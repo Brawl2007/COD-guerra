@@ -1,0 +1,69 @@
+{
+  "stage": "implementation checks; independent acceptance separate",
+  "focusedPartials": {
+    "pass": 21,
+    "fail": 0
+  },
+  "crewSmokeEarlier": {
+    "pass": 48,
+    "fail": 0,
+    "note": "includes earlier19case version of partials; do not sum overlapping counts"
+  },
+  "bridgeAudio": {
+    "pass": 72,
+    "fail": 0
+  },
+  "trainHud": {
+    "pass": 20,
+    "fail": 0
+  },
+  "build": {
+    "status": "PASS",
+    "log": "build-final-lamp.log"
+  },
+  "colliderBoxes": 83,
+  "mg34RealGeometry": "PASS",
+  "protectedPredecessorFiles": 299,
+  "auditFinalSource": {
+    "status": "independent reproduction required",
+    "persistedArtifacts": [
+      "PREDECESSOR_DELTA_AUDIT.json",
+      "tests/fixtures/m01-partials-gameplay-baseline.json"
+    ],
+    "note": "Earlier tool output reported both routes PASS; no final console log survived environment replacement. This resumed pass did not regenerate the golden. Verifier must reproduce without --write-golden."
+  },
+  "browserNewProduction": {
+    "pass": 2,
+    "fail": 0,
+    "secondsApprox": 384,
+    "log": "browser-final-lamp-yard-after-footprint.log",
+    "scope": "six train/yard windows, exact paused authority, native stock calls7/7/11; front negative, clear lamp/smoke, two target perturbations, canonical view10 capture",
+    "proof": "train-1km-final-proof.json",
+    "report": "test-results/partials-completion-evidence/browser-report.json",
+    "view10Acceptance": "independent verifier/reviewer judgment; canonical lamp ray remains physically occluded"
+  },
+  "fullNodeSuite": "independent verifier gate",
+  "fullBrowserUnion": "independent verifier gate",
+  "focusedFinalLampTrain": {
+    "pass": 36,
+    "fail": 0,
+    "log": "focused-final-lamp.log",
+    "note": "overlaps earlier focused partials/train suites; do not add counts"
+  },
+  "browserEarlierAnchorFailure": {
+    "pass": 1,
+    "fail": 1,
+    "log": "browser-final-lamp-yard.log",
+    "failure": "Frontal ray blocked by original gate; lampPixels0 smokePixels7. Preserved, not relabeled as PASS.",
+    "passed": "optional supplemental crew fallback (before only glow-size change)"
+  },
+  "animationBrowserFixture": {
+    "status": "PASS CPU fixture check only; browser gate remains independent",
+    "log": "animation-browser-fixture-check.log",
+    "currentActors": 97,
+    "legacyActors": 86,
+    "restoredActors": 97,
+    "preservedPreAuxiliaryIds": 89,
+    "note": "Browser spec retains exact pause/reload/prior-checkpoint equality and is included in coupled config."
+  }
+}

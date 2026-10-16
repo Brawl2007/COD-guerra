@@ -1,0 +1,109 @@
+{
+  "note": "JPEG export of real rendered test frames for a smaller repository. Same full viewport, no resizing or invented content. The original test tools still output PNG into their evidence directory.",
+  "images": [
+    {
+      "file": "production/station-damage.jpg",
+      "sourcePNG": "station-damage.png",
+      "sourcePNG_SHA256": "0f881fe9091e67965150d5b4ce71d06bc95bafab8299eeb9cb918058addbe3dd",
+      "sourcePNG_bytes": 794239,
+      "jpegBytes": 94594,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/roll-call.jpg",
+      "sourcePNG": "roll-call.png",
+      "sourcePNG_SHA256": "0e75804f76057319ef6923e90337f1a49b3b68ebfe5e97679dda11a6cd4f26c8",
+      "sourcePNG_bytes": 990587,
+      "jpegBytes": 96219,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/withdrawal.jpg",
+      "sourcePNG": "withdrawal.png",
+      "sourcePNG_SHA256": "fc1f8fb01b8b34c356786964fe1afc8ad26886b6bded7f44d2255809368c11bb",
+      "sourcePNG_bytes": 947821,
+      "jpegBytes": 134981,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "production/repair.jpg",
+      "sourcePNG": "repair.png",
+      "sourcePNG_SHA256": "93399641e850788023cc0273c961a64ed1116598863323d7e6476d74390af33d",
+      "sourcePNG_bytes": 990741,
+      "jpegBytes": 97960,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false
+    },
+    {
+      "file": "controls/m01-rig-clip.jpg",
+      "sourcePNG": "m01-rig-clip.png",
+      "sourcePNG_SHA256": "e0240802e69fbd3afa3bfd54fece58acad487f4f7195a2713af7ab71f6c6b94c",
+      "sourcePNG_bytes": 853714,
+      "jpegBytes": 101196,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false,
+      "source": "m01-current-equipment-browser.json"
+    },
+    {
+      "file": "controls/m01-rig-iron-sights.jpg",
+      "sourcePNG": "m01-rig-iron-sights.png",
+      "sourcePNG_SHA256": "4d26c50666777e01fbe5740e2aa654eea210f42e3a5eb815481138e3318fc7ef",
+      "sourcePNG_bytes": 725780,
+      "jpegBytes": 86464,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false,
+      "source": "m01-current-equipment-browser.json"
+    },
+    {
+      "file": "controls/m01-rig-single-round.jpg",
+      "sourcePNG": "m01-rig-single-round.png",
+      "sourcePNG_SHA256": "a0c69fddb7a4856a5443ac09f7ec496aa163f6fd893bb0e557f4687eec9ee266",
+      "sourcePNG_bytes": 847194,
+      "jpegBytes": 100972,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false,
+      "source": "m01-current-equipment-browser.json"
+    },
+    {
+      "file": "equipment/m01-kowal-rkm-burst.jpg",
+      "sourcePNG": "m01-kowal-rkm-burst.png",
+      "sourcePNG_SHA256": "d845aa8ae7903a033d112610a398172fbcf92f0250433bdc934631beffac7b9c",
+      "sourcePNG_bytes": 758625,
+      "jpegBytes": 97397,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false,
+      "source": "m01-current-equipment-browser.json"
+    },
+    {
+      "file": "equipment/m01-kowal-rkm-reload.jpg",
+      "sourcePNG": "m01-kowal-rkm-reload.png",
+      "sourcePNG_SHA256": "57026a403da773eafadaa43568ef39aae3395ea103d5aa4d368c56ef5e8ef7ae",
+      "sourcePNG_bytes": 754925,
+      "jpegBytes": 97397,
+      "width": 1280,
+      "height": 720,
+      "quality": 72,
+      "resized": false,
+      "source": "m01-current-equipment-browser.json"
+    }
+  ]
+}

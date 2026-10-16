@@ -1,0 +1,98 @@
+{
+  "schema_version": 2,
+  "task": {
+    "id": "M01-CONTINUITY-RAID-INTEGRATION-V1",
+    "type": "GAMEPLAY",
+    "role": "implementer",
+    "objective": "Two sequential deliveries: T02-min continuity and T03-lite + T25 raid, integrated on the accepted T08/T12 stack."
+  },
+  "git": {
+    "base_branch": "claude/m01-stack-integration-t08-t12-v1",
+    "base_head": "2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55",
+    "work_branch": "codex/m01-continuity-raid-integration-v1",
+    "starting_head": "2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55"
+  },
+  "policy": {
+    "gameplay_change_allowed": true,
+    "visual_change_allowed": true,
+    "persistence_change_allowed": true,
+    "architecture_change_allowed": false
+  },
+  "scope": {
+    "allowed_files": [
+      "src/game/m01-simulation.js",
+      "missions/m01-tczew/mission.json",
+      "missions/m01-tczew/ENGINE_CONTRACT.md",
+      "tests/m01-continuity-raid.test.js",
+      "tests/fixtures/m01-anim-gameplay-baseline.json",
+      "tests/m01-animation-contract.test.js",
+      "tools/verification/**",
+      "docs/verification/m01-runtime/continuity-raid-integration-v1/**",
+      "docs/direction/**",
+      "DEVELOPMENT_STATUS.md",
+      "tests/helpers/m01-byte-guard-allowlist.js",
+      "src/render/m01-aircraft.js",
+      "tests/browser/m01-continuity-raid.spec.js",
+      "src/render/m01-atmosphere.js",
+      "tests/m01-atmosphere-runtime.test.js",
+      ".github/workflows/m01-continuity-raid-integration-v1.yml",
+      "src/game/game.js",
+      "tests/m01-consolidation-lifecycle.test.js"
+    ],
+    "forbidden_files": [
+      "src/game/wz29.js",
+      "src/game/m01-fire.js",
+      "src/world/**",
+      "assets/**",
+      "package*.json",
+      "playwright.config.js"
+    ],
+    "allowed_systems": [
+      "T02-min: west eligibility to include firing post and shelter route, dlg019 only after impact",
+      "T03-lite: terrain grounding of aerial impacts",
+      "T25: six fixed-time raid targets outside playable area, persistent smoke, deterministic saved schedule",
+      "Minimal integration: restore classifies the five new raid IDs as aerial for existing delayed audio and shake thresholds."
+    ],
+    "forbidden_systems": [
+      "damage tuning",
+      "cadences",
+      "objectives",
+      "schema number",
+      "CP gates",
+      "historical event times",
+      "T02b dialogue/preroll",
+      "main/deploy writes"
+    ]
+  },
+  "acceptance": {
+    "criteria": [
+      "T02 west route under same legal line-of-sight fire; no early dlg019",
+      "T25 5-7 fixed-time grounded impacts by 05:34 outside playable area and 30m aerial safety; >=4 persistent smoke columns at 05:36",
+      "Pause/reload no duplicated impacts; legacy schema2 valid; corrupt schedules rejected atomically",
+      "Existing checkpoints, routes, RNG/cadence unaffected except documented approved delta; full Node baseline compared before changes"
+    ],
+    "evidence_required": [
+      "focused Node and affected regressions",
+      "build",
+      "targeted browser evidence of raid smoke",
+      "independent verification and critical review"
+    ]
+  },
+  "verification": {
+    "build_requirement": "required",
+    "browser_requirement": "focused",
+    "regression_obligations": []
+  },
+  "execution": {
+    "max_fix_attempts": 3,
+    "max_review_rejections": 2,
+    "production_mode": "focused"
+  },
+  "human": {
+    "approval_points": []
+  },
+  "integration": {
+    "target_branch": "codex/m01-continuity-raid-integration-v1",
+    "auto_integrate": true
+  }
+}

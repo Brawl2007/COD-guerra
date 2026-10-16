@@ -1,0 +1,843 @@
+{
+  "version": 1,
+  "author": "COD-guerra project original procedural architecture",
+  "license": "CC0-1.0",
+  "units": "metres",
+  "axes": "+Y up, local coordinates translated by anchor",
+  "historicalStatus": "Artistic reconstruction, not measured historical architecture",
+  "collisionPolicy": "Only collisionSurfaces reference authoritative world boxes; all other geometry is decoration. No solids or routes added.",
+  "generator": "tools/assets/m01-field-structures/build.mjs",
+  "budgets": [
+    5000,
+    1500,
+    300
+  ],
+  "structures": [
+    {
+      "id": "rail_shed",
+      "anchor": [
+        -260,
+        -3,
+        20
+      ],
+      "description": "Original railway shed: gable, chimney, open west door, surface-mounted window and bench.",
+      "colliderIds": [
+        "hut_north",
+        "hut_east",
+        "hut_south",
+        "hut_west_n",
+        "hut_west_s"
+      ],
+      "openings": [
+        {
+          "kind": "west door",
+          "worldX": -270,
+          "worldZ": [
+            18,
+            24
+          ],
+          "widthM": 6
+        }
+      ],
+      "license": "CC0-1.0",
+      "files": {
+        "intact:lod0": {
+          "file": "m01_rail_shed_intact_lod0.glb",
+          "lod": 0,
+          "variant": "intact",
+          "triangles": 1120,
+          "bytes": 92288,
+          "sha256": "79b486febf30f8b30806a06bd8e228acaff7349b07a96c8a909274674aacb281",
+          "visualBounds": {
+            "min": [
+              -10.5,
+              0,
+              -6.61710262298584
+            ],
+            "max": [
+              10.539999961853027,
+              6.400000095367432,
+              6.61710262298584
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "hut_north",
+              "min": [
+                -10,
+                0,
+                -6
+              ],
+              "max": [
+                10,
+                3.5,
+                -5.65
+              ],
+              "material": "wood",
+              "vertexStart": 0,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_east",
+              "min": [
+                10,
+                0,
+                -6
+              ],
+              "max": [
+                10.35,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 24,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_south",
+              "min": [
+                -10,
+                0,
+                5.65
+              ],
+              "max": [
+                10,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 48,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_west_n",
+              "min": [
+                -10,
+                0,
+                -6
+              ],
+              "max": [
+                -9.65,
+                3.5,
+                -2
+              ],
+              "material": "wood",
+              "vertexStart": 72,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_west_s",
+              "min": [
+                -10,
+                0,
+                4
+              ],
+              "max": [
+                -9.65,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 96,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "intact:lod1": {
+          "file": "m01_rail_shed_intact_lod1.glb",
+          "lod": 1,
+          "variant": "intact",
+          "triangles": 208,
+          "bytes": 20300,
+          "sha256": "39f831fd071a76a95f8e05b3657d5fc026be4a9ed6a94110ac9aa3c8bbbfb476",
+          "visualBounds": {
+            "min": [
+              -10.5,
+              0,
+              -6.61710262298584
+            ],
+            "max": [
+              10.539999961853027,
+              6.400000095367432,
+              6.61710262298584
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "hut_north",
+              "min": [
+                -10,
+                0,
+                -6
+              ],
+              "max": [
+                10,
+                3.5,
+                -5.65
+              ],
+              "material": "wood",
+              "vertexStart": 0,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_east",
+              "min": [
+                10,
+                0,
+                -6
+              ],
+              "max": [
+                10.35,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 24,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_south",
+              "min": [
+                -10,
+                0,
+                5.65
+              ],
+              "max": [
+                10,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 48,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_west_n",
+              "min": [
+                -10,
+                0,
+                -6
+              ],
+              "max": [
+                -9.65,
+                3.5,
+                -2
+              ],
+              "material": "wood",
+              "vertexStart": 72,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_west_s",
+              "min": [
+                -10,
+                0,
+                4
+              ],
+              "max": [
+                -9.65,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 96,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "intact:lod2": {
+          "file": "m01_rail_shed_intact_lod2.glb",
+          "lod": 2,
+          "variant": "intact",
+          "triangles": 112,
+          "bytes": 12800,
+          "sha256": "4644c421c34a9fa4bdbe07aea4bc262cd9385348dd336e3d4d11944e0cfac009",
+          "visualBounds": {
+            "min": [
+              -10.5,
+              0,
+              -6.61710262298584
+            ],
+            "max": [
+              10.5,
+              6.400000095367432,
+              6.61710262298584
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "hut_north",
+              "min": [
+                -10,
+                0,
+                -6
+              ],
+              "max": [
+                10,
+                3.5,
+                -5.65
+              ],
+              "material": "wood",
+              "vertexStart": 0,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_east",
+              "min": [
+                10,
+                0,
+                -6
+              ],
+              "max": [
+                10.35,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 24,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_south",
+              "min": [
+                -10,
+                0,
+                5.65
+              ],
+              "max": [
+                10,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 48,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_west_n",
+              "min": [
+                -10,
+                0,
+                -6
+              ],
+              "max": [
+                -9.65,
+                3.5,
+                -2
+              ],
+              "material": "wood",
+              "vertexStart": 72,
+              "vertexCount": 24
+            },
+            {
+              "id": "hut_west_s",
+              "min": [
+                -10,
+                0,
+                4
+              ],
+              "max": [
+                -9.65,
+                3.5,
+                6
+              ],
+              "material": "wood",
+              "vertexStart": 96,
+              "vertexCount": 24
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "shelter",
+      "anchor": [
+        -260,
+        -4,
+        70
+      ],
+      "description": "Artistic timber-lined shelter with an L-shaped north entrance; only existing entrance cover is collision backed.",
+      "colliderIds": [
+        "cv_shelter_entrance"
+      ],
+      "openings": [
+        {
+          "kind": "north L entrance",
+          "localX": [
+            -1.5,
+            1.5
+          ],
+          "localZ": [
+            -6,
+            -2
+          ]
+        }
+      ],
+      "license": "CC0-1.0",
+      "files": {
+        "intact:lod0": {
+          "file": "m01_shelter_intact_lod0.glb",
+          "lod": 0,
+          "variant": "intact",
+          "triangles": 528,
+          "bytes": 43436,
+          "sha256": "1a8fd56408af52d9faf09537150f2a8b7aee88a07e70a081f1e1413fa6646088",
+          "visualBounds": {
+            "min": [
+              -5.5,
+              0,
+              -5.5
+            ],
+            "max": [
+              5.5,
+              3.0999999046325684,
+              5.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_shelter_entrance",
+              "min": [
+                1.55,
+                0,
+                -5.5
+              ],
+              "max": [
+                2.45,
+                2.2,
+                -2.5
+              ],
+              "material": "wood",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "intact:lod1": {
+          "file": "m01_shelter_intact_lod1.glb",
+          "lod": 1,
+          "variant": "intact",
+          "triangles": 156,
+          "bytes": 14408,
+          "sha256": "ad00c11e254b1b3ea7c259cc6113bb382a571c8d6077af0e0018855d9a373baa",
+          "visualBounds": {
+            "min": [
+              -5.5,
+              0,
+              -5.5
+            ],
+            "max": [
+              5.5,
+              3.0999999046325684,
+              5.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_shelter_entrance",
+              "min": [
+                1.55,
+                0,
+                -5.5
+              ],
+              "max": [
+                2.45,
+                2.2,
+                -2.5
+              ],
+              "material": "wood",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "intact:lod2": {
+          "file": "m01_shelter_intact_lod2.glb",
+          "lod": 2,
+          "variant": "intact",
+          "triangles": 84,
+          "bytes": 8788,
+          "sha256": "1d5a773241be943e7c26ace2afe7d350d17b1019e0c9cc90fe0f2f982e36c9ea",
+          "visualBounds": {
+            "min": [
+              -5.5,
+              0,
+              -5.5
+            ],
+            "max": [
+              5.5,
+              3.0999999046325684,
+              5.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_shelter_entrance",
+              "min": [
+                1.55,
+                0,
+                -5.5
+              ],
+              "max": [
+                2.45,
+                2.2,
+                -2.5
+              ],
+              "material": "wood",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "forward_post",
+      "anchor": [
+        18,
+        0,
+        3
+      ],
+      "description": "Earth and timber parapet; destroyed variant is exactly 0.45m tall, sourced from the world cover.",
+      "colliderIds": [
+        "cv_forward_post"
+      ],
+      "openings": [],
+      "license": "CC0-1.0",
+      "files": {
+        "intact:lod0": {
+          "file": "m01_forward_post_intact_lod0.glb",
+          "lod": 0,
+          "variant": "intact",
+          "triangles": 1248,
+          "bytes": 52132,
+          "sha256": "cdd782c70736f071e1d859fffa3c964d11c3aeb9c31e31e88fe878762be09890",
+          "visualBounds": {
+            "min": [
+              -0.45500001311302185,
+              0,
+              -1.5299999713897705
+            ],
+            "max": [
+              0.45500001311302185,
+              1.100000023841858,
+              1.5299999713897705
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_forward_post",
+              "min": [
+                -0.45,
+                0,
+                -1.5
+              ],
+              "max": [
+                0.45,
+                1.1,
+                1.5
+              ],
+              "material": "earth",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "intact:lod1": {
+          "file": "m01_forward_post_intact_lod1.glb",
+          "lod": 1,
+          "variant": "intact",
+          "triangles": 96,
+          "bytes": 9804,
+          "sha256": "e6296a79407a8144edc526b474f21e0f237103d0dbe9f27661159d3fe45ce707",
+          "visualBounds": {
+            "min": [
+              -0.45500001311302185,
+              0,
+              -1.5
+            ],
+            "max": [
+              0.45500001311302185,
+              1.100000023841858,
+              1.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_forward_post",
+              "min": [
+                -0.45,
+                0,
+                -1.5
+              ],
+              "max": [
+                0.45,
+                1.1,
+                1.5
+              ],
+              "material": "earth",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "intact:lod2": {
+          "file": "m01_forward_post_intact_lod2.glb",
+          "lod": 2,
+          "variant": "intact",
+          "triangles": 12,
+          "bytes": 2420,
+          "sha256": "fc868590ef448be9380bfa9b6841bcfdc11e0513d5bdcdfb871e2b0b0b2e2002",
+          "visualBounds": {
+            "min": [
+              -0.44999998807907104,
+              0,
+              -1.5
+            ],
+            "max": [
+              0.44999998807907104,
+              1.100000023841858,
+              1.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_forward_post",
+              "min": [
+                -0.45,
+                0,
+                -1.5
+              ],
+              "max": [
+                0.45,
+                1.1,
+                1.5
+              ],
+              "material": "earth",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "destroyed:lod0": {
+          "file": "m01_forward_post_destroyed_lod0.glb",
+          "lod": 0,
+          "variant": "destroyed",
+          "triangles": 384,
+          "bytes": 21012,
+          "sha256": "fe83db0e0950bf6a5cfe1de35540647a57a0d36a3da06e07d89fb10f25bd8cb7",
+          "visualBounds": {
+            "min": [
+              -0.45500001311302185,
+              0,
+              -1.5299999713897705
+            ],
+            "max": [
+              0.45500001311302185,
+              0.44999998807907104,
+              1.5299999713897705
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_forward_post",
+              "min": [
+                -0.45,
+                0,
+                -1.5
+              ],
+              "max": [
+                0.45,
+                0.45,
+                1.5
+              ],
+              "material": "earth",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "destroyed:lod1": {
+          "file": "m01_forward_post_destroyed_lod1.glb",
+          "lod": 1,
+          "variant": "destroyed",
+          "triangles": 96,
+          "bytes": 9808,
+          "sha256": "67b7e4615e7c322f779a26273ea7851f9dce17cc67c9cc6e02ae1405e4d7b093",
+          "visualBounds": {
+            "min": [
+              -0.45500001311302185,
+              0,
+              -1.5
+            ],
+            "max": [
+              0.45500001311302185,
+              0.44999998807907104,
+              1.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_forward_post",
+              "min": [
+                -0.45,
+                0,
+                -1.5
+              ],
+              "max": [
+                0.45,
+                0.45,
+                1.5
+              ],
+              "material": "earth",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        },
+        "destroyed:lod2": {
+          "file": "m01_forward_post_destroyed_lod2.glb",
+          "lod": 2,
+          "variant": "destroyed",
+          "triangles": 12,
+          "bytes": 2424,
+          "sha256": "128d0acf89b41cbc377909a97b247d4c8f1a1d33e12dad8f19d0d835cb7d053f",
+          "visualBounds": {
+            "min": [
+              -0.44999998807907104,
+              0,
+              -1.5
+            ],
+            "max": [
+              0.44999998807907104,
+              0.44999998807907104,
+              1.5
+            ]
+          },
+          "collisionSurfaces": [
+            {
+              "id": "cv_forward_post",
+              "min": [
+                -0.45,
+                0,
+                -1.5
+              ],
+              "max": [
+                0.45,
+                0.45,
+                1.5
+              ],
+              "material": "earth",
+              "vertexStart": 0,
+              "vertexCount": 24
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "casemate",
+      "anchor": [
+        13,
+        -7,
+        40
+      ],
+      "description": "Artistic concrete casemate, two open east embrasures and earth cap. Feature envelope is a map reference, not a collider.",
+      "colliderIds": [],
+      "featureBounds": {
+        "min": [
+          0,
+          -7,
+          34
+        ],
+        "max": [
+          26,
+          -1,
+          46
+        ]
+      },
+      "openings": [
+        {
+          "kind": "east embrasures",
+          "worldZ": [
+            37,
+            43
+          ]
+        },
+        {
+          "kind": "west entrance",
+          "localZ": [
+            -1.5,
+            1.5
+          ]
+        }
+      ],
+      "license": "CC0-1.0",
+      "files": {
+        "intact:lod0": {
+          "file": "m01_casemate_intact_lod0.glb",
+          "lod": 0,
+          "variant": "intact",
+          "triangles": 828,
+          "bytes": 51464,
+          "sha256": "a013f6c5447cbc6d27afcbd4ce75b4a80049069e09f193a592dc2ead2daabc95",
+          "visualBounds": {
+            "min": [
+              -13.300000190734863,
+              -0.05000000074505806,
+              -6.300000190734863
+            ],
+            "max": [
+              13.300000190734863,
+              6.230000019073486,
+              6.300000190734863
+            ]
+          },
+          "collisionSurfaces": []
+        },
+        "intact:lod1": {
+          "file": "m01_casemate_intact_lod1.glb",
+          "lod": 1,
+          "variant": "intact",
+          "triangles": 180,
+          "bytes": 17040,
+          "sha256": "6d886b0f4502b18c835289f7c6c7e8e1bcb0b708fc435962d62a6960d901b07e",
+          "visualBounds": {
+            "min": [
+              -13.300000190734863,
+              -0.05000000074505806,
+              -6.300000190734863
+            ],
+            "max": [
+              13.300000190734863,
+              6.050000190734863,
+              6.300000190734863
+            ]
+          },
+          "collisionSurfaces": []
+        },
+        "intact:lod2": {
+          "file": "m01_casemate_intact_lod2.glb",
+          "lod": 2,
+          "variant": "intact",
+          "triangles": 144,
+          "bytes": 12644,
+          "sha256": "411bac276fd2d2637bb98624f95a61865086f453666665f93f24619e2c0c1d7c",
+          "visualBounds": {
+            "min": [
+              -13.300000190734863,
+              -0.05000000074505806,
+              -6.300000190734863
+            ],
+            "max": [
+              13.300000190734863,
+              6.050000190734863,
+              6.300000190734863
+            ]
+          },
+          "collisionSurfaces": []
+        }
+      }
+    }
+  ]
+}

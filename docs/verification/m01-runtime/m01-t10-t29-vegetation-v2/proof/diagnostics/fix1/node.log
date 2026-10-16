@@ -1,0 +1,37 @@
+✔ damage decals never write simulation state: the real repair route stays bit-identical with them attached (5841.810969ms)
+✔ damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook (2.151256ms)
+✔ marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight (186.756312ms)
+✔ portal wall marks stay on masonry: never across the arch opening or below its apex (1.641476ms)
+✔ the west bridgehead marks the drawn embankment, never the walkable abutment buried under it (85.20984ms)
+✔ mark pools, spall, debris and embers stay within the declared per-quality budget (790.19956ms)
+✔ marks expire on the mission clock and are dropped deterministically when time runs backwards (313.345534ms)
+✔ blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic (34.569035ms)
+✔ reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save (2515.237014ms)
+✔ marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist (193.910393ms)
+✔ the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes (161.509223ms)
+✔ the chip FX batch has instance colours from construction, so the first chip does not switch its program (7.203198ms)
+✔ the decal atlas is original, deterministic art with bounded size (303.435188ms)
+✔ original authored kit is exact reproducible and SHA/bytes describe actual bytes (678.835217ms)
+✔ independent GLB accessors prove all actual normals, UVs, anchored wind, bounds and triangle budgets (89.212387ms)
+✔ species and shrub identities have actually distinct silhouettes/accessor bytes (10.470956ms)
+✔ vegetation layout is deterministic, pure and leaves the approved solid trees untouched (360.678492ms)
+✔ vegetation stays inside the browser budget and keeps Low cheaper (17.672578ms)
+✔ trees, shrubs and ground cover are varied, clustered and never laid out on a grid (16.251384ms)
+✔ decoration respects corridors, objectives, covers and the playable bounds (92.849038ms)
+✔ no shrub or visual tree stands on a path actually walked in the scripted mission (7214.02362ms)
+✔ vegetation variation is deterministic, visual-only and does not consume gameplay RNG (113.307203ms)
+✔ actual four-tier kit LOD uses 120m impostors, bounded hysteresis and 40m grass in every quality (0.492804ms)
+✔ approved tree colliders and critical route remain unchanged by the visual pass (1142.567001ms)
+✔ physical receiver accessors and every original physical descriptor remain exact against pinned old bytes (507.22759ms)
+✔ actual kit geometry has precise source byte ranges, padded budgets, shared atlas and persistent buffers through quality/rebind (1042.648067ms)
+✔ failure, partial validation, hung timeout and late completion close exclusive resources once (929.169047ms)
+✔ failed/hung residency retains all decorative trunks and both-bank legacy silhouettes without new colliders (277.270669ms)
+✔ submission callbacks exclude zero instances and empty ranges; structural capacity stays separate (313.062457ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24545.105752

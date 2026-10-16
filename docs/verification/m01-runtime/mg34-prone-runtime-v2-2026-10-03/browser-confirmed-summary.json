@@ -1,0 +1,34 @@
+{
+  "kind": "confirmed tool-output summary reconstructed after workspace replacement; not raw logs or a rerun",
+  "date": "2026-10-03",
+  "browserHead": "152df76331bc6a8c49bc0a93e2aed6766f69308f",
+  "implementationHead": "8d55ae554b54f2fc0758189395936bb8c41a7c40",
+  "sourceTree": "0761b6675e9f71d1a2b5440907c571541068497b",
+  "browserTestsTree": "51fe1a560f62e17c302988c816c2f8b4cec303eb",
+  "command": "CI=1 CHROME_EXECUTABLE=/workspace/scratch/ad7c1d5a3eda/chromium-runtime/chromium PLAYWRIGHT_JSON_OUTPUT_NAME=/tmp/mg34-browser-full.json npm run test:browser -- --reporter=line,json",
+  "full": {
+    "passed": 35,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "workers": 1,
+    "reportedDuration": "12.3m",
+    "exitCode": 0
+  },
+  "focused": {
+    "passed": 4,
+    "failed": 0,
+    "reportedDuration": "1.2m"
+  },
+  "environment": {
+    "chromium": "153",
+    "viewport": [
+      1280,
+      720
+    ],
+    "graphics": "SwiftShader/software WebGL"
+  },
+  "rawLogsAvailable": false,
+  "screenshotsAvailable": false,
+  "note": "The execution completed and exit code 0 / 35 passed were read from the tool before workspace replacement. All source/browser-test trees are identical to the subsequent implementation commit."
+}

@@ -1,0 +1,176 @@
+✖ save between checkpoints preserves the future respawn destination (46.092999ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 157.437956
+
+✖ failing tests:
+
+test at tests/m01-schema2-determinism.test.js:5:1
+✖ save between checkpoints preserves the future respawn destination (46.092999ms)
+  AssertionError [ERR_ASSERTION]: first divergence: recovery tick 1
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      actors: [
+        {
+          active: true,
+          alive: true,
+  ...
+          civilian: false,
+  +       cooldown: -2.0500000000000007,
+  -       cooldown: 0,
+          crouched: false,
+          essential: false,
+          facing: 0,
+          health: 100,
+          id: 'szymon_kowal',
+  ...
+      ],
+  +   battleClock: 16246.04999999997,
+  -   battleClock: 16244,
+      checkpointsReached: [
+        'cp_m01_a_orientacao'
+      ],
+  +   clock: 2.0500000000000007,
+  -   clock: 0.05,
+      consumed: {
+        evt_m01_intro_card: 0,
+        evt_m01_prelude_start: 0.05
+      },
+      destruction: [],
+  ...
+        status: '',
+  +     text: 'Leve a mensagem e o café ao posto da ponte'
+  -     text: '04:30 · Tczew, Polónia'
+      },
+      missionId: 'm01_tczew',
+      objectives: {
+        obj_m01_cover_repair: {
+          progress: 0,
+  ...
+        weaponShotAt: -1000000000,
+  +     x: -60.87000000000006,
+  -     x: -66,
+        y: -3,
+        z: 22
+      },
+      recoveries: [],
+      rng: 19390901,
+  ...
+        guide: 0,
+  +     guideAt: 4.05,
+  +     guideDist: 86.12200647918044,
+  +     guideKey: 'Posto da ponte ferroviária',
+  -     guideAt: 0,
+  -     guideDist: 0,
+  -     guideKey: null,
+        guideShown: false,
+        holdAccessVisited: false,
+        kowalRounds: 30,
+        lowAmmoHint: false,
+        nextCombatCall: 0,
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/179e239c7f9f/COD-guerra/tests/m01-schema2-determinism.test.js:13:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      schema: 2,
+      missionId: 'm01_tczew',
+      clock: 2.0500000000000007,
+      battleClock: 16246.04999999997,
+      rng: 19390901,
+      player: { id: 'jan_wrona', space: 'metres', x: -60.87000000000006, y: -3, z: 22, team: 'player', health: 100, alive: true, active: true, state: 'GUARD', facing: 0, shot: 0, radius: 0.36, crouched: false, suppressedUntil: 0, cooldown: 0, rounds: 5, angle: 0, pitch: 0, aiming: false, moveBlend: 0, sprinting: false, weaponShotAt: -1000000000, carrying: null, headgear: 'pl_rogatywka_wz37' },
+      weapon: { id: 'kb_wz29', mag: 5, reserve: 40, state: 'READY', until: 0, started: 0, lastShot: -1000000000, shotCount: 0, received: 0, sight: 300, reloadMode: null },
+      actors: [
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object]
+      ],
+      consumed: { evt_m01_intro_card: 0, evt_m01_prelude_start: 0.05 },
+      objectives: { obj_m01_deliver_message: [Object], obj_m01_take_cover: [Object], obj_m01_follow_sergeant: [Object], obj_m01_find_sappers: [Object], obj_m01_fetch_material: [Object], obj_m01_cover_repair: [Object], obj_m01_hold_access: [Object], obj_m01_cover_withdrawal: [Object], obj_m01_rescue_bak: [Object], obj_m01_leave_bridge: [Object], obj_m01_hold_corridor: [Object], obj_m01_reach_shelter: [Object] },
+      flags: { 'm01.completed': false, 'm01.nowicki_status': 'present', 'm01.bak_status': 'unhurt', 'm01.dudek_status': 'unhurt', 'm01.east_platoon_survivors': 18, 'm01.second_raid_state': 'pending', 'm01.forward_post_state': 'pending' },
+      destruction: [],
+      dialogueConsumed: [ 'cs_m01_intro:4:dlg_m01_005', 'cs_m01_intro:5:dlg_m01_001', 'cs_m01_intro:6:dlg_m01_002', 'cs_m01_intro:7:dlg_m01_006', 'cs_m01_intro:8:dlg_m01_007', 'cs_m01_intro:9:dlg_m01_003', 'cs_m01_intro:10:dlg_m01_004' ],
+      dialogueQueue: [],
+      subtitle: null,
+      scene: null,
+      sceneDone: [ 'cs_m01_intro' ],
+      checkpointsReached: [ 'cp_m01_a_orientacao' ],
+      pendingCheckpoint: null,
+      gate: null,
+      recoveries: [],
+      timers: { boundary: 0, water: 0, cover: 0, repairStall: 0, repairSuppressedUntil: 0, withdrawalCasualty: 21600, ambient: 0, nextCoverCall: 40, guide: 0, guideKey: 'Posto da ponte ferroviária', guideAt: 4.05, guideDist: 86.12200647918044, guideShown: false, kowalRounds: 30, lowAmmoHint: false, escort: false, escortSpoke: false, boundaryWarning: false, boundaryCountdown: 0, holdAccessVisited: false, occupiedCover: null, coverExposure: 0, coverCallIndex: 0, repairPins: 0, fireEase: false, calloutAt: -1000000000, nextCombatCall: 0 },
+      sectors: { sectors: [Array], damage: [] },
+      grenades: { ammo: 2, active: [], nextId: 0 },
+      mission: { phase: 'SETUP', complete: false, text: 'Leve a mensagem e o café ao posto da ponte', status: '' },
+      enemyFire: { rounds: [], nextId: 0 }
+    },
+    expected: {
+      schema: 2,
+      missionId: 'm01_tczew',
+      clock: 0.05,
+      battleClock: 16244,
+      rng: 19390901,
+      player: { id: 'jan_wrona', space: 'metres', x: -66, y: -3, z: 22, team: 'player', health: 100, alive: true, active: true, state: 'GUARD', facing: 0, shot: 0, radius: 0.36, crouched: false, suppressedUntil: 0, cooldown: 0, rounds: 5, angle: 0, pitch: 0, aiming: false, moveBlend: 0, sprinting: false, weaponShotAt: -1000000000, carrying: null, headgear: 'pl_rogatywka_wz37' },
+      weapon: { id: 'kb_wz29', mag: 5, reserve: 40, state: 'READY', until: 0, started: 0, lastShot: -1000000000, shotCount: 0, received: 0, sight: 300, reloadMode: null },
+      actors: [
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object]
+      ],
+      consumed: { evt_m01_intro_card: 0, evt_m01_prelude_start: 0.05 },
+      objectives: { obj_m01_deliver_message: [Object], obj_m01_take_cover: [Object], obj_m01_follow_sergeant: [Object], obj_m01_find_sappers: [Object], obj_m01_fetch_material: [Object], obj_m01_cover_repair: [Object], obj_m01_hold_access: [Object], obj_m01_cover_withdrawal: [Object], obj_m01_rescue_bak: [Object], obj_m01_leave_bridge: [Object], obj_m01_hold_corridor: [Object], obj_m01_reach_shelter: [Object] },
+      flags: { 'm01.completed': false, 'm01.nowicki_status': 'present', 'm01.bak_status': 'unhurt', 'm01.dudek_status': 'unhurt', 'm01.east_platoon_survivors': 18, 'm01.second_raid_state': 'pending', 'm01.forward_post_state': 'pending' },
+      destruction: [],
+      dialogueConsumed: [ 'cs_m01_intro:4:dlg_m01_005', 'cs_m01_intro:5:dlg_m01_001', 'cs_m01_intro:6:dlg_m01_002', 'cs_m01_intro:7:dlg_m01_006', 'cs_m01_intro:8:dlg_m01_007', 'cs_m01_intro:9:dlg_m01_003', 'cs_m01_intro:10:dlg_m01_004' ],
+      dialogueQueue: [],
+      subtitle: null,
+      scene: null,
+      sceneDone: [ 'cs_m01_intro' ],
+      checkpointsReached: [ 'cp_m01_a_orientacao' ],
+      pendingCheckpoint: null,
+      gate: null,
+      recoveries: [],
+      timers: { boundary: 0, water: 0, cover: 0, repairStall: 0, repairSuppressedUntil: 0, withdrawalCasualty: 21600, ambient: 0, nextCoverCall: 40, guide: 0, guideKey: null, guideAt: 0, guideDist: 0, guideShown: false, kowalRounds: 30, lowAmmoHint: false, escort: false, escortSpoke: false, boundaryWarning: false, boundaryCountdown: 0, holdAccessVisited: false, occupiedCover: null, coverExposure: 0, coverCallIndex: 0, repairPins: 0, fireEase: false, calloutAt: -1000000000, nextCombatCall: 0 },
+      sectors: { sectors: [Array], damage: [] },
+      grenades: { ammo: 2, active: [], nextId: 0 },
+      mission: { phase: 'SETUP', complete: false, text: '04:30 · Tczew, Polónia', status: '' },
+      enemyFire: { rounds: [], nextId: 0 }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

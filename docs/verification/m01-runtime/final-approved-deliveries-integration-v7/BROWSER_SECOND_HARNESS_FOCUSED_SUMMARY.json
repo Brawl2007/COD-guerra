@@ -1,0 +1,273 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "status": "PASS",
+  "scope": "Second-full-run two failures plus both neighboring FX and wagon regression scenarios; focused invocation, not combined certification",
+  "baseHead": "7a5800e12e3b4309f3d567e2a949900d4bb36b50",
+  "localUncommittedHarnessCorrection": true,
+  "chromiumVersion": "153.0.8010.0",
+  "stats": {
+    "startTime": "2026-10-08T23:52:18.242Z",
+    "duration": 226628.503,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "retries": 0,
+  "workers": 1,
+  "errors": [],
+  "reportSha256Uncompressed": "2e48ee42a45be75e2e9c8685aac1a642ae61dfe23d9aa7fcf66cc69ce8e2ed7e",
+  "testFileSha256": {
+    "tests/browser/m01-battlefield-fx.spec.js": "73a982c9348642cac88c37e7b731222686ee490960f13a7dd31a9b0573c04366",
+    "tests/browser/m01-wagon-runtime-integration.spec.js": "6d560f567b59a67d2fc7421925e065b6c33df81c23baad8545e8395b4fb22b1c"
+  },
+  "cases": [
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "title": "east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools",
+      "status": "passed",
+      "durationMs": 79332
+    },
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+      "status": "passed",
+      "durationMs": 33047
+    },
+    {
+      "file": "m01-wagon-runtime-integration.spec.js",
+      "title": "yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint",
+      "status": "passed",
+      "durationMs": 82682
+    },
+    {
+      "file": "m01-wagon-runtime-integration.spec.js",
+      "title": "total wagon GLB failure keeps train and yard procedural fallbacks visible and semantic state burned",
+      "status": "passed",
+      "durationMs": 21450
+    }
+  ],
+  "actualCounterAttachments": [
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "name": "fx-counters",
+      "value": {
+        "armed": {
+          "clock": 0,
+          "paused": true,
+          "frames": 7
+        },
+        "hotClock": 786.7500999998326,
+        "hotEventIds": [
+          "evt_m01_intro_card",
+          "evt_m01_prelude_start",
+          "evt_m01_railway_worker_report",
+          "evt_m01_planes_heard",
+          "evt_m01_bombing_0434",
+          "evt_m01_cable_cut",
+          "evt_m01_forward_post_bombed",
+          "evt_m01_nowicki_lost",
+          "evt_m01_wounded_dragged",
+          "evt_m01_second_air_pass",
+          "evt_m01_train963_arrives",
+          "evt_m01_panzerzug_arrives",
+          "evt_m01_repair_complete",
+          "evt_m01_order_demolish",
+          "evt_m01_bombing_0530",
+          "evt_m01_runner_pressure_report",
+          "evt_m01_north_contact_distant",
+          "evt_m01_east_platoon_withdraws",
+          "evt_m01_bak_wounded",
+          "evt_m01_germans_on_east_spans",
+          "evt_m01_east_demolition"
+        ],
+        "hot": {
+          "active": 1,
+          "counts": {
+            "flash": 1,
+            "core": 3,
+            "fire": 0,
+            "smoke": 0,
+            "dust": 1,
+            "shard": 3
+          },
+          "meta": {
+            "kinds": {
+              "small": 0,
+              "bombing": 0,
+              "demolition": 1
+            },
+            "bands": {
+              "near": 0,
+              "mid": 0,
+              "far": 1
+            }
+          },
+          "limits": {
+            "bursts": 16,
+            "flash": 16,
+            "core": 48,
+            "fire": 96,
+            "smoke": 128,
+            "dust": 128,
+            "shards": 96,
+            "lights": 1
+          },
+          "extraLights": 1,
+          "atmosphere": {
+            "puffs": 39,
+            "puffCapacity": 256,
+            "debris": 22,
+            "debrisCapacity": 64,
+            "puffBatches": 8
+          }
+        },
+        "frozen": {
+          "active": 1,
+          "counts": {
+            "flash": 0,
+            "core": 0,
+            "fire": 0,
+            "smoke": 5,
+            "dust": 7,
+            "shard": 5
+          },
+          "meta": {
+            "kinds": {
+              "small": 0,
+              "bombing": 0,
+              "demolition": 1
+            },
+            "bands": {
+              "near": 0,
+              "mid": 0,
+              "far": 1
+            }
+          },
+          "limits": {
+            "bursts": 16,
+            "flash": 16,
+            "core": 48,
+            "fire": 96,
+            "smoke": 128,
+            "dust": 128,
+            "shards": 96,
+            "lights": 1
+          },
+          "extraLights": 0,
+          "atmosphere": {
+            "puffs": 46,
+            "puffCapacity": 256,
+            "debris": 22,
+            "debrisCapacity": 64,
+            "puffBatches": 8
+          }
+        },
+        "clean": {
+          "active": 0,
+          "counts": {
+            "flash": 0,
+            "core": 0,
+            "fire": 0,
+            "smoke": 0,
+            "dust": 0,
+            "shard": 0
+          },
+          "meta": {
+            "kinds": {
+              "small": 0,
+              "bombing": 0,
+              "demolition": 0
+            },
+            "bands": {
+              "near": 0,
+              "mid": 0,
+              "far": 0
+            }
+          },
+          "limits": {
+            "bursts": 16,
+            "flash": 16,
+            "core": 48,
+            "fire": 96,
+            "smoke": 128,
+            "dust": 128,
+            "shards": 96,
+            "lights": 1
+          },
+          "extraLights": 0,
+          "atmosphere": {
+            "puffs": 50,
+            "puffCapacity": 256,
+            "debris": 0,
+            "debrisCapacity": 64,
+            "puffBatches": 8
+          }
+        },
+        "drawCalls": 347,
+        "triangles": 921795,
+        "textures": 98,
+        "geometries": 333
+      }
+    },
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "name": "impact-counters",
+      "value": {
+        "before": {
+          "muzzle": 0,
+          "tracer": 0,
+          "puff": 0,
+          "spark": 0,
+          "smoke": 0,
+          "chip": 0
+        },
+        "impact": {
+          "muzzle": 1,
+          "tracer": 1,
+          "puff": 0,
+          "spark": 0,
+          "smoke": 13,
+          "chip": 2
+        },
+        "drawCalls": 321,
+        "triangles": 668653
+      }
+    }
+  ],
+  "screenshotsInspected": true,
+  "screenshots": [
+    {
+      "path": "m01-battlefield-fx-east-de-6aca4--and-cleans-transient-pools/AFTER-east-demolition-hot-core.png",
+      "sha256": "45ef74e59cca75bf1cf435d752bb45d698a53889f039a21280209ecd0fb566f6"
+    },
+    {
+      "path": "m01-battlefield-fx-east-de-6aca4--and-cleans-transient-pools/AFTER-east-demolition-smoke.png",
+      "sha256": "3487060aba5fca929794c63edf128d880833c953d31bca6c9ffe371a768b1827"
+    },
+    {
+      "path": "m01-battlefield-fx-real-in-1c1f5-g-the-saved-simulation-path/AFTER-real-round-impact.png",
+      "sha256": "b15a26448935fed37a84b28a920e138a33f66339debe85ab790db9b3d5ce2335"
+    },
+    {
+      "path": "m01-wagon-runtime-integrat-4bdd2-then-obeys-prior-checkpoint/AFTER-yard-wagon-burned-lod0.png",
+      "sha256": "b0a2776d836b0a0a8a104891a82ab286c9a217c5286c1c97c8c1529e7aab82bf"
+    },
+    {
+      "path": "m01-wagon-runtime-integrat-4bdd2-then-obeys-prior-checkpoint/AFTER-yard-wagon-lod2-far.png",
+      "sha256": "25c29095ffa02ce46b36ec3fa9e9d783b7aa1c849954d741842930032a459a4b"
+    },
+    {
+      "path": "m01-wagon-runtime-integrat-4bdd2-then-obeys-prior-checkpoint/BEFORE-yard-wagon-intact-lod0.png",
+      "sha256": "066123c773327a3f1230e45bf5b1b4ee134425e43d992272fe6619b28ad28e02"
+    },
+    {
+      "path": "m01-wagon-runtime-integrat-cf08c-e-and-semantic-state-burned/AFTER-yard-wagon-total-fallback.png",
+      "sha256": "386568e20859eceb198e22dae9fce8e97d1cf2470d4e45b002f99833be00e97c"
+    }
+  ],
+  "visualReview": "All seven real PNGs inspected. Near intact/burned meshes and unchanged Station visible; fallback boxes remain visibly simple and third wagon/fire can be occluded by nearer wagons. Hot/smoke FX at 771 m are largely occluded by the truss; positive event/layer counters prove phase capture, these are not beauty shots. Far LOD fixture is in water and proves only model LOD, not a gameplay route. Earlier 72 matched visual pairs remain the visual-quality evidence."
+}

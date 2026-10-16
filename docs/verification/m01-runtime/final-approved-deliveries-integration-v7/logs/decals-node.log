@@ -1,0 +1,45 @@
+✔ V3 visual RNG and lifecycle curves are deterministic and gameplay RNG stays untouched (10.118394ms)
+✔ blast categories remain explicit rather than scale-only aliases (0.323278ms)
+✔ distance and quality reduce secondary density without turning effects off (0.338922ms)
+✔ fade curves stagger endings and never exceed normalized bounds (0.485353ms)
+✔ impact materials have distinct bounded presentation families (0.224769ms)
+✔ approved battlefield pool limits and one-light budget remain byte-explicit (1.24557ms)
+✔ pause/reset/dispose paths keep presentation pools non-authoritative and cleanable (0.825587ms)
+✔ demolition authority and saved state are unchanged by all V3 profile sampling (174.282075ms)
+✔ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (50.121146ms)
+✔ portal recreate/dispose releases every owned instanced buffer exactly once and preserves shared materials (4.985506ms)
+✔ missing viewmodel renders a repeated first-shot flash after restart even when the first frame is 100 ms late (17.01236ms)
+✔ damage decals never write simulation state: the real repair route stays bit-identical with them attached (2948.119191ms)
+✔ damage decal sources stay presentation-only: no RNG, no simulation writes, a single Game hook (2.006379ms)
+✔ marks sit on the drawn receiver with a fixed lift, differ per material and never z-fight (98.491202ms)
+✔ portal wall marks stay on masonry: never across the arch opening or below its apex (1.74829ms)
+✔ the west bridgehead marks the drawn embankment, never the walkable abutment buried under it (54.762209ms)
+✔ mark pools, spall, debris and embers stay within the declared per-quality budget (488.002397ms)
+✔ marks expire on the mission clock and are dropped deterministically when time runs backwards (213.484703ms)
+✔ blast residue lies on drawn surfaces, skips destroyed decks and the station interior, and is deterministic (22.773896ms)
+✔ reset clears every transient mark and the residue rebuilds identically from saved damage; restore follows the save (1232.275425ms)
+✔ marks on a demolished span or a lowered cover are invalidated; marks elsewhere persist (104.806693ms)
+✔ the first frame compiles the decal programs and draws every mesh once invisibly; later frames hide empty meshes (51.516242ms)
+✔ the chip FX batch has instance colours from construction, so the first chip does not switch its program (5.833135ms)
+✔ the decal atlas is original, deterministic art with bounded size (149.302087ms)
+✔ actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm (167.31654ms)
+✔ renderer save after 1 shots restores same frame and flash without replay or RNG draws (86.937184ms)
+✔ renderer save after 4 shots restores same frame and flash without replay or RNG draws (71.040232ms)
+✔ renderer save after 6 shots restores same frame and flash without replay or RNG draws (57.327331ms)
+✔ missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots (76.797743ms)
+✔ rendered death during enter has no residual prone frame, weapon, flash or loader (44.91287ms)
+✔ rendered death during idle has no residual prone frame, weapon, flash or loader (67.061355ms)
+✔ rendered death during fire_burst has no residual prone frame, weapon, flash or loader (33.862428ms)
+✔ rendered death during exit has no residual prone frame, weapon, flash or loader (57.275668ms)
+✔ actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore (22.553466ms)
+✔ actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore (16.51426ms)
+✔ actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore (16.277252ms)
+✔ actual muzzle batches have no post-death flash during all four prone phases (6.288333ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5534.710817

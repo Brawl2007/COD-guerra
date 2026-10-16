@@ -1,0 +1,462 @@
+{
+  "base": "44ee7822a295ac840bce70c4ca9897c064becce9",
+  "unchangedFiles": 114,
+  "files": [
+    {
+      "path": ".github/workflows/pages.yml",
+      "sha256": "19a277cc9eb110d1b388b6602ecb639d01109200b152e03ea9063bec1a13e2ee"
+    },
+    {
+      "path": "assets/licenses/MakeHuman-CC0.md",
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c"
+    },
+    {
+      "path": "assets/models/allied-rifleman.mtl",
+      "sha256": "bfb1903f8102062e68e89a8273d8ed679788b58dcbcd0bbc406ed933aa992f09"
+    },
+    {
+      "path": "assets/models/allied-rifleman.obj",
+      "sha256": "198b8a0327317d29c3e272947e6831174c45da68075bc057b4dc68b204eabce5"
+    },
+    {
+      "path": "assets/models/axis-rifleman.mtl",
+      "sha256": "5b37b2fcd90436ec942a6476320965f2e0e5066bf40990a8f90d8d812f518979"
+    },
+    {
+      "path": "assets/models/axis-rifleman.obj",
+      "sha256": "e8261973f9547897c798d0fbcb0b01cc524039aa4fb7694b8d777a97fc5772cc"
+    },
+    {
+      "path": "assets/models/m1-carbine.mtl",
+      "sha256": "d0c7992df4ad20373b2500dab016b7193ae654b8d6d3b716da64b925407d8ea1"
+    },
+    {
+      "path": "assets/models/m1-carbine.obj",
+      "sha256": "393b6539bb3c0b4492530962c7dc3fa7726fc766cfb3a4c4435c687b86243042"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod0.glb",
+      "sha256": "04ab39240c3433f176e95508fb4ef7e11167c53f898bdc0f6da607135cf2794b"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod1.glb",
+      "sha256": "71393ee3ef304b68c445a597895b52d89761f45dac8f1a9ca0f94ce279c54d3c"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod2.glb",
+      "sha256": "454c5afeafcd1516058b1db47df052353b1a28e60cbed994c2904dad042868c8"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/manifest.json",
+      "sha256": "d0e0e054d7eb840c0c292453cb113f617b68acd16c11b3766531ff023ccac724"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod0.glb",
+      "sha256": "9ddc22ef1635cd4f708c46127950d76695081e251fbfaaadcd1bcd760bda848b"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod1.glb",
+      "sha256": "baab5b6b63d6f3c550585d6abf924cde6c366ca3109904f65909c5b7249b0b44"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod2.glb",
+      "sha256": "5be4191578f3c28f0eebbfac35d67cc1f5ef9b167403683227b7929965b641a5"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod0.glb",
+      "sha256": "232517ead15255ac57c10440c43e56a51bf0f06cdab20592c68ebb27dc0dba29"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod1.glb",
+      "sha256": "42a17730056103e8fbc8cb7b7c95951dfddd1c03b552a8cff4c7f5db823f37cc"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod2.glb",
+      "sha256": "6b7e03ddc01017b225776737d6248aa978a9b2ddc4e130af29560e7e8f8cfb3c"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod0.glb",
+      "sha256": "7abe2b0ea4a2c0a72400c14e931424312bd7eecbd537ea7dc772c81eed22e103"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod1.glb",
+      "sha256": "878fb80bbc5575c5232269b49a54428b320390d5df5edbedabd65d91b3e30e11"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod2.glb",
+      "sha256": "fcb97bd311981ce10b2ec6ebf89e348b71ccddf8789193b81914ff3eba137381"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod0.glb",
+      "sha256": "6f8ddbd089ed0a1cc98533e63ceb916e182bf23424ffa96cef4148ece862b1b3"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod1.glb",
+      "sha256": "9e3bbdac0d56ce9be1e0e7be20f7f2e44d27105ac76783415763b01a16afe3fd"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod2.glb",
+      "sha256": "9abb14d756208ca0e9bdc3cafce2395ca885161818e9b4f14495066413d0bd58"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/manifest.json",
+      "sha256": "1361f0e91187d8b0a285bcc767786d4191c9e04e8594a9878d641a8285599673"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod0.glb",
+      "sha256": "081157e1bccd9b184e14bce03cffd4821738818a354811fa6ba2f53e2bed974f"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod1.glb",
+      "sha256": "452b005d6efa9d510cb421a5eeeeb533e32dae4c30b9b1a247e8800f42a44e87"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod2.glb",
+      "sha256": "0eb03cada40c0e0279d81f83c95963d2de39523735e33fb9fd3810dd2a502413"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod0.glb",
+      "sha256": "7806337ee9413b6dc2c2505980032868b14cd8969bc99362273ca80534d46b50"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod1.glb",
+      "sha256": "4994884b89a2c0e51317e0056ea5cafdb9c447b33641459481a329ec3097b6b3"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod2.glb",
+      "sha256": "78c7c6afcbb9ff3b9e1942d7729d79e82acbafe95302aeda08ee35f2ac19adb1"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/manifest.json",
+      "sha256": "cbea08196bc4d11105d61d42cef3098eeabc1fb8d225d0c515b630bcc3d6a09b"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge-colliders.json",
+      "sha256": "4abe3556c34f80d046dcd78f6d2c4697b66fafab948f9d812ff45c13456e326d"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb",
+      "sha256": "d842571caf72e69567552838167fdd1dc757fdfaf09e607675c9522b8014714f"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "sha256": "b57496e46c8f72244c64477aa576ef102a9436406a02112325c23f7898e4547b"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+      "sha256": "73a40ed8dc0bcb1926175b52e3a12f5356a868eec71cc6529dcee1fe391c3af3"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb",
+      "sha256": "2a4b0d7715d36c21a71cd54fc3e742e763605d032f31a3ef04fb625244d65ffc"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "sha256": "51aab198331165fe968b9b5e2883dda7583c2590b26233a634f4e0c02c8e60a4"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+      "sha256": "80251700525fe134c4c3771a58635951461f7d2e5223e09e6bccc3ed60ee379c"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridges.manifest.json",
+      "sha256": "176fcbb31a3329443086dff88a05772996a3be6cb59ccd310147887c15454313"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_animations.glb",
+      "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb",
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb",
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb",
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb",
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod1.glb",
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod2.glb",
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_station_animations.glb",
+      "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/manifest.json",
+      "sha256": "2f8e29ccf8894d40b7746abb4540105323650f4dbd9feab3d41908099c96eda6"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-animations.manifest.json",
+      "sha256": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb",
+      "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/manifest.json",
+      "sha256": "9dbbed8028b9828de0b6e487622c385774be863e5ac7157f74ccf57721a57017"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb",
+      "sha256": "14fd8776cde3822b7b42a230854af543a611c8f95e89e0eec68166ef3ef90ac9"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "sha256": "9db340f3127076b41c4d9261eedef64b2816f204c87f267faaa406d68b98a933"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "sha256": "3283065ab78ca79231338cf780591944c548fc963ed0dab42216cd7432f95094"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+      "sha256": "84ee83e8b096b3c9dc6bfe4320c1e617a7780af36e9ad408f8243fce08831f9f"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_animations.glb",
+      "sha256": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod0.glb",
+      "sha256": "64ee37e3f4ad5882c97bcebfa47195b6ae84abbc33eb1faff99cd37c931165b9"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod1.glb",
+      "sha256": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod2.glb",
+      "sha256": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/manifest.json",
+      "sha256": "81acc3147bbfaf965c2985deab3dd0d47330a7b4b4f080379088f060f8a4a3da"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb",
+      "sha256": "79a405dd9c3c2d4bdc113b367d96de631ff62fa88be62e93e79952d353ca4d3c"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/manifest.json",
+      "sha256": "61cf1f31717a5071e96911c84a44824fc010690fee94240a656d86718ebcf352"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb",
+      "sha256": "2245c4ac88f59b2a17a73436e14b62fa2f0abff2303fa19bb2b16913f82ad74b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb",
+      "sha256": "a65ac6a4eb8a350646a209383a5e2d7c76667774f9af2453279af99f8a071298"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod1.glb",
+      "sha256": "6aa44e8c9c6152301a9ac2d31d1c88e174705f778922459a2c2f2d2d6fa0fc7a"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod2.glb",
+      "sha256": "657e2ab1784f6755d7a429081210db6b7252496ede55e8c068ded112d8edcc65"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/manifest.json",
+      "sha256": "61040eebb6e09abf93a567efbcde5b2009f2805b997d83952abca169f4961b8b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_animations.glb",
+      "sha256": "23ecb6fb0429d5b38ee70492e3bb63d7853c1d86d85402693a5d67e23535c804"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod0.glb",
+      "sha256": "ade802f370828734bec7b8e9d810a4d76974b38be285ec30ab4be2f9ee0b323b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod1.glb",
+      "sha256": "ac9381fdcd3989fb50739f2b8a9d7cdf2e05e1a2d5f77faaeb16f33e78f135d9"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod2.glb",
+      "sha256": "2816fe42517469a5577575c04c45ed679b80b6a04b974a586ea912a280839744"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/manifest.json",
+      "sha256": "cd26ea6deeb568479bb6f9bb3992ad86db3f29d1ae7d76de876d6e72c324d451"
+    },
+    {
+      "path": "graphify-out/README.md",
+      "sha256": "3d5e9b4e0cab2ba2a5abd2543e9d4d0e77b2e580d6ee8a1414adb81f9e85adb1"
+    },
+    {
+      "path": "graphify-out/checkpoint.json",
+      "sha256": "d5b76966501534feb99e00839a899bd3134b6254d6de112a344988e6f27b8d0c"
+    },
+    {
+      "path": "graphify-out/extraction-checkpoint.json.gz",
+      "sha256": "54647d13cc9b860c18b777cbd3d4cdc693d4a2af0cb015082171c2667dd32e32"
+    },
+    {
+      "path": "src/assets/asset-manager.js",
+      "sha256": "f0366f743ac499f66c3f312bd6c78da70e7ffa869f1b5286107bf40397e4db39"
+    },
+    {
+      "path": "src/assets/gltf-loader.js",
+      "sha256": "f29cda15e0eb6c5e1b2f44cba612aa67d9a8aa158ac065864dcb0fc09f61beef"
+    },
+    {
+      "path": "src/assets/mesh-repair.js",
+      "sha256": "b9d1917ea1a050d4afbf3bd33a4e353e2f2c393e349edece8d6e5eac97def2a8"
+    },
+    {
+      "path": "src/assets/obj-loader.js",
+      "sha256": "69da9101eba7fab0ab17500190acfb5c6f7f857c37a04767cb27b1605d8ba04a"
+    },
+    {
+      "path": "src/config.js",
+      "sha256": "020a19feaab671f5e7777a81e76e8d4b2a9b1bd3eb360c8d81903f0adb55bf80"
+    },
+    {
+      "path": "src/core/audio.js",
+      "sha256": "2d335193c60888a89b8831e0351e8c26a80a13da1954dfccd3ddf55c9b3ebf49"
+    },
+    {
+      "path": "src/core/input.js",
+      "sha256": "71b9f99f864ae52f78a8b53f45c6beff582771760c7062df149979e4c4b83f15"
+    },
+    {
+      "path": "src/core/math.js",
+      "sha256": "e765d656e54a34c18d82dae0d1a4997e0e787617dbfd1c46e4bfe87af61fb9fc"
+    },
+    {
+      "path": "src/core/random.js",
+      "sha256": "c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1"
+    },
+    {
+      "path": "src/game/actors.js",
+      "sha256": "dda82e4f83120e1c832c7c73c617c012efdb2426cf227773d04e55593d8bd408"
+    },
+    {
+      "path": "src/game/battle-director.js",
+      "sha256": "c3d2d7ad26cc8b4b19ee2014aadfaaadbdc0142c5c480462e724d9c07f7a67aa"
+    },
+    {
+      "path": "src/game/game.js",
+      "sha256": "6d3d45745f2e5fbbf26a8f3050b48844f7b4fc6948930c1162f542887fed3bd4"
+    },
+    {
+      "path": "src/game/grenade.js",
+      "sha256": "8b588b862e5ffe0b7144412807ae89df14553bd55b6bc1187b0d9bd3813c846d"
+    },
+    {
+      "path": "src/game/m01-fire.js",
+      "sha256": "f5962ee028e5a6d101793ba3fe6896ccba9350c2e22de7bab60666ef9f53aa1e"
+    },
+    {
+      "path": "src/game/mission.js",
+      "sha256": "877957aed04fb27b8aafdbbdaa989e9e275d3d1248a340402be9e404f5bc70c2"
+    },
+    {
+      "path": "src/game/sector-battle.js",
+      "sha256": "abeabe90329f80103a5838e6d80b44c860a7d4ffa146a1e119c885357907cb3c"
+    },
+    {
+      "path": "src/game/simulation.js",
+      "sha256": "59b206413ab76abf9c93d6d76e48831f13c7358cb1caade409e2a759238c34f3"
+    },
+    {
+      "path": "src/game/weapon.js",
+      "sha256": "4b4e7bf93653509189f4d2d28ade314b7488d15ede69e217f1d98b6eae9a9fda"
+    },
+    {
+      "path": "src/game/wz29.js",
+      "sha256": "3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5"
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "4ee77c025ab75cae5e6c88e0e1ab8d6380d5e03679bed123bce1db5d17d7867f"
+    },
+    {
+      "path": "src/render/m01-actor-pose.js",
+      "sha256": "6b05f67ab86aea626676273a0ad772c9b0dc65b61ad83a7b4d4323d6431ccc95"
+    },
+    {
+      "path": "src/render/m01-atmosphere.js",
+      "sha256": "b1e828d9fe1179eed51c858ae819b6bf019483a7f26bc302333bd442fb8430e5"
+    },
+    {
+      "path": "src/render/m01-environment.js",
+      "sha256": "f56288796cdac9e8f0fd83461b90524d31c21f9fc29daee5cda29f6937ce8fb2"
+    },
+    {
+      "path": "src/render/m01-surfaces.js",
+      "sha256": "08c8af41685ad4ca9bf8e803f3b3af3b164631965edc2a6ff8b36511de4507cf"
+    },
+    {
+      "path": "src/render/m01-train-wagons.js",
+      "sha256": "c38f8d853afdc118382af0bc78a2db9a8b21ec6591d6b2bca87d2a4ed706d866"
+    },
+    {
+      "path": "src/render/m01-view.js",
+      "sha256": "c2467bc2d0c89bf2cfd7ef7208fe9ee5b5c165c1d645cfdf34df833c38a7e39c"
+    },
+    {
+      "path": "src/render/m01-viewmodel.js",
+      "sha256": "6fd9cc2fc5831c7d22d2f3b774b17b1194152e2a7a73b6a41f7bf37679dd062a"
+    },
+    {
+      "path": "src/render/materials.js",
+      "sha256": "fa51effdcd9367e5418be6b19e4fb615970d8fe03c7e08808bf800ea5278ab9c"
+    },
+    {
+      "path": "src/render/math3d.js",
+      "sha256": "392c01dcb8b799d408403c54c205c1b69931bd4591809076e7230026b3d1d5ec"
+    },
+    {
+      "path": "src/render/renderer.js",
+      "sha256": "a7905fa72ffa0754ce4c1509e9acb408d48f55be08f10ef9f7bf94503005fa8b"
+    },
+    {
+      "path": "src/render/three-renderer.js",
+      "sha256": "f72bbf5600f7faf8cab02c7451240ca3b0d5ae908383c99dd53fa36a5b617ddf"
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "4ac8ef7df0684d398869bffdf6024ab595f1d75258cd2cf3f4262416a9b7c26f"
+    },
+    {
+      "path": "src/world/m01-decoration-layout.js",
+      "sha256": "d1000fd485fb6bcbd1de08edc7593b26f199fe139170358564ce9885339e2b96"
+    },
+    {
+      "path": "src/world/spatial.js",
+      "sha256": "f6ae3da79e3fce7df556aef26f1c0e2bf3f3fd95bfaff29681f07ea40805961b"
+    },
+    {
+      "path": "src/world/tczew-world.js",
+      "sha256": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22"
+    },
+    {
+      "path": "src/world/world.js",
+      "sha256": "bdbe2212e50a04b2a20ac2db1cb3062827ac3f0ffb8c779a76b56d1832fccc7e"
+    }
+  ]
+}

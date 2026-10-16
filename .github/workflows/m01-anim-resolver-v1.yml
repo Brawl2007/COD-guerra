@@ -1,0 +1,53 @@
+name: M01 Anim Resolver V1
+
+on:
+  push:
+    branches: [claude/m01-anim-resolver-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-anim-resolver-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (presentation only)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: the accepted T42 evidence commit. Simulation, world, core, missions, assets and the build/test config must not change.
+          git diff --exit-code 5765aa5 HEAD -- src/game src/world src/core missions assets package.json package-lock.json playwright.config.js 2>&1 | tee evidence/authority.log
+          echo "authority diff clean against 5765aa5" | tee -a evidence/authority.log
+          # The simulation, world and core must not import the presentation modules.
+          # (explicit if/exit: a bare '! grep' is exempt from 'bash -e' and could never fail the step)
+          if grep -rnE "m01-animation-(resolver|player)" src/game src/world src/core 2>&1 | tee -a evidence/authority.log; then echo "FAIL: src/game, src/world or src/core references the animation resolver or player" | tee -a evidence/authority.log; exit 1; fi
+          echo "no animation resolver/player reference in src/game, src/world, src/core" | tee -a evidence/authority.log
+          # No generic-path mixer-wide stop and no RNG or wall clock in the new pose modules (the CKM prop keeps its own authored mixer).
+          if grep -nE "Math\.random|performance\.now|\bDate\b|stopAllAction" src/render/m01-animation-resolver.js src/render/m01-animation-player.js 2>&1 | tee -a evidence/authority.log; then echo "FAIL: forbidden call in a pose module" | tee -a evidence/authority.log; exit 1; fi
+          echo "pose modules free of RNG, wall clock and stopAllAction" | tee -a evidence/authority.log
+      - name: npm test (TAP evidence)
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Focused browser specs (resolver + animation contract, soldier variation and MG34 prone regressions)
+        run: set -o pipefail; npx playwright test tests/browser/m01-anim-resolver.spec.js tests/browser/m01-animation-contract.spec.js tests/browser/m01-soldier-visual-variation.spec.js tests/browser/m01-mg34-prone.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-anim-resolver-v1-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

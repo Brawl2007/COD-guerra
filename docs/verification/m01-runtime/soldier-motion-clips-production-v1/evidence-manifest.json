@@ -1,0 +1,617 @@
+{
+  "task": "M01-SOLDIER-MOTION-CLIPS-PRODUCTION-V1",
+  "method": "SHA-256 over actual committed artifacts; this hash manifest excludes itself",
+  "entries": [
+    {
+      "file": "DEVELOPMENT_STATUS.md",
+      "bytes": 31669,
+      "sha256": "2fecb764ca31d06c2e813399f749147ddc2a0f51d7f72365e72f165ecd239ab5"
+    },
+    {
+      "file": "assets/models/provisional/m01/characters/motion-clips-v1/m01_soldier_motion_clips.glb",
+      "bytes": 415724,
+      "sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c"
+    },
+    {
+      "file": "assets/models/provisional/m01/characters/motion-clips-v1/manifest.json",
+      "bytes": 12213,
+      "sha256": "1269ec5fdb115f69af111beb23c32427954250b8be36d3eb4e69535808e6a78c"
+    },
+    {
+      "file": "docs/NEXT_CHAT_CONTEXT.md",
+      "bytes": 25091,
+      "sha256": "c9f42901b2eee549fd620009669c196076b8098926bdbe741ca4eb34c9623530"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/HANDOFF.md",
+      "bytes": 7941,
+      "sha256": "0f2fed6da3be17b7cc6bc81aeb71a5a67861570ada11e44c04214047ca2a8113"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/README.md",
+      "bytes": 3493,
+      "sha256": "3ac87190de5ac38c0c8d7c1f625a60e14a6a9ce21ffa17ed34b832e3d96855bc"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/browser-asset-review.json",
+      "bytes": 32773,
+      "sha256": "2f54db938c6a7f10df4b4e385d16fb8cc447403b190806941823978405246ea6"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/browser-capture.log",
+      "bytes": 426,
+      "sha256": "fa05bce0451d3770f77a7ccf4fa89dddab5a21da40faf3a7f63303fbe2c6be2e"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/build-output.log.gz",
+      "bytes": 529,
+      "sha256": "d726553a0613c841cd288d256d2796c8a546a12220a33d730c7aae170d704faa"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/build.log",
+      "bytes": 865,
+      "sha256": "13195906809f95a23ef33aa0e6bf4316883bc19025d1e69feb27dca31af47905"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod0-crouch_walk.jpg",
+      "bytes": 55703,
+      "sha256": "f98297e8c9ac4aa92d1a35779dcbaa2954d2fe0a8056dc00b7820e8e83750afe"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod0-hit_front.jpg",
+      "bytes": 56791,
+      "sha256": "101f138fea1b3fdabc53b149c2d19e57dd7285d54ab949d92b89f044fb01b6dc"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod0-near_miss_duck.jpg",
+      "bytes": 51120,
+      "sha256": "a2d01073d90e1ffc38281db7e9af8d954b8eea323de095d140c0514f8e356db4"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod0-sprint.jpg",
+      "bytes": 56020,
+      "sha256": "4505d17950cd57db07eebf64f6ffec239db773471584a02c31c423843ae6e8c0"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod0-turn_left.jpg",
+      "bytes": 57068,
+      "sha256": "ef22c7f1ac9cb862f22784cc0a7b2f513c7eb4da3745e50bf4052110c4caf9d1"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod0-turn_right.jpg",
+      "bytes": 57304,
+      "sha256": "a00ce9b14ecc6d0b65b540c0cf1208d4f389de0e41a2b24cb27a2ede19be010f"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod1-crouch_walk.jpg",
+      "bytes": 55454,
+      "sha256": "dfd94ee31ba15b65cfae1ad54f319edbf12017076f21a63297f6821bc75782fb"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod1-hit_front.jpg",
+      "bytes": 56383,
+      "sha256": "e79ecb0148e593cccf5b6d5f9f1c1f97262818f0e013538874adc13036a267fa"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod1-near_miss_duck.jpg",
+      "bytes": 51096,
+      "sha256": "cd5cb2f2e44794e4c044886a7090b3bbdfd8c4c792ea5e399c25e9ddfb9bcea7"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod1-sprint.jpg",
+      "bytes": 55632,
+      "sha256": "322d371658602a4559cb6ffb9490d0395141e0c860d0bf4445dfd3d2e9aa360b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod1-turn_left.jpg",
+      "bytes": 56736,
+      "sha256": "d2c35b9285ee228218de3da8083def5e0b55304025698392cde447db211d5a92"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod1-turn_right.jpg",
+      "bytes": 57096,
+      "sha256": "9a76712df9cad4709212cdd845e7e9c61fe4e15e6c165cfcae8aa15a00fc00be"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod2-crouch_walk.jpg",
+      "bytes": 55609,
+      "sha256": "cc32205c5872b86618f9cb1cc6a229aea226bff7ae0b2beddb69b32fa3e7d842"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod2-hit_front.jpg",
+      "bytes": 55869,
+      "sha256": "e1c4367dc511b1e5f0e45a89ad3c27ce6353d73e44d2b4297a56a2d1008b710c"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod2-near_miss_duck.jpg",
+      "bytes": 51185,
+      "sha256": "4eaa5870c663e20347da8d4febdefdc70cef4e336d8344c1ab3d1465b051bacc"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod2-sprint.jpg",
+      "bytes": 55792,
+      "sha256": "b650c40f6427e05b82f63a665fbb6de1fd6150dfc27cb13cce7686577fa3573a"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod2-turn_left.jpg",
+      "bytes": 56368,
+      "sha256": "4b76a6b1d4d1adcc7cb37466bfb94ddcd962d83bf80fd0e517868632ee2b38da"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-de-lod2-turn_right.jpg",
+      "bytes": 56616,
+      "sha256": "481a137037f39ad6f3143d8d0d6f870598d06853b504b0bdbb6c4d76739e874b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod0-crouch_walk.jpg",
+      "bytes": 55559,
+      "sha256": "763f03c2f94fa2b3196137e49e05529275d85a4a2af7dff4e19b156bcf50b561"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod0-hit_front.jpg",
+      "bytes": 57372,
+      "sha256": "d90501bfb8ded25a35488d6642532d632473d1bdad4b826fb871e44eeadfb58f"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod0-near_miss_duck.jpg",
+      "bytes": 51375,
+      "sha256": "d2a00439b7e30b2923e79967fc5c996c288df4bdb3cb0b637819a99c24da6b2b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod0-sprint.jpg",
+      "bytes": 56465,
+      "sha256": "e5b562a032ea88b0cb41908f429aed20ebceb7aa3f537c1955b8561aad062543"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod0-turn_left.jpg",
+      "bytes": 57448,
+      "sha256": "8ebef01cfe33711a81b67876aba6fd107f7a71714000ce33c9e94af60e1a2ab9"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod0-turn_right.jpg",
+      "bytes": 57657,
+      "sha256": "0b4d1ca11990c9e9bd5b9ddc80c4b810a505559a0b5944fbb09b48b453edd5f3"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod1-crouch_walk.jpg",
+      "bytes": 55331,
+      "sha256": "563cc704b28c0bea29f4590bab9100f1ebd9c366085b7e5764cbbeddaa06ffb8"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod1-hit_front.jpg",
+      "bytes": 57208,
+      "sha256": "abb767257b344accb54180397c5c2690e56c1cdc9a0e41b21fe6a7aa81597a8f"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod1-near_miss_duck.jpg",
+      "bytes": 51383,
+      "sha256": "79584ef5ca4a5e70f18fc731c9ae8fd2d0d17e3c777e0541eb65eaf36804515b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod1-sprint.jpg",
+      "bytes": 56245,
+      "sha256": "aea2b89cbf3b29305ecfc53cb2f79ad2736016c623f59c97acb65dc3f30ca71c"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod1-turn_left.jpg",
+      "bytes": 57360,
+      "sha256": "d150651e5ea1bdc8a2a33fae47a3ad7b220076b61ea7c5ca46d956d44d8d9f0b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod1-turn_right.jpg",
+      "bytes": 57670,
+      "sha256": "3ca4bb42fe35e0d9fde5262a5d69317f09e471de10bb3033d2e3f4a91ce490c8"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod2-crouch_walk.jpg",
+      "bytes": 55174,
+      "sha256": "b566fceea88a18b43247d7fea34b478bbc1a068c324247ad34c265ccbc9ada85"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod2-hit_front.jpg",
+      "bytes": 55964,
+      "sha256": "d54bb73392bcbb0a2bc04d1aa10af407bd6bf99192e31cd415f8f12f9424da67"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod2-near_miss_duck.jpg",
+      "bytes": 50649,
+      "sha256": "d0bcdb036c27e145796b599aff169ba94f3cfa43da08a8d6229b79410bc2d02f"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod2-sprint.jpg",
+      "bytes": 55982,
+      "sha256": "f339493a1bcfc18cb752423a708c83b6a764cb3646e38acb9c84e0dc652bcaa8"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod2-turn_left.jpg",
+      "bytes": 55907,
+      "sha256": "5521e9f316bd31dbdabf5bfbe088d5f65c1a39093e39823a195e45ffba565c8b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/compat-pl-lod2-turn_right.jpg",
+      "bytes": 56431,
+      "sha256": "cd6f33f5a62800232b493ff6da5b7518272727a0373d6d4eb0f7e4c5dd44e057"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/crouch_walk-000.jpg",
+      "bytes": 59263,
+      "sha256": "1f13f174fdbbde8daadcc491ef482c5376fda0569f45fedd5935d2b16c319993"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/crouch_walk-025.jpg",
+      "bytes": 59164,
+      "sha256": "f1adb9542d56457c1061b14c491db8369f3e45f1d0f02d7370b110bc509445aa"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/crouch_walk-050.jpg",
+      "bytes": 59088,
+      "sha256": "755e105f47d4014e1374b8f21210471dadcdeaf5d86fa14559e3e2fb24bb34ac"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/crouch_walk-075.jpg",
+      "bytes": 58956,
+      "sha256": "dd6fd91a3c4381f3b17bc342b504e757b095902fd7e547c9f75f525306d46f99"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/crouch_walk-100.jpg",
+      "bytes": 59403,
+      "sha256": "d8f8d7e7ab94127db2d64d74463b932476c6ff4280df721063302e6666074796"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/hit_front-000.jpg",
+      "bytes": 60817,
+      "sha256": "e8a0637d701fc25d3fefa43530e5af2227e93ff204db6114e5e78335d439e3e8"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/hit_front-025.jpg",
+      "bytes": 60934,
+      "sha256": "2e83e2d91f878bf0ef2c73e5115c37cda9a70c832bcaea6fab501a1a6adc7acd"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/hit_front-050.jpg",
+      "bytes": 60977,
+      "sha256": "ee82e092b3dc2859c5df07497569ae96b9a2d3f55dc0a107d62a6e35a5ad23bf"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/hit_front-075.jpg",
+      "bytes": 60457,
+      "sha256": "fb4dd65f6963c7fee5854abcdb09a2987917fc80efb1a045613293f9215736ad"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/hit_front-100.jpg",
+      "bytes": 61054,
+      "sha256": "7f1e44234649932e0ea3e5d3180891f05f1f94e2f02247573785f3410505fc11"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/near_miss_duck-000.jpg",
+      "bytes": 55221,
+      "sha256": "92dbd6df91f3a16b90cd8789c902d394bb907180221f5455a72d87772bfb005b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/near_miss_duck-025.jpg",
+      "bytes": 54628,
+      "sha256": "8bc715d13f9df5b80ef5a413e5fc473e595c219757f70b0478e346f4e18b788c"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/near_miss_duck-050.jpg",
+      "bytes": 54616,
+      "sha256": "c2d35fef1e875243b5b642f54eab8668b102dafd378b9d91b85c10a68efd5d3f"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/near_miss_duck-075.jpg",
+      "bytes": 54875,
+      "sha256": "ce8acf81c6d4197316351124f3d9240e4f2c176cf16c3998f18194cc5c50e056"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/near_miss_duck-100.jpg",
+      "bytes": 55535,
+      "sha256": "034ee9e82f8d0ae5453a083c4ed8c3631e8deba76b710df6755b1b2c0d344145"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/sprint-000.jpg",
+      "bytes": 59549,
+      "sha256": "95fa24084c7e294c71e4adb66c05a1eb68cca87ad8f145b23a89443ceeddfbf1"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/sprint-025.jpg",
+      "bytes": 60115,
+      "sha256": "afb2b5c566e11f61e43b76b88507e72c436ce3cb66df5388ad364dcf287040b9"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/sprint-050.jpg",
+      "bytes": 59980,
+      "sha256": "ca6b0575629584943c3cf647ebd1f20a0ae62866e1b4d76db60f5f22445174d4"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/sprint-075.jpg",
+      "bytes": 59986,
+      "sha256": "8f5a8bc48b50973378196481f7bb27e397c7bc0d113d447d0bf6f6861fb1d165"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/sprint-100.jpg",
+      "bytes": 60127,
+      "sha256": "0ee8e6b1a53e95000603c76d761e72bff4381e257f57e71abe1fb75a62242482"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_left-000.jpg",
+      "bytes": 60681,
+      "sha256": "0b114bc98eb0bdcc7f1423adbd80c4d59df075a5db42fa63e3aa076afec95375"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_left-025.jpg",
+      "bytes": 61153,
+      "sha256": "987c3f9f825eb0819491f7b97e169ea732c16b3bff0796b5bef1f6d7bec3a8e1"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_left-050.jpg",
+      "bytes": 61458,
+      "sha256": "ba88aaef6aa87846c04bb87b1ed3d3b559ee1f40cadbf04597f166e334e1ef37"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_left-075.jpg",
+      "bytes": 59950,
+      "sha256": "cf4540dcfc40da1e0f87be2ebf3718b7ce6a6c9b6e8723c9fc20be6dc904cbe5"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_left-100.jpg",
+      "bytes": 59751,
+      "sha256": "9e52e21845c777411d150db723927cb9a8a97a330c4585a593adb5b7dacc883b"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_right-000.jpg",
+      "bytes": 60790,
+      "sha256": "629e249d74ae1325799dffa2a16aec30503204e6e2b406133dd0c66367b1ff5f"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_right-025.jpg",
+      "bytes": 61327,
+      "sha256": "02412f2a878ceebec4c31e57ec486c2e568b1861092f1c4aabbe39056f94e4d5"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_right-050.jpg",
+      "bytes": 62129,
+      "sha256": "6fc80423ce49b6034706053e480ce0ff5ef916228ebf2823db1f37eeac0d4c03"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_right-075.jpg",
+      "bytes": 60593,
+      "sha256": "4bc704bea95b9a93bdc8763ad24b1d43c3f8706be77aacc635995384ca24e1d8"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/captures/turn_right-100.jpg",
+      "bytes": 60465,
+      "sha256": "c7e55e7de6d144a43da332dd33f2d4f3d2dbca658a765f7ad439fe46a319b9f9"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/contact-sheets.json",
+      "bytes": 6594,
+      "sha256": "382f2e22dcc6d6839924300d966762659b10edd921bbf0cbd4b04e59555d05b5"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/focused-tests.log",
+      "bytes": 3226,
+      "sha256": "d97fa9b82d96ea89678af7713e5c0e4d767759de278f32de7fd3cb217c5d43bc"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/gallery.html",
+      "bytes": 4078,
+      "sha256": "45a37f3fea2c5a712a7dbfa052a8b3ea3d88f5121f5732d6b7b84212c1739909"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/invariance.json",
+      "bytes": 83056,
+      "sha256": "aefbbd0e22077477ac6e270bc3a529c9de0f11e018f0ea8ed61d2ad1fcadbd09"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/mixer-validation.json",
+      "bytes": 33785,
+      "sha256": "fe7b7a7263fd1719f3710261c3868c4400ff7232cc2704894df51cc83fbfaea4"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sequences/crouch_walk.mp4",
+      "bytes": 232325,
+      "sha256": "9d36a9864a96e9659b721431d6629197b523e25c2f63535e14d97d3ebeecdd0e"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sequences/hit_front.mp4",
+      "bytes": 98138,
+      "sha256": "70ce84de517d6dde2d4891867696146728b4bdad915b15a9ac420dc3a983b115"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sequences/near_miss_duck.mp4",
+      "bytes": 102568,
+      "sha256": "d67a6d2b6c92ac2cec9c8e65d27e034ff8e1f6bcd03bbbdeff2041afe765ec7c"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sequences/sprint.mp4",
+      "bytes": 272092,
+      "sha256": "b12f5f4be8aed74f5e45c30a4ab47d2bf82692d93e08417b327418fab1624662"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sequences/turn_left.mp4",
+      "bytes": 132060,
+      "sha256": "f939d45f7822d92eadd7289b211350ed95dc48e77811aceeff4f63d59fbdca4c"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sequences/turn_right.mp4",
+      "bytes": 134567,
+      "sha256": "b3dc046cdc81a6a61c065686b1ce437edbbdd7809ed720d6a720fe4bc1fee88e"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/crouch_walk-compat.jpg",
+      "bytes": 123588,
+      "sha256": "78b38ffa792dbb7b147d160c36e71a00dee352f001e69f100be1e3076a3c3f8e"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/crouch_walk-front.jpg",
+      "bytes": 129430,
+      "sha256": "33e20e7a8773230c65dfd3e44a203dadbdf61c0b485bff21990223eb9dc0316d"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/crouch_walk-sequence.jpg",
+      "bytes": 105630,
+      "sha256": "d1bbe931374b59ea57cab12677875bff60c032bbd98744f68f39e39c1933c909"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/crouch_walk-side.jpg",
+      "bytes": 133611,
+      "sha256": "602674e5862ba2cf6ba57d1a798f0d79cfddc88872a4fc42d235b6cd83908239"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/hit_front-compat.jpg",
+      "bytes": 125156,
+      "sha256": "58e175410cc7fe8f188023511501d3085f3f21d86c0a16cf12e2a489484549a4"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/hit_front-front.jpg",
+      "bytes": 136124,
+      "sha256": "0df17c7c29c5160f150c4a8cda7c0c978a6b5360c59b7879097a3672e4918273"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/hit_front-sequence.jpg",
+      "bytes": 109532,
+      "sha256": "cc330f5c6d49b4230d820efdd5f43f13ac2fb7e0066a4af9bfcb0a7cceb19a5e"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/hit_front-side.jpg",
+      "bytes": 130618,
+      "sha256": "c0c13a163959fe813fbc6b8d6887aab9293251e1d6086d74fcfefab24321d5fe"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/near_miss_duck-compat.jpg",
+      "bytes": 122813,
+      "sha256": "6b0b6dee5177c68e11e7e75d05b7fcc6490c6d36999c8dbcee000a406821034d"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/near_miss_duck-front.jpg",
+      "bytes": 122786,
+      "sha256": "50f9b65a6604c74f60518138379f3b95314c0db72511388b854eee3b10045600"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/near_miss_duck-sequence.jpg",
+      "bytes": 109380,
+      "sha256": "3dfa5943e651896a8126ac4f3bbfced26a6c733ebf6af7ca52b5b6b28cb4c17d"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/near_miss_duck-side.jpg",
+      "bytes": 127154,
+      "sha256": "68c62db17e9557de3d014a6460b65aeb7720ffd936fd1ff86363d13cbae56f93"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/sprint-compat.jpg",
+      "bytes": 126777,
+      "sha256": "e7700375c2dede21f7c1a5992a7a63b621f65d5f2db576141de6a0df7cc904a0"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/sprint-front.jpg",
+      "bytes": 130953,
+      "sha256": "492ab29662125ff621178121c50cc6ad2843399d820fa2477339668ad6b5ae75"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/sprint-sequence.jpg",
+      "bytes": 108930,
+      "sha256": "a3109ea91358854f04f409198fbc26634cc727d12afe270e31162a4b1204610c"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/sprint-side.jpg",
+      "bytes": 137323,
+      "sha256": "2a6a0edab40c2b7b72ba720c92bc009224d573f8d888b9a2a935c6374c6c01fd"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_left-compat.jpg",
+      "bytes": 125740,
+      "sha256": "7c17848fabbfa884804e913b5a07ab519e51663ffb54e2b696a085da6e41dfe3"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_left-front.jpg",
+      "bytes": 135448,
+      "sha256": "f5486e163a94cd4082f7fa77a65072ca2f7ddca2237979b3c1faa8e93533c585"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_left-sequence.jpg",
+      "bytes": 109258,
+      "sha256": "b8271b56574197ee9a7f702282a80aba5432d867cbc962adda5a1f95166026d7"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_left-side.jpg",
+      "bytes": 131000,
+      "sha256": "56032553c8ab44c15fdae41d953d0037030811d8e3b5ff4b314a6445b00defa5"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_right-compat.jpg",
+      "bytes": 126893,
+      "sha256": "c330a43bb7c8d9b46aa8f9fa25a005d089d46e39d2acbcc837bd1c675756054e"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_right-front.jpg",
+      "bytes": 134207,
+      "sha256": "caf38ed46d7bcfad19a51c5cf7305abd9f0291e5056cd225ef0c62f321998b01"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_right-sequence.jpg",
+      "bytes": 109389,
+      "sha256": "7fc0e3d8f775d4f72a5c9f0d865ee71cc3c744c3da60f8b1c4402f062ac6bc41"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/sheets/turn_right-side.jpg",
+      "bytes": 133385,
+      "sha256": "61e01aad3cf045ac61d29fd6c9d79729c32b9258ae16790c76ceeeb114ba6998"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/verification.json",
+      "bytes": 5686,
+      "sha256": "393e5760a915803cafda2fc5604217e27e20dee02b04d48ca0a1794e455eec3d"
+    },
+    {
+      "file": "docs/verification/m01-runtime/soldier-motion-clips-production-v1/visual-review.md",
+      "bytes": 3391,
+      "sha256": "b8b3242b626a2539e36a149bf8c0681a3fa2be07678cd33f5dbe2f6c91ae1708"
+    },
+    {
+      "file": "tests/m01-soldier-motion-clips.test.js",
+      "bytes": 10078,
+      "sha256": "9782662aab1aa2faf4f0220aabd6bebe8ab8e9bef12ef5b50e955521a75d39ca"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/build-motion-clips.mjs",
+      "bytes": 4680,
+      "sha256": "f2fa352ef99434d931bfb3b9912d5dd01b37eb3177d10af194fd005e2a02c471"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/clips.mjs",
+      "bytes": 14947,
+      "sha256": "99b35dccdbe0568b84ee2b7de298b40b35a52a64ee2416fb01522ff7f10c1b55"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/rig.mjs",
+      "bytes": 3040,
+      "sha256": "ca6a3faef57e0f573c5b2d7f5422e638533dbef98ba4eec200052a1347a6d84b"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/validate.mjs",
+      "bytes": 9722,
+      "sha256": "fa08bc16be450ae48a3ff86c6b218ef3db26bee2029517658fe74a72b3962a4d"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/render/capture-motion.mjs",
+      "bytes": 5650,
+      "sha256": "3a3392608ba64b26e8abbfc1b07a3f67d9482edeb0449ab4d1a52117ecdacf07"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/render/motion-sheets.py",
+      "bytes": 4437,
+      "sha256": "01d97fa79e2bca79dc3445511e98c0fbfbaeb3eff70a52213bcbe8cff29a0017"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/render/motion-viewer.html",
+      "bytes": 6275,
+      "sha256": "eb0e14f41d4db9c1dbc3de2df1ce0ea9ecbde07782de0aeacaee5ce59fea40db"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/validate-motion-clips.mjs",
+      "bytes": 635,
+      "sha256": "6e6789497c87dc65588104e2a36834c12a69a544127a744259c16dc9d97d3e4d"
+    }
+  ],
+  "log_note": "build.log is readable output with trailing whitespace trimmed; build-output.log.gz preserves the exact original captured bytes"
+}

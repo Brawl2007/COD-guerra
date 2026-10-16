@@ -1,0 +1,12 @@
+{
+  "status": "superseded run interrupted after this regression",
+  "cause": "ckm pair remained active without base soldier animations",
+  "fix": "hasCKM also requires standing_idle from the base soldier animation set",
+  "errors": [
+    {
+      "name": "",
+      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m2\u001b[39m",
+      "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n    at /workspace/scratch/7f9fb283b9fc/COD-guerra-staging/tests/browser/m01.spec.js:189:84"
+    }
+  ]
+}

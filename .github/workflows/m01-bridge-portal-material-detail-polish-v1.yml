@@ -1,0 +1,70 @@
+name: M01 bridge portal material detail polish v1
+
+on:
+  push:
+    branches:
+      - codex/m01-bridge-portal-material-detail-polish-v1
+
+concurrency:
+  group: m01-bridge-portal-material-detail-polish-v1
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    steps:
+      - name: Checkout task head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Focused bridge and portal tests
+        run: |
+          node --test             tests/m01-bridge-portal-polish.test.js             tests/m01-bridges-glb.test.js             tests/m01-demolition-cue.test.js
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture approved base before
+        run: |
+          set -euo pipefail
+          mkdir -p docs/verification/m01-runtime/bridge-portal-material-detail-polish-v1
+          git checkout f5adc46af2a074bbb028368516afdce011b8620c --             src/render/m01-view.js src/render/m01-surfaces.js
+          npm run build
+          M01_BASELINE_CAPTURE=1 npx playwright test tests/browser/m01-bridge-portal-polish.spec.js             --grep "captures rail, road, oblique"             --output=docs/verification/m01-runtime/bridge-portal-material-detail-polish-v1/before
+          git checkout "$GITHUB_SHA" -- src/render/m01-view.js src/render/m01-surfaces.js
+          npm run build
+          git diff --exit-code
+
+      - name: Focused after browser
+        run: |
+          set -o pipefail
+          npx playwright test tests/browser/m01-bridge-portal-polish.spec.js             --output=docs/verification/m01-runtime/bridge-portal-material-detail-polish-v1/after             2>&1 | tee docs/verification/m01-runtime/bridge-portal-material-detail-polish-v1/browser.log
+
+      - name: Gameplay and authored bridge authority unchanged
+        run: |
+          git diff --exit-code f5adc46af2a074bbb028368516afdce011b8620c --             src/game src/world missions assets tools/assets/m01-bridges             src/render/m01-environment.js src/render/m01-environment-props.js             src/render/m01-locomotive.js src/render/m01-panzerzug.js             src/render/m01-train-wagons.js src/render/m01-yard-wagons.js             src/render/m01-characters.js src/render/m01-actor-pose.js             package.json package-lock.json playwright.config.js
+
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-bridge-portal-material-detail-polish-v1
+          path: |
+            docs/verification/m01-runtime/bridge-portal-material-detail-polish-v1/
+            playwright-report/
+            test-results/
+          if-no-files-found: error

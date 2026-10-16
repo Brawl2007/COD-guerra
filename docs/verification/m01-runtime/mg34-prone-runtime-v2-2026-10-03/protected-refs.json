@@ -1,0 +1,14 @@
+{
+  "repository": "Brawl2007/COD-guerra",
+  "confirmedUnchanged": {
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "codex/m01-runtime": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+    "codex/m01-assets-review": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+    "codex/m01-ckm-placement-migration": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732"
+  },
+  "onlyPublishedBranch": "codex/m01-mg34-prone-runtime",
+  "implementationHead": "8d55ae554b54f2fc0758189395936bb8c41a7c40",
+  "integration": false,
+  "deployment": false,
+  "forcePush": false
+}

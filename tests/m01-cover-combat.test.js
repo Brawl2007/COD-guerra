@@ -49,7 +49,9 @@ test('inactive or suppressed Germans on the spans cause no withdrawal losses; lo
 });
 
 test('casualty IDs and rounds in flight survive reload and checkpoint restore; invalid optional timers are rejected atomically',()=>{
-  const s=load(scenarios().ignored.combatSnapshots.withdrawal);run(s,15);const saved=s.snapshot(),restored=load(saved);
+  const s=load(scenarios().ignored.combatSnapshots.withdrawal);run(s,15);
+  // This fixture deliberately saves a new CP containing these casualties, rather than a continuation of the older CP.
+  s.checkpoint=s.snapshot(false);const saved=s.snapshot(),restored=load(saved);
   const dead=s.allies.filter(a=>a.group==='grp_east_platoon'&&a.active&&!a.alive).map(a=>a.id);assert.ok(dead.length>0);
   assert.deepEqual(restored.snapshot(),saved);run(s,10);run(restored,10);assert.deepEqual(restored.snapshot(),s.snapshot());
   restored.restoreCheckpoint();assert.deepEqual(restored.allies.filter(a=>a.group==='grp_east_platoon'&&a.active&&!a.alive).map(a=>a.id),dead);
@@ -63,7 +65,11 @@ test('casualty IDs and rounds in flight survive reload and checkpoint restore; i
 test('legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon',()=>{
   const old=structuredClone(scenarios().ignored.combatSnapshots.withdrawal);
   delete old.timers.nextCombatCall;delete old.enemyFire;
-  for(const a of old.actors.filter(a=>a.group==='grp_east_platoon'))Object.assign(a,{active:true,alive:true,health:100,state:'ADVANCE'});
+  for(const a of old.actors.filter(a=>a.group==='grp_east_platoon')){
+    Object.assign(a,{active:true,alive:true,health:100,state:'ADVANCE'});
+    // T23: the reserve men now fall with recorded hit and death times; a legacy save never had them, and a living man cannot carry a death time.
+    for(const key of ['hitAt','hitYaw','diedAt','deathYaw'])delete a[key];
+  }
   const s=load(old);assert.equal(s.timers.nextCombatCall,0);assert.deepEqual(s.enemyFire,{rounds:[],nextId:0});assert.equal(platoon(s).length,18);
   run(s,5);assert.equal(s.loadCheckpoint(JSON.stringify(s.snapshot())).ok,true);
 });

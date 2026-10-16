@@ -92,7 +92,7 @@ export function twoBone(S, T, a, b, pole) {
  * Resolve uma pose de alto nível em rotações/translações locais:
  *  hips: {pos, rot(euler)}, spine: [euler×3], neck, head (euler), jaw (graus), clav: {l, r} (euler),
  *  hands: {l|r: {pos, fdir, palm, pole}}, feet: {l|r: {pos, rot(quat), pole, toe}}, fingers: {l|r: {curl, thumb, spread}},
- *  weapon: {pos, rot}, bolt: {turn, back}, clip: {pos, rot, scale}, local: {osso: quat} (sobrepõe).
+ *  weapon: {pos, rot}, bolt: {turn, back}, clip: {pos, rot, scale}, mag: {pos, rot, scale}, local: {osso: quat} (sobrepõe).
  */
 export function solve(R, pose) {
   const J = R.J, local = {}, trans = {};
@@ -149,12 +149,17 @@ export function solve(R, pose) {
     const t = fg.thumb ?? 0;
     [0.5, 0.8, 0.8].forEach((k, i) => { local[`thumb_0${i + 1}_${s}`] = q.axis(R.finger[`thumb_${s}`], t * k * 55); });
   }
-  // Adereços: arma (filha da raiz), ferrolho (filho da arma), clipe (filho da raiz).
+  // Adereços: arma (filha da raiz), ferrolho e carregador (filhos da arma), clipe (filho da raiz).
   if (pose.weapon) { trans.weapon = v3.sub(pose.weapon.pos, W.root.p); local.weapon = pose.weapon.rot; }
-  trans.weapon_bolt = v3.sub(J.weapon_bolt, J.weapon); trans.weapon_clip = v3.sub(J.weapon_clip, J.root);
+  trans.weapon_bolt = v3.sub(J.weapon_bolt, J.weapon); trans.weapon_clip = v3.sub(J.weapon_clip, J.root); trans.weapon_mag = v3.sub(J.weapon_mag, J.weapon);
   if (pose.bolt) { trans.weapon_bolt = v3.add(v3.sub(J.weapon_bolt, J.weapon), [0, 0, pose.bolt.back ?? 0]); local.weapon_bolt = q.axis([0, 0, 1], pose.bolt.turn ?? 0); }
   if (pose.clip) { trans.weapon_clip = v3.sub(pose.clip.pos, W.root.p); local.weapon_clip = pose.clip.rot; }
-  return { local, trans, scale: { weapon_clip: pose.clip?.scale ?? 0, weapon: pose.weaponScale ?? 1 }, W: fk(J, local, trans) };
+  // Carregador da rkm: por omissão no poço; pose.mag = {pos, rot} no mundo (fora da arma) → local ao osso weapon.
+  if (pose.mag?.pos) {
+    const Wf = fk(J, local, trans).weapon, inv = q.inv(Wf.r);
+    trans.weapon_mag = q.rot(inv, v3.sub(pose.mag.pos, Wf.p)); local.weapon_mag = q.mul(inv, pose.mag.rot);
+  }
+  return { local, trans, scale: { weapon_clip: pose.clip?.scale ?? 0, weapon: pose.weaponScale ?? 1, weapon_mag: pose.mag?.scale ?? 1 }, W: fk(J, local, trans) };
 }
 
 /** Transforma um ponto/direcção do referencial da arma (origem no punho) para o mundo. */

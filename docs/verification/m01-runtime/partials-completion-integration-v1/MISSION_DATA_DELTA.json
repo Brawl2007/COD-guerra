@@ -1,0 +1,246 @@
+{
+  "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "path": "missions/m01-tczew/mission.json",
+  "oldSha256": "08931cd0fa5ea5f0b99c3a063f2ecea071e1a3ae939a6d093c8f02f6dbf4bd8a",
+  "newSha256": "8df839877b50c0ae0141d36a90b17990b5e3888384f67873c3dd1d7ceff8c1b2",
+  "changes": [
+    {
+      "path": "$.continuityCues",
+      "added": [
+        {
+          "from": "04:46:00",
+          "until": "05:30:00",
+          "intervalSec": 55,
+          "kind": "repair",
+          "text": "Sapadores na linha. Proteja o reparo; observe os port\u00f5es de Lisewo."
+        },
+        {
+          "from": "05:30:00",
+          "until": "06:00:00",
+          "intervalSec": 55,
+          "kind": "hold",
+          "text": "Mantenha o acesso. O pelot\u00e3o leste ainda segura a cabe\u00e7a de ponte."
+        },
+        {
+          "from": "06:00:00",
+          "until": "06:10:00",
+          "intervalSec": 45,
+          "kind": "withdrawal",
+          "text": "O pelot\u00e3o atravessa. Conte os nossos e cubra os \u00faltimos homens."
+        },
+        {
+          "from": "06:10:00",
+          "until": "06:45:00",
+          "intervalSec": 55,
+          "kind": "corridor",
+          "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+        }
+      ]
+    },
+    {
+      "path": "$.cutscenes[0].presentationCues",
+      "added": [
+        {
+          "t": 0,
+          "until": 75,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "\u25b2 Posto da sec\u00e7\u00e3o \u00b7 mapa e lanterna"
+        }
+      ]
+    },
+    {
+      "path": "$.cutscenes[1].presentationCues",
+      "added": [
+        {
+          "t": 0,
+          "until": 14,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "\u25b2 ENE \u00b7 aeronaves sobre a ponte"
+        }
+      ]
+    },
+    {
+      "path": "$.cutscenes[2].presentationCues",
+      "added": [
+        {
+          "t": 0,
+          "until": 12,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "\u25c0 Oeste \u00b7 mensageiro na trincheira"
+        }
+      ]
+    },
+    {
+      "path": "$.cutscenes[3].preRoll",
+      "added": {
+        "event": "evt_m01_east_demolition",
+        "duration": 4.0,
+        "timeline": [
+          {
+            "t": 0.0,
+            "action": "apito de sinal dos sapadores (curto, tr\u00eas vezes)"
+          },
+          {
+            "t": 2.0,
+            "line": "dlg_m01_044"
+          }
+        ]
+      }
+    },
+    {
+      "path": "$.cutscenes[3].presentationCues",
+      "added": [
+        {
+          "t": 0,
+          "until": 12,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "\u25b2 Leste \u00b7 encontro da ponte"
+        },
+        {
+          "t": 6.5,
+          "until": 8.5,
+          "subtitlePause": true
+        },
+        {
+          "t": 0,
+          "until": 4,
+          "shakeAtSound": true
+        }
+      ]
+    },
+    {
+      "path": "$.cutscenes[3].timeline[0].action",
+      "removed": "apito de sinal dos sapadores (curto, tr\u00eas vezes)"
+    },
+    {
+      "path": "$.cutscenes[3].timeline[0].preRollOnly",
+      "added": true
+    },
+    {
+      "path": "$.cutscenes[3].timeline[0].t",
+      "before": -4.0,
+      "after": 0
+    },
+    {
+      "path": "$.cutscenes[3].timeline[1].line",
+      "removed": "dlg_m01_044"
+    },
+    {
+      "path": "$.cutscenes[3].timeline[1].preRollOnly",
+      "added": true
+    },
+    {
+      "path": "$.cutscenes[3].timeline[1].t",
+      "before": -2.0,
+      "after": 0
+    },
+    {
+      "path": "$.cutscenes[4].preRoll",
+      "added": {
+        "event": "evt_m01_west_demolition",
+        "duration": 6.0,
+        "timeline": [
+          {
+            "t": 0.0,
+            "line": "dlg_m01_051"
+          },
+          {
+            "t": 5.0,
+            "action": "Zieli\u0144ski abaixa a cabe\u00e7a de Jan com a m\u00e3o (se o jogador estiver a at\u00e9 3 m)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "$.cutscenes[4].presentationCues",
+      "added": [
+        {
+          "t": 0,
+          "until": 15,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "\u25bc Ponte oeste \u00b7 cabe\u00e7a baixa"
+        },
+        {
+          "t": 8,
+          "until": 11,
+          "subtitlePause": true
+        },
+        {
+          "t": 0,
+          "until": 4,
+          "shakeAtSound": true
+        }
+      ]
+    },
+    {
+      "path": "$.cutscenes[4].timeline[0].line",
+      "removed": "dlg_m01_051"
+    },
+    {
+      "path": "$.cutscenes[4].timeline[0].preRollOnly",
+      "added": true
+    },
+    {
+      "path": "$.cutscenes[4].timeline[0].t",
+      "before": -6.0,
+      "after": 0
+    },
+    {
+      "path": "$.cutscenes[4].timeline[1].action",
+      "removed": "Zieli\u0144ski abaixa a cabe\u00e7a de Jan com a m\u00e3o (se o jogador estiver a at\u00e9 3 m)"
+    },
+    {
+      "path": "$.cutscenes[4].timeline[1].preRollOnly",
+      "added": true
+    },
+    {
+      "path": "$.cutscenes[4].timeline[1].t",
+      "before": -1.0,
+      "after": 0
+    },
+    {
+      "path": "$.cutscenes[5].presentationCues",
+      "added": [
+        {
+          "t": 0,
+          "until": 110,
+          "letterbox": true,
+          "dimHud": 0.35,
+          "lookPrompt": "\u25b2 Chamada no abrigo"
+        }
+      ]
+    },
+    {
+      "path": "$.yardLife",
+      "added": {
+        "certainty": "GAMEPLAY_DRAMATIZATION",
+        "actors": [
+          "yard_railway_0",
+          "yard_railway_1",
+          "yard_orderly",
+          "yard_patient",
+          "yard_aid",
+          "yard_cart"
+        ],
+        "tasks": [
+          "clean_weapon",
+          "coffee",
+          "map",
+          "patrol",
+          "guard_change",
+          "watch_bridge"
+        ],
+        "corridorExcluded": {
+          "minZ": 27,
+          "maxZ": 42
+        },
+        "lanterns": true
+      }
+    }
+  ]
+}

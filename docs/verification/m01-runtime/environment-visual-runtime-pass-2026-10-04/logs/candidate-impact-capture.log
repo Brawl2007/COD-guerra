@@ -1,0 +1,3 @@
+CANDIDATE-PATCH F-impact-dust medium: 243 calls, 461409 tris, 0 errors
+CANDIDATE-PATCH F-impact-dust high: 243 calls, 465567 tris, 0 errors
+CANDIDATE-PATCH F-impact-dust low: 220 calls, 412435 tris, 0 errors

@@ -1,0 +1,180 @@
+{
+  "stage": "implementation evidence; independent view10 acceptance pending",
+  "lampSourceSha256": "ad980f7fe8962e94e57c1c922178f5d8847d5fe02bef0fedb78d34510974359e",
+  "headlampWorld": [
+    1066.35,
+    2.5,
+    -2.5
+  ],
+  "headlampDiameterMetres": 4,
+  "depthTest": true,
+  "clearCentreRayFirstIntersection": "train_headlamp; measured with temporary read-only debug raycast, restored before final build",
+  "diagnosticLog": "train-lamp-clear-diagnostic.log",
+  "cases": {
+    "train-1km": {
+      "distanceMetres": 1000.527985615595,
+      "camera": [
+        1773.4567811865475,
+        35,
+        704.6067811865474
+      ],
+      "target": [
+        1075,
+        8,
+        -2.5
+      ],
+      "pixels": {
+        "lampPixels": 2,
+        "smokePixels": 7,
+        "lampBrightening": 63
+      },
+      "native": {
+        "calls": 7,
+        "triangles": 36350,
+        "byMesh": {
+          "train_detail_far_buffers": 1,
+          "glazed_windows": 1,
+          "wagon_covered_lod2_authored_far_stock_batch": 1,
+          "wagon_open_lod2_authored_far_stock_batch": 1,
+          "paint_and_soot": 1,
+          "exposed_metal": 1,
+          "train_headlamp": 1
+        }
+      },
+      "occluded": false,
+      "worldPixelRegion": [
+        610,
+        330,
+        670,
+        390
+      ],
+      "editorialMask": "pause/menu/frozen resume overlay only",
+      "method": "Same paused production frame/camera and snapshot; independently toggle only lamp and smoke; decoded world-region PNG RGB threshold3/255. Original frontal ray is blocked by gate_rail_left; clear oblique ray reaches the lamp first (persisted diagnostic). Small target perturbations check raster stability."
+    },
+    "train-1km-clear-jitter1": {
+      "distanceMetres": 1000.527985615595,
+      "camera": [
+        1773.4567811865475,
+        35,
+        704.6067811865474
+      ],
+      "target": [
+        1075,
+        7.6,
+        -2.9
+      ],
+      "pixels": {
+        "lampPixels": 1,
+        "smokePixels": 0,
+        "lampBrightening": 124
+      },
+      "native": {
+        "calls": 7,
+        "triangles": 36350,
+        "byMesh": {
+          "train_detail_far_buffers": 1,
+          "glazed_windows": 1,
+          "wagon_covered_lod2_authored_far_stock_batch": 1,
+          "wagon_open_lod2_authored_far_stock_batch": 1,
+          "paint_and_soot": 1,
+          "exposed_metal": 1,
+          "train_headlamp": 1
+        }
+      },
+      "occluded": false,
+      "worldPixelRegion": [
+        610,
+        330,
+        670,
+        390
+      ],
+      "editorialMask": "pause/menu/frozen resume overlay only",
+      "method": "Same paused production frame/camera and snapshot; independently toggle only lamp and smoke; decoded world-region PNG RGB threshold3/255. Original frontal ray is blocked by gate_rail_left; clear oblique ray reaches the lamp first (persisted diagnostic). Small target perturbations check raster stability."
+    },
+    "train-1km-clear-jitter2": {
+      "distanceMetres": 1000.527985615595,
+      "camera": [
+        1773.4567811865475,
+        35,
+        704.6067811865474
+      ],
+      "target": [
+        1075,
+        8.4,
+        -2.1
+      ],
+      "pixels": {
+        "lampPixels": 3,
+        "smokePixels": 0,
+        "lampBrightening": 12
+      },
+      "native": {
+        "calls": 7,
+        "triangles": 36350,
+        "byMesh": {
+          "train_detail_far_buffers": 1,
+          "glazed_windows": 1,
+          "wagon_covered_lod2_authored_far_stock_batch": 1,
+          "wagon_open_lod2_authored_far_stock_batch": 1,
+          "paint_and_soot": 1,
+          "exposed_metal": 1,
+          "train_headlamp": 1
+        }
+      },
+      "occluded": false,
+      "worldPixelRegion": [
+        610,
+        330,
+        670,
+        390
+      ],
+      "editorialMask": "pause/menu/frozen resume overlay only",
+      "method": "Same paused production frame/camera and snapshot; independently toggle only lamp and smoke; decoded world-region PNG RGB threshold3/255. Original frontal ray is blocked by gate_rail_left; clear oblique ray reaches the lamp first (persisted diagnostic). Small target perturbations check raster stability."
+    },
+    "train-1km-occluded": {
+      "distanceMetres": 995.7345642790551,
+      "camera": [
+        75,
+        35,
+        -90
+      ],
+      "target": [
+        1075,
+        8,
+        -2.5
+      ],
+      "pixels": {
+        "lampPixels": 0,
+        "smokePixels": 7,
+        "lampBrightening": 0
+      },
+      "native": {
+        "calls": 7,
+        "triangles": 36350,
+        "byMesh": {
+          "train_detail_far_buffers": 1,
+          "glazed_windows": 1,
+          "wagon_covered_lod2_authored_far_stock_batch": 1,
+          "wagon_open_lod2_authored_far_stock_batch": 1,
+          "paint_and_soot": 1,
+          "exposed_metal": 1,
+          "train_headlamp": 1
+        }
+      },
+      "occluded": true,
+      "worldPixelRegion": [
+        610,
+        330,
+        670,
+        390
+      ],
+      "editorialMask": "pause/menu/frozen resume overlay only",
+      "method": "Same paused production frame/camera and snapshot; independently toggle only lamp and smoke; decoded world-region PNG RGB threshold3/255. Original frontal ray is blocked by gate_rail_left; clear oblique ray reaches the lamp first (persisted diagnostic). Small target perturbations check raster stability."
+    }
+  },
+  "canonicalView10": {
+    "capture": "test-results/partials-completion-evidence/production/train-canonical-view10.png",
+    "raw": "test-results/partials-completion-evidence/production/train-canonical-view10.json",
+    "limitation": "Canonical lamp ray is occluded by real rail-span and gate geometry; verifier/reviewer must decide exact roadmap view10 clause. No claim of canonical lamp visibility."
+  }
+}

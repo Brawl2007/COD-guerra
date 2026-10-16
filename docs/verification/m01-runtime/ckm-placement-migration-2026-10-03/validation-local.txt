@@ -1,0 +1,39 @@
+TAP version 13
+# Subtest: fresh canonical crew is rigid +2.17 X from legacy
+ok 1 - fresh canonical crew is rigid +2.17 X from legacy
+# Subtest: old idle migrates exactly once
+ok 2 - old idle migrates exactly once
+# Subtest: abandon preserves startedAt
+ok 3 - abandon preserves startedAt
+# Subtest: retreat never translates even at exact old post
+ok 4 - retreat never translates even at exact old post
+# Subtest: already moving retreat never translates
+ok 5 - already moving retreat never translates
+# Subtest: post west never rewrites any position
+ok 6 - post west never rewrites any position
+# Subtest: dead actor stays dead while stationary placement is corrected
+ok 7 - dead actor stays dead while stationary placement is corrected
+# Subtest: newly migrated legacy 86 before east starts aligned idle
+ok 8 - newly migrated legacy 86 before east starts aligned idle
+# Subtest: legacy 86 after east stays withdrawn and does not replay abandon
+ok 9 - legacy 86 after east stays withdrawn and does not replay abandon
+# Subtest: muzzle socket transforms to south embrasure x/z
+ok 10 - muzzle socket transforms to south embrasure x/z
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 60.423261
+
+Comando executado localmente:
+node --test /tmp/ckm-placement-rule.test.mjs
+
+Verificação de sintaxe do novo teste do repositório:
+node --check /tmp/ckmrepo/tests/m01-ckm-placement-migration.test.js
+resultado: exit 0
+
+Limite do ambiente: git clone da branch falhou com "Could not resolve host: github.com". Por isso este log não é uma execução de npm test nem do ficheiro de teste importando o checkout completo. Nenhum CI/workflow_dispatch foi disparado.

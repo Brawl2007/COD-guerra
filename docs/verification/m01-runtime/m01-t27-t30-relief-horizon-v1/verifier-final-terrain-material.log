@@ -1,0 +1,19 @@
+✔ tier policy: low = macro mask only, medium/high = mask + detail + normals (556.545814ms)
+✔ quality change re-bakes the mask, swaps the set and disposes what it replaced (no leak) (518.737361ms)
+✔ a failed texture load is reported, never thrown: the terrain falls back to the macro colour (340.883464ms)
+✔ a stale load (quality changed while fetching) is discarded and disposed (443.048123ms)
+✔ shader patch: stock map / roughness / normal chunks are replaced, uniforms exposed, fog and shadows untouched (0.739879ms)
+✔ gpu byte accounting matches the texture sizes (0.247734ms)
+✔ out-of-order loads and failures never poison the current tier; every bitmap closes once (1.177994ms)
+✔ dispose during pending load is idempotent; no callbacks, resources or world mutations after disposal (350.162686ms)
+✔ steep slope patch samples three projections; Low shader constant-folds all detail (0.530871ms)
+✔ world replacement updates mask ownership and later tier rebakes without rebuilding ground geometry (154.358159ms)
+✔ partial fulfilled loads release immediately on Low or dispose while another request remains pending (0.836842ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2526.437683

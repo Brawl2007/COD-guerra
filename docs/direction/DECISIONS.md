@@ -1,0 +1,154 @@
+# Registo de decisões do Captain
+
+Formato: data · decisão · razão · reversível? Decisões de produto/jogabilidade/[D] ficam como
+**PENDENTE HUMANO** até aprovação explícita.
+
+| # | Data | Decisão | Razão | Reversível |
+|---|---|---|---|---|
+| D1 | 2026-10-08 | O Captain (Claude Code) assume a coordenação técnica. ChatGPT/GPT Sol deixa de ser necessário para dirigir. | Instrução do utilizador | — |
+| D2 | 2026-10-08 | Nenhuma implementação do M01 sobre `2645f3f` nem sobre a V7 por validar. A base de desenvolvimento nasce do HEAD da V7 que o utilizador fornecer como validado, mais a infra Capitão V3. | Instrução do utilizador; a V7 tem o CI integral em curso | Não |
+| D3 | 2026-10-08 | `claude/captain-direction-v1` (V7 `7a5800e` + infra) só recebe documentação de planeamento. Ao criar a base, os commits de `docs/direction/` são reaplicados por cherry-pick. | Plano independente do resultado do CI | Sim |
+| D4 | 2026-10-08 | Os dossiês M02–M30 (PR #58) são **referenciados, não copiados**. | Evitar duplicar 1,45 MB de proposta que pode ainda mudar no PR | Sim |
+| D5 | 2026-10-08 | Não começar M02+ antes de o M01 estar em PRODUÇÃO. Os sistemas novos nascem em bancadas reutilizáveis. | Mandato: "não sacrificar a qualidade da M01" | Sim (decisão humana) |
+| D6 | 2026-10-08 | A lane de simulação é sequencial: T03 → T02 → T22 → T05 → T47. O ckm (T47) vem depois de T22/T05. | Todas mexem em `m01-simulation.js`; T47 precisa de display rounds e de campos de áudio | Sim |
+| D7 | 2026-10-08 | As oito alterações por commitar em `~/projetos/COD-guerra` ficam intocadas, embora 5/8 sejam idênticas à V7 e as outras pareçam superadas. | Instrução do utilizador. Descartá-las é ação destrutiva e exige decisão humana. | — |
+| D8 | 2026-10-08 | Nenhuma worktree nova. Reutilizar esta, com checkout esparso. | Disco a 81 % (cerca de 1,3 GB livres) | Sim |
+| D9 | 2026-10-08 | Browser integral só no CI do GitHub. Localmente: Node + browser focado, quando estritamente necessário. | Chromebook; SwiftShader lento; disco | Sim |
+| D10 | 2026-10-09 | Base de desenvolvimento do M01: `claude/m01-dev-base` = V7 `4c6f7bebee27b68af3bea8ad086da1dffbca0084` (CI integral 84/84, run 37876099475) + infra Capitão V3 + Jev (cherry-pick -x). Resolve H1. | Instrução do utilizador após a certificação ("depois desenvolve M01") | Sim |
+| D11 | 2026-10-09 | No Chromebook (aarch64, Node 24.21) o `npm test` dá 467/474 na base: 7 falhas conhecidas em `m01-animation-contract.test.js` (2 hashes golden por tick + 5 em cascata). O CI x86_64 dá 474/474 no mesmo código; `m01-schema2-determinism` (A/B na mesma máquina) passa localmente. Prova de gameplay das tarefas M01 = CI x86 da branch (um workflow por branch); localmente exige-se exatamente este conjunto de 7. | Divergência de vírgula flutuante entre arquiteturas (hipótese, não investigada) | Sim |
+| D12 | 2026-10-09 | T19 `M01-PLAYER-SHOT-FEEDBACK-V1` ACEITE (`08d2e81`, CI 37890545910: Node 480/480, build, browser focado 1/1) e integrada por fast-forward em `claude/m01-dev-base`. | Ciclo implementer→verifier→reviewer completo | Sim |
+| D13 | 2026-10-09 | O Chromebook deixa de ser plataforma-alvo do jogo. Não se sacrifica qualidade por ele. Anexo B14 levantado (segunda cascata de sombras em Média/Alta); T01 anulada; T44/T49 deixam de esperar por T01. A máquina continua a ser só a estação de desenvolvimento. | Instrução do utilizador | Sim (decisão humana) |
+| D14 | 2026-10-09 | T16 `M01-LIGHTING-DAWN-V1` ACEITE (`3386fc2`, CI 37918399233: Node 490/490, build, browser focado 8/8). Sem vento em `map-layout.json` (porta de autoridade); constante `CLOUD_WIND`. Integração em `claude/m01-dev-base` aguarda autorização (merge bloqueado pelo classificador de permissões); a próxima tarefa empilha sobre esta branch. | Ciclo implementer→verifier→reviewer completo | Sim |
+| D15 | 2026-10-09 | T17 `M01-STUKA-DIVE-SEQUENCE-V1` ACEITE (`4c64beb`, CI 37930134740: Node 502/502, build, browser focado 5/5). Caminho dos aviões em `src/world/m01-aircraft-path.js` declarado só de apresentação (a simulação não o importa); guarda de Doppler 500 m/s + salto de relógio 1 s (só áudio). Empilhada sobre T16; integração em `claude/m01-dev-base` continua a aguardar autorização. | Ciclo implementer→verifier→reviewer completo (1 correcção) | Sim |
+| D16 | 2026-10-09 | T18 `M01-DEMOLITION-SETPIECE-V2` ACEITE (`b296374`, CI 37959483518: Node 520/520, build, browser 9/9 com prova por píxeis). Só apresentação: colapso determinístico a partir de `damage.started` sobre as poses guardadas dos assets, feedback distante >180 m pelo lado do render (game.js intacto), silêncio de 2 s só como gancho. Empilhada sobre T17; integração em `claude/m01-dev-base` continua a aguardar autorização. | Ciclo implementer→verifier→reviewer completo (1 correcção) | Sim |
+| D17 | 2026-10-09 | T42 `M01-WATER-VISTULA-V1` ACEITE (`71ad067`, CI 37988900379: Node 535/535, build, browser 15/15 com retries 0, A/B espuma ligada/desligada no mesmo frame em pausa, controlo maxDiff 0). Só apresentação: `src/render/m01-water.js` função pura do relógio da simulação; malha, nível e classificação de superfície da água intactos. Orçamento de correcções esgotado (3/3) mas o resultado final passou no CI; fecho com prova Git+CI. Empilhada sobre T18; integração em `claude/m01-dev-base` continua a aguardar autorização. | Ciclo implementer→verifier→reviewer completo (3 correcções) | Sim |
+| D18 | 2026-10-10 | T35 `M01-ANIM-LOCOMOTION-RESOLVER-V1` ACEITE (`46b210f`, primeiro commit `876b67c`; base `5765aa5`, pilha T16+T17+T18+T42; CI x86 38043817745: Node 559/559, build, browser 11/11 com `--workers=1 --retries=0`). Resolvedor de animação dos soldados: fades de postura 0,3 s, morte com clip `fallen` completo de 1,4 s a partir de `diedAt`, fades entre idle/mira/andar/correr/imobilizado, fase do andar pelo odómetro, pausa congela a pose. Trata itens 7, 9 e 11 do playtest 1; itens 3, 4 e 8 seguem em H6. Correção de 1 tentativa (3 possíveis): espera pelo frame carregado no spec de pausa (run 38042227351 falhou 1/11). Prova em `docs/verification/m01-runtime/m01-anim-resolver-v1/README.md`. M01 continua PROTÓTIPO JOGÁVEL. | Ciclo implementer→verifier→reviewer completo (1 correcção; 0 rejeições de revisão) | Sim |
+| D19 | 2026-10-10 | O utilizador permite o uso livre de agentes Fable e Opus (plano Claude Max). | Instrução do utilizador | Sim |
+| D20 | 2026-10-10 | O utilizador permite usar o Jev livremente (cada `rule_fallback`, prioridade, triagem de CI e escolha de testes). O teto de 100 chamadas mantém-se. O Jev é só consultivo: não decide, não aprova e não substitui o Captain. | Instrução do utilizador | Sim |
+| D21 | 2026-10-10 | O utilizador aprova o orçamento de correções das tarefas T20 e T44 de 3 para 5. | Instrução do utilizador | Sim |
+| D22 | 2026-10-10 | T39 `M01-VIEWMODEL-FEEL-V2` ACEITE (`29ba3cf`, base `304b90f` = T35 aceite + docs; CI x86 38045111352: autoridade OK, Node 574/574, build OK, browser 9/9 com `--workers=1 --retries=0`). Só apresentação: mira 0,30 s a entrar e 0,22 s a sair com curva suave (antes 55 ms); FOV 70→48 na mesma curva por `M01ViewModel.applyFov()` (lerp de `m01-view.js:660-662` sobrescrito; follow-up pode apagá-lo); respiração e bob pelo relógio da simulação; arma baixa perto de paredes, árvores e cobertura por sonda só de leitura; recuo inalterado. Follow-up para T40: pose baixa junto a parede mostra a manga grande e a mão visível pela manga aberta; encostado a parede (<0,8 m) a arma desenha sobre a parede. H8 (disparo com arma baixada mantém precisão de ADS) continua PENDENTE HUMANO. Sem FPS medido. M01 continua PROTÓTIPO JOGÁVEL. Prova em `docs/verification/m01-runtime/m01-viewmodel-feel-v2/README.md`. | Ciclo implementer→verifier→reviewer completo (0 correções; 0 rejeições de revisão) | Sim |
+| D23 | 2026-10-10 | T44 ACEITE em 4f27f90 (tentativa 4 de 5, `fable-high`): falhas eram de medição (atlas de decalques tardio; métrica extra de pretos <10 → <3). Critério do contrato (luminância ≥85 %) inalterado. | CI 38045943911 verde; verifier PASS; reviewer ACCEPT | Sim |
+| D24 | 2026-10-10 | T20 ACEITE em 676a455 (tentativa 4 de 5, `fable-high`): A/B mede só figuras com linha de vista (54/66 tapadas pelas pontes). Jev risco médio (0,72). Limitação: pelotão polaco sem prova de píxeis. | CI 38047289527 verde; verifier PASS; reviewer ACCEPT | Sim |
+| D25 | 2026-10-10 | T20 e T44 estão em branches baseadas em 71ad067, fora da pilha (ponta 4ed6e95). Integração na pilha fica para uma tarefa própria (rebase/merge com CI). | Evitar alterações concorrentes; integração exige CI | Sim |
+| D26 | 2026-10-10 | O utilizador aprova **H8** (tabela de escala histórica M01–M30) e **H9** (dificuldade e perigo; desenho em `.agent/runs/H9-DIFFICULTY-DESIGN/DESIGN.md`, tarefas D1–D5). Prioridade da M01: **T20 → T23 → T17 → T25**, começando pelo desenho da dificuldade. "esta autorizado a tudo"; "continue ate terminar o M01". | Instrução do utilizador | — |
+| D27 | 2026-10-10 | Escolhas **provisórias do Captain** para as 5 questões da H9 (recomendação do `opus-medium`; o utilizador pode mudar qualquer uma): recruta = afinação actual exacta; cura lenta fora de fogo em soldado, nenhuma em veterano, vida cheia em cada checkpoint; bombas nunca matam na M01; nível escolhido no início, só pode descer (oferta após 3 mortes no mesmo checkpoint); nível por defeito = soldado. | "autorizado a tudo", sem perguntas | Sim |
+| D28 | 2026-10-10 | Integração T44+T20 na pilha: branch `claude/m01-stack-integration-t44-t20-v1`, `git merge --no-ff` de 3d202ca e 7ade323 sobre b0020cf (sem reescrever branches publicadas); 4 conflitos-união em `m01-view.js`; correcção 1 (ordem das chaves), correcção 2 (CI captura ANTES em b0020cf+7ade323). Verifier PASS, reviewer-critical ACCEPT (rejeição 1/2 antes). **ACEITE**: CI x86 38054298392 verde (npm test 596/596, build, ANTES 10/10, browser 30/30, autoridade OK). | Resolve D25 | Sim |
+| D29 | 2026-10-10 | T17 (prioridade do utilizador): **sem defeito** na pilha 909bf43. Os Stukas não ficam parados nem em laço antes do mergulho (1530 amostras, 0 frames parados; `stukaPathSample` extrapola pela tangente). "Stukas ainda em laço" na visão era texto antigo. Run `M01-STUKA-PARKED-FIX-V1-20261010T131914Z` fechado sem push (commit só de teste `e1f2d81`, local; não retomar). Perguntar ao utilizador o que viu exactamente. | Prova determinística | Sim |
+| D30 | 2026-10-10 | Cadeias de simulação desenhadas (`.agent/runs/M01-SIM-CHAINS-DESIGN/DESIGN.md`): ramo A = T22 → T23 → T02-min; ramo B = T03-lite + T25; H9-D2 em série depois. O golden `tests/fixtures/m01-anim-gameplay-baseline.json` só pode ser regenerado em x86 (CI), nunca no Chromebook (D11). | Desenho `opus-medium`; actualiza D6 | Sim |
+| D31 | 2026-10-10 | T22 `M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1` ACEITE (`1881df1`; correcção de workflow `cf7c2d7`; CI x86 38070927878: npm 628/628, golden 2/2, 12 sementes com RNG igual a uma simulação sem fogo de exibição, build, browser 7+2). Desvios aceites pelo reviewer-critical: `intensity` = fracção de atiradores que dispararam em 20 s; clarão do Panzerzug e puff 75 mm passam para T23. Jev 5/100 (sonnet 0,98). | Ciclo completo | Sim |
+| D32 | 2026-10-10 | O utilizador aprova **H8, H9, H10, H11 e H12** (texto de H10–H12 trazido da branch `claude/gracious-franklin-u8kdin`; as questões do Captain H10–H15 passam a H13–H18). Meta: sentir a guerra como só mais um soldado, qualidade nível COD WaW (gráficos, som, animação, música sombria, ambiente). Ordem M01: (1) desenho da dificuldade H9 — **implementar só depois de o utilizador aprovar o desenho** (D27 passa a proposta); (2) som real e música sombria T05/T06/T45/T46 + H11; (3) animação T07/T08/T35/T36/T37; (4) batalha visível T20/T23/T17/T25 + T44; (5) H8 em paralelo. Regras: PC de referência H12 (Intel HD 5500, 1366×768) com orçamento de desempenho, sem FPS inventados; tudo original ou com licença verificada no manifesto; nada do COD; nenhuma compra sem perguntar; nunca main/merge/force-push; um agente pesado de cada vez no Chromebook; Jev nas decisões grandes. No fim de cada tarefa: branch, commit, `bash ~/jogar.sh <branch>` e o que testar. | Instrução do utilizador | — |
+| D33 | 2026-10-10 | PT05: `src/world/tczew-world.js` entra na lista `integratedPresentation` das 3 guardas byte-a-byte (locomotive, panzerzug, soldier-visual-variation), justificado pelo golden por tick e pelos testes de colisão; aceite pelo reviewer-critical. | CI 38073355306 | Sim |
+| D34 | 2026-10-10 | **Autorização permanente do utilizador:** o Captain decide e faz tudo sem perguntar — desenho de gameplay, dificuldade, som, música, animação, gráficos, escolhas entre opções, aprovar os próprios desenhos (incluindo H9), commits, push para branches de trabalho, abrir PRs e juntar tarefas numa branch de integração para o utilizador jogar. Avisa só no fim de cada tarefa (branch, commit, o que testar). **Continua proibido sem ordem explícita na hora:** gastar dinheiro (assets, plugins, créditos, subir o teto do Jev), merge ou push na `main`, force-push ou apagar trabalho não guardado, expor chaves ou segredos. | Instrução do utilizador | Revogável pelo utilizador |
+| D35 | 2026-10-10 | Ao abrigo de D34, o Captain aprova o desenho H9 (`.agent/runs/H9-DIFFICULTY-DESIGN/DESIGN.md`) com as escolhas de D27 (recruta = afinação actual; soldado por defeito; cura lenta em soldado, nenhuma em veterano, vida cheia em cada checkpoint; bombas não matam na M01; nível só desce). Implementação em D1–D5 com revisão crítica. | D34 | Sim |
+| D36 | 2026-10-11 | T12 entra na pilha por `git cherry-pick -x` de 5ee62a8, 7564b6f e b4e5fd6 (branch `claude/m01-stack-integration-t08-t12-v1`), **excepção à D28**: um merge de `claude/m01-prop-kit-v1` arrastaria ~50 commits de outra linha (arquivo de workflows, `.claude/`, `package.json`) e um conflito em `m01-view.js`. Os hashes das árvores de props, ferramentas, docs e teste ficam iguais aos de 934b274. | Manter só o trabalho aceite. Prova: CI 38104348154 (verde, gerador portável); CI 38104348125: 0 falhas novas, 8 já existentes na base f51c9c1 (ci-triage). | Sim |
+
+## Visão do utilizador (2026-10-10)
+
+Palavras do utilizador, depois do playtest da branch `claude/m01-viewmodel-feel-v2` (`b0020cf`):
+"o objetivo é ter que sentir a guerra, a sensação verdadeira, como se você fosse só mais 1 soldado no meio da
+grande guerra, sentindo o impacto".
+
+Consequências para todas as missões (M01–M30):
+
+- A escala da batalha tem de se sentir: muita gente a lutar à volta e ao longe (figuras simplificadas), o jogador
+  é um entre muitos, e a batalha continua quando ele não olha (`docs/PROMPT_MESTRE.txt`, §"densidade", linha 1965).
+- A densidade segue a batalha real. Nenhum dos dossiês M02–M30 (PR #58) diz hoje quantos soldados havia nem
+  quantos aparecem no jogo; ver H8.
+- No playtest, o utilizador estranhou na M01: só 10–13 polacos por perto, alemães quase invisíveis, um só
+  bombardeio visível. Parte é histórica (frente a ~1,2 km do outro lado do Vístula; um só mergulho às 04:34);
+  parte é trabalho em falta: T20 e T23 (frente leste visível, 26 dos 40 alemães nunca disparam para oeste),
+  T17 (mergulho, Stukas ainda em laço) e T25 (impactos do bombardeio das 05:30). Estas tarefas servem a visão
+  e devem subir de prioridade.
+
+Segundo pedido do utilizador, no mesmo dia: "o jogo tem que ter dificuldades… o perigo de morrer a qualquer
+momento, tem que ter fases difíceis de passar, igual a todos os jogos de níveis".
+
+Estado verificado em `claude/m01-viewmodel-feel-v2` (`src/game/m01-simulation.js:585-587`): um tiro alemão que
+passa no jogador só fere com probabilidade 0,20 (0,06 em cobertura) e tira 8 de 100, ou seja, cerca de 13
+ferimentos para morrer. O comentário diz "afinação de protótipo". Não há níveis de dificuldade. O roteiro proíbe
+bombas a menos de 30 m e diz que a MG "suprime antes de matar". Fora isso, só se perde por sair do mapa ou cair
+no Vístula. A especificação já pede dificuldade que mude comportamento, precisão e recursos de forma legível
+(`docs/PROMPT_MESTRE.txt:1831`). Ver H9.
+
+## Pendentes de decisão humana
+
+- ~~**H1**~~ Resolvido em 2026-10-09 (D10): V7 `4c6f7be`, CI integral 84/84.
+- **H2** Adotar no trunk os PRs de documentação #58/#44/#56? Os três apontam para a `main`.
+- **H3** O destino das oito alterações por commitar na worktree original (manter, arquivar num commit WIP na própria branch, ou descartar).
+- **H4** Playtest humano (T52): só uma pessoa o pode fazer. (T01 anulada por D13.)
+- **H5** Qualquer tarefa [D] da campanha (S1 flags de save, S2 relógio por segmentos, S8 bancadas de veículo).
+- **H6** (2026-10-09) Playtest 1, itens 3, 4, 8 e 11: escopo da animação e da IA dos soldados da M01. Proposta: primeiro um resolvedor simples que escolha o clip pelo estado, com os clips que já existem; a cobertura e a reação (itens 4 e 8) só depois de desenho. Decisão de jogabilidade: fica pendente até aprovação explícita. Estado (2026-10-10): o resolvedor de T35 (D18) trata a parte de animação dos itens 7, 9 e 11; os itens 3, 4 e 8 (soldados parados, cobertura, reação) são IA/simulação e continuam **PENDENTE HUMANO**.
+- **H7** (2026-10-09) Respostas do playtest 1: branch e commit jogados, resposta 5 sobre a ckm (decide a prioridade da geometria, fase 0), qualidade usada, causa da vida 92 da ponte, parede invisível (item 5) e respostas 1 a 10. Sem elas, os itens 1, 2 e 10 ficam por confirmar.
+- **H13** (2026-10-10; era H8 e depois H10 na pilha; renumerada para H13 para não colidir com as H8–H12 do utilizador) Em ADS junto a uma parede, a arma baixa-se mas a simulação continua a disparar com precisão de ADS. Bloquear o disparo seria uma alteração à simulação (de T39) → **PENDENTE HUMANO**.
+- **H8** (2026-10-10) Tabela de escala histórica por missão (M01–M30): forças reais na batalha, forças reais no
+  setor do jogador, soldados visíveis no jogo (perto / à volta / ao longe) e fonte com grau de certeza. Trabalho
+  de pesquisa e documentação, sem código; os números visíveis são medidos no Chromebook antes de aprovar.
+  Exemplo M02 (fontes gerais, a confirmar): cerca de 225 000 polacos e 425 000 alemães no Bzura; no jogo,
+  150–300 polacos visíveis em vagas e 30–60 alemães perto. **APROVADA pelo utilizador em 2026-10-10 (D26).**
+- **H9** (2026-10-10) Dificuldade e perigo em todas as missões, a pedido do utilizador: (1) níveis de
+  dificuldade (proposta: recruta, soldado, veterano) que mudam precisão, cadência, ferimento por tiro e recursos,
+  sem dar aos inimigos visão através de paredes; (2) perigo real em todo o lado: no nível normal, poucos tiros
+  matam quem fica exposto, e a cobertura e o movimento é que salvam; (3) em cada missão, pelo menos uma ou duas
+  fases difíceis de passar, com checkpoint antes delas; (4) morte justa: o perigo vê-se e ouve-se antes de matar
+  (traçantes, estalos, sirene, aviso do sargento). As regras atuais de justiça (bombas a 30 m ou mais, MG que
+  suprime primeiro) ficam só nos níveis fáceis, ou são revistas. Na M01, as fases candidatas a difíceis são a
+  proteção do reparo (04:52–05:30), a mudança de cobertura sob fogo ajustado e o corredor das 06:10–06:45.
+  Mudar o dano ou a IA é decisão de jogabilidade com impacto em simulação, saves e testes: precisa de desenho
+  (`opus-medium`), comparação A/B e revisão crítica. **APROVADA pelo utilizador em 2026-10-10 (D26).**
+- **H14** (2026-10-10, PT05) Mover as coberturas `cv_wagon_1/2` para o centro dos vagões (cobertura também do lado oeste) e criar `cv_wagon_3`? Recomendação: sim, numa tarefa à parte. **PENDENTE HUMANO**.
+- **H15** (2026-10-10, PT05) Assentar no chão o `yard_wagon_1`, que flutua ~2,4 m acima do talude numa ponta? Recomendação: sim. **PENDENTE HUMANO**.
+- **H16** (2026-10-10, cadeias) Horas dos impactos do raid e das baixas do pelotão: fixas ou variáveis por semente? Recomendação: fixas (o Captain segue-a até resposta). **PENDENTE HUMANO**.
+- **H17** (2026-10-10, cadeias) O Panzerzug pode matar homens do pelotão? Recomendação: não, só fogo de exibição (segue-a até resposta). **PENDENTE HUMANO**.
+- **H18** (2026-10-10, cadeias) Re-temporizar as falas 018/038/048/049/051 e beats com `t` negativo: recomendação T02b junto com T26 (segue-a até resposta). **PENDENTE HUMANO**.
+- **H10** (2026-10-10) **APROVADA (D32).** Meta de qualidade "nível COD WaW" em gráficos, som e animação, pedida pelo utilizador.
+  Caminho já planeado em `docs/M01_FINAL_ROADMAP.md`: animação T07/T08/T35/T36/T37 (hoje os soldados deslizam e
+  cortam entre poses); som T05/T06/T45/T46 (hoje 100 % sintetizado, sem `assets/audio`); materiais, terreno,
+  vegetação e FX nas ondas de ambiente (incluindo o ambiente de guerra: fumo, fogo, crateras,
+  destroços e lama que se acumulam com a batalha, e cor do T44). Para a meta, faltam: (1) o alvo é o PC de teste do utilizador (H12), não o
+  Chromebook; um nível de qualidade baixo é opcional e não trava a meta; (2) **fontes com licença
+  verificada**: animações de captura de movimento licenciadas, amostras de som reais (CC0/CC-BY ou pacotes
+  royalty-free) e modelos com autoria, escala e licença no manifesto, conforme `AGENTS.md`; (3) qualquer compra
+  só com autorização expressa do utilizador. Avaliação por capturas e escuta no PC forte, não só por testes.
+  Proposto ao utilizador; falta a ordem para começar.
+- **H11** (2026-10-10) **APROVADA (D32).** Música sombria durante o jogo, pedida pelo utilizador. Proposta: (1) camadas de tensão
+  escuras (drones graves, cordas, percussão surda), nunca heroicas, que sobem nas fases de combate e descem com
+  ele, ligadas ao estado da batalha e não a um temporizador; (2) temas curtos nos grandes momentos (na M01: os
+  Stukas das 04:34, a retirada do pelotão leste, a explosão da ponte); (3) silêncios obrigatórios mantidos
+  (depois da explosão, a chamada, feridos e mortos); (4) volume próprio no menu (canal MUSIC). Fonte: música
+  original ou com licença verificada (CC0/CC-BY, biblioteca royalty-free ou composição encomendada); **nada da
+  banda sonora do COD**; nenhuma compra sem autorização. Substitui a regra 4 da direção sonora do PR #58 se
+  aprovada. Proposto ao utilizador; falta a ordem para começar.
+- **H12** (2026-10-10) **APROVADA (D32).** PC de teste de referência, confirmado por capturas do `dxdiag` enviadas pelo utilizador:
+  Acer TravelMate P645-S; Intel Core i5-5200U a 2,2 GHz (2 núcleos, 4 threads); 8 GB de RAM; **Intel HD Graphics
+  5500** integrada (512 MB dedicados, 4 GB partilhados; driver 20.19.15.4703 de 2017, DirectX 12, nível 11_1);
+  ecrã 1366×768 a 60 Hz; Windows 10 Pro 64 bits (19045); som Realtek HD. Navegadores instalados: Chrome, Edge,
+  Firefox, Opera GX. Consequências: o alvo de qualidade e desempenho é **1366×768 nesta gráfica integrada**;
+  orçamento de desempenho (soldados completos, partículas de fumo e fogo, sombras, pós-processamento) medido
+  neste PC, com escala de render ajustável; nenhum FPS é afirmado sem medição. Substitui o "Chromebook de
+  referência" de H4 e T01.
+
+
+## D37 — duas tarefas integradas, 2026-10-14
+
+O utilizador pediu "Faz mais 2 tarefas e integra cod guerra" e "Continua". Escolhidas as pendências executáveis de D30: T02-min e T03-lite+T25, sobre a ponta T08/T12 `2d65dd0` com CI 38117931250 verde. Horas fixas seguem H16; posições são estimativas de gameplay. A correcção necessária no reload acrescenta os cinco IDs à classificação aérea existente. Uma tentativa de correcção, zero rejeições de revisão; local verde e **CI 38582392486 completo final verde (694/694, build, browser 1/1), código 8387b56, PR #63 publicado**. A autorização D34 permite branch integrada e PR, sem escrita em main/deploy ou branches das fontes.
+
+## D38 — pilha `claude/m01-integration` no candidato único M01, 2026-10-15
+
+`git merge --no-ff` de `claude/m01-integration` @ `8a0c362` no candidato `integ-c` (V7 + Argon #62/#64 + T50 + T21 + main + pilha PR #63 + áudio T05a/T06), sem desenvolvimento novo. Entram T09/T28, T13/T32, T31/T33, T27/T30 e T10/T29. Resoluções: infra agentic (`.agent/`, `.claude/`, `CLAUDE.md`, `AGENT_SETUP.md`, `.gitignore`) fica na versão do candidato (main, mais recente; a linha C só trazia cópias antigas, com teto Jev de 100); o arquivo de workflows e o `ci.yml` da linha C (5b2158b) não entram, porque a política de CI do candidato (`pages.yml` + `agentic-python-tests.yml`, ver `captain.md`) prevalece, mas os cinco workflows de tarefa T09–T33 e os testes `assets-manifests`/`m01-simulation-boundary` entram; T12 fica na versão do candidato (16dd41b); o gerador T13 passa a usar cópias congeladas de `mesh.mjs`/`glb.mjs` da linha C para manter os 15 GLBs aceites byte a byte; `materials.js` entra no allowlist partilhado das guardas byte a byte (T09); a guarda de autoridade T27 fixa `tczew-world.js` no commit PT05 (D33); o envelope do terreno T27 acrescenta a região de dados `grp_east_platoon.hold.layout` (T23), sem mudança visual medida. Histórico de decisões da linha C (D1–D25 e H1–H13 com numeração antiga) já estava no candidato com a numeração nova; não há IDs novos da linha C.
+
+## Lote M01-PARTIALS-COMPLETION-INTEGRATION-V1 — 2026-10-15
+
+O pedido explícito "Faz todas as tarefas parcialmente concluída e integra", retomado com "Continua", autoriza o lote T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41 e a integração em `claude/m01-integration`, ao abrigo de D34. A aceitação exige verificador e revisão independentes; esta decisão não declara esses gates cumpridos.
+
+Para T36, o Captain adota a recomendação B4 do roadmap: Dudek transporta Bąk a 1,6 m/s, com pickup/putdown de 1,6 s, condicionada à prova da rota completa de prontidão oeste antes das 06:45. A auditoria deve conservar as alterações espaciais e os efeitos de supressão decorrentes desse transporte em deltas nomeados, mantendo todos os outros atores/tiros/gates comparados. A política de disparo real da ckm continua desligada; o contrato latente de rajada só admite `policy:disabled` e zero tiros emitidos (T47 separado).
+
+T05 reutiliza as zonas e superfícies já aceites em `audio-layout.json`; não duplica dados no layout físico só para mudar um hash. As provas novas das pontes comparam o proprietário gráfico ligado/desligado sobre a simulação atual, porque os novos dados de roteiro/transporte/elenco de T02/T07/T34/T36 alteram legitimamente os saves da base gráfica histórica. Os hashes físicos e GLBs originais continuam protegidos, e as antigas falhas das pontes ficam preservadas.
+
+## D39 — H9-D1 e lote parciais no candidato único M01, 2026-10-15
+
+Pedido do utilizador: "integrar tudo" o que faltava. Dois merges `--no-ff`, sem desenvolvimento novo.
+
+1. `claude/m01-h9-d1-difficulty-data-v1` @ `5745e48` (H9-D1, D35): só dados. Merge limpo; a única quebra foi o bloqueio exacto da fonte de `m01-simulation.js` na golden histórica. As duas rotas por tick passaram sem alteração antes de mover o bloqueio; foi acrescentado o registo `sourceLock` (proveniência histórica mantida e fixada no teste).
+2. `codex/m01-partials-completion-integration-v1` @ `9a1535b` (lote T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41). Resoluções: props T12 ficam na versão do candidato (16dd41b, D38); `m01-actor-pose.js`, `m01-characters.js` e `m01-view.js` juntam os dois lados (resolver Argon/T35, flinch T21 e brilho do horizonte + vida do pátio, carregadores MG34, comboio por battleClock, dano da estação, bridge finish); a visibilidade dos comboios passa a ser a união da chegada por battleClock com as flags autoritativas `train963`/`panzerzug`; documentos de estado ficam na versão do candidato e esta decisão soma-se à do lote. Na própria branch, 26 testes Node falhavam (reproduzido localmente no HEAD `9a1535b`). Defeitos reais corrigidos na junção: `M01ViewModel` chamava `sim.actor` sem verificar (registos mínimos de apresentação não têm esse método); `actorPose` desenhava um morto em prone genérico em vez de caído (só vivos usam a geometria prone genérica); os lotes procedurais de actores tinham capacidade para 90 e o elenco de 97 transbordava (capacidade 120 por actor). Contratos de teste antigos actualizados ao comportamento autorizado, mantendo as invariantes: guardas exactos de `spatial.js` (wz29 e armas) e dos blocos MG34/ckm de `m01-characters.js` aceitam só o delta T07/T36 nomeado, cada troço revertido exactamente uma vez e o resto comparado byte a byte; save legado de 86 actores passa a 97 (ckm + auxiliares T34); `diedAt` -1e9 é o valor T07 "nunca carimbado"; a chave `displayOnly` só nos oito auxiliares; o controlo positivo emite um `enemy-fire` com os campos T05 obrigatórios; 019 na reorganização e só com o posto destruído (T02); chegada de Dudek com Bąk em 90 s em vez de 30 s (1,6 m/s, T36); lotes LOD2 dos vagões com geometria cozida por material (T24); carregador MG34 sai e desactiva-se após a morte do apontador (T36). A golden das parciais mudou só nos metadados (`sourceSha256`, `historicalGoldenSha256`): a auditoria `m01-partials-completion-audit.mjs` contra `bc8f6a2` (mesma simulação da candidata antes de H9) deu autoridade estrita PASS nas duas rotas e um relatório idêntico ao da branch, com os mesmos blocos por tick.
+
+Aceitação: nenhum dos onze tem verifier/reviewer independentes. T14/T41 continuam BLOCKED para aceitação (verifier/perf FAIL na fonte). T24 mantém por provar a cláusula da vista canónica 10.

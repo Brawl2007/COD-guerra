@@ -1,0 +1,10 @@
+{
+  "artifact_id": 11836333308,
+  "run_id": 38432707503,
+  "sourceHead": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "zipBytes": 56046373,
+  "sha256": "65d82ce926f5601171f8121786910d47e6caefb99118445ea7becf24cf6ac5b2",
+  "apiDigestMatches": true,
+  "crc": "PASS",
+  "entries": 227
+}

@@ -1,0 +1,26 @@
+{
+  "tool": "tools/verification/m01-ju87-equivalence.mjs",
+  "seed": 19390901,
+  "base": {
+    "commit": "99309d9cb023cc94a07d41ff863e1362e4460570",
+    "raidWindow": "5f6f6d3ef3efa0dc82d1860318a09b4a0c4335a4d9affe84ae85847e94cec9ae",
+    "raidSnapshot": "7ada7dad021ab3bd791cb15ca3f711314be075ad8c60ac5cf838b09a657b5faf",
+    "finalSnapshot": "16d08af5e94d922b7aa7e8f6a200f068b2c0684a8a6907d1d54f39a79ffbd427",
+    "events": "748cb0daf006850359aa9f36bba7cae0e3c835ca666297c89c554f6651b8958c",
+    "checkpoints": "83fe69fb73cc956a18e6bf4716b79b5881128a86fb8b284e789843fa04b63c14",
+    "battleClock": 25500,
+    "eventCount": 2923
+  },
+  "candidate": {
+    "tree": "working tree on codex/m01-ju87-aircraft-production-closeout-v2 (runtime = commit 8947f20)",
+    "raidWindow": "5f6f6d3ef3efa0dc82d1860318a09b4a0c4335a4d9affe84ae85847e94cec9ae",
+    "raidSnapshot": "7ada7dad021ab3bd791cb15ca3f711314be075ad8c60ac5cf838b09a657b5faf",
+    "finalSnapshot": "16d08af5e94d922b7aa7e8f6a200f068b2c0684a8a6907d1d54f39a79ffbd427",
+    "events": "748cb0daf006850359aa9f36bba7cae0e3c835ca666297c89c554f6651b8958c",
+    "checkpoints": "83fe69fb73cc956a18e6bf4716b79b5881128a86fb8b284e789843fa04b63c14",
+    "battleClock": 25500,
+    "eventCount": 2923
+  },
+  "identical": true,
+  "note": "rota completa até 07:05:00 e 400 ticks da janela visível do primeiro raid; src/game, src/world, src/core, missions e src/main.js sem diferenças contra a base (git diff vazio)"
+}

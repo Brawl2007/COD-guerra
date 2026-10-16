@@ -1,0 +1,9 @@
+✔ BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks (3438.72072ms)
+ℹ tests 490
+ℹ suites 0
+ℹ pass 490
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 315911.839209

@@ -1,0 +1,12 @@
+{
+  "name": "m01-station-drag-transitions-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera as transições do arrasto do ferido da estação (station_drag_{medic,patient}_{grab,release}) para o rig polaco actual, reutilizando crouched_idle, wounded e drag_wounded sem os alterar.",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": { "node": ">=22.12.0" }
+}

@@ -1,0 +1,2227 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "base": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+  "testedHead": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
+  "browsers": {
+    "production": "145.0.7632.6",
+    "transients": "145.0.7632.6"
+  },
+  "pairs": [
+    {
+      "name": "bridge-east",
+      "quality": "low",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "eecab8c373a43c30fe6bedd5b511eb0aeac31e52d63d4291ed4d47888c3b7241",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-bridge-east-low.png",
+          "pngSha256": "ecc5f710924e93bbdfe03d3e58e563c4b49499af138630d0440cbb95b2b0d36e",
+          "jpeg": "visual/V6-bridge-east-low.jpg",
+          "jpegSha256": "1dfff340d822e5cd8b9cc334dd5d7381d39ca2a5689f0b820243f30abf960e40",
+          "pngBytes": 869958,
+          "jpegBytes": 232612,
+          "drawCalls": 154,
+          "triangles": 404318,
+          "textures": 69,
+          "geometries": 286,
+          "environmentInstances": 15052
+        },
+        "V7": {
+          "png": "visual/V7-bridge-east-low.png",
+          "pngSha256": "ecc5f710924e93bbdfe03d3e58e563c4b49499af138630d0440cbb95b2b0d36e",
+          "jpeg": "visual/V7-bridge-east-low.jpg",
+          "jpegSha256": "1dfff340d822e5cd8b9cc334dd5d7381d39ca2a5689f0b820243f30abf960e40",
+          "pngBytes": 869958,
+          "jpegBytes": 232612,
+          "drawCalls": 154,
+          "triangles": 404317,
+          "textures": 69,
+          "geometries": 289,
+          "environmentInstances": 15052
+        }
+      }
+    },
+    {
+      "name": "bridge-west",
+      "quality": "low",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "5e3ab4f5320b5033a07ae2d0de975cbb50b054a9ceb3fc2b4d91d1ee4d5a9775",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-bridge-west-low.png",
+          "pngSha256": "2f066da03e2e98255a4c11bdc4290432249dcdf756b014042c776cf6ea4dac7f",
+          "jpeg": "visual/V6-bridge-west-low.jpg",
+          "jpegSha256": "7564e770a832ae3ba4938295abe71d0362e7ac046434ac04ac4c8c4133485fcb",
+          "pngBytes": 917107,
+          "jpegBytes": 181288,
+          "drawCalls": 226,
+          "triangles": 421029,
+          "textures": 117,
+          "geometries": 273,
+          "environmentInstances": 15364
+        },
+        "V7": {
+          "png": "visual/V7-bridge-west-low.png",
+          "pngSha256": "2f066da03e2e98255a4c11bdc4290432249dcdf756b014042c776cf6ea4dac7f",
+          "jpeg": "visual/V7-bridge-west-low.jpg",
+          "jpegSha256": "7564e770a832ae3ba4938295abe71d0362e7ac046434ac04ac4c8c4133485fcb",
+          "pngBytes": 917107,
+          "jpegBytes": 181288,
+          "drawCalls": 226,
+          "triangles": 421028,
+          "textures": 117,
+          "geometries": 276,
+          "environmentInstances": 15364
+        }
+      }
+    },
+    {
+      "name": "east-demolition",
+      "quality": "low",
+      "clock": 741.1499999998737,
+      "snapshotSha256": "edf6be47ab7d2f9896cb472fa64a6e801deb1dd28784bf54a91f8094a967ebfa",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-east-demolition-low.png",
+          "pngSha256": "9e037b9d908e47ec643443cc540c6198a34bcf2b687560d5c431828e3717215f",
+          "jpeg": "visual/V6-east-demolition-low.jpg",
+          "jpegSha256": "4c971cf3cf72165bf9f038251531fe8356303505b1e67e45fc2d62db4fa34404",
+          "pngBytes": 814521,
+          "jpegBytes": 219813,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-east-demolition-low.png",
+          "pngSha256": "9e037b9d908e47ec643443cc540c6198a34bcf2b687560d5c431828e3717215f",
+          "jpeg": "visual/V7-east-demolition-low.jpg",
+          "jpegSha256": "4c971cf3cf72165bf9f038251531fe8356303505b1e67e45fc2d62db4fa34404",
+          "pngBytes": 814521,
+          "jpegBytes": 219813,
+          "fixtureRender": {
+            "calls": 186,
+            "triangles": 558388
+          }
+        }
+      }
+    },
+    {
+      "name": "evacuation",
+      "quality": "low",
+      "clock": 174.95000000000553,
+      "snapshotSha256": "800e344f84091474c223447a15a852bdb307f36c65f3190939953d2d6a1fdd5b",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.70974609375,
+        0.7305523003472222,
+        0.6975434027777778
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-evacuation-low.png",
+          "pngSha256": "df4e2e9857c7048227727c74a16f1705a38e0e67e2e51ff913f2ff0fd578f008",
+          "jpeg": "visual/V6-evacuation-low.jpg",
+          "jpegSha256": "98f8b5deada6463a085ecbe724c63335029088f54e909fb8cb96735580b14fad",
+          "pngBytes": 817219,
+          "jpegBytes": 170304,
+          "drawCalls": 63,
+          "triangles": 393783,
+          "textures": 80,
+          "geometries": 385,
+          "environmentInstances": 15606
+        },
+        "V7": {
+          "png": "visual/V7-evacuation-low.png",
+          "pngSha256": "c5f9f27ef8c3a06e8fa909c88f41ef68a1b65e8a216f163a47770b8df0b0a175",
+          "jpeg": "visual/V7-evacuation-low.jpg",
+          "jpegSha256": "de41bc73f913a33db40ee2b3ceba863c2fc68f610c7f10fd9ff394cf873ee32c",
+          "pngBytes": 823760,
+          "jpegBytes": 171065,
+          "drawCalls": 63,
+          "triangles": 397328,
+          "textures": 80,
+          "geometries": 388,
+          "environmentInstances": 15606
+        }
+      }
+    },
+    {
+      "name": "grenade-explosion",
+      "quality": "low",
+      "clock": 4.099999999999993,
+      "snapshotSha256": "e89994c3cc63bfb6ed3535fbd7e2deb4f6a450c0ce3b8a8e65f8906eba76822e",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-grenade-explosion-low.png",
+          "pngSha256": "f802d6c95231f75d343d660000828b64afe4d27dd627818e55106e2c1ef2a74b",
+          "jpeg": "visual/V6-grenade-explosion-low.jpg",
+          "jpegSha256": "bd4ea1595f617fb44f6835cddb5ad3686c7826844e1638d7bfe289da75e51ed3",
+          "pngBytes": 770318,
+          "jpegBytes": 165810,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-grenade-explosion-low.png",
+          "pngSha256": "f802d6c95231f75d343d660000828b64afe4d27dd627818e55106e2c1ef2a74b",
+          "jpeg": "visual/V7-grenade-explosion-low.jpg",
+          "jpegSha256": "bd4ea1595f617fb44f6835cddb5ad3686c7826844e1638d7bfe289da75e51ed3",
+          "pngBytes": 770318,
+          "jpegBytes": 165810,
+          "fixtureRender": {
+            "calls": 253,
+            "triangles": 442565
+          }
+        }
+      }
+    },
+    {
+      "name": "panzerzug",
+      "quality": "low",
+      "clock": 303.10000000003464,
+      "snapshotSha256": "a06dce114ea5e518463e8dfa626e0ee7105df15ee332faa9367210facec3b1f7",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-panzerzug-low.png",
+          "pngSha256": "2a2b6eb3720a86607af5d1276227bc8fcda642764dfb9d236cbaddf6ed45f702",
+          "jpeg": "visual/V6-panzerzug-low.jpg",
+          "jpegSha256": "c9c572bd659b6fca87a097203b6c0ab7b8117f8e1e02053c8932481e0178a3f3",
+          "pngBytes": 582001,
+          "jpegBytes": 131114,
+          "drawCalls": 165,
+          "triangles": 497095,
+          "textures": 174,
+          "geometries": 370,
+          "environmentInstances": 14964
+        },
+        "V7": {
+          "png": "visual/V7-panzerzug-low.png",
+          "pngSha256": "2a2b6eb3720a86607af5d1276227bc8fcda642764dfb9d236cbaddf6ed45f702",
+          "jpeg": "visual/V7-panzerzug-low.jpg",
+          "jpegSha256": "c9c572bd659b6fca87a097203b6c0ab7b8117f8e1e02053c8932481e0178a3f3",
+          "pngBytes": 582001,
+          "jpegBytes": 131114,
+          "drawCalls": 165,
+          "triangles": 497094,
+          "textures": 174,
+          "geometries": 373,
+          "environmentInstances": 14964
+        }
+      }
+    },
+    {
+      "name": "roll-call",
+      "quality": "low",
+      "clock": 1003.2499999996353,
+      "snapshotSha256": "e1c78b3e828845cd6316dffc46a39d0bde185a40e812ca40d0810d7e5539b99d",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-roll-call-low.png",
+          "pngSha256": "0e2fee078591950bebf32e54b596c61f180762462484ebd94058f1fec940caf7",
+          "jpeg": "visual/V6-roll-call-low.jpg",
+          "jpegSha256": "917a71106c6f40401800e89a432862012f774beb109cf3979e3841145c4895c1",
+          "pngBytes": 945094,
+          "jpegBytes": 216031,
+          "drawCalls": 155,
+          "triangles": 512906,
+          "textures": 184,
+          "geometries": 400,
+          "environmentInstances": 15702
+        },
+        "V7": {
+          "png": "visual/V7-roll-call-low.png",
+          "pngSha256": "0e2fee078591950bebf32e54b596c61f180762462484ebd94058f1fec940caf7",
+          "jpeg": "visual/V7-roll-call-low.jpg",
+          "jpegSha256": "917a71106c6f40401800e89a432862012f774beb109cf3979e3841145c4895c1",
+          "pngBytes": 945094,
+          "jpegBytes": 216031,
+          "drawCalls": 155,
+          "triangles": 512905,
+          "textures": 184,
+          "geometries": 403,
+          "environmentInstances": 15702
+        }
+      }
+    },
+    {
+      "name": "soldiers",
+      "quality": "low",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "eaa97fa790282dddbef98970a5c8755e3836dfba42c2764f96feeafcad425d8e",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-soldiers-low.png",
+          "pngSha256": "116b1569230634ccd8095d2ef1676ea8cbd2e254969cee88d76e7ec6eaddcc27",
+          "jpeg": "visual/V6-soldiers-low.jpg",
+          "jpegSha256": "934e5b141f75640b8f963f03020537b04526a23f0df8ae02729dc7436971afea",
+          "pngBytes": 693263,
+          "jpegBytes": 159085,
+          "drawCalls": 187,
+          "triangles": 400848,
+          "textures": 95,
+          "geometries": 273,
+          "environmentInstances": 15175
+        },
+        "V7": {
+          "png": "visual/V7-soldiers-low.png",
+          "pngSha256": "116b1569230634ccd8095d2ef1676ea8cbd2e254969cee88d76e7ec6eaddcc27",
+          "jpeg": "visual/V7-soldiers-low.jpg",
+          "jpegSha256": "934e5b141f75640b8f963f03020537b04526a23f0df8ae02729dc7436971afea",
+          "pngBytes": 693263,
+          "jpegBytes": 159085,
+          "drawCalls": 187,
+          "triangles": 400847,
+          "textures": 95,
+          "geometries": 276,
+          "environmentInstances": 15175
+        }
+      }
+    },
+    {
+      "name": "station-frontal",
+      "quality": "low",
+      "clock": 0.05,
+      "snapshotSha256": "19039c6e5fa056e4413d1b2b9a2685e90b43b59b3580688a28ea088bc18464eb",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        5.479718967013889,
+        5.046655815972223,
+        4.284134114583333
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-frontal-low.png",
+          "pngSha256": "fd123f23fee4bd4ca68d6570e253bf7eadbf7de8f22e67121739ca2964dfed8b",
+          "jpeg": "visual/V6-station-frontal-low.jpg",
+          "jpegSha256": "d75b294f277a7ad6ab5e0b9b6da0cf20e289ca58f158366dde81e84bc4eb2585",
+          "pngBytes": 852244,
+          "jpegBytes": 200231,
+          "drawCalls": 48,
+          "triangles": 384047,
+          "textures": 51,
+          "geometries": 233,
+          "environmentInstances": 15296
+        },
+        "V7": {
+          "png": "visual/V7-station-frontal-low.png",
+          "pngSha256": "640bc1b4d08dfec21634995342d971ba620d42bada29bade7e9ae681fd1bbabe",
+          "jpeg": "visual/V7-station-frontal-low.jpg",
+          "jpegSha256": "bde5859b32a1d5c9f37435a82ab4792b77d13bb2c6f97d6b56f15d4dd2944b48",
+          "pngBytes": 888106,
+          "jpegBytes": 190705,
+          "drawCalls": 48,
+          "triangles": 387593,
+          "textures": 53,
+          "geometries": 238,
+          "environmentInstances": 15296
+        }
+      }
+    },
+    {
+      "name": "station-oblique",
+      "quality": "low",
+      "clock": 0.05,
+      "snapshotSha256": "677183ad755f63f04e988ef7113cfe8865236705fd6dbd1071b77bc3739b4aee",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.9754578993055556,
+        0.8872374131944445,
+        0.7073849826388889
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-oblique-low.png",
+          "pngSha256": "f0d3ae7256ce5c3377edcbe89118afc6978f9e40ece9d344ac5b6144556e51e9",
+          "jpeg": "visual/V6-station-oblique-low.jpg",
+          "jpegSha256": "c3cc2a30067d696dbce3a0c7eb67c59bb2a3889be1b2f84f1a758095a7e64693",
+          "pngBytes": 745193,
+          "jpegBytes": 159245,
+          "drawCalls": 56,
+          "triangles": 388517,
+          "textures": 55,
+          "geometries": 241,
+          "environmentInstances": 15645
+        },
+        "V7": {
+          "png": "visual/V7-station-oblique-low.png",
+          "pngSha256": "e74c804ea9cd46dc514e34dcb06e8ad150d1ba6b41beffbdf266e63030cf6cbb",
+          "jpeg": "visual/V7-station-oblique-low.jpg",
+          "jpegSha256": "6fb01039f59c0b29263f85732c22465127f5a1325ca194d4ea98373c96232684",
+          "pngBytes": 743996,
+          "jpegBytes": 158827,
+          "drawCalls": 56,
+          "triangles": 392063,
+          "textures": 57,
+          "geometries": 246,
+          "environmentInstances": 15645
+        }
+      }
+    },
+    {
+      "name": "station-platform",
+      "quality": "low",
+      "clock": 0.05,
+      "snapshotSha256": "b1b60f86439b704a27432f23dea454e6b497a9534bc62646fde2af6735d871ac",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        6.901126302083333,
+        6.403390842013889,
+        5.498001302083333
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-platform-low.png",
+          "pngSha256": "8e6a352190b6e2c749b6dd59c5cd44c1b154e45387b1a787c1acc0d8bf505ba2",
+          "jpeg": "visual/V6-station-platform-low.jpg",
+          "jpegSha256": "da6431d669e43402d025eb48d91a340bc337f4ebb5473fe38418b3b0707638d3",
+          "pngBytes": 805382,
+          "jpegBytes": 193334,
+          "drawCalls": 61,
+          "triangles": 390732,
+          "textures": 57,
+          "geometries": 244,
+          "environmentInstances": 15693
+        },
+        "V7": {
+          "png": "visual/V7-station-platform-low.png",
+          "pngSha256": "d04e92fd442bccc2f7c3d52b461747a4da542d8b83d71640d44cdf3284df51da",
+          "jpeg": "visual/V7-station-platform-low.jpg",
+          "jpegSha256": "47e0b3914653262c9b09af2dcd7d5f0ea54a872c4c5e019136163ff0f05f3bc6",
+          "pngBytes": 850045,
+          "jpegBytes": 178818,
+          "drawCalls": 61,
+          "triangles": 394278,
+          "textures": 59,
+          "geometries": 249,
+          "environmentInstances": 15693
+        }
+      }
+    },
+    {
+      "name": "station-window",
+      "quality": "low",
+      "clock": 0.05,
+      "snapshotSha256": "526565ec9196737f90d3625105bc20f2d9dfa1697cb44969ef7afbfe66ef3687",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        4.865560980902778,
+        4.3494140625,
+        3.5876453993055555
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-window-low.png",
+          "pngSha256": "4cbba1f8e21aee3e1c705473e28288a6b8300108103be440401b1c408a86656b",
+          "jpeg": "visual/V6-station-window-low.jpg",
+          "jpegSha256": "2bca2d3b0642a6df3f0e11eede40b8f510b2e68c5b7e71b14d859c6ae58a9b12",
+          "pngBytes": 693142,
+          "jpegBytes": 165295,
+          "drawCalls": 40,
+          "triangles": 383200,
+          "textures": 53,
+          "geometries": 249,
+          "environmentInstances": 15314
+        },
+        "V7": {
+          "png": "visual/V7-station-window-low.png",
+          "pngSha256": "baec73d83374f5bb2a72e931592128c21edb3f7cee2f2c6cc3e565dfdbf1fe22",
+          "jpeg": "visual/V7-station-window-low.jpg",
+          "jpegSha256": "c5f8b2427a8bfc1b2cd4b269ad696fd6fd6d279552fb1382ff30a9cae0f87b49",
+          "pngBytes": 722314,
+          "jpegBytes": 155212,
+          "drawCalls": 40,
+          "triangles": 386746,
+          "textures": 55,
+          "geometries": 254,
+          "environmentInstances": 15314
+        }
+      }
+    },
+    {
+      "name": "station-yard",
+      "quality": "low",
+      "clock": 0.05,
+      "snapshotSha256": "da4aed77ece1df4ce90fe31e838aedbb8f37545e162bd43c474137d03ac757ff",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.31136610243055557,
+        0.30337782118055556,
+        0.2580251736111111
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-yard-low.png",
+          "pngSha256": "9c24ffe611f9b0d128ebd370f1c2a25c4e519967ef1ff8fc47c679a2a1dd7ead",
+          "jpeg": "visual/V6-station-yard-low.jpg",
+          "jpegSha256": "3af0ceb81ffb871930dd7d493d2c39e841b641e5d52611b9e724820b7e9e7ca1",
+          "pngBytes": 684700,
+          "jpegBytes": 149595,
+          "drawCalls": 62,
+          "triangles": 390942,
+          "textures": 59,
+          "geometries": 249,
+          "environmentInstances": 15688
+        },
+        "V7": {
+          "png": "visual/V7-station-yard-low.png",
+          "pngSha256": "4ee8694699ec99f7146fa96f6d11e0d2e500ef88088e29e709025d48fe809cf3",
+          "jpeg": "visual/V7-station-yard-low.jpg",
+          "jpegSha256": "11b5422f1305ecc81ac4f66a2c684b5f1cb9dc90945495ff1e449e441d20b9cc",
+          "pngBytes": 684542,
+          "jpegBytes": 149379,
+          "drawCalls": 62,
+          "triangles": 394488,
+          "textures": 61,
+          "geometries": 254,
+          "environmentInstances": 15688
+        }
+      }
+    },
+    {
+      "name": "train-963",
+      "quality": "low",
+      "clock": 256.400000000024,
+      "snapshotSha256": "94df3fcc8d5805830a5f57304c1b34e331d403fa10a87404dd6952f529909b0a",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-train-963-low.png",
+          "pngSha256": "da8b4b7724b5960d56ceb1e859327f08f488ec600e3ad2d63ab9f4adc73fed5f",
+          "jpeg": "visual/V6-train-963-low.jpg",
+          "jpegSha256": "bee8be0937b62a6e33cc14d96286cdfb1ad67d5625cf3f215940d9c4a9ac6304",
+          "pngBytes": 740430,
+          "jpegBytes": 151949,
+          "drawCalls": 192,
+          "triangles": 499143,
+          "textures": 171,
+          "geometries": 364,
+          "environmentInstances": 14968
+        },
+        "V7": {
+          "png": "visual/V7-train-963-low.png",
+          "pngSha256": "da8b4b7724b5960d56ceb1e859327f08f488ec600e3ad2d63ab9f4adc73fed5f",
+          "jpeg": "visual/V7-train-963-low.jpg",
+          "jpegSha256": "bee8be0937b62a6e33cc14d96286cdfb1ad67d5625cf3f215940d9c4a9ac6304",
+          "pngBytes": 740430,
+          "jpegBytes": 151949,
+          "drawCalls": 192,
+          "triangles": 499142,
+          "textures": 171,
+          "geometries": 367,
+          "environmentInstances": 14968
+        }
+      }
+    },
+    {
+      "name": "weapon-ads-turn",
+      "quality": "low",
+      "clock": 2.1500000000000004,
+      "snapshotSha256": "7e49706d29f9713924388bec995a0de569f1cc6b5a5768c90c8d9919fc1998a8",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.1817578125,
+        0.15125,
+        0.11956814236111112
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-ads-turn-low.png",
+          "pngSha256": "81e02c58988f1988e2610731a69882a3b713b22f6d26fc73cf7596382ddcb792",
+          "jpeg": "visual/V6-weapon-ads-turn-low.jpg",
+          "jpegSha256": "6e7a7f1240905703ab4ae462ee186aa39d56b23f1c56a06a706ff7ce87af817d",
+          "pngBytes": 726049,
+          "jpegBytes": 156956,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-ads-turn-low.png",
+          "pngSha256": "7457aa904c570da8c0f28e87b45654115a188bd07ed1ce087b803963bb999ddc",
+          "jpeg": "visual/V7-weapon-ads-turn-low.jpg",
+          "jpegSha256": "1a682852e601a3ba9361989677d698bf63beca4243912ac260a876cbe21dbc13",
+          "pngBytes": 725796,
+          "jpegBytes": 156990,
+          "fixtureRender": {
+            "calls": 250,
+            "triangles": 442493
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-brass",
+      "quality": "low",
+      "clock": 2.849999999999998,
+      "snapshotSha256": "6349536c7438b586187e8be597642603516343b568ae719f5afa14f6cfbfbe07",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.44367078993055553,
+        0.44196940104166665,
+        0.4274544270833333
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-brass-low.png",
+          "pngSha256": "312d4b3c75017475767ac515e6fced2d34378bd03d8c55695001d6a7beac5021",
+          "jpeg": "visual/V6-weapon-brass-low.jpg",
+          "jpegSha256": "7601d8c55db482b6cdd905d3377f1c120529882e11462a6c1ac1c1cd98dd2082",
+          "pngBytes": 714640,
+          "jpegBytes": 153549,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-brass-low.png",
+          "pngSha256": "7cdd23723a26b681948fbebc1aeaf3796295756c4fd36c37a9df62cbbbc97701",
+          "jpeg": "visual/V7-weapon-brass-low.jpg",
+          "jpegSha256": "c9b21f690dbee24e9aabe95ba28287d25361aeccc422e69c372e6d3f66434c00",
+          "pngBytes": 712484,
+          "jpegBytes": 153878,
+          "fixtureRender": {
+            "calls": 260,
+            "triangles": 442731
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-hip",
+      "quality": "low",
+      "clock": 1.2500000000000004,
+      "snapshotSha256": "c88170ff72cc538ba12d10ab6e06b16ed1afb10bc5ebfdcb6fb8658cfe27c845",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-hip-low.png",
+          "pngSha256": "465fc0d94b1f374641902e7d1a9d2750afcc86581f68ceba204ec67a99daf7b9",
+          "jpeg": "visual/V6-weapon-hip-low.jpg",
+          "jpegSha256": "9b6d2d4a4a01b353058b629a923a4dba5c9b29402699594e1bf515830e4ed108",
+          "pngBytes": 755657,
+          "jpegBytes": 164981,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-hip-low.png",
+          "pngSha256": "465fc0d94b1f374641902e7d1a9d2750afcc86581f68ceba204ec67a99daf7b9",
+          "jpeg": "visual/V7-weapon-hip-low.jpg",
+          "jpegSha256": "9b6d2d4a4a01b353058b629a923a4dba5c9b29402699594e1bf515830e4ed108",
+          "pngBytes": 755657,
+          "jpegBytes": 164981,
+          "fixtureRender": {
+            "calls": 250,
+            "triangles": 442493
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-reload",
+      "quality": "low",
+      "clock": 10.050000000000008,
+      "snapshotSha256": "780b02564049c8edc11191ed1fa7643a875053eafa4c55ffdee6b8b0fec6b674",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        3.7977430555555556e-05,
+        3.0381944444444444e-05,
+        3.472222222222222e-05
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-reload-low.png",
+          "pngSha256": "30aec2caa90f0236981a1707c1d5f84e449bbca7d8b7420da7c4362a42680065",
+          "jpeg": "visual/V6-weapon-reload-low.jpg",
+          "jpegSha256": "7b98a0027c5638c228af22a99a8a4f5bdcd2f42608158eabeb5a3c000ddc64c3",
+          "pngBytes": 655987,
+          "jpegBytes": 141847,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-reload-low.png",
+          "pngSha256": "668323f2a3ed13677fdc0ebad6f1e4aa3115370eec2afeed03649c4ce2a68123",
+          "jpeg": "visual/V7-weapon-reload-low.jpg",
+          "jpegSha256": "477bcdb4e5797f282e8546f58357859c69483233278ea216933f36fe38c77804",
+          "pngBytes": 655982,
+          "jpegBytes": 141867,
+          "fixtureRender": {
+            "calls": 255,
+            "triangles": 444217
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-shot",
+      "quality": "low",
+      "clock": 2.2,
+      "snapshotSha256": "cb24b65b29ee0fbd0c9eeaae364822dcc7bd97bf0e0f3a9271873fc94e5a20ff",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.15620442708333335,
+        0.12918077256944444,
+        0.10215386284722222
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-shot-low.png",
+          "pngSha256": "fcc3581245c6344eb612fce75abddd40ee6f224e322ad5467306ec7aece34f1f",
+          "jpeg": "visual/V6-weapon-shot-low.jpg",
+          "jpegSha256": "746cdec9c87ff29d1c79e1138cc9c45d442291c8ab7146c4799b7989699a1153",
+          "pngBytes": 713295,
+          "jpegBytes": 155250,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-shot-low.png",
+          "pngSha256": "d708ad882d2454a29b21446107ae829f6fa5bb493977d44d291d80a889f82499",
+          "jpeg": "visual/V7-weapon-shot-low.jpg",
+          "jpegSha256": "e92fb854dcd8c14f5657e08392eb137f651fe86c03d56d7331b2da709414fb3a",
+          "pngBytes": 713301,
+          "jpegBytes": 155275,
+          "fixtureRender": {
+            "calls": 254,
+            "triangles": 442501
+          }
+        }
+      }
+    },
+    {
+      "name": "bridge-east",
+      "quality": "medium",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "eecab8c373a43c30fe6bedd5b511eb0aeac31e52d63d4291ed4d47888c3b7241",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-bridge-east-medium.png",
+          "pngSha256": "9cb8606276ec2f9af754ef3708e301253c724b4f0997f86320aaf3c62c3be52c",
+          "jpeg": "visual/V6-bridge-east-medium.jpg",
+          "jpegSha256": "884c1dc7b22c284e6e635e9364a3850a050e01dfed078018d7d76e0cb6461b9f",
+          "pngBytes": 868320,
+          "jpegBytes": 227751,
+          "drawCalls": 201,
+          "triangles": 513041,
+          "textures": 89,
+          "geometries": 320,
+          "environmentInstances": 15881
+        },
+        "V7": {
+          "png": "visual/V7-bridge-east-medium.png",
+          "pngSha256": "9cb8606276ec2f9af754ef3708e301253c724b4f0997f86320aaf3c62c3be52c",
+          "jpeg": "visual/V7-bridge-east-medium.jpg",
+          "jpegSha256": "884c1dc7b22c284e6e635e9364a3850a050e01dfed078018d7d76e0cb6461b9f",
+          "pngBytes": 868320,
+          "jpegBytes": 227751,
+          "drawCalls": 201,
+          "triangles": 513020,
+          "textures": 89,
+          "geometries": 323,
+          "environmentInstances": 15881
+        }
+      }
+    },
+    {
+      "name": "bridge-west",
+      "quality": "medium",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "5e3ab4f5320b5033a07ae2d0de975cbb50b054a9ceb3fc2b4d91d1ee4d5a9775",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-bridge-west-medium.png",
+          "pngSha256": "0fafaf0afd5bc09b18fb8f60a674d41d1bc3bb45f9c46fff0639d59be80d993d",
+          "jpeg": "visual/V6-bridge-west-medium.jpg",
+          "jpegSha256": "d93c814914f163609b63f953984ac393f757f0d2b00434ede3e5a82645b76e5d",
+          "pngBytes": 911117,
+          "jpegBytes": 180010,
+          "drawCalls": 271,
+          "triangles": 517720,
+          "textures": 125,
+          "geometries": 306,
+          "environmentInstances": 17370
+        },
+        "V7": {
+          "png": "visual/V7-bridge-west-medium.png",
+          "pngSha256": "0fafaf0afd5bc09b18fb8f60a674d41d1bc3bb45f9c46fff0639d59be80d993d",
+          "jpeg": "visual/V7-bridge-west-medium.jpg",
+          "jpegSha256": "d93c814914f163609b63f953984ac393f757f0d2b00434ede3e5a82645b76e5d",
+          "pngBytes": 911117,
+          "jpegBytes": 180010,
+          "drawCalls": 271,
+          "triangles": 517699,
+          "textures": 125,
+          "geometries": 309,
+          "environmentInstances": 17370
+        }
+      }
+    },
+    {
+      "name": "east-demolition",
+      "quality": "medium",
+      "clock": 741.1499999998737,
+      "snapshotSha256": "edf6be47ab7d2f9896cb472fa64a6e801deb1dd28784bf54a91f8094a967ebfa",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-east-demolition-medium.png",
+          "pngSha256": "0e1ff00598529ba53cc8def3cbf4560ec9e2d69a3538ecbd2f3b46b71e02fe6e",
+          "jpeg": "visual/V6-east-demolition-medium.jpg",
+          "jpegSha256": "8501bcf1c67c271dd6ab0648af70e0364102085cdc4d492fd04f3e9534111753",
+          "pngBytes": 825420,
+          "jpegBytes": 215227,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-east-demolition-medium.png",
+          "pngSha256": "0e1ff00598529ba53cc8def3cbf4560ec9e2d69a3538ecbd2f3b46b71e02fe6e",
+          "jpeg": "visual/V7-east-demolition-medium.jpg",
+          "jpegSha256": "8501bcf1c67c271dd6ab0648af70e0364102085cdc4d492fd04f3e9534111753",
+          "pngBytes": 825420,
+          "jpegBytes": 215227,
+          "fixtureRender": {
+            "calls": 323,
+            "triangles": 914266
+          }
+        }
+      }
+    },
+    {
+      "name": "evacuation",
+      "quality": "medium",
+      "clock": 174.95000000000553,
+      "snapshotSha256": "800e344f84091474c223447a15a852bdb307f36c65f3190939953d2d6a1fdd5b",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.7439984809027778,
+        0.7632682291666667,
+        0.7340874565972222
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-evacuation-medium.png",
+          "pngSha256": "96a0bbb423a790d285e0287f36b287de2f1970468e77d4686895c57e5023cecd",
+          "jpeg": "visual/V6-evacuation-medium.jpg",
+          "jpegSha256": "1ef3959f84635e4f6562fb0b0a9bd4a4d4a41d7cb7c60532b0ae7188637bcb72",
+          "pngBytes": 851546,
+          "jpegBytes": 175378,
+          "drawCalls": 69,
+          "triangles": 441267,
+          "textures": 80,
+          "geometries": 416,
+          "environmentInstances": 17890
+        },
+        "V7": {
+          "png": "visual/V7-evacuation-medium.png",
+          "pngSha256": "8f732c628e7e6076c87061b51cf30bb10172689d22507158089579d96ef4d32f",
+          "jpeg": "visual/V7-evacuation-medium.jpg",
+          "jpegSha256": "39f4c5bc2cc6952d989b29c580bbb853b136e6d3f685e3e67aa200a1671e1eeb",
+          "pngBytes": 857206,
+          "jpegBytes": 175787,
+          "drawCalls": 69,
+          "triangles": 441514,
+          "textures": 80,
+          "geometries": 419,
+          "environmentInstances": 17890
+        }
+      }
+    },
+    {
+      "name": "grenade-explosion",
+      "quality": "medium",
+      "clock": 4.099999999999993,
+      "snapshotSha256": "e89994c3cc63bfb6ed3535fbd7e2deb4f6a450c0ce3b8a8e65f8906eba76822e",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-grenade-explosion-medium.png",
+          "pngSha256": "b9233655af896114cdf54956863cbe94a64b26572c3335d05bb75ffa152f4f3e",
+          "jpeg": "visual/V6-grenade-explosion-medium.jpg",
+          "jpegSha256": "d0c86b9727f9416cf1087c13d06596da7dde66a71857356fc04ba9c90fe2d405",
+          "pngBytes": 778757,
+          "jpegBytes": 166705,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-grenade-explosion-medium.png",
+          "pngSha256": "b9233655af896114cdf54956863cbe94a64b26572c3335d05bb75ffa152f4f3e",
+          "jpeg": "visual/V7-grenade-explosion-medium.jpg",
+          "jpegSha256": "d0c86b9727f9416cf1087c13d06596da7dde66a71857356fc04ba9c90fe2d405",
+          "pngBytes": 778757,
+          "jpegBytes": 166705,
+          "fixtureRender": {
+            "calls": 289,
+            "triangles": 569142
+          }
+        }
+      }
+    },
+    {
+      "name": "panzerzug",
+      "quality": "medium",
+      "clock": 303.10000000003464,
+      "snapshotSha256": "a06dce114ea5e518463e8dfa626e0ee7105df15ee332faa9367210facec3b1f7",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-panzerzug-medium.png",
+          "pngSha256": "7f2047107b04c81ff523e5dc09c575a1c2561524f19d6efb9a3137dd682946b5",
+          "jpeg": "visual/V6-panzerzug-medium.jpg",
+          "jpegSha256": "d3b4b675b50ae444412a467f3fe72a95cbf7c9b6d4e7e72a8eb34eca026d805f",
+          "pngBytes": 582989,
+          "jpegBytes": 131189,
+          "drawCalls": 206,
+          "triangles": 532943,
+          "textures": 210,
+          "geometries": 408,
+          "environmentInstances": 15079
+        },
+        "V7": {
+          "png": "visual/V7-panzerzug-medium.png",
+          "pngSha256": "7f2047107b04c81ff523e5dc09c575a1c2561524f19d6efb9a3137dd682946b5",
+          "jpeg": "visual/V7-panzerzug-medium.jpg",
+          "jpegSha256": "d3b4b675b50ae444412a467f3fe72a95cbf7c9b6d4e7e72a8eb34eca026d805f",
+          "pngBytes": 582989,
+          "jpegBytes": 131189,
+          "drawCalls": 206,
+          "triangles": 532922,
+          "textures": 210,
+          "geometries": 411,
+          "environmentInstances": 15079
+        }
+      }
+    },
+    {
+      "name": "roll-call",
+      "quality": "medium",
+      "clock": 1003.2499999996353,
+      "snapshotSha256": "e1c78b3e828845cd6316dffc46a39d0bde185a40e812ca40d0810d7e5539b99d",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-roll-call-medium.png",
+          "pngSha256": "b8ab1d70677d4f20340feb7b4c9b3b8a55d06ae81edda2de8b347569b0313990",
+          "jpeg": "visual/V6-roll-call-medium.jpg",
+          "jpegSha256": "158dbe72e4a75194b954390689674b41cb9d6bbfc5685d367da2bc0c61bf119b",
+          "pngBytes": 920166,
+          "jpegBytes": 199782,
+          "drawCalls": 280,
+          "triangles": 767211,
+          "textures": 222,
+          "geometries": 421,
+          "environmentInstances": 19093
+        },
+        "V7": {
+          "png": "visual/V7-roll-call-medium.png",
+          "pngSha256": "b8ab1d70677d4f20340feb7b4c9b3b8a55d06ae81edda2de8b347569b0313990",
+          "jpeg": "visual/V7-roll-call-medium.jpg",
+          "jpegSha256": "158dbe72e4a75194b954390689674b41cb9d6bbfc5685d367da2bc0c61bf119b",
+          "pngBytes": 920166,
+          "jpegBytes": 199782,
+          "drawCalls": 280,
+          "triangles": 766772,
+          "textures": 222,
+          "geometries": 424,
+          "environmentInstances": 19093
+        }
+      }
+    },
+    {
+      "name": "soldiers",
+      "quality": "medium",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "eaa97fa790282dddbef98970a5c8755e3836dfba42c2764f96feeafcad425d8e",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-soldiers-medium.png",
+          "pngSha256": "cbf3f078ec35251a5fb71275150e79abf004ab1d6ce71159c9836154eef61543",
+          "jpeg": "visual/V6-soldiers-medium.jpg",
+          "jpegSha256": "0a7ec6f72964621a4f8ae5e0f019ec7db0f6beacc7952e873e19eac7690d38b0",
+          "pngBytes": 691427,
+          "jpegBytes": 160844,
+          "drawCalls": 241,
+          "triangles": 508027,
+          "textures": 117,
+          "geometries": 303,
+          "environmentInstances": 16740
+        },
+        "V7": {
+          "png": "visual/V7-soldiers-medium.png",
+          "pngSha256": "cbf3f078ec35251a5fb71275150e79abf004ab1d6ce71159c9836154eef61543",
+          "jpeg": "visual/V7-soldiers-medium.jpg",
+          "jpegSha256": "0a7ec6f72964621a4f8ae5e0f019ec7db0f6beacc7952e873e19eac7690d38b0",
+          "pngBytes": 691427,
+          "jpegBytes": 160844,
+          "drawCalls": 241,
+          "triangles": 508006,
+          "textures": 117,
+          "geometries": 306,
+          "environmentInstances": 16740
+        }
+      }
+    },
+    {
+      "name": "station-frontal",
+      "quality": "medium",
+      "clock": 0.05,
+      "snapshotSha256": "19039c6e5fa056e4413d1b2b9a2685e90b43b59b3580688a28ea088bc18464eb",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        5.752157118055556,
+        5.202573784722222,
+        4.399609375
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-frontal-medium.png",
+          "pngSha256": "0954f7e0492fcbae99fbf53291798dacddf6c742044407347413681d87d718be",
+          "jpeg": "visual/V6-station-frontal-medium.jpg",
+          "jpegSha256": "27571018eb22a0e183761f4d4546561db65a807d18da8a8d8171a2ae4f4f0c73",
+          "pngBytes": 894108,
+          "jpegBytes": 209321,
+          "drawCalls": 53,
+          "triangles": 428618,
+          "textures": 51,
+          "geometries": 242,
+          "environmentInstances": 17878
+        },
+        "V7": {
+          "png": "visual/V7-station-frontal-medium.png",
+          "pngSha256": "f2a8a8a86c133fb88cc67ee8da5ca66d8663f9aaf84e64e03038e02f79e7a2db",
+          "jpeg": "visual/V7-station-frontal-medium.jpg",
+          "jpegSha256": "f40e70faca7a324e2651aa9ac90c180a5644c671981caff7dae3454852f62ffc",
+          "pngBytes": 916062,
+          "jpegBytes": 198430,
+          "drawCalls": 53,
+          "triangles": 428886,
+          "textures": 53,
+          "geometries": 247,
+          "environmentInstances": 17878
+        }
+      }
+    },
+    {
+      "name": "station-oblique",
+      "quality": "medium",
+      "clock": 0.05,
+      "snapshotSha256": "677183ad755f63f04e988ef7113cfe8865236705fd6dbd1071b77bc3739b4aee",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        1.0834092881944444,
+        0.9791796875,
+        0.7830609809027778
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-oblique-medium.png",
+          "pngSha256": "edda157e1a29f25731f820020c2a44e933b9f7e8f8d53d2555f5a6c32bec1bc3",
+          "jpeg": "visual/V6-station-oblique-medium.jpg",
+          "jpegSha256": "cb46b36afd4518f6e2d2092a335833403fa6383e0844102b33c7780a6afa0a26",
+          "pngBytes": 759756,
+          "jpegBytes": 163786,
+          "drawCalls": 61,
+          "triangles": 437719,
+          "textures": 55,
+          "geometries": 254,
+          "environmentInstances": 17812
+        },
+        "V7": {
+          "png": "visual/V7-station-oblique-medium.png",
+          "pngSha256": "2b06b4463d363bb8be96690e33fcff403094485897a97c20cd5b1897a407c4ca",
+          "jpeg": "visual/V7-station-oblique-medium.jpg",
+          "jpegSha256": "d1aca2414082e860de7c2bea59ce9cc3970e410a12b85a4a60a548afcfc2a067",
+          "pngBytes": 759736,
+          "jpegBytes": 164396,
+          "drawCalls": 61,
+          "triangles": 437987,
+          "textures": 57,
+          "geometries": 259,
+          "environmentInstances": 17812
+        }
+      }
+    },
+    {
+      "name": "station-platform",
+      "quality": "medium",
+      "clock": 0.05,
+      "snapshotSha256": "b1b60f86439b704a27432f23dea454e6b497a9534bc62646fde2af6735d871ac",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        6.702269965277778,
+        6.161300998263889,
+        5.408746744791666
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-platform-medium.png",
+          "pngSha256": "2567d20d48a1d08039bcaacb7f91e6ddec98ac4ca2abde7907f22ce473d101d3",
+          "jpeg": "visual/V6-station-platform-medium.jpg",
+          "jpegSha256": "1d859b7cb1ed5dc4c8db74ddf894bd675c9ebf0a97e2723bc9179d7ac6c5fca0",
+          "pngBytes": 834517,
+          "jpegBytes": 200125,
+          "drawCalls": 66,
+          "triangles": 440717,
+          "textures": 59,
+          "geometries": 262,
+          "environmentInstances": 18748
+        },
+        "V7": {
+          "png": "visual/V7-station-platform-medium.png",
+          "pngSha256": "61c472aa7ef9b12af5bf3bcfa7fbf6ed968dc54c906863c9961d5ca52b810c90",
+          "jpeg": "visual/V7-station-platform-medium.jpg",
+          "jpegSha256": "b84373a83816f111b55871d7e0e444db94d705e70215d04cc8d00cfe2dc5b6df",
+          "pngBytes": 864056,
+          "jpegBytes": 180804,
+          "drawCalls": 66,
+          "triangles": 440985,
+          "textures": 61,
+          "geometries": 267,
+          "environmentInstances": 18748
+        }
+      }
+    },
+    {
+      "name": "station-window",
+      "quality": "medium",
+      "clock": 0.05,
+      "snapshotSha256": "526565ec9196737f90d3625105bc20f2d9dfa1697cb44969ef7afbfe66ef3687",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        5.105434027777778,
+        4.499851345486111,
+        3.7015625
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-window-medium.png",
+          "pngSha256": "908c5cd7b7b0175ad39e36f55415d322de81f543d21267174a0d7c249b065970",
+          "jpeg": "visual/V6-station-window-medium.jpg",
+          "jpegSha256": "38a48b3b71c6c2100df8c1ad2e0de8c01db0eec2a1a530a82aca14edc04ef79d",
+          "pngBytes": 726977,
+          "jpegBytes": 171858,
+          "drawCalls": 53,
+          "triangles": 431202,
+          "textures": 59,
+          "geometries": 262,
+          "environmentInstances": 17941
+        },
+        "V7": {
+          "png": "visual/V7-station-window-medium.png",
+          "pngSha256": "3cf5b70669051b952cf970a37de2991a5fe65b3572c532d251437d6b6b3da70f",
+          "jpeg": "visual/V7-station-window-medium.jpg",
+          "jpegSha256": "c099e637e265755aff90633cb3b03d7e5c162745ec7b9019a6b34a652f44b069",
+          "pngBytes": 751239,
+          "jpegBytes": 162306,
+          "drawCalls": 53,
+          "triangles": 431470,
+          "textures": 61,
+          "geometries": 267,
+          "environmentInstances": 17941
+        }
+      }
+    },
+    {
+      "name": "station-yard",
+      "quality": "medium",
+      "clock": 0.05,
+      "snapshotSha256": "da4aed77ece1df4ce90fe31e838aedbb8f37545e162bd43c474137d03ac757ff",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.33540581597222224,
+        0.3227072482638889,
+        0.27224609375
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-yard-medium.png",
+          "pngSha256": "20141491611707f82d89c4e6772f3f1616fea6176e7571f5d2cf1fc66871fa6c",
+          "jpeg": "visual/V6-station-yard-medium.jpg",
+          "jpegSha256": "75e8f63986b82cd1233ecdf3270ff065a6733f439a1c5a20f01b0ba128b31fe2",
+          "pngBytes": 701051,
+          "jpegBytes": 152894,
+          "drawCalls": 67,
+          "triangles": 446887,
+          "textures": 59,
+          "geometries": 262,
+          "environmentInstances": 18402
+        },
+        "V7": {
+          "png": "visual/V7-station-yard-medium.png",
+          "pngSha256": "5e968e2fb99d60e5970f19a0ab33e3d2bafc8d69f9beb034317296ea84ae40e9",
+          "jpeg": "visual/V7-station-yard-medium.jpg",
+          "jpegSha256": "3c4a510d144fc08104d5470989b59f49f44e34bedc0aefce79d744d6ac2bc71b",
+          "pngBytes": 702907,
+          "jpegBytes": 153045,
+          "drawCalls": 67,
+          "triangles": 447155,
+          "textures": 61,
+          "geometries": 267,
+          "environmentInstances": 18402
+        }
+      }
+    },
+    {
+      "name": "train-963",
+      "quality": "medium",
+      "clock": 256.400000000024,
+      "snapshotSha256": "94df3fcc8d5805830a5f57304c1b34e331d403fa10a87404dd6952f529909b0a",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-train-963-medium.png",
+          "pngSha256": "c53fa7759731e5721ac77602cd61207aba44dc7cb2e8f09f9b36bf3c6087fb10",
+          "jpeg": "visual/V6-train-963-medium.jpg",
+          "jpegSha256": "47b31c41c36c6e86173b02d0c97cb2a25eeeb012d5e249e44ce0fd44e3ac78eb",
+          "pngBytes": 738346,
+          "jpegBytes": 152212,
+          "drawCalls": 234,
+          "triangles": 530379,
+          "textures": 209,
+          "geometries": 405,
+          "environmentInstances": 15101
+        },
+        "V7": {
+          "png": "visual/V7-train-963-medium.png",
+          "pngSha256": "c53fa7759731e5721ac77602cd61207aba44dc7cb2e8f09f9b36bf3c6087fb10",
+          "jpeg": "visual/V7-train-963-medium.jpg",
+          "jpegSha256": "47b31c41c36c6e86173b02d0c97cb2a25eeeb012d5e249e44ce0fd44e3ac78eb",
+          "pngBytes": 738346,
+          "jpegBytes": 152212,
+          "drawCalls": 234,
+          "triangles": 530358,
+          "textures": 209,
+          "geometries": 408,
+          "environmentInstances": 15101
+        }
+      }
+    },
+    {
+      "name": "weapon-ads-turn",
+      "quality": "medium",
+      "clock": 2.1500000000000004,
+      "snapshotSha256": "7e49706d29f9713924388bec995a0de569f1cc6b5a5768c90c8d9919fc1998a8",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.18176106770833333,
+        0.15127061631944444,
+        0.119580078125
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-ads-turn-medium.png",
+          "pngSha256": "4cf463221b801a2e3e3ac9736562dcd7ef5f40971f9ba8f01ed4bd160b047bfe",
+          "jpeg": "visual/V6-weapon-ads-turn-medium.jpg",
+          "jpegSha256": "2fc41af4a7ae9fc662e66809cd27103c293cc79dd0d2684382c8e4a346930118",
+          "pngBytes": 729223,
+          "jpegBytes": 157073,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-ads-turn-medium.png",
+          "pngSha256": "9250db0852732965b288bfa4b01b6242dc6e18cfd75a4eee0ccb9603e7831459",
+          "jpeg": "visual/V7-weapon-ads-turn-medium.jpg",
+          "jpegSha256": "0cb763ce0571b2ee96d5c88ea57daf59671202f355e009e96ff1587435e78f75",
+          "pngBytes": 728516,
+          "jpegBytes": 156991,
+          "fixtureRender": {
+            "calls": 286,
+            "triangles": 569042
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-brass",
+      "quality": "medium",
+      "clock": 2.849999999999998,
+      "snapshotSha256": "6349536c7438b586187e8be597642603516343b568ae719f5afa14f6cfbfbe07",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.4445269097222222,
+        0.4429665798611111,
+        0.4284299045138889
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-brass-medium.png",
+          "pngSha256": "c98fa9f695af08e989f157ec491a1bce8fc37d6602aad261b9a58e76144e1366",
+          "jpeg": "visual/V6-weapon-brass-medium.jpg",
+          "jpegSha256": "c8f2a52d7bccfde8601c4ddd44d3453efb7627a98c1e2a6c323a1d0a9680e62b",
+          "pngBytes": 717496,
+          "jpegBytes": 153626,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-brass-medium.png",
+          "pngSha256": "562267b8862388d41dd940ece85cb90324d52733894fd6765e4842f5d0619786",
+          "jpeg": "visual/V7-weapon-brass-medium.jpg",
+          "jpegSha256": "96956d3ee4f21562dbc8c700bd35ccaec27ce5257850386dfebff2601f1dd799",
+          "pngBytes": 715179,
+          "jpegBytes": 153964,
+          "fixtureRender": {
+            "calls": 296,
+            "triangles": 569280
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-hip",
+      "quality": "medium",
+      "clock": 1.2500000000000004,
+      "snapshotSha256": "c88170ff72cc538ba12d10ab6e06b16ed1afb10bc5ebfdcb6fb8658cfe27c845",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-hip-medium.png",
+          "pngSha256": "ca7a034f2959b571bb82470254e463bea32503fca2efc1b6eb50db16d14f8488",
+          "jpeg": "visual/V6-weapon-hip-medium.jpg",
+          "jpegSha256": "c42a88b7e39d2b396a7306f87c457a1825e4fbbaceae77c8910198f310a66dab",
+          "pngBytes": 760190,
+          "jpegBytes": 165642,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-hip-medium.png",
+          "pngSha256": "ca7a034f2959b571bb82470254e463bea32503fca2efc1b6eb50db16d14f8488",
+          "jpeg": "visual/V7-weapon-hip-medium.jpg",
+          "jpegSha256": "c42a88b7e39d2b396a7306f87c457a1825e4fbbaceae77c8910198f310a66dab",
+          "pngBytes": 760190,
+          "jpegBytes": 165642,
+          "fixtureRender": {
+            "calls": 286,
+            "triangles": 569042
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-reload",
+      "quality": "medium",
+      "clock": 10.050000000000008,
+      "snapshotSha256": "780b02564049c8edc11191ed1fa7643a875053eafa4c55ffdee6b8b0fec6b674",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        4.0147569444444445e-05,
+        2.9296875e-05,
+        3.472222222222222e-05
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-reload-medium.png",
+          "pngSha256": "30f2f22e46735244941df5b2e8a25a887d9fd79cc015bb68c8be5a47780fdd79",
+          "jpeg": "visual/V6-weapon-reload-medium.jpg",
+          "jpegSha256": "52fb0555082c12281c121eb20923be76e3e0721719e25f837e3e457879f8b17c",
+          "pngBytes": 658052,
+          "jpegBytes": 142036,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-reload-medium.png",
+          "pngSha256": "15037e5da6dcef49e4c0d2727d686aaa53b59e6aedf89cd2887074810e9ae8a5",
+          "jpeg": "visual/V7-weapon-reload-medium.jpg",
+          "jpegSha256": "557d0d51a81435d6d8d08aa0f6b044514318b69bbe3f976b0cde6978c40f1d3a",
+          "pngBytes": 658048,
+          "jpegBytes": 142039,
+          "fixtureRender": {
+            "calls": 291,
+            "triangles": 570766
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-shot",
+      "quality": "medium",
+      "clock": 2.2,
+      "snapshotSha256": "cb24b65b29ee0fbd0c9eeaae364822dcc7bd97bf0e0f3a9271873fc94e5a20ff",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.15611653645833334,
+        0.12910047743055555,
+        0.10212022569444444
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-shot-medium.png",
+          "pngSha256": "55190b83c3c892851365db5f7ee7f7e6e8b3cd8911c2ea21a422d7f964c6e4e8",
+          "jpeg": "visual/V6-weapon-shot-medium.jpg",
+          "jpegSha256": "e3c22160d3549ee0f52d1cc3b1866ccef79bec3fc670999f453ac41650d485c2",
+          "pngBytes": 715876,
+          "jpegBytes": 155253,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-shot-medium.png",
+          "pngSha256": "1aa09a20522c173cdf4ce88c0b521c8f920fd30583a95f89b7d110dcb252ea88",
+          "jpeg": "visual/V7-weapon-shot-medium.jpg",
+          "jpegSha256": "9a16d76a2c4732a776a13c9c415af3fa686801b6d6080ed7985c8fdd66cdac66",
+          "pngBytes": 715512,
+          "jpegBytes": 155200,
+          "fixtureRender": {
+            "calls": 290,
+            "triangles": 569050
+          }
+        }
+      }
+    },
+    {
+      "name": "bridge-east",
+      "quality": "high",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "eecab8c373a43c30fe6bedd5b511eb0aeac31e52d63d4291ed4d47888c3b7241",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-bridge-east-high.png",
+          "pngSha256": "044b2b8227aaf1e16267864e5f8c33ef77317a43944c18036d6026696467ee91",
+          "jpeg": "visual/V6-bridge-east-high.jpg",
+          "jpegSha256": "6246c60bcf8b72b0c7ed13400f96b05a35479a445de04549d8c6e204e0c2a6d9",
+          "pngBytes": 869505,
+          "jpegBytes": 227974,
+          "drawCalls": 210,
+          "triangles": 549813,
+          "textures": 91,
+          "geometries": 321,
+          "environmentInstances": 17559
+        },
+        "V7": {
+          "png": "visual/V7-bridge-east-high.png",
+          "pngSha256": "044b2b8227aaf1e16267864e5f8c33ef77317a43944c18036d6026696467ee91",
+          "jpeg": "visual/V7-bridge-east-high.jpg",
+          "jpegSha256": "6246c60bcf8b72b0c7ed13400f96b05a35479a445de04549d8c6e204e0c2a6d9",
+          "pngBytes": 869505,
+          "jpegBytes": 227974,
+          "drawCalls": 210,
+          "triangles": 549792,
+          "textures": 91,
+          "geometries": 324,
+          "environmentInstances": 17559
+        }
+      }
+    },
+    {
+      "name": "bridge-west",
+      "quality": "high",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "5e3ab4f5320b5033a07ae2d0de975cbb50b054a9ceb3fc2b4d91d1ee4d5a9775",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-bridge-west-high.png",
+          "pngSha256": "0ffee1414a8b41b6451ac431e98795393f6eaa99936a3f1f20884439a35bb4d1",
+          "jpeg": "visual/V6-bridge-west-high.jpg",
+          "jpegSha256": "16c036c006743636f89662c8c6bb7ffa17134a0a7262546d42079fb7707d0b0a",
+          "pngBytes": 912393,
+          "jpegBytes": 180556,
+          "drawCalls": 279,
+          "triangles": 570917,
+          "textures": 121,
+          "geometries": 311,
+          "environmentInstances": 20128
+        },
+        "V7": {
+          "png": "visual/V7-bridge-west-high.png",
+          "pngSha256": "0ffee1414a8b41b6451ac431e98795393f6eaa99936a3f1f20884439a35bb4d1",
+          "jpeg": "visual/V7-bridge-west-high.jpg",
+          "jpegSha256": "16c036c006743636f89662c8c6bb7ffa17134a0a7262546d42079fb7707d0b0a",
+          "pngBytes": 912393,
+          "jpegBytes": 180556,
+          "drawCalls": 279,
+          "triangles": 570896,
+          "textures": 121,
+          "geometries": 314,
+          "environmentInstances": 20128
+        }
+      }
+    },
+    {
+      "name": "east-demolition",
+      "quality": "high",
+      "clock": 741.1499999998737,
+      "snapshotSha256": "edf6be47ab7d2f9896cb472fa64a6e801deb1dd28784bf54a91f8094a967ebfa",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-east-demolition-high.png",
+          "pngSha256": "ac1a14c660e5acd28aca8c2c07289d5f010abe7aa044cec9fe101f3fcdb6af88",
+          "jpeg": "visual/V6-east-demolition-high.jpg",
+          "jpegSha256": "4ac6e04bf278c4d767ace7ed759dc1a55c3d1023f6e9b7073a0c593495c8db4b",
+          "pngBytes": 826578,
+          "jpegBytes": 215498,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-east-demolition-high.png",
+          "pngSha256": "ac1a14c660e5acd28aca8c2c07289d5f010abe7aa044cec9fe101f3fcdb6af88",
+          "jpeg": "visual/V7-east-demolition-high.jpg",
+          "jpegSha256": "4ac6e04bf278c4d767ace7ed759dc1a55c3d1023f6e9b7073a0c593495c8db4b",
+          "pngBytes": 826578,
+          "jpegBytes": 215498,
+          "fixtureRender": {
+            "calls": 334,
+            "triangles": 992380
+          }
+        }
+      }
+    },
+    {
+      "name": "evacuation",
+      "quality": "high",
+      "clock": 174.95000000000553,
+      "snapshotSha256": "800e344f84091474c223447a15a852bdb307f36c65f3190939953d2d6a1fdd5b",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.7416493055555555,
+        0.7603135850694445,
+        0.7308930121527778
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-evacuation-high.png",
+          "pngSha256": "e050a7f7e44546ba54f0136000345e1373c73764a74211b3b884274b3795bc2e",
+          "jpeg": "visual/V6-evacuation-high.jpg",
+          "jpegSha256": "16d8ec8608f00c267de52b3375ac60ffd73a824d6d8755c1755ac524f651d0eb",
+          "pngBytes": 868868,
+          "jpegBytes": 176642,
+          "drawCalls": 80,
+          "triangles": 515809,
+          "textures": 91,
+          "geometries": 470,
+          "environmentInstances": 22293
+        },
+        "V7": {
+          "png": "visual/V7-evacuation-high.png",
+          "pngSha256": "7c73dc9e359f0d2e1132575e41830c66a507150cbb64fd4458fc6c171a6ecf4b",
+          "jpeg": "visual/V7-evacuation-high.jpg",
+          "jpegSha256": "d1c7da203f0447af1189bed7c5c278243311a97ebec4780989ef24c85713d5f7",
+          "pngBytes": 874120,
+          "jpegBytes": 177081,
+          "drawCalls": 80,
+          "triangles": 519192,
+          "textures": 91,
+          "geometries": 473,
+          "environmentInstances": 22293
+        }
+      }
+    },
+    {
+      "name": "grenade-explosion",
+      "quality": "high",
+      "clock": 4.099999999999993,
+      "snapshotSha256": "e89994c3cc63bfb6ed3535fbd7e2deb4f6a450c0ce3b8a8e65f8906eba76822e",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-grenade-explosion-high.png",
+          "pngSha256": "c863a7a167c6bc6fe51575ba134eaf7dff9c095fcc5e5f9ccb4b563eae8089ab",
+          "jpeg": "visual/V6-grenade-explosion-high.jpg",
+          "jpegSha256": "0b1f5c12b1c059a4f059f7ee76c3c0c0d5ef167841ad7c4e386cb9d9ac4071cc",
+          "pngBytes": 782950,
+          "jpegBytes": 167100,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-grenade-explosion-high.png",
+          "pngSha256": "c863a7a167c6bc6fe51575ba134eaf7dff9c095fcc5e5f9ccb4b563eae8089ab",
+          "jpeg": "visual/V7-grenade-explosion-high.jpg",
+          "jpegSha256": "0b1f5c12b1c059a4f059f7ee76c3c0c0d5ef167841ad7c4e386cb9d9ac4071cc",
+          "pngBytes": 782950,
+          "jpegBytes": 167100,
+          "fixtureRender": {
+            "calls": 298,
+            "triangles": 629781
+          }
+        }
+      }
+    },
+    {
+      "name": "panzerzug",
+      "quality": "high",
+      "clock": 303.10000000003464,
+      "snapshotSha256": "a06dce114ea5e518463e8dfa626e0ee7105df15ee332faa9367210facec3b1f7",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-panzerzug-high.png",
+          "pngSha256": "2d4cd90fc17906510eefdf671d65354c921e98371594b70185a4131742eb327b",
+          "jpeg": "visual/V6-panzerzug-high.jpg",
+          "jpegSha256": "67af3c20caf466274d1194a4a6e0dc90ca9ae6a366aa83cfcd14fc83c06f9ff3",
+          "pngBytes": 583062,
+          "jpegBytes": 131153,
+          "drawCalls": 230,
+          "triangles": 574463,
+          "textures": 237,
+          "geometries": 455,
+          "environmentInstances": 15265
+        },
+        "V7": {
+          "png": "visual/V7-panzerzug-high.png",
+          "pngSha256": "2d4cd90fc17906510eefdf671d65354c921e98371594b70185a4131742eb327b",
+          "jpeg": "visual/V7-panzerzug-high.jpg",
+          "jpegSha256": "67af3c20caf466274d1194a4a6e0dc90ca9ae6a366aa83cfcd14fc83c06f9ff3",
+          "pngBytes": 583062,
+          "jpegBytes": 131153,
+          "drawCalls": 230,
+          "triangles": 574442,
+          "textures": 237,
+          "geometries": 458,
+          "environmentInstances": 15265
+        }
+      }
+    },
+    {
+      "name": "roll-call",
+      "quality": "high",
+      "clock": 1003.2499999996353,
+      "snapshotSha256": "e1c78b3e828845cd6316dffc46a39d0bde185a40e812ca40d0810d7e5539b99d",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-roll-call-high.png",
+          "pngSha256": "f9a73f90452e929afdc24d9b11bef5610ac26413096724019d8ff75410df609c",
+          "jpeg": "visual/V6-roll-call-high.jpg",
+          "jpegSha256": "d3dd28edc66e9e3b7def5e9072fd47fb00091e6e943ae93b45b7bf4b0c2eacc2",
+          "pngBytes": 919870,
+          "jpegBytes": 199349,
+          "drawCalls": 315,
+          "triangles": 951720,
+          "textures": 245,
+          "geometries": 497,
+          "environmentInstances": 22471
+        },
+        "V7": {
+          "png": "visual/V7-roll-call-high.png",
+          "pngSha256": "f9a73f90452e929afdc24d9b11bef5610ac26413096724019d8ff75410df609c",
+          "jpeg": "visual/V7-roll-call-high.jpg",
+          "jpegSha256": "d3dd28edc66e9e3b7def5e9072fd47fb00091e6e943ae93b45b7bf4b0c2eacc2",
+          "pngBytes": 919870,
+          "jpegBytes": 199349,
+          "drawCalls": 315,
+          "triangles": 954417,
+          "textures": 245,
+          "geometries": 500,
+          "environmentInstances": 22471
+        }
+      }
+    },
+    {
+      "name": "soldiers",
+      "quality": "high",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "eaa97fa790282dddbef98970a5c8755e3836dfba42c2764f96feeafcad425d8e",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-soldiers-high.png",
+          "pngSha256": "cbf3f078ec35251a5fb71275150e79abf004ab1d6ce71159c9836154eef61543",
+          "jpeg": "visual/V6-soldiers-high.jpg",
+          "jpegSha256": "0a7ec6f72964621a4f8ae5e0f019ec7db0f6beacc7952e873e19eac7690d38b0",
+          "pngBytes": 691427,
+          "jpegBytes": 160844,
+          "drawCalls": 253,
+          "triangles": 551686,
+          "textures": 121,
+          "geometries": 311,
+          "environmentInstances": 19184
+        },
+        "V7": {
+          "png": "visual/V7-soldiers-high.png",
+          "pngSha256": "cbf3f078ec35251a5fb71275150e79abf004ab1d6ce71159c9836154eef61543",
+          "jpeg": "visual/V7-soldiers-high.jpg",
+          "jpegSha256": "0a7ec6f72964621a4f8ae5e0f019ec7db0f6beacc7952e873e19eac7690d38b0",
+          "pngBytes": 691427,
+          "jpegBytes": 160844,
+          "drawCalls": 253,
+          "triangles": 551665,
+          "textures": 121,
+          "geometries": 314,
+          "environmentInstances": 19184
+        }
+      }
+    },
+    {
+      "name": "station-frontal",
+      "quality": "high",
+      "clock": 0.05,
+      "snapshotSha256": "19039c6e5fa056e4413d1b2b9a2685e90b43b59b3580688a28ea088bc18464eb",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        5.746578776041667,
+        5.188420138888889,
+        4.378272569444444
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-frontal-high.png",
+          "pngSha256": "cc54011c21f01b670a887c554fa5ffbd23e286b67eb2f3c2a3b2929a359bde73",
+          "jpeg": "visual/V6-station-frontal-high.jpg",
+          "jpegSha256": "e000af89b6cfcc19982314449bc2dce4a0ef4b37bd4595ad4ece277edb2a502a",
+          "pngBytes": 896890,
+          "jpegBytes": 210998,
+          "drawCalls": 56,
+          "triangles": 484908,
+          "textures": 51,
+          "geometries": 250,
+          "environmentInstances": 22049
+        },
+        "V7": {
+          "png": "visual/V7-station-frontal-high.png",
+          "pngSha256": "5c1293090f4706bb347a96ba3a1e84ac8971175a5288fb4feb97efedb3e88827",
+          "jpeg": "visual/V7-station-frontal-high.jpg",
+          "jpegSha256": "64871e7a8c7e5fe48705a0155365fee9b33c47218147dc853c5fd69b0f48750e",
+          "pngBytes": 921402,
+          "jpegBytes": 200023,
+          "drawCalls": 56,
+          "triangles": 488312,
+          "textures": 53,
+          "geometries": 255,
+          "environmentInstances": 22049
+        }
+      }
+    },
+    {
+      "name": "station-oblique",
+      "quality": "high",
+      "clock": 0.05,
+      "snapshotSha256": "677183ad755f63f04e988ef7113cfe8865236705fd6dbd1071b77bc3739b4aee",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        1.0828363715277778,
+        0.9787489149305556,
+        0.7820290798611111
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-oblique-high.png",
+          "pngSha256": "577bf3cf9d319f07c076fd9e795fcf30887904c644f68d56275f89d675561963",
+          "jpeg": "visual/V6-station-oblique-high.jpg",
+          "jpegSha256": "8e90a228c858c2cdf634f79a26946b41f46c587237504e72aaf69bf31fe19427",
+          "pngBytes": 761312,
+          "jpegBytes": 164180,
+          "drawCalls": 64,
+          "triangles": 492444,
+          "textures": 55,
+          "geometries": 262,
+          "environmentInstances": 21744
+        },
+        "V7": {
+          "png": "visual/V7-station-oblique-high.png",
+          "pngSha256": "9fa1d88846b87d7e8502bbcfc8b0187d2997a5a41e8fa0661ed7dc945651ef64",
+          "jpeg": "visual/V7-station-oblique-high.jpg",
+          "jpegSha256": "6380930ad656a55c3ae3f8f408b3497b95bf9e4d3b310a1be0760905bab0f2c5",
+          "pngBytes": 761256,
+          "jpegBytes": 164770,
+          "drawCalls": 64,
+          "triangles": 495848,
+          "textures": 57,
+          "geometries": 267,
+          "environmentInstances": 21744
+        }
+      }
+    },
+    {
+      "name": "station-platform",
+      "quality": "high",
+      "clock": 0.05,
+      "snapshotSha256": "b1b60f86439b704a27432f23dea454e6b497a9534bc62646fde2af6735d871ac",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        6.697263454861111,
+        6.149430338541666,
+        5.388140190972222
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-platform-high.png",
+          "pngSha256": "b2682387d665457519bebe56a1319bc8a9e1f5ea5c96ee85c52e962b1bc5302d",
+          "jpeg": "visual/V6-station-platform-high.jpg",
+          "jpegSha256": "18c7795c5cc9e86703b58144e7299c46ac5aec68d688564461bd1508b439e424",
+          "pngBytes": 835050,
+          "jpegBytes": 200596,
+          "drawCalls": 69,
+          "triangles": 494913,
+          "textures": 55,
+          "geometries": 262,
+          "environmentInstances": 22272
+        },
+        "V7": {
+          "png": "visual/V7-station-platform-high.png",
+          "pngSha256": "297275f506bd2d892818537903aa4a8cb2fbe5337a69b45b06a768305a3a0247",
+          "jpeg": "visual/V7-station-platform-high.jpg",
+          "jpegSha256": "b35040c8f8e6d537d334034183285b52f601673227ee38a4334931ef20da5966",
+          "pngBytes": 866277,
+          "jpegBytes": 181232,
+          "drawCalls": 69,
+          "triangles": 498317,
+          "textures": 57,
+          "geometries": 267,
+          "environmentInstances": 22272
+        }
+      }
+    },
+    {
+      "name": "station-window",
+      "quality": "high",
+      "clock": 0.05,
+      "snapshotSha256": "526565ec9196737f90d3625105bc20f2d9dfa1697cb44969ef7afbfe66ef3687",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        5.102037760416667,
+        4.494721137152778,
+        3.694926215277778
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-window-high.png",
+          "pngSha256": "0f98613be1b88448016a80f7a07951d14e7233df1ad78b91342519d5521edff7",
+          "jpeg": "visual/V6-station-window-high.jpg",
+          "jpegSha256": "5fac5357bb91fd626eff52e25b7e31f6a1f0e72a092ad1843bed929713ff4f92",
+          "pngBytes": 728660,
+          "jpegBytes": 172215,
+          "drawCalls": 56,
+          "triangles": 484921,
+          "textures": 55,
+          "geometries": 262,
+          "environmentInstances": 22016
+        },
+        "V7": {
+          "png": "visual/V7-station-window-high.png",
+          "pngSha256": "7ba2376c6d6e3291c8dfbe70290b8c6b4587beeea8845d39a6ca8ac9e8277521",
+          "jpeg": "visual/V7-station-window-high.jpg",
+          "jpegSha256": "ff8e1779ea0e49f433ba136f7c1fe93b1ddf6925ce7c8dd09789a3a1b79cc70a",
+          "pngBytes": 754426,
+          "jpegBytes": 162744,
+          "drawCalls": 56,
+          "triangles": 488325,
+          "textures": 57,
+          "geometries": 267,
+          "environmentInstances": 22016
+        }
+      }
+    },
+    {
+      "name": "station-yard",
+      "quality": "high",
+      "clock": 0.05,
+      "snapshotSha256": "da4aed77ece1df4ce90fe31e838aedbb8f37545e162bd43c474137d03ac757ff",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.3352191840277778,
+        0.3224565972222222,
+        0.27176215277777777
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-yard-high.png",
+          "pngSha256": "3ce8cc63a521b6971307dd9720bb3d0ca49b55303adb24f42ad073121ae5accd",
+          "jpeg": "visual/V6-station-yard-high.jpg",
+          "jpegSha256": "e61d44551ff123d6abf383cc23e7b9e2d552579fb9db41fa4f2a31f320652b0d",
+          "pngBytes": 703234,
+          "jpegBytes": 153441,
+          "drawCalls": 70,
+          "triangles": 497147,
+          "textures": 55,
+          "geometries": 262,
+          "environmentInstances": 21860
+        },
+        "V7": {
+          "png": "visual/V7-station-yard-high.png",
+          "pngSha256": "8686143040ad428e030ad527e388c759886deb8e4d111d39e33f7b8419a0d023",
+          "jpeg": "visual/V7-station-yard-high.jpg",
+          "jpegSha256": "f3489280d31968ad1d24d4d820ed2bf8b97fef49d6912983806a48f77bf646e7",
+          "pngBytes": 704626,
+          "jpegBytes": 153614,
+          "drawCalls": 70,
+          "triangles": 500551,
+          "textures": 57,
+          "geometries": 267,
+          "environmentInstances": 21860
+        }
+      }
+    },
+    {
+      "name": "train-963",
+      "quality": "high",
+      "clock": 256.400000000024,
+      "snapshotSha256": "94df3fcc8d5805830a5f57304c1b34e331d403fa10a87404dd6952f529909b0a",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-train-963-high.png",
+          "pngSha256": "e6ee42fce45db7ac68b5961143bb195ec09f238bd8570e9b406b9971e143bf23",
+          "jpeg": "visual/V6-train-963-high.jpg",
+          "jpegSha256": "6f18d4962888ecbcab23435877c050a251d5b6dfd220a3de3b745560ca69e9b0",
+          "pngBytes": 738441,
+          "jpegBytes": 152172,
+          "drawCalls": 259,
+          "triangles": 653774,
+          "textures": 236,
+          "geometries": 444,
+          "environmentInstances": 15293
+        },
+        "V7": {
+          "png": "visual/V7-train-963-high.png",
+          "pngSha256": "e6ee42fce45db7ac68b5961143bb195ec09f238bd8570e9b406b9971e143bf23",
+          "jpeg": "visual/V7-train-963-high.jpg",
+          "jpegSha256": "6f18d4962888ecbcab23435877c050a251d5b6dfd220a3de3b745560ca69e9b0",
+          "pngBytes": 738441,
+          "jpegBytes": 152172,
+          "drawCalls": 259,
+          "triangles": 653753,
+          "textures": 236,
+          "geometries": 447,
+          "environmentInstances": 15293
+        }
+      }
+    },
+    {
+      "name": "weapon-ads-turn",
+      "quality": "high",
+      "clock": 2.1500000000000004,
+      "snapshotSha256": "7e49706d29f9713924388bec995a0de569f1cc6b5a5768c90c8d9919fc1998a8",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.18179144965277777,
+        0.15130208333333334,
+        0.11959743923611112
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-ads-turn-high.png",
+          "pngSha256": "a1a676b380587427e1e78ef50b77954de314fbda3ce297278eb0533a2f22ed23",
+          "jpeg": "visual/V6-weapon-ads-turn-high.jpg",
+          "jpegSha256": "828169b6f2b529b4a0067146ea9e2925bcc2423bf55039536c91207aa1375b82",
+          "pngBytes": 729471,
+          "jpegBytes": 157337,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-ads-turn-high.png",
+          "pngSha256": "570b9c8ed2faa8b11d3232f8cb6f04e932ccd1f7d4b5c193048db801d0cf64fc",
+          "jpeg": "visual/V7-weapon-ads-turn-high.jpg",
+          "jpegSha256": "b9f95fc7dd185a025d3abfed96b1abc010d6913e5ab86a6632d2b019a345a4c1",
+          "pngBytes": 728770,
+          "jpegBytes": 157376,
+          "fixtureRender": {
+            "calls": 295,
+            "triangles": 629657
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-brass",
+      "quality": "high",
+      "clock": 2.849999999999998,
+      "snapshotSha256": "6349536c7438b586187e8be597642603516343b568ae719f5afa14f6cfbfbe07",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.444638671875,
+        0.4430783420138889,
+        0.428486328125
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-brass-high.png",
+          "pngSha256": "84e8fe269fc743c0f6be946b8eac66cb15e0c4fdf7d1092178c180c114c16e82",
+          "jpeg": "visual/V6-weapon-brass-high.jpg",
+          "jpegSha256": "b10d3f33d2390721ed5f49695281abffdeda819351c6ce52ba164297631a9ac1",
+          "pngBytes": 717970,
+          "jpegBytes": 154136,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-brass-high.png",
+          "pngSha256": "b3ff07ba2b8b0c4a5c38c7df20ba5c2018be186d1f9bc5c10db528c432f876a5",
+          "jpeg": "visual/V7-weapon-brass-high.jpg",
+          "jpegSha256": "baa4c77104e264f9406adc12c4cb4d070bc104fc132dacb601798c78f9ffa2c5",
+          "pngBytes": 715580,
+          "jpegBytes": 154467,
+          "fixtureRender": {
+            "calls": 305,
+            "triangles": 629895
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-hip",
+      "quality": "high",
+      "clock": 1.2500000000000004,
+      "snapshotSha256": "c88170ff72cc538ba12d10ab6e06b16ed1afb10bc5ebfdcb6fb8658cfe27c845",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-hip-high.png",
+          "pngSha256": "d724bb952f7f7d1a30304c37b49a7db875cb083acf92b7fd503751cffe5833b8",
+          "jpeg": "visual/V6-weapon-hip-high.jpg",
+          "jpegSha256": "ef4b59b1101c16813c056437e76f167d7297f949fee4bfe5fd217ccbdc2c20d4",
+          "pngBytes": 760971,
+          "jpegBytes": 165949,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-hip-high.png",
+          "pngSha256": "d724bb952f7f7d1a30304c37b49a7db875cb083acf92b7fd503751cffe5833b8",
+          "jpeg": "visual/V7-weapon-hip-high.jpg",
+          "jpegSha256": "ef4b59b1101c16813c056437e76f167d7297f949fee4bfe5fd217ccbdc2c20d4",
+          "pngBytes": 760971,
+          "jpegBytes": 165949,
+          "fixtureRender": {
+            "calls": 295,
+            "triangles": 629657
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-reload",
+      "quality": "high",
+      "clock": 10.050000000000008,
+      "snapshotSha256": "780b02564049c8edc11191ed1fa7643a875053eafa4c55ffdee6b8b0fec6b674",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        4.0147569444444445e-05,
+        2.9296875e-05,
+        3.472222222222222e-05
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-reload-high.png",
+          "pngSha256": "51bbda5930bf705c35e695037008971e01ad8b901ea6aae1c63eaf11cd863776",
+          "jpeg": "visual/V6-weapon-reload-high.jpg",
+          "jpegSha256": "6b4c3dd41d504365a0736cfcd5ed26935e499454275554e6e4a9eea64ebeb549",
+          "pngBytes": 658736,
+          "jpegBytes": 142326,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-reload-high.png",
+          "pngSha256": "e264f41dfee34c0174f989c042a4a77f2feb329e9abecbd022b8697dce4296e4",
+          "jpeg": "visual/V7-weapon-reload-high.jpg",
+          "jpegSha256": "76211f79b6a0c4fdc8e502d5f57c7298c6f57311bea67261734b54f7426cf0c6",
+          "pngBytes": 658729,
+          "jpegBytes": 142304,
+          "fixtureRender": {
+            "calls": 300,
+            "triangles": 631381
+          }
+        }
+      }
+    },
+    {
+      "name": "weapon-shot",
+      "quality": "high",
+      "clock": 2.2,
+      "snapshotSha256": "cb24b65b29ee0fbd0c9eeaae364822dcc7bd97bf0e0f3a9271873fc94e5a20ff",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        0.15611653645833334,
+        0.12910047743055555,
+        0.10212022569444444
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-weapon-shot-high.png",
+          "pngSha256": "6bd167df5872e926ef31ac467183cfba3a1a61a299a43213b3c61e5f4e213296",
+          "jpeg": "visual/V6-weapon-shot-high.jpg",
+          "jpegSha256": "484d817757f15334634d2e95ab9eb7c128943c2cae73b3dca73d33175761a870",
+          "pngBytes": 716128,
+          "jpegBytes": 155574,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-weapon-shot-high.png",
+          "pngSha256": "71a70b3c08908f3efefacf06d07180255eb832d83d5e2a977a74113f3554d2b4",
+          "jpeg": "visual/V7-weapon-shot-high.jpg",
+          "jpegSha256": "358e014bada0becbc8426877453fa13e6c4b96aa0f1320eef1ec66d9b41fecef",
+          "pngBytes": 715752,
+          "jpegBytes": 155555,
+          "fixtureRender": {
+            "calls": 299,
+            "triangles": 629665
+          }
+        }
+      }
+    }
+  ],
+  "pairCount": 57,
+  "captureCount": 114,
+  "allSnapshotsEquivalent": true,
+  "boards": [
+    "boards/station-low.jpg",
+    "boards/world-low.jpg",
+    "boards/weapon-low.jpg",
+    "boards/fx-low.jpg",
+    "boards/station-medium.jpg",
+    "boards/world-medium.jpg",
+    "boards/weapon-medium.jpg",
+    "boards/fx-medium.jpg",
+    "boards/station-high.jpg",
+    "boards/world-high.jpg",
+    "boards/weapon-high.jpg",
+    "boards/fx-high.jpg"
+  ],
+  "fpsMeasured": false,
+  "physicalGpuMemoryMeasured": false,
+  "imageEncoding": "Pixel measurements from original lossless PNG; repository JPEG copies at original 1280x720, quality 92, no retouch. Lossless PNGs in Actions artifact."
+}

@@ -1,0 +1,23 @@
+# Verificação independente final local — tentativa 2
+
+STATUS: PASS LOCAL. EVIDÊNCIA SUFICIENTE PARA REVIEW: SIM. GATE DE INTEGRAÇÃO COMPLETA: CI PENDENTE.
+
+Branch `codex/m01-continuity-raid-integration-v1`; base/HEAD durante os checks `2d65dd0b9837d5e6f21fe24dd8a8b167ca76df55`. Uma correção necessária: a tabela fechada de IDs em `Game` passou a reconhecer os cinco novos impactos como aéreos após reload. O teste existente de lifecycle foi reforçado para exigir todos os seis IDs do raid. Context packet confirmado VALID antes da verificação. Produção/testes/golden congelados durante os checks; nenhum deles foi editado pelo verificador.
+
+- **Node afetado final: PASS, 28/28**, `node --test --test-concurrency=2 tests/foundation.test.js tests/game.test.js tests/m01-consolidation-lifecycle.test.js`, 4554 ms. Log `/workspace/scratch/cod-final-focused-node.log`. O teste anteriormente falhado agora preserva som atrasado, classificação aérea e shake no reload para os seis IDs, sem duplicação nem mutação do save/RNG.
+- **Build final: PASS**, `npm run build`, bundle `index-lOvjtvh9.js`, build 426 ms. Log `/workspace/scratch/cod-final-build.log`. Apenas aviso conhecido de tamanho de bundle.
+- **Browser final: PASS, 1/1, zero retries/unexpected/flaky**, `CI=1 npx playwright test tests/browser/m01-continuity-raid.spec.js --workers=1 --retries=0 --reporter=list,json`, 58799 ms. Log `/workspace/scratch/cod-final-browser.log`; screenshot `test-results/m01-continuity-raid-raid-d-fb0f9-o-após-continuação-às-05-36/raid-0536.png` inspecionada. Attachment confirma seis impactos únicos, battleClock `20162.40000000132` (05:36:02), raid ended, **171 puffs**, paused=true, relógio/damage/puffs congelados e nenhum erro de página/recurso. Evidência é continuação de estado atingido por controlos reais na simulação; não é playtest humano nem partida contínua no navegador.
+- **Invariantes finais: PASS**, `git diff --check`; wz29/fire/spatial/random/world/package/lock/playwright EXACT contra base. Simulation SHA256 **e988fcd9b923a429657d1deeb820054694b5e9b046ff904faa190e14e020c4a6**; golden SHA256 **e0fb4ecbc1e483f9d9e177fd63c8a5a063529787238500d5a8a91e80e696b958**, ambos idênticos à tentativa 1. Guard obrigatório de hash exato continua a passar; proveniência histórica original retida.
+- **Evidência focal anterior válida: PASS, 22/22**, `focused-node.log`: LOS/fogo a oeste, dlg019 apenas após destruição, grounding após safety shift, seis horários fixos sem RNG, pause/double restore, legado schema 2 sem replay, corrupções correntes/aninhadas rejeitadas atomicamente e colunas persistentes nos três níveis de qualidade. A correção não alterou simulation/renderer/fixture, pelo que estes checks não foram repetidos.
+
+## Histórico preservado e limite da conclusão
+
+A suite Node completa anterior foi realmente **FAIL: 693/694 PASS, uma falha**, 510957 ms. Não é convertida em PASS por união dos resultados. O baseline anterior passou 683/683. A falha e a reprodução estão em `VERIFIER-FIRST-FAIL.md`, `/workspace/scratch/cod-candidate-node-full.log` e `/workspace/scratch/cod-candidate-lifecycle-failure.log`: reload de `raid_0530_1` dava aerial:false/shake:true em vez de aerial:true/shake:false. A correção de uma tabela fechada resolveu o teste existente sem o enfraquecer.
+
+Não foi executada outra suite completa local. A suite completa **final de 694 testes no CI da branch revista é gate obrigatório pendente**, e deve ser observada antes do fecho. Skills locais `focused-verification` e fase 2 de `autonomous-task` aplicados. Uma fix attempt; sem alterações de main/deploy.
+
+Próximo passo: critical review do diff final e, após push autorizado da branch de trabalho, observar full Node/build/browser CI. Se o CI falhar, preservar a falha e corrigir proporcionalmente; não declarar full694PASS antes do resultado real.
+
+## Gate remoto fechado — 2026-10-14
+
+CI 38582392486 no commit `8387b5627b3b5482370c0915f018776d563e31ec`: SUCCESS. **694/694 Node**, build PASS e browser **1/1**, workers 1, retries 0, numa execução final própria; não é união com resultados anteriores. Provas: `CI_RESULT.json` e `ci-job.log`. Condição de fecho satisfeita; revisão seguinte só de documentos, sem mudanças no código validado.

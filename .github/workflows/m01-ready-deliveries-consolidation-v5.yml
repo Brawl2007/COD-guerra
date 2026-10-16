@@ -1,0 +1,80 @@
+name: M01 ready deliveries consolidation V5
+
+on:
+  push:
+    branches:
+      - codex/m01-ready-deliveries-consolidation-v5
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-ready-deliveries-consolidation-v5
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: npm run build
+
+  focused-node:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        test:
+          - m01-soldier-motion-clips.test.js
+          - m01-train-consist-polish.test.js
+          - m01-station-architecture.test.js
+          - m01-bridge-structure.test.js
+          - m01-animation-contract.test.js
+          - m01-weapon-presentation.test.js
+          - m01-battlefield-fx-polish-v3.test.js
+          - m01-damage-decals.test.js
+          - m01-vegetation-layout.test.js
+          - m01-audio-production.test.js
+          - m01-aircraft-runtime.test.js
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: node --test --test-concurrency=1 tests/${{ matrix.test }}
+
+  focused-browser:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Reproduce FX and camera tests on combined runtime
+        run: >-
+          npx playwright test
+          tests/browser/m01-battlefield-fx-polish-v3.spec.js
+          tests/browser/m01-damage-decals.spec.js
+          tests/browser/m01-weapon-presentation.spec.js
+          --workers=1
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v5-browser-diagnostics
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

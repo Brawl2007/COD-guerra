@@ -1,0 +1,13 @@
+A	.github/workflows/m01-train-detail-coupling-polish-v1.yml
+A	src/render/m01-train-consist-detail.js
+M	src/render/m01-train-wagons.js
+A	tests/browser/m01-train-consist-polish.spec.js
+M	tests/m01-support-runtime.test.js
+A	tests/m01-train-consist-polish.test.js
+A	tools/verification/m01-train-consist-audit.mjs
+A	tools/verification/m01-train-consist-fixture.html
+A	tools/verification/m01-train-consist-gallery.mjs
+M	DEVELOPMENT_STATUS.md (docs commit)
+M	docs/NEXT_CHAT_CONTEXT.md (docs commit)
+A	tools/verification/m01-train-consist-pairs.py (docs commit)
+A	docs/verification/m01-runtime/train-detail-coupling-polish-v1/ (docs commit)

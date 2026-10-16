@@ -1,0 +1,32 @@
+✔ Station mesh vertices remain inside the authorised visual envelope at all LODs (246.107246ms)
+✔ the facade has real missing wall faces, deep closed reveals and physical parallax (118.494508ms)
+✔ silhouette, roofs and openings survive quality switches; detail and allocation stay bounded (81.217088ms)
+✖ geometry and material maps regenerate byte for byte without random state or external assets (21.203752ms)
+✔ Station construction/sync preserves all anchors, colliders, props and save/RNG/evacuation authority (720.455231ms)
+✔ platform and awning preserve walking clearance in the existing facade and evacuation strips (87.574188ms)
+✔ dispose is idempotent; recreate replaces one root and frees owned geometry/material/texture resources once (197.991051ms)
+✔ unexpected or missing Station anchors fail safely before attaching any replacement root (0.940531ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1612.602789
+
+✖ failing tests:
+
+test at tests/m01-station-architecture.test.js:51:1
+✖ geometry and material maps regenerate byte for byte without random state or external assets (21.203752ms)
+  Error: Unseeded visual randomness
+      at Math.random (file:///workspace/scratch/2975fbb80cc7/COD-guerra/tests/m01-station-architecture.test.js:52:57)
+      at generateUUID (file:///workspace/scratch/2975fbb80cc7/COD-guerra/node_modules/three/build/three.core.js:2321:18)
+      at new BufferGeometry (file:///workspace/scratch/2975fbb80cc7/COD-guerra/node_modules/three/build/three.core.js:18442:15)
+      at MeshWriter.geometry (file:///workspace/scratch/2975fbb80cc7/COD-guerra/src/render/m01-station-architecture.js:54:13)
+      at file:///workspace/scratch/2975fbb80cc7/COD-guerra/src/render/m01-station-architecture.js:174:102
+      at Array.map (<anonymous>)
+      at buildStationMeshes (file:///workspace/scratch/2975fbb80cc7/COD-guerra/src/render/m01-station-architecture.js:174:84)
+      at Array.map (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/scratch/2975fbb80cc7/COD-guerra/tests/m01-station-architecture.test.js:54:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)

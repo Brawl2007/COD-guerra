@@ -1,0 +1,117 @@
+{
+  "task": "M01-ANIM-CONTRACT-SIM-V1",
+  "cases": [
+    {
+      "label": "gameplay-baseline",
+      "seed": 19390901,
+      "support": false,
+      "ticks": 20976,
+      "blocks": 41,
+      "maxSpeed": 33.24429142066895
+    },
+    {
+      "label": "gameplay-baseline",
+      "seed": 7,
+      "support": true,
+      "ticks": 20107,
+      "blocks": 40,
+      "maxSpeed": 33.24429142066895
+    },
+    {
+      "label": "cp_m01_a_orientacao",
+      "ticks": 180,
+      "firstDivergence": null,
+      "clock": 3.565999999999994,
+      "rng": 19390901
+    },
+    {
+      "label": "cp_m01_b_reorganizacao",
+      "ticks": 180,
+      "firstDivergence": null,
+      "clock": 101.26599999999658,
+      "rng": 19390901
+    },
+    {
+      "label": "cp_m01_c_engenheiros",
+      "ticks": 180,
+      "firstDivergence": null,
+      "clock": 517.8160000000782,
+      "rng": 2517969563
+    },
+    {
+      "label": "cp_m01_d_retirada",
+      "ticks": 180,
+      "firstDivergence": null,
+      "clock": 798.3159999998231,
+      "rng": 1421686038
+    },
+    {
+      "label": "station-grab",
+      "ticks": 120,
+      "firstDivergence": null,
+      "clock": 164.60000000000318,
+      "rng": 29
+    },
+    {
+      "label": "station-drag",
+      "ticks": 120,
+      "firstDivergence": null,
+      "clock": 180.30000000000675,
+      "rng": 29
+    },
+    {
+      "label": "station-release",
+      "ticks": 120,
+      "firstDivergence": null,
+      "clock": 218.8500000000155,
+      "rng": 29
+    },
+    {
+      "label": "bak-carry",
+      "ticks": 180,
+      "firstDivergence": null,
+      "clock": 859.9499999997656,
+      "rng": 755031976
+    },
+    {
+      "label": "mg34-prone-burst",
+      "ticks": 100,
+      "firstDivergence": null,
+      "clock": 4.500000000000001,
+      "rng": 2236384061
+    },
+    {
+      "label": "legacy-86",
+      "ticks": 160,
+      "firstDivergence": null,
+      "clock": 105.74999999999613,
+      "rng": 39400879
+    },
+    {
+      "label": "legacy-89",
+      "ticks": 160,
+      "firstDivergence": null,
+      "clock": 105.74999999999613,
+      "rng": 39400879
+    },
+    {
+      "label": "atomic-false",
+      "ticks": 40,
+      "firstDivergence": null,
+      "clock": 2.0500000000000007,
+      "rng": 17
+    },
+    {
+      "label": "atomic-true",
+      "ticks": 40,
+      "firstDivergence": null,
+      "clock": 2.0500000000000007,
+      "rng": 17
+    },
+    {
+      "label": "corruption",
+      "mutations": 44,
+      "atomic": true
+    }
+  ]
+}

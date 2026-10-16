@@ -1,0 +1,20 @@
+{
+  "distanceMetres": 1004.3468026533465,
+  "camera": [
+    75,
+    35,
+    -90
+  ],
+  "target": [
+    1075,
+    8,
+    -2.5
+  ],
+  "pixels": {
+    "lampPixels": 0,
+    "smokePixels": 7,
+    "lampBrightening": 0
+  },
+  "editorialMask": "pause/menu/frozen resume overlay only",
+  "method": "Same paused production frame/camera and snapshot, independently toggle only lamp and smoke, compare decoded PNG RGB at threshold3/255."
+}

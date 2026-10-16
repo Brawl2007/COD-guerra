@@ -1,0 +1,5726 @@
+{
+  "status": "PASS",
+  "url": "http://127.0.0.1:5173/COD-guerra/",
+  "onlinePreviewCreated": false,
+  "testedHead": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
+  "kind": "Real V7 app and browser input; automated smoke test, not a human playtest",
+  "browser": "145.0.7632.6",
+  "errors": [],
+  "failed": [],
+  "checks": [
+    "menu",
+    "intro and start",
+    "KeyW",
+    "KeyS",
+    "KeyA",
+    "KeyD",
+    "native pointer lock and relative mouse",
+    "shoot",
+    "ADS",
+    "pause freezes reload",
+    "reload and resume",
+    "audio and HUD",
+    "Schema 2 checkpoint",
+    "Continue after reload"
+  ],
+  "quality": "low",
+  "active": {
+    "renderer": "Three.js",
+    "quality": "low",
+    "drawCalls": 175,
+    "triangles": 423651,
+    "geometries": 234,
+    "textures": 123,
+    "assetFailures": [],
+    "models": [
+      "weapon",
+      "ally",
+      "enemy"
+    ],
+    "weaponFx": {
+      "world": {
+        "casings": 0,
+        "clips": 0,
+        "puffs": 0,
+        "resting": 0,
+        "capacity": {
+          "casings": 12,
+          "clips": 3,
+          "puffs": 24
+        }
+      },
+      "lighting": null
+    },
+    "audio": {
+      "state": "running",
+      "activeVoices": 2,
+      "maxVoices": 32,
+      "peakVoices": 6,
+      "droppedVoices": 0,
+      "evictedVoices": 0,
+      "loopRefused": 0,
+      "fadingVoices": 0,
+      "liveSources": 4,
+      "peakSources": 12,
+      "sourceBudget": 260,
+      "budgetDropped": 0,
+      "culledGrains": 0,
+      "categoryDropped": {},
+      "categories": {},
+      "categoryLimits": {
+        "weapon": 12,
+        "player": 6,
+        "danger": 4,
+        "impact": 6,
+        "debris": 4,
+        "explosion": 6,
+        "distant": 6,
+        "vehicle": 4,
+        "aircraft": 3,
+        "fire": 3,
+        "ambience": 4,
+        "fx": 32
+      },
+      "loops": [
+        "battle-bed",
+        "wind"
+      ],
+      "permanentLoops": 2,
+      "buffers": 0,
+      "proceduralBuffers": 2,
+      "estimatedBufferBytes": 2046240,
+      "reverb": true,
+      "compressor": true,
+      "buses": [
+        "weapons",
+        "player",
+        "impacts",
+        "explosions",
+        "distant",
+        "vehicles",
+        "ambience"
+      ],
+      "intensity": 0.0406,
+      "quality": "low",
+      "lastDuck": null,
+      "nodesCreated": 79,
+      "nodesDisposed": 48,
+      "eventCounts": {
+        "wz29-mechanism": 2,
+        "wz29-shot": 1
+      },
+      "lastEvents": [
+        {
+          "kind": "wz29-shot",
+          "pan": 0,
+          "distance": 0,
+          "priority": 66,
+          "key": "wz29:2",
+          "detail": null,
+          "serial": 2
+        },
+        {
+          "kind": "wz29-mechanism",
+          "pan": 0,
+          "distance": 0,
+          "priority": 66,
+          "key": "bolt",
+          "detail": "bolt",
+          "serial": 4
+        },
+        {
+          "kind": "wz29-mechanism",
+          "pan": 0,
+          "distance": 0,
+          "priority": 66,
+          "key": "single",
+          "detail": "single",
+          "serial": 8
+        }
+      ]
+    },
+    "missionId": "m01_tczew",
+    "clock": 4.233199999999995,
+    "paused": false,
+    "missionPhase": "SETUP",
+    "complete": false,
+    "player": {
+      "x": -66,
+      "y": -3,
+      "z": 22,
+      "angle": 0.9812000000000001,
+      "pitch": 0.19560000000000002,
+      "health": 100,
+      "crouched": false,
+      "aiming": false
+    },
+    "sectors": [
+      {
+        "id": "s1_west_bridgehead",
+        "state": "prelude_calm",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s2_east_bridgehead",
+        "state": "quiet",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s3_station_yard",
+        "state": "night_shift",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s4_north_perimeter",
+        "state": "quiet",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s5_sky_east",
+        "state": "empty",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      }
+    ],
+    "eventIds": [
+      "evt_m01_intro_card",
+      "evt_m01_prelude_start"
+    ],
+    "m01": {
+      "models": [
+        "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+        "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+        "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+        "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+        "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+        "assets/models/provisional/m01/portal_lisewo_1912.glb",
+        "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+        "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+        "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+      ],
+      "assetFailures": [],
+      "requiredAssetFailures": [],
+      "characters": {
+        "active": 13,
+        "limit": 18,
+        "instances": 13,
+        "clips": {
+          "standing_idle": 10,
+          "rkm_clean": 1,
+          "ckm_wz30_gunner_idle": 1,
+          "ckm_wz30_loader_idle": 1
+        },
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "lod": 1,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:1",
+              "nation": "pl",
+              "profile": 1,
+              "head": "zielinski",
+              "equipment": "nco",
+              "faceStyle": 0,
+              "pack": 1.16,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "ccbe99",
+              "proxyHelmet": "5c5842",
+              "proxySkin": "f8f9f8"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.6691999999999947,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 1,
+            "muzzle": [
+              -75.30734036305313,
+              -2.0676818349607284,
+              23.667852357364843
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "szymon_kowal",
+            "lod": 1,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:0",
+              "nation": "pl",
+              "profile": 0,
+              "head": "kowal",
+              "equipment": "rkm",
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "b6af90",
+              "proxyHelmet": "5a5640",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "rkm_clean",
+            "clipTime": 2.045199999999994,
+            "loop": true,
+            "weapon": "rkm_wz28",
+            "weaponLOD": 1,
+            "muzzle": [
+              -80.80114687007665,
+              -2.6973614394664764,
+              24.79499999932945
+            ],
+            "weaponMeshes": [
+              "rkm_pouch",
+              "rkm_wz28",
+              "rkm_bipod_folded",
+              "rag"
+            ]
+          },
+          {
+            "id": "jozef_bak",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:3",
+              "nation": "pl",
+              "profile": 3,
+              "head": "bak",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 0.92,
+              "shovel": false,
+              "wear": 3,
+              "proxyCloth": "cbb992",
+              "proxyHelmet": "5f5b44",
+              "proxySkin": "f2f3f1"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.5251999999999946,
+            "loop": true,
+            "weapon": "wz98a",
+            "weaponLOD": 2,
+            "muzzle": [
+              -81.71671111340396,
+              -2.0602124684276863,
+              25.658811707985002
+            ],
+            "weaponMeshes": [
+              "clip",
+              "rifle_wz98a"
+            ]
+          },
+          {
+            "id": "staszek_pawlak",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "kowal",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": false,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.289199999999995,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -84.91601728008936,
+              -2.0614371178746684,
+              23.65827715986431
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "sapper_3",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:3",
+              "nation": "pl",
+              "profile": 3,
+              "head": "bak",
+              "equipment": "sapper",
+              "faceStyle": 0,
+              "pack": 0.92,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "cbb992",
+              "proxyHelmet": "5f5b44",
+              "proxySkin": "f2f3f1"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.053199999999995,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -46.71672908254028,
+              -1.0607194807172775,
+              9.657942225238237
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "sapper_2",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "kowal",
+              "equipment": "sapper",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.0491999999999946,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -46.11673761868782,
+              -1.060709502594766,
+              9.657940428198447
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pawel_krawiec",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "krawiec",
+              "equipment": "sapper",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.0731999999999946,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -41.90571783110036,
+              -1.0685285301028715,
+              9.67057136246747
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "east_platoon_voice",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:2",
+              "nation": "pl",
+              "profile": 2,
+              "head": "nowicki",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c1bb99",
+              "proxyHelmet": "5d5a43",
+              "proxySkin": "fffff9"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.0811999999999946,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -91.31153432317386,
+              -2.0649111951224572,
+              25.662432831369404
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "leon_dudek",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:7",
+              "nation": "pl",
+              "profile": 7,
+              "head": "dudek",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 0.96,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "beb993",
+              "proxyHelmet": "656149",
+              "proxySkin": "f7fafa"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.0411999999999946,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -7.314573136628782,
+              0.9385145215283797,
+              47.66147435693205
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:0",
+              "nation": "pl",
+              "profile": 0,
+              "head": "nowicki",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "b6af90",
+              "proxyHelmet": "5a5640",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.4691999999999945,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              17.683432804887378,
+              0.9397316186654652,
+              2.6590324681456528
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "ckm_reserve",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:7",
+              "nation": "pl",
+              "profile": 7,
+              "head": "zielinski",
+              "equipment": "ckm-crew",
+              "faceStyle": 0,
+              "pack": 0.96,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "beb993",
+              "proxyHelmet": "656149",
+              "proxySkin": "f7fafa"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.8971999999999944,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              23.257236424074364,
+              -2.064034898817779,
+              41.261088765791875
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "ckm_gunner",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "kowal",
+              "equipment": "ckm-crew",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": false,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "ckm_wz30_gunner_idle",
+            "clipTime": 0.23319999999999474,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              23.58056155115442,
+              -1.9167425,
+              43.45589124999999
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "ckm_loader",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:1",
+              "nation": "pl",
+              "profile": 1,
+              "head": "wrona",
+              "equipment": "ckm-crew",
+              "faceStyle": 0,
+              "pack": 1.16,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "ccbe99",
+              "proxyHelmet": "5c5842",
+              "proxySkin": "f8f9f8"
+            },
+            "clip": "ckm_wz30_loader_idle",
+            "clipTime": 0.23319999999999474,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              23.72378655595746,
+              -1.9167425,
+              42.48802270815583
+            ],
+            "weaponMeshes": []
+          }
+        ],
+        "visuals": {
+          "version": "m01-soldier-visual/v1",
+          "profilesPerNation": 8,
+          "geometries": 35,
+          "materials": 2,
+          "additionalTextures": 0,
+          "additionalDrawCalls": 0,
+          "attributeBytesUpperBound": 247752
+        },
+        "proneAvailable": true,
+        "ckm": {
+          "visible": true,
+          "lod": 2,
+          "clip": "ckm_wz30_gun_idle",
+          "time": 0.23319999999999474,
+          "position": [
+            24.17,
+            -3,
+            43
+          ]
+        },
+        "loaded": [
+          "mg34:2",
+          "ckm:2",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "viewModel": {
+        "active": true,
+        "visible": true,
+        "lod": 0,
+        "clip": "aim",
+        "clipTime": 0,
+        "carrying": false,
+        "singleRound": false,
+        "armTriangles": 1603,
+        "aimBlend": 0.003459734048919961,
+        "runBlend": 0,
+        "phase": 9.149399999999984,
+        "visualMuzzle": [
+          0.07066916104827979,
+          -0.2355597872073436,
+          -1.20600664608919
+        ],
+        "visualSights": {
+          "rear": [
+            0.14410832205371213,
+            -0.1751818489225476,
+            -0.74
+          ],
+          "front": [
+            0.07421783386279018,
+            -0.20171783858721387,
+            -1.1960001764396055
+          ]
+        },
+        "presentation": {
+          "profile": "wz29",
+          "mechanical": 0,
+          "boltStroke": 0,
+          "lookYaw": 0,
+          "lookPitch": 0,
+          "clipEjected": false,
+          "flash": 0,
+          "layers": 0,
+          "light": 0,
+          "wisps": 0
+        }
+      },
+      "weaponFx": {
+        "casings": 1,
+        "clips": 0,
+        "puffs": 0,
+        "resting": 1,
+        "capacity": {
+          "casings": 10,
+          "clips": 3,
+          "puffs": 16
+        }
+      },
+      "weaponLighting": {
+        "fill": 2.173,
+        "key": 0.595,
+        "environment": 0.331,
+        "keyDirection": [
+          -0.935,
+          0.28,
+          -0.217
+        ]
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 2,
+        "requestedLOD": 2,
+        "fallback": false,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": false,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 2,
+        "requestedLOD": 2,
+        "fallback": false,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": false,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "wagons": {
+        "wagons": 65,
+        "step": 9.1,
+        "lodDistribution": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "loaded": [
+          "covered:0",
+          "covered:1",
+          "covered:2",
+          "open:0",
+          "open:1",
+          "open:2"
+        ],
+        "proxies": 0,
+        "batches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "visible": false,
+        "first": [
+          1090,
+          0,
+          -2.5
+        ],
+        "last": [
+          1672.4,
+          0,
+          -2.5
+        ],
+        "artOffsetY": -0.8325,
+        "shadowCasters": 0,
+        "detail": {
+          "version": "m01-train-detail-coupling-polish-v1",
+          "quality": "low",
+          "wagons": 65,
+          "gaps": 64,
+          "instancesByTier": {
+            "near": 0,
+            "mid": 0,
+            "far": 65
+          },
+          "trackDetail": false,
+          "drawCalls": 2,
+          "triangles": 1158,
+          "shadowCasters": 0,
+          "instances": {
+            "nearFrame": 0,
+            "nearWear": 0,
+            "nearGap": 0,
+            "nearEnd": 0,
+            "midFrame": 0,
+            "midGap": 0,
+            "farBuffers": 32,
+            "shade": 0
+          },
+          "budget": {
+            "drawCalls": 12
+          },
+          "ownedGeometries": 10,
+          "ownedMaterials": 4,
+          "ownedTextures": 1,
+          "artOffsetY": -0.8325,
+          "track": {
+            "z": -2.5,
+            "railTop": -0.82,
+            "gauge": 1.435,
+            "from": 1062,
+            "to": 2000,
+            "sleepers": 1250,
+            "railSegments": 158
+          }
+        }
+      },
+      "yardWagons": {
+        "loaded": [
+          "covered:burned:0",
+          "covered:burned:1",
+          "covered:burned:2",
+          "covered:intact:0",
+          "covered:intact:1",
+          "covered:intact:2",
+          "open:intact:0",
+          "open:intact:1",
+          "open:intact:2"
+        ],
+        "pending": [],
+        "wagons": [
+          {
+            "id": "yard_wagon_1",
+            "type": "covered",
+            "state": "intact",
+            "lod": 2,
+            "position": [
+              -320,
+              -0.13091553254588018,
+              -6
+            ],
+            "key": "covered:intact:2",
+            "cover": "cv_wagon_1",
+            "fire": false
+          },
+          {
+            "id": "yard_wagon_2",
+            "type": "open",
+            "state": "intact",
+            "lod": 2,
+            "position": [
+              -340,
+              -3,
+              8
+            ],
+            "key": "open:intact:2",
+            "cover": "cv_wagon_2",
+            "fire": false
+          },
+          {
+            "id": "yard_wagon_3",
+            "type": "covered",
+            "state": "intact",
+            "lod": 2,
+            "position": [
+              -352,
+              -3,
+              8
+            ],
+            "key": "covered:intact:2",
+            "cover": null,
+            "fire": false
+          }
+        ]
+      },
+      "aircraft": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "planes": [
+          {
+            "visible": false,
+            "lod": 2,
+            "position": [
+              101.14072277144453,
+              160,
+              223.0672
+            ],
+            "attitude": [
+              0.01644434054762286,
+              0.1,
+              -0.053830446635066184
+            ],
+            "fade": 1,
+            "propeller": [
+              0,
+              0,
+              -0.5090414083440374,
+              -0.8607420210796629
+            ]
+          },
+          {
+            "visible": false,
+            "lod": 2,
+            "position": [
+              301.0366204637042,
+              180,
+              253.0672
+            ],
+            "attitude": [
+              -0.009377834769907624,
+              0.1,
+              -0.06227292407524077
+            ],
+            "fade": 1,
+            "propeller": [
+              0,
+              0,
+              -0.999777160495335,
+              -0.021109934186978235
+            ]
+          },
+          {
+            "visible": false,
+            "lod": 2,
+            "position": [
+              297.71246866423587,
+              200,
+              283.0672
+            ],
+            "attitude": [
+              -0.014027775790591385,
+              0.1,
+              0.05789082790565061
+            ],
+            "fade": 1,
+            "propeller": [
+              0,
+              0,
+              -0.669006070826497,
+              0.7432569182712087
+            ]
+          }
+        ]
+      },
+      "renderedFrames": 29,
+      "smokePuffs": 0,
+      "environmentInstances": 15701,
+      "stationArchitecture": {
+        "ready": true,
+        "fidelity": "v3",
+        "textureBytes": 1441792,
+        "geometryBytes": 10584816,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 16928,
+        "trianglesByLod": [
+          34285,
+          28975,
+          16928
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "environmentProps": {
+        "quality": "low",
+        "clusters": 30,
+        "totalAll": 432,
+        "visible": 174,
+        "byArea": {
+          "station-yard": 53,
+          "railway-approach": 48,
+          "bridge-approach": 40,
+          "combat-area": 33
+        },
+        "byCluster": {
+          "station_south_01": 6,
+          "station_south_02": 5,
+          "station_south_03": 5,
+          "station_south_04": 5,
+          "station_south_05": 6,
+          "station_south_06": 5,
+          "station_south_07": 5,
+          "station_south_08": 5,
+          "station_north_01": 6,
+          "station_north_02": 5,
+          "rail_approach_01": 6,
+          "rail_approach_02": 6,
+          "rail_approach_03": 6,
+          "rail_approach_04": 6,
+          "rail_approach_05": 6,
+          "rail_approach_06": 6,
+          "rail_approach_07": 6,
+          "rail_approach_08": 6,
+          "bridge_rail_01": 6,
+          "bridge_rail_02": 5,
+          "bridge_mid_01": 5,
+          "bridge_mid_02": 5,
+          "bridge_mid_03": 7,
+          "bridge_road_01": 5,
+          "bridge_road_02": 7,
+          "combat_repair_01": 7,
+          "combat_road_01": 7,
+          "combat_road_02": 7,
+          "combat_road_03": 5,
+          "combat_portal_01": 7
+        },
+        "batches": 4,
+        "totalBatches": 11,
+        "collidersAdded": 0,
+        "deterministicSeedDomain": "m01-environment-props"
+      },
+      "bridgePortalPolish": {
+        "quality": "low",
+        "attachments": [
+          "rail_portal_west",
+          "rail_portal_west",
+          "rail_portal_west",
+          "road_portal_west",
+          "road_portal_west",
+          "portal_lisewo_1912",
+          "portal_lisewo_1912",
+          "portal_lisewo_1912",
+          "road_portal_west"
+        ],
+        "activeAttachments": [
+          "rail_portal_west",
+          "portal_lisewo_1912",
+          "road_portal_west"
+        ],
+        "mediumDetails": 42,
+        "highDetails": 48,
+        "visibleDetails": 0,
+        "activeBatches": 0,
+        "totalBatches": 27,
+        "collidersAdded": 0
+      },
+      "bridgeStructure": {
+        "quality": "low",
+        "attachments": 73,
+        "activeAttachments": 0,
+        "active": [],
+        "mediumDetails": 21669,
+        "highDetails": 28982,
+        "visibleDetails": 0,
+        "activeBatches": 0,
+        "totalBatches": 141,
+        "hiddenSourcePrimitives": 0,
+        "hiddenJointStubs": 84,
+        "microRange": 140,
+        "collidersAdded": 0
+      },
+      "vegetation": {
+        "treeCount": 212,
+        "solidTreeCount": 17,
+        "visualTreeCount": 195,
+        "lod": {
+          "near": 2,
+          "mid": 25,
+          "far": 185
+        },
+        "treeInstances": 808,
+        "treeDrawCalls": 6,
+        "treeTriangles": 17680,
+        "leafCards": 0,
+        "legacyLeafCardEstimate": 1513,
+        "alphaCardReductionApprox": 1,
+        "species": {
+          "oak": 55,
+          "lime": 24,
+          "birch": 34,
+          "snag": 8,
+          "pine": 38,
+          "willow": 26,
+          "poplar": 18,
+          "pollard": 9
+        },
+        "damagedTrees": 19,
+        "shrubCount": 716,
+        "shrubSpecies": {
+          "hazel": 125,
+          "bramble": 251,
+          "dead": 28,
+          "elder": 132,
+          "dry": 106,
+          "broom": 74
+        },
+        "shrubLod": {
+          "near": 0,
+          "mid": 69,
+          "culled": 647
+        },
+        "grassInstances": 549,
+        "groundCover": {
+          "weed": 2045,
+          "meadow": 9577,
+          "dry": 4958,
+          "tall": 5558,
+          "reed": 900
+        },
+        "groundCoverBatches": 4,
+        "groundTriangles": 4018,
+        "groundShadows": 892,
+        "drawCalls": 10,
+        "materials": 5,
+        "textures": 4,
+        "groundCoverTotal": 23038,
+        "collidersAdded": 0,
+        "tracked": {
+          "m01_tree_0": "near",
+          "m01_tree_1": "mid",
+          "m01_tree_2": "near",
+          "m01_tree_3": "mid",
+          "m01_tree_4": "mid",
+          "m01_tree_5": "mid",
+          "m01_tree_6": "mid",
+          "m01_tree_7": "far",
+          "m01_tree_8": "far",
+          "m01_tree_9": "far",
+          "m01_tree_10": "far",
+          "m01_tree_11": "mid",
+          "m01_tree_12": "mid",
+          "m01_tree_13": "mid",
+          "m01_tree_14": "mid",
+          "m01_tree_15": "far",
+          "m01_tree_16": "far"
+        }
+      },
+      "actorPoses": {
+        "standing": 15,
+        "crouched": 0,
+        "pinned": 0,
+        "seated": 0,
+        "wounded": 0,
+        "carried": 0,
+        "fallen": 0,
+        "prone": 0
+      },
+      "actorAnimations": {
+        "aiming": 3,
+        "firing": 0,
+        "moving": 0,
+        "underFire": 0
+      },
+      "damageDecals": {
+        "version": "m01-environmental-damage-decal-pass-v1",
+        "marks": 0,
+        "visibleMarks": 0,
+        "byKind": {},
+        "spall": 0,
+        "residueBlasts": [],
+        "residueTriangles": 0,
+        "debris": 0,
+        "embers": 0,
+        "drawCalls": 0,
+        "counts": {
+          "spawned": 0,
+          "placed": 0,
+          "noSurface": 0,
+          "outOfRange": 0,
+          "dedup": 0,
+          "clustered": 0,
+          "evicted": 0,
+          "expired": 0,
+          "invalidated": 0,
+          "errors": 0
+        },
+        "lastError": null,
+        "limits": {
+          "quality": {
+            "low": {
+              "marks": 48,
+              "debris": 64,
+              "embers": 0,
+              "range": 55,
+              "cluster": 4
+            },
+            "medium": {
+              "marks": 96,
+              "debris": 128,
+              "embers": 24,
+              "range": 90,
+              "cluster": 5
+            },
+            "high": {
+              "marks": 144,
+              "debris": 192,
+              "embers": 40,
+              "range": 130,
+              "cluster": 6
+            }
+          },
+          "blasts": 16,
+          "residueTriangles": 6000,
+          "residueDebrisShare": 0.7,
+          "drawCalls": 4,
+          "textures": 2,
+          "pxRange": 450,
+          "clusterRadius": 0.6,
+          "earthClusterRadius": 1.1
+        },
+        "atlasReady": true,
+        "atlasError": null,
+        "atlasChecksum": 726099253
+      },
+      "visiblePieces": 57,
+      "fireEffects": {
+        "muzzle": 0,
+        "tracer": 0,
+        "puff": 0,
+        "spark": 0,
+        "smoke": 0,
+        "chip": 0
+      },
+      "muzzlePresentation": {
+        "frames": 0,
+        "lastClock": null,
+        "lastFrame": null
+      },
+      "combatFeedback": {
+        "suppressionVisual": 0,
+        "hitImpulse": 0,
+        "nearMissImpulse": 0,
+        "impactImpulse": 0,
+        "explosionImpulse": 0,
+        "direction": 0,
+        "cameraX": 0,
+        "cameraY": 0,
+        "roll": 0,
+        "shakeStrength": 0,
+        "overlayAlpha": 0,
+        "exposureFlash": 0,
+        "activeOverlay": false,
+        "activeEvents": 0,
+        "lastHitDirection": null,
+        "lastDirection": null,
+        "counts": {
+          "playerHit": 0,
+          "nearMiss": 0,
+          "nearImpact": 0,
+          "explosion": 0,
+          "directional": 0
+        },
+        "peaks": {
+          "suppressionVisual": 0,
+          "hitImpulse": 0,
+          "nearMissImpulse": 0,
+          "impactImpulse": 0,
+          "explosionImpulse": 0,
+          "overlayAlpha": 0,
+          "shakeStrength": 0
+        },
+        "caps": {
+          "suppressionVisual": 1,
+          "hitImpulse": 1,
+          "nearMissImpulse": 0.72,
+          "impactImpulse": 0.5,
+          "explosionImpulse": 1,
+          "cameraOffset": 0.02,
+          "cameraRoll": 0.012,
+          "overlayAlpha": 0.42
+        },
+        "quality": "low"
+      },
+      "battlefieldFx": {
+        "active": 0,
+        "counts": {
+          "flash": 0,
+          "core": 0,
+          "fire": 0,
+          "smoke": 0,
+          "dust": 0,
+          "shard": 0
+        },
+        "meta": {
+          "kinds": {
+            "small": 0,
+            "bombing": 0,
+            "demolition": 0
+          },
+          "bands": {
+            "near": 0,
+            "mid": 0,
+            "far": 0
+          }
+        },
+        "limits": {
+          "bursts": 16,
+          "flash": 16,
+          "core": 48,
+          "fire": 96,
+          "smoke": 128,
+          "dust": 128,
+          "shards": 96,
+          "lights": 1
+        },
+        "extraLights": 0,
+        "atmosphere": {
+          "puffs": 0,
+          "puffCapacity": 256,
+          "debris": 0,
+          "debrisCapacity": 64,
+          "puffBatches": 8
+        }
+      },
+      "battleClock": 16248.216499999942,
+      "weapon": {
+        "id": "kb_wz29",
+        "mag": 5,
+        "reserve": 39,
+        "state": "READY",
+        "until": 0,
+        "started": 3199.8999999999987,
+        "lastShot": 1699.9000000000024,
+        "shotCount": 1,
+        "received": 0,
+        "sight": 300,
+        "reloadMode": null
+      },
+      "grenades": {
+        "ammo": 2,
+        "active": [],
+        "nextId": 0
+      },
+      "damage": [],
+      "pendingAudio": [],
+      "checkpoints": [
+        "cp_m01_a_orientacao"
+      ],
+      "flags": {
+        "m01.completed": false,
+        "m01.nowicki_status": "present",
+        "m01.bak_status": "unhurt",
+        "m01.dudek_status": "unhurt",
+        "m01.east_platoon_survivors": 18,
+        "m01.second_raid_state": "pending",
+        "m01.forward_post_state": "pending"
+      },
+      "scene": null,
+      "gate": null,
+      "objectives": {
+        "obj_m01_deliver_message": {
+          "state": "active",
+          "progress": 0
+        },
+        "obj_m01_take_cover": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_follow_sergeant": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_find_sappers": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_fetch_material": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_cover_repair": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_hold_access": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_cover_withdrawal": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_rescue_bak": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_leave_bridge": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_hold_corridor": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_reach_shelter": {
+          "state": "locked",
+          "progress": 0
+        }
+      },
+      "parts": {
+        "rail_support_00": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_portal_west": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_support_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_support_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_support_03": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_support_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_support_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_support_06": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_portal_old_east": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_span_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_span_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_span_03": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_span_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_span_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_span_06": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_span_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_span_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_span_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_00_damaged": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_support_01_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_support_06_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "rail_portal_old_east_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "rail_span_01_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_span_02_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_span_06_collapsed": {
+          "lod": 1,
+          "visible": false
+        },
+        "rail_span_07_collapsed": {
+          "lod": 2,
+          "visible": false
+        },
+        "road_support_00": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_portal_west": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_01_n": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_01_s": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_support_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_02_n": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_02_s": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_support_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_03_n": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_03_s": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_03": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_04_n": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_04_s": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_05_n": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_05_s": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_06": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_portal_old_east": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_span_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_span_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_span_03": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_span_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_span_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_span_06": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_span_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_span_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_span_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_00_damaged": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_tower_01_n_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_tower_01_s_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_support_01_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_support_06_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "road_portal_old_east_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "road_span_01_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_span_02_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_span_06_collapsed": {
+          "lod": 1,
+          "visible": false
+        },
+        "road_span_07_collapsed": {
+          "lod": 2,
+          "visible": false
+        },
+        "portal_lisewo_1912": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_rail_left": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_rail_right": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_road_left": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_road_right": {
+          "lod": 0,
+          "visible": true
+        }
+      },
+      "enemyAlive": 50,
+      "threat": {
+        "inFlight": 0,
+        "status": "",
+        "coverFire": null,
+        "recentFire": [],
+        "repair": {
+          "progress": 0,
+          "state": "locked",
+          "pinned": false,
+          "pins": 0,
+          "fireEase": false
+        },
+        "survivors": 18,
+        "spansSuppressed": false,
+        "mgSuppressed": []
+      },
+      "stationEvacuation": {
+        "patient": {
+          "id": "generic_rifleman",
+          "x": -300,
+          "y": -3,
+          "z": 30,
+          "facing": 0,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "task": null,
+          "carriedBy": null
+        },
+        "medic": {
+          "id": "leon_dudek",
+          "x": -8,
+          "y": 0,
+          "z": 48,
+          "facing": 0,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "task": null,
+          "carriedBy": null
+        },
+        "delivered": false
+      },
+      "animationPresentation": {
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pawel_krawiec",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "szymon_kowal",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "jozef_bak",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "leon_dudek",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "staszek_pawlak",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "franciszek_lipski",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "sapper_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "sapper_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "east_platoon_voice",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "generic_rifleman",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_0",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_1",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_4",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_5",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_6",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_7",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_8",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_9",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_10",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_11",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_12",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_13",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_14",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_15",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_16",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_17",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_18",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_19",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_20",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_21",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_22",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_23",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_24",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_25",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_26",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_27",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_28",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_29",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_30",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_31",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_32",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_33",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_34",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_35",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_36",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_37",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_38",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_39",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_0",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_1",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_4",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_5",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_6",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_7",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_8",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_9",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_0",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_1",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_4",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_5",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_6",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_7",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_8",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_9",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_10",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_11",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_12",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_13",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_14",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_15",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_16",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_17",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_18",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_19",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_20",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_21",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_22",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_23",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "ckm_gunner",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "ckm_loader",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 1.9547687622336491,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "ckm_reserve",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          }
+        ]
+      },
+      "hudStatus": "",
+      "hudPresentation": {
+        "banner": null,
+        "queued": [],
+        "fade": 0,
+        "checkpoint": 0,
+        "titleCard": null,
+        "resumeCard": null,
+        "cinematic": false
+      }
+    }
+  },
+  "restored": {
+    "renderer": "Three.js",
+    "quality": "low",
+    "drawCalls": 250,
+    "triangles": 442493,
+    "geometries": 227,
+    "textures": 118,
+    "assetFailures": [],
+    "models": [
+      "weapon",
+      "ally",
+      "enemy"
+    ],
+    "weaponFx": {
+      "world": {
+        "casings": 0,
+        "clips": 0,
+        "puffs": 0,
+        "resting": 0,
+        "capacity": {
+          "casings": 12,
+          "clips": 3,
+          "puffs": 24
+        }
+      },
+      "lighting": null
+    },
+    "audio": {
+      "state": "running",
+      "activeVoices": 2,
+      "maxVoices": 32,
+      "peakVoices": 2,
+      "droppedVoices": 0,
+      "evictedVoices": 0,
+      "loopRefused": 0,
+      "fadingVoices": 0,
+      "liveSources": 4,
+      "peakSources": 4,
+      "sourceBudget": 260,
+      "budgetDropped": 0,
+      "culledGrains": 0,
+      "categoryDropped": {},
+      "categories": {},
+      "categoryLimits": {
+        "weapon": 12,
+        "player": 6,
+        "danger": 4,
+        "impact": 6,
+        "debris": 4,
+        "explosion": 6,
+        "distant": 6,
+        "vehicle": 4,
+        "aircraft": 3,
+        "fire": 3,
+        "ambience": 4,
+        "fx": 32
+      },
+      "loops": [
+        "battle-bed",
+        "wind"
+      ],
+      "permanentLoops": 2,
+      "buffers": 0,
+      "proceduralBuffers": 2,
+      "estimatedBufferBytes": 2046240,
+      "reverb": true,
+      "compressor": true,
+      "buses": [
+        "weapons",
+        "player",
+        "impacts",
+        "explosions",
+        "distant",
+        "vehicles",
+        "ambience"
+      ],
+      "intensity": 0,
+      "quality": "low",
+      "lastDuck": null,
+      "nodesCreated": 31,
+      "nodesDisposed": 0,
+      "eventCounts": {},
+      "lastEvents": []
+    },
+    "missionId": "m01_tczew",
+    "clock": 0.08329999999999928,
+    "paused": false,
+    "missionPhase": "SETUP",
+    "complete": false,
+    "player": {
+      "x": -66,
+      "y": -3,
+      "z": 22,
+      "angle": 0,
+      "pitch": 0,
+      "health": 100,
+      "crouched": false,
+      "aiming": false
+    },
+    "sectors": [
+      {
+        "id": "s1_west_bridgehead",
+        "state": "prelude_calm",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s2_east_bridgehead",
+        "state": "quiet",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s3_station_yard",
+        "state": "night_shift",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s4_north_perimeter",
+        "state": "quiet",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      },
+      {
+        "id": "s5_sky_east",
+        "state": "empty",
+        "strength": 100,
+        "morale": 1,
+        "supply": 1
+      }
+    ],
+    "eventIds": [
+      "evt_m01_intro_card",
+      "evt_m01_prelude_start"
+    ],
+    "m01": {
+      "models": [
+        "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+        "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+        "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+        "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+        "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+        "assets/models/provisional/m01/portal_lisewo_1912.glb",
+        "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+        "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+        "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb"
+      ],
+      "assetFailures": [],
+      "requiredAssetFailures": [],
+      "characters": {
+        "active": 13,
+        "limit": 18,
+        "instances": 13,
+        "clips": {
+          "standing_idle": 10,
+          "rkm_clean": 1,
+          "ckm_wz30_gunner_idle": 1,
+          "ckm_wz30_loader_idle": 1
+        },
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "lod": 1,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:1",
+              "nation": "pl",
+              "profile": 1,
+              "head": "zielinski",
+              "equipment": "nco",
+              "faceStyle": 0,
+              "pack": 1.16,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "ccbe99",
+              "proxyHelmet": "5c5842",
+              "proxySkin": "f8f9f8"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.5192999999999994,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 1,
+            "muzzle": [
+              -75.30842863310552,
+              -2.0669880607272972,
+              23.66634157987272
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "szymon_kowal",
+            "lod": 1,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:0",
+              "nation": "pl",
+              "profile": 0,
+              "head": "kowal",
+              "equipment": "rkm",
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "b6af90",
+              "proxyHelmet": "5a5640",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "rkm_clean",
+            "clipTime": 3.8952999999999993,
+            "loop": true,
+            "weapon": "rkm_wz28",
+            "weaponLOD": 1,
+            "muzzle": [
+              -80.80114687007665,
+              -2.6973614394664764,
+              24.79499999932945
+            ],
+            "weaponMeshes": [
+              "rkm_pouch",
+              "rkm_wz28",
+              "rkm_bipod_folded",
+              "rag"
+            ]
+          },
+          {
+            "id": "jozef_bak",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:3",
+              "nation": "pl",
+              "profile": 3,
+              "head": "bak",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 0.92,
+              "shovel": false,
+              "wear": 3,
+              "proxyCloth": "cbb992",
+              "proxyHelmet": "5f5b44",
+              "proxySkin": "f2f3f1"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.3752999999999993,
+            "loop": true,
+            "weapon": "wz98a",
+            "weaponLOD": 2,
+            "muzzle": [
+              -81.71626229069248,
+              -2.060416131163195,
+              25.659457000884586
+            ],
+            "weaponMeshes": [
+              "clip",
+              "rifle_wz98a"
+            ]
+          },
+          {
+            "id": "staszek_pawlak",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "kowal",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": false,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.1392999999999995,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -84.91651571364463,
+              -2.0609530035847676,
+              23.65801246201522
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "sapper_3",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:3",
+              "nation": "pl",
+              "profile": 3,
+              "head": "bak",
+              "equipment": "sapper",
+              "faceStyle": 0,
+              "pack": 0.92,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "cbb992",
+              "proxyHelmet": "5f5b44",
+              "proxySkin": "f2f3f1"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.9032999999999993,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -46.71696456241143,
+              -1.0604014973623441,
+              9.657961145911736
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "sapper_2",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "kowal",
+              "equipment": "sapper",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.8992999999999993,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -46.11696866062945,
+              -1.0603944983125602,
+              9.657963849995909
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pawel_krawiec",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "krawiec",
+              "equipment": "sapper",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.9232999999999993,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -41.90548894317955,
+              -1.0688393852835363,
+              9.670534119254901
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "east_platoon_voice",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:2",
+              "nation": "pl",
+              "profile": 2,
+              "head": "nowicki",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c1bb99",
+              "proxyHelmet": "5d5a43",
+              "proxySkin": "fffff9"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.9312999999999994,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -91.31254119560116,
+              -2.0641963538615835,
+              25.66132220532265
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "leon_dudek",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:7",
+              "nation": "pl",
+              "profile": 7,
+              "head": "dudek",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 0.96,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "beb993",
+              "proxyHelmet": "656149",
+              "proxySkin": "f7fafa"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.8912999999999993,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -7.313530789058824,
+              0.9377630543983246,
+              47.66261393244652
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:0",
+              "nation": "pl",
+              "profile": 0,
+              "head": "nowicki",
+              "equipment": "field",
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "b6af90",
+              "proxyHelmet": "5a5640",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "standing_idle",
+            "clipTime": 1.3192999999999993,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              17.68395601519659,
+              0.9394640001272709,
+              2.659741085385909
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "ckm_reserve",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:7",
+              "nation": "pl",
+              "profile": 7,
+              "head": "zielinski",
+              "equipment": "ckm-crew",
+              "faceStyle": 0,
+              "pack": 0.96,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "beb993",
+              "proxyHelmet": "656149",
+              "proxySkin": "f7fafa"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.7472999999999996,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              23.256296215666907,
+              -2.0633359593136995,
+              41.26015215359708
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "ckm_gunner",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:6",
+              "nation": "pl",
+              "profile": 6,
+              "head": "kowal",
+              "equipment": "ckm-crew",
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": false,
+              "wear": 2,
+              "proxyCloth": "c4b28e",
+              "proxyHelmet": "646048",
+              "proxySkin": "fffef7"
+            },
+            "clip": "ckm_wz30_gunner_idle",
+            "clipTime": 0.08329999999999928,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              23.58056155115442,
+              -1.9167425,
+              43.45589124999999
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "ckm_loader",
+            "lod": 2,
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:1",
+              "nation": "pl",
+              "profile": 1,
+              "head": "wrona",
+              "equipment": "ckm-crew",
+              "faceStyle": 0,
+              "pack": 1.16,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "ccbe99",
+              "proxyHelmet": "5c5842",
+              "proxySkin": "f8f9f8"
+            },
+            "clip": "ckm_wz30_loader_idle",
+            "clipTime": 0.08329999999999928,
+            "loop": true,
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              23.72378655595746,
+              -1.9167425,
+              42.48802270815583
+            ],
+            "weaponMeshes": []
+          }
+        ],
+        "visuals": {
+          "version": "m01-soldier-visual/v1",
+          "profilesPerNation": 8,
+          "geometries": 35,
+          "materials": 2,
+          "additionalTextures": 0,
+          "additionalDrawCalls": 0,
+          "attributeBytesUpperBound": 247752
+        },
+        "proneAvailable": true,
+        "ckm": {
+          "visible": true,
+          "lod": 2,
+          "clip": "ckm_wz30_gun_idle",
+          "time": 0.08329999999999928,
+          "position": [
+            24.17,
+            -3,
+            43
+          ]
+        },
+        "loaded": [
+          "ckm:2",
+          "mg34:2",
+          "pl:2",
+          "de:2",
+          "pl:1",
+          "pl:0"
+        ],
+        "failures": []
+      },
+      "viewModel": {
+        "active": true,
+        "visible": true,
+        "lod": 0,
+        "clip": "aim",
+        "clipTime": 0,
+        "carrying": false,
+        "singleRound": false,
+        "armTriangles": 1603,
+        "aimBlend": 0,
+        "runBlend": 0,
+        "phase": 0.7496999999999935,
+        "visualMuzzle": [
+          0.07334732160712298,
+          -0.2336732082795827,
+          -1.205917009494245
+        ],
+        "visualSights": {
+          "rear": [
+            0.1473493377129304,
+            -0.1732907449626932,
+            -0.7400000000000001
+          ],
+          "front": [
+            0.07697544551964473,
+            -0.19983531624762943,
+            -1.1959253239653034
+          ]
+        },
+        "presentation": {
+          "profile": "wz29",
+          "mechanical": 0,
+          "boltStroke": 0,
+          "lookYaw": 0,
+          "lookPitch": 0,
+          "clipEjected": false,
+          "flash": 0,
+          "layers": 0,
+          "light": 0,
+          "wisps": 0
+        }
+      },
+      "weaponFx": {
+        "casings": 0,
+        "clips": 0,
+        "puffs": 0,
+        "resting": 0,
+        "capacity": {
+          "casings": 10,
+          "clips": 3,
+          "puffs": 16
+        }
+      },
+      "weaponLighting": {
+        "fill": 2.173,
+        "key": 0.595,
+        "environment": 0.331,
+        "keyDirection": [
+          -0.325,
+          0.28,
+          -0.903
+        ]
+      },
+      "locomotive": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 2,
+        "requestedLOD": 2,
+        "fallback": false,
+        "position": [
+          1075,
+          0,
+          -2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": false,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "panzerzug": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "lod": 2,
+        "requestedLOD": 2,
+        "fallback": false,
+        "position": [
+          1119,
+          0,
+          2.5
+        ],
+        "rotationY": 1.5707963267948966,
+        "visible": false,
+        "motion": "stationary; no synthetic wheel rotation"
+      },
+      "wagons": {
+        "wagons": 65,
+        "step": 9.1,
+        "lodDistribution": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "loaded": [
+          "covered:0",
+          "covered:1",
+          "covered:2",
+          "open:0",
+          "open:1",
+          "open:2"
+        ],
+        "proxies": 0,
+        "batches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "visible": false,
+        "first": [
+          1090,
+          0,
+          -2.5
+        ],
+        "last": [
+          1672.4,
+          0,
+          -2.5
+        ],
+        "artOffsetY": -0.8325,
+        "shadowCasters": 0,
+        "detail": {
+          "version": "m01-train-detail-coupling-polish-v1",
+          "quality": "low",
+          "wagons": 65,
+          "gaps": 64,
+          "instancesByTier": {
+            "near": 0,
+            "mid": 0,
+            "far": 65
+          },
+          "trackDetail": false,
+          "drawCalls": 2,
+          "triangles": 1158,
+          "shadowCasters": 0,
+          "instances": {
+            "nearFrame": 0,
+            "nearWear": 0,
+            "nearGap": 0,
+            "nearEnd": 0,
+            "midFrame": 0,
+            "midGap": 0,
+            "farBuffers": 32,
+            "shade": 0
+          },
+          "budget": {
+            "drawCalls": 12
+          },
+          "ownedGeometries": 10,
+          "ownedMaterials": 4,
+          "ownedTextures": 1,
+          "artOffsetY": -0.8325,
+          "track": {
+            "z": -2.5,
+            "railTop": -0.82,
+            "gauge": 1.435,
+            "from": 1062,
+            "to": 2000,
+            "sleepers": 1250,
+            "railSegments": 158
+          }
+        }
+      },
+      "yardWagons": {
+        "loaded": [
+          "covered:burned:0",
+          "covered:burned:1",
+          "covered:burned:2",
+          "covered:intact:0",
+          "covered:intact:1",
+          "covered:intact:2",
+          "open:intact:0",
+          "open:intact:1",
+          "open:intact:2"
+        ],
+        "pending": [],
+        "wagons": [
+          {
+            "id": "yard_wagon_1",
+            "type": "covered",
+            "state": "intact",
+            "lod": 2,
+            "position": [
+              -320,
+              -0.13091553254588018,
+              -6
+            ],
+            "key": "covered:intact:2",
+            "cover": "cv_wagon_1",
+            "fire": false
+          },
+          {
+            "id": "yard_wagon_2",
+            "type": "open",
+            "state": "intact",
+            "lod": 2,
+            "position": [
+              -340,
+              -3,
+              8
+            ],
+            "key": "open:intact:2",
+            "cover": "cv_wagon_2",
+            "fire": false
+          },
+          {
+            "id": "yard_wagon_3",
+            "type": "covered",
+            "state": "intact",
+            "lod": 2,
+            "position": [
+              -352,
+              -3,
+              8
+            ],
+            "key": "covered:intact:2",
+            "cover": null,
+            "fire": false
+          }
+        ]
+      },
+      "aircraft": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "planes": [
+          {
+            "visible": false,
+            "lod": 2,
+            "position": [
+              80.41649980733018,
+              160,
+              239.6668
+            ],
+            "attitude": [
+              0.0007045379817446741,
+              0.1,
+              -0.06847616875679478
+            ],
+            "fade": 0.0032566819792635487,
+            "propeller": [
+              0,
+              0,
+              -0.2562893698196063,
+              0.966600100569474
+            ]
+          },
+          {
+            "visible": false,
+            "lod": 2,
+            "position": [
+              290.59249006460567,
+              180,
+              269.66679999999997
+            ],
+            "attitude": [
+              0.01774551227396442,
+              0.1,
+              -0.016395922262809347
+            ],
+            "fade": 0.0032566819792635487,
+            "propeller": [
+              0,
+              0,
+              -0.9679392950299098,
+              0.2511842288397164
+            ]
+          },
+          {
+            "visible": false,
+            "lod": 2,
+            "position": [
+              307.1507161535093,
+              200,
+              299.66679999999997
+            ],
+            "attitude": [
+              -0.005277361091652614,
+              0.1,
+              -0.0007068635988133447
+            ],
+            "fade": 0.0032566819792635487,
+            "propeller": [
+              0,
+              0,
+              -0.5203003343629631,
+              -0.8539833391405269
+            ]
+          }
+        ]
+      },
+      "renderedFrames": 8,
+      "smokePuffs": 0,
+      "environmentInstances": 15701,
+      "stationArchitecture": {
+        "ready": true,
+        "fidelity": "v3",
+        "textureBytes": 1441792,
+        "geometryBytes": 10584816,
+        "quality": "low",
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 16928,
+        "trianglesByLod": [
+          34285,
+          28975,
+          16928
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "environmentProps": {
+        "quality": "low",
+        "clusters": 30,
+        "totalAll": 432,
+        "visible": 174,
+        "byArea": {
+          "station-yard": 53,
+          "railway-approach": 48,
+          "bridge-approach": 40,
+          "combat-area": 33
+        },
+        "byCluster": {
+          "station_south_01": 6,
+          "station_south_02": 5,
+          "station_south_03": 5,
+          "station_south_04": 5,
+          "station_south_05": 6,
+          "station_south_06": 5,
+          "station_south_07": 5,
+          "station_south_08": 5,
+          "station_north_01": 6,
+          "station_north_02": 5,
+          "rail_approach_01": 6,
+          "rail_approach_02": 6,
+          "rail_approach_03": 6,
+          "rail_approach_04": 6,
+          "rail_approach_05": 6,
+          "rail_approach_06": 6,
+          "rail_approach_07": 6,
+          "rail_approach_08": 6,
+          "bridge_rail_01": 6,
+          "bridge_rail_02": 5,
+          "bridge_mid_01": 5,
+          "bridge_mid_02": 5,
+          "bridge_mid_03": 7,
+          "bridge_road_01": 5,
+          "bridge_road_02": 7,
+          "combat_repair_01": 7,
+          "combat_road_01": 7,
+          "combat_road_02": 7,
+          "combat_road_03": 5,
+          "combat_portal_01": 7
+        },
+        "batches": 4,
+        "totalBatches": 11,
+        "collidersAdded": 0,
+        "deterministicSeedDomain": "m01-environment-props"
+      },
+      "bridgePortalPolish": {
+        "quality": "low",
+        "attachments": [
+          "rail_portal_west",
+          "rail_portal_west",
+          "rail_portal_west",
+          "road_portal_west",
+          "road_portal_west",
+          "portal_lisewo_1912",
+          "portal_lisewo_1912",
+          "portal_lisewo_1912",
+          "road_portal_west"
+        ],
+        "activeAttachments": [
+          "rail_portal_west",
+          "portal_lisewo_1912",
+          "road_portal_west"
+        ],
+        "mediumDetails": 42,
+        "highDetails": 48,
+        "visibleDetails": 0,
+        "activeBatches": 0,
+        "totalBatches": 27,
+        "collidersAdded": 0
+      },
+      "bridgeStructure": {
+        "quality": "low",
+        "attachments": 73,
+        "activeAttachments": 0,
+        "active": [],
+        "mediumDetails": 21669,
+        "highDetails": 28982,
+        "visibleDetails": 0,
+        "activeBatches": 0,
+        "totalBatches": 141,
+        "hiddenSourcePrimitives": 0,
+        "hiddenJointStubs": 84,
+        "microRange": 140,
+        "collidersAdded": 0
+      },
+      "vegetation": {
+        "treeCount": 212,
+        "solidTreeCount": 17,
+        "visualTreeCount": 195,
+        "lod": {
+          "near": 2,
+          "mid": 25,
+          "far": 185
+        },
+        "treeInstances": 808,
+        "treeDrawCalls": 6,
+        "treeTriangles": 17680,
+        "leafCards": 0,
+        "legacyLeafCardEstimate": 1513,
+        "alphaCardReductionApprox": 1,
+        "species": {
+          "oak": 55,
+          "lime": 24,
+          "birch": 34,
+          "snag": 8,
+          "pine": 38,
+          "willow": 26,
+          "poplar": 18,
+          "pollard": 9
+        },
+        "damagedTrees": 19,
+        "shrubCount": 716,
+        "shrubSpecies": {
+          "hazel": 125,
+          "bramble": 251,
+          "dead": 28,
+          "elder": 132,
+          "dry": 106,
+          "broom": 74
+        },
+        "shrubLod": {
+          "near": 0,
+          "mid": 69,
+          "culled": 647
+        },
+        "grassInstances": 549,
+        "groundCover": {
+          "weed": 2045,
+          "meadow": 9577,
+          "dry": 4958,
+          "tall": 5558,
+          "reed": 900
+        },
+        "groundCoverBatches": 4,
+        "groundTriangles": 4018,
+        "groundShadows": 892,
+        "drawCalls": 10,
+        "materials": 5,
+        "textures": 4,
+        "groundCoverTotal": 23038,
+        "collidersAdded": 0,
+        "tracked": {
+          "m01_tree_0": "near",
+          "m01_tree_1": "mid",
+          "m01_tree_2": "near",
+          "m01_tree_3": "mid",
+          "m01_tree_4": "mid",
+          "m01_tree_5": "mid",
+          "m01_tree_6": "mid",
+          "m01_tree_7": "far",
+          "m01_tree_8": "far",
+          "m01_tree_9": "far",
+          "m01_tree_10": "far",
+          "m01_tree_11": "mid",
+          "m01_tree_12": "mid",
+          "m01_tree_13": "mid",
+          "m01_tree_14": "mid",
+          "m01_tree_15": "far",
+          "m01_tree_16": "far"
+        }
+      },
+      "actorPoses": {
+        "standing": 15,
+        "crouched": 0,
+        "pinned": 0,
+        "seated": 0,
+        "wounded": 0,
+        "carried": 0,
+        "fallen": 0,
+        "prone": 0
+      },
+      "actorAnimations": {
+        "aiming": 3,
+        "firing": 0,
+        "moving": 0,
+        "underFire": 0
+      },
+      "damageDecals": {
+        "version": "m01-environmental-damage-decal-pass-v1",
+        "marks": 0,
+        "visibleMarks": 0,
+        "byKind": {},
+        "spall": 0,
+        "residueBlasts": [],
+        "residueTriangles": 0,
+        "debris": 0,
+        "embers": 0,
+        "drawCalls": 0,
+        "counts": {
+          "spawned": 0,
+          "placed": 0,
+          "noSurface": 0,
+          "outOfRange": 0,
+          "dedup": 0,
+          "clustered": 0,
+          "evicted": 0,
+          "expired": 0,
+          "invalidated": 0,
+          "errors": 0
+        },
+        "lastError": null,
+        "limits": {
+          "quality": {
+            "low": {
+              "marks": 48,
+              "debris": 64,
+              "embers": 0,
+              "range": 55,
+              "cluster": 4
+            },
+            "medium": {
+              "marks": 96,
+              "debris": 128,
+              "embers": 24,
+              "range": 90,
+              "cluster": 5
+            },
+            "high": {
+              "marks": 144,
+              "debris": 192,
+              "embers": 40,
+              "range": 130,
+              "cluster": 6
+            }
+          },
+          "blasts": 16,
+          "residueTriangles": 6000,
+          "residueDebrisShare": 0.7,
+          "drawCalls": 4,
+          "textures": 2,
+          "pxRange": 450,
+          "clusterRadius": 0.6,
+          "earthClusterRadius": 1.1
+        },
+        "atlasReady": true,
+        "atlasError": null,
+        "atlasChecksum": 726099253
+      },
+      "visiblePieces": 57,
+      "fireEffects": {
+        "muzzle": 0,
+        "tracer": 0,
+        "puff": 0,
+        "spark": 0,
+        "smoke": 0,
+        "chip": 0
+      },
+      "muzzlePresentation": {
+        "frames": 0,
+        "lastClock": null,
+        "lastFrame": null
+      },
+      "combatFeedback": {
+        "suppressionVisual": 0,
+        "hitImpulse": 0,
+        "nearMissImpulse": 0,
+        "impactImpulse": 0,
+        "explosionImpulse": 0,
+        "direction": 0,
+        "cameraX": 0,
+        "cameraY": 0,
+        "roll": 0,
+        "shakeStrength": 0,
+        "overlayAlpha": 0,
+        "exposureFlash": 0,
+        "activeOverlay": false,
+        "activeEvents": 0,
+        "lastHitDirection": null,
+        "lastDirection": null,
+        "counts": {
+          "playerHit": 0,
+          "nearMiss": 0,
+          "nearImpact": 0,
+          "explosion": 0,
+          "directional": 0
+        },
+        "peaks": {
+          "suppressionVisual": 0,
+          "hitImpulse": 0,
+          "nearMissImpulse": 0,
+          "impactImpulse": 0,
+          "explosionImpulse": 0,
+          "overlayAlpha": 0,
+          "shakeStrength": 0
+        },
+        "caps": {
+          "suppressionVisual": 1,
+          "hitImpulse": 1,
+          "nearMissImpulse": 0.72,
+          "impactImpulse": 0.5,
+          "explosionImpulse": 1,
+          "cameraOffset": 0.02,
+          "cameraRoll": 0.012,
+          "overlayAlpha": 0.42
+        },
+        "quality": "low"
+      },
+      "battlefieldFx": {
+        "active": 0,
+        "counts": {
+          "flash": 0,
+          "core": 0,
+          "fire": 0,
+          "smoke": 0,
+          "dust": 0,
+          "shard": 0
+        },
+        "meta": {
+          "kinds": {
+            "small": 0,
+            "bombing": 0,
+            "demolition": 0
+          },
+          "bands": {
+            "near": 0,
+            "mid": 0,
+            "far": 0
+          }
+        },
+        "limits": {
+          "bursts": 16,
+          "flash": 16,
+          "core": 48,
+          "fire": 96,
+          "smoke": 128,
+          "dust": 128,
+          "shards": 96,
+          "lights": 1
+        },
+        "extraLights": 0,
+        "atmosphere": {
+          "puffs": 0,
+          "puffCapacity": 256,
+          "debris": 0,
+          "debrisCapacity": 64,
+          "puffBatches": 8
+        }
+      },
+      "battleClock": 16244.0166,
+      "weapon": {
+        "id": "kb_wz29",
+        "mag": 5,
+        "reserve": 40,
+        "state": "READY",
+        "until": 0,
+        "started": 0,
+        "lastShot": -1000000000,
+        "shotCount": 0,
+        "received": 0,
+        "sight": 300,
+        "reloadMode": null
+      },
+      "grenades": {
+        "ammo": 2,
+        "active": [],
+        "nextId": 0
+      },
+      "damage": [],
+      "pendingAudio": [],
+      "checkpoints": [
+        "cp_m01_a_orientacao"
+      ],
+      "flags": {
+        "m01.completed": false,
+        "m01.nowicki_status": "present",
+        "m01.bak_status": "unhurt",
+        "m01.dudek_status": "unhurt",
+        "m01.east_platoon_survivors": 18,
+        "m01.second_raid_state": "pending",
+        "m01.forward_post_state": "pending"
+      },
+      "scene": null,
+      "gate": null,
+      "objectives": {
+        "obj_m01_deliver_message": {
+          "state": "active",
+          "progress": 0
+        },
+        "obj_m01_take_cover": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_follow_sergeant": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_find_sappers": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_fetch_material": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_cover_repair": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_hold_access": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_cover_withdrawal": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_rescue_bak": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_leave_bridge": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_hold_corridor": {
+          "state": "locked",
+          "progress": 0
+        },
+        "obj_m01_reach_shelter": {
+          "state": "locked",
+          "progress": 0
+        }
+      },
+      "parts": {
+        "rail_support_00": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_portal_west": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_support_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_support_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_support_03": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_support_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_support_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_support_06": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_portal_old_east": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_span_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_span_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_span_03": {
+          "lod": 0,
+          "visible": true
+        },
+        "rail_span_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_span_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_span_06": {
+          "lod": 1,
+          "visible": true
+        },
+        "rail_span_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_span_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_span_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "rail_support_00_damaged": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_support_01_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_support_06_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "rail_portal_old_east_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "rail_span_01_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_span_02_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "rail_span_06_collapsed": {
+          "lod": 1,
+          "visible": false
+        },
+        "rail_span_07_collapsed": {
+          "lod": 2,
+          "visible": false
+        },
+        "road_support_00": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_portal_west": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_01_n": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_01_s": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_support_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_02_n": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_02_s": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_support_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_tower_03_n": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_03_s": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_03": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_04_n": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_04_s": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_05_n": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_tower_05_s": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_support_06": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_portal_old_east": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_span_01": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_span_02": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_span_03": {
+          "lod": 0,
+          "visible": true
+        },
+        "road_span_04": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_span_05": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_span_06": {
+          "lod": 1,
+          "visible": true
+        },
+        "road_span_07": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_span_08": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_span_09": {
+          "lod": 2,
+          "visible": true
+        },
+        "road_support_00_damaged": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_tower_01_n_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_tower_01_s_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_support_01_rubble": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_support_06_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "road_portal_old_east_rubble": {
+          "lod": 2,
+          "visible": false
+        },
+        "road_span_01_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_span_02_collapsed": {
+          "lod": 0,
+          "visible": false
+        },
+        "road_span_06_collapsed": {
+          "lod": 1,
+          "visible": false
+        },
+        "road_span_07_collapsed": {
+          "lod": 2,
+          "visible": false
+        },
+        "portal_lisewo_1912": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_rail_left": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_rail_right": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_road_left": {
+          "lod": 0,
+          "visible": true
+        },
+        "gate_road_right": {
+          "lod": 0,
+          "visible": true
+        }
+      },
+      "enemyAlive": 50,
+      "threat": {
+        "inFlight": 0,
+        "status": "",
+        "coverFire": null,
+        "recentFire": [],
+        "repair": {
+          "progress": 0,
+          "state": "locked",
+          "pinned": false,
+          "pins": 0,
+          "fireEase": false
+        },
+        "survivors": 18,
+        "spansSuppressed": false,
+        "mgSuppressed": []
+      },
+      "stationEvacuation": {
+        "patient": {
+          "id": "generic_rifleman",
+          "x": -300,
+          "y": -3,
+          "z": 30,
+          "facing": 0,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "task": null,
+          "carriedBy": null
+        },
+        "medic": {
+          "id": "leon_dudek",
+          "x": -8,
+          "y": 0,
+          "z": 48,
+          "facing": 0,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "task": null,
+          "carriedBy": null
+        },
+        "delivered": false
+      },
+      "animationPresentation": {
+        "actors": [
+          {
+            "id": "marek_zielinski",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pawel_krawiec",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "tadeusz_nowicki",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "szymon_kowal",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "jozef_bak",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "leon_dudek",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "staszek_pawlak",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "franciszek_lipski",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "sapper_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "sapper_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "east_platoon_voice",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "generic_rifleman",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_0",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_1",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_4",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_5",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_6",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_7",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_8",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_9",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_10",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_11",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_12",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_13",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_14",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_15",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_16",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_17",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_18",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_19",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_20",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_21",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_22",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_23",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_24",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_25",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_26",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_27",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_28",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_29",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_30",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_31",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_32",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_33",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_34",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_35",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_36",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_37",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_38",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_east_39",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_0",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_1",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_4",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_5",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_6",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_7",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_8",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "de_spans_9",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_0",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_1",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_2",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_3",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_4",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_5",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_6",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_7",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_8",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_9",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_10",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_11",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_12",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_13",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_14",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_15",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_16",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_17",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_18",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_19",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_20",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_21",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_22",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "pl_east_23",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "ckm_gunner",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "ckm_loader",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 1.9547687622336491,
+            "posture": "stand",
+            "postureSince": 0
+          },
+          {
+            "id": "ckm_reserve",
+            "motion": {
+              "speed": 0,
+              "odometer": 0,
+              "gait": "idle",
+              "gaitSince": 0
+            },
+            "bodyYaw": 0,
+            "posture": "stand",
+            "postureSince": 0
+          }
+        ]
+      },
+      "hudStatus": "",
+      "hudPresentation": {
+        "banner": {
+          "kind": "current",
+          "id": "obj_m01_deliver_message"
+        },
+        "queued": [],
+        "fade": 0.979,
+        "checkpoint": 0,
+        "titleCard": null,
+        "resumeCard": "resume|Tczew — pontes do Vístula|1 de setembro de 1939 · 04:30|CP-A · Orientação",
+        "cinematic": false
+      }
+    }
+  },
+  "checkpointSha256": "6331ff9cac2be72b04c51ae510758379b010aeb41ec828a5920edb7e7c1077e2"
+}

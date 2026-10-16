@@ -1,0 +1,20 @@
+{
+  "diagnostics": {
+    "tier": "low",
+    "families": [
+      "painted-steel",
+      "rusted-steel",
+      "brick",
+      "stone",
+      "soot",
+      "road",
+      "timber",
+      "rail"
+    ],
+    "textures": 24,
+    "decodedBytes": 1572864,
+    "calls": 8,
+    "triangles": 16
+  },
+  "errors": []
+}

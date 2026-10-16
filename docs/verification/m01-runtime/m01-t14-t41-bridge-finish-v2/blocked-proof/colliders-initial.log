@@ -1,0 +1,5 @@
+
+> operation-ashen-road@0.2.0 assets:m01:colliders
+> node tools/assets/m01-bridges/export-colliders.mjs --check
+
+Verified 83 collider boxes from the three GLB.

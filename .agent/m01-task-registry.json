@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "project": "Brawl2007/COD-guerra",
+  "mission": "M01-TCZEW",
+  "source_of_truth": "GitHub Git HEAD/PR checks; this is an index, never completion proof",
+  "candidate": "PR:#76",
+  "rules": [
+    "Never confuse delivered branch with integrated and validated",
+    "Check live GitHub PRs/branches and unique claim before beginning a task",
+    "Resume current candidate PR #76; do not create a competing V7 integration",
+    "Do not merge to main or deploy without CI/review/authorization"
+  ],
+  "tasks": {
+    "T00": {
+      "name": "PLANS CONSOLIDATION",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "PR:#56",
+        "PR:#58",
+        "PR:#44"
+      ],
+      "note": "Planos paralelos fora do trunk (docs)."
+    },
+    "T01": {
+      "name": "CHROMEBOOK FPS BASELINE",
+      "status": "ANNULLED",
+      "refs": [
+        "docs/M01_FINAL_ROADMAP.md",
+        "D13"
+      ],
+      "note": "Anulada: Chromebook deixou de ser alvo (D13)."
+    },
+    "T02": {
+      "name": "SCRIPT DATA CONTINUITY",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "T02-min aceite (#63); fecho T02 (018/019, 038, 048/049, 051, pré-roll, mensagens de continuidade) do lote partials integrado na candidata 2026-10-15; sem verifier/reviewer independentes."
+    },
+    "T03": {
+      "name": "BLAST DATA GROUNDING",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "T03-lite aceite (#63); fumo finito de granadas (smokeSeconds 20) do lote partials integrado; sem verificação independente."
+    },
+    "T04": {
+      "name": "HUD CINEMATIC",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ],
+      "note": "HUD da V7."
+    },
+    "T05": {
+      "name": "AUDIO DATA FIELDS",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-audio-director-music-v1@af81657",
+        "CI:38120863543",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "T05a na candidata; campos transitórios weapon/kind/pass e near-pass por aproximação do lote partials integrados; sem verificação independente."
+    },
+    "T06": {
+      "name": "AUDIO CORE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-audio-director-music-v1@af81657",
+        "CI:38132511927",
+        "CI:38138498956",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "T06a+T06b na candidata; atraso por distância de cada tiro inimigo e aproximação do comboio (lote partials) integrados; sem verificação independente."
+    },
+    "T07": {
+      "name": "ANIM CONTRACT SIM",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#43",
+        "PR:#59",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "Contrato de animação na V7; prone genérico/hitboxes orientadas, migração de carry e validação do lote partials integrados (delta spatial.js nomeado no guard wz29); sem verificação independente."
+    },
+    "T08": {
+      "name": "ANIM CLIP LIBRARY",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:38115976563",
+        "PR:#76"
+      ],
+      "note": "Clip library V2."
+    },
+    "T09": {
+      "name": "TEXTURE AUTHORING PIPELINE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38174455690",
+        "PR:#76"
+      ],
+      "note": "Atlas de materiais."
+    },
+    "T10": {
+      "name": "VEGETATION KIT",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38432707375",
+        "PR:#76"
+      ],
+      "note": "Kit de vegetação; licença CC0 registada em ASSET_CREDITS.md."
+    },
+    "T11": {
+      "name": "MERGED IN T24",
+      "status": "SUBSUMED",
+      "refs": [
+        "roadmap:T24"
+      ],
+      "note": "Incorporada em T24."
+    },
+    "T12": {
+      "name": "PROP KIT",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:38104348154",
+        "PR:#76"
+      ],
+      "note": "Kit de props (versão independente da arquitectura 16dd41b)."
+    },
+    "T13": {
+      "name": "FIELD STRUCTURES KIT",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38225594014",
+        "PR:#76"
+      ],
+      "note": "Estruturas de campo."
+    },
+    "T14": {
+      "name": "BRIDGE MATERIAL KIT",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:codex/m01-t14-t41-bridge-finish-v2@fd2b0c7",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#76"
+      ],
+      "note": "Código integrado na candidata via partials (1affd34+e0d494e). Aceitação continua BLOCKED: README da fonte regista verifier/perf FAIL e orçamento de correcção esgotado; correcções de e0d494e (metadados de autor) sem verifier/perf independentes."
+    },
+    "T15": {
+      "name": "FX V3 INTEGRATION GATE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#59",
+        "PR:#76"
+      ],
+      "note": "Portão FX V3 da V7; tabela fechado/aberto não verificada."
+    },
+    "T16": {
+      "name": "LIGHTING DAWN",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:37918399233",
+        "PR:#76"
+      ],
+      "note": "Luz da madrugada."
+    },
+    "T17": {
+      "name": "STUKA DIVE SEQUENCE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:37930134740",
+        "PR:#76"
+      ],
+      "note": "Mergulho dos Stuka."
+    },
+    "T18": {
+      "name": "DEMOLITION SETPIECE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:37959483518",
+        "PR:#76"
+      ],
+      "note": "Demolição V2."
+    },
+    "T19": {
+      "name": "PLAYER SHOT FEEDBACK",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:37890545910",
+        "PR:#76"
+      ],
+      "note": "Feedback do tiro do jogador."
+    },
+    "T20": {
+      "name": "DISTANT FRONT IMPOSTORS",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:38054298392",
+        "PR:#76"
+      ],
+      "note": "Impostores da frente distante."
+    },
+    "T21": {
+      "name": "AMBIENT DIRECTOR",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#65",
+        "PR:#70",
+        "PR:#76"
+      ],
+      "note": "Campo de batalha vivo (Argon). Ferramenta de prova #70 corrigida localmente; captura real em CI por reprovar."
+    },
+    "T22": {
+      "name": "BATTLE READOUT",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:38070927878",
+        "PR:#76"
+      ],
+      "note": "Display fire / battleReadout."
+    },
+    "T23": {
+      "name": "EAST FRONT VISIBLE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-east-front-visible-v1@b9c6c6b",
+        "CI:38091391874",
+        "PR:#63",
+        "PR:#76"
+      ],
+      "note": "Frente leste visível (Gemini) via pilha #63."
+    },
+    "T24": {
+      "name": "TRAIN ARRIVAL AND LIFE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#59",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "branch:integ-t24@ae0f453 (port manual do pacote Gemini/Argon M01-TRAIN-ARRIVAL-AND-LIFE-V1, local)",
+        "docs/T24_TRAIN_ARRIVAL_REPORT.md"
+      ],
+      "note": "Duas T24 reconciliadas numa junção: cinemática canónica única = Gemini (entra em andamento e trava até parar: 963 1435→1075 m 04:43:30→04:45:00; Panzerzug 1359→1119 m 04:51:00→04:52:00); M01TrainLife (Codex) usa trainArrivalOffset/panzerzugArrivalOffset e já não move os grupos pai (um só dono de transformação por comboio: raiz da locomotiva, grupo dos vagões, raiz do Panzerzug). Mantidos: halo de 1 km, contagem nativa de draw calls e fontes de fumo (Codex); fixture de luz/fornalha/travões, lanterna de fenda e coluna de manobra oeste (Gemini). Um só tecto de fumo 12/18/24 (RAILWAY_PUFF_BUDGET, TRAIN_PUFF_CAP é alias) e um só emissor. Visibilidade = chegada iniciada OU flags da simulação. Áudio veh.train.* testado mas não ligado. Cláusula da vista 10 e verificação independente por fazer; não é playtest."
+    },
+    "T25": {
+      "name": "RAID 05:30",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "PR:#76"
+      ],
+      "note": "Raid 05:30."
+    },
+    "T26": {
+      "name": "SCENE BEATS PRESENTATION",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#59",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "Letterbox/prompt/shake/pausas derivados de scene.elapsed nas quatro cenas (lote partials) integrados; sem verificação independente."
+    },
+    "T27": {
+      "name": "TERRAIN RELIEF",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38376693678",
+        "PR:#76"
+      ],
+      "note": "Relevo natural."
+    },
+    "T28": {
+      "name": "TERRAIN MATERIAL MACRO",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38174455699",
+        "PR:#76"
+      ],
+      "note": "Material macro do terreno."
+    },
+    "T29": {
+      "name": "VEGETATION RUNTIME",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38432707503",
+        "PR:#76"
+      ],
+      "note": "Vegetação em runtime."
+    },
+    "T30": {
+      "name": "FAR LANDSCAPE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38376693616",
+        "PR:#76"
+      ],
+      "note": "Paisagem distante."
+    },
+    "T31": {
+      "name": "TRACK BED",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38279380748",
+        "PR:#76"
+      ],
+      "note": "Leito da via V2."
+    },
+    "T32": {
+      "name": "FIELD STRUCTURES RUNTIME",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38225594010",
+        "PR:#76"
+      ],
+      "note": "Estruturas de campo em runtime."
+    },
+    "T33": {
+      "name": "PROPS RUNTIME",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/m01-integration@8a0c362",
+        "CI:38279380744",
+        "PR:#76"
+      ],
+      "note": "Props em runtime."
+    },
+    "T34": {
+      "name": "STATION YARD LIFE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#59",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "Evacuação na candidata; vida do pátio (seis auxiliares só de apresentação, danos reversíveis, fogo finito) do lote partials integrada; sem verificação independente."
+    },
+    "T35": {
+      "name": "ANIM LOCOMOTION RESOLVER",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "PR:#62",
+        "PR:#64",
+        "PR:#76"
+      ],
+      "note": "Resolver T35 + Argon V1/V2 unificados num módulo (merge 9149de7)."
+    },
+    "T36": {
+      "name": "ANIM CREWS EVACUATION",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#59",
+        "PR:#76",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b"
+      ],
+      "note": "carriedBy na candidata; transporte Bąk/Dudek, carregadores MG34 e fases ckm (fire_burst latente, policy disabled) do lote partials integrados; fogo real da ckm continua em T47; sem verificação independente."
+    },
+    "T37": {
+      "name": "ANIM FIDELITY IK",
+      "status": "PARTIAL_IN_CANDIDATE",
+      "refs": [
+        "PR:#64",
+        "PR:#76"
+      ],
+      "note": "IK do braço de apoio (Argon V2); orçamento IK por fazer."
+    },
+    "T38": {
+      "name": "COMBAT POSTURE STAGING",
+      "status": "NOT_DEVELOPED",
+      "refs": [],
+      "note": "Posturas de combate."
+    },
+    "T39": {
+      "name": "VIEWMODEL FEEL",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:38045111352",
+        "PR:#76"
+      ],
+      "note": "Viewmodel feel V2."
+    },
+    "T40": {
+      "name": "FP ARMS AND CARRY",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "branch:codex/m01-viewmodel-visual-v2"
+      ],
+      "note": "Branch pré-V7; confirmar se foi absorvida."
+    },
+    "T41": {
+      "name": "BRIDGE FINISH",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:codex/m01-t14-t41-bridge-finish-v2@fd2b0c7",
+        "branch:codex/m01-partials-completion-integration-v1@9a1535b",
+        "PR:#76"
+      ],
+      "note": "Código integrado na candidata via partials. Aceitação continua BLOCKED: README da fonte regista verifier/perf FAIL; e0d494e declara correcção de cartões desligados e alocações, sem verifier/perf independentes."
+    },
+    "T42": {
+      "name": "WATER VISTULA",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:37988900379",
+        "PR:#76"
+      ],
+      "note": "Água do Vístula."
+    },
+    "T43": {
+      "name": "LOD POLICY AND FADES",
+      "status": "NOT_DEVELOPED",
+      "refs": [],
+      "note": "Política de LOD."
+    },
+    "T44": {
+      "name": "POSTPROCESS GRADING",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#63",
+        "CI:38054298392",
+        "PR:#76"
+      ],
+      "note": "Grading/pós-processamento."
+    },
+    "T45": {
+      "name": "AUDIO ASSETS",
+      "status": "HUMAN_REQUIRED",
+      "refs": [
+        "branch:claude/m01-audio-real-v1"
+      ],
+      "note": "Assets de áudio exigem licenças; branch WIP não verificada."
+    },
+    "T46": {
+      "name": "AUDIO MIX OPTIONS",
+      "status": "NOT_DEVELOPED",
+      "refs": [],
+      "note": "Mistura e opções de áudio."
+    },
+    "T47": {
+      "name": "CKM CASEMATE CREW",
+      "status": "NOT_DEVELOPED",
+      "refs": [],
+      "note": "Fogo da guarnição do ckm."
+    },
+    "T48": {
+      "name": "GERMAN RETREAT",
+      "status": "NOT_DEVELOPED",
+      "refs": [
+        "package:Gemini T48 2026-10-15 (design input only)"
+      ],
+      "note": "Retirada alemã. Pacote Gemini avaliado em 2026-10-15: simulação substituída por stub de 289 linhas, IDs rg_dike_*/rg_gate_* inexistentes no mission.json e capturas de cena de teste; não integrável. Usar só como desenho (Fases A/B/C, silêncio 06:10–06:11, reagrupamento 06:12) para implementação real sobre RETREAT/carriedBy existentes."
+    },
+    "T49": {
+      "name": "PERFORMANCE BUDGET",
+      "status": "NEEDS_AUDIT",
+      "refs": [
+        "D13"
+      ],
+      "note": "Orçamento para a plataforma-alvo nova (PC H12)."
+    },
+    "T50": {
+      "name": "LOADING AND BUNDLE",
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "PR:#66",
+        "PR:#76"
+      ],
+      "note": "Loading real e divisão do bundle."
+    },
+    "T51": {
+      "name": "INTEGRATED VISUAL CLOSEOUT",
+      "status": "HUMAN_REVIEW_REQUIRED",
+      "refs": [
+        "roadmap:T51"
+      ],
+      "note": "Fecho visual integrado."
+    },
+    "T52": {
+      "name": "HUMAN PLAYTEST",
+      "status": "HUMAN_REQUIRED",
+      "refs": [
+        "docs/M01_FINAL_ROADMAP.md"
+      ],
+      "note": "Playtest humano."
+    }
+  },
+  "candidate_head_note": "Estados IN_CANDIDATE_* referem-se ao HEAD do PR #76; passam a INTEGRATED_VERIFIED só com CI verde (Node+build+Playwright) nesse HEAD.",
+  "extra_scope": {
+    "T53": "App de PC instalável (D37, branch claude/m01-decisions-d37-v1); fora do T00–T52."
+  }
+}

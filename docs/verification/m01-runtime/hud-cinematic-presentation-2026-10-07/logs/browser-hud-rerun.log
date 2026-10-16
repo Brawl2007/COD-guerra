@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/browser/m01-hud-presentation.spec.js:20:1 › the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint (50.7s)
+
+
+  1) tests/browser/m01-hud-presentation.spec.js:20:1 › the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      33 |   // O aviso fica por cima das faixas e do fade: o ponto central do texto pertence ao próprio #interaction.
+      34 |   expect(await page.evaluate(()=>{const r=document.querySelector('#interaction .interaction-action').getBoundingClientRect();
+    > 35 |     return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('#interaction')!==null;})).toBe(true);
+         |                                                                                                        ^
+      36 |   await page.keyboard.press('Space');
+      37 |   await page.waitForFunction(()=>window.gameDiagnostics().m01.checkpoints.includes('cp_m01_a_orientacao'));
+      38 |   const skipped=await page.evaluate(()=>window.gameDiagnostics().clock);await pauseAt(page,skipped+.8);
+        at /home/user/COD-guerra/tests/browser/m01-hud-presentation.spec.js:35:104
+
+    Error Context: test-results/m01-hud-presentation-the-i-d4950-he-objective-and-checkpoint/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-hud-presentation-the-i-d4950-he-objective-and-checkpoint/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-hud-presentation-the-i-d4950-he-objective-and-checkpoint/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01-hud-presentation.spec.js:20:1 › the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint 

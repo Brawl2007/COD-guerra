@@ -1,0 +1,154 @@
+name: M01 partial tasks integrated browser verification
+
+on:
+  push:
+    branches: [codex/m01-partials-completion-integration-v1]
+    paths-ignore:
+      - "docs/**"
+      - ".agent/**"
+      - "DEVELOPMENT_STATUS.md"
+      - "RUNBOOK.md"
+      - "IMPLEMENTATION_PLAN.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-partials-browser-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  integrated-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Preserve source histories and sandbox authority
+        run: |
+          git merge-base --is-ancestor 529e7de5ccbb69408304196a8d4fab27529ecd60 HEAD
+          git merge-base --is-ancestor 8a0c3622f5375f2c5b5e847db71f4f6e8352ae39 HEAD
+          git merge-base --is-ancestor af816578ea1dc3ee2a2b46f5bf14ce245d2cab2a HEAD
+          git merge-base --is-ancestor fd2b0c7eb467d509df28910be18661e1d07f6bb9 HEAD
+          git diff --exit-code 529e7de5ccbb69408304196a8d4fab27529ecd60 HEAD -- src/game/simulation.js src/world/world.js missions/sandbox-1944 package-lock.json
+      - name: Production build
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          node tools/verification/m01-bridge-finish-v2-build.mjs 2>&1 | tee evidence/build.log
+      - name: Physical colliders and full mission route
+        run: |
+          set -o pipefail
+          npm run assets:m01:colliders -- --check 2>&1 | tee evidence/colliders.log
+          node tools/verify-m01-route.mjs 2>&1 | tee evidence/route.log
+      - run: npx playwright install --with-deps chromium
+      - name: Integrated task and coupled browser checks
+        run: |
+          set -o pipefail
+          npx playwright test --config tools/verification/playwright.partials-completion.config.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - name: Existing crew and evacuation pause/reload obligations
+        run: |
+          set -o pipefail
+          PLAYWRIGHT_JSON_OUTPUT_NAME="$GITHUB_WORKSPACE/evidence/crews-browser-report.json" npx playwright test --config playwright.config.js tests/browser/m01.spec.js --grep 'the station evacuation|the real station (grab|release)|a missing optional station transition|ckm west crew|optional ckm kit' --output test-results/partials-crews-runner --workers=1 --retries=0 --reporter=line,json 2>&1 | tee evidence/crews-browser.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m01-partials-integration-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            docs/verification/m01-runtime/partials-completion-integration-v1/
+          if-no-files-found: ignore
+
+  simulation-authority:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: mkdir -p evidence
+      - name: Exact predecessor delta audit and twelve-seed cover invariants
+        run: |
+          set -o pipefail
+          git worktree add --detach "$RUNNER_TEMP/m01-partials-predecessor" bc8f6a21a57ccd926d4e0655481908d90d6b1978
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/m01-partials-predecessor/node_modules"
+          M01_PARTIALS_BASELINE="$RUNNER_TEMP/m01-partials-predecessor" M01_PARTIALS_AUDIT_OUT="$GITHUB_WORKSPACE/evidence/delta-audit" node tools/verification/m01-partials-completion-audit.mjs 2>&1 | tee evidence/delta-audit.log
+          node tools/m01-cover-comparison.mjs --out "$GITHUB_WORKSPACE/evidence/cover-current.json" > evidence/cover-current.log
+          cd "$RUNNER_TEMP/m01-partials-predecessor"
+          node tools/m01-cover-comparison.mjs --out "$GITHUB_WORKSPACE/evidence/cover-predecessor.json" > "$GITHUB_WORKSPACE/evidence/cover-predecessor.log"
+          cd "$GITHUB_WORKSPACE"
+          node --input-type=module -e 'import fs from "node:fs"; import assert from "node:assert/strict"; const read=p=>JSON.parse(fs.readFileSync(p)); const current=read("evidence/cover-current.json"), before=read("evidence/cover-predecessor.json"); assert.equal(current.seeds.length,12); assert.equal(current.runs.length,24); assert.deepEqual(current.summary,before.summary); assert.deepEqual(current.runs,before.runs); console.log("12 seeds / both routes: cover outcome invariants equal predecessor");' 2>&1 | tee evidence/cover-invariants.log
+      - name: Protected current integration bytes and original assets
+        run: node tools/verification/m01-bridge-finish-v2-authority.mjs --current-authority
+      - name: Twenty-four current simulation bridge-owner ON/OFF futures
+        run: |
+          set -o pipefail
+          node tools/verification/m01-bridge-finish-v2-futures.mjs --current-authority --out evidence/bridge-current-authority.json 2>&1 | tee evidence/bridge-current-authority.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m01-partials-authority-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+          if-no-files-found: ignore
+
+  bridge-paired-and-coupled:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: mkdir -p evidence
+      - name: Authored sidecars and production viewers
+        run: |
+          set -o pipefail
+          node tools/assets/m01-bridges/materials/generate.mjs --check
+          node tools/assets/m01-bridges/impostors/generate.mjs --check
+          node tools/verification/m01-bridge-finish-v2-build.mjs 2>&1 | tee evidence/build.log
+          node tools/verification/m01-bridge-finish-v2-source.mjs evidence/bridge-source.json
+      - run: npx playwright install --with-deps chromium
+      - name: Current authority with bridge owner OFF, same six phase views and controls
+        env:
+          M01_BASELINE_CAPTURE: '1'
+          M01_BRIDGE_CURRENT_AUTHORITY: '1'
+          M01_BRIDGE_EVIDENCE: test-results/partials-bridge-paired/off
+          M01_BRIDGE_REPORT: test-results/partials-bridge-paired/off-report.json
+        run: |
+          set -o pipefail
+          npx playwright test --config tools/verification/playwright.bridge-finish-v2.config.js m01-bridge-finish-runtime.spec.js 2>&1 | tee evidence/bridge-off.log
+      - name: Current authority with bridge owner ON and full bridge behavior matrix
+        env:
+          M01_BRIDGE_EVIDENCE: test-results/partials-bridge-paired/on
+          M01_BRIDGE_REPORT: test-results/partials-bridge-paired/on-report.json
+        run: |
+          set -o pipefail
+          npx playwright test --config tools/verification/playwright.bridge-finish-v2.config.js m01-bridge-finish-runtime.spec.js 2>&1 | tee evidence/bridge-on.log
+          node tools/verification/m01-bridge-finish-v2-compare.mjs test-results/partials-bridge-paired/off test-results/partials-bridge-paired/on evidence/bridge-paired.json 2>&1 | tee evidence/bridge-paired.log
+      - name: Coupled bridge, terrain, contact, water and demolition regressions
+        run: |
+          set -o pipefail
+          npx playwright test --config tools/verification/playwright.bridge-finish-v2-regressions.config.js --workers=1 --retries=0 2>&1 | tee evidence/bridge-coupled.log
+      - name: Source remained frozen throughout runtime checks
+        run: node tools/verification/m01-bridge-finish-v2-source.mjs --check evidence/bridge-source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m01-partials-bridge-paired-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+          if-no-files-found: ignore

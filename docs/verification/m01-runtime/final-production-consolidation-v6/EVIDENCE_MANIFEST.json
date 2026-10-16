@@ -1,0 +1,572 @@
+{
+  "productionHead": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+  "baselineHead": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+  "visualEvidenceHead": "377add30489247045fd028deb8ea9823acd41bc9",
+  "finalDeliveryHead": "exact SHA in PR #57 description and branch ref",
+  "hashKind": "Git content-addressed blob SHA-1; sizes from Git tree/UTF-8 content; this manifest excludes itself",
+  "files": [
+    {
+      "path": ".github/workflows/m01-final-production-consolidation-v6.yml",
+      "gitBlobSha1": "dc50738a0c2ea60ba61df5818a05d2628a6e696e",
+      "bytes": 1860
+    },
+    {
+      "path": ".github/workflows/m01-v6-evidence-recovery.yml",
+      "gitBlobSha1": "0c0552bb0e700dff245692294f79629a4cc6a741",
+      "bytes": 5635
+    },
+    {
+      "path": "DEVELOPMENT_STATUS.md",
+      "gitBlobSha1": "fced62f28bbb9e0aa6162bbad0ca52a0486f0c80",
+      "bytes": 33087
+    },
+    {
+      "path": "docs/NEXT_CHAT_CONTEXT.md",
+      "gitBlobSha1": "fe625fd71745ac85a0b24151171cd3a827f1ebd2",
+      "bytes": 26879
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_COMBINED_COVERAGE.json",
+      "gitBlobSha1": "dd02beb3c3401738646a8e9b22b8fb5ba6d06a71",
+      "bytes": 15015
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_PROGRESS.json",
+      "gitBlobSha1": "bbf845daaa1915dcc8cdd91070f44b9c873b9b29",
+      "bytes": 11867
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_RECOVERY.json",
+      "gitBlobSha1": "aea34d96dbf4ba7233171dd52f56e9f1b993e413",
+      "bytes": 6951
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_TRANSPORT_INTERRUPTION.json",
+      "gitBlobSha1": "2ffee37d4a350c5f67be6fb90dbc7d565a6773f7",
+      "bytes": 794
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/BUILD_PROVENANCE.json",
+      "gitBlobSha1": "509c5d2b6183590549c1391006ac8494500c815c",
+      "bytes": 1049
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/CI_RESULTS.json",
+      "gitBlobSha1": "cf3cd57da7626faab95bc67d0eb06bb7dd10cef2",
+      "bytes": 919
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/CI_VISUAL_REVIEW.md",
+      "gitBlobSha1": "d7557b66e1aa205d6b37932eefd45a4e454ebece",
+      "bytes": 2021
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/ci-visual/fx-contact-sheet.jpg",
+      "gitBlobSha1": "a9364e81d0f7788cd1fbc3e5ca961c032849d30f",
+      "bytes": 211114
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/ci-visual/grenade-small-near-high.png",
+      "gitBlobSha1": "825965832b179c647182a2d77fc13e2fac8a14da",
+      "bytes": 856820
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/ci-visual/west-demolition-high.png",
+      "gitBlobSha1": "45b3bba89e690e164a9a68c01a53b31e5804dbd3",
+      "bytes": 833613
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/DELIVERY_MATRIX.md",
+      "gitBlobSha1": "a6bf2986daf7b6c2492111c53d99f1cc65b3d28a",
+      "bytes": 24909
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/FX_FAILURE_DIAGNOSIS.md",
+      "gitBlobSha1": "ee20053103138d4aabbf95e35e349002e6b14045",
+      "bytes": 7956
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/FX_REMOTE_EVIDENCE.json",
+      "gitBlobSha1": "68078395741a115c4508228991a78f6c1b1dd177",
+      "bytes": 20761
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/HANDOFF.md",
+      "gitBlobSha1": "b001e5a9ebec8692d2e3270c498ca4a0f310fdc4",
+      "bytes": 14495
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/INVARIANTS.json",
+      "gitBlobSha1": "953a8bf605fdf372911901a6ad1b23b41e116b12",
+      "bytes": 53028
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/browser-recovery.log",
+      "gitBlobSha1": "5819d3449b778927fdfa5f81fd31bdda7fca0e75",
+      "bytes": 476
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/build-baseline.log",
+      "gitBlobSha1": "6bec859af02f153f38d24586d5382a83fffb08fb",
+      "bytes": 271
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/build-corrections.log",
+      "gitBlobSha1": "8ee88789a2fbe7c0fa13aa2edfcb66cfc1d7edd8",
+      "bytes": 866
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/build-final.log",
+      "gitBlobSha1": "832db25933e5e2728602f3bd9d5c5608bab32e56",
+      "bytes": 866
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/build-v5-isolated.log",
+      "gitBlobSha1": "5f4bcbbedfd3a031dfa75bdb56df54bdd54d2d08",
+      "bytes": 866
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/ci-critical-browser.log",
+      "gitBlobSha1": "160ebdb46ebfb8a16079bc389fd3de941ff9ffdc",
+      "bytes": 61112
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/ci-evidence-recovery.log",
+      "gitBlobSha1": "cc7de8f942da2c185a4134d6f1de5d5019e225c9",
+      "bytes": 82504
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/ci-node-build.log",
+      "gitBlobSha1": "2e27839c9eef9ae0150b6e28656ff456734b2b25",
+      "bytes": 94854
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/fx-focused.log",
+      "gitBlobSha1": "39746c459fdd898036bcd4893c5f59d950f1b38a",
+      "bytes": 63733
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/invariants-final.log",
+      "gitBlobSha1": "3a9bfcfb39425ceaaf6577f08a18e717a8469d4e",
+      "bytes": 68
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/lifecycle-focused.log",
+      "gitBlobSha1": "181889084cb6a2f0b1b040adb68ebbecbd67aced",
+      "bytes": 3692
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/node-all-initial.log",
+      "gitBlobSha1": "56e5b8b55ff91349bad13c4898fda7dc0ddd105e",
+      "bytes": 119702
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/node-all-recovery.log",
+      "gitBlobSha1": "3725cd492d1cd7f2cabeb6875fcd825e72cb9763",
+      "bytes": 117349
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/logs/visual-recovery.log",
+      "gitBlobSha1": "36aea5f43b41e35594a21e3fa67a5aae8cb11ee4",
+      "bytes": 3032
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/NODE_FINAL.json",
+      "gitBlobSha1": "4bee7ee2ab421e6b9f1190cc019317c23a660d0d",
+      "bytes": 357
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/NODE_INITIAL.json",
+      "gitBlobSha1": "e0f1884f23a635f8eae6ec5267a6ce95d880e96b",
+      "bytes": 2566
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/RECOVERY_CI_RESULTS.json",
+      "gitBlobSha1": "f5b3e638b412619896ebc0400d01eeb98e2360b6",
+      "bytes": 6306
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/REMOTE_CLOSURE.json",
+      "gitBlobSha1": "eee314522cb308ba19a06f2bdbbff058bde129a5",
+      "bytes": 4207
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/REMOTE_INVENTORY.json",
+      "gitBlobSha1": "670195dd1089d798227096709be3ec7546d0f797",
+      "bytes": 185785
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/RUNTIME_REVIEW.md",
+      "gitBlobSha1": "8628a486376cee0d1c031428f85a804b1a07a7da",
+      "bytes": 3966
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/VISUAL_COMPARISON.json",
+      "gitBlobSha1": "4e620f56f11870dfdab9489cbcf418e023ea8a0c",
+      "bytes": 1114231
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/VISUAL_PAIRS.json",
+      "gitBlobSha1": "d89a1300e72d5486523f0d812bc767a465393a60",
+      "bytes": 17730
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/VISUAL_REVIEW.md",
+      "gitBlobSha1": "29a92ab9427aa6b8492898203e05228b278e04ad",
+      "bytes": 5485
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/comparison-high-1.jpg",
+      "gitBlobSha1": "c8f6a859dad92e94ee2f1898756e64aaf2d9a1f6",
+      "bytes": 286635
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/comparison-high-2.jpg",
+      "gitBlobSha1": "acdfff57ebd030ba7a701430b2c2a07de6781fa1",
+      "bytes": 293952
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/comparison-low-1.jpg",
+      "gitBlobSha1": "1298292aa679828af06a16eda80b8bcc02ddd04e",
+      "bytes": 280203
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/comparison-low-2.jpg",
+      "gitBlobSha1": "6c17446a4fd78bfccdcfc1d743f34c8fef0e6df5",
+      "bytes": 298320
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/comparison-medium-1.jpg",
+      "gitBlobSha1": "63efbf9304fddc43199efed9c60c821830cb4434",
+      "bytes": 287137
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/comparison-medium-2.jpg",
+      "gitBlobSha1": "e0b9951a156cb19ab8420d15e3f399a7f163c485",
+      "bytes": 294871
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-bridge-east-high.png",
+      "gitBlobSha1": "433180edba01f39a348e529acf04cff5e670278f",
+      "bytes": 869505
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-bridge-east-low.png",
+      "gitBlobSha1": "7b08c6d58ffb59fc5d63131347caeb9e1f7c5530",
+      "bytes": 869958
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-bridge-east-medium.png",
+      "gitBlobSha1": "ca4e3d1e91746739623b7f792455d208c5c6bd8e",
+      "bytes": 868320
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-bridge-west-high.png",
+      "gitBlobSha1": "251e81a4ee77b1cc6edb14385a0a32ddb68a69a3",
+      "bytes": 912322
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-bridge-west-low.png",
+      "gitBlobSha1": "4721384c86a4758842cb3aac0a43f56729819e32",
+      "bytes": 917107
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-bridge-west-medium.png",
+      "gitBlobSha1": "3b58e582f96ed72d632694334e1eccc14fbd3945",
+      "bytes": 911117
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-evacuation-high.png",
+      "gitBlobSha1": "3d943c2ae47d7b30dee2e5ba6c2a82de8c6948c2",
+      "bytes": 868868
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-evacuation-low.png",
+      "gitBlobSha1": "32b44903b09dc651e351a5ff79c27836ce3b8d01",
+      "bytes": 817219
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-evacuation-medium.png",
+      "gitBlobSha1": "59d3dd927a4e3c6346a0bf6bebfa991edb0b2a40",
+      "bytes": 851546
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-panzerzug-high.png",
+      "gitBlobSha1": "213550418a5790c0aa1cdc0e4c018fcc683b91a6",
+      "bytes": 583062
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-panzerzug-low.png",
+      "gitBlobSha1": "5eb2de3170eb26fc15260d713f8617bf4b1a1f84",
+      "bytes": 582001
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-panzerzug-medium.png",
+      "gitBlobSha1": "d640f04b0d6598eb43768400c454b3a2f01c7345",
+      "bytes": 582989
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-roll-call-high.png",
+      "gitBlobSha1": "436736fc224ccd6e254e69f2b7f33033ed5f8d64",
+      "bytes": 919870
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-roll-call-low.png",
+      "gitBlobSha1": "f4bb9a0e2a44cd3f8aa75e04afe5de0c83653b9d",
+      "bytes": 945094
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-roll-call-medium.png",
+      "gitBlobSha1": "913eae23054b11a6961bdfc66d767bb89d1ed1bb",
+      "bytes": 920166
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-frontal-high.png",
+      "gitBlobSha1": "64658a2e37b31c35c36da9a3a4c03e7ce822de27",
+      "bytes": 896890
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-frontal-low.png",
+      "gitBlobSha1": "069b615143202541e16b89a92f5e8bf15982f9e0",
+      "bytes": 852244
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-frontal-medium.png",
+      "gitBlobSha1": "9e541c2756bcfa0a5381b4bde99c03f678969bc6",
+      "bytes": 894108
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-oblique-high.png",
+      "gitBlobSha1": "87c7e30839ee2ee104267d2ee74c97f2b0aea1fc",
+      "bytes": 761312
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-oblique-low.png",
+      "gitBlobSha1": "33b515470f09365003dbbd1d449db46ff2f879ec",
+      "bytes": 745193
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-oblique-medium.png",
+      "gitBlobSha1": "ec23aa3c43be46197b784fb80fb82278a984df74",
+      "bytes": 759756
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-platform-high.png",
+      "gitBlobSha1": "90dd7e9e3da9e345bea2c23f2965b5e63674f491",
+      "bytes": 835050
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-platform-low.png",
+      "gitBlobSha1": "5707020d8cb24bb88fa689c412e18973d94ce1a6",
+      "bytes": 805382
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-platform-medium.png",
+      "gitBlobSha1": "41b5188e81ed87b56d31a0965e84fe97ef4731f9",
+      "bytes": 834517
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-yard-high.png",
+      "gitBlobSha1": "33f07b243af1637a90c89b536ace268349d1038c",
+      "bytes": 703234
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-yard-low.png",
+      "gitBlobSha1": "2cf1a346fb99bb2e25b94300b76f6f26d836df81",
+      "bytes": 684700
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-station-yard-medium.png",
+      "gitBlobSha1": "4f71722d985339a364f2594190a58bc7c1d0a121",
+      "bytes": 701051
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-train-963-high.png",
+      "gitBlobSha1": "c5bfba24fe8330fe688ced4480b7d7eb99cd2a05",
+      "bytes": 738441
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-train-963-low.png",
+      "gitBlobSha1": "14d18e5a813c1eae8d5067876c909dc51902a938",
+      "bytes": 740430
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V5-train-963-medium.png",
+      "gitBlobSha1": "99a7f21e86dbb5e3366e67b181f6246155d56c8f",
+      "bytes": 738346
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-bridge-east-high.png",
+      "gitBlobSha1": "433180edba01f39a348e529acf04cff5e670278f",
+      "bytes": 869505
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-bridge-east-low.png",
+      "gitBlobSha1": "7b08c6d58ffb59fc5d63131347caeb9e1f7c5530",
+      "bytes": 869958
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-bridge-east-medium.png",
+      "gitBlobSha1": "ca4e3d1e91746739623b7f792455d208c5c6bd8e",
+      "bytes": 868320
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-bridge-west-high.png",
+      "gitBlobSha1": "251e81a4ee77b1cc6edb14385a0a32ddb68a69a3",
+      "bytes": 912322
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-bridge-west-low.png",
+      "gitBlobSha1": "4721384c86a4758842cb3aac0a43f56729819e32",
+      "bytes": 917107
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-bridge-west-medium.png",
+      "gitBlobSha1": "3b58e582f96ed72d632694334e1eccc14fbd3945",
+      "bytes": 911117
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-evacuation-high.png",
+      "gitBlobSha1": "3d943c2ae47d7b30dee2e5ba6c2a82de8c6948c2",
+      "bytes": 868868
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-evacuation-low.png",
+      "gitBlobSha1": "32b44903b09dc651e351a5ff79c27836ce3b8d01",
+      "bytes": 817219
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-evacuation-medium.png",
+      "gitBlobSha1": "59d3dd927a4e3c6346a0bf6bebfa991edb0b2a40",
+      "bytes": 851546
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-panzerzug-high.png",
+      "gitBlobSha1": "213550418a5790c0aa1cdc0e4c018fcc683b91a6",
+      "bytes": 583062
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-panzerzug-low.png",
+      "gitBlobSha1": "5eb2de3170eb26fc15260d713f8617bf4b1a1f84",
+      "bytes": 582001
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-panzerzug-medium.png",
+      "gitBlobSha1": "d640f04b0d6598eb43768400c454b3a2f01c7345",
+      "bytes": 582989
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-roll-call-high.png",
+      "gitBlobSha1": "436736fc224ccd6e254e69f2b7f33033ed5f8d64",
+      "bytes": 919870
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-roll-call-low.png",
+      "gitBlobSha1": "f4bb9a0e2a44cd3f8aa75e04afe5de0c83653b9d",
+      "bytes": 945094
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-roll-call-medium.png",
+      "gitBlobSha1": "913eae23054b11a6961bdfc66d767bb89d1ed1bb",
+      "bytes": 920166
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-frontal-high.png",
+      "gitBlobSha1": "64658a2e37b31c35c36da9a3a4c03e7ce822de27",
+      "bytes": 896890
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-frontal-low.png",
+      "gitBlobSha1": "069b615143202541e16b89a92f5e8bf15982f9e0",
+      "bytes": 852244
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-frontal-medium.png",
+      "gitBlobSha1": "9e541c2756bcfa0a5381b4bde99c03f678969bc6",
+      "bytes": 894108
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-oblique-high.png",
+      "gitBlobSha1": "87c7e30839ee2ee104267d2ee74c97f2b0aea1fc",
+      "bytes": 761312
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-oblique-low.png",
+      "gitBlobSha1": "33b515470f09365003dbbd1d449db46ff2f879ec",
+      "bytes": 745193
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-oblique-medium.png",
+      "gitBlobSha1": "ec23aa3c43be46197b784fb80fb82278a984df74",
+      "bytes": 759756
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-platform-high.png",
+      "gitBlobSha1": "90dd7e9e3da9e345bea2c23f2965b5e63674f491",
+      "bytes": 835050
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-platform-low.png",
+      "gitBlobSha1": "5707020d8cb24bb88fa689c412e18973d94ce1a6",
+      "bytes": 805382
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-platform-medium.png",
+      "gitBlobSha1": "41b5188e81ed87b56d31a0965e84fe97ef4731f9",
+      "bytes": 834517
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-yard-high.png",
+      "gitBlobSha1": "33f07b243af1637a90c89b536ace268349d1038c",
+      "bytes": 703234
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-yard-low.png",
+      "gitBlobSha1": "2cf1a346fb99bb2e25b94300b76f6f26d836df81",
+      "bytes": 684700
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-station-yard-medium.png",
+      "gitBlobSha1": "4f71722d985339a364f2594190a58bc7c1d0a121",
+      "bytes": 701051
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-train-963-high.png",
+      "gitBlobSha1": "c5bfba24fe8330fe688ced4480b7d7eb99cd2a05",
+      "bytes": 738441
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-train-963-low.png",
+      "gitBlobSha1": "14d18e5a813c1eae8d5067876c909dc51902a938",
+      "bytes": 740430
+    },
+    {
+      "path": "docs/verification/m01-runtime/final-production-consolidation-v6/visual/V6-train-963-medium.png",
+      "gitBlobSha1": "99a7f21e86dbb5e3366e67b181f6246155d56c8f",
+      "bytes": 738346
+    },
+    {
+      "path": "tools/verification/m01-final-consolidation-v6.mjs",
+      "gitBlobSha1": "c448afbfe62583adfeb77476e0151627256ec703",
+      "bytes": 8732
+    }
+  ],
+  "artifactDigests": {
+    "critical": {
+      "id": 11552374346,
+      "sha256": "0bd589c7cfc976cae92c2a2efdfa115eb03cb41d446877fdcdcf0ab5ba8aeec1",
+      "downloadVerified": true
+    },
+    "recovery": {
+      "id": 11559960166,
+      "sha256": "029029f6ba3f05dbec8f4f9bf766a6a0970ad077844e452af9cdd2a010dd71ac",
+      "downloadVerified": false,
+      "source": "GitHub artifact metadata; original images also committed and read from Git"
+    }
+  },
+  "omissions": [
+    "Final original local browser exit/report and unpublished local test images unavailable after executor loss; do not invent them",
+    "No hardware FPS or exact VRAM measurement"
+  ],
+  "state": "READY_FOR_CAPTAIN_REVIEW_WITH_KNOWN_FAILURES"
+}

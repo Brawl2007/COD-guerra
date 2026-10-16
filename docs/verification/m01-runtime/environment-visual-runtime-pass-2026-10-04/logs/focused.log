@@ -1,0 +1,10 @@
+✔ damage presentation is bounded, frozen at pause, reconstructible and never mutates source state (65.71766ms)
+✔ visual quality respects explicit settings and conservative hardware fallback (0.798831ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 238.063179

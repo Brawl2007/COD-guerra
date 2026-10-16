@@ -1,0 +1,600 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "base": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+  "testedHead": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+  "browsers": {
+    "production": "153.0.8010.0",
+    "transients": "153.0.8010.0"
+  },
+  "pairs": [
+    {
+      "name": "east-demolition-hot",
+      "quality": "low",
+      "clock": 741.3999999998734,
+      "snapshotSha256": "6099522f9985c033e920e1e6b38537f5dd9da6ae7b9e29eeaf756243a7bbc198",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-east-demolition-hot-low.png",
+          "pngSha256": "6020059e8727b99b803c119660ca01096261dc1dfbad08bfe61586f00f81964a",
+          "jpeg": "visual/V6-east-demolition-hot-low.jpg",
+          "jpegSha256": "198b3c1142f8dfa121b84d01851bdfb4ef5faf2ba1c16924b6cd7f5dd8140854",
+          "pngBytes": 813691,
+          "jpegBytes": 219404,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-east-demolition-hot-low.png",
+          "pngSha256": "6020059e8727b99b803c119660ca01096261dc1dfbad08bfe61586f00f81964a",
+          "jpeg": "visual/V7-east-demolition-hot-low.jpg",
+          "jpegSha256": "198b3c1142f8dfa121b84d01851bdfb4ef5faf2ba1c16924b6cd7f5dd8140854",
+          "pngBytes": 813691,
+          "jpegBytes": 219404,
+          "fixtureRender": {
+            "calls": 190,
+            "triangles": 558428
+          }
+        }
+      }
+    },
+    {
+      "name": "grenade-explosion-hot",
+      "quality": "low",
+      "clock": 4.299999999999993,
+      "snapshotSha256": "092d06b54691fde3b924c41be2fbf0025b255089bf6607083370093b0e407d3f",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        1.8446180555555556e-05,
+        2.604166666666667e-05,
+        3.0381944444444444e-05
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-grenade-explosion-hot-low.png",
+          "pngSha256": "8a43eddddffbafe365f947a393220c1b43686e42b45938ca5a734b772acb63fb",
+          "jpeg": "visual/V6-grenade-explosion-hot-low.jpg",
+          "jpegSha256": "7aaf1af13a50d68ac06513aa09852a8db4991e41df3cddc8c5998b81c46bcb82",
+          "pngBytes": 780729,
+          "jpegBytes": 166987,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-grenade-explosion-hot-low.png",
+          "pngSha256": "7b08a786aaf5e651e6bfc80523e998e2e1c0e21ba76057217414d00461b88d55",
+          "jpeg": "visual/V7-grenade-explosion-hot-low.jpg",
+          "jpegSha256": "e7ad600834c73eb23cc68bf0d495540c894e72f9b6bc57c5958ec4bdf23e5c87",
+          "pngBytes": 780724,
+          "jpegBytes": 166972,
+          "fixtureRender": {
+            "calls": 257,
+            "triangles": 442593
+          }
+        }
+      }
+    },
+    {
+      "name": "soldiers-close",
+      "quality": "low",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "7baaf4d6dff5935bedf8fadc87b03d5ecd608a0343003413812095877692fcd3",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-soldiers-close-low.png",
+          "pngSha256": "6d21a7c6fe697555c0136f9ca56675bd17a66b0670cee1eb323f907b4018f652",
+          "jpeg": "visual/V6-soldiers-close-low.jpg",
+          "jpegSha256": "496260c5ec36a178719fd59e4cca33a30deacd10320c01644ebfd730c8a81b00",
+          "pngBytes": 810486,
+          "jpegBytes": 168348,
+          "drawCalls": 103,
+          "triangles": 392333,
+          "textures": 93,
+          "geometries": 244,
+          "environmentInstances": 15687
+        },
+        "V7": {
+          "png": "visual/V7-soldiers-close-low.png",
+          "pngSha256": "6d21a7c6fe697555c0136f9ca56675bd17a66b0670cee1eb323f907b4018f652",
+          "jpeg": "visual/V7-soldiers-close-low.jpg",
+          "jpegSha256": "496260c5ec36a178719fd59e4cca33a30deacd10320c01644ebfd730c8a81b00",
+          "pngBytes": 810486,
+          "jpegBytes": 168348,
+          "drawCalls": 103,
+          "triangles": 392332,
+          "textures": 93,
+          "geometries": 247,
+          "environmentInstances": 15687
+        }
+      }
+    },
+    {
+      "name": "station-roof-artistic",
+      "quality": "low",
+      "clock": 0.05,
+      "snapshotSha256": "27e0cc33e9358562e93bfc4aa908bb39a68eb31465df5d5bfd60c0524c497f48",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        4.664690755208333,
+        5.5253721788194445,
+        6.130235460069445
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-roof-artistic-low.png",
+          "pngSha256": "57ab4b887ee7417421f0425ce6bc8eaa170f3f194bd2eb87ec41cbdb51ab52b2",
+          "jpeg": "visual/V6-station-roof-artistic-low.jpg",
+          "jpegSha256": "70572b640c2aa2ff0d212ebf0d4bc8d6ee86e42692d345b5c48511d34631642c",
+          "pngBytes": 703982,
+          "jpegBytes": 163091,
+          "drawCalls": 42,
+          "triangles": 383471,
+          "textures": 56,
+          "geometries": 385,
+          "environmentInstances": 15309
+        },
+        "V7": {
+          "png": "visual/V7-station-roof-artistic-low.png",
+          "pngSha256": "ac0bebe105fbddffc506606bec73730991ce95ff6507130dcac87f9d36b11e18",
+          "jpeg": "visual/V7-station-roof-artistic-low.jpg",
+          "jpegSha256": "e0c3f9b94b0eaee6e9553ba48e75ef8ac60f47fb06348f3bffef6add1ec09291",
+          "pngBytes": 721622,
+          "jpegBytes": 168340,
+          "drawCalls": 42,
+          "triangles": 387017,
+          "textures": 56,
+          "geometries": 388,
+          "environmentInstances": 15309
+        }
+      }
+    },
+    {
+      "name": "train-963-close",
+      "quality": "low",
+      "clock": 256.400000000024,
+      "snapshotSha256": "26c69da7f6be7a7e6603670c2d06459d73e85f9765251d5ec8788e7c5810d3d2",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-train-963-close-low.png",
+          "pngSha256": "1b7abb331101cf898daa0120efe6e004aad7d80560d0563b880e73ea11c4b9e7",
+          "jpeg": "visual/V6-train-963-close-low.jpg",
+          "jpegSha256": "465304decc73ced8c2e22a0a01a0f4ade8b10812c6ab75aa480f8031df3ed89f",
+          "pngBytes": 759299,
+          "jpegBytes": 163718,
+          "drawCalls": 304,
+          "triangles": 529920,
+          "textures": 160,
+          "geometries": 386,
+          "environmentInstances": 14964
+        },
+        "V7": {
+          "png": "visual/V7-train-963-close-low.png",
+          "pngSha256": "1b7abb331101cf898daa0120efe6e004aad7d80560d0563b880e73ea11c4b9e7",
+          "jpeg": "visual/V7-train-963-close-low.jpg",
+          "jpegSha256": "465304decc73ced8c2e22a0a01a0f4ade8b10812c6ab75aa480f8031df3ed89f",
+          "pngBytes": 759299,
+          "jpegBytes": 163718,
+          "drawCalls": 304,
+          "triangles": 533465,
+          "textures": 160,
+          "geometries": 389,
+          "environmentInstances": 14964
+        }
+      }
+    },
+    {
+      "name": "east-demolition-hot",
+      "quality": "medium",
+      "clock": 741.3999999998734,
+      "snapshotSha256": "6099522f9985c033e920e1e6b38537f5dd9da6ae7b9e29eeaf756243a7bbc198",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-east-demolition-hot-medium.png",
+          "pngSha256": "ab54424e87103696aa58fea58046cd5b8a06cedfade634d0822a59d79c8a9f4f",
+          "jpeg": "visual/V6-east-demolition-hot-medium.jpg",
+          "jpegSha256": "6975b0e101ce3c409bc1217881359daf28d7e6bea9adfd5776c2a2677b05eec0",
+          "pngBytes": 824869,
+          "jpegBytes": 215100,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-east-demolition-hot-medium.png",
+          "pngSha256": "ab54424e87103696aa58fea58046cd5b8a06cedfade634d0822a59d79c8a9f4f",
+          "jpeg": "visual/V7-east-demolition-hot-medium.jpg",
+          "jpegSha256": "6975b0e101ce3c409bc1217881359daf28d7e6bea9adfd5776c2a2677b05eec0",
+          "pngBytes": 824869,
+          "jpegBytes": 215100,
+          "fixtureRender": {
+            "calls": 321,
+            "triangles": 915620
+          }
+        }
+      }
+    },
+    {
+      "name": "grenade-explosion-hot",
+      "quality": "medium",
+      "clock": 4.299999999999993,
+      "snapshotSha256": "092d06b54691fde3b924c41be2fbf0025b255089bf6607083370093b0e407d3f",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-grenade-explosion-hot-medium.png",
+          "pngSha256": "74eaf27fffa9769ee078a3ad57ad1c248b78d80457b6ff53fc7f467a76e42ff5",
+          "jpeg": "visual/V6-grenade-explosion-hot-medium.jpg",
+          "jpegSha256": "24a4920fb878edb4e709fc48b8b6db080ee7b65c1efb72be31de38117631d2a1",
+          "pngBytes": 788745,
+          "jpegBytes": 167789,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-grenade-explosion-hot-medium.png",
+          "pngSha256": "74eaf27fffa9769ee078a3ad57ad1c248b78d80457b6ff53fc7f467a76e42ff5",
+          "jpeg": "visual/V7-grenade-explosion-hot-medium.jpg",
+          "jpegSha256": "24a4920fb878edb4e709fc48b8b6db080ee7b65c1efb72be31de38117631d2a1",
+          "pngBytes": 788745,
+          "jpegBytes": 167789,
+          "fixtureRender": {
+            "calls": 294,
+            "triangles": 569178
+          }
+        }
+      }
+    },
+    {
+      "name": "soldiers-close",
+      "quality": "medium",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "7baaf4d6dff5935bedf8fadc87b03d5ecd608a0343003413812095877692fcd3",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-soldiers-close-medium.png",
+          "pngSha256": "cce231a438cebfc754c2d9a07c72193f0fdc2e068d14f98cebfef0f28ee2dd40",
+          "jpeg": "visual/V6-soldiers-close-medium.jpg",
+          "jpegSha256": "a29d7bfb8d20f836333d36d4f80d71fa1f7f71ba1ce25f64ac11226407bff4df",
+          "pngBytes": 812712,
+          "jpegBytes": 168525,
+          "drawCalls": 108,
+          "triangles": 440447,
+          "textures": 93,
+          "geometries": 243,
+          "environmentInstances": 18467
+        },
+        "V7": {
+          "png": "visual/V7-soldiers-close-medium.png",
+          "pngSha256": "cce231a438cebfc754c2d9a07c72193f0fdc2e068d14f98cebfef0f28ee2dd40",
+          "jpeg": "visual/V7-soldiers-close-medium.jpg",
+          "jpegSha256": "a29d7bfb8d20f836333d36d4f80d71fa1f7f71ba1ce25f64ac11226407bff4df",
+          "pngBytes": 812712,
+          "jpegBytes": 168525,
+          "drawCalls": 108,
+          "triangles": 440426,
+          "textures": 93,
+          "geometries": 246,
+          "environmentInstances": 18467
+        }
+      }
+    },
+    {
+      "name": "station-roof-artistic",
+      "quality": "medium",
+      "clock": 0.05,
+      "snapshotSha256": "27e0cc33e9358562e93bfc4aa908bb39a68eb31465df5d5bfd60c0524c497f48",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        4.703076171875,
+        5.534214409722222,
+        6.136220703125
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-roof-artistic-medium.png",
+          "pngSha256": "c354e344dc5563b0c5474a64a82448e9eeb578a425591aff2fa9aef81b06c5ed",
+          "jpeg": "visual/V6-station-roof-artistic-medium.jpg",
+          "jpegSha256": "879a4447dcb81467d80f4710dd05e811734dcb98b67e4000bf1ba09067cae4f9",
+          "pngBytes": 718314,
+          "jpegBytes": 165844,
+          "drawCalls": 53,
+          "triangles": 428983,
+          "textures": 62,
+          "geometries": 396,
+          "environmentInstances": 17750
+        },
+        "V7": {
+          "png": "visual/V7-station-roof-artistic-medium.png",
+          "pngSha256": "34bb10ab7c7f02b38a9ea56a04d77c0aed3c4bce5bb2ab0a0990c11d6241dc2b",
+          "jpeg": "visual/V7-station-roof-artistic-medium.jpg",
+          "jpegSha256": "37b9bb9edd70dd8e0526c8d06aaf569f7d02a692f810cf910efe983c0ea9fdd8",
+          "pngBytes": 733813,
+          "jpegBytes": 170784,
+          "drawCalls": 53,
+          "triangles": 429251,
+          "textures": 62,
+          "geometries": 399,
+          "environmentInstances": 17750
+        }
+      }
+    },
+    {
+      "name": "train-963-close",
+      "quality": "medium",
+      "clock": 256.400000000024,
+      "snapshotSha256": "26c69da7f6be7a7e6603670c2d06459d73e85f9765251d5ec8788e7c5810d3d2",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-train-963-close-medium.png",
+          "pngSha256": "b8441ba40e69d94b5297a538e931a5b76c330eb06bd6231306c09bbdd798ce54",
+          "jpeg": "visual/V6-train-963-close-medium.jpg",
+          "jpegSha256": "ec0430aadc52b9292f6f97e1364cc3ca59e1ecab99e2884816e4976a55e5f30c",
+          "pngBytes": 759974,
+          "jpegBytes": 163868,
+          "drawCalls": 378,
+          "triangles": 592892,
+          "textures": 196,
+          "geometries": 386,
+          "environmentInstances": 15087
+        },
+        "V7": {
+          "png": "visual/V7-train-963-close-medium.png",
+          "pngSha256": "b8441ba40e69d94b5297a538e931a5b76c330eb06bd6231306c09bbdd798ce54",
+          "jpeg": "visual/V7-train-963-close-medium.jpg",
+          "jpegSha256": "ec0430aadc52b9292f6f97e1364cc3ca59e1ecab99e2884816e4976a55e5f30c",
+          "pngBytes": 759974,
+          "jpegBytes": 163868,
+          "drawCalls": 378,
+          "triangles": 596417,
+          "textures": 196,
+          "geometries": 389,
+          "environmentInstances": 15087
+        }
+      }
+    },
+    {
+      "name": "east-demolition-hot",
+      "quality": "high",
+      "clock": 741.3999999998734,
+      "snapshotSha256": "6099522f9985c033e920e1e6b38537f5dd9da6ae7b9e29eeaf756243a7bbc198",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-east-demolition-hot-high.png",
+          "pngSha256": "c094e2ccedceba19ad149a9fba8799dd138e9a3312c023324bb0093fc48814aa",
+          "jpeg": "visual/V6-east-demolition-hot-high.jpg",
+          "jpegSha256": "cc23c5760f8f3a5743c639420bb5175a681aea9726818319e0c028a0a1111b84",
+          "pngBytes": 826149,
+          "jpegBytes": 215421,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-east-demolition-hot-high.png",
+          "pngSha256": "c094e2ccedceba19ad149a9fba8799dd138e9a3312c023324bb0093fc48814aa",
+          "jpeg": "visual/V7-east-demolition-hot-high.jpg",
+          "jpegSha256": "cc23c5760f8f3a5743c639420bb5175a681aea9726818319e0c028a0a1111b84",
+          "pngBytes": 826149,
+          "jpegBytes": 215421,
+          "fixtureRender": {
+            "calls": 338,
+            "triangles": 992450
+          }
+        }
+      }
+    },
+    {
+      "name": "grenade-explosion-hot",
+      "quality": "high",
+      "clock": 4.299999999999993,
+      "snapshotSha256": "092d06b54691fde3b924c41be2fbf0025b255089bf6607083370093b0e407d3f",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-grenade-explosion-hot-high.png",
+          "pngSha256": "9abcb237616052aa408259345c0fa70caa2552eb0f38878691b407a1e2885581",
+          "jpeg": "visual/V6-grenade-explosion-hot-high.jpg",
+          "jpegSha256": "92319d4590ebb7599416b51c1e2c55dfe80dadbf685b3d719d060f67e8f75094",
+          "pngBytes": 794384,
+          "jpegBytes": 168527,
+          "fixtureRender": null,
+          "metricLimit": "Protected V6 fixture does not expose render counters; production-app pairs do."
+        },
+        "V7": {
+          "png": "visual/V7-grenade-explosion-hot-high.png",
+          "pngSha256": "9abcb237616052aa408259345c0fa70caa2552eb0f38878691b407a1e2885581",
+          "jpeg": "visual/V7-grenade-explosion-hot-high.jpg",
+          "jpegSha256": "92319d4590ebb7599416b51c1e2c55dfe80dadbf685b3d719d060f67e8f75094",
+          "pngBytes": 794384,
+          "jpegBytes": 168527,
+          "fixtureRender": {
+            "calls": 303,
+            "triangles": 629829
+          }
+        }
+      }
+    },
+    {
+      "name": "soldiers-close",
+      "quality": "high",
+      "clock": 207.3500000000129,
+      "snapshotSha256": "7baaf4d6dff5935bedf8fadc87b03d5ecd608a0343003413812095877692fcd3",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-soldiers-close-high.png",
+          "pngSha256": "0cdc9c179679a5cfe441be2018774a1f7f21b7954d0b22502bbdbe264b14e747",
+          "jpeg": "visual/V6-soldiers-close-high.jpg",
+          "jpegSha256": "d3c671f7d66eb78146ce7e90028b886965e8322e0ddcf3b3aa4fa938fe8e80c2",
+          "pngBytes": 812445,
+          "jpegBytes": 168510,
+          "drawCalls": 125,
+          "triangles": 524600,
+          "textures": 108,
+          "geometries": 253,
+          "environmentInstances": 22422
+        },
+        "V7": {
+          "png": "visual/V7-soldiers-close-high.png",
+          "pngSha256": "0cdc9c179679a5cfe441be2018774a1f7f21b7954d0b22502bbdbe264b14e747",
+          "jpeg": "visual/V7-soldiers-close-high.jpg",
+          "jpegSha256": "d3c671f7d66eb78146ce7e90028b886965e8322e0ddcf3b3aa4fa938fe8e80c2",
+          "pngBytes": 812445,
+          "jpegBytes": 168510,
+          "drawCalls": 125,
+          "triangles": 524579,
+          "textures": 108,
+          "geometries": 256,
+          "environmentInstances": 22422
+        }
+      }
+    },
+    {
+      "name": "station-roof-artistic",
+      "quality": "high",
+      "clock": 0.05,
+      "snapshotSha256": "27e0cc33e9358562e93bfc4aa908bb39a68eb31465df5d5bfd60c0524c497f48",
+      "pixelsIdentical": false,
+      "meanAbsoluteRgbDifference": [
+        4.701402994791667,
+        5.530995008680556,
+        6.131631944444444
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-station-roof-artistic-high.png",
+          "pngSha256": "dfd306d26a521c6429c587c45a9f3395c8a476215f45645cae820e586f9d491e",
+          "jpeg": "visual/V6-station-roof-artistic-high.jpg",
+          "jpegSha256": "a3ca708e26979577b9527648a40767a3ccb3ff8296b69b03bdc4025a5e8e1a9f",
+          "pngBytes": 724087,
+          "jpegBytes": 168212,
+          "drawCalls": 56,
+          "triangles": 484505,
+          "textures": 69,
+          "geometries": 444,
+          "environmentInstances": 21989
+        },
+        "V7": {
+          "png": "visual/V7-station-roof-artistic-high.png",
+          "pngSha256": "f61b0bf1652f5aa43738294e373aafb26b46a1c966e8b3eede14730409d7dee6",
+          "jpeg": "visual/V7-station-roof-artistic-high.jpg",
+          "jpegSha256": "e2b9ca6ed9bf33a190ffd1f815ce31c267f6745b1b1250c3445a88e5ee876dfa",
+          "pngBytes": 740402,
+          "jpegBytes": 173220,
+          "drawCalls": 56,
+          "triangles": 487909,
+          "textures": 69,
+          "geometries": 447,
+          "environmentInstances": 21989
+        }
+      }
+    },
+    {
+      "name": "train-963-close",
+      "quality": "high",
+      "clock": 256.400000000024,
+      "snapshotSha256": "26c69da7f6be7a7e6603670c2d06459d73e85f9765251d5ec8788e7c5810d3d2",
+      "pixelsIdentical": true,
+      "meanAbsoluteRgbDifference": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "versions": {
+        "V6": {
+          "png": "visual/V6-train-963-close-high.png",
+          "pngSha256": "9da91c0fbe956b93ddb355cd17fda72e01407c3123b16f55a0db60702dc85579",
+          "jpeg": "visual/V6-train-963-close-high.jpg",
+          "jpegSha256": "304293612c6a3ebb47c40fca7446b8b483a3f73342614877b1f5d65d14b8f699",
+          "pngBytes": 760399,
+          "jpegBytes": 164504,
+          "drawCalls": 408,
+          "triangles": 689232,
+          "textures": 227,
+          "geometries": 434,
+          "environmentInstances": 15271
+        },
+        "V7": {
+          "png": "visual/V7-train-963-close-high.png",
+          "pngSha256": "9da91c0fbe956b93ddb355cd17fda72e01407c3123b16f55a0db60702dc85579",
+          "jpeg": "visual/V7-train-963-close-high.jpg",
+          "jpegSha256": "304293612c6a3ebb47c40fca7446b8b483a3f73342614877b1f5d65d14b8f699",
+          "pngBytes": 760399,
+          "jpegBytes": 164504,
+          "drawCalls": 408,
+          "triangles": 692757,
+          "textures": 227,
+          "geometries": 437,
+          "environmentInstances": 15271
+        }
+      }
+    }
+  ],
+  "pairCount": 15,
+  "captureCount": 30,
+  "allSnapshotsEquivalent": true,
+  "boards": [
+    "boards/supplementary-low.jpg",
+    "boards/supplementary-medium.jpg",
+    "boards/supplementary-high.jpg"
+  ],
+  "fpsMeasured": false,
+  "physicalGpuMemoryMeasured": false,
+  "imageEncoding": "Pixel measurements from original lossless PNG; repository JPEG copies at original 1280x720, quality 92, no retouch.",
+  "losslessLocation": "Local supplementary capture output; reproduce with --supplementary. Not part of the core CI artifact.",
+  "cameraLimit": "station-roof-artistic uses an elevated save pose only for inspection; this is not an accessible gameplay position. Other production supplementary views are at player height."
+}

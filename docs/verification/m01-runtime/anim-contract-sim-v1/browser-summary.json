@@ -1,0 +1,36 @@
+{
+  "stats": {
+    "startTime": "2026-10-07T23:59:15.062Z",
+    "duration": 62537.295,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "schema-2 animation contract current 89: exact production restore, pause, reload and prior checkpoint",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 36295,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "schema-2 animation contract legacy 86: exact production restore, pause, reload and prior checkpoint",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 20487,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+npm notice run operation-ashen-road@0.2.0 npx
+npm notice run 'playwright' test tests/browser/m01-locomotive.spec.js --repeat-each 3 --workers 1 --retries 0 --timeout 300000 --reporter=list,json
+[2m[WebServer] [22mnpm notice run operation-ashen-road@0.2.0 preview
+[2m[WebServer] [22mnpm notice run vite preview --host 127.0.0.1
+
+Running 6 tests using 1 worker
+
+  ✓  1 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production GLBs load, far LOD, pause and restore (3.3m)
+  ✓  2 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production optional failure fallback (1.6m)
+  ✓  3 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production GLBs load, far LOD, pause and restore (3.3m)
+  ✓  4 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production optional failure fallback (1.6m)
+  ✓  5 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production GLBs load, far LOD, pause and restore (3.1m)
+  ✓  6 tests/browser/m01-locomotive.spec.js:6:36 › locomotive 963 production optional failure fallback (1.4m)
+
+  6 passed (16.3m)

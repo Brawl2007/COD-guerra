@@ -1,0 +1,2203 @@
+{
+  "status": "PASS",
+  "base": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+  "testedHead": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+  "allowedRendererChanges": [
+    "src/render/first-person-weapon-fx.js",
+    "src/render/m01-damage-decals.js",
+    "src/render/m01-station-architecture.js",
+    "src/render/m01-view.js",
+    "src/render/m01-viewmodel.js",
+    "src/render/m01-wz29-presentation.js",
+    "src/render/three-renderer.js"
+  ],
+  "protectedFiles": [
+    {
+      "path": "assets/licenses/MakeHuman-CC0.md",
+      "bytes": 6962,
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c"
+    },
+    {
+      "path": "assets/models/allied-rifleman.mtl",
+      "bytes": 228,
+      "sha256": "bfb1903f8102062e68e89a8273d8ed679788b58dcbcd0bbc406ed933aa992f09"
+    },
+    {
+      "path": "assets/models/allied-rifleman.obj",
+      "bytes": 144268,
+      "sha256": "198b8a0327317d29c3e272947e6831174c45da68075bc057b4dc68b204eabce5"
+    },
+    {
+      "path": "assets/models/axis-rifleman.mtl",
+      "bytes": 229,
+      "sha256": "5b37b2fcd90436ec942a6476320965f2e0e5066bf40990a8f90d8d812f518979"
+    },
+    {
+      "path": "assets/models/axis-rifleman.obj",
+      "bytes": 146862,
+      "sha256": "e8261973f9547897c798d0fbcb0b01cc524039aa4fb7694b8d777a97fc5772cc"
+    },
+    {
+      "path": "assets/models/m1-carbine.mtl",
+      "bytes": 183,
+      "sha256": "d0c7992df4ad20373b2500dab016b7193ae654b8d6d3b716da64b925407d8ea1"
+    },
+    {
+      "path": "assets/models/m1-carbine.obj",
+      "bytes": 30486,
+      "sha256": "393b6539bb3c0b4492530962c7dc3fa7726fc766cfb3a4c4435c687b86243042"
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/LICENSE.txt",
+      "bytes": 440,
+      "sha256": "bffdd6984faafcd4476819038131ed2d9e7140526846c368e333370a93297c23"
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/m01_locomotive_freight_lod0.glb",
+      "bytes": 1142356,
+      "sha256": "46faab0661f43689bf3e2ce647889a314acea5aa9044b65aee9abff82e35f471"
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/m01_locomotive_freight_lod1.glb",
+      "bytes": 680920,
+      "sha256": "0c058431d483d4c1c9869283e688e1fda5e724feee6446354861a2fc32f2dd42"
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/m01_locomotive_freight_lod2.glb",
+      "bytes": 347852,
+      "sha256": "60d18026fea48429790103386b081875679bff289cdd74573b260869ad78120b"
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/manifest.json",
+      "bytes": 4158,
+      "sha256": "2ad7be4a56396fc02413e5e904523e7cf97c54d1d96fae6e09b099da6d9e3ede"
+    },
+    {
+      "path": "assets/models/production/m01/locomotive/weathered-metal.png",
+      "bytes": 61339,
+      "sha256": "5728ea712db9f5ec37836918d86e93f8defd4a8d650a1144a8e8f31772405c9a"
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/LICENSE.md",
+      "bytes": 244,
+      "sha256": "8c325c71e62a6de17feadf82a76433eaaaa1e5270ddd93e06d2401bc7fc13f71"
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/armour-paint.png",
+      "bytes": 61339,
+      "sha256": "5728ea712db9f5ec37836918d86e93f8defd4a8d650a1144a8e8f31772405c9a"
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/m01_panzerzug_visual_lod0.glb",
+      "bytes": 1441116,
+      "sha256": "5f1747c82754ea054a00715fbe7fad9d044314e5732843bc708664fba86e192c"
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/m01_panzerzug_visual_lod1.glb",
+      "bytes": 1069980,
+      "sha256": "3803dd376c9280c6e43d5bbab1ad043e3aa288a8d2624631468025e5805a924f"
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/m01_panzerzug_visual_lod2.glb",
+      "bytes": 465632,
+      "sha256": "6f5bc68a2f37a7a4e25eccfdef37efc56a7bed45a32174b1791d46e7566bd89d"
+    },
+    {
+      "path": "assets/models/production/m01/panzerzug/manifest.json",
+      "bytes": 4613,
+      "sha256": "009bba63ca9e113b649070fa7b7e924f2cb95b8fcdb887675862c24a035dfbbe"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod0.glb",
+      "bytes": 922488,
+      "sha256": "47cd82a53ac5a047d32faff8d66c2b9e8c7041ad193b43c8d23f9e7359e0b893"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod1.glb",
+      "bytes": 359356,
+      "sha256": "c3d0354b65bc87ff4badeb597a223ffded4ebd6ab8d25358a5caa6602ecb3d70"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/m01_ju87_b1_lod2.glb",
+      "bytes": 136460,
+      "sha256": "eb5252eabfc43c31b25504fee0087a07089b07e4ed00c0e28681c18d59bcb1d7"
+    },
+    {
+      "path": "assets/models/provisional/m01-aircraft/manifest.json",
+      "bytes": 15276,
+      "sha256": "ce4e61c6666bce6498da2013ba460596f0ba38c803395a0ef0f7f80e9a5b0ddd"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod0.glb",
+      "bytes": 337284,
+      "sha256": "9ddc22ef1635cd4f708c46127950d76695081e251fbfaaadcd1bcd760bda848b"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod1.glb",
+      "bytes": 139188,
+      "sha256": "baab5b6b63d6f3c550585d6abf924cde6c366ca3109904f65909c5b7249b0b44"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_burned_lod2.glb",
+      "bytes": 57264,
+      "sha256": "5be4191578f3c28f0eebbfac35d67cc1f5ef9b167403683227b7929965b641a5"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod0.glb",
+      "bytes": 337772,
+      "sha256": "232517ead15255ac57c10440c43e56a51bf0f06cdab20592c68ebb27dc0dba29"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod1.glb",
+      "bytes": 132360,
+      "sha256": "42a17730056103e8fbc8cb7b7c95951dfddd1c03b552a8cff4c7f5db823f37cc"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_covered_damaged_lod2.glb",
+      "bytes": 56092,
+      "sha256": "6b7e03ddc01017b225776737d6248aa978a9b2ddc4e130af29560e7e8f8cfb3c"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod0.glb",
+      "bytes": 319500,
+      "sha256": "7abe2b0ea4a2c0a72400c14e931424312bd7eecbd537ea7dc772c81eed22e103"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod1.glb",
+      "bytes": 127484,
+      "sha256": "878fb80bbc5575c5232269b49a54428b320390d5df5edbedabd65d91b3e30e11"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_burned_lod2.glb",
+      "bytes": 52304,
+      "sha256": "fcb97bd311981ce10b2ec6ebf89e348b71ccddf8789193b81914ff3eba137381"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod0.glb",
+      "bytes": 292252,
+      "sha256": "6f8ddbd089ed0a1cc98533e63ceb916e182bf23424ffa96cef4148ece862b1b3"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod1.glb",
+      "bytes": 110716,
+      "sha256": "9e3bbdac0d56ce9be1e0e7be20f7f2e44d27105ac76783415763b01a16afe3fd"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/m01_wagon_open_damaged_lod2.glb",
+      "bytes": 42288,
+      "sha256": "9abb14d756208ca0e9bdc3cafce2395ca885161818e9b4f14495066413d0bd58"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagon-damage/manifest.json",
+      "bytes": 43590,
+      "sha256": "1361f0e91187d8b0a285bcc767786d4191c9e04e8594a9878d641a8285599673"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod0.glb",
+      "bytes": 301200,
+      "sha256": "081157e1bccd9b184e14bce03cffd4821738818a354811fa6ba2f53e2bed974f"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod1.glb",
+      "bytes": 121320,
+      "sha256": "452b005d6efa9d510cb421a5eeeeb533e32dae4c30b9b1a247e8800f42a44e87"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_covered_lod2.glb",
+      "bytes": 50980,
+      "sha256": "0eb03cada40c0e0279d81f83c95963d2de39523735e33fb9fd3810dd2a502413"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod0.glb",
+      "bytes": 266496,
+      "sha256": "7806337ee9413b6dc2c2505980032868b14cd8969bc99362273ca80534d46b50"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod1.glb",
+      "bytes": 97088,
+      "sha256": "4994884b89a2c0e51317e0056ea5cafdb9c447b33641459481a329ec3097b6b3"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/m01_wagon_open_lod2.glb",
+      "bytes": 37748,
+      "sha256": "78c7c6afcbb9ff3b9e1942d7729d79e82acbafe95302aeda08ee35f2ac19adb1"
+    },
+    {
+      "path": "assets/models/provisional/m01-wagons/manifest.json",
+      "bytes": 18231,
+      "sha256": "cbea08196bc4d11105d61d42cef3098eeabc1fb8d225d0c515b630bcc3d6a09b"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge-colliders.json",
+      "bytes": 43146,
+      "sha256": "4abe3556c34f80d046dcd78f6d2c4697b66fafab948f9d812ff45c13456e326d"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.colliders.glb",
+      "bytes": 64080,
+      "sha256": "d842571caf72e69567552838167fdd1dc757fdfaf09e607675c9522b8014714f"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.glb",
+      "bytes": 1642496,
+      "sha256": "6bc61f88caba3a5efb8a5435081413d629ce0547b1b22d13b3f497538fd270dd"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod1.glb",
+      "bytes": 931464,
+      "sha256": "b57496e46c8f72244c64477aa576ef102a9436406a02112325c23f7898e4547b"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_rail_1891_1912.lod2.glb",
+      "bytes": 349304,
+      "sha256": "73a40ed8dc0bcb1926175b52e3a12f5356a868eec71cc6529dcee1fe391c3af3"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.colliders.glb",
+      "bytes": 82080,
+      "sha256": "2a4b0d7715d36c21a71cd54fc3e742e763605d032f31a3ef04fb625244d65ffc"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.glb",
+      "bytes": 3092296,
+      "sha256": "e022cdd1454bca6dc908d31c542ab05f864096bef0ea40c39d5ae27ef3913404"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod1.glb",
+      "bytes": 654632,
+      "sha256": "51aab198331165fe968b9b5e2883dda7583c2590b26233a634f4e0c02c8e60a4"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridge_road_lentze_1857_1912.lod2.glb",
+      "bytes": 304504,
+      "sha256": "80251700525fe134c4c3771a58635951461f7d2e5223e09e6bccc3ed60ee379c"
+    },
+    {
+      "path": "assets/models/provisional/m01/bridges.manifest.json",
+      "bytes": 129333,
+      "sha256": "176fcbb31a3329443086dff88a05772996a3be6cb59ccd310147887c15454313"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_animations.glb",
+      "bytes": 876612,
+      "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod0.glb",
+      "bytes": 1718132,
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod1.glb",
+      "bytes": 604600,
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_de_lod2.glb",
+      "bytes": 187880,
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb",
+      "bytes": 2602908,
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod1.glb",
+      "bytes": 1041440,
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_soldier_pl_lod2.glb",
+      "bytes": 321668,
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/m01_station_animations.glb",
+      "bytes": 96720,
+      "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/manifest.json",
+      "bytes": 15722,
+      "sha256": "2f8e29ccf8894d40b7746abb4540105323650f4dbd9feab3d41908099c96eda6"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/motion-clips-v1/m01_soldier_motion_clips.glb",
+      "bytes": 415724,
+      "sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/motion-clips-v1/manifest.json",
+      "bytes": 12213,
+      "sha256": "1269ec5fdb115f69af111beb23c32427954250b8be36d3eb4e69535808e6a78c"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-animations.manifest.json",
+      "bytes": 707,
+      "sha256": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/m01_station_drag_transitions.glb",
+      "bytes": 408488,
+      "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c"
+    },
+    {
+      "path": "assets/models/provisional/m01/characters/station-drag-transitions/manifest.json",
+      "bytes": 10143,
+      "sha256": "9dbbed8028b9828de0b6e487622c385774be863e5ac7157f74ccf57721a57017"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.colliders.glb",
+      "bytes": 2592,
+      "sha256": "14fd8776cde3822b7b42a230854af543a611c8f95e89e0eec68166ef3ef90ac9"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.glb",
+      "bytes": 114820,
+      "sha256": "9db340f3127076b41c4d9261eedef64b2816f204c87f267faaa406d68b98a933"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod1.glb",
+      "bytes": 40960,
+      "sha256": "3283065ab78ca79231338cf780591944c548fc963ed0dab42216cd7432f95094"
+    },
+    {
+      "path": "assets/models/provisional/m01/portal_lisewo_1912.lod2.glb",
+      "bytes": 31840,
+      "sha256": "84ee83e8b096b3c9dc6bfe4320c1e617a7780af36e9ad408f8243fce08831f9f"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_animations.glb",
+      "bytes": 891712,
+      "sha256": "dda588e9163da7aa0bfe9b3f7189d96c84a9e4788b9707ffbee7b70dfe936865"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod0.glb",
+      "bytes": 364660,
+      "sha256": "64ee37e3f4ad5882c97bcebfa47195b6ae84abbc33eb1faff99cd37c931165b9"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod1.glb",
+      "bytes": 194356,
+      "sha256": "30fa7424df859c7c4c5be6b347955cf636284041c9eccfc1e30f1063f1fd0168"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/m01_ckm_wz30_lod2.glb",
+      "bytes": 84208,
+      "sha256": "a00f9a301b11523d3398c360a3c7bf8a15c5c0481abec56ec48efe80f9c5f875"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/ckm_wz30/manifest.json",
+      "bytes": 28842,
+      "sha256": "81acc3147bbfaf965c2985deab3dd0d47330a7b4b4f080379088f060f8a4a3da"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/m01_mg34_prone_animations.glb",
+      "bytes": 858508,
+      "sha256": "79a405dd9c3c2d4bdc113b367d96de631ff62fa88be62e93e79952d353ca4d3c"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34-prone/manifest.json",
+      "bytes": 16074,
+      "sha256": "61cf1f31717a5071e96911c84a44824fc010690fee94240a656d86718ebcf352"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_animations.glb",
+      "bytes": 256984,
+      "sha256": "2245c4ac88f59b2a17a73436e14b62fa2f0abff2303fa19bb2b16913f82ad74b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod0.glb",
+      "bytes": 331304,
+      "sha256": "a65ac6a4eb8a350646a209383a5e2d7c76667774f9af2453279af99f8a071298"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod1.glb",
+      "bytes": 124380,
+      "sha256": "6aa44e8c9c6152301a9ac2d31d1c88e174705f778922459a2c2f2d2d6fa0fc7a"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/m01_mg34_lod2.glb",
+      "bytes": 37144,
+      "sha256": "657e2ab1784f6755d7a429081210db6b7252496ede55e8c068ded112d8edcc65"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/mg34/manifest.json",
+      "bytes": 16043,
+      "sha256": "61040eebb6e09abf93a567efbcde5b2009f2805b997d83952abca169f4961b8b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_animations.glb",
+      "bytes": 218776,
+      "sha256": "23ecb6fb0429d5b38ee70492e3bb63d7853c1d86d85402693a5d67e23535c804"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod0.glb",
+      "bytes": 260444,
+      "sha256": "ade802f370828734bec7b8e9d810a4d76974b38be285ec30ab4be2f9ee0b323b"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod1.glb",
+      "bytes": 96288,
+      "sha256": "ac9381fdcd3989fb50739f2b8a9d7cdf2e05e1a2d5f77faaeb16f33e78f135d9"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/m01_rkm_wz28_lod2.glb",
+      "bytes": 26736,
+      "sha256": "2816fe42517469a5577575c04c45ed679b80b6a04b974a586ea912a280839744"
+    },
+    {
+      "path": "assets/models/provisional/m01/weapons/rkm_wz28/manifest.json",
+      "bytes": 11118,
+      "sha256": "cd26ea6deeb568479bb6f9bb3992ad86db3f29d1ae7d76de876d6e72c324d451"
+    },
+    {
+      "path": "missions/campaign-plan.json",
+      "bytes": 5945,
+      "sha256": "9c9109fa1005a183676f32fb5001765113cdc63948f14816780549c3387a7fa0"
+    },
+    {
+      "path": "missions/m01-tczew/ASSETS.md",
+      "bytes": 8721,
+      "sha256": "86838ed2ac201eb14aa80cdf773ffa224c742da8228dd7002270b6b720061321"
+    },
+    {
+      "path": "missions/m01-tczew/BRIDGE_ASSET_REPORT.md",
+      "bytes": 11500,
+      "sha256": "49235d8902415124c58a858709bc4f9bf2b54c6449ab9d3f270d5870dfa8136b"
+    },
+    {
+      "path": "missions/m01-tczew/CLAUDE_BRIDGE_TASK.md",
+      "bytes": 4747,
+      "sha256": "8099f12362ff63e1ae62316e91ae0b5ef6e55482233d3bda64775fe04b62bda2"
+    },
+    {
+      "path": "missions/m01-tczew/ENGINE_CONTRACT.md",
+      "bytes": 13575,
+      "sha256": "d2651e7d0f8f067de55fb030a5f7ff7a1c7d9618822ec770bc3c57f0ea8de242"
+    },
+    {
+      "path": "missions/m01-tczew/HISTORICAL_RESEARCH.md",
+      "bytes": 23759,
+      "sha256": "16e7431104f180c74c8607399c618147d6083a447fb5f4141770374b4bd031fc"
+    },
+    {
+      "path": "missions/m01-tczew/MAP.md",
+      "bytes": 10874,
+      "sha256": "a05d24fbd0cb96b989a9415ea5c55097fd142418cc51cdaeb82be79f6d64cd4d"
+    },
+    {
+      "path": "missions/m01-tczew/MEASUREMENTS.md",
+      "bytes": 6181,
+      "sha256": "297ad7daa0761fcf5bb23126186c74ebd050aa76f643f87d8f4f134f83effd20"
+    },
+    {
+      "path": "missions/m01-tczew/README.md",
+      "bytes": 6511,
+      "sha256": "5cf8ee8c551315c33a92ad1ad9994878c8c138e9cb3eed6c8ff7db56494a46d7"
+    },
+    {
+      "path": "missions/m01-tczew/SCRIPT.md",
+      "bytes": 29932,
+      "sha256": "1586fe28ef65796e62d070fcf111fce66b7e4e123322e321517dadc6b3d279e2"
+    },
+    {
+      "path": "missions/m01-tczew/SOURCE_CHECK.md",
+      "bytes": 7874,
+      "sha256": "e9aefe26533e720a1123399d6b05fc0118ffd8915f7b39881c46eda824943112"
+    },
+    {
+      "path": "missions/m01-tczew/assets-m01.json",
+      "bytes": 20683,
+      "sha256": "f2595de67c19d8519edd18736d3bb49330e4e868afe1795bbe2604fd434de4ac"
+    },
+    {
+      "path": "missions/m01-tczew/map-layout.json",
+      "bytes": 25756,
+      "sha256": "50b8e90a69804bffa94a84acfd6680247e0c6abd356efab75d00b835c6a075d7"
+    },
+    {
+      "path": "missions/m01-tczew/map-layout.svg",
+      "bytes": 28981,
+      "sha256": "e334b7c50862082f5da4659aab9e8569713e3e8c5d9bf3e091026dcf998c5b38"
+    },
+    {
+      "path": "missions/m01-tczew/measurements.json",
+      "bytes": 3665,
+      "sha256": "48c90ab38b957a2b973f84a2dd302a2c49d165a3b81dc548c6b708aea5504a76"
+    },
+    {
+      "path": "missions/m01-tczew/mission.json",
+      "bytes": 73292,
+      "sha256": "1af2b926493b5df8c75fdd34702f9f869c642bb005b423fcbb6c9b49f493a69e"
+    },
+    {
+      "path": "missions/m01-tczew/tools/.gitignore",
+      "bytes": 21,
+      "sha256": "046032151fe6113c18a8d7d9971c557e81129ca1ba244e5263d54b7e0e6f9643"
+    },
+    {
+      "path": "missions/m01-tczew/tools/measure_osm_overture.py",
+      "bytes": 12453,
+      "sha256": "8f2787518d391bc388bdc36d9218dea805ac5b0c0be710a3094ecd2da3f18df6"
+    },
+    {
+      "path": "missions/m01-tczew/tools/render-map-svg.mjs",
+      "bytes": 9358,
+      "sha256": "f7c7f272a05cb9ec89f3e315674e9bee7438c681908eb00a992beeebd8d097ec"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 27406,
+      "sha256": "7dc6046b961e916f3e8d8de4513a582cdd1138a943305bfd975b5ce61b3d8ac3"
+    },
+    {
+      "path": "package.json",
+      "bytes": 582,
+      "sha256": "c366a42b77930e9d717d6fa9178ac004465e1e0e768a391df9495f846b8ec1e3"
+    },
+    {
+      "path": "playwright.config.js",
+      "bytes": 868,
+      "sha256": "73963bc356cd785f09065534d3a520afc9a740fe946434293d78bea8887c45f1"
+    },
+    {
+      "path": "research/SOURCES.md",
+      "bytes": 22487,
+      "sha256": "7f5156199d695e287d78867d98c1c35f1d6ced6bda60975daa7073ca2c1fa167"
+    },
+    {
+      "path": "research/equipment-timeline.json",
+      "bytes": 10692,
+      "sha256": "d0d4cfc6ff8c2f8bad353838471e99974601d9b7ef520d7490cbdd125d4ac3d6"
+    },
+    {
+      "path": "research/weapons/ckm_wz30.md",
+      "bytes": 4529,
+      "sha256": "41d40822ba1ace397b6ad5a75908764073bbea326a8a06085bb223e6e443b0ce"
+    },
+    {
+      "path": "research/weapons/kb_wz29.md",
+      "bytes": 7162,
+      "sha256": "874d99e0d296da5087fcdda0ac9bc0de1d5f1a82e330ff4ad236f6a313f421a3"
+    },
+    {
+      "path": "research/weapons/kb_wz29.profile.json",
+      "bytes": 2840,
+      "sha256": "73a3cf9a9300d1e34cbedd8f103988854147377956c031f5645616f4ca8e589e"
+    },
+    {
+      "path": "research/weapons/kb_wz98a.md",
+      "bytes": 2556,
+      "sha256": "57a7822d1c8b6a88db4bf22a7a8bf7d6d81884121b96a74f325b394bed789997"
+    },
+    {
+      "path": "research/weapons/mg34.md",
+      "bytes": 4142,
+      "sha256": "5fd203d905b2ec08f11d126671aa96c8113abee623128ca9f3b49d1c1d72dc11"
+    },
+    {
+      "path": "research/weapons/rkm_wz28.md",
+      "bytes": 4456,
+      "sha256": "da7a4ed32135744931929f40af7784091a3744de531371114582143d69f14372"
+    },
+    {
+      "path": "src/assets/asset-manager.js",
+      "bytes": 3476,
+      "sha256": "f0366f743ac499f66c3f312bd6c78da70e7ffa869f1b5286107bf40397e4db39"
+    },
+    {
+      "path": "src/assets/gltf-loader.js",
+      "bytes": 220,
+      "sha256": "f29cda15e0eb6c5e1b2f44cba612aa67d9a8aa158ac065864dcb0fc09f61beef"
+    },
+    {
+      "path": "src/assets/mesh-repair.js",
+      "bytes": 686,
+      "sha256": "b9d1917ea1a050d4afbf3bd33a4e353e2f2c393e349edece8d6e5eac97def2a8"
+    },
+    {
+      "path": "src/assets/obj-loader.js",
+      "bytes": 2298,
+      "sha256": "69da9101eba7fab0ab17500190acfb5c6f7f857c37a04767cb27b1605d8ba04a"
+    },
+    {
+      "path": "src/config.js",
+      "bytes": 1025,
+      "sha256": "020a19feaab671f5e7777a81e76e8d4b2a9b1bd3eb360c8d81903f0adb55bf80"
+    },
+    {
+      "path": "src/core/audio.js",
+      "bytes": 43938,
+      "sha256": "af8a25aa13057a56e6cb5c8eefb5519d79c754353730e69c7213dbd0f2c6f294"
+    },
+    {
+      "path": "src/core/battlefield-audio.js",
+      "bytes": 31438,
+      "sha256": "c658c92e82c82c4af75fb2e6b36ff493fbb363234827fbaabeab60067a3e33d7"
+    },
+    {
+      "path": "src/core/input.js",
+      "bytes": 2751,
+      "sha256": "71b9f99f864ae52f78a8b53f45c6beff582771760c7062df149979e4c4b83f15"
+    },
+    {
+      "path": "src/core/math.js",
+      "bytes": 500,
+      "sha256": "e765d656e54a34c18d82dae0d1a4997e0e787617dbfd1c46e4bfe87af61fb9fc"
+    },
+    {
+      "path": "src/core/random.js",
+      "bytes": 210,
+      "sha256": "c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1"
+    },
+    {
+      "path": "src/game/actors.js",
+      "bytes": 5625,
+      "sha256": "dda82e4f83120e1c832c7c73c617c012efdb2426cf227773d04e55593d8bd408"
+    },
+    {
+      "path": "src/game/battle-director.js",
+      "bytes": 1805,
+      "sha256": "c3d2d7ad26cc8b4b19ee2014aadfaaadbdc0142c5c480462e724d9c07f7a67aa"
+    },
+    {
+      "path": "src/game/game.js",
+      "bytes": 19368,
+      "sha256": "05533ec38c9bf4415981788af07956bbb0e7cfebe4517985fd5af190bce6ff51"
+    },
+    {
+      "path": "src/game/grenade.js",
+      "bytes": 2872,
+      "sha256": "8b588b862e5ffe0b7144412807ae89df14553bd55b6bc1187b0d9bd3813c846d"
+    },
+    {
+      "path": "src/game/m01-animation-presentation.js",
+      "bytes": 4056,
+      "sha256": "f7f5d2290a670d2fdd20a68cf28ed938b103741aa0ee122e16a10d2efe5d5268"
+    },
+    {
+      "path": "src/game/m01-fire.js",
+      "bytes": 3178,
+      "sha256": "f5962ee028e5a6d101793ba3fe6896ccba9350c2e22de7bab60666ef9f53aa1e"
+    },
+    {
+      "path": "src/game/m01-simulation.js",
+      "bytes": 87542,
+      "sha256": "ffc198c1089da201d580b703b44d1a80f1536c3923cca7d7ca6fab9602362f14"
+    },
+    {
+      "path": "src/game/mission.js",
+      "bytes": 666,
+      "sha256": "877957aed04fb27b8aafdbbdaa989e9e275d3d1248a340402be9e404f5bc70c2"
+    },
+    {
+      "path": "src/game/sector-battle.js",
+      "bytes": 3457,
+      "sha256": "abeabe90329f80103a5838e6d80b44c860a7d4ffa146a1e119c885357907cb3c"
+    },
+    {
+      "path": "src/game/simulation.js",
+      "bytes": 11379,
+      "sha256": "59b206413ab76abf9c93d6d76e48831f13c7358cb1caade409e2a759238c34f3"
+    },
+    {
+      "path": "src/game/weapon.js",
+      "bytes": 2210,
+      "sha256": "4b4e7bf93653509189f4d2d28ade314b7488d15ede69e217f1d98b6eae9a9fda"
+    },
+    {
+      "path": "src/game/wz29.js",
+      "bytes": 3071,
+      "sha256": "3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 6281,
+      "sha256": "d18c912d05a9396d6bd4889e69299d49ee676a5735c07492fe104e83f292ed59"
+    },
+    {
+      "path": "src/render/m01-actor-pose.js",
+      "bytes": 5364,
+      "sha256": "94f412d84e0b78159c4c766044880b1642bb310d3a21ab5cc26b2cdbcb4fab8d"
+    },
+    {
+      "path": "src/render/m01-aircraft.js",
+      "bytes": 4710,
+      "sha256": "78b2a52467edd181b579fbbf68b52d73deb2b5f197a482f9d73faf67907f9d8d"
+    },
+    {
+      "path": "src/render/m01-atmosphere.js",
+      "bytes": 11438,
+      "sha256": "46d5409d27b9f5dd327c16b71abf5f3af57e90e5b8babee374db3fa3823f8671"
+    },
+    {
+      "path": "src/render/m01-battlefield-fx-profile.js",
+      "bytes": 3495,
+      "sha256": "e7714bf5b86daf7b08d5f1c9db3648bf94752cf0111e38c35ab182b1bbf0af1c"
+    },
+    {
+      "path": "src/render/m01-bridge-portal-polish.js",
+      "bytes": 5430,
+      "sha256": "be35965bac4de2738253436fecf6c61e2387f7c01ba5b1e477fe7f2ce09e17c4"
+    },
+    {
+      "path": "src/render/m01-bridge-structure.js",
+      "bytes": 31356,
+      "sha256": "d2477ceac805ae74084f1ee28a9216c47574fabae2e50b733a6d7ad6934392a8"
+    },
+    {
+      "path": "src/render/m01-characters.js",
+      "bytes": 19313,
+      "sha256": "a0ad2706434207376c79dfbd8c7bcf08bbc05c104ac3bffcacd7ff844332f299"
+    },
+    {
+      "path": "src/render/m01-combat-feedback.js",
+      "bytes": 5602,
+      "sha256": "b5f0225b097b4ab8f21a17404754c3a95a222e07a5f68b070786ea2de4ccdeb3"
+    },
+    {
+      "path": "src/render/m01-environment-props.js",
+      "bytes": 9545,
+      "sha256": "54b612ff81e4fdeec4f85e173af5d5a88ad9924edcd1d7f12b05974a768119e0"
+    },
+    {
+      "path": "src/render/m01-environment.js",
+      "bytes": 32316,
+      "sha256": "db984e22df35ea910da27ccf941ad46b6f0ac06bb959dc658b2c9ca1430e7c74"
+    },
+    {
+      "path": "src/render/m01-fx-textures.js",
+      "bytes": 1469,
+      "sha256": "5ac03cdf1b99ca21c8163ced80cbe5414dbd510d6d388aa8d4201e9d70fe21b9"
+    },
+    {
+      "path": "src/render/m01-locomotive.js",
+      "bytes": 3069,
+      "sha256": "620d9f7979a8e235feb46b92af197887d33176592817942229ef16537a3110fa"
+    },
+    {
+      "path": "src/render/m01-panzerzug.js",
+      "bytes": 3080,
+      "sha256": "bcfaecfadc9470ab803a983512784d932dc5746639f07cb54bedf6743e769db4"
+    },
+    {
+      "path": "src/render/m01-soldier-variation.js",
+      "bytes": 9209,
+      "sha256": "9543e46d80ff271e1029cd26172e19f030183b4e07abbb480f6827c2cf7d440e"
+    },
+    {
+      "path": "src/render/m01-surfaces.js",
+      "bytes": 12824,
+      "sha256": "caa85c88cee2b85808e04b2b7d6505e7a99bc04c9066934f2a1ff355a42df7cf"
+    },
+    {
+      "path": "src/render/m01-train-consist-detail.js",
+      "bytes": 23102,
+      "sha256": "698840c88ca32f23402b2111c121fc7af2da0ffa11d0924c14e6ef3d68ca9dad"
+    },
+    {
+      "path": "src/render/m01-train-wagons.js",
+      "bytes": 6164,
+      "sha256": "5e01a239e2c0c89684fd6b67d877a5ff4acaeb5422361f8c591ff022a2cfa695"
+    },
+    {
+      "path": "src/render/m01-vegetation-art.js",
+      "bytes": 9013,
+      "sha256": "7298b9802884acbf4855d5d76aaf77efca3f70f5fe94ed061f1fdb8386ae8be3"
+    },
+    {
+      "path": "src/render/m01-vegetation-layout.js",
+      "bytes": 19204,
+      "sha256": "bfa9d89c226f8f122d6171342decadab538365011dc5411c85e9a3b735ff2798"
+    },
+    {
+      "path": "src/render/m01-yard-wagons.js",
+      "bytes": 6877,
+      "sha256": "f09a2cb963c21f8af64c5ebf1ec9342c9e986521eeb3f2ac6b8642d416810c0b"
+    },
+    {
+      "path": "src/render/materials.js",
+      "bytes": 1482,
+      "sha256": "fa51effdcd9367e5418be6b19e4fb615970d8fe03c7e08808bf800ea5278ab9c"
+    },
+    {
+      "path": "src/render/math3d.js",
+      "bytes": 1299,
+      "sha256": "392c01dcb8b799d408403c54c205c1b69931bd4591809076e7230026b3d1d5ec"
+    },
+    {
+      "path": "src/render/renderer.js",
+      "bytes": 18169,
+      "sha256": "a7905fa72ffa0754ce4c1509e9acb408d48f55be08f10ef9f7bf94503005fa8b"
+    },
+    {
+      "path": "src/styles.css",
+      "bytes": 16046,
+      "sha256": "7e70f133b52bc8dab9c8b8265ec503c8fb45f09575c8d96ceff38d67bede1f1d"
+    },
+    {
+      "path": "src/ui/m01-hud.js",
+      "bytes": 14543,
+      "sha256": "b0b15e6ad786a5162ab252b9220e72c12f36dd705b1f926237cc483812f775c6"
+    },
+    {
+      "path": "src/world/m01-aircraft-path.js",
+      "bytes": 473,
+      "sha256": "1479ba7545ddbaa1895603acc633d9e5f2cd1335f0fcb7ba09af2a55aa5912d3"
+    },
+    {
+      "path": "src/world/m01-decoration-layout.js",
+      "bytes": 523,
+      "sha256": "d1000fd485fb6bcbd1de08edc7593b26f199fe139170358564ce9885339e2b96"
+    },
+    {
+      "path": "src/world/m01-mg34-prone-geometry.json",
+      "bytes": 58245,
+      "sha256": "05bbe5806ed017ddc215352634519524d70d749c08d4c68f3f0d459094f02fbb"
+    },
+    {
+      "path": "src/world/spatial.js",
+      "bytes": 7551,
+      "sha256": "49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb"
+    },
+    {
+      "path": "src/world/tczew-world.js",
+      "bytes": 6495,
+      "sha256": "716c9b3fb3bca8c8d07a690caf1ef67288a416a043a94b47e98d8e58c4f95a22"
+    },
+    {
+      "path": "src/world/world.js",
+      "bytes": 4849,
+      "sha256": "bdbe2212e50a04b2a20ac2db1cb3062827ac3f0ffb8c779a76b56d1832fccc7e"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/README.md",
+      "bytes": 1077,
+      "sha256": "f33f3e5df8276b514b97084d40a91cebd6b29669916033285c9a6c4cd475e076"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/build.mjs",
+      "bytes": 14102,
+      "sha256": "9cf2170b94cf66fdd79118e69d71dc9ca6090ca0f5581cc1a4e3cbb5d2a988ed"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/package-lock.json",
+      "bytes": 1780,
+      "sha256": "c3d2ad7436a9282a591d9270e4b410dcbb08ff77fe5351f6b2e1708704143268"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/package.json",
+      "bytes": 504,
+      "sha256": "ea5a849923bad0ab75ba96c0b74ae9f4dd136d0e684461a98390eb027cca5a34"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/capture.mjs",
+      "bytes": 7058,
+      "sha256": "09db2693454808a4bd1f8cdd687a9f3b8ccdcd14edd0b5e711d70e5139d51fe1"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/raid-capture.mjs",
+      "bytes": 5835,
+      "sha256": "df302d4308d31ccd29fb724494d899e304ff7f554af0296d34972bbf9fa8973d"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/stage.mjs",
+      "bytes": 2226,
+      "sha256": "0d82c4af417db8a6ff06667eb8e419ea692aa3934c59b1ab6172da9b85f40557"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/render/viewer.html",
+      "bytes": 7475,
+      "sha256": "1ff5a90448cd6b19c9164e9fe9c843c061dba6fb622ad0f349f28b06ce9bb100"
+    },
+    {
+      "path": "tools/assets/m01-aircraft/src/ju87.mjs",
+      "bytes": 32882,
+      "sha256": "769e70a50c01193270522f60edf65b14f8ae1ce02f25e28345567cd311804426"
+    },
+    {
+      "path": "tools/assets/m01-bridges/.gitignore",
+      "bytes": 14,
+      "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+    },
+    {
+      "path": "tools/assets/m01-bridges/build.mjs",
+      "bytes": 6947,
+      "sha256": "5c8fcae1159536ef318fbce1a92132aa17257acf0944956445b6e3f527d1552a"
+    },
+    {
+      "path": "tools/assets/m01-bridges/export-colliders.mjs",
+      "bytes": 1833,
+      "sha256": "67ee9a5c1872d26bcfcc4fb6be4f5428aa0213ccc5412ce67099f913512ed3e4"
+    },
+    {
+      "path": "tools/assets/m01-bridges/package-lock.json",
+      "bytes": 1396,
+      "sha256": "de415262f402d2754fe4642a5e8d4a0f5c4b3f302621b46ac377788c734dd0d1"
+    },
+    {
+      "path": "tools/assets/m01-bridges/package.json",
+      "bytes": 492,
+      "sha256": "931c4fc8924d19dc10f8a21794a15786b9afc7fddc52f156a86875b036005512"
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/render.mjs",
+      "bytes": 8404,
+      "sha256": "29e425789292d3717e493acd2dbcf45802af2b4349b7c1540549c37fd2e3462d"
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/viewer.html",
+      "bytes": 1795,
+      "sha256": "e477c7419f7e6d6741762330352ddeca6a52185483ba0d7e09aafc49fb073205"
+    },
+    {
+      "path": "tools/assets/m01-bridges/render/viewer.mjs",
+      "bytes": 16093,
+      "sha256": "3e5d66ed70da94a84263f7d007027f67e2a2b092812915b021d57e2c16c2467d"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/bridges.mjs",
+      "bytes": 29753,
+      "sha256": "0c316875befcfbc007c74a0d0434c66dd365416771ab08d41e5816db057538e9"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/geom.mjs",
+      "bytes": 7367,
+      "sha256": "41f3d8cd3cf621f9bd7b91a9be7ef3847d2411bc90018f215af383e9d62f1088"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/state.mjs",
+      "bytes": 1138,
+      "sha256": "a887e60d28ed8c539f9171fe5d83d3583800cbc60b4f0101c200b12dfb1ba1c3"
+    },
+    {
+      "path": "tools/assets/m01-bridges/src/write-glb.mjs",
+      "bytes": 4616,
+      "sha256": "1e1318820e38cef19a4c1c45c6ba4bd41b7c38f3a99b450202708f8a6c65a2d4"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/README.md",
+      "bytes": 2093,
+      "sha256": "dfbfffe64324237ed4ade42240d5a34e8eaef4aa4aea842817bbfd6ddda1450e"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/build.mjs",
+      "bytes": 16459,
+      "sha256": "e172101e425120640d0c6a454d1e5564c61ff7db7d85905ec0efa8de706c8b4d"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/package-lock.json",
+      "bytes": 1092,
+      "sha256": "4d5efabf55752ab38cc0609f933a662f0aeb31c66afdc4b71d914382c0d5ac40"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/package.json",
+      "bytes": 538,
+      "sha256": "580c6fc6cfcb39a25666972397bf50d7309e5c8ab1fc42e2a21a12022fc26e1f"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/render/capture.mjs",
+      "bytes": 12535,
+      "sha256": "5c71910e4532f1c638307dc7fad33772c711be57547a8d0b14038db3d5e83e5d"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/src/ckm.mjs",
+      "bytes": 26701,
+      "sha256": "1c468adb5b4ad0b872a5cff9cac36c7de9ae33398d52566130ba3bfebd2b6d98"
+    },
+    {
+      "path": "tools/assets/m01-ckm-wz30/src/clips.mjs",
+      "bytes": 19461,
+      "sha256": "3a73126d9551d9714b6177d4b14e7ff47003785a271416dd4785096aaaf2ea9d"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/README.md",
+      "bytes": 1320,
+      "sha256": "7777dda46ba07aa7a15cad2e0dcf67aa16a18349768b7b5a37efe343b5377418"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/build.mjs",
+      "bytes": 10944,
+      "sha256": "eba452425b756d931e8d40c563c7996c0bc11b0b006df62fa89ae232b4ecb9c9"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/package-lock.json",
+      "bytes": 1096,
+      "sha256": "8be5cfb1f731e0e13060665a568d8ca615f6be8cd8550e199d1983911035a871"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/package.json",
+      "bytes": 492,
+      "sha256": "3500824bef5e853c62de2a9cf6838fdb2b37d4d5e8fd902b39be1f8e5e43e454"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/render/capture.mjs",
+      "bytes": 11526,
+      "sha256": "5f858abbffef6866697096084097705fb425ef087f17d4f8d2a7670c57db9336"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/src/clips.mjs",
+      "bytes": 31069,
+      "sha256": "6b6b23a4b5118ef95a54f72947f04c17c3eaa7b8755165d4996cfd29610f0edc"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/src/prone.mjs",
+      "bytes": 4635,
+      "sha256": "297248fed896b9ae503b2ef51e8fc05631302e04ecb1c26e39ab9e44d573b084"
+    },
+    {
+      "path": "tools/assets/m01-mg34-prone/src/skin.mjs",
+      "bytes": 2109,
+      "sha256": "ec25db1745b06091042218eec00f03b15ff31096a45705dace077fcf74bcb115"
+    },
+    {
+      "path": "tools/assets/m01-mg34/README.md",
+      "bytes": 943,
+      "sha256": "1f92cc36d956b9d85f6e97a0f8fddf94eb25f7c9246d5efe92f7f6f1f80ee144"
+    },
+    {
+      "path": "tools/assets/m01-mg34/build.mjs",
+      "bytes": 10868,
+      "sha256": "f2f2395fe37956660dace1aba63513e16b1f4073e09a79cd8e8bd1f21ae8009a"
+    },
+    {
+      "path": "tools/assets/m01-mg34/package-lock.json",
+      "bytes": 1084,
+      "sha256": "e0777df4c033f7e3b72eee5869986bdbe5cb3aa73a64b1d2e9716efa86e4ccbf"
+    },
+    {
+      "path": "tools/assets/m01-mg34/package.json",
+      "bytes": 458,
+      "sha256": "ae2aa68774ba401edad570cc487519ce1cbf08dbb193be4da11d9319fd4f7466"
+    },
+    {
+      "path": "tools/assets/m01-mg34/render/capture.mjs",
+      "bytes": 8030,
+      "sha256": "b448fc6076bd8c721750f3f3df2e00364f41f27efa027c9f028db5a5fbcb4fb8"
+    },
+    {
+      "path": "tools/assets/m01-mg34/src/clips.mjs",
+      "bytes": 12944,
+      "sha256": "553790fff24f88a5deeecf5675b36b3a66f8a1ed6095b8bde4a244fd13431f9b"
+    },
+    {
+      "path": "tools/assets/m01-mg34/src/mg34.mjs",
+      "bytes": 17202,
+      "sha256": "afd49da678cfe83d4f99e3fb39167f93ba25339e2c0efb8234e89138f4353f63"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/README.md",
+      "bytes": 764,
+      "sha256": "145fda30e128b29bea6a9af187ecc43513308efcae7a2e4eb57cd0abef2f6685"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/build.mjs",
+      "bytes": 8627,
+      "sha256": "34ca0685fdb593bdf93d5143d42a9db50370eb1cb1c30c4c89361d9fb21d1675"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/package-lock.json",
+      "bytes": 1092,
+      "sha256": "7b90b97c44c41cc1a405c33ccaf0c2182175883bfe40654b33d3ba310969f4a0"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/package.json",
+      "bytes": 440,
+      "sha256": "8aa87b427a26eb85ccf312e63e821018b1f896be53565f0a838752e0e7a905d1"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/render/capture.mjs",
+      "bytes": 5615,
+      "sha256": "2aa2c117afc1e8d3901b60fd4c8dc6a33b449ead8c00ef863facdeb9f8109722"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/src/clips.mjs",
+      "bytes": 6188,
+      "sha256": "cc3dfcf57e270944be8172b96ff7f6f2dc677cd542ab95f15c0243db68cbc2ef"
+    },
+    {
+      "path": "tools/assets/m01-rkm-wz28/src/rkm.mjs",
+      "bytes": 12679,
+      "sha256": "f53026dab272f144eccd690e59a8f3df9bb8ad8c350fa15bf03a00cfcb942176"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/.gitignore",
+      "bytes": 22,
+      "sha256": "af4ab05e427b8408f81adcadfbc042fc81f69e62cc750bece8b8bde1152886ee"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/README.md",
+      "bytes": 3799,
+      "sha256": "0b11a669b9bd88e57343f74c8f1f0e40067694c90f5043c64b572b1c97e6439c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/build-motion-clips.mjs",
+      "bytes": 4680,
+      "sha256": "f2fa352ef99434d931bfb3b9912d5dd01b37eb3177d10af194fd005e2a02c471"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/build.mjs",
+      "bytes": 4300,
+      "sha256": "345bd1b51c09c974704cf85e55dbe43bc78c911477f3d086d26dee58b644a902"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/anim.mjs",
+      "bytes": 870,
+      "sha256": "ea13c51dc43ded201ea4662c71dac2ecf40eb3974acd520e41b77d49c9ddad6c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/carry.mjs",
+      "bytes": 924,
+      "sha256": "f3d8da377c96395ffcc60110b54f9d9b87b0474811d78b11694758ad40023b46"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/close.mjs",
+      "bytes": 1644,
+      "sha256": "5aab3a497c7d5f7bb24aab197ff875087021d2082f1571da31e0492b73ee1034"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/preview.mjs",
+      "bytes": 2561,
+      "sha256": "92f4c1b00270641db7a5b708fefa4943b68502aff069dfb2727af76b9eb01648"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/sheet.mjs",
+      "bytes": 1511,
+      "sha256": "0356d86929782af13e3bf6efdc7b955cd8c8d91a4b4aa0b0da68022697414833"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/shot.mjs",
+      "bytes": 1485,
+      "sha256": "76fe20490b6c671eb94e0cdf0e40cd2874cd5093781765c0892d070d8aa8b498"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/dev/textured.mjs",
+      "bytes": 2432,
+      "sha256": "5ab7ae58f7fec899d7d9668db97f51c3ac0166789401c71c611845f2fd53228c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/fetch-makehuman.mjs",
+      "bytes": 3361,
+      "sha256": "f47bda567d992657263c7ec3a40d46eb7b9a0e72f82d16198d680996337006bc"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/makehuman.lock.json",
+      "bytes": 95757,
+      "sha256": "8f521bdc140bd1c70a5501ab6d91a4d7b7e381e25c80d655eb7e68068b2389ab"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/motion/clips.mjs",
+      "bytes": 14947,
+      "sha256": "99b35dccdbe0568b84ee2b7de298b40b35a52a64ee2416fb01522ff7f10c1b55"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/motion/rig.mjs",
+      "bytes": 3040,
+      "sha256": "ca6a3faef57e0f573c5b2d7f5422e638533dbef98ba4eec200052a1347a6d84b"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/motion/validate.mjs",
+      "bytes": 9722,
+      "sha256": "fa08bc16be450ae48a3ff86c6b218ef3db26bee2029517658fe74a72b3962a4d"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/package-lock.json",
+      "bytes": 2403,
+      "sha256": "a6561cb2990ba3132e44249ab111c7c97d40d393394a4839d097a8477e9fe244"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/package.json",
+      "bytes": 614,
+      "sha256": "077421f58b75727def700cc3274643b93d8d7d91a0e91be98777fddaae862aee"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/capture-motion.mjs",
+      "bytes": 5650,
+      "sha256": "3a3392608ba64b26e8abbfc1b07a3f67d9482edeb0449ab4d1a52117ecdacf07"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/capture.mjs",
+      "bytes": 13069,
+      "sha256": "aba0c46b5fc7495fd3d01cf7fd8d0a19e4a0bf5095ba7c039318b22c6e31f1d1"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/motion-sheets.py",
+      "bytes": 4437,
+      "sha256": "01d97fa79e2bca79dc3445511e98c0fbfbaeb3eff70a52213bcbe8cff29a0017"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/motion-viewer.html",
+      "bytes": 6275,
+      "sha256": "eb0e14f41d4db9c1dbc3de2df1ce0ea9ecbde07782de0aeacaee5ce59fea40db"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/stage.mjs",
+      "bytes": 2116,
+      "sha256": "b51af22cefab6aecf23cc30c1e267c83578d92474d0dfbd1a416838fd0729ee1"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/render/viewer.html",
+      "bytes": 6799,
+      "sha256": "a383880dc570fc3b016579b957d7fcba62bacad6be213ea1d8e457c9d5d76f0a"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/assemble.mjs",
+      "bytes": 8866,
+      "sha256": "cfa594814e32bb8aa78e67e9b2bb29f07ac82de50fc9bc46fbf553b9321b3b1f"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/atlas.mjs",
+      "bytes": 10009,
+      "sha256": "b76367e568a0cf616d4b496faf59f846e27655f7ae3da443a0481810625a4544"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/clips.mjs",
+      "bytes": 44007,
+      "sha256": "4ff9491bf05ed13f3e444bd555d7ecbc072da17cd0d0aca8040d85df5c13046a"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/garments.mjs",
+      "bytes": 10965,
+      "sha256": "6e276933cb1747a821f92f2ae2735fe8bc818b64f72f244a18168c9ed797cdd5"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/gear.mjs",
+      "bytes": 23978,
+      "sha256": "779bbc75f606c796aa83e630f62a0535b7a36522c6a0c25f331c47074da01c50"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/geom.mjs",
+      "bytes": 8577,
+      "sha256": "54cd50b87f17566377bef41bd767832f454b6efe2f7c9e9963600e1213267479"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/glb.mjs",
+      "bytes": 6280,
+      "sha256": "4b51955214c0132944234ca87e1622f2c0a6b4779a00c5c252bc59136a951da3"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/head.mjs",
+      "bytes": 9054,
+      "sha256": "1848d987ff04bfd067045a1a124e4e9f8d9d220b8a5b4887748f2f335801f99e"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/human.mjs",
+      "bytes": 7835,
+      "sha256": "a517a98514119c01221f3fca9a067d65dd6515d4efc91ba0fa077e4cab996616"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/meshops.mjs",
+      "bytes": 6027,
+      "sha256": "b7dd3b144fc58de4baaf36a6fe9210fe056e3af6ff4b9bd89c7e3487bf4d4624"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/mh.mjs",
+      "bytes": 5190,
+      "sha256": "618d122cc206a021da3740e11b78368df6c99765d5c432b25ce9c0e49c12a7de"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/noise.mjs",
+      "bytes": 2047,
+      "sha256": "3d742e6762c585f06b18360081616f587655822977c969c6707556d9d158772c"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/outfit.mjs",
+      "bytes": 17977,
+      "sha256": "c2b1d0bf1b75b1adf0b8b490d7e9e15ae1a4b7380919af8c4c0daf11c111ba20"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/paint.mjs",
+      "bytes": 20435,
+      "sha256": "3bbabbd6d114c79b5b7b838f2c56c01f3a2947cc2334a2dd90839ba4a3999951"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/pose.mjs",
+      "bytes": 10013,
+      "sha256": "1a06b2a34599569db84a57667feabc301ab57dcbd9cb02640e00a15bf727a152"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/textures.mjs",
+      "bytes": 3539,
+      "sha256": "487fc0ffb08a407be517b69f4e38d3455c632e69f46b6506611aa901a3c60ab4"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/variants.mjs",
+      "bytes": 5423,
+      "sha256": "4b79e9c43993a0dace2e760e381fe670de5ccaed0b1be2ed7875ce446fd4e25a"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/src/weapon.mjs",
+      "bytes": 19127,
+      "sha256": "0a6b49c4e30a52ffa1d07f3f5142b68b5c823d7b7eff30144550e89706372e0b"
+    },
+    {
+      "path": "tools/assets/m01-soldiers/validate-motion-clips.mjs",
+      "bytes": 635,
+      "sha256": "6e6789497c87dc65588104e2a36834c12a69a544127a744259c16dc9d97d3e4d"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/README.md",
+      "bytes": 1803,
+      "sha256": "f2239df1e909c7a129ed2fc9351c01080eb2a42d32f78c2065b34c4bd1392b7f"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/build.mjs",
+      "bytes": 14351,
+      "sha256": "4970433e7405b249a3bea95652d935f2ae373a37bd5b76b8d55821737565a91c"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/package.json",
+      "bytes": 459,
+      "sha256": "5390684b66bf27b76fd1a285aea51fbbde3701f7d9ee5a07195e19258d3adbb4"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/render/capture.mjs",
+      "bytes": 10377,
+      "sha256": "a5ec30231247f44be4f825b07035b2a6ca1ce61255138739830fe3b260892e2c"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/body.mjs",
+      "bytes": 3378,
+      "sha256": "b04bab4124b42a3efd4470a5d9c42cede5ae5b3b5a9f84ede2346918d968ac3f"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/clips.mjs",
+      "bytes": 9736,
+      "sha256": "37736e147b152ee1abd93373f6c7a26ac466d45b68a72e6309a0cfb3d609e357"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/fk.mjs",
+      "bytes": 4477,
+      "sha256": "2ae47893b0d8e3541b81334d161d3be55bf29a0c2df0ceda76d132c232cf1cbe"
+    },
+    {
+      "path": "tools/assets/m01-station-drag-transitions/src/rig.mjs",
+      "bytes": 4293,
+      "sha256": "afd302b99bde6d57ee1a73ea5749b8c0370844890450f11f8eebf7a362d034b3"
+    },
+    {
+      "path": "tools/assets/m01-station/build.mjs",
+      "bytes": 4227,
+      "sha256": "5eac14043bc4ef1731c1732c9f87ce76e3584f7cc583cf39bfb8b250ac01761b"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/README.md",
+      "bytes": 1495,
+      "sha256": "f65f9ce5e99894ef1a3fa6b417d8ffc934b3eb0229cc331dfe2b184b87816c7d"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/build.mjs",
+      "bytes": 12975,
+      "sha256": "e4cc6a9fa11c1c5737a61fe037b10a72520ed1453a66636459cb26f9b7bc2026"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/package-lock.json",
+      "bytes": 1788,
+      "sha256": "06ac620073be8b0d4414923423851d4e046a0c1e263405ccaca3b22afc2b7833"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/package.json",
+      "bytes": 550,
+      "sha256": "9fb087c6e477e262ced0ae6b636ecaf97ba148a9517b4862f203614c7716743c"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/render/capture.mjs",
+      "bytes": 10566,
+      "sha256": "85d7f0b37ba1f60ae7e568e554a44a317ffc39e8d8d127228229a0663915880c"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/render/stage.mjs",
+      "bytes": 2238,
+      "sha256": "68404c92d894ecc100d64e47a1be768b7935bca65813ae070cdb8ca7c8722474"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/render/viewer.html",
+      "bytes": 7702,
+      "sha256": "cf59fc43b3cf3a6d3ed7a88dd01f0dbfa4a0633513106856f3ba07a7c5ba8726"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/src/damage.mjs",
+      "bytes": 21679,
+      "sha256": "254bc2d021717940b80730e3559c19c472b2854a178c8402d7166d53a2a44fb7"
+    },
+    {
+      "path": "tools/assets/m01-wagon-damage/src/shapes.mjs",
+      "bytes": 6951,
+      "sha256": "f1c63240d63977f3786e6b92e54dc8448b786af9d6d47d9cbd42d597ab7a8da3"
+    },
+    {
+      "path": "tools/assets/m01-wagons/README.md",
+      "bytes": 923,
+      "sha256": "8b2aa034800eb2ee68975619e15165e45b9512ce71a36155794e8956c79309fb"
+    },
+    {
+      "path": "tools/assets/m01-wagons/build.mjs",
+      "bytes": 10699,
+      "sha256": "03f8b1b04a58d20050b6ec484e0ef6b043aeb506f3948ca3f821add0023130cf"
+    },
+    {
+      "path": "tools/assets/m01-wagons/package-lock.json",
+      "bytes": 1776,
+      "sha256": "6ca73490017df6343430600e5a3be10b37a7e9c56091f5e09de8094f8582946c"
+    },
+    {
+      "path": "tools/assets/m01-wagons/package.json",
+      "bytes": 522,
+      "sha256": "f4e94fc82014b7ca526ab9699963862917de5d1f422e9f6b47ec8d8f8b1a5952"
+    },
+    {
+      "path": "tools/assets/m01-wagons/render/capture.mjs",
+      "bytes": 7068,
+      "sha256": "b343d003c2d5c61f52f1a1eee50950208b3263b2e80d7c3df2f365bd2a81bb75"
+    },
+    {
+      "path": "tools/assets/m01-wagons/render/stage.mjs",
+      "bytes": 2239,
+      "sha256": "8f8f040e610bc71bb0f9ef6616e8f94bdde7a66a6db842da134360d7812044f8"
+    },
+    {
+      "path": "tools/assets/m01-wagons/render/viewer.html",
+      "bytes": 7158,
+      "sha256": "554b1748a0e8b1ba9c071587ff458cb01aafa0c2d767547493f5ec7ad414a376"
+    },
+    {
+      "path": "tools/assets/m01-wagons/src/wagons.mjs",
+      "bytes": 20424,
+      "sha256": "99f149506f4ac7202b494997eadb2e7f2c260a77a284bfe47b985955f1ac63be"
+    }
+  ],
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "objectives": {
+        "obj_m01_deliver_message": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_take_cover": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_follow_sergeant": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_find_sappers": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_fetch_material": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_cover_repair": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_hold_access": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_cover_withdrawal": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_rescue_bak": {
+          "state": "expired",
+          "progress": 0
+        },
+        "obj_m01_leave_bridge": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_hold_corridor": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_reach_shelter": {
+          "state": "done",
+          "progress": 100
+        }
+      },
+      "configuredEvents": 26,
+      "consumedIds": [
+        "evt_m01_intro_card",
+        "evt_m01_prelude_start",
+        "evt_m01_railway_worker_report",
+        "evt_m01_planes_heard",
+        "evt_m01_bombing_0434",
+        "evt_m01_cable_cut",
+        "evt_m01_forward_post_bombed",
+        "evt_m01_nowicki_lost",
+        "evt_m01_wounded_dragged",
+        "evt_m01_second_air_pass",
+        "evt_m01_train963_arrives",
+        "evt_m01_panzerzug_arrives",
+        "evt_m01_repair_complete",
+        "evt_m01_order_demolish",
+        "evt_m01_bombing_0530",
+        "evt_m01_runner_pressure_report",
+        "evt_m01_north_contact_distant",
+        "evt_m01_east_platoon_withdraws",
+        "evt_m01_bak_wounded",
+        "evt_m01_germans_on_east_spans",
+        "evt_m01_east_demolition",
+        "evt_m01_dudek_retrieves_bak",
+        "evt_m01_west_demolition",
+        "evt_m01_roll_call",
+        "evt_m01_kozliny_attack_distant",
+        "evt_m01_debrief"
+      ],
+      "schema": 2,
+      "rng": 3822798900,
+      "snapshotSha256": "3f9fabf83664ee5d139442e890d98d1464a67e2c8d7c7f740c8326e88550918c",
+      "eventsSha256": "748cb0daf006850359aa9f36bba7cae0e3c835ca666297c89c554f6651b8958c",
+      "checkpoints": [
+        {
+          "id": "cp_m01_a_orientacao",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "bcab87f42a038882a1a646b56845164da004887bd1918f8f937d6429754648a3"
+        },
+        {
+          "id": "cp_m01_b_reorganizacao",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "b81c4f318f3aa845ff8ce651b43f977cd2a3847adcf3c36aca0cd41a4287d9cb"
+        },
+        {
+          "id": "cp_m01_c_engenheiros",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "c52693b26c8e53b98b47d8b780e52f87027038714508ba8d601b9f29b7ff57e5"
+        },
+        {
+          "id": "cp_m01_d_retirada",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "3538acee794f5a3b3550ba0032dacf7cfcbaa381890609787adbd0afe127e63d"
+        }
+      ],
+      "equivalent": true
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "objectives": {
+        "obj_m01_deliver_message": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_take_cover": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_follow_sergeant": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_find_sappers": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_fetch_material": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_cover_repair": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_hold_access": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_cover_withdrawal": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_rescue_bak": {
+          "state": "expired",
+          "progress": 0
+        },
+        "obj_m01_leave_bridge": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_hold_corridor": {
+          "state": "done",
+          "progress": 100
+        },
+        "obj_m01_reach_shelter": {
+          "state": "done",
+          "progress": 100
+        }
+      },
+      "configuredEvents": 26,
+      "consumedIds": [
+        "evt_m01_intro_card",
+        "evt_m01_prelude_start",
+        "evt_m01_railway_worker_report",
+        "evt_m01_planes_heard",
+        "evt_m01_bombing_0434",
+        "evt_m01_cable_cut",
+        "evt_m01_forward_post_bombed",
+        "evt_m01_nowicki_lost",
+        "evt_m01_wounded_dragged",
+        "evt_m01_second_air_pass",
+        "evt_m01_train963_arrives",
+        "evt_m01_panzerzug_arrives",
+        "evt_m01_repair_complete",
+        "evt_m01_order_demolish",
+        "evt_m01_bombing_0530",
+        "evt_m01_runner_pressure_report",
+        "evt_m01_north_contact_distant",
+        "evt_m01_east_platoon_withdraws",
+        "evt_m01_bak_wounded",
+        "evt_m01_germans_on_east_spans",
+        "evt_m01_east_demolition",
+        "evt_m01_dudek_retrieves_bak",
+        "evt_m01_west_demolition",
+        "evt_m01_roll_call",
+        "evt_m01_kozliny_attack_distant",
+        "evt_m01_debrief"
+      ],
+      "schema": 2,
+      "rng": 555806077,
+      "snapshotSha256": "34480118dcf8ef846be8392a8c32d3754e3e253292c91b67694a33702a264055",
+      "eventsSha256": "87598dba01fac47aa22bc937743363d583c6252e4231e893b31b50a0512864a3",
+      "checkpoints": [
+        {
+          "id": "cp_m01_a_orientacao",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "54e3d118832f93aaf92ef3edbe0b4d7910867e8b1f2c1ecaffb5b82754caf0f5"
+        },
+        {
+          "id": "cp_m01_b_reorganizacao",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "dc60ffe0deef7434df0b23e199f78162a159d937d95caaf7f9da545fae4bee85"
+        },
+        {
+          "id": "cp_m01_c_engenheiros",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "1ca26d5d6af514f867b03578b2e3ac4e30906cfacf871f664e43d16fd3f7e26a"
+        },
+        {
+          "id": "cp_m01_d_retirada",
+          "schema": 2,
+          "ticks": 300,
+          "sha256": "4e182c9a1185333c7b3cccf34605c01e1d3c25dd99ecc2a7689ed85dae2bd23f"
+        }
+      ],
+      "equivalent": true
+    }
+  ],
+  "station": {
+    "v6": {
+      "diag": {
+        "ready": true,
+        "quality": {
+          "x": -397,
+          "z": 17
+        },
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 13382,
+        "trianglesByLod": [
+          30881,
+          28707,
+          13382
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "textureBytes": 655360,
+      "geometryBytes": 9632040,
+      "fingerprint": "37cc033a1840c2e75a3da5a0be4eea58cb339e97a93cba7b134084a3b185a96d",
+      "qualities": [
+        {
+          "ready": true,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 13382,
+          "trianglesByLod": [
+            30881,
+            28707,
+            13382
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        },
+        {
+          "ready": true,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 13382,
+          "trianglesByLod": [
+            30881,
+            28707,
+            13382
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        },
+        {
+          "ready": true,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 13382,
+          "trianglesByLod": [
+            30881,
+            28707,
+            13382
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        },
+        {
+          "ready": true,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 13382,
+          "trianglesByLod": [
+            30881,
+            28707,
+            13382
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        }
+      ]
+    },
+    "v7": {
+      "diag": {
+        "ready": true,
+        "fidelity": "v3",
+        "textureBytes": 1441792,
+        "geometryBytes": 10584816,
+        "quality": {
+          "x": -397,
+          "z": 17
+        },
+        "lod": 2,
+        "anchor": {
+          "min": {
+            "x": -460,
+            "y": -3,
+            "z": 28
+          },
+          "max": {
+            "x": -338,
+            "y": 11,
+            "z": 55
+          }
+        },
+        "envelope": {
+          "min": [
+            -470,
+            -3,
+            20
+          ],
+          "max": [
+            -330,
+            15,
+            55
+          ]
+        },
+        "volumes": 5,
+        "openings": 140,
+        "triangles": 16928,
+        "trianglesByLod": [
+          34285,
+          28975,
+          16928
+        ],
+        "drawCalls": 7,
+        "geometries": 21,
+        "textures": 10,
+        "instances": 0,
+        "source": "original-mesh-no-external-asset-dependency",
+        "collidersAdded": 0,
+        "disposed": false
+      },
+      "textureBytes": 1441792,
+      "geometryBytes": 10584816,
+      "fingerprint": "713ab42f7d8c5b93b583326be0f8fd3c2f2bc5076551a4558d744598ca5fe364",
+      "qualities": [
+        {
+          "ready": true,
+          "fidelity": "v3",
+          "textureBytes": 1441792,
+          "geometryBytes": 10584816,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 16928,
+          "trianglesByLod": [
+            34285,
+            28975,
+            16928
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        },
+        {
+          "ready": true,
+          "fidelity": "v3",
+          "textureBytes": 1441792,
+          "geometryBytes": 10584816,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 16928,
+          "trianglesByLod": [
+            34285,
+            28975,
+            16928
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        },
+        {
+          "ready": true,
+          "fidelity": "v3",
+          "textureBytes": 1441792,
+          "geometryBytes": 10584816,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 16928,
+          "trianglesByLod": [
+            34285,
+            28975,
+            16928
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        },
+        {
+          "ready": true,
+          "fidelity": "v3",
+          "textureBytes": 1441792,
+          "geometryBytes": 10584816,
+          "quality": {
+            "x": -397,
+            "z": 17
+          },
+          "lod": 2,
+          "anchor": {
+            "min": {
+              "x": -460,
+              "y": -3,
+              "z": 28
+            },
+            "max": {
+              "x": -338,
+              "y": 11,
+              "z": 55
+            }
+          },
+          "envelope": {
+            "min": [
+              -470,
+              -3,
+              20
+            ],
+            "max": [
+              -330,
+              15,
+              55
+            ]
+          },
+          "volumes": 5,
+          "openings": 140,
+          "triangles": 16928,
+          "trianglesByLod": [
+            34285,
+            28975,
+            16928
+          ],
+          "drawCalls": 7,
+          "geometries": 21,
+          "textures": 10,
+          "instances": 0,
+          "source": "original-mesh-no-external-asset-dependency",
+          "collidersAdded": 0,
+          "disposed": false
+        }
+      ]
+    }
+  },
+  "fpsMeasured": false
+}

@@ -1,0 +1,599 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "observedAt": "2026-10-09T02:00:00Z",
+  "runtimeHead": "8f7d1ea8f096472436c860e118a8c799e740e23f",
+  "node": {
+    "runId": 37831786923,
+    "head": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37831786923",
+    "tests": 474,
+    "passed": 474,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 167534.073728,
+    "artifacts": [
+      {
+        "id": 11573683250,
+        "name": "m01-v7-node-build-a97a3152d4848517a267d80c0cbbdc24bf2ddaeb",
+        "size_in_bytes": 11711660,
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11573683250",
+        "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11573683250/zip",
+        "expired": false,
+        "created_at": "2026-10-08T19:28:16Z",
+        "expires_at": "2026-11-07T19:28:14Z",
+        "updated_at": "2026-10-08T19:28:16Z",
+        "digest": "sha256:ad8c64324dbe6f56f79886d5ccb3099d4b3125d6a06e25411822a0b67bb247a8",
+        "workflow_run": {
+          "id": 37831786923,
+          "repository_id": 1397655434,
+          "head_repository_id": 1397655434,
+          "head_branch": "codex/m01-final-production-consolidation-v7",
+          "head_sha": "a97a3152d4848517a267d80c0cbbdc24bf2ddaeb"
+        }
+      }
+    ]
+  },
+  "build": {
+    "status": "PASS",
+    "v6JsBytes": 1408885,
+    "v7JsBytes": 1418098,
+    "v6JsSha256": "b9d9f57d83317dc2114561c7c8b7d443ebbfeb66c3ccdc5ab07bfd09dd8d035a",
+    "v7JsSha256": "258742274390e6ccac1d17da4a01c6f9a82a7f9506179b66614d42691c6e3d1a",
+    "cssSha256": "199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06"
+  },
+  "visualPreview": {
+    "runId": 37835181912,
+    "head": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37835181912",
+    "matchedPairs": 57,
+    "frames": 114,
+    "controlsValidated": 14,
+    "onlineHostingCreated": false,
+    "artifacts": [
+      {
+        "id": 11577000458,
+        "name": "m01-v7-visual-preview-6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353",
+        "size_in_bytes": 114336244,
+        "url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11577000458",
+        "archive_download_url": "https://api.github.com/repos/Brawl2007/COD-guerra/actions/artifacts/11577000458/zip",
+        "expired": false,
+        "created_at": "2026-10-08T20:15:18Z",
+        "expires_at": "2027-01-06T19:52:20Z",
+        "updated_at": "2026-10-08T20:15:18Z",
+        "digest": "sha256:10615b9c0069e9a0eb7f3c7c357e93cc152317b9ce21d6b29b1b743dd6a9390f",
+        "workflow_run": {
+          "id": 37835181912,
+          "repository_id": 1397655434,
+          "head_repository_id": 1397655434,
+          "head_branch": "codex/m01-final-production-consolidation-v7",
+          "head_sha": "6e61aaa2efa98ff6a05f12f9ae5b0bf7190ba353"
+        }
+      }
+    ]
+  },
+  "fullBrowser": {
+    "runId": 37876099475,
+    "jobId": 113644942412,
+    "head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37876099475",
+    "execution": "Fourth complete unfiltered invocation after three trace-driven harness corrections; one invocation, no historical/focused result union",
+    "workers": 1,
+    "retries": 0,
+    "inventory": 84,
+    "productionUnchanged": true,
+    "harnessCorrectionHeads": [
+      "91c7a844c7d5020a552969027a424aad1f13dcd4",
+      "0a83942b41957e0b900b8a8fc704eb7860f84ba9",
+      "29e26b7f5c5b90720463853c76b34aa3454090b1"
+    ],
+    "executed": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "globalErrors": 0,
+    "durationMs": 5733758.757,
+    "startedAt": "2026-10-09T02:45:51Z",
+    "completedAt": "2026-10-09T04:22:34Z",
+    "report": "BROWSER_FULL_FOURTH.json.gz",
+    "summary": "BROWSER_FULL_FOURTH_SUMMARY.json.gz",
+    "artifact": {
+      "id": 11595565742,
+      "bytes": 80191367,
+      "sha256": "86b10b0e27656c06c0572222c03d610778babcdcce6c4833965a44baa4f8e294",
+      "downloadAndZipCrcVerified": true
+    }
+  },
+  "fpsMeasured": false,
+  "physicalGpuMemoryMeasured": false,
+  "chromebookPhysicalTest": false,
+  "additionalLodInvariantRecheck": {
+    "status": "PASS",
+    "testedHead": "158c30edea72869144cb0b0c875029dc3818adc2",
+    "report": "INVARIANTS_LOD_CORRECTED.json",
+    "originalReport": "INVARIANTS.json",
+    "correctedHelper": "sync(player, quality), previous helper had swapped arguments",
+    "sequence": [
+      "low",
+      "medium",
+      "high",
+      "low"
+    ],
+    "lods": [
+      2,
+      1,
+      0,
+      2
+    ],
+    "runtimeOrBrowserTestChanged": false
+  },
+  "fullBrowserFirst": {
+    "runId": 37833355993,
+    "head": "1b636303beeebf019aa2cd13819c6e0637f2b0bc",
+    "status": "completed",
+    "retriesConfigured": 0,
+    "inventoryCases": 84,
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37833355993",
+    "conclusion": "failure",
+    "executed": 84,
+    "passed": 80,
+    "failed": 4,
+    "skipped": 0,
+    "retries": 0,
+    "workers": 1,
+    "durationMs": 5798011.982,
+    "report": "BROWSER_FULL_FIRST.json.gz",
+    "summary": "BROWSER_FULL_FIRST_SUMMARY.json.gz",
+    "diagnosis": "BROWSER_FAILURE_DIAGNOSIS.json",
+    "artifact": {
+      "id": 11579816373,
+      "bytes": 111822856,
+      "sha256": "b9cf13c8667a15a883ea7e59383e3fee4660a60771607e5ab4f8928e447153ed",
+      "downloadAndZipCrcVerified": true
+    }
+  },
+  "browserHarnessFocused": {
+    "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+    "status": "PASS",
+    "scope": "Four failed scenarios plus both parameterized adjustment salvos, not the full suite",
+    "baseHead": "29821eeedf574244814a1d6e21c7103121282524",
+    "localUncommittedHarnessCorrection": true,
+    "chromiumVersion": "153.0.8010.0",
+    "stats": {
+      "startTime": "2026-10-08T21:58:43.702Z",
+      "duration": 145550.59399999998,
+      "expected": 5,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "workers": 1,
+    "errors": [],
+    "reportSha256Uncompressed": "c55fc1a7d763aaa0cf14c8d82b6323afbae71a2edc9975d0dd95c0ce23131fbf",
+    "testFileSha256": {
+      "tests/browser/m01.spec.js": "c3ec7e24f34333ca43ffe84043d31a9d2dbc9227e01e45fa7b1c35130359acfa",
+      "tests/browser/m01-battlefield-fx.spec.js": "3fbead454e3486d86b1e209c878551633c05a258bee8542aa67fa563d5d22202"
+    },
+    "cases": [
+      {
+        "file": "m01-battlefield-fx.spec.js",
+        "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+        "status": "passed",
+        "durationMs": 26011
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+        "status": "passed",
+        "durationMs": 26964
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+        "status": "passed",
+        "durationMs": 26955
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+        "status": "passed",
+        "durationMs": 30573
+      },
+      {
+        "file": "m01.spec.js",
+        "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+        "status": "passed",
+        "durationMs": 25124
+      }
+    ]
+  },
+  "fullBrowserSecond": {
+    "runId": 37851294926,
+    "jobId": 113564557176,
+    "head": "13b14fe75cdffc4e6425dcff4cb7b1f5dbb75e24",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37851294926",
+    "execution": "One corrected complete unfiltered invocation; no historical/focused result union",
+    "workers": 1,
+    "retries": 0,
+    "inventory": 84,
+    "productionUnchanged": true,
+    "harnessCorrectionHead": "91c7a844c7d5020a552969027a424aad1f13dcd4",
+    "executed": 84,
+    "passed": 82,
+    "failed": 2,
+    "skipped": 0,
+    "flaky": 0,
+    "globalErrors": 0,
+    "durationMs": 5660748.135,
+    "report": "BROWSER_FULL_SECOND.json.gz",
+    "summary": "BROWSER_FULL_SECOND_SUMMARY.json.gz",
+    "diagnosis": "BROWSER_FULL_SECOND_DIAGNOSIS.json",
+    "artifact": {
+      "id": 11585538865,
+      "bytes": 96110429,
+      "sha256": "7ab1ecf84c461281554125965427cd533e83282611551ce90ca73afa7421a8f3",
+      "downloadAndZipCrcVerified": true
+    }
+  },
+  "browserSecondHarnessFocused": {
+    "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+    "status": "PASS",
+    "scope": "Second-full-run two failures plus both neighboring FX and wagon regression scenarios; focused invocation, not combined certification",
+    "baseHead": "7a5800e12e3b4309f3d567e2a949900d4bb36b50",
+    "localUncommittedHarnessCorrection": true,
+    "chromiumVersion": "153.0.8010.0",
+    "stats": {
+      "startTime": "2026-10-08T23:52:18.242Z",
+      "duration": 226628.503,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "workers": 1,
+    "errors": [],
+    "reportSha256Uncompressed": "2e48ee42a45be75e2e9c8685aac1a642ae61dfe23d9aa7fcf66cc69ce8e2ed7e",
+    "testFileSha256": {
+      "tests/browser/m01-battlefield-fx.spec.js": "73a982c9348642cac88c37e7b731222686ee490960f13a7dd31a9b0573c04366",
+      "tests/browser/m01-wagon-runtime-integration.spec.js": "6d560f567b59a67d2fc7421925e065b6c33df81c23baad8545e8395b4fb22b1c"
+    },
+    "cases": [
+      {
+        "file": "m01-battlefield-fx.spec.js",
+        "title": "east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools",
+        "status": "passed",
+        "durationMs": 79332
+      },
+      {
+        "file": "m01-battlefield-fx.spec.js",
+        "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+        "status": "passed",
+        "durationMs": 33047
+      },
+      {
+        "file": "m01-wagon-runtime-integration.spec.js",
+        "title": "yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint",
+        "status": "passed",
+        "durationMs": 82682
+      },
+      {
+        "file": "m01-wagon-runtime-integration.spec.js",
+        "title": "total wagon GLB failure keeps train and yard procedural fallbacks visible and semantic state burned",
+        "status": "passed",
+        "durationMs": 21450
+      }
+    ],
+    "actualCounterAttachments": [
+      {
+        "file": "m01-battlefield-fx.spec.js",
+        "name": "fx-counters",
+        "value": {
+          "armed": {
+            "clock": 0,
+            "paused": true,
+            "frames": 7
+          },
+          "hotClock": 786.7500999998326,
+          "hotEventIds": [
+            "evt_m01_intro_card",
+            "evt_m01_prelude_start",
+            "evt_m01_railway_worker_report",
+            "evt_m01_planes_heard",
+            "evt_m01_bombing_0434",
+            "evt_m01_cable_cut",
+            "evt_m01_forward_post_bombed",
+            "evt_m01_nowicki_lost",
+            "evt_m01_wounded_dragged",
+            "evt_m01_second_air_pass",
+            "evt_m01_train963_arrives",
+            "evt_m01_panzerzug_arrives",
+            "evt_m01_repair_complete",
+            "evt_m01_order_demolish",
+            "evt_m01_bombing_0530",
+            "evt_m01_runner_pressure_report",
+            "evt_m01_north_contact_distant",
+            "evt_m01_east_platoon_withdraws",
+            "evt_m01_bak_wounded",
+            "evt_m01_germans_on_east_spans",
+            "evt_m01_east_demolition"
+          ],
+          "hot": {
+            "active": 1,
+            "counts": {
+              "flash": 1,
+              "core": 3,
+              "fire": 0,
+              "smoke": 0,
+              "dust": 1,
+              "shard": 3
+            },
+            "meta": {
+              "kinds": {
+                "small": 0,
+                "bombing": 0,
+                "demolition": 1
+              },
+              "bands": {
+                "near": 0,
+                "mid": 0,
+                "far": 1
+              }
+            },
+            "limits": {
+              "bursts": 16,
+              "flash": 16,
+              "core": 48,
+              "fire": 96,
+              "smoke": 128,
+              "dust": 128,
+              "shards": 96,
+              "lights": 1
+            },
+            "extraLights": 1,
+            "atmosphere": {
+              "puffs": 39,
+              "puffCapacity": 256,
+              "debris": 22,
+              "debrisCapacity": 64,
+              "puffBatches": 8
+            }
+          },
+          "frozen": {
+            "active": 1,
+            "counts": {
+              "flash": 0,
+              "core": 0,
+              "fire": 0,
+              "smoke": 5,
+              "dust": 7,
+              "shard": 5
+            },
+            "meta": {
+              "kinds": {
+                "small": 0,
+                "bombing": 0,
+                "demolition": 1
+              },
+              "bands": {
+                "near": 0,
+                "mid": 0,
+                "far": 1
+              }
+            },
+            "limits": {
+              "bursts": 16,
+              "flash": 16,
+              "core": 48,
+              "fire": 96,
+              "smoke": 128,
+              "dust": 128,
+              "shards": 96,
+              "lights": 1
+            },
+            "extraLights": 0,
+            "atmosphere": {
+              "puffs": 46,
+              "puffCapacity": 256,
+              "debris": 22,
+              "debrisCapacity": 64,
+              "puffBatches": 8
+            }
+          },
+          "clean": {
+            "active": 0,
+            "counts": {
+              "flash": 0,
+              "core": 0,
+              "fire": 0,
+              "smoke": 0,
+              "dust": 0,
+              "shard": 0
+            },
+            "meta": {
+              "kinds": {
+                "small": 0,
+                "bombing": 0,
+                "demolition": 0
+              },
+              "bands": {
+                "near": 0,
+                "mid": 0,
+                "far": 0
+              }
+            },
+            "limits": {
+              "bursts": 16,
+              "flash": 16,
+              "core": 48,
+              "fire": 96,
+              "smoke": 128,
+              "dust": 128,
+              "shards": 96,
+              "lights": 1
+            },
+            "extraLights": 0,
+            "atmosphere": {
+              "puffs": 50,
+              "puffCapacity": 256,
+              "debris": 0,
+              "debrisCapacity": 64,
+              "puffBatches": 8
+            }
+          },
+          "drawCalls": 347,
+          "triangles": 921795,
+          "textures": 98,
+          "geometries": 333
+        }
+      },
+      {
+        "file": "m01-battlefield-fx.spec.js",
+        "name": "impact-counters",
+        "value": {
+          "before": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0
+          },
+          "impact": {
+            "muzzle": 1,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 13,
+            "chip": 2
+          },
+          "drawCalls": 321,
+          "triangles": 668653
+        }
+      }
+    ],
+    "screenshotsInspected": true,
+    "screenshots": [
+      {
+        "path": "m01-battlefield-fx-east-de-6aca4--and-cleans-transient-pools/AFTER-east-demolition-hot-core.png",
+        "sha256": "45ef74e59cca75bf1cf435d752bb45d698a53889f039a21280209ecd0fb566f6"
+      },
+      {
+        "path": "m01-battlefield-fx-east-de-6aca4--and-cleans-transient-pools/AFTER-east-demolition-smoke.png",
+        "sha256": "3487060aba5fca929794c63edf128d880833c953d31bca6c9ffe371a768b1827"
+      },
+      {
+        "path": "m01-battlefield-fx-real-in-1c1f5-g-the-saved-simulation-path/AFTER-real-round-impact.png",
+        "sha256": "b15a26448935fed37a84b28a920e138a33f66339debe85ab790db9b3d5ce2335"
+      },
+      {
+        "path": "m01-wagon-runtime-integrat-4bdd2-then-obeys-prior-checkpoint/AFTER-yard-wagon-burned-lod0.png",
+        "sha256": "b0a2776d836b0a0a8a104891a82ab286c9a217c5286c1c97c8c1529e7aab82bf"
+      },
+      {
+        "path": "m01-wagon-runtime-integrat-4bdd2-then-obeys-prior-checkpoint/AFTER-yard-wagon-lod2-far.png",
+        "sha256": "25c29095ffa02ce46b36ec3fa9e9d783b7aa1c849954d741842930032a459a4b"
+      },
+      {
+        "path": "m01-wagon-runtime-integrat-4bdd2-then-obeys-prior-checkpoint/BEFORE-yard-wagon-intact-lod0.png",
+        "sha256": "066123c773327a3f1230e45bf5b1b4ee134425e43d992272fe6619b28ad28e02"
+      },
+      {
+        "path": "m01-wagon-runtime-integrat-cf08c-e-and-semantic-state-burned/AFTER-yard-wagon-total-fallback.png",
+        "sha256": "386568e20859eceb198e22dae9fce8e97d1cf2470d4e45b002f99833be00e97c"
+      }
+    ],
+    "visualReview": "All seven real PNGs inspected. Near intact/burned meshes and unchanged Station visible; fallback boxes remain visibly simple and third wagon/fire can be occluded by nearer wagons. Hot/smoke FX at 771 m are largely occluded by the truss; positive event/layer counters prove phase capture, these are not beauty shots. Far LOD fixture is in water and proves only model LOD, not a gameplay route. Earlier 72 matched visual pairs remain the visual-quality evidence.",
+    "correctionHead": "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
+  },
+  "localParallelAttempt": {
+    "status": "INFRASTRUCTURE_INCOMPLETE",
+    "head": "0bbffba78cbe96da9a4de24449ab3ac9470ba0db",
+    "configuredInventory": 84,
+    "configuredWorkers": 2,
+    "configuredRetries": 0,
+    "passedCasesReported": 19,
+    "failedCasesReported": 0,
+    "uncertifiedCases": 65,
+    "finalReportExists": false,
+    "processExitCode": null,
+    "excludedFromCertification": true,
+    "countsCombinedWithAnyOtherRun": false,
+    "report": "LOCAL_PARALLEL_ATTEMPT.json",
+    "identity": "LOCAL_PARALLEL_EXECUTION_IDENTITY.json",
+    "log": "logs/browser-local-parallel-incomplete.log",
+    "experimentalConfigRemoved": true
+  },
+  "fullBrowserThird": {
+    "runId": 37862528016,
+    "jobId": 113601388960,
+    "head": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37862528016",
+    "execution": "One corrected complete unfiltered invocation; no historical/focused result union",
+    "workers": 1,
+    "retries": 0,
+    "productionUnchanged": true,
+    "harnessCorrectionHeads": [
+      "91c7a844c7d5020a552969027a424aad1f13dcd4",
+      "0a83942b41957e0b900b8a8fc704eb7860f84ba9"
+    ],
+    "executed": 84,
+    "passed": 83,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0,
+    "globalErrors": 0,
+    "durationMs": 5785157.361,
+    "startedAt": "2026-10-09T00:00:42Z",
+    "completedAt": "2026-10-09T01:38:12Z",
+    "report": "BROWSER_FULL_THIRD.json.gz",
+    "summary": "BROWSER_FULL_THIRD_SUMMARY.json.gz",
+    "diagnosis": "BROWSER_FULL_THIRD_DIAGNOSIS.json",
+    "artifact": {
+      "id": 11590350851,
+      "bytes": 88161687,
+      "sha256": "2c6657b848d4829ce0ad6aaf2ad87daa9e94c7eb1f7eb36ae4f5fd452e4ddb49",
+      "downloadAndZipCrcVerified": true
+    },
+    "failedTest": "tests/browser/m01-locomotive.spec.js:6 locomotive 963 production GLBs load, far LOD, pause and restore",
+    "inventory": 84
+  },
+  "browserThirdHarnessFocused": {
+    "status": "PASS",
+    "kind": "focused, not certification; never united with full-run results",
+    "spec": "tests/browser/m01-locomotive.spec.js",
+    "repeatEach": 3,
+    "executed": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "retries": 0,
+    "workers": 1,
+    "timeoutMs": 300000,
+    "timeoutReason": "local Chromebook page.reload exceeds default 45 s; unmodified test fails identically locally; config unchanged",
+    "durationMs": 975411.66,
+    "report": "BROWSER_THIRD_HARNESS_FOCUSED.json.gz",
+    "summary": "BROWSER_THIRD_HARNESS_FOCUSED_SUMMARY.json",
+    "log": "logs/browser-third-harness-focused.log",
+    "build": "logs/build-third-harness-fix.log"
+  }
+}

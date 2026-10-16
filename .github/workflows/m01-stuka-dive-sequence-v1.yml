@@ -1,0 +1,52 @@
+name: M01 Stuka dive sequence V1
+
+on:
+  push:
+    branches: [claude/m01-stuka-dive-sequence-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-stuka-dive-sequence-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (presentation only)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: the accepted T16 lighting commit. Only src/world/m01-aircraft-path.js (declared presentation path) may change.
+          WORLD=$(git ls-files src/world | grep -v '^src/world/m01-aircraft-path.js$')
+          git diff --exit-code 687ff72 HEAD -- src/game missions assets package.json package-lock.json playwright.config.js $WORLD 2>&1 | tee evidence/authority.log
+          echo "authority diff clean against 687ff72" | tee -a evidence/authority.log
+          # The simulation must not import the presentation path, and the aircraft presentation has no clock wrap.
+          # (explicit if/exit: a bare '! grep' is exempt from 'bash -e' and could never fail the step)
+          if grep -rn "m01-aircraft-path" src/game 2>&1 | tee -a evidence/authority.log; then echo "FAIL: src/game imports m01-aircraft-path" | tee -a evidence/authority.log; exit 1; fi
+          if grep -n "time%" src/render/m01-aircraft.js src/render/m01-view.js src/world/m01-aircraft-path.js 2>&1 | tee -a evidence/authority.log; then echo "FAIL: time% in the aircraft presentation" | tee -a evidence/authority.log; exit 1; fi
+          echo "no m01-aircraft-path import in src/game; no time% in the aircraft presentation" | tee -a evidence/authority.log
+      - name: npm test (TAP evidence)
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Focused browser spec
+        run: set -o pipefail; npx playwright test tests/browser/m01-stuka-dive.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-stuka-dive-sequence-v1-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
-import {route,driver,toRepair,toCoverAdjustment} from '../helpers/m01-route.js';
+import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
+import {M01_BOMBING_BATTLE_SECONDS} from '../../src/world/m01-aircraft-path.js';
 
 let result;
 const flow=()=>result??=route();
@@ -15,7 +16,7 @@ async function open(page){
   page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#start')).toBeEnabled();
+  await expect(page.locator('#error')).toBeHidden();await expect(page.locator('#start')).toBeEnabled({timeout:60000});
   return {errors,failed};
 }
 async function start(page,button='#start'){
@@ -25,6 +26,26 @@ async function start(page,button='#start'){
     await page.keyboard.press('Space');
     await page.waitForFunction(()=>window.gameDiagnostics().m01.checkpoints.includes('cp_m01_a_orientacao'));
   }
+}
+async function freezeClick(page,button){
+  // Native pointer-lock handoff preserves the restored frame while optional clips finish loading.
+  await page.evaluate(()=>{
+    const hold=e=>{if(document.pointerLockElement?.id==='game'){
+      document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();
+    }};document.addEventListener('pointerlockchange',hold,true);
+  });
+  await page.locator(button).click();await expect(page.locator('#pause')).toBeVisible();
+}
+async function waitForBearingFrame(page,angle,bearing,minFrame){
+  // The failing full-suite traces had the correct simulated yaw/status after a slow
+  // software-rendered frame, while the five-second DOM assertion still saw the old HUD.
+  // Require the actual turn AND a new frame presenting its exact authoritative status.
+  await page.waitForFunction(({angle,bearing,minFrame})=>{
+    const d=window.gameDiagnostics(),hud=document.querySelector('#objective-status').textContent;
+    const error=Math.abs(Math.atan2(Math.sin(d.player.angle-angle),Math.cos(d.player.angle-angle)));
+    return error<.01&&d.m01.renderedFrames>minFrame&&hud===d.m01.threat.status&&hud.includes(bearing);
+  },{angle,bearing,minFrame},{timeout:process.env.CI?60000:30000});
+  return page.evaluate(()=>({data:window.gameDiagnostics(),hud:document.querySelector('#objective-status').textContent}));
 }
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
@@ -54,20 +75,268 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.checkpoints).toEqual(['cp_m01_a_orientacao']);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause',async({page},info)=>{
+  test.setTimeout(180000);
+  // T17 flies the formation along the authored stukaPath, anchored to evt_m01_bombing_0434. At the instant the planes are first heard
+  // (50 s earlier) they are still at the start of that path, ~10 km east of the station and ~5 degrees above the horizon, so the view can
+  // never rise past 0.2 rad. Continue the genuine route until the formation is inbound over the station (3 s before the bombing event).
+  const d=driver();d.step({skip:true});d.until(()=>d.sim.renderState.stukas,200);
+  d.until(()=>M01_BOMBING_BATTLE_SECONDS-d.sim.battleClock<=3,200);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  // The planes were heard long before the restored instant: the presentation fade-in has to be complete.
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
+  const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
+  expect(planes).toHaveLength(3);expect(planes.every(p=>p.visible&&p.lod===2&&p.propeller.every(Number.isFinite))).toBe(true);
+  const target=planes[0].position,dx=target[0]-before.player.x,dz=target[2]-before.player.z;
+  const angle=Math.atan2(dz,dx),pitch=Math.atan2(target[1]-before.player.y-1.6,Math.hypot(dx,dz));
+  // The look input below can only reach the waited-for pitch if the lead aircraft really is that high above the player.
+  expect(pitch).toBeGreaterThan(.2);
+  await page.evaluate(({x,y})=>{
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
+    document.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y,bubbles:true}));
+  },{x:Math.atan2(Math.sin(angle-before.player.angle),Math.cos(angle-before.player.angle))/.0022,y:(before.player.pitch-pitch)/.0022});
+  await page.waitForFunction(()=>window.gameDiagnostics().player.pitch>.2);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.aircraft).toEqual(frozen.m01.aircraft);
+  await page.screenshot({path:info.outputPath('m01-ju87-real-raid.png'),style:'#pause { visibility:hidden !important; }'});
+  await page.locator('#resume').click();await page.waitForFunction(clock=>window.gameDiagnostics().clock>clock+.05,frozen.clock);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.aircraft.planes[0].position).not.toEqual(frozen.m01.aircraft.planes[0].position);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission',async({page})=>{
+  await page.route('**/m01_ju87_b1_lod*.glb',route=>route.abort());
+  const d=driver();d.step({skip:true});d.until(()=>d.sim.renderState.stukas,200);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-aircraft')).length===3);
+  const diag=await page.evaluate(()=>window.gameDiagnostics());
+  expect(diag.m01.aircraft.loaded).toEqual([]);expect(diag.m01.aircraft.planes.every(p=>p.visible&&p.lod==='proxy')).toBe(true);
+  await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);
+});
+test('licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset',async({page},info)=>{
+  // Every wait here is frame-bound (reload clips, bolt cycles, quality switch): the 2.1-2.5 min of the V7 CI runs filled 180 s once
+  // the integrated scene made each software-rendered frame ~1.4x dearer. The sequence and its assertions are unchanged.
+  test.setTimeout(process.env.CI?300000:180000);
+  const {errors,failed}=await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.active>0&&window.gameDiagnostics().m01.viewModel.active);
+  const initial=await page.evaluate(()=>window.gameDiagnostics());
+  expect(initial.m01.characters.loaded).toEqual(expect.arrayContaining(['pl:0','pl:1','pl:2','de:2']));
+  expect(initial.m01.characters.active).toBeLessThanOrEqual(18);expect(initial.m01.viewModel.lod).toBe(0);
+  expect(initial.m01.viewModel.armTriangles).toBeGreaterThan(200);
+  const kowal=initial.m01.characters.actors.find(a=>a.id==='szymon_kowal'),bak=initial.m01.characters.actors.find(a=>a.id==='jozef_bak');
+  expect(kowal.weaponMeshes).toEqual(expect.arrayContaining(['rkm_wz28','rkm_bipod_folded','rkm_pouch']));
+  expect(kowal.weaponMeshes).not.toContain('rifle');expect(bak.weaponMeshes).toContain('rifle_wz98a');expect(bak.weaponMeshes).not.toContain('rifle');
+  async function horizontal(){
+    // Native headless clicks can move the locked cursor; restore the view with the same relative look controls.
+    const view=await page.evaluate(()=>window.gameDiagnostics().player);
+    // A fresh pointer lock drops its first look sample (Input.discardLookSample). Native events normally consume it; after a resume
+    // followed only by synthetic clicks nothing does, and the correction below would be lost. A zero sample consumes it without moving the view.
+    await page.evaluate(({angle,pitch})=>{
+      window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
+      window.dispatchEvent(new MouseEvent('mousemove',{movementX:-angle/.0022,movementY:pitch/.0022}));
+    },view);
+    await page.waitForFunction(()=>Math.abs(window.gameDiagnostics().player.pitch)<.03);
+  }
+  async function capture(name){
+    await page.evaluate(()=>document.exitPointerLock());
+    await expect(page.locator('#pause')).toBeVisible();
+    await page.screenshot({path:info.outputPath(name),style:'#pause { visibility:hidden !important; }'});
+  }
+  // The aim state reaches the HUD through the next software-rendered frame(s): give the same assertion room for them.
+  await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden({timeout:30000});
+  await horizontal();
+  await capture('m01-rig-iron-sights.png');
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.viewModel).toEqual(frozen.m01.viewModel);
+  await page.locator('#resume').click();
+  const fireRound=async expectedMag=>{
+    // Resume requests pointer lock asynchronously; pointerlockchange clears Input.
+    // A READY weapon alone does not mean the browser has returned control yet.
+    await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+    const before=await page.evaluate(()=>window.gameDiagnostics().m01.weapon.shotCount);
+    // Pointer-lock native mouse movement can race the slow rendered frame. Dispatch the same window input
+    // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.
+    await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+    await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});
+    expect((await page.evaluate(()=>window.gameDiagnostics())).m01.weapon.shotCount).toBe(before+1);
+    await expect(page.locator('#mag')).toHaveText(String(expectedMag));
+  };
+  for(let i=0;i<5;i++){
+    await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+    await fireRound(4-i);
+  }
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');await horizontal();
+  const clipVisible=page.waitForFunction(()=>{const g=window.gameDiagnostics().m01;if(g.weapon.state==='RELOAD_CLIP'&&g.viewModel.clip==='reload_clip'&&g.viewModel.clipTime>1.1){document.exitPointerLock();return true;}return false;});
+  await page.keyboard.press('KeyR');await clipVisible;
+  await capture('m01-rig-clip.png');
+  await page.locator('#resume').click();await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+  await fireRound(4);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.weapon.state==='READY');
+  await horizontal();
+  const singleVisible=page.waitForFunction(()=>{const v=window.gameDiagnostics().m01.viewModel;if(v.singleRound&&v.clipTime>1.1){document.exitPointerLock();return true;}return false;});
+  await page.keyboard.press('KeyR');await singleVisible;
+  await capture('m01-rig-single-round.png');
+  const single=await page.evaluate(()=>window.gameDiagnostics());expect(single.m01.weapon.state).toBe('RELOAD_SINGLE');
+  await page.locator('#back-menu').click();await page.locator('#quality').selectOption('high');await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.lod===0);
+  const high=await page.evaluate(()=>window.gameDiagnostics());expect(high.m01.characters.failures).toEqual([]);
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('an optional character download failure preserves playable procedural actors without blocking bridge validation',async({page})=>{
+  await page.route('**/characters/*.glb',r=>r.abort());
+  await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.characters.active).toBe(0);expect(data.m01.viewModel.active).toBe(false);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);
+});
+test('Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toRepair(driver());d.walk(-115,32);d.walk(-74,30);d.step({crouch:true});
+  d.until(()=>d.sim.actor('szymon_kowal').rounds===2,240);
+  const k=d.sim.actor('szymon_kowal'),p=d.sim.player,angle=Math.atan2(k.z-p.z,k.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
+  const snapshot=d.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  const samples=[];
+  for(const [clip,file]of [['rkm_fire_burst','m01-kowal-rkm-burst.png'],['rkm_reload','m01-kowal-rkm-reload.png']]){
+    await page.waitForFunction(clip=>{
+      const g=window.gameDiagnostics();
+      if(!g.paused&&g.m01.characters.actors?.some(a=>a.id==='szymon_kowal'&&a.clip===clip)){document.exitPointerLock();return true;}
+      return false;
+    },clip,{timeout:90000});
+    await expect(page.locator('#pause')).toBeVisible();
+    const frozen=await page.evaluate(()=>window.gameDiagnostics()),actor=frozen.m01.characters.actors.find(a=>a.id==='szymon_kowal');
+    expect(actor.clip).toBe(clip);expect(actor.weapon).toBe('rkm_wz28');expect(actor.weaponMeshes).toContain('rkm_wz28');
+    expect(actor.weaponMeshes).not.toContain('rifle');expect(actor.weaponMeshes).not.toContain('clip');
+    await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+    expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);
+    await page.screenshot({path:info.outputPath(file),style:'#pause { visibility:hidden !important; }',timeout:120000});
+    samples.push({clip,clock:frozen.clock,battleClock:frozen.m01.battleClock,actor});
+    if(clip==='rkm_fire_burst')await page.locator('#resume').click();
+  }
+  await info.attach('kowal-rkm-samples',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',samples,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available',async({page})=>{
+  await page.route('**/m01_soldier_pl_lod0.glb',r=>r.abort());
+  await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.active);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.viewModel.lod).toBe(1);expect(data.m01.viewModel.armTriangles).toBeGreaterThan(200);
+  expect(data.m01.characters.active).toBeGreaterThan(0);expect(data.m01.assetFailures).toEqual([]);
+});
+test('the station clip alone cannot enable a viewmodel when the required weapon animations fail to download',async({page})=>{
+  await page.route('**/m01_soldier_animations.glb',r=>r.abort());
+  const {errors}=await open(page);await start(page);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.viewModel.active).toBe(false);expect(data.m01.characters.active).toBe(0);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.actorPoses.standing).toBeGreaterThan(0);expect(errors).toEqual([]);
+});
+test('the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:180000);
+  // Staged continuation of real simulation controls; not an uninterrupted browser playthrough.
+  const station=toStationEvacuation(driver(),{observe:true});
+  // Genuine simulation-control state, staged later so combined rendering cannot turn the remaining drag into a wall-clock timeout.
+  station.until(()=>station.sim.stationEvacuation.patient.x<-329,60);
+  const snapshot=station.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.actors?.some(a=>a.id==='leon_dudek'&&a.clip==='drag_wounded'));
+  const current=await page.evaluate(()=>window.gameDiagnostics()),pair=current.m01.stationEvacuation;
+  expect(pair.patient.carriedBy).toBe('leon_dudek');expect(pair.patient.y).toBeLessThanOrEqual(pair.medic.y+.1);
+  expect(current.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'station_drag_patient_grab',loop:false,clipTime:expect.closeTo(1.6,5)}));
+  const angle=Math.atan2(pair.patient.z-current.player.z,pair.patient.x-current.player.x);
+  await page.evaluate(({delta,pitch})=>{
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
+    window.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:(pitch+.18)/.0022}));
+  },{delta:Math.atan2(Math.sin(angle-current.player.angle),Math.cos(angle-current.player.angle))/.0022,pitch:current.player.pitch});
+  await page.waitForFunction(angle=>Math.abs(Math.atan2(Math.sin(window.gameDiagnostics().player.angle-angle),Math.cos(window.gameDiagnostics().player.angle-angle)))<.02,angle);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
+  expect((await page.evaluate(()=>window.gameDiagnostics())).m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);
+  await page.screenshot({path:info.outputPath('m01-station-ground-drag.png'),style:'#pause { visibility:hidden !important; }',timeout:120000});
+  await page.locator('#resume').click();
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered,null,{timeout:120000});
+  const delivered=await page.evaluate(()=>window.gameDiagnostics());
+  expect(delivered.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(delivered.m01.stationEvacuation.patient.x).toBe(-334);
+  expect(delivered.m01.stationEvacuation.patient.state).toBe('WOUNDED');expect(delivered.m01.flags['m01.bak_status']).toBe('unhurt');
+  await info.attach('station-evacuation',{body:JSON.stringify({kind:'production browser continuation of a genuine simulation-control snapshot',drag:frozen.m01.stationEvacuation,delivered:delivered.m01.stationEvacuation,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+for(const phase of ['grab','release'])test(`the real station ${phase} restores synchronized clips, pauses and keeps both roots fixed`,async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toStationEvacuation(driver(),{observe:true,phase});for(let i=0;i<7;i++)d.step();
+  const snapshot=d.sim.snapshot(false),pair=d.sim.stationEvacuation,p=snapshot.player;
+  // Look controls applied to the genuine route, before saving. No hand-written actor states.
+  const angle=Math.atan2(pair.patient.z-p.z,pair.patient.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022,lookY:(p.pitch+.18)/.0022});
+  // This staged visual test installs the observed phase as a CP, so Restart must return to that phase.
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot(false)});
+  const {errors,failed}=await open(page);await freezeClick(page,'#continue');
+  await page.waitForFunction(phase=>{
+    const g=window.gameDiagnostics(),actors=g.m01.characters.actors;
+    if(g.m01.stationEvacuation.patient.stationDrag?.phase===phase&&
+      actors?.some(a=>a.id==='generic_rifleman'&&a.clip===`station_drag_patient_${phase}`)&&
+      actors.some(a=>a.id==='leon_dudek'&&a.clip===`station_drag_medic_${phase}`)){
+      document.exitPointerLock();return true;
+    }return false;
+  },phase);
+  await expect(page.locator('#pause')).toBeVisible();const frozen=await page.evaluate(()=>window.gameDiagnostics());
+  const roles=frozen.m01.characters.actors.filter(a=>['generic_rifleman','leon_dudek'].includes(a.id));
+  expect(roles).toHaveLength(2);expect(roles[0].clipTime).toBeCloseTo(roles[1].clipTime,6);
+  for(const a of roles){expect(a.loop).toBe(false);expect(a.weaponMeshes).toEqual([]);}
+  expect(frozen.m01.stationEvacuation.delivered).toBe(false);
+  await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+  expect(still.m01.stationEvacuation).toEqual(frozen.m01.stationEvacuation);expect(still.m01.characters).toEqual(frozen.m01.characters);
+  await page.screenshot({path:info.outputPath(`m01-station-${phase}.png`),style:'#pause { visibility:hidden !important; }',timeout:90000});
+  await freezeClick(page,'#restart-checkpoint');
+  await page.waitForFunction(phase=>{
+    const g=window.gameDiagnostics();if(g.paused&&g.m01.characters.actors?.some(a=>a.clip===`station_drag_patient_${phase}`)){
+      document.exitPointerLock();return true;
+    }return false;
+  },phase);
+  await expect(page.locator('#pause')).toBeVisible();const restored=await page.evaluate(()=>window.gameDiagnostics());
+  expect(restored.m01.stationEvacuation.patient.stationDrag.startedAt).toBe(snapshot.actors.find(a=>a.id==='generic_rifleman').stationDrag.startedAt);
+  for(const role of ['patient','medic'])for(const axis of ['x','y','z','facing'])
+    expect(restored.m01.stationEvacuation[role][axis]).toBe(frozen.m01.stationEvacuation[role][axis]);
+  await info.attach(`station-${phase}`,{body:JSON.stringify({kind:'production browser continuation of genuine simulation controls',frozen,restored,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('a missing optional station transition GLB keeps the grounded fallback and completes evacuation',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:180000);
+  const d=toStationEvacuation(driver(),{observe:true,phase:'release'}),snapshot=d.sim.snapshot();
+  await page.route('**/m01_station_drag_transitions.glb',r=>r.abort());
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.some(f=>f.path.endsWith('m01_station_drag_transitions.glb')));
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.stationEvacuation.delivered);
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.characters.actors).toContainEqual(expect.objectContaining({id:'generic_rifleman',clip:'wounded'}));
+  expect(data.m01.stationEvacuation.patient.carriedBy).toBeNull();expect(data.m01.stationEvacuation.patient.y).toBe(-3);
+  expect(data.m01.assetFailures).toEqual([]);expect(data.m01.flags['m01.bak_status']).toBe('unhurt');expect(errors).toEqual([]);
+  await info.attach('station-transition-fallback',{body:JSON.stringify({kind:'production continuation; intentional optional asset failure',data,errors}),contentType:'application/json'});
+});
 test('real keyboard movement traverses the approaches and E delivers the message at the rail bridge',async({page},info)=>{
-  // Slow software rendering needs room for input and the final, paused evidence capture.
-  test.setTimeout(process.env.CI?240000:130000);
+  // Slow software rendering needs room for input and the final, paused evidence capture. The route is frame-bound (each leg is ~34 frames
+  // of 0.25 s mission time): the V7 CI runs took 3.6-3.8 min of the previous 240 s, and every frame of the integrated scene is ~1.4x dearer.
+  test.setTimeout(process.env.CI?420000:130000);
   const {errors,failed}=await open(page);await start(page);await page.keyboard.down('ShiftLeft');
   async function axis(code,axis,target,direction){
     await page.keyboard.down(code);
-    await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?90000:45000});
+    await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?150000:45000});
     await page.keyboard.up(code);
   }
   await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await page.keyboard.up('ShiftLeft');
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
-  await expect(page.locator('#interaction')).toContainText('entregar mensagem');
+  await expect(page.locator('#interaction')).toContainText('entregar mensagem',{timeout:30000});
   await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.gameDiagnostics().m01.objectives.obj_m01_deliver_message.state==='done');
   const data=await page.evaluate(()=>window.gameDiagnostics());expect(data.m01.battleClock).toBeGreaterThanOrEqual(4*3600+33*60+10);expect(data.eventIds).toContain('evt_m01_planes_heard');
   // A real pause stops animation and avoids competing GPU frames during readback.
@@ -94,7 +363,10 @@ for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
   },Math.atan2(Math.sin(aim+Math.PI-before.player.angle),Math.cos(aim+Math.PI-before.player.angle))/.0022);
+  const turned=await waitForBearingFrame(page,aim+Math.PI,'atrás de si',before.m01.renderedFrames);
   await expect(page.locator('#objective-status')).toContainText('atrás de si');
+  expect(turned.hud).toBe(turned.data.m01.threat.status);
+  await info.attach('bearing-frame-proof',{body:JSON.stringify({before,turned}),contentType:'application/json'});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   await page.screenshot({path:info.outputPath('m01-cover-origin-paused.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -113,14 +385,17 @@ test('demolition inside the road truss shows the actual bearing while mouse look
     document.dispatchEvent(new MouseEvent('mousemove',{movementX:delta,movementY:0,bubbles:true}));
   },Math.atan2(Math.sin(angle),Math.cos(angle))/.0022);
   await turn(aim+Math.PI-initial.player.angle);
+  const awayFrame=await waitForBearingFrame(page,aim+Math.PI,'atrás de si',initial.m01.renderedFrames);
   await expect(page.locator('#objective-status')).toContainText('atrás de si');
-  const away=await page.evaluate(()=>window.gameDiagnostics());
+  const away=awayFrame.data;
   await turn(aim-away.player.angle);
+  const facingFrame=await waitForBearingFrame(page,aim,'em frente',away.m01.renderedFrames);
   await expect(page.locator('#objective-status')).toContainText('em frente');
-  const facing=await page.evaluate(()=>window.gameDiagnostics());
+  const facing=facingFrame.data;
   expect(facing.m01.threat.status).toBe(await page.locator('#objective-status').textContent());
   expect(Math.abs(Math.atan2(Math.sin(facing.player.angle-aim),Math.cos(facing.player.angle-aim)))).toBeLessThan(.01);
   expect(facing.player.x).toBe(initial.player.x);expect(facing.player.z).toBe(initial.player.z);
+  await info.attach('bearing-frame-proof',{body:JSON.stringify({initial,away:awayFrame,facing:facingFrame}),contentType:'application/json'});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -170,6 +445,71 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   await page.screenshot({path:info.outputPath('m01-repair-under-fire.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+test('the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart',async({page},info)=>{
+  test.setTimeout(process.env.CI?180000:120000);
+  const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);
+  const gun=d.sim.actor('de_east_0'),p=d.sim.player,angle=Math.atan2(gun.z-p.z,gun.x-p.x);
+  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
+  const snapshot=d.sim.snapshot(false);   // staged CP for the train/MG visual restart, not a continuation save
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>{
+    const g=window.gameDiagnostics();
+    if(!g.paused&&g.m01.wagons.loaded.length===6&&g.m01.characters.actors.some(a=>a.weapon==='mg34'&&a.clip==='mg34_prone_fire_burst')){
+      document.exitPointerLock();return true;
+    }return false;
+  },null,{timeout:90000});
+  await expect(page.locator('#pause')).toBeVisible();
+  const frozen=await page.evaluate(()=>window.gameDiagnostics()),w=frozen.m01.wagons,mg=frozen.m01.characters.actors.filter(a=>a.weapon==='mg34');
+  expect(w).toMatchObject({wagons:65,step:9.1,proxies:0,visible:true,first:[1090,0,-2.5],last:[1672.4,0,-2.5]});
+  expect(w.loaded).toEqual(['covered:0','covered:1','covered:2','open:0','open:1','open:2']);expect(w.lodDistribution).toEqual({0:0,1:0,2:65});
+  expect(w.batches).toBeLessThanOrEqual(10);expect(mg.map(a=>a.id).sort()).toEqual(['de_east_0','de_east_1']);
+  expect(frozen.m01.characters.active).toBeLessThanOrEqual(18);
+  for(const a of mg){expect(a.weaponLOD).toBe(2);expect(a.weaponMeshes).toContain('mg34_body');expect(a.weaponMeshes).not.toContain('rifle');expect(a.weaponMeshes).not.toContain('clip');expect(a.muzzle.every(Number.isFinite)).toBe(true);}
+  await page.waitForTimeout(300);const still=await page.evaluate(()=>window.gameDiagnostics());
+  expect(still.clock).toBe(frozen.clock);expect(still.m01.characters).toEqual(frozen.m01.characters);expect(still.m01.wagons).toEqual(w);
+  await page.screenshot({path:info.outputPath('m01-train-mg34.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
+  await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const restored=await page.evaluate(()=>window.gameDiagnostics());
+  expect(restored.m01.wagons).toEqual(w);expect(restored.geometries).toBeLessThanOrEqual(frozen.geometries+2);expect(restored.textures).toBeLessThanOrEqual(frozen.textures+2);
+  await info.attach('train-mg34-samples',{body:JSON.stringify({kind:'production continuation of a genuine simulation-control snapshot; view from west bank',frozen,restored,errors,failed}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+
+test('schema-2 continuation keeps the older CP-A on the real Restart checkpoint button',async({page},info)=>{
+  test.setTimeout(120000);
+  const d=driver();d.step({skip:true});d.walk(-66,26);
+  const snapshot=d.sim.snapshot(),cp=d.sim.checkpoint;
+  expect(snapshot.resumeCheckpoint).toEqual(cp);expect(snapshot.clock).toBeGreaterThan(cp.clock);
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);
+  await freezeClick(page,'#continue');
+  const current=await page.evaluate(()=>window.gameDiagnostics());expect(current.clock).toBe(snapshot.clock);
+  for(const axis of ['x','y','z','angle','pitch'])expect(current.player[axis]).toBe(snapshot.player[axis]);
+  await freezeClick(page,'#restart-checkpoint');
+  const recovered=await page.evaluate(()=>window.gameDiagnostics());expect(recovered.clock).toBe(cp.clock);
+  expect(recovered.m01.battleClock).toBe(cp.battleClock);expect(recovered.m01.checkpoints).toEqual(cp.checkpointsReached);
+  for(const axis of ['x','y','z','angle','pitch'])expect(recovered.player[axis]).toBe(cp.player[axis]);
+  expect(recovered.player.z).not.toBe(current.player.z);
+  await info.attach('continuation-checkpoint-proof',{body:JSON.stringify({kind:'actual UI continuation, then recovery to earlier genuine CP-A before first tick',current,recovered,savedClock:snapshot.clock,checkpointClock:cp.clock}),contentType:'application/json'});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01',async({page},info)=>{
+  const d=toRepair(driver());d.until(()=>d.sim.battleClock>=seconds('04:45:10'),120);const snapshot=d.sim.snapshot();
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  await page.route('**/m01-wagons/*.glb',r=>r.fulfill({status:404,body:'optional wagon missing'}));
+  await page.route('**/mg34/m01_mg34_animations.glb',r=>r.fulfill({status:404,body:'optional MG34 clips missing'}));
+  await open(page);await page.waitForFunction(()=>{
+    const g=window.gameDiagnostics();return g.m01.characters.failures.some(f=>f.path.includes('m01_mg34_animations'))&&
+      g.m01.wagons.loaded.length===0&&g.m01.wagons.proxies===65&&g.m01.assetFailures.some(f=>f.path.includes('m01-wagons'));
+  });
+  await start(page,'#continue');const g=await page.evaluate(()=>window.gameDiagnostics());
+  expect(g.m01.requiredAssetFailures).toEqual([]);expect(g.m01.wagons).toMatchObject({wagons:65,proxies:65,loaded:[],visible:true});
+  expect(g.m01.characters.actors.every(a=>a.weapon!=='mg34')).toBe(true);expect(g.m01.actorAnimations.aiming).toBeGreaterThan(0);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-train-mg34-fallback.jpg'),type:'jpeg',quality:85,style:'#pause { visibility:hidden !important; }',timeout:120000});
+});
 test('the real roll-call snapshot renders seated actors and keeps their pose after page reload',async({page},info)=>{
   // Visual verification by continuation of a snapshot reached with simulation controls.
   const snapshot=flow().outro,seated=snapshot.actors.filter(a=>a.active&&a.alive&&a.pose==='seated').length;
@@ -187,43 +527,65 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   const snapshot=flow().combatSnapshots.withdrawal;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
-  // O clarão da boca dura uma fracção de segundo e apaga-se antes de o tiro chegar: amostrar até à primeira baixa.
-  // Um contador na própria página regista os clarões de cada frame desenhado; a amostragem a 250 ms podia perdê-los
-  // no CI com renderização por software (run 36920430287).
-  await page.evaluate(()=>{window.__m01MuzzleSeen=0;const tick=()=>{const m=window.gameDiagnostics?.().m01?.fireEffects?.muzzle??0;if(m>window.__m01MuzzleSeen)window.__m01MuzzleSeen=m;requestAnimationFrame(tick);};requestAnimationFrame(tick);});
-  const samples=[];
-  for(let i=0;i<300&&!(samples.length&&samples.at(-1).n<18);i++){
+  // Renderer telemetry is latched only after a world frame with a real muzzle batch was submitted.
+  // Unlike polling fireEffects.muzzle, the count remains observable after the short visual flash disappears.
+  const muzzleStart=await page.evaluate(()=>window.gameDiagnostics().m01.muzzlePresentation.frames),samples=[];
+  // A casualty can precede the next submitted muzzle frame. The full-run trace
+  // stopped here at 17 men; its afterEach observed the real flash only 0.5 sim s later.
+  // Wait for both original requirements instead of ending at the first casualty.
+  for(let i=0;i<300&&!(samples.length&&samples.at(-1).n<18&&samples.at(-1).muzzle.frames>muzzleStart);i++){
     await page.waitForTimeout(250);
-    samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {n:g.flags['m01.east_platoon_survivors'],muzzle:Math.max(g.fireEffects.muzzle,window.__m01MuzzleSeen),
+    samples.push(await page.evaluate(()=>{const d=window.gameDiagnostics(),g=d.m01;return {clock:d.clock,frame:g.renderedFrames,
+      n:g.flags['m01.east_platoon_survivors'],muzzle:{...g.muzzlePresentation},inFlight:g.threat.inFlight,
       hud:document.querySelector('#objective-status').textContent,sim:g.threat.status,origins:g.threat.recentFire.map(f=>f.id)};}));
   }
-  const n=samples.at(-1).n;expect(n).toBeLessThan(18);expect(n).toBeGreaterThanOrEqual(12);
-  expect(samples.some(s=>s.muzzle>0)).toBe(true);
+  await info.attach('withdrawal-muzzle-presentation-proof',{body:JSON.stringify({muzzleStart,samples}),contentType:'application/json'});
+  const n=samples.at(-1).n;expect(n).toBeLessThan(18);expect(samples.every(s=>s.n>=12)).toBe(true);
+  expect(samples.some(s=>s.origins.some(id=>id.startsWith('de_spans_')))).toBe(true);
+  expect(samples.some(s=>s.muzzle.frames>muzzleStart)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud).toContain(`Pelotão leste: ${s.n} homens`);}
-  await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png')});
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-withdrawal-under-fire.png'),style:'#pause {visibility:hidden !important;}',timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 test('a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable',async({page})=>{
   await page.route('**/*.glb',r=>r.fulfill({status:404,body:'missing M01 test asset'}));
-  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.assetFailures.length===9);
+  await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.requiredAssetFailures.length===9);
   await expect(page.locator('#error')).toBeVisible();await expect(page.locator('#start')).toBeDisabled();
   await page.locator('#close-error').click();await page.locator('#mission-select').selectOption('sandbox-1944');
-  await expect(page.locator('#start')).toBeEnabled();await page.locator('#start').click();
+  await expect(page.locator('#start')).toBeEnabled({timeout:60000});await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused);await expect(page.locator('#weapon-name')).toHaveText('M1 CARBINE');
 });
 
+// Textures and geometries are counted when first drawn, and several owners finish asynchronously after the restored frame (bridge finish,
+// vegetation kit, rigs, burned wagons). Smoke puffs and the legacy batches already exist in the menu, so they cannot say the scene is
+// resident: take resource baselines only once the async owners reported and the counts held still for `frames` rendered frames.
+async function resourcesSettled(page,frames=3){
+  await page.evaluate(()=>{delete window.__resourceSettle;});
+  await page.waitForFunction(({frames})=>{
+    const d=window.gameDiagnostics(),m=d.m01;
+    if(m.bridgeFinish.status==='loading'||!(m.vegetation.ready||m.vegetation.failure))return false;
+    const w=window.__resourceSettle??={frame:-1,textures:-1,geometries:-1,stable:0};
+    if(m.renderedFrames===w.frame)return false;
+    w.stable=d.textures===w.textures&&d.geometries===w.geometries?w.stable+1:0;
+    Object.assign(w,{frame:m.renderedFrames,textures:d.textures,geometries:d.geometries});
+    return w.stable>=frames;
+  },{frames});
+}
 test('textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation',async({page},info)=>{
-  test.setTimeout(180000);
+  test.setTimeout(process.env.CI?300000:180000);
   const snapshot=flow().checkpoints.cp_m01_d_retirada,shaderErrors=[];
   page.on('console',m=>{if(m.type()==='error')shaderErrors.push(m.text());});
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await page.locator('#quality').selectOption('medium');await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.smokePuffs>0&&window.gameDiagnostics().m01.environmentInstances>2000);
+  await resourcesSettled(page);
   const initial=await page.evaluate(()=>window.gameDiagnostics());
   expect(initial.m01.smokePuffs).toBeLessThanOrEqual(192);
   await page.screenshot({path:info.outputPath('m01-visual-medium.png')});
   await page.evaluate(()=>document.exitPointerLock());await page.locator('#restart-checkpoint').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
+  await resourcesSettled(page);
   const restored=await page.evaluate(()=>window.gameDiagnostics());
   expect(restored.m01.environmentInstances).toBe(initial.m01.environmentInstances);
   expect(restored.textures).toBeLessThanOrEqual(initial.textures+2);expect(restored.geometries).toBeLessThanOrEqual(initial.geometries+2);
@@ -235,4 +597,37 @@ test('textured atmosphere survives checkpoint restart without duplicating resour
   expect(low.m01.models.length).toBe(9);expect(low.eventIds).toContain('evt_m01_east_demolition');
   await page.screenshot({path:info.outputPath('m01-visual-low.png')});
   expect(errors).toEqual([]);expect(shaderErrors).toEqual([]);expect(failed).toEqual([]);
+});
+
+
+test('ckm west crew and weapon use actual saved abandon time, pause and fresh reload',async({page},info)=>{
+  test.setTimeout(180000);
+  const flow=route(),snapshot=structuredClone(flow.combatSnapshots.eastDemolition);
+  // This snapshot was reached by the route's real controls at the demolition event.
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.actors.some(a=>a.clip==='ckm_wz30_gunner_abandon'));
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  const before=await page.evaluate(()=>window.gameDiagnostics()),c=before.m01.characters;
+  const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
+  expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);
+  expect(c.ckm.clip).toBe('ckm_wz30_gun_abandon');expect(c.ckm.time).toBeCloseTo(gunner.clipTime,5);
+  expect(c.ckm.position).toEqual([24.17,-3,43]);expect(c.ckm.lod).toBe(2);
+  await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
+  await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
+  await page.reload();await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.loaded.includes('ckm:2'));
+  await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('optional ckm kit failure retains the crew fallback and checkpoint restoration',async({page})=>{
+  test.setTimeout(120000);await page.route('**/m01_ckm_wz30_*.glb',r=>r.abort());
+  const d=driver();d.step({skip:true});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
+  const {errors}=await open(page);await start(page,'#continue');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.failures.some(f=>f.path.includes('ckm_wz30')));
+  const c=(await page.evaluate(()=>window.gameDiagnostics())).m01.characters;
+  expect(c.actors.filter(a=>a.id.startsWith('ckm_'))).toHaveLength(3);expect(c.ckm).toBeNull();
+  expect(c.actors.filter(a=>a.id.startsWith('ckm_')).every(a=>!a.clip.startsWith('ckm_wz30_'))).toBe(true);
+  await page.evaluate(()=>document.exitPointerLock());await page.locator('#restart-checkpoint').click();
+  await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);
 });

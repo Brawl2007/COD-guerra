@@ -1,0 +1,17 @@
+{
+  "state": "INFRASTRUCTURE_INTERRUPTION",
+  "session": 42586,
+  "plannedCases": 84,
+  "observedPassedCases": 81,
+  "observedFailedAssertions": 0,
+  "remainingUnverifiedOriginalCases": [
+    82,
+    83,
+    84
+  ],
+  "lastObservedCase": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+  "error": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 25s",
+  "finalOriginalExitAndReport": "not yet accessible, do not claim 84/84 from this invocation",
+  "durableProgress": "BROWSER_PROGRESS.json retains the first 71 PASS log lines",
+  "recovery": "Push-triggered isolated evidence job runs only cases 82–84 and frozen V5/V6 visual comparison. No complete suite repetition or workflow_dispatch."
+}

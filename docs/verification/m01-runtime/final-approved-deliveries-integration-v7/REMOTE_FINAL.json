@@ -1,0 +1,587 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "observedAt": "2026-10-08T20:40:38.822Z",
+  "branchHeads": [
+    {
+      "name": "claude/bold-cannon-rkvxjp",
+      "sha": "12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416"
+    },
+    {
+      "name": "claude/busy-edison-mokkrb",
+      "sha": "ad0253e9e370c80b96163d01b061047750dd93df"
+    },
+    {
+      "name": "claude/clever-goldberg-avn7dj",
+      "sha": "1ffcf1325cdc0b553c619add4f5881586bebc820"
+    },
+    {
+      "name": "claude/cool-euler-fkyo43",
+      "sha": "21c1ae653836522e74c071c31e917a1609f5611a"
+    },
+    {
+      "name": "claude/ecstatic-planck-jiy2k3",
+      "sha": "4a85ff9663946d9202bf38a92c68b185712a9d04"
+    },
+    {
+      "name": "claude/exciting-planck-5ylz7z",
+      "sha": "5583a4ab854a2e64dad85460bfd40031c3406ccc"
+    },
+    {
+      "name": "claude/m01-bridge-models",
+      "sha": "fdbb1860df31ce2b2a31a8ff09bfb4dbc4c74229"
+    },
+    {
+      "name": "claude/m01-ckm-budget",
+      "sha": "e65ce73f2def4e3e8433912280a978b078c9fdd6"
+    },
+    {
+      "name": "claude/m01-ckm-wz30",
+      "sha": "4170eea6ca5ed5f882727f9678bd2a763927e5b1"
+    },
+    {
+      "name": "claude/m01-continuous-playtest",
+      "sha": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2"
+    },
+    {
+      "name": "claude/m01-integration-prep",
+      "sha": "3ba46d441f3189dc0bc241ca845a52760cf0b052"
+    },
+    {
+      "name": "claude/m01-ju87",
+      "sha": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563"
+    },
+    {
+      "name": "claude/m01-mg34-prone",
+      "sha": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a"
+    },
+    {
+      "name": "claude/m01-rkm-wz28",
+      "sha": "afdbe9e50b6f841c108cf250b2eef851213322bb"
+    },
+    {
+      "name": "claude/m01-soldiers-1939",
+      "sha": "6134a46253ecbfcfce37eb528007783a513ae343"
+    },
+    {
+      "name": "claude/m01-staging",
+      "sha": "cf9b2ea7b6a43970989d9138f279f52c140fc26d"
+    },
+    {
+      "name": "claude/m01-station-drag-transitions",
+      "sha": "27353ef207c5d0d97102db5b60d1d4fd16943194"
+    },
+    {
+      "name": "claude/m01-train-detail-coupling-polish-dws18u",
+      "sha": "e588c0cda2bbe191f752792ec7e05f865fcff1a5"
+    },
+    {
+      "name": "claude/m01-train-detail-coupling-polish-v1",
+      "sha": "e588c0cda2bbe191f752792ec7e05f865fcff1a5"
+    },
+    {
+      "name": "claude/m01-wagon-damage",
+      "sha": "11554d91e70409ac6e8a18ab1717761d7f54d522"
+    },
+    {
+      "name": "claude/m01-wagons",
+      "sha": "0667af008549f15947c10ab09b814338d701bf2c"
+    },
+    {
+      "name": "claude/pensive-thompson-jc2y12",
+      "sha": "36a04b33a6d1bc85a926b47dd2db5704dd3e265f"
+    },
+    {
+      "name": "claude/railway-production-pass-3c7fwx",
+      "sha": "8ff9c6707c776c4096bc206d37ec99802af1f743"
+    },
+    {
+      "name": "claude/upbeat-ptolemy-rzqu5g",
+      "sha": "03b61a380c2624ba2b704299a789749a50dc6a93"
+    },
+    {
+      "name": "claude/zealous-ramanujan-2el38r",
+      "sha": "8e4d2dde0e009dddccc322a53e6e6925fbbd517e"
+    },
+    {
+      "name": "codex/agentic-engineering-v1",
+      "sha": "e88d4f871465499f170e33d6614e2cf4b401dac4"
+    },
+    {
+      "name": "codex/campaign-cinematic-m02-m30",
+      "sha": "49824083ff996ead3dfa1b00ea0cc30aa2f69d2d"
+    },
+    {
+      "name": "codex/campaign-script-polish-v2-30-missions",
+      "sha": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra",
+      "sha": "94cdd3aa95b3f22ccce869880c43bc6b0a09e440"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog",
+      "sha": "3af7ea23179896048ee7f77cb9df5e570f3b822e"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy",
+      "sha": "ef597a3937b54ae58e269128a8e4443d5a74fa26"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt",
+      "sha": "b5817cba7d28cd0824d35057ed2d55bccd33b64b"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg",
+      "sha": "3ddeed0eda3dd0b36d049435d373d5fb6e25ca72"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa",
+      "sha": "b250a640de2bdd455a16c8ef5b44f78cd5ba5ee9"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5",
+      "sha": "76367561fbb741b83cae2906af62576f2f4938d0"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b",
+      "sha": "f6f64fa4793bd9bc319593d6017d6525bf13018c"
+    },
+    {
+      "name": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h",
+      "sha": "f2c7a66590e75cf2feac8df2a6d04f566113aadb"
+    },
+    {
+      "name": "codex/m01-anim-contract-sim-v1",
+      "sha": "d070225d49840f5bd304a0825c0656651b82c26d"
+    },
+    {
+      "name": "codex/m01-approved-consolidation-checkpoint-v1",
+      "sha": "58c403cb93ca40d47e4ecb65061cdd8ff3280374"
+    },
+    {
+      "name": "codex/m01-assets-review",
+      "sha": "beec7cd9333cfac38fdc361da481ad4a942e1e37"
+    },
+    {
+      "name": "codex/m01-authority-lease",
+      "sha": "d12972fcfb4ec908be115c831392209560bbeba7"
+    },
+    {
+      "name": "codex/m01-battlefield-audio-architecture",
+      "sha": "7a0060cfd340cfcf51b6072ca25c5ab86117bd7a"
+    },
+    {
+      "name": "codex/m01-battlefield-audio-production-pass",
+      "sha": "91463ac1f9b99f4cda0934e43c2e83466a15a248"
+    },
+    {
+      "name": "codex/m01-battlefield-audio-production-pass-v1",
+      "sha": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd"
+    },
+    {
+      "name": "codex/m01-battlefield-fx-polish-v3",
+      "sha": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43"
+    },
+    {
+      "name": "codex/m01-battlefield-fx-visual-runtime-v2",
+      "sha": "9050fbfbc748d2c84b5b3bdf1a0cca7bfad325aa"
+    },
+    {
+      "name": "codex/m01-bridge-completion",
+      "sha": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95"
+    },
+    {
+      "name": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "sha": "99309d9cb023cc94a07d41ff863e1362e4460570"
+    },
+    {
+      "name": "codex/m01-bridge-structural-production-closeout-v2",
+      "sha": "54c94fd97c9a282eb9dfe7dbd409449571938813"
+    },
+    {
+      "name": "codex/m01-browser-harness-hardening",
+      "sha": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862"
+    },
+    {
+      "name": "codex/m01-character-integration",
+      "sha": "82dd3f06e383dfca0277e5416a27c7bb302fd931"
+    },
+    {
+      "name": "codex/m01-chromebook-benchmark",
+      "sha": "7edcdce5dc06ed438417c820d7294a9aaa2bd607"
+    },
+    {
+      "name": "codex/m01-ci-capture-budget",
+      "sha": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3"
+    },
+    {
+      "name": "codex/m01-ckm-fire-arc-resolution",
+      "sha": "b2422396a33c1e3802ba83061a6e2fde173270e5"
+    },
+    {
+      "name": "codex/m01-ckm-fire-runtime",
+      "sha": "876b1622b5ff2f47ada196aad6ba4f3c6707855b"
+    },
+    {
+      "name": "codex/m01-ckm-placement-migration",
+      "sha": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732"
+    },
+    {
+      "name": "codex/m01-ckm-runtime",
+      "sha": "f3be55aedc8b8a0f0342a711090ff8570eedfe3b"
+    },
+    {
+      "name": "codex/m01-combat-ai-architecture",
+      "sha": "3da1f1637167a3d90953d4f698ebcf5c4b16cf26"
+    },
+    {
+      "name": "codex/m01-combat-animation",
+      "sha": "70607ca18cdcd768af9cc98eed31e033d9b73515"
+    },
+    {
+      "name": "codex/m01-cover-fire-origin",
+      "sha": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf"
+    },
+    {
+      "name": "codex/m01-demolition-cue",
+      "sha": "f612bba71754c346a7cd54ecfd756f65751f5360"
+    },
+    {
+      "name": "codex/m01-demolition-dust",
+      "sha": "08b21b7c7877a6cbdda3520c41ce1e32d7180938"
+    },
+    {
+      "name": "codex/m01-destruction-persistence",
+      "sha": "e02b53a0abbce57c3bce175ca87d1084f62ec752"
+    },
+    {
+      "name": "codex/m01-distant-battle-sectors",
+      "sha": "fe2d99f9f343aeb526a95eca048bb010b155ad75"
+    },
+    {
+      "name": "codex/m01-distant-battlefield-presentation-v1",
+      "sha": "6864872f016e62234b261c0db2eee4c339a91f5c"
+    },
+    {
+      "name": "codex/m01-environment-prop-density-grounding-v1",
+      "sha": "f5adc46af2a074bbb028368516afdce011b8620c"
+    },
+    {
+      "name": "codex/m01-environment-visual-runtime-pass",
+      "sha": "5325b7b3ef678079ef08b32f8172ed62934ffe1c"
+    },
+    {
+      "name": "codex/m01-environmental-damage-decal-pass-v1",
+      "sha": "12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416"
+    },
+    {
+      "name": "codex/m01-final-production-consolidation-v6",
+      "sha": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a"
+    },
+    {
+      "name": "codex/m01-final-production-consolidation-v7",
+      "sha": "93c2519d7647b58de3ea7f0a88c6237784aca00f"
+    },
+    {
+      "name": "codex/m01-first-person-weapon-presentation-v1",
+      "sha": "eeff340736ea9ca3f1e71fc8666e6f0c548e54b2"
+    },
+    {
+      "name": "codex/m01-fx-browser-evidence-harness-v1",
+      "sha": "a4dc9a8df5792df74cb6b7583f00819a380423d9"
+    },
+    {
+      "name": "codex/m01-handoff-aircraft",
+      "sha": "f758daab8817adf5382a6623b8be43d42f2e4321"
+    },
+    {
+      "name": "codex/m01-historical-soldier-equipment-audit",
+      "sha": "adcd0a52c78f0ee648da94772a8ebc60b1834a46"
+    },
+    {
+      "name": "codex/m01-hud-cinematic-presentation-pass-v1",
+      "sha": "4b0e883dd58988fbbcaf24c062f69285c46a1457"
+    },
+    {
+      "name": "codex/m01-idle-render",
+      "sha": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc"
+    },
+    {
+      "name": "codex/m01-integrated-visual-placeholder-closeout-v2",
+      "sha": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8"
+    },
+    {
+      "name": "codex/m01-integration-browser-harness-stabilization-v2",
+      "sha": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b"
+    },
+    {
+      "name": "codex/m01-ju87-aircraft-production-closeout-v2",
+      "sha": "e145027f82dcc73260c177f7efa8310f0206c47a"
+    },
+    {
+      "name": "codex/m01-locomotive-963-production-asset-runtime",
+      "sha": "6accc401e86a6523b0df26b50beff33aef4dd18a"
+    },
+    {
+      "name": "codex/m01-mg34-prone-runtime",
+      "sha": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b"
+    },
+    {
+      "name": "codex/m01-near-far-authority-runtime-pilot",
+      "sha": "f2741e53a85c582b4e0739e3a946f534fbe25dde"
+    },
+    {
+      "name": "codex/m01-next-pendencies-audit",
+      "sha": "29e2c3eb1c6f3c7cd82c0c46bb6a1a2a49b42b96"
+    },
+    {
+      "name": "codex/m01-panzerzug-production-asset-runtime",
+      "sha": "8f2326514c0277c6af1c54a8be1c012db18615ff"
+    },
+    {
+      "name": "codex/m01-per-formation-rng-architecture",
+      "sha": "d81ddfa99f2a5c99d3a3fce30a87ff0cd5a43941"
+    },
+    {
+      "name": "codex/m01-player-hit-near-miss-feedback",
+      "sha": "1934bed871297898278b1571b4f0fc003e76417e"
+    },
+    {
+      "name": "codex/m01-production-integration-checkpoint-1",
+      "sha": "f9aa1add5705ead80ec378c3f423650f854b19a6"
+    },
+    {
+      "name": "codex/m01-ready-deliveries-consolidation-v2",
+      "sha": "b16d56ceead467f2fd0d7380699c7dd35690e0bc"
+    },
+    {
+      "name": "codex/m01-ready-deliveries-consolidation-v3",
+      "sha": "74645f3f4414f39a2420c80e3e2723170493e5c5"
+    },
+    {
+      "name": "codex/m01-ready-deliveries-consolidation-v4",
+      "sha": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae"
+    },
+    {
+      "name": "codex/m01-ready-deliveries-consolidation-v5",
+      "sha": "d277b06937170aa433bc418ef5b83b2925c6d6de"
+    },
+    {
+      "name": "codex/m01-ready-deliveries-validation-v3",
+      "sha": "17886b401189e77bb2d00a43a113cc83a1027eb4"
+    },
+    {
+      "name": "codex/m01-rifleman-locomotion-runtime",
+      "sha": "93aaa5c4a5651f22b4c696005501a2ac1014860a"
+    },
+    {
+      "name": "codex/m01-runtime",
+      "sha": "beec7cd9333cfac38fdc361da481ad4a942e1e37"
+    },
+    {
+      "name": "codex/m01-schema2-determinism-audit",
+      "sha": "5f3cc34f53c61beec52255d67f8babd7194c9f7f"
+    },
+    {
+      "name": "codex/m01-soldier-locomotion-animation",
+      "sha": "cd91d65f0c022678ed24785eb44233bab137eb3c"
+    },
+    {
+      "name": "codex/m01-soldier-motion-clips-production-v1",
+      "sha": "075effaf72d3ceaf4dbda153f1221dc1541b8bef"
+    },
+    {
+      "name": "codex/m01-soldier-visual-variation-pass",
+      "sha": "63318225c015d7dc50390bed32897b0305237aa1"
+    },
+    {
+      "name": "codex/m01-station-architecture-production-v2",
+      "sha": "090804776b18c8dc3200497388eb59e83b56205c"
+    },
+    {
+      "name": "codex/m01-station-visual-fidelity-v3",
+      "sha": "271413f26efc1dbccefc39ac401f4495928a2493"
+    },
+    {
+      "name": "codex/m01-station-wagon-state",
+      "sha": "f15a2e51dbe329ae984a52c47ecf856eef8fbede"
+    },
+    {
+      "name": "codex/m01-station-wagon-validation",
+      "sha": "e5d7c049e64ef7e2bf49766df10aa0b332633923"
+    },
+    {
+      "name": "codex/m01-support-runtime",
+      "sha": "8e8e74246ca72c3fe050f57d485fc3aaad7363f9"
+    },
+    {
+      "name": "codex/m01-v3-isolated-cancelled-tests",
+      "sha": "269c3816aea27247fdeffda039ffe4f9ba7f4743"
+    },
+    {
+      "name": "codex/m01-vegetation-foliage-production-closeout-v1",
+      "sha": "21c1ae653836522e74c071c31e917a1609f5611a"
+    },
+    {
+      "name": "codex/m01-vegetation-mesh-lod-runtime-pass",
+      "sha": "9d3f9fc898fd17a4919e2cc367ffacd591605360"
+    },
+    {
+      "name": "codex/m01-viewmodel-visual-v2",
+      "sha": "3e879e7406109b4e03c1bb9d21631a11a6736f33"
+    },
+    {
+      "name": "codex/m01-visual-placeholder-asset-audit",
+      "sha": "e8813ac01555a77646cbecac991ddb04e90b27c7"
+    },
+    {
+      "name": "codex/m01-visual-sprint",
+      "sha": "7a965d809961d66d4ac19c94f852e09a294760f8"
+    },
+    {
+      "name": "codex/m01-wagon-lod-damage-runtime-integration",
+      "sha": "1ac890d45650f8eb4f4c8e13a9e5be4265205f90"
+    },
+    {
+      "name": "codex/m01-world-interactions",
+      "sha": "5d11e91567fe7ff188a95ad1885c47da61da6f7c"
+    },
+    {
+      "name": "codex/m01-wz29-viewmodel-visual-runtime",
+      "sha": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5"
+    },
+    {
+      "name": "codex/m01-yard-wagon-fit",
+      "sha": "a3fab20ce9cb78d330869f85ad491e266374d5c0"
+    },
+    {
+      "name": "codex/m02-m30-full-creative-production-v1",
+      "sha": "784952257f490f7be3e7f3e3b788f7dfc899fa08"
+    },
+    {
+      "name": "codex/three-foundation-checkpoints",
+      "sha": "9e1961331bd870cf0db5d38c0364f24c2cea56f5"
+    },
+    {
+      "name": "deploy/m01-latest-playable",
+      "sha": "cb400355c056955d1d6d0b22e92bd7be2443a10c"
+    },
+    {
+      "name": "main",
+      "sha": "72bbcdd156603c9399801c95d43d9365ba50fc82"
+    }
+  ],
+  "latestIssue55Comment": {
+    "url": "https://api.github.com/repos/Brawl2007/COD-guerra/issues/comments/6057373984",
+    "html_url": "https://github.com/Brawl2007/COD-guerra/issues/55#issuecomment-6057373984",
+    "issue_url": "https://api.github.com/repos/Brawl2007/COD-guerra/issues/55",
+    "id": 6057373984,
+    "node_id": "IC_kwDOU06His8AAAABaQwxIA",
+    "user": {
+      "login": "Brawl2007",
+      "id": 151524167,
+      "node_id": "U_kgDOCQgTRw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/151524167?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Brawl2007",
+      "html_url": "https://github.com/Brawl2007",
+      "followers_url": "https://api.github.com/users/Brawl2007/followers",
+      "following_url": "https://api.github.com/users/Brawl2007/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Brawl2007/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Brawl2007/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Brawl2007/subscriptions",
+      "organizations_url": "https://api.github.com/users/Brawl2007/orgs",
+      "repos_url": "https://api.github.com/users/Brawl2007/repos",
+      "events_url": "https://api.github.com/users/Brawl2007/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Brawl2007/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-08T09:58:31Z",
+    "updated_at": "2026-10-08T09:58:31Z",
+    "body": "## Atualização de handoff — 2026-10-08 (a ler ANTES de executar esta issue)\n\n**A descrição original desta issue usa a V2 e está desatualizada quanto à melhor base já consolidada. Não recomeçar na V2.** Verificações diretas no GitHub:\n\n- **PR #52 — consolidação V5**: https://github.com/Brawl2007/COD-guerra/pull/52\n  - Branch `codex/m01-ready-deliveries-consolidation-v5`, HEAD remoto observado `d277b06937170aa433bc418ef5b83b2925c6d6de`.\n  - Aberta, **draft**, **não integrada em main**; contém Station V2, pontes V2, vegetação, 65 vagões/acoplamentos, Ju 87, HUD, áudio, ViewModel/armamento, FX/danos, contrato de animação e seis motion clips GLB.\n  - **O Animation Resolver ainda NÃO está implementado**; não declarar animações dos soldados prontas em runtime só porque os clips estão presentes.\n  - **Os testes Node focados e build não equivalem a certificação total**; a PR documenta bloqueios nos testes de browser FX.\n- **PR #53 — diagnóstico específico dos timeouts Battlefield FX**: https://github.com/Brawl2007/COD-guerra/pull/53\n  - Branch `codex/m01-fx-browser-evidence-harness-v1`, HEAD observado `a4dc9a8df5792df74cb6b7583f00819a380423d9`.\n  - Continua **draft**. Isola alteração de teste Playwright e workflow de evidência; **não modifica código de produção**. O problema pode ser captura tardia de efeitos transitórios ou defeito real. **Não criar correção concorrente que descarte o diagnóstico desta PR.** Verificar resultado/evidência antes de qualquer resolução.\n- **PR #54 — Station Visual Fidelity V3**: https://github.com/Brawl2007/COD-guerra/pull/54\n  - Branch `codex/m01-station-visual-fidelity-v3`, HEAD `271413f26efc1dbccefc39ac401f4495928a2493`, baseada em Station V2 `090804776b18c8dc3200497388eb59e83b56205c`.\n  - Marcada **READY_FOR_CAPTAIN_REVIEW**, testes locais focados relatados como 31/31 Node + build + browser focado; **não está certificada no conjunto V5**. Integrar apenas após aprovação expressa do Capitão, por delta semântico do módulo Station e provas, sem sobrescrever alterações de ponte ou ambiente.\n- **Quatro tarefas EM PROGRESSO**: continuam sem identificação inequívoca; registrar exclusões explícitas e **não supor que a #54 é uma delas**.\n\n### Instrução executiva para o agente avançado\n1. Confirmar HEADs atuais antes de qualquer escrita; ler `AGENTS.md`, `CLAUDE.md` (se existente), `docs/NEXT_CHAT_CONTEXT.md` e logs/handoffs da integração.\n2. **Usar a V5 como base preferencial**, salvo prova técnica de uma consolidação mais recente e segura; criar branch NOVA isolada, não editar `codex/m01-ready-deliveries-consolidation-v5` nem a branch da #53.\n3. Fechar diagnóstico da #53 com logs/traces/fases do efeito: separar evento não emitido, FX ausente, FX emitido e expirado, runner cancelado ou assert falso-positivo. Corrigir apenas defeitos demonstrados, com teste de regressão; não relaxar cobertura.\n4. Auditar PRs/branches prontas que não entraram na V5, sobretudo #54; não confundir `READY_FOR_CAPTAIN_REVIEW` com aprovação. Integrar só as aprovadas e independentes, resolvendo conflitos por hunk/semântica.\n5. Provar build, Node, browser focado/integral, invariantes determinísticos, save/reload e A/B visual; relatar falhas e limites, não fabricar aprovação, FPS nem artefatos.\n6. Abrir PR **draft** contra a branch correta de consolidação; preparar HANDOFF com matriz de branches incluídas/excluídas, HEADs, decisões de conflitos, testes e blockers.\n\n**Regras inegociáveis**: sem mudanças em `main`/deploy/Pages; sem `workflow_dispatch`, force-push, reset destrutivo; não refazer elementos já aprovados. **M01 segue PROTÓTIPO JOGÁVEL.**\n\nSe esta issue for atribuída a um agente Copilot no GitHub, **selecionar explicitamente a branch de partida `codex/m01-ready-deliveries-consolidation-v5`** (o default costuma ser `main`). Confirmar suporte e acesso do agente antes de iniciar.",
+    "author_association": "OWNER",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/Brawl2007/COD-guerra/issues/comments/6057373984/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": {
+      "id": 1144995,
+      "client_id": "Iv23liVemv8A9if9v0F2",
+      "slug": "chatgpt-codex-connector",
+      "node_id": "A_kwHOAOQ6Gs4AEXij",
+      "owner": {
+        "login": "openai",
+        "id": 14957082,
+        "node_id": "MDEyOk9yZ2FuaXphdGlvbjE0OTU3MDgy",
+        "avatar_url": "https://avatars.githubusercontent.com/u/14957082?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/openai",
+        "html_url": "https://github.com/openai",
+        "followers_url": "https://api.github.com/users/openai/followers",
+        "following_url": "https://api.github.com/users/openai/following{/other_user}",
+        "gists_url": "https://api.github.com/users/openai/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/openai/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/openai/subscriptions",
+        "organizations_url": "https://api.github.com/users/openai/orgs",
+        "repos_url": "https://api.github.com/users/openai/repos",
+        "events_url": "https://api.github.com/users/openai/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/openai/received_events",
+        "type": "Organization",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "name": "ChatGPT Codex Connector",
+      "description": "Bring ChatGPT and Codex to your GitHub repositories.",
+      "external_url": "https://www.chatgpt.com",
+      "html_url": "https://github.com/apps/chatgpt-codex-connector",
+      "created_at": "2025-02-14T01:37:05Z",
+      "updated_at": "2026-09-23T18:52:59Z",
+      "permissions": {
+        "actions": "write",
+        "checks": "read",
+        "contents": "write",
+        "emails": "read",
+        "issues": "write",
+        "metadata": "read",
+        "pull_requests": "write",
+        "statuses": "read",
+        "workflows": "write"
+      },
+      "events": [
+        "check_run",
+        "check_suite",
+        "commit_comment",
+        "issues",
+        "issue_comment",
+        "pull_request",
+        "pull_request_review",
+        "pull_request_review_comment",
+        "pull_request_review_thread",
+        "repository",
+        "status",
+        "sub_issues"
+      ]
+    },
+    "minimized": null
+  },
+  "observedV7Head": "93c2519d7647b58de3ea7f0a88c6237784aca00f",
+  "recordStage": "Before final evidence publication; exact final head in PR #59 description. Source, protected references rechecked separately at closure.",
+  "protected": {
+    "v6": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "deploy": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+    "branch": "deploy/m01-latest-playable"
+  },
+  "protectedMatch": true
+}

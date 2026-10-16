@@ -136,7 +136,9 @@ test('optional Bąk rescue cannot be taken away mid-carry; delivery chooses the 
   assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');assert.equal(sim.flags['m01.dudek_status'],'unhurt');assert.equal(sim.player.carrying,null);
 });
 test('all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away',()=>{
-  const saved=structuredClone(full().checkpoints.cp_m01_c_engenheiros);saved.actors.find(a=>a.id==='de_east_0').alive=false;saved.actors.find(a=>a.id==='de_east_0').health=0;
+  const casualty=new M01Simulation();casualty.restoreSnapshot(full().checkpoints.cp_m01_c_engenheiros);
+  const gunner=casualty.actor('de_east_0');Object.assign(gunner,{alive:false,health:0,state:'DOWN'});casualty.updateMG34Posture(gunner);
+  const saved=casualty.snapshot();
   const front=new M01Simulation(),away=new M01Simulation();front.restoreSnapshot(saved);away.restoreSnapshot(saved);away.player.angle+=Math.PI;
   run(front,90);run(away,90);
   assert.deepEqual(front.sectors,away.sectors);assert.deepEqual(front.consumed,away.consumed);

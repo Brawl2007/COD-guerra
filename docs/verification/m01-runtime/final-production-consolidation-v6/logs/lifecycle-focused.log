@@ -1,0 +1,63 @@
+✖ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (87.268027ms)
+✔ portal recreate/dispose releases every owned instanced buffer exactly once and preserves shared materials (8.240026ms)
+✔ missing viewmodel renders a repeated first-shot flash after restart even when the first frame is 100 ms late (23.974658ms)
+✔ actual renderer samples enter, idle, burst and exit from simulation and matches its muzzle within 2 mm (153.754676ms)
+✔ renderer save after 1 shots restores same frame and flash without replay or RNG draws (81.10599ms)
+✔ renderer save after 4 shots restores same frame and flash without replay or RNG draws (78.508509ms)
+✔ renderer save after 6 shots restores same frame and flash without replay or RNG draws (64.326371ms)
+✔ missing prone GLB uses existing procedural batches without changing gameplay, hitboxes, save, RNG or real shots (77.30703ms)
+✔ rendered death during enter has no residual prone frame, weapon, flash or loader (53.111414ms)
+✔ rendered death during idle has no residual prone frame, weapon, flash or loader (49.760815ms)
+✔ rendered death during fire_burst has no residual prone frame, weapon, flash or loader (82.343283ms)
+✔ rendered death during exit has no residual prone frame, weapon, flash or loader (51.077046ms)
+✔ actual muzzle effect after shot 1 has no extra flash in the .06/.075 gap or restore (36.338024ms)
+✔ actual muzzle effect after shot 4 has no extra flash in the .06/.075 gap or restore (17.941114ms)
+✔ actual muzzle effect after shot 6 has no extra flash in the .06/.075 gap or restore (17.052715ms)
+✔ actual muzzle batches have no post-death flash during all four prone phases (6.593648ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4782.785742
+
+✖ failing tests:
+
+test at tests/m01-consolidation-lifecycle.test.js:23:1
+✖ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (87.268027ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      aerial: false,
+      at: 4.1447322108397575,
+      distance: 15.343148318039212,
+      dy: 0.08000000000000007,
+  ...
+      point: {
+  -     fuse: -0.04999999999999416,
+  -     id: 'm01_grenade_0',
+  -     vx: 3.973697144157734e-10,
+  -     vy: 0.1131923076923077,
+  -     vz: 0,
+        x: -50.65685168196079,
+        y: -2.92,
+        z: 22
+      },
+      scale: 'small',
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/2975fbb80cc7/COD-guerra-v6/tests/m01-consolidation-lifecycle.test.js:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { distance: 15.343148318039212, pan: 0, front: 1, dy: 0.08000000000000007, at: 4.1447322108397575, kind: 'blast', scale: 'small', key: 'm01_grenade_0', shake: true, aerial: false, point: { x: -50.65685168196079, y: -2.92, z: 22 } },
+    expected: { distance: 15.343148318039212, pan: 0, front: 1, dy: 0.08000000000000007, at: 4.1447322108397575, kind: 'blast', scale: 'small', key: 'm01_grenade_0', shake: true, aerial: false, point: { id: 'm01_grenade_0', x: -50.65685168196079, y: -2.92, z: 22, vx: 3.973697144157734e-10, vy: 0.1131923076923077, vz: 0, fuse: -0.04999999999999416 } },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

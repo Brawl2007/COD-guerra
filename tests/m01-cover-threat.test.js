@@ -102,7 +102,8 @@ test('rounds in flight survive save and restore and play out identically; corrup
 test('after 120 s of continuous suppression the fire on the repair eases without warning until work resumes',()=>{
   const d=toRepair(driver()),{sim}=d;d.until(()=>sim.battleClock>=seconds('04:46:00'),120);
   // Fixture: a stall longer than any real one, to exercise the documented tolerance.
-  sim.timers.repairSuppressedUntil=sim.clock+1e4;const progress=sim.objectives.obj_m01_cover_repair.progress;
+  // Start this forced stall at zero: the real prone firefight may already have accumulated suppression.
+  sim.timers.repairStall=0;sim.timers.repairSuppressedUntil=sim.clock+1e4;const progress=sim.objectives.obj_m01_cover_repair.progress;
   for(let i=0;i<20*119;i++)sim.tick(.05);assert.equal(sim.objectives.obj_m01_cover_repair.progress,progress);
   for(let i=0;i<20*3;i++)sim.tick(.05);
   assert.ok(sim.objectives.obj_m01_cover_repair.progress>progress,'work resumed');

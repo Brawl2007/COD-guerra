@@ -1,0 +1,768 @@
+{
+  "types": {
+    "context-options": 4,
+    "before": 88,
+    "after": 88,
+    "error": 1,
+    "event": 3,
+    "frame-snapshot": 52,
+    "log": 63,
+    "screencast-frame": 60,
+    "console": 5,
+    "input": 6
+  },
+  "events": [
+    {
+      "stream": "test.trace.gz",
+      "event": {
+        "type": "error",
+        "message": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.",
+        "stack": [
+          {
+            "file": "/home/runner/work/COD-guerra/COD-guerra/tests/browser/m01-battlefield-fx-polish-v3.spec.js",
+            "line": 56,
+            "column": 14,
+            "function": "openFrom"
+          },
+          {
+            "file": "/home/runner/work/COD-guerra/COD-guerra/tests/browser/m01-battlefield-fx-polish-v3.spec.js",
+            "line": 113,
+            "column": 21
+          }
+        ]
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@276",
+        "time": 303984.858,
+        "message": "navigating to \"http://127.0.0.1:4173/COD-guerra/?debug=1&visual-verify=1\", waiting until \"load\""
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@280",
+        "time": 309321.091,
+        "message": "waiting for locator('#quality')"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "console",
+        "messageType": "warning",
+        "text": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+        "args": [
+          {
+            "preview": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+            "value": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
+          }
+        ],
+        "location": {
+          "url": "http://127.0.0.1:4173/COD-guerra/assets/index-QzIf-9Lu.js",
+          "lineNumber": 0,
+          "columnNumber": 53342
+        },
+        "time": 309982.831,
+        "pageId": "page@b8f6538612520e69d852f667d28886ed"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@280",
+        "time": 312326.745,
+        "message": "  locator resolved to <select id=\"quality\">\u2026</select>"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@280",
+        "time": 312328.931,
+        "message": "attempting select option action"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "input",
+        "callId": "call@280",
+        "inputSnapshot": "input@call@280"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@280",
+        "time": 312332.505,
+        "message": "  waiting for element to be visible and enabled"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@280",
+        "time": 312338.274,
+        "message": "  selected specified option(s)"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312345.682,
+        "message": "waiting for locator('#continue')"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312348.246,
+        "message": "  locator resolved to <button id=\"continue\" class=\"secondary\">CONTINUAR CHECKPOINT</button>"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312350.912,
+        "message": "attempting click action"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312350.962,
+        "message": "  waiting for element to be visible, enabled and stable"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312679.492,
+        "message": "  element is visible, enabled and stable"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312679.508,
+        "message": "  scrolling into view if needed"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312680.327,
+        "message": "  done scrolling"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "input",
+        "callId": "call@282",
+        "point": {
+          "x": 463.07,
+          "y": 441.05
+        },
+        "inputSnapshot": "input@call@282"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312698.439,
+        "message": "  performing click action"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312759.611,
+        "message": "  click action done"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312759.627,
+        "message": "  waiting for scheduled navigations to finish"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@282",
+        "time": 312763.8,
+        "message": "  navigations have finished"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@286",
+        "time": 324907.001,
+        "message": "Expect \"toBeVisible\" with timeout 5000ms"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@286",
+        "time": 324907.012,
+        "message": "waiting for locator('#pause')"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@286",
+        "time": 324911.273,
+        "message": "  locator resolved to <section id=\"pause\" class=\"overlay centered\">\u2026</section>"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@292",
+        "time": 324989.505,
+        "message": "taking page screenshot"
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@292",
+        "time": 324990.87,
+        "message": "waiting for fonts to load..."
+      }
+    },
+    {
+      "stream": "0-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@292",
+        "time": 324992.786,
+        "message": "fonts loaded"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@342",
+        "time": 364196.274,
+        "message": "navigating to \"http://127.0.0.1:4173/COD-guerra/?debug=1&visual-verify=1\", waiting until \"load\""
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@346",
+        "time": 369307.452,
+        "message": "waiting for locator('#quality')"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "console",
+        "messageType": "warning",
+        "text": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+        "args": [
+          {
+            "preview": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+            "value": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
+          }
+        ],
+        "location": {
+          "url": "http://127.0.0.1:4173/COD-guerra/assets/index-QzIf-9Lu.js",
+          "lineNumber": 0,
+          "columnNumber": 53342
+        },
+        "time": 371700.929,
+        "pageId": "page@5df661c2efe3ec8e6aeb012e6a882d45"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@346",
+        "time": 373654.586,
+        "message": "  locator resolved to <select id=\"quality\">\u2026</select>"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@346",
+        "time": 373660.932,
+        "message": "attempting select option action"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "input",
+        "callId": "call@346",
+        "inputSnapshot": "input@call@346"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@346",
+        "time": 373665.522,
+        "message": "  waiting for element to be visible and enabled"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@346",
+        "time": 373674.316,
+        "message": "  selected specified option(s)"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373686.554,
+        "message": "waiting for locator('#continue')"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373696.2,
+        "message": "  locator resolved to <button id=\"continue\" class=\"secondary\">CONTINUAR CHECKPOINT</button>"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373696.949,
+        "message": "attempting click action"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373697.007,
+        "message": "  waiting for element to be visible, enabled and stable"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373809.149,
+        "message": "  element is visible, enabled and stable"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373809.164,
+        "message": "  scrolling into view if needed"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373809.664,
+        "message": "  done scrolling"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "input",
+        "callId": "call@348",
+        "point": {
+          "x": 463.07,
+          "y": 441.05
+        },
+        "inputSnapshot": "input@call@348"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373815.824,
+        "message": "  performing click action"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373894.154,
+        "message": "  click action done"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373894.169,
+        "message": "  waiting for scheduled navigations to finish"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@348",
+        "time": 373896.446,
+        "message": "  navigations have finished"
+      }
+    },
+    {
+      "stream": "2-trace.trace.gz",
+      "event": {
+        "type": "console",
+        "messageType": "warning",
+        "text": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+        "args": [
+          {
+            "preview": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+            "value": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+          }
+        ],
+        "location": {
+          "url": "http://127.0.0.1:4173/COD-guerra/assets/index-QzIf-9Lu.js",
+          "lineNumber": 0,
+          "columnNumber": 53342
+        },
+        "time": 375573.82,
+        "pageId": "page@5df661c2efe3ec8e6aeb012e6a882d45"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@309",
+        "time": 327795.647,
+        "message": "navigating to \"http://127.0.0.1:4173/COD-guerra/?debug=1&visual-verify=1\", waiting until \"load\""
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@313",
+        "time": 333241.551,
+        "message": "waiting for locator('#quality')"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "console",
+        "messageType": "warning",
+        "text": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+        "args": [
+          {
+            "preview": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+            "value": "THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported."
+          }
+        ],
+        "location": {
+          "url": "http://127.0.0.1:4173/COD-guerra/assets/index-QzIf-9Lu.js",
+          "lineNumber": 0,
+          "columnNumber": 53342
+        },
+        "time": 334039.819,
+        "pageId": "page@0048e23849fead7e76e261a0f05af74a"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@313",
+        "time": 338365.235,
+        "message": "  locator resolved to <select id=\"quality\">\u2026</select>"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@313",
+        "time": 338373.282,
+        "message": "attempting select option action"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "input",
+        "callId": "call@313",
+        "inputSnapshot": "input@call@313"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@313",
+        "time": 338385.466,
+        "message": "  waiting for element to be visible and enabled"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@313",
+        "time": 338394.487,
+        "message": "  selected specified option(s)"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338407.195,
+        "message": "waiting for locator('#continue')"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338417.783,
+        "message": "  locator resolved to <button id=\"continue\" class=\"secondary\">CONTINUAR CHECKPOINT</button>"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338419.292,
+        "message": "attempting click action"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338419.398,
+        "message": "  waiting for element to be visible, enabled and stable"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338510.725,
+        "message": "  element is visible, enabled and stable"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338510.75,
+        "message": "  scrolling into view if needed"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338511.429,
+        "message": "  done scrolling"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "input",
+        "callId": "call@315",
+        "point": {
+          "x": 463.07,
+          "y": 441.05
+        },
+        "inputSnapshot": "input@call@315"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338517.897,
+        "message": "  performing click action"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338627.357,
+        "message": "  click action done"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338627.406,
+        "message": "  waiting for scheduled navigations to finish"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@315",
+        "time": 338628.763,
+        "message": "  navigations have finished"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "console",
+        "messageType": "warning",
+        "text": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+        "args": [
+          {
+            "preview": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.",
+            "value": "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead."
+          }
+        ],
+        "location": {
+          "url": "http://127.0.0.1:4173/COD-guerra/assets/index-QzIf-9Lu.js",
+          "lineNumber": 0,
+          "columnNumber": 53342
+        },
+        "time": 339288.264,
+        "pageId": "page@0048e23849fead7e76e261a0f05af74a"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@319",
+        "time": 362232.107,
+        "message": "Expect \"toBeVisible\" with timeout 5000ms"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@319",
+        "time": 362232.115,
+        "message": "waiting for locator('#pause')"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@319",
+        "time": 362239.48,
+        "message": "  locator resolved to <section id=\"pause\" class=\"overlay centered\">\u2026</section>"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@325",
+        "time": 362402.866,
+        "message": "taking page screenshot"
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@325",
+        "time": 362404.346,
+        "message": "waiting for fonts to load..."
+      }
+    },
+    {
+      "stream": "1-trace.trace.gz",
+      "event": {
+        "type": "log",
+        "callId": "call@325",
+        "time": 362406.28,
+        "message": "fonts loaded"
+      }
+    }
+  ]
+}

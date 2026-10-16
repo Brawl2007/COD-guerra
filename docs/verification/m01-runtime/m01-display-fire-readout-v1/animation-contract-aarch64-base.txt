@@ -1,0 +1,275 @@
+✔ schema 2 initializes all 89 IDs; diagnostics are detached, small presentation records (77.533842ms)
+✖ all gameplay bytes hashed each tick against approved base: seed 19390901, support false (244301.871262ms)
+✖ all gameplay bytes hashed each tick against approved base: seed 7, support true (218139.980723ms)
+✔ odometer equals accumulated effective XZ displacement, including collision slide; gait is real speed (163.400393ms)
+✔ blocked ADVANCE publishes idle and zero speed instead of commanded speed (12.095112ms)
+✔ direct German spans movement, platoon sprint and crouch walk publish distinct effective gaits (15.036507ms)
+✔ idle bodyYaw follows the shortest arc at 180 degrees/s and preserves combat facing (92.223382ms)
+✔ moving bodyYaw turns at 360 degrees/s; hitboxes and eye geometry still use authoritative facing (11.896193ms)
+✔ pause/invalid dt does not touch timestamps, motion, yaw, RNG, checkpoint or events (23.526469ms)
+✔ real script wounds and demolition deaths have stable timestamps; unseen reserve losses have unknown history (21.422902ms)
+✔ actual grenade damage records only exposed living actors; repeat ticks do not replay impacts (12.38149ms)
+✔ player rifle hit/death and real near-miss suppression stamp only the existing combat outcomes (20.428693ms)
+✖ gait and bodyYaw resume identically at each real CP-A..D, including death recovery (2.644709ms)
+✔ station grab adapter retains exact data and motion after pause/double restore (4372.846245ms)
+✔ station drag adapter retains exact data and motion after pause/double restore (4417.814454ms)
+✔ station release adapter retains exact data and motion after pause/double restore (3937.126084ms)
+✖ Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload (5.619562ms)
+✖ legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG (1.336892ms)
+✖ optional partial migration preserves present fields byte for byte and defaults only missing fields (0.938901ms)
+✖ corrupt presentation rejects atomically in current state and nested checkpoint (1.956416ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 13
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 476427.323354
+
+✖ failing tests:
+
+test at tests/m01-animation-contract.test.js:29:37
+✖ all gameplay bytes hashed each tick against approved base: seed 19390901, support false (244301.871262ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      blocks: [
+        {
+          sha256: '552d02725c8642bd6364165a4087b930d6313a44be999095518677b619666ea0',
+          tick: 512
+  ...
+        {
+  +       sha256: 'f2bddac66168be6054ce3cfece12e2d03f1ef445ad2e3304b4ed82e9376d394c',
+  -       sha256: 'ac7f5bfb3fe62cf8c2633f9088ced59bc0680cdad3a6059689f6f678b6c360cf',
+          tick: 6656
+        },
+        {
+  +       sha256: 'e29a567f5e9ccf210fc2e347e58490e8b8528f841572e2d3ecef35601b129f6f',
+  -       sha256: '888aa7709e5dc63923e1030f27f76af2d72eefaa35ce70b3c43293f6c57541fc',
+          tick: 7168
+        },
+        {
+          sha256: 'b178c062c118ddb943a7deff6b10b9ed31bea2876645a7c3b34133ebc1e6fa23',
+          tick: 7680
+  ...
+        {
+  +       sha256: 'b0b6fb9cd0f934e42059227acf46ad289315b0fe193272cc5ae40ce76f3f06d1',
+  -       sha256: '4d71d10fa75d2bce207032cff3aa746714430e4e5b9692013796efe79ee053d8',
+          tick: 9728
+        },
+        {
+          sha256: 'dc5ad1924543168981b0bf8fd73ea71fcaabc5c09599048757399745d6bbaa80',
+          tick: 10240
+  ...
+        {
+  +       sha256: '740126590a05d57a00d03e5c0a5a6f3ecf7242adfee2072b100b45ca68fb5e7f',
+  -       sha256: '04b280a9ee39013989094a841b8f55343f0c5ea5465bd9ad89327add3a8e3367',
+          tick: 11264
+        },
+        {
+          sha256: '0c3d0dd8fe7419fc92ff6179341edb0b97dbcd6a3f8e488ccd51e2c688a85bb8',
+          tick: 11776
+  ...
+        {
+  +       sha256: '7d864e5c558e6c553d45750925be9296339b92159dd2f19dbad865e8693c43c5',
+  -       sha256: '6f4e64089f20be057616564dd099db536db47561845e242f87a563b1c14c45c0',
+          tick: 13312
+        },
+        {
+          sha256: '597199e7159a2fb89512d5a701b3cc0338a88d377f3d90e8a3a2c4cc250205ec',
+          tick: 13824
+  ...
+        {
+  +       sha256: '8ff318d36b7224362aaaba3ee7ca64b5d339aa4319d299f4ab18770c7b0f6fc6',
+  -       sha256: '4beacbc1ab5b03270fcd29525759d357c48001d6890a7d6e6ebd1ab075cd1645',
+          tick: 14848
+        },
+        {
+          sha256: '902ce0949150398a49f9feaac65b7c49a41c9f0bfe669ae11dd891de508b3eb8',
+          tick: 15360
+  
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:35:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {
+      ticks: 20976,
+      blocks: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ]
+    },
+    expected: {
+      ticks: 20976,
+      blocks: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ]
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/m01-animation-contract.test.js:29:37
+✖ all gameplay bytes hashed each tick against approved base: seed 7, support true (218139.980723ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      blocks: [
+        {
+          sha256: '21e31574b8395251a05c5de503f594f442b94ba2082be9c13367c5e575ab770e',
+          tick: 512
+  ...
+        {
+  +       sha256: '8c1bd1046e429426a8be6945f0ab304687c9c1a4bb89f8f4c36599a2facb0d07',
+  -       sha256: '00e548f94cd9fa18fdb6bb5b46b0d2fabd2835e6391c0c66d2033db0de3fa646',
+          tick: 5632
+        },
+        {
+          sha256: '9fd8d319cc099d6dbde44c318df12f3ed92ffae07b41f631b2619fec88ae1bf0',
+          tick: 6144
+  ...
+        {
+  +       sha256: 'e91bff7d798f42f350e59c255508e2f9d235dc909f4cecdd21ecabd13f6d0f83',
+  -       sha256: '861dbe648ecbae7144c256844414d7c878eb2d94fe580ad0506a38844669e5f4',
+          tick: 10752
+        },
+        {
+          sha256: '9d32fec60a935f07b12f1f81116a308c64a3bbf729b3ce8ff237c3dceca7dd6f',
+          tick: 11264
+        },
+        {
+  +       sha256: '260fb4c1951af8406867e7400f8f6b8f3bcbb23756f4633c3471a12bba8f9e35',
+  -       sha256: '6f420f293d1e1769b189c375b268a7278bbd533f62c4d9f2343ffe6fb5232e67',
+          tick: 11776
+        },
+        {
+          sha256: 'f5b63a636c0ee36628da4b07b7ddef64b90a6cf5d82ce53accc5b21e19742ccb',
+          tick: 12288
+  
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:35:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {
+      ticks: 20107,
+      blocks: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ]
+    },
+    expected: {
+      ticks: 20107,
+      blocks: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ]
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/m01-animation-contract.test.js:123:1
+✖ gait and bodyYaw resume identically at each real CP-A..D, including death recovery (2.644709ms)
+  TypeError: Cannot read properties of undefined (reading 'checkpoints')
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:124:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/m01-animation-contract.test.js:139:1
+✖ Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload (5.619562ms)
+  TypeError: Cannot read properties of undefined (reading 'checkpoints')
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:140:59)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/m01-animation-contract.test.js:153:1
+✖ legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG (1.336892ms)
+  TypeError: Cannot read properties of undefined (reading 'checkpoints')
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:155:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/m01-animation-contract.test.js:166:1
+✖ optional partial migration preserves present fields byte for byte and defaults only missing fields (0.938901ms)
+  TypeError: Cannot read properties of undefined (reading 'checkpoints')
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:167:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/m01-animation-contract.test.js:173:1
+✖ corrupt presentation rejects atomically in current state and nested checkpoint (1.956416ms)
+  TypeError: Cannot read properties of undefined (reading 'checkpoints')
+      at TestContext.<anonymous> (file:///home/joiceiscee/projetos/COD-guerra-t35/tests/m01-animation-contract.test.js:174:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+exit=1

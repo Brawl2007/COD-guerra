@@ -1,0 +1,35 @@
+✔ all six GLBs have finite skin weights, valid joint indices, embedded textures and decreasing LOD budgets (93.884283ms)
+✔ all twenty-five animation clips bind to real named bones, have monotonic times and finite transforms (22.665864ms)
+✔ the original station drag loops on the existing rig with a locked source and finite transforms (5.190154ms)
+✔ first-person geometry keeps actual GLB arm/hand surfaces and leaves the world uniform unchanged (33.112941ms)
+✔ the actual reload rig keeps the open action, clip and hand in the first-person frustum on both usable LODs (81.513596ms)
+✔ sampling real clock, changing LOD and restoring a copy preserves bone transforms and immutable data (5.570397ms)
+✔ wounded attachment follows its carrier socket and detaches after delivery without changing simulation coordinates (2.728144ms)
+✔ MakeHuman data licence is shipped exactly as locked at its source revision (0.959899ms)
+✔ the station casualty remains grounded while the medic samples the backward drag and its fallback (3.677718ms)
+✔ Kowal and healthy Bąk use their own meshes and muzzle sockets, preserve data and hide the casualty weapon (13.758483ms)
+✔ riflemen finish the bolt after the flash; pinned engineers stop their working hands until the repair resumes (1.616129ms)
+✔ motion package contains six distinct original clips and no renderable geometry, textures or root channels (2.276786ms)
+✔ documented locomotion distance, contacts and durations can be sampled from an odometer (0.265082ms)
+✔ all PL/DE and 61/28-joint LOD variants accept the same locked bind pose (3650.596799ms)
+✔ real GLTFLoader/AnimationMixer binds all tracks, preserves root and limb lengths, without NaN or warnings (153.967086ms)
+✔ actual skinned boot soles stay above ground; nominal root displacement cancels planted-foot drift (0.529062ms)
+✔ wrists follow the weapon profile and elbows remain outside the chest envelope through the actual interpolated clips (0.216651ms)
+✔ locomotion loops have matching transforms and no single-tick joint jump (0.24384ms)
+✔ left/right turns use opposite foot orders and ±90° skeletal yaw while the actor root stays fixed (112.603486ms)
+✔ reactions recover to their initial pose without deciding combat or moving the actor root (34.501674ms)
+✔ the full visible skin stays finite and anatomically bounded at five requested clip phases on all six models (2420.081707ms)
+✔ generation reproduces the exact GLB and metadata twice without modifying original assets (228.703698ms)
+✔ gameplay, runtime, original assets, dependencies and deployment workflows remain byte-identical to the approved base (9.464018ms)
+✔ M01 soldiers: metres, −Z facing, 1.65–1.85 m and the full game skeleton in every LOD (6.923387ms)
+✔ M01 soldiers: visible triangle budget, textures per LOD and togglable variants (5.452262ms)
+✔ M01 soldiers: weapons keep documented length (wz.29 1.10, Kar98k ~1.11, wz.98a 1.25, rkm wz.28 1.11 m) with bolt and magazine bones (12.205828ms)
+✔ M01 soldier animations bind by bone name and keep kb_wz29 timings (3.619181ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6779.669905

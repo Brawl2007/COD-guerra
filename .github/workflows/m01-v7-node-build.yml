@@ -1,0 +1,47 @@
+name: M01 V7 Node and production build
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v7]
+    paths: [.github/workflows/m01-v7-node-build.yml]
+permissions:
+  contents: read
+concurrency:
+  group: m01-v7-node-build-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  node-build:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v7'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      EVIDENCE: docs/verification/m01-runtime/final-approved-deliveries-integration-v7
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Verify protected simulation, assets and recovery ancestry
+        run: |
+          git merge-base --is-ancestor cbc7de5668a1b2e4bc646b86548196a5f4f1039a HEAD
+          git diff --exit-code cbc7de5668a1b2e4bc646b86548196a5f4f1039a HEAD -- src/game src/world src/core src/assets src/main.js src/ui assets missions research package.json package-lock.json playwright.config.js tools/assets
+      - name: Every Node test, no shards or retries
+        run: |
+          mkdir -p "$EVIDENCE/logs"
+          set -o pipefail
+          node --test --test-concurrency=2 --test-reporter=tap tests/*.test.js | tee "$EVIDENCE/logs/node-full-ci.log"
+      - name: Build exact V7 production
+        run: |
+          set -o pipefail
+          npm run build | tee "$EVIDENCE/logs/build-full-ci.log"
+          sha256sum dist/assets/*.js dist/assets/*.css | tee "$EVIDENCE/logs/build-sha256-ci.log"
+      - name: Preserve test logs and playable production bundle without publishing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v7-node-build-${{ github.sha }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            docs/verification/m01-runtime/final-approved-deliveries-integration-v7/logs/
+            dist/

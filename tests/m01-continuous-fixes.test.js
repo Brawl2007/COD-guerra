@@ -105,7 +105,8 @@ test('when Dudek retrieves Bąk he walks to him on the deck and carries him to t
   let carried=false;
   for(let i=0;i<20*400&&!sim.consumedEvent(E('west_demolition'));i++){sim.tick(.05);carried||=bak.carriedBy==='leon_dudek';}
   assert.ok(carried);assert.equal(sim.consumedEvent(E('west_demolition')),true);
-  run(sim,30);assert.ok(bak.x<-300&&dudek.x<-300,'ambos na estação');assert.equal(dudek.task,'stay_with_bak');
+  // T36 (partials, B4): Dudek carries Bąk at 1.6 m/s with a 1.6 s putdown, so the arrival takes ~70 s instead of 30 s.
+  run(sim,90);assert.ok(bak.x<-300&&dudek.x<-300,'ambos na estação');assert.equal(dudek.task,'stay_with_bak');
 });
 
 test('the roll call positions the present section in the shelter facing Jan; the absent stay away',()=>{

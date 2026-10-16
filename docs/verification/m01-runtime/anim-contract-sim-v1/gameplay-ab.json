@@ -1,0 +1,40 @@
+{
+  "task": "M01-ANIM-CONTRACT-SIM-V1",
+  "base": "99309d9cb023cc94a07d41ff863e1362e4460570",
+  "sourceSha256": "5da7f3b357caa14d002e6999ddde0eb518fbfc942e08284f8ef0a92b2c47f364",
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "ticks": 20976,
+      "gameplayBytesEqual": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "actorIdsEqual": true,
+      "rngEqual": true,
+      "finalClock": 1048.7999999995939,
+      "maxEffectiveRootSpeed": 33.24429142066895
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "ticks": 20107,
+      "gameplayBytesEqual": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ],
+      "actorIdsEqual": true,
+      "rngEqual": true,
+      "finalClock": 1005.3499999996334,
+      "maxEffectiveRootSpeed": 33.24429142066895
+    }
+  ],
+  "firstDivergence": null
+}

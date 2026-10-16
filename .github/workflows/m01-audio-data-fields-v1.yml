@@ -1,0 +1,74 @@
+name: M01 Audio Data Fields V1
+
+on:
+  push:
+    branches: [claude/m01-audio-data-fields-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-audio-data-fields-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (T05a is presentation data only, on the integration tip 2d65dd0)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          git merge-base --is-ancestor 2d65dd0 HEAD
+          echo "2d65dd0 is an ancestor of HEAD" | tee evidence/authority.log
+          git diff --exit-code 2d65dd0 HEAD -- src tests/fixtures assets package.json package-lock.json playwright.config.js 2>&1 | tee -a evidence/authority.log
+          echo "src, golden fixtures, assets and build config untouched since 2d65dd0" | tee -a evidence/authority.log
+          test ! -f tests/fixtures/.golden-stale
+          git diff --name-only 2d65dd0 HEAD | tee evidence/changed-files.txt
+      - name: Additive proof (mission.json minus the new audio keys equals the 2d65dd0 mission.json)
+        run: |
+          set -o pipefail
+          node --input-type=module - <<'JS' 2>&1 | tee evidence/additive-proof.log
+          import assert from 'node:assert/strict';
+          import {execFileSync} from 'node:child_process';
+          import fs from 'node:fs';
+          const base=JSON.parse(execFileSync('git',['show','2d65dd0:missions/m01-tczew/mission.json'],{encoding:'utf8',maxBuffer:64e6}));
+          const head=JSON.parse(fs.readFileSync('missions/m01-tczew/mission.json','utf8'));
+          const removed=[];
+          for(const s of head.sectors){
+            if(!s.audioEmitters)continue;
+            const baseSector=base.sectors.find(b=>b.id===s.id);
+            if(!baseSector.audioEmitters){removed.push(`${s.id}.audioEmitters`);delete s.audioEmitters;continue;}
+            s.audioEmitters=s.audioEmitters.filter(e=>{if(baseSector.audioEmitters.some(b=>b.id===e.id))return true;removed.push(e.id);return false;});
+            for(const e of s.audioEmitters)if('activeFrom' in e){delete e.activeFrom;removed.push(`${e.id}.activeFrom`);}
+          }
+          assert.deepEqual(head,base);
+          console.log('additive proof OK: deleting the new keys from HEAD mission.json == 2d65dd0 mission.json (deep-equal)');
+          console.log('removed:',removed.join(', '));
+          JS
+      - name: Byte guards
+        run: set -o pipefail; node --test tests/m01-locomotive.test.js tests/m01-panzerzug.test.js tests/m01-soldier-visual-variation.test.js 2>&1 | tee evidence/byte-guards.log
+      - name: npm test
+        run: set -o pipefail; npm test 2>&1 | tee evidence/npm-test.log
+      - name: Golden proof line
+        run: |
+          set -o pipefail
+          grep -E '^\s*(ok [0-9]+ - |✔ )all gameplay bytes hashed each tick against approved base' evidence/npm-test.log | tee evidence/proof-lines.txt
+          test "$(grep -cE '^\s*(not ok [0-9]+ - |✖ )all gameplay bytes hashed each tick against approved base' evidence/npm-test.log)" = 0
+          test "$(grep -cE '^\s*(ok [0-9]+ - |✔ )all gameplay bytes hashed each tick against approved base' evidence/npm-test.log)" -ge 1
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-audio-data-fields-v1-${{ github.sha }}
+          path: evidence/
+          if-no-files-found: ignore

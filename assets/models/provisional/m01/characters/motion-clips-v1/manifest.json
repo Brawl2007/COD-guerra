@@ -1,0 +1,417 @@
+{
+  "schema": 1,
+  "task": "M01-SOLDIER-MOTION-CLIPS-PRODUCTION-V1",
+  "file": "m01_soldier_motion_clips.glb",
+  "bytes": 415724,
+  "sha256": "dbcb3e56015c1902d691c9fdb1783997e86c0a69e7c2abc29135ea773611031c",
+  "base_commit": "d070225d49840f5bd304a0825c0656651b82c26d",
+  "author": "Original COD Guerra motion authored in this repository; existing M01 FK/IK solver reused",
+  "license": "Original project animation; repository-wide licence remains for the owner to decide. No animation copied from games or external motion libraries.",
+  "units": "metres",
+  "up": "+Y",
+  "forward": "-Z",
+  "root_motion": false,
+  "mesh_count": 0,
+  "material_count": 0,
+  "texture_count": 0,
+  "additional_draw_calls": 0,
+  "reference_rig": "m01_soldier_pl_lod1.glb",
+  "source_rigs": [
+    {
+      "nation": "pl",
+      "lod": 0,
+      "file": "m01_soldier_pl_lod0.glb",
+      "sha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d",
+      "skin_joints": 61
+    },
+    {
+      "nation": "pl",
+      "lod": 1,
+      "file": "m01_soldier_pl_lod1.glb",
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f",
+      "skin_joints": 61
+    },
+    {
+      "nation": "pl",
+      "lod": 2,
+      "file": "m01_soldier_pl_lod2.glb",
+      "sha256": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de",
+      "skin_joints": 28
+    },
+    {
+      "nation": "de",
+      "lod": 0,
+      "file": "m01_soldier_de_lod0.glb",
+      "sha256": "15082783b5a18ed93934e6eb47b9b07632d91e13478d9d7a450a7af2a9eb5b54",
+      "skin_joints": 61
+    },
+    {
+      "nation": "de",
+      "lod": 1,
+      "file": "m01_soldier_de_lod1.glb",
+      "sha256": "5c7294586cd75d0cd96eb757452854a5d8d19a93349fdf9d00d80d52d640a29f",
+      "skin_joints": 61
+    },
+    {
+      "nation": "de",
+      "lod": 2,
+      "file": "m01_soldier_de_lod2.glb",
+      "sha256": "6e04d5a34ee64ad8f142ada447e565314b45f4da8b2f123fa3ffeff6fd6c66d4",
+      "skin_joints": 28
+    }
+  ],
+  "generation_sources": [
+    {
+      "file": "tools/assets/m01-soldiers/build-motion-clips.mjs",
+      "sha256": "f2fa352ef99434d931bfb3b9912d5dd01b37eb3177d10af194fd005e2a02c471"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/rig.mjs",
+      "sha256": "ca6a3faef57e0f573c5b2d7f5422e638533dbef98ba4eec200052a1347a6d84b"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/motion/clips.mjs",
+      "sha256": "99b35dccdbe0568b84ee2b7de298b40b35a52a64ee2416fb01522ff7f10c1b55"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/src/human.mjs",
+      "sha256": "a517a98514119c01221f3fca9a067d65dd6515d4efc91ba0fa077e4cab996616"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/src/pose.mjs",
+      "sha256": "1a06b2a34599569db84a57667feabc301ab57dcbd9cb02640e00a15bf727a152"
+    },
+    {
+      "file": "tools/assets/m01-soldiers/src/meshops.mjs",
+      "sha256": "b7dd3b144fc58de4baaf36a6fe9210fe056e3af6ff4b9bd89c7e3487bf4d4624"
+    }
+  ],
+  "grips": {
+    "r": {
+      "pos": [
+        0.044,
+        0.02,
+        0.088
+      ],
+      "fdir": [
+        -0.29986509105671,
+        -0.5497526669373017,
+        -0.779649236747446
+      ],
+      "palm": [
+        -0.9928768384869221,
+        0,
+        0.11914522061843064
+      ]
+    },
+    "l": {
+      "pos": [
+        -0.03,
+        -0.034,
+        -0.29
+      ],
+      "fdir": [
+        0.5484119048844308,
+        0.11965350652023944,
+        -0.8276034200983228
+      ],
+      "palm": [
+        -0.2422507915557546,
+        0.9690031662230184,
+        0.048450158311150925
+      ]
+    }
+  },
+  "clips": [
+    {
+      "name": "sprint",
+      "duration_s": 0.64,
+      "loop": true,
+      "nominal_speed_mps": 5,
+      "cycle_distance_m": 3.2,
+      "step_distance_m": 1.6,
+      "contact_windows": {
+        "l": [
+          [
+            0,
+            0.24
+          ]
+        ],
+        "r": [
+          [
+            0.5,
+            0.74
+          ]
+        ]
+      },
+      "stance": "standing",
+      "description": "Armed sprint: compressed single support, flight, high knee recovery, pelvis/shoulder counter-rotation, secured port arms.",
+      "in_place": true,
+      "root_motion": "none; root bone has no channels",
+      "contact_phase_unit": "cycle fraction",
+      "sampled_fps": 120,
+      "samples": 78,
+      "phase_zero": "left foot strike",
+      "phase_source": "odometer",
+      "phase_formula": "t = duration_s * fract((odometer_m - phase_origin_m) / cycle_distance_m)",
+      "blend_in_s": 0.12,
+      "blend_out_s": 0.12,
+      "endpoint": "identical pose and periodic velocity",
+      "combat_events": [],
+      "weapon_profile": "two-handed rifle (wz.29 / Kar98k / same wrist profile wz.98a); not MG34/RKM/transports",
+      "foot_strikes": [
+        {
+          "side": "l",
+          "phase": 0
+        },
+        {
+          "side": "r",
+          "phase": 0.5
+        }
+      ]
+    },
+    {
+      "name": "crouch_walk",
+      "duration_s": 0.96,
+      "loop": true,
+      "nominal_speed_mps": 0.8,
+      "cycle_distance_m": 0.768,
+      "step_distance_m": 0.384,
+      "contact_windows": {
+        "l": [
+          [
+            0,
+            0.64
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.14
+          ],
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "stance": "crouched",
+      "description": "Low centre of gravity, short strides, overlapping support and a low-ready rifle.",
+      "in_place": true,
+      "root_motion": "none; root bone has no channels",
+      "contact_phase_unit": "cycle fraction",
+      "sampled_fps": 120,
+      "samples": 117,
+      "phase_zero": "left foot strike",
+      "phase_source": "odometer",
+      "phase_formula": "t = duration_s * fract((odometer_m - phase_origin_m) / cycle_distance_m)",
+      "blend_in_s": 0.12,
+      "blend_out_s": 0.12,
+      "endpoint": "identical pose and periodic velocity",
+      "combat_events": [],
+      "weapon_profile": "two-handed rifle (wz.29 / Kar98k / same wrist profile wz.98a); not MG34/RKM/transports",
+      "foot_strikes": [
+        {
+          "side": "l",
+          "phase": 0
+        },
+        {
+          "side": "r",
+          "phase": 0.5
+        }
+      ]
+    },
+    {
+      "name": "turn_left",
+      "duration_s": 1.14,
+      "loop": false,
+      "nominal_speed_mps": 0,
+      "cycle_distance_m": 0,
+      "step_distance_m": 0,
+      "body_yaw_delta_deg": 90,
+      "contact_windows": {
+        "l": [
+          [
+            0,
+            0.13
+          ],
+          [
+            0.49,
+            1
+          ]
+        ],
+        "r": [
+          [
+            0,
+            0.49
+          ],
+          [
+            0.85,
+            1
+          ]
+        ]
+      },
+      "stance": "standing",
+      "description": "Look, shoulder lead, left placement, weight transfer, right placement and settle.",
+      "in_place": true,
+      "root_motion": "none; root bone has no channels",
+      "contact_phase_unit": "cycle fraction",
+      "sampled_fps": 60,
+      "samples": 70,
+      "phase_zero": "ready pose",
+      "phase_source": "persisted presentation timestamp / body-yaw transition",
+      "phase_formula": "t = clamp(mission_clock - event_or_transition_time, 0, duration_s)",
+      "blend_in_s": 0.075,
+      "blend_out_s": 0.12,
+      "endpoint": "ready pose rotated by body_yaw_delta_deg about the fixed root",
+      "combat_events": [],
+      "weapon_profile": "two-handed rifle (wz.29 / Kar98k / same wrist profile wz.98a); not MG34/RKM/transports",
+      "foot_strikes": [],
+      "authored_yaw_channel": "hips.quaternion",
+      "presentation_group_yaw": "bodyYaw - extracted authored hips yaw; do not rotate actor root/facing"
+    },
+    {
+      "name": "turn_right",
+      "duration_s": 1.14,
+      "loop": false,
+      "nominal_speed_mps": 0,
+      "cycle_distance_m": 0,
+      "step_distance_m": 0,
+      "body_yaw_delta_deg": -90,
+      "contact_windows": {
+        "r": [
+          [
+            0,
+            0.13
+          ],
+          [
+            0.49,
+            1
+          ]
+        ],
+        "l": [
+          [
+            0,
+            0.49
+          ],
+          [
+            0.85,
+            1
+          ]
+        ]
+      },
+      "stance": "standing",
+      "description": "Mirrored foot order with the same two-handed rifle carriage; terminal body yaw -90 degrees.",
+      "in_place": true,
+      "root_motion": "none; root bone has no channels",
+      "contact_phase_unit": "cycle fraction",
+      "sampled_fps": 60,
+      "samples": 70,
+      "phase_zero": "ready pose",
+      "phase_source": "persisted presentation timestamp / body-yaw transition",
+      "phase_formula": "t = clamp(mission_clock - event_or_transition_time, 0, duration_s)",
+      "blend_in_s": 0.075,
+      "blend_out_s": 0.12,
+      "endpoint": "ready pose rotated by body_yaw_delta_deg about the fixed root",
+      "combat_events": [],
+      "weapon_profile": "two-handed rifle (wz.29 / Kar98k / same wrist profile wz.98a); not MG34/RKM/transports",
+      "foot_strikes": [],
+      "authored_yaw_channel": "hips.quaternion",
+      "presentation_group_yaw": "bodyYaw - extracted authored hips yaw; do not rotate actor root/facing"
+    },
+    {
+      "name": "hit_front",
+      "duration_s": 0.76,
+      "loop": false,
+      "nominal_speed_mps": 0,
+      "cycle_distance_m": 0,
+      "step_distance_m": 0,
+      "contact_windows": {
+        "l": [
+          [
+            0,
+            1
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "stance": "standing",
+      "presentation_event": "hitAt",
+      "description": "Short chest impulse, delayed head and knee compression, balance recovery to the starting ready pose. No damage/fire event.",
+      "in_place": true,
+      "root_motion": "none; root bone has no channels",
+      "contact_phase_unit": "cycle fraction",
+      "sampled_fps": 60,
+      "samples": 47,
+      "phase_zero": "ready pose",
+      "phase_source": "persisted presentation timestamp / body-yaw transition",
+      "phase_formula": "t = clamp(mission_clock - event_or_transition_time, 0, duration_s)",
+      "blend_in_s": 0.075,
+      "blend_out_s": 0.12,
+      "endpoint": "same ready pose as the start",
+      "combat_events": [],
+      "weapon_profile": "two-handed rifle (wz.29 / Kar98k / same wrist profile wz.98a); not MG34/RKM/transports",
+      "foot_strikes": []
+    },
+    {
+      "name": "near_miss_duck",
+      "duration_s": 0.98,
+      "loop": false,
+      "nominal_speed_mps": 0,
+      "cycle_distance_m": 0,
+      "step_distance_m": 0,
+      "contact_windows": {
+        "l": [
+          [
+            0,
+            1
+          ]
+        ],
+        "r": [
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "stance": "standing",
+      "presentation_event": "suppressedAt",
+      "description": "Fast defensive compression, held low head/shoulders, brief glance and slower recovery. No suppression decision.",
+      "in_place": true,
+      "root_motion": "none; root bone has no channels",
+      "contact_phase_unit": "cycle fraction",
+      "sampled_fps": 60,
+      "samples": 60,
+      "phase_zero": "ready pose",
+      "phase_source": "persisted presentation timestamp / body-yaw transition",
+      "phase_formula": "t = clamp(mission_clock - event_or_transition_time, 0, duration_s)",
+      "blend_in_s": 0.075,
+      "blend_out_s": 0.12,
+      "endpoint": "same ready pose as the start",
+      "combat_events": [],
+      "weapon_profile": "two-handed rifle (wz.29 / Kar98k / same wrist profile wz.98a); not MG34/RKM/transports",
+      "foot_strikes": []
+    }
+  ],
+  "integration": {
+    "runtime_loaded": false,
+    "names_are_additional": true,
+    "specialized_adapters_first": [
+      "MG34",
+      "RKM",
+      "CKM",
+      "carry",
+      "drag",
+      "seated",
+      "wounded",
+      "dead"
+    ],
+    "turn_yaw": "hips/spine/weapon contain visual yaw; root has no channels. Compensate authored yaw on a presentation-only group to avoid applying bodyYaw twice.",
+    "event_policy": "Read actual hitAt/suppressedAt. Do not generate combat events from a clip or trigger locomotion solely from clock time."
+  }
+}

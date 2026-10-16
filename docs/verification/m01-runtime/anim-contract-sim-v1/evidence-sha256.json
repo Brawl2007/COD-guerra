@@ -1,0 +1,18 @@
+{
+  "continuation-proof.json": "4b7138e1bca5b61062b7daa49bf2ffc83244c15c69736ea4acffbfd915157127",
+  "gameplay-ab.log": "44d1ad650b55fe37e2791af9f9d66d18edca7df5b958a1eb8c835e2b10d911ee",
+  "build.log": "92b249b14b48e87659506e32d76ff0306d86ff7691522d4dbfab64129834e1e5",
+  "schema2-proof.json": "7a1e023edf964102ca93038044ed2ee459ba916113007f546c78ec869db1bb99",
+  "browser.json": "5a48c08d2fc03ef7afe9159dacdbef371837f09b940dcde75909a59d2b95faf0",
+  "protected-guard-final.log": "11a523328d438c4f2f4a5aee8791892a0d43efac13234bf6dee9c8131aa352ce",
+  "guard-followup.log": "a8a64a5e8f13cd7f70fc73fe620a844a9b6d9ac3fd6a7d5b1d1ebd01f257dd74",
+  "snapshot-diff.json": "357ba6890c41411c1536444797e2fef73cfc454b16c47c5e1074313654bd6b9d",
+  "browser-summary.json": "1d426a70d30cca379a65b9059c2e767524d49577cbba4e151c95ad119ad0970a",
+  "animation-contract-legacy-restore.jpg": "d2bad7daef3e3adaf4178602dd4c09c0149f498c602ddcab5907d888c6b8e204",
+  "animation-contract-current-restore.jpg": "d2bad7daef3e3adaf4178602dd4c09c0149f498c602ddcab5907d888c6b8e204",
+  "verification.json": "516299397923a5a8a38ebbf6e2dcbbe1ac292f63e32a2100f891773677bbe1ae",
+  "node-tests.log": "c121381620215dc0f826ed1d0ad681e8628b79d7099161acc54f723857aa21f5",
+  "gameplay-ab.json": "ac5bbc3ca9446ea9536d2e519b9332bfd6707432b49a7a68793bc3b4eee9c040",
+  "browser.stderr": "7125f194612fcff2f454c05d848e7cb71facc1967b4d5017e25b34fdee3ba74f",
+  "HANDOFF.md": "bf3fdaa2de11835719e40b0f3205507dabed51196e3239793312d49b3b786393"
+}

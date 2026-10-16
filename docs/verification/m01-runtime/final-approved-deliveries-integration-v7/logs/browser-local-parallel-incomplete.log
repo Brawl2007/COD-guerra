@@ -1,0 +1,38 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:36) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] (node:49) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 84 tests using 2 workers
+
+(node:84) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:83) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:84) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work (15.1s)
+  ✓   2 tests/browser/m01-animation-contract.spec.js:22:34 › schema-2 animation contract current 89: exact production restore, pause, reload and prior checkpoint (30.3s)
+  ✓   3 tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it (36.0s)
+  ✓   5 tests/browser/game.spec.js:98:1 › corrupt checkpoint is explained and a new mission remains available (7.3s)
+  ✓   4 tests/browser/m01-animation-contract.spec.js:22:34 › schema-2 animation contract legacy 86: exact production restore, pause, reload and prior checkpoint (30.7s)
+  ✓   6 tests/browser/game.spec.js:106:1 › missing models are reported and procedural fallback keeps the area playable (6.8s)
+  ✓   7 tests/browser/m01-audio-offline-render.spec.js:114:1 › offline render: each weapon, distance band, impact, blast, vehicle and fire has a measurable, distinct acoustic signature (21.2s)
+  ✓   9 tests/browser/m01-battlefield-audio-runtime.spec.js:27:1 › live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses and limits are live (34.6s)
+  ✓   8 tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops (1.1m)
+  ✓  10 tests/browser/m01-battlefield-audio-runtime.spec.js:46:1 › live M01 east demolition: one authoritative blast becomes the layered bridge demolition with metal stress (37.2s)
+  ✓  11 tests/browser/m01-battlefield-fx-polish-v3.spec.js:75:1 › real earth stone and wood round impacts keep distinct visual language (1.5m)
+  ✓  12 tests/browser/m01-battlefield-fx.spec.js:34:1 › east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools (1.8m)
+  ✓  14 tests/browser/m01-battlefield-fx.spec.js:90:1 › real in-flight round produces bounded material impact FX without altering the saved simulation path (1.3m)
+  ✓  13 tests/browser/m01-battlefield-fx-polish-v3.spec.js:89:1 › small bombing east and west demolition show distinct layered profiles (2.2m)
+M01_BATTLEFIELD_FX_V3_COUNTERS {"low":{"drawCalls":190,"triangles":558414,"textures":76,"geometries":292,"fx":{"active":1,"counts":{"flash":0,"core":2,"fire":3,"smoke":0,"dust":1,"shard":3},"meta":{"kinds":{"small":0,"bombing":0,"demolition":1},"bands":{"near":0,"mid":0,"far":1}},"limits":{"bursts":16,"flash":16,"core":48,"fire":96,"smoke":128,"dust":128,"shards":96,"lights":1},"extraLights":1,"atmosphere":{"puffs":29,"puffCapacity":256,"debris":16,"debrisCapacity":64,"puffBatches":8}}},"high":{"drawCalls":338,"triangles":992430,"textures":98,"geometries":329,"fx":{"active":1,"counts":{"flash":0,"core":4,"fire":3,"smoke":0,"dust":2,"shard":7},"meta":{"kinds":{"small":0,"bombing":0,"demolition":1},"bands":{"near":0,"mid":0,"far":1}},"limits":{"bursts":16,"flash":16,"core":48,"fire":96,"smoke":128,"dust":128,"shards":96,"lights":1},"extraLights":1,"atmosphere":{"puffs":49,"puffCapacity":256,"debris":28,"debrisCapacity":64,"puffBatches":8}}}}
+  ✓  16 tests/browser/m01-battlefield-fx-polish-v3.spec.js:108:1 › distance smoke lifecycle pause restore and Low High remain bounded (1.7m)
+  ✓  15 tests/browser/m01-bridge-portal-polish.spec.js:38:1 › captures rail, road, oblique, bridge-context and post-demolition portal views (2.2m)
+M01_PORTAL_POLISH_COUNTERS {"low":{"drawCalls":152,"triangles":409867,"textures":47,"geometries":303,"quality":"low","attachments":["rail_portal_west","rail_portal_west","rail_portal_west","road_portal_west","road_portal_west","portal_lisewo_1912","portal_lisewo_1912","portal_lisewo_1912","road_portal_west"],"activeAttachments":["rail_portal_west","road_portal_west","portal_lisewo_1912"],"mediumDetails":42,"highDetails":48,"visibleDetails":0,"activeBatches":0,"totalBatches":27,"collidersAdded":0},"high":{"drawCalls":194,"triangles":476599,"textures":47,"geometries":318,"quality":"high","attachments":["rail_portal_west","rail_portal_west","road_portal_west","rail_portal_west","road_portal_west","portal_lisewo_1912","portal_lisewo_1912","portal_lisewo_1912","road_portal_west"],"activeAttachments":["rail_portal_west","road_portal_west","portal_lisewo_1912"],"mediumDetails":42,"highDetails":48,"visibleDetails":30,"activeBatches":9,"totalBatches":27,"collidersAdded":0}}
+  ✓  18 tests/browser/m01-bridge-portal-polish.spec.js:64:1 › Low keeps weathered portal material while High adds bounded microdetail (35.8s)
+  ✓  19 tests/browser/m01-combat-feedback.spec.js:51:1 › real enemy hit drives bounded directional M01 presentation and reset semantics (1.3m)
+  ✓  20 tests/browser/m01-combat-feedback.spec.js:87:1 › real crack and nearby impact register danger, accumulation caps and Low tier (1.8m)

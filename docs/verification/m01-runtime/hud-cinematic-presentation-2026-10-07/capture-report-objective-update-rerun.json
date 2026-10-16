@@ -1,0 +1,620 @@
+{
+  "label": "after",
+  "kind": "Production build, genuine route snapshots and real controls, frozen by real pause; not a human playtest or FPS measurement",
+  "viewports": [
+    "1280x720",
+    "1366x768",
+    "1920x1080",
+    "1024x600",
+    "800x600",
+    "2560x1080"
+  ],
+  "shots": [
+    {
+      "scene": "objective-update",
+      "viewport": "1280x720",
+      "path": "after-objective-update-1280x720.png",
+      "clock": 19.25000000000014,
+      "battleClock": 16391.483299999978,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 31,
+          "y": 31,
+          "w": 289,
+          "h": 49,
+          "visible": true,
+          "text": "OBJECTIVOMantenha contacto com a secção"
+        },
+        "objective-update": {
+          "x": 359,
+          "y": 180,
+          "w": 562,
+          "h": 70,
+          "visible": true,
+          "text": "Objectivo concluídoLeve a mensagem e o café ao posto da ponte"
+        },
+        "battle-clock": {
+          "x": 1060,
+          "y": 46,
+          "w": 190,
+          "h": 21,
+          "visible": true,
+          "text": "04:33:11"
+        },
+        "subtitle": {
+          "x": 466,
+          "y": 579,
+          "w": 348,
+          "h": 33,
+          "visible": true,
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        },
+        "message": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "interaction": {
+          "x": 640,
+          "y": 407,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "health-wrap": {
+          "x": 31,
+          "y": 646,
+          "w": 126,
+          "h": 44,
+          "visible": true,
+          "text": "SAÚDE100"
+        },
+        "ammo": {
+          "x": 1134,
+          "y": 588,
+          "w": 115,
+          "h": 101,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40Alça 300 mGranadas ×2"
+        },
+        "checkpoint": {
+          "x": 1060,
+          "y": 77,
+          "w": 190,
+          "h": 15,
+          "visible": false,
+          "text": "PROGRESSO GUARDADO"
+        },
+        "title-card": {
+          "x": 115,
+          "y": 558,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "fade": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 720,
+          "visible": false,
+          "text": ""
+        }
+      },
+      "overflow": [],
+      "overlaps": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "1366x768",
+      "path": "after-objective-update-1366x768.png",
+      "clock": 19.25000000000014,
+      "battleClock": 16391.483299999978,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 33,
+          "y": 33,
+          "w": 308,
+          "h": 52,
+          "visible": true,
+          "text": "OBJECTIVOMantenha contacto com a secção"
+        },
+        "objective-update": {
+          "x": 383,
+          "y": 192,
+          "w": 599,
+          "h": 74,
+          "visible": true,
+          "text": "Objectivo concluídoLeve a mensagem e o café ao posto da ponte"
+        },
+        "battle-clock": {
+          "x": 1131,
+          "y": 49,
+          "w": 202,
+          "h": 23,
+          "visible": true,
+          "text": "04:33:11"
+        },
+        "subtitle": {
+          "x": 497,
+          "y": 618,
+          "w": 371,
+          "h": 35,
+          "visible": true,
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        },
+        "message": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "interaction": {
+          "x": 683,
+          "y": 434,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "health-wrap": {
+          "x": 33,
+          "y": 689,
+          "w": 135,
+          "h": 46,
+          "visible": true,
+          "text": "SAÚDE100"
+        },
+        "ammo": {
+          "x": 1210,
+          "y": 627,
+          "w": 123,
+          "h": 108,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40Alça 300 mGranadas ×2"
+        },
+        "checkpoint": {
+          "x": 1131,
+          "y": 82,
+          "w": 202,
+          "h": 16,
+          "visible": false,
+          "text": "PROGRESSO GUARDADO"
+        },
+        "title-card": {
+          "x": 123,
+          "y": 595,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "fade": {
+          "x": 0,
+          "y": 0,
+          "w": 1366,
+          "h": 768,
+          "visible": false,
+          "text": ""
+        }
+      },
+      "overflow": [],
+      "overlaps": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "1920x1080",
+      "path": "after-objective-update-1920x1080.png",
+      "clock": 19.25000000000014,
+      "battleClock": 16391.483299999978,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 44,
+          "y": 44,
+          "w": 432,
+          "h": 73,
+          "visible": true,
+          "text": "OBJECTIVOMantenha contacto com a secção"
+        },
+        "objective-update": {
+          "x": 539,
+          "y": 270,
+          "w": 842,
+          "h": 105,
+          "visible": true,
+          "text": "Objectivo concluídoLeve a mensagem e o café ao posto da ponte"
+        },
+        "battle-clock": {
+          "x": 1592,
+          "y": 66,
+          "w": 284,
+          "h": 32,
+          "visible": true,
+          "text": "04:33:11"
+        },
+        "subtitle": {
+          "x": 699,
+          "y": 869,
+          "w": 522,
+          "h": 49,
+          "visible": true,
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        },
+        "message": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "interaction": {
+          "x": 960,
+          "y": 610,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "health-wrap": {
+          "x": 44,
+          "y": 972,
+          "w": 190,
+          "h": 64,
+          "visible": true,
+          "text": "SAÚDE100"
+        },
+        "ammo": {
+          "x": 1703,
+          "y": 884,
+          "w": 173,
+          "h": 152,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40Alça 300 mGranadas ×2"
+        },
+        "checkpoint": {
+          "x": 1592,
+          "y": 113,
+          "w": 284,
+          "h": 22,
+          "visible": false,
+          "text": "PROGRESSO GUARDADO"
+        },
+        "title-card": {
+          "x": 173,
+          "y": 837,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "fade": {
+          "x": 0,
+          "y": 0,
+          "w": 1920,
+          "h": 1080,
+          "visible": false,
+          "text": ""
+        }
+      },
+      "overflow": [],
+      "overlaps": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "1024x600",
+      "path": "after-objective-update-1024x600.png",
+      "clock": 19.25000000000014,
+      "battleClock": 16391.483299999978,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 26,
+          "y": 26,
+          "w": 247,
+          "h": 42,
+          "visible": true,
+          "text": "OBJECTIVOMantenha contacto com a secção"
+        },
+        "objective-update": {
+          "x": 272,
+          "y": 150,
+          "w": 480,
+          "h": 60,
+          "visible": true,
+          "text": "Objectivo concluídoLeve a mensagem e o café ao posto da ponte"
+        },
+        "battle-clock": {
+          "x": 836,
+          "y": 39,
+          "w": 162,
+          "h": 18,
+          "visible": true,
+          "text": "04:33:11"
+        },
+        "subtitle": {
+          "x": 363,
+          "y": 476,
+          "w": 297,
+          "h": 28,
+          "visible": true,
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        },
+        "message": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "interaction": {
+          "x": 512,
+          "y": 340,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "health-wrap": {
+          "x": 26,
+          "y": 536,
+          "w": 108,
+          "h": 38,
+          "visible": true,
+          "text": "SAÚDE100"
+        },
+        "ammo": {
+          "x": 899,
+          "y": 486,
+          "w": 98,
+          "h": 87,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40Alça 300 mGranadas ×2"
+        },
+        "checkpoint": {
+          "x": 836,
+          "y": 66,
+          "w": 162,
+          "h": 13,
+          "visible": false,
+          "text": "PROGRESSO GUARDADO"
+        },
+        "title-card": {
+          "x": 92,
+          "y": 465,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "fade": {
+          "x": 0,
+          "y": 0,
+          "w": 1024,
+          "h": 600,
+          "visible": false,
+          "text": ""
+        }
+      },
+      "overflow": [],
+      "overlaps": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "800x600",
+      "path": "after-objective-update-800x600.png",
+      "clock": 19.25000000000014,
+      "battleClock": 16391.483299999978,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 26,
+          "y": 26,
+          "w": 247,
+          "h": 42,
+          "visible": true,
+          "text": "OBJECTIVOMantenha contacto com a secção"
+        },
+        "objective-update": {
+          "x": 32,
+          "y": 150,
+          "w": 736,
+          "h": 60,
+          "visible": true,
+          "text": "Objectivo concluídoLeve a mensagem e o café ao posto da ponte"
+        },
+        "battle-clock": {
+          "x": 612,
+          "y": 39,
+          "w": 162,
+          "h": 18,
+          "visible": true,
+          "text": "04:33:11"
+        },
+        "subtitle": {
+          "x": 251,
+          "y": 476,
+          "w": 297,
+          "h": 28,
+          "visible": true,
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        },
+        "message": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "interaction": {
+          "x": 400,
+          "y": 340,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "health-wrap": {
+          "x": 26,
+          "y": 536,
+          "w": 108,
+          "h": 38,
+          "visible": true,
+          "text": "SAÚDE100"
+        },
+        "ammo": {
+          "x": 675,
+          "y": 486,
+          "w": 98,
+          "h": 87,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40Alça 300 mGranadas ×2"
+        },
+        "checkpoint": {
+          "x": 612,
+          "y": 66,
+          "w": 162,
+          "h": 13,
+          "visible": false,
+          "text": "PROGRESSO GUARDADO"
+        },
+        "title-card": {
+          "x": 72,
+          "y": 465,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "fade": {
+          "x": 0,
+          "y": 0,
+          "w": 800,
+          "h": 600,
+          "visible": false,
+          "text": ""
+        }
+      },
+      "overflow": [],
+      "overlaps": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "2560x1080",
+      "path": "after-objective-update-2560x1080.png",
+      "clock": 19.25000000000014,
+      "battleClock": 16391.483299999978,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 44,
+          "y": 44,
+          "w": 451,
+          "h": 77,
+          "visible": true,
+          "text": "OBJECTIVOMantenha contacto com a secção"
+        },
+        "objective-update": {
+          "x": 840,
+          "y": 270,
+          "w": 880,
+          "h": 109,
+          "visible": true,
+          "text": "Objectivo concluídoLeve a mensagem e o café ao posto da ponte"
+        },
+        "battle-clock": {
+          "x": 2219,
+          "y": 67,
+          "w": 297,
+          "h": 33,
+          "visible": true,
+          "text": "04:33:11"
+        },
+        "subtitle": {
+          "x": 1007,
+          "y": 867,
+          "w": 546,
+          "h": 51,
+          "visible": true,
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        },
+        "message": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "interaction": {
+          "x": 1280,
+          "y": 613,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "health-wrap": {
+          "x": 44,
+          "y": 969,
+          "w": 198,
+          "h": 67,
+          "visible": true,
+          "text": "SAÚDE100"
+        },
+        "ammo": {
+          "x": 2336,
+          "y": 878,
+          "w": 180,
+          "h": 158,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40Alça 300 mGranadas ×2"
+        },
+        "checkpoint": {
+          "x": 2219,
+          "y": 116,
+          "w": 297,
+          "h": 23,
+          "visible": false,
+          "text": "PROGRESSO GUARDADO"
+        },
+        "title-card": {
+          "x": 230,
+          "y": 837,
+          "w": 0,
+          "h": 0,
+          "visible": false,
+          "text": ""
+        },
+        "fade": {
+          "x": 0,
+          "y": 0,
+          "w": 2560,
+          "h": 1080,
+          "visible": false,
+          "text": ""
+        }
+      },
+      "overflow": [],
+      "overlaps": [],
+      "errors": []
+    }
+  ]
+}

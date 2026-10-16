@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COD-guerra M01 — demonstração REAL do Animation Resolver V1</title>
+<style>
+html,body{margin:0;background:#171e21;overflow:hidden;font:16px system-ui;color:#f1f0e9}
+canvas{display:block;width:100%;height:100%}
+#head{position:absolute;top:22px;left:32px;background:#102025df;border:1px solid #a3c4aa80;border-radius:8px;padding:14px 20px;pointer-events:none}
+#title{font-size:24px;font-weight:750}#subtitle{color:#cbdfd0;font-size:15px;margin-top:5px}
+#footer{position:absolute;bottom:24px;left:32px;right:32px;background:#102025dd;border-radius:6px;padding:10px 15px;font-size:14px;color:#d0dfd1;pointer-events:none}
+</style>
+<div id="head"><div id="title">COD-GUERRA · M01</div><div id="subtitle">Animation Resolver V1 | modelos 3D e clips reais</div></div>
+<div id="footer">DEMONSTRAÇÃO TÉCNICA: atores posicionados para inspeção. Renderer, rigs, materiais e animações reais da branch Argon; não é uma partida da campanha.</div>
+<script type="module">
+import * as THREE from 'three';
+import {M01Characters} from '../../src/render/m01-characters.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);renderer.setSize(1280,720);
+renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.2;
+renderer.shadowMap.enabled=false;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#84918b');
+scene.fog=new THREE.Fog('#84918b',18,62);
+scene.add(new THREE.HemisphereLight('#d9ebfb','#514b38',2));
+const sun=new THREE.DirectionalLight('#fff3d2',2.6);sun.position.set(-6,10,-4);scene.add(sun);
+const fill=new THREE.DirectionalLight('#d2e1ff',.8);fill.position.set(3,3,6);scene.add(fill);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(150,150),new THREE.MeshStandardMaterial({color:'#696b59',roughness:1}));
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+const grid=new THREE.GridHelper(60,60,0x555f52,0x747765);grid.position.y=.008;grid.material.transparent=true;grid.material.opacity=.24;scene.add(grid);
+const camera=new THREE.PerspectiveCamera(42,1280/720,.05,200);
+const sim=new M01Simulation(),characters=new M01Characters(scene);
+window.ready=false;
+await characters.load('medium');
+const required=['sprint','crouch_walk','turn_left','turn_right','hit_front','near_miss_duck'];
+if(required.some(n=>!characters.clips.has(n)))throw Error('Animação GLB ausente: '+required.filter(n=>!characters.clips.has(n)));
+const allies=sim.actors.filter(a=>a.team==='ally'&&a.alive&&!a.civilian&&a.role==='RIFLEMAN'&&!a.carriedBy).slice(0,6);
+const enemies=sim.actors.filter(a=>a.team==='enemy'&&a.alive&&!a.civilian&&a.role==='RIFLEMAN'&&a.weapon!=='mg34').slice(0,6);
+const source=[...allies,...enemies];
+if(source.length<9)throw Error('Sem soldados suficientes na simulação original: '+source.length);
+let mode='platoon',started=performance.now(),last=null,frame=0;
+const modes={
+ platoon:['12+ soldados: caminhar, correr, sprint e agachado','Walk · Run · Sprint · Crouch walk · sincronização dos pés'],
+ reactions:['Reações de combate e mudança de direção','Hit front · Near miss duck · Turn left / right · idle'],
+ closeup:['Movimentos dos soldados — vista aproximada','GLB riggado · capacetes · armas · transições']
+};
+const title=document.getElementById('title'),subtitle=document.getElementById('subtitle');
+function stageActors(t){
+ const list=mode==='closeup'?source.slice(0,5):source;
+ return list.map((original,i)=>{
+  const n=list.length,col=mode==='closeup'?i-2:(i%6)-2.5,row=mode==='closeup'?0:Math.floor(i/6);
+  const x=col*(mode==='closeup'?1.35:1.48),z=row*2.65;
+  const a={...original,alive:true,active:true,carriedBy:null,stationDrag:null,shot:0,
+    state:'ADVANCE',firedAt:-1e9,suppressedUntil:0,hitAt:undefined,suppressedAt:undefined,
+    crouched:false,posture:'stand',x,y:0,z,facing:-Math.PI/2,bodyYaw:-Math.PI/2,
+    motion:{...(original.motion??{}),gait:'walk',speed:1.4,odometer:t*1.4,gaitSince:0}};
+  if(mode==='platoon'||mode==='closeup'){
+    const kinds=['walk','run','sprint','crouch_walk','run','sprint'];
+    const k=kinds[i%kinds.length],spd=k==='sprint'?5:k==='run'?3.1:k==='crouch_walk'?.8:1.4;
+    a.crouched=k==='crouch_walk';a.posture=a.crouched?'crouch':'stand';
+    a.motion={...(original.motion??{}),gait:k,speed:spd,odometer:t*spd,gaitSince:0};
+  }else{
+    a.state='GUARD';a.motion={...(original.motion??{}),gait:'idle',speed:0,odometer:0,gaitSince:0};
+    const pulse=t%2.3,at=t-pulse;
+    if(i%4===0)a.hitAt=at;
+    if(i%4===1)a.suppressedAt=at;
+    if(i%4===2)a.bodyYaw=a.facing+.46;
+    if(i%4===3)a.bodyYaw=a.facing-.46;
+  }
+  return a;
+ });
+}
+function animate(now){
+ const t=(now-started)/1000;
+ const actors=stageActors(t);
+ characters.update(actors,t,{x:0,z:mode==='closeup'?-5:-11},'medium',sim.battleClock);
+ if(mode==='closeup'){camera.position.set(-.35,2.20,-6.9);camera.lookAt(0,1.08,0);}
+ else{camera.position.set(-.6,3.2,-14.2);camera.lookAt(0,1.1,1.0);}
+ camera.updateProjectionMatrix();
+ renderer.render(scene,camera);
+ last={mode,clock:t,frame:frame++,actors:characters.diagnostics.actors.map(a=>({id:a.id,clip:a.clip,clipTime:a.clipTime,lod:a.lod})),
+  availableClips:required.filter(n=>characters.clips.has(n)),renderedModels:characters.diagnostics.active};
+ requestAnimationFrame(animate);
+}
+window.showcase={
+ setMode(next){if(!modes[next])throw Error('Modo inválido '+next);mode=next;started=performance.now();
+  title.textContent=modes[mode][0];subtitle.textContent=modes[mode][1];return mode;},
+ diagnostics(){return structuredClone(last)},
+ modes:Object.keys(modes)
+};
+window.showcase.setMode('platoon');
+window.ready=true;requestAnimationFrame(animate);
+</script></html>

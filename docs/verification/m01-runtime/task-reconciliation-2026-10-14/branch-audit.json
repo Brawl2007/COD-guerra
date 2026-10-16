@@ -1,0 +1,363 @@
+{
+  "date": "2026-10-14",
+  "scope": "Roadmap tasks T00\u2013T53; T11 folded into T24; T01 annulled",
+  "method": "Remote Git ancestry, repository handoffs, live GitHub CI metadata; no new game execution",
+  "currentBranch": "codex/m01-continuity-raid-integration-v1",
+  "auditedHead": "bf202b39e52d741d59ea0096c8b24a56c404754b",
+  "confirmedAcceptedTasks": [
+    4,
+    8,
+    9,
+    10,
+    12,
+    13,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    22,
+    23,
+    25,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    35,
+    39,
+    42,
+    44
+  ],
+  "confirmedAcceptedCount": 26,
+  "notFormallyClosedCountIncludingT53": 26,
+  "annulledCount": 1,
+  "audioSubtasksNotCountedAsFullTasks": [
+    "T05a",
+    "T06a",
+    "T06b"
+  ],
+  "branches": [
+    {
+      "branch": "codex/m01-t09-t28-materials-closeout-v1",
+      "head": "1511826b3f69e880322d4029a350c7e2ee575ba3",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": true,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38175685874,
+          "headSha": "1511826b3f69e880322d4029a350c7e2ee575ba3",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38174455690,
+          "headSha": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38174455699,
+          "headSha": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+          "name": "M01 T09 T28 materials and terrain",
+          "status": "completed"
+        },
+        {
+          "conclusion": "cancelled",
+          "databaseId": 38174057323,
+          "headSha": "3c3a66c3315e33ce70195d0bb178ddb0008ab90d",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "codex/m01-t13-t32-field-structures-v1",
+      "head": "d79a2ae3f4f0956de6af7774ecfa10aa048d108f",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": true,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38228814105,
+          "headSha": "d79a2ae3f4f0956de6af7774ecfa10aa048d108f",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38225594014,
+          "headSha": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38225594010,
+          "headSha": "cbbe0d7624d39e444f02ac0bd200037a71b3cf8e",
+          "name": "M01 T13 T32 field structures browser and authority",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38223941910,
+          "headSha": "e23a47d94528e63537ec6cbcdd5718606c86f004",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "codex/m01-t31-t33-rail-props-v1",
+      "head": "75598ed64e27cee5a7bf9da5fc5c48831556c6ba",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": true,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38308565925,
+          "headSha": "75598ed64e27cee5a7bf9da5fc5c48831556c6ba",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38279380748,
+          "headSha": "6878d01e895787342d5f43b98524d47d53475943",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38279380744,
+          "headSha": "6878d01e895787342d5f43b98524d47d53475943",
+          "name": "M01 T31 T33 rail props browser and authority",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "databaseId": 38270579908,
+          "headSha": "ab85e6b942628ebb032fbe3b53660b2e95ec392f",
+          "name": "M01 T31 T33 rail props browser and authority",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "codex/m01-t27-t30-relief-horizon-v1",
+      "head": "faf4be8a1857964df646354bdc9822db8820c672",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": true,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38381491544,
+          "headSha": "faf4be8a1857964df646354bdc9822db8820c672",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38376693678,
+          "headSha": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38376693616,
+          "headSha": "4e5389b314f3e02b3197139cca953b79a5464d8f",
+          "name": "M01 T27 T30 browser and authority",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "databaseId": 38313350611,
+          "headSha": "49a18863ad6fc6f821ccff6f65253ac264f607dc",
+          "name": "M01 T27 T30 browser and authority",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "codex/m01-t10-t29-vegetation-v2",
+      "head": "cd8e7023cbe80ce44d8f2ece9040e459977c6911",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": true,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38468300586,
+          "headSha": "cd8e7023cbe80ce44d8f2ece9040e459977c6911",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38432707375,
+          "headSha": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38432707503,
+          "headSha": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+          "name": "M01 T10 T29 vegetation browser and authority",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38427309685,
+          "headSha": "8aa1549f7eef58aec92ec4421aa84266ffce18ea",
+          "name": "M01 T10 T29 vegetation browser and authority",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "claude/m01-audio-data-fields-v1",
+      "head": "899937fd2852ec99f7bd339c59c31222a88f1751",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": false,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38120863543,
+          "headSha": "899937fd2852ec99f7bd339c59c31222a88f1751",
+          "name": "M01 Audio Data Fields V1",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "claude/m01-audio-core-v1",
+      "head": "9596059680e908c5883a546d23262ef846a05de7",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": false,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38132511927,
+          "headSha": "9596059680e908c5883a546d23262ef846a05de7",
+          "name": "M01 Audio Core V1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "databaseId": 38131608909,
+          "headSha": "dbb035baebd266aeb3bbed23f9bfee246103150e",
+          "name": "M01 Audio Core V1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "databaseId": 38131505678,
+          "headSha": "ed26449d93bbb283b5266bbe75387df24ca27198",
+          "name": ".github/workflows/m01-audio-core-v1.yml",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "claude/m01-audio-director-music-v1",
+      "head": "af816578ea1dc3ee2a2b46f5bf14ce245d2cab2a",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": false,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38138498956,
+          "headSha": "af816578ea1dc3ee2a2b46f5bf14ce245d2cab2a",
+          "name": "M01 Audio Director Music V1",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "codex/m01-t14-t41-bridge-finish-v2",
+      "head": "fd2b0c7eb467d509df28910be18661e1d07f6bb9",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": false,
+      "ciRuns": [
+        {
+          "conclusion": "failure",
+          "databaseId": 38533402254,
+          "headSha": "fd2b0c7eb467d509df28910be18661e1d07f6bb9",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "databaseId": 38528756419,
+          "headSha": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "databaseId": 38528756490,
+          "headSha": "b36ad7470ce977deeecab1ae193e51592d4aaf72",
+          "name": "M01 T14 T41 bridge browser and authority",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38471867146,
+          "headSha": "c00670786e85dc9c2671bc5234b828eb07b434bb",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "claude/m01-integration",
+      "head": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": true,
+      "ciRuns": [
+        {
+          "conclusion": "success",
+          "databaseId": 38470792716,
+          "headSha": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38383404278,
+          "headSha": "b2430fac3504aa6d0ce7d0ad664076c26f90d6f7",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38309634971,
+          "headSha": "293a4f116b9b28818b7ff3bda4d83cc49b01014f",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "databaseId": 38230034882,
+          "headSha": "02f2145cd71ce17a6af84ef611823a0c0f1ddac5",
+          "name": "CI (Node + build)",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "branch": "claude/m01-decisions-d37-v1",
+      "head": "d5afc092581ee8337d5acad6a94c6d048da29dbe",
+      "ancestorOfContinuityBranch": false,
+      "ancestorOfGameIntegration": false,
+      "ciRuns": []
+    }
+  ]
+}

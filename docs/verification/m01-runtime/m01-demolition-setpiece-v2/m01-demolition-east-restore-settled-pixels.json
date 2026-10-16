@@ -1,0 +1,144 @@
+{
+  "name": "m01-demolition-east-restore-settled",
+  "shot": {
+    "base": "eastAfter",
+    "x": 610,
+    "z": 20,
+    "aim": {
+      "x": 800,
+      "y": 8,
+      "z": 20
+    },
+    "lift": 60,
+    "player": {
+      "x": 610,
+      "y": -5,
+      "z": 20
+    }
+  },
+  "camera": {
+    "position": [
+      610,
+      -3.3600000000000003,
+      20
+    ],
+    "quaternion": [
+      -0.019958043936570604,
+      -0.7068250678083128,
+      -0.019958043936570604,
+      0.7068250678083128
+    ],
+    "fov": 70,
+    "aspect": 1.7777777777777777,
+    "near": 0.05,
+    "far": 7500,
+    "width": 1280,
+    "height": 720
+  },
+  "projected": [
+    {
+      "point": [
+        800,
+        0,
+        20
+      ],
+      "x": 640,
+      "y": 321.8,
+      "depth": 189.5
+    },
+    {
+      "point": [
+        800,
+        30,
+        20
+      ],
+      "x": 640,
+      "y": 239.5,
+      "depth": 187.8
+    },
+    {
+      "point": [
+        690,
+        5,
+        0
+      ],
+      "x": 510.5,
+      "y": 276.7,
+      "depth": 79.4
+    },
+    {
+      "point": [
+        690,
+        5,
+        40
+      ],
+      "x": 769.5,
+      "y": 276.7,
+      "depth": 79.4
+    },
+    {
+      "point": [
+        837,
+        4,
+        0
+      ],
+      "x": 594.5,
+      "y": 314.2,
+      "depth": 226.2
+    },
+    {
+      "point": [
+        843,
+        4,
+        40
+      ],
+      "x": 684.3,
+      "y": 314.6,
+      "depth": 232.2
+    }
+  ],
+  "limit": {
+    "changed": 200,
+    "peak": 60,
+    "meanAbs": 0.1
+  },
+  "threshold": 24,
+  "stats": {
+    "roi": {
+      "box": [
+        430,
+        199,
+        850,
+        362
+      ],
+      "pixels": 68460,
+      "changed": 9905,
+      "changedLoose": 12191,
+      "peak": 227,
+      "meanAbs": 18.4744,
+      "meanLumaReference": 102.808,
+      "meanLumaLive": 105.61,
+      "centroid": [
+        628,
+        266.2
+      ]
+    },
+    "control": {
+      "box": [
+        480,
+        10,
+        800,
+        90
+      ],
+      "pixels": 25600,
+      "changed": 0,
+      "changedLoose": 0,
+      "peak": 0,
+      "meanAbs": 0,
+      "meanLumaReference": 181.524,
+      "meanLumaLive": 181.524,
+      "centroid": null
+    }
+  },
+  "changedInFrame": 12412
+}

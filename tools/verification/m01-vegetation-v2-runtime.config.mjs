@@ -1,0 +1,4 @@
+import {defineConfig} from '@playwright/test';
+import path from 'node:path';
+const root=path.resolve(new URL('../../',import.meta.url).pathname),baseline=process.env.M01_VEGETATION_BASELINE_ROOT;
+export default defineConfig({testDir:path.join(root,'tests/browser'),testMatch:'m01-vegetation-runtime-v2.spec.js',timeout:240000,workers:1,outputDir:path.resolve(root,process.env.M01_VEGETATION_ARTIFACT_DIR||'test-results/m01-vegetation-v2-runtime'),retries:0,use:{baseURL:'http://127.0.0.1:4177/COD-guerra/',viewport:{width:1280,height:720},launchOptions:{...(process.env.CHROME_EXECUTABLE?{executablePath:process.env.CHROME_EXECUTABLE}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}},webServer:{cwd:baseline||root,command:'npm run preview -- --port 4177',url:'http://127.0.0.1:4177/COD-guerra/',reuseExistingServer:false,timeout:30000}});

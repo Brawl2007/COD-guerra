@@ -1,0 +1,1646 @@
+[
+  {
+    "capture": "runtime/fix3-resume-base/base-0430-04.json",
+    "phaseLabel": "0430",
+    "view": "04",
+    "actualBattleClockSeconds": 16200,
+    "actualBattleClockHHMMSS": "04:30:00.000000",
+    "actualSimClock": 0,
+    "eastDemolitionEventSimClock": null,
+    "phaseMeaning": "exact constructor04:30",
+    "damageAges": [],
+    "snapshotSHA256": "8fa5e2af6b4285b35cb0cce110cebdeada7bc1308f0cd28e78387ae93c681732",
+    "checkpointSHA256": "8fa5e2af6b4285b35cb0cce110cebdeada7bc1308f0cd28e78387ae93c681732",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_06",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_portal_old_east",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_06",
+      "rail_span_07",
+      "rail_span_08",
+      "rail_span_09",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_06",
+      "road_support_07",
+      "road_support_08",
+      "road_portal_old_east",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_06",
+      "road_span_07",
+      "road_span_08",
+      "road_span_09",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0430-12.json",
+    "phaseLabel": "0430",
+    "view": "12",
+    "actualBattleClockSeconds": 16200,
+    "actualBattleClockHHMMSS": "04:30:00.000000",
+    "actualSimClock": 0,
+    "eastDemolitionEventSimClock": null,
+    "phaseMeaning": "exact constructor04:30",
+    "damageAges": [],
+    "snapshotSHA256": "4a47ce886bd7f8059a7caee4bad85827103a69805ca10a0c3a52eead07557e43",
+    "checkpointSHA256": "4a47ce886bd7f8059a7caee4bad85827103a69805ca10a0c3a52eead07557e43",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_06",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_portal_old_east",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_06",
+      "rail_span_07",
+      "rail_span_08",
+      "rail_span_09",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_06",
+      "road_support_07",
+      "road_support_08",
+      "road_portal_old_east",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_06",
+      "road_span_07",
+      "road_span_08",
+      "road_span_09",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0430-13.json",
+    "phaseLabel": "0430",
+    "view": "13",
+    "actualBattleClockSeconds": 16200,
+    "actualBattleClockHHMMSS": "04:30:00.000000",
+    "actualSimClock": 0,
+    "eastDemolitionEventSimClock": null,
+    "phaseMeaning": "exact constructor04:30",
+    "damageAges": [],
+    "snapshotSHA256": "d2588f456b8c776e5a0e7066ab6bc3967a91037203f912ed901606293121e906",
+    "checkpointSHA256": "d2588f456b8c776e5a0e7066ab6bc3967a91037203f912ed901606293121e906",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_06",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_portal_old_east",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_06",
+      "rail_span_07",
+      "rail_span_08",
+      "rail_span_09",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_06",
+      "road_support_07",
+      "road_support_08",
+      "road_portal_old_east",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_06",
+      "road_span_07",
+      "road_span_08",
+      "road_span_09",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0430-control.json",
+    "phaseLabel": "0430",
+    "view": "control",
+    "actualBattleClockSeconds": 16200,
+    "actualBattleClockHHMMSS": "04:30:00.000000",
+    "actualSimClock": 0,
+    "eastDemolitionEventSimClock": null,
+    "phaseMeaning": "exact constructor04:30",
+    "damageAges": [],
+    "snapshotSHA256": "ede32949a98ecd064d2d06dce9ee8d3135da04399e7f443bdcd625842f13d330",
+    "checkpointSHA256": "ede32949a98ecd064d2d06dce9ee8d3135da04399e7f443bdcd625842f13d330",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_06",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_portal_old_east",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_06",
+      "rail_span_07",
+      "rail_span_08",
+      "rail_span_09",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_06",
+      "road_support_07",
+      "road_support_08",
+      "road_portal_old_east",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_06",
+      "road_span_07",
+      "road_span_08",
+      "road_span_09",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0610-04.json",
+    "phaseLabel": "0610",
+    "view": "04",
+    "actualBattleClockSeconds": 22395.074999999666,
+    "actualBattleClockHHMMSS": "06:13:15.075000",
+    "actualSimClock": 764.0999999998528,
+    "eastDemolitionEventSimClock": 741.1499999998737,
+    "phaseMeaning": "genuine east-demolition phase, captured after route retreated outside blast; actual clock06:13:15, not exact06:10",
+    "damageAges": [
+      {
+        "id": "station_bomb",
+        "started": 67.7499999999983,
+        "ageSimSeconds": 696.3499999998545
+      },
+      {
+        "id": "forward_post",
+        "started": 69.89999999999817,
+        "ageSimSeconds": 694.1999999998546
+      },
+      {
+        "id": "repair_crater",
+        "started": 72.79999999999801,
+        "ageSimSeconds": 691.2999999998548
+      },
+      {
+        "id": "raid_0530",
+        "started": 438.7500000000655,
+        "ageSimSeconds": 325.3499999997873
+      },
+      {
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "ageSimSeconds": 22.949999999979127
+      }
+    ],
+    "snapshotSHA256": "d002c3f2fd5bf2f81bb239c6e875217e7452f32dc70403ce14ea8aa87a54d71f",
+    "checkpointSHA256": "070e1c199dad43134d86d1e7436c97d517ca4e444cfb470daf2339fbac0a66a3",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_08",
+      "rail_span_09",
+      "rail_support_06_rubble",
+      "rail_portal_old_east_rubble",
+      "rail_span_06_collapsed",
+      "rail_span_07_collapsed",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_07",
+      "road_support_08",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_08",
+      "road_span_09",
+      "road_support_06_rubble",
+      "road_portal_old_east_rubble",
+      "road_span_06_collapsed",
+      "road_span_07_collapsed",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      }
+    ],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0610-12.json",
+    "phaseLabel": "0610",
+    "view": "12",
+    "actualBattleClockSeconds": 22395.074999999666,
+    "actualBattleClockHHMMSS": "06:13:15.075000",
+    "actualSimClock": 764.0999999998528,
+    "eastDemolitionEventSimClock": 741.1499999998737,
+    "phaseMeaning": "genuine east-demolition phase, captured after route retreated outside blast; actual clock06:13:15, not exact06:10",
+    "damageAges": [
+      {
+        "id": "station_bomb",
+        "started": 67.7499999999983,
+        "ageSimSeconds": 696.3499999998545
+      },
+      {
+        "id": "forward_post",
+        "started": 69.89999999999817,
+        "ageSimSeconds": 694.1999999998546
+      },
+      {
+        "id": "repair_crater",
+        "started": 72.79999999999801,
+        "ageSimSeconds": 691.2999999998548
+      },
+      {
+        "id": "raid_0530",
+        "started": 438.7500000000655,
+        "ageSimSeconds": 325.3499999997873
+      },
+      {
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "ageSimSeconds": 22.949999999979127
+      }
+    ],
+    "snapshotSHA256": "6e81f27559a9d0e780d3202b156cfa30cd2870559360a0660f727ffe00658e7e",
+    "checkpointSHA256": "070e1c199dad43134d86d1e7436c97d517ca4e444cfb470daf2339fbac0a66a3",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_08",
+      "rail_span_09",
+      "rail_support_06_rubble",
+      "rail_portal_old_east_rubble",
+      "rail_span_06_collapsed",
+      "rail_span_07_collapsed",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_07",
+      "road_support_08",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_08",
+      "road_span_09",
+      "road_support_06_rubble",
+      "road_portal_old_east_rubble",
+      "road_span_06_collapsed",
+      "road_span_07_collapsed",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      }
+    ],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0610-13.json",
+    "phaseLabel": "0610",
+    "view": "13",
+    "actualBattleClockSeconds": 22395.074999999666,
+    "actualBattleClockHHMMSS": "06:13:15.075000",
+    "actualSimClock": 764.0999999998528,
+    "eastDemolitionEventSimClock": 741.1499999998737,
+    "phaseMeaning": "genuine east-demolition phase, captured after route retreated outside blast; actual clock06:13:15, not exact06:10",
+    "damageAges": [
+      {
+        "id": "station_bomb",
+        "started": 67.7499999999983,
+        "ageSimSeconds": 696.3499999998545
+      },
+      {
+        "id": "forward_post",
+        "started": 69.89999999999817,
+        "ageSimSeconds": 694.1999999998546
+      },
+      {
+        "id": "repair_crater",
+        "started": 72.79999999999801,
+        "ageSimSeconds": 691.2999999998548
+      },
+      {
+        "id": "raid_0530",
+        "started": 438.7500000000655,
+        "ageSimSeconds": 325.3499999997873
+      },
+      {
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "ageSimSeconds": 22.949999999979127
+      }
+    ],
+    "snapshotSHA256": "22ff05ca2eac77b5ec732974e80337830108b6d582ad32445b92773e695d1f30",
+    "checkpointSHA256": "070e1c199dad43134d86d1e7436c97d517ca4e444cfb470daf2339fbac0a66a3",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_08",
+      "rail_span_09",
+      "rail_support_06_rubble",
+      "rail_portal_old_east_rubble",
+      "rail_span_06_collapsed",
+      "rail_span_07_collapsed",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_07",
+      "road_support_08",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_08",
+      "road_span_09",
+      "road_support_06_rubble",
+      "road_portal_old_east_rubble",
+      "road_span_06_collapsed",
+      "road_span_07_collapsed",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 1,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      }
+    ],
+    "errors": [],
+    "http": []
+  },
+  {
+    "capture": "runtime/fix3-resume-base/base-0610-control.json",
+    "phaseLabel": "0610",
+    "view": "control",
+    "actualBattleClockSeconds": 22395.074999999666,
+    "actualBattleClockHHMMSS": "06:13:15.075000",
+    "actualSimClock": 764.0999999998528,
+    "eastDemolitionEventSimClock": 741.1499999998737,
+    "phaseMeaning": "genuine east-demolition phase, captured after route retreated outside blast; actual clock06:13:15, not exact06:10",
+    "damageAges": [
+      {
+        "id": "station_bomb",
+        "started": 67.7499999999983,
+        "ageSimSeconds": 696.3499999998545
+      },
+      {
+        "id": "forward_post",
+        "started": 69.89999999999817,
+        "ageSimSeconds": 694.1999999998546
+      },
+      {
+        "id": "repair_crater",
+        "started": 72.79999999999801,
+        "ageSimSeconds": 691.2999999998548
+      },
+      {
+        "id": "raid_0530",
+        "started": 438.7500000000655,
+        "ageSimSeconds": 325.3499999997873
+      },
+      {
+        "id": "east_demolition",
+        "started": 741.1499999998737,
+        "ageSimSeconds": 22.949999999979127
+      }
+    ],
+    "snapshotSHA256": "0f7b7a88995ed03c1ba4c60b5a1a0bb180a72b2858090ed74e135c4d922c86d5",
+    "checkpointSHA256": "070e1c199dad43134d86d1e7436c97d517ca4e444cfb470daf2339fbac0a66a3",
+    "partCount": 75,
+    "visiblePartNames": [
+      "rail_support_00",
+      "rail_portal_west",
+      "rail_support_01",
+      "rail_support_02",
+      "rail_support_03",
+      "rail_support_04",
+      "rail_support_05",
+      "rail_support_07",
+      "rail_support_08",
+      "rail_support_09",
+      "rail_span_01",
+      "rail_span_02",
+      "rail_span_03",
+      "rail_span_04",
+      "rail_span_05",
+      "rail_span_08",
+      "rail_span_09",
+      "rail_support_06_rubble",
+      "rail_portal_old_east_rubble",
+      "rail_span_06_collapsed",
+      "rail_span_07_collapsed",
+      "road_support_00",
+      "road_portal_west",
+      "road_tower_01_n",
+      "road_tower_01_s",
+      "road_support_01",
+      "road_tower_02_n",
+      "road_tower_02_s",
+      "road_support_02",
+      "road_tower_03_n",
+      "road_tower_03_s",
+      "road_support_03",
+      "road_tower_04_n",
+      "road_tower_04_s",
+      "road_support_04",
+      "road_tower_05_n",
+      "road_tower_05_s",
+      "road_support_05",
+      "road_support_07",
+      "road_support_08",
+      "road_support_09",
+      "road_span_01",
+      "road_span_02",
+      "road_span_03",
+      "road_span_04",
+      "road_span_05",
+      "road_span_08",
+      "road_span_09",
+      "road_support_06_rubble",
+      "road_portal_old_east_rubble",
+      "road_span_06_collapsed",
+      "road_span_07_collapsed",
+      "portal_lisewo_1912",
+      "gate_rail_left",
+      "gate_rail_right",
+      "gate_road_left",
+      "gate_road_right"
+    ],
+    "actualLastDrawnCollapsePieces": [
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      }
+    ],
+    "errors": [],
+    "http": []
+  }
+]

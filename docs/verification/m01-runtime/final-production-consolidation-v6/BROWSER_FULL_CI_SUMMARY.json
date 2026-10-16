@@ -1,0 +1,1383 @@
+{
+  "status": "FAIL",
+  "testedHead": "dd743de922f32b7391ce8e9e69a2ede2903eafb8",
+  "executableHead": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+  "runId": "37802820440",
+  "stats": {
+    "startTime": "2026-10-08T15:42:01.430Z",
+    "duration": 3994039.777,
+    "expected": 83,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "globalErrors": [],
+  "testCount": 84,
+  "tests": [
+    {
+      "file": "game.spec.js",
+      "line": 28,
+      "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 20594,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "game.spec.js",
+      "line": 68,
+      "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 41967,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "game.spec.js",
+      "line": 98,
+      "title": "corrupt checkpoint is explained and a new mission remains available",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 10896,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "game.spec.js",
+      "line": 106,
+      "title": "missing models are reported and procedural fallback keeps the area playable",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11251,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-animation-contract.spec.js",
+      "line": 22,
+      "title": "schema-2 animation contract current 89: exact production restore, pause, reload and prior checkpoint",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 24623,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-animation-contract.spec.js",
+      "line": 22,
+      "title": "schema-2 animation contract legacy 86: exact production restore, pause, reload and prior checkpoint",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 23256,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-audio-offline-render.spec.js",
+      "line": 114,
+      "title": "offline render: each weapon, distance band, impact, blast, vehicle and fire has a measurable, distinct acoustic signature",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12535,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-audio-production.spec.js",
+      "line": 36,
+      "title": "M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 80728,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-audio-runtime.spec.js",
+      "line": 27,
+      "title": "live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses and limits are live",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 32524,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-audio-runtime.spec.js",
+      "line": 46,
+      "title": "live M01 east demolition: one authoritative blast becomes the layered bridge demolition with metal stress",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 30812,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-fx-polish-v3.spec.js",
+      "line": 69,
+      "title": "real earth stone and wood round impacts keep distinct visual language",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 73244,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-fx-polish-v3.spec.js",
+      "line": 83,
+      "title": "small bombing east and west demolition show distinct layered profiles",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 130445,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-fx-polish-v3.spec.js",
+      "line": 102,
+      "title": "distance smoke lifecycle pause restore and Low High remain bounded",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 109812,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "line": 23,
+      "title": "east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 88270,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-battlefield-fx.spec.js",
+      "line": 72,
+      "title": "real in-flight round produces bounded material impact FX without altering the saved simulation path",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 59468,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-bridge-portal-polish.spec.js",
+      "line": 38,
+      "title": "captures rail, road, oblique, bridge-context and post-demolition portal views",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 157096,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-bridge-portal-polish.spec.js",
+      "line": 64,
+      "title": "Low keeps weathered portal material while High adds bounded microdetail",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 32767,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-bridge-structural.spec.js",
+      "line": 41,
+      "title": "captures bridge structure at near, medium and long range",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 259944,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-bridge-structural.spec.js",
+      "line": 87,
+      "title": "captures demolished spans with the structural detail they inherit",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 89248,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-combat-feedback.spec.js",
+      "line": 51,
+      "title": "real enemy hit drives bounded directional M01 presentation and reset semantics",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 87586,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-combat-feedback.spec.js",
+      "line": 87,
+      "title": "real crack and nearby impact register danger, accumulation caps and Low tier",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 79919,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-combat-feedback.spec.js",
+      "line": 117,
+      "title": "real grenade detonation produces bounded nearby explosion feedback without moving the player",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 56659,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-consolidation-lifecycle.spec.js",
+      "line": 3,
+      "title": "menu Low quality controls first audio allocation; persisted pagehide pauses and remains resumable",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 26760,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-damage-decals.spec.js",
+      "line": 70,
+      "title": "player fire leaves bounded portal-brick marks; pause freezes them and a checkpoint restore clears them",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 74581,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-damage-decals.spec.js",
+      "line": 70,
+      "title": "player fire leaves bounded track-bed marks; pause freezes them and a checkpoint restore clears them",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 68820,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-damage-decals.spec.js",
+      "line": 99,
+      "title": "saved blasts draw their persistent aftermath on load (frozen probes of genuine route states)",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 166419,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-environment-prop-density.spec.js",
+      "line": 39,
+      "title": "captures contextual Station yard, railway, bridge and combat-area dressing",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 73756,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-environment-prop-density.spec.js",
+      "line": 59,
+      "title": "Low Medium High retain composition with bounded deterministic density",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 56048,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-environment-prop-density.spec.js",
+      "line": 78,
+      "title": "checkpoint restart and page reload do not duplicate environment props",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 39594,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-environment-quality.spec.js",
+      "line": 2,
+      "title": "explicit visual quality survives reload and the menu agrees with the renderer",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 28197,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-hud-presentation.spec.js",
+      "line": 20,
+      "title": "the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 41761,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-hud-presentation.spec.js",
+      "line": 56,
+      "title": "a continued save shows the place card and keyed interaction prompt; HUD fits common resolutions without overlap",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 26107,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "line": 6,
+      "title": "locomotive 963 production GLBs load, far LOD, pause and restore",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 34072,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "line": 6,
+      "title": "locomotive 963 production optional failure fallback",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12515,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "line": 24,
+      "title": "real MG34 prone save after shot 1: production continuation, real muzzle, pause and reload",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 28412,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "line": 24,
+      "title": "real MG34 prone save after shot 4: production continuation, real muzzle, pause and reload",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 34495,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "line": 24,
+      "title": "real MG34 prone save after shot 6: production continuation, real muzzle, pause and reload",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 31817,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-mg34-prone.spec.js",
+      "line": 42,
+      "title": "missing optional prone GLB keeps real MG34 gameplay and procedural low posture",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 24218,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-panzerzug.spec.js",
+      "line": 6,
+      "title": "Panzerzug production GLBs load, far LOD, pause and restore",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 34365,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-panzerzug.spec.js",
+      "line": 6,
+      "title": "Panzerzug production optional failure fallback",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 19946,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-soldier-visual-variation.spec.js",
+      "line": 9,
+      "title": "real character renderer: German/Polish faces, gear, roles, all LODs, pause and save/reload; matched BEFORE/AFTER",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6684,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-soldier-visual-variation.spec.js",
+      "line": 23,
+      "title": "production UI continuation and reload keep visual IDs stable with no gameplay fields added to schema 2",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 24769,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-station-architecture.spec.js",
+      "line": 14,
+      "title": "Station quality, checkpoint restart and page reload retain one architectural root and all prop clusters",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 35700,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-station-architecture.spec.js",
+      "line": 38,
+      "title": "missing optional soldier, aircraft and train GLBs preserve Station architecture and solid gameplay envelopes",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9165,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-train-consist-polish.spec.js",
+      "line": 65,
+      "title": "captures wagon, coupling, underframe and consist views at High and Low",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 198785,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-train-consist-polish.spec.js",
+      "line": 92,
+      "title": "total wagon GLB failure keeps the 65 procedural proxies and adds no detail on them",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 22967,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-vegetation-lod.spec.js",
+      "line": 47,
+      "title": "fixed rail camera shows volumetric grove in High and a cheaper intact silhouette in Low",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17548,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-vegetation-lod.spec.js",
+      "line": 77,
+      "title": "Medium keeps volumetric near and distant battlefield vegetation without changing gameplay state",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 33005,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-wagon-runtime-integration.spec.js",
+      "line": 41,
+      "title": "yard wagon uses real LOD0/1/2 and authoritative burned state survives reload then obeys prior checkpoint",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 99520,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-wagon-runtime-integration.spec.js",
+      "line": 66,
+      "title": "total wagon GLB failure keeps train and yard procedural fallbacks visible and semantic state burned",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 26423,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-weapon-presentation.spec.js",
+      "line": 38,
+      "title": "wz.29 ADS shot: layered flash on the socket, bolt stroke, one case into the world; gameplay state is the simulation's",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 21934,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-weapon-presentation.spec.js",
+      "line": 64,
+      "title": "wz.29 clip reload: the empty stripper clip leaves at the 2,45 s marker and lands in the world",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 23310,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-weapon-presentation.spec.js",
+      "line": 77,
+      "title": "bench M1 Carbine keeps its own semi-auto identity: flash, brass with the shot, smooth ADS",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 16530,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-wz29-viewmodel.spec.js",
+      "line": 4,
+      "title": "Wz.29 production ADS, paused save reconstruction and actual sights on low",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12112,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-wz29-viewmodel.spec.js",
+      "line": 4,
+      "title": "Wz.29 production ADS, paused save reconstruction and actual sights on medium",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12220,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01-wz29-viewmodel.spec.js",
+      "line": 4,
+      "title": "Wz.29 production ADS, paused save reconstruction and actual sights on high",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13350,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 38,
+      "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 60102,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 66,
+      "title": "the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 35317,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 91,
+      "title": "unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 14394,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 101,
+      "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+      "project": "",
+      "status": "unexpected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 59134,
+          "retry": 0,
+          "errors": [
+            {
+              "location": {
+                "file": "/home/runner/work/COD-guerra/COD-guerra/tests/browser/m01.spec.js",
+                "column": 16,
+                "line": 133
+              },
+              "message": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded.\n\n  131 |     // consumed by Input without repositioning the locked cursor, then wait on authoritative weapon state.\n  132 |     await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});\n> 133 |     await page.waitForFunction(expected=>window.gameDiagnostics().m01.weapon.mag===expected,expectedMag,{timeout:process.env.CI?30000:10000});\n      |                ^\n  134 |     await expect(page.locator('#mag')).toHaveText(String(expectedMag));\n  135 |   };\n  136 |   for(let i=0;i<5;i++){\n    at fireRound (/home/runner/work/COD-guerra/COD-guerra/tests/browser/m01.spec.js:133:16)\n    at /home/runner/work/COD-guerra/COD-guerra/tests/browser/m01.spec.js:138:5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 157,
+      "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11151,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 165,
+      "title": "Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 43571,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 194,
+      "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11483,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 202,
+      "title": "the station clip alone cannot enable a viewmodel when the required weapon animations fail to download",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17773,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 210,
+      "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 61907,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 241,
+      "title": "the real station grab restores synchronized clips, pauses and keeps both roots fixed",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 19383,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 241,
+      "title": "the real station release restores synchronized clips, pauses and keeps both roots fixed",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13482,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 280,
+      "title": "a missing optional station transition GLB keeps the grounded fallback and completes evacuation",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17298,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 294,
+      "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 137870,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 320,
+      "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 31532,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 320,
+      "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 35128,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 339,
+      "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 33896,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 365,
+      "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 56038,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 378,
+      "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 24111,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 388,
+      "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 42893,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 410,
+      "title": "the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 25756,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 442,
+      "title": "schema-2 continuation keeps the older CP-A on the real Restart checkpoint button",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 10305,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 460,
+      "title": "missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17491,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 475,
+      "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 43125,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 487,
+      "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 51677,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 509,
+      "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 16023,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 518,
+      "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 56582,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 544,
+      "title": "ckm west crew and weapon use actual saved abandon time, pause and fresh reload",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 63031,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "m01.spec.js",
+      "line": 563,
+      "title": "optional ckm kit failure retains the crew fallback and checkpoint restoration",
+      "project": "",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 19472,
+          "retry": 0,
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "rawReportSha256": "0efb6c2e76f08baace0b8702cdcef3cfcd2a71975d99af9fdefa52d1d5734333",
+  "gzipSha256": "86ef69de782516620cd6e10007efde9d99408565917b014ed9d544e7a4961a22",
+  "buildFiles": {
+    "dist/assets/index-QzIf-9Lu.js": {
+      "bytes": 1408885,
+      "sha256": "b9d9f57d83317dc2114561c7c8b7d443ebbfeb66c3ccdc5ab07bfd09dd8d035a"
+    },
+    "dist/assets/index-DQURwQ3m.css": {
+      "bytes": 14890,
+      "sha256": "199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06"
+    }
+  }
+}

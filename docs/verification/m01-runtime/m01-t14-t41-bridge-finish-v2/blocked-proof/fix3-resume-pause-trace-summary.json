@@ -1,0 +1,98 @@
+[
+  {
+    "timestamp": 48118.341,
+    "snapshotName": "before@call@51",
+    "url": "about:blank",
+    "pauseContext": "['HTML', {}, ['HEAD', {}, ['BASE', {'href': 'about:blank'}]], ['BODY']]"
+  },
+  {
+    "timestamp": 54534.554,
+    "snapshotName": "after@call@51",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": " 'id': 'mission-status'}, 'PROT\u00d3TIPO \u00b7 MODELOS E \u00c1UDIO PROVIS\u00d3RIOS'], '\\n    '], '\\n    ', ['SECTION', {'id': 'pause', 'class': 'overlay centered hidden'}, ['P', {'class': 'eyebrow'}, 'MISS\u00c3O SUSPENSA'], ['H2', {}, 'PAUSADO'], ['P', {'id': 'pause-text'}], ['P', {'id': 'pause-objective'}], ['BUTTON', {'id': 'resume'}, 'RETOMAR'], ['BUTTON', {'id': 'restart-checkpoint', 'class': 'secondary'}, 'REINICIAR CHECKPOINT'], ['BUTTON', {'id': 'back-menu', 'class': 'quiet'}, 'VOLTAR AO MENU']], '\\n    ', ['SECTION', {'id': 'complete', 'class': 'overlay centered hidden'}, ['P', {'class': 'eyebrow', 'id': 'complete-place'}, 'TCZEW \u00b7 1 SETEMBRO 1939'], ['H2', {}, 'MISS\u00c3O CONCLU\u00cdDA'], ['DIV', {'id': 'debrief'}], ['B"
+  },
+  {
+    "timestamp": 55323.395,
+    "snapshotName": "before@call@53",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[1, 224]]"
+  },
+  {
+    "timestamp": 63515.101,
+    "snapshotName": "after@call@53",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "['HTML', {'lang': 'pt'}, [[2, 20]], [[2, 21]], ['BODY', {}, [[2, 22]], ['MAIN', {'id': 'game-shell'}, [[2, 23]], [[2, 24]], [[2, 25]], ['SECTION', {'id': 'menu', 'class': 'overlay'}, [[2, 26]], ['DIV', {'class': 'menu-content'}, [[2, 27]], [[2, 31]], [[2, 32]], [[2, 39]], [[2, 40]], [[2, 42]], [[2, 43]], [[2, 48]], [[2, 49]], [[2, 51]], [[2, 52]], ['DIV', {'class': 'menu-actions'}, ['BUTTON', {'id': 'start'}, [[2, 53]], [[2, 55]]], ['BUTTON', {'id': 'continue', 'class': 'secondary'}, [[2, 57]]]], [[2, 60]], [[2, 76]], [[2, 77]], [[2, 83]], [[2, 84]]], [[2, 86]], [[2, 93]], [[2, 94]], [[2, 96]"
+  },
+  {
+    "timestamp": 63552.128,
+    "snapshotName": "before@call@55",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[1, 7]]"
+  },
+  {
+    "timestamp": 63626.744,
+    "snapshotName": "after@call@55",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[2, 7]]"
+  },
+  {
+    "timestamp": 63637.223,
+    "snapshotName": "before@call@57",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[3, 7]]"
+  },
+  {
+    "timestamp": 63733.541,
+    "snapshotName": "input@call@57",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "['HTML', {'lang': 'pt'}, [[6, 20]], [[6, 21]], ['BODY', {}, [[6, 22]], ['MAIN', {'id': 'game-shell'}, [[6, 23]], [[6, 24]], [[6, 25]], ['SECTION', {'id': 'menu', 'class': 'overlay'}, [[6, 26]], ['DIV', {'class': 'menu-content'}, [[6, 27]], [[6, 31]], [[6, 32]], [[6, 39]], [[6, 40]], [[6, 42]], [[6, 43]], [[6, 48]], [[6, 49]], [[6, 51]], [[6, 52]], [[4, 2]], [[6, 60]], ['DIV', {'class': 'settings'}, [[6, 61]], ['LABEL', {'for': 'quality'}, [[6, 62]], ['SELECT', {'__playwright_target__': 'call@57', 'id': 'quality'}, [[6, 64]], [[6, 66]], [[6, 68]]]], [[6, 71]], [[6, 74]], [[6, 75]]], [[6, 77]],"
+  },
+  {
+    "timestamp": 63796.662,
+    "snapshotName": "after@call@57",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[1, 7]]"
+  },
+  {
+    "timestamp": 63814.238,
+    "snapshotName": "before@call@59",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[2, 7]]"
+  },
+  {
+    "timestamp": 63831.884,
+    "snapshotName": "after@call@59",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[3, 7]]"
+  },
+  {
+    "timestamp": 63850.154,
+    "snapshotName": "before@call@61",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[4, 7]]"
+  },
+  {
+    "timestamp": 72905.869,
+    "snapshotName": "input@call@61",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "['HTML', {'lang': 'pt'}, [[11, 20]], [[11, 21]], ['BODY', {}, [[11, 22]], ['MAIN', {'id': 'game-shell'}, [[11, 23]], [[11, 24]], [[11, 25]], ['SECTION', {'id': 'menu', 'class': 'overlay'}, [[11, 26]], ['DIV', {'class': 'menu-content'}, [[11, 27]], [[11, 31]], [[11, 32]], [[11, 39]], [[11, 40]], [[11, 42]], [[11, 43]], [[11, 48]], [[11, 49]], [[11, 51]], [[11, 52]], ['DIV', {'class': 'menu-actions'}, [[9, 0]], ['BUTTON', {'__playwright_target__': 'call@61', 'id': 'continue', 'class': 'secondary'}, [[11, 57]]]], [[11, 60]], [[5, 2]], [[11, 77]], [[11, 83]], [[11, 84]]], [[11, 86]], [[11, 93]], "
+  },
+  {
+    "timestamp": 72981.753,
+    "snapshotName": "after@call@61",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "['HTML', {'lang': 'pt'}, [[12, 20]], [[12, 21]], ['BODY', {}, [[12, 22]], ['MAIN', {'id': 'game-shell'}, [[12, 23]], [[12, 24]], [[12, 25]], ['SECTION', {'id': 'menu', 'class': 'overlay hidden'}, [[12, 26]], [[1, 2]], [[12, 86]], [[12, 93]], [[12, 94]], [[12, 96]], [[12, 97]]], [[12, 99]], [[12, 112]], [[12, 113]], [[12, 123]], [[12, 124]], [[12, 130]], [[12, 131]], ['DIV', {'id': 'hud', 'class': 'm01 cinematic'}, [[12, 132]], [[12, 133]], [[12, 134]], [[12, 135]], [[12, 142]], [[12, 143]], [[12, 144]], [[12, 145]], [[12, 155]], [[12, 156]], [[12, 161]], [[12, 162]], [[12, 167]], [[12, 168]],"
+  },
+  {
+    "timestamp": 72988.615,
+    "snapshotName": "before@call@63",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "[[1, 4]]"
+  },
+  {
+    "timestamp": 78353.706,
+    "snapshotName": "after@call@63",
+    "url": "http://127.0.0.1:4190/COD-guerra/?debug=1&visual-verify=1",
+    "pauseContext": "4, 23]], [[14, 24]], [[14, 25]], [[2, 0]], [[14, 99]], ['SECTION', {'__playwright_target__': 'call@63', 'id': 'pause', 'class': 'overlay centered'}, [[14, 101]], [[14, 103]], ['P', {'id': 'pause-text'}, 'A batalha est\u00e1 em pausa. Retome quando estiver pronto.'], [[14, 105]], [[14, 107]], [[14, 109]], [[14, 111]]], [[14, 113]], [[14, 123]], [[14, 124]], [[14, 130]], [[14, 131]], [[2, 1]], [[14, 220]]], [[14, 222]]]]"
+  }
+]

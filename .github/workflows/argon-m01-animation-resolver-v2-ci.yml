@@ -1,0 +1,79 @@
+name: M01 Argon V2 — testes de integração sem deploy
+
+on:
+  push:
+    branches: [argon/m01-animation-resolver-v2-ik-reload-hit]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: argon-m01-animation-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Animation Resolver V1 e V2
+        run: node --test tests/m01-animation-resolver.test.js tests/m01-animation-resolver-v2.test.js
+      - name: Determinismo do renderer, incluindo CKM
+        run: node --test tests/m01-render-idempotence.test.js
+      - name: Sintaxe e build sem deploy
+        run: |
+          node --check src/render/m01-animation-resolver.js
+          node --check src/render/m01-actor-pose.js
+          node --check src/render/m01-characters.js
+          npm run build
+      - name: Testes regressão dos especialistas
+        run: node --test tests/m01-ckm-runtime.test.js tests/m01-mg34-prone-presentation.test.js tests/m01-station-drag-runtime.test.js
+
+  full-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Suíte Node completa — reportar falhas herdadas e novas
+        run: npm test
+
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: M01 real — ecrã de jogo, soldados 3D, pausa e movimento
+        env:
+          CI: '1'
+        run: npx playwright test tests/browser/m01-argon-visual-evidence.spec.js --reporter=line
+      - name: Guardar evidências
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-argon-v2-browser-smoke
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: warn

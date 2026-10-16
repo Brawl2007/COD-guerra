@@ -1,0 +1,36 @@
+[
+  {
+    "version": "V5",
+    "gitHeadAtBuildVerification": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+    "productionHead": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+    "files": [
+      {
+        "name": "index-BtKwTBZt.js",
+        "sha256": "8c185e1518d44279309122fdad7b11bf612d350f0e33a6bab4ac09e393def41f",
+        "bytes": 1408582
+      },
+      {
+        "name": "index-DQURwQ3m.css",
+        "sha256": "199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06",
+        "bytes": 14890
+      }
+    ]
+  },
+  {
+    "version": "V6",
+    "gitHeadAtBuildVerification": "aa067fd61e693822c74b0e870979e13c4ad796ad",
+    "productionHead": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+    "files": [
+      {
+        "name": "index-DQURwQ3m.css",
+        "sha256": "199d38325c505021278bfaff8be2fe6f86a0f742bb82f9cf6a1909fdfa3b7e06",
+        "bytes": 14890
+      },
+      {
+        "name": "index-QzIf-9Lu.js",
+        "sha256": "b9d9f57d83317dc2114561c7c8b7d443ebbfeb66c3ccdc5ab07bfd09dd8d035a",
+        "bytes": 1408885
+      }
+    ]
+  }
+]

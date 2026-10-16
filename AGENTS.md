@@ -1,5 +1,23 @@
 # COD Guerra
 
+## Registo obrigatório antitrabalho duplicado (M01)
+
+**Antes de planear, implementar, delegar ou criar uma branch para uma tarefa M01**, executar:
+```bash
+python3 .agent/tools/m01_task_registry.py list
+python3 .agent/tools/m01_task_registry.py check TXX --live
+```
+TXX é o TASK_ID do roadmap. `check` deve consultar os PRs/branches atuais pelo GitHub CLI (`gh` autenticado). Se devolver `REUSE_OR_REVIEW_EXISTING`, continuar e integrar a entrega existente; `AUDIT_EXISTING_FIRST`, ler commits/testes; `EXISTING_REMOTE_WORK`, não duplicar; `LIVE_CHECK_REQUIRED`, verificar rede antes de programar. **Não iniciar nova implementação quando o estado/autoridade é incerto.**
+
+Se e só se a tarefa estiver `UNKNOWN`, sem PR/branch existente e após confirmação de que a issue #72 não a atribui a outro agente, reservar atomicamente:
+```bash
+python3 .agent/tools/m01_task_registry.py claim TXX --sha "$(git rev-parse HEAD)"
+```
+A reserva cria exclusivamente `refs/heads/claims/m01-txx` no GitHub; se a criação falhar, outro agente pode ter reclamado a tarefa: não continuar nem fazer outra reserva. Registar owner e branch de desenvolvimento na issue #72 e criar PR de implementação. Não converter estados em `INTEGRATED` sem verificar commits, CI e destino; não tratar a presença na V7 ou no PR #76 como integração em `main`.
+
+**Integração única existente:** PR #76 é a candidata M01. Não criar outra consolidação V7 concorrente. O Capitão trabalha sobre ela quando for seguro, mantendo histórico, provas e proteções. A lista é índice conservador; Git/PR/CI recentes sempre prevalecem.
+
+
 Leia `DEVELOPMENT_STATUS.md`, `RUNBOOK.md`, `IMPLEMENTATION_PLAN.md` e o sistema afectado antes de editar.
 A especificação completa é `docs/PROMPT_MESTRE.txt`; o índice do produto é `PROJECT_SPEC.md`.
 
@@ -12,3 +30,4 @@ A especificação completa é `docs/PROMPT_MESTRE.txt`; o índice do produto é 
 - Assets finais precisam de autoria/licença, escala e animações verificadas. Não extrair conteúdo de COD.
 - Trabalhar em branch própria; abrir PR para main. Actualizar status e evidências antes de terminar.
 - Trabalho simultâneo com Claude Code: pesquisa/mapa/roteiro de M01 em branch própria, evitando alterações concorrentes em engine/combate/build.
+- Direção do Captain (estado verificado, plano das 30 missões, grafo de tarefas, decisões, handoff): `docs/direction/README.md`.

@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "author": "Original COD Guerra geometry and paint",
+  "license": "CC0-1.0",
+  "units": "metres",
+  "forward": "-Z",
+  "historicalClass": "UNKNOWN (P16)",
+  "numbering": "963 is a service number; no locomotive number or railway insignia authored",
+  "visualDimensions": "Conservative generic proportions, not a measured historical reconstruction",
+  "placement": {
+    "position": [
+      1075,
+      0,
+      -2.5
+    ],
+    "rotationY": 1.5707963267948966,
+    "scale": 1
+  },
+  "motion": "Stationary in current M01; no synthetic wheel or valve motion",
+  "files": [
+    {
+      "file": "m01_locomotive_freight_lod0.glb",
+      "lod": 0,
+      "triangles": 16144,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1,
+      "bytes": 1142356,
+      "sha256": "46faab0661f43689bf3e2ce647889a314acea5aa9044b65aee9abff82e35f471",
+      "bounds": {
+        "min": [
+          -1.5800000429153442,
+          -0.005000014323741198,
+          -8.414941787719727
+        ],
+        "max": [
+          1.5800000429153442,
+          4.21999979019165,
+          8.40494155883789
+        ]
+      },
+      "features": {
+        "frame": 2,
+        "detail": 84,
+        "buffer_beam": 1,
+        "boiler": 1,
+        "smokebox": 1,
+        "smokebox_door": 1,
+        "boiler_bands": 4,
+        "chimney": 1,
+        "domes": 2,
+        "handrail": 2,
+        "pipes": 2,
+        "cab": 1,
+        "steps": 6,
+        "firebox": 1,
+        "cab_roof": 1,
+        "wheel_rim": 16,
+        "wheel_hub": 16,
+        "spokes": 160,
+        "coupling_rod": 2,
+        "crankpin": 8,
+        "cylinder": 2,
+        "connecting_rod": 2,
+        "valve_gear": 2,
+        "tender": 1,
+        "coal": 1,
+        "coal_lumps": 50,
+        "buffer": 4,
+        "coupling": 2,
+        "lamp": 2
+      }
+    },
+    {
+      "file": "m01_locomotive_freight_lod1.glb",
+      "lod": 1,
+      "triangles": 8768,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1,
+      "bytes": 680920,
+      "sha256": "0c058431d483d4c1c9869283e688e1fda5e724feee6446354861a2fc32f2dd42",
+      "bounds": {
+        "min": [
+          -1.5800000429153442,
+          0.006658515892922878,
+          -8.414941787719727
+        ],
+        "max": [
+          1.5800000429153442,
+          4.21999979019165,
+          8.40494155883789
+        ]
+      },
+      "features": {
+        "frame": 2,
+        "detail": 84,
+        "buffer_beam": 1,
+        "boiler": 1,
+        "smokebox": 1,
+        "smokebox_door": 1,
+        "boiler_bands": 4,
+        "chimney": 1,
+        "domes": 2,
+        "handrail": 2,
+        "pipes": 2,
+        "cab": 1,
+        "steps": 6,
+        "firebox": 1,
+        "cab_roof": 1,
+        "wheel_rim": 16,
+        "wheel_hub": 16,
+        "spokes": 128,
+        "coupling_rod": 2,
+        "crankpin": 8,
+        "cylinder": 2,
+        "connecting_rod": 2,
+        "valve_gear": 2,
+        "tender": 1,
+        "coal": 1,
+        "coal_lumps": 18,
+        "buffer": 4,
+        "coupling": 2,
+        "lamp": 2
+      }
+    },
+    {
+      "file": "m01_locomotive_freight_lod2.glb",
+      "lod": 2,
+      "triangles": 4088,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1,
+      "bytes": 347852,
+      "sha256": "60d18026fea48429790103386b081875679bff289cdd74573b260869ad78120b",
+      "bounds": {
+        "min": [
+          -1.409999966621399,
+          -0.005000014323741198,
+          -8.414941787719727
+        ],
+        "max": [
+          1.409999966621399,
+          4.21999979019165,
+          8.40494155883789
+        ]
+      },
+      "features": {
+        "frame": 2,
+        "detail": 74,
+        "buffer_beam": 1,
+        "boiler": 1,
+        "smokebox": 1,
+        "smokebox_door": 1,
+        "boiler_bands": 4,
+        "chimney": 1,
+        "domes": 2,
+        "cab": 1,
+        "firebox": 1,
+        "cab_roof": 1,
+        "wheel_rim": 16,
+        "wheel_hub": 16,
+        "coupling_rod": 2,
+        "crankpin": 8,
+        "cylinder": 2,
+        "connecting_rod": 2,
+        "tender": 1,
+        "coal": 1,
+        "coal_lumps": 5,
+        "buffer": 4,
+        "coupling": 2,
+        "lamp": 2
+      }
+    }
+  ]
+}

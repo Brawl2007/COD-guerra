@@ -1,0 +1,2064 @@
+{
+  "label": "before",
+  "kind": "Production build, genuine route snapshots and real controls, frozen by real pause; not a human playtest or FPS measurement",
+  "viewports": [
+    "1280x720",
+    "1024x600"
+  ],
+  "shots": [
+    {
+      "scene": "intro-black",
+      "viewport": "1280x720",
+      "path": "before-intro-black-1280x720.png",
+      "clock": 1.6000999999999994,
+      "battleClock": 16201.600099999978,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:02"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-black",
+      "viewport": "1024x600",
+      "path": "before-intro-black-1024x600.png",
+      "clock": 1.6000999999999994,
+      "battleClock": 16201.600099999978,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:02"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-card-place",
+      "viewport": "1280x720",
+      "path": "before-intro-card-place-1280x720.png",
+      "clock": 5.816599999999988,
+      "battleClock": 16205.816599999916,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:06"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-card-place",
+      "viewport": "1024x600",
+      "path": "before-intro-card-place-1024x600.png",
+      "clock": 5.816599999999988,
+      "battleClock": 16205.816599999916,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:06"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-card-unit",
+      "viewport": "1280x720",
+      "path": "before-intro-card-unit-1280x720.png",
+      "clock": 9.816600000000006,
+      "battleClock": 16209.816599999858,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:10"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-card-unit",
+      "viewport": "1024x600",
+      "path": "before-intro-card-unit-1024x600.png",
+      "clock": 9.816600000000006,
+      "battleClock": 16209.816599999858,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:10"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-fade-in",
+      "viewport": "1280x720",
+      "path": "before-intro-fade-in-1280x720.png",
+      "clock": 12.35020000000004,
+      "battleClock": 16212.35019999982,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:12"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-fade-in",
+      "viewport": "1024x600",
+      "path": "before-intro-fade-in-1024x600.png",
+      "clock": 12.35020000000004,
+      "battleClock": 16212.35019999982,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:12"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-dialogue",
+      "viewport": "1280x720",
+      "path": "before-intro-dialogue-1280x720.png",
+      "clock": 19.583500000000143,
+      "battleClock": 16219.583499999715,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:20"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 525,
+          "w": 896,
+          "h": 44,
+          "visible": true,
+          "text": "Marek Zieliński: Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinis"
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "intro-dialogue",
+      "viewport": "1024x600",
+      "path": "before-intro-dialogue-1024x600.png",
+      "clock": 19.583500000000143,
+      "battleClock": 16219.583499999715,
+      "sceneId": "cs_m01_intro",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 177,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL04:30 · Tczew, Polónia"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:20"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 406,
+          "w": 717,
+          "h": 68,
+          "visible": true,
+          "text": "Marek Zieliński: Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinis"
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "cp-a-objective",
+      "viewport": "1280x720",
+      "path": "before-cp-a-objective-1280x720.png",
+      "clock": 1.2833000000000008,
+      "battleClock": 16245.249999999982,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 330,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUALLeve a mensagem e o café ao posto da ponte"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:45"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 583,
+          "w": 900,
+          "h": 22,
+          "visible": true,
+          "text": "CP-A · progresso guardado"
+        },
+        "interaction": {
+          "x": 0,
+          "y": 641,
+          "w": 1280,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "cp-a-objective",
+      "viewport": "1024x600",
+      "path": "before-cp-a-objective-1024x600.png",
+      "clock": 1.2833000000000008,
+      "battleClock": 16245.249999999982,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 330,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUALLeve a mensagem e o café ao posto da ponte"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:30:45"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 482,
+          "w": 900,
+          "h": 22,
+          "visible": true,
+          "text": "CP-A · progresso guardado"
+        },
+        "interaction": {
+          "x": 0,
+          "y": 534,
+          "w": 1024,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "interaction-post",
+      "viewport": "1280x720",
+      "path": "before-interaction-post-1280x720.png",
+      "clock": 19.000000000000135,
+      "battleClock": 16262.999999999725,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 330,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUALLeve a mensagem e o café ao posto da ponte"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:31:03"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "E · entregar mensagem e café"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "interaction-post",
+      "viewport": "1024x600",
+      "path": "before-interaction-post-1024x600.png",
+      "clock": 19.000000000000135,
+      "battleClock": 16262.999999999725,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 330,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUALLeve a mensagem e o café ao posto da ponte"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:31:03"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "E · entregar mensagem e café"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "1280x720",
+      "path": "before-objective-update-1280x720.png",
+      "clock": 18.266500000000125,
+      "battleClock": 16390.499899999995,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 251,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUALMantenha contacto com a secção"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:33:10"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 525,
+          "w": 896,
+          "h": 44,
+          "visible": true,
+          "text": "Marek Zieliński: O posto da ponte levou uma bomba. Depois. Agora, os sapadores."
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 641,
+          "w": 1280,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "objective-update",
+      "viewport": "1024x600",
+      "path": "before-objective-update-1024x600.png",
+      "clock": 18.266500000000125,
+      "battleClock": 16390.499899999995,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 251,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUALMantenha contacto com a secção"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:33:10"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 430,
+          "w": 717,
+          "h": 44,
+          "visible": true,
+          "text": "Marek Zieliński: O posto da ponte levou uma bomba. Depois. Agora, os sapadores."
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 534,
+          "w": 1024,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "repair-status",
+      "viewport": "1280x720",
+      "path": "before-repair-status-1280x720.png",
+      "clock": 267.5334000000266,
+      "battleClock": 17200.200600000164,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 240,
+          "h": 68,
+          "visible": true,
+          "text": "OBJETIVO ACTUALProteja o reparo da linhaReparo 37% · sapadores a trabalhar"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:46:40"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 525,
+          "w": 896,
+          "h": 44,
+          "visible": true,
+          "text": "Paweł Krawiec: Precisamos de espaço para trabalhar!"
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 641,
+          "w": 1280,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "repair-status",
+      "viewport": "1024x600",
+      "path": "before-repair-status-1024x600.png",
+      "clock": 267.5334000000266,
+      "battleClock": 17200.200600000164,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 240,
+          "h": 68,
+          "visible": true,
+          "text": "OBJETIVO ACTUALProteja o reparo da linhaReparo 37% · sapadores a trabalhar"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "04:46:40"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 430,
+          "w": 717,
+          "h": 44,
+          "visible": true,
+          "text": "Paweł Krawiec: Precisamos de espaço para trabalhar!"
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 534,
+          "w": 1024,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE100GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "withdrawal",
+      "viewport": "1280x720",
+      "path": "before-withdrawal-1280x720.png",
+      "clock": 749.8332999998659,
+      "battleClock": 21924.66640000773,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 506,
+          "h": 68,
+          "visible": true,
+          "text": "OBJETIVO ACTUALCubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorristaPel"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "06:05:25"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 583,
+          "w": 900,
+          "h": 22,
+          "visible": true,
+          "text": "Um homem caiu na retirada! Suprima o fogo do tabuleiro leste."
+        },
+        "interaction": {
+          "x": 0,
+          "y": 641,
+          "w": 1280,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "withdrawal",
+      "viewport": "1024x600",
+      "path": "before-withdrawal-1024x600.png",
+      "clock": 749.8332999998659,
+      "battleClock": 21924.66640000773,
+      "sceneId": null,
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 506,
+          "h": 68,
+          "visible": true,
+          "text": "OBJETIVO ACTUALCubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorristaPel"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "06:05:25"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 482,
+          "w": 900,
+          "h": 22,
+          "visible": true,
+          "text": "Um homem caiu na retirada! Suprima o fogo do tabuleiro leste."
+        },
+        "interaction": {
+          "x": 0,
+          "y": 534,
+          "w": 1024,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "cp-d-restore",
+      "viewport": "1280x720",
+      "path": "before-cp-d-restore-1280x720.png",
+      "clock": 795.1331999998246,
+      "battleClock": 22272.10719999988,
+      "sceneId": "cs_m01_east_blast",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 547,
+          "h": 68,
+          "visible": true,
+          "text": "OBJETIVO ACTUALSaia da ponte! Para o posto de disparo · (Opcional) Leve Bąk até o socorris"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "06:11:12"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 641,
+          "w": 1280,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "cp-d-restore",
+      "viewport": "1024x600",
+      "path": "before-cp-d-restore-1024x600.png",
+      "clock": 795.1331999998246,
+      "battleClock": 22272.10719999988,
+      "sceneId": "cs_m01_east_blast",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 547,
+          "h": 68,
+          "visible": true,
+          "text": "OBJETIVO ACTUALSaia da ponte! Para o posto de disparo · (Opcional) Leve Bąk até o socorris"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "06:11:12"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 534,
+          "w": 1024,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "outro-card",
+      "viewport": "1280x720",
+      "path": "before-outro-card-1280x720.png",
+      "clock": 1050.0998999995927,
+      "battleClock": 25500,
+      "sceneId": "cs_m01_roll_call",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 208,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL07:05 · Chamada no abrigo"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "07:05:00"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 569,
+          "w": 896,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "outro-card",
+      "viewport": "1024x600",
+      "path": "before-outro-card-1024x600.png",
+      "clock": 1050.0998999995927,
+      "battleClock": 25500,
+      "sceneId": "cs_m01_roll_call",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 208,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL07:05 · Chamada no abrigo"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "07:05:00"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 474,
+          "w": 717,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "outro-dialogue",
+      "viewport": "1280x720",
+      "path": "before-outro-dialogue-1280x720.png",
+      "clock": 1055.3165999995879,
+      "battleClock": 25500,
+      "sceneId": "cs_m01_roll_call",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 208,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL07:05 · Chamada no abrigo"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 1160,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "07:05:00"
+        },
+        "subtitle": {
+          "x": 192,
+          "y": 525,
+          "w": 896,
+          "h": 44,
+          "visible": true,
+          "text": "Marek Zieliński: Chamada."
+        },
+        "message": {
+          "x": 190,
+          "y": 605,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 626,
+          "w": 1280,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 624,
+          "w": 1230,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 1129,
+          "y": 624,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 158,
+          "w": 1280,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    },
+    {
+      "scene": "outro-dialogue",
+      "viewport": "1024x600",
+      "path": "before-outro-dialogue-1024x600.png",
+      "clock": 1055.3165999995879,
+      "battleClock": 25500,
+      "sceneId": "cs_m01_roll_call",
+      "layout": {
+        "objective": {
+          "x": 25,
+          "y": 25,
+          "w": 208,
+          "h": 49,
+          "visible": true,
+          "text": "OBJETIVO ACTUAL07:05 · Chamada no abrigo"
+        },
+        "objective-update": null,
+        "battle-clock": {
+          "x": 904,
+          "y": 30,
+          "w": 92,
+          "h": 19,
+          "visible": true,
+          "text": "07:05:00"
+        },
+        "subtitle": {
+          "x": 154,
+          "y": 430,
+          "w": 717,
+          "h": 44,
+          "visible": true,
+          "text": "Marek Zieliński: Chamada."
+        },
+        "message": {
+          "x": 62,
+          "y": 504,
+          "w": 900,
+          "h": 0,
+          "visible": true,
+          "text": ""
+        },
+        "interaction": {
+          "x": 0,
+          "y": 519,
+          "w": 1024,
+          "h": 15,
+          "visible": true,
+          "text": "Espaço · saltar cena"
+        },
+        "status": {
+          "x": 25,
+          "y": 504,
+          "w": 974,
+          "h": 72,
+          "visible": true,
+          "text": "SAÚDE92GRANADAS ×2KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "ammo": {
+          "x": 873,
+          "y": 504,
+          "w": 126,
+          "h": 72,
+          "visible": true,
+          "text": "KARABINEK WZ.295/40300 m · 5 CARTUCHOS"
+        },
+        "checkpoint": {
+          "x": 0,
+          "y": 132,
+          "w": 1024,
+          "h": 15,
+          "visible": false,
+          "text": "CHECKPOINT ALCANÇADO"
+        },
+        "title-card": null,
+        "fade": null
+      },
+      "overflow": [],
+      "errors": []
+    }
+  ]
+}

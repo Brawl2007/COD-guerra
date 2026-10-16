@@ -1,0 +1,87 @@
+{
+  "clock": 742.3499999998726,
+  "qualitySamples": {
+    "high": {
+      "active": 1,
+      "counts": {
+        "flash": 0,
+        "core": 0,
+        "fire": 0,
+        "smoke": 4,
+        "dust": 9,
+        "shard": 11
+      },
+      "meta": {
+        "kinds": {
+          "small": 0,
+          "bombing": 0,
+          "demolition": 1
+        },
+        "bands": {
+          "near": 0,
+          "mid": 0,
+          "far": 1
+        }
+      },
+      "limits": {
+        "bursts": 16,
+        "flash": 16,
+        "core": 48,
+        "fire": 96,
+        "smoke": 128,
+        "dust": 128,
+        "shards": 96,
+        "lights": 1
+      },
+      "extraLights": 0,
+      "atmosphere": {
+        "puffs": 55,
+        "puffCapacity": 256,
+        "debris": 28,
+        "debrisCapacity": 64,
+        "puffBatches": 8
+      }
+    },
+    "low": {
+      "active": 1,
+      "counts": {
+        "flash": 0,
+        "core": 0,
+        "fire": 0,
+        "smoke": 1,
+        "dust": 5,
+        "shard": 6
+      },
+      "meta": {
+        "kinds": {
+          "small": 0,
+          "bombing": 0,
+          "demolition": 1
+        },
+        "bands": {
+          "near": 0,
+          "mid": 0,
+          "far": 1
+        }
+      },
+      "limits": {
+        "bursts": 16,
+        "flash": 16,
+        "core": 48,
+        "fire": 96,
+        "smoke": 128,
+        "dust": 128,
+        "shards": 96,
+        "lights": 1
+      },
+      "extraLights": 0,
+      "atmosphere": {
+        "puffs": 33,
+        "puffCapacity": 256,
+        "debris": 16,
+        "debrisCapacity": 64,
+        "puffBatches": 8
+      }
+    }
+  }
+}

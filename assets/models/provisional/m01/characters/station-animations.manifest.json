@@ -1,0 +1,20 @@
+{
+  "file": "m01_station_animations.glb",
+  "bytes": 96720,
+  "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5",
+  "sourceRig": "m01_soldier_pl_lod1.glb",
+  "sourceRigSHA256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f",
+  "units": "metres",
+  "forward": "-Z",
+  "clips": [
+    {
+      "name": "drag_wounded",
+      "duration": 1.4,
+      "fps": 30,
+      "loop": true,
+      "speed_mps": 0.65
+    }
+  ],
+  "author": "Original COD Guerra procedural clip; solver and rig from the preserved Claude M01 kit",
+  "note": "Presentation only. Movement, injury, carrier and delivery are decided by M01Simulation. Original project licence pending owner decision."
+}

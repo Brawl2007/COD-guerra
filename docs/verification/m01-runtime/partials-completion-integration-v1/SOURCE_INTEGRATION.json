@@ -1,0 +1,53 @@
+{
+  "integrationBeforeCompletion": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
+  "sources": [
+    {
+      "head": "529e7de5ccbb69408304196a8d4fab27529ecd60",
+      "ancestorOfMergedSource": true
+    },
+    {
+      "head": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+      "ancestorOfMergedSource": true
+    },
+    {
+      "head": "af816578ea1dc3ee2a2b46f5bf14ce245d2cab2a",
+      "ancestorOfMergedSource": true
+    },
+    {
+      "head": "fd2b0c7eb467d509df28910be18661e1d07f6bb9",
+      "ancestorOfMergedSource": true
+    }
+  ],
+  "mergeCommits": [
+    "1affd34b00a4a9f2c28fa96c38e2e3c40caaf972 Bring blocked bridge source forward for authorized partial-task completion",
+    "cbd9485f58f01dc46807a22735fdcbf33d7f1ab7 Merge M01 audio data core director and music deliveries",
+    "f312da0643c2ded8e939552d67e7cabcac007d53 Merge accepted M01 terrain vegetation structures and rail stack",
+    "403c7489cd3171ae5ee3eefff948ba0dddb2a844 Merge accepted M01 T10 T29 vegetation kit and runtime",
+    "14d37c5b9d69b88be9e30837e0bd92dba337413b Integrate accepted M01 T27 protected relief and T30 distant horizon",
+    "fbfca56d3991feb6f1307d2acbd89466c6836b7a Update reserved T27 T30 branch with accepted T31 T33 integration",
+    "096a393fff3b33e221a0c586f58101b2025f9eac Integrate accepted M01 T31 track bed and T33 real props runtime",
+    "80b04746db66a0e848c5c168292bd5bf003b878e Integrate accepted T13 and T32 field structures",
+    "3bdcd994ab791547fb081a5ebff325f1563c33e7 Integrate accepted T09 and T28 materials",
+    "443f74d6940d692ddf424d17e15ebc78a1dfe980 merge: integra\u00e7\u00e3o M01 actualizada sobre T12",
+    "a265980b39ac997dec0f5346dcdc61c7663a2573 merge: T12 kit de props de guerra (claude/m01-prop-kit-v1 @ fe7982f) na integra\u00e7\u00e3o M01",
+    "85a2e120b5bf05b8906968c90d33e8277726af1e merge: T44 grading sobre T20 impostors na integra\u00e7\u00e3o M01 (uni\u00e3o dos quatro pontos de m01-view.js)",
+    "422b00bd111c3d6ee9c7110c3451f4b6dcf09e5b Merge remote-tracking branch 'origin/claude/m01-distant-front-impostors-v1' into HEAD",
+    "78446747776ff50d612270a1363e1450a1be6045 merge: integra\u00e7\u00e3o M01 \u2014 jogo (viewmodel-feel-v2) + dire\u00e7\u00e3o, agentes, hooks e CI (gracious-franklin)"
+  ],
+  "conflictResolution": {
+    "props": "accepted architecture-independent graphics T12 variant used by T33, including paired generator/manifest/tests",
+    "view": "union of all current owners, pause revision keys and dispose cleanup; conflict import order only",
+    "guardTests": "narrow shared helper reconciliation and exact source-string normalization, protected bytes checked separately by current-authority verifier",
+    "trackingDocuments": "newer current global reconciliation retained; all predecessor handoffs and accepted regression records retained"
+  },
+  "protectedSourceBranches": "No original source branches or main modified by this execution",
+  "mainHeadAtAudit": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+  "remoteRecheck": {
+    "at": "2026-10-14T22:31:00Z",
+    "targetHead": "8a0c3622f5375f2c5b5e847db71f4f6e8352ae39",
+    "mainHead": "3a3b3ff7b276ed7a8bfa48b4c1a355ef1de11c81",
+    "note": "main moved externally since initial audit; this execution neither writes main nor requires main to stay at its old audited head. Integration target remains unchanged."
+  },
+  "implementationCommit": "e0d494e51e367383952719d577207c233c290fbb",
+  "stage": "implemented candidate; independent verification/review pending"
+}

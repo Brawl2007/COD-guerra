@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+[1/1] tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops
+  1) tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 300000ms exceeded.
+
+      51 |   // avoid native pointer repositioning, which can change the locked look vector before the click is consumed.
+      52 |   await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:430,bubbles:true})));
+    > 53 |   await page.waitForFunction(()=>window.gameDiagnostics().player.pitch<-.75);
+         |              ^
+      54 |   const beforeShot=await page.evaluate(()=>window.gameDiagnostics());
+      55 |   await page.evaluate(()=>{window.dispatchEvent(new MouseEvent('mousedown',{button:0,bubbles:true}));window.dispatchEvent(new MouseEvent('mouseup',{button:0,bubbles:true}));});
+      56 |   await page.waitForFunction(({mag,shot,impact})=>{
+        at /tmp/claude-0/base/tests/browser/m01-audio-production.spec.js:53:14
+
+    Error Context: test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-audio-production-M01-b-55855-oad-without-duplicate-loops/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  Slow test file: tests/browser/m01-audio-production.spec.js (5.1m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests/browser/m01-audio-production.spec.js:36:1 › M01 battlefield audio follows real rifle/MG/impact/blast events and survives pause checkpoint reload without duplicate loops 

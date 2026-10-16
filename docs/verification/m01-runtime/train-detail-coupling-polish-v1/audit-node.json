@@ -1,0 +1,857 @@
+{
+  "task": "M01-TRAIN-DETAIL-COUPLING-POLISH-V1",
+  "base": "99309d9cb023cc94a07d41ff863e1362e4460570",
+  "note": "Train group only (Node, real wagon GLB geometry; atlas textures counted per type). Not a GPU frame-time measurement.",
+  "railTop": -0.82,
+  "baseWagonsWithoutAnyRail": 27,
+  "bufferGapBetweenBodies_m": {
+    "covered:0": 0,
+    "covered:1": 0.04,
+    "covered:2": 0.12,
+    "open:0": 0,
+    "open:1": 0.04,
+    "open:2": 1.18
+  },
+  "fit": [
+    {
+      "version": "base",
+      "asset": "covered:0",
+      "wagon": "train963_wagon_01",
+      "treadAboveRailTop_m": {
+        "inner": 0.826,
+        "centre": 0.8325,
+        "outer": 0.839
+      },
+      "lateralOffsetToTrackCentre_m": -3.037
+    },
+    {
+      "version": "base",
+      "asset": "covered:1",
+      "wagon": "train963_wagon_01",
+      "treadAboveRailTop_m": {
+        "inner": 0.8636,
+        "centre": 0.8696,
+        "outer": 0.8756
+      },
+      "lateralOffsetToTrackCentre_m": -3.037
+    },
+    {
+      "version": "base",
+      "asset": "covered:2",
+      "wagon": "train963_wagon_01",
+      "treadAboveRailTop_m": {
+        "inner": 0.8636,
+        "centre": 0.8696,
+        "outer": 0.8756
+      },
+      "lateralOffsetToTrackCentre_m": -3.037
+    },
+    {
+      "version": "base",
+      "asset": "open:0",
+      "wagon": "train963_wagon_04",
+      "treadAboveRailTop_m": {
+        "inner": 0.826,
+        "centre": 0.8325,
+        "outer": 0.839
+      },
+      "lateralOffsetToTrackCentre_m": -3.394
+    },
+    {
+      "version": "base",
+      "asset": "open:1",
+      "wagon": "train963_wagon_04",
+      "treadAboveRailTop_m": {
+        "inner": 0.8549,
+        "centre": 0.8515,
+        "outer": 0.8482
+      },
+      "lateralOffsetToTrackCentre_m": -3.394
+    },
+    {
+      "version": "base",
+      "asset": "open:2",
+      "wagon": "train963_wagon_04",
+      "treadAboveRailTop_m": {
+        "inner": 0.8549,
+        "centre": 0.8515,
+        "outer": 0.8482
+      },
+      "lateralOffsetToTrackCentre_m": -3.394
+    },
+    {
+      "version": "head",
+      "asset": "covered:0",
+      "wagon": "train963_wagon_01",
+      "treadAboveRailTop_m": {
+        "inner": -0.0065,
+        "centre": 0,
+        "outer": 0.0065
+      },
+      "lateralOffsetToTrackCentre_m": 0
+    },
+    {
+      "version": "head",
+      "asset": "covered:1",
+      "wagon": "train963_wagon_01",
+      "treadAboveRailTop_m": {
+        "inner": 0.0311,
+        "centre": 0.0371,
+        "outer": 0.0431
+      },
+      "lateralOffsetToTrackCentre_m": 0
+    },
+    {
+      "version": "head",
+      "asset": "covered:2",
+      "wagon": "train963_wagon_01",
+      "treadAboveRailTop_m": {
+        "inner": 0.0311,
+        "centre": 0.0371,
+        "outer": 0.0431
+      },
+      "lateralOffsetToTrackCentre_m": 0
+    },
+    {
+      "version": "head",
+      "asset": "open:0",
+      "wagon": "train963_wagon_04",
+      "treadAboveRailTop_m": {
+        "inner": -0.0065,
+        "centre": 0,
+        "outer": 0.0065
+      },
+      "lateralOffsetToTrackCentre_m": 0
+    },
+    {
+      "version": "head",
+      "asset": "open:1",
+      "wagon": "train963_wagon_04",
+      "treadAboveRailTop_m": {
+        "inner": 0.0224,
+        "centre": 0.019,
+        "outer": 0.0157
+      },
+      "lateralOffsetToTrackCentre_m": 0
+    },
+    {
+      "version": "head",
+      "asset": "open:2",
+      "wagon": "train963_wagon_04",
+      "treadAboveRailTop_m": {
+        "inner": 0.0224,
+        "centre": 0.019,
+        "outer": 0.0157
+      },
+      "lateralOffsetToTrackCentre_m": 0
+    }
+  ],
+  "counters": {
+    "base": [
+      {
+        "view": "wagon-near",
+        "quality": "high",
+        "lod": {
+          "0": 15,
+          "1": 31,
+          "2": 19
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 69,
+          "1": 139,
+          "2": 85
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 75584,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "coupling-pair",
+        "quality": "high",
+        "lod": {
+          "0": 17,
+          "1": 30,
+          "2": 18
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 77,
+          "1": 136,
+          "2": 80
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 78502,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "underframe",
+        "quality": "high",
+        "lod": {
+          "0": 18,
+          "1": 31,
+          "2": 16
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 82,
+          "1": 139,
+          "2": 72
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 80800,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "consist-medium",
+        "quality": "high",
+        "lod": {
+          "0": 14,
+          "1": 31,
+          "2": 20
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 64,
+          "1": 139,
+          "2": 90
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 73768,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "consist-far",
+        "quality": "high",
+        "lod": {
+          "0": 0,
+          "1": 49,
+          "2": 16
+        },
+        "glbBatches": 16,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 221,
+          "2": 72
+        },
+        "drawCalls": 16,
+        "shadowCasters": 0,
+        "triangles": 59536,
+        "instances": 293,
+        "geometries": 16,
+        "materials": 4,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "coupling-pair",
+        "quality": "low",
+        "lod": {
+          "0": 9,
+          "1": 13,
+          "2": 43
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 41,
+          "1": 59,
+          "2": 193
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 54554,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "consist-medium",
+        "quality": "low",
+        "lod": {
+          "0": 6,
+          "1": 13,
+          "2": 46
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 28,
+          "1": 59,
+          "2": 206
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 49338,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "consist-daylight",
+        "quality": "high",
+        "lod": {
+          "0": 16,
+          "1": 30,
+          "2": 19
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 72,
+          "1": 136,
+          "2": 85
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 76686,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "locomotive-wagon1",
+        "quality": "high",
+        "lod": {
+          "0": 13,
+          "1": 30,
+          "2": 22
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 59,
+          "1": 136,
+          "2": 98
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 71470,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "coupling-pair",
+        "quality": "medium",
+        "lod": {
+          "0": 13,
+          "1": 22,
+          "2": 30
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 59,
+          "1": 100,
+          "2": 134
+        },
+        "drawCalls": 24,
+        "shadowCasters": 0,
+        "triangles": 66834,
+        "instances": 293,
+        "geometries": 24,
+        "materials": 6,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "playable-east-edge",
+        "quality": "high",
+        "lod": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "glbBatches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "drawCalls": 8,
+        "shadowCasters": 0,
+        "triangles": 31108,
+        "instances": 293,
+        "geometries": 8,
+        "materials": 2,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "playable-east-edge",
+        "quality": "low",
+        "lod": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "glbBatches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "drawCalls": 8,
+        "shadowCasters": 0,
+        "triangles": 31108,
+        "instances": 293,
+        "geometries": 8,
+        "materials": 2,
+        "textures": 2,
+        "detail": null
+      },
+      {
+        "view": "west-bridgehead",
+        "quality": "medium",
+        "lod": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "glbBatches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "drawCalls": 8,
+        "shadowCasters": 0,
+        "triangles": 31108,
+        "instances": 293,
+        "geometries": 8,
+        "materials": 2,
+        "textures": 2,
+        "detail": null
+      }
+    ],
+    "head": [
+      {
+        "view": "wagon-near",
+        "quality": "high",
+        "lod": {
+          "0": 15,
+          "1": 31,
+          "2": 19
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 69,
+          "1": 139,
+          "2": 85
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 130534,
+        "instances": 1884,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 15,
+            "mid": 31,
+            "far": 19
+          },
+          "drawCalls": 11,
+          "triangles": 54950
+        }
+      },
+      {
+        "view": "coupling-pair",
+        "quality": "high",
+        "lod": {
+          "0": 17,
+          "1": 30,
+          "2": 18
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 77,
+          "1": 136,
+          "2": 80
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 136468,
+        "instances": 1891,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 17,
+            "mid": 30,
+            "far": 18
+          },
+          "drawCalls": 11,
+          "triangles": 57966
+        }
+      },
+      {
+        "view": "underframe",
+        "quality": "high",
+        "lod": {
+          "0": 18,
+          "1": 31,
+          "2": 16
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 82,
+          "1": 139,
+          "2": 72
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 140622,
+        "instances": 1897,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 18,
+            "mid": 31,
+            "far": 16
+          },
+          "drawCalls": 11,
+          "triangles": 59822
+        }
+      },
+      {
+        "view": "consist-medium",
+        "quality": "high",
+        "lod": {
+          "0": 14,
+          "1": 31,
+          "2": 20
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 64,
+          "1": 139,
+          "2": 90
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 127046,
+        "instances": 1877,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 14,
+            "mid": 31,
+            "far": 20
+          },
+          "drawCalls": 11,
+          "triangles": 53278
+        }
+      },
+      {
+        "view": "consist-far",
+        "quality": "high",
+        "lod": {
+          "0": 0,
+          "1": 49,
+          "2": 16
+        },
+        "glbBatches": 16,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 221,
+          "2": 72
+        },
+        "drawCalls": 23,
+        "shadowCasters": 0,
+        "triangles": 94238,
+        "instances": 1857,
+        "geometries": 23,
+        "materials": 8,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 0,
+            "mid": 49,
+            "far": 16
+          },
+          "drawCalls": 7,
+          "triangles": 34702
+        }
+      },
+      {
+        "view": "coupling-pair",
+        "quality": "low",
+        "lod": {
+          "0": 9,
+          "1": 13,
+          "2": 43
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 41,
+          "1": 59,
+          "2": 193
+        },
+        "drawCalls": 31,
+        "shadowCasters": 0,
+        "triangles": 78560,
+        "instances": 1751,
+        "geometries": 31,
+        "materials": 10,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 0,
+            "mid": 9,
+            "far": 56
+          },
+          "drawCalls": 7,
+          "triangles": 24006
+        }
+      },
+      {
+        "view": "consist-medium",
+        "quality": "low",
+        "lod": {
+          "0": 6,
+          "1": 13,
+          "2": 46
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 28,
+          "1": 59,
+          "2": 206
+        },
+        "drawCalls": 31,
+        "shadowCasters": 0,
+        "triangles": 72576,
+        "instances": 1744,
+        "geometries": 31,
+        "materials": 10,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 0,
+            "mid": 6,
+            "far": 59
+          },
+          "drawCalls": 7,
+          "triangles": 23238
+        }
+      },
+      {
+        "view": "consist-daylight",
+        "quality": "high",
+        "lod": {
+          "0": 16,
+          "1": 30,
+          "2": 19
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 72,
+          "1": 136,
+          "2": 85
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 133004,
+        "instances": 1886,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 16,
+            "mid": 30,
+            "far": 19
+          },
+          "drawCalls": 11,
+          "triangles": 56318
+        }
+      },
+      {
+        "view": "locomotive-wagon1",
+        "quality": "high",
+        "lod": {
+          "0": 13,
+          "1": 30,
+          "2": 22
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 59,
+          "1": 136,
+          "2": 98
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 122892,
+        "instances": 1871,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 13,
+            "mid": 30,
+            "far": 22
+          },
+          "drawCalls": 11,
+          "triangles": 51422
+        }
+      },
+      {
+        "view": "coupling-pair",
+        "quality": "medium",
+        "lod": {
+          "0": 13,
+          "1": 22,
+          "2": 30
+        },
+        "glbBatches": 24,
+        "activeInstancesByLod": {
+          "0": 59,
+          "1": 100,
+          "2": 134
+        },
+        "drawCalls": 35,
+        "shadowCasters": 8,
+        "triangles": 116160,
+        "instances": 1851,
+        "geometries": 35,
+        "materials": 11,
+        "textures": 4,
+        "detail": {
+          "instancesByTier": {
+            "near": 13,
+            "mid": 22,
+            "far": 30
+          },
+          "drawCalls": 11,
+          "triangles": 49326
+        }
+      },
+      {
+        "view": "playable-east-edge",
+        "quality": "high",
+        "lod": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "glbBatches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "drawCalls": 10,
+        "shadowCasters": 0,
+        "triangles": 32266,
+        "instances": 326,
+        "geometries": 10,
+        "materials": 4,
+        "textures": 3,
+        "detail": {
+          "instancesByTier": {
+            "near": 0,
+            "mid": 0,
+            "far": 65
+          },
+          "drawCalls": 2,
+          "triangles": 1158
+        }
+      },
+      {
+        "view": "playable-east-edge",
+        "quality": "low",
+        "lod": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "glbBatches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "drawCalls": 10,
+        "shadowCasters": 0,
+        "triangles": 32266,
+        "instances": 326,
+        "geometries": 10,
+        "materials": 4,
+        "textures": 3,
+        "detail": {
+          "instancesByTier": {
+            "near": 0,
+            "mid": 0,
+            "far": 65
+          },
+          "drawCalls": 2,
+          "triangles": 1158
+        }
+      },
+      {
+        "view": "west-bridgehead",
+        "quality": "medium",
+        "lod": {
+          "0": 0,
+          "1": 0,
+          "2": 65
+        },
+        "glbBatches": 8,
+        "activeInstancesByLod": {
+          "0": 0,
+          "1": 0,
+          "2": 293
+        },
+        "drawCalls": 10,
+        "shadowCasters": 0,
+        "triangles": 32266,
+        "instances": 326,
+        "geometries": 10,
+        "materials": 4,
+        "textures": 3,
+        "detail": {
+          "instancesByTier": {
+            "near": 0,
+            "mid": 0,
+            "far": 65
+          },
+          "drawCalls": 2,
+          "triangles": 1158
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "head": "6878d01e895787342d5f43b98524d47d53475943",
+  "normal": {
+    "run": 38279380748,
+    "job": 114912642743,
+    "conclusion": "success",
+    "tests": 661,
+    "tooling": 173,
+    "buildModules": 89
+  },
+  "focused": {
+    "run": 38279380744,
+    "job": 114912641972,
+    "conclusion": "success",
+    "browserPassed": 3
+  },
+  "documentationHead": "75598ed64e27cee5a7bf9da5fc5c48831556c6ba",
+  "documentationCI": {
+    "run": 38308565925,
+    "nodeJob": 115008449625,
+    "conclusion": "success",
+    "productionBytesIdenticalToAcceptedSource": true
+  },
+  "integration": {
+    "head": "096a393fff3b33e221a0c586f58101b2025f9eac",
+    "nodeTests": 661,
+    "passed": 661,
+    "failed": 0,
+    "buildModules": 89
+  }
+}

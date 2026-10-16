@@ -1,0 +1,7 @@
+SPDX-License-Identifier: CC0-1.0
+Original COD Guerra geometry and generated paint atlas, 2026.
+No imported game geometry, third-party texture or railway markings.
+To the extent possible under law, the authors waive copyright and related rights
+in these authored assets under Creative Commons CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+The historical identity of the locomotive in train 963 remains unknown (P16).

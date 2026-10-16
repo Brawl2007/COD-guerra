@@ -73,20 +73,63 @@ const VIEWS = {
   },
   async weapons() {
     const tiles = [];
+    const full = (url, name, show, eye = [0.95, 0.12, -0.22], at = [0, 0.02, -0.2]) => scene(800, 400, async ([url, name, show, eye, at]) => {
+      const s = window.stage; s.ground(false);
+      const a = await s.add(url, { show }), p = s.bone(a, 'weapon');
+      s.camera([p[0] + eye[0], p[1] + eye[1], p[2] + eye[2]], [p[0] + at[0], p[1] + at[1], p[2] + at[2]], 40); s.label(name);
+    }, [url, name, show, eye, at]);
     for (const [url, name] of [[PL, 'kb wz.29 (alavanca recta)'], [DE, 'Kar98k (alavanca dobrada)']]) {
-      tiles.push(await scene(800, 400, async ([url, name]) => {
-        const s = window.stage; s.ground(false);
-        const a = await s.add(url, { show: ['rifle'] }), p = s.bone(a, 'weapon');
-        s.camera([p[0] + 0.95, p[1] + 0.12, p[2] - 0.22], [p[0], p[1] + 0.02, p[2] - 0.2], 40); s.label(name);
-      }, [url, name]));
+      tiles.push(await full(url, name, ['rifle']));
       tiles.push(await scene(800, 400, async ([url, name]) => {
         const s = window.stage; s.ground(false);
         const a = await s.add(url, { show: ['rifle', 'clip'] }), p = s.bone(a, 'weapon_bolt');
         s.camera([p[0] + 0.22, p[1] + 0.12, p[2] - 0.05], [p[0], p[1], p[2] - 0.06], 40); s.label(`${name}: ferrolho e clipe de 5`);
       }, [url, name]));
     }
+    tiles.push(await full(PL, 'kb wz.98a de Bąk (1,25 m, alavanca recta, mira sem orelhas)', ['rifle_wz98a'], [1.1, 0.12, -0.27], [0, 0, -0.27]));
+    tiles.push(await scene(800, 400, async () => {
+      const s = window.stage; s.ground(false);
+      const a = await s.add('/assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb', { show: ['rifle'], position: [0, 0.09, 0] });
+      await s.add('/assets/models/provisional/m01/characters/m01_soldier_pl_lod0.glb', { show: ['rifle_wz98a'], position: [0, -0.09, 0] });
+      const p = s.bone(a, 'weapon');
+      s.camera([p[0] + 1.25, p[1] - 0.05, p[2] - 0.3], [p[0], p[1] - 0.09, p[2] - 0.3], 40); s.label('wz.29 (em cima) e wz.98a: 1,10 m e 1,25 m');
+    }));
+    tiles.push(await full(PL, 'rkm wz.28 de Kowal: bípode aberto com patins, carregador de 20', ['rkm_wz28', 'rkm_bipod_open'], [0.95, 0.06, -0.2], [0, -0.06, -0.2]));
+    tiles.push(await full(PL, 'rkm wz.28 (lado esquerdo): alavanca de armar, selector, bípode dobrado', ['rkm_wz28', 'rkm_bipod_folded'], [-0.95, 0.12, -0.2], [0, -0.03, -0.2]));
     await st.eval(() => { window.stage.ground(true); });
     save('weapons.png', grid(tiles, 2));
+  },
+  async lineup_kowal_bak() {
+    const K = ['body', 'gear', 'head_kowal', 'helmet_wz31', 'rank_st_strzelec', 'rkm_wz28', 'rkm_bipod_folded', 'rkm_pouch'];
+    const Q = ['body', 'gear', 'head_bak', 'helmet_wz31', 'rifle_wz98a', 'clip'];
+    const tiles = [];
+    for (const [label, az, show] of [['Kowal, st. strzelec, rkm wz.28', 0, K], ['Kowal 3/4 (bolsa de carregadores)', 35, K], ['Bąk, strzelec, kb wz.98a', 0, Q], ['Bąk 3/4', 35, Q]])
+      tiles.push(await actorTile(PL, { show }, 'spine_02', 2.7, az, 6, label));
+    tiles.push(await actorTile(PL, { show: Q, clip: 'aim', f: 0 }, 'spine_02', 2.4, 60, 8, 'Bąk: aim com a wz.98a'));
+    tiles.push(await actorTile(PL, { show: Q, clip: 'fire_bolt', f: 0.6 }, 'weapon_bolt', 0.8, 70, 25, 'Bąk: fire_bolt (mesmo ferrolho Mauser)'));
+    tiles.push(await actorTile(PL, { show: Q, clip: 'reload_clip', f: 0.45 }, 'weapon_bolt', 0.85, 55, 28, 'Bąk: reload_clip'));
+    tiles.push(await actorTile(PL, { show: Q, clip: 'walk', f: 0.25 }, 'spine_01', 2.6, 90, 8, 'Bąk: walk'));
+    save('lineup_kowal_bak.png', grid(tiles, 4));
+  },
+  async clip_rkm() {
+    const K = ['body', 'gear', 'head_kowal', 'helmet_wz31', 'rank_st_strzelec', 'rkm_wz28', 'rkm_pouch'];
+    const fold = [...K, 'rkm_bipod_folded'], open = [...K, 'rkm_bipod_open'];
+    const tiles = [];
+    for (const [clip, f, az, el, d, bone, show, txt] of [
+      ['rkm_standing_idle', 0, 30, 8, 2.6, 'spine_02', fold, ''], ['rkm_aim', 0, 60, 8, 2.4, 'spine_02', fold, ''], ['rkm_fire_burst', 0.2, 90, 6, 2.2, 'spine_02', fold, 'rajada de 3'],
+      ['rkm_walk', 0.25, 70, 8, 2.6, 'spine_01', fold, ''], ['rkm_crouched_idle', 0, 40, 10, 2.4, 'spine_01', fold, ''],
+      ['rkm_prone', 0, 75, 8, 2.9, 'spine_03', open, 'no bípode'], ['rkm_prone_fire', 0.1, 150, 25, 2.1, 'spine_03', open, 'rajada'],
+      ['rkm_clean', 0.15, 20, 25, 1.8, 'spine_01', [...fold, 'rag'], 'pano (abertura)']])
+      tiles.push(await actorTile(PL, { clip, f, show }, bone, d, az, el, `${clip} ${txt}`));
+    save('clip_rkm.png', grid(tiles, 4));
+  },
+  async clip_rkm_reload() {
+    const show = ['body', 'gear', 'head_kowal', 'helmet_wz31', 'rank_st_strzelec', 'rkm_wz28', 'rkm_pouch', 'rkm_bipod_folded'];
+    const tiles = [];
+    for (const [f, txt] of [[0.13, 'mão ao carregador'], [0.17, 'puxa o vazio'], [0.24, 'cai (mag_drop)'], [0.36, 'à bolsa'], [0.5, 'novo carregador'],
+      [0.6, 'ao poço'], [0.69, 'alavanca'], [0.75, 'armada (handle_back)']])
+      tiles.push(await actorTile(PL, { clip: 'rkm_reload', f, show }, 'weapon', 1.6, -55, 22, `rkm_reload — ${txt}`));
+    save('clip_rkm_reload.png', grid(tiles, 4));
   },
   async clip_poses() {
     const tiles = [];

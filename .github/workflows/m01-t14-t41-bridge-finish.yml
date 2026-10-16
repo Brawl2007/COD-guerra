@@ -1,0 +1,88 @@
+name: M01 T14 T41 bridge browser and authority
+on:
+  push:
+    branches: [codex/m01-t14-t41-bridge-finish-v2]
+    paths:
+      - src/render/m01-bridge-*.js
+      - src/render/m01-view.js
+      - assets/models/provisional/m01/m01-bridges/**
+      - tools/assets/m01-bridges/materials/**
+      - tools/assets/m01-bridges/impostors/**
+      - tests/m01-bridge-*.test.js
+      - tests/browser/m01-bridge-*.spec.js
+      - tools/verification/*bridge-finish-v2*
+      - .github/workflows/m01-t14-t41-bridge-finish.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - src/render/m01-bridge-*.js
+      - src/render/m01-view.js
+      - assets/models/provisional/m01/m01-bridges/**
+      - tools/assets/m01-bridges/materials/**
+      - tools/assets/m01-bridges/impostors/**
+      - tests/browser/m01-bridge-*.spec.js
+      - tools/verification/*bridge-finish-v2*
+      - .github/workflows/m01-t14-t41-bridge-finish.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: m01-t14-t41-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  browser-authority:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      M01_BRIDGE_EXTERNAL_SERVER: '1'
+      M01_BASE_URL: http://127.0.0.1:4190/COD-guerra/
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Exact immutable source and deterministic authored sidecar
+        run: |
+          node tools/verification/m01-bridge-finish-v2-authority.mjs
+          node tools/assets/m01-bridges/materials/generate.mjs --check
+          node tools/assets/m01-bridges/impostors/generate.mjs --check
+      - name: Prepare exact base and production browser fixtures
+        run: |
+          git worktree add --detach /tmp/m01-bridge-base 8a0c3622f5375f2c5b5e847db71f4f6e8352ae39
+          ln -s "$GITHUB_WORKSPACE/node_modules" /tmp/m01-bridge-base/node_modules
+          (cd /tmp/m01-bridge-base && ./node_modules/.bin/vite build)
+          node tools/verification/m01-bridge-finish-v2-build.mjs
+          node tools/verification/m01-bridge-finish-v2-source.mjs test-results/bridge-finish-v2/source.json
+          (cd /tmp/m01-bridge-base && ./node_modules/.bin/vite preview --host 127.0.0.1 --port 4188 > "$GITHUB_WORKSPACE/test-results/bridge-finish-v2/base-preview.log" 2>&1) &
+          ./node_modules/.bin/vite preview --host 127.0.0.1 --port 4190 > test-results/bridge-finish-v2/current-preview.log 2>&1 &
+      - run: npx playwright install --with-deps chromium
+      - name: Original all-family material viewer before dependent bridge runtime
+        env: {M01_BRIDGE_EVIDENCE: test-results/bridge-finish-v2/material-viewer, M01_BRIDGE_REPORT: test-results/bridge-finish-v2/material-viewer-report.json}
+        run: npx playwright test --config tools/verification/playwright.bridge-finish-v2.config.js m01-bridge-material-kit.spec.js
+      - name: Exact untouched base frozen phase views
+        env:
+          M01_BASE_URL: http://127.0.0.1:4188/COD-guerra/
+          M01_BASELINE_CAPTURE: '1'
+          M01_BRIDGE_REPORT: test-results/bridge-finish-v2/base-report.json
+          M01_BRIDGE_EVIDENCE: test-results/bridge-finish-v2/base
+        run: npx playwright test --config tools/verification/playwright.bridge-finish-v2.config.js m01-bridge-finish-runtime.spec.js
+      - name: Actual current runtime, real checkpoint restores, failure and residency
+        env: {M01_BRIDGE_EVIDENCE: test-results/bridge-finish-v2/current, M01_BRIDGE_REPORT: test-results/bridge-finish-v2/current-report.json}
+        run: npx playwright test --config tools/verification/playwright.bridge-finish-v2.config.js m01-bridge-finish-runtime.spec.js
+      - name: Six exact phase comparisons and unaffected control frames
+        run: node tools/verification/m01-bridge-finish-v2-compare.mjs test-results/bridge-finish-v2/base test-results/bridge-finish-v2/current
+      - name: Twenty-four active-owner real-control authority futures
+        run: node tools/verification/m01-bridge-finish-v2-future-batch.mjs --baseline /tmp/m01-bridge-base --out test-results/bridge-finish-v2/futures.json
+      - name: Coupled bridge, rail/contact, material, terrain, vegetation, water and demolition obligations
+        run: npx playwright test --config tools/verification/playwright.bridge-finish-v2-regressions.config.js --workers=1 --retries=0
+      - name: Evidence remains attached to exact frozen source
+        run: node tools/verification/m01-bridge-finish-v2-source.mjs --check test-results/bridge-finish-v2/source.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-t14-t41-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: error

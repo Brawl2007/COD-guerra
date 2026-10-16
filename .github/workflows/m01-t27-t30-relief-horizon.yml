@@ -1,0 +1,33 @@
+name: M01 T27 T30 browser and authority
+on:
+  push:
+    branches: [codex/m01-t27-t30-relief-horizon-v1]
+    paths: [src/render/**, tests/browser/*relief-horizon*.spec.js, tools/verification/*relief-horizon*, .github/workflows/m01-t27-t30-relief-horizon.yml]
+  pull_request:
+    branches: [main]
+    paths: [src/render/m01-terrain-envelope.js, src/render/m01-terrain-relief.js, src/render/m01-far-landscape.js, tests/browser/*relief-horizon*.spec.js]
+permissions: {contents: read}
+concurrency:
+  group: m01-t27-t30-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  browser-authority:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Preserve game, world, authored data, assets and previous renderer owners
+        run: git diff --exit-code 293a4f116b9b28818b7ff3bda4d83cc49b01014f HEAD -- src/game src/core src/world missions assets tools/assets src/render/m01-track-bed.js src/render/m01-props-runtime.js src/render/m01-environment.js src/render/m01-environment-props.js src/render/m01-train-consist-detail.js src/render/m01-locomotive.js src/render/m01-train-wagons.js src/render/m01-station-architecture.js src/render/m01-field-structures.js src/render/m01-bridge-structure.js src/render/m01-terrain-material.js src/render/m01-lighting.js package.json package-lock.json playwright.config.js vite.config.js
+      - run: npx playwright install --with-deps chromium
+      - name: Production canonical relief, skyline, paused quality and resource plateau
+        # Compile only to serve this production browser harness; normal CI owns build validation and Node/tooling.
+        run: |
+          npx vite build
+          npx playwright test --config tools/verification/playwright.m01-relief-horizon.config.js --workers=1 --retries=0
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: {name: 'm01-t27-t30-${{ github.sha }}', path: test-results/, if-no-files-found: error}

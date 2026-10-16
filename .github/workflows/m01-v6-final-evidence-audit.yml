@@ -1,0 +1,120 @@
+name: M01 V6 final evidence audit
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths: [.github/workflows/m01-v6-final-evidence-audit.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  final-evidence:
+    if: github.ref == 'refs/heads/codex/m01-final-production-consolidation-v6'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0, ref: '${{ github.sha }}'}
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 37822021393
+          name: m01-v6-fx-followup-9a9946450b0ba77e8c649d0b28def2542e188c4e
+          path: /tmp/m01-v6-final-fx
+      - run: python3 -m pip install Pillow
+      - name: Verify production protection, report integrity, combined coverage and original captures
+        run: |
+          git diff --exit-code 2a2a56734861b0801234d7ddf3cda66c0100f326 HEAD -- src assets package.json package-lock.json playwright.config.js
+          python3 - <<'PY'
+          import json,gzip,hashlib,subprocess,base64,shutil
+          from pathlib import Path
+          from PIL import Image,ImageDraw,ImageChops
+          p=Path('docs/verification/m01-runtime/final-production-consolidation-v6')
+          out=p/'fx-final';out.mkdir(exist_ok=True)
+          inv=json.loads((p/'INVARIANTS.json').read_text())
+          for f in inv['protectedFiles']:
+              raw=Path(f['path']).read_bytes()
+              assert hashlib.sha256(raw).hexdigest()==f['sha256'],f['path']
+              old=subprocess.check_output(['git','show',inv['base']+':'+f['path']])
+              assert raw==old,f['path']
+          fullRaw=gzip.decompress((p/'BROWSER_FULL_CI.json.gz').read_bytes())
+          full=json.loads(fullRaw);summary=json.loads((p/'BROWSER_FULL_CI_SUMMARY.json').read_text())
+          assert hashlib.sha256(fullRaw).hexdigest()==summary['rawReportSha256']
+          assert full['stats']['expected']==83 and full['stats']['unexpected']==1 and not full['errors']
+          def cases(r):
+              out=[]
+              def walk(s):
+                  for spec in s.get('specs',[]):
+                      for test in spec['tests']: out.append({'file':spec['file'],'title':spec['title'],'test':test})
+                  for child in s.get('suites',[]):walk(child)
+              for s in r['suites']:walk(s)
+              return out
+          rig=json.loads((p/'RIG_FOLLOWUP.json').read_text())
+          fx=json.loads((p/'FX_FOLLOWUP.json').read_text())
+          for report,count in [(rig,3),(fx,2)]:
+              assert report['stats']['expected']==count and all(report['stats'][k]==0 for k in ['unexpected','skipped','flaky']) and not report['errors']
+              assert all(c['test']['status']=='expected' and len(c['test']['results'])==1 and c['test']['results'][0]['status']=='passed' and c['test']['results'][0]['retry']==0 for c in cases(report))
+          replacements={(c['file'],c['title']):{'runId':37813098794,'source':'RIG_FOLLOWUP.json'} for c in cases(rig)}
+          replacements.update({(c['file'],c['title']):{'runId':37822021393,'source':'FX_FOLLOWUP.json'} for c in cases(fx)})
+          combined=[]
+          for c in cases(full):
+              key=(c['file'],c['title'])
+              if key in replacements: source=replacements[key]
+              else:
+                  assert c['test']['status']=='expected' and c['test']['results'][0]['status']=='passed',key
+                  source={'runId':37802820440,'source':'BROWSER_FULL_CI.json.gz'}
+              combined.append({'file':key[0],'title':key[1],'observed':'PASS',**source})
+          assert len(combined)==84 and len({(c['file'],c['title']) for c in combined})==84
+          (p/'BROWSER_COMBINED_COVERAGE_FINAL.json').write_text(json.dumps({'distinctPassingCases':84,'singleFullSuitePass':False,'historicalCompleteRun':{'pass':83,'fail':1,'runId':37802820440},'fixtureDeltaProof':'TEST_DELTA_PROOF.json','cases':combined},indent=2)+'\n')
+          for n,c in enumerate(cases(fx),1):
+              attachments=c['test']['results'][0]['attachments']
+              for a in attachments:
+                  if a['contentType']!='application/json':continue
+                  value=json.loads(base64.b64decode(a['body']))
+                  safe=a['name'].replace('.png.json','.json')
+                  if not safe.endswith('.json'):safe+='.json'
+                  (out/f'{n}-{safe}').write_text(json.dumps(value,indent=2)+'\n')
+                  if a['name']=='quality-same-clock':
+                      low=value['qualitySamples']['low'];high=value['qualitySamples']['high']
+                      for layer in ['smoke','dust']:assert 0<low['counts'][layer]<=high['counts'][layer]
+          names=['east-demolition-low.png','east-demolition-high.png','east-demolition-smoke-high.png','raid-0530-medium-far.png']
+          src=Path('/tmp/m01-v6-final-fx')
+          for name in names:
+              found=sorted(src.rglob(name),key=lambda f:('repeat' in f.parent.name,str(f)))
+              assert len(found)==2,(name,found)
+              for n,f in enumerate(found,1):shutil.copy2(f,out/f'{n}-{name}')
+          for n in [1,2]:
+              board=Image.new('RGB',(1280,780),'#18191b');draw=ImageDraw.Draw(board)
+              for i,name in enumerate(names):
+                  im=Image.open(out/f'{n}-{name}').convert('RGB')
+                  assert im.size==(1280,720)
+                  im.thumbnail((640,360));x=(i%2)*640;y=(i//2)*390
+                  board.paste(im,(x,y));draw.text((x+5,y+366),name,fill='white')
+              board.save(out/f'fx-followup-{n}.jpg',quality=92)
+          paired=0
+          for f in sorted((p/'visual').glob('V5-*.png')):
+              candidate=f.with_name(f.name.replace('V5-','V6-',1))
+              a=Image.open(f).convert('RGB');b=Image.open(candidate).convert('RGB')
+              assert a.size==b.size and ImageChops.difference(a,b).getbbox() is None,f.name
+              paired+=1
+          assert paired==30
+          manifest=[{'path':str(f.relative_to(p)),'bytes':f.stat().st_size,'sha256':hashlib.sha256(f.read_bytes()).hexdigest()} for f in sorted(out.iterdir())]
+          (p/'FINAL_CAPTURE_MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          check={'status':'PASS','protectedFilesEqualToV5':len(inv['protectedFiles']),'productionEqualTo':'2a2a56734861b0801234d7ddf3cda66c0100f326','historicalFullReportIntegrityVerified':True,'distinctPassingCases':84,'singleFullSuitePass':False,'rigIndependentPasses':3,'fxIndependentPasses':2,'v5v6PixelIdenticalPairsRecomputed':paired,'finalOriginalPngs':8,'finalQualityAttachments':2,'sourceHead':subprocess.check_output(['git','rev-parse','HEAD']).decode().strip()}
+          (p/'FINAL_EVIDENCE_CHECK.json').write_text(json.dumps(check,indent=2)+'\n')
+          print(json.dumps(check,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-final-evidence-${{ github.sha }}
+          path: |
+            docs/verification/m01-runtime/final-production-consolidation-v6/fx-final/
+            docs/verification/m01-runtime/final-production-consolidation-v6/FINAL_*.json
+            docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_COMBINED_COVERAGE_FINAL.json
+          if-no-files-found: error
+      - name: Publish verified evidence to the owned branch
+        run: |
+          git config user.name "M01 V6 final evidence"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/verification/m01-runtime/final-production-consolidation-v6/fx-final docs/verification/m01-runtime/final-production-consolidation-v6/FINAL_*.json docs/verification/m01-runtime/final-production-consolidation-v6/BROWSER_COMBINED_COVERAGE_FINAL.json
+          git commit -m "docs(m01): verify all protected files and preserve final FX capture evidence"
+          git push origin HEAD:refs/heads/codex/m01-final-production-consolidation-v6

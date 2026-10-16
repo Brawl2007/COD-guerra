@@ -1,0 +1,9 @@
+{
+  "role": "verifier",
+  "kind": "external read-only tool failure",
+  "message": "Error while downloading file. Upstream status code:503. invalid_request_error/invalid_value/url400",
+  "status": "Independent agent turn interrupted by tool; not implementation failure. Formal CI gates pending; resume same independent verifier after packet refresh.",
+  "fixAttempts": 3,
+  "reviewRejections": 0,
+  "at": "2026-10-13T17:08:25.917909+00:00"
+}

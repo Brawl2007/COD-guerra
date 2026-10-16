@@ -1,0 +1,3 @@
+BASE-PATCH F-impact-dust medium: 241 calls, 388283 tris, 0 errors
+BASE-PATCH F-impact-dust high: 241 calls, 392409 tris, 0 errors
+BASE-PATCH F-impact-dust low: 218 calls, 349097 tris, 0 errors

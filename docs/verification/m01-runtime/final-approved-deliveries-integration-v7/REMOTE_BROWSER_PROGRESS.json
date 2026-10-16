@@ -1,0 +1,52 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "observedAt": "2026-10-09T04:25:39Z",
+  "observedV7Head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+  "branches": 117,
+  "changesSincePriorClosureSnapshot": [
+    {
+      "branch": "codex/m01-final-production-consolidation-v7",
+      "previous": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+      "current": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458"
+    }
+  ],
+  "sourcesAndProtectedUnchanged": true,
+  "protected": {
+    "v6": "cbc7de5668a1b2e4bc646b86548196a5f4f1039a",
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "deploy": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+    "branch": "deploy/m01-latest-playable"
+  },
+  "latestIssue55Comment": {
+    "id": 6057373984,
+    "updatedAt": "2026-10-08T09:58:31Z"
+  },
+  "browserThirdRun": {
+    "id": 37862528016,
+    "jobId": 113601388960,
+    "head": "9d9844e65701aeb80af854d8f9b7ed6dc9a351e8",
+    "status": "completed",
+    "conclusion": "failure",
+    "executed": 84,
+    "passed": 83,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0,
+    "summary": "BROWSER_FULL_THIRD_SUMMARY.json.gz",
+    "diagnosis": "BROWSER_FULL_THIRD_DIAGNOSIS.json"
+  },
+  "decision": "Only this task's V7 advanced (third-run evidence, locomotive harness correction, workflow trigger). V6, main and deploy heads re-read remotely and unchanged.",
+  "browserFourthRun": {
+    "runId": 37876099475,
+    "jobId": 113644942412,
+    "head": "e0bb04e2c85208b1d58d8bc44ac091bf16c66458",
+    "status": "completed",
+    "conclusion": "success",
+    "executed": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "summary": "BROWSER_FULL_FOURTH_SUMMARY.json.gz"
+  }
+}

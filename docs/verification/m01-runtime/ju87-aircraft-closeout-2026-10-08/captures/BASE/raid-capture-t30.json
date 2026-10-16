@@ -1,0 +1,173 @@
+{
+  "base": "http://127.0.0.1:4174/COD-guerra/",
+  "snapshotClock": 145.99999999999895,
+  "battleClock": 16389.999999997875,
+  "shots": [
+    {
+      "quality": "low",
+      "file": "raid-low-t30.png",
+      "crop": "raid-low-t30-crop3x.png",
+      "cropCentre": [
+        636,
+        359
+      ],
+      "render": {
+        "quality": "low",
+        "drawCalls": 144,
+        "triangles": 367909,
+        "geometries": 212,
+        "textures": 108
+      },
+      "clock": 176.34990000000585,
+      "battleClock": 16420.349899997433,
+      "player": {
+        "x": -66,
+        "y": -3,
+        "z": 22,
+        "angle": -1.1704,
+        "pitch": 0.8646,
+        "health": 100,
+        "crouched": false,
+        "aiming": false
+      },
+      "aircraft": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "planes": [
+          {
+            "visible": true,
+            "lod": 2,
+            "position": [
+              -13.983695075434042,
+              160,
+              -105.39960000002338
+            ],
+            "propeller": [
+              0,
+              0,
+              -0.7126385067174731,
+              -0.7015314141594708
+            ]
+          },
+          {
+            "visible": true,
+            "lod": 2,
+            "position": [
+              -165.71606400426128,
+              180,
+              -75.39960000002338
+            ],
+            "propeller": [
+              0,
+              0,
+              -0.7126385067174731,
+              -0.7015314141594708
+            ]
+          },
+          {
+            "visible": true,
+            "lod": 2,
+            "position": [
+              -91.53821686525757,
+              200,
+              -45.39960000002338
+            ],
+            "propeller": [
+              0,
+              0,
+              -0.7126385067174731,
+              -0.7015314141594708
+            ]
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "quality": "high",
+      "file": "raid-high-t30.png",
+      "crop": "raid-high-t30-crop3x.png",
+      "cropCentre": [
+        629,
+        360
+      ],
+      "render": {
+        "quality": "high",
+        "drawCalls": 154,
+        "triangles": 438817,
+        "geometries": 219,
+        "textures": 109
+      },
+      "clock": 176.81660000000596,
+      "battleClock": 16420.816599997426,
+      "player": {
+        "x": -66,
+        "y": -3,
+        "z": 22,
+        "angle": -1.1704,
+        "pitch": 0.8646,
+        "health": 100,
+        "crouched": false,
+        "aiming": false
+      },
+      "aircraft": {
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "planes": [
+          {
+            "visible": true,
+            "lod": 1,
+            "position": [
+              -16.14189834280515,
+              160,
+              -107.26640000002385
+            ],
+            "propeller": [
+              0,
+              0,
+              -0.9645574170459783,
+              0.26387304609412754
+            ]
+          },
+          {
+            "visible": true,
+            "lod": 1,
+            "position": [
+              -166.13548999526665,
+              180,
+              -77.26640000002385
+            ],
+            "propeller": [
+              0,
+              0,
+              -0.9645574170459783,
+              0.26387304609412754
+            ]
+          },
+          {
+            "visible": true,
+            "lod": 1,
+            "position": [
+              -89.833247258049,
+              200,
+              -47.26640000002385
+            ],
+            "propeller": [
+              0,
+              0,
+              -0.9645574170459783,
+              0.26387304609412754
+            ]
+          }
+        ]
+      },
+      "errors": []
+    }
+  ]
+}

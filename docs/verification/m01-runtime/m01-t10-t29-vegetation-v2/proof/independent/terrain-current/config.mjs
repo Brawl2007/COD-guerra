@@ -1,0 +1,3 @@
+import {defineConfig} from '@playwright/test';
+import base from '../../../../../../playwright.config.js';
+export default defineConfig({...base,testDir:process.cwd()+'/tests/browser',testMatch:'m01-terrain-war-ground.spec.js',workers:1,retries:0,outputDir:process.cwd()+'/.agent/runs/M01-T10-T29-20261013/runtime/verifier/terrain-current/artifacts',reporter:[['list'],['json',{outputFile:process.cwd()+'/.agent/runs/M01-T10-T29-20261013/runtime/verifier/terrain-current/report.json'}]],use:{...base.use,baseURL:'http://127.0.0.1:4187/COD-guerra/'},webServer:{command:'npm run preview -- --port 4187',url:'http://127.0.0.1:4187/COD-guerra/',reuseExistingServer:false,timeout:30000}});

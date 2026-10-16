@@ -87,8 +87,11 @@ export async function writeCharacter(path, character) {
   for (const a of character.animations ?? []) {
     const anim = doc.createAnimation(a.name);
     if (a.extras) anim.setExtras(a.extras);
+    // Tempos partilhados entre as faixas do clip com os mesmos instantes (um acessor por vector de tempos).
+    const inputs = new Map();
+    const input = times => { const k = times.join(','); if (!inputs.has(k)) inputs.set(k, acc('SCALAR', Float32Array.from(times))); return inputs.get(k); };
     for (const t of a.tracks) {
-      const sampler = doc.createAnimationSampler().setInput(acc('SCALAR', Float32Array.from(t.times)))
+      const sampler = doc.createAnimationSampler().setInput(input(t.times))
         .setOutput(acc(t.path === 'rotation' ? 'VEC4' : 'VEC3', Float32Array.from(t.values))).setInterpolation(t.interpolation ?? 'LINEAR');
       anim.addSampler(sampler).addChannel(doc.createAnimationChannel().setTargetNode(nodes.get(t.bone)).setTargetPath(t.path).setSampler(sampler));
     }

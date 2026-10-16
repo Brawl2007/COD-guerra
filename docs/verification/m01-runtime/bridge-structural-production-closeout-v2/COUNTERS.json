@@ -1,0 +1,262 @@
+{
+ "base": "99309d9cb023cc94a07d41ff863e1362e4460570",
+ "head": "ce73304 runtime",
+ "renderer": "Chromium 1194 / SwiftShader, 1280x720; renderer.info of one frame. Not FPS, not Chromebook.",
+ "views": {
+  "rail-deck-near-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 219,
+    "triangles": 407259
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 244,
+    "triangles": 518563,
+    "structureBatches": 44,
+    "structureDetails": 9917
+   },
+   "dDrawCalls": 25,
+   "dTriangles": 111304,
+   "dTrianglesPct": 27.3
+  },
+  "road-deck-near-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 219,
+    "triangles": 445608
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 246,
+    "triangles": 567120,
+    "structureBatches": 44,
+    "structureDetails": 12341
+   },
+   "dDrawCalls": 27,
+   "dTriangles": 121512,
+   "dTrianglesPct": 27.3
+  },
+  "rail-approach-junction-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 253,
+    "triangles": 428060
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 280,
+    "triangles": 529224,
+    "structureBatches": 37,
+    "structureDetails": 8061
+   },
+   "dDrawCalls": 27,
+   "dTriangles": 101164,
+   "dTrianglesPct": 23.6
+  },
+  "rail-truss-side-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 219,
+    "triangles": 402909
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 245,
+    "triangles": 520125,
+    "structureBatches": 44,
+    "structureDetails": 11267
+   },
+   "dDrawCalls": 26,
+   "dTriangles": 117216,
+   "dTrianglesPct": 29.1
+  },
+  "road-truss-side-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 221,
+    "triangles": 417728
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 247,
+    "triangles": 533328,
+    "structureBatches": 44,
+    "structureDetails": 10991
+   },
+   "dDrawCalls": 26,
+   "dTriangles": 115600,
+   "dTrianglesPct": 27.7
+  },
+  "pier-01-bearings-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 219,
+    "triangles": 407427
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 246,
+    "triangles": 528939,
+    "structureBatches": 44,
+    "structureDetails": 12341
+   },
+   "dDrawCalls": 27,
+   "dTriangles": 121512,
+   "dTrianglesPct": 29.8
+  },
+  "bridges-medium-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 159,
+    "triangles": 406281
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 184,
+    "triangles": 491789,
+    "structureBatches": 37,
+    "structureDetails": 6979
+   },
+   "dDrawCalls": 25,
+   "dTriangles": 85508,
+   "dTrianglesPct": 21.0
+  },
+  "bridges-long-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 162,
+    "triangles": 403221
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 183,
+    "triangles": 461397,
+    "structureBatches": 30,
+    "structureDetails": 3836
+   },
+   "dDrawCalls": 21,
+   "dTriangles": 58176,
+   "dTrianglesPct": 14.4
+  },
+  "bridges-medium-low.png": {
+   "before": {
+    "quality": "low",
+    "drawCalls": 143,
+    "triangles": 381189
+   },
+   "after": {
+    "quality": "low",
+    "drawCalls": 142,
+    "triangles": 390621,
+    "structureBatches": 0,
+    "structureDetails": 0
+   },
+   "dDrawCalls": -1,
+   "dTriangles": 9432,
+   "dTrianglesPct": 2.5
+  },
+  "rail-truss-node-near-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 219,
+    "triangles": 405917
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 246,
+    "triangles": 527429,
+    "structureBatches": 44,
+    "structureDetails": 12341
+   },
+   "dDrawCalls": 27,
+   "dTriangles": 121512,
+   "dTrianglesPct": 29.9
+  },
+  "road-girder-near-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 219,
+    "triangles": 416802
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 246,
+    "triangles": 538314,
+    "structureBatches": 44,
+    "structureDetails": 12341
+   },
+   "dDrawCalls": 27,
+   "dTriangles": 121512,
+   "dTrianglesPct": 29.2
+  },
+  "pratt-portal-near-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 50,
+    "triangles": 326033
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 66,
+    "triangles": 384785,
+    "structureBatches": 51,
+    "structureDetails": 14741
+   },
+   "dDrawCalls": 16,
+   "dTriangles": 58752,
+   "dTrianglesPct": 18.0
+  },
+  "pier-02-close-high.png": {
+   "before": {
+    "quality": "high",
+    "drawCalls": 131,
+    "triangles": 403637
+   },
+   "after": {
+    "quality": "high",
+    "drawCalls": 152,
+    "triangles": 512553,
+    "structureBatches": 58,
+    "structureDetails": 18511
+   },
+   "dDrawCalls": 21,
+   "dTriangles": 108916,
+   "dTrianglesPct": 27.0
+  },
+  "rail-deck-near-medium.png": {
+   "before": {
+    "quality": "medium",
+    "drawCalls": 218,
+    "triangles": 402653
+   },
+   "after": {
+    "quality": "medium",
+    "drawCalls": 241,
+    "triangles": 503717,
+    "structureBatches": 44,
+    "structureDetails": 7485
+   },
+   "dDrawCalls": 23,
+   "dTriangles": 101064,
+   "dTrianglesPct": 25.1
+  },
+  "rail-deck-near-low.png": {
+   "before": {
+    "quality": "low",
+    "drawCalls": 178,
+    "triangles": 386490
+   },
+   "after": {
+    "quality": "low",
+    "drawCalls": 177,
+    "triangles": 395922,
+    "structureBatches": 0,
+    "structureDetails": 0
+   },
+   "dDrawCalls": -1,
+   "dTriangles": 9432,
+   "dTrianglesPct": 2.4
+  }
+ }
+}

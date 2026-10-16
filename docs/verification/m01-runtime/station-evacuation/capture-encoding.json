@@ -1,0 +1,13 @@
+{
+  "note": "JPEG export of the real production test frame at the same full viewport; no resizing or invented content. Pause overlay hidden by the original browser test only.",
+  "sourceCommit": "ef7d68a4d4b4193bcf8fabf6c0f1162aceb2f728",
+  "file": "m01-station-ground-drag.jpg",
+  "sourcePNG": "m01-station-ground-drag.png",
+  "sourcePNG_SHA256": "efbadc37c64890ee320a8077f2dbfb64d8c7017cc1d6aaef15f844f6ad384ba0",
+  "sourcePNG_bytes": 818532,
+  "jpegBytes": 93491,
+  "width": 1280,
+  "height": 720,
+  "quality": 72,
+  "resized": false
+}

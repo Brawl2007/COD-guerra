@@ -1,0 +1,15 @@
+{
+  "name": "m01-mg34-prone-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera os clips da MG 34 deitada sobre o bípode (mg34_prone_* do atirador e mg34_loader_prone_* do municiador) para o rig alemão actual, reutilizando o kit da MG 34 sem o alterar.",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": { "node": ">=22.12.0" },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1"
+  }
+}

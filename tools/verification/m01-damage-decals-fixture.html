@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>Danos ambientais M01 — bancada isolada</title>
+<style>html,body{margin:0;background:#8d969a;overflow:hidden}canvas{display:block;width:100vw;height:100vh}#label{position:fixed;left:10px;top:8px;font:13px/1.35 system-ui,sans-serif;color:#111;background:#ffffffc8;padding:4px 8px;border-radius:3px;white-space:pre}</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="label"></div>
+<script type="module">
+// Verification page only (served by `vite`, never part of the build). It drives the real Renderer/M01View with a
+// throw-away M01Simulation so damage marks can be inspected close up. Impact points come from the simulation's own
+// traceShot/traceRound against the real TczewWorld; blasts use the real damage records or M01Simulation.consume().
+// This page never touches a player's save and is not a playtest.
+import {Renderer} from '/src/render/three-renderer.js';
+import {M01Simulation} from '/src/game/m01-simulation.js';
+import {traceShot,eyePosition,aimDirection} from '/src/world/spatial.js';
+import {makeRound,traceRound} from '/src/game/m01-fire.js';
+import {seconds} from '/src/game/m01-simulation.js';
+import {m01DecalAtlasReady} from '/src/render/m01-damage-decals.js';
+
+const canvas=document.getElementById('game'),renderer=new Renderer(canvas);
+renderer.setQuality(new URLSearchParams(location.search).get('quality')??'high');
+const view=renderer.prepareM01();
+let sim=new M01Simulation();
+const label=text=>{const el=document.getElementById('label');el.textContent=text;el.style.display=text?'block':'none';};
+// Fixture-only pose: the camera follows the throw-away simulation's player, exactly as in the game.
+function place({x,z,angle,pitch=0,battle='06:00:00',crouched=false}){
+  const p=sim.player;p.x=x;p.z=z;p.y=sim.world.heightAt(x,z);p.angle=angle;p.pitch=pitch;p.crouched=crouched;p.moveBlend=0;
+  sim.battleClock=seconds(battle);sim.scene=null;
+}
+function aimAt(target){const e=eyePosition(sim.player),dx=target.x-e.x,dz=target.z-e.z;
+  sim.player.angle=Math.atan2(dz,dx);sim.player.pitch=Math.atan2(target.y-e.y,Math.hypot(dx,dz));}
+// Same event shapes the simulation emits; every point is the simulation's own trace result.
+function playerShot(target){
+  const eye=eyePosition(sim.player),dx=target.x-eye.x,dy=target.y-eye.y,dz=target.z-eye.z,l=Math.hypot(dx,dy,dz);
+  const hit=traceShot(sim.world,eye,{x:dx/l,y:dy/l,z:dz/l},sim.actors,1200);
+  const event={type:'player-shot',point:hit?.point??{x:eye.x+dx/l*1200,y:eye.y+dy/l*1200,z:eye.z+dz/l*1200},material:hit?.material,hit:false,weapon:'kb_wz29'};
+  sim.clock+=.04;view.surfaceDamage(event,sim);return {point:event.point,material:event.material};
+}
+function enemyRound(aim,by='de_east_2'){
+  const a=sim.actor(by),origin={x:a.x,y:a.y+1.35,z:a.z};
+  const r=makeRound({id:`fixture_${sim.clock.toFixed(3)}`,by,weapon:'kar98k',kind:'player',origin,aim,firedAt:sim.clock,bias:[0,0],cone:[0,0],gauss:()=>0});
+  const hit=traceRound(sim.world,r,[]);const event={type:'round-impact',kind:'player',by,point:hit.point,material:hit.material??'earth',crack:false,distance:0,victim:null,pinned:[]};
+  sim.clock+=.04;view.surfaceDamage(event,sim);view.impact(event.point,event.material,sim.clock);return {point:event.point,material:event.material};
+}
+window.stage={
+  // Models loaded and the procedural decal atlas painted (it is painted in timer slices; captures must not race it).
+  ready:()=>Promise.all([view.ready,m01DecalAtlasReady()]),
+  reset(){sim=new M01Simulation();renderer.resetEffects();},
+  place,aimAt,playerShot,enemyRound,label,
+  // Real mission events (east/west demolition, bombing) through M01Simulation.consume; a grenade as its saved record.
+  consume(id){sim.consume(id);view.lastFrame=null;},
+  grenade(point){sim.sectors.damage.push({id:`m01_grenade_${sim.grenades.nextId++}`,...point,started:sim.clock,soundAt:sim.clock});view.explosion(point,sim.clock,false);},
+  advance(seconds){sim.clock+=seconds;},
+  resize(w,h){canvas.style.width=w+'px';canvas.style.height=h+'px';renderer.resize();},
+  render(){view.lastFrame=null;renderer.renderMission(sim);const i=renderer.engine.info.render;return {calls:i.calls,triangles:i.triangles};},
+  // Close-up camera on mark i (fixture only): the eye sits `distance` metres off the mark along its normal.
+  closeup(i,distance=.8,side=0){const m=view.damageDecals.marks[i];if(!m)return false;const p=sim.player,n=m.normal;
+    const eye={x:m.position.x+n.x*distance+(side?-n.z*side:0),y:m.position.y+n.y*distance+(Math.abs(n.y)>.7?0:.02),z:m.position.z+n.z*distance+(side?n.x*side:0)};
+    if(Math.abs(n.y)>.7){eye.x-=Math.cos(p.angle)*distance*.55;eye.z-=Math.sin(p.angle)*distance*.55;}
+    p.eyeHeight=0;p.x=eye.x;p.y=eye.y;p.z=eye.z;aimAt(m.position);return {kind:m.kind,position:m.position,normal:m.normal,size:[m.sizeU,m.sizeV]};},
+  // Fixture-only overview: raise the camera `height` metres above the current pose and look down at `pitch`.
+  lift(height,pitch=-1.2){const p=sim.player;p.eyeHeight=0;p.y+=height;p.pitch=pitch;return {x:p.x,y:p.y,z:p.z};},
+  weapon(visible){view.weaponScene.visible=visible;},
+  decals(visible){view.damageDecals.group.visible=visible;},
+  // Fixture-only: first scene objects hit from the camera towards a world point (what occludes a mark).
+  async probe(point){const THREE=await import('three');const r=new THREE.Raycaster(),c=view.camera.position,t=new THREE.Vector3(point.x,point.y,point.z);
+    r.set(c.clone(),t.clone().sub(c).normalize());r.camera=view.camera;r.far=t.distanceTo(c)+.5;
+    return r.intersectObjects(view.scene.children,true).slice(0,6).map(h=>({name:h.object.name||h.object.parent?.name||h.object.type,type:h.object.type,geometry:h.object.geometry?.type,
+      material:h.object.material?.type,distance:+h.distance.toFixed(4),point:h.point.toArray().map(v=>+v.toFixed(4)),instance:h.instanceId}));},
+  debugResidue(mode='both'){const m=view.damageDecals.residueMaterial;m.depthTest=mode==='map';if(mode!=='depth'){m.map=null;m.bumpMap=null;m.color.set('#ff0000');}m.needsUpdate=true;
+    const g=view.damageDecals.residueGeometry;return {count:g.attributes.position?.count,box:(g.computeBoundingBox(),g.boundingBox)};},
+  // Fixture-only: instanced meshes drawing a large instance (largest axis scale) in the scene, by geometry type.
+  largeInstances(min=.5){const out=[],m=new view.camera.matrixWorld.constructor(),pos=new view.camera.position.constructor(),q=new view.camera.quaternion.constructor(),sc=new view.camera.position.constructor();
+    view.scene.traverse(o=>{if(!o.isInstancedMesh||!o.visible)return;for(let i=0;i<o.count;i++){o.getMatrixAt(i,m);m.decompose(pos,q,sc);const big=Math.max(sc.x,sc.y,sc.z);
+      if(big>=min)out.push({name:o.name||o.parent?.name||'',geometry:o.geometry.type,index:i,scale:+big.toFixed(3),position:pos.toArray().map(v=>+v.toFixed(2))});}});
+    return out.filter(e=>Math.hypot(e.position[0]-view.camera.position.x,e.position[2]-view.camera.position.z)<30).slice(0,40);},
+  diagnostics:()=>structuredClone(view.diagnostics.damageDecals),
+  surfaceAt:(x,z)=>({heightAt:sim.world.heightAt(x,z)}),
+  damage:()=>structuredClone(sim.sectors.damage),
+  // Fixture-only: centre and extent of each blast's persistent residue (where to point the camera).
+  residueBounds:()=>view.damageDecals.residue.map(b=>{const p=b.polys.flatMap(q=>q.points);if(!p.length)return {id:b.id,polygons:0};
+    const r=k=>[Math.min(...p.map(v=>v[k])),Math.max(...p.map(v=>v[k]))];return {id:b.id,kind:b.kind,polygons:b.polys.length,x:r('x'),y:r('y'),z:r('z')};}),
+  world:()=>sim.world
+};
+window.ready=true;
+</script>
+</body>
+</html>

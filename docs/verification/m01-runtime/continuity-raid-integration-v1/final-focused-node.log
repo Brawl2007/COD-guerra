@@ -1,0 +1,36 @@
+✔ planar y becomes scene z; height is independent (2.831236ms)
+✔ horizontal head shot hits, aiming above the head misses (1.334751ms)
+✔ nearest wall shields an enemy; lowering the aim hits terrain (0.361535ms)
+✔ wall around muzzle blocks a clear camera sightline (0.201734ms)
+✔ enemy in cover cannot cause damage through a wall (0.933357ms)
+✔ unreachable destination reports failure and does not move through walls (0.287484ms)
+✔ wall shields blast damage but visible nearby actor takes damage (0.51759ms)
+✔ JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly (9.357839ms)
+✔ corrupt and incompatible saves are rejected atomically (4.710998ms)
+✔ death restores the last living checkpoint without reviving defeated enemies (4.849116ms)
+✔ restored simulation reproduces future seeded decisions and events (268.848326ms)
+✔ two independent sectors evolve for 90 seconds with stable losses and unique events (0.999766ms)
+✔ partial fourth reinforcement group activates and visible candidates remain hidden (0.367074ms)
+✔ zero time never advances reload or the battle (1.517146ms)
+✔ weapon enforces cadence, ammo, and reload transfer (1.514802ms)
+✔ world blocks walls and permits open cells (0.740165ms)
+✔ navigation chooses a walkable next tile around cover (0.509608ms)
+✔ mission advances through checkpoint, combat, and radio (0.431901ms)
+✔ shot geometry detects targets on aim line (0.173722ms)
+✔ 3D matrix composition preserves translation and scale (0.341955ms)
+✔ weapon exposes a stable reload animation timeline (0.169185ms)
+✔ enemy selects cover instead of charging directly at player (1.139216ms)
+✔ grenade bounces on walls, warns AI, and applies radial damage (3.282005ms)
+✔ battle director activates reinforcement groups without replacing individual AI (0.726715ms)
+✔ text-only OBJ assets load with meshes, normals, and MTL colors (13.596685ms)
+✔ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (103.005313ms)
+✔ portal recreate/dispose releases every owned instanced buffer exactly once and preserves shared materials (4.994566ms)
+✔ missing viewmodel renders a repeated first-shot flash after restart even when the first frame is 100 ms late (19.816898ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4554.238078

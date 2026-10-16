@@ -47,8 +47,8 @@ window.stage = {
     return cache.get(url);
   },
   /** Adiciona um actor: clone com SkeletonUtils, mostra só as malhas pedidas (por nome ou expressão) e toca um clip. */
-  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false, anims = null } = {}) {
-    const gltf = await this.load(url), clipSrc = anims ? await this.load(anims) : gltf;
+  async add(url, { position = [0, 0, 0], rotationY = 0, show = null, clip = null, time = 0, morphs = null, unskinned = false, animationUrl = null, anims = null } = {}) {
+    const gltf = await this.load(url);
     const root = SkeletonUtils.clone(gltf.scene);
     if (unskinned) { const list = []; root.traverse(o => { if (o.isSkinnedMesh) list.push(o); }); for (const o of list) { const m = new THREE.Mesh(o.geometry, o.material); m.name = o.name; m.userData = o.userData; o.parent.add(m); o.parent.remove(o); } }
     root.position.set(...position); root.rotation.y = rotationY;
@@ -66,8 +66,9 @@ window.stage = {
     const mixer = new THREE.AnimationMixer(root);
     let action = null;
     if (clip) {
-      const c = clipSrc.animations.find(a => a.name === clip);
-      if (!c) throw new Error(`clip ${clip} não existe; há ${clipSrc.animations.map(a => a.name).join(', ')}`);
+      const source = animationUrl || anims ? await this.load(animationUrl ?? anims) : gltf;
+      const c = source.animations.find(a => a.name === clip);
+      if (!c) throw new Error(`clip ${clip} não existe; há ${source.animations.map(a => a.name).join(', ')}`);
       action = mixer.clipAction(c); action.setLoop(THREE.LoopOnce); action.clampWhenFinished = true; action.play(); mixer.setTime(time);
     } else mixer.update(0);
     root.updateMatrixWorld(true);
@@ -76,7 +77,15 @@ window.stage = {
     return actors.length - 1;
   },
   /** Prende a raiz do actor i ao osso `bone` do actor j (p. ex. ferido ao carry_socket do transportador). */
-  attach(i, j, bone) { const b = actors[j].root.getObjectByName(bone); const r = actors[i].root; r.position.set(0, 0, 0); r.rotation.set(0, 0, 0); b.add(r); actors[j].root.updateMatrixWorld(true); },
+  attach(i, j, bone) {
+    const A = actors[j], b = A.root.getObjectByName(bone), r = actors[i].root; r.position.set(0, 0, 0); r.rotation.set(0, 0, 0); b.add(r);
+    // Religa o clip de j: faixas que animam nós da cena presa por nome (p. ex. mg34_feed_cover) só se ligam depois de a prender.
+    if (A.action) {
+      const c = A.action.getClip(), t = A.mixer.time; A.mixer.stopAllAction(); A.mixer.uncacheClip(c);
+      A.action = A.mixer.clipAction(c); A.action.setLoop(THREE.LoopOnce); A.action.clampWhenFinished = true; A.action.play(); A.mixer.setTime(t);
+    }
+    A.root.updateMatrixWorld(true);
+  },
   setTime(i, t) { actors[i].mixer.setTime(t); actors[i].root.updateMatrixWorld(true); },
   clear() { for (const a of actors) scene.remove(a.root); actors.length = 0; },
   info(i) { return actors[i].info; },

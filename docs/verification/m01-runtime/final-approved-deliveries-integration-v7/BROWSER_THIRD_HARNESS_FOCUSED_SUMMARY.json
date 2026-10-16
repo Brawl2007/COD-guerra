@@ -1,0 +1,76 @@
+{
+  "taskId": "M01-FINAL-APPROVED-DELIVERIES-INTEGRATION-V7",
+  "status": "PASS",
+  "scope": "Third-full-run locomotive restore failure plus the neighbouring fallback case; focused invocation (--repeat-each 3), not combined certification and never united with full-run results",
+  "baseHead": "5b75864",
+  "localUncommittedHarnessCorrection": true,
+  "localEnvironment": "Chromebook, headless Chromium (playwright chromium-headless-shell v1208). Default 45 s per-test timeout is insufficient for page.reload on this machine: the unmodified test also times out at line 19 col 27 (page.reload) locally. CLI --timeout 300000 used; playwright.config.js unchanged.",
+  "command": "npx playwright test tests/browser/m01-locomotive.spec.js --repeat-each 3 --workers 1 --retries 0 --timeout 300000 --reporter=list,json",
+  "stats": {
+    "startTime": "2026-10-09T02:24:34.817Z",
+    "duration": 975411.66,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "retries": 0,
+  "workers": 1,
+  "errors": [],
+  "reportSha256Uncompressed": "007ac0041b5d3f7b8a984e9feb418f95021fd09db165600c865672c5e53606bd",
+  "testFileSha256": {
+    "tests/browser/m01-locomotive.spec.js": "d445055b049569aebde6804079ac97a07e8aa81669f4cb73e8a2e677c6c562f2"
+  },
+  "results": [
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production GLBs load, far LOD, pause and restore",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 198375
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production optional failure fallback",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 96569
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production GLBs load, far LOD, pause and restore",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 200780
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production optional failure fallback",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 95334
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production GLBs load, far LOD, pause and restore",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 185332
+    },
+    {
+      "file": "m01-locomotive.spec.js",
+      "title": "locomotive 963 production optional failure fallback",
+      "status": "passed",
+      "retry": 0,
+      "durationMs": 86082
+    }
+  ],
+  "invalidLocalAttempts": [
+    "interrupted attempt: first case timed out at line 11 (#continue click) under default 45 s timeout",
+    "attempt without chromium-headless-shell installed: browser never launched (0 cases executed)",
+    "attempt with --timeout 120000: 3/3 fallback PASS, 3/3 main case timed out/ERR_ABORTED at page.reload (line 19 col 27), before the new wait; unmodified baseline test fails identically"
+  ]
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "name": "01-start-section-close",
+    "pixels": {
+      "pixels": 53838,
+      "max": 168,
+      "sum": 7104351,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 0,
+      "max": 0,
+      "sum": 0,
+      "rect": {
+        "x": 4,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  },
+  {
+    "name": "04-start-west-portal-bridge",
+    "pixels": {
+      "pixels": 123923,
+      "max": 180,
+      "sum": 12807248,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 720
+      }
+    },
+    "control": {
+      "pixels": 217,
+      "max": 121,
+      "sum": 59720,
+      "rect": {
+        "x": 4,
+        "y": 4,
+        "w": 80,
+        "h": 40
+      }
+    },
+    "saveEqual": true,
+    "cameraEqual": true,
+    "clock": 0.05
+  }
+]

@@ -1,0 +1,246 @@
+{
+  "viewer": "three.js 0.186.1 GLTFLoader (Chromium/SwiftShader)",
+  "note": "galeria isolada; não é playtest nem medição de FPS",
+  "files": {
+    "m01_wagon_covered_lod0.glb": {
+      "nodes": [
+        "wagon_covered_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r"
+      ],
+      "materials": [
+        "wagon_covered"
+      ],
+      "triangles": 2332,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        },
+        {
+          "name": "doors_open",
+          "duration": 1.5,
+          "tracks": [
+            "door_r.position",
+            "door_l.position"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          -0.0350000262260437,
+          -4.550000190734863
+        ],
+        "max": [
+          1.590000000745058,
+          3.8499999046325684,
+          4.550000190734863
+        ]
+      }
+    },
+    "m01_wagon_covered_lod1.glb": {
+      "nodes": [
+        "wagon_covered_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r"
+      ],
+      "materials": [
+        "wagon_covered"
+      ],
+      "triangles": 1128,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        },
+        {
+          "name": "doors_open",
+          "duration": 1.5,
+          "tracks": [
+            "door_r.position",
+            "door_l.position"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          0.005724459886550903,
+          -4.53000020980835
+        ],
+        "max": [
+          1.590000000745058,
+          3.8159303665161133,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_covered_lod2.glb": {
+      "nodes": [
+        "wagon_covered_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r"
+      ],
+      "materials": [
+        "wagon_covered"
+      ],
+      "triangles": 516,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        },
+        {
+          "name": "doors_open",
+          "duration": 1.5,
+          "tracks": [
+            "door_r.position",
+            "door_l.position"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          0.005724459886550903,
+          -4.489999771118164
+        ],
+        "max": [
+          1.590000000745058,
+          3.8159303665161133,
+          4.489999771118164
+        ]
+      }
+    },
+    "m01_wagon_open_lod0.glb": {
+      "nodes": [
+        "wagon_open_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2"
+      ],
+      "materials": [
+        "wagon_open"
+      ],
+      "triangles": 1948,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5,
+          -0.0350000262260437,
+          -4.550000190734863
+        ],
+        "max": [
+          1.5,
+          2.8399999141693115,
+          4.550000190734863
+        ]
+      }
+    },
+    "m01_wagon_open_lod1.glb": {
+      "nodes": [
+        "wagon_open_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2"
+      ],
+      "materials": [
+        "wagon_open"
+      ],
+      "triangles": 846,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5,
+          0.005724459886550903,
+          -4.53000020980835
+        ],
+        "max": [
+          1.5,
+          2.8399999141693115,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_open_lod2.glb": {
+      "nodes": [
+        "wagon_open_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2"
+      ],
+      "materials": [
+        "wagon_open"
+      ],
+      "triangles": 364,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5,
+          0.005724459886550903,
+          -3.950000047683716
+        ],
+        "max": [
+          1.5,
+          2.8399999141693115,
+          3.9700000286102295
+        ]
+      }
+    }
+  }
+}

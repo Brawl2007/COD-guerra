@@ -1,0 +1,8 @@
+
+Running 3 tests using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:518:1 › textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation (1.5m)
+  ✓  2 tests/browser/m01.spec.js:544:1 › ckm west crew and weapon use actual saved abandon time, pause and fresh reload (1.4m)
+  ✓  3 tests/browser/m01.spec.js:563:1 › optional ckm kit failure retains the crew fallback and checkpoint restoration (26.5s)
+
+  3 passed (3.5m)

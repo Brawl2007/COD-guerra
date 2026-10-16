@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "author": "Original COD Guerra geometry and paint",
+  "license": "CC0-1.0",
+  "units": "metres",
+  "forward": "-Z",
+  "historicalIdentity": "Panzerzug 7 presence documented; P6 composition/calibres unresolved",
+  "representation": "Five pre-existing presentation slots, generic armoured profiles. Not a measured reconstruction.",
+  "armament": "No new barrel, turret, cannon, AA or gameplay weapon. Existing MG support unchanged; dark slits only.",
+  "placements": [
+    [
+      1119,
+      0,
+      2.5
+    ],
+    [
+      1138,
+      0,
+      2.5
+    ],
+    [
+      1157,
+      0,
+      2.5
+    ],
+    [
+      1176,
+      0,
+      2.5
+    ],
+    [
+      1195,
+      0,
+      2.5
+    ]
+  ],
+  "modelPlacement": {
+    "position": [
+      1119,
+      0,
+      2.5
+    ],
+    "rotationY": 1.5707963267948966,
+    "railContactOffsetY": -0.82,
+    "scale": 1
+  },
+  "motion": "Stationary; no synthetic wheel or weapon motion",
+  "files": [
+    {
+      "file": "m01_panzerzug_visual_lod0.glb",
+      "lod": 0,
+      "triangles": 17952,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1,
+      "bytes": 1441116,
+      "sha256": "5f1747c82754ea054a00715fbe7fad9d044314e5732843bc708664fba86e192c",
+      "bounds": {
+        "min": [
+          -1.7100000381469727,
+          -0.0050000036135315895,
+          -8.108890533447266
+        ],
+        "max": [
+          1.7100000381469727,
+          3.879999876022339,
+          84.10889434814453
+        ]
+      },
+      "features": {
+        "chassis": 10,
+        "detail": 156,
+        "footplate": 5,
+        "hull_0": 1,
+        "plate_seams": 70,
+        "rivets": 140,
+        "door": 10,
+        "steps": 30,
+        "slits": 24,
+        "handrails": 20,
+        "roof_hatch": 5,
+        "ventilation": 5,
+        "buffer_beam": 10,
+        "buffer": 20,
+        "coupling": 10,
+        "end_hatch": 10,
+        "buffer_platform": 16,
+        "bogie": 20,
+        "wheels": 40,
+        "wheel_rims": 40,
+        "axlebox": 40,
+        "springs": 120,
+        "underframe_box": 5,
+        "hull_1": 1,
+        "hull_2": 1,
+        "traction_cab": 1,
+        "traction_roof": 1,
+        "intake": 6,
+        "traction_chimney": 1,
+        "hull_3": 1,
+        "hull_4": 1
+      }
+    },
+    {
+      "file": "m01_panzerzug_visual_lod1.glb",
+      "lod": 1,
+      "triangles": 12624,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1,
+      "bytes": 1069980,
+      "sha256": "3803dd376c9280c6e43d5bbab1ad043e3aa288a8d2624631468025e5805a924f",
+      "bounds": {
+        "min": [
+          -1.7100000381469727,
+          -0.0050000036135315895,
+          -8.108890533447266
+        ],
+        "max": [
+          1.7100000381469727,
+          3.879999876022339,
+          84.10889434814453
+        ]
+      },
+      "features": {
+        "chassis": 10,
+        "detail": 156,
+        "footplate": 5,
+        "hull_0": 1,
+        "plate_seams": 70,
+        "door": 10,
+        "steps": 30,
+        "slits": 24,
+        "handrails": 20,
+        "roof_hatch": 5,
+        "ventilation": 5,
+        "buffer_beam": 10,
+        "buffer": 20,
+        "coupling": 10,
+        "end_hatch": 10,
+        "buffer_platform": 16,
+        "bogie": 20,
+        "wheels": 40,
+        "wheel_rims": 40,
+        "axlebox": 40,
+        "springs": 120,
+        "underframe_box": 5,
+        "hull_1": 1,
+        "hull_2": 1,
+        "traction_cab": 1,
+        "traction_roof": 1,
+        "intake": 6,
+        "traction_chimney": 1,
+        "hull_3": 1,
+        "hull_4": 1
+      }
+    },
+    {
+      "file": "m01_panzerzug_visual_lod2.glb",
+      "lod": 2,
+      "triangles": 4764,
+      "drawCalls": 3,
+      "materials": 3,
+      "textures": 1,
+      "bytes": 465632,
+      "sha256": "6f5bc68a2f37a7a4e25eccfdef37efc56a7bed45a32174b1791d46e7566bd89d",
+      "bounds": {
+        "min": [
+          -1.537500023841858,
+          -8.344650304081824e-9,
+          -8.108890533447266
+        ],
+        "max": [
+          1.537500023841858,
+          3.879999876022339,
+          84.10889434814453
+        ]
+      },
+      "features": {
+        "chassis": 10,
+        "detail": 42,
+        "footplate": 5,
+        "hull_0": 1,
+        "door": 10,
+        "slits": 24,
+        "roof_hatch": 5,
+        "buffer_beam": 10,
+        "buffer": 20,
+        "coupling": 10,
+        "end_hatch": 10,
+        "buffer_platform": 16,
+        "bogie": 20,
+        "wheels": 40,
+        "hull_1": 1,
+        "hull_2": 1,
+        "traction_cab": 1,
+        "traction_roof": 1,
+        "traction_chimney": 1,
+        "hull_3": 1,
+        "hull_4": 1
+      }
+    }
+  ]
+}

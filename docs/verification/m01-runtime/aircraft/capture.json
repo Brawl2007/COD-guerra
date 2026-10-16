@@ -1,0 +1,12 @@
+{
+  "source": "m01-ju87-real-raid.png",
+  "source_sha256": "8101efd4a079d7c8b28ff28561c495e0361dcb59012b6702a8a5efdc0a5e5c34",
+  "source_dimensions": [
+    1280,
+    720
+  ],
+  "conversion": "JPEG quality 72, no crop/resize/content edit",
+  "output_sha256": "7e91155d7a1c47451d76ab4be5396a678605e077888d1376a5268f1f85aac87d",
+  "method": "Production browser continuation from an actual simulation checkpoint; relative mouse input aims at first aircraft, pointer-lock release pauses, pause overlay hidden in screenshot only; real mission clock around 04:33:11, raid lead-in",
+  "scope": "not human/continuous playtest or Chromebook FPS"
+}

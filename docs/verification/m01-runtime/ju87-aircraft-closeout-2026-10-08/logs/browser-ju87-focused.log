@@ -1,0 +1,6 @@
+
+Running 2 tests using 1 worker
+
+[1/2] tests/browser/m01.spec.js:66:1 › the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause
+[2/2] tests/browser/m01.spec.js:91:1 › unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission
+  2 passed (59.7s)

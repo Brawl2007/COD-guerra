@@ -1,0 +1,46 @@
+✔ real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and visible locomotive features (24.207712ms)
+✔ loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes (160.631599ms)
+✔ LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics (0.179676ms)
+✔ partial asset failure uses a surviving LOD; total failure retains exact old proxy extents (19.164524ms)
+✔ late optional downloads cannot attach after disposal; asset cache owns shared buffers (20.896356ms)
+✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (568.41668ms)
+✔ pause/restore and repeated rendering never mutate a save or introduce train movement authority (53.754813ms)
+✔ real GLBs: bounded decreasing LOD budgets, finite valid attributes, original licence and five distinct conservative profiles (52.331999ms)
+✔ loaded actual assets retain anchor and orientation; one visible LOD and three draw meshes (153.995179ms)
+✔ LOD hysteresis avoids boundary flicker and ignores quality, clock and camera semantics (0.179185ms)
+✔ partial asset failure uses a surviving LOD; total failure retains exact old proxy extents (22.707234ms)
+✔ late optional downloads cannot attach after disposal; asset cache owns shared buffers (17.631047ms)
+✔ integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and non-presentation base assets byte-identical (564.495456ms)
+✔ pause/restore and repeated rendering never mutate a save or introduce train movement authority (51.257804ms)
+✔ eight bounded profiles per nation are deterministic by ID/side/real role and independent of clocks, health, order and quality (14.58472ms)
+✔ actual GLB variants survive all three LODs, pause, rebind and re-created renderers without actor/source mutation (301.053471ms)
+✔ OFF vs ON has exactly equal world bones, root/facing, gameplay hitboxes, weapon meshes and rendered muzzle at every LOD (147.249717ms)
+✔ shared originals retain all attributes and indices; source atlas is shared; cached variants add no textures/draws (143.801362ms)
+✔ actual gear silhouettes differ through existing breadbag fullness/optional shovel; ammo pouches and skins remain (38.017048ms)
+✔ simulation futures/RNG/saves/checkpoints are exact with visual OFF vs ON; renderer freeze/reload does not write state (530.222877ms)
+✔ missing optional art stays procedural; release/rebind keeps cached buffers until owner disposal (31.690741ms)
+✔ real continuation and its CP backup keep the same visual identities; German face treatments stay within 3 mm (526.679973ms)
+✔ integration preserves gameplay, hitbox/muzzle, save, locomotion and non-presentation base assets byte-identical (565.296205ms)
+✔ measured real clips and asset socket metadata are locked; archived BASE is exact (305.775731ms)
+✔ integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved simulation gameplay baseline (0.482393ms)
+✔ ADS aligns actual rear/front with camera -Z on LOD0, all qualities (208.627478ms)
+✔ ADS aligns actual rear/front with camera -Z on LOD1, all qualities (121.072772ms)
+✔ visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run (184.463181ms)
+✔ dense clipping matrix samples all referenced vertices, LOD0 (539.106386ms)
+✔ dense clipping matrix samples all referenced vertices, LOD1 (314.575755ms)
+✔ local arm skin/pose/material changes leave source geometry, bones, clips and materials intact (164.758743ms)
+✔ pause freezes phase, transition, arms and mechanics including clamped clip endpoint (129.264862ms)
+✔ ADS/run transitions are controlled by mission dt and converge without action rebind (142.409994ms)
+✔ recoil is finite, damped, bounded and has weaker ADS presentation (0.853873ms)
+✔ missing optional model/clips returns to existing caller fallback; LOD1 remains viable (109.660772ms)
+✔ restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer (231.788885ms)
+✔ an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary (159.971417ms)
+✔ BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks (2567.241737ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5336.509196

@@ -1,0 +1,44 @@
+✖ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (115.519795ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8808.902178
+
+✖ failing tests:
+
+test at tests/m01-consolidation-lifecycle.test.js:23:1
+✖ actual M01 aerial/demolition/grenade events rebuild identical delayed sound, shake and pull-out metadata from Schema 2 (115.519795ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+  +   aerial: false,
+  -   aerial: true,
+      at: 445.4393453434741,
+      distance: 579.4454527887585,
+      dy: 0,
+      front: -0.9976557010387667,
+      key: 'raid_0530_1',
+  ...
+      scale: 'large',
+  +   shake: true
+  -   shake: false
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/COD-guerra/tests/m01-consolidation-lifecycle.test.js:31:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { distance: 579.4454527887585, pan: 0.06843319505069871, front: -0.9976557010387667, dy: 0, at: 445.4393453434741, kind: 'blast', scale: 'large', key: 'raid_0530_1', shake: true, aerial: false, point: { x: -680, y: -3, z: 65 } },
+    expected: { distance: 579.4454527887585, pan: 0.06843319505069871, front: -0.9976557010387667, dy: 0, at: 445.4393453434741, kind: 'blast', scale: 'large', key: 'raid_0530_1', shake: false, aerial: true, point: { x: -680, y: -3, z: 65 } },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

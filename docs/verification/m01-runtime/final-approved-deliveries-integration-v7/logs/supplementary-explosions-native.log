@@ -1,0 +1,13 @@
+V6 grenade-explosion-hot low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 east-demolition-hot low: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V7 grenade-explosion-hot low: 257 calls / 442593 triangles
+V7 east-demolition-hot low: 190 calls / 558428 triangles
+V6 grenade-explosion-hot medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 east-demolition-hot medium: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V7 grenade-explosion-hot medium: 294 calls / 569178 triangles
+V7 east-demolition-hot medium: 321 calls / 915620 triangles
+V6 grenade-explosion-hot high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V6 east-demolition-hot high: not exposed by V6 fixture calls / not exposed by V6 fixture triangles
+V7 grenade-explosion-hot high: 303 calls / 629829 triangles
+V7 east-demolition-hot high: 338 calls / 992450 triangles
+PASS: 6 matched transient pairs; every simulation snapshot identical

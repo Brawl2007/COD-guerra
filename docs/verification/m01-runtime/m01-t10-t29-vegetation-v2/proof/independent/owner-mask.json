@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "source": "cc3f459cea8cf7ad1f797808cb0461d142d20a79",
+  "runtimeExecutionSource": "8aa1549 (production and runtime-v2 bytes equal final cc3)",
+  "method": "Exact owner enabled-vs-disabled pixel mask, then restored-vs-resumed restricted to mask; directly inspected poplar rectangle 600,315,80,125",
+  "width": 1280,
+  "height": 720,
+  "mask": 14312,
+  "changed": 12107,
+  "treeMask": 5407,
+  "treeChanged": 4795,
+  "max": 165,
+  "sum": 60633,
+  "frozenPixels": 0
+}

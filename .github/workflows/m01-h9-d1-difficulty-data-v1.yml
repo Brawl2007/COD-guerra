@@ -1,0 +1,61 @@
+name: M01 H9 D1 Difficulty Data V1
+
+on:
+  push:
+    branches: [claude/m01-h9-d1-difficulty-data-v1]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-h9-d1-difficulty-data-v1-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (D1 is data + save plumbing only, on the integration tip 2d65dd0)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          git merge-base --is-ancestor 2d65dd0 HEAD
+          echo "2d65dd0 is an ancestor of HEAD" | tee evidence/authority.log
+          git diff --exit-code 2d65dd0 HEAD -- missions src/render src/ui src/main.js index.html tests/fixtures package.json package-lock.json playwright.config.js 2>&1 | tee -a evidence/authority.log
+          echo "missions, render, ui, main, index.html, golden fixtures and build config untouched since 2d65dd0" | tee -a evidence/authority.log
+          test ! -f tests/fixtures/.golden-stale
+          echo "no golden marker: the committed x86 golden is verified, never regenerated" | tee -a evidence/authority.log
+          git diff --name-only 2d65dd0 HEAD | tee evidence/changed-files.txt
+      - name: Byte guards
+        run: set -o pipefail; node --test tests/m01-locomotive.test.js tests/m01-panzerzug.test.js tests/m01-soldier-visual-variation.test.js 2>&1 | tee evidence/byte-guards.log
+      - name: npm test
+        run: set -o pipefail; npm test 2>&1 | tee evidence/npm-test.log
+      - name: Golden, determinism, 12-seed and D1 proof lines
+        run: |
+          set -o pipefail
+          OK='^\s*(ok [0-9]+ - |✔ )'; BAD='^\s*(not ok [0-9]+ - |✖ )'
+          NAMES='(all gameplay bytes hashed each tick against approved base|route seed [0-9]+:|the level table equals the approved design table|the shipped design document is the approved copy|recruta snapshots carry no difficulty key|a legacy save without difficulty restores as recruta|soldado: snapshot -> restore -> snapshot is byte-identical|veterano: snapshot -> restore -> snapshot is byte-identical|the constructor stores the level, rejects unknown ones|invalid difficulty values are rejected|a resumeCheckpoint whose difficulty differs)'
+          grep -E "($OK|$BAD)$NAMES" evidence/npm-test.log | tee evidence/proof-lines.txt
+          if grep -qE "$BAD$NAMES" evidence/npm-test.log; then echo "FAIL: a proof line is not ok" | tee -a evidence/proof-lines.txt; exit 1; fi
+          test "$(grep -cE "${OK}all gameplay bytes hashed each tick against approved base" evidence/npm-test.log)" = 2
+          test "$(grep -cE "${OK}route seed [0-9]+:" evidence/npm-test.log)" = 12
+          for n in 'the level table equals the approved design table' 'the shipped design document is the approved copy' 'recruta snapshots carry no difficulty key' 'a legacy save without difficulty restores as recruta' 'soldado: snapshot -> restore -> snapshot is byte-identical' 'veterano: snapshot -> restore -> snapshot is byte-identical' 'the constructor stores the level, rejects unknown ones' 'invalid difficulty values are rejected' 'a resumeCheckpoint whose difficulty differs'; do
+            test "$(grep -cE "${OK}$n" evidence/npm-test.log)" = 1
+          done
+          echo "golden x2, 12 route seeds and the 9 D1 difficulty tests ran and passed" | tee -a evidence/proof-lines.txt
+      - name: npm run build
+        id: build
+        if: ${{ !cancelled() }}
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-h9-d1-difficulty-data-v1-${{ github.sha }}
+          path: evidence/
+          if-no-files-found: ignore

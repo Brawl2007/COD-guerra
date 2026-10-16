@@ -1,0 +1,44 @@
+✔ all beats have nonnegative time; pre-roll is explicit and cannot move bomb instants or gates (18.776516ms)
+✔ 019 remains absent at reorganization and after reload when the forward post survives a real near-miss (102.407703ms)
+✔ audio contracts reject missing fields and real Game queues every enemy fire at 3D distance/343 (3.506402ms)
+✔ grenade smoke expires at20s even for old records, ground impacts retain safeImpact displacement (6.882559ms)
+✔ auxiliary roster is atomic/legacy-compatible; every yard actor clears real solids and the platoon corridor for90s (46.298543ms)
+✔ display-only auxiliaries cannot intercept real player rays or become grenade damage/suppression targets (9.410424ms)
+✔ optional cover validation binds mapped node/type; legitimate predecessor carry speed migrates but corrupt new speed rejects (10.756816ms)
+✔ generic prone hitboxes lower and orient the silhouette from authoritative progress, with atomic corruption rejection (366.033286ms)
+✔ carry finite phases retain midphase saves, exact1.6m/s movement and death cleanup (236.486976ms)
+✔ battle-clock train arrival is monotone, stops at exact final anchors and leaves simulation/count65 untouched (7.667152ms)
+✔ MG34 loader feeds through a real finite reload, restores mid-feed and leaves immediately on gunner death without additional shots (206.003529ms)
+✔ ckm aim/feed are display-only and the finite west exit clears every real solid before retreat (679.697338ms)
+✔ four free scenes expose letterbox and a visible cue; scene elapsed/pause/reload alone determine the frame and camera stays unchanged (36.999166ms)
+✔ station soot/glass derive from event age and restore cleanly; old protected station remains untouched (1.494306ms)
+✔ disabling warmed bridge owner stays disabled on its next native selection and all borrowed originals remain visible (32.99314ms)
+✔ real projectile near-pass classification uses closest approach even when impact is hundreds of metres away (10.159444ms)
+✔ far wagon batching independently preserves all authored vertices/UVs/normals/material identity and disposes only copies (21.913706ms)
+✔ legacy mid-demolition scene beat indices remain valid after explicit pre-roll extraction (203.854836ms)
+✔ grenade smoke contributes actual pooled puffs before20s and none at expiry after save continuation, while raid columns persist (117.727937ms)
+✔ ckm typed fire_burst plan is saveable but policy-disabled, never fires, and malformed/armed plans reject atomically (51.115043ms)
+✔ supplemental original crew GLB has finite paired carry phases, complete rig bindings and reproducible saved-time poses (35.947889ms)
+✔ train headlamp halo is in front of the actual original engine geometry, without changing engine anchors (13.922905ms)
+✔ consist keeps 65 wagons, plan ids/types/x and the plan anchor; LOD hysteresis and candidates are unchanged (40.915577ms)
+✔ real GLB instances keep plan x/z, sit on the rail-top offset and retain exact final transforms with material-preserving far batches (192.407187ms)
+✔ wheel/rail fit: treads sit on the rail head, flanges stay inside the gauge, no lateral offset (all types and LODs) (49.839917ms)
+✔ every detail batch matches the tier of the drawn LOD; near/mid sets vanish at LOD2 and on Low; budget counted on real submissions (87.394688ms)
+✔ fallback: total and partial GLB failure keep the old proxies and never float details on them (25.623015ms)
+✔ train consist never asks for damage art and the yard intact/burned authority is unchanged (11.230411ms)
+✔ save/reload, pause frames and repeated updates never mutate simulation state or RNG; every detail/GLB buffer is history-free (185.003823ms)
+✔ variation is deterministic, bounded and visibly non-uniform without touching wagon type (0.665625ms)
+✔ couplings and underframe add no collider: world obstacles/walk surfaces are identical and nothing reads the world (12.161095ms)
+✔ dispose/recreate and repeated rebuilds never duplicate meshes or free shared art (55.410677ms)
+✔ original Claude train source changes only its renderer and adds detail, without touching gameplay or assets (22.563647ms)
+✔ everything the consist draws (siding included) lives under the train963 group, so visibility authority is unchanged (13.799158ms)
+✔ the drawn siding: rail heads at the rail top, standard gauge between inner faces, continuous from 1062 to 2000 m (12.615586ms)
+✔ a wagon drawn with a finer fallback GLB far away keeps the far tier (missing LOD2 art) (9.920364ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3346.629767

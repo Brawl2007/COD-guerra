@@ -1,0 +1,56 @@
+name: M01 Viewmodel Feel V2
+
+on:
+  push:
+    branches: [claude/m01-viewmodel-feel-v2]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m01-viewmodel-feel-v2-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - name: Authority check (presentation only)
+        run: |
+          set -o pipefail
+          mkdir -p evidence
+          # Base: T35 (blended soldier animation resolver). Simulation, world, core, missions, assets and the build/test config must not change.
+          git diff --exit-code 876b67c HEAD -- src/game src/world src/core missions assets package.json package-lock.json playwright.config.js 2>&1 | tee evidence/authority.log
+          echo "authority diff clean against 876b67c" | tee -a evidence/authority.log
+          # Hot shared render files stay untouched: the world camera, the bench renderer and the shared weapon FX are not part of this task.
+          git diff --exit-code 876b67c HEAD -- src/render/three-renderer.js src/render/m01-view.js src/render/first-person-weapon-fx.js 2>&1 | tee -a evidence/authority.log
+          echo "three-renderer, m01-view and first-person-weapon-fx unchanged against 876b67c" | tee -a evidence/authority.log
+          # The simulation, world and core must not import the presentation modules.
+          # (explicit if/exit: a bare '! grep' is exempt from 'bash -e' and could never fail the step)
+          if grep -rnE "m01-wz29-presentation|m01-viewmodel" src/game src/world src/core 2>&1 | tee -a evidence/authority.log; then echo "FAIL: src/game, src/world or src/core references the viewmodel modules" | tee -a evidence/authority.log; exit 1; fi
+          echo "no viewmodel reference in src/game, src/world, src/core" | tee -a evidence/authority.log
+          # No RNG, wall clock or frame timer in the two viewmodel modules: every term is a function of the simulation clock.
+          if grep -nE "Math\.random|performance\.now|\bDate\b|requestAnimationFrame|setTimeout|setInterval" src/render/m01-viewmodel.js src/render/m01-wz29-presentation.js 2>&1 | tee -a evidence/authority.log; then echo "FAIL: forbidden call in a viewmodel module" | tee -a evidence/authority.log; exit 1; fi
+          echo "viewmodel modules free of RNG, wall clock and timers" | tee -a evidence/authority.log
+      - name: npm test (TAP evidence)
+        run: set -o pipefail; npm test -- --test-reporter=tap 2>&1 | tee evidence/npm-test.tap
+      - name: npm run build
+        run: set -o pipefail; npm run build 2>&1 | tee evidence/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Focused browser specs (viewmodel feel, plus the existing wz.29 viewmodel, weapon presentation and player shot feedback specs)
+        run: set -o pipefail; npx playwright test tests/browser/m01-viewmodel-feel.spec.js tests/browser/m01-wz29-viewmodel.spec.js tests/browser/m01-weapon-presentation.spec.js tests/browser/m01-player-shot-feedback.spec.js --workers=1 --retries=0 2>&1 | tee evidence/browser.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-viewmodel-feel-v2-${{ github.sha }}
+          path: |
+            evidence/
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

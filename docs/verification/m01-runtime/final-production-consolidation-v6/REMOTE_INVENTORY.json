@@ -1,0 +1,4251 @@
+{
+  "task_id": "M01-FINAL-PRODUCTION-CONSOLIDATION-V6",
+  "audit_date": "2026-10-08",
+  "repository": "Brawl2007/COD-guerra",
+  "method": "Read-only GitHub plugin issue/PR/comments/reviews/branch collection/commit comparisons; limited local git history and committed documentation reads. No tests or workflow execution by inventory agent.",
+  "snapshot_timing": "Captured during initial independent inventory phase of this task; remote inventory not exhaustively refreshed for documentation write.",
+  "counts": {
+    "remote_branches": 113,
+    "relevant_branch_comparisons": 102,
+    "recent_pr_snapshots": 50,
+    "prs_with_review_and_comment_audit": 18
+  },
+  "approval_policy": {
+    "ready_is_approval": false,
+    "authorized_base_carry_is_source_certification": false,
+    "new_independent_production_requires_express_captain_approval": true,
+    "new_expressly_approved_independent_delivery_found": false
+  },
+  "authoritative_issue_update": {
+    "url": "https://github.com/Brawl2007/COD-guerra/issues/55#issuecomment-6057373984",
+    "id": 6057373984,
+    "author": "Brawl2007",
+    "body": "## Atualização de handoff — 2026-10-08 (a ler ANTES de executar esta issue)\n\n**A descrição original desta issue usa a V2 e está desatualizada quanto à melhor base já consolidada. Não recomeçar na V2.** Verificações diretas no GitHub:\n\n- **PR #52 — consolidação V5**: https://github.com/Brawl2007/COD-guerra/pull/52\n  - Branch `codex/m01-ready-deliveries-consolidation-v5`, HEAD remoto observado `d277b06937170aa433bc418ef5b83b2925c6d6de`.\n  - Aberta, **draft**, **não integrada em main**; contém Station V2, pontes V2, vegetação, 65 vagões/acoplamentos, Ju 87, HUD, áudio, ViewModel/armamento, FX/danos, contrato de animação e seis motion clips GLB.\n  - **O Animation Resolver ainda NÃO está implementado**; não declarar animações dos soldados prontas em runtime só porque os clips estão presentes.\n  - **Os testes Node focados e build não equivalem a certificação total**; a PR documenta bloqueios nos testes de browser FX.\n- **PR #53 — diagnóstico específico dos timeouts Battlefield FX**: https://github.com/Brawl2007/COD-guerra/pull/53\n  - Branch `codex/m01-fx-browser-evidence-harness-v1`, HEAD observado `a4dc9a8df5792df74cb6b7583f00819a380423d9`.\n  - Continua **draft**. Isola alteração de teste Playwright e workflow de evidência; **não modifica código de produção**. O problema pode ser captura tardia de efeitos transitórios ou defeito real. **Não criar correção concorrente que descarte o diagnóstico desta PR.** Verificar resultado/evidência antes de qualquer resolução.\n- **PR #54 — Station Visual Fidelity V3**: https://github.com/Brawl2007/COD-guerra/pull/54\n  - Branch `codex/m01-station-visual-fidelity-v3`, HEAD `271413f26efc1dbccefc39ac401f4495928a2493`, baseada em Station V2 `090804776b18c8dc3200497388eb59e83b56205c`.\n  - Marcada **READY_FOR_CAPTAIN_REVIEW**, testes locais focados relatados como 31/31 Node + build + browser focado; **não está certificada no conjunto V5**. Integrar apenas após aprovação expressa do Capitão, por delta semântico do módulo Station e provas, sem sobrescrever alterações de ponte ou ambiente.\n- **Quatro tarefas EM PROGRESSO**: continuam sem identificação inequívoca; registrar exclusões explícitas e **não supor que a #54 é uma delas**.\n\n### Instrução executiva para o agente avançado\n1. Confirmar HEADs atuais antes de qualquer escrita; ler `AGENTS.md`, `CLAUDE.md` (se existente), `docs/NEXT_CHAT_CONTEXT.md` e logs/handoffs da integração.\n2. **Usar a V5 como base preferencial**, salvo prova técnica de uma consolidação mais recente e segura; criar branch NOVA isolada, não editar `codex/m01-ready-deliveries-consolidation-v5` nem a branch da #53.\n3. Fechar diagnóstico da #53 com logs/traces/fases do efeito: separar evento não emitido, FX ausente, FX emitido e expirado, runner cancelado ou assert falso-positivo. Corrigir apenas defeitos demonstrados, com teste de regressão; não relaxar cobertura.\n4. Auditar PRs/branches prontas que não entraram na V5, sobretudo #54; não confundir `READY_FOR_CAPTAIN_REVIEW` com aprovação. Integrar só as aprovadas e independentes, resolvendo conflitos por hunk/semântica.\n5. Provar build, Node, browser focado/integral, invariantes determinísticos, save/reload e A/B visual; relatar falhas e limites, não fabricar aprovação, FPS nem artefatos.\n6. Abrir PR **draft** contra a branch correta de consolidação; preparar HANDOFF com matriz de branches incluídas/excluídas, HEADs, decisões de conflitos, testes e blockers.\n\n**Regras inegociáveis**: sem mudanças em `main`/deploy/Pages; sem `workflow_dispatch`, force-push, reset destrutivo; não refazer elementos já aprovados. **M01 segue PROTÓTIPO JOGÁVEL.**\n\nSe esta issue for atribuída a um agente Copilot no GitHub, **selecionar explicitamente a branch de partida `codex/m01-ready-deliveries-consolidation-v5`** (o default costuma ser `main`). Confirmar suporte e acesso do agente antes de iniciar."
+  },
+  "protected_refs": [
+    {
+      "branch": "deploy/m01-latest-playable",
+      "observed_head": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+      "decision": "preserve; no modifications"
+    },
+    {
+      "branch": "main",
+      "observed_head": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "decision": "preserve; no modifications"
+    }
+  ],
+  "branch_inventory": [
+    {
+      "branch": "claude/bold-cannon-rkvxjp",
+      "head": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "protected": false,
+      "decision": "exclude_later_decal_delta",
+      "approval": "alias of current unapproved decal source"
+    },
+    {
+      "branch": "claude/busy-edison-mokkrb",
+      "head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/clever-goldberg-avn7dj",
+      "head": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/cool-euler-fkyo43",
+      "head": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/ecstatic-planck-jiy2k3",
+      "head": "4a85ff9663946d9202bf38a92c68b185712a9d04",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "claude/exciting-planck-5ylz7z",
+      "head": "5583a4ab854a2e64dad85460bfd40031c3406ccc",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "claude/m01-bridge-models",
+      "head": "fdbb1860df31ce2b2a31a8ff09bfb4dbc4c74229",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-ckm-budget",
+      "head": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-ckm-wz30",
+      "head": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-continuous-playtest",
+      "head": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-integration-prep",
+      "head": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-ju87",
+      "head": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-mg34-prone",
+      "head": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-rkm-wz28",
+      "head": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-soldiers-1939",
+      "head": "6134a46253ecbfcfce37eb528007783a513ae343",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-staging",
+      "head": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-station-drag-transitions",
+      "head": "27353ef207c5d0d97102db5b60d1d4fd16943194",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-train-detail-coupling-polish-dws18u",
+      "head": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-train-detail-coupling-polish-v1",
+      "head": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-wagon-damage",
+      "head": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/m01-wagons",
+      "head": "0667af008549f15947c10ab09b814338d701bf2c",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "claude/pensive-thompson-jc2y12",
+      "head": "36a04b33a6d1bc85a926b47dd2db5704dd3e265f",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "claude/railway-production-pass-3c7fwx",
+      "head": "8ff9c6707c776c4096bc206d37ec99802af1f743",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "claude/zealous-ramanujan-2el38r",
+      "head": "8e4d2dde0e009dddccc322a53e6e6925fbbd517e",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/agentic-engineering-v1",
+      "head": "e88d4f871465499f170e33d6614e2cf4b401dac4",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/campaign-cinematic-m02-m30",
+      "head": "49824083ff996ead3dfa1b00ea0cc30aa2f69d2d",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/campaign-script-polish-v2-30-missions",
+      "head": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra",
+      "head": "94cdd3aa95b3f22ccce869880c43bc6b0a09e440",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-8d0uog",
+      "head": "3af7ea23179896048ee7f77cb9df5e570f3b822e",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-9pjnmy",
+      "head": "ef597a3937b54ae58e269128a8e4443d5a74fa26",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-bza8xt",
+      "head": "b5817cba7d28cd0824d35057ed2d55bccd33b64b",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg",
+      "head": "3ddeed0eda3dd0b36d049435d373d5fb6e25ca72",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-os0vaa",
+      "head": "b250a640de2bdd455a16c8ef5b44f78cd5ba5ee9",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-p5srg5",
+      "head": "76367561fbb741b83cae2906af62576f2f4938d0",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b",
+      "head": "f6f64fa4793bd9bc319593d6017d6525bf13018c",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h",
+      "head": "f2c7a66590e75cf2feac8df2a6d04f566113aadb",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "codex/m01-anim-contract-sim-v1",
+      "head": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-approved-consolidation-checkpoint-v1",
+      "head": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "protected": false,
+      "decision": "historical_consolidation_not_replacement_base",
+      "approval": "no later safe certified consolidation demonstrated"
+    },
+    {
+      "branch": "codex/m01-assets-review",
+      "head": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-authority-lease",
+      "head": "d12972fcfb4ec908be115c831392209560bbeba7",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-architecture",
+      "head": "7a0060cfd340cfcf51b6072ca25c5ab86117bd7a",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-production-pass",
+      "head": "91463ac1f9b99f4cda0934e43c2e83466a15a248",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-production-pass-v1",
+      "head": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-battlefield-fx-polish-v3",
+      "head": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-battlefield-fx-visual-runtime-v2",
+      "head": "9050fbfbc748d2c84b5b3bdf1a0cca7bfad325aa",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-bridge-completion",
+      "head": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "head": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-bridge-structural-production-closeout-v2",
+      "head": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-browser-harness-hardening",
+      "head": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-character-integration",
+      "head": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-chromebook-benchmark",
+      "head": "7edcdce5dc06ed438417c820d7294a9aaa2bd607",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-ci-capture-budget",
+      "head": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-ckm-fire-arc-resolution",
+      "head": "b2422396a33c1e3802ba83061a6e2fde173270e5",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-ckm-fire-runtime",
+      "head": "876b1622b5ff2f47ada196aad6ba4f3c6707855b",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-ckm-placement-migration",
+      "head": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-ckm-runtime",
+      "head": "f3be55aedc8b8a0f0342a711090ff8570eedfe3b",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "Sem aprovação expressa encontrada para este HEAD"
+    },
+    {
+      "branch": "codex/m01-combat-ai-architecture",
+      "head": "3da1f1637167a3d90953d4f698ebcf5c4b16cf26",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-combat-animation",
+      "head": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-cover-fire-origin",
+      "head": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-demolition-cue",
+      "head": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-demolition-dust",
+      "head": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-destruction-persistence",
+      "head": "e02b53a0abbce57c3bce175ca87d1084f62ec752",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-distant-battle-sectors",
+      "head": "fe2d99f9f343aeb526a95eca048bb010b155ad75",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-distant-battlefield-presentation-v1",
+      "head": "16ba780b1d170b6ad88898fe5ffa5950eb468979",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "Sem PR/aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-environment-prop-density-grounding-v1",
+      "head": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-environment-visual-runtime-pass",
+      "head": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-environmental-damage-decal-pass-v1",
+      "head": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "protected": false,
+      "decision": "Excluir delta posterior",
+      "approval": "Sem PR/aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-first-person-weapon-presentation-v1",
+      "head": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "protected": false,
+      "decision": "Excluir delta posterior",
+      "approval": "Sem PR/aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-fx-browser-evidence-harness-v1",
+      "head": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "protected": false,
+      "decision": "Preservar branch; usar evidência; sem importação de produção",
+      "approval": "PR #53 draft, 0 reviews/0 comentários; diagnóstico executado não é aprovação"
+    },
+    {
+      "branch": "codex/m01-handoff-aircraft",
+      "head": "f758daab8817adf5382a6623b8be43d42f2e4321",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-historical-soldier-equipment-audit",
+      "head": "adcd0a52c78f0ee648da94772a8ebc60b1834a46",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-hud-cinematic-presentation-pass-v1",
+      "head": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-idle-render",
+      "head": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-integrated-visual-placeholder-closeout-v2",
+      "head": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8",
+      "protected": false,
+      "decision": "Referência apenas; não é consolidação de produção posterior",
+      "approval": "Sem aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-integration-browser-harness-stabilization-v2",
+      "head": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-ju87-aircraft-production-closeout-v2",
+      "head": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "protected": false,
+      "decision": "Excluir delta posterior",
+      "approval": "Sem PR/aprovação expressa; handoff READY_FOR_CAPTAIN_REVIEW, browser relatado 55/61"
+    },
+    {
+      "branch": "codex/m01-locomotive-963-production-asset-runtime",
+      "head": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-mg34-prone-runtime",
+      "head": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-near-far-authority-runtime-pilot",
+      "head": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "PR #39 draft, 0 reviews/0 comentários; sem aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-next-pendencies-audit",
+      "head": "29e2c3eb1c6f3c7cd82c0c46bb6a1a2a49b42b96",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-panzerzug-production-asset-runtime",
+      "head": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-per-formation-rng-architecture",
+      "head": "d81ddfa99f2a5c99d3a3fce30a87ff0cd5a43941",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "Sem aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-player-hit-near-miss-feedback",
+      "head": "1934bed871297898278b1571b4f0fc003e76417e",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-production-integration-checkpoint-1",
+      "head": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+      "protected": false,
+      "decision": "historical_consolidation_not_replacement_base",
+      "approval": "no later safe certified consolidation demonstrated"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "head": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "protected": false,
+      "decision": "historical_consolidation_not_replacement_base",
+      "approval": "no later safe certified consolidation demonstrated"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v3",
+      "head": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "protected": false,
+      "decision": "historical_consolidation_not_replacement_base",
+      "approval": "no later safe certified consolidation demonstrated"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v4",
+      "head": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "protected": false,
+      "decision": "historical_consolidation_not_replacement_base",
+      "approval": "no later safe certified consolidation demonstrated"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "head": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "protected": false,
+      "decision": "authorized_base",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-validation-v3",
+      "head": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-rifleman-locomotion-runtime",
+      "head": "93aaa5c4a5651f22b4c696005501a2ac1014860a",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "Sem aprovação expressa encontrada; não é o Animation Resolver da V5"
+    },
+    {
+      "branch": "codex/m01-runtime",
+      "head": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-schema2-determinism-audit",
+      "head": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-soldier-locomotion-animation",
+      "head": "cd91d65f0c022678ed24785eb44233bab137eb3c",
+      "protected": false,
+      "decision": "Referência apenas; excluir importação",
+      "approval": "Sem aprovação expressa; handoff desaconselha merge como funcionalidade de gameplay"
+    },
+    {
+      "branch": "codex/m01-soldier-motion-clips-production-v1",
+      "head": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-soldier-visual-variation-pass",
+      "head": "63318225c015d7dc50390bed32897b0305237aa1",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-station-architecture-production-v2",
+      "head": "090804776b18c8dc3200497388eb59e83b56205c",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-station-visual-fidelity-v3",
+      "head": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "protected": false,
+      "decision": "Excluir até aprovação expressa",
+      "approval": "PR #54 draft, READY somente; 0 reviews/0 comentários; #55 exige aprovação expressa"
+    },
+    {
+      "branch": "codex/m01-station-wagon-state",
+      "head": "f15a2e51dbe329ae984a52c47ecf856eef8fbede",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "Sem aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-station-wagon-validation",
+      "head": "e5d7c049e64ef7e2bf49766df10aa0b332633923",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "PR #38 closed draft; 0 reviews/0 comentários observados; sem aprovação expressa encontrada"
+    },
+    {
+      "branch": "codex/m01-support-runtime",
+      "head": "8e8e74246ca72c3fe050f57d485fc3aaad7363f9",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-v3-isolated-cancelled-tests",
+      "head": "269c3816aea27247fdeffda039ffe4f9ba7f4743",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-vegetation-foliage-production-closeout-v1",
+      "head": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-vegetation-mesh-lod-runtime-pass",
+      "head": "9d3f9fc898fd17a4919e2cc367ffacd591605360",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-viewmodel-visual-v2",
+      "head": "3e879e7406109b4e03c1bb9d21631a11a6736f33",
+      "protected": false,
+      "decision": "Excluir",
+      "approval": "Sem aprovação expressa encontrada para este HEAD"
+    },
+    {
+      "branch": "codex/m01-visual-placeholder-asset-audit",
+      "head": "e8813ac01555a77646cbecac991ddb04e90b27c7",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-visual-sprint",
+      "head": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-wagon-lod-damage-runtime-integration",
+      "head": "1ac890d45650f8eb4f4c8e13a9e5be4265205f90",
+      "protected": false,
+      "decision": "historical_ancestry_no_new_commit_delta",
+      "approval": "authorized base carries existing state; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-world-interactions",
+      "head": "5d11e91567fe7ff188a95ad1885c47da61da6f7c",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/m01-wz29-viewmodel-visual-runtime",
+      "head": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "protected": false,
+      "decision": "carry_existing_V5_checkpoint",
+      "approval": "authorized base carry; not source Captain certification"
+    },
+    {
+      "branch": "codex/m01-yard-wagon-fit",
+      "head": "a3fab20ce9cb78d330869f85ad491e266374d5c0",
+      "protected": false,
+      "decision": "exclude_unapproved_divergent_branch",
+      "approval": "no express approval established in observed evidence"
+    },
+    {
+      "branch": "codex/three-foundation-checkpoints",
+      "head": "9e1961331bd870cf0db5d38c0364f24c2cea56f5",
+      "protected": false,
+      "decision": "historical_foundation_not_new_delivery_candidate",
+      "approval": "not independently admitted by this audit"
+    },
+    {
+      "branch": "deploy/m01-latest-playable",
+      "head": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+      "protected": false,
+      "decision": "protected_ref_do_not_modify",
+      "approval": "no integration action"
+    },
+    {
+      "branch": "main",
+      "head": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "protected": false,
+      "decision": "protected_ref_do_not_modify",
+      "approval": "no integration action"
+    }
+  ],
+  "comparisons": [
+    {
+      "branch": "claude/bold-cannon-rkvxjp",
+      "observed_head": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 2,
+      "behind_by": 74,
+      "total_commits": 2,
+      "merge_base": "b084bba8a56c85d60f15a10a6bcf3fb4da18f5e8",
+      "changed_file_count": 58,
+      "production_files": [
+        {
+          "path": "src/render/m01-damage-decals.js",
+          "status": "modified",
+          "additions": 36,
+          "deletions": 21
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-damage-decals.spec.js",
+        "tests/m01-damage-decals.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "claude/busy-edison-mokkrb",
+      "observed_head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 283,
+      "total_commits": 0,
+      "merge_base": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/clever-goldberg-avn7dj",
+      "observed_head": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 324,
+      "total_commits": 0,
+      "merge_base": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/cool-euler-fkyo43",
+      "observed_head": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 74,
+      "total_commits": 0,
+      "merge_base": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/ecstatic-planck-jiy2k3",
+      "observed_head": "4a85ff9663946d9202bf38a92c68b185712a9d04",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 2,
+      "behind_by": 295,
+      "total_commits": 2,
+      "merge_base": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "changed_file_count": 1,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/exciting-planck-5ylz7z",
+      "observed_head": "5583a4ab854a2e64dad85460bfd40031c3406ccc",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 295,
+      "total_commits": 1,
+      "merge_base": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "changed_file_count": 2,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-bridge-models",
+      "observed_head": "fdbb1860df31ce2b2a31a8ff09bfb4dbc4c74229",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 349,
+      "total_commits": 0,
+      "merge_base": "fdbb1860df31ce2b2a31a8ff09bfb4dbc4c74229",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-ckm-budget",
+      "observed_head": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 260,
+      "total_commits": 0,
+      "merge_base": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-ckm-wz30",
+      "observed_head": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 270,
+      "total_commits": 0,
+      "merge_base": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-continuous-playtest",
+      "observed_head": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 338,
+      "total_commits": 0,
+      "merge_base": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-integration-prep",
+      "observed_head": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 349,
+      "total_commits": 0,
+      "merge_base": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-ju87",
+      "observed_head": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 279,
+      "total_commits": 0,
+      "merge_base": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-mg34-prone",
+      "observed_head": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 272,
+      "total_commits": 0,
+      "merge_base": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-rkm-wz28",
+      "observed_head": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 285,
+      "total_commits": 0,
+      "merge_base": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-soldiers-1939",
+      "observed_head": "6134a46253ecbfcfce37eb528007783a513ae343",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 328,
+      "total_commits": 0,
+      "merge_base": "6134a46253ecbfcfce37eb528007783a513ae343",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-staging",
+      "observed_head": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 336,
+      "total_commits": 0,
+      "merge_base": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-station-drag-transitions",
+      "observed_head": "27353ef207c5d0d97102db5b60d1d4fd16943194",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 262,
+      "total_commits": 0,
+      "merge_base": "27353ef207c5d0d97102db5b60d1d4fd16943194",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-train-detail-coupling-polish-dws18u",
+      "observed_head": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 68,
+      "total_commits": 0,
+      "merge_base": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-train-detail-coupling-polish-v1",
+      "observed_head": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 68,
+      "total_commits": 0,
+      "merge_base": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-wagon-damage",
+      "observed_head": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 272,
+      "total_commits": 0,
+      "merge_base": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/m01-wagons",
+      "observed_head": "0667af008549f15947c10ab09b814338d701bf2c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 287,
+      "total_commits": 0,
+      "merge_base": "0667af008549f15947c10ab09b814338d701bf2c",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/pensive-thompson-jc2y12",
+      "observed_head": "36a04b33a6d1bc85a926b47dd2db5704dd3e265f",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 295,
+      "total_commits": 1,
+      "merge_base": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "changed_file_count": 3,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/railway-production-pass-3c7fwx",
+      "observed_head": "8ff9c6707c776c4096bc206d37ec99802af1f743",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 295,
+      "total_commits": 1,
+      "merge_base": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "changed_file_count": 4,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "claude/zealous-ramanujan-2el38r",
+      "observed_head": "8e4d2dde0e009dddccc322a53e6e6925fbbd517e",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 295,
+      "total_commits": 1,
+      "merge_base": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "changed_file_count": 3,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/agentic-engineering-v1",
+      "observed_head": "e88d4f871465499f170e33d6614e2cf4b401dac4",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 16,
+      "behind_by": 206,
+      "total_commits": 16,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 27,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/campaign-cinematic-m02-m30",
+      "observed_head": "49824083ff996ead3dfa1b00ea0cc30aa2f69d2d",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 26,
+      "behind_by": 244,
+      "total_commits": 26,
+      "merge_base": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "changed_file_count": 13,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/campaign-script-polish-v2-30-missions",
+      "observed_head": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 9,
+      "behind_by": 295,
+      "total_commits": 9,
+      "merge_base": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "changed_file_count": 8,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-anim-contract-sim-v1",
+      "observed_head": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 74,
+      "total_commits": 0,
+      "merge_base": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-approved-consolidation-checkpoint-v1",
+      "observed_head": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 68,
+      "total_commits": 0,
+      "merge_base": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-assets-review",
+      "observed_head": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 252,
+      "total_commits": 0,
+      "merge_base": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-authority-lease",
+      "observed_head": "d12972fcfb4ec908be115c831392209560bbeba7",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 3,
+      "behind_by": 214,
+      "total_commits": 3,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 12,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-authority-lease-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/authority-lease-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-architecture",
+      "observed_head": "7a0060cfd340cfcf51b6072ca25c5ab86117bd7a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 9,
+      "behind_by": 214,
+      "total_commits": 9,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 7,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-battlefield-audio-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/battlefield-audio-architecture-2026-10-03/HANDOFF.md",
+        "docs/verification/m01-runtime/battlefield-audio-architecture-2026-10-03/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-production-pass",
+      "observed_head": "91463ac1f9b99f4cda0934e43c2e83466a15a248",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 196,
+      "total_commits": 0,
+      "merge_base": "91463ac1f9b99f4cda0934e43c2e83466a15a248",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-battlefield-audio-production-pass-v1",
+      "observed_head": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 73,
+      "total_commits": 0,
+      "merge_base": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-battlefield-fx-polish-v3",
+      "observed_head": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 61,
+      "total_commits": 0,
+      "merge_base": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-battlefield-fx-visual-runtime-v2",
+      "observed_head": "9050fbfbc748d2c84b5b3bdf1a0cca7bfad325aa",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 196,
+      "total_commits": 0,
+      "merge_base": "9050fbfbc748d2c84b5b3bdf1a0cca7bfad325aa",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-bridge-completion",
+      "observed_head": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 346,
+      "total_commits": 0,
+      "merge_base": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "observed_head": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 75,
+      "total_commits": 0,
+      "merge_base": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-bridge-structural-production-closeout-v2",
+      "observed_head": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 72,
+      "total_commits": 0,
+      "merge_base": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-browser-harness-hardening",
+      "observed_head": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 30,
+      "behind_by": 206,
+      "total_commits": 30,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 10,
+      "production_files": [],
+      "tests_and_workflows": [
+        ".github/workflows/pages.yml",
+        "tests/browser/game.spec.js",
+        "tests/browser/helpers/harness.js",
+        "tests/browser/helpers/preview-server.mjs",
+        "tests/browser/m01-mg34-prone.spec.js",
+        "tests/browser/m01.spec.js",
+        "tests/m01-browser-harness.test.js"
+      ],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-character-integration",
+      "observed_head": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 289,
+      "total_commits": 0,
+      "merge_base": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-chromebook-benchmark",
+      "observed_head": "7edcdce5dc06ed438417c820d7294a9aaa2bd607",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 10,
+      "behind_by": 244,
+      "total_commits": 10,
+      "merge_base": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "changed_file_count": 6,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-chromebook-benchmark.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/chromebook-benchmark/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-ci-capture-budget",
+      "observed_head": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 319,
+      "total_commits": 0,
+      "merge_base": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ckm-fire-arc-resolution",
+      "observed_head": "b2422396a33c1e3802ba83061a6e2fde173270e5",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 4,
+      "behind_by": 214,
+      "total_commits": 4,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 9,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-ckm-fire-arc.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/ckm-fire-arc-resolution-2026-10-03/HANDOFF.md",
+        "docs/verification/m01-runtime/ckm-fire-arc-resolution-2026-10-03/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-ckm-fire-runtime",
+      "observed_head": "876b1622b5ff2f47ada196aad6ba4f3c6707855b",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 214,
+      "total_commits": 1,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 1,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/ckm-fire-arc-2026-10-03/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-ckm-placement-migration",
+      "observed_head": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 244,
+      "total_commits": 0,
+      "merge_base": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ckm-runtime",
+      "observed_head": "f3be55aedc8b8a0f0342a711090ff8570eedfe3b",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 5,
+      "behind_by": 254,
+      "total_commits": 5,
+      "merge_base": "b734cb0703013c36416f4cda269d558ae0602394",
+      "changed_file_count": 3,
+      "production_files": [
+        {
+          "path": "src/game/m01-simulation.js",
+          "status": "modified",
+          "additions": 48,
+          "deletions": 5
+        },
+        {
+          "path": "src/render/m01-characters.js",
+          "status": "modified",
+          "additions": 64,
+          "deletions": 19
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/m01-ckm-runtime.test.js"
+      ],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-combat-ai-architecture",
+      "observed_head": "3da1f1637167a3d90953d4f698ebcf5c4b16cf26",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 9,
+      "behind_by": 214,
+      "total_commits": 9,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 7,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-combat-ai-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/combat-ai-architecture-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-combat-animation",
+      "observed_head": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 309,
+      "total_commits": 0,
+      "merge_base": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-cover-fire-origin",
+      "observed_head": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 311,
+      "total_commits": 0,
+      "merge_base": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-demolition-cue",
+      "observed_head": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 315,
+      "total_commits": 0,
+      "merge_base": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-demolition-dust",
+      "observed_head": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 313,
+      "total_commits": 0,
+      "merge_base": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-destruction-persistence",
+      "observed_head": "e02b53a0abbce57c3bce175ca87d1084f62ec752",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 7,
+      "behind_by": 214,
+      "total_commits": 7,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 14,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-destruction-state-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/destruction-persistence-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-distant-battle-sectors",
+      "observed_head": "fe2d99f9f343aeb526a95eca048bb010b155ad75",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 7,
+      "behind_by": 214,
+      "total_commits": 7,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 13,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-battle-sector-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/distant-battle-sectors-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-distant-battlefield-presentation-v1",
+      "observed_head": "16ba780b1d170b6ad88898fe5ffa5950eb468979",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 5,
+      "behind_by": 75,
+      "total_commits": 5,
+      "merge_base": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "changed_file_count": 34,
+      "production_files": [
+        {
+          "path": "src/render/m01-distant-battlefield-plan.js",
+          "status": "added",
+          "additions": 276,
+          "deletions": 0
+        },
+        {
+          "path": "src/render/m01-distant-battlefield.js",
+          "status": "added",
+          "additions": 229,
+          "deletions": 0
+        },
+        {
+          "path": "src/render/m01-view.js",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-distant-battlefield.spec.js",
+        "tests/m01-distant-battlefield.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-environment-prop-density-grounding-v1",
+      "observed_head": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 104,
+      "total_commits": 0,
+      "merge_base": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-environment-visual-runtime-pass",
+      "observed_head": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 204,
+      "total_commits": 0,
+      "merge_base": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-environmental-damage-decal-pass-v1",
+      "observed_head": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 2,
+      "behind_by": 74,
+      "total_commits": 2,
+      "merge_base": "b084bba8a56c85d60f15a10a6bcf3fb4da18f5e8",
+      "changed_file_count": 58,
+      "production_files": [
+        {
+          "path": "src/render/m01-damage-decals.js",
+          "status": "modified",
+          "additions": 36,
+          "deletions": 21
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-damage-decals.spec.js",
+        "tests/m01-damage-decals.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-first-person-weapon-presentation-v1",
+      "observed_head": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 5,
+      "behind_by": 73,
+      "total_commits": 5,
+      "merge_base": "2e946ab0f62997689c1f7d015cef8904ec6f3c60",
+      "changed_file_count": 54,
+      "production_files": [
+        {
+          "path": "src/render/first-person-weapon-fx.js",
+          "status": "modified",
+          "additions": 97,
+          "deletions": 34
+        },
+        {
+          "path": "src/render/m01-view.js",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 5
+        },
+        {
+          "path": "src/render/m01-viewmodel.js",
+          "status": "modified",
+          "additions": 12,
+          "deletions": 8
+        },
+        {
+          "path": "src/render/m01-wz29-presentation.js",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 3
+        },
+        {
+          "path": "src/render/three-renderer.js",
+          "status": "modified",
+          "additions": 15,
+          "deletions": 7
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/m01-weapon-presentation.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-fx-browser-evidence-harness-v1",
+      "observed_head": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 2,
+      "behind_by": 3,
+      "total_commits": 2,
+      "merge_base": "05984f63ced11e38d57cba9a75170b38d54f7a13",
+      "changed_file_count": 2,
+      "production_files": [],
+      "tests_and_workflows": [
+        ".github/workflows/m01-fx-browser-evidence-harness-v1.yml",
+        "tests/browser/m01-battlefield-fx-polish-v3.spec.js"
+      ],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-handoff-aircraft",
+      "observed_head": "f758daab8817adf5382a6623b8be43d42f2e4321",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 278,
+      "total_commits": 0,
+      "merge_base": "f758daab8817adf5382a6623b8be43d42f2e4321",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-historical-soldier-equipment-audit",
+      "observed_head": "adcd0a52c78f0ee648da94772a8ebc60b1834a46",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 11,
+      "behind_by": 206,
+      "total_commits": 11,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 9,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/historical-soldier-equipment-audit-2026-10-03/HANDOFF.md",
+        "docs/verification/m01-runtime/historical-soldier-equipment-audit-2026-10-03/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-hud-cinematic-presentation-pass-v1",
+      "observed_head": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 67,
+      "total_commits": 0,
+      "merge_base": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-idle-render",
+      "observed_head": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 317,
+      "total_commits": 0,
+      "merge_base": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-integrated-visual-placeholder-closeout-v2",
+      "observed_head": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 15,
+      "behind_by": 117,
+      "total_commits": 15,
+      "merge_base": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+      "changed_file_count": 6,
+      "production_files": [],
+      "tests_and_workflows": [
+        ".github/workflows/m01-integrated-visual-placeholder-closeout-v2.yml",
+        "tests/browser/m01-battlefield-fx.spec.js",
+        "tests/browser/m01-integrated-visual-closeout.spec.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/integrated-visual-closeout-v2/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-integration-browser-harness-stabilization-v2",
+      "observed_head": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 117,
+      "total_commits": 0,
+      "merge_base": "6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ju87-aircraft-production-closeout-v2",
+      "observed_head": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 7,
+      "behind_by": 70,
+      "total_commits": 7,
+      "merge_base": "4a8063916ad858fe594346b76915b9b9b6b8a12c",
+      "changed_file_count": 46,
+      "production_files": [
+        {
+          "path": "src/render/m01-view.js",
+          "status": "modified",
+          "additions": 0,
+          "deletions": 2
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/m01-aircraft-runtime.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-locomotive-963-production-asset-runtime",
+      "observed_head": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 205,
+      "total_commits": 0,
+      "merge_base": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-mg34-prone-runtime",
+      "observed_head": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 214,
+      "total_commits": 0,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-near-far-authority-runtime-pilot",
+      "observed_head": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 7,
+      "behind_by": 206,
+      "total_commits": 7,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 44,
+      "production_files": [
+        {
+          "path": "src/game/game.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-authority-coordinator.js",
+          "status": "added",
+          "additions": 149,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-sector-runtime-adapter.js",
+          "status": "added",
+          "additions": 118,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-simulation.js",
+          "status": "modified",
+          "additions": 25,
+          "deletions": 6
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-authority-pilot.spec.js",
+        "tests/m01-authority-runtime.test.js",
+        "tests/m01-cover-threat.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-next-pendencies-audit",
+      "observed_head": "29e2c3eb1c6f3c7cd82c0c46bb6a1a2a49b42b96",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 4,
+      "behind_by": 252,
+      "total_commits": 4,
+      "merge_base": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "changed_file_count": 2,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/next-pendencies-2026-10-03/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-panzerzug-production-asset-runtime",
+      "observed_head": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 205,
+      "total_commits": 0,
+      "merge_base": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-per-formation-rng-architecture",
+      "observed_head": "d81ddfa99f2a5c99d3a3fce30a87ff0cd5a43941",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 9,
+      "behind_by": 206,
+      "total_commits": 9,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 57,
+      "production_files": [
+        {
+          "path": "src/game/game.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-authority-coordinator.js",
+          "status": "added",
+          "additions": 149,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-sector-runtime-adapter.js",
+          "status": "added",
+          "additions": 118,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-simulation.js",
+          "status": "modified",
+          "additions": 25,
+          "deletions": 6
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-authority-pilot.spec.js",
+        "tests/m01-authority-runtime.test.js",
+        "tests/m01-cover-threat.test.js",
+        "tests/m01-per-formation-rng-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/near-far-authority-pilot-2026-10-04/HANDOFF.md",
+        "docs/verification/m01-runtime/per-formation-rng-2026-10-04/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-player-hit-near-miss-feedback",
+      "observed_head": "1934bed871297898278b1571b4f0fc003e76417e",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 192,
+      "total_commits": 0,
+      "merge_base": "1934bed871297898278b1571b4f0fc003e76417e",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-production-integration-checkpoint-1",
+      "observed_head": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 126,
+      "total_commits": 0,
+      "merge_base": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "observed_head": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 8,
+      "behind_by": 30,
+      "total_commits": 8,
+      "merge_base": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+      "changed_file_count": 104,
+      "production_files": [
+        {
+          "path": "src/game/game.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "src/render/first-person-weapon-fx.js",
+          "status": "added",
+          "additions": 437,
+          "deletions": 0
+        },
+        {
+          "path": "src/render/m01-damage-decals.js",
+          "status": "added",
+          "additions": 1138,
+          "deletions": 0
+        },
+        {
+          "path": "src/render/m01-view.js",
+          "status": "modified",
+          "additions": 46,
+          "deletions": 10
+        },
+        {
+          "path": "src/render/m01-viewmodel.js",
+          "status": "modified",
+          "additions": 96,
+          "deletions": 22
+        },
+        {
+          "path": "src/render/m01-wz29-presentation.js",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 13
+        },
+        {
+          "path": "src/render/three-renderer.js",
+          "status": "modified",
+          "additions": 57,
+          "deletions": 18
+        }
+      ],
+      "tests_and_workflows": [
+        ".github/workflows/m01-environmental-damage-decal-pass-v1.yml",
+        ".github/workflows/m01-ready-deliveries-consolidation-v2.yml",
+        "tests/browser/m01-damage-decals.spec.js",
+        "tests/browser/m01-weapon-presentation.spec.js",
+        "tests/m01-aircraft-runtime.test.js",
+        "tests/m01-damage-decals.test.js",
+        "tests/m01-weapon-presentation.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md",
+        "docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v3",
+      "observed_head": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 28,
+      "total_commits": 0,
+      "merge_base": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v4",
+      "observed_head": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 6,
+      "total_commits": 0,
+      "merge_base": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "observed_head": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "identical",
+      "ahead_by": 0,
+      "behind_by": 0,
+      "total_commits": 0,
+      "merge_base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-ready-deliveries-validation-v3",
+      "observed_head": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 33,
+      "total_commits": 1,
+      "merge_base": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+      "changed_file_count": 1,
+      "production_files": [],
+      "tests_and_workflows": [
+        ".github/workflows/m01-ready-deliveries-validation-v3.yml"
+      ],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-rifleman-locomotion-runtime",
+      "observed_head": "93aaa5c4a5651f22b4c696005501a2ac1014860a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 6,
+      "behind_by": 206,
+      "total_commits": 6,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 60,
+      "production_files": [
+        {
+          "path": "src/render/m01-characters.js",
+          "status": "modified",
+          "additions": 37,
+          "deletions": 8
+        },
+        {
+          "path": "src/render/m01-rifleman-locomotion.js",
+          "status": "added",
+          "additions": 51,
+          "deletions": 0
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-rifleman-locomotion.spec.js",
+        "tests/browser/m01.spec.js",
+        "tests/m01-rifleman-locomotion.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/rifleman-locomotion-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-runtime",
+      "observed_head": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 252,
+      "total_commits": 0,
+      "merge_base": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-schema2-determinism-audit",
+      "observed_head": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 206,
+      "total_commits": 0,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-soldier-locomotion-animation",
+      "observed_head": "cd91d65f0c022678ed24785eb44233bab137eb3c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 6,
+      "behind_by": 214,
+      "total_commits": 6,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 8,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-soldier-animation-state-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/soldier-animation-architecture-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-soldier-motion-clips-production-v1",
+      "observed_head": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 73,
+      "total_commits": 0,
+      "merge_base": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-soldier-visual-variation-pass",
+      "observed_head": "63318225c015d7dc50390bed32897b0305237aa1",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 205,
+      "total_commits": 0,
+      "merge_base": "63318225c015d7dc50390bed32897b0305237aa1",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-station-architecture-production-v2",
+      "observed_head": "090804776b18c8dc3200497388eb59e83b56205c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 74,
+      "total_commits": 0,
+      "merge_base": "090804776b18c8dc3200497388eb59e83b56205c",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-station-visual-fidelity-v3",
+      "observed_head": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 3,
+      "behind_by": 74,
+      "total_commits": 3,
+      "merge_base": "090804776b18c8dc3200497388eb59e83b56205c",
+      "changed_file_count": 114,
+      "production_files": [
+        {
+          "path": "src/render/m01-station-architecture.js",
+          "status": "modified",
+          "additions": 173,
+          "deletions": 50
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-station-architecture.spec.js",
+        "tests/m01-station-architecture.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-station-wagon-state",
+      "observed_head": "f15a2e51dbe329ae984a52c47ecf856eef8fbede",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 11,
+      "behind_by": 214,
+      "total_commits": 11,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 5,
+      "production_files": [
+        {
+          "path": "src/render/m01-atmosphere.js",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "src/render/m01-view.js",
+          "status": "modified",
+          "additions": 17,
+          "deletions": 7
+        },
+        {
+          "path": "src/render/m01-yard-wagons.js",
+          "status": "added",
+          "additions": 100,
+          "deletions": 0
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/m01-station-wagon-state.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/station-wagon-state-2026-10-03/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-station-wagon-validation",
+      "observed_head": "e5d7c049e64ef7e2bf49766df10aa0b332633923",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 25,
+      "behind_by": 214,
+      "total_commits": 25,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 12,
+      "production_files": [
+        {
+          "path": "missions/m01-tczew/mission.json",
+          "status": "modified",
+          "additions": 18,
+          "deletions": 1
+        },
+        {
+          "path": "src/game/game.js",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "src/game/m01-simulation.js",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 3
+        },
+        {
+          "path": "src/render/m01-atmosphere.js",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "src/render/m01-view.js",
+          "status": "modified",
+          "additions": 19,
+          "deletions": 8
+        },
+        {
+          "path": "src/render/m01-yard-wagons.js",
+          "status": "added",
+          "additions": 101,
+          "deletions": 0
+        }
+      ],
+      "tests_and_workflows": [
+        "tests/browser/m01-station-wagon.spec.js",
+        "tests/browser/m01.spec.js",
+        "tests/m01-station-wagon-state.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/station-wagon-state-2026-10-03/REPORT.md",
+        "docs/verification/m01-runtime/station-wagon-validation-2026-10-04/HANDOFF.md",
+        "docs/verification/m01-runtime/station-wagon-validation-2026-10-04/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-support-runtime",
+      "observed_head": "8e8e74246ca72c3fe050f57d485fc3aaad7363f9",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 4,
+      "behind_by": 252,
+      "total_commits": 4,
+      "merge_base": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "changed_file_count": 1,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-v3-isolated-cancelled-tests",
+      "observed_head": "269c3816aea27247fdeffda039ffe4f9ba7f4743",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 2,
+      "behind_by": 33,
+      "total_commits": 2,
+      "merge_base": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+      "changed_file_count": 2,
+      "production_files": [],
+      "tests_and_workflows": [
+        ".github/workflows/m01-isolated-interrupted-v3.yml",
+        ".github/workflows/m01-ready-deliveries-validation-v3.yml"
+      ],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-vegetation-foliage-production-closeout-v1",
+      "observed_head": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 74,
+      "total_commits": 0,
+      "merge_base": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-vegetation-mesh-lod-runtime-pass",
+      "observed_head": "9d3f9fc898fd17a4919e2cc367ffacd591605360",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 194,
+      "total_commits": 0,
+      "merge_base": "9d3f9fc898fd17a4919e2cc367ffacd591605360",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-viewmodel-visual-v2",
+      "observed_head": "3e879e7406109b4e03c1bb9d21631a11a6736f33",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 4,
+      "behind_by": 244,
+      "total_commits": 4,
+      "merge_base": "2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732",
+      "changed_file_count": 4,
+      "production_files": [
+        {
+          "path": "src/render/m01-viewmodel.js",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2
+        }
+      ],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/viewmodel-v2/HANDOFF.md",
+        "docs/verification/m01-runtime/viewmodel-v2/REPORT.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-visual-placeholder-asset-audit",
+      "observed_head": "e8813ac01555a77646cbecac991ddb04e90b27c7",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 8,
+      "behind_by": 206,
+      "total_commits": 8,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 7,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/visual-placeholder-audit-2026-10-04/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-visual-sprint",
+      "observed_head": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 322,
+      "total_commits": 0,
+      "merge_base": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-wagon-lod-damage-runtime-integration",
+      "observed_head": "1ac890d45650f8eb4f4c8e13a9e5be4265205f90",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 194,
+      "total_commits": 0,
+      "merge_base": "1ac890d45650f8eb4f4c8e13a9e5be4265205f90",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-world-interactions",
+      "observed_head": "5d11e91567fe7ff188a95ad1885c47da61da6f7c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 7,
+      "behind_by": 214,
+      "total_commits": 7,
+      "merge_base": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "changed_file_count": 7,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-world-interactions-prototype.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/verification/m01-runtime/world-interactions-2026-10-03/HANDOFF.md"
+      ]
+    },
+    {
+      "branch": "codex/m01-wz29-viewmodel-visual-runtime",
+      "observed_head": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "behind",
+      "ahead_by": 0,
+      "behind_by": 202,
+      "total_commits": 0,
+      "merge_base": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "changed_file_count": 0,
+      "production_files": [],
+      "tests_and_workflows": [],
+      "handoff_or_report_paths": []
+    },
+    {
+      "branch": "codex/m01-yard-wagon-fit",
+      "observed_head": "a3fab20ce9cb78d330869f85ad491e266374d5c0",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 7,
+      "behind_by": 252,
+      "total_commits": 7,
+      "merge_base": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "changed_file_count": 7,
+      "production_files": [],
+      "tests_and_workflows": [
+        "tests/m01-yard-wagon-fit.test.js"
+      ],
+      "handoff_or_report_paths": [
+        "docs/parallel/m01-yard-wagon-fit/HANDOFF.md",
+        "docs/parallel/m01-yard-wagon-fit/REPORT.md"
+      ]
+    },
+    {
+      "branch": "deploy/m01-latest-playable",
+      "observed_head": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+      "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "compare_status": "diverged",
+      "ahead_by": 1,
+      "behind_by": 206,
+      "total_commits": 1,
+      "merge_base": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "changed_file_count": 1,
+      "production_files": [],
+      "tests_and_workflows": [
+        ".github/workflows/pages.yml"
+      ],
+      "handoff_or_report_paths": []
+    }
+  ],
+  "pull_request_snapshots": [
+    {
+      "number": 54,
+      "title": "M01: refinar fachadas, materiais e coberturas da Station V3",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/54",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-station-visual-fidelity-v3",
+      "head_sha": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "observed_current_branch_head": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "base_branch": "codex/m01-station-architecture-production-v2",
+      "base_sha": "090804776b18c8dc3200497388eb59e83b56205c",
+      "created_at": "2026-10-08T09:32:05Z",
+      "updated_at": "2026-10-08T09:32:05Z"
+    },
+    {
+      "number": 53,
+      "title": "M01: diagnosticar timeouts FX no navegador sem alterar o jogo",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/53",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-fx-browser-evidence-harness-v1",
+      "head_sha": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "observed_current_branch_head": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "base_sha": "ea6e912e36d1013bc8ca0bc60db182f5b6a60166",
+      "created_at": "2026-10-08T09:18:41Z",
+      "updated_at": "2026-10-08T09:18:41Z"
+    },
+    {
+      "number": 52,
+      "title": "M01 V5 — biblioteca de animações dos soldados integrada para revisão",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/52",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "head_sha": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "observed_current_branch_head": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v4",
+      "base_sha": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "created_at": "2026-10-08T09:15:03Z",
+      "updated_at": "2026-10-08T09:21:02Z"
+    },
+    {
+      "number": 51,
+      "title": "M01: integração V4 — FX e danos ambientais",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/51",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-ready-deliveries-consolidation-v4",
+      "head_sha": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "observed_current_branch_head": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v3",
+      "base_sha": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "created_at": "2026-10-08T08:23:49Z",
+      "updated_at": "2026-10-08T08:28:26Z"
+    },
+    {
+      "number": 50,
+      "title": "M01: consolidação V3 — apresentação das armas e validação combinada",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/50",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-ready-deliveries-consolidation-v3",
+      "head_sha": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "observed_current_branch_head": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "base_sha": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+      "created_at": "2026-10-08T08:19:14Z",
+      "updated_at": "2026-10-08T08:19:14Z"
+    },
+    {
+      "number": 49,
+      "title": "M01: biblioteca original de movimento dos soldados — seis clips",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/49",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-soldier-motion-clips-production-v1",
+      "head_sha": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "observed_current_branch_head": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "base_branch": "codex/m01-anim-contract-sim-v1",
+      "base_sha": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "created_at": "2026-10-08T08:04:44Z",
+      "updated_at": "2026-10-08T08:04:44Z"
+    },
+    {
+      "number": 48,
+      "title": "CI: validação independente da consolidação M01 em seis grupos",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/48",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-ready-deliveries-validation-v3",
+      "head_sha": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "observed_current_branch_head": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "base_sha": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+      "created_at": "2026-10-08T07:49:54Z",
+      "updated_at": "2026-10-08T07:49:54Z"
+    },
+    {
+      "number": 47,
+      "title": "M01: consolidação V2 — 10 entregas integradas, aguardando CI",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/47",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "head_sha": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "observed_current_branch_head": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "base_branch": "codex/m01-approved-consolidation-checkpoint-v1",
+      "base_sha": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "created_at": "2026-10-08T04:08:23Z",
+      "updated_at": "2026-10-08T09:09:26Z"
+    },
+    {
+      "number": 46,
+      "title": "INTEGRATION SUBTASK: train detail and coupling polish into M01 checkpoint",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/46",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-train-detail-coupling-polish-v1",
+      "head_sha": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "observed_current_branch_head": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "base_branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "base_sha": "aa5d8640825145fc2419ff30b749352f0f8db27a",
+      "created_at": "2026-10-08T03:51:29Z",
+      "updated_at": "2026-10-08T04:09:59Z"
+    },
+    {
+      "number": 45,
+      "title": "M01: integração controlada Station V2 + Animation Contract V1",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/45",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-approved-consolidation-checkpoint-v1",
+      "head_sha": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "observed_current_branch_head": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "base_branch": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "base_sha": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "created_at": "2026-10-08T03:34:30Z",
+      "updated_at": "2026-10-08T03:44:46Z"
+    },
+    {
+      "number": 44,
+      "title": "docs(campaign): narrativa V3, crueldade e personagens das 30 missões",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/44",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/campaign-script-polish-v2-30-missions",
+      "head_sha": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "observed_current_branch_head": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "base_branch": "main",
+      "base_sha": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "created_at": "2026-10-08T02:53:25Z",
+      "updated_at": "2026-10-08T03:20:59Z"
+    },
+    {
+      "number": 43,
+      "title": "M01: contrato determinístico de apresentação das animações",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/43",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-anim-contract-sim-v1",
+      "head_sha": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "observed_current_branch_head": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "base_branch": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "base_sha": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "created_at": "2026-10-08T00:20:28Z",
+      "updated_at": "2026-10-08T00:20:28Z"
+    },
+    {
+      "number": 42,
+      "title": "M01: Station architecture production v2",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/42",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-station-architecture-production-v2",
+      "head_sha": "090804776b18c8dc3200497388eb59e83b56205c",
+      "observed_current_branch_head": "090804776b18c8dc3200497388eb59e83b56205c",
+      "base_branch": "codex/m01-bridge-portal-material-detail-polish-v1",
+      "base_sha": "99309d9cb023cc94a07d41ff863e1362e4460570",
+      "created_at": "2026-10-08T00:09:17Z",
+      "updated_at": "2026-10-08T00:09:17Z"
+    },
+    {
+      "number": 41,
+      "title": "M01: environment visual runtime pass with fixed-camera evidence",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/41",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-environment-visual-runtime-pass",
+      "head_sha": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "observed_current_branch_head": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "base_branch": "codex/m01-schema2-determinism-audit",
+      "base_sha": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "created_at": "2026-10-04T12:16:53Z",
+      "updated_at": "2026-10-04T12:16:53Z"
+    },
+    {
+      "number": 40,
+      "title": "M01: harden browser regression harness diagnostics",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/40",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-browser-harness-hardening",
+      "head_sha": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "observed_current_branch_head": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "base_branch": "main",
+      "base_sha": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "created_at": "2026-10-04T11:29:15Z",
+      "updated_at": "2026-10-04T14:14:55Z"
+    },
+    {
+      "number": 39,
+      "title": "M01: pilot near/far authority lease in production runtime",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/39",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-near-far-authority-runtime-pilot",
+      "head_sha": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "observed_current_branch_head": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "base_branch": "codex/m01-schema2-determinism-audit",
+      "base_sha": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "created_at": "2026-10-04T01:41:36Z",
+      "updated_at": "2026-10-04T01:59:35Z"
+    },
+    {
+      "number": 38,
+      "title": "M01 validation: station wagon state authority and persistence",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/38",
+      "state": "closed",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-station-wagon-validation",
+      "head_sha": "60adb79b32f868bc2188e988386904357f7cd382",
+      "observed_current_branch_head": "e5d7c049e64ef7e2bf49766df10aa0b332633923",
+      "base_branch": "main",
+      "base_sha": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "created_at": "2026-10-03T23:57:19Z",
+      "updated_at": "2026-10-04T11:51:21Z"
+    },
+    {
+      "number": 37,
+      "title": "M01: schema-2 determinism audit and recovery checkpoint fixes",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/37",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-schema2-determinism-audit",
+      "head_sha": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "observed_current_branch_head": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "base_branch": "codex/m01-mg34-prone-runtime",
+      "base_sha": "fbaac1e4bce0ce62dc61415c338dd33ccd86a71b",
+      "created_at": "2026-10-03T23:01:55Z",
+      "updated_at": "2026-10-03T23:03:09Z"
+    },
+    {
+      "number": 36,
+      "title": "CI temporária: validar ckm crew runtime",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/36",
+      "state": "closed",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-support-runtime",
+      "head_sha": "191b436ad7ca5023dd84b85a07107a82cb06ce92",
+      "observed_current_branch_head": "8e8e74246ca72c3fe050f57d485fc3aaad7363f9",
+      "base_branch": "main",
+      "base_sha": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "created_at": "2026-10-03T09:46:07Z",
+      "updated_at": "2026-10-03T10:31:52Z"
+    },
+    {
+      "number": 35,
+      "title": "M01: ckm wz.30 — LOD0 dentro do orçamento de 4000 triângulos (5004 → 3904)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/35",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-ckm-budget",
+      "head_sha": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "observed_current_branch_head": "e65ce73f2def4e3e8433912280a978b078c9fdd6",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "23c403b9e12c5350df0e33a05663605c34706590",
+      "created_at": "2026-10-02T22:29:45Z",
+      "updated_at": "2026-10-02T23:09:01Z"
+    },
+    {
+      "number": 34,
+      "title": "M01: vagões queimados e danificados (provisórios, por ligar)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/34",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-wagon-damage",
+      "head_sha": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "observed_current_branch_head": "11554d91e70409ac6e8a18ab1717761d7f54d522",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "dcffd4a4aa175d7800a52429a4159544649bd4db",
+      "created_at": "2026-10-02T21:56:16Z",
+      "updated_at": "2026-10-02T22:19:03Z"
+    },
+    {
+      "number": 33,
+      "title": "M01: clips provisórios da MG 34 deitada (atirador e municiador)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/33",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-mg34-prone",
+      "head_sha": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "observed_current_branch_head": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "dcffd4a4aa175d7800a52429a4159544649bd4db",
+      "created_at": "2026-10-02T21:36:29Z",
+      "updated_at": "2026-10-02T22:19:03Z"
+    },
+    {
+      "number": 32,
+      "title": "M01: Ju 87, vagões, MG34 e transições da evacuação de S3",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/32",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head_branch": "codex/m01-assets-review",
+      "head_sha": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "observed_current_branch_head": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "base_branch": "main",
+      "base_sha": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "created_at": "2026-10-02T20:52:50Z",
+      "updated_at": "2026-10-03T17:09:16Z"
+    },
+    {
+      "number": 31,
+      "title": "M01: ckm wz.30 da casamata — arma, tripé, fita, caixa e clips da guarnição",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/31",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-ckm-wz30",
+      "head_sha": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "observed_current_branch_head": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "dcffd4a4aa175d7800a52429a4159544649bd4db",
+      "created_at": "2026-10-02T14:30:34Z",
+      "updated_at": "2026-10-02T22:19:03Z"
+    },
+    {
+      "number": 30,
+      "title": "M01: MG 34 de 1939 (GLB LOD0–2, clips mg34_* para o rig, manifesto)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/30",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/busy-edison-mokkrb",
+      "head_sha": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "observed_current_branch_head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "a07fcd955dcaccae8173a5b4773675af27bd476a",
+      "created_at": "2026-10-02T09:00:55Z",
+      "updated_at": "2026-10-02T20:52:45Z"
+    },
+    {
+      "number": 29,
+      "title": "M01: vagões de mercadorias do trem 963 e do pátio (GLB LOD0–2, rodados e portas animados)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/29",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-wagons",
+      "head_sha": "0667af008549f15947c10ab09b814338d701bf2c",
+      "observed_current_branch_head": "0667af008549f15947c10ab09b814338d701bf2c",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "ec02e912773207396ab867c5ab6e53a5699db5fd",
+      "created_at": "2026-10-02T02:36:43Z",
+      "updated_at": "2026-10-02T20:52:45Z"
+    },
+    {
+      "number": 28,
+      "title": "M01: Ju 87 B-1 do raid das 04:34 (GLB LOD0–2, hélice e freios) e ligação aos três Stukas",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/28",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-ju87",
+      "head_sha": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "observed_current_branch_head": "3fa1d0d4e62e5c48c300d1929ca5455ee6737563",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "a07fcd955dcaccae8173a5b4773675af27bd476a",
+      "created_at": "2026-10-02T00:58:13Z",
+      "updated_at": "2026-10-02T20:52:45Z"
+    },
+    {
+      "number": 27,
+      "title": "M01: kit da rkm wz.28 de Kowal (GLB LOD0–2, clips para o rig, manifesto)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/27",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-rkm-wz28",
+      "head_sha": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "observed_current_branch_head": "afdbe9e50b6f841c108cf250b2eef851213322bb",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "ec02e912773207396ab867c5ab6e53a5699db5fd",
+      "created_at": "2026-10-02T00:26:52Z",
+      "updated_at": "2026-10-02T08:28:56Z"
+    },
+    {
+      "number": 26,
+      "title": "Integrar soldados, armas de Kowal/Bąk e a evacuação da estação",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/26",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-character-integration",
+      "head_sha": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "observed_current_branch_head": "82dd3f06e383dfca0277e5416a27c7bb302fd931",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "ce382ec6c0c063c7b1479cdfa4f90f722d4b94fb",
+      "created_at": "2026-10-01T23:42:18Z",
+      "updated_at": "2026-10-02T00:57:23Z"
+    },
+    {
+      "number": 25,
+      "title": "Soldados M01: rkm wz.28 de Kowal e kb wz.98a de Bąk",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/25",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "head_branch": "claude/busy-edison-mokkrb",
+      "head_sha": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "observed_current_branch_head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "base_branch": "main",
+      "base_sha": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+      "created_at": "2026-10-01T22:47:57Z",
+      "updated_at": "2026-10-02T09:00:08Z"
+    },
+    {
+      "number": 24,
+      "title": "Teste M01: registar clarões da boca em cada frame na retirada sob fogo",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/24",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/busy-edison-mokkrb",
+      "head_sha": "c4f4913e9a0044325fc6563721578034f3df2a8b",
+      "observed_current_branch_head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "base_branch": "main",
+      "base_sha": "65fcdfb61384dda36b2a85bd3b0ecd7a0062b47b",
+      "created_at": "2026-10-01T20:34:11Z",
+      "updated_at": "2026-10-01T20:36:19Z"
+    },
+    {
+      "number": 23,
+      "title": "M01: protótipo jogável (codex/m01-runtime) + soldados de 1939 riggados (GLB, LOD0–2, 15 clips)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/23",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/busy-edison-mokkrb",
+      "head_sha": "af3a06d470131bb5541afba5a26186aff09df693",
+      "observed_current_branch_head": "ad0253e9e370c80b96163d01b061047750dd93df",
+      "base_branch": "main",
+      "base_sha": "c5d086151e4f55ffc20647e9d6aebc3f4af87843",
+      "created_at": "2026-10-01T20:14:38Z",
+      "updated_at": "2026-10-01T20:16:58Z"
+    },
+    {
+      "number": 22,
+      "title": "M01: arma ao ombro, recuo e postura sob fogo",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/22",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-combat-animation",
+      "head_sha": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "observed_current_branch_head": "70607ca18cdcd768af9cc98eed31e033d9b73515",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "e0ecc3b12c44a7cc956f3ee5c28a23975da51eec",
+      "created_at": "2026-10-01T17:14:50Z",
+      "updated_at": "2026-10-01T17:18:51Z"
+    },
+    {
+      "number": 21,
+      "title": "M01: avisos de cobertura por salva real e fumo suave no combate",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/21",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-cover-fire-origin",
+      "head_sha": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "observed_current_branch_head": "b6a2cdfaa8526a84e51b7254d2aefdd4fb8484cf",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "2d4155cef5079961c01e4d66510f82cb36be973f",
+      "created_at": "2026-10-01T16:42:53Z",
+      "updated_at": "2026-10-01T16:46:26Z"
+    },
+    {
+      "number": 20,
+      "title": "M01: poeira contínua nas demolições e dissipação do fumo",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/20",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-demolition-dust",
+      "head_sha": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "observed_current_branch_head": "08b21b7c7877a6cbdda3520c41ce1e32d7180938",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "67902ef6987e1d4df4ee4d1370a3338716c255f6",
+      "created_at": "2026-10-01T14:46:07Z",
+      "updated_at": "2026-10-01T14:48:37Z"
+    },
+    {
+      "number": 19,
+      "title": "M01: orientar o jogador nas demolições dentro da treliça",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/19",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-demolition-cue",
+      "head_sha": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "observed_current_branch_head": "f612bba71754c346a7cd54ecfd756f65751f5360",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "1b3fbe733c118d7f2f9c2001f0ac8e9bb4759728",
+      "created_at": "2026-10-01T14:31:09Z",
+      "updated_at": "2026-10-01T14:31:35Z"
+    },
+    {
+      "number": 18,
+      "title": "M01: conservar frames em pausa e reduzir custo do preset baixo",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/18",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-idle-render",
+      "head_sha": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "observed_current_branch_head": "d683174c7f4b6fe88a1debcdaafd011c7a62b9cc",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "742ea444d4afbf28e2061e8240b11fc7d9f2f02a",
+      "created_at": "2026-10-01T13:43:28Z",
+      "updated_at": "2026-10-01T13:43:38Z"
+    },
+    {
+      "number": 17,
+      "title": "M01: reservar tempo para a captura do percurso no CI",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/17",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-ci-capture-budget",
+      "head_sha": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "observed_current_branch_head": "47a7090fda1da40bb1d9de7828421c1ffcd6c8b3",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "5c00b76d526788d78849d0c963223bcc58b94679",
+      "created_at": "2026-10-01T13:04:11Z",
+      "updated_at": "2026-10-01T13:04:22Z"
+    },
+    {
+      "number": 16,
+      "title": "M01: cenário com materiais e atmosfera; integração do combate do PR #15",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/16",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-visual-sprint",
+      "head_sha": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "observed_current_branch_head": "7a965d809961d66d4ac19c94f852e09a294760f8",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "0ab60d7f2c0d7f396c6045f17ec3a977c0fb164e",
+      "created_at": "2026-10-01T12:28:15Z",
+      "updated_at": "2026-10-01T12:48:46Z"
+    },
+    {
+      "number": 15,
+      "title": "M01: ameaça real em \"Proteja o reparo\" e \"Cubra a retirada\" (fogo alemão visível, supressão, HUD fiel, ajuda vs ignora)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/15",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/clever-goldberg-avn7dj",
+      "head_sha": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "observed_current_branch_head": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "0ab60d7f2c0d7f396c6045f17ec3a977c0fb164e",
+      "created_at": "2026-10-01T11:52:33Z",
+      "updated_at": "2026-10-01T12:44:15Z"
+    },
+    {
+      "number": 14,
+      "title": "M01: feridos visíveis, demolições legíveis, chamada encenada, munição da secção e rotas adversas",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/14",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-staging",
+      "head_sha": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "observed_current_branch_head": "cf9b2ea7b6a43970989d9138f279f52c140fc26d",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "47f490867a4969db8ddaa0f6900049d29258d20b",
+      "created_at": "2026-10-01T06:27:23Z",
+      "updated_at": "2026-10-01T06:40:15Z"
+    },
+    {
+      "number": 13,
+      "title": "M01: partida contínua no navegador e correcções de navegação, ritmo, resgate e retardatários",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/13",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-continuous-playtest",
+      "head_sha": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "observed_current_branch_head": "1ddb9e9bd038dbd2c9bf5ee267f62fcaa07079a2",
+      "base_branch": "codex/m01-runtime",
+      "base_sha": "0cecb444c182e2cbc85a4425c15f4d780bb6a561",
+      "created_at": "2026-10-01T05:12:51Z",
+      "updated_at": "2026-10-01T05:19:15Z"
+    },
+    {
+      "number": 12,
+      "title": "M01 — Tczew: protótipo jogável com wz.29, pontes do Claude e CP-A..D",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/12",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-runtime",
+      "head_sha": "ce382ec6c0c063c7b1479cdfa4f90f722d4b94fb",
+      "observed_current_branch_head": "beec7cd9333cfac38fdc361da481ad4a942e1e37",
+      "base_branch": "main",
+      "base_sha": "c5d086151e4f55ffc20647e9d6aebc3f4af87843",
+      "created_at": "2026-10-01T03:30:59Z",
+      "updated_at": "2026-10-01T20:16:59Z"
+    },
+    {
+      "number": 11,
+      "title": "M01: completar pontes provisórias do Claude com três LODs e destruição persistente",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/11",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/m01-bridge-completion",
+      "head_sha": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "observed_current_branch_head": "da7f8be1aae4dfa85b3bfa8073b5122078d0de95",
+      "base_branch": "main",
+      "base_sha": "c5d086151e4f55ffc20647e9d6aebc3f4af87843",
+      "created_at": "2026-10-01T01:53:51Z",
+      "updated_at": "2026-10-01T20:17:00Z"
+    },
+    {
+      "number": 10,
+      "title": "M01 — medições de Tczew, verificação P1–P16, ficha do wz.29 e lista de assets (sem alterar src/)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/10",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/m01-integration-prep",
+      "head_sha": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "observed_current_branch_head": "3ba46d441f3189dc0bc241ca845a52760cf0b052",
+      "base_branch": "main",
+      "base_sha": "7cc7b9726c6180516919dd5d11c18ab084dd28d5",
+      "created_at": "2026-10-01T00:13:22Z",
+      "updated_at": "2026-10-01T00:38:41Z"
+    },
+    {
+      "number": 9,
+      "title": "Fundação Three.js: combate 3D, checkpoints completos e testes de navegador",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/9",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/three-foundation-checkpoints",
+      "head_sha": "9e1961331bd870cf0db5d38c0364f24c2cea56f5",
+      "observed_current_branch_head": "9e1961331bd870cf0db5d38c0364f24c2cea56f5",
+      "base_branch": "main",
+      "base_sha": "c5d086151e4f55ffc20647e9d6aebc3f4af87843",
+      "created_at": "2026-09-30T23:59:25Z",
+      "updated_at": "2026-10-01T20:16:59Z"
+    },
+    {
+      "number": 8,
+      "title": "M01 — Tczew: pesquisa histórica, mapa e roteiro (planejamento, sem alterar src/)",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/8",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "claude/clever-goldberg-avn7dj",
+      "head_sha": "3e791dc3957f2fce6041e387db1ab72f516a37b1",
+      "observed_current_branch_head": "1ffcf1325cdc0b553c619add4f5881586bebc820",
+      "base_branch": "main",
+      "base_sha": "f2c4d05cd8128e32361ebdadc8ef0f17a0fd11d6",
+      "created_at": "2026-09-30T23:31:32Z",
+      "updated_at": "2026-09-30T23:48:10Z"
+    },
+    {
+      "number": 7,
+      "title": "Add playable WebGL preview (engine, assets, renderer, tests) and Pages workflow",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/7",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-y4di6h",
+      "head_sha": "f2c7a66590e75cf2feac8df2a6d04f566113aadb",
+      "observed_current_branch_head": "f2c7a66590e75cf2feac8df2a6d04f566113aadb",
+      "base_branch": "main",
+      "base_sha": "32b760e9faef6e5922da486826f7399aa9bd4254",
+      "created_at": "2026-09-30T18:19:36Z",
+      "updated_at": "2026-09-30T18:26:40Z"
+    },
+    {
+      "number": 6,
+      "title": "Add WebGL FPS prototype (renderer, game logic, tests) and GitHub Pages workflow",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/6",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-gdherg",
+      "head_sha": "3ddeed0eda3dd0b36d049435d373d5fb6e25ca72",
+      "observed_current_branch_head": "3ddeed0eda3dd0b36d049435d373d5fb6e25ca72",
+      "base_branch": "main",
+      "base_sha": "9f4e3bab38ae041d2867ec99354d65c5e2097420",
+      "created_at": "2026-09-30T17:06:27Z",
+      "updated_at": "2026-09-30T17:12:36Z"
+    },
+    {
+      "number": 5,
+      "title": "Add Operation: Ashen Road vertical slice — game, renderer, world, UI, GH Pages and tests",
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/5",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head_branch": "codex/criar-base-tecnica-para-fps-da-segunda-guerra-t54j0b",
+      "head_sha": "f6f64fa4793bd9bc319593d6017d6525bf13018c",
+      "observed_current_branch_head": "f6f64fa4793bd9bc319593d6017d6525bf13018c",
+      "base_branch": "main",
+      "base_sha": "225f9c21f571b2ee3a912190bd2d2745dc40b92d",
+      "created_at": "2026-09-30T13:24:53Z",
+      "updated_at": "2026-09-30T13:30:15Z"
+    }
+  ],
+  "review_and_comment_evidence": [
+    {
+      "pr": 54,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/54",
+      "head": "codex/m01-station-visual-fidelity-v3",
+      "head_sha": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 53,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/53",
+      "head": "codex/m01-fx-browser-evidence-harness-v1",
+      "head_sha": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 52,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/52",
+      "head": "codex/m01-ready-deliveries-consolidation-v5",
+      "head_sha": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 51,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/51",
+      "head": "codex/m01-ready-deliveries-consolidation-v4",
+      "head_sha": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 50,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/50",
+      "head": "codex/m01-ready-deliveries-consolidation-v3",
+      "head_sha": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 49,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/49",
+      "head": "codex/m01-soldier-motion-clips-production-v1",
+      "head_sha": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 48,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/48",
+      "head": "codex/m01-ready-deliveries-validation-v3",
+      "head_sha": "17886b401189e77bb2d00a43a113cc83a1027eb4",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 47,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/47",
+      "head": "codex/m01-ready-deliveries-consolidation-v2",
+      "head_sha": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 46,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/46",
+      "head": "claude/m01-train-detail-coupling-polish-v1",
+      "head_sha": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "review_count": 0,
+      "comment_count": 1,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": [
+        {
+          "id": 6051802664,
+          "url": "https://github.com/Brawl2007/COD-guerra/pull/46#issuecomment-6051802664",
+          "user": "chatgpt-codex-connector[bot]",
+          "created_at": "2026-10-08T03:51:34Z",
+          "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, you can upgrade your account or add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+          "review": null
+        }
+      ]
+    },
+    {
+      "pr": 45,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/45",
+      "head": "codex/m01-approved-consolidation-checkpoint-v1",
+      "head_sha": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 44,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/44",
+      "head": "codex/campaign-script-polish-v2-30-missions",
+      "head_sha": "3fc04b25e61c0dc0bacbe740fa3dab36f524c1d7",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 43,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/43",
+      "head": "codex/m01-anim-contract-sim-v1",
+      "head_sha": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 42,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/42",
+      "head": "codex/m01-station-architecture-production-v2",
+      "head_sha": "090804776b18c8dc3200497388eb59e83b56205c",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 41,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/41",
+      "head": "codex/m01-environment-visual-runtime-pass",
+      "head_sha": "5325b7b3ef678079ef08b32f8172ed62934ffe1c",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 40,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/40",
+      "head": "codex/m01-browser-harness-hardening",
+      "head_sha": "894c6db7c3c37ef5f1285cb191bd09d7e9a37862",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 39,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/39",
+      "head": "codex/m01-near-far-authority-runtime-pilot",
+      "head_sha": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 38,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/38",
+      "head": "codex/m01-station-wagon-validation",
+      "head_sha": "60adb79b32f868bc2188e988386904357f7cd382",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "pr": 37,
+      "url": "https://github.com/Brawl2007/COD-guerra/pull/37",
+      "head": "codex/m01-schema2-determinism-audit",
+      "head_sha": "5f3cc34f53c61beec52255d67f8babd7194c9f7f",
+      "review_count": 0,
+      "comment_count": 0,
+      "express_captain_approval_found": false,
+      "reviews": [],
+      "comments": []
+    }
+  ],
+  "integrated_delivery_matrix": [
+    {
+      "delivery": "Station V2",
+      "branch": "codex/m01-station-architecture-production-v2",
+      "integrated_sha": "090804776b18c8dc3200497388eb59e83b56205c",
+      "remote_head": "090804776b18c8dc3200497388eb59e83b56205c",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Checkpoint aprovado/V2; integração semântica com bridge",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Animation Presentation Contract V1",
+      "branch": "codex/m01-anim-contract-sim-v1",
+      "integrated_sha": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "remote_head": "d070225d49840f5bd304a0825c0656651b82c26d",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Contrato schema 2; Animation Resolver não implementado",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Train detail / coupling polish",
+      "branch": "claude/m01-train-detail-coupling-polish-v1",
+      "integrated_sha": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "remote_head": "e588c0cda2bbe191f752792ec7e05f865fcff1a5",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "65 vagões; alias claude/m01-train-detail-coupling-polish-dws18u no mesmo SHA",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Bridge Structural V2",
+      "branch": "codex/m01-bridge-structural-production-closeout-v2",
+      "integrated_sha": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "remote_head": "54c94fd97c9a282eb9dfe7dbd409449571938813",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Preservar Station, trilhos, materiais e dispose",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "HUD Cinematic V1",
+      "branch": "codex/m01-hud-cinematic-presentation-pass-v1",
+      "integrated_sha": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "remote_head": "4b0e883dd58988fbbcaf24c062f69285c46a1457",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "game.js preserva diagnóstico de animação e tempos",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Vegetation/Foliage V1",
+      "branch": "codex/m01-vegetation-foliage-production-closeout-v1",
+      "integrated_sha": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "remote_head": "21c1ae653836522e74c071c31e917a1609f5611a",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Alias claude/cool-euler-fkyo43; cleanup Station preservado",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Battlefield Audio V1",
+      "branch": "codex/m01-battlefield-audio-production-pass-v1",
+      "integrated_sha": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "remote_head": "2d797a1f5988cc1d86f0f2260967c6b0a170eddd",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Eventos reais e caminhos partilhados dos aviões",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Battlefield FX V3",
+      "branch": "codex/m01-battlefield-fx-polish-v3",
+      "integrated_sha": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "remote_head": "e08755be169c8ae5ddf12978b9beb3cc25b4ba43",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "PR #51 registra integração; falhas browser continuam objeto de diagnóstico",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Soldier Motion Clips V1",
+      "branch": "codex/m01-soldier-motion-clips-production-v1",
+      "integrated_sha": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "remote_head": "075effaf72d3ceaf4dbda153f1221dc1541b8bef",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "PR #49; 121 blobs preservados; seis clips GLB sem resolver runtime",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Environment Prop Density/Grounding",
+      "branch": "codex/m01-environment-prop-density-grounding-v1",
+      "integrated_sha": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "remote_head": "f5adc46af2a074bbb028368516afdce011b8620c",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Base histórica; ancestral da V5",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Soldier Visual Variation",
+      "branch": "codex/m01-soldier-visual-variation-pass",
+      "integrated_sha": "63318225c015d7dc50390bed32897b0305237aa1",
+      "remote_head": "63318225c015d7dc50390bed32897b0305237aa1",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Base histórica; aparência não certifica variação de movimento",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Wz.29 ViewModel",
+      "branch": "codex/m01-wz29-viewmodel-visual-runtime",
+      "integrated_sha": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "remote_head": "cf9f8b0aaa02c9f26adc8c96745b2c2758753ed5",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Base histórica; ancestral da V5",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Locomotive 963",
+      "branch": "codex/m01-locomotive-963-production-asset-runtime",
+      "integrated_sha": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "remote_head": "6accc401e86a6523b0df26b50beff33aef4dd18a",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Base histórica; ancestral da V5",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Panzerzug",
+      "branch": "codex/m01-panzerzug-production-asset-runtime",
+      "integrated_sha": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "remote_head": "8f2326514c0277c6af1c54a8be1c012db18615ff",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Base histórica; ancestral da V5",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Ju87 Aircraft V2 — checkpoint herdado",
+      "branch": "codex/m01-ju87-aircraft-production-closeout-v2",
+      "integrated_sha": "4a8063916ad858fe594346b76915b9b9b6b8a12c",
+      "remote_head": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "Log V2; HEAD da fonte avançou; delta posterior excluído",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "First-person Weapon V1 — checkpoint herdado",
+      "branch": "codex/m01-first-person-weapon-presentation-v1",
+      "integrated_sha": "2e946ab0f62997689c1f7d015cef8904ec6f3c60",
+      "remote_head": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "PR #50; HEAD da fonte avançou; delta posterior excluído",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    },
+    {
+      "delivery": "Environmental Damage Decals V1 — checkpoint herdado",
+      "branch": "codex/m01-environmental-damage-decal-pass-v1",
+      "integrated_sha": "b084bba8a56c85d60f15a10a6bcf3fb4da18f5e8",
+      "remote_head": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "approval_evidence": "authorized base carry; não é certificação da fonte pelo Capitão",
+      "dependency": "PR #51; HEAD da fonte avançou; delta posterior excluído",
+      "decision": "Conservar versão integrada na V5; sem importação duplicada"
+    }
+  ],
+  "excluded_priority_delivery_matrix": [
+    {
+      "delivery": "Ju87 V2 — delta posterior",
+      "branch": "codex/m01-ju87-aircraft-production-closeout-v2",
+      "remote_head": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "approval_evidence": "Sem PR/aprovação expressa; handoff READY_FOR_CAPTAIN_REVIEW, browser relatado 55/61",
+      "dependency": "V5 incorpora 4a8063916ad858fe594346b76915b9b9b6b8a12c; alterações posteriores incluem m01-view.js",
+      "decision": "Excluir delta posterior"
+    },
+    {
+      "delivery": "Weapon V1 — delta posterior",
+      "branch": "codex/m01-first-person-weapon-presentation-v1",
+      "remote_head": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "approval_evidence": "Sem PR/aprovação expressa encontrada",
+      "dependency": "V5 incorpora 2e946ab0f62997689c1f7d015cef8904ec6f3c60; cinco fontes de render mudam depois",
+      "decision": "Excluir delta posterior"
+    },
+    {
+      "delivery": "Decals V1 — delta posterior",
+      "branch": "codex/m01-environmental-damage-decal-pass-v1",
+      "remote_head": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "approval_evidence": "Sem PR/aprovação expressa encontrada",
+      "dependency": "V5 incorpora b084bba8a56c85d60f15a10a6bcf3fb4da18f5e8; alias claude/bold-cannon-rkvxjp; produção m01-damage-decals.js muda depois",
+      "decision": "Excluir delta posterior"
+    },
+    {
+      "delivery": "Station V3",
+      "branch": "codex/m01-station-visual-fidelity-v3",
+      "remote_head": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "approval_evidence": "PR #54 draft, READY somente; 0 reviews/0 comentários; #55 exige aprovação expressa",
+      "dependency": "Base Station V2 090804776b18c8dc3200497388eb59e83b56205c; produção isolada ao módulo Station",
+      "decision": "Excluir até aprovação expressa"
+    },
+    {
+      "delivery": "Distant Battlefield Presentation V1",
+      "branch": "codex/m01-distant-battlefield-presentation-v1",
+      "remote_head": "16ba780b1d170b6ad88898fe5ffa5950eb468979",
+      "approval_evidence": "Sem PR/aprovação expressa encontrada",
+      "dependency": "Base 99309d9cb023cc94a07d41ff863e1362e4460570; módulos de apresentação + hooks view; sem áudio acoplado",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "Soldier locomotion architecture",
+      "branch": "codex/m01-soldier-locomotion-animation",
+      "remote_head": "cd91d65f0c022678ed24785eb44233bab137eb3c",
+      "approval_evidence": "Sem aprovação expressa; handoff desaconselha merge como funcionalidade de gameplay",
+      "dependency": "Base MG34 fbaac1e4bce0ce62dc61415c338dd33ccd86a71b; documentos + protótipo Node, sem import de produção",
+      "decision": "Referência apenas; excluir importação"
+    },
+    {
+      "delivery": "Integrated Visual Placeholder Closeout V2",
+      "branch": "codex/m01-integrated-visual-placeholder-closeout-v2",
+      "remote_head": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8",
+      "approval_evidence": "Sem aprovação expressa encontrada",
+      "dependency": "Auditoria da base 6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b; docs/testes/workflow; não altera produção",
+      "decision": "Referência apenas; não é consolidação de produção posterior"
+    },
+    {
+      "delivery": "FX Browser Evidence Harness V1",
+      "branch": "codex/m01-fx-browser-evidence-harness-v1",
+      "remote_head": "a4dc9a8df5792df74cb6b7583f00819a380423d9",
+      "approval_evidence": "PR #53 draft, 0 reviews/0 comentários; diagnóstico executado não é aprovação",
+      "dependency": "Fork V5 05984f63ced11e38d57cba9a75170b38d54f7a13; somente spec FX + workflow",
+      "decision": "Preservar branch; usar evidência; sem importação de produção"
+    },
+    {
+      "delivery": "Near/Far Authority Pilot",
+      "branch": "codex/m01-near-far-authority-runtime-pilot",
+      "remote_head": "f2741e53a85c582b4e0739e3a946f534fbe25dde",
+      "approval_evidence": "PR #39 draft, 0 reviews/0 comentários; sem aprovação expressa encontrada",
+      "dependency": "Base schema audit 5f3cc34f53c61beec52255d67f8babd7194c9f7f; acrescenta coordenação/adapter/simulação",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "Per-formation RNG architecture",
+      "branch": "codex/m01-per-formation-rng-architecture",
+      "remote_head": "d81ddfa99f2a5c99d3a3fce30a87ff0cd5a43941",
+      "approval_evidence": "Sem aprovação expressa encontrada",
+      "dependency": "Inclui mudanças de produção do authority pilot; não é delta independente de documentação",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "Rifleman locomotion pilot",
+      "branch": "codex/m01-rifleman-locomotion-runtime",
+      "remote_head": "93aaa5c4a5651f22b4c696005501a2ac1014860a",
+      "approval_evidence": "Sem aprovação expressa encontrada; não é o Animation Resolver da V5",
+      "dependency": "Base schema audit 5f3cc34f53c61beec52255d67f8babd7194c9f7f; characters + locomotion renderer",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "Station Wagon State",
+      "branch": "codex/m01-station-wagon-state",
+      "remote_head": "f15a2e51dbe329ae984a52c47ecf856eef8fbede",
+      "approval_evidence": "Sem aprovação expressa encontrada",
+      "dependency": "Base MG34 fbaac1e4bce0ce62dc61415c338dd33ccd86a71b; atmosfera/view/yard renderer divergentes",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "Station Wagon Validation",
+      "branch": "codex/m01-station-wagon-validation",
+      "remote_head": "e5d7c049e64ef7e2bf49766df10aa0b332633923",
+      "approval_evidence": "PR #38 closed draft; 0 reviews/0 comentários observados; sem aprovação expressa encontrada",
+      "dependency": "Inclui alterações divergentes de missão/simulação/render; HEAD posterior ao descrito em #38",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "CKM runtime anterior",
+      "branch": "codex/m01-ckm-runtime",
+      "remote_head": "f3be55aedc8b8a0f0342a711090ff8570eedfe3b",
+      "approval_evidence": "Sem aprovação expressa encontrada para este HEAD",
+      "dependency": "Fork b734cb0703013c36416f4cda269d558ae0602394; simulação/characters divergentes; V5 herda sistemas posteriores",
+      "decision": "Excluir"
+    },
+    {
+      "delivery": "ViewModel Visual V2 anterior",
+      "branch": "codex/m01-viewmodel-visual-v2",
+      "remote_head": "3e879e7406109b4e03c1bb9d21631a11a6736f33",
+      "approval_evidence": "Sem aprovação expressa encontrada para este HEAD",
+      "dependency": "Fork 2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732; ViewModel divergente",
+      "decision": "Excluir"
+    }
+  ],
+  "later_consolidation": {
+    "later_valid_consolidation_found": false,
+    "preferred_base": {
+      "branch": "codex/m01-ready-deliveries-consolidation-v5",
+      "head": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "pr": 52
+    },
+    "reason": "Latest issue #55 update directs V5. No later consolidation ref or PR observed; integrated-visual-placeholder-closeout-v2 is audit only. Current V2 is divergent and not certified safe as replacement.",
+    "observed_consolidations": [
+      {
+        "branch": "codex/m01-approved-consolidation-checkpoint-v1",
+        "head": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+        "comparison": {
+          "branch": "codex/m01-approved-consolidation-checkpoint-v1",
+          "observed_head": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+          "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "compare_status": "behind",
+          "ahead_by": 0,
+          "behind_by": 68,
+          "total_commits": 0,
+          "merge_base": "58c403cb93ca40d47e4ecb65061cdd8ff3280374",
+          "changed_file_count": 0,
+          "production_files": [],
+          "tests_and_workflows": [],
+          "handoff_or_report_paths": []
+        }
+      },
+      {
+        "branch": "codex/m01-production-integration-checkpoint-1",
+        "head": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+        "comparison": {
+          "branch": "codex/m01-production-integration-checkpoint-1",
+          "observed_head": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+          "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "compare_status": "behind",
+          "ahead_by": 0,
+          "behind_by": 126,
+          "total_commits": 0,
+          "merge_base": "f9aa1add5705ead80ec378c3f423650f854b19a6",
+          "changed_file_count": 0,
+          "production_files": [],
+          "tests_and_workflows": [],
+          "handoff_or_report_paths": []
+        }
+      },
+      {
+        "branch": "codex/m01-ready-deliveries-consolidation-v2",
+        "head": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+        "comparison": {
+          "branch": "codex/m01-ready-deliveries-consolidation-v2",
+          "observed_head": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+          "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "compare_status": "diverged",
+          "ahead_by": 8,
+          "behind_by": 30,
+          "total_commits": 8,
+          "merge_base": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+          "changed_file_count": 104,
+          "production_files": [
+            {
+              "path": "src/game/game.js",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0
+            },
+            {
+              "path": "src/render/first-person-weapon-fx.js",
+              "status": "added",
+              "additions": 437,
+              "deletions": 0
+            },
+            {
+              "path": "src/render/m01-damage-decals.js",
+              "status": "added",
+              "additions": 1138,
+              "deletions": 0
+            },
+            {
+              "path": "src/render/m01-view.js",
+              "status": "modified",
+              "additions": 46,
+              "deletions": 10
+            },
+            {
+              "path": "src/render/m01-viewmodel.js",
+              "status": "modified",
+              "additions": 96,
+              "deletions": 22
+            },
+            {
+              "path": "src/render/m01-wz29-presentation.js",
+              "status": "modified",
+              "additions": 30,
+              "deletions": 13
+            },
+            {
+              "path": "src/render/three-renderer.js",
+              "status": "modified",
+              "additions": 57,
+              "deletions": 18
+            }
+          ],
+          "tests_and_workflows": [
+            ".github/workflows/m01-environmental-damage-decal-pass-v1.yml",
+            ".github/workflows/m01-ready-deliveries-consolidation-v2.yml",
+            "tests/browser/m01-damage-decals.spec.js",
+            "tests/browser/m01-weapon-presentation.spec.js",
+            "tests/m01-aircraft-runtime.test.js",
+            "tests/m01-damage-decals.test.js",
+            "tests/m01-weapon-presentation.test.js"
+          ],
+          "handoff_or_report_paths": [
+            "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md",
+            "docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md"
+          ]
+        }
+      },
+      {
+        "branch": "codex/m01-ready-deliveries-consolidation-v3",
+        "head": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+        "comparison": {
+          "branch": "codex/m01-ready-deliveries-consolidation-v3",
+          "observed_head": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+          "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "compare_status": "behind",
+          "ahead_by": 0,
+          "behind_by": 28,
+          "total_commits": 0,
+          "merge_base": "74645f3f4414f39a2420c80e3e2723170493e5c5",
+          "changed_file_count": 0,
+          "production_files": [],
+          "tests_and_workflows": [],
+          "handoff_or_report_paths": []
+        }
+      },
+      {
+        "branch": "codex/m01-ready-deliveries-consolidation-v4",
+        "head": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+        "comparison": {
+          "branch": "codex/m01-ready-deliveries-consolidation-v4",
+          "observed_head": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+          "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "compare_status": "behind",
+          "ahead_by": 0,
+          "behind_by": 6,
+          "total_commits": 0,
+          "merge_base": "079ee53b48764272b1b2366a543fbbd0fbb9b3ae",
+          "changed_file_count": 0,
+          "production_files": [],
+          "tests_and_workflows": [],
+          "handoff_or_report_paths": []
+        }
+      },
+      {
+        "branch": "codex/m01-ready-deliveries-consolidation-v5",
+        "head": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+        "comparison": {
+          "branch": "codex/m01-ready-deliveries-consolidation-v5",
+          "observed_head": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "compare_status": "identical",
+          "ahead_by": 0,
+          "behind_by": 0,
+          "total_commits": 0,
+          "merge_base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+          "changed_file_count": 0,
+          "production_files": [],
+          "tests_and_workflows": [],
+          "handoff_or_report_paths": []
+        }
+      }
+    ],
+    "current_v2": {
+      "branch": "codex/m01-ready-deliveries-consolidation-v2",
+      "head": "b16d56ceead467f2fd0d7380699c7dd35690e0bc",
+      "merge_base": "eab619e508f638121fab6b7c1fc84d1cb8f08106",
+      "compare_status": "diverged",
+      "completed_source_checkpoints": [
+        "f6db41d5ead1a21871fb674b396886f9805de16f",
+        "61db784b95c352f14d34f3ca0967bdb659a01442"
+      ],
+      "note": "V2 integrated these completed weapon/decals checkpoints after V3/V4 forked. V5 source snapshots are earlier; do not claim all latest source corrections/evidence are present."
+    }
+  },
+  "unmapped_WIP_exclusions": [
+    {
+      "slot": 1,
+      "task_id": null,
+      "task_name": null,
+      "branch": null,
+      "head": null,
+      "reported_state": "EM PROGRESSO",
+      "mapping": "unidentified",
+      "decision": "exclude unmapped work; do not infer a candidate branch, including Station V3, as this slot"
+    },
+    {
+      "slot": 2,
+      "task_id": null,
+      "task_name": null,
+      "branch": null,
+      "head": null,
+      "reported_state": "EM PROGRESSO",
+      "mapping": "unidentified",
+      "decision": "exclude unmapped work; do not infer a candidate branch, including Station V3, as this slot"
+    },
+    {
+      "slot": 3,
+      "task_id": null,
+      "task_name": null,
+      "branch": null,
+      "head": null,
+      "reported_state": "EM PROGRESSO",
+      "mapping": "unidentified",
+      "decision": "exclude unmapped work; do not infer a candidate branch, including Station V3, as this slot"
+    },
+    {
+      "slot": 4,
+      "task_id": null,
+      "task_name": null,
+      "branch": null,
+      "head": null,
+      "reported_state": "EM PROGRESSO",
+      "mapping": "unidentified",
+      "decision": "exclude unmapped work; do not infer a candidate branch, including Station V3, as this slot"
+    }
+  ],
+  "source_documents": [
+    {
+      "label": "V5 integration handoff",
+      "path": "docs/verification/m01-runtime/ready-deliveries-consolidation-v5/HANDOFF.md",
+      "ref": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "blob_sha": "a1902c8fa8bd98e7fd3991b32ea44c507347d98b",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/d277b06937170aa433bc418ef5b83b2925c6d6de/docs/verification/m01-runtime/ready-deliveries-consolidation-v5/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# Checkpoint V5 — inclusão dos clips de movimento dos soldados\n\n**Estado:** novo candidato de integração para aprovação; **NÃO certificado nem publicado**.\n**Base exata:** V4 `079ee53b48764272b1b2366a543fbbd0fbb9b3ae`.\n**Fonte:** `codex/m01-soldier-motion-clips-production-v1` @ `075effaf72d3ceaf4dbda153f1221dc1541b8bef`.\n**TASK_ID:** `M01-SOLDIER-MOTION-CLIPS-PRODUCTION-V1`, marcado `READY_FOR_CAPTAIN_REVIEW` no [PR #49](https://github.com/Brawl2007/COD-guerra/pull/49).\n\n## Alterações incorporadas\n\n- Biblioteca adicional de **6 clips originais** `sprint`, `crouch_walk`, `turn_left`, `turn_right`, `hit_front` e `near_miss_duck`, com ficheiro GLB de 415.724 bytes, manifesto, gerador, testes e evidência da revisão visual.\n- **121 blobs exclusivos** da fonte, sem colisão com código da consolidação V4: todos preservados byte a byte através dos mesmos blobs Git.\n- Os dois caminhos de histórico `DEVELOPMENT_STATUS.md` e `docs/NEXT_CHAT_CONTEXT.md` já continham as atualizações das integrações anteriores. Foram mantidos na V4 para evitar perda de estado; o handoff completo da nova tarefa foi mantido no caminho original e o commit de origem foi acrescentado como segundo pai.\n- **Nenhum sistema de resolução/ativação dos clips foi inventado**: o pacote é de assets, ainda não dá animações novas aos soldados durante o gameplay.\n- Nenhum ficheiro `src/game/`, `src/render/`, `mission.json`, `main` ou deploy foi alterado por esta integração.\n\n## Validação da fonte e pendências\n\n- Fonte: 27/27 testes focados, build aprovado, 36 configurações de loader/mixer, capturas e seis MP4 (dados relata"
+    },
+    {
+      "label": "V2 integration log present in V5",
+      "path": "docs/verification/m01-runtime/ready-deliveries-consolidation-v2/INTEGRATION_LOG.md",
+      "ref": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+      "blob_sha": "3f907297d939fa5bc17acfb7cb6df5b88238faeb",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/d277b06937170aa433bc418ef5b83b2925c6d6de/docs/verification/m01-runtime/ready-deliveries-consolidation-v2/INTEGRATION_LOG.md",
+      "read_succeeded": true,
+      "content_excerpt": "# M01 consolidation V2 — ready deliveries\n\n## Integrated — Train consist detail and coupling polish\n\n- Source `claude/m01-train-detail-coupling-polish-v1` at `e588c0cda2bbe191f752792ec7e05f865fcff1a5`.\n- Exact blob integration of 88 nonconflicting files, including wagon coupling visuals, wheel/rail grounding, 65 wagons, focused tests and source handoff.\n- `DEVELOPMENT_STATUS.md` and `docs/NEXT_CHAT_CONTEXT.md` are intentionally retained from consolidation base, not blindly overwritten. Both source branch snapshots remain in Git ancestry; dedicated `docs/verification/m01-runtime/train-detail-coupling-polish-v1/HANDOFF.md` carries this task's status/evidence.\n- Integration's Node/build/browser tests have not yet passed on combined tree. M01 remains PROTÓTIPO JOGÁVEL. No `main` / deploy changes.\n\n## Integrated — Bridge structural production closeout V2\n\n- Source `codex/m01-bridge-structural-production-closeout-v2` at `54c94fd97c9a282eb9dfe7dbd409449571938813` with original source files, handoff, tests, screenshots and workflow.\n- Semantic non-destructive integration of `src/render/m01-view.js` and `m01-environment.js`: retain Station V2 sections and add bridge material, truss/rivet/deck/rail structure and disposal. Patch segments matched uniquely.\n- Historical `DEVELOPMENT_STATUS.md` and `docs/NEXT_CHAT_CONTEXT.md` kept on this consolidated branch; source notes preserved in Git history and dedicated HANDOFF.\n- No runtime/regression certification until combined CI passes. No main/deploy change.\n\n## Integrated — M01 HUD Cinematic Presentation V1\n\n- Source `codex/m01-hud-cinemati"
+    },
+    {
+      "label": "Ju87 V2 — delta posterior",
+      "path": "docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md",
+      "ref": "e145027f82dcc73260c177f7efa8310f0206c47a",
+      "blob_sha": "c67718115c3d9c38792d52decfdc5997938d0329",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-ju87-aircraft-production-closeout-v2/docs/verification/m01-runtime/ju87-aircraft-closeout-2026-10-08/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# HANDOFF — M01 Ju 87 aircraft production closeout\n\nTASK_ID: `M01-JU87-AIRCRAFT-PRODUCTION-CLOSEOUT-V2`  \nBASE: `codex/m01-bridge-portal-material-detail-polish-v1 @ 99309d9cb023cc94a07d41ff863e1362e4460570`  \nBRANCH: `codex/m01-ju87-aircraft-production-closeout-v2`  \nRuntime final: `d90f8de`. Os commits seguintes só acrescentam evidência, documentação e os modos `cover`/`repair` do script de medição `tools/verification/m01-ju87-load-longtasks.mjs` (`ae97790`); `src/`, testes e assets ficam iguais aos de `d90f8de`. O SHA final é comunicado na entrega.\n\nM01 continua **PROTÓTIPO JOGÁVEL**. Sem merge, deploy ou alteração em `main`.\n\n**Estado: READY_FOR_CAPTAIN_REVIEW**, com uma ressalva: neste ambiente, a suite completa de navegador tem 6 falhas que também acontecem na base `99309d9`, em corridas isoladas (ver [Validação](#validação)). Não é ACCEPTED: a aceitação cabe ao capitão.\n\n## O que o jogador percebe\n\nOs três Stukas do primeiro raid deixam de ser recortes pretos contra o céu. A barriga RLM 65 lê-se pintada e iluminada pelo solo: nas capturas, o avião segmentado tem RGB médio 92–96/100–104/96–100, um cinzento ligeiramente esverdeado. A asa em gaivota, as calças do trem e a cauda distinguem-se. O avião inclina-se ligeiramente para o lado da deriva. As hélices rodam com rotações e fases diferentes e cada avião tem pequenas diferenças de tinta e desgaste. Na volta de 90 s do caminho os aviões já não saltam ~360 m à vista: dissolvem-se e voltam a aparecer. Também entram em fade quando são ouvidos.\n\nDe perto (galeria) vê-se:\n- a capota de vidro com aros, piloto e atirador;\n- o"
+    },
+    {
+      "label": "Weapon V1 — delta posterior",
+      "path": "docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md",
+      "ref": "7dbc0a5490c336db63bcf2704b8fca216353be88",
+      "blob_sha": "9ab9144378163b2ba631af4585bbb2631032dcdf",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-first-person-weapon-presentation-v1/docs/verification/m01-runtime/first-person-weapon-presentation-v1-2026-10-08/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# HANDOFF — M01 first-person weapon presentation V1\n\nTASK_ID: `M01-FIRST-PERSON-WEAPON-PRESENTATION-V1`  \nBASE: `99309d9cb023cc94a07d41ff863e1362e4460570`  \nBRANCH: `codex/m01-first-person-weapon-presentation-v1` (sem merge, sem PR, `main` intacta)  \nRuntime verificado: commit indicado em [`EVIDENCE.md`](EVIDENCE.md). Os commits seguintes só acrescentam documentação, capturas e um probe de evidência no fixture de verificação.\n\nM01 continua **PROTÓTIPO JOGÁVEL**. Trabalho **só de apresentação**: dano, dispersão autoritativa, cadência, munição, detecção de impactos e `Simulation` não mudaram.\n\n## O que o jogador percebe\n\n**Karabinek wz.29 (M01).** A espingarda sobe ao olho com uma curva suavizada à entrada e à saída, um pouco mais pesada do que antes (constante de 55 ms em vez de 45 ms, nos dois sentidos), e com um ligeiro mergulho e cant a meio do gesto. No disparo há um empurrão forte para o ombro, subida e ligeiro cant à direita, uma descida abaixo do repouso e um assentamento lento. O clarão tem camadas no socket real da boca: núcleo branco, língua de chama e estrela de quatro pontas. Junta-se uma luz curta na mão/arma, fumo no cano e, quando o ferrolho abre, um fio de fumo na câmara. O ferrolho tira a arma do olho, com cant para mostrar a acção, e volta às miras antes de `READY`. Os batentes do ferrolho e o assentar do clipe dão um pequeno solavanco nos marcadores do GLB. O invólucro 7,92×57 sai da janela de ejecção no marcador `eject` do clip `fire_bolt`, voa no mundo, gira, cai no chão real (também em encostas) e fica lá cerca de 24 s. No recarregamento por clipe, o ca"
+    },
+    {
+      "label": "Decals V1 — delta posterior",
+      "path": "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md",
+      "ref": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+      "blob_sha": "bec015d4e008f1c1ff3e3642df27de173181b550",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-environmental-damage-decal-pass-v1/docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# HANDOFF — M01 environmental damage decal pass v1\n\nTASK_ID: `M01-ENVIRONMENTAL-DAMAGE-DECAL-PASS-V1`  \nBASE: `99309d9cb023cc94a07d41ff863e1362e4460570`  \nBRANCHES: `codex/m01-environmental-damage-decal-pass-v1` e `claude/bold-cannon-rkvxjp` (mesmo commit). Nunca `main`; sem PR, merge ou deploy.  \nHEAD de entrega: o SHA do commit que inclui este ficheiro é comunicado na entrega final (ver as branches).\n\nM01 continua **PROTÓTIPO JOGÁVEL**.\n\n## O que o jogador percebe\n\n- Tiros deixam marcas diferentes por material: lascas claras na pedra, lascas laranja irregulares no tijolo, farpas ao longo do veio na madeira e na casca, mossa no metal, risco brilhante na cabeça do carril, terra húmida lançada na direcção do tiro, gravilha deslocada no balastro, pavimento lascado no tabuleiro rodoviário. Pequenos fragmentos assentam junto às marcas.\n- O FX de impacto acompanha a superfície desenhada: faíscas no carril e nas juntas metálicas, farpas na madeira, lascas na pedra, mesmo onde a simulação reporta `earth`. Os tiros do próprio jogador passam a ter FX de impacto visual (antes só tinham som).\n- Granadas e bombas deixam queimado ou cratera, terra lançada, detritos e brasas que se apagam; a bomba da estação deixa poeira clara de alvenaria e entulho junto à fachada. As demolições queimam a via e os encontros, espalham alvenaria e deixam fuligem nas pontas dos tabuleiros que ficam de pé.\n- Marcas de bala desaparecem ao fim de 1 a 4 min de missão (terra mais cedo, metal mais tarde); resíduos de explosões ficam e são reconstruídos do save, também depois de carregar ou restaurar.\n\n## Contrat"
+    },
+    {
+      "label": "Station V3",
+      "path": "docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md",
+      "ref": "271413f26efc1dbccefc39ac401f4495928a2493",
+      "blob_sha": "4e0fe4d6bb7ba38671c9b880cb821852b0c8eb82",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-station-visual-fidelity-v3/docs/verification/m01-runtime/station-visual-fidelity-v3-2026-10-08/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# M01-STATION-VISUAL-FIDELITY-PASS-V3\n\nEstado: **READY_FOR_CAPTAIN_REVIEW**. M01 permanece **PROTÓTIPO JOGÁVEL**.\n\nBase remota confirmada: `codex/m01-station-architecture-production-v2` @ `090804776b18c8dc3200497388eb59e83b56205c`. Branch própria: `codex/m01-station-visual-fidelity-v3`. Código de produção final em `2d608d8a1b52d319ff92ef0e9352733df91b59f7`; o HEAD da entrega inclui a documentação/evidências e é indicado no PR. Sem merge, main, deploy ou integração da bridge structural do Claude.\n\n## Mudança visual\n\nRefinamento da implementação V2. Mantêm-se os cinco volumes, proporções, posições, coberturas e 140 aberturas. Os caixilhos têm perfis e fanlights, travessas com variação discreta e tons de vidro determinados pela localização; portas fechadas têm painéis rebaixados. Peitoris têm bisel e bordo de gotejamento. Juntas radiais interrompem os arcos de alvenaria sem acrescentar novos vãos. A revisão corrige normais dos extremos, perfis, marquises e remates.\n\nCumeeiras dobradas com folga real, juntas das águas, caleiras abertas e tubos de queda substituem remates planos. As chaminés existentes recebem cabeça em fiadas, tampo com abertura escura e rufo que acompanha a inclinação. Toda a malha continua agrupada nos mesmos sete materiais; não há BoxGeometry adicional, modelo externo, nova sala ou collider.\n\nMateriais originais: tijolo calibrado para aproximadamente 27 × 9 cm, juntas estreitas irregulares, desgaste de arestas e granulação; pedra com poros; madeira pintada com grão e desgaste gradual; metal oxidado; cobertura com fiadas, juntas e variação de rugosidade. Cor "
+    },
+    {
+      "label": "Distant Battlefield Presentation V1",
+      "path": "docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/HANDOFF.md",
+      "ref": "16ba780b1d170b6ad88898fe5ffa5950eb468979",
+      "blob_sha": "93491fbc956fd664c7f8c1202e82b6def466c98f",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-distant-battlefield-presentation-v1/docs/verification/m01-runtime/distant-battlefield-presentation-v1-2026-10-08/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# HANDOFF — M01 distant battlefield presentation V1\n\nTASK_ID: `M01-DISTANT-BATTLEFIELD-PRESENTATION-V1`  \nBASE: `99309d9cb023cc94a07d41ff863e1362e4460570`  \nBRANCH: `codex/m01-distant-battlefield-presentation-v1` (sem merge, sem PR, `main` intacta)  \nRuntime verificado: commit indicado em [`EVIDENCE.md`](EVIDENCE.md). Os commits seguintes só acrescentam documentação/capturas.\n\nM01 continua **PROTÓTIPO JOGÁVEL**. Esta camada é **apresentação**: não decide dano, estado da missão, visibilidade, IA nem objectivos.\n\n## O que o jogador percebe\n\nA guerra continua para lá do alcance do jogador:\n- **Planície de Lisewo.** Muito a montante e a jusante das pontes (1,3–2 km), há tiros isolados, rajadas com traçantes a cada 3–5 cartuchos e trocas: a linha alvejada responde quando as primeiras balas chegam, depois de uma pausa humana.\n- **Frente norte.** Depois do contacto distante das 05:50 (`evt_m01_north_contact_distant`), abre-se a 0,85–1,5 km da área jogável (S4 de `MAP.md` §3). Há clarões de espingarda e MG e impactos de morteiro com poeira e fumo. Peças muito a norte mostram o clarão no horizonte; o impacto chega depois do voo. Uma quinta fica em chamas e, 4 min depois do contacto, ergue-se uma coluna larga ao longe.\n- **Planície a leste (x ≥ 1750 m).** Pequenos grupos avançam em lanços (correm, depois agacham-se). Depois das 06:10 voltam para trás, alguns com dois homens a carregar um ferido.\n- **Céu.** Elementos de 1–3 aviões cruzam o céu a ≥2 km.\n- **Koźliny (≈07:00).** Viaturas levantam poeira; uma peça anticarro dispara três vezes, com intervalos irregulares, e a viatura ating"
+    },
+    {
+      "label": "Soldier locomotion architecture",
+      "path": "docs/verification/m01-runtime/soldier-animation-architecture-2026-10-03/HANDOFF.md",
+      "ref": "cd91d65f0c022678ed24785eb44233bab137eb3c",
+      "blob_sha": "c8bdebeddfc8f4960a8a680591393865ba08b333",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-soldier-locomotion-animation/docs/verification/m01-runtime/soldier-animation-architecture-2026-10-03/HANDOFF.md",
+      "read_succeeded": true,
+      "content_excerpt": "# HANDOFF — M01-SOLDIER-LOCOMOTION-ANIMATION-ARCHITECTURE-V1\n\n## TASK_ID\n`M01-SOLDIER-LOCOMOTION-ANIMATION-ARCHITECTURE-V1`\n\n## MODELO\nGPT-5.6 Sol\n\n## ESFORÇO\nHIGH\n\n## BASE\n`codex/m01-mg34-prone-runtime` @ `fbaac1e4bce0ce62dc61415c338dd33ccd86a71b`\n\n## BRANCH\n`codex/m01-soldier-locomotion-animation`\n\n## HEAD FINAL\nRead the final branch ref after this handoff commit; report the exact SHA to the captain. No merge to `main` is part of this task.\n\n## COMMITS\nThe branch uses separate commits for audit, architecture, prototype, restore clarification, focused tests and final evidence/handoff. Exact SHAs are reported from the final branch history.\n\n## CURRENT ANIMATION AUDIT\n`CURRENT_ANIMATION_AUDIT.md` classifies the existing system as EXISTS / PARTIAL / PLACEHOLDER / MISSING. The current rig, idle/walk/run, crouch idle, weapon clips, suppression basic pose, MG34 prone, station drag, deterministic phase offsets, LOD skeleton reduction, pause and basic restore behavior exist. Generic crouch-walk/prone-crawl/strafe/backpedal/turn-in-place, speed matching, crossfades, upper/lower-body layering, runtime IK, aim offsets and generic hit reactions are missing or placeholders.\n\n## STATE MODEL\nAnimation consumes authoritative AI/simulation data and returns a presentation plan with orthogonal axes: base locomotion, posture/transition, visual body yaw, bounded aim offset, upper-body weapon layer, reaction, cover metadata, additive detail and IK targets. It never changes tactics, HP, actor world transform, hitboxes, ammo or shot timing.\n\nThe approved Combat AI `Intent` is the upstream seam; a"
+    },
+    {
+      "label": "Integrated Visual Placeholder Closeout V2",
+      "path": "docs/verification/m01-runtime/integrated-visual-closeout-v2/REPORT.md",
+      "ref": "dfb7bd89c37fc9ddbe961d399474e8c57437a6f8",
+      "blob_sha": "e4d91d8fdc506b0df8f91d1c99034b3b9ace5a16",
+      "url": "https://github.com/Brawl2007/COD-guerra/blob/codex/m01-integrated-visual-placeholder-closeout-v2/docs/verification/m01-runtime/integrated-visual-closeout-v2/REPORT.md",
+      "read_succeeded": true,
+      "content_excerpt": "# M01 Integrated Visual Placeholder Closeout V2\n\n## RESUMO\n\nBase auditada: `codex/m01-integration-browser-harness-stabilization-v2@6bd69521aef18f00b2ab37ccd7ceeca6a4da3a2b`.\n\nA M01 já não denuncia protótipo principalmente por locomotiva, Panzerzug, Wz.29 ou falta de personagens. Os maiores fatores restantes são: **Station ainda construída como massa procedural**, **grandes corredores de terreno/yard pouco vestidos**, **árvores próximas com silhueta geométrica**, **movimento de soldados repetitivo apesar da variação de aparência**, e **portais/estruturas de acesso com acabamento/material muito simples em enquadramentos dominantes**.\n\nA leitura vem de screenshots do browser no HEAD exato da base, inspeção do runtime integrado e contadores já validados. Não é benchmark de FPS.\n\n## P0\n\n| Prioridade | Sistema | Problema visual | Evidência | Código/asset responsável | Próxima tarefa recomendada |\n|---|---|---|---|---|---|\n| P0-1 | Station | Corpo principal lê como um bloco enorme: parede plana, repetição de tijolo, janelas rasas, roof slab, pouca profundidade de portas/annexes e nenhum interior shell convincente. | `m01-station-ground-drag.png`; capturas dirigidas `station-facade-south.png`, `station-facade-oblique-roof.png`, `station-annex-yard.png` | `tczew-world.js:refresh()`; `m01-environment.js:buildArchitecture()`; `m01-view.js:buildTerrain()` | **Station Architecture Production V2** |\n| P0-2 | Environment / yard | Muito espaço jogável continua visualmente vazio; terreno domina o frame, props concentram-se em poucos pontos e há pouca leitura de pátio ferroviário/atividade h"
+    }
+  ],
+  "fx_pr_53_completed_diagnostic_update": {
+    "type": "independent_FX_auditor_result_reported_to_parent",
+    "run_id": 37755734696,
+    "run_url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37755734696",
+    "status": "completed",
+    "node": {
+      "passed": 8,
+      "total": 8
+    },
+    "production_build": "PASS",
+    "browser": {
+      "failed": 3,
+      "result": "FAIL",
+      "diagnosis": "late observer; transient FX captured after relevant phase"
+    },
+    "runner_cancelled": false,
+    "approval_effect": "none: PR #53 remains draft and unapproved; diagnosis only",
+    "evidence_origin": "FX agent confirmation relayed by /root; this inventory agent did not execute tests or re-open workflow logs",
+    "run_head_sha": null
+  },
+  "documentation_write_scope": [
+    "docs/verification/m01-runtime/final-production-consolidation-v6/DELIVERY_MATRIX.md",
+    "docs/verification/m01-runtime/final-production-consolidation-v6/REMOTE_INVENTORY.json"
+  ],
+  "limitations": [
+    "Approval absence is limited to inspected remote review/comment/issue/handoff evidence and current task authorization.",
+    "The branch inventory snapshots are not a live GitHub certification.",
+    "Independent source test results quoted in handoffs were not re-executed by this inventory audit.",
+    "Four reported WIP tasks remain unmapped; no candidate is inferred to be one of them.",
+    "V5 carry does not certify all source handoffs or combined runtime."
+  ]
+}
+

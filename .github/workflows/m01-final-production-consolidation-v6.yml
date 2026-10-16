@@ -1,0 +1,62 @@
+name: M01 final production consolidation V6
+
+on:
+  push:
+    branches: [codex/m01-final-production-consolidation-v6]
+    paths:
+      - src/**
+      - tests/**
+      - assets/**
+      - package*.json
+      - playwright.config.js
+      - .github/workflows/m01-final-production-consolidation-v6.yml
+
+permissions:
+  contents: read
+
+# Keep independent checkpoints intact; evidence-only pushes do not re-run CI.
+concurrency:
+  group: m01-final-production-consolidation-v6-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  node-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: node --test --test-concurrency=2 tests/*.test.js
+      - run: npm run build
+
+  critical-browser:
+    needs: node-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      # The full local integration suite is recorded separately. CI repeats only
+      # critical regression coverage, not another expensive full certification.
+      - run: >-
+          npx playwright test
+          tests/browser/m01-battlefield-fx-polish-v3.spec.js
+          tests/browser/m01-consolidation-lifecycle.spec.js
+          tests/browser/m01-station-architecture.spec.js
+          --workers=1
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-v6-critical-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

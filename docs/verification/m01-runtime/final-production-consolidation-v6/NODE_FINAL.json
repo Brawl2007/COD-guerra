@@ -1,0 +1,12 @@
+{
+  "head": "2a2a56734861b0801234d7ddf3cda66c0100f326",
+  "documentationHead": "be8041043e4e538af5ae577f5b4a562479281cab",
+  "command": "node --test --test-concurrency=2 --test-reporter=tap tests/*.test.js",
+  "tests": 460,
+  "pass": 460,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "durationMs": 287910.030599,
+  "log": "logs/node-all-recovery.log"
+}

@@ -1,0 +1,65 @@
+name: M01 bridge structural production closeout v2
+
+on:
+  push:
+    branches:
+      - codex/m01-bridge-structural-production-closeout-v2
+
+concurrency:
+  group: m01-bridge-structural-production-closeout-v2
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    steps:
+      - name: Checkout task head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Focused bridge tests
+        run: |
+          node --test tests/m01-bridge-structure.test.js tests/m01-bridge-portal-polish.test.js \
+            tests/m01-bridges-glb.test.js tests/m01-demolition-cue.test.js
+
+      - name: Gameplay, authored bridge kit and portal authority unchanged
+        run: |
+          git diff --exit-code 99309d9cb023cc94a07d41ff863e1362e4460570 -- \
+            src/game src/world src/core missions assets tools/assets/m01-bridges \
+            src/render/m01-bridge-portal-polish.js src/render/m01-surfaces.js \
+            package.json package-lock.json playwright.config.js
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Focused structural browser captures
+        run: |
+          set -o pipefail
+          mkdir -p ci-evidence
+          npx playwright test tests/browser/m01-bridge-structural.spec.js tests/browser/m01-bridge-portal-polish.spec.js \
+            --output=ci-evidence/after 2>&1 | tee ci-evidence/browser.log
+
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m01-bridge-structural-production-closeout-v2
+          path: |
+            ci-evidence/
+            playwright-report/
+            test-results/
+          if-no-files-found: error

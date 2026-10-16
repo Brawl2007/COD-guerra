@@ -1,0 +1,38 @@
+{
+  "priorSourceHead": "8aa1549f7eef58aec92ec4421aa84266ffce18ea",
+  "newSourceSHA256": "8363ea61d93bb09c0c14215ef6818066c7bdfd4688db284e4da0f780100a2b70",
+  "unchangedFiles": [
+    "assets/models/provisional/m01/vegetation/LICENSE.md",
+    "assets/models/provisional/m01/vegetation/foliage-alpha.png",
+    "assets/models/provisional/m01/vegetation/manifest.json",
+    "assets/models/provisional/m01/vegetation/vegetation-kit.glb",
+    "src/render/m01-environment.js",
+    "src/render/m01-vegetation-art.js",
+    "src/render/m01-vegetation-material.js",
+    "src/render/m01-vegetation-runtime.js",
+    "src/render/m01-view.js",
+    "tests/browser/m01-vegetation-kit.spec.js",
+    "tests/browser/m01-vegetation-runtime-v2.spec.js",
+    "tests/m01-vegetation-glb.test.js",
+    "tests/m01-vegetation-layout.test.js",
+    "tests/m01-vegetation-lod.test.js",
+    "tests/m01-vegetation-runtime.test.js",
+    "tools/assets/m01-vegetation/build.mjs",
+    "tools/assets/m01-vegetation/viewer-config.mjs",
+    "tools/assets/m01-vegetation/viewer.html",
+    "tools/assets/m01-vegetation/viewer.mjs",
+    "tools/verification/m01-vegetation-v2-compare.mjs",
+    "tools/verification/m01-vegetation-v2-future-batch.mjs",
+    "tools/verification/m01-vegetation-v2-futures.mjs",
+    "tools/verification/m01-vegetation-v2-kit.config.mjs",
+    "tools/verification/m01-vegetation-v2-node-asset.mjs",
+    "tools/verification/m01-vegetation-v2-pixels.mjs",
+    "tools/verification/m01-vegetation-v2-runtime.config.mjs",
+    "tools/verification/m01-vegetation-v2-source.mjs"
+  ],
+  "changedFiles": [
+    ".github/workflows/m01-t10-t29-vegetation.yml",
+    "tests/browser/m01-vegetation-lod.spec.js"
+  ],
+  "meaning": "Existing complete runtime-v2 browser3/9views, kit galleries and9baseline comparisons use identical27 component bytes; legacyLOD2 was freshly rerun after fixture/synchronization changes; new published-head CI will rerun all required gates."
+}

@@ -1,0 +1,8 @@
+
+Running 3 tests using 1 worker
+
+  ✓  1 tests/browser/m01.spec.js:101:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (2.1m)
+  ✓  2 tests/browser/m01.spec.js:101:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (2.4m)
+  ✓  3 tests/browser/m01.spec.js:101:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset (2.3m)
+
+  3 passed (7.4m)

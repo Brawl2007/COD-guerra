@@ -1,0 +1,73 @@
+{
+  "issueCommentId": 6057373984,
+  "issueCommentUpdated": "2026-10-08T09:58:31Z",
+  "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+  "deploy": "cb400355c056955d1d6d0b22e92bd7be2443a10c",
+  "base": "d277b06937170aa433bc418ef5b83b2925c6d6de",
+  "stationV3": {
+    "head": "271413f26efc1dbccefc39ac401f4495928a2493",
+    "reviews": 0,
+    "comments": 0,
+    "decision": "exclude without express approval"
+  },
+  "creativePR56": {
+    "head": "03b61a380c2624ba2b704299a789749a50dc6a93",
+    "branch": "claude/upbeat-ptolemy-rzqu5g",
+    "base": "main",
+    "reviews": [],
+    "comments": [],
+    "files": [
+      "docs/creative-direction/COD-GUERRA-CAMPAIGN-CREATIVE-VISION.md",
+      "docs/creative-direction/M01-ATMOSPHERE-ART-DIRECTION.md",
+      "docs/creative-direction/M01-AUDIO-MUSIC-DIRECTION.md",
+      "docs/creative-direction/M01-CHARACTER-BIBLE.md",
+      "docs/creative-direction/M01-CINEMATIC-GAMEPLAY-SETPIECES.md",
+      "docs/creative-direction/M01-CINEMATIC-SHOT-BIBLE.md",
+      "docs/creative-direction/M01-COMPLETE-CINEMATIC-SCREENPLAY.md",
+      "docs/creative-direction/M01-CREATIVE-PRESERVATION-HANDOFF.md",
+      "docs/creative-direction/M01-CREATIVE-PRODUCTION-ROADMAP.md",
+      "docs/creative-direction/M01-DIALOGUE-PRODUCTION-SCRIPT.md",
+      "docs/creative-direction/M01-ENVIRONMENTAL-WAR-STORYTELLING.md",
+      "docs/creative-direction/M01-GAMEPLAY-VARIETY-DESIGN.md",
+      "docs/creative-direction/M01-HISTORICAL-VALIDATION.md",
+      "docs/creative-direction/M01-INTEGRATION-MATRIX.md",
+      "docs/creative-direction/M01-MASTER-STORY-BIBLE.md",
+      "docs/creative-direction/README.md"
+    ],
+    "decision": "documentation only, exclude without approval"
+  },
+  "decalsLater": {
+    "head": "12a70220ecdd0e2e3488a1c8a2e5f3cca0a78416",
+    "previous": "f7459527c6153fdef5ced2ce43e249bde5669db7",
+    "files": [
+      "DEVELOPMENT_STATUS.md",
+      "docs/NEXT_CHAT_CONTEXT.md",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/DESIGN.md",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/HANDOFF.md",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/PERFORMANCE.md",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/SHA256SUMS.txt",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/after/AFTER-east-deck-end-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/after/AFTER-portal-brick-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/after/AFTER-station-facade-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/after/AFTER-track-bed-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/after/AFTER-west-bridgehead-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/before/BEFORE-east-deck-end-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/before/BEFORE-portal-brick-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/before/BEFORE-repair-crater-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/before/BEFORE-track-bed-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/before/BEFORE-west-bridgehead-high.png",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/browser-after.log",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/browser-before.log",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/build.log",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/node-focused.log",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/node-test.log",
+      "docs/verification/m01-runtime/environmental-damage-decal-pass-v1/logs/session-probes.txt",
+      "src/render/m01-damage-decals.js",
+      "src/render/m01-view.js",
+      "tests/m01-damage-decals.test.js"
+    ],
+    "decision": "prewarm delta not approved, excluded"
+  },
+  "wipSlots": "four remain unmapped, no invented identities",
+  "executableChangesAfterCI": []
+}

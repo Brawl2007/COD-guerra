@@ -1,0 +1,54 @@
+{
+  "task": "M01-ANIM-CONTRACT-SIM-V1",
+  "state": "READY_FOR_CAPTAIN_REVIEW_WITH_KNOWN_FAILURES",
+  "base": "99309d9cb023cc94a07d41ff863e1362e4460570",
+  "productionSha256": {
+    "src/game/m01-simulation.js": "ffc198c1089da201d580b703b44d1a80f1536c3923cca7d7ca6fab9602362f14",
+    "src/game/m01-animation-presentation.js": "f7f5d2290a670d2fdd20a68cf28ed938b103741aa0ee122e16a10d2efe5d5268",
+    "src/game/game.js": "72d049c011e1aba21a300002b9995e10027beb06b6231c75d3729e8e37b47719"
+  },
+  "protectedPathsByteIdentical": [
+    "src/render",
+    "src/world",
+    "src/core",
+    "assets",
+    "src/game/wz29.js",
+    "src/game/m01-fire.js",
+    "missions/m01-tczew/mission.json",
+    "missions/m01-tczew/map-layout.json",
+    ".github/workflows"
+  ],
+  "productionChangesAfterFullNpmTest": false,
+  "npmTest": {
+    "executions": 1,
+    "tests": 344,
+    "pass": 343,
+    "fail": 1,
+    "skips": 0,
+    "failure": "obsolete whole-source hash of m01-simulation.js in viewmodel guard",
+    "failureFixed": true,
+    "fullSuiteRerun": false
+  },
+  "protectedGuardFollowup": {
+    "tests": 38,
+    "pass": 38,
+    "fail": 0,
+    "skips": 0
+  },
+  "gameplayABTicks": 41083,
+  "snapshotABComparisons": 62815,
+  "corruptionMutations": 44,
+  "build": "PASS",
+  "browser": {
+    "startTime": "2026-10-07T23:59:15.062Z",
+    "duration": 62537.295,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "protectedRemoteRefs": {
+    "main": "72bbcdd156603c9399801c95d43d9365ba50fc82",
+    "deploy/m01-latest-playable": "cb400355c056955d1d6d0b22e92bd7be2443a10c"
+  }
+}

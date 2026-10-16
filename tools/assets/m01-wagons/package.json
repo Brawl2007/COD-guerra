@@ -1,0 +1,19 @@
+{
+  "name": "m01-wagons-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera os vagões de mercadorias de M01 (coberto e aberto; GLB LOD0–2, rodados e portas animados, manifesto) com geometria e pintura procedurais originais.",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1",
+    "meshoptimizer": "1.3.0",
+    "pngjs": "7.0.0"
+  }
+}

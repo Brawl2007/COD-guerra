@@ -1,0 +1,30 @@
+✔ constants agree with the mission data they mirror (1.845676ms)
+✔ every Ju 87 lies on stukaPath at known instants after the bombing event, offset 0/3.5/7 s (58.205906ms)
+✔ the approach comes from the east, then the formation departs east, hides and never repeats (0.610062ms)
+✔ attitude comes from the path tangent: nose down in the dive, heading north then west, east on departure (57.779173ms)
+✔ second raid: one high pass from the raid start, crossing once, then hidden (36.897632ms)
+✔ the anchor is the consumed time of the bombing event: predicted before it, authoritative after; restore reproduces it (1225.125246ms)
+✔ bombs appear 1.5 s before each aerial blast and land at the authoritative point at its instant (9.060411ms)
+✔ the predicted blast points mirror the simulation (including the forward-post near miss and the 30 m rule) (2.207443ms)
+✔ simulation never imports the presentation path and no time wrap remains in the aircraft presentation (1.487366ms)
+✔ the view draws a bounded bomb pool from the flights and reports path/bomb diagnostics (8.499804ms)
+✔ the presented Ju 87 yaw is a smooth pure function of time: bounded rate through the pull-out, no NaN, position untouched (660.520945ms)
+✔ damage presentation is bounded, frozen at pause, reconstructible and never mutates source state (188.418003ms)
+✔ T25 all six raid smoke columns survive 05:36 with bounded pools and identical pause/reconstruction (35.992796ms)
+✔ T02 firing post and shelter route receive real LOS fire with the existing cadence and RNG algorithm (68.064752ms)
+✔ T02 eligibility follows real playable bounds, preserves LOS and excludes the east bridgehead/dike shooters (8.51749ms)
+✔ T02 dialogue 019 follows the actual destruction impact and never the early railway report (12.104898ms)
+✔ T03-lite aerial impacts ground after the safety shift; non-aerial demolition levels stay unchanged (2.871786ms)
+✔ T25 six fixed-time city targets stay outside gameplay and safe, without drawing combat RNG (70.752344ms)
+✔ T25 existing safeImpact replacement remains safe and grounded when a player is beside an estimated target (13.548687ms)
+✔ T25 jump consumes due impacts in order once; pause/double restore resumes identical schedule and RNG (1776.535803ms)
+✔ T25 legacy schema-2 pending/active/ended saves load without replaying historical raid impacts (21.949101ms)
+✔ T25 corrupt schedules reject atomically including nested checkpoint, preserving input/live state (400.978965ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5547.719416

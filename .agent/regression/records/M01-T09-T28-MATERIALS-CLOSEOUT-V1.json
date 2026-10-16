@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "task_id": "M01-T09-T28-MATERIALS-CLOSEOUT-V1",
+  "accepted_head": "c739b08549d5f08963984eb644b40bebcb91cfd8",
+  "status": "ACCEPTED",
+  "obligations": [
+    {
+      "id": "m01-materials-generation-and-ownership",
+      "kind": "test",
+      "check": "node --test tests/m01-material-atlas.test.js tests/m01-material-authority.test.js tests/m01-terrain-mask.test.js tests/m01-terrain-material.test.js tests/m01-terrain-textures.test.js tests/m01-props-kit.test.js",
+      "reason": "Keep deterministic licensed atlases, cell isolation, decoded memory limits, terrain mapping, original surface/mesh sampling and exactly-once ownership of resident and partially completed loads. Prop reproduction permits only near-zero NORMAL residuals, with all other data strict."
+    },
+    {
+      "id": "m01-terrain-frozen-frame-and-quality",
+      "kind": "browser",
+      "check": "npx playwright test tests/browser/m01-terrain-war-ground.spec.js --workers=1 --retries=0",
+      "reason": "Preserve actual material changes at 1/5/50 metres, wet banks/ballast/tracks, frozen material A/B geometry/save/clock, Low macro-only and texture recovery after quality churn."
+    },
+    {
+      "id": "m01-material-atlas-viewer",
+      "kind": "browser",
+      "check": "npx playwright test --config tools/verification/playwright.m01-materials.config.js --workers=1 --retries=0",
+      "reason": "Render all sixteen original albedo/normal/ORM material families at both quality tiers and 1/5/20 metres, without HTTP or shader errors; preserve family/distance on replacement."
+    }
+  ]
+}

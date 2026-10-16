@@ -1,0 +1,81 @@
+{
+  "pairs": 15,
+  "stateHashEqual": true,
+  "shots": [
+    {
+      "name": "V1-rail-grove",
+      "quality": "medium",
+      "stateHash": "3227aad318eb18659c973640d1ad41e62de6f3b40202bb02eb76684d1ec4047a"
+    },
+    {
+      "name": "V2-north-meadow",
+      "quality": "medium",
+      "stateHash": "32ccb968779d6ce91f83457a4ae93460a8bce68a714a9e8c926d72bdf4d4ef73"
+    },
+    {
+      "name": "V3-station-edge",
+      "quality": "medium",
+      "stateHash": "f3861ae1fae3ffee1b245b3b7bbd47b08bc3125287d01bc54fb22fb7ccde6347"
+    },
+    {
+      "name": "V4-river-margin",
+      "quality": "medium",
+      "stateHash": "dc3f21d9114f0e18f04960c506da47d4a52e12afe8b183a877275a70381f3dda"
+    },
+    {
+      "name": "V5-far-battlefield",
+      "quality": "medium",
+      "stateHash": "141b8136e42931bc0b45dc44f8138dec6642c5e23168dc8bcd498d1761250f55"
+    },
+    {
+      "name": "V1-rail-grove",
+      "quality": "high",
+      "stateHash": "3227aad318eb18659c973640d1ad41e62de6f3b40202bb02eb76684d1ec4047a"
+    },
+    {
+      "name": "V2-north-meadow",
+      "quality": "high",
+      "stateHash": "32ccb968779d6ce91f83457a4ae93460a8bce68a714a9e8c926d72bdf4d4ef73"
+    },
+    {
+      "name": "V3-station-edge",
+      "quality": "high",
+      "stateHash": "f3861ae1fae3ffee1b245b3b7bbd47b08bc3125287d01bc54fb22fb7ccde6347"
+    },
+    {
+      "name": "V4-river-margin",
+      "quality": "high",
+      "stateHash": "dc3f21d9114f0e18f04960c506da47d4a52e12afe8b183a877275a70381f3dda"
+    },
+    {
+      "name": "V5-far-battlefield",
+      "quality": "high",
+      "stateHash": "141b8136e42931bc0b45dc44f8138dec6642c5e23168dc8bcd498d1761250f55"
+    },
+    {
+      "name": "V1-rail-grove",
+      "quality": "low",
+      "stateHash": "3227aad318eb18659c973640d1ad41e62de6f3b40202bb02eb76684d1ec4047a"
+    },
+    {
+      "name": "V2-north-meadow",
+      "quality": "low",
+      "stateHash": "32ccb968779d6ce91f83457a4ae93460a8bce68a714a9e8c926d72bdf4d4ef73"
+    },
+    {
+      "name": "V3-station-edge",
+      "quality": "low",
+      "stateHash": "f3861ae1fae3ffee1b245b3b7bbd47b08bc3125287d01bc54fb22fb7ccde6347"
+    },
+    {
+      "name": "V4-river-margin",
+      "quality": "low",
+      "stateHash": "dc3f21d9114f0e18f04960c506da47d4a52e12afe8b183a877275a70381f3dda"
+    },
+    {
+      "name": "V5-far-battlefield",
+      "quality": "low",
+      "stateHash": "141b8136e42931bc0b45dc44f8138dec6642c5e23168dc8bcd498d1761250f55"
+    }
+  ]
+}

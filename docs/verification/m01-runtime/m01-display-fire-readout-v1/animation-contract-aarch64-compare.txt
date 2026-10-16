@@ -1,0 +1,70 @@
+# M01 animation-contract on aarch64 (Node v24.21.0), base 21a6f76 vs this branch. CI x86 is authoritative (D11).
+
+## failing tests, counts and mismatching golden digest blocks (scratch-animsum.mjs), base
+{
+ "counts": [
+  "ℹ tests 20",
+  "ℹ pass 13",
+  "ℹ fail 7"
+ ],
+ "failing": [
+  "Bąk carry and CKM/MG34 specialized adapters do not lose identity, timestamps or presentation on reload",
+  "all gameplay bytes hashed each tick against approved base: seed 19390901, support false",
+  "all gameplay bytes hashed each tick against approved base: seed 7, support true",
+  "corrupt presentation rejects atomically in current state and nested checkpoint",
+  "gait and bodyYaw resume identically at each real CP-A..D, including death recovery",
+  "legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG",
+  "optional partial migration preserves present fields byte for byte and defaults only missing fields"
+ ],
+ "digestLines": 36
+}
+19390901 + f2bddac66168be6054ce3cfece12e2d03f1ef445ad2e3304b4ed82e9376d394c
+19390901 - ac7f5bfb3fe62cf8c2633f9088ced59bc0680cdad3a6059689f6f678b6c360cf
+19390901 tick 6656
+19390901 + e29a567f5e9ccf210fc2e347e58490e8b8528f841572e2d3ecef35601b129f6f
+19390901 - 888aa7709e5dc63923e1030f27f76af2d72eefaa35ce70b3c43293f6c57541fc
+19390901 tick 7168
+19390901 tick 7680
+19390901 + b0b6fb9cd0f934e42059227acf46ad289315b0fe193272cc5ae40ce76f3f06d1
+19390901 - 4d71d10fa75d2bce207032cff3aa746714430e4e5b9692013796efe79ee053d8
+19390901 tick 9728
+19390901 tick 10240
+19390901 + 740126590a05d57a00d03e5c0a5a6f3ecf7242adfee2072b100b45ca68fb5e7f
+19390901 - 04b280a9ee39013989094a841b8f55343f0c5ea5465bd9ad89327add3a8e3367
+19390901 tick 11264
+19390901 tick 11776
+19390901 + 7d864e5c558e6c553d45750925be9296339b92159dd2f19dbad865e8693c43c5
+19390901 - 6f4e64089f20be057616564dd099db536db47561845e242f87a563b1c14c45c0
+19390901 tick 13312
+19390901 tick 13824
+19390901 + 8ff318d36b7224362aaaba3ee7ca64b5d339aa4319d299f4ab18770c7b0f6fc6
+19390901 - 4beacbc1ab5b03270fcd29525759d357c48001d6890a7d6e6ebd1ab075cd1645
+19390901 tick 14848
+19390901 tick 15360
+7 tick 512
+7 + 8c1bd1046e429426a8be6945f0ab304687c9c1a4bb89f8f4c36599a2facb0d07
+7 - 00e548f94cd9fa18fdb6bb5b46b0d2fabd2835e6391c0c66d2033db0de3fa646
+7 tick 5632
+7 tick 6144
+7 + e91bff7d798f42f350e59c255508e2f9d235dc909f4cecdd21ecabd13f6d0f83
+7 - 861dbe648ecbae7144c256844414d7c878eb2d94fe580ad0506a38844669e5f4
+7 tick 10752
+7 tick 11264
+7 + 260fb4c1951af8406867e7400f8f6b8f3bcbb23756f4633c3471a12bba8f9e35
+7 - 6f420f293d1e1769b189c375b268a7278bbd533f62c4d9f2343ffe6fb5232e67
+7 tick 11776
+7 tick 12288
+
+## diff of the same summary, base vs after
+(empty: identical)
+
+## full-text diff of the two runs with timings stripped
+(empty: identical)
+
+## complete GameplayDigest block lists (golden-blocks-aarch64-*.json), base vs after
+seed 19390901 support false ticks 20976 blocks 41 | every block after == base: true | blocks that differ from the x86 golden: base 6 after 6
+seed 7 support true ticks 20107 blocks 40 | every block after == base: true | blocks that differ from the x86 golden: base 3 after 3
+
+## golden fixture
+c775d6d46d8401c8284a93fca290fbdae1cb34966a9e8d32743829fb6e40e3c8  tests/fixtures/m01-anim-gameplay-baseline.json
+git diff 21a6f76 HEAD -- tests/fixtures/m01-anim-gameplay-baseline.json is empty (byte-identical)
