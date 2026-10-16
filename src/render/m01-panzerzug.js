@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {rgbaGeometry,haloGeometry} from './m01-railway-light.js';
+import {selectConsumerLod} from './m01-lod-policy.js';
 
 const BASE='assets/models/production/m01/panzerzug/';
 export const PANZERZUG_PLACEMENT=Object.freeze({position:Object.freeze([1119,0,2.5]),rotationY:Math.PI/2});
@@ -49,12 +50,7 @@ export function panzerzugKinematics(battleClock=null,flagActive=false){
   };
 }
 
-export function panzerzugLOD(distance,current=null){
-  if(current===0&&distance<66)return 0;
-  if(current===1&&distance>=54&&distance<198)return 1;
-  if(current===2&&distance>=162)return 2;
-  return distance<60?0:distance<180?1:2;
-}
+export function panzerzugLOD(distance,current=null){return selectConsumerLod('panzerzug',distance,'medium',current);}
 
 function buildPanzerzugLampFixture(){
   const slit=new THREE.BoxGeometry(0.95,0.16,0.18);

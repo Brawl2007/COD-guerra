@@ -1,14 +1,9 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import manifest from '../../assets/models/provisional/m01/structures/manifest.json' with {type:'json'};
+import {selectConsumerLod} from './m01-lod-policy.js';
 const BASE='assets/models/provisional/m01/structures/';
-export function fieldStructureLod(distance,quality='medium',previous=null){
- const near=quality==='high'?90:quality==='low'?0:55,mid=quality==='high'?260:quality==='low'?100:180;
- if(previous===0&&near>0&&distance<near+8)return 0;
- if(previous===1&&distance>=near-8&&distance<mid+12)return 1;
- if(previous===2&&distance>=mid-12)return 2;
- return distance<near?0:distance<mid?1:2;
-}
+export function fieldStructureLod(distance,quality='medium',previous=null){return selectConsumerLod('fieldStructures',distance,quality,previous);}
 // Each result is exclusively owned by this controller, including late and partial results.
 export function disposeFieldAsset(asset){
  if(!asset?.scene)return;asset.scene.removeFromParent();const geometries=new Set(),materials=new Set(),textures=new Set();

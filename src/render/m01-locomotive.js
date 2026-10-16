@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {rgbaGeometry,haloGeometry} from './m01-railway-light.js';
+import {selectConsumerLod} from './m01-lod-policy.js';
 
 const BASE='assets/models/production/m01/locomotive/';
 export const LOCOMOTIVE_PLACEMENT=Object.freeze({position:Object.freeze([1075,0,-2.5]),rotationY:Math.PI/2});
@@ -53,12 +54,7 @@ export function train963Kinematics(battleClock=null,flagActive=false){
   };
 }
 
-export function locomotiveLOD(distance,current=null){
-  if(current===0&&distance<66)return 0;
-  if(current===1&&distance>=54&&distance<198)return 1;
-  if(current===2&&distance>=162)return 2;
-  return distance<60?0:distance<180?1:2;
-}
+export function locomotiveLOD(distance,current=null){return selectConsumerLod('locomotive',distance,'medium',current);}
 
 function buildLocomotiveLightingFixture(){
   const parts=[];
