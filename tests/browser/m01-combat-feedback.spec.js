@@ -91,7 +91,7 @@ test('real crack and nearby impact register danger, accumulation caps and Low ti
   await page.waitForFunction(()=>{
     const f=window.gameDiagnostics().m01.combatFeedback;
     return f.counts.nearMiss>0&&f.lastDirection!==null;
-  },null,{timeout:20000});
+  },null,{timeout:45000});   // CI budget only (b4dc86f, CI 38871227131 shard 1 rerun): per-frame software-GL cost is ~1.4x V7 since the partials merge; same assertions.
   const near=await page.evaluate(()=>window.gameDiagnostics()),n=feedback(near);
   expect(n.peaks.nearMissImpulse).toBeGreaterThan(0);expect(n.peaks.impactImpulse).toBeGreaterThan(0);
   expect(n.peaks.overlayAlpha).toBeGreaterThan(0);expect(n.peaks.nearMissImpulse).toBeLessThanOrEqual(.72);

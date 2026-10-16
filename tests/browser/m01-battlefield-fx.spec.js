@@ -33,7 +33,7 @@ test.afterEach(async({page},info)=>{
 
 test('east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools',async({page},info)=>{
   // The trace reaches cleanup at ~90 s under SwiftShader; give CI headroom without changing any FX timing.
-  test.setTimeout(process.env.CI?180000:90000);
+  test.setTimeout(process.env.CI?300000:90000);
   // Arm while the menu is paused; no remote round trip races the live hot phase.
   const {errors,failed}=await openFrom(page,preBlast,'medium',()=>{
     window.__m01FxArmed=window.gameDiagnostics();
@@ -46,7 +46,8 @@ test('east demolition runs layered blast -> dust -> smoke, freezes on pause and 
   // The second full CI trace spent 30 s in this read, despite reaching the blast
   // cue and native pause. Keep the positive hot-phase predicate; budget wall
   // time for software-WebGL submission/trace snapshots, never extend FX life.
-  await page.waitForFunction(()=>Boolean(window.__m01FxHot),null,{timeout:60000});await expect(page.locator('#pause')).toBeVisible();
+  // CI budget only (b4dc86f, CI 38871227131 shard 1 rerun): per-frame software-GL cost is ~1.4x V7 since the partials merge; same assertions.
+  await page.waitForFunction(()=>Boolean(window.__m01FxHot),null,{timeout:120000});await expect(page.locator('#pause')).toBeVisible();
   const hot=await page.evaluate(()=>window.__m01FxHot);
   expect(hot.paused).toBe(false);expect(hot.clock).toBeGreaterThan(preBlast.clock);
   expect(hot.eventIds).toContain('evt_m01_east_demolition');

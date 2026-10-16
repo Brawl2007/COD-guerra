@@ -103,6 +103,10 @@ async function capture(browser,info,{name,snapshot,needBomb=false,expectDiagnost
     await page.locator('#quality').selectOption('high');
     // The Ju 87 GLBs load asynchronously: wait for them while the mission clock is still frozen, so no flight time is spent loading.
     await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.aircraft.loaded.length===3,null,{timeout:240000});
+    // The bridge finish binds every kit in one pass once all kit GLBs have settled (fixed draw order): let that bind and its first
+    // frame happen here, still paused, so the capped 0.25 s steps of slow first running frames do not carry the 1.5 s bomb flight past
+    // the framing window (CI 38871227131, shard 3: the sample landed ~0.1 s before the blast).
+    await page.waitForFunction(()=>{const b=window.gameDiagnostics?.().m01?.bridgeFinish;return b?.status==='ready'&&b.boundMeshes>0;},null,{timeout:240000});
     await page.locator('#continue').click();
     // Wait for the exact condition to be true in a live frame, keep that diagnostics sample and release the pointer lock in the SAME
     // callback (the game stops ticking at once because it also needs the lock), so the frozen frame is the one that was sampled.

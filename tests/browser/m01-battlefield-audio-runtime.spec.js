@@ -31,8 +31,9 @@ test('live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses
   const initial=await page.evaluate(()=>window.gameDiagnostics().audio);
   expect(initial.reverb).toBe(true);expect(initial.compressor).toBe(true);expect(initial.maxVoices).toBe(20);
   expect(initial.loops).toEqual(expect.arrayContaining(['wind','battle-bed']));
-  await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts.mg34??0)>1,null,{timeout:30000});
-  await page.waitForFunction(()=>window.gameDiagnostics().audio.intensity>0,null,{timeout:30000});
+  // CI budget only (b4dc86f, CI 38871227131 shard 1 rerun): per-frame software-GL cost is ~1.4x V7 since the partials merge; same assertions.
+  await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts.mg34??0)>1,null,{timeout:60000});
+  await page.waitForFunction(()=>window.gameDiagnostics().audio.intensity>0,null,{timeout:60000});
   await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts['distant-battle']??0)>0,null,{timeout:60000});
   const live=await page.evaluate(()=>window.gameDiagnostics());
   expect(limitsHold(live)).toBe(true);expect(new Set(live.audio.loops).size).toBe(live.audio.loops.length);

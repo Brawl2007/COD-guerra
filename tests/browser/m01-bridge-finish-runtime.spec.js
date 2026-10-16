@@ -31,7 +31,7 @@ async function editorialCamera(page,pose,expectedReturnCamera=null){
   if(!pose)return c.quaternion.every((v,i)=>Math.abs(v-expectedReturnCamera.quaternion[i])<1e-10);
   const [x,y,z,w]=c.quaternion,forward=[-2*(x*z+w*y),-2*(y*z-w*x),-(1-2*(x*x+y*y))],delta=pose.target.map((v,i)=>v-position[i]),length=Math.hypot(...delta);
   return forward.reduce((sum,v,i)=>sum+v*delta[i]/length,0)>1-1e-10;
- },{frames,pose,expectedReturnCamera},{timeout:120000});
+ },{frames,pose,expectedReturnCamera},{timeout:240000});   // CI budget only (b4dc86f, CI 38871227131 shard 1 rerun): per-frame software-GL cost is ~1.4x V7 since the partials merge; same assertions.
 }
 async function materialEnabled(page,on){const frames=(await actual(page)).diagnostics.m01.renderedFrames;await page.evaluate(on=>window.m01BridgeFinishDebug.setEnabled(on),on);await page.waitForFunction(({frames,on})=>{const d=window.gameDiagnostics();return d.m01.renderedFrames>frames&&d.m01.bridgeFinish.enabled===on;},{frames,on},{timeout:120000});}
 async function capture(page,name,input,{errors=[],http=[]}={}){
@@ -52,7 +52,7 @@ test('exact constructor04:30 and genuine real-route06:10 × editorial04/12/13 pl
 });
 if(!baseline){
  test('native actual far sweep, stationary ten seconds, damage fallback and intact near return for all presets',async({browser})=>{
-  test.setTimeout(900000);const input=save(new M01Simulation(19390901).snapshot(),cameras[0][1]),opened=await open(browser,input),{page}=opened,samples=[],returnCamera=(await actual(page)).diagnostics.m01.bridgeCamera;
+  test.setTimeout(process.env.CI?1500000:900000);const input=save(new M01Simulation(19390901).snapshot(),cameras[0][1]),opened=await open(browser,input),{page}=opened,samples=[],returnCamera=(await actual(page)).diagnostics.m01.bridgeCamera;
   for(const q of ['low','medium','high']){await quality(page,q);for(const distance of [760,820,840,810,805,790,770,380,420,390,380]){await editorialCamera(page,{position:[10.4-.6*distance,8,-.8*distance],target:[80,5,0]});const d=(await actual(page)).diagnostics;budget(d);samples.push({q,requestedDistance:distance,actualCamera:d.m01.bridgeCamera,owner:d.m01.bridgeFinish});const p=d.m01.bridgeFinish.lod.parts.rail_span_01;expect(p.distance).toBeGreaterThan(distance);if(distance===840){expect(p.impostor).toBe(true);expect(d.m01.bridgeFinish.native.impostor.main.calls).toBeGreaterThan(0);await capture(page,`far-${q}`,input,opened);}}}
   await editorialCamera(page,{position:[-650,8,-800],target:[100,6,0]});const before=await capture(page,'far-stationary-before',input,opened);await page.waitForTimeout(10000);const after=await capture(page,'far-stationary-after',input,opened);expect(after.state).toEqual(before.state);expect(after.diagnostics.m01.bridgeFinish.lod).toEqual(before.diagnostics.m01.bridgeFinish.lod);expect(pixelDelta(pixels('far-stationary-before'),pixels('far-stationary-after')).pixels).toBe(0);
   await materialEnabled(page,false);const fallback=await capture(page,'far-original-lod2-fallback',input,opened);expect(fallback.diagnostics.m01.bridgeFinish.native.impostor.main.calls).toBe(0);expect(fallback.diagnostics.m01.bridgeFinish.impostors.activeParts).toBe(0);await materialEnabled(page,true);await capture(page,'far-enabled-again',input,opened);await editorialCamera(page,null,returnCamera);const near=await capture(page,'far-return-near',input,opened);expect(near.diagnostics.m01.bridgeFinish.lod.parts.rail_span_01.impostor).toBe(false);clean(opened);await page.close();
