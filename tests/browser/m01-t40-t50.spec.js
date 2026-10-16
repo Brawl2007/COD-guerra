@@ -4,7 +4,7 @@ import {canonicalViews,carryViews} from '../../tools/verification/m01-t40-views.
 import {driver} from '../helpers/m01-route.js';
 const key='cod-guerra:checkpoint:m01:v2',baseline=Boolean(process.env.T40_BASELINE_ROOT);
 async function seed(page,snapshot,quality='low'){
- await page.addInitScript(({key,snapshot,quality})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot,quality});
+ await page.addInitScript(({key,snapshot,quality})=>{if(!sessionStorage.getItem('t40-t50-seeded')){localStorage.setItem(key,JSON.stringify(snapshot));sessionStorage.setItem('t40-t50-seeded','1');}localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot,quality});
  await page.goto('?debug=1&visual-verify=1');await expect(page.locator('#start')).toBeEnabled({timeout:180000});
 }
 async function holdNext(page){await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement?.id==='game'){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});}
