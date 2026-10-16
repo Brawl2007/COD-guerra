@@ -31,6 +31,7 @@
 
 **Obrigatório:** ler `docs/direction/M01_INTEGRATOR_LEASE.md` antes de integrar. O estado remoto único já existe em `coordination/m01-integration-state:.agent/coordination/m01-integrator.json`.
 
+- **Migração:** a reserva começa PAUSED, não FREE. Não iniciar integrações novas por este protocolo até o PR #84 ser validado e confirmar que todas as sessões legadas saíram da candidata; ativar FREE por CAS com evidência.
 - Cada execução horária começa por verificar o lock e as reservas de tarefas existentes. Se um chat já está a integrar, outros não modificam a candidata, mesmo que tenham passado várias horas; continuar só trabalho independente ou terminar sem gastar tokens.
 - Quem termina uma tarefa totalmente concluída pode integrá-la diretamente **se conseguir a reserva exclusiva**. Caso contrário, sinaliza PR não-draft como READY após provas e deixa na fila única.
 - O lock exige atualização atómica do ficheiro via SHA de conteúdo. Via GitHub CLI autenticado usar `.agent/tools/m01_integration_lease.py`; via MCP usar fetch_file/update_file para o mesmo ficheiro. Nunca criar locks paralelos.
