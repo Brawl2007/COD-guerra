@@ -64,7 +64,7 @@ jobs:
       - run: npm run build:browser
       - run: npx playwright install --with-deps chromium
       - name: BEFORE do grading T44 (esta árvore sem o passe de grading)
-        run: tools/verification/m01-grading-before.sh ${{ matrix.shard }} 4 "$M01_GRADING_BEFORE_DIR"
+        run: bash tools/verification/m01-grading-before.sh ${{ matrix.shard }} 4 "$M01_GRADING_BEFORE_DIR"
       - run: npm run test:browser -- --shard=${{ matrix.shard }}/4
       - name: Evidências do navegador
         if: always()
