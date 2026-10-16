@@ -145,18 +145,41 @@ class LeaseTests(unittest.TestCase):
                 lease.advance(TOKEN, NEXT)
             write.assert_not_called()
 
-    def test_ready_queue_ignores_drafts_and_unready(self):
-        def pull(number, ready, draft):
+    def test_ready_queue_requires_complete_criteria_and_tested_sha(self):
+        def pull(number, draft=False, status="COMPLETE", sha=PIN, ready=True, task_ids="T40,T50"):
+            body = ("M01-INTEGRATION: READY\n" if ready else "") + (
+                "M01-TASK-IDS: " + task_ids + "\n"
+                + "M01-ACCEPTANCE: " + status + "\n"
+                + "M01-TESTED-SHA: " + sha + "\n"
+            )
             return {
-                "number": number, "draft": draft,
-                "body": "M01-INTEGRATION: READY" if ready else "",
+                "number": number, "draft": draft, "body": body,
                 "labels": [], "head": {"ref": "feature", "sha": PIN},
-                "base": {"ref": "main"}, "title": "Example"
+                "base": {"ref": "main"}, "title": "Example",
             }
         with patch.object(lease, "api", return_value=[
-            pull(1, True, False), pull(2, False, False), pull(3, True, True)
+            pull(1),
+            pull(2, ready=False),
+            pull(3, draft=True),
+            pull(4, status="PARTIAL"),
+            pull(5, sha=NEXT),
+            pull(6, task_ids="T40,T40"),
+            pull(7, task_ids="T99"),
         ]):
-            self.assertEqual([i["pr"] for i in lease.candidates()], [1])
+            ready = lease.candidates()
+        self.assertEqual([x["pr"] for x in ready], [1])
+        self.assertEqual(ready[0]["task_ids"], ["T40", "T50"])
+
+    def test_label_cannot_bypass_acceptance(self):
+        pr = {
+            "number": 8, "draft": False,
+            "body": "M01-TASK-IDS: T43\nM01-ACCEPTANCE: PARTIAL\nM01-TESTED-SHA: " + PIN,
+            "labels": [{"name": "m01-ready-to-integrate"}],
+            "head": {"ref": "feature", "sha": PIN},
+            "base": {"ref": "main"}, "title": "T43 fatia 1"
+        }
+        with patch.object(lease, "api", return_value=[pr]):
+            self.assertEqual(lease.candidates(), [])
 
 
 if __name__ == "__main__":
