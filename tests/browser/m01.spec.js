@@ -117,7 +117,9 @@ test('unavailable optional Ju 87 models retain all three raid silhouettes and th
   await expect(page.locator('#error')).toBeHidden();expect(errors).toEqual([]);
 });
 test('licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset',async({page},info)=>{
-  test.setTimeout(180000);
+  // Every wait here is frame-bound (reload clips, bolt cycles, quality switch): the 2.1-2.5 min of the V7 CI runs filled 180 s once
+  // the integrated scene made each software-rendered frame ~1.4x dearer. The sequence and its assertions are unchanged.
+  test.setTimeout(process.env.CI?300000:180000);
   const {errors,failed}=await open(page);await start(page);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.active>0&&window.gameDiagnostics().m01.viewModel.active);
   const initial=await page.evaluate(()=>window.gameDiagnostics());
@@ -130,7 +132,12 @@ test('licensed character rigs and first-person hands follow real weapon state, p
   async function horizontal(){
     // Native headless clicks can move the locked cursor; restore the view with the same relative look controls.
     const view=await page.evaluate(()=>window.gameDiagnostics().player);
-    await page.evaluate(({angle,pitch})=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:-angle/.0022,movementY:pitch/.0022})),view);
+    // A fresh pointer lock drops its first look sample (Input.discardLookSample). Native events normally consume it; after a resume
+    // followed only by synthetic clicks nothing does, and the correction below would be lost. A zero sample consumes it without moving the view.
+    await page.evaluate(({angle,pitch})=>{
+      window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0}));
+      window.dispatchEvent(new MouseEvent('mousemove',{movementX:-angle/.0022,movementY:pitch/.0022}));
+    },view);
     await page.waitForFunction(()=>Math.abs(window.gameDiagnostics().player.pitch)<.03);
   }
   async function capture(name){
@@ -138,7 +145,8 @@ test('licensed character rigs and first-person hands follow real weapon state, p
     await expect(page.locator('#pause')).toBeVisible();
     await page.screenshot({path:info.outputPath(name),style:'#pause { visibility:hidden !important; }'});
   }
-  await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();
+  // The aim state reaches the HUD through the next software-rendered frame(s): give the same assertion room for them.
+  await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden({timeout:30000});
   await horizontal();
   await capture('m01-rig-iron-sights.png');
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(300);
