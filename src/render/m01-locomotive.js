@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {rgbaGeometry,haloGeometry} from './m01-railway-light.js';
-import {selectConsumerLod} from './m01-lod-policy.js';
+import {selectConsumerLod,createLodCounters,tallyLod,lodCounterTotals} from './m01-lod-policy.js';
+import {M01LodFade} from './m01-lod-dither.js';
 
 const BASE='assets/models/production/m01/locomotive/';
 export const LOCOMOTIVE_PLACEMENT=Object.freeze({position:Object.freeze([1075,0,-2.5]),rotationY:Math.PI/2});
@@ -130,6 +131,9 @@ export class M01Locomotive {
     this.proxy.traverse(n=>{if(n.isMesh)n.castShadow=n.receiveShadow=true;});
     this.lightingFixture=buildLocomotiveLightingFixture();this.root.add(this.lightingFixture);   // one merged draw call, fog:false
     this.models=new Map();this.revision=0;this.disposed=false;this.requestedLOD=2;this.selectedLOD=null;
+    // T43 slice 2: whole-object LOD cross-fade (screen-door dither, 0.3 s) driven by the battle clock update() already receives.
+    // The preset comes from the shared `m01LowDetail` uniform the view keeps on the metal material (or update()'s optional 4th argument).
+    this.lodFade=new M01LodFade();this.lodCounters=createLodCounters();this.lodPreset='medium';this.lowDetail=metal?.userData?.m01LowDetail??null;
     this.lastKinematics=train963Kinematics(null,true);
   }
   async load(){
@@ -142,31 +146,38 @@ export class M01Locomotive {
         // Offset art only; retain the original fixed presentation anchor and gameplay data.
         model.position.y=-.82;
         model.traverse(n=>{if(n.isMesh)n.castShadow=n.receiveShadow=true;});
-        this.models.set(lod,model);this.root.add(model);this.revision++;this.select();
+        this.models.set(lod,model);this.root.add(model);this.lodFade.register(lod,model);this.revision++;this.select(null,this.lodPreset,false);
       }catch{/* Optional art: retain original proxy or another usable LOD. */}
     }));
   }
-  select(){
+  select(clock=null,preset=this.lodPreset,count=true){
     const available=[...this.models.keys()].sort((a,b)=>Math.abs(a-this.requestedLOD)-Math.abs(b-this.requestedLOD)||a-b);
     this.selectedLOD=available[0]??null;
-    for(const [lod,model]of this.models)model.visible=lod===this.selectedLOD;
+    if(this.selectedLOD!==null){
+      // No clock (asset arrival, tests) or the low preset => instant swap. A missing LOD asset can never be faded to or from.
+      const before=this.lodFade.switches;this.lodFade.set(this.selectedLOD,clock,preset!=='low',count);
+      if(this.lodFade.switches!==before)tallyLod(this.lodCounters,preset,this.selectedLOD);
+    }
+    for(const [lod,model]of this.models)model.visible=this.lodFade.shows(lod);
     this.proxy.visible=this.selectedLOD===null;
   }
-  update(player,battleClock=null,flagActive=true){
+  update(player,battleClock=null,flagActive=true,quality=null){
     // Omitted battleClock keeps the anchor at x=1075 (stopped), exactly as before T24.
     const kin=train963Kinematics(battleClock,flagActive);this.lastKinematics=kin;
     this.root.position.set(kin.x,LOCOMOTIVE_PLACEMENT.position[1],LOCOMOTIVE_PLACEMENT.position[2]);
     for(const w of this.proxyWheels)w.rotation.x=kin.wheelPhaseRad;
     if(this.lightingFixture?.material)this.lightingFixture.material.opacity=+(0.84+0.14*kin.fireboxPulse).toFixed(3);
     const distance=Math.hypot(player.x-kin.x,player.z+2.5);
-    this.requestedLOD=locomotiveLOD(distance,this.requestedLOD);this.select();
+    this.requestedLOD=locomotiveLOD(distance,this.requestedLOD);
+    this.lodPreset=quality??(this.lowDetail?.value>.5?'low':'medium');this.select(battleClock,this.lodPreset);
   }
   get diagnostics(){return {loaded:[...this.models.keys()].sort(),lod:this.selectedLOD,requestedLOD:this.requestedLOD,
-    fallback:this.proxy.visible,position:this.root.position.toArray(),rotationY:this.root.rotation.y,
+    fallback:this.proxy.visible,lodSwitches:this.lodFade.switches,fading:this.lodFade.active,lodLevel:this.lodFade.level,lodFadeProgress:this.lodFade.active?this.lodFade.progress.value:1,lodFades:this.lodFade.fades,lodSnaps:this.lodFade.snaps,lodPreset:this.lodPreset,
+    lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')},position:this.root.position.toArray(),rotationY:this.root.rotation.y,
     visible:this.root.parent?.visible??false,motion:this.lastKinematics.arriving?'arriving_decelerating':'stationary',kinematics:stableKinematics(this.lastKinematics),
     headlampFogFree:this.lightingFixture?.material?.fog===false,fireboxActive:Boolean(this.lightingFixture?.visible)};}
   dispose(){
-    if(this.disposed)return;this.disposed=true;
+    if(this.disposed)return;this.disposed=true;this.lodFade.dispose();   // rebinds the shared materials, then frees the dither clones
     if(this.lightingFixture){this.lightingFixture.removeFromParent();this.lightingFixture.geometry.dispose();this.lightingFixture.material.dispose();}
     this.root.removeFromParent();this.models.clear();
   }
