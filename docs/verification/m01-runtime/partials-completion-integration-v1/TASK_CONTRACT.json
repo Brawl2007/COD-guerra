@@ -183,13 +183,13 @@
     ]
   },
   "state": {
-    "status": "VERIFIED",
-    "current_node": "review",
-    "current_owner": "reviewer-critical",
-    "next_action": "Independent verifier5 PASS at e377. Criticalreview required beforeacceptance/countchanges/targetintegration; originalfailures retained, formal4/4 consumed, review0/2."
+    "status": "ACCEPTED",
+    "current_node": "handoff",
+    "current_owner": "captain",
+    "next_action": "Publish reviewed metadata and source-identical playable target by normal atomic fast-forward, open draftPR to main, verify remotes and finish graph. No main merge/push."
   },
   "result": {
-    "final_head": "",
+    "final_head": "e377a0739906507dee63cd4006a3428efd22c56b",
     "tests": [
       "Fresh874Node/173tooling PASS",
       "Freshoriginal5Stuka PASS, zero retries/skips/flaky",
@@ -197,8 +197,8 @@
     ],
     "build": "PASS",
     "runtime": "IndependentverifierPASS, compositeproof; no singlefull44PASS",
-    "review": "",
-    "final_status": "",
+    "review": "ACCEPT: REVIEW.md",
+    "final_status": "ACCEPTED",
     "verification_head": "e377a0739906507dee63cd4006a3428efd22c56b"
   }
 }

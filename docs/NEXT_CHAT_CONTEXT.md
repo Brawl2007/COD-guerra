@@ -1,5 +1,13 @@
 # Continuação — duas tarefas M01 integradas, 2026-10-14
 
+## Onze tarefas parciais aceites — 2026-10-16
+
+O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.
+
+**37 tarefas principais confirmadas;15 por fechar**, incluindo T53. T21/PR65 e T50/PR66 são candidatos existentes fora deste lote. M01 continua PROTÓTIPO JOGÁVEL; playtest humano e performance no PC-alvo pendentes. As variâncias T24-CAMERA-01 e T36-EXPOSURE-01 e os FAIL históricos permanecem explícitos; main não é modificada.
+
+O conteúdo abaixo é histórico e conserva o estado da respetiva data.
+
 Branch `codex/m01-continuity-raid-integration-v1`, base T08/T12 `2d65dd0`. Ler o handoff `docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md` e confirmar HEAD/CI remoto. T02-min e T03-lite+T25 implementadas; 22/22 focados, 28/28 após correção aérea no reload, build e browser 1/1 PASS. Integral inicial 693/694 FAIL preservado; CI final **694/694 Node, build e browser 1/1 PASS** (run 38582392486, código `8387b56`, PR #63). Não repetir tarefas nem regenerar golden sem revisão: source hash exato bloqueado e proveniência histórica conservada. M01 continua PROTÓTIPO JOGÁVEL; main/deploy/source branches não foram escritos.
 
 ---

@@ -1,7 +1,7 @@
 {
   "schema": "cod-guerra-program-graph/1",
-  "updated": "2026-10-14",
-  "note": "Grafo do programa (planeamento versionado). Cada nó de tarefa, ao iniciar, gera um Task Contract e um TASK_GRAPH de execução em .agent/runs/<RUN_ID>/ (não versionado). Estados: OPEN | READY | BLOCKED_GATE | BLOCKED_HUMAN | IN_PROGRESS | DONE. Atualização 2026-10-14: só os pré-requisitos comprovados e T02-min/T03-lite/T25 foram reconciliados; os restantes estados históricos exigem revalidação no código/handoff.",
+  "updated": "2026-10-16",
+  "note": "Grafo do programa (planeamento versionado). Cada nó de tarefa, ao iniciar, gera um Task Contract e um TASK_GRAPH de execução em .agent/runs/<RUN_ID>/ (não versionado). Estados: OPEN | READY | BLOCKED_GATE | BLOCKED_HUMAN | IN_PROGRESS | DONE. Atualização 2026-10-14: só os pré-requisitos comprovados e T02-min/T03-lite/T25 foram reconciliados; os restantes estados históricos exigem revalidação no código/handoff. Reconciliação aceite2026-10-16:37confirmadas/15porfechar, conforme M01_TASK_STATUS.md; estados históricos anteriores preservados no Git.",
   "lanes": {
     "gate": "Portões externos ou humanos",
     "sim": "src/game + missions/m01-tczew/mission.json: sequencial (mesmo ficheiro m01-simulation.js); preservar hashes protegidos, A/B de futuros, saves",
@@ -74,7 +74,7 @@
       "lane": "sim",
       "priority": 1,
       "title": "BLAST-DATA-GROUNDING: explosões ancoradas ao terreno; fumo de granada efémero",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "implementer",
       "verify": "verifier",
       "review": "reviewer",
@@ -111,14 +111,15 @@
         "remaining": "ephemeral grenade smoke",
         "ci_run": 38582392486,
         "code_head": "8387b5627b3b5482370c0915f018776d563e31ec"
-      }
+      },
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T02",
       "lane": "sim",
       "priority": 2,
       "title": "SCRIPT-DATA-CONTINUITY: condição west, re-timing de falas, pré-roll",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "implementer-deep",
       "verify": "verifier",
       "review": "reviewer-critical",
@@ -148,14 +149,15 @@
         "remaining": "T02b other dialogues/preroll",
         "ci_run": 38582392486,
         "code_head": "8387b5627b3b5482370c0915f018776d563e31ec"
-      }
+      },
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T22",
       "lane": "sim",
       "priority": 3,
       "title": "BATTLE-READOUT-AND-DISPLAY-ROUNDS: tipo de ronda de exibição + readout; desbloqueia T21/T23/T47/T48",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "implementer-deep",
       "verify": "verifier",
       "review": "reviewer-critical",
@@ -174,14 +176,15 @@
       "evidence": [
         "npm test",
         "compareContinuation"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T05",
       "lane": "sim",
       "priority": 4,
       "title": "AUDIO-DATA-FIELDS: npc-shot.weapon, m01-blast.kind, round-impact.pass, audioEmitters activeFrom/Until",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "implementer",
       "depends_on": [
         "M01-T22"
@@ -192,7 +195,8 @@
       ],
       "evidence": [
         "npm test"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T47",
@@ -222,10 +226,11 @@
       "lane": "sim",
       "priority": 6,
       "title": "EAST-FRONT-VISIBLE",
-      "status": "OPEN",
+      "status": "DONE",
       "depends_on": [
         "M01-T22"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T25",
@@ -239,14 +244,15 @@
       "current_delivery": "Accepted: full final CI 38582392486 (694 Node, build, browser), code8387b56, PR63; T03-lite included.",
       "evidence": [
         "docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T09",
       "lane": "assets",
       "priority": 2,
       "title": "TEXTURE-AUTHORING-PIPELINE: atlas determinísticos albedo/normal/ORM + Low",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "implementer",
       "depends_on": [
         "BASE"
@@ -260,34 +266,37 @@
         "teste do manifesto",
         "capturas 1/5/20 m"
       ],
-      "risk_note": "disco: confirmar espaço antes de gerar texturas"
+      "risk_note": "disco: confirmar espaço antes de gerar texturas",
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T13",
       "lane": "assets",
       "priority": 3,
       "title": "FIELD-STRUCTURES-KIT: barracão/abrigo/posto/casamata com bounds iguais aos colliders",
-      "status": "OPEN",
+      "status": "DONE",
       "depends_on": [
         "M01-T09"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T12",
       "lane": "assets",
       "priority": 4,
       "title": "PROP-KIT",
-      "status": "OPEN",
+      "status": "DONE",
       "depends_on": [
         "M01-T09"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T17",
       "lane": "render",
       "priority": 2,
       "title": "STUKA-DIVE-SEQUENCE: Ju 87 seguem stukaPath sem ciclo (m01-aircraft.js:26 ainda em loop)",
-      "status": "BLOCKED_GATE",
+      "status": "DONE",
       "agent": "implementer-deep",
       "depends_on": [
         "BASE"
@@ -299,28 +308,31 @@
       "evidence": [
         "tests/m01-aircraft*.test.js",
         "spec browser no CI"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T16",
       "lane": "render",
       "priority": 3,
       "title": "LIGHTING-DAWN",
-      "status": "OPEN",
+      "status": "DONE",
       "depends_on": [
         "BASE"
-      ]
+      ],
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T35",
       "lane": "campaign",
       "priority": 3,
       "title": "ANIM-LOCOMOTION-RESOLVER (= S17, pré-requisito da campanha)",
-      "status": "OPEN",
+      "status": "DONE",
       "depends_on": [
         "BASE"
       ],
-      "review": "reviewer-critical"
+      "review": "reviewer-critical",
+      "resolution": "Aceitação global preservada na união verificada e377a0739906507dee63cd4006a3428efd22c56b; ver M01_TASK_STATUS.md e handoff do lote."
     },
     {
       "id": "M01-T01",
@@ -330,7 +342,9 @@
       "depends_on": [
         "BASE"
       ],
-      "human": "sessão no aparelho de referência; ferramenta preparada por implementer"
+      "human": "sessão no aparelho de referência; ferramenta preparada por implementer",
+      "resolution": "Anulada porD13; não conta como entrega nem tarefa pendente.",
+      "counts_as_delivery": false
     },
     {
       "id": "M01-T52",
@@ -386,6 +400,32 @@
         "docs/verification/m01-runtime/continuity-raid-integration-v1/HANDOFF.md"
       ],
       "scope_note": "Não inclui fumo efémero de granadas, ainda no T03 completo."
+    },
+    {
+      "id": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+      "lane": "sim",
+      "title": "Concluir e integrar as onze tarefas parciais",
+      "status": "DONE",
+      "depends_on": [
+        "BASE"
+      ],
+      "accepted_head": "e377a0739906507dee63cd4006a3428efd22c56b",
+      "closed_tasks": [
+        2,
+        3,
+        5,
+        6,
+        7,
+        14,
+        24,
+        26,
+        34,
+        36,
+        41
+      ],
+      "evidence": [
+        "docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md"
+      ]
     }
   ]
 }
