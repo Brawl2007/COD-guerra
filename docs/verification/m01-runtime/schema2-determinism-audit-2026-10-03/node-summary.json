@@ -1,0 +1,28 @@
+{
+  "schema": 2,
+  "cases": 37,
+  "pairedTicks": 61055,
+  "routeTicks": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "ticks": 20976,
+      "events": 2923,
+      "windows": 19
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "ticks": 20107,
+      "events": 1642,
+      "windows": 15
+    }
+  ],
+  "firstDivergence": null,
+  "node": {
+    "tests": 242,
+    "pass": 242,
+    "fail": 0,
+    "skipped": 0
+  }
+}

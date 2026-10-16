@@ -22,7 +22,7 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 
 - CP-C usa `savePolicy: deferUntilSafe`: não perder o pedido de checkpoint quando o raid das 05:30 estiver activo. Guardar ao terminar a janela das 05:34, com hora e eventos reais. Restaurar `m01.second_raid_state`, timers e impactos já consumidos; não repetir a passagem.
 - Munição da arma no save: `mag + reserve + shotCount = 45 + received`. `received` (máx. 30) são carregadores que Kowal passa ao jogador; `timers.kowalRounds` guarda o que lhe resta, e os dois somam sempre 30. Saves antigos sem estes campos continuam válidos.
-- Feridos e transporte são dados dos actores e entram no save: `carriedBy` (quem leva o ferido) e `task` de Dudek (`evacuate_bak` ou `stay_with_bak`). O renderer só lê estas posições.
+- Feridos e transporte são dados dos actores e entram no save: `carriedBy` (quem leva o ferido) e `task` de Dudek (`evacuate_bak`, `stay_with_bak` ou `evacuate_station_wounded`). O renderer só lê estas posições.
 - Bąk nunca fica na zona da demolição oeste. Entregue pelo jogador, fica deitado junto a Dudek, que o leva para a estação depois das 06:10 e volta à secção. Recolhido por Dudek às 06:14, ambos ficam na estação (`dlg_m01_056b/057b`).
 - `pose` opcional no actor guarda a postura sentada da chamada; saves sem o campo são aceites. A representação distingue também agachados, feridos e transportados a partir dos dados existentes. Geometria procedural, sem alterar saúde, coordenadas ou resultados no renderer.
 - Mira/recuo procedural usa `shot`, `firedAt` quando presente, `state`, `role` e `suppressedUntil` no relógio de jogo activo. Mãos, arma, cano e clarão partilham o referencial de apresentação; o tronco inclina-se sobre pés assentes. A mesma hora/dados produzem as mesmas matrizes em pausa/reload, sem novos campos no save ou mudança de hitboxes. `actorAnimations` é diagnóstico de apresentação; não deve servir de autoridade para combate.
@@ -87,3 +87,8 @@ Dados revistos nos PRs #8 e #10; runtime em **PROTÓTIPO JOGÁVEL**, com evidên
 ## Validação
 
 Percurso, wz.29, CP-A..D, skip, independência da câmara e demolições têm testes de simulação e verificações de navegador descritos em `QUALITY_REPORT.md`. As duas rotas de cobertura com controlos não substituem uma nova partida contínua nem um playtest humano. Historicidade fina, afinação humana do combate, encenação e Chromebook continuam pendentes.
+
+## Evacuação ficcional de S3 e apresentação das armas
+
+- `evt_m01_wounded_dragged` das 04:35:30 fere uma única vez `generic_rifleman`, já presente no pátio. `task: station_wounded` e `carriedBy: leon_dudek` mantêm o corpo no chão enquanto Dudek recua a 0,65 m/s. A fala 017 ocorre ao agarrar; a entrega junto à estação muda a tarefa para `station_aid_post` e devolve Dudek ao posto. A operação avança fora da câmara, entra no schema 2 e não reencena eventos consumidos de saves antigos. Morte/inactivação desliga o transporte.
+- Kowal guarda `firedAt` no disparo real (campo opcional já validado). A apresentação usa a rajada de 0,8 s e a troca de 3,4 s dentro dos cinco segundos de cooldown existentes, quando o carregador volta a 20. Não cria munição nem temporizador independente. A wz.98a de Bąk usa os clips de espingarda; os clarões usam o socket da arma seleccionada.

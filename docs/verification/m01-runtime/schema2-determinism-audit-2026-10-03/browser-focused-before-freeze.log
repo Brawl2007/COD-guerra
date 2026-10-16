@@ -1,0 +1,59 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test --grep real station (grab|release)|genuine train 963|schema-2 continuation --reporter=line,json
+
+[1A[2K[2m[WebServer] [22m(node:33) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22mnpm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+[1A[2K[2m[WebServer] [22m(node:46) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:80) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:80) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests/browser/m01.spec.js:220:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed
+[1A[2K  1) tests/browser/m01.spec.js:220:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed 
+
+    [31mTest timeout of 120000ms exceeded.[39m
+
+    Error: page.waitForFunction: Test timeout of 120000ms exceeded.
+
+      228 |   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot(false)});
+      229 |   const {errors,failed}=await open(page);await start(page,'#continue');
+    > 230 |   await page.waitForFunction(phase=>{
+          |              ^
+      231 |     const g=window.gameDiagnostics(),actors=g.m01.characters.actors;
+      232 |     if(g.m01.stationEvacuation.patient.stationDrag?.phase===phase&&
+      233 |       actors?.some(a=>a.id==='generic_rifleman'&&a.clip===`station_drag_patient_${phase}`)&&
+        at /workspace/scratch/179e239c7f9f/COD-guerra/tests/browser/m01.spec.js:230:14
+
+    Error Context: test-results/m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+

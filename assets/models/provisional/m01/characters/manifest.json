@@ -5,9 +5,9 @@
     "m01_soldier_pl_lod0.glb": {
       "nation": "pl",
       "lod": "lod0",
-      "bytes": 2371952,
+      "bytes": 2602908,
       "height_m": 1.745,
-      "bones": 60,
+      "bones": 61,
       "triangles_visible": 14861,
       "draw_calls_visible": 6,
       "textures": {
@@ -58,7 +58,7 @@
         },
         {
           "name": "head_pl_a",
-          "triangles": 2947,
+          "triangles": 2948,
           "visible": false
         },
         {
@@ -73,7 +73,7 @@
         },
         {
           "name": "cap_wz37",
-          "triangles": 358,
+          "triangles": 363,
           "visible": false
         },
         {
@@ -84,6 +84,11 @@
         {
           "name": "sapper",
           "triangles": 332,
+          "visible": false
+        },
+        {
+          "name": "rkm_pouch",
+          "triangles": 344,
           "visible": false
         },
         {
@@ -115,16 +120,41 @@
           "name": "clip",
           "triangles": 618,
           "visible": true
+        },
+        {
+          "name": "rifle_wz98a",
+          "triangles": 1366,
+          "visible": false
+        },
+        {
+          "name": "rkm_wz28",
+          "triangles": 1064,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rag",
+          "triangles": 220,
+          "visible": false
         }
       ]
     },
     "m01_soldier_pl_lod1.glb": {
       "nation": "pl",
       "lod": "lod1",
-      "bytes": 874588,
+      "bytes": 1041440,
       "height_m": 1.745,
-      "bones": 60,
-      "triangles_visible": 6026,
+      "bones": 61,
+      "triangles_visible": 6022,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg",
@@ -133,7 +163,7 @@
       "meshes": [
         {
           "name": "body",
-          "triangles": 2452,
+          "triangles": 2451,
           "visible": true
         },
         {
@@ -143,7 +173,7 @@
         },
         {
           "name": "head_zielinski",
-          "triangles": 983,
+          "triangles": 984,
           "visible": false
         },
         {
@@ -178,7 +208,7 @@
         },
         {
           "name": "helmet_wz31",
-          "triangles": 380,
+          "triangles": 381,
           "visible": true
         },
         {
@@ -188,17 +218,22 @@
         },
         {
           "name": "cap_wz37",
-          "triangles": 201,
+          "triangles": 206,
           "visible": false
         },
         {
           "name": "gear",
-          "triangles": 1068,
+          "triangles": 1066,
           "visible": true
         },
         {
           "name": "sapper",
           "triangles": 244,
+          "visible": false
+        },
+        {
+          "name": "rkm_pouch",
+          "triangles": 254,
           "visible": false
         },
         {
@@ -223,23 +258,48 @@
         },
         {
           "name": "rifle",
-          "triangles": 848,
+          "triangles": 846,
           "visible": true
         },
         {
           "name": "clip",
           "triangles": 294,
           "visible": true
+        },
+        {
+          "name": "rifle_wz98a",
+          "triangles": 784,
+          "visible": false
+        },
+        {
+          "name": "rkm_wz28",
+          "triangles": 904,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 128,
+          "visible": false
+        },
+        {
+          "name": "rag",
+          "triangles": 140,
+          "visible": false
         }
       ]
     },
     "m01_soldier_pl_lod2.glb": {
       "nation": "pl",
       "lod": "lod2",
-      "bytes": 287012,
+      "bytes": 321668,
       "height_m": 1.745,
-      "bones": 27,
-      "triangles_visible": 1893,
+      "bones": 28,
+      "triangles_visible": 1895,
       "draw_calls_visible": 6,
       "textures": {
         "baseColor": "image/jpeg"
@@ -247,7 +307,7 @@
       "meshes": [
         {
           "name": "body",
-          "triangles": 919,
+          "triangles": 918,
           "visible": true
         },
         {
@@ -257,12 +317,12 @@
         },
         {
           "name": "head_zielinski",
-          "triangles": 344,
+          "triangles": 343,
           "visible": false
         },
         {
           "name": "head_krawiec",
-          "triangles": 343,
+          "triangles": 344,
           "visible": false
         },
         {
@@ -282,17 +342,17 @@
         },
         {
           "name": "head_dudek",
-          "triangles": 343,
+          "triangles": 344,
           "visible": false
         },
         {
           "name": "head_pl_a",
-          "triangles": 343,
+          "triangles": 342,
           "visible": false
         },
         {
           "name": "helmet_wz31",
-          "triangles": 149,
+          "triangles": 150,
           "visible": true
         },
         {
@@ -307,12 +367,17 @@
         },
         {
           "name": "gear",
-          "triangles": 202,
+          "triangles": 204,
           "visible": true
         },
         {
           "name": "sapper",
           "triangles": 42,
+          "visible": false
+        },
+        {
+          "name": "rkm_pouch",
+          "triangles": 34,
           "visible": false
         },
         {
@@ -344,15 +409,40 @@
           "name": "clip",
           "triangles": 104,
           "visible": true
+        },
+        {
+          "name": "rifle_wz98a",
+          "triangles": 170,
+          "visible": false
+        },
+        {
+          "name": "rkm_wz28",
+          "triangles": 132,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_open",
+          "triangles": 14,
+          "visible": false
+        },
+        {
+          "name": "rkm_bipod_folded",
+          "triangles": 14,
+          "visible": false
+        },
+        {
+          "name": "rag",
+          "triangles": 22,
+          "visible": false
         }
       ]
     },
     "m01_soldier_de_lod0.glb": {
       "nation": "de",
       "lod": "lod0",
-      "bytes": 1717696,
+      "bytes": 1718132,
       "height_m": 1.745,
-      "bones": 60,
+      "bones": 61,
       "triangles_visible": 16055,
       "draw_calls_visible": 6,
       "textures": {
@@ -406,9 +496,9 @@
     "m01_soldier_de_lod1.glb": {
       "nation": "de",
       "lod": "lod1",
-      "bytes": 604164,
+      "bytes": 604600,
       "height_m": 1.745,
-      "bones": 60,
+      "bones": 61,
       "triangles_visible": 6446,
       "draw_calls_visible": 6,
       "textures": {
@@ -461,9 +551,9 @@
     "m01_soldier_de_lod2.glb": {
       "nation": "de",
       "lod": "lod2",
-      "bytes": 187440,
+      "bytes": 187880,
       "height_m": 1.745,
-      "bones": 27,
+      "bones": 28,
       "triangles_visible": 2059,
       "draw_calls_visible": 6,
       "textures": {
@@ -513,7 +603,7 @@
       ]
     },
     "m01_soldier_animations.glb": {
-      "bytes": 1429064,
+      "bytes": 876612,
       "clips": [
         {
           "name": "standing_idle",
@@ -527,7 +617,7 @@
         },
         {
           "name": "fire_bolt",
-          "duration": 1.167,
+          "duration": 1.17,
           "loop": false
         },
         {
@@ -542,7 +632,7 @@
         },
         {
           "name": "run",
-          "duration": 0.667,
+          "duration": 0.68,
           "loop": true
         },
         {
@@ -588,6 +678,56 @@
         {
           "name": "seated",
           "duration": 4,
+          "loop": true
+        },
+        {
+          "name": "rkm_standing_idle",
+          "duration": 4,
+          "loop": true
+        },
+        {
+          "name": "rkm_walk",
+          "duration": 1.05,
+          "loop": true
+        },
+        {
+          "name": "rkm_run",
+          "duration": 0.72,
+          "loop": true
+        },
+        {
+          "name": "rkm_aim",
+          "duration": 2,
+          "loop": true
+        },
+        {
+          "name": "rkm_fire_burst",
+          "duration": 0.8,
+          "loop": false
+        },
+        {
+          "name": "rkm_crouched_idle",
+          "duration": 3,
+          "loop": true
+        },
+        {
+          "name": "rkm_prone",
+          "duration": 3,
+          "loop": true
+        },
+        {
+          "name": "rkm_prone_fire",
+          "duration": 0.8,
+          "loop": false
+        },
+        {
+          "name": "rkm_reload",
+          "duration": 3.4,
+          "loop": false
+        },
+        {
+          "name": "rkm_clean",
+          "duration": 6,
           "loop": true
         }
       ]

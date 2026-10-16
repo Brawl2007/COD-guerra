@@ -1,0 +1,138 @@
+{
+  "viewer": "three.js 0.186.1 GLTFLoader (Chromium/SwiftShader)",
+  "note": "galeria isolada; não é playtest nem medição de FPS",
+  "files": {
+    "m01_ju87_b1_lod0.glb": {
+      "nodes": [
+        "ju87_b1_1",
+        "fuselage",
+        "propeller",
+        "dive_brake_r",
+        "dive_brake_l",
+        "bomb_sc250"
+      ],
+      "materials": [
+        "ju87_b1"
+      ],
+      "triangles": 13102,
+      "finite": true,
+      "animations": [
+        {
+          "name": "propeller_spin",
+          "duration": 1,
+          "tracks": [
+            "propeller.quaternion"
+          ]
+        },
+        {
+          "name": "dive_brakes_extend",
+          "duration": 1.2,
+          "tracks": [
+            "dive_brake_r.quaternion",
+            "dive_brake_l.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -6.900000095367432,
+          -2.6700000762939453,
+          -4.550000002980232
+        ],
+        "max": [
+          6.900000095367432,
+          1.7000000476837158,
+          6.550000190734863
+        ]
+      }
+    },
+    "m01_ju87_b1_lod1.glb": {
+      "nodes": [
+        "ju87_b1_1",
+        "fuselage",
+        "propeller",
+        "dive_brake_r",
+        "dive_brake_l",
+        "bomb_sc250"
+      ],
+      "materials": [
+        "ju87_b1"
+      ],
+      "triangles": 4730,
+      "finite": true,
+      "animations": [
+        {
+          "name": "propeller_spin",
+          "duration": 1,
+          "tracks": [
+            "propeller.quaternion"
+          ]
+        },
+        {
+          "name": "dive_brakes_extend",
+          "duration": 1.2,
+          "tracks": [
+            "dive_brake_r.quaternion",
+            "dive_brake_l.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -6.900000095367432,
+          -2.6700000762939453,
+          -4.550000002980232
+        ],
+        "max": [
+          6.900000095367432,
+          1.7000000476837158,
+          6.550000190734863
+        ]
+      }
+    },
+    "m01_ju87_b1_lod2.glb": {
+      "nodes": [
+        "ju87_b1_1",
+        "fuselage",
+        "propeller",
+        "dive_brake_r",
+        "dive_brake_l",
+        "bomb_sc250"
+      ],
+      "materials": [
+        "ju87_b1"
+      ],
+      "triangles": 1636,
+      "finite": true,
+      "animations": [
+        {
+          "name": "propeller_spin",
+          "duration": 1,
+          "tracks": [
+            "propeller.quaternion"
+          ]
+        },
+        {
+          "name": "dive_brakes_extend",
+          "duration": 1.2,
+          "tracks": [
+            "dive_brake_r.quaternion",
+            "dive_brake_l.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -6.900000095367432,
+          -2.6700000762939453,
+          -4.550000002980232
+        ],
+        "max": [
+          6.900000095367432,
+          1.7000000476837158,
+          6.550000190734863
+        ]
+      }
+    }
+  }
+}

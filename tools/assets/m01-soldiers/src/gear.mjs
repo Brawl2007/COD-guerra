@@ -270,6 +270,8 @@ export function buildGear(nat, h, o) {
     add('gear', onBody([tag(strap(path, normals, { width: 0.03, thickness: 0.003 }), 'gasmask_strap', 'canvas')], v => h.skin[v].every(([b]) => !/lowerarm|hand|upperarm/.test(b))));
     // Sapadores: bolsa de lona de ferramentas/cargas à direita da frente (substitui a cartucheira direita na leitura).
     { const f = bf(-62, -0.13); add('sapper', onBody(pouch(f.o, f.axes, [0.22, 0.17, 0.08], 'canvas', 'sapper_bag', { flap: 0.6, r: 0.02, bulge: 0.12 }), nearBelt)); }
+    // Atirador da rkm: bolsa de couro para carregadores de 20 no lugar da cartucheira esquerda (envolve-a por completo).
+    { const f = bf(26, -0.02); add('rkm_pouch', onBody(pouch(f.o, f.axes, [0.112, 0.13, 0.062], 'leather_light', 'rkm_mag_pouch', { flap: 0.45, r: 0.01 }), nearBelt)); }
     // Graduados: coldre da Vis wz.35 (couro) e divisas nas platinas.
     { const f = bf(58, -0.07); add('nco', onBody(holster(f.o, f.axes), nearBelt)); }
     add('rank_kapral', onBody(rankBars(J, 2, topAt), v => h.skin[v].some(([b]) => /clavicle|upperarm|spine_03/.test(b))));

@@ -318,6 +318,11 @@ function gearPainters(nat) {
       const base = nat === 'pl' ? [0.36, 0.20, 0.10] : [0.40, 0.24, 0.12];
       return { c: mul(base, 0.8 + 0.3 * ring + fbm(p, 60, 2) * 0.08), r: 0.45 + ring * 0.1, m: 0, h: (ring - 0.5) * 0.00006 };
     },
+    // Pano de linho cru, sujo de óleo e pó (limpeza da rkm).
+    rag: ({ p }) => {
+      const oil = smoothstep(0.1, 0.5, fbm([p[0] + 3, p[1], p[2]], 30, 3)), weave = fbm(p, 400, 1);
+      return { c: mix(mul([0.74, 0.70, 0.6], 1 + weave * 0.08), [0.25, 0.22, 0.18], oil * 0.7), r: 0.9 - oil * 0.3, m: 0, h: weave * 0.0002 };
+    },
     shovel_handle: ({ p }) => ({ c: mul([0.50, 0.38, 0.24], 0.85 + fbm(p, 40, 3) * 0.2), r: 0.7, m: 0, h: 0 }),
     rank: ({ p }) => ({ c: mul([0.78, 0.74, 0.6], 1 + fbm(p, 100, 2) * 0.1), r: 0.5, m: 0.4, h: 0.0004 }),
   };

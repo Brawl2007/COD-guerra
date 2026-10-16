@@ -1,0 +1,12 @@
+[
+  {
+    "text": "Failure: automatic context summaries scored 0.20 and 0.25 below 0.35. Preserve complete constraints and exact identifiers in docs/WORKING_CONTEXT.md.",
+    "timestamp": "2026-10-02",
+    "source": "M01 anchored context"
+  },
+  {
+    "text": "Warning: standalone rkm clips duplicate rkm_aim and rkm_fire_burst; avoid overriding the full soldier animations or displaying two guns.",
+    "timestamp": "2026-10-02",
+    "source": "M01 anchored context"
+  }
+]

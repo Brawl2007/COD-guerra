@@ -2,17 +2,19 @@
 // arma e clipe → atlas único → malhas fundidas por grupo alternável → LODs (meshoptimizer) → descrição para glb.mjs.
 import { MeshoptSimplifier } from 'meshoptimizer';
 import { buildHuman, GAME_BONES, LIGHT_DROP, bodyHeight } from './human.mjs';
-import { computeNormals, skinArrays } from './meshops.mjs';
+import { computeNormals, skinArrays, v3 } from './meshops.mjs';
 import { buildOutfit, STYLES } from './outfit.mjs';
 import { buildHead, buildHands } from './head.mjs';
 import { buildGear } from './gear.mjs';
-import { buildRifle, buildClip, placeWeapon, RIFLES } from './weapon.mjs';
+import { buildRifle, buildClip, buildRkm, buildRag, placeWeapon, RIFLES, RKM } from './weapon.mjs';
 import { HEADS } from './variants.mjs';
 import { makePainters } from './paint.mjs';
 import { bakeAtlas } from './textures.mjs';
 
 export const MACRO = { gender: 1, age: 0.55, muscle: 0.6, weight: 0.45, height: 0.5 };
 export const RIFLE_OF = { pl: 'wz29', de: 'kar98k' };
+// Armas alternativas (malhas escondidas por omissão, mesmo atlas): Bąk com kb wz.98a, Kowal com rkm wz.28.
+export const EXTRA_WEAPONS = { pl: ['wz98a', 'rkm_wz28'], de: [] };
 
 /** Peças de uma nação (pose de ligação, metros) agrupadas pelas malhas finais. */
 export function buildNation(nat, { heads = HEADS[nat] } = {}) {
@@ -25,7 +27,20 @@ export function buildNation(nat, { heads = HEADS[nat] } = {}) {
   // Arma: punho na mão direita (pose de ligação); ferrolho no eixo do ferrolho; clipe na mão.
   placeWeapon(rifle.parts, J.weapon); placeWeapon(clip, J.weapon_clip);
   J.weapon_bolt = [J.weapon[0], J.weapon[1] + R.boltY, J.weapon[2] + R.boltZ];
-  for (const p of [...rifle.parts, ...clip]) p.skin = Array.from({ length: p.positions.length / 3 }, () => [[p.bone, 1]]);
+  J.weapon_mag = v3.add(J.weapon, RKM.mag);
+  const extra = [], sockets = { [RIFLE_OF[nat]]: rifle.sockets };
+  if (EXTRA_WEAPONS[nat].includes('wz98a')) {
+    const r = buildRifle('wz98a'); placeWeapon(r.parts, J.weapon); sockets.wz98a = r.sockets;
+    extra.push({ name: 'rifle_wz98a', parts: r.parts, visible: false });
+  }
+  if (EXTRA_WEAPONS[nat].includes('rkm_wz28')) {
+    const k = buildRkm(), rag = buildRag(); sockets.rkm_wz28 = k.sockets;
+    for (const ps of [k.parts, k.mag, k.bipodOpen, k.bipodFolded]) placeWeapon(ps, J.weapon);
+    placeWeapon(rag, J.weapon_clip);
+    extra.push({ name: 'rkm_wz28', parts: [...k.parts, ...k.mag], visible: false }, { name: 'rkm_bipod_open', parts: k.bipodOpen, visible: false },
+      { name: 'rkm_bipod_folded', parts: k.bipodFolded, visible: false }, { name: 'rag', parts: rag, visible: false });
+  }
+  for (const p of [...rifle.parts, ...clip, ...extra.flatMap(g => g.parts)]) p.skin = Array.from({ length: p.positions.length / 3 }, () => [[p.bone, 1]]);
 
   const groups = [
     { name: 'body', parts: [...o.parts, hands], visible: true },
@@ -33,10 +48,11 @@ export function buildNation(nat, { heads = HEADS[nat] } = {}) {
     ...Object.entries(gear.sets).map(([k, parts]) => ({ name: k, parts, visible: ['helmet_wz31', 'helmet_m35', 'gear'].includes(k) })),
     { name: 'rifle', parts: rifle.parts, visible: true },
     { name: 'clip', parts: clip, visible: true },
+    ...extra,
   ];
   for (const g of groups) for (const p of g.parts) if (!p.normals) computeNormals(p, p.src ?? null);
   const painters = makePainters({ nat, J, lm: o.lm, heads: headParts.map(hp => ({ variant: hp.variant, lm: hp.lm })) });
-  return { nat, h, J, o, groups, painters, rifle, height: bodyHeight(h), fit: gear.fit };
+  return { nat, h, J, o, groups, painters, rifle, sockets, height: bodyHeight(h), fit: gear.fit };
 }
 
 /** Funde as peças de um grupo (já com atlasUV) numa malha com pesos. */
@@ -93,7 +109,8 @@ export const LODS = [
   { id: 'lod1', ratio: { body: 0.12, head: 0.1, helmet: 0.15, gear: 0.3, rifle: 0.3, clip: 0.2 }, error: 0.05, flags: [], color: 1024, orm: 512, normal: null, bones: 'full' },
   { id: 'lod2', ratio: { body: 0.045, head: 0.035, helmet: 0.06, gear: 0.08, rifle: 0.1, clip: 0.1 }, error: 0.3, flags: ['Permissive'], color: 512, orm: null, normal: null, bones: 'light' },
 ];
-const category = name => name === 'body' ? 'body' : name.startsWith('head_') ? 'head' : /^(helmet|cap)_/.test(name) ? 'helmet' : name === 'rifle' ? 'rifle' : name === 'clip' ? 'clip' : 'gear';
+const category = name => name === 'body' ? 'body' : name.startsWith('head_') ? 'head' : /^(helmet|cap)_/.test(name) ? 'helmet'
+  : /^(rifle|rkm_wz28)/.test(name) ? 'rifle' : /^(clip|rag|rkm_bipod)/.test(name) ? 'clip' : 'gear';
 
 /** Atlas da nação (uma vez) e malhas de cada LOD, prontos para writeCharacter. */
 export async function bakeNation(N, { size = 2048 } = {}) {

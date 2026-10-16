@@ -1,0 +1,317 @@
+{
+  "status": "PROTÓTIPO JOGÁVEL — kit provisório de apresentação; sem playtest humano nem medição no Chromebook",
+  "license": "Original do projecto COD Guerra (animação procedimental); licença final do projecto pendente da decisão do dono",
+  "author": "COD Guerra — clips procedimentais originais; solver e rig do kit M01 dos soldados preservado",
+  "units": "metres",
+  "up": "+Y",
+  "forward": "-Z",
+  "fps": 30,
+  "files": {
+    "m01_station_drag_transitions.glb": {
+      "bytes": 408488,
+      "sha256": "5b59af9c0410f7747bed478a3c009ae54e916d7c38053530769f38a1d2c9eb6c",
+      "clips": [
+        {
+          "name": "station_drag_medic_grab",
+          "duration": 1.6,
+          "fps": 30,
+          "loop": false,
+          "in_place": true,
+          "estimated": true,
+          "patient_root_offset_m": [
+            0,
+            0,
+            -0.92
+          ],
+          "role": "medic",
+          "pair": "station_drag_patient_grab",
+          "events": {
+            "hands_contact": 0.7,
+            "grip_ready": 0.95
+          },
+          "from": {
+            "file": "m01_soldier_animations.glb",
+            "clip": "crouched_idle",
+            "time": 0
+          },
+          "to": {
+            "file": "m01_station_animations.glb",
+            "clip": "drag_wounded",
+            "time": 0
+          }
+        },
+        {
+          "name": "station_drag_patient_grab",
+          "duration": 1.6,
+          "fps": 30,
+          "loop": false,
+          "in_place": true,
+          "estimated": true,
+          "patient_root_offset_m": [
+            0,
+            0,
+            -0.92
+          ],
+          "role": "patient",
+          "pair": "station_drag_medic_grab",
+          "events": {
+            "hands_contact": 0.7,
+            "grip_ready": 0.95
+          },
+          "from": {
+            "file": "m01_soldier_animations.glb",
+            "clip": "wounded",
+            "time": 0
+          },
+          "to": {
+            "file": "m01_station_drag_transitions.glb",
+            "clip": "station_drag_patient_grab",
+            "time": 1.6
+          }
+        },
+        {
+          "name": "station_drag_medic_release",
+          "duration": 1.6,
+          "fps": 30,
+          "loop": false,
+          "in_place": true,
+          "estimated": true,
+          "patient_root_offset_m": [
+            0,
+            0,
+            -0.92
+          ],
+          "role": "medic",
+          "pair": "station_drag_patient_release",
+          "events": {
+            "hands_release": 0.65,
+            "settled": 1.6
+          },
+          "from": {
+            "file": "m01_station_animations.glb",
+            "clip": "drag_wounded",
+            "time": 0
+          },
+          "to": {
+            "file": "m01_soldier_animations.glb",
+            "clip": "crouched_idle",
+            "time": 0
+          }
+        },
+        {
+          "name": "station_drag_patient_release",
+          "duration": 1.6,
+          "fps": 30,
+          "loop": false,
+          "in_place": true,
+          "estimated": true,
+          "patient_root_offset_m": [
+            0,
+            0,
+            -0.92
+          ],
+          "role": "patient",
+          "pair": "station_drag_medic_release",
+          "events": {
+            "hands_release": 0.65,
+            "settled": 1.6
+          },
+          "from": {
+            "file": "m01_station_drag_transitions.glb",
+            "clip": "station_drag_patient_grab",
+            "time": 1.6
+          },
+          "to": {
+            "file": "m01_soldier_animations.glb",
+            "clip": "wounded",
+            "time": 0
+          }
+        }
+      ]
+    }
+  },
+  "reused": {
+    "m01_soldier_pl_lod1.glb": {
+      "bytes": 1041440,
+      "sha256": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f"
+    },
+    "m01_soldier_animations.glb": {
+      "bytes": 876612,
+      "sha256": "481d6114f4481ae0f99e162a4bbfdbe8e1d74cffc2460836a2b525bf93b0202d"
+    },
+    "m01_station_animations.glb": {
+      "bytes": 96720,
+      "sha256": "504d4d84859149e3557da345e9572279a360d471e6c55c8550625ea5415ca9e5"
+    },
+    "station-animations.manifest.json": {
+      "bytes": 707,
+      "sha256": "05e132bfa87f1626359fe3577e5cbc6eb4da67bc0756ac65ff8dab76af360a87"
+    }
+  },
+  "rig": {
+    "source": "m01_soldier_pl_lod1.glb",
+    "bones": 61,
+    "bind": "nós do GLB sem alterações; eixos de ligação alinhados com o mundo",
+    "unchanged": true
+  },
+  "timing": {
+    "duration_s": 1.6,
+    "estimated": true,
+    "clock": "O par grab (médico + paciente) e o par release partilham duração e relógio: iniciar os dois no mesmo instante.",
+    "grab": {
+      "approach": [
+        0,
+        0.7
+      ],
+      "hands_contact": 0.7,
+      "grip": [
+        0.7,
+        0.95
+      ],
+      "grip_ready": 0.95,
+      "lift": [
+        0.95,
+        1.6
+      ]
+    },
+    "release": {
+      "lower": [
+        0,
+        0.65
+      ],
+      "hands_release": 0.65,
+      "open_and_clear": [
+        0.65,
+        0.9
+      ],
+      "hands_clear": 0.9,
+      "settled": 1.6,
+      "return": [
+        0.9,
+        1.6
+      ]
+    },
+    "events": {
+      "hands_contact": "as mãos do médico pousam nos ombros do ferido deitado",
+      "grip_ready": "pega fechada; começa a erguer o tronco do ferido",
+      "hands_release": "o ferido volta a ficar de costas no chão; a pega abre (as mãos largam os ombros em hands_clear)",
+      "settled": "ambos nas poses de chegada: médico em crouched_idle t=0, ferido em wounded t=0"
+    },
+    "note": "Eventos de apresentação em extras de cada clip. A simulação continua a decidir associação, trajecto, entrega e baixa; não há gameplay, horários nem flags nos clips."
+  },
+  "endpoints": {
+    "station_drag_medic_grab": "crouched_idle t=0 → drag_wounded t=0 (frames exactos)",
+    "station_drag_patient_grab": "wounded t=0 → pose de arrasto (tronco erguido pelos sovacos, bacia e pernas no chão, de costas)",
+    "station_drag_medic_release": "drag_wounded t=0 → crouched_idle t=0 (percurso inverso)",
+    "station_drag_patient_release": "pose de arrasto → wounded t=0 (percurso inverso; fica de costas no chão)",
+    "patient_drag_pose": "Último frame de station_drag_patient_grab = primeiro de station_drag_patient_release. O renderer actual mantém o paciente em 'wounded' durante drag_wounded: as mãos do médico ficam a 0.3266 m dos ombros. Com a pose de arrasto ficam a 0.1226 m; para manter o contacto, a integração deve segurar o último frame do agarrar (clampWhenFinished) enquanto dura o arrasto."
+  },
+  "pair": {
+    "patient_root_offset_m": [
+      0,
+      0,
+      -0.92
+    ],
+    "patient_facing": "igual à do médico (cabeça do ferido para o médico, +Z do paciente)",
+    "runtime": "M01Simulation: paciente em medic + 0,92 m na direcção facing; raiz renderizada com rotação −facing − π/2 (rig virado para −Z).",
+    "root_motion": "nenhum: o osso root fica na translação de ligação [0,0,0.0618] e sem rotação em todos os frames; a anca move-se só dentro do corpo"
+  },
+  "sockets": {
+    "frame": "osso upperarm_l/upperarm_r do paciente (posição e rotação no mundo); offsets em metros nesse referencial",
+    "shoulder_on_ground": {
+      "l": [
+        -0.1015,
+        0.1068,
+        0.067
+      ],
+      "r": [
+        0.1003,
+        0.1002,
+        0.0781
+      ],
+      "from_upperarm_world": [
+        0.01,
+        0.15,
+        0.06
+      ],
+      "note": "mão em cima do ombro do ferido deitado (hands_contact)"
+    },
+    "armpit_grip": {
+      "l": [
+        0.0376,
+        0.1166,
+        -0.0058
+      ],
+      "r": [
+        -0.0777,
+        0.0935,
+        0.0156
+      ],
+      "note": "posição exacta das mãos do frame 0 de drag_wounded com o paciente na pose de arrasto (debaixo dos sovacos, por trás)"
+    },
+    "carry_socket": "não usado (não é o transporte ao ombro de Bąk)"
+  },
+  "patient_drag_pose": {
+    "hips_tilt_deg": 20,
+    "spine_pitch_deg": [
+      10,
+      10,
+      8
+    ],
+    "legs": "pés e mãos com os alvos de wounded t=0 (mãos na coxa direita)",
+    "supine": true
+  },
+  "checks": {
+    "method": "cápsulas entre ossos (src/body.mjs; raios estimados com fardamento) medidas em todos os frames; FK própria e AnimationMixer nos testes",
+    "contact_slack_m": 0.015,
+    "hands_contact": {
+      "hand_to_shoulder_m": 0.1619
+    },
+    "grip_ready": {
+      "hand_to_shoulder_m": 0.1626
+    },
+    "drag_pose": {
+      "hand_to_shoulder_m": 0.1226
+    },
+    "max_hand_to_shoulder_after_contact_m": 0.1856,
+    "max_ik_error_m": 0,
+    "worst_contact_overlap": {
+      "pair": "forearm_r/upper_chest",
+      "t": 1.3333,
+      "gap_m": -0.0298,
+      "note": "mão/antebraço do médico contra o corpo do ferido; inclui o aperto da pega"
+    },
+    "worst_other_overlap": {
+      "pair": "foot_l/upperarm_l",
+      "t": 0,
+      "gap_m": -0.0352,
+      "note": "o pé esquerdo do médico junto ao ombro esquerdo do ferido já existe nas poses reais dos extremos (ver endpoints_existing)"
+    },
+    "endpoints_existing": [
+      {
+        "pair": "crouched_idle t0 + wounded t0",
+        "closest": "foot_l/upperarm_l",
+        "gap_m": -0.0352
+      },
+      {
+        "pair": "drag_wounded t0 + pose de arrasto",
+        "closest": "hand_l/upperarm_l",
+        "gap_m": -0.0105
+      }
+    ],
+    "patient_ground_min_m": -0.0522,
+    "drag_loop_with_patient_hold": {
+      "frames": 43,
+      "max_hand_to_grip_m": 0.0058,
+      "worst_gap_m": -0.0141
+    }
+  },
+  "sources": {
+    "estimates": [
+      "Durações (1,6 s) e instantes dos eventos estimados, sem captura de movimento.",
+      "Pega pelos sovacos por trás (arrasto de costas) inferida do clip drag_wounded existente e da posição do paciente na simulação; não é uma técnica documentada para 1939.",
+      "Raios das cápsulas de contacto estimados para o soldado provisório."
+    ]
+  },
+  "note": "Apresentação apenas. Não altera rig, malhas, clips anteriores, src/, simulação ou engine. Galeria em docs/assets/m01-station-drag-transitions/ não é playtest nem medição de FPS."
+}

@@ -1,0 +1,477 @@
+{
+  "asset": "Junkers Ju 87 B-1 (3./StG 1) — raid das 04:34 sobre Tczew, M01",
+  "status": "PROVISÓRIO VERIFICADO (galeria isolada; M01 continua PROTÓTIPO JOGÁVEL)",
+  "generator": "tools/assets/m01-aircraft (node build.mjs)",
+  "author": "Claude Code (geometria, pintura e animações geradas por código original neste repositório)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem modelos, texturas ou fotografias de terceiros nem conteúdo de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "meshoptimizer 1.3.0 (MIT)",
+    "jpeg-js 0.4.4 (BSD-3)",
+    "pngjs 7.0.0 (MIT)",
+    "three.js 0.186.1 (MIT, verificação)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; nariz para −Z; asa direita em +X",
+  "pivot": "origem = centro de gravidade estimado sobre o eixo de tracção (voo: rodar/inclinar em torno da origem); sem coordenadas globais de Tczew",
+  "variant": {
+    "id": "Ju 87 B-1",
+    "confirmed_by": [
+      "T12: três Ju 87 B da 3./StG 1 (Dilley, Schiller, Grenzel), Elbing, 04:34–04:35",
+      "research/equipment-timeline.json ju87b"
+    ],
+    "features": [
+      "asa em gaivota invertida com flaperons Junkers (Doppelflügel)",
+      "trem fixo com carenagens grandes (\"calças\") e sirenes à frente",
+      "radiador grande debaixo do motor Jumo 211 (o D tem radiadores sob as asas e capota do motor diferente)",
+      "capota comprida com atirador e uma MG 15",
+      "estabilizador escorado por montantes",
+      "freios de mergulho sob as asas exteriores"
+    ],
+    "not_modelled": [
+      "variantes D/G",
+      "código da unidade e letras",
+      "suástica da deriva (omitida de propósito, política dos soldados)"
+    ],
+    "certainty": "MÉDIA: variante B pela fonte T12 (resumo); traços do B-1 por conhecimento geral, sem fonte primária lida neste ambiente"
+  },
+  "sources": {
+    "T29": [
+      "https://www.flugzeuginfo.net/acdata_php/acdata_ju87_en.php",
+      "airpages.ru (Ju 87 B-1)"
+    ],
+    "T12": [
+      "https://en.wikipedia.org/wiki/Sturzkampfgeschwader_1"
+    ],
+    "T10": [
+      "https://polskieradio24.pl/artykul/2360661,1-wrzesnia-1939-o-godzinie-434-bomby-spadly-na-tczew"
+    ],
+    "note": "Só resumos: flugzeuginfo.net, wikipedia.org e Sketchfab (WAF) sem acesso neste ambiente; airpages.ru 403. Os candidatos CC-BY do Sketchfab de assets-m01.json não foram usados nem verificados."
+  },
+  "measures": [
+    {
+      "id": "length",
+      "value_m": 11.1,
+      "source": "T29",
+      "estimated": false,
+      "note": "da ponta do cubo da hélice ao bordo de fuga do leme"
+    },
+    {
+      "id": "wingspan",
+      "value_m": 13.8,
+      "source": "T29",
+      "estimated": false,
+      "note": "pontas das asas (x = ±6,90)"
+    },
+    {
+      "id": "height",
+      "value_m": 4.24,
+      "source": "T29",
+      "estimated": true,
+      "note": "publicada provavelmente em atitude de solo; o modelo mede ~4,27 m da roda ao topo da deriva em atitude de voo"
+    },
+    {
+      "id": "wing_area",
+      "value_m2": 31.9,
+      "source": "conhecimento geral (sem fonte lida)",
+      "estimated": true,
+      "note": "só orienta a planta; a do modelo é calculada no manifesto"
+    },
+    {
+      "id": "gull_wing",
+      "value_deg": [
+        -11,
+        7.8
+      ],
+      "source": "vistas de frente genéricas",
+      "estimated": true,
+      "note": "anedro da secção interior e diedro da exterior; cotovelo a x = ±1,95 m"
+    },
+    {
+      "id": "chords",
+      "value_m": [
+        3,
+        1.6
+      ],
+      "source": "proporção",
+      "estimated": true,
+      "note": "corda na raiz e antes da ponta arredondada"
+    },
+    {
+      "id": "propeller",
+      "value_m": 3.4,
+      "source": "proporção",
+      "estimated": true,
+      "note": "hélice tripá de passo variável; diâmetro estimado"
+    },
+    {
+      "id": "tailplane_span",
+      "value_m": 4.9,
+      "source": "proporção",
+      "estimated": true,
+      "note": "estabilizador escorado por montantes por baixo"
+    },
+    {
+      "id": "track",
+      "value_m": 3.9,
+      "source": "proporção",
+      "estimated": true,
+      "note": "bitola do trem fixo carenado (rodas a x = ±1,95)"
+    },
+    {
+      "id": "dive_brakes",
+      "value_m": [
+        1.7,
+        0.24
+      ],
+      "source": "proporção",
+      "estimated": true,
+      "note": "grelhas sob as asas exteriores, rodam 90° na dobradiça dianteira"
+    },
+    {
+      "id": "sc250",
+      "value_m": [
+        1.64,
+        0.368
+      ],
+      "source": "conhecimento geral (sem fonte lida)",
+      "estimated": true,
+      "note": "bomba SC 250 no garfo ventral; carga do raid de Tczew não documentada"
+    }
+  ],
+  "nodes": [
+    {
+      "node": "fuselage",
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation_z_rad": 0,
+      "contents": "célula: fuselagem e capota do motor, radiador, escapes, capota envidraçada, MG 15, asas em gaivota, flaperons Junkers, trem carenado com sirenes, cauda escorada, roda de cauda, garfo da bomba",
+      "pieces": [
+        "fuselage",
+        "radiator",
+        "exhaust_l0",
+        "exhaust_l1",
+        "exhaust_l2",
+        "exhaust_l3",
+        "exhaust_l4",
+        "exhaust_l5",
+        "exhaust_r0",
+        "exhaust_r1",
+        "exhaust_r2",
+        "exhaust_r3",
+        "exhaust_r4",
+        "exhaust_r5",
+        "supercharger_intake",
+        "canopy",
+        "mg15_barrel",
+        "mg15_body",
+        "wing_r",
+        "wing_l",
+        "flaperon_r",
+        "flaperon_l",
+        "gear_fairing_r",
+        "gear_fairing_l",
+        "wheel_r",
+        "wheel_l",
+        "siren_r0",
+        "siren_l0",
+        "siren_r1",
+        "siren_l1",
+        "siren_r2",
+        "siren_l2",
+        "siren_r3",
+        "siren_l3",
+        "siren_r4",
+        "siren_l4",
+        "siren_r5",
+        "siren_l5",
+        "fin_rudder",
+        "tailplane_r",
+        "tailplane_l",
+        "tail_strut_r",
+        "tail_strut_l",
+        "tailwheel_leg",
+        "tailwheel",
+        "bomb_crutch_l",
+        "bomb_crutch_r"
+      ]
+    },
+    {
+      "node": "propeller",
+      "translation": [
+        0,
+        0,
+        -4.35
+      ],
+      "rotation_z_rad": 0,
+      "contents": "cone e hélice tripá (roda em torno do seu Z local)",
+      "pieces": [
+        "spinner",
+        "blade_0",
+        "blade_1",
+        "blade_2"
+      ]
+    },
+    {
+      "node": "dive_brake_r",
+      "translation": [
+        2.65,
+        -0.7641703833266149,
+        -0.6833771186440678
+      ],
+      "rotation_z_rad": 0.14617429410528096,
+      "contents": "freio de mergulho direito (roda em torno do seu X local, a dobradiça)",
+      "pieces": [
+        "dive_brake_r"
+      ]
+    },
+    {
+      "node": "dive_brake_l",
+      "translation": [
+        -2.65,
+        -0.7641703833266149,
+        -0.6833771186440678
+      ],
+      "rotation_z_rad": -0.14617429410528096,
+      "contents": "freio de mergulho esquerdo",
+      "pieces": [
+        "dive_brake_l"
+      ]
+    },
+    {
+      "node": "bomb_sc250",
+      "translation": [
+        0,
+        -1.06,
+        -0.55
+      ],
+      "rotation_z_rad": 0,
+      "contents": "bomba SC 250 no garfo ventral (o jogo esconde-a ao largar)",
+      "pieces": [
+        "sc250_body",
+        "sc250_fin0",
+        "sc250_fin1",
+        "sc250_fin2",
+        "sc250_fin3"
+      ]
+    }
+  ],
+  "sockets": {
+    "cg": [
+      0,
+      0,
+      0
+    ],
+    "propeller_hub": [
+      0,
+      0,
+      -4.35
+    ],
+    "bomb_release": [
+      0,
+      -1.06,
+      -0.55
+    ],
+    "cockpit_eye": [
+      0,
+      1.14,
+      -1
+    ],
+    "gunner_mg15": [
+      0,
+      1.15,
+      1.85
+    ],
+    "siren_r": [
+      1.95,
+      -1.3,
+      -1.33
+    ],
+    "siren_l": [
+      -1.95,
+      -1.3,
+      -1.33
+    ],
+    "wheel_r": [
+      1.95,
+      -2.67,
+      -0.85
+    ],
+    "wheel_l": [
+      -1.95,
+      -2.67,
+      -0.85
+    ],
+    "tailwheel": [
+      0,
+      -0.52,
+      5.72
+    ],
+    "exhaust_r": [
+      0.6,
+      0.13,
+      -2.85
+    ],
+    "exhaust_l": [
+      -0.6,
+      0.13,
+      -2.85
+    ],
+    "wingtip_r": [
+      6.9,
+      -0.10377161128499579,
+      -0.34072197584931296
+    ],
+    "wingtip_l": [
+      -6.9,
+      -0.10377161128499579,
+      -0.34072197584931296
+    ]
+  },
+  "animations": [
+    {
+      "name": "propeller_spin",
+      "duration": 1,
+      "loop": true,
+      "node": "propeller",
+      "note": "uma volta por segundo em torno de −Z (sentido horário visto do piloto); no jogo usar timeScale = rpm/60 (~1500 rpm na hélice em cruzeiro: valor estimado)"
+    },
+    {
+      "name": "dive_brakes_extend",
+      "duration": 1.2,
+      "loop": false,
+      "nodes": [
+        "dive_brake_l",
+        "dive_brake_r"
+      ],
+      "note": "0 → 90° em torno da dobradiça; recolher = tocar ao contrário (timeScale −1)"
+    }
+  ],
+  "textures": {
+    "atlas_px": 2048,
+    "density_px_per_m": 125,
+    "painters": [
+      "airframe",
+      "glass",
+      "exhaust",
+      "tire",
+      "propeller",
+      "brake",
+      "bomb"
+    ],
+    "camouflage": "RLM 70/71 em lascas por cima, RLM 65 por baixo (cores aproximadas em sRGB)"
+  },
+  "files": {
+    "m01_ju87_b1_lod0.glb": {
+      "lod": "lod0",
+      "use": "perto (< 150 m), capturas, mergulho sobre o jogador",
+      "bytes": 652028,
+      "triangles": 13102,
+      "draw_calls": 5,
+      "materials": [
+        "ju87_b1"
+      ],
+      "meshes": [
+        {
+          "name": "fuselage",
+          "triangles": 11016
+        },
+        {
+          "name": "propeller",
+          "triangles": 1656
+        },
+        {
+          "name": "dive_brake_r",
+          "triangles": 16
+        },
+        {
+          "name": "dive_brake_l",
+          "triangles": 16
+        },
+        {
+          "name": "bomb_sc250",
+          "triangles": 398
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 2048²",
+        "metallicRoughness": "image/png 1024²"
+      }
+    },
+    "m01_ju87_b1_lod1.glb": {
+      "lod": "lod1",
+      "use": "médio (150–600 m)",
+      "bytes": 247896,
+      "triangles": 4730,
+      "draw_calls": 5,
+      "materials": [
+        "ju87_b1"
+      ],
+      "meshes": [
+        {
+          "name": "fuselage",
+          "triangles": 3854
+        },
+        {
+          "name": "propeller",
+          "triangles": 578
+        },
+        {
+          "name": "dive_brake_r",
+          "triangles": 12
+        },
+        {
+          "name": "dive_brake_l",
+          "triangles": 12
+        },
+        {
+          "name": "bomb_sc250",
+          "triangles": 274
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      }
+    },
+    "m01_ju87_b1_lod2.glb": {
+      "lod": "lod2",
+      "use": "longe (> 600 m); Chromebook",
+      "bytes": 95772,
+      "triangles": 1636,
+      "draw_calls": 5,
+      "materials": [
+        "ju87_b1"
+      ],
+      "meshes": [
+        {
+          "name": "fuselage",
+          "triangles": 1098
+        },
+        {
+          "name": "propeller",
+          "triangles": 414
+        },
+        {
+          "name": "dive_brake_r",
+          "triangles": 12
+        },
+        {
+          "name": "dive_brake_l",
+          "triangles": 12
+        },
+        {
+          "name": "bomb_sc250",
+          "triangles": 100
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²"
+      }
+    }
+  }
+}

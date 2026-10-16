@@ -1,0 +1,239 @@
+{
+  "status": "PROTÓTIPO JOGÁVEL",
+  "date": "2026-10-02",
+  "runtime_code_local": "bf59e6ff201c2db7b72c908901918d4c7e49d8c3",
+  "runtime_code_remote_equivalent": "456d2169961725e18c8559d6f7f23a308c0be410",
+  "runtime_tree": "ec27af68ec9c25f9603a2329437ee4891ace8319",
+  "asset34_local_merge": "4221f8e418a234e69c0308ef8f1302bfea7a1dcb",
+  "asset34_tree": "81b4a71f35230fb89451b9029644afc2c8120d56",
+  "node": {
+    "runtime": 148,
+    "staging_with_asset34": 153,
+    "failures": 0
+  },
+  "browser": {
+    "provenance": "Production build of runtime bf59e6f; genuine simulation-control snapshots, not human playtest",
+    "stats": {
+      "startTime": "2026-10-02T21:59:13.138Z",
+      "duration": 552104.728,
+      "expected": 26,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "retries": 0,
+    "chromium": "153.0.8010.0",
+    "renderer": "SwiftShader",
+    "cases": [
+      {
+        "title": "production prefix loads assets; real click captures mouse; shooting, reload and pause work",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "real keyboard movement reaches and stores checkpoint; restart and page reload restore it",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "corrupt checkpoint is explained and a new mission remains available",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "missing models are reported and procedural fallback keeps the area playable",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "an optional character download failure preserves playable procedural actors without blocking bridge validation",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "the station clip alone cannot enable a viewmodel when the required weapon animations fail to download",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "real keyboard movement traverses the approaches and E delivers the message at the rail bridge",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "adjustment salvo at the gates restores its actual origin and follows mouse look",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "adjustment salvo behind the truss restores its actual origin and follows mouse look",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "demolition inside the road truss shows the actual bearing while mouse look remains free",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "a genuine CP-D reload keeps east destruction and casualties, including restart and page reload",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "the actual outro state can be skipped through the UI into the enabled historical debrief",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "German fire on the repair is drawn from the Lisewo gates and the HUD status line is the simulation state",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "missing optional wagon models and MG34 clips preserve 65 proxies, both procedural supports and playable M01",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "the real roll-call snapshot renders seated actors and keeps their pose after page reload",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "a real withdrawal continuation loses men only to rounds from the spans, keeps the twelve-survivor floor and shows the count in the HUD",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "a failed M01 bridge load prevents an invisible bridge; the French sandbox remains selectable",
+        "status": "expected",
+        "attempts": 1
+      },
+      {
+        "title": "textured atmosphere survives checkpoint restart without duplicating resources; low quality reduces vegetation",
+        "status": "expected",
+        "attempts": 1
+      }
+    ]
+  },
+  "bundle": {
+    "file": "index-Cu8XFDIC.js",
+    "bytes": 1034234,
+    "sha256": "6e8d87a1653f4495add54fa4176c9da41cb1416c3362f2615b17cc16116c56fa",
+    "identical_after_asset34": true,
+    "warning": "chunk above 500 kB"
+  },
+  "runtime_changes": {
+    "wagons": {
+      "count": 65,
+      "step_m": 9.1,
+      "covered": 49,
+      "open": 16,
+      "lod": 2,
+      "composition": "provisional generic, P16 open",
+      "fallback": "partial and total",
+      "movement": "static: no velocity or disembarkation provided by simulation"
+    },
+    "MG34": {
+      "actors": [
+        "de_east_0",
+        "de_east_1"
+      ],
+      "weapon_count_per_actor": 1,
+      "saved_inputs": [
+        "firedAt",
+        "shot"
+      ],
+      "real_burst_rounds": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "same_actor_limits": [
+        18,
+        24,
+        28
+      ],
+      "posture": "existing upright/crouched/fallen states; no invented prone/loader/reload"
+    }
+  },
+  "kits_reviewed": {
+    "31": "4170eea6ca5ed5f882727f9678bd2a763927e5b1",
+    "33": "c6e5ed4d0981bffc4b62ae7e3663015270909a4a",
+    "34": "11554d91e70409ac6e8a18ab1717761d7f54d522"
+  },
+  "invariants": {
+    "src_game_world_core_unchanged": true,
+    "schema": 2,
+    "checkpoints": "CP-A..D",
+    "RNG_and_casualties_by_ID_unchanged": true,
+    "demolition_safety_and_clocks_unchanged": true,
+    "French_sandbox_passed": true,
+    "workflows_unchanged": true,
+    "graphify_checkpoint_sha256": "54647d13cc9b860c18b777cbd3d4cdc693d4a2af0cb015082171c2667dd32e32"
+  },
+  "pending": [
+    "human playtest",
+    "Chromebook FPS",
+    "ckm LOD0 5004 > 4000: assigned to Claude",
+    "ckm crew and prone MG34/loader in simulation",
+    "west yard wagon height/collider review",
+    "damage wagon IDs/states from simulation",
+    "art and historical review"
+  ],
+  "previous_ci32": {
+    "head": "dcffd4a4aa175d7800a52429a4159544649bd4db",
+    "run": 37063392650,
+    "job": 111025169827,
+    "node": 136,
+    "browser": 24,
+    "browser_duration": "20.8m",
+    "status": "success",
+    "deploy": "skipped",
+    "url": "https://github.com/Brawl2007/COD-guerra/actions/runs/37063392650"
+  },
+  "asset34_remote_equivalent_merge": "e6f4bdccc9798a4b447a2e3f0b8e33aa2edec698"
+}

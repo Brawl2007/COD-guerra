@@ -1,0 +1,29 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test --grep real station (grab|release)|genuine train 963|schema-2 continuation --reporter=line,json
+
+[1A[2K[2m[WebServer] [22m(node:36) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22mnpm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+[1A[2K[2m[WebServer] [22m(node:49) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:83) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:83) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests/browser/m01.spec.js:229:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed
+[1A[2K[2/4] tests/browser/m01.spec.js:229:39 › the real station release restores synchronized clips, pauses and keeps both roots fixed
+[1A[2K[3/4] tests/browser/m01.spec.js:398:1 › the genuine train 963 and both MG34 fire sources use optional GLBs, light instances and reproducible pause/restart
+[1A[2K[4/4] tests/browser/m01.spec.js:429:1 › schema-2 continuation keeps the older CP-A on the real Restart checkpoint button
+[1A[2K  4 passed (1.3m)

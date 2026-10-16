@@ -1,6 +1,8 @@
+import {mg34ProneGeometry} from '../world/spatial.js';
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
 export function actorPoseName(actor,time=0){
   if(!actor.alive)return 'fallen';
+  if(actor.task==='station_wounded')return 'wounded';
   if(actor.carriedBy)return 'carried';
   if(actor.state==='WOUNDED')return 'wounded';
   if(actor.pose==='seated')return 'seated';
@@ -10,6 +12,21 @@ export function actorPoseName(actor,time=0){
 }
 
 export function actorPose(actor,time){
+  const geometry=mg34ProneGeometry(actor,time);
+  if(geometry&&actor.mg34Prone.phase!=='standing'){
+    // Existing procedural fallback. Read physical posture/frame; never create combat state or advance time.
+    const convert=p=>[-p[2],p[1],p[0]],head=convert(geometry.head),torso=convert(geometry.torso),legs=convert(geometry.legs),muzzle=convert(geometry.muzzle);
+    head[1]+=.08;
+    const aiming=['aim','fire_burst'].includes(actor.mg34Prone.phase)&&time>=(actor.suppressedUntil??0),firing=aiming&&actor.mg34Prone.phase==='fire_burst'&&actor.shot>0;
+    const limbs=[],boots=[],hip=[torso[0]-.2,torso[1]-.05,torso[2]],rifle=[muzzle[0]-.62,muzzle[1]-.03,muzzle[2]];
+    for(const side of [-1,1]){
+      const knee=[legs[0]+.12,legs[1],side*.15],foot=[legs[0]-.27,.07,side*.18],shoulder=[torso[0]+.2,torso[1]+.02,side*.2],elbow=[torso[0]+.27,.07+(1-geometry.low)*.7,side*.22],hand=[rifle[0]+(side>0?-.1:.25),rifle[1]-.07,rifle[2]];
+      limbs.push({from:hip.map((v,i)=>i===2?side*.15:v),to:knee,radius:.095},{from:knee,to:foot,radius:.085},{from:shoulder,to:elbow,radius:.075},{from:elbow,to:hand,radius:.065});boots.push(foot);
+    }
+    return {name:'prone',prone:true,limbs,boots,aiming,firing,moving:false,underFire:time<(actor.suppressedUntil??0),
+      root:{offsetY:0,pivotY:0,pitch:0,roll:0},head,torso:{position:torso,size:[.30+.46*geometry.low,.65-.37*geometry.low,.46],roll:0},
+      rifle:{position:rifle,axis:[1,0,0],pitch:0,barrelFrom:[muzzle[0]-.57,muzzle[1],muzzle[2]],muzzle}};
+  }
   const name=actorPoseName(actor,time),seated=name==='seated',pinned=name==='pinned',crouched=name==='crouched'||pinned;
   const low=seated||crouched,underFire=time<(actor.suppressedUntil??0);
   const armed=!actor.civilian&&actor.role!=='MEDIC',upright=name==='standing'||name==='crouched';

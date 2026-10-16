@@ -38,7 +38,7 @@ Ao capturar o rato, o input espera a confirmação de pointer lock e descarta a 
 
 Na bancada, checkpoint automático ao atingir C e chave `cod-guerra:checkpoint:v1`. Em M01, CP-A..D usam `cod-guerra:checkpoint:m01:v2`, com os dois relógios, estado real da arma, actores, eventos, flags, diálogos, sectores e destruição. CP-C é adiado até 05:34; CP-D usa posição/hora actuais. Reiniciar Checkpoint restaura o snapshot vivo; Continuar restaura após reload da página. Saves inválidos mostram erro e deixam iniciar de novo. Versões desconhecidas são rejeitadas.
 
-As pontes usam nove GLB de apresentação e colisores em JSON. Se um GLB de M01 falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Para verificar a exportação e repetir o percurso de simulação:
+As pontes usam nove GLB de apresentação e colisores em JSON. Se um dos nove GLB obrigatórios das pontes falhar, o menu mostra erro e bloqueia início/continuação para não criar uma ponte invisível; a bancada francesa mantém o fallback próprio. Os GLB opcionais de soldados e aviões mantêm os proxies quando faltam. `gameDiagnostics().m01.requiredAssetFailures` distingue as pontes de `assetFailures`, que também regista o Ju 87. `m01.aircraft` mostra LODs carregados, nível seleccionado e transforms dos três aviões; a hélice usa o relógio da missão e conserva a pausa/restauro. `m01.wagons` mostra 65 vagões, passo 9,10 m, LOD2, tipos carregados e contagem de proxies. `m01.characters.actors` identifica `de_east_0/1` com MG34, `weaponLOD`, boca real e clip; `characters.failures` regista as falhas opcionais da arma/clips. As duas fontes ficam dentro do limite 18/24/28. A postura deitada e a dupla aguardam dados de simulação. Para verificar a exportação e repetir o percurso de simulação:
 
 ```sh
 npm run assets:m01:colliders -- --check
@@ -104,6 +104,18 @@ O piloto move-se, aponta com deltas de input e usa disparo/ferrolho/recarga. Nã
 
 ## Diagnóstico
 
+O clip opcional `m01_station_animations.glb` é gerado com `node tools/assets/m01-station/build.mjs`, sobre o rig fixado no seu manifesto. `gameDiagnostics().m01.stationEvacuation` resume dados reais do ferido e de Dudek. A primeira pessoa exige os clips de arma/transporte: o clip da estação, sozinho, não a activa. Kowal/Bąk e os sockets das suas armas aparecem em `m01.characters.actors`; isso é apresentação, não autoridade de combate.
+
+Os soldados e as mãos de M01 carregam GLB com texturas incorporadas sob o mesmo prefixo de produção. Todas as qualidades carregam LOD0/1/2 polacos, LOD2 alemão e o ficheiro de clips. O LOD0 fornece a arma e os braços em primeira pessoa; a qualidade baixa usa LOD1/2 no cenário e limita os soldados com skinning a 18. Se o LOD0 faltar, as mãos usam o LOD1; falhar todos os modelos conserva a apresentação procedural. Não muda o estado do actor nem bloqueia a missão; uma ponte em falta continua a bloquear o início.
+
+Galeria dos seis LODs e quinze clips, em Chromium, com relatório e capturas:
+
+```sh
+CHROME_EXECUTABLE=/caminho/para/chromium node tools/verify-m01-characters.mjs test-results/m01-characters
+```
+
+É revisão isolada de assets. As capturas de produção por trechos e as verificações de ferrolho/clipe/cartucho usam o jogo construído. `gameDiagnostics().m01.characters` e `.viewModel` expõem apenas dados de apresentação; não são guardados no save. Créditos, limitações e provas em `docs/verification/m01-runtime/characters/README.md`.
+
 `?debug=1` habilita somente `window.gameDiagnostics()`: renderer, preset, chamadas/triângulos, assets, relógio, posição, fase e sectores. Não expõe a instância nem permite mutações. Não deixar informação de engenharia no HUD normal.
 
 Se o ecrã falha, inspeccionar consola, rede e `#error`. Ausência de WebGL2 mostra mensagem. Asset ausente aparece no diagnóstico e utiliza fallback, sem aprovar qualidade final. `base` deve continuar `/COD-guerra/`; Vite copia `assets` para `dist/assets` no build.
@@ -137,3 +149,16 @@ CHROME_EXECUTABLE=/caminho/chromium node tools/capture-m01-visual.mjs docs/verif
 ```
 
 O script gere o seu preview, importa a rota do directório corrente e continua snapshots genuínos no browser; não é playtest contínuo/humano. Captura reparo, estação, retirada e chamada, com diagnóstico e erros. Antes de comparar, usar a mesma qualidade/viewport. Não executar com outro servidor na porta 4173. Guardar capturas fora de `test-results/` se precisarem sobreviver ao próximo Playwright, que limpa essa pasta.
+
+## Auditoria de continuação schema 2
+
+```sh
+mkdir -p test-results
+M01_DETERMINISM_REPORT=test-results/m01-schema2-audit.json node --test tests/m01-schema2-determinism.test.js
+```
+
+Compara duas continuações com os mesmos inputs/dt a cada tick e indica o primeiro caminho/tick divergente. Inclui rotas completas, CP-A..D, morte/recuperação, MG34 mid-burst, granadas, estação/Bąk, demolições, casualties, OUTRO e migrações legacy. É teste Node, não playtest humano nem benchmark de FPS.
+
+`M01Simulation.snapshot()` cria um save de continuação com `resumeCheckpoint` opcional plano para preservar o CP anterior. `snapshot(false)` cria um snapshot plano para instalar explicitamente um novo checkpoint ou fabricar uma fixture legacy. Os CP-A..D e a persistência normal do jogo continuam planos em schema 2. Saves antigos sem o novo campo conservam o contrato anterior. Não guardar cadeias de backups; o validador rejeita aninhamento, backups futuros e campos de arma que não pertencem ao snapshot real.
+
+Evidências/reprodução/limites: `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`.

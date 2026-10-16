@@ -1,0 +1,471 @@
+{
+  "viewer": "three.js 0.186.1 GLTFLoader (Chromium/SwiftShader)",
+  "note": "galeria isolada; não é playtest nem medição de FPS",
+  "files": {
+    "m01_wagon_covered_burned_lod0.glb": {
+      "nodes": [
+        "wagon_covered_burned_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r",
+        "debris"
+      ],
+      "materials": [
+        "wagon_covered_burned"
+      ],
+      "triangles": 2480,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          -0.0350000262260437,
+          -4.550000190734863
+        ],
+        "max": [
+          1.6019715070724487,
+          3.7110583782196045,
+          4.550000190734863
+        ]
+      }
+    },
+    "m01_wagon_covered_burned_lod1.glb": {
+      "nodes": [
+        "wagon_covered_burned_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r",
+        "debris"
+      ],
+      "materials": [
+        "wagon_covered_burned"
+      ],
+      "triangles": 1277,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          0.005724459886550903,
+          -4.53000020980835
+        ],
+        "max": [
+          1.6019715070724487,
+          3.7110583782196045,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_covered_burned_lod2.glb": {
+      "nodes": [
+        "wagon_covered_burned_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r",
+        "debris"
+      ],
+      "materials": [
+        "wagon_covered_burned"
+      ],
+      "triangles": 609,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          0.005724459886550903,
+          -3.9700000286102295
+        ],
+        "max": [
+          1.6019715070724487,
+          3.5999999046325684,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_open_burned_lod0.glb": {
+      "nodes": [
+        "wagon_open_burned_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "debris"
+      ],
+      "materials": [
+        "wagon_open_burned"
+      ],
+      "triangles": 2340,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.569987177848816,
+          -0.0350000262260437,
+          -4.550000190734863
+        ],
+        "max": [
+          1.603654384613037,
+          2.8399999141693115,
+          4.550000190734863
+        ]
+      }
+    },
+    "m01_wagon_open_burned_lod1.glb": {
+      "nodes": [
+        "wagon_open_burned_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "debris"
+      ],
+      "materials": [
+        "wagon_open_burned"
+      ],
+      "triangles": 1158,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.569987177848816,
+          0.005724459886550903,
+          -4.53000020980835
+        ],
+        "max": [
+          1.603654384613037,
+          2.8399999141693115,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_open_burned_lod2.glb": {
+      "nodes": [
+        "wagon_open_burned_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "debris"
+      ],
+      "materials": [
+        "wagon_open_burned"
+      ],
+      "triangles": 572,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.569987177848816,
+          0.005724459886550903,
+          -4.489999771118164
+        ],
+        "max": [
+          1.569987177848816,
+          2.8399999141693115,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_covered_damaged_lod0.glb": {
+      "nodes": [
+        "wagon_covered_damaged_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r",
+        "debris"
+      ],
+      "materials": [
+        "wagon_covered_damaged"
+      ],
+      "triangles": 2452,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        },
+        {
+          "name": "doors_open",
+          "duration": 1.5,
+          "tracks": [
+            "door_l.position"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          -0.0350000262260437,
+          -4.550000190734863
+        ],
+        "max": [
+          1.9564759516716004,
+          3.8499999046325684,
+          4.550000190734863
+        ]
+      }
+    },
+    "m01_wagon_covered_damaged_lod1.glb": {
+      "nodes": [
+        "wagon_covered_damaged_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r",
+        "debris"
+      ],
+      "materials": [
+        "wagon_covered_damaged"
+      ],
+      "triangles": 1194,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        },
+        {
+          "name": "doors_open",
+          "duration": 1.5,
+          "tracks": [
+            "door_l.position"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.590000000745058,
+          0.005724459886550903,
+          -4.53000020980835
+        ],
+        "max": [
+          1.9564759516716004,
+          3.8159303665161133,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_covered_damaged_lod2.glb": {
+      "nodes": [
+        "wagon_covered_damaged_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "door_l",
+        "door_r",
+        "debris"
+      ],
+      "materials": [
+        "wagon_covered_damaged"
+      ],
+      "triangles": 570,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        },
+        {
+          "name": "doors_open",
+          "duration": 1.5,
+          "tracks": [
+            "door_l.position"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5599999995529652,
+          0.005724459886550903,
+          -4.03000020980835
+        ],
+        "max": [
+          1.9564759516716004,
+          3.8159303665161133,
+          4.03000020980835
+        ]
+      }
+    },
+    "m01_wagon_open_damaged_lod0.glb": {
+      "nodes": [
+        "wagon_open_damaged_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "debris"
+      ],
+      "materials": [
+        "wagon_open_damaged"
+      ],
+      "triangles": 2098,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5,
+          -0.0350000262260437,
+          -4.550000190734863
+        ],
+        "max": [
+          1.974491834640503,
+          2.8413970470428467,
+          4.550000190734863
+        ]
+      }
+    },
+    "m01_wagon_open_damaged_lod1.glb": {
+      "nodes": [
+        "wagon_open_damaged_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "debris"
+      ],
+      "materials": [
+        "wagon_open_damaged"
+      ],
+      "triangles": 976,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5,
+          0.005724459886550903,
+          -4.53000020980835
+        ],
+        "max": [
+          1.974491834640503,
+          2.8413970470428467,
+          4.53000020980835
+        ]
+      }
+    },
+    "m01_wagon_open_damaged_lod2.glb": {
+      "nodes": [
+        "wagon_open_damaged_1",
+        "body",
+        "wheelset_1",
+        "wheelset_2",
+        "debris"
+      ],
+      "materials": [
+        "wagon_open_damaged"
+      ],
+      "triangles": 405,
+      "finite": true,
+      "animations": [
+        {
+          "name": "wheels_roll",
+          "duration": 1,
+          "tracks": [
+            "wheelset_1.quaternion",
+            "wheelset_2.quaternion"
+          ]
+        }
+      ],
+      "bbox": {
+        "min": [
+          -1.5,
+          0.005724459886550903,
+          -3.950000047683716
+        ],
+        "max": [
+          1.974491834640503,
+          2.8399999141693115,
+          3.9700000286102295
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,1896 @@
+{
+  "asset": "Vagões de mercadorias de dois eixos queimados e danificados — variantes genéricas para o trem 963 e o pátio da estação, M01",
+  "status": "PROVISÓRIO VERIFICADO (galeria isolada; M01 continua PROTÓTIPO JOGÁVEL)",
+  "generator": "tools/assets/m01-wagon-damage (node build.mjs)",
+  "author": "Claude Code (geometria, pintura e animações geradas por código original neste repositório, a partir das peças do kit intacto)",
+  "license": "Original do projecto; a licença global do repositório continua por decidir pelo proprietário (ASSET_CREDITS.md). Sem modelos, texturas ou fotografias de terceiros nem conteúdo de jogos.",
+  "tools": [
+    "Node.js",
+    "@gltf-transform/core 4.5.1 (MIT)",
+    "meshoptimizer 1.3.0 (MIT)",
+    "jpeg-js 0.4.4 (BSD-3)",
+    "pngjs 7.0.0 (MIT)",
+    "three.js 0.186.1 (MIT, verificação)",
+    "Playwright/Chromium (capturas)"
+  ],
+  "units": "metros; +Y para cima; frente em −Z (vagões simétricos)",
+  "pivot": "como no intacto: origem no topo do carril, ao centro da via e a meio do vagão; passo de 9,10 m entre faces dos tampões",
+  "base": {
+    "kit": "assets/models/provisional/m01-wagons/",
+    "generator": "tools/assets/m01-wagons/src/wagons.mjs (importado; não editado)",
+    "sha256": {
+      "assets/models/provisional/m01-wagons/m01_wagon_covered_lod0.glb": {
+        "sha256": "081157e1bccd9b184e14bce03cffd4821738818a354811fa6ba2f53e2bed974f",
+        "bytes": 301200
+      },
+      "assets/models/provisional/m01-wagons/m01_wagon_covered_lod1.glb": {
+        "sha256": "452b005d6efa9d510cb421a5eeeeb533e32dae4c30b9b1a247e8800f42a44e87",
+        "bytes": 121320
+      },
+      "assets/models/provisional/m01-wagons/m01_wagon_covered_lod2.glb": {
+        "sha256": "0eb03cada40c0e0279d81f83c95963d2de39523735e33fb9fd3810dd2a502413",
+        "bytes": 50980
+      },
+      "assets/models/provisional/m01-wagons/m01_wagon_open_lod0.glb": {
+        "sha256": "7806337ee9413b6dc2c2505980032868b14cd8969bc99362273ca80534d46b50",
+        "bytes": 266496
+      },
+      "assets/models/provisional/m01-wagons/m01_wagon_open_lod1.glb": {
+        "sha256": "4994884b89a2c0e51317e0056ea5cafdb9c447b33641459481a329ec3097b6b3",
+        "bytes": 97088
+      },
+      "assets/models/provisional/m01-wagons/m01_wagon_open_lod2.glb": {
+        "sha256": "78c7c6afcbb9ff3b9e1942d7729d79e82acbafe95302aeda08ee35f2ac19adb1",
+        "bytes": 37748
+      },
+      "assets/models/provisional/m01-wagons/manifest.json": {
+        "sha256": "cbea08196bc4d11105d61d42cef3098eeabc1fb8d225d0c515b630bcc3d6a09b",
+        "bytes": 18231
+      },
+      "tools/assets/m01-wagons/src/wagons.mjs": {
+        "sha256": "99f149506f4ac7202b494997eadb2e7f2c260a77a284bfe47b985955f1ac63be",
+        "bytes": 20424
+      },
+      "tools/assets/m01-wagons/build.mjs": {
+        "sha256": "03f8b1b04a58d20050b6ec484e0ef6b043aeb506f3948ca3f821add0023130cf",
+        "bytes": 10699
+      }
+    }
+  },
+  "identification": {
+    "status": "P16 ABERTA: variantes genéricas para composição; não afirmam quais vagões históricos arderam ou foram atingidos, nem a classe, o dono ou o país",
+    "not_modelled": [
+      "locomotiva",
+      "inscrições de dono, número, classe e datas",
+      "fogo, brasas ou fumo próprios (o evento station_wagon_fire pertence à simulação; usar os sockets fire e smoke_top)",
+      "descarrilamento ou física das peças"
+    ]
+  },
+  "runtime": {
+    "states": [
+      "intact (kit de m01-wagons)",
+      "burned",
+      "damaged"
+    ],
+    "choice": "a simulação decide o vagão e o estado (p. ex. station_wagon_fire → burned); o renderer só troca o GLB do mesmo tipo, na mesma posição e com o mesmo passo",
+    "collision": "não inferir colisão de peças partidas ou de restos (nó debris): uma colisão futura deve usar a caixa do vagão intacto do mesmo tipo",
+    "no_autonomous_effects": "os GLB não têm fogo, fumo, partículas, luzes nem temporizadores"
+  },
+  "states": {
+    "covered_burned": {
+      "type": "covered",
+      "state": "burned",
+      "label": "vagão coberto (tipo G), portas de correr, queimado",
+      "summary": "caixa de madeira ardida até 1,6–2,7 m, sem tejadilho; portas carbonizadas no carril; um arco do tejadilho caído, carril de cima da porta cedido, montantes da porta inclinados; tábuas do tejadilho e cinza no soalho",
+      "changes_vs_intact": {
+        "removed": [
+          "side_l_f",
+          "side_l_r",
+          "lintel_l",
+          "vent_l_f",
+          "vent_l_r",
+          "door_rail_l_top",
+          "door_l_leaf",
+          "side_r_f",
+          "side_r_r",
+          "lintel_r",
+          "vent_r_f",
+          "vent_r_r",
+          "door_rail_r_top",
+          "door_r_leaf",
+          "end_f",
+          "end_r",
+          "roof"
+        ],
+        "added": [
+          "burnt_side_l_f",
+          "burnt_side_l_r",
+          "burnt_door_l",
+          "sagging_door_rail_l",
+          "burnt_side_r_f",
+          "burnt_side_r_r",
+          "burnt_door_r",
+          "sagging_door_rail_r",
+          "burnt_end_f",
+          "burnt_end_r",
+          "roof_hoop_f",
+          "roof_hoop_r_collapsed",
+          "fallen_roof_board_1",
+          "fallen_roof_board_2",
+          "ash_heap_f",
+          "ash_heap_r"
+        ],
+        "deformed": [
+          "post_l_0.95",
+          "post_r_-0.95"
+        ]
+      },
+      "nodes": [
+        {
+          "node": "body",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "contents": "caixa danificada, estrado, tampões, engates, caixas de eixo, molas, freios e degraus",
+          "pieces": [
+            "headstock_f",
+            "headstock_r",
+            "solebar_l",
+            "solebar_r",
+            "crossmember_f",
+            "crossmember_r",
+            "floor",
+            "axlebox_1l",
+            "axleguard_1lf",
+            "axleguard_1lr",
+            "spring_1l",
+            "brake_shoe_1l",
+            "axlebox_1r",
+            "axleguard_1rf",
+            "axleguard_1rr",
+            "spring_1r",
+            "brake_shoe_1r",
+            "brake_beam_1",
+            "axlebox_2l",
+            "axleguard_2lf",
+            "axleguard_2lr",
+            "spring_2l",
+            "brake_shoe_2l",
+            "axlebox_2r",
+            "axleguard_2rf",
+            "axleguard_2rr",
+            "spring_2r",
+            "brake_shoe_2r",
+            "brake_beam_2",
+            "buffer_fl",
+            "shunter_step_fl",
+            "buffer_fr",
+            "shunter_step_fr",
+            "hook_f",
+            "coupling_link_fl",
+            "coupling_link_fr",
+            "buffer_rl",
+            "shunter_step_rl",
+            "buffer_rr",
+            "shunter_step_rr",
+            "hook_r",
+            "coupling_link_rl",
+            "coupling_link_rr",
+            "post_l_-0.95",
+            "post_l_0.95",
+            "post_l_-2.45",
+            "post_l_2.45",
+            "brace_l_fi",
+            "brace_l_fo",
+            "brace_l_ri",
+            "brace_l_ro",
+            "door_rail_l_bottom",
+            "post_r_-0.95",
+            "post_r_0.95",
+            "post_r_-2.45",
+            "post_r_2.45",
+            "brace_r_fi",
+            "brace_r_fo",
+            "brace_r_ri",
+            "brace_r_ro",
+            "door_rail_r_bottom",
+            "end_post_fl",
+            "end_post_fr",
+            "corner_fl",
+            "corner_fr",
+            "grab_fl",
+            "grab_fr",
+            "end_post_rl",
+            "end_post_rr",
+            "corner_rl",
+            "corner_rr",
+            "grab_rl",
+            "grab_rr",
+            "burnt_side_l_f",
+            "burnt_side_l_r",
+            "sagging_door_rail_l",
+            "burnt_side_r_f",
+            "burnt_side_r_r",
+            "sagging_door_rail_r",
+            "burnt_end_f",
+            "burnt_end_r",
+            "roof_hoop_f",
+            "roof_hoop_r_collapsed"
+          ]
+        },
+        {
+          "node": "wheelset_1",
+          "translation": [
+            0,
+            0.5,
+            -2
+          ],
+          "contents": "rodado dianteiro (−Z), igual ao intacto; roda em torno do X local",
+          "pieces": [
+            "wheel_1l",
+            "wheel_1r",
+            "axle_1"
+          ]
+        },
+        {
+          "node": "wheelset_2",
+          "translation": [
+            0,
+            0.5,
+            2
+          ],
+          "contents": "rodado traseiro (+Z), igual ao intacto",
+          "pieces": [
+            "wheel_2l",
+            "wheel_2r",
+            "axle_2"
+          ]
+        },
+        {
+          "node": "door_l",
+          "translation": [
+            -1.54,
+            2.24,
+            0
+          ],
+          "contents": "porta esquerda (−X), pivô igual ao intacto",
+          "pieces": [
+            "door_l_handle",
+            "burnt_door_l"
+          ]
+        },
+        {
+          "node": "door_r",
+          "translation": [
+            1.54,
+            2.24,
+            0
+          ],
+          "contents": "porta direita (+X), pivô igual ao intacto",
+          "pieces": [
+            "door_r_handle",
+            "burnt_door_r"
+          ]
+        },
+        {
+          "node": "debris",
+          "translation": [
+            0,
+            1.24,
+            0
+          ],
+          "contents": "restos soltos (tábuas, lascas, cinza, carga ardida) dentro do vagão ou presos à caixa; só visuais",
+          "pieces": [
+            "fallen_roof_board_1",
+            "fallen_roof_board_2",
+            "ash_heap_f",
+            "ash_heap_r"
+          ]
+        }
+      ],
+      "sockets": {
+        "coupler_front": [
+          0,
+          1.04,
+          -4.55
+        ],
+        "coupler_rear": [
+          0,
+          1.04,
+          4.55
+        ],
+        "wheelset_1": [
+          0,
+          0.5,
+          -2
+        ],
+        "wheelset_2": [
+          0,
+          0.5,
+          2
+        ],
+        "fire": [
+          0,
+          1.29,
+          0
+        ],
+        "smoke_top": [
+          0,
+          3.85,
+          0
+        ],
+        "door_r": [
+          1.45,
+          1.24,
+          0
+        ],
+        "door_l": [
+          -1.45,
+          1.24,
+          0
+        ],
+        "disembark_r": [
+          2.35,
+          0,
+          0
+        ],
+        "disembark_l": [
+          -2.35,
+          0,
+          0
+        ]
+      },
+      "animations": [
+        "wheels_roll"
+      ],
+      "textures": {
+        "atlas_px": 1024,
+        "density_px_per_m": 49,
+        "painters": [
+          "black",
+          "char_floor",
+          "wheel",
+          "buffer",
+          "brown",
+          "char",
+          "ash"
+        ]
+      },
+      "intact_lod0_bbox_m": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.59,
+          3.85,
+          4.55
+        ]
+      }
+    },
+    "open_burned": {
+      "type": "open",
+      "state": "burned",
+      "label": "vagão aberto (tipo O), queimado",
+      "summary": "taipais ardidos até 1,3–2,3 m; cantoneiras do topo cedidas e torcidas; dois montantes inclinados; carga carbonizada (vigas e cinza) no soalho",
+      "changes_vs_intact": {
+        "removed": [
+          "side_l",
+          "top_rail_l",
+          "side_r",
+          "top_rail_r",
+          "end_f",
+          "end_r"
+        ],
+        "added": [
+          "burnt_side_l",
+          "sagging_top_rail_l",
+          "burnt_side_r",
+          "sagging_top_rail_r",
+          "burnt_end_f",
+          "burnt_end_r",
+          "charred_load_f",
+          "charred_load_r",
+          "charred_beam_1",
+          "charred_beam_2",
+          "charred_beam_3",
+          "charred_beam_4"
+        ],
+        "deformed": [
+          "post_l_0.79",
+          "post_r_-2.35"
+        ]
+      },
+      "nodes": [
+        {
+          "node": "body",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "contents": "caixa danificada, estrado, tampões, engates, caixas de eixo, molas, freios e degraus",
+          "pieces": [
+            "headstock_f",
+            "headstock_r",
+            "solebar_l",
+            "solebar_r",
+            "crossmember_f",
+            "crossmember_r",
+            "floor",
+            "axlebox_1l",
+            "axleguard_1lf",
+            "axleguard_1lr",
+            "spring_1l",
+            "brake_shoe_1l",
+            "axlebox_1r",
+            "axleguard_1rf",
+            "axleguard_1rr",
+            "spring_1r",
+            "brake_shoe_1r",
+            "brake_beam_1",
+            "axlebox_2l",
+            "axleguard_2lf",
+            "axleguard_2lr",
+            "spring_2l",
+            "brake_shoe_2l",
+            "axlebox_2r",
+            "axleguard_2rf",
+            "axleguard_2rr",
+            "spring_2r",
+            "brake_shoe_2r",
+            "brake_beam_2",
+            "buffer_fl",
+            "shunter_step_fl",
+            "buffer_fr",
+            "shunter_step_fr",
+            "hook_f",
+            "coupling_link_fl",
+            "coupling_link_fr",
+            "buffer_rl",
+            "shunter_step_rl",
+            "buffer_rr",
+            "shunter_step_rr",
+            "hook_r",
+            "coupling_link_rl",
+            "coupling_link_rr",
+            "post_l_-0.79",
+            "post_l_0.79",
+            "post_l_-2.35",
+            "post_l_2.35",
+            "post_r_-0.79",
+            "post_r_0.79",
+            "post_r_-2.35",
+            "post_r_2.35",
+            "top_rail_f",
+            "end_post_fl",
+            "end_post_fr",
+            "corner_fl",
+            "corner_fr",
+            "top_rail_r",
+            "end_post_rl",
+            "end_post_rr",
+            "corner_rl",
+            "corner_rr",
+            "burnt_side_l",
+            "sagging_top_rail_l",
+            "burnt_side_r",
+            "sagging_top_rail_r",
+            "burnt_end_f",
+            "burnt_end_r"
+          ]
+        },
+        {
+          "node": "wheelset_1",
+          "translation": [
+            0,
+            0.5,
+            -2
+          ],
+          "contents": "rodado dianteiro (−Z), igual ao intacto; roda em torno do X local",
+          "pieces": [
+            "wheel_1l",
+            "wheel_1r",
+            "axle_1"
+          ]
+        },
+        {
+          "node": "wheelset_2",
+          "translation": [
+            0,
+            0.5,
+            2
+          ],
+          "contents": "rodado traseiro (+Z), igual ao intacto",
+          "pieces": [
+            "wheel_2l",
+            "wheel_2r",
+            "axle_2"
+          ]
+        },
+        {
+          "node": "debris",
+          "translation": [
+            0,
+            1.24,
+            0
+          ],
+          "contents": "restos soltos (tábuas, lascas, cinza, carga ardida) dentro do vagão ou presos à caixa; só visuais",
+          "pieces": [
+            "charred_load_f",
+            "charred_load_r",
+            "charred_beam_1",
+            "charred_beam_2",
+            "charred_beam_3",
+            "charred_beam_4"
+          ]
+        }
+      ],
+      "sockets": {
+        "coupler_front": [
+          0,
+          1.04,
+          -4.55
+        ],
+        "coupler_rear": [
+          0,
+          1.04,
+          4.55
+        ],
+        "wheelset_1": [
+          0,
+          0.5,
+          -2
+        ],
+        "wheelset_2": [
+          0,
+          0.5,
+          2
+        ],
+        "fire": [
+          0,
+          1.29,
+          0
+        ],
+        "smoke_top": [
+          0,
+          2.84,
+          0
+        ],
+        "load": [
+          0,
+          1.24,
+          0
+        ]
+      },
+      "animations": [
+        "wheels_roll"
+      ],
+      "textures": {
+        "atlas_px": 1024,
+        "density_px_per_m": 50,
+        "painters": [
+          "black",
+          "char_floor",
+          "wheel",
+          "buffer",
+          "brown",
+          "char",
+          "ash"
+        ]
+      },
+      "intact_lod0_bbox_m": {
+        "min": [
+          -1.5,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.5,
+          2.84,
+          4.55
+        ]
+      }
+    },
+    "covered_damaged": {
+      "type": "covered",
+      "state": "damaged",
+      "label": "vagão coberto (tipo G), portas de correr, danificado",
+      "summary": "furo de impacto de ~1 × 0,8 m no painel traseiro direito, com lascas, estilhaços e fuligem; diagonal empurrada para dentro; porta direita saída da guia de baixo; tampão traseiro direito amolgado; cobertura do tejadilho levantada; tábuas soltas",
+      "changes_vs_intact": {
+        "removed": [
+          "side_r_r",
+          "brace_r_ri"
+        ],
+        "added": [
+          "holed_side_r_r1",
+          "holed_side_r_r2",
+          "bent_brace_r_ri",
+          "torn_roof_cover",
+          "hanging_plank",
+          "splinter_in",
+          "blown_plank_1",
+          "blown_plank_2"
+        ],
+        "deformed": [
+          "door_r_leaf",
+          "door_r_handle",
+          "buffer_rr"
+        ]
+      },
+      "nodes": [
+        {
+          "node": "body",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "contents": "caixa danificada, estrado, tampões, engates, caixas de eixo, molas, freios e degraus",
+          "pieces": [
+            "headstock_f",
+            "headstock_r",
+            "solebar_l",
+            "solebar_r",
+            "crossmember_f",
+            "crossmember_r",
+            "floor",
+            "axlebox_1l",
+            "axleguard_1lf",
+            "axleguard_1lr",
+            "spring_1l",
+            "brake_shoe_1l",
+            "axlebox_1r",
+            "axleguard_1rf",
+            "axleguard_1rr",
+            "spring_1r",
+            "brake_shoe_1r",
+            "brake_beam_1",
+            "axlebox_2l",
+            "axleguard_2lf",
+            "axleguard_2lr",
+            "spring_2l",
+            "brake_shoe_2l",
+            "axlebox_2r",
+            "axleguard_2rf",
+            "axleguard_2rr",
+            "spring_2r",
+            "brake_shoe_2r",
+            "brake_beam_2",
+            "buffer_fl",
+            "shunter_step_fl",
+            "buffer_fr",
+            "shunter_step_fr",
+            "hook_f",
+            "coupling_link_fl",
+            "coupling_link_fr",
+            "buffer_rl",
+            "shunter_step_rl",
+            "buffer_rr",
+            "shunter_step_rr",
+            "hook_r",
+            "coupling_link_rl",
+            "coupling_link_rr",
+            "side_l_f",
+            "side_l_r",
+            "lintel_l",
+            "post_l_-0.95",
+            "post_l_0.95",
+            "post_l_-2.45",
+            "post_l_2.45",
+            "brace_l_fi",
+            "brace_l_fo",
+            "brace_l_ri",
+            "brace_l_ro",
+            "vent_l_f",
+            "vent_l_r",
+            "door_rail_l_top",
+            "door_rail_l_bottom",
+            "side_r_f",
+            "lintel_r",
+            "post_r_-0.95",
+            "post_r_0.95",
+            "post_r_-2.45",
+            "post_r_2.45",
+            "brace_r_fi",
+            "brace_r_fo",
+            "brace_r_ro",
+            "vent_r_f",
+            "vent_r_r",
+            "door_rail_r_top",
+            "door_rail_r_bottom",
+            "end_f",
+            "end_post_fl",
+            "end_post_fr",
+            "corner_fl",
+            "corner_fr",
+            "grab_fl",
+            "grab_fr",
+            "end_r",
+            "end_post_rl",
+            "end_post_rr",
+            "corner_rl",
+            "corner_rr",
+            "grab_rl",
+            "grab_rr",
+            "roof",
+            "holed_side_r_r1",
+            "holed_side_r_r2",
+            "bent_brace_r_ri",
+            "torn_roof_cover"
+          ]
+        },
+        {
+          "node": "wheelset_1",
+          "translation": [
+            0,
+            0.5,
+            -2
+          ],
+          "contents": "rodado dianteiro (−Z), igual ao intacto; roda em torno do X local",
+          "pieces": [
+            "wheel_1l",
+            "wheel_1r",
+            "axle_1"
+          ]
+        },
+        {
+          "node": "wheelset_2",
+          "translation": [
+            0,
+            0.5,
+            2
+          ],
+          "contents": "rodado traseiro (+Z), igual ao intacto",
+          "pieces": [
+            "wheel_2l",
+            "wheel_2r",
+            "axle_2"
+          ]
+        },
+        {
+          "node": "door_l",
+          "translation": [
+            -1.54,
+            2.24,
+            0
+          ],
+          "contents": "porta esquerda (−X), pivô igual ao intacto",
+          "pieces": [
+            "door_l_leaf",
+            "door_l_handle"
+          ]
+        },
+        {
+          "node": "door_r",
+          "translation": [
+            1.54,
+            2.24,
+            0
+          ],
+          "contents": "porta direita (+X), pivô igual ao intacto",
+          "pieces": [
+            "door_r_leaf",
+            "door_r_handle"
+          ]
+        },
+        {
+          "node": "debris",
+          "translation": [
+            0,
+            1.24,
+            0
+          ],
+          "contents": "restos soltos (tábuas, lascas, cinza, carga ardida) dentro do vagão ou presos à caixa; só visuais",
+          "pieces": [
+            "hanging_plank",
+            "splinter_in",
+            "blown_plank_1",
+            "blown_plank_2"
+          ]
+        }
+      ],
+      "sockets": {
+        "coupler_front": [
+          0,
+          1.04,
+          -4.55
+        ],
+        "coupler_rear": [
+          0,
+          1.04,
+          4.55
+        ],
+        "wheelset_1": [
+          0,
+          0.5,
+          -2
+        ],
+        "wheelset_2": [
+          0,
+          0.5,
+          2
+        ],
+        "fire": [
+          0,
+          1.29,
+          0
+        ],
+        "smoke_top": [
+          0,
+          3.85,
+          0
+        ],
+        "door_r": [
+          1.45,
+          1.24,
+          0
+        ],
+        "door_l": [
+          -1.45,
+          1.24,
+          0
+        ],
+        "disembark_r": [
+          2.35,
+          0,
+          0
+        ],
+        "disembark_l": [
+          -2.35,
+          0,
+          0
+        ],
+        "impact": [
+          1.45,
+          2.1,
+          1.72
+        ]
+      },
+      "animations": [
+        "wheels_roll",
+        "doors_open"
+      ],
+      "doors_open_nodes": [
+        "door_l"
+      ],
+      "textures": {
+        "atlas_px": 1024,
+        "density_px_per_m": 44,
+        "painters": [
+          "black",
+          "wood",
+          "wheel",
+          "buffer",
+          "brown",
+          "door",
+          "roof",
+          "wood_hit",
+          "roof_torn",
+          "splinter"
+        ]
+      },
+      "intact_lod0_bbox_m": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.59,
+          3.85,
+          4.55
+        ]
+      }
+    },
+    "open_damaged": {
+      "type": "open",
+      "state": "damaged",
+      "label": "vagão aberto (tipo O), danificado",
+      "summary": "taipal direito rebentado de cima numa extensão de ~1,9 m, com tábuas a pender para fora; cantoneira do topo e montante da porta dobrados para fora; estilhaços e fuligem; tábuas soltas no soalho",
+      "changes_vs_intact": {
+        "removed": [
+          "side_r",
+          "top_rail_r"
+        ],
+        "added": [
+          "broken_side_r",
+          "bent_top_rail_r",
+          "hanging_plank_1",
+          "hanging_plank_2",
+          "hanging_plank_3",
+          "blown_plank_1",
+          "blown_plank_2",
+          "blown_plank_3"
+        ],
+        "deformed": [
+          "post_r_-0.79"
+        ]
+      },
+      "nodes": [
+        {
+          "node": "body",
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "contents": "caixa danificada, estrado, tampões, engates, caixas de eixo, molas, freios e degraus",
+          "pieces": [
+            "headstock_f",
+            "headstock_r",
+            "solebar_l",
+            "solebar_r",
+            "crossmember_f",
+            "crossmember_r",
+            "floor",
+            "axlebox_1l",
+            "axleguard_1lf",
+            "axleguard_1lr",
+            "spring_1l",
+            "brake_shoe_1l",
+            "axlebox_1r",
+            "axleguard_1rf",
+            "axleguard_1rr",
+            "spring_1r",
+            "brake_shoe_1r",
+            "brake_beam_1",
+            "axlebox_2l",
+            "axleguard_2lf",
+            "axleguard_2lr",
+            "spring_2l",
+            "brake_shoe_2l",
+            "axlebox_2r",
+            "axleguard_2rf",
+            "axleguard_2rr",
+            "spring_2r",
+            "brake_shoe_2r",
+            "brake_beam_2",
+            "buffer_fl",
+            "shunter_step_fl",
+            "buffer_fr",
+            "shunter_step_fr",
+            "hook_f",
+            "coupling_link_fl",
+            "coupling_link_fr",
+            "buffer_rl",
+            "shunter_step_rl",
+            "buffer_rr",
+            "shunter_step_rr",
+            "hook_r",
+            "coupling_link_rl",
+            "coupling_link_rr",
+            "side_l",
+            "top_rail_l",
+            "post_l_-0.79",
+            "post_l_0.79",
+            "post_l_-2.35",
+            "post_l_2.35",
+            "post_r_-0.79",
+            "post_r_0.79",
+            "post_r_-2.35",
+            "post_r_2.35",
+            "end_f",
+            "top_rail_f",
+            "end_post_fl",
+            "end_post_fr",
+            "corner_fl",
+            "corner_fr",
+            "end_r",
+            "top_rail_r",
+            "end_post_rl",
+            "end_post_rr",
+            "corner_rl",
+            "corner_rr",
+            "broken_side_r",
+            "bent_top_rail_r"
+          ]
+        },
+        {
+          "node": "wheelset_1",
+          "translation": [
+            0,
+            0.5,
+            -2
+          ],
+          "contents": "rodado dianteiro (−Z), igual ao intacto; roda em torno do X local",
+          "pieces": [
+            "wheel_1l",
+            "wheel_1r",
+            "axle_1"
+          ]
+        },
+        {
+          "node": "wheelset_2",
+          "translation": [
+            0,
+            0.5,
+            2
+          ],
+          "contents": "rodado traseiro (+Z), igual ao intacto",
+          "pieces": [
+            "wheel_2l",
+            "wheel_2r",
+            "axle_2"
+          ]
+        },
+        {
+          "node": "debris",
+          "translation": [
+            0,
+            1.24,
+            0
+          ],
+          "contents": "restos soltos (tábuas, lascas, cinza, carga ardida) dentro do vagão ou presos à caixa; só visuais",
+          "pieces": [
+            "hanging_plank_1",
+            "hanging_plank_2",
+            "hanging_plank_3",
+            "blown_plank_1",
+            "blown_plank_2",
+            "blown_plank_3"
+          ]
+        }
+      ],
+      "sockets": {
+        "coupler_front": [
+          0,
+          1.04,
+          -4.55
+        ],
+        "coupler_rear": [
+          0,
+          1.04,
+          4.55
+        ],
+        "wheelset_1": [
+          0,
+          0.5,
+          -2
+        ],
+        "wheelset_2": [
+          0,
+          0.5,
+          2
+        ],
+        "fire": [
+          0,
+          1.29,
+          0
+        ],
+        "smoke_top": [
+          0,
+          2.84,
+          0
+        ],
+        "load": [
+          0,
+          1.24,
+          0
+        ],
+        "impact": [
+          1.45,
+          2.25,
+          -0.7
+        ]
+      },
+      "animations": [
+        "wheels_roll"
+      ],
+      "textures": {
+        "atlas_px": 1024,
+        "density_px_per_m": 51,
+        "painters": [
+          "black",
+          "wood",
+          "wheel",
+          "buffer",
+          "brown",
+          "wood_hit",
+          "splinter"
+        ]
+      },
+      "intact_lod0_bbox_m": {
+        "min": [
+          -1.5,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.5,
+          2.84,
+          4.55
+        ]
+      }
+    }
+  },
+  "impact": {
+    "covered": {
+      "p": [
+        1.45,
+        2.1,
+        1.72
+      ],
+      "r": 0.45,
+      "side": "r"
+    },
+    "open": {
+      "p": [
+        1.45,
+        2.25,
+        -0.7
+      ],
+      "r": 0.6,
+      "side": "r"
+    }
+  },
+  "animations": {
+    "wheels_roll": {
+      "duration": 1,
+      "loop": true,
+      "note": "igual ao intacto: uma volta por segundo a rolar para −Z; timeScale = v / (π × 1,0 m)"
+    },
+    "doors_open": {
+      "duration": 1.5,
+      "loop": false,
+      "note": "só no coberto danificado e só a porta esquerda (a direita saiu da guia); corre +1,95 m em Z; fechar = timeScale −1"
+    }
+  },
+  "files": {
+    "m01_wagon_covered_burned_lod0.glb": {
+      "type": "covered",
+      "state": "burned",
+      "lod": "lod0",
+      "use": "perto (< 60 m): pátio da estação, vagão de station_wagon_fire, desembarque",
+      "bytes": 337284,
+      "triangles": 2480,
+      "visible_triangles": 2480,
+      "draw_calls": 6,
+      "materials": [
+        "wagon_covered_burned"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 1632
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 352
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 352
+        },
+        {
+          "name": "door_l",
+          "triangles": 40
+        },
+        {
+          "name": "door_r",
+          "triangles": 40
+        },
+        {
+          "name": "debris",
+          "triangles": 64
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.602,
+          3.711,
+          4.55
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          0.012,
+          -0.139,
+          0
+        ]
+      }
+    },
+    "m01_wagon_covered_burned_lod1.glb": {
+      "type": "covered",
+      "state": "burned",
+      "lod": "lod1",
+      "use": "médio (60–300 m)",
+      "bytes": 139188,
+      "triangles": 1277,
+      "visible_triangles": 1277,
+      "draw_calls": 6,
+      "materials": [
+        "wagon_covered_burned"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 784
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 179
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 178
+        },
+        {
+          "name": "door_l",
+          "triangles": 40
+        },
+        {
+          "name": "door_r",
+          "triangles": 32
+        },
+        {
+          "name": "debris",
+          "triangles": 64
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.59,
+          0.006,
+          -4.53
+        ],
+        "max": [
+          1.602,
+          3.711,
+          4.53
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0.041,
+          0.02
+        ],
+        "max": [
+          0.012,
+          -0.139,
+          -0.02
+        ]
+      }
+    },
+    "m01_wagon_covered_burned_lod2.glb": {
+      "type": "covered",
+      "state": "burned",
+      "lod": "lod2",
+      "use": "longe: trem 963 a ~1,05–1,2 km; InstancedMesh; Chromebook",
+      "bytes": 57264,
+      "triangles": 609,
+      "visible_triangles": 609,
+      "draw_calls": 6,
+      "materials": [
+        "wagon_covered_burned"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 300
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 110
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 107
+        },
+        {
+          "name": "door_l",
+          "triangles": 28
+        },
+        {
+          "name": "door_r",
+          "triangles": 24
+        },
+        {
+          "name": "debris",
+          "triangles": 40
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.59,
+          0.006,
+          -3.97
+        ],
+        "max": [
+          1.602,
+          3.6,
+          4.53
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0.041,
+          0.58
+        ],
+        "max": [
+          0.012,
+          -0.25,
+          -0.02
+        ]
+      }
+    },
+    "m01_wagon_open_burned_lod0.glb": {
+      "type": "open",
+      "state": "burned",
+      "lod": "lod0",
+      "use": "perto (< 60 m): pátio da estação, vagão de station_wagon_fire, desembarque",
+      "bytes": 319500,
+      "triangles": 2340,
+      "visible_triangles": 2340,
+      "draw_calls": 4,
+      "materials": [
+        "wagon_open_burned"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 1548
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 352
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 352
+        },
+        {
+          "name": "debris",
+          "triangles": 88
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.57,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.604,
+          2.84,
+          4.55
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          -0.07,
+          0,
+          0
+        ],
+        "max": [
+          0.104,
+          0,
+          0
+        ]
+      }
+    },
+    "m01_wagon_open_burned_lod1.glb": {
+      "type": "open",
+      "state": "burned",
+      "lod": "lod1",
+      "use": "médio (60–300 m)",
+      "bytes": 127484,
+      "triangles": 1158,
+      "visible_triangles": 1158,
+      "draw_calls": 4,
+      "materials": [
+        "wagon_open_burned"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 710
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 180
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 180
+        },
+        {
+          "name": "debris",
+          "triangles": 88
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.57,
+          0.006,
+          -4.53
+        ],
+        "max": [
+          1.604,
+          2.84,
+          4.53
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          -0.07,
+          0.041,
+          0.02
+        ],
+        "max": [
+          0.104,
+          0,
+          -0.02
+        ]
+      }
+    },
+    "m01_wagon_open_burned_lod2.glb": {
+      "type": "open",
+      "state": "burned",
+      "lod": "lod2",
+      "use": "longe: trem 963 a ~1,05–1,2 km; InstancedMesh; Chromebook",
+      "bytes": 52304,
+      "triangles": 572,
+      "visible_triangles": 572,
+      "draw_calls": 4,
+      "materials": [
+        "wagon_open_burned"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 294
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 113
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 89
+        },
+        {
+          "name": "debris",
+          "triangles": 76
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.57,
+          0.006,
+          -4.49
+        ],
+        "max": [
+          1.57,
+          2.84,
+          4.53
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          -0.07,
+          0.041,
+          0.06
+        ],
+        "max": [
+          0.07,
+          0,
+          -0.02
+        ]
+      }
+    },
+    "m01_wagon_covered_damaged_lod0.glb": {
+      "type": "covered",
+      "state": "damaged",
+      "lod": "lod0",
+      "use": "perto (< 60 m): pátio da estação, vagão de station_wagon_fire, desembarque",
+      "bytes": 337772,
+      "triangles": 2452,
+      "visible_triangles": 2452,
+      "draw_calls": 6,
+      "materials": [
+        "wagon_covered_damaged"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 1652
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 352
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 352
+        },
+        {
+          "name": "door_l",
+          "triangles": 24
+        },
+        {
+          "name": "door_r",
+          "triangles": 24
+        },
+        {
+          "name": "debris",
+          "triangles": 48
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.59,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.956,
+          3.85,
+          4.55
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          0.366,
+          0,
+          0
+        ]
+      }
+    },
+    "m01_wagon_covered_damaged_lod1.glb": {
+      "type": "covered",
+      "state": "damaged",
+      "lod": "lod1",
+      "use": "médio (60–300 m)",
+      "bytes": 132360,
+      "triangles": 1194,
+      "visible_triangles": 1194,
+      "draw_calls": 6,
+      "materials": [
+        "wagon_covered_damaged"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 741
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 178
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 179
+        },
+        {
+          "name": "door_l",
+          "triangles": 24
+        },
+        {
+          "name": "door_r",
+          "triangles": 24
+        },
+        {
+          "name": "debris",
+          "triangles": 48
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.59,
+          0.006,
+          -4.53
+        ],
+        "max": [
+          1.956,
+          3.816,
+          4.53
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0.041,
+          0.02
+        ],
+        "max": [
+          0.366,
+          -0.034,
+          -0.02
+        ]
+      }
+    },
+    "m01_wagon_covered_damaged_lod2.glb": {
+      "type": "covered",
+      "state": "damaged",
+      "lod": "lod2",
+      "use": "longe: trem 963 a ~1,05–1,2 km; InstancedMesh; Chromebook",
+      "bytes": 56092,
+      "triangles": 570,
+      "visible_triangles": 570,
+      "draw_calls": 6,
+      "materials": [
+        "wagon_covered_damaged"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 295
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 105
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 106
+        },
+        {
+          "name": "door_l",
+          "triangles": 12
+        },
+        {
+          "name": "door_r",
+          "triangles": 12
+        },
+        {
+          "name": "debris",
+          "triangles": 40
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.56,
+          0.006,
+          -4.03
+        ],
+        "max": [
+          1.956,
+          3.816,
+          4.03
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0.03,
+          0.041,
+          0.52
+        ],
+        "max": [
+          0.366,
+          -0.034,
+          -0.52
+        ]
+      }
+    },
+    "m01_wagon_open_damaged_lod0.glb": {
+      "type": "open",
+      "state": "damaged",
+      "lod": "lod0",
+      "use": "perto (< 60 m): pátio da estação, vagão de station_wagon_fire, desembarque",
+      "bytes": 292252,
+      "triangles": 2098,
+      "visible_triangles": 2098,
+      "draw_calls": 4,
+      "materials": [
+        "wagon_open_damaged"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 1322
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 352
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 352
+        },
+        {
+          "name": "debris",
+          "triangles": 72
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 1024²",
+        "metallicRoughness": "image/png 512²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.5,
+          -0.035,
+          -4.55
+        ],
+        "max": [
+          1.974,
+          2.841,
+          4.55
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          0.474,
+          0.001,
+          0
+        ]
+      }
+    },
+    "m01_wagon_open_damaged_lod1.glb": {
+      "type": "open",
+      "state": "damaged",
+      "lod": "lod1",
+      "use": "médio (60–300 m)",
+      "bytes": 110716,
+      "triangles": 976,
+      "visible_triangles": 976,
+      "draw_calls": 4,
+      "materials": [
+        "wagon_open_damaged"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 548
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 178
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 178
+        },
+        {
+          "name": "debris",
+          "triangles": 72
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 512²",
+        "metallicRoughness": "image/png 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.5,
+          0.006,
+          -4.53
+        ],
+        "max": [
+          1.974,
+          2.841,
+          4.53
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0.041,
+          0.02
+        ],
+        "max": [
+          0.474,
+          0.001,
+          -0.02
+        ]
+      }
+    },
+    "m01_wagon_open_damaged_lod2.glb": {
+      "type": "open",
+      "state": "damaged",
+      "lod": "lod2",
+      "use": "longe: trem 963 a ~1,05–1,2 km; InstancedMesh; Chromebook",
+      "bytes": 42288,
+      "triangles": 405,
+      "visible_triangles": 405,
+      "draw_calls": 4,
+      "materials": [
+        "wagon_open_damaged"
+      ],
+      "meshes": [
+        {
+          "name": "body",
+          "triangles": 162
+        },
+        {
+          "name": "wheelset_1",
+          "triangles": 95
+        },
+        {
+          "name": "wheelset_2",
+          "triangles": 92
+        },
+        {
+          "name": "debris",
+          "triangles": 56
+        }
+      ],
+      "textures": {
+        "baseColor": "image/jpeg 256²"
+      },
+      "bbox_m": {
+        "min": [
+          -1.5,
+          0.006,
+          -3.95
+        ],
+        "max": [
+          1.974,
+          2.84,
+          3.97
+        ]
+      },
+      "bbox_delta_vs_intact_lod0_m": {
+        "min": [
+          0,
+          0.041,
+          0.6
+        ],
+        "max": [
+          0.474,
+          0,
+          -0.58
+        ]
+      }
+    }
+  }
+}

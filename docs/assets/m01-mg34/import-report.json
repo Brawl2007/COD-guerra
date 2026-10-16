@@ -1,0 +1,62 @@
+{
+  "viewer": "three.js 0.186.1 GLTFLoader (Chromium/SwiftShader)",
+  "note": "galeria isolada; não é playtest nem medição de FPS",
+  "files": {
+    "m01_mg34_lod0.glb": {
+      "meshes": [
+        "mg34_body",
+        "mg34_feed_cover",
+        "mg34_cocking_handle",
+        "mg34_drum",
+        "mg34_belt",
+        "mg34_bipod_folded"
+      ],
+      "triangles": 2432,
+      "drawCalls": 6,
+      "bones": 0
+    },
+    "m01_mg34_lod1.glb": {
+      "meshes": [
+        "mg34_body",
+        "mg34_feed_cover",
+        "mg34_cocking_handle",
+        "mg34_drum",
+        "mg34_belt",
+        "mg34_bipod_folded"
+      ],
+      "triangles": 1262,
+      "drawCalls": 6,
+      "bones": 0
+    },
+    "m01_mg34_lod2.glb": {
+      "meshes": [
+        "mg34_body",
+        "mg34_feed_cover",
+        "mg34_cocking_handle",
+        "mg34_drum",
+        "mg34_belt",
+        "mg34_bipod_folded"
+      ],
+      "triangles": 368,
+      "drawCalls": 6,
+      "bones": 0
+    },
+    "m01_mg34_animations.glb": [
+      {
+        "name": "mg34_aim",
+        "duration": 2,
+        "tracks": 65
+      },
+      {
+        "name": "mg34_fire_burst",
+        "duration": 1.0199999809265137,
+        "tracks": 65
+      },
+      {
+        "name": "mg34_reload",
+        "duration": 4.400000095367432,
+        "tracks": 65
+      }
+    ]
+  }
+}

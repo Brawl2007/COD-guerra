@@ -1,0 +1,62 @@
+[
+  {
+    "file": "src/game/m01-simulation.js",
+    "line": 21,
+    "old": "const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';\n",
+    "new": "const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';\n// Estimated presentation timing, owned by simulation and saved with the pair (schema 2).\nconst STATION_TRANSITION_SEC=1.6,STATION_DRAG_OFFSET=.92;\nconst STATION_DELIVERY={x:EVACUATION.x-2,z:EVACUATION.z+2.2};\n"
+  },
+  {
+    "file": "src/game/m01-simulation.js",
+    "line": 316,
+    "old": "  updateActors(dt){\n",
+    "new": "  updateActors(dt){\n    this.interruptStationEvacuation();\n"
+  },
+  {
+    "file": "src/game/m01-simulation.js",
+    "line": 348,
+    "old": "        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*.92;a.z=c.z+Math.sin(c.facing)*.92;\n",
+    "new": "        a.facing=c.facing;a.x=c.x+Math.cos(c.facing)*STATION_DRAG_OFFSET;a.z=c.z+Math.sin(c.facing)*STATION_DRAG_OFFSET;\n"
+  },
+  {
+    "file": "src/game/m01-simulation.js",
+    "line": 604,
+    "old": "  evacuateStation(medic,dt){\n    const patient=this.actor(STATION_PATIENT);\n    if(!patient.alive||!patient.active){\n      if(patient.carriedBy===medic.id){patient.carriedBy=null;patient.y=this.world.heightAt(patient.x,patient.z);}\n      medic.task=null;medic.crouched=false;medic.target=this.world.point('aid_position');return;\n    }\n    if(patient.carriedBy!==medic.id){\n      // Reach the head from the side instead of walking through the casualty's body.\n      const head={x:patient.x-.92,z:patient.z};\n      this.moveActor(medic,medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,dt,4.5);\n      if(dist(medic,head)<.9){\n        patient.carriedBy=medic.id;medic.crouched=true;medic.facing=0;\n        this.line('dlg_m01_017',`${E('wounded_dragged')}:17`);\n      }\n      return;\n    }\n    this.moveActor(medic,EVACUATION,dt,.65);medic.facing+=Math.PI;\n    if(dist(medic,EVACUATION)<1.2){\n      Object.assign(patient,{carriedBy:null,task:'station_aid_post',x:EVACUATION.x-2,z:EVACUATION.z+2.2,facing:medic.facing});\n      patient.y=this.world.heightAt(patient.x,patient.z);\n      Object.assign(medic,{task:null,crouched:false,state:'GUARD',target:this.world.point('aid_position')});\n    }\n  }\n",
+    "new": "  interruptStationEvacuation(){\n    const patient=this.actor(STATION_PATIENT),medic=this.actor('leon_dudek');\n    if(!patient.stationDrag&&!(patient.task==='station_wounded'&&patient.carriedBy===medic.id)&&medic.task!=='evacuate_station_wounded')return;\n    if(patient.alive&&patient.active&&patient.task==='station_wounded'&&medic.alive&&medic.active&&medic.state!=='WOUNDED'&&medic.task==='evacuate_station_wounded')return;\n    if(patient.carriedBy===medic.id)patient.carriedBy=null;\n    delete patient.stationDrag;patient.y=this.world.heightAt(patient.x,patient.z);\n    if(medic.task==='evacuate_station_wounded')Object.assign(medic,{task:null,crouched:false,target:this.world.point('aid_position')});\n  }\n  evacuateStation(medic,dt){\n    const patient=this.actor(STATION_PATIENT);\n    const phase=name=>patient.stationDrag={phase:name,startedAt:this.clock,duration:STATION_TRANSITION_SEC};\n    // Only this pair needs an exact endpoint. Leave the common follower arrival logic intact.\n    const reach=(target,speed)=>{\n      const d=dist(medic,target);\n      if(d>.9)this.moveActor(medic,target,dt,speed);\n      else if(d>=.001){\n        const step=Math.min(d,speed*dt);\n        this.world.move(medic,(target.x-medic.x)*step/d,(target.z-medic.z)*step/d);medic.state='ADVANCE';\n      }\n    };\n    if(patient.carriedBy!==medic.id){\n      // Reach the head from the side instead of walking through the casualty's body.\n      const facing=Math.atan2(patient.z-STATION_DELIVERY.z,patient.x-STATION_DELIVERY.x);\n      const head={x:patient.x-Math.cos(facing)*STATION_DRAG_OFFSET,z:patient.z-Math.sin(facing)*STATION_DRAG_OFFSET};\n      reach(medic.x>patient.x-.7?{x:patient.x-1.4,z:patient.z+2.3}:head,4.5);\n      if(dist(medic,head)<.001){\n        patient.carriedBy=medic.id;Object.assign(medic,{crouched:true,facing,state:'GUARD'});phase('grab');\n        this.line('dlg_m01_017',`${E('wounded_dragged')}:17`);\n      }\n      return;\n    }\n    // Legacy schema 2 saves already in transit resume their drag without replaying the grab.\n    if(!patient.stationDrag)phase('drag');\n    const transport=patient.stationDrag,elapsed=this.clock-transport.startedAt;\n    if(transport.phase==='grab'){\n      if(elapsed+1e-9<transport.duration)return;\n      phase('drag');return;\n    }\n    if(transport.phase==='release'){\n      if(elapsed+1e-9<transport.duration)return;\n      // The roots have already arrived here; this only removes numerical movement residue.\n      Object.assign(patient,{carriedBy:null,task:'station_aid_post',...STATION_DELIVERY});delete patient.stationDrag;\n      patient.y=this.world.heightAt(patient.x,patient.z);\n      Object.assign(medic,{task:null,crouched:false,state:'GUARD',target:this.world.point('aid_position')});\n      return;\n    }\n    const destination={x:STATION_DELIVERY.x-Math.cos(medic.facing)*STATION_DRAG_OFFSET,z:STATION_DELIVERY.z-Math.sin(medic.facing)*STATION_DRAG_OFFSET};\n    if(dist(medic,destination)>=.001){const facing=medic.facing;reach(destination,.65);medic.facing=facing;}\n    if(dist(medic,destination)<.001){medic.state='GUARD';phase('release');}\n  }\n"
+  },
+  {
+    "file": "src/game/m01-simulation.js",
+    "line": 717,
+    "old": "    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null});\n",
+    "new": "    const data=a=>({id:a.id,x:a.x,y:a.y,z:a.z,facing:a.facing,alive:a.alive,active:a.active,state:a.state,task:a.task??null,carriedBy:a.carriedBy??null,\n      ...(a.stationDrag?{stationDrag:{...a.stationDrag}}:{})});\n"
+  },
+  {
+    "file": "src/game/m01-simulation.js",
+    "line": 791,
+    "old": "  if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||\n    (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');\n",
+    "new": "  if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||\n    (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');\n  for(const a of s.actors)if(a.stationDrag!==undefined){\n    const t=a.stationDrag,m=s.actors.find(c=>c.id==='leon_dudek'),eventAt=s.consumed?.[E('wounded_dragged')];\n    if(a.id!==STATION_PATIENT||!t||Object.keys(t).some(k=>!['phase','startedAt','duration'].includes(k))||\n      !['grab','drag','release'].includes(t.phase)||!finite(eventAt,0,s.clock)||!finite(t.startedAt,eventAt,s.clock)||t.duration!==STATION_TRANSITION_SEC||\n      !a.alive||!a.active||a.task!=='station_wounded'||a.carriedBy!==m.id||!m.alive||!m.active||m.state==='WOUNDED'||m.task!=='evacuate_station_wounded')reject('transição da evacuação da estação');\n  }\n"
+  },
+  {
+    "file": "src/render/m01-characters.js",
+    "line": 12,
+    "old": "const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);",
+    "new": "const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);\nconst stationClips=['station_drag_medic_grab','station_drag_patient_grab','station_drag_medic_release','station_drag_patient_release','drag_wounded','crouched_idle','wounded'];"
+  },
+  {
+    "file": "src/render/m01-characters.js",
+    "line": 28,
+    "old": "      this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{\n        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}\n      }),\n",
+    "new": "      this.assets.load('m01-station-transitions',BASE+'station-drag-transitions/m01_station_drag_transitions.glb').then(g=>{\n        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}\n      }),\n      this.assets.load('mg34-clips',MG+'m01_mg34_animations.glb').then(g=>{\n        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}\n      }),\n"
+  },
+  {
+    "file": "src/render/m01-characters.js",
+    "line": 54,
+    "old": "    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};\n",
+    "new": "    if(pose.name==='fallen')return {clip:'fallen',time:1.4,loop:false};\n    const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);\n    const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);\n    if(stationPatient?.alive&&stationPatient.active&&stationPatient.task==='station_wounded'&&stationMedic?.alive&&stationMedic.active){\n      const transport=stationPatient.stationDrag,phase=transport?.phase??'drag',isPatient=actor===stationPatient;\n      if(stationClips.every(n=>this.clips.has(n))){\n        if(phase==='drag')return isPatient?{clip:'station_drag_patient_grab',time:this.clips.get('station_drag_patient_grab').duration,loop:false}:\n          {clip:'drag_wounded',time:transport?Math.max(0,time-transport.startedAt):time+offset,loop:true};\n        const name=`station_drag_${isPatient?'patient':'medic'}_${phase}`;\n        return {clip:name,time:Math.max(0,Math.min(1,(time-transport.startedAt)/transport.duration))*this.clips.get(name).duration,loop:false};\n      }\n      // A missing/partial optional kit falls back for both roles; never play half of a pair.\n      if(isPatient)return {clip:'wounded',time:0,loop:false};\n      return phase==='drag'?{clip:this.clips.has('drag_wounded')?'drag_wounded':'pinned',time:time+offset,loop:true}:\n        {clip:this.clips.has('crouched_idle')?'crouched_idle':'pinned',time:0,loop:false};\n    }\n"
+  },
+  {
+    "file": "src/render/m01-characters.js",
+    "line": 165,
+    "old": "      visible.push({id:a.id,lod,clip:sample.clip,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),\n",
+    "new": "      visible.push({id:a.id,lod,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),\n"
+  }
+]

@@ -34,10 +34,12 @@ export const GAME_BONES = (() => {
       { name: `ball_${s}`, parent: `foot_${s}`, at: `toes.${S}`, mhPrefix: `toe`, side: S },
     );
   }
-  // Ossos de adereço (sem pesos): arma, ferrolho e carregador animados nos clips; encaixe para transportar um ferido.
+  // Ossos de adereço (sem pesos): arma, ferrolho/alavanca de armar, carregador amovível da rkm e clipe (ou pano)
+  // animados nos clips; encaixe para transportar um ferido.
   b.push(
     { name: 'weapon', parent: 'root', at: 'prop' },
     { name: 'weapon_bolt', parent: 'weapon', at: 'prop' },
+    { name: 'weapon_mag', parent: 'weapon', at: 'prop' },
     { name: 'weapon_clip', parent: 'root', at: 'prop' },
     { name: 'carry_socket', parent: 'spine_03', at: 'prop' },
   );
@@ -108,7 +110,7 @@ export function buildHuman({ macro, face = [], headMask = null }) {
   }
   joints.root = [0, 0, joints.hips[2]];
   // Adereços: arma junto à mão direita na pose de ligação, ferrolho na arma; encaixe de transporte no ombro direito.
-  joints.weapon = [...joints.hand_r]; joints.weapon_bolt = [...joints.hand_r]; joints.weapon_clip = [...joints.hand_r];
+  joints.weapon = [...joints.hand_r]; joints.weapon_bolt = [...joints.hand_r]; joints.weapon_mag = [...joints.hand_r]; joints.weapon_clip = [...joints.hand_r];
   joints.carry_socket = [joints.clavicle_r[0] * 0.5 + joints.upperarm_r[0] * 0.5, joints.upperarm_r[1] + 0.12, joints.spine_03[2]];
 
   // Pesos fundidos: até 4 ossos por vértice, normalizados.

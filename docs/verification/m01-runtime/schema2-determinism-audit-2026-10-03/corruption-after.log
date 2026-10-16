@@ -1,0 +1,11 @@
+✔ corrupt cross-system states reject atomically and leave the destination future unchanged (1128.709422ms)
+✔ corrupt weapon method/profile, unsigned RNG and unknown phase reject before changing future gameplay (708.425079ms)
+✔ save between checkpoints preserves the future respawn destination (20.778404ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1989.655331

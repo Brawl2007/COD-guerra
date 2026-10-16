@@ -1,0 +1,19 @@
+{
+  "name": "m01-wagon-damage-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gera as variantes queimada e danificada dos vagões de M01 (coberto e aberto; GLB LOD0–2, rodados animados, manifesto) a partir do gerador dos vagões intactos, sem o alterar.",
+  "scripts": {
+    "build": "node build.mjs",
+    "render": "node render/capture.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1",
+    "meshoptimizer": "1.3.0",
+    "pngjs": "7.0.0"
+  }
+}

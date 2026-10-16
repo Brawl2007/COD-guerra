@@ -1,0 +1,112 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> operation-ashen-road@0.2.0 test:browser
+> playwright test --reporter=line,json
+
+[1A[2K[2m[WebServer] [22m(node:32) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22mnpm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+[1A[2K[2m[WebServer] [22m(node:45) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 35 tests using 1 worker
+
+[1A[2K(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:79) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/35] tests/browser/game.spec.js:28:1 › production prefix loads assets; real click captures mouse; shooting, reload and pause work
+[1A[2K[2/35] tests/browser/game.spec.js:68:1 › real keyboard movement reaches and stores checkpoint; restart and page reload restore it
+[1A[2K[3/35] tests/browser/game.spec.js:98:1 › corrupt checkpoint is explained and a new mission remains available
+[1A[2K[4/35] tests/browser/game.spec.js:106:1 › missing models are reported and procedural fallback keeps the area playable
+[1A[2K[5/35] tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 1: production continuation, real muzzle, pause and reload
+[1A[2K[6/35] tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 4: production continuation, real muzzle, pause and reload
+[1A[2K[7/35] tests/browser/m01-mg34-prone.spec.js:24:28 › real MG34 prone save after shot 6: production continuation, real muzzle, pause and reload
+[1A[2K[8/35] tests/browser/m01-mg34-prone.spec.js:42:1 › missing optional prone GLB keeps real MG34 gameplay and procedural low posture
+[1A[2K[9/35] tests/browser/m01.spec.js:29:1 › M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A
+[1A[2K[10/35] tests/browser/m01.spec.js:57:1 › the genuine first raid displays three Ju 87 GLBs with light LODs and freezes the propellers on pause
+[1A[2K[11/35] tests/browser/m01.spec.js:80:1 › unavailable optional Ju 87 models retain all three raid silhouettes and the playable mission
+[1A[2K[12/35] tests/browser/m01.spec.js:90:1 › licensed character rigs and first-person hands follow real weapon state, preserve pause and use the light preset
+[1A[2K[13/35] tests/browser/m01.spec.js:139:1 › an optional character download failure preserves playable procedural actors without blocking bridge validation
+[1A[2K[14/35] tests/browser/m01.spec.js:147:1 › Kowal fires and changes the rkm magazine from actual combat state, preserving both poses in pause
+[1A[2K[15/35] tests/browser/m01.spec.js:176:1 › missing close-up LOD0 falls back to intact LOD1 hands while the light world actors remain available
+[1A[2K[16/35] tests/browser/m01.spec.js:184:1 › the station clip alone cannot enable a viewmodel when the required weapon animations fail to download
+[1A[2K[17/35] tests/browser/m01.spec.js:192:1 › the station evacuation restores its grounded drag, pauses with the mission and delivers the casualty
+[1A[2K[18/35] tests/browser/m01.spec.js:220:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed
+[1A[2K  1) tests/browser/m01.spec.js:220:39 › the real station grab restores synchronized clips, pauses and keeps both roots fixed 
+
+    [31mTest timeout of 120000ms exceeded.[39m
+
+    Error: page.waitForFunction: Test timeout of 120000ms exceeded.
+
+      244 |   await page.screenshot({path:info.outputPath(`m01-station-${phase}.png`),style:'#pause { visibility:hidden !important; }',timeout:90000});
+      245 |   await page.locator('#restart-checkpoint').click();
+    > 246 |   await page.waitForFunction(phase=>{
+          |              ^
+      247 |     const g=window.gameDiagnostics();if(!g.paused&&g.m01.characters.actors?.some(a=>a.clip===`station_drag_patient_${phase}`)){
+      248 |       document.exitPointerLock();return true;
+      249 |     }return false;
+        at /workspace/scratch/179e239c7f9f/COD-guerra/tests/browser/m01.spec.js:246:14
+
+    Error Context: test-results/m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-the-real-station-grab--9eaaf--and-keeps-both-roots-fixed/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[19/35] tests/browser/m01.spec.js:220:39 › the real station release restores synchronized clips, pauses and keeps both roots fixed
+[1A[2K  2) tests/browser/m01.spec.js:220:39 › the real station release restores synchronized clips, pauses and keeps both roots fixed 
+
+    [31mTest timeout of 120000ms exceeded.[39m
+
+    Error: page.waitForFunction: Test timeout of 120000ms exceeded.
+
+      244 |   await page.screenshot({path:info.outputPath(`m01-station-${phase}.png`),style:'#pause { visibility:hidden !important; }',timeout:90000});
+      245 |   await page.locator('#restart-checkpoint').click();
+    > 246 |   await page.waitForFunction(phase=>{
+          |              ^
+      247 |     const g=window.gameDiagnostics();if(!g.paused&&g.m01.characters.actors?.some(a=>a.clip===`station_drag_patient_${phase}`)){
+      248 |       document.exitPointerLock();return true;
+      249 |     }return false;
+        at /workspace/scratch/179e239c7f9f/COD-guerra/tests/browser/m01.spec.js:246:14
+
+    Error Context: test-results/m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m01-the-real-station-relea-87f46--and-keeps-both-roots-fixed/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[20/35] tests/browser/m01.spec.js:258:1 › a missing optional station transition GLB keeps the grounded fallback and completes evacuation
