@@ -85,6 +85,27 @@ Se a Claude Cloud não tiver gh autenticado, usar o MESMO estado via GitHub MCP,
 - Se não houver prova de que a sessão parou, bloquear a integração, mas permitir tarefas independentes.
 - Falhas de API/credenciais/CI são bloqueios reais; não contornar testes ou proteções.
 
+## Regra anti-inatividade da Routine (prioridade sobre escolher nova tarefa)
+
+A Routine horária é uma **execução com orçamento de tempo**, não um trabalhador que dura exatamente uma hora. Cada execução deve produzir o próximo progresso seguro, em vez de verificar uma única tarefa e terminar sem procurar alternativas. Não prometer 24/7 contínuo nem inventar progresso.
+
+**Triagem inicial curta, antes de chamar Opus/Sonnet:**
+1. Ler somente o estado GitHub atual: PR candidato e HEAD, lock do integrador, reservas TXX, últimas alterações relevantes e checks pendentes. Reutilizar o último handoff quando o HEAD for igual.
+2. Se há trabalho desta **mesma sessão** em curso, concluí-lo, verificar o resultado do subagente e deixar commit/handoff. Não iniciar um segundo agente duplicado apenas porque o primeiro demora.
+3. Se existe tarefa **parcial** já atribuída à própria sessão, retomar a parte em falta na mesma branch. Se a reserva é de outra sessão, não a tomar sem handoff confirmado.
+4. Se existe PR **completo e READY**, e o integrador está FREE e ativo, adquirir o lock e integrar na única candidata. Se PAUSED/HELD, procurar outra ação independente e não tentar contornar a reserva.
+5. Se CI falhou, investigar a causa específica do HEAD, criar uma correção segura na própria branch ou PR separado sem tocar em ficheiros ocupados. Se CI continua a correr, deixar de esperar/polling e passar a uma tarefa independente ou encerrar com handoff.
+6. Se uma entrega está incompleta e livre para ser retomada, **terminar os critérios de aceitação pendentes** em vez de abrir outra fatia.
+7. Só depois das opções anteriores escolher um TASK_ID novo que esteja realmente livre, cujo trabalho não colida com sessões ativas, com reserva atómica e objetivo completo bem definido.
+
+**Nenhuma das ações acima é segura ou útil?** Registar em uma linha o bloqueio específico + owner/PR/SHA e terminar para **poupar tokens**. Não fabricar mudanças cosméticas nem abrir PRs de inventário apenas para aparentar atividade.
+
+**Trabalho por blocos pequenos mas conclusão por tarefa inteira:** dividir alterações longas em checkpoints reversíveis e testáveis (um commit/uma prova), preservar o contexto remoto para a próxima hora. Não considerar TASK_ID concluído por uma fatia. Uma execução pode fechar dois blocos independentes quando terminar o primeiro; a rotina não precisa gastar exatamente 60 minutos.
+
+**Evitar espera passiva:** não manter Opus ativo a repetir "a aguardar agente/CI". Usar execução delegada com limites e terminar a execução somente depois de recolher resultado ou deixar handoff durável verificável, sem assumir que um subagente inacabado continuou a trabalhar. Não criar nova sessão concorrente na mesma branch.
+
+**Handoff mínimo no fim:** `owner | TXX/PR | branch@SHA | COMPLETE/PARTIAL/BLOCKED | testes realmente corridos | próximo comando/ação segura | lock`. No início seguinte, retomar essa ação se continuar válida. Atualizar o estado apenas quando mudou algo; não republicar relatórios idênticos.
+
 ## Critérios para concluir e integrar
 
 Uma tarefa é CONCLUÍDA só quando todas as fatias e critérios de aceitação estão completos e provados. É INTEGRADA só depois de existir no HEAD da candidata, com verificações apropriadas (testes Node, build, Playwright, checks obrigatórios e evidência funcional conforme impacto). Um CI verde de outro commit não valida o HEAD novo.
