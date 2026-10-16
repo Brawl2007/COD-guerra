@@ -74,6 +74,7 @@ for(const phase of ['enter','idle','fire_burst','exit'])test(`rendered death dur
    // T36 (partials) adds display-only loaders bound to fixed gunners: the dead gunner's loader leaves at once and is inactive after its leave.
    const loader=s.actors.find(x=>x.loaderFor===a.id);assert.equal(loader.mg34Loader.phase,'leave');assert.equal(loader.shot,0);
    at(s,s.clock+loader.mg34Loader.duration);assert.equal(loader.active,false);assert.deepEqual(s.drainEvents(),[]);
+   const loaderB=s.actor('de_mg34_loader_0');assert.equal(loaderB.loaderFor,a.id);assert.equal(loaderB.mg34Loader.phase,'leave');assert.equal(loaderB.active,false);assert.equal(loaderB.shot,0);
  }finally{c.dispose();}
 });
 

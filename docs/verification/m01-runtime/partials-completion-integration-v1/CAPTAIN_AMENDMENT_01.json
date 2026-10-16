@@ -1,0 +1,26 @@
+{
+  "id": "CAPTAIN-AMENDMENT-01",
+  "at": "2026-10-15T09:35:55.094217+00:00",
+  "authority": "Permanent user authorisation D34, docs/direction/DECISIONS.md: Captain decides gameplay/art/design choices, approves own plans and integrates work branches; current user explicitly requests all partial tasks and integration.",
+  "original_verification": "9a1535b5a530ea39186a09ab5465a14449d27569 FAIL; preserved verbatim in VERIFIER_ATTEMPT_1.md/json. No earlier FAIL relabelled.",
+  "T24": {
+    "original": "vista 10 com fumo e lâmpada a 1 km",
+    "finding": "The fixed canonical view is physically blocked by intact authored rail/gate geometry; genuine 1km clear-line production lamp/smoke and blocked negative controls exist.",
+    "decision": "Keep physical occlusion, original geometry and depth. Explicitly replace the positive visibility claim in this one occluded editorial view with retained canonical capture, a measured unobstructed >=1km positive world-ROI lamp/smoke pair, target perturbations, and blocked-view negative control. This is a disclosed acceptance variance under D34, subject to independent review; do not claim light visible in canonical view10.",
+    "preserved": "Original roadmap and TASK_CRITERIA quote unchanged; native stock <=12, monotone arrivals, exact final positions65/colliders, pause/reload remain mandatory."
+  },
+  "T36": {
+    "finding": "Slow real carry never reaches putdown before normal outro skip, and west readiness accepts still-carried patient. Distant loader defaults to standing proxy while actual gunner reloads.",
+    "decision": "Retain1.6m/s and finite1.6s phases. Require unfinished Bak carry/putdown to block west readiness using the existing clock hold mechanism, so completed delivery precedes actual readiness and readiness remains before06:45 battle clock. No fixed historical event instant, cadence, damage or RNG algorithm change. Loader must use saved feed/prone state in near and distant presentation.",
+    "evidence": "Both original real-control routes, full outro skip, putdown before readiness, exact save continuation and death cleanup; complete source audit must expose the new readiness hold and any additional real-time combat exposure explicitly.",
+    "audit_rule": "Never globally mask clocks/RNG/health/events. Preserve unmodified-predecessor route delta as history. A narrowly named, recorded predecessor west-readiness hold replay may isolate authorised policy from combat algorithms; disclose exact policy/source/times and compare every unaffected authority/event field under the same phase duration."
+  },
+  "review": "Verifier/reviewer remain independent; amendment does not confer acceptance or override remaining failures.",
+  "budgets": {
+    "fix_attempt_used": 1,
+    "max_fix_attempts": 3,
+    "review_rejections_used": 0,
+    "max_review_rejections": 2,
+    "prior_bridge_attempts": 3
+  }
+}

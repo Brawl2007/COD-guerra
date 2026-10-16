@@ -1,3 +1,4 @@
+import {spatialPredecessorBytes} from './helpers/m01-spatial-byte-guard.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -46,6 +47,7 @@ test('integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved si
       // Partials T07 (generic prone geometry/eye/hitboxes) and T36 (MG34 reload curve sample) are the only approved deltas.
       // Revert exactly those strings, each found once, and every other byte must still hash to the protected original.
       assert.equal(createHash('sha256').update(spatialWithoutPartialsDelta(readFileSync(new URL('../'+path,import.meta.url),'utf8'))).digest('hex'),hash,path);
+      assert.equal(createHash('sha256').update(spatialPredecessorBytes(readFileSync(new URL('../'+path,import.meta.url)))).digest('hex'),hash,`${path} predecessor byte guard`);
     }else assert.equal(createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex'),hash,path);
   }
 });

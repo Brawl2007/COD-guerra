@@ -30,6 +30,8 @@ const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
 const LIMITS={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
 const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
 const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_open','rkm_bipod_folded','rkm_pouch','rag']);
+const mgLoader=a=>a.team==='enemy'&&a.mg34Loader&&['de_mg34_loader_0','de_mg34_loader_1'].includes(a.id)&&a.loaderFor===`de_east_${a.id.at(-1)}`;
+const mgCrew=a=>mgGunner(a)||mgLoader(a);
 const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);
 const stationClips=['station_drag_medic_grab','station_drag_patient_grab','station_drag_medic_release','station_drag_patient_release','drag_wounded','crouched_idle','wounded'];
 const SPINE_NAMES=['spine_02','spine_01','spine','chest','Spine2','Spine1','Spine'];
@@ -262,9 +264,9 @@ export class M01Characters {
     const selected=new Set(),visible=[],clips={};
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
     const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
-      .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>p.d<(mgGunner(p.a)?1800:limits.far))
-      // Reserve two existing fire sources within the same 18/24/28 actor budget, including from the west bank.
-      .sort((a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id)).slice(0,limits.count);
+      .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>p.d<(mgCrew(p.a)?1800:limits.far))
+      // Reserve the two real fire sources and their linked loaders within the existing 18/24/28 actor budget.
+      .sort((a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id)).slice(0,limits.count);
     if(this.clips.size)for(const {a,d}of candidates){
       const nation=a.team==='enemy'?'de':'pl';
       const prevInst=this.instances.get(a.id);
@@ -277,6 +279,7 @@ export class M01Characters {
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
       // Missing or partial optional clips use the existing procedural batches, sampled from the same posture.
       if(mgGunner(a)&&a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&!this.hasProne())continue;
+      if(mgLoader(a)&&a.alive&&!this.clips.has(`mg34_loader_prone_${a.mg34Loader.phase}`))continue;
       let v=prevInst;
       // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
@@ -327,7 +330,7 @@ export class M01Characters {
         n.castShadow=quality!=='low'&&d<35;
         if(n.name==='mg34_bipod_open')n.visible=Boolean(a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne());
         if(!weaponParts.has(n.name))return;
-        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgGunner(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
+        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgCrew(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
         const bipod=clip.userData?.bipod??'folded';
         n.visible=n.name==='rifle'?armed&&!kowal&&!bak:n.name==='clip'?armed&&!kowal:
           n.name==='rifle_wz98a'?armed&&bak:n.name==='rkm_wz28'?armed&&kowal:

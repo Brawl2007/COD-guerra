@@ -1,0 +1,146 @@
+{
+  "stats": {
+    "seed": 6,
+    "mode": "help",
+    "shots": 43,
+    "repair": {
+      "deliveredAt": 207.3500000000129,
+      "start": "04:42:08",
+      "end": "05:04:31",
+      "realSeconds": 179.2,
+      "pins": 13
+    },
+    "casualties": [],
+    "repairMgSuppressed": 121.34999999999525,
+    "repairUnderFire": 130.14999999999534,
+    "germanCasualties": [
+      "04:45:42",
+      "06:08:00"
+    ],
+    "survivors": 18,
+    "times": {
+      "order_demolish": "05:30:00",
+      "east_platoon_withdraws": "06:00:00",
+      "germans_on_east_spans": "06:05:00",
+      "east_demolition": "06:10:00",
+      "west_demolition": "06:45:00",
+      "roll_call": "07:05:00"
+    },
+    "repairMgSuppressedPct": 93,
+    "health": 100,
+    "activeSeconds": 1007.2,
+    "checkpoints": [
+      "cp_m01_a_orientacao",
+      "cp_m01_b_reorganizacao",
+      "cp_m01_c_engenheiros",
+      "cp_m01_d_retirada"
+    ],
+    "lethalRounds": 0,
+    "enemyFire": 1639
+  },
+  "west": {
+    "clock": 992.1999999996453,
+    "battleClock": 24300,
+    "player": {
+      "id": "jan_wrona",
+      "space": "metres",
+      "x": -290.93459003017216,
+      "y": -3,
+      "z": 26.05879022997216,
+      "team": "player",
+      "health": 100,
+      "alive": true,
+      "active": true,
+      "state": "GUARD",
+      "facing": 0,
+      "shot": 0,
+      "radius": 0.36,
+      "crouched": false,
+      "suppressedUntil": 0,
+      "cooldown": 0,
+      "rounds": 5,
+      "angle": -9.369653013779374,
+      "pitch": -0.0020000000000000885,
+      "aiming": false,
+      "moveBlend": 0,
+      "sprinting": false,
+      "weaponShotAt": 745049.9999998701,
+      "carrying": null,
+      "headgear": "pl_helmet_wz31"
+    }
+  },
+  "impacts": [
+    {
+      "clock": 993.1499999996445,
+      "battleClock": 24300.949999999986,
+      "gate": null,
+      "player": {
+        "id": "jan_wrona",
+        "space": "metres",
+        "x": -291.0793373670676,
+        "y": -3,
+        "z": 31.756952057128466,
+        "team": "player",
+        "health": 100,
+        "alive": true,
+        "active": true,
+        "state": "GUARD",
+        "facing": 0,
+        "shot": 0,
+        "radius": 0.36,
+        "crouched": false,
+        "suppressedUntil": 0,
+        "cooldown": 0,
+        "rounds": 5,
+        "angle": -10.970177287812108,
+        "pitch": -0.0020000000000000885,
+        "aiming": false,
+        "moveBlend": 1,
+        "sprinting": true,
+        "weaponShotAt": 745049.9999998701,
+        "carrying": null,
+        "headgear": "pl_helmet_wz31"
+      },
+      "round": {
+        "id": "m01_round_1659",
+        "by": "de_east_0",
+        "weapon": "mg34",
+        "kind": "player",
+        "ox": 1053.7386752862858,
+        "oy": 0.3843987384524238,
+        "oz": 31.894118427773684,
+        "ax": -290.93486589959343,
+        "ay": -1.5218982986270604,
+        "az": 26.122360645023516,
+        "h": 10.849081449072006,
+        "firedAt": 990.9499999996466,
+        "arriveAt": 993.1188482685458,
+        "tracer": false,
+        "victim": null
+      },
+      "westConsumed": 992.1999999996453,
+      "healthAfter": 100,
+      "events": [
+        {
+          "type": "round-impact",
+          "kind": "player",
+          "by": "de_east_0",
+          "point": {
+            "x": -334.7312145321317,
+            "y": -3.0470500665950047,
+            "z": 25.934373071583973
+          },
+          "material": "earth",
+          "crack": true,
+          "distance": 44.03849232292981,
+          "victim": null,
+          "pinned": [
+            "jozef_bak",
+            "leon_dudek",
+            "generic_rifleman"
+          ]
+        }
+      ]
+    }
+  ]
+}

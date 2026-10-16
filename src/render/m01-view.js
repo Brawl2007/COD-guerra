@@ -311,7 +311,7 @@ export class M01View {
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
-      if(!a.civilian&&a.role!=='MEDIC'){
+      if(!a.civilian&&a.role!=='MEDIC'&&!a.mg34Loader){
         put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
         const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;
         put('barrel',from.map((v,i)=>(v+to[i])/2),[.012,.57,.012],null,{from,to});
@@ -743,9 +743,10 @@ export class M01View {
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
+    // The procedural decal atlas completes in pause; its texture uploads must invalidate the frozen frame.
     const frame={clock:sim.clock,battleClock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,kitsSettled:this.kitsSettled,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
+      bridgeFinishRevision:this.bridgeFinish.revision,damageAtlasRevision:this.damageDecals.map.version,damageHeightAtlasRevision:this.damageDecals.heightMap.version,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
