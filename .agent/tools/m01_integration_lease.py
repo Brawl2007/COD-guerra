@@ -73,7 +73,7 @@ def write_state(expected_blob_sha, state, operation):
     # GitHub checks the original content SHA and rejects conflicting writes.
     # Never force-update a ref or push to the game branch in this function.
     api("PUT", "contents/" + STATE_PATH, {
-        "message": "chore(coordination): M01 " + operation,
+        "message": "chore(coordination): M01 " + operation + " [skip ci]",
         "content": base64.b64encode(content).decode("ascii"),
         "sha": expected_blob_sha,
         "branch": COORD_BRANCH,
