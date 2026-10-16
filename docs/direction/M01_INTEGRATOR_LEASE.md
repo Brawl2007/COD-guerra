@@ -39,7 +39,9 @@ Sem CLI, o Claude pode aplicar a mesma transição via GitHub MCP fetch_file/upd
 
 Quando um agente concluir TODOS os critérios de aceitação da tarefa:
 - manter código e testes no PR de origem com SHA exato e provas verificáveis;
-- retirar draft e inserir no corpo uma linha exata: M01-INTEGRATION: READY; alternativamente, usar a label m01-ready-to-integrate;
+- retirar draft apenas após validação e indicar um marcador READY (linha exata `M01-INTEGRATION: READY` ou label `m01-ready-to-integrate`);
+- **independentemente de marcador ou label**, incluir no corpo as linhas `M01-TASK-IDS: T40,T50` (ou outro(s) TASK_ID(s) válido(s)), `M01-ACCEPTANCE: COMPLETE` e `M01-TESTED-SHA: <SHA-40-exato-do-PR>`; sem qualquer uma destas provas o script **não inclui** o PR na fila;
+- checklist original completo e referências aos testes/CI obrigatórios no mesmo HEAD; estes campos são declarações a rever, não prova automática de funcionalidade;
 - não declarar pronto um PR de uma fatia parcial, em CI vermelho ou com critérios em falta.
 
 O script devolve a fila de PRs sinalizados; o integrador ainda precisa de rever CI, duplicações, conflitos, dependências e licenças. READY não equivale a integrado.
@@ -94,7 +96,7 @@ Se a Claude Cloud não tiver gh autenticado, usar o MESMO estado via GitHub MCP,
 - Checkpoints de código e fases internas são permitidos e úteis, mas só com estado `PARTIAL`/`IN_PROGRESS`, PR draft e próxima ação precisa. **Jamais usar READY/COMPLETE para uma fatia parcial.**
 - Se o agente encontra um bloqueio externo legítimo, documentar qual critério faltou, o teste que falha, a dependência/decisão necessária e a próxima ação. Marcar `BLOCKED`; não abandonar a tarefa nem tomar outra reservada. Enquanto aguarda, pode atuar noutra tarefa independente efetivamente livre.
 - **Antes de mudar de TASK_ID**, perguntar: "A minha tarefa anterior está realmente COMPLETE ou tem bloqueio externo verificável?" Se a resposta for não, continuar nela. Fim da hora, CI em curso, dificuldades normais de implementação ou necessidade de novos testes **não** são justificações para abandonar a tarefa.
-- Para READY, registar no PR `M01-TASK-ID: TXX`, `M01-ACCEPTANCE: COMPLETE` e `M01-TESTED-SHA: <SHA40>`, com checklist original inteiramente marcado e CI obrigatório comprovado no mesmo HEAD. O integrador confirma tudo independentemente; texto no PR não é prova automática.
+- Para READY, registar no PR `M01-TASK-IDS: TXX` (ou vários separados por vírgula), `M01-ACCEPTANCE: COMPLETE` e `M01-TESTED-SHA: <SHA40>`, com checklist original inteiramente marcado e CI obrigatório comprovado no mesmo HEAD. A fila recusa PR draft, SHA desatualizado ou declaração PARTIAL, mesmo com label READY. O integrador confirma tudo independentemente; texto no PR não é prova automática.
 - Não obrigar "conclusão" artificiosamente por contornar proteções, remover testes ou alterar factos históricos. Se houver dependência humana, usar BLOCKED de modo transparente e manter o trabalho recuperável.
 
 **Exemplos atuais:** T38 #82 tem apenas a primeira fatia e incoerência entre postura/tiros; T43 #81 tem integrações e validações parciais que devem ser comparadas com aceitação final; T47 #85 só tem medições e depende de decisão de desenho. Nenhuma deve ser chamada de "tarefa completa" só por possuir um PR.
