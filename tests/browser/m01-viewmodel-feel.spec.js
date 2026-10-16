@@ -56,7 +56,7 @@ async function expectFrozen(page){
 // whose aim is clearly mid-transition. Pausing uses the game's own blur/pointer-lock path, synchronously, so a slow software
 // renderer cannot step past the moment. Nothing is injected into the simulation.
 const install=page=>page.evaluate(()=>{
-  const raf=window.requestAnimationFrame.bind(window),state=window.__feel={recording:false,captureMid:false,frames:[],mid:null,callbacks:0,skipped:[],events:[],installedAt:performance.now()};
+  const raf=window.requestAnimationFrame.bind(window),state=window.__feel={recording:false,captureMid:false,frames:[],mid:null,callbacks:0,skipped:[],events:[],cycles:[],installedAt:performance.now()};
   for(const type of ['mousedown','mouseup','pointerlockchange','blur'])window.addEventListener(type,event=>{const g=window.gameDiagnostics?.();state.events.push({type,button:event.button,time:performance.now(),clock:g?.clock,paused:g?.paused,aiming:g?.player.aiming,pointerLock:document.pointerLockElement?.id??null});});
   window.requestAnimationFrame=callback=>raf(time=>{
     callback(time);state.callbacks++;
@@ -107,9 +107,23 @@ test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
   await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
   await resume(page);
-  await page.mouse.down({button:'right'});
-  try{await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});}
-  finally{await info.attach('mid-ads-observer.json',{body:JSON.stringify(await page.evaluate(()=>({observer:window.__feel,diagnostics:window.gameDiagnostics(),fpResources:performance.getEntriesByType('resource').filter(r=>r.name.includes('/fp-arms-v2/')).map(r=>r.toJSON())}))),contentType:'application/json'});}
+  const resumed=await page.evaluate(()=>{const g=window.gameDiagnostics();return {frame:g.m01.renderedFrames,clock:g.clock};});
+  await page.waitForFunction(({frame,clock})=>{const last=window.__feel.frames.at(-1);return last&&last.renderedFrames>=frame+2&&last.clock>clock;},resumed);
+  try{
+    // A permitted .25 s game step can take an early (<25 %) sample straight to full ADS.
+    // If that native cycle draws no qualifying midpoint, release to the real hip and sample another native cycle.
+    // Keep every cycle in the recording so the same curve audit still checks all rendered pairs.
+    for(let cycle=1;cycle<=3;cycle++){
+      await page.evaluate(number=>{const s=window.__feel;s.cycles.push({number,startIndex:s.frames.length,startClock:window.gameDiagnostics().clock});},cycle);
+      await page.mouse.down({button:'right'});
+      await page.waitForFunction(()=>{const s=window.__feel,last=s.frames.at(-1);return s.mid||last?.aiming&&last.aim===1;},null,{timeout:60000});
+      const captured=await page.evaluate(()=>{const s=window.__feel,cycle=s.cycles.at(-1);cycle.endIndex=s.frames.length-1;cycle.endClock=window.gameDiagnostics().clock;cycle.outcome=s.mid?'captured-midpoint':'full-ADS-without-qualifying-drawn-midpoint';return Boolean(s.mid);});
+      if(captured)break;
+      await page.mouse.up({button:'right'});
+      await page.waitForFunction(()=>{const last=window.__feel.frames.at(-1);return last&&!last.aiming&&last.aim===0;},null,{timeout:60000});
+    }
+  }finally{await info.attach('mid-ads-observer.json',{body:JSON.stringify(await page.evaluate(()=>({observer:window.__feel,diagnostics:window.gameDiagnostics(),fpResources:performance.getEntriesByType('resource').filter(r=>r.name.includes('/fp-arms-v2/')).map(r=>r.toJSON())}))),contentType:'application/json'});}
+  expect(await page.evaluate(()=>window.__feel.mid),'one of at most three native ADS cycles must draw the required midpoint').not.toBeNull();
   await expect(page.locator('#pause')).toBeVisible();
   const mid=await page.evaluate(()=>window.__feel.mid);
   expect(mid.aiming).toBe(true);expect(mid.aim).toBeGreaterThanOrEqual(.25);expect(mid.aim).toBeLessThan(1);
