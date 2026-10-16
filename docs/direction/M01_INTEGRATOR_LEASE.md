@@ -9,9 +9,9 @@
 Branch de coordenação: coordination/m01-integration-state
 Ficheiro: .agent/coordination/m01-integrator.json
 
-Este ficheiro guarda status (FREE/HELD), owner (session ID), token, candidate, candidate_sha, generation, updated_at e handoff.
+Este ficheiro guarda status (PAUSED/FREE/HELD), owner (session ID), token, candidate, candidate_sha, generation, updated_at e handoff.
 
-O estado inicial é FREE. A branch de coordenação NÃO é um jogo, NÃO é integrada na main e NÃO altera a candidata.
+O estado inicial foi colocado em PAUSED para **não disputar a candidata com sessões Claude antigas ainda ativas**. O processo só pode ser ativado depois de os antigos integradores pararem e fazerem handoff. A branch de coordenação NÃO é um jogo, NÃO é integrada na main e NÃO altera a candidata.
 
 Cada transição lê o SHA do conteúdo atual e envia-o ao GitHub Contents API. Se a versão mudar por outra sessão, a atualização falha e o agente pára. Isto é uma reserva cooperativa, não uma substituição das permissões do GitHub.
 
@@ -19,9 +19,21 @@ Cada transição lê o SHA do conteúdo atual e envia-o ao GitHub Contents API. 
 
 1. Ler o estado remoto, a candidata e o registo da issue #72 / tarefas.
 2. Se estiver HELD, não alterar a candidata nem iniciar um segundo integrador. Continuar uma tarefa independente reservada ou terminar imediatamente para poupar tokens.
-3. Se estiver FREE e houver PRs completos prontos, tentar adquirir a reserva atomicamente. O mesmo chat que concluiu uma tarefa pode tornar-se integrador.
+3. Se estiver PAUSED, não integrar: a migração das sessões antigas ainda não foi confirmada. Se estiver FREE e houver PRs completos prontos, tentar adquirir a reserva atomicamente. O mesmo chat que concluiu uma tarefa pode tornar-se integrador.
 4. Uma hora decorrida NÃO torna a reserva inválida. Não a roubar só por idade.
 5. Antes de cada push à candidata, confirmar owner/token e que o HEAD remoto ainda corresponde à SHA guardada. Se divergir, parar.
+
+## Ativação única, após migração segura
+
+Enquanto o PR #84 estiver pendente de revisão/testes e houver sessões anteriores sem esta regra, o estado fica PAUSED. **Não** se deve adquirir o lock nem escrever na candidata por este sistema.
+
+Após os checks do #84 e confirmação verificável de que as antigas sessões que editavam a candidata já terminaram/fizeram handoff, atualizar PAUSED -> FREE na branch de coordenação usando o mesmo SHA CAS.
+
+Com CLI autenticada:
+
+    python3 .agent/tools/m01_integration_lease.py activate --confirm-no-old-writers --reason "CONFIRMACAO DOCUMENTADA: sessoes antigas terminadas, HEAD e handoff verificados"
+
+Sem CLI, o Claude pode aplicar a mesma transição via GitHub MCP fetch_file/update_file, incluindo geração+1, a SHA atual da candidata e o motivo. Se a atividade das antigas sessões for incerta, manter PAUSED. Não confundir confirmação verbal genérica com evidência de término.
 
 ## Fila de entregas READY
 
