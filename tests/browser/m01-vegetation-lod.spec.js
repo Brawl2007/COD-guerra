@@ -31,7 +31,10 @@ async function freezeContinue(page){
   await page.waitForLoadState('networkidle',{timeout:120000});
   await expect(page.locator('#pause')).toBeVisible();
 }
+// A look sample can land in a frame that does not consume it (CI 38921344585 shard 3 waited out the test on an unchanged angle):
+// re-aim from the current pose until the same tolerance holds. The tolerance and the target are unchanged.
 async function lookAt(page,target){
+  for(let attempt=0;;attempt++){
   const p=await page.evaluate(()=>window.gameDiagnostics().player),dx=target.x-p.x,dz=target.z-p.z;
   const angle=Math.atan2(dz,dx),pitch=Math.atan2((target.y??p.y+5)-p.y-1.6,Math.hypot(dx,dz));
   const turn=Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle));
@@ -39,7 +42,9 @@ async function lookAt(page,target){
     window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0,bubbles:true}));
     window.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y,bubbles:true}));
   },{x:turn/.0022,y:(p.pitch-pitch)/.0022});
-  await page.waitForFunction(angle=>Math.abs(Math.atan2(Math.sin(window.gameDiagnostics().player.angle-angle),Math.cos(window.gameDiagnostics().player.angle-angle)))<.035,angle);
+  try{await page.waitForFunction(angle=>Math.abs(Math.atan2(Math.sin(window.gameDiagnostics().player.angle-angle),Math.cos(window.gameDiagnostics().player.angle-angle)))<.035,angle,{timeout:20000});return;}
+  catch(error){if(attempt>=3)throw error;}
+  }
 }
 async function capture(page,info,name){
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
@@ -77,7 +82,7 @@ test('fixed rail camera shows volumetric grove in High and a cheaper intact silh
 });
 
 test('Medium keeps volumetric near and distant battlefield vegetation without changing gameplay state',async({page},info)=>{
-  test.setTimeout(120000);
+  test.setTimeout(process.env.CI?240000:120000);
   const watch=await observe(page);
   await page.addInitScript(({key,snapshot})=>{localStorage.setItem(key,JSON.stringify(snapshot));localStorage.setItem('cod-guerra:visual-quality','medium');},{key,snapshot:rail.snapshot});
   await page.goto('?debug=1&visual-verify=1');await waitMenu(page);
