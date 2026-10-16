@@ -1,0 +1,184 @@
+{
+  "schema_version": 2,
+  "task": {
+    "id": "M01-T40-T50-FP-LOADING-INTEGRATION-V1",
+    "type": "VISUAL_ASSET_LOADING_INTEGRATION",
+    "role": "captain",
+    "objective": "Complete exactly T40 first-person arms/carry and T50 real asset loading/bundle/self-hosted font on the currently accepted playable union, then integrate."
+  },
+  "git": {
+    "base_branch": "claude/m01-integration",
+    "base_head": "d151a97239a54dc3f92b594e88ae5933c6bdfa06",
+    "starting_head": "d151a97239a54dc3f92b594e88ae5933c6bdfa06",
+    "work_branch": "codex/m01-t40-t50-fp-loading-v1"
+  },
+  "policy": {
+    "gameplay_change_allowed": false,
+    "visual_change_allowed": true,
+    "persistence_change_allowed": false,
+    "architecture_change_allowed": true,
+    "architecture_limit": "Only existing startup/module loading and asset manager interfaces necessary for T50; no gameplay or parallel game/renderer architecture."
+  },
+  "scope": {
+    "allowed_files": [
+      "src/main.js",
+      "index.html",
+      "src/styles*.css",
+      "src/assets/**",
+      "src/ui/m01-loading*.js",
+      "src/game/game.js",
+      "src/render/m01-viewmodel.js",
+      "src/render/m01-wz29-presentation.js",
+      "src/render/m01-fp-*.js",
+      "src/render/m01-characters.js",
+      "tools/assets/m01-soldiers/**",
+      "assets/models/provisional/m01/characters/fp*/**",
+      "assets/fonts/**",
+      "tests/**",
+      "tools/verification/**",
+      "tools/verify-t40*.mjs",
+      "tools/verify-t50*.mjs",
+      "vite.config.js",
+      ".github/workflows/**",
+      "docs/**",
+      ".agent/memory/**",
+      ".agent/regression/**",
+      "ASSET_CREDITS.md",
+      "DEVELOPMENT_STATUS.md",
+      "RUNBOOK.md",
+      "IMPLEMENTATION_PLAN.md"
+    ],
+    "forbidden_files": [
+      "src/game/m01-simulation.js",
+      "src/game/simulation.js",
+      "src/game/wz29.js",
+      "src/world/**",
+      "missions/**",
+      "package-lock.json",
+      "assets/models/provisional/m01/characters/clip-library-v2/**",
+      "assets/models/provisional/m01/characters/motion-clips-v1/**"
+    ],
+    "allowed_systems": [
+      "T40 dedicated FP visual variant, closed cuffs/fingers/carry from accepted clips",
+      "T50 startup asset progress/cache lifecycle, safe module chunks, licensed selfhosted Barlow, UI loading",
+      "Necessary narrow authorized-test integration fixes with original immutable golden preserved"
+    ],
+    "forbidden_systems": [
+      "All simulation/RNG/weapon/collision/damage/gates/save semantics",
+      "Third-person rig/clips/variation or existing authored asset bytes",
+      "Other unfinished roadmap tasks; no T21 takeover",
+      "French gameplay/audio/render behavior changes"
+    ],
+    "write_areas": [
+      "Firstperson presentation",
+      "Asset loading/menu/bundle only",
+      "Task evidence/tracking"
+    ],
+    "exclusive_resources": [
+      "src/render/m01-viewmodel.js",
+      "src/main.js",
+      "src/assets/asset-manager.js",
+      "vite.config.js"
+    ]
+  },
+  "dependencies": {
+    "tasks": [
+      "T08",
+      "T39",
+      "T04"
+    ],
+    "branches": [
+      "claude/m01-integration"
+    ]
+  },
+  "risk": {
+    "level": "high",
+    "complexity": "high"
+  },
+  "acceptance": {
+    "criteria": [
+      "Every original T40/T50 clause in TASK_CRITERIA.json, unchanged, individually evidenced.",
+      "T40 original authored FP arms/hands with closed sleeves, articulated fingers/wrists/straps/skin; real carry pickup/walk/putdown from accepted clips without changing third-person rig or simulation. Actual FP triangle budget <=6000; report actual drawn meshes including weapon/carried view honestly.",
+      "T40 same real snapshots/cameras before/after canonical views01/05/14; no near-plane torn cuffs/clipped fingers; ADS/reload/carry and pause/reload clocks preserved, optional FP failure safe.",
+      "T50 initial JS entry plus its static eager dependency/preload graph <600000 raw bytes; do not claim only a tiny entry while eager chunks exceed limit. Separate Three/GLTF and French chunks, native menu/start/continue/restart/mission switch still work.",
+      "T50 real asset-manager request progress; loading visible under controlled slow responses; mandatory bridge failures block M01 start and optional failures retain accepted fallback; no fabricated timer progress. Duplicate load/session/cancel/dispose safe.",
+      "T50 selfhosted actual Barlow with complete license/provenance/SHA; no external font requests/FOUT in successful normal load, finite safe fallback if font fails.",
+      "No forbidden authoritative byte changes and original golden immutable; old third-person clips/rig/assets untouched. No sim RNG used by presentation.",
+      "Fresh full npm test, tooling, build and focused production browser proof with workers1/retries0; applicable accepted regression obligations retained or revalidated proportionately.",
+      "Independent verifierPASS and criticalreviewACCEPT before closing tasks or integrating. Publish PR to main without merging main; integration target merge commit and actual result tested/built/pushed."
+    ],
+    "evidence_required": [
+      "Original criteria to proof matrix",
+      "Pinned before/after camera/PNG/runtime diagnostics and native FP counts",
+      "Real loading progress/abort/failure/fallback/font/network/bundle graph evidence",
+      "Protected authority/source hashes + original golden",
+      "Full Node/build logs and browser report",
+      "Verifier and critical review reports"
+    ]
+  },
+  "verification": {
+    "required_tests": [
+      "npm test",
+      "python3 -m unittest discover -s .agent/tests",
+      "npm run build",
+      "New focused T40/T50 Node and browser checks plus existing viewmodel/animation/carry/asset-manager/startup regressions"
+    ],
+    "build_requirement": "required",
+    "browser_requirement": "Native controls, worker1/retries0, actual rendered current saved clock; no hidden stale frame/overlay proof.",
+    "regression_obligations": [
+      "FP variant must preserve saved carry/reload/ADS and total FP budgets without mutating third-person sources",
+      "Real loading/menu progress and mandatory/optional asset failure semantics preserve French and M01 authority"
+    ]
+  },
+  "execution": {
+    "max_fix_attempts": 3,
+    "max_review_rejections": 2,
+    "production_mode": "focused"
+  },
+  "routing": {
+    "policy": "sequential implementer-deep -> independent verifier -> reviewer-critical; local offline advisory only"
+  },
+  "human": {
+    "approval_points": []
+  },
+  "context": {
+    "required_memory_topics": [
+      "Paused asynchronous atlas invalidation",
+      "Finite carry/WEST readiness unchanged"
+    ],
+    "mutable_claims_to_verify": [
+      "Current remote integration d151",
+      "T40/T50 unclaimed for36h; T21 active and excluded",
+      "Existing T50 candidate is unverified predecessor-only",
+      "Accepted874/173/build CI38920019282 atd151; fresh new source needed"
+    ]
+  },
+  "integration": {
+    "target_branch": "claude/m01-integration",
+    "auto_integrate": true,
+    "authorization": "User: faz mais2tarefas e integra; permanentD34",
+    "mode": "merge commit then npmtest/build on exact integrated tree; no rebase/force/main write"
+  },
+  "escalation": {
+    "conditions": [
+      "Required scope exceeds T40/T50",
+      "Unsafe conflict where same gameplay logic changed",
+      "Budget exhausted",
+      "Mandatory human evidence unavailable"
+    ]
+  },
+  "state": {
+    "status": "PLANNED",
+    "current_node": "memory_retrieval",
+    "current_owner": "captain",
+    "next_action": "Retrieve two relevant current notes; audit/pin context; delegate implementation."
+  },
+  "result": {
+    "final_head": "",
+    "tests": [],
+    "build": "",
+    "runtime": "",
+    "review": "",
+    "final_status": ""
+  }
+}
