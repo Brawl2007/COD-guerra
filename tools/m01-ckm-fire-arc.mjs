@@ -5,7 +5,7 @@ import layout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import manifest from '../assets/models/provisional/m01/weapons/ckm_wz30/manifest.json' with {type:'json'};
 import {CKM_POSITION} from '../src/game/m01-simulation.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
-import {traceObstruction,eyePosition} from '../src/world/spatial.js';
+import {traceObstruction,eyePosition,rayBox} from '../src/world/spatial.js';
 
 export const CKM_YAW=-Math.PI/2;
 export const DEG=Math.PI/180;
@@ -88,12 +88,162 @@ export async function routeSweep({everyTicks=20}={}){
   }});
   return out;
 }
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+// Candidate ckm posts on the west bridgehead (T47 phase 0b). Same production line of sight as the MG34 fire (world.obstacles via rayBox +
+// world.traceTerrain, i.e. traceObstruction), plus a STRICT test: a ray that enters ANY live bridge collider (trusses/partialCover, piers,
+// walkable boxes) is not clear, because the fire must not go through the bridge. Production ignores 'partialCover' trusses for bullets.
+export const CANDIDATE_PHASES=['pre_repair','repair','withdrawal','post_repair'];
+export const MUZZLE_ABOVE_GROUND=.7;
+export const CASEMATE_BOX={min:{x:0,y:-7,z:34},max:{x:26,y:-1,z:46}};
+export function phaseOf(sim){
+  if(sim.consumedEvent('evt_m01_germans_on_east_spans'))return 'withdrawal';
+  if(sim.active('cover_repair'))return 'repair';
+  if(!sim.done('cover_repair'))return 'pre_repair';
+  return 'post_repair';
+}
+// One passive pass over the real route: unique (world state, German actor, eye position) tuples before evt_m01_east_demolition, with sample counts per phase.
+export async function collectWindowTargets({everyTicks=20,seed=19390901}={}){
+  const {route}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js')));
+  const worlds=new Map(),entries=new Map(),out={everyTicks,seed,samples:0,enemySamples:0,phaseSamples:{},phaseActors:{},worlds};
+  let tick=0,lastRevision=-1,worldKey=null;const actorsByPhase={};
+  route(seed,{onStep:({sim})=>{
+    if(tick++%everyTicks)return;
+    if(sim.consumedEvent('evt_m01_east_demolition'))return;
+    if(sim.world.revision!==lastRevision){lastRevision=sim.world.revision;worldKey=JSON.stringify([sim.world.events,sim.flags]);
+      if(!worlds.has(worldKey)){const w=new TczewWorld();w.refresh([...sim.world.events],{...sim.flags});worlds.set(worldKey,w);}}
+    const phase=phaseOf(sim);out.samples++;
+    for(const a of sim.enemies.filter(a=>a.alive&&a.active)){
+      const eye=eyePosition(a),k=`${worldKey}|${a.id}|${eye.x.toFixed(3)},${eye.y.toFixed(3)},${eye.z.toFixed(3)}`;
+      let e=entries.get(k);if(!e){e={worldKey,id:a.id,group:a.group,eye:{x:eye.x,y:eye.y,z:eye.z},phases:{}};entries.set(k,e);}
+      e.phases[phase]=(e.phases[phase]??0)+1;out.enemySamples++;out.phaseSamples[phase]=(out.phaseSamples[phase]??0)+1;
+      (actorsByPhase[phase]??=new Set()).add(a.id);
+    }
+  }});
+  for(const [p,set] of Object.entries(actorsByPhase))out.phaseActors[p]=set.size;
+  out.entries=[...entries.values()];return out;
+}
+// Blocked-ness identical to traceObstruction (any box hit within range, or a terrain hit): the nearest-hit bookkeeping is skipped for speed.
+export function productionClear(world,o,eye){
+  const dx=eye.x-o.x,dy=eye.y-o.y,dz=eye.z-o.z,dist=Math.hypot(dx,dy,dz);if(dist<1e-6)return {clear:true,dist,dir:null,range:0};
+  const dir={x:dx/dist,y:dy/dist,z:dz/dist},range=Math.max(0,dist-.02);
+  for(const b of world.obstacles)if(rayBox(o,dir,b.min,b.max,range)!==null)return {clear:false,dist,dir,range};
+  return {clear:!world.traceTerrain(o,dir,range),dist,dir,range};
+}
+export function throughBridge(world,o,dir,range){for(const b of world.colliders)if(rayBox(o,dir,b.min,b.max,range)!==null)return b.id;return null;}
+// Smallest height of the ray above a deck/joint top, taken over the part of the ray that lies over that deck footprint (analytic: y is linear along the ray).
+export function deckClearance(world,o,dir,range){
+  let best=Infinity;
+  for(const c of world.spanDecks){
+    let a=0,b=range;
+    for(const ax of ['x','z']){
+      if(Math.abs(dir[ax])<1e-9){if(o[ax]<c.min[ax]||o[ax]>c.max[ax]){a=1;b=0;}continue;}
+      const t0=(c.min[ax]-o[ax])/dir[ax],t1=(c.max[ax]-o[ax])/dir[ax];a=Math.max(a,Math.min(t0,t1));b=Math.min(b,Math.max(t0,t1));
+    }
+    if(a>b)continue;
+    best=Math.min(best,o.y+dir.y*Math.max(0,a)-c.max.y,o.y+dir.y*Math.min(range,b)-c.max.y);
+  }
+  return best;
+}
+// Smallest 3D gap (m) between the ray and any live bridge collider box, sampled every 2 m (only meaningful for rays that enter none).
+export function minGapToColliders(world,o,dir,range,step=2){
+  let best=Infinity;
+  for(let d=0;d<=range;d+=step){
+    const p={x:o.x+dir.x*d,y:o.y+dir.y*d,z:o.z+dir.z*d};
+    for(const b of world.colliders){const gx=Math.max(b.min.x-p.x,0,p.x-b.max.x),gy=Math.max(b.min.y-p.y,0,p.y-b.max.y),gz=Math.max(b.min.z-p.z,0,p.z-b.max.z);const g=Math.hypot(gx,gy,gz);if(g<best)best=g;}
+  }
+  return best;
+}
+export function candidateMuzzle(world,x,z,above=MUZZLE_ABOVE_GROUND){const g=world.heightAt(x,z);return {x,y:g+above,z,groundY:g};}
+export function candidateExclusion(world,x,z){
+  const g=world.heightAt(x,z),pts=[{x,y:g+.01,z},{x,y:g+MUZZLE_ABOVE_GROUND,z}];
+  if(g<=-5)return 'water/off-terrain';
+  for(const c of world.spanDecks)if(x>=c.min.x&&x<=c.max.x&&z>=c.min.z&&z<=c.max.z)return `bridge-deck:${c.id}`;
+  const inside=(b,p)=>p.x>=b.min.x&&p.x<=b.max.x&&p.y>=b.min.y&&p.y<=b.max.y&&p.z>=b.min.z&&p.z<=b.max.z;
+  for(const b of [...world.colliders,...world.obstacles,CASEMATE_BOX])for(const p of pts)if(inside(b,p))return `inside:${b.id??'casemate_box'}`;
+  return null;
+}
+export function distanceToCasemate(x,z){const dx=Math.max(CASEMATE_BOX.min.x-x,0,x-CASEMATE_BOX.max.x),dz=Math.max(CASEMATE_BOX.min.z-z,0,z-CASEMATE_BOX.max.z);return Math.hypot(dx,dz);}
+export function evaluateCandidate(window,origin,{explain=false}={}){
+  const res={origin:{x:round(origin.x,3),y:round(origin.y,3),z:round(origin.z,3)},phases:{},groups:{},minClearanceM:null,minTargetDistanceM:null,maxTargetDistanceM:null,productionClearEntries:0,strictClearEntries:0,throughBridgeEntries:0,blockers:explain?{}:undefined,throughBridgeIds:explain?{}:undefined};
+  const bucket=p=>res.phases[p]??={production:{actors:new Set(),samples:0},strict:{actors:new Set(),samples:0}};
+  let clearance=Infinity,dMin=Infinity,dMax=0;
+  for(const e of window.entries){
+    const world=window.worlds.get(e.worldKey),r=productionClear(world,origin,e.eye),n=Object.values(e.phases).reduce((a,b)=>a+b,0);
+    if(explain){const k=r.clear?'CLEAR':(traceObstructionId(world,origin,r));res.blockers[k]=(res.blockers[k]??0)+n;}
+    if(!r.clear)continue;
+    res.productionClearEntries++;
+    for(const [p,c] of Object.entries(e.phases)){const b=bucket(p).production;b.actors.add(e.id);b.samples+=c;}
+    const hit=r.dir?throughBridge(world,origin,r.dir,r.range):null;
+    if(hit){res.throughBridgeEntries++;if(explain)res.throughBridgeIds[hit]=(res.throughBridgeIds[hit]??0)+n;continue;}
+    res.strictClearEntries++;
+    const cl=r.dir?deckClearance(world,origin,r.dir,r.range):Infinity;if(cl<clearance)clearance=cl;
+    dMin=Math.min(dMin,r.dist);dMax=Math.max(dMax,r.dist);
+    for(const [p,c] of Object.entries(e.phases)){const b=bucket(p).strict;b.actors.add(e.id);b.samples+=c;}
+    const g=res.groups[e.group]??={actors:new Set(),samples:0};g.actors.add(e.id);g.samples+=n;
+  }
+  res.minClearanceM=clearance===Infinity?null:round(clearance,3);res.minTargetDistanceM=dMin===Infinity?null:round(dMin,2);res.maxTargetDistanceM=dMax?round(dMax,2):null;
+  for(const b of Object.values(res.phases))for(const k of ['production','strict']){b[k]={actors:b[k].actors.size,ids:[...b[k].actors].sort(),samples:b[k].samples};}
+  for(const [k,g] of Object.entries(res.groups))res.groups[k]={actors:g.actors.size,ids:[...g.actors].sort(),samples:g.samples};
+  return res;
+}
+function traceObstructionId(world,o,r){
+  const hit=traceObstruction(world,o,r.dir,r.range);if(!hit)return 'CLEAR';
+  const surface=!hit.id&&hit.material==='earth'?world.walkSurfaces.find(c=>{const p={x:o.x+r.dir.x*hit.distance,z:o.z+r.dir.z*hit.distance,y:o.y+r.dir.y*hit.distance};return p.x>=c.min.x&&p.x<=c.max.x&&p.z>=c.min.z&&p.z<=c.max.z&&p.y<c.max.y-.04;}):null;
+  return hit.id??surface?.id??'terrain';
+}
+export function candidateGrid({xMin=-40,xMax=10,zMin=-20,zMax=60,step=2}={}){
+  const pts=[];for(let x=xMin;x<=xMax+1e-9;x+=step)for(let z=zMin;z<=zMax+1e-9;z+=step)pts.push({x:round(x,3),z:round(z,3)});return pts;
+}
+export function gateAzimuth(o,{x=1055,zMin=9.5,zMax=31.5}={}){
+  const az=z=>Math.atan2(z-o.z,x-o.x)/DEG;return {toRiflemenCentreDeg:round(az((zMin+zMax)/2),3),minDeg:round(az(zMin),3),maxDeg:round(az(zMax),3),horizontalToGatesM:round(Math.hypot(x-o.x,(zMin+zMax)/2-o.z),1)};
+}
+// Shortlist: (x,z) on the 2 m grid; ground and muzzle come from the production heightAt (+0.7 m).
+export const SHORTLIST=Object.freeze([{id:'S1',x:8,z:30,kind:'abutment_top_north_edge'},{id:'S2',x:8,z:26,kind:'embankment_between_bridges'},
+  {id:'S3',x:8,z:40,kind:'abutment_top_road_axis'},{id:'S4',x:8,z:54,kind:'south_flank'}]);
+export function describeCandidate(window,{x,z},{above=MUZZLE_ABOVE_GROUND}={}){
+  const world0=[...window.worlds.values()][0],m=candidateMuzzle(world0,x,z,above),ev=evaluateCandidate(window,m,{explain:true});
+  const clear=window.entries.filter(e=>{const w=window.worlds.get(e.worldKey),r=productionClear(w,m,e.eye);return r.clear&&r.dir&&!throughBridge(w,m,r.dir,r.range);});
+  const az=[],el=[];for(const e of clear){const dx=e.eye.x-m.x,dz=e.eye.z-m.z,dy=e.eye.y-m.y;az.push(Math.atan2(dz,dx)/DEG);el.push(Math.atan2(dy,Math.hypot(dx,dz))/DEG);}
+  let gap=Infinity;for(const e of clear){const w=window.worlds.get(e.worldKey),r=productionClear(w,m,e.eye);gap=Math.min(gap,minGapToColliders(w,m,r.dir,r.range));}
+  const range=a=>a.length?[round(Math.min(...a),3),round(Math.max(...a),3)]:null;
+  return {x,z,groundY:round(m.groundY,3),muzzleY:round(m.y,3),exclusion:candidateExclusion(world0,x,z),distanceToCasemateM:round(distanceToCasemate(x,z),2),...ev,
+    minGapToBridgeM:gap===Infinity?null:round(gap,2),strictAzimuthDeg:range(az),strictElevationDeg:range(el),gateAzimuth:gateAzimuth(m)};
+}
+export async function candidateReport({window,step=2}={}){
+  window??=await collectWindowTargets();
+  const world0=[...window.worlds.values()][0],baselineOrigin=muzzleFlashWorld(),rows=[];
+  const baseline={id:'C0',...evaluateCandidate(window,baselineOrigin,{explain:true}),groundY:-3,distanceToCasemateM:0};
+  const excluded={};
+  for(const {x,z} of candidateGrid({step})){
+    const why=candidateExclusion(world0,x,z);if(why){const k=why.split(':')[0];excluded[k]=(excluded[k]??0)+1;continue;}
+    const m=candidateMuzzle(world0,x,z),ev=evaluateCandidate(window,m);
+    rows.push({x,z,groundY:round(m.groundY,3),...ev,distanceToCasemateM:round(distanceToCasemate(x,z),2),azimuth:gateAzimuth(m)});
+  }
+  return {schemaVersion:1,muzzleAboveGroundM:MUZZLE_ABOVE_GROUND,window:{seed:window.seed,everyTicks:window.everyTicks,samples:window.samples,enemySamples:window.enemySamples,phaseSamples:window.phaseSamples,phaseActors:window.phaseActors,uniqueEntries:window.entries.length,worldStates:window.worlds.size},baseline,excluded,rows};
+}
+export function candidateCsv(report){
+  const cols=['x','z','groundY','muzzleY','distCasemateM','azCentreDeg','prodClearActors','prodClearSamples','strictClearActors','strictClearSamples','strictRepairActors','strictRepairSamples','strictWithdrawalActors','strictWithdrawalSamples','throughBridgeEntries','minDeckClearanceM','minTargetDistM','maxTargetDistM'];
+  const line=r=>{
+    const sum=(k,f)=>Object.values(r.phases).reduce((a,p)=>a+p[k][f],0),ids=k=>new Set(Object.values(r.phases).flatMap(p=>p[k].ids)).size;
+    const ph=(p,f)=>r.phases[p]?.strict[f]??0;
+    return [r.x,r.z,r.groundY,round(r.origin.y,3),r.distanceToCasemateM,r.azimuth.toRiflemenCentreDeg,ids('production'),sum('production','samples'),ids('strict'),sum('strict','samples'),
+      ph('repair','actors'),ph('repair','samples'),ph('withdrawal','actors'),ph('withdrawal','samples'),r.throughBridgeEntries,r.minClearanceM??'',r.minTargetDistanceM??'',r.maxTargetDistanceM??''].join(',');
+  };
+  return [cols.join(','),...report.rows.map(line)].join('\n')+'\n';
+}
 export async function buildReport(options={}){
   const origin=muzzleFlashWorld(),rows=scanArc({...options,origin}),targets=await scenarioTargets();
   return {schemaVersion:1,root:{...CKM_POSITION},yawRad:CKM_YAW,yawDeg:-90,sockets:{muzzleLocal:manifest.sockets.scene.gun_muzzle,muzzleFlashLocal:manifest.sockets.scene.gun_muzzle_flash,
     muzzleWorld:muzzleWorld(),muzzleFlashWorld:origin},embrasure:embrasureContract(),scan:{config:{azMin:options.azMin??-30,azMax:options.azMax??30,azStep:options.azStep??.5,elMin:options.elMin??-5,elMax:options.elMax??10,elStep:options.elStep??.5,range:options.range??1200},summary:summariseRows(rows),rows},targets};
 }
 async function main(argv){
+  if(argv.includes('--candidates')){
+    const flag=n=>{const i=argv.indexOf(n);return i>=0?argv[i+1]:null;},report=await candidateReport({step:Number(flag('--step')??2)});
+    const text=JSON.stringify(report,null,2)+'\n';if(flag('--out-json'))await writeFile(resolve(flag('--out-json')),text);
+    if(flag('--out-csv'))await writeFile(resolve(flag('--out-csv')),candidateCsv(report));
+    if(!flag('--out-json')&&!flag('--out-csv'))process.stdout.write(text);return;
+  }
   if(argv.includes('--route')){process.stdout.write(JSON.stringify(await routeSweep(),null,2)+'\n');return;}
   const take=(name,fallback)=>{const i=argv.indexOf(name);return i>=0?Number(argv[i+1]):fallback;},outIndex=argv.indexOf('--out');
   const report=await buildReport({azMin:take('--az-min',-30),azMax:take('--az-max',30),azStep:take('--az-step',.5),elMin:take('--el-min',-5),elMax:take('--el-max',10),elStep:take('--el-step',.5),range:take('--range',1200)});
