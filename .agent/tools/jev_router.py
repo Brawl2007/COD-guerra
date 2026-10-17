@@ -22,9 +22,10 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-# Explicit user authorization (2026-10-13): paid Jev calls without a project cap.
-# Optional COD_JEV_LIMIT / --limit may lower this to a finite number.
-# The provider may enforce credit/billing limits; those are not bypassed.
+# Authorization updated 2026-10-17: Jev may use the existing US$5 balance
+# where helpful, with explicit Cloud Web opt-in and a local estimated dollar guard.
+# Optional COD_JEV_LIMIT / --limit imposes a call cap if requested.
+# Only the TypeSafe provider/account can enforce a true cross-VM billing limit.
 PILOT_MAX_PAID_CALLS = None
 PRICE_PER_MTOK_INPUT = 0.042
 CLOUD_WEB_BUDGET_USD = 5.0  # Local estimate only; TypeSafe account must enforce real prepaid balance.
