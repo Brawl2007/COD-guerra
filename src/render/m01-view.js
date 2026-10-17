@@ -111,7 +111,7 @@ export class M01View {
     this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
     this.kitsSettled=false;   // every bridge kit GLB has arrived or failed (see M01BridgeFinishRuntime.sync)
     this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null,kitsSettled:false};
-    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
+    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true,clock:null};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);this.trainLife.lampsEnabled=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
     }
@@ -735,12 +735,12 @@ export class M01View {
     this.trainLife.update(battleClock,state);
     this.wagons.update(sim.player,this.owner.quality,battleClock);
     this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
-    this.locomotive.update(sim.player,battleClock,state.train963);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug);
+    this.locomotive.update(sim.player,battleClock,state.train963,this.owner.quality);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug,this.owner.quality);   // T43: preset + battle clock drive the 0.3 s fade (Low snaps)
     this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
-    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
-    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
+    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player,battleClock);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
+    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled,battleClock);   // T43: battle clock drives the 0.3 s instance dither fades
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     // The procedural decal atlas completes in pause; its texture uploads must invalidate the frozen frame.
@@ -775,7 +775,7 @@ export class M01View {
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
     if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
     this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
-    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeFinish.select(this.bridgeSelectInput);
+    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeSelectInput.clock=battleClock;this.bridgeFinish.select(this.bridgeSelectInput);   // T43: battle clock drives the truss<->card dither crossfade
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;

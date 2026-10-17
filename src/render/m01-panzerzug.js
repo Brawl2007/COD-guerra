@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {rgbaGeometry,haloGeometry} from './m01-railway-light.js';
+import {selectConsumerLod,createLodCounters,tallyLod,lodCounterTotals} from './m01-lod-policy.js';
+import {M01LodFade} from './m01-lod-dither.js';
 
 const BASE='assets/models/production/m01/panzerzug/';
 export const PANZERZUG_PLACEMENT=Object.freeze({position:Object.freeze([1119,0,2.5]),rotationY:Math.PI/2});
@@ -49,12 +51,7 @@ export function panzerzugKinematics(battleClock=null,flagActive=false){
   };
 }
 
-export function panzerzugLOD(distance,current=null){
-  if(current===0&&distance<66)return 0;
-  if(current===1&&distance>=54&&distance<198)return 1;
-  if(current===2&&distance>=162)return 2;
-  return distance<60?0:distance<180?1:2;
-}
+export function panzerzugLOD(distance,current=null){return selectConsumerLod('panzerzug',distance,'medium',current);}
 
 function buildPanzerzugLampFixture(){
   const slit=new THREE.BoxGeometry(0.95,0.16,0.18);
@@ -87,6 +84,9 @@ export class M01Panzerzug {
     this.proxy.traverse(n=>{if(n.isMesh)n.castShadow=n.receiveShadow=true;});
     this.lampFixture=buildPanzerzugLampFixture();this.root.add(this.lampFixture);   // slit lantern: one draw call, fog:false
     this.models=new Map();this.revision=0;this.disposed=false;this.requestedLOD=2;this.selectedLOD=null;
+    // T43 slice 2: whole-object LOD cross-fade (screen-door dither, 0.3 s) driven by the battle clock update() already receives.
+    // The preset comes from the shared `m01LowDetail` uniform the view keeps on the metal material (or update()'s optional 4th argument).
+    this.lodFade=new M01LodFade();this.lodCounters=createLodCounters();this.lodPreset='medium';this.lowDetail=metal?.userData?.m01LowDetail??null;
     this.lastKinematics=panzerzugKinematics(null,true);
   }
   async load(){
@@ -99,29 +99,36 @@ export class M01Panzerzug {
         // Offset art only; retain the original fixed presentation anchor and gameplay data.
         model.position.y=-.82;
         model.traverse(n=>{if(n.isMesh)n.castShadow=n.receiveShadow=true;});
-        this.models.set(lod,model);this.root.add(model);this.revision++;this.select();
+        this.models.set(lod,model);this.root.add(model);this.lodFade.register(lod,model);this.revision++;this.select(null,this.lodPreset,false);
       }catch{/* Optional art: retain original proxy or another usable LOD. */}
     }));
   }
-  select(){
+  select(clock=null,preset=this.lodPreset,count=true){
     const available=[...this.models.keys()].sort((a,b)=>Math.abs(a-this.requestedLOD)-Math.abs(b-this.requestedLOD)||a-b);
     this.selectedLOD=available[0]??null;
-    for(const [lod,model]of this.models)model.visible=lod===this.selectedLOD;
+    if(this.selectedLOD!==null){
+      // No clock (asset arrival, tests) or the low preset => instant swap. A missing LOD asset can never be faded to or from.
+      const before=this.lodFade.switches;this.lodFade.set(this.selectedLOD,clock,preset!=='low',count);
+      if(this.lodFade.switches!==before)tallyLod(this.lodCounters,preset,this.selectedLOD);
+    }
+    for(const [lod,model]of this.models)model.visible=this.lodFade.shows(lod);
     this.proxy.visible=this.selectedLOD===null;
   }
-  update(player,battleClock=null,flagActive=true){
+  update(player,battleClock=null,flagActive=true,quality=null){
     // Omitted battleClock keeps the anchor at x=1119 (stopped), exactly as before T24.
     const kin=panzerzugKinematics(battleClock,flagActive);this.lastKinematics=kin;
     this.root.position.set(kin.x,PANZERZUG_PLACEMENT.position[1],PANZERZUG_PLACEMENT.position[2]);
     const distance=Math.min(...[0,1,2,3,4].map(i=>Math.hypot(player.x-(kin.x+i*19),player.z-2.5)));
-    this.requestedLOD=panzerzugLOD(distance,this.requestedLOD);this.select();
+    this.requestedLOD=panzerzugLOD(distance,this.requestedLOD);
+    this.lodPreset=quality??(this.lowDetail?.value>.5?'low':'medium');this.select(battleClock,this.lodPreset);
   }
   get diagnostics(){return {loaded:[...this.models.keys()].sort(),lod:this.selectedLOD,requestedLOD:this.requestedLOD,
-    fallback:this.proxy.visible,position:this.root.position.toArray(),rotationY:this.root.rotation.y,
+    fallback:this.proxy.visible,lodSwitches:this.lodFade.switches,fading:this.lodFade.active,lodLevel:this.lodFade.level,lodFadeProgress:this.lodFade.active?this.lodFade.progress.value:1,lodFades:this.lodFade.fades,lodSnaps:this.lodFade.snaps,lodPreset:this.lodPreset,
+    lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')},position:this.root.position.toArray(),rotationY:this.root.rotation.y,
     visible:this.root.parent?.visible??false,motion:this.lastKinematics.arriving?'arriving_decelerating':'stationary',kinematics:this.lastKinematics,
     headlampFogFree:this.lampFixture?.material?.fog===false};}
   dispose(){
-    if(this.disposed)return;this.disposed=true;
+    if(this.disposed)return;this.disposed=true;this.lodFade.dispose();   // rebinds the shared materials, then frees the dither clones
     if(this.lampFixture){this.lampFixture.removeFromParent();this.lampFixture.geometry.dispose();this.lampFixture.material.dispose();}
     this.root.removeFromParent();this.models.clear();
   }
