@@ -158,6 +158,14 @@ export function raidPlan(def=definition,world=new TczewWorld()){
 }
 const RAID_PLAN=raidPlan();
 
+// T48 (BX-09), the Germans after the east demolition. Roadmap schedule, in battle clock: no German shot from 06:10 to 06:11 (60 s), regrouped by 06:12.
+// A man's march to the close-up knot is a pure function of the battle clock (fallBack), so 06:12 holds at any time scale and tick length.
+const GERMAN_SILENCE_FROM=seconds('06:10:00'),GERMAN_SILENCE_UNTIL=seconds('06:11:00'),GERMAN_REGROUP_AT=seconds('06:12:00');
+// The knot forms REGROUP_AHEAD metres east of the westmost survivor (carriers then walk at ~1.2 m/s over the 14 s of play until 06:12), at most at x 1080, the
+// old retreat's destination. GERMAN_FELLED is the number of men of the spans the east demolition kills, GERMAN_CARRIED how many of them are lifted.
+const REGROUP_AHEAD=17,REGROUP_EAST_END=1080,REGROUP_Z=40.2,GERMAN_FELLED=4,GERMAN_CARRIED=2;
+const REGROUP_SLOTS=[[0,0],[-1.8,1.1],[-1.8,-1.1],[1.8,1.1],[1.8,-1.1],[0,2.2]];   // metres east/south of the knot centre, westmost survivor first
+
 export class M01Simulation {
   // H9 D1: the level is stored before reset() because reset() ends with a snapshot. Nothing reads it yet; reset() keeps whatever level the instance has.
   constructor(seed=19390901,{difficulty=M01_DIFFICULTY_SIM_DEFAULT}={}){
@@ -379,7 +387,8 @@ export class M01Simulation {
         this.timers.withdrawalCasualty=this.battleClock;this.message('Eles entram pelo tabuleiro leste! Cubra os últimos homens do pelotão.');break;
       case E('east_demolition'):
         this.finish('cover_withdrawal');this.activate('leave_bridge');this.destruction.push('east_ends_destroyed');this.mission.phase='CLIMAX';
-        this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{const wasAlive=a.alive;if(i<4){a.health=0;a.alive=false;a.state='DOWN';recordDeath(a,wasAlive,this.clock);}else{a.state='RETREAT';}});
+        this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{const wasAlive=a.alive;if(i<GERMAN_FELLED){a.health=0;a.alive=false;a.state='DOWN';recordDeath(a,wasAlive,this.clock);}else{a.state='RETREAT';}});
+        this.beginFallBack();
         this.startScene('cs_m01_east_blast');this.impact('east_demolition',{x:800,y:0,z:20},false);
         if(this.flags['m01.bak_status']==='rescued_by_player'&&this.actor('jozef_bak').active)this.actor('leon_dudek').task='evacuate_bak';break;
       case E('dudek_retrieves_bak'):this.flags['m01.bak_status']='rescued_by_dudek';this.flags['m01.dudek_status']='wounded_arm';
@@ -516,6 +525,8 @@ export class M01Simulation {
     if(p.phase==='reload'&&this.clock-p.startedAt>=4.8){phase('aim',p.startedAt+4.8);a.mg34Prone.beltRemaining=50;p=a.mg34Prone;}
     // Suppression keeps a fixed gunner low and cancels only shots which have not left the muzzle.
     if((this.clock<a.suppressedUntil||a.state==='HIT_REACTION'||this.mission.phase==='OUTRO'||this.mission.complete)&&['aim','fire_burst'].includes(p.phase)){phase('idle');a.shot=0;}
+    // T48: so does the silence after the east demolition, for a burst begun before it; a gun that is only aimed stays aimed.
+    if(this.germanSilence()&&a.mg34Prone.phase==='fire_burst'){phase('idle');a.shot=0;}
     p=a.mg34Prone;p.progress=['enter','exit'].includes(p.phase)?Math.min(1,Math.max(0,(this.clock-p.startedAt)/p.duration)):
       p.phase==='standing'?0:1;
   }
@@ -587,6 +598,8 @@ export class M01Simulation {
         this.moveActor(a,a.x>12?file:a.x>-105?{x:-110,z:40}:a.x>-230?{x:-235,z:30}:{x:-322-(k%4)*1.6,z:30+Math.floor(k/4)%6*1.3},dt,5.5);continue;
       }
       if(a.group==='grp_de_spans'){
+        if(a.fallBack){this.stepFallBack(a);continue;}   // T48: marching to the close-up knot, whatever the fire; once there the men stay (REGROUP)
+        if(a.state==='REGROUP')continue;
         const destination=retreat?1080:690;
         if(this.clock>=a.suppressedUntil){a.x+=Math.sign(destination-a.x)*Math.min(Math.abs(destination-a.x),dt*1.5);a.state=retreat?'RETREAT':'ADVANCE';}
         continue;
@@ -699,7 +712,7 @@ export class M01Simulation {
       else if(this.active('cover_repair')&&r()<.45){if(this.timers.fireEase)return;target=this.repairAim();kind='repair';}
       else if(west&&sees(p)){target=p;kind='player';}
     }
-    if(!target)return;
+    if(!target||this.germanSilence())return;   // T48: the cadence above is re-armed as usual, but nothing is shot, said or flagged in the silence
     this.burst(a,target,kind,mg?{rounds:4+Math.floor(r()*3),bias:[1.2,.8],cone:[.7,.5],tracer:kind!=='east'}:{rounds:1,bias:[2.5,1.6],cone:[0,0]});
     if(kind==='repair'&&west)this.line('dlg_m01_026');
     if(mg&&['player','squad'].includes(kind)&&west){this.line('co_m01_enemy_mg_fire_on_squad');if(this.clock-(this.timers.firstMgAt??this.clock)>8)this.line('dlg_m01_027');this.timers.firstMgAt??=this.clock;}
@@ -725,6 +738,46 @@ export class M01Simulation {
     }
   }
   withdrawingPlatoon(){return this.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active);}
+  /** T48: true from 06:10 to 06:11 of the battle clock, the 60 s after the east demolition in which no German starts a shot. Read from the clock alone. */
+  germanSilence(){return this.battleClock>=GERMAN_SILENCE_FROM&&this.battleClock<GERMAN_SILENCE_UNTIL;}
+  /**
+   * T48: called by east_demolition once it has felled the first GERMAN_FELLED men of grp_de_spans. Each of the GERMAN_CARRIED westmost living survivors
+   * (nearest the fallen) lifts the nearest fallen man (carriedBy; no `carry` record, that one is Bąk's), and every living survivor gets a plan
+   * `fallBack` {t0,x0,z0,x1,z1} to his place in a close-up knot ahead of the westmost of them, reached at GERMAN_REGROUP_AT. A man without a plan (a save
+   * made before this rule, or one not on the spans) keeps the old retreat, so no migration exists. Writes actor data only and draws nothing from this.rng.
+   */
+  beginFallBack(){
+    const spans=this.actors.filter(a=>a.group==='grp_de_spans'),fallen=spans.slice(0,GERMAN_FELLED);
+    const men=spans.slice(GERMAN_FELLED).filter(a=>a.alive&&a.active).sort((a,b)=>a.x-b.x||spans.indexOf(a)-spans.indexOf(b));
+    if(!men.length)return;
+    const rx=Math.min(men[0].x+REGROUP_AHEAD,REGROUP_EAST_END);
+    men.forEach((a,k)=>{
+      const [dx,dz]=REGROUP_SLOTS[k%REGROUP_SLOTS.length];
+      a.fallBack={t0:this.battleClock,x0:a.x,z0:a.z,x1:rx+dx,z1:REGROUP_Z+dz};a.facing=Math.atan2(a.fallBack.z1-a.z,a.fallBack.x1-a.x);
+    });
+    for(const carrier of men.slice(0,GERMAN_CARRIED)){
+      fallen.sort((p,q)=>Math.abs(p.x-carrier.x)-Math.abs(q.x-carrier.x)||spans.indexOf(p)-spans.indexOf(q));
+      const patient=fallen.shift();if(!patient)break;
+      patient.carriedBy=carrier.id;patient.facing=carrier.facing+Math.PI/2;
+      patient.x=carrier.x-Math.cos(carrier.facing)*.25;patient.z=carrier.z-Math.sin(carrier.facing)*.25;patient.y=carrier.y+1.15;
+    }
+  }
+  /** T48: one man of the withdrawal, every tick. A straight line from where the east demolition found him to his place in the knot, by the battle clock
+   * (suppression does not stop a man who is leaving). At GERMAN_REGROUP_AT he is there, REGROUP, and sets down whom he carried beside him. */
+  stepFallBack(a){
+    const f=a.fallBack,span=GERMAN_REGROUP_AT-f.t0,u=span>0?Math.min(1,Math.max(0,(this.battleClock-f.t0)/span)):1;
+    if(u<1){a.x=f.x0+(f.x1-f.x0)*u;a.z=f.z0+(f.z1-f.z0)*u;a.y=this.world.heightAt(a.x,a.z);a.state='RETREAT';return;}
+    Object.assign(a,{x:f.x1,z:f.z1,state:'REGROUP',facing:Math.PI});a.y=this.world.heightAt(a.x,a.z);delete a.fallBack;
+    const patient=this.actors.find(p=>p.carriedBy===a.id);
+    if(patient){patient.carriedBy=null;patient.x=a.x-1.1;patient.z=a.z;patient.y=this.world.heightAt(patient.x,patient.z);}
+  }
+  /** T48, computed on every read and never stored: where the German withdrawal stands. FALL_BACK while a living man still marches on his plan, REGROUP once
+   * the men that lived have arrived, IDLE otherwise (before the east demolition, or on a save made before this rule). */
+  get germanWithdrawal(){
+    const spans=this.actors.filter(a=>a.group==='grp_de_spans'),regrouped=spans.filter(a=>a.state==='REGROUP').map(a=>a.id);
+    return {phase:spans.some(a=>a.fallBack&&a.alive&&a.active)?'FALL_BACK':regrouped.length?'REGROUP':'IDLE',silent:this.germanSilence(),
+      carried:spans.filter(a=>a.carriedBy).map(a=>({patient:a.id,carrier:a.carriedBy})),regrouped};
+  }
   /** T23: true from hold.from (train 963) to hold.until (the withdrawal at 06:00). Read from the consumed events only, so a save needs no new key. */
   holdingEast(){return this.consumedEvent(EAST_FRONT.hold.from)&&!this.consumedEvent(EAST_FRONT.hold.until);}
   /** Puts every living platoon man on guard while the hold lasts. Also brings a save made inside that window by older code into line on its next tick. */
@@ -771,6 +824,7 @@ export class M01Simulation {
   gauss(){let u=0;while(u<=1e-12)u=this.rng.next();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*this.rng.next());}
   /** Uma rajada (ou um tiro) com dispersão em milésimos; os tiros ficam em voo até à hora de chegada (enemyFire.rounds). */
   burst(a,target,kind,{rounds=1,interval=.075,bias=[0,0],cone=[0,0],tracer=false,victim=null}={}){
+    if(a.team==='enemy'&&this.germanSilence())return false;   // T48: nobody on the east bank starts a shot from 06:10 to 06:11
     if(proneGunner(a)&&(!canMG34Fire(a)||this.clock<a.suppressedUntil||this.mission.phase==='OUTRO'||this.mission.complete))return false;
     const aim=target.id?aimPoint(target):   // T38: torso of the posture he is in (a prone sapper is aimed at low)
       {x:target.x,y:(target.y??this.world.heightAt(target.x,target.z))+1,z:target.z};
@@ -1265,10 +1319,18 @@ export function validateM01Snapshot(s){
   }
   if(s.actors.some(a=>a.team==='enemy'&&a.x<690)||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
-    !['GUARD','ADVANCE','SUPPRESS','RETREAT','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
+    !['GUARD','ADVANCE','SUPPRESS','RETREAT','REGROUP','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
     ![a.facing,a.shot,a.cooldown,a.suppressedUntil].every(Number.isFinite)||typeof a.active!=='boolean'||(a.target&&![a.target.x,a.target.z].every(Number.isFinite))))reject('estado dos actores');
   if(s.actors.some(a=>(a.carriedBy!=null&&a.carriedBy!==s.player.id&&!s.actors.some(c=>c.id===a.carriedBy&&c.alive&&c.active))||
     (a.task!=null&&![...YARD_TASKS,'evacuate_bak','stay_with_bak','evacuate_station_wounded','station_wounded','station_aid_post'].includes(a.task))))reject('transporte');
+  // T48: the withdrawal's plan and its REGROUP state exist only for the Germans on the spans after the east demolition; a German carried is a fallen man lifted by a marching one.
+  for(const a of s.actors){
+    const f=a.fallBack;
+    if(f!==undefined&&(a.group!=='grp_de_spans'||!Object.hasOwn(s.consumed,E('east_demolition'))||!f||Object.keys(f).some(k=>!['t0','x0','z0','x1','z1'].includes(k))||
+      ![f.t0,f.x0,f.z0,f.x1,f.z1].every(Number.isFinite)||f.t0<seconds('04:30:00')||f.t0>s.battleClock))reject('retirada alemã '+a.id);
+    if(a.state==='REGROUP'&&(a.group!=='grp_de_spans'||f!==undefined))reject('reagrupamento '+a.id);
+    if(a.group==='grp_de_spans'&&a.carriedBy!=null&&(a.alive||!s.actors.some(c=>c.id===a.carriedBy&&c.group==='grp_de_spans'&&c.fallBack!==undefined)))reject('transporte alemão '+a.id);
+  }
   if(s.actors.some(a=>['station_wounded','station_aid_post'].includes(a.task)&&(a.id!==STATION_PATIENT||!['WOUNDED','DOWN'].includes(a.state)||
     (a.carriedBy!=null&&(a.carriedBy!=='leon_dudek'||a.task==='station_aid_post')))||a.task==='evacuate_station_wounded'&&a.id!=='leon_dudek'))reject('evacuação da estação');
   for(const a of s.actors)if(a.stationDrag!==undefined){
