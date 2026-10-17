@@ -15,8 +15,10 @@
 //   events      `ally-fire` (the burst event; no predecessor has it) and the crew ids inside the `pinned` list of `round-impact`
 //   germans     health / suppressedUntil / state of the Germans a landed ckm round hits or passes within 3 m of (the two MG34 gunners included: they are never CHOSEN as the target, but the
 //               beaten zone does not spare them), and what follows from that (L only)
-// Usage: node tools/verification/m01-t47-ckm-fire-audit.mjs [--write-golden]          (x86 only; the predecessor tree is extracted with `git archive`)
-//   M01_T47_AUDIT_OUT   output folder (default docs/verification/m01-runtime/ckm-fire-live-2026-10-16)
+// Usage: node tools/verification/m01-t47-ckm-fire-audit.mjs [--write | --write-golden]          (x86 only; the predecessor tree is extracted with `git archive`)
+//   Without a flag (check mode) NOTHING is written: the regenerated delta audit must equal the committed PREDECESSOR_DELTA_AUDIT.json byte for byte and the regenerated golden must
+//   equal tests/fixtures/m01-t47-gameplay-baseline.json. Only --write (alias --write-golden) writes PREDECESSOR_DELTA_AUDIT.json and the golden.
+//   M01_T47_AUDIT_OUT   folder of PREDECESSOR_DELTA_AUDIT.json (default docs/verification/m01-runtime/ckm-fire-live-2026-10-16)
 //   M01_T47_BASELINE    an existing checkout of the predecessor instead of the automatic `git archive`
 //   M01_T47_AUDIT_SEEDS comma list of seeds; each one is run twice, without and with the support pilot (default: the two golden routes)
 import assert from 'node:assert/strict';
@@ -33,8 +35,10 @@ import {firstDifference} from '../../tests/helpers/m01-determinism.js';
 import {GameplayDigest,gameplayFrame} from '../../tests/helpers/m01-animation-contract.js';
 import {CkmGhostSimulation} from '../../tests/helpers/m01-ckm-neutral.js';
 
+const write=process.argv.includes('--write')||process.argv.includes('--write-golden');
 const root=resolve(import.meta.dirname,'../..');
-const out=resolve(process.env.M01_T47_AUDIT_OUT??join(root,'docs/verification/m01-runtime/ckm-fire-live-2026-10-16'));mkdirSync(out,{recursive:true});
+const out=resolve(process.env.M01_T47_AUDIT_OUT??join(root,'docs/verification/m01-runtime/ckm-fire-live-2026-10-16'));if(write)mkdirSync(out,{recursive:true});
+const auditFile=join(out,'PREDECESSOR_DELTA_AUDIT.json');
 assert.equal(process.arch,'x64','exact gameplay golden regeneration requires x86 (same rule as D30)');
 const PREDECESSOR='813f163deceb551e0e4504b30958580cb67d3a76';   // PR #80 head; dfae8dd (T47 docs/tests only) has the identical src, missions, assets and research trees
 const hash=v=>createHash('sha256').update(typeof v==='string'||Buffer.isBuffer(v)?v:JSON.stringify(v)).digest('hex');
@@ -164,7 +168,7 @@ for(const {seed,support} of cases){
     repairCompleteSec:{predecessorOwnRoute:own.consumed['evt_m01_repair_complete']??null,predecessorOnLiveControls:ca['evt_m01_repair_complete']??null,live:cl['evt_m01_repair_complete']??null},
     repairPins:{predecessorOwnRoute:ownSummary.repairPins,predecessorOnLiveControls:summaries.predecessor.repairPins,live:liveSummary.repairPins}};
   report.routes.push(row);golden.routes.push({seed,support,...digest.finish()});
-  writeFileSync(join(out,'PREDECESSOR_DELTA_AUDIT.json'),JSON.stringify(report,null,2)+'\n');
+  if(write)writeFileSync(auditFile,JSON.stringify(report,null,2)+'\n');   // check mode never touches the committed evidence
   // The proof obligations.
   assert.equal(row.predecessorVsGhost.result,'PASS','1. predecessor == infrastructure-only candidate, apart from the named deltas, at every tick');
   assert.ok(row.causalOnset,'the live gun changed at least one German on this route');
@@ -175,7 +179,8 @@ for(const {seed,support} of cases){
   assert.ok(end.checkpointsIdentical&&end.consumedEventIdsIdentical&&end.survivorsIdentical&&end.finalBattleClockIdentical,'3. same checkpoints, same consumed events, same survivors and final battle clock as the predecessor on its own route');
   console.log(JSON.stringify({seed,support,ticks:row.ticks,onset:row.causalOnset.clock,bursts:row.live.bursts,hits:row.live.hits,kills:row.live.kills,suppressionEvents:row.live.suppressionEvents}));
 }
-const auditText=readFileSync(join(out,'PREDECESSOR_DELTA_AUDIT.json'));
+const auditText=JSON.stringify(report,null,2)+'\n';
+if(!write)assert.equal(readFileSync(auditFile,'utf8'),auditText,'PREDECESSOR_DELTA_AUDIT.json equals the regenerated delta audit (check mode writes nothing; --write regenerates it)');
 golden.auditSha256=hash(auditText);
-if(process.argv.includes('--write-golden'))writeFileSync(fixture('m01-t47-gameplay-baseline.json'),JSON.stringify(golden,null,2)+'\n');
+if(write)writeFileSync(fixture('m01-t47-gameplay-baseline.json'),JSON.stringify(golden,null,2)+'\n');
 else assert.deepEqual(JSON.parse(readFileSync(fixture('m01-t47-gameplay-baseline.json'))),golden);
