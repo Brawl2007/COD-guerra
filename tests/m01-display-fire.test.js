@@ -5,9 +5,9 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import * as THREE from 'three';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
+import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01View} from '../src/render/m01-view.js';
 import {validRound} from '../src/game/m01-fire.js';
-import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {DISPLAY_CAP,DISPLAY_TRACER_CAP,DISPLAY_FLASH_SEC,DISPLAY_SEED_XOR,READOUT_WINDOW_SEC,createDisplayFire,displaySeed,displayProfiles,
   displayFireView,normalizeDisplayProfile,updateDisplayFire} from '../src/game/m01-display-fire.js';
 import {route,driver,toRepair} from './helpers/m01-route.js';
@@ -26,6 +26,7 @@ const report={task:'M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1',node:process.version,a
 after(()=>{if(process.env.M01_DISPLAY_FIRE_REPORT)writeFileSync(process.env.M01_DISPLAY_FIRE_REPORT,JSON.stringify(report,null,2)+'\n');});
 const SEEDS=process.env.M01_DISPLAY_FIRE_SEEDS?process.env.M01_DISPLAY_FIRE_SEEDS.split(',').map(Number):[19390901,1,2,3,4,5,6,7,8,9,10,11];
 const keysOf=(o,out=[])=>{if(o&&typeof o==='object')for(const [k,v] of Object.entries(o)){out.push(k);keysOf(v,out);}return out;};
+function withoutAuxiliaryMarkers(raw){const save=structuredClone(raw);for(const actor of save.actors??[])if(AUXILIARY_IDS.includes(actor.id)&&actor.displayOnly===true)delete actor.displayOnly;if(save.resumeCheckpoint)save.resumeCheckpoint=withoutAuxiliaryMarkers(save.resumeCheckpoint);return save;}
 const deepFreeze=o=>{if(o&&typeof o==='object'&&!Object.isFrozen(o)){Object.freeze(o);Object.values(o).forEach(deepFreeze);}return o;};
 const norm=p=>normalizeDisplayProfile(p,{events:EVENT_IDS});
 
@@ -248,6 +249,7 @@ test('without profiles nothing is drawn and nothing is saved; the getters leave 
   // T34 (partials): the eight auxiliary actors carry the unrelated save flag displayOnly; it is the only /display/ key allowed and only on them.
   assert.ok(!keysOf(save).some(k=>/display/i.test(k)&&k!=='displayOnly'));assert.ok(!keysOf(s.snapshot(false)).some(k=>/display/i.test(k)&&k!=='displayOnly'));
   assert.deepEqual(s.snapshot(false).actors.filter(a=>Object.hasOwn(a,'displayOnly')).map(a=>a.id),[...AUXILIARY_IDS]);
+  assert.ok(!keysOf(withoutAuxiliaryMarkers(save)).some(k=>/display/i.test(k)));assert.ok(!keysOf(withoutAuxiliaryMarkers(s.snapshot(false))).some(k=>/display/i.test(k)));
   const readonly=s.displayFire;readonly.rounds.push({});readonly.firedAt.x=1;assert.deepEqual(s.displayFire.rounds,[]);assert.deepEqual(s.displayFire.firedAt,{});
 });
 
@@ -301,6 +303,7 @@ test('a restore starts an empty display list re-seeded from the saved state; dis
   assert.ok(a.display.nextId>0&&a.display.rounds.length>0,'rounds were in flight when the save was taken');
   const save=a.snapshot();assert.equal(JSON.stringify(save),JSON.stringify(plain.snapshot()),'the save is byte-identical with and without display fire');
   assert.ok(!keysOf(save).some(k=>/display/i.test(k)&&k!=='displayOnly'));   // T34 auxiliary flag, see above
+  assert.ok(!keysOf(withoutAuxiliaryMarkers(save)).some(k=>/display/i.test(k)));
   const r1=new M01Simulation(1),r2=new M01Simulation(2),r3=new M01Simulation(3);for(const r of [r1,r2,r3])r.restoreSnapshot(json(save));
   const seed=(save.rng^0x5bd1e995^Math.floor(save.clock*20))>>>0;
   for(const r of [r1,r2,r3]){assert.equal(r.display.rng.state,seed);assert.deepEqual(r.displayFire,{rounds:[],firedAt:{},fixed:{},skipped:0,nextId:0});assert.equal(r.rng.state,save.rng);
@@ -355,6 +358,7 @@ test('positive control: the lockstep comparison detects a display round that lea
   assert.match(diverges(leaky(s=>{s.player.health-=1;})),/^state /);
   assert.match(diverges(leaky(s=>{s.enemyFire.nextId++;})),/^state /);
   assert.match(diverges(leaky(s=>{s.emit({type:'enemy-fire',at:s.clock,weapon:'kar98k',origin:{x:0,y:0,z:0}});})),/^events /);   // T05: events now carry the required audio fields
+  assert.match(diverges(leaky(s=>{s.emit({type:'enemy-fire',origin:{x:s.player.x+10,y:1,z:s.player.z},at:s.clock,weapon:'kar98k'});})),/^events /);
 });
 
 test('compareContinuation at 04:47 passes, also with display fire running in the original and none in the restored copy',()=>{

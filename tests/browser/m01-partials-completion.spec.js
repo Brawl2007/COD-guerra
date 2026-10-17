@@ -73,13 +73,25 @@ test('train lamp and smoke at1km resolve in a clear sightline while the original
 });
 
 async function trainPixels(page,input,{name,position,target,occluded=false,smoke=true}){
+  // Presentation assets arrive after the paused-ready predicate (decal atlas upload; the 12 character sources incl. the MG34 crew at the east
+  // gate, which swap their procedural bodies for skinned ones). Each arrival redraws the frozen frame (frame key) and would otherwise land between
+  // the off/lamp/both captures, so wait for them, then require the three captures to be consecutive frames caused only by the lamp/smoke toggles.
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.m01.damageDecals.atlasReady&&d.m01.characters.loaded.length>=12;},null,{timeout:240000});
   await camera(page,position,target);
-  const options={off:{lamp:false,smoke:false},lamp:{lamp:true,smoke:false},...(smoke?{both:{lamp:true,smoke:true}}:{})},captures={};
-  for(const [state,effects]of Object.entries(options)){
-    const frame=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);await page.evaluate(o=>window.m01BridgeFinishDebug.setTrainEffects(o),effects);
-    await page.waitForFunction(f=>window.gameDiagnostics().m01.renderedFrames>f,frame,{timeout:120000});
-    captures[state]=(await page.screenshot({path:`${OUT}/${name}-${state}.png`,style:'#pause,#menu,#fade,#resume-card{visibility:hidden!important}',timeout:120000})).toString('base64');
-    const stateSnapshot=await page.evaluate(()=>window.gameVerificationState().snapshot),expected=new M01Simulation();expected.restoreSnapshot(input);expect(stateSnapshot).toEqual(expected.snapshot());
+  const options={off:{lamp:false,smoke:false},lamp:{lamp:true,smoke:false},...(smoke?{both:{lamp:true,smoke:true}}:{})},frames=()=>page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  let captures;
+  for(let attempt=0;;attempt++){
+    captures={};let consecutive=true,last=await frames();
+    for(const [state,effects]of Object.entries(options)){
+      const before=await frames();consecutive&&=before===last;await page.evaluate(o=>window.m01BridgeFinishDebug.setTrainEffects(o),effects);
+      await page.waitForFunction(f=>window.gameDiagnostics().m01.renderedFrames>f,before,{timeout:120000});
+      captures[state]=(await page.screenshot({path:`${OUT}/${name}-${state}.png`,style:'#pause,#menu,#fade,#resume-card{visibility:hidden!important}',timeout:120000})).toString('base64');
+      last=await frames();consecutive&&=last===before+1;
+      const stateSnapshot=await page.evaluate(()=>window.gameVerificationState().snapshot),expected=new M01Simulation();expected.restoreSnapshot(input);expect(stateSnapshot).toEqual(expected.snapshot());
+    }
+    if(consecutive)break;
+    // An unrelated redraw (late asset) fell between captures: they are not a same-frame A/B. Retake the series (bounded).
+    expect(attempt,'off/lamp/both captures were interleaved with unrelated redraws on every attempt').toBeLessThan(4);
   }
   const pixels=await page.evaluate(async captures=>{
     const decode=async value=>{const b=Uint8Array.from(atob(value),c=>c.charCodeAt(0)),im=await createImageBitmap(new Blob([b],{type:'image/png'})),canvas=new OffscreenCanvas(im.width,im.height),ctx=canvas.getContext('2d');ctx.drawImage(im,0,0);return ctx.getImageData(0,0,im.width,im.height).data;};

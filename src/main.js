@@ -2,6 +2,7 @@ import { detectTouch, TouchState, bindTouchControls } from './core/touch-control
 import './styles.css';
 import './styles-t50-loading.css';
 import { M01LoadingController } from './ui/m01-loading-controller.js';
+import { AUDIO_MIX_KEY, AUDIO_MIX_DEFAULTS, parseAudioMix, concussionScaleFor } from './core/audio/settings.js';
 
 // Render a genuine loading screen before requesting the large 3D game graph.
 const t50Loading=new M01LoadingController(document);
@@ -95,7 +96,14 @@ try{
   $('#complete-menu').addEventListener('click',()=>game.menu());
   $('#quality').value=game.renderer.quality;
   $('#quality').addEventListener('change',e=>{game.renderer.setQuality(e.target.value);game.audio.setQuality(e.target.value);try{localStorage.setItem('cod-guerra:visual-quality',e.target.value);}catch{}});
-  $('#volume').addEventListener('input',e=>game.audio.setVolume(e.target.value));
+  const mixKey=AUDIO_MIX_KEY;let mix={...AUDIO_MIX_DEFAULTS};
+  try{mix=parseAudioMix(localStorage.getItem(mixKey));}catch{}
+  const applyMix=()=>{game.audio.setVolume(mix.master);for(const b of ['sfx','voice','music'])game.audio.setBusVolume(b,mix[b]);game.audio.setConcussionScale(concussionScaleFor(mix.reduceTinnitus));};
+  const saveMix=()=>{try{localStorage.setItem(mixKey,JSON.stringify(mix));}catch{}};
+  $('#volume').value=mix.master;$('#reduce-tinnitus').checked=mix.reduceTinnitus;
+  for(const [id,key] of [['volume','master'],['volume-sfx','sfx'],['volume-voice','voice'],['volume-music','music']]){if(key!=='master')$('#'+id).value=mix[key];$('#'+id).addEventListener('input',e=>{mix=parseAudioMix({...mix,[key]:Number(e.target.value)});applyMix();saveMix();});}
+  $('#reduce-tinnitus').addEventListener('change',e=>{mix.reduceTinnitus=e.target.checked;applyMix();saveMix();});
+  applyMix();
   $('#close-error').addEventListener('click',()=>errorPanel.classList.add('hidden'));
   // A persisted page retains its WebGL/audio objects and resumes via the usual
   // pause controls after Back. Only a real unload destroys the game.

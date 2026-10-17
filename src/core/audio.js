@@ -47,7 +47,7 @@ export class AudioManager {
   constructor({contextFactory=null,maxVoices=AUDIO_LIMITS.maxVoices,quality='high',fetchImpl,assetBaseUrl=''}={}){
     this.contextFactory=contextFactory;this._maxVoices=maxVoices;this.quality=quality;
     this.ctx=null;this.master=null;this.buses={};this.reverb=null;this.compressor=null;this.concussion=null;this.mix=null;
-    this.buffers=new Map();this.volume=.68;this.disposed=false;
+    this.buffers=new Map();this.volume=.68;this.busVolumes={sfx:1,voice:1,music:1};this.concussionScale=1;this.disposed=false;
     // T06a core (src/core/audio/): mix graph, voice pools (SFX 32 / 20 on low, VOICE 3), loader + synth fallback, zone layout.
     this.core=new AudioCore({quality,maxVoices,store:this.buffers,fetchImpl,baseUrl:assetBaseUrl});
     this.voices=this.core.pool.sets.sfx;this.loops=new Map();this.events=new Map();this.history=[];
@@ -76,6 +76,7 @@ export class AudioManager {
     // Mix graph (buses -> limiter -> master -> destination), zone reverb and the SFX group buses now live in src/core/audio/mix.js.
     const mix=this.mix=this.core.attach(this.ctx,{volume:this.volume,track:()=>this.nodesCreated++,untrack:n=>{this.nodesDisposed+=n;}});
     this.master=mix.master;this.compressor=mix.limiter;this.concussion=mix.concussion;this.reverb=mix.reverbIn;
+    for(const [name,v] of Object.entries(this.busVolumes))mix.setBusVolume(name,v);
     for(const name of MIX_BUSES){const bus=this._node(this.ctx.createGain());bus.gain.value=1;bus.connect(mix.sfx);this.buses[name]=bus;}
   }
   setVolume(value){this.volume=clamp(Number(value),0,1);if(this.master)this.master.gain.value=this.volume;}
@@ -223,7 +224,7 @@ export class AudioManager {
   _duck({amount=.5,hold=.4,recover=1.2,concussion=0}={}){
     if(!this.ctx)return;const now=this.ctx.currentTime,active=this.duck&&now<this.duck.releaseAt;
     const depth=active?Math.min(amount,this.duck.amount):amount,releaseAt=Math.max(now+hold,active?this.duck.releaseAt:0),rec=Math.max(recover,active?this.duck.recover:0);
-    const cut=Math.max(concussion,active?this.duck.concussion:0);
+    const cut=Math.max(concussion*this.concussionScale,active?this.duck.concussion:0);
     for(const [name,scale] of [['distant',1],['ambience',1],['vehicles',.5]]){
       const p=this.buses[name]?.gain;if(!p)continue;const target=1-(1-depth)*scale;
       p.cancelScheduledValues?.(now);p.setTargetAtTime?p.setTargetAtTime(target,now,.03):(p.value=target);
@@ -527,7 +528,10 @@ export class AudioManager {
   playVoice(id,opts){return this.core.playVoice(id,opts);}
   playMusic(slot,id,opts){return this.core.playMusic(slot,id,opts);}
   stopMusic(slot,fade){return this.core.stopMusic(slot,fade);}
-  setBusVolume(name,value){return this.mix?this.mix.setBusVolume(name,value):false;}
+  /** Guarda o volume do grupo (sfx/voice/music) mesmo antes do contexto existir; é aplicado ao criar o grafo. */
+  setBusVolume(name,value){const v=Number(value);if(!Object.hasOwn(this.busVolumes,name)||!Number.isFinite(v))return false;this.busVolumes[name]=clamp(v,0,1);return this.mix?this.mix.setBusVolume(name,this.busVolumes[name]):false;}   // false = guardado, ainda não aplicado
+  /** 1 = efeito completo de zumbido/concussão; menos reduz o corte do filtro (apenas apresentação). */
+  setConcussionScale(value){const v=Number(value);if(!Number.isFinite(v))return false;this.concussionScale=clamp(v,0,1);return true;}
   get diagnostics(){
     let bytes=0;for(const b of this.buffers.values())bytes+=(b.length??0)*(b.numberOfChannels??1)*4;
     for(const b of Object.values(this.noiseBuffers))bytes+=(b.length??0)*(b.numberOfChannels??1)*4;

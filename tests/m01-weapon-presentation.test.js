@@ -1,3 +1,4 @@
+import {spatialPredecessorBytes} from './helpers/m01-spatial-byte-guard.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -33,6 +34,7 @@ test('unmodified weapon ballistics, RNG and spatial gameplay sources remain byte
     const bytes=readFileSync(new URL('../'+path,import.meta.url));
     // spatial.js: only the named partials T07/T36 delta is reverted; all other bytes stay locked.
     assert.equal(createHash('sha256').update(path==='src/world/spatial.js'?spatialWithoutPartialsDelta(bytes.toString('utf8')):bytes).digest('hex'),hash,path);
+    if(path==='src/world/spatial.js')assert.equal(createHash('sha256').update(spatialPredecessorBytes(bytes)).digest('hex'),hash,`${path} predecessor byte guard`);
   }
 });
 

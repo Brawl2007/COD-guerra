@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';
+const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});const p=await b.newPage({viewport:{width:1366,height:768}});
+const ready=async()=>{await p.waitForFunction(()=>document.querySelector('#m01-loading')?.dataset.phase!=='loading',null,{timeout:90000});await p.waitForTimeout(500);};
+await p.goto('http://localhost:4173/COD-guerra/');await ready();
+console.log('phase',await p.evaluate(()=>document.querySelector('#m01-loading').dataset.phase));
+await p.screenshot({path:process.argv[2].replace('.png','-closed.png')});await p.click('.audio-mix summary');await p.fill('#volume-music','0.3');await p.check('#reduce-tinnitus');
+console.log(await p.evaluate(()=>localStorage.getItem('cod-guerra:audio-mix')));
+await p.reload();await ready();await p.click('.audio-mix summary');
+console.log(await p.evaluate(()=>[document.querySelector('#volume-music').value,document.querySelector('#reduce-tinnitus').checked]));
+await p.screenshot({path:process.argv[2]});await b.close();

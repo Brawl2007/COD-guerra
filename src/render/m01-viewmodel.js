@@ -146,9 +146,9 @@ export class M01ViewModel {
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
     if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
-    // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) without an actor index.
-    const p=sim.player,w=sim.weapon,t=sim.clock,bak=typeof sim.actor==='function'?sim.actor('jozef_bak'):null,carryPhase=bak?.carry,
-      carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&bak?.carriedBy===p.id;
+    // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) with or without an actor index.
+    const p=sim.player,w=sim.weapon,t=sim.clock,patient=typeof sim.actor==='function'?sim.actor('jozef_bak'):sim.actors?.find(a=>a.id==='jozef_bak'),carryPhase=patient?.carry,
+      carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
     const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
       p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
     if(this.sampleKey===key){this.applyFov(view);return true;}
