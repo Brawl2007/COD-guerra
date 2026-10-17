@@ -51,14 +51,15 @@ if(candidate)assert.equal(hash(execFileSync('git',['show',candidate+':src/game/m
 const E=name=>`evt_m01_${name}`,FRONT=eastFrontPlan();
 const FIXED=['train963_arrives','order_demolish','east_platoon_withdraws','germans_on_east_spans','bak_wounded'];
 function outcome(Simulation,seed,support){
-  const deaths={},times={};let withdrawFlag=null;
+  const deaths={},times={},dialogues={},DLG=['dlg_m01_022','dlg_m01_026','dlg_m01_027','dlg_m01_029','dlg_m01_040','dlg_m01_049'];let withdrawFlag=null;
   const r=route(seed,{support,Simulation,onStep:({sim})=>{
     for(let i=0;i<24;i++){const a=sim.actor(`pl_east_${i}`);if(!a.alive&&deaths[a.id]===undefined)deaths[a.id]=sim.battleClock;}
     // battle clock at which each event was consumed (the real clock legitimately shifts with the repair duration)
     for(const id of Object.keys(sim.consumed))if(times[id]===undefined)times[id]=clockText(sim.battleClock);
+    for(const id of DLG)if(dialogues[id]===undefined&&sim.dialogueConsumed.some(t=>t===id||t.startsWith(id+':')))dialogues[id]={clock:+sim.clock.toFixed(2),battleClock:clockText(sim.battleClock)};
     if(withdrawFlag===null&&sim.consumedEvent(E('east_platoon_withdraws')))withdrawFlag=sim.flags['m01.east_platoon_survivors'];
   }}),s=r.sim;
-  return {battleTimes:Object.fromEntries(Object.entries(times).map(([k,v])=>[k.replace('evt_m01_',''),v])),complete:s.mission.complete,finalBattleClock:clockText(s.battleClock),checkpoints:s.checkpointsReached,
+  return {dialogues,repairCompleteRealClock:+(s.consumed['evt_m01_repair_complete']??NaN).toFixed(2),battleTimes:Object.fromEntries(Object.entries(times).map(([k,v])=>[k.replace('evt_m01_',''),v])),complete:s.mission.complete,finalBattleClock:clockText(s.battleClock),checkpoints:s.checkpointsReached,
     objectives:Object.fromEntries(Object.entries(s.objectives).map(([k,v])=>[k,v.state])),withdrawFlag,finalSurvivors:s.flags['m01.east_platoon_survivors'],
     flags:s.flags,attrition:FRONT.attrition.map(e=>({victim:e.victim,at:clockText(e.at),fellAfterSec:deaths[e.victim]===undefined?null:+(deaths[e.victim]-e.at).toFixed(2)})),
     dlg049:s.dialogueConsumed.includes('dlg_m01_049'),consumedOrder:Object.keys(s.consumed),repairDoneObjective:s.objectives.obj_m01_cover_repair.state,

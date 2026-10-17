@@ -71,10 +71,9 @@ test('24 distinct slots on the road deck: nobody stands on another man, the six 
     assert.ok(a.x>=deck.min.x&&a.x<=deck.max.x-.3&&a.z>=deck.min.z+.3&&a.z<=deck.max.z-.3,`${a.id} is on the deck`);
     assert.equal(sim.world.heightAt(a.x,a.z),a.y,`${a.id} stands on the deck, not above the bank`);
   }
-  // T38: no rank any more (staggered slots), but the six reserves still wait at the back: all in the rear (north) 1.2 m strip of the block,
-  // on average 2 m behind the other eighteen.
-  const mean=v=>v.reduce((n,x)=>n+x,0)/v.length,rear=men.slice(18).map(a=>a.z),front=men.slice(0,18).map(a=>a.z);
-  assert.ok(rear.every(z=>z>=40.6)&&mean(rear)-mean(front)>=2,`the reserves wait at the back: ${mean(rear).toFixed(2)} / ${mean(front).toFixed(2)}`);
+  // T38: no rank any more (staggered slots), but the six reserves are still the back rank: every reserve is strictly further south (larger z)
+  // than every one of the other eighteen.
+  assert.ok(Math.min(...men.slice(18).map(a=>a.z))>Math.max(...men.slice(0,18).map(a=>a.z)),'the reserves are behind every front man');
   assert.ok(men.every(a=>!a.active&&a.alive&&a.state==='GUARD'&&a.group==='grp_east_platoon'),'off stage until the train arrives');
 });
 
@@ -168,7 +167,8 @@ test('the first fall is fired on the very tick that crosses 04:53:00: one riflem
   assert.equal(attritionRounds(s).length,1);
   assert.equal(round.kind,'attrition');assert.equal(round.victim,'pl_east_23');assert.equal(round.weapon,'kar98k');assert.equal(round.tracer,true);
   assert.ok(ATTRITION_SHOOTER.test(round.by),`${round.by} is a rifleman, never the MG34 gunners 0 and 1`);
-  assert.ok(validRound(round,s.clock)&&round.ox>=1053&&round.arriveAt-round.firedAt<.3);
+  // T38: the gate riflemen kneel staggered in depth between x 1050.5 and 1057.4 (all east of the wall used below); the round leaves from the bank.
+  assert.ok(validRound(round,s.clock)&&round.ox>=1050&&round.arriveAt-round.firedAt<.3);
   assert.equal(s.display.firedAt[round.by],round.firedAt,'his muzzle flash is published as display data');
   assert.ok(s.actor('pl_east_23').alive,'the round is still in flight');
   const ids=s.enemyFire.rounds.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);

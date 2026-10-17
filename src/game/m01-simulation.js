@@ -45,6 +45,20 @@ const migrateCKMPlacement=(actors,consumed)=>{
     if(a?.ckm&&a.ckm.phase!=='retreat'&&a.x===x&&a.y===-3&&a.z===z)a.x+=CKM_PLACEMENT_DX;
   });
 };
+// T38: saves made before the staging carry the old waiting places. A man still standing exactly on his old authored place (the only unambiguous
+// signature) and not sent anywhere is put on his new slot when the save loads; anyone who has moved keeps his position.
+const migrateT38Staging=(actors,world)=>{
+  const castIds=definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),seat=(a,x,z,facing)=>{a.x=x;a.z=z;a.y=world.heightAt(x,z);if(facing!==undefined&&a.facing===0)a.facing=facing;};
+  for(const a of actors){
+    const i=castIds.indexOf(a.id),slot=STAGE.squad.slots[a.id]??STAGE.sappers[a.id],idle=!a.target&&!a.task&&!a.carriedBy&&a.alive;
+    if(slot&&idle&&a.role==='ENGINEER'&&a.x===-42-i*.6&&a.z===10&&a.y===-2)seat(a,slot.x,slot.z,slot.facing);
+    else if(slot&&idle&&a.role!=='ENGINEER'&&a.x===-76-i*1.6&&a.z===24+i%3*2&&a.y===-3)seat(a,slot.x,slot.z,slot.facing);
+    const k=a.group==='grp_east_platoon'?Number(a.id.slice(8)):-1;
+    if(k>=0&&a.alive&&!a.carriedBy&&a.x===1033+k%6*2&&a.z===38.2+Math.floor(k/6)*1.2&&a.y===0){const p=holdSlot(k);seat(a,p.x,p.z);}
+    const g=a.group==='grp_de_east'?Number(a.id.slice(8))-2:-1;
+    if(g>=0&&g<12&&a.x===1053+g%3*2&&a.z===9.5+g*2&&a.y===-1){const p=STAGE.gates.positions[g];seat(a,p.x,p.z,p.facing);}
+  }
+};
 const makeCKMCrew=(world,clock=0,withdrawn=false)=>CKM_IDS.map((id,i)=>{
   const [x,z]=CKM_POST[i];
   const point=withdrawn?{x:-170-i*1.6,z:22+i*1.2}:{x,z};
@@ -79,8 +93,11 @@ export function combatStagePlan(def=definition){
   if(squad?.stage?.posture!=='crouch'||def.events.find(e=>e.id===squad.stage.underFireFrom)?.trigger?.type!=='battleClock')fail('grp_squad.stage');
   const section=slots(squad,cast.filter(id=>id!=='jan_wrona'&&id!=='tadeusz_nowicki'&&!sappers.members.includes(id)&&def.cast.find(c=>c.id===id).role!=='CIVILIAN'));
   const crew=slots(sappers,sappers.members);if(Object.keys(crew).length!==sappers.members.length)fail('every sapper needs a slot');
+  const rkm=squad.stage.rkm;
+  if(!rkm||!section[rkm.actor]||!(rkm.riseBeforeSec>=.1&&rkm.riseBeforeSec<=2)||!(rkm.holdAfterSec>=.8&&rkm.holdAfterSec<=3))fail('grp_squad.stage.rkm: a staged gunner, rise 0.1-2 s, hold >= the 0.8 s burst');
   return Object.freeze({gates:Object.freeze({positions:Object.freeze(gates.positions.map(([x,z,facing])=>Object.freeze({x,z,facing}))),
-    riseBeforeSec:st.riseBeforeSec,holdAfterSec:st.holdAfterSec}),squad:Object.freeze({underFireFrom:squad.stage.underFireFrom,slots:section}),sappers:crew});
+    riseBeforeSec:st.riseBeforeSec,holdAfterSec:st.holdAfterSec}),
+    squad:Object.freeze({underFireFrom:squad.stage.underFireFrom,slots:section,rkm:Object.freeze({actor:rkm.actor,riseBeforeSec:rkm.riseBeforeSec,holdAfterSec:rkm.holdAfterSec})}),sappers:crew});
 }
 const STAGE=combatStagePlan();
 const eastPosition=(i,world)=>{
@@ -90,8 +107,8 @@ const eastPosition=(i,world)=>{
   const k=i-14;return k<14?{x:1076+(k%4)*7,y:-1,z:-80+k*5}:{x:1076+(k%4)*6,y:-1,z:52+(k-14)*4};   // dique, atrás das treliças
 };
 const gateShooter=a=>Number(a.id.split('_').at(-1))<14;
-/** T38: a gate rifleman kneels in cover and stands only to shoot (riseBeforeSec before his cooldown runs out, holdAfterSec after his shot). */
-const gateKneels=(a,clock)=>a.group==='grp_de_east'&&a.weapon==='kar98k'&&gateShooter(a)&&a.cooldown>STAGE.gates.riseBeforeSec&&clock-a.firedAt>=STAGE.gates.holdAfterSec;
+/** T38: a gate rifleman of grp_de_east (not an MG34 gunner, not the dike). */
+const gateRifleman=a=>a.group==='grp_de_east'&&a.weapon==='kar98k'&&gateShooter(a);
 const MG34_IDS=['de_east_0','de_east_1'],MG34_TRANSITION_SEC=1.9,MG34_INTERVAL=.075;
 const proneGunner=a=>MG34_IDS.includes(a.id);
 const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
@@ -375,6 +392,8 @@ export class M01Simulation {
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
     this.world.refresh(Object.keys(this.consumed),this.flags);
+    // T38: an event can open or close the rkm gunner's firing window (train 963, east demolition): stage him at once, as he will be drawn.
+    const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);
     for(const a of this.actors)updatePosture(a,this.clock);
     return true;
   }
@@ -537,7 +556,7 @@ export class M01Simulation {
       }
       a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
       if(proneGunner(a)&&a.mg34Prone.phase==='exit')continue;
-      if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil||gateKneels(a,this.clock);   // T38: gate riflemen kneel until they rise to shoot
+      if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil||this.gateKneels(a);   // T38: gate riflemen kneel until they rise to shoot
       if(a.group==='grp_ckm_crew'){
         if(retreat&&['idle','aim','feed'].includes(a.ckm.phase))a.ckm={phase:'abandon',startedAt:this.clock,visible:a.ckm.visible};
         if(!retreat&&this.battleClock>=seconds('04:46:00')){
@@ -577,12 +596,10 @@ export class M01Simulation {
       if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
       if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
-      // T38: a staged section man kneels at his slot behind the sandbags once the post is under fire; leaving it (a target elsewhere) he stands.
-      const slot=STAGE.squad.slots[a.id];
-      if(slot&&this.consumedEvent(STAGE.squad.underFireFrom))
-        a.crouched=a.state!=='WOUNDED'&&!a.carriedBy&&!a.task&&dist(a,slot)<.5&&!(a.target&&dist(a.target,a)>=.8);
-      // Sappers: kneeling at the cable until called to the second cut (T38), crouched while working there; prone is presentation (T07/T38).
-      if(a.role==='ENGINEER'){a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target;if(this.clock<a.suppressedUntil)continue;}
+      this.stageSection(a);
+      // Sappers: kneeling at the cable until called to the second cut (T38), crouched while working there, kneeling again once they reach the
+      // west after the retreat (not under fire there); prone is presentation (T07/T38).
+      if(a.role==='ENGINEER'){a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';if(this.clock<a.suppressedUntil)continue;}
       if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt);
     }
     for(const a of this.actors)if(a.carriedBy){
@@ -630,10 +647,35 @@ export class M01Simulation {
       if(a.group==='grp_de_spans')this.spansFire(a,retreat);else this.eastFire(a,retreat,withdrawal);
     }
     this.attritionTick();this.kowalFire(dt);this.landRounds();this.stageGateRiflemen();
+    const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);   // T38: up or down after his burst
     updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
+  /**
+   * T38: a staged section man kneels at his slot behind the sandbags once the post is under fire; leaving it (a target elsewhere) he stands.
+   * The rkm gunner rises over the sandbags rkm.riseBeforeSec before each burst and stays up rkm.holdAfterSec after it (the burst clip).
+   */
+  stageSection(a){
+    const slot=STAGE.squad.slots[a.id];if(!slot||!this.consumedEvent(STAGE.squad.underFireFrom))return;
+    const rkm=STAGE.squad.rkm,firing=a.id===rkm.actor&&this.consumedEvent(E('train963_arrives'))&&!this.consumedEvent(E('east_demolition'))&&
+      (a.cooldown<=rkm.riseBeforeSec||this.clock-a.firedAt<rkm.holdAfterSec);
+    a.crouched=a.state!=='WOUNDED'&&!a.carriedBy&&!a.task&&dist(a,slot)<.5&&!(a.target&&dist(a.target,a)>=.8)&&!firing;
+  }
   /** T38: after this tick's shots and suppression, each active gate rifleman kneels or stands as he will be drawn (and hit) until the next tick. */
-  stageGateRiflemen(){for(const a of this.enemies)if(a.group==='grp_de_east'&&a.alive&&a.active&&gateShooter(a)&&a.weapon==='kar98k')a.crouched=this.clock<a.suppressedUntil||gateKneels(a,this.clock);}
+  stageGateRiflemen(){for(const a of this.enemies)if(a.alive&&a.active&&gateRifleman(a))a.crouched=this.clock<a.suppressedUntil||this.gateKneels(a);}
+  /**
+   * T38: a gate rifleman kneels in cover and stands only to shoot: riseBeforeSec before his own cooldown runs out and holdAfterSec after his own
+   * shot, and for each fixed-time attrition fall (T23) from its time until holdAfterSec after the man falls (the volley that kills him is fired
+   * standing). Reads only gameplay data (cooldown, firedAt, the plan, the victim's state and his recorded death); writes nothing.
+   */
+  gateKneels(a){
+    if(!gateRifleman(a))return false;
+    const g=STAGE.gates;if(a.cooldown<=g.riseBeforeSec||this.clock-a.firedAt<g.holdAfterSec)return false;
+    if(this.holdingEast())for(const e of EAST_FRONT.attrition){
+      if(this.battleClock<e.at)break;const v=this.actor(e.victim);
+      if(this.battleClock<e.cutoff&&v.active&&(v.alive||this.clock-v.diedAt<g.holdAfterSec))return false;
+    }
+    return true;
+  }
   /** grp_de_east no dique: MG34 sobre o reparo/jogador/secção; atiradores sobretudo sobre a cabeça de ponte leste até às 06:00. */
   eastFire(a,retreat,withdrawal){
     const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=inside(p,this.world.layout.bounds.playable);
@@ -1159,6 +1201,7 @@ export class M01Simulation {
       const at=s.consumed[E('east_demolition')],crew=makeCKMCrew(candidate.world,at??0,at!==undefined);
       crew.forEach(a=>a.ckm.visible=!Object.hasOwn(s.consumed,E('west_demolition')));candidate.actors.push(...crew);
     }else migrateCKMPlacement(candidate.actors,s.consumed);
+    migrateT38Staging(candidate.actors,candidate.world);
     if(!s.actors.some(a=>AUXILIARY_IDS.includes(a.id)))candidate.actors.push(...makeAuxiliaries(entity,candidate.world,candidate.actors,candidate.clock));
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
     // Legacy MG bursts pre-created future rounds. Keep shots already in flight, cancel unissued ones, and

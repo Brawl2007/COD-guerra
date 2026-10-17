@@ -8,8 +8,7 @@ const angle=x=>Math.atan2(Math.sin(x),Math.cos(x));
  * slot (m01-simulation.js: hitbox, eye, aim and shot origin all kneel), so the posture below is simply 'crouch'. Here, presentation only, a
  * man kneeling still on his own slot turns his body by stage.yaw[i] from his gameplay facing, so the kneeling men do not all look the same way.
  * Engineers (sappers) lie prone (T07 generic prone, which also lowers their hitboxes in spatial.js) while suppressed and, from the moment they are
- * sent to the second cut, whenever they wait still on guard without working (gameplay `crouched` is their work posture); Kowal lies prone behind
- * his rkm while he holds his slot at the squad post under fire. Validated at load.
+ * sent to the second cut, whenever they wait still on guard without working (gameplay `crouched` is their work posture). Validated at load.
  */
 export function eastHoldStage(def=definition){
   const fail=m=>{throw new Error(`M01 east hold stage: ${m}`);};
@@ -29,9 +28,7 @@ export function holdStageSlot(a){
 const bodyGoal=a=>{const i=holdStageSlot(a);return i<0?a.facing:angle(a.facing+EAST_HOLD_STAGE.yaw[i]);};
 /** T38: a sapper sent to the second cut who waits still on guard, not working (`crouched`), lies prone. */
 const waitingProne=a=>a.role==='ENGINEER'&&a.target!=null&&!a.crouched&&a.alive&&a.active&&!a.carriedBy&&a.state==='GUARD'&&(a.motion?.speed??0)===0;
-/** T38: Kowal, staged low at his slot (gameplay `crouched`), lies prone behind the rkm wz.28 on its bipod at the end of the sandbags. */
-const rkmProne=a=>a.id==='szymon_kowal'&&a.crouched&&a.alive&&a.active&&!a.carriedBy&&a.pose!=='seated'&&a.state==='GUARD'&&(a.motion?.speed??0)===0;
-const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&(a.role==='ENGINEER'&&(clock<a.suppressedUntil||waitingProne(a))||rkmProne(a))?'prone':a.crouched?'crouch':'stand';
+const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&(clock<a.suppressedUntil||waitingProne(a))?'prone':a.crouched?'crouch':'stand';
 const fixedBody=a=>!a.alive||a.state==='WOUNDED'||a.carriedBy||a.pose==='seated'||
   (a.mg34Prone&&a.mg34Prone.phase!=='standing')||(a.ckm&&a.ckm.phase!=='retreat');
 
