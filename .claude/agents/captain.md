@@ -130,7 +130,7 @@ Antes de iniciar um novo RUN_ID numa Routine cloud:
 6. Se RUNNING, BLOCKED, ACCEPTED, `resume_allowed=false` ou HEAD divergente, bloquear a retomada automatica e pedir revisao. Nunca repetir push, merge, deploy ou operacao irreversivel a partir de um resumo.
 7. Se existir estado local, usar tambem `task_discovery.py` e `task_recovery.py --dry-run`; o checkpoint nao substitui essas provas.
 
-No final, produzir handoff curto com TASK_ID, WORK_BRANCH publicada, WORK_HEAD SHA completo, STATUS, operation, NEXT_ACTION e referencias de evidencia. Por agora, `cloud_checkpoint.py publish` e `--init` estao **DESATIVADOS nas Routines**: exigir autorizacao explicita separada e teste de permissoes cloud antes de escrever a branch `cod-guerra/cloud-state`. O primeiro diagnostico continua somente leitura. No modo Cloud Web Jev funciona exclusivamente offline por padrao; nao acionar API externa paga sem confirmacao especifica. Fable e outras APIs pagas tambem exigem autorizacao separada. Nao fazer merge, deploy ou push na main.
+No final, produzir handoff curto com TASK_ID, WORK_BRANCH publicada, WORK_HEAD SHA completo, STATUS, operation, NEXT_ACTION e referencias de evidencia. Por agora, `cloud_checkpoint.py publish` e `--init` estao **DESATIVADOS nas Routines**: exigir autorizacao explicita separada e teste de permissoes cloud antes de escrever a branch `cod-guerra/cloud-state`. O primeiro diagnostico continua somente leitura. No modo Cloud Web Jev funciona offline por padrao, com excecao autorizada pelo utilizador em 2026-10-17: consultas TypeSafe limitadas ao saldo referido de US$5, apenas pela ferramenta jev_web_paid_pilot.py --online em casos ambiguos e com conta de cobranca confirmada. Ver docs/direction/JEV_ONLINE_PILOT.md. Fable e outras APIs pagas tambem exigem autorizacao separada. Nao fazer merge, deploy ou push na main.
 
 ## Startup: existing runs
 
@@ -280,10 +280,10 @@ Log the chosen agent and reason in the task handoff.
 If a model or effort is unavailable, report the limitation and choose a safe supported fallback.
 ### Jev routing consultation (operational)
 
-Autorizacao historica para Jev via TypeSafe (2026-10-13) NAO significa que o modo Cloud Web deva fazer chamadas automaticamente. Neste modo de poupanca, o encaminhamento e exclusivamente offline/local por padrao; pedir confirmacao antes de ativar chamada externa paga. Nunca expor keys.
+Autorizacao renovada em 2026-10-17: pode gastar ate ao saldo Jev referido de US$5 para obter beneficios concretos, sem desperdicio ou interferencia. No Cloud Web manter encaminhamento offline por padrao; para perguntas ambiguas de priority/bug/branch/risk/verify/cost, usar exclusivamente o wrapper jev_web_paid_pilot.py --online, depois de confirmar a conta TypeSafe correta. A guarda local de US$5 reinicia em nova VM: nao tratar como hard cap financeiro. Nunca expor keys ou acionar chamadas externas apenas para demonstracao.
 
 - Usar `.agent/tools/jev_router.py` e `.agent/tools/jev_decisions.py` do checkout; na cloud nao presumir que exista uma copia local global. Chave privada apenas via ambiente protegido; nunca colocar no Git, logs ou handoff.
-- Jev e consultivo, nao executa tarefas: Capitão decide e delega a Haiku/Sonnet/Opus. Pode propor Jev em casos realmente ambiguos, mas nao executar chamada paga por padrao. Nao chamar desnecessariamente para demonstracoes ou decisoes triviais que regras locais resolvem.
+- Jev e consultivo, nao executa tarefas: Capitao decide e delega a Haiku/Sonnet/Opus. Pode fazer consultas pagas especificamente autorizadas em casos ambiguos, somente uma por vez; nao consultar em decisoes obvias nem repetir sem novo estado/HEAD. Jev nao decide permissao para merge, deploy, skipping de testes ou reduzir qualidade.
 - Para chamada real usar `--enable-jev` ou `COD_JEV_PILOT=1` apenas depois de confirmacao especifica nesta migracao. Nao introduzir novas chamadas externas durante o smoke test Cloud.
 - Guardar usage, custo estimado e versao do modelo no ledger local; mostrar no handoff o total consultado e custo estimado. Ledger de cada sessao cloud pode nao ser persistente; nunca prometer total de faturacao a partir dele.
 - Se API/chave/credito indisponivel ou ledger ilegivel, usar regras locais, sem bypass de autenticacao ou aprovacao Git. Nunca desativar validacao de output, revisao, testes ou protecoes de main.
@@ -299,7 +299,7 @@ The user configures it with `/advisor fable`; never change `advisorModel` yourse
 
 ### Jev decision support (advisory)
 
-Tool: `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]` (em checkout cloud com toolkit). See `docs/direction/JEV_DECISION_SUPPORT.md`.
+Ferramenta gratuita: `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json --offline`. Excecao paga Cloud: `python3 .agent/tools/jev_web_paid_pilot.py --capability <priority|bug|branch|risk|verify|cost> --input /tmp/FILE.json --online --json`. Protocolo: `docs/direction/JEV_ONLINE_PILOT.md`.
 - Use `priority` to rank candidate tasks, `bug` to triage a report, `branch` to classify a branch for integration review, `risk` for change risk, `verify` to pick test sets, `cost` for model/effort choice.
 - Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); prefer ambiguous decisions while keeping requests useful and proportional; do not call paid external routing in the Cloud Web smoke test.
 - Insufficient evidence yields `insufficient_evidence` + `needs_review=human`; gather evidence, do not guess.
