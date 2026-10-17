@@ -740,7 +740,7 @@ export class M01View {
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
     this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player,battleClock);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
-    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
+    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled,battleClock);   // T43: battle clock drives the 0.3 s instance dither fades
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
     // The procedural decal atlas completes in pause; its texture uploads must invalidate the frozen frame.

@@ -11,13 +11,17 @@ import {advanceLodFade,LOD_DEFAULT_FADE_SECONDS} from './m01-lod-policy.js';
 
 // Constant side flags shared by all variants (never mutated): the compiled program is the same for in/out.
 const FLAG_IN={value:0},FLAG_OUT={value:1};
-export const LOD_DITHER_GLSL_DECL=`uniform float uLodFadeProgress;
-uniform float uLodFadeOut;
-float lodBayer4(vec2 p){
+export const LOD_BAYER_GLSL=`float lodBayer4(vec2 p){
   vec2 a=mod(p,2.0),b=mod(floor(p*0.5),2.0);
   float va=2.0*a.x+3.0*a.y-4.0*a.x*a.y,vb=2.0*b.x+3.0*b.y-4.0*b.x*b.y;
   return (4.0*va+vb+0.5)/16.0;
 }
+`;
+export const LOD_DITHER_GLSL_DECL=`uniform float uLodFadeProgress;
+uniform float uLodFadeOut;
+`+LOD_BAYER_GLSL;
+// Single-float role+progress test shared by per-instance (vegetation) and per-piece (bridge) fades; see encodeInstanceFade().
+export const LOD_FADE_VALUE_GLSL_BODY=(v)=>`if(${v}<.999){float lodT=lodBayer4(floor(gl_FragCoord.xy));if(${v}<0.){if(lodT<1.+${v})discard;}else if(lodT>=${v})discard;}
 `;
 export const LOD_DITHER_GLSL_BODY=`{
   float lodT=lodBayer4(floor(gl_FragCoord.xy));

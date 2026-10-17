@@ -63,7 +63,7 @@ export function selectConsumerLod(consumer,distance,preset='medium',previous=nul
   const c=M01_LOD_PROFILES[consumer],p=lodProfile(consumer,preset);
   return selectLodBand(distance,p.bands,previous,{hysteresis:p.hysteresis,upperHysteresis:p.upperHysteresis,upperInclusive:c.upperInclusive,directional:c.directional});
 }
-// Deterministic cross-fade state driven only by the caller's clock (seconds). Not wired into shaders yet.
+// Deterministic cross-fade state driven only by the caller's clock (seconds). Used by the whole-object fades (m01-lod-dither.js).
 // state: {from,to,startedAt,clock,progress,done,value}; `from`/`to` are LOD levels, `value` the current blended level.
 // Retargeting mid-fade restarts from the current blended `value`. Equal clock => same result; clock going backwards (reset/restore) snaps.
 const snapFade=(level,clock)=>Object.freeze({from:level,to:level,startedAt:clock,clock,progress:1,done:true,value:level});
@@ -80,3 +80,19 @@ export const createLodCounters=(presets=['low','medium','high'])=>Object.fromEnt
 export function tallyLod(counters,preset,band){const row=counters[preset]??(counters[preset]=[]);row[band]=(row[band]??0)+1;return counters;}
 export const lodCounterTotals=(counters,preset)=>Array.from(counters[preset]??[],v=>v??0);
 export function resetLodCounters(counters){for(const k of Object.keys(counters))counters[k]=[];return counters;}
+
+// Per-instance / per-piece screen-door fade (T43 slice 5). One float encodes the role and the progress of an object in ONE of the two
+// LOD levels that are drawn together during a fade, so a shader needs a single attribute or uniform:
+//   value >= 0  incoming (or resting = 1): kept where bayer < value      (progress p => value p)
+//   value <  0  outgoing:                 kept where bayer >= 1 + value  (progress p => value -(1-p) = p - 1)
+// The two roles keep complementary pixel sets at the same progress, so every pixel is drawn by exactly one level. Pure functions of
+// the caller's clock; no state, no allocation.
+export const lodFadeProgress=(clock,start,duration=LOD_DEFAULT_FADE_SECONDS)=>duration>0?Math.min(1,Math.max(0,(clock-start)/duration)):1;
+export const encodeInstanceFade=(outgoing,progress)=>outgoing?progress-1:progress;
+export const LOD_FADE_REST=1;
+// JS port of the GLSL 4x4 Bayer threshold (gl_FragCoord integer pixel), in (0,1).
+export function lodBayer4(x,y){
+  const ax=x&1,ay=y&1,bx=(x>>1)&1,by=(y>>1)&1;
+  return (4*(2*ax+3*ay-4*ax*ay)+(2*bx+3*by-4*bx*by)+.5)/16;
+}
+export const instanceFadeKeeps=(value,x,y)=>{const t=lodBayer4(x,y);return value<0?t>=1+value:t<value;};
