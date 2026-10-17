@@ -46,8 +46,8 @@ export const M01_LOD_PROFILES=Object.freeze({
   vegetationTrees:Object.freeze({upperInclusive:false,presets:Object.freeze({low:profile([20,55,120],4,[4,4,0]),medium:profile([35,75,120],4,[4,4,0]),high:profile([50,90,120],4,[4,4,0])})}),
   // Bark/leaf-card LOD: near/mid/far = [near, 120]; same hysteresis as trees.
   vegetationLod:Object.freeze({upperInclusive:false,presets:Object.freeze({low:profile([20,120],4,[4,0]),medium:profile([35,120],4,[4,0]),high:profile([50,120],4,[4,0])})}),
-  // Shrubs: near/mid/culled = [shrubNear, shrubMid]; stateless (no hysteresis).
-  vegetationShrubs:Object.freeze({upperInclusive:false,presets:Object.freeze({low:profile([21,42],0),medium:profile([32.5,65],0),high:profile([45,90],0)})}),
+  // Shrubs: near/mid/culled = [shrubNear, shrubMid]. Hysteresis is new in T43 (default 15% of each threshold) and only applies when the caller passes `previous`.
+  vegetationShrubs:Object.freeze({upperInclusive:false,presets:Object.freeze({low:profile([21,42]),medium:profile([32.5,65]),high:profile([45,90])})}),
   // Bridge parts ignore the preset. Authority owns 400/800; renderer enters 412/824 and leaves 388/776 (directional enter/exit thresholds).
   bridgeParts:Object.freeze({upperInclusive:false,directional:true,presets:Object.freeze({low:profile([400,800],[12,24]),medium:profile([400,800],[12,24]),high:profile([400,800],[12,24])})}),
 });

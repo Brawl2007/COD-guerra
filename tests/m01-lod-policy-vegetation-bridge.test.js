@@ -106,3 +106,14 @@ test('policy extensions are inert for consumers that do not opt in',()=>{
   assert.equal(selectLodBand(121,[35,75,120],2,{hysteresis:4}),2);
   assert.equal(selectLodBand(121,[35,75,120],2,{hysteresis:4,upperHysteresis:[4,4,0]}),3);
 });
+test('shrub hysteresis is new in T43: 15% of each threshold, only when previous is passed',()=>{
+  for(const q of PRESETS)for(const d of sweep)same(chooseShrubLod(d,q,null),oldShrub(d,q),`shrub null ${q} ${d}`);
+  // medium: near 32.5 m, mid 65 m, margins 4.875 / 9.75 m.
+  assert.equal(chooseShrubLod(37.3,'medium','near'),'near');assert.equal(chooseShrubLod(37.4,'medium','near'),'mid');
+  assert.equal(chooseShrubLod(27.7,'medium','mid'),'mid');assert.equal(chooseShrubLod(27.6,'medium','mid'),'near');
+  assert.equal(chooseShrubLod(74.7,'medium','mid'),'mid');assert.equal(chooseShrubLod(74.8,'medium','mid'),'culled');
+  assert.equal(chooseShrubLod(55.3,'medium','culled'),'culled');assert.equal(chooseShrubLod(55.2,'medium','culled'),'mid');
+  assert.equal(chooseShrubLod(5,'medium','culled'),'near');assert.equal(chooseShrubLod(500,'medium','near'),'culled');
+  // A static camera with +-1.5 m jitter never toggles a shrub across a boundary once it has a previous LOD.
+  for(const base of [31,32.5,34,63,65,67]){let prev=null,changes=0;for(let f=0;f<600;f++){const out=chooseShrubLod(base+Math.sin(f*1.7)*1.5,'medium',prev);if(prev!==null&&out!==prev)changes++;prev=out;}assert.equal(changes,0,`shrub base ${base}`);}
+});
