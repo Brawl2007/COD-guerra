@@ -7,7 +7,7 @@ agent-teams). Itens marcados *não confirmado* não vêm dessas páginas.
 
 | Papel | Agente | Modelo / esforço |
 |---|---|---|
-| Planeia, decide, integra | `captain` (sessão principal) | Opus 5.5, high |
+| Planeia, decide, coordena | `captain` (sessão principal) | Sonnet, medium (modo Cloud Web) |
 | Aconselha em 3 momentos | Advisor | Fable 5.1 (`/advisor fable`) |
 | Lê código | `explorer`, `Explore` (substitui o Explore de origem) | Haiku, low, só leitura |
 | Lê documentação e fontes | `researcher` | Haiku, low, só leitura + web |
@@ -48,8 +48,7 @@ sempre pelo `verifier` e pelo `reviewer`, seja quem for que a implementou.
 Escada: começar no agente mais barato cuja função sirva; subir só com evidência de dificuldade.
 `fable-*` só quando o utilizador pede expressamente um agente Fable nessa tarefa (pode gastar créditos de uso).
 
-Opus 5.5 como principal aceita o Fable 5.1 como advisor. Os subagentes herdam o advisor e aplicam a
-mesma regra de pares contra o seu próprio modelo.
+Plano inicial Opus/Fable documentado historicamente. Para Cloud Web usar Sonnet como Capitão e não ativar Fable por rotina. Qualquer chamada de consulta externa deve cumprir a política de custos do modo de execução.
 
 Não adotado: agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`). Cada colega é uma instância completa,
 gasta muito mais do plano, partilha a pasta de trabalho sem worktree automática e não é restaurado
@@ -66,8 +65,7 @@ claude --agent captain
 ```
 
 Dentro da sessão: `/status` (deve mostrar a conta Max, não uma chave de API), `/advisor fable`, `/usage`.
-Opcional em `~/.claude/settings.json`: `"modelSettings": {"claude-opus-5-5": {"effortLevel": "high"}}`
-(o `effortLevel` de topo nas definições do utilizador é ignorado pelo Opus 5.5).
+Para Cloud Web, selecionar Sonnet no modelo da sessão; configurações locais em `~/.claude/` não são transportadas automaticamente. Ver `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`.
 
 ## Agentes em todas as pastas e sessões da máquina
 
