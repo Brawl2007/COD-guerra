@@ -1,6 +1,6 @@
 # M01 — Lacuna de disparo da ckm wz.30
 
-> **Estado em 2026-10-16:** a lacuna foi fechada pela T47 (branch `claude/cool-mccarthy-viomu9`, PR #85; concluída na origem, não integrada). A fase 0 mediu o bloqueio no HEAD da candidata e escolheu o posto S2 (`docs/verification/m01-runtime/ckm-fire-arc-phase0-2026-10-16/`); a implementação e as provas estão em `DEVELOPMENT_STATUS.md` (entrada T47) e `docs/verification/m01-runtime/ckm-fire-live-2026-10-16/`. O texto abaixo é a análise original e fica como histórico.
+> **Estado em 2026-10-16:** a lacuna foi tratada pela T47 (branch `claude/cool-mccarthy-viomu9`, PR #85; implementada e verificada localmente, verificação independente pendente, não integrada). A fase 0 mediu o bloqueio no HEAD da candidata e escolheu o posto S2 (`docs/verification/m01-runtime/ckm-fire-arc-phase0-2026-10-16/`); a implementação e as provas estão em `DEVELOPMENT_STATUS.md` (entrada T47) e `docs/verification/m01-runtime/ckm-fire-live-2026-10-16/`. O texto abaixo é a análise original e fica como histórico.
 
 Análise estática, só leitura. Verificada contra `1b3a973` (branch `claude/gracious-franklin-u8kdin`); `src/`, `tests/`, `missions/` e `assets/` inalterados até ao commit em que este ficheiro entra.
 

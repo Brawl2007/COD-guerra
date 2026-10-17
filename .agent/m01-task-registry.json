@@ -489,7 +489,7 @@
         "PR:#85",
         "claim:claims/m01-t47"
       ],
-      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem revisão independente nem sessão de jogo."
+      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta e emenda 01 (revisão crítica aplicada: MG34 já não imunes à zona batida, emissor da casamata retirado). Verificada localmente (Node completo, build, browser focado); verificação independente pendente, por isso não declarada concluída. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem sessão de jogo; posto S2 e ritmo do reparo esperam decisão do proprietário."
     },
     "T48": {
       "name": "GERMAN RETREAT",
