@@ -255,9 +255,40 @@ test('save validation: every malformed fire record or burst plan is rejected ato
       assert.deepEqual(target.snapshot(),baseline,`${label}: the running simulation is untouched`);
     }
   }
+  // One burst is one arc: makeRound gives its 8 rounds one aim, hence one drop h = ARC_K R^2 and one flight time R / ROUND_SPEED. Each of these is refused for that reason.
+  const arc={
+    'one round with another drop':raw=>{gun(raw).ckm.burstPlan.plan[3].h*=1.01;},
+    'one round with another flight time':raw=>{gun(raw).ckm.burstPlan.plan[5].arriveAt+=.002;},
+    'every round with a drop that does not follow the range':raw=>{for(const r of gun(raw).ckm.burstPlan.plan)r.h*=1.5;},
+    'every round with a flight time that does not match the drop':raw=>{for(const r of gun(raw).ckm.burstPlan.plan)r.arriveAt+=.0005;},
+  };
+  for(const [label,mutate] of Object.entries(arc)){
+    const bad=structuredClone(mid);mutate(bad);
+    assert.throws(()=>validateM01Snapshot(structuredClone(bad)),/Checkpoint M01 inválido: ckm live burst arc/,label);
+    assert.throws(()=>target.restoreSnapshot(structuredClone(bad)),/ckm live burst arc/,label);
+    assert.deepEqual(target.snapshot(),baseline,`${label}: the running simulation is untouched`);
+  }
+  // Rounding noise of the float arithmetic is not a malformed plan: the real saves stay valid through JSON, and so does a flight time off by 1e-11 s.
+  validateM01Snapshot(JSON.parse(JSON.stringify(mid)));validateM01Snapshot(JSON.parse(JSON.stringify(landing)));
+  const wobble=structuredClone(mid);gun(wobble).ckm.burstPlan.plan[2].arriveAt+=1e-11;validateM01Snapshot(wobble);
   // The shapes that must stay valid: the gunner's copied burst phase on the other two men carries no plan, and an unengaged save has no plan at all.
   assert.equal(loader(structuredClone(mid)).ckm.phase,'fire_burst');assert.equal(loader(structuredClone(mid)).ckm.burstPlan,undefined);
   assert.equal(gunnerOf(new M01Simulation().snapshot()).ckm.burstPlan,undefined);
+});
+test('an older save whose crew carries a typed plan of the disabled policy loads as it was, and the gun fires all the same: the inert plan goes at the first tick',{timeout:240000},()=>{
+  const {pre}=firstBurst(),legacy=structuredClone(pre),crew=['ckm_gunner','ckm_loader','ckm_reserve'];
+  for(const id of crew){
+    const a=legacy.actors.find(x=>x.id===id);assert.ok(['idle','aim','feed'].includes(a.ckm.phase));
+    a.ckm.burstPlan={policy:'disabled',startedAt:legacy.clock-.05,rounds:6,interval:.075,emitted:0};   // the shape T36 validated (inert: no round, no flash)
+  }
+  validateM01Snapshot(structuredClone(legacy));
+  assert.deepEqual(restore(legacy).snapshot(),legacy,'the plan round-trips through a load');
+  const run=raw=>{const sim=restore(raw),events=[];for(let i=0;i<600;i++){sim.tick(.05,{});events.push(...sim.drainEvents());}return {sim,events};};
+  const withPlan=run(legacy),control=run(pre),bursts=ev=>ev.filter(e=>e.type==='ally-fire');
+  assert.ok(bursts(control.events).length>=3,'the control save fires '+bursts(control.events).length+' bursts in 30 s');
+  assert.deepEqual(bursts(withPlan.events),bursts(control.events),'the same bursts at the same times as without the inert plan (it must not shut the planning gate)');
+  for(const id of crew){const plan=withPlan.sim.actor(id).ckm.burstPlan;assert.ok(plan===undefined||plan.policy==='live',id);}
+  assert.deepEqual(withPlan.sim.snapshot(),control.sim.snapshot(),'the inert plan leaves no trace after the first tick');
 });
 
 test('saves made before T47 (86 and 89 actors, crew on the casemate post, no fire record) load, move the crew to S2 and fire for real afterwards',()=>{
@@ -328,15 +359,17 @@ test('the whole route still completes: all 12 objectives resolve, the scripted b
   for(let i=18;i<24;i++)assert.equal(sim.actor('pl_east_'+i).alive,false,`T23 attrition: pl_east_${i} still falls`);
   assert.equal(sim.battleClock,seconds('07:05:00'));assert.ok(rec.ticks>20000);
 });
-test('the two MG34 gunners are outside the beaten zone: the rounds of the gun pass within 3 m of them, yet it never hurts or suppresses them',{timeout:240000},()=>{
+test('the two MG34 gunners are never chosen as a target, but nothing shields them: rounds that pass within 3 m suppress them like any German',{timeout:240000},()=>{
   const {rec,sim,log}=routeFixture(),mg=['de_east_0','de_east_1'];
-  assert.deepEqual(log.filter(x=>mg.includes(x.id)),[],'no hit and no suppression of an MG34 gunner was ever recorded');
-  // Negative control: without the exclusion these very rounds would reach them. This is what keeps the cover_repair duel and the prone MG34 bursts as they were.
+  assert.ok(rec.bursts.length>50&&rec.bursts.every(b=>!mg.includes(b.target)),'no burst is aimed at an MG34 gunner');
+  // The beaten zone does cross them: rounds of the plans pass within NEAR_MISS of an MG34 gunner...
   let near=0;
   for(const b of rec.bursts)for(const r of b.plan.plan){
     const end=traceRound(sim.world,r,[]);
     for(const id of mg){const a=sim.actor(id);if(closestApproach(r,end.t,{x:a.x,y:a.y+.9,z:a.z})<=NEAR_MISS)near++;}
   }
   assert.ok(near>0,'rounds of the gun do pass within 3 m of the MG34 gunners ('+near+')');
-  assert.ok(log.some(x=>x.kind==='suppressed'&&!mg.includes(x.id)),'the riflemen of the gates are still suppressed');
+  // ...and the normal path acts on them exactly as on the riflemen of the gates.
+  assert.ok(log.some(x=>x.kind==='suppressed'&&mg.includes(x.id)),'an MG34 gunner is suppressed by a round of the gun');
+  assert.ok(log.some(x=>x.kind==='suppressed'&&!mg.includes(x.id)),'the riflemen of the gates are suppressed as well');
 });

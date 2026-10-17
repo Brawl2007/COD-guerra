@@ -912,9 +912,7 @@
         { "at": "06:12:00", "state": "evacuating_bridgehead" },
         { "at": "06:45:00", "state": "west_blown", "activity": "poeira, silêncio, zumbido; ferroviários olham a ponte" }
       ],
-      "audioEmitters": [
-        { "id": "ae_s1_ckm_casemate", "weapon": "ckm_wz30", "position": [25, -3, 43], "activeFrom": "04:46:00", "activeUntil": "06:45:00", "certainty": "GAMEPLAY_DRAMATIZATION", "displayOnly": true }
-      ],
+      "audioEmitters": [],
       "certainty": "RECONSTRUCTED"
     },
     {

@@ -6,7 +6,7 @@ import { Wz29 } from './wz29.js';
 import { M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction, rayBox } from '../world/spatial.js';
-import { makeRound, traceRound, closestApproach, roundPoint, validRound, NEAR_MISS, ATTRITION_VICTIM } from './m01-fire.js';
+import { makeRound, traceRound, closestApproach, roundPoint, validRound, NEAR_MISS, ATTRITION_VICTIM, ARC_K, ROUND_SPEED } from './m01-fire.js';
 import { createDisplayFire, displaySeed, displayProfiles, updateDisplayFire, displayFireView, computeBattleReadout } from './m01-display-fire.js';
 import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, recordSuppression, recordHit, recordDeath,
   recordDamage, validatePresentation, presentationDiagnostics,updateActorDetails } from './m01-animation-presentation.js';
@@ -531,10 +531,13 @@ export class M01Simulation {
    * cooldown; a spent belt is changed through the feed phase. No new burst starts from 30 s before the east demolition, and none after it.
    */
   updateCKMGunner(g,retreat){
+    // Only a live plan is kept. A typed plan of the old disabled policy (TASK D, older saves; it is inert, never emitted a round) would keep the planning gate
+    // below shut for ever, so it goes at the first tick. The save itself still round-trips with it (validateM01Snapshot accepts it).
+    if(g?.ckm?.burstPlan&&g.ckm.burstPlan.policy!=='live')delete g.ckm.burstPlan;
     if(!g||retreat||this.battleClock<CKM_FIRE_FROM||!g.alive||!g.active||!['idle','aim','feed','fire_burst'].includes(g.ckm.phase))return;
     const f=g.ckmFire??=newCKMFire(this.rng.state),clock=this.clock,p=g.ckm,live=p.burstPlan?.policy==='live';
     // Every phase change keeps the plan of rounds still in flight; the plan is removed when its last round has landed (landCKMRounds).
-    const to=(phase,startedAt)=>{g.ckm={phase,startedAt,visible:p.visible,...(g.ckm.burstPlan?{burstPlan:g.ckm.burstPlan}:{})};};
+    const to=(phase,startedAt)=>{g.ckm={phase,startedAt,visible:p.visible,...(g.ckm.burstPlan?.policy==='live'?{burstPlan:g.ckm.burstPlan}:{})};};
     if(p.phase==='fire_burst'){
       if(!live)return;   // a typed plan of the disabled policy: the generic reversion to aim handles it
       this.emitCKMRounds(g);
@@ -559,9 +562,10 @@ export class M01Simulation {
   ckmAim(t){return {x:t.x,y:t.y+(t.crouched?.75:1.1)+CKM_AIM_UP,z:t.z};}
   /**
    * The German to answer: the rifleman who fired most recently (his flash is visible) among those with a clear shot; deterministic, no random draw.
-   * The two MG34 gunners are neither answered nor touched (ckmImpact): they lie behind the gate masonry (a hitbox under half a metre) and their duel with
-   * the sappers is the player's (cover_repair: keeping the gate MG down shortens the repair, tests/m01-cover-threat.test.js; the prone MG34 bursts of
-   * tests/browser/m01-mg34-prone.spec.js). A burst the gun cut would also change every beat that hangs on those two men.
+   * The two MG34 gunners are never CHOSEN: they lie behind the gate masonry (a hitbox under half a metre) and their duel with the sappers is the player's
+   * (cover_repair, tests/m01-cover-threat.test.js: with the gun answering them, the route that ignores the MG saw it suppressed 21% of the time, over the 20% that
+   * beat allows). That is all the exclusion does. A round of the beaten zone that passes within NEAR_MISS of one of them suppresses or hits him like any other
+   * German (ckmImpact), so the gun can still interrupt an MG34 burst when its zone happens to cross him.
    */
   ckmTarget(){
     const o=ckmMuzzle(),probe={space:'metres',x:o.x,y:o.y,z:o.z,eyeHeight:0};
@@ -603,20 +607,21 @@ export class M01Simulation {
     if(b.landed>=b.rounds)delete g.ckm.burstPlan;
   }
   /**
-   * What one landed round does to the Germans, through the existing paths: a hit damages (part multiplier, recordDamage); a pass within NEAR_MISS suppresses.
-   * The two MG34 gunners are outside the beaten zone (see ckmTarget): their fire pattern, and with it every beat built on it, stays what it was.
+   * What one landed round does to EVERY living German (the MG34 gunners included; they are only never chosen as a target, see ckmTarget), through the existing
+   * paths: a hit damages (part multiplier, recordDamage); a pass within NEAR_MISS suppresses. An MG34 gunner hit or suppressed goes through updateMG34Posture,
+   * exactly as when the player's fire reaches him.
    */
   ckmImpact(r){
-    const targets=this.enemies.filter(a=>a.alive&&a.active&&a.weapon!=='mg34'),hit=traceRound(this.world,r,targets),source={x:r.ox,z:r.oz};
+    const targets=this.enemies.filter(a=>a.alive&&a.active),hit=traceRound(this.world,r,targets),source={x:r.ox,z:r.oz};
     if(hit.actor){
       const a=hit.actor,health=a.health,wasAlive=a.alive;
       a.health=Math.max(0,a.health-CKM_DAMAGE*hit.multiplier);a.alive=a.health>0;a.state=a.alive?'HIT_REACTION':'DOWN';
-      recordDamage(a,health,wasAlive,this.clock,source);
+      recordDamage(a,health,wasAlive,this.clock,source);this.updateMG34Posture(a);
     }
     for(const a of targets){
       if(!a.alive||(Math.abs(a.x-hit.point.x)>80&&Math.abs(a.x-r.ax)>80)||closestApproach(r,hit.t,{x:a.x,y:a.y+.9,z:a.z})>NEAR_MISS)continue;
       const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+CKM_SUPPRESS_SEC);
-      recordSuppression(a,previousUntil,this.clock);
+      recordSuppression(a,previousUntil,this.clock);this.updateMG34Posture(a);
     }
   }
   /** Read-only diagnostics of the gun (never saved): phase, belt, cooldown and the burst in progress. */
@@ -647,6 +652,7 @@ export class M01Simulation {
         // A typed plan of the old disabled policy (TASK D; older saves) cannot emit rounds/flash and returns to ordinary aim before activity.
         // Only a live plan of the gunner (T47), and the two men copying his burst, keep fire_burst.
         if(a.ckm.phase==='fire_burst'&&!(a.id==='ckm_gunner'?a.ckm.burstPlan?.policy==='live':bursting))a.ckm={phase:'aim',startedAt:this.clock,visible:a.ckm.visible};
+        if(a.ckm.burstPlan&&a.ckm.burstPlan.policy!=='live')delete a.ckm.burstPlan;   // an inert typed plan of the old disabled policy never outlives the first tick
         if(!a.alive||!a.active)delete a.ckm.burstPlan;
       }
       a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
@@ -1313,10 +1319,16 @@ function validateCKMLive(a,s,reject){
   if(b.emitted!==emitted||b.landed!==landed||landed>=b.rounds)reject('ckm live burst progress');
   // fire_burst lasts exactly the clip; afterwards the plan only waits for its last round to land (and a spent belt can already be changing).
   if((t.phase==='fire_burst')!==(s.clock-b.startedAt<CKM_BURST_SEC)||(t.phase==='fire_burst'&&t.startedAt!==b.startedAt))reject('ckm live burst phase');
+  let flight0=null,h0=null;
   b.plan.forEach((r,k)=>{
     if(!r||typeof r!=='object'||Object.keys(r).length!==15||r.id!==`ckm_${f.bursts-1}_${k}`||r.by!=='ckm_gunner'||r.weapon!=='ckm_wz30'||r.kind!=='ally'||
       r.ox!==o.x||r.oy!==o.y||r.oz!==o.z||![r.ax,r.ay,r.az,r.h,r.arriveAt].every(Number.isFinite)||!finite(r.ax,690,1500)||!finite(r.az,-300,300)||!finite(r.ay,-50,100)||
       !finite(r.h,0,40)||r.firedAt!==b.startedAt+k*b.interval||!(r.arriveAt>=r.firedAt)||r.arriveAt-s.clock>10||r.tracer!==false||r.victim!==null)reject('ckm live burst round');
+    // makeRound gives the 8 rounds of a burst one aim and so one nominal range R: the same flight time R / ROUND_SPEED and the same drop h = ARC_K R². The float
+    // tolerances cover the rounding of firedAt + R / ROUND_SPEED (clock values up to ~1.1e3 s, ulp ~2e-13) and of the reconstruction of R from it.
+    const flight=r.arriveAt-r.firedAt,R=flight*ROUND_SPEED;
+    if(k===0){flight0=flight;h0=r.h;}
+    if(Math.abs(flight-flight0)>1e-9||r.h!==h0||Math.abs(r.h-ARC_K*R*R)>1e-9||R<1-1e-9)reject('ckm live burst arc');
   });
 }
 
