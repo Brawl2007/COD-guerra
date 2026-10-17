@@ -4,9 +4,9 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 ## Modelo de execução
 
-- **Uma única sessão principal Cloud Web por vez**, modelo Sonnet, como Capitão. O operador mantém a Routine antiga PAUSADA. Não criar outra sessão coordenadora. Sessões Cloud não são uma VM permanente, e uma sessão não transfere automaticamente subagentes entre VMs.
+- **Uma única sessão principal Cloud Web por vez**, modelo Opus, como Capitão. O operador mantém a Routine antiga PAUSADA. Não criar outra sessão coordenadora. Sessões Cloud não são uma VM permanente, e uma sessão não transfere automaticamente subagentes entre VMs.
 - Os agentes do projeto em `.claude/agents/` são carregados pelo Claude Code Web. `captain.md` governa o papel principal quando explicitamente selecionado; numa sessão Web comum, o `CLAUDE.md` e o prompt de arranque abaixo instruem o modelo principal a cumprir esse papel. **Nunca invocar `captain` como um subagente**.
-- Fluxo inicial seguro: Sonnet Captain -> no máximo um `implementer` Sonnet -> `verifier` Sonnet -> `reviewer` Sonnet, quando a verificação for suficiente. Haiku `explorer`/`researcher` apenas para leituras realmente necessárias; `reviewer-critical` Opus somente mediante evidência de risco elevado. Não ativar `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
+- Fluxo inicial seguro: Opus Captain -> no máximo um `implementer` Sonnet -> `verifier` Sonnet -> `reviewer` Sonnet, quando a verificação for suficiente. Haiku `explorer`/`researcher` apenas para leituras realmente necessárias; `reviewer-critical` Opus somente mediante evidência de risco elevado. Não ativar `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
 - `maxTurns` estabelece limite por invocação e devolve trabalho parcial; **não é teto de tokens nem impede um Capitão de mandar retomar**. O protocolo exige inspeção e uma decisão justificada antes de qualquer retomada. A UI continua sendo o controlo imediato da quota.
 
 ## Estado e segurança do projeto
@@ -29,7 +29,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 1. Manter Routine antiga pausada e verificar que todas as sessões Opus antigas terminaram.
 2. Rever este PR draft. Antes do merge, **arrancar sessão Web manual num checkout desta branch** (não assumir que um clone de `main` já contém os novos ficheiros).
-3. Selecionar Sonnet. Executar `python3 .agent/tools/cloud_web_preflight.py` e guardar a saída sanitizada; não enviar segredos.
+3. Selecionar Opus. Executar `python3 .agent/tools/cloud_web_preflight.py` e guardar a saída sanitizada; não enviar segredos.
 4. Ler `CLAUDE.md` e este documento. Verificar que a ferramenta Agent enxerga `implementer`, `verifier` e `explorer`. Testar só um Haiku de leitura curta (sem trabalho de gameplay), com handoff compacto.
 5. Executar o diagnóstico de segurança e os testes Python da configuração, se existentes no checkout. Não iniciar nova T da M01 durante a migração.
 6. Medir no UI utilização antes/depois e observar custo da execução; não comparar totais cumulativos exibidos como se fossem tokens cobrados.
@@ -38,7 +38,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 ### Prompt curto para a sessão manual
 
-> És a única sessão de Capitão Sonnet desta execução Cloud Web para COD-guerra. A Routine anterior continua pausada. Antes de qualquer implementação, consulta `CLAUDE.md`, `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`, issue #72, Git e `python3 .agent/tools/cloud_web_preflight.py`. Nesta primeira execução, faz SOMENTE o smoke test de agentes e configurações em modo leitura: confirma que os agentes reutilizados existem, que Haiku devolve uma resposta curta, que os hooks são seguros e que RTK está ou não disponível. Não trabalhes nas Txx. Não abras outras sessões de Capitão, não uses Agent Teams, não chames Opus/Fable/Jev. Não faças polling de tarefas. Não alteres main/#80/#84, nem deploy. Termina com relatório curto, SHA, testes executados, compatibilidades e limitações.
+> És a única sessão de Capitão Opus desta execução Cloud Web para COD-guerra. A Routine anterior continua pausada. Antes de qualquer implementação, consulta `CLAUDE.md`, `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`, issue #72, Git e `python3 .agent/tools/cloud_web_preflight.py`. Nesta primeira execução, faz SOMENTE o smoke test de agentes e configurações em modo leitura: confirma que os agentes reutilizados existem, que Haiku devolve uma resposta curta, que os hooks são seguros e que RTK está ou não disponível. Não trabalhes nas Txx. Não abras outras sessões de Capitão, não uses Agent Teams, não chames outros subagentes Opus/Fable/Jev. Não faças polling de tarefas. Não alteres main/#80/#84, nem deploy. Termina com relatório curto, SHA, testes executados, compatibilidades e limitações.
 
 ## Interrupção e handoff
 
