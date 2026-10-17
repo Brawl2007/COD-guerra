@@ -48,6 +48,13 @@ export class M01Characters {
     this.anim=new Map();
   }
   async load(quality='low'){
+    // Optional private FP variants never hold the mandatory bridge/menu readiness.
+    // Revision is already part of the paused render invalidation key.
+    for(const [key,file]of [['fp:0','m01_fp_arms_v2.glb'],['fp:patient','m01_fp_patient_v2.glb']]){
+      this.assets.load(key,BASE+'fp-arms-v2/'+file).then(g=>{
+        if(!this.disposed){this.sources.set(key,g);this.revision++;}
+      }).catch(()=>{/* Existing optional first-person fallback remains playable. */});
+    }
     await Promise.allSettled([
       this.assets.load('m01-clips',BASE+'m01_soldier_animations.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
