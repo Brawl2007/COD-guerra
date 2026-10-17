@@ -104,7 +104,8 @@ export function resolveTorsoOrientation(actor,pose){
     Boolean(actor?.mg34Prone&&actor.mg34Prone.phase!=='standing')||
     Boolean(actor?.ckm&&actor.ckm.phase!=='retreat');
   if(fixed){
-    const yaw=!actor?.alive&&Number.isFinite(actor?.deathYaw)?actor.deathYaw:facing;
+    // T48: a casualty being carried takes the carrier's heading (facing), not the frozen yaw it fell with.
+    const yaw=!actor?.alive&&pose?.name!=='carried'&&Number.isFinite(actor?.deathYaw)?actor.deathYaw:facing;
     return {facing,bodyYaw:yaw,yawDelta:0,torsoTwist:0,rootYaw:yaw};
   }
   const bodyYaw=Number.isFinite(actor?.bodyYaw)?actor.bodyYaw:facing;

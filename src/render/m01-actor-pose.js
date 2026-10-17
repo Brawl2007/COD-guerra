@@ -4,10 +4,12 @@ import {resolveDirectionalImpact,resolveLocomotionGait,resolveStrideSample,resol
 const GAIT_STRIDE=Object.freeze({crouch_walk:.16,walk:.22,run:.26,sprint:.31});
 // Procedural presentation in metres. This never writes to an actor or advances gameplay.
 export function actorPoseName(actor,time=0){
+  // The stretcher and the grounded station drag keep their own lying pose; every other carried body is 'carried'.
+  // T48: carriedBy outranks every other posture, including a casualty (!alive) lifted by the withdrawing Germans.
+  const grounded=actor.task==='yard_patient'||actor.task==='station_wounded';
+  if(actor.carriedBy&&!grounded)return 'carried';
   if(!actor.alive)return 'fallen';
-  if(actor.task==='yard_patient')return 'wounded';
-  if(actor.task==='station_wounded')return 'wounded';
-  if(actor.carriedBy)return 'carried';
+  if(grounded)return 'wounded';
   if(actor.state==='WOUNDED')return 'wounded';
   if(actor.posture==='prone'&&!actor.mg34Prone)return 'prone';
   if(actor.pose==='seated')return 'seated';

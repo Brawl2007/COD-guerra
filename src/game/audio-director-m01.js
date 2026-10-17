@@ -27,6 +27,9 @@ const DISTANT_FROM_M = 500, AUDIBLE_RANGE_M = 2500;
 const DENSITY = Object.freeze({ ckm_wz30: .5, mg34: .6 }), DEFAULT_DENSITY = .4;
 const WHIZZ_BAND_M = 12;
 const EMPTY = Object.freeze({});
+/** T48: the MG34 emitters are the German east-bank guns; they fall silent with every other German shot from 06:10 to 06:11 (sim.germanSilence). */
+const isGermanEmitter = e => e.weapon === 'mg34';
+const germanSilent = sim => typeof sim.germanSilence === 'function' && sim.germanSilence() === true;
 
 // ---------------------------------------------------------------- presentation derivation (design section 3, option T05a)
 /** `m01-blast` carries no kind: derive it from the sim's damage id (game.js blastScale rule) and the event's aerial flag. */
@@ -153,8 +156,8 @@ export class M01AudioDirector {
       this.emitterSlot = slot; this.stats.slots++;
       const clock = sim.clock;
       // Real sector states drive the gate: the casemate ckm sounds 04:46..06:12 and falls silent at s1 `evacuating_bridgehead`.
-      const list = this.audio.activeEmitters(sim.battleClock, this.stateOf, this.active, null);
-      for (let i = 0; i < list.length; i++) this._schedule(list[i], slot, clock, sim.player);
+      const list = this.audio.activeEmitters(sim.battleClock, this.stateOf, this.active, null), silent = germanSilent(sim);
+      for (let i = 0; i < list.length; i++) if (!(silent && isGermanEmitter(list[i]))) this._schedule(list[i], slot, clock, sim.player);
     }
     this._dispatch(sim);
   }
@@ -179,7 +182,7 @@ export class M01AudioDirector {
       p.used = false;
       const e = p.emitter; p.emitter = null;
       // The gate is re-checked at the moment of the shot: a burst scheduled just before the evacuation does not sound after it.
-      if (!isEmitterAudible(e, sim.battleClock, this.stateOf(e.sector), undefined)) { this.stats.suppressed++; continue; }
+      if (!isEmitterAudible(e, sim.battleClock, this.stateOf(e.sector), undefined) || (isGermanEmitter(e) && germanSilent(sim))) { this.stats.suppressed++; continue; }
       this._play(e, p);
     }
   }
