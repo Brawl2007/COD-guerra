@@ -105,14 +105,25 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
   ["    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n",
    "    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);\n"]
  ];
+ // T47 (live ckm fire, M01-CKM-FIRE-LIVE): the simulation now publishes a real fire_burst phase and the renderer plays its clip instead of showing it as aim.
+ // Same method one level up: revert exactly those two strings, each found once, back to the T36 text, then the T36 reversion below applies unchanged.
+ const T47_DELTA=[
+  ["      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';\n      const name=`ckm_wz30_${role}_${phase}`;\n",
+   "      const phase=actor.ckm.phase==='fire_burst'?'aim':actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';\n      const name=`ckm_wz30_${role}_${phase}`;\n"],
+  ["    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n",
+   "    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n"]
+ ];
  let current=section(file,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')")+section(file,'  updateCKM(','  get diagnostics');
+ for(const [now,original]of T47_DELTA){assert.equal(current.split(now).length,2,'approved T47 delta occurs exactly once');current=current.replace(now,()=>original);}
  for(const [now,original]of T36_DELTA){assert.equal(current.split(now).length,2,'approved T36 delta occurs exactly once');current=current.replace(now,()=>original);}
  assert.equal(current,section(old,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')")+section(old,'  updateCKM(','  get diagnostics'));
  // PR #78 T07/T36: the MG34 loader adapter hunk that precedes the prone sample is byte-pinned (the rest of sample() is locked above, since the unified resolver rewrote its header).
  {const sampler=section(file,'  sample(','  create('),start=sampler.indexOf('    if(actor.mg34Loader)'),end=sampler.indexOf('    const prone=mg34ProneSample',start);assert.ok(start>=0&&end>start);
   assert.equal(createHash('sha256').update(sampler.slice(start,end)).digest('hex'),'5710ad4e1dd2385c3df6e78cf0440067a56cdf9d19a411701841196ad71c5f5f','exact approved T07/T36 loader adapter');}
+ const t47CKM="    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');";
  const currentCKM="    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');";
  const priorCKM="    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);";
- const ckmSection=section(file,'  updateCKM(','  get diagnostics');assert.equal(ckmSection.split(currentCKM).length,2,'exact T36 disabled-burst/aim/feed adapter');
- assert.equal(ckmSection.replace(currentCKM,priorCKM),section(old,'  updateCKM(','  get diagnostics'));
+ const ckmSection=section(file,'  updateCKM(','  get diagnostics');assert.equal(ckmSection.split(t47CKM).length,2,'exact T47 live fire_burst/aim/feed adapter');
+ const t36Section=ckmSection.replace(t47CKM,currentCKM);assert.equal(t36Section.split(currentCKM).length,2,'exact T36 disabled-burst/aim/feed adapter once T47 is reverted');
+ assert.equal(t36Section.replace(currentCKM,priorCKM),section(old,'  updateCKM(','  get diagnostics'));
 });

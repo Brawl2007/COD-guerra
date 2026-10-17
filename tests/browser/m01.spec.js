@@ -612,7 +612,7 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
   expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);
   expect(c.ckm.clip).toBe('ckm_wz30_gun_abandon');expect(c.ckm.time).toBeCloseTo(gunner.clipTime,5);
-  expect(c.ckm.position).toEqual([24.17,-3,43]);expect(c.ckm.lod).toBe(2);
+  expect(c.ckm.position).toEqual([7.17,-3,26]);expect(c.ckm.lod).toBe(2);   // T47: the gun stands at post S2 (it was at the casemate (24.17,-3,43) until then)
   await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
   await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
   await page.reload();await open(page);await start(page,'#continue');
