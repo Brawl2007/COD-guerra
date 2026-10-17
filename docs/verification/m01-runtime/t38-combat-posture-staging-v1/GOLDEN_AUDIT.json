@@ -3,8 +3,8 @@
   "predecessor": "ef35c7ab24d75d87ca6435891f1977fd14d7a52c",
   "predecessorSourceSha256": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
   "sourceSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
-  "candidate": null,
-  "gameplayInputsSha256": "59d8aca3f4542acda818d216f174cc7738c3408192cf30fc57045723a4fbff5e",
+  "candidate": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+  "gameplayInputsSha256": "741888a156af732c149bf8118a9894232c3513398c54644a4bf398b8610491dc",
   "node": "v22.22.0",
   "arch": "x64",
   "invariants": "equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time",
@@ -193,15 +193,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 840.7,
+            "clock": 837.75,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 946.05,
+            "clock": 943.1,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 450.2,
+        "repairCompleteRealClock": 445.75,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -215,7 +215,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:14:04",
+          "repair_complete": "05:13:24",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -277,12 +277,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -325,15 +325,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 100,
-        "rng": 2297694736,
-        "issuedRounds": 1996,
-        "realClock": 1112.85,
+        "playerHealth": 92,
+        "rng": 1192639761,
+        "issuedRounds": 2003,
+        "realClock": 1109.9,
         "events": {
-          "enemy-fire": 1977,
-          "round-impact": 901,
-          "npc-shot": 127,
-          "player-hit": 0
+          "enemy-fire": 1986,
+          "round-impact": 926,
+          "npc-shot": 126,
+          "player-hit": 1
         }
       }
     },
@@ -521,15 +521,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 822.8,
+            "clock": 822.85,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 928.15,
+            "clock": 928.2,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 423.35,
+        "repairCompleteRealClock": 423.4,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -605,12 +605,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -653,15 +653,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 1193661606,
-        "issuedRounds": 1976,
-        "realClock": 1094.95,
+        "playerHealth": 100,
+        "rng": 1244400151,
+        "issuedRounds": 1991,
+        "realClock": 1095,
         "events": {
-          "enemy-fire": 1958,
-          "round-impact": 911,
+          "enemy-fire": 1971,
+          "round-impact": 924,
           "npc-shot": 123,
-          "player-hit": 1
+          "player-hit": 0
         }
       }
     },
@@ -849,15 +849,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 833.6,
+            "clock": 836,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 938.95,
+            "clock": 941.35,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 439.55,
+        "repairCompleteRealClock": 443.1,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -871,7 +871,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:12:28",
+          "repair_complete": "05:13:00",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -933,12 +933,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 2.7
           },
           {
             "victim": "pl_east_19",
@@ -981,15 +981,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 84,
-        "rng": 3129257387,
-        "issuedRounds": 2012,
-        "realClock": 1105.75,
+        "playerHealth": 76,
+        "rng": 267614395,
+        "issuedRounds": 1996,
+        "realClock": 1108.15,
         "events": {
-          "enemy-fire": 1990,
-          "round-impact": 929,
-          "npc-shot": 125,
-          "player-hit": 2
+          "enemy-fire": 1968,
+          "round-impact": 885,
+          "npc-shot": 126,
+          "player-hit": 3
         }
       }
     },
@@ -1177,15 +1177,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 819.5,
+            "clock": 818.4,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 924.85,
+            "clock": 923.75,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 418.35,
+        "repairCompleteRealClock": 416.7,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -1199,7 +1199,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:09:18",
+          "repair_complete": "05:09:03",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -1309,15 +1309,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 1595161394,
-        "issuedRounds": 1971,
-        "realClock": 1091.65,
+        "playerHealth": 100,
+        "rng": 3082916080,
+        "issuedRounds": 1918,
+        "realClock": 1090.55,
         "events": {
-          "enemy-fire": 1946,
-          "round-impact": 895,
+          "enemy-fire": 1893,
+          "round-impact": 868,
           "npc-shot": 122,
-          "player-hit": 1
+          "player-hit": 0
         }
       }
     },
@@ -1505,15 +1505,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 838.6,
+            "clock": 838.75,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 943.95,
+            "clock": 944.1,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 447,
+        "repairCompleteRealClock": 447.25,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -1527,7 +1527,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:13:35",
+          "repair_complete": "05:13:38",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -1589,12 +1589,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 2.7
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -1637,15 +1637,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 937009982,
-        "issuedRounds": 2034,
-        "realClock": 1110.75,
+        "playerHealth": 100,
+        "rng": 1749006726,
+        "issuedRounds": 2047,
+        "realClock": 1110.9,
         "events": {
-          "enemy-fire": 2005,
-          "round-impact": 929,
+          "enemy-fire": 2018,
+          "round-impact": 942,
           "npc-shot": 126,
-          "player-hit": 1
+          "player-hit": 0
         }
       }
     },
@@ -1833,15 +1833,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 827.35,
+            "clock": 824.8,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 932.7,
+            "clock": 930.15,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 430.15,
+        "repairCompleteRealClock": 426.3,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -1855,7 +1855,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:11:04",
+          "repair_complete": "05:10:29",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -1917,12 +1917,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.6
+            "fellAfterSec": 2.7
           },
           {
             "victim": "pl_east_19",
@@ -1965,15 +1965,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 84,
-        "rng": 580615547,
-        "issuedRounds": 1949,
-        "realClock": 1099.5,
+        "playerHealth": 60,
+        "rng": 1096905517,
+        "issuedRounds": 1939,
+        "realClock": 1096.95,
         "events": {
-          "enemy-fire": 1936,
-          "round-impact": 898,
-          "npc-shot": 124,
-          "player-hit": 2
+          "enemy-fire": 1922,
+          "round-impact": 892,
+          "npc-shot": 123,
+          "player-hit": 5
         }
       }
     },
@@ -2161,15 +2161,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 832.9,
+            "clock": 824.35,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 938.25,
+            "clock": 929.7,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 438.5,
+        "repairCompleteRealClock": 425.65,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -2183,7 +2183,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:12:19",
+          "repair_complete": "05:10:23",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -2245,12 +2245,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -2293,15 +2293,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 100,
-        "rng": 2011897686,
-        "issuedRounds": 1982,
-        "realClock": 1105.05,
+        "playerHealth": 84,
+        "rng": 3349620544,
+        "issuedRounds": 1963,
+        "realClock": 1096.5,
         "events": {
-          "enemy-fire": 1964,
-          "round-impact": 914,
-          "npc-shot": 125,
-          "player-hit": 0
+          "enemy-fire": 1950,
+          "round-impact": 902,
+          "npc-shot": 123,
+          "player-hit": 2
         }
       }
     },
@@ -2489,15 +2489,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 825.45,
+            "clock": 825.4,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 930.8,
+            "clock": 930.75,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 427.3,
+        "repairCompleteRealClock": 427.25,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -2573,12 +2573,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.6
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -2621,15 +2621,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 100,
-        "rng": 3080456920,
-        "issuedRounds": 1955,
-        "realClock": 1097.6,
+        "playerHealth": 92,
+        "rng": 1931627103,
+        "issuedRounds": 1930,
+        "realClock": 1097.55,
         "events": {
-          "enemy-fire": 1936,
-          "round-impact": 912,
+          "enemy-fire": 1911,
+          "round-impact": 887,
           "npc-shot": 123,
-          "player-hit": 0
+          "player-hit": 1
         }
       }
     },
@@ -2817,15 +2817,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 819.8,
+            "clock": 819.75,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 925.15,
+            "clock": 925.1,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 418.8,
+        "repairCompleteRealClock": 418.75,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -2839,7 +2839,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:09:22",
+          "repair_complete": "05:09:21",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -2901,12 +2901,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 2.7
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -2949,15 +2949,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 84,
-        "rng": 263737545,
-        "issuedRounds": 1932,
-        "realClock": 1091.95,
+        "playerHealth": 92,
+        "rng": 4151697316,
+        "issuedRounds": 1940,
+        "realClock": 1091.9,
         "events": {
-          "enemy-fire": 1901,
-          "round-impact": 861,
+          "enemy-fire": 1910,
+          "round-impact": 879,
           "npc-shot": 122,
-          "player-hit": 2
+          "player-hit": 1
         }
       }
     },
@@ -3145,15 +3145,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 833.3,
+            "clock": 833.2,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 938.65,
+            "clock": 938.55,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 439.05,
+        "repairCompleteRealClock": 438.95,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -3167,7 +3167,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:12:24",
+          "repair_complete": "05:12:23",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -3229,12 +3229,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 2.7
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -3278,12 +3278,12 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 92,
-        "rng": 4091523150,
-        "issuedRounds": 2008,
-        "realClock": 1105.45,
+        "rng": 1859124800,
+        "issuedRounds": 2027,
+        "realClock": 1105.35,
         "events": {
-          "enemy-fire": 1995,
-          "round-impact": 904,
+          "enemy-fire": 2011,
+          "round-impact": 920,
           "npc-shot": 125,
           "player-hit": 1
         }
@@ -3473,15 +3473,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 821.9,
+            "clock": 821.8,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 927.25,
+            "clock": 927.15,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 421.95,
+        "repairCompleteRealClock": 421.85,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -3495,7 +3495,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:09:50",
+          "repair_complete": "05:09:49",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -3557,12 +3557,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 2.7
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -3606,12 +3606,12 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 92,
-        "rng": 917472399,
-        "issuedRounds": 1954,
-        "realClock": 1094.05,
+        "rng": 3904722964,
+        "issuedRounds": 1959,
+        "realClock": 1093.95,
         "events": {
-          "enemy-fire": 1935,
-          "round-impact": 889,
+          "enemy-fire": 1938,
+          "round-impact": 895,
           "npc-shot": 123,
           "player-hit": 1
         }
@@ -3801,15 +3801,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 819.95,
+            "clock": 820,
             "battleClock": "06:17:39"
           },
           "dlg_m01_040": {
-            "clock": 925.3,
+            "clock": 925.35,
             "battleClock": "06:32:35"
           }
         },
-        "repairCompleteRealClock": 419.05,
+        "repairCompleteRealClock": 419.15,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -3823,7 +3823,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:09:24",
+          "repair_complete": "05:09:25",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -3885,12 +3885,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.6
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -3933,15 +3933,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 68,
-        "rng": 3013193950,
-        "issuedRounds": 1938,
-        "realClock": 1092.1,
+        "playerHealth": 100,
+        "rng": 545683256,
+        "issuedRounds": 1930,
+        "realClock": 1092.15,
         "events": {
-          "enemy-fire": 1909,
-          "round-impact": 881,
+          "enemy-fire": 1907,
+          "round-impact": 884,
           "npc-shot": 122,
-          "player-hit": 4
+          "player-hit": 0
         }
       }
     },
@@ -4122,15 +4122,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 796.35,
+            "clock": 796.8,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 899.5,
+            "clock": 899.95,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 380.35,
+        "repairCompleteRealClock": 381.05,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -4144,7 +4144,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:03:36",
+          "repair_complete": "05:03:42",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -4202,17 +4202,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.6
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -4256,12 +4256,12 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 92,
-        "rng": 2048550139,
-        "issuedRounds": 1255,
-        "realClock": 1067.15,
+        "rng": 2497590160,
+        "issuedRounds": 1237,
+        "realClock": 1067.6,
         "events": {
-          "enemy-fire": 1249,
-          "round-impact": 277,
+          "enemy-fire": 1231,
+          "round-impact": 268,
           "npc-shot": 116,
           "player-hit": 1
         }
@@ -4444,15 +4444,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 801.5,
+            "clock": 795.25,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 904.65,
+            "clock": 898.4,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 388.05,
+        "repairCompleteRealClock": 378.7,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -4466,7 +4466,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:04:45",
+          "repair_complete": "05:03:21",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -4524,17 +4524,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 1.2
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 2.7
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -4578,13 +4578,13 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 100,
-        "rng": 3217025272,
-        "issuedRounds": 1265,
-        "realClock": 1072.3,
+        "rng": 2695108548,
+        "issuedRounds": 1255,
+        "realClock": 1066.05,
         "events": {
-          "enemy-fire": 1257,
-          "round-impact": 269,
-          "npc-shot": 117,
+          "enemy-fire": 1247,
+          "round-impact": 285,
+          "npc-shot": 116,
           "player-hit": 0
         }
       }
@@ -4766,15 +4766,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 788.05,
+            "clock": 804.1,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 891.2,
+            "clock": 907.25,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 367.85,
+        "repairCompleteRealClock": 391.95,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -4788,7 +4788,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:01:43",
+          "repair_complete": "05:05:20",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -4846,17 +4846,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 1.2
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 2.7
           },
           {
             "victim": "pl_east_19",
@@ -4899,15 +4899,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 831266144,
-        "issuedRounds": 1241,
-        "realClock": 1058.85,
+        "playerHealth": 100,
+        "rng": 868027850,
+        "issuedRounds": 1272,
+        "realClock": 1074.9,
         "events": {
-          "enemy-fire": 1235,
-          "round-impact": 281,
-          "npc-shot": 114,
-          "player-hit": 1
+          "enemy-fire": 1266,
+          "round-impact": 292,
+          "npc-shot": 118,
+          "player-hit": 0
         }
       }
     },
@@ -5096,15 +5096,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 809,
+            "clock": 795.1,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 912.15,
+            "clock": 898.25,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 399.35,
+        "repairCompleteRealClock": 378.45,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -5118,7 +5118,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:06:27",
+          "repair_complete": "05:03:18",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -5176,17 +5176,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 1.2
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 2.7
           },
           {
             "victim": "pl_east_19",
@@ -5229,15 +5229,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 2183711849,
-        "issuedRounds": 1289,
-        "realClock": 1079.8,
+        "playerHealth": 100,
+        "rng": 2913641748,
+        "issuedRounds": 1235,
+        "realClock": 1065.9,
         "events": {
-          "enemy-fire": 1281,
-          "round-impact": 268,
-          "npc-shot": 119,
-          "player-hit": 1
+          "enemy-fire": 1225,
+          "round-impact": 266,
+          "npc-shot": 116,
+          "player-hit": 0
         }
       }
     },
@@ -5418,15 +5418,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 799.95,
+            "clock": 810.1,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 903.1,
+            "clock": 913.25,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 385.75,
+        "repairCompleteRealClock": 401,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -5440,7 +5440,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:04:24",
+          "repair_complete": "05:06:41",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -5503,12 +5503,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.6
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -5551,15 +5551,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 100,
-        "rng": 3305328810,
-        "issuedRounds": 1242,
-        "realClock": 1070.75,
+        "playerHealth": 92,
+        "rng": 3541902166,
+        "issuedRounds": 1267,
+        "realClock": 1080.9,
         "events": {
-          "enemy-fire": 1236,
-          "round-impact": 263,
-          "npc-shot": 117,
-          "player-hit": 0
+          "enemy-fire": 1261,
+          "round-impact": 272,
+          "npc-shot": 119,
+          "player-hit": 1
         }
       }
     },
@@ -5740,15 +5740,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 800.4,
+            "clock": 801.15,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 903.55,
+            "clock": 904.3,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 386.45,
+        "repairCompleteRealClock": 387.55,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -5762,7 +5762,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:04:30",
+          "repair_complete": "05:04:40",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -5825,12 +5825,12 @@
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -5874,12 +5874,12 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 100,
-        "rng": 3795049258,
-        "issuedRounds": 1264,
-        "realClock": 1071.2,
+        "rng": 3045403227,
+        "issuedRounds": 1267,
+        "realClock": 1071.95,
         "events": {
-          "enemy-fire": 1258,
-          "round-impact": 272,
+          "enemy-fire": 1261,
+          "round-impact": 276,
           "npc-shot": 117,
           "player-hit": 0
         }
@@ -6057,20 +6057,24 @@
             "clock": 261.15,
             "battleClock": "04:45:43"
           },
+          "dlg_m01_027": {
+            "clock": 268.6,
+            "battleClock": "04:46:50"
+          },
           "dlg_m01_029": {
             "clock": 280.75,
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 806.15,
+            "clock": 792.15,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 909.3,
+            "clock": 895.3,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 395.05,
+        "repairCompleteRealClock": 374,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -6084,7 +6088,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:05:48",
+          "repair_complete": "05:02:38",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -6142,17 +6146,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 1.2
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.6
+            "fellAfterSec": 3.15
           },
           {
             "victim": "pl_east_19",
@@ -6196,13 +6200,13 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 100,
-        "rng": 98044419,
-        "issuedRounds": 1267,
-        "realClock": 1076.95,
+        "rng": 3944594246,
+        "issuedRounds": 1247,
+        "realClock": 1062.95,
         "events": {
-          "enemy-fire": 1261,
-          "round-impact": 270,
-          "npc-shot": 119,
+          "enemy-fire": 1238,
+          "round-impact": 273,
+          "npc-shot": 115,
           "player-hit": 0
         }
       }
@@ -6375,32 +6379,32 @@
       },
       "after": {
         "dialogues": {
+          "dlg_m01_026": {
+            "clock": 261.85,
+            "battleClock": "04:45:49"
+          },
           "dlg_m01_022": {
-            "clock": 262.7,
-            "battleClock": "04:45:57"
+            "clock": 262.65,
+            "battleClock": "04:45:56"
           },
           "dlg_m01_027": {
             "clock": 267.95,
             "battleClock": "04:46:44"
-          },
-          "dlg_m01_026": {
-            "clock": 274,
-            "battleClock": "04:47:38"
           },
           "dlg_m01_029": {
             "clock": 280.75,
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 802.55,
+            "clock": 808.45,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 905.7,
+            "clock": 911.6,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 389.65,
+        "repairCompleteRealClock": 398.5,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -6414,7 +6418,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:04:59",
+          "repair_complete": "05:06:19",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -6526,13 +6530,13 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 100,
-        "rng": 3585496686,
-        "issuedRounds": 1246,
-        "realClock": 1073.35,
+        "rng": 3293056639,
+        "issuedRounds": 1281,
+        "realClock": 1079.25,
         "events": {
-          "enemy-fire": 1240,
-          "round-impact": 266,
-          "npc-shot": 117,
+          "enemy-fire": 1275,
+          "round-impact": 274,
+          "npc-shot": 118,
           "player-hit": 0
         }
       }
@@ -6722,15 +6726,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 806.3,
+            "clock": 797.4,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 909.45,
+            "clock": 900.55,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 395.25,
+        "repairCompleteRealClock": 381.9,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -6744,7 +6748,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:05:50",
+          "repair_complete": "05:03:50",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -6802,7 +6806,7 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 1.2
+            "fellAfterSec": 3
           },
           {
             "victim": "pl_east_21",
@@ -6855,15 +6859,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 84,
-        "rng": 2254780838,
-        "issuedRounds": 1256,
-        "realClock": 1077.1,
+        "playerHealth": 100,
+        "rng": 2102231295,
+        "issuedRounds": 1252,
+        "realClock": 1068.2,
         "events": {
-          "enemy-fire": 1250,
-          "round-impact": 277,
-          "npc-shot": 119,
-          "player-hit": 2
+          "enemy-fire": 1246,
+          "round-impact": 258,
+          "npc-shot": 116,
+          "player-hit": 0
         }
       }
     },
@@ -7039,20 +7043,24 @@
             "clock": 267.3,
             "battleClock": "04:46:38"
           },
+          "dlg_m01_027": {
+            "clock": 270.8,
+            "battleClock": "04:47:10"
+          },
           "dlg_m01_029": {
             "clock": 280.75,
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 796.8,
+            "clock": 797.95,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 899.95,
+            "clock": 901.1,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 381.05,
+        "repairCompleteRealClock": 382.75,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -7066,7 +7074,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:03:42",
+          "repair_complete": "05:03:57",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -7124,17 +7132,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -7177,15 +7185,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 1751851712,
-        "issuedRounds": 1232,
-        "realClock": 1067.6,
+        "playerHealth": 100,
+        "rng": 3644118327,
+        "issuedRounds": 1246,
+        "realClock": 1068.75,
         "events": {
-          "enemy-fire": 1226,
-          "round-impact": 271,
-          "npc-shot": 116,
-          "player-hit": 1
+          "enemy-fire": 1240,
+          "round-impact": 272,
+          "npc-shot": 115,
+          "player-hit": 0
         }
       }
     },
@@ -7362,27 +7370,23 @@
             "battleClock": "04:45:26"
           },
           "dlg_m01_022": {
-            "clock": 263.4,
+            "clock": 263.45,
             "battleClock": "04:46:03"
-          },
-          "dlg_m01_027": {
-            "clock": 271.3,
-            "battleClock": "04:47:14"
           },
           "dlg_m01_029": {
             "clock": 280.75,
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 795,
+            "clock": 795.35,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 898.15,
+            "clock": 898.5,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 378.35,
+        "repairCompleteRealClock": 378.85,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -7396,7 +7400,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:03:18",
+          "repair_complete": "05:03:22",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -7454,17 +7458,17 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 3.45
+            "fellAfterSec": 3.9
           },
           {
             "victim": "pl_east_21",
             "at": "05:16:00",
-            "fellAfterSec": 3
+            "fellAfterSec": 3.45
           },
           {
             "victim": "pl_east_20",
             "at": "05:27:00",
-            "fellAfterSec": 3.15
+            "fellAfterSec": 3.6
           },
           {
             "victim": "pl_east_19",
@@ -7507,15 +7511,15 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 100,
-        "rng": 336128940,
-        "issuedRounds": 1242,
-        "realClock": 1065.8,
+        "playerHealth": 92,
+        "rng": 911289054,
+        "issuedRounds": 1239,
+        "realClock": 1066.15,
         "events": {
-          "enemy-fire": 1236,
-          "round-impact": 255,
+          "enemy-fire": 1233,
+          "round-impact": 272,
           "npc-shot": 116,
-          "player-hit": 0
+          "player-hit": 1
         }
       }
     },
@@ -7696,15 +7700,15 @@
             "battleClock": "04:48:39"
           },
           "dlg_m01_049": {
-            "clock": 797.35,
+            "clock": 805.05,
             "battleClock": "06:17:51"
           },
           "dlg_m01_040": {
-            "clock": 900.5,
+            "clock": 908.2,
             "battleClock": "06:32:28"
           }
         },
-        "repairCompleteRealClock": 381.85,
+        "repairCompleteRealClock": 393.4,
         "battleTimes": {
           "intro_card": "04:30:44",
           "prelude_start": "04:30:44",
@@ -7718,7 +7722,7 @@
           "second_air_pass": "04:40:00",
           "train963_arrives": "04:45:00",
           "panzerzug_arrives": "04:52:00",
-          "repair_complete": "05:03:49",
+          "repair_complete": "05:05:33",
           "order_demolish": "05:30:00",
           "bombing_0530": "05:30:00",
           "runner_pressure_report": "05:40:00",
@@ -7776,7 +7780,7 @@
           {
             "victim": "pl_east_22",
             "at": "05:04:00",
-            "fellAfterSec": 3.9
+            "fellAfterSec": 1.2
           },
           {
             "victim": "pl_east_21",
@@ -7830,13 +7834,13 @@
         ],
         "repairDoneObjective": "done",
         "playerHealth": 100,
-        "rng": 979833549,
-        "issuedRounds": 1252,
-        "realClock": 1068.15,
+        "rng": 3907130768,
+        "issuedRounds": 1264,
+        "realClock": 1075.85,
         "events": {
-          "enemy-fire": 1246,
-          "round-impact": 269,
-          "npc-shot": 116,
+          "enemy-fire": 1258,
+          "round-impact": 267,
+          "npc-shot": 118,
           "player-hit": 0
         }
       }
