@@ -400,15 +400,18 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+// T47: 46 Germans stood at CP-D on the route before the ckm fired; the gun now fells one of them (de_east_3, tools/verification/m01-t47-ckm-fire-audit.mjs, live.kills in
+// docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json). The restore must keep exactly the casualties of the route.
+const CPD_ENEMIES_ALIVE=45;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
-  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(46);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
+  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
   expect(d.m01.parts.road_span_06.visible).toBe(false);expect(d.m01.parts.rail_support_06.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-cp-d.png')});await page.evaluate(()=>document.exitPointerLock());
   await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
-  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(46);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
+  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
   await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);await start(page,'#continue');
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.parts.road_span_06.visible).toBe(false);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
