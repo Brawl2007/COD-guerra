@@ -15,9 +15,18 @@
 // x86 only (D11/D30: aarch64 floats differ). With --candidate <sha> the commit that carries this simulation is recorded after checking that its
 // src/game/m01-simulation.js hashes to the pinned source; when the fixture already exists the regenerated digests must be byte-identical to it.
 //
-//   git worktree add --detach /tmp/t38-pred ef35c7ab24d75d87ca6435891f1977fd14d7a52c && ln -s "$PWD/node_modules" /tmp/t38-pred/node_modules
-//   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --write-golden [--candidate <sha>]
-//   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs            # verify only
+// PREDECESSOR is the head T38 is audited against. It was ef35c7a (T38 slice 1 on the partials candidate, whose simulation the partials golden pinned as
+// 00964436) until the T48 German retreat joined this branch (merge f02e06b); it is now 5a169ba (candidate #80 + #89 + T48), whose simulation c06c1b1b is
+// the one the partials golden pins since its amendment 02. The report of the earlier audit is kept as GOLDEN_AUDIT_PRE_T48.json.
+//
+// --amendment NN (with --write-golden to write, without it to verify) is a golden amendment, in the pattern of the T48 tool: the golden it replaces is
+// kept byte for byte, read from git at AMENDMENTS[NN].before and never overwritten, as tests/fixtures/m01-t38-gameplay-baseline-before-amendment-NN.json,
+// and GOLDEN_AMENDMENT_NN.json is derived from the two fixtures (header keys before/after, per route the ticks, the leading identical 512-tick blocks,
+// the first block that differs and the tick of the east demolition). Nothing in a fixture or a record is typed by hand.
+//
+//   git worktree add --detach /tmp/t38-pred 5a169babb638d1d09608f9a2bb84d1528f1aab4b && ln -s "$PWD/node_modules" /tmp/t38-pred/node_modules
+//   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --write-golden [--candidate <sha>] [--amendment 02]
+//   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs [--amendment 02]    # verify only
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -27,7 +36,7 @@ import {M01Simulation,seconds,clockText,eastFrontPlan} from '../../src/game/m01-
 import {route} from '../../tests/helpers/m01-route.js';
 import {GameplayDigest,gameplayFrame} from '../../tests/helpers/m01-animation-contract.js';
 
-const PREDECESSOR='ef35c7ab24d75d87ca6435891f1977fd14d7a52c';
+const PREDECESSOR='5a169babb638d1d09608f9a2bb84d1528f1aab4b';   // candidate #80 + #89 + T48; before the merge f02e06b: ef35c7ab24d75d87ca6435891f1977fd14d7a52c
 const FIXTURE='tests/fixtures/m01-t38-gameplay-baseline.json',PARTIALS='tests/fixtures/m01-partials-gameplay-baseline.json',HISTORICAL='tests/fixtures/m01-anim-gameplay-baseline.json';
 const out=process.env.M01_T38_AUDIT_OUT??'docs/verification/m01-runtime/t38-combat-posture-staging-v1';mkdirSync(out,{recursive:true});
 const hash=v=>createHash('sha256').update(v).digest('hex');
@@ -98,6 +107,18 @@ function mg34Report(tally){
     byGunner:Object.fromEntries(Object.entries(tally.byGunner).sort(([a],[b])=>a<b?-1:1).map(([id,g])=>[id,squadAreaOthers(Object.fromEntries(Object.entries(g).filter(([k])=>k!=='refused')))])),
     fireOnSquadCalls:tally.fireOnSquadCalls};
 }
+// Golden amendments of tests/fixtures/m01-t38-gameplay-baseline.json, generated with --amendment NN (see the header). Amendment 01 (the twelve gate places
+// moved, 25ed12f) predates this table: its record GOLDEN_AMENDMENT_01.json was assembled by hand-run analysis and the golden it replaced is kept as
+// tests/fixtures/m01-t38-gameplay-baseline-before-amendment-01.json. `before` is the revision whose committed golden an amendment replaces.
+const AMENDMENTS={
+  '02':{before:'65145c905209d47da6931aad11c0beeebe597291',
+    reason:'The T48 German retreat (BX-09; candidate #80 + #89 + T48 = 5a169ba) was merged into this branch (f02e06b). The simulation of the combined tree has a new source hash, '+
+      'and from the east demolition on the Germans of the spans fall back with their fallen and regroup by 06:12, so the golden of the T38 simulation (amendment 01, the head 65145c9) no longer describes the branch. '+
+      'Combined T38 positions and postures + T48 retreat: the T38 places, postures and mission data are unchanged (missions/m01-tczew/mission.json is not among the changed gameplay inputs). '+
+      'The audit predecessor moves from ef35c7a to 5a169ba, whose simulation the partials golden pins since its amendment 02. The save migration of the gate riflemen no longer moves a fallen man '+
+      '(it runs only when a save is restored: no per-tick effect). The causal proof that the retreat only changes the Germans of the spans from the east demolition tick on is '+
+      'docs/verification/m01-runtime/german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json.'},
+};
 const SEEDS=(process.env.M01_T38_AUDIT_SEEDS??'19390901,1,2,3,4,5,6,7,8,9,10,11').split(',').map(Number);
 const report={task:'M01-COMBAT-POSTURE-STAGING-V1',predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,sourceSha256,candidate,
   gameplayInputsSha256,node:process.version,arch:process.arch,invariants:'equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time',
@@ -124,16 +145,58 @@ console.log(JSON.stringify({mg34Totals:report.mg34Totals}));
 const golden={task:'M01-COMBAT-POSTURE-STAGING-V1',generationStage:'gameplay re-baseline by design after the invariant audit against the exact predecessor',
   predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,...(candidate?{candidate}:{}),sourceSha256,gameplayInputs:INPUTS,gameplayInputsSha256,
   partialsGoldenSha256:hash(readFileSync(PARTIALS)),historicalGoldenSha256:hash(readFileSync(HISTORICAL)),routes:[]};
+const demolitionTicks={};
 for(const {seed,support} of partials.routes){
-  const digest=new GameplayDigest();
-  route(seed,{support,onStep:({sim,events})=>digest.add(gameplayFrame(sim,events))});
-  golden.routes.push({seed,support,...digest.finish()});
+  const digest=new GameplayDigest();let tick=0,demolition=null;
+  route(seed,{support,onStep:({sim,events})=>{tick++;digest.add(gameplayFrame(sim,events));if(demolition===null&&sim.consumedEvent(E('east_demolition')))demolition=tick;}});
+  golden.routes.push({seed,support,...digest.finish()});demolitionTicks[`${seed}/${support}`]=demolition;
 }
 writeFileSync(out+'/GOLDEN_AUDIT.json',JSON.stringify(report,null,2)+'\n');
+const write=process.argv.includes('--write-golden');
 if(existsSync(FIXTURE)){
   const committed=JSON.parse(readFileSync(FIXTURE,'utf8'));
   if(committed.gameplayInputsSha256===gameplayInputsSha256)assert.deepEqual(golden.routes,committed.routes,'same gameplay inputs, same per-tick digests (reproducible)');
 }
-if(process.argv.includes('--write-golden'))writeFileSync(FIXTURE,JSON.stringify(golden,null,2)+'\n');
+const amendment=arg('--amendment'),spec=amendment?AMENDMENTS[amendment]:null;
+if(amendment)assert.ok(spec,`unknown amendment ${amendment}`);
+// The golden an amendment replaces: kept byte for byte (from git at spec.before), never overwritten, never taken from the working tree.
+const keptPath=amendment?`tests/fixtures/m01-t38-gameplay-baseline-before-amendment-${amendment}.json`:null,
+  oldBytes=amendment?execFileSync('git',['show',`${spec.before}:${FIXTURE}`],{maxBuffer:1<<26}):null;
+if(amendment){
+  if(!existsSync(keptPath)){assert.ok(write,`${keptPath} does not exist yet: run with --write-golden`);writeFileSync(keptPath,oldBytes);}
+  assert.deepEqual(readFileSync(keptPath),oldBytes,'the replaced golden is kept byte for byte');
+}
+if(write)writeFileSync(FIXTURE,JSON.stringify(golden,null,2)+'\n');
 else{const committed=JSON.parse(readFileSync(FIXTURE,'utf8'));const {candidate:_,...a}=committed,{candidate:__,...b}=golden;assert.deepEqual(a,b);}
+if(amendment){
+  const record=amendmentRecord(amendment,spec,keptPath,oldBytes,readFileSync(FIXTURE),demolitionTicks),file=`${out}/GOLDEN_AMENDMENT_${amendment}.json`;
+  if(write)writeFileSync(file,JSON.stringify(record,null,2)+'\n');
+  else assert.deepEqual(JSON.parse(readFileSync(file,'utf8')),record,`${file} equals the regenerated amendment record`);
+  console.log(JSON.stringify({amendment:record.amendment,beforeFixtureSha256:record.beforeFixtureSha256,afterFixtureSha256:record.afterFixtureSha256,routes:record.routes}));
+}
 console.log(JSON.stringify({fixture:FIXTURE,sourceSha256,routes:golden.routes.map(r=>({seed:r.seed,support:r.support,ticks:r.ticks,blocks:r.blocks.length}))}));
+
+/** GOLDEN_AMENDMENT_NN.json, derived from the two fixtures and git only: what changed in the header, per route the ticks and the 512-tick blocks, the gameplay inputs that differ. */
+function amendmentRecord(no,spec,keptPath,oldBytes,newBytes,demolitionTicks){
+  const old=JSON.parse(oldBytes),now=JSON.parse(newBytes);
+  const header=Object.fromEntries([...new Set([...Object.keys(old),...Object.keys(now)])].filter(k=>k!=='routes').map(k=>
+    [k,JSON.stringify(old[k])===JSON.stringify(now[k])?{unchanged:true}:{before:old[k]??null,after:now[k]??null}]));
+  const routes=now.routes.map((r,i)=>{
+    const o=old.routes[i];assert.deepEqual([o.seed,o.support],[r.seed,r.support],'the same routes in the same order');
+    let same=0;while(same<Math.min(o.blocks.length,r.blocks.length)&&JSON.stringify(o.blocks[same])===JSON.stringify(r.blocks[same]))same++;
+    return {seed:r.seed,support:r.support,oldTicks:o.ticks,newTicks:r.ticks,oldBlocks:o.blocks.length,newBlocks:r.blocks.length,identicalBlocks:same,
+      firstDifferingBlockTick:r.blocks[same]?.tick??null,eastDemolitionTick:demolitionTicks[`${r.seed}/${r.support}`]};
+  });
+  const gitBlob=f=>hash(execFileSync('git',['show',`${spec.before}:${f}`],{maxBuffer:1<<26})),changed=INPUTS.filter(f=>gitBlob(f)!==hash(readFileSync(f)));
+  return {task:'M01-COMBAT-POSTURE-STAGING-V1',amendment:`amendment-${no}`,base:now.candidate??null,beforeCommit:spec.before,beforeSourceSha256:old.sourceSha256,
+    beforeGameplayInputsSha256:old.gameplayInputsSha256,beforeFixture:keptPath,beforeFixtureSha256:hash(oldBytes),afterFixture:FIXTURE,afterFixtureSha256:hash(newBytes),
+    afterSourceSha256:now.sourceSha256,afterGameplayInputsSha256:now.gameplayInputsSha256,candidateRecordedInFixture:now.candidate??null,
+    authority:'Regenerated only with tools/verification/m01-combat-posture-staging-audit.mjs --write-golden --amendment '+no+' (x86), after its invariant audit against the exact predecessor; never edited by hand. '+
+      'This file is derived from the two fixture files and from git (the golden it replaces is read from the revision named in beforeCommit); no value in it is typed.',
+    reason:spec.reason,changedGameplayInputs:changed,unchangedGameplayInputs:INPUTS.filter(f=>!changed.includes(f)),
+    rule:'Same two routes and the same digest scheme (sha256 per 512 ticks of the whole gameplay frame: state, nested checkpoint and events, presentation fields removed). '+
+      'identicalBlocks counts the leading 512-tick blocks equal to the replaced golden; firstDifferingBlockTick is the end tick of the first block that differs.',
+    header,routes,
+    invariantsAudit:{file:'GOLDEN_AUDIT.json',predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,routes:report.routes.length,seeds:SEEDS,
+      invariants:report.invariants,mg34Totals:report.mg34Totals}};
+}
