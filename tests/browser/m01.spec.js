@@ -85,6 +85,11 @@ test('the genuine first raid displays three Ju 87 GLBs with light LODs and freez
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  // start() returns once the restored clock is visible, but m01.aircraft is read from the LAST RENDERED frame, which can still be the
+  // pre-restore one (trace: renderedFrames 6, since -240 s, planes hidden at the path start, fade 1 because no 'heard' time yet).
+  // Wait for a frame rendered after the restore, so the presentation sampled below is the restored raid, not the stale frame.
+  const staleFrame=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.renderedFrames>n,staleFrame);
   // The planes were heard long before the restored instant: the presentation fade-in has to be complete.
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
   const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
