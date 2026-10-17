@@ -82,7 +82,7 @@ class Base(unittest.TestCase):
         self.keyfile = self.tmp / "key.env"
         self.write_key(self.keyfile)
         self.env = {k: v for k, v in os.environ.items()
-                    if not k.startswith(("TYPESAFE", "COD_JEV"))}
+                    if not k.startswith(("TYPESAFE", "COD_JEV")) and k != "CLAUDE_CODE_REMOTE"}
         self.env.update(HOME=str(self.tmp), COD_JEV_LEDGER=str(self.ledger),
                         COD_JEV_KEY_FILE=str(self.keyfile),
                         TYPESAFE_BASE_URL=self.stub.url,
