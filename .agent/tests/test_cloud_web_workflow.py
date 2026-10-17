@@ -85,6 +85,9 @@ def route(request, *, offline=False, enable_jev=False, env=None):
         skill = self.root / ".claude/skills/ponytail/SKILL.md"
         skill.parent.mkdir(parents=True)
         skill.write_text("---\\nname: ponytail\\n---\\nPonytail test fixture\\n".replace("\\n", "\n"))
+        self.git("add", ".claude/skills/ponytail/SKILL.md")
+        self.git("-c", "user.email=test@example.test", "-c", "user.name=Test",
+                 "commit", "-qm", "fixture ponytail")
         enabled = self.good_plan("--ponytail")
         self.assertEqual(enabled.returncode, 0, enabled.stderr)
         plan = json.loads(enabled.stdout)
