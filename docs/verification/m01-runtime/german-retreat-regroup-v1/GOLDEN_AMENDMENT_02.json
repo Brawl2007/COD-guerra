@@ -1,0 +1,57 @@
+{
+  "task": "M01-GERMAN-RETREAT-AND-REGROUP-V1",
+  "amendment": "amendment-02",
+  "base": "813f163deceb551e0e4504b30958580cb67d3a76",
+  "beforeSourceSha256": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
+  "beforeFixture": "tests/fixtures/m01-partials-gameplay-baseline-before-amendment-02.json",
+  "beforeFixtureSha256": "83a907ca00389f17723ffc97f1c42dca7d80f9a956d07ca7f39b8ae58fe87b79",
+  "rule": "Per-tick gameplay frames (state, nested checkpoint, events; presentation fields removed as in the golden) are byte-identical until the east demolition tick, where the first difference is a grp_de_spans actor field; with the grp_de_spans actors removed from both frames every tick of the whole route is byte-identical (confinedTicks equals the route length).",
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "eastDemolitionTick": 15723,
+      "identicalTicksBeforeIt": 15722,
+      "firstDivergenceTick": 15723,
+      "firstDifferencePath": "$.state.actors.54.x",
+      "firstDifferenceActor": "de_spans_2",
+      "confinedTicks": 22247,
+      "identicalBlocks": 30,
+      "firstDifferingBlockTick": 15872,
+      "oldTicks": 22247,
+      "newTicks": 22247,
+      "oldBlocks": 44,
+      "newBlocks": 44,
+      "complete": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ]
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "eastDemolitionTick": 14854,
+      "identicalTicksBeforeIt": 14853,
+      "firstDivergenceTick": 14854,
+      "firstDifferencePath": "$.state.actors.54.x",
+      "firstDifferenceActor": "de_spans_2",
+      "confinedTicks": 21378,
+      "identicalBlocks": 29,
+      "firstDifferingBlockTick": 15360,
+      "oldTicks": 21378,
+      "newTicks": 21378,
+      "oldBlocks": 42,
+      "newBlocks": 42,
+      "complete": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ]
+    }
+  ]
+}
