@@ -3,18 +3,18 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import manifest from '../../assets/models/provisional/m01/vegetation/manifest.json' with {type:'json'};
 import {vegetationNoise,buildM01VegetationLayout,M01_TREE_SPECIES,interleaveForDensity} from './m01-vegetation-layout.js';
 import {trunkGeometry,groundShadowTexture} from './m01-vegetation-art.js';
+import {selectConsumerLod} from './m01-lod-policy.js';
 import {vegetationKitMaterial} from './m01-vegetation-material.js';
 export const M01_VEGETATION_LOD=Object.freeze(Object.fromEntries([
  ['low',20,55,42,4,24,120000],['medium',35,75,65,2,36,220000],['high',50,90,90,1,48,350000]
 ].map(([name,near,lod1,shrubMid,densityStep,maxDrawCalls,maxTriangles])=>[name,Object.freeze({near,lod1,mid:120,hysteresis:4,shrubNear:shrubMid*.5,shrubMid,densityStep,grassFade:Object.freeze([34,40]),maxDrawCalls,maxTriangles})])));
 export const M01_LEGACY_LEAF_CARD_ESTIMATE=1513;
-export function chooseVegetationTier(distance,quality='medium',previous=null){const q=M01_VEGETATION_LOD[quality]??M01_VEGETATION_LOD.medium;
- if(previous===3&&distance>=116)return 3;if(distance>=120)return 3;
- const boundaries=[q.near,q.lod1,120];if(previous!==null&&previous<3){const lo=previous?boundaries[previous-1]-4:0,hi=boundaries[previous]+4;if(distance>=lo&&distance<Math.min(hi,120))return previous;}
- return distance<q.near?0:distance<q.lod1?1:2;
-}
-export function chooseVegetationLod(distance,quality='medium',previous=null){const q=M01_VEGETATION_LOD[quality]??M01_VEGETATION_LOD.medium;if(previous==='far'&&distance>=116)return 'far';if(distance>=120)return 'far';if(previous==='near'&&distance<q.near+4)return 'near';if(previous==='mid'&&distance>=q.near-4)return 'mid';return distance<q.near?'near':'mid';}
-export function chooseShrubLod(distance,quality='medium'){const q=M01_VEGETATION_LOD[quality]??M01_VEGETATION_LOD.medium;return distance<q.shrubNear?'near':distance<q.shrubMid?'mid':'culled';}
+// T43: band selection lives in the single LOD policy (profiles vegetationTrees / vegetationLod / vegetationShrubs, kept in sync with M01_VEGETATION_LOD by tests).
+// A NaN distance historically fell through to the mid tier, so it is kept explicitly (the policy would answer the farthest band).
+const VEG_LOD_NAMES=['near','mid','far'],SHRUB_LOD_NAMES=['near','mid','culled'];
+export function chooseVegetationTier(distance,quality='medium',previous=null){return +distance!==+distance?2:selectConsumerLod('vegetationTrees',distance,quality,previous);}
+export function chooseVegetationLod(distance,quality='medium',previous=null){return +distance!==+distance?'mid':VEG_LOD_NAMES[selectConsumerLod('vegetationLod',distance,quality,VEG_LOD_NAMES.indexOf(previous))];}
+export function chooseShrubLod(distance,quality='medium'){return SHRUB_LOD_NAMES[selectConsumerLod('vegetationShrubs',distance,quality,null)];}
 const lerp=(range,t)=>range[0]+(range[1]-range[0])*t;
 const WOOD_MAP_MEAN=new THREE.Color().setRGB(114/255,88/255,58/255,THREE.SRGBColorSpace);
 export function barkTint(hex,scale=1){const c=new THREE.Color(hex);return [c.r/WOOD_MAP_MEAN.r*scale,c.g/WOOD_MAP_MEAN.g*scale,c.b/WOOD_MAP_MEAN.b*scale];}
