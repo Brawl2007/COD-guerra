@@ -125,7 +125,9 @@ for(const [index,{seed,support,ticks,blocks}] of before.routes.entries()){
 }
 
 // 4. The record.
-const changedSince=rev=>INPUTS.filter(f=>sha(show(rev,f))!==sha(read(f)));
+// A gameplay input that did not exist at `rev` (src/game/m01-aim.js came with T38) counts as changed.
+const blobAt=(rev,f)=>{try{return sha(execFileSync('git',['-C',ROOT,'show',`${rev}:${f}`],{maxBuffer:1<<26,stdio:['ignore','pipe','ignore']}));}catch{return null;}};
+const changedSince=rev=>INPUTS.filter(f=>blobAt(rev,f)!==sha(read(f)));
 const sincePredecessor=changedSince(PREDECESSOR);
 const header=Object.fromEntries([...new Set([...Object.keys(before),...Object.keys(after)])].filter(k=>k!=='routes').map(k=>
   [k,JSON.stringify(before[k])===JSON.stringify(after[k])?{unchanged:true}:{before:before[k]??null,after:after[k]??null}]));

@@ -33,7 +33,12 @@
 //
 //   git worktree add --detach /tmp/t38-pred 5a169babb638d1d09608f9a2bb84d1528f1aab4b && ln -s "$PWD/node_modules" /tmp/t38-pred/node_modules
 //   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --write-golden [--candidate <sha>] [--amendment 02]
-//   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs [--amendment 02]    # verify only
+//   M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --candidate 9f7945b3ba66f57871aef61a13699960acc953a8 --amendment 02    # verify only
+//   node tools/verification/m01-combat-posture-staging-audit.mjs --live    # evidence only: see below
+// --live runs the 24 invariants on the LIVE tree (staging + the T47 gun) against the predecessor 5a169ba, whose side is read from the committed GOLDEN_AUDIT.json (that report
+// was made by a real run of the predecessor and is byte-checked by the verify mode above), COLLECTS the violations instead of asserting, writes only
+// docs/verification/m01-runtime/ckm-fire-live-2026-10-16/INVARIANTS_24_ROUTES.json (M01_T47_AUDIT_OUT overrides the folder) and exits 0: it is the evidence of why this audit
+// stopped being the guard of the live tree, not a gate.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -53,17 +58,20 @@ const hash=v=>createHash('sha256').update(v).digest('hex');
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
 
 assert.equal(process.arch,'x64','D11/D30: the gameplay golden is generated and verified on x86 only');
-const baselineRoot=process.env.M01_T38_BASELINE;assert.ok(baselineRoot,'M01_T38_BASELINE must point at a checkout of the predecessor');
-assert.equal(execFileSync('git',['-C',baselineRoot,'rev-parse','HEAD'],{encoding:'utf8'}).trim(),PREDECESSOR,'immutable predecessor ref');
-assert.equal(execFileSync('git',['-C',baselineRoot,'status','--porcelain','--untracked-files=no'],{encoding:'utf8'}).trim(),'','the predecessor checkout is clean');
+const live=process.argv.includes('--live');
+const baselineRoot=process.env.M01_T38_BASELINE;
+if(!live){
+  assert.ok(baselineRoot,'M01_T38_BASELINE must point at a checkout of the predecessor');
+  assert.equal(execFileSync('git',['-C',baselineRoot,'rev-parse','HEAD'],{encoding:'utf8'}).trim(),PREDECESSOR,'immutable predecessor ref');
+  assert.equal(execFileSync('git',['-C',baselineRoot,'status','--porcelain','--untracked-files=no'],{encoding:'utf8'}).trim(),'','the predecessor checkout is clean');
+}
 const partials=JSON.parse(readFileSync(PARTIALS,'utf8'));
-const predecessorSource=readFileSync(baselineRoot+'/src/game/m01-simulation.js');
-assert.equal(hash(predecessorSource),partials.sourceSha256,'the predecessor simulation is the one the partials golden pins');
-const {M01Simulation:Before}=await import(pathToFileURL(baselineRoot+'/src/game/m01-simulation.js'));
-// The candidate: the staging, extracted from git with its own data (src, missions and every .json of assets and research). The working tree is never read for it.
+if(!live)assert.equal(hash(readFileSync(baselineRoot+'/src/game/m01-simulation.js')),partials.sourceSha256,'the predecessor simulation is the one the partials golden pins');
+const Before=live?null:(await import(pathToFileURL(baselineRoot+'/src/game/m01-simulation.js'))).M01Simulation;
+// The candidate: the staging, extracted from git with its own data (src, missions and every .json of assets and research). The working tree is never read for it (except with --live).
 const repoRoot=resolve(import.meta.dirname,'../..');
-const treeRoot=mkdtempSync(join(tmpdir(),'m01-t38-candidate-'));
-{
+const treeRoot=live?repoRoot:mkdtempSync(join(tmpdir(),'m01-t38-candidate-'));
+if(!live){
   const data=execFileSync('git',['-C',repoRoot,'ls-tree','-r','--name-only',CANDIDATE_COMMIT,'assets','research'],{encoding:'utf8',maxBuffer:1<<26}).split('\n').filter(p=>p.endsWith('.json'));
   execFileSync('tar',['-x','-C',treeRoot],{input:execFileSync('git',['-C',repoRoot,'archive','--format=tar',CANDIDATE_COMMIT,'src','missions',...data],{maxBuffer:1<<29})});
   symlinkSync(join(repoRoot,'node_modules'),join(treeRoot,'node_modules'));
@@ -142,6 +150,30 @@ const SEEDS=(process.env.M01_T38_AUDIT_SEEDS??'19390901,1,2,3,4,5,6,7,8,9,10,11'
 const report={task:'M01-COMBAT-POSTURE-STAGING-V1',predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,sourceSha256,candidate,
   gameplayInputsSha256,node:process.version,arch:process.arch,invariants:'equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time',
   measured:'not invariants, they legitimately move with the lines of sight: per route and per MG34 gunner the bursts by kind of target (squad = Kowal, area = the forward post, others = player, repair, platoon, ...) and the calls of the callout co_m01_enemy_mg_fire_on_squad',routes:[]};
+if(live){
+  const committed=JSON.parse(readFileSync(`${out}/GOLDEN_AUDIT.json`,'utf8'));
+  assert.equal(committed.predecessor,PREDECESSOR,'the committed report is the one made against the predecessor');
+  const rows=[];
+  for(const support of [false,true])for(const seed of SEEDS){
+    const before=committed.routes.find(r=>r.seed===seed&&r.support===support).before,after=outcome(M01Simulation,seed,support),tb=before.battleTimes,ta=after.battleTimes,violations=[];
+    for(const k of ['complete','finalBattleClock','checkpoints','objectives','withdrawFlag','finalSurvivors','dlg049','consumedOrder','repairDoneObjective'])
+      if(JSON.stringify(after[k])!==JSON.stringify(before[k]))violations.push({invariant:k,predecessor:before[k],live:after[k]});
+    if(JSON.stringify(Object.keys(ta))!==JSON.stringify(Object.keys(tb)))violations.push({invariant:'event order',predecessor:Object.keys(tb),live:Object.keys(ta)});
+    for(const id of [...FIXED,'east_demolition','west_demolition','roll_call','debrief'])if(ta[id]!==tb[id])violations.push({invariant:`battle-clock time of ${id}`,predecessor:tb[id],live:ta[id]});
+    if(!(seconds(ta.repair_complete)<seconds('05:30:00')))violations.push({invariant:'repair before the order',live:ta.repair_complete});
+    for(const a of after.attrition)if(!(a.fellAfterSec!==null&&a.fellAfterSec>=0&&a.fellAfterSec<5))violations.push({invariant:'attrition fall 0 to 5 s after its fixed time',victim:a.victim,fellAfterSec:a.fellAfterSec});
+    rows.push({seed,support,violations,finalSurvivors:{predecessor:before.finalSurvivors,live:after.finalSurvivors},withdrawFlag:{predecessor:before.withdrawFlag,live:after.withdrawFlag},
+      repairComplete:{predecessor:tb.repair_complete,live:ta.repair_complete},attritionFallsSec:after.attrition.map(a=>a.fellAfterSec),playerHealth:{predecessor:before.playerHealth,live:after.playerHealth}});
+    console.log(JSON.stringify(rows.at(-1)));
+  }
+  const folder=process.env.M01_T47_AUDIT_OUT??'docs/verification/m01-runtime/ckm-fire-live-2026-10-16';mkdirSync(folder,{recursive:true});
+  const evidence={task:'M01-T47-CKM-LIVE-FIRE-V1',what:'The invariants audit of tools/verification/m01-combat-posture-staging-audit.mjs run on the LIVE tree (the staging plus the T47 gun) against the exact predecessor 5a169ba, collecting the violations instead of asserting them',
+    predecessor:PREDECESSOR,predecessorSideFrom:'docs/verification/m01-runtime/t38-combat-posture-staging-v1/GOLDEN_AUDIT.json (the staging against 5a169ba; the verify mode of the tool checks it byte for byte)',
+    predecessorSourceSha256:partials.sourceSha256,liveSourceSha256:hash(readFileSync(repoRoot+'/src/game/m01-simulation.js')),node:process.version,arch:process.arch,invariants:report.invariants,seeds:SEEDS,
+    summary:{routes:rows.length,violatingRoutes:rows.filter(r=>r.violations.length).map(r=>`${r.seed}/${r.support?'support':'no support'}`)},routes:rows};
+  writeFileSync(`${folder}/INVARIANTS_24_ROUTES.json`,JSON.stringify(evidence,null,2)+'\n');
+  console.log(JSON.stringify(evidence.summary));process.exit(0);
+}
 for(const support of [false,true])for(const seed of SEEDS){
   const before=outcome(Before,seed,support),after=outcome(M01Simulation,seed,support);
   const tb=before.battleTimes,ta=after.battleTimes;
