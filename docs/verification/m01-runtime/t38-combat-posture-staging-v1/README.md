@@ -187,9 +187,14 @@ Máquina partilhada e muito carregada (carga 6–11 em 4 CPUs nesta versão, 9�
 | `M01_T38_BASELINE=<5a169ba> m01-combat-posture-staging-audit.mjs --write-golden --candidate 9f7945b --amendment 02` | exit 0: 24 pares cumprem as invariantes; golden, `GOLDEN_AUDIT.json` e `GOLDEN_AMENDMENT_02.json` escritos. Uma execução independente noutro worktree (1 semente de auditoria) escreveu o golden com o mesmo `sha256` (`d21fa94e…`) |
 | `m01-german-retreat-golden-audit.mjs --write-golden` (BASE `65145c9`) | exit 0 nas duas rotas do golden (todas as asserções da ferramenta); `GOLDEN_AMENDMENT_03.json` byte a byte igual ao de uma execução independente noutro worktree |
 | `node --test tests/m01-animation-contract.test.js` e `node --test tests/m01-german-retreat.test.js` (depois do re-baseline) | **21/21** e **22/22** |
-| `npm test` na árvore re-baselined; `npm run build`; specs de browser (`m01-german-retreat`, `m01-mg34-prone`, `m01`) e capturas T38 | **ainda a correr à data deste commit** (a fila do `flock` tem outros agentes à frente); o commit seguinte regista os resultados |
+| `m01-combat-posture-staging-audit.mjs --candidate 9f7945b --amendment 02` sem `--write-golden` (24 rotas, segunda execução completa) e `m01-german-retreat-golden-audit.mjs` sem `--write-golden` | exit 0 as duas: o golden, `GOLDEN_AMENDMENT_02.json` e `GOLDEN_AMENDMENT_03.json` committed iguais aos regenerados, e o `GOLDEN_AUDIT.json` regenerado byte a byte igual ao committed (`git status` limpo) |
+| `npm test` (`9550a4b`, árvore re-baselined) | **990/990**, exit 0 (16,9 min) |
+| `npm run build` | OK (vite, 2,3 s) |
+| `flock … env CI=1 … npx playwright test tests/browser/m01-german-retreat.spec.js tests/browser/m01-mg34-prone.spec.js tests/browser/m01.spec.js --reporter=line` | 33 testes em 26,5 min: **32 passam, 1 falha**: `m01.spec.js:426` («German fire on the repair…», linha 439: ver o reparo suprimido **e** livre nas amostras), que falha igual na base `813f163` (sem T38 nem T48) e já falhava antes da fusão; só registada, nenhuma asserção tocada. Passam `m01-german-retreat.spec.js:63` (06:12, os alemães reagrupados e desenhados), as 4 de `m01-mg34-prone.spec.js` (incluindo `:45`), `m01.spec.js:50` (o atraso de frame da corrida anterior), `:196` (Kowal/rkm: rajada e carregador) e `:525` (retirada com o piso de 12 sobreviventes) |
+| `flock … env CI=1 T38_OUT=… … npx playwright test -c tools/verification/playwright.t38.config.js` (capturas) | passa (4,4 min), 6 vistas, sem erros de página; o `actorPoses` de cada vista é igual ao de «Capturas» (vista 01: de pé 17, de joelhos 3, ferido 1; 01b: 39, 36, «pinned» 2, deitados 3; 21: de pé 40, de joelhos 34, deitados 3), como se espera: a retirada de T48 só actua a partir das 06:10; as imagens «depois» não foram refeitas |
+| `flock … env CI=1 … npx playwright test tests/browser/m01-anim-resolver.spec.js tests/browser/m01-distant-front-impostors.spec.js` (regressão directa: T48 mexeu em `m01-animation-resolver.js` e `m01-actor-pose.js`) | **7/7 passam** (5,0 min) |
 
-
+**A falha de browser desta versão, honestamente.** `m01.spec.js:426` é a mesma que a revisão e o Capitão viram na base `813f163` (sem T38 nem T48), na mesma asserção; a causa mais provável continua a ser o ritmo do renderer em software desta máquina (hipótese, não investigada). `m01.spec.js:50`, que falhara por atraso de frame na corrida anterior, passou desta vez. Nada disto é playtest humano nem mede FPS.
 
 ### Versão anterior à fusão (`65145c9`)
 
@@ -237,8 +242,8 @@ node tools/verification/m01-t38-golden-divergence.mjs /tmp/t38-old "$PWD" /tmp/d
 
 ## Capturas
 
-Regeneradas nesta árvore (`HEAD` da emenda do golden; `T38_OUT=… npx playwright test -c tools/verification/playwright.t38.config.js`, `CI=1`, sob `flock`, 1 teste, 5,2 min,
-sem erros de página). Cada vista carrega um instantâneo **real** da rota de controlo (semente 19390901, com apoio), só o jogador é movido, três frames renderizados e o jogo pausado.
+Regeneradas na árvore de `65145c9`, anterior à fusão com a base T48 (`HEAD` da emenda 01 do golden; `T38_OUT=… npx playwright test -c tools/verification/playwright.t38.config.js`, `CI=1`, sob `flock`, 1 teste, 5,2 min,
+sem erros de página). Na árvore fundida (`9550a4b`) o spec voltou a correr (1/1, 4,4 min, sem erros de página) e o `actorPoses` de cada vista é igual ao desta tabela; as imagens «depois» não foram refeitas porque a retirada de T48 só actua a partir das 06:10, depois de todas as vistas. Cada vista carrega um instantâneo **real** da rota de controlo (semente 19390901, com apoio), só o jogador é movido, três frames renderizados e o jogo pausado.
 Reduzidas para 960×540, 256 cores. «Tally» é o `actorPoses` do renderer de produção (poses que desenhou para todos os actores activos, vistos ou não): é a postura da simulação a chegar
 ao ecrã, não uma medida de qualidade. As «antes» são de `ef35c7a` (mesmo spec).
 
