@@ -32,5 +32,7 @@ test('locomotive 963 LOD cross-fade: still camera for 10 s keeps lodSwitches and
  await page.waitForTimeout(10000);
  const after=await page.evaluate(()=>window.gameDiagnostics().m01.locomotive);
  expect(after.lodSwitches).toBe(before.lodSwitches);expect(after.fading).toBe(false);expect(after.lod).toBe(before.lod);
+ // T43 slice 4: the view passes the quality preset, so the counters/fade policy follow it (previously only low/medium from the shared uniform).
+ expect(after.lodPreset).toBe(await page.evaluate(()=>window.gameDiagnostics().quality));
  expect(errors).toEqual([]);
 });

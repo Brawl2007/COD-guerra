@@ -735,11 +735,11 @@ export class M01View {
     this.trainLife.update(battleClock,state);
     this.wagons.update(sim.player,this.owner.quality,battleClock);
     this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
-    this.locomotive.update(sim.player,battleClock,state.train963);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug);
+    this.locomotive.update(sim.player,battleClock,state.train963,this.owner.quality);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug,this.owner.quality);   // T43: preset + battle clock drive the 0.3 s fade (Low snaps)
     this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
-    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
+    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player,battleClock);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
     this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
