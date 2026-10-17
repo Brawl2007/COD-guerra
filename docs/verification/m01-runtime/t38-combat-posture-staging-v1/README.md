@@ -105,17 +105,20 @@ Máquina partilhada e muito carregada (carga 9–25 em 4 CPUs, outros agentes a 
 | `npm test` (`HEAD` = emenda do golden) | **967/967**, exit 0 (26 min; `8606998`, o commit da emenda do golden). Os 946 dos outros ficheiros e os 21 do contrato somam o mesmo 967 |
 | `npm run build` | OK (vite, 4,6 s) |
 | `flock … env CI=1 … npx playwright test tests/browser/m01.spec.js tests/browser/m01-mg34-prone.spec.js --reporter=line` | 32 testes em 47,2 min: **30 passam, 2 falham**: `m01.spec.js:50` e `m01.spec.js:426` (abaixo). Passam, entre outros, `m01.spec.js:196` (Kowal/rkm: rajada e carregador) e as 4 de `m01-mg34-prone.spec.js` (incluindo `:45`), os dois que a revisão crítica apontou |
-| `m01-anim-resolver.spec.js` e `m01-distant-front-impostors.spec.js` (mesma forma, `CI=1`, `flock`) | **ainda por correr** quando este texto foi escrito (na fila do `flock`, com trabalhos de outros agentes à frente) |
-| a spec de capturas (`playwright.t38.config.js`) e a comparação do teste `:426` na base `813f163` contra esta árvore, mais uma repetição isolada de `:50` | **ainda por correr** (mesma fila) |
+| `m01-anim-resolver.spec.js` e `m01-distant-front-impostors.spec.js` (mesma forma: `CI=1`, `flock`) | **7/7 passam** (4,0 min): a transição ao vivo dos sapadores para a pose de trabalho com pesos `smoothstep` exactos, as vistas 10 e 12 das silhuetas distantes (a vista 10 com os atiradores nos lugares novos), a baixa qualidade e o resumo |
+| `m01.spec.js -g "German fire on the repair"`, primeiro na base `813f163` (worktree separado, `npm run build` nele) e a seguir nesta árvore, no mesmo `flock` | **falha nos dois, na mesma linha 439**: não é de T38 (abaixo) |
+| `m01.spec.js -g "M01 loads the nine bridge LODs"` (repetição isolada de `:50`) | **passa** (1,9 min): foi um atraso de frame com a máquina carregada |
+| `playwright.t38.config.js` (spec de capturas, `CI=1`, `flock`) | passa (5,2 min), 6 vistas, sem erros de página; imagens e leitura em «Capturas» |
 | em Node, sem browser: linha temporal do reparo suprimido/livre e poses desenhadas, candidata #80 contra esta árvore (mesmo estado, 04:45:40, 90 s) | suprimido/livre iguais nos primeiros 57 s; as mesmas poses «pinned» (Marek); só mudam as posturas de joelhos (abaixo) |
 
-**As duas falhas de browser, honestamente.** Nenhuma asserção foi tocada.
-- `m01.spec.js:50` (carregador do karabinek): `#mag` esperado «2», recebido «3» ao fim do `expect` de 5 s; o instantâneo da página à falha já mostra «2/40», ou seja, o segundo
-  tiro entrou depois dos 5 s (frame lento com a máquina carregada). Não toca em nada de T38. A repetição isolada está na fila do `flock`.
-- `m01.spec.js:426` («German fire on the repair»): a asserção da linha 439 (ver o reparo suprimido **e** livre nas 60 amostras de 250 ms) não se cumpriu; o relógio de batalha da página só
-  avançou 39 s. Em Node, a partir do mesmo estado (04:45:40) a linha temporal do reparo suprimido/livre da candidata #80 e a desta branch são **idênticas** nos primeiros 57 s
-  (suprimido 0–5,85 s, livre 5,85–13,6 s, suprimido 13,6–23,45 s, …) e quem é desenhado «pinned» enquanto está suprimido (Marek) é o mesmo (430 contra 429 ticks);
-  só mudam as posturas ajoelhadas (29 894 contra 404 tiques-de-actor de «crouched» durante a supressão). A comparação no browser contra a base `813f163` (o que mostraria se falha igual sem T38 nesta máquina) está na fila do `flock`; até correr, **não** se afirma que seja anterior a T38, apenas que o desvio de simulação está excluído.
+**As duas falhas da primeira corrida de browser, honestamente.** Nenhuma asserção foi tocada.
+- `m01.spec.js:50` (carregador do karabinek): `#mag` esperado «2», recebido «3» ao fim do `expect` de 5 s; o instantâneo da página à falha já mostrava «2/40», ou seja, o segundo tiro entrou
+  depois dos 5 s (frame lento com a máquina carregada). Sem relação com T38. **Repetido isolado, passa.**
+- `m01.spec.js:426` («German fire on the repair»): a asserção da linha 439 (ver o reparo suprimido **e** livre nas 60 amostras de 250 ms) não se cumpre. **Falha igual na base `813f163`
+  (sem T38) nesta máquina, na mesma linha**, portanto é anterior a T38 (o handoff anterior já o tinha visto falhar em `ef35c7a`); a causa mais provável é o ritmo do renderer em software desta máquina, mas isso é uma hipótese
+  e não foi investigado mais. Em Node, a partir do mesmo estado (04:45:40), a linha temporal do reparo suprimido/livre da candidata #80 e a desta branch são **idênticas** nos primeiros 57 s (suprimido
+  0–5,85 s, livre 5,85–13,6 s, suprimido 13,6–23,45 s, …) e quem é desenhado «pinned» enquanto está suprimido (Marek) é o mesmo (430 contra 429 ticks); só mudam as posturas
+  ajoelhadas (29 894 contra 404 tiques-de-actor de «crouched» durante a supressão). Fica por ver se passa no CI, onde o renderer em software é mais rápido.
 
 ## Reproduzir
 
@@ -133,7 +136,21 @@ node tools/verification/m01-t38-golden-divergence.mjs /tmp/t38-old "$PWD" /tmp/d
 
 ## Capturas
 
-As capturas `before/` (de `ef35c7a`) e `after/` desta pasta são as da fatia 2 anterior à correcção dos portões e da secção; **a regeneração das `after/` com o código actual está na fila do `flock` e ainda não foi feita**. Não as uses como evidência desta versão.
+Regeneradas nesta árvore (`HEAD` da emenda do golden; `T38_OUT=… npx playwright test -c tools/verification/playwright.t38.config.js`, `CI=1`, sob `flock`, 1 teste, 5,2 min,
+sem erros de página). Cada vista carrega um instantâneo **real** da rota de controlo (semente 19390901, com apoio), só o jogador é movido, três frames renderizados e o jogo pausado.
+Reduzidas para 960×540, 256 cores. «Tally» é o `actorPoses` do renderer de produção (poses que desenhou para todos os actores activos, vistos ou não): é a postura da simulação a chegar
+ao ecrã, não uma medida de qualidade. As «antes» são de `ef35c7a` (mesmo spec).
+
+| Vista (relógio de batalha) | Antes | Depois | O que se vê / tally do renderer |
+| --- | --- | --- | --- |
+| `01-start-section-close` (04:30:45) | ![](before/01-start-section-close.png) | ![](after/01-start-section-close.png) | A secção no posto antes de qualquer fogo: de pé, mas em lugares desencontrados atrás dos sacos (antes, fila de pé). de pé 17, de joelhos 3 (os sapadores ao cabo), ferido 1 |
+| `01b-section-under-fire` (04:48:08) | ![](before/01b-section-under-fire.png) | ![](after/01b-section-under-fire.png) | Depois do bombardeamento das 04:34, a rkm a responder à MG: Bąk e Pawlak de joelhos (desenhados «pinned» porque suprimidos), a voz do pelotão de joelhos, Kowal de pé por cima dos sacos 0,25 s antes de uma rajada (estado da simulação neste instante); Marek, o sargento, está longe com o jogador. de pé 39, de joelhos 36, «pinned» 2, deitados 3 |
+| `11-repair-threat-sappers-pinned` (04:47:33) | ![](before/11-repair-threat-sappers-pinned.png) | ![](after/11-repair-threat-sappers-pinned.png) | Vista do roteiro: os sapadores deitados no segundo corte sob a MG (HUD: «sapadores deitados sob fogo da metralhadora do dique»); a esta distância são pontos baixos na encosta. deitados 3 |
+| `11b-sappers-close` (04:47:34) | ![](before/11b-sappers-close.png) | ![](after/11b-sappers-close.png) | Os sapadores de perto: deitados (T07), silhueta rasa, espingarda ao lado (antes, de pé em fila junto ao cabo). deitados 3 |
+| `21-east-platoon-hold` (05:08:28) | ![](before/21-east-platoon-hold.png) | ![](after/21-east-platoon-hold.png) | O pelotão leste a segurar o fim do tabuleiro: de joelhos, em lugares desencontrados e com corpos virados de maneira diferente (antes, um bloco de pé). de joelhos 34, de pé 40 (o resto do campo), deitados 3 |
+| `22-gate-riflemen` (05:08:28) | ![](before/22-gate-riflemen.png) | ![](after/22-gate-riflemen.png) | Os atiradores dos portões vistos do tabuleiro, contra o portal de 1912: desencontrados em profundidade, uns de joelhos e uns poucos de pé (os que se levantaram para disparar); à esquerda, o artilheiro deitado da MG34. Não há cobertura nova: ver a decisão pendente |
+
+Limites da evidência: imagens SwiftShader de uma só rota e de um só instante por vista; não provam o jogo ao longo do tempo (isso são os testes por tick) nem medem FPS.
 
 ## Limitações
 

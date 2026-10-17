@@ -15,13 +15,16 @@ Resultados e números: `README.md` (efeitos no jogo, golden, verificação, capt
    (`m01-combat-posture-staging-audit.mjs --write-golden --candidate 25ed12f`) contra o predecessor `ef35c7a`; as 24 rotas passaram todas as invariantes; segunda execução
    da ferramenta sem `--write-golden` reproduziu os dois percursos byte a byte; `m01-animation-contract` 21/21. Documentado em `GOLDEN_AMENDMENT_01.json` (valores
    exactos que mudam e porquê) e `GOLDEN_DIVERGENCE_01.json` (onde as duas simulações divergem primeiro); golden antigo guardado byte a byte e fixado por `sha256`.
-3. **Build e specs de browser, capturas, `npm test`:** `npm run build` OK. `npm test`: **967/967**, exit 0. Browser (`CI=1`, sob `flock`), `m01.spec.js` + `m01-mg34-prone.spec.js`: 32 testes, **30 passam, 2 falham** (`m01.spec.js:50`, o carregador, e `m01.spec.js:426`, «German fire on the repair»; análise no `README.md`, secção Verificação). `m01-anim-resolver`, `m01-distant-front-impostors`, as capturas e a comparação do `:426` com a base `813f163` **ainda estavam na fila do `flock`** (com trabalhos de outros agentes à frente) quando isto foi escrito: ver o README, que diz o que já foi corrido.
+3. **Build, specs de browser, capturas e `npm test`.** `npm run build` OK. `npm test`: **967/967**, exit 0. Browser (`CI=1`, sob `flock`): `m01.spec.js` + `m01-mg34-prone.spec.js` 30/32,
+   com **`m01.spec.js:196` (Kowal) e `m01-mg34-prone.spec.js:45` a passar** — os dois que a revisão crítica tinha apontado; as duas falhas são `m01.spec.js:50` (atraso de frame; repetido isolado,
+   passa) e `m01.spec.js:426` («German fire on the repair»; **falha igual na base `813f163`, sem T38**, na mesma linha, nesta máquina). `m01-anim-resolver` + `m01-distant-front-impostors`: 7/7.
+   Capturas `after/` regeneradas (6 vistas, vista 22 dos portões inspeccionada: lugares em profundidade, uns de joelhos e uns poucos de pé a disparar). Pormenores no `README.md`.
 
 ## Os 10 defeitos da revisão crítica de `8bb0372`, verificados agora por testes (não pelo que o implementador disse ao parar)
 | # | Defeito | Prova actual |
 | --- | --- | --- |
 | 1 | Kowal deitado partia `m01.spec.js:196` e `m01-mg34-prone.spec.js:45` | Kowal está de joelhos (`crouched`), levanta-se só para a rajada; teste `renderer: Kowal kneels…`, estatísticas da rota (`kowalUp`, `sectionKneel`) e as duas specs de browser passam: `m01.spec.js:196` e as 4 de `m01-mg34-prone.spec.js` (incluindo `:45`) |
-| 2 | Specs de browser nunca corridas | corridas agora: 30/32; as 2 falhas não são do Kowal nem do deitado (ver README) |
+| 2 | Specs de browser nunca corridas | corridas agora (sob `flock`, `CI=1`): `m01.spec.js` + `m01-mg34-prone.spec.js` 30/32, `anim-resolver` + `distant-front` 7/7, capturas 6/6; as 2 falhas não são do Kowal nem do deitado (ver README) |
 | 3 | Envelope do terreno | `collisions: … terrain envelope protects every staged place` e `m01-terrain-envelope.test.js` |
 | 4 | Secção atrás dos sacos, por linha de visão | `behind the sandbags the kneeling section is hidden from every German position…` (40 posições alemãs) |
 | 5 | Casos negativos, validação de dados, «back rank» estrito | `stage data: … a data error stops the game` (≈30 casos) e `m01-east-front` (reservas atrás de todos) |
@@ -36,6 +39,7 @@ Resultados e números: `README.md` (efeitos no jogo, golden, verificação, capt
   Sem props, a melhoria é profundidade, alturas diferentes e postura; foi isso que se fez.
 - Revisão crítica independente da versão final (a anterior, sobre `8bb0372`, foi REJECT), CI x86 completo (4 shards) e playtest humano. As capturas são SwiftShader, não medem
   FPS e não são playtest.
+- `m01.spec.js:426` («German fire on the repair») falha nesta máquina também na base `813f163`, sem T38 (mesma linha); se passa no CI x86 está por confirmar.
 - `m01-postprocess-grading` (9 testes) exige `M01_GRADING_BEFORE_DIR` (ver `DEVELOPMENT_STATUS.md`, grupo A); não é T38 e não foi corrido.
 - Registo T00–T52: T38 continua `DELIVERED_BRANCH` (nota actualizada). Issue #72: por actualizar pelo Capitão.
 

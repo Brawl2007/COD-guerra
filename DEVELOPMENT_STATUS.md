@@ -14,8 +14,11 @@ sem revisão crítica independente, sem CI x86 completo, sem playtest humano. N�
 - **O que NÃO mudou:** conclusão, checkpoints, objectivos, horas de batalha dos eventos fixos, 18 homens às 06:00, sobreviventes finais (12/18), `dlg_m01_049` (auditoria de 24 rotas contra `ef35c7a`).
   O RNG diverge (hora do reparo −223…+154 s, `dlg_m01_027` muda em 3 das 24 rotas, tiros no jogador 16 → 18 no total).
 - **Golden:** `tests/fixtures/m01-t38-gameplay-baseline.json` estava desactualizado desde `4772b24` (12 lugares dos portões); regenerado em x86 só com
-  `tools/verification/m01-combat-posture-staging-audit.mjs` e verificado byte a byte; emenda 01 documentada, golden antigo guardado. Sem mudança em `m01-simulation.js`.
-- **Verificação local (x86, SwiftShader, máquina partilhada com carga ~20; Playwright com `CI=1` para os orçamentos de tempo de CI, sob `flock`):** `npm test` 967/967 e `npm run build` OK; Playwright (`CI=1`, sob `flock`) `m01.spec.js` + `m01-mg34-prone.spec.js`: 30/32 (Kowal `:196` e mg34-prone `:45` passam; `:50` e `:426` falharam sob carga, análise no README da pasta); `m01-anim-resolver`, `m01-distant-front-impostors`, as capturas e a comparação do `:426` com a base estavam na fila do `flock` quando isto foi escrito.
+  `tools/verification/m01-combat-posture-staging-audit.mjs` e verificado byte a byte; emenda 01 documentada, golden antigo guardado. A regeneração não tocou em `m01-simulation.js` (o `sha256` fixado é o mesmo).
+- **Verificação local (x86, Node 22.22.0, SwiftShader, máquina partilhada e carregada; Playwright com `CI=1`, os orçamentos de tempo do CI, e sempre sob `flock`):** `npm test` **967/967**; `npm run build` OK;
+  auditoria de invariantes 24/24 rotas e golden verificado byte a byte; browser `m01.spec.js` + `m01-mg34-prone.spec.js` 30/32 (o Kowal `:196` e o `m01-mg34-prone.spec.js:45`, que a revisão crítica apontou, **passam**;
+  `m01.spec.js:50` falhou por atraso de frame e **passa repetido isolado**; `m01.spec.js:426` falha igual na base `813f163` sem T38, nesta máquina); `m01-anim-resolver` + `m01-distant-front-impostors` 7/7;
+  capturas regeneradas (6 vistas). Em Node, o reparo suprimido/livre da candidata #80 e o desta branch coincidem nos primeiros 57 s.
 - **Pendente:** revisão crítica; CI; playtest; decisão de design sobre cobertura real vinda de oeste para os atiradores dos portões (precisa de props); `m01-postprocess-grading` (grupo A acima) continua a precisar de `M01_GRADING_BEFORE_DIR`.
 
 ## Candidato `integ-full`: quatro regressões de browser em `m01.spec.js` — 2026-10-16
