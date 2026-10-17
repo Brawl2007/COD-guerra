@@ -1,6 +1,11 @@
 # T38 · M01-COMBAT-POSTURE-STAGING-V1 — evidência
 
 Estado: **entregue na branch, NÃO aceite** (falta revisão crítica independente da versão final, CI x86 completo e playtest humano).
+
+> **Desde o merge de T47 (`3c9cab7`, 2026-10-17) este golden e as ferramentas desta pasta são a história do staging `8c6328c`.** A T47 (fogo real da ckm) entrou por cima e muda os alemães, por isso o golden da simulação viva é
+> `tests/fixtures/m01-t47-gameplay-baseline.json` (T47, emenda 02, com a auditoria de delta por tick contra `8c6328c`). Este golden (emenda 02) não foi reescrito e fica fixado por `sha256` em `tests/m01-animation-contract.test.js`; a ferramenta de auditoria
+> passou a correr o candidato **extraído do git em `8c6328c`** e continua a reproduzir byte a byte este golden, `GOLDEN_AUDIT.json` e `GOLDEN_AMENDMENT_02.json`. Os números desta página (D40, «Efeitos no jogo») são os do staging, sem a arma. A opção `--live` corre as 24 invariantes na árvore viva:
+> `../ckm-fire-live-2026-10-16/INVARIANTS_24_ROUTES.json` (23 de 24 rotas mantêm todas; a semente 3 com apoio acaba com 17 sobreviventes e não 18). Ver D41 e D42 em `docs/direction/DECISIONS.md`.
 Base: predecessor `ef35c7a` (fatia 1 de T38) → fatia 2 (jogo), retomada em 2026-10-17 na branch `claude/busy-ritchie-3fkvk2-t38` (cabeça do PR #82
 `2bc623c` + candidata #80 `813f163` + correcção de teste #89 `b449007`), com as correcções da revisão crítica de `8bb0372` (REJECT; ver `HANDOFF.md`).
 Segunda revisão crítica (sobre `65145c9`): REQUEST_CHANGES, sem defeito de código. Esta versão responde-lhe: (1) o desvio do fogo da MG34 está medido por rota e a frase errada «é o do RNG» foi corrigida
@@ -169,7 +174,7 @@ a rota inteira é igual (`GOLDEN_AMENDMENT_03.json`):
 
 A prova é destas duas rotas. Noutras sementes a calada de 60 s de T48 pode recusar uma rajada alemã no tick da demolição e, como a rajada recusada não gasta RNG, mudar daí em diante o caminho do RNG (3 das 24 rotas da auditoria; ver «Efeitos no jogo»);
 fora dos alemães do tabuleiro isso só se vê nos tiros posteriores sobre o jogador. Os blocos do golden novo antes do bloco da demolição são os do golden T38 anterior, e o golden novo é o resumo da rota própria desta árvore. O golden parcial de T48 (emenda 02 de T48) fica como história: já não descreve a simulação viva, e o teste «golden amendment 02»
-de `tests/m01-german-retreat.test.js` passou a verificá-lo sem a simulação viva; o novo teste «golden amendment 03» faz a mesma afirmação sobre o golden T38 e a demolição viva.
+de `tests/m01-german-retreat.test.js` passou a verificá-lo sem a simulação viva; o novo teste «golden amendment 03» fazia a mesma afirmação sobre o golden T38 e a demolição viva (desde a fusão de T47 lê também os ticks do registo, como o da emenda 02).
 
 ## Verificação local (x86, Node 22.22.0, Chromium 1194 em SwiftShader, 2026-10-17)
 
@@ -229,8 +234,11 @@ Máquina partilhada e muito carregada (carga 6–11 em 4 CPUs nesta versão, 9�
 npm ci && npm run build
 # golden: predecessor (a base T48) num worktree separado, depois a ferramenta do repositório (verifica; com --write-golden --candidate <sha> --amendment 02 regenera o golden e os registos)
 git worktree add --detach /tmp/t38-pred 5a169babb638d1d09608f9a2bb84d1528f1aab4b && ln -s "$PWD/node_modules" /tmp/t38-pred/node_modules
-M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --amendment 02
-# prova causal de T48 sobre T38 (lockstep contra 65145c9; lê o golden T38 e verifica german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json)
+M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --candidate 9f7945b3ba66f57871aef61a13699960acc953a8 --amendment 02
+# (desde T47 o candidato é o staging 8c6328c extraído do git; sem --candidate o GOLDEN_AUDIT.json seria reescrito com «candidate»: null)
+# as 24 invariantes na árvore viva (staging + arma da T47), só evidência: escreve ckm-fire-live-2026-10-16/INVARIANTS_24_ROUTES.json
+node tools/verification/m01-combat-posture-staging-audit.mjs --live
+# prova causal de T48 sobre T38 (lockstep contra 65145c9, agora a partir do git em 8c6328c; verifica german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json byte a byte)
 node tools/verification/m01-german-retreat-golden-audit.mjs
 # a auditoria anterior à fusão (predecessor ef35c7a, árvore d171fd1) é GOLDEN_AUDIT_PRE_T48.json: git worktree add --detach /tmp/t38-pre d171fd1 e a ferramenta desse commit
 # capturas "depois" (as "antes" vêm do mesmo spec num worktree de ef35c7a, depois de `npm run build` nele)

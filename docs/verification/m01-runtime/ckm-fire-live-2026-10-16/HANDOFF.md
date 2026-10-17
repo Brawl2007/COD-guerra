@@ -51,3 +51,13 @@ Uma correção obrigatória e quatro menores (mais a extensão das guardas de by
 1. Decisão do proprietário sobre o posto S2 e o equilíbrio (acima).
 2. Verificação independente (sem nova revisão crítica completa): `npm ci`, `npm test`, `npm run build`, os specs de browser acima sob `flock`, e `node tools/verification/m01-t47-ckm-fire-audit.mjs` e `m01-t47-golden-amendment-audit.mjs` sem `--write` (têm de passar e não alterar ficheiros).
 3. Só depois, marcar a T47 como `CONCLUÍDA NA ORIGEM` e pedir a integração na candidata.
+
+## Integração no staging combinado (2026-10-17, branch local `claude/busy-ritchie-3fkvk2-t47i`)
+
+O estado acima é o da T47 sobre a candidata #80 (`813f163`), na cabeça `602a5ee`. A branch `claude/busy-ritchie-3fkvk2-t47i` fundiu-a (merge `3c9cab7`) no staging `8c6328c` (candidata #80 + #89 + retirada alemã T48 + braços FP T40 + posturas T38). O que isto muda neste directório:
+- `PREDECESSOR_DELTA_AUDIT.json` é agora a auditoria contra `8c6328c` (a de `602a5ee` fica byte a byte em `PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_02.json`); o golden `tests/fixtures/m01-t47-gameplay-baseline.json` é o da árvore viva (emenda 02; o de `602a5ee` em `…-before-amendment-02.json`);
+  `GOLDEN_AMENDMENT_02.json` explica a diferença (T38 desde o tick 1, T48 desde a demolição leste, o fogo desta tarefa); `GOLDEN_AMENDMENT_01.json` e as cópias da emenda 01 ficam como história. `INVARIANTS_24_ROUTES.json` é a evidência da ferramenta T38 `--live`.
+- Mantém-se: A == G em todos os ticks das duas rotas (apenas os deltas nomeados), a primeira diferença é o alemão que a primeira ronda tocou, o fim igual ao predecessor na rota própria dele. Muda a escala: sobre o staging a arma fere 4 e 2 homens e **não mata ninguém** nas duas rotas
+  (sobre a candidata #80 matava `de_east_5` na rota de referência), e o reparo sai 36,8 s e 15,55 s mais cedo (era 31,45 s e 6,15 s).
+- Três achados por decidir (D42 em `docs/direction/DECISIONS.md`): `cover-threat` (cadência das baixas), `east-front` (gémeo T22 e a postura que chega à mira da arma), invariantes T38 numa das 24 rotas. A folga mínima de um raio de S2 a um collider da ponte é 0,70 m (era 0,98 m).
+- A próxima acção da secção anterior (decisão do proprietário sobre S2, verificação independente) continua por fazer; a integração passou a existir só nesta branch local, sem push.
