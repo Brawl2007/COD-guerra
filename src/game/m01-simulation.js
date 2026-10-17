@@ -56,7 +56,7 @@ const migrateT38Staging=(actors,world)=>{
     const k=a.group==='grp_east_platoon'?Number(a.id.slice(8)):-1;
     if(k>=0&&a.alive&&!a.carriedBy&&a.x===1033+k%6*2&&a.z===38.2+Math.floor(k/6)*1.2&&a.y===0){const p=holdSlot(k);seat(a,p.x,p.z);}
     const g=a.group==='grp_de_east'?Number(a.id.slice(8))-2:-1;
-    if(g>=0&&g<12&&a.x===1053+g%3*2&&a.z===9.5+g*2&&a.y===-1){const p=STAGE.gates.positions[g];seat(a,p.x,p.z,p.facing);}
+    if(g>=0&&g<12&&a.alive&&a.x===1053+g%3*2&&a.z===9.5+g*2&&a.y===-1){const p=STAGE.gates.positions[g];seat(a,p.x,p.z,p.facing);}   // a fallen man is not moved
   }
 };
 const makeCKMCrew=(world,clock=0,withdrawn=false)=>CKM_IDS.map((id,i)=>{

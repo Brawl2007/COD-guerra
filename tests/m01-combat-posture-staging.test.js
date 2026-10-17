@@ -141,20 +141,23 @@ test('the gate riflemen keep their lines of sight: standing at his new place eac
   gates(s).forEach((a,k)=>assert.deepEqual(sees(a.x,a.z),sees(old[k].x,old[k].z),`${a.id}: same lines of sight as from ${old[k].x},${old[k].z}`));
 });
 
-test('saves from before T38 load onto the new places: a man exactly on his old authored spot, sent nowhere, is re-seated; anyone else keeps his position',()=>{
+test('saves from before T38 load onto the new places: a man exactly on his old authored spot, sent nowhere, is re-seated; anyone else (and any fallen man) keeps his position',()=>{
   const fresh=new M01Simulation(),save=fresh.snapshot(),cast=definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),at=id=>save.actors.find(a=>a.id===id);
   for(const id of SECTION){const i=cast.indexOf(id);Object.assign(at(id),{x:-76-i*1.6,y:-3,z:24+i%3*2,facing:0});}
   for(const id of SAPPERS){const i=cast.indexOf(id);Object.assign(at(id),{x:-42-i*.6,y:-2,z:10,facing:0});}
   for(let k=0;k<24;k++)Object.assign(at(`pl_east_${k}`),{x:1033+k%6*2,y:0,z:38.2+Math.floor(k/6)*1.2});
   for(let k=0;k<12;k++)Object.assign(at(`de_east_${k+2}`),{x:1053+k%3*2,y:-1,z:9.5+k*2,facing:0});
   Object.assign(at('jozef_bak'),{x:-80,z:30});Object.assign(at('sapper_3'),{target:{x:-121,z:10}});   // moved / already sent: untouched
+  Object.assign(at('de_east_6'),{alive:false,health:0,state:'DOWN'});   // a gate rifleman who fell on his old place before T38: a corpse is not moved
   const s=new M01Simulation(5);s.restoreSnapshot(json(save));
   for(const id of SECTION.filter(id=>id!=='jozef_bak')){const a=s.actor(id),p=PLAN.squad.slots[id];assert.deepEqual([a.x,a.z,a.y,a.facing],[p.x,p.z,s.world.heightAt(p.x,p.z),p.facing],id);}
   assert.deepEqual([s.actor('jozef_bak').x,s.actor('jozef_bak').z],[-80,30],'a man who has moved keeps his place');
   for(const id of ['pawel_krawiec','sapper_2']){const a=s.actor(id),p=PLAN.sappers[id];assert.deepEqual([a.x,a.z],[p.x,p.z],id);}
   assert.deepEqual([s.actor('sapper_3').x,s.actor('sapper_3').z],[-42-cast.indexOf('sapper_3')*.6,10],'a sapper already sent keeps his place');
   platoon(s).forEach((a,k)=>assert.deepEqual([a.x,a.z,a.y],[FRONT.slots[k].x,FRONT.slots[k].z,0],a.id));
-  gates(s).forEach((a,k)=>{const p=PLAN.gates.positions[k];assert.deepEqual([a.x,a.z,a.y,a.facing],[p.x,p.z,s.world.heightAt(p.x,p.z),p.facing],a.id);});
+  gates(s).forEach((a,k)=>{
+    if(a.id==='de_east_6'){assert.deepEqual([a.alive,a.x,a.z,a.y,a.facing],[false,1053+4%3*2,9.5+4*2,-1,0],'a fallen gate rifleman stays where he fell');return;}
+    const p=PLAN.gates.positions[k];assert.deepEqual([a.x,a.z,a.y,a.facing],[p.x,p.z,s.world.heightAt(p.x,p.z),p.facing],a.id);});
   // a current save is restored byte for byte
   const c=new M01Simulation(5);c.restoreSnapshot(json(fresh.snapshot()));assert.deepEqual(c.snapshot(),fresh.snapshot());
 });
