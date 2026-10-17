@@ -150,15 +150,24 @@ def ledger_path(env=None):
 
 
 def effective_limit(env=None, flag=None):
-    """None = no project call cap; optional settings can impose a finite cap."""
+    """Per-ledger call limit; Cloud Web needs scoped opt-in and a 20-call cap.
+
+    This protects BOTH jev_router.py and jev_decisions.py. The cloud ledger is
+    ephemeral: this is NOT a provider-level money limit across VM restarts.
+    """
+    e = _env(env)
     lim = PILOT_MAX_PAID_CALLS
-    for v in (_env(env).get("COD_JEV_LIMIT"), flag):
+    for v in (e.get("COD_JEV_LIMIT"), flag):
         if v not in (None, ""):
             try:
                 chosen = max(0, int(v))
                 lim = chosen if lim is None else min(lim, chosen)
             except (ValueError, TypeError):
                 pass
+    if e.get("CLAUDE_CODE_REMOTE") == "true":
+        if e.get("COD_JEV_WEB_PAID_APPROVED") != "1":
+            return 0  # Refuse calls by default, even behind credential-injecting proxy.
+        lim = 20 if lim is None else min(lim, 20)
     return lim
 
 
