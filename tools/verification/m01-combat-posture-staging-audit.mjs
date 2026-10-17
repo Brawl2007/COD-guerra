@@ -10,6 +10,8 @@
 //      falls within 5 s of battle clock of their fixed times, cover_repair done before the 05:30 order, dlg_m01_049;
 //   2. writes (--write-golden) or verifies the candidate's per-tick gameplay digests for the same two routes as the partials golden, into
 //      tests/fixtures/m01-t38-gameplay-baseline.json, pinned to the sha256 of src/game/m01-simulation.js (m01-animation-contract.test.js).
+// The audit also MEASURES (does not assert) how the MG34 gunners' fire moves with the lines of sight: per route and per gunner the bursts by kind of
+// target (player, Kowal = 'squad', the forward post = 'area', ...) and the calls of the callout co_m01_enemy_mg_fire_on_squad, predecessor against candidate.
 // x86 only (D11/D30: aarch64 floats differ). With --candidate <sha> the commit that carries this simulation is recorded after checking that its
 // src/game/m01-simulation.js hashes to the pinned source; when the fixture already exists the regenerated digests must be byte-identical to it.
 //
@@ -50,9 +52,32 @@ if(candidate)assert.equal(hash(execFileSync('git',['show',candidate+':src/game/m
 
 const E=name=>`evt_m01_${name}`,FRONT=eastFrontPlan();
 const FIXED=['train963_arrives','order_demolish','east_platoon_withdraws','germans_on_east_spans','bak_wounded'];
+const MG_SQUAD_LINE='co_m01_enemy_mg_fire_on_squad';
+/**
+ * The MG34 gunners' bursts counted by the kind of target they were aimed at (eastFire: the player, Kowal = 'squad', the forward post = 'area',
+ * the sappers = 'repair', the withdrawing platoon, ...), and every call of the callout co_m01_enemy_mg_fire_on_squad. It only observes: both
+ * overrides delegate to the simulation and touch neither its RNG nor its state, so the route is the one the plain class plays (the committed
+ * per-tick golden is generated without it). Works on the predecessor's class and on the candidate's alike.
+ */
+function withMg34Tally(Simulation,tally){
+  return class extends Simulation{
+    burst(a,target,kind,options){
+      const fired=super.burst(a,target,kind,options);
+      if(a.weapon==='mg34'){const g=tally.byGunner[a.id]??={};const key=fired?kind:'refused';g[key]=(g[key]??0)+1;}
+      return fired;
+    }
+    line(id,token){if(id===MG_SQUAD_LINE)tally.fireOnSquadCalls++;return super.line(id,token);}
+  };
+}
+const kindTotals=byGunner=>{
+  const kinds={};for(const g of Object.values(byGunner))for(const [k,n] of Object.entries(g))if(k!=='refused')kinds[k]=(kinds[k]??0)+n;
+  return Object.fromEntries(Object.entries(kinds).sort(([a],[b])=>a<b?-1:1));
+};
+const squadAreaOthers=kinds=>({squad:kinds.squad??0,area:kinds.area??0,others:Object.entries(kinds).filter(([k])=>k!=='squad'&&k!=='area').reduce((n,[,v])=>n+v,0)});
 function outcome(Simulation,seed,support){
   const deaths={},times={},dialogues={},DLG=['dlg_m01_022','dlg_m01_026','dlg_m01_027','dlg_m01_029','dlg_m01_040','dlg_m01_049'];let withdrawFlag=null;
-  const r=route(seed,{support,Simulation,onStep:({sim})=>{
+  const tally={byGunner:{},fireOnSquadCalls:0};
+  const r=route(seed,{support,Simulation:withMg34Tally(Simulation,tally),onStep:({sim})=>{
     for(let i=0;i<24;i++){const a=sim.actor(`pl_east_${i}`);if(!a.alive&&deaths[a.id]===undefined)deaths[a.id]=sim.battleClock;}
     // battle clock at which each event was consumed (the real clock legitimately shifts with the repair duration)
     for(const id of Object.keys(sim.consumed))if(times[id]===undefined)times[id]=clockText(sim.battleClock);
@@ -64,11 +89,19 @@ function outcome(Simulation,seed,support){
     flags:s.flags,attrition:FRONT.attrition.map(e=>({victim:e.victim,at:clockText(e.at),fellAfterSec:deaths[e.victim]===undefined?null:+(deaths[e.victim]-e.at).toFixed(2)})),
     dlg049:s.dialogueConsumed.includes('dlg_m01_049'),consumedOrder:Object.keys(s.consumed),repairDoneObjective:s.objectives.obj_m01_cover_repair.state,
     playerHealth:s.player.health,rng:s.rng.state,issuedRounds:s.enemyFire.nextId,realClock:+s.clock.toFixed(2),
-    events:Object.fromEntries(['enemy-fire','round-impact','npc-shot','player-hit'].map(t=>[t,r.events.filter(e=>e.type===t).length]))};
+    events:Object.fromEntries(['enemy-fire','round-impact','npc-shot','player-hit'].map(t=>[t,r.events.filter(e=>e.type===t).length])),
+    mg34:mg34Report(tally)};
+}
+function mg34Report(tally){
+  const kinds=kindTotals(tally.byGunner);
+  return {bursts:squadAreaOthers(kinds),kinds,refused:Object.values(tally.byGunner).reduce((n,g)=>n+(g.refused??0),0),
+    byGunner:Object.fromEntries(Object.entries(tally.byGunner).sort(([a],[b])=>a<b?-1:1).map(([id,g])=>[id,squadAreaOthers(Object.fromEntries(Object.entries(g).filter(([k])=>k!=='refused')))])),
+    fireOnSquadCalls:tally.fireOnSquadCalls};
 }
 const SEEDS=(process.env.M01_T38_AUDIT_SEEDS??'19390901,1,2,3,4,5,6,7,8,9,10,11').split(',').map(Number);
 const report={task:'M01-COMBAT-POSTURE-STAGING-V1',predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,sourceSha256,candidate,
-  gameplayInputsSha256,node:process.version,arch:process.arch,invariants:'equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time',routes:[]};
+  gameplayInputsSha256,node:process.version,arch:process.arch,invariants:'equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time',
+  measured:'not invariants, they legitimately move with the lines of sight: per route and per MG34 gunner the bursts by kind of target (squad = Kowal, area = the forward post, others = player, repair, platoon, ...) and the calls of the callout co_m01_enemy_mg_fire_on_squad',routes:[]};
 for(const support of [false,true])for(const seed of SEEDS){
   const before=outcome(Before,seed,support),after=outcome(M01Simulation,seed,support);
   const tb=before.battleTimes,ta=after.battleTimes;
@@ -79,9 +112,15 @@ for(const support of [false,true])for(const seed of SEEDS){
   assert.ok(seconds(ta.repair_complete)<seconds('05:30:00'),`seed ${seed} support ${support}: repair before the order`);
   for(const a of after.attrition)assert.ok(a.fellAfterSec!==null&&a.fellAfterSec>=0&&a.fellAfterSec<5,`seed ${seed} support ${support}: ${a.victim} +${a.fellAfterSec}`);
   report.routes.push({seed,support,before,after});
+  const mb=before.mg34,ma=after.mg34;
   console.log(JSON.stringify({seed,support,complete:after.complete,survivors:[before.finalSurvivors,after.finalSurvivors],repair:[tb.repair_complete,ta.repair_complete],
-    falls:after.attrition.map(a=>a.fellAfterSec)}));
+    falls:after.attrition.map(a=>a.fellAfterSec),
+    mg34:{squad:[mb.bursts.squad,ma.bursts.squad],area:[mb.bursts.area,ma.bursts.area],others:[mb.bursts.others,ma.bursts.others],fireOnSquadCalls:[mb.fireOnSquadCalls,ma.fireOnSquadCalls]}}));
 }
+const mg34Sum=(side,pick)=>report.routes.reduce((n,r)=>n+pick(r[side].mg34),0);
+report.mg34Totals=Object.fromEntries(['before','after'].map(side=>[side,{squad:mg34Sum(side,m=>m.bursts.squad),area:mg34Sum(side,m=>m.bursts.area),others:mg34Sum(side,m=>m.bursts.others),
+  fireOnSquadCalls:mg34Sum(side,m=>m.fireOnSquadCalls)}]));
+console.log(JSON.stringify({mg34Totals:report.mg34Totals}));
 const golden={task:'M01-COMBAT-POSTURE-STAGING-V1',generationStage:'gameplay re-baseline by design after the invariant audit against the exact predecessor',
   predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,...(candidate?{candidate}:{}),sourceSha256,gameplayInputs:INPUTS,gameplayInputsSha256,
   partialsGoldenSha256:hash(readFileSync(PARTIALS)),historicalGoldenSha256:hash(readFileSync(HISTORICAL)),routes:[]};
