@@ -1,0 +1,44 @@
+{
+  "task": "T40",
+  "author": "COD Guerra project; original first-person derivation of the accepted soldier kit, with MakeHuman base data",
+  "units": "metres",
+  "license": "Original project derivative; MakeHuman base CC0-1.0; predecessor project art licence pending owner decision; see ASSET_CREDITS.md",
+  "source": "../m01_soldier_pl_lod0.glb",
+  "sourceSha256": "9c98adb2eace9e4ac0558146b7cdc85a37374809a090208c0b51f42b4c87ae4d",
+  "generator": "tools/assets/m01-soldiers/build-fp-arms.mjs",
+  "closedBoundaryLoops": [
+    21,
+    22,
+    20,
+    20,
+    8,
+    3,
+    8
+  ],
+  "details": {
+    "fp_cuffs": 96,
+    "fp_straps": 24,
+    "fp_hands": 1028
+  },
+  "armTriangles": 1850,
+  "rifleTriangles": 1414,
+  "clipTriangles": 618,
+  "patientTriangles": 4019,
+  "patientSources": {
+    "m01_soldier_pl_lod1.glb": "d4e7565b92c6e266487a43af3c5a739b9f0a98328656662940ed0fe9fa361d8f",
+    "m01_soldier_pl_lod2.glb": "d1a59032549e07973684942aeac993d72c7427811db5061bba57c0bcf3fa15de"
+  },
+  "maximumCarryMeshTriangles": 5869,
+  "files": [
+    {
+      "file": "m01_fp_arms_v2.glb",
+      "bytes": 2749228,
+      "sha256": "68a3d1bd58b5c78a91f01eeae0d1ca310755dce93c9c8c953cb093a4db2118cb"
+    },
+    {
+      "file": "m01_fp_patient_v2.glb",
+      "bytes": 1045776,
+      "sha256": "a02c84832c6fc7ed18bced8bb4c9e3955742ede6f308838494890ad53442a560"
+    }
+  ]
+}
