@@ -52,6 +52,7 @@ def invoke(*, role: str, risk: str, complexity: str, description: str,
         raise RuntimeError("An explicit, non-sensitive task description is required")
     # Override secrets and pilot state in process memory; proxy owns authentication.
     e = dict(env, COD_JEV_PILOT="1", COD_JEV_AUTH="proxy",
+             COD_JEV_WEB_PAID_APPROVED="1" if online else "0",
              TYPESAFE_API_KEY="", COD_JEV_KEY_FILE=os.devnull,
              TYPESAFE_BASE_URL=OFFICIAL_URL)
     outcome = jev_router.route(
