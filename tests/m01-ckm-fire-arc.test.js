@@ -1,13 +1,15 @@
 // T47 phase 0: facts measured at the candidate HEAD with the production world/trace. These assert what IS, not a desired outcome.
 // If a later change opens an embrasure or fixes the colliders, these counts are expected to change and must be re-measured on purpose.
+// They measure the pre-T47 CASEMATE gun (CKM_CASEMATE_POSITION) on a route whose ckm never engages (tests/helpers/m01-ckm-neutral.js), i.e. the world as
+// phase 0 found it; the S2 post chosen by T47 is measured in tests/m01-ckm-candidate-posts.test.js and tests/m01-ckm-live-fire.test.js.
 import test from 'node:test';import assert from 'node:assert/strict';
 import {TczewWorld} from '../src/world/tczew-world.js';
-import {CKM_POSITION} from '../src/game/m01-simulation.js';
+import {CKM_CASEMATE_POSITION,CKM_POSITION} from '../src/game/m01-simulation.js';
 import {muzzleFlashWorld,muzzleWorld,embrasureContract,traceRay,scanArc,summariseRows,directionFor,buildReport,routeSweep} from '../tools/m01-ckm-fire-arc.mjs';
 
 test('CKM authored sockets transform numerically onto the reconstructed south embrasure',()=>{
   const flash=muzzleFlashWorld(),muzzle=muzzleWorld(),e=embrasureContract();
-  assert.deepEqual(CKM_POSITION,{x:24.17,y:-3,z:43});
+  assert.deepEqual(CKM_CASEMATE_POSITION,{x:24.17,y:-3,z:43});assert.deepEqual(CKM_POSITION,{x:7.17,y:-3,z:26},'T47 moved the gun to S2');
   assert.ok(Math.abs(flash.x-25)<1e-9);assert.ok(Math.abs(flash.y+2.36)<1e-9);assert.ok(Math.abs(flash.z-43)<1e-9);
   assert.ok(Math.abs(muzzle.x-24.85)<1e-9);assert.ok(Math.abs(muzzle.y+2.36)<1e-9);assert.ok(Math.abs(muzzle.z-43)<1e-9);
   assert.deepEqual(e.normal,{x:1,y:0,z:0});assert.equal(e.widthM,null);assert.equal(e.openingHeightM,null);

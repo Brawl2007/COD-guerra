@@ -3,13 +3,16 @@ import {resolve} from 'node:path';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import layout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import manifest from '../assets/models/provisional/m01/weapons/ckm_wz30/manifest.json' with {type:'json'};
-import {CKM_POSITION} from '../src/game/m01-simulation.js';
+import {CKM_POSITION as POST_POSITION,CKM_CASEMATE_POSITION} from '../src/game/m01-simulation.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
 import {traceObstruction,eyePosition,rayBox} from '../src/world/spatial.js';
 
 export const CKM_YAW=-Math.PI/2;
 export const DEG=Math.PI/180;
 const round=(n,d=6)=>Number(n.toFixed(d));
+// The phase-0/0b facts are about the world BEFORE the ckm answered the Germans: the route runs with a gun that never engages (it differs from the
+// pre-T47 build only by the crew standing at S2, proved per tick by tools/verification/m01-t47-ckm-fire-audit.mjs).
+const neutralSimulation=async()=>(await import(pathToFileURL(resolve('tests/helpers/m01-ckm-neutral.js')))).CkmNeutralSimulation;
 const xyz=a=>({x:a[0],y:a[1],z:a[2]});
 export function transformLocal(root,local,yaw=CKM_YAW){
   const c=Math.cos(yaw),s=Math.sin(yaw);
@@ -35,8 +38,10 @@ export function scanArc({azMin=-30,azMax=30,azStep=.5,elMin=-5,elMax=10,elStep=.
   for(let el=elMin;el<=elMax+1e-9;el+=elStep)for(let az=azMin;az<=azMax+1e-9;az+=azStep)rows.push(traceRay(world,origin,az,el,range));
   return rows;
 }
-export function muzzleFlashWorld(){return transformLocal(CKM_POSITION,manifest.sockets.scene.gun_muzzle_flash);}
-export function muzzleWorld(){return transformLocal(CKM_POSITION,manifest.sockets.scene.gun_muzzle);}
+// Phase 0 (T47) measured the casemate gun: muzzleFlashWorld()/muzzleWorld() default to that pre-T47 root. `postMuzzleFlashWorld()` is the gun at the S2 post.
+export function muzzleFlashWorld(root=CKM_CASEMATE_POSITION){return transformLocal(root,manifest.sockets.scene.gun_muzzle_flash);}
+export function muzzleWorld(root=CKM_CASEMATE_POSITION){return transformLocal(root,manifest.sockets.scene.gun_muzzle);}
+export function postMuzzleFlashWorld(){return muzzleFlashWorld(POST_POSITION);}
 export function embrasureContract(){
   const feature=layout.features.find(f=>f.id==='casemates_west'),cover=layout.coverNodes.find(c=>c.id==='cv_casemate_emb_s');
   const mapped=feature.embrasures[1];
@@ -57,7 +62,7 @@ export function targetTrace(world,origin,actor){
     eye:{x:round(dest.x,3),y:round(dest.y,3),z:round(dest.z,3)},targetDistanceM:round(distance,3),...row};
 }
 async function scenarioTargets(){
-  const {route}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js'))),flow=route(),origin=muzzleFlashWorld();
+  const {route}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js'))),flow=route(19390901,{Simulation:await neutralSimulation()}),origin=muzzleFlashWorld();
   const snapshots={repair:flow.combatSnapshots.repairThreat,withdrawal:flow.combatSnapshots.withdrawal};
   return Object.fromEntries(Object.entries(snapshots).map(([name,snapshot])=>{
     const world=new TczewWorld();world.refresh(Object.keys(snapshot.consumed??{}),snapshot.flags??{});
@@ -71,7 +76,7 @@ export async function routeSweep({everyTicks=20}={}){
   const {route}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js'))),origin=muzzleFlashWorld(),probe={space:'metres',x:origin.x,y:origin.y,z:origin.z,eyeHeight:0};
   let tick=0;const out={everyTicks,samples:0,samplesBeforeEastDemolition:0,enemySamples:0,enemySamplesBeforeEastDemolition:0,clearEnemySamples:0,clearEnemySamplesBeforeEastDemolition:0,clearEnemySamplesAfterEastBeforeWestDemolition:0,clearEnemySamplesAfterWestDemolition:0,
     productionLineOfSightMismatches:0,groups:{},firstBlockers:{},clearTargets:{}};
-  route(19390901,{onStep:({sim})=>{
+  route(19390901,{Simulation:await neutralSimulation(),onStep:({sim})=>{
     if(tick++%everyTicks)return;
     const before=!sim.consumedEvent('evt_m01_east_demolition'),west=sim.consumedEvent('evt_m01_west_demolition'),crew=sim.actors.find(a=>a.ckm);out.samples++;if(before)out.samplesBeforeEastDemolition++;
     for(const a of sim.enemies.filter(a=>a.alive&&a.active)){
@@ -107,7 +112,7 @@ export async function collectWindowTargets({everyTicks=20,seed=19390901}={}){
   const {route}=await import(pathToFileURL(resolve('tests/helpers/m01-route.js')));
   const worlds=new Map(),entries=new Map(),out={everyTicks,seed,samples:0,enemySamples:0,phaseSamples:{},phaseActors:{},worlds};
   let tick=0,lastRevision=-1,worldKey=null;const actorsByPhase={};
-  route(seed,{onStep:({sim})=>{
+  route(seed,{Simulation:await neutralSimulation(),onStep:({sim})=>{
     if(tick++%everyTicks)return;
     if(sim.consumedEvent('evt_m01_east_demolition'))return;
     if(sim.world.revision!==lastRevision){lastRevision=sim.world.revision;worldKey=JSON.stringify([sim.world.events,sim.flags]);
@@ -234,7 +239,7 @@ export function candidateCsv(report){
 }
 export async function buildReport(options={}){
   const origin=muzzleFlashWorld(),rows=scanArc({...options,origin}),targets=await scenarioTargets();
-  return {schemaVersion:1,root:{...CKM_POSITION},yawRad:CKM_YAW,yawDeg:-90,sockets:{muzzleLocal:manifest.sockets.scene.gun_muzzle,muzzleFlashLocal:manifest.sockets.scene.gun_muzzle_flash,
+  return {schemaVersion:1,root:{...CKM_CASEMATE_POSITION},yawRad:CKM_YAW,yawDeg:-90,sockets:{muzzleLocal:manifest.sockets.scene.gun_muzzle,muzzleFlashLocal:manifest.sockets.scene.gun_muzzle_flash,
     muzzleWorld:muzzleWorld(),muzzleFlashWorld:origin},embrasure:embrasureContract(),scan:{config:{azMin:options.azMin??-30,azMax:options.azMax??30,azStep:options.azStep??.5,elMin:options.elMin??-5,elMax:options.elMax??10,elStep:options.elStep??.5,range:options.range??1200},summary:summariseRows(rows),rows},targets};
 }
 async function main(argv){

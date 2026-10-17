@@ -81,8 +81,8 @@ export function toStationEvacuation(d=driver(),{observe=false,phase='drag'}={}){
   return d;
 }
 /** Stay in the real sandbag cover until an actual adjustment salvo is emitted. */
-export function toCoverAdjustment({truss=false}={}){
-  const d=toRepair(driver()),{sim,walk,step,until}=d;
+export function toCoverAdjustment({truss=false,Simulation}={}){
+  const d=toRepair(driver(undefined,{Simulation})),{sim,walk,step,until}=d;
   walk(-115,27);walk(-26.5,28);step({crouch:true});
   until(()=>sim.active('hold_access'),500);
   if(truss){step({crouch:true});walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);walk(38.5,37);step({crouch:true});}
