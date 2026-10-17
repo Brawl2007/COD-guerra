@@ -126,6 +126,12 @@ export class M01Characters {
   sample(actor,time,actors=[],pose=actorPose(actor,time),battleClock){
     const offset=(hash(actor.id)%1000)/250;
     if(pose.name==='fallen')return {clip:'fallen',time:Number.isFinite(actor.diedAt)&&time>=actor.diedAt?Math.min(1.4,time-actor.diedAt):1.4,loop:false};
+    // T38: Kowal holds the squad post lying prone behind the rkm wz.28 on its bipod (posture from the simulation's presentation data).
+    if(actor.id==='szymon_kowal'&&actor.posture==='prone'&&this.clips.has('rkm_prone')){
+      const age=time-actor.firedAt,burst=this.clips.get('rkm_prone_fire')?.duration??.8;
+      if(Number.isFinite(age)&&age>=0&&age<burst&&this.clips.has('rkm_prone_fire'))return {clip:'rkm_prone_fire',time:age,loop:false};
+      return {clip:'rkm_prone',time:time+offset,loop:true};
+    }
     if(actor.mg34Loader){const phase=actor.mg34Loader.phase,name=`mg34_loader_prone_${phase}`;
       if(this.clips.has(name))return {clip:name,time:Math.max(0,time-actor.mg34Loader.startedAt),loop:phase==='idle'};
       return {clip:phase==='leave'?'walk':'pinned',time:time+offset,loop:true};}

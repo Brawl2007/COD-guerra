@@ -4,32 +4,34 @@ export const MOTION_GAITS=Object.freeze(['idle','walk','run','sprint','crouch_wa
 export const PRESENTATION_FIELDS=Object.freeze(['motion','bodyYaw','posture','postureSince','postureProgress','suppressedAt','hitAt','hitYaw','diedAt','deathYaw','reload','cover','carry']);
 const angle=x=>Math.atan2(Math.sin(x),Math.cos(x));
 /**
- * T38 (M01-COMBAT-POSTURE-STAGING-V1, slice 1): grp_east_platoon.hold.stage. Presentation only: a platoon man standing still on his slot of
- * the waiting block is drawn crouched/kneeling and his body turned by yaw[i] from his gameplay facing, so nobody stands in a row under fire.
- * Gameplay `crouched`, positions, hitboxes (spatial.js only reads `posture` for 'prone', excluded here), aim heights and cadences are untouched.
- * The box is the east rifles' aim block of m01-simulation.js (layout +1 m in x, +0.2 m in z). Validated at load: a typo stops the game.
+ * T38 (M01-COMBAT-POSTURE-STAGING-V1): grp_east_platoon.hold. While the platoon holds the deck every man is crouched in GAMEPLAY on his staggered
+ * slot (m01-simulation.js: hitbox, eye, aim and shot origin all kneel), so the posture below is simply 'crouch'. Here, presentation only, a
+ * man kneeling still on his own slot turns his body by stage.yaw[i] from his gameplay facing, so the kneeling men do not all look the same way.
+ * Engineers (sappers) lie prone (T07 generic prone, which also lowers their hitboxes in spatial.js) while suppressed and, from the moment they are
+ * sent to the second cut, whenever they wait still on guard without working (gameplay `crouched` is their work posture); Kowal lies prone behind
+ * his rkm while he holds his slot at the squad post under fire. Validated at load.
  */
 export function eastHoldStage(def=definition){
   const fail=m=>{throw new Error(`M01 east hold stage: ${m}`);};
-  const group=def.groups?.find(g=>g.id==='grp_east_platoon'),l=group?.hold?.layout,s=group?.hold?.stage,size=group?.startSize;
-  if(!l||!Number.isInteger(l.columns)||l.columns<1||![l.x0,l.dx,l.z0,l.dz].every(Number.isFinite))fail('hold.layout');
-  if(!s||s.posture!=='crouch')fail('posture must be crouch (stand keeps the row; prone would change the hitboxes)');
-  if(!Number.isInteger(size)||!Array.isArray(s.yaw)||s.yaw.length!==size||!s.yaw.every(y=>Number.isFinite(y)&&Math.abs(y)<=.4))fail('one yaw per man, |yaw| <= 0.4 rad');
-  const rows=Math.ceil(size/l.columns);
-  return Object.freeze({posture:s.posture,yaw:Object.freeze([...s.yaw]),
-    box:Object.freeze({x0:l.x0-1,x1:l.x0+(l.columns-1)*l.dx+1,z0:l.z0-.2,z1:l.z0+(rows-1)*l.dz+.2})});
+  const group=def.groups?.find(g=>g.id==='grp_east_platoon'),slots=group?.hold?.slots,s=group?.hold?.stage,size=group?.startSize;
+  if(!Number.isInteger(size)||!Array.isArray(slots)||slots.length!==size||!slots.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)))fail('hold.slots');
+  if(!s||s.posture!=='crouch')fail('posture must be crouch (stand keeps the men upright under fire; prone is not a platoon posture)');
+  if(!Array.isArray(s.yaw)||s.yaw.length!==size||!s.yaw.every(y=>Number.isFinite(y)&&Math.abs(y)<=.4))fail('one yaw per man, |yaw| <= 0.4 rad');
+  return Object.freeze({posture:s.posture,yaw:Object.freeze([...s.yaw]),slots:Object.freeze(slots.map(([x,z])=>Object.freeze({x,z})))});
 }
 const EAST_HOLD_STAGE=eastHoldStage();
-/** Slot index of a platoon man staged on the waiting block, or -1. Reads gameplay data only; writes nothing. */
+/** Slot index of a platoon man kneeling still on his own hold slot, or -1. Reads gameplay data only; writes nothing. */
 export function holdStageSlot(a){
-  if(a.group!=='grp_east_platoon'||!a.active||a.crouched||a.carriedBy||a.state==='WOUNDED'||(a.motion?.speed??0)!==0)return -1;
-  const b=EAST_HOLD_STAGE.box,i=Number(a.id.slice('pl_east_'.length));
-  if(!(a.x>=b.x0&&a.x<=b.x1&&a.z>=b.z0&&a.z<=b.z1)||!Number.isInteger(i)||i<0||i>=EAST_HOLD_STAGE.yaw.length)return -1;
-  return i;
+  if(a.group!=='grp_east_platoon'||!a.active||!a.alive||!a.crouched||a.carriedBy||a.state==='WOUNDED'||(a.motion?.speed??0)!==0)return -1;
+  const i=Number(a.id.slice('pl_east_'.length)),slot=Number.isInteger(i)?EAST_HOLD_STAGE.slots[i]:undefined;
+  return slot&&Math.hypot(a.x-slot.x,a.z-slot.z)<.05?i:-1;
 }
 const bodyGoal=a=>{const i=holdStageSlot(a);return i<0?a.facing:angle(a.facing+EAST_HOLD_STAGE.yaw[i]);};
-const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&clock<a.suppressedUntil?'prone':a.crouched?'crouch':
-  holdStageSlot(a)>=0?EAST_HOLD_STAGE.posture:'stand';
+/** T38: a sapper sent to the second cut who waits still on guard, not working (`crouched`), lies prone. */
+const waitingProne=a=>a.role==='ENGINEER'&&a.target!=null&&!a.crouched&&a.alive&&a.active&&!a.carriedBy&&a.state==='GUARD'&&(a.motion?.speed??0)===0;
+/** T38: Kowal, staged low at his slot (gameplay `crouched`), lies prone behind the rkm wz.28 on its bipod at the end of the sandbags. */
+const rkmProne=a=>a.id==='szymon_kowal'&&a.crouched&&a.alive&&a.active&&!a.carriedBy&&a.pose!=='seated'&&a.state==='GUARD'&&(a.motion?.speed??0)===0;
+const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&(a.role==='ENGINEER'&&(clock<a.suppressedUntil||waitingProne(a))||rkmProne(a))?'prone':a.crouched?'crouch':'stand';
 const fixedBody=a=>!a.alive||a.state==='WOUNDED'||a.carriedBy||a.pose==='seated'||
   (a.mg34Prone&&a.mg34Prone.phase!=='standing')||(a.ckm&&a.ckm.phase!=='retreat');
 

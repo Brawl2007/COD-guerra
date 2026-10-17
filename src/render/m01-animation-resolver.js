@@ -440,8 +440,7 @@ function derive(actor,T,cand,deadAt,alt){
   // postureSince/gaitSince default to clock-1 (or 0 at mission start) when unknown: only a stamp > 0 is a real event.
   // The earlier posture flips both the flag and the saved posture: the clip selection reads either (actorPoseName, genericCandidate).
   else if(IDLE.has(cand.clip)&&actor.postureSince>0&&(actor.posture==='stand'||actor.posture==='crouch')){
-    // T38: a staged platoon man is crouch by posture alone (crouched false); his earlier state was plain standing, not a crouched flag.
-    stamp=actor.postureSince;patch=actor.crouched||actor.posture==='crouch'?{crouched:false,posture:'stand'}:{crouched:true,posture:'crouch'};plausible=f=>IDLE.has(f.clip)&&crouchedClip(f.clip)!==crouchedClip(cand.clip);
+    stamp=actor.postureSince;patch={crouched:!actor.crouched,posture:actor.posture==='crouch'?'stand':'crouch'};plausible=f=>IDLE.has(f.clip)&&crouchedClip(f.clip)!==crouchedClip(cand.clip);
   }else if(LOCO.has(cand.clip)&&actor.motion?.gaitSince>0){
     stamp=actor.motion.gaitSince;patch={state:'GUARD',motion:{...actor.motion,gait:'idle'}};plausible=f=>!LOCO.has(f.clip);
   }
