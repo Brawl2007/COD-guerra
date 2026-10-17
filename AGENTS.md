@@ -15,10 +15,10 @@ python3 .agent/tools/m01_task_registry.py claim TXX --sha "$(git rev-parse HEAD)
 ```
 A reserva cria exclusivamente `refs/heads/claims/m01-txx` no GitHub; se a criação falhar, outro agente pode ter reclamado a tarefa: não continuar nem fazer outra reserva. Registar owner e branch de desenvolvimento na issue #72 e criar PR de implementação. Não converter estados em `INTEGRATED` sem verificar commits, CI e destino; não tratar a presença na V7 ou no PR #76 como integração em `main`.
 
-**Integração única existente:** PR #76 é a candidata M01. Não criar outra consolidação V7 concorrente. O Capitão trabalha sobre ela quando for seguro, mantendo histórico, provas e proteções. A lista é índice conservador; Git/PR/CI recentes sempre prevalecem.
+**Candidata atual:** PR #76 foi integrada em main. O PR #80 é a candidata M01 em desenvolvimento (draft); NÃO escrever nela enquanto o mecanismo exclusivo do PR #84 estiver PAUSED. Não criar candidata concorrente. A lista é índice conservador; Git/PR/CI recentes sempre prevalecem.
 
 
-Leia `DEVELOPMENT_STATUS.md`, `RUNBOOK.md`, `IMPLEMENTATION_PLAN.md` e o sistema afectado antes de editar.
+Leia os trechos relevantes de `DEVELOPMENT_STATUS.md`, `RUNBOOK.md`, `IMPLEMENTATION_PLAN.md` e o sistema afectado antes de editar. Não carregar documentação longa sem necessidade.
 A especificação completa é `docs/PROMPT_MESTRE.txt`; o índice do produto é `PROJECT_SPEC.md`.
 
 - Node >=22.12; usar Node 24 no CI. `npm ci`, `npm test`, `npm run build`, `npm run test:browser`.
