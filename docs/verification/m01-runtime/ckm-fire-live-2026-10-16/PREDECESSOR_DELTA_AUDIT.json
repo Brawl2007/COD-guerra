@@ -1,7 +1,7 @@
 {
   "task": "M01-T47-CKM-LIVE-FIRE-V1",
-  "predecessor": "813f163deceb551e0e4504b30958580cb67d3a76",
-  "predecessorSourceSha256": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
+  "predecessor": "8c6328c947e92041f237b5990142dd110aee8e71",
+  "predecessorSourceSha256": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9",
   "namedDeltas": {
     "crew": {
       "actors": [
@@ -77,7 +77,7 @@
     {
       "seed": 19390901,
       "support": false,
-      "ticks": 21828,
+      "ticks": 21707,
       "predecessorVsGhost": {
         "result": "PASS",
         "firstDifference": null
@@ -104,45 +104,41 @@
         ],
         "consistent": true
       },
-      "afterOnsetTicksDiffering": 16508,
+      "afterOnsetTicksDiffering": 16387,
       "live": {
         "bursts": 77,
         "roundsIssued": 616,
         "beltAtEnd": 42,
         "beltRefills": 1,
-        "hits": 7,
-        "kills": [
-          "de_east_5"
-        ],
+        "hits": 4,
+        "kills": [],
         "men": {
           "hit": [
-            "de_east_5",
-            "de_east_1",
-            "de_east_13",
-            "de_east_4",
-            "de_east_8",
-            "de_east_3"
+            "de_east_11",
+            "de_east_12",
+            "de_east_6",
+            "de_east_1"
           ],
           "suppressed": [
             "de_east_0",
             "de_east_13",
             "de_east_12",
-            "de_east_6",
             "de_east_7",
-            "de_east_8",
-            "de_east_9",
+            "de_east_1",
             "de_east_5",
+            "de_east_6",
+            "de_east_8",
             "de_east_11",
+            "de_east_9",
             "de_east_10",
             "de_east_2",
             "de_east_3",
-            "de_east_1",
             "de_east_4"
           ]
         },
-        "suppressionEvents": 688,
+        "suppressionEvents": 779,
         "firstBurstClock": 264.3000000000258,
-        "lastBurstBattleClock": 22141.200000008495,
+        "lastBurstBattleClock": 22145.60000000851,
         "allyFireEvents": 77,
         "complete": true,
         "checkpoints": [
@@ -154,19 +150,20 @@
       },
       "summaries": {
         "predecessor": {
-          "ticks": 21828,
-          "clock": 1091.3999999995551,
+          "ticks": 21707,
+          "clock": 1085.3499999995606,
           "battleClock": 24270,
-          "rng": 4119413479,
-          "issuedGermanRounds": 2033,
+          "rng": 1365844107,
+          "issuedGermanRounds": 2039,
           "eventCounts": {
             "checkpoint": 4,
             "distant-shot": 2,
-            "enemy-fire": 2020,
+            "enemy-fire": 2027,
             "m01-blast": 10,
             "message": 169,
-            "npc-shot": 127,
-            "round-impact": 934
+            "npc-shot": 126,
+            "player-hit": 1,
+            "round-impact": 953
           },
           "consumedEvents": 22,
           "checkpoints": [
@@ -176,8 +173,8 @@
             "cp_m01_d_retirada"
           ],
           "survivors": 12,
-          "repairPins": 81,
-          "playerHealth": 100,
+          "repairPins": 74,
+          "playerHealth": 92,
           "objectives": {
             "deliver_message": "done",
             "take_cover": "done",
@@ -446,20 +443,21 @@
           ]
         },
         "ghost": {
-          "ticks": 21828,
-          "clock": 1091.3999999995551,
+          "ticks": 21707,
+          "clock": 1085.3499999995606,
           "battleClock": 24270,
-          "rng": 4119413479,
-          "issuedGermanRounds": 2033,
+          "rng": 1365844107,
+          "issuedGermanRounds": 2039,
           "eventCounts": {
-            "ally-fire": 81,
+            "ally-fire": 83,
             "checkpoint": 4,
             "distant-shot": 2,
-            "enemy-fire": 2020,
+            "enemy-fire": 2027,
             "m01-blast": 10,
             "message": 169,
-            "npc-shot": 127,
-            "round-impact": 934
+            "npc-shot": 126,
+            "player-hit": 1,
+            "round-impact": 953
           },
           "consumedEvents": 22,
           "checkpoints": [
@@ -469,8 +467,8 @@
             "cp_m01_d_retirada"
           ],
           "survivors": 12,
-          "repairPins": 81,
-          "playerHealth": 100,
+          "repairPins": 74,
+          "playerHealth": 92,
           "objectives": {
             "deliver_message": "done",
             "take_cover": "done",
@@ -739,22 +737,22 @@
           ]
         },
         "live": {
-          "ticks": 21828,
-          "clock": 1091.3999999995551,
+          "ticks": 21707,
+          "clock": 1085.3499999995606,
           "battleClock": 25500,
-          "rng": 570389703,
-          "issuedGermanRounds": 1876,
+          "rng": 1162800478,
+          "issuedGermanRounds": 1914,
           "eventCounts": {
             "ally-fire": 77,
             "checkpoint": 4,
             "complete": 1,
             "distant-shot": 3,
-            "enemy-fire": 1844,
+            "enemy-fire": 1889,
             "m01-blast": 11,
-            "message": 171,
-            "npc-shot": 122,
+            "message": 170,
+            "npc-shot": 120,
             "player-hit": 3,
-            "round-impact": 838
+            "round-impact": 876
           },
           "consumedEvents": 26,
           "checkpoints": [
@@ -764,7 +762,7 @@
             "cp_m01_d_retirada"
           ],
           "survivors": 12,
-          "repairPins": 47,
+          "repairPins": 39,
           "playerHealth": 76,
           "objectives": {
             "deliver_message": "done",
@@ -798,22 +796,22 @@
             },
             {
               "id": "de_east_3",
-              "health": 55,
+              "health": 100,
               "alive": true
             },
             {
               "id": "de_east_4",
-              "health": 55,
+              "health": 100,
               "alive": true
             },
             {
               "id": "de_east_5",
-              "health": 0,
-              "alive": false
+              "health": 100,
+              "alive": true
             },
             {
               "id": "de_east_6",
-              "health": 100,
+              "health": 10,
               "alive": true
             },
             {
@@ -823,7 +821,7 @@
             },
             {
               "id": "de_east_8",
-              "health": 10,
+              "health": 100,
               "alive": true
             },
             {
@@ -838,17 +836,17 @@
             },
             {
               "id": "de_east_11",
-              "health": 100,
+              "health": 10,
               "alive": true
             },
             {
               "id": "de_east_12",
-              "health": 100,
+              "health": 55,
               "alive": true
             },
             {
               "id": "de_east_13",
-              "health": 68.5,
+              "health": 100,
               "alive": true
             },
             {
@@ -1034,11 +1032,11 @@
           ]
         },
         "predecessorOwnRoute": {
-          "ticks": 22247,
-          "clock": 1112.349999999536,
+          "ticks": 22198,
+          "clock": 1109.8999999995383,
           "battleClock": 25500,
-          "rng": 3612259737,
-          "issuedGermanRounds": 2011,
+          "rng": 1192639761,
+          "issuedGermanRounds": 2003,
           "eventCounts": {},
           "consumedEvents": 26,
           "checkpoints": [
@@ -1048,8 +1046,8 @@
             "cp_m01_d_retirada"
           ],
           "survivors": 12,
-          "repairPins": 81,
-          "playerHealth": 84,
+          "repairPins": 74,
+          "playerHealth": 92,
           "objectives": {
             "deliver_message": "done",
             "take_cover": "done",
@@ -1320,7 +1318,7 @@
       },
       "deltaGhostAgainstPredecessor": {
         "eventCounts": {
-          "ally-fire": 81
+          "ally-fire": 83
         },
         "germansDiffering": [],
         "ticks": 0,
@@ -1338,27 +1336,25 @@
           "ally-fire": 77,
           "complete": 1,
           "distant-shot": 1,
-          "enemy-fire": -176,
+          "enemy-fire": -138,
           "m01-blast": 1,
-          "message": 2,
-          "npc-shot": -5,
-          "player-hit": 3,
-          "round-impact": -96
+          "message": 1,
+          "npc-shot": -6,
+          "player-hit": 2,
+          "round-impact": -77
         },
         "germansDiffering": [
           "de_east_1",
-          "de_east_3",
-          "de_east_4",
-          "de_east_5",
-          "de_east_8",
-          "de_east_13"
+          "de_east_6",
+          "de_east_11",
+          "de_east_12"
         ],
         "ticks": 0,
         "rngDiffers": true,
-        "issuedGermanRounds": -157,
-        "repairPins": -34,
+        "issuedGermanRounds": -125,
+        "repairPins": -35,
         "survivors": 0,
-        "playerHealth": -24,
+        "playerHealth": -16,
         "objectivesIdentical": false,
         "checkpointsIdentical": true,
         "consumedEventsIdentical": false
@@ -1366,93 +1362,93 @@
       "timeline": [
         {
           "event": "evt_m01_repair_complete",
-          "predecessor": 448.1500000000676,
-          "live": 416.70000000006047,
-          "shiftSec": -31.45000000000715
+          "predecessor": 445.7500000000671,
+          "live": 408.9500000000587,
+          "shiftSec": -36.80000000000837
         },
         {
           "event": "evt_m01_bombing_0530",
-          "predecessor": 484.25000000007583,
-          "live": 463.30000000007107,
-          "shiftSec": -20.950000000004763
+          "predecessor": 482.65000000007547,
+          "live": 458.1000000000699,
+          "shiftSec": -24.550000000005582
         },
         {
           "event": "evt_m01_order_demolish",
-          "predecessor": 484.25000000007583,
-          "live": 463.30000000007107,
-          "shiftSec": -20.950000000004763
+          "predecessor": 482.65000000007547,
+          "live": 458.1000000000699,
+          "shiftSec": -24.550000000005582
         },
         {
           "event": "evt_m01_runner_pressure_report",
-          "predecessor": 559.2500000000391,
-          "live": 538.3000000000582,
-          "shiftSec": -20.949999999980946
+          "predecessor": 557.6500000000406,
+          "live": 533.1000000000629,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_north_contact_distant",
-          "predecessor": 634.2499999999709,
-          "live": 613.29999999999,
-          "shiftSec": -20.949999999980946
+          "predecessor": 632.6499999999724,
+          "live": 608.0999999999947,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_east_platoon_withdraws",
-          "predecessor": 709.2499999999027,
-          "live": 688.2999999999217,
-          "shiftSec": -20.949999999980946
+          "predecessor": 707.6499999999041,
+          "live": 683.0999999999265,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_bak_wounded",
-          "predecessor": 739.2499999998754,
-          "live": 718.2999999998945,
-          "shiftSec": -20.949999999980946
+          "predecessor": 737.6499999998769,
+          "live": 713.0999999998992,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_germans_on_east_spans",
-          "predecessor": 746.7499999998686,
-          "live": 725.7999999998876,
-          "shiftSec": -20.949999999980946
+          "predecessor": 745.14999999987,
+          "live": 720.5999999998924,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_east_demolition",
-          "predecessor": 786.1499999998327,
-          "live": 765.1999999998518,
-          "shiftSec": -20.949999999980946
+          "predecessor": 783.699999999835,
+          "live": 759.1499999998573,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_dudek_retrieves_bak",
-          "predecessor": 814.399999999807,
-          "live": 793.4499999998261,
-          "shiftSec": -20.949999999980946
+          "predecessor": 811.9499999998093,
+          "live": 787.3999999998316,
+          "shiftSec": -24.549999999977672
         },
         {
           "event": "evt_m01_west_demolition",
           "predecessor": null,
-          "live": 1076.3499999995688,
+          "live": 1070.2999999995743,
           "shiftSec": null
         },
         {
           "event": "evt_m01_kozliny_attack_distant",
           "predecessor": null,
-          "live": 1091.3499999995552,
+          "live": 1085.2999999995607,
           "shiftSec": null
         },
         {
           "event": "evt_m01_roll_call",
           "predecessor": null,
-          "live": 1091.3499999995552,
+          "live": 1085.2999999995607,
           "shiftSec": null
         },
         {
           "event": "evt_m01_debrief",
           "predecessor": null,
-          "live": 1091.3999999995551,
+          "live": 1085.3499999995606,
           "shiftSec": null
         }
       ],
       "endStateAgainstPredecessorOwnRoute": {
         "ticks": {
-          "predecessor": 22247,
-          "live": 21828
+          "predecessor": 22198,
+          "live": 21707
         },
         "objectivesIdentical": true,
         "checkpointsIdentical": true,
@@ -1460,74 +1456,73 @@
         "survivorsIdentical": true,
         "finalBattleClockIdentical": true,
         "repairCompleteSec": {
-          "predecessorOwnRoute": 448.1500000000676,
-          "predecessorOnLiveControls": 448.1500000000676,
-          "live": 416.70000000006047
+          "predecessorOwnRoute": 445.7500000000671,
+          "predecessorOnLiveControls": 445.7500000000671,
+          "live": 408.9500000000587
         },
         "repairPins": {
-          "predecessorOwnRoute": 81,
-          "predecessorOnLiveControls": 81,
-          "live": 47
+          "predecessorOwnRoute": 74,
+          "predecessorOnLiveControls": 74,
+          "live": 39
         }
       }
     },
     {
       "seed": 7,
       "support": true,
-      "ticks": 21296,
+      "ticks": 21378,
       "predecessorVsGhost": {
         "result": "PASS",
         "firstDifference": null
       },
       "causalOnset": {
-        "tick": 5447,
-        "clock": 272.35000000002765,
-        "battleClock": 17243.550000000232,
-        "firstDifferencePath": "$.state.actors.20.suppressedUntil",
-        "firstDifferenceActor": "de_east_8",
+        "tick": 5449,
+        "clock": 272.45000000002767,
+        "battleClock": 17244.450000000234,
+        "firstDifferencePath": "$.state.actors.25.suppressedUntil",
+        "firstDifferenceActor": "de_east_13",
         "landedThisTick": [
           {
-            "clock": 272.35000000002765,
-            "round": "ckm_1_1",
-            "id": "de_east_8",
+            "clock": 272.45000000002767,
+            "round": "ckm_1_2",
+            "id": "de_east_13",
             "effect": "suppressed"
           }
         ],
         "consistent": true
       },
-      "afterOnsetTicksDiffering": 15849,
+      "afterOnsetTicksDiffering": 15929,
       "live": {
-        "bursts": 72,
-        "roundsIssued": 576,
-        "beltAtEnd": 82,
+        "bursts": 77,
+        "roundsIssued": 616,
+        "beltAtEnd": 42,
         "beltRefills": 1,
-        "hits": 4,
+        "hits": 2,
         "kills": [],
         "men": {
           "hit": [
-            "de_east_6",
-            "de_east_13",
-            "de_east_3",
-            "de_east_2"
+            "de_east_4",
+            "de_east_3"
           ],
           "suppressed": [
-            "de_east_8",
-            "de_east_12",
             "de_east_13",
-            "de_east_10",
             "de_east_11",
+            "de_east_12",
             "de_east_9",
+            "de_east_10",
             "de_east_6",
+            "de_east_8",
             "de_east_7",
+            "de_east_5",
+            "de_east_4",
             "de_east_2",
-            "de_east_3",
-            "de_east_5"
+            "de_east_3"
           ]
         },
-        "suppressionEvents": 528,
+        "suppressionEvents": 655,
         "firstBurstClock": 264.3000000000258,
-        "lastBurstBattleClock": 22133.200000008488,
-        "allyFireEvents": 72,
+        "lastBurstBattleClock": 22140.8500000085,
+        "allyFireEvents": 77,
         "complete": true,
         "checkpoints": [
           "cp_m01_a_orientacao",
@@ -1538,32 +1533,34 @@
       },
       "summaries": {
         "predecessor": {
-          "ticks": 21296,
-          "clock": 1064.7999999995793,
-          "battleClock": 24304.499999999935,
-          "rng": 3548732628,
-          "issuedGermanRounds": 1282,
+          "ticks": 21378,
+          "clock": 1068.8999999995756,
+          "battleClock": 25500,
+          "rng": 1440845870,
+          "issuedGermanRounds": 1473,
           "eventCounts": {
             "checkpoint": 4,
-            "distant-shot": 2,
-            "enemy-fire": 1276,
+            "complete": 1,
+            "distant-shot": 3,
+            "enemy-fire": 1459,
             "m01-blast": 11,
-            "message": 163,
-            "npc-shot": 118,
-            "player-shot": 40,
-            "reload": 7,
-            "round-impact": 281
+            "message": 171,
+            "npc-shot": 116,
+            "player-hit": 2,
+            "player-shot": 35,
+            "reload": 6,
+            "round-impact": 497
           },
-          "consumedEvents": 23,
+          "consumedEvents": 26,
           "checkpoints": [
             "cp_m01_a_orientacao",
             "cp_m01_b_reorganizacao",
             "cp_m01_c_engenheiros",
             "cp_m01_d_retirada"
           ],
-          "survivors": 16,
-          "repairPins": 13,
-          "playerHealth": 100,
+          "survivors": 17,
+          "repairPins": 9,
+          "playerHealth": 84,
           "objectives": {
             "deliver_message": "done",
             "take_cover": "done",
@@ -1586,8 +1583,8 @@
             },
             {
               "id": "de_east_1",
-              "health": 0,
-              "alive": false
+              "health": 100,
+              "alive": true
             },
             {
               "id": "de_east_2",
@@ -1832,33 +1829,35 @@
           ]
         },
         "ghost": {
-          "ticks": 21296,
-          "clock": 1064.7999999995793,
-          "battleClock": 24304.499999999935,
-          "rng": 3548732628,
-          "issuedGermanRounds": 1282,
+          "ticks": 21378,
+          "clock": 1068.8999999995756,
+          "battleClock": 25500,
+          "rng": 1440845870,
+          "issuedGermanRounds": 1473,
           "eventCounts": {
-            "ally-fire": 74,
+            "ally-fire": 72,
             "checkpoint": 4,
-            "distant-shot": 2,
-            "enemy-fire": 1276,
+            "complete": 1,
+            "distant-shot": 3,
+            "enemy-fire": 1459,
             "m01-blast": 11,
-            "message": 163,
-            "npc-shot": 118,
-            "player-shot": 40,
-            "reload": 7,
-            "round-impact": 281
+            "message": 171,
+            "npc-shot": 116,
+            "player-hit": 2,
+            "player-shot": 35,
+            "reload": 6,
+            "round-impact": 497
           },
-          "consumedEvents": 23,
+          "consumedEvents": 26,
           "checkpoints": [
             "cp_m01_a_orientacao",
             "cp_m01_b_reorganizacao",
             "cp_m01_c_engenheiros",
             "cp_m01_d_retirada"
           ],
-          "survivors": 16,
-          "repairPins": 13,
-          "playerHealth": 100,
+          "survivors": 17,
+          "repairPins": 9,
+          "playerHealth": 84,
           "objectives": {
             "deliver_message": "done",
             "take_cover": "done",
@@ -1881,8 +1880,8 @@
             },
             {
               "id": "de_east_1",
-              "health": 0,
-              "alive": false
+              "health": 100,
+              "alive": true
             },
             {
               "id": "de_east_2",
@@ -2127,23 +2126,23 @@
           ]
         },
         "live": {
-          "ticks": 21296,
-          "clock": 1064.7999999995793,
+          "ticks": 21378,
+          "clock": 1068.8999999995756,
           "battleClock": 25500,
-          "rng": 140472616,
-          "issuedGermanRounds": 1210,
+          "rng": 1467252804,
+          "issuedGermanRounds": 1233,
           "eventCounts": {
-            "ally-fire": 72,
+            "ally-fire": 77,
             "checkpoint": 4,
             "complete": 1,
             "distant-shot": 3,
-            "enemy-fire": 1204,
+            "enemy-fire": 1227,
             "m01-blast": 11,
-            "message": 164,
-            "npc-shot": 116,
-            "player-shot": 40,
-            "reload": 7,
-            "round-impact": 256
+            "message": 163,
+            "npc-shot": 117,
+            "player-shot": 35,
+            "reload": 6,
+            "round-impact": 279
           },
           "consumedEvents": 26,
           "checkpoints": [
@@ -2153,7 +2152,7 @@
             "cp_m01_d_retirada"
           ],
           "survivors": 18,
-          "repairPins": 7,
+          "repairPins": 8,
           "playerHealth": 100,
           "objectives": {
             "deliver_message": "done",
@@ -2182,7 +2181,7 @@
             },
             {
               "id": "de_east_2",
-              "health": 55,
+              "health": 100,
               "alive": true
             },
             {
@@ -2192,8 +2191,8 @@
             },
             {
               "id": "de_east_4",
-              "health": 0,
-              "alive": false
+              "health": 10,
+              "alive": true
             },
             {
               "id": "de_east_5",
@@ -2202,7 +2201,7 @@
             },
             {
               "id": "de_east_6",
-              "health": 10,
+              "health": 100,
               "alive": true
             },
             {
@@ -2237,7 +2236,7 @@
             },
             {
               "id": "de_east_13",
-              "health": 55,
+              "health": 100,
               "alive": true
             },
             {
@@ -2423,11 +2422,11 @@
           ]
         },
         "predecessorOwnRoute": {
-          "ticks": 21378,
-          "clock": 1068.8999999995756,
+          "ticks": 21585,
+          "clock": 1079.2499999995662,
           "battleClock": 25500,
-          "rng": 3461484509,
-          "issuedGermanRounds": 1243,
+          "rng": 3293056639,
+          "issuedGermanRounds": 1281,
           "eventCounts": {},
           "consumedEvents": 26,
           "checkpoints": [
@@ -2437,8 +2436,8 @@
             "cp_m01_d_retirada"
           ],
           "survivors": 18,
-          "repairPins": 9,
-          "playerHealth": 92,
+          "repairPins": 13,
+          "playerHealth": 100,
           "objectives": {
             "deliver_message": "done",
             "take_cover": "done",
@@ -2709,7 +2708,7 @@
       },
       "deltaGhostAgainstPredecessor": {
         "eventCounts": {
-          "ally-fire": 74
+          "ally-fire": 72
         },
         "germansDiffering": [],
         "ticks": 0,
@@ -2724,121 +2723,112 @@
       },
       "deltaLiveAgainstPredecessor": {
         "eventCounts": {
-          "ally-fire": 72,
-          "complete": 1,
-          "distant-shot": 1,
-          "enemy-fire": -72,
-          "message": 1,
-          "npc-shot": -2,
-          "round-impact": -25
+          "ally-fire": 77,
+          "enemy-fire": -232,
+          "message": -8,
+          "npc-shot": 1,
+          "player-hit": -2,
+          "round-impact": -218
         },
         "germansDiffering": [
-          "de_east_2",
+          "de_east_1",
           "de_east_3",
-          "de_east_4",
-          "de_east_6",
-          "de_east_13"
+          "de_east_4"
         ],
         "ticks": 0,
         "rngDiffers": true,
-        "issuedGermanRounds": -72,
-        "repairPins": -6,
-        "survivors": 2,
-        "playerHealth": 0,
+        "issuedGermanRounds": -240,
+        "repairPins": -1,
+        "survivors": 1,
+        "playerHealth": 16,
         "objectivesIdentical": true,
         "checkpointsIdentical": true,
-        "consumedEventsIdentical": false
+        "consumedEventsIdentical": true
       },
       "timeline": [
         {
           "event": "evt_m01_repair_complete",
-          "predecessor": 392.650000000055,
-          "live": 376.8000000000514,
-          "shiftSec": -15.850000000003604
+          "predecessor": 376.2500000000513,
+          "live": 382.9500000000528,
+          "shiftSec": 6.700000000001523
         },
         {
           "event": "evt_m01_bombing_0530",
-          "predecessor": 447.2500000000674,
-          "live": 436.700000000065,
-          "shiftSec": -10.550000000002399
+          "predecessor": 436.3000000000649,
+          "live": 440.80000000006595,
+          "shiftSec": 4.500000000001023
         },
         {
           "event": "evt_m01_order_demolish",
-          "predecessor": 447.2500000000674,
-          "live": 436.700000000065,
-          "shiftSec": -10.550000000002399
+          "predecessor": 436.3000000000649,
+          "live": 440.80000000006595,
+          "shiftSec": 4.500000000001023
         },
         {
           "event": "evt_m01_runner_pressure_report",
-          "predecessor": 522.2500000000728,
-          "live": 511.70000000008207,
-          "shiftSec": -10.549999999990689
+          "predecessor": 511.350000000082,
+          "live": 515.8000000000786,
+          "shiftSec": 4.449999999996635
         },
         {
           "event": "evt_m01_north_contact_distant",
-          "predecessor": 597.2500000000045,
-          "live": 586.7000000000141,
-          "shiftSec": -10.549999999990405
+          "predecessor": 586.3500000000145,
+          "live": 590.8000000000104,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_east_platoon_withdraws",
-          "predecessor": 672.2499999999363,
-          "live": 661.6999999999459,
-          "shiftSec": -10.549999999990405
+          "predecessor": 661.3499999999462,
+          "live": 665.7999999999422,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_bak_wounded",
-          "predecessor": 702.249999999909,
-          "live": 691.6999999999186,
-          "shiftSec": -10.549999999990405
+          "predecessor": 691.349999999919,
+          "live": 695.7999999999149,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_germans_on_east_spans",
-          "predecessor": 709.7499999999022,
-          "live": 699.1999999999118,
-          "shiftSec": -10.549999999990405
+          "predecessor": 698.8499999999121,
+          "live": 703.2999999999081,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_east_demolition",
-          "predecessor": 749.1499999998664,
-          "live": 738.599999999876,
-          "shiftSec": -10.549999999990405
+          "predecessor": 738.2499999998763,
+          "live": 742.6999999998723,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_dudek_retrieves_bak",
-          "predecessor": 777.3999999998407,
-          "live": 766.8499999998503,
-          "shiftSec": -10.549999999990405
+          "predecessor": 766.4999999998506,
+          "live": 770.9499999998466,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_west_demolition",
-          "predecessor": 1060.2999999995834,
-          "live": 1049.749999999593,
-          "shiftSec": -10.549999999990405
+          "predecessor": 1049.3999999995933,
+          "live": 1053.8499999995893,
+          "shiftSec": 4.449999999995953
         },
         {
           "event": "evt_m01_kozliny_attack_distant",
-          "predecessor": null,
-          "live": 1064.7499999995794,
-          "shiftSec": null
+          "predecessor": 1065.199999999579,
+          "live": 1068.8499999995756,
+          "shiftSec": 3.6499999999966803
         },
         {
           "event": "evt_m01_roll_call",
-          "predecessor": null,
-          "live": 1064.7499999995794,
-          "shiftSec": null
-        },
-        {
-          "event": "evt_m01_debrief",
-          "predecessor": null,
-          "live": 1064.7999999995793,
-          "shiftSec": null
+          "predecessor": 1065.199999999579,
+          "live": 1068.8499999995756,
+          "shiftSec": 3.6499999999966803
         }
       ],
       "endStateAgainstPredecessorOwnRoute": {
         "ticks": {
-          "predecessor": 21378,
-          "live": 21296
+          "predecessor": 21585,
+          "live": 21378
         },
         "objectivesIdentical": true,
         "checkpointsIdentical": true,
@@ -2846,14 +2836,14 @@
         "survivorsIdentical": true,
         "finalBattleClockIdentical": true,
         "repairCompleteSec": {
-          "predecessorOwnRoute": 382.9500000000528,
-          "predecessorOnLiveControls": 392.650000000055,
-          "live": 376.8000000000514
+          "predecessorOwnRoute": 398.50000000005633,
+          "predecessorOnLiveControls": 376.2500000000513,
+          "live": 382.9500000000528
         },
         "repairPins": {
-          "predecessorOwnRoute": 9,
-          "predecessorOnLiveControls": 13,
-          "live": 7
+          "predecessorOwnRoute": 13,
+          "predecessorOnLiveControls": 9,
+          "live": 8
         }
       }
     }
