@@ -12,7 +12,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 AGENTS = {
-    "captain": ("sonnet", 0),
+    "captain": ("opus", 0),
     "implementer": ("sonnet", 24),
     "verifier": ("sonnet", 14),
     "reviewer": ("sonnet", 12),
