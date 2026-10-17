@@ -115,22 +115,7 @@ export class Game {
       }
       const due=this.pendingSounds.filter(sound=>sound.at<=this.sim.clock);
       this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
-      due.forEach(sound=>{
-        if(sound.kind==='fire'){
-          if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source});
-          else if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
-          else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
-          return;
-        }
-        if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
-        if(sound.kind==='blast'){
-          this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
-          // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
-          if(sound.aerial&&this.isM01)this.audio.ju87PullOutNearest(this.sim.clock,point=>this.spatial(point),`${sound.key}:ju87`,this.sim.renderState.stukas);
-        }
-        else this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);
-        if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
-      });
+      due.forEach(sound=>this.playSound(sound));
       if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
         phase:this.sim.mission.phase,quality:this.renderer.quality});
       if(this.isM01)this.audioDirector?.update(this.sim);
@@ -139,6 +124,25 @@ export class Game {
     else this.renderer.render(this.sim.world,this.sim.player,this.sim.combatants,this.sim.radio,
         this.sim.weapon,this.sim.grenades.active,this.sim.clock*1000,this.sim.sectors);
     this.updateHud();this.frame=requestAnimationFrame(time=>this.loop(time));
+  }
+  /** One queued sound that has come due (distance / 343 s after the simulation event). Presentation only. */
+  playSound(sound){
+    if(sound.kind==='fire'){
+      // T47: the ckm wz.30 burst of the simulation (`ally-fire`, 8 rounds at 0.1 s) is played whole through its own burst call.
+      if(this.isM01&&sound.weapon==='ckm_wz30')this.audio.ckmBurst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key,sound.front);
+      else if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source});
+      else if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
+      else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
+      return;
+    }
+    if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
+    if(sound.kind==='blast'){
+      this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
+      // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
+      if(sound.aerial&&this.isM01)this.audio.ju87PullOutNearest(this.sim.clock,point=>this.spatial(point),`${sound.key}:ju87`,this.sim.renderState.stukas);
+    }
+    else this.audio.explosion(sound.pan,sound.distance*UNITS_PER_METRE);
+    if(sound.shake&&this.isM01)this.renderer.m01.blast(this.sim.clock);
   }
   spatial(point){
     const dx=point.x-(this.isM01?this.sim.player.x:this.sim.player.x/UNITS_PER_METRE),
@@ -215,6 +219,9 @@ export class Game {
     // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
     if(event.type==='enemy-fire'){const s=enemyFireSoundPlan(event,this.sim.player),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
       this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
+    // T47: the west bridgehead ckm answers the Germans (one event per 8-round burst). The report reaches the player after distance / 343 s, like enemy fire.
+    if(event.type==='ally-fire'){const s=enemyFireSoundPlan(event,this.sim.player),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
+      this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
       this.renderer.m01.impact(event.point,event.material,this.sim.clock);
       const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`,shooter=this.sim.actor?.(event.by);
@@ -290,7 +297,7 @@ export class Game {
       grenades:structuredClone(this.sim.grenades),damage:(this.sim.sectors.damage??[]).map(d=>({...d})),pendingAudio:(this.pendingSounds??[]).map(s=>({...s})),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
-      threat:this.sim.threat,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,
+      threat:this.sim.threat,ckm:this.sim.ckm,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,
       hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);

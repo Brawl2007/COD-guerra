@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { applyBridgeState } from '../tools/assets/m01-bridges/src/state.mjs';
+import { layoutWithoutT47 } from './helpers/m01-layout-t47-delta.js';
 const read=path=>fs.readFileSync(new URL(`../${path}`,import.meta.url));
 const DIR='assets/models/provisional/m01/',layoutText=read('missions/m01-tczew/map-layout.json');
 const layout=JSON.parse(layoutText),manifest=JSON.parse(read(`${DIR}bridges.manifest.json`));
@@ -61,7 +62,8 @@ test('M01 binary exports contain finite positions and unit normals',()=>{
   for(const entry of manifest.files){const {json,vec}=glb(entry.file.replace(DIR,''));for(const mesh of json.meshes)for(const p of mesh.primitives){const a=json.accessors[p.attributes.POSITION],n=json.accessors[p.attributes.NORMAL];assert.equal(a.count,n.count);assert.ok(a.count>0);for(let i=0;i<a.count;i++){assert.ok(vec(p.attributes.POSITION,i).every(Number.isFinite));const length=Math.hypot(...vec(p.attributes.NORMAL,i));assert.ok(Number.isFinite(length)&&Math.abs(length-1)<0.001,`${entry.file}: invalid normal ${i}`);}}}
 });
 test('M01 manifest matches binary counts, current map hash and decreasing LOD budgets',()=>{
-  assert.equal(manifest.mapLayout.sha256_16,createHash('sha256').update(layoutText).digest('hex').slice(0,16));assert.deepEqual(manifest.lodDistancesM,[0,400,800]);
+  // T47 added a cover node, a position feature and a note to the layout (no bridge geometry; the kit was not rebuilt): the kit is pinned to the layout WITHOUT those named hunks.
+  assert.equal(manifest.mapLayout.sha256_16,createHash('sha256').update(layoutWithoutT47(layoutText)).digest('hex').slice(0,16));assert.deepEqual(manifest.lodDistancesM,[0,400,800]);
   for(const entry of manifest.files){const {json,triangles,bytes}=glb(entry.file.replace(DIR,''));assert.equal(bytes,entry.bytes);assert.ok(bytes<6*1024*1024);assert.equal(json.meshes.reduce((s,_,i)=>s+triangles(i),0),entry.uniqueTriangles);assert.equal(json.nodes.filter(n=>n.mesh!==undefined).reduce((s,n)=>s+triangles(n.mesh),0),entry.sceneTriangles);}
   for(const b of bridges){const entries=[0,1,2].map(lod=>manifest.files.find(f=>f.file===DIR+fileFor(b,lod)));assert.ok(entries[0].intactTriangles>entries[1].intactTriangles);assert.ok(entries[1].intactTriangles>entries[2].intactTriangles);for(const entry of entries)for(const n of entry.nodes.filter(n=>new RegExp(`^${b.prefix}_span_\\d\\d$`).test(n.name)))assert.ok(n.triangles<=(b.prefix==='rail'?25000:30000));}
 });

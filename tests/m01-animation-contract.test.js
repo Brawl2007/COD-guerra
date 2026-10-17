@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import historicalGolden from './fixtures/m01-anim-gameplay-baseline.json' with {type:'json'};
-import golden from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+import partialsGolden from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+import golden from './fixtures/m01-t47-gameplay-baseline.json' with {type:'json'};
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -29,7 +30,8 @@ test('schema 2 initializes all 97 IDs; diagnostics are detached, small presentat
   validateM01Snapshot(s.snapshot());
 });
 
-test('historical approved golden remains immutable; candidate partials golden is separately pinned after predecessor delta audit',()=>{
+const fileSha=path=>createHash('sha256').update(readFileSync(new URL(path,import.meta.url))).digest('hex');
+test('historical approved golden remains immutable; the partials golden stays pinned; the T47 golden chains to both, pins the current source and cites its delta audit',()=>{
   assert.equal(historicalGolden.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');
   assert.equal(historicalGolden.sourceSha256,'792fdc9a7a56a09bda599669f7349e3bb6fad0e3e13d67eed03f1474eeef07b6');
   assert.equal(historicalGolden.approvedIntegration.task,'M01-CONTINUITY-RAID-INTEGRATION-V1');
@@ -40,10 +42,24 @@ test('historical approved golden remains immutable; candidate partials golden is
   assert.equal(historicalGolden.sourceLock.previousTask,historicalGolden.approvedIntegration.task);
   assert.equal(historicalGolden.sourceLock.previousSourceSha256,historicalGolden.approvedIntegration.sourceSha256);
   assert.equal(historicalGolden.sourceLock.sourceSha256,'57c81b31acf4920f6259db47faadb94ac33a10916db5befaadf2d35e0f988506');
+  // The partials golden (candidate of PR #78, the predecessor of T47) is an immutable record: its fields and its file bytes are pinned here.
+  assert.equal(partialsGolden.task,'M01-PARTIALS-COMPLETION-INTEGRATION-V1');
+  assert.equal(partialsGolden.predecessor,'bc8f6a21a57ccd926d4e0655481908d90d6b1978');
+  assert.equal(partialsGolden.sourceSha256,'00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a');
+  assert.equal(partialsGolden.historicalGoldenSha256,fileSha('./fixtures/m01-anim-gameplay-baseline.json'),'the historical golden file is byte-identical to the one the partials golden pinned');
+  assert.equal(fileSha('./fixtures/m01-partials-gameplay-baseline.json'),'83a907ca00389f17723ffc97f1c42dca7d80f9a956d07ca7f39b8ae58fe87b79');
+  // T47 (M01-T47-CKM-LIVE-FIRE-V1): the ckm fires for real from post S2. The per-tick golden below is the audited candidate; the chain is task -> predecessor -> source lock.
+  assert.equal(golden.task,'M01-T47-CKM-LIVE-FIRE-V1');
+  assert.equal(golden.predecessor,'813f163deceb551e0e4504b30958580cb67d3a76');
+  assert.equal(golden.predecessorSourceSha256,partialsGolden.sourceSha256,'the audited predecessor simulation is exactly the one the partials golden pinned');
+  assert.equal(golden.previousGolden.task,partialsGolden.task);assert.equal(golden.previousGolden.sha256,fileSha('./fixtures/m01-partials-gameplay-baseline.json'));
+  assert.equal(golden.historicalGoldenSha256,partialsGolden.historicalGoldenSha256);
+  assert.deepEqual(golden.routes.map(r=>[r.seed,r.support]),partialsGolden.routes.map(r=>[r.seed,r.support]),'the same routes are audited');
   assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256);
+  assert.equal(fileSha('../docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json'),golden.auditSha256,'the delta audit that justifies this golden is the committed one');
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against separately audited partials candidate: seed ${expected.seed}, support ${expected.support}`,()=>{
+for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against the T47-audited candidate (live ckm fire): seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));

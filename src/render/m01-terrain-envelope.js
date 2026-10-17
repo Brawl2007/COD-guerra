@@ -38,7 +38,9 @@ export function buildTerrainEnvelope(world){
   add('source:platoon-all-stages',platoon);
   const spans=definition.groups.find(g=>g.id==='grp_de_spans');add('source:span-advance-retreat',[[spans.maxAdvanceX,39.6],[1080,41.8]]);
   // makeCKMCrew/updateActors, evacuation roots + carried casualty offset, roll-call seats.
-  add('source:ckm-crew-route',[[21.206+2.17,42.971],[22.08+2.17,42.48],[20.4+2.17,41.6],[10,40],[-14,40],[-173.2,24.4]]);
+  // T47: the crew now stands at post S2 (CKM_POST, rigid layout round the gun root 7.17, 26) and walks west along z 22..26; the casemate post and the way out under
+  // the deck stay in the hull for saves made before T47 (they still finish that way out).
+  add('source:ckm-crew-route',[[6.376,25.971],[7.25,25.48],[5.57,24.6],[21.206+2.17,42.971],[22.08+2.17,42.48],[20.4+2.17,41.6],[10,40],[-14,40],[-173.2,24.4]]);
   add('source:evacuation-and-roll-call',[[-300-1.4-.92,30+2.3+.92],[-332-2-.92,24+2.2-.92],[-332+.9,24+.7],[-263.2,69.6],[-256.9,73.9]]);
   // consume(): actual distant fire origins are isolated protected regions, never a fictitious far city.
   for(const [id,x,z]of [['second_air_pass',-550,60],['north_contact_distant',-500,-1100],['kozliny_attack_distant',-500,-1300]])add(`source:fire:${id}`,[[x,z]]);

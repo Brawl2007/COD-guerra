@@ -10,6 +10,9 @@ export function validateM01AudioEvent(event){
   if(event.type==='round-impact'&&!PASS_KINDS.includes(event.pass))throw Error('M01 round-impact.pass required');
   if(event.type==='enemy-fire'&&(!Number.isFinite(event.at)||typeof event.weapon!=='string'||!event.origin||
     ![event.origin.x,event.origin.y,event.origin.z].every(Number.isFinite)))throw Error('M01 enemy-fire origin/clock/weapon required');
+  // T47: the ckm wz.30 of the west bridgehead answers the German fire. One event per burst, at its first round (rounds * interval long); never persisted.
+  if(event.type==='ally-fire'&&(!Number.isFinite(event.at)||typeof event.weapon!=='string'||!event.weapon||typeof event.by!=='string'||!event.origin||
+    ![event.origin.x,event.origin.y,event.origin.z].every(Number.isFinite)||!Number.isInteger(event.rounds)||event.rounds<1||!(event.interval>0)))throw Error('M01 ally-fire origin/clock/weapon/rounds required');
   return event;
 }
 export function enemyFireSoundPlan(event,player){
