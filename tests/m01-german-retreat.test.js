@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
-import golden from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+import partials from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+import golden from './fixtures/m01-t38-gameplay-baseline.json' with {type:'json'};
 import {M01Simulation,seconds,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {M01View} from '../src/render/m01-view.js';
 import {M01Characters} from '../src/render/m01-characters.js';
@@ -348,24 +350,50 @@ test('the getter is computed on every read and detached; the plan and the pairs 
   assert.deepEqual(restore(sim).germanWithdrawal,sim.germanWithdrawal);
 });
 
-// ---- golden amendment 02 ---------------------------------------------------------------------------------------------------------------------------
+// ---- golden amendments 02 (history) and 03 (live) ----------------------------------------------------------------------------------------------
 
-test('golden amendment 02: the pre-change fixture is kept, its blocks before the east demolition are byte-identical and the first change is the block holding that tick',()=>{
+// Amendment 02 moved the partials golden on top of the candidate #80 (813f163). The T38 staging was then merged into this branch (f02e06b), so the simulation these
+// tests drive is the combined one and no longer the one that golden pins: the partials golden is the history of the candidate #80 + #89 + T48 (kept, and pinned by
+// tests/m01-animation-contract.test.js) and the golden of the live simulation is the T38 golden. The first test keeps every assertion of amendment 02 that does not
+// need the old simulation (its east demolition ticks are the golden's own record); the second states the same for the retreat over the T38 staging
+// (GOLDEN_AMENDMENT_03.json), with the east demolition ticks read from the live route.
+const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+/** The 512-tick blocks of `now` before the one holding the east demolition `tick` equal those of `old`, and that block is the first to change. */
+function assertFirstChangeIsDemolitionBlock(old,now,tick){
+  const first=Math.ceil(tick/512)-1;
+  assert.deepEqual([old.seed,old.support],[now.seed,now.support]);
+  assert.ok(first>20,'the east demolition is deep into the route');
+  assert.deepEqual(now.blocks.slice(0,first),old.blocks.slice(0,first),`${now.seed}: ${first} blocks (ticks 1..${first*512}) precede tick ${tick} and are byte-identical`);
+  assert.equal(now.blocks[first].tick,old.blocks[first].tick);
+  assert.ok(old.blocks[first-1].tick<tick&&tick<=old.blocks[first].tick,'that block holds the east demolition tick');
+  assert.notEqual(now.blocks[first].sha256,old.blocks[first].sha256,'and it is the first one to change');
+  assert.equal(now.blocks.at(-1).tick,now.ticks,'the last block ends the route');
+}
+
+test('golden amendment 02 (history, on the candidate #80): the pre-change fixture is kept, its blocks before the recorded east demolition are byte-identical and the first change is the block holding that tick',()=>{
   const before=JSON.parse(readFileSync(new URL('./fixtures/m01-partials-gameplay-baseline-before-amendment-02.json',import.meta.url)));
   assert.equal(before.sourceSha256,'00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a','the source T48 started from (PR #80 head)');
+  assert.equal(before.historicalGoldenSha256,partials.historicalGoldenSha256,'the immutable historical golden is untouched');
+  assert.equal(before.routes.length,partials.routes.length);
+  for(const [i,now] of partials.routes.entries())assertFirstChangeIsDemolitionBlock(before.routes[i],now,partials.amendment02.eastDemolitionTicks[`${now.seed}/${now.support}`]);
+  assert.equal(partials.amendment02.base,'813f163deceb551e0e4504b30958580cb67d3a76');
+});
+
+test('golden amendment 03 (live, the retreat over the T38 staging): the T38 golden before the merge is kept, its blocks before the live east demolition are byte-identical and the first change is the block holding that tick',()=>{
+  const before=JSON.parse(readFileSync(new URL('./fixtures/m01-t38-gameplay-baseline-before-amendment-02.json',import.meta.url))),
+    record=JSON.parse(readFileSync(new URL('../docs/verification/m01-runtime/german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json',import.meta.url),'utf8'));
+  assert.equal(before.sourceSha256,'344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0','the simulation the retreat joined (the T38 head 65145c9)');
   assert.equal(before.historicalGoldenSha256,golden.historicalGoldenSha256,'the immutable historical golden is untouched');
   assert.equal(before.routes.length,golden.routes.length);
-  const demolitions={};
+  assert.equal(record.amendment,'amendment-03');assert.equal(record.base,'65145c905209d47da6931aad11c0beeebe597291');
+  assert.equal(record.beforeFixtureSha256,sha('./fixtures/m01-t38-gameplay-baseline-before-amendment-02.json'));
+  assert.equal(record.afterFixtureSha256,sha('./fixtures/m01-t38-gameplay-baseline.json'));assert.equal(record.afterSourceSha256,golden.sourceSha256);
+  assert.equal(record.routes.length,golden.routes.length);
   for(const [i,now] of golden.routes.entries()){
-    const old=before.routes[i],obs=observe(now.seed,now.support),first=Math.ceil(obs.demolitionTick/512)-1;
-    assert.deepEqual([old.seed,old.support],[now.seed,now.support]);demolitions[`${now.seed}/${now.support}`]=obs.demolitionTick;
-    assert.ok(first>20,'the east demolition is deep into the route');
-    assert.deepEqual(now.blocks.slice(0,first),old.blocks.slice(0,first),`${now.seed}: ${first} blocks (ticks 1..${first*512}) precede tick ${obs.demolitionTick} and are byte-identical`);
-    assert.equal(now.blocks[first].tick,old.blocks[first].tick);
-    assert.ok(old.blocks[first-1].tick<obs.demolitionTick&&obs.demolitionTick<=old.blocks[first].tick,'that block holds the east demolition tick');
-    assert.notEqual(now.blocks[first].sha256,old.blocks[first].sha256,'and it is the first one to change');
-    assert.equal(now.blocks.at(-1).tick,now.ticks,'the last block ends the route');
+    const obs=observe(now.seed,now.support),entry=record.routes[i];
+    assertFirstChangeIsDemolitionBlock(before.routes[i],now,obs.demolitionTick);
+    assert.deepEqual([entry.seed,entry.support,entry.eastDemolitionTick],[now.seed,now.support,obs.demolitionTick],'the recorded east demolition tick is the live one');
+    assert.equal(entry.confinedTicks,now.ticks,'every tick of the route is confined to the Germans of the spans');
+    assert.ok(entry.differingActors.length>0&&entry.differingActors.every(id=>/^de_spans_\d$/.test(id)),'and only they differ');
   }
-  assert.deepEqual(golden.amendment02.eastDemolitionTicks,demolitions);
-  assert.equal(golden.amendment02.base,'813f163deceb551e0e4504b30958580cb67d3a76');
 });
