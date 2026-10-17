@@ -191,6 +191,8 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
     body = {"state": spec["state"], "model": "jev-latest", "questions": {
         qid: {"type": "choice", "instructions": q["instructions"], "criteria": q["criteria"]}
         for qid, q in spec["questions"].items()}}
+    if not jr.cloud_credit_available(e, jr.read_ledger(lpath)["calls"], body):
+        return fallback("budget_exhausted", budget={"kind": "cloud_usd_5_ledger_estimate"})
     if dry_run:
         out["dry_run"] = {
             "would_call": True, "url": url,
@@ -210,6 +212,8 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
             return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
         if jr.auth_blocked(latest):
             return fallback("auth_failed_previously")
+        if not jr.cloud_credit_available(e, latest, body):
+            return fallback("budget_exhausted", budget={"kind": "cloud_usd_5_ledger_estimate"})
         request_id = "%s-%d" % (run_id or "norun", now_used + 1)
         try:
             idx = jr.reserve(lpath, limit, run_id, request_id)
