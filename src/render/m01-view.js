@@ -4,6 +4,7 @@ import manifest from '../../assets/models/provisional/m01/bridges.manifest.json'
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { roundPoint } from '../game/m01-fire.js';
 import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
+import { ckmFlashes, ckmSmoke, CKM_SMOKE_SEC } from './m01-ckm-fx.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -98,7 +99,7 @@ export class M01View {
     this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
-    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
+    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
     this.combatFeedback=new M01CombatFeedback();
     this.ambientDirector=new M01AmbientDirector();
@@ -411,6 +412,16 @@ export class M01View {
           put('puff',{x:aim.x+Math.cos(a)*r,y:aim.y+.06+landed*(profile.rise+.20*n2)*SHELL_SCALE,z:aim.z+Math.sin(a)*r},[sx,sy,1],null,.60*life,profile.color,seed,30+j);
         }
       }
+    }
+    // T47: the west bridgehead ckm. Flash and smoke come from the saved burst plan only (m01-ckm-fx.js); the renderer decides no target and no damage.
+    const ckmShots=ckmFlashes(sim.actors,time);
+    for(const f of ckmShots)put('muzzle',f,Math.max(.2,far(f)*.008)*(.8+.2*Math.sin(time*90)));
+    if(ckmShots.length){this.ckmPresentation.frames++;this.ckmPresentation.flashes=ckmShots.length;this.ckmPresentation.lastClock=time;this.ckmPresentation.lastFrame=this.renderedFrames??0;}
+    const ckmGas=ckmSmoke(sim.actors,time);
+    if(ckmGas){
+      const k=ckmGas.age/CKM_SMOKE_SEC,d=far(ckmGas),seed=fxSeed(ckmGas,sim.actor('ckm_gunner').ckm.burstPlan.startedAt),n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+      put('smoke',{x:ckmGas.x+(n0-.5)*.5*k+k*.6,y:ckmGas.y+.3+k*(1.1+n1*.5),z:ckmGas.z+(n1-.5)*.4*k},
+        Math.max(.3,d*.0085)*(.55+k*.95)*(1-k*k),null,.5*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
     }
     const tracer=r=>{
       const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)return;
@@ -869,7 +880,7 @@ export class M01View {
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.demolitionState={entries:[],pieces:[],flash:null};
-    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
+    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
   drawGraded(post){
@@ -893,7 +904,7 @@ export class M01View {
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
-    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
+    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,

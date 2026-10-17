@@ -114,7 +114,8 @@ export class M01Characters {
   }
   hasProne(){return PRONE_CLIPS.every(n=>this.clips.has(n));}
   hasCKM(){
-    return this.clips.has('standing_idle')&&[0,1,2].some(l=>this.sources.has(`ckm:${l}`))&&['idle','abandon'].every(phase=>
+    // T47: the live phases aim / fire_burst / feed are played from the saved gunner phase, so the whole kit (gun and both crew roles) must be there.
+    return this.clips.has('standing_idle')&&[0,1,2].some(l=>this.sources.has(`ckm:${l}`))&&['idle','aim','fire_burst','feed','abandon'].every(phase=>
       this.sources.get('ckm:2')?.animations.some(c=>c.name===`ckm_wz30_gun_${phase}`)&&
       ['gunner','loader'].every(role=>this.clips.has(`ckm_wz30_${role}_${phase}`)));
   }
@@ -139,7 +140,7 @@ export class M01Characters {
     const prone=mg34ProneSample(actor,time);
     if(prone&&actor.mg34Prone.phase!=='standing'&&this.hasProne())return {clip:prone.clip,time:prone.time,loop:false};
     if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
-      const phase=actor.ckm.phase==='fire_burst'?'aim':actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
+      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
       const name=`ckm_wz30_${role}_${phase}`;
       return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'||phase==='aim'};
     }
@@ -378,7 +379,7 @@ export class M01Characters {
       const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
       this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
     }
-    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
+    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
     if(!clip){v.root.visible=false;return;}
     v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
     v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();

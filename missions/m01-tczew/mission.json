@@ -240,7 +240,17 @@
         "note": "T38: lugares iniciais [x, z, facing em rad] junto à linha de ignição no ponto de reparo 1, espaçados (antes x −42,6, −46,8 e −47,4 na mesma recta, dois a 0,6 m). Ali, até serem chamados para o segundo corte, estão de joelhos a trabalhar no cabo (`crouched`). No segundo corte: agachados a trabalhar durante obj_m01_cover_repair e deitados (postura 'prone' de T07, hitbox deitada) quando suprimidos ou à espera parados (antes da caixa, depois do reparo). Os lugares do segundo corte, a supressão a 3 m e o tempo de reparo não mudam."
       }
     },
-    { "id": "grp_ckm_crew", "faction": "PL", "size": 3, "weapon": "ckm_wz30", "post": "cv_casemate_emb_s" },
+    {
+      "id": "grp_ckm_crew",
+      "faction": "PL",
+      "size": 3,
+      "weapon": "ckm_wz30",
+      "post": "cv_ckm_post",
+      "postFeature": "ckm_post",
+      "classification": "RECONSTRUCTED",
+      "fire": { "from": "04:46:00", "ceaseAt": "06:09:30", "belt": 330, "burstRounds": 8, "intervalSec": 0.1 },
+      "note": "T47: a ckm wz.30 dispara de verdade desde o posto S2 (feature ckm_post; cover cv_ckm_post), não da casamata. Posição RECONSTRUCTED: T08/T27 documentam um bunker de disparo na cabeça de ponte oeste (P12: posição exata em aberto) e nenhuma fonte dá a posição da ckm; S2 é o único posto perto da casamata com linha livre aos atiradores dos portões de Lisewo (docs/verification/m01-runtime/ckm-fire-arc-phase0-2026-10-16). Fogo de supressão a ~1050 m: responde ao último atirador que disparou, em rajadas de 8 (clip fire_burst), com fita finita de 330 trocada na fase feed; os dois MG34 deitados nunca são escolhidos como alvo (o duelo, cover_repair, é do jogador), mas a zona batida não os poupa: uma ronda que passa a menos de 3 m suprime-os como a qualquer alemão. Fogo de jogo, não balística medida. Cessa 30 s antes da demolição leste (06:09:30) e a guarnição recua para oeste ao longo do aterro entre as pontes. O emissor de apresentação ae_s1_ckm_casemate (posição antiga) foi retirado: a ckm soa só pelo evento ally-fire."
+    },
     {
       "id": "grp_east_platoon",
       "faction": "PL",
@@ -865,7 +875,7 @@
       "readiness": [
         "jogador fora de bz_west",
         "Zieliński, Krawiec, Kowal, Pawlak, Dudek e Bąk fora de bz_west ou em estado 'reached_safety'",
-        "grp_ckm_crew saiu da casamata"
+        "grp_ckm_crew saiu do posto da ckm (S2, cabeça de ponte oeste)"
       ],
       "warnings": [
         { "clockBefore": "06:36:00", "line": "dlg_m01_050" },
@@ -939,9 +949,7 @@
         { "at": "06:12:00", "state": "evacuating_bridgehead" },
         { "at": "06:45:00", "state": "west_blown", "activity": "poeira, silêncio, zumbido; ferroviários olham a ponte" }
       ],
-      "audioEmitters": [
-        { "id": "ae_s1_ckm_casemate", "weapon": "ckm_wz30", "position": [25, -3, 43], "activeFrom": "04:46:00", "activeUntil": "06:45:00", "certainty": "GAMEPLAY_DRAMATIZATION", "displayOnly": true }
-      ],
+      "audioEmitters": [],
       "certainty": "RECONSTRUCTED"
     },
     {
@@ -1113,7 +1121,7 @@
           ],
           "active": ["obj_m01_hold_access"]
         },
-        "actors": "grp_ckm_crew na casamata; grp_de_east com baixas atuais (IDs persistidos); trem 963 e Panzerzug 7 parados",
+        "actors": "grp_ckm_crew no posto S2; grp_de_east com baixas atuais (IDs persistidos); trem 963 e Panzerzug 7 parados",
         "destruction": [
           "forward_post_state (conforme m01.forward_post_state)",
           "craters_embankment",

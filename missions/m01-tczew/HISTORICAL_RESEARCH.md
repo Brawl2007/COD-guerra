@@ -134,6 +134,7 @@ H01-PDF foi lida por completo, com bibliografia e fotografias; H02, H30 e T23 ta
 | Cabos de ignição | Encosta **sul** do aterro ferroviário, entre a estação e a ponte | `DOCUMENTED`; traçado `RECONSTRUCTED` | T08, T12 |
 | Estação de Tczew (1939) | "Stara Stacja" de Stüler, 1856–57, **perto das pontes**: sítio da atual rua 1 Maja e da rotunda, entre as linhas para Gdańsk e Bydgoszcz, ~300–500 m a oeste. Bombardeada em 1/9/1939; queimada em 1945. A estação atual é posterior. | `DOCUMENTED` (sítio); contorno `RECONSTRUCTED` | T18, T24, G01 |
 | Postos de disparo | **Dois:** bunker na cabeça de ponte oeste e abrigo no terreno da estação | `DOCUMENTED` (resumo); posições pendentes (P12) | T08, T27 |
+| Posto da ckm wz.30 (jogo) | **Nenhuma fonte dá a posição da ckm.** Reconstruída no aterro entre as pontes (posto S2), encostada à face norte do encontro rodoviário, ao nível das casamatas e a 8 m da casamata, que não vê nenhum alemão. É a área do bunker da cabeça de ponte oeste (T08/T27), mas o bunker documentado era um posto de disparo das cargas, não uma posição de metralhadora | `RECONSTRUCTED` (T47); posição histórica pendente (P12) | T04, T08, T27 |
 | Quartel do 2.º Batalhão | Construído em 1928–1930 (T30); bombardeado às 04:34. **Localização não confirmada** | `RECONSTRUCTED` (só direção) | T10, T30 |
 | Portões | Portões da ponte fechados no lado de Lisewo | `DOCUMENTED` | T07 |
 | Casamatas oeste | Ponto de disparo das cargas | `DOCUMENTED` (baixa certeza) | T04 (resumo) |
