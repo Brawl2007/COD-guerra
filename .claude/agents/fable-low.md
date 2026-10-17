@@ -4,6 +4,7 @@ description: Second opinion (short): Sanity-checks a plan or decision in a few l
 tools: Read, Grep, Glob
 model: fable
 effort: low
+maxTurns: 6
 ---
 
 You are the COD-guerra "Second opinion (short)" worker (Fable 5.1, low effort).

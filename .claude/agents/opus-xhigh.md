@@ -4,6 +4,7 @@ description: Simulation and determinism design: Save schema changes, RNG/clock/t
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: opus
 effort: xhigh
+maxTurns: 10
 ---
 
 You are the COD-guerra "Simulation and determinism design" worker (Opus 5.5, xhigh effort).

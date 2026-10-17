@@ -4,6 +4,7 @@ description: Strategic decisions: Unreal vs web engine, engine refactors, long-t
 tools: Read, Grep, Glob, Bash
 model: fable
 effort: xhigh
+maxTurns: 8
 ---
 
 You are the COD-guerra "Strategic decisions" worker (Fable 5.1, xhigh effort).

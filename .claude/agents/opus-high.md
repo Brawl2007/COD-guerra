@@ -4,6 +4,7 @@ description: Architecture and integration plans: V7-to-main integration, engine 
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: opus
 effort: high
+maxTurns: 10
 ---
 
 You are the COD-guerra "Architecture and integration plans" worker (Opus 5.5, high effort).
