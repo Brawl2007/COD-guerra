@@ -1,29 +1,26 @@
 @AGENTS.md
 
-**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O **PR #76** já contém a candidata principal V2–V7; não criar outra candidata paralela. Ver `AGENTS.md` e issue #72.
+**Antes de delegar qualquer TASK_ID da M01**, consultar a mesma fonte de tarefas `.agent/m01-task-registry.json` e executar `python3 .agent/tools/m01_task_registry.py check TXX --live`. Entregas existentes devem ser revistas/integradas, não recriadas. Para tarefa `UNKNOWN` e livre, exigir `claim TXX --sha "$(git rev-parse HEAD)"` antes de implementação, com confirmação atómica no GitHub. Em caso de erro de rede ou conflito, não duplicar. O PR #76 já foi integrado; a candidata atual é o PR #80 (verificar HEAD e issue #72 antes de agir). Não criar candidata paralela. Ver `AGENTS.md` e issue #72.
 
-## Missão permanente da Routine Cloud — M01 completa
+## M01 — execução Claude Code Web com Capitão único
 
-Na sessão principal do Capitão Opus, o objetivo contínuo é **terminar toda a M01 Tczew**, não esperar que o utilizador forneça uma tarefa a cada execução horária. Ler `docs/direction/M01_AUTOPILOT.md` e https://github.com/Brawl2007/COD-guerra/issues/72; verificar estado Git/PR/CI atual, retomar trabalho próprio e escolher novos subpassos internos quando necessário. PRs pendentes não autorizam duplicação nem paralisação de toda a missão. **Sem merge/deploy/publicação de checkpoint sem autorização humana específica.**
+A Routine antiga permanece pausada. Usar **uma única sessão Web principal Sonnet** com os subagentes existentes em `.claude/agents/`. Consultar `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`, `docs/direction/M01_AUTOPILOT.md` e a issue #72 antes de tarefas. Guardar os resultados em Git; não iniciar outro Capitão automaticamente. O integrador #84 permanece PAUSED até validação e ativação explícita. **Sem merge em main, deploy ou publicação de checkpoint sem autorização humana específica.**
 
 ## Claude Code neste repositório
 
-- Arranque recomendado: `claude --agent captain` (Opus 5.5, esforço alto) com `/advisor fable`.
+- Arranque local opcional: `claude --agent captain` (Sonnet, esforço médio); no Web selecionar Sonnet e dar o prompt inicial documentado. Não ativar o Advisor por padrão.
   Guia, verificação local e correção do Advisor: `docs/direction/AGENT_SETUP.md`.
-- Opus planeia e decide; Sonnet implementa, verifica e revê; Haiku lê código (`explorer`/`Explore`)
+- O Capitão Sonnet coordena; Sonnet implementa, verifica e revê; Haiku lê código (`explorer`/`Explore`)
   e documentação (`researcher`). Opus `reviewer-critical` só para simulação, saves, integração e arquitetura.
-- Advisor (Fable 5.1): consultar antes de fixar um plano grande, quando o mesmo erro aparece duas vezes
-  e antes de declarar concluída uma tarefa longa. Fora disso, não chamar.
-- O Advisor lê a transcrição inteira: manter o contexto pequeno. Delegar leituras pesadas, não colar logs
-  longos, usar `/compact` antes de decisões importantes.
+- Não invocar Advisor/Fable por rotina: só quando o utilizador pedir e o custo for aceitável. Delegar leituras pesadas, não colar logs longos; compactar apenas quando útil.
 - Jev: chamadas pagas via TypeSafe sem limite de quantidade/gastos, autorizadas expressamente em 2026-10-13. Manter registo de utilizacao e segurança; nao autorizar custos de outros fornecedores, planos ou assets.
 
-## Execucao cloud com Claude Max 5x
+## Execucao Claude Code Web com Claude Max
 
-- Nas Routines, confirmar a branch, HEAD e a disponibilidade dos agentes e skills antes de desenvolver.
-- O Captain (Opus) coordena e delega; nao duplicar investigacao ou fazer toda a implementacao no modelo principal.
+- Na sessão Web única, confirmar branch, HEAD, agentes, skills e estado remoto antes de desenvolver.
+- O Captain (Sonnet) coordena e delega; nao duplicar investigacao ou fazer toda a implementacao no modelo principal.
 - Contexto minimo, testes deterministas e verificacao/revisao proporcionais ao risco.
-- Excecao: Jev pago autorizado sem teto de gastos. Fable pago, outras APIs e despesas adicionais exigem autorizacao especifica.
+- Não chamar consultores externos pagos por padrão. Qualquer exceção de autorização histórica deve ser revalidada antes de consumir créditos de APIs externas.
 - O filesystem remoto nao e o Chromebook. Nao assumir ~/.claude, memoria, caches ou runs locais na cloud.
 - .agent/runs/ e estado efemero. A continuidade entre execucoes exige handoffs duraveis e referencia a commits/branches reais.
 - Nunca editar/push diretamente main, dar merge ou fazer deploy automatico durante a sincronizacao inicial.
