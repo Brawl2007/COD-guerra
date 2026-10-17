@@ -13,7 +13,8 @@
 //   crew        x, y, z, facing, state, suppressedUntil, ckm, ckmFire and every presentation field of ckm_gunner, ckm_loader, ckm_reserve (they stand at S2, run the
 //               fire cycle, walk another way out, and German rounds pass within 3 m of that post, not of the casemate: they pin the crew, never hurt it)
 //   events      `ally-fire` (the burst event; no predecessor has it) and the crew ids inside the `pinned` list of `round-impact`
-//   germans     health / suppressedUntil / state of the Germans a landed ckm round hits or passes within 3 m of (never the two MG34 gunners), and what follows from that (L only)
+//   germans     health / suppressedUntil / state of the Germans a landed ckm round hits or passes within 3 m of (the two MG34 gunners included: they are never CHOSEN as the target, but the
+//               beaten zone does not spare them), and what follows from that (L only)
 // Usage: node tools/verification/m01-t47-ckm-fire-audit.mjs [--write-golden]          (x86 only; the predecessor tree is extracted with `git archive`)
 //   M01_T47_AUDIT_OUT   output folder (default docs/verification/m01-runtime/ckm-fire-live-2026-10-16)
 //   M01_T47_BASELINE    an existing checkout of the predecessor instead of the automatic `git archive`
@@ -89,13 +90,22 @@ class Live extends M01Simulation{
 const report={task:'M01-T47-CKM-LIVE-FIRE-V1',predecessor:PREDECESSOR,predecessorSourceSha256:hash(predecessorSource),
   namedDeltas:{crew:{actors:CREW,fields:[...CREW_DELTA,...PRESENTATION_FIELDS],why:'the gun stands at S2 (CKM_POSITION 7.17,-3,26), the three men stand round it and run the fire cycle, and walk west along the embankment instead of under the deck'},
     events:{types:['ally-fire'],pinnedCrewIdsRemoved:CREW,why:'one event per ckm burst; no predecessor emits it. A round-impact lists the allies it passed within 3 m of: S2 is not where the casemate was'},
-    germans:{fields:['health','suppressedUntil','state','crouched','cooldown','suppressedAt','hitAt','hitYaw','diedAt','deathYaw'],why:'only a landed ckm round that hits or passes within NEAR_MISS (3 m) of a German other than the two MG34 gunners (the beaten zone never touches them); L only, from the causal onset'},
+    germans:{fields:['health','suppressedUntil','state','crouched','cooldown','suppressedAt','hitAt','hitYaw','diedAt','deathYaw'],why:'only a landed ckm round that hits or passes within NEAR_MISS (3 m) of a German (the two MG34 gunners included: the gun never chooses them as its target, but the beaten zone does not spare them); L only, from the causal onset'},
     timeline:{fields:['clock of every consumed event after the first pin difference','player health','rng state','issued German rounds','repair pins'],why:'a suppressed or wounded German fires less, so fewer rounds pin the sappers (timers.repairPins) and the repair finishes earlier; the clock-gated beats after it shift by the same amount. The plot is unchanged: see endStateAgainstPredecessorOwnRoute'}},
   projectionSource:projection.toString(),eventProjectionSource:eventProjection.toString(),routes:[]};
-const golden={task:'M01-T47-CKM-LIVE-FIRE-V1',generationStage:'implementation candidate after the per-tick predecessor delta audit',
+const golden={task:'M01-T47-CKM-LIVE-FIRE-V1',generationStage:'implementation candidate after the critical review (amendment 01) and the per-tick predecessor delta audit',
   predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,
   previousGolden:{task:partials.task,file:'tests/fixtures/m01-partials-gameplay-baseline.json',sha256:hash(readFileSync(fixture('m01-partials-gameplay-baseline.json')))},
-  historicalGoldenSha256:hash(readFileSync(fixture('m01-anim-gameplay-baseline.json'))),sourceSha256:hash(readFileSync(join(root,'src/game/m01-simulation.js'))),routes:[]};
+  historicalGoldenSha256:hash(readFileSync(fixture('m01-anim-gameplay-baseline.json'))),sourceSha256:hash(readFileSync(join(root,'src/game/m01-simulation.js'))),
+  // Amendment 01: the critical review moved this golden once (the first golden was written from ab98199). The pre-review golden and delta audit are kept as byte copies and the per-tick
+  // proof of what moved is tools/verification/m01-t47-golden-amendment-audit.mjs -> GOLDEN_AMENDMENT_01.json; tests/m01-animation-contract.test.js asserts this chain.
+  amendment01:{task:'M01-T47-CKM-LIVE-FIRE-V1',beforeCommit:'ab98199c7b50a6682a5deef2e461dc83b7737247',
+    beforeSourceSha256:'0c6e4eb354f7643e416e72a5c077c5bc362873fd8139fcbd6f15bea375ecfe8c',
+    beforeFixture:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-01.json',beforeFixtureSha256:'45facd521d1bf86cf88099c91b5724c5e73b0f86a5a7f950fe73f2fda8340963',
+    beforeAudit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_01.json',
+    beforeAuditSha256:'c980f82cace48e0dfb172258da7c2d7ddc92efb9a5b92e716480703e97889088',
+    audit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_01.json'},
+  routes:[]};
 const cases=process.env.M01_T47_AUDIT_SEEDS?process.env.M01_T47_AUDIT_SEEDS.split(',').map(Number).flatMap(seed=>[false,true].map(support=>({seed,support}))):[{seed:19390901,support:false},{seed:7,support:true}];
 
 for(const {seed,support} of cases){

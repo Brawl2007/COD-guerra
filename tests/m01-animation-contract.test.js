@@ -57,6 +57,26 @@ test('historical approved golden remains immutable; the partials golden stays pi
   assert.deepEqual(golden.routes.map(r=>[r.seed,r.support]),partialsGolden.routes.map(r=>[r.seed,r.support]),'the same routes are audited');
   assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256);
   assert.equal(fileSha('../docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json'),golden.auditSha256,'the delta audit that justifies this golden is the committed one');
+  // Amendment 01: the critical review moved this golden once (the first one was written from ab98199). The first golden and its delta audit are kept as byte copies, the chain to them
+  // is pinned here, and tools/verification/m01-t47-golden-amendment-audit.mjs committed the per-tick account of what moved (GOLDEN_AMENDMENT_01.json).
+  const amendment=golden.amendment01,first=JSON.parse(readFileSync(new URL('./fixtures/m01-t47-gameplay-baseline-before-amendment-01.json',import.meta.url)));
+  assert.equal(amendment.task,golden.task);assert.equal(amendment.beforeCommit,'ab98199c7b50a6682a5deef2e461dc83b7737247');
+  assert.equal(fileSha('./fixtures/m01-t47-gameplay-baseline-before-amendment-01.json'),amendment.beforeFixtureSha256,'the first T47 golden is kept byte for byte');
+  assert.equal(first.sourceSha256,amendment.beforeSourceSha256);assert.notEqual(first.sourceSha256,golden.sourceSha256,'the amendment moved the source lock');
+  assert.equal(first.task,golden.task);assert.equal(first.predecessor,golden.predecessor);assert.equal(first.previousGolden.sha256,golden.previousGolden.sha256,'the same chain to the immutable goldens');
+  assert.equal(first.amendment01,undefined);
+  assert.equal(fileSha('../'+amendment.beforeAudit),amendment.beforeAuditSha256);assert.equal(first.auditSha256,amendment.beforeAuditSha256,'the first golden cites the kept first delta audit');
+  const account=JSON.parse(readFileSync(new URL('../'+amendment.audit,import.meta.url)));
+  assert.equal(account.beforeFixtureSha256,amendment.beforeFixtureSha256);assert.equal(account.beforeSourceSha256,amendment.beforeSourceSha256);assert.equal(account.beforeAuditSha256,amendment.beforeAuditSha256);
+  assert.equal(account.afterSourceSha256,golden.sourceSha256);assert.equal(account.afterAuditSha256,golden.auditSha256);assert.equal(account.afterFixtureSha256,fileSha('./fixtures/m01-t47-gameplay-baseline.json'),'the account describes this very golden');
+  assert.deepEqual(account.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]));
+  account.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,first.routes[i].ticks);assert.equal(r.newTicks,golden.routes[i].ticks);assert.equal(r.complete,true);assert.equal(r.checkpoints.length,4);
+    if(r.firstDivergenceTick===null)return assert.deepEqual(golden.routes[i],first.routes[i],'a route that did not move is byte-identical');
+    assert.equal(r.firstDifferenceWeapon,'mg34','the only thing the amendment changes is what a ckm round does to an MG34 gunner');assert.equal(r.firstMg34Effect.tick,r.firstDivergenceTick);
+    assert.equal(r.identicalTicksBeforeIt,r.firstDivergenceTick-1);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(golden.routes[i].blocks[b],first.routes[i].blocks[b],'the blocks before the first difference are the first golden\'s');
+  });
 });
 
 for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against the T47-audited candidate (live ckm fire): seed ${expected.seed}, support ${expected.support}`,()=>{
