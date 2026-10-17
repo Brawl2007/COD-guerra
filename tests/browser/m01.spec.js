@@ -400,8 +400,8 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
-// T47: 46 Germans stood at CP-D on the route before the ckm fired; the gun now fells one of them (de_east_3, tools/verification/m01-t47-ckm-fire-audit.mjs, live.kills in
-// docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json). The restore must keep exactly the casualties of the route.
+// T47: 46 Germans stood at CP-D on the route before the ckm fired; the gun now fells one of them (de_east_5 since the review fix that stops shielding the MG34 gunners; was de_east_3,
+// tools/verification/m01-t47-ckm-fire-audit.mjs, live.kills in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json). The restore must keep exactly the casualties of the route.
 const CPD_ENEMIES_ALIVE=45;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
