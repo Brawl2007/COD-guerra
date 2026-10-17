@@ -483,9 +483,13 @@
     },
     "T47": {
       "name": "CKM CASEMATE CREW",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Fogo da guarnição do ckm."
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/cool-mccarthy-viomu9",
+        "PR:#85",
+        "claim:claims/m01-t47"
+      ],
+      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem revisão independente nem sessão de jogo."
     },
     "T48": {
       "name": "GERMAN RETREAT",

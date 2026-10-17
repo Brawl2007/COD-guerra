@@ -60,7 +60,7 @@ Legenda: DONE · PARCIAL · AUSENTE · HUMANO (exige pessoa ou aparelho) · INCE
 | 44 | Grading/pós-processamento | **ACEITE** | 4f27f90 (integrado na pilha em `claude/m01-stack-integration-t44-t20-v1` @ 909bf43, CI 38054298392), CI 38045943911 |
 | 45 | Assets de áudio | AUSENTE | Exige licenças |
 | 46 | Mistura e opções de áudio | AUSENTE | — |
-| 47 | Guarnição do ckm (fogo) | AUSENTE | Sem fogo nem munição na simulação. Depende de T22 (display rounds) e T05. |
+| 47 | Guarnição do ckm (fogo) | **CONCLUÍDA NA ORIGEM** (não integrada) | Branch `claude/cool-mccarthy-viomu9` (PR #85, empilhada sobre o #80): posto S2 reconstruído, fogo de supressão real (rajadas, fita de 330, fase feed, stream próprio), evento `ally-fire`, áudio, clarão, abrigo procedural, saves, golden novo com auditoria de delta por tick. Sem revisão independente nem sessão de jogo. Prova: `DEVELOPMENT_STATUS.md` (entrada T47) e `docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json`. |
 | 48 | Retirada alemã | AUSENTE | Depende de T22/T35 |
 | 49 | Orçamento de performance | REVER | T01 anulada (D13); orçamento a definir para a plataforma-alvo nova |
 | 50 | Loading e bundle | CANDIDATO / não fechado | PR draft #66 aberto, `51334bc`; entrega candidata existente, fora deste lote e sem aceitação aqui. |
