@@ -51,3 +51,29 @@ Para linha-base, usar exatamente o mesmo comando **sem `--ponytail`**, sobre uma
 - Se qualidade cair, se não houver medição confiável ou se hooks forem alterados inesperadamente: manter a skill desativada (omitir `--ponytail`), registar motivo e não alargar a adoção.
 
 **Limitação:** nenhum script desta preparação instala o plugin, abre sessões Claude, executa um subagente, controla quotas de forma rígida ou substitui um teste visual real.
+
+## Resultado do piloto 1 — INFRA-PONYTAIL-PILOT (2026-10-17)
+
+Tarefa: `plan` escrevia `.agent/tools/__pycache__` no `--root` (import in-process do `jev_router.py`),
+o que fazia `test_ponytail_is_opt_in_and_only_for_sonnet_edit` falhar com "dirty checkout".
+Correção `d838af9` (+8/−1): `sys.dont_write_bytecode` só durante `exec_module`, restaurado em `finally`.
+
+| Execução | Agente | Ponytail | Tokens | Ferramentas | Tempo | Diff | Testes |
+|---|---|---|---|---|---|---|---|
+| Linha-base (worktree isolado) | `implementer` Sonnet | não | 19 258 | 5 | 79,9 s | +8/−1 | 7/7, Jev 104/104 |
+| Despacho `--ponytail` | `implementer` Sonnet | **não carregou** | 19 755 | 6 | 68,5 s | idêntico | 7/7, Jev 104/104 |
+| Ativação real (worktree isolado) | `general-purpose` Sonnet | **sim**, `Skill(ponytail)` | 72 076 | 8 | 96,3 s | +8/−1 | 7/7, Jev 104/104, red/green |
+
+Verificador independente: PASS (red/green contra `8ac528a`, 240/240 em `.agent/tests`). Revisor: ACCEPT.
+Gate `verify`: 59 541 tokens reportados → BLOCKED com `--token-stop` padrão 25 000; PASS com 70 000.
+
+Constatações:
+- A sessão carrega `.claude/agents/*.md` no arranque. Uma sessão iniciada em `main` usa o `implementer`
+  sem a ferramenta `Skill`, logo o despacho `--ponytail` executa sem Ponytail. A skill em si é recarregada
+  e funciona. Para pilotar, a sessão tem de arrancar já nesta branch.
+- A ativação real não é comparável 1:1 (tipo de agente diferente). Não houve poupança observável nesta
+  tarefa: as três soluções são equivalentes em código e qualidade.
+- O `--token-stop` padrão (25 000) é inferior ao custo de um ciclo completo de 4 fases.
+
+Recomendação: manter Ponytail **opt-in e desligado por defeito**; repetir o piloto numa sessão arrancada
+nesta branch, com uma tarefa INFRA maior que permita diferenças de diff, antes de alargar a adoção.
