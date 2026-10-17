@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import historicalGolden from './fixtures/m01-anim-gameplay-baseline.json' with {type:'json'};
-import golden from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+import partialsGolden from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
+// T38 (M01-COMBAT-POSTURE-STAGING-V1) changes gameplay by design; its golden was regenerated on x86 by tools/verification/
+// m01-combat-posture-staging-audit.mjs after the invariant audit against the exact predecessor (whose simulation the partials golden pins).
+import golden from './fixtures/m01-t38-gameplay-baseline.json' with {type:'json'};
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -29,7 +32,7 @@ test('schema 2 initializes all 97 IDs; diagnostics are detached, small presentat
   validateM01Snapshot(s.snapshot());
 });
 
-test('historical approved golden remains immutable; candidate partials golden is separately pinned after predecessor delta audit',()=>{
+test('historical approved golden remains immutable; the partials golden stays pinned as history; the T38 golden is separately pinned after its audit',()=>{
   assert.equal(historicalGolden.base,'61ecd77b099d5921bd025275eafd9c3157536bb7');
   assert.equal(historicalGolden.sourceSha256,'792fdc9a7a56a09bda599669f7349e3bb6fad0e3e13d67eed03f1474eeef07b6');
   assert.equal(historicalGolden.approvedIntegration.task,'M01-CONTINUITY-RAID-INTEGRATION-V1');
@@ -40,10 +43,19 @@ test('historical approved golden remains immutable; candidate partials golden is
   assert.equal(historicalGolden.sourceLock.previousTask,historicalGolden.approvedIntegration.task);
   assert.equal(historicalGolden.sourceLock.previousSourceSha256,historicalGolden.approvedIntegration.sourceSha256);
   assert.equal(historicalGolden.sourceLock.sourceSha256,'57c81b31acf4920f6259db47faadb94ac33a10916db5befaadf2d35e0f988506');
+  // The partials candidate golden (predecessor of T38) is now history too: byte-for-byte the file the partials integration committed.
+  assert.equal(createHash('sha256').update(readFileSync(new URL('./fixtures/m01-partials-gameplay-baseline.json',import.meta.url))).digest('hex'),
+    '83a907ca00389f17723ffc97f1c42dca7d80f9a956d07ca7f39b8ae58fe87b79');
+  assert.equal(partialsGolden.task,'M01-PARTIALS-COMPLETION-INTEGRATION-V1');assert.equal(partialsGolden.sourceSha256,'00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a');
+  assert.equal(golden.task,'M01-COMBAT-POSTURE-STAGING-V1');assert.equal(golden.predecessor,'ef35c7ab24d75d87ca6435891f1977fd14d7a52c');
+  assert.equal(golden.predecessorSourceSha256,partialsGolden.sourceSha256);
+  assert.equal(golden.partialsGoldenSha256,'83a907ca00389f17723ffc97f1c42dca7d80f9a956d07ca7f39b8ae58fe87b79');
+  assert.equal(golden.historicalGoldenSha256,createHash('sha256').update(readFileSync(new URL('./fixtures/m01-anim-gameplay-baseline.json',import.meta.url))).digest('hex'));
+  assert.deepEqual(golden.routes.map(r=>[r.seed,r.support]),partialsGolden.routes.map(r=>[r.seed,r.support]),'the same two routes');
   assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256);
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against separately audited partials candidate: seed ${expected.seed}, support ${expected.support}`,()=>{
+for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against the audited T38 candidate: seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));

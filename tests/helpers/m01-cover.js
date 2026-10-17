@@ -37,7 +37,8 @@ export function coverRoute(seed=19390901,mode='ignore',options={}){
     walk(-120,16.5);tick({crouch:true});lastFlash=null;
     wait(()=>!sim.active('cover_repair'),400,cover(f=>f.id==='de_east_0',()=>sim.threat.mgSuppressed.includes('de_east_0'),4));
     tick({crouch:true});
-    const kowal=sim.actor('szymon_kowal');walk(kowal.x+1.5,kowal.z);tick({interact:true});tick({});tick({interact:true});
+    // T38: Kowal kneels right behind the squad-post sandbags, so the pilot comes up from behind him (west), not through the sandbags.
+    const kowal=sim.actor('szymon_kowal');walk(kowal.x-1.5,kowal.z);tick({interact:true});tick({});tick({interact:true});
   }
   walk(-115,27);walk(-28,28);tick({crouch:true});
   wait(()=>sim.active('hold_access'),500);
