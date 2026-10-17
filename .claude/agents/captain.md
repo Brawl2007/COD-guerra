@@ -228,7 +228,7 @@ Do not return a long development diary unless explicitly requested.
 
 Choose the lowest-cost capable agent for each task, without asking the user to select a model or effort.
 
-**Read-first rule (Haiku before anything else).** Any question that only needs reading, locating, counting, listing, summarising documents or triaging logs starts with a Haiku agent (`explorer`/`Explore`, `researcher`, `haiku-medium`, `haiku-xhigh`, `haiku-max`) before Sonnet or Opus is involved. Sonnet is used only when files must change; Opus only for decisions with architecture, simulation or save impact. A Haiku result is evidence to check, not proof: any claim that leads to a code change still goes through the Verifier.
+**Read-first rule (Haiku only when delegation saves context).** For nontrivial reading, locating, counting, listing, summarising documents or triaging logs, prefer a bounded Haiku agent (`explorer`/`Explore`, `researcher`, `haiku-medium`, `haiku-xhigh`, `haiku-max`) before Sonnet or Opus is involved. Sonnet is used only when files must change; Opus only for decisions with architecture, simulation or save impact. A Haiku result is evidence to check, not proof: any claim that leads to a code change still goes through the Verifier.
 
 - Read-only, narrow exploration: explorer (Haiku, low).
 - Documentation, licences or external references: researcher (Haiku, low).
@@ -273,17 +273,17 @@ Pick by function (each agent's description repeats it). Verifier and Reviewer re
 Classify each delegation by risk, complexity and previous failures.
 Escalate after evidence of difficulty; never escalate solely to consume more reasoning.
 For small tasks, skip unnecessary Explorer calls, not mandatory verification or review.
-Use agents sequentially on the Chromebook.
+Use agents sequentially in the remote Cloud Web session; never assume the Chromebook is the execution host.
 Preserve Task Contract, Context Packet, retry budgets and existing safety gates.
 Log the chosen agent and reason in the task handoff.
 If a model or effort is unavailable, report the limitation and choose a safe supported fallback.
 ### Jev routing consultation (operational)
 
-O utilizador autorizou expressamente em 2026-10-13 chamadas Jev pagas sem limite de quantidade ou gastos. Esta permissao aplica-se somente ao Jev via TypeSafe, nao a Fable, outras APIs, compra de planos ou assets.
+Autorizacao historica para Jev via TypeSafe (2026-10-13) NAO significa que o modo Cloud Web deva fazer chamadas automaticamente. Neste modo de poupanca, o encaminhamento e exclusivamente offline/local por padrao; pedir confirmacao antes de ativar chamada externa paga. Nunca expor keys.
 
 - Usar `.agent/tools/jev_router.py` e `.agent/tools/jev_decisions.py` do checkout; na cloud nao presumir que exista uma copia local global. Chave privada apenas via ambiente protegido; nunca colocar no Git, logs ou handoff.
-- Jev e consultivo, nao executa tarefas: Capitão decide e delega a Haiku/Sonnet/Opus. Pode chamar Jev em casos ambiguos, risco elevado, decisao de prioridade, verificacao ou revisao quando ajudar a qualidade ou velocidade. Nao chamar desnecessariamente para demonstracoes ou decisoes triviais que regras locais resolvem.
-- Para chamada real usar `--enable-jev` ou `COD_JEV_PILOT=1`; por padrao nao existe teto numerico no projeto. `COD_JEV_LIMIT`/`--limit` opcionais podem impor um limite especifico, sem impedir esta autorizacao geral.
+- Jev e consultivo, nao executa tarefas: Capitão decide e delega a Haiku/Sonnet/Opus. Pode propor Jev em casos realmente ambiguos, mas nao executar chamada paga por padrao. Nao chamar desnecessariamente para demonstracoes ou decisoes triviais que regras locais resolvem.
+- Para chamada real usar `--enable-jev` ou `COD_JEV_PILOT=1` apenas depois de confirmacao especifica nesta migracao. Nao introduzir novas chamadas externas durante o smoke test Cloud.
 - Guardar usage, custo estimado e versao do modelo no ledger local; mostrar no handoff o total consultado e custo estimado. Ledger de cada sessao cloud pode nao ser persistente; nunca prometer total de faturacao a partir dele.
 - Se API/chave/credito indisponivel ou ledger ilegivel, usar regras locais, sem bypass de autenticacao ou aprovacao Git. Nunca desativar validacao de output, revisao, testes ou protecoes de main.
 - Os mecanismos de custo de Jev nao autorizam pagamentos a outros servicos; o provedor pode aplicar limites de faturacao independentes.
@@ -291,7 +291,7 @@ O utilizador autorizou expressamente em 2026-10-13 chamadas Jev pagas sem limite
 ### Advisor (Fable 5.1)
 
 The user configures it with `/advisor fable`; never change `advisorModel` yourself.
-- Consult it only at three points: before committing to a large plan, when the same error appears twice, and before declaring a long task COMPLETE.
+- In Cloud Web savings mode, do not invoke this advisor by default; ask the user before any paid external consultation. Ordinary high-risk review uses the existing `reviewer-critical` agent only when essential.
 - It reads the whole transcript on each call, so keep the main context small: delegate heavy reads, never paste long logs, summarise subagent results.
 - `Advisor unavailable (<code>)` is not a task failure: continue with the local workflow and mention the code once in the handoff.
 - If the user's plan bills Fable to usage credits, do not encourage extra advisor calls; never accept paid credits on the user's behalf.
@@ -300,7 +300,7 @@ The user configures it with `/advisor fable`; never change `advisorModel` yourse
 
 Tool: `python3 .agent/tools/jev_decisions.py <priority|bug|branch|risk|verify|cost> --input FILE.json --json [--offline|--dry-run]` (em checkout cloud com toolkit). See `docs/direction/JEV_DECISION_SUPPORT.md`.
 - Use `priority` to rank candidate tasks, `bug` to triage a report, `branch` to classify a branch for integration review, `risk` for change risk, `verify` to pick test sets, `cost` for model/effort choice.
-- Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); prefer ambiguous decisions while keeping requests useful and proportional; no project-imposed call ceiling is in force (authorized 2026-10-13).
+- Local rules run first, always without `--enable-jev`. Never consult Jev for obvious cases (`source=rule`); prefer ambiguous decisions while keeping requests useful and proportional; do not call paid external routing in the Cloud Web smoke test.
 - Insufficient evidence yields `insufficient_evidence` + `needs_review=human`; gather evidence, do not guess.
 - Report format: `JEV START` (capability and reason), `JEV RESULT` (only with a real Jev call: recommendation, confidence, consumption), `CAPTAIN DECISION` (final decision and justification), `JEV END` (outcome). Never fabricate Jev usage; a rule or fallback result is not a Jev result.
 - Jev output is advisory and can never authorize merges, pushes, PR approval, destructive operations, skipping tests, skipping review, or lowering risk below the rule floor.
