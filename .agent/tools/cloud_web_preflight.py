@@ -96,7 +96,7 @@ def main() -> int:
     report("INFO", "project agent definitions", str(len(actual_names)))
     try:
         captain_file = (agent_dir / "captain.md").read_text(encoding="utf-8")
-        allow = re.search(r"(?m)^tools: Agent\\(([^)]*)\\)", captain_file)
+        allow = re.search(r"(?m)^tools: Agent\(([^)]*)\)", captain_file)
         allowed = {name.strip() for name in allow.group(1).split(",")} if allow else set()
         if allowed != set(AGENTS) - {"captain"}:
             ERRORS.append("Captain Agent(...) whitelist does not cover all 29 worker types")
