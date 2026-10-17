@@ -1,18 +1,15 @@
 import {test,expect} from '@playwright/test';
 import {driver,toRepair} from '../helpers/m01-route.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
-import {CkmNeutralSimulation} from '../helpers/m01-ckm-neutral.js';
 import {actorPose} from '../../src/render/m01-actor-pose.js';
 import {muzzlePosition} from '../../src/world/spatial.js';
 const key='cod-guerra:checkpoint:m01:v2';
-// T47: the live ckm suppresses the two MG34 gunners like any German once its first burst lands (266 s), which cuts their bursts short: on that timeline de_east_0 never completes a
-// sixth round in the 120 s this search allows ("Route stalled"). The burst saves are therefore reached with the gun silenced (CkmNeutralSimulation, the German timeline this spec was
-// written on) and restored into the production game, where the gun is live: the burst they hold ends within 0.3 s of the restore, before any ckm round can land (checked in Node
-// against the production simulation: 0.05-0.3 s to the resumed aim phase, first ckm landing 3.2 s or later after the restore). Nothing the spec asserts is changed.
+// The search starts at 207.4 s of game time. With the ckm live (T47) the first burst of de_east_0 that reaches a sixth round fires it at 328.8 s, 121.4 s in, with the gun itself mid-burst:
+// the window must be longer than 121.4 s (180 s leaves a margin of 58 s; at 120 s it ends at 327.4 s and fails with "Route stalled").
 function burstSave(count){
- const d=toRepair(driver(undefined,{Simulation:CkmNeutralSimulation})),p=d.sim.player,a=d.sim.actor('de_east_0'),angle=Math.atan2(a.z-p.z,a.x-p.x);
+ const d=toRepair(driver()),p=d.sim.player,a=d.sim.actor('de_east_0'),angle=Math.atan2(a.z-p.z,a.x-p.x);
  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
- d.until(()=>d.sim.actor('de_east_0').mg34Prone?.phase==='fire_burst'&&d.sim.actor('de_east_0').mg34Prone.burst.emitted===count,120);
+ d.until(()=>d.sim.actor('de_east_0').mg34Prone?.phase==='fire_burst'&&d.sim.actor('de_east_0').mg34Prone.burst.emitted===count,180);
  return d.sim.snapshot();
 }
 async function continueAndPause(page,optionalFailure=false){
