@@ -1,4 +1,4 @@
-# M01-FINISH — protocolo permanente do Capitão Opus
+# M01-FINISH — protocolo permanente do Capitão Sonnet (Cloud Web)
 
 **Missão:** concluir a M01 Tczew inteira; não esperar nova tarefa por hora.
 **Backlog vivo e critérios:** https://github.com/Brawl2007/COD-guerra/issues/72
@@ -9,8 +9,9 @@
 - Registo canónico inicial: `.agent/m01-task-registry.json`, com T00–T52, evidências/branches e estados conservadores. **Um índice não é certificado de integração.**
 - Antes de cada tarefa: `python3 .agent/tools/m01_task_registry.py check TXX --live` e ler a issue #72. Não criar outra tarefa já marcada `DELIVERED_BRANCH`, `DELIVERED_PR` ou `IN_CANDIDATE_UNVERIFIED`. Usar commits e PRs existentes.
 - Apenas depois de verificar que TXX é `UNKNOWN` e sem dono: `python3 .agent/tools/m01_task_registry.py claim TXX --sha "$(git rev-parse HEAD)"`. A criação de `claims/m01-txx` é atómica; conflito = não implementar duplicado. Ver `AGENTS.md`.
-- **PR #76 já é a candidata única de integração V2–V7 + Argon V1/V2 + T50 + T21.** Não começar outra candidata: retomar #76, corrigir a prova combinada sem suprimir testes, trazer outras entregas verificadas seletivamente.
-- A execução atual do PR #76 falhou na etapa `npm test` do CI: muitas verificações invocam históricos do Git não disponíveis no checkout raso, mas há também testes com referências a caminhos ausentes em revisões históricas. Investigar e corrigir a causa de cada grupo no PR/branch de trabalho correspondente, sem afrouxar proteções. Não afirmar CI verde com base em 502 testes locais.
+- **Situação atual (verificar novamente):** o PR #76 já foi integrado em main; a candidata de desenvolvimento é o PR #80, DRAFT. A reserva exclusiva de integração preparada no PR #84 permanece **PAUSED**. Enquanto estiver assim, não alterar #80 nem assumir posse da integração.
+- **Provas:** T38 #82 parcial; T43 #81 parcial; T47 #85 parcial; T48 #86 implementação reportada completa mas ainda não integrada. Os estados requerem reconfirmação no HEAD e CI de cada tarefa.
+- Não criar nova candidata. Não ocultar falhas de testes nem confundir rascunho/commit com aceitação.
 
 ## ENTREGA OBRIGATÓRIA — transformar TODO o trabalho existente em jogo utilizável
 
@@ -27,15 +28,15 @@
 
 **Aceitação:** uma branch/PR candidato único, funcional e validado, com mapa de proveniência e lacunas transparentes; não chamar «tudo entregue» se funcionalidades aprovadas permanecem dispersas. O merge final ou publicação continuam reservados à decisão humana.
 
-## Ação em cada execução da Routine
+## Ação na sessão única Claude Code Web
 
-1. A sessão principal Opus é o Capitão; **não iniciar `captain` como subagente**, pois subagentes aninhados foram bloqueados na Cloud. Ler este protocolo e a issue #72.
+1. A sessão principal Sonnet é o único Capitão. **Não iniciar `captain` como subagente** nem lançar uma Routine concorrente. Ler este protocolo, `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md` e a issue #72.
 2. Consultar estado real de main, PRs abertos, branches empilhadas, runs Actions, checkpoints read-only, últimos handoffs e Task Contracts. O HEAD, não a memória, determina o que foi feito.
-3. Retomar primeiro o trabalho inacabado **da própria Routine** na mesma branch, desde que não esteja atualmente ocupado por outro executor. Se não existir trabalho próprio, escolher o próximo bloqueio no caminho crítico de conclusão da M01.
-4. **Prioridade:** integrar/certificar cadeia V2→V7 e entregas dependentes; corrigir problemas concretos nos candidatos; completar gameplay e apresentação, testar performance, propor consolidação. Os PRs #65/#66/#70 e a issue #71 são itens de trabalho a avaliar, não ordens fixas permanentes.
+3. Retomar primeiro trabalho incompleto com reserva válida e HEAD conhecido, desde que não esteja atualmente ocupado por outro executor. Se não existir trabalho próprio, escolher o próximo bloqueio no caminho crítico de conclusão da M01.
+4. **Prioridade:** verificar e concluir entregas pendentes em PRs existentes (incluindo T38/T43/T47/T48), corrigir problemas concretos, certificar regressões e preparar integração pela fila segura do PR #80 apenas quando o protocolo #84 estiver ativo.
 5. Dividir internamente o objetivo em tarefas pequenas verificáveis, sem pedir ao utilizador uma nova tarefa a cada hora. Fazer mudanças reais (código, testes, integração isolada, evidência), com branch própria, PR e revisão independente. Se um PR depende de outro, usar base/stack correto, sem alterar o branch alheio.
 6. Delegar leitura barata a Haiku; implementação/testes a Sonnet; decisões de arquitetura e revisão crítica a Opus. Maximizar velocidade sem gastar tokens em inspeções duplicadas nem diagnósticos intermináveis.
-7. Não reexecutar testes caros quando o HEAD e evidência são idênticos. Quando um bloqueio requer aprovação humana, preparar proposta verificável e **passar a outra tarefa segura e independente**; não declarar «não há trabalho» apenas porque existem muitos PRs.
+7. Não reexecutar testes caros quando HEAD e evidência são idênticos. Não usar polling contínuo para esperar CI/Playwright. Quando um bloqueio exigir aprovação humana ou houver um comando demorado, guardar handoff e terminar; outra tarefa só começa se houver orçamento e reserva segura.
 8. Registar progresso durável na issue #72 somente após alterações reais: branch, SHA, PR, checks, estado, pendências e próxima ação. O contexto de cada execução Cloud pode desaparecer, por isso não confiar apenas em estado local ou narrativa de chat.
 9. Respeitar limites de segurança do projeto: nunca push/merge em main, deploy, force-push, reset --hard, publicação de checkpoints, contas/compra de serviços sem autorização específica. Jev pago permitido segundo configuração, Fable pago e outros gastos proibidos sem aprovação.
 10. Cada execução entrega: progresso da M01 (provas); trabalho implementado nesta rodada; o que mudou e não mudou no jogo; branch e SHA; PR; CI; próxima ação já escolhida. Não enviar notificações repetitivas se nada mudou.
@@ -50,7 +51,7 @@ O Capitão **não** pode chamar M01 «concluída» até:
 - assets/licenças revistos e conteúdo provisório explicitamente identificado;
 - playtest humano e decisão de aceitação final quando necessários.
 
-O agendamento horário abre **sessões separadas**, não um trabalhador ininterrupto. Quando houver quotas/erros externos, documentar e retomar no próximo horário. Não prometer 24/7 nem conclusão sem dependências humanas.
+A Routine antiga fica pausada. O Cloud Web executa uma única sessão principal com subagentes, não um processo eterno. Em limite de contexto/quota, guardar commits e handoff para uma sucessora única, sem relançamento automático. Não prometer 24/7 nem conclusão sem dependências humanas.
 
 ## Fonte de verdade
 
