@@ -1,9 +1,26 @@
 # HANDOFF T38 — `M01-COMBAT-POSTURE-STAGING-V1` (estado: ENTREGUE NA BRANCH, NÃO ACEITE)
 
-Retoma de 2026-10-17 (sessão Sonnet) do trabalho parado do PR #82. Branch `claude/busy-ritchie-3fkvk2-t38` (local, não publicada), base = cabeça do PR #82 (`2bc623c`,
+Retoma de 2026-10-17 (sessão Sonnet) do trabalho parado do PR #82. Branch `claude/busy-ritchie-3fkvk2-t38` (publicada até `65145c9` pelo Capitão; os commits seguintes, a «Retoma 3» abaixo, são locais), base = cabeça do PR #82 (`2bc623c`,
 branch `claude/quirky-heisenberg-iytxsy`) fundida com a candidata #80 (`813f163`) e com a correcção de teste do #89 (`b449007`). Reserva `claims/m01-t38`.
-Nada foi publicado: sem push, sem PR novo, sem comentário no GitHub (a issue #72 fica por actualizar pelo Capitão), sem merge, sem deploy.
-Resultados e números: `README.md` (efeitos no jogo, golden, verificação, capturas) e `GOLDEN_AMENDMENT_01.json`.
+Nesta sessão não se publicou nada: sem push, sem PR novo, sem comentário no GitHub (a issue #72 fica por actualizar pelo Capitão), sem deploy; o único merge é o local da «Retoma 3», pedido pelo Capitão.
+Resultados e números: `README.md` (efeitos no jogo, golden, verificação, capturas), `GOLDEN_AMENDMENT_01.json` e `GOLDEN_AMENDMENT_02.json`.
+
+## Retoma 3 (2026-10-17): segunda revisão crítica, REQUEST_CHANGES sem defeito de código — o que se fez
+
+A revisão crítica de `65145c9` não encontrou defeito de código; pedia prova, decisão e integração. Em ordem (commits locais na branch; nada publicado além de `65145c9`):
+1. **Prova do desvio da MG34** (`d171fd1`): a auditoria de invariantes mede agora, por rota e por MG34, as rajadas por tipo de alvo (`squad` = Kowal, `area` = posto avançado, outras) e os pedidos de
+   `co_m01_enemy_mg_fire_on_squad`, predecessor contra candidata (subclasse que só conta e delega; todos os campos antigos das 24 rotas ficam iguais). Resultado: o README estava **errado** ao dizer que o desvio é só do RNG.
+   Com a secção de joelhos atrás dos sacos nenhum alemão dos portões a vê e o alvo das MG34 cai de `squad` para `area` (rotas sem apoio: 499 → 146 e 0 → 351; exemplo 42 → 14, 0 → 27, pedidos 82 → 55). README e
+   `DEVELOPMENT_STATUS.md` corrigidos; **decisão do Captain D40** (`docs/direction/DECISIONS.md`): aceite como efeito pretendido da cobertura.
+2. **Migração de saves** (`9f7945b`): `migrateT38Staging` já não move um atirador dos portões caído (faltava `alive`); teste com `de_east_6` caído (vermelho antes, verde depois). Sem efeito por tick.
+3. **Fusão com a base T48** (`f02e06b`, `git merge --no-ff origin/claude/busy-ritchie-3fkvk2` = `5a169ba`: candidata #80 + #89 + retirada alemã): sem conflitos de texto; a árvore fundida partia 8 testes do contrato de animação
+   (pins do golden parcial `83a907ca`/`00964436` → `a29c1ac9`/`c06c1b1b`, simulação nova) e 1 da retirada (ticks da demolição leste). Re-baseline só com as ferramentas do repositório:
+   a auditoria de T38 com predecessor `5a169ba` regenerou o golden T38 (**emenda 02**, `GOLDEN_AMENDMENT_02.json`; o golden anterior fica byte a byte em `tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json`);
+   a ferramenta de T48 (`tools/verification/m01-german-retreat-golden-audit.mjs`, agora com BASE `65145c9`) provou em paralelo, tick a tick que a retirada só muda os alemães do tabuleiro depois da demolição
+   (`german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json`). O golden parcial de T48 (emenda 02 de T48) fica como história, fixado por `sha256` em `tests/m01-animation-contract.test.js`.
+   Em `tests/m01-german-retreat.test.js` o teste «golden amendment 02» passou a história (sem simulação viva) e o novo «golden amendment 03» faz a mesma afirmação sobre o golden T38 e a demolição viva: nenhuma asserção foi
+   enfraquecida, as de dados migraram para o ficheiro que descreve a simulação viva.
+Resultados e comandos em `README.md` (secções «Golden por tick» e «Verificação local»).
 
 ## O que se fez, passo a passo (os passos 1–4 do handoff anterior)
 1. **Testes focados** (`m01-combat-posture-staging`, `m01-east-front`, `m01-cover-threat`, `m01-animation-contract`) sobre `25ed12f`: 84 testes, 77 passam, 7 falham. As 7

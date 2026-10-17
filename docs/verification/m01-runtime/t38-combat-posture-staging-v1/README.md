@@ -1,9 +1,12 @@
 # T38 · M01-COMBAT-POSTURE-STAGING-V1 — evidência
 
-Estado: **entregue na branch, NÃO aceite** (falta revisão crítica independente, CI x86 completo e playtest humano).
+Estado: **entregue na branch, NÃO aceite** (falta revisão crítica independente da versão final, CI x86 completo e playtest humano).
 Base: predecessor `ef35c7a` (fatia 1 de T38) → fatia 2 (jogo), retomada em 2026-10-17 na branch `claude/busy-ritchie-3fkvk2-t38` (cabeça do PR #82
 `2bc623c` + candidata #80 `813f163` + correcção de teste #89 `b449007`), com as correcções da revisão crítica de `8bb0372` (REJECT; ver `HANDOFF.md`).
-As capturas "antes" são de `ef35c7a` (worktree separado, mesmo spec); as "depois" são desta árvore. Chromium 1194 headless, SwiftShader,
+Segunda revisão crítica (sobre `65145c9`): REQUEST_CHANGES, sem defeito de código. Esta versão responde-lhe: (1) o desvio do fogo da MG34 está medido por rota e a frase errada «é o do RNG» foi corrigida
+(«Mudança sistemática…» abaixo), com a decisão do Captain **D40** em `docs/direction/DECISIONS.md`; (2) a base T48 (`5a169ba`: candidata #80 + #89 + retirada alemã) entrou na branch (merge `f02e06b`) e o golden foi
+re-derivado sobre a simulação combinada (emenda 02, mais a prova causal `german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json`); (3) a migração de saves já não move um atirador dos portões caído.
+As capturas "antes" são de `ef35c7a` (worktree separado, mesmo spec); as "depois" são da árvore anterior à fusão (`65145c9`; ver «Capturas»). Chromium 1194 headless, SwiftShader,
 1280×720 reduzido a 960×540 (PNG de 256 cores). Não é playtest humano e não mede FPS.
 
 ## O que mudou no jogo
@@ -25,13 +28,17 @@ cobertura vinda de oeste**: o único colisor junto aos portões é o portal de 1
 atrás do fim dos tabuleiros cortar-lhes-ia a linha de visão com que disparam sobre o jogador. Sem novos props de cobertura (fora do
 âmbito "só posições") a melhoria possível é profundidade, alturas diferentes e postura.
 
-**Saves antigos.** Ao carregar um save anterior a T38, quem estiver exactamente no seu lugar antigo (e não tiver sido mandado para
-lado nenhum) passa para o lugar novo; quem já se moveu fica onde está.
+**Saves antigos.** Ao carregar um save anterior a T38, quem estiver vivo exactamente no seu lugar antigo (e não tiver sido mandado para
+lado nenhum) passa para o lugar novo; quem já se moveu, e quem já caiu (um atirador dos portões caído fica onde caiu), fica onde está.
 
 ## Efeitos no jogo (auditoria de 12 sementes × 2 rotas, `GOLDEN_AUDIT.json`)
 
-Gerada por `tools/verification/m01-combat-posture-staging-audit.mjs` (predecessor `ef35c7a` contra esta árvore, as mesmas rotas de controlo reais, x86,
-Node 22.22.0, 24 pares de simulações completas); a ferramenta falha se uma só das invariantes seguintes não se mantiver, e saiu com 0.
+Gerada por `tools/verification/m01-combat-posture-staging-audit.mjs` (predecessor `5a169ba` = base T48, a candidata #80 + #89 + retirada alemã, contra esta árvore, as mesmas rotas de controlo reais, x86,
+Node 22.22.0, 24 pares de simulações completas); a ferramenta falha se uma só das invariantes seguintes não se mantiver, e saiu com 0. A mesma auditoria **antes da fusão com T48**
+(predecessor `ef35c7a`, árvore `d171fd1`, `GOLDEN_AUDIT_PRE_T48.json`) dá os mesmos resultados, campo a campo, em 21 das 24 rotas. Diferem 3: semente 2 sem apoio (predecessor: acertos no jogador 2 → 1, saúde final 84 → 92, `enemy-fire` 1978 → 1971); semente 4 sem apoio (predecessor: acertos no jogador 0 → 1, saúde final 100 → 92, `enemy-fire` 2021 → 2010); semente 8 sem apoio (candidata: acertos no jogador 1 → 3, saúde final 92 → 76, `enemy-fire` 1910 → 1913).
+A causa é T48, não T38, e só actua depois das 06:10: a calada de 60 s (06:10–06:11) recusa a rajada de um alemão do tabuleiro disparada no próprio tick da demolição (visto nas três, às 06:10:00: `de_spans_1` na semente 2 e `de_spans_5` na semente 4, que o predecessor `ef35c7a` ainda disparava sobre o jogador, e `de_spans_7` na semente 8, que a candidata só com T38 ainda disparava sobre o pelotão);
+a rajada recusada não gasta RNG, o RNG segue outro caminho e os tiros seguintes sobre o jogador mudam de hora e de número (e com eles os acertos e a saúde final); as invariantes, as horas do reparo e as contagens da MG34 por tipo de alvo antes das 06:10 não mudam. A auditoria anterior à contagem da MG34 (`65145c9`)
+tinha os mesmos valores em todos os campos que já tinha: a contagem só lê (subclasse que conta e delega), não altera o jogo.
 
 Iguais ao predecessor em todas as 24 rotas: conclusão, checkpoints, estados dos objectivos, ordem dos eventos, horas de batalha dos
 eventos fixos (trem 963, ordem das 05:30, retirada das 06:00, alemães no tabuleiro 06:05, Bąk 06:04, demolições, chamada),
@@ -43,37 +50,67 @@ queda por atrito 0,8–3,9 s de batalha depois da sua hora fixa (o limite é 0�
 (que segue o reparo; −17,4 s a +10,5 s). `dlg_m01_027` (uma das MG34 dispara sobre o jogador ou a secção mais de 8 s depois da primeira vez, com o jogador a oeste; não é um evento fixo)
 muda em 3 das 24 rotas: as sementes 6 e 9 com apoio passam a tê-lo, a 10 com apoio deixa de o ter (nas outras 21 aparece e desaparece como antes).
 
-Sem desvio sistemático de dificuldade nas 24 rotas: tiros que atingem o jogador 16 → 18 no total (sem apoio 11 → 15, com apoio 5 → 3), eventos `enemy-fire`
-38293 → 38366, `round-impact` 14043 → 14079, hora real média da conclusão do reparo 409,4 s → 407,6 s. O desvio é o do RNG, não uma regra nova.
+### Mudança sistemática, não ruído do RNG: o alvo das duas MG34
 
-| Semente | Apoio | Reparo antes | Reparo depois | Δ (s de batalha) | Tiros que atingem o jogador antes → depois | Saúde final antes → depois | dlg_m01_027 antes/depois | dlg_m01_040: Δ relógio real (s) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 19390901 | não | 05:13:46 | 05:13:24 | -22 | 2 → 1 | 84 → 92 | sim/sim | -2.50 |
-| 1 | não | 05:10:03 | 05:10:03 | +0 | 3 → 0 | 76 → 100 | sim/sim | -0.85 |
-| 2 | não | 05:13:00 | 05:13:00 | +0 | 2 → 3 | 84 → 76 | sim/sim | -0.90 |
-| 3 | não | 05:10:14 | 05:09:03 | -71 | 0 → 0 | 100 → 100 | sim/sim | -6.15 |
-| 4 | não | 05:13:32 | 05:13:38 | +6 | 0 → 0 | 100 → 100 | sim/sim | -0.45 |
-| 5 | não | 05:08:42 | 05:10:29 | +107 | 3 → 5 | 76 → 60 | sim/sim | +7.05 |
-| 6 | não | 05:12:33 | 05:10:23 | -130 | 1 → 2 | 92 → 84 | sim/sim | -10.50 |
-| 7 | não | 05:10:39 | 05:10:38 | -1 | 0 → 1 | 100 → 92 | sim/sim | -1.00 |
-| 8 | não | 05:12:27 | 05:09:21 | -186 | 0 → 1 | 100 → 92 | sim/sim | -14.65 |
-| 9 | não | 05:13:27 | 05:12:23 | -64 | 0 → 1 | 100 → 92 | sim/sim | -5.65 |
-| 10 | não | 05:09:50 | 05:09:49 | -1 | 0 → 1 | 100 → 92 | sim/sim | -0.95 |
-| 11 | não | 05:09:00 | 05:09:25 | +25 | 0 → 0 | 100 → 100 | sim/sim | +0.90 |
-| 19390901 | sim | 05:03:32 | 05:03:42 | +10 | 2 → 1 | 84 → 92 | não/não | -0.15 |
-| 1 | sim | 05:05:10 | 05:03:21 | -109 | 0 → 0 | 100 → 100 | não/não | -8.95 |
-| 2 | sim | 05:02:46 | 05:05:20 | +154 | 1 → 0 | 92 → 100 | não/não | +10.50 |
-| 3 | sim | 05:07:01 | 05:03:18 | -223 | 0 → 0 | 100 → 100 | sim/sim | -17.40 |
-| 4 | sim | 05:05:08 | 05:06:41 | +93 | 0 → 1 | 100 → 92 | não/não | +6.00 |
-| 5 | sim | 05:03:53 | 05:04:40 | +47 | 0 → 0 | 100 → 100 | não/não | +2.65 |
-| 6 | sim | 05:04:16 | 05:02:38 | -98 | 0 → 0 | 100 → 100 | não/sim | -8.10 |
-| 7 | sim | 05:03:59 | 05:06:19 | +140 | 1 → 0 | 92 → 100 | sim/sim | +9.45 |
-| 8 | sim | 05:06:52 | 05:03:50 | -182 | 1 → 0 | 92 → 100 | sim/sim | -14.40 |
-| 9 | sim | 05:03:18 | 05:03:57 | +39 | 0 → 0 | 100 → 100 | não/sim | +2.05 |
-| 10 | sim | 05:02:26 | 05:03:22 | +56 | 0 → 1 | 100 → 92 | sim/não | +3.25 |
-| 11 | sim | 05:05:10 | 05:05:33 | +23 | 0 → 0 | 100 → 100 | não/não | +0.80 |
+A frase anterior deste README («o desvio é o do RNG, não uma regra nova») estava **errada** para um efeito, e a segunda revisão crítica apanhou-o: o alvo das MG34 do dique.
+Não há regra nova no código, mas o resultado de uma regra antiga mudou de forma sistemática, por uma causa determinista:
 
-## Golden por tick (`tests/fixtures/m01-t38-gameplay-baseline.json`) — emenda 01
+- `eastFire`, ramo `mg` (`src/game/m01-simulation.js`, linhas 693–694 em `65145c9`): a MG34 dispara sobre o jogador, se está a oeste e a MG o vê; senão sobre **Kowal** (`kind: 'squad'`), se vivo, activo e à vista dela;
+  senão sobre o **posto avançado** (`world.point('forward_post')`, `kind: 'area'`, ponto (18, 0, 3)).
+- Com a secção de joelhos atrás dos sacos (o objectivo de T38), nenhum dos 14 alemães dos portões (as duas MG34 e os 12 atiradores) a vê (teste `behind the sandbags the kneeling section is hidden from every German position…`,
+  40 posições alemãs); Kowal só se levanta por cima dos sacos 0,5 s antes e 0,8 s depois de cada rajada da rkm, e só então as MG o vêem. Quase sempre `sees(kowal)` falha e o alvo cai de `squad` para `area`.
+- O ritmo não muda: o `cooldown` (8–13 s) é re-armado **antes** da escolha do alvo, por isso o número de rajadas fica quase igual e muda onde batem.
+
+Medido pela mesma auditoria (`mg34` por rota e por MG em `GOLDEN_AUDIT.json`; rajadas das duas MG34 por tipo de alvo e pedidos de `co_m01_enemy_mg_fire_on_squad`, predecessor → candidata):
+
+| | rajadas `squad` (Kowal) | rajadas `area` (posto avançado) | outras (jogador, reparo, pelotão) | `co_m01_enemy_mg_fire_on_squad` |
+| --- | --- | --- | --- | --- |
+| 12 rotas sem apoio | 499 → 146 | 0 → 351 | 850 → 869 | 961 → 616 |
+| 12 rotas com apoio | 0 → 0 | 0 → 0 | 16 → 19 | 16 → 19 |
+| `de_east_0` (sem apoio) | 250 → 77 | 0 → 175 | 507 → 518 | |
+| `de_east_1` (sem apoio) | 249 → 69 | 0 → 176 | 343 → 351 | |
+
+Exemplo (semente 19390901 sem apoio): `squad` 42 → 14, `area` 0 → 27, `co_m01_enemy_mg_fire_on_squad` 82 → 55.
+As duas MG mudam por igual (a `de_east_0` só bate o reparo enquanto `cover_repair` está activo; fora disso cai no mesmo ramo que a `de_east_1`). Sem apoio, o total de rajadas das MG34 é 1349 → 1366: não disparam menos, disparam noutro sítio.
+Com apoio o jogador cala as MG e quase não há rajadas. «Pedidos» conta as chamadas a `line('co_m01_enemy_mg_fire_on_squad')`, feitas por cada rajada sobre o jogador ou a secção; a fala só se ouve uma vez (`line()` ignora um id já consumido), por isso a
+contagem mede quantas rajadas a pediram e não quantas vezes se ouve.
+
+**Decisão do Captain (2026-10-17, D40 em `docs/direction/DECISIONS.md`): aceite como efeito pretendido da cobertura.** O objectivo de T38 é que as posições de espera usem cobertura, e uma secção realmente coberta deixa de ser alvo de uma MG34 que não a vê;
+o fogo de supressão da MG34 sobre o posto avançado é plausível; as invariantes da missão mantêm-se nas 24 rotas. A decisão não muda código nem dados, não é playtest humano e não aceita T38.
+
+Quanto ao resto, a amostra não permite concluir nem desvio de dificuldade nem a sua ausência: tiros que atingem o jogador 16 → 20 no total (sem apoio 11 → 17, com apoio 5 → 3;
+sem apoio mais acertos em 7 rotas, menos em 3, iguais em 2; saúde final média 94,7 → 93,3), eventos `enemy-fire`
+38275 → 38369, `round-impact` 14025 → 14082, hora real média da conclusão do reparo 409,4 s → 407,6 s.
+São 24 rotas de um piloto de teste com 0 a 5 acertos cada, não uma amostra de jogadores; o alvo `player` das MG34 não mudou (a mudança sistemática é a de cima) e o resto é o desvio do RNG que se segue à primeira linha de visão diferente.
+
+| Semente | Apoio | Reparo antes | Reparo depois | Δ (s de batalha) | Tiros que atingem o jogador antes → depois | Saúde final antes → depois | dlg_m01_027 antes/depois | dlg_m01_040: Δ relógio real (s) | MG34 `squad` (Kowal) | MG34 `area` (posto) | MG34 outras | `co_m01_enemy_mg_fire_on_squad` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 19390901 | não | 05:13:46 | 05:13:24 | -22 | 2 → 1 | 84 → 92 | sim/sim | -2.50 | 42 → 14 | 0 → 27 | 70 → 75 | 82 → 55 |
+| 1 | não | 05:10:03 | 05:10:03 | +0 | 3 → 0 | 76 → 100 | sim/sim | -0.85 | 41 → 8 | 0 → 33 | 76 → 74 | 82 → 47 |
+| 2 | não | 05:13:00 | 05:13:00 | +0 | 1 → 3 | 92 → 76 | sim/sim | -0.90 | 41 → 13 | 0 → 28 | 73 → 73 | 80 → 52 |
+| 3 | não | 05:10:14 | 05:09:03 | -71 | 0 → 0 | 100 → 100 | sim/sim | -6.15 | 41 → 7 | 0 → 34 | 68 → 71 | 79 → 48 |
+| 4 | não | 05:13:32 | 05:13:38 | +6 | 1 → 0 | 92 → 100 | sim/sim | -0.45 | 43 → 20 | 0 → 23 | 72 → 76 | 82 → 60 |
+| 5 | não | 05:08:42 | 05:10:29 | +107 | 3 → 5 | 76 → 60 | sim/sim | +7.05 | 39 → 18 | 0 → 24 | 66 → 71 | 78 → 57 |
+| 6 | não | 05:12:33 | 05:10:23 | -130 | 1 → 2 | 92 → 84 | sim/sim | -10.50 | 41 → 15 | 0 → 27 | 71 → 70 | 80 → 54 |
+| 7 | não | 05:10:39 | 05:10:38 | -1 | 0 → 1 | 100 → 92 | sim/sim | -1.00 | 42 → 13 | 0 → 29 | 68 → 69 | 78 → 49 |
+| 8 | não | 05:12:27 | 05:09:21 | -186 | 0 → 3 | 100 → 76 | sim/sim | -14.65 | 41 → 7 | 0 → 35 | 75 → 72 | 80 → 47 |
+| 9 | não | 05:13:27 | 05:12:23 | -64 | 0 → 1 | 100 → 92 | sim/sim | -5.65 | 43 → 12 | 0 → 29 | 73 → 77 | 81 → 51 |
+| 10 | não | 05:09:50 | 05:09:49 | -1 | 0 → 1 | 100 → 92 | sim/sim | -0.95 | 42 → 11 | 0 → 30 | 73 → 70 | 80 → 49 |
+| 11 | não | 05:09:00 | 05:09:25 | +25 | 0 → 0 | 100 → 100 | sim/sim | +0.90 | 43 → 8 | 0 → 32 | 65 → 71 | 79 → 47 |
+| 19390901 | sim | 05:03:32 | 05:03:42 | +10 | 2 → 1 | 84 → 92 | não/não | -0.15 | 0 → 0 | 0 → 0 | 1 → 1 | 1 → 1 |
+| 1 | sim | 05:05:10 | 05:03:21 | -109 | 0 → 0 | 100 → 100 | não/não | -8.95 | 0 → 0 | 0 → 0 | 1 → 1 | 1 → 1 |
+| 2 | sim | 05:02:46 | 05:05:20 | +154 | 1 → 0 | 92 → 100 | não/não | +10.50 | 0 → 0 | 0 → 0 | 1 → 1 | 1 → 1 |
+| 3 | sim | 05:07:01 | 05:03:18 | -223 | 0 → 0 | 100 → 100 | sim/sim | -17.40 | 0 → 0 | 0 → 0 | 2 → 3 | 2 → 3 |
+| 4 | sim | 05:05:08 | 05:06:41 | +93 | 0 → 1 | 100 → 92 | não/não | +6.00 | 0 → 0 | 0 → 0 | 1 → 1 | 1 → 1 |
+| 5 | sim | 05:03:53 | 05:04:40 | +47 | 0 → 0 | 100 → 100 | não/não | +2.65 | 0 → 0 | 0 → 0 | 1 → 1 | 1 → 1 |
+| 6 | sim | 05:04:16 | 05:02:38 | -98 | 0 → 0 | 100 → 100 | não/sim | -8.10 | 0 → 0 | 0 → 0 | 1 → 2 | 1 → 2 |
+| 7 | sim | 05:03:59 | 05:06:19 | +140 | 1 → 0 | 92 → 100 | sim/sim | +9.45 | 0 → 0 | 0 → 0 | 2 → 2 | 2 → 2 |
+| 8 | sim | 05:06:52 | 05:03:50 | -182 | 1 → 0 | 92 → 100 | sim/sim | -14.40 | 0 → 0 | 0 → 0 | 2 → 2 | 2 → 2 |
+| 9 | sim | 05:03:18 | 05:03:57 | +39 | 0 → 0 | 100 → 100 | não/sim | +2.05 | 0 → 0 | 0 → 0 | 1 → 3 | 1 → 3 |
+| 10 | sim | 05:02:26 | 05:03:22 | +56 | 0 → 1 | 100 → 92 | sim/não | +3.25 | 0 → 0 | 0 → 0 | 2 → 1 | 2 → 1 |
+| 11 | sim | 05:05:10 | 05:05:33 | +23 | 0 → 0 | 100 → 100 | não/não | +0.80 | 0 → 0 | 0 → 0 | 1 → 1 | 1 → 1 |
+
+## Golden por tick (`tests/fixtures/m01-t38-gameplay-baseline.json`) — emendas 01 e 02
 
 O golden anterior (`d3ac3b2`) estava desactualizado: `4772b24` moveu os 12 lugares dos atiradores dos portões em `mission.json` e não o regenerou. Regenerado
 em x86 **só com a ferramenta do repositório** (`m01-combat-posture-staging-audit.mjs --write-golden --candidate 25ed12f`), depois da auditoria de invariantes
@@ -90,10 +127,71 @@ O que muda, exactamente:
   é às 04:45:20 (semente 19390901) e 04:45:43 (semente 7) de relógio de batalha; o RNG principal só diverge às 05:14:06 e 04:45:49.
 - Comprimento: 22257 → 22198 ticks (semente 19390901, 44 → 44 blocos) e 21467 → 21585 ticks (semente 7, 42 → 43 blocos).
 
+### Emenda 02 — fusão com a retirada alemã de T48 (`GOLDEN_AMENDMENT_02.json`; prova causal em `german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json`)
+
+**Razão: posições e posturas de T38 + retirada alemã de T48 na mesma simulação.** A base T48 (`5a169ba`: candidata #80 + #89 + retirada alemã) entrou nesta branch no merge `f02e06b`; a simulação combinada tem outro `sha256`
+(o código de T48 e a guarda do `alive` na migração dos saves, `9f7945b`) e, da demolição leste em diante, os alemães do tabuleiro recuam com os seus caídos e reagrupam-se às 06:12, por isso o golden da simulação T38 (`65145c9`) já não a descrevia.
+Regenerado em x86 **só com a ferramenta do repositório** (`m01-combat-posture-staging-audit.mjs --write-golden --candidate 9f7945b --amendment 02`, predecessor `5a169ba`, as 24 rotas de invariantes passadas); nada foi editado à mão.
+O golden substituído (o da emenda 01) fica byte a byte em `tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json` (`sha256` `89baff90…`); o novo tem `d21fa94e…`.
+Todos estes valores, os dois golden parciais (`a29c1ac9…`, o de T48 e a sua cópia anterior `83a907ca…`, ambos história) e o `sha256` da simulação ficam fixados em `tests/m01-animation-contract.test.js`. O registo é gerado a partir dos ficheiros e do git.
+
+O que muda, exactamente (de `GOLDEN_AMENDMENT_02.json`):
+- Das entradas do golden mudam:
+
+| Campo do golden | Antes (emenda 01, `65145c9`) | Depois |
+| --- | --- | --- |
+| `predecessor` | `ef35c7a` | `5a169ba` |
+| `predecessorSourceSha256` | `00964436…` | `c06c1b1b…` |
+| `candidate` | `25ed12f` | `9f7945b` |
+| `sourceSha256` | `344a932f…` | `c470d144…` |
+| `gameplayInputsSha256` | `741888a1…` | `2674bdeb…` |
+| `partialsGoldenSha256` | `83a907ca…` | `a29c1ac9…` |
+
+  Não mudam `task`, `generationStage`, `gameplayInputs`, `historicalGoldenSha256`. Das 10 entradas de jogo muda só `src/game/m01-simulation.js` (`mission.json` e as outras oito iguais: as posições e posturas de T38 não mudam).
+- `routes` (as duas rotas, o mesmo esquema de `sha256` por 512 ticks do frame de jogo completo):
+
+| Rota | Ticks antes → depois | Blocos antes → depois | Blocos idênticos ao golden anterior | 1.º bloco que muda (tick final) | Demolição leste (tick) |
+| --- | --- | --- | --- | --- | --- |
+| semente 19390901, sem apoio | 22198 → 22198 | 44 → 44 | 30 | 15872 | 15674 |
+| semente 7, com apoio | 21585 → 21585 | 43 → 43 | 29 | 15360 | 15061 |
+
+  Comprimento das rotas igual; os blocos anteriores ao da demolição leste ficam byte a byte iguais ao golden anterior e o primeiro a mudar é o que contém o tick da demolição.
+- Os ticks da demolição leste deslocam-se em relação ao golden de T48 sobre a candidata #80 (`german-retreat-regroup-v1/GOLDEN_AMENDMENT_02.json`: 15723 e 14854) porque as posições e posturas de T38 mudam o rumo do tiroteio antes dela; é T38, não a retirada.
+
+**Prova de que, nas duas rotas do golden, a retirada é a única diferença (T48 sobre T38).** `tools/verification/m01-german-retreat-golden-audit.mjs` (agora com BASE `65145c9`, a simulação T38 sem a retirada, fixada pelo seu golden) corre a rota real com a simulação BASE e segue com a simulação desta árvore,
+tick a tick, com os mesmos controlos: o frame de jogo completo (estado, checkpoint aninhado, eventos) é byte a byte igual até ao tick da demolição leste, onde a primeira diferença é um campo de um alemão do tabuleiro, e com esses actores retirados dos dois frames
+a rota inteira é igual (`GOLDEN_AMENDMENT_03.json`):
+
+| Rota | Demolição leste: tick (candidata #80 + T48) → tick (T38 + T48) | Ticks idênticos antes dela | Primeira diferença | Actores que diferem | Ticks confinados / ticks da rota |
+| --- | --- | --- | --- | --- | --- |
+| semente 19390901, sem apoio | 15723 → 15674 | 15673 (de 15673) | tick 15674, `$.state.actors.54.x` (`de_spans_2`) | `de_spans_2`, `de_spans_3`, `de_spans_4`, `de_spans_5`, `de_spans_6`, `de_spans_7`, `de_spans_8`, `de_spans_9` | 22198 / 22198 |
+| semente 7, com apoio | 14854 → 15061 | 15060 (de 15060) | tick 15061, `$.state.actors.54.x` (`de_spans_2`) | `de_spans_2`, `de_spans_3`, `de_spans_4`, `de_spans_5`, `de_spans_6`, `de_spans_7`, `de_spans_8`, `de_spans_9` | 21585 / 21585 |
+
+A prova é destas duas rotas. Noutras sementes a calada de 60 s de T48 pode recusar uma rajada alemã no tick da demolição e, como a rajada recusada não gasta RNG, mudar daí em diante o caminho do RNG (3 das 24 rotas da auditoria; ver «Efeitos no jogo»);
+fora dos alemães do tabuleiro isso só se vê nos tiros posteriores sobre o jogador. Os blocos do golden novo antes do bloco da demolição são os do golden T38 anterior, e o golden novo é o resumo da rota própria desta árvore. O golden parcial de T48 (emenda 02 de T48) fica como história: já não descreve a simulação viva, e o teste «golden amendment 02»
+de `tests/m01-german-retreat.test.js` passou a verificá-lo sem a simulação viva; o novo teste «golden amendment 03» faz a mesma afirmação sobre o golden T38 e a demolição viva.
+
 ## Verificação local (x86, Node 22.22.0, Chromium 1194 em SwiftShader, 2026-10-17)
 
-Máquina partilhada e muito carregada (carga 9–25 em 4 CPUs, outros agentes a correr `npm test` e browser em simultâneo); por isso o Playwright correu com `CI=1`
+Máquina partilhada e muito carregada (carga 6–11 em 4 CPUs nesta versão, 9–25 na anterior; outros agentes a correr `npm test` e browser em simultâneo); por isso o Playwright correu com `CI=1`
 (os mesmos orçamentos de tempo do CI do repositório; nenhuma asserção foi tocada) e sempre sob `flock` (porta 4173 fixa). Nada disto é playtest humano nem mede FPS.
+
+### Versão fundida com a base T48 (`f02e06b` + `9f7945b` + re-baseline; esta versão)
+
+| Comando | Resultado |
+| --- | --- |
+| `node --test tests/m01-animation-contract.test.js tests/m01-german-retreat.test.js` na árvore fundida sem re-baseline (`9f7945b`) | 42 testes: 33 passam, **9 falham** (o que o Capitão tinha visto): contrato de animação 8 (os pins do golden parcial e da simulação, os 2 testes por tick e 5 que dependem do primeiro), retirada 1 (`golden amendment 02`, ticks da demolição leste) |
+| `node --test tests/m01-combat-posture-staging.test.js tests/m01-east-front.test.js tests/m01-cover-threat.test.js` (`9f7945b`) | **63/63**: staging (12 sementes e a rota com apoio), east-front e cover-threat; inclui o teste de saves antigos com o atirador `de_east_6` caído |
+| `node --test --test-name-pattern="saves from before T38" tests/m01-combat-posture-staging.test.js` antes e depois da guarda `alive` | vermelho antes (o caído era movido para o lugar novo), verde depois |
+| `m01-combat-posture-staging-audit.mjs` sem `--write-golden` em `d171fd1` (worktree separado), predecessor `ef35c7a` | exit 0: 24 pares de rotas completas cumprem todas as invariantes e o golden é reproduzido byte a byte; todos os campos antigos das 24 rotas iguais aos do relatório de `65145c9` (a contagem da MG34 só lê) → `GOLDEN_AUDIT_PRE_T48.json` |
+| `M01_T38_BASELINE=<5a169ba> m01-combat-posture-staging-audit.mjs --write-golden --candidate 9f7945b --amendment 02` | exit 0: 24 pares cumprem as invariantes; golden, `GOLDEN_AUDIT.json` e `GOLDEN_AMENDMENT_02.json` escritos. Uma execução independente noutro worktree (1 semente de auditoria) escreveu o golden com o mesmo `sha256` (`d21fa94e…`) |
+| `m01-german-retreat-golden-audit.mjs --write-golden` (BASE `65145c9`) | exit 0 nas duas rotas do golden (todas as asserções da ferramenta); `GOLDEN_AMENDMENT_03.json` byte a byte igual ao de uma execução independente noutro worktree |
+| `node --test tests/m01-animation-contract.test.js` e `node --test tests/m01-german-retreat.test.js` (depois do re-baseline) | **21/21** e **22/22** |
+| `npm test` na árvore re-baselined; `npm run build`; specs de browser (`m01-german-retreat`, `m01-mg34-prone`, `m01`) e capturas T38 | **ainda a correr à data deste commit** (a fila do `flock` tem outros agentes à frente); o commit seguinte regista os resultados |
+
+
+
+### Versão anterior à fusão (`65145c9`)
 
 | Comando | Resultado |
 | --- | --- |
@@ -124,12 +222,15 @@ Máquina partilhada e muito carregada (carga 9–25 em 4 CPUs, outros agentes a 
 
 ```sh
 npm ci && npm run build
-# golden: predecessor num worktree separado, depois a ferramenta do repositório (verifica; com --write-golden --candidate <sha> regenera)
-git worktree add --detach /tmp/t38-pred ef35c7ab24d75d87ca6435891f1977fd14d7a52c && ln -s "$PWD/node_modules" /tmp/t38-pred/node_modules
-M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs
+# golden: predecessor (a base T48) num worktree separado, depois a ferramenta do repositório (verifica; com --write-golden --candidate <sha> --amendment 02 regenera o golden e os registos)
+git worktree add --detach /tmp/t38-pred 5a169babb638d1d09608f9a2bb84d1528f1aab4b && ln -s "$PWD/node_modules" /tmp/t38-pred/node_modules
+M01_T38_BASELINE=/tmp/t38-pred node tools/verification/m01-combat-posture-staging-audit.mjs --amendment 02
+# prova causal de T48 sobre T38 (lockstep contra 65145c9; lê o golden T38 e verifica german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json)
+node tools/verification/m01-german-retreat-golden-audit.mjs
+# a auditoria anterior à fusão (predecessor ef35c7a, árvore d171fd1) é GOLDEN_AUDIT_PRE_T48.json: git worktree add --detach /tmp/t38-pre d171fd1 e a ferramenta desse commit
 # capturas "depois" (as "antes" vêm do mesmo spec num worktree de ef35c7a, depois de `npm run build` nele)
 T38_OUT=test-results/m01-t38-staging CHROME_EXECUTABLE=/opt/pw-browsers/chromium npx playwright test -c tools/verification/playwright.t38.config.js
-# emenda do golden: onde as duas simulações divergem
+# emenda 01 do golden: onde as duas simulações divergem
 git worktree add --detach /tmp/t38-old d3ac3b2 && ln -s "$PWD/node_modules" /tmp/t38-old/node_modules
 node tools/verification/m01-t38-golden-divergence.mjs /tmp/t38-old "$PWD" /tmp/divergence.json
 ```
