@@ -484,9 +484,11 @@
       "name": "PERFORMANCE BUDGET",
       "status": "NEEDS_AUDIT",
       "refs": [
-        "D13"
+        "D13",
+        "package:Gemini T49 2026-10-17 (partial port)",
+        "branch:claude/trusting-euler-o7fcdd"
       ],
-      "note": "Orçamento para a plataforma-alvo nova (PC H12)."
+      "note": "Orçamento para a plataforma-alvo nova (PC H12). Pacote Gemini auditado em 2026-10-17 (docs/direction/M01_T49_GEMINI_AUDIT.md): base af81657, colide com T28/T13/T43 no main; só o pilar E (scratch/uploads vazios) foi portado. Falta orçamento medido no PC de referência e reescrita de B1–B4/C."
     },
     "T50": {
       "name": "LOADING AND BUNDLE",
