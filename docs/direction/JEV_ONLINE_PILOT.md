@@ -1,58 +1,62 @@
-# Jev real — piloto de até 20 consultas (TypeSafe / Claude Code Web)
+# Jev real — utilização de até US$5 em decisões úteis (Claude Code Web)
 
-**Autorização do utilizador em 2026-10-17:** usar Jev real com uma conta onde o utilizador refere ter US$5 disponíveis. Isto autoriza **somente um piloto controlado** na branch de infraestrutura `infra/claude-web-single-captain-v1`, não gastos ilimitados e não prova de que o proxy cobra a conta pretendida.
+Estado: código preparado; primeira chamada paga ainda não verificada. Autorização do utilizador em 2026-10-17: o Capitão pode utilizar todo o saldo de US$5 referido, mas apenas quando houver benefício real para o COD-guerra e sem interferir no desenvolvimento, na segurança ou na qualidade.
 
-## O que é e para que serve
+## Seis capacidades disponíveis
 
-- Jev é um modelo de **decisões estruturadas**, não um substituto do Opus ou do Sonnet para escrever código.
-- Usar quando a classificação é realmente ambígua: delegação de tarefa difícil, priorização, risco, verificação proporcional. Para decisões evidentes, **regras locais sem consumo**.
-- Usar descrição de tarefa curta e sanitizada, **sem segredos, tokens, credenciais ou dados pessoais**.
-- O Capitão Opus permanece único; Jev não cria agentes, não modifica Git, não escolhe permissões e não autoriza deploy/merge.
+A infraestrutura já implementa seis decisões em .agent/tools/jev_decisions.py:
+- priority — ordenação de tarefas existentes sem as duplicar;
+- bug — classificação de erros e orientação de diagnóstico;
+- branch — avaliação de branches sem executar merges;
+- risk — classificação da criticidade e da necessidade de revisão Opus;
+- verify — recomendação adicional de testes, preservando testes obrigatórios;
+- cost — seleção do agente/modelo competente mais económico.
 
-## Segurança e orçamento
+Jev só é consultado se as regras locais classificarem a decisão como ambígua. As respostas são pareceres não vinculativos; o Capitão mantém a última palavra e os agentes Sonnet/Haiku continuam a programar/investigar normalmente. Não reduzir gráficos, IA, simulação, animações nem requisitos para poupar tokens.
 
-- Preço oficial consultado em 2026-10-17: **US$0,042 por milhão de tokens de entrada** para Jev 1.14/1.13; output gratuito. Confirmar preços da conta antes de ampliar: https://docs.typesafe.ai/models
-- Primeira experiência: **20 chamadas pagas no máximo por ledger persistente da VM**, incluindo `jev_decisions.py` e `jev_router.py`, com guarda adicionada a `effective_limit()`. São chamadas, **não** um teto em dólares.
-- Nas VMs efémeras o ledger pode reiniciar. Para um teto financeiro confiável, definir um **limite/bloqueio real no painel TypeSafe**, caso esteja disponível. Não prometer que o script protege os US$5 entre sessões.
-- Cloud Web sem `COD_JEV_WEB_PAID_APPROVED=1`: limite efetivo **ZERO** para pedidos pagos mesmo com proxy que injeta credenciais.
-- **Apenas** `.agent/tools/jev_web_paid_pilot.py --online` é autorizado a aplicar esse opt-in nesta etapa. Outras rotas continuam offline; não exportar `COD_JEV_WEB_PAID_APPROVED=1` na sessão global.
-- Proxy `api.typesafe.ai` usado sem chave do utilizador, exclusivamente no Web; não instalar SDKs nem copiar credenciais. A associação do saldo de US$5 a esta rota precisa ser confirmada no painel da conta.
-- O preço do modelo não inclui custos de outros modelos, ferramentas, serviços intermediários nem o próprio Claude.
+## Autorização e proteção financeira
 
-## Passo 1: confirmação sem API paga
+- Preço direto oficial em 2026-10-17: US$0,042 por milhão de tokens de entrada de Jev 1.13 e 1.14; output gratuito. Fonte: https://docs.typesafe.ai/models
+- Sem teto arbitrário de 20 chamadas: aplica-se um teto local estimado de US$5 por ledger da VM a todos os roteadores (jev_router.py e jev_decisions.py). O limite usa consumo declarado nas respostas e uma estimativa conservadora antes de enviar o pedido.
+- ATENÇÃO: o ledger reinicia numa nova VM; não equivale a um limite de gastos da TypeSafe. O saldo real precisa ser verificado no painel, onde deve existir proteção de conta pré-paga ou limite financeiro. Confirmar que o proxy da VM cobra a conta que tem os US$5; isso ainda NÃO foi provado.
+- Na Cloud Web, sem autorização explícita COD_JEV_WEB_PAID_APPROVED=1, o limite efetivo de chamadas pagas é zero, mesmo se o proxy tiver credenciais.
+- APENAS o wrapper .agent/tools/jev_web_paid_pilot.py --online pode habilitar essa variável durante a chamada. Não exportar globalmente. O preflight, o dispatcher V2 e CI continuam offline.
+- Não instalar ferramentas, não transmitir credenciais, não usar APIs adicionais, não acionar chamadas repetidas/loops, não repetir automaticamente após erro.
+- Só uma sessão Capitão Opus. Apenas branch infra/claude-web-single-captain-v1. Sem M01, merge na main, mudanças em #80/#84 ou deploy durante esta migração.
 
-Na **única sessão** Opus Claude Code Web, checkout limpo da branch indicada:
+## Pré-teste offline (sem custo)
 
-```bash
-git branch --show-current
-git rev-parse HEAD
-git status --short
-python3 .agent/tools/cloud_web_preflight.py
-python3 -m unittest discover -s .agent/tests -p 'test_jev_web_paid_pilot.py' -v
-python3 .agent/tools/jev_web_paid_pilot.py \
-  --role implement --risk medium --complexity medium \
-  --description "Classificar alteração restrita de infraestrutura dos agentes" --json
-```
+    git branch --show-current
+    git rev-parse HEAD
+    git status --short
+    python3 .agent/tools/cloud_web_preflight.py
+    python3 -m unittest discover -s .agent/tests -p 'test_jev_web_paid_pilot.py' -v
+    python3 .agent/tools/jev_web_paid_pilot.py --role implement --risk medium --complexity medium --description "Escolher especialista para uma correção de infraestrutura" --json
 
-A chamada acima é **offline**; deve devolver `mode=offline_preview` e **não** cobrir despesas reais.
+O último comando indica mode=offline_preview, sem TypeSafe.
 
-## Passo 2: UMA consulta real, curta
+## Primeira decisão paga após confirmar a conta
 
-Se o utilizador confirmou no painel TypeSafe que o proxy é da sua conta, continuar:
+    python3 .agent/tools/jev_web_paid_pilot.py --role implement --risk medium --complexity medium --description "Escolher especialista para uma correção de infraestrutura" --online --json
 
-```bash
-python3 .agent/tools/jev_web_paid_pilot.py \
-  --role implement --risk medium --complexity medium \
-  --description "Escolher implementador para pequena tarefa agentic de risco medio" \
-  --online --json
-```
+Exigir source=jev e usage para afirmar que houve consulta real. Caso contrario registar a razão do fallback sem repetir automaticamente.
 
-Aceitação: `source=jev` com `usage.input_tokens`/modelo/confiança, ledger registado; caso contrário registar fallback `no_key`, `error`, `budget_exhausted` ou outra razão real. Não repetir automaticamente chamadas com falha. O CLI não envia credenciais explícitas nem publica segredos.
+## Outras capacidades estruturadas (quando acrescentarem valor)
 
-Conferir `python3 .agent/tools/jev_router.py usage --json` e o painel TypeSafe após esta chamada. **Só continuar** com novas consultas se a cobrança, os limites e a utilidade estiverem claros. Nunca lançar 20 chamadas só para gastar saldo.
+Preparar JSON curto e sem segredos num ficheiro em /tmp (limite 8 KiB). Exemplo:
 
-## O que ainda não é automático
+    cat > /tmp/cod-jev-risk.json <<'EOF'
+    {"files_changed":[".agent/tools/jev_router.py"],"change_type":"infrastructure","description":"Avaliar mudança no roteamento de agentes"}
+    EOF
 
-A ferramenta `cloud_web_workflow.py` mantém Jev offline de propósito; o piloto online é uma invocação separada, por decisão expressa do Capitão. Não alterar `main`, PR #80, PR #84 ou executar M01. Não iniciar nova sessão Capitão, Agent Teams ou Routine. Não ativar chamadas pagas em loops nem no preflight/CI.
+    python3 .agent/tools/jev_web_paid_pilot.py --capability risk --input /tmp/cod-jev-risk.json --online --json
 
-Handoff: branch, SHA, decisão, `source`, modelo, confiança, tokens observados, custo **estimado**, chamadas acumuladas, saldo **confirmado na conta** (ou desconhecido), testes, riscos e próxima ação.
+O mesmo comando aceita priority, bug, branch, verify ou cost, com os campos JSON da respetiva capacidade. Pode retornar só a decisão local sem API; isso é normal, não é uma falha. Perguntas relacionadas podem ser avaliadas numa única chamada dentro de jev_decisions.py sem perder os filtros de segurança.
+
+## Contabilidade e handoff
+
+    python3 .agent/tools/jev_router.py usage --json
+
+Registar tarefa, branch/SHA, capability, source, modelo, confiança, tokens, custo estimado e decisões; comparar com saldo real no painel TypeSafe. Se sem valor, se o resultado conflitar com critérios do jogo ou se houver risco de cobrança inesperada, interromper chamadas pagas e voltar à análise local. Reaproveitar decisões anteriores em vez de consultar Jev de novo para o mesmo estado.
+
+Importante: os scripts não lançam a sessão Claude Code Web, não criam novos agentes, não validam a titularidade do saldo nem asseguram limites globais entre VMs. A primeira consulta real depende da sessão do Capitão com conta/billing confirmado.
