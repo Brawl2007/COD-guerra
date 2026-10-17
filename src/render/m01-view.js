@@ -237,7 +237,7 @@ export class M01View {
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
-    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
+    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock,this.world)??new Set();
     const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
