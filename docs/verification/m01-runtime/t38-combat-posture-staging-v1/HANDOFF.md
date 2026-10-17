@@ -8,17 +8,22 @@ Interrompido por ordem do proprietário em 2026-10-17. Retomar numa única sess�
 - `8bb0372` — fatia 2 WIP: posturas de jogo (pelotão leste, atiradores dos portões, secção, sapadores), `src/game/m01-aim.js`, golden `tests/fixtures/m01-t38-gameplay-baseline.json`, ferramenta de auditoria, capturas. Local: `npm test` 964/964, build OK. **Revisão crítica: REJECT.**
 - `d3ac3b2` e o commit WIP final: ronda de correções incompleta (ver abaixo).
 
-## Defeitos da revisão crítica (estado conhecido)
-1. **BLOQUEANTE:** o Kowal deitado quebrava `tests/browser/m01.spec.js:196` (rkm_fire_burst/recarga) e `m01-mg34-prone.spec.js:45`. Correção: o Kowal ajoelha como a secção. *Iniciada na ronda; não verificada.*
-2. **BLOQUEANTE:** specs de browser nunca corridas na árvore final. *Não feito.*
-3. Envelope do terreno (`src/render/m01-terrain-envelope.js`) a ler as novas `slots`/`positions`. *Editado em d3ac3b2; não verificado.*
-4. `east_platoon_voice` (e qualquer membro da secção) fora da cobertura dos sacos (z 20,5–23,5); o teste deve verificar a extensão real ou a linha de visão. *Parcial.*
-5. Repor a rigidez dos testes: casos negativos do helper de lugares e da validação; «back rank» estrito (reservas atrás de todos). *Parcial (testes em edição).*
-6. Os disparos de atrição devem sair de um atirador de pé. *Descrito na nota do mission.json; não verificado.*
-7. Atiradores dos portões ainda formam linha vista de frente: novas posições no commit final (x 1053,2–1058,3), **sem capturas novas**.
-8. Os sapadores em x −170 depois da retirada não devem ficar deitados. *Estado desconhecido.*
-9. README: divulgar o desvio do reparo (−209 s a +142 s), os acertos no jogador (ex. seed 8: 0→4, 100→68 HP), `dlg_m01_027`/`dlg_m01_040`; corrigir «norte» das reservas; não exagerar a cobertura. *Parcial.*
-10. Saves antigos mantêm as posições antigas: recolocar ao restaurar ou documentar. *Não feito.*
+## Defeitos da revisão crítica: estado comunicado pelo implementador ao parar (não verificado de forma independente)
+1. Kowal ajoelha (já não fica deitado): **feito**. A spec da rkm de `m01.spec.js`, `m01-mg34-prone` e `m01-anim-resolver` passaram (estado antes da última mudança dos portões).
+2. Specs de browser: **parcial**. Browser 37 PASS / 10 FAIL, antes da mudança dos portões:
+   - 9 de `m01-postprocess-grading`: precisam de `M01_GRADING_BEFORE_DIR`; também falham na base `ef35c7a`.
+   - 1 de `m01.spec.js` «German fire on the repair»: também falha em `ef35c7a` nesta máquina.
+   - `distant-front-impostors` view10: falhava com as posições antigas; passa com os portões em x ≥ 1053; também falha em `ef35c7a`.
+3. Envelope do terreno: **feito**.
+4. Secção atrás dos sacos, verificada por linha de visão: **feito**.
+5. Casos negativos, validação de dados e «back rank» estrito: **feito**.
+6. Atirador de atrição de pé: **feito**.
+7. Profundidade dos portões (x 1053–1058,3, mesmas linhas de visão): **feito**. Cobertura real vinda de oeste é impossível sem novos props de cobertura (decisão de design pendente).
+8. Sapadores ajoelhados em x −170: **feito**.
+9. README: **parcial**. Falta a secção de capturas; a tabela é anterior à mudança dos portões.
+10. Saves antigos recolocados nos seus lugares ao restaurar: **feito**.
+
+Últimos números (antes da mudança dos portões): `npm test` 967/967. Depois da mudança: staging (1 seed) 12/12, east-front + continuity-raid 27/27. Capturas `before/after` no repositório são o conjunto antigo.
 
 ## AVISO sobre o golden
 As posições dos portões mudaram **depois** da última geração do golden. A regeneração (`--write-golden`) foi interrompida antes de escrever. **Considerar `tests/fixtures/m01-t38-gameplay-baseline.json` e `GOLDEN_AUDIT.json` desatualizados.** Não há resultados de testes válidos para o commit final.
