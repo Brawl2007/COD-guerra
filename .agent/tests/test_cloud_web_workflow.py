@@ -99,6 +99,8 @@ def route(request, *, offline=False, enable_jev=False, env=None):
         self.assertEqual(self.good_plan("--ponytail", "--read-only").returncode, 2)
         baseline = self.good_plan()
         self.assertEqual(json.loads(baseline.stdout)["ponytail_mode"], "off")
+        self.assertEqual(list(self.root.rglob("__pycache__")), [])
+        self.assertEqual(self.git("status", "--porcelain").stdout.strip(), "")
 
     def test_pilot_does_not_add_global_hooks_or_reduce_quality(self):
         project = SCRIPT.parents[2]

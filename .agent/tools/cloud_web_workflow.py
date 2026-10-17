@@ -71,7 +71,12 @@ def jev_local(root: Path, role: str, description: str, risk: str) -> dict:
     if spec is None or spec.loader is None:
         raise Blocked("cannot load offline Jev")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    previous = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True  # never write __pycache__ into the checked root
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.dont_write_bytecode = previous
     result = module.route({"role": role, "description": description[:240],
                            "risk": risk, "complexity": "medium",
                            "read_only": role == "explore"},
