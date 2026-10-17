@@ -11,7 +11,9 @@ import { visualNoise } from './m01-atmosphere.js';
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
 export function initialQuality({saved,cores=0,memory=0,renderer='',maxTexture=0}={}){
   if(Object.hasOwn(QUALITY,saved))return saved;
-  return cores>=4&&memory>=4&&maxTexture>=8192&&renderer&&!/swiftshader|llvmpipe|software/i.test(renderer)?'medium':'low';
+  // PC target (owner directive 2026-10-17): a capable hardware GPU starts at maximum quality; software rasterisers stay low.
+  if(!renderer||/swiftshader|llvmpipe|software/i.test(renderer))return 'low';
+  return cores>=4&&memory>=4&&maxTexture>=8192?'high':'medium';
 }
 const matrix=new THREE.Object3D();
 
