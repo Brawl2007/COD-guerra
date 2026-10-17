@@ -19,6 +19,7 @@ import {
   refineCandidate,
   resolveAnimation
 } from './m01-animation-resolver.js';
+import { bindCharacterIkRig, createIkDiagnosticsState, formatIkDiagnostics, restoreIkPose, updateActorsIk } from './m01-hand-pin.js';
 
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
@@ -37,16 +38,21 @@ const stationClips=['station_drag_medic_grab','station_drag_patient_grab','stati
 const SPINE_NAMES=['spine_02','spine_01','spine','chest','Spine2','Spine1','Spine'];
 const SUPPORT_ARM_NAMES=['upperarm_l','arm_l','LeftArm','mixamorigLeftArm'];
 const UP_AXIS=new THREE.Vector3(0,1,0);
+const debugEnabled=()=>typeof window!=='undefined'&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('debug');
 
 // Presentation only. Playback is sampled from the saved mission clock; no renderer timers enter saves.
 export class M01Characters {
-  constructor(scene,{visualVariation=true}={}){
+  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled()}={}){
     this.visuals=visualVariation?new SoldierVisualVariations():null;
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
+    // T37 foot IK / ramp lean / hand pin (m01-foot-ik.js, m01-hand-pin.js). Presentation only; off = plain clip output, bit-identical.
+    this.ikEnabled=Boolean(ik);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
+    if(debug&&typeof window!=='undefined'){this.ikDebug={setEnabled:on=>this.setIkEnabled(on),isEnabled:()=>this.ikEnabled};window.m01CharacterIkDebug=this.ikDebug;}
     // Cross-fade records by actor id (pure data from the resolver). They outlive LOD swaps; they never enter a save.
     this.anim=new Map();
   }
+  setIkEnabled(on){const next=Boolean(on);if(this.ikEnabled!==next){this.ikEnabled=next;this.revision++;}return this.ikEnabled;}
   async load(quality='low'){
     await Promise.allSettled([
       this.assets.load('m01-clips',BASE+'m01_soldier_animations.glb').then(g=>{
@@ -246,7 +252,7 @@ export class M01Characters {
       // so repeated rendering of the same simulation time is bit-identical.
       spineClipQuat:spineBaseQuat?.clone()??null,armClipQuat:armBaseQuat?.clone()??null,
       muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
-      mixer:new THREE.AnimationMixer(root),action:null,clip:null};
+      mixer:new THREE.AnimationMixer(root),action:null,clip:null,ikRig:bindCharacterIkRig(root),ik:null,ikApplied:false};
     v.player=new AnimationPlayer(v.mixer);
     this.instances.set(actor.id,v);return v;
   }
@@ -256,8 +262,9 @@ export class M01Characters {
     skeletons.forEach(s=>s.dispose());
     // Geometry, materials and atlases belong to the source cache, shared by all clones/LODs.
   }
-  update(actors,time,player,quality='low',battleClock){
+  update(actors,time,player,quality='low',battleClock,world=this.world){
     const limits=LIMITS[quality]??LIMITS.low;
+    const ikOn=this.ikEnabled&&Boolean(world);let ikCount=0;
     if(quality==='high')for(const k of ['pl:0','de:0','de:1'])void this.loadSource(k);
     if(quality==='high')for(const lod of [0,1]){void this.loadMG(lod);void this.loadCKM(lod);}
     this.updateCKM(actors,time,player,quality);
@@ -284,6 +291,8 @@ export class M01Characters {
       // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       v??=this.create(a,key,weaponLOD);selected.add(a.id);
+      // Undo last frame's IK first: the mixer only rewrites a track whose value changed, and the caches below hold the clip pose.
+      if(v.ikApplied){restoreIkPose(v.ikRig);v.ikApplied=false;}
       // Specialist animated rigs (CKM, prone MG34, station drag) keep their authored pose: the torso twist and support-arm hint
       // never touch their root orientation or spine bones. Their clips are exact in the resolver: one layer, no cross-fade.
       const specialist=/^(ckm_wz30_|mg34_prone_|station_drag_|drag_wounded$)/.test(sample.clip);
@@ -346,7 +355,11 @@ export class M01Characters {
         ...(fading?{blendClip:fading.clip,blendWeight:fading.weight}:{}),
         weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
+      if(ikOn){const e=this.ikEntries[ikCount]??={actor:null,inst:null,distance:0,view:null};e.actor=a;e.inst=v;e.distance=d;e.view=visible[visible.length-1];ikCount++;}
     }
+    // Foot IK, ramp lean and hand pin run after every clip/additive correction, on the already sampled pose of the selected actors.
+    if(ikOn){updateActorsIk(this.ikEntries,ikCount,quality,time,world,this.ikState);for(let i=0;i<ikCount;i++){const e=this.ikEntries[i];e.actor=e.inst=e.view=null;}}
+    else this.ikState.recordDisabled(selected.size,quality);
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&(!a.carry||a.carry.phase==='carry')&&selected.has(a.carriedBy)){
       const v=this.instances.get(a.id),socket=this.instances.get(a.carriedBy).root.getObjectByName('carry_socket');
       socket.add(v.root);v.root.position.set(0,0,0);v.root.rotation.set(0,0,0);v.root.updateMatrixWorld(true);
@@ -381,6 +394,7 @@ export class M01Characters {
     const v=this.instances.get(id),bone=v?.root.getObjectByName('weapon');if(!bone)return null;
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
-  get diagnostics(){return {...this.stats,visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();this.visuals?.dispose();this.assets.dispose();}
+  get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();this.visuals?.dispose();this.assets.dispose();
+    if(typeof window!=='undefined'&&this.ikDebug&&window.m01CharacterIkDebug===this.ikDebug)delete window.m01CharacterIkDebug;}
 }
