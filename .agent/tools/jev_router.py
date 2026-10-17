@@ -27,6 +27,7 @@ from pathlib import Path
 # The provider may enforce credit/billing limits; those are not bypassed.
 PILOT_MAX_PAID_CALLS = None
 PRICE_PER_MTOK_INPUT = 0.042
+CLOUD_WEB_BUDGET_USD = 5.0  # Local estimate only; TypeSafe account must enforce real prepaid balance.
 DEFAULT_BASE = "https://api.typesafe.ai"
 TIMEOUT_S = 15
 DESC_MAX = 500
@@ -150,10 +151,11 @@ def ledger_path(env=None):
 
 
 def effective_limit(env=None, flag=None):
-    """Per-ledger call limit; Cloud Web needs scoped opt-in and a 20-call cap.
+    """Scoped paid opt-in for Cloud Web, optional per-ledger call limit.
 
-    This protects BOTH jev_router.py and jev_decisions.py. The cloud ledger is
-    ephemeral: this is NOT a provider-level money limit across VM restarts.
+    No arbitrary 20-call ceiling: the user approved use of the existing
+    US$5 balance, subject to the separate estimated-cost guard below.
+    The cloud ledger is ephemeral and is NOT a provider billing hard limit.
     """
     e = _env(env)
     lim = PILOT_MAX_PAID_CALLS
@@ -167,7 +169,7 @@ def effective_limit(env=None, flag=None):
     if e.get("CLAUDE_CODE_REMOTE") == "true":
         if e.get("COD_JEV_WEB_PAID_APPROVED") != "1":
             return 0  # Refuse calls by default, even behind credential-injecting proxy.
-        lim = 20 if lim is None else min(lim, 20)
+        # No forced count cap; keep any explicit COD_JEV_LIMIT or --limit.
     return lim
 
 
@@ -270,6 +272,28 @@ def est_cost(tokens):
     return round(tokens * PRICE_PER_MTOK_INPUT / 1_000_000, 10)
 
 
+def cloud_credit_available(env, calls, body):
+    """Fail closed before dispatch if the scoped Cloud Web ledger approaches US$5.
+
+    UTF-8 body bytes plus overhead intentionally overestimate input tokens.
+    This is NOT a provider billing limit and resets if the VM ledger is lost.
+    """
+    e = _env(env)
+    if e.get("CLAUDE_CODE_REMOTE") != "true":
+        return True
+    if e.get("COD_JEV_WEB_PAID_APPROVED") != "1":
+        return False
+    try:
+        totals = [float(c.get("est_cost_usd", 0.0)) for c in calls]
+        if any(not math.isfinite(x) or x < 0 for x in totals):
+            return False
+        payload_bytes = len(json.dumps(body, ensure_ascii=False).encode("utf-8"))
+        conservative = est_cost(payload_bytes + 2048)
+        return math.fsum(totals) + conservative <= CLOUD_WEB_BUDGET_USD
+    except (TypeError, ValueError, OverflowError):
+        return False
+
+
 # -------------------------------------------------------------- transport
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, *a, **k):
@@ -360,6 +384,8 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
     base = (e.get("TYPESAFE_BASE_URL") or DEFAULT_BASE).rstrip("/")
     url = base + "/v1/systemone"
     body = build_body(norm)
+    if not cloud_credit_available(e, prior, body):
+        return fallback("budget_exhausted", budget={"kind": "cloud_usd_5_ledger_estimate"})
     if dry_run:
         out["source"] = "rule"
         out["dry_run"] = {
@@ -382,6 +408,8 @@ def route(request, *, enable_jev=False, offline=False, dry_run=False,
             return fallback("budget_exhausted", budget={"used": now_used, "limit": limit})
         if auth_blocked(latest) and not retry_auth:
             return fallback("auth_failed_previously")
+        if not cloud_credit_available(e, latest, body):
+            return fallback("budget_exhausted", budget={"kind": "cloud_usd_5_ledger_estimate"})
         request_id = "%s-%d" % (run_id or "norun", now_used + 1)
         try:
             idx = reserve(lpath, limit, run_id, request_id)
