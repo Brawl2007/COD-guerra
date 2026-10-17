@@ -59,11 +59,17 @@ class CloudWebSavingsTests(TestCase):
         })
         self.assertTrue(audit.has_rtk_project_hook(safety))
 
-    def test_j_ev_cloud_policy_explicitly_offline(self):
+    def test_jev_cloud_policy_offline_default_paid_only_with_explicit_opt_in(self):
         claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
         captain = (ROOT / ".claude/agents/captain.md").read_text(encoding="utf-8")
+        router = (ROOT / ".agent/tools/jev_router.py").read_text(encoding="utf-8")
+        pilot = (ROOT / ".agent/tools/jev_web_paid_pilot.py").read_text(encoding="utf-8")
         self.assertIn("não ativar consultas pagas automaticamente", claude)
-        self.assertIn("exclusivamente offline por padrao", captain)
+        self.assertIn("encaminhamento offline por padrao", captain)
+        self.assertIn("jev_web_paid_pilot.py --online", captain)
+        self.assertIn('e.get("COD_JEV_WEB_PAID_APPROVED") != "1"', router)
+        self.assertIn('return 0  # Refuse calls by default', router)
+        self.assertIn('COD_JEV_WEB_PAID_APPROVED="1" if online else "0"', pilot)
 
 
 if __name__ == "__main__":
