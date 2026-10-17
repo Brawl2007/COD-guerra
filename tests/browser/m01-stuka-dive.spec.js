@@ -107,16 +107,24 @@ async function capture(browser,info,{name,snapshot,needBomb=false,expectDiagnost
     // frame happen here, still paused, so the capped 0.25 s steps of slow first running frames do not carry the 1.5 s bomb flight past
     // the framing window (CI 38871227131, shard 3: the sample landed ~0.1 s before the blast).
     await page.waitForFunction(()=>{const b=window.gameDiagnostics?.().m01?.bridgeFinish;return b?.status==='ready'&&b.boundMeshes>0;},null,{timeout:240000});
-    await page.locator('#continue').click();
-    // Wait for the exact condition to be true in a live frame, keep that diagnostics sample and release the pointer lock in the SAME
-    // callback (the game stops ticking at once because it also needs the lock), so the frozen frame is the one that was sampled.
-    // needBomb: the 1.5 s flight is short, so the sample is the first running frame that draws a bomb.
-    const handle=await page.waitForFunction(({needBomb})=>{
+    // Wait for the exact condition to be true in a live frame, keep that diagnostics sample and freeze the game in the SAME callback,
+    // so the frozen frame is the one that was sampled. needBomb: the 1.5 s flight is short, so the sample is the first running frame
+    // that draws a bomb. Two things make that deterministic on a slow runner (frames of 1 s or more, each running frame advancing
+    // the mission by its 0.25 s cap, while the snapshot already starts 0.75 s into the flight and the framing window ends at 1.15 s):
+    //  - the poller is armed BEFORE the click. Armed after it, the click/evaluate round trips queue behind the slow frames and the
+    //    game has already run two or three of them by the time the first sample is taken (CI: bomb at s=0.83 or at the ground);
+    //  - the freeze is the game's own synchronous pause (window blur, as the battlefield-fx spec does). Releasing the pointer lock
+    //    alone is asynchronous and lets frames run before the pause arrives; the lock is released afterwards, as before.
+    const sampled=page.waitForFunction(({needBomb})=>{
+      if(!document.pointerLockElement)return false;   // still paused: skip the (expensive) diagnostics until the click has taken the lock
       const d=window.gameDiagnostics?.();if(!d||d.paused||!d.m01||d.m01.renderedFrames<(needBomb?1:3))return false;
       const a=d.m01.aircraft;if(!a.path||(needBomb&&a.bombs.visible<1))return false;
       const sample=JSON.parse(JSON.stringify({clock:d.clock,aircraft:a,eventIds:d.eventIds,damage:d.m01.damage}));
-      document.exitPointerLock();return sample;
+      window.dispatchEvent(new Event('blur'));document.exitPointerLock();return sample;
     },{needBomb},{timeout:240000,polling:'raf'});
+    sampled.catch(()=>{});   // a failing click must not leave an unhandled rejection behind when the page closes
+    await page.locator('#continue').click();
+    const handle=await sampled;
     const live=await handle.jsonValue();
     await expectDiagnostics?.(live,page);
     await expect(page.locator('#pause')).toBeVisible();
