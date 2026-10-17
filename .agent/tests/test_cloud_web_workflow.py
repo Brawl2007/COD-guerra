@@ -80,6 +80,36 @@ def route(request, *, offline=False, enable_jev=False, env=None):
         (self.root / "scratch.txt").write_text("not committed")
         self.assertEqual(self.good_plan().returncode, 2)
 
+    def test_ponytail_is_opt_in_and_only_for_sonnet_edit(self):
+        self.assertEqual(self.good_plan("--ponytail").returncode, 2)
+        skill = self.root / ".claude/skills/ponytail/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text("---\\nname: ponytail\\n---\\nPonytail test fixture\\n".replace("\\n", "\n"))
+        enabled = self.good_plan("--ponytail")
+        self.assertEqual(enabled.returncode, 0, enabled.stderr)
+        plan = json.loads(enabled.stdout)
+        self.assertEqual(plan["ponytail_mode"], "full")
+        self.assertIn("Skill(ponytail)", plan["phases"][1]["instruction"])
+        self.assertNotIn("Skill(ponytail)", plan["phases"][0]["instruction"])
+        self.assertNotIn("Skill(ponytail)", plan["phases"][2]["instruction"])
+        self.assertNotIn("Skill(ponytail)", plan["phases"][3]["instruction"])
+        self.assertEqual(self.good_plan("--ponytail", "--read-only").returncode, 2)
+        baseline = self.good_plan()
+        self.assertEqual(json.loads(baseline.stdout)["ponytail_mode"], "off")
+
+    def test_pilot_does_not_add_global_hooks_or_reduce_quality(self):
+        project = SCRIPT.parents[2]
+        skill = (project / ".claude/skills/ponytail/SKILL.md").read_text()
+        agent = (project / ".claude/agents/implementer.md").read_text()
+        hooks = (project / ".claude/settings.json").read_text().lower()
+        license_text = (project / ".claude/skills/ponytail/LICENSE").read_text()
+        self.assertIn("name: ponytail", skill)
+        self.assertIn("Never cut:", skill)
+        self.assertIn("MIT License", license_text)
+        self.assertIn("PONYTAIL_PILOT=full", agent)
+        self.assertIn("Skill", agent.split("tools:", 1)[1].splitlines()[0])
+        self.assertNotIn("ponytail", hooks)
+
     def test_verify_evidence_and_budget(self):
         phases = {name: {"agent": agent, "status": "PASS", "tokens": 100,
                          "evidence": "confirmed in test fixture"} for name, agent in (
