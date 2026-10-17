@@ -214,7 +214,8 @@ export class M01Characters {
         const s=resolveStrideSample(actor,kClip,time,this.clips);
         return {clip:kClip,time:s.time,loop:true,stridePhase:s.stridePhase};
       }
-      return {clip:pose.aiming?'rkm_aim':actor.crouched?'rkm_crouched_idle':'rkm_standing_idle',time:time+offset,loop:true};
+      // T38: kneeling behind the squad-post sandbags (gameplay `crouched`) he is drawn kneeling; he rises to aim and fire (m01-simulation stageSection).
+      return {clip:actor.crouched&&this.clips.has('rkm_crouched_idle')?'rkm_crouched_idle':pose.aiming?'rkm_aim':actor.crouched?'rkm_crouched_idle':'rkm_standing_idle',time:time+offset,loop:true};
     }
     // Ordinary soldiers: the pure selection shared with the resolver (bolt, explicit reload, gait/stride, turn, aim, idle).
     return genericCandidate(actor,pose,time,offset,this.clipView);

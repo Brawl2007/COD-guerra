@@ -1,5 +1,31 @@
 # Estado de desenvolvimento
 
+## T38 `M01-COMBAT-POSTURE-STAGING-V1`: MG34 medida, fusão com a base T48 e golden re-derivado — 2026-10-17
+
+Branch local `claude/busy-ritchie-3fkvk2-t38` (cabeça do PR #82 `2bc623c` + candidata #80 `813f163` + correcção de teste #89 `b449007`; publicada só até `65145c9`), agora fundida com a base T48 `5a169ba`
+(candidata #80 + #89 + retirada alemã de T48) no merge `f02e06b`. **Não aceite**: sem revisão crítica independente da versão final, sem CI x86 completo, sem playtest humano. A segunda revisão crítica (sobre `65145c9`)
+devolveu REQUEST_CHANGES sem defeito de código; esta versão responde-lhe. Números, capturas e os registos dos goldens em `docs/verification/m01-runtime/t38-combat-posture-staging-v1/` (`README.md`,
+`GOLDEN_AMENDMENT_01.json`, `GOLDEN_AMENDMENT_02.json`, `GOLDEN_AUDIT.json`, `GOLDEN_AUDIT_PRE_T48.json`, `HANDOFF.md`) e a prova causal de T48 em `docs/verification/m01-runtime/german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json`.
+
+- **Jogo (dados em `mission.json`, estado em `m01-simulation.js`; o renderer só desenha o que a simulação diz):** o pelotão leste (24) espera de joelhos em 24 lugares desencontrados
+  (nenhuma fila) e levanta-se na retirada; os atiradores dos portões (`de_east_2..13`) em 12 lugares desencontrados virados a oeste, de joelhos, de pé só 1,2 s antes e 2,5 s depois de
+  cada disparo seu; a secção atrás dos sacos do posto, de joelhos desde o bombardeamento das 04:34, com Kowal a levantar-se por cima dos sacos para cada rajada da rkm; os sapadores
+  espaçados, de joelhos ao cabo, agachados a trabalhar no segundo corte e deitados (T07) quando suprimidos ou à espera. A hitbox, os olhos, o ponto visado e a origem dos tiros seguem a
+  postura desenhada. Saves anteriores recolocam quem ainda está vivo no lugar antigo (um atirador dos portões caído já não é movido: `9f7945b`, sem efeito por tick).
+- **O que NÃO mudou:** conclusão, checkpoints, objectivos, horas de batalha dos eventos fixos, 18 homens às 06:00, sobreviventes finais (12/18), `dlg_m01_049`, reparo antes das 05:30, quedas por atrito 0,8–3,9 s depois da hora fixa
+  (auditoria de 24 rotas contra `5a169ba`; antes da fusão, contra `ef35c7a`, deu o mesmo).
+- **O que muda, e não é só RNG (a frase «o desvio é o do RNG» estava errada):** com a secção de joelhos atrás dos sacos nenhum dos 14 alemães dos portões a vê, por isso o ramo `squad` (Kowal) do `eastFire` das MG34
+  (`src/game/m01-simulation.js`, linhas 693–694 em `65145c9`) cai para `area` (o posto avançado). Rotas sem apoio: rajadas `squad` 499 → 146, `area` 0 → 351; semente 19390901 sem apoio `squad` 42 → 14, `area` 0 → 27,
+  `co_m01_enemy_mg_fire_on_squad` 82 → 55; o total de rajadas fica quase igual. **Decisão do Captain (2026-10-17, D40 em `docs/direction/DECISIONS.md`): aceite como efeito pretendido da cobertura**; fogo de supressão da MG34 sobre o posto plausível;
+  invariantes mantidas. O resto (hora do reparo −223…+154 s, `dlg_m01_027` em 3 das 24 rotas, tiros no jogador 16 → 20 no total (sem apoio 11 → 17, com apoio 5 → 3)) é o desvio do RNG que se segue.
+- **Fusão com T48:** textualmente limpa; partiu 8 testes do contrato de animação (os pins do golden parcial `83a907ca`/`00964436` agora são `a29c1ac9`/`c06c1b1b`, e a simulação combinada tem outro `sha256`) e 1 da retirada (ticks da demolição leste
+  15723/14854 → 15674/15061). Re-baseline só com as ferramentas do repositório: a auditoria de T38 com predecessor `5a169ba` regenerou o golden T38 (**emenda 02**, `GOLDEN_AMENDMENT_02.json`; o anterior fica byte a byte em
+  `tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json`) e a ferramenta de T48 (BASE `65145c9`) provou em paralelo, tick a tick, nas duas rotas do golden, que a retirada só muda os alemães do tabuleiro depois da demolição (`GOLDEN_AMENDMENT_03.json`).
+  O golden parcial de T48 (emenda 02 de T48) fica como história, fixado por `sha256`. Achado sobre T48 (não corrigido, fora do âmbito): a calada de 60 s recusa a rajada de um alemão do tabuleiro disparada no próprio tick da demolição (06:10:00); sem gastar RNG, isso muda
+  o caminho do RNG daí em diante em 3 das 24 rotas da auditoria (sementes 2 e 4 no predecessor, 8 na candidata, todas sem apoio): só os tiros posteriores sobre o jogador mudam.
+- **Verificação local (x86, Node 22.22.0, SwiftShader, máquina partilhada e muito carregada; Playwright com `CI=1`, os orçamentos de tempo do CI, e sempre sob `flock`):** auditoria de invariantes 24/24 rotas contra `5a169ba` (e, antes da fusão, contra `ef35c7a`), exit 0, repetida em modo de verificação (golden, `GOLDEN_AMENDMENT_02.json` e `GOLDEN_AUDIT.json` byte a byte iguais); prova de T48 sobre T38 nas duas rotas do golden, exit 0 (também repetida); `node --test` do contrato de animação 21/21, da retirada 22/22, de staging + east-front + cover-threat 63/63; `npm test` **990/990**; `npm run build` OK; browser `m01-german-retreat` + `m01-mg34-prone` + `m01.spec.js` 32/33 (a falha é `m01.spec.js:426`, igual na base `813f163`), capturas T38 1/1 (tallies iguais), `m01-anim-resolver` + `m01-distant-front-impostors` 7/7. Detalhe no `README.md`.
+- **Pendente:** revisão crítica independente da versão final; CI; playtest; decisão de design sobre cobertura real vinda de oeste para os atiradores dos portões (precisa de props); `m01-postprocess-grading` (grupo A acima) continua a precisar de `M01_GRADING_BEFORE_DIR`.
+
 ## Candidato `integ-full`: quatro regressões de browser em `m01.spec.js` — 2026-10-16
 
 CI 38838894714 (`998d6d0`, shard 4/4) falhou em :77, :112, :310 e :544; o CI V7 (`67c3cda`, run 38759449619) tinha 85/86. Bissecção pelos merges de primeira linha e correcções sem tocar na simulação nem no gameplay (nenhuma golden mexe):

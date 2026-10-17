@@ -53,13 +53,16 @@ test('a data error stops the load: typos, duplicate or out-of-range victims, bad
     'before the train arrives':g=>{g.attrition[0].at='04:44:00';},'cutoff not after at':g=>{g.attrition[0].cutoff=g.attrition[0].at;},
     'cutoff leaves no flight time before the withdrawal':g=>{g.attrition[5].cutoff='05:59:59';},'missing cutoff':g=>{delete g.attrition[3].cutoff;},
     'no list':g=>{g.attrition=[];},'no hold':g=>{delete g.hold;},'hold from not before until':g=>{g.hold.until=g.hold.from;},
-    'hold from not a battle-clock event':g=>{g.hold.from=E('repair_complete');},'no layout':g=>{delete g.hold.layout;},
-    'zero columns':g=>{g.hold.layout.columns=0;},'negative step':g=>{g.hold.layout.dx=-1;},
+    'hold from not a battle-clock event':g=>{g.hold.from=E('repair_complete');},
+    // T38: the 6x4 layout became explicit staggered slots, one [x, z] per man, at least 1.2 m apart, and the hold posture is crouch.
+    'no slots':g=>{delete g.hold.slots;},'a man without a slot':g=>{g.hold.slots.pop();},'two men on one spot':g=>{g.hold.slots[5]=[...g.hold.slots[4]];},
+    'slots closer than 1.2 m':g=>{g.hold.slots[5]=[g.hold.slots[4][0]+.8,g.hold.slots[4][1]];},'a slot that is not [x, z]':g=>{g.hold.slots[2]=[1030];},
+    'a NaN slot':g=>{g.hold.slots[7]=[null,40];},'standing hold':g=>{g.hold.stage.posture='stand';},
   };
   for(const [name,fn] of Object.entries(bad))assert.throws(()=>eastFrontPlan(edit(fn)),/east front/,name);
 });
 
-test('24 distinct slots on the road deck: nobody stands on another man, the six reserves are the back rank, the old four-point stack is gone',()=>{
+test('24 distinct slots on the road deck: nobody stands on another man, the six reserves wait at the back, the old four-point stack is gone',()=>{
   const sim=new M01Simulation(1),men=platoon(sim),deck=sim.world.colliders.find(c=>c.id==='road_collider_deck_span_09');
   assert.equal(new Set(men.map(a=>`${a.x},${a.z}`)).size,24);
   let closest=Infinity;for(const a of men)for(const b of men)if(a!==b)closest=Math.min(closest,dist(a,b));
@@ -68,7 +71,9 @@ test('24 distinct slots on the road deck: nobody stands on another man, the six 
     assert.ok(a.x>=deck.min.x&&a.x<=deck.max.x-.3&&a.z>=deck.min.z+.3&&a.z<=deck.max.z-.3,`${a.id} is on the deck`);
     assert.equal(sim.world.heightAt(a.x,a.z),a.y,`${a.id} stands on the deck, not above the bank`);
   }
-  assert.equal(new Set(men.slice(18).map(a=>a.z)).size,1,'one back rank');assert.ok(men.slice(0,18).every(a=>a.z<men[18].z));
+  // T38: no rank any more (staggered slots), but the six reserves are still the back rank: every reserve is strictly further south (larger z)
+  // than every one of the other eighteen.
+  assert.ok(Math.min(...men.slice(18).map(a=>a.z))>Math.max(...men.slice(0,18).map(a=>a.z)),'the reserves are behind every front man');
   assert.ok(men.every(a=>!a.active&&a.alive&&a.state==='GUARD'&&a.group==='grp_east_platoon'),'off stage until the train arrives');
 });
 
@@ -78,7 +83,8 @@ test('the east rifles aim into the platoon block with exactly three draws per ca
   const bands=new Set();let farthest=0;
   for(let i=0;i<4000;i++){
     draws=0;const p=sim.eastBridgeheadPoint(r);assert.equal(draws,3,'band, x and z');
-    assert.ok(p.x>=1032&&p.x<=1044&&p.z>=38&&p.z<=42&&p.y===.5,JSON.stringify(p));
+    // T38: the block is the staggered slots' bounds (x 1028-1043, z 38.2-41.8) plus 1 m in x and 0.2 m in z, as T23 built it from the grid.
+    assert.ok(p.x>=1027&&p.x<=1044&&p.z>=38&&p.z<=42&&p.y===.5,JSON.stringify(p));
     bands.add(p.z<40?'north':'south');farthest=Math.max(farthest,Math.min(...men.map(a=>dist(a,p))));
   }
   assert.deepEqual([...bands].sort(),['north','south']);assert.ok(farthest<=1.5,`the farthest aim point is ${farthest.toFixed(2)} m from the nearest man`);
