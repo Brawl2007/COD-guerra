@@ -487,9 +487,10 @@
       "refs": [
         "branch:claude/cool-mccarthy-viomu9",
         "PR:#85",
-        "claim:claims/m01-t47"
+        "claim:claims/m01-t47",
+        "branch:claude/busy-ritchie-3fkvk2-t47@e61738b"
       ],
-      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta e emenda 01 (revisão crítica aplicada: MG34 já não imunes à zona batida, emissor da casamata retirado). Verificada localmente (Node completo, build, browser focado); verificação independente pendente, por isso não declarada concluída. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem sessão de jogo; posto S2 e ritmo do reparo esperam decisão do proprietário."
+      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta e emenda 01 (revisão crítica aplicada: MG34 já não imunes à zona batida, emissor da casamata retirado). Verificada localmente (Node completo, build, browser focado); verificação independente pendente, por isso não declarada concluída. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem sessão de jogo; posto S2 e ritmo do reparo esperam decisão do proprietário. Retomada em claude/busy-ritchie-3fkvk2-t47 (ref acima = HEAD anterior a esta actualização do registo): revisão crítica REQUEST_CHANGES aplicada (fixture do spec de MG34 deitada de novo sobre o jogo de produção com janela de busca de 180 s, auditoria em modo de verificação sem escrita, MAP.md, decisões do Captain de 2026-10-17 em DECISIONS.md); continua por integrar e sem verificação independente."
     },
     "T48": {
       "name": "GERMAN RETREAT",
