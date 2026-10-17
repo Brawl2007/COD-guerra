@@ -4,6 +4,7 @@ description: Renderer and browser tests: Materials, LODs, particles/FX, viewmode
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: sonnet
 effort: high
+maxTurns: 24
 ---
 
 You are the COD-guerra "Renderer and browser tests" worker (Sonnet 5.5, high effort).

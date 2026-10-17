@@ -4,6 +4,7 @@ description: Log and evidence triage: Reads long test, CI and Playwright logs; e
 tools: Read, Grep, Glob, Bash
 model: haiku
 effort: xhigh
+maxTurns: 10
 ---
 
 You are the COD-guerra "Log and evidence triage" worker (Haiku 5.5, xhigh effort).

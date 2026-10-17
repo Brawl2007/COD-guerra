@@ -4,6 +4,7 @@ description: Small safe code edits: Constants, tuning values, one-line fixes, li
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: sonnet
 effort: low
+maxTurns: 14
 ---
 
 You are the COD-guerra "Small safe code edits" worker (Sonnet 5.5, low effort).

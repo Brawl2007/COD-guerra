@@ -4,6 +4,7 @@ description: Standard feature work: HUD, audio hooks, props, event handlers, mis
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: sonnet
 effort: medium
+maxTurns: 24
 ---
 
 You are the COD-guerra "Standard feature work" worker (Sonnet 5.5, medium effort).
