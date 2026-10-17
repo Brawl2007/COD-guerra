@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import impostorManifest from '../../assets/models/provisional/m01/m01-bridges/impostors/manifest.json' with {type:'json'};
 import {M01_BRIDGE_MATERIAL_MANIFEST as materialManifest,bridgeFamily,bridgeMappedMaterial,loadBridgeTexture,configureBridgeTexture} from './m01-bridge-material.js';
 import {M01BridgeLOD} from './m01-bridge-lod.js';
-import {bridgeFadeDither} from './m01-bridge-material.js';
+import {bridgeFadeDither,bridgeFadeFallbackMaterial} from './m01-bridge-material.js';
 import {LOD_DEFAULT_FADE_SECONDS,lodFadeProgress,encodeInstanceFade} from './m01-lod-policy.js';
 function mipBytes(width,height){let bytes=0;while(width>1||height>1){width=Math.max(1,width>>1);height=Math.max(1,height>>1);bytes+=width*height*4;}return bytes;}
 const demolitionDamage=d=>String(d.id).includes('demolition');
@@ -38,7 +38,7 @@ export class M01BridgeFinishRuntime{
  }
  bind(mesh){if(!mesh.isMesh||mesh.userData.m01BridgeImpostor)return;this.observe(mesh);if(!this.enabled||!this.stage||this.status==='loading')return;const bound=this.bindings.get(mesh);if(bound&&mesh.material===bound.material)return;
   // T31 binds first in M01View; if a later owner supplied a new clone, retain that exact clone as the new borrowed original.
-  const source=mesh.material;if(Array.isArray(source))return;const family=bridgeFamily(mesh,source),maps=this.stage.families.get(family);if(!maps)return;let cache=this.materialCache.get(source);if(!cache)this.materialCache.set(source,cache=new Map());let material=cache.get(family);if(!material){material=bridgeMappedMaterial(source,family,maps);cache.set(family,material);}this.bindings.set(mesh,{original:source,material,family});mesh.material=material;
+  const source=mesh.material;if(Array.isArray(source))return;const family=bridgeFamily(mesh,source),maps=this.stage.families.get(family),fallback=family===null;if(!maps&&!fallback)return;let cache=this.materialCache.get(source);if(!cache)this.materialCache.set(source,cache=new Map());const slot=fallback?'fade-fallback':family;let material=cache.get(slot);if(!material){material=fallback?bridgeFadeFallbackMaterial(source):bridgeMappedMaterial(source,family,maps);cache.set(slot,material);}this.bindings.set(mesh,{original:source,material,family:slot});mesh.material=material;
  }
  sync({kits,quality,world,kitsSettled=true}){if(this.disposed)return;this.requestQuality(quality);this.fadeQuality=quality;this.lod.syncWorld(world);if(world!==this.world||world?.revision!==this.worldRevision){this.world=world;this.worldRevision=world?.revision;this.revision++;this.snapFades();this.resetFades();this.pieceFades.clear();}
   // The mapped materials are created in bind order and three.js draws opaque items by material id, so the order the kits are bound in decides which of two

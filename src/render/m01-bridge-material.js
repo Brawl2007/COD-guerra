@@ -29,6 +29,14 @@ export function bridgeFadeDither(material){
  material.customProgramCacheKey=()=>`${baseKey}:m01-bridge-fade-v1`;
  return fade;
 }
+// Meshes whose material has no bridge family (e.g. 'opening_dark' under the LOD0 rail/road spans) get no texture mapping but must still
+// take part in the LOD0 <-> LOD1 dither, or they pop while everything around them fades. Same uniform / onBeforeCompile path as the mapped
+// materials; the source material (shared with its GLB/T31 owner) is never modified and the clone is disposed with the other bindings.
+export function bridgeFadeFallbackMaterial(source){
+ const material=source.clone();
+ material.onBeforeCompile=source.onBeforeCompile;material.customProgramCacheKey=source.customProgramCacheKey;
+ bridgeFadeDither(material);material.needsUpdate=true;return material;
+}
 // Wrap the complete inherited shader, including T31's contact discard and original cache key.
 // World-metre sampling supplies scale for baked GLB shapes and transformed instances without touching UV/accessor bytes.
 export function bridgeMappedMaterial(source,family,maps){
