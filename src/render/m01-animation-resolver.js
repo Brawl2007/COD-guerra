@@ -7,6 +7,8 @@
 //    resolveAnimation() turns (actor data, mission clock, previous blend record) into a weighted clip stack. The same state at the same
 //    sim time yields the same weights and clip times; pause, LOD swaps and reloads rebuild the same pose.
 
+import {selectLodBand,LOD_ACTOR_HYSTERESIS_M} from './m01-lod-policy.js';
+
 // ================================ clip selection (Argon V1/V2) ================================
 export const STRIDE_METRES=Object.freeze({
   walk:1.54,run:2.88,sprint:3.2,crouch_walk:.768,
@@ -41,7 +43,7 @@ export const CLIP_FALLBACKS=Object.freeze({
 export const BLEND_DURATION=.18;
 export const TURN_THRESHOLD=.22;
 export const MAX_TORSO_TWIST=.65;
-export const LOD_HYSTERESIS_M=.5;
+export const LOD_HYSTERESIS_M=LOD_ACTOR_HYSTERESIS_M;
 
 const BLENDABLE_CLIPS=new Set(['standing_idle','crouched_idle','walk','run','sprint','crouch_walk','aim','rkm_standing_idle','rkm_crouched_idle','rkm_walk','rkm_run','rkm_aim']);
 
@@ -249,16 +251,10 @@ export function resolveTransitionBlend(actor,pose,primary,time=0,clips=null){
 }
 
 export function resolveLodWithHysteresis(distance,limits,currentKey,nation,quality,sources){
-  let lod=distance<limits.near?0:distance<limits.middle?1:2;
-  if(currentKey){
-    const [curNation,curLodStr]=currentKey.split(':'),curLod=Number(curLodStr);
-    if(curNation===nation&&Number.isInteger(curLod)){
-      if(curLod===0&&lod===1&&limits.near>0&&distance<limits.near+LOD_HYSTERESIS_M)lod=0;
-      else if(curLod===1&&lod===0&&limits.near>0&&distance>limits.near-LOD_HYSTERESIS_M)lod=1;
-      else if(curLod===1&&lod===2&&distance<limits.middle+LOD_HYSTERESIS_M)lod=1;
-      else if(curLod===2&&lod===1&&distance>limits.middle-LOD_HYSTERESIS_M)lod=2;
-    }
-  }
+  // near/middle bands through the single LOD policy (T43); the cull edge is decided by the caller (selectConsumerLod('actors')).
+  let previous=null;
+  if(currentKey){const [curNation,curLodStr]=currentKey.split(':'),curLod=Number(curLodStr);if(curNation===nation&&Number.isInteger(curLod))previous=curLod;}
+  let lod=selectLodBand(distance,[limits.near,limits.middle],previous,{hysteresis:LOD_HYSTERESIS_M});
   if(nation==='de'&&quality!=='high'&&lod<2)lod=2;
   while(lod<3&&sources&&!sources.has(`${nation}:${lod}`))lod++;
   return lod;

@@ -1,6 +1,7 @@
 // M01 shared LOD policy (T43 slice 1). Pure presentation helpers: no THREE, no Date/performance.now, no simulation state.
 // Bands are ascending distance thresholds in metres: band i covers [bands[i-1],bands[i]); the last band is open-ended.
 export const LOD_DEFAULT_HYSTERESIS_FRACTION=0.15,LOD_DEFAULT_FADE_SECONDS=0.3;
+export const LOD_ACTOR_HYSTERESIS_M=.5;   // near/middle margin the actors shipped with (m01-animation-resolver.js)
 const finiteOr=(v,d)=>Number.isFinite(v)?v:d;
 // Hysteresis per boundary i (between band i and i+1): array in metres, one number in metres for all, or fraction*threshold when absent.
 // `upper` selects options.upperHysteresis (when given) for the hold-nearer side, without allocating a merged options object.
@@ -31,6 +32,7 @@ export function selectLodBand(distance,bands,previous=null,options={}){
   return band;
 }
 const profile=(bands,hysteresis,upperHysteresis)=>Object.freeze({bands:Object.freeze(bands),hysteresis:Array.isArray(hysteresis)?Object.freeze(hysteresis):hysteresis,...(upperHysteresis===undefined?{}:{upperHysteresis:Array.isArray(upperHysteresis)?Object.freeze(upperHysteresis):upperHysteresis})});
+const actorProfile=(near,middle,far)=>profile([near,middle,far],[LOD_ACTOR_HYSTERESIS_M,LOD_ACTOR_HYSTERESIS_M,far*LOD_DEFAULT_HYSTERESIS_FRACTION]);
 // Frozen per-consumer/per-preset tables. They encode the thresholds each consumer shipped with before T43, so behaviour is preserved.
 // `upperInclusive` mirrors the pre-T43 comparison (wagons held the nearer band with <=, everything else with <).
 export const M01_LOD_PROFILES=Object.freeze({
@@ -48,6 +50,10 @@ export const M01_LOD_PROFILES=Object.freeze({
   vegetationLod:Object.freeze({upperInclusive:false,presets:Object.freeze({low:profile([20,120],4,[4,0]),medium:profile([35,120],4,[4,0]),high:profile([50,120],4,[4,0])})}),
   // Shrubs: near/mid/culled = [shrubNear, shrubMid]. Hysteresis is new in T43 (default 15% of each threshold) and only applies when the caller passes `previous`.
   vegetationShrubs:Object.freeze({upperInclusive:false,presets:Object.freeze({low:profile([21,42]),medium:profile([32.5,65]),high:profile([45,90])})}),
+  // Actors (m01-characters.js): bands = [near, middle, far]; band 0..2 are skinned LODs, band 3 = culled beyond `far`. Low/Medium have no
+  // near LOD (0 collapses band 0). near/middle keep the shipped 0.5 m margin; the cull edge is new in T43 and holds a visible actor for 15%
+  // of `far` (15/19.5/24 m), so a soldier hovering on the cull distance does not pop in and out. Only applied when `previous` is passed.
+  actors:Object.freeze({upperInclusive:false,presets:Object.freeze({low:actorProfile(0,15,100),medium:actorProfile(0,40,130),high:actorProfile(14,45,160)})}),
   // Bridge parts ignore the preset. Authority owns 400/800; renderer enters 412/824 and leaves 388/776 (directional enter/exit thresholds).
   bridgeParts:Object.freeze({upperInclusive:false,directional:true,presets:Object.freeze({low:profile([400,800],[12,24]),medium:profile([400,800],[12,24]),high:profile([400,800],[12,24])})}),
 });
