@@ -4,6 +4,7 @@ description: Critical independent review for high-risk tasks. Independently revi
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: max
+maxTurns: 8
 ---
 
 # COD-guerra Reviewer
@@ -126,3 +127,8 @@ NEXT_ACTION:
 - ...
 
 Keep the response concise.
+
+
+## Cloud Web bounded execution
+
+Treat the maxTurns limit as a stop-and-handoff threshold, not as an invitation to request automatic resume. Before reaching it, return the smallest useful result with completed steps, changed files, concrete checks, uncommitted work, blockers and the next action. The main Captain must inspect that evidence before a single scoped continuation. Never start polling loops or unrelated work. Do not claim validated results without the tests.
