@@ -4,6 +4,7 @@ description: Implements scoped COD-guerra tasks from an approved Task Contract u
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 effort: medium
+maxTurns: 24
 ---
 
 # COD-guerra Implementer
@@ -118,3 +119,8 @@ BLOCKERS:
 RECOMMENDED_VERIFICATION:
 
 Do not return a long development diary.
+
+
+## Cloud Web bounded execution
+
+Treat the maxTurns limit as a stop-and-handoff threshold, not as an invitation to request automatic resume. Before reaching it, return the smallest useful result with completed steps, changed files, concrete checks, uncommitted work, blockers and the next action. The main Captain must inspect that evidence before a single scoped continuation. Never start polling loops or unrelated work. Do not claim validated results without the tests.
