@@ -1,0 +1,12 @@
+{
+  "family": "Barlow",
+  "style": "Regular",
+  "author": "Jeremy Tribby",
+  "license": "SIL Open Font License 1.1; complete text in OFL.txt",
+  "source": "https://github.com/google/fonts/tree/main/ofl/barlow",
+  "downloaded": "2026-10-16",
+  "files": {
+    "Barlow-Regular.ttf": "95aa02c7c43096e0dd44d787ba6216864a67157e402adab59b35572e0c1577ea",
+    "OFL.txt": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+  }
+}
