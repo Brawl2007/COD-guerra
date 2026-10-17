@@ -16,14 +16,24 @@ class CloudPaidSafetyTests(unittest.TestCase):
     REQ = {"role": "implement", "risk": "medium", "complexity": "medium",
            "description": "Prioritize a narrow infrastructure task"}
 
-    def test_cloud_default_blocks_and_limit_never_exceeds_20(self):
+    def test_cloud_default_blocks_but_authorized_calls_have_no_arbitrary_count_cap(self):
         self.assertEqual(jr.effective_limit({"CLAUDE_CODE_REMOTE": "true"}), 0)
         e = {"CLAUDE_CODE_REMOTE": "true", "COD_JEV_WEB_PAID_APPROVED": "1"}
-        self.assertEqual(jr.effective_limit(e), 20)
-        self.assertEqual(jr.effective_limit(e, flag=1000), 20)
+        self.assertIsNone(jr.effective_limit(e))
+        self.assertEqual(jr.effective_limit(e, flag=1000), 1000)
         self.assertEqual(jr.effective_limit(dict(e, COD_JEV_LIMIT="3"), flag=20), 3)
-        self.assertEqual(jr.effective_limit(dict(e, COD_JEV_LIMIT="999")), 20)
+        self.assertEqual(jr.effective_limit(dict(e, COD_JEV_LIMIT="999")), 999)
         self.assertIsNone(jr.effective_limit({}))  # Linux behavior unchanged.
+
+    def test_cloud_budget_is_estimated_in_usd_and_fails_closed(self):
+        env = {"CLAUDE_CODE_REMOTE": "true", "COD_JEV_WEB_PAID_APPROVED": "1"}
+        sample = {"state": "small decision", "model": "jev-latest"}
+        self.assertTrue(jr.cloud_credit_available(env, [], sample))
+        self.assertTrue(jr.cloud_credit_available(env, [{"est_cost_usd": 4.9}], sample))
+        self.assertFalse(jr.cloud_credit_available(env, [{"est_cost_usd": 5.0}], sample))
+        self.assertFalse(jr.cloud_credit_available(env, [{"est_cost_usd": 4.99999}], sample))
+        self.assertFalse(jr.cloud_credit_available(env, [{"est_cost_usd": "nan"}], sample))
+        self.assertFalse(jr.cloud_credit_available({"CLAUDE_CODE_REMOTE": "true"}, [], sample))
 
     def test_unapproved_cloud_router_cannot_hit_transport(self):
         with tempfile.TemporaryDirectory() as d:
@@ -56,6 +66,37 @@ class CloudPaidSafetyTests(unittest.TestCase):
             self.assertEqual(len(received), 1)
             self.assertEqual(received[0][1], {"Content-Type": "application/json"})
             self.assertEqual(len(jr.read_ledger(Path(e["COD_JEV_LEDGER"]))["calls"]), 1)
+
+    def test_six_capabilities_use_existing_safety_filtered_router(self):
+        from unittest import mock
+        fake = {"source": "jev", "capability": "priority",
+                "recommendation": {"priority": "p1"}, "usage": {"input_tokens": 300}}
+        with mock.patch.object(pilot, "guard", return_value={
+            "branch": pilot.BRANCH, "head": "a" * 40}):
+            with mock.patch.object(pilot.jev_decisions, "decide", return_value=fake) as run:
+                result = pilot.invoke_decision(
+                    capability="priority", payload={"task": "x"},
+                    online=True, env={"CLAUDE_CODE_REMOTE": "true"})
+                self.assertEqual(result["capability"], "priority")
+                self.assertEqual(result["local_estimated_usd_cap"], 5.0)
+                self.assertIsNone(result["max_project_ledger_calls"])
+                options = run.call_args.kwargs
+                self.assertTrue(options["enable_jev"])
+                self.assertFalse(options["offline"])
+                self.assertEqual(options["env"]["COD_JEV_WEB_PAID_APPROVED"], "1")
+                self.assertEqual(options["env"]["COD_JEV_AUTH"], "proxy")
+        self.assertEqual(len(pilot.jev_decisions.CAPABILITIES), 6)
+
+    def test_input_must_be_small_json_inside_tmp(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "decision.json"
+            path.write_text('{"description":"analysis"}')
+            self.assertEqual(pilot.read_scoped_payload(str(path))["description"], "analysis")
+            path.write_text("{" + "a" * 10000 + "}")
+            with self.assertRaisesRegex(RuntimeError, "8 KiB"):
+                pilot.read_scoped_payload(str(path))
+        with self.assertRaisesRegex(RuntimeError, "temporary directory"):
+            pilot.read_scoped_payload(str(Path(__file__).resolve()))
 
     def test_guard_requires_cloud_and_expected_branch(self):
         with mock.patch.object(pilot, "git", side_effect=[
@@ -99,7 +140,7 @@ class CloudPaidSafetyTests(unittest.TestCase):
                              env={"CLAUDE_CODE_REMOTE": "true"})
                 k = route.call_args.kwargs
                 self.assertFalse(k["offline"])
-                self.assertEqual(k["limit_flag"], pilot.MAX_CALLS)
+                self.assertIsNone(k["limit_flag"])
                 self.assertEqual(k["env"]["COD_JEV_WEB_PAID_APPROVED"], "1")
                 self.assertEqual(k["env"]["COD_JEV_AUTH"], "proxy")
                 self.assertEqual(k["env"]["TYPESAFE_BASE_URL"], "https://api.typesafe.ai")
