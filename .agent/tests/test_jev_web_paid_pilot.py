@@ -96,7 +96,7 @@ class CloudPaidSafetyTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "8 KiB"):
                 pilot.read_scoped_payload(str(path))
         with self.assertRaisesRegex(RuntimeError, "temporary directory"):
-            pilot.read_scoped_payload(str(Path(__file__).resolve()))
+            pilot.read_scoped_payload("/etc/hosts")
 
     def test_guard_requires_cloud_and_expected_branch(self):
         with mock.patch.object(pilot, "git", side_effect=[
