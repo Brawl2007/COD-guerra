@@ -45,6 +45,12 @@ const UP_AXIS=new THREE.Vector3(0,1,0);
 const debugEnabled=()=>typeof window!=='undefined'&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('debug');
 
 // Presentation only. Playback is sampled from the saved mission clock; no renderer timers enter saves.
+/** The GLB 'extras' (weapons/sockets) live on a child of the empty `m01_soldier_<nation>` Group (e.g. `m01_soldier_pl_1`): first descendant that carries them. Presentation only. */
+export function soldierProfile(root,nation){
+  const top=root.getObjectByName(`m01_soldier_${nation}`)??root;let found=null;
+  top.traverse(n=>{if(!found&&(n.userData?.weapons||n.userData?.sockets))found=n.userData;});
+  return found;
+}
 export class M01Characters {
   constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled()}={}){
     this.visuals=visualVariation?new SoldierVisualVariations():null;
@@ -254,7 +260,7 @@ export class M01Characters {
     if(this.visuals)this.visuals.apply(root,actor,key,visual);
     this.scene.add(root);
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
-    const profile=root.getObjectByName(`m01_soldier_${nation}`)?.userData;
+    const profile=soldierProfile(root,nation);
     let spineBone=null,supportArmBone=null;
     for(const name of SPINE_NAMES){const b=root.getObjectByName(name);if(b){spineBone=b;break;}}
     for(const name of SUPPORT_ARM_NAMES){const b=root.getObjectByName(name);if(b?.isBone){supportArmBone=b;break;}}
