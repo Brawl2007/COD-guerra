@@ -90,6 +90,49 @@ def check_rtk() -> None:
         report("WARN", "RTK", "rtk gain could not be verified in this environment")
 
 
+def check_jev_offline() -> None:
+    """Exercise Jev's real CLI with network-disabled flags and no credentials.
+
+    --offline has to win even when COD_JEV_PILOT=1. If it does not, no
+    credential is present, and the test reports an error instead of calling.
+    """
+    script = ROOT / ".agent/tools/jev_router.py"
+    if not script.is_file():
+        ERRORS.append("Jev router script missing")
+        return
+    env = dict(os.environ)
+    env.update({
+        "COD_JEV_PILOT": "1",
+        "TYPESAFE_API_KEY": "",
+        "COD_JEV_AUTH": "",
+        "COD_JEV_KEY_FILE": os.devnull,
+        "COD_JEV_LIMIT": "",
+    })
+    cmd = [sys.executable, "-B", str(script), "route", "--role", "implement",
+           "--risk", "medium", "--complexity", "medium",
+           "--description", "Cloud Web offline readiness audit",
+           "--offline", "--json"]
+    try:
+        result = subprocess.run(cmd, env=env, capture_output=True,
+                                text=True, check=False, timeout=10)
+        data = json.loads(result.stdout) if result.returncode == 0 else {}
+        if (result.returncode == 0 and data.get("source") == "rule_fallback"
+                and data.get("reason") == "offline"):
+            report("INFO", "Jev", "offline routing PASS; no TypeSafe request or token charge")
+        else:
+            ERRORS.append("Jev offline safety check did not return fallback=offline")
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        ERRORS.append("Jev offline safety check could not complete")
+
+
+def has_rtk_project_hook(settings: dict) -> bool:
+    """Report only the versioned hook; user/VM global hooks remain unknown."""
+    entries = settings.get("hooks", {}).get("PreToolUse", [])
+    return any("rtk" in str(h.get("command", "")).lower()
+               for entry in entries if isinstance(entry, dict)
+               for h in entry.get("hooks", []) if isinstance(h, dict))
+
+
 def main() -> int:
     ERRORS.clear()
     report("INFO", "root", str(ROOT))
@@ -97,6 +140,7 @@ def main() -> int:
     for path in REQUIRED:
         if not (ROOT / path).is_file():
             ERRORS.append("missing " + path)
+    settings = {}
     try:
         settings = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
         if "PreToolUse" not in settings.get("hooks", {}):
@@ -144,6 +188,11 @@ def main() -> int:
     except (OSError, subprocess.TimeoutExpired):
         report("WARN", "branch", "unavailable")
     check_rtk()
+    report("INFO" if has_rtk_project_hook(settings) else "WARN",
+           "RTK project hook",
+           "present in project settings (execution not verified)" if has_rtk_project_hook(settings)
+           else "not configured in project settings; a VM-global hook may exist")
+    check_jev_offline()
     for name in ("ANTHROPIC_API_KEY", "TYPESAFE_API_KEY", "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"):
         if os.environ.get(name):
             report("WARN", "env " + name, "SET (value deliberately hidden)")

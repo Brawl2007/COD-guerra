@@ -130,7 +130,7 @@ Antes de iniciar um novo RUN_ID numa Routine cloud:
 6. Se RUNNING, BLOCKED, ACCEPTED, `resume_allowed=false` ou HEAD divergente, bloquear a retomada automatica e pedir revisao. Nunca repetir push, merge, deploy ou operacao irreversivel a partir de um resumo.
 7. Se existir estado local, usar tambem `task_discovery.py` e `task_recovery.py --dry-run`; o checkpoint nao substitui essas provas.
 
-No final, produzir handoff curto com TASK_ID, WORK_BRANCH publicada, WORK_HEAD SHA completo, STATUS, operation, NEXT_ACTION e referencias de evidencia. Por agora, `cloud_checkpoint.py publish` e `--init` estao **DESATIVADOS nas Routines**: exigir autorizacao explicita separada e teste de permissoes cloud antes de escrever a branch `cod-guerra/cloud-state`. O primeiro diagnostico continua somente leitura. Jev pago esta expressamente autorizado sem teto de chamadas; Fable e outras APIs pagas continuam a exigir autorizacao separada. Nao fazer merge, deploy ou push na main.
+No final, produzir handoff curto com TASK_ID, WORK_BRANCH publicada, WORK_HEAD SHA completo, STATUS, operation, NEXT_ACTION e referencias de evidencia. Por agora, `cloud_checkpoint.py publish` e `--init` estao **DESATIVADOS nas Routines**: exigir autorizacao explicita separada e teste de permissoes cloud antes de escrever a branch `cod-guerra/cloud-state`. O primeiro diagnostico continua somente leitura. No modo Cloud Web Jev funciona exclusivamente offline por padrao; nao acionar API externa paga sem confirmacao especifica. Fable e outras APIs pagas tambem exigem autorizacao separada. Nao fazer merge, deploy ou push na main.
 
 ## Startup: existing runs
 

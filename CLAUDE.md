@@ -13,7 +13,7 @@ A Routine antiga permanece pausada. Usar **uma única sessão Web principal Opus
 - O Capitão Opus coordena; Sonnet implementa, verifica e revê; Haiku lê código (`explorer`/`Explore`)
   e documentação (`researcher`). Opus `reviewer-critical` só para simulação, saves, integração e arquitetura.
 - Não invocar Advisor/Fable por rotina: só quando o utilizador pedir e o custo for aceitável. Delegar leituras pesadas, não colar logs longos; compactar apenas quando útil.
-- Jev: chamadas pagas via TypeSafe sem limite de quantidade/gastos, autorizadas expressamente em 2026-10-13. Manter registo de utilizacao e segurança; nao autorizar custos de outros fornecedores, planos ou assets.
+- Jev: usar primeiro `jev_router.py`/`jev_decisions.py` em modo `--offline` (regras locais, sem chamadas pagas). Existe autorização histórica para chamadas TypeSafe, mas **nesta migração Cloud Web não ativar consultas pagas automaticamente**: exigir confirmação explícita, verificar credenciais/limites e registar utilização. Jev não é um compressor de tokens.
 
 ## Execucao Claude Code Web com Claude Max
 

@@ -23,7 +23,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 - Os ficheiros `CLAUDE.md`, `AGENTS.md`, `.claude/agents/`, `.claude/settings.json`, hooks, skills e scripts *versionados* viajam com o checkout Git, sem precisar de copiar `~/.claude`.
 - Programas instalados apenas no Linux do Chromebook **não viajam**: RTK, ferramentas de shell, configurações globais, MCPs locais, caches, tokens e integrações. Não declarar RTK disponível apenas porque funcionava no terminal.
-- Diagnóstico remoto, sem instalações nem alterações: `python3 .agent/tools/cloud_web_preflight.py`. Verifica os 30 agentes, allowlist, modelos, limites, remoto, branch, hooks e ferramentas. **Para RTK executa também `rtk gain`**, pois existe outro programa sem relação com o mesmo nome (Rust Type Kit); `rtk --version` sozinho não é prova.
+- Diagnóstico remoto, sem instalações nem alterações: `python3 .agent/tools/cloud_web_preflight.py`. Verifica os 30 agentes, allowlist, modelos, limites, remoto, branch, hooks, ferramentas e **executa o Jev em modo `--offline` sem credenciais** para confirmar o bloqueio de pedidos externos. Também usa `rtk gain` para identificar o Rust Token Killer e relata se há hook RTK **nas settings do projeto** (o hook global da VM continua por confirmar).
 - RTK pretendido: **Rust Token Killer** do projeto oficial https://github.com/rtk-ai/rtk. Se estiver ausente, verificar a documentação e a proveniência de um release antes de instalar na VM. Não fazer `curl | sh` automaticamente, não misturar com chaves/API pagas e não usar `cargo install rtk` (nome ambíguo). A instalação deve ser autorizada e reproduzível; as VMs Cloud podem ser efémeras.
 - Depois de instalado, `rtk gain` prova a ferramenta correta, **não** que o hook Claude esteja ativo. Só testar `rtk init` de projeto numa sessão controlada, após inspeção de como o hook se combina com `git-safety.py`, e com autorização. RTK comprime saída de comandos Bash; ferramentas integradas `Read`, `Grep` e `Glob` não passam automaticamente pelo mesmo hook. Não atribuir percentagens de poupança à quota sem medição real.
 - `.claude/hooks/session-start.sh` continua *read-only* por padrão; `COD_GUERRA_AUTOINSTALL_DEPS=1` e `COD_GUERRA_INSTALL_GIT_GUARDS=1` só com opt-in consciente. Não instalar RTK nem rodar `npm ci` automaticamente neste PR.
@@ -32,7 +32,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 1. Manter Routine antiga pausada e verificar que todas as sessões Opus antigas terminaram.
 2. Rever este PR draft. Antes do merge, **arrancar sessão Web manual num checkout desta branch** (não assumir que um clone de `main` já contém os novos ficheiros).
-3. Selecionar Opus. Executar `python3 .agent/tools/cloud_web_preflight.py` e guardar a saída sanitizada; não enviar segredos.
+3. Selecionar Opus. Executar `python3 .agent/tools/cloud_web_preflight.py` e guardar a saída sanitizada; inclui prova Jev offline e diagnóstico RTK/hook. Não enviar segredos nem credenciais, nem chamar TypeSafe.
 4. Ler `CLAUDE.md` e este documento. Verificar que os 30 ficheiros existem e a allowlist do Capitão cobre os 29 trabalhadores, incluindo as combinações especializadas. Testar só um Haiku de leitura curta (sem trabalho de gameplay), com handoff compacto.
 5. Executar o diagnóstico de segurança e os testes Python da configuração, se existentes no checkout. Não iniciar nova T da M01 durante a migração.
 6. Medir no UI utilização antes/depois e observar custo da execução; não comparar totais cumulativos exibidos como se fossem tokens cobrados.
@@ -51,7 +51,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 ## Lacunas conhecidas
 
-- Não foi demonstrada compatibilidade de RTK na VM da nuvem.
+- Não foi demonstrada compatibilidade de RTK na VM da nuvem; o hook RTK não está configurado nas settings versionadas. O Jev está disponível por regras locais; autenticação TypeSafe e consultas pagas ainda não foram validadas no Cloud.
 - Não foi demonstrado um *hard cap* de tokens/quota; `maxTurns` sozinho não resolve isso.
 - Exclusividade de Capitão nesta fase é **operacional** (uma sessão manual e Routine pausada), não um lease técnico distribuído implementado. Para automático simultâneo, seria indispensável um lease separado e testado; o lock do integrador #84 não serve para isso.
 - Compatibilidade Cloud e execução de smoke test ainda exigem um arranque real em Claude Code Web. Nenhum teste local comprova consumo real.
