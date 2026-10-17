@@ -409,7 +409,7 @@
         "branch:claude/quirky-heisenberg-iytxsy",
         "claim:claims/m01-t38"
       ],
-      "note": "Fatia 1 (apresentação): pelotão leste em espera agachado/ajoelhado com rotações variadas, sem alterar gameplay. Fatia 2 por fazer: escalonar posições (exige mexer em m01-simulation.js e regenerar goldens em CI x86), atiradores dos portões, secção e sapadores."
+      "note": "Fatias 1 (apresentação) e 2 (jogo) entregues na branch, NÃO aceites: lugares desencontrados e posturas de jogo (de joelhos/deitado) como dados de missão para o pelotão leste, os atiradores dos portões, a secção atrás dos sacos do posto e os sapadores; golden x86 regenerado com a ferramenta do repositório (GOLDEN_AMENDMENT_01.json). Falta revisão crítica independente, CI e playtest humano. Decisão de design pendente: cobertura real vinda de oeste para os atiradores dos portões exige novos props de cobertura. Ver docs/verification/m01-runtime/t38-combat-posture-staging-v1/."
     },
     "T39": {
       "name": "VIEWMODEL FEEL",

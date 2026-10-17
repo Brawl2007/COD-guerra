@@ -39,7 +39,7 @@ async function openView(browser,{name,sim,snapshot,x,z,target,quality='high'}){
   expect(data.player.x).toBeCloseTo(x,3);expect(data.player.z).toBeCloseTo(z,3);
   await page.screenshot({path:`${OUT}/${name}.png`,style:'#pause,#menu {visibility:hidden!important}',timeout:180000});
   const near=(data.m01.characters?.actors??[]).filter(a=>a.lod!==null&&a.lod!==undefined).length;
-  const c={view:name,quality:data.quality,clock:data.m01.battleClock,player:{x:data.player.x,z:data.player.z},target,visibleActors:near,errors};
+  const c={view:name,quality:data.quality,clock:data.m01.battleClock,player:{x:data.player.x,z:data.player.z},target,visibleActors:near,poses:data.m01.actorPoses,errors};   // poses: the production renderer's own tally of the postures it drew (active actors)
   await page.close();return c;
 }
 

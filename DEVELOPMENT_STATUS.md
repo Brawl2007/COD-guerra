@@ -1,5 +1,23 @@
 # Estado de desenvolvimento
 
+## T38 `M01-COMBAT-POSTURE-STAGING-V1`: retoma, golden regenerado e verificação local — 2026-10-17
+
+Branch local `claude/busy-ritchie-3fkvk2-t38` (cabeça do PR #82 `2bc623c` + candidata #80 `813f163` + correcção de teste #89 `b449007`; não publicada). **Não aceite**:
+sem revisão crítica independente, sem CI x86 completo, sem playtest humano. Números, capturas e o registo do golden em
+`docs/verification/m01-runtime/t38-combat-posture-staging-v1/` (`README.md`, `GOLDEN_AMENDMENT_01.json`, `HANDOFF.md`).
+
+- **Jogo (dados em `mission.json`, estado em `m01-simulation.js`; o renderer só desenha o que a simulação diz):** o pelotão leste (24) espera de joelhos em 24 lugares desencontrados
+  (nenhuma fila) e levanta-se na retirada; os atiradores dos portões (`de_east_2..13`) em 12 lugares desencontrados virados a oeste, de joelhos, de pé só 1,2 s antes e 2,5 s depois de
+  cada disparo seu; a secção atrás dos sacos do posto, de joelhos desde o bombardeamento das 04:34, com Kowal a levantar-se por cima dos sacos para cada rajada da rkm; os sapadores
+  espaçados, de joelhos ao cabo, agachados a trabalhar no segundo corte e deitados (T07) quando suprimidos ou à espera. A hitbox, os olhos, o ponto visado e a origem dos tiros seguem a
+  postura desenhada. Saves anteriores recolocam quem ainda está no lugar antigo.
+- **O que NÃO mudou:** conclusão, checkpoints, objectivos, horas de batalha dos eventos fixos, 18 homens às 06:00, sobreviventes finais (12/18), `dlg_m01_049` (auditoria de 24 rotas contra `ef35c7a`).
+  O RNG diverge (hora do reparo −223…+154 s, `dlg_m01_027` muda em 3 das 24 rotas, tiros no jogador 16 → 18 no total).
+- **Golden:** `tests/fixtures/m01-t38-gameplay-baseline.json` estava desactualizado desde `4772b24` (12 lugares dos portões); regenerado em x86 só com
+  `tools/verification/m01-combat-posture-staging-audit.mjs` e verificado byte a byte; emenda 01 documentada, golden antigo guardado. Sem mudança em `m01-simulation.js`.
+- **Verificação local (x86, SwiftShader, máquina partilhada com carga ~20; Playwright com `CI=1` para os orçamentos de tempo de CI, sob `flock`):** `npm test` 967/967 e `npm run build` OK; Playwright (`CI=1`, sob `flock`) `m01.spec.js` + `m01-mg34-prone.spec.js`: 30/32 (Kowal `:196` e mg34-prone `:45` passam; `:50` e `:426` falharam sob carga, análise no README da pasta); `m01-anim-resolver`, `m01-distant-front-impostors`, as capturas e a comparação do `:426` com a base estavam na fila do `flock` quando isto foi escrito.
+- **Pendente:** revisão crítica; CI; playtest; decisão de design sobre cobertura real vinda de oeste para os atiradores dos portões (precisa de props); `m01-postprocess-grading` (grupo A acima) continua a precisar de `M01_GRADING_BEFORE_DIR`.
+
 ## Candidato `integ-full`: quatro regressões de browser em `m01.spec.js` — 2026-10-16
 
 CI 38838894714 (`998d6d0`, shard 4/4) falhou em :77, :112, :310 e :544; o CI V7 (`67c3cda`, run 38759449619) tinha 85/86. Bissecção pelos merges de primeira linha e correcções sem tocar na simulação nem no gameplay (nenhuma golden mexe):
