@@ -1,13 +1,14 @@
 {
   "task": "M01-COMBAT-POSTURE-STAGING-V1",
-  "predecessor": "ef35c7ab24d75d87ca6435891f1977fd14d7a52c",
-  "predecessorSourceSha256": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
-  "sourceSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
-  "candidate": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
-  "gameplayInputsSha256": "741888a156af732c149bf8118a9894232c3513398c54644a4bf398b8610491dc",
+  "predecessor": "5a169babb638d1d09608f9a2bb84d1528f1aab4b",
+  "predecessorSourceSha256": "c06c1b1be4e2d1eddffa14b791d661d95bb1d0aefbae7cb4e80f37ecf92083a2",
+  "sourceSha256": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9",
+  "candidate": "9f7945b3ba66f57871aef61a13699960acc953a8",
+  "gameplayInputsSha256": "2674bdebae5151bd2c7aed48b59d5c54dc5fdcc0cd844277c1115ee62b7f3d43",
   "node": "v22.22.0",
   "arch": "x64",
   "invariants": "equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time",
+  "measured": "not invariants, they legitimately move with the lines of sight: per route and per MG34 gunner the bursts by kind of target (squad = Kowal, area = the forward post, others = player, repair, platoon, ...) and the calls of the callout co_m01_enemy_mg_fire_on_squad",
   "routes": [
     {
       "seed": 19390901,
@@ -172,6 +173,33 @@
           "round-impact": 919,
           "npc-shot": 127,
           "player-hit": 2
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 42,
+            "area": 0,
+            "others": 70
+          },
+          "kinds": {
+            "platoon": 7,
+            "player": 40,
+            "repair": 23,
+            "squad": 42
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 21,
+              "area": 0,
+              "others": 43
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 27
+            }
+          },
+          "fireOnSquadCalls": 82
         }
       },
       "after": {
@@ -334,6 +362,34 @@
           "round-impact": 926,
           "npc-shot": 126,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 14,
+            "area": 27,
+            "others": 75
+          },
+          "kinds": {
+            "area": 27,
+            "platoon": 11,
+            "player": 41,
+            "repair": 23,
+            "squad": 14
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 10,
+              "area": 11,
+              "others": 45
+            },
+            "de_east_1": {
+              "squad": 4,
+              "area": 16,
+              "others": 30
+            }
+          },
+          "fireOnSquadCalls": 55
         }
       }
     },
@@ -500,6 +556,33 @@
           "round-impact": 930,
           "npc-shot": 123,
           "player-hit": 3
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 41,
+            "area": 0,
+            "others": 76
+          },
+          "kinds": {
+            "platoon": 14,
+            "player": 41,
+            "repair": 21,
+            "squad": 41
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 21,
+              "area": 0,
+              "others": 48
+            },
+            "de_east_1": {
+              "squad": 20,
+              "area": 0,
+              "others": 28
+            }
+          },
+          "fireOnSquadCalls": 82
         }
       },
       "after": {
@@ -662,6 +745,34 @@
           "round-impact": 924,
           "npc-shot": 123,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 8,
+            "area": 33,
+            "others": 74
+          },
+          "kinds": {
+            "area": 33,
+            "platoon": 14,
+            "player": 39,
+            "repair": 21,
+            "squad": 8
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 2,
+              "area": 19,
+              "others": 46
+            },
+            "de_east_1": {
+              "squad": 6,
+              "area": 14,
+              "others": 28
+            }
+          },
+          "fireOnSquadCalls": 47
         }
       }
     },
@@ -819,15 +930,42 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 84,
-        "rng": 1639616471,
-        "issuedRounds": 2006,
+        "playerHealth": 92,
+        "rng": 704893510,
+        "issuedRounds": 1999,
         "realClock": 1109,
         "events": {
-          "enemy-fire": 1978,
-          "round-impact": 895,
+          "enemy-fire": 1971,
+          "round-impact": 888,
           "npc-shot": 126,
-          "player-hit": 2
+          "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 41,
+            "area": 0,
+            "others": 73
+          },
+          "kinds": {
+            "platoon": 12,
+            "player": 39,
+            "repair": 22,
+            "squad": 41
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 20,
+              "area": 0,
+              "others": 44
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 80
         }
       },
       "after": {
@@ -990,6 +1128,34 @@
           "round-impact": 885,
           "npc-shot": 126,
           "player-hit": 3
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 13,
+            "area": 28,
+            "others": 73
+          },
+          "kinds": {
+            "area": 28,
+            "platoon": 12,
+            "player": 39,
+            "repair": 22,
+            "squad": 13
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 3,
+              "area": 17,
+              "others": 44
+            },
+            "de_east_1": {
+              "squad": 10,
+              "area": 11,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 52
         }
       }
     },
@@ -1156,6 +1322,33 @@
           "round-impact": 860,
           "npc-shot": 123,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 41,
+            "area": 0,
+            "others": 68
+          },
+          "kinds": {
+            "platoon": 10,
+            "player": 38,
+            "repair": 20,
+            "squad": 41
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 20,
+              "area": 0,
+              "others": 40
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 28
+            }
+          },
+          "fireOnSquadCalls": 79
         }
       },
       "after": {
@@ -1318,6 +1511,34 @@
           "round-impact": 868,
           "npc-shot": 122,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 7,
+            "area": 34,
+            "others": 71
+          },
+          "kinds": {
+            "area": 34,
+            "platoon": 11,
+            "player": 41,
+            "repair": 19,
+            "squad": 7
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 5,
+              "area": 16,
+              "others": 39
+            },
+            "de_east_1": {
+              "squad": 2,
+              "area": 18,
+              "others": 32
+            }
+          },
+          "fireOnSquadCalls": 48
         }
       }
     },
@@ -1475,15 +1696,42 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 100,
-        "rng": 1518706014,
-        "issuedRounds": 2043,
+        "playerHealth": 92,
+        "rng": 2673724072,
+        "issuedRounds": 2032,
         "realClock": 1111.3,
         "events": {
-          "enemy-fire": 2021,
-          "round-impact": 935,
+          "enemy-fire": 2010,
+          "round-impact": 924,
           "npc-shot": 127,
-          "player-hit": 0
+          "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 43,
+            "area": 0,
+            "others": 72
+          },
+          "kinds": {
+            "platoon": 10,
+            "player": 39,
+            "repair": 23,
+            "squad": 43
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 21,
+              "area": 0,
+              "others": 43
+            },
+            "de_east_1": {
+              "squad": 22,
+              "area": 0,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 82
         }
       },
       "after": {
@@ -1646,6 +1894,34 @@
           "round-impact": 942,
           "npc-shot": 126,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 20,
+            "area": 23,
+            "others": 76
+          },
+          "kinds": {
+            "area": 23,
+            "platoon": 12,
+            "player": 40,
+            "repair": 24,
+            "squad": 20
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 10,
+              "area": 12,
+              "others": 46
+            },
+            "de_east_1": {
+              "squad": 10,
+              "area": 11,
+              "others": 30
+            }
+          },
+          "fireOnSquadCalls": 60
         }
       }
     },
@@ -1812,6 +2088,33 @@
           "round-impact": 862,
           "npc-shot": 122,
           "player-hit": 3
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 39,
+            "area": 0,
+            "others": 66
+          },
+          "kinds": {
+            "platoon": 8,
+            "player": 39,
+            "repair": 19,
+            "squad": 39
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 19,
+              "area": 0,
+              "others": 39
+            },
+            "de_east_1": {
+              "squad": 20,
+              "area": 0,
+              "others": 27
+            }
+          },
+          "fireOnSquadCalls": 78
         }
       },
       "after": {
@@ -1974,6 +2277,34 @@
           "round-impact": 892,
           "npc-shot": 123,
           "player-hit": 5
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 18,
+            "area": 24,
+            "others": 71
+          },
+          "kinds": {
+            "area": 24,
+            "platoon": 11,
+            "player": 39,
+            "repair": 21,
+            "squad": 18
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 11,
+              "area": 11,
+              "others": 42
+            },
+            "de_east_1": {
+              "squad": 7,
+              "area": 13,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 57
         }
       }
     },
@@ -2140,6 +2471,33 @@
           "round-impact": 917,
           "npc-shot": 126,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 41,
+            "area": 0,
+            "others": 71
+          },
+          "kinds": {
+            "platoon": 11,
+            "player": 39,
+            "repair": 21,
+            "squad": 41
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 20,
+              "area": 0,
+              "others": 42
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 80
         }
       },
       "after": {
@@ -2302,6 +2660,34 @@
           "round-impact": 902,
           "npc-shot": 123,
           "player-hit": 2
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 15,
+            "area": 27,
+            "others": 70
+          },
+          "kinds": {
+            "area": 27,
+            "platoon": 11,
+            "player": 39,
+            "repair": 20,
+            "squad": 15
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 8,
+              "area": 14,
+              "others": 43
+            },
+            "de_east_1": {
+              "squad": 7,
+              "area": 13,
+              "others": 27
+            }
+          },
+          "fireOnSquadCalls": 54
         }
       }
     },
@@ -2468,6 +2854,33 @@
           "round-impact": 889,
           "npc-shot": 124,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 42,
+            "area": 0,
+            "others": 68
+          },
+          "kinds": {
+            "platoon": 10,
+            "player": 36,
+            "repair": 22,
+            "squad": 42
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 22,
+              "area": 0,
+              "others": 41
+            },
+            "de_east_1": {
+              "squad": 20,
+              "area": 0,
+              "others": 27
+            }
+          },
+          "fireOnSquadCalls": 78
         }
       },
       "after": {
@@ -2630,6 +3043,34 @@
           "round-impact": 887,
           "npc-shot": 123,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 13,
+            "area": 29,
+            "others": 69
+          },
+          "kinds": {
+            "area": 29,
+            "platoon": 11,
+            "player": 36,
+            "repair": 22,
+            "squad": 13
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 6,
+              "area": 16,
+              "others": 43
+            },
+            "de_east_1": {
+              "squad": 7,
+              "area": 13,
+              "others": 26
+            }
+          },
+          "fireOnSquadCalls": 49
         }
       }
     },
@@ -2796,6 +3237,33 @@
           "round-impact": 917,
           "npc-shot": 126,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 41,
+            "area": 0,
+            "others": 75
+          },
+          "kinds": {
+            "platoon": 13,
+            "player": 39,
+            "repair": 23,
+            "squad": 41
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 21,
+              "area": 0,
+              "others": 43
+            },
+            "de_east_1": {
+              "squad": 20,
+              "area": 0,
+              "others": 32
+            }
+          },
+          "fireOnSquadCalls": 80
         }
       },
       "after": {
@@ -2949,15 +3417,43 @@
           "evt_m01_debrief"
         ],
         "repairDoneObjective": "done",
-        "playerHealth": 92,
-        "rng": 4151697316,
-        "issuedRounds": 1940,
+        "playerHealth": 76,
+        "rng": 3749625280,
+        "issuedRounds": 1943,
         "realClock": 1091.9,
         "events": {
-          "enemy-fire": 1910,
-          "round-impact": 879,
+          "enemy-fire": 1913,
+          "round-impact": 882,
           "npc-shot": 122,
-          "player-hit": 1
+          "player-hit": 3
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 7,
+            "area": 35,
+            "others": 72
+          },
+          "kinds": {
+            "area": 35,
+            "platoon": 12,
+            "player": 40,
+            "repair": 20,
+            "squad": 7
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 4,
+              "area": 17,
+              "others": 42
+            },
+            "de_east_1": {
+              "squad": 3,
+              "area": 18,
+              "others": 30
+            }
+          },
+          "fireOnSquadCalls": 47
         }
       }
     },
@@ -3124,6 +3620,33 @@
           "round-impact": 891,
           "npc-shot": 127,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 43,
+            "area": 0,
+            "others": 73
+          },
+          "kinds": {
+            "platoon": 11,
+            "player": 38,
+            "repair": 24,
+            "squad": 43
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 22,
+              "area": 0,
+              "others": 44
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 81
         }
       },
       "after": {
@@ -3286,6 +3809,34 @@
           "round-impact": 920,
           "npc-shot": 125,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 12,
+            "area": 29,
+            "others": 77
+          },
+          "kinds": {
+            "area": 29,
+            "platoon": 15,
+            "player": 39,
+            "repair": 23,
+            "squad": 12
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 5,
+              "area": 15,
+              "others": 48
+            },
+            "de_east_1": {
+              "squad": 7,
+              "area": 14,
+              "others": 29
+            }
+          },
+          "fireOnSquadCalls": 51
         }
       }
     },
@@ -3452,6 +4003,33 @@
           "round-impact": 908,
           "npc-shot": 123,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 42,
+            "area": 0,
+            "others": 73
+          },
+          "kinds": {
+            "platoon": 14,
+            "player": 38,
+            "repair": 21,
+            "squad": 42
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 21,
+              "area": 0,
+              "others": 42
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 31
+            }
+          },
+          "fireOnSquadCalls": 80
         }
       },
       "after": {
@@ -3614,6 +4192,34 @@
           "round-impact": 895,
           "npc-shot": 123,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 11,
+            "area": 30,
+            "others": 70
+          },
+          "kinds": {
+            "area": 30,
+            "platoon": 12,
+            "player": 38,
+            "repair": 20,
+            "squad": 11
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 7,
+              "area": 13,
+              "others": 40
+            },
+            "de_east_1": {
+              "squad": 4,
+              "area": 17,
+              "others": 30
+            }
+          },
+          "fireOnSquadCalls": 49
         }
       }
     },
@@ -3780,6 +4386,33 @@
           "round-impact": 877,
           "npc-shot": 122,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 43,
+            "area": 0,
+            "others": 65
+          },
+          "kinds": {
+            "platoon": 10,
+            "player": 36,
+            "repair": 19,
+            "squad": 43
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 22,
+              "area": 0,
+              "others": 38
+            },
+            "de_east_1": {
+              "squad": 21,
+              "area": 0,
+              "others": 27
+            }
+          },
+          "fireOnSquadCalls": 79
         }
       },
       "after": {
@@ -3942,6 +4575,34 @@
           "round-impact": 884,
           "npc-shot": 122,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 8,
+            "area": 32,
+            "others": 71
+          },
+          "kinds": {
+            "area": 32,
+            "platoon": 13,
+            "player": 39,
+            "repair": 19,
+            "squad": 8
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_0": {
+              "squad": 6,
+              "area": 14,
+              "others": 40
+            },
+            "de_east_1": {
+              "squad": 2,
+              "area": 18,
+              "others": 31
+            }
+          },
+          "fireOnSquadCalls": 47
         }
       }
     },
@@ -4105,6 +4766,25 @@
           "round-impact": 280,
           "npc-shot": 116,
           "player-hit": 2
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -4264,6 +4944,25 @@
           "round-impact": 268,
           "npc-shot": 116,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     },
@@ -4427,6 +5126,25 @@
           "round-impact": 263,
           "npc-shot": 118,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -4586,6 +5304,25 @@
           "round-impact": 285,
           "npc-shot": 116,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     },
@@ -4749,6 +5486,25 @@
           "round-impact": 265,
           "npc-shot": 114,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -4908,6 +5664,25 @@
           "round-impact": 292,
           "npc-shot": 118,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     },
@@ -5075,6 +5850,25 @@
           "round-impact": 285,
           "npc-shot": 120,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       },
       "after": {
@@ -5238,6 +6032,25 @@
           "round-impact": 266,
           "npc-shot": 116,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 3
+          },
+          "kinds": {
+            "player": 3
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 3
+            }
+          },
+          "fireOnSquadCalls": 3
         }
       }
     },
@@ -5401,6 +6214,25 @@
           "round-impact": 258,
           "npc-shot": 118,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -5560,6 +6392,25 @@
           "round-impact": 272,
           "npc-shot": 119,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     },
@@ -5723,6 +6574,25 @@
           "round-impact": 272,
           "npc-shot": 115,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -5882,6 +6752,25 @@
           "round-impact": 276,
           "npc-shot": 117,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     },
@@ -6045,6 +6934,25 @@
           "round-impact": 275,
           "npc-shot": 117,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -6208,6 +7116,25 @@
           "round-impact": 273,
           "npc-shot": 115,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       }
     },
@@ -6375,6 +7302,25 @@
           "round-impact": 280,
           "npc-shot": 116,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       },
       "after": {
@@ -6538,6 +7484,25 @@
           "round-impact": 274,
           "npc-shot": 118,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       }
     },
@@ -6705,6 +7670,25 @@
           "round-impact": 250,
           "npc-shot": 119,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       },
       "after": {
@@ -6868,6 +7852,25 @@
           "round-impact": 258,
           "npc-shot": 116,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       }
     },
@@ -7031,6 +8034,25 @@
           "round-impact": 255,
           "npc-shot": 116,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -7194,6 +8216,25 @@
           "round-impact": 272,
           "npc-shot": 115,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 3
+          },
+          "kinds": {
+            "player": 3
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 3
+            }
+          },
+          "fireOnSquadCalls": 3
         }
       }
     },
@@ -7361,6 +8402,25 @@
           "round-impact": 287,
           "npc-shot": 115,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 2
+          },
+          "kinds": {
+            "player": 2
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 2
+            }
+          },
+          "fireOnSquadCalls": 2
         }
       },
       "after": {
@@ -7520,6 +8580,25 @@
           "round-impact": 272,
           "npc-shot": 116,
           "player-hit": 1
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     },
@@ -7683,6 +8762,25 @@
           "round-impact": 273,
           "npc-shot": 118,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       },
       "after": {
@@ -7842,8 +8940,41 @@
           "round-impact": 267,
           "npc-shot": 118,
           "player-hit": 0
+        },
+        "mg34": {
+          "bursts": {
+            "squad": 0,
+            "area": 0,
+            "others": 1
+          },
+          "kinds": {
+            "player": 1
+          },
+          "refused": 0,
+          "byGunner": {
+            "de_east_1": {
+              "squad": 0,
+              "area": 0,
+              "others": 1
+            }
+          },
+          "fireOnSquadCalls": 1
         }
       }
     }
-  ]
+  ],
+  "mg34Totals": {
+    "before": {
+      "squad": 499,
+      "area": 0,
+      "others": 866,
+      "fireOnSquadCalls": 977
+    },
+    "after": {
+      "squad": 146,
+      "area": 351,
+      "others": 888,
+      "fireOnSquadCalls": 635
+    }
+  }
 }
