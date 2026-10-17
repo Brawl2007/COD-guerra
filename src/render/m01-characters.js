@@ -52,12 +52,12 @@ export function soldierProfile(root,nation){
   return found;
 }
 export class M01Characters {
-  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled()}={}){
+  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled(),ikMeasure=debug}={}){
     this.visuals=visualVariation?new SoldierVisualVariations():null;
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
     // T37 foot IK / ramp lean / hand pin (m01-foot-ik.js, m01-hand-pin.js). Presentation only; off = plain clip output, bit-identical.
-    this.ikEnabled=Boolean(ik);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
+    this.ikEnabled=Boolean(ik);this.ikMeasure=Boolean(ikMeasure);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
     if(debug&&typeof window!=='undefined'){this.ikDebug={setEnabled:on=>this.setIkEnabled(on),isEnabled:()=>this.ikEnabled};window.m01CharacterIkDebug=this.ikDebug;}
     // Cross-fade records by actor id (pure data from the resolver). They outlive LOD swaps; they never enter a save.
     this.anim=new Map();
@@ -380,7 +380,7 @@ export class M01Characters {
       if(ikOn){const e=this.ikEntries[ikCount]??={actor:null,inst:null,distance:0,view:null};e.actor=a;e.inst=v;e.distance=d;e.view=visible[visible.length-1];ikCount++;}
     }
     // Foot IK, ramp lean and hand pin run after every clip/additive correction, on the already sampled pose of the selected actors.
-    if(ikOn){updateActorsIk(this.ikEntries,ikCount,quality,time,world,this.ikState);for(let i=0;i<ikCount;i++){const e=this.ikEntries[i];e.actor=e.inst=e.view=null;}}
+    if(ikOn){updateActorsIk(this.ikEntries,ikCount,quality,time,world,this.ikState,this.ikMeasure);for(let i=0;i<ikCount;i++){const e=this.ikEntries[i];e.actor=e.inst=e.view=null;}}
     else this.ikState.recordDisabled(selected.size,quality);
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&(!a.carry||a.carry.phase==='carry')&&selected.has(a.carriedBy)){
       const v=this.instances.get(a.id),socket=this.instances.get(a.carriedBy).root.getObjectByName('carry_socket');

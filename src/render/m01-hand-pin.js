@@ -277,8 +277,9 @@ const _footOptions = { mode: 'full', weight: 1, measure: true };
  * actors, nearest first, recording exact counts and the measured CPU time (`performance.now()`; no FPS is ever derived).
  * `entries[0..count)` are `{ actor, inst, distance, view }` records owned by the caller (reused every frame).
  * `inst` carries `root`, `clip`, `ikRig`, `ik`, `ikApplied`; `view` (optional) is the diagnostics entry that receives `.ik`.
+ * `measure` (default true): re-sample the terrain under the finished boots for the accuracy diagnostics; production passes false (debug/diagnostics only).
  */
-export function updateActorsIk(entries, count, quality, time, ground, state = null) {
+export function updateActorsIk(entries, count, quality, time, ground, state = null, measure = true) {
   const tier = M01_IK_TIER_POLICY[quality] ? quality : 'high';
   const tStart = nowMs();
   let footIkMs = 0;
@@ -331,6 +332,7 @@ export function updateActorsIk(entries, count, quality, time, ground, state = nu
 
     const t0 = nowMs();
     _footOptions.mode = mode;
+    _footOptions.measure = measure;
     const foot = solveActorFootIk(rig, actor, inst.clip, ground, _footOptions, record.footIk);
     const t1 = nowMs();
     footIkMs += t1 - t0;

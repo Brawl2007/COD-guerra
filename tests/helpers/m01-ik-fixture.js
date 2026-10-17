@@ -21,7 +21,7 @@ export const loadIkAssets=()=>cache??=(async()=>{
 /** M01Characters wired with the real soldier GLBs and clip libraries (no network). */
 export async function createIkCharacters(options={}){
   const {sources,clips}=await loadIkAssets();
-  const c=new M01Characters(new THREE.Scene(),{visualVariation:false,debug:false,...options});
+  const c=new M01Characters(new THREE.Scene(),{visualVariation:false,debug:false,ikMeasure:true,...options});
   for(const [k,v] of sources)c.sources.set(k,v);
   for(const [k,v] of clips)c.clips.set(k,v);
   return c;
