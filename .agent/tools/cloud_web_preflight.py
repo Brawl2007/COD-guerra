@@ -21,6 +21,20 @@ AGENTS = {
     "Explore": ("haiku", 8),
     "researcher": ("haiku", 8),
 }
+# The Linux roster has 30 versioned definitions. All 29 worker types remain
+# available to the Captain, but only scoped workers may run in a given session.
+AGENTS.update({
+    "implementer-deep": ("sonnet", 24),
+    "perf-auditor": ("sonnet", 12),
+})
+for family, limits in {
+    "haiku": {"low": 8, "medium": 10, "high": 12, "xhigh": 10, "max": 10},
+    "sonnet": {"low": 14, "medium": 24, "high": 24, "xhigh": 24, "max": 24},
+    "opus": {"low": 8, "medium": 8, "high": 10, "xhigh": 10, "max": 10},
+    "fable": {"low": 6, "medium": 6, "high": 8, "xhigh": 8, "max": 8},
+}.items():
+    for effort_name, limit in limits.items():
+        AGENTS[f"{family}-{effort_name}"] = (family, limit)
 REQUIRED = ("CLAUDE.md", "AGENTS.md", ".claude/settings.json",
             ".claude/hooks/session-start.sh", ".claude/hooks/git-safety.py")
 ERRORS: list[str] = []
@@ -60,6 +74,7 @@ def command_version(name: str) -> str:
 
 
 def main() -> int:
+    ERRORS.clear()
     report("INFO", "root", str(ROOT))
     report("INFO", "remote", os.environ.get("CLAUDE_CODE_REMOTE", "unset"))
     for path in REQUIRED:
@@ -73,6 +88,20 @@ def main() -> int:
             ERRORS.append("SessionStart hook not configured")
     except (OSError, ValueError) as exc:
         ERRORS.append("invalid settings.json: " + type(exc).__name__)
+    agent_dir = ROOT / ".claude/agents"
+    actual_names = {p.stem for p in agent_dir.glob("*.md")}
+    if actual_names != set(AGENTS):
+        ERRORS.append("agent roster mismatch: missing " + repr(sorted(set(AGENTS) - actual_names)) +
+                      " extra " + repr(sorted(actual_names - set(AGENTS))))
+    report("INFO", "project agent definitions", str(len(actual_names)))
+    try:
+        captain_file = (agent_dir / "captain.md").read_text(encoding="utf-8")
+        allow = re.search(r"(?m)^tools: Agent\\(([^)]*)\\)", captain_file)
+        allowed = {name.strip() for name in allow.group(1).split(",")} if allow else set()
+        if allowed != set(AGENTS) - {"captain"}:
+            ERRORS.append("Captain Agent(...) whitelist does not cover all 29 worker types")
+    except OSError:
+        ERRORS.append("Captain Agent(...) whitelist unavailable")
     for name, (model, turns) in AGENTS.items():
         path = ROOT / ".claude/agents" / (name + ".md")
         if not path.is_file():

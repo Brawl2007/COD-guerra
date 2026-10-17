@@ -48,6 +48,25 @@ class CloudWebAgentParityTests(unittest.TestCase):
                 self.assertEqual(meta["model"], model)
                 self.assertEqual(int(meta["maxTurns"]), limit)
 
+    def test_all_specialists_have_bounded_turns(self):
+        names = {p.stem for p in AGENTS_DIR.glob("*.md")}
+        for name in names - {"captain"}:
+            with self.subTest(agent=name):
+                meta = fields(AGENTS_DIR / (name + ".md"))
+                self.assertIn("maxTurns", meta)
+                self.assertGreaterEqual(int(meta["maxTurns"]), 1)
+                self.assertLessEqual(int(meta["maxTurns"]), 24)
+
+    def test_cloud_web_preflight_covers_full_roster(self):
+        import importlib.util
+        module_path = REPO / ".agent/tools/cloud_web_preflight.py"
+        spec = importlib.util.spec_from_file_location("cloud_web_preflight_parity", module_path)
+        self.assertIsNotNone(spec)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.assertEqual(set(module.AGENTS), {p.stem for p in AGENTS_DIR.glob("*.md")})
+        self.assertEqual(module.AGENTS["captain"], ("opus", 0))
+
     def test_cloud_session_has_single_captain_and_keeps_integrator_paused(self):
         captain = (AGENTS_DIR / "captain.md").read_text(encoding="utf-8")
         self.assertIn("only Captain", captain)

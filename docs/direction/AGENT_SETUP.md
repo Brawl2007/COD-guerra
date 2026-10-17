@@ -67,6 +67,8 @@ claude --agent captain
 Dentro da sessão: `/status` (deve mostrar a conta Max, não uma chave de API), `/advisor fable`, `/usage`.
 Para Cloud Web, selecionar Opus no modelo da sessão; configurações locais em `~/.claude/` não são transportadas automaticamente. Ver `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`.
 
+**Diferença Cloud Web:** o instalador abaixo destina-se ao Linux local, não à VM Cloud efémera. Na Cloud os agentes já versionados em `.claude/agents/` são a fonte de verdade; não instalar cópias globais nem restaurar automaticamente tokens/chaves ou o serviço Jev. A equipa completa continua disponível, mas a sessão inicia somente um trabalhador de cada vez (salvo autorização explícita).
+
 ## Agentes em todas as pastas e sessões da máquina
 
 Os agentes de projeto só existem nas pastas cuja branch tem `.claude/agents/`. Para os ter em qualquer

@@ -6,6 +6,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 
 - **Uma única sessão principal Cloud Web por vez**, modelo Opus, como Capitão. O operador mantém a Routine antiga PAUSADA. Não criar outra sessão coordenadora. Sessões Cloud não são uma VM permanente, e uma sessão não transfere automaticamente subagentes entre VMs.
 - Os agentes do projeto em `.claude/agents/` são carregados pelo Claude Code Web. `captain.md` governa o papel principal quando explicitamente selecionado; numa sessão Web comum, o `CLAUDE.md` e o prompt de arranque abaixo instruem o modelo principal a cumprir esse papel. **Nunca invocar `captain` como um subagente**.
+- Todas as **30 definições originais** do Linux permanecem versionadas; o Capitão pode delegar aos **29 tipos de agentes** através da allowlist Agent(...). Isto é disponibilidade, NÃO autorização para os iniciar simultaneamente. Os 29 trabalhadores têm maxTurns apropriado à função (6–24); o Capitão não deve retomar automaticamente subagentes que atinjam o limite.
 - Fluxo inicial seguro: Opus Captain -> no máximo um `implementer` Sonnet -> `verifier` Sonnet -> `reviewer` Sonnet, quando a verificação for suficiente. Haiku `explorer`/`researcher` apenas para leituras realmente necessárias; `reviewer-critical` Opus somente mediante evidência de risco elevado. Não ativar `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`.
 - `maxTurns` estabelece limite por invocação e devolve trabalho parcial; **não é teto de tokens nem impede um Capitão de mandar retomar**. O protocolo exige inspeção e uma decisão justificada antes de qualquer retomada. A UI continua sendo o controlo imediato da quota.
 
@@ -30,7 +31,7 @@ Estado: migração **em PR draft**, não ativada no `main`. O objetivo é reutil
 1. Manter Routine antiga pausada e verificar que todas as sessões Opus antigas terminaram.
 2. Rever este PR draft. Antes do merge, **arrancar sessão Web manual num checkout desta branch** (não assumir que um clone de `main` já contém os novos ficheiros).
 3. Selecionar Opus. Executar `python3 .agent/tools/cloud_web_preflight.py` e guardar a saída sanitizada; não enviar segredos.
-4. Ler `CLAUDE.md` e este documento. Verificar que a ferramenta Agent enxerga `implementer`, `verifier` e `explorer`. Testar só um Haiku de leitura curta (sem trabalho de gameplay), com handoff compacto.
+4. Ler `CLAUDE.md` e este documento. Verificar que os 30 ficheiros existem e a allowlist do Capitão cobre os 29 trabalhadores, incluindo as combinações especializadas. Testar só um Haiku de leitura curta (sem trabalho de gameplay), com handoff compacto.
 5. Executar o diagnóstico de segurança e os testes Python da configuração, se existentes no checkout. Não iniciar nova T da M01 durante a migração.
 6. Medir no UI utilização antes/depois e observar custo da execução; não comparar totais cumulativos exibidos como se fossem tokens cobrados.
 7. Confirmar nenhum novo Capitão, nenhum Agent Teams, nenhum polling repetitivo, nenhum commit de gameplay, nenhum novo PR de candidata; recolher SHA/handoff.
