@@ -2,6 +2,8 @@ import {test,expect} from '@playwright/test';
 import {writeFileSync} from 'node:fs';
 import {canonicalViews,carryViews} from '../../tools/verification/m01-t40-views.mjs';
 import {driver} from '../helpers/m01-route.js';
+// Software WebGL boots and re-renders the full M01 scene slowly; keep the production viewport and real controls, budget wall time.
+test.describe.configure({timeout:process.env.CI?360000:240000});
 const key='cod-guerra:checkpoint:m01:v2';
 async function seed(page,snapshot,quality='low'){
  await page.addInitScript(({key,snapshot,quality})=>{if(!sessionStorage.getItem('t40-t50-seeded')){localStorage.setItem(key,JSON.stringify(snapshot));sessionStorage.setItem('t40-t50-seeded','1');}localStorage.setItem('cod-guerra:visual-quality',quality);},{key,snapshot,quality});

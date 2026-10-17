@@ -91,6 +91,9 @@ function expectCurve(frames){
 test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased curve; pause freezes the weapon region',async({page},info)=>{
   test.setTimeout(TIMEOUT());
   const {errors,failed}=await open(page,saves.hip);
+  // T40: the dedicated FP rig arrives asynchronously and rebuilds the presentation from authoritative flags (visual=null).
+  // Measure the eased input transition on the resident rig; late arrival is covered by the delayed-residency test in m01-fp-arms.spec.js.
+  await page.waitForFunction(()=>{const g=window.gameDiagnostics(),m=g.m01,v=m.viewModel;return m.characters.loaded.includes('fp:0')&&v.fpVariant==='fp-arms-v2'&&v.clock===g.clock;});
   // HIP: nothing aimed, world FOV 70, no wall in reach.
   const hip=await diag(page);
   expect(hip.player.aiming).toBe(false);expect(hip.m01.viewModel.aimBlend).toBe(0);expect(hip.m01.viewModel.presentation.fov).toBe(70);
@@ -103,7 +106,8 @@ test('hip, mid-ADS and ADS by real right-mouse aim: 70 -> 48 on the shared eased
   await install(page);
   await page.evaluate(()=>{window.__feel.frames=[];window.__feel.recording=true;window.__feel.captureMid=true;});
   await page.mouse.down({button:'right'});
-  await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});
+  try{await page.waitForFunction(()=>window.__feel.mid,null,{timeout:60000});}
+  finally{await info.attach('mid-ads-frames.json',{body:JSON.stringify(await page.evaluate(()=>({frames:window.__feel.frames,mid:window.__feel.mid,clock:window.gameDiagnostics().clock,loaded:window.gameDiagnostics().m01.characters.loaded}))),contentType:'application/json'});}
   await expect(page.locator('#pause')).toBeVisible();
   const mid=await page.evaluate(()=>window.__feel.mid);
   expect(mid.aiming).toBe(true);expect(mid.aim).toBeGreaterThanOrEqual(.25);expect(mid.aim).toBeLessThan(1);
