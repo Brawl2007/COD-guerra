@@ -94,6 +94,12 @@ def plan(a: argparse.Namespace) -> dict:
     description = " ".join(a.description.split())[:240]
     if not description:
         raise Blocked("description required")
+    if a.ponytail:
+        if a.read_only:
+            raise Blocked("Ponytail pilot is for Sonnet implementation only, not Haiku scans")
+        skill = root / ".claude/skills/ponytail/SKILL.md"
+        if not skill.is_file() or not skill.read_text(encoding="utf-8").startswith("---\nname: ponytail\n"):
+            raise Blocked("official local Ponytail skill missing or invalid")
     phases = ("scan",) if a.read_only else PHASES
     dispatch = []
     for phase in phases:
@@ -105,14 +111,18 @@ def plan(a: argparse.Namespace) -> dict:
                          "offline_router": routed["source"],
                          "instruction": {
                              "scan": "Read only; report at most 8 path:line findings; do not edit or run network calls.",
-                             "edit": "Change ONLY scoped files; focused checks; send diff summary, not full logs.",
+                             "edit": ("Invoke Skill(ponytail) once in this Sonnet worker ONLY; "
+                                      "PONYTAIL_PILOT=full; quality requirements and tests take priority. "
+                                      if a.ponytail else "Baseline: do NOT invoke Ponytail skill. ")
+                                     + "Change ONLY scoped files; focused checks; send diff summary, not full logs.",
                              "verify": "Independent verification; report commands, SHA and actual PASS/FAIL.",
                              "review": "Independent review of tested diff; report ACCEPT/REJECT and evidence.",
                          }[phase]})
     return {"schema_version": 1, "task_id": a.task_id, "description": description,
             **ident, "scope": paths, "read_only": bool(a.read_only),
             "max_simultaneous_workers": 1, "router": "Jev local offline; no TypeSafe",
-            "phases": dispatch, "suggested_token_stop": a.token_stop,
+            "phases": dispatch, "ponytail_mode": "full" if a.ponytail else "off",
+            "suggested_token_stop": a.token_stop,
             "token_limit_is_enforced": False,
             "restrictions": "No second captain, Agent Teams, M01, paid APIs, main, PR80/84, deploy, force-push, cloud-state publication."}
 
@@ -168,6 +178,7 @@ def main(argv=None) -> int:
     p.add_argument("--file", action="append", required=True)
     p.add_argument("--risk", choices=("low", "medium", "high"), default="medium")
     p.add_argument("--read-only", action="store_true")
+    p.add_argument("--ponytail", action="store_true", help="opt-in Ponytail 5 skill only for Sonnet edit phase")
     p.add_argument("--token-stop", type=int, default=25000)
     p.add_argument("--expect-sha", default="")
     v = subs.add_parser("verify", help="Validate independent phase evidence and budget")
