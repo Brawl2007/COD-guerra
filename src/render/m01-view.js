@@ -111,7 +111,7 @@ export class M01View {
     this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
     this.kitsSettled=false;   // every bridge kit GLB has arrived or failed (see M01BridgeFinishRuntime.sync)
     this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null,kitsSettled:false};
-    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
+    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true,clock:null};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);this.trainLife.lampsEnabled=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
     }
@@ -775,7 +775,7 @@ export class M01View {
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
     if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
     this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
-    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeFinish.select(this.bridgeSelectInput);
+    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeSelectInput.clock=battleClock;this.bridgeFinish.select(this.bridgeSelectInput);   // T43: battle clock drives the truss<->card dither crossfade
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;

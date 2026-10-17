@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {LOD_BAYER_GLSL,LOD_FADE_VALUE_GLSL_BODY} from './m01-lod-dither.js';
 import manifest from '../../assets/models/provisional/m01/m01-bridges/materials/manifest.json' with {type:'json'};
 export const M01_BRIDGE_MATERIAL_MANIFEST=manifest;
 export function bridgeFamily(mesh,source){
@@ -10,6 +11,23 @@ export function bridgeFamily(mesh,source){
  if(/_timber$/.test(mesh.name))return 'timber';
  if(/_(steel|rivet)$/.test(mesh.name))return 'painted-steel';
  return null;
+}
+// T43 slice 5: screen-door dither for the detailed-truss <-> impostor-card crossfade. One shared float uniform per material, written per mesh
+// in onBeforeRender (see M01BridgeFinishRuntime.observe) with the single-float role+progress encoding of encodeInstanceFade():
+// 1 = resting (keeps every pixel), 0..1 incoming, -1..0 outgoing. No blending, no transparency sorting, depthWrite unchanged.
+// Wraps whatever onBeforeCompile / cache key the material already has; call it last.
+export function bridgeFadeDither(material){
+ const fade={value:1},previous=material.onBeforeCompile,baseKey=typeof material.customProgramCacheKey==='function'?material.customProgramCacheKey():'';
+ material.userData.m01BridgeFade=fade;
+ material.onBeforeCompile=(shader,renderer)=>{
+  if(typeof previous==='function')previous.call(material,shader,renderer);
+  shader.uniforms.uBridgeFade=fade;
+  shader.fragmentShader=shader.fragmentShader
+   .replace(/void\s+main\s*\(\s*\)\s*\{/,m=>`uniform float uBridgeFade;\n${LOD_BAYER_GLSL}${m}`)
+   .replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\n'+LOD_FADE_VALUE_GLSL_BODY('uBridgeFade'));
+ };
+ material.customProgramCacheKey=()=>`${baseKey}:m01-bridge-fade-v1`;
+ return fade;
 }
 // Wrap the complete inherited shader, including T31's contact discard and original cache key.
 // World-metre sampling supplies scale for baked GLB shapes and transformed instances without touching UV/accessor bytes.
@@ -45,7 +63,7 @@ vec4 bridgeSample(sampler2D tex){vec3 p=vM01BridgeMetres/${manifest.materials[fa
 #endif
  normal=normalize(bridgeFrame*bridgeNormal);`);
  };
- material.customProgramCacheKey=()=>`${key.call(source)}:m01-bridge-metre-v1:${family}`;material.needsUpdate=true;return material;
+ material.customProgramCacheKey=()=>`${key.call(source)}:m01-bridge-metre-v1:${family}`;bridgeFadeDither(material);material.needsUpdate=true;return material;
 }
 export async function loadBridgeTexture(url,{signal}={}){
  const response=await fetch(url,{signal});if(!response.ok)throw Error(`Bridge texture HTTP ${response.status}`);
