@@ -4,6 +4,7 @@ description: Document and data reader: Summarises handoffs, reports, mission.jso
 tools: Read, Grep, Glob
 model: haiku
 effort: medium
+maxTurns: 10
 ---
 
 You are the COD-guerra "Document and data reader" worker (Haiku 5.5, medium effort).

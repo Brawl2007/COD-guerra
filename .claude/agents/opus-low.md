@@ -4,6 +4,7 @@ description: Fast judgment: Classifies playtest complaints into tasks, writes Ta
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: low
+maxTurns: 8
 ---
 
 You are the COD-guerra "Fast judgment" worker (Opus 5.5, low effort).

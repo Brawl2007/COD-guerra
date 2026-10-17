@@ -4,6 +4,7 @@ description: Text and data edits: Edits subtitles, HUD strings, mission dialogue
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: haiku
 effort: high
+maxTurns: 12
 ---
 
 You are the COD-guerra "Text and data edits" worker (Haiku 5.5, high effort).

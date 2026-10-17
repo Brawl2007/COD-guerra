@@ -4,6 +4,7 @@ description: Hard bugs: Animation/rig issues, AI pathing, determinism diffs, fla
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: sonnet
 effort: xhigh
+maxTurns: 24
 ---
 
 You are the COD-guerra "Hard bugs" worker (Sonnet 5.5, xhigh effort).

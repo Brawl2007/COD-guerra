@@ -4,6 +4,7 @@ description: Combat and weapon mechanics: Implements weapon firing (e.g. ckm wz.
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: sonnet
 effort: max
+maxTurns: 24
 ---
 
 You are the COD-guerra "Combat and weapon mechanics" worker (Sonnet 5.5, max effort).

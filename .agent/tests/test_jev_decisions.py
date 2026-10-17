@@ -124,7 +124,7 @@ class Base(unittest.TestCase):
         self.keyfile.write_text("TYPESAFE_API_KEY=%s\n" % SENTINEL)
         os.chmod(self.keyfile, 0o600)
         self.env = {k: v for k, v in os.environ.items()
-                    if not k.startswith(("TYPESAFE", "COD_JEV"))}
+                    if not k.startswith(("TYPESAFE", "COD_JEV")) and k != "CLAUDE_CODE_REMOTE"}
         self.env.update(HOME=str(self.tmp), COD_JEV_LEDGER=str(self.ledger),
                         COD_JEV_KEY_FILE=str(self.keyfile), TYPESAFE_BASE_URL=self.stub.url,
                         COD_JEV_LIMIT=str(tjr.TEST_CAP))

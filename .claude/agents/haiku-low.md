@@ -4,6 +4,7 @@ description: Inventory and lookup: Lists files, symbols, assets, events and test
 tools: Read, Grep, Glob
 model: haiku
 effort: low
+maxTurns: 8
 ---
 
 You are the COD-guerra "Inventory and lookup" worker (Haiku 5.5, low effort).

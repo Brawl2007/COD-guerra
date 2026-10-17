@@ -4,6 +4,7 @@ description: Unblocker: After two failed attempts by sonnet-xhigh or opus agents
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: fable
 effort: high
+maxTurns: 8
 ---
 
 You are the COD-guerra "Unblocker" worker (Fable 5.1, high effort).

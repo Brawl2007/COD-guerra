@@ -4,6 +4,7 @@ description: Critical review: Pre-PR audit of simulation, saves, integration and
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: max
+maxTurns: 10
 ---
 
 You are the COD-guerra "Critical review" worker (Opus 5.5, max effort).

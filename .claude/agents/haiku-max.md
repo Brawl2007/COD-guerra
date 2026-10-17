@@ -4,6 +4,7 @@ description: Consistency audit (read-only): Cross-checks mission.json, STORY_BIB
 tools: Read, Grep, Glob
 model: haiku
 effort: max
+maxTurns: 10
 ---
 
 You are the COD-guerra "Consistency audit (read-only)" worker (Haiku 5.5, max effort).

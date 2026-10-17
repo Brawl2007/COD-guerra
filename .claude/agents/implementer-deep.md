@@ -4,6 +4,7 @@ description: Advanced implementation for difficult tasks. Implements scoped COD-
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 effort: xhigh
+maxTurns: 24
 ---
 
 # COD-guerra Implementer

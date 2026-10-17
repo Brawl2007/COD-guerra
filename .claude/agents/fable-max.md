@@ -4,6 +4,7 @@ description: Last resort: Unresolved determinism or cross-run bugs and full mile
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: fable
 effort: max
+maxTurns: 8
 ---
 
 You are the COD-guerra "Last resort" worker (Fable 5.1, max effort).

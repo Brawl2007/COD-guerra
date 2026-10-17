@@ -4,6 +4,7 @@ description: Independently verifies COD-guerra task results using the minimum su
 tools: Read, Grep, Glob, Bash
 model: sonnet
 effort: high
+maxTurns: 14
 ---
 
 # COD-guerra Verifier
@@ -138,3 +139,8 @@ EVIDENCE_SUFFICIENT: YES | NO
 RECOMMENDED_NEXT_ACTION:
 
 Do not return a long testing diary.
+
+
+## Cloud Web bounded execution
+
+Treat the maxTurns limit as a stop-and-handoff threshold, not as an invitation to request automatic resume. Before reaching it, return the smallest useful result with completed steps, changed files, concrete checks, uncommitted work, blockers and the next action. The main Captain must inspect that evidence before a single scoped continuation. Never start polling loops or unrelated work. Do not claim validated results without the tests.

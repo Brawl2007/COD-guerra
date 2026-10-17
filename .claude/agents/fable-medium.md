@@ -4,6 +4,7 @@ description: Campaign and mission design review: Reviews the 30-mission arc, his
 tools: Read, Grep, Glob
 model: fable
 effort: medium
+maxTurns: 6
 ---
 
 You are the COD-guerra "Campaign and mission design review" worker (Fable 5.1, medium effort).

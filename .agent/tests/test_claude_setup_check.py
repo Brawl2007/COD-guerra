@@ -46,7 +46,7 @@ class ClaudeSetupCheckTest(unittest.TestCase):
         missing = [m for lvl, m in out if lvl == "WARN"]
         self.assertEqual(missing, [])
         lines = " ".join(m for _, m in out)
-        self.assertIn("agent captain (project): model=opus effort=high", lines)
+        self.assertIn("agent captain (project): model=opus effort=medium", lines)  # deliberate Cloud Web savings profile
         self.assertIn("agent Explore (project): model=haiku effort=low", lines)
         self.assertIn("agent researcher (project): model=haiku effort=low", lines)
         self.assertIn("20 combination agents (4 models x 5 effort levels)", lines)

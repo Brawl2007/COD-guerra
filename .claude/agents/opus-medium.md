@@ -4,6 +4,7 @@ description: System design: Design docs for destruction, vehicles, mission direc
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: opus
 effort: medium
+maxTurns: 8
 ---
 
 You are the COD-guerra "System design" worker (Opus 5.5, medium effort).
