@@ -172,7 +172,7 @@ export class M01Impostors {
     this.material=new THREE.ShaderMaterial({vertexShader:VERT,fragmentShader:FRAG,uniforms:this.uniforms,transparent:true,depthWrite:false,depthTest:true,fog:false,toneMapped:false,side:THREE.DoubleSide});
     this.material.customProgramCacheKey=()=>'m01-distant-front-impostors-v1';
     this.meshes={};this.capacity=0;this.last=null;this.backlight=0;this.rimFacing=0;
-    this.dummy=new THREE.Object3D();
+    this.dummy=new THREE.Object3D();this._fwd=new THREE.Vector3();
     if(debug&&typeof window!=='undefined')window.m01ImpostorDebug={setEnabled:on=>{this.enabled=Boolean(on);}};   // `enabled` is part of the view paused-frame key
   }
   allocate(quality){
@@ -205,7 +205,7 @@ export class M01Impostors {
   /** After the camera is placed: matrices, ink and rim. `fog` is the linear fog colour, `sunDir` the game-space sun direction. */
   sync({camera,clock,battleClock,fog,sunColor,sunDir,viewportHeight}){
     const eye=camera.position,fov=camera.fov,counts={pl:0,de:0},list=[];
-    const fwd=new THREE.Vector3();camera.getWorldDirection(fwd);
+    const fwd=this._fwd;camera.getWorldDirection(fwd);
     const strength=backlightStrength(battleClock),facing=sunDir?sunFacing([fwd.x,fwd.z],[sunDir[0],sunDir[2]]):0;
     this.backlight=strength;this.rimFacing=facing;
     // sun side on screen: sign of (sun - view) along the camera's right vector (right = fwd x up)
@@ -227,6 +227,8 @@ export class M01Impostors {
     }
     for(const n of IMPOSTOR_NATIONS){
       const m=this.meshes[n];if(!m)continue;m.count=counts[n];
+      if(!counts[n])continue;   // count 0 draws nothing: no upload
+      m.instanceMatrix.clearUpdateRanges();m.instanceMatrix.addUpdateRange(0,counts[n]*16);
       m.instanceMatrix.needsUpdate=true;m.geometry.getAttribute('aShape').needsUpdate=true;m.geometry.getAttribute('aInk').needsUpdate=true;
     }
     this.last={clock,list,counts};
