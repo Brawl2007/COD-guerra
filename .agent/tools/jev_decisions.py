@@ -181,7 +181,8 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
     if key is None and kstatus != "proxy":
         return fallback("insecure_key_file" if kstatus == "insecure_key_file" else "no_key")
     try:
-        used = len(jr.read_ledger(lpath)["calls"])
+        prior = jr.read_ledger(lpath)["calls"]
+        used = len(prior)
     except jr.LedgerUnreadable:
         return fallback("ledger_unreadable")
     if limit is not None and used >= limit:
@@ -191,7 +192,7 @@ def consult(out, spec, *, enable_jev, offline, dry_run, min_confidence,
     body = {"state": spec["state"], "model": "jev-latest", "questions": {
         qid: {"type": "choice", "instructions": q["instructions"], "criteria": q["criteria"]}
         for qid, q in spec["questions"].items()}}
-    if not jr.cloud_credit_available(e, jr.read_ledger(lpath)["calls"], body):
+    if not jr.cloud_credit_available(e, prior, body):
         return fallback("budget_exhausted", budget={"kind": "cloud_usd_5_ledger_estimate"})
     if dry_run:
         out["dry_run"] = {
