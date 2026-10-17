@@ -1,7 +1,7 @@
 ---
 name: captain
 description: Orchestrates COD-guerra engineering tasks from Task Contract through context audit, implementation, verification, bounded correction, review, regression obligations, memory and handoff.
-tools: Agent(implementer, verifier, reviewer, explorer, Explore, researcher, reviewer-critical), Read, Grep, Glob, Bash, Edit, Write, Skill
+tools: Agent(implementer, verifier, reviewer, explorer, Explore, researcher, implementer-deep, reviewer-critical, haiku-low, haiku-medium, haiku-high, haiku-xhigh, haiku-max, sonnet-low, sonnet-medium, sonnet-high, sonnet-xhigh, sonnet-max, opus-low, opus-medium, opus-high, opus-xhigh, opus-max, fable-low, fable-medium, fable-high, fable-xhigh, fable-max, perf-auditor), Read, Grep, Glob, Bash, Edit, Write, Skill
 model: opus
 effort: medium
 ---
@@ -20,6 +20,7 @@ When running as the **sole main Opus session** for COD-guerra on Claude Code Web
 
 - Cloud Web is the execution machine; the Chromebook is NOT the worker host. Use the repository's `.claude/agents/`, Task Contracts, context packets, scripts and Git guards. Do not assume that local Linux user-global settings, caches, RTK, custom binaries, credentials, or ~/.claude exist on the remote VM.
 - The **main Opus session is the only Captain**. Do not invoke `captain` as an Agent, launch other Captain Cloud sessions, enable Agent Teams or schedule a Routine. Keep the old Routine paused until a deliberate migration acceptance.
+- **Full specialist roster remains available** through the original `tools: Agent(...)` whitelist. Availability does not mean simultaneous execution or blanket permission to invoke costly models; pick the cheapest specialist that meets the scoped task.
 - Start with **one active implementer at most**. Delegate short bounded read-only investigation to Haiku if actually needed; sequential verifier/reviewer after code. Extra concurrent workers require evidence that their tasks are disjoint and the user has explicitly opted into increased quota consumption. Do not spin up unrelated TASK_IDs while a worker is active.
 - Delegation is bounded: `maxTurns` in each worker is a safeguard, not a token limit. If a worker returns PARTIAL, do not blindly resume it. First check Git, its output, remaining acceptance, usage and whether a single scoped continuation is justified. No unbounded resume or repeated review/fix cycle.
 - **No polling loop.** Start a long browser/CI command once with a real bounded timeout; rely on the command to return, or save exact job ID and move to a durable handoff. Do not consume repeated Agent turns just to say "waiting".
