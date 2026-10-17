@@ -10,6 +10,7 @@ import {nodeCharacterAssets} from '../tools/verification/m01-soldier-variation-a
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
 import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
+import {withoutT47} from './helpers/m01-layout-t47-delta.js';
 import {driver,toRepair} from './helpers/m01-route.js';
 const assets=await nodeCharacterAssets();
 function characters(on=true){const c=new M01Characters(new THREE.Scene(),{visualVariation:on});c.sources=assets.sources;c.clips=assets.clips;return c;}
@@ -88,6 +89,7 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
     assert.ok(start>=0,'baseline engine contract marker');
     assert.ok(actual.includes(baseline.subarray(start)),'original M01 gameplay contract remains intact');
     assert.match(actual.toString('utf8'),/## Apresentação das animações — V1 \(schema 2\)/);
+  }else if(p==='missions/m01-tczew/map-layout.json'||p==='missions/m01-tczew/HISTORICAL_RESEARCH.md'){assert.deepEqual(withoutT47(p,actual),baseline,p);   // T47: only the named hunks (three layout hunks, one research row) differ from the base
   }else{assert.deepEqual(actual,baseline,p);}
  }
  const file=readFileSync(new URL('../src/render/m01-characters.js',import.meta.url),'utf8'),old=execFileSync('git',['show',base+':src/render/m01-characters.js'],{encoding:'utf8'});
