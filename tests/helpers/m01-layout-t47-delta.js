@@ -65,9 +65,33 @@ export function historyWithoutT47(input){
   return Buffer.from(text.replace(T47_HISTORY_ROW,()=>''));
 }
 
-/** The base-comparable bytes of a mission file that T47 changed by named hunks only (map-layout.json, HISTORICAL_RESEARCH.md). */
+// T47 also updated missions/m01-tczew/MAP.md (the ckm stands at the RECONSTRUCTED post S2 and its cover node is cv_ckm_post, not the casemate loophole). Four hunks: one table row, the cover-node
+// count, the reserve line and the positional-sound line. The guard reverts exactly these, each pair [text now, text before T47] found exactly once; every other byte is still the base's.
+export const T47_MAP_DELTA=[
+  ["| Posto da ckm wz.30 (S2: aterro entre as pontes, 8; −3; 26; nenhuma fonte dá a posição da ckm) | `RECONSTRUCTED` | T04, T08, T27 (P12) |\n",
+   ''],
+  ["26 nós em `map-layout.json → coverNodes`",
+   "25 nós em `map-layout.json → coverNodes`"],
+  ["- **Reserva:** `cv_ckm_post` (8,8; −3; 26) fica reservado à guarnição da ckm wz.30, que desde a T47 está no posto S2 (8; −3; 26), no aterro entre as pontes, encostado à face norte do encontro rodoviário (`RECONSTRUCTED`: nenhuma fonte dá a posição da ckm). `cv_casemate_emb_s` (casamata, 24; −3; 43) deixou de estar reservado: a seteira da casamata não vê nenhum alemão.",
+   "- **Reserva:** `cv_casemate_emb_s` fica reservado à guarnição da ckm wz.30."],
+  ["- A ckm wz.30 está ao ar livre no posto S2 (8, −3, 26; `RECONSTRUCTED`), já não na casamata (24, −3, 43): soa pelo evento `ally-fire` de cada rajada, com atraso distância/343 s, e o emissor de apresentação da casamata (`ae_s1_ckm_casemate`) foi retirado na T47. O timbre nesse posto ainda não foi ouvido em jogo.",
+   "- A ckm wz.30 da casamata (24, −3, 43) soa próxima e abafada pelo interior de pedra."],
+];
+
+/** Today's MAP.md with the T47 hunks reverted: the base commit's bytes. */
+export function mapWithoutT47(input){
+  let text=Buffer.isBuffer(input)?input.toString('utf8'):input;
+  for(const [now,before] of T47_MAP_DELTA){
+    assert.equal(text.split(now).length,2,'approved T47 MAP.md hunk occurs exactly once');
+    text=text.replace(now,()=>before);
+  }
+  return Buffer.from(text);
+}
+
+/** The base-comparable bytes of a mission file that T47 changed by named hunks only (map-layout.json, HISTORICAL_RESEARCH.md, MAP.md). */
 export function withoutT47(path,input){
   if(path==='missions/m01-tczew/map-layout.json')return layoutWithoutT47(input);
   if(path==='missions/m01-tczew/HISTORICAL_RESEARCH.md')return historyWithoutT47(input);
+  if(path==='missions/m01-tczew/MAP.md')return mapWithoutT47(input);
   assert.fail('no approved T47 hunks for '+path);
 }

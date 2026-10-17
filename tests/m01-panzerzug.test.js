@@ -49,8 +49,8 @@ test('integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and
     assert.ok(oldBodyStart>=0,'baseline engine contract marker');
     assert.ok(actual.includes(baseline.subarray(oldBodyStart)),'the pre-existing M01 engine contract must remain unmodified');
     assert.match(actual.toString('utf8'),/## Apresentação das animações — V1 \(schema 2\)/);
-  }else if(p==='missions/m01-tczew/map-layout.json'||p==='missions/m01-tczew/HISTORICAL_RESEARCH.md'){
-    assert.deepEqual(withoutT47(p,actual),baseline,p);   // T47: only the named hunks (three layout hunks, one research row) differ from the base
+  }else if(p==='missions/m01-tczew/map-layout.json'||p==='missions/m01-tczew/HISTORICAL_RESEARCH.md'||p==='missions/m01-tczew/MAP.md'){
+    assert.deepEqual(withoutT47(p,actual),baseline,p);   // T47: only the named hunks (three layout hunks, one research row, four MAP.md hunks) differ from the base
   }else{
     assert.deepEqual(actual,baseline,p);
   }
