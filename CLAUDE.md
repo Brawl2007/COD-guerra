@@ -4,13 +4,13 @@
 
 ## M01 — execução Claude Code Web com Capitão único
 
-A Routine antiga permanece pausada. Usar **uma única sessão Web principal Sonnet** com os subagentes existentes em `.claude/agents/`. Consultar `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`, `docs/direction/M01_AUTOPILOT.md` e a issue #72 antes de tarefas. Guardar os resultados em Git; não iniciar outro Capitão automaticamente. O integrador #84 permanece PAUSED até validação e ativação explícita. **Sem merge em main, deploy ou publicação de checkpoint sem autorização humana específica.**
+A Routine antiga permanece pausada. Usar **uma única sessão Web principal Opus** com os subagentes existentes em `.claude/agents/`. Consultar `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md`, `docs/direction/M01_AUTOPILOT.md` e a issue #72 antes de tarefas. Guardar os resultados em Git; não iniciar outro Capitão automaticamente. O integrador #84 permanece PAUSED até validação e ativação explícita. **Sem merge em main, deploy ou publicação de checkpoint sem autorização humana específica.**
 
 ## Claude Code neste repositório
 
-- Arranque local opcional: `claude --agent captain` (Sonnet, esforço médio); no Web selecionar Sonnet e dar o prompt inicial documentado. Não ativar o Advisor por padrão.
+- Arranque local opcional: `claude --agent captain` (Opus, esforço médio); no Web selecionar Opus e dar o prompt inicial documentado. Não ativar o Advisor por padrão.
   Guia, verificação local e correção do Advisor: `docs/direction/AGENT_SETUP.md`.
-- O Capitão Sonnet coordena; Sonnet implementa, verifica e revê; Haiku lê código (`explorer`/`Explore`)
+- O Capitão Opus coordena; Sonnet implementa, verifica e revê; Haiku lê código (`explorer`/`Explore`)
   e documentação (`researcher`). Opus `reviewer-critical` só para simulação, saves, integração e arquitetura.
 - Não invocar Advisor/Fable por rotina: só quando o utilizador pedir e o custo for aceitável. Delegar leituras pesadas, não colar logs longos; compactar apenas quando útil.
 - Jev: chamadas pagas via TypeSafe sem limite de quantidade/gastos, autorizadas expressamente em 2026-10-13. Manter registo de utilizacao e segurança; nao autorizar custos de outros fornecedores, planos ou assets.
@@ -18,7 +18,7 @@ A Routine antiga permanece pausada. Usar **uma única sessão Web principal Sonn
 ## Execucao Claude Code Web com Claude Max
 
 - Na sessão Web única, confirmar branch, HEAD, agentes, skills e estado remoto antes de desenvolver.
-- O Captain (Sonnet) coordena e delega; nao duplicar investigacao ou fazer toda a implementacao no modelo principal.
+- O Captain (Opus) coordena e delega; nao duplicar investigacao ou fazer toda a implementacao no modelo principal.
 - Contexto minimo, testes deterministas e verificacao/revisao proporcionais ao risco.
 - Não chamar consultores externos pagos por padrão. Qualquer exceção de autorização histórica deve ser revalidada antes de consumir créditos de APIs externas.
 - O filesystem remoto nao e o Chromebook. Nao assumir ~/.claude, memoria, caches ou runs locais na cloud.
