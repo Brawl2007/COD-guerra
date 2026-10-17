@@ -14,6 +14,7 @@ import {Game} from '../src/game/game.js';
 import mission from '../missions/m01-tczew/mission.json' with {type:'json'};
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
 import {driver,toRepair,route} from './helpers/m01-route.js';
+import {missionWithRetiredCasemate} from './helpers/m01-retired-casemate.js';
 
 // MEMORY SAFETY: nothing here keeps a graph of fake nodes in a value that an assertion could serialise (fake nodes keep ctx/connections
 // non-enumerable), the route is run with a bounded fake context that is trimmed as it goes, and no test retains per-tick data.
@@ -329,14 +330,9 @@ test('zone occlusion: only a listener inside an interior zone muffles sources ou
 const ckmBursts=log=>log.filter(e=>e[1]==='weaponFire'&&e[2]==='ckm_wz30'&&String(e[5].key).startsWith('ae_s1_ckm_casemate'));
 // T47 retired the dramatized casemate ckm from the mission data: the real gun of post S2 is the only ckm of the west bridgehead, and it sounds through the simulation's
 // ally-fire event (one ckmBurst per burst). The crew gate, the sector states and the slot-based scheduling that emitter exercised are still the rules of every dramatized
-// emitter, so the tests below keep running them on the emitter exactly as it was authored, put back into the definition of the simulation under test (a copy: the
-// mission data itself is never touched).
-const RETIRED_CASEMATE={id:'ae_s1_ckm_casemate',weapon:'ckm_wz30',position:[25,-3,43],activeFrom:'04:46:00',activeUntil:'06:45:00',certainty:'GAMEPLAY_DRAMATIZATION',displayOnly:true};
-function withCasemate(sim){
-  const definition=structuredClone(sim.definition);
-  definition.sectors.find(s=>s.id==='s1_west_bridgehead').audioEmitters=[RETIRED_CASEMATE];
-  sim.definition=definition;return sim;
-}
+// emitter, so the tests below keep running them on the emitter exactly as it was authored (tests/helpers/m01-retired-casemate.js), put back into the definition of the
+// simulation under test (a copy: the mission data itself is never touched).
+function withCasemate(sim){sim.definition=missionWithRetiredCasemate(sim.definition);return sim;}
 class CasemateSim extends M01Simulation{constructor(seed){super(seed);withCasemate(this);}}
 function runEmitters(sim,{frames,dt=.05}){
   const {audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[],view=readonly(sim);

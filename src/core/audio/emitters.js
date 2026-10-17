@@ -8,8 +8,9 @@
  * Entry shape: {id, weapon, position:[x,y,z], activeFrom?:"HH:MM:SS", activeUntil?:"HH:MM:SS", certainty?, displayOnly?}.
  * Window: active when `activeFrom <= clock < activeUntil`. Missing activeFrom = from the start, missing activeUntil = until the end.
  *
- * CREW GATE (T06-NOTES): the casemate ckm (`ae_s1_ckm_casemate`) is a display-only dramatization, so its window is only an outer
- * bound (06:45). It sounds only while the crew is there: the caller says `crewPresent` or passes the owning sector's state, and
+ * CREW GATE (T06-NOTES): a display-only dramatization (the casemate ckm `ae_s1_ckm_casemate` was one; T47 retired it from the mission data because the
+ * real gun of post S2 sounds through the simulation's ally-fire event) has no authority of its own, so its window is only an outer
+ * bound (06:45 for that one). It sounds only while the crew is there: the caller says `crewPresent` or passes the owning sector's state, and
  * the states in CREW_GONE_STATES (s1 evacuates from 06:12) silence it. With no information at all a gated emitter stays silent.
  */
 export const CREW_GONE_STATES=Object.freeze(['evacuating_bridgehead','west_blown']);
