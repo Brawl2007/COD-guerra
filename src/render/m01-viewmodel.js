@@ -164,7 +164,7 @@ export class M01ViewModel {
     this.root.position.set(0,0,0);this.root.rotation.set(0,0,0);
     this.play(this.root,this.mixer,clip,sample);
     // Carry presentation is preserved; the rifle path uses measured sight landmarks.
-    const eye=new THREE.Vector3();this.root.getObjectByName('eye_r').getWorldPosition(eye);
+    const eye=this._eye??=new THREE.Vector3();this.root.getObjectByName('eye_r').getWorldPosition(eye);
     let mechanical=0,stroke=0,feel={wallDistance:null,wallTarget:0,wallLower:0,fov:null,breath:0,bob:0,gait:0};
     if(carry){
       this.root.position.copy(eye).multiplyScalar(-1);
@@ -233,8 +233,8 @@ export class M01ViewModel {
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);
     this.stats={active:true,visible:true,lod,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
       armTriangles:this.armGeometry.index.count/3,aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
-      phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(new THREE.Vector3()).toArray(),
-      visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(new THREE.Vector3(...WZ29_VISUAL[name])).toArray()])),
+      phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(a).toArray(),
+      visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(a.fromArray(WZ29_VISUAL[name])).toArray()])),
       // muzzleReach: how far the drawn muzzle stands in front of the eye (m); wallDistance is the probe's clearance the lowering answers.
       presentation:{profile:PROFILE.id,mechanical:+mechanical.toFixed(4),boltStroke:+stroke.toFixed(4),...feel,muzzleReach:+(-weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)).z).toFixed(4),lookYaw:+(this.visual?.look?.yaw??0).toFixed(5),
         lookPitch:+(this.visual?.look?.pitchLag??0).toFixed(5),clipEjected:Boolean(clipEjected),...fx}};
