@@ -1,6 +1,8 @@
 // T47 (M01-T47-CKM-LIVE-FIRE-V1): per-tick delta audit of the live ckm fire against the immutable predecessor, in the style of
 // tools/verification/m01-partials-completion-audit.mjs. Three simulations run in lockstep on the SAME controls, which come from the candidate itself:
-//   A  the predecessor (813f163, PR #80 head; its simulation source is the one pinned by tests/fixtures/m01-partials-gameplay-baseline.json)
+//   A  the predecessor (8c6328c: the combined staging = candidate #80 + #89 + T48 German retreat + T40 first-person arms + T38 combat postures; its simulation source is
+//      the one pinned by tests/fixtures/m01-t38-gameplay-baseline.json, the T38 golden of its amendment 02, which stays what it was as history). Until the merge 3c9cab7
+//      the predecessor was 813f163 (PR #80 head); that audit and its golden (T47 amendment 01) are kept as ...BEFORE_AMENDMENT_02 / ...-before-amendment-02.
 //   G  the candidate with the gun firing for real but its rounds changing no German (tests/helpers/m01-ckm-neutral.js, CkmGhostSimulation)
 //   L  the candidate as shipped (live fire; the golden is the per-tick digest of L)
 // Proof, every tick, with exact numbers (no epsilon):
@@ -15,6 +17,9 @@
 //   events      `ally-fire` (the burst event; no predecessor has it) and the crew ids inside the `pinned` list of `round-impact`
 //   germans     health / suppressedUntil / state of the Germans a landed ckm round hits or passes within 3 m of (the two MG34 gunners included: they are never CHOSEN as the target, but the
 //               beaten zone does not spare them), and what follows from that (L only)
+// Run order on the combined tree: this tool first (--write-golden writes the delta audit and the live golden of the combined tree, tests/fixtures/m01-t47-gameplay-baseline.json),
+// then m01-t47-golden-amendment-audit.mjs --write (keeps the T47 golden and audit it replaces and writes GOLDEN_AMENDMENT_02.json). The T38 golden and the T38 and T48 audit tools are
+// history since the merge: they are re-run from git at the staging commit (see their headers) and nothing here rewrites them.
 // Usage: node tools/verification/m01-t47-ckm-fire-audit.mjs [--write | --write-golden]          (x86 only; the predecessor tree is extracted with `git archive`)
 //   Without a flag (check mode) NOTHING is written: the regenerated delta audit must equal the committed PREDECESSOR_DELTA_AUDIT.json byte for byte and the regenerated golden must
 //   equal tests/fixtures/m01-t47-gameplay-baseline.json. Only --write (alias --write-golden) writes PREDECESSOR_DELTA_AUDIT.json and the golden.
@@ -40,10 +45,15 @@ const root=resolve(import.meta.dirname,'../..');
 const out=resolve(process.env.M01_T47_AUDIT_OUT??join(root,'docs/verification/m01-runtime/ckm-fire-live-2026-10-16'));if(write)mkdirSync(out,{recursive:true});
 const auditFile=join(out,'PREDECESSOR_DELTA_AUDIT.json');
 assert.equal(process.arch,'x64','exact gameplay golden regeneration requires x86 (same rule as D30)');
-const PREDECESSOR='813f163deceb551e0e4504b30958580cb67d3a76';   // PR #80 head; dfae8dd (T47 docs/tests only) has the identical src, missions, assets and research trees
+const PREDECESSOR='8c6328c947e92041f237b5990142dd110aee8e71';   // the combined staging (T38 + T48 + T40 on the candidate #80 + #89); before the merge 3c9cab7 it was 813f163 (PR #80 head)
+const BEFORE_COMMIT='602a5ee89920283d360a1bdad6177922666b2936';   // the T47 head before the merge: its golden (amendment 01) and delta audit (against 813f163) are what amendment 02 replaces
 const hash=v=>createHash('sha256').update(typeof v==='string'||Buffer.isBuffer(v)?v:JSON.stringify(v)).digest('hex');
 const fixture=name=>join(root,'tests/fixtures',name);
-const partials=JSON.parse(readFileSync(fixture('m01-partials-gameplay-baseline.json')));
+// The golden of the predecessor: the T38 golden of its amendment 02, the golden of the staging 8c6328c. It stays what it was (history, pinned by sha256 in tests/m01-animation-contract.test.js).
+const previousFile='m01-t38-gameplay-baseline.json';
+const previous=JSON.parse(readFileSync(fixture(previousFile)));
+const gitShow=(rev,path)=>execFileSync('git',['-C',root,'show',`${rev}:${path}`],{maxBuffer:1<<26});
+const beforeGolden=gitShow(BEFORE_COMMIT,'tests/fixtures/m01-t47-gameplay-baseline.json'),beforeAudit=gitShow(BEFORE_COMMIT,'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json');
 
 function predecessorTree(){
   const given=process.env.M01_T47_BASELINE;
@@ -57,7 +67,7 @@ function predecessorTree(){
 }
 const tree=predecessorTree();
 const predecessorSource=readFileSync(join(tree,'src/game/m01-simulation.js'));
-assert.equal(hash(predecessorSource),partials.sourceSha256,'the predecessor simulation is exactly the source pinned by the partials golden (sourceLock chain)');
+assert.equal(hash(predecessorSource),previous.sourceSha256,'the predecessor simulation is exactly the source pinned by the T38 golden (sourceLock chain)');
 const {M01Simulation:Before}=await import(pathToFileURL(join(tree,'src/game/m01-simulation.js')));
 
 const CREW=['ckm_gunner','ckm_loader','ckm_reserve'];
@@ -97,18 +107,17 @@ const report={task:'M01-T47-CKM-LIVE-FIRE-V1',predecessor:PREDECESSOR,predecesso
     germans:{fields:['health','suppressedUntil','state','crouched','cooldown','suppressedAt','hitAt','hitYaw','diedAt','deathYaw'],why:'only a landed ckm round that hits or passes within NEAR_MISS (3 m) of a German (the two MG34 gunners included: the gun never chooses them as its target, but the beaten zone does not spare them); L only, from the causal onset'},
     timeline:{fields:['clock of every consumed event after the first pin difference','player health','rng state','issued German rounds','repair pins'],why:'a suppressed or wounded German fires less, so fewer rounds pin the sappers (timers.repairPins) and the repair finishes earlier; the clock-gated beats after it shift by the same amount. The plot is unchanged: see endStateAgainstPredecessorOwnRoute'}},
   projectionSource:projection.toString(),eventProjectionSource:eventProjection.toString(),routes:[]};
-const golden={task:'M01-T47-CKM-LIVE-FIRE-V1',generationStage:'implementation candidate after the critical review (amendment 01) and the per-tick predecessor delta audit',
-  predecessor:PREDECESSOR,predecessorSourceSha256:partials.sourceSha256,
-  previousGolden:{task:partials.task,file:'tests/fixtures/m01-partials-gameplay-baseline.json',sha256:hash(readFileSync(fixture('m01-partials-gameplay-baseline.json')))},
+const golden={task:'M01-T47-CKM-LIVE-FIRE-V1',generationStage:'T47 on the combined staging: implementation candidate after the critical review (amendments 01 and 02) and the per-tick predecessor delta audit',
+  predecessor:PREDECESSOR,predecessorSourceSha256:previous.sourceSha256,
+  previousGolden:{task:previous.task,file:'tests/fixtures/'+previousFile,sha256:hash(readFileSync(fixture(previousFile)))},
   historicalGoldenSha256:hash(readFileSync(fixture('m01-anim-gameplay-baseline.json'))),sourceSha256:hash(readFileSync(join(root,'src/game/m01-simulation.js'))),
-  // Amendment 01: the critical review moved this golden once (the first golden was written from ab98199). The pre-review golden and delta audit are kept as byte copies and the per-tick
-  // proof of what moved is tools/verification/m01-t47-golden-amendment-audit.mjs -> GOLDEN_AMENDMENT_01.json; tests/m01-animation-contract.test.js asserts this chain.
-  amendment01:{task:'M01-T47-CKM-LIVE-FIRE-V1',beforeCommit:'ab98199c7b50a6682a5deef2e461dc83b7737247',
-    beforeSourceSha256:'0c6e4eb354f7643e416e72a5c077c5bc362873fd8139fcbd6f15bea375ecfe8c',
-    beforeFixture:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-01.json',beforeFixtureSha256:'45facd521d1bf86cf88099c91b5724c5e73b0f86a5a7f950fe73f2fda8340963',
-    beforeAudit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_01.json',
-    beforeAuditSha256:'c980f82cace48e0dfb172258da7c2d7ddc92efb9a5b92e716480703e97889088',
-    audit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_01.json'},
+  // Amendment 02: T47 was merged onto the combined staging, so this golden moved from the candidate #80 + T47 to the staging + T47. The golden and delta audit it replaces
+  // (the T47 head 602a5ee: amendment 01, against 813f163) are kept as byte copies, read from git, by tools/verification/m01-t47-golden-amendment-audit.mjs, which also writes
+  // GOLDEN_AMENDMENT_02.json; tests/m01-animation-contract.test.js asserts the chain (the amendment 01 chain lives in the kept golden).
+  amendment02:{task:'M01-T47-CKM-LIVE-FIRE-V1',beforeCommit:BEFORE_COMMIT,beforeSourceSha256:JSON.parse(beforeGolden).sourceSha256,
+    beforeFixture:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-02.json',beforeFixtureSha256:hash(beforeGolden),
+    beforeAudit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_02.json',beforeAuditSha256:hash(beforeAudit),
+    audit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_02.json'},
   routes:[]};
 const cases=process.env.M01_T47_AUDIT_SEEDS?process.env.M01_T47_AUDIT_SEEDS.split(',').map(Number).flatMap(seed=>[false,true].map(support=>({seed,support}))):[{seed:19390901,support:false},{seed:7,support:true}];
 

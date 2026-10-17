@@ -19,21 +19,29 @@
 // without it the committed record must equal the regenerated one. The record is deterministic (no clocks, no paths), so re-running it must reproduce the committed
 // file. The T38 audit tool runs first: it is the only writer of the T38 golden.
 // x86_64 only (D11/D30): exact gameplay golden regeneration is never done from aarch64.
+//
+// Since the merge of T47 (3c9cab7) the live tree is the staging PLUS the live fire of the ckm, which changes Germans long before the east demolition, so this proof can no longer
+// be run on the live tree and it is not repeated there: it is bound to the tree it was made on, the staging 8c6328c, and it is re-run FROM GIT. The candidate (simulation and its
+// data) is extracted with `git archive` (as tools/verification/m01-t47-ckm-fire-audit.mjs extracts its predecessor), the golden it must reproduce is the T38 golden of amendment 02,
+// tests/fixtures/m01-t38-gameplay-baseline.json, which stays what it was as history, and the record GOLDEN_AMENDMENT_03.json must come out byte for byte: the history stays reproducible. What the retreat does inside the combined tree with T47 is covered by
+// tests/m01-german-retreat.test.js, which drives the live simulation; the T47 part of the live golden is accounted for by tools/verification/m01-t47-ckm-fire-audit.mjs.
 //   node tools/verification/m01-german-retreat-golden-audit.mjs [--write-golden]        (M01_GERMAN_RETREAT_AUDIT_OUT overrides the output folder)
 import assert from 'node:assert/strict';
-import {readFileSync,writeFileSync,mkdirSync,existsSync,unlinkSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,existsSync,symlinkSync,unlinkSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
-import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {route} from '../../tests/helpers/m01-route.js';
 import {firstDifference} from '../../tests/helpers/m01-determinism.js';
 import {GameplayDigest,gameplayFrame} from '../../tests/helpers/m01-animation-contract.js';
 
 const BASE='65145c905209d47da6931aad11c0beeebe597291';   // the T38 head before the merge f02e06b: the simulation without the T48 retreat
+const CANDIDATE='8c6328c947e92041f237b5990142dd110aee8e71';   // the staging (T38 + T48 + T40 on the candidate #80 + #89): the simulation whose golden this proof is about
 const BEFORE_SOURCE_SHA='344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0';
 const FIXTURES=new URL('../../tests/fixtures/',import.meta.url);
-const GOLDEN=new URL('m01-t38-gameplay-baseline.json',FIXTURES),BEFORE=new URL('m01-t38-gameplay-baseline-before-amendment-02.json',FIXTURES);
+const GOLDEN=new URL('m01-t38-gameplay-baseline.json',FIXTURES),BEFORE=new URL('m01-t38-gameplay-baseline-before-amendment-02.json',FIXTURES);   // GOLDEN: the T38 golden of amendment 02 (history)
 const HERE=new URL('../../docs/verification/m01-runtime/german-retreat-regroup-v1/',import.meta.url);
 const OUT=process.env.M01_GERMAN_RETREAT_AUDIT_OUT??fileURLToPath(HERE);
 const DEMOLITION='evt_m01_east_demolition',BLOCK=512;
@@ -49,14 +57,22 @@ if(!existsSync(BEFORE)){assert.ok(write,'the pre-change fixture does not exist y
 assert.deepEqual(readFileSync(BEFORE),baseGolden,'the pre-change fixture is byte-identical to the golden at BASE');
 const before=JSON.parse(baseGolden);
 assert.equal(before.sourceSha256,BEFORE_SOURCE_SHA);
-// The golden of the combined simulation: written by the T38 audit tool, only verified here.
-const goldenBytes=readFileSync(GOLDEN),golden=JSON.parse(goldenBytes),candidateSource=sha(readFileSync(new URL('../../src/game/m01-simulation.js',import.meta.url)));
-assert.equal(golden.sourceSha256,candidateSource,'the committed T38 golden pins this tree\'s simulation (run the T38 audit tool with --write-golden first)');
+// The candidate is the staging, extracted from git with its own data; its golden is the T38 golden of amendment 02 (history, only verified here).
+const goldenBytes=readFileSync(GOLDEN),golden=JSON.parse(goldenBytes);
+const tree=mkdtempSync(join(tmpdir(),'m01-german-retreat-candidate-'));
+{
+  const data=execFileSync('git',['ls-tree','-r','--name-only',CANDIDATE,'assets','research'],{encoding:'utf8',maxBuffer:1<<26}).split('\n').filter(p=>p.endsWith('.json'));
+  execFileSync('tar',['-x','-C',tree],{input:execFileSync('git',['archive','--format=tar',CANDIDATE,'src','missions',...data],{maxBuffer:1<<29})});
+  symlinkSync(fileURLToPath(new URL('../../node_modules',import.meta.url)),join(tree,'node_modules'));
+}
+const candidateSource=sha(readFileSync(join(tree,'src/game/m01-simulation.js')));
+assert.equal(golden.sourceSha256,candidateSource,'the T38 golden of amendment 02 pins the simulation of the staging');
+const {M01Simulation}=await import(pathToFileURL(join(tree,'src/game/m01-simulation.js')));
 assert.equal(golden.routes.length,before.routes.length);
 // The east demolition ticks recorded by amendment 02 on the candidate #80, for the record of what the merge moved.
 const previous=JSON.parse(readFileSync(new URL('GOLDEN_AMENDMENT_02.json',HERE),'utf8'));
 
-const temp=fileURLToPath(new URL('../../src/game/.m01-german-retreat-base.js',import.meta.url));
+const temp=join(tree,'src/game/.m01-german-retreat-base.js');   // BASE's source next to the candidate's data, as before (the data is the staging's)
 writeFileSync(temp,baseSource);
 const report={task:'M01-GERMAN-RETREAT-AND-REGROUP-V1',amendment:'amendment-03',base:BASE,beforeSourceSha256:BEFORE_SOURCE_SHA,
   beforeFixture:'tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json',beforeFixtureSha256:sha(baseGolden),
@@ -97,7 +113,7 @@ try{
     assert.deepEqual(oldFinal,{ticks,blocks},'BASE reproduces the pre-change golden for this route');
     // (3) The candidate's own route, as tests/m01-animation-contract.test.js runs it.
     const newDigest=new GameplayDigest();let newDemolition=null,n=0;
-    const result=route(seed,{support,onStep:({sim,events})=>{n++;newDigest.add(gameplayFrame(sim,events));if(newDemolition===null&&sim.consumedEvent(DEMOLITION))newDemolition=n;}});
+    const result=route(seed,{support,Simulation:M01Simulation,onStep:({sim,events})=>{n++;newDigest.add(gameplayFrame(sim,events));if(newDemolition===null&&sim.consumedEvent(DEMOLITION))newDemolition=n;}});
     const next=newDigest.finish();
     assert.equal(newDemolition,demolitionTick,'the east demolition happens on the same tick in the candidate');
     const first=Math.ceil(demolitionTick/BLOCK)-1;   // index of the 512-tick block holding the east demolition tick
@@ -106,7 +122,7 @@ try{
     assert.notEqual(next.blocks[first].sha256,oldFinal.blocks[first].sha256,'the block holding the east demolition tick differs');
     const committed=golden.routes[index];
     assert.deepEqual([committed.seed,committed.support],[seed,support]);
-    assert.deepEqual({ticks:committed.ticks,blocks:committed.blocks},next,'the committed T38 golden is the digest of the candidate\'s own route');
+    assert.deepEqual({ticks:committed.ticks,blocks:committed.blocks},next,'the T38 golden of amendment 02 is the digest of the staging\'s own route');
     report.routes.push({seed,support,eastDemolitionTick:demolitionTick,identicalTicksBeforeIt:identical,firstDivergenceTick:divergence.tick,
       firstDifferencePath:divergence.difference.path,firstDifferenceActor:divergence.actor,differingActors:[...differing].sort(),confinedTicks:confined,identicalBlocks:first,
       firstDifferingBlockTick:next.blocks[first].tick,oldTicks:oldFinal.ticks,newTicks:next.ticks,oldBlocks:oldFinal.blocks.length,newBlocks:next.blocks.length,

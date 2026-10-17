@@ -19,6 +19,13 @@
 // 00964436) until the T48 German retreat joined this branch (merge f02e06b); it is now 5a169ba (candidate #80 + #89 + T48), whose simulation c06c1b1b is
 // the one the partials golden pins since its amendment 02. The report of the earlier audit is kept as GOLDEN_AUDIT_PRE_T48.json.
 //
+// HISTORY since the merge of T47 (3c9cab7). The live tree is now the staging PLUS the live fire of the ckm wz.30, whose golden is tests/fixtures/m01-t47-gameplay-baseline.json
+// (tools/verification/m01-t47-ckm-fire-audit.mjs). This tool's golden, tests/fixtures/m01-t38-gameplay-baseline.json (amendment 02), stays what it was: the golden of the staging
+// 8c6328c. The tool is therefore bound to that tree and re-runs it FROM GIT: the candidate simulation and its data are extracted with `git archive` at CANDIDATE_COMMIT (as the
+// T47 tool extracts its predecessor), the 24-route invariants audit and the golden are computed on that extraction, and in verify mode the golden, GOLDEN_AUDIT.json and the
+// amendment record come out byte for byte. Why the live tree is not audited by this tool any more, with numbers: docs/verification/m01-runtime/ckm-fire-live-2026-10-16/
+// (the T47 gun changes the final survivors of one of the 24 routes, seed 3 with support, 18 -> 17, which this audit asserts equal to the predecessor).
+//
 // --amendment NN (with --write-golden to write, without it to verify) is a golden amendment, in the pattern of the T48 tool: the golden it replaces is
 // kept byte for byte, read from git at AMENDMENTS[NN].before and never overwritten, as tests/fixtures/m01-t38-gameplay-baseline-before-amendment-NN.json,
 // and GOLDEN_AMENDMENT_NN.json is derived from the two fixtures (header keys before/after, per route the ticks, the leading identical 512-tick blocks,
@@ -32,11 +39,14 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
-import {M01Simulation,seconds,clockText,eastFrontPlan} from '../../src/game/m01-simulation.js';
+import {mkdtempSync,symlinkSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
 import {route} from '../../tests/helpers/m01-route.js';
 import {GameplayDigest,gameplayFrame} from '../../tests/helpers/m01-animation-contract.js';
 
 const PREDECESSOR='5a169babb638d1d09608f9a2bb84d1528f1aab4b';   // candidate #80 + #89 + T48; before the merge f02e06b: ef35c7ab24d75d87ca6435891f1977fd14d7a52c
+const CANDIDATE_COMMIT='8c6328c947e92041f237b5990142dd110aee8e71';   // the staging that carries this golden's simulation (candidate #80 + #89 + T48 + T40 + T38); the tool audits this tree, from git
 const FIXTURE='tests/fixtures/m01-t38-gameplay-baseline.json',PARTIALS='tests/fixtures/m01-partials-gameplay-baseline.json',HISTORICAL='tests/fixtures/m01-anim-gameplay-baseline.json';
 const out=process.env.M01_T38_AUDIT_OUT??'docs/verification/m01-runtime/t38-combat-posture-staging-v1';mkdirSync(out,{recursive:true});
 const hash=v=>createHash('sha256').update(v).digest('hex');
@@ -50,12 +60,21 @@ const partials=JSON.parse(readFileSync(PARTIALS,'utf8'));
 const predecessorSource=readFileSync(baselineRoot+'/src/game/m01-simulation.js');
 assert.equal(hash(predecessorSource),partials.sourceSha256,'the predecessor simulation is the one the partials golden pins');
 const {M01Simulation:Before}=await import(pathToFileURL(baselineRoot+'/src/game/m01-simulation.js'));
-const source=readFileSync('src/game/m01-simulation.js'),sourceSha256=hash(source);
+// The candidate: the staging, extracted from git with its own data (src, missions and every .json of assets and research). The working tree is never read for it.
+const repoRoot=resolve(import.meta.dirname,'../..');
+const treeRoot=mkdtempSync(join(tmpdir(),'m01-t38-candidate-'));
+{
+  const data=execFileSync('git',['-C',repoRoot,'ls-tree','-r','--name-only',CANDIDATE_COMMIT,'assets','research'],{encoding:'utf8',maxBuffer:1<<26}).split('\n').filter(p=>p.endsWith('.json'));
+  execFileSync('tar',['-x','-C',treeRoot],{input:execFileSync('git',['-C',repoRoot,'archive','--format=tar',CANDIDATE_COMMIT,'src','missions',...data],{maxBuffer:1<<29})});
+  symlinkSync(join(repoRoot,'node_modules'),join(treeRoot,'node_modules'));
+}
+const {M01Simulation,seconds,clockText,eastFrontPlan}=await import(pathToFileURL(treeRoot+'/src/game/m01-simulation.js'));
+const source=readFileSync(treeRoot+'/src/game/m01-simulation.js'),sourceSha256=hash(source);
 // Everything the per-tick gameplay bytes depend on besides the simulation source (data, posture, aim, fire, world): recorded for provenance and
 // used to prove reproducibility (same inputs => byte-identical digests), not pinned by the test.
 const INPUTS=['src/game/m01-simulation.js','missions/m01-tczew/mission.json','missions/m01-tczew/map-layout.json','src/game/m01-animation-presentation.js',
   'src/game/m01-aim.js','src/game/m01-fire.js','src/game/m01-display-fire.js','src/game/m01-yard-life.js','src/world/spatial.js','src/world/tczew-world.js'];
-const gameplayInputsSha256=hash(INPUTS.map(f=>`${f} ${hash(readFileSync(f))}\n`).join(''));
+const gameplayInputsSha256=hash(INPUTS.map(f=>`${f} ${hash(readFileSync(treeRoot+'/'+f))}\n`).join(''));
 const candidate=arg('--candidate');
 if(candidate)assert.equal(hash(execFileSync('git',['show',candidate+':src/game/m01-simulation.js'])),sourceSha256,`${candidate} carries this simulation`);
 
@@ -148,7 +167,7 @@ const golden={task:'M01-COMBAT-POSTURE-STAGING-V1',generationStage:'gameplay re-
 const demolitionTicks={};
 for(const {seed,support} of partials.routes){
   const digest=new GameplayDigest();let tick=0,demolition=null;
-  route(seed,{support,onStep:({sim,events})=>{tick++;digest.add(gameplayFrame(sim,events));if(demolition===null&&sim.consumedEvent(E('east_demolition')))demolition=tick;}});
+  route(seed,{support,Simulation:M01Simulation,onStep:({sim,events})=>{tick++;digest.add(gameplayFrame(sim,events));if(demolition===null&&sim.consumedEvent(E('east_demolition')))demolition=tick;}});
   golden.routes.push({seed,support,...digest.finish()});demolitionTicks[`${seed}/${support}`]=demolition;
 }
 writeFileSync(out+'/GOLDEN_AUDIT.json',JSON.stringify(report,null,2)+'\n');
@@ -187,7 +206,7 @@ function amendmentRecord(no,spec,keptPath,oldBytes,newBytes,demolitionTicks){
     return {seed:r.seed,support:r.support,oldTicks:o.ticks,newTicks:r.ticks,oldBlocks:o.blocks.length,newBlocks:r.blocks.length,identicalBlocks:same,
       firstDifferingBlockTick:r.blocks[same]?.tick??null,eastDemolitionTick:demolitionTicks[`${r.seed}/${r.support}`]};
   });
-  const gitBlob=f=>hash(execFileSync('git',['show',`${spec.before}:${f}`],{maxBuffer:1<<26})),changed=INPUTS.filter(f=>gitBlob(f)!==hash(readFileSync(f)));
+  const gitBlob=f=>hash(execFileSync('git',['show',`${spec.before}:${f}`],{maxBuffer:1<<26})),changed=INPUTS.filter(f=>gitBlob(f)!==hash(readFileSync(treeRoot+'/'+f)));
   return {task:'M01-COMBAT-POSTURE-STAGING-V1',amendment:`amendment-${no}`,base:now.candidate??null,beforeCommit:spec.before,beforeSourceSha256:old.sourceSha256,
     beforeGameplayInputsSha256:old.gameplayInputsSha256,beforeFixture:keptPath,beforeFixtureSha256:hash(oldBytes),afterFixture:FIXTURE,afterFixtureSha256:hash(newBytes),
     afterSourceSha256:now.sourceSha256,afterGameplayInputsSha256:now.gameplayInputsSha256,candidateRecordedInFixture:now.candidate??null,
