@@ -73,6 +73,23 @@ def command_version(name: str) -> str:
         return "present (version unavailable)"
 
 
+def check_rtk() -> None:
+    """Distinguish Rust Token Killer from the unrelated Rust Type Kit."""
+    exe = shutil.which("rtk")
+    if not exe:
+        report("WARN", "RTK", "not installed in this VM; Linux setup is not shared")
+        return
+    try:
+        result = subprocess.run([exe, "gain"], text=True, capture_output=True,
+                                timeout=5, check=False)
+        if result.returncode == 0:
+            report("INFO", "RTK", "Rust Token Killer identified by rtk gain; hook activation NOT proven")
+        else:
+            report("WARN", "RTK", "rtk gain failed: verify this is Rust Token Killer (rtk-ai/rtk), not Rust Type Kit")
+    except (OSError, subprocess.TimeoutExpired):
+        report("WARN", "RTK", "rtk gain could not be verified in this environment")
+
+
 def main() -> int:
     ERRORS.clear()
     report("INFO", "root", str(ROOT))
@@ -126,8 +143,7 @@ def main() -> int:
             report("WARN", "branch", "protected; do not change project files here")
     except (OSError, subprocess.TimeoutExpired):
         report("WARN", "branch", "unavailable")
-    if not shutil.which("rtk"):
-        report("WARN", "RTK", "not installed in this environment; do not assume Linux setup transferred")
+    check_rtk()
     for name in ("ANTHROPIC_API_KEY", "TYPESAFE_API_KEY", "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"):
         if os.environ.get(name):
             report("WARN", "env " + name, "SET (value deliberately hidden)")
