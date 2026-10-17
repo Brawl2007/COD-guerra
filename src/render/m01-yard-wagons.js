@@ -1,24 +1,16 @@
 import * as THREE from 'three';
 import {M01_YARD_WAGON_PLAN,M01_YARD_WAGON_SIZE} from '../world/m01-yard-wagon-layout.js';
 import wagonManifest from '../../assets/models/provisional/m01-wagons/manifest.json' with {type:'json'};
+import {lodProfile,selectConsumerLod} from './m01-lod-policy.js';
 
 const INTACT_BASE='assets/models/provisional/m01-wagons/';
 const DAMAGE_BASE='assets/models/provisional/m01-wagon-damage/';
 
 export {M01_YARD_WAGON_PLAN};
 
-export const M01_YARD_WAGON_LOD=Object.freeze({
-  low:Object.freeze({near:35,mid:140,hysteresis:10}),
-  medium:Object.freeze({near:60,mid:220,hysteresis:14}),
-  high:Object.freeze({near:90,mid:300,hysteresis:18}),
-});
-export function chooseYardWagonLod(distance,quality='medium',previous=null){
-  const q=M01_YARD_WAGON_LOD[quality]??M01_YARD_WAGON_LOD.medium,h=q.hysteresis;
-  if(previous===0&&distance<=q.near+h)return 0;
-  if(previous===1){if(distance<q.near-h)return 0;if(distance<=q.mid+h)return 1;return 2;}
-  if(previous===2&&distance>=q.mid-h)return 2;
-  return distance<q.near?0:distance<q.mid?1:2;
-}
+const wagonLod=consumer=>Object.freeze(Object.fromEntries(['low','medium','high'].map(k=>{const p=lodProfile(consumer,k);return [k,Object.freeze({near:p.bands[0],mid:p.bands[1],hysteresis:p.hysteresis})];})));
+export const M01_YARD_WAGON_LOD=wagonLod('yardWagons');
+export function chooseYardWagonLod(distance,quality='medium',previous=null){return selectConsumerLod('yardWagons',distance,quality,previous);}
 export const yardWagonState=(wagon,destruction=[])=>wagon.damageKey&&destruction.includes(wagon.damageKey)?'burned':'intact';
 export const yardWagonPosition=(wagon,world)=>[wagon.position[0],world?.heightAt?world.heightAt(wagon.position[0],wagon.position[2]):wagon.position[1],wagon.position[2]];
 export const yardWagonFireDamage=(destruction,world,started=0,clock=0)=>{

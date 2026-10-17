@@ -4,6 +4,7 @@ import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
 import { AnimationPlayer } from './m01-animation-player.js';
 import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
+import {lodProfile,selectConsumerLod,createLodCounters,tallyLod,lodCounterTotals} from './m01-lod-policy.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
 import {
@@ -28,7 +29,10 @@ const PRONE_CLIPS=['enter','idle','aim','fire_burst','exit','reload'].map(n=>`mg
 const CKM='assets/models/provisional/m01/weapons/ckm_wz30/';
 const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(a.id);
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
-const LIMITS={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
+// Distances come from the single LOD policy (m01-lod-policy.js 'actors'); only the skinning budgets (18/24/28) live here.
+const actorLimits=(preset,count)=>{const [near,middle,far]=lodProfile('actors',preset).bands;return {count,near,middle,far};};
+const LIMITS={low:actorLimits('low',18),medium:actorLimits('medium',24),high:actorLimits('high',28)};
+const instanceLod=v=>v?Number(v.key.slice(v.key.indexOf(':')+1)):null;   // LOD band of a live instance (0..2); null = none yet
 const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
 const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_open','rkm_bipod_folded','rkm_pouch','rag']);
 const mgLoader=a=>a.team==='enemy'&&a.mg34Loader&&['de_mg34_loader_0','de_mg34_loader_1'].includes(a.id)&&a.loaderFor===`de_east_${a.id.at(-1)}`;
@@ -41,16 +45,24 @@ const UP_AXIS=new THREE.Vector3(0,1,0);
 const debugEnabled=()=>typeof window!=='undefined'&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('debug');
 
 // Presentation only. Playback is sampled from the saved mission clock; no renderer timers enter saves.
+/** The GLB 'extras' (weapons/sockets) live on a child of the empty `m01_soldier_<nation>` Group (e.g. `m01_soldier_pl_1`): first descendant that carries them. Presentation only. */
+export function soldierProfile(root,nation){
+  const top=root.getObjectByName(`m01_soldier_${nation}`)??root;let found=null;
+  top.traverse(n=>{if(!found&&(n.userData?.weapons||n.userData?.sockets))found=n.userData;});
+  return found;
+}
 export class M01Characters {
-  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled()}={}){
+  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled(),ikMeasure=debug}={}){
     this.visuals=visualVariation?new SoldierVisualVariations():null;
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
     // T37 foot IK / ramp lean / hand pin (m01-foot-ik.js, m01-hand-pin.js). Presentation only; off = plain clip output, bit-identical.
-    this.ikEnabled=Boolean(ik);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
+    this.ikEnabled=Boolean(ik);this.ikMeasure=Boolean(ikMeasure);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
     if(debug&&typeof window!=='undefined'){this.ikDebug={setEnabled:on=>this.setIkEnabled(on),isEnabled:()=>this.ikEnabled};window.m01CharacterIkDebug=this.ikDebug;}
     // Cross-fade records by actor id (pure data from the resolver). They outlive LOD swaps; they never enter a save.
     this.anim=new Map();
+    // Per-preset tally of the band an actor switched into (T43 diagnostics); presentation only, never saved.
+    this.lodCounters=createLodCounters();this.lodSwitches=0;
   }
   setIkEnabled(on){const next=Boolean(on);if(this.ikEnabled!==next){this.ikEnabled=next;this.revision++;}return this.ikEnabled;}
   async load(quality='low'){
@@ -248,7 +260,7 @@ export class M01Characters {
     if(this.visuals)this.visuals.apply(root,actor,key,visual);
     this.scene.add(root);
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
-    const profile=root.getObjectByName(`m01_soldier_${nation}`)?.userData;
+    const profile=soldierProfile(root,nation);
     let spineBone=null,supportArmBone=null;
     for(const name of SPINE_NAMES){const b=root.getObjectByName(name);if(b){spineBone=b;break;}}
     for(const name of SUPPORT_ARM_NAMES){const b=root.getObjectByName(name);if(b?.isBone){supportArmBone=b;break;}}
@@ -271,15 +283,15 @@ export class M01Characters {
     // Geometry, materials and atlases belong to the source cache, shared by all clones/LODs.
   }
   update(actors,time,player,quality='low',battleClock,world=this.world){
-    const limits=LIMITS[quality]??LIMITS.low;
+    const limits=LIMITS[quality]??LIMITS.low,preset=LIMITS[quality]?quality:'low';
     const ikOn=this.ikEnabled&&Boolean(world);let ikCount=0;
     if(quality==='high')for(const k of ['pl:0','de:0','de:1'])void this.loadSource(k);
     if(quality==='high')for(const lod of [0,1]){void this.loadMG(lod);void this.loadCKM(lod);}
     this.updateCKM(actors,time,player,quality);
-    const selected=new Set(),visible=[],clips={};
+    const selected=new Set(),visible=[],clips={},bands=[0,0,0];let submitted=0;
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
     const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
-      .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>p.d<(mgCrew(p.a)?1800:limits.far))
+      .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>mgCrew(p.a)?p.d<1800:selectConsumerLod('actors',p.d,preset,instanceLod(this.instances.get(p.a.id)))<3)
       // Reserve the two real fire sources and their linked loaders within the existing 18/24/28 actor budget.
       .sort((a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id)).slice(0,limits.count);
     if(this.clips.size)for(const {a,d}of candidates){
@@ -298,7 +310,8 @@ export class M01Characters {
       let v=prevInst;
       // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
-      v??=this.create(a,key,weaponLOD);selected.add(a.id);
+      if(prevInst&&prevInst.key!==key){this.lodSwitches++;tallyLod(this.lodCounters,preset,lod);}   // a camera-driven band change (first appearance is not a switch)
+      v??=this.create(a,key,weaponLOD);selected.add(a.id);bands[lod]++;
       // Undo last frame's IK first: the mixer only rewrites a track whose value changed, and the caches below hold the clip pose.
       if(v.ikApplied){restoreIkPose(v.ikRig);v.ikApplied=false;}
       // Specialist animated rigs (CKM, prone MG34, station drag) keep their authored pose: the torso twist and support-arm hint
@@ -355,6 +368,7 @@ export class M01Characters {
           armed&&kowal&&n.name===`rkm_bipod_${bipod}`;
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
+      for(let i=0;i<v.meshes.length;i++)if(v.meshes[i].visible)submitted++;if(v.weaponRoot?.visible)submitted++;   // meshes handed to the GPU this frame
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
       const fading=plan.blend.filter(b=>!b.target).reduce((m,b)=>!m||b.weight>m.weight?b:m,null);
       visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),
@@ -366,7 +380,7 @@ export class M01Characters {
       if(ikOn){const e=this.ikEntries[ikCount]??={actor:null,inst:null,distance:0,view:null};e.actor=a;e.inst=v;e.distance=d;e.view=visible[visible.length-1];ikCount++;}
     }
     // Foot IK, ramp lean and hand pin run after every clip/additive correction, on the already sampled pose of the selected actors.
-    if(ikOn){updateActorsIk(this.ikEntries,ikCount,quality,time,world,this.ikState);for(let i=0;i<ikCount;i++){const e=this.ikEntries[i];e.actor=e.inst=e.view=null;}}
+    if(ikOn){updateActorsIk(this.ikEntries,ikCount,quality,time,world,this.ikState,this.ikMeasure);for(let i=0;i<ikCount;i++){const e=this.ikEntries[i];e.actor=e.inst=e.view=null;}}
     else this.ikState.recordDisabled(selected.size,quality);
     for(const {a}of candidates)if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&(!a.carry||a.carry.phase==='carry')&&selected.has(a.carriedBy)){
       const v=this.instances.get(a.id),socket=this.instances.get(a.carriedBy).root.getObjectByName('carry_socket');
@@ -375,7 +389,8 @@ export class M01Characters {
     for(const [id,v]of this.instances)if(!selected.has(id)){this.release(v);this.instances.delete(id);}
     // A record older than GAP (or from a later clock after a load) would be reset anyway: drop it.
     for(const [id,r]of this.anim)if(!(time>=r.t&&time-r.t<=GAP))this.anim.delete(id);
-    this.stats={active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible};
+    this.stats={active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible,lodPreset:preset,lodBands:bands,submittedMeshes:submitted,lodSwitches:this.lodSwitches,
+      lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')}};
     return selected;
   }
   updateCKM(actors,time,player,quality){
