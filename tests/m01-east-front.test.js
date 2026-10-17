@@ -167,8 +167,7 @@ test('the first fall is fired on the very tick that crosses 04:53:00: one riflem
   assert.equal(attritionRounds(s).length,1);
   assert.equal(round.kind,'attrition');assert.equal(round.victim,'pl_east_23');assert.equal(round.weapon,'kar98k');assert.equal(round.tracer,true);
   assert.ok(ATTRITION_SHOOTER.test(round.by),`${round.by} is a rifleman, never the MG34 gunners 0 and 1`);
-  // T38: the gate riflemen kneel staggered in depth between x 1050.5 and 1057.4 (all east of the wall used below); the round leaves from the bank.
-  assert.ok(validRound(round,s.clock)&&round.ox>=1050&&round.arriveAt-round.firedAt<.3);
+  assert.ok(validRound(round,s.clock)&&round.ox>=1053&&round.arriveAt-round.firedAt<.3);
   assert.equal(s.display.firedAt[round.by],round.firedAt,'his muzzle flash is published as display data');
   assert.ok(s.actor('pl_east_23').alive,'the round is still in flight');
   const ids=s.enemyFire.rounds.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);

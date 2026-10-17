@@ -99,11 +99,12 @@ test('no row: every waiting group is staggered (no close-order trio, no four on 
   }
   assert.equal(new Set(HOLD.yaw).size,24,'the platoon kneels with 24 different body turns');
   // Seen from the west bank (z across the view, ground height up) the gate riflemen do not line up either: they kneel at different depths on
-  // the slope (ground -2.9 .. -1 m), so no three are on one line within 0.1 m and no four within 0.1 m with gaps <= 4 m.
+  // the slope (ground -1.4 .. -1 m, x >= 1053 as in T23 so the distant silhouettes stay visible), so no three are on one line within 0.1 m and
+  // no four within 0.1 m with gaps <= 4 m.
   const west=groups.gates.map(a=>({x:a.z,z:a.y}));
   assert.deepEqual(rowTriples(west,{dev:.1}),[],'gates from the west: no row');assert.deepEqual(lineQuads(west,{dev:.1}),[],'gates from the west: no four on a line');
-  assert.ok(Math.max(...groups.gates.map(a=>a.x))-Math.min(...groups.gates.map(a=>a.x))>=6.5,'at least 6.5 m of depth');
-  assert.ok(new Set(groups.gates.map(a=>a.y)).size>=8,'at least eight different ground heights');
+  assert.ok(Math.max(...groups.gates.map(a=>a.x))-Math.min(...groups.gates.map(a=>a.x))>=5,'at least 5 m of depth');
+  assert.ok(new Set(groups.gates.map(a=>a.y)).size>=6,'at least six different ground heights');
   // Gate riflemen face the west bank; nobody of them stands where an MG34 gunner lies.
   for(const a of groups.gates){assert.ok(Math.abs(angle(a.facing-Math.PI))<.25,a.id);for(const mg of ['de_east_0','de_east_1'])assert.ok(d2(a,s.actor(mg))>=1.5,`${a.id} / ${mg}`);}
 });
@@ -124,7 +125,7 @@ test('collisions: no staged man stands inside a world collider or on another man
   for(const id of SECTION){const a=s.actor(id);assert.ok(a.x<post.min.x-a.radius&&a.x>post.min.x-4.5&&a.z>=post.min.z&&a.z<=post.max.z,`${id} is behind the squad-post sandbags, within their length`);}
   const nowicki=s.actor('tadeusz_nowicki');assert.ok(nowicki.x<forward.min.x&&nowicki.z>=forward.min.z&&nowicki.z<=forward.max.z,'Nowicki waits behind the forward-post sandbags');
   const portal=s.world.obstacles.find(o=>o.id==='COL_portal_lisewo_1912');
-  for(const a of gates(s))assert.ok(a.x+a.radius<=portal.min.x&&a.x>=1050&&a.z>=6.5&&a.z<=31.5,`${a.id} is on the bank between the bridges, in front of the 1912 portal, east of x 1050`);
+  for(const a of gates(s))assert.ok(a.x+a.radius<=portal.min.x&&a.x>=1053&&a.z>=6.5&&a.z<=31.5,`${a.id} is on the bank between the bridges, in front of the 1912 portal, x >= 1053`);
   // The terrain envelope (renderer) protects every staged place, read from the same data.
   const env=buildTerrainEnvelope(s.world),ids=env.regions.map(r=>r.id);
   for(const id of ['fire:fp_m01_riflemen_gates','stage:grp_squad','stage:grp_sappers','source:east-hold-slots'])assert.ok(ids.includes(id),id);
