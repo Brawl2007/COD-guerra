@@ -1,4 +1,4 @@
-# M01-FINISH — protocolo permanente do Capitão Sonnet (Cloud Web)
+# M01-FINISH — protocolo permanente do Capitão Opus (Cloud Web)
 
 **Missão:** concluir a M01 Tczew inteira; não esperar nova tarefa por hora.
 **Backlog vivo e critérios:** https://github.com/Brawl2007/COD-guerra/issues/72
@@ -30,7 +30,7 @@
 
 ## Ação na sessão única Claude Code Web
 
-1. A sessão principal Sonnet é o único Capitão. **Não iniciar `captain` como subagente** nem lançar uma Routine concorrente. Ler este protocolo, `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md` e a issue #72.
+1. A sessão principal Opus é o único Capitão. **Não iniciar `captain` como subagente** nem lançar uma Routine concorrente. Ler este protocolo, `docs/direction/CLOUD_WEB_SINGLE_CAPTAIN.md` e a issue #72.
 2. Consultar estado real de main, PRs abertos, branches empilhadas, runs Actions, checkpoints read-only, últimos handoffs e Task Contracts. O HEAD, não a memória, determina o que foi feito.
 3. Retomar primeiro trabalho incompleto com reserva válida e HEAD conhecido, desde que não esteja atualmente ocupado por outro executor. Se não existir trabalho próprio, escolher o próximo bloqueio no caminho crítico de conclusão da M01.
 4. **Prioridade:** verificar e concluir entregas pendentes em PRs existentes (incluindo T38/T43/T47/T48), corrigir problemas concretos, certificar regressões e preparar integração pela fila segura do PR #80 apenas quando o protocolo #84 estiver ativo.
