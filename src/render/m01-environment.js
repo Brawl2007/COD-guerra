@@ -67,7 +67,7 @@ export class M01Environment {
   partMatrix(...args){return M01VegetationRuntime.prototype.partMatrix.apply(this.vegetation??this,args);}
   rodMatrix(...args){return M01VegetationRuntime.prototype.rodMatrix.apply(this.vegetation??this,args);}
   hsl(...args){return M01VegetationRuntime.prototype.hsl.apply(this.vegetation??this,args);}
-  syncVegetation(world,quality,player,clock,surfaceRevision){this.vegetation.sync(world,quality,player,clock,surfaceRevision);}
+  syncVegetation(world,quality,player,clock,surfaceRevision,fadeClock=null){this.vegetation.sync(world,quality,player,clock,surfaceRevision,fadeClock);}
   buildClutter(){
     const r=this.random;
     for(let i=0;i<1900;i++){

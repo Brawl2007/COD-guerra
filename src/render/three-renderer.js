@@ -11,7 +11,9 @@ import { visualNoise } from './m01-atmosphere.js';
 const QUALITY={low:{ratio:1,shadows:false,particles:70},medium:{ratio:1.25,shadows:true,particles:120},high:{ratio:1.5,shadows:true,particles:180}};
 export function initialQuality({saved,cores=0,memory=0,renderer='',maxTexture=0}={}){
   if(Object.hasOwn(QUALITY,saved))return saved;
-  return cores>=4&&memory>=4&&maxTexture>=8192&&renderer&&!/swiftshader|llvmpipe|software/i.test(renderer)?'medium':'low';
+  // PC target (owner directive 2026-10-17): a capable hardware GPU starts at maximum quality; software rasterisers stay low.
+  if(!renderer||/swiftshader|llvmpipe|software/i.test(renderer))return 'low';
+  return cores>=4&&memory>=4&&maxTexture>=8192?'high':'medium';
 }
 const matrix=new THREE.Object3D();
 
@@ -292,8 +294,8 @@ export class Renderer {
     this.leftArm.position.y=-Math.sin(progress*Math.PI)*.08;
     this.magazine.position.y=-.09-arc*.1;
     const r=this.weaponRoot;r.updateMatrixWorld(true);
-    const shotAt=player.weaponShotAt/1000,muzzle=r.localToWorld(new THREE.Vector3(0,.0145,-.378)),axis=new THREE.Vector3(0,0,-1).transformDirection(r.matrixWorld);
-    const port=r.localToWorld(new THREE.Vector3(.026,.034,-.02));
+    const shotAt=player.weaponShotAt/1000,muzzle=r.localToWorld((this._muzzleVec??=new THREE.Vector3()).set(0,.0145,-.378)),axis=(this._axisVec??=new THREE.Vector3()).set(0,0,-1).transformDirection(r.matrixWorld);
+    const port=r.localToWorld((this._portVec??=new THREE.Vector3()).set(.026,.034,-.02));
     // A slow frame may already be past the 50 ms window: the first frame after a shot event always flashes.
     const fresh=(weapon.shotCount??0)!==this.flashShot&&time<this.muzzleUntil+200&&time-player.weaponShotAt>=0&&time-player.weaponShotAt<250;if(fresh)this.flashShot=weapon.shotCount;
     this.weaponFx.update({clock:t,shotAt,gate:time<this.muzzleUntil,fresh,aim:s.aim,shot:weapon.shotCount??0,muzzle,axis,port,up:viewUp(player.pitch??0),chamberAt:shotAt+.008});
@@ -320,9 +322,9 @@ export class Renderer {
       const age=(time-p.born)/1000;
       matrix.position.set(p.x+p.vx*age,Math.max(.025,p.y+p.vy*age-3*age*age),p.z+p.vz*age);
       matrix.rotation.set(0,0,0);matrix.scale.setScalar(p.size*(1-age/(p.life/1000)));
-      matrix.updateMatrix();this.particleMesh.setMatrixAt(i,matrix.matrix);this.particleMesh.setColorAt(i,new THREE.Color(p.color));
+      matrix.updateMatrix();this.particleMesh.setMatrixAt(i,matrix.matrix);this.particleMesh.setColorAt(i,(this._particleColor??=new THREE.Color()).set(p.color));
     });
-    this.particleMesh.instanceMatrix.needsUpdate=true;if(this.particleMesh.instanceColor)this.particleMesh.instanceColor.needsUpdate=true;
+    if(this.particles.length){this.particleMesh.instanceMatrix.needsUpdate=true;if(this.particleMesh.instanceColor)this.particleMesh.instanceColor.needsUpdate=true;}   // count 0 draws nothing: no stale instance
     for(const damage of battle?.damage??[]){
       let view=this.smokeViews.get(damage.id);
       if(!view){

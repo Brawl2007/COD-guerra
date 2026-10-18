@@ -85,6 +85,11 @@ test('the genuine first raid displays three Ju 87 GLBs with light LODs and freez
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  // start() returns once the restored clock is visible, but m01.aircraft is read from the LAST RENDERED frame, which can still be the
+  // pre-restore one (trace: renderedFrames 6, since -240 s, planes hidden at the path start, fade 1 because no 'heard' time yet).
+  // Wait for a frame rendered after the restore, so the presentation sampled below is the restored raid, not the stale frame.
+  const staleFrame=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.renderedFrames>n,staleFrame);
   // The planes were heard long before the restored instant: the presentation fade-in has to be complete.
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
   const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
@@ -430,15 +435,20 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   const samples=[];
-  for(let i=0;i<60&&!(samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress);i++){
+  // Pinned sappers are drawn prone (e0d494e), so 'pinned' poses only count bystanders a round happens to pass: the sappers show as extra prone bodies
+  // over the free baseline (the MG34 crews are always prone). Sampling continues until every property asserted below has been seen.
+  const sappersDown=()=>{const free=samples.filter(s=>!s.pinned).map(s=>s.prone);return free.length>0&&samples.some(s=>s.pinned&&s.prone>Math.max(...free));};
+  const seen=()=>samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress
+    &&sappersDown()&&samples.some(s=>s.animations.aiming>0)&&samples.some(s=>s.pinned&&s.animations.underFire>0);
+  for(let i=0;i<160&&!seen();i++){
     await page.waitForTimeout(250);
     samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {fx:g.fireEffects,hud:document.querySelector('#objective-status').textContent,
-      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),poses:g.actorPoses.pinned,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
+      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),prone:g.actorPoses.prone,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
   }
   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
-  expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+  expect(sappersDown()).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
   expect(samples.some(s=>s.pinned&&s.animations.underFire>0)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud.includes('sapadores deitados')).toBe(s.pinned);for(const x of s.origins)expect(x).toBeGreaterThanOrEqual(1050);}

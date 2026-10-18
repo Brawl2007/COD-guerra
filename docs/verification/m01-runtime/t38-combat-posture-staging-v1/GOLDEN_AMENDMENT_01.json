@@ -1,0 +1,378 @@
+{
+  "task": "M01-COMBAT-POSTURE-STAGING-V1",
+  "amendment": "amendment-01",
+  "base": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+  "beforeCommit": "d3ac3b2",
+  "beforeSourceSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+  "beforeGameplayInputsSha256": "59d8aca3f4542acda818d216f174cc7738c3408192cf30fc57045723a4fbff5e",
+  "beforeFixture": "tests/fixtures/m01-t38-gameplay-baseline-before-amendment-01.json",
+  "beforeFixtureSha256": "2dd919178de1c54da42589ae926cd42c116a248b07c7e4c3cebab15250d2b397",
+  "afterFixture": "tests/fixtures/m01-t38-gameplay-baseline.json",
+  "afterFixtureSha256": "89baff905da88e8bc1f8fd9dcfc40686779d77dc22246ab2b1bafb236b0ad5a2",
+  "afterGameplayInputsSha256": "741888a156af732c149bf8118a9894232c3513398c54644a4bf398b8610491dc",
+  "candidateRecordedInFixture": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+  "authority": "Regenerated only with tools/verification/m01-combat-posture-staging-audit.mjs --write-golden (x86), after its invariant audit against the exact predecessor ef35c7a; never edited by hand. This file is produced from the two fixture files, the git revisions named here and a divergence analysis: the simulation of the old revision and the candidate each run the same two routes and their per-tick signatures (clock, main RNG state, rounds issued and in flight, player health, event count) are compared; the full frames of tick 1 are diffed leaf by leaf.",
+  "cause": {
+    "commit": "4772b24",
+    "file": "missions/m01-tczew/mission.json",
+    "path": "groups[grp_de_east].firePositions[fp_m01_riflemen_gates].positions",
+    "summary": "The golden committed at d3ac3b2 pins the per-tick gameplay bytes of the T38 simulation with the gate-rifleman places of that revision. Commit 4772b24 moved the twelve gate-rifleman places (and rewrote the explanatory note beside them) and did not regenerate the golden. Their x, y, z are part of every per-tick frame and of the nested checkpoint, and decide the origin, line of sight and aim of their shots.",
+    "changedGameplayInputs": [
+      "missions/m01-tczew/mission.json"
+    ],
+    "unchangedGameplayInputs": [
+      "src/game/m01-simulation.js",
+      "missions/m01-tczew/map-layout.json",
+      "src/game/m01-animation-presentation.js",
+      "src/game/m01-aim.js",
+      "src/game/m01-fire.js",
+      "src/game/m01-display-fire.js",
+      "src/game/m01-yard-life.js",
+      "src/world/spatial.js",
+      "src/world/tczew-world.js"
+    ],
+    "gatePositionsBefore": [
+      [
+        1053.8,
+        9.4,
+        3.02
+      ],
+      [
+        1051.7,
+        9.6,
+        3.24
+      ],
+      [
+        1050.5,
+        15.2,
+        2.98
+      ],
+      [
+        1058.3,
+        15.4,
+        3.3
+      ],
+      [
+        1053.5,
+        17.1,
+        3.07
+      ],
+      [
+        1055.9,
+        17.3,
+        3.21
+      ],
+      [
+        1051.4,
+        22.9,
+        2.95
+      ],
+      [
+        1058,
+        22.5,
+        3.27
+      ],
+      [
+        1054.7,
+        24.5,
+        3.1
+      ],
+      [
+        1053.2,
+        27.1,
+        3.18
+      ],
+      [
+        1058,
+        30.9,
+        2.99
+      ],
+      [
+        1052.6,
+        31.1,
+        3.25
+      ]
+    ],
+    "gatePositionsAfter": [
+      [
+        1053.8,
+        8.5,
+        3.02
+      ],
+      [
+        1056.8,
+        9.6,
+        3.24
+      ],
+      [
+        1055,
+        11,
+        2.98
+      ],
+      [
+        1053.2,
+        15.4,
+        3.3
+      ],
+      [
+        1055.6,
+        19.2,
+        3.07
+      ],
+      [
+        1058.3,
+        17,
+        3.21
+      ],
+      [
+        1053.2,
+        19,
+        2.95
+      ],
+      [
+        1054.4,
+        23.1,
+        3.27
+      ],
+      [
+        1053.5,
+        24.8,
+        3.1
+      ],
+      [
+        1058.3,
+        26.2,
+        3.18
+      ],
+      [
+        1054.1,
+        28.8,
+        2.99
+      ],
+      [
+        1056.8,
+        31.4,
+        3.25
+      ]
+    ],
+    "facingChanged": false,
+    "xRangeBefore": [
+      1050.5,
+      1058.3
+    ],
+    "xRangeAfter": [
+      1053.2,
+      1058.3
+    ],
+    "note": "positions[k] = [x, z, facing in rad] of de_east_(k+2). The new places stay at x >= 1053, the T23 strip, so the distant silhouettes remain visible from the west bank; the facing values did not change."
+  },
+  "rule": "Same simulation source (sourceSha256 unchanged), same predecessor, same two routes, same digest scheme (sha256 per 512 ticks of the whole gameplay frame: state, nested checkpoint and events, presentation fields removed). What changes is every block hash of both routes, because the frames contain the moved places from tick 1, and the route lengths, because the mission then plays out differently from the first shot fired from a new place.",
+  "header": {
+    "task": {
+      "unchanged": true
+    },
+    "generationStage": {
+      "unchanged": true
+    },
+    "predecessor": {
+      "unchanged": true
+    },
+    "predecessorSourceSha256": {
+      "unchanged": true
+    },
+    "candidate": {
+      "before": null,
+      "after": "25ed12f823bb1d4621fff50944b2eadf90f02ae0"
+    },
+    "sourceSha256": {
+      "unchanged": true
+    },
+    "gameplayInputs": {
+      "unchanged": true
+    },
+    "gameplayInputsSha256": {
+      "before": "59d8aca3f4542acda818d216f174cc7738c3408192cf30fc57045723a4fbff5e",
+      "after": "741888a156af732c149bf8118a9894232c3513398c54644a4bf398b8610491dc"
+    },
+    "partialsGoldenSha256": {
+      "unchanged": true
+    },
+    "historicalGoldenSha256": {
+      "unchanged": true
+    }
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 22257,
+      "newTicks": 22198,
+      "oldBlocks": 44,
+      "newBlocks": 44,
+      "identicalBlocks": 0,
+      "firstDifferingBlockTick": 512,
+      "firstDivergence": {
+        "tick": 1,
+        "what": "x, y and z of de_east_2..de_east_13 in the state and in its nested checkpoint; no other leaf differs",
+        "leafDifferences": 62,
+        "actors": [
+          "de_east_2",
+          "de_east_3",
+          "de_east_4",
+          "de_east_5",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_10",
+          "de_east_11",
+          "de_east_12",
+          "de_east_13"
+        ],
+        "fields": [
+          "z",
+          "x",
+          "y"
+        ]
+      },
+      "firstTickWhere": {
+        "mainRngStateDiffers": {
+          "tick": 8946,
+          "clock": 447.3,
+          "battleClock": "05:14:06"
+        },
+        "roundsIssuedOrInFlightDiffer": {
+          "tick": 5172,
+          "clock": 258.6,
+          "battleClock": "04:45:20"
+        },
+        "eventCountDiffers": {
+          "tick": 5221,
+          "clock": 261.05,
+          "battleClock": "04:45:42"
+        },
+        "playerHealthDiffers": {
+          "tick": 18104,
+          "clock": 905.2,
+          "battleClock": "06:27:13"
+        },
+        "realClockDiffers": null
+      },
+      "finalMainRng": {
+        "old": 2297694736,
+        "new": 1192639761
+      },
+      "finalPlayerHealth": {
+        "old": 100,
+        "new": 92
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 21467,
+      "newTicks": 21585,
+      "oldBlocks": 42,
+      "newBlocks": 43,
+      "identicalBlocks": 0,
+      "firstDifferingBlockTick": 512,
+      "firstDivergence": {
+        "tick": 1,
+        "what": "x, y and z of de_east_2..de_east_13 in the state and in its nested checkpoint; no other leaf differs",
+        "leafDifferences": 62,
+        "actors": [
+          "de_east_2",
+          "de_east_3",
+          "de_east_4",
+          "de_east_5",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_10",
+          "de_east_11",
+          "de_east_12",
+          "de_east_13"
+        ],
+        "fields": [
+          "z",
+          "x",
+          "y"
+        ]
+      },
+      "firstTickWhere": {
+        "mainRngStateDiffers": {
+          "tick": 5237,
+          "clock": 261.85,
+          "battleClock": "04:45:49"
+        },
+        "roundsIssuedOrInFlightDiffer": {
+          "tick": 5224,
+          "clock": 261.2,
+          "battleClock": "04:45:43"
+        },
+        "eventCountDiffers": {
+          "tick": 5224,
+          "clock": 261.2,
+          "battleClock": "04:45:43"
+        },
+        "playerHealthDiffers": null,
+        "realClockDiffers": null
+      },
+      "finalMainRng": {
+        "old": 3585496686,
+        "new": 3293056639
+      },
+      "finalPlayerHealth": {
+        "old": 100,
+        "new": 100
+      }
+    }
+  ],
+  "divergenceAnalysis": {
+    "file": "docs/verification/m01-runtime/t38-combat-posture-staging-v1/GOLDEN_DIVERGENCE_01.json",
+    "tool": "tools/verification/m01-t38-golden-divergence.mjs",
+    "oldCheckout": {
+      "revision": "d3ac3b2233c838c760d82b107230bd48d716dedb",
+      "simulationSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+      "missionSha256": "3a2121a86b1ada1af58e28a3cd907df9ca571a04309b5490da58fc666f85a07c"
+    },
+    "newCheckout": {
+      "revision": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+      "simulationSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+      "missionSha256": "d3501cd56d28cb71fc6633a3e21dc29e23925f2709a49d78673d2e4b21aa9eaf"
+    }
+  },
+  "invariantsAudit": "GOLDEN_AUDIT.json (24 routes: 12 seeds x {no support, support}) re-run on the final inputs: identical to the predecessor in completion, checkpoints, objective states, consumed-event order, the battle-clock time of every fixed event, the 18 men at 06:00, the final survivors and dlg_m01_049; each attrition fall 0 to 5 s of battle clock after its fixed time; repair completed before the 05:30 order.",
+  "commands": [
+    {
+      "cmd": "node --test tests/m01-combat-posture-staging.test.js tests/m01-east-front.test.js tests/m01-cover-threat.test.js tests/m01-animation-contract.test.js",
+      "at": "25ed12f, before the regeneration",
+      "result": "tests 84, pass 77, fail 7: the two per-tick golden route tests (block digests differ from the stale golden) and five tests of tests/m01-animation-contract.test.js that depend on the `completed` variable the first golden test fills",
+      "exit": 1
+    },
+    {
+      "cmd": "M01_T38_BASELINE=<detached worktree of ef35c7ab24d75d87ca6435891f1977fd14d7a52c> node tools/verification/m01-combat-posture-staging-audit.mjs --write-golden --candidate 25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+      "result": "24 predecessor-versus-candidate route pairs (12 seeds x {no support, support}) passed every invariant of the audit; GOLDEN_AUDIT.json and the fixture written; golden routes 22198 ticks / 44 blocks (seed 19390901) and 21585 ticks / 43 blocks (seed 7)",
+      "exit": 0
+    },
+    {
+      "cmd": "M01_T38_BASELINE=<same worktree> M01_T38_AUDIT_OUT=<scratch dir> M01_T38_AUDIT_SEEDS=19390901 node tools/verification/m01-combat-posture-staging-audit.mjs",
+      "at": "same inputs, no --write-golden",
+      "result": "verification run: both golden routes regenerated byte for byte equal to the committed fixture (the tool's reproducibility and header assertions passed); the audit report of this run went to a scratch directory, not to GOLDEN_AUDIT.json",
+      "exit": 0
+    },
+    {
+      "cmd": "node --test tests/m01-animation-contract.test.js",
+      "at": "working tree with the regenerated fixture",
+      "result": "tests 21, pass 21, fail 0, including the two per-tick golden route tests and the pins of the preserved old golden and of this amendment",
+      "exit": 0
+    },
+    {
+      "cmd": "node tools/verification/m01-t38-golden-divergence.mjs <worktree of d3ac3b2> <this checkout> docs/verification/m01-runtime/t38-combat-posture-staging-v1/GOLDEN_DIVERGENCE_01.json",
+      "result": "the analysis this document quotes (tick-1 diff, first tick at which rounds, main RNG, events and health differ)",
+      "exit": 0
+    }
+  ],
+  "review": "This amendment records why and how the golden changed. It does not accept T38: independent critical review, CI and human playtest are still required."
+}

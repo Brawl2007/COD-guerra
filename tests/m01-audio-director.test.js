@@ -358,6 +358,23 @@ test('casemate ckm with real sector states: audible 04:46-06:12 (s1 states), sil
   for(let i=0;i<120;i++){sim.clock+=.05;director.update(sim);}
   assert.equal(ckmBursts(log).length,0);assert.ok(director.diagnostics.emitters.suppressed>=1);
 });
+test('T48: the German MG34 emitters are silent from 06:10 to 06:11 and sound again from 06:11, also for a burst scheduled before the silence',()=>{
+  const eastMg=log=>log.filter(e=>e[1]==='weaponFire'&&e[2]==='mg34'&&String(e[5].key).startsWith('ae_s2_mg_'));
+  const at=clock=>{const sim=m01Sim(clock);place(sim,-70,-3,24);return sim;};
+  assert.equal(at('06:10:00').germanSilence(),true);assert.equal(at('06:11:00').germanSilence(),false);
+  assert.ok(eastMg(runEmitters(at('06:09:00'),{frames:1200}).log).length>0,'before the silence the east MG34s sound');
+  for(const clock of ['06:10:00','06:10:59'])assert.equal(eastMg(runEmitters(at(clock),{frames:1200}).log).length,0,`${clock}: no German MG34`);
+  assert.ok(eastMg(runEmitters(at('06:11:00'),{frames:1200}).log).length>0,'from 06:11 the east MG34s sound again');
+  // A burst scheduled at 06:09:59 and due after 06:10:00 is dropped at the moment of the shot.
+  const sim=at('06:09:59'),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
+  director.reset(sim);let waiting=false;
+  for(let i=0;i<2400&&!waiting;i++){sim.clock+=.05;ctx.currentTime=sim.clock;director.update(sim);waiting=director.pending.some(p=>p.used&&p.emitter.weapon==='mg34');}
+  assert.ok(waiting,'an MG34 burst is waiting');
+  const shots=eastMg(log).length;sim.battleClock=bc('06:10:00');
+  for(let i=0;i<200;i++){sim.clock+=.05;ctx.currentTime=sim.clock;director.update(sim);}
+  assert.equal(eastMg(log).length,shots,'nothing scheduled before 06:10 sounds inside the silence');assert.ok(director.diagnostics.emitters.suppressed>=1);
+  assert.equal(director.errors,0,director.lastError);
+});
 test('emitters: far emitters use the distant category, timing is slot-based without backlog, and a rewind drops pending bursts',()=>{
   const sim=m01Sim('05:00:00'),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
   place(sim,-70,-3,24);

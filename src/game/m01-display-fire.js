@@ -1,6 +1,7 @@
 import { Random } from '../core/random.js';
 import { makeRound } from './m01-fire.js';
 import { eyePosition } from '../world/spatial.js';
+import { aimPoint } from './m01-aim.js';
 
 // Display fire (roadmap T22): visual-only rounds for the distant firefight (tracers and muzzle flashes across Lisewo).
 // They live in their own list, outside enemyFire.rounds and outside every save: they never trace the world, suppress,
@@ -101,7 +102,7 @@ const gone = ['DOWN', 'WOUNDED', 'reached_safety'];
 const eligible = (a, now) => Boolean(a && a.alive && a.active && !a.carriedBy && !gone.includes(a.state) && now >= (a.suppressedUntil ?? 0));
 const open = (p, view) => (!p.from || view.consumedEvent(p.from)) && (!p.until || !view.consumedEvent(p.until));
 
-/** Same aim point rule as the gameplay burst (chest height of a standing or crouched man, one metre above ground for a box). */
+/** Same aim point rule as the gameplay burst (torso of a standing, crouched or prone man, one metre above ground for a box). */
 function target(display, view, p, byId) {
   const r = () => display.rng.next();
   if (p.targetBox) {
@@ -111,7 +112,7 @@ function target(display, view, p, byId) {
   const pool = (p.targetGroup ? view.actors.filter(a => a.group === p.targetGroup) : p.targetIds.map(id => byId.get(id))).filter(a => a?.alive && a.active);
   if (!pool.length) return null;
   const t = pool[Math.floor(r() * pool.length)];
-  return { x: t.x, y: t.y + (t.crouched ? .75 : 1.1), z: t.z };
+  return aimPoint(t);   // T38: the torso of the posture he is drawn in (kneeling platoon/gate men, prone MG34 gunners)
 }
 
 /** One burst. Draw order is fixed: count, target, shared dispersion, per-round dispersion. A burst without a target or without room fires nothing. */
