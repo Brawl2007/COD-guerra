@@ -65,7 +65,7 @@ test('post S2 is confirmed in the production trace: the gate riflemen are in cle
   const s2=evaluateCandidate(win,MUZZLE,{explain:true}),casemate=evaluateCandidate(win,muzzleFlashWorld());
   assert.equal(casemate.productionClearEntries,0,'the pre-T47 casemate muzzle sees no German');
   assert.equal(s2.productionClearEntries,s2.strictClearEntries,'production line == strict: nothing the production trace lets through is a bridge collider');
-  assert.equal(s2.strictClearEntries,270,'was 214 before the T38 gate places (re-measured when T47 joined the staging, 3c9cab7; tests/m01-ckm-candidate-posts.test.js)');assert.equal(s2.throughBridgeEntries,0);
+  assert.equal(s2.strictClearEntries,271,'D43: was 270 before T47 amendment 03 (the T23 withdrawal cadence counted on landing changes the neutral route after 06:05; re-measured with tools/m01-ckm-fire-arc.mjs, GOLDEN_AMENDMENT_03.json s2Visibility); 214 before the T38 gate places (re-measured when T47 joined the staging, 3c9cab7; tests/m01-ckm-candidate-posts.test.js)');assert.equal(s2.throughBridgeEntries,0);
   for(const phase of ['repair','post_repair','withdrawal']){
     assert.deepEqual(s2.phases[phase].strict.ids,Array.from({length:14},(_,i)=>`de_east_${i}`).sort(),phase);
   }

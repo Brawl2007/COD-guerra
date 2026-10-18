@@ -4,7 +4,7 @@
   "predecessor": "5a169babb638d1d09608f9a2bb84d1528f1aab4b",
   "predecessorSideFrom": "docs/verification/m01-runtime/t38-combat-posture-staging-v1/GOLDEN_AUDIT.json (the staging against 5a169ba; the verify mode of the tool checks it byte for byte)",
   "predecessorSourceSha256": "c06c1b1be4e2d1eddffa14b791d661d95bb1d0aefbae7cb4e80f37ecf92083a2",
-  "liveSourceSha256": "f568c386a192fedf45bde54a2102398adfb67d292726268dbd69ef07c364e261",
+  "liveSourceSha256": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c",
   "node": "v22.22.0",
   "arch": "x64",
   "invariants": "equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time",
@@ -24,9 +24,7 @@
   ],
   "summary": {
     "routes": 24,
-    "violatingRoutes": [
-      "3/support"
-    ]
+    "violatingRoutes": []
   },
   "routes": [
     {
@@ -43,19 +41,19 @@
       },
       "repairComplete": {
         "predecessor": "05:13:46",
-        "live": "05:07:53"
+        "live": "05:09:37"
       },
       "attritionFallsSec": [
         1.05,
-        1.2,
-        3,
-        3.15,
+        0.75,
+        3.45,
+        3.6,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 84,
-        "live": 76
+        "live": 92
       }
     },
     {
@@ -72,19 +70,19 @@
       },
       "repairComplete": {
         "predecessor": "05:10:03",
-        "live": "05:12:03"
+        "live": "05:12:35"
       },
       "attritionFallsSec": [
         1.05,
-        0.75,
-        3,
-        3.15,
+        1.2,
+        3.9,
+        2.7,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 76,
-        "live": 100
+        "live": 84
       }
     },
     {
@@ -101,19 +99,19 @@
       },
       "repairComplete": {
         "predecessor": "05:13:00",
-        "live": "05:09:26"
+        "live": "05:12:29"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3,
-        3.15,
+        3.45,
+        3.6,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 92,
-        "live": 92
+        "live": 84
       }
     },
     {
@@ -130,19 +128,19 @@
       },
       "repairComplete": {
         "predecessor": "05:10:14",
-        "live": "05:09:49"
+        "live": "05:12:38"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        1.65,
-        3.15,
+        3.45,
+        3.6,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 100,
-        "live": 100
+        "live": 84
       }
     },
     {
@@ -159,10 +157,10 @@
       },
       "repairComplete": {
         "predecessor": "05:13:32",
-        "live": "05:09:19"
+        "live": "05:06:16"
       },
       "attritionFallsSec": [
-        0.6,
+        1.05,
         1.2,
         3,
         3.15,
@@ -171,7 +169,7 @@
       ],
       "playerHealth": {
         "predecessor": 92,
-        "live": 76
+        "live": 100
       }
     },
     {
@@ -188,7 +186,7 @@
       },
       "repairComplete": {
         "predecessor": "05:08:42",
-        "live": "05:11:28"
+        "live": "05:08:57"
       },
       "attritionFallsSec": [
         1.05,
@@ -200,7 +198,7 @@
       ],
       "playerHealth": {
         "predecessor": 76,
-        "live": 100
+        "live": 76
       }
     },
     {
@@ -217,19 +215,19 @@
       },
       "repairComplete": {
         "predecessor": "05:12:33",
-        "live": "05:09:19"
+        "live": "05:12:33"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3,
-        3.15,
+        3.9,
+        2.7,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 92,
-        "live": 76
+        "live": 92
       }
     },
     {
@@ -246,13 +244,13 @@
       },
       "repairComplete": {
         "predecessor": "05:10:39",
-        "live": "05:05:16"
+        "live": "05:09:04"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3.9,
-        2.7,
+        3.45,
+        3.6,
         0.8,
         0.8
       ],
@@ -275,7 +273,7 @@
       },
       "repairComplete": {
         "predecessor": "05:12:27",
-        "live": "05:07:22"
+        "live": "05:12:20"
       },
       "attritionFallsSec": [
         1.05,
@@ -287,7 +285,7 @@
       ],
       "playerHealth": {
         "predecessor": 100,
-        "live": 92
+        "live": 100
       }
     },
     {
@@ -304,13 +302,13 @@
       },
       "repairComplete": {
         "predecessor": "05:13:27",
-        "live": "05:09:52"
+        "live": "05:10:05"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3,
-        3.15,
+        3.9,
+        2.7,
         0.8,
         0.8
       ],
@@ -333,13 +331,13 @@
       },
       "repairComplete": {
         "predecessor": "05:09:50",
-        "live": "05:10:38"
+        "live": "05:09:29"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3.45,
-        3.6,
+        3,
+        3.15,
         0.8,
         0.8
       ],
@@ -362,12 +360,12 @@
       },
       "repairComplete": {
         "predecessor": "05:09:00",
-        "live": "05:08:09"
+        "live": "05:16:34"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3,
+        1.2,
         3.15,
         0.8,
         0.8
@@ -391,13 +389,13 @@
       },
       "repairComplete": {
         "predecessor": "05:03:32",
-        "live": "05:04:05"
+        "live": "05:04:26"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3,
-        3.15,
+        3.9,
+        2.7,
         0.8,
         0.8
       ],
@@ -420,19 +418,19 @@
       },
       "repairComplete": {
         "predecessor": "05:05:10",
-        "live": "05:05:26"
+        "live": "05:03:44"
       },
       "attritionFallsSec": [
         1.05,
-        1.2,
-        3.45,
-        3.6,
+        3,
+        3.9,
+        2.7,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 100,
-        "live": 84
+        "live": 92
       }
     },
     {
@@ -449,42 +447,7 @@
       },
       "repairComplete": {
         "predecessor": "05:02:46",
-        "live": "05:03:37"
-      },
-      "attritionFallsSec": [
-        0.6,
-        3,
-        3.9,
-        2.7,
-        0.8,
-        0.8
-      ],
-      "playerHealth": {
-        "predecessor": 92,
-        "live": 100
-      }
-    },
-    {
-      "seed": 3,
-      "support": true,
-      "violations": [
-        {
-          "invariant": "finalSurvivors",
-          "predecessor": 18,
-          "live": 17
-        }
-      ],
-      "finalSurvivors": {
-        "predecessor": 18,
-        "live": 17
-      },
-      "withdrawFlag": {
-        "predecessor": 18,
-        "live": 18
-      },
-      "repairComplete": {
-        "predecessor": "05:07:01",
-        "live": "05:03:31"
+        "live": "05:01:43"
       },
       "attritionFallsSec": [
         1.05,
@@ -495,8 +458,37 @@
         0.8
       ],
       "playerHealth": {
+        "predecessor": 92,
+        "live": 92
+      }
+    },
+    {
+      "seed": 3,
+      "support": true,
+      "violations": [],
+      "finalSurvivors": {
+        "predecessor": 18,
+        "live": 18
+      },
+      "withdrawFlag": {
+        "predecessor": 18,
+        "live": 18
+      },
+      "repairComplete": {
+        "predecessor": "05:07:01",
+        "live": "05:03:49"
+      },
+      "attritionFallsSec": [
+        1.05,
+        3.9,
+        3.45,
+        3.6,
+        0.8,
+        0.8
+      ],
+      "playerHealth": {
         "predecessor": 100,
-        "live": 100
+        "live": 84
       }
     },
     {
@@ -513,7 +505,7 @@
       },
       "repairComplete": {
         "predecessor": "05:05:08",
-        "live": "05:04:01"
+        "live": "05:04:24"
       },
       "attritionFallsSec": [
         1.05,
@@ -525,7 +517,7 @@
       ],
       "playerHealth": {
         "predecessor": 100,
-        "live": 100
+        "live": 92
       }
     },
     {
@@ -542,19 +534,19 @@
       },
       "repairComplete": {
         "predecessor": "05:03:53",
-        "live": "05:08:16"
+        "live": "05:05:33"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3,
-        3.15,
+        3.45,
+        3.6,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 100,
-        "live": 92
+        "live": 84
       }
     },
     {
@@ -571,7 +563,7 @@
       },
       "repairComplete": {
         "predecessor": "05:04:16",
-        "live": "05:03:41"
+        "live": "05:03:27"
       },
       "attritionFallsSec": [
         1.05,
@@ -600,7 +592,7 @@
       },
       "repairComplete": {
         "predecessor": "05:03:59",
-        "live": "05:03:59"
+        "live": "05:03:58"
       },
       "attritionFallsSec": [
         1.05,
@@ -629,7 +621,7 @@
       },
       "repairComplete": {
         "predecessor": "05:06:52",
-        "live": "05:03:20"
+        "live": "05:03:51"
       },
       "attritionFallsSec": [
         1.05,
@@ -641,7 +633,7 @@
       ],
       "playerHealth": {
         "predecessor": 92,
-        "live": 92
+        "live": 100
       }
     },
     {
@@ -658,19 +650,19 @@
       },
       "repairComplete": {
         "predecessor": "05:03:18",
-        "live": "05:07:12"
+        "live": "05:03:26"
       },
       "attritionFallsSec": [
         1.05,
-        1.2,
-        3.9,
-        2.7,
+        3.45,
+        1.65,
+        3.15,
         0.8,
         0.8
       ],
       "playerHealth": {
         "predecessor": 100,
-        "live": 92
+        "live": 100
       }
     },
     {
@@ -687,10 +679,10 @@
       },
       "repairComplete": {
         "predecessor": "05:02:26",
-        "live": "05:03:31"
+        "live": "05:02:52"
       },
       "attritionFallsSec": [
-        1.05,
+        0.6,
         3.45,
         3,
         3.15,
@@ -716,13 +708,13 @@
       },
       "repairComplete": {
         "predecessor": "05:05:10",
-        "live": "05:06:35"
+        "live": "05:07:19"
       },
       "attritionFallsSec": [
         1.05,
         1.2,
-        3.45,
-        3.6,
+        3.9,
+        2.7,
         0.8,
         0.8
       ],

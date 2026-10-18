@@ -82,7 +82,7 @@ test('historical approved golden remains immutable; the partials golden and the 
   assert.equal(amendment2.afterSourceSha256,t38Golden.sourceSha256);assert.notEqual(t38Golden.sourceSha256,replaced.sourceSha256,'amendment 02 moved the simulation source');
 });
 
-test('the T47 golden of the combined tree chains to the staging, pins the live simulation, cites its per-tick delta audit, and keeps amendments 01 and 02 as history',()=>{
+test('the T47 golden of the combined tree chains to the staging, pins the live simulation, cites its per-tick delta audit, and keeps amendments 01, 02 and 03 as history',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   // The original partials golden (the candidate #80 alone, the predecessor of T47 amendment 01 and of T48) is kept as ...-before-amendment-02.json: an immutable record, pinned here.
   const original='./fixtures/m01-partials-gameplay-baseline-before-amendment-02.json',partialsOriginal=JSON.parse(readFileSync(new URL(original,import.meta.url),'utf8'));
@@ -101,13 +101,40 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the golden pins the live simulation');
   assert.notEqual(golden.sourceSha256,t38Golden.sourceSha256,'the T38 golden is history: T47 moved the simulation');
   assert.equal(sha('../docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json'),golden.auditSha256,'the delta audit that justifies this golden is the committed one');
-  // Amendment 02: T47 joined the staging, so the golden moved from the candidate #80 + T47 to the staging + T47. The golden and the delta audit it replaces (the T47 head 602a5ee,
-  // amendment 01) are kept as byte copies, the chain to them is pinned here, and tools/verification/m01-t47-golden-amendment-audit.mjs wrote the account (GOLDEN_AMENDMENT_02.json).
-  const kept2='./fixtures/m01-t47-gameplay-baseline-before-amendment-02.json',old=JSON.parse(readFileSync(new URL(kept2,import.meta.url),'utf8')),amendment2=golden.amendment02;
+  // Amendment 03 (D43, docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md): the T47 x T38 interaction fix moved the simulation again, on the same
+  // staging predecessor. The golden and delta audit it replaces (bc4523f, amendment 02) are kept as byte copies, the chain is pinned here, and
+  // tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 03 wrote the account (GOLDEN_AMENDMENT_03.json). Amendments 02 and 01 live in the kept goldens.
+  const kept3='./fixtures/m01-t47-gameplay-baseline-before-amendment-03.json',prev=JSON.parse(readFileSync(new URL(kept3,import.meta.url),'utf8')),amendment3=golden.amendment03;
+  assert.equal(amendment3.task,golden.task);assert.equal(amendment3.beforeCommit,'bc4523fc2e8161846828b77e7c1a49697f3372e8');assert.equal(golden.amendment02,undefined);
+  assert.equal(sha(kept3),'664df540ec94e2e51b6fcab20e766f9a5db1f2fd695b23e5075ebd786fced24f');
+  assert.equal(sha(kept3),amendment3.beforeFixtureSha256,'the T47 golden of amendment 02 is kept byte for byte');
+  assert.equal(prev.sourceSha256,amendment3.beforeSourceSha256);assert.notEqual(prev.sourceSha256,golden.sourceSha256,'amendment 03 moved the source lock');
+  assert.equal(prev.task,golden.task);assert.equal(prev.predecessor,golden.predecessor);assert.equal(prev.predecessorSourceSha256,golden.predecessorSourceSha256);assert.equal(prev.amendment03,undefined);
+  assert.equal(prev.previousGolden.sha256,golden.previousGolden.sha256,'amendment 03 keeps the chain to the staging golden');
+  assert.equal(sha('../'+amendment3.beforeAudit),'61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a');
+  assert.equal(sha('../'+amendment3.beforeAudit),amendment3.beforeAuditSha256);assert.equal(prev.auditSha256,amendment3.beforeAuditSha256,'the replaced golden cites the kept delta audit');
+  const account3=JSON.parse(readFileSync(new URL('../'+amendment3.audit,import.meta.url)));
+  assert.equal(account3.amendment,'amendment-03');assert.equal(account3.beforeCommit,amendment3.beforeCommit);assert.equal(account3.predecessor,golden.predecessor);
+  assert.equal(account3.beforeFixtureSha256,amendment3.beforeFixtureSha256);assert.equal(account3.beforeSourceSha256,amendment3.beforeSourceSha256);assert.equal(account3.beforeAuditSha256,amendment3.beforeAuditSha256);
+  assert.equal(account3.afterSourceSha256,golden.sourceSha256);assert.equal(account3.afterAuditSha256,golden.auditSha256);
+  assert.equal(account3.afterFixtureSha256,sha('./fixtures/m01-t47-gameplay-baseline.json'),'the account describes this very golden');
+  assert.deepEqual(account3.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]));
+  account3.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,prev.routes[i].ticks);assert.equal(r.newTicks,golden.routes[i].ticks);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(golden.routes[i].blocks[b],prev.routes[i].blocks[b],'the blocks before the first difference are the replaced golden\'s');
+    if(r.identicalBlocks<Math.min(prev.routes[i].blocks.length,golden.routes[i].blocks.length))assert.notDeepEqual(golden.routes[i].blocks[r.identicalBlocks],prev.routes[i].blocks[r.identicalBlocks],'and the next block differs');
+    assert.equal(r.cadenceFirstDifferenceAfter.difference.path,'$.state.timers.withdrawalCasualty','D43: the named cadence delta first changes only the withdrawal timer');
+  });
+  // D43 (b): the S2 visibility count of tests/m01-ckm-live-fire.test.js, re-measured with tools/m01-ckm-fire-arc.mjs on both sides of the amendment.
+  assert.equal(account3.s2Visibility.before.strictClearEntries,270);assert.equal(account3.s2Visibility.after.strictClearEntries,271);
+  // Amendment 02 (history): T47 joined the staging, so the golden moved from the candidate #80 + T47 to the staging + T47. The golden and the delta audit it replaced (the T47
+  // head 602a5ee, amendment 01) are kept as byte copies; the account (GOLDEN_AMENDMENT_02.json) describes the golden that amendment 03 replaced (`prev`) and is re-checked
+  // byte for byte by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 02, with the simulation and pilot of bc4523f extracted from git.
+  const kept2='./fixtures/m01-t47-gameplay-baseline-before-amendment-02.json',old=JSON.parse(readFileSync(new URL(kept2,import.meta.url),'utf8')),amendment2=prev.amendment02;
   assert.equal(amendment2.task,golden.task);assert.equal(amendment2.beforeCommit,'602a5ee89920283d360a1bdad6177922666b2936');
   assert.equal(sha(kept2),'0556f0e3704f79764acce35144bb847aeeb901edfc6ce1faf318169378dba663');
   assert.equal(sha(kept2),amendment2.beforeFixtureSha256,'the T47 golden of amendment 01 is kept byte for byte');
-  assert.equal(old.sourceSha256,amendment2.beforeSourceSha256);assert.notEqual(old.sourceSha256,golden.sourceSha256,'amendment 02 moved the source lock');
+  assert.equal(old.sourceSha256,amendment2.beforeSourceSha256);assert.notEqual(old.sourceSha256,prev.sourceSha256,'amendment 02 moved the source lock');
   assert.equal(old.task,golden.task);assert.equal(old.predecessor,'813f163deceb551e0e4504b30958580cb67d3a76');assert.equal(old.amendment02,undefined);
   assert.equal(old.previousGolden.sha256,sha(original),'amendment 01 was built on the original partials golden');assert.equal(old.predecessorSourceSha256,partialsOriginal.sourceSha256);
   assert.equal(sha('../'+amendment2.beforeAudit),'2a7dd733454a4a3598dba3f400488a81b756ac2fb8bf2c2f1886f02a7e45fb29');
@@ -115,13 +142,13 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   const account2=JSON.parse(readFileSync(new URL('../'+amendment2.audit,import.meta.url)));
   assert.equal(account2.amendment,'amendment-02');assert.equal(account2.beforeCommit,amendment2.beforeCommit);assert.equal(account2.predecessor,golden.predecessor);
   assert.equal(account2.beforeFixtureSha256,amendment2.beforeFixtureSha256);assert.equal(account2.beforeSourceSha256,amendment2.beforeSourceSha256);assert.equal(account2.beforeAuditSha256,amendment2.beforeAuditSha256);
-  assert.equal(account2.afterSourceSha256,golden.sourceSha256);assert.equal(account2.afterAuditSha256,golden.auditSha256);
-  assert.equal(account2.afterFixtureSha256,sha('./fixtures/m01-t47-gameplay-baseline.json'),'the account describes this very golden');
-  assert.deepEqual(account2.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]));
+  assert.equal(account2.afterSourceSha256,prev.sourceSha256);assert.equal(account2.afterAuditSha256,prev.auditSha256);
+  assert.equal(account2.afterFixtureSha256,sha(kept3),'the account describes the golden that amendment 03 replaced');
+  assert.deepEqual(account2.routes.map(r=>[r.seed,r.support]),prev.routes.map(r=>[r.seed,r.support]));
   account2.routes.forEach((r,i)=>{
-    assert.equal(r.oldTicks,old.routes[i].ticks);assert.equal(r.newTicks,golden.routes[i].ticks);
-    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(golden.routes[i].blocks[b],old.routes[i].blocks[b],'the blocks before the first difference are the replaced golden\'s');
-    if(r.identicalBlocks<Math.min(old.routes[i].blocks.length,golden.routes[i].blocks.length))assert.notDeepEqual(golden.routes[i].blocks[r.identicalBlocks],old.routes[i].blocks[r.identicalBlocks],'and the next block differs');
+    assert.equal(r.oldTicks,old.routes[i].ticks);assert.equal(r.newTicks,prev.routes[i].ticks);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(prev.routes[i].blocks[b],old.routes[i].blocks[b],'the blocks before the first difference are the replaced golden\'s');
+    if(r.identicalBlocks<Math.min(old.routes[i].blocks.length,prev.routes[i].blocks.length))assert.notDeepEqual(prev.routes[i].blocks[r.identicalBlocks],old.routes[i].blocks[r.identicalBlocks],'and the next block differs');
   });
   // Amendment 01 (history, on the candidate #80): the critical review moved the T47 golden once (the first one was written from ab98199). The first golden and its delta audit are kept as
   // byte copies, the chain is pinned here, and the account was written by tools/verification/m01-t47-golden-amendment-audit.mjs at 602a5ee (GOLDEN_AMENDMENT_01.json). It lives in `old`.

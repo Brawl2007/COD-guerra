@@ -1,0 +1,471 @@
+{
+  "task": "M01-T47-CKM-LIVE-FIRE-V1",
+  "amendment": "amendment-03",
+  "beforeCommit": "bc4523fc2e8161846828b77e7c1a49697f3372e8",
+  "predecessor": "8c6328c947e92041f237b5990142dd110aee8e71",
+  "predecessorSourceSha256": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9",
+  "beforeSourceSha256": "f568c386a192fedf45bde54a2102398adfb67d292726268dbd69ef07c364e261",
+  "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-03.json",
+  "beforeFixtureSha256": "664df540ec94e2e51b6fcab20e766f9a5db1f2fd695b23e5075ebd786fced24f",
+  "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_03.json",
+  "beforeAuditSha256": "61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a",
+  "afterFixture": "tests/fixtures/m01-t47-gameplay-baseline.json",
+  "afterFixtureSha256": "92a69ba178bdf3e8071940135db873c34f6269b9c7c2427d4e8efd845c58b1ff",
+  "afterSourceSha256": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c",
+  "afterAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json",
+  "afterAuditSha256": "6480330aff018fa53e89d2ad379ba6cff22e628bc522d2d38a89ab92e0922d4f",
+  "authority": "Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 03 --write (x86), after tools/verification/m01-t47-ckm-fire-audit.mjs --write-golden; never edited by hand. Derived from git (the replaced golden and delta audit are read from beforeCommit), the two fixtures, the two delta audits and two runs of each golden route; no value in it is typed.",
+  "reason": "The T47 x T38 interaction (T47_T38_INTERACTION.md in this folder; the three findings of D42) was fixed in the simulation of the combined tree, on the same staging predecessor 8c6328c. Three changes, in the order the route meets them: (1) the ckm is laid on the standing man who fired (ckmAim and the clear-shot line of sight no longer read `crouched`), so the gun no longer depends on the T38 gate postures, which the T23 attrition volleys change (the T22 twin of tests/m01-east-front.test.js): the first difference is the first burst laid on a kneeling rifleman, inside the crew delta, and then the first landed round whose beaten zone changes a German; (2) CKM_SUPPRESS_SEC 2.5 -> 1.5 s, the 1.5 s that a German near miss pins an ally who is not working (landRound), so the player keeps the duel with the gate MG during the repair; (3) the T23 withdrawal cadence counts its 20 s from the landing of the lethal round (named delta `cadence` of the delta audit, emulated on the predecessor and proved per route: cadenceFirstDifferenceAfter), so casualties are at least 20 s of battle clock apart when the clock drops from 8x to 1x during a flight (06:09:00). The replaced golden and delta audit (bc4523f, amendment 02) are kept byte for byte.",
+  "rule": "Same two routes and the same digest scheme (sha256 per 512 ticks of the whole gameplay frame: state, nested checkpoint and events, presentation fields removed). identicalBlocks counts the leading 512-tick blocks equal to the replaced golden; firstDifferingBlockTick is the end tick of the first block that differs. firstDifferenceFromBefore runs the simulation of beforeCommit (extracted from git with its own data) and the live one through the same test pilot.",
+  "changedGameplayInputsSinceBefore": [
+    "src/game/m01-simulation.js"
+  ],
+  "changedGameplayInputsSincePredecessor": [
+    "src/game/m01-simulation.js",
+    "missions/m01-tczew/mission.json",
+    "missions/m01-tczew/map-layout.json"
+  ],
+  "unchangedGameplayInputsSincePredecessor": [
+    "src/game/m01-animation-presentation.js",
+    "src/game/m01-aim.js",
+    "src/game/m01-fire.js",
+    "src/game/m01-display-fire.js",
+    "src/game/m01-yard-life.js",
+    "src/world/spatial.js",
+    "src/world/tczew-world.js"
+  ],
+  "header": {
+    "task": {
+      "unchanged": true
+    },
+    "generationStage": {
+      "before": "T47 on the combined staging: implementation candidate after the critical review (amendments 01 and 02) and the per-tick predecessor delta audit",
+      "after": "T47 on the combined staging: implementation candidate after the critical review (amendments 01 and 02), the T47 x T38 interaction fix (amendment 03) and the per-tick predecessor delta audit"
+    },
+    "predecessor": {
+      "unchanged": true
+    },
+    "predecessorSourceSha256": {
+      "unchanged": true
+    },
+    "previousGolden": {
+      "unchanged": true
+    },
+    "historicalGoldenSha256": {
+      "unchanged": true
+    },
+    "sourceSha256": {
+      "before": "f568c386a192fedf45bde54a2102398adfb67d292726268dbd69ef07c364e261",
+      "after": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c"
+    },
+    "amendment02": {
+      "before": {
+        "task": "M01-T47-CKM-LIVE-FIRE-V1",
+        "beforeCommit": "602a5ee89920283d360a1bdad6177922666b2936",
+        "beforeSourceSha256": "276215dae9b74831e08dbc3f01b3c7748277a679a547343d982641e742b7d3f3",
+        "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-02.json",
+        "beforeFixtureSha256": "0556f0e3704f79764acce35144bb847aeeb901edfc6ce1faf318169378dba663",
+        "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_02.json",
+        "beforeAuditSha256": "2a7dd733454a4a3598dba3f400488a81b756ac2fb8bf2c2f1886f02a7e45fb29",
+        "audit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_02.json"
+      },
+      "after": null
+    },
+    "auditSha256": {
+      "before": "61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a",
+      "after": "6480330aff018fa53e89d2ad379ba6cff22e628bc522d2d38a89ab92e0922d4f"
+    },
+    "amendment03": {
+      "before": null,
+      "after": {
+        "task": "M01-T47-CKM-LIVE-FIRE-V1",
+        "beforeCommit": "bc4523fc2e8161846828b77e7c1a49697f3372e8",
+        "beforeSourceSha256": "f568c386a192fedf45bde54a2102398adfb67d292726268dbd69ef07c364e261",
+        "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-03.json",
+        "beforeFixtureSha256": "664df540ec94e2e51b6fcab20e766f9a5db1f2fd695b23e5075ebd786fced24f",
+        "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_03.json",
+        "beforeAuditSha256": "61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a",
+        "audit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_03.json"
+      }
+    }
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 21707,
+      "newTicks": 21862,
+      "oldBlocks": 43,
+      "newBlocks": 43,
+      "identicalBlocks": 10,
+      "firstDifferingBlockTick": 5632,
+      "firstDifferenceFromBefore": {
+        "tick1": {
+          "leafDifferences": 0,
+          "leafCapReached": false,
+          "actorsDiffering": [],
+          "groups": {},
+          "other": []
+        },
+        "firstTickWhere": {
+          "mainRngStateDiffers": {
+            "tick": 5412,
+            "clock": 270.6,
+            "battleClock": "04:47:08"
+          },
+          "roundsIssuedOrInFlightDiffer": {
+            "tick": 5412,
+            "clock": 270.6,
+            "battleClock": "04:47:08"
+          },
+          "eventCountDiffers": {
+            "tick": 5412,
+            "clock": 270.6,
+            "battleClock": "04:47:08"
+          },
+          "playerHealthDiffers": {
+            "tick": 5679,
+            "clock": 283.95,
+            "battleClock": "04:49:08"
+          },
+          "realClockDiffers": null
+        }
+      },
+      "liveFireBefore": {
+        "bursts": 77,
+        "roundsIssued": 616,
+        "hits": 4,
+        "kills": [],
+        "menHit": [
+          "de_east_11",
+          "de_east_12",
+          "de_east_6",
+          "de_east_1"
+        ],
+        "menSuppressed": [
+          "de_east_0",
+          "de_east_13",
+          "de_east_12",
+          "de_east_7",
+          "de_east_1",
+          "de_east_5",
+          "de_east_6",
+          "de_east_8",
+          "de_east_11",
+          "de_east_9",
+          "de_east_10",
+          "de_east_2",
+          "de_east_3",
+          "de_east_4"
+        ],
+        "suppressionEvents": 779,
+        "repairPins": 39,
+        "repairCompleteSec": 408.9500000000587,
+        "causalOnset": {
+          "tick": 5320,
+          "clock": 266.0000000000262,
+          "actor": "de_east_0"
+        }
+      },
+      "liveFireAfter": {
+        "bursts": 76,
+        "roundsIssued": 608,
+        "hits": 3,
+        "kills": [],
+        "menHit": [
+          "de_east_9",
+          "de_east_8",
+          "de_east_10"
+        ],
+        "menSuppressed": [
+          "de_east_0",
+          "de_east_13",
+          "de_east_12",
+          "de_east_7",
+          "de_east_1",
+          "de_east_5",
+          "de_east_6",
+          "de_east_8",
+          "de_east_2",
+          "de_east_4",
+          "de_east_3",
+          "de_east_9",
+          "de_east_10",
+          "de_east_11"
+        ],
+        "suppressionEvents": 727,
+        "repairPins": 44,
+        "repairCompleteSec": 420.55000000006135,
+        "causalOnset": {
+          "tick": 5320,
+          "clock": 266.0000000000262,
+          "actor": "de_east_0"
+        }
+      },
+      "cadenceFirstDifferenceAfter": {
+        "tick": 14954,
+        "clock": 747.6999999998677,
+        "battleClock": 21920.400000007714,
+        "difference": {
+          "path": "$.state.timers.withdrawalCasualty",
+          "a": 21920.000000007713,
+          "b": 21920.400000007714
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 21378,
+      "newTicks": 21376,
+      "oldBlocks": 42,
+      "newBlocks": 42,
+      "identicalBlocks": 10,
+      "firstDifferingBlockTick": 5632,
+      "firstDifferenceFromBefore": {
+        "tick1": {
+          "leafDifferences": 0,
+          "leafCapReached": false,
+          "actorsDiffering": [],
+          "groups": {},
+          "other": []
+        },
+        "firstTickWhere": {
+          "mainRngStateDiffers": {
+            "tick": 5503,
+            "clock": 275.15,
+            "battleClock": "04:47:49"
+          },
+          "roundsIssuedOrInFlightDiffer": {
+            "tick": 5503,
+            "clock": 275.15,
+            "battleClock": "04:47:49"
+          },
+          "eventCountDiffers": {
+            "tick": 5503,
+            "clock": 275.15,
+            "battleClock": "04:47:49"
+          },
+          "playerHealthDiffers": null,
+          "realClockDiffers": null
+        }
+      },
+      "liveFireBefore": {
+        "bursts": 77,
+        "roundsIssued": 616,
+        "hits": 2,
+        "kills": [],
+        "menHit": [
+          "de_east_4",
+          "de_east_3"
+        ],
+        "menSuppressed": [
+          "de_east_13",
+          "de_east_11",
+          "de_east_12",
+          "de_east_9",
+          "de_east_10",
+          "de_east_6",
+          "de_east_8",
+          "de_east_7",
+          "de_east_5",
+          "de_east_4",
+          "de_east_2",
+          "de_east_3"
+        ],
+        "suppressionEvents": 655,
+        "repairPins": 8,
+        "repairCompleteSec": 382.9500000000528,
+        "causalOnset": {
+          "tick": 5449,
+          "clock": 272.45000000002767,
+          "actor": "de_east_13"
+        }
+      },
+      "liveFireAfter": {
+        "bursts": 73,
+        "roundsIssued": 584,
+        "hits": 5,
+        "kills": [],
+        "menHit": [
+          "de_east_11",
+          "de_east_12",
+          "de_east_7",
+          "de_east_4",
+          "de_east_10"
+        ],
+        "menSuppressed": [
+          "de_east_13",
+          "de_east_11",
+          "de_east_12",
+          "de_east_9",
+          "de_east_10",
+          "de_east_2",
+          "de_east_3",
+          "de_east_4",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_5"
+        ],
+        "suppressionEvents": 573,
+        "repairPins": 8,
+        "repairCompleteSec": 382.80000000005276,
+        "causalOnset": {
+          "tick": 5449,
+          "clock": 272.45000000002767,
+          "actor": "de_east_13"
+        }
+      },
+      "cadenceFirstDifferenceAfter": {
+        "tick": 14324,
+        "clock": 716.1999999998964,
+        "battleClock": 21920.400000007714,
+        "difference": {
+          "path": "$.state.timers.withdrawalCasualty",
+          "a": 21920.000000007713,
+          "b": 21920.400000007714
+        }
+      }
+    }
+  ],
+  "s2Visibility": {
+    "tool": "tools/m01-ckm-fire-arc.mjs collectWindowTargets({everyTicks:20}) + evaluateCandidate(window, ckmMuzzle()) + describeCandidate(window, SHORTLIST[i])",
+    "tests": [
+      "tests/m01-ckm-live-fire.test.js: post S2 is confirmed in the production trace",
+      "tests/m01-ckm-candidate-posts.test.js: whole-route window"
+    ],
+    "before": {
+      "samples": 784,
+      "enemySamples": 21460,
+      "phaseSamples": {
+        "repair": 7560,
+        "post_repair": 12000,
+        "withdrawal": 1900
+      },
+      "phaseActors": {
+        "repair": 40,
+        "post_repair": 40,
+        "withdrawal": 50
+      },
+      "entries": 884,
+      "productionClearEntries": 270,
+      "strictClearEntries": 270,
+      "throughBridgeEntries": 0,
+      "shortlist": {
+        "S1": {
+          "strictClearEntries": 269,
+          "productionClearEntries": 395,
+          "throughBridgeEntries": 126,
+          "minGapToBridgeM": 0.04,
+          "minClearanceM": null,
+          "minTargetDistanceM": 1045.26,
+          "maxTargetDistanceM": 1050.38
+        },
+        "S2": {
+          "strictClearEntries": 270,
+          "productionClearEntries": 270,
+          "throughBridgeEntries": 0,
+          "minGapToBridgeM": 0.7,
+          "minClearanceM": null,
+          "minTargetDistanceM": 1045.23,
+          "maxTargetDistanceM": 1050.34
+        },
+        "S3": {
+          "strictClearEntries": 338,
+          "productionClearEntries": 428,
+          "throughBridgeEntries": 90,
+          "minGapToBridgeM": 0.35,
+          "minClearanceM": 0.351,
+          "minTargetDistanceM": 985.15,
+          "maxTargetDistanceM": 1049.65
+        },
+        "S4": {
+          "strictClearEntries": 108,
+          "productionClearEntries": 108,
+          "throughBridgeEntries": 0,
+          "minGapToBridgeM": 3.5,
+          "minClearanceM": null,
+          "minTargetDistanceM": 1068.02,
+          "maxTargetDistanceM": 1086.54
+        }
+      },
+      "muzzleHeights": {
+        "0.6": {
+          "S1": 269,
+          "S2": 270
+        },
+        "0.9": {
+          "S1": 269,
+          "S2": 270
+        }
+      }
+    },
+    "after": {
+      "samples": 784,
+      "enemySamples": 21460,
+      "phaseSamples": {
+        "repair": 7560,
+        "post_repair": 12000,
+        "withdrawal": 1900
+      },
+      "phaseActors": {
+        "repair": 40,
+        "post_repair": 40,
+        "withdrawal": 50
+      },
+      "entries": 885,
+      "productionClearEntries": 271,
+      "strictClearEntries": 271,
+      "throughBridgeEntries": 0,
+      "shortlist": {
+        "S1": {
+          "strictClearEntries": 270,
+          "productionClearEntries": 396,
+          "throughBridgeEntries": 126,
+          "minGapToBridgeM": 0.04,
+          "minClearanceM": null,
+          "minTargetDistanceM": 1045.26,
+          "maxTargetDistanceM": 1050.38
+        },
+        "S2": {
+          "strictClearEntries": 271,
+          "productionClearEntries": 271,
+          "throughBridgeEntries": 0,
+          "minGapToBridgeM": 0.7,
+          "minClearanceM": null,
+          "minTargetDistanceM": 1045.23,
+          "maxTargetDistanceM": 1050.34
+        },
+        "S3": {
+          "strictClearEntries": 338,
+          "productionClearEntries": 428,
+          "throughBridgeEntries": 90,
+          "minGapToBridgeM": 0.35,
+          "minClearanceM": 0.351,
+          "minTargetDistanceM": 985.15,
+          "maxTargetDistanceM": 1049.65
+        },
+        "S4": {
+          "strictClearEntries": 108,
+          "productionClearEntries": 108,
+          "throughBridgeEntries": 0,
+          "minGapToBridgeM": 3.5,
+          "minClearanceM": null,
+          "minTargetDistanceM": 1068.02,
+          "maxTargetDistanceM": 1086.54
+        }
+      },
+      "muzzleHeights": {
+        "0.6": {
+          "S1": 270,
+          "S2": 271
+        },
+        "0.9": {
+          "S1": 270,
+          "S2": 271
+        }
+      }
+    }
+  }
+}

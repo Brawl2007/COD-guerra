@@ -406,7 +406,7 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 // T47: 46 Germans stood at CP-D on the route before the ckm fired. On the candidate #80 the gun felled one of them (de_east_5 after the review fix, so 45). Over the T38 staging it wounds
-// four men on this route (live.hits 4, live.men.hit) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
+// three men on this route since T47 amendment 03 (live.hits 3, live.men.hit; D43) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
 // tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
 const CPD_ENEMIES_ALIVE=46;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
