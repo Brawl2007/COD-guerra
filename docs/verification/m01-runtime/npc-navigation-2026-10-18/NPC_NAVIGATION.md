@@ -28,13 +28,13 @@ varrimento do movimento do tick (atravessar sem terminar dentro) e pares de home
 
 ## 3. O que mudou
 
-- `src/world/m01-navigation.js` — **planeador determinístico, só de dados** (reutiliza as listas de colliders de `TczewWorld`; o mapa não tem grafo de pontos nem rotas nos `coverNodes`, que são posições de tiro, por isso não há nós autorados — marcas `ponytail:` no código): grelha de 0,5 m rasterizada sob pedido numa janela à volta do pedido, A* de oito vizinhos sem cortar esquinas,
+- `src/world/m01-navigation.js` — **planeador determinístico, só de dados** (reutiliza as listas de colliders de `TczewWorld` e aceita uma lista extra de sólidos, `extraSolids`; o mapa não tem grafo de pontos nem rotas nos `coverNodes`, que são posições de tiro, por isso não há nós autorados — marcas `ponytail:` no código): grelha de 0,5 m rasterizada sob pedido numa janela à volta do pedido, A* de oito vizinhos sem cortar esquinas,
   string pulling com testes exatos de segmento. Sólidos: `world.obstacles`, treliças, faixas de bordo dos tabuleiros (o centro já era contido por `world.move`; as faixas afastam o corpo das treliças) e os sacos da ckm
   (somem com a demolição oeste). Sem RNG, sem relógio, sem estado escondido: a mesma entrada dá as mesmas esquinas. Não move ninguém.
 - `src/world/m01-nav-layout.js` — dados partilhados do horseshoe (o renderizador desenha a partir dele; a navegação e a auditoria leem os mesmos sacos) e as **passagens** (o arco rodoviário de Lisewo).
   O horseshoe passa a ter a **retaguarda aberta** (2,1 m): é o que o nome diz e é por onde a tripulação sai.
 - `moveActor` (`m01-simulation.js`): se o caminho reto está livre, anda **exatamente como antes**; senão segue as esquinas de uma rota guardada no próprio ator (`a.nav`: `goal`, `key`, `at`, `i`, `stall`, `pts`).
-  A rota refaz-se quando o alvo muda >1,5 m, cai um vão, passam 8 s ou fica sem avançar. Um homem desvia-se de quem está à frente (35° e depois 70°, para o lado livre), e na última zona de um objetivo cheio
+  A rota refaz-se quando o alvo muda >1,5 m, cai um vão, fica gasta ou o homem não avança (nada mais muda debaixo de uma rota). Uma rota que não existe não é pedida a cada tick: a falha fica guardada (`nav.fail`, validada no restore) e só se tenta de novo quando o alvo mexe >1,5 m, cai um vão ou passam `NAV.retrySec` (5 s). A segunda tentativa usa a janela mais larga que cabe no orçamento de células (o rodeio da estação, 122 m, precisa dela). Um homem desvia-se de quem está à frente (35° e depois 70°, para o lado livre), e na última zona de um objetivo cheio
   (<2,5 m) pára onde está, como numa fila. Depois de andar, quem estiver mais perto do que a soma dos raios menos 0,1 m empurra-o (≤0,15 m por tick, através de `world.move`).
 - **Compatibilidade de saves.** `a.nav` é opcional; um save antigo não o tem e a rota refaz-se a partir da posição e do alvo; `validateM01Snapshot` recusa um `nav` que a máquina não faria. `nav.key` vem
   dos eventos consumidos (não do contador de revisões do mundo), por isso um save e um restore dão o mesmo.

@@ -16,7 +16,7 @@
 // M01_PASSAGES cut the doorways of slabs that the exported collider fills (Lisewo's portal). The vertical rule is the one of TczewWorld.move.
 import {M01_PASSAGES,ckmEmplacementSolids} from './m01-nav-layout.js';
 
-export const NAV={margin:.15,tightMargin:.03,cell:.5,maxCells:120000,band:{low:.1,high:1.45},edge:2,bucket:32,voidBelow:-6,maxSnap:6,reachSnap:3};
+export const NAV={margin:.15,tightMargin:.03,cell:.5,maxCells:120000,band:{low:.1,high:1.45},edge:2,bucket:32,voidBelow:-6,maxSnap:6,reachSnap:3,retrySec:5,widePadMax:200};
 const EAST='evt_m01_east_demolition',WEST='evt_m01_west_demolition';
 
 // Rectangle minus rectangle (xz): up to four pieces, the y range is kept.
@@ -55,8 +55,12 @@ class Heap {
 }
 
 export class M01Navigator {
-  /** `emplacement`: the ckm gun root ({x,y,z}) round which the sandbag walls stand; null leaves them out. */
-  constructor(world,{emplacement=null}={}){this.world=world;this.emplacement=emplacement;this.built=-1;this.solids=[];this.buckets=new Map();this.stamp=0;}
+  /**
+   * `emplacement`: the ckm gun root ({x,y,z}) round which the sandbag walls stand; null leaves them out.
+   * `extraSolids`: more walls to route round, an array or a function of the world returning one, of boxes {id,min:{x,y,z},max:{x,y,z}} in metres (for solids the world keeps apart
+   * from `obstacles`, e.g. what only the player collides with). They are hard solids like the colliders; read again whenever the world's revision changes.
+   */
+  constructor(world,{emplacement=null,extraSolids=null}={}){this.world=world;this.emplacement=emplacement;this.extraSolids=extraSolids;this.built=-1;this.solids=[];this.buckets=new Map();this.stamp=0;}
   /** What the saved routes depend on besides the map: which spans and which walls still stand. Stable across a save and a restore. */
   get key(){const e=this.world.events;return (e.includes(EAST)?1:0)+(e.includes(WEST)?2:0);}
   sync(){
@@ -64,6 +68,7 @@ export class M01Navigator {
     const w=this.world,list=[],add=(id,kind,b)=>list.push({id,kind,min:{x:b.min.x,y:b.min.y,z:b.min.z},max:{x:b.max.x,y:b.max.y,z:b.max.z}});
     for(const b of w.obstacles)add(b.id,'collider',b);
     for(const c of w.colliders)if(c.collider==='partialCover')add(c.id,'truss',c);
+    for(const b of (typeof this.extraSolids==='function'?this.extraSolids(w):this.extraSolids)??[])add(b.id??'extra','collider',b);
     for(const s of w.spanDecks){   // the strips beside a span: the body stays clear of the girders, the centre rule of TczewWorld.move is unchanged
       const y0=s.max.y-.6,y1=s.max.y+3.5;
       add(`${s.id}:edge_n`,'edge',{min:{x:s.min.x,y:y0,z:s.min.z-NAV.edge},max:{x:s.max.x,y:y1,z:s.min.z}});
@@ -132,13 +137,20 @@ export class M01Navigator {
    */
   route(a,goal){
     this.sync();
-    for(const margin of [NAV.margin,NAV.tightMargin]){const r=this.plan(a,goal,margin);if(r)return r;}
+    for(const margin of [NAV.margin,NAV.tightMargin])for(const wide of [false,true]){const r=this.plan(a,goal,margin,wide);if(r)return r;}
     return null;
   }
-  plan(a,goal,margin){
+  plan(a,goal,margin,wide=false){
     const radius=a.radius+margin,y=a.y;
     if(this.clear(a.x,a.z,goal.x,goal.z,a.radius,y,margin))return [[goal.x,goal.z]];
-    const dist=Math.hypot(goal.x-a.x,goal.z-a.z),pad=Math.min(80,Math.max(24,dist*.35));
+    const dist=Math.hypot(goal.x-a.x,goal.z-a.z),dx=Math.abs(goal.x-a.x),dz=Math.abs(goal.z-a.z);
+    let pad=Math.min(80,Math.max(24,dist*.35));
+    if(wide){
+      // The second try: the widest window that still fits the cell budget at full resolution, so a wall longer than the first window (the station is 122 m) can be walked round.
+      const area=NAV.maxCells*NAV.cell*NAV.cell,wider=(-(dx+dz)+Math.sqrt((dx+dz)**2-4*(dx*dz-area)))/4;
+      if(!(wider>pad+1))return null;
+      pad=Math.min(NAV.widePadMax,wider);
+    }
     const x0=Math.min(a.x,goal.x)-pad,x1=Math.max(a.x,goal.x)+pad,z0=Math.min(a.z,goal.z)-pad,z1=Math.max(a.z,goal.z)+pad;
     let cell=NAV.cell;while((x1-x0)/cell*((z1-z0)/cell)>NAV.maxCells)cell*=2;
     const nx=Math.ceil((x1-x0)/cell),nz=Math.ceil((z1-z0)/cell),n=nx*nz,blocked=new Uint8Array(n);

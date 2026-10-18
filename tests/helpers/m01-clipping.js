@@ -72,6 +72,8 @@ export function stackingAudit(){
   const open=new Map(),pairs=new Map();let ticks=0;
   return {
     observe({sim}){
+      // Display-only actors (the station-yard civilians and the two MG34 loaders) are authored presentation: placed on fixed yard slots or a metre behind their gun, set directly
+      // by updateYard/updateLoaders and never walked by moveActor, so a pair with one of them is no navigation failure. They still count in the wall audit (clippingAudit).
       ticks++;const men=sim.actors.filter(a=>a.alive&&a.active&&!a.carriedBy&&!a.displayOnly);
       for(let i=0;i<men.length;i++)for(let j=i+1;j<men.length;j++){
         const a=men[i],b=men[j],k=a.id+'|'+b.id;

@@ -614,17 +614,19 @@ export class M01Simulation {
   /**
    * Where an actor walks to this tick. The straight walk to the target is kept exactly as it always was whenever no solid is in the way; otherwise he
    * follows the corners of a route round the solids (src/world/m01-navigation.js), which are saved with him (`nav`) and re-made from his position and
-   * the target when the target moves, a span falls, the route is spent or he makes no headway. Nothing here reads or writes the random stream.
+   * the target when the target moves, a span falls, the route is spent or he makes no headway (nothing else in the world changes under a route, so no timer). Nothing here reads or writes the random stream.
    */
   navAim(a,target){
     if(this.navigator.world!==this.world)this.navigator=new M01Navigator(this.world,{emplacement:CKM_POSITION});   // a world swapped under the simulation (tests do)
     const nav=this.navigator;
     if(nav.clear(a.x,a.z,target.x,target.z,a.radius,a.y)){delete a.nav;return target;}
     let n=a.nav;
+    // A route that failed is not asked for again every tick: the failure is saved (`fail`) and kept until the goal moves, a span falls or NAV.retrySec pass (the walk is the old one meanwhile).
+    if(n?.fail&&n.key===nav.key&&Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)<=1.5&&this.clock-n.at<NAV.retrySec)return target;
     const spent=n&&n.i>=n.pts.length-1&&Math.hypot(n.pts[n.pts.length-1][0]-a.x,n.pts[n.pts.length-1][1]-a.z)<.06;
-    if(!n||spent||n.key!==nav.key||Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)>1.5||this.clock-n.at>8||n.stall>=20){
+    if(!n||spent||n.key!==nav.key||Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)>1.5||n.stall>=20){
       const pts=nav.route(a,target);
-      if(!pts){delete a.nav;return target;}   // no way round: the old walk, with its sidestep
+      if(!pts){a.nav={goal:[target.x,target.z],key:nav.key,at:this.clock,i:0,stall:0,pts:[[target.x,target.z]],fail:true};return target;}   // no way round: the old walk, with its sidestep
       n=a.nav={goal:[target.x,target.z],key:nav.key,at:this.clock,i:0,stall:0,pts};
     }
     while(n.i<n.pts.length-1&&nav.clear(a.x,a.z,n.pts[n.i+1][0],n.pts[n.i+1][1],a.radius,a.y,NAV.tightMargin))n.i++;
@@ -858,7 +860,9 @@ export class M01Simulation {
           // A suppressed man stands still while the others walk on: nobody walks into the one who stands in his lane (NPC navigation, personal space).
           // ponytail: the spans stay a scripted straight march along x (no routes, no world.move); only the queue behind a man who stands is added.
           const x=a.x+Math.sign(destination-a.x)*Math.min(Math.abs(destination-a.x),dt*1.5);
-          if(!this.bodiesNear(a,x,a.z,1).some(b=>dist(b,{x,z:a.z})<a.radius+b.radius-SEPARATION_SLACK&&dist(b,{x,z:a.z})<dist(b,a))){a.x=x;a.state=retreat?'RETREAT':'ADVANCE';}
+          // The old retreat of saves made before T48 is not queued: its men all end on x 1080 by design (tests/m01-german-retreat.test.js).
+          if(retreat||!this.bodiesNear(a,x,a.z,1).some(b=>dist(b,{x,z:a.z})<a.radius+b.radius-SEPARATION_SLACK&&dist(b,{x,z:a.z})<dist(b,a))){a.x=x;a.state=retreat?'RETREAT':'ADVANCE';}
+          else a.state='GUARD';   // waiting behind the man who stands: on guard, not walking in place
         }
         continue;
       }
@@ -1577,7 +1581,7 @@ function validateCKMLive(a,s,reject){
 }
 
 // A saved detour (src/world/m01-navigation.js): the corners to walk, which of them is next, and what it was made for. Anything the machine could not have made is refused.
-const validNavRoute=(n,clock)=>Boolean(n)&&typeof n==='object'&&!Array.isArray(n)&&Object.keys(n).length===6&&['goal','key','at','i','stall','pts'].every(k=>Object.hasOwn(n,k))&&
+const validNavRoute=(n,clock)=>Boolean(n)&&typeof n==='object'&&!Array.isArray(n)&&Object.keys(n).length===(n.fail===undefined?6:7)&&['goal','key','at','i','stall','pts'].every(k=>Object.hasOwn(n,k))&&(n.fail===undefined||n.fail===true&&n.i===0&&n.pts.length===1)&&
   Array.isArray(n.goal)&&n.goal.length===2&&n.goal.every(Number.isFinite)&&Number.isInteger(n.key)&&n.key>=0&&n.key<=3&&Number.isFinite(n.at)&&n.at>=0&&n.at<=clock+1e-9&&
   Array.isArray(n.pts)&&n.pts.length>=1&&n.pts.length<=24&&Number.isInteger(n.i)&&n.i>=0&&n.i<n.pts.length&&Number.isInteger(n.stall)&&n.stall>=0&&n.stall<=100000&&
   n.pts.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite));

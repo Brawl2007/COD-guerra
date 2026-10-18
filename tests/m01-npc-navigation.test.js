@@ -4,7 +4,7 @@ import {route,driver,toStationEvacuation} from './helpers/m01-route.js';
 import {clippingAudit,stackingAudit} from './helpers/m01-clipping.js';
 import {M01Simulation,CKM_POSITION,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
-import {M01Navigator} from '../src/world/m01-navigation.js';
+import {M01Navigator,NAV} from '../src/world/m01-navigation.js';
 import {ckmEmplacementSolids,ckmEmplacementBags,CKM_EMPLACEMENT} from '../src/world/m01-nav-layout.js';
 import {compareContinuation,json} from './helpers/m01-determinism.js';
 
@@ -156,4 +156,43 @@ test('free play: 60 deterministic walks across the west bank all arrive, none cl
     for(const line of audit.report().filter(l=>l.includes(' staszek_pawlak ')))failed.push(`walk ${k}: ${line}`);
   });
   assert.deepEqual(failed,[]);
+});
+
+// ---- A route that cannot be made is not asked for every tick ----
+const counting=sim=>{const calls={n:0},real=sim.navigator.route.bind(sim.navigator);sim.navigator.route=(...args)=>{calls.n++;return real(...args);};return calls;};
+
+test('a goal behind the whole station (122 m) is reached: the second try with the widest window walks round it, and no wall is touched',{timeout:300000},()=>{
+  const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit(),calls=counting(s);
+  Object.assign(man,{x:-400,z:25,y:s.world.heightAt(-400,25),target:{x:-400,z:58},state:'GUARD'});
+  for(let i=0;i<20*90&&Math.hypot(man.x+400,man.z-58)>=.8;i++){s.tick(.05,{});audit.observe({sim:s});}
+  assert.ok(Math.hypot(man.x+400,man.z-58)<.8,`arrived (${man.x.toFixed(1)},${man.z.toFixed(1)})`);
+  assert.deepEqual(audit.report().filter(l=>l.includes(' staszek_pawlak ')),[]);
+  assert.ok(calls.n<=2,`${calls.n} route() calls for one 155 m walk: one plan (the first window fails, the wide one succeeds), never one per tick`);
+});
+
+test('an unreachable goal is planned once, kept as a saved back-off and tried again only after NAV.retrySec; a restore in the middle changes nothing',{timeout:300000},()=>{
+  const s=ready(),man=s.actor('staszek_pawlak'),calls=counting(s);
+  // The middle of the station: solid all round, nothing to walk to.
+  Object.assign(man,{x:-400,z:25,y:s.world.heightAt(-400,25),target:{x:-400,z:41},state:'GUARD'});
+  for(let i=0;i<40;i++)s.tick(.05,{});
+  assert.equal(calls.n,1,'one plan, then the back-off');
+  assert.equal(man.nav.fail,true);assert.equal(man.nav.pts.length,1);
+  const save=s.snapshot();validateM01Snapshot(save);
+  const bad=json(save);bad.actors.find(x=>x.id===man.id).nav.fail=false;assert.throws(()=>validateM01Snapshot(bad),/route/);
+  const bad2=json(save);bad2.actors.find(x=>x.id===man.id).nav.i=1;assert.throws(()=>validateM01Snapshot(bad2),/route/);
+  const resumed=new M01Simulation(1);resumed.restoreSnapshot(save);const again=counting(resumed);
+  for(let i=0;i<60;i++)resumed.tick(.05,{});
+  assert.equal(again.n,0,'a restored run does not plan again during the back-off');
+  const rec=compareContinuation(s,{label:'back-off continues identically after a restore',ticks:300,doubleAt:[20,120]});
+  assert.equal(rec.firstDivergence,null);
+  for(let i=0;i<20*12;i++)s.tick(.05,{});
+  assert.ok(calls.n<=1+Math.ceil(12/NAV.retrySec)+1+Math.ceil(300*.05/NAV.retrySec),`${calls.n} route() calls in ${s.clock.toFixed(0)} s`);
+});
+
+test('the planner takes an extra list of solids and routes round them like a collider',()=>{
+  const world=new TczewWorld(),walls=[{id:'extra_wall',min:{x:-150,y:-4,z:10},max:{x:-149,y:2,z:40}}];
+  const plain=new M01Navigator(world),extra=new M01Navigator(world,{extraSolids:()=>walls}),a=walker(-170,25);
+  assert.deepEqual(plain.route(a,{x:-130,z:25}),[[-130,25]]);
+  const r=extra.route(a,{x:-130,z:25});assert.ok(r.length>=2);assertWalkable(extra,a,r);
+  assert.equal(new M01Navigator(world,{extraSolids:walls}).route(a,{x:-130,z:25}).length>=2,true,'an array works as well as a function');
 });
