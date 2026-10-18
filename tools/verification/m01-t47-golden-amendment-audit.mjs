@@ -1,6 +1,15 @@
-// T47 (M01-T47-CKM-LIVE-FIRE-V1) golden AMENDMENTS 02 and 03. Not invoked by npm test.
+// T47 (M01-T47-CKM-LIVE-FIRE-V1) golden AMENDMENTS 02, 03 and 04. Not invoked by npm test.
 //
-// Amendment 03 (the default, `--amendment 03`): the T47 x T38 interaction fix (docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md) moved the simulation
+// Amendment 04 (the default, `--amendment 04`): the player's body physics (docs/verification/m01-runtime/player-collision-2026-10-18/README.md). The owner's playtest found the player
+// walking through walls and falling without gravity; the player now collides with every visible solid, steps up ledges, slides along walls, falls under gravity and lands with an
+// impact (src/world/m01-player-physics.js, m01-collision-layout.js). The scripted routes of tests/helpers/m01-route.js walked through the old geometry (up the face of the abutments, through the
+// shelter's west wall and the combat fence), so the pilot changed too. BEFORE is f6913a0 (amendment 03's tree); its golden and delta audit are kept as ...-before-amendment-04 /
+// ..._BEFORE_AMENDMENT_04. Unlike amendments 02 and 03, BEFORE is driven by ITS OWN pilot (the one extracted from git with it): the kept golden is the digest of that simulation on that pilot,
+// and the new golden is the digest of the live simulation on the live pilot. The account adds the three facts that make the difference explainable: where the two pilots first part (the
+// leading identical blocks), where the OLD pilot, run on the NEW simulation, is first stopped by the geometry it used to walk through (the throw of its own walk() with the position), and the
+// first tick at which the old pilot's player differs from the old simulation's (the contact).
+//
+// Amendment 03 (`--amendment 03`, history since 04): the T47 x T38 interaction fix (docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md) moved the simulation
 // of the combined tree once more, on the same staging predecessor 8c6328c. BEFORE is bc4523f (the combined tree with the golden of amendment 02); its golden and delta audit are kept
 // as ...-before-amendment-03 / ..._BEFORE_AMENDMENT_03 and GOLDEN_AMENDMENT_03.json is the account, built exactly as the account of amendment 02 below (same chain checks, same runs,
 // same record), plus the per-route first difference of the withdrawal cadence (the named delta `cadence` of the delta audit).
@@ -24,7 +33,7 @@
 //      new delta audit are put side by side; the gameplay inputs that changed since BEFORE and since the staging are listed.
 // The T38 golden (amendment 02) and the T38 and T48 audit tools are history since the merge and are not rewritten: the live golden of the combined tree is this one.
 // The JSON is deterministic (no clocks, no paths), so re-running reproduces the committed file. x86_64 only (D11/D30): exact gameplay golden regeneration is never done from aarch64.
-//   node tools/verification/m01-t47-golden-amendment-audit.mjs [--amendment 02|03] [--write]        (M01_T47_AUDIT_OUT overrides the output folder)
+//   node tools/verification/m01-t47-golden-amendment-audit.mjs [--amendment 02|03|04] [--write]        (M01_T47_AUDIT_OUT overrides the output folder)
 // Without --write nothing is written: the kept copies and GOLDEN_AMENDMENT_NN.json must equal what is regenerated. Run it AFTER m01-t47-ckm-fire-audit.mjs --write-golden.
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync,mkdirSync,existsSync,mkdtempSync,symlinkSync} from 'node:fs';
@@ -39,18 +48,22 @@ import {M01Simulation as WorkingTree,clockText} from '../../src/game/m01-simulat
 
 const ROOT=resolve(import.meta.dirname,'../..');
 const PREDECESSOR='8c6328c947e92041f237b5990142dd110aee8e71';    // the combined staging T47 is audited against
-const amendmentArg=(()=>{const i=process.argv.indexOf('--amendment');return i<0?'03':process.argv[i+1];})();
+const amendmentArg=(()=>{const i=process.argv.indexOf('--amendment');return i<0?'04':process.argv[i+1];})();
 // before: the commit whose golden and delta audit the amendment replaced (beforePredecessor: the predecessor that golden was audited against); after: null = the working tree,
 // or the commit whose golden and delta audit the amendment wrote (history: both are read from the byte copies the NEXT amendment kept, the simulation from git at that commit).
 const AMENDMENTS={
   '02':{before:'602a5ee89920283d360a1bdad6177922666b2936',beforePredecessor:'813f163deceb551e0e4504b30958580cb67d3a76',after:'bc4523fc2e8161846828b77e7c1a49697f3372e8',
     afterGolden:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-03.json',afterAudit:'PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_03.json'},
-  '03':{before:'bc4523fc2e8161846828b77e7c1a49697f3372e8',beforePredecessor:PREDECESSOR,after:null,
-    afterGolden:'tests/fixtures/m01-t47-gameplay-baseline.json',afterAudit:'PREDECESSOR_DELTA_AUDIT.json'}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 02 or 03`);
+  '03':{before:'bc4523fc2e8161846828b77e7c1a49697f3372e8',beforePredecessor:PREDECESSOR,after:'f6913a0dae3ae227ab0421c6b59f992e8685e9a6',
+    afterGolden:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-04.json',afterAudit:'PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_04.json'},
+  '04':{before:'f6913a0dae3ae227ab0421c6b59f992e8685e9a6',beforePredecessor:PREDECESSOR,after:null,
+    afterGolden:'tests/fixtures/m01-t47-gameplay-baseline.json',afterAudit:'PREDECESSOR_DELTA_AUDIT.json',beforeOwnPilot:true}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 02, 03 or 04`);
 const BEFORE_COMMIT=CFG.before,KEY=`amendment${amendmentArg}`;
 const INPUTS=['src/game/m01-simulation.js','missions/m01-tczew/mission.json','missions/m01-tczew/map-layout.json','src/game/m01-animation-presentation.js',
-  'src/game/m01-aim.js','src/game/m01-fire.js','src/game/m01-display-fire.js','src/game/m01-yard-life.js','src/world/spatial.js','src/world/tczew-world.js'];   // as in the T38 tool
+  'src/game/m01-aim.js','src/game/m01-fire.js','src/game/m01-display-fire.js','src/game/m01-yard-life.js','src/world/spatial.js','src/world/tczew-world.js',   // as in the T38 tool
+  // amendment 04: the body physics and what feeds it. Listed for 04 only, so the records of the earlier amendments are reproduced byte for byte.
+  ...(amendmentArg==='04'?['src/world/m01-player-physics.js','src/world/m01-collision-layout.js','src/world/m01-prop-layout.js','src/render/m01-environment-props.js','tests/helpers/m01-route.js']:[])];
 const GOLDEN_PATH='tests/fixtures/m01-t47-gameplay-baseline.json',BEFORE_GOLDEN_PATH=`tests/fixtures/m01-t47-gameplay-baseline-before-amendment-${amendmentArg}.json`;
 const STAGING_GOLDEN_PATH='tests/fixtures/m01-t38-gameplay-baseline.json';   // the T38 golden of amendment 02 = the golden of the staging; history, unchanged by the merge
 const EVIDENCE='docs/verification/m01-runtime/ckm-fire-live-2026-10-16';
@@ -99,10 +112,12 @@ assert.equal(sha(readFileSync(join(tree,'src/game/m01-simulation.js'))),before.s
 const {M01Simulation:Before}=await import(pathToFileURL(join(tree,'src/game/m01-simulation.js')));
 // The test pilot: the working tree's for amendment 03; for a history amendment the pilot as it was at AFTER (D43 taught the support pilot to ask Kowal for clips,
 // which changes the support route of 602a5ee), so the history is reproduced with the controls that made it.
-let Live=WorkingTree,pilot=route;
-if(CFG.after){const afterTree=extract(CFG.after);assert.equal(sha(readFileSync(join(afterTree,'src/game/m01-simulation.js'))),after.sourceSha256,'the history AFTER tree carries the simulation its golden pins');
+let Live=WorkingTree,pilot=route,afterDir=ROOT;
+if(CFG.after){const afterTree=afterDir=extract(CFG.after);assert.equal(sha(readFileSync(join(afterTree,'src/game/m01-simulation.js'))),after.sourceSha256,'the history AFTER tree carries the simulation its golden pins');
   Live=(await import(pathToFileURL(join(afterTree,'src/game/m01-simulation.js')))).M01Simulation;
   pilot=(await import(pathToFileURL(join(afterTree,'tests/helpers/m01-route.js')))).route;}
+// Amendment 04: BEFORE is driven by the pilot it was audited with (its own, from git), the live simulation by the live pilot; the two pilots differ on purpose (the old one walked through geometry).
+const beforePilot=CFG.beforeOwnPilot?(await import(pathToFileURL(join(tree,'tests/helpers/m01-route.js')))).route:pilot;
 
 const LEAF_CAP=4000;
 /** Every leaf path at which two JSON values differ (capped), as the T38 divergence tool lists them. */
@@ -111,18 +126,18 @@ function diff(a,b,path='$',out=[]){
   if(a&&b&&typeof a==='object'&&typeof b==='object'){for(const k of new Set([...Object.keys(a),...Object.keys(b)]))diff(a[k],b[k],`${path}.${k}`,out);return out;}
   out.push(path);return out;
 }
-function run(Simulation,seed,support){
-  const sig=[],digest=new GameplayDigest();let tick=0,first=null,ids=null,groups=null;
-  pilot(seed,{support,Simulation,onStep:({sim,events})=>{
+function run(Simulation,seed,support,drive=pilot){
+  const sig=[],pos=[],digest=new GameplayDigest();let tick=0,first=null,ids=null,groups=null;
+  drive(seed,{support,Simulation,onStep:({sim,events})=>{
     tick++;digest.add(gameplayFrame(sim,events));
-    sig.push([sim.clock,sim.rng.state,sim.enemyFire.nextId,sim.enemyFire.rounds.length,sim.player.health,events.length,sim.battleClock]);
+    sig.push([sim.clock,sim.rng.state,sim.enemyFire.nextId,sim.enemyFire.rounds.length,sim.player.health,events.length,sim.battleClock]);pos.push([sim.player.x,sim.player.y,sim.player.z]);
     if(tick===1){first=gameplayFrame(sim,events);ids=sim.actors.map(a=>a.id);groups=Object.fromEntries(sim.actors.map(a=>[a.id,a.group??a.team]));}
   }});
-  return {sig,first,ids,groups,digest:digest.finish()};
+  return {sig,pos,first,ids,groups,digest:digest.finish()};
 }
 const routes=[];
 for(const [index,{seed,support,ticks,blocks}] of before.routes.entries()){
-  const old=run(Before,seed,support),now=run(Live,seed,support);
+  const old=run(Before,seed,support,beforePilot),now=run(Live,seed,support);
   // The kept golden is the digest of BEFORE's simulation on this tree's pilot; the new golden is the digest of the live one.
   assert.deepEqual(old.digest,{ticks,blocks},'BEFORE reproduces the kept golden for this route on this tree');
   assert.deepEqual(now.digest,{ticks:after.routes[index].ticks,blocks:after.routes[index].blocks},'the live simulation reproduces the new golden');
@@ -134,6 +149,18 @@ for(const [index,{seed,support,ticks,blocks}] of before.routes.entries()){
   const len=Math.min(old.sig.length,now.sig.length),at=t=>t===null?null:{tick:t,clock:+now.sig[t-1][0].toFixed(2),battleClock:clockText(now.sig[t-1][6])};
   const firstTick=pick=>{for(let i=0;i<len;i++)if(pick(old.sig[i],now.sig[i]))return i+1;return null;};
   // Leading 512-tick blocks equal to the replaced golden.
+  // Amendment 04: where the geometry the old pilot used to walk through first stops it. The OLD pilot is run on the NEW simulation; the player's position is compared with the old
+  // simulation's tick by tick (exact numbers), and the old pilot's own walk() throws when it cannot get to a waypoint any more.
+  let oldPilotOnNewSimulation=null;
+  if(CFG.beforeOwnPilot){
+    const pos=[];let stopped=null;
+    try{beforePilot(seed,{support,Simulation:Live,onStep:({sim})=>{pos.push([sim.player.x,sim.player.y,sim.player.z]);}});}
+    catch(error){stopped=error.message.replace(/: \{.*$/,'');}
+    let tick=null;for(let i=0;i<Math.min(pos.length,old.pos.length);i++)if(pos[i].some((v,k)=>v!==old.pos[i][k])){tick=i+1;break;}
+    const at=t=>t===null?null:{tick:t,clock:+now.sig[t-1][0].toFixed(2),battleClock:clockText(now.sig[t-1][6]),oldSimulationPlayer:old.pos[t-1].map(v=>+v.toFixed(3)),newSimulationPlayer:pos[t-1].map(v=>+v.toFixed(3))};
+    oldPilotOnNewSimulation={firstTickPlayerDiffers:at(tick),stopped,ticksRunBeforeItStopped:pos.length,oldPilotCompletesOnNewSimulation:stopped===null};
+    console.log(JSON.stringify({oldPilotOnNewSimulation}));
+  }
   const mine=after.routes[index];let same=0;while(same<Math.min(blocks.length,mine.blocks.length)&&JSON.stringify(blocks[same])===JSON.stringify(mine.blocks[same]))same++;
   const liveOf=audit=>{const row=audit.routes[index];return {bursts:row.live.bursts,roundsIssued:row.live.roundsIssued,hits:row.live.hits,kills:row.live.kills,menHit:row.live.men.hit,menSuppressed:row.live.men.suppressed,
     suppressionEvents:row.live.suppressionEvents,repairPins:row.summaries.live.repairPins,repairCompleteSec:row.endStateAgainstPredecessorOwnRoute.repairCompleteSec.live,
@@ -144,7 +171,8 @@ for(const [index,{seed,support,ticks,blocks}] of before.routes.entries()){
       firstTickWhere:{mainRngStateDiffers:at(firstTick((o,n)=>o[1]!==n[1])),roundsIssuedOrInFlightDiffer:at(firstTick((o,n)=>o[2]!==n[2]||o[3]!==n[3])),
         eventCountDiffers:at(firstTick((o,n)=>o[5]!==n[5])),playerHealthDiffers:at(firstTick((o,n)=>o[4]!==n[4])),realClockDiffers:at(firstTick((o,n)=>o[0]!==n[0]))}},
     liveFireBefore:liveOf(beforeAudit),liveFireAfter:liveOf(afterAudit),
-    ...(amendmentArg==='03'?{cadenceFirstDifferenceAfter:afterAudit.routes[index].cadenceFirstDifference}:{})});
+    ...(amendmentArg==='03'||amendmentArg==='04'?{cadenceFirstDifferenceAfter:afterAudit.routes[index].cadenceFirstDifference}:{}),
+    ...(oldPilotOnNewSimulation?{oldPilotOnNewSimulation}:{})});
   console.log(JSON.stringify(routes.at(-1)).slice(0,1200));
 }
 
@@ -162,9 +190,9 @@ function windowCount(dir){
     `console.log(JSON.stringify({samples:w.samples,enemySamples:w.enemySamples,phaseSamples:w.phaseSamples,phaseActors:w.phaseActors,entries:w.entries.length,productionClearEntries:e.productionClearEntries,strictClearEntries:e.strictClearEntries,throughBridgeEntries:e.throughBridgeEntries,shortlist,muzzleHeights}));`;
   return JSON.parse(execFileSync(process.execPath,['--input-type=module','-e',code],{cwd:dir,encoding:'utf8',maxBuffer:1<<26}).trim().split('\n').at(-1));
 }
-const s2Visibility=amendmentArg==='03'?{tool:'tools/m01-ckm-fire-arc.mjs collectWindowTargets({everyTicks:20}) + evaluateCandidate(window, ckmMuzzle()) + describeCandidate(window, SHORTLIST[i])',
+const s2Visibility=amendmentArg==='03'||amendmentArg==='04'?{tool:'tools/m01-ckm-fire-arc.mjs collectWindowTargets({everyTicks:20}) + evaluateCandidate(window, ckmMuzzle()) + describeCandidate(window, SHORTLIST[i])',
   tests:['tests/m01-ckm-live-fire.test.js: post S2 is confirmed in the production trace','tests/m01-ckm-candidate-posts.test.js: whole-route window'],
-  before:windowCount(tree),after:windowCount(ROOT)}:null;
+  before:windowCount(tree),after:windowCount(afterDir)}:null;
 if(s2Visibility)console.log(JSON.stringify({s2Visibility}));
 
 // 4. The record.
@@ -182,13 +210,22 @@ const REASON_03='The T47 x T38 interaction (T47_T38_INTERACTION.md in this folde
   'that a German near miss pins an ally who is not working (landRound), so the player keeps the duel with the gate MG during the repair; (3) the T23 withdrawal cadence counts its 20 s '+
   'from the landing of the lethal round (named delta `cadence` of the delta audit, emulated on the predecessor and proved per route: cadenceFirstDifferenceAfter), so casualties are at '+
   'least 20 s of battle clock apart when the clock drops from 8x to 1x during a flight (06:09:00). The replaced golden and delta audit (bc4523f, amendment 02) are kept byte for byte.';
+const REASON_04='The owner playtest of M01 (2026-10-18) found that the player walks through walls and that falls have no gravity. Root cause: TczewWorld.move snapped the player to heightAt() every '+
+  'tick (a 1.4-2.6 m abutment face, a deck, the river bank were all one-tick teleports) and tested a handful of axis-aligned boxes; the casemate, the shelter, the whole T12 prop kit, '+
+  'the ckm sandbag horseshoe, the bridge trusses and the combat fence had no collider at all. The player now moves with src/world/m01-player-physics.js (a vertical capsule: slide along walls, step '+
+  'up to 0.45 m, gravity 9.81 m/s^2 with momentum, landing event and fall damage, hard stop 10 m beyond the warned map boundary) against src/world/m01-collision-layout.js, derived from the data '+
+  'the renderer draws. Open ground is bit-identical to the old movement (tests/m01-player-physics.test.js replays 4000 random steps against TczewWorld.move). What moved the golden is only the '+
+  'player: the scripted pilot walked through the geometry that is now solid (up the south face of the rail abutment at x=-15, along z=32 into the road abutment, through the west wall of the '+
+  'shelter and the combat fence), so tests/helpers/m01-route.js gained detours (embankment at x=-30, road crest at (-30,40), the shelter gate), and the shelter pit no longer cuts a 5 m cliff into the '+
+  'road embankment. The replaced golden and delta audit (f6913a0, amendment 03) are kept byte for byte; BEFORE reproduces them on ITS OWN pilot, the live simulation reproduces the new golden on the live pilot, '+
+  'and oldPilotOnNewSimulation names where the old pilot is first held by the geometry. Combat, mission data, RNG and the NPC movement code are untouched.';
 const report={task:'M01-T47-CKM-LIVE-FIRE-V1',amendment:`amendment-${amendmentArg}`,beforeCommit:BEFORE_COMMIT,predecessor:PREDECESSOR,predecessorSourceSha256:staging.sourceSha256,
   beforeSourceSha256:before.sourceSha256,beforeFixture:BEFORE_GOLDEN_PATH,beforeFixtureSha256:sha(oldGolden),
   beforeAudit:`${EVIDENCE}/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_${amendmentArg}.json`,beforeAuditSha256:sha(oldAudit),
   afterFixture:GOLDEN_PATH,afterFixtureSha256:sha(afterGoldenBytes),afterSourceSha256:after.sourceSha256,afterAudit:`${EVIDENCE}/PREDECESSOR_DELTA_AUDIT.json`,afterAuditSha256:after.auditSha256,
-  authority:(amendmentArg==='02'?'Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --write (x86)':'Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 03 --write (x86)')+', after tools/verification/m01-t47-ckm-fire-audit.mjs --write-golden; never edited by hand. '+
+  authority:(amendmentArg==='02'?'Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --write (x86)':`Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment ${amendmentArg} --write (x86)`)+', after tools/verification/m01-t47-ckm-fire-audit.mjs --write-golden; never edited by hand. '+
     'Derived from git (the replaced golden and delta audit are read from beforeCommit), the two fixtures, the two delta audits and two runs of each golden route; no value in it is typed.',
-  reason:amendmentArg==='03'?REASON_03:'T47 was merged onto the combined staging 8c6328c (candidate #80 + #89 + T48 German retreat + T40 first-person arms + T38 combat postures; merge 3c9cab7). The golden of the T47 branch '+
+  reason:amendmentArg==='04'?REASON_04:amendmentArg==='03'?REASON_03:'T47 was merged onto the combined staging 8c6328c (candidate #80 + #89 + T48 German retreat + T40 first-person arms + T38 combat postures; merge 3c9cab7). The golden of the T47 branch '+
     '(602a5ee: candidate #80 + T47, amendment 01) pinned a simulation and mission data that no longer exist as such, so it was regenerated for staging + T47 and the replaced golden and '+
     'delta audit are kept byte for byte. Why the new golden differs from the replaced one, in the order the route meets it: (1) from tick 1 the T38 places and postures (gameplay data: '+
     'the east platoon, the twelve gate riflemen, the section and the sappers kneel or lie at staggered places; listed under firstDifferenceFromBefore.tick1 and proved by the T38 '+
