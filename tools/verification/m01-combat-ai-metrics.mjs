@@ -73,7 +73,7 @@ async function measure({seed,support}){
   }});
   const cadence={};
   for(const [id,ts] of Object.entries(starts)){
-    const cls=id.startsWith('display:')?classOf(id.slice(8)):classOf(id),iv=ts.slice(1).map((t,i)=>t-ts[i]).filter(x=>x>1e-9);
+    const base=id.startsWith('display:')?classOf(id.slice(8)):classOf(id),cls=id.startsWith('display:')&&!base.startsWith('display_')?'display_'+base:base,iv=ts.slice(1).map((t,i)=>t-ts[i]).filter(x=>x>1e-9);
     const fixed=iv.slice(1).filter((x,i)=>Math.abs(x-iv[i])<=.05).length;
     const c=cadence[cls]??={shooters:0,intervals:[],fixedPairs:0,pairs:0,perShooterCv:[]};
     c.shooters++;c.intervals.push(...iv);c.fixedPairs+=fixed;c.pairs+=Math.max(0,iv.length-1);
