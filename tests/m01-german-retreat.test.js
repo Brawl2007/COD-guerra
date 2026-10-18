@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import partials from './fixtures/m01-partials-gameplay-baseline.json' with {type:'json'};
 // The T38 golden (its amendment 02): the golden of the staging 8c6328c, i.e. of the simulation the retreat was proved over. It stays what it was and is history since T47 joined;
-// the live golden is tests/fixtures/m01-combat-ai-gameplay-baseline.json, after the T47 golden (see tests/m01-animation-contract.test.js).
+// the live golden is tests/fixtures/m01-t47-gameplay-baseline.json (see the comment above the amendment tests).
 import staging from './fixtures/m01-t38-gameplay-baseline.json' with {type:'json'};
 import {M01Simulation,seconds,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {M01View} from '../src/render/m01-view.js';
