@@ -8,6 +8,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M01Locomotive,locomotiveLOD} from '../src/render/m01-locomotive.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
+import {withoutT47} from './helpers/m01-layout-t47-delta.js';
 const base='5f3cc34f53c61beec52255d67f8babd7194c9f7f',dir=new URL('../assets/models/production/m01/locomotive/',import.meta.url);
 const manifest=JSON.parse(readFileSync(new URL('manifest.json',dir)));
 const data=lod=>{const b=readFileSync(new URL(manifest.files[lod].file,dir)),n=b.readUInt32LE(12);return {b,j:JSON.parse(b.subarray(20,20+n)),bin:b.subarray(28+n)};};
@@ -48,6 +49,8 @@ test('integration preserves gameplay, RNG, hitboxes/muzzle modules, missions and
     assert.ok(oldBodyStart>=0,'baseline engine contract marker');
     assert.ok(actual.includes(baseline.subarray(oldBodyStart)),'the pre-existing M01 engine contract must remain unmodified');
     assert.match(actual.toString('utf8'),/## Apresentação das animações — V1 \(schema 2\)/);
+  }else if(p==='missions/m01-tczew/map-layout.json'||p==='missions/m01-tczew/HISTORICAL_RESEARCH.md'||p==='missions/m01-tczew/MAP.md'){
+    assert.deepEqual(withoutT47(p,actual),baseline,p);   // T47: only the named hunks (three layout hunks, one research row, four MAP.md hunks) differ from the base
   }else{
     assert.deepEqual(actual,baseline,p);
   }

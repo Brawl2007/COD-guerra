@@ -10,6 +10,7 @@ import {displayProfiles} from '../src/game/m01-display-fire.js';
 import {eyePosition} from '../src/world/spatial.js';
 import {route,driver,toRepair} from './helpers/m01-route.js';
 import {compareContinuation,json} from './helpers/m01-determinism.js';
+import {CkmNeutralSimulation} from './helpers/m01-ckm-neutral.js';
 
 // T23 M01-EAST-FRONT-VISIBLE-V1. The east platoon stands on the end of the road deck from the arrival of train 963 (04:45) to its withdrawal
 // (06:00); its six reserve men (pl_east_18..23) fall at fixed times to rifle rounds of kind 'attrition' instead of off stage at 06:00; two-way
@@ -26,7 +27,10 @@ const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const attritionRounds=sim=>sim.enemyFire.rounds.filter(r=>r.kind==='attrition');
 
 /** What the simulation did before T23: nobody holds, nobody falls early, the old aim block, no display fire. The T23 logic is the only difference. */
-class T22Logic extends M01Simulation{
+// D43 (docs/direction/DECISIONS.md): the ckm wz.30 is silenced on BOTH sides of this comparison (CkmNeutralSimulation). Since T38 the gate riflemen stand for every
+// T23 attrition volley, so a live ckm round can meet a standing man in the route and a kneeling one in the twin (a real T23 -> T38 -> T47 consequence); the twin
+// verifies the T23 attrition logic, not ckm hits, which tests/m01-ckm-live-fire.test.js and the T47 golden cover.
+class T22Logic extends CkmNeutralSimulation{
   reset(seed){super.reset(seed);this.display.profiles=[];}
   holdingEast(){return false;}
   eastBridgeheadPoint(r){return r()<.5?{x:995+r()*45,y:.5,z:-3+r()*6}:{x:995+r()*45,y:.5,z:37.5+r()*5};}
@@ -346,7 +350,7 @@ function eastFrontRoute(seed,support,{continuations=false}={}){
     withdrawAt:null,flagAtWithdraw:null,roundsAfterWithdraw:0};
   const realProfiles=displayProfiles(definition),owner=new Map(realProfiles.flatMap(p=>(p.shooters??[p.id]).map(who=>[who,p.id])));
   let slots=null,counted=0,trainAt=null;const seenRound=new Set(),tracerAt=[],saves={};
-  const result=route(seed,{support,onStep:({sim,controls,events,dt})=>{
+  const result=route(seed,{support,Simulation:CkmNeutralSimulation,onStep:({sim,controls,events,dt})=>{
     stats.ticks++;twin.tick(dt,json(controls));const twinEvents=twin.drainEvents();
     // 1. the T22 logic is equal in everything the hold, the attrition and the display must not touch
     if(sim.rng.state!==twin.rng.state)assert.fail(`rng diverged at tick ${stats.ticks} (seed ${seed}): ${sim.rng.state} vs ${twin.rng.state}`);

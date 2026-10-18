@@ -405,15 +405,19 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+// T47: 46 Germans stood at CP-D on the route before the ckm fired. On the candidate #80 the gun felled one of them (de_east_5 after the review fix, so 45). Over the T38 staging it wounds
+// three men on this route since T47 amendment 03 (live.hits 3, live.men.hit; D43) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
+// tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
+const CPD_ENEMIES_ALIVE=46;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
-  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(46);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
+  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
   expect(d.m01.parts.road_span_06.visible).toBe(false);expect(d.m01.parts.rail_support_06.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-cp-d.png')});await page.evaluate(()=>document.exitPointerLock());
   await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
-  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(46);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
+  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
   await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);await start(page,'#continue');
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.parts.road_span_06.visible).toBe(false);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -622,7 +626,7 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
   expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);
   expect(c.ckm.clip).toBe('ckm_wz30_gun_abandon');expect(c.ckm.time).toBeCloseTo(gunner.clipTime,5);
-  expect(c.ckm.position).toEqual([24.17,-3,43]);expect(c.ckm.lod).toBe(2);
+  expect(c.ckm.position).toEqual([7.17,-3,26]);expect(c.ckm.lod).toBe(2);   // T47: the gun stands at post S2 (it was at the casemate (24.17,-3,43) until then)
   await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
   await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
   await page.reload();await open(page);await start(page,'#continue');

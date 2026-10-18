@@ -507,11 +507,17 @@
     },
     "T47": {
       "name": "CKM CASEMATE CREW",
-      "status": "NOT_DEVELOPED",
+      "status": "DELIVERED_BRANCH",
       "refs": [
-        "branch:claude/busy-ritchie-3fkvk2-t47i@bc4523f"
+        "branch:claude/cool-mccarthy-viomu9",
+        "PR:#85",
+        "claim:claims/m01-t47",
+        "branch:claude/busy-ritchie-3fkvk2-t47@1787658",
+        "branch:claude/busy-ritchie-3fkvk2-t47i@f3d7386",
+        "PR:#90"
       ],
-      "note": "Fogo da guarnição do ckm. Integração bloqueada pela interacção T47×T38 (lacuna ajuda/ignora da ameaça de cobertura, divergência agachado na frente leste, sobreviventes da semente 3) — a ser corrigida."
+      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta e emenda 01 (revisão crítica aplicada: MG34 já não imunes à zona batida, emissor da casamata retirado). Verificada localmente (Node completo, build, browser focado); verificação independente pendente, por isso não declarada concluída. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem sessão de jogo; posto S2 e ritmo do reparo esperam decisão do proprietário. Retomada em claude/busy-ritchie-3fkvk2-t47 (ref acima = HEAD anterior a esta actualização do registo): revisão crítica REQUEST_CHANGES aplicada (fixture do spec de MG34 deitada de novo sobre o jogo de produção com janela de busca de 180 s, auditoria em modo de verificação sem escrita, MAP.md, decisões do Captain de 2026-10-17 em DECISIONS.md); continua por integrar na candidata e sem verificação independente. Integração local no staging combinado (8c6328c = candidata #80 + #89 + T48 + T40 + T38) na branch claude/busy-ritchie-3fkvk2-t47i (merge 3c9cab7, sem push): golden regenerado com as ferramentas (emenda 02), a infra-estrutura da arma não perturba o staging em nenhum tick das duas rotas do golden; 9 testes de Node por decidir (cover-threat 1, east-front 8; D42 em DECISIONS.md), nada afrouxado. 2026-10-18: interacção T47×T38 resolvida pela D43 (V3: mira/LOS no atirador de pé, cadência contada na chegada, CKM_SUPPRESS_SEC 1,5 s; piloto pede munição ao Kowal), emenda 03 por ferramentas; npm test 1028/1028 em 5a5722e; revisão crítica REQUEST_CHANGES só na ferramenta histórica T38, corrigida em f3d7386; integrada no PR #90."
+
     },
     "T48": {
       "name": "GERMAN RETREAT",

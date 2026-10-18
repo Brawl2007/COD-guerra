@@ -7,6 +7,7 @@ import {vegetationNoise} from './m01-vegetation-layout.js';
 import {M01VegetationRuntime} from './m01-vegetation-runtime.js';
 import {M01TrackBed} from './m01-track-bed.js';
 import {M01PropsRuntime} from './m01-props-runtime.js';
+import {CKM_POSITION} from '../game/m01-simulation.js';
 
 export {vegetationNoise};
 export {M01_VEGETATION_LOD,M01_LEGACY_LEAF_CARD_ESTIMATE,chooseVegetationLod,chooseShrubLod,barkTint} from './m01-vegetation-runtime.js';
@@ -15,7 +16,7 @@ export {M01_VEGETATION_LOD,M01_LEGACY_LEAF_CARD_ESTIMATE,chooseVegetationLod,cho
 // This is art direction around measured infrastructure, not a historical survey.
 export class M01Environment {
   constructor(scene,world,materials,{propVertexTextures=true,surfaceY,onVegetationUpdate}={}){
-    this.group=new THREE.Group();scene.add(this.group);this.world=world;this.materials=materials;this.fieldProxyBatches=[];
+    this.group=new THREE.Group();scene.add(this.group);this.world=world;this.materials=materials;this.fieldProxyBatches=[];this.emplacementBatches=[];
     this.fieldStructures=new M01FieldStructures(this.group);this.fieldStructures.ready=this.fieldStructures.load();
     this.geometry={box:new THREE.BoxGeometry(1,1,1),rock:new THREE.DodecahedronGeometry(1,0),gravel:new THREE.TetrahedronGeometry(1),
       trunk:new THREE.CylinderGeometry(.72,1,1,9),leaf:new THREE.PlaneGeometry(1,1),bag:new THREE.CapsuleGeometry(.5,.4,3,7),
@@ -23,13 +24,13 @@ export class M01Environment {
     this.bark=texturedSurface('wood',{worldScale:1,bump:.12,color:'#ffffff'});
     this.lists=new Map();this.resources=[];this.dynamic=[];this.grassBatches=[];this.propBatches=[];this.propDescriptors=[];this.propQuality='medium';
     let seed=19390901;this.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
-    this.buildVegetation();this.buildClutter();this.buildArchitecture();this.buildCovers();this.buildProductionDressing();this.flush();
+    this.buildVegetation();this.buildClutter();this.buildArchitecture();this.buildCovers();this.buildEmplacement();this.buildProductionDressing();this.flush();
     this.trackBed=new M01TrackBed(this.group,world,materials);this.propsRuntime=new M01PropsRuntime(this.group,{supported:propVertexTextures});this.propsRuntime.readyPromise=this.propsRuntime.load();
     this.vegetation=new M01VegetationRuntime(this.group,world,{surfaceY,bark:this.bark,onUpdate:onVegetationUpdate});this.vegetation.readyPromise=this.vegetation.load();
   }
   put(kind,material,p,size,rotation=[0,0,0],color=null,parentId=null,meta=null){
-    const propQuality=meta?.propQuality??null,fieldProxy=meta?.fieldProxy??null,key=`${kind}:${material}:${parentId??'static'}:${propQuality??'base'}:${fieldProxy??''}`;
-    if(!this.lists.has(key))this.lists.set(key,{kind,material,parentId,propQuality,fieldProxy,items:[]});
+    const propQuality=meta?.propQuality??null,fieldProxy=meta?.fieldProxy??null,emplacement=Boolean(meta?.emplacement),key=`${kind}:${material}:${parentId??'static'}:${propQuality??'base'}:${fieldProxy??''}${emplacement?':emplacement':''}`;
+    if(!this.lists.has(key))this.lists.set(key,{kind,material,parentId,propQuality,fieldProxy,emplacement,items:[]});
     this.lists.get(key).items.push({p,size,rotation,color});
   }
   flush(){
@@ -41,6 +42,7 @@ export class M01Environment {
       list.items.forEach((o,i)=>{dummy.position.set(...o.p);dummy.scale.set(...o.size);dummy.rotation.set(...o.rotation);dummy.updateMatrix();batch.setMatrixAt(i,dummy.matrix);if(o.color)batch.setColorAt(i,new THREE.Color(o.color));});
       batch.computeBoundingSphere();batch.castShadow=['box','trunk','bag','leaf'].includes(list.kind);batch.receiveShadow=true;
       this.group.add(batch);this.resources.push(batch);
+      if(list.emplacement){batch.userData.m01Emplacement=true;this.emplacementBatches.push(batch);}
       if(list.fieldProxy){batch.userData.m01FieldProxy=list.fieldProxy;this.fieldProxyBatches.push(batch);}
       if(list.propQuality){batch.userData.m01PropQuality=list.propQuality;this.propBatches.push(batch);}
       if(list.parentId)this.dynamic.push({batch,id:list.parentId,height:this.world.covers.find(c=>c.id===list.parentId)?.max.y-this.world.covers.find(c=>c.id===list.parentId)?.min.y});
@@ -115,7 +117,22 @@ export class M01Environment {
       }
     }
   }
+  /**
+   * T47: the field emplacement of the ckm at post S2 (RECONSTRUCTED; T08/T27 only say "a bunker at the west bridgehead"). Original procedural sandbags,
+   * no third-party asset and no collider (decoration like every cover here): a horseshoe round the gun root, three courses at the back and the sides,
+   * two in front so the barrel (0.64 m up) fires over it. The crew posts of the simulation (CKM_POST) stand inside; it goes with the west demolition.
+   */
+  buildEmplacement(){
+    const {x:rx,y:ry,z:rz}=CKM_POSITION,meta={emplacement:true},color='#a29470',course=.22;
+    const wallX=(z,x0,x1,courses)=>{for(let c=0;c<courses;c++)for(let x=x0+(c%2)*.275;x<=x1;x+=.55)this.put('bag','cloth',[x,ry+.12+c*course,z],[.24,.39,.40],[0,0,-Math.PI/2],color,null,meta);};
+    const wallZ=(x,z0,z1,courses)=>{for(let c=0;c<courses;c++)for(let z=z0+(c%2)*.275;z<=z1;z+=.55)this.put('bag','cloth',[x,ry+.12+c*course,z],[.40,.39,.24],[Math.PI/2,0,0],color,null,meta);};
+    wallX(rz-2.2,rx-2.5,rx+1.65,3);wallX(rz+1.4,rx-2.5,rx+1.65,3);     // north and south sides (the belt side is the north one)
+    wallZ(rx-2.5,rz-2.0,rz+1.2,3);                                      // back, behind the third man
+    wallZ(rx+1.65,rz-2.0,rz+1.2,2);                                     // front: low, the gun fires over it
+    for(let i=0;i<2;i++)this.put('box','wood',[rx+.3+i*.5,ry+.14,rz-1.55],[.36,.2,.18],[0,0,0],'#6b6b46',null,meta);   // two ammunition boxes at the loader's side
+  }
   sync(world,quality,player={x:0,z:0},clock=0){
+    for(const batch of this.emplacementBatches)batch.visible=!world.events.includes('evt_m01_west_demolition');
     this.fieldStructures.sync(world,quality,player);this.syncRailProps(world,quality,player);
     for(const batch of this.fieldProxyBatches)batch.visible=!this.fieldStructures.replaces(batch.userData.m01FieldProxy);
     for(const {id,batch,height}of this.dynamic){const cover=world.covers.find(c=>c.id===id);batch.visible=Boolean(cover)&&!this.fieldStructures.replaces(id);if(cover)batch.scale.y=(cover.max.y-cover.min.y)/height;}
@@ -130,7 +147,9 @@ export class M01Environment {
     const quality=this.propQuality??'medium',counts=propCountsForQuality(this.propDescriptors,quality);
     return {quality,clusters:new Set(this.propDescriptors.map(p=>p.cluster)).size,totalAll:this.propDescriptors.length,visible:counts.total,
       byArea:counts.byArea,byCluster:counts.byCluster,batches:this.propsRuntime.replacesProxies()?this.propsRuntime.diagnostics.drawCalls:this.propBatches.filter(b=>b.visible).length,totalBatches:this.propsRuntime.ready?this.propsRuntime.batches.length:this.propBatches.length,
-      collidersAdded:0,deterministicSeedDomain:'m01-environment-props',runtime:this.propsRuntime.diagnostics,proxyBatches:this.propBatches.filter(b=>b.visible).length};
+      collidersAdded:0,deterministicSeedDomain:'m01-environment-props',runtime:this.propsRuntime.diagnostics,proxyBatches:this.propBatches.filter(b=>b.visible).length,
+      // T47: the ckm emplacement is original procedural decoration (sandbags and two boxes, no collider); it leaves with the west demolition.
+      ckmEmplacement:{instances:this.emplacementBatches.reduce((n,b)=>n+b.count,0),batches:this.emplacementBatches.length,visible:this.emplacementBatches.some(b=>b.visible),collidersAdded:0}};
   }
   get diagnostics(){return this.vegetation.diagnostics;}
   dispose(){
