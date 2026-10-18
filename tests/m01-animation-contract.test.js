@@ -11,6 +11,11 @@ import t38Golden from './fixtures/m01-t38-gameplay-baseline.json' with {type:'js
 // T47 (M01-T47-CKM-LIVE-FIRE-V1) was merged onto that staging: its golden, regenerated on x86 by tools/verification/m01-t47-ckm-fire-audit.mjs after the per-tick delta audit
 // against the exact staging predecessor, is the golden of the live simulation.
 import golden from './fixtures/m01-t47-gameplay-baseline.json' with {type:'json'};
+// M01-NPC-NAVIGATION-V1 (golden amendment 05, 2026-10-18, phys x npc integration): the actors got a deterministic navigation round every solid (the colliders and the player's
+// layer) and local avoidance, so the simulation moved again. The T47 golden above is history since then (it pins the simulation of the physics tree c7d8341 = 98f094f, byte for
+// byte below); the golden of the live simulation, regenerated on x86 by tools/verification/m01-npc-navigation-golden-audit.mjs after its lockstep audit against that exact
+// predecessor, is this one.
+import live from './fixtures/m01-npc-navigation-gameplay-baseline.json' with {type:'json'};
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -82,7 +87,7 @@ test('historical approved golden remains immutable; the partials golden and the 
   assert.equal(amendment2.afterSourceSha256,t38Golden.sourceSha256);assert.notEqual(t38Golden.sourceSha256,replaced.sourceSha256,'amendment 02 moved the simulation source');
 });
 
-test('the T47 golden of the combined tree chains to the staging, pins the live simulation, cites its per-tick delta audit, and keeps amendments 01 to 03 as history',()=>{
+test('the T47 golden of the combined tree chains to the staging, pins the simulation of the physics tree, cites its per-tick delta audit, and keeps amendments 01 to 03 as history',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   // The original partials golden (the candidate #80 alone, the predecessor of T47 amendment 01 and of T48) is kept as ...-before-amendment-02.json: an immutable record, pinned here.
   const original='./fixtures/m01-partials-gameplay-baseline-before-amendment-02.json',partialsOriginal=JSON.parse(readFileSync(new URL(original,import.meta.url),'utf8'));
@@ -98,7 +103,10 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   assert.equal(golden.previousGolden.sha256,sha('./fixtures/m01-t38-gameplay-baseline.json'));
   assert.equal(golden.historicalGoldenSha256,t38Golden.historicalGoldenSha256);
   assert.deepEqual(golden.routes.map(r=>[r.seed,r.support]),t38Golden.routes.map(r=>[r.seed,r.support]),'the same routes are audited');
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the golden pins the live simulation');
+  // History since the NPC navigation (amendment 05): this golden pins the simulation of the physics tree (c7d8341, the same file as 98f094f), not the live one.
+  assert.equal(golden.sourceSha256,'64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482','the T47 golden pins the simulation of the physics tree');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the T47 golden is history: the NPC navigation moved the simulation');
+  assert.equal(sha('./fixtures/m01-t47-gameplay-baseline.json'),live.previousGolden.sha256,'and it is kept byte for byte');
   assert.notEqual(golden.sourceSha256,t38Golden.sourceSha256,'the T38 golden is history: T47 moved the simulation');
   assert.equal(sha('../docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json'),golden.auditSha256,'the delta audit that justifies this golden is the committed one');
   // Amendment 04 (the player's body physics, docs/verification/m01-runtime/player-collision-2026-10-18/README.md): the player collides with every visible solid, steps, slides and falls under
@@ -198,7 +206,40 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   });
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against the T47-audited candidate (the staging with the live ckm fire): seed ${expected.seed}, support ${expected.support}`,()=>{
+test('the NPC navigation golden (amendment 05) chains to the T47 golden, pins the live simulation and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  assert.equal(live.task,'M01-NPC-NAVIGATION-V1');assert.equal(live.predecessor,'c7d834126e9f94195379b331370b14ebb465224c');
+  assert.equal(live.predecessorSourceSha256,golden.sourceSha256,'the audited predecessor is exactly the simulation the T47 golden pins');
+  // The T47 golden is history: kept byte for byte where it was, pinned here.
+  assert.equal(live.previousGolden.task,golden.task);assert.equal(live.previousGolden.file,'tests/fixtures/m01-t47-gameplay-baseline.json');
+  assert.equal(live.previousGolden.sha256,sha('./fixtures/m01-t47-gameplay-baseline.json'));
+  assert.equal(live.historicalGoldenSha256,golden.historicalGoldenSha256);
+  assert.deepEqual(live.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]),'the same two routes are audited');
+  assert.equal(sha('../src/game/m01-simulation.js'),live.sourceSha256,'the golden pins the live simulation');assert.notEqual(live.sourceSha256,golden.sourceSha256);
+  // The account written by the audit tool from real runs of the predecessor and the live tree, with nothing typed by hand.
+  assert.equal(live.audit,'docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json');assert.equal(sha('../'+live.audit),live.auditSha256);
+  const account=JSON.parse(readFileSync(new URL('../'+live.audit,import.meta.url)));
+  assert.equal(account.task,live.task);assert.equal(account.amendment,'amendment-05');assert.equal(account.predecessor,live.predecessor);
+  assert.equal(account.sourceSha256,live.sourceSha256);assert.equal(account.predecessorSourceSha256,golden.sourceSha256);
+  assert.equal(account.previousGolden.sha256,live.previousGolden.sha256);
+  assert.deepEqual(account.routes.map(r=>[r.seed,r.support]),live.routes.map(r=>[r.seed,r.support]));
+  account.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,golden.routes[i].ticks);assert.equal(r.newTicks,live.routes[i].ticks);
+    assert.match(r.firstDifference.path,new RegExp(account.navigationFields),'the first difference from the predecessor is a navigation field of one actor');
+    assert.equal(r.identicalTicksBeforeIt,r.firstDifference.tick-1);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(live.routes[i].blocks[b],golden.routes[i].blocks[b],'the blocks before the first difference are the T47 golden\'s');
+    if(r.identicalBlocks<Math.min(golden.routes[i].blocks.length,live.routes[i].blocks.length))assert.notDeepEqual(live.routes[i].blocks[r.identicalBlocks],golden.routes[i].blocks[r.identicalBlocks]);
+    // Mission invariants against the predecessor on its own route: 12 objectives, four checkpoints, the same consumed events, the survivors and the final battle clock.
+    assert.deepEqual(r.endState.identical,{objectives:true,checkpoints:true,consumedEventIds:true,survivors:true,finalBattleClock:true,complete:true});
+    // The measured effect: nobody in a wall, a girder or a solid of the player layer, nobody inside another man, on the live route.
+    assert.equal(r.measured.clipping.live.events,0);assert.equal(r.measured.stacked.live.pairs,0);
+  });
+  // The same measured effect on seeds 3 and 7, with and without the covering-fire pilot.
+  assert.deepEqual(account.otherRoutes.map(r=>[r.seed,r.support]),[[3,false],[3,true],[7,false],[7,true]]);
+  for(const r of account.otherRoutes){assert.equal(r.clipping.live.events,0);assert.equal(r.stacked.live.pairs,0);}
+});
+
+for(const expected of live.routes)test(`all gameplay bytes hashed each tick against the NPC-navigation-audited candidate (the physics tree with routes round every solid, avoidance and queues): seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));

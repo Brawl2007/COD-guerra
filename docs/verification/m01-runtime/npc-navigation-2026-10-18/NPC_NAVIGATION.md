@@ -50,7 +50,7 @@ os sobreviventes e a hora final da missão são idênticos aos do predecessor na
   A auditoria de empilhamento **exclui** os pares em que os dois homens estão nessa marcha (`fallBack`); parados, contam.
 `props`, vegetação e trens continuam decoração sem collider.
 
-## 5. Golden e verificação (estado nesta branch)
+## 5. Golden e verificação (estado na branch npc, antes da integração; HISTÓRIA desde a secção 7)
 
 `src/game/m01-simulation.js` mudou, logo o golden da T47 (que fixa o hash dessa fonte) já não vale para esta árvore. **Por ordem do Captain (merge phys → npc → pacing → combat) o golden não é regenerado
 nesta branch**: o merge da física torná-lo-ia obsoleto, e é o Captain quem o re-baseia no merge. A ferramenta `tools/verification/m01-npc-navigation-golden-audit.mjs` (lockstep contra o predecessor + invariantes
@@ -69,7 +69,31 @@ O que essa corrida mostrou, em `f6913a0` + esta mudança (rotas do golden: semen
   parcial, corrupção); `tests/m01-ckm-fire-arc.test.js` — a varredura da rota inteira (`samples` 1110 → 1111, `enemySamples` 36 456 → 36 502, amostras claras 135 → 144: a rota ficou 3 ticks mais longa) fica por
   re-medir com a nova base. O guarda `m01-mg34-prone-runtime` foi atualizado (fixa `walkStraight`, o andar antigo, byte a byte).
 
+## 7. Integração phys × npc (2026-10-18, branch `claude/busy-ritchie-3fkvk2-integ-npc`)
+
+Merge `--no-ff` da npc (`c61ce98`) sobre a árvore da física (`98f094f`) e depois da física `c7d8341` (rampa do rio). Conflito só no bloco de imports de `m01-simulation.js` (os dois lados mantidos);
+`moveActor`, `validateM01Snapshot` (`a.nav` e `player.fall`) e `restoreSnapshot` juntaram-se sem conflito.
+- **Os NPC também param no que o corpo do jogador para** (`world.playerSolids` tipos `structure`, `bridge`, `truss`, `prop`: casamata, paredes do abrigo, parapeitos/pilares/cordas das cabeças de ponte, balanço das
+  treliças e guardas das juntas, barris da cabana e os props T12; `playerSolidsForNav` em `src/world/m01-navigation.js`). Caixas orientadas (88 props rodados) testadas no próprio referencial. Sem collider de
+  mundo, são `decor`: o planeador contorna-as e `settle` empurra o homem para fora depois de **cada** passo (também do andar reto, que fica byte a byte quando nada está no caminho), pela face mais rasa **livre**
+  (já não empurra através de um collider).
+- **Altura**: um sólido é parede onde encontra a faixa de um corpo de pé no chão **desse** lugar (`heightAt`), não à altura de partida; treliças e faixas de bordo mantêm a altura do caminhante. Sem isto, o
+  caminho de Bąk do posto da secção para o tabuleiro via a casamata enterrada (tecto −1,4 m, debaixo do tabuleiro) como parede, o plano falhava e ele ficava preso.
+- **Uma só tabela da ckm** (`CKM_EMPLACEMENT` em `m01-nav-layout.js`, meia-saca 0,273 m medida no GLB/cápsula): renderizador, NPC e jogador. A porta de trás existe agora também para o jogador; a libertação do
+  anel ao restaurar (F1 da física) foi retirada (teleportaria quem gravou lá dentro); testes da física reescritos para a premissa da porta.
+- **Prop movido**: o grupo `bridge_mid_01` 1,5 m para sul (as latas t12_82 estavam entre os lugares da secção; Marek nascia 7 cm dentro delas).
+- **Auditoria** (`tests/helpers/m01-clipping.js`): conta a camada do jogador; colocações de mais de 1 m num tick (a chamada final senta a secção) ficam numa lista à parte e o destino continua auditado; sentados
+  no banco do abrigo isentos; o *sweep* é julgado à altura a que o homem andou (a de `TczewWorld.move`).
+- **Medido** (predecessor = árvore da física `c7d8341`, rota própria; depois = esta árvore): eventos de clipping **14 → 0** nas seis rotas (sementes 19390901, 3 e 7, sem e com apoio): Marek e Bąk nas latas, Nowicki
+  e Bąk nos pilares/parapeitos do portal oeste, Dudek a carregar Bąk no pilar do portal da estrada, a tripulação da ckm na parede de trás fechada; pares empilhados 49/55/57 → 0. 150 percursos livres: todos chegam,
+  0 clipping (49 precisam de desvio).
+- **Golden: emenda 05** (`GOLDEN_AMENDMENT_05.json`, `tests/fixtures/m01-npc-navigation-gameplay-baseline.json`, `tools/verification/m01-npc-navigation-golden-audit.mjs --write`, x86). O golden da T47 (emenda 04)
+  fica byte a byte e é história. Delta nomeado: a primeira diferença, nas duas rotas, é `$.state.actors.2.x` de `tadeusz_nowicki` ao tick 356 (1,3 mm), 355 ticks iguais antes; 12 objetivos, 4 checkpoints,
+  eventos, sobreviventes e relógio final iguais; `west_demolition` +0,15 s (rota completa) e +0,25 s (com apoio). Varredura `m01-ckm-fire-arc`: amostras claras 144 → 135 (os mesmos nove alvos, uma amostra a menos
+  cada depois da demolição oeste). Invariantes: 24/24 rotas sem violação (`INVARIANTS_24_ROUTES.json`).
+- **Continua inferior**: os NPC ainda sobem/descem os encontros e tabuleiros por teletransporte (`TczewWorld.move` usa `heightAt`, sem degraus nem queda); balas, visão e granadas continuam a ignorar a camada do
+  jogador; o A* não custa desníveis; nunca jogado por um humano.
+
 ## 6. Limites (o que continua inferior à referência)
 
-Sem rotas sob fogo (a grelha não tem custo de exposição nem de linha de visão), sem salto de sacos de areia, sem formação nem movimento de cobertura a cobertura, o jogador ainda atravessa os sacos da ckm
-(decoração, outro ramo), e a deteção de colisão dos homens é um círculo de 0,3 m.
+Sem rotas sob fogo (a grelha não tem custo de exposição nem de linha de visão), sem salto de sacos de areia, sem formação nem movimento de cobertura a cobertura, e a deteção de colisão dos homens é um círculo de 0,3 m.
