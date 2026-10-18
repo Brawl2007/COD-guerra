@@ -6,6 +6,9 @@
 // tests are about does not change: the casemate sees nobody, S2 still sees the same 14 gate riflemen in every phase, production == strict, no ray touches a bridge collider.
 // Re-measured on purpose for T47 amendment 03 (D43): the T23 withdrawal cadence counted on landing adds one entry (a span German's position) to the window after 06:05:
 // S1 269/395 -> 270/396, S2 270/270 -> 271/271 (and 270 -> 271 at muzzle heights 0.6 and 0.9 m); every other figure is unchanged (GOLDEN_AMENDMENT_03.json, s2Visibility).
+// Re-measured on purpose for T47 amendment 04 (the player's body physics): the pilot detours round the abutments, the repair cluster and the hut drums, so the window is one sample longer
+// and the phases shift by a few seconds: 784 -> 785 samples, 21460 -> 21500 enemy samples, repair 7560 -> 7640, post_repair 12000 -> 11960 (withdrawal 1900 unchanged). Every entry count of the
+// shortlist (S1 270/396, S2 271/271, S3 338, S4 108) and the distances are unchanged (GOLDEN_AMENDMENT_04.json, s2Visibility).
 // Measured with tools/m01-ckm-fire-arc.mjs (collectWindowTargets, describeCandidate), the functions the tests call.
 import test from 'node:test';import assert from 'node:assert/strict';
 import {TczewWorld} from '../src/world/tczew-world.js';
@@ -24,7 +27,7 @@ test('candidate grid on the west bridgehead: 1066 points, 39 excluded (36 inside
 
 test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted posts see gate riflemen (S1,S2), the span group (S3) or only the south reserve (S4)',{timeout:240000},async()=>{
   const win=await collectWindowTargets({everyTicks:20});
-  assert.equal(win.samples,784);assert.equal(win.enemySamples,21460);assert.deepEqual(win.phaseSamples,{repair:7560,post_repair:12000,withdrawal:1900});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
+  assert.equal(win.samples,785);assert.equal(win.enemySamples,21500);assert.deepEqual(win.phaseSamples,{repair:7640,post_repair:11960,withdrawal:1900});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
   const c0=evaluateCandidate(win,muzzleFlashWorld());assert.equal(c0.productionClearEntries,0);assert.deepEqual(c0.phases,{});
   const by=Object.fromEntries(SHORTLIST.map(c=>[c.id,describeCandidate(win,c)]));
   // S1 abutment top, north edge: 14 gate riflemen (incl. both MG34 gunners); production also lets rays through the rail trusses (28 actors), strict removes them.

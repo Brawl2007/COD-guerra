@@ -17,7 +17,7 @@ await mkdir(out,{recursive:true});
 
 // Snapshots da rota real; nada é injectado na simulação depois de carregados.
 const flow=route();
-const atPost=driver();atPost.step({skip:true});atPost.walk(-66,26);atPost.walk(-15,26);atPost.walk(-15,2);atPost.walk(16,2);
+const atPost=driver();atPost.step({skip:true});atPost.walk(-66,26);atPost.walk(-30,26);atPost.walk(-30,2);atPost.walk(16,2);
 const repair=toRepair(driver()).sim.snapshot();
 const scenes=[
   {name:'intro-black',kind:'new',at:1.6},
