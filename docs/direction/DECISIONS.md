@@ -206,3 +206,19 @@ limite nem asserção. A regra do Captain («se o `cover-threat` exceder o limit
 3. **Invariantes de T38 na árvore viva.** 23 das 24 rotas mantêm todas; a semente 3 com apoio acaba com 17 sobreviventes e não 18 (`INVARIANTS_24_ROUTES.json`). A ferramenta T38 afirma igualdade com o predecessor; o intervalo da missão é 12–18. Até decisão, o golden vivo é o da T47 e as ferramentas T38 e T48 ficam ligadas ao staging (re-executadas a partir do git).
 
 Nada disto foi jogado nem ouvido; são medições de simulação em Node.
+
+## D43 — T47 × T38: V3 na simulação e três mudanças do lado dos testes (decisão do Captain), 2026-10-18
+
+Responde aos três achados da D42. Análise, opções medidas e números: `docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md`. **Decisão do Captain (2026-10-18), com autoridade total delegada pelo proprietário:** aplicar a variante V3 e só estas mudanças de teste.
+
+Simulação (`src/game/m01-simulation.js`):
+1. **A ckm é laçada sobre o homem de pé que disparou.** `ckmAim` deixa de ler `crouched` (zona batida sobre o peito de pé, 1,1 m) e `ckmClearShot` olha para o homem de pé; a escolha da arma fica independente das posturas T38 que as salvas de atrito da T23 mudam.
+2. **`CKM_SUPPRESS_SEC` 2,5 → 1,5 s** (o tempo que um quase-acerto alemão prende um aliado que não trabalha, abaixo dos 2 s de Kowal): em 24 sementes a diferença média do reparo help/ignore volta a 41,4 s (staging 33,1 s; com 2,5 s 29,8 s) e o MG dos portões nunca passa de 18 % na rota «ignore» (com 2,5 s passava 20 % em 7 de 24). Os MG34 continuam suprimíveis pela zona batida (D41 mantida).
+3. **Cadência da retirada contada na chegada do tiro letal**, como diz `mission.json` (`cover_withdrawal.mechanic`): enquanto o tiro voa a contagem espera; corrige quedas a 16 s quando o relógio passa de 8× para 1× (06:09:00). Delta nomeado `cadence` na auditoria por tick da T47.
+
+Testes (as únicas mudanças autorizadas; nenhuma asserção removida nem afrouxada):
+- (a) `tests/m01-east-front.test.js`: a ckm fica calada nos **dois** lados da comparação com o gémeo T22 (`CkmNeutralSimulation`). O gémeo verifica a lógica de atrito da T23, não os impactos da ckm: desde a T38 os atiradores dos portões ficam de pé em cada salva de atrito, e uma ronda da ckm encontra um homem de pé na rota e de joelhos no gémeo (consequência real T23 → T38 → T47).
+- (b) `tests/m01-ckm-live-fire.test.js`: a contagem de entradas visíveis de S2 passa de 270 para 271, re-medida com `tools/m01-ckm-fire-arc.mjs` (registada em `GOLDEN_AMENDMENT_03.json`, `s2Visibility`); move-se com a cadência, que muda a rota neutra depois das 06:05. A mesma medida está fixada em `tests/m01-ckm-candidate-posts.test.js` (mesma janela, mesmas funções) e foi re-medida pelo integrador ao abrigo deste ponto: S1 269/395 → 270/396, S2 270 → 271; os outros números da janela não mudam.
+- (c) `tests/helpers/m01-route.js`: o piloto de apoio pede carregadores a Kowal depois do reparo, pela interacção do jogo (E junto dele, reserva ≤ 25), como um jogador com pouca munição. Antes ficava sem munição às 06:09:00 na semente 3 com apoio e perdia um homem; a invariante (sobreviventes iguais ao predecessor, 18) não muda.
+
+A regra de postura T38 fixada por `tests/m01-combat-posture-staging.test.js:230` não muda. Golden da T47 regenerado com as ferramentas (emenda 03; as cópias de `bc4523f` ficam byte a byte e fixadas). Não é playtest: o equilíbrio (suprimir 1,5 s, ritmo das baixas) continua por jogar. Reversível: sim.

@@ -61,3 +61,7 @@ O estado acima é o da T47 sobre a candidata #80 (`813f163`), na cabeça `602a5e
   (sobre a candidata #80 matava `de_east_5` na rota de referência), e o reparo sai 36,8 s e 15,55 s mais cedo (era 31,45 s e 6,15 s).
 - Três achados por decidir (D42 em `docs/direction/DECISIONS.md`): `cover-threat` (cadência das baixas), `east-front` (gémeo T22 e a postura que chega à mira da arma), invariantes T38 numa das 24 rotas. A folga mínima de um raio de S2 a um collider da ponte é 0,70 m (era 0,98 m).
 - A próxima acção da secção anterior (decisão do proprietário sobre S2, verificação independente) continua por fazer; a integração passou a existir só nesta branch local, sem push.
+
+## D43 aplicada (2026-10-18)
+
+Os três achados da D42 foram resolvidos pela decisão do Captain **D43** (V3 na simulação, três mudanças de teste autorizadas): ver `T47_T38_INTERACTION.md` (secção 4) e a entrada do topo de `DEVELOPMENT_STATUS.md`. Golden da T47 na **emenda 03** (`GOLDEN_AMENDMENT_03.json`; cópias de `bc4523f` em `…-before-amendment-03.json` e `PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_03.json`). `npm test` 1028/1028; invariantes T38 24/24; build OK; `m01-ckm-fire.spec.js` 2 falhados só por erros de validação de shader na consola (ver o estado). Continua por fazer: verificação independente, decisão do proprietário sobre S2, sessão de jogo.

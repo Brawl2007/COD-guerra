@@ -1,6 +1,6 @@
 # T47 x T38: os três achados da D42 — causa, opções, escolha (2026-10-18)
 
-Estado: **ANÁLISE CONCLUÍDA, SEM CORRECÇÃO APLICADA. Precisa de decisão humana** (Captain/proprietário). Nenhuma opção de simulação/dados mantém as três condições ao mesmo tempo sem mudar uma asserção, um limite ou uma invariante. Branch `claude/busy-ritchie-3fkvk2-t47i`, base `bc4523f`. Nenhum golden foi regenerado; `src/`, `missions/` e as ferramentas ficam como em `bc4523f`.
+Estado: **DECIDIDO E IMPLEMENTADO (D43, decisão do Captain de 2026-10-18 com autoridade delegada pelo proprietário): V3 na simulação e três mudanças do lado dos testes** — ver a secção 4. As secções 1–3 são a análise que levou à decisão (feita em `bc4523f`, antes de qualquer correcção). Branch `claude/busy-ritchie-3fkvk2-t47i`.
 
 Tudo o que está abaixo são medições de simulação em Node (x86-64, Node 22.22), não playtest. Rotas: `tests/helpers/m01-cover.js` (`coverRoute`, «help»/«ignore») e `tests/helpers/m01-route.js` (`route`, com e sem apoio). «Staging» = `8c6328c` (sem arma), «T47 sozinha» = `602a5ee`.
 
@@ -59,3 +59,16 @@ Nenhuma opção satisfaz as três condições. Recomendação, por ordem:
 Em qualquer dos casos é preciso regenerar o golden da T47 (emenda 03: cópias de `bc4523f` guardadas byte a byte, `GOLDEN_AMENDMENT_03.json`, a auditoria por tick contra `8c6328c` com o delta nomeado `cadence` se a cadência entrar) e re-fixar a cadeia em `tests/m01-animation-contract.test.js`. A preparação das ferramentas para isso existe como patch fora do repositório (ver o relatório ao Captain); não foi corrida.
 
 Reversível: sim, tudo. Não é playtest; nada foi ouvido nem jogado.
+
+## 4. Decisão do Captain (D43) e implementação
+
+**Decisão do Captain, 2026-10-18** (o proprietário delegou autoridade total no Captain; registada como D43 em `docs/direction/DECISIONS.md`): implementar V3 — mira e linha de vista no homem de pé que disparou, cadência contada na chegada (como diz `mission.json`), `CKM_SUPPRESS_SEC` 1,5 s — e só estas mudanças de teste, sem retirar nem afrouxar nenhuma asserção:
+- (a) `tests/m01-east-front.test.js`: ckm calada nos dois lados da comparação com o gémeo T22 (`CkmNeutralSimulation`; o gémeo verifica a lógica de atrito da T23, não impactos da ckm).
+- (b) contagem de S2 re-medida com a ferramenta do repositório: `tests/m01-ckm-live-fire.test.js:68` 270 → 271. A mesma medida (a mesma janela, as mesmas funções) está fixada em `tests/m01-ckm-candidate-posts.test.js`, que também foi re-medida: S1 269/395 → 270/396, S2 270/270 → 271/271 (e 270 → 271 às alturas de boca 0,6 e 0,9 m); todos os outros números da janela ficam iguais. Medição registada em `GOLDEN_AMENDMENT_03.json` (`s2Visibility`, antes e depois).
+- (c) piloto de apoio (`tests/helpers/m01-route.js`): depois do reparo, com reserva ≤ 25 e Kowal com carregadores, vai ter com ele por trás (oeste) e pede munição pela interacção do jogo (`E`, a mesma de `updateObjectives`). Nas rotas com apoio, dispara nas sementes 3, 6 e 9 (reserva 15, 20, 20); a rota golden 7 tem 30 e não muda.
+- A regra de postura T38 de `tests/m01-combat-posture-staging.test.js:230` não mudou.
+
+Resultados na árvore final (x86-64, Node 22.22):
+- Semente 19390901 (`coverRoute`): reparo «help» 174,5 s, «ignore» 213,2 s (diferença **38,7 s**; staging 65,8 s, T47 sozinha 34,7 s, `bc4523f` 5,7 s); MG dos portões suprimido 10 % do reparo na «ignore» (limite 20 %); baixas da «ignore» às 06:05:23, :46, 06:06:10, :34, :57, 06:07:21 (23–24 s); «help» sem baixas.
+- Invariantes T38 em 24 rotas (`m01-combat-posture-staging-audit.mjs --live`, `INVARIANTS_24_ROUTES.json`): **24/24**, sem violações; semente 3 com apoio 18.
+- Golden T47 emenda 03: `m01-t47-ckm-fire-audit.mjs --write` (EXIT 0; A == G com os deltas nomeados, incluindo `cadence`, cuja primeira diferença é `timers.withdrawalCasualty` nas duas rotas, 06:05:20,4), `m01-t47-golden-amendment-audit.mjs --amendment 03 --write` (EXIT 0; cópias de `bc4523f` byte a byte) e `--amendment 02` em modo de verificação (EXIT 0, `GOLDEN_AMENDMENT_02.json` igual byte a byte, com a simulação e o piloto de `bc4523f` extraídos do git). Na rota de referência a arma fere 3 alemães e não mata ninguém; na rota 7 com apoio fere 5.
