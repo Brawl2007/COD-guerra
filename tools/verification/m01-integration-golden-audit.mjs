@@ -62,7 +62,12 @@ const AMENDMENTS={
     // The deck assault lives in its own module too; it is hashed for this amendment only (06 and 07 keep their input lists byte for byte).
     extraInputs:['src/game/m01-deck-assault.js'],
     generationStage:'Combat slice 2, the deck assault on the combat AI integration tree: at 06:05 the ten Germans of grp_de_spans enter the road deck, four post on span 08 and six bound by cover to mid-deck (x 458-578, never west of x 450) with the slice-1 AI and real rounds, fall back east of x 945 on losses, suppression, the end of their hold or 165 s; the east demolition waits for the deck to clear; enemy_down_by_player; the platoon hands two clips to the player; golden amendment 08',
-    deltaFields:/.*/}};   // MEASURING
+    // Measured on both golden routes: the first lockstep difference is the new key `who` of a sighting (actor.ai.seen.who, the review fix that sends searching fire on the player's
+    // last-seen spot as player rounds), first written by the rail-gate MG when it sees the player after train 963. With it stripped from both frames (stateOnly), the first
+    // BEHAVIOUR difference is recorded below (behaviourFields / behaviourActors are measured, then pinned).
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/,
+    stateOnly:frame=>{for(const k of ['state','checkpoint'])for(const x of frame[k]?.actors??[])if(x.ai?.seen)delete x.ai.seen.who;return frame;},
+    behaviourFields:/.*/,behaviourActors:/.*/}};   // MEASURING
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07 or 08`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
