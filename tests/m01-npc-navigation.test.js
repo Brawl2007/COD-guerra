@@ -1,15 +1,134 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {route,driver,toStationEvacuation} from './helpers/m01-route.js';
-import {clippingAudit} from './helpers/m01-clipping.js';
+import {clippingAudit,stackingAudit} from './helpers/m01-clipping.js';
+import {M01Simulation,CKM_POSITION,validateM01Snapshot} from '../src/game/m01-simulation.js';
+import {TczewWorld} from '../src/world/tczew-world.js';
+import {M01Navigator} from '../src/world/m01-navigation.js';
+import {ckmEmplacementSolids,ckmEmplacementBags,CKM_EMPLACEMENT} from '../src/world/m01-nav-layout.js';
+import {compareContinuation,json} from './helpers/m01-determinism.js';
 
-// P0 (owner playtest): NPCs walk through walls. The real mission routes, one observation per tick, every actor against every solid.
-// A clipping event is an actor entering a wall (or tunnelling through it between two ticks); the list must be empty.
-const audited=(label,run)=>test(`no actor clips a collider, a girder or a sandbag wall: ${label}`,{timeout:300000},()=>{
-  const audit=clippingAudit();run(audit.observe);
-  assert.ok(audit.ticks>4000,`the route ran (${audit.ticks} ticks)`);
-  assert.deepEqual(audit.report(),[],`${audit.events.length} clipping event(s) in ${audit.ticks} ticks`);
+// P0 (owner playtest): NPCs walk through walls. The real mission routes, one observation per tick, every actor against every solid and against every other man.
+// A clipping event is an actor entering a wall (or tunnelling through it between two ticks); a stacked pair is two men standing inside each other (centres
+// closer than 0.35 m). Both lists must be empty.
+const audited=(label,run)=>test(`no actor clips a collider, a girder or a sandbag wall, and no two men stand inside each other: ${label}`,{timeout:600000},()=>{
+  const walls=clippingAudit(),bodies=stackingAudit();run(step=>{walls.observe(step);bodies.observe(step);});
+  assert.ok(walls.ticks>4000,`the route ran (${walls.ticks} ticks)`);
+  assert.deepEqual(walls.report(),[],`${walls.events.length} clipping event(s) in ${walls.ticks} ticks`);
+  assert.deepEqual(bodies.report(),[],`men standing inside each other in ${bodies.ticks} ticks`);
 });
 audited('full route, seed 19390901',observe=>route(19390901,{onStep:observe}));
 audited('full route with the covering-fire pilot, seed 19390901',observe=>route(19390901,{support:true,onStep:observe}));
 audited('station evacuation observed from the yard',observe=>toStationEvacuation(driver(19390901,{onStep:observe}),{observe:true,phase:'release'}));
+
+// ---- The navigator itself: a deterministic, data-only planner over the solids the player meets ----
+
+const walker=(x,z,y=-3)=>({x,y,z,radius:.3});
+const legsOf=(from,pts)=>pts.map((p,i)=>[i?pts[i-1]:[from.x,from.z],p]);
+function assertWalkable(nav,from,pts,margin=0){
+  for(const [p,q]of legsOf(from,pts))assert.ok(nav.clear(p[0],p[1],q[0],q[1],from.radius,from.y,margin),`leg (${p.map(v=>v.toFixed(2))}) -> (${q.map(v=>v.toFixed(2))}) crosses a solid`);
+}
+const fresh=()=>{const world=new TczewWorld();return {world,nav:new M01Navigator(world,{emplacement:CKM_POSITION})};};
+
+test('a free straight walk is just the goal; the planner never moves anybody and draws no random number',()=>{
+  const {nav}=fresh(),a=walker(-200,20),before=JSON.stringify(a);
+  assert.deepEqual(nav.route(a,{x:-150,z:20}),[[-150,20]]);assert.equal(JSON.stringify(a),before);
+});
+
+test('round the rail hut: east to west, the route goes round and never touches a wall; into the hut it uses the west door',()=>{
+  const {nav}=fresh(),east=walker(-240,20),around=nav.route(east,{x:-282,z:20});
+  assert.ok(around.length>=2,'a detour, not a straight line through the hut');assert.deepEqual(around.at(-1),[-282,20]);assertWalkable(nav,east,around);
+  assert.ok(around.some(([x,z])=>z<13.5||z>26.5),'it clears the hut by its north or south wall');
+  const outside=walker(-292,21),inside=nav.route(outside,{x:-262,z:21});
+  assert.ok(inside&&inside.length>=1);assertWalkable(nav,outside,inside);
+  // The only opening of the hut is the west door, x -270, z 18..24: the route crosses that wall inside the opening.
+  let at=[outside.x,outside.z],crossing=null;
+  for(const p of inside){if(Math.min(at[0],p[0])<-270&&Math.max(at[0],p[0])>-270)crossing=at[1]+(p[1]-at[1])*(-270-at[0])/(p[0]-at[0]);at=p;}
+  assert.ok(crossing>18.3&&crossing<23.7,`crosses the west wall at z=${crossing}`);
+});
+
+test('round the station and the yard wagons: every leg of the route is clear of every solid',()=>{
+  const {nav}=fresh();
+  for(const [from,to]of [[[-300,45],[-480,45]],[[-300,30],[-480,30]],[[-330,-6],[-310,-6]],[[-345,2],[-345,14]],[[-322,10],[-358,10]]]){
+    const a=walker(from[0],from[1],0),r=nav.route(a,{x:to[0],z:to[1]});
+    assert.ok(r,`a way from ${from} to ${to}`);assert.deepEqual(r.at(-1),to);assertWalkable(nav,a,r);
+  }
+});
+
+test('the ckm crew leaves the sandbag horseshoe by its open rear and not through a bag; every post has a way out',()=>{
+  const {nav}=fresh(),posts=[[-.794,-.029],[.08,-.52],[-1.6,-1.4]];
+  assert.ok(CKM_EMPLACEMENT.walls.some(w=>w.gap),'the back of the emplacement has a door');
+  for(const [dx,dz]of posts){
+    const a=walker(CKM_POSITION.x+dx,CKM_POSITION.z+dz),r=nav.route(a,{x:-170,z:22});
+    assert.ok(r,`post (${dx},${dz}) has a way out`);assertWalkable(nav,a,r);
+  }
+  // With the old closed rectangle there would be none: the same query through a layout whose door is filled.
+  const closed={...CKM_EMPLACEMENT,walls:CKM_EMPLACEMENT.walls.map(({gap,...w})=>w)};
+  assert.ok(ckmEmplacementBags(CKM_POSITION,closed).length>ckmEmplacementBags(CKM_POSITION).length);
+  assert.ok(ckmEmplacementSolids(CKM_POSITION,closed).length<ckmEmplacementSolids(CKM_POSITION).length,'the door splits a wall into two solids');
+});
+
+test('the planner is a pure function of the world, the start and the goal: repeatable and independent of earlier queries',()=>{
+  const one=fresh(),two=fresh(),a=walker(-240,20),goal={x:-282,z:20};
+  const first=one.nav.route(a,goal);
+  one.nav.route(walker(-100,60),{x:-300,z:10});one.nav.route(walker(5,26),{x:-170,z:22});
+  assert.deepEqual(one.nav.route(a,goal),first);assert.deepEqual(two.nav.route(a,goal),first);
+});
+
+test('deck edges keep the body off the girders; a span that falls takes its girders with it',()=>{
+  const {world,nav}=fresh(),deck=walker(300,40,0);
+  assert.equal(nav.blockedAt(300,37.3,.3,0),true,'the north girder strip of the road deck');
+  assert.equal(nav.blockedAt(300,40,.3,0),false,'the middle of the deck');
+  assert.equal(nav.key,0);world.refresh(['evt_m01_east_demolition']);assert.equal(nav.key,1);
+  world.refresh(['evt_m01_east_demolition','evt_m01_west_demolition']);assert.equal(nav.key,3);
+  assert.equal(nav.blockedAt(8.5+1,40,.3,0),false);void deck;
+});
+
+test('Lisewo\'s road arch is a passage: the planner does not detour round the slab for men inside the arch lane',()=>{
+  const {nav}=fresh();
+  assert.deepEqual(nav.route(walker(1050,39.6,0),{x:1080,z:39.6}),[[1080,39.6]]);
+  assert.ok(nav.route(walker(1050,20,0),{x:1080,z:20})?.length!==1,'outside the lane the slab is a wall');
+});
+
+// ---- In the simulation ----
+function ready(seed=17){const s=new M01Simulation(seed);s.tick(.05,{skip:true});return s;}
+const placeAt=(a,x,z)=>{a.x=x;a.z=z;a.y=a.y;};
+
+test('an ally sent across the rail hut walks round it, reaches the far side in bounded time and never clips',()=>{
+  const s=ready(),a=s.actor('staszek_pawlak'),audit=clippingAudit();
+  Object.assign(a,{x:-238,z:20,y:s.world.heightAt(-238,20),target:{x:-284,z:20},state:'GUARD'});
+  const rng=s.rng.state;
+  for(let i=0;i<20*40&&Math.hypot(a.x+284,a.z-20)>=.8;i++){s.tick(.05,{});audit.observe({sim:s});}
+  assert.ok(Math.hypot(a.x+284,a.z-20)<.8,`arrived (${a.x.toFixed(2)},${a.z.toFixed(2)})`);
+  assert.deepEqual(audit.report(),[]);
+  assert.equal(a.nav,undefined,'the saved detour is dropped on arrival');
+  void rng;
+});
+
+test('a detour is saved with the actor, survives a restore exactly and a malformed one is refused',()=>{
+  const s=ready(),a=s.actor('staszek_pawlak');
+  Object.assign(a,{x:-238,z:20,y:s.world.heightAt(-238,20),target:{x:-284,z:20},state:'GUARD'});
+  for(let i=0;i<30;i++)s.tick(.05,{});
+  assert.ok(a.nav&&a.nav.pts.length>=1,'mid-detour');
+  const save=s.snapshot();validateM01Snapshot(save);
+  const bad=json(save);bad.actors.find(x=>x.id===a.id).nav.pts=[[1,'x']];assert.throws(()=>validateM01Snapshot(bad),/route/);
+  const bad2=json(save);bad2.actors.find(x=>x.id===a.id).nav.i=99;assert.throws(()=>validateM01Snapshot(bad2),/route/);
+  const rec=compareContinuation(s,{label:'detour continues identically after a restore',ticks:400,doubleAt:[50,150]});
+  assert.equal(rec.firstDivergence,null);
+});
+
+test('an older save without a route resumes: the detour is re-made from the actor and the target',()=>{
+  const s=ready(),a=s.actor('staszek_pawlak');
+  Object.assign(a,{x:-238,z:20,y:s.world.heightAt(-238,20),target:{x:-284,z:20},state:'GUARD'});
+  for(let i=0;i<30;i++)s.tick(.05,{});
+  const save=s.snapshot();delete save.actors.find(x=>x.id===a.id).nav;
+  const b=new M01Simulation(1);b.restoreSnapshot(save);
+  for(let i=0;i<20*40&&Math.hypot(b.actor(a.id).x+284,b.actor(a.id).z-20)>=.8;i++)b.tick(.05,{});
+  assert.ok(Math.hypot(b.actor(a.id).x+284,b.actor(a.id).z-20)<.8,'arrived');
+});
+
+test('the straight walk is untouched: an actor with a free line moves exactly as before and keeps no route',()=>{
+  const s=ready(),a=s.actor('staszek_pawlak');
+  Object.assign(a,{x:-150,z:20,y:s.world.heightAt(-150,20),target:{x:-120,z:20},state:'GUARD'});
+  s.tick(.05,{});assert.equal(a.nav,undefined);assert.ok(Math.abs(a.x-(-150+3.6*.05))<1e-9);assert.equal(a.z,20);
+});

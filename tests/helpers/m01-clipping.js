@@ -10,7 +10,7 @@
 // One event is counted per actor and solid each time the actor ENTERS the solid; staying inside is not counted again.
 // PASSAGES are the doorways of the authored geometry: a solid that is drawn with an opening but exported as one slab. Inside a passage the
 // slab is not a wall for the actors walking through it (src/world/m01-nav-layout.js, M01_PASSAGES).
-import {ckmEmplacementSolids,M01_PASSAGES} from '../../src/world/m01-nav-layout.js';
+import {ckmEmplacementSolids,M01_PASSAGES,CKM_EMPLACEMENT} from '../../src/world/m01-nav-layout.js';
 import {CKM_POSITION} from '../../src/game/m01-simulation.js';
 
 // A passage is the opening: the man's centre in its lane, his body allowed to reach the slab faces from outside.
@@ -26,20 +26,22 @@ function crosses(p,q,b,r){
   }
   return true;
 }
-export function auditedSolids(world){
+/** The emplacement as it was drawn before the rear door: closed on four sides. For auditing the predecessor, which still has that wall. */
+export const CLOSED_EMPLACEMENT=Object.freeze({...CKM_EMPLACEMENT,walls:CKM_EMPLACEMENT.walls.map(({gap,...w})=>w)});
+export function auditedSolids(world,layout=CKM_EMPLACEMENT){
   const box=(id,kind,b)=>({id,kind,min:b.min,max:b.max});
   const list=world.obstacles.map(b=>box(b.id,'collider',b));
   for(const c of world.colliders)if(c.collider==='partialCover')list.push(box(c.id,'truss',c));
-  if(!world.events.includes('evt_m01_west_demolition'))for(const s of ckmEmplacementSolids(CKM_POSITION))list.push(box(s.id,'sandbag',s));
+  if(!world.events.includes('evt_m01_west_demolition'))for(const s of ckmEmplacementSolids(CKM_POSITION,layout))list.push(box(s.id,'sandbag',s));
   return list;
 }
 
 /** `observe({sim})` once per tick (the `onStep` of the route driver). `report()` returns the deterministic list of events. */
-export function clippingAudit(){
+export function clippingAudit({layout=CKM_EMPLACEMENT}={}){
   const events=[],previous=new Map(),flagged=new Set();let ticks=0,solids=null,revision=-1;
   function observe({sim}){
     ticks++;
-    if(revision!==sim.world.revision){solids=auditedSolids(sim.world);revision=sim.world.revision;}
+    if(revision!==sim.world.revision){solids=auditedSolids(sim.world,layout);revision=sim.world.revision;}
     for(const a of sim.actors){
       if(!a.alive||!a.active||a.carriedBy){previous.delete(a.id);continue;}
       const before=previous.get(a.id);previous.set(a.id,{x:a.x,z:a.z});
@@ -58,4 +60,30 @@ export function clippingAudit(){
   }
   return {observe,events,get ticks(){return ticks;},
     report(){return events.map(e=>`${e.tick} t=${e.clock} ${e.actor} [${e.group??'-'}/${e.task??'-'}/${e.state}] ${e.hit} ${e.kind}:${e.solid} at (${e.x},${e.z})`);}};
+}
+
+/**
+ * Men standing inside each other: two living, present, uncarried men on one level whose centres are closer than 0.35 m (a body is 0.30 m in radius), counted once
+ * per pair and episode, with the longest stay in ticks. `observe({sim})` once per tick, like clippingAudit.
+ * Out of scope, on purpose: two Germans who are both on the T48 withdrawal march (`fallBack`): that march is a straight line by the battle clock (stepFallBack) from where the
+ * east demolition found each man to his place in the knot, 700 m from the player, and two such lines may cross for a couple of seconds. They are not exempt once they stand.
+ */
+export function stackingAudit(){
+  const open=new Map(),pairs=new Map();let ticks=0;
+  return {
+    observe({sim}){
+      ticks++;const men=sim.actors.filter(a=>a.alive&&a.active&&!a.carriedBy&&!a.displayOnly);
+      for(let i=0;i<men.length;i++)for(let j=i+1;j<men.length;j++){
+        const a=men[i],b=men[j],k=a.id+'|'+b.id;
+        if(Math.abs(a.y-b.y)<=1.5&&Math.hypot(a.x-b.x,a.z-b.z)<.35&&!(a.fallBack&&b.fallBack)){
+          const e=pairs.get(k)??{first:Math.round(sim.clock*100)/100,episodes:0,longestTicks:0};
+          if(!open.has(k)){open.set(k,0);e.episodes++;}
+          open.set(k,open.get(k)+1);e.longestTicks=Math.max(e.longestTicks,open.get(k));pairs.set(k,e);
+        }else open.delete(k);
+      }
+    },
+    get ticks(){return ticks;},
+    summary(){return {pairs:pairs.size,longestStayTicks:Math.max(0,...[...pairs.values()].map(e=>e.longestTicks)),list:[...pairs].map(([k,v])=>({pair:k,...v}))};},
+    report(){return [...pairs].map(([k,v])=>`${k} from t=${v.first} (${v.episodes} episode(s), longest ${v.longestTicks} ticks)`);}
+  };
 }

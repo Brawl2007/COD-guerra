@@ -2,15 +2,15 @@
 
 /**
  * T47 ckm emplacement: the sandbag walls drawn round the gun root (src/render/m01-environment.js buildEmplacement). Local metres relative to the root;
- * an 'x' wall runs along x at local z = `at`, a 'z' wall along z at local x = `at`. `gap` leaves a door in the wall: no bag is drawn there and nobody has
- * to be solid there. A bag is .39 long (along the wall, .275 stagger on odd courses) and .40 thick, a course is .22 high.
+ * an 'x' wall runs along x at local z = `at`, a 'z' wall along z at local x = `at`. `gap` leaves a door in the wall (open to the rear, as a horseshoe
+ * is): no bag is drawn there and the crew walks out through it. The wall used to be closed on all four sides, which left the men no way out but through the bags. A bag is .39 long (along the wall, .275 stagger on odd courses) and .40 thick, a course is .22 high.
  */
 export const CKM_EMPLACEMENT=Object.freeze({
   course:.22,pitch:.55,stagger:.275,halfLength:.2,halfThickness:.2,bagHeight:.12,
   walls:Object.freeze([
     Object.freeze({id:'north',axis:'x',at:-2.2,from:-2.5,to:1.65,courses:3}),
     Object.freeze({id:'south',axis:'x',at:1.4,from:-2.5,to:1.65,courses:3}),
-    Object.freeze({id:'back',axis:'z',at:-2.5,from:-2,to:1.2,courses:3}),
+    Object.freeze({id:'back',axis:'z',at:-2.5,from:-2,to:1.2,courses:3,gap:Object.freeze({from:-1.7,to:.7})}),
     Object.freeze({id:'front',axis:'z',at:1.65,from:-2,to:1.2,courses:2})])});
 
 /** Bag centres of the emplacement round `root` ({x,y,z}); the exact loops the renderer used, as data. */

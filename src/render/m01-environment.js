@@ -8,6 +8,7 @@ import {M01VegetationRuntime} from './m01-vegetation-runtime.js';
 import {M01TrackBed} from './m01-track-bed.js';
 import {M01PropsRuntime} from './m01-props-runtime.js';
 import {CKM_POSITION} from '../game/m01-simulation.js';
+import {ckmEmplacementBags} from '../world/m01-nav-layout.js';
 
 export {vegetationNoise};
 export {M01_VEGETATION_LOD,M01_LEGACY_LEAF_CARD_ESTIMATE,chooseVegetationLod,chooseShrubLod,barkTint} from './m01-vegetation-runtime.js';
@@ -123,12 +124,11 @@ export class M01Environment {
    * two in front so the barrel (0.64 m up) fires over it. The crew posts of the simulation (CKM_POST) stand inside; it goes with the west demolition.
    */
   buildEmplacement(){
-    const {x:rx,y:ry,z:rz}=CKM_POSITION,meta={emplacement:true},color='#a29470',course=.22;
-    const wallX=(z,x0,x1,courses)=>{for(let c=0;c<courses;c++)for(let x=x0+(c%2)*.275;x<=x1;x+=.55)this.put('bag','cloth',[x,ry+.12+c*course,z],[.24,.39,.40],[0,0,-Math.PI/2],color,null,meta);};
-    const wallZ=(x,z0,z1,courses)=>{for(let c=0;c<courses;c++)for(let z=z0+(c%2)*.275;z<=z1;z+=.55)this.put('bag','cloth',[x,ry+.12+c*course,z],[.40,.39,.24],[Math.PI/2,0,0],color,null,meta);};
-    wallX(rz-2.2,rx-2.5,rx+1.65,3);wallX(rz+1.4,rx-2.5,rx+1.65,3);     // north and south sides (the belt side is the north one)
-    wallZ(rx-2.5,rz-2.0,rz+1.2,3);                                      // back, behind the third man
-    wallZ(rx+1.65,rz-2.0,rz+1.2,2);                                     // front: low, the gun fires over it
+    const root=CKM_POSITION,{x:rx,y:ry,z:rz}=root,meta={emplacement:true},color='#a29470';
+    // The bag positions are the layout of src/world/m01-nav-layout.js, the same table the NPC navigation reads, so the men never walk through a bag that is drawn.
+    for(const b of ckmEmplacementBags(root))
+      if(b.axis==='x')this.put('bag','cloth',[b.x,b.y,b.z],[.24,.39,.40],[0,0,-Math.PI/2],color,null,meta);
+      else this.put('bag','cloth',[b.x,b.y,b.z],[.40,.39,.24],[Math.PI/2,0,0],color,null,meta);
     for(let i=0;i<2;i++)this.put('box','wood',[rx+.3+i*.5,ry+.14,rz-1.55],[.36,.2,.18],[0,0,0],'#6b6b46',null,meta);   // two ammunition boxes at the loader's side
   }
   sync(world,quality,player={x:0,z:0},clock=0){
