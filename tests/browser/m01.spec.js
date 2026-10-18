@@ -47,6 +47,15 @@ async function waitForBearingFrame(page,angle,bearing,minFrame){
   },{angle,bearing,minFrame},{timeout:process.env.CI?60000:30000});
   return page.evaluate(()=>({data:window.gameDiagnostics(),hud:document.querySelector('#objective-status').textContent}));
 }
+async function waitForFrameAfterRestore(page){
+  // Continue restores the save inside the click handler, outside the frame loop, and the HUD text is written only by the next rendered
+  // frame (loop: tick -> renderMission -> updateHud, one task). Under software rendering that frame can arrive after the pointer-lock
+  // handoff start() waits for: the first sample then paired the restored sim status with the still-empty HUD (m01.spec.js:458 in the
+  // final integration run, "Reparo 35% · sapadores deitados..." vs ""). Sample only once a frame has been rendered after the restore;
+  // every later task boundary follows a whole frame, so HUD and simulation are compared exactly and the equality stays strict.
+  const restored=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(frame=>window.gameDiagnostics().m01.renderedFrames>frame,restored,{timeout:process.env.CI?60000:30000});
+}
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
@@ -437,7 +446,7 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   // Staged continuation of a state reached by the simulation route (crate delivered, train 963 firing).
   const d=toRepair(driver());d.walk(-134,13);d.until(()=>d.sim.battleClock>=seconds('04:45:40'),120);
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
   const samples=[];
   // Pinned sappers are drawn prone (e0d494e), so 'pinned' poses only count bystanders a round happens to pass: the sappers show as extra prone bodies
   // over the free baseline (the MG34 crews are always prone). Sampling continues until every property asserted below has been seen.
@@ -540,7 +549,7 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   test.setTimeout(process.env.CI?180000:90000);
   const snapshot=flow().combatSnapshots.withdrawal;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
   // Renderer telemetry is latched only after a world frame with a real muzzle batch was submitted.
   // Unlike polling fireEffects.muzzle, the count remains observable after the short visual flash disappears.
   const muzzleStart=await page.evaluate(()=>window.gameDiagnostics().m01.muzzlePresentation.frames),samples=[];
