@@ -55,7 +55,9 @@ test('the intro is presented as black screen, typed title card and letterbox; sk
 
 test('a continued save shows the place card and keyed interaction prompt; HUD fits common resolutions without overlap',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
-  const route=driver();route.step({skip:true});route.walk(-66,26);route.walk(-15,26);route.walk(-15,2);route.walk(16,2);
+  // 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2); this is the detour of
+  // tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
+  const route=driver();route.step({skip:true});route.walk(-66,26);route.walk(-30,26);route.walk(-30,2);route.walk(16,2);
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:route.sim.snapshot()});
   const errors=await open(page);await page.locator('#continue').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');

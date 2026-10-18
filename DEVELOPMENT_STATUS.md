@@ -1,5 +1,22 @@
 # Estado de desenvolvimento
 
+## M01: integração passos 3 e 4 (pacing → combate) sobre phys + npc + skin + anim + áudio — 2026-10-18
+
+Branch local `claude/busy-ritchie-3fkvk2-integ-pc` (de `66e47b2`). **Não publicada**, sem revisão crítica independente, sem CI, sem playtest humano.
+- **Merges:** pacing `74da28f` (sem conflitos; B4 mantida), combate `2ed56f5` (conflitos de teste/documentação resolvidos mantendo os dois lados). Goldens dos ramos revertidos e re-baseados uma vez por passo com `tools/verification/m01-integration-golden-audit.mjs`: **emenda 06** (`5d99df8`, delta `pacing`) e **emenda 07** (`5d13d32`, delta `combat-ai`); os goldens anteriores ficam byte a byte.
+- **Jogo:** 06:00 chega aos 568 s reais em vez de 692 s na rota de controlo (missão 1094 → 961 s); marcador e estado do objectivo; fogo alemão e de Kowal sem metrónomo (repetição de Kowal 71 % → 2 %, cv do dique 0,35 → 0,93). A compressão do relógio só acelera o relógio de batalha: a IA corre em tempo real (`tests/m01-pacing-combat-clock.test.js`).
+- **Invariantes** 24/24 após cada passo; clipping 0 e empilhados 0; apoio > ignorar a MG em 12/12 sementes (margem menor: 44–380 s).
+- **Testes:** focados 311/311 (passo 3), 246/246 + 75/75 (passo 4); `npm run build` OK; browser (porta 4184, `flock`): `m01-ckm-fire` 2/2 na 2.ª execução (1.ª: `:29` sem `ckm` nos últimos 12 eventos de áudio, embora contado), `m01-hud-presentation` 2/2 depois de alinhar o caminho das specs com o desvio da física (`-15` → `-30`). `npm test` **1289/1289 em `de05d65`** (em `297ef31`: 1288/1289, `m01-damage-decals.test.js:92`, limite de impactos da rota re-medido 95 → 71 pela IA). Por correr no browser: `m01-anim-resolver`, `m01-field-structures` (caminho corrigido, verificado só em Node); o marcador/cartão «Mais tarde…» não tem captura de browser.
+- **Inferior:** alemães sempre ≥ 963 m (decisão humana); corredor B4 parado 257 s; sem movimento entre coberturas nem callouts; nunca jogado.
+
+## M01 combate e IA, fatia 1 (P1 do playtest: «o combate é aborrecido») — 2026-10-18
+
+Branch local `claude/busy-ritchie-3fkvk2-combat` sobre `f6913a0`. **Não publicada** (sem push/PR), sem revisão crítica independente, sem playtest humano. Análise, medições antes/depois e desenho: `docs/direction/COD_WAW_WWII_BENCHMARK.md` («Combate e IA»).
+
+- **Simulação.** `grp_de_east` (antes da demolição leste): espreitar 1–3 tiros / grupos de 1–3 rajadas MG34 com pausas log-normais de média igual à antiga, recarga em cobertura, MG34 parada na troca de fita, alvo por linha de visão e ameaça (o jogador que disparou há < 8 s; só muda o alvo), supressão que quebra o espreitar, atrasa e alarga a pontaria. Kowal: rajadas 2–5, reacção conforme a idade do clarão, média 4,2 s. Fogo visual: chaves opcionais `respondSec`/`followUp` em `m01-display-fire.js`, usadas por `dp_east_pl_ckm` e `dp_east_de_mg`. Estado `actor.ai` guardado, validado e migrado.
+- **Efeito medido** (`tools/verification/m01-combat-ai-metrics.mjs`, rotas do golden): repetição do ciclo de Kowal 72 % → 2,5 %/5,5 %; cv do dique 0,29 → 0,92/0,87; MG34 0,59 → 1,01; MG visuais 0,20–0,22 → 0,79–0,87. Distância mínima ao alemão (≥ 963 m), linha de visão e tempos mortos sem mudança.
+- **Testes.** `tests/m01-combat-ai.test.js` (9/9). Focados: `m01-cover-threat` + `m01-cover-combat` 16/16; `m01-combat-posture-staging`, `m01-display-fire`, `m01-east-front` (sementes 19390901 e 3), `m01-german-retreat`, `m01-mg34-prone-runtime`, `m01-continuity-raid`, `m01-support-runtime` 143/144 antes da emenda do teste de posturas (ver commit `0fd2694`), depois 13/13 nas rotas encenadas. `npm test` completo **não corrido** na cabeça final (pedido do Capitão: re-baseia os goldens por passo de fusão); pins que se movem listados no documento. `npm run build` OK. Browser: `m01-ckm-fire.spec.js` 2/2 (porta própria 4179; a 4173 estava ocupada por outra worktree).
+
 ## M01: som menos robótico — variação por evento, passos, nós reutilizados, absorção do ar — 2026-10-18
 
 Branch local `claude/busy-ritchie-3fkvk2-audio` sobre `98f094f`. **Não aceite, não publicada**, sem revisão crítica independente, sem CI x86 completo, **sem ninguém ter ouvido o resultado** (playtest humano em falta). Evidência: `docs/verification/m01-runtime/audio-feel-2026-10-18/README.md`.

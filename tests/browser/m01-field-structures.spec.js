@@ -7,7 +7,9 @@ const OUT=process.env.M01_FIELD_EVIDENCE==='1'?'docs/verification/m01-runtime/m0
 const SHOT={style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000};
 const fresh=new M01Simulation(19390901);fresh.tick(.05,{skip:true});const start=fresh.snapshot(false),r=route(19390901,{support:true}),day=r.combatSnapshots.eastDemolitionOutside;
 // The alternate destruction branch is reached only through real movement/interact/tick controls.
-const d=driver();d.step({skip:true});d.walk(-66,26);d.walk(-15,26);d.walk(-15,2);d.walk(16,2);d.step({interact:true});d.walk(-15,2);d.walk(-60,12);d.until(()=>d.sim.flags['m01.forward_post_state']==='destroyed',120);const destroyed=d.sim.snapshot(false);
+// 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2); this is the detour of
+// tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
+const d=driver();d.step({skip:true});d.walk(-66,26);d.walk(-30,26);d.walk(-30,2);d.walk(16,2);d.step({interact:true});d.walk(-30,2);d.walk(-60,12);d.until(()=>d.sim.flags['m01.forward_post_state']==='destroyed',120);const destroyed=d.sim.snapshot(false);
 const centroid=s=>{const a=s.actors.filter(a=>a.alive&&a.active&&!a.civilian&&a.x<-200&&a.z>50);return a.length?{x:a.reduce((n,a)=>n+a.x,0)/a.length,z:a.reduce((n,a)=>n+a.z,0)/a.length,y:a.reduce((n,a)=>n+a.y,0)/a.length+1}:{x:-262,z:70,y:1};};
 const VIEWS=[
  {name:'03-start-hut-objective',snapshot:start,x:-242,z:32,target:{x:-262,z:20,y:0}},

@@ -1,5 +1,9 @@
 // M01-NPC-NAVIGATION-V1: golden AMENDMENT 05 of the combined tree. Not invoked by npm test.
 //
+// HISTORY since amendment 06 (2026-10-18, P2 pacing merged on the integration tree; tools/verification/m01-integration-golden-audit.mjs): the live simulation is no longer the one
+// this tool's golden pins. tests/fixtures/m01-npc-navigation-gameplay-baseline.json is kept byte for byte and pins the simulation of 66e47b2; this tool's check mode reproduces it
+// in a checkout of 66e47b2, not in the working tree.
+//
 // HISTORY. On the npc branch this tool was run once against f6913a0 (commit 31ea980, an account it called amendment 04) and that output was reverted (b4a8d13) because the
 // player body physics merged first and took the number 04 (T47 golden amendment 04, tools/verification/m01-t47-golden-amendment-audit.mjs). 2026-10-18, phys x npc integration:
 // re-pointed at the physics tree, PREDECESSOR = c7d8341 (claude/busy-ritchie-3fkvk2-phys: the body physics with the review fixes and the west-bank river slip; its
