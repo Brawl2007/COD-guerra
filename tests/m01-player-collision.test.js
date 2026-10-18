@@ -50,10 +50,11 @@ function sweep(sim,boxes,others,{label,sides=['+x','-x','+z','-z'],offsets=[0],m
     probes++;
     const worst=Math.max(...result.path.map(q=>penetration(box,q.x,q.z)));
     const end=result.path.at(-1);
-    if(footprintDistance(box,end.x,end.z)<R+.3)reached++;
+    if(footprintDistance(box,end.x,end.z)<R+.45)reached++;   // the casemate envelope of the manifest is 0.3 m inside the drawn hull
     if(worst>TOL)failures.push(`${box.id} from ${side}${offset?` @${offset.toFixed(2)}`:''}: sank ${worst.toFixed(2)} m into the footprint (ended ${(end.x).toFixed(2)},${(end.z).toFixed(2)}, y ${end.y.toFixed(2)})`);
   }
   assert.ok(probes>=minProbes,`${label}: only ${probes} probes ran (need ${minProbes})`);
+  if(process.env.M01_COLLISION_REPORT)console.log(JSON.stringify({label,probes,reachedTheFace:reached,walkedThrough:failures.length}));
   assert.deepEqual(failures.slice(0,12),[],`${label}: ${failures.length}/${probes} probes walked through the solid`);
   assert.ok(reached>=probes*.7,`${label}: the player reached the face in only ${reached}/${probes} probes (sweep would be vacuous)`);
   return {probes,reached};
