@@ -13,10 +13,10 @@ test('actual reconstructed source buffers match independently recorded integrati
   // leave nor reach) into a depression relative to the ground, so exactly five of the 52531 vertices changed: (-265,65) -4 -> -1.216, (-260,65) -4 -> -2.115,
   // (-255,65) -4 -> -1.935, (-265,75) and (-255,75) -4 -> -3.464. positionHash and normalHash moved with them (the integration values were 25c524bd8f1f... and f76a0411c090...);
   // uv and index are the integration buffers, byte for byte. The same re-pin is in tests/m01-material-authority.test.js.
-  // 2026-10-18, the river slip (a way out of the Vistula, x 25..40, z 10..20): six more vertices changed, river bed -> ramp: (30,10), (30,15), (30,20) -10 -> -5.3333 and (35,10), (35,15),
-  // (35,20) -10 -> -7.6667 (11 in all). The hashes below are the ones after the slip; those after the shelter pit alone were position 35d11fa7ea41... and normal f7e0d30eb0721....
+  // 2026-10-18, the river slip (a way out of the Vistula, x 25..40, z 10..15): four more vertices changed, river bed -> ramp: (30,10) and (30,15) -10 -> -5.3333, (35,10) and (35,15)
+  // -10 -> -7.6667 (9 in all). The hashes below are the ones after the slip; those after the shelter pit alone were position 35d11fa7ea41... and normal f7e0d30eb0721....
 
-  const evidence={positionHash:'eafa79013b67376ca0874b0f09b3c75ebea9535d76fd230c8f4a9c75a1847225',normalHash:'5ac8667fc8c51bcc40f1a52bc065c1cdad634b8fc038697bfc2b2d4d68d63564',uvHash:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',indexHash:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'},g=createLegacyGround(new TczewWorld());
+  const evidence={positionHash:'3fedf7d0c248d93b24b7e7b77fbfdfa7fe964a37a3f5613d496326402f98ba10',normalHash:'1feff156f96275aa99b714a1729373da53ef2920fa5322ad95cfb7449560ea8c',uvHash:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',indexHash:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'},g=createLegacyGround(new TczewWorld());
   assert.equal(g.index.count/3,104000);for(const [attr,key]of [['position','positionHash'],['normal','normalHash'],['uv','uvHash']])assert.equal(hash(g.attributes[attr].array),evidence[key]);assert.equal(hash(g.index.array),evidence.indexHash);g.dispose();
 });
 test('every protected and crossing source triangle, its surface, exact normals and rounded UVs survives extraction',()=>{
