@@ -6,7 +6,10 @@ const centroid=(snapshot,pred)=>{const a=snapshot.actors.filter(pred);if(!a.leng
 export function reliefHorizonViews(){
   const fresh=new M01Simulation(19390901);fresh.tick(.05,{skip:true});const start=fresh.snapshot(false),r=route(19390901,{support:true}),cs=r.combatSnapshots;
   return {world:fresh.world,views:[
-    {name:'01-start-section-close',snapshot:start,x:-74,z:30,target:centroid(start,a=>a.alive&&a.active&&Math.hypot(a.x+66,a.z-22)<14&&!a.civilian)??{x:-66,z:22,y:1}},
+    // The framing is pinned to the pre-T38 start section (marek_zielinski alone stood at -76,24, y -2 inside 14 m of -66,22, so the old target was his position): T38 stages five men at
+    // the squad-post slots, which moved the 14 m centroid and swung the camera 29 degrees onto the rail embankment, where the horizon strip the far-landscape A/B measures is hidden.
+    // Same camera and pitch as the baseline; the section is still in frame (about 30 degrees right of the view axis).
+    {name:'01-start-section-close',snapshot:start,x:-74,z:30,target:{x:-76,z:24,y:-2}},
     {name:'09-repair-sappers',snapshot:cs.repair,x:-146,z:14,target:centroid(cs.repair,a=>a.alive&&a.active&&a.x>-135&&a.x<-100&&!a.civilian)??{x:-123,z:8,y:1}},
     {name:'10-repair-threat-lisewo-far',snapshot:cs.repairThreat,x:-120,z:16.5,target:{x:1063,z:6,y:3}},
     {name:'17-panzerzug-daylight',snapshot:cs.eastDemolitionOutside,x:1092,z:24,target:{x:1150,z:2.5,y:2.5}},
