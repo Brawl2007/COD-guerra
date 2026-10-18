@@ -201,3 +201,41 @@ test('the planner takes an extra list of solids and routes round them like a col
   const r=extra.route(a,{x:-130,z:25});assert.ok(r.length>=2);assertWalkable(extra,a,r);
   assert.equal(new M01Navigator(world,{extraSolids:walls}).route(a,{x:-130,z:25}).length>=2,true,'an array works as well as a function');
 });
+
+// ---- The player layer (2026-10-18, phys x npc integration): what only the player's body met before is a wall for the NPCs too ----
+const playerLayer=(audit,id)=>audit.report().filter(l=>l.includes(` ${id} `));
+
+test('a man walks round a rotated prop of the T12 kit (the yard horse cart, yaw -0.08), in its own frame, and is never inside it',()=>{
+  const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit(),cart=s.world.playerSolids.find(b=>b.id==='t12_7:horse_cart');
+  assert.ok(cart&&Math.abs(cart.s)>.05,'the cart is an oriented box');
+  const from={x:cart.cx,z:cart.cz-cart.hz-2.5},to={x:cart.cx,z:cart.cz+cart.hz+2.5};
+  assert.equal(s.navigator.clear(from.x,from.z,to.x,to.z,.3,s.world.heightAt(from.x,from.z)),false,'the straight line is blocked by the cart');
+  Object.assign(man,{...from,y:s.world.heightAt(from.x,from.z),target:to,state:'GUARD'});
+  let inside=0;
+  for(let i=0;i<20*20&&Math.hypot(man.x-to.x,man.z-to.z)>=.8;i++){s.tick(.05,{});audit.observe({sim:s});
+    const dx=man.x-cart.cx,dz=man.z-cart.cz;if(Math.abs(dx*cart.c-dz*cart.s)<cart.hx+man.radius&&Math.abs(dx*cart.s+dz*cart.c)<cart.hz+man.radius)inside++;}
+  assert.ok(Math.hypot(man.x-to.x,man.z-to.z)<.8,`arrived (${man.x.toFixed(2)},${man.z.toFixed(2)})`);
+  assert.equal(inside,0,'never inside the cart');assert.deepEqual(playerLayer(audit,'staszek_pawlak'),[]);
+});
+
+test('Bąk\'s walk from the squad post to his wound point on the road deck goes over the buried casemate, not into it, and arrives',{timeout:300000},()=>{
+  // The casemate (x 0..26, z 34..46, roof -1.4 m) is under the road deck; a plan made at the lowland height used to see it as a wall across the deck and fail.
+  const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit(),from={x:-72.5,z:20.6},to={x:55,z:41};
+  Object.assign(man,{...from,y:s.world.heightAt(from.x,from.z),target:to,state:'GUARD'});
+  const planned=s.navigator.route(man,to);assert.ok(planned,'a route exists');
+  for(let i=0;i<20*120&&Math.hypot(man.x-to.x,man.z-to.z)>=.8;i++){s.tick(.05,{});audit.observe({sim:s});}
+  assert.ok(Math.hypot(man.x-to.x,man.z-to.z)<.8,`arrived (${man.x.toFixed(2)},${man.z.toFixed(2)})`);
+  assert.deepEqual(playerLayer(audit,'staszek_pawlak'),[]);
+});
+
+test('a man pushed out of a solid without a collider is not pushed into a collider: settle takes the shallowest exit that is free',()=>{
+  // A box without a world collider against the inside of the rail hut's north wall (hut_north, z 14..14.35): the shallowest way out of it is north, into the wall.
+  const world=new TczewWorld(),box={id:'decor_box',min:{x:-262,y:-4,z:14.35},max:{x:-258,y:2,z:15.4}},nav=new M01Navigator(world,{extraSolids:[box]});
+  const man={x:-260,z:14.7,y:world.heightAt(-260,14.7),radius:.3};   // clear of the wall (z 14.4 > 14.35), 0.65 deep from the north face, 1.0 from the south
+  nav.settle(man);
+  assert.ok(man.z>=15.4+.3-1e-9,`left by the free side, at z ${man.z.toFixed(3)} (the wall side was shallower)`);
+  assert.equal(man.x,-260);assert.equal(nav.blockedAt(man.x,man.z,man.radius-1e-6,man.y),false,'out of every solid');
+  // and with nothing behind the shallow side he leaves by it
+  const open=new M01Navigator(world,{extraSolids:[{id:'decor_box',min:{x:-262,y:-4,z:16},max:{x:-258,y:2,z:16.55}}]}),m2={x:-260,z:16.15,y:man.y,radius:.3};
+  open.settle(m2);assert.ok(Math.abs(m2.z-(16-.3))<1e-9,`the shallow side when it is free (z ${m2.z})`);
+});

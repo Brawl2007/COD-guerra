@@ -1,8 +1,12 @@
-// M01-NPC-NAVIGATION-V1: golden AMENDMENT 04 of the combined tree. Not invoked by npm test.
+// M01-NPC-NAVIGATION-V1: golden AMENDMENT 05 of the combined tree. Not invoked by npm test.
 //
-// STATE ON THIS BRANCH (Captain's order, merge order phys -> npc -> pacing -> combat): this tool was run once (commit 31ea980 holds its output, the account and the golden for
-// f6913a0) and its output was then REMOVED from the tree, because the physics merge makes that golden obsolete. Nothing here is run again on this branch. At merge time re-point
-// PREDECESSOR (and the `previous` golden) at the merged tree and run `--write`; it proves lockstep/invariants against whatever predecessor it is given.
+// HISTORY. On the npc branch this tool was run once against f6913a0 (commit 31ea980, an account it called amendment 04) and that output was reverted (b4a8d13) because the
+// player body physics merged first and took the number 04 (T47 golden amendment 04, tools/verification/m01-t47-golden-amendment-audit.mjs). 2026-10-18, phys x npc integration:
+// re-pointed at the physics tree, PREDECESSOR = c7d8341 (claude/busy-ritchie-3fkvk2-phys: the body physics with the review fixes and the west-bank river slip; its
+// src/game/m01-simulation.js is exactly the source the T47 golden amendment 04 pins, and its gameplay inputs are those of the integration tree without the NPC navigation:
+// the skin and animation branches merged beside it change only src/render). Account: GOLDEN_AMENDMENT_05.json. Besides the npc branch's navigation, the integration adds
+// the player layer (world.playerSolids) to the solids the NPCs route round and are kept out of, one ckm sandbag table with the rear door for the player too, and the prop
+// cluster bridge_mid_01 moved clear of the squad's slots (the predecessor's player meets that cluster where it was; the routes never touch it).
 //
 // The change under audit: M01 actors get a deterministic, data-only navigation (src/world/m01-navigation.js, m01-nav-layout.js) in the simulation's one
 // walking routine (moveActor): a man whose straight walk is free walks it exactly as before; otherwise he follows the corners of a route round the solids
@@ -11,7 +15,7 @@
 // that file is KEPT byte for byte and pinned by sha256, and this tool writes the golden of the live simulation, tests/fixtures/m01-npc-navigation-gameplay-baseline.json.
 //
 // Proof, per golden route (the two routes of the T47 golden), with exact numbers (no epsilon):
-//   1. LOCKSTEP. The predecessor (f6913a0, the combined tree of candidate #80 as the owner played it: golden T47 amendment 03) runs on the SAME controls as the live
+//   1. LOCKSTEP. The predecessor (c7d8341, the physics tree: golden T47 amendment 04) runs on the SAME controls as the live
 //      simulation. Every tick the two gameplay frames (all gameplay bytes, the presentation fields stripped) are compared. The tick of the first difference, and its
 //      path, are recorded: it must be a navigation field of one actor (x, y, z, facing, state, crouched or the new `nav` route) and until then the two are byte identical.
 //   2. WHAT FOLLOWS is timing, never the plot: each side then runs on its OWN route (`route(seed,{Simulation})`) and the end of the mission is compared: the 12 objective
@@ -38,10 +42,10 @@ import {clippingAudit,stackingAudit,CLOSED_EMPLACEMENT} from '../../tests/helper
 const write=process.argv.includes('--write');
 const root=resolve(import.meta.dirname,'../..');
 assert.equal(process.arch,'x64','exact gameplay golden regeneration requires x86 (same rule as D30)');
-const PREDECESSOR='f6913a0dae3ae227ab0421c6b59f992e8685e9a6';   // candidate #80 + PR #90 + #89 as played: the combined tree whose golden is T47 amendment 03
+const PREDECESSOR='c7d834126e9f94195379b331370b14ebb465224c';   // the physics tree (T47 golden amendment 04 pins its simulation), with the river slip; see the header
 const EVIDENCE='docs/verification/m01-runtime/npc-navigation-2026-10-18';
 const out=resolve(process.env.M01_NPC_AUDIT_OUT??join(root,EVIDENCE));if(write)mkdirSync(out,{recursive:true});
-const ACCOUNT=join(out,'GOLDEN_AMENDMENT_04.json'),GOLDEN=join(root,'tests/fixtures/m01-npc-navigation-gameplay-baseline.json');
+const ACCOUNT=join(out,'GOLDEN_AMENDMENT_05.json'),GOLDEN=join(root,'tests/fixtures/m01-npc-navigation-gameplay-baseline.json');
 const hash=v=>createHash('sha256').update(typeof v==='string'||Buffer.isBuffer(v)?v:JSON.stringify(v)).digest('hex');
 const previousFile='m01-t47-gameplay-baseline.json',previousPath=join(root,'tests/fixtures',previousFile),previous=JSON.parse(readFileSync(previousPath));
 const NAVIGATION_FIELDS=/^\$\.(state|checkpoint)\.actors\.\d+\.(x|y|z|facing|state|crouched|nav)$/;
@@ -67,12 +71,12 @@ const sorted=o=>Object.fromEntries(Object.entries(o).sort());
 const endState=(sim)=>({ticks:Math.round(sim.clock/.05),battleClock:sim.battleClock,survivors:sim.flags['m01.east_platoon_survivors'],checkpoints:[...sim.checkpointsReached],complete:sim.mission.complete,
   playerHealth:sim.player.health,objectives:Object.fromEntries(Object.entries(sim.objectives).map(([id,o])=>[id.replace('obj_m01_',''),o.state])),
   consumedEventIds:Object.keys(sim.consumed).sort(),consumed:sorted(sim.consumed)});
-const clipSummary=audit=>({ticks:audit.ticks,events:audit.events.length,list:audit.report()});
+const clipSummary=audit=>({ticks:audit.ticks,events:audit.events.length,list:audit.report(),placements:audit.placements.length});
 
-const report={task:'M01-NPC-NAVIGATION-V1',amendment:'amendment-04',predecessor:PREDECESSOR,predecessorSourceSha256:hash(predecessorSource),sourceSha256:hash(liveSource),
+const report={task:'M01-NPC-NAVIGATION-V1',amendment:'amendment-05',predecessor:PREDECESSOR,predecessorSourceSha256:hash(predecessorSource),sourceSha256:hash(liveSource),
   previousGolden:{task:previous.task,file:'tests/fixtures/'+previousFile,sha256:hash(readFileSync(previousPath)),sourceSha256:previous.sourceSha256},
   navigationFields:NAVIGATION_FIELDS.source,routes:[]};
-const golden={task:'M01-NPC-NAVIGATION-V1',generationStage:'NPC navigation on the combined tree (candidate #80 + PR #90 + #89): routes round the solids, steering round men, queue at a crowded goal, open ckm emplacement; golden amendment 04',
+const golden={task:'M01-NPC-NAVIGATION-V1',generationStage:'NPC navigation on the integration tree (physics + skin + animation): routes round the solids and the player layer, steering round men, queue at a crowded goal, ckm emplacement open at the rear; golden amendment 05',
   predecessor:PREDECESSOR,predecessorSourceSha256:previous.sourceSha256,
   previousGolden:{task:previous.task,file:'tests/fixtures/'+previousFile,sha256:hash(readFileSync(previousPath))},
   historicalGoldenSha256:previous.historicalGoldenSha256,sourceSha256:hash(liveSource),routes:[]};
@@ -121,11 +125,24 @@ for(const {seed,support} of cases){
   console.log(JSON.stringify({seed,support,ticks:row.newTicks,firstDifferenceClock:row.firstDifference.clock,identicalBlocks:row.identicalBlocks,movers:Object.keys(row.routeWindows),
     clippingBefore:row.measured.clipping.predecessor.events,clippingAfter:0,stackedBefore:row.measured.stacked.predecessor.pairs,stackedAfter:0}));
 }
+// Amendment 05: the same measured effect on the other audited seeds (3 and 7, with and without the covering-fire pilot), each side on its own route. Not part of the golden.
+report.otherRoutes=[];
+for(const seed of [3,7])for(const support of [false,true]){
+  const clip=clippingAudit(),stack=stackingAudit(),clipOld=clippingAudit({layout:CLOSED_EMPLACEMENT}),stackOld=stackingAudit();
+  const live=route(seed,{support,onStep:(step)=>{clip.observe(step);stack.observe(step);}}).sim;
+  const own=route(seed,{support,Simulation:Before,onStep:(step)=>{clipOld.observe(step);stackOld.observe(step);}}).sim;
+  const endOld=endState(own),endNew=endState(live);
+  report.otherRoutes.push({seed,support,clipping:{predecessor:clipSummary(clipOld),live:clipSummary(clip)},stacked:{predecessor:stackOld.summary(),live:stack.summary()},
+    endState:{objectives:JSON.stringify(endOld.objectives)===JSON.stringify(endNew.objectives),checkpoints:JSON.stringify(endOld.checkpoints)===JSON.stringify(endNew.checkpoints),
+      survivors:{predecessor:endOld.survivors,live:endNew.survivors},battleClock:{predecessor:endOld.battleClock,live:endNew.battleClock}}});
+  assert.equal(clip.events.length,0,`seed ${seed} support ${support}: no clipping event on the live route`);assert.equal(stack.summary().pairs,0,`seed ${seed} support ${support}: nobody inside another man`);
+  console.log(JSON.stringify({seed,support,clippingBefore:clipOld.events.length,clippingAfter:clip.events.length,stackedBefore:stackOld.summary().pairs}));
+}
 const accountText=JSON.stringify(report,null,2)+'\n';
-golden.auditSha256=hash(accountText);golden.audit=EVIDENCE+'/GOLDEN_AMENDMENT_04.json';
+golden.auditSha256=hash(accountText);golden.audit=EVIDENCE+'/GOLDEN_AMENDMENT_05.json';
 const goldenText=JSON.stringify(golden,null,2)+'\n';
 if(write){writeFileSync(ACCOUNT,accountText);writeFileSync(GOLDEN,goldenText);}
 else{
-  assert.equal(readFileSync(ACCOUNT,'utf8'),accountText,'GOLDEN_AMENDMENT_04.json equals the regenerated account (check mode writes nothing; --write regenerates it)');
+  assert.equal(readFileSync(ACCOUNT,'utf8'),accountText,'GOLDEN_AMENDMENT_05.json equals the regenerated account (check mode writes nothing; --write regenerates it)');
   assert.equal(readFileSync(GOLDEN,'utf8'),goldenText,'the golden equals the regenerated one');
 }
