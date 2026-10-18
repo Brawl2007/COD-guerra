@@ -117,9 +117,14 @@ test('the ckm emplacement solids contain every sandbag the environment draws rou
   for(const [i,b] of boxes.entries()){
     assert.ok(solids.some(o=>b.min.x>=o.cx-o.hx-.03&&b.max.x<=o.cx+o.hx+.03&&b.min.z>=o.cz-o.hz-.03&&b.max.z<=o.cz+o.hz+.03&&b.max.y<=o.y1+.03&&b.min.y>=o.y0-.05),`bag ${i} sticks out of every solid`);
   }
+  // 2026-10-18 (phys x npc integration): one table (src/world/m01-nav-layout.js) with a door in the back wall, so the back wall is two jambs of 3 bags each (one per course)
+  // instead of one closed run. The count of every run is pinned exactly (it used to be a lower bound of 4, which the jambs cannot meet).
+  const expectedBags={ckm_sandbag_north_0:24,ckm_sandbag_south_1:24,ckm_sandbag_back_2:3,ckm_sandbag_back_3:3,ckm_sandbag_front_4:12};
+  assert.deepEqual(solids.map(o=>o.id),Object.keys(expectedBags),'north, south, the two jambs of the rear door, front');
+  assert.ok(solids[3].cz-solids[3].hz-(solids[2].cz+solids[2].hz)>1.9,'the rear door is wider than 1.9 m (the player body is 0.72 m across, an NPC 0.6 m)');
   for(const o of solids){
     const inside=boxes.filter(b=>b.min.x>=o.cx-o.hx-.03&&b.max.x<=o.cx+o.hx+.03&&b.min.z>=o.cz-o.hz-.03&&b.max.z<=o.cz+o.hz+.03);
-    assert.ok(inside.length>=4,`${o.id} holds ${inside.length} bags`);
+    assert.equal(inside.length,expectedBags[o.id],`${o.id} holds ${inside.length} bags`);
     const x0=Math.min(...inside.map(b=>b.min.x)),x1=Math.max(...inside.map(b=>b.max.x)),z0=Math.min(...inside.map(b=>b.min.z)),z1=Math.max(...inside.map(b=>b.max.z)),top=Math.max(...inside.map(b=>b.max.y));
     assert.ok(Math.abs(x0-(o.cx-o.hx))<.04&&Math.abs(x1-(o.cx+o.hx))<.04,`${o.id} x extent ${x0.toFixed(2)}..${x1.toFixed(2)} vs ${(o.cx-o.hx).toFixed(2)}..${(o.cx+o.hx).toFixed(2)}`);
     assert.ok(Math.abs(z0-(o.cz-o.hz))<.04&&Math.abs(z1-(o.cz+o.hz))<.04,`${o.id} z extent`);

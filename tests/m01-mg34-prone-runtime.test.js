@@ -156,15 +156,18 @@ test('invalid partial/impossible prone fields reject atomically without changing
   }
 });
 
-test('movement and S3 station evacuation bodies remain byte-for-byte identical to the fixed base',()=>{
+test('the old straight walk and S3 station evacuation bodies remain byte-for-byte identical to the fixed base',()=>{
   const current=readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url),'utf8');
   const base=execFileSync('git',['show','2cfa9520a09c68629e3d98d6e7f4dc0d8f9e6732:src/game/m01-simulation.js'],{encoding:'utf8'});
-  for(const [start,end] of [['  moveActor(','  updateActors('],['  evacuateStation(','  evacuate(']]){
-    const old=base.slice(base.indexOf(start),base.indexOf(end,base.indexOf(start)));
-    const now=current.slice(current.indexOf(start),current.indexOf(end,current.indexOf(start)));
-    // New posture methods precede updateActors, leaving moveActor itself intact.
-    const body=now.slice(0,old.length);assert.equal(body,old);
+  // NPC navigation (M01-NPC-NAVIGATION-V1, golden amendment 04): moveActor is now the navigating walker. The walk it used to be is kept verbatim as walkStraight,
+  // which moveActor calls whenever no solid and no man is in the way; only the name on the first line differs. evacuateStation is untouched and still calls moveActor.
+  for(const [start,end,renamed] of [['  moveActor(','  updateActors(','  walkStraight('],['  evacuateStation(','  evacuate(',null]]){
+    const old0=base.slice(base.indexOf(start),base.indexOf(end,base.indexOf(start))),old=renamed?old0.replace(start,renamed):old0;
+    const from=renamed??start,at=current.indexOf(from);
+    // New posture methods precede updateActors, leaving the old walk itself intact.
+    const now=current.slice(at,current.indexOf(end,at));const body=now.slice(0,old.length);assert.equal(body,old);
   }
+  assert.match(current,/moveActor\(a,target,dt,speed=3\.6\)\{[^]*?this\.walkStraight\(a,target,dt,speed\)/,'moveActor walks the old walk whenever nothing is in the way');
 });
 
  test('a nonlethal hit interrupts the remaining burst and stays low with a valid snapshot',()=>{

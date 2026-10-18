@@ -24,7 +24,9 @@ export const M01_PROP_CLUSTERS=Object.freeze([
 
   Object.freeze({id:'bridge_rail_01',area:'bridge-approach',style:'rail',x:-55,z:-14,yaw:0,seed:301}),
   Object.freeze({id:'bridge_rail_02',area:'bridge-approach',style:'maintenance',x:-25,z:-14,yaw:.02,seed:302}),
-  Object.freeze({id:'bridge_mid_01',area:'bridge-approach',style:'maintenance',x:-70,z:19,yaw:.05,seed:303}),
+  // 2026-10-18 (phys x npc integration): z 19 -> 17.5. At 19 the cluster's jerrycans (t12_82, x -71.9..-70.7, z 21.0..21.3) stood among the squad's slots behind the post's
+  // sandbags (mission.json grp_squad: Marek at -71.1, 21.5 started 7 cm inside them; Bąk walking east from -72.5, 20.6 ran into them). Now solid for the NPCs too, so moved clear.
+  Object.freeze({id:'bridge_mid_01',area:'bridge-approach',style:'maintenance',x:-70,z:17.5,yaw:.05,seed:303}),
   Object.freeze({id:'bridge_mid_02',area:'bridge-approach',style:'freight',x:-42,z:20,yaw:-.04,seed:304}),
   Object.freeze({id:'bridge_mid_03',area:'bridge-approach',style:'combat',x:-18,z:20,yaw:.10,seed:305}),
   Object.freeze({id:'bridge_road_01',area:'bridge-approach',style:'maintenance',x:-68,z:56,yaw:-.05,seed:306}),

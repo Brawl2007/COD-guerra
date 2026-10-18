@@ -72,8 +72,11 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   assert.equal(r.samples,1112);assert.equal(r.samplesBeforeEastDemolition,785);
   assert.equal(r.enemySamples,36542);assert.equal(r.enemySamplesBeforeEastDemolition,21500);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
+  // Re-measured on purpose, with the repo tool, for the NPC navigation round every solid (golden amendment 05, 2026-10-18, phys x npc integration): the west demolition, which waits
+  // for every ally west of x -90, is consumed 0.15 s later on this route (movedEvents in docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json) while the
+  // route's length in samples is unchanged (1112), so each of the same nine targets is clear in one 20-tick sample fewer after it (16 -> 15 each, 144 -> 135). Nothing before it moved.
   // The only clear samples exist after evt_m01_west_demolition removed pier_01 and deck_span_01, when the crew is in 'retreat' and the casemate is gone.
-  assert.equal(r.clearEnemySamples,144);assert.equal(r.clearEnemySamplesAfterWestDemolition,144);
+  assert.equal(r.clearEnemySamples,135);assert.equal(r.clearEnemySamplesAfterWestDemolition,135);
   assert.deepEqual(Object.keys(r.clearTargets),['de_east_26','de_east_27','de_east_33','de_east_34','de_east_35','de_east_36','de_east_37','de_east_38','de_east_39']);
   assert.ok(Object.values(r.clearTargets).every(t=>t.ckmPhaseAtFirst==='retreat'&&t.samplesBeforeEastDemolition===0&&t.samples===t.samplesAfterWestDemolition));
 });

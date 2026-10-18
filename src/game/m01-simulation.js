@@ -3,7 +3,7 @@ import mapLayout from '../../missions/m01-tczew/map-layout.json' with {type:'jso
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import { TczewWorld } from '../world/tczew-world.js';
 import { movePlayer } from '../world/m01-player-physics.js';
-import { CKM_RELEASE_POINT, insideCkmEnclosure } from '../world/m01-collision-layout.js';
+import { M01Navigator, NAV, playerSolidsForNav } from '../world/m01-navigation.js';
 import { Wz29 } from './wz29.js';
 import { M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
@@ -28,6 +28,11 @@ const entity=(id,point,team='ally',extra={})=>({id,space:'metres',...point,team,
 const phaseText={INTRO:'04:30 · Tczew, Polónia',OUTRO:'07:05 · Chamada no abrigo'};
 // Dudek leva Bąk para junto da estação ("Levaram o Bąk para a estação", dlg_m01_056b), fora da zona de demolição oeste.
 const EVACUATION={x:-332,y:-3,z:24};
+// Personal space of walking men (moveActor): a shoulder's slack off the sum of the radii, the longest push of one tick, and the last metres in which a crowd queues.
+const SEPARATION_SLACK=.1,SEPARATION_PUSH=.15,CROWD_NEAR=2.5;
+// The actors' navigator: the colliders, girders and ckm sandbags, plus (2026-10-18, phys x npc integration) every solid the player's body meets that no collider covers
+// (the casemate, the shelter walls, the bridge heads, the prop kit: playerSolidsForNav), so a man routes round what the player walks into and is never left inside it.
+const simulationNavigator=world=>new M01Navigator(world,{emplacement:CKM_POSITION,extraSolids:playerSolidsForNav});
 // The scripted station casualty is fictional and already in the yard before the raid, avoiding a visible relocation.
 const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
@@ -220,7 +225,7 @@ export class M01Simulation {
     this.difficulty=difficulty;this.reset(seed);
   }
   reset(seed=19390901){
-    this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();
+    this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();this.navigator=simulationNavigator(this.world);
     this.clock=0;this.battleClock=seconds(definition.clock.start);this.events=[];this.consumed={};this.objectives={};
     definition.objectives.forEach(o=>{this.objectives[o.id]={state:'locked',progress:0};});
     this.flags={'m01.completed':false,'m01.nowicki_status':'present','m01.bak_status':'unhurt','m01.dudek_status':'unhurt',
@@ -546,7 +551,94 @@ export class M01Simulation {
       (active?.text??'Mantenha contacto com a secção')+(optional?` · ${optional.text}`:'');
     this.mission.status=this.scene?.id==='cs_m01_roll_call'?'':this.threatStatus();
   }
+  /**
+   * The one walking routine of every actor (NPC navigation, M01-NPC-NAVIGATION-V1). With no solid and no man in the way it is the old straight walk, to the bit
+   * (`walkStraight`, byte for byte what moveActor was). Otherwise the walker follows the corners of a route round the solids (`navAim`, saved in `a.nav`),
+   * turns away from a man in the way (`steerAround`), and at a crowded goal waits where he is; after every walk anyone inside his personal space pushes him
+   * out (`separate`). No random number and no clock are read here.
+   */
   moveActor(a,target,dt,speed=3.6){
+    if(!a.alive||!a.active||a.state==='WOUNDED')return;
+    const d=dist(a,target);
+    if(d<.8){delete a.nav;return this.walkStraight(a,target,dt,speed);}
+    const aim=this.navAim(a,target),detour=aim!==target,before={x:a.x,z:a.z};
+    const wanted=Math.atan2(aim.z-a.z,aim.x-a.x),step=Math.min(detour?dist(a,aim):d,speed*dt);
+    const heading=this.steerAround(a,wanted,step);
+    // settle after the straight walk too: a no-op unless he ended inside a solid without a world collider (the failed-route fallback and the sidestep of walkStraight can).
+    if(!detour&&heading===wanted){this.walkStraight(a,target,dt,speed);this.navigator.settle(a);}
+    else{
+      a.facing=heading??wanted;a.state='ADVANCE';
+      // The last metres of a crowded goal: a man with no free way forward stops where he is, as a queue does.
+      if(heading===null&&d<CROWD_NEAR){a.state='GUARD';return;}
+      this.world.move(a,Math.cos(a.facing)*step,Math.sin(a.facing)*step);
+      this.navigator.settle(a);
+    }
+    this.separate(a);
+    if(detour&&a.nav)a.nav.stall=dist(a,before)<step*.25?a.nav.stall+1:0;
+  }
+  /** Everyone whose body counts for a walking man: the other living, present men on his level, and the player. Nobody carried (he is part of his carrier). */
+  bodiesNear(a,x,z,reach){
+    const out=[];
+    for(const b of this.actors){
+      if(b===a||!b.alive||!b.active||b.carriedBy||a.carriedBy===b.id||Math.abs(b.y-a.y)>1.5)continue;
+      if(Math.abs(b.x-x)<=reach&&Math.abs(b.z-z)<=reach)out.push(b);
+    }
+    const p=this.player;if(p.alive&&Math.abs(p.y-a.y)<=1.5&&Math.abs(p.x-x)<=reach&&Math.abs(p.z-z)<=reach)out.push(p);
+    return out;
+  }
+  /**
+   * Local avoidance. A step is "in the way" when it ends within personal space of somebody and closer to him than the walker is now; the walker then turns
+   * away from that man (about 35 degrees, then 70) towards the free side, and null means no free way at all. Returns `wanted` itself when nobody is in the way.
+   * Pure geometry on the roster order: no random number, no clock.
+   */
+  // ponytail: two turns (35 and 70 degrees) to the free side and a stop, no look-ahead and no reciprocal avoidance; enough for a file of men and a crowd at one goal.
+  steerAround(a,wanted,step){
+    const near=this.bodiesNear(a,a.x,a.z,step+1.2);if(!near.length)return wanted;
+    const at=(h)=>({x:a.x+Math.cos(h)*step,z:a.z+Math.sin(h)*step});
+    const blocker=(h)=>{const p=at(h);return near.find(b=>{const n=dist(b,p);return n<a.radius+b.radius-SEPARATION_SLACK&&n<dist(b,a);});};
+    const first=blocker(wanted);if(!first)return wanted;
+    const cross=Math.cos(wanted)*(first.z-a.z)-Math.sin(wanted)*(first.x-a.x),side=Math.abs(cross)>1e-3?(cross>0?-1:1):(this.actors.indexOf(a)%2?1:-1);
+    for(const turn of [.6,-.6,1.2,-1.2]){const h=wanted+side*turn;if(!blocker(h))return h;}
+    return null;
+  }
+  /**
+   * Personal space: after a walking man moves, anyone nearer than the sum of both radii less a shoulder's slack pushes him away along the line between
+   * them (all the way from a man standing still, half the way from one who also walks), through TczewWorld.move so a wall still stops the push.
+   * Two men on the very same spot are parted along a direction that depends only on their places in the roster. No random number, no clock.
+   */
+  // ponytail: a push for walkers only; men who stand are never moved by it, so authored slots (kneeling squad, gate riflemen) keep their places.
+  separate(a){
+    for(const b of this.bodiesNear(a,a.x,a.z,1)){
+      const space=a.radius+b.radius-SEPARATION_SLACK;let dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);
+      if(d>=space)continue;
+      if(d<1e-6){const angle=(this.actors.indexOf(a)-Math.max(0,this.actors.indexOf(b)))*2.399963;dx=Math.cos(angle);dz=Math.sin(angle);d=1;}
+      const push=Math.min(SEPARATION_PUSH,(space-Math.min(d,space))*(b.state==='ADVANCE'?.5:1));
+      this.world.move(a,dx/d*push,dz/d*push);this.navigator.settle(a);
+    }
+  }
+  /**
+   * Where an actor walks to this tick. The straight walk to the target is kept exactly as it always was whenever no solid is in the way; otherwise he
+   * follows the corners of a route round the solids (src/world/m01-navigation.js), which are saved with him (`nav`) and re-made from his position and
+   * the target when the target moves, a span falls, the route is spent or he makes no headway (nothing else in the world changes under a route, so no timer). Nothing here reads or writes the random stream.
+   */
+  navAim(a,target){
+    if(this.navigator.world!==this.world)this.navigator=simulationNavigator(this.world);   // a world swapped under the simulation (tests do)
+    const nav=this.navigator;
+    if(nav.clear(a.x,a.z,target.x,target.z,a.radius,a.y)){delete a.nav;return target;}
+    let n=a.nav;
+    // A route that failed is not asked for again every tick: the failure is saved (`fail`) and kept until the goal moves, a span falls or NAV.retrySec pass (the walk is the old one meanwhile).
+    if(n?.fail&&n.key===nav.key&&Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)<=1.5&&this.clock-n.at<NAV.retrySec)return target;
+    const spent=n&&n.i>=n.pts.length-1&&Math.hypot(n.pts[n.pts.length-1][0]-a.x,n.pts[n.pts.length-1][1]-a.z)<.06;
+    if(!n||spent||n.key!==nav.key||Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)>1.5||n.stall>=20){
+      const pts=nav.route(a,target);
+      if(!pts){a.nav={goal:[target.x,target.z],key:nav.key,at:this.clock,i:0,stall:0,pts:[[target.x,target.z]],fail:true};return target;}   // no way round: the old walk, with its sidestep
+      n=a.nav={goal:[target.x,target.z],key:nav.key,at:this.clock,i:0,stall:0,pts};
+    }
+    while(n.i<n.pts.length-1&&nav.clear(a.x,a.z,n.pts[n.i+1][0],n.pts[n.i+1][1],a.radius,a.y,NAV.tightMargin))n.i++;
+    if(n.i<n.pts.length-1&&Math.hypot(n.pts[n.i][0]-a.x,n.pts[n.i][1]-a.z)<.06)n.i++;
+    return {x:n.pts[n.i][0],z:n.pts[n.i][1]};
+  }
+  walkStraight(a,target,dt,speed=3.6){
     if(!a.alive||!a.active||a.state==='WOUNDED')return;
     const d=dist(a,target);if(d<.8){a.state='GUARD';return;}
     a.facing=Math.atan2(target.z-a.z,target.x-a.x);a.state='ADVANCE';
@@ -769,7 +861,14 @@ export class M01Simulation {
         if(a.fallBack){this.stepFallBack(a);continue;}   // T48: marching to the close-up knot, whatever the fire; once there the men stay (REGROUP)
         if(a.state==='REGROUP')continue;
         const destination=retreat?1080:690;
-        if(this.clock>=a.suppressedUntil){a.x+=Math.sign(destination-a.x)*Math.min(Math.abs(destination-a.x),dt*1.5);a.state=retreat?'RETREAT':'ADVANCE';}
+        if(this.clock>=a.suppressedUntil){
+          // A suppressed man stands still while the others walk on: nobody walks into the one who stands in his lane (NPC navigation, personal space).
+          // ponytail: the spans stay a scripted straight march along x (no routes, no world.move); only the queue behind a man who stands is added.
+          const x=a.x+Math.sign(destination-a.x)*Math.min(Math.abs(destination-a.x),dt*1.5);
+          // The old retreat of saves made before T48 is not queued: its men all end on x 1080 by design (tests/m01-german-retreat.test.js).
+          if(retreat||!this.bodiesNear(a,x,a.z,1).some(b=>dist(b,{x,z:a.z})<a.radius+b.radius-SEPARATION_SLACK&&dist(b,{x,z:a.z})<dist(b,a))){a.x=x;a.state=retreat?'RETREAT':'ADVANCE';}
+          else a.state='GUARD';   // waiting behind the man who stands: on guard, not walking in place
+        }
         continue;
       }
       if(a.task==='evacuate_bak'){this.evacuate(a,dt);continue;}
@@ -1458,12 +1557,8 @@ export class M01Simulation {
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
-    // A save made before the ckm sandbag ring was solid may hold the player inside it (the walls are 0.46-0.68 m, over the 0.45 m step, and the ring is closed): he is put on the
-    // open ground in front of it. Other overlaps with new solids are pushed out by the first move; an enclosure cannot be.
-    const held=candidate.player;
-    if(!Object.hasOwn(s.consumed,E('west_demolition'))&&insideCkmEnclosure(held.x,held.z)){
-      held.x=CKM_RELEASE_POINT.x;held.z=CKM_RELEASE_POINT.z;held.y=candidate.world.heightAt(held.x,held.z);delete held.fall;
-    }
+    // 2026-10-18 (phys x npc integration): no release from the ckm sandbag ring any more. The ring has a door at the rear (one table, src/world/m01-nav-layout.js), so a player
+    // saved inside it walks out, and a new save made there is restored where it was made; a body overlapping a new solid is pushed out by its first move.
     candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation(undefined,{difficulty});backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
@@ -1505,6 +1600,11 @@ function validateCKMLive(a,s,reject){
   });
 }
 
+// A saved detour (src/world/m01-navigation.js): the corners to walk, which of them is next, and what it was made for. Anything the machine could not have made is refused.
+const validNavRoute=(n,clock)=>Boolean(n)&&typeof n==='object'&&!Array.isArray(n)&&Object.keys(n).length===(n.fail===undefined?6:7)&&['goal','key','at','i','stall','pts'].every(k=>Object.hasOwn(n,k))&&(n.fail===undefined||n.fail===true&&n.i===0&&n.pts.length===1)&&
+  Array.isArray(n.goal)&&n.goal.length===2&&n.goal.every(Number.isFinite)&&Number.isInteger(n.key)&&n.key>=0&&n.key<=3&&Number.isFinite(n.at)&&n.at>=0&&n.at<=clock+1e-9&&
+  Array.isArray(n.pts)&&n.pts.length>=1&&n.pts.length<=24&&Number.isInteger(n.i)&&n.i>=0&&n.i<n.pts.length&&Number.isInteger(n.stall)&&n.stall>=0&&n.stall<=100000&&
+  n.pts.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite));
 export function validateM01Snapshot(s){
   const reject=message=>{throw new Error('Checkpoint M01 inválido: '+message);};
   if(!s||s.schema!==2||s.missionId!==definition.id)reject('versão ou missão');
@@ -1528,6 +1628,7 @@ export function validateM01Snapshot(s){
   for(const a of s.actors){
     if(a.cover&&!definitionMapCover(a.cover))reject('cover node '+a.id);
     if(a.displayOnly!==undefined&&(!AUXILIARY_IDS.includes(a.id)||a.displayOnly!==true))reject('display-only actor');
+    if(a.nav!==undefined&&!validNavRoute(a.nav,s.clock))reject('route '+a.id);   // NPC navigation: a saved detour round the solids (absent in older saves, re-made on demand)
     if(AUXILIARY_IDS.includes(a.id)&&(!a.displayOnly||a.group!==(YARD_IDS.includes(a.id)?'grp_station_yard':'grp_mg34_loaders')))reject('auxiliary group');
     if(MG_LOADER_IDS.includes(a.id)){
       const p=a.mg34Loader,index=MG_LOADER_IDS.indexOf(a.id);
