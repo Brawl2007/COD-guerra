@@ -8,7 +8,7 @@ import {M01Characters} from '../src/render/m01-characters.js';
 import {actorPose} from '../src/render/m01-actor-pose.js';
 import {
   VARIETY,STAND_IDLES,CROUCH_IDLES,FIDGETS,DEATHS,HITS,POSTURE_TRANSITIONS,
-  animationSeed,mix32,unit,varietyOf,loopTime,impactSector,hitReactionClip,duckReactionClip,deathVariant,idleChoice,postureTransition,isAlert,varyLoop,proneReaction,varietyActive
+  animationSeed,mix32,unit,varietyOf,loopTime,impactSector,hitReactionClip,duckReactionClip,deathVariant,idleChoice,restingVariant,coverLowOf,postureTransition,isAlert,varyLoop,proneReaction,varietyActive
 } from '../src/render/m01-animation-variety.js';
 import {isFootIkEligible} from '../src/render/m01-foot-ik.js';
 import {actorHash,FADE,fadeDuration,refineCandidate,selectGeneric,resolveAnimation,resolveCombatReaction,locomotionSample,wrapAngle} from '../src/render/m01-animation-resolver.js';
@@ -32,6 +32,8 @@ const pick=(actor,time,clips=FULL)=>{
   if(pose.name==='fallen')return refineCandidate({clip:'fallen',time:1.4,loop:false},{actor,pose,time,offset:OFFSET,clips});
   return selectGeneric({actor,pose,time,offset:OFFSET,clips});
 };
+const ROSTER=Array.from({length:40},(_,i)=>`de_east_${i+2}`);
+const idWhere=(family,variant,coverLow=false)=>ROSTER.find(id=>restingVariant({id},family,coverLow)===variant);
 const circ=(a,b)=>{const d=Math.abs(a-b)%1;return Math.min(d,1-d);};
 
 // ================================ seeds: the lockstep root cause ================================
@@ -115,71 +117,92 @@ test('without the T08 library the output is exactly the previous behaviour (time
 });
 
 // ================================ clip coverage per state ================================
-test('standing soldiers use three idle variants and the four fidgets over time; legacy clip sets keep the single idle',()=>{
-  const seen={},fidgetAges=[];
-  for(let i=0;i<24*60;i++){
-    const t=100+i*.5,s=pick(soldier({id:'de_east_9'}),t);
-    seen[s.clip]=(seen[s.clip]??0)+1;
-    if(s.clip.startsWith('fidget_'))fidgetAges.push([s.clip,s.time]);
+test('standing soldiers: three resting idles across the roster, ONE per soldier for ten minutes (no re-roll, so no foot slide), fidgets only from the base idle',()=>{
+  const rest=new Set(),fidgets={};let fidgeters=0;
+  for(const id of ROSTER){
+    const mine=new Set();let n=0;
+    for(let i=0;i<1200;i++){
+      const t=100+i*.5,s=pick(soldier({id}),t);
+      if(s.clip.startsWith('fidget_')){fidgets[s.clip]=(fidgets[s.clip]??0)+1;n++;assert.ok(s.time>=0&&s.time<=INFO[s.clip].duration+1e-9,`${s.clip} age ${s.time}`);}
+      else mine.add(s.clip);
+    }
+    assert.equal(mine.size,1,`${id} shows ${[...mine]}: the resting idle must not change while he stands`);
+    mine.forEach(c=>rest.add(c));
+    if(n>0){fidgeters++;assert.ok(mine.has('standing_idle'),`${id} fidgets from ${[...mine]}: fidgets are authored from and to the base idle`);}
   }
-  for(const n of [...STAND_IDLES,...FIDGETS])assert.ok(seen[n]>0,`${n} never shown: ${JSON.stringify(seen)}`);
-  assert.ok(seen.standing_idle>seen.standing_idle_b*.5,'the base idle stays the most common');
-  for(const [n,age] of fidgetAges)assert.ok(age>=0&&age<=INFO[n].duration+1e-9,`${n} age ${age}`);
+  assert.deepEqual([...rest].sort(),[...STAND_IDLES].sort());
+  for(const f of FIDGETS)assert.ok(fidgets[f]>0,`${f} never shown: ${JSON.stringify(fidgets)}`);
+  assert.ok(fidgeters>=8,`${fidgeters} of 40 soldiers fidgeted`);
   for(let i=0;i<200;i++)assert.equal(pick(soldier({id:'de_east_9'}),100+i,LEGACY).clip,'standing_idle');
 });
 
-test('different soldiers never show the same clip schedule: ten men over two minutes produce ten distinct sequences',()=>{
-  const seq=id=>Array.from({length:240},(_,i)=>pick(soldier({id}),50+i*.5).clip).join(',');
-  const set=new Set(Array.from({length:10},(_,i)=>seq(`de_east_${i+2}`)));
-  assert.equal(set.size,10);
+test('different soldiers never show the same clip schedule: ten men over two minutes produce ten distinct (clip, time) sequences',()=>{
+  const seq=id=>Array.from({length:60},(_,i)=>{const s=pick(soldier({id}),50+i*2);return `${s.clip}@${s.time.toFixed(2)}`;}).join(',');
+  assert.equal(new Set(ROSTER.slice(0,10).map(seq)).size,10);
 });
 
-test('a fidget starts and ends inside one slot (the variant never changes under it) and is a pure function of time',()=>{
-  const actor=soldier({id:'de_east_5'}),v=varietyOf('de_east_5');
-  for(let i=0;i<4000;i++){
+test('a fidget starts and ends inside one slot and is a pure function of time',()=>{
+  const id=idWhere('stand',0),actor=soldier({id}),v=varietyOf(id);let seen=0;
+  for(let i=0;i<8000;i++){
     const t=200+i*.05,c=idleChoice(actor,t,'stand',FULL,{});
-    if(!c.fidget)continue;
+    if(!c.fidget)continue;seen++;
     const dur=INFO[c.fidget].duration,x=(t+v.slotShift)/v.slotLength,s=(x-Math.floor(x))*v.slotLength;
     assert.ok(s-c.fidgetAge>=VARIETY.fidgetMargin-1e-9&&s-c.fidgetAge+dur<=v.slotLength-VARIETY.fidgetMargin+1e-9,'fidget sits inside its slot');
   }
+  assert.ok(seen>0);
+  const t=321.7,first=idleChoice(actor,t,'stand',FULL,{}),snap=[first.clip,first.fidget,first.fidgetAge];
+  idleChoice(actor,t+77,'stand',FULL,{});const again=idleChoice(actor,t,'stand',FULL,{});assert.deepEqual([again.clip,again.fidget,again.fidgetAge],snap);
 });
 
 test('an alert soldier (fired, hit or shot at in the last 8 s) does not fidget; a relaxed one does',()=>{
-  const times=Array.from({length:4000},(_,i)=>200+i*.1);
-  const relaxed=times.filter(t=>idleChoice(soldier({id:'de_east_5'}),t,'stand',FULL,{}).fidget).length;
+  const id=idWhere('stand',0),times=Array.from({length:6000},(_,i)=>200+i*.1);
+  const relaxed=times.filter(t=>idleChoice(soldier({id}),t,'stand',FULL,{}).fidget).length;
   assert.ok(relaxed>0);
-  const alertFidgets=times.filter(t=>{const a=soldier({id:'de_east_5',firedAt:t-3});return isAlert(a,t)&&idleChoice(a,t,'stand',FULL,{alert:true}).fidget;}).length;
+  const alertFidgets=times.filter(t=>{const a=soldier({id,firedAt:t-3});return isAlert(a,t)&&idleChoice(a,t,'stand',FULL,{alert:true}).fidget;}).length;
   assert.equal(alertFidgets,0);
   assert.equal(isAlert(soldier({suppressedAt:99}),100),true);assert.equal(isAlert(soldier({suppressedAt:80}),100),false);assert.equal(isAlert(soldier(),100),false);
-  // End to end: a soldier who just fired is not drawn fidgeting.
-  for(const t of times.slice(0,1000)){const s=pick(soldier({id:'de_east_5',firedAt:t-6}),t);assert.ok(!s.clip.startsWith('fidget_'),s.clip);}
+  for(const t of times.slice(0,1000)){const s=pick(soldier({id,firedAt:t-6}),t);assert.ok(!s.clip.startsWith('fidget_'),s.clip);}
 });
 
-test('kneeling soldiers alternate two kneeling idles; behind low cover the cover idle joins them; nothing changes without the library',()=>{
+test('kneeling soldiers: one kneeling idle per soldier (left or right knee), the squat joins them behind low cover only; nothing changes without the library',()=>{
   const seen=new Set(),seenCover=new Set();
-  for(let i=0;i<1200;i++){
-    const t=30+i*.5;
-    seen.add(pick(soldier({id:'pl_east_6',crouched:true,posture:'crouch'}),t).clip);
-    seenCover.add(pick(soldier({id:'pl_east_6',crouched:true,posture:'crouch',cover:{nodeId:'sb1',type:'SANDBAG',side:'left',height:.8}}),t).clip);
+  for(const id of ROSTER){
+    const plain=new Set(),cover=new Set(),tall=new Set();
+    for(let i=0;i<600;i++){
+      const t=30+i*.5,k={id,crouched:true,posture:'crouch'};
+      plain.add(pick(soldier(k),t).clip);
+      cover.add(pick(soldier({...k,cover:{nodeId:'sb1',type:'SANDBAG',side:'left',height:.8}}),t).clip);
+      tall.add(pick(soldier({...k,cover:{nodeId:'w',type:'WALL',side:'left',height:1.6}}),t).clip);
+    }
+    assert.equal(plain.size,1,`${id}: ${[...plain]}`);assert.equal(cover.size,1);assert.equal(tall.size,1);
+    plain.forEach(c=>seen.add(c));cover.forEach(c=>seenCover.add(c));
+    assert.ok(!tall.has('cover_low_idle'),'cover_low_idle is a squat below ~1 m of cover only');
   }
   assert.deepEqual([...seen].sort(),['crouched_idle','crouched_idle_b']);
-  assert.ok(seenCover.has('cover_low_idle')&&seenCover.has('crouched_idle'));
-  const tall=new Set();for(let i=0;i<1200;i++)tall.add(pick(soldier({id:'pl_east_6',crouched:true,posture:'crouch',cover:{nodeId:'w',type:'WALL',side:'left',height:1.6}}),30+i*.5).clip);
-  assert.ok(!tall.has('cover_low_idle'),'cover_low_idle is a squat below ~1 m of cover only');
+  assert.ok(seenCover.has('cover_low_idle')&&seenCover.has('crouched_idle')&&seenCover.has('crouched_idle_b'));
+  assert.equal(coverLowOf({cover:{height:1.2}}),true);assert.equal(coverLowOf({cover:{height:1.21}}),false);assert.equal(coverLowOf({}),false);
   for(let i=0;i<100;i++)assert.equal(pick(soldier({crouched:true,posture:'crouch'}),i,LEGACY).clip,'crouched_idle');
 });
 
-test('stand <-> crouch plays the authored transition for its length, then the idle; engineers and legacy clip sets keep the plain cross-fade',()=>{
-  const crouching=soldier({crouched:true,posture:'crouch',postureSince:50});
+test('stand <-> crouch plays the authored transition for its length when his kneeling idle is the base one; every other soldier keeps the plain cross-fade',()=>{
+  const right=idWhere('crouch',0),left=idWhere('crouch',1);
+  const crouching=soldier({id:right,crouched:true,posture:'crouch',postureSince:50});
   assert.deepEqual([pick(crouching,50).clip,pick(crouching,50.2).clip,pick(crouching,50.44).clip],Array(3).fill('stand_to_crouch'));
   assert.ok(Math.abs(pick(crouching,50.2).time-.2)<1e-9);
-  assert.ok(CROUCH_IDLES.slice(0,2).includes(pick(crouching,50.46).clip));
-  const standing=soldier({postureSince:50});
+  assert.equal(pick(crouching,50.46).clip,'crouched_idle');
+  const standing=soldier({id:right,postureSince:50});
   assert.equal(pick(standing,50.1).clip,'crouch_to_stand');assert.ok(STAND_IDLES.includes(pick(standing,50.5).clip));
+  // The left-knee soldier would swap 0.76 m of foot position inside 0.1-0.2 s: he gets the plain posture cross-fade.
+  assert.equal(pick({...crouching,id:left},50.1).clip,'crouched_idle_b');assert.equal(pick({...standing,id:left},50.1).clip.startsWith('crouch_to'),false);
   assert.ok(!['stand_to_crouch','crouch_to_stand'].includes(pick({...crouching,role:'ENGINEER'},50.1).clip));
   assert.equal(pick(crouching,50.1,LEGACY).clip,'crouched_idle');
-  assert.equal(postureTransition(soldier({postureSince:0}),.1,FULL),null,'postureSince 0 is "unknown", not an event');
+  assert.equal(postureTransition(soldier({id:right,postureSince:0}),.1,FULL),null,'postureSince 0 is "unknown", not an event');
   assert.equal(postureTransition(crouching,49,FULL),null,'a stamp in the future is not an event');
+  const coverRight=idWhere('crouch',0,true),coverSquat=idWhere('crouch',2,true);
+  assert.notEqual(coverSquat,undefined);
+  const cover={nodeId:'sb',type:'SANDBAG',side:'left',height:.8};
+  assert.equal(pick(soldier({id:coverRight,crouched:true,posture:'crouch',postureSince:50,cover}),50.1).clip,'stand_to_crouch');
+  assert.equal(pick(soldier({id:coverSquat,crouched:true,posture:'crouch',postureSince:50,cover}),50.1).clip,'cover_low_idle','the squat variant is never entered through the right-knee clip');
 });
 
 test('prone soldiers flinch when shot at or hit and otherwise lie in their prone idle (the idle keeps its sim-stamp time)',()=>{
@@ -248,6 +271,12 @@ test('deaths: the killing shot picks the directional clip, no recorded shot spre
   assert.equal(deathVariant(dead({hitAt:100,hitYaw:Math.PI}),LEGACY),'fallen');
   assert.equal(deathVariant(dead({hitAt:100,hitYaw:Math.PI,posture:'prone'}),FULL),'fallen','a prone corpse keeps the original lying clip');
   assert.equal(deathVariant(dead({id:'de_east_0',mg34Prone:{phase:'aim',progress:1}}),FULL),'fallen');
+  // The real dead MG34 gunner as the simulation leaves him (route to 257.55 s): posture 'crouch', mg34Prone removed, weapon/role kept. The browser spec
+  // tests/browser/m01-anim-resolver.spec.js ('cold load: the MG34 gunner death cross-fades into fallen') relies on exactly this.
+  const gunner=dead({id:'de_east_0',team:'enemy',role:'SUPPORT',weapon:'mg34',group:'grp_de_east',posture:'crouch',hitAt:100,hitYaw:Math.PI});
+  assert.equal(gunner.mg34Prone,undefined);assert.equal(deathVariant(gunner,FULL),'fallen');
+  assert.equal(deathVariant(dead({id:'de_mg34_loader_0',group:'grp_mg34_loaders',role:'RIFLEMAN',posture:'stand',hitAt:100,hitYaw:Math.PI}),FULL),'fallen');
+  assert.equal(pick(gunner,101).clip,'fallen');
   // A wound that was not the killing blow (hit long before death) is undirected.
   assert.ok(Object.values(DEATHS).includes(deathVariant(dead({hitAt:60,hitYaw:Math.PI}),FULL)));
 });
@@ -328,7 +357,7 @@ test('M01Characters: every state maps to the intended clip, at distinct phases f
       ['aiming',{role:'RIFLEMAN',state:'SUPPRESS',shot:.1,firedAt:299.9},['fire_bolt']],
       ['pinned',{team:'ally',suppressedUntil:400},['pinned']],
       ['hit from the left',{hitAt:299.9,hitYaw:-Math.PI/2},['hit_left']],['hit from behind',{hitAt:299.9,hitYaw:Math.PI},['hit_back']],
-      ['kneeling down',{crouched:true,posture:'crouch',postureSince:299.9},['stand_to_crouch']],
+      ['kneeling down',{crouched:true,posture:'crouch',postureSince:299.9},['stand_to_crouch','crouched_idle','crouched_idle_b']],
       ['dead from behind',{alive:false,diedAt:299,hitAt:299,hitYaw:Math.PI,deathYaw:0},Object.values(DEATHS)],
       ['prone, shot at',{posture:'prone',suppressedAt:299.9,suppressedUntil:302},['prone_flinch','pinned']]];
     for(const [label,extra,allowed] of cases){

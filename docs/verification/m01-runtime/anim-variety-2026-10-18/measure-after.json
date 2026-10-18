@@ -126,20 +126,20 @@
   "carry_putdown_patient": 7,
   "carry_walk": 960,
   "carry_wounded": 114,
-  "cover_low_idle": 2284,
-  "crouch_to_stand": 1029,
+  "cover_low_idle": 1403,
+  "crouch_to_stand": 601,
   "crouch_walk": 3,
-  "crouched_idle": 34497,
-  "crouched_idle_b": 33361,
-  "death_back": 3253,
-  "death_crumple": 6616,
+  "crouched_idle": 41214,
+  "crouched_idle_b": 27876,
+  "death_crumple": 3371,
   "death_left": 5942,
   "death_right": 1305,
   "drag_wounded": 210,
-  "fidget_check_rifle": 2222,
-  "fidget_helmet": 2073,
-  "fidget_look": 1688,
-  "fidget_shift": 1608,
+  "fallen": 6498,
+  "fidget_check_rifle": 1441,
+  "fidget_helmet": 1377,
+  "fidget_look": 1139,
+  "fidget_shift": 966,
   "fire_bolt": 4720,
   "hit_front": 5,
   "hit_right": 3,
@@ -161,10 +161,10 @@
   "run": 1997,
   "sapper_work": 6877,
   "sprint": 14068,
-  "stand_to_crouch": 842,
-  "standing_idle": 43811,
-  "standing_idle_b": 31427,
-  "standing_idle_c": 27831,
+  "stand_to_crouch": 491,
+  "standing_idle": 66124,
+  "standing_idle_b": 19758,
+  "standing_idle_c": 20283,
   "station_drag_medic_grab": 7,
   "station_drag_medic_release": 7,
   "station_drag_patient_grab": 217,
@@ -193,8 +193,8 @@
   "cover_low_peek_fire_l",
   "cover_low_peek_fire_r",
   "cover_return",
+  "death_back",
   "death_front",
-  "fallen",
   "hit_back",
   "hit_left",
   "mg34_aim",
@@ -226,14 +226,14 @@
    "samples": 112757,
    "distinctClips": 14,
    "clips": {
-    "standing_idle_c": 27831,
-    "standing_idle": 43811,
-    "standing_idle_b": 31427,
-    "fidget_helmet": 2073,
-    "fidget_check_rifle": 2222,
-    "fidget_shift": 1608,
-    "fidget_look": 1688,
-    "crouch_to_stand": 1029,
+    "standing_idle": 66124,
+    "standing_idle_c": 20283,
+    "fidget_helmet": 1377,
+    "fidget_check_rifle": 1441,
+    "fidget_shift": 966,
+    "fidget_look": 1139,
+    "standing_idle_b": 19758,
+    "crouch_to_stand": 601,
     "carry_wounded": 94,
     "turn_left": 4,
     "turn_right": 2,
@@ -247,13 +247,13 @@
    "distinctClips": 14,
    "clips": {
     "sapper_work": 6877,
-    "stand_to_crouch": 842,
-    "crouched_idle": 34497,
-    "cover_low_idle": 2284,
-    "crouched_idle_b": 33361,
+    "cover_low_idle": 1403,
+    "stand_to_crouch": 491,
+    "crouched_idle": 41214,
     "station_drag_medic_grab": 7,
     "drag_wounded": 210,
     "station_drag_medic_release": 7,
+    "crouched_idle_b": 27876,
     "near_miss_duck": 1680,
     "pinned": 1538,
     "blast_duck": 615,
@@ -325,9 +325,9 @@
    "samples": 17230,
    "distinctClips": 5,
    "clips": {
-    "death_back": 3253,
-    "death_crumple": 6616,
+    "fallen": 6498,
     "death_left": 5942,
+    "death_crumple": 3371,
     "death_right": 1305,
     "carried": 114
    }
@@ -384,37 +384,37 @@
   "mg34_prone_enter->mg34_prone_fire_burst": 1,
   "mg34_prone_fire_burst->mg34_prone_idle": 1
  },
- "transitions": 12227,
- "crossfaded": 12218,
+ "transitions": 9447,
+ "crossfaded": 9438,
  "hardSnaps": 9,
  "cohort": {
-  "groups": 16318,
-  "actors": 180811,
-  "meanDistinctPhase05": 0.791,
-  "meanDistinctPhase02": 0.905,
-  "medianMinGap": 0.0065,
-  "pairs": 1107867,
-  "pairsInLockstep2pct": 45373,
+  "groups": 15122,
+  "actors": 181359,
+  "meanDistinctPhase05": 0.775,
+  "meanDistinctPhase02": 0.895,
+  "medianMinGap": 0.0055,
+  "pairs": 1288634,
+  "pairsInLockstep2pct": 52858,
   "lockstepByClip": {
    "standing_idle": {
-    "pairs": 300919,
-    "fraction": 0.0375
-   },
-   "standing_idle_b": {
-    "pairs": 151961,
-    "fraction": 0.0414
-   },
-   "standing_idle_c": {
-    "pairs": 113646,
-    "fraction": 0.0402
-   },
-   "crouched_idle": {
-    "pairs": 210325,
-    "fraction": 0.0448
+    "pairs": 621667,
+    "fraction": 0.0399
    },
    "crouched_idle_b": {
-    "pairs": 193382,
-    "fraction": 0.0432
+    "pairs": 131942,
+    "fraction": 0.045
+   },
+   "standing_idle_b": {
+    "pairs": 54593,
+    "fraction": 0.0422
+   },
+   "crouched_idle": {
+    "pairs": 275633,
+    "fraction": 0.0425
+   },
+   "standing_idle_c": {
+    "pairs": 67165,
+    "fraction": 0.0396
    },
    "aim": {
     "pairs": 13895,
@@ -438,45 +438,45 @@
    }
   },
   "lockstepPairFraction": 0.041,
-  "timeLoopPairs": 987801,
-  "timeLoopPairsSameRate": 1685,
+  "timeLoopPairs": 1168568,
+  "timeLoopPairsSameRate": 1319,
   "groupsWithAllSameRate": 0,
-  "groupsWithMinGapUnder1pct": 10057,
+  "groupsWithMinGapUnder1pct": 9826,
   "byClip": {
    "standing_idle": {
-    "groups": 3218,
-    "actors": 42261,
-    "distinct05": 31069,
+    "groups": 3521,
+    "actors": 64608,
+    "distinct05": 42143,
     "sameRate": 0,
-    "minGapUnder1pct": 2243
-   },
-   "standing_idle_b": {
-    "groups": 2962,
-    "actors": 29597,
-    "distinct05": 23174,
-    "sameRate": 0,
-    "minGapUnder1pct": 1720
-   },
-   "standing_idle_c": {
-    "groups": 2815,
-    "actors": 25159,
-    "distinct05": 20341,
-    "sameRate": 0,
-    "minGapUnder1pct": 1444
-   },
-   "crouched_idle": {
-    "groups": 2682,
-    "actors": 32074,
-    "distinct05": 23438,
-    "sameRate": 0,
-    "minGapUnder1pct": 1763
+    "minGapUnder1pct": 3153
    },
    "crouched_idle_b": {
-    "groups": 2786,
-    "actors": 31012,
-    "distinct05": 22973,
+    "groups": 2632,
+    "actors": 25629,
+    "distinct05": 19920,
     "sameRate": 0,
-    "minGapUnder1pct": 1811
+    "minGapUnder1pct": 1650
+   },
+   "standing_idle_b": {
+    "groups": 2269,
+    "actors": 16242,
+    "distinct05": 13695,
+    "sameRate": 0,
+    "minGapUnder1pct": 858
+   },
+   "crouched_idle": {
+    "groups": 3239,
+    "actors": 39641,
+    "distinct05": 28371,
+    "sameRate": 0,
+    "minGapUnder1pct": 2245
+   },
+   "standing_idle_c": {
+    "groups": 1606,
+    "actors": 14531,
+    "distinct05": 11648,
+    "sameRate": 0,
+    "minGapUnder1pct": 844
    },
    "aim": {
     "groups": 869,

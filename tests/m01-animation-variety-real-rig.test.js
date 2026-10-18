@@ -7,13 +7,14 @@ import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {createIkCharacters,loadIkAssets,boneSnapshot} from './helpers/m01-ik-fixture.js';
-import {STAND_IDLES,CROUCH_IDLES,FIDGETS,DEATHS,HITS,POSTURE_TRANSITIONS} from '../src/render/m01-animation-variety.js';
+import {STAND_IDLES,CROUCH_IDLES,FIDGETS,DEATHS,HITS,POSTURE_TRANSITIONS,restingVariant} from '../src/render/m01-animation-variety.js';
 
-const libraryClips=async()=>{
+let libraryCache=null;
+const libraryClips=()=>libraryCache??=(async()=>{
   const b=readFileSync(new URL('../assets/models/provisional/m01/characters/clip-library-v2/m01_soldier_clip_library_v2.glb',import.meta.url));
   const loader=new GLTFLoader().register(()=>({name:'CPU_NO_TEXTURE',loadTexture:()=>Promise.resolve(null)}));
   return (await loader.parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'')).animations;
-};
+})();
 async function characters(options={}){
   const c=await createIkCharacters({ik:false,ikMeasure:false,...options});
   for(const clip of await libraryClips())c.clips.set(clip.name,clip);   // what M01Characters.load() does with the library pack
@@ -102,4 +103,75 @@ test('real rig: a hit from the left plays hit_left with the body inside its pose
     }
     assert.ok(worst<.06,`largest hips step between 60 Hz frames ${worst.toFixed(4)} m`);
   }finally{c.dispose();}
+});
+
+// ---- foot skate: the library one-shots and idles were authored on specific foot marks; the layer must never cross-fade between different ones ----
+const ROSTER=Array.from({length:60},(_,i)=>`de_east_${i+2}`);
+const idOf=(family,variant)=>ROSTER.find(id=>restingVariant({id},family,false)===variant);
+const feetOf=(c,id)=>{const b=boneSnapshot(c.instances.get(id)),g=n=>b.find(x=>x[0]===n)[3].slice(12,15);return [...g('foot_l'),...g('foot_r')];};
+const footStep=(a,b)=>Math.max(Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]),Math.hypot(a[3]-b[3],a[4]-b[4],a[5]-b[5]));
+/** Largest world step of either foot between two frames of one authored clip played alone, at `hz`. */
+function authoredPeak(c,name,hz){
+  const root=c.sources.get('pl:1').scene.clone(true),mixer=new THREE.AnimationMixer(root),clip=c.clips.get(name),act=mixer.clipAction(clip);
+  const fl=root.getObjectByName('foot_l'),fr=root.getObjectByName('foot_r'),v=new THREE.Vector3(),w=new THREE.Vector3();
+  act.play();let prev=null,worst=0;
+  for(let t=0;t<=clip.duration+1e-9;t+=1/hz){act.time=Math.min(t,clip.duration);mixer.update(0);root.updateMatrixWorld(true);fl.getWorldPosition(v);fr.getWorldPosition(w);
+    const f=[...v.toArray(),...w.toArray()];if(prev)worst=Math.max(worst,footStep(prev,f));prev=f;}
+  mixer.uncacheRoot(root);return worst;
+}
+
+test('real rig, no foot skate: a stationary soldier never moves his feet in any resting idle or fidget (only the authored boot step of fidget_shift)',async()=>{
+  const c=await characters();
+  try{
+    const hz=30,shift=authoredPeak(c,'fidget_shift',hz);let fidgetsSeen=0;
+    for(const [family,variant] of [['stand',0],['stand',1],['stand',2],['crouch',0],['crouch',1]]){
+      const id=idOf(family,variant);assert.ok(id,`${family} ${variant}`);
+      const actor={...base,id,team:'enemy',...(family==='crouch'?{crouched:true,posture:'crouch',postureSince:1}:{})};
+      let prev=null,worst=0;
+      for(let t=100;t<=220;t+=1/hz){
+        c.update([actor],t,player,'high');const f=feetOf(c,id),s=stat(c,id);
+        if(prev){
+          const step=footStep(prev,f),shifting=s.blend.some(b=>b.clip==='fidget_shift');
+          if(s.blend.some(b=>b.clip.startsWith('fidget_')))fidgetsSeen++;
+          if(shifting)assert.ok(step<=shift*1.25+1e-4,`${id} fidget_shift step ${step} > authored ${shift}`);
+          else worst=Math.max(worst,step);
+        }
+        prev=f;
+      }
+      assert.ok(worst<.001,`${id} (${family} variant ${variant}) feet moved ${(worst*1000).toFixed(2)} mm in one frame while standing still`);
+    }
+    assert.ok(fidgetsSeen>0,'the scenario includes fidgets');
+  }finally{c.dispose();}
+});
+
+test('real rig, no foot skate: stand -> kneel -> stand on the base kneeling idle moves the feet only as fast as the authored transitions, and rests still after them',async()=>{
+  const c=await characters();
+  try{
+    const hz=60,peak=Math.max(authoredPeak(c,'stand_to_crouch',hz),authoredPeak(c,'crouch_to_stand',hz)),id=idOf('crouch',0);
+    let prev=null,worst=0;const rest=[];
+    for(let t=299;t<=309;t+=1/hz){
+      const actor={...base,id,team:'enemy',...(t>=300&&t<304?{crouched:true,posture:'crouch',postureSince:300}:{}),...(t>=304?{postureSince:304}:{})};
+      c.update([actor],t,player,'high');const f=feetOf(c,id);
+      if(prev){const step=footStep(prev,f);worst=Math.max(worst,step);if((t>300.9&&t<303.9)||t>305)rest.push(step);}
+      prev=f;
+    }
+    assert.ok(worst<=peak*1.25,`peak foot step ${(worst*1000).toFixed(1)} mm/frame vs authored transition peak ${(peak*1000).toFixed(1)}`);
+    assert.ok(Math.max(...rest)<.001,`feet slide after the transition: ${(Math.max(...rest)*1000).toFixed(2)} mm/frame`);
+    assert.ok(rest.length>200);
+  }finally{c.dispose();}
+});
+
+test('real rig, hit direction: the clip follows the shooter\'s side at any facing, and the lateral clips push the head away from the shooter (left/right authored as "pushed away")',async()=>{
+  // A fresh renderer per sample is a pure clip pose (single layer, no idle blended in): frame 0 of the reaction vs its 0.3 s frame.
+  const headAt=async(a,t)=>{const c=await characters();try{c.update([a],t,player,'high');const b=boneSnapshot(c.instances.get(a.id)).find(x=>x[0]==='head');return {clip:stat(c,a.id).clip,p:[b[3][12],b[3][14]]};}finally{c.dispose();}};
+  for(const facing of [0,1.1,-2.3,Math.PI]){
+    for(const [label,off,clip] of [['front',0,'hit_front'],['left',-Math.PI/2,'hit_left'],['back',Math.PI,'hit_back'],['right',Math.PI/2,'hit_right']]){
+      const yaw=facing+off,a={...base,id:`pl_east_${label}`,facing,bodyYaw:facing,hitAt:400,hitYaw:yaw,x:3,z:2};
+      const start=await headAt(a,400),peak=await headAt(a,400.3);
+      assert.equal(start.clip,clip,`${label} at facing ${facing}`);assert.equal(peak.clip,clip);
+      if(label!=='left'&&label!=='right')continue;   // ponytail: hit_front/hit_back are chest and shoulder impulses (head bows / rocks), not lateral pushes: only their selection is asserted
+      const along=(peak.p[0]-start.p[0])*Math.cos(yaw)+(peak.p[1]-start.p[1])*Math.sin(yaw);
+      assert.ok(along<-.01,`${label} at facing ${facing}: the head moved ${(along*1000).toFixed(1)} mm toward the shooter`);
+    }
+  }
 });

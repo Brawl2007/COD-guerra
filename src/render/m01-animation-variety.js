@@ -28,7 +28,7 @@ export const unit=(seed,salt)=>mix32((seed+imul((salt|0)+1,0x9e3779b1))>>>0)/429
 export const VARIETY=Object.freeze({
   rate:.05,            // +-5 % playback rate on time driven loops (idle, aim, pinned...): neighbours drift apart instead of re-syncing
   stride:.035,         // +-3.5 % stride length on odometer driven locomotion; the foot IK absorbs the residual slide
-  slotMin:12,slotSpan:8,// an idle variant is held for 12..20 s (per actor), then re-rolled
+  slotMin:12,slotSpan:8,// fidget slots: each actor has one slot length in 12..20 s, a slot holds at most one fidget
   fidgetChance:.6,     // chance that an idle slot contains one fidget
   fidgetMargin:1,      // a fidget starts at least this long after the slot starts and ends this long before it ends
   alertSeconds:8,      // no fidgets this long after the soldier fired, was hit or was shot at
@@ -106,8 +106,9 @@ export function duckReactionClip(actor,clips){
 /** Death clip: directed by the killing shot's side when the sim recorded one at the moment of death (a share stays the undirected crumple), else a
  *  seeded pick over all five, so corpses with no recorded shot (scripted wounds, pre-placed dead) do not all lie in the same pose. */
 export function deathVariant(actor,clips){
-  // The library deaths fall from standing. A soldier who was lying prone (MG34 crew, suppressed sappers) keeps the original 'fallen' clip.
-  if(!has(clips,'death_front')||actor?.posture==='prone'||actor?.mg34Prone)return 'fallen';
+  // The library deaths fall from standing. A soldier who was lying prone keeps the original 'fallen' clip: suppressed sappers (posture 'prone') and the MG34
+  // crew, whose mg34Prone block the sim removes on death (the corpse keeps weapon 'mg34' / role SUPPORT and the loaders their group).
+  if(!has(clips,'death_front')||actor?.posture==='prone'||actor?.mg34Prone||actor?.weapon==='mg34'||actor?.group==='grp_mg34_loaders')return 'fallen';
   const v=varietyOf(actor?.id),hasShot=finite(actor?.hitAt)&&actor.hitAt>=0&&finite(actor?.diedAt)&&Math.abs(actor.diedAt-actor.hitAt)<=.25;
   let key;
   if(hasShot)key=unit(v.seed,91)<VARIETY.crumpleChance?'crumple':impactSector(actor.hitYaw,finite(actor.deathYaw)?actor.deathYaw:actor.facing);
@@ -116,38 +117,50 @@ export function deathVariant(actor,clips){
   return has(clips,name)?name:has(clips,DEATHS.crumple)?DEATHS.crumple:'fallen';
 }
 
+/** An actor's resting variant per posture, rolled ONCE per (id, posture): nothing re-rolls while he stands or kneels, so the feet never slide
+ *  between two idles' different foot placements (standing_idle_b/c differ 5-7 cm from the base idle, crouched_idle_b 0.76 m and cover_low_idle
+ *  0.48 m: the left/right knee and the squat). Index into STAND_IDLES / CROUCH_IDLES. */
+export function restingVariant(actor,family,coverLow=false){
+  const r=unit(varietyOf(actor.id).seed,family==='stand'?11:12);
+  if(family==='stand')return r<.5?0:r<.75?1:2;
+  return coverLow?(r<.25?0:r<.5?1:2):(r<.5?0:1);
+}
 const idle={clip:'',fidget:'',fidgetAge:0};   // scratch result of idleChoice (module-level: no per-frame object)
-/** Idle variant and, if one is due, the fidget in progress, as a pure function of (actor, time). Result object is reused: read it at once.
- *  family 'stand' | 'crouch'. Slots of 12..20 s hold one variant; a slot may contain one fidget that starts and ends inside it. */
+/** Resting clip and, when one is due, the fidget in progress, as a pure function of (actor, time). Result object is reused: read it at once.
+ *  family 'stand' | 'crouch'. Fidgets are authored from and back to the exact base standing_idle pose (feet on their marks), so only soldiers whose
+ *  standing variant IS the base idle fidget; each actor's 12..20 s slot may hold one fidget that starts and ends inside it. */
 export function idleChoice(actor,time,family,clips,{coverLow=false,alert=false}={}){
-  const v=varietyOf(actor.id),L=v.slotLength,x=(time+v.slotShift)/L,slot=Math.floor(x),s=(x-slot)*L,seed=v.seed,base=slot*8;
-  const r=unit(seed,base+100);
+  const pick=restingVariant(actor,family,coverLow);
   idle.fidget='';idle.fidgetAge=0;
   if(family==='stand'){
-    const pick=r<.42?0:r<.72?1:2;
     idle.clip=has(clips,STAND_IDLES[pick])?STAND_IDLES[pick]:STAND_IDLES[0];
-    if(!alert&&unit(seed,base+101)<VARIETY.fidgetChance){
-      const name=FIDGETS[Math.floor(unit(seed,base+102)*FIDGETS.length)];
-      if(has(clips,name)){
-        const dur=durationOf(clips,name,2),room=L-dur-2*VARIETY.fidgetMargin;
-        if(room>0){const f0=VARIETY.fidgetMargin+unit(seed,base+103)*room;
-          if(s>=f0&&s<f0+dur){idle.fidget=name;idle.fidgetAge=s-f0;}}
+    if(pick===0&&!alert){
+      const v=varietyOf(actor.id),L=v.slotLength,x=(time+v.slotShift)/L,slot=Math.floor(x),s=(x-slot)*L,seed=v.seed,base=slot*8;
+      if(unit(seed,base+101)<VARIETY.fidgetChance){
+        const name=FIDGETS[Math.floor(unit(seed,base+102)*FIDGETS.length)];
+        if(has(clips,name)){
+          const dur=durationOf(clips,name,2),room=L-dur-2*VARIETY.fidgetMargin;
+          if(room>0){const f0=VARIETY.fidgetMargin+unit(seed,base+103)*room;
+            if(s>=f0&&s<f0+dur){idle.fidget=name;idle.fidgetAge=s-f0;}}
+        }
       }
     }
-  }else{
-    const pick=coverLow?(r<.2?0:r<.4?1:2):(r<.5?0:1);
-    idle.clip=has(clips,CROUCH_IDLES[pick])?CROUCH_IDLES[pick]:CROUCH_IDLES[0];
-  }
+  }else idle.clip=has(clips,CROUCH_IDLES[pick])?CROUCH_IDLES[pick]:CROUCH_IDLES[0];
   return idle;
 }
 
-/** The authored stand<->crouch transition clip while a posture change is younger than the clip, else ''. Engineers use the prone path instead
- *  (their posture field also flips to and from 'prone'), so they keep the plain cross-fade. */
+/** Behind low cover (<= 1.2 m of sandbag / low wall) a kneeling soldier may use the squat idle. */
+export const coverLowOf=actor=>Boolean(actor?.cover&&finite(actor.cover.height)&&actor.cover.height<=1.2);
+
+/** The authored stand<->crouch transition clip while a posture change is younger than the clip, else null. stand_to_crouch ends on, and
+ *  crouch_to_stand starts from, the BASE kneeling pose (right knee): a soldier whose own kneeling variant is the left-knee or cover idle keeps the
+ *  plain cross-fade (a 0.5-0.8 m foot swap would otherwise run inside 0.1-0.2 s). Engineers use the prone path instead (their posture flips to
+ *  and from 'prone'). */
 export function postureTransition(actor,time,clips){
   if(actor?.role==='ENGINEER'||!finite(actor?.postureSince)||actor.postureSince<=0)return null;
   if(actor.posture!=='crouch'&&actor.posture!=='stand')return null;
   const name=actor.posture==='crouch'?POSTURE_TRANSITIONS.toCrouch:POSTURE_TRANSITIONS.toStand;
-  if(!has(clips,name))return null;
+  if(!has(clips,name)||restingVariant(actor,'crouch',coverLowOf(actor))!==0)return null;
   const age=time-actor.postureSince;
   return age>=0&&age<durationOf(clips,name,.45)?{clip:name,age}:null;
 }
@@ -177,8 +190,7 @@ export function varyLoop(c,{actor,pose,time,clips}){
   if(family){
     const tr=postureTransition(actor,time,clips);
     if(tr)return {clip:tr.clip,time:tr.age,loop:false};
-    const cover=family==='crouch'&&actor.cover&&finite(actor.cover.height)&&actor.cover.height<=1.2;
-    const choice=idleChoice(actor,time,family,clips,{coverLow:Boolean(cover),alert:isAlert(actor,time)});
+    const choice=idleChoice(actor,time,family,clips,{coverLow:coverLowOf(actor),alert:isAlert(actor,time)});
     if(choice.fidget)return {clip:choice.fidget,time:choice.fidgetAge,loop:false};
     clip=choice.clip;
   }else if(name==='seated'&&has(clips,'seated_b')&&unit(v.seed,6)>=.5)clip='seated_b';

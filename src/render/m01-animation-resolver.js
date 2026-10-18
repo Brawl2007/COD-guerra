@@ -298,7 +298,7 @@ export function genericCandidate(actor,pose,time,offset,clips){
 // Cross-fade lengths in sim seconds. Posture changes are the slow ones (stand <-> crouch, ~0.3 s).
 export const FADE=Object.freeze({posture:.3,death:.2,fromLoco:.25,toFire:.08,fromFire:.15,toPinned:.15,fromPinned:.3,default:.2,
   // T08 library: idle variants swap slowly (the poses are close), fidgets and posture transitions are short authored one-shots.
-  variant:.45,toFidget:.25,fromFidget:.3,toTransition:.1,fromTransition:.2});
+  variant:.45,toFidget:.25,fromFidget:.3,toTransition:.15,fromTransition:.2});
 // A stopped gait is only trusted after this long: a mover pushed against cover alternates 0/non-zero distance every tick.
 export const HOLD=.25;
 // More than this long without seeing the actor (or going back in time after a load) resets the blend record.
