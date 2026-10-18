@@ -43,6 +43,15 @@ const CLIPS=[
   {name:'stuka-formation-near',seconds:2.5,call:'aircraft',args:[200]},
   {name:'stuka-formation-far',seconds:2.5,call:'aircraft',args:[2200]},
   {name:'fire-near',seconds:3,call:'fire',args:[12]},
+  // Corpo e equipamento do jogador (antes bips fixos; os passos nem existiam).
+  {name:'footstep-earth-walk',seconds:.6,call:'footstep',args:['earth',{key:'fe',pace:'walk'}]},
+  {name:'footstep-metal-run',seconds:.8,call:'footstep',args:['metal',{key:'fm',pace:'run'}]},
+  {name:'footstep-wood-walk',seconds:.6,call:'footstep',args:['wood',{key:'fw',pace:'walk'}]},
+  {name:'footstep-stone-walk',seconds:.6,call:'footstep',args:['stone',{key:'fs',pace:'walk'}]},
+  {name:'footstep-water-walk',seconds:.6,call:'footstep',args:['water',{key:'fx',pace:'walk'}]},
+  {name:'wz29-bolt-cycle',seconds:1.4,call:'wz29Mechanism',args:['bolt','bolt-a']},
+  {name:'player-hit',seconds:.8,call:'hit',args:['hit-a']},
+  {name:'landing-8mps',seconds:1,call:'landing',args:[8,'ground','land-a']},
 ];
 
 async function serveSources(page){
@@ -148,6 +157,10 @@ test('offline render: each weapon, distance band, impact, blast, vehicle and fir
   // Ju 87: perto rasga (mais agudo), longe só ronca.
   expect(m('stuka-formation-near').centroid).toBeGreaterThan(m('stuka-formation-far').centroid);expect(m('stuka-formation-near').rms).toBeGreaterThan(m('stuka-formation-far').rms);
   expect(r['fire-near'].diagnostics.eventCounts['fire-crackle']).toBeGreaterThan(3);
+  // Passos: bem abaixo de um tiro, e cada material soa a material (aço mais agudo que terra; terra mais grave que pedra).
+  for(const n of ['footstep-earth-walk','footstep-metal-run','footstep-wood-walk','footstep-stone-walk','footstep-water-walk'])expect(m(n).peak,n).toBeLessThan(m('wz29-player').peak*.35);
+  expect(m('footstep-metal-run').centroid).toBeGreaterThan(m('footstep-earth-walk').centroid);expect(m('footstep-stone-walk').centroid).toBeGreaterThan(m('footstep-earth-walk').centroid);
+  expect(m('footstep-earth-walk').lowRatio).toBeGreaterThan(m('footstep-stone-walk').lowRatio);
   expect(r['mg34-per-round-30m'].diagnostics.peakVoices,'per-round events share one burst voice').toBe(1);
   expect(m('dense-mix-worst-case').peak).toBeLessThan(1);
   expect(errors).toEqual([]);
