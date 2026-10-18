@@ -136,6 +136,7 @@ export class Game {
       return;
     }
     if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
+    if(sound.kind==='distant-battle'){this.audio.distantBattle('rifle',sound.pan,sound.distance,sound.key,{rounds:sound.rounds,front:sound.front});return;}
     if(sound.kind==='blast'){
       this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
       // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
@@ -196,9 +197,9 @@ export class Game {
     const now=this.sim.clock*1000;
     if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim);   // presentation only
     if(event.type==='message')this.say(event.message,2600);
-    if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
+    if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode,`reload:${this.sim.clock.toFixed(3)}`);
     if(event.type==='player-shot'){
-      this.audio.wz29Shot();this.audio.wz29Mechanism('bolt');this.renderer.m01.muzzle(this.sim.clock);
+      this.audio.wz29Shot(0,0,`wz29:${this.sim.weapon.shotCount}`);this.audio.wz29Mechanism('bolt',`bolt:${this.sim.weapon.shotCount}`);this.renderer.m01.muzzle(this.sim.clock);
       if(event.hit===true)this.m01Hud.hit(this.sim.clock);
       if(event.material&&event.material!=='character'){
         const s=this.spatial(event.point),key=`player:${this.sim.weapon.shotCount}`,material=this.renderer.m01.lastSurface?.kind==='water'?'water':event.material,plan=playerImpactSoundPlan(s.distance,this.sim.clock);
@@ -207,13 +208,16 @@ export class Game {
         else this.pendingSounds.push({...s,at:plan.at,kind:'impact',material,key});
       }
     }
+    // Allies (Kowal's rkm, the allied riflemen) and the scripted far shot: the report reaches the player after distance / 343 s, like enemy fire,
+    // so the muzzle flash is seen before the shot is heard. Presentation only (pendingSounds is cleared on a restore).
     if(event.type==='npc-shot'){
-      const s=this.spatial(event.point);
-      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`,s.front);
-      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`,undefined,s.front);
+      const s=this.spatial(event.point),clock=this.sim.clock.toFixed(3);
+      this.pendingSounds.push(event.rounds>1?{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'rkm_wz28',rounds:event.rounds,interval:.11,key:`kowal:${clock}`}
+        :{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'ally_rifle',key:`ally:${clock}`});
     }
     if(event.type==='distant-shot'){
-      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`,{rounds:3,front:s.front});
+      const s=this.spatial(event.point),d=Math.max(500,s.distance);
+      this.pendingSounds.push({...s,distance:d,at:this.sim.clock+d/343,kind:'distant-battle',rounds:3,key:`scripted:${this.sim.clock.toFixed(3)}`});
     }
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
     // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
@@ -235,11 +239,11 @@ export class Game {
       if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key,s.front);
     }
     if(event.type==='player-hit'){
-      this.audio.hit();this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
+      this.audio.hit(`hit:${this.sim.clock.toFixed(3)}`);this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
       this.renderer.m01.playerHit(this.sim.clock);
     }
     // The simulation decided the landing (speed, damage, surface); the thud and the camera dip only present it.
-    if(event.type==='player-landing'){this.audio.landing(event.speed,event.surface);this.renderer.m01.playerLanding(this.sim.clock,event.speed,event.surface);}
+    if(event.type==='player-landing'){this.audio.landing(event.speed,event.surface,`landing:${this.sim.clock.toFixed(3)}`);this.renderer.m01.playerLanding(this.sim.clock,event.speed,event.surface);}
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);

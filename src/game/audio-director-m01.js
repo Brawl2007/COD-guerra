@@ -1,5 +1,5 @@
 import audioLayout from '../../missions/m01-tczew/audio-layout.json' with { type: 'json' };
-import { audioHash, audioVariation, SPEED_OF_SOUND } from '../core/battlefield-audio.js';
+import { audioHash, audioVariation, presentationNoise, SPEED_OF_SOUND } from '../core/battlefield-audio.js';
 import { MusicConductor, createMusicInput, readoutIntensity, MUSIC_TUNING, isEmitterAudible } from '../core/audio/index.js';
 
 /**
@@ -25,7 +25,7 @@ export const MAX_PENDING = 12;
 const DISTANT_FROM_M = 500, AUDIBLE_RANGE_M = 2500;
 /** Chance that an emitter fires a burst in a given slot, by weapon (dramatised display fire is sparse). */
 const DENSITY = Object.freeze({ ckm_wz30: .5, mg34: .6 }), DEFAULT_DENSITY = .4;
-const WHIZZ_BAND_M = 12;
+const WHIZZ_BAND_M = 12, CADENCE_JITTER = .06;   // display fire only: +/-6 % of the burst interval, zero mean (authoritative bursts keep the simulation's interval)
 const EMPTY = Object.freeze({});
 /** T48: the MG34 emitters are the German east-bank guns; they fall silent with every other German shot from 06:10 to 06:11 (sim.germanSilence). */
 const isGermanEmitter = e => e.weapon === 'mg34';
@@ -70,6 +70,7 @@ export class M01AudioDirector {
     this.sim = null; this.disposed = false; this.errors = 0; this.lastError = null;
     this.lastClock = -Infinity; this.restoredAt = -Infinity; this.emitterSlot = NaN;
     this.active = []; this.spatialOut = { distance: 0, pan: 0, front: 1 }; this.occ = { hz: 0, gain: 1 };
+    this.step={ready:false,x:0,z:0,dist:0,count:0,side:1};   // footsteps: distance walked since the last step (a pure function of the path)
     this.trainArrivals=[{id:'train963',from:17010,until:17100,x:1675,y:2,z:-2.5,heard:false,pending:false,at:0},
       {id:'panzerzug',from:17460,until:17520,x:1519,y:2,z:2.5,heard:false,pending:false,at:0}];
     this.pending = Array.from({ length: MAX_PENDING }, () => ({ used: false, at: 0, emitter: null, pan: 0, distance: 0, front: 1, rounds: 1, key: '' }));
@@ -91,7 +92,7 @@ export class M01AudioDirector {
     if (this.disposed) return;
     const m01 = Boolean(sim) && sim.missionId === MISSION_ID;
     this.sim = m01 ? sim : null;
-    this._clearPending(); this.emitterSlot = NaN; this.restoredAt = -Infinity;
+    this._clearPending(); this.emitterSlot = NaN; this.restoredAt = -Infinity; this.step.ready = false;
     this.lastClock = m01 && Number.isFinite(sim.clock) ? sim.clock : -Infinity;
     this.conductor?.reset(m01 ? sim.consumed : EMPTY);
     for(const train of this.trainArrivals){train.heard=m01&&sim.battleClock>=train.from;train.pending=false;}
@@ -130,6 +131,7 @@ export class M01AudioDirector {
       this.lastClock = clock;
       const p = sim.player;
       audio.setListener?.(p.x, p.y, p.z);   // zone + surface under the listener (reverb A/B and interior lowpass on change only)
+      this._footsteps(sim);
       this._emitters(sim);   // sim, not numbers: a number argument across a non-inlined call is boxed on every frame
       this._trainArrival(sim);
       this._music(sim);
@@ -138,6 +140,24 @@ export class M01AudioDirector {
   }
   /** A failure here must never reach the frame loop; it is counted and kept for diagnostics/tests. */
   _fail(error) { this.errors++; this.lastError = String(error?.message ?? error); }
+  /**
+   * The player's footsteps, derived from the distance walked (never from a timer, so standing still is silent and sprinting is faster). Reads
+   * position, stance and `fall` only; the surface under the listener comes from the audio layout. A jump of more than 2.5 m in one frame
+   * (restore, scripted staging) is not walking. Allocation-free except for the key string at the moment a step sounds.
+   */
+  _footsteps(sim) {
+    const p = sim.player, st = this.step;
+    if (!st.ready) { st.ready = true; st.x = p.x; st.z = p.z; st.dist = 0; return; }
+    const dx = p.x - st.x, dz = p.z - st.z, moved = Math.sqrt(dx * dx + dz * dz);   // not Math.hypot: it boxes its arguments every call
+    st.x = p.x; st.z = p.z;
+    if (moved > 2.5 || p.fall) { st.dist = 0; return; }
+    st.dist += moved;
+    const stride = p.carrying ? .62 : p.crouched ? .55 : p.sprinting ? 1.05 : .78;
+    if (st.dist < stride) return;
+    st.dist -= stride; if (st.dist > stride) st.dist = 0;
+    st.count++; st.side = -st.side;
+    this.audio.footstep?.(this.core?.surface?.material ?? 'earth', { key: `step:${st.count}`, pace: p.crouched ? 'crouch' : p.sprinting ? 'run' : 'walk', side: st.side, load: p.carrying ? 1 : 0 });
+  }
   _trainArrival(sim){
     for(const train of this.trainArrivals){
       if(!train.heard&&sim.battleClock>=train.from&&sim.battleClock<train.until){
@@ -162,18 +182,28 @@ export class M01AudioDirector {
     this._dispatch(sim);
   }
   _schedule(e, slot, clock, player) {
-    const density = DENSITY[e.weapon] ?? DEFAULT_DENSITY, key = `${e.id}:${slot}`;
+    // Dramatised display fire is not a metronome: a slow, smooth "pressure" per gun (9 s cells) stretches or thins the chance of a burst, so the
+    // gun fires in clusters with lulls instead of one burst every 1.5 s. The mean density is unchanged (0.35 + 1.3 * 0.5 = 1).
+    const key = `${e.id}:${slot}`, density = (DENSITY[e.weapon] ?? DEFAULT_DENSITY) * (.35 + 1.3 * presentationNoise(`${e.id}:pressure`, clock, 9));
     if (audioVariation(`${key}:fire`) >= density) return;
     this._spatial(e.x, e.z, player);
     const s = this.spatialOut;
     if (s.distance > AUDIBLE_RANGE_M) return;
+    // Round counts: the MG34 mixes short 2-4 round taps with long 4-9 round runs; the other guns keep 3-6.
+    const h = audioHash(`${key}:rounds`), rounds = e.weapon === 'mg34' ? (audioVariation(`${key}:long`) < .4 ? 2 + h % 3 : 4 + h % 6) : 3 + h % 4;
+    const first = clock + audioVariation(`${key}:at`, 0, EMITTER_SLOT_SEC * .8) + s.distance / SPEED_OF_SOUND;
+    if (!this._enqueue(e, s, key, rounds, first)) return;
+    // Occasionally the same gun answers again at once (a double tap) at least half a second after the first burst starts.
+    if (audioVariation(`${key}:double`) < .18) this._enqueue(e, s, `${key}:b`, (e.weapon === 'mg34' ? 2 : 3) + audioHash(`${key}:r2`) % 3, first + audioVariation(`${key}:gap`, .55, .95) + rounds * .09);
+  }
+  _enqueue(e, s, key, rounds, at) {
     let free = null;
     for (let i = 0; i < this.pending.length; i++) if (!this.pending[i].used) { free = this.pending[i]; break; }
-    if (!free) { this.stats.dropped++; return; }
+    if (!free) { this.stats.dropped++; return false; }
     free.used = true; free.emitter = e; free.pan = s.pan; free.distance = s.distance; free.front = s.front;
-    free.rounds = 3 + audioHash(`${key}:rounds`) % 4; free.key = key;
-    free.at = clock + audioVariation(`${key}:at`, 0, EMITTER_SLOT_SEC * .8) + s.distance / SPEED_OF_SOUND;   // the shot is heard after distance/343
+    free.rounds = rounds; free.key = key; free.at = at;   // the shot is heard after distance/343 (already inside `at`)
     this.stats.scheduled++;
+    return true;
   }
   _dispatch(sim) {
     for (let i = 0; i < this.pending.length; i++) {
@@ -189,7 +219,7 @@ export class M01AudioDirector {
   _play(e, p) {
     const audio = this.audio, core = this.core, occ = occlusionFor(core?.layout, core?.zone, e.x, e.y, e.z, p.distance, this.occ);
     if (occ) { audio.setOcclusion?.(occ); this.stats.occluded++; }
-    try { audio.weaponFire(e.weapon, p.pan, p.distance, { rounds: p.rounds, key: p.key, front: p.front, distant: p.distance >= DISTANT_FROM_M }); this.stats.played++; }
+    try { audio.weaponFire(e.weapon, p.pan, p.distance, { rounds: p.rounds, key: p.key, front: p.front, distant: p.distance >= DISTANT_FROM_M, cadenceJitter: CADENCE_JITTER }); this.stats.played++; }
     catch (error) { this._fail(error); }
     finally { if (occ) audio.setOcclusion?.(null); }
   }

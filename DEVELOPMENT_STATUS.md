@@ -1,5 +1,15 @@
 # Estado de desenvolvimento
 
+## M01: som menos robótico — variação por evento, passos, nós reutilizados, absorção do ar — 2026-10-18
+
+Branch local `claude/busy-ritchie-3fkvk2-audio` sobre `98f094f`. **Não aceite, não publicada**, sem revisão crítica independente, sem CI x86 completo, **sem ninguém ter ouvido o resultado** (playtest humano em falta). Evidência: `docs/verification/m01-runtime/audio-feel-2026-10-18/README.md`.
+
+- **Problema (playtest, queixa 12):** o som era sempre o mesmo. **Causa medida:** variação de ±2,4–3,5 % em altura e 0,2–0,3 dB em ganho por tiro, uma só estrutura de camadas por arma, impactos sem variação de ganho, rajadas com intervalo exacto; ferrolho, recarga, golpe e aterragem eram bips fixos (1 renderização em 40 chamadas); não havia passos; cada disparo criava ~3 nós Web Audio por fonte.
+- **Jogo:** quatro vozes por arma (estalo, corpo com ressonâncias de ruído, cauda e reflexões com filtros que escurecem enquanto morrem), três vozes por impacto e material (aço com quatro famílias de modos), variantes de explosão e de estalo de bala, desvios de altura/ganho/equilíbrio de camadas ligados à chave do evento (nunca ao RNG); ferrolho/carregador/recarga/golpe/aterragem sintetizados e variados; **passos** pela distância andada, por material sob os pés (terra, madeira, aço, pedra, tijolo, água), postura e carga; fogo de fundo irregular (2–9 rondas, toques duplos, pressão lenta, ±6 % no intervalo, só em fogo sem cadência autoritária); tiros aliados e o tiro longínquo scriptado chegam depois de distância/343 s; absorção do ar mais física; reverberação por zona.
+- **Código:** `src/core/battlefield-audio.js`, `src/core/audio.js` (reserva de ganhos/filtros/panners), `src/core/audio/mix.js`, `src/game/audio-director-m01.js`, `src/game/game.js` (chaves e atrasos), só apresentação. Simulação, saves, goldens e cadência autoritária das rajadas intactos.
+- **Testes:** `npm test` **1240/1240** (1229 + 11 em `tests/m01-audio-feel.test.js`: determinismo, cobertura de variantes, dispersão, monotonia da distância, passos, reserva de nós, director). `npm run build` PASS. Browser sem WebGL: `m01-audio-offline-render` e `m01-audio-variation-render` (novo) 2/2; `m01-audio-production` 1/1, uma vez, sob `flock`, porta 4183 (`tools/verification/playwright-port-4183.config.mjs`).
+- **Em aberto:** HRTF (só StereoPanner), diálogo falado (não existe reprodução), amostras de T45 (humano), equilíbrio dos passos em aço (34 % do pico de um tiro), rajadas ainda pouco diferentes entre si (3,2–3,4 dB de distância espectral contra 2 dB de base).
+
 ## M01: o corpo do jogador tem física real — paredes sólidas, degraus, gravidade e aterragem — 2026-10-18
 
 Branch local `claude/busy-ritchie-3fkvk2-phys` sobre a candidata #80 (`f6913a0`). **Não aceite, não publicada** (o push é do Captain), sem revisão crítica independente, sem CI x86 completo, sem playtest humano. Evidência completa: `docs/verification/m01-runtime/player-collision-2026-10-18/README.md`; decisão: D44.
