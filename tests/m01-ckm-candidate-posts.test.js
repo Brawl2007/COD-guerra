@@ -9,6 +9,11 @@
 // Re-measured on purpose for T47 amendment 04 (the player's body physics): the pilot detours round the abutments, the repair cluster and the hut drums, so the window is one sample longer
 // and the phases shift by a few seconds: 784 -> 785 samples, 21460 -> 21500 enemy samples, repair 7560 -> 7640, post_repair 12000 -> 11960 (withdrawal 1900 unchanged). Every entry count of the
 // shortlist (S1 270/396, S2 271/271, S3 338, S4 108) and the distances are unchanged (GOLDEN_AMENDMENT_04.json, s2Visibility).
+// Re-measured on purpose for the P2 pacing (golden amendment 06, 2026-10-18, integration claude/busy-ritchie-3fkvk2-integ-pc): seg_hold 05:34-05:59 runs at 24x while the pilot holds
+// the deck after the raid, so the post-repair window has fewer 20-tick samples (785 -> 661 samples, 21500 -> 16540 enemy samples, post_repair 11960 -> 7000; repair 7640 and
+// withdrawal 1900 unchanged). An entry is a distinct (world state, actor, eye position) tuple, not a sample: the samples now fall on other ticks (other eye positions of the same
+// actors), so S1 270/396 -> 274/400 and S2 271/271 -> 275/275 (and at muzzle heights 0.6 and 0.9 m); S3 338 and S4 108 unchanged. What the tests are about is unchanged: the casemate
+// sees nobody, S2 sees the same 14 gate riflemen in every phase, production == strict, no S2 ray touches a bridge collider, the same gaps (docs/verification/m01-runtime/pacing-p2-2026-10-18).
 // Measured with tools/m01-ckm-fire-arc.mjs (collectWindowTargets, describeCandidate), the functions the tests call.
 import test from 'node:test';import assert from 'node:assert/strict';
 import {TczewWorld} from '../src/world/tczew-world.js';
@@ -27,16 +32,16 @@ test('candidate grid on the west bridgehead: 1066 points, 39 excluded (36 inside
 
 test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted posts see gate riflemen (S1,S2), the span group (S3) or only the south reserve (S4)',{timeout:240000},async()=>{
   const win=await collectWindowTargets({everyTicks:20});
-  assert.equal(win.samples,785);assert.equal(win.enemySamples,21500);assert.deepEqual(win.phaseSamples,{repair:7640,post_repair:11960,withdrawal:1900});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
+  assert.equal(win.samples,661);assert.equal(win.enemySamples,16540);assert.deepEqual(win.phaseSamples,{repair:7640,post_repair:7000,withdrawal:1900});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
   const c0=evaluateCandidate(win,muzzleFlashWorld());assert.equal(c0.productionClearEntries,0);assert.deepEqual(c0.phases,{});
   const by=Object.fromEntries(SHORTLIST.map(c=>[c.id,describeCandidate(win,c)]));
   // S1 abutment top, north edge: 14 gate riflemen (incl. both MG34 gunners); production also lets rays through the rail trusses (28 actors), strict removes them.
   const s1=by.S1;assert.equal(s1.groundY,-.35);assert.equal(s1.muzzleY,.35);assert.equal(s1.distanceToCasemateM,4);
   for(const p of ['repair','post_repair','withdrawal']){assert.deepEqual(ids(s1,p),range(0,13));assert.equal(s1.phases[p].production.actors,28);}
-  assert.equal(s1.strictClearEntries,270);assert.equal(s1.productionClearEntries,396);assert.equal(s1.throughBridgeEntries,126);assert.ok(s1.minGapToBridgeM<.1,'grazes road_collider_tower_05_n for de_east_0');
+  assert.equal(s1.strictClearEntries,274);assert.equal(s1.productionClearEntries,400);assert.equal(s1.throughBridgeEntries,126);assert.ok(s1.minGapToBridgeM<.1,'grazes road_collider_tower_05_n for de_east_0');
   assert.ok(s1.minTargetDistanceM>1044&&s1.maxTargetDistanceM<1051);
   // S2 embankment between the bridges: same 14 actors, production == strict, no ray touches any bridge collider (>0.9 m gap).
-  const s2=by.S2;assert.equal(s2.groundY,-3);assert.equal(s2.muzzleY,-2.3);assert.equal(s2.throughBridgeEntries,0);assert.equal(s2.strictClearEntries,271);assert.equal(s2.productionClearEntries,271);assert.equal(s2.minGapToBridgeM,.7,'smallest gap of an S2 ray to a bridge collider (was 0.98 m before the T38 gate places)');
+  const s2=by.S2;assert.equal(s2.groundY,-3);assert.equal(s2.muzzleY,-2.3);assert.equal(s2.throughBridgeEntries,0);assert.equal(s2.strictClearEntries,275);assert.equal(s2.productionClearEntries,275);assert.equal(s2.minGapToBridgeM,.7,'smallest gap of an S2 ray to a bridge collider (was 0.98 m before the T38 gate places)');
   for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s2,p),range(0,13));
   // S3 road axis on the abutment: sees the 10 span Germans only in the withdrawal phase, 0.35 m above the deck; no gate rifleman.
   const s3=by.S3;assert.deepEqual(ids(s3,'repair'),[]);assert.deepEqual(ids(s3,'post_repair'),[]);assert.deepEqual(ids(s3,'withdrawal'),range(0,9));
@@ -44,5 +49,5 @@ test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted 
   // S4 south flank: only the south reserve group de_east_28..39, never the gate riflemen.
   const s4=by.S4;for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s4,p),range(28,39));assert.equal(s4.throughBridgeEntries,0);
   // Muzzle height 0.6..0.9 m above ground does not change the shortlisted actor counts.
-  for(const above of [.6,.9]){const a=describeCandidate(win,SHORTLIST[0],{above}),b=describeCandidate(win,SHORTLIST[1],{above});assert.equal(a.strictClearEntries,270);assert.equal(b.strictClearEntries,271);}
+  for(const above of [.6,.9]){const a=describeCandidate(win,SHORTLIST[0],{above}),b=describeCandidate(win,SHORTLIST[1],{above});assert.equal(a.strictClearEntries,274);assert.equal(b.strictClearEntries,275);}
 });

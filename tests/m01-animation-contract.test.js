@@ -16,6 +16,11 @@ import golden from './fixtures/m01-t47-gameplay-baseline.json' with {type:'json'
 // byte below); the golden of the live simulation, regenerated on x86 by tools/verification/m01-npc-navigation-golden-audit.mjs after its lockstep audit against that exact
 // predecessor, is this one.
 import live from './fixtures/m01-npc-navigation-gameplay-baseline.json' with {type:'json'};
+// M01-P2-PACING-V1 (golden amendment 06, 2026-10-18, integration claude/busy-ritchie-3fkvk2-integ-pc): the hold clock compresses once the player holds the deck, the objective panel
+// and status lines changed and the continuity cues are gated. The NPC navigation golden above is history since then (it pins the simulation of 66e47b2, byte for byte below); the
+// golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 06 after its lockstep audit against that exact predecessor, is this one.
+import pacing from './fixtures/m01-pacing-gameplay-baseline.json' with {type:'json'};
+const current=pacing;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -206,7 +211,7 @@ test('the T47 golden of the combined tree chains to the staging, pins the simula
   });
 });
 
-test('the NPC navigation golden (amendment 05) chains to the T47 golden, pins the live simulation and cites its lockstep account',()=>{
+test('the NPC navigation golden (amendment 05) chains to the T47 golden, pins the simulation of 66e47b2 and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   assert.equal(live.task,'M01-NPC-NAVIGATION-V1');assert.equal(live.predecessor,'c7d834126e9f94195379b331370b14ebb465224c');
   assert.equal(live.predecessorSourceSha256,golden.sourceSha256,'the audited predecessor is exactly the simulation the T47 golden pins');
@@ -215,7 +220,10 @@ test('the NPC navigation golden (amendment 05) chains to the T47 golden, pins th
   assert.equal(live.previousGolden.sha256,sha('./fixtures/m01-t47-gameplay-baseline.json'));
   assert.equal(live.historicalGoldenSha256,golden.historicalGoldenSha256);
   assert.deepEqual(live.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]),'the same two routes are audited');
-  assert.equal(sha('../src/game/m01-simulation.js'),live.sourceSha256,'the golden pins the live simulation');assert.notEqual(live.sourceSha256,golden.sourceSha256);
+  // History since the P2 pacing (amendment 06): this golden pins the simulation of the integration tree 66e47b2 (phys + npc + skin + anim + audio), not the live one.
+  assert.equal(live.sourceSha256,'e961cc5566a0acad80115dff5f2ad1be971b86a7604c6f62800b2fe13075c2b8','the NPC navigation golden pins the simulation of 66e47b2');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),live.sourceSha256,'the NPC navigation golden is history: the pacing moved the simulation');assert.notEqual(live.sourceSha256,golden.sourceSha256);
+  assert.equal(sha('./fixtures/m01-npc-navigation-gameplay-baseline.json'),pacing.previousGolden.sha256,'and it is kept byte for byte');
   // The account written by the audit tool from real runs of the predecessor and the live tree, with nothing typed by hand.
   assert.equal(live.audit,'docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json');assert.equal(sha('../'+live.audit),live.auditSha256);
   const account=JSON.parse(readFileSync(new URL('../'+live.audit,import.meta.url)));
@@ -239,7 +247,46 @@ test('the NPC navigation golden (amendment 05) chains to the T47 golden, pins th
   for(const r of account.otherRoutes){assert.equal(r.clipping.live.events,0);assert.equal(r.stacked.live.pairs,0);}
 });
 
-for(const expected of live.routes)test(`all gameplay bytes hashed each tick against the NPC-navigation-audited candidate (the physics tree with routes round every solid, avoidance and queues): seed ${expected.seed}, support ${expected.support}`,()=>{
+/** An integration amendment (06 pacing, 07 combat AI) written by tools/verification/m01-integration-golden-audit.mjs: chain, source lock, account and invariants. */
+function integrationAmendment(g,{amendment,task,delta,previous,previousFile,predecessor,deltaFields}){
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  assert.equal(g.task,task);assert.equal(g.amendment,`amendment-${amendment}`);assert.equal(g.delta,delta);assert.equal(g.predecessor,predecessor);
+  assert.equal(g.predecessorSourceSha256,previous.sourceSha256,'the audited predecessor is exactly the simulation the previous golden pins');
+  assert.equal(g.previousGolden.task,previous.task);assert.equal(g.previousGolden.file,'tests/fixtures/'+previousFile);
+  assert.equal(g.previousGolden.sha256,sha('./fixtures/'+previousFile),'the previous golden is kept byte for byte');
+  assert.equal(g.historicalGoldenSha256,previous.historicalGoldenSha256);
+  assert.deepEqual(g.routes.map(r=>[r.seed,r.support]),previous.routes.map(r=>[r.seed,r.support]),'the same two routes are audited');
+  assert.notEqual(g.sourceSha256,previous.sourceSha256,'the simulation moved');
+  assert.equal(sha('../'+g.audit),g.auditSha256,'the account is the committed one');
+  const account=JSON.parse(readFileSync(new URL('../'+g.audit,import.meta.url)));
+  assert.equal(account.task,task);assert.equal(account.amendment,g.amendment);assert.equal(account.delta,delta);assert.equal(account.predecessor,predecessor);
+  assert.equal(account.sourceSha256,g.sourceSha256);assert.equal(account.previousGolden.sha256,g.previousGolden.sha256);assert.equal(account.deltaFields,deltaFields.source);
+  account.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,previous.routes[i].ticks);assert.equal(r.newTicks,g.routes[i].ticks);
+    assert.match(r.firstDifference.path,deltaFields,`the first difference from the predecessor is a path of the named delta ${delta}`);
+    assert.equal(r.identicalTicksBeforeIt,r.firstDifference.tick-1);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(g.routes[i].blocks[b],previous.routes[i].blocks[b],'the blocks before the first difference are the previous golden\'s');
+    if(r.identicalBlocks<Math.min(previous.routes[i].blocks.length,g.routes[i].blocks.length))assert.notDeepEqual(g.routes[i].blocks[r.identicalBlocks],previous.routes[i].blocks[r.identicalBlocks]);
+    // The plot is the predecessor's: 12 objectives done or expired as before, CP-A..D, 07:05 (the tool also proved consumed events, survivors and plot flags identical).
+    assert.equal(Object.keys(r.endState.objectives).length,12);assert.equal(r.endState.checkpoints.length,4);assert.equal(r.endState.finalBattleClock,'07:05:00');
+    assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
+    // Fixed battle-clock beats stay at their historical time (non-gated: within one tick at 30x).
+    for(const e of r.battleClockEvents)if(e.fixed&&!e.jump)assert.ok(Math.abs(e.battle.live-e.battle.predecessor)<=1.5,`${e.id} ${e.at}`);
+    assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);
+  });
+  assert.deepEqual(account.otherRoutes.map(r=>[r.seed,r.support]),[[3,false],[3,true],[7,false],[7,true]]);
+  for(const r of account.otherRoutes){assert.equal(r.clipping,0);assert.equal(r.stacked,0);}
+  return account;
+}
+test('the pacing golden (amendment 06) chains to the NPC navigation golden, pins the live simulation and cites its lockstep account',()=>{
+  const account=integrationAmendment(pacing,{amendment:'06',task:'M01-P2-PACING-V1',delta:'pacing',previous:live,previousFile:'m01-npc-navigation-gameplay-baseline.json',
+    predecessor:'66e47b239a9e0bc586375481fb1a554e46b845e2',deltaFields:/^\$\.state\.mission\.(text|status)$/});
+  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),pacing.sourceSha256,'the golden pins the live simulation');
+  // What the pacing is for: the player in position reaches 06:00 sooner in real time, on both golden routes.
+  for(const r of account.routes)assert.ok(r.endState.live.to0600<r.endState.predecessorOwnRoute.to0600,`06:00 sooner (${r.endState.predecessorOwnRoute.to0600} -> ${r.endState.live.to0600} s)`);
+});
+
+for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));
