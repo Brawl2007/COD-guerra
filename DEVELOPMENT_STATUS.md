@@ -1,5 +1,13 @@
 # Estado de desenvolvimento
 
+## M01 combate e IA, fatia 1 (P1 do playtest: «o combate é aborrecido») — 2026-10-18
+
+Branch local `claude/busy-ritchie-3fkvk2-combat` sobre `f6913a0`. **Não publicada** (sem push/PR), sem revisão crítica independente, sem playtest humano. Análise, medições antes/depois e desenho: `docs/direction/COD_WAW_WWII_BENCHMARK.md` («Combate e IA»).
+
+- **Simulação.** `grp_de_east` (antes da demolição leste): espreitar 1–3 tiros / grupos de 1–3 rajadas MG34 com pausas log-normais de média igual à antiga, recarga em cobertura, MG34 parada na troca de fita, alvo por linha de visão e ameaça (o jogador que disparou há < 8 s; só muda o alvo), supressão que quebra o espreitar, atrasa e alarga a pontaria. Kowal: rajadas 2–5, reacção conforme a idade do clarão, média 4,2 s. Fogo visual: chaves opcionais `respondSec`/`followUp` em `m01-display-fire.js`, usadas por `dp_east_pl_ckm` e `dp_east_de_mg`. Estado `actor.ai` guardado, validado e migrado.
+- **Efeito medido** (`tools/verification/m01-combat-ai-metrics.mjs`, rotas do golden): repetição do ciclo de Kowal 72 % → 2,5 %/5,5 %; cv do dique 0,29 → 0,92/0,87; MG34 0,59 → 1,01; MG visuais 0,20–0,22 → 0,79–0,87. Distância mínima ao alemão (≥ 963 m), linha de visão e tempos mortos sem mudança.
+- **Testes.** `tests/m01-combat-ai.test.js` (9/9). Focados: `m01-cover-threat` + `m01-cover-combat` 16/16; `m01-combat-posture-staging`, `m01-display-fire`, `m01-east-front` (sementes 19390901 e 3), `m01-german-retreat`, `m01-mg34-prone-runtime`, `m01-continuity-raid`, `m01-support-runtime` 143/144 antes da emenda do teste de posturas (ver commit `0fd2694`), depois 13/13 nas rotas encenadas. `npm test` completo **não corrido** na cabeça final (pedido do Capitão: re-baseia os goldens por passo de fusão); pins que se movem listados no documento. `npm run build` OK. Browser: `m01-ckm-fire.spec.js` 2/2 (porta própria 4179; a 4173 estava ocupada por outra worktree).
+
 ## M01: som menos robótico — variação por evento, passos, nós reutilizados, absorção do ar — 2026-10-18
 
 Branch local `claude/busy-ritchie-3fkvk2-audio` sobre `98f094f`. **Não aceite, não publicada**, sem revisão crítica independente, sem CI x86 completo, **sem ninguém ter ouvido o resultado** (playtest humano em falta). Evidência: `docs/verification/m01-runtime/audio-feel-2026-10-18/README.md`.

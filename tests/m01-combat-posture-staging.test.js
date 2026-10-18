@@ -243,6 +243,9 @@ function stagedRoute(seed,support=false){
         // He stood for the shot (h above). He still stands afterwards unless this very tick pinned him down after it (a suppression that began now), the same ordering the
         // ordinary rounds below allow: the shot is issued before the allies' fire of the tick is resolved. Found when the pilot's route moved by 23 ticks (D44, amendment 04).
         assert.ok(by.crouched===false||((lastSup.get(by.id)??0)<=lastClock&&by.suppressedUntil>clock),`${r.id} by ${r.by} is kneeling although nothing pinned him down in this tick`);
+        // Combat AI slice 1 (integration 2026-10-18, both sides kept): a ckm or rkm near miss landing later in the SAME tick may pin him after the shot (seed 7: de_east_2 at 404.3 s on
+        // the combat branch); he is down at the end of the tick exactly when that suppression began in this very tick.
+        assert.equal(by.crouched,by.suppressedAt===sim.clock&&sim.clock<by.suppressedUntil,`${r.id} by ${r.by}: kneeling iff pinned in this tick`);
         if(k<14)st.attritionGate++;else st.attritionDike++;continue;}
       if(by.group!=='grp_de_east'||k<2||k>=14)continue;
       // The origin of a gate rifleman's own round is his standing eye: he rose riseBeforeSec earlier (Kowal may pin him down again in the
