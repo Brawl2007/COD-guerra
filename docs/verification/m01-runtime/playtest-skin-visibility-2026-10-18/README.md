@@ -17,3 +17,15 @@ An impostor contrast experiment (hostile ink contrast 4.5) showed no measurable 
 
 Not changed and not provable from these captures: the Germans in the standard route stay >= 1000 m from the player (sim positions) and
 are 3x2 px impostors behind bridge girders; see the report for what that needs.
+
+## Follow-up: first-load LOD-3 boxes and dressed civilians
+
+Reproduction (Playwright `route.abort()` on the soldier GLBs, High, same snapshot as `de90m`):
+- `firstload_lod2_fetch_failed_...`: with `m01_soldier_{pl,de}_lod2.glb` failing, every soldier beyond 45 m was a procedural box (0 skinned of 48 although LOD0/LOD1 were loaded). After: the nearest loaded dressed band (LOD1) is drawn, 48 skinned.
+- `firstload_all_glb_failed_procedural_fallback.png`: with every soldier GLB failing nothing can be skinned; the existing procedural bodies stay (olive uniform, helmet/beret, skin) and the first-person arms fall back too. Not black, but blocky. Unchanged on purpose.
+- Normal load is not affected: the menu keeps Start disabled until `ready`, which awaits all soldier sources and clips.
+- Not changed: a missing base clip (e.g. `standing_idle`) still leaves the procedural body (tests depend on it).
+
+Civilians (Lipski, yard railwaymen, aid staff) are now skinned soldier bodies in workwear dye, no helmet/webbing/rank/rifle, generic head `pl_a`,
+hand lantern for the lantern carriers and a white/red armband for the aid staff (`civilians_*`, `civilian_*`). The yard patient and the cart keep their
+procedural layouts; their procedural cloth colour was lightened from #404c56 (rendered black) to #8f8a78.

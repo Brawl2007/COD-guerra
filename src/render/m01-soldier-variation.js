@@ -8,6 +8,10 @@ const DE_HEADS=['de_a','de_b','de_c'];
 // Bounded dye/fading multipliers of the existing national atlas, not new uniform types.
 const CLOTH=[[.80,.83,.79],[1.03,1.00,.91],[.91,.97,.91],[1.02,.94,.82],[.83,.89,.87],[1.04,1.04,.99],[.94,.87,.77],[.88,.94,.83]];
 const SKIN=[[1.03,.98,.91],[.94,.95,.94],[1.07,1.00,.95],[.89,.90,.88],[1.00,.96,.92],[.95,.93,.90],[1.05,.99,.93],[.93,.96,.96]];
+// Civilians (Lipski, the station-yard railwaymen and aid staff) reuse the same body mesh and atlas with a workwear dye instead of a field-grey
+// tunic: no new asset. The multipliers act on the khaki atlas, so they are greys, browns and dark olives (a blue is not reachable from khaki).
+const CIVIL_CLOTH=[[.42,.46,.50],[.62,.50,.40],[.36,.37,.40],[.45,.50,.38],[.70,.64,.52],[.40,.42,.48],[.55,.45,.36],[.50,.52,.50]];
+const CIVIL_HEAD='pl_a';   // the Polish source carries one generic face; the other heads belong to named soldiers. Civilians differ by skin tone, beard and wear.
 const PACK=[.82,1.16,1.02,.92,1.20,.87,1.10,.96];
 const smooth=(a,b,x)=>{const t=THREE.MathUtils.clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);};
 function visualHash(text){let h=2166136261;for(const c of text){h^=c.codePointAt(0);h=Math.imul(h,16777619);}h^=h>>>16;h=Math.imul(h,0x7feb352d);h^=h>>>15;h=Math.imul(h,0x846ca68b);h^=h>>>16;return h>>>0;}
@@ -16,13 +20,13 @@ function visualHash(text){let h=2166136261;for(const c of text){h^=c.codePointAt
 const descriptors=new Map();
 export function soldierVisualVariant(actor){
   const nation=actor.team==='enemy'?'de':'pl',role=actor.role??'RIFLEMAN';
-  const identity=`${VISUAL_VARIATION_VERSION}|${nation}|${role}|${actor.id}|${actor.group??''}|${actor.weapon??''}`;
+  const civilian=Boolean(actor.civilian),identity=`${VISUAL_VARIATION_VERSION}|${nation}|${role}|${actor.id}|${actor.group??''}|${actor.weapon??''}${civilian?'|civilian':''}`;
   if(descriptors.has(identity))return descriptors.get(identity);
   const profile=visualHash(identity)%8;
-  const head=NAMED[actor.id]??(nation==='de'?DE_HEADS[profile%3]:PL_HEADS[profile]);
-  const equipment=actor.role==='ENGINEER'?'sapper':actor.id==='marek_zielinski'?'nco':actor.id==='pawel_krawiec'?'sapper':
+  const head=civilian?CIVIL_HEAD:NAMED[actor.id]??(nation==='de'?DE_HEADS[profile%3]:PL_HEADS[profile]);
+  const equipment=civilian?'civilian':actor.role==='ENGINEER'?'sapper':actor.id==='marek_zielinski'?'nco':actor.id==='pawel_krawiec'?'sapper':
     actor.group==='grp_ckm_crew'?'ckm-crew':actor.weapon==='mg34'?'mg-crew':actor.id==='szymon_kowal'?'rkm':'field';
-  const descriptor=Object.freeze({version:VISUAL_VARIATION_VERSION,id:`${nation}:${profile}`,nation,profile,head,equipment,
+  const descriptor=Object.freeze({version:VISUAL_VARIATION_VERSION,id:`${nation}:${profile}${civilian?'c':''}`,nation,profile,head,equipment,civilian,
     faceStyle:nation==='de'?profile%2:0,pack:PACK[profile],shovel:actor.role==='ENGINEER'||profile%3!==0,wear:profile%4,
     proxyCloth:new THREE.Color(nation==='de'?'#b4c0b7':'#c9bea0').multiply(new THREE.Color(...CLOTH[profile])).getHexString(),
     proxyHelmet:new THREE.Color(nation==='de'?'#465252':'#635f47').multiplyScalar(.82+profile*.033).getHexString(),
@@ -51,7 +55,7 @@ export class SoldierVisualVariations {
       if(!mesh.isMesh||!mesh.visible||!mesh.geometry.getAttribute('position'))return;
       const name=mesh.name,head=name.startsWith('head_');
       if(!(name==='body'||name==='gear'||name.startsWith('helmet_')||name==='sapper'||head&&!NAMED[actor.id]))return;
-      const source=mesh.geometry,cacheKey=`${key}|${variant.profile}|${name}|${name==='gear'&&variant.shovel?'full':'light'}`;
+      const source=mesh.geometry,cacheKey=`${key}|${variant.profile}${variant.civilian?'c':''}|${name}|${name==='gear'&&variant.shovel?'full':'light'}`;
       if(!this.geometries.has(cacheKey))this.geometries.set(cacheKey,this.geometry(source,mesh,variant));
       if(!this.materials.has(mesh.material)){const material=mesh.material.clone();material.vertexColors=true;if(variant.nation==='de')patchRimMaterial(material,this.rim);this.materials.set(mesh.material,material);}
       mesh.geometry=this.geometries.get(cacheKey);mesh.material=this.materials.get(mesh.material);
@@ -65,11 +69,11 @@ export class SoldierVisualVariations {
     for(let i=0;i<pos.count;i++){
       const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
       let hand=false;if(mesh.name==='body'&&joints&&weights)for(let k=0;k<4;k++)if(weights.getComponent(i,k)>.2&&/^(hand|thumb|index|middle|ring|pinky)/.test(bones[joints.getComponent(i,k)]?.name??''))hand=true;
-      const base=head?SKIN[v.profile]:mesh.name==='body'&&!hand?CLOTH[v.profile]:helmet?[.84+v.profile*.024,.86+v.profile*.019,.80+v.profile*.025]:[1,1,1];
+      const base=head?SKIN[v.profile]:mesh.name==='body'&&!hand?(v.civilian?CIVIL_CLOTH:CLOTH)[v.profile]:helmet?[.84+v.profile*.024,.86+v.profile*.019,.80+v.profile*.025]:[1,1,1];
       const pattern=.5+.5*Math.sin(x*39+y*23+z*51+v.profile*2.3),hem=1-smooth(.35,.9,y);
       const dirt=head?.045*(v.wear+1)*pattern:hand?.025:helmet?.075*v.wear*pattern:(.06*v.wear+.14*hem)*pattern;
       const beard=head&&v.profile%2&&y<1.59&&z<-.035?.10:0;
-      for(let k=0;k<3;k++)colour[i*3+k]=Math.max(.5,base[k]*(1-dirt-beard));
+      for(let k=0;k<3;k++)colour[i*3+k]=Math.max(v.civilian&&mesh.name==='body'?.3:.5,base[k]*(1-dirt-beard));
     }
     g.setAttribute('color',new THREE.BufferAttribute(colour,3));
     if(head&&v.nation==='de'){
