@@ -62,8 +62,8 @@ their feet 0.0 mm per frame in every resting idle and fidget (except the authore
 
 * `node --test tests/m01-animation-variety.test.js` : 27 / 27.
 * `node --test tests/m01-animation-variety-real-rig.test.js` : 7 / 7 (real LOD0..2 pl+de rigs: library bound with no PropertyBinding warning, corpses lie on the ground, 8 neighbours spread, no foot skate, hit clip follows the shooter's side and pushes the head away).
-* Focused regression batch (animation resolver V1/V2/T35, player, contract, characters, T37 IK + frozen pre-T37 oracle, poses, soldier GLB, MG34/CKM/station/support runtime, LOD, idempotence): see the report; the one failure seen on the first run (frozen T37 oracle) is why the layer is gated on the library being loaded.
-* `npm run build` : ok. Browser smoke (one run): `tests/browser/m01-anim-resolver.spec.js -g "every visible soldier"` on port 4181 : 1 passed; image `smoke-anim-resolver-paused.jpg`.
+* Focused regression batch, 27 files (animation resolver V1/V2/T35, player, contract, characters, T37 IK + frozen pre-T37 oracle, poses, soldier GLB/motion clips, fp-arms hash locks, MG34/CKM/station/support runtime, LOD, idempotence, asset manifests): 274 / 274, 0 failed (242 s). The one failure seen on the very first batch (frozen T37 IK-off oracle, bit-exact bones) is why the layer is on only when the library is loaded. Full `npm test` was not run (instruction).
+* `npm run build` : ok (vite, no errors). Browser smoke, `tests/browser/m01-anim-resolver.spec.js -g "every visible soldier"` (production UI, real GLBs, pause/reload determinism) on port 4181 under flock: run 1 (first commit) passed; run 2 (final code) failed once at `expect(#pause).toBeVisible()` after 5 s while the page snapshot already showed PAUSADO (load: other agents' suites, load average 4-6); run 3 (final code, `0c5a1b2`) passed in 56 s. Image from run 3: `smoke-anim-resolver-paused.jpg`. The MG34 gunner cold-load death spec in the same file (`clip==='fallen'`) was NOT run in a browser; its clip choice was checked in Node on the real route (`fallen`, see the guard in `deathVariant`).
 
 ## Deliberate ceilings (`ponytail:` in `src/render/m01-animation-variety.js`)
 
