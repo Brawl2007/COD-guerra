@@ -650,6 +650,9 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.actors.some(a=>a.clip==='ckm_wz30_gunner_abandon'));
+  // T40: the optional first-person arm GLBs (fp:0, fp:patient) load in the background and append to characters.loaded when they arrive (and bump the paused revision): on a slow
+  // runner that can fall inside the 250 ms window below. The pause stability being proven here starts once the optional residency has settled (loaded or failed).
+  await page.waitForFunction(()=>{const c=window.gameDiagnostics().m01.characters;return [['fp:0','m01_fp_arms_v2'],['fp:patient','m01_fp_patient_v2']].every(([k,f])=>c.loaded.includes(k)||c.failures.some(x=>String(x.path).includes(f)));},null,{timeout:120000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const before=await page.evaluate(()=>window.gameDiagnostics()),c=before.m01.characters;
   const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');

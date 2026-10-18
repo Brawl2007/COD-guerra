@@ -88,3 +88,19 @@ test('bridge fade: authority state and renderState parts are never modified; dis
     for(const m of meshes)assert.equal(m.userData.m01BridgeFade.value,1,'dispose resets dither values');
   }finally{f.owner.dispose();}
 });
+
+test('bridge fade: a preset change that reloads the impostor maps never fades to/from a card whose maps are released (no 0x0 texture upload)', async () => {
+  // Low -> Medium reloads the optional bridge textures (tier low -> high): the previous maps are disposed and their bitmaps closed. The piece leaves "card" only because the
+  // card is not ready any more, so it must snap to the detailed truss; a 0.3 s card -> truss fade would draw the card with the released texture (three.js re-uploads it as a
+  // 0x0 sRGB texture: one leaked GL texture per card face, found by the m01-terrain-war-ground and m01-bridge-finish-runtime quality-churn specs).
+  const f=await fixture('low');
+  try{
+    f.at(900,100);assert.equal(f.card().root.visible,true,'steady card at Low');const maps=[f.card().side.material.map,f.card().top.material.map];
+    f.owner.sync({kits:f.kits,quality:'medium',world:f.world});
+    f.at(900,101);
+    assert.equal(f.owner.diagnostics.fade.started,0,'no fade is started by the maps going away');assert.equal(f.owner.diagnostics.fade.active,0);
+    assert.equal(f.card().root.visible,false,'the card is not drawn without its maps');assert.equal(f.piece(2).truss.visible,true,'the detailed trusses stand in');
+    await f.owner.ready;f.owner.sync({kits:f.kits,quality:'medium',world:f.world});f.at(900,102);
+    for(const mesh of [f.card().side,f.card().top])assert.ok(!maps.includes(mesh.material.map)||!f.card().root.visible,'a visible card never carries a released map');
+  }finally{f.owner.dispose();}
+});
