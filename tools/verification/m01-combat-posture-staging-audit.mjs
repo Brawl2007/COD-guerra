@@ -24,7 +24,8 @@
 // 8c6328c. The tool is therefore bound to that tree and re-runs it FROM GIT: the candidate simulation and its data are extracted with `git archive` at CANDIDATE_COMMIT (as the
 // T47 tool extracts its predecessor), the 24-route invariants audit and the golden are computed on that extraction, and in verify mode the golden, GOLDEN_AUDIT.json and the
 // amendment record come out byte for byte. Why the live tree is not audited by this tool any more, with numbers: docs/verification/m01-runtime/ckm-fire-live-2026-10-16/
-// (the T47 gun changes the final survivors of one of the 24 routes, seed 3 with support, 18 -> 17, which this audit asserts equal to the predecessor).
+// (at bc4523f the T47 gun changed the final survivors of one of the 24 routes, seed 3 with support, 18 -> 17, which this audit asserts equal to the predecessor; since D43,
+// T47 amendment 03 and the support pilot that asks Kowal for clips, --live holds on 24 of 24).
 //
 // --amendment NN (with --write-golden to write, without it to verify) is a golden amendment, in the pattern of the T48 tool: the golden it replaces is
 // kept byte for byte, read from git at AMENDMENTS[NN].before and never overwritten, as tests/fixtures/m01-t38-gameplay-baseline-before-amendment-NN.json,
