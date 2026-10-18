@@ -79,7 +79,10 @@ const CKM_ENGAGE_SEC=10,CKM_SCAN_MAX=50,CKM_RESCAN_SEC=.5,CKM_AIM_SEC=1.2,CKM_HO
 // German answered, with a burst-wide bias and a per-round cone in thousandths (makeRound). Most rounds only pass within NEAR_MISS (3 m) of a German and
 // suppress him for CKM_SUPPRESS_SEC; few land on one (about 2-8 hits and 0-1 kills in a whole route of ~590 rounds, tools/verification/m01-t47-ckm-fire-audit.mjs).
 // A hit uses the existing damage path; CKM_DAMAGE per part multiplier is a wound at this range (a head hit leaves 10 health), not a kill.
-const CKM_AIM_UP=2.8,CKM_BIAS=[1.6,.8],CKM_CONE=[2.2,1],CKM_DAMAGE=45,CKM_SUPPRESS_SEC=2.5;
+// CKM_SUPPRESS_SEC is the 1.5 s that a German near miss pins an ally who is not working (landRound), below Kowal's aimed 2 s: with 2.5 s the beaten zone, laid on the
+// riflemen beside the gate MG, kept that MG down for up to 30 % of the repair on the route that ignores it (24 seeds; the limit is 20 %) and took the duel from the player
+// (docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md).
+const CKM_AIM_UP=2.8,CKM_BIAS=[1.6,.8],CKM_CONE=[2.2,1],CKM_DAMAGE=45,CKM_SUPPRESS_SEC=1.5;
 // Own stream derived from the mission seed: the ckm never draws from this.rng, so every other actor keeps its draws. State: ckmFire.rng (saved).
 const ckmSeed=seed=>Math.imul((seed>>>0)^0x7a30c0de,2654435761)>>>0;
 const newCKMFire=seed=>({rng:ckmSeed(seed),belt:CKM_BELT,bursts:0,nextAt:0,engagedUntil:0});
@@ -623,7 +626,12 @@ export class M01Simulation {
     }
     if(!firing||!(clock<f.engagedUntil)){const q=ckmQuiet(this.battleClock,clock);if(g.ckm.phase!==q.phase)to(q.phase,q.startedAt);}
   }
-  ckmAim(t){return {x:t.x,y:t.y+(t.crouched?.75:1.1)+CKM_AIM_UP,z:t.z};}
+  /**
+   * The gun is laid on the flash it answered, not on the man's posture of the moment: a rifleman fires standing (T38 gate riflemen rise to shoot), so the
+   * beaten zone floats CKM_AIM_UP over the standing chest (1.1 m) and the clear-shot test looks at the standing man. At ~1050 m the crew cannot tell a
+   * kneeling man from a standing one; and the gun's choice stays independent of the T38 postures, which only the attrition volleys of T23 change.
+   */
+  ckmAim(t){return {x:t.x,y:t.y+1.1+CKM_AIM_UP,z:t.z};}
   /**
    * The German to answer: the rifleman who fired most recently (his flash is visible) among those with a clear shot; deterministic, no random draw.
    * The two MG34 gunners are never CHOSEN: they lie behind the gate masonry (a hitbox under half a metre) and their duel with the sappers is the player's
@@ -639,7 +647,7 @@ export class M01Simulation {
   }
   /** Clear shot = the production line of sight from the muzzle AND the undispersed arc free of every obstacle up to the target and of every bridge collider. */
   ckmClearShot(probe,o,t){
-    if(!this.world.lineOfSight(probe,t))return false;
+    if(!this.world.lineOfSight(probe,{space:'metres',x:t.x,y:t.y,z:t.z,crouched:false}))return false;   // the standing man who fired (ckmAim)
     const r=makeRound({id:'probe',by:'ckm_gunner',weapon:'ckm_wz30',kind:'ally',origin:o,aim:this.ckmAim(t),firedAt:0,bias:[0,0],cone:[0,0],gauss:()=>0}),hit=traceRound(this.world,r,[]);
     return !(hit.material!==null&&hit.t<.98)&&ckmThroughBridge(this.world,r)===null;
   }
@@ -794,12 +802,16 @@ export class M01Simulation {
     }
     // O primeiro homem do pelotão que passa pelo jogador grita o que vem atrás deles (dlg_m01_040, "soldado do pelotão leste passando").
     if(this.consumedEvent(E('germans_on_east_spans'))&&this.withdrawingPlatoon().some(a=>dist(a,this.player)<25))this.line('dlg_m01_040');
-    if(this.consumedEvent(E('germans_on_east_spans'))&&!retreat&&this.battleClock-this.timers.withdrawalCasualty>=20){
+    if(this.consumedEvent(E('germans_on_east_spans'))&&!retreat){
       // cover_withdrawal.mechanic: cada 20 s de relógio sem supressão sobre os alemães do tabuleiro, um tiro certeiro no último
-      // homem do pelotão (baixa por ID ao chegar). Enquanto esse tiro voa, a contagem espera por ele.
-      const spans=this.enemies.filter(a=>a.group==='grp_de_spans'&&a.alive&&a.active);
-      if(spans.some(a=>a.suppressedUntil>this.clock))this.timers.withdrawalCasualty=this.battleClock;
-      else if(!this.enemyFire.rounds.some(r=>r.victim)){this.timers.withdrawalCasualty=this.battleClock;this.lethalShot(spans);}
+      // homem do pelotão (baixa por ID ao chegar). Enquanto esse tiro voa, a contagem espera por ele: recomeça quando ele chega, por isso
+      // as baixas ficam a pelo menos 20 s de relógio umas das outras («intervalo mínimo de 20 s de relógio entre baixas»), também quando o
+      // relógio passa de 8x para 1x durante o voo (06:09:00, a 60 s da demolição leste).
+      if(this.enemyFire.rounds.some(r=>r.victim))this.timers.withdrawalCasualty=this.battleClock;
+      else if(this.battleClock-this.timers.withdrawalCasualty>=20){
+        const spans=this.enemies.filter(a=>a.group==='grp_de_spans'&&a.alive&&a.active);
+        this.timers.withdrawalCasualty=this.battleClock;if(!spans.some(a=>a.suppressedUntil>this.clock))this.lethalShot(spans);
+      }
     }
     updateMotion(this.actors,motionBefore,dt,this.clock);
     updateLoaders(this.actors,this.clock);updateActorDetails(this.actors,this.clock,this.world);
