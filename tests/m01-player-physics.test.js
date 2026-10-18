@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {TczewWorld} from '../src/world/tczew-world.js';
 import {indexSolids} from '../src/world/m01-collision-layout.js';
-import {movePlayer,supportAt,fallDamage,PLAYER_PHYSICS as P,SAFE_LANDING_SPEED,LETHAL_LANDING_SPEED} from '../src/world/m01-player-physics.js';
+import {movePlayer,supportAt,deepestWall,fallDamage,PLAYER_PHYSICS as P,SAFE_LANDING_SPEED,LETHAL_LANDING_SPEED} from '../src/world/m01-player-physics.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {compareContinuation} from './helpers/m01-determinism.js';
 import {freshSim,drive} from './helpers/m01-collision-probe.js';
@@ -194,4 +194,55 @@ test('support: a deck is reachable only from within a step of it; the terrain is
   assert.equal(supportAt(world,14,2,-.2),0,'a body 0.2 m under the deck top steps onto it');
   assert.equal(supportAt(world,60,0,0),0,'on the span over the river');
   assert.equal(supportAt(world,60,0,-3),-10,'under the span over the river is the river: not a floor at the deck');
+});
+
+// ---------------------------------------------------------------- review fixes (F1 horseshoe release, air speed, escort gravity)
+test('air control steers a share of the momentum but never makes the body faster than it took off or than the ground input',()=>{
+  const world=new TczewWorld();
+  const flight=(vx,input,ticks=20)=>{   // just past the rail abutment edge (x 11.9, 2.65 m up) with a take-off speed vx, while the walking input keeps pressing
+    const a=body(world,12.2,8,{y:-.35});a.fall={vy:0,vx,vz:0,startY:-.35,t:0};
+    let fastest=0,airborne=0;for(let i=0;i<ticks&&a.fall;i++){const x0=a.x,z0=a.z;movePlayer(world,a,input*.05,0,.05);fastest=Math.max(fastest,Math.hypot(a.x-x0,a.z-z0)/.05);airborne++;}
+    return {fastest,airborne};
+  };
+  const walking=flight(3.8,3.8);assert.ok(walking.airborne>=8,'a real flight');
+  assert.ok(walking.fastest<=3.8+1e-9,`walking off the edge and holding forward: ${walking.fastest.toFixed(3)} m/s in the air (it was 4.75 m/s with the 25 % added on top)`);
+  const sprinted=flight(6,3.8);assert.ok(sprinted.fastest<=6+1e-9,`a sprint released in the air stays at most 6 m/s (${sprinted.fastest.toFixed(3)})`);
+  const lunged=flight(0,3.8);assert.ok(lunged.fastest>0&&lunged.fastest<=3.8+1e-9,`pressing forward from a standstill steers without exceeding the ground speed (${lunged.fastest.toFixed(3)})`);
+});
+
+test('the escort push does not advance gravity a second time in a tick (an airborne player falls at the same rate with and without it)',()=>{
+  const make=()=>{const sim=freshSim();Object.assign(sim.player,{x:-91,z:16,y:sim.world.heightAt(-91,16)+10,angle:0,health:100});   // east of x -95, where the escort push stops
+    sim.player.fall={vy:0,vx:0,vz:0,startY:sim.player.y,t:0};return sim;};
+  const plain=make(),escorted=make();
+  Object.assign(escorted.actor('marek_zielinski'),{x:-90,z:16});escorted.timers.escort=true;
+  for(let i=0;i<12;i++){plain.tick(.05,{});escorted.tick(.05,{});plain.drainEvents();escorted.drainEvents();}
+  assert.ok(plain.player.fall&&escorted.player.fall,'both still falling');
+  assert.equal(escorted.player.fall.vy,plain.player.fall.vy,'the same fall speed');assert.equal(escorted.player.y,plain.player.y,'the same height');
+  assert.ok(Math.abs(plain.player.fall.vy+P.gravity*12*.05)<1e-9,`g t after 0.6 s: ${plain.player.fall.vy}`);
+});
+
+test('an old save holding the player inside the closed ckm sandbag ring puts him on the open ground east of it; after the west demolition it does not',()=>{
+  // The ring is 0.68 m (north, south, back) and 0.46 m (front) high, over the 0.45 m step: a body inside it cannot leave, so it is moved, not pushed.
+  // The premise: walking east from inside the ring (a body that is simply there, no restore) is held by the front wall.
+  const held=freshSim();Object.assign(held.player,{x:6.5,z:25.5,y:-3,angle:0});for(let i=0;i<60;i++)held.tick(.05,{forward:1,sprint:true});
+  assert.ok(held.player.x<9.07,`still inside the ring at x ${held.player.x}`);
+  const from=freshSim();
+  for(const [x,z] of [[6.5,25.5],[5.3,24.4],[8.2,26.8],[7.17,26]]){
+    const sim=freshSim();Object.assign(sim.player,{x,z,y:-3});delete sim.player.fall;
+    const old=structuredClone(sim.snapshot());   // as an old build would have saved it
+    const back=new M01Simulation(3);back.restoreSnapshot(old);
+    assert.deepEqual([back.player.x,back.player.z,back.player.y],[9.6,25.5,-3],`from ${x},${z}`);
+    assert.equal(back.player.fall,undefined);assert.equal(back.player.alive,true);
+    const w=back.world,r=back.player.radius??R;
+    assert.equal(deepestWall(w,9.6,25.5,-3,r,1.8),null,'the release point is free of every solid');
+    // and it can walk away: west is the ring, so go east
+    Object.assign(back.player,{angle:0});for(let i=0;i<40;i++)back.tick(.05,{forward:1});
+    assert.ok(back.player.x>12,`walked away to x ${back.player.x}`);
+  }
+  // outside the ring, and everywhere once the demolition has happened, a restored position is untouched
+  const outside=freshSim();Object.assign(outside.player,{x:9.6,z:25.5,y:-3});
+  const o=new M01Simulation(3);o.restoreSnapshot(structuredClone(outside.snapshot()));assert.deepEqual([o.player.x,o.player.z],[9.6,25.5]);
+  const gone=freshSim();gone.consumed['evt_m01_west_demolition']=gone.clock;Object.assign(gone.player,{x:6.5,z:25.5,y:-3});
+  const g=new M01Simulation(3);g.restoreSnapshot(structuredClone(gone.snapshot()));assert.deepEqual([g.player.x,g.player.z],[6.5,25.5],'no ring after the west demolition');
+  assert.ok(from);
 });

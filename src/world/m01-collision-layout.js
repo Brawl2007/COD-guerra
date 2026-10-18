@@ -67,6 +67,15 @@ export function ckmEmplacementSolids([rx,ry,rz]=CKM_EMPLACEMENT_ROOT){
 }
 
 /**
+ * The closed ring of the ckm sandbag walls (0.68 and 0.46 m high, over the 0.45 m step) in plan, and the open ground in front of it. A body inside the ring cannot leave it
+ * on foot, so a save made before the walls were solid (the player could stand there) is released at CKM_RELEASE_POINT on restore. Derived from the walls above.
+ */
+export const CKM_ENCLOSURE=(()=>{const w=ckmEmplacementSolids();
+  return Object.freeze({minX:Math.min(...w.map(b=>b.cx-b.hx)),maxX:Math.max(...w.map(b=>b.cx+b.hx)),minZ:Math.min(...w.map(b=>b.cz-b.hz)),maxZ:Math.max(...w.map(b=>b.cz+b.hz))});})();
+export const CKM_RELEASE_POINT=Object.freeze({x:9.6,z:25.5});
+export const insideCkmEnclosure=(x,z)=>x>=CKM_ENCLOSURE.minX&&x<=CKM_ENCLOSURE.maxX&&z>=CKM_ENCLOSURE.minZ&&z<=CKM_ENCLOSURE.maxZ;
+
+/**
  * What the bridge heads draw above and under the walking surfaces that the kit's collider boxes leave out (measured on the intact meshes of the lod0 GLBs;
  * tests/m01-collision-bridgehead.test.js casts rays from every standable point of the heads against those meshes and requires a solid first):
  *  - the parapets along both sides of the two west abutments (1 m thick, 1.1 m above the walking plane: -0.35 .. 0.75 m): without them the abutment top ended in thin air;

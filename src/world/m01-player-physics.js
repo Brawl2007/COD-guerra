@@ -126,7 +126,12 @@ export function movePlayer(world,p,dx,dz,dt){
 function fall(world,p,dt,inputX,inputZ,r,h){
   const f=p.fall,g=P.gravity;
   // Momentum carries on; the input only steers a share of it. In slices of at most 0.2 m, like the ground, so a thin fence cannot be skipped in the air.
-  const mx=f.vx*dt+P.airControl*inputX,mz=f.vz*dt+P.airControl*inputZ,n=Math.max(1,Math.ceil(Math.hypot(mx,mz)/.2));
+  let mx=f.vx*dt+P.airControl*inputX,mz=f.vz*dt+P.airControl*inputZ;
+  // The steering is a share of the walking input added to the kept momentum, which would make a man 25 % faster in the air than on the ground: the horizontal speed
+  // never exceeds the faster of the take-off speed and this tick's ground input.
+  const cap=Math.max(Math.hypot(f.vx,f.vz),dt>0?Math.hypot(inputX,inputZ)/dt:0)*dt,len=Math.hypot(mx,mz);
+  if(len>cap*(1+1e-9)){const k=cap/len;mx*=k;mz*=k;}   // (the tolerance keeps the momentum alone bit-exact: no rounding noise from rescaling by 1 - 1e-16)
+  const n=Math.max(1,Math.ceil(Math.hypot(mx,mz)/.2));
   for(let i=0;i<n;i++)slide(world,p,mx/n,mz/n,r,h);
   const y0=p.y;
   const vy=Math.max(-P.terminalSpeed,f.vy-g*dt),y1=y0+(f.vy+vy)/2*dt;   // exact y0 + vy dt - g dt^2 / 2 until the terminal speed, then constant speed
