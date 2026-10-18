@@ -10,6 +10,7 @@ O link de pré-visualização é o que o Vercel publicar no PR #80 para o SHA in
 
 | Origem | Conteúdo | Estado na candidata | Prova (SHA / testes) | Próxima ação |
 |---|---|---|---|---|
+| Física do corpo do jogador (Claude) · P0 do playtest «atravessa paredes, sem gravidade» · D44 | Cápsula com deslize, degraus 0,45 m, gravidade, aterragem (mergulho da câmara, som), dano de queda; sólidos dos props/estruturas/encontros/treliça/casamata; golden T47 emenda 04 | CONCLUÍDA NA ORIGEM (local, não publicada; `claude/busy-ritchie-3fkvk2-phys` sobre `f6913a0`) | commits `cf26d5c`..HEAD da branch; `npm test` 1175 com 2 pilotos corrigidos e re-corridos (55/55); build OK; browser 2/2 (movimento após correcção do teste); auditor 04/03/02 EXIT 0 | revisão crítica; merge `--no-ff` pelo Captain (1.º na ordem); playtest humano (queda, aterragem, degraus) |
 | PR #76 (Claude) | V2–V7, Argon #62/#64, T50 #66, T21 #65/#70, pilha #63, áudio, touch #74, registo #73 | INTEGRADA (na `main`) | `6697956` | — |
 | PR #78 (Codex) | Fecho de T02 T03 T05 T06 T07 T14 T24 T26 T34 T36 T41 (14 commits sobre `9a1535b`) | INTEGRADA SEM VALIDAÇÃO DE JOGO | merge `c24ee0b`; Node 944/944; build OK; 4 specs de browser em conflito resolvidas mas ainda não corridas | CI do #80 (browser) |
 | PR #77 | Regra de integração na versão jogável | INTEGRADA, consolidada no `AGENTS.md` | merge do #77 nesta candidata | — |

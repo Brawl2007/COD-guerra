@@ -43,14 +43,14 @@ export function coverRoute(seed=19390901,mode='ignore',options={}){
   walk(-115,27);walk(-28,28);tick({crouch:true});
   wait(()=>sim.active('hold_access'),500);
   tick({crouch:true});
-  walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);
   wait(()=>sim.consumedEvent('evt_m01_germans_on_east_spans'),500);
   if(mode==='help'){walk(38,42.4);lastFlash=null;wait(()=>sim.consumedEvent('evt_m01_east_demolition'),500,cover(f=>f.id.startsWith('de_spans'),()=>sim.threat.spansSuppressed,3.5));}
   wait(()=>sim.consumedEvent('evt_m01_east_demolition'),500);
   stats.survivors=sim.flags['m01.east_platoon_survivors'];
   walk(-15,40);walk(-115,27);walk(-275,27);walk(-292,26);
   wait(()=>sim.consumedEvent('evt_m01_west_demolition'),500);
-  walk(-292,68);walk(-262,70);
+  walk(-263,58);walk(-263,70);
   wait(()=>sim.scene?.id==='cs_m01_roll_call',30);step({skip:true});
   wait(()=>sim.mission.complete,10);
   if(sim.battleClock!==seconds('07:05:00'))throw new Error('Wrong final battle clock');

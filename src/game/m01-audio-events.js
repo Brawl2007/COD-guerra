@@ -7,6 +7,9 @@ export function impactPass(crack,distance){return crack?'crack':distance<=12?'wh
 export function validateM01AudioEvent(event){
   if(event.type==='npc-shot'&&(typeof event.weapon!=='string'||!event.weapon))throw Error('M01 npc-shot.weapon required');
   if(event.type==='m01-blast'&&!BLAST_KINDS.includes(event.kind))throw Error('M01 m01-blast.kind required');
+  // The player's feet meet the ground after a fall (src/world/m01-player-physics.js); one event per landing, never persisted. The audio and the camera dip read the speed.
+  if(event.type==='player-landing'&&(![event.speed,event.drop,event.damage].every(Number.isFinite)||!['ground','water'].includes(event.surface)||
+    !event.point||![event.point.x,event.point.y,event.point.z].every(Number.isFinite)))throw Error('M01 player-landing speed/drop/damage/surface/point required');
   if(event.type==='round-impact'&&!PASS_KINDS.includes(event.pass))throw Error('M01 round-impact.pass required');
   if(event.type==='enemy-fire'&&(!Number.isFinite(event.at)||typeof event.weapon!=='string'||!event.origin||
     ![event.origin.x,event.origin.y,event.origin.z].every(Number.isFinite)))throw Error('M01 enemy-fire origin/clock/weapon required');

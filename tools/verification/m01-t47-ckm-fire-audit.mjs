@@ -12,7 +12,7 @@
 //   3. What follows is only timing, never the plot: a German who fires less pins the sappers less, so the repair (and every gate after it) comes earlier. Because A and G
 //      are driven by L's controls they lag that new timeline, so the end of the mission is compared with the predecessor on its OWN route (`route(seed,{Simulation:Before})`):
 //      same 12 objective states, same four checkpoints, same consumed event ids, same survivors, same final battle clock. The shift of every event is listed (`timeline`).
-// NAMED deltas (anything else differing is a failure):
+// NAMED deltas (anything else differing is a failure; `cadence` and `body` are applied to the predecessor from outside, see withCadence and withBody):
 //   crew        x, y, z, facing, state, suppressedUntil, ckm, ckmFire and every presentation field of ckm_gunner, ckm_loader, ckm_reserve (they stand at S2, run the
 //               fire cycle, walk another way out, and German rounds pass within 3 m of that post, not of the casemate: they pin the crew, never hurt it)
 //   events      `ally-fire` (the burst event; no predecessor has it) and the crew ids inside the `pinned` list of `round-impact`
@@ -24,8 +24,8 @@
 //               exactly what the fixed updateActors does), and the predecessor as it was (P) runs beside it: P == A until the first tick at which the timer differs
 //               (cadenceFirstDifference, whose path must be $.state.timers.withdrawalCasualty), so the rule is the only thing the emulation adds.
 // Run order on the combined tree: this tool first (--write-golden writes the delta audit and the live golden of the combined tree, tests/fixtures/m01-t47-gameplay-baseline.json),
-// then m01-t47-golden-amendment-audit.mjs --amendment 03 --write (keeps the T47 golden and audit it replaces and writes GOLDEN_AMENDMENT_03.json; --amendment 02 re-checks the
-// previous amendment as history). The T38 golden and the T38 and T48 audit tools are
+// then m01-t47-golden-amendment-audit.mjs --amendment 04 --write (keeps the T47 golden and audit it replaces and writes GOLDEN_AMENDMENT_04.json; --amendment 03 and 02 re-check the
+// previous amendments as history). The T38 golden and the T38 and T48 audit tools are
 // history since the merge: they are re-run from git at the staging commit (see their headers) and nothing here rewrites them.
 // Usage: node tools/verification/m01-t47-ckm-fire-audit.mjs [--write | --write-golden]          (x86 only; the predecessor tree is extracted with `git archive`)
 //   Without a flag (check mode) NOTHING is written: the regenerated delta audit must equal the committed PREDECESSOR_DELTA_AUDIT.json byte for byte and the regenerated golden must
@@ -46,6 +46,7 @@ import {route} from '../../tests/helpers/m01-route.js';
 import {firstDifference} from '../../tests/helpers/m01-determinism.js';
 import {GameplayDigest,gameplayFrame} from '../../tests/helpers/m01-animation-contract.js';
 import {CkmGhostSimulation} from '../../tests/helpers/m01-ckm-neutral.js';
+import {TczewWorld} from '../../src/world/tczew-world.js';
 
 const write=process.argv.includes('--write')||process.argv.includes('--write-golden');
 const root=resolve(import.meta.dirname,'../..');
@@ -53,7 +54,11 @@ const out=resolve(process.env.M01_T47_AUDIT_OUT??join(root,'docs/verification/m0
 const auditFile=join(out,'PREDECESSOR_DELTA_AUDIT.json');
 assert.equal(process.arch,'x64','exact gameplay golden regeneration requires x86 (same rule as D30)');
 const PREDECESSOR='8c6328c947e92041f237b5990142dd110aee8e71';   // the combined staging (T38 + T48 + T40 on the candidate #80 + #89); before the merge 3c9cab7 it was 813f163 (PR #80 head)
-const BEFORE_COMMIT='bc4523fc2e8161846828b77e7c1a49697f3372e8';   // the combined tree before amendment 03: its golden (amendment 02) and delta audit are what amendment 03 replaces
+const BEFORE_COMMIT='f6913a0dae3ae227ab0421c6b59f992e8685e9a6';   // the candidate (#80 + #90) before amendment 04: its golden (amendment 03) and delta audit are what amendment 04 replaces
+// Amendment 04 (the player's body physics, docs/verification/m01-runtime/player-collision-2026-10-18/README.md): the player collides with every visible solid, steps up ledges, slides and falls
+// (src/world/m01-player-physics.js), and the scripted pilot of tests/helpers/m01-route.js was taught to walk where a player can walk. Nothing about the gun or the Germans changed: this audit
+// still proves A == G apart from the named deltas on the NEW pilot's controls, so the predecessor (which has no body physics) and the candidate agree at every tick because the new route
+// never touches a wall, a ledge or an edge, apart from the named delta `body` (the shelter pit terrain and the roll-call placement, applied to the predecessor from outside). Amendment 03 (T47 x T38 interaction: ckmAim, CKM_SUPPRESS_SEC, the T23 withdrawal cadence) is history; its golden and delta audit are kept.
 // Amendment 03 (T47 x T38 interaction, docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md): the gun is laid on the standing man who fired (ckmAim no longer reads
 // `crouched`), CKM_SUPPRESS_SEC 2.5 -> 1.5 s, and the T23 withdrawal cadence counts from the landing of the lethal round (named delta `cadence`).
 const hash=v=>createHash('sha256').update(typeof v==='string'||Buffer.isBuffer(v)?v:JSON.stringify(v)).digest('hex');
@@ -91,7 +96,28 @@ const withCadence=Base=>class extends Base{
     return out;
   }
 };
-const Before=withCadence(Plain);
+// Named delta `body` (amendment 04): the two places where the live world differs from the predecessor's for a player who walks round every solid and never falls. They are applied to the
+// predecessor from outside, exactly as `cadence` is, so that A == G stays an equality of every byte and nothing is projected away:
+//  - the shelter pit (terrainHeightAt): the pit is 1 m below the ground and fades out by 8 m instead of cutting `-4` flat into the road embankment; the predecessor's player y inside 8.5 m of
+//    the shelter is set to the live terrain's heightAt after each tick;
+//  - stageRollCall: the live player is placed 0.6 m deeper in the shelter (z = shelter.z - 1.2, not -1.8: the L return wall used to enclose the camera), with the facing of the seated men
+//    and his own angle following; the predecessor's method is wrapped to place him the same way, at the same point of the same tick.
+const LIVE_TERRAIN=new TczewWorld();
+const withBody=Base=>class extends Base{
+  stageRollCall(){
+    super.stageRollCall();
+    const p=this.player,shelter=this.world.point('shelter');
+    p.z=shelter.z-1.2;p.y=LIVE_TERRAIN.heightAt(p.x,p.z);p.angle=Math.atan2(72.6-p.z,-260-p.x);
+    for(const a of this.actors)if(a.pose==='seated')a.facing=Math.atan2(p.z-a.z,p.x-a.x);
+  }
+  tick(dt,controls){
+    const runs=Number.isFinite(dt)&&dt>0&&!this.mission.complete&&this.player.alive;
+    const out=super.tick(dt,controls);
+    if(runs&&Math.hypot(this.player.x+260,this.player.z-70)<8.5)this.player.y=LIVE_TERRAIN.heightAt(this.player.x,this.player.z);
+    return out;
+  }
+};
+const Before=withBody(withCadence(Plain));
 
 const CREW=['ckm_gunner','ckm_loader','ckm_reserve'];
 // suppressedUntil: German rounds aimed at the repair site or the player pass within 3 m of the new post (they never hurt an ally, only pin him), which the casemate never saw.
@@ -128,21 +154,23 @@ const report={task:'M01-T47-CKM-LIVE-FIRE-V1',predecessor:PREDECESSOR,predecesso
   namedDeltas:{crew:{actors:CREW,fields:[...CREW_DELTA,...PRESENTATION_FIELDS],why:'the gun stands at S2 (CKM_POSITION 7.17,-3,26), the three men stand round it and run the fire cycle, and walk west along the embankment instead of under the deck'},
     cadence:{fields:['timers.withdrawalCasualty and what follows from it (the withdrawal lethal shots, their RNG draws and casualties)'],predecessorWith:'withCadence (this file): after a tick in which a lethal round of the withdrawal was in flight, timers.withdrawalCasualty = battleClock',
       why:'amendment 03: the T23 count of 20 s of battle clock restarts when the lethal round lands, so casualties are at least 20 s apart also when the clock drops from 8x to 1x during the flight (06:09:00). Not the gun: applied to the predecessor, proved per route by cadenceFirstDifference (plain predecessor against it)'},
+    body:{fields:['player.y inside 8.5 m of the shelter','player.z, player.y, player.angle and the facing of the seated men at the roll call'],predecessorWith:'withBody (this file): the live terrain\'s heightAt for the player\'s y near the shelter, and stageRollCall wrapped to place the player 0.6 m deeper',
+      why:'amendment 04: the shelter pit is a depression relative to the ground (not a 5 m cliff cut into the road embankment) and the roll-call player no longer starts inside the L return wall. World data, not the gun: applied to the predecessor, so A == G is still an equality of every byte'},
     events:{types:['ally-fire'],pinnedCrewIdsRemoved:CREW,why:'one event per ckm burst; no predecessor emits it. A round-impact lists the allies it passed within 3 m of: S2 is not where the casemate was'},
     germans:{fields:['health','suppressedUntil','state','crouched','cooldown','suppressedAt','hitAt','hitYaw','diedAt','deathYaw'],why:'only a landed ckm round that hits or passes within NEAR_MISS (3 m) of a German (the two MG34 gunners included: the gun never chooses them as its target, but the beaten zone does not spare them); L only, from the causal onset'},
     timeline:{fields:['clock of every consumed event after the first pin difference','player health','rng state','issued German rounds','repair pins'],why:'a suppressed or wounded German fires less, so fewer rounds pin the sappers (timers.repairPins) and the repair finishes earlier; the clock-gated beats after it shift by the same amount. The plot is unchanged: see endStateAgainstPredecessorOwnRoute'}},
   projectionSource:projection.toString(),eventProjectionSource:eventProjection.toString(),routes:[]};
-const golden={task:'M01-T47-CKM-LIVE-FIRE-V1',generationStage:'T47 on the combined staging: implementation candidate after the critical review (amendments 01 and 02), the T47 x T38 interaction fix (amendment 03) and the per-tick predecessor delta audit',
+const golden={task:'M01-T47-CKM-LIVE-FIRE-V1',generationStage:'T47 on the combined staging: implementation candidate after the critical review (amendments 01 and 02), the T47 x T38 interaction fix (amendment 03), the player body physics (amendment 04) and the per-tick predecessor delta audit',
   predecessor:PREDECESSOR,predecessorSourceSha256:previous.sourceSha256,
   previousGolden:{task:previous.task,file:'tests/fixtures/'+previousFile,sha256:hash(readFileSync(fixture(previousFile)))},
   historicalGoldenSha256:hash(readFileSync(fixture('m01-anim-gameplay-baseline.json'))),sourceSha256:hash(readFileSync(join(root,'src/game/m01-simulation.js'))),
-  // Amendment 03: the T47 x T38 interaction (T47_T38_INTERACTION.md) moved the simulation of the combined tree. The golden and delta audit it replaces (bc4523f: amendment 02,
-  // against the same staging) are kept as byte copies, read from git, by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 03, which also writes GOLDEN_AMENDMENT_03.json;
-  // tests/m01-animation-contract.test.js asserts the chain (amendments 02 and 01 live in the kept goldens).
-  amendment03:{task:'M01-T47-CKM-LIVE-FIRE-V1',beforeCommit:BEFORE_COMMIT,beforeSourceSha256:JSON.parse(beforeGolden).sourceSha256,
-    beforeFixture:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-03.json',beforeFixtureSha256:hash(beforeGolden),
-    beforeAudit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_03.json',beforeAuditSha256:hash(beforeAudit),
-    audit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_03.json'},
+  // Amendment 04: the player's body physics (docs/verification/m01-runtime/player-collision-2026-10-18/README.md) moved the simulation and the scripted pilot. The golden and delta audit it
+  // replaces (f6913a0: amendment 03, against the same staging) are kept as byte copies, read from git, by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 04, which also writes
+  // GOLDEN_AMENDMENT_04.json; tests/m01-animation-contract.test.js asserts the chain (amendments 03, 02 and 01 live in the kept goldens).
+  amendment04:{task:'M01-T47-CKM-LIVE-FIRE-V1',beforeCommit:BEFORE_COMMIT,beforeSourceSha256:JSON.parse(beforeGolden).sourceSha256,
+    beforeFixture:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-04.json',beforeFixtureSha256:hash(beforeGolden),
+    beforeAudit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_04.json',beforeAuditSha256:hash(beforeAudit),
+    audit:'docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_04.json'},
   routes:[]};
 const cases=process.env.M01_T47_AUDIT_SEEDS?process.env.M01_T47_AUDIT_SEEDS.split(',').map(Number).flatMap(seed=>[false,true].map(support=>({seed,support}))):[{seed:19390901,support:false},{seed:7,support:true}];
 

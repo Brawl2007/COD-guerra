@@ -12,7 +12,7 @@ export function canonicalViews(){
 }
 export function carryViews(){
  const d=toRepair(driver(19390901,{support:true})),{sim,walk,step,until}=d;
- walk(-120,16.5);until(()=>sim.active('hold_access'),500);walk(-115,32);walk(-10,32);walk(-10,40);walk(38,42.4);
+ walk(-120,16.5);until(()=>sim.active('hold_access'),500);walk(-115,32);walk(-30,40);walk(-10,40);walk(38,42.4);
  until(()=>sim.active('rescue_bak'),500);const bak=sim.actor('jozef_bak');walk(bak.x,bak.z);const beforePickup=sim.snapshot();step({interact:true});
  const pickup=sim.snapshot();until(()=>bak.carry?.phase==='carry',10);const carry=sim.snapshot();walk(-8,40);walk(-8,48);const beforePutdown=sim.snapshot();step({interact:true});
  if(bak.carry?.phase!=='putdown')throw Error('Real carry route failed to reach aid position');

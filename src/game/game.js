@@ -238,6 +238,8 @@ export class Game {
       this.audio.hit();this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
       this.renderer.m01.playerHit(this.sim.clock);
     }
+    // The simulation decided the landing (speed, damage, surface); the thud and the camera dip only present it.
+    if(event.type==='player-landing'){this.audio.landing(event.speed,event.surface);this.renderer.m01.playerLanding(this.sim.clock,event.speed,event.surface);}
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);

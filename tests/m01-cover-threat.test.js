@@ -113,7 +113,7 @@ test('after 120 s of continuous suppression the fire on the repair eases without
 test('the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed',()=>{
   const d=toRepair(driver()),{sim,walk,until}=d;
   walk(-115,27);walk(-28,28);until(()=>sim.active('hold_access'),500);
-  walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);
   until(()=>sim.consumedEvent('evt_m01_east_platoon_withdraws'),500);d.step({});
   assert.equal(sim.mission.status,'Pelotão leste: 18 homens a atravessar o tabuleiro');
   until(()=>sim.flags['m01.east_platoon_survivors']<18,200);

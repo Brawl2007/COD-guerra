@@ -2,6 +2,7 @@ import definition from '../../missions/m01-tczew/mission.json' with { type: 'jso
 import mapLayout from '../../missions/m01-tczew/map-layout.json' with {type:'json'};
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import { TczewWorld } from '../world/tczew-world.js';
+import { movePlayer } from '../world/m01-player-physics.js';
 import { Wz29 } from './wz29.js';
 import { M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
@@ -796,7 +797,7 @@ export class M01Simulation {
       a.x=c.x-Math.cos(c.facing)*.25;a.z=c.z-Math.sin(c.facing)*.25;a.y=c.y+1.15*lift;
     }
     if(this.timers.escort){const leader=this.actor('marek_zielinski');
-      if(dist(leader,this.player)<3){this.world.move(this.player,-dt*3,0);
+      if(dist(leader,this.player)<3){this.moveBody(-dt*3,0,dt);
         if(!this.timers.escortSpoke){this.timers.escortSpoke=true;this.message('Zieliński: venha comigo, para oeste!');}}
       if(this.player.x<-95)this.timers.escort=false;
     }
@@ -1161,7 +1162,7 @@ export class M01Simulation {
       const f=controls.forward??0,s=controls.side??0,len=Math.hypot(f,s)||1;
       const speed=(controls.sprint?6:3.8)*(p.carrying?.55:1)*(p.crouched?.6:1)*(p.aiming?.65:1);
       const dx=(Math.cos(p.angle)*f-Math.sin(p.angle)*s)*speed*dt/len,dz=(Math.sin(p.angle)*f+Math.cos(p.angle)*s)*speed*dt/len;
-      const before={x:p.x,z:p.z};this.world.move(p,dx,dz);p.moveBlend=Math.min(1,dist(before,p)/(dt*3.8));p.sprinting=Boolean(controls.sprint)&&p.moveBlend>.1;
+      const before={x:p.x,z:p.z};this.moveBody(dx,dz,dt);p.moveBlend=Math.min(1,dist(before,p)/(dt*3.8));p.sprinting=Boolean(controls.sprint)&&p.moveBlend>.1;
       this.weapon.update(this.clock*1000);
       if(controls.reload&&this.weapon.reload(this.clock*1000))this.emit({type:'reload',weapon:'kb_wz29'});
       if(controls.sight)this.message(`Alça: ${this.weapon.adjustSight()} m`);
@@ -1201,6 +1202,19 @@ export class M01Simulation {
     }
     if(this.subtitle&&this.clock>=this.subtitle.until)this.subtitle=null;
     if(!this.subtitle&&this.dialogueQueue.length){this.subtitle=this.dialogueQueue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
+  }
+  /** The player's body moves (walls, ledges, gravity: src/world/m01-player-physics.js) and, if it touched down after a fall, lands. Every move of the player goes through here. */
+  moveBody(dx,dz,dt){const landing=movePlayer(this.world,this.player,dx,dz,dt);if(landing)this.playerLanded(landing);}
+  /**
+   * The body touched down after a real fall (src/world/m01-player-physics.js): the impact costs health from a 3 m drop, a man at full health dies from 9 m,
+   * and a splash in the river costs nothing. The event is transient (presentation: camera dip, thud); the health is the only state.
+   */
+  playerLanded(landing){
+    const p=this.player,{speed,drop,damage,surface,x,y,z}=landing;
+    if(damage>0){p.health=Math.max(0,p.health-damage);p.alive=p.health>0;}
+    this.emit({type:'player-landing',speed,drop,damage,surface,point:{x,y,z}});
+    if(!p.alive)this.failure='Você caiu de uma altura fatal.';
+    else if(damage>0)this.message(`Queda dura: -${damage} de vida.`);
   }
   /** 04:35:30: Dudek reaches the station casualty, drags him to the aid point, then returns to his bridge post. */
   interruptStationEvacuation(){
@@ -1293,7 +1307,7 @@ export class M01Simulation {
       ...(this.flags['m01.dudek_status']==='unhurt'?['leon_dudek']:[]),...(this.flags['m01.bak_status']==='unhurt'?['jozef_bak']:[])]
       .map(id=>this.actor(id)).filter(a=>a&&a.alive&&a.active&&!a.carriedBy&&a.state!=='WOUNDED');
     const p=this.player,shelter=this.world.point('shelter');
-    Object.assign(p,{x:shelter.x-.5,z:shelter.z-1.8,crouched:true,pitch:-.06});p.y=this.world.heightAt(p.x,p.z);
+    Object.assign(p,{x:shelter.x-.5,z:shelter.z-1.2,crouched:true,pitch:-.06});p.y=this.world.heightAt(p.x,p.z);   // 0.6 m further in than before: the L return wall (z 68.0-68.35) used to enclose the camera
     present.forEach((a,i)=>{const [x,z]=ROLL_CALL_SEATS[i%ROLL_CALL_SEATS.length];
       Object.assign(a,{x,z,target:null,task:null,state:'GUARD',pose:'seated',crouched:true});a.y=this.world.heightAt(x,z);a.facing=Math.atan2(p.z-z,p.x-x);});
     p.angle=Math.atan2(72.6-p.z,-260-p.x);
@@ -1494,6 +1508,9 @@ export function validateM01Snapshot(s){
   const finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max;
   const point=p=>p&&p.space==='metres'&&[p.x,p.y,p.z].every(Number.isFinite)&&finite(p.health,0,100)&&typeof p.alive==='boolean';
   if(!point(s.player)||s.player.health<=0||s.player.health>100||!s.player.alive||![s.player.angle,s.player.pitch].every(Number.isFinite))reject('jogador');
+  // An airborne player carries his fall (src/world/m01-player-physics.js); a grounded one has none, so older saves need no migration.
+  if(s.player.fall!==undefined){const f=s.player.fall;
+    if(!f||typeof f!=='object'||Object.keys(f).length!==5||['vy','vx','vz','startY','t'].some(k=>!Number.isFinite(f[k]))||f.vy>0||f.vy<-60||Math.abs(f.vx)>20||Math.abs(f.vz)>20||f.t<0||f.t>30)reject('queda do jogador');}
   const actorIds=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
   const hasCKM=Array.isArray(s.actors)&&s.actors.some(a=>CKM_IDS.includes(a?.id));
   if(hasCKM)actorIds.push(...CKM_IDS);

@@ -26,11 +26,15 @@ test('terrain rollout preserves the original sampled ground geometry and collide
   const integration='293a4f116b9b28818b7ff3bda4d83cc49b01014f',world=new TczewWorld(),original=new THREE.PlaneGeometry(2000,650,400,130);
   // PT05 (D33, 1f8bd2d) legitimately added solid yard-wagon obstacles to tczew-world.js in the integration candidate;
   // that file is pinned byte-exact to the PT05 commit (still listed in tests/helpers/m01-byte-guard-allowlist.js).
-  const pinned={'src/world/tczew-world.js':'1f8bd2d0af9552abd713a665082d33ce53535214'};
+  // The player's body physics (D44, golden amendment 04) legitimately changed it again: the player's solid list (playerSolids), isWater/waterY and the shelter pit, which is now a
+  // depression relative to the ground (1 m inside 6 m, fading out by 8 m) instead of -4 m flat, a 5 m cliff cut into the foot of the road embankment. The file is pinned byte-exact to that
+  // commit; the sampled ground below differs from the original in exactly five of its 52531 vertices (all at the shelter pit: (-265,65) -4 -> -1.216, (-260,65) -4 -> -2.115,
+  // (-255,65) -4 -> -1.935, (-265,75) and (-255,75) -4 -> -3.464) and its position and normal hashes moved with them; uv and index are the original buffers.
+  const pinned={'src/world/tczew-world.js':'16383eb6fa6c44c2f13160e8c9b7095b30b61c28'};
   for(const path of ['src/world/tczew-world.js','assets/models/provisional/m01/bridge-colliders.json','src/render/m01-track-bed.js'])assert.equal(readFileSync(path,'utf8'),git('show',`${pinned[path]??integration}:${path}`),`immutable physics/contact owner ${path}`);
   original.rotateX(-Math.PI/2);original.translate(300,0,40);const p=original.attributes.position;
   for(let i=0;i<p.count;i++)p.setY(i,world.terrainHeightAt(p.getX(i),p.getZ(i)));original.computeVertexNormals();
-  const hashes={position:'25c524bd8f1f2b0a80378bacf1ea10bdba8cdd10b8b9d077b8eb5c148c1f376a',normal:'f76a0411c090ab56f65c7430498e277fa44b162b7e63c95797d9aae013a6531d',uv:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',index:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'};
+  const hashes={position:'35d11fa7ea416a062df3adc81ec164971a2cf971925bd2acb18fc43102da9529',normal:'f7e0d30eb0721db5f7f5ee5584a36d1eacb9cf7ca2d1524efcf6d46ef8fb5dad',uv:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',index:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'};
   for(const [attribute,expected]of Object.entries(hashes)){const a=attribute==='index'?original.index.array:original.attributes[attribute].array;assert.equal(createHash('sha256').update(Buffer.from(a.buffer,a.byteOffset,a.byteLength)).digest('hex'),expected);}
   const material=new THREE.MeshBasicMaterial(),oldMesh=new THREE.Mesh(original,material),owner=new M01TerrainRelief(new THREE.Group(),world,material),ray=new THREE.Raycaster();owner.parent.updateMatrixWorld(true);oldMesh.updateMatrixWorld(true);
   try{

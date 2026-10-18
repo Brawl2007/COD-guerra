@@ -3,6 +3,7 @@ import kit from '../../assets/models/provisional/m01/bridge-colliders.json' with
 import { visible } from './spatial.js';
 import {M01_TREES} from './m01-decoration-layout.js';
 import {M01_YARD_WAGON_PLAN,yardWagonFootprint} from './m01-yard-wagon-layout.js';
+import {buildPlayerSolids,indexSolids} from './m01-collision-layout.js';
 
 const xyz=a=>({x:a[0],y:a[1],z:a[2]});
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -55,8 +56,13 @@ export class TczewWorld {
     this.treeObstacles=this.trees.map(t=>box(t.id,[t.x-t.radius,t.y,t.z-t.radius],[t.x+t.radius,t.y+t.height*.78,t.z+t.radius],{material:'wood'}));
     // Drawn yard wagons are solid (movement, shots, LOS, grenades). Not covers: m01-environment draws a crate for every cover.
     this.wagonObstacles=M01_YARD_WAGON_PLAN.map(w=>{const f=yardWagonFootprint(w,(x,z)=>this.heightAt(x,z));return box(f.id,[f.min.x,f.min.y,f.min.z],[f.max.x,f.max.y,f.max.z],{visual:true,material:'wood'});});
-    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles,...this.wagonObstacles];this.revision++;
+    this.obstacles=[...this.colliders.filter(c=>c.collider==='solid'),...this.portals,...this.buildings,...this.covers,...this.treeObstacles,...this.wagonObstacles];
+    // What the PLAYER's body cannot pass (src/world/m01-collision-layout.js): a wider list than `obstacles`, which also stops bullets, sight, grenades and the NPCs.
+    this.playerSolids=buildPlayerSolids(this,consumed);this.solidIndex=indexSolids(this.playerSolids);this.revision++;
   }
+  /** The Vistula channel: x 25..265 at y -10 (terrainHeightAt). A body landing here splashes instead of taking an impact. */
+  isWater(x){return x>25&&x<265;}
+  get waterY(){return this.features.get('vistula_channel').waterY;}
   heightAt(x,z){
     let deck=-Infinity;
     for(const c of this.walkSurfaces)if(x>=c.min.x&&x<=c.max.x&&z>=c.min.z&&z<=c.max.z)deck=Math.max(deck,c.max.y);
@@ -75,7 +81,11 @@ export class TczewWorld {
       const d=Math.hypot(x-a[0]-t*dx,z-a[2]-t*dz),crest=a[1]+t*(b[1]-a[1]);
       if(d<width+6)height=Math.max(height,-3+(crest+3)*Math.max(0,Math.min(1,1-(d-width)/6)));
     }
-    if(distance({x,z},this.point('shelter'))<8)height=-4;
+    // The shelter pit: 1 m below whatever the ground is, fully inside 6 m of its centre, fading out by 8 m. It used to set -4 m flat inside 8 m: a 1 m cliff on the
+    // flat side and, where the pit overlaps the foot of the road embankment (the L entrance side, z 62..68), a 5 m cliff cut into the slope. The terrain mesh
+    // (sampled every 5 m) drew ramps, the player teleported down them; a body with gravity would fall to its death on the way to the last objective.
+    const pit=distance({x,z},this.point('shelter'));
+    if(pit<8)height-=Math.min(1,(8-pit)/2);
     return height;
   }
   move(actor,dx,dz){

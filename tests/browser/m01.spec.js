@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
-import {seconds} from '../../src/game/m01-simulation.js';
+import {seconds,M01Simulation} from '../../src/game/m01-simulation.js';
 import {M01_BOMBING_BATTLE_SECONDS} from '../../src/world/m01-aircraft-path.js';
 
 let result;
@@ -346,7 +346,10 @@ test('real keyboard movement traverses the approaches and E delivers the message
     await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?150000:45000});
     await page.keyboard.up(code);
   }
-  await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await page.keyboard.up('ShiftLeft');
+  // The route a player can walk: the abutments of both bridges are walls (the old route climbed their faces at x=-15), so go west of them (x=-30), up the
+  // embankment to the rail line (z=3), then east along the track to the forward post. Strafe to z=26 first: a straight line along z=22 meets the crates and
+  // carts at x=-43 (checked with the same keys in Node, 246 ticks door to door).
+  await axis('KeyD','z',26,1);await axis('KeyW','x',-30,1);await page.keyboard.up('ShiftLeft');
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
@@ -361,6 +364,23 @@ test('real keyboard movement traverses the approaches and E delivers the message
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(paused.clock);expect(still.m01.renderedFrames).toBe(paused.m01.renderedFrames);
   await page.screenshot({path:info.outputPath('m01-message-delivered-paused.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('walking off the rail abutment edge in the real game is a fall: gravity, one presented landing, no damage and no console error',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:120000);
+  // The real game, a real key: the abutment top (-0.35 m) ends at x=11.9 and the lowland is 2.65 m below it (outside the trusses, z=8).
+  const sim=new M01Simulation();sim.tick(.05,{skip:true});sim.drainEvents();Object.assign(sim.player,{x:10.9,z:8,y:-.35,angle:0});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.keyboard.down('KeyW');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.bodyFeedback.landings>=1,null,{timeout:process.env.CI?120000:60000});
+  await page.keyboard.up('KeyW');
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.bodyFeedback.landings).toBe(1);
+  expect(data.m01.bodyFeedback.lastSpeed).toBeGreaterThan(6.8);expect(data.m01.bodyFeedback.lastSpeed).toBeLessThan(7.6);   // sqrt(2 g 2.65 m) = 7.21 m/s
+  expect(data.player.y).toBeCloseTo(-3,2);expect(data.player.health).toBe(100);expect(data.player.x).toBeGreaterThan(11.9);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-landed-below-the-abutment.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss':'at the gates'} restores its actual origin and follows mouse look`,async({page},info)=>{
