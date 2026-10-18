@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createRimState,patchRimMaterial,setRimFog} from './m01-actor-legibility.js';
 
 export const VISUAL_VARIATION_VERSION='m01-soldier-visual/v1';
 const NAMED={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
@@ -42,7 +43,9 @@ function gearShells(g){
 
 // Source attributes/atlas are immutable and shared; only colours and changed gear positions/indices are private.
 export class SoldierVisualVariations {
-  constructor(){this.geometries=new Map();this.materials=new Map();this.shells=new WeakMap();this.disposed=false;}
+  constructor(){this.geometries=new Map();this.materials=new Map();this.shells=new WeakMap();this.disposed=false;this.rim=createRimState();}
+  /** Live fog colour (linear rgb) for the German distance rim (m01-actor-legibility.js); one shared uniform, no per-actor state. */
+  setFog(fog){setRimFog(this.rim,fog);}
   apply(root,actor,key,variant=soldierVisualVariant(actor)){
     root.traverse(mesh=>{
       if(!mesh.isMesh||!mesh.visible||!mesh.geometry.getAttribute('position'))return;
@@ -50,7 +53,7 @@ export class SoldierVisualVariations {
       if(!(name==='body'||name==='gear'||name.startsWith('helmet_')||name==='sapper'||head&&!NAMED[actor.id]))return;
       const source=mesh.geometry,cacheKey=`${key}|${variant.profile}|${name}|${name==='gear'&&variant.shovel?'full':'light'}`;
       if(!this.geometries.has(cacheKey))this.geometries.set(cacheKey,this.geometry(source,mesh,variant));
-      if(!this.materials.has(mesh.material)){const material=mesh.material.clone();material.vertexColors=true;this.materials.set(mesh.material,material);}
+      if(!this.materials.has(mesh.material)){const material=mesh.material.clone();material.vertexColors=true;if(variant.nation==='de')patchRimMaterial(material,this.rim);this.materials.set(mesh.material,material);}
       mesh.geometry=this.geometries.get(cacheKey);mesh.material=this.materials.get(mesh.material);
     });
     return variant;

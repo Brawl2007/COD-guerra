@@ -31,7 +31,9 @@ const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
 // Distances come from the single LOD policy (m01-lod-policy.js 'actors'); only the skinning budgets (18/24/28) live here.
 const actorLimits=(preset,count)=>{const [near,middle,far]=lodProfile('actors',preset).bands;return {count,near,middle,far};};
-const LIMITS={low:actorLimits('low',18),medium:actorLimits('medium',24),high:actorLimits('high',28)};
+// High keeps skinned bodies up to the impostor hand-off (350 m) for 48 actors, so no actor in normal combat range is a box proxy.
+export const ACTOR_BUDGET={low:18,medium:24,high:48};
+const LIMITS={low:actorLimits('low',ACTOR_BUDGET.low),medium:actorLimits('medium',ACTOR_BUDGET.medium),high:actorLimits('high',ACTOR_BUDGET.high)};
 const instanceLod=v=>v?Number(v.key.slice(v.key.indexOf(':')+1)):null;   // LOD band of a live instance (0..2); null = none yet
 const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
 const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_open','rkm_bipod_folded','rkm_pouch','rag']);
@@ -64,6 +66,8 @@ export class M01Characters {
     // Per-preset tally of the band an actor switched into (T43 diagnostics); presentation only, never saved.
     this.lodCounters=createLodCounters();this.lodSwitches=0;
   }
+  /** Fog colour for the German distance rim (presentation only). */
+  setRimFog(fog){this.visuals?.setFog(fog);}
   setIkEnabled(on){const next=Boolean(on);if(this.ikEnabled!==next){this.ikEnabled=next;this.revision++;}return this.ikEnabled;}
   async load(quality='low'){
     // Optional private FP variants never hold the mandatory bridge/menu readiness.

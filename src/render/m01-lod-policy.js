@@ -53,7 +53,7 @@ export const M01_LOD_PROFILES=Object.freeze({
   // Actors (m01-characters.js): bands = [near, middle, far]; band 0..2 are skinned LODs, band 3 = culled beyond `far`. Low/Medium have no
   // near LOD (0 collapses band 0). near/middle keep the shipped 0.5 m margin; the cull edge is new in T43 and holds a visible actor for 15%
   // of `far` (15/19.5/24 m), so a soldier hovering on the cull distance does not pop in and out. Only applied when `previous` is passed.
-  actors:Object.freeze({upperInclusive:false,presets:Object.freeze({low:actorProfile(0,15,100),medium:actorProfile(0,40,130),high:actorProfile(14,45,160)})}),
+  actors:Object.freeze({upperInclusive:false,presets:Object.freeze({low:actorProfile(0,15,100),medium:actorProfile(0,40,130),high:actorProfile(14,45,350)})}),
   // Bridge parts ignore the preset. Authority owns 400/800; renderer enters 412/824 and leaves 388/776 (directional enter/exit thresholds).
   bridgeParts:Object.freeze({upperInclusive:false,directional:true,presets:Object.freeze({low:profile([400,800],[12,24]),medium:profile([400,800],[12,24]),high:profile([400,800],[12,24])})}),
 });

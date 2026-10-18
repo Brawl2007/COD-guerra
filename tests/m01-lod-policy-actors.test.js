@@ -24,7 +24,8 @@ function oldLod(distance,limits,currentKey,nation,quality,sources){
   while(lod<3&&sources&&!sources.has(`${nation}:${lod}`))lod++;
   return lod;
 }
-const SHIPPED={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:28,near:14,middle:45,far:160}};
+const SHIPPED={low:{count:18,near:0,middle:15,far:100},medium:{count:24,near:0,middle:40,far:130},high:{count:48,near:14,middle:45,far:350}};   // amended 2026-10-18 (playtest-skin-visibility): High skins out to the 350 m impostor hand-off, budget 28 -> 48
+
 const all=new Set(['pl:0','pl:1','pl:2','de:0','de:1','de:2']),noNear=new Set(['pl:1','pl:2','de:2']),onlyFar=new Set(['pl:2','de:2']);
 
 test('actors profile carries the shipped distances and the 0.5 m margin', () => {
@@ -38,7 +39,7 @@ test('actors profile carries the shipped distances and the 0.5 m margin', () => 
 
 test('previous=null is bit-identical to the pre-T43 actor LOD for every preset, nation and source set', () => {
   for(const [quality,limits] of Object.entries(SHIPPED))for(const nation of ['pl','de'])for(const sources of [all,noNear,onlyFar,undefined]){
-    for(let d=0;d<=200;d+=.125)assert.equal(resolveLodWithHysteresis(d,limits,null,nation,quality,sources),oldLod(d,limits,null,nation,quality,sources),`${quality} ${nation} d=${d}`);
+    for(let d=0;d<=420;d+=.125)assert.equal(resolveLodWithHysteresis(d,limits,null,nation,quality,sources),oldLod(d,limits,null,nation,quality,sources),`${quality} ${nation} d=${d}`);
     for(const d of [NaN,Infinity,undefined])assert.equal(resolveLodWithHysteresis(d,limits,null,nation,quality,sources),oldLod(d,limits,null,nation,quality,sources),`${quality} ${nation} d=${d}`);
   }
 });
@@ -47,7 +48,7 @@ test('with a previous key the near/middle hold matches the pre-T43 body (includi
   const keys=[null,undefined,'','pl:0','pl:1','pl:2','de:0','de:1','de:2','pl:x','pl:1.5','pl:7','nonsense'];
   for(const [quality,limits] of Object.entries(SHIPPED))for(const nation of ['pl','de'])for(const key of keys)for(const sources of [all,onlyFar]){
     // Offset keeps the sweep off the exact hold edges (near-0.5, middle-0.5), where the policy's `>=` meets the old `>`.
-    for(let d=.013;d<=200;d+=.25)assert.equal(resolveLodWithHysteresis(d,limits,key,nation,quality,sources),oldLod(d,limits,key,nation,quality,sources),`${quality} ${nation} ${key} d=${d}`);
+    for(let d=.013;d<=420;d+=.25)assert.equal(resolveLodWithHysteresis(d,limits,key,nation,quality,sources),oldLod(d,limits,key,nation,quality,sources),`${quality} ${nation} ${key} d=${d}`);
   }
 });
 

@@ -1,0 +1,581 @@
+{
+ "note": "gameDiagnostics().m01.characters/impostors, ?debug=1, quality High, SwiftShader 1280x720, restored snapshots (tests/helpers/m01-route.js route), paused at the same sim clock +-0.2 s. before = f6913a0, after = this commit.",
+ "views": {
+  "opening_allies": {
+   "before": {
+    "activeSkinned": 13,
+    "budget": 28,
+    "lodBands": [
+     5,
+     3,
+     5
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 0,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 14,
+    "budget": 48,
+    "lodBands": [
+     5,
+     3,
+     6
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 0,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "raid0536_east": {
+   "before": {
+    "activeSkinned": 10,
+    "budget": 28,
+    "lodBands": [
+     0,
+     4,
+     6
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 21,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     0,
+     4,
+     11
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 20,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "repairThreat_mid": {
+   "before": {
+    "activeSkinned": 14,
+    "budget": 28,
+    "lodBands": [
+     3,
+     2,
+     9
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     3,
+     2,
+     10
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "t0610_declose": {
+   "before": {
+    "activeSkinned": 28,
+    "budget": 28,
+    "lodBands": [
+     2,
+     22,
+     4
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 48,
+    "budget": 48,
+    "lodBands": [
+     2,
+     22,
+     24
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "t0610_de45": {
+   "before": {
+    "activeSkinned": 28,
+    "budget": 28,
+    "lodBands": [
+     0,
+     1,
+     27
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 48,
+    "budget": 48,
+    "lodBands": [
+     0,
+     1,
+     47
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "t0610_de90": {
+   "before": {
+    "activeSkinned": 28,
+    "budget": 28,
+    "lodBands": [
+     0,
+     0,
+     28
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 48,
+    "budget": 48,
+    "lodBands": [
+     0,
+     0,
+     48
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 31,
+     "de": 0
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "t0610_east": {
+   "before": {
+    "activeSkinned": 10,
+    "budget": 28,
+    "lodBands": [
+     0,
+     4,
+     6
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 19,
+     "de": 44
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     0,
+     4,
+     11
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 18,
+     "de": 44
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "repairThreat_t_generic_rifleman": {
+   "before": {
+    "activeSkinned": 14,
+    "budget": 28,
+    "lodBands": [
+     3,
+     2,
+     9
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     3,
+     2,
+     10
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 24,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  },
+  "raid0536_t_marek_zielinski": {
+   "before": {
+    "activeSkinned": 10,
+    "budget": 28,
+    "lodBands": [
+     0,
+     4,
+     6
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 21,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 15,
+    "budget": 48,
+    "lodBands": [
+     0,
+     4,
+     11
+    ],
+    "failures": [],
+    "impostors": {
+     "pl": 20,
+     "de": 38
+    },
+    "loadedSources": [
+     "ckm:0",
+     "ckm:1",
+     "ckm:2",
+     "de:0",
+     "de:1",
+     "de:2",
+     "fp:0",
+     "fp:patient",
+     "mg34:0",
+     "mg34:1",
+     "mg34:2",
+     "pl:0",
+     "pl:1",
+     "pl:2"
+    ],
+    "preset": "high"
+   }
+  }
+ }
+}
