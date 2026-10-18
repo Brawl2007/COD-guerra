@@ -92,7 +92,9 @@ function mixedVolley(b){
 test('damage decals never write simulation state: the real repair route stays bit-identical with them attached',()=>{
   const plain=repairRoute(),a=new M01DamageDecals(new THREE.Scene()),b=new M01DamageDecals(new THREE.Scene()),fed=repairRoute([a,b]);
   assert.deepEqual(fed.sim.snapshot(false),plain.sim.snapshot(false));
-  assert.ok(fed.impacts>80&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
+  // Re-measured on purpose for the combat AI slice 1 (golden amendment 07, 2026-10-18, integration integ-pc): on this support route up to hold_access the Germans fire in
+  // peeks and burst groups and the repair ends 12 s sooner, so 95 -> 71 impacts (4 -> 3 player shots) reach the decals; the bound stays just under the measured count.
+  assert.ok(fed.impacts>65&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
   assert.ok(a.counts.placed>15&&a.marks.length>0&&a.marks.length<=LIMITS.quality.medium.marks,JSON.stringify(a.counts));
   // Two instances fed the same frozen events are identical: variation is a hash of event data, not a random source.
   assert.deepEqual(a.marks.map(markData),b.marks.map(markData));assert.deepEqual(a.counts,b.counts);
