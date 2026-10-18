@@ -1,5 +1,14 @@
 # Estado de desenvolvimento
 
+## PR #90 `M01` candidata de integração: T21, T37, T38, T40, T43, T48, T50, T15 e T49 (pilar E) — 2026-10-17
+
+Branch `claude/busy-ritchie-3fkvk2` @ `5fde48f`. **Não está em #80 nem em `main`**; sem revisão crítica independente, sem CI x86 completo, sem playtest humano.
+
+- **Conteúdo:** T48 retirada alemã (`claude/great-faraday-0sambg@8f9d1b2`); T40 braços em primeira pessoa e transporte (`-t40@3ca910e`); T38 encenação de posturas (`-t38@3ff9e4e`); T21 ambient director (`-t21@552652b`); T37 IK (`-t37@8e1f77a`, continua parcial: orçamento IK por fazer); T43 política de LOD (`-t43i@d223cdf`); T50 loading/bundle e T15 portão FX V3 (`-t50@ca0aea0`); T49 só o pilar E (reutilização de scratch e salto de uploads vazios, `-t49@5fde48f`; B1–B4/C e orçamento PC pendentes).
+- **Evidência:** `npm test` 1095/1095 em `5fde48f`; `npm run build` OK. `.agent/m01-task-registry.json` actualizado (IN_CANDIDATE_UNVERIFIED / PARTIAL_IN_CANDIDATE, refs `PR:#90` e branch@sha). Os testes `.agent/tests` têm 3 falhas (`test_atomic_post_conflict_stops_cleanly`, `test_successful_claim_uses_unique_ref`, `test_unknown_requires_live_scan`) que também ocorrem sem esta alteração.
+- **Directiva do dono (2026-10-17):** a plataforma-alvo é o executável instalado no PC com qualidade máxima; o browser serve só de smoke («corre»). Orçamentos de Chromebook/baixa qualidade e timeouts de SwiftShader não bloqueiam.
+- **Em aberto:** T47 (`claude/busy-ritchie-3fkvk2-t47i@bc4523f`) bloqueada pela interacção T47×T38 (lacuna ajuda/ignora da ameaça de cobertura, divergência agachado na frente leste, sobreviventes da semente 3), em correcção. Humano: licença de `fp-arms-v2`, assets de áudio de T45, medição do orçamento PC de T49, playtest. Merge para `main`/deploy só por ordem explícita.
+
 ## T38 `M01-COMBAT-POSTURE-STAGING-V1`: MG34 medida, fusão com a base T48 e golden re-derivado — 2026-10-17
 
 Branch local `claude/busy-ritchie-3fkvk2-t38` (cabeça do PR #82 `2bc623c` + candidata #80 `813f163` + correcção de teste #89 `b449007`; publicada só até `65145c9`), agora fundida com a base T48 `5a169ba`
