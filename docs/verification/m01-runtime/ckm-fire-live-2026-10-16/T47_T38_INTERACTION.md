@@ -40,7 +40,7 @@ O piloto de apoio (`coverControls`) dispara sempre que a arma está pronta e nun
 
 | opção (simulação) | cover-threat | east-front | ckm-live-fire (contagem 270) | invariantes 24 rotas | equilíbrio |
 |---|---|---|---|---|---|
-| `bc4523f` | FALHA (cadência) | 8 FALHAS | ok | 23/24 | mau (5,7 s; 22 %) |
+| `bc4523f` | FALHA (cadência) | 8 FALHAS | ok | 23/24 | mau (5,7 s; MG dos portões 16 % na «ignore» desta semente) |
 | **V0** = mira e linha de vista no homem de pé que disparou | ok 10/10 | ok 30/30 | ok | 23/24 (3/apoio) | fraco (17,2 s; 7/24 > 20 %) |
 | V1 = V0 + cadência contada na chegada | ok | ok 30/30 | **FALHA 271 ≠ 270** | 23/24 | como V0 |
 | V3 = V1 + `CKM_SUPPRESS_SEC` 1,5 s | ok 10/10 | **FALHA semente 2** (29/30) | **FALHA 271 ≠ 270** | 23/24 | bom (38,7 s; 0/24 > 20 %) |
