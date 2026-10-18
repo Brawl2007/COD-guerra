@@ -70,6 +70,10 @@ export class TczewWorld {
     return this.terrainHeightAt(x,z);
   }
   terrainHeightAt(x,z){
+    // The slip: a way out of the river on the west bank, in the low ground between the two bridges (the rail abutment ends at z 9.5, the road abutment starts at z 29.5).
+    // Without it the bank is a 7 m step the body cannot climb and a man who falls in is stuck on the bed. It is aligned with the 5 m lattice the ground mesh is sampled on
+    // (x 25..40, z 15..25), so the drawn ground is the ramp exactly (the height is affine in x over every cell) and not a guess between samples. 7 m over 15 m, about 25 degrees.
+    if(x>25&&x<40&&z>=15&&z<=25)return -3-7*(x-25)/15;
     if(x>25&&x<265)return -10;
     if(x>=265)return x>=1055?-1:x>1035?-5+(x-1035)/5:-5;
     let height=-3;
