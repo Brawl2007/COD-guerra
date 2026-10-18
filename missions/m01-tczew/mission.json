@@ -346,13 +346,13 @@
         "rushSpeed": 5.2,
         "coverSec": [2.2, 5.5],
         "holdSec": [20, 38],
-        "pinnedWaitMaxSec": 6,
-        "breakPinnedSec": 18,
+        "pinnedWaitMaxSec": 4,
+        "breakPinnedSec": 30,
         "breakOut": 3,
         "maxSec": 165,
         "fire": { "assaultPauseSec": 7, "overwatchPauseSec": 10, "platoonRangeM": 520, "riseBeforeSec": 0.9, "holdAfterSec": 1.8 },
         "classification": "GAMEPLAY_DRAMATIZATION",
-        "note": "Fatia 2 do combate (playtest P1: combate a ~1 km). Destacamento de cobertura das 06:05: os quatro de overwatch correm até ao vão 8 (x 926-937, dentro do raio da demolição leste, bz_east 800 +- 140 m: são os quatro que a demolição derruba, GERMAN_FELLED) e disparam dali; os seis de assalto perseguem o pelotão a correr até x 830 (pursuitToX) e depois avançam por lanços de rushStations estações (rushSpeed m/s) entre os montantes da treliça, cada um na sua faixa lanes[k] = [z, desvio em x], até ao seu limite limits[k] (x 458-578, nunca a oeste de safeX). Disparam só parados (espreitar 1-3 tiros, IA da fatia 1, tiros reais sobre o pelotão e o jogador). Cada um recua (fallback, a correr até ao seu lugar a leste de clearX) quando o seu lugar se esgota (holdSec) ou quando a supressão que sofreu em cobertura passa breakPinnedSec; o grupo inteiro recua quando breakOut dos seis estão fora de combate (caídos ou já a recuar) ou maxSec reais depois da entrada. A demolição leste espera (gate de 06:10, o relógio fica em 06:09:30) até nenhum homem vivo do assalto estar a oeste de clearX: os vãos 06-07 (x 663-877) caem e ninguém fica do lado polaco. Plausível para Tczew em 1/9/1939 (elementos de assalto alemães entraram na ponte antes das demolições), mas não documentado homem a homem. safeX é o número que o proprietário pode mover."
+        "note": "Fatia 2 do combate (playtest P1: combate a ~1 km). Destacamento de cobertura das 06:05: os quatro de overwatch correm até ao vão 8 (x 926-937, dentro do raio da demolição leste, bz_east 800 +- 140 m: são os quatro que a demolição derruba, GERMAN_FELLED) e disparam dali; os seis de assalto perseguem o pelotão a correr até x 830 (pursuitToX) e depois avançam por lanços de rushStations estações (rushSpeed m/s) entre os montantes da treliça, cada um na sua faixa lanes[k] = [z, desvio em x], até ao seu limite limits[k] (x 458-578, nunca a oeste de safeX). Disparam só parados (espreitar 1-3 tiros, IA da fatia 1, tiros reais sobre o pelotão e o jogador). Cada um recua (fallback, a correr até ao seu lugar a leste de clearX) quando o seu lugar se esgota (holdSec) ou quando a supressão que sofreu em cobertura passa breakPinnedSec; o grupo inteiro recua quando breakOut dos seis caem ou maxSec reais depois da entrada (a supressão atrasa e por fim faz recuar um homem, não desfaz o grupo). A demolição leste espera (gate de 06:10, o relógio fica em 06:09:30) até nenhum homem vivo do assalto estar a oeste de clearX: os vãos 06-07 (x 663-877) caem e ninguém fica do lado polaco. Plausível para Tczew em 1/9/1939 (elementos de assalto alemães entraram na ponte antes das demolições), mas não documentado homem a homem. safeX é o número que o proprietário pode mover."
       }
     },
     { "id": "grp_de_stukas", "faction": "DE", "vehicles": ["ju87b"], "count": 3, "sector": "s5_sky_east" },

@@ -16,6 +16,8 @@
 //   closeness    (combat slice 2, 2026-10-18) the nearest living German to the player, sampled every 0.5 s: its distribution and the share of time under 600 / 300 / 150 m, over
 //                the whole mission, the battle window (train 963 to the east demolition) and the deck window (evt_m01_germans_on_east_spans to the east demolition, the deck assault);
 //                the player's damage (100 minus the lowest health, player-hit events) and the Germans the player killed (enemy_down_by_player events).
+//   nearImpacts  enemy rounds landing within 60 m of the player and rounds cracking past him (round-impact), per stretch: to hold_access (the damage-decals route window),
+//                hold_access to the deck, the deck window, after the east demolition.
 // Routes: seed:mode with mode 0 = the golden control route (never fires), 1 = the golden support pilot, 2 = FORWARD (this file only, not a golden pilot): the control route until
 // the Germans enter the deck, then a player who walks up the road deck to x 255 (short of the 270 m warning) and shoots at the deck Germans within 400 m, aimed at the chest, until the east
 // demolition, then the same way out as the route. It shows what the deck assault gives a player who advances; the golden pilots stand at x 29-37.
@@ -79,6 +81,7 @@ async function measure({seed,support,forward}){
   class Probe extends Base{
     burst(a,target,kind,opts){const ok=super.burst(a,target,kind,opts);if(ok){push(a.id,this.clock);rounds[kind]=(rounds[kind]??0)+(opts?.rounds??1);}return ok;}
   }
+  const nearImpacts=Object.fromEntries(['toHoldAccess','toDeck','deck','after'].map(k=>[k,{within60m:0,cracks:0}]));
   const seenAttrition=new Set(),close={mission:[],battle:[],deck:[]},player={minHealth:100,hits:0},kills=[],battleAt=[];
   (forward?forwardRoute:route)(seed,{support,Simulation:Probe,onStep:({sim,events})=>{
     tick++;last=sim;
@@ -87,6 +90,8 @@ async function measure({seed,support,forward}){
       if(e.type==='ally-fire'&&e.by==='ckm_gunner')push('ckm_gunner',e.at);
       if(e.type==='round-impact'&&window&&!window.end&&(e.crack||e.distance<=25))contacts.push(sim.clock);
       if(e.type==='player-hit')player.hits++;
+      if(e.type==='round-impact'){const w=!sim.active('hold_access')&&!sim.consumedEvent('evt_m01_order_demolish')?'toHoldAccess':!sim.consumedEvent('evt_m01_germans_on_east_spans')?'toDeck':!sim.consumedEvent('evt_m01_east_demolition')?'deck':'after';
+        const n=nearImpacts[w];if(e.distance<=60)n.within60m++;if(e.crack)n.cracks++;}
       if(e.type==='enemy_down_by_player')kills.push({id:e.id,distanceM:round(e.distance,0),weapon:e.weapon});
     }
     for(const r of sim.enemyFire.rounds)if(r.kind==='attrition'&&!seenAttrition.has(r.id)){seenAttrition.add(r.id);push(r.by,r.firedAt);rounds.attrition=(rounds.attrition??0)+1;}
@@ -126,7 +131,7 @@ async function measure({seed,support,forward}){
   const share=(xs,m)=>xs.length?round(xs.filter(x=>x<m).length/xs.length,3):null;
   const closeness=Object.fromEntries(Object.entries(close).map(([k,xs])=>[k,{realSec:round(xs.length*.5,1),nearestGermanM:{min:round(quant(xs,0),0),p10:round(quant(xs,.1),0),p50:round(quant(xs,.5),0)},
     shareUnder600m:share(xs,600),shareUnder300m:share(xs,300),shareUnder150m:share(xs,150)}]));
-  return {seed,support,forward,realSec:round(last.clock,1),closeness,player:{damageTaken:100-player.minHealth,finalHealth:last.player.health,hitEvents:player.hits},killsByPlayer:kills,cadence:cadenceOut,shots:{gameplayRoundsByKind:Object.fromEntries(Object.entries(rounds).sort()),aimedRounds:aimed,scriptedOrAreaRounds:scripted,
+  return {seed,support,forward,realSec:round(last.clock,1),closeness,nearImpacts,player:{damageTaken:100-player.minHealth,finalHealth:last.player.health,hitEvents:player.hits},killsByPlayer:kills,cadence:cadenceOut,shots:{gameplayRoundsByKind:Object.fromEntries(Object.entries(rounds).sort()),aimedRounds:aimed,scriptedOrAreaRounds:scripted,
       displayRounds:display.rounds,displayBursts:display.bursts,aimedShareOfAllRounds:round(aimed/(aimed+scripted+display.rounds),3)},
     phases,contact:{windowRealSec:window?round((window.end??last.clock)-window.start,1):null,contactMoments:contacts.length,longestGapRealSec:round(Math.max(0,...gaps),1),
       longestGapStartsAt:{realSec:longestAt,battleClock:bcAt},

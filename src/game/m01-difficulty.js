@@ -21,7 +21,11 @@ export const M01_DIFFICULTY=deepFreeze({
     burstWoundCap:null,                         // max wounds per single MG burst; null = no cap
     aimErrorScale:1,                            // x bias and cone, kinds `player`/`cover` only
     cooldownScale:1,                            // x fire cooldown at the west bank
-    rifleGateEastThreshold:.50,                 // r()< : east-only rifle gate shooters
+    // DEAD for D2 as written (2026-10-18 review): since combat AI slice 1 the gate riflemen pick by weights (aiTarget: east 1, repair 0.8, player 0.6 + 1.6 when he is the
+    // threat), not by this draw; D2 must re-express it as a weight on 'east' or drop it.
+    rifleGateEastThreshold:.50,                 // r()< : east-only rifle gate shooters (old eastFire draw; only a German without actor.ai still uses .5 literally)
+    // DEAD for D2 as written (2026-10-18): the deck assault (combat slice 2) picks by weights (deckTarget: platoon 2.3, player 1 + 1.6 threat); only a spans man without the
+    // deck record (an older save) still uses the old 0.25 literal of spansFire. D2 must re-express it as the player weight of deckTarget.
     spansPickPlayerThreshold:.25,               // r()< : spans riflemen pick the player
     deEast0Repair:{share:0,withinSappersM:8},   // share of de_east_0 fire on a visible player within 8 m of the sappers during the repair
     coverAdjustSalvoSec:42,                     // seconds in one cover before the adjusted-fire salvo

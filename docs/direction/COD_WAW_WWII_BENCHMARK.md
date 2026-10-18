@@ -39,8 +39,11 @@ também fica **NÃO VERIFICADO** até um playtest. Estados: FEITO / PARCIAL / AB
   cv dique 0,35 / 0,35 → 0,93 / 0,88; portões 0,71 / 0,71 → 1,55 / 0,88; MG34 0,59 → 0,98 (semente 7: o piloto suprime-a); parte apontada 26,4 / 13,0 % → 30,0 / 14,0 %;
   alemão mais próximo inalterado (≥ 963 m); maior intervalo sem contacto 135,9 / 105,1 s → 76,7 / 105,1 s.
   **Contra:** momentos de contacto (ronda a ≤ 25 m do jogador ou a estalar junto dele, do trem 963 à demolição leste) 156 / 62 → 123 / 40, e na rota com apoio até `hold_access`
-  as rondas que aterram descem 95 → 71 (`tests/m01-damage-decals.test.js`): menos perigo perto do jogador (causa não isolada: alvos, rajadas ou reparo mais curto). A vida do jogador no fim da
-  rota 19390901 desce 92 → 76 (a ameaça faz dele o alvo preferido). Afinar com o director de intensidade.
+  as rondas que aterram descem 95 → 71 (`tests/m01-damage-decals.test.js`): menos perigo perto do jogador. Causas (corrigido em 2026-10-18 depois da revisão crítica): os atiradores dos
+  portões disparam cerca de 20 % mais devagar sobre um jogador à vista, porque os 16,5 s por tiro planos da IA substituíram os ≈ 13,5 s antigos, e o reparo fica 18 s mais curto, com 10 → 3
+  imobilizações; rondas a ≤ 60 m do jogador 50 → 25, estalos junto dele 55 → 34 (`nearImpacts.toHoldAccess` de `m01-combat-ai-metrics.mjs`, `5d99df8` contra `9cd2aca`). A vida do jogador no
+  fim da rota 19390901 desce 92 → 76, mas **não** por ameaça: o piloto de controlo nunca dispara, por isso `threat` nunca é verdadeira; 2 das 3 feridas caem no `hold_corridor`, dos mesmos
+  impactos com sorteios de RNG diferentes. Mínimo nas 24 rotas: 76 nas duas árvores; a morte exige 13 feridas. Afinar com o director de intensidade.
 
 ## Ritmo e objetivos
 

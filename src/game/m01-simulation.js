@@ -125,6 +125,8 @@ const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-2
 // Trabalho dos sapadores sem supressão, em segundos de jogo. Com 75 s, a caixa entregue por volta das 04:42 deixava
 // dois terços do reparo feitos antes do trem 963 (04:45) e nenhum fogo o podia interromper; com 150 s ele decorre sob fogo.
 const REPAIR_WORK_SEC=150;
+// Seconds a near miss keeps the working sappers down: a rifle round, and a round of an MG34 burst (the beaten zone of a machine gun pins a team longer than one shot).
+const REPAIR_PIN_SEC=3.5,REPAIR_PIN_MG_SEC=5;
 // Posições alemãs (grp_de_east.firePositions): as duas MG34 e 12 atiradores na faixa dos portões de Lisewo, entre as pontes, que é o
 // que a cabeça de ponte oeste vê da margem leste por cima da água; os restantes no dique, atrás das treliças.
 const FIRE_POSITIONS=definition.groups.find(g=>g.id==='grp_de_east').firePositions;
@@ -250,6 +252,8 @@ const GERMAN_SILENCE_FROM=seconds('06:10:00'),GERMAN_SILENCE_UNTIL=seconds('06:1
 const REGROUP_AHEAD=17,REGROUP_EAST_END=1080,REGROUP_Z=40.2,GERMAN_FELLED=4,GERMAN_CARRIED=2;
 // Combat slice 2: the spare clips of the section at its deck post (see updateObjectives). Gameplay tuning, not a documented load.
 const DECK_AMMO_POOL=30,DECK_AMMO_LOW=15,DECK_AMMO_SEC=3;
+// Combat slice 2: how far along the player's ray, from where his round lands or ends, a man of the deck assault is still pinned by its near miss (see fire()).
+const DECK_SUPPRESS_ALONG_M=25;
 const REGROUP_SLOTS=[[0,0],[-1.8,1.1],[-1.8,-1.1],[1.8,1.1],[1.8,-1.1],[0,2.2]];   // metres east/south of the knot centre, westmost survivor first
 
 export class M01Simulation {
@@ -1074,7 +1078,7 @@ export class M01Simulation {
     if(open)ai.peek=mg?aiCount(ai,[.35,.45,.2]):aiCount(ai,[.4,.4,.2]);
     ai.target=pick.id;
     const k=this.clock<ai.shakenUntil?AI_SHAKEN_BIAS:1,rounds=mg?this.aiBurstRounds(ai,pick.kind):1;
-    const fired=this.burst(a,pick.target,pick.kind,mg?{rounds,bias:[1.2*k,.8*k],cone:[.7,.5],tracer:pick.kind!=='east'}:{rounds:1,bias:[2.5*k,1.6*k],cone:[0,0]});
+    const fired=this.burst(a,pick.target,pick.roundKind??pick.kind,mg?{rounds,bias:[1.2*k,.8*k],cone:[.7,.5],tracer:pick.kind!=='east'}:{rounds:1,bias:[2.5*k,1.6*k],cone:[0,0]});
     ai.peek=Math.max(0,ai.peek-1);
     if(ai.peek>0&&(mg||a.rounds>0))a.cooldown=mg?rounds*MG34_INTERVAL+.45+.9*u():AI_BOLT[0]+AI_BOLT[1]*u();
     else{
@@ -1109,9 +1113,12 @@ export class M01Simulation {
     }else if(mg){
       if(a.id==='de_east_0'&&this.active('cover_repair')){const t=sapper();return {id:t.id??'repair_site_2',target:t,kind:'repair'};}
       const kowal=this.actor('szymon_kowal');
-      if(seesPlayer()){ai.seen={x:p.x,y:p.y,z:p.z,at:this.clock};add('player',p,'player',1);}
-      else if(kowal.alive&&kowal.active&&sees(kowal)){ai.seen={x:kowal.x,y:kowal.y,z:kowal.z,at:this.clock};add(kowal.id,kowal,'squad',1);}
-      else{const t=ai.seen&&this.clock-ai.seen.at<60?ai.seen:this.world.point('forward_post');add('area',{x:t.x,y:t.y,z:t.z},'area',1);}
+      // 2026-10-18 review fix: the sighting remembers WHO was seen (`who`), so searching fire on the player's last-seen spot leaves as fire at the player (round kind
+      // 'player': the per-target player settings of H9 D2 apply to it) while its burst length, its callouts and its choice stay those of searching fire.
+      if(seesPlayer()){ai.seen={x:p.x,y:p.y,z:p.z,at:this.clock,who:'player'};add('player',p,'player',1);}
+      else if(kowal.alive&&kowal.active&&sees(kowal)){ai.seen={x:kowal.x,y:kowal.y,z:kowal.z,at:this.clock,who:kowal.id};add(kowal.id,kowal,'squad',1);}
+      else{const recent=ai.seen&&this.clock-ai.seen.at<60,t=recent?ai.seen:this.world.point('forward_post');add('area',{x:t.x,y:t.y,z:t.z},'area',1);
+        if(recent&&ai.seen.who==='player')c.at(-1).roundKind='player';}
     }else{
       // The T23 block where the held platoon kneels, three draws of the main stream as before (the T22 twin of tests/m01-east-front.test.js draws the same three).
       // ponytail: still aimed at a point of the block, not at a man, and still never lands (T23 data); the dike riflemen only get the new cadence.
@@ -1156,16 +1163,16 @@ export class M01Simulation {
    * One man of the deck assault, every tick until the east demolition. Overwatch: run to his post on span 08 and stay there (clear). Assault: run the pursuit leg (stations
    * east of pursuitToX) without stopping, then bound: a rush of rushStations stations at rushSpeed, a COVER at the girder for a drawn coverSec, longer while he is suppressed
    * (but at most pinnedWaitMaxSec longer), until his forward limit, where he HOLDS for a drawn holdSec. He FALLS BACK to his place east of clearX, at a run, when the hold is
-   * over or when the suppression he has taken in cover reaches breakPinnedSec, and with the whole squad when breakOut of the six are out of the fight (down or already falling
-   * back) or maxSec after the entry, whichever comes first;
+   * over or when the suppression he has taken in cover reaches breakPinnedSec, and with the whole squad when breakOut of the six are down or maxSec after the entry, whichever
+   * comes first;
    * then he is CLEAR. He shoots only standing still (deckFire). Movement is the ordinary moveActor (navigator, local avoidance, queue). Draws only from a.ai.rng.
    */
   stepDeck(a,dt){
     const P=DECK_ASSAULT,d=a.deck,now=this.clock,over=deckRole(a)==='overwatch',u=()=>aiNext(a.ai),suppressed=now<a.suppressedUntil;
     if(suppressed&&(d.phase==='cover'||d.phase==='hold'))d.pinned+=dt;
     const set=(phase,until=now)=>{d.phase=phase;d.since=now;d.until=until;};
-    // The squad breaks when breakOut of its six are out of the fight (down, or already falling back for their own reason): the rest go back with them.
-    const out=P.assault.filter(id=>{const m=this.actor(id);return !m.alive||!m.active||m.deck?.phase==='fallback'||m.deck?.phase==='clear';}).length;
+    // The squad breaks when breakOut of its six are down: the rest go back with them. Suppression alone slows a man (and in the end sends him back), it does not rout the squad.
+    const out=P.assault.filter(id=>{const m=this.actor(id);return !m.alive||!m.active;}).length;
     const pursuit=d.phase==='advance'&&deckGoal(a).x>P.pursuitToX;
     if(!over&&['advance','cover','hold'].includes(d.phase)){
       if(out>=P.breakOut||now-d.t0>=P.maxSec||!pursuit&&(d.pinned>=P.breakPinnedSec||d.phase==='hold'&&now>=d.until)){
@@ -1407,17 +1414,20 @@ export class M01Simulation {
       p.health=Math.max(0,p.health-8);p.alive=p.health>0;this.emit({type:'player-hit'});
     }
     // Aliados nunca são feridos por estes tiros (baixas só por ID): quem está a menos de 3 m da trajectória deita-se.
+    // 2026-10-18 review fix (seed 4: covering fire beat ignoring the MG by only 4.9 s): a burst of the MG34 among the working sappers keeps them down REPAIR_PIN_MG_SEC, a rifle
+    // round REPAIR_PIN_SEC as before, so silencing the gun is what pays (measured on 12 seeds in tests/m01-cover-combat.test.js).
+    const repairPin=r.weapon==='mg34'?REPAIR_PIN_MG_SEC:REPAIR_PIN_SEC;
     let pinned=false;const site=this.world.point('repair_site_2'),near=[];
     for(const a of this.allies){
       if(!a.alive||!a.active||a===victim||a.carriedBy||(Math.abs(a.x-point.x)>80&&Math.abs(a.x-r.ax)>80))continue;
       if(closestApproach(r,hit.t,{x:a.x,y:a.y+.9,z:a.z})>NEAR_MISS)continue;
       const working=a.role==='ENGINEER'&&this.active('cover_repair')&&dist(a,site)<6;
       const previousUntil=a.suppressedUntil;
-      a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+(working?3.5:a.group==='grp_east_platoon'?1:1.5));pinned||=working;near.push(a.id);
+      a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+(working?repairPin:a.group==='grp_east_platoon'?1:1.5));pinned||=working;near.push(a.id);
       recordSuppression(a,previousUntil,this.clock);
     }
     if(pinned){   // o trabalho pára e a equipa inteira abriga-se
-      this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,this.clock+3.5);this.timers.repairPins++;this.line('dlg_m01_022');
+      this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,this.clock+repairPin);this.timers.repairPins++;this.line('dlg_m01_022');
       for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&dist(a,site)<6){const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);if(!near.includes(a.id))near.push(a.id);recordSuppression(a,previousUntil,this.clock);}
     }
     const approach=closestApproach(r,hit.t,eyePosition(p)),crack=approach<=6,distance=dist(point,p);
@@ -1445,9 +1455,15 @@ export class M01Simulation {
       if(wasAlive&&!a.alive)this.enemyDown(a,'kb_wz29');}
     const targetPoint=hit?.point??{x:origin.x+dir.x*1200,y:origin.y+dir.y*1200,z:origin.z+dir.z*1200};
     let silenced=false;
+    const along=a=>Math.max(0,(a.x-origin.x)*dir.x+(a.y+1-origin.y)*dir.y+(a.z-origin.z)*dir.z),off=(a,d)=>Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d);
+    const passes=a=>{const d=along(a);return d>0&&d<1200&&off(a,d)<3&&(!hit||d<=hit.distance+3);};
+    // Combat slice 2: on the road deck the ray runs down a 5.6 m corridor and passed within 3 m of every man of the assault, so one rifle pinned all ten for good. A man of the
+    // deck assault is pinned only when the round cracks past the deck man it came closest to, or a man within DECK_SUPPRESS_ALONG_M of him along the ray (his neighbours).
+    const deck=!this.consumedEvent(E('east_demolition'))&&this.enemies.filter(a=>a.alive&&a.active&&a.deck&&passes(a)).sort((a,b)=>off(a,along(a))-off(b,along(b))||this.actors.indexOf(a)-this.actors.indexOf(b))[0];
     for(const a of this.enemies.filter(a=>a.alive&&a.active)){
-      const d=Math.max(0,(a.x-origin.x)*dir.x+(a.y+1-origin.y)*dir.y+(a.z-origin.z)*dir.z);
-      if(d>0&&d<1200&&Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d)<3&&(!hit||d<=hit.distance+3)){
+      const d=along(a);
+      if(a.deck&&!this.consumedEvent(E('east_demolition'))&&!(deck&&Math.abs(d-along(deck))<=DECK_SUPPRESS_ALONG_M))continue;
+      if(passes(a)){
         const previousUntil=a.suppressedUntil;
         silenced||=a.suppressedUntil<=this.clock&&(a.weapon==='mg34'||a.group==='grp_de_spans');a.suppressedUntil=this.clock+5;
         recordSuppression(a,previousUntil,this.clock);
@@ -1920,7 +1936,8 @@ export function validateM01Snapshot(s){
     if(!AI_ACTOR(a)||!ai||typeof ai!=='object'||Array.isArray(ai)||Object.keys(ai).length!==AI_KEYS.length||AI_KEYS.some(k=>!Object.hasOwn(ai,k))||
       !Number.isInteger(ai.rng)||!finite(ai.rng,0,0xffffffff)||!Number.isInteger(ai.peek)||!finite(ai.peek,0,3)||!finite(ai.shakenUntil,0,s.clock+20)||
       !finite(ai.pinnedUntil,0,s.clock+10)||!finite(ai.recover,0,3)||(ai.target!==null&&(typeof ai.target!=='string'||!/^[a-z0-9_]{1,40}$/.test(ai.target)))||
-      (seen!==null&&(!seen||typeof seen!=='object'||Object.keys(seen).length!==4||![seen.x,seen.y,seen.z,seen.at].every(Number.isFinite)||!finite(seen.at,0,s.clock))))reject('IA de combate '+a.id);
+      (seen!==null&&(!seen||typeof seen!=='object'||Object.keys(seen).length!==(seen.who===undefined?4:5)||(seen.who!==undefined&&!['player','szymon_kowal'].includes(seen.who))||
+        ![seen.x,seen.y,seen.z,seen.at].every(Number.isFinite)||!finite(seen.at,0,s.clock))))reject('IA de combate '+a.id);   // `who`: optional, absent in saves before the 2026-10-18 fix
   }
   // Combat slice 2, versioned rule (deck record v1, src/game/m01-deck-assault.js): a man of grp_de_spans who carries the deck record may stand west of x 690 down to
   // DECK_SAFE_X (450, mission data); every other German, and any man of the spans without the record (every save made before this rule), keeps x >= 690.
