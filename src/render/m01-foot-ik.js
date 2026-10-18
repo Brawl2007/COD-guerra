@@ -52,10 +52,11 @@ export const NON_GROUND_CLIPS = Object.freeze(new Set([
   'seated',
   'drag_wounded',
   'rkm_prone',
-  'rkm_prone_fire'
+  'rkm_prone_fire',
+  'seated_b'
 ]));
 /** Prefix families that are never ground clips: prone transitions, Bąk pickup/putdown, and the exact crew/station adapters. */
-const NON_GROUND_FAMILY = /^(prone_|carry_pickup_|carry_putdown_|mg34_|ckm_wz30_|station_drag_)/;
+const NON_GROUND_FAMILY = /^(prone_|death_|seated_|carry_pickup_|carry_putdown_|mg34_|ckm_wz30_|station_drag_)/;
 
 /** Clips that alternate stance and swing phases (used for the stride impact compression and the lean boost). */
 export const LOCOMOTION_CLIPS = Object.freeze(new Set([
