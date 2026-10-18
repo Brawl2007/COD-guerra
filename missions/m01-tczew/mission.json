@@ -344,9 +344,27 @@
         "targetRealMin": 3.0
       },
       { "id": "seg_bombing", "from": "04:34:00", "to": "04:45:00", "scale": 3.5, "targetRealMin": 3.1 },
-      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "readyScale": 27.0, "targetRealMin": 5.0, "readyScaleNote": "Partida contínua no navegador: com o reparo concluído (~04:49) restavam ~4,5 min reais sem tarefa até às 05:30. Com o gate pronto, o resto do segmento corre a 27× (~1,5 min). Horários dos eventos inalterados." },
-      { "id": "seg_hold", "from": "05:30:00", "to": "06:10:00", "scale": 8.0, "gate": "evt_m01_east_demolition", "targetRealMin": 5.0 },
-      { "id": "seg_climax", "from": "06:10:00", "to": "06:45:00", "scale": 8.5, "gate": "evt_m01_west_demolition", "targetRealMin": 4.1 },
+      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "readyScale": 27.0, "readyLabel": "Mais tarde…", "readyReason": "Reparo concluído. A secção espera a ordem do tenente.", "targetRealMin": 5.0, "readyScaleNote": "Partida contínua no navegador: com o reparo concluído (~04:49) restavam ~4,5 min reais sem tarefa até às 05:30. Com o gate pronto, o resto do segmento corre a 27× (~1,5 min). Horários dos eventos inalterados." },
+      {
+        "id": "seg_hold",
+        "from": "05:30:00",
+        "to": "06:10:00",
+        "scale": 8.0,
+        "gate": "evt_m01_east_demolition",
+        "targetRealMin": 5.0,
+        "compress": { "from": "05:34:00", "to": "05:59:00", "scale": 24.0, "when": "hold_in_position", "label": "Mais tarde…", "reason": "Em posição no tabuleiro. O pelotão leste aguenta a cabeça de ponte até à ordem de retirada." },
+        "compressNote": "Playtest do proprietário (P2): o jogador já em posição esperava ~3,5 min reais pelas 06:00. Só com o jogador no tabuleiro e o 2.º raide terminado, 05:34–05:59 corre a 24× (~1 min). Fora da posição volta a 8×. Horários históricos (05:40, 05:50, 06:00) inalterados."
+      },
+      {
+        "id": "seg_climax",
+        "from": "06:10:00",
+        "to": "06:45:00",
+        "scale": 8.5,
+        "gate": "evt_m01_west_demolition",
+        "targetRealMin": 4.1,
+        "compress": { "from": "06:12:00", "to": "06:44:00", "scale": 30.0, "when": "west_gate_ready", "label": "Mais tarde…", "reason": "Todos fora da ponte. Os sapadores preparam a carga oeste." },
+        "compressNote": "Playtest do proprietário (P2): com o corredor vazio e todos a oeste, o jogador esperava ~2–4 min no posto de disparo. Com o gate oeste pronto, o resto do segmento corre a 30×. A demolição continua às 06:45."
+      },
       {
         "id": "seg_aftermath",
         "from": "06:45:00",
@@ -432,7 +450,7 @@
     },
     {
       "id": "obj_m01_hold_access",
-      "text": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+      "text": "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem",
       "required": true,
       "activation": { "event": "evt_m01_order_demolish" },
       "completion": {
@@ -483,7 +501,7 @@
     },
     {
       "id": "obj_m01_hold_corridor",
-      "text": "Mantenha o corredor — conte os que passam",
+      "text": "Mantenha o corredor aberto até à demolição oeste — conte os que passam",
       "required": true,
       "activation": { "objective": "obj_m01_leave_bridge" },
       "completion": { "event": "evt_m01_west_demolition" },
@@ -1969,12 +1987,20 @@
       { "id": "db_07", "enabled": true, "text": "Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios." }
     ]
   },
+  "pacing": {
+    "note": "Playtest do proprietário (P2). Texto do painel enquanto nenhum objectivo obrigatório está activo; cada pista de continuidade só fala com o seu objectivo activo e com pelo menos 20 s reais entre mensagens (relógio comprimido não inunda a legenda).",
+    "interludes": [
+      { "after": "obj_m01_deliver_message", "until": "evt_m01_bombing_0434", "text": "Mensagem entregue. Fique com o posto — aviões a norte" },
+      { "after": "obj_m01_cover_repair", "until": "evt_m01_order_demolish", "text": "Reparo concluído. Aguarde a ordem com a secção" }
+    ]
+  },
   "continuityCues": [
     {
       "from": "04:46:00",
       "until": "05:30:00",
       "intervalSec": 55,
       "kind": "repair",
+      "requires": "obj_m01_cover_repair",
       "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
     },
     {
@@ -1982,6 +2008,7 @@
       "until": "06:00:00",
       "intervalSec": 55,
       "kind": "hold",
+      "requires": "obj_m01_hold_access",
       "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
     },
     {
@@ -1989,6 +2016,7 @@
       "until": "06:10:00",
       "intervalSec": 45,
       "kind": "withdrawal",
+      "requires": "obj_m01_cover_withdrawal",
       "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens."
     },
     {
@@ -1996,6 +2024,7 @@
       "until": "06:45:00",
       "intervalSec": 55,
       "kind": "corridor",
+      "requires": "obj_m01_hold_corridor",
       "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
     }
   ],

@@ -90,6 +90,17 @@ export function splitObjective(text,optionalText){
   const suffix=optionalText?` · ${optionalText}`:'';
   return suffix&&text.endsWith(suffix)&&text.length>suffix.length?{main:text.slice(0,-suffix.length),optional:optionalText}:{main:text,optional:''};
 }
+/** Vertical field of view of the M01 camera (src/render/m01-view.js PerspectiveCamera(70, …)). */
+export const M01_VFOV_DEG=70;
+/**
+ * Horizontal place of the objective marker for a bearing relative to the view (radians, + = right), on a screen of `aspect`.
+ * On screen: perspective-correct x in 0..1. Off screen: pinned to the nearer edge with the side, so the player knows which way to turn.
+ */
+export function markerScreen(bearing,aspect=16/9,vfovDeg=M01_VFOV_DEG){
+  const half=Math.atan(Math.tan(vfovDeg*Math.PI/360)*aspect),edge=.05;
+  if(Math.abs(bearing)<half)return {x:clamp(.5+.5*Math.tan(bearing)/Math.tan(half),edge,1-edge),side:null};
+  return {x:bearing>0?1-edge:edge,side:bearing>0?'right':'left'};
+}
 /** Intensidade do aviso de vida baixa (0 a partir de 45 de saúde). */
 export const lowHealthLevel=health=>clamp((45-health)/45);
 
@@ -97,12 +108,22 @@ export class M01HudPresenter {
   constructor(el,{document:doc=globalThis.document}={}){
     this.el=el;this.doc=doc;this.cache=new Map();this.queue=[];this.reset('new',0);
     if(!el.sceneCue&&el.root?.appendChild&&doc?.createElement){el.sceneCue=this.node('div','scene-look-prompt','');el.root.appendChild(el.sceneCue);}
+    // P2: world marker of the current objective and the "Mais tarde…" card of a compressed clock (created here, like the scene cue: no index.html change).
+    if(!el.objectiveMarker&&el.root?.appendChild&&doc?.createElement){
+      el.objectiveMarker=this.node('div','objective-marker','');el.objectiveMarker.setAttribute?.('aria-hidden','true');
+      el.markerLabel=this.node('span','marker-label','');el.markerDistance=this.node('span','marker-distance','');
+      el.objectiveMarker.append?.(this.node('i','marker-pip',''),el.markerLabel,el.markerDistance);el.root.appendChild(el.objectiveMarker);
+    }
+    if(!el.tempoCard&&el.root?.appendChild&&doc?.createElement){
+      el.tempoCard=this.node('div','tempo-card','');el.tempoLabel=this.node('strong','','');el.tempoReason=this.node('small','','');
+      el.tempoCard.append?.(el.tempoLabel,el.tempoReason);el.root.appendChild(el.tempoCard);
+    }
   }
   /** kind: new (missão nova), continue (save carregado), restore (checkpoint reposto). */
   reset(kind='new',clock=0){
     this.clearSceneCues();
     this.kind=kind;this.baseline=kind==='new'?null:undefined;this.queue=[];this.banner=null;this.checkpointAt=-Infinity;this.checkpointName='';
-    this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
+    this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.tempoSince=null;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
     this.announceCurrent=kind!=='new';this.resumeLines=null;
     this.hitAt=-Infinity;this.opacity('hitMarker',0);
   }
@@ -120,7 +141,8 @@ export class M01HudPresenter {
     this.clearSceneCues();
     const e=this.el;this.cache.clear();
     e.root?.classList.remove('cinematic','m01');
-    for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName'])if(e[k])e[k].textContent='';
+    for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName','markerLabel','markerDistance','tempoLabel','tempoReason'])if(e[k])e[k].textContent='';
+    for(const k of ['objectiveMarker','tempoCard'])e[k]?.style?.removeProperty('opacity');e.root?.classList.remove('tempo-compressed');
     e.ammo?.classList.remove('low','empty');e.objectivePanel?.classList.remove('fresh');e.interaction?.classList.remove('show');e.subtitle?.classList.remove('show');
     for(const k of ['fade','lowHealth','titleCard','objectiveUpdate','resumeCard','checkpoint','hitMarker'])e[k]?.style.removeProperty('opacity');
     e.rounds?.classList.add('hidden');e.status?.classList.remove('health-full','health-low');
@@ -146,6 +168,8 @@ export class M01HudPresenter {
     // Estado da ameaça: o texto é exactamente o da simulação.
     this.text('objectiveStatus',sim.mission.status??'');
     this.text('clock',clockText(sim.battleClock));
+    this.updateMarker(sim.objectiveMarker??null,cine.locked||beats.letterbox);
+    this.updateTempo(sim.tempo??null,clock,cine.locked);
     this.updateInteraction(sim.interaction??'');
     this.updateSubtitle(sim.subtitle);
     this.opacity('subtitle',beats.subtitlePause?0:1);
@@ -218,6 +242,23 @@ export class M01HudPresenter {
     if(!active)this.resumeLines=null;
     this.updateCard('resumeCard',data,'show');
   }
+  updateMarker(marker,hidden){
+    const node=this.el.objectiveMarker;if(!node)return;
+    if(!marker||hidden){this.opacity('objectiveMarker',0);return;}
+    const root=this.el.root,aspect=root?.clientWidth&&root?.clientHeight?root.clientWidth/root.clientHeight:16/9,place=markerScreen(marker.bearing,aspect);
+    this.set('marker:x',place.x.toFixed(4),v=>node.style?.setProperty('--marker-x',v));
+    this.set('marker:side',place.side??'',v=>{if(node.dataset)node.dataset.side=v;});
+    this.text('markerLabel',marker.label);this.text('markerDistance',`${Math.round(marker.distance)} m`);
+    this.opacity('objectiveMarker',1);
+  }
+  updateTempo(tempo,clock,locked){
+    const on=Boolean(tempo?.compressed)&&!locked;
+    if(on&&this.tempoSince===null)this.tempoSince=clock;if(!on)this.tempoSince=null;
+    this.toggle('root','tempo-compressed',on);
+    this.text('tempoLabel',on?tempo.label:'');this.text('tempoReason',on?tempo.reason:'');
+    // Card for the first seconds of each compression; the clock keeps its accelerated look (CSS) for the whole stretch.
+    const t=on?clock-this.tempoSince:0;this.opacity('tempoCard',on?Math.min(ramp(t,0,.6),1-ramp(t,5,6.5)):0);
+  }
   updateInteraction(text){
     this.set('interaction',text,()=>{
       const node=this.el.interaction;if(!node)return;const {key,action}=splitInteraction(text);
@@ -259,6 +300,8 @@ export class M01HudPresenter {
     return {banner:this.banner?{kind:this.banner.kind,id:this.banner.id}:null,queued:this.queue.map(c=>`${c.kind}:${c.id}`),
       fade:Number(this.cache.get('opacity:fade')??0),checkpoint:Number(this.cache.get('opacity:checkpoint')??0),
       titleCard:this.cache.get('titleCard:lines')||null,resumeCard:this.cache.get('resumeCard:lines')||null,
-      cinematic:Boolean(this.cache.get('class:root:cinematic')),sceneBeats:this.beatFrame??null};
+      cinematic:Boolean(this.cache.get('class:root:cinematic')),sceneBeats:this.beatFrame??null,
+      marker:Number(this.cache.get('opacity:objectiveMarker')??0)>0?{label:this.cache.get('text:markerLabel'),x:Number(this.cache.get('marker:x')),side:this.cache.get('marker:side')||null}:null,
+      tempo:Boolean(this.cache.get('class:root:tempo-compressed'))};
   }
 }

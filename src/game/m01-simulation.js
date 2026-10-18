@@ -13,6 +13,7 @@ import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, rec
   recordDamage, validatePresentation, presentationDiagnostics,updateActorDetails } from './m01-animation-presentation.js';
 import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADER_IDS,YARD_TASKS} from './m01-yard-life.js';
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
+import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -317,6 +318,8 @@ export class M01Simulation {
       if(this.battleClock<from||this.battleClock>=until)continue;
       const slot=Math.floor((this.battleClock-from)/cue.intervalSec),token=`continuity:${cue.kind}:${slot}`;
       if(this.dialogueConsumed.includes(token))continue;this.dialogueConsumed.push(token);
+      // P2: a slot that falls outside its objective or too soon after the last cue is spent silently (a compressed clock crosses slots in seconds).
+      if(!continuityAllowed(this,cue))continue;this.timers.continuityAt=this.clock;
       const progress=this.objectives[O('cover_repair')].progress;
       const text=cue.kind==='repair'&&this.active('cover_repair')?`${cue.text} Reparo: ${Math.floor(progress)}%.`:
         cue.kind==='withdrawal'?`${cue.text} ${this.flags['m01.east_platoon_survivors']} homens no pelotão.`:cue.text;
@@ -324,10 +327,11 @@ export class M01Simulation {
     }
     // Finite delivery milestones remain legible in real time while the existing west gate holds battleClock.
     const bak=this.actor('jozef_bak');
-    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)){
-      const remaining=dist(bak,EVACUATION),metres=[360,300,240,180,120,60,30,10].findLast(limit=>remaining<=limit),token=`continuity:bak_delivery_hold:${metres}`;
+    // P2: the charge now waits only until Bąk is out of the zone (WEST_SAFE_X), so the milestones count the metres to it, not to the station.
+    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)&&bak.x>=WEST_SAFE_X){
+      const remaining=bak.x-WEST_SAFE_X,metres=[360,300,240,180,120,60,30,10].findLast(limit=>remaining<=limit),token=`continuity:bak_delivery_hold:${metres}`;
       if(metres!==undefined&&!this.dialogueConsumed.includes(token)){
-        this.dialogueConsumed.push(token);this.emit({type:'message',message:`Dudek leva Bąk para a estação. Corredor livre; faltam cerca de ${Math.ceil(remaining)} metros.`,continuity:{kind:'bak_delivery_hold',slot:metres,battleClock:this.battleClock}});
+        this.dialogueConsumed.push(token);this.emit({type:'message',message:`Dudek leva Bąk para oeste. A carga espera por eles; faltam cerca de ${Math.ceil(remaining)} metros até sair da zona.`,continuity:{kind:'bak_delivery_hold',slot:metres,battleClock:this.battleClock}});
       }
     }
     if(this.consumedEvent(E('panzerzug_arrives'))&&this.inView({x:1119,y:0,z:2.5}))this.line('dlg_m01_038');
@@ -350,7 +354,9 @@ export class M01Simulation {
   readiness(id){
     if(id===E('repair_complete'))return this.objectives[O('cover_repair')].progress>=100;
     if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.active&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660;
-    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<-90&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<-90)&&!bak.carry&&!bak.carriedBy;}
+    // P2: Bąk (active, so in the ally list, on Dudek's shoulder or lying) must be west of the zone like everyone else; the charge no longer waits
+    // for the 240 m walk on to the station, which Dudek finishes after the blast (completeEvacuation covers the 07:05 roll call). The player must put him down first.
+    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<WEST_SAFE_X)&&bak.carriedBy!==this.player.id;}
     if(id===E('dudek_retrieves_bak'))return this.player.carrying!=='jozef_bak';
     if(id===E('roll_call'))return this.scene?.id!=='cs_m01_west_blast';
     return true;
@@ -359,11 +365,14 @@ export class M01Simulation {
     const segment=definition.clock.segments.find(s=>this.battleClock>=seconds(s.from)&&this.battleClock<seconds(s.to));
     if(!segment)return;
     // readyScale: com o gate já pronto (ex.: reparo concluído), encurta a espera sem tarefa até à hora seguinte.
-    let scale=segment.gate&&segment.readyScale&&this.readiness(segment.gate)?segment.readyScale:segment.scale,next=this.battleClock+dt*scale;
+    let scale=segment.gate&&segment.readyScale&&this.readiness(segment.gate)?segment.readyScale:segment.scale;
+    // P2 (compress): the player has done what this stretch needs; the clock runs faster up to compress.to, never past it. Event times are unchanged.
+    const compress=activeCompression(this,segment);if(compress)scale=Math.max(scale,compress.scale);
+    let next=this.battleClock+dt*scale;if(compress)next=Math.min(next,seconds(compress.to));
     if(segment.gate&&!this.readiness(segment.gate)){
       const at=seconds(segment.to);
       if(at-this.battleClock<=60)scale=1;
-      next=Math.min(this.battleClock+dt*scale,at-30);
+      next=Math.min(this.battleClock+dt*scale,at-30);if(compress)next=Math.min(next,seconds(compress.to));
       if(this.battleClock>=at-30){
         if(this.gate?.id!==segment.gate)this.gate={id:segment.gate,started:this.clock,hold:0};
         this.gate.hold=this.clock-this.gate.started;
@@ -441,7 +450,7 @@ export class M01Simulation {
       case E('west_demolition'):if(this.done('leave_bridge'))this.finish('hold_corridor');this.activate('reach_shelter');this.destruction.push('west_end_destroyed');this.mission.phase='AFTERMATH';
         this.startScene('cs_m01_west_blast');this.impact('west_demolition',{x:70,y:0,z:20},false);break;
       case E('kozliny_attack_distant'):this.emit({type:'distant-shot',point:{x:-500,y:0,z:-1300}});break;
-      case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.stageRollCall();break;
+      case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.completeEvacuation();this.stageRollCall();break;
       case E('debrief'):this.flags['m01.completed']=true;this.mission.complete=true;this.checkpoint=this.snapshot(false);this.emit({type:'complete'});break;
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
@@ -514,9 +523,10 @@ export class M01Simulation {
     }
     if(this.active('rescue_bak')&&interact){
       const bak=this.actor('jozef_bak');
-      if(!p.carrying&&dist(p,bak)<3){p.carrying='jozef_bak';bak.active=false;bak.carriedBy=p.id;bak.carry={phase:'pickup',startedAt:this.clock,duration:1.6};this.message('Bąk está consigo. Leve-o ao socorrista.');}
+      if(!p.carrying&&dist(p,bak)<3){p.carrying='jozef_bak';bak.active=false;bak.carriedBy=p.id;bak.carry={phase:'pickup',startedAt:this.clock,duration:1.6};
+        const aid=this.world.point('aid_position');this.message(`Bąk está consigo. Leve-o ao socorrista Dudek: ${Math.round(dist(p,aid))} m, ${this.directionTo(aid)}.`);}
       else if(p.carrying==='jozef_bak'&&dist(p,this.world.point('aid_position'))<4){p.carrying=null;this.finish('rescue_bak');
-        this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';this.message('Bąk entregue ao socorrista.');
+        this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';this.message('Bąk entregue. Dudek trata dele — volte à secção.');
         const aid=this.world.point('aid_position');Object.assign(bak,{active:true,state:'WOUNDED',target:null,x:aid.x-1.2,z:aid.z+.6});bak.y=this.world.heightAt(bak.x,bak.z);
         bak.carriedBy=p.id;bak.carry={phase:'putdown',startedAt:this.clock,duration:1.6};
         // Entregue depois das 06:10, Dudek leva-o já: ninguém pode ficar ferido junto ao portal (x≈−9) à espera da demolição oeste.
@@ -531,7 +541,7 @@ export class M01Simulation {
       this.timers.lowAmmoHint=true;const d=dist(p,kowal),rel=Math.atan2(kowal.z-p.z,kowal.x-p.x)-p.angle,a=Math.atan2(Math.sin(rel),Math.cos(rel)),deg=Math.abs(a)*180/Math.PI;
       this.message(`Pouca munição. Kowal tem carregadores: ${Math.round(d)} m, ${deg<35?'em frente':deg>120?'atrás de si':a>0?'à sua direita':'à sua esquerda'}`);
     }
-    if(this.active('hold_access')&&inside(p,{minX:-10,maxX:160,minZ:30,maxZ:50})){this.timers.holdAccessVisited=true;if(this.consumedEvent(E('east_platoon_withdraws')))this.finish('hold_access');}
+    if(this.active('hold_access')&&inside(p,HOLD_AREA)){this.timers.holdAccessVisited=true;if(this.consumedEvent(E('east_platoon_withdraws')))this.finish('hold_access');}
     if(this.active('leave_bridge')&&dist(p,this.world.point('firing_point'))<12){this.finish('leave_bridge');this.activate('hold_corridor');}
     if(this.active('hold_corridor')&&this.consumedEvent(E('west_demolition')))this.finish('hold_corridor');
     if(this.active('reach_shelter')&&this.done('hold_access')&&this.done('hold_corridor')&&dist(p,this.world.point('shelter'))<5)this.finish('reach_shelter');
@@ -541,8 +551,8 @@ export class M01Simulation {
     const active=definition.objectives.find(o=>o.required&&this.objectives[o.id].state==='active');
     const optional=definition.objectives.find(o=>!o.required&&this.objectives[o.id].state==='active');
     this.mission.text=this.scene?.id==='cs_m01_intro'?phaseText.INTRO:this.scene?.id==='cs_m01_roll_call'?phaseText.OUTRO:
-      (active?.text??'Mantenha contacto com a secção')+(optional?` · ${optional.text}`:'');
-    this.mission.status=this.scene?.id==='cs_m01_roll_call'?'':this.threatStatus();
+      (active?.text??interludeText(this)??'Mantenha contacto com a secção')+(optional?` · ${optional.text}`:'');
+    this.mission.status=this.scene?.id==='cs_m01_roll_call'?'':(p.carrying==='jozef_bak'&&pacingStatus(this))||this.threatStatus()||pacingStatus(this);   // carrying Bąk: where to take him comes first
   }
   moveActor(a,target,dt,speed=3.6){
     if(!a.alive||!a.active||a.state==='WOUNDED')return;
@@ -1287,6 +1297,14 @@ export class M01Simulation {
       medic.task=this.flags['m01.bak_status']==='rescued_by_dudek'?'stay_with_bak':null;medic.target=null;medic.state='GUARD';
     }
   }
+  /** 07:05 (after the fade): a carry that the west charge no longer waits for has long reached the station; finish it as evacuate() would. */
+  completeEvacuation(){
+    const bak=this.actor('jozef_bak'),medic=this.actor('leon_dudek');
+    if(medic.task!=='evacuate_bak'||bak.carriedBy!==medic.id||!bak.alive||!bak.active||!medic.alive||!medic.active)return;
+    Object.assign(medic,{x:EVACUATION.x,z:EVACUATION.z,state:'GUARD',target:null});medic.y=this.world.heightAt(medic.x,medic.z);
+    bak.carriedBy=null;delete bak.carry;Object.assign(bak,{x:medic.x+.9,z:medic.z+.7,facing:medic.facing});bak.y=this.world.heightAt(bak.x,bak.z);
+    medic.task=this.flags['m01.bak_status']==='rescued_by_dudek'?'stay_with_bak':null;
+  }
   /** 07:05: os presentes na chamada reúnem-se no abrigo, de frente para Jan; ausentes ficam onde estão. */
   stageRollCall(){
     const present=['marek_zielinski','szymon_kowal','pawel_krawiec','staszek_pawlak','sapper_2','sapper_3',
@@ -1306,6 +1324,7 @@ export class M01Simulation {
     if(this.active('find_sappers'))return {label:'Sapadores no aterro',point:pt('repair_site_1')};
     if(this.active('fetch_material'))return p.carrying?{label:'Sapadores no segundo corte da linha',point:pt('repair_site_2')}:{label:'Barracão ferroviário, porta oeste',point:pt('rail_hut')};
     if(this.active('cover_repair')){const mg=this.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');if(mg)return {label:'Metralhadora no dique · V para alça 1000 m',point:mg};}
+    if(this.active('hold_access')&&!this.timers.holdAccessVisited)return {label:'Posição no tabuleiro rodoviário',point:HOLD_POSITION};
     if(this.active('leave_bridge'))return {label:'Posto de disparo',point:pt('firing_point')};
     if(this.active('reach_shelter'))return {label:'Abrigo',point:pt('shelter')};
     return null;
@@ -1377,6 +1396,9 @@ export class M01Simulation {
   }
   /** Read-only copy of the visual-only display rounds ({rounds, firedAt, skipped, nextId}); the renderer draws them after the gameplay tracers. */
   get displayFire(){return displayFireView(this.display);}
+  /** P2, computed on every read and never saved: the current objective's marker (label, point, distance, bearing) and the battle-clock tempo. */
+  get objectiveMarker(){return objectiveMarker(this);}
+  get tempo(){return tempoState(this);}
   /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
   get battleReadout(){return computeBattleReadout(this.display,this);}
   get interaction(){
@@ -1608,6 +1630,7 @@ export function validateM01Snapshot(s){
   for(const key of ['boundary','water','cover','repairStall','repairSuppressedUntil','withdrawalCasualty','ambient','nextCoverCall','guide',
     'boundaryCountdown','coverExposure','coverCallIndex'])if(!finite(s.timers[key]))reject('timer '+key);
   for(const key of ['guideAt','guideDist'])if(key in s.timers&&!finite(s.timers[key]))reject('timer '+key);
+  if('continuityAt' in s.timers&&!(Number.isFinite(s.timers.continuityAt)&&s.timers.continuityAt<=s.clock))reject('timer continuityAt');
   if('guideKey' in s.timers&&s.timers.guideKey!==null&&typeof s.timers.guideKey!=='string')reject('timer guideKey');
   if('guideShown' in s.timers&&typeof s.timers.guideShown!=='boolean')reject('timer guideShown');
   if('kowalRounds' in s.timers&&(!Number.isInteger(s.timers.kowalRounds)||s.timers.kowalRounds<0||s.timers.kowalRounds>30))reject('timer kowalRounds');

@@ -221,7 +221,7 @@ O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegar
 
 ### Cena 7 — Contra o sol (05:30–06:00) · COMBATE PRINCIPAL
 
-**Objetivo: "Mantenha a cabeça de ponte — mude de cobertura quando mandarem".**
+**Objetivo: "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem".** (P2, 2026-10-18: marcador no tabuleiro até o jogador chegar; em posição, depois do 2.º raide, o relógio corre a 24× até 05:59 com «Mais tarde…».)
 
 - O Sol nasceu a leste, **atrás do inimigo** (C01: +4,8° às 05:30, +10,6° às 06:10). Olhar para leste ofusca; a sombra das torres e treliças devolve a visão.
   - **ZIELIŃSKI:** Sol nos olhos. Fique na sombra da treliça e espere o clarão. (036)
@@ -278,7 +278,7 @@ Consequência na margem leste: alemães recuam carregando feridos; alguns ficam 
 
 A margem leste reagrupa (`german_regroup`, 06:20): atiradores no dique e rajadas esporádicas do trem varrem a faixa entre os acessos. O caminho tem cobertura em série: portal, sandbags, trincheira, barracão, vagões.
 
-**Objetivo: "Mantenha o corredor — conte os que passam".** Os últimos homens do pelotão leste e a guarnição da metralhadora pesada (que sai da casamata) passam por Jan.
+**Objetivo: "Mantenha o corredor aberto até à demolição oeste — conte os que passam".** (P2: estado «passaram X de N»; depois marcador em Dudek com Bąk até x −90; com todos a oeste, o relógio corre a 30× até 06:44.) Os últimos homens do pelotão leste e a guarnição da metralhadora pesada (que sai da casamata) passam por Jan.
 
 | ID | Fala |
 | --- | --- |
