@@ -144,3 +144,16 @@ body.touch #ammo{position:absolute;right:max(16px,env(safe-area-inset-right));to
 body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #subtitle{bottom:44%;left:20%;width:60%}
 .settings{position:relative}.audio-mix summary{font-size:.6rem;color:#9da690;letter-spacing:.2em;cursor:pointer;list-style:none;padding-top:2px;white-space:nowrap}.audio-mix summary::after{content:" ▸"}.audio-mix[open] summary::after{content:" ▾"}
 .audio-mix-panel{position:absolute;left:0;bottom:calc(100% + 8px);display:grid;grid-template-columns:repeat(2,auto);gap:14px 24px;padding:14px 16px;background:rgba(20,24,18,.96);border:1px solid #46503d;z-index:5}.settings label.check{display:flex;align-items:center;gap:10px}.settings input[type=checkbox]{width:auto}
+/* P2 (M01 pacing): objective marker on the horizon band and the "Mais tarde…" card of a compressed battle clock. */
+.objective-marker{position:absolute;top:22vh;left:calc(var(--marker-x,.5) * 100%);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.15em;
+  color:var(--brass);font-size:.74em;letter-spacing:.06em;text-shadow:0 1px 2px #000;pointer-events:none;opacity:0;transition:opacity .4s ease;white-space:nowrap}
+.objective-marker .marker-pip{width:.8em;height:.8em;border:2px solid var(--brass);transform:rotate(45deg);box-shadow:0 0 6px rgba(0,0,0,.7)}
+.objective-marker .marker-distance{color:var(--ink);font-variant-numeric:tabular-nums}
+.objective-marker[data-side=left] .marker-pip{transform:rotate(45deg) translate(-.15em,.15em);border-right-color:transparent;border-top-color:transparent}
+.objective-marker[data-side=right] .marker-pip{transform:rotate(45deg) translate(.15em,-.15em);border-left-color:transparent;border-bottom-color:transparent}
+.tempo-card{position:absolute;top:calc(var(--edge) + 4.2em);right:var(--edge);text-align:right;opacity:0;pointer-events:none;text-shadow:0 1px 2px #000;max-width:min(26em,60vw)}
+.tempo-card strong{display:block;color:var(--brass);letter-spacing:.24em;font-size:.9em}
+.tempo-card small{display:block;color:var(--dim);font-size:.74em;margin-top:.2em}
+#hud.tempo-compressed #battle-clock{color:var(--brass);animation:tempo-pulse 1.2s ease-in-out infinite}
+@keyframes tempo-pulse{50%{opacity:.55}}
+#hud.cinematic :is(.objective-marker,.tempo-card){opacity:0!important}
