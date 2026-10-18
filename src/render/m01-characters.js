@@ -82,6 +82,10 @@ export class M01Characters {
       this.assets.load('m01-motion-clips',BASE+'motion-clips-v1/m01_soldier_motion_clips.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),
+      // T08 clip library V2 (idle variants, fidgets, directional hits/deaths...): the 4 names it shares with the packs above are byte-identical, so load order is irrelevant.
+      this.assets.load('m01-clip-library',BASE+'clip-library-v2/m01_soldier_clip_library_v2.glb').then(g=>{
+        if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
+      }),
       this.assets.load('m01-station-clips',BASE+'m01_station_animations.glb').then(g=>{
         if(!this.disposed){g.animations.forEach(c=>this.clips.set(c.name,c));this.revision++;}
       }),

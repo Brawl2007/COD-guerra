@@ -1,0 +1,519 @@
+{
+ "label": "after",
+ "packs": [
+  "base",
+  "motion",
+  "station",
+  "stationTr",
+  "crews",
+  "mg34",
+  "mg34p",
+  "ckm",
+  "lib"
+ ],
+ "clipsLoaded": 101,
+ "loadedClips": [
+  "aim",
+  "blast_duck",
+  "call_out",
+  "carried",
+  "carry_pickup_carrier",
+  "carry_pickup_patient",
+  "carry_putdown_carrier",
+  "carry_putdown_patient",
+  "carry_walk",
+  "carry_wounded",
+  "ckm_wz30_gunner_abandon",
+  "ckm_wz30_gunner_aim",
+  "ckm_wz30_gunner_feed",
+  "ckm_wz30_gunner_fire_burst",
+  "ckm_wz30_gunner_idle",
+  "ckm_wz30_loader_abandon",
+  "ckm_wz30_loader_aim",
+  "ckm_wz30_loader_feed",
+  "ckm_wz30_loader_fire_burst",
+  "ckm_wz30_loader_idle",
+  "cover_high_idle",
+  "cover_high_lean_l",
+  "cover_high_lean_r",
+  "cover_leave",
+  "cover_low_idle",
+  "cover_low_peek_fire_l",
+  "cover_low_peek_fire_r",
+  "cover_return",
+  "crouch_to_stand",
+  "crouch_walk",
+  "crouched_idle",
+  "crouched_idle_b",
+  "death_back",
+  "death_crumple",
+  "death_front",
+  "death_left",
+  "death_right",
+  "drag_wounded",
+  "fallen",
+  "fidget_check_rifle",
+  "fidget_helmet",
+  "fidget_look",
+  "fidget_shift",
+  "fire_bolt",
+  "hit_back",
+  "hit_front",
+  "hit_left",
+  "hit_right",
+  "mg34_aim",
+  "mg34_fire_burst",
+  "mg34_loader_prone_feed",
+  "mg34_loader_prone_idle",
+  "mg34_loader_prone_leave",
+  "mg34_prone_aim",
+  "mg34_prone_enter",
+  "mg34_prone_exit",
+  "mg34_prone_fire_burst",
+  "mg34_prone_idle",
+  "mg34_prone_reload",
+  "mg34_reload",
+  "near_miss_duck",
+  "pinned",
+  "prone_crawl",
+  "prone_enter",
+  "prone_exit",
+  "prone_flinch",
+  "prone_idle",
+  "reload_clip",
+  "rkm_aim",
+  "rkm_clean",
+  "rkm_crouched_idle",
+  "rkm_fire_burst",
+  "rkm_prone",
+  "rkm_prone_fire",
+  "rkm_reload",
+  "rkm_run",
+  "rkm_standing_idle",
+  "rkm_walk",
+  "run",
+  "sapper_work",
+  "sapper_work_pinned",
+  "seated",
+  "seated_b",
+  "seated_cup_turn",
+  "seated_pass_canteen",
+  "seated_receive_canteen",
+  "sprint",
+  "stand_to_crouch",
+  "standing_idle",
+  "standing_idle_b",
+  "standing_idle_c",
+  "station_drag_medic_grab",
+  "station_drag_medic_release",
+  "station_drag_patient_grab",
+  "station_drag_patient_release",
+  "turn_left",
+  "turn_left_90",
+  "turn_right",
+  "turn_right_90",
+  "walk",
+  "wounded"
+ ],
+ "distinctClipsSelected": 56,
+ "selectedClips": {
+  "aim": 13111,
+  "blast_duck": 1681,
+  "carried": 1074,
+  "carry_pickup_carrier": 7,
+  "carry_pickup_patient": 7,
+  "carry_putdown_carrier": 7,
+  "carry_putdown_patient": 7,
+  "carry_walk": 960,
+  "carry_wounded": 114,
+  "cover_low_idle": 2284,
+  "crouch_to_stand": 1029,
+  "crouch_walk": 3,
+  "crouched_idle": 34497,
+  "crouched_idle_b": 33361,
+  "death_back": 3253,
+  "death_crumple": 6616,
+  "death_left": 5942,
+  "death_right": 1305,
+  "drag_wounded": 210,
+  "fidget_check_rifle": 2222,
+  "fidget_helmet": 2073,
+  "fidget_look": 1688,
+  "fidget_shift": 1608,
+  "fire_bolt": 4720,
+  "hit_front": 5,
+  "hit_right": 3,
+  "mg34_prone_enter": 13,
+  "mg34_prone_fire_burst": 1,
+  "mg34_prone_idle": 4,
+  "near_miss_duck": 5104,
+  "pinned": 1849,
+  "prone_enter": 160,
+  "prone_flinch": 21,
+  "prone_idle": 5369,
+  "reload_clip": 3203,
+  "rkm_aim": 1609,
+  "rkm_clean": 70,
+  "rkm_crouched_idle": 1854,
+  "rkm_fire_burst": 399,
+  "rkm_reload": 217,
+  "rkm_run": 110,
+  "run": 1997,
+  "sapper_work": 6877,
+  "sprint": 14068,
+  "stand_to_crouch": 842,
+  "standing_idle": 43811,
+  "standing_idle_b": 31427,
+  "standing_idle_c": 27831,
+  "station_drag_medic_grab": 7,
+  "station_drag_medic_release": 7,
+  "station_drag_patient_grab": 217,
+  "station_drag_patient_release": 7,
+  "turn_left": 4,
+  "turn_right": 2,
+  "walk": 360,
+  "wounded": 4203
+ },
+ "neverSelectedLoaded": [
+  "call_out",
+  "ckm_wz30_gunner_abandon",
+  "ckm_wz30_gunner_aim",
+  "ckm_wz30_gunner_feed",
+  "ckm_wz30_gunner_fire_burst",
+  "ckm_wz30_gunner_idle",
+  "ckm_wz30_loader_abandon",
+  "ckm_wz30_loader_aim",
+  "ckm_wz30_loader_feed",
+  "ckm_wz30_loader_fire_burst",
+  "ckm_wz30_loader_idle",
+  "cover_high_idle",
+  "cover_high_lean_l",
+  "cover_high_lean_r",
+  "cover_leave",
+  "cover_low_peek_fire_l",
+  "cover_low_peek_fire_r",
+  "cover_return",
+  "death_front",
+  "fallen",
+  "hit_back",
+  "hit_left",
+  "mg34_aim",
+  "mg34_fire_burst",
+  "mg34_loader_prone_feed",
+  "mg34_loader_prone_idle",
+  "mg34_loader_prone_leave",
+  "mg34_prone_aim",
+  "mg34_prone_exit",
+  "mg34_prone_reload",
+  "mg34_reload",
+  "prone_crawl",
+  "prone_exit",
+  "rkm_prone",
+  "rkm_prone_fire",
+  "rkm_standing_idle",
+  "rkm_walk",
+  "sapper_work_pinned",
+  "seated",
+  "seated_b",
+  "seated_cup_turn",
+  "seated_pass_canteen",
+  "seated_receive_canteen",
+  "turn_left_90",
+  "turn_right_90"
+ ],
+ "perState": {
+  "idle-standing": {
+   "samples": 112757,
+   "distinctClips": 14,
+   "clips": {
+    "standing_idle_c": 27831,
+    "standing_idle": 43811,
+    "standing_idle_b": 31427,
+    "fidget_helmet": 2073,
+    "fidget_check_rifle": 2222,
+    "fidget_shift": 1608,
+    "fidget_look": 1688,
+    "crouch_to_stand": 1029,
+    "carry_wounded": 94,
+    "turn_left": 4,
+    "turn_right": 2,
+    "carry_pickup_carrier": 7,
+    "carry_walk": 954,
+    "carry_putdown_carrier": 7
+   }
+  },
+  "idle-crouched": {
+   "samples": 81946,
+   "distinctClips": 14,
+   "clips": {
+    "sapper_work": 6877,
+    "stand_to_crouch": 842,
+    "crouched_idle": 34497,
+    "cover_low_idle": 2284,
+    "crouched_idle_b": 33361,
+    "station_drag_medic_grab": 7,
+    "drag_wounded": 210,
+    "station_drag_medic_release": 7,
+    "near_miss_duck": 1680,
+    "pinned": 1538,
+    "blast_duck": 615,
+    "hit_right": 3,
+    "hit_front": 5,
+    "carry_wounded": 20
+   }
+  },
+  "aiming": {
+   "samples": 23289,
+   "distinctClips": 8,
+   "clips": {
+    "rkm_clean": 70,
+    "aim": 13111,
+    "rkm_aim": 1609,
+    "rkm_crouched_idle": 1854,
+    "rkm_fire_burst": 258,
+    "fire_bolt": 4100,
+    "rkm_reload": 217,
+    "reload_clip": 2070
+   }
+  },
+  "run": {
+   "samples": 2107,
+   "distinctClips": 2,
+   "clips": {
+    "run": 1997,
+    "rkm_run": 110
+   }
+  },
+  "sprint": {
+   "samples": 14068,
+   "distinctClips": 1,
+   "clips": {
+    "sprint": 14068
+   }
+  },
+  "wounded": {
+   "samples": 4427,
+   "distinctClips": 3,
+   "clips": {
+    "wounded": 4203,
+    "station_drag_patient_grab": 217,
+    "station_drag_patient_release": 7
+   }
+  },
+  "prone": {
+   "samples": 5568,
+   "distinctClips": 6,
+   "clips": {
+    "prone_enter": 160,
+    "prone_idle": 5369,
+    "mg34_prone_enter": 13,
+    "mg34_prone_fire_burst": 1,
+    "mg34_prone_idle": 4,
+    "prone_flinch": 21
+   }
+  },
+  "firing": {
+   "samples": 910,
+   "distinctClips": 3,
+   "clips": {
+    "rkm_fire_burst": 141,
+    "fire_bolt": 620,
+    "reload_clip": 149
+   }
+  },
+  "dead": {
+   "samples": 17230,
+   "distinctClips": 5,
+   "clips": {
+    "death_back": 3253,
+    "death_crumple": 6616,
+    "death_left": 5942,
+    "death_right": 1305,
+    "carried": 114
+   }
+  },
+  "pinned": {
+   "samples": 4807,
+   "distinctClips": 4,
+   "clips": {
+    "near_miss_duck": 3424,
+    "pinned": 311,
+    "blast_duck": 1066,
+    "carry_walk": 6
+   }
+  },
+  "reload": {
+   "samples": 984,
+   "distinctClips": 1,
+   "clips": {
+    "reload_clip": 984
+   }
+  },
+  "walk": {
+   "samples": 360,
+   "distinctClips": 1,
+   "clips": {
+    "walk": 360
+   }
+  },
+  "crouch-crouch_walk": {
+   "samples": 3,
+   "distinctClips": 1,
+   "clips": {
+    "crouch_walk": 3
+   }
+  },
+  "carried": {
+   "samples": 974,
+   "distinctClips": 3,
+   "clips": {
+    "carry_pickup_patient": 7,
+    "carried": 960,
+    "carry_putdown_patient": 7
+   }
+  }
+ },
+ "snapPairs": {
+  "sprint->station_drag_medic_grab": 1,
+  "wounded->station_drag_patient_grab": 1,
+  "station_drag_medic_grab->drag_wounded": 1,
+  "drag_wounded->station_drag_medic_release": 1,
+  "station_drag_patient_grab->station_drag_patient_release": 1,
+  "station_drag_medic_release->run": 1,
+  "station_drag_patient_release->wounded": 1,
+  "mg34_prone_enter->mg34_prone_fire_burst": 1,
+  "mg34_prone_fire_burst->mg34_prone_idle": 1
+ },
+ "transitions": 12227,
+ "crossfaded": 12218,
+ "hardSnaps": 9,
+ "cohort": {
+  "groups": 16318,
+  "actors": 180811,
+  "meanDistinctPhase05": 0.791,
+  "meanDistinctPhase02": 0.905,
+  "medianMinGap": 0.0065,
+  "pairs": 1107867,
+  "pairsInLockstep2pct": 45373,
+  "lockstepByClip": {
+   "standing_idle": {
+    "pairs": 300919,
+    "fraction": 0.0375
+   },
+   "standing_idle_b": {
+    "pairs": 151961,
+    "fraction": 0.0414
+   },
+   "standing_idle_c": {
+    "pairs": 113646,
+    "fraction": 0.0402
+   },
+   "crouched_idle": {
+    "pairs": 210325,
+    "fraction": 0.0448
+   },
+   "crouched_idle_b": {
+    "pairs": 193382,
+    "fraction": 0.0432
+   },
+   "aim": {
+    "pairs": 13895,
+    "fraction": 0.042
+   },
+   "pinned": {
+    "pairs": 3673,
+    "fraction": 0.0286
+   },
+   "sprint": {
+    "pairs": 117175,
+    "fraction": 0.0394
+   },
+   "walk": {
+    "pairs": 270,
+    "fraction": 0.0111
+   },
+   "run": {
+    "pairs": 2621,
+    "fraction": 0.0557
+   }
+  },
+  "lockstepPairFraction": 0.041,
+  "timeLoopPairs": 987801,
+  "timeLoopPairsSameRate": 1685,
+  "groupsWithAllSameRate": 0,
+  "groupsWithMinGapUnder1pct": 10057,
+  "byClip": {
+   "standing_idle": {
+    "groups": 3218,
+    "actors": 42261,
+    "distinct05": 31069,
+    "sameRate": 0,
+    "minGapUnder1pct": 2243
+   },
+   "standing_idle_b": {
+    "groups": 2962,
+    "actors": 29597,
+    "distinct05": 23174,
+    "sameRate": 0,
+    "minGapUnder1pct": 1720
+   },
+   "standing_idle_c": {
+    "groups": 2815,
+    "actors": 25159,
+    "distinct05": 20341,
+    "sameRate": 0,
+    "minGapUnder1pct": 1444
+   },
+   "crouched_idle": {
+    "groups": 2682,
+    "actors": 32074,
+    "distinct05": 23438,
+    "sameRate": 0,
+    "minGapUnder1pct": 1763
+   },
+   "crouched_idle_b": {
+    "groups": 2786,
+    "actors": 31012,
+    "distinct05": 22973,
+    "sameRate": 0,
+    "minGapUnder1pct": 1811
+   },
+   "aim": {
+    "groups": 869,
+    "actors": 5243,
+    "distinct05": 4596,
+    "sameRate": 0,
+    "minGapUnder1pct": 238
+   },
+   "pinned": {
+    "groups": 91,
+    "actors": 832,
+    "distinct05": 709,
+    "sameRate": 0,
+    "minGapUnder1pct": 48
+   },
+   "sprint": {
+    "groups": 771,
+    "actors": 13743,
+    "distinct05": 9301,
+    "sameRate": 0,
+    "minGapUnder1pct": 736
+   },
+   "walk": {
+    "groups": 18,
+    "actors": 108,
+    "distinct05": 101,
+    "sameRate": 0,
+    "minGapUnder1pct": 2
+   },
+   "run": {
+    "groups": 106,
+    "actors": 782,
+    "distinct05": 644,
+    "sameRate": 0,
+    "minGapUnder1pct": 52
+   }
+  }
+ },
+ "finalClock": 1070.8999999995738
+}
