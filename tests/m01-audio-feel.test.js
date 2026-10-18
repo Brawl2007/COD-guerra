@@ -214,3 +214,32 @@ test('director display fire is not a metronome: burst lengths span 2-9, double t
   d.pending.forEach(p=>{p.used=false;p.emitter=null;});d.pending[0]=Object.assign(d.pending[0],{used:true,at:0,emitter:{...e,sector:'s',id:'x'},pan:0,distance:300,front:1,rounds:4,key:'k'});
   d._play(d.pending[0].emitter,d.pending[0]);assert.equal(calls.at(-1)[3].cadenceJitter,.06,'display fire asks for cadence jitter');
 });
+
+test('director ally footsteps: only walking allies within 25 m, from the distance each man walked, capped per frame, spatial and quiet at range',()=>{
+  const steps=[],audio={ctx:{},disposed:false,footstep:(surface,o)=>steps.push({surface,...o}),core:{surface:{material:'earth'},layout:undefined},setLayout(){},setDirectorProbe(){},setEmitters(){}};
+  const d=new M01AudioDirector(audio),player={x:0,y:0,z:0,angle:0};
+  const man=(id,x,z,extra={})=>({id,team:'ally',alive:true,active:true,x,y:0,z,crouched:false,...extra});
+  const actors=[man('near',5,0),man('far',40,0),man('enemy',3,3,{team:'enemy'}),man('dead',4,4,{alive:false}),man('carried',6,6,{carriedBy:'player'}),man('still',-5,0)];
+  const run=(seconds,speed)=>{let clock=d.clk[0]>=0?d.clk[0]:0;const end=clock+seconds;
+    while(clock<end){clock+=1/60;for(const a of actors)if(['near','far','enemy','dead','carried'].includes(a.id))a.z+=speed/60;d._npcFootsteps({actors,player,clock});}};
+  run(.2,0);steps.length=0;   // baselines
+  run(4,1.4);   // 4 s walking at 1.4 m/s = 5.6 m each
+  const by=id=>steps.filter(s=>s.key.startsWith(`npc:${id}:`));
+  assert.ok(by('near').length>=5&&by('near').length<=8,`near ally: ${by('near').length} steps for 5.6 m (stride 0.85)`);
+  for(const id of ['far','enemy','dead','carried','still'])assert.equal(by(id).length,0,`${id}: no step`);
+  assert.ok(by('near').every(s=>s.pace==='walk'&&s.npc.distance>0&&s.npc.distance<25&&Math.abs(s.npc.pan)<=1&&s.npc.front!==undefined),'spatial data from the listener');
+  const walk=by('near').length;steps.length=0;run(2,5.5);assert.ok(steps.some(s=>s.pace==='run')&&by('near').length>=walk*.8,'sprinting: the run voicing');
+  // A teleport (staging, restore) is not walking; a rewind forgets the baselines.
+  steps.length=0;actors[0].x+=20;actors[0].z+=0;run(.5,0);assert.equal(by('near').length,0);
+  const before=d.npcSteps.size;d._npcFootsteps({actors,player,clock:0});assert.equal(d.npcSteps.size,0,'a rewind clears the baselines');assert.ok(before>0);
+  // Per-frame cap: ten allies stepping together never sound more than 2 steps in one poll.
+  const crowd=Array.from({length:10},(_,i)=>man('c'+i,4+i*.5,0));d.npcSteps.clear();d.clk[0]=NaN;steps.length=0;
+  let clock=0;d._npcFootsteps({actors:crowd,player,clock});
+  for(let k=1;k<=40;k++){clock+=.125;crowd.forEach(a=>{a.z+=.2;});const n0=steps.length;d._npcFootsteps({actors:crowd,player,clock});assert.ok(steps.length-n0<=2);}
+  assert.ok(d.npcStats.capped>0&&d.npcStats.played>0);
+  // The audio side: spatial foley voices, capped at 4, never taking a voice from gunfire.
+  const {audio:real}=makeAudio();for(let i=0;i<8;i++)real.footstep('earth',{key:'n'+i,npc:{distance:10,pan:.5,front:1}});
+  assert.equal(real.diagnostics.categories.foley,4,'foley cap of 4 holds');assert.ok(real.diagnostics.evictedVoices>=4,'the oldest ally step makes room');
+  assert.ok(real.diagnostics.lastEvents.some(e=>e.kind==='footstep'&&e.detail.npc));
+  const near=planFootstep('earth',{key:'x'});assert.ok(near.length);real.dispose();
+});
