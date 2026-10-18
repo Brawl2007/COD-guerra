@@ -13,6 +13,13 @@ sys.modules[spec.name] = gate
 spec.loader.exec_module(gate)
 
 
+def undeveloped(task="T38"):
+    """Registry copy where `task` is still undeveloped, so the claim gate is tested independently of live delivery status."""
+    data = gate.load()
+    data["tasks"][task] = dict(data["tasks"][task], status="NOT_DEVELOPED", refs=[])
+    return data
+
+
 class RegistryTests(unittest.TestCase):
     def test_all_53_task_ids_and_allowed_statuses(self):
         registry = gate.load()
@@ -32,8 +39,8 @@ class RegistryTests(unittest.TestCase):
             self.assertEqual(gate.evaluate(task, data[task], []), "DO_NOT_START")
 
     def test_unknown_requires_live_scan(self):
-        # T38 is a still undeveloped task (T43 was delivered on a branch).
-        t = gate.load()["tasks"]["T38"]
+        # Synthetic undeveloped entry: every M01 task now has a delivery, so live data cannot exercise this path.
+        t = undeveloped()["tasks"]["T38"]
         self.assertEqual(gate.evaluate("T38", t), "LIVE_CHECK_REQUIRED")
         self.assertEqual(gate.evaluate("T38", t, [{"kind": "branch", "ref": "claims/m01-t38"}]), "EXISTING_REMOTE_WORK")
         self.assertEqual(gate.evaluate("T38", t, []), "ELIGIBLE_FOR_ATOMIC_CLAIM")
@@ -51,22 +58,26 @@ class RegistryTests(unittest.TestCase):
             self.assertEqual(gate.evaluate(task, data[task], []), "REUSE_OR_REVIEW_EXISTING")
 
     def test_unavailable_github_prevents_claim(self):
-        with patch.object(gate, "live_refs", side_effect=RuntimeError("no permission")):
+        with patch.object(gate, "load", return_value=undeveloped()), \
+             patch.object(gate, "live_refs", side_effect=RuntimeError("no permission")):
             self.assertEqual(gate.main(["claim", "T38", "--sha", "a"*40]), 3)
 
     def test_duplicate_branch_blocks_claim_without_write(self):
-        with patch.object(gate, "live_refs", return_value=[{"kind":"branch","ref":"claims/m01-t38"}]), \
+        with patch.object(gate, "load", return_value=undeveloped()), \
+             patch.object(gate, "live_refs", return_value=[{"kind":"branch","ref":"claims/m01-t38"}]), \
              patch.object(gate.subprocess, "run") as run:
             self.assertEqual(gate.main(["claim", "T38", "--sha", "a"*40]), 2)
             run.assert_not_called()
 
     def test_atomic_post_conflict_stops_cleanly(self):
-        with patch.object(gate, "live_refs", return_value=[]), \
+        with patch.object(gate, "load", return_value=undeveloped()), \
+             patch.object(gate, "live_refs", return_value=[]), \
              patch.object(gate.subprocess, "run", side_effect=gate.subprocess.CalledProcessError(1, "gh api")):
             self.assertEqual(gate.main(["claim", "T38", "--sha", "a"*40]), 3)
 
     def test_successful_claim_uses_unique_ref(self):
-        with patch.object(gate, "live_refs", return_value=[]), \
+        with patch.object(gate, "load", return_value=undeveloped()), \
+             patch.object(gate, "live_refs", return_value=[]), \
              patch.object(gate.subprocess, "run") as run:
             self.assertEqual(gate.main(["claim", "T38", "--sha", "a"*40]), 0)
             call = run.call_args.args[0]
