@@ -327,7 +327,33 @@
       "size": 10,
       "maxAdvanceX": 690,
       "weapons": ["kar98k", "mg34"],
-      "sector": "s2_east_bridgehead"
+      "sector": "s2_east_bridgehead",
+      "deckAssault": {
+        "version": 1,
+        "from": "evt_m01_germans_on_east_spans",
+        "safeX": 450,
+        "clearX": 945,
+        "overwatch": ["de_spans_0", "de_spans_1", "de_spans_2", "de_spans_3"],
+        "assault": ["de_spans_4", "de_spans_5", "de_spans_6", "de_spans_7", "de_spans_8", "de_spans_9"],
+        "entry": [[1040, 38.2], [1040, 41.8], [1043, 40], [1036, 38.2], [1036, 41.8], [1033, 40], [1030, 38.2], [1030, 41.8], [1027, 40], [1044, 38.2]],
+        "overwatchNodes": [[926, 39], [930, 41], [934, 39], [937, 41]],
+        "stations": [1022, 998, 974, 950, 926, 902, 870, 846, 822, 798, 774, 750, 726, 702, 678, 654, 630, 606, 582, 558, 534, 510, 486, 462],
+        "lanes": [[37.9, 0], [42.1, 3], [40, 6], [42.1, 9], [37.9, 12], [40, 15]],
+        "limits": [458, 506, 482, 554, 530, 578],
+        "fallback": [[946, 38.2], [949, 41.8], [952, 40], [955, 38.2], [958, 41.8], [961, 40]],
+        "pursuitToX": 830,
+        "rushStations": 2,
+        "rushSpeed": 5.2,
+        "coverSec": [2.2, 5.5],
+        "holdSec": [20, 38],
+        "pinnedWaitMaxSec": 6,
+        "breakPinnedSec": 18,
+        "breakOut": 3,
+        "maxSec": 165,
+        "fire": { "assaultPauseSec": 7, "overwatchPauseSec": 10, "platoonRangeM": 520, "riseBeforeSec": 0.9, "holdAfterSec": 1.8 },
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "Fatia 2 do combate (playtest P1: combate a ~1 km). Destacamento de cobertura das 06:05: os quatro de overwatch correm até ao vão 8 (x 926-937, dentro do raio da demolição leste, bz_east 800 +- 140 m: são os quatro que a demolição derruba, GERMAN_FELLED) e disparam dali; os seis de assalto perseguem o pelotão a correr até x 830 (pursuitToX) e depois avançam por lanços de rushStations estações (rushSpeed m/s) entre os montantes da treliça, cada um na sua faixa lanes[k] = [z, desvio em x], até ao seu limite limits[k] (x 458-578, nunca a oeste de safeX). Disparam só parados (espreitar 1-3 tiros, IA da fatia 1, tiros reais sobre o pelotão e o jogador). Cada um recua (fallback, a correr até ao seu lugar a leste de clearX) quando o seu lugar se esgota (holdSec) ou quando a supressão que sofreu em cobertura passa breakPinnedSec; o grupo inteiro recua quando breakOut dos seis estão fora de combate (caídos ou já a recuar) ou maxSec reais depois da entrada. A demolição leste espera (gate de 06:10, o relógio fica em 06:09:30) até nenhum homem vivo do assalto estar a oeste de clearX: os vãos 06-07 (x 663-877) caem e ninguém fica do lado polaco. Plausível para Tczew em 1/9/1939 (elementos de assalto alemães entraram na ponte antes das demolições), mas não documentado homem a homem. safeX é o número que o proprietário pode mover."
+      }
     },
     { "id": "grp_de_stukas", "faction": "DE", "vehicles": ["ju87b"], "count": 3, "sector": "s5_sky_east" },
     { "id": "grp_railway_workers", "faction": "PL_CIV", "members": ["franciszek_lipski"], "extras": 3, "sector": "s3_station_yard" }
@@ -470,7 +496,7 @@
       "required": true,
       "activation": { "event": "evt_m01_east_platoon_withdraws" },
       "completion": { "event": "evt_m01_east_demolition" },
-      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans avança até x ≥ 690. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). No protótipo, a partir de evt_m01_germans_on_east_spans, um alemão do tabuleiro não suprimido que vê o último homem pode disparar um tiro letal; a baixa só conta quando o tiro chega, com intervalo mínimo de 20 s de relógio entre baixas e mínimo de 12 sobreviventes. Sem tiro desobstruído não há baixas automáticas. Guardar os tiros em voo e cada baixa por ID. Nunca falha a missão; estes valores são tuning de gameplay, não efectivos históricos.",
+      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans: assalto do tabuleiro (grp_de_spans.deckAssault): seis homens avançam por lanços até meio do tabuleiro (x 458–578, nunca a oeste de x 450) e recuam para leste de x 945; a demolição leste espera que o tabuleiro fique livre (o relógio fica em 06:09:30), por isso o combate dura minutos reais sem mexer em nenhuma hora fixa. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). No protótipo, a partir de evt_m01_germans_on_east_spans, um alemão do tabuleiro não suprimido que vê o último homem pode disparar um tiro letal; a baixa só conta quando o tiro chega, com intervalo mínimo de 20 s de relógio entre baixas e mínimo de 12 sobreviventes. Sem tiro desobstruído não há baixas automáticas. Guardar os tiros em voo e cada baixa por ID. Nunca falha a missão; estes valores são tuning de gameplay, não efectivos históricos.",
       "failure": null
     },
     {

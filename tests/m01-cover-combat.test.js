@@ -1,3 +1,4 @@
+import {DECK_SAFE_X} from '../src/game/m01-deck-assault.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
@@ -22,7 +23,8 @@ test('real control routes compare covering and ignoring: faster repair, fewer ne
     assert.equal(r.sim.mission.complete,true);assert.equal(r.sim.battleClock,seconds('07:05'));
     assert.equal(Object.keys(r.sim.consumed).length,r.sim.definition.events.length);
     assert.equal(platoon(r.sim).length,r.sim.flags['m01.east_platoon_survivors']);
-    assert.ok(r.sim.enemies.every(e=>e.x>=690));
+    // Combat slice 2 (versioned save rule, deck record v1): a German of the deck assault may lie or stand down to the safety line x 450; every other German at x >= 690.
+    assert.ok(r.sim.enemies.every(e=>e.x>=(e.group==='grp_de_spans'&&e.deck?DECK_SAFE_X:690)));
   }
 });
 
