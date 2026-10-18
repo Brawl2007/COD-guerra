@@ -212,6 +212,7 @@ function stagedRoute(seed,support=false){
   const st={platoonKneel:0,platoonTurned:0,gateKneel:0,gateUp:0,gateShots:0,gateShotsUp:0,attritionGate:0,sectionKneel:0,kowalShots:0,
     sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,hitboxChecks:0},deaths={},saves=[];
   let holdTicks=0,withdrawFlag=null,seenRounds=new Set();
+  let lastClock=0;const lastSup=new Map();   // suppression of every German at the end of the previous tick
   const onStep=({sim,events})=>{
     const clock=sim.clock;
     if(sim.holdingEast()){
@@ -238,7 +239,11 @@ function stagedRoute(seed,support=false){
       if(seenRounds.has(r.id))continue;seenRounds.add(r.id);
       const by=sim.actor(r.by),k=Number(r.by.split('_').at(-1)),h=+(r.oy-by.y).toFixed(9);
       // An attrition round (T23) leaves from the eye of a man drawn standing (a kneeling gate rifleman never takes that shot).
-      if(r.kind==='attrition'){assert.equal(h,EYE_HEIGHT,`${r.id} by ${r.by}: a standing man's eye`);assert.equal(by.crouched,false);if(k<14)st.attritionGate++;else st.attritionDike++;continue;}
+      if(r.kind==='attrition'){assert.equal(h,EYE_HEIGHT,`${r.id} by ${r.by}: a standing man's eye`);
+        // He stood for the shot (h above). He still stands afterwards unless this very tick pinned him down after it (a suppression that began now), the same ordering the
+        // ordinary rounds below allow: the shot is issued before the allies' fire of the tick is resolved. Found when the pilot's route moved by 23 ticks (D44, amendment 04).
+        assert.ok(by.crouched===false||((lastSup.get(by.id)??0)<=lastClock&&by.suppressedUntil>clock),`${r.id} by ${r.by} is kneeling although nothing pinned him down in this tick`);
+        if(k<14)st.attritionGate++;else st.attritionDike++;continue;}
       if(by.group!=='grp_de_east'||k<2||k>=14)continue;
       // The origin of a gate rifleman's own round is his standing eye: he rose riseBeforeSec earlier (Kowal may pin him down again in the
       // same tick, after the shot).
@@ -284,6 +289,7 @@ function stagedRoute(seed,support=false){
       withdrawFlag=sim.flags['m01.east_platoon_survivors'];
       for(const a of platoon(sim).slice(0,18))assert.equal(a.crouched,false,`${a.id} stands to run at the withdrawal`);
     }
+    lastClock=clock;for(const a of sim.enemies)lastSup.set(a.id,a.suppressedUntil);
   };
   const r=route(seed,{support,onStep}),s=r.sim;
   const times=Object.fromEntries(Object.entries(s.consumed).map(([k,v])=>[k.replace('evt_m01_',''),v]));
