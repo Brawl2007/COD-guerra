@@ -234,6 +234,7 @@ Origem: playtest do proprietário (2026-10-18) — «o jogador atravessa paredes
 5. **Portão na vedação de arame farpado** (x −264 a −258, z 66): a vedação, agora sólida, passava pela entrada do abrigo, o último objectivo. As três secções saem do desenho também (nada visível é atravessado).
 6. **Props ≤ 0,45 m (caixa de munição, canto de sacos) são degraus onde se sobe; lixo à altura do tornozelo (caixa de lata, lanterna, sacos rebentados) não tem colisor.** Ferradura de sacos da ckm: sólida até à demolição oeste.
 7. **Golden da T47, emenda 04** com as ferramentas (`m01-t47-ckm-fire-audit.mjs --write`, `m01-t47-golden-amendment-audit.mjs --amendment 04 --write`; 03 e 02 re-verificadas como história). Tudo o que se moveu é o piloto (percursos pelo que agora é sólido); combate, dados da missão e RNG não mudaram.
+8. **Revisão crítica (APPROVE WITH FIXES).** Gravação antiga com o jogador dentro do anel fechado de sacos da ckm: `restoreSnapshot` põe-no em (9,6, 25,5) enquanto a demolição oeste não ocorreu (um recinto não se resolve empurrando). A escolta empurra com `dt` 0 (uma só gravidade por tick) e a velocidade horizontal no ar fica limitada à de descolagem ou à do passo. O rio continua de sentido único (margem de 7 m); a rampa de saída fica por decidir (ver README, secção da revisão). Golden da T47 emenda 04 regenerado para a simulação final.
 
 Não é playtest: a sensação de queda, aterragem, degraus e paredes nunca foi jogada.
 

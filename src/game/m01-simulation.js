@@ -3,6 +3,7 @@ import mapLayout from '../../missions/m01-tczew/map-layout.json' with {type:'jso
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import { TczewWorld } from '../world/tczew-world.js';
 import { movePlayer } from '../world/m01-player-physics.js';
+import { CKM_RELEASE_POINT, insideCkmEnclosure } from '../world/m01-collision-layout.js';
 import { Wz29 } from './wz29.js';
 import { M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
@@ -797,7 +798,7 @@ export class M01Simulation {
       a.x=c.x-Math.cos(c.facing)*.25;a.z=c.z-Math.sin(c.facing)*.25;a.y=c.y+1.15*lift;
     }
     if(this.timers.escort){const leader=this.actor('marek_zielinski');
-      if(dist(leader,this.player)<3){this.moveBody(-dt*3,0,dt);
+      if(dist(leader,this.player)<3){this.moveBody(-dt*3,0,0);   // a push (dt 0): gravity is advanced once, by the player's own move of this tick
         if(!this.timers.escortSpoke){this.timers.escortSpoke=true;this.message('Zieliński: venha comigo, para oeste!');}}
       if(this.player.x<-95)this.timers.escort=false;
     }
@@ -1457,6 +1458,12 @@ export class M01Simulation {
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    // A save made before the ckm sandbag ring was solid may hold the player inside it (the walls are 0.46-0.68 m, over the 0.45 m step, and the ring is closed): he is put on the
+    // open ground in front of it. Other overlaps with new solids are pushed out by the first move; an enclosure cannot be.
+    const held=candidate.player;
+    if(!Object.hasOwn(s.consumed,E('west_demolition'))&&insideCkmEnclosure(held.x,held.z)){
+      held.x=CKM_RELEASE_POINT.x;held.z=CKM_RELEASE_POINT.z;held.y=candidate.world.heightAt(held.x,held.z);delete held.fall;
+    }
     candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation(undefined,{difficulty});backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);
