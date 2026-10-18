@@ -347,8 +347,9 @@ test('real keyboard movement traverses the approaches and E delivers the message
     await page.keyboard.up(code);
   }
   // The route a player can walk: the abutments of both bridges are walls (the old route climbed their faces at x=-15), so go west of them (x=-30), up the
-  // embankment to the rail line (z=3), then east along the track to the forward post.
-  await axis('KeyW','x',-30,1);await page.keyboard.up('ShiftLeft');
+  // embankment to the rail line (z=3), then east along the track to the forward post. Strafe to z=26 first: a straight line along z=22 meets the crates and
+  // carts at x=-43 (checked with the same keys in Node, 246 ticks door to door).
+  await axis('KeyD','z',26,1);await axis('KeyW','x',-30,1);await page.keyboard.up('ShiftLeft');
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
