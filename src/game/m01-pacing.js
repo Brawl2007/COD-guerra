@@ -12,7 +12,7 @@ const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
 export const HOLD_AREA=Object.freeze({minX:-10,maxX:160,minZ:30,maxZ:50});
 /** Where the hold-access marker points before the player has reached the deck: the sandbags of the squad post, inside HOLD_AREA. */
 export const HOLD_POSITION=Object.freeze({x:30,y:0,z:40});
-/** West edge of the west demolition zone: every ally (Bąk included) must be west of it before the 06:45 charge. */
+/** West edge of the west demolition zone (readiness of evt_m01_west_demolition in m01-simulation.js). */
 export const WEST_SAFE_X=-90;
 /** Real seconds between two continuity messages, whatever the clock scale (a compressed clock must not flood the caption line). */
 export const CONTINUITY_MIN_GAP_SEC=20;
@@ -24,11 +24,10 @@ const COMPRESS_WHEN={
   // In position on the deck after the second raid: the section only waits for the 06:00 withdrawal.
   hold_in_position:sim=>sim.active('hold_access')&&Boolean(sim.timers.holdAccessVisited)&&inside(sim.player,HOLD_AREA)&&!sim.player.carrying&&!sim.scene&&
     sim.flags['m01.second_raid_state']==='ended',
-  // Off the bridge, everyone west of the demolition zone: only the sappers' 06:45 charge is left.
-  west_gate_ready:sim=>sim.done('leave_bridge')&&!sim.scene&&sim.readiness(E('west_demolition')),
 };
 
-/** The compression of `segment` that applies now, or null. Validated against mission data by tests/m01-pacing.test.js. */
+/** ponytail: compression reuses the existing per-segment scale (advanceBattle) as a plain multiplier; no fade or skip-cut.
+ * The compression of `segment` that applies now, or null. Validated against mission data by tests/m01-pacing.test.js. */
 export function activeCompression(sim,segment){
   const c=segment?.compress;if(!c)return null;
   if(sim.battleClock<seconds(c.from)||sim.battleClock>=seconds(c.to))return null;
@@ -76,13 +75,14 @@ export function markerTarget(sim){
   }
   if(sim.active('hold_corridor')){
     const bak=sim.actor('jozef_bak'),carrier=carrierOf(sim,bak);
-    if(carrier&&bak.x>=WEST_SAFE_X)return {label:'Dudek com Bąk',point:carrier};
+    if(carrier)return {label:'Dudek com Bąk',point:carrier};
     const fp=sim.world.point('firing_point');if(dist(p,fp)>15)return {label:'Posto de disparo',point:fp};
   }
   return null;
 }
 
-/** Read-only marker record for the HUD: label, world point, distance (m) and bearing relative to the view (radians, positive = to the right). */
+/** ponytail: horizontal bearing only (HUD horizon band), no projection of height or occlusion.
+ * Read-only marker record for the HUD: label, world point, distance (m) and bearing relative to the view (radians, positive = to the right). */
 export function objectiveMarker(sim){
   if(sim.scene||sim.mission.phase==='OUTRO'||sim.mission.complete)return null;
   const target=markerTarget(sim);if(!target)return null;
@@ -108,7 +108,7 @@ export function pacingStatus(sim){
     const men=sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active),passed=men.filter(a=>a.x<=PASSED_X).length;
     if(passed<men.length)return `Corredor · passaram ${passed} de ${men.length} homens do pelotão leste`;
     const carrier=carrierOf(sim,bak);
-    if(carrier&&bak.x>=WEST_SAFE_X)return `Dudek leva Bąk para oeste · faltam ${Math.ceil(bak.x-WEST_SAFE_X)} m até sair da zona de demolição`;
+    if(carrier)return `Dudek leva Bąk para a estação · a carga oeste espera por eles${bak.x>=WEST_SAFE_X?' · ainda na zona de demolição':''}`;
     if(sim.readiness(E('west_demolition')))return 'Todos fora da ponte · os sapadores preparam a carga oeste';
   }
   return '';

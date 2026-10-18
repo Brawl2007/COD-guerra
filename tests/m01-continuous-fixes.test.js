@@ -91,9 +91,6 @@ test('a Bąk delivered by the player stays visible beside Dudek, who carries him
   for(let i=0;i<20*400&&!sim.consumedEvent(E('west_demolition'));i++){sim.tick(.05);carried||=bak.carriedBy==='leon_dudek';}
   assert.ok(carried,'Dudek leva Bąk ao ombro');
   assert.equal(sim.consumedEvent(E('west_demolition')),true,'a evacuação não segura a demolição oeste');
-  // P2 (m01-pacing): the charge waits only until both are out of the zone (x < -90), not for the walk on to the station, which Dudek finishes after it.
-  assert.ok(bak.x<-90&&dudek.x<-90,`Bąk em ${bak.x.toFixed(0)}, Dudek em ${dudek.x.toFixed(0)} na demolição`);
-  for(let i=0;i<20*240&&(bak.carriedBy||dudek.task==='evacuate_bak');i++)sim.tick(.05);
   assert.equal(bak.carriedBy,null);assert.ok(bak.x<-300,`Bąk em ${bak.x.toFixed(0)}`);
   assert.ok(dudek.x<-90&&dudek.task===null,'Dudek volta à secção ("Presente" na chamada)');
   assert.ok(bak.active&&bak.alive);
@@ -108,10 +105,8 @@ test('when Dudek retrieves Bąk he walks to him on the deck and carries him to t
   let carried=false;
   for(let i=0;i<20*400&&!sim.consumedEvent(E('west_demolition'));i++){sim.tick(.05);carried||=bak.carriedBy==='leon_dudek';}
   assert.ok(carried);assert.equal(sim.consumedEvent(E('west_demolition')),true);
-  // T36 (partials, B4): Dudek carries Bąk at 1.6 m/s with a 1.6 s putdown. P2: the charge no longer waits for the station (only for x < -90), so from the
-  // demolition the remaining ~240 m take ~150 s more instead of the ~70 s left when it waited for most of the walk.
-  assert.ok(bak.x<-90&&dudek.x<-90,'fora da zona de demolição');
-  run(sim,200);assert.ok(bak.x<-300&&dudek.x<-300,'ambos na estação');assert.equal(dudek.task,'stay_with_bak');
+  // T36 (partials, B4): Dudek carries Bąk at 1.6 m/s with a 1.6 s putdown, so the arrival takes ~70 s instead of 30 s.
+  run(sim,90);assert.ok(bak.x<-300&&dudek.x<-300,'ambos na estação');assert.equal(dudek.task,'stay_with_bak');
 });
 
 test('the roll call positions the present section in the shelter facing Jan; the absent stay away',()=>{

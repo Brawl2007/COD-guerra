@@ -327,11 +327,10 @@ export class M01Simulation {
     }
     // Finite delivery milestones remain legible in real time while the existing west gate holds battleClock.
     const bak=this.actor('jozef_bak');
-    // P2: the charge now waits only until Bąk is out of the zone (WEST_SAFE_X), so the milestones count the metres to it, not to the station.
-    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)&&bak.x>=WEST_SAFE_X){
-      const remaining=bak.x-WEST_SAFE_X,metres=[360,300,240,180,120,60,30,10].findLast(limit=>remaining<=limit),token=`continuity:bak_delivery_hold:${metres}`;
+    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)){
+      const remaining=dist(bak,EVACUATION),metres=[360,300,240,180,120,60,30,10].findLast(limit=>remaining<=limit),token=`continuity:bak_delivery_hold:${metres}`;
       if(metres!==undefined&&!this.dialogueConsumed.includes(token)){
-        this.dialogueConsumed.push(token);this.emit({type:'message',message:`Dudek leva Bąk para oeste. A carga espera por eles; faltam cerca de ${Math.ceil(remaining)} metros até sair da zona.`,continuity:{kind:'bak_delivery_hold',slot:metres,battleClock:this.battleClock}});
+        this.dialogueConsumed.push(token);this.emit({type:'message',message:`Dudek leva Bąk para a estação. Corredor livre; faltam cerca de ${Math.ceil(remaining)} metros.`,continuity:{kind:'bak_delivery_hold',slot:metres,battleClock:this.battleClock}});
       }
     }
     if(this.consumedEvent(E('panzerzug_arrives'))&&this.inView({x:1119,y:0,z:2.5}))this.line('dlg_m01_038');
@@ -354,9 +353,9 @@ export class M01Simulation {
   readiness(id){
     if(id===E('repair_complete'))return this.objectives[O('cover_repair')].progress>=100;
     if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.active&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660;
-    // P2: Bąk (active, so in the ally list, on Dudek's shoulder or lying) must be west of the zone like everyone else; the charge no longer waits
-    // for the 240 m walk on to the station, which Dudek finishes after the blast (completeEvacuation covers the 07:05 roll call). The player must put him down first.
-    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<WEST_SAFE_X)&&bak.carriedBy!==this.player.id;}
+    // ponytail: P2 keeps the approved B4 rule (the charge waits for Bąk's delivery at the station, tests/m01-partials-correction-01.test.js); releasing it at
+    // x < WEST_SAFE_X would save ~2 min at the firing point but needs a human decision (docs/direction/COD_WAW_WWII_BENCHMARK.md).
+    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<WEST_SAFE_X)&&!bak.carry&&!bak.carriedBy;}
     if(id===E('dudek_retrieves_bak'))return this.player.carrying!=='jozef_bak';
     if(id===E('roll_call'))return this.scene?.id!=='cs_m01_west_blast';
     return true;
@@ -450,7 +449,7 @@ export class M01Simulation {
       case E('west_demolition'):if(this.done('leave_bridge'))this.finish('hold_corridor');this.activate('reach_shelter');this.destruction.push('west_end_destroyed');this.mission.phase='AFTERMATH';
         this.startScene('cs_m01_west_blast');this.impact('west_demolition',{x:70,y:0,z:20},false);break;
       case E('kozliny_attack_distant'):this.emit({type:'distant-shot',point:{x:-500,y:0,z:-1300}});break;
-      case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.completeEvacuation();this.stageRollCall();break;
+      case E('roll_call'):this.battleClock=Math.max(this.battleClock,seconds('07:05:00'));this.mission.phase='OUTRO';this.startScene('cs_m01_roll_call');this.stageRollCall();break;
       case E('debrief'):this.flags['m01.completed']=true;this.mission.complete=true;this.checkpoint=this.snapshot(false);this.emit({type:'complete'});break;
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
@@ -1296,14 +1295,6 @@ export class M01Simulation {
       // Ramo Dudek: fica com Bąk na estação (dlg_m01_056b/057b). Ramo do jogador: volta à secção (dlg_m01_057a).
       medic.task=this.flags['m01.bak_status']==='rescued_by_dudek'?'stay_with_bak':null;medic.target=null;medic.state='GUARD';
     }
-  }
-  /** 07:05 (after the fade): a carry that the west charge no longer waits for has long reached the station; finish it as evacuate() would. */
-  completeEvacuation(){
-    const bak=this.actor('jozef_bak'),medic=this.actor('leon_dudek');
-    if(medic.task!=='evacuate_bak'||bak.carriedBy!==medic.id||!bak.alive||!bak.active||!medic.alive||!medic.active)return;
-    Object.assign(medic,{x:EVACUATION.x,z:EVACUATION.z,state:'GUARD',target:null});medic.y=this.world.heightAt(medic.x,medic.z);
-    bak.carriedBy=null;delete bak.carry;Object.assign(bak,{x:medic.x+.9,z:medic.z+.7,facing:medic.facing});bak.y=this.world.heightAt(bak.x,bak.z);
-    medic.task=this.flags['m01.bak_status']==='rescued_by_dudek'?'stay_with_bak':null;
   }
   /** 07:05: os presentes na chamada reúnem-se no abrigo, de frente para Jan; ausentes ficam onde estão. */
   stageRollCall(){

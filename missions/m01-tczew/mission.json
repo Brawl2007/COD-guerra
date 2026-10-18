@@ -361,9 +361,7 @@
         "to": "06:45:00",
         "scale": 8.5,
         "gate": "evt_m01_west_demolition",
-        "targetRealMin": 4.1,
-        "compress": { "from": "06:12:00", "to": "06:44:00", "scale": 30.0, "when": "west_gate_ready", "label": "Mais tarde…", "reason": "Todos fora da ponte. Os sapadores preparam a carga oeste." },
-        "compressNote": "Playtest do proprietário (P2): com o corredor vazio e todos a oeste, o jogador esperava ~2–4 min no posto de disparo. Com o gate oeste pronto, o resto do segmento corre a 30×. A demolição continua às 06:45."
+        "targetRealMin": 4.1
       },
       {
         "id": "seg_aftermath",
