@@ -53,7 +53,7 @@ export const acousticBand=distance=>{const d=Math.max(0,Number(distance)||0);ret
 // Afinada para mistura de jogo (gama dinâmica comprimida), não para níveis SPL medidos.
 export const ATTENUATION=Object.freeze({
   weapon:Object.freeze({ref:4,span:70}),player:Object.freeze({ref:1,span:1e9}),danger:Object.freeze({ref:1,span:1e9}),
-  impact:Object.freeze({ref:2,span:16}),debris:Object.freeze({ref:4,span:30}),explosion:Object.freeze({ref:20,span:170}),
+  impact:Object.freeze({ref:2,span:16}),foley:Object.freeze({ref:1,span:9}),debris:Object.freeze({ref:4,span:30}),explosion:Object.freeze({ref:20,span:170}),
   distant:Object.freeze({ref:4,span:70}),vehicle:Object.freeze({ref:15,span:140}),aircraft:Object.freeze({ref:60,span:260}),
   fire:Object.freeze({ref:6,span:22}),ambience:Object.freeze({ref:1,span:1e9}),fx:Object.freeze({ref:0,span:70}),
 });
@@ -79,10 +79,10 @@ export const AUDIO_PRIORITY=Object.freeze({
 });
 // Limites por categoria (vozes = eventos com várias camadas). O total global continua 32.
 export const CATEGORY_LIMITS=Object.freeze({
-  weapon:12,player:6,danger:4,impact:6,debris:4,explosion:6,distant:6,vehicle:4,aircraft:3,fire:3,ambience:4,fx:32
+  weapon:12,player:6,danger:4,impact:6,foley:4,debris:4,explosion:6,distant:6,vehicle:4,aircraft:3,fire:3,ambience:4,fx:32
 });
 export const CATEGORY_BUS=Object.freeze({
-  weapon:'weapons',player:'player',danger:'player',impact:'impacts',debris:'impacts',explosion:'explosions',
+  weapon:'weapons',player:'player',danger:'player',impact:'impacts',foley:'impacts',debris:'impacts',explosion:'explosions',
   distant:'distant',vehicle:'vehicles',aircraft:'vehicles',fire:'ambience',ambience:'ambience',fx:'weapons'
 });
 export const MIX_BUSES=Object.freeze(['weapons','player','impacts','explosions','distant','vehicles','ambience']);
@@ -467,7 +467,7 @@ export function planLanding(speed,surface,{key=''}={}){
   return humanize(g,`landing:${key}:h`,{pitch:.1,gain:.25,time:.006});
 }
 export const FOOTSTEP_SURFACES=Object.freeze(['earth','wood','metal','stone','brick','water']);
-export const footstepSurface=m=>m==='ground'?'earth':FOOTSTEP_SURFACES.includes(m)?m:'earth';
+export const footstepSurface=m=>m==='ground'?'earth':m==='concrete'?'stone':FOOTSTEP_SURFACES.includes(m)?m:'earth';   // sand/grass/gravel have no voicing of their own yet: earth
 const PACE_GAIN=Object.freeze({walk:1,run:1.55,crouch:.5});
 export const FOOTSTEP_VARIANTS=3;
 /**
@@ -494,12 +494,12 @@ export function planFootstep(surface,{key='',pace='walk',load=0}={}){
     g.push({layer:'toe',src:'noise',noise:'white',at:toe,dur:.02,vol:.016*pg,filter:{type:'bandpass',freq:1500*v('t'),q:1.4}});
     if(audioVariation(`step:wood:${key}:creak`)<.14)g.push({layer:'creak',src:'osc',wave:'sawtooth',freq:520*v('cr',.3),freqEnd:430*v('ce',.3),at:.02,dur:.17,vol:.012,attack:.03,filter:{type:'bandpass',freq:650,q:6}});
   }else if(m==='metal'){
-    g.push({layer:'heel',src:'noise',noise:'white',at:0,dur:.022,vol:.02*pg,attack:.0005,filter:{type:'highpass',freq:2500*v('h'),q:.7}});
-    g.push({layer:'thud',src:'osc',wave:'sine',freq:[110,95,130][variant]*v('k'),freqEnd:68,at:0,dur:.08,vol:.028*pg});
-    g.push({layer:'ring',src:'osc',wave:'sine',freq:[780,640,920][variant]*v('r'),freqEnd:[772,632,910][variant],at:.002,dur:.22*v('rd',.3),vol:.008*pg});
-    g.push({layer:'ring',src:'osc',wave:'sine',freq:[1460,1210,1710][variant]*v('r2'),freqEnd:1430,at:.002,dur:.14*v('rd2',.3),vol:.005*pg});
-    g.push({layer:'deck',src:'noise',noise:'brown',at:.004,dur:.26,vol:.02*pg,filter:{type:'bandpass',freq:150*v('d'),q:5}});   // tabuleiro oco da ponte
-    g.push({layer:'toe',src:'noise',noise:'white',at:toe,dur:.016,vol:.012*pg,filter:{type:'highpass',freq:3000,q:.8}});
+    g.push({layer:'heel',src:'noise',noise:'white',at:0,dur:.022,vol:.015*pg,attack:.0005,filter:{type:'highpass',freq:2500*v('h'),q:.7}});
+    g.push({layer:'thud',src:'osc',wave:'sine',freq:[110,95,130][variant]*v('k'),freqEnd:68,at:0,dur:.08,vol:.021*pg});
+    g.push({layer:'ring',src:'osc',wave:'sine',freq:[780,640,920][variant]*v('r'),freqEnd:[772,632,910][variant],at:.002,dur:.22*v('rd',.3),vol:.006*pg});
+    g.push({layer:'ring',src:'osc',wave:'sine',freq:[1460,1210,1710][variant]*v('r2'),freqEnd:1430,at:.002,dur:.14*v('rd2',.3),vol:.0037*pg});
+    g.push({layer:'deck',src:'noise',noise:'brown',at:.004,dur:.26,vol:.015*pg,filter:{type:'bandpass',freq:150*v('d'),q:5}});   // tabuleiro oco da ponte
+    g.push({layer:'toe',src:'noise',noise:'white',at:toe,dur:.016,vol:.009*pg,filter:{type:'highpass',freq:3000,q:.8}});
   }else{   // water
     g.push({layer:'slosh',src:'noise',noise:'white',at:0,dur:[.16,.2,.13][variant],vol:.045*pg,filter:{type:'bandpass',freq:900*v('h'),q:.9,freqEnd:1700}});
     g.push({layer:'plop',src:'osc',wave:'sine',freq:400*v('p'),freqEnd:900,at:.01,dur:.05,vol:.02*pg});

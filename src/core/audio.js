@@ -316,10 +316,12 @@ export class AudioManager {
    * Um passo do jogador sobre o material sob os pés (`surface` do audio-layout; "ground" = terra). `side` (-1/+1) desloca
    * levemente o panorama, pé esquerdo/direito. Prioridade baixa: nunca expulsa tiros nem explosões.
    */
-  footstep(surface='earth',{key='',pace='walk',side=0,load=0}={}){
+  footstep(surface='earth',{key='',pace='walk',side=0,load=0,npc=null}={}){
     const id=key||`step:${this.serial}`,m=footstepSurface(surface);
-    this._record('footstep',{pan:side*.1,priority:AUDIO_PRIORITY.fire,key:id,detail:{surface:m,pace}});
-    return this._playPlan(planFootstep(m,{key:id,pace,load}),{kind:'footstep',category:'player',priority:AUDIO_PRIORITY.fire,pan:side*.1,key:id,volume:1.8});
+    // An ally's step (`npc`: {distance, pan, front}) is a spatial 'foley' voice (cap 4) a little quieter than the player's own.
+    const pan=npc?npc.pan:side*.1,distance=npc?npc.distance:0;
+    this._record('footstep',{pan,distance,priority:AUDIO_PRIORITY.fire,key:id,detail:{surface:m,pace,npc:Boolean(npc)}});
+    return this._playPlan(planFootstep(m,{key:id,pace,load}),{kind:npc?'footstep-npc':'footstep',category:npc?'foley':'player',priority:AUDIO_PRIORITY.fire,pan,distance,front:npc?.front??1,key:id,volume:npc?1.3:1.8});
   }
   // ------------------------------------------------------------ armas
   // wz.29 do jogador: mantém as camadas/tempos já estabelecidos (estalo .26, corpo 78 Hz, cauda a .15 s) e ganha corpo médio e reflexão.
