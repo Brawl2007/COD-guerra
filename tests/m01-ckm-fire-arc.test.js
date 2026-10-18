@@ -66,8 +66,10 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   assert.equal(r.productionLineOfSightMismatches,0,'tool trace and world.lineOfSight agree on every sample');
   // Re-measured on purpose when T47 joined the T38 staging (3c9cab7): the route is 3 s shorter before the east demolition (samples 1113 -> 1110, 787 -> 784) and the Germans
   // alive are fewer in the window (enemy samples 36596 -> 36456, 21600 -> 21460). The clear-sample census below is unchanged: only the retreating crew's casemate gun is ever cleared.
-  assert.equal(r.samples,1110);assert.equal(r.samplesBeforeEastDemolition,784);
-  assert.equal(r.enemySamples,36456);assert.equal(r.enemySamplesBeforeEastDemolition,21460);
+  // Re-measured on purpose for the combat AI slice 1 (M01-COMBAT-AI-SLICE-1): the Germans fire in peeks and burst groups and this route's repair is 38 s shorter
+  // (samples 1110 -> 1085, 784 -> 758; enemy samples 36456 -> 35462, 21460 -> 20420). The clear-sample census below is unchanged.
+  assert.equal(r.samples,1085);assert.equal(r.samplesBeforeEastDemolition,758);
+  assert.equal(r.enemySamples,35462);assert.equal(r.enemySamplesBeforeEastDemolition,20420);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
   // The only clear samples exist after evt_m01_west_demolition removed pier_01 and deck_span_01, when the crew is in 'retreat' and the casemate is gone.
   assert.equal(r.clearEnemySamples,135);assert.equal(r.clearEnemySamplesAfterWestDemolition,135);

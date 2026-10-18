@@ -1,0 +1,479 @@
+{
+  "task": "M01-COMBAT-AI-SLICE-1",
+  "predecessor": "f6913a0dae3ae227ab0421c6b59f992e8685e9a6",
+  "predecessorSourceSha256": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c",
+  "previousGolden": {
+    "task": "M01-T47-CKM-LIVE-FIRE-V1",
+    "file": "tests/fixtures/m01-t47-gameplay-baseline.json",
+    "sha256": "92a69ba178bdf3e8071940135db873c34f6269b9c7c2427d4e8efd845c58b1ff"
+  },
+  "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
+  "sourceSha256": "ce51aae03d255515fa658a2cfec63ccbd7157a63384cb3623fda91e6c036989f",
+  "inputs": {
+    "src/game/m01-simulation.js": {
+      "before": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c",
+      "after": "ce51aae03d255515fa658a2cfec63ccbd7157a63384cb3623fda91e6c036989f"
+    },
+    "src/game/m01-display-fire.js": {
+      "before": "0a1fea8f97907f6e0c37d8b86ee3eb0329b08792feabc231339ec5e84244abaa",
+      "after": "4f6184c3a051c968f973805b653964ce09b662259508fc7bfa3924d387c2a96b"
+    },
+    "missions/m01-tczew/mission.json": {
+      "before": "bd1d8aa647db5f8da71c277ba6f196d4862d07f4edd564ce14a7ef8a832f540c",
+      "after": "0a7cf7c563b503b9ebc951b27723e0e4ba52c3448552217f6fc2db2f0faa435d"
+    }
+  },
+  "rule": "Per route: the predecessor reproduces the T47 golden on this pilot; the live digest is this golden; the predecessor on its own route and the live route end with the same objective states, checkpoints, consumed event ids, battle clock of every fixed-time (battleClock) event, survivors, flags and final battle clock. Real-time positions (ticks, repair completion, pins, player health) may move: they are listed, not required.",
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "ticks": 21627,
+      "blocks": [
+        {
+          "tick": 512,
+          "sha256": "e183128561df09eed3b332fa764bb0e4fc28f7521723e37524e0d65c0bcb98b2"
+        },
+        {
+          "tick": 1024,
+          "sha256": "9570692ea3185803e6c363bf390d01af520058662804afbc363666846bd69b2f"
+        },
+        {
+          "tick": 1536,
+          "sha256": "32dbab67030b0e73c4f6d3797711a57898589421de82b301bd41c3bf0a871351"
+        },
+        {
+          "tick": 2048,
+          "sha256": "008bde6027ab350727755a2901ba509ed8a83a44d8abc06da1bd5713743c91db"
+        },
+        {
+          "tick": 2560,
+          "sha256": "319870df08bf80c98e4a42381574c6bad7b0f2657b119e1ccb49d2a6e4d2e570"
+        },
+        {
+          "tick": 3072,
+          "sha256": "5aea91082e0e4ddabc8db9d4f5f8895e8ad8c1a3e6139bf8caeb61a904455a2d"
+        },
+        {
+          "tick": 3584,
+          "sha256": "b1c1bd68fcd2fb77516ab4d122cc19f5c9c3f7937d746d4456825060d9ffd0b8"
+        },
+        {
+          "tick": 4096,
+          "sha256": "fa06e342d2f80e8386b3665ff2d35f118011ee79b24a7ba3be6f3c48e32d0cce"
+        },
+        {
+          "tick": 4608,
+          "sha256": "746d78bebd6bd2812d5a7b1f02f47804afc5039ba4891bf67c560ed54c67c50d"
+        },
+        {
+          "tick": 5120,
+          "sha256": "69177bc9c0b6d938f7e780d6e33bf6fd73975454befed8414c55e2707af40960"
+        },
+        {
+          "tick": 5632,
+          "sha256": "94f2af7a78f4ad6c1dfe053d013df4d1005603d0534de57ad4554a9e0df9dba9"
+        },
+        {
+          "tick": 6144,
+          "sha256": "d4f872bc0b58faf2c82e819991558ce75560778f6e937355d64939913cd47fc0"
+        },
+        {
+          "tick": 6656,
+          "sha256": "d6e38eed9603d404fa74816eea261d68f22325b562a5210dfdd9a7c7e95e443d"
+        },
+        {
+          "tick": 7168,
+          "sha256": "17dca03064b88117ee814c6c84822ec7c74dc05bcab5bb820701a5a34cff0c1d"
+        },
+        {
+          "tick": 7680,
+          "sha256": "5d2b3e3b9df25c3ec4283a647c9b7c06cc1ead447bc17452eb58877816e8ec47"
+        },
+        {
+          "tick": 8192,
+          "sha256": "c45cf996e7f263ed91c68b2e8ba63b31a49ed1e41180ae002149ffe8c1d43ee9"
+        },
+        {
+          "tick": 8704,
+          "sha256": "1fb7652a39b400cddfba8a4520b98a788ae5eec48746d7838c87980d36609f7f"
+        },
+        {
+          "tick": 9216,
+          "sha256": "2329daef77266785463c5a87f1d08a2ceb3e77e4a82c1284ae799c7d506e5e2d"
+        },
+        {
+          "tick": 9728,
+          "sha256": "4f0f72e84b36fa121ec8e72f547a14885034c9a3ba963d85dc119cec2ac2682a"
+        },
+        {
+          "tick": 10240,
+          "sha256": "8606e9e08f29f7f18b5b25295ff4f5078b08b007a765fbe4d8d6ccf2245823d9"
+        },
+        {
+          "tick": 10752,
+          "sha256": "a343ac0815b22c097af082965d378f792b76e0bc8b770e9b5dcb51e946179df8"
+        },
+        {
+          "tick": 11264,
+          "sha256": "7423102dcc6341b151932a7469b826ce5508063eb29ccf8b443b659350520bca"
+        },
+        {
+          "tick": 11776,
+          "sha256": "60547891138ec673d71dde6830374ca18b4c724673197b2999986649391b527d"
+        },
+        {
+          "tick": 12288,
+          "sha256": "72ac11c4d988462fdcf1a9bc654d3dcf68a1ac63c5f38d322c811f9ba19f1256"
+        },
+        {
+          "tick": 12800,
+          "sha256": "74cae6c2e3f9eb9b03a2ea6b38728dfa9f1b97df555f1e620f96ba9792542a26"
+        },
+        {
+          "tick": 13312,
+          "sha256": "511b8a6b7057ba090ee794f18ac4a8814037edf960c6cf7e53d26791524d629b"
+        },
+        {
+          "tick": 13824,
+          "sha256": "775b625b1daf887e62ef7f0b27d2cab953375e44f8f244c0d7ed95c3d0ff4197"
+        },
+        {
+          "tick": 14336,
+          "sha256": "da113e686404cf528834f0429876804a664814f8c19bee6d0d4d23ae83606d6f"
+        },
+        {
+          "tick": 14848,
+          "sha256": "38416bef3761a177d2dafb08e52c6aef1ecfb769ee935fe33993345f2be294b6"
+        },
+        {
+          "tick": 15360,
+          "sha256": "961bd2cf12ded315bfb6aa1f10161783d1d80070634109e8d00fa862b6216a83"
+        },
+        {
+          "tick": 15872,
+          "sha256": "9f580dba6ca947d094dec59431c943c52d9e7dc52e97d572f26b7cdcebb5f45a"
+        },
+        {
+          "tick": 16384,
+          "sha256": "913d4b6fca8f7f3f418c8b4dce25f685d8a2c8f4c9c4ad9699f8971b17bf2f5f"
+        },
+        {
+          "tick": 16896,
+          "sha256": "5b6b3c9f44a9dd77769b65cd873c53510c8142dd0da4c7a73aa5aaaeba9879bd"
+        },
+        {
+          "tick": 17408,
+          "sha256": "bce3d32df76b9c94580dc1727f6a2482668448e89b52ca81e39c9561e4f72cbb"
+        },
+        {
+          "tick": 17920,
+          "sha256": "16d20275666662ed9b803ab6a453012501c6ccf81307bbe23ffb33791acd4f3b"
+        },
+        {
+          "tick": 18432,
+          "sha256": "8ef850ac51ea9755cd05e19e26ba6142f74131516d1029669b89e1148a9d3307"
+        },
+        {
+          "tick": 18944,
+          "sha256": "b531d58c6b028612f955fb2b66a213cbcc2e4b667f58df3cf72c49cbb9a9f610"
+        },
+        {
+          "tick": 19456,
+          "sha256": "f0e6162df978e7dbb3604308419c33c88ccb8c19a1df48daeb6f6205408f5503"
+        },
+        {
+          "tick": 19968,
+          "sha256": "b8d83fa47f82812fab3b964f319e74454a25c946384c4d24d225a3591d08beb5"
+        },
+        {
+          "tick": 20480,
+          "sha256": "d2e9849403edd29c3c302180d9e41af47f3a74831a01000c6713b5405fe268ee"
+        },
+        {
+          "tick": 20992,
+          "sha256": "09c46745bb4149e55e7719fad208eb58d7cb7ef3c6e6bf8d594dd4a0b4abd6ad"
+        },
+        {
+          "tick": 21504,
+          "sha256": "0958f6559570f83ef83eb4cae6d5633b9f5eed188039fa4a2cd4c04677dc2af8"
+        },
+        {
+          "tick": 21627,
+          "sha256": "26bbe4e73d0030c697a3c7577fda8f52481b02160088d842a3f161e409c5924a"
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "ticks": 21211,
+      "blocks": [
+        {
+          "tick": 512,
+          "sha256": "2f6e5d8eb3dd1db83cbb0abc3c9656f8e7dc2ea3eb05ba394ca6df91d2ae2dcf"
+        },
+        {
+          "tick": 1024,
+          "sha256": "cb8d0d161ceabb60c0e174e6d0c511028a9970cb18ea7ac81a9f2c648af4d3d2"
+        },
+        {
+          "tick": 1536,
+          "sha256": "3ae942feebd0e6443fdb81041cef802cbc2e300d1cccae7d2d931126d6373060"
+        },
+        {
+          "tick": 2048,
+          "sha256": "bf8d7d85383c068dc637afa3ce2385d00012950c38380d5e8aaf925c72536457"
+        },
+        {
+          "tick": 2560,
+          "sha256": "ebd3d98165b44665a7dc080f640010d0faaa0e42b11f9c061f9d90e9538f2e27"
+        },
+        {
+          "tick": 3072,
+          "sha256": "50c086807eebb237a995f252aeb3aad678408cf5960f6744c3a439bb48524c52"
+        },
+        {
+          "tick": 3584,
+          "sha256": "7ec157402123cad64b218b1263f8d714f6509db8296bebc58c0b753eedeab8fa"
+        },
+        {
+          "tick": 4096,
+          "sha256": "36a1dbfa3ef531076d89967d7bd404aa485b128b309ae6be762785b383078b8f"
+        },
+        {
+          "tick": 4608,
+          "sha256": "08fd0919ea569febc10872d68852bc26132567784355c3b5ef6910135339e5b3"
+        },
+        {
+          "tick": 5120,
+          "sha256": "9fd5d5a85d197f06c49269153f2c596a65538d4eae0e12722d10e7452765d4c0"
+        },
+        {
+          "tick": 5632,
+          "sha256": "a0e37a325e4ef733f81c857a8d291749e192d1d59ef159469a171f9d58a4391c"
+        },
+        {
+          "tick": 6144,
+          "sha256": "cfd83bffbbc9ffb4625b089e271eb79a1ace5f2d900c6d49c4659b677d63490b"
+        },
+        {
+          "tick": 6656,
+          "sha256": "04e0e88ee67a9e5001f29e4ee37369bbf9e4597e58e0956953b27734e2764c29"
+        },
+        {
+          "tick": 7168,
+          "sha256": "ed963c67ba80b9e6d5f13f2dce9f3c18a751df0be2ad2cecca3530988ee45205"
+        },
+        {
+          "tick": 7680,
+          "sha256": "e33d04e0b0abc80df85fac689ac3c88ecf19a81a928e7de10c4f89197491d7f1"
+        },
+        {
+          "tick": 8192,
+          "sha256": "dd56ff1efcdb747616049302c4d3834232120d3f07607a9d0e6b10724b8e44ca"
+        },
+        {
+          "tick": 8704,
+          "sha256": "23939d53448e940a3e3282e3eaf2665cb2c8ff5d75b91b93084dfb70becd8fe8"
+        },
+        {
+          "tick": 9216,
+          "sha256": "0582df2db55207a095fb6bf88be126d68fe62296bae9f55be9f1b72c4e9139fa"
+        },
+        {
+          "tick": 9728,
+          "sha256": "aa9a205833558392d33150810586b62868d008b0c14569181150d217904a8d71"
+        },
+        {
+          "tick": 10240,
+          "sha256": "d6e9e3a74f37e07a9a894de336cf86efc79171e0fba808dc6c402e40e31e76bd"
+        },
+        {
+          "tick": 10752,
+          "sha256": "db07dbc50941b1f66450eda99a3a109e47c8571a601b79e2592bb7fa1360f8c1"
+        },
+        {
+          "tick": 11264,
+          "sha256": "93b2367ffee232d67efd9e3ad51a720dc503715cd82638ef1b295d3accf14ef1"
+        },
+        {
+          "tick": 11776,
+          "sha256": "ccd595b6d36edf234fb2f4ec15a7285a1c94b4c0375c447a4e0c37ab5c8238df"
+        },
+        {
+          "tick": 12288,
+          "sha256": "ac92abe069b39569d762bef4bf906e3aed2532bd30c0e220f8e2e488a89614a6"
+        },
+        {
+          "tick": 12800,
+          "sha256": "a74f8be932746ddd3a36b370473b10eca393a88043f51b4b1397d4245b054a47"
+        },
+        {
+          "tick": 13312,
+          "sha256": "fd0405deb4e1970f828261f1da8f20d9a1e1d92015db85ab6bfc275d13e4bdfb"
+        },
+        {
+          "tick": 13824,
+          "sha256": "384a641594740159f57ed7eac71c90007693cd177c241afd2affccdbbb265f7a"
+        },
+        {
+          "tick": 14336,
+          "sha256": "618d0d4f368b9403f536cc7346710f21995e0a26740c5a27b088b43053604b7a"
+        },
+        {
+          "tick": 14848,
+          "sha256": "fca02b551a33dcfa442d2725ac5ef9cad0a66fa0fe1a7c627c58755960138b68"
+        },
+        {
+          "tick": 15360,
+          "sha256": "0c25645f9cc28ff6cd9b25397a9126f58abc419900d1acde9f93d38f5fbba8f1"
+        },
+        {
+          "tick": 15872,
+          "sha256": "6c4f0b6bcccc52f2fdde04ed2c341c0d117396d0ac87eb8a2bce91445a6e295a"
+        },
+        {
+          "tick": 16384,
+          "sha256": "74262b8893c62dfba458948cb20f746117a9799b78d3083fa4d3086fa84e0475"
+        },
+        {
+          "tick": 16896,
+          "sha256": "09b6627cca8d6c049a9709cd165ad1cb925b32e9dcb79e746760c55021b3be66"
+        },
+        {
+          "tick": 17408,
+          "sha256": "802f3bfe2fb9b68b7cddb62931e104232aa18a4875860bb568bdf11917100a74"
+        },
+        {
+          "tick": 17920,
+          "sha256": "acc6905d2666d0724d54a9f623df1c9ea3657eaee439bdd764f554041c0e842e"
+        },
+        {
+          "tick": 18432,
+          "sha256": "c690b4e6a7ca742798667fa2d88fd53ae488597c9003a8edd52ba4116c229c1d"
+        },
+        {
+          "tick": 18944,
+          "sha256": "25819a43c3a41f4452124c738f24fadbd355a08bf89c814d76a6688c362385b2"
+        },
+        {
+          "tick": 19456,
+          "sha256": "a673edda489a6b53fbdce991b3c23f445b802ba954966f88f27208362c7a6ece"
+        },
+        {
+          "tick": 19968,
+          "sha256": "8a023e197b91657726ecf0fc3158124e39d4209f3330658d4efbe86adf237bf4"
+        },
+        {
+          "tick": 20480,
+          "sha256": "dd0931394f815cbda1f617e0306bfe3db3aa64209831027459b2e4188704de2d"
+        },
+        {
+          "tick": 20992,
+          "sha256": "d158338eef8b708061b3c18b6d89eef0df27e54a04abd521e006009ba8ed1325"
+        },
+        {
+          "tick": 21211,
+          "sha256": "dd6a462388c7e1d4dea4fc7e8776172a9ee12612aa75077834ef11736090d7c4"
+        }
+      ]
+    }
+  ],
+  "account": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "identicalLeadingBlocks": 0,
+      "firstDifferingBlockTick": 512,
+      "invariantsIdentical": true,
+      "predecessor": {
+        "ticks": 21862,
+        "repairCompleteAt": "05:09:37",
+        "repairCompleteRealSec": 420.55000000006135,
+        "repairPins": 44,
+        "playerHealth": 92
+      },
+      "live": {
+        "ticks": 21627,
+        "repairCompleteAt": "05:06:59",
+        "repairCompleteRealSec": 402.95000000005734,
+        "repairPins": 35,
+        "playerHealth": 92
+      },
+      "shared": {
+        "finalBattleClock": "07:05:00",
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "survivors": 12,
+        "fixedTimeEvents": {
+          "bombing_0434": "04:34:00",
+          "bombing_0530": "05:30:00",
+          "east_demolition": "06:10:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "kozliny_attack_distant": "07:05:00",
+          "north_contact_distant": "05:50:00",
+          "panzerzug_arrives": "04:52:00",
+          "railway_worker_report": "04:31:00",
+          "runner_pressure_report": "05:40:00",
+          "second_air_pass": "04:40:00",
+          "train963_arrives": "04:45:00",
+          "west_demolition": "06:45:00",
+          "wounded_dragged": "04:35:30"
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "identicalLeadingBlocks": 0,
+      "firstDifferingBlockTick": 512,
+      "invariantsIdentical": true,
+      "predecessor": {
+        "ticks": 21376,
+        "repairCompleteAt": "05:03:58",
+        "repairCompleteRealSec": 382.80000000005276,
+        "repairPins": 8,
+        "playerHealth": 100
+      },
+      "live": {
+        "ticks": 21211,
+        "repairCompleteAt": "05:02:06",
+        "repairCompleteRealSec": 370.40000000004994,
+        "repairPins": 4,
+        "playerHealth": 92
+      },
+      "shared": {
+        "finalBattleClock": "07:05:00",
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "survivors": 18,
+        "fixedTimeEvents": {
+          "bombing_0434": "04:34:00",
+          "bombing_0530": "05:30:00",
+          "east_demolition": "06:10:00",
+          "east_platoon_withdraws": "06:00:00",
+          "germans_on_east_spans": "06:05:00",
+          "kozliny_attack_distant": "07:05:00",
+          "north_contact_distant": "05:50:00",
+          "panzerzug_arrives": "04:52:00",
+          "railway_worker_report": "04:31:00",
+          "runner_pressure_report": "05:40:00",
+          "second_air_pass": "04:40:00",
+          "train963_arrives": "04:45:00",
+          "west_demolition": "06:45:00",
+          "wounded_dragged": "04:35:30"
+        }
+      }
+    }
+  ]
+}

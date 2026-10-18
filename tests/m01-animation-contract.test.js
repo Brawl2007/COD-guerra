@@ -9,8 +9,12 @@ import partialsGolden from './fixtures/m01-partials-gameplay-baseline.json' with
 // it is history: the golden of the staging 8c6328c (candidate #80 + #89 + T48 + T40 + T38), pinned here by sha256 and no longer the golden of the live simulation.
 import t38Golden from './fixtures/m01-t38-gameplay-baseline.json' with {type:'json'};
 // T47 (M01-T47-CKM-LIVE-FIRE-V1) was merged onto that staging: its golden, regenerated on x86 by tools/verification/m01-t47-ckm-fire-audit.mjs after the per-tick delta audit
-// against the exact staging predecessor, is the golden of the live simulation.
+// against the exact staging predecessor, pins the simulation of the candidate f6913a0. Since the combat AI slice 1 it is history, kept byte for byte.
 import golden from './fixtures/m01-t47-gameplay-baseline.json' with {type:'json'};
+// Combat AI slice 1 (M01-COMBAT-AI-SLICE-1, owner playtest P1; docs/direction/COD_WAW_WWII_BENCHMARK.md «Combate e IA») changes gameplay by design: WHEN and AT WHOM the Germans
+// of grp_de_east and Kowal fire. Its golden, written on x86 by tools/verification/m01-combat-ai-golden.mjs after the predecessor f6913a0 reproduced the T47 golden and both
+// routes ended with the same mission invariants, is the golden of the live simulation.
+import aiGolden from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:'json'};
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -82,7 +86,7 @@ test('historical approved golden remains immutable; the partials golden and the 
   assert.equal(amendment2.afterSourceSha256,t38Golden.sourceSha256);assert.notEqual(t38Golden.sourceSha256,replaced.sourceSha256,'amendment 02 moved the simulation source');
 });
 
-test('the T47 golden of the combined tree chains to the staging, pins the live simulation, cites its per-tick delta audit, and keeps amendments 01, 02 and 03 as history',()=>{
+test('the T47 golden of the combined tree chains to the staging, pins the simulation of the combat AI predecessor, cites its per-tick delta audit, and keeps amendments 01, 02 and 03 as history',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   // The original partials golden (the candidate #80 alone, the predecessor of T47 amendment 01 and of T48) is kept as ...-before-amendment-02.json: an immutable record, pinned here.
   const original='./fixtures/m01-partials-gameplay-baseline-before-amendment-02.json',partialsOriginal=JSON.parse(readFileSync(new URL(original,import.meta.url),'utf8'));
@@ -98,7 +102,9 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   assert.equal(golden.previousGolden.sha256,sha('./fixtures/m01-t38-gameplay-baseline.json'));
   assert.equal(golden.historicalGoldenSha256,t38Golden.historicalGoldenSha256);
   assert.deepEqual(golden.routes.map(r=>[r.seed,r.support]),t38Golden.routes.map(r=>[r.seed,r.support]),'the same routes are audited');
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the golden pins the live simulation');
+  // History since the combat AI slice 1: the T47 golden pins the simulation of f6913a0, the predecessor the combat AI golden names (and whose tree reproduced this golden).
+  assert.equal(aiGolden.predecessorSourceSha256,golden.sourceSha256,'the T47 golden pins the simulation of the combat AI predecessor');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the T47 golden is history: the combat AI moved the simulation');
   assert.notEqual(golden.sourceSha256,t38Golden.sourceSha256,'the T38 golden is history: T47 moved the simulation');
   assert.equal(sha('../docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json'),golden.auditSha256,'the delta audit that justifies this golden is the committed one');
   // Amendment 03 (D43, docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md): the T47 x T38 interaction fix moved the simulation again, on the same
@@ -172,7 +178,26 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   });
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against the T47-audited candidate (the staging with the live ckm fire): seed ${expected.seed}, support ${expected.support}`,()=>{
+test('the combat AI golden pins the live simulation, chains to the T47 golden byte for byte, and its account keeps every mission invariant of the predecessor',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  assert.equal(aiGolden.task,'M01-COMBAT-AI-SLICE-1');assert.equal(aiGolden.predecessor,'f6913a0dae3ae227ab0421c6b59f992e8685e9a6');
+  assert.equal(aiGolden.previousGolden.task,golden.task);assert.equal(aiGolden.previousGolden.file,'tests/fixtures/m01-t47-gameplay-baseline.json');
+  assert.equal(aiGolden.previousGolden.sha256,sha('./fixtures/m01-t47-gameplay-baseline.json'),'the T47 golden is kept byte for byte');
+  assert.equal(aiGolden.historicalGoldenSha256,golden.historicalGoldenSha256);
+  assert.equal(sha('../src/game/m01-simulation.js'),aiGolden.sourceSha256,'the golden pins the live simulation');
+  assert.equal(aiGolden.inputs['src/game/m01-simulation.js'].after,aiGolden.sourceSha256);assert.equal(aiGolden.inputs['src/game/m01-simulation.js'].before,golden.sourceSha256);
+  assert.equal(sha('../src/game/m01-display-fire.js'),aiGolden.inputs['src/game/m01-display-fire.js'].after);assert.equal(sha('../missions/m01-tczew/mission.json'),aiGolden.inputs['missions/m01-tczew/mission.json'].after);
+  assert.deepEqual(aiGolden.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]),'the same routes');
+  assert.deepEqual(aiGolden.account.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]));
+  aiGolden.account.forEach((r,i)=>{
+    assert.equal(r.invariantsIdentical,true);assert.equal(r.shared.checkpoints.length,4);assert.equal(r.shared.finalBattleClock,'07:05:00');
+    assert.ok(r.shared.survivors>=12&&r.shared.survivors<=18);
+    for(let b=0;b<r.identicalLeadingBlocks;b++)assert.deepEqual(aiGolden.routes[i].blocks[b],golden.routes[i].blocks[b],'the blocks before the first changed shot are the T47 golden\'s');
+    assert.notDeepEqual(aiGolden.routes[i].blocks[r.identicalLeadingBlocks],golden.routes[i].blocks[r.identicalLeadingBlocks],'and the next block differs');
+  });
+});
+
+for(const expected of aiGolden.routes)test(`all gameplay bytes hashed each tick against the combat AI golden (the candidate with the combat AI slice 1): seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));
