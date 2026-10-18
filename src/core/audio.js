@@ -260,6 +260,21 @@ export class AudioManager {
   reload(){if(!this.play('reload',{volume:.7,priority:AUDIO_PRIORITY.rifle,kind:'reload',category:'player'})){for(const [delay,freq]of [[0,780],[.38,510],[.82,690],[1.2,430]])this.tone(freq,.045,'square',.025,-180,0,delay,{priority:AUDIO_PRIORITY.rifle,kind:'reload',category:'player'});}}
   hit(){this._record('player-hit',{priority:AUDIO_PRIORITY.critical,key:`hit:${this.serial}`});this.tone(95,.08,'sawtooth',.05,-45,0,0,{priority:AUDIO_PRIORITY.critical,kind:'player-hit',category:'player',filter:1800});}
 
+  /**
+   * The player's feet meet the ground after a fall (M01 `player-landing`, speed in m/s): a low body thud, the gear and grit of the impact and, from a hard
+   * drop, a second heavier knock; a splash in the river instead of earth. Synthesised, no sample: the loudness follows the landing speed.
+   */
+  landing(speed=6,surface='ground'){
+    const s=Math.max(0,Math.min(1,(speed-2.5)/10.5)),opts={priority:AUDIO_PRIORITY.impact,kind:'player-landing',category:'player'};
+    this._record('player-landing',{priority:AUDIO_PRIORITY.impact,key:`landing:${this.serial}`,detail:{surface,speed:Number(speed.toFixed?.(2)??speed)}});
+    if(surface==='water'){
+      this.noise(.4+.3*s,.05+.09*s,0,0,{...opts,noise:'white',filter:2600});
+      this.tone(96,.28+.2*s,'sine',.04+.07*s,-52,0,0,opts);return;
+    }
+    this.tone(70-18*s,.14+.16*s,'sine',.07+.14*s,-34,0,0,opts);                       // body weight
+    this.noise(.05+.09*s,.04+.1*s,0,0,{...opts,noise:'brown',filter:1100+700*s});       // boots, grit, webbing
+    if(s>.45){this.tone(46,.2+.12*s,'sine',.06*s,-18,0,.05,opts);this.noise(.12,.05*s,0,.04,{...opts,noise:'white',filter:2200});}   // a hard drop: a second knock and the rattle of gear
+  }
   // ------------------------------------------------------------ armas
   // wz.29 do jogador: mantém as camadas/tempos já estabelecidos (estalo .26, corpo 78 Hz, cauda a .15 s) e ganha corpo médio e reflexão.
   wz29Shot(pan=0,distance=0){const key=`wz29:${this.serial}`;this._record('wz29-shot',{pan,distance,priority:AUDIO_PRIORITY.rifle,key});this._feel('rifle',distance);
