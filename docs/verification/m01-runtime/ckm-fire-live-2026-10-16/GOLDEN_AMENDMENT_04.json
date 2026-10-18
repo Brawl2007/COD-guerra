@@ -10,8 +10,8 @@
   "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_04.json",
   "beforeAuditSha256": "6480330aff018fa53e89d2ad379ba6cff22e628bc522d2d38a89ab92e0922d4f",
   "afterFixture": "tests/fixtures/m01-t47-gameplay-baseline.json",
-  "afterFixtureSha256": "11862f580a02511ed8e14c7329615d9ca7d47841bfbdff1e077b9abbf99b78ec",
-  "afterSourceSha256": "4e8a5019a3607dd874b81bd9bf80439fed4189e9584fbafccc4cedb82bf42473",
+  "afterFixtureSha256": "acd056fef28ae28eeb07662f8f98b785fd56f6fd2eec2be46af0f634831bc251",
+  "afterSourceSha256": "64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482",
   "afterAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json",
   "afterAuditSha256": "ebd6c97f4347098e8008695bfe12d78c0a8098a3c5dbe2941f2e3c9fa32191bc",
   "authority": "Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 04 --write (x86), after tools/verification/m01-t47-ckm-fire-audit.mjs --write-golden; never edited by hand. Derived from git (the replaced golden and delta audit are read from beforeCommit), the two fixtures, the two delta audits and two runs of each golden route; no value in it is typed.",
@@ -67,7 +67,7 @@
     },
     "sourceSha256": {
       "before": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c",
-      "after": "4e8a5019a3607dd874b81bd9bf80439fed4189e9584fbafccc4cedb82bf42473"
+      "after": "64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482"
     },
     "amendment03": {
       "before": {

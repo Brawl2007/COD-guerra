@@ -9,7 +9,7 @@
     "sha256": "d21fa94e0ad2bb4c161939f5ba9db319dc36e4ef2665d1e2b21767dfe978df6c"
   },
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
-  "sourceSha256": "4e8a5019a3607dd874b81bd9bf80439fed4189e9584fbafccc4cedb82bf42473",
+  "sourceSha256": "64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482",
   "amendment04": {
     "task": "M01-T47-CKM-LIVE-FIRE-V1",
     "beforeCommit": "f6913a0dae3ae227ab0421c6b59f992e8685e9a6",
