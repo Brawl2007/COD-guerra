@@ -12,7 +12,9 @@ function realRoundFixture({requireHit}){
   const d=toCoverAdjustment({truss:true,Simulation:CkmNeutralSimulation}),sim=d.sim;
   const shooter=sim.enemies.find(a=>a.active&&a.alive&&a.weapon==='kar98k'&&sim.world.lineOfSight(a,sim.player));
   if(!shooter)throw new Error('No real line-of-sight rifleman available for focused combat fixture');
-  for(let attempt=0;attempt<20;attempt++){
+  // A round that reaches the player wounds him only on a roll (6% in cover, m01-simulation.js landRound), so the first hit is a lottery over the deterministic stream and its
+  // position moves with any change upstream (PR #90 moved it from attempt 16 to 21). The bound is generous: the search is deterministic and ends at the first match.
+  for(let attempt=0;attempt<300;attempt++){
     sim.burst(shooter,sim.player,'player',{rounds:1,bias:[0,0],cone:[0,0]});
     sim.drainEvents(); // firing notification only; the authoritative round remains in enemyFire.rounds.
     const before=sim.snapshot(),health=sim.player.health,rng=sim.rng.state;
