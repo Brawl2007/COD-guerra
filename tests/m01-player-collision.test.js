@@ -147,10 +147,17 @@ test('fall damage: a 5 m drop hurts, a 12 m drop kills; both through the real ti
   assert.ok(died,'a 12 m fall kills and the checkpoint is restored');
 });
 
-test('walking off a 1 m step is a stair, not a fall: no landing event, no damage',()=>{
-  const sim=freshSim();
-  // The shelter pit lip: -3 outside, -4 inside the pit (src/world/tczew-world.js).
-  const path=drive(sim,{x:-286,z:70,y:-3,angle:0,ticks:40,sprint:false});
-  const bad=path.flatMap(p=>p.events??[]).filter(e=>e.type==='player-landing'&&e.damage>0);
-  assert.deepEqual(bad,[]);assert.equal(sim.player.health,100);
+test('the shelter pit is a slope, not a cliff: walking into it from the road embankment is a descent with no landing event and no damage',()=>{
+  const sim=freshSim(),c=sim.world.point('shelter');
+  // The real way in is from the road embankment (1.6 m) down through the open north entrance (x -265..-261.5) to the pit floor (-4 m): the pit is a relative depression
+  // (src/world/tczew-world.js), where it used to be a flat -4 that cut a 5 m cliff into the foot of the embankment. Walking pace, south to north, 80 ticks.
+  const path=drive(sim,{x:-263,z:56,angle:Math.PI/2,ticks:80,sprint:false});
+  const events=path.flatMap(p=>p.events??[]);
+  assert.deepEqual(events.filter(e=>e.type==='player-landing'),[],'no landing event at all');
+  assert.equal(sim.player.health,100);assert.equal(sim.player.fall,undefined);
+  const reached=Math.min(...path.map(p=>Math.hypot(p.x-c.x,p.z-c.z)));
+  assert.ok(reached<4,`the probe reached the pit (${reached.toFixed(2)} m from its centre; the full depth is inside 6 m)`);
+  let steepest=0;for(let i=1;i<path.length;i++){steepest=Math.max(steepest,path[i-1].y-path[i].y);assert.equal(path[i].y,sim.world.heightAt(path[i].x,path[i].z),`on the ground at tick ${i}`);}
+  assert.ok(steepest<.35,`never more than a stair a tick (${steepest.toFixed(3)} m)`);
+  assert.ok(path[0].y-sim.player.y>5,`it went down ${(path[0].y-sim.player.y).toFixed(2)} m, the real depth of the way in`);
 });
