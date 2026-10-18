@@ -48,7 +48,6 @@ import {pathToFileURL} from 'node:url';
 import {mkdtempSync,symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
-import {route} from '../../tests/helpers/m01-route.js';
 import {GameplayDigest,gameplayFrame} from '../../tests/helpers/m01-animation-contract.js';
 
 const PREDECESSOR='5a169babb638d1d09608f9a2bb84d1528f1aab4b';   // candidate #80 + #89 + T48; before the merge f02e06b: ef35c7ab24d75d87ca6435891f1977fd14d7a52c
@@ -74,9 +73,11 @@ const repoRoot=resolve(import.meta.dirname,'../..');
 const treeRoot=live?repoRoot:mkdtempSync(join(tmpdir(),'m01-t38-candidate-'));
 if(!live){
   const data=execFileSync('git',['-C',repoRoot,'ls-tree','-r','--name-only',CANDIDATE_COMMIT,'assets','research'],{encoding:'utf8',maxBuffer:1<<26}).split('\n').filter(p=>p.endsWith('.json'));
-  execFileSync('tar',['-x','-C',treeRoot],{input:execFileSync('git',['-C',repoRoot,'archive','--format=tar',CANDIDATE_COMMIT,'src','missions',...data],{maxBuffer:1<<29})});
+  execFileSync('tar',['-x','-C',treeRoot],{input:execFileSync('git',['-C',repoRoot,'archive','--format=tar',CANDIDATE_COMMIT,'src','missions','tests/helpers',...data],{maxBuffer:1<<29})});
   symlinkSync(join(repoRoot,'node_modules'),join(treeRoot,'node_modules'));
 }
+// The route pilot is part of the audited tree: taken from the same commit (the live working tree only with --live).
+const {route}=await import(pathToFileURL(treeRoot+'/tests/helpers/m01-route.js'));
 const {M01Simulation,seconds,clockText,eastFrontPlan}=await import(pathToFileURL(treeRoot+'/src/game/m01-simulation.js'));
 const source=readFileSync(treeRoot+'/src/game/m01-simulation.js'),sourceSha256=hash(source);
 // Everything the per-tick gameplay bytes depend on besides the simulation source (data, posture, aim, fire, world): recorded for provenance and
