@@ -151,6 +151,9 @@ body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #sub
 .objective-marker .marker-distance{color:var(--ink);font-variant-numeric:tabular-nums}
 .objective-marker[data-side=left] .marker-pip{transform:rotate(45deg) translate(-.15em,.15em);border-right-color:transparent;border-top-color:transparent}
 .objective-marker[data-side=right] .marker-pip{transform:rotate(45deg) translate(.15em,-.15em);border-left-color:transparent;border-bottom-color:transparent}
+/* Pinned to an edge (target off screen): the label hangs inward from the edge instead of being centred on it, so it never leaves the window. */
+.objective-marker[data-side=left]{transform:none;align-items:flex-start}
+.objective-marker[data-side=right]{transform:translateX(-100%);align-items:flex-end}
 .tempo-card{position:absolute;top:calc(var(--edge) + 4.2em);right:var(--edge);text-align:right;opacity:0;pointer-events:none;text-shadow:0 1px 2px #000;max-width:min(26em,60vw)}
 .tempo-card strong{display:block;color:var(--brass);letter-spacing:.24em;font-size:.9em}
 .tempo-card small{display:block;color:var(--dim);font-size:.74em;margin-top:.2em}
