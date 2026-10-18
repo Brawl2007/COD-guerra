@@ -38,7 +38,8 @@ export class M01BridgeFinishRuntime{
  }
  bind(mesh){if(!mesh.isMesh||mesh.userData.m01BridgeImpostor)return;this.observe(mesh);if(!this.enabled||!this.stage||this.status==='loading')return;const bound=this.bindings.get(mesh);if(bound&&mesh.material===bound.material)return;
   // T31 binds first in M01View; if a later owner supplied a new clone, retain that exact clone as the new borrowed original.
-  const source=mesh.material;if(Array.isArray(source))return;const family=bridgeFamily(mesh,source),maps=this.stage.families.get(family),fallback=family===null;if(!maps&&!fallback)return;let cache=this.materialCache.get(source);if(!cache)this.materialCache.set(source,cache=new Map());const slot=fallback?'fade-fallback':family;let material=cache.get(slot);if(!material){material=fallback?bridgeFadeFallbackMaterial(source):bridgeMappedMaterial(source,family,maps);cache.set(slot,material);}this.bindings.set(mesh,{original:source,material,family:slot});mesh.material=material;
+  const source=mesh.material;if(Array.isArray(source))return;const family=bridgeFamily(mesh,source),maps=this.stage.families.get(family),fallback=family===null;if(!maps&&!fallback)return;if(fallback&&!this.stage.families.size)return;   // every optional map set failed: the finish binds nothing and the originals stay as T31 left them (no fade clone beside unmapped neighbours)
+  let cache=this.materialCache.get(source);if(!cache)this.materialCache.set(source,cache=new Map());const slot=fallback?'fade-fallback':family;let material=cache.get(slot);if(!material){material=fallback?bridgeFadeFallbackMaterial(source):bridgeMappedMaterial(source,family,maps);cache.set(slot,material);}this.bindings.set(mesh,{original:source,material,family:slot});mesh.material=material;
  }
  sync({kits,quality,world,kitsSettled=true}){if(this.disposed)return;this.requestQuality(quality);this.fadeQuality=quality;this.lod.syncWorld(world);if(world!==this.world||world?.revision!==this.worldRevision){this.world=world;this.worldRevision=world?.revision;this.revision++;this.snapFades();this.resetFades();this.pieceFades.clear();}
   // The mapped materials are created in bind order and three.js draws opaque items by material id, so the order the kits are bound in decides which of two
@@ -81,14 +82,18 @@ export class M01BridgeFinishRuntime{
  showCard(rec,hideTrusses){const c=this.cards.get(rec.name),maps=this.stage?.impostors.get(rec.name);if(!c)return;if(maps)for(let i=0;i<2;i++){const mesh=i===0?c.side:c.top;if(mesh.material.map!==maps[i]){mesh.material.map=maps[i];mesh.material.needsUpdate=true;}}c.root.visible=true;if(hideTrusses)for(const mesh of c.trusses){this.farHidden.set(mesh,mesh.visible);mesh.visible=false;}}
  resolveFade(rec,fadeOn,clock){
   const state=rec.state;let progress=-1;
+  // The card is only drawable while this piece's impostor maps are resident. A tier change (Low <-> Medium/High) releases the maps (texture disposed, bitmap closed)
+  // and the card then stops being "ready": that is a resource change, not a distance change, so it never fades; drawing the card then would upload the released
+  // 0x0 texture again (one leaked GL texture per card face) and show an unmapped quad.
+  const cardReady=this.enabled&&Boolean(this.stage?.impostors.has(rec.name));
   if(rec.shown===null)rec.shown=state;
   else if(state!==rec.shown){
    const from=rec.shown,fromPiece=from<0?null:rec.piece[from===3?2:from],toPiece=state<0?null:rec.piece[state===3?2:state];
-   if(fadeOn&&rec.clean&&fromPiece&&toPiece){rec.from=from;rec.to=state;rec.start=clock;rec.active=true;this.fadeStats.started++;}
+   if(fadeOn&&rec.clean&&fromPiece&&toPiece&&(cardReady||from!==3&&state!==3)){rec.from=from;rec.to=state;rec.start=clock;rec.active=true;this.fadeStats.started++;}
    else{if(rec.active)this.fadeStats.snapped++;rec.active=false;}
    rec.shown=state;
   }
-  if(rec.active){if(!fadeOn||!rec.clean||clock<rec.start){rec.active=false;this.fadeStats.snapped++;}else{progress=lodFadeProgress(clock,rec.start,this.fadeSeconds);if(progress>=1){rec.active=false;progress=-1;}}}
+  if(rec.active){if(!fadeOn||!rec.clean||clock<rec.start||(rec.from===3||rec.to===3)&&!cardReady){rec.active=false;this.fadeStats.snapped++;}else{progress=lodFadeProgress(clock,rec.start,this.fadeSeconds);if(progress>=1){rec.active=false;progress=-1;}}}
   if(progress<0){if(rec.applied)this.clearRecFade(rec);if(state===3)this.showCard(rec,true);return;}
   // Fading: both representations drawn, complementary dither; shared meshes (kit-2 body in 2 <-> 3) stay solid.
   if(rec.applied&&(rec.lastFrom!==rec.from||rec.lastTo!==rec.to))this.clearRecFade(rec);
