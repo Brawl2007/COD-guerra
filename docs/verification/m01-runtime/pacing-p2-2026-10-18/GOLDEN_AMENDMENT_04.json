@@ -1,0 +1,441 @@
+{
+  "task": "M01-P2-PACING-V1",
+  "amendment": "amendment-04",
+  "beforeCommit": "f6913a0dae3ae227ab0421c6b59f992e8685e9a6",
+  "beforeSourceSha256": "d256c43bef6702c8e75dac28d6e58f217bf6511a1cc78c2e7d1299c78812577c",
+  "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-04.json",
+  "beforeFixtureSha256": "92a69ba178bdf3e8071940135db873c34f6269b9c7c2427d4e8efd845c58b1ff",
+  "afterFixture": "tests/fixtures/m01-t47-gameplay-baseline.json",
+  "afterSourceSha256": "3c3d1eef844a9ec9f9510e4890623dda2b0158d18b9034383ae33df982586159",
+  "authority": "Written only by tools/verification/m01-pacing-golden-amendment.mjs --write (x86); never edited by hand. Derived from git (the replaced golden and the BEFORE simulation are read from beforeCommit) and two runs of each golden route through the same test pilot.",
+  "reason": "Owner playtest 2026-10-18, P2: long stretches with nothing to do, a forced real-time wait for 06:00 and unclear objectives (bridge defence; Bąk to the medic). Mission flow changes, in the order a route meets them: (1) objective panel and status text (pacing.interludes, clearer hold_access/hold_corridor texts, pacingStatus); (2) continuity cues only with their objective active and >= 20 real s apart; (3) seg_hold 05:34-05:59 runs at 24x while the player holds the deck after the raid; (4) the west charge waits for Bąk and Dudek to be west of x -90, not at the station, and seg_climax 06:12-06:44 runs at 30x once everyone is west; (5) the roll call finishes a carry still under way (the 07:05 fade). Historical battle-clock times, the 12 objectives, CP-A..D, survivors and 07:05 are the invariants checked per route.",
+  "changedGameplayInputsSinceBefore": [
+    "src/game/m01-simulation.js",
+    "src/game/m01-pacing.js",
+    "missions/m01-tczew/mission.json"
+  ],
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 21862,
+      "newTicks": 16904,
+      "identicalBlocks": 0,
+      "firstDifference": {
+        "tick": 355,
+        "real": 17.75,
+        "battleClock": "04:33:10",
+        "path": "$.state.mission.text"
+      },
+      "firstTickWhere": {
+        "battleClockDiffers": {
+          "tick": 9969,
+          "real": 498.45,
+          "battleClock": "05:34:22"
+        },
+        "mainRngStateDiffers": {
+          "tick": 11359,
+          "real": 567.95,
+          "battleClock": "06:00:03"
+        }
+      },
+      "realSeconds": {
+        "to0600": {
+          "before": 690.85,
+          "after": 567.55
+        },
+        "end": {
+          "before": 1093.1,
+          "after": 845.2
+        }
+      },
+      "invariants": {
+        "objectives": {
+          "obj_m01_deliver_message": "done",
+          "obj_m01_take_cover": "done",
+          "obj_m01_follow_sergeant": "done",
+          "obj_m01_find_sappers": "done",
+          "obj_m01_fetch_material": "done",
+          "obj_m01_cover_repair": "done",
+          "obj_m01_hold_access": "done",
+          "obj_m01_cover_withdrawal": "done",
+          "obj_m01_rescue_bak": "expired",
+          "obj_m01_leave_bridge": "done",
+          "obj_m01_hold_corridor": "done",
+          "obj_m01_reach_shelter": "done"
+        },
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "survivors": 12,
+        "bakStatus": "rescued_by_dudek",
+        "finalBattleClock": "07:05:00",
+        "consumedEvents": 26,
+        "suggestedCover": {
+          "before": null,
+          "after": null
+        }
+      },
+      "battleClockEvents": [
+        {
+          "id": "evt_m01_railway_worker_report",
+          "at": "04:31:00",
+          "battleBefore": "04:31:00",
+          "battleAfter": "04:31:00",
+          "realBefore": 16,
+          "realAfter": 16
+        },
+        {
+          "id": "evt_m01_planes_heard",
+          "at": "04:33:10",
+          "battleBefore": "04:33:10",
+          "battleAfter": "04:33:10",
+          "realBefore": 17.75,
+          "realAfter": 17.75
+        },
+        {
+          "id": "evt_m01_bombing_0434",
+          "at": "04:34:00",
+          "battleBefore": "04:34:00",
+          "battleAfter": "04:34:00",
+          "realBefore": 67.75,
+          "realAfter": 67.75
+        },
+        {
+          "id": "evt_m01_wounded_dragged",
+          "at": "04:35:30",
+          "battleBefore": "04:35:30",
+          "battleAfter": "04:35:30",
+          "realBefore": 93.55,
+          "realAfter": 93.55
+        },
+        {
+          "id": "evt_m01_second_air_pass",
+          "at": "04:40:00",
+          "battleBefore": "04:40:00",
+          "battleAfter": "04:40:00",
+          "realBefore": 170.7,
+          "realAfter": 170.7
+        },
+        {
+          "id": "evt_m01_train963_arrives",
+          "at": "04:45:00",
+          "battleBefore": "04:45:00",
+          "battleAfter": "04:45:00",
+          "realBefore": 256.4,
+          "realAfter": 256.4
+        },
+        {
+          "id": "evt_m01_panzerzug_arrives",
+          "at": "04:52:00",
+          "battleBefore": "04:52:00",
+          "battleAfter": "04:52:00",
+          "realBefore": 303.1,
+          "realAfter": 303.1
+        },
+        {
+          "id": "evt_m01_order_demolish",
+          "at": "05:30:00",
+          "battleBefore": "05:30:00",
+          "battleAfter": "05:30:00",
+          "realBefore": 465.85,
+          "realAfter": 465.85
+        },
+        {
+          "id": "evt_m01_bombing_0530",
+          "at": "05:30:00",
+          "battleBefore": "05:30:00",
+          "battleAfter": "05:30:00",
+          "realBefore": 465.85,
+          "realAfter": 465.85
+        },
+        {
+          "id": "evt_m01_runner_pressure_report",
+          "at": "05:40:00",
+          "battleBefore": "05:40:00",
+          "battleAfter": "05:40:00",
+          "realBefore": 540.85,
+          "realAfter": 512.55
+        },
+        {
+          "id": "evt_m01_north_contact_distant",
+          "at": "05:50:00",
+          "battleBefore": "05:50:00",
+          "battleAfter": "05:50:00",
+          "realBefore": 615.85,
+          "realAfter": 537.55
+        },
+        {
+          "id": "evt_m01_east_platoon_withdraws",
+          "at": "06:00:00",
+          "battleBefore": "06:00:00",
+          "battleAfter": "06:00:00",
+          "realBefore": 690.85,
+          "realAfter": 567.55
+        },
+        {
+          "id": "evt_m01_bak_wounded",
+          "at": "06:04:00",
+          "battleBefore": "06:04:00",
+          "battleAfter": "06:04:00",
+          "realBefore": 720.85,
+          "realAfter": 597.55
+        },
+        {
+          "id": "evt_m01_germans_on_east_spans",
+          "at": "06:05:00",
+          "battleBefore": "06:05:00",
+          "battleAfter": "06:05:00",
+          "realBefore": 728.35,
+          "realAfter": 605.05
+        },
+        {
+          "id": "evt_m01_east_demolition",
+          "at": "06:10:00",
+          "battleBefore": "06:10:00",
+          "battleAfter": "06:10:00",
+          "realBefore": 766.9,
+          "realAfter": 643.6
+        },
+        {
+          "id": "evt_m01_dudek_retrieves_bak",
+          "at": "06:14:00",
+          "battleBefore": "06:14:00",
+          "battleAfter": "06:14:00",
+          "realBefore": 795.15,
+          "realAfter": 671.85
+        },
+        {
+          "id": "evt_m01_west_demolition",
+          "at": "06:45:00",
+          "battleBefore": "06:45:00",
+          "battleAfter": "06:45:00",
+          "realBefore": 1078.05,
+          "realAfter": 830.15
+        },
+        {
+          "id": "evt_m01_kozliny_attack_distant",
+          "at": "07:00:00",
+          "battleBefore": "07:05:00",
+          "battleAfter": "07:05:00",
+          "realBefore": 1093.05,
+          "realAfter": 845.15
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 21376,
+      "newTicks": 16384,
+      "identicalBlocks": 0,
+      "firstDifference": {
+        "tick": 355,
+        "real": 17.75,
+        "battleClock": "04:33:10",
+        "path": "$.state.mission.text"
+      },
+      "firstTickWhere": {
+        "battleClockDiffers": {
+          "tick": 9415,
+          "real": 470.75,
+          "battleClock": "05:34:01"
+        },
+        "mainRngStateDiffers": {
+          "tick": 10816,
+          "real": 540.8,
+          "battleClock": "06:00:01"
+        }
+      },
+      "realSeconds": {
+        "to0600": {
+          "before": 665.7,
+          "after": 540.7
+        },
+        "end": {
+          "before": 1068.8,
+          "after": 819.2
+        }
+      },
+      "invariants": {
+        "objectives": {
+          "obj_m01_deliver_message": "done",
+          "obj_m01_take_cover": "done",
+          "obj_m01_follow_sergeant": "done",
+          "obj_m01_find_sappers": "done",
+          "obj_m01_fetch_material": "done",
+          "obj_m01_cover_repair": "done",
+          "obj_m01_hold_access": "done",
+          "obj_m01_cover_withdrawal": "done",
+          "obj_m01_rescue_bak": "expired",
+          "obj_m01_leave_bridge": "done",
+          "obj_m01_hold_corridor": "done",
+          "obj_m01_reach_shelter": "done"
+        },
+        "checkpoints": [
+          "cp_m01_a_orientacao",
+          "cp_m01_b_reorganizacao",
+          "cp_m01_c_engenheiros",
+          "cp_m01_d_retirada"
+        ],
+        "survivors": 18,
+        "bakStatus": "rescued_by_dudek",
+        "finalBattleClock": "07:05:00",
+        "consumedEvents": 26,
+        "suggestedCover": {
+          "before": "cv_road_truss_3",
+          "after": "cv_sandbag_mid_2"
+        }
+      },
+      "battleClockEvents": [
+        {
+          "id": "evt_m01_railway_worker_report",
+          "at": "04:31:00",
+          "battleBefore": "04:31:00",
+          "battleAfter": "04:31:00",
+          "realBefore": 16,
+          "realAfter": 16
+        },
+        {
+          "id": "evt_m01_planes_heard",
+          "at": "04:33:10",
+          "battleBefore": "04:33:10",
+          "battleAfter": "04:33:10",
+          "realBefore": 17.75,
+          "realAfter": 17.75
+        },
+        {
+          "id": "evt_m01_bombing_0434",
+          "at": "04:34:00",
+          "battleBefore": "04:34:00",
+          "battleAfter": "04:34:00",
+          "realBefore": 67.75,
+          "realAfter": 67.75
+        },
+        {
+          "id": "evt_m01_wounded_dragged",
+          "at": "04:35:30",
+          "battleBefore": "04:35:30",
+          "battleAfter": "04:35:30",
+          "realBefore": 93.55,
+          "realAfter": 93.55
+        },
+        {
+          "id": "evt_m01_second_air_pass",
+          "at": "04:40:00",
+          "battleBefore": "04:40:00",
+          "battleAfter": "04:40:00",
+          "realBefore": 170.7,
+          "realAfter": 170.7
+        },
+        {
+          "id": "evt_m01_train963_arrives",
+          "at": "04:45:00",
+          "battleBefore": "04:45:00",
+          "battleAfter": "04:45:00",
+          "realBefore": 256.4,
+          "realAfter": 256.4
+        },
+        {
+          "id": "evt_m01_panzerzug_arrives",
+          "at": "04:52:00",
+          "battleBefore": "04:52:00",
+          "battleAfter": "04:52:00",
+          "realBefore": 303.1,
+          "realAfter": 303.1
+        },
+        {
+          "id": "evt_m01_order_demolish",
+          "at": "05:30:00",
+          "battleBefore": "05:30:00",
+          "battleAfter": "05:30:00",
+          "realBefore": 440.7,
+          "realAfter": 440.7
+        },
+        {
+          "id": "evt_m01_bombing_0530",
+          "at": "05:30:00",
+          "battleBefore": "05:30:00",
+          "battleAfter": "05:30:00",
+          "realBefore": 440.7,
+          "realAfter": 440.7
+        },
+        {
+          "id": "evt_m01_runner_pressure_report",
+          "at": "05:40:00",
+          "battleBefore": "05:40:00",
+          "battleAfter": "05:40:00",
+          "realBefore": 515.7,
+          "realAfter": 485.7
+        },
+        {
+          "id": "evt_m01_north_contact_distant",
+          "at": "05:50:00",
+          "battleBefore": "05:50:00",
+          "battleAfter": "05:50:00",
+          "realBefore": 590.7,
+          "realAfter": 510.7
+        },
+        {
+          "id": "evt_m01_east_platoon_withdraws",
+          "at": "06:00:00",
+          "battleBefore": "06:00:00",
+          "battleAfter": "06:00:00",
+          "realBefore": 665.7,
+          "realAfter": 540.7
+        },
+        {
+          "id": "evt_m01_bak_wounded",
+          "at": "06:04:00",
+          "battleBefore": "06:04:00",
+          "battleAfter": "06:04:00",
+          "realBefore": 695.7,
+          "realAfter": 570.7
+        },
+        {
+          "id": "evt_m01_germans_on_east_spans",
+          "at": "06:05:00",
+          "battleBefore": "06:05:00",
+          "battleAfter": "06:05:00",
+          "realBefore": 703.2,
+          "realAfter": 578.2
+        },
+        {
+          "id": "evt_m01_east_demolition",
+          "at": "06:10:00",
+          "battleBefore": "06:10:00",
+          "battleAfter": "06:10:00",
+          "realBefore": 742.6,
+          "realAfter": 617.6
+        },
+        {
+          "id": "evt_m01_dudek_retrieves_bak",
+          "at": "06:14:00",
+          "battleBefore": "06:14:00",
+          "battleAfter": "06:14:00",
+          "realBefore": 770.85,
+          "realAfter": 645.85
+        },
+        {
+          "id": "evt_m01_west_demolition",
+          "at": "06:45:00",
+          "battleBefore": "06:45:00",
+          "battleAfter": "06:45:00",
+          "realBefore": 1053.75,
+          "realAfter": 804.15
+        },
+        {
+          "id": "evt_m01_kozliny_attack_distant",
+          "at": "07:00:00",
+          "battleBefore": "07:05:00",
+          "battleAfter": "07:05:00",
+          "realBefore": 1068.75,
+          "realAfter": 819.15
+        }
+      ]
+    }
+  ]
+}

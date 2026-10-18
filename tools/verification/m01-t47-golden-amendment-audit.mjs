@@ -45,8 +45,9 @@ const amendmentArg=(()=>{const i=process.argv.indexOf('--amendment');return i<0?
 const AMENDMENTS={
   '02':{before:'602a5ee89920283d360a1bdad6177922666b2936',beforePredecessor:'813f163deceb551e0e4504b30958580cb67d3a76',after:'bc4523fc2e8161846828b77e7c1a49697f3372e8',
     afterGolden:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-03.json',afterAudit:'PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_03.json'},
-  '03':{before:'bc4523fc2e8161846828b77e7c1a49697f3372e8',beforePredecessor:PREDECESSOR,after:null,
-    afterGolden:'tests/fixtures/m01-t47-gameplay-baseline.json',afterAudit:'PREDECESSOR_DELTA_AUDIT.json'}};
+  // History since the P2 pacing amendment 04 (tools/verification/m01-pacing-golden-amendment.mjs): AFTER is f6913a0, whose golden is kept as ...-before-amendment-04.
+  '03':{before:'bc4523fc2e8161846828b77e7c1a49697f3372e8',beforePredecessor:PREDECESSOR,after:'f6913a0dae3ae227ab0421c6b59f992e8685e9a6',
+    afterGolden:'tests/fixtures/m01-t47-gameplay-baseline-before-amendment-04.json',afterAudit:'PREDECESSOR_DELTA_AUDIT.json'}};
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 02 or 03`);
 const BEFORE_COMMIT=CFG.before,KEY=`amendment${amendmentArg}`;
 const INPUTS=['src/game/m01-simulation.js','missions/m01-tczew/mission.json','missions/m01-tczew/map-layout.json','src/game/m01-animation-presentation.js',
@@ -99,8 +100,8 @@ assert.equal(sha(readFileSync(join(tree,'src/game/m01-simulation.js'))),before.s
 const {M01Simulation:Before}=await import(pathToFileURL(join(tree,'src/game/m01-simulation.js')));
 // The test pilot: the working tree's for amendment 03; for a history amendment the pilot as it was at AFTER (D43 taught the support pilot to ask Kowal for clips,
 // which changes the support route of 602a5ee), so the history is reproduced with the controls that made it.
-let Live=WorkingTree,pilot=route;
-if(CFG.after){const afterTree=extract(CFG.after);assert.equal(sha(readFileSync(join(afterTree,'src/game/m01-simulation.js'))),after.sourceSha256,'the history AFTER tree carries the simulation its golden pins');
+let Live=WorkingTree,pilot=route,afterTree=null;
+if(CFG.after){afterTree=extract(CFG.after);assert.equal(sha(readFileSync(join(afterTree,'src/game/m01-simulation.js'))),after.sourceSha256,'the history AFTER tree carries the simulation its golden pins');
   Live=(await import(pathToFileURL(join(afterTree,'src/game/m01-simulation.js')))).M01Simulation;
   pilot=(await import(pathToFileURL(join(afterTree,'tests/helpers/m01-route.js')))).route;}
 
@@ -164,7 +165,7 @@ function windowCount(dir){
 }
 const s2Visibility=amendmentArg==='03'?{tool:'tools/m01-ckm-fire-arc.mjs collectWindowTargets({everyTicks:20}) + evaluateCandidate(window, ckmMuzzle()) + describeCandidate(window, SHORTLIST[i])',
   tests:['tests/m01-ckm-live-fire.test.js: post S2 is confirmed in the production trace','tests/m01-ckm-candidate-posts.test.js: whole-route window'],
-  before:windowCount(tree),after:windowCount(ROOT)}:null;
+  before:windowCount(tree),after:windowCount(afterTree??ROOT)}:null;
 if(s2Visibility)console.log(JSON.stringify({s2Visibility}));
 
 // 4. The record.
