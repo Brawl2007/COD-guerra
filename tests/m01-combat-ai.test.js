@@ -78,13 +78,14 @@ test('suppression breaks a peek once per episode, adds a drawn recovery and leav
   a.ai.shakenUntil=0;a.cooldown=0;a.ai.peek=0;s.aiFire(a,false,()=>true,true);assert.deepEqual(opts.at(-1).bias,[2.5,1.6],'steady aim again');
 });
 
-test('the player who fires becomes the threat: the gate riflemen who see him answer him sooner and more often',()=>{
+test('the player who fires becomes the threat: the gate riflemen who see him answer him more often, without firing more in all',()=>{
   // Count by target kind over a fresh window, with and without the threat.
   const count=threat=>{const s=underFire(3);let player=0,all=0;const burst=s.burst.bind(s);
     s.burst=(a,t,k,o)=>{const ok=burst(a,t,k,o);if(ok&&GATE.includes(a.id)){all++;if(k==='player')player++;}return ok;};
     shots(s,400,sim=>{if(threat)sim.player.weaponShotAt=sim.clock*1000;});return {player,all};};
   const calm=count(false),hot=count(true);
   assert.ok(hot.player>calm.player*1.5,JSON.stringify({calm,hot}));
+  assert.ok(hot.all<=calm.all*1.15,'the threat redirects the fire, it does not add to it: '+JSON.stringify({calm,hot}));
 });
 
 test('MG34: bursts in groups of 1-3 on one target, 4-7 rounds by target, short pauses inside a group, and it holds while the belt is changed',()=>{

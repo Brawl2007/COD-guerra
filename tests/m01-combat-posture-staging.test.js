@@ -238,7 +238,9 @@ function stagedRoute(seed,support=false){
       if(seenRounds.has(r.id))continue;seenRounds.add(r.id);
       const by=sim.actor(r.by),k=Number(r.by.split('_').at(-1)),h=+(r.oy-by.y).toFixed(9);
       // An attrition round (T23) leaves from the eye of a man drawn standing (a kneeling gate rifleman never takes that shot).
-      if(r.kind==='attrition'){assert.equal(h,EYE_HEIGHT,`${r.id} by ${r.by}: a standing man's eye`);assert.equal(by.crouched,false);if(k<14)st.attritionGate++;else st.attritionDike++;continue;}
+      // Combat AI slice 1: as for his own rounds below, a ckm or rkm near miss landing later in the SAME tick may pin him after the shot (seed 7: de_east_2 at 404.3 s);
+      // the origin height proves the posture he fired in, and he may be down at the end of the tick only if that suppression began in this very tick.
+      if(r.kind==='attrition'){assert.equal(h,EYE_HEIGHT,`${r.id} by ${r.by}: a standing man's eye`);assert.equal(by.crouched,by.suppressedAt===sim.clock&&sim.clock<by.suppressedUntil);if(k<14)st.attritionGate++;else st.attritionDike++;continue;}
       if(by.group!=='grp_de_east'||k<2||k>=14)continue;
       // The origin of a gate rifleman's own round is his standing eye: he rose riseBeforeSec earlier (Kowal may pin him down again in the
       // same tick, after the shot).

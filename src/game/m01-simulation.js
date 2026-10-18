@@ -160,7 +160,7 @@ const proneGunner=a=>MG34_IDS.includes(a.id);
  * Combat AI, slice 1 (owner playtest P1; docs/direction/COD_WAW_WWII_BENCHMARK.md, «Combate e IA»). Replaces the flat per-shot cooldowns of grp_de_east
  * (uniform 9-18 s per rifle round, 6-13 s per MG34 burst) and Kowal's fixed 4 s rkm cycle with target-driven, jittered, reload-aware cycles:
  *   rifleman  PEEK of 1-3 aimed rounds (bolt and re-aim 1.7-2.8 s apart, the T38 rise/hold keeps him up through it), then COVER for a skewed draw around the
- *             old mean rate, shorter while the player is a visible threat (he fired in the last AI_THREAT_SEC), never shorter than his clip reload;
+ *             old mean rate, never shorter than his clip reload; the player who fired in the last AI_THREAT_SEC is the target he prefers;
  *   MG34      a GROUP of 1-3 bursts on one target (0.45-1.35 s between them, 4-7 rounds by target), then a skewed pause; searching fire goes to where a
  *             threat was last seen, not to a fixed point; it holds while the loader changes the belt;
  *   suppressed (any source: the player, Kowal, the ckm) a man breaks his peek or group, stays down a drawn extra moment and is SHAKEN (wider aim) for a while;
@@ -170,6 +170,7 @@ const proneGunner=a=>MG34_IDS.includes(a.id);
  */
 const AI_THREAT_SEC=8,AI_BOLT=[1.7,1.1],AI_RELOAD_COVER=4,AI_SHAKEN_SEC=4,AI_SHAKEN_BIAS=1.9,AI_RESCAN=[2.5,3];
 const AI_KEYS=['rng','peek','shakenUntil','pinnedUntil','recover','target','seen'];
+// ponytail: one LCG stream per man derived from the mission seed, the same scheme as the T47 ckm stream, so a man's choices never shift anyone else's draws.
 const aiSeed=(seed,index)=>Math.imul(((seed>>>0)^0x41c0b1a7)+Math.imul(index+1,0x9e3779b9)|0,2654435761)>>>0;
 const newAI=(seed,index,pinnedUntil=0)=>({rng:aiSeed(seed,index),peek:0,shakenUntil:0,pinnedUntil,recover:0,target:null,seen:null});
 const aiNext=ai=>{ai.rng=(Math.imul(1664525,ai.rng)+1013904223)>>>0;return ai.rng/4294967296;};
@@ -179,6 +180,8 @@ const aiPause=(ai,mean,lo)=>Math.min(3*mean,Math.max(lo,mean*Math.exp(.5*aiGauss
 /** 1, 2 or 3 with weights w (the length of a peek or of a burst group). */
 const aiCount=(ai,w)=>{const u=aiNext(ai)*(w[0]+w[1]+w[2]);return u<w[0]?1:u<w[0]+w[1]?2:3;};
 const AI_ACTOR=a=>a.group==='grp_de_east'||a.id==='szymon_kowal';
+// ponytail: the state machine is implicit in existing fields (cooldown = time to the next trigger, suppressedUntil, reload, the T38 rise/hold posture rule); actor.ai
+// only adds what those cannot hold (the open peek/group, the stream, the suppression episode). No movement between cover nodes yet (slice 2), no callout events.
 const aiIndex=id=>id==='szymon_kowal'?40:Number(id.slice(8));
 const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
   !(a.target&&dist(a,a.target)>=.8);
@@ -921,7 +924,7 @@ export class M01Simulation {
    */
   aiFire(a,withdrawal,sees,west){
     const ai=a.ai,u=()=>aiNext(ai),p=this.player,mg=a.weapon==='mg34';
-    // The player fired in the last AI_THREAT_SEC seconds: his flash makes him the threat a German answers first and sooner.
+    // The player fired in the last AI_THREAT_SEC seconds: his flash makes him the target a German prefers.
     const threat=west&&this.clock*1000-p.weaponShotAt<AI_THREAT_SEC*1000;
     // Reload-aware: the MG34 holds while its loader changes the belt; a rifleman with an empty clip reloads in cover before he peeks again.
     if(mg&&a.mg34Prone?.phase==='reload'){ai.peek=0;a.cooldown=Math.max(.3,a.mg34Prone.startedAt+4.8-this.clock+.3);return;}
@@ -931,10 +934,11 @@ export class M01Simulation {
     }
     const open=ai.peek===0,pick=this.aiTarget(a,withdrawal,sees,west,threat);
     if(!pick){ai.peek=0;ai.target=null;a.cooldown=AI_RESCAN[0]+AI_RESCAN[1]*u();return;}   // nothing in sight: he stays down and looks again
-    const onPlayer=pick.kind==='player'&&threat;
-    if(open)ai.peek=mg?aiCount(ai,onPlayer?[.2,.45,.35]:[.35,.45,.2]):aiCount(ai,onPlayer?[.2,.45,.35]:[.4,.4,.2]);
+    // The threat changes WHOM he shoots (aiTarget), never how much: a faster or longer answer to a player who covers the sappers from beside them pinned the
+    // sappers more and made covering fire slower than ignoring the MG (tests/m01-cover-threat.test.js, tests/m01-cover-combat.test.js).
+    if(open)ai.peek=mg?aiCount(ai,[.35,.45,.2]):aiCount(ai,[.4,.4,.2]);
     ai.target=pick.id;
-    const k=this.clock<ai.shakenUntil?AI_SHAKEN_BIAS:1,rounds=mg?this.aiBurstRounds(ai,pick.kind,threat):1;
+    const k=this.clock<ai.shakenUntil?AI_SHAKEN_BIAS:1,rounds=mg?this.aiBurstRounds(ai,pick.kind):1;
     const fired=this.burst(a,pick.target,pick.kind,mg?{rounds,bias:[1.2*k,.8*k],cone:[.7,.5],tracer:pick.kind!=='east'}:{rounds:1,bias:[2.5*k,1.6*k],cone:[0,0]});
     ai.peek=Math.max(0,ai.peek-1);
     if(ai.peek>0&&(mg||a.rounds>0))a.cooldown=mg?rounds*MG34_INTERVAL+.45+.9*u():AI_BOLT[0]+AI_BOLT[1]*u();
@@ -942,7 +946,8 @@ export class M01Simulation {
       ai.peek=0;
       const base=withdrawal?(mg?8.5:13):mg?(a.id==='de_east_0'&&this.active('cover_repair')?8*(this.timers.fireEase?4:1):10.5):gateShooter(a)?16.5:13.5;
       // Mean rounds per peek 1.8 (bolt 2.25 s), bursts per group 1.85 (1.3 s apart): the cover pause keeps the old mean interval per round/burst.
-      let pause=aiPause(ai,mg?base*1.85-1.1:base*1.8-1.8,mg?3:4)*(onPlayer?.6:1);
+      // ponytail: one log-normal around the old mean per role/phase; no intensity waves yet (a director would scale `base` by phase).
+      let pause=aiPause(ai,mg?base*1.85-1.1:base*1.8-1.8,mg?3:4);
       if(!mg&&!(a.rounds>0))pause=Math.max(pause,AI_RELOAD_COVER+u());   // the clip is changed in cover
       a.cooldown=pause;
     }
@@ -974,6 +979,7 @@ export class M01Simulation {
       else{const t=ai.seen&&this.clock-ai.seen.at<60?ai.seen:this.world.point('forward_post');add('area',{x:t.x,y:t.y,z:t.z},'area',1);}
     }else{
       // The T23 block where the held platoon kneels, three draws of the main stream as before (the T22 twin of tests/m01-east-front.test.js draws the same three).
+      // ponytail: still aimed at a point of the block, not at a man, and still never lands (T23 data); the dike riflemen only get the new cadence.
       add('east',this.eastBridgeheadPoint(()=>this.rng.next()),'east',1);
       if(gate&&this.active('cover_repair')&&!this.timers.fireEase){const t=sapper();add(t.id??'repair_site_2',t,'repair',.8);}
       if(gate&&seesPlayer())add('player',p,'player',.6+(threat?1.6:0));
@@ -981,8 +987,8 @@ export class M01Simulation {
     if(!c.length)return null;
     let x=u()*c.reduce((s,o)=>s+o.w,0);return c.find(o=>(x-=o.w)<0)??c.at(-1);
   }
-  /** MG34 burst length by target (the authored 4-7 round clips): longer on the player, much the longest when he is the threat; short searching bursts. */
-  aiBurstRounds(ai,kind,threat){const [lo,hi]=kind==='player'?(threat?[6,7]:[5,7]):kind==='area'?[4,5]:[4,6];return lo+Math.floor(aiNext(ai)*(hi-lo+1));}
+  /** MG34 burst length by target (the authored 4-7 round clips): a long burst may go to a man in sight, short ones to searching fire; mean 5 as before. */
+  aiBurstRounds(ai,kind){const [lo,hi]=kind==='player'?[4,7]:kind==='area'?[4,5]:[4,6];return lo+Math.floor(aiNext(ai)*(hi-lo+1));}
   /**
    * A German (or Kowal) under fire: on a NEW suppression (not an extension of the one he is already under) he breaks his peek or burst group, draws how long
    * he stays down after it ends (`recover`: MG34 0-1.5 s, riflemen 0.5-3 s, on top of the existing 2.5/1.2 s) and is shaken (wider aim) until AI_SHAKEN_SEC after.
@@ -1129,6 +1135,7 @@ export class M01Simulation {
   kowalFire(dt){
     const kowal=this.actor('szymon_kowal');kowal.cooldown-=dt;
     if(!kowal.alive||!kowal.active||kowal.cooldown>0||!this.consumedEvent(E('train963_arrives'))||this.consumedEvent(E('east_demolition')))return;
+    // ponytail: Kowal keeps the old target rule (latest visible flash, else an MG) and ignores fire on himself; only his burst and reaction change.
     const ai=kowal.ai,u=ai?()=>aiNext(ai):()=>.5;   // combat AI slice 1: his own stream (a legacy actor without one keeps the mean cycle)
     const dike=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active);
     const fresh=dike.filter(a=>this.clock-a.firedAt<10).sort((a,b)=>b.firedAt-a.firedAt).find(a=>this.world.lineOfSight(kowal,a));
