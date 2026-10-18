@@ -81,8 +81,8 @@ export function toStationEvacuation(d=driver(),{observe=false,phase='drag'}={}){
   return d;
 }
 /** Stay in the real sandbag cover until an actual adjustment salvo is emitted. */
-export function toCoverAdjustment({truss=false}={}){
-  const d=toRepair(driver()),{sim,walk,step,until}=d;
+export function toCoverAdjustment({truss=false,Simulation}={}){
+  const d=toRepair(driver(undefined,{Simulation})),{sim,walk,step,until}=d;
   walk(-115,27);walk(-26.5,28);step({crouch:true});
   until(()=>sim.active('hold_access'),500);
   if(truss){step({crouch:true});walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);walk(38.5,37);step({crouch:true});}
@@ -96,6 +96,13 @@ export function route(seed=19390901,{support=false,onStep,Simulation=M01Simulati
   if(support)walk(-120,16.5);else{walk(-115,27);walk(-28,28);step({crouch:true});}
   until(()=>sim.active('hold_access'),500);
   if(!support)step({crouch:true});
+  // D43: like a player who is low after the repair, the support pilot asks Kowal for clips through the game's own interaction (E beside him, reserve <= 25,
+  // timers.kowalRounds left) before going to the deck; it comes up from behind him (west), as tests/helpers/m01-cover.js does. A pilot that never did ran dry
+  // before the east demolition on the knife-edge route (seed 3 with support).
+  if(support&&sim.weapon.reserve<=25&&(sim.timers.kowalRounds??0)>0){
+    const kowal=sim.actor('szymon_kowal');
+    if(kowal.alive&&kowal.active){walk(kowal.x-1.5,kowal.z);for(let i=0;i<2&&sim.weapon.reserve<=25&&sim.timers.kowalRounds>0;i++){step({interact:true});step({});}}
+  }
   walk(-115,32);walk(-10,32);walk(-10,40);walk(support?38:30,support?42.4:40);
   until(()=>sim.consumedEvent('evt_m01_east_demolition'),500);
   walk(-15,40);walk(-115,27);walk(-275,27);walk(-292,26);

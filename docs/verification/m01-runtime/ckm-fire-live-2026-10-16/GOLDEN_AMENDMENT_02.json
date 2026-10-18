@@ -1,0 +1,474 @@
+{
+  "task": "M01-T47-CKM-LIVE-FIRE-V1",
+  "amendment": "amendment-02",
+  "beforeCommit": "602a5ee89920283d360a1bdad6177922666b2936",
+  "predecessor": "8c6328c947e92041f237b5990142dd110aee8e71",
+  "predecessorSourceSha256": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9",
+  "beforeSourceSha256": "276215dae9b74831e08dbc3f01b3c7748277a679a547343d982641e742b7d3f3",
+  "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-02.json",
+  "beforeFixtureSha256": "0556f0e3704f79764acce35144bb847aeeb901edfc6ce1faf318169378dba663",
+  "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_02.json",
+  "beforeAuditSha256": "2a7dd733454a4a3598dba3f400488a81b756ac2fb8bf2c2f1886f02a7e45fb29",
+  "afterFixture": "tests/fixtures/m01-t47-gameplay-baseline.json",
+  "afterFixtureSha256": "664df540ec94e2e51b6fcab20e766f9a5db1f2fd695b23e5075ebd786fced24f",
+  "afterSourceSha256": "f568c386a192fedf45bde54a2102398adfb67d292726268dbd69ef07c364e261",
+  "afterAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json",
+  "afterAuditSha256": "61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a",
+  "authority": "Written only by tools/verification/m01-t47-golden-amendment-audit.mjs --write (x86), after tools/verification/m01-t47-ckm-fire-audit.mjs --write-golden; never edited by hand. Derived from git (the replaced golden and delta audit are read from beforeCommit), the two fixtures, the two delta audits and two runs of each golden route; no value in it is typed.",
+  "reason": "T47 was merged onto the combined staging 8c6328c (candidate #80 + #89 + T48 German retreat + T40 first-person arms + T38 combat postures; merge 3c9cab7). The golden of the T47 branch (602a5ee: candidate #80 + T47, amendment 01) pinned a simulation and mission data that no longer exist as such, so it was regenerated for staging + T47 and the replaced golden and delta audit are kept byte for byte. Why the new golden differs from the replaced one, in the order the route meets it: (1) from tick 1 the T38 places and postures (gameplay data: the east platoon, the twelve gate riflemen, the section and the sappers kneel or lie at staggered places; listed under firstDifferenceFromBefore.tick1 and proved by the T38 amendment records); (2) from the first changed line of sight the main RNG path parts (firstTickWhere), because a kneeling German is a different target; (3) from the east demolition the T48 German retreat and regroup (german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json); (4) the T47 live fire itself, now over the staging: the per-tick delta audit against 8c6328c shows that the new post, crew, phases, burst plans, own random stream, belt and events disturb nothing else apart from the named deltas, and that the first landed round that changes a German is the first difference (liveFireAfter.causalOnset). The T47 head had the same live-fire code; its figures (liveFireBefore) differ from the new ones because the Germans it answers now stand, kneel and shoot as the T38 staging has them.",
+  "rule": "Same two routes and the same digest scheme (sha256 per 512 ticks of the whole gameplay frame: state, nested checkpoint and events, presentation fields removed). identicalBlocks counts the leading 512-tick blocks equal to the replaced golden; firstDifferingBlockTick is the end tick of the first block that differs. firstDifferenceFromBefore runs the simulation of beforeCommit (extracted from git with its own data) and the live one through the same test pilot.",
+  "changedGameplayInputsSinceBefore": [
+    "src/game/m01-simulation.js",
+    "missions/m01-tczew/mission.json",
+    "src/game/m01-animation-presentation.js",
+    "src/game/m01-aim.js",
+    "src/game/m01-display-fire.js"
+  ],
+  "changedGameplayInputsSincePredecessor": [
+    "src/game/m01-simulation.js",
+    "missions/m01-tczew/mission.json",
+    "missions/m01-tczew/map-layout.json"
+  ],
+  "unchangedGameplayInputsSincePredecessor": [
+    "src/game/m01-animation-presentation.js",
+    "src/game/m01-aim.js",
+    "src/game/m01-fire.js",
+    "src/game/m01-display-fire.js",
+    "src/game/m01-yard-life.js",
+    "src/world/spatial.js",
+    "src/world/tczew-world.js"
+  ],
+  "header": {
+    "task": {
+      "unchanged": true
+    },
+    "generationStage": {
+      "before": "implementation candidate after the critical review (amendment 01) and the per-tick predecessor delta audit",
+      "after": "T47 on the combined staging: implementation candidate after the critical review (amendments 01 and 02) and the per-tick predecessor delta audit"
+    },
+    "predecessor": {
+      "before": "813f163deceb551e0e4504b30958580cb67d3a76",
+      "after": "8c6328c947e92041f237b5990142dd110aee8e71"
+    },
+    "predecessorSourceSha256": {
+      "before": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
+      "after": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9"
+    },
+    "previousGolden": {
+      "before": {
+        "task": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
+        "file": "tests/fixtures/m01-partials-gameplay-baseline.json",
+        "sha256": "83a907ca00389f17723ffc97f1c42dca7d80f9a956d07ca7f39b8ae58fe87b79"
+      },
+      "after": {
+        "task": "M01-COMBAT-POSTURE-STAGING-V1",
+        "file": "tests/fixtures/m01-t38-gameplay-baseline.json",
+        "sha256": "d21fa94e0ad2bb4c161939f5ba9db319dc36e4ef2665d1e2b21767dfe978df6c"
+      }
+    },
+    "historicalGoldenSha256": {
+      "unchanged": true
+    },
+    "sourceSha256": {
+      "before": "276215dae9b74831e08dbc3f01b3c7748277a679a547343d982641e742b7d3f3",
+      "after": "f568c386a192fedf45bde54a2102398adfb67d292726268dbd69ef07c364e261"
+    },
+    "amendment01": {
+      "before": {
+        "task": "M01-T47-CKM-LIVE-FIRE-V1",
+        "beforeCommit": "ab98199c7b50a6682a5deef2e461dc83b7737247",
+        "beforeSourceSha256": "0c6e4eb354f7643e416e72a5c077c5bc362873fd8139fcbd6f15bea375ecfe8c",
+        "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-01.json",
+        "beforeFixtureSha256": "45facd521d1bf86cf88099c91b5724c5e73b0f86a5a7f950fe73f2fda8340963",
+        "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_01.json",
+        "beforeAuditSha256": "c980f82cace48e0dfb172258da7c2d7ddc92efb9a5b92e716480703e97889088",
+        "audit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_01.json"
+      },
+      "after": null
+    },
+    "auditSha256": {
+      "before": "2a7dd733454a4a3598dba3f400488a81b756ac2fb8bf2c2f1886f02a7e45fb29",
+      "after": "61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a"
+    },
+    "amendment02": {
+      "before": null,
+      "after": {
+        "task": "M01-T47-CKM-LIVE-FIRE-V1",
+        "beforeCommit": "602a5ee89920283d360a1bdad6177922666b2936",
+        "beforeSourceSha256": "276215dae9b74831e08dbc3f01b3c7748277a679a547343d982641e742b7d3f3",
+        "beforeFixture": "tests/fixtures/m01-t47-gameplay-baseline-before-amendment-02.json",
+        "beforeFixtureSha256": "0556f0e3704f79764acce35144bb847aeeb901edfc6ce1faf318169378dba663",
+        "beforeAudit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT_BEFORE_AMENDMENT_02.json",
+        "beforeAuditSha256": "2a7dd733454a4a3598dba3f400488a81b756ac2fb8bf2c2f1886f02a7e45fb29",
+        "audit": "docs/verification/m01-runtime/ckm-fire-live-2026-10-16/GOLDEN_AMENDMENT_02.json"
+      }
+    }
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 21828,
+      "newTicks": 21707,
+      "oldBlocks": 43,
+      "newBlocks": 43,
+      "identicalBlocks": 0,
+      "firstDifferingBlockTick": 512,
+      "firstDifferenceFromBefore": {
+        "tick1": {
+          "leafDifferences": 231,
+          "leafCapReached": false,
+          "actorsDiffering": [
+            "de_east_10",
+            "de_east_11",
+            "de_east_12",
+            "de_east_13",
+            "de_east_2",
+            "de_east_3",
+            "de_east_4",
+            "de_east_5",
+            "de_east_6",
+            "de_east_7",
+            "de_east_8",
+            "de_east_9",
+            "east_platoon_voice",
+            "jozef_bak",
+            "marek_zielinski",
+            "pawel_krawiec",
+            "pl_east_0",
+            "pl_east_1",
+            "pl_east_10",
+            "pl_east_11",
+            "pl_east_12",
+            "pl_east_13",
+            "pl_east_14",
+            "pl_east_15",
+            "pl_east_16",
+            "pl_east_17",
+            "pl_east_18",
+            "pl_east_19",
+            "pl_east_2",
+            "pl_east_20",
+            "pl_east_21",
+            "pl_east_22",
+            "pl_east_23",
+            "pl_east_3",
+            "pl_east_4",
+            "pl_east_5",
+            "pl_east_6",
+            "pl_east_7",
+            "pl_east_8",
+            "pl_east_9",
+            "sapper_2",
+            "sapper_3",
+            "staszek_pawlak",
+            "szymon_kowal"
+          ],
+          "groups": {
+            "ally": {
+              "actors": 8,
+              "fields": [
+                "crouched",
+                "facing",
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            "grp_de_east": {
+              "actors": 12,
+              "fields": [
+                "facing",
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            "grp_east_platoon": {
+              "actors": 24,
+              "fields": [
+                "x",
+                "z"
+              ]
+            }
+          },
+          "other": []
+        },
+        "firstTickWhere": {
+          "mainRngStateDiffers": {
+            "tick": 5621,
+            "clock": 281.05,
+            "battleClock": "04:48:42"
+          },
+          "roundsIssuedOrInFlightDiffer": {
+            "tick": 5172,
+            "clock": 258.6,
+            "battleClock": "04:45:20"
+          },
+          "eventCountDiffers": {
+            "tick": 5213,
+            "clock": 260.65,
+            "battleClock": "04:45:38"
+          },
+          "playerHealthDiffers": {
+            "tick": 6719,
+            "clock": 335.95,
+            "battleClock": "04:56:56"
+          },
+          "realClockDiffers": null
+        }
+      },
+      "liveFireBefore": {
+        "bursts": 77,
+        "roundsIssued": 616,
+        "hits": 7,
+        "kills": [
+          "de_east_5"
+        ],
+        "menHit": [
+          "de_east_5",
+          "de_east_1",
+          "de_east_13",
+          "de_east_4",
+          "de_east_8",
+          "de_east_3"
+        ],
+        "menSuppressed": [
+          "de_east_0",
+          "de_east_13",
+          "de_east_12",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_5",
+          "de_east_11",
+          "de_east_10",
+          "de_east_2",
+          "de_east_3",
+          "de_east_1",
+          "de_east_4"
+        ],
+        "suppressionEvents": 688,
+        "repairPins": 47,
+        "repairCompleteSec": 416.70000000006047,
+        "causalOnset": {
+          "tick": 5320,
+          "clock": 266.0000000000262,
+          "actor": "de_east_0"
+        }
+      },
+      "liveFireAfter": {
+        "bursts": 77,
+        "roundsIssued": 616,
+        "hits": 4,
+        "kills": [],
+        "menHit": [
+          "de_east_11",
+          "de_east_12",
+          "de_east_6",
+          "de_east_1"
+        ],
+        "menSuppressed": [
+          "de_east_0",
+          "de_east_13",
+          "de_east_12",
+          "de_east_7",
+          "de_east_1",
+          "de_east_5",
+          "de_east_6",
+          "de_east_8",
+          "de_east_11",
+          "de_east_9",
+          "de_east_10",
+          "de_east_2",
+          "de_east_3",
+          "de_east_4"
+        ],
+        "suppressionEvents": 779,
+        "repairPins": 39,
+        "repairCompleteSec": 408.9500000000587,
+        "causalOnset": {
+          "tick": 5320,
+          "clock": 266.0000000000262,
+          "actor": "de_east_0"
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 21296,
+      "newTicks": 21378,
+      "oldBlocks": 42,
+      "newBlocks": 42,
+      "identicalBlocks": 0,
+      "firstDifferingBlockTick": 512,
+      "firstDifferenceFromBefore": {
+        "tick1": {
+          "leafDifferences": 231,
+          "leafCapReached": false,
+          "actorsDiffering": [
+            "de_east_10",
+            "de_east_11",
+            "de_east_12",
+            "de_east_13",
+            "de_east_2",
+            "de_east_3",
+            "de_east_4",
+            "de_east_5",
+            "de_east_6",
+            "de_east_7",
+            "de_east_8",
+            "de_east_9",
+            "east_platoon_voice",
+            "jozef_bak",
+            "marek_zielinski",
+            "pawel_krawiec",
+            "pl_east_0",
+            "pl_east_1",
+            "pl_east_10",
+            "pl_east_11",
+            "pl_east_12",
+            "pl_east_13",
+            "pl_east_14",
+            "pl_east_15",
+            "pl_east_16",
+            "pl_east_17",
+            "pl_east_18",
+            "pl_east_19",
+            "pl_east_2",
+            "pl_east_20",
+            "pl_east_21",
+            "pl_east_22",
+            "pl_east_23",
+            "pl_east_3",
+            "pl_east_4",
+            "pl_east_5",
+            "pl_east_6",
+            "pl_east_7",
+            "pl_east_8",
+            "pl_east_9",
+            "sapper_2",
+            "sapper_3",
+            "staszek_pawlak",
+            "szymon_kowal"
+          ],
+          "groups": {
+            "ally": {
+              "actors": 8,
+              "fields": [
+                "crouched",
+                "facing",
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            "grp_de_east": {
+              "actors": 12,
+              "fields": [
+                "facing",
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            "grp_east_platoon": {
+              "actors": 24,
+              "fields": [
+                "x",
+                "z"
+              ]
+            }
+          },
+          "other": []
+        },
+        "firstTickWhere": {
+          "mainRngStateDiffers": {
+            "tick": 5237,
+            "clock": 261.85,
+            "battleClock": "04:45:49"
+          },
+          "roundsIssuedOrInFlightDiffer": {
+            "tick": 5185,
+            "clock": 259.25,
+            "battleClock": "04:45:26"
+          },
+          "eventCountDiffers": {
+            "tick": 5237,
+            "clock": 261.85,
+            "battleClock": "04:45:49"
+          },
+          "playerHealthDiffers": null,
+          "realClockDiffers": null
+        }
+      },
+      "liveFireBefore": {
+        "bursts": 72,
+        "roundsIssued": 576,
+        "hits": 4,
+        "kills": [],
+        "menHit": [
+          "de_east_6",
+          "de_east_13",
+          "de_east_3",
+          "de_east_2"
+        ],
+        "menSuppressed": [
+          "de_east_8",
+          "de_east_12",
+          "de_east_13",
+          "de_east_10",
+          "de_east_11",
+          "de_east_9",
+          "de_east_6",
+          "de_east_7",
+          "de_east_2",
+          "de_east_3",
+          "de_east_5"
+        ],
+        "suppressionEvents": 528,
+        "repairPins": 7,
+        "repairCompleteSec": 376.8000000000514,
+        "causalOnset": {
+          "tick": 5447,
+          "clock": 272.35000000002765,
+          "actor": "de_east_8"
+        }
+      },
+      "liveFireAfter": {
+        "bursts": 77,
+        "roundsIssued": 616,
+        "hits": 2,
+        "kills": [],
+        "menHit": [
+          "de_east_4",
+          "de_east_3"
+        ],
+        "menSuppressed": [
+          "de_east_13",
+          "de_east_11",
+          "de_east_12",
+          "de_east_9",
+          "de_east_10",
+          "de_east_6",
+          "de_east_8",
+          "de_east_7",
+          "de_east_5",
+          "de_east_4",
+          "de_east_2",
+          "de_east_3"
+        ],
+        "suppressionEvents": 655,
+        "repairPins": 8,
+        "repairCompleteSec": 382.9500000000528,
+        "causalOnset": {
+          "tick": 5449,
+          "clock": 272.45000000002767,
+          "actor": "de_east_13"
+        }
+      }
+    }
+  ]
+}

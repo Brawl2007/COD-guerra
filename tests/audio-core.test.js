@@ -9,11 +9,15 @@ import {
 } from '../src/core/audio/index.js';
 import {FakeAudioContext,MAX_FAKE_SAMPLES} from './helpers/fake-audio-context.js';
 import {MusicConductor,createMusicInput,MUSIC_STEM_IDS,MUSIC_STINGERS,GATE_OFF} from '../src/core/audio/index.js';   // T06b
+import {missionWithRetiredCasemate} from './helpers/m01-retired-casemate.js';   // T47
 
 const LAYOUT_URL=new URL('../missions/m01-tczew/audio-layout.json',import.meta.url);
 const realLayoutRaw=()=>JSON.parse(readFileSync(LAYOUT_URL,'utf8'));
 const MISSION_URL=new URL('../missions/m01-tczew/mission.json',import.meta.url);
 const realMissionRaw=()=>JSON.parse(readFileSync(MISSION_URL,'utf8'));
+// T47 retired the dramatized casemate ckm from the mission data (tests/helpers/m01-retired-casemate.js). The crew gate is an engine rule of every dramatized emitter, so the
+// tests of the gate run on the emitter as it was authored, put back into a copy of the real mission; the tests of the real data assert what is there now.
+const missionWithCasemate=()=>missionWithRetiredCasemate(realMissionRaw());
 const hms=(h,m,sec=0)=>h*3600+m*60+sec;
 class DecodeFailContext extends FakeAudioContext{async decodeAudioData(){throw new Error('EncodingError');}}
 class EmptyDecodeContext extends FakeAudioContext{async decodeAudioData(){return this.createBuffer(1,0,this.sampleRate);}}
@@ -374,25 +378,35 @@ test('audio core never writes simulation state: sources read nothing but plain a
   assert.equal(state.clock,1);assert.ok(AUDIO_PRIORITY.explosion>AUDIO_PRIORITY.rifle);audio.dispose();
 });
 
-test('emitters: the real mission data compiles; windows, sectors and the display-only casemate ckm are read',()=>{
+test('emitters: the real mission data compiles; windows and sectors are read, and T47 left no dramatized casemate ckm in it',()=>{
   const parsed=parseAudioEmitters(realMissionRaw());
   assert.equal(parsed.ok,true,parsed.issues.join('; '));
-  assert.deepEqual(parsed.emitters.map(e=>e.id),['ae_s1_ckm_casemate','ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
-  const [casemate,dike,train,ckmEast]=parsed.emitters;
-  assert.equal(casemate.crewGated,true);assert.equal(casemate.displayOnly,true);assert.equal(casemate.sector,'s1_west_bridgehead');
-  assert.deepEqual([casemate.x,casemate.y,casemate.z],[25,-3,43]);assert.equal(casemate.from,hms(4,46));assert.equal(casemate.until,hms(6,45));
+  assert.deepEqual(parsed.emitters.map(e=>e.id),['ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
+  assert.ok(parsed.emitters.every(e=>!e.crewGated&&!e.displayOnly),'T47: the real gun of post S2 is the only ckm of the west bridgehead; no display-only twin is left in the data');
+  assert.equal(realMissionRaw().sectors.find(s=>s.id==='s1_west_bridgehead').audioEmitters.length,0);
+  const [dike,train,ckmEast]=parsed.emitters;
   assert.equal(dike.crewGated,false);assert.equal(dike.until,Infinity,'no activeUntil -> until the end of the mission');
   assert.equal(train.from,hms(4,52));assert.equal(ckmEast.until,hms(6,0));
-  assert.ok(Object.isFrozen(parsed)&&Object.isFrozen(parsed.emitters)&&Object.isFrozen(casemate));
+  assert.ok(Object.isFrozen(parsed)&&Object.isFrozen(parsed.emitters)&&Object.isFrozen(dike));
   // The same list from the sectors array or a flat array.
-  assert.equal(parseAudioEmitters(realMissionRaw().sectors).emitters.length,4);
-  assert.equal(parseAudioEmitters(JSON.stringify(realMissionRaw())).emitters.length,4);
-  assert.equal(parseAudioEmitters(parsed.emitters.map(e=>({id:e.id,weapon:e.weapon,position:[e.x,e.y,e.z]}))).emitters.length,4);
+  assert.equal(parseAudioEmitters(realMissionRaw().sectors).emitters.length,3);
+  assert.equal(parseAudioEmitters(JSON.stringify(realMissionRaw())).emitters.length,3);
+  assert.equal(parseAudioEmitters(parsed.emitters.map(e=>({id:e.id,weapon:e.weapon,position:[e.x,e.y,e.z]}))).emitters.length,3);
   assert.equal(parseClock('04:46:00'),hms(4,46));assert.equal(parseClock('4:46'),null);assert.equal(parseClock('25:61:61'),null);assert.equal(parseClock(5),null);
+  // The reader still compiles a display-only, GAMEPLAY_DRAMATIZATION emitter (the casemate ckm as it was authored, in a copy of the mission) as a crew-gated one, in its sector.
+  const withCasemate=parseAudioEmitters(missionWithCasemate());
+  assert.equal(withCasemate.ok,true,withCasemate.issues.join('; '));
+  assert.deepEqual(withCasemate.emitters.map(e=>e.id),['ae_s1_ckm_casemate','ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
+  const casemate=withCasemate.emitters[0];
+  assert.equal(casemate.crewGated,true);assert.equal(casemate.displayOnly,true);assert.equal(casemate.sector,'s1_west_bridgehead');
+  assert.deepEqual([casemate.x,casemate.y,casemate.z],[25,-3,43]);assert.equal(casemate.from,hms(4,46));assert.equal(casemate.until,hms(6,45));
+  assert.ok(Object.isFrozen(casemate));
+  assert.equal(parseAudioEmitters(missionWithCasemate().sectors).emitters.length,4);
+  assert.equal(parseAudioEmitters(JSON.stringify(missionWithCasemate())).emitters.length,4);
 });
 
-test('emitters: casemate ckm is gated on crew presence / s1 state (the 06:45 window is only the outer bound)',()=>{
-  const {emitters}=parseAudioEmitters(realMissionRaw()),[casemate,dike,,ckmEast]=emitters;
+test('emitters: a dramatized (display-only) ckm is gated on crew presence / s1 state (the 06:45 window is only the outer bound)',()=>{
+  const {emitters}=parseAudioEmitters(missionWithCasemate()),[casemate,dike,,ckmEast]=emitters;
   assert.deepEqual([...CREW_GONE_STATES],['evacuating_bridgehead','west_blown']);
   const states=['repair_under_fire','holding','withdrawal_cover','east_blown'];
   for(const state of states)assert.equal(isEmitterAudible(casemate,hms(5,0),state),true,`crew still fires in ${state}`);
@@ -411,7 +425,16 @@ test('emitters: casemate ckm is gated on crew presence / s1 state (the 06:45 win
 });
 
 test('emitters: activeEmitters reuses the caller array (no per-frame allocation) and follows the s1 state',()=>{
-  const {audio}=make();audio.setEmitters(realMissionRaw());
+  // The real data: no emitter depends on the s1 state or on a crew any more, and the east ckm ends at 06:00.
+  const real=make();real.audio.setEmitters(realMissionRaw());
+  const none=()=>undefined,out0=[];
+  assert.deepEqual(real.audio.activeEmitters(hms(5,10),none,out0).map(e=>e.id),['ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
+  assert.deepEqual(real.audio.activeEmitters(hms(5,10),id=>id==='s1_west_bridgehead'?'evacuating_bridgehead':undefined,out0,id=>id==='s1_west_bridgehead'?false:undefined).map(e=>e.id),
+    ['ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east'],'T47: no crew gate is left in the data, so the s1 state and the crew say nothing about the audible emitters');
+  assert.deepEqual(real.audio.activeEmitters(hms(6,20),none,out0).map(e=>e.id),['ae_s2_mg_dike','ae_s2_mg_train']);
+  assert.equal(real.audio.diagnostics.core.emitters,3);real.audio.dispose();
+  // The same engine on the casemate ckm as it was authored (a copy of the mission with it put back).
+  const {audio}=make();audio.setEmitters(missionWithCasemate());
   const stateOf=id=>id==='s1_west_bridgehead'?state.s1:undefined,state={s1:'holding'},out=[];
   assert.equal(audio.activeEmitters(hms(5,10),stateOf,out),out);
   assert.deepEqual(out.map(e=>e.id),['ae_s1_ckm_casemate','ae_s2_mg_dike','ae_s2_mg_train','ae_s2_ckm_east']);
@@ -444,7 +467,7 @@ test('emitters: malformed or missing data never throws and falls back to silence
   assert.equal(await loadAudioEmitters('x',{fetchImpl:async()=>({ok:true,json:async()=>{throw new SyntaxError('bad');}})}),NO_EMITTERS);
   assert.equal(await loadAudioEmitters('x',{fetchImpl:null}),NO_EMITTERS);
   const {audio}=make();
-  assert.equal((await audio.loadEmitters('x',async()=>({ok:true,json:async()=>realMissionRaw()}))).emitters.length,4);
+  assert.equal((await audio.loadEmitters('x',async()=>({ok:true,json:async()=>realMissionRaw()}))).emitters.length,3);
   assert.equal(audio.setEmitters('}{').emitters.length,0);assert.equal(audio.core.emitters.ok,false);
   const late=audio.loadEmitters('x',async()=>({ok:true,json:async()=>realMissionRaw()}));audio.setEmitters([]);   // a newer call wins
   await late;assert.equal(audio.core.emitters.emitters.length,0,'a stale load cannot overwrite a newer setEmitters');

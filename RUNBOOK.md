@@ -191,3 +191,7 @@ Compara duas continuações com os mesmos inputs/dt a cada tick e indica o prime
 `M01Simulation.snapshot()` cria um save de continuação com `resumeCheckpoint` opcional plano para preservar o CP anterior. `snapshot(false)` cria um snapshot plano para instalar explicitamente um novo checkpoint ou fabricar uma fixture legacy. Os CP-A..D e a persistência normal do jogo continuam planos em schema 2. Saves antigos sem o novo campo conservam o contrato anterior. Não guardar cadeias de backups; o validador rejeita aninhamento, backups futuros e campos de arma que não pertencem ao snapshot real.
 
 Evidências/reprodução/limites: `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`.
+
+## Guarda do bundle inicial (T50)
+
+Depois de `npm run build`, `npm run verify:bundle` (`tools/verify-t50-bundle.mjs`) escreve `artifacts/t50-proof/t50-bundle-metrics.json` e falha se o chunk de entrada `index-*.js` tiver >= 600 000 bytes. `tests/m01-t50-font-footer-bundle.test.js` garante sem build que o grafo estático de `src/main.js` não importa `three` nem `src/game|render|sim` (carregados por `import()`), e verifica a fonte Barlow self-hosted, o `@font-face`/preload e o rodapé ligado ao estado.

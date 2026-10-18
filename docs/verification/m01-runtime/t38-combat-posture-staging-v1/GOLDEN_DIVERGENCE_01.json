@@ -1,0 +1,1005 @@
+{
+  "task": "M01-COMBAT-POSTURE-STAGING-V1",
+  "old": {
+    "revision": "d3ac3b2233c838c760d82b107230bd48d716dedb",
+    "simulationSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+    "missionSha256": "3a2121a86b1ada1af58e28a3cd907df9ca571a04309b5490da58fc666f85a07c"
+  },
+  "new": {
+    "revision": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+    "simulationSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+    "missionSha256": "d3501cd56d28cb71fc6633a3e21dc29e23925f2709a49d78673d2e4b21aa9eaf"
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "ticks": {
+        "old": 22257,
+        "new": 22198
+      },
+      "tick1": {
+        "leafDifferences": 62,
+        "actorsDifferingAtTick1": [
+          "de_east_2",
+          "de_east_3",
+          "de_east_4",
+          "de_east_5",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_10",
+          "de_east_11",
+          "de_east_12",
+          "de_east_13"
+        ],
+        "fieldsDiffering": [
+          "z",
+          "x",
+          "y"
+        ],
+        "all": [
+          {
+            "where": "state",
+            "actor": "de_east_2",
+            "field": "z",
+            "old": 9.4,
+            "new": 8.5
+          },
+          {
+            "where": "state",
+            "actor": "de_east_3",
+            "field": "x",
+            "old": 1051.7,
+            "new": 1056.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_3",
+            "field": "y",
+            "old": -1.6599999999999908,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_4",
+            "field": "x",
+            "old": 1050.5,
+            "new": 1055
+          },
+          {
+            "where": "state",
+            "actor": "de_east_4",
+            "field": "y",
+            "old": -1.9,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_4",
+            "field": "z",
+            "old": 15.2,
+            "new": 11
+          },
+          {
+            "where": "state",
+            "actor": "de_east_5",
+            "field": "x",
+            "old": 1058.3,
+            "new": 1053.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_5",
+            "field": "y",
+            "old": -1,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "state",
+            "actor": "de_east_6",
+            "field": "x",
+            "old": 1053.5,
+            "new": 1055.6
+          },
+          {
+            "where": "state",
+            "actor": "de_east_6",
+            "field": "y",
+            "old": -1.2999999999999998,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_6",
+            "field": "z",
+            "old": 17.1,
+            "new": 19.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_7",
+            "field": "x",
+            "old": 1055.9,
+            "new": 1058.3
+          },
+          {
+            "where": "state",
+            "actor": "de_east_7",
+            "field": "z",
+            "old": 17.3,
+            "new": 17
+          },
+          {
+            "where": "state",
+            "actor": "de_east_8",
+            "field": "x",
+            "old": 1051.4,
+            "new": 1053.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_8",
+            "field": "y",
+            "old": -1.719999999999982,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "state",
+            "actor": "de_east_8",
+            "field": "z",
+            "old": 22.9,
+            "new": 19
+          },
+          {
+            "where": "state",
+            "actor": "de_east_9",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.4
+          },
+          {
+            "where": "state",
+            "actor": "de_east_9",
+            "field": "y",
+            "old": -1,
+            "new": -1.119999999999982
+          },
+          {
+            "where": "state",
+            "actor": "de_east_9",
+            "field": "z",
+            "old": 22.5,
+            "new": 23.1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_10",
+            "field": "x",
+            "old": 1054.7,
+            "new": 1053.5
+          },
+          {
+            "where": "state",
+            "actor": "de_east_10",
+            "field": "y",
+            "old": -1.0599999999999907,
+            "new": -1.2999999999999998
+          },
+          {
+            "where": "state",
+            "actor": "de_east_10",
+            "field": "z",
+            "old": 24.5,
+            "new": 24.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_11",
+            "field": "x",
+            "old": 1053.2,
+            "new": 1058.3
+          },
+          {
+            "where": "state",
+            "actor": "de_east_11",
+            "field": "y",
+            "old": -1.359999999999991,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_11",
+            "field": "z",
+            "old": 27.1,
+            "new": 26.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_12",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_12",
+            "field": "y",
+            "old": -1,
+            "new": -1.1800000000000184
+          },
+          {
+            "where": "state",
+            "actor": "de_east_12",
+            "field": "z",
+            "old": 30.9,
+            "new": 28.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_13",
+            "field": "x",
+            "old": 1052.6,
+            "new": 1056.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_13",
+            "field": "y",
+            "old": -1.4800000000000182,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_13",
+            "field": "z",
+            "old": 31.1,
+            "new": 31.4
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_2",
+            "field": "z",
+            "old": 9.4,
+            "new": 8.5
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_3",
+            "field": "x",
+            "old": 1051.7,
+            "new": 1056.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_3",
+            "field": "y",
+            "old": -1.6599999999999908,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_4",
+            "field": "x",
+            "old": 1050.5,
+            "new": 1055
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_4",
+            "field": "y",
+            "old": -1.9,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_4",
+            "field": "z",
+            "old": 15.2,
+            "new": 11
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_5",
+            "field": "x",
+            "old": 1058.3,
+            "new": 1053.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_5",
+            "field": "y",
+            "old": -1,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_6",
+            "field": "x",
+            "old": 1053.5,
+            "new": 1055.6
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_6",
+            "field": "y",
+            "old": -1.2999999999999998,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_6",
+            "field": "z",
+            "old": 17.1,
+            "new": 19.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_7",
+            "field": "x",
+            "old": 1055.9,
+            "new": 1058.3
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_7",
+            "field": "z",
+            "old": 17.3,
+            "new": 17
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_8",
+            "field": "x",
+            "old": 1051.4,
+            "new": 1053.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_8",
+            "field": "y",
+            "old": -1.719999999999982,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_8",
+            "field": "z",
+            "old": 22.9,
+            "new": 19
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_9",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.4
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_9",
+            "field": "y",
+            "old": -1,
+            "new": -1.119999999999982
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_9",
+            "field": "z",
+            "old": 22.5,
+            "new": 23.1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_10",
+            "field": "x",
+            "old": 1054.7,
+            "new": 1053.5
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_10",
+            "field": "y",
+            "old": -1.0599999999999907,
+            "new": -1.2999999999999998
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_10",
+            "field": "z",
+            "old": 24.5,
+            "new": 24.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_11",
+            "field": "x",
+            "old": 1053.2,
+            "new": 1058.3
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_11",
+            "field": "y",
+            "old": -1.359999999999991,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_11",
+            "field": "z",
+            "old": 27.1,
+            "new": 26.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_12",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_12",
+            "field": "y",
+            "old": -1,
+            "new": -1.1800000000000184
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_12",
+            "field": "z",
+            "old": 30.9,
+            "new": 28.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_13",
+            "field": "x",
+            "old": 1052.6,
+            "new": 1056.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_13",
+            "field": "y",
+            "old": -1.4800000000000182,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_13",
+            "field": "z",
+            "old": 31.1,
+            "new": 31.4
+          }
+        ]
+      },
+      "firstTickWhere": {
+        "mainRngStateDiffers": {
+          "tick": 8946,
+          "clock": 447.3,
+          "battleClock": "05:14:06"
+        },
+        "roundsIssuedOrInFlightDiffer": {
+          "tick": 5172,
+          "clock": 258.6,
+          "battleClock": "04:45:20"
+        },
+        "eventCountDiffers": {
+          "tick": 5221,
+          "clock": 261.05,
+          "battleClock": "04:45:42"
+        },
+        "playerHealthDiffers": {
+          "tick": 18104,
+          "clock": 905.2,
+          "battleClock": "06:27:13"
+        },
+        "realClockDiffers": null
+      },
+      "finalRng": {
+        "old": 2297694736,
+        "new": 1192639761
+      },
+      "finalHealth": {
+        "old": 100,
+        "new": 92
+      }
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "ticks": {
+        "old": 21467,
+        "new": 21585
+      },
+      "tick1": {
+        "leafDifferences": 62,
+        "actorsDifferingAtTick1": [
+          "de_east_2",
+          "de_east_3",
+          "de_east_4",
+          "de_east_5",
+          "de_east_6",
+          "de_east_7",
+          "de_east_8",
+          "de_east_9",
+          "de_east_10",
+          "de_east_11",
+          "de_east_12",
+          "de_east_13"
+        ],
+        "fieldsDiffering": [
+          "z",
+          "x",
+          "y"
+        ],
+        "all": [
+          {
+            "where": "state",
+            "actor": "de_east_2",
+            "field": "z",
+            "old": 9.4,
+            "new": 8.5
+          },
+          {
+            "where": "state",
+            "actor": "de_east_3",
+            "field": "x",
+            "old": 1051.7,
+            "new": 1056.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_3",
+            "field": "y",
+            "old": -1.6599999999999908,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_4",
+            "field": "x",
+            "old": 1050.5,
+            "new": 1055
+          },
+          {
+            "where": "state",
+            "actor": "de_east_4",
+            "field": "y",
+            "old": -1.9,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_4",
+            "field": "z",
+            "old": 15.2,
+            "new": 11
+          },
+          {
+            "where": "state",
+            "actor": "de_east_5",
+            "field": "x",
+            "old": 1058.3,
+            "new": 1053.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_5",
+            "field": "y",
+            "old": -1,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "state",
+            "actor": "de_east_6",
+            "field": "x",
+            "old": 1053.5,
+            "new": 1055.6
+          },
+          {
+            "where": "state",
+            "actor": "de_east_6",
+            "field": "y",
+            "old": -1.2999999999999998,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_6",
+            "field": "z",
+            "old": 17.1,
+            "new": 19.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_7",
+            "field": "x",
+            "old": 1055.9,
+            "new": 1058.3
+          },
+          {
+            "where": "state",
+            "actor": "de_east_7",
+            "field": "z",
+            "old": 17.3,
+            "new": 17
+          },
+          {
+            "where": "state",
+            "actor": "de_east_8",
+            "field": "x",
+            "old": 1051.4,
+            "new": 1053.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_8",
+            "field": "y",
+            "old": -1.719999999999982,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "state",
+            "actor": "de_east_8",
+            "field": "z",
+            "old": 22.9,
+            "new": 19
+          },
+          {
+            "where": "state",
+            "actor": "de_east_9",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.4
+          },
+          {
+            "where": "state",
+            "actor": "de_east_9",
+            "field": "y",
+            "old": -1,
+            "new": -1.119999999999982
+          },
+          {
+            "where": "state",
+            "actor": "de_east_9",
+            "field": "z",
+            "old": 22.5,
+            "new": 23.1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_10",
+            "field": "x",
+            "old": 1054.7,
+            "new": 1053.5
+          },
+          {
+            "where": "state",
+            "actor": "de_east_10",
+            "field": "y",
+            "old": -1.0599999999999907,
+            "new": -1.2999999999999998
+          },
+          {
+            "where": "state",
+            "actor": "de_east_10",
+            "field": "z",
+            "old": 24.5,
+            "new": 24.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_11",
+            "field": "x",
+            "old": 1053.2,
+            "new": 1058.3
+          },
+          {
+            "where": "state",
+            "actor": "de_east_11",
+            "field": "y",
+            "old": -1.359999999999991,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_11",
+            "field": "z",
+            "old": 27.1,
+            "new": 26.2
+          },
+          {
+            "where": "state",
+            "actor": "de_east_12",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_12",
+            "field": "y",
+            "old": -1,
+            "new": -1.1800000000000184
+          },
+          {
+            "where": "state",
+            "actor": "de_east_12",
+            "field": "z",
+            "old": 30.9,
+            "new": 28.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_13",
+            "field": "x",
+            "old": 1052.6,
+            "new": 1056.8
+          },
+          {
+            "where": "state",
+            "actor": "de_east_13",
+            "field": "y",
+            "old": -1.4800000000000182,
+            "new": -1
+          },
+          {
+            "where": "state",
+            "actor": "de_east_13",
+            "field": "z",
+            "old": 31.1,
+            "new": 31.4
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_2",
+            "field": "z",
+            "old": 9.4,
+            "new": 8.5
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_3",
+            "field": "x",
+            "old": 1051.7,
+            "new": 1056.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_3",
+            "field": "y",
+            "old": -1.6599999999999908,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_4",
+            "field": "x",
+            "old": 1050.5,
+            "new": 1055
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_4",
+            "field": "y",
+            "old": -1.9,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_4",
+            "field": "z",
+            "old": 15.2,
+            "new": 11
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_5",
+            "field": "x",
+            "old": 1058.3,
+            "new": 1053.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_5",
+            "field": "y",
+            "old": -1,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_6",
+            "field": "x",
+            "old": 1053.5,
+            "new": 1055.6
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_6",
+            "field": "y",
+            "old": -1.2999999999999998,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_6",
+            "field": "z",
+            "old": 17.1,
+            "new": 19.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_7",
+            "field": "x",
+            "old": 1055.9,
+            "new": 1058.3
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_7",
+            "field": "z",
+            "old": 17.3,
+            "new": 17
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_8",
+            "field": "x",
+            "old": 1051.4,
+            "new": 1053.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_8",
+            "field": "y",
+            "old": -1.719999999999982,
+            "new": -1.359999999999991
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_8",
+            "field": "z",
+            "old": 22.9,
+            "new": 19
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_9",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.4
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_9",
+            "field": "y",
+            "old": -1,
+            "new": -1.119999999999982
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_9",
+            "field": "z",
+            "old": 22.5,
+            "new": 23.1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_10",
+            "field": "x",
+            "old": 1054.7,
+            "new": 1053.5
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_10",
+            "field": "y",
+            "old": -1.0599999999999907,
+            "new": -1.2999999999999998
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_10",
+            "field": "z",
+            "old": 24.5,
+            "new": 24.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_11",
+            "field": "x",
+            "old": 1053.2,
+            "new": 1058.3
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_11",
+            "field": "y",
+            "old": -1.359999999999991,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_11",
+            "field": "z",
+            "old": 27.1,
+            "new": 26.2
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_12",
+            "field": "x",
+            "old": 1058,
+            "new": 1054.1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_12",
+            "field": "y",
+            "old": -1,
+            "new": -1.1800000000000184
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_12",
+            "field": "z",
+            "old": 30.9,
+            "new": 28.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_13",
+            "field": "x",
+            "old": 1052.6,
+            "new": 1056.8
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_13",
+            "field": "y",
+            "old": -1.4800000000000182,
+            "new": -1
+          },
+          {
+            "where": "checkpoint",
+            "actor": "de_east_13",
+            "field": "z",
+            "old": 31.1,
+            "new": 31.4
+          }
+        ]
+      },
+      "firstTickWhere": {
+        "mainRngStateDiffers": {
+          "tick": 5237,
+          "clock": 261.85,
+          "battleClock": "04:45:49"
+        },
+        "roundsIssuedOrInFlightDiffer": {
+          "tick": 5224,
+          "clock": 261.2,
+          "battleClock": "04:45:43"
+        },
+        "eventCountDiffers": {
+          "tick": 5224,
+          "clock": 261.2,
+          "battleClock": "04:45:43"
+        },
+        "playerHealthDiffers": null,
+        "realClockDiffers": null
+      },
+      "finalRng": {
+        "old": 3585496686,
+        "new": 3293056639
+      },
+      "finalHealth": {
+        "old": 100,
+        "new": 100
+      }
+    }
+  ]
+}

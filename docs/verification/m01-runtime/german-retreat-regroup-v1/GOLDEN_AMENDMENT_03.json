@@ -1,0 +1,85 @@
+{
+  "task": "M01-GERMAN-RETREAT-AND-REGROUP-V1",
+  "amendment": "amendment-03",
+  "base": "65145c905209d47da6931aad11c0beeebe597291",
+  "beforeSourceSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+  "beforeFixture": "tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json",
+  "beforeFixtureSha256": "89baff905da88e8bc1f8fd9dcfc40686779d77dc22246ab2b1bafb236b0ad5a2",
+  "afterFixture": "tests/fixtures/m01-t38-gameplay-baseline.json",
+  "afterFixtureSha256": "d21fa94e0ad2bb4c161939f5ba9db319dc36e4ef2665d1e2b21767dfe978df6c",
+  "afterSourceSha256": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9",
+  "reason": "The T48 German retreat (candidate #80 + #89 + T48, amendment 02) and the T38 staging (combat postures and places) were merged into one branch (f02e06b). The golden of the combined simulation is the T38 golden (tools/verification/m01-combat-posture-staging-audit.mjs, its amendment 02); this record is the causal proof of what the retreat changes in it: the T38 simulation (BASE) and the combined one are byte-identical until the east demolition tick and differ only in the Germans of the spans after it. The east demolition happens at other ticks than on the candidate #80 alone (previousEastDemolitionTicks) because the T38 places and postures change the course of the shooting before it; that is T38, not the retreat.",
+  "rule": "Per-tick gameplay frames (state, nested checkpoint, events; presentation fields removed as in the golden) are byte-identical until the east demolition tick, where the first difference is a grp_de_spans actor field; with the grp_de_spans actors removed from both frames every tick of the whole route is byte-identical (confinedTicks equals the route length).",
+  "previousEastDemolitionTicks": {
+    "19390901/false": 15723,
+    "7/true": 14854
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "eastDemolitionTick": 15674,
+      "identicalTicksBeforeIt": 15673,
+      "firstDivergenceTick": 15674,
+      "firstDifferencePath": "$.state.actors.54.x",
+      "firstDifferenceActor": "de_spans_2",
+      "differingActors": [
+        "de_spans_2",
+        "de_spans_3",
+        "de_spans_4",
+        "de_spans_5",
+        "de_spans_6",
+        "de_spans_7",
+        "de_spans_8",
+        "de_spans_9"
+      ],
+      "confinedTicks": 22198,
+      "identicalBlocks": 30,
+      "firstDifferingBlockTick": 15872,
+      "oldTicks": 22198,
+      "newTicks": 22198,
+      "oldBlocks": 44,
+      "newBlocks": 44,
+      "complete": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ]
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "eastDemolitionTick": 15061,
+      "identicalTicksBeforeIt": 15060,
+      "firstDivergenceTick": 15061,
+      "firstDifferencePath": "$.state.actors.54.x",
+      "firstDifferenceActor": "de_spans_2",
+      "differingActors": [
+        "de_spans_2",
+        "de_spans_3",
+        "de_spans_4",
+        "de_spans_5",
+        "de_spans_6",
+        "de_spans_7",
+        "de_spans_8",
+        "de_spans_9"
+      ],
+      "confinedTicks": 21585,
+      "identicalBlocks": 29,
+      "firstDifferingBlockTick": 15360,
+      "oldTicks": 21585,
+      "newTicks": 21585,
+      "oldBlocks": 43,
+      "newBlocks": 43,
+      "complete": true,
+      "checkpoints": [
+        "cp_m01_a_orientacao",
+        "cp_m01_b_reorganizacao",
+        "cp_m01_c_engenheiros",
+        "cp_m01_d_retirada"
+      ]
+    }
+  ]
+}

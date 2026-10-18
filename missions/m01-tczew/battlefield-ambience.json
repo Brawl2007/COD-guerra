@@ -1,0 +1,16 @@
+{
+  "id": "m01-battlefield-ambience",
+  "task": "M01-AMBIENT-DIRECTOR-V1",
+  "note": "Presentation-only data for the north-horizon flashes (S4 north perimeter, 0.8-1.5 km). Axes: X+ east, Z+ south, north is -Z (MAP.md). Flashes only brighten with the real battleReadout; their timing never depends on it.",
+  "seed": 19390901,
+  "slotSeconds": 4.5,
+  "flash": {
+    "startSpreadSeconds": 3.2,
+    "durationSeconds": [0.2, 0.46],
+    "northAzimuthDeg": -90,
+    "halfSpreadDeg": 35,
+    "distanceMeters": [1400, 3200],
+    "color": "#ff9e52"
+  },
+  "readout": { "refreshSeconds": 0.5, "boostMax": 0.25 }
+}

@@ -2,7 +2,7 @@
   "task": "M01-PARTIALS-COMPLETION-INTEGRATION-V1",
   "generationStage": "implementation candidate after exact predecessor authority comparison",
   "predecessor": "bc8f6a21a57ccd926d4e0655481908d90d6b1978",
-  "sourceSha256": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
+  "sourceSha256": "c06c1b1be4e2d1eddffa14b791d661d95bb1d0aefbae7cb4e80f37ecf92083a2",
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
   "routes": [
     {
@@ -132,59 +132,59 @@
         },
         {
           "tick": 15872,
-          "sha256": "a4db1562a302e0b3d7a43dd3869e3ea24f74f3c24e421ab924ad8381d6b7dff9"
+          "sha256": "9df37527107b64d6d445cd6f01931f234bfee9d83e6c13e7f29ea11dd324c7c1"
         },
         {
           "tick": 16384,
-          "sha256": "1063ee5f7498a4cb3a2e24c2d026854d92d6a09ae1257e886e658312970cbb47"
+          "sha256": "319d0498f8883eda4453ac82f503c230ee4ee6fa233807bacdf883b1da5682e2"
         },
         {
           "tick": 16896,
-          "sha256": "a39df64f5b4b0bb50ac2916d9d5209685d6a2b88a490f7dfe1877bc5eb28617e"
+          "sha256": "e65e555a66f6b4d1199ad81fcf793b705a39cc1284a8ad773a32e37734da5e73"
         },
         {
           "tick": 17408,
-          "sha256": "3d01481ef6f7ff762bdb48411954b2b4d3469a79c684aef081994e6d3beb891b"
+          "sha256": "d9cf2e3594299fc8e67e001fce397ee1f20f0ec031651fd8b951222d16f1a6b0"
         },
         {
           "tick": 17920,
-          "sha256": "eba6dd4ef5d3bdd516c82a58c4efc21e51acebf9b4dedc1ac86594b78e8d9f44"
+          "sha256": "0b8548e0acf27d4fc304f92635bd35117d595b4a1b71e7aabd9ad506b6cc1286"
         },
         {
           "tick": 18432,
-          "sha256": "ff7376bfe3c2aecf19f60851db159adc46f30605883a419f20fbfa12f853e341"
+          "sha256": "a77db3e94899c6b3ef9a09ca199342dff76e97e402f8e42997bd2eb1e6e2be94"
         },
         {
           "tick": 18944,
-          "sha256": "5337dac5b2e946a466b6f97d16a870dcdf5e7b87cc0ed53267ddc429fefd75eb"
+          "sha256": "f0a102e009b098034577ade15970ba70eac08b75d38d8a7bc76cdebefb5b643a"
         },
         {
           "tick": 19456,
-          "sha256": "19757c40819ad473cbd1d93b8f27ec6ea3103017c1872000e66da913d3dcddde"
+          "sha256": "ccb8faff64466b0c6c929423c6e5ce349c142437128d6dc6ba89debbf62f8ddd"
         },
         {
           "tick": 19968,
-          "sha256": "9bf234ebcbf817bf5bce22492bee0dd47de65c88a1323d7fc20347f66d45f438"
+          "sha256": "5e99bf1fa2a089269659fdcd7c53521465de053f042d803adc35d16c1dae65c7"
         },
         {
           "tick": 20480,
-          "sha256": "dce6f54ace6037c3fa3fec5fbadc26ea0abb8f8e20952214ed36da1fb25f23f6"
+          "sha256": "055f47b25316bb63f4431b6138a3f7ad1fb38584c6fac07802a4dd1ed8716662"
         },
         {
           "tick": 20992,
-          "sha256": "3c3e601159a9222226247c96937216751d8024a75458082d611aeff626db3198"
+          "sha256": "f1e7c7aa74939ab852e2b460d3b37cbdbdff58115b953fa89b04be509c5bfadb"
         },
         {
           "tick": 21504,
-          "sha256": "8657a14cb17a45bfdb8e4d1e48670b9da5ef91af58a4e8a12b1184a8d318ebbb"
+          "sha256": "61a14b359b6794c72eb4f41fd17c0e6fa2b928036e5c36600d3ca0576d8f1c19"
         },
         {
           "tick": 22016,
-          "sha256": "e5c5423a55c771d4940e69c54873a9048a9621e707422022cee9903cca7f3e0a"
+          "sha256": "7ca20957ea85c869904a56f6bcb1883bd9864a90f48916f2e98c2b686f1e808d"
         },
         {
           "tick": 22247,
-          "sha256": "d576de901eacdce3bb2fa7f8566daf83a40e56044a0525657c8c2cbbbca77ea2"
+          "sha256": "31c744edfd9ca0b91fbcd0c9f755675b8f2d65d98c972858a76305824c6745ed"
         }
       ]
     },
@@ -311,57 +311,67 @@
         },
         {
           "tick": 15360,
-          "sha256": "c89bbaee44d24d58846a2057571bd469973292154bb395399fa65063689eea2b"
+          "sha256": "b69e70b45e20b4a64345a209c73927142ed4299149ddb72126960f83056e24a0"
         },
         {
           "tick": 15872,
-          "sha256": "695d87b79323d58defe901b477bc596ff13c46f2b5d73a2d985f460419bf0e22"
+          "sha256": "a0bdf8fa4eed8715059f9273f8ab29ffc62c7dae191426d914378db9c95fbfff"
         },
         {
           "tick": 16384,
-          "sha256": "77e77f0dfce953744fc2bce445db473169649b7bb0d6909b972fe98dbde26887"
+          "sha256": "d6f1297a0568ce70aa607fc70bcdb31941103155fc1738f478d9e0cccb30e41f"
         },
         {
           "tick": 16896,
-          "sha256": "a536a4bac2238565d741c41e51cf4d5205f3b883b544a5ce36a39a5f6544cb5a"
+          "sha256": "af831b08123b8d8ada412cc4e52427f8dbf889bed5a78998fd63bb83c605a01f"
         },
         {
           "tick": 17408,
-          "sha256": "9f89d513c17be6b96b27a282e307100b2452a70ddaf7a00c0cca81c4a5bf3b84"
+          "sha256": "c2a6f055d905a8b6935566840f0a7137c91a0005f76e862141a55b9c7707e734"
         },
         {
           "tick": 17920,
-          "sha256": "f5a7fc70e4dea855f0b86bc486d871647056ae5f014c4faaf474a37decbd6c58"
+          "sha256": "f284d60a9d8390b104d7e56f86ac1b7eae33ad880e39c80461b8bdbd6285aa2c"
         },
         {
           "tick": 18432,
-          "sha256": "c2b968cdce123968327711385b0e524021dcb33153d9a4575c7ad73a74ad8ea7"
+          "sha256": "577b91742ee25fb82bfd867bc7c774d1c6fdedbed0b2a935d7ea9728bbf3a6a1"
         },
         {
           "tick": 18944,
-          "sha256": "d8c631fbfdaed6660023b8e7e26d45cb8d26ef7ed640d3590daa87ca364cf17a"
+          "sha256": "50637b574063d3f966e0c9e4eeb55f02965fe60f9192f101ab4c123d5109d6e3"
         },
         {
           "tick": 19456,
-          "sha256": "1dbad8b5ddd0e0b784304f2dc51749436fe77df0cfd4ecd077eca3df2bc2b978"
+          "sha256": "1094ebce530f132c01a05168c6071d145a2c5d72ea99cd66543ff8c97c6ad9f4"
         },
         {
           "tick": 19968,
-          "sha256": "10ba2745d883901238a09a99e1bdc293ecc084aad798abad72ad7d9bc3d6a34c"
+          "sha256": "96884d1869fcf98aa3e961b1bca30bbb7f5f3f0db21aa653eb638b8b0a26ad82"
         },
         {
           "tick": 20480,
-          "sha256": "5cea4ad256259655e29413cafe459e4d449482f54c0635637f6ba5d749cfb242"
+          "sha256": "6a35690507d567b4d58b345b1c7dcce1756f379771fcf394827421ac63ada5e3"
         },
         {
           "tick": 20992,
-          "sha256": "90f9ba66a463decfd7ea0dc46c413490179251bf5e62007d282ba6dcdb22793d"
+          "sha256": "8cfc31ce471841e82d32c4246f1e6f33de3fa046712d3455cc3cb6661241198b"
         },
         {
           "tick": 21378,
-          "sha256": "0bd224c58bf0fd16d765137b2f0de4cadfe3636df08266c2cac5ae71f0b0bf9d"
+          "sha256": "22b3b5f043714daaac2c873de447e896eaf151d220a16743ebac4e1f483239f0"
         }
       ]
     }
-  ]
+  ],
+  "amendment02": {
+    "task": "M01-GERMAN-RETREAT-AND-REGROUP-V1",
+    "base": "813f163deceb551e0e4504b30958580cb67d3a76",
+    "beforeFixture": "m01-partials-gameplay-baseline-before-amendment-02.json",
+    "eastDemolitionTicks": {
+      "19390901/false": 15723,
+      "7/true": 14854
+    },
+    "audit": "docs/verification/m01-runtime/german-retreat-regroup-v1/GOLDEN_AMENDMENT_02.json"
+  }
 }

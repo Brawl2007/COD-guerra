@@ -10,6 +10,7 @@ import {displayProfiles} from '../src/game/m01-display-fire.js';
 import {eyePosition} from '../src/world/spatial.js';
 import {route,driver,toRepair} from './helpers/m01-route.js';
 import {compareContinuation,json} from './helpers/m01-determinism.js';
+import {CkmNeutralSimulation} from './helpers/m01-ckm-neutral.js';
 
 // T23 M01-EAST-FRONT-VISIBLE-V1. The east platoon stands on the end of the road deck from the arrival of train 963 (04:45) to its withdrawal
 // (06:00); its six reserve men (pl_east_18..23) fall at fixed times to rifle rounds of kind 'attrition' instead of off stage at 06:00; two-way
@@ -26,7 +27,10 @@ const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const attritionRounds=sim=>sim.enemyFire.rounds.filter(r=>r.kind==='attrition');
 
 /** What the simulation did before T23: nobody holds, nobody falls early, the old aim block, no display fire. The T23 logic is the only difference. */
-class T22Logic extends M01Simulation{
+// D43 (docs/direction/DECISIONS.md): the ckm wz.30 is silenced on BOTH sides of this comparison (CkmNeutralSimulation). Since T38 the gate riflemen stand for every
+// T23 attrition volley, so a live ckm round can meet a standing man in the route and a kneeling one in the twin (a real T23 -> T38 -> T47 consequence); the twin
+// verifies the T23 attrition logic, not ckm hits, which tests/m01-ckm-live-fire.test.js and the T47 golden cover.
+class T22Logic extends CkmNeutralSimulation{
   reset(seed){super.reset(seed);this.display.profiles=[];}
   holdingEast(){return false;}
   eastBridgeheadPoint(r){return r()<.5?{x:995+r()*45,y:.5,z:-3+r()*6}:{x:995+r()*45,y:.5,z:37.5+r()*5};}
@@ -53,13 +57,16 @@ test('a data error stops the load: typos, duplicate or out-of-range victims, bad
     'before the train arrives':g=>{g.attrition[0].at='04:44:00';},'cutoff not after at':g=>{g.attrition[0].cutoff=g.attrition[0].at;},
     'cutoff leaves no flight time before the withdrawal':g=>{g.attrition[5].cutoff='05:59:59';},'missing cutoff':g=>{delete g.attrition[3].cutoff;},
     'no list':g=>{g.attrition=[];},'no hold':g=>{delete g.hold;},'hold from not before until':g=>{g.hold.until=g.hold.from;},
-    'hold from not a battle-clock event':g=>{g.hold.from=E('repair_complete');},'no layout':g=>{delete g.hold.layout;},
-    'zero columns':g=>{g.hold.layout.columns=0;},'negative step':g=>{g.hold.layout.dx=-1;},
+    'hold from not a battle-clock event':g=>{g.hold.from=E('repair_complete');},
+    // T38: the 6x4 layout became explicit staggered slots, one [x, z] per man, at least 1.2 m apart, and the hold posture is crouch.
+    'no slots':g=>{delete g.hold.slots;},'a man without a slot':g=>{g.hold.slots.pop();},'two men on one spot':g=>{g.hold.slots[5]=[...g.hold.slots[4]];},
+    'slots closer than 1.2 m':g=>{g.hold.slots[5]=[g.hold.slots[4][0]+.8,g.hold.slots[4][1]];},'a slot that is not [x, z]':g=>{g.hold.slots[2]=[1030];},
+    'a NaN slot':g=>{g.hold.slots[7]=[null,40];},'standing hold':g=>{g.hold.stage.posture='stand';},
   };
   for(const [name,fn] of Object.entries(bad))assert.throws(()=>eastFrontPlan(edit(fn)),/east front/,name);
 });
 
-test('24 distinct slots on the road deck: nobody stands on another man, the six reserves are the back rank, the old four-point stack is gone',()=>{
+test('24 distinct slots on the road deck: nobody stands on another man, the six reserves wait at the back, the old four-point stack is gone',()=>{
   const sim=new M01Simulation(1),men=platoon(sim),deck=sim.world.colliders.find(c=>c.id==='road_collider_deck_span_09');
   assert.equal(new Set(men.map(a=>`${a.x},${a.z}`)).size,24);
   let closest=Infinity;for(const a of men)for(const b of men)if(a!==b)closest=Math.min(closest,dist(a,b));
@@ -68,7 +75,9 @@ test('24 distinct slots on the road deck: nobody stands on another man, the six 
     assert.ok(a.x>=deck.min.x&&a.x<=deck.max.x-.3&&a.z>=deck.min.z+.3&&a.z<=deck.max.z-.3,`${a.id} is on the deck`);
     assert.equal(sim.world.heightAt(a.x,a.z),a.y,`${a.id} stands on the deck, not above the bank`);
   }
-  assert.equal(new Set(men.slice(18).map(a=>a.z)).size,1,'one back rank');assert.ok(men.slice(0,18).every(a=>a.z<men[18].z));
+  // T38: no rank any more (staggered slots), but the six reserves are still the back rank: every reserve is strictly further south (larger z)
+  // than every one of the other eighteen.
+  assert.ok(Math.min(...men.slice(18).map(a=>a.z))>Math.max(...men.slice(0,18).map(a=>a.z)),'the reserves are behind every front man');
   assert.ok(men.every(a=>!a.active&&a.alive&&a.state==='GUARD'&&a.group==='grp_east_platoon'),'off stage until the train arrives');
 });
 
@@ -78,7 +87,8 @@ test('the east rifles aim into the platoon block with exactly three draws per ca
   const bands=new Set();let farthest=0;
   for(let i=0;i<4000;i++){
     draws=0;const p=sim.eastBridgeheadPoint(r);assert.equal(draws,3,'band, x and z');
-    assert.ok(p.x>=1032&&p.x<=1044&&p.z>=38&&p.z<=42&&p.y===.5,JSON.stringify(p));
+    // T38: the block is the staggered slots' bounds (x 1028-1043, z 38.2-41.8) plus 1 m in x and 0.2 m in z, as T23 built it from the grid.
+    assert.ok(p.x>=1027&&p.x<=1044&&p.z>=38&&p.z<=42&&p.y===.5,JSON.stringify(p));
     bands.add(p.z<40?'north':'south');farthest=Math.max(farthest,Math.min(...men.map(a=>dist(a,p))));
   }
   assert.deepEqual([...bands].sort(),['north','south']);assert.ok(farthest<=1.5,`the farthest aim point is ${farthest.toFixed(2)} m from the nearest man`);
@@ -340,7 +350,7 @@ function eastFrontRoute(seed,support,{continuations=false}={}){
     withdrawAt:null,flagAtWithdraw:null,roundsAfterWithdraw:0};
   const realProfiles=displayProfiles(definition),owner=new Map(realProfiles.flatMap(p=>(p.shooters??[p.id]).map(who=>[who,p.id])));
   let slots=null,counted=0,trainAt=null;const seenRound=new Set(),tracerAt=[],saves={};
-  const result=route(seed,{support,onStep:({sim,controls,events,dt})=>{
+  const result=route(seed,{support,Simulation:CkmNeutralSimulation,onStep:({sim,controls,events,dt})=>{
     stats.ticks++;twin.tick(dt,json(controls));const twinEvents=twin.drainEvents();
     // 1. the T22 logic is equal in everything the hold, the attrition and the display must not touch
     if(sim.rng.state!==twin.rng.state)assert.fail(`rng diverged at tick ${stats.ticks} (seed ${seed}): ${sim.rng.state} vs ${twin.rng.state}`);

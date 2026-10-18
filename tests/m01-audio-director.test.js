@@ -14,6 +14,7 @@ import {Game} from '../src/game/game.js';
 import mission from '../missions/m01-tczew/mission.json' with {type:'json'};
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
 import {driver,toRepair,route} from './helpers/m01-route.js';
+import {missionWithRetiredCasemate} from './helpers/m01-retired-casemate.js';
 
 // MEMORY SAFETY: nothing here keeps a graph of fake nodes in a value that an assertion could serialise (fake nodes keep ctx/connections
 // non-enumerable), the route is run with a bounded fake context that is trimmed as it goes, and no test retains per-tick data.
@@ -327,6 +328,12 @@ test('zone occlusion: only a listener inside an interior zone muffles sources ou
 
 // ------------------------------------------------------------------------------------------------ director: emitters and the casemate crew gate
 const ckmBursts=log=>log.filter(e=>e[1]==='weaponFire'&&e[2]==='ckm_wz30'&&String(e[5].key).startsWith('ae_s1_ckm_casemate'));
+// T47 retired the dramatized casemate ckm from the mission data: the real gun of post S2 is the only ckm of the west bridgehead, and it sounds through the simulation's
+// ally-fire event (one ckmBurst per burst). The crew gate, the sector states and the slot-based scheduling that emitter exercised are still the rules of every dramatized
+// emitter, so the tests below keep running them on the emitter exactly as it was authored (tests/helpers/m01-retired-casemate.js), put back into the definition of the
+// simulation under test (a copy: the mission data itself is never touched).
+function withCasemate(sim){sim.definition=missionWithRetiredCasemate(sim.definition);return sim;}
+class CasemateSim extends M01Simulation{constructor(seed){super(seed);withCasemate(this);}}
 function runEmitters(sim,{frames,dt=.05}){
   const {audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[],view=readonly(sim);
   record(audio,log,()=>sim.battleClock);
@@ -334,23 +341,33 @@ function runEmitters(sim,{frames,dt=.05}){
   assert.equal(director.errors,0,director.lastError);
   return {audio,director,log};
 }
-test('casemate ckm with real sector states: audible 04:46-06:12 (s1 states), silent from the evacuation',()=>{
+test('T47: the real mission data has no casemate ckm: the west bridgehead has no emitter and the director schedules no dramatized ckm burst there',()=>{
+  const sim=m01Sim('05:00:00');
+  assert.deepEqual(sim.definition.sectors.find(s=>s.id==='s1_west_bridgehead').audioEmitters,[]);
+  const run=runEmitters(sim,{frames:2400});   // 120 s of the battle at 05:00, the window the casemate emitter used to sound in
+  assert.deepEqual(run.audio.activeEmitters(sim.battleClock,run.director.stateOf,[],null).map(e=>e.id).sort(),['ae_s2_ckm_east','ae_s2_mg_dike','ae_s2_mg_train']);
+  assert.equal(ckmBursts(run.log).length,0,'no dramatized ckm burst: the only ckm sound of the west bridgehead is the simulation ally-fire event');
+  const ckmCalls=run.log.filter(e=>e[1]==='weaponFire'&&e[2]==='ckm_wz30');
+  assert.ok(ckmCalls.every(e=>String(e[5].key).startsWith('ae_s2_ckm_east')),'any ckm call of the director belongs to the east emitter, 1 km away');
+  assert.ok(run.director.diagnostics.emitters.played>0,'the east emitters still sound');
+});
+test('dramatized casemate ckm (retired from the mission data, put back here) with real sector states: audible 04:46-06:12 (s1 states), silent from the evacuation',()=>{
   const rows=[['04:45:59',false],['04:46:00',true],['05:00:00',true],['06:09:59',true],['06:10:00',true],['06:11:59',true],['06:12:00',false],['06:12:01',false],['06:30:00',false],['06:44:59',false]];
   for(const [clock,expected] of rows){
-    const sim=m01Sim(clock),{audio}=makeAudio(),director=new M01AudioDirector(audio);director.reset(sim);
+    const sim=withCasemate(m01Sim(clock)),{audio}=makeAudio(),director=new M01AudioDirector(audio);director.reset(sim);
     const ids=audio.activeEmitters(sim.battleClock,director.stateOf,[],null).map(e=>e.id);
     assert.equal(ids.includes('ae_s1_ckm_casemate'),expected,`${clock} s1=${sim.sectors.sectors[0].state}`);
   }
   assert.equal(m01Sim('06:12:00').sectors.sectors[0].state,'evacuating_bridgehead');
   // Audible: bursts of the ckm come out of a long run at 05:00 and are tagged with the emitter key...
-  const audible=runEmitters(m01Sim('05:00:00'),{frames:2400});
+  const audible=runEmitters(withCasemate(m01Sim('05:00:00')),{frames:2400});
   const bursts=ckmBursts(audible.log);assert.ok(bursts.length>=15,`${bursts.length} ckm bursts in 120 s`);
   for(const b of bursts){assert.ok(b[3]>=-1&&b[3]<=1,'pan');assert.ok(b[4]>0&&b[4]<2500,'distance');assert.ok(b[5].rounds>=3&&b[5].rounds<=6);}
   // ...silent after the evacuation, and before it starts.
-  assert.equal(ckmBursts(runEmitters(m01Sim('06:12:00'),{frames:2400}).log).length,0);
-  assert.equal(ckmBursts(runEmitters(m01Sim('04:45:00'),{frames:600}).log).length,0);
+  assert.equal(ckmBursts(runEmitters(withCasemate(m01Sim('06:12:00')),{frames:2400}).log).length,0);
+  assert.equal(ckmBursts(runEmitters(withCasemate(m01Sim('04:45:00')),{frames:600}).log).length,0);
   // The gate is re-checked when the burst is due: a burst scheduled before the evacuation does not sound after it.
-  const sim=m01Sim('06:11:59'),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
+  const sim=withCasemate(m01Sim('06:11:59')),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
   director.reset(sim);let scheduled=false;
   for(let i=0;i<2400&&!scheduled;i++){sim.clock+=.05;ctx.currentTime=sim.clock;director.update(sim);scheduled=director.pending.some(p=>p.used&&p.emitter.id==='ae_s1_ckm_casemate');}
   assert.ok(scheduled,'a casemate burst is waiting');
@@ -358,8 +375,25 @@ test('casemate ckm with real sector states: audible 04:46-06:12 (s1 states), sil
   for(let i=0;i<120;i++){sim.clock+=.05;director.update(sim);}
   assert.equal(ckmBursts(log).length,0);assert.ok(director.diagnostics.emitters.suppressed>=1);
 });
+test('T48: the German MG34 emitters are silent from 06:10 to 06:11 and sound again from 06:11, also for a burst scheduled before the silence',()=>{
+  const eastMg=log=>log.filter(e=>e[1]==='weaponFire'&&e[2]==='mg34'&&String(e[5].key).startsWith('ae_s2_mg_'));
+  const at=clock=>{const sim=m01Sim(clock);place(sim,-70,-3,24);return sim;};
+  assert.equal(at('06:10:00').germanSilence(),true);assert.equal(at('06:11:00').germanSilence(),false);
+  assert.ok(eastMg(runEmitters(at('06:09:00'),{frames:1200}).log).length>0,'before the silence the east MG34s sound');
+  for(const clock of ['06:10:00','06:10:59'])assert.equal(eastMg(runEmitters(at(clock),{frames:1200}).log).length,0,`${clock}: no German MG34`);
+  assert.ok(eastMg(runEmitters(at('06:11:00'),{frames:1200}).log).length>0,'from 06:11 the east MG34s sound again');
+  // A burst scheduled at 06:09:59 and due after 06:10:00 is dropped at the moment of the shot.
+  const sim=at('06:09:59'),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
+  director.reset(sim);let waiting=false;
+  for(let i=0;i<2400&&!waiting;i++){sim.clock+=.05;ctx.currentTime=sim.clock;director.update(sim);waiting=director.pending.some(p=>p.used&&p.emitter.weapon==='mg34');}
+  assert.ok(waiting,'an MG34 burst is waiting');
+  const shots=eastMg(log).length;sim.battleClock=bc('06:10:00');
+  for(let i=0;i<200;i++){sim.clock+=.05;ctx.currentTime=sim.clock;director.update(sim);}
+  assert.equal(eastMg(log).length,shots,'nothing scheduled before 06:10 sounds inside the silence');assert.ok(director.diagnostics.emitters.suppressed>=1);
+  assert.equal(director.errors,0,director.lastError);
+});
 test('emitters: far emitters use the distant category, timing is slot-based without backlog, and a rewind drops pending bursts',()=>{
-  const sim=m01Sim('05:00:00'),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
+  const sim=withCasemate(m01Sim('05:00:00')),{audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];record(audio,log,()=>sim.battleClock);
   place(sim,-70,-3,24);
   for(let i=0;i<1200;i++){sim.clock+=.05;ctx.currentTime=sim.clock;director.update(sim);if(i%100===0){ctx.flush();ctx.nodes.length=0;ctx.sources.length=0;}}
   const east=log.filter(e=>e[1]==='weaponFire'&&e[2]==='mg34'&&String(e[5].key).startsWith('ae_s2_'));
@@ -487,11 +521,11 @@ class RouteDigest{
 test('full recruta route: the director only reads (deep read-only view, no RNG access, unchanged snapshots and RNG states) and the route is byte-identical with and without it; casemate gate follows real states',()=>{
   // Run A: the route with no director at all.
   const plain=new RouteDigest();
-  route(19390901,{support:false,onStep:({sim,events})=>plain.add(sim,events)});
+  route(19390901,{support:false,Simulation:CasemateSim,onStep:({sim,events})=>plain.add(sim,events)});
   // Run B: the same route with the director fed through a deep read-only view, as game.js feeds it (events first, then update).
   const {audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];let stamp=0;record(audio,log,()=>stamp);
   const withDirector=new RouteDigest(),samples=[];let ticks=0,last=director.stats.slots;
-  const result=route(19390901,{support:false,onStep:({sim,events})=>{
+  const result=route(19390901,{support:false,Simulation:CasemateSim,onStep:({sim,events})=>{
     ticks++;ctx.currentTime=sim.clock;stamp=sim.battleClock;
     const view=readonly(sim),rng=[sim.rng.state,sim.display.rng.state],clock=[sim.clock,sim.battleClock],consumed=Object.keys(sim.consumed).length;
     const heavy=ticks%10===0,before=heavy?hash(JSON.stringify(sim.snapshot(false))):0;
@@ -532,7 +566,7 @@ class Stop extends Error{}
 function segmentRun({readoutOff=false,until='05:05:00'}={}){
   const {audio,ctx}=makeAudio(),director=new M01AudioDirector(audio),log=[];let stamp=0,n=0;record(audio,log,()=>stamp);
   try{
-    route(19390901,{support:false,onStep:({sim,events})=>{
+    route(19390901,{support:false,Simulation:CasemateSim,onStep:({sim,events})=>{
       ctx.currentTime=sim.clock;stamp=sim.clock;
       const view=readonlyWithout(sim,readoutOff);for(const e of events)director.handleEvent(e,view);director.update(view);
       if(++n%100===0){ctx.flush();ctx.nodes.length=0;ctx.sources.length=0;}

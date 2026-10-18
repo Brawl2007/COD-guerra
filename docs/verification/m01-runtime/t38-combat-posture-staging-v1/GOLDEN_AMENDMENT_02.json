@@ -1,0 +1,129 @@
+{
+  "task": "M01-COMBAT-POSTURE-STAGING-V1",
+  "amendment": "amendment-02",
+  "base": "9f7945b3ba66f57871aef61a13699960acc953a8",
+  "beforeCommit": "65145c905209d47da6931aad11c0beeebe597291",
+  "beforeSourceSha256": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+  "beforeGameplayInputsSha256": "741888a156af732c149bf8118a9894232c3513398c54644a4bf398b8610491dc",
+  "beforeFixture": "tests/fixtures/m01-t38-gameplay-baseline-before-amendment-02.json",
+  "beforeFixtureSha256": "89baff905da88e8bc1f8fd9dcfc40686779d77dc22246ab2b1bafb236b0ad5a2",
+  "afterFixture": "tests/fixtures/m01-t38-gameplay-baseline.json",
+  "afterFixtureSha256": "d21fa94e0ad2bb4c161939f5ba9db319dc36e4ef2665d1e2b21767dfe978df6c",
+  "afterSourceSha256": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9",
+  "afterGameplayInputsSha256": "2674bdebae5151bd2c7aed48b59d5c54dc5fdcc0cd844277c1115ee62b7f3d43",
+  "candidateRecordedInFixture": "9f7945b3ba66f57871aef61a13699960acc953a8",
+  "authority": "Regenerated only with tools/verification/m01-combat-posture-staging-audit.mjs --write-golden --amendment 02 (x86), after its invariant audit against the exact predecessor; never edited by hand. This file is derived from the two fixture files and from git (the golden it replaces is read from the revision named in beforeCommit); no value in it is typed.",
+  "reason": "The T48 German retreat (BX-09; candidate #80 + #89 + T48 = 5a169ba) was merged into this branch (f02e06b). The simulation of the combined tree has a new source hash, and from the east demolition on the Germans of the spans fall back with their fallen and regroup by 06:12, so the golden of the T38 simulation (amendment 01, the head 65145c9) no longer describes the branch. Combined T38 positions and postures + T48 retreat: the T38 places, postures and mission data are unchanged (missions/m01-tczew/mission.json is not among the changed gameplay inputs). The audit predecessor moves from ef35c7a to 5a169ba, whose simulation the partials golden pins since its amendment 02. The save migration of the gate riflemen no longer moves a fallen man (it runs only when a save is restored: no per-tick effect). The causal proof that the retreat only changes the Germans of the spans from the east demolition tick on is docs/verification/m01-runtime/german-retreat-regroup-v1/GOLDEN_AMENDMENT_03.json.",
+  "changedGameplayInputs": [
+    "src/game/m01-simulation.js"
+  ],
+  "unchangedGameplayInputs": [
+    "missions/m01-tczew/mission.json",
+    "missions/m01-tczew/map-layout.json",
+    "src/game/m01-animation-presentation.js",
+    "src/game/m01-aim.js",
+    "src/game/m01-fire.js",
+    "src/game/m01-display-fire.js",
+    "src/game/m01-yard-life.js",
+    "src/world/spatial.js",
+    "src/world/tczew-world.js"
+  ],
+  "rule": "Same two routes and the same digest scheme (sha256 per 512 ticks of the whole gameplay frame: state, nested checkpoint and events, presentation fields removed). identicalBlocks counts the leading 512-tick blocks equal to the replaced golden; firstDifferingBlockTick is the end tick of the first block that differs.",
+  "header": {
+    "task": {
+      "unchanged": true
+    },
+    "generationStage": {
+      "unchanged": true
+    },
+    "predecessor": {
+      "before": "ef35c7ab24d75d87ca6435891f1977fd14d7a52c",
+      "after": "5a169babb638d1d09608f9a2bb84d1528f1aab4b"
+    },
+    "predecessorSourceSha256": {
+      "before": "00964436e079373887ca89c2128e8aa7f81a7f4ee9522c63b070f0e14f833f2a",
+      "after": "c06c1b1be4e2d1eddffa14b791d661d95bb1d0aefbae7cb4e80f37ecf92083a2"
+    },
+    "candidate": {
+      "before": "25ed12f823bb1d4621fff50944b2eadf90f02ae0",
+      "after": "9f7945b3ba66f57871aef61a13699960acc953a8"
+    },
+    "sourceSha256": {
+      "before": "344a932f82a21bc4efe138968193a999f1d0efc17eceffea5ceb9a3d09a933a0",
+      "after": "c470d1447c925419ad9e99237fa7f0c2c8fb4d8f9238c86e29bc4d9cd1ed33a9"
+    },
+    "gameplayInputs": {
+      "unchanged": true
+    },
+    "gameplayInputsSha256": {
+      "before": "741888a156af732c149bf8118a9894232c3513398c54644a4bf398b8610491dc",
+      "after": "2674bdebae5151bd2c7aed48b59d5c54dc5fdcc0cd844277c1115ee62b7f3d43"
+    },
+    "partialsGoldenSha256": {
+      "before": "83a907ca00389f17723ffc97f1c42dca7d80f9a956d07ca7f39b8ae58fe87b79",
+      "after": "a29c1ac9a4a5ae729bc2330a7b57ed430403311a3160174a9995efc3c54a8f07"
+    },
+    "historicalGoldenSha256": {
+      "unchanged": true
+    }
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "oldTicks": 22198,
+      "newTicks": 22198,
+      "oldBlocks": 44,
+      "newBlocks": 44,
+      "identicalBlocks": 30,
+      "firstDifferingBlockTick": 15872,
+      "eastDemolitionTick": 15674
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "oldTicks": 21585,
+      "newTicks": 21585,
+      "oldBlocks": 43,
+      "newBlocks": 43,
+      "identicalBlocks": 29,
+      "firstDifferingBlockTick": 15360,
+      "eastDemolitionTick": 15061
+    }
+  ],
+  "invariantsAudit": {
+    "file": "GOLDEN_AUDIT.json",
+    "predecessor": "5a169babb638d1d09608f9a2bb84d1528f1aab4b",
+    "predecessorSourceSha256": "c06c1b1be4e2d1eddffa14b791d661d95bb1d0aefbae7cb4e80f37ecf92083a2",
+    "routes": 24,
+    "seeds": [
+      19390901,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "invariants": "equal to the predecessor: completion, final battle clock, checkpoints, objective states, consumed-event order, battle-clock time of train963_arrives, order_demolish, east_platoon_withdraws, germans_on_east_spans, bak_wounded, east_demolition, west_demolition, roll_call and debrief, the 06:00 survivors flag, the final survivors, dlg_m01_049; absolute: repair_complete before 05:30, each attrition fall 0 to 5 s of battle clock after its fixed time",
+    "mg34Totals": {
+      "before": {
+        "squad": 499,
+        "area": 0,
+        "others": 866,
+        "fireOnSquadCalls": 977
+      },
+      "after": {
+        "squad": 146,
+        "area": 351,
+        "others": 888,
+        "fireOnSquadCalls": 635
+      }
+    }
+  }
+}

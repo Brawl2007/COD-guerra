@@ -1,8 +1,34 @@
 // Schema-2 presentation data. No gameplay/RNG writes, renderer history or wall clock.
+import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 export const MOTION_GAITS=Object.freeze(['idle','walk','run','sprint','crouch_walk','carry','drag']);
 export const PRESENTATION_FIELDS=Object.freeze(['motion','bodyYaw','posture','postureSince','postureProgress','suppressedAt','hitAt','hitYaw','diedAt','deathYaw','reload','cover','carry']);
 const angle=x=>Math.atan2(Math.sin(x),Math.cos(x));
-const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&clock<a.suppressedUntil?'prone':a.crouched?'crouch':'stand';
+/**
+ * T38 (M01-COMBAT-POSTURE-STAGING-V1): grp_east_platoon.hold. While the platoon holds the deck every man is crouched in GAMEPLAY on his staggered
+ * slot (m01-simulation.js: hitbox, eye, aim and shot origin all kneel), so the posture below is simply 'crouch'. Here, presentation only, a
+ * man kneeling still on his own slot turns his body by stage.yaw[i] from his gameplay facing, so the kneeling men do not all look the same way.
+ * Engineers (sappers) lie prone (T07 generic prone, which also lowers their hitboxes in spatial.js) while suppressed and, from the moment they are
+ * sent to the second cut, whenever they wait still on guard without working (gameplay `crouched` is their work posture). Validated at load.
+ */
+export function eastHoldStage(def=definition){
+  const fail=m=>{throw new Error(`M01 east hold stage: ${m}`);};
+  const group=def.groups?.find(g=>g.id==='grp_east_platoon'),slots=group?.hold?.slots,s=group?.hold?.stage,size=group?.startSize;
+  if(!Number.isInteger(size)||!Array.isArray(slots)||slots.length!==size||!slots.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)))fail('hold.slots');
+  if(!s||s.posture!=='crouch')fail('posture must be crouch (stand keeps the men upright under fire; prone is not a platoon posture)');
+  if(!Array.isArray(s.yaw)||s.yaw.length!==size||!s.yaw.every(y=>Number.isFinite(y)&&Math.abs(y)<=.4))fail('one yaw per man, |yaw| <= 0.4 rad');
+  return Object.freeze({posture:s.posture,yaw:Object.freeze([...s.yaw]),slots:Object.freeze(slots.map(([x,z])=>Object.freeze({x,z})))});
+}
+const EAST_HOLD_STAGE=eastHoldStage();
+/** Slot index of a platoon man kneeling still on his own hold slot, or -1. Reads gameplay data only; writes nothing. */
+export function holdStageSlot(a){
+  if(a.group!=='grp_east_platoon'||!a.active||!a.alive||!a.crouched||a.carriedBy||a.state==='WOUNDED'||(a.motion?.speed??0)!==0)return -1;
+  const i=Number(a.id.slice('pl_east_'.length)),slot=Number.isInteger(i)?EAST_HOLD_STAGE.slots[i]:undefined;
+  return slot&&Math.hypot(a.x-slot.x,a.z-slot.z)<.05?i:-1;
+}
+const bodyGoal=a=>{const i=holdStageSlot(a);return i<0?a.facing:angle(a.facing+EAST_HOLD_STAGE.yaw[i]);};
+/** T38: a sapper sent to the second cut who waits still on guard, not working (`crouched`), lies prone. */
+const waitingProne=a=>a.role==='ENGINEER'&&a.target!=null&&!a.crouched&&a.alive&&a.active&&!a.carriedBy&&a.state==='GUARD'&&(a.motion?.speed??0)===0;
+const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&(clock<a.suppressedUntil||waitingProne(a))?'prone':a.crouched?'crouch':'stand';
 const fixedBody=a=>!a.alive||a.state==='WOUNDED'||a.carriedBy||a.pose==='seated'||
   (a.mg34Prone&&a.mg34Prone.phase!=='standing')||(a.ckm&&a.ckm.phase!=='retreat');
 
@@ -29,9 +55,10 @@ export function updatePosture(a,clock){
 
 export function updateBodyYaw(a,dt){
   if(fixedBody(a))return;
-  const delta=angle(a.facing-a.bodyYaw),limit=(a.motion.speed===0?Math.PI:2*Math.PI)*dt;
-  a.bodyYaw=Math.abs(delta)<=limit?a.facing:angle(a.bodyYaw+Math.sign(delta)*limit);
-  if(a.motion.speed===0){const remaining=angle(a.facing-a.bodyYaw);if(Math.abs(remaining)>Math.PI/3)a.bodyYaw=angle(a.facing-Math.sign(remaining)*Math.PI/3);}
+  const goal=bodyGoal(a);   // the gameplay facing, or (T38) the staged turn of a waiting platoon man
+  const delta=angle(goal-a.bodyYaw),limit=(a.motion.speed===0?Math.PI:2*Math.PI)*dt;
+  a.bodyYaw=Math.abs(delta)<=limit?goal:angle(a.bodyYaw+Math.sign(delta)*limit);
+  if(a.motion.speed===0){const remaining=angle(goal-a.bodyYaw);if(Math.abs(remaining)>Math.PI/3)a.bodyYaw=angle(goal-Math.sign(remaining)*Math.PI/3);}
 }
 
 export function updateMotion(actors,before,dt,clock){

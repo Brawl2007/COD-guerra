@@ -4,10 +4,12 @@ import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {actorPose} from '../../src/render/m01-actor-pose.js';
 import {muzzlePosition} from '../../src/world/spatial.js';
 const key='cod-guerra:checkpoint:m01:v2';
+// The search starts at 207.4 s of game time. With the ckm live (T47) the first burst of de_east_0 that reaches a sixth round fires it at 328.8 s, 121.4 s in, with the gun itself mid-burst:
+// the window must be longer than 121.4 s (180 s leaves a margin of 58 s; at 120 s it ends at 327.4 s and fails with "Route stalled").
 function burstSave(count){
  const d=toRepair(driver()),p=d.sim.player,a=d.sim.actor('de_east_0'),angle=Math.atan2(a.z-p.z,a.x-p.x);
  d.step({lookX:Math.atan2(Math.sin(angle-p.angle),Math.cos(angle-p.angle))/.0022});
- d.until(()=>d.sim.actor('de_east_0').mg34Prone?.phase==='fire_burst'&&d.sim.actor('de_east_0').mg34Prone.burst.emitted===count,120);
+ d.until(()=>d.sim.actor('de_east_0').mg34Prone?.phase==='fire_burst'&&d.sim.actor('de_east_0').mg34Prone.burst.emitted===count,180);
  return d.sim.snapshot();
 }
 async function continueAndPause(page,optionalFailure=false){

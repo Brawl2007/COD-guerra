@@ -47,6 +47,15 @@ async function waitForBearingFrame(page,angle,bearing,minFrame){
   },{angle,bearing,minFrame},{timeout:process.env.CI?60000:30000});
   return page.evaluate(()=>({data:window.gameDiagnostics(),hud:document.querySelector('#objective-status').textContent}));
 }
+async function waitForFrameAfterRestore(page){
+  // Continue restores the save inside the click handler, outside the frame loop, and the HUD text is written only by the next rendered
+  // frame (loop: tick -> renderMission -> updateHud, one task). Under software rendering that frame can arrive after the pointer-lock
+  // handoff start() waits for: the first sample then paired the restored sim status with the still-empty HUD (m01.spec.js:458 in the
+  // final integration run, "Reparo 35% · sapadores deitados..." vs ""). Sample only once a frame has been rendered after the restore;
+  // every later task boundary follows a whole frame, so HUD and simulation are compared exactly and the equality stays strict.
+  const restored=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(frame=>window.gameDiagnostics().m01.renderedFrames>frame,restored,{timeout:process.env.CI?60000:30000});
+}
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
@@ -85,6 +94,11 @@ test('the genuine first raid displays three Ju 87 GLBs with light LODs and freez
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  // start() returns once the restored clock is visible, but m01.aircraft is read from the LAST RENDERED frame, which can still be the
+  // pre-restore one (trace: renderedFrames 6, since -240 s, planes hidden at the path start, fade 1 because no 'heard' time yet).
+  // Wait for a frame rendered after the restore, so the presentation sampled below is the restored raid, not the stale frame.
+  const staleFrame=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.renderedFrames>n,staleFrame);
   // The planes were heard long before the restored instant: the presentation fade-in has to be complete.
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
   const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
@@ -400,15 +414,19 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+// T47: 46 Germans stood at CP-D on the route before the ckm fired. On the candidate #80 the gun felled one of them (de_east_5 after the review fix, so 45). Over the T38 staging it wounds
+// three men on this route since T47 amendment 03 (live.hits 3, live.men.hit; D43) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
+// tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
+const CPD_ENEMIES_ALIVE=46;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
-  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(46);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
+  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
   expect(d.m01.parts.road_span_06.visible).toBe(false);expect(d.m01.parts.rail_support_06.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-cp-d.png')});await page.evaluate(()=>document.exitPointerLock());
   await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
-  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(46);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
+  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
   await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);await start(page,'#continue');
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.parts.road_span_06.visible).toBe(false);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -428,17 +446,22 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   // Staged continuation of a state reached by the simulation route (crate delivered, train 963 firing).
   const d=toRepair(driver());d.walk(-134,13);d.until(()=>d.sim.battleClock>=seconds('04:45:40'),120);
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
   const samples=[];
-  for(let i=0;i<60&&!(samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress);i++){
+  // Pinned sappers are drawn prone (e0d494e), so 'pinned' poses only count bystanders a round happens to pass: the sappers show as extra prone bodies
+  // over the free baseline (the MG34 crews are always prone). Sampling continues until every property asserted below has been seen.
+  const sappersDown=()=>{const free=samples.filter(s=>!s.pinned).map(s=>s.prone);return free.length>0&&samples.some(s=>s.pinned&&s.prone>Math.max(...free));};
+  const seen=()=>samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress
+    &&sappersDown()&&samples.some(s=>s.animations.aiming>0)&&samples.some(s=>s.pinned&&s.animations.underFire>0);
+  for(let i=0;i<160&&!seen();i++){
     await page.waitForTimeout(250);
     samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {fx:g.fireEffects,hud:document.querySelector('#objective-status').textContent,
-      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),poses:g.actorPoses.pinned,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
+      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),prone:g.actorPoses.prone,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
   }
   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
-  expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+  expect(sappersDown()).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
   expect(samples.some(s=>s.pinned&&s.animations.underFire>0)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud.includes('sapadores deitados')).toBe(s.pinned);for(const x of s.origins)expect(x).toBeGreaterThanOrEqual(1050);}
@@ -526,7 +549,7 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   test.setTimeout(process.env.CI?180000:90000);
   const snapshot=flow().combatSnapshots.withdrawal;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
   // Renderer telemetry is latched only after a world frame with a real muzzle batch was submitted.
   // Unlike polling fireEffects.muzzle, the count remains observable after the short visual flash disappears.
   const muzzleStart=await page.evaluate(()=>window.gameDiagnostics().m01.muzzlePresentation.frames),samples=[];
@@ -612,7 +635,7 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
   expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);
   expect(c.ckm.clip).toBe('ckm_wz30_gun_abandon');expect(c.ckm.time).toBeCloseTo(gunner.clipTime,5);
-  expect(c.ckm.position).toEqual([24.17,-3,43]);expect(c.ckm.lod).toBe(2);
+  expect(c.ckm.position).toEqual([7.17,-3,26]);expect(c.ckm.lod).toBe(2);   // T47: the gun stands at post S2 (it was at the casemate (24.17,-3,43) until then)
   await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
   await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
   await page.reload();await open(page);await start(page,'#continue');

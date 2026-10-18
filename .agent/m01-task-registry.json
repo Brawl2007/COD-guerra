@@ -172,9 +172,12 @@
       "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#59",
-        "PR:#76"
+        "PR:#76",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t50@ca0aea0"
       ],
-      "note": "Portão FX V3 da V7; tabela fechado/aberto não verificada."
+      "note": "Portão FX V3 da V7; tabela fechado/aberto não verificada. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T16": {
       "name": "LIGHTING DAWN",
@@ -232,9 +235,12 @@
       "refs": [
         "PR:#65",
         "PR:#70",
-        "PR:#76"
+        "PR:#76",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t21@552652b"
       ],
-      "note": "Campo de batalha vivo (Argon). Ferramenta de prova #70 corrigida localmente; captura real em CI por reprovar."
+      "note": "Campo de batalha vivo (Argon). Ferramenta de prova #70 corrigida localmente; captura real em CI por reprovar. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T22": {
       "name": "BATTLE READOUT",
@@ -398,15 +404,24 @@
       "status": "PARTIAL_IN_CANDIDATE",
       "refs": [
         "PR:#64",
-        "PR:#76"
+        "PR:#76",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t37@8e1f77a"
       ],
-      "note": "IK do braço de apoio (Argon V2); orçamento IK por fazer."
+      "note": "IK do braço de apoio (Argon V2); orçamento IK por fazer. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest. Mantém-se parcial (orçamento IK por fazer)."
     },
     "T38": {
       "name": "COMBAT POSTURE STAGING",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Posturas de combate."
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/quirky-heisenberg-iytxsy",
+        "claim:claims/m01-t38",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t38@3ff9e4e"
+      ],
+      "note": "Fatias 1 (apresentação) e 2 (jogo) entregues na branch, NÃO aceites: lugares desencontrados e posturas de jogo (de joelhos/deitado) como dados de missão para o pelotão leste, os atiradores dos portões, a secção atrás dos sacos do posto e os sapadores; golden x86 regenerado com a ferramenta do repositório (GOLDEN_AMENDMENT_01.json). Falta revisão crítica independente, CI e playtest humano. Decisão de design pendente: cobertura real vinda de oeste para os atiradores dos portões exige novos props de cobertura. Ver docs/verification/m01-runtime/t38-combat-posture-staging-v1/. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T39": {
       "name": "VIEWMODEL FEEL",
@@ -420,11 +435,14 @@
     },
     "T40": {
       "name": "FP ARMS AND CARRY",
-      "status": "NEEDS_AUDIT",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
-        "branch:codex/m01-viewmodel-visual-v2"
+        "branch:codex/m01-viewmodel-visual-v2",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t40@3ca910e"
       ],
-      "note": "Branch pré-V7; confirmar se foi absorvida."
+      "note": "Branch pré-V7; confirmar se foi absorvida. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T41": {
       "name": "BRIDGE FINISH",
@@ -449,9 +467,15 @@
     },
     "T43": {
       "name": "LOD POLICY AND FADES",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Política de LOD."
+      "status": "IN_CANDIDATE_UNVERIFIED",
+      "refs": [
+        "branch:claude/quirky-heisenberg-eldlky",
+        "claim:claims/m01-t43",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t43i@d223cdf"
+      ],
+      "note": "Política de LOD. Fatia 1 (2026-10-16): src/render/m01-lod-policy.js (histerese, fade determinístico 0,3 s não ligado a shaders, contadores) adotada por vagões do pátio, estruturas de campo, props, locomotiva e Panzerzug; m01-train-wagons.js mantém seletor próprio (bloqueio de proveniência) com perfil equivalente testado. Falta: ligar fade/dither, atores/vegetação (ficheiros de #78/#79), contadores na vista. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T44": {
       "name": "POSTPROCESS GRADING",
@@ -483,34 +507,51 @@
     },
     "T47": {
       "name": "CKM CASEMATE CREW",
-      "status": "NOT_DEVELOPED",
-      "refs": [],
-      "note": "Fogo da guarnição do ckm."
+      "status": "DELIVERED_BRANCH",
+      "refs": [
+        "branch:claude/cool-mccarthy-viomu9",
+        "PR:#85",
+        "claim:claims/m01-t47",
+        "branch:claude/busy-ritchie-3fkvk2-t47@1787658",
+        "branch:claude/busy-ritchie-3fkvk2-t47i@f3d7386",
+        "PR:#90"
+      ],
+      "note": "Fogo real da ckm wz.30 no posto S2 (reconstruído; a casamata não vê nenhum alemão): rajadas de 8, fita de 330 + feed, stream próprio, evento ally-fire, áudio, clarão, abrigo, saves e golden novo com auditoria de delta e emenda 01 (revisão crítica aplicada: MG34 já não imunes à zona batida, emissor da casamata retirado). Verificada localmente (Node completo, build, browser focado); verificação independente pendente, por isso não declarada concluída. Entregue na branch (empilhada sobre a candidata #80); não integrada, sem sessão de jogo; posto S2 e ritmo do reparo esperam decisão do proprietário. Retomada em claude/busy-ritchie-3fkvk2-t47 (ref acima = HEAD anterior a esta actualização do registo): revisão crítica REQUEST_CHANGES aplicada (fixture do spec de MG34 deitada de novo sobre o jogo de produção com janela de busca de 180 s, auditoria em modo de verificação sem escrita, MAP.md, decisões do Captain de 2026-10-17 em DECISIONS.md); continua por integrar na candidata e sem verificação independente. Integração local no staging combinado (8c6328c = candidata #80 + #89 + T48 + T40 + T38) na branch claude/busy-ritchie-3fkvk2-t47i (merge 3c9cab7, sem push): golden regenerado com as ferramentas (emenda 02), a infra-estrutura da arma não perturba o staging em nenhum tick das duas rotas do golden; 9 testes de Node por decidir (cover-threat 1, east-front 8; D42 em DECISIONS.md), nada afrouxado. 2026-10-18: interacção T47×T38 resolvida pela D43 (V3: mira/LOS no atirador de pé, cadência contada na chegada, CKM_SUPPRESS_SEC 1,5 s; piloto pede munição ao Kowal), emenda 03 por ferramentas; npm test 1028/1028 em 5a5722e; revisão crítica REQUEST_CHANGES só na ferramenta histórica T38, corrigida em f3d7386; integrada no PR #90."
+
     },
     "T48": {
       "name": "GERMAN RETREAT",
-      "status": "NOT_DEVELOPED",
+      "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
-        "package:Gemini T48 2026-10-15 (design input only)"
+        "package:Gemini T48 2026-10-15 (design input only)",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/great-faraday-0sambg@8f9d1b2"
       ],
-      "note": "Retirada alemã. Pacote Gemini avaliado em 2026-10-15: simulação substituída por stub de 289 linhas, IDs rg_dike_*/rg_gate_* inexistentes no mission.json e capturas de cena de teste; não integrável. Usar só como desenho (Fases A/B/C, silêncio 06:10–06:11, reagrupamento 06:12) para implementação real sobre RETREAT/carriedBy existentes."
+      "note": "Retirada alemã. Pacote Gemini avaliado em 2026-10-15: simulação substituída por stub de 289 linhas, IDs rg_dike_*/rg_gate_* inexistentes no mission.json e capturas de cena de teste; não integrável. Usar só como desenho (Fases A/B/C, silêncio 06:10–06:11, reagrupamento 06:12) para implementação real sobre RETREAT/carriedBy existentes. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T49": {
       "name": "PERFORMANCE BUDGET",
-      "status": "NEEDS_AUDIT",
+      "status": "PARTIAL_IN_CANDIDATE",
       "refs": [
-        "D13"
+        "D13",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t49@5fde48f"
       ],
-      "note": "Orçamento para a plataforma-alvo nova (PC H12)."
+      "note": "Orçamento para a plataforma-alvo nova (PC H12). [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest. Só o pilar E; B1–B4/C e orçamento PC pendentes."
     },
     "T50": {
       "name": "LOADING AND BUNDLE",
       "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#66",
-        "PR:#76"
+        "PR:#76",
+        "PR:#90",
+        "branch:claude/busy-ritchie-3fkvk2@5fde48f",
+        "branch:claude/busy-ritchie-3fkvk2-t50@ca0aea0"
       ],
-      "note": "Loading real e divisão do bundle."
+      "note": "Loading real e divisão do bundle. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
     },
     "T51": {
       "name": "INTEGRATED VISUAL CLOSEOUT",
