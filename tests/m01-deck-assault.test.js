@@ -169,7 +169,7 @@ test('the section\'s clips at the deck post: one clip every 3 s while the player
   assert.equal(s.timers.deckAmmo,DECK_AMMO_POOL);const at=w.reserve;w.shotCount+=w.reserve;w.reserve=0;s.tick(.05);for(let i=0;i<100;i++)s.tick(.05);assert.equal(w.reserve,0,'empty box');void at;
   validateM01Snapshot(s.snapshot());
   const far=load(observed().snap.entry);Object.assign(far.player,{x:-120,y:-3,z:16});far.weapon.shotCount+=30;far.weapon.reserve=10;far.tick(.05);assert.equal(far.timers.deckAmmo,undefined,'only at the deck post');
-  for(const bad of [t=>{t.deckAmmo=DECK_AMMO_POOL+1;},t=>{t.deckAmmo=5;delete t.deckAmmoAt;},t=>{t.deckAmmo=0;},t=>{t.deckAmmoAt=1e9;}]){const raw=s.snapshot();bad(raw.timers);assert.throws(()=>validateM01Snapshot(raw),/deckAmmo|munição/);}
+  for(const bad of [t=>{t.deckAmmo=DECK_AMMO_POOL+1;},t=>{t.deckAmmo=5;delete t.deckAmmoAt;},t=>{t.deckAmmo=0;},t=>{t.deckAmmoAt=1e9;}]){const raw=s.snapshot();bad(raw.timers);assert.throws(()=>validateM01Snapshot(raw),/deckAmmo|munição|arma/);}
 });
 
 test('every difficulty level the simulation supports completes the control route with the deck assault and the player alive (the levels are data only, H9 D1)',()=>{
