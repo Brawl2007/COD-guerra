@@ -282,12 +282,12 @@ export class M01View {
         put('rifle',[1.7,.52,0],[1.8,.1,.1]);continue;
       }
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
-      const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
+      const cloth=a.civilian?'#8f8a78':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
       put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
-      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#2b3134':helmet);
+      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#4b4a43':helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
@@ -795,6 +795,7 @@ export class M01View {
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
     this.terrainRelief?.beginFrame(this.camera,time);this.farLandscape?.beginFrame(this.camera);this.farLandscape?.sync(sim.world,this.owner.quality,time,this.lightingModel);
+    this.characters?.setRimFog(this.lightingModel?.fog.color??[.63,.65,.65]);
     this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);

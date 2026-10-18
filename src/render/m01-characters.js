@@ -31,10 +31,16 @@ const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
 // Distances come from the single LOD policy (m01-lod-policy.js 'actors'); only the skinning budgets (18/24/28) live here.
 const actorLimits=(preset,count)=>{const [near,middle,far]=lodProfile('actors',preset).bands;return {count,near,middle,far};};
-const LIMITS={low:actorLimits('low',18),medium:actorLimits('medium',24),high:actorLimits('high',28)};
+// High keeps skinned bodies up to the impostor hand-off (350 m) for 48 actors, so no actor in normal combat range is a box proxy.
+export const ACTOR_BUDGET={low:18,medium:24,high:48};
+const LIMITS={low:actorLimits('low',ACTOR_BUDGET.low),medium:actorLimits('medium',ACTOR_BUDGET.medium),high:actorLimits('high',ACTOR_BUDGET.high)};
 const instanceLod=v=>v?Number(v.key.slice(v.key.indexOf(':')+1)):null;   // LOD band of a live instance (0..2); null = none yet
 const named={marek_zielinski:'zielinski',pawel_krawiec:'krawiec',tadeusz_nowicki:'nowicki',jozef_bak:'bak',szymon_kowal:'kowal',leon_dudek:'dudek'};
 const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_open','rkm_bipod_folded','rkm_pouch','rag']);
+// Civilians (Lipski, station-yard railwaymen and aid staff) are drawn with the soldier body in workwear (no new asset). The yard patient and the cart keep
+// the procedural stretcher/cart layouts of m01-view.js, which a rigged soldier cannot reproduce.
+const dressedCivilian=a=>Boolean(a.civilian)&&a.task!=='cart'&&a.task!=='yard_patient';
+const civilianHidden=n=>n==='gear'||n==='sapper'||n==='nco'||n==='cap_wz37'||n.startsWith('helmet_')||n.startsWith('rank_')||weaponParts.has(n);
 const mgLoader=a=>a.team==='enemy'&&a.mg34Loader&&['de_mg34_loader_0','de_mg34_loader_1'].includes(a.id)&&a.loaderFor===`de_east_${a.id.at(-1)}`;
 const mgCrew=a=>mgGunner(a)||mgLoader(a);
 const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1'].includes(a.id);
@@ -64,6 +70,8 @@ export class M01Characters {
     // Per-preset tally of the band an actor switched into (T43 diagnostics); presentation only, never saved.
     this.lodCounters=createLodCounters();this.lodSwitches=0;
   }
+  /** Fog colour for the German distance rim (presentation only). */
+  setRimFog(fog){this.visuals?.setFog(fog);}
   setIkEnabled(on){const next=Boolean(on);if(this.ikEnabled!==next){this.ikEnabled=next;this.revision++;}return this.ikEnabled;}
   async load(quality='low'){
     // Optional private FP variants never hold the mandatory bridge/menu readiness.
@@ -256,9 +264,11 @@ export class M01Characters {
       if(n.name==='nco'||n.name==='rank_sierzant')n.visible=actor.id==='marek_zielinski';
       if(n.name==='rank_kapral')n.visible=actor.id==='pawel_krawiec';
       if(n.name==='rank_st_strzelec')n.visible=actor.id==='szymon_kowal';
+      if(actor.civilian&&civilianHidden(n.name))n.visible=false;
       n.frustumCulled=false;n.receiveShadow=true;meshes.push(n);
     });
     if(this.visuals)this.visuals.apply(root,actor,key,visual);
+    if(actor.civilian)this.addCivilianProps(root,actor);
     this.scene.add(root);
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
     const profile=soldierProfile(root,nation);
@@ -277,6 +287,29 @@ export class M01Characters {
     v.player=new AnimationPlayer(v.mixer);
     this.instances.set(actor.id,v);return v;
   }
+  // Station-yard props of the civilians that the procedural body used to draw (hand lantern, aid armband), on the rig's own bones so they follow the clip.
+  // Geometry/materials are shared by every civilian and owned by this instance (disposed in dispose()).
+  civilianKit(){
+    return this._civilianKit??={lantern:new THREE.BoxGeometry(.06,.2,.06),glow:new THREE.BoxGeometry(.105,.11,.105),band:new THREE.CylinderGeometry(.058,.058,.07,12,1,true),stripe:new THREE.CylinderGeometry(.061,.061,.02,12,1,true),
+      iron:new THREE.MeshStandardMaterial({color:'#242824',roughness:.8}),flame:new THREE.MeshBasicMaterial({color:'#ffc778',toneMapped:false,fog:false}),
+      cloth:new THREE.MeshStandardMaterial({color:'#dfd8c8',roughness:.9,side:THREE.DoubleSide}),red:new THREE.MeshStandardMaterial({color:'#914539',roughness:.9,side:THREE.DoubleSide})};
+  }
+  addCivilianProps(root,actor){
+    const kit=this.civilianKit();
+    if(actor.lantern){
+      // Carried at the right side, clear of the torso. It hangs from the root rather than a bone: the clips move the fist, and a bone-parented lantern
+      // ends up inside the chest in the idle and walk poses. Root space: +x is the soldier's right, -z forward.
+      const body=new THREE.Mesh(kit.lantern,kit.iron),glow=new THREE.Mesh(kit.glow,kit.flame);
+      body.position.set(.33,.8,-.1);glow.position.copy(body.position);body.name=glow.name='civilian_lantern';body.frustumCulled=glow.frustumCulled=false;root.add(body,glow);
+    }
+    if(actor.role==='MEDIC'){
+      const arm=root.getObjectByName('upperarm_l'),forearm=arm?.getObjectByName('lowerarm_l');
+      if(arm&&forearm){
+        const dir=forearm.position.clone(),at=dir.clone().multiplyScalar(.45),q=new THREE.Quaternion().setFromUnitVectors(UP_AXIS,dir.normalize());
+        for(const [geometry,material]of [[kit.band,kit.cloth],[kit.stripe,kit.red]]){const m=new THREE.Mesh(geometry,material);m.position.copy(at);m.quaternion.copy(q);m.name='civilian_armband';m.frustumCulled=false;arm.add(m);}
+      }
+    }
+  }
   release(v){
     v.root.removeFromParent();v.player.dispose();
     const skeletons=new Set(v.meshes.filter(n=>n.isSkinnedMesh).map(n=>n.skeleton));
@@ -291,7 +324,7 @@ export class M01Characters {
     this.updateCKM(actors,time,player,quality);
     const selected=new Set(),visible=[],clips={},bands=[0,0,0];let submitted=0;
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
-    const candidates=actors.filter(a=>a.active&&!a.civilian&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
+    const candidates=actors.filter(a=>a.active&&(!a.civilian||dressedCivilian(a))&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
       .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>mgCrew(p.a)?p.d<1800:selectConsumerLod('actors',p.d,preset,instanceLod(this.instances.get(p.a.id)))<3)
       // Reserve the two real fire sources and their linked loaders within the existing 18/24/28 actor budget.
       .sort((a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id)).slice(0,limits.count);
@@ -361,7 +394,7 @@ export class M01Characters {
         n.castShadow=quality!=='low'&&d<35;
         if(n.name==='mg34_bipod_open')n.visible=Boolean(a.alive&&a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne());
         if(!weaponParts.has(n.name))return;
-        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!mgCrew(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
+        const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!a.civilian&&!mgCrew(a)&&!(ckmAtPost(a)&&this.hasCKM()),kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak';
         const bipod=clip.userData?.bipod??'folded';
         n.visible=n.name==='rifle'?armed&&!kowal&&!bak:n.name==='clip'?armed&&!kowal:
           n.name==='rifle_wz98a'?armed&&bak:n.name==='rkm_wz28'?armed&&kowal:
@@ -419,6 +452,6 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();this.visuals?.dispose();this.assets.dispose();
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.assets.dispose();
     if(typeof window!=='undefined'&&this.ikDebug&&window.m01CharacterIkDebug===this.ikDebug)delete window.m01CharacterIkDebug;}
 }

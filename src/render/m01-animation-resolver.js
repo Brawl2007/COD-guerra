@@ -258,6 +258,9 @@ export function resolveLodWithHysteresis(distance,limits,currentKey,nation,quali
   let lod=selectLodBand(distance,[limits.near,limits.middle],previous,{hysteresis:LOD_HYSTERESIS_M});
   if(nation==='de'&&quality!=='high'&&lod<2)lod=2;
   while(lod<3&&sources&&!sources.has(`${nation}:${lod}`))lod++;
+  // Playtest 2026-10-18 follow-up: when nothing at or beyond the wanted band is loaded (a failed or late far-LOD GLB), the old
+  // loop returned 3 and the soldier was drawn as a procedural box. Use the nearest loaded dressed band instead (more detail beats a box).
+  if(lod===3&&sources){for(let k=2;k>=0;k--)if(sources.has(`${nation}:${k}`)){lod=k;break;}}
   return lod;
 }
 
