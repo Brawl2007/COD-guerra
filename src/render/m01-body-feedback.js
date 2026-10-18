@@ -9,14 +9,16 @@ const PROFILE=Object.freeze({attack:.055,minDuration:.42,maxDuration:.9});
 
 export class M01BodyFeedback {
   constructor(){this.reset();}
-  reset(){this.landings=[];this.lastY=null;this.lastX=null;this.lastZ=null;this.lastClock=null;this.stairOffset=0;this.count=0;}
+  reset(){this.landings=[];this.lastY=null;this.lastX=null;this.lastZ=null;this.lastClock=null;this.stairOffset=0;this.count=0;this.lastSpeed=null;this.lastDip=0;}
   /** A landing at `speed` m/s: nothing below a short hop, a 0.34 m dip from a lethal height; a splash in water is softer. */
   landing(clock,speed,surface='ground'){
     if(!Number.isFinite(clock)||!Number.isFinite(speed)||speed<2.5)return false;
     const hard=clamp((speed-2.5)/10.5),depth=lerp(.035,BODY_FEEDBACK_CAPS.dip,hard**.85)*(surface==='water'?.6:1);
-    this.landings.push({clock,depth,duration:lerp(PROFILE.minDuration,PROFILE.maxDuration,hard)});
+    this.landings.push({clock,depth,duration:lerp(PROFILE.minDuration,PROFILE.maxDuration,hard)});this.lastSpeed=speed;
     if(this.landings.length>6)this.landings.shift();this.count++;return true;
   }
+  /** Read-only: how many landings were presented, the last one's speed and the dip and stair offsets of the last sample (for the browser specs). */
+  diagnostics(){return {landings:this.count,lastSpeed:this.lastSpeed??null,lastDip:this.lastDip??0,lastStairs:this.stairOffset};}
   /** Camera offsets at `clock`: dy (metres, negative = lower), tilt (metres of gaze lowered 1 m ahead). */
   sample(clock,player,quality='medium'){
     const q=QUALITY[quality]??1,dt=this.lastClock===null?0:clock-this.lastClock;
@@ -39,6 +41,7 @@ export class M01BodyFeedback {
     }
     this.landings=alive;
     dip=Math.min(BODY_FEEDBACK_CAPS.dip,dip*q);
+    this.lastDip=dip;
     return {dy:this.stairOffset*q-dip,tilt:Math.min(BODY_FEEDBACK_CAPS.tilt,dip*.35),dip,stairs:this.stairOffset};
   }
 }

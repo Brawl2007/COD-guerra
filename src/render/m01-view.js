@@ -908,7 +908,7 @@ export class M01View {
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},
-    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
+    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),bodyFeedback:this.bodyFeedback.diagnostics(),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
       far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions,

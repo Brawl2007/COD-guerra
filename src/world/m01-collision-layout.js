@@ -60,6 +60,29 @@ export function ckmEmplacementSolids([rx,ry,rz]=CKM_EMPLACEMENT_ROOT){
     end('ckm_emplacement_back',rx-2.5,rz-2,rz+1.2,3),end('ckm_emplacement_front',rx+1.65,rz-2,rz+1.2,2)];
 }
 
+/**
+ * What the bridge heads draw above and under the walking surfaces that the kit's collider boxes leave out (measured on the intact meshes of the lod0 GLBs;
+ * tests/m01-collision-bridgehead.test.js casts rays from every standable point of the heads against those meshes and requires a solid first):
+ *  - the parapets along both sides of the two west abutments (1 m thick, 1.1 m above the walking plane: -0.35 .. 0.75 m): without them the abutment top ended in thin air;
+ *  - the west portal piers (chamfered, 7 m wide, hollow chambers closed at both ends): the kit's boxes are 0.4-0.5 m smaller than the drawing;
+ *  - the underside of the first rail span over the lowland (the lower chords at |z| 4..5.5 and a floor beam at x 18..19): steel at the height of a man's chest.
+ * They go with the west demolition, like the abutment, the portals and the first two spans they belong to.
+ */
+export const M01_BRIDGE_HEAD_SOLIDS=Object.freeze((()=>{
+  const out=[],add=(id,x0,x1,z0,z1,y0,y1)=>out.push(Object.freeze(box(id,'bridge',[x0,y0,z0],[x1,y1,z1])));
+  add('rail_abutment_parapet_n',-20.1,11.9,-9.5,-8.5,-.35,.75);add('rail_abutment_parapet_s',-20.1,11.9,8.5,9.5,-.35,.75);
+  add('road_abutment_parapet_n',-22,10,29.5,30.5,-.35,.75);add('road_abutment_parapet_s',-22,10,49.5,50.5,-.35,.75);
+  // rail portal piers, north (z<0) and mirrored south: [x0, x1, z0, z1]
+  [[-5.25,-2.75,-12.25,-11.5],[-6.25,-1.75,-11.5,-10.75],[-6.75,-1.25,-10.75,-10],[-7,-1,-10,-8.5],[-6.75,-1.25,-8.5,-7],[-6.75,-1.25,-7,-4]].forEach(([x0,x1,z0,z1],i)=>{
+    add(`rail_portal_pier_n_${i}`,x0,x1,z0,z1,-1,14);add(`rail_portal_pier_s_${i}`,x0,x1,-z1,-z0,-1,14);});
+  // road portal piers, north (z 29.5..37.25) and mirrored about the road axis z=40
+  [[-5.5,-2.5,29.5,30],[-6.75,-1.25,30,31],[-7.25,-.75,31,34.75],[-6.75,-1.25,34.75,37.25]].forEach(([x0,x1,z0,z1],i)=>{
+    add(`road_portal_pier_n_${i}`,x0,x1,z0,z1,-1,14);add(`road_portal_pier_s_${i}`,x0,x1,80-z1,80-z0,-1,14);});
+  // under the first rail span, above the lowland (-3 .. -0.5, the underside of the deck slab)
+  add('rail_span_1_chord_n',10.2,26.5,-5.5,-4,-4.5,-.5);add('rail_span_1_chord_s',10.2,26.5,4,5.5,-4.5,-.5);add('rail_span_1_floor_beam',18,19,-5.5,5.5,-4.5,-.5);
+  return out;
+})());
+
 /** Two metal barrels beside the hut's west door (M01Environment.buildArchitecture: trunk 0.35 x 1.1 x 0.35 at x -272/-274, z 14, y -2.45). Always drawn. */
 export const HUT_BARRELS=Object.freeze([[-272,14],[-274,14]]);
 
@@ -93,7 +116,8 @@ export function buildPlayerSolids(world,consumed){
   for(const b of world.decks)aabb(b,'deck');
   for(const b of world.joints)aabb(b,'deck');
   const trusses=world.colliders.filter(b=>b.collider==='partialCover'&&/_truss_[NS]_span_/.test(b.id));
-  for(const b of trusses)aabb(b,'truss');
+  // The drawn girders overhang the kit's boxes by up to 0.2 m at their ends.
+  for(const b of trusses)aabb({...b,min:{...b.min,x:b.min.x-.2},max:{...b.max,x:b.max.x+.2}},'truss');
   // A rail where two surviving spans meet: the same z band as the trusses, only as high as the shortest neighbour needs to stop a walking man.
   for(const j of world.joints){
     const prefix=j.id.slice(0,j.id.indexOf('_joint_'));
@@ -104,7 +128,7 @@ export function buildPlayerSolids(world,consumed){
     }
   }
   for(const b of M01_STRUCTURE_SOLIDS)out.push(b);
-  if(!consumed.has(WEST_DEMOLITION))out.push(...ckmEmplacementSolids());
+  if(!consumed.has(WEST_DEMOLITION))out.push(...ckmEmplacementSolids(),...M01_BRIDGE_HEAD_SOLIDS);
   HUT_BARRELS.forEach(([x,z],i)=>out.push(box(`hut_barrel_${i}`,'prop',[x-.3,-3,z-.3],[x+.3,-1.9,z+.3])));
   out.push(...propSolids(buildM01AcceptedPropPlacements(world)));
   return out.map(b=>{
