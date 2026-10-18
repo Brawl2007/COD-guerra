@@ -27,8 +27,6 @@
 // then m01-t47-golden-amendment-audit.mjs --amendment 03 --write (keeps the T47 golden and audit it replaces and writes GOLDEN_AMENDMENT_03.json; --amendment 02 re-checks the
 // previous amendment as history). The T38 golden and the T38 and T48 audit tools are
 // history since the merge: they are re-run from git at the staging commit (see their headers) and nothing here rewrites them.
-// History since the P2 pacing amendment 04 (tools/verification/m01-pacing-golden-amendment.mjs, 2026-10-18): the live golden is no longer this tool's; its check mode reproduces
-// PREDECESSOR_DELTA_AUDIT.json and the golden kept as tests/fixtures/m01-t47-gameplay-baseline-before-amendment-04.json in a checkout of f6913a0, not in the working tree.
 // Usage: node tools/verification/m01-t47-ckm-fire-audit.mjs [--write | --write-golden]          (x86 only; the predecessor tree is extracted with `git archive`)
 //   Without a flag (check mode) NOTHING is written: the regenerated delta audit must equal the committed PREDECESSOR_DELTA_AUDIT.json byte for byte and the regenerated golden must
 //   equal tests/fixtures/m01-t47-gameplay-baseline.json. Only --write (alias --write-golden) writes PREDECESSOR_DELTA_AUDIT.json and the golden.
