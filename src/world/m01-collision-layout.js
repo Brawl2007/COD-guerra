@@ -5,6 +5,11 @@ import {buildM01AcceptedPropPlacements} from './m01-prop-layout.js';
 // battle (every pinned route, RNG path and golden). The player's body is solid against more than the ballistic world is, exactly as in a shooter where
 // a crate stops you but a gap in a lattice girder does not stop a round.
 //
+// Reuse first: the list is built from what the world already holds (obstacles, decks, joints, the bridge kit's colliders) plus what the renderer draws and no collider covered
+// (structures, props, the ckm horseshoe, the bridge heads); nothing is derived from the renderer at runtime.
+// ponytail: a second list instead of widening `obstacles`. Ceiling: bullets, sight, grenades and the NPC still ignore everything that is only here (the casemate, the prop kit,
+// the trusses); feeding this list to ballistics and NPC navigation is its own task and moves every pinned route and golden.
+//
 // A solid is an oriented box on the ground plane with a vertical range: {id, kind, cx, cz, hx, hz, yaw, c, s, y0, y1, minX, maxX, minZ, maxZ}.
 // How the movement code treats it depends only on its range against the player's feet (src/world/m01-player-physics.js):
 //   top <= feet + step height  -> a ledge, stood on or stepped over;   bottom >= head -> overhead, walked under;   otherwise a wall.
@@ -14,6 +19,7 @@ import {buildM01AcceptedPropPlacements} from './m01-prop-layout.js';
  * height and the head (0.45-1.8 m), so a pole is its trunk (not its cross-arms), the crane its column and a cart its frame. A prop whose top is at most the step height
  * is a ledge the player steps onto and stands on (an ammunition crate 0.35 m, the sandbag corner 0.44 m); ankle-high clutter that cannot be stood on - the tin box, the
  * lantern, the burst sandbags - is left out: the foot goes through it. tests/m01-collision-visible-geometry.test.js recomputes every row from the GLBs.
+ * ponytail: one or two boxes per prop (a pole is its trunk, a cart its frame, a barrel its square). Ceiling: cross-arms, wheels and overhangs above the head are not solid.
  */
 export const M01_PROP_FOOTPRINTS=Object.freeze({
   supply_crate_planked:[[-.45,.45,-.26,.26,.55]],sandbag_run:[[-1.05,1.05,-.31,.31,.585]],barrel_wood:[[-.29,.29,-.29,.29,.89]],

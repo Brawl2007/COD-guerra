@@ -4,6 +4,9 @@
 //
 // State added to the player is only `fall`, present while airborne ({vy, vx, vz, startY, t}); a grounded player is bit-identical to what the previous
 // movement produced in open ground, so saves made before this change load unchanged and a save never carries a field it does not need.
+//
+// ponytail: the body is a circle in plan with one fixed height per stance, against flat-topped oriented boxes. Ceiling: no slanted or round solids (a round barrel is its square,
+// up to 0.12 m wider at the corners), no leaning, no jump or mantle, no ladders, no body-to-body push against soldiers or the dead; those need a navmesh/convex-hull layer.
 export const PLAYER_PHYSICS=Object.freeze({
   radius:.36,
   standHeight:1.8,crouchHeight:1.25,
@@ -18,6 +21,7 @@ export const PLAYER_PHYSICS=Object.freeze({
 });
 const P=PLAYER_PHYSICS;
 export const SAFE_LANDING_SPEED=Math.sqrt(2*P.gravity*P.safeFallM),LETHAL_LANDING_SPEED=Math.sqrt(2*P.gravity*P.lethalFallM);
+// ponytail: damage is linear in the landing speed and there is no leg-break, stumble or roll; ceiling: one curve for every surface (water is the only exception).
 /** Health lost on landing at `speed` m/s (0 up to a 3 m fall, 100 from 9 m, linear in the speed between). */
 export const fallDamage=speed=>Math.max(0,Math.min(100,Math.ceil(100*(speed-SAFE_LANDING_SPEED)/(LETHAL_LANDING_SPEED-SAFE_LANDING_SPEED))));
 
@@ -63,6 +67,7 @@ export function deepestWall(world,x,z,y,r,h,skip=null){
   return best;
 }
 
+// ponytail: six push-out passes, then the body stays where it was clear. Ceiling: a body wedged between two walls stays put instead of sliding out of a corner it cannot leave.
 /** Push (x, z) out of every wall; up to 6 passes. Returns the corrected point and whether it is clear. */
 function pushOut(world,x,z,y,r,h){
   for(let i=0;i<6;i++){
@@ -86,6 +91,7 @@ function slide(world,p,sx,sz,r,h){
   else {p.x=x0;p.z=z0;}   // wedged between two walls: stay where the body was clear
 }
 
+// ponytail: a plain clamp 10 m beyond the warned boundary; the 8 s countdown still decides the failure. Ceiling: no soft barrier, no invisible-wall feedback.
 function clampToMap(world,p){
   const a=world.layout.bounds.playable,m=P.mapMargin;
   p.x=Math.max(a.minX-m,Math.min(a.maxX+m,p.x));p.z=Math.max(a.minZ-m,Math.min(a.maxZ+m,p.z));
