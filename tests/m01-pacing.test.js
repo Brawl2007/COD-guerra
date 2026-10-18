@@ -57,10 +57,14 @@ test('a real route keeps every historical event at its battle-clock time, the 12
   assert.ok(sim.flags['m01.east_platoon_survivors']>=12&&sim.flags['m01.east_platoon_survivors']<=18);
 });
 
-test('measured on the control route: 06:00 within 10 real minutes (was 11.5) and the whole mission shorter than 18 (was 18.2)',()=>{
+test('measured on the control route: 06:00 within 10 real minutes (was 11.5) and the whole mission shorter than 21 (was 18.2 before P2, 16.0 after it, 19.9 with the deck fight)',()=>{
   const {sim,at0600,tempo}=full();
   assert.ok(at0600<600,`06:00 aos ${at0600.toFixed(1)} s reais`);
-  assert.ok(sim.clock<1080,`missão em ${sim.clock.toFixed(1)} s reais`);
+  // Re-measured on purpose for combat slice 2 (golden amendment 08, 2026-10-18, branch -slice2): 06:00 is unchanged (565.8 s), but the mission is 961 -> 1192 s, because the
+  // east demolition now waits for the deck assault to clear and that fight runs in real time while the gate holds the clock at 06:09:30 (~230 s: pursuit ~42 s, bounding and the
+  // hold, the run back east ~95 s). That is combat, not waiting; the bound was P2's measurement (18.2 -> 16 min) and the mission stays inside its authored targetDurationMin.
+  assert.ok(sim.clock<1260,`missão em ${sim.clock.toFixed(1)} s reais`);
+  assert.ok(sim.clock>=definition.targetDurationMin[0]*60&&sim.clock<=definition.targetDurationMin[1]*60,'inside mission.json targetDurationMin');
   assert.ok(tempo.length>0,'the compressed clock is presented (sim.tempo) while it runs');
 });
 
