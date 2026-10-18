@@ -1,5 +1,5 @@
 {
- "note": "gameDiagnostics().m01.characters/impostors, ?debug=1, quality High, SwiftShader 1280x720, restored snapshots (tests/helpers/m01-route.js route), paused at the same sim clock +-0.2 s. before = f6913a0, after = this commit.",
+ "note": "gameDiagnostics().m01.characters/impostors, ?debug=1, quality High, SwiftShader 1280x720, restored snapshots (tests/helpers/m01-route.js route), paused at the same sim clock +-0.2 s. before = f6913a0. after = LOD/budget logic identical in every capture; the German rim/fill shader differs between intermediate builds (v1/v2/v3) for runs other than t0610_de45, t0610_de90 and t0610_declose, which are from the final build. Counts and submittedMeshes do not depend on the shader. renderer.info was not collected.",
  "views": {
   "opening_allies": {
    "before": {
@@ -10,27 +10,12 @@
      3,
      5
     ],
+    "submittedMeshes": 81,
     "failures": [],
     "impostors": {
      "pl": 0,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -41,27 +26,12 @@
      3,
      6
     ],
+    "submittedMeshes": 87,
     "failures": [],
     "impostors": {
      "pl": 0,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
@@ -74,27 +44,12 @@
      4,
      6
     ],
+    "submittedMeshes": 64,
     "failures": [],
     "impostors": {
      "pl": 21,
      "de": 38
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -105,27 +60,12 @@
      4,
      11
     ],
+    "submittedMeshes": 98,
     "failures": [],
     "impostors": {
      "pl": 20,
      "de": 38
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
@@ -138,27 +78,12 @@
      2,
      9
     ],
+    "submittedMeshes": 94,
     "failures": [],
     "impostors": {
      "pl": 24,
      "de": 38
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -169,27 +94,12 @@
      2,
      10
     ],
+    "submittedMeshes": 98,
     "failures": [],
     "impostors": {
      "pl": 24,
      "de": 38
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
@@ -202,27 +112,12 @@
      22,
      4
     ],
+    "submittedMeshes": 168,
     "failures": [],
     "impostors": {
      "pl": 31,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -233,27 +128,12 @@
      22,
      24
     ],
+    "submittedMeshes": 288,
     "failures": [],
     "impostors": {
      "pl": 31,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
@@ -266,27 +146,12 @@
      1,
      27
     ],
+    "submittedMeshes": 168,
     "failures": [],
     "impostors": {
      "pl": 31,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -297,27 +162,12 @@
      1,
      47
     ],
+    "submittedMeshes": 288,
     "failures": [],
     "impostors": {
      "pl": 31,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
@@ -330,27 +180,12 @@
      0,
      28
     ],
+    "submittedMeshes": 168,
     "failures": [],
     "impostors": {
      "pl": 31,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -361,91 +196,80 @@
      0,
      48
     ],
+    "submittedMeshes": 288,
     "failures": [],
     "impostors": {
      "pl": 31,
      "de": 0
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
-  "t0610_east": {
+  "t0610_east450": {
    "before": {
-    "activeSkinned": 10,
+    "activeSkinned": 20,
     "budget": 28,
     "lodBands": [
+     18,
      0,
-     4,
-     6
+     2
     ],
+    "submittedMeshes": 128,
     "failures": [],
     "impostors": {
-     "pl": 19,
+     "pl": 13,
      "de": 44
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
-    "activeSkinned": 15,
+    "activeSkinned": 20,
+    "budget": 48,
+    "lodBands": [
+     18,
+     0,
+     2
+    ],
+    "submittedMeshes": 128,
+    "failures": [],
+    "impostors": {
+     "pl": 13,
+     "de": 44
+    },
+    "preset": "high"
+   }
+  },
+  "t0610_far700": {
+   "before": {
+    "activeSkinned": 2,
+    "budget": 28,
+    "lodBands": [
+     0,
+     0,
+     2
+    ],
+    "submittedMeshes": 20,
+    "failures": [],
+    "impostors": {
+     "pl": 10,
+     "de": 44
+    },
+    "preset": "high"
+   },
+   "after": {
+    "activeSkinned": 25,
     "budget": 48,
     "lodBands": [
      0,
-     4,
-     11
+     0,
+     25
     ],
+    "submittedMeshes": 150,
     "failures": [],
     "impostors": {
-     "pl": 18,
+     "pl": 8,
      "de": 44
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   },
@@ -458,27 +282,12 @@
      2,
      9
     ],
+    "submittedMeshes": 94,
     "failures": [],
     "impostors": {
      "pl": 24,
      "de": 38
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    },
    "after": {
@@ -489,91 +298,12 @@
      2,
      10
     ],
+    "submittedMeshes": 98,
     "failures": [],
     "impostors": {
      "pl": 24,
      "de": 38
     },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
-    "preset": "high"
-   }
-  },
-  "raid0536_t_marek_zielinski": {
-   "before": {
-    "activeSkinned": 10,
-    "budget": 28,
-    "lodBands": [
-     0,
-     4,
-     6
-    ],
-    "failures": [],
-    "impostors": {
-     "pl": 21,
-     "de": 38
-    },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
-    "preset": "high"
-   },
-   "after": {
-    "activeSkinned": 15,
-    "budget": 48,
-    "lodBands": [
-     0,
-     4,
-     11
-    ],
-    "failures": [],
-    "impostors": {
-     "pl": 20,
-     "de": 38
-    },
-    "loadedSources": [
-     "ckm:0",
-     "ckm:1",
-     "ckm:2",
-     "de:0",
-     "de:1",
-     "de:2",
-     "fp:0",
-     "fp:patient",
-     "mg34:0",
-     "mg34:1",
-     "mg34:2",
-     "pl:0",
-     "pl:1",
-     "pl:2"
-    ],
     "preset": "high"
    }
   }
