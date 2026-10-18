@@ -4,6 +4,10 @@
 // draws from a random stream, keeps hidden state or reads the clock; the same world, start and goal always give the same corners. It never moves anybody:
 // the simulation keeps the corners it was given in the actor's own (saved) data and walks them with the ordinary TczewWorld.move.
 //
+// ponytail: reuse first. The map has no waypoint graph and its cover nodes are firing positions, not routes (nothing leads round the hut door, the station or the yard wagons),
+// so this reads the collider lists TczewWorld already keeps and authors no nodes; an authored graph would have to be edited every time a collider moves or a span falls.
+// ponytail: deliberately simple. Two dimensions only (one height band per query, the walker's own), a grid made per query instead of a stored navmesh (a plan is only made when
+// the straight walk is blocked, a handful of times a mission), no dynamic obstacles here (men are steered round in m01-simulation.js), at most 24 corners per route.
 // Solids, in this order of authority:
 //   1. world.obstacles       every solid the player and the bullets meet (piers, towers, portals, huts, station, sandbag covers, trees, yard wagons);
 //   2. truss girders         the bridge's 'partialCover' boxes: a bullet passes between them, a body does not;

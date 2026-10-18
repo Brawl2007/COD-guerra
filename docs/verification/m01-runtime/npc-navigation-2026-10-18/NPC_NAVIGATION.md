@@ -1,7 +1,7 @@
 # M01 — navegação dos atores (P0 do playtest: «os NPC atravessam paredes») — 2026-10-18
 
 Estado: **implementado e medido em Node (x86-64), sem playtest humano.** Tudo o que se segue são medições da simulação nas rotas reais (`tests/helpers/m01-route.js`), não jogo.
-Predecessor auditado: `f6913a0` (candidata #80 + PR #90 + #89, o que o proprietário jogou). Golden: emenda 04 (secção 5).
+Predecessor auditado: `f6913a0` (candidata #80 + PR #90 + #89, o que o proprietário jogou). Golden: não regenerado nesta branch (secção 5).
 
 ## 1. Como os atores se moviam (causa)
 
@@ -24,11 +24,11 @@ varrimento do movimento do tick (atravessar sem terminar dentro) e pares de home
 |---|---|---|
 | eventos de clipping, rota completa, semente 19390901 (21 862 ticks) | **14** em bruto: 11 na laje de Lisewo, 3 nos sacos da ckm (`ckm_reserve` t=770,1 s, `ckm_gunner` 770,3, `ckm_loader` 770,55; x≈5,1, z 24,6–25,9). **3** depois de declarar a passagem de Lisewo (a auditoria da emenda 04 conta estes). A rota com apoio (semente 7) repete os mesmos 3. | 0 nas duas rotas do golden e nas sementes 3 e 7 (ver secção 5) |
 | pares de homens a menos de 0,35 m | 49 na rota completa (o mais longo 6 260 ticks = 313 s), 55 na rota com apoio: cerca de dez aliados e a tripulação da ckm no mesmo ponto de retirada `(-170,22)`, doze homens do pelotão no pátio da estação, e Zieliński/Pawlak/sapadores empilhados desde t=71 s | 0 (medido fora da marcha escrita da retirada alemã T48, ver §4) |
-| 150 pares origem/destino determinísticos no oeste (um aliado, `staszek_pawlak`, tempo limitado) | 140 chegam, 10 ficam presos, 11 percursos com clipping (12 eventos) | 150 chegam, 0 clipping |
+| 150 pares origem/destino determinísticos no oeste (um aliado, `staszek_pawlak`, tempo limitado) | 140 chegam, 10 ficam presos contra uma parede. Nenhum corpo entra num collider; 11 percursos fazem cantos de colliders que a corda entre dois ticks cruza (estação, barracão, vagões), o que a auditoria marca como `sweep` e é só o deslizar de `world.move` por eixos | 150 chegam, 0 eventos |
 
 ## 3. O que mudou
 
-- `src/world/m01-navigation.js` — **planeador determinístico, só de dados**: grelha de 0,5 m rasterizada sob pedido numa janela à volta do pedido, A* de oito vizinhos sem cortar esquinas,
+- `src/world/m01-navigation.js` — **planeador determinístico, só de dados** (reutiliza as listas de colliders de `TczewWorld`; o mapa não tem grafo de pontos nem rotas nos `coverNodes`, que são posições de tiro, por isso não há nós autorados — marcas `ponytail:` no código): grelha de 0,5 m rasterizada sob pedido numa janela à volta do pedido, A* de oito vizinhos sem cortar esquinas,
   string pulling com testes exatos de segmento. Sólidos: `world.obstacles`, treliças, faixas de bordo dos tabuleiros (o centro já era contido por `world.move`; as faixas afastam o corpo das treliças) e os sacos da ckm
   (somem com a demolição oeste). Sem RNG, sem relógio, sem estado escondido: a mesma entrada dá as mesmas esquinas. Não move ninguém.
 - `src/world/m01-nav-layout.js` — dados partilhados do horseshoe (o renderizador desenha a partir dele; a navegação e a auditoria leem os mesmos sacos) e as **passagens** (o arco rodoviário de Lisewo).
@@ -50,19 +50,24 @@ os sobreviventes e a hora final da missão são idênticos aos do predecessor na
   A auditoria de empilhamento **exclui** os pares em que os dois homens estão nessa marcha (`fallBack`); parados, contam.
 `props`, vegetação e trens continuam decoração sem collider.
 
-## 5. Golden (emenda 04) e verificação
+## 5. Golden e verificação (estado nesta branch)
 
-`src/game/m01-simulation.js` mudou, logo o golden da T47 (que fixa o hash dessa fonte) passa a ser história: fica **byte a byte** em `tests/fixtures/m01-t47-gameplay-baseline.json` (sha256 fixado em
-`tests/m01-animation-contract.test.js`). O golden da simulação viva é `tests/fixtures/m01-npc-navigation-gameplay-baseline.json`, gerado por
-`node tools/verification/m01-npc-navigation-golden-audit.mjs --write` (x86), com a conta em `GOLDEN_AMENDMENT_04.json` desta pasta: marcha em lockstep contra o predecessor (a primeira diferença, nas duas rotas, é
-`$.state.actors.2.x` de `tadeusz_nowicki` ao tick 356, t=17,8 s: 1,3 mm: o primeiro passo vai para o primeiro canto da rota, `(-33,75; 4,25)`, e não para o alvo `(-40; 10)`, cuja linha reta atravessa o pilar sul do portal ferroviário; antes disso, 355 ticks byte a byte iguais), invariantes de
-fim de missão contra o predecessor na rota própria dele (12 objetivos, 4 checkpoints, eventos consumidos, sobreviventes, relógio final: todos iguais) e efeito medido. Sem `--write` a ferramenta só verifica: reproduz os
-dois ficheiros byte a byte.
-- Quem seguiu uma rota guardada nas rotas do golden: `tadeusz_nowicki` (t=17,8–23,9 s), `jozef_bak` (a caminho do tabuleiro), `pl_east_17` (1 tick) e `ckm_reserve` (2 ticks, a saída do horseshoe).
-- Eventos que mudaram de relógio (`movedEvents`): rota completa, `west_demolition` +0,15 s e os três que a seguem; rota com apoio (semente 7), `dudek_retrieves_bak` e `east_demolition` +0,10 s, `west_demolition`, `roll_call`, `debrief` +0,25 s.
-- **24 rotas** (`m01-combat-posture-staging-audit.mjs --live`, 12 sementes × {sem, com apoio}, contra o predecessor 5a169ba como na T47): `INVARIANTS_24_ROUTES.json` desta pasta, **0 rotas com violação** (conclusão, relógio final,
-  checkpoints, objetivos, ordem dos eventos consumidos, horas fixas de relógio de batalha incluindo `west_demolition`, 18 sobreviventes às 06:00, sobreviventes finais, `dlg_m01_049`, quedas de atrição a 0–5 s).
-- Sementes 3 e 7, rota completa e com apoio, auditoria de clipping e de empilhamento: 0 eventos de clipping e 0 pares empilhados nas quatro (21 815–22 133 ticks), todas completas, sobreviventes 12 sem apoio e 18 com apoio, como no predecessor.
+`src/game/m01-simulation.js` mudou, logo o golden da T47 (que fixa o hash dessa fonte) já não vale para esta árvore. **Por ordem do Captain (merge phys → npc → pacing → combat) o golden não é regenerado
+nesta branch**: o merge da física torná-lo-ia obsoleto, e é o Captain quem o re-baseia no merge. A ferramenta `tools/verification/m01-npc-navigation-golden-audit.mjs` (lockstep contra o predecessor + invariantes
++ efeito medido) foi corrida **uma vez** contra `f6913a0` e o resultado ficou no commit `31ea980` (golden e `GOLDEN_AMENDMENT_04.json`), retirado depois da árvore; a ferramenta fica para o merge (re-apontar `PREDECESSOR`).
+O que essa corrida mostrou, em `f6913a0` + esta mudança (rotas do golden: semente 19390901 sem apoio e semente 7 com apoio):
+- a primeira diferença do predecessor, nas duas rotas, é `$.state.actors.2.x` de `tadeusz_nowicki` ao tick 356 (t=17,8 s, 1,3 mm): o primeiro passo vai para o primeiro canto da rota, `(-33,75; 4,25)`, e não para o
+  alvo `(-40; 10)`, cuja linha reta atravessa o pilar sul do portal ferroviário; antes disso 355 ticks byte a byte iguais;
+- 12 objetivos, 4 checkpoints, eventos consumidos, sobreviventes e relógio final iguais aos do predecessor na rota própria dele; `movedEvents`: rota completa `west_demolition` +0,15 s e os três seguintes; rota com
+  apoio `dudek_retrieves_bak` e `east_demolition` +0,10 s, `west_demolition`, `roll_call`, `debrief` +0,25 s;
+- quem seguiu uma rota guardada: `tadeusz_nowicki` (t=17,8–23,9 s), `jozef_bak` (a caminho do tabuleiro), `pl_east_17` (1 tick) e `ckm_reserve` (2 ticks, a saída do horseshoe).
+- **24 rotas** (`m01-combat-posture-staging-audit.mjs --live`, 12 sementes × {sem, com apoio}, contra o predecessor 5a169ba como na T47): `INVARIANTS_24_ROUTES.json` desta pasta, **0 rotas com violação** (conclusão,
+  relógio final, checkpoints, objetivos, ordem dos eventos consumidos, horas fixas de relógio de batalha incluindo `west_demolition`, 18 sobreviventes às 06:00, sobreviventes finais, `dlg_m01_049`, quedas de atrição a 0–5 s).
+- Sementes 3 e 7, rota completa e com apoio, auditoria de clipping e de empilhamento: 0 eventos de clipping e 0 pares empilhados nas quatro (21 815–22 133 ticks), todas completas, sobreviventes 12 sem apoio e 18 com apoio.
+- **Testes de golden que falham por desenho nesta branch** (o Captain re-baseia no merge): `tests/m01-animation-contract.test.js` — «the T47 golden … pins the live simulation» (hash de `m01-simulation.js`), os dois
+  «all gameplay bytes hashed each tick …» (sementes 19390901 e 7; os blocos de 512 ticks divergem desde o primeiro) e os cinco testes que dependem do `completed` desses (CP-A..D, Bąk/CKM/MG34, saves 86/89, migração
+  parcial, corrupção); `tests/m01-ckm-fire-arc.test.js` — a varredura da rota inteira (`samples` 1110 → 1111, `enemySamples` 36 456 → 36 502, amostras claras 135 → 144: a rota ficou 3 ticks mais longa) fica por
+  re-medir com a nova base. O guarda `m01-mg34-prone-runtime` foi atualizado (fixa `walkStraight`, o andar antigo, byte a byte).
 
 ## 6. Limites (o que continua inferior à referência)
 

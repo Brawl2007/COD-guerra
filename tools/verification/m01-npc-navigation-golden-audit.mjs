@@ -1,5 +1,9 @@
 // M01-NPC-NAVIGATION-V1: golden AMENDMENT 04 of the combined tree. Not invoked by npm test.
 //
+// STATE ON THIS BRANCH (Captain's order, merge order phys -> npc -> pacing -> combat): this tool was run once (commit 31ea980 holds its output, the account and the golden for
+// f6913a0) and its output was then REMOVED from the tree, because the physics merge makes that golden obsolete. Nothing here is run again on this branch. At merge time re-point
+// PREDECESSOR (and the `previous` golden) at the merged tree and run `--write`; it proves lockstep/invariants against whatever predecessor it is given.
+//
 // The change under audit: M01 actors get a deterministic, data-only navigation (src/world/m01-navigation.js, m01-nav-layout.js) in the simulation's one
 // walking routine (moveActor): a man whose straight walk is free walks it exactly as before; otherwise he follows the corners of a route round the solids
 // (saved in his own `nav`), he steers round the men in his way, a crowd at one goal queues instead of standing inside each other, and the ckm emplacement is

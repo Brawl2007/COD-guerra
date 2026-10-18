@@ -66,15 +66,11 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   assert.equal(r.productionLineOfSightMismatches,0,'tool trace and world.lineOfSight agree on every sample');
   // Re-measured on purpose when T47 joined the T38 staging (3c9cab7): the route is 3 s shorter before the east demolition (samples 1113 -> 1110, 787 -> 784) and the Germans
   // alive are fewer in the window (enemy samples 36596 -> 36456, 21600 -> 21460). The clear-sample census below is unchanged: only the retreating crew's casemate gun is ever cleared.
-  // Re-measured on purpose for the NPC navigation (M01-NPC-NAVIGATION-V1, golden amendment 04). The actors now walk routes round the solids (and the ckm crew leaves its
-  // sandbags by the open rear), and on this route the west demolition, which waits for the allies to be west of x -90, is consumed 0.15 s later (movedEvents in
-  // docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_04.json). The route is 3 ticks longer and crosses one more 20-tick sample (1110 -> 1111; enemy
-  // samples 36456 -> 36502; clear samples 135 -> 144 = the same 9 targets, one more sample each). Everything before the west demolition is unchanged (784 / 21460 samples, none clear).
-  assert.equal(r.samples,1111);assert.equal(r.samplesBeforeEastDemolition,784);
-  assert.equal(r.enemySamples,36502);assert.equal(r.enemySamplesBeforeEastDemolition,21460);
+  assert.equal(r.samples,1110);assert.equal(r.samplesBeforeEastDemolition,784);
+  assert.equal(r.enemySamples,36456);assert.equal(r.enemySamplesBeforeEastDemolition,21460);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
   // The only clear samples exist after evt_m01_west_demolition removed pier_01 and deck_span_01, when the crew is in 'retreat' and the casemate is gone.
-  assert.equal(r.clearEnemySamples,144);assert.equal(r.clearEnemySamplesAfterWestDemolition,144);
+  assert.equal(r.clearEnemySamples,135);assert.equal(r.clearEnemySamplesAfterWestDemolition,135);
   assert.deepEqual(Object.keys(r.clearTargets),['de_east_26','de_east_27','de_east_33','de_east_34','de_east_35','de_east_36','de_east_37','de_east_38','de_east_39']);
   assert.ok(Object.values(r.clearTargets).every(t=>t.ckmPhaseAtFirst==='retreat'&&t.samplesBeforeEastDemolition===0&&t.samples===t.samplesAfterWestDemolition));
 });

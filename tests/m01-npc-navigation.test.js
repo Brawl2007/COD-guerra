@@ -132,3 +132,28 @@ test('the straight walk is untouched: an actor with a free line moves exactly as
   Object.assign(a,{x:-150,z:20,y:s.world.heightAt(-150,20),target:{x:-120,z:20},state:'GUARD'});
   s.tick(.05,{});assert.equal(a.nav,undefined);assert.ok(Math.abs(a.x-(-150+3.6*.05))<1e-9);assert.equal(a.z,20);
 });
+
+test('free play: 60 deterministic walks across the west bank all arrive, none clips a wall or a girder (the old walker left about one in fifteen stuck)',{timeout:300000},()=>{
+  // The pairs are drawn with a fixed linear-congruential stream over free ground that has a route; 10 of these 60 need a detour round a hut, wagons, sandbags or the station
+  // (on f6913a0 the first 60 of the same stream left four walkers stuck against a wall, 10 of the first 150 in all).
+  let seed=12345;const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+  const probe=ready(),nav=probe.navigator,free=(x,z)=>{const y=probe.world.heightAt(x,z);return y>-6&&!nav.blockedAt(x,z,.45,y);};
+  const pairs=[];
+  while(pairs.length<60){
+    const a=[-440+rnd()*445,-12+rnd()*87],b=[-440+rnd()*445,-12+rnd()*87],d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+    if(!free(...a)||!free(...b)||d<15||d>160)continue;
+    const ya=probe.world.heightAt(...a),yb=probe.world.heightAt(...b);if(Math.abs(ya-yb)>1.5)continue;
+    if(nav.route({x:a[0],z:a[1],y:ya,radius:.3},{x:b[0],z:b[1]}))pairs.push({a,b,direct:nav.clear(a[0],a[1],b[0],b[1],.3,ya)});
+  }
+  const detours=pairs.filter(p=>!p.direct).length;assert.equal(detours,10,'the pairs that need a detour');
+  const failed=[];
+  pairs.forEach((p,k)=>{
+    const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit();
+    Object.assign(man,{x:p.a[0],z:p.a[1],y:s.world.heightAt(p.a[0],p.a[1]),target:{x:p.b[0],z:p.b[1]},state:'GUARD'});
+    const limit=Math.ceil((Math.hypot(p.a[0]-p.b[0],p.a[1]-p.b[1])/3.6*2.2+10)/.05);let arrived=false;
+    for(let i=0;i<limit&&!arrived;i++){s.tick(.05,{});audit.observe({sim:s});arrived=Math.hypot(man.x-p.b[0],man.z-p.b[1])<.8;}
+    if(!arrived)failed.push(`walk ${k}: (${p.a.map(v=>v.toFixed(1))}) -> (${p.b.map(v=>v.toFixed(1))}) stopped at (${man.x.toFixed(1)},${man.z.toFixed(1)})`);
+    for(const line of audit.report().filter(l=>l.includes(' staszek_pawlak ')))failed.push(`walk ${k}: ${line}`);
+  });
+  assert.deepEqual(failed,[]);
+});

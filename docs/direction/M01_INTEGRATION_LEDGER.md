@@ -10,6 +10,7 @@ O link de pré-visualização é o que o Vercel publicar no PR #80 para o SHA in
 
 | Origem | Conteúdo | Estado na candidata | Prova (SHA / testes) | Próxima ação |
 |---|---|---|---|---|
+| NPC navigation (Claude) · P0 do playtest «os NPC atravessam paredes» | Rotas A* determinísticas à volta de sólidos (sobre os colliders existentes), desvio e fila entre homens, horseshoe da ckm aberto atrás; `moveActor` navega e `walkStraight` guarda o andar antigo | CONCLUÍDA NA ORIGEM (branch local `claude/busy-ritchie-3fkvk2-npc`, sobre `f6913a0`; ainda não integrada na #80) | `4d0b60e`; clipping 3 → 0 e pares empilhados 49/55 → 0 nas rotas do golden e nas sementes 3 e 7; 24 rotas sem violação de invariantes; browser `m01-ckm-fire.spec.js` 2/2; golden NÃO regenerado (ordem do Captain; falham por desenho `m01-animation-contract` e a varredura de `m01-ckm-fire-arc`) | merge phys → npc; o Captain re-baseia o golden (ferramenta `m01-npc-navigation-golden-audit.mjs`); playtest humano (rotas sob fogo e saltos de sacos por fazer) |
 | PR #76 (Claude) | V2–V7, Argon #62/#64, T50 #66, T21 #65/#70, pilha #63, áudio, touch #74, registo #73 | INTEGRADA (na `main`) | `6697956` | — |
 | PR #78 (Codex) | Fecho de T02 T03 T05 T06 T07 T14 T24 T26 T34 T36 T41 (14 commits sobre `9a1535b`) | INTEGRADA SEM VALIDAÇÃO DE JOGO | merge `c24ee0b`; Node 944/944; build OK; 4 specs de browser em conflito resolvidas mas ainda não corridas | CI do #80 (browser) |
 | PR #77 | Regra de integração na versão jogável | INTEGRADA, consolidada no `AGENTS.md` | merge do #77 nesta candidata | — |

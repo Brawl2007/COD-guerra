@@ -48,6 +48,7 @@ export function ckmEmplacementSolids(root,layout=CKM_EMPLACEMENT){
   return solids;
 }
 
+// ponytail: a passage is data, not geometry: the exported collider is left as it is (it is generated from the model and also stops shots) and only walkers are let through.
 /**
  * Doorways in solids that the exported collider fills with one slab. Inside a passage the slab is not a wall: the navigation does not route round it
  * and the clipping audit does not count the men who walk through. Lisewo's common 1912 portal (rail and road arches, the gates open to the road) is

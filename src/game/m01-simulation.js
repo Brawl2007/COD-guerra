@@ -586,6 +586,7 @@ export class M01Simulation {
    * away from that man (about 35 degrees, then 70) towards the free side, and null means no free way at all. Returns `wanted` itself when nobody is in the way.
    * Pure geometry on the roster order: no random number, no clock.
    */
+  // ponytail: two turns (35 and 70 degrees) to the free side and a stop, no look-ahead and no reciprocal avoidance; enough for a file of men and a crowd at one goal.
   steerAround(a,wanted,step){
     const near=this.bodiesNear(a,a.x,a.z,step+1.2);if(!near.length)return wanted;
     const at=(h)=>({x:a.x+Math.cos(h)*step,z:a.z+Math.sin(h)*step});
@@ -600,6 +601,7 @@ export class M01Simulation {
    * them (all the way from a man standing still, half the way from one who also walks), through TczewWorld.move so a wall still stops the push.
    * Two men on the very same spot are parted along a direction that depends only on their places in the roster. No random number, no clock.
    */
+  // ponytail: a push for walkers only; men who stand are never moved by it, so authored slots (kneeling squad, gate riflemen) keep their places.
   separate(a){
     for(const b of this.bodiesNear(a,a.x,a.z,1)){
       const space=a.radius+b.radius-SEPARATION_SLACK;let dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);
@@ -854,6 +856,7 @@ export class M01Simulation {
         const destination=retreat?1080:690;
         if(this.clock>=a.suppressedUntil){
           // A suppressed man stands still while the others walk on: nobody walks into the one who stands in his lane (NPC navigation, personal space).
+          // ponytail: the spans stay a scripted straight march along x (no routes, no world.move); only the queue behind a man who stands is added.
           const x=a.x+Math.sign(destination-a.x)*Math.min(Math.abs(destination-a.x),dt*1.5);
           if(!this.bodiesNear(a,x,a.z,1).some(b=>dist(b,{x,z:a.z})<a.radius+b.radius-SEPARATION_SLACK&&dist(b,{x,z:a.z})<dist(b,a))){a.x=x;a.state=retreat?'RETREAT':'ADVANCE';}
         }
