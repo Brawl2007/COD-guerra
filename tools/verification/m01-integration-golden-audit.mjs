@@ -36,18 +36,24 @@ const write=process.argv.includes('--write');
 const amendmentArg=(()=>{const i=process.argv.indexOf('--amendment');return i<0?null:process.argv[i+1];})();
 assert.equal(process.arch,'x64','exact gameplay golden regeneration requires x86 (same rule as D30)');
 const AMENDMENTS={
-  '06':{task:'M01-P2-PACING-V1',delta:'pacing',predecessor:'66e47b239a9e0bc586375481fb1a554e46b845e2',after:null,
+  '06':{task:'M01-P2-PACING-V1',delta:'pacing',predecessor:'66e47b239a9e0bc586375481fb1a554e46b845e2',
+    // History since amendment 07: the pacing golden pins the simulation of 5d99df8 (the amendment 06 commit; its merge 74da28f has the same simulation).
+    after:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',
     previousGolden:'tests/fixtures/m01-npc-navigation-gameplay-baseline.json',golden:'tests/fixtures/m01-pacing-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/pacing-p2-2026-10-18',
     generationStage:'P2 pacing on the integration tree (phys + npc + skin + anim + audio): seg_hold 05:34-05:59 at 24x while the player holds the deck after the raid, objective marker and status, continuity cues gated to their objective and >= 20 real s apart; golden amendment 06',
     // Measured on both golden routes (first lockstep difference, tick 355, 04:33:10): the objective panel shows the pacing interlude after obj_m01_deliver_message
     // ("Mensagem entregue. Fique com o posto - avioes a norte") where the predecessor showed "Mantenha contacto com a seccao". Only the HUD text and status lines.
     deltaFields:/^\$\.state\.mission\.(text|status)$/},
-  '07':{task:'M01-COMBAT-AI-V1',delta:'combat-ai',predecessor:null,after:null,
+  '07':{task:'M01-COMBAT-AI-V1',delta:'combat-ai',predecessor:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',after:null,
     previousGolden:'tests/fixtures/m01-pacing-gameplay-baseline.json',golden:'tests/fixtures/m01-combat-ai-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/combat-ai-2026-10-18',
     generationStage:'Combat AI slice 1 on the pacing integration tree: per-actor actor.ai streams, rifle peeks, MG34 burst groups, line-of-sight and threat targets, suppression breaking peeks, Kowal 2-5 round bursts; golden amendment 07',
-    deltaFields:null}};
+    // Measured on both golden routes: the first lockstep difference is the new saved record actor.ai (tick 1, Kowal = actors.3, missing in the predecessor). With it stripped from
+    // both frames (stateOnly), the first BEHAVIOUR difference is Kowal's first rkm burst at tick 5129 (256.45 s): shot 0.25 -> 0.44 s (a 4-round burst instead of the fixed 3).
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai$/,
+    stateOnly:frame=>{for(const k of ['state','checkpoint'])for(const x of frame[k]?.actors??[])delete x.ai;return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(shot|cooldown|firedAt|rounds)$/,behaviourActors:/^(szymon_kowal|de_east_\d+)$/}};
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06 or 07`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
@@ -106,6 +112,7 @@ function clockEvents(now,old){
 
 const report={task:CFG.task,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,sourceSha256:sha(liveSource),
   previousGolden:{task:previous.task,file:CFG.previousGolden,sha256:sha(previousText),sourceSha256:previous.sourceSha256},deltaFields:CFG.deltaFields.source,
+  ...(CFG.stateOnly?{behaviourFields:CFG.behaviourFields.source,behaviourActors:CFG.behaviourActors.source}:{}),
   authority:`Written only by tools/verification/m01-integration-golden-audit.mjs --amendment ${amendmentArg} --write (x86); never edited by hand.`,
   changedGameplayInputsSincePredecessor:changedInputs,routes:[]};
 const golden={task:CFG.task,generationStage:CFG.generationStage,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,
@@ -119,7 +126,8 @@ for(const {seed,support,ticks,blocks} of previous.routes){
   assert.deepEqual(pd.finish(),{ticks,blocks},'0. the predecessor reproduces the previous golden on the live pilot (the pilot did not move)');
   // 1. Lockstep on the live controls.
   const a=new Before(seed);a.drainEvents();
-  const digest=new GameplayDigest(),lo=observer(),row={seed,support,oldTicks:ticks,newTicks:0,firstDifference:null,identicalTicksBeforeIt:null,identicalBlocks:0};
+  const digest=new GameplayDigest(),lo=observer(),row={seed,support,oldTicks:ticks,newTicks:0,firstDifference:null,identicalTicksBeforeIt:null,identicalBlocks:0,
+    ...(CFG.stateOnly?{firstBehaviourDifference:null}:{})};   // only amendments with a new saved record carry it (06's account stays byte for byte)
   const result=route(seed,{support,Simulation:Live,onStep:step=>{
     const {sim,controls,dt,events}=step;row.newTicks++;
     a.tick(dt,structuredClone(controls));const ea=a.drainEvents();const live=gameplayFrame(sim,events);
@@ -128,11 +136,18 @@ for(const {seed,support,ticks,blocks} of previous.routes){
         row.firstDifference={tick:row.newTicks,clock:+sim.clock.toFixed(2),battleClock:clockText(sim.battleClock),path:d.path,actor:m?sim.actors[Number(m[1])].id:null,
           predecessor:d.a??null,live:d.b??null,missing:d.missing??false};
         row.identicalTicksBeforeIt=row.newTicks-1;console.log(JSON.stringify({seed,support,firstDifference:row.firstDifference}));}}
+    // The first difference that is not the new saved state alone (copies of both frames, with CFG.stateOnly stripped).
+    if(CFG.stateOnly&&row.firstDifference&&!row.firstBehaviourDifference){const d=firstDifference(CFG.stateOnly(structuredClone(gameplayFrame(a,ea))),CFG.stateOnly(structuredClone(live)));
+      if(d){const m=/^\$\.(?:state|checkpoint)\.actors\.(\d+)\./.exec(d.path);
+        row.firstBehaviourDifference={tick:row.newTicks,clock:+sim.clock.toFixed(2),battleClock:clockText(sim.battleClock),path:d.path,actor:m?sim.actors[Number(m[1])].id:null,predecessor:d.a??null,live:d.b??null};
+        console.log(JSON.stringify({seed,support,firstBehaviourDifference:row.firstBehaviourDifference}));}}
     digest.add(live);lo.step(step);
   }});
   const sim=result.sim,fin=digest.finish();
   assert.ok(row.firstDifference,'the live simulation differs from the predecessor on this route');
   assert.match(row.firstDifference.path,CFG.deltaFields,`1. the first difference is a path of the named delta \`${CFG.delta}\``);
+  if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
+    assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
   for(let i=0;i<Math.min(fin.blocks.length,blocks.length)&&JSON.stringify(fin.blocks[i])===JSON.stringify(blocks[i]);i++)row.identicalBlocks++;
   // 2. Invariants against the predecessor on its own route.
   const endOld=endState(own,po),endNew=endState(sim,lo);

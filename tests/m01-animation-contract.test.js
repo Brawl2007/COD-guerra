@@ -20,7 +20,11 @@ import live from './fixtures/m01-npc-navigation-gameplay-baseline.json' with {ty
 // and status lines changed and the continuity cues are gated. The NPC navigation golden above is history since then (it pins the simulation of 66e47b2, byte for byte below); the
 // golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 06 after its lockstep audit against that exact predecessor, is this one.
 import pacing from './fixtures/m01-pacing-gameplay-baseline.json' with {type:'json'};
-const current=pacing;   // the golden of the live simulation
+// M01-COMBAT-AI-V1 (golden amendment 07, 2026-10-18, same integration): combat AI slice 1 (actor.ai, peeks, MG34 burst groups, threat, suppression, Kowal bursts). The pacing golden
+// above is history since then (it pins the simulation of 5d99df8); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs
+// --amendment 07 after its lockstep audit against that exact predecessor, is this one.
+import combat from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:'json'};
+const current=combat;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -278,12 +282,24 @@ function integrationAmendment(g,{amendment,task,delta,previous,previousFile,pred
   for(const r of account.otherRoutes){assert.equal(r.clipping,0);assert.equal(r.stacked,0);}
   return account;
 }
-test('the pacing golden (amendment 06) chains to the NPC navigation golden, pins the live simulation and cites its lockstep account',()=>{
+test('the pacing golden (amendment 06) chains to the NPC navigation golden, pins the simulation of 5d99df8 and cites its lockstep account',()=>{
   const account=integrationAmendment(pacing,{amendment:'06',task:'M01-P2-PACING-V1',delta:'pacing',previous:live,previousFile:'m01-npc-navigation-gameplay-baseline.json',
     predecessor:'66e47b239a9e0bc586375481fb1a554e46b845e2',deltaFields:/^\$\.state\.mission\.(text|status)$/});
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),pacing.sourceSha256,'the golden pins the live simulation');
+  // History since the combat AI (amendment 07): this golden pins the simulation of 5d99df8 (the pacing on phys + npc + skin + anim + audio), not the live one.
+  assert.equal(pacing.sourceSha256,'a220e2935efe4bdd54e855e33e095b69d00c5fd6651449965164e13da6782292','the pacing golden pins the simulation of 5d99df8');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),pacing.sourceSha256,'the pacing golden is history: the combat AI moved the simulation');
   // What the pacing is for: the player in position reaches 06:00 sooner in real time, on both golden routes.
   for(const r of account.routes)assert.ok(r.endState.live.to0600<r.endState.predecessorOwnRoute.to0600,`06:00 sooner (${r.endState.predecessorOwnRoute.to0600} -> ${r.endState.live.to0600} s)`);
+});
+
+test('the combat AI golden (amendment 07) chains to the pacing golden, pins the live simulation and cites its lockstep account',()=>{
+  const account=integrationAmendment(combat,{amendment:'07',task:'M01-COMBAT-AI-V1',delta:'combat-ai',previous:pacing,previousFile:'m01-pacing-gameplay-baseline.json',
+    predecessor:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai$/});
+  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),combat.sourceSha256,'the golden pins the live simulation');
+  // The first difference is the new saved record (actor.ai); the first BEHAVIOUR difference (actor.ai stripped from both frames) is a combat field of a man the AI drives.
+  assert.equal(account.behaviourFields,'^\\$\\.(state|checkpoint)\\.actors\\.\\d+\\.(shot|cooldown|firedAt|rounds)$');
+  for(const r of account.routes){assert.equal(r.firstDifference.missing,true,'actor.ai is new');assert.match(r.firstBehaviourDifference.path,new RegExp(account.behaviourFields));
+    assert.match(r.firstBehaviourDifference.actor,new RegExp(account.behaviourActors));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);}
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

@@ -71,8 +71,10 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   // 21460 -> 21500) and the retreating crew's gun is clear of more samples after the west demolition (135 -> 144; the same nine targets). Still nothing is clear before it.
   // Re-measured on purpose for the P2 pacing (golden amendment 06, 2026-10-18): the hold at 24x shortens the route before the east demolition (samples 1112 -> 988, 785 -> 661;
   // enemy samples 36542 -> 31582, 21500 -> 16540). The clear-sample census below is unchanged (135, the same nine targets, nothing before the west demolition).
-  assert.equal(r.samples,988);assert.equal(r.samplesBeforeEastDemolition,661);
-  assert.equal(r.enemySamples,31582);assert.equal(r.enemySamplesBeforeEastDemolition,16540);
+  // Re-measured on purpose for the combat AI slice 1 (golden amendment 07, 2026-10-18): the repair of the neutral route ends sooner (samples 988 -> 959, 661 -> 633; enemy
+  // samples 31582 -> 30426, 16540 -> 15430). The clear-sample census below is unchanged (135, the same nine targets).
+  assert.equal(r.samples,959);assert.equal(r.samplesBeforeEastDemolition,633);
+  assert.equal(r.enemySamples,30426);assert.equal(r.enemySamplesBeforeEastDemolition,15430);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
   // Re-measured on purpose, with the repo tool, for the NPC navigation round every solid (golden amendment 05, 2026-10-18, phys x npc integration): the west demolition, which waits
   // for every ally west of x -90, is consumed 0.15 s later on this route (movedEvents in docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json) while the
