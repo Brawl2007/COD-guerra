@@ -251,7 +251,8 @@ const GERMAN_SILENCE_FROM=seconds('06:10:00'),GERMAN_SILENCE_UNTIL=seconds('06:1
 // old retreat's destination. GERMAN_FELLED is the number of men of the spans the east demolition kills, GERMAN_CARRIED how many of them are lifted.
 const REGROUP_AHEAD=17,REGROUP_EAST_END=1080,REGROUP_Z=40.2,GERMAN_FELLED=4,GERMAN_CARRIED=2;
 // Combat slice 2: the spare clips of the section at its deck post (see updateObjectives). Gameplay tuning, not a documented load.
-const DECK_AMMO_POOL=30,DECK_AMMO_LOW=15,DECK_AMMO_SEC=3;
+// The box holds DECK_AMMO_POOL rounds: a player who keeps firing at the deck for the whole fight (the golden support pilot, about 0.55 rounds/s for ~250 s) does not run dry.
+export const DECK_AMMO_POOL=120,DECK_AMMO_LOW=15,DECK_AMMO_SEC=3;
 // Combat slice 2: how far along the player's ray, from where his round lands or ends, a man of the deck assault is still pinned by its near miss (see fire()).
 const DECK_SUPPRESS_ALONG_M=25;
 const REGROUP_SLOTS=[[0,0],[-1.8,1.1],[-1.8,-1.1],[1.8,1.1],[1.8,-1.1],[0,2.2]];   // metres east/south of the knot centre, westmost survivor first
@@ -2027,7 +2028,7 @@ export function validateM01Snapshot(s){
   if('guideKey' in s.timers&&s.timers.guideKey!==null&&typeof s.timers.guideKey!=='string')reject('timer guideKey');
   if('guideShown' in s.timers&&typeof s.timers.guideShown!=='boolean')reject('timer guideShown');
   if('kowalRounds' in s.timers&&(!Number.isInteger(s.timers.kowalRounds)||s.timers.kowalRounds<0||s.timers.kowalRounds>30))reject('timer kowalRounds');
-  // Combat slice 2: the clips taken from the section's box at the deck post (timers.deckAmmo, 1-30 rounds, with the time of the last one) are the only rounds received
+  // Combat slice 2: the clips taken from the section's box at the deck post (timers.deckAmmo, 1-DECK_AMMO_POOL rounds, with the time of the last one) are the only rounds received
   // outside Kowal's pool of 30.
   if('deckAmmo' in s.timers&&(!Number.isInteger(s.timers.deckAmmo)||!finite(s.timers.deckAmmo,1,DECK_AMMO_POOL)||!finite(s.timers.deckAmmoAt,0,s.clock)))reject('timer deckAmmo');
   if(('deckAmmoAt' in s.timers)!==('deckAmmo' in s.timers))reject('timer deckAmmo');

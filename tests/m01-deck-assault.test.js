@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import layout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
-import {M01Simulation,validateM01Snapshot,seconds} from '../src/game/m01-simulation.js';
+import {M01Simulation,validateM01Snapshot,seconds,DECK_AMMO_POOL} from '../src/game/m01-simulation.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckAssaultPlan,deckRole} from '../src/game/m01-deck-assault.js';
 import {validRound} from '../src/game/m01-fire.js';
 import {validateM01AudioEvent} from '../src/game/m01-audio-events.js';
@@ -160,16 +160,16 @@ test('saves: an older save (no deck record) keeps the old march and rule; malfor
   assert.ok(validRound(r,5));assert.ok(!validRound({...r,ox:449},5));assert.ok(!validRound({...r,by:'de_east_5'},5));
 });
 
-test('the section\'s clips at the deck post: one clip every 3 s while the player covers from the deck with 15 or fewer in reserve, 30 rounds at most, saved and accounted',()=>{
+test('the section\'s clips at the deck post: one clip every 3 s while the player covers from the deck with 15 or fewer in reserve, DECK_AMMO_POOL rounds at most, saved and accounted',()=>{
   const s=load(observed().snap.entry);Object.assign(s.player,{x:30,y:0,z:40});
   const w=s.weapon;w.shotCount+=w.reserve-10;w.reserve=10;   // he has fired 30 rounds
   const before=w.reserve;s.tick(.05);assert.equal(w.reserve,before+5);assert.equal(s.timers.deckAmmo,5);validateM01Snapshot(s.snapshot());
   s.tick(.05);assert.equal(w.reserve,before+5,'not twice in 3 s');
-  let n=0;while(s.timers.deckAmmo<30&&n++<4000){w.shotCount+=Math.max(0,w.reserve-10);w.reserve=Math.min(w.reserve,10);s.tick(.05);}
-  assert.equal(s.timers.deckAmmo,30);const at=w.reserve;w.shotCount+=w.reserve;w.reserve=0;s.tick(.05);for(let i=0;i<100;i++)s.tick(.05);assert.equal(w.reserve,0,'empty box');void at;
+  assert.equal(DECK_AMMO_POOL,120);let n=0;while(s.timers.deckAmmo<DECK_AMMO_POOL&&n++<8000){w.shotCount+=Math.max(0,w.reserve-10);w.reserve=Math.min(w.reserve,10);s.tick(.05);}
+  assert.equal(s.timers.deckAmmo,DECK_AMMO_POOL);const at=w.reserve;w.shotCount+=w.reserve;w.reserve=0;s.tick(.05);for(let i=0;i<100;i++)s.tick(.05);assert.equal(w.reserve,0,'empty box');void at;
   validateM01Snapshot(s.snapshot());
   const far=load(observed().snap.entry);Object.assign(far.player,{x:-120,y:-3,z:16});far.weapon.shotCount+=30;far.weapon.reserve=10;far.tick(.05);assert.equal(far.timers.deckAmmo,undefined,'only at the deck post');
-  for(const bad of [t=>{t.deckAmmo=31;},t=>{t.deckAmmo=5;delete t.deckAmmoAt;},t=>{t.deckAmmo=0;},t=>{t.deckAmmoAt=1e9;}]){const raw=s.snapshot();bad(raw.timers);assert.throws(()=>validateM01Snapshot(raw),/deckAmmo|munição/);}
+  for(const bad of [t=>{t.deckAmmo=DECK_AMMO_POOL+1;},t=>{t.deckAmmo=5;delete t.deckAmmoAt;},t=>{t.deckAmmo=0;},t=>{t.deckAmmoAt=1e9;}]){const raw=s.snapshot();bad(raw.timers);assert.throws(()=>validateM01Snapshot(raw),/deckAmmo|munição/);}
 });
 
 test('every difficulty level the simulation supports completes the control route with the deck assault and the player alive (the levels are data only, H9 D1)',()=>{

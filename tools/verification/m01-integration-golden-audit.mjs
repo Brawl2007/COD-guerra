@@ -67,7 +67,9 @@ const AMENDMENTS={
     // BEHAVIOUR difference is recorded below (behaviourFields / behaviourActors are measured, then pinned).
     deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/,
     stateOnly:frame=>{for(const k of ['state','checkpoint'])for(const x of frame[k]?.actors??[])if(x.ai?.seen)delete x.ai.seen.who;return frame;},
-    behaviourFields:/.*/,behaviourActors:/.*/}};   // MEASURING
+    // Measured: route 19390901 (control), tick 5331 (04:46:31): sapper pawel_krawiec suppressedUntil +1.5 s (an MG34 near miss pins the working sappers 5 s, was 3.5 s);
+    // route 7 support, tick 5195 (04:45:30): the new event enemy_down_by_player where the predecessor emitted only player-shot (the pilot kills the gate MG gunner).
+    behaviourFields:/^\$\.((state|checkpoint)\.actors\.\d+\.suppressedUntil|events\.\d+\.type)$/,behaviourActors:/^(pawel_krawiec|sapper_\d)$/}};
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07 or 08`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
@@ -161,7 +163,8 @@ for(const {seed,support,ticks,blocks} of previous.routes){
   assert.ok(row.firstDifference,'the live simulation differs from the predecessor on this route');
   assert.match(row.firstDifference.path,CFG.deltaFields,`1. the first difference is a path of the named delta \`${CFG.delta}\``);
   if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
-    assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
+    // An event path has no actor (amendment 08: the new enemy_down_by_player event); an actor path must be a man of the named delta.
+    if(row.firstBehaviourDifference.actor!==null||!/\.events\./.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
   for(let i=0;i<Math.min(fin.blocks.length,blocks.length)&&JSON.stringify(fin.blocks[i])===JSON.stringify(blocks[i]);i++)row.identicalBlocks++;
   // 2. Invariants against the predecessor on its own route.
   const endOld=endState(own,po),endNew=endState(sim,lo);
