@@ -133,8 +133,8 @@ test('walking off a ledge keeps the walking momentum through the fall (the body 
 });
 
 test('falling off the river bank lands in the water: a splash, no damage, y at the river level',()=>{
-  // z=12: the lowland ends at x=25 and the channel is 7 m lower. (At z 15..25 there is the slip, a ramp down into the river: tests/m01-river-slip.test.js.)
-  const world=new TczewWorld(),a=body(world,23,12);
+  // z=24: the lowland ends at x=25 and the channel is 7 m lower. (At z 10..20 there is the slip, a ramp down into the river: tests/m01-river-slip.test.js.)
+  const world=new TczewWorld(),a=body(world,23,24);
   const path=walk(world,a,.19,0,60),landing=path.find(p=>p.landing)?.landing;
   assert.ok(landing,'a landing');assert.equal(landing.surface,'water');assert.equal(landing.damage,0);
   assert.ok(Math.abs(landing.drop-7)<.01&&Math.abs(a.y-(-10))<1e-9);
