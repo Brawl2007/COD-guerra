@@ -1,5 +1,14 @@
 # Estado de desenvolvimento
 
+## M01: integração passos 3 e 4 (pacing → combate) sobre phys + npc + skin + anim + áudio — 2026-10-18
+
+Branch local `claude/busy-ritchie-3fkvk2-integ-pc` (de `66e47b2`). **Não publicada**, sem revisão crítica independente, sem CI, sem playtest humano.
+- **Merges:** pacing `74da28f` (sem conflitos; B4 mantida), combate `2ed56f5` (conflitos de teste/documentação resolvidos mantendo os dois lados). Goldens dos ramos revertidos e re-baseados uma vez por passo com `tools/verification/m01-integration-golden-audit.mjs`: **emenda 06** (`5d99df8`, delta `pacing`) e **emenda 07** (`5d13d32`, delta `combat-ai`); os goldens anteriores ficam byte a byte.
+- **Jogo:** 06:00 chega aos 568 s reais em vez de 692 s na rota de controlo (missão 1094 → 961 s); marcador e estado do objectivo; fogo alemão e de Kowal sem metrónomo (repetição de Kowal 71 % → 2 %, cv do dique 0,35 → 0,93). A compressão do relógio só acelera o relógio de batalha: a IA corre em tempo real (`tests/m01-pacing-combat-clock.test.js`).
+- **Invariantes** 24/24 após cada passo; clipping 0 e empilhados 0; apoio > ignorar a MG em 12/12 sementes (margem menor: 44–380 s).
+- **Testes:** focados 311/311 (passo 3), 246/246 + 75/75 (passo 4); `npm run build` OK; browser (porta 4184, `flock`): `m01-ckm-fire` 2/2 na 2.ª execução (1.ª: `:29` sem `ckm` nos últimos 12 eventos de áudio, embora contado), `m01-hud-presentation` 2/2 depois de alinhar o caminho das specs com o desvio da física (`-15` → `-30`). `npm test` completo: ver o ledger.
+- **Inferior:** alemães sempre ≥ 963 m (decisão humana); corredor B4 parado 257 s; sem movimento entre coberturas nem callouts; nunca jogado.
+
 ## M01 combate e IA, fatia 1 (P1 do playtest: «o combate é aborrecido») — 2026-10-18
 
 Branch local `claude/busy-ritchie-3fkvk2-combat` sobre `f6913a0`. **Não publicada** (sem push/PR), sem revisão crítica independente, sem playtest humano. Análise, medições antes/depois e desenho: `docs/direction/COD_WAW_WWII_BENCHMARK.md` («Combate e IA»).
