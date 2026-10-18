@@ -246,6 +246,9 @@ test('missing close-up LOD0 falls back to intact LOD1 hands while the light worl
 });
 test('the station clip alone cannot enable a viewmodel when the required weapon animations fail to download',async({page})=>{
   await page.route('**/m01_soldier_animations.glb',r=>r.abort());
+  // 2026-10-18: the six motion clips (V7) and the clip library V2 (T08: idle variants, fidgets) are separate GLBs that the renderer loads next to the soldier pack; left to download they give
+  // idle/fidget clips to three light actors, so "the station clip alone" needs them to fail too. The viewmodel must still stay off and no soldier may be drawn from the station clip alone.
+  await page.route('**/m01_soldier_motion_clips.glb',r=>r.abort());await page.route('**/m01_soldier_clip_library_v2.glb',r=>r.abort());
   const {errors}=await open(page);await start(page);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
   const data=await page.evaluate(()=>window.gameDiagnostics());
@@ -437,7 +440,9 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // T47: 46 Germans stood at CP-D on the route before the ckm fired. On the candidate #80 the gun felled one of them (de_east_5 after the review fix, so 45). Over the T38 staging it wounds
 // three men on this route since T47 amendment 03 (live.hits 3, live.men.hit; D43) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
 // tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
-const CPD_ENEMIES_ALIVE=46;
+// 2026-10-18: after the combat AI slice 1 integration (golden amendment 07, the route is 19224 ticks and Kowal's rkm bursts changed) the casualties of this route at CP-D are de_east_3 and
+// de_spans_0..3, i.e. 45 alive. Measured on the route's own save with a Node M01Simulation.restoreSnapshot (45 enemies alive); the browser restore must reproduce exactly that.
+const CPD_ENEMIES_ALIVE=45;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
