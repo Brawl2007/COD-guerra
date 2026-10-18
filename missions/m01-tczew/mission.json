@@ -333,7 +333,7 @@
   "clock": {
     "start": "04:30:00",
     "end": "07:05:00",
-    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; um segmento com 'readyScale' usa essa escala quando o seu gate já está pronto; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
+    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; um segmento com 'readyScale' usa essa escala quando o seu gate já está pronto; um segmento com 'compress' corre à escala 'compress.scale' dentro da janela from–to enquanto a condição do jogador 'compress.when' se cumpre (src/game/m01-pacing.js), sem mudar a hora de nenhum evento; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
     "segments": [
       {
         "id": "seg_prelude",
