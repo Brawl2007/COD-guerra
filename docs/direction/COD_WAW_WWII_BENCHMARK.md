@@ -38,6 +38,9 @@ também fica **NÃO VERIFICADO** até um playtest. Estados: FEITO / PARCIAL / AB
 - **Métricas de combate** (`tools/verification/m01-combat-ai-metrics.mjs`, antes `--rev 5d99df8` / depois, rotas 19390901 e 7 com apoio): Kowal repetição 71,4 / 71,8 % → 2,2 / 2,4 %;
   cv dique 0,35 / 0,35 → 0,93 / 0,88; portões 0,71 / 0,71 → 1,55 / 0,88; MG34 0,59 → 0,98 (semente 7: o piloto suprime-a); parte apontada 26,4 / 13,0 % → 30,0 / 14,0 %;
   alemão mais próximo inalterado (≥ 963 m); maior intervalo sem contacto 135,9 / 105,1 s → 76,7 / 105,1 s.
+  **Contra:** momentos de contacto (ronda a ≤ 25 m do jogador ou a estalar junto dele, do trem 963 à demolição leste) 156 / 62 → 123 / 40, e na rota com apoio até `hold_access`
+  as rondas que aterram descem 95 → 71 (`tests/m01-damage-decals.test.js`): menos perigo perto do jogador (causa não isolada: alvos, rajadas ou reparo mais curto). A vida do jogador no fim da
+  rota 19390901 desce 92 → 76 (a ameaça faz dele o alvo preferido). Afinar com o director de intensidade.
 
 ## Ritmo e objetivos
 
@@ -117,7 +120,7 @@ no transporte de Bąk; cartão «Mais tarde…» quando o relógio corre; pistas
 **O que não muda:** horários históricos dos eventos (relógio de batalha), 12 objectivos, CP-A..D, sobreviventes, 07:05, regra B4 da entrega de Bąk, combate, IA,
 física, renderer (excepto a camada HUD), assets, saves antigos (o temporizador novo é opcional e validado).
 
-**Pins e goldens que esta mudança move (re-baseline do Capitão no merge; nada regenerado nesta branch):**
+**Feito na integração (emenda 06, ver «Integração»; os números abaixo são os da branch):** pins e goldens que esta mudança move:
 - `tests/m01-animation-contract.test.js` — golden por tick `tests/fixtures/m01-t47-gameplay-baseline.json` (pina o sha256 de `m01-simulation.js` e o digest das duas rotas: o relógio e os textos mudam a partir de 04:33:10) e os testes que dependem da rota dele (CP-A..D resume, Bąk/CKM reload, legacy saves, presentation migration).
 - `tests/m01-ckm-candidate-posts.test.js`, `tests/m01-ckm-fire-arc.test.js`, `tests/m01-ckm-live-fire.test.js` (S2 271) — contagens amostradas ao longo da rota (janela pós-reparo mais curta); medidas com a variante já retirada: 784→661 amostras, S2 271→266; recalcular com `tools/m01-ckm-fire-arc.mjs`. As asserções qualitativas mantêm-se.
 - `tests/m01-ckm-live-fire.test.js` `rec.ticks>20000` — limite do comprimento da rota (~19 400 ticks agora).
@@ -182,7 +185,7 @@ Atiradores dos portões e do dique e as duas MG34 (`grp_de_east`, antes da demol
 
 Invariantes verificados numa execução local com `tools/verification/m01-combat-ai-golden.mjs` (commit `598a159`, depois revertido por `a580b09`: o Capitão re-baseia os goldens uma vez por passo de fusão) contra `f6913a0` nas duas rotas: 12 objectivos, 4 checkpoints, mesmos eventos consumidos, mesma hora de batalha de cada evento de hora fixa (04:34, 04:45, 04:52, 05:30, 06:00, 06:05, 06:10, 06:45…), sobreviventes 12 / 18, flags e 07:05:00. Esse ensaio é anterior à correcção da ameaça (`0fd2694`), que só reduz fogo.
 
-Pins que esta mudança move (a re-basear pelo Capitão; valores medidos em `598a159`, a repetir sobre a árvore fundida):
+**Feito na integração (emenda 07, ver «Integração»; valores re-medidos na árvore fundida: S2 275 → 254, janela 661 → 633).** Pins que esta mudança move (valores da branch, medidos em `598a159`):
 - `tests/m01-animation-contract.test.js`: o golden por tick da T47 (duas rotas; `actor.ai` existe desde o tick 1, por isso nenhum bloco de 512 ticks é igual), a asserção «the golden pins the live simulation» e, em cascata, os testes que usam a rota completa (`gait and bodyYaw … CP-A..D`, `Bąk carry …`, `legacy 86/89 …`, `optional partial migration …`, `corrupt presentation …`).
 - `tests/m01-ckm-candidate-posts.test.js` (janela 784 → 758 amostras, inimigos 21460 → 20420, reparo 7560 → 6040, pós-reparo 12000 → 12480; S1 270/396 → 255/381; S2 271 → 256), `tests/m01-ckm-fire-arc.test.js` (varrimento 1110 → 1085, 784 → 758, 36456 → 35462, 21460 → 20420) e `tests/m01-ckm-live-fire.test.js` (S2 271 → 256): contagens que dependem da duração da rota (o reparo da rota neutra encurta); quem é visto de cada posto não muda.
 - `tools/verification/m01-t47-ckm-fire-audit.mjs` e `m01-t47-golden-amendment-audit.mjs` deixam de passar em modo de verificação na árvore viva (afirmam que o golden da T47 fixa a simulação viva).
