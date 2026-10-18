@@ -3,8 +3,7 @@ import mapLayout from '../../missions/m01-tczew/map-layout.json' with {type:'jso
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import { TczewWorld } from '../world/tczew-world.js';
 import { movePlayer } from '../world/m01-player-physics.js';
-import { CKM_RELEASE_POINT, insideCkmEnclosure } from '../world/m01-collision-layout.js';
-import { M01Navigator, NAV } from '../world/m01-navigation.js';
+import { M01Navigator, NAV, playerSolidsForNav } from '../world/m01-navigation.js';
 import { Wz29 } from './wz29.js';
 import { M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
@@ -31,6 +30,9 @@ const phaseText={INTRO:'04:30 · Tczew, Polónia',OUTRO:'07:05 · Chamada no abr
 const EVACUATION={x:-332,y:-3,z:24};
 // Personal space of walking men (moveActor): a shoulder's slack off the sum of the radii, the longest push of one tick, and the last metres in which a crowd queues.
 const SEPARATION_SLACK=.1,SEPARATION_PUSH=.15,CROWD_NEAR=2.5;
+// The actors' navigator: the colliders, girders and ckm sandbags, plus (2026-10-18, phys x npc integration) every solid the player's body meets that no collider covers
+// (the casemate, the shelter walls, the bridge heads, the prop kit: playerSolidsForNav), so a man routes round what the player walks into and is never left inside it.
+const simulationNavigator=world=>new M01Navigator(world,{emplacement:CKM_POSITION,extraSolids:playerSolidsForNav});
 // The scripted station casualty is fictional and already in the yard before the raid, avoiding a visible relocation.
 const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
@@ -223,7 +225,7 @@ export class M01Simulation {
     this.difficulty=difficulty;this.reset(seed);
   }
   reset(seed=19390901){
-    this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();this.navigator=new M01Navigator(this.world,{emplacement:CKM_POSITION});
+    this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();this.navigator=simulationNavigator(this.world);
     this.clock=0;this.battleClock=seconds(definition.clock.start);this.events=[];this.consumed={};this.objectives={};
     definition.objectives.forEach(o=>{this.objectives[o.id]={state:'locked',progress:0};});
     this.flags={'m01.completed':false,'m01.nowicki_status':'present','m01.bak_status':'unhurt','m01.dudek_status':'unhurt',
@@ -562,7 +564,8 @@ export class M01Simulation {
     const aim=this.navAim(a,target),detour=aim!==target,before={x:a.x,z:a.z};
     const wanted=Math.atan2(aim.z-a.z,aim.x-a.x),step=Math.min(detour?dist(a,aim):d,speed*dt);
     const heading=this.steerAround(a,wanted,step);
-    if(!detour&&heading===wanted)this.walkStraight(a,target,dt,speed);
+    // settle after the straight walk too: a no-op unless he ended inside a solid without a world collider (the failed-route fallback and the sidestep of walkStraight can).
+    if(!detour&&heading===wanted){this.walkStraight(a,target,dt,speed);this.navigator.settle(a);}
     else{
       a.facing=heading??wanted;a.state='ADVANCE';
       // The last metres of a crowded goal: a man with no free way forward stops where he is, as a queue does.
@@ -619,7 +622,7 @@ export class M01Simulation {
    * the target when the target moves, a span falls, the route is spent or he makes no headway (nothing else in the world changes under a route, so no timer). Nothing here reads or writes the random stream.
    */
   navAim(a,target){
-    if(this.navigator.world!==this.world)this.navigator=new M01Navigator(this.world,{emplacement:CKM_POSITION});   // a world swapped under the simulation (tests do)
+    if(this.navigator.world!==this.world)this.navigator=simulationNavigator(this.world);   // a world swapped under the simulation (tests do)
     const nav=this.navigator;
     if(nav.clear(a.x,a.z,target.x,target.z,a.radius,a.y)){delete a.nav;return target;}
     let n=a.nav;
@@ -1554,12 +1557,8 @@ export class M01Simulation {
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
     candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
-    // A save made before the ckm sandbag ring was solid may hold the player inside it (the walls are 0.46-0.68 m, over the 0.45 m step, and the ring is closed): he is put on the
-    // open ground in front of it. Other overlaps with new solids are pushed out by the first move; an enclosure cannot be.
-    const held=candidate.player;
-    if(!Object.hasOwn(s.consumed,E('west_demolition'))&&insideCkmEnclosure(held.x,held.z)){
-      held.x=CKM_RELEASE_POINT.x;held.z=CKM_RELEASE_POINT.z;held.y=candidate.world.heightAt(held.x,held.z);delete held.fall;
-    }
+    // 2026-10-18 (phys x npc integration): no release from the ckm sandbag ring any more. The ring has a door at the rear (one table, src/world/m01-nav-layout.js), so a player
+    // saved inside it walks out, and a new save made there is restored where it was made; a body overlapping a new solid is pushed out by its first move.
     candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
     if(s.resumeCheckpoint!==undefined){
       const backup=new M01Simulation(undefined,{difficulty});backup.restoreSnapshot(s.resumeCheckpoint);candidate.checkpoint=backup.snapshot(false);

@@ -133,24 +133,29 @@ test('the straight walk is untouched: an actor with a free line moves exactly as
   s.tick(.05,{});assert.equal(a.nav,undefined);assert.ok(Math.abs(a.x-(-150+3.6*.05))<1e-9);assert.equal(a.z,20);
 });
 
-test('free play: 60 deterministic walks across the west bank all arrive, none clips a wall or a girder (the old walker left about one in fifteen stuck)',{timeout:300000},()=>{
-  // The pairs are drawn with a fixed linear-congruential stream over free ground that has a route; 10 of these 60 need a detour round a hut, wagons, sandbags or the station
-  // (on f6913a0 the first 60 of the same stream left four walkers stuck against a wall, 10 of the first 150 in all).
+const DETOURS=49;   // measured 2026-10-18 on the integration tree (the first 150 pairs of the stream; 49 need a detour round some solid)
+test('free play: 150 deterministic walks across the west bank all arrive, none clips a wall, a girder or a solid of the player layer (the old walker left about one in fifteen stuck)',{timeout:900000},()=>{
+  // The pairs are drawn with a fixed linear-congruential stream over free ground that has a route; DETOURS of these 150 need a detour round a hut, wagons, sandbags, the station
+  // or (since the phys x npc integration) a prop, the casemate or the shelter (on f6913a0 the first 60 of the same stream left four walkers stuck against a wall, 10 of the first 150 in all).
+  // 2026-10-18 (phys x npc integration): 60 -> 150 walks, and the free ground and the clipping audit now include world.playerSolids (src/world/m01-navigation.js playerSolidsForNav).
   let seed=12345;const rnd=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
   const probe=ready(),nav=probe.navigator,free=(x,z)=>{const y=probe.world.heightAt(x,z);return y>-6&&!nav.blockedAt(x,z,.45,y);};
   const pairs=[];
-  while(pairs.length<60){
+  while(pairs.length<150){
     const a=[-440+rnd()*445,-12+rnd()*87],b=[-440+rnd()*445,-12+rnd()*87],d=Math.hypot(a[0]-b[0],a[1]-b[1]);
     if(!free(...a)||!free(...b)||d<15||d>160)continue;
     const ya=probe.world.heightAt(...a),yb=probe.world.heightAt(...b);if(Math.abs(ya-yb)>1.5)continue;
-    if(nav.route({x:a[0],z:a[1],y:ya,radius:.3},{x:b[0],z:b[1]}))pairs.push({a,b,direct:nav.clear(a[0],a[1],b[0],b[1],.3,ya)});
+    const way=nav.route({x:a[0],z:a[1],y:ya,radius:.3},{x:b[0],z:b[1]});
+    if(way)pairs.push({a,b,direct:nav.clear(a[0],a[1],b[0],b[1],.3,ya),length:way.reduce((sum,q,i)=>sum+Math.hypot(q[0]-(i?way[i-1][0]:a[0]),q[1]-(i?way[i-1][1]:a[1])),0)});
   }
-  const detours=pairs.filter(p=>!p.direct).length;assert.equal(detours,10,'the pairs that need a detour');
+  const detours=pairs.filter(p=>!p.direct).length;assert.equal(detours,DETOURS,'the pairs that need a detour');
   const failed=[];
   pairs.forEach((p,k)=>{
     const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit();
     Object.assign(man,{x:p.a[0],z:p.a[1],y:s.world.heightAt(p.a[0],p.a[1]),target:{x:p.b[0],z:p.b[1]},state:'GUARD'});
-    const limit=Math.ceil((Math.hypot(p.a[0]-p.b[0],p.a[1]-p.b[1])/3.6*2.2+10)/.05);let arrived=false;
+    // 2026-10-18 (phys x npc integration): the time allowed is 2.2 x the walk of the PLANNED route (it was of the straight line, the same for a direct pair): the combat fence is
+    // a wall for the NPCs now, and a pair on its two sides walks round its end or through the shelter gate (walk 21: 57.5 m apart, 178.8 m of route, arrives in 49.1 s).
+    const limit=Math.ceil((Math.max(Math.hypot(p.a[0]-p.b[0],p.a[1]-p.b[1]),p.length)/3.6*2.2+10)/.05);let arrived=false;
     for(let i=0;i<limit&&!arrived;i++){s.tick(.05,{});audit.observe({sim:s});arrived=Math.hypot(man.x-p.b[0],man.z-p.b[1])<.8;}
     if(!arrived)failed.push(`walk ${k}: (${p.a.map(v=>v.toFixed(1))}) -> (${p.b.map(v=>v.toFixed(1))}) stopped at (${man.x.toFixed(1)},${man.z.toFixed(1)})`);
     for(const line of audit.report().filter(l=>l.includes(' staszek_pawlak ')))failed.push(`walk ${k}: ${line}`);

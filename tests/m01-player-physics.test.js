@@ -221,28 +221,36 @@ test('the escort push does not advance gravity a second time in a tick (an airbo
   assert.ok(Math.abs(plain.player.fall.vy+P.gravity*12*.05)<1e-9,`g t after 0.6 s: ${plain.player.fall.vy}`);
 });
 
-test('an old save holding the player inside the closed ckm sandbag ring puts him on the open ground east of it; after the west demolition it does not',()=>{
-  // The ring is 0.68 m (north, south, back) and 0.46 m (front) high, over the 0.45 m step: a body inside it cannot leave, so it is moved, not pushed.
-  // The premise: walking east from inside the ring (a body that is simply there, no restore) is held by the front wall.
+test('the ckm sandbag ring holds a body on its north, south and front sides, has a door at the rear, and a save made inside it is restored where it was made',()=>{
+  // 2026-10-18 (phys x npc integration): the ring has a door in its back wall (one table for renderer, NPC navigation and player: src/world/m01-nav-layout.js). It used to be
+  // closed on four sides, so a save holding the player inside it was released on restore at (9.6, 25.5) (review fix F1); with the door that release would teleport a player who
+  // walked in and saved there, so it is gone and this test checks the door premise instead: the walls still hold, the door lets the body out, the position is kept.
   const held=freshSim();Object.assign(held.player,{x:6.5,z:25.5,y:-3,angle:0});for(let i=0;i<60;i++)held.tick(.05,{forward:1,sprint:true});
-  assert.ok(held.player.x<9.07,`still inside the ring at x ${held.player.x}`);
-  const from=freshSim();
+  assert.ok(held.player.x<9.07,`walking east the front wall holds him, x ${held.player.x}`);
+  const north=freshSim();Object.assign(north.player,{x:6.5,z:25.5,y:-3,angle:-Math.PI/2});for(let i=0;i<60;i++)north.tick(.05,{forward:1,sprint:true});
+  assert.ok(north.player.z>=24-1e-6+R-.01,`walking north the north wall holds him, z ${north.player.z}`);
+  const south=freshSim();Object.assign(south.player,{x:6.5,z:25.5,y:-3,angle:Math.PI/2});for(let i=0;i<60;i++)south.tick(.05,{forward:1,sprint:true});
+  assert.ok(south.player.z<=27.2+1e-6-R+.01,`walking south the south wall holds him, z ${south.player.z}`);
+  assert.equal(deepestWall(held.world,4.67,25.5,-3,R,1.8),null,'the rear door is free of every solid');
   for(const [x,z] of [[6.5,25.5],[5.3,24.4],[8.2,26.8],[7.17,26]]){
     const sim=freshSim();Object.assign(sim.player,{x,z,y:-3});delete sim.player.fall;
-    const old=structuredClone(sim.snapshot());   // as an old build would have saved it
-    const back=new M01Simulation(3);back.restoreSnapshot(old);
-    assert.deepEqual([back.player.x,back.player.z,back.player.y],[9.6,25.5,-3],`from ${x},${z}`);
+    const saved=structuredClone(sim.snapshot());
+    const back=new M01Simulation(3);back.restoreSnapshot(saved);
+    assert.deepEqual([back.player.x,back.player.z,back.player.y],[x,z,-3],`restored where it was saved, from ${x},${z}`);
     assert.equal(back.player.fall,undefined);assert.equal(back.player.alive,true);
-    const w=back.world,r=back.player.radius??R;
-    assert.equal(deepestWall(w,9.6,25.5,-3,r,1.8),null,'the release point is free of every solid');
-    // and it can walk away: west is the ring, so go east
-    Object.assign(back.player,{angle:0});for(let i=0;i<40;i++)back.tick(.05,{forward:1});
-    assert.ok(back.player.x>12,`walked away to x ${back.player.x}`);
+    // and it walks out by the door: to the middle of the doorway, then west
+    const door={x:4.67,z:25.5};back.player.angle=Math.atan2(door.z-z,door.x-x);
+    for(let i=0;i<40&&Math.hypot(back.player.x-door.x,back.player.z-door.z)>.2;i++)back.tick(.05,{forward:1});
+    back.player.angle=Math.PI;for(let i=0;i<30;i++)back.tick(.05,{forward:1});
+    assert.ok(back.player.x<4,`out of the ring through the rear door, at x ${back.player.x.toFixed(2)} (the back wall is at x 4.47..4.87)`);
   }
-  // outside the ring, and everywhere once the demolition has happened, a restored position is untouched
-  const outside=freshSim();Object.assign(outside.player,{x:9.6,z:25.5,y:-3});
-  const o=new M01Simulation(3);o.restoreSnapshot(structuredClone(outside.snapshot()));assert.deepEqual([o.player.x,o.player.z],[9.6,25.5]);
+  // A body saved overlapping a wall of the ring is pushed out by its first move, as any body overlapping a new solid is.
+  const over=freshSim();Object.assign(over.player,{x:6.5,z:24.1,y:-3,angle:0});delete over.player.fall;
+  const o2=new M01Simulation(3);o2.restoreSnapshot(structuredClone(over.snapshot()));assert.deepEqual([o2.player.x,o2.player.z],[6.5,24.1]);
+  assert.ok(deepestWall(o2.world,6.5,24.1,-3,R,1.8),'the saved place overlaps the north wall');
+  o2.tick(.05,{forward:1});assert.equal(deepestWall(o2.world,o2.player.x,o2.player.z,o2.player.y,R,1.8),null,'free after one move');
+  // after the west demolition the ring is gone and nothing holds the body
   const gone=freshSim();gone.consumed['evt_m01_west_demolition']=gone.clock;Object.assign(gone.player,{x:6.5,z:25.5,y:-3});
   const g=new M01Simulation(3);g.restoreSnapshot(structuredClone(gone.snapshot()));assert.deepEqual([g.player.x,g.player.z],[6.5,25.5],'no ring after the west demolition');
-  assert.ok(from);
+  assert.equal(deepestWall(g.world,4.67,24,-3,R,1.8),null,'the jamb is gone with the demolition');
 });

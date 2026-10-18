@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {TczewWorld} from '../src/world/tczew-world.js';
 import {supportAt,groundOk,deepestWall,PLAYER_PHYSICS as P} from '../src/world/m01-player-physics.js';
+import {ckmEmplacementSolids,indexSolids} from '../src/world/m01-collision-layout.js';
+import {CKM_EMPLACEMENT} from '../src/world/m01-nav-layout.js';
 
 // Solid props, structures and the fence must never wall the mission off. A breadth-first search over a 1 m grid with the body's own rules
 // (the ground may rise at most a step, no wall at the new place, a drop of more than a stair is a fall and not a walk) from the squad post
@@ -51,11 +53,20 @@ for(const [name,consumed] of [['at the start',[]],['after the west demolition',[
   });
 }
 
-test('the sealed places stay sealed: the ckm horseshoe (until the west demolition), the casemate interior and the abutment tops from the side',()=>{
+test('the sealed places stay sealed: the casemate interior and the abutment tops from the side; the ckm horseshoe is entered only by its rear door',()=>{
   const world=new TczewWorld(),start={x:-66,z:22,y:world.heightAt(-66,22)},fine={cell:.5,region:{x0:-65,x1:34,z0:14,z1:62}};
   // a fine flood round the bridgehead, seeded from open ground well west of it
   const seed={x:-50,z:26,y:world.heightAt(-50,26)},before=flood(world,seed,fine);
-  assert.equal(before.near(7.17,26,.8),false,'nobody walks into the gun position');
+  // 2026-10-18 (phys x npc integration): the horseshoe has a door in its back wall (one table: src/world/m01-nav-layout.js), so the gun position is reached on foot, and only
+  // through the door: with the door filled (the closed ring this test used to assume) the same flood does not get in.
+  assert.equal(before.near(7.17,26,.8),true,'the gun position is reached through the rear door');
+  const closedWorld=new TczewWorld(),closed=ckmEmplacementSolids(undefined,{...CKM_EMPLACEMENT,walls:CKM_EMPLACEMENT.walls.map(({gap,...w})=>w)});
+  closedWorld.playerSolids=[...closedWorld.playerSolids.filter(b=>b.kind!=='emplacement'),...closed.map(b=>({...b,minX:b.cx-b.hx,maxX:b.cx+b.hx,minZ:b.cz-b.hz,maxZ:b.cz+b.hz}))];
+  closedWorld.solidIndex=indexSolids(closedWorld.playerSolids);
+  assert.equal(flood(closedWorld,seed,fine).near(7.17,26,.8),false,'with the door filled nobody walks into the gun position');
+  const inside=before.cells.filter(c=>c.x>4.87&&c.x<8.62&&c.z>24&&c.z<27.2);
+  assert.ok(inside.length>0,'cells inside the ring');
+  assert.equal(before.cells.some(c=>c.x>4.47&&c.x<4.87&&(c.z<24.548+.36||c.z>26.477-.36)&&c.z>23.6&&c.z<27.6),false,'no cell stands in the jambs of the door');
   assert.equal(before.cells.some(c=>c.x>2&&c.x<24&&c.z>35&&c.z<45&&c.y<-3.5),false,'nobody walks into the casemate');
   assert.ok(before.near(7.17,22,.8)&&before.near(14,30,.8)&&before.near(14,50,.8),'the ground round the horseshoe and the casemate is open');
   world.refresh(['evt_m01_west_demolition'],{});

@@ -1,4 +1,5 @@
 import {buildM01AcceptedPropPlacements} from './m01-prop-layout.js';
+import {CKM_EMPLACEMENT,ckmEmplacementSolids as navEmplacementSolids} from './m01-nav-layout.js';
 
 // Everything the PLAYER cannot walk through in M01, derived from the data the renderer draws (never from the renderer at runtime).
 // Movement solids are a separate list from `world.obstacles`: obstacles also stop bullets, sight and grenades and NPC movement, and adding to them changes the
@@ -47,33 +48,17 @@ export const M01_STRUCTURE_SOLIDS=Object.freeze([
 
 /**
  * Sandbag horseshoe round the ckm wz.30 of post S2 (M01Environment.buildEmplacement draws it around CKM_POSITION = 7.17, -3, 26 until the west demolition):
- * bags are 0.55 m long, 0.4 m deep and 0.24 m high, courses 0.22 m apart; three courses (0.68 m) on the north, south and back sides, two (0.46 m) in front.
+ * three courses (0.68 m) on the north, south and back sides, two (0.46 m) in front; the back wall has a door (open to the rear, as a horseshoe is).
+ * 2026-10-18 (phys x npc integration): ONE table for the renderer, the NPC navigation and the player, CKM_EMPLACEMENT of src/world/m01-nav-layout.js; these boxes are its runs
+ * of bags. Before, this file kept its own closed ring (four walls, no door) while the NPC branch opened the rear: the two layers disagreed. With the door the ring is no longer an
+ * enclosure, so the restore-time release of a player saved inside it (CKM_RELEASE_POINT, review fix F1 of the body physics) is gone: a body inside walks out through the door,
+ * and one overlapping a wall is pushed out by its first move like any other new solid.
  * tests/m01-collision-visible-geometry.test.js checks these rows against the renderer's own bag instances.
  */
 export const CKM_EMPLACEMENT_ROOT=Object.freeze([7.17,-3,26]);
-export function ckmEmplacementSolids([rx,ry,rz]=CKM_EMPLACEMENT_ROOT){
-  const BAG=.273,HALF_DEPTH=.2;   // a bag is a capsule 0.546 m long and 0.4 m deep; courses alternate by half a bag
-  // The span of a wall = the bags the renderer places: x0 + (course odd ? 0.275 : 0) + k * 0.55 while <= x1 (the same loop, the same float steps).
-  const span=(from,to,courses)=>{
-    let lo=Infinity,hi=-Infinity;
-    for(let c=0;c<courses;c++)for(let v=from+(c%2)*.275;v<=to;v+=.55){lo=Math.min(lo,v-BAG);hi=Math.max(hi,v+BAG);}
-    return [lo,hi];
-  };
-  const top=courses=>ry+.24+(courses-1)*.22;
-  const side=(id,x0,x1,z,courses)=>{const [lo,hi]=span(x0,x1,courses);return box(id,'emplacement',[lo,ry,z-HALF_DEPTH],[hi,top(courses),z+HALF_DEPTH]);};
-  const end=(id,x,z0,z1,courses)=>{const [lo,hi]=span(z0,z1,courses);return box(id,'emplacement',[x-HALF_DEPTH,ry,lo],[x+HALF_DEPTH,top(courses),hi]);};
-  return [side('ckm_emplacement_north',rx-2.5,rx+1.65,rz-2.2,3),side('ckm_emplacement_south',rx-2.5,rx+1.65,rz+1.4,3),
-    end('ckm_emplacement_back',rx-2.5,rz-2,rz+1.2,3),end('ckm_emplacement_front',rx+1.65,rz-2,rz+1.2,2)];
+export function ckmEmplacementSolids([rx,ry,rz]=CKM_EMPLACEMENT_ROOT,layout=CKM_EMPLACEMENT){
+  return navEmplacementSolids({x:rx,y:ry,z:rz},layout).map(b=>box(b.id,'emplacement',[b.min.x,b.min.y,b.min.z],[b.max.x,b.max.y,b.max.z]));
 }
-
-/**
- * The closed ring of the ckm sandbag walls (0.68 and 0.46 m high, over the 0.45 m step) in plan, and the open ground in front of it. A body inside the ring cannot leave it
- * on foot, so a save made before the walls were solid (the player could stand there) is released at CKM_RELEASE_POINT on restore. Derived from the walls above.
- */
-export const CKM_ENCLOSURE=(()=>{const w=ckmEmplacementSolids();
-  return Object.freeze({minX:Math.min(...w.map(b=>b.cx-b.hx)),maxX:Math.max(...w.map(b=>b.cx+b.hx)),minZ:Math.min(...w.map(b=>b.cz-b.hz)),maxZ:Math.max(...w.map(b=>b.cz+b.hz))});})();
-export const CKM_RELEASE_POINT=Object.freeze({x:9.6,z:25.5});
-export const insideCkmEnclosure=(x,z)=>x>=CKM_ENCLOSURE.minX&&x<=CKM_ENCLOSURE.maxX&&z>=CKM_ENCLOSURE.minZ&&z<=CKM_ENCLOSURE.maxZ;
 
 /**
  * What the bridge heads draw above and under the walking surfaces that the kit's collider boxes leave out (measured on the intact meshes of the lod0 GLBs;

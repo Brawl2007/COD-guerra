@@ -3,10 +3,14 @@
 /**
  * T47 ckm emplacement: the sandbag walls drawn round the gun root (src/render/m01-environment.js buildEmplacement). Local metres relative to the root;
  * an 'x' wall runs along x at local z = `at`, a 'z' wall along z at local x = `at`. `gap` leaves a door in the wall (open to the rear, as a horseshoe
- * is): no bag is drawn there and the crew walks out through it. The wall used to be closed on all four sides, which left the men no way out but through the bags. A bag is .39 long (along the wall, .275 stagger on odd courses) and .40 thick, a course is .22 high.
+ * is): no bag is drawn there and the crew walks out through it. The wall used to be closed on all four sides, which left the men no way out but through the bags.
+ * A bag is the renderer's capsule (radius .5, length .4) scaled by .39 along the wall: 0.546 m long (half .273), .40 thick, .24 high; courses are .22 apart, odd courses
+ * staggered by .275. This is the ONE table of the emplacement: the renderer draws it, the NPC navigation routes round it and the player collides with it
+ * (src/world/m01-collision-layout.js ckmEmplacementSolids derives its boxes from here). 2026-10-18 (phys x npc integration): halfLength .2 -> .273, the measured half length
+ * of the drawn bag (tests/m01-collision-visible-geometry.test.js); the .2 under-measured every run by 7 cm at each end.
  */
 export const CKM_EMPLACEMENT=Object.freeze({
-  course:.22,pitch:.55,stagger:.275,halfLength:.2,halfThickness:.2,bagHeight:.12,
+  course:.22,pitch:.55,stagger:.275,halfLength:.273,halfThickness:.2,bagHeight:.12,
   walls:Object.freeze([
     Object.freeze({id:'north',axis:'x',at:-2.2,from:-2.5,to:1.65,courses:3}),
     Object.freeze({id:'south',axis:'x',at:1.4,from:-2.5,to:1.65,courses:3}),
