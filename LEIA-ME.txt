@@ -1,0 +1,8 @@
+COD-guerra M01 — pacote da auditoria
+
+Auditoria: 8d420eb3dcb51c3b05c0213856f3eb1266e43cd7
+Jogo avaliado: PR #80, 68301b779b856af46ed35a10fde42df9559d9ed4
+
+Branch exclusiva de entrega documental. Contém apenas este índice e o ZIP.
+Não contém alterações de código nem representa uma nova versão jogável.
+ZIP sem vídeos. SHA-256: 5cee677efdcd85f5d2bd95f39414036a6d3ec65dc2b05aa7399c9b804a04d2aa
