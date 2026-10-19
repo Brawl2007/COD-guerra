@@ -1,6 +1,6 @@
 {
   "task": "M01-COMBAT-DECK-ASSAULT-V1",
-  "generationStage": "Combat slice 2, the deck assault on the combat AI integration tree: at 06:05 the ten Germans of grp_de_spans enter the road deck, four post on span 08 and six bound by cover to mid-deck (x 458-578, never west of x 450) with the slice-1 AI and real rounds, fall back east of x 945 on losses, suppression, the end of their hold or 165 s; the east demolition waits for the deck to clear; enemy_down_by_player; the platoon hands two clips to the player; golden amendment 08",
+  "generationStage": "Combat slice 2, the deck assault on the combat AI integration tree: at 06:05 the ten Germans of grp_de_spans enter the road deck, four post on span 08 and six bound by cover to mid-deck (x 458-578, never west of x 450) with the slice-1 AI and real rounds, fall back east of x 945 on losses, suppression, the end of their hold or 165 s; the east demolition waits for the deck to clear; enemy_down_by_player; a 120-round ammo box of the section at the deck post; review fixes (MG34 near miss pins the sappers 5 s, searching fire where the player was last seen leaves as player rounds, dead men on the collapsed spans fall with them, an absolute bound on the deck hold); golden amendment 08",
   "amendment": "amendment-08",
   "delta": "deck-assault",
   "predecessor": "9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec",
@@ -11,9 +11,9 @@
     "sha256": "0d98e07c82c6e6a67ee06ba4d500a0d79a90a338cccccaa2c5426cb063b2127e"
   },
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
-  "sourceSha256": "7e85d7a7b42aef4f8d85a234a3ea76885e9dd00f0b7fdf65e137d5894bf6d416",
+  "sourceSha256": "d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23",
   "inputsSha256": {
-    "src/game/m01-simulation.js": "7e85d7a7b42aef4f8d85a234a3ea76885e9dd00f0b7fdf65e137d5894bf6d416",
+    "src/game/m01-simulation.js": "d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23",
     "src/game/m01-pacing.js": "6beed69eb50f306e0d5f798cb3d17429e688944599b48d8aa3c618c8b189d2dd",
     "missions/m01-tczew/mission.json": "b1555e0b1a9aaf9c9dd97bb2b16c4aef82ef64a45b8a73f56306d011ee6c6ed8",
     "missions/m01-tczew/map-layout.json": "d0cec6dbb3098ebfb33797c5ba75bced07a34b521afe91205565fa44de4bae7e",
@@ -418,5 +418,5 @@
     }
   ],
   "audit": "docs/verification/m01-runtime/deck-assault-2026-10-18/GOLDEN_AMENDMENT_08.json",
-  "auditSha256": "ed75623bb9c181ef6c8ca26cea8d089b801bdd8b62d73b7f156fab0bf2603844"
+  "auditSha256": "d2a15ff28ef64bdec4ccbf7289c4a2bad7a5cd4cacaa71157d2043e581f05eb8"
 }
