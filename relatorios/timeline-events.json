@@ -1,0 +1,252 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "complete_report_available": true,
+  "objective_transitions": [
+    {
+      "real": 10.4,
+      "game": 0.3,
+      "battle": "04:30:00",
+      "objective": "04:30 · Tczew, Polónia",
+      "pos": [
+        -66,
+        22
+      ]
+    },
+    {
+      "real": 113.2,
+      "game": 44,
+      "battle": "04:30:44",
+      "objective": "Leve a mensagem e o café ao posto da ponte",
+      "pos": [
+        -66,
+        22
+      ]
+    },
+    {
+      "real": 161.8,
+      "game": 65.1,
+      "battle": "04:33:11",
+      "objective": "Mantenha contacto com a secção",
+      "pos": [
+        15,
+        2
+      ]
+    },
+    {
+      "real": 415.7,
+      "game": 114.7,
+      "battle": "04:34:02",
+      "objective": "Abrigue-se!",
+      "pos": [
+        15,
+        2
+      ]
+    },
+    {
+      "real": 424.3,
+      "game": 116.7,
+      "battle": "04:34:09",
+      "objective": "Siga a voz do sargento",
+      "pos": [
+        15,
+        2
+      ]
+    },
+    {
+      "real": 544,
+      "game": 148.9,
+      "battle": "04:36:02",
+      "objective": "Encontre os sapadores no aterro",
+      "pos": [
+        -143.2,
+        11.1
+      ]
+    },
+    {
+      "real": 590,
+      "game": 168.4,
+      "battle": "04:37:10",
+      "objective": "Traga o material dos sapadores do barracão ferroviário",
+      "pos": [
+        -45.2,
+        11
+      ]
+    },
+    {
+      "real": 874.1,
+      "game": 268.2,
+      "battle": "04:42:59",
+      "objective": "Proteja o reparo da linha",
+      "pos": [
+        -123.9,
+        8
+      ]
+    },
+    {
+      "real": 1787.1,
+      "game": 503.1,
+      "battle": "05:15:06",
+      "objective": "Mantenha contacto com a secção",
+      "pos": [
+        -28.1,
+        28
+      ]
+    },
+    {
+      "real": 1956.8,
+      "game": 536.4,
+      "battle": "05:30:01",
+      "objective": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+      "pos": [
+        -28.1,
+        28
+      ]
+    },
+    {
+      "real": 2902.1,
+      "game": 761.5,
+      "battle": "06:00:02",
+      "objective": "Cubra a retirada do pelotão leste",
+      "pos": [
+        29,
+        40
+      ]
+    },
+    {
+      "real": 3060.7,
+      "game": 792.1,
+      "battle": "06:04:06",
+      "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista",
+      "pos": [
+        29,
+        40
+      ]
+    },
+    {
+      "real": 3178.2,
+      "game": 823,
+      "battle": "06:08:14",
+      "objective": "Cubra a retirada do pelotão leste",
+      "pos": [
+        -9.8,
+        44.9
+      ]
+    },
+    {
+      "real": 3232.2,
+      "game": 837.5,
+      "battle": "06:10:01",
+      "objective": "Saia da ponte! Para o posto de disparo",
+      "pos": [
+        -5.6,
+        40.6
+      ]
+    },
+    {
+      "real": 3401.7,
+      "game": 889.2,
+      "battle": "06:17:20",
+      "objective": "Mantenha o corredor — conte os que passam",
+      "pos": [
+        -280.2,
+        26.7
+      ]
+    },
+    {
+      "real": 4392.5,
+      "game": 1084.6,
+      "battle": "06:45:00",
+      "objective": "Vá para o abrigo",
+      "pos": [
+        -292.2,
+        26
+      ]
+    },
+    {
+      "real": 4444.1,
+      "game": 1100.6,
+      "battle": "07:05:00",
+      "objective": "07:05 · Chamada no abrigo",
+      "pos": [
+        -260.5,
+        68.2
+      ]
+    },
+    {
+      "real": 4519.7,
+      "game": 1160.4,
+      "battle": "07:05:00",
+      "objective": "Mantenha contacto com a secção",
+      "pos": [
+        -260.5,
+        68.2
+      ]
+    }
+  ],
+  "waits": [
+    {
+      "label": "intro",
+      "real": 103,
+      "game": 42.7,
+      "battleFrom": "04:30:01",
+      "battleTo": "04:30:44"
+    },
+    {
+      "label": "bombardeamento e abrigo",
+      "real": 266.5,
+      "game": 51.6,
+      "battleFrom": "04:33:11",
+      "battleTo": "04:34:09"
+    },
+    {
+      "label": "reparo e ordem de demolição",
+      "real": 1047.1,
+      "game": 248.8,
+      "battleFrom": "04:44:07",
+      "battleTo": "05:30:01"
+    },
+    {
+      "label": "retirada do pelotão leste",
+      "real": 765,
+      "game": 181.1,
+      "battleFrom": "05:35:53",
+      "battleTo": "06:00:02"
+    },
+    {
+      "label": "Bąk ferido",
+      "real": 143,
+      "game": 27.8,
+      "battleFrom": "06:00:18",
+      "battleTo": "06:04:00"
+    },
+    {
+      "label": "demolição leste",
+      "real": 55.1,
+      "game": 12,
+      "battleFrom": "06:08:34",
+      "battleTo": "06:10:01"
+    },
+    {
+      "label": "demolição oeste",
+      "real": 987.6,
+      "game": 192.5,
+      "battleFrom": "06:17:46",
+      "battleTo": "06:45:00"
+    },
+    {
+      "label": "chamada",
+      "real": 0.3,
+      "game": 0,
+      "battleFrom": "07:05:00",
+      "battleTo": "07:05:00"
+    },
+    {
+      "label": "outro até ao debrief",
+      "real": 60.7,
+      "game": 48.8,
+      "battleFrom": "07:05:00",
+      "battleTo": "07:05:00"
+    }
+  ],
+  "log_clock_note": "For kind=waited, real is the wait duration because the original logger spreads the wait payload over global real. Do not sort these rows as absolute timestamps."
+}

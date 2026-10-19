@@ -1,0 +1,3 @@
+# Preserve captured logs and unified patch context verbatim.
+*.log -whitespace
+*.diff -whitespace

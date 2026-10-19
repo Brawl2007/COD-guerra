@@ -1,0 +1,30 @@
+{
+  "method": "Isolated simulation fixtures; objective activation and position assigned in disposable instances. Not browser gameplay, not part of the continuous route.",
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "results": [
+    {
+      "objective": "rescue_bak",
+      "distance": 3.5,
+      "prompt": "E · levar Bąk",
+      "carryingAfterE": null
+    },
+    {
+      "objective": "rescue_bak",
+      "distance": 2.9,
+      "prompt": "E · levar Bąk",
+      "carryingAfterE": "jozef_bak"
+    },
+    {
+      "objective": "fetch_material",
+      "distance": 5.5,
+      "prompt": "E · carregar material",
+      "carryingAfterE": null
+    },
+    {
+      "objective": "fetch_material",
+      "distance": 4.9,
+      "prompt": "E · carregar material",
+      "carryingAfterE": "sapper_crate"
+    }
+  ]
+}

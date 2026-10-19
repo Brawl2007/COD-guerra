@@ -1,0 +1,48 @@
+{
+  "method": "Geometric estimate of a vertical 1.7 m silhouette at 1000 m; excludes effects/bloom, terrain occlusion and crouch; not a pixel measurement of a captured enemy. Use measured camera FOV before accepting.",
+  "cases": [
+    {
+      "viewport_height_px": 360,
+      "vertical_fov_deg": 70,
+      "actor_height_m": 1.7,
+      "distance_m": 1000,
+      "projected_height_px": 0.4370132900630871
+    },
+    {
+      "viewport_height_px": 360,
+      "vertical_fov_deg": 48,
+      "actor_height_m": 1.7,
+      "distance_m": 1000,
+      "projected_height_px": 0.68728725281469
+    },
+    {
+      "viewport_height_px": 720,
+      "vertical_fov_deg": 70,
+      "actor_height_m": 1.7,
+      "distance_m": 1000,
+      "projected_height_px": 0.8740265801261742
+    },
+    {
+      "viewport_height_px": 720,
+      "vertical_fov_deg": 48,
+      "actor_height_m": 1.7,
+      "distance_m": 1000,
+      "projected_height_px": 1.37457450562938
+    },
+    {
+      "viewport_height_px": 1080,
+      "vertical_fov_deg": 70,
+      "actor_height_m": 1.7,
+      "distance_m": 1000,
+      "projected_height_px": 1.3110398701892612
+    },
+    {
+      "viewport_height_px": 1080,
+      "vertical_fov_deg": 48,
+      "actor_height_m": 1.7,
+      "distance_m": 1000,
+      "projected_height_px": 2.06186175844407
+    }
+  ],
+  "verified_camera_source": "src/render/m01-wz29-presentation.js, WZ29_FEEL.ads.fov: hip=70, ads=48; m01-view uses the weapon presentation field of view"
+}

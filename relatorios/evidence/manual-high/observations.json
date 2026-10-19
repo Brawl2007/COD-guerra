@@ -1,0 +1,563 @@
+[
+  {
+    "case": "initial",
+    "method": "New mission, UI quality High, no save injection; pause after intro fade",
+    "errors": [],
+    "clock": 14.050100000000079,
+    "quality": "high",
+    "player": {
+      "x": -66,
+      "y": -3,
+      "z": 22,
+      "angle": 0,
+      "pitch": 0,
+      "health": 100,
+      "crouched": false,
+      "aiming": false
+    },
+    "scene": "cs_m01_intro",
+    "actorClips": [
+      {
+        "id": "marek_zielinski",
+        "clip": "standing_idle",
+        "clipTime": 1.4861000000000786,
+        "lod": 0
+      },
+      {
+        "id": "szymon_kowal",
+        "clip": "rkm_clean",
+        "clipTime": 5.86210000000008,
+        "lod": 0
+      },
+      {
+        "id": "jozef_bak",
+        "clip": "standing_idle",
+        "clipTime": 3.3421000000000785,
+        "lod": 0
+      },
+      {
+        "id": "east_platoon_voice",
+        "clip": "standing_idle",
+        "clipTime": 0.8981000000000776,
+        "lod": 0
+      },
+      {
+        "id": "staszek_pawlak",
+        "clip": "standing_idle",
+        "clipTime": 0.10610000000007958,
+        "lod": 0
+      },
+      {
+        "id": "sapper_3",
+        "clip": "sapper_work",
+        "clipTime": 0.8701000000000789,
+        "lod": 1
+      },
+      {
+        "id": "sapper_2",
+        "clip": "sapper_work",
+        "clipTime": 0.8661000000000794,
+        "lod": 1
+      },
+      {
+        "id": "pawel_krawiec",
+        "clip": "sapper_work",
+        "clipTime": 2.8901000000000785,
+        "lod": 1
+      },
+      {
+        "id": "leon_dudek",
+        "clip": "standing_idle",
+        "clipTime": 2.8581000000000785,
+        "lod": 2
+      },
+      {
+        "id": "ckm_reserve",
+        "clip": "standing_idle",
+        "clipTime": 0.7141000000000801,
+        "lod": 2
+      },
+      {
+        "id": "ckm_gunner",
+        "clip": "ckm_wz30_gunner_idle",
+        "clipTime": 2.0501000000000786,
+        "lod": 2
+      },
+      {
+        "id": "ckm_loader",
+        "clip": "ckm_wz30_loader_idle",
+        "clipTime": 2.0501000000000786,
+        "lod": 2
+      },
+      {
+        "id": "tadeusz_nowicki",
+        "clip": "standing_idle",
+        "clipTime": 3.2861000000000793,
+        "lod": 2
+      }
+    ],
+    "audioCore": {
+      "quality": "high",
+      "sfxCap": 32,
+      "voiceCap": 3,
+      "activeVoiceLines": 0,
+      "voiceStolen": 0,
+      "voiceRefused": 0,
+      "sfxStolen": 0,
+      "sfxRefused": 0,
+      "musicSlots": [],
+      "convolvers": 2,
+      "zone": "open",
+      "surface": "default",
+      "layoutOk": true,
+      "layoutIssues": 0,
+      "emitters": 3,
+      "emitterIssues": 0,
+      "loader": {
+        "decoded": 0,
+        "synthMissing": 0,
+        "synthDecode": 0,
+        "synthUnlisted": 0,
+        "missing": [],
+        "entries": 0
+      }
+    },
+    "audioDirector": {
+      "bound": true,
+      "errors": 0,
+      "lastError": null,
+      "zone": "open",
+      "surface": "default",
+      "emitters": {
+        "slots": 10,
+        "scheduled": 0,
+        "played": 0,
+        "suppressed": 0,
+        "dropped": 0,
+        "occluded": 0,
+        "rewinds": 0,
+        "readoutSamples": 56,
+        "readoutMissing": 0,
+        "active": [],
+        "pending": 0
+      },
+      "derived": {
+        "grenade": 0,
+        "demolition": 0,
+        "bomb": 0,
+        "shell": 0,
+        "rkm_wz28": 0,
+        "ally_rifle": 0,
+        "other": 0,
+        "crack": 0,
+        "whizz": 0,
+        "none": 0
+      },
+      "music": {
+        "gate": "layers",
+        "gateOpen": true,
+        "layers": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "layerChanges": 0,
+        "fired": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ducked": false,
+        "busDuck": 1,
+        "playing": [],
+        "primed": true,
+        "stingerFired": 0,
+        "stingerSkipped": 0,
+        "stingerPlayed": 0,
+        "stingerSilent": 0,
+        "stemStarts": 0,
+        "gateChanges": 0,
+        "rewinds": 0
+      }
+    }
+  },
+  {
+    "case": "turned",
+    "method": "Visual decision after inspecting initial High frame: turn around using mouse input to look for the off-screen section; no target coordinates, save or clock injection",
+    "errors": null,
+    "clock": 14.583500000000107,
+    "quality": "high",
+    "player": {
+      "x": -66,
+      "y": -3,
+      "z": 22,
+      "angle": 3.1416000000000004,
+      "pitch": 0,
+      "health": 100,
+      "crouched": false,
+      "aiming": false
+    },
+    "scene": "cs_m01_intro",
+    "actorClips": [
+      {
+        "id": "marek_zielinski",
+        "clip": "standing_idle",
+        "clipTime": 2.0195000000001073,
+        "lod": 0
+      },
+      {
+        "id": "szymon_kowal",
+        "clip": "rkm_clean",
+        "clipTime": 0.39550000000010854,
+        "lod": 0
+      },
+      {
+        "id": "jozef_bak",
+        "clip": "standing_idle",
+        "clipTime": 3.875500000000107,
+        "lod": 0
+      },
+      {
+        "id": "east_platoon_voice",
+        "clip": "standing_idle",
+        "clipTime": 1.4315000000001064,
+        "lod": 0
+      },
+      {
+        "id": "staszek_pawlak",
+        "clip": "standing_idle",
+        "clipTime": 0.6395000000001083,
+        "lod": 0
+      },
+      {
+        "id": "sapper_3",
+        "clip": "sapper_work",
+        "clipTime": 1.4035000000001077,
+        "lod": 1
+      },
+      {
+        "id": "sapper_2",
+        "clip": "sapper_work",
+        "clipTime": 1.3995000000001063,
+        "lod": 1
+      },
+      {
+        "id": "pawel_krawiec",
+        "clip": "sapper_work",
+        "clipTime": 0.42350000000010724,
+        "lod": 1
+      },
+      {
+        "id": "leon_dudek",
+        "clip": "standing_idle",
+        "clipTime": 3.391500000000107,
+        "lod": 2
+      },
+      {
+        "id": "ckm_reserve",
+        "clip": "standing_idle",
+        "clipTime": 1.2475000000001089,
+        "lod": 2
+      },
+      {
+        "id": "ckm_gunner",
+        "clip": "ckm_wz30_gunner_idle",
+        "clipTime": 2.5835000000001074,
+        "lod": 2
+      },
+      {
+        "id": "ckm_loader",
+        "clip": "ckm_wz30_loader_idle",
+        "clipTime": 2.5835000000001074,
+        "lod": 2
+      },
+      {
+        "id": "tadeusz_nowicki",
+        "clip": "standing_idle",
+        "clipTime": 3.819500000000108,
+        "lod": 2
+      }
+    ],
+    "audioCore": {
+      "quality": "high",
+      "sfxCap": 32,
+      "voiceCap": 3,
+      "activeVoiceLines": 0,
+      "voiceStolen": 0,
+      "voiceRefused": 0,
+      "sfxStolen": 0,
+      "sfxRefused": 0,
+      "musicSlots": [],
+      "convolvers": 2,
+      "zone": "open",
+      "surface": "default",
+      "layoutOk": true,
+      "layoutIssues": 0,
+      "emitters": 3,
+      "emitterIssues": 0,
+      "loader": {
+        "decoded": 0,
+        "synthMissing": 0,
+        "synthDecode": 0,
+        "synthUnlisted": 0,
+        "missing": [],
+        "entries": 0
+      }
+    },
+    "audioDirector": {
+      "bound": true,
+      "errors": 0,
+      "lastError": null,
+      "zone": "open",
+      "surface": "default",
+      "emitters": {
+        "slots": 10,
+        "scheduled": 0,
+        "played": 0,
+        "suppressed": 0,
+        "dropped": 0,
+        "occluded": 0,
+        "rewinds": 0,
+        "readoutSamples": 58,
+        "readoutMissing": 0,
+        "active": [],
+        "pending": 0
+      },
+      "derived": {
+        "grenade": 0,
+        "demolition": 0,
+        "bomb": 0,
+        "shell": 0,
+        "rkm_wz28": 0,
+        "ally_rifle": 0,
+        "other": 0,
+        "crack": 0,
+        "whizz": 0,
+        "none": 0
+      },
+      "music": {
+        "gate": "layers",
+        "gateOpen": true,
+        "layers": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "layerChanges": 0,
+        "fired": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ducked": false,
+        "busDuck": 1,
+        "playing": [],
+        "primed": true,
+        "stingerFired": 0,
+        "stingerSkipped": 0,
+        "stingerPlayed": 0,
+        "stingerSilent": 0,
+        "stemStarts": 0,
+        "gateChanges": 0,
+        "rewinds": 0
+      }
+    }
+  },
+  {
+    "case": "approach",
+    "method": "After visually locating section, Space skips intro through real control, W approaches for 1.15 simulation seconds, E attempts context interaction; no position/clock/save assignment",
+    "errors": null,
+    "clock": 16.133500000000126,
+    "quality": "high",
+    "player": {
+      "x": -69.03999999991788,
+      "y": -3,
+      "z": 21.999965104551514,
+      "angle": 3.1416000000000004,
+      "pitch": 0,
+      "health": 100,
+      "crouched": false,
+      "aiming": false
+    },
+    "scene": null,
+    "actorClips": [
+      {
+        "id": "marek_zielinski",
+        "clip": "standing_idle",
+        "clipTime": 3.569500000000126,
+        "lod": 0
+      },
+      {
+        "id": "szymon_kowal",
+        "clip": "rkm_clean",
+        "clipTime": 1.945500000000127,
+        "lod": 0
+      },
+      {
+        "id": "jozef_bak",
+        "clip": "standing_idle",
+        "clipTime": 1.4255000000001274,
+        "lod": 0
+      },
+      {
+        "id": "east_platoon_voice",
+        "clip": "standing_idle",
+        "clipTime": 2.981500000000125,
+        "lod": 0
+      },
+      {
+        "id": "staszek_pawlak",
+        "clip": "standing_idle",
+        "clipTime": 2.189500000000127,
+        "lod": 0
+      },
+      {
+        "id": "sapper_3",
+        "clip": "sapper_work",
+        "clipTime": 2.953500000000126,
+        "lod": 1
+      },
+      {
+        "id": "sapper_2",
+        "clip": "sapper_work",
+        "clipTime": 2.949500000000125,
+        "lod": 1
+      },
+      {
+        "id": "pawel_krawiec",
+        "clip": "sapper_work",
+        "clipTime": 1.9735000000001257,
+        "lod": 1
+      },
+      {
+        "id": "leon_dudek",
+        "clip": "standing_idle",
+        "clipTime": 0.9415000000001257,
+        "lod": 2
+      },
+      {
+        "id": "ckm_reserve",
+        "clip": "standing_idle",
+        "clipTime": 2.7975000000001273,
+        "lod": 2
+      },
+      {
+        "id": "ckm_gunner",
+        "clip": "ckm_wz30_gunner_idle",
+        "clipTime": 0.13350000000012585,
+        "lod": 2
+      },
+      {
+        "id": "ckm_loader",
+        "clip": "ckm_wz30_loader_idle",
+        "clipTime": 0.13350000000012585,
+        "lod": 2
+      },
+      {
+        "id": "tadeusz_nowicki",
+        "clip": "standing_idle",
+        "clipTime": 1.3695000000001265,
+        "lod": 2
+      }
+    ],
+    "audioCore": {
+      "quality": "high",
+      "sfxCap": 32,
+      "voiceCap": 3,
+      "activeVoiceLines": 0,
+      "voiceStolen": 0,
+      "voiceRefused": 0,
+      "sfxStolen": 0,
+      "sfxRefused": 0,
+      "musicSlots": [],
+      "convolvers": 2,
+      "zone": "open",
+      "surface": "default",
+      "layoutOk": true,
+      "layoutIssues": 0,
+      "emitters": 3,
+      "emitterIssues": 0,
+      "loader": {
+        "decoded": 0,
+        "synthMissing": 0,
+        "synthDecode": 0,
+        "synthUnlisted": 0,
+        "missing": [],
+        "entries": 0
+      }
+    },
+    "audioDirector": {
+      "bound": true,
+      "errors": 0,
+      "lastError": null,
+      "zone": "open",
+      "surface": "default",
+      "emitters": {
+        "slots": 11,
+        "scheduled": 0,
+        "played": 0,
+        "suppressed": 0,
+        "dropped": 0,
+        "occluded": 0,
+        "rewinds": 0,
+        "readoutSamples": 64,
+        "readoutMissing": 0,
+        "active": [],
+        "pending": 0
+      },
+      "derived": {
+        "grenade": 0,
+        "demolition": 0,
+        "bomb": 0,
+        "shell": 0,
+        "rkm_wz28": 0,
+        "ally_rifle": 0,
+        "other": 0,
+        "crack": 0,
+        "whizz": 0,
+        "none": 0
+      },
+      "music": {
+        "gate": "layers",
+        "gateOpen": true,
+        "layers": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "layerChanges": 0,
+        "fired": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ducked": false,
+        "busDuck": 1,
+        "playing": [],
+        "primed": true,
+        "stingerFired": 0,
+        "stingerSkipped": 0,
+        "stingerPlayed": 0,
+        "stingerSilent": 0,
+        "stemStarts": 0,
+        "gateChanges": 0,
+        "rewinds": 0
+      }
+    }
+  },
+  {
+    "asset_validation": {
+      "source": "approach.json raw diagnostics retained in workspace scratch",
+      "all_first_five_characters_lod": 0,
+      "character_failures": [],
+      "fpVariant": "fp-arms-v2",
+      "meaning": "High criticism is not explained by an observed character load failure; coverage is this early segment only."
+    }
+  }
+]

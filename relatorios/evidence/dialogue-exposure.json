@@ -1,0 +1,1028 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "method": "Suffix match between canonical dialogue text (including its {n} survivor-count substitution) and subtitles recorded by the browser pilot. Not voice listening. Conditional, optional and alternate-branch lines need not play in this route. Not-recorded is not proof of missing implementation. Sampling and time in screenshots can miss short lines. The pilot ignores empty subtitles when updating last.subtitle; an identical line repeated after silence can be omitted from this log. Counts are recorded canonical lines, not all utterances.",
+  "recorded_subtitle_changes": 62,
+  "canonical_lines": 70,
+  "canonical_lines_recorded": 58,
+  "by_speaker": {
+    "marek_zielinski": {
+      "canonical": 31,
+      "recorded": 23
+    },
+    "pawel_krawiec": {
+      "canonical": 7,
+      "recorded": 7
+    },
+    "szymon_kowal": {
+      "canonical": 7,
+      "recorded": 7
+    },
+    "jozef_bak": {
+      "canonical": 4,
+      "recorded": 3
+    },
+    "leon_dudek": {
+      "canonical": 5,
+      "recorded": 4
+    },
+    "franciszek_lipski": {
+      "canonical": 2,
+      "recorded": 1
+    },
+    "jan_wrona": {
+      "canonical": 3,
+      "recorded": 3
+    },
+    "tadeusz_nowicki": {
+      "canonical": 5,
+      "recorded": 5
+    },
+    "generic_rifleman": {
+      "canonical": 1,
+      "recorded": 1
+    },
+    "staszek_pawlak": {
+      "canonical": 4,
+      "recorded": 3
+    },
+    "east_platoon_voice": {
+      "canonical": 1,
+      "recorded": 1
+    }
+  },
+  "lines": [
+    {
+      "id": "dlg_m01_001",
+      "speaker": "marek_zielinski",
+      "text": "Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinista.",
+      "context": "intro, sobre o mapa",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 63.9,
+          "battle": "04:30:18",
+          "text": "Marek Zieliński: Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinista."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_002",
+      "speaker": "pawel_krawiec",
+      "text": "Os meus rapazes conferiram tudo duas vezes. Só não quero ninguém tropeçando no que é nosso.",
+      "context": "intro",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 73.7,
+          "battle": "04:30:23",
+          "text": "Paweł Krawiec: Os meus rapazes conferiram tudo duas vezes. Só não quero ninguém tropeçando no que é nosso."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_003",
+      "speaker": "marek_zielinski",
+      "text": "Wrona. Leve isto ao posto da ponte. E o café, antes que esfrie.",
+      "context": "intro, entrega da mensagem",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 96.3,
+          "battle": "04:30:35",
+          "text": "Marek Zieliński: Wrona. Leve isto ao posto da ponte. E o café, antes que esfrie."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_004",
+      "speaker": "marek_zielinski",
+      "text": "Confira o homem do posto. Ele está sozinho.",
+      "context": "intro",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 105.6,
+          "battle": "04:30:40",
+          "text": "Marek Zieliński: Confira o homem do posto. Ele está sozinho."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_005",
+      "speaker": "szymon_kowal",
+      "text": "Café de verdade hoje. Mau sinal.",
+      "context": "intro, limpando o rkm",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 54.9,
+          "battle": "04:30:13",
+          "text": "Szymon Kowal: Café de verdade hoje. Mau sinal."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_006",
+      "speaker": "jozef_bak",
+      "text": "Dudek, se eu desmaiar, você me carrega?",
+      "context": "intro",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 82.9,
+          "battle": "04:30:28",
+          "text": "Józef Bąk: Dudek, se eu desmaiar, você me carrega?"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_007",
+      "speaker": "leon_dudek",
+      "text": "Carrego. Depois cobro.",
+      "context": "intro",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 89.4,
+          "battle": "04:30:31",
+          "text": "Leon Dudek: Carrego. Depois cobro."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_008",
+      "speaker": "franciszek_lipski",
+      "text": "Szymankowo telefonou: um trem de carga fora do horário. Depois a linha caiu. Diga ao seu sargento.",
+      "context": "trilhos, 04:31, se o jogador estiver perto",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_009",
+      "speaker": "jan_wrona",
+      "text": "O sargento mandou isto. E o café.",
+      "context": "posto avançado",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 166,
+          "battle": "04:33:11",
+          "text": "Jan Wrona: O sargento mandou isto. E o café."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_010",
+      "speaker": "tadeusz_nowicki",
+      "text": "Na caneca amassada. Então ainda gostam de mim.",
+      "context": "posto avançado",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 170.8,
+          "battle": "04:33:13",
+          "text": "Tadeusz Nowicki: Na caneca amassada. Então ainda gostam de mim."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_011",
+      "speaker": "tadeusz_nowicki",
+      "text": "\"Atenção redobrada a leste.\" Como se desse para olhar para outro lado.",
+      "context": "posto avançado, lendo o papel",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 182.6,
+          "battle": "04:33:15",
+          "text": "Tadeusz Nowicki: \"Atenção redobrada a leste.\" Como se desse para olhar para outro lado."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_012",
+      "speaker": "tadeusz_nowicki",
+      "text": "Ouve isso? Não é trem.",
+      "context": "evt_m01_planes_heard",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 197,
+          "battle": "04:33:18",
+          "text": "Tadeusz Nowicki: Ouve isso? Não é trem."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_013",
+      "speaker": "tadeusz_nowicki",
+      "text": "Aviões! A leste, contra a claridade!",
+      "context": "callout aviões",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 209.8,
+          "battle": "04:33:21",
+          "text": "Tadeusz Nowicki: Aviões! A leste, contra a claridade!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_014",
+      "speaker": "marek_zielinski",
+      "text": "Para o chão! Todo mundo no chão!",
+      "context": "bombardeio",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 418.5,
+          "battle": "04:34:04",
+          "text": "Marek Zieliński: Para o chão! Todo mundo no chão!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_015",
+      "speaker": "marek_zielinski",
+      "text": "Wrona! Para a trincheira! Siga a minha voz!",
+      "context": "bombardeio; repetir com variações até o jogador chegar",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 462,
+          "battle": "04:34:44",
+          "text": "Marek Zieliński: Wrona! Para a trincheira! Siga a minha voz!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_016",
+      "speaker": "generic_rifleman",
+      "text": "O aterro! Acertaram o aterro!",
+      "context": "bombardeio",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 455,
+          "battle": "04:34:35",
+          "text": "Soldado: O aterro! Acertaram o aterro!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_017",
+      "speaker": "leon_dudek",
+      "text": "Segura a perna dele! Segura, eu disse!",
+      "context": "S3/S1, ferido arrastado; ouvido à distância",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 705.5,
+          "battle": "04:39:21",
+          "text": "Leon Dudek: Segura a perna dele! Segura, eu disse!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_018",
+      "speaker": "marek_zielinski",
+      "text": "Quem está inteiro, levanta a mão. Kowal. Bąk. Wrona. Nowicki? …Nowicki.",
+      "context": "ponto de reunião",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 548.5,
+          "battle": "04:36:02",
+          "text": "Marek Zieliński: Quem está inteiro, levanta a mão. Kowal. Bąk. Wrona. Nowicki? …Nowicki."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_019",
+      "speaker": "marek_zielinski",
+      "text": "O posto da ponte levou uma bomba. Depois. Agora, os sapadores.",
+      "context": "ponto de reunião",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_020",
+      "speaker": "marek_zielinski",
+      "text": "Wrona, com o Kowal. Achem o Krawiec no aterro.",
+      "context": "ponto de reunião",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 556.2,
+          "battle": "04:36:12",
+          "text": "Marek Zieliński: Wrona, com o Kowal. Achem o Krawiec no aterro."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_021",
+      "speaker": "pawel_krawiec",
+      "text": "Cortaram a linha em dois lugares. Eu sei onde. Não sei é se vão me deixar trabalhar.",
+      "context": "repair_site_1",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 592.1,
+          "battle": "04:37:10",
+          "text": "Paweł Krawiec: Cortaram a linha em dois lugares. Eu sei onde. Não sei é se vão me deixar trabalhar."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_022",
+      "speaker": "pawel_krawiec",
+      "text": "Precisamos de espaço para trabalhar!",
+      "context": "reparo sob fogo (primeira supressão)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1002.1,
+          "battle": "04:47:35",
+          "text": "Paweł Krawiec: Precisamos de espaço para trabalhar!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_023",
+      "speaker": "pawel_krawiec",
+      "text": "Wrona! A caixa no barracão ferroviário, a da faixa branca. Corre!",
+      "context": "obj_m01_fetch_material",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 599.7,
+          "battle": "04:37:22",
+          "text": "Paweł Krawiec: Wrona! A caixa no barracão ferroviário, a da faixa branca. Corre!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_024",
+      "speaker": "pawel_krawiec",
+      "text": "Isso. Agora vire para o rio e não olhe para mim.",
+      "context": "entrega da caixa",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 878.1,
+          "battle": "04:42:59",
+          "text": "Paweł Krawiec: Isso. Agora vire para o rio e não olhe para mim."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_025",
+      "speaker": "staszek_pawlak",
+      "text": "Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando!",
+      "context": "evt_m01_train963_arrives",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 955.8,
+          "battle": "04:45:00",
+          "text": "Stanisław „Staszek” Pawlak: Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_026",
+      "speaker": "marek_zielinski",
+      "text": "Kowal, rajadas curtas nos clarões do dique. Ninguém desperdiça.",
+      "context": "S1 repair_under_fire",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 982.9,
+          "battle": "04:46:14",
+          "text": "Marek Zieliński: Kowal, rajadas curtas nos clarões do dique. Ninguém desperdiça."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_027",
+      "speaker": "szymon_kowal",
+      "text": "Clarões junto aos vagões. Mil metros, talvez mais.",
+      "context": "S1",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 996.9,
+          "battle": "04:47:13",
+          "text": "Szymon Kowal: Clarões junto aos vagões. Mil metros, talvez mais."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_028",
+      "speaker": "marek_zielinski",
+      "text": "Wrona, alça em mil. Mire nos clarões, não na fumaça.",
+      "context": "tutorial de mira a longa distância",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 968.4,
+          "battle": "04:45:29",
+          "text": "Marek Zieliński: Wrona, alça em mil. Mire nos clarões, não na fumaça."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_029",
+      "speaker": "szymon_kowal",
+      "text": "Trocando carregador!",
+      "context": "callout recarga (real, quando o rkm recarrega)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1019.6,
+          "battle": "04:48:41",
+          "text": "Szymon Kowal: Trocando carregador!"
+        },
+        {
+          "real": 1236.8,
+          "battle": "04:57:28",
+          "text": "Szymon Kowal: Trocando carregador!"
+        },
+        {
+          "real": 2088.2,
+          "battle": "05:33:25",
+          "text": "Szymon Kowal: Trocando carregador!"
+        },
+        {
+          "real": 2400.2,
+          "battle": "05:45:07",
+          "text": "Szymon Kowal: Trocando carregador!"
+        },
+        {
+          "real": 3182.8,
+          "battle": "06:08:34",
+          "text": "Szymon Kowal: Trocando carregador!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_030",
+      "speaker": "jozef_bak",
+      "text": "Cubro você!",
+      "context": "callout; Bąk atira enquanto o jogador recarrega",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_031",
+      "speaker": "pawel_krawiec",
+      "text": "Linha inteira. Avisem o oficial: está pronta.",
+      "context": "evt_m01_repair_complete",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1790.5,
+          "battle": "05:15:06",
+          "text": "Paweł Krawiec: Linha inteira. Avisem o oficial: está pronta."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_032",
+      "speaker": "marek_zielinski",
+      "text": "Pawlak, vai.",
+      "context": "evt_m01_repair_complete",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1796.2,
+          "battle": "05:16:13",
+          "text": "Marek Zieliński: Pawlak, vai."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_033",
+      "speaker": "staszek_pawlak",
+      "text": "Ordem do comandante do batalhão: destruir as pontes. O pelotão do outro lado recua primeiro.",
+      "context": "cs_m01_order, 05:30",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1962.1,
+          "battle": "05:30:13",
+          "text": "Stanisław „Staszek” Pawlak: Ordem do comandante do batalhão: destruir as pontes. O pelotão do outro lado recua primeiro."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_034",
+      "speaker": "marek_zielinski",
+      "text": "Ouviram. Quando os sapadores disserem, ninguém fica na ponte.",
+      "context": "cs_m01_order",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1982.5,
+          "battle": "05:30:52",
+          "text": "Marek Zieliński: Ouviram. Quando os sapadores disserem, ninguém fica na ponte."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_035",
+      "speaker": "marek_zielinski",
+      "text": "Mudar! Estão acertando a nossa posição. Para a torre!",
+      "context": "rotação de cobertura (variantes por nó)",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_036",
+      "speaker": "marek_zielinski",
+      "text": "Sol nos olhos. Fique na sombra da treliça e espere o clarão.",
+      "context": "05:30+, contraluz (C01)",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_037",
+      "speaker": "staszek_pawlak",
+      "text": "Do outro lado dizem que não aguentam muito. Perderam uma metralhadora.",
+      "context": "evt_m01_runner_pressure_report",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 2255.6,
+          "battle": "05:40:01",
+          "text": "Stanisław „Staszek” Pawlak: Do outro lado dizem que não aguentam muito. Perderam uma metralhadora."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_038",
+      "speaker": "szymon_kowal",
+      "text": "Trem blindado! Na outra via, atrás dos vagões!",
+      "context": "evt_m01_panzerzug_arrives (se o jogador estiver olhando para leste) ou primeira rajada do trem",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 1097.6,
+          "battle": "04:52:01",
+          "text": "Szymon Kowal: Trem blindado! Na outra via, atrás dos vagões!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_039",
+      "speaker": "marek_zielinski",
+      "text": "Aí vêm os nossos. Fogo em quem vem atrás deles. Nos nossos, não!",
+      "context": "evt_m01_east_platoon_withdraws",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 2907.4,
+          "battle": "06:00:02",
+          "text": "Marek Zieliński: Aí vêm os nossos. Fogo em quem vem atrás deles. Nos nossos, não!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_040",
+      "speaker": "east_platoon_voice",
+      "text": "Não parem! Eles estão no tabuleiro atrás de nós!",
+      "context": "soldado do pelotão leste passando",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3948.9,
+          "battle": "06:32:37",
+          "text": "Soldado do pelotão leste: Não parem! Eles estão no tabuleiro atrás de nós!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_041",
+      "speaker": "jozef_bak",
+      "text": "Estou bem… Não. Não estou.",
+      "context": "evt_m01_bak_wounded",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3056.2,
+          "battle": "06:04:00",
+          "text": "Józef Bąk: Estou bem… Não. Não estou."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_042",
+      "speaker": "leon_dudek",
+      "text": "Bąk está no chão! Alguém me cubra!",
+      "context": "evt_m01_bak_wounded",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_043",
+      "speaker": "marek_zielinski",
+      "text": "Wrona! Traga o Bąk até o Dudek. Eu cubro!",
+      "context": "obj_m01_rescue_bak (opcional)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3067.9,
+          "battle": "06:04:21",
+          "text": "Marek Zieliński: Wrona! Traga o Bąk até o Dudek. Eu cubro!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_044",
+      "speaker": "marek_zielinski",
+      "text": "Cabeças baixas! Lá do outro lado!",
+      "context": "antes da demolição leste",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3228.9,
+          "battle": "06:09:59",
+          "text": "Marek Zieliński: Cabeças baixas! Lá do outro lado!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_045",
+      "speaker": "szymon_kowal",
+      "text": "…Lá se foi o outro lado.",
+      "context": "após a demolição leste",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3265.9,
+          "battle": "06:11:13",
+          "text": "Szymon Kowal: …Lá se foi o outro lado."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_046",
+      "speaker": "marek_zielinski",
+      "text": "Todos fora da ponte! Para o posto de disparo, agora!",
+      "context": "obj_m01_leave_bridge",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3274.8,
+          "battle": "06:11:34",
+          "text": "Marek Zieliński: Todos fora da ponte! Para o posto de disparo, agora!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_047",
+      "speaker": "marek_zielinski",
+      "text": "Contem os homens do pelotão leste quando passarem. Em voz alta.",
+      "context": "corredor",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_048",
+      "speaker": "marek_zielinski",
+      "text": "Wrona, conte os nossos. Não conte os tiros.",
+      "context": "corredor; quando o jogador dispara enquanto o pelotão passa, ou após 10 s",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3404.4,
+          "battle": "06:17:20",
+          "text": "Marek Zieliński: Wrona, conte os nossos. Não conte os tiros."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_049",
+      "speaker": "jan_wrona",
+      "text": "{n}. São {n} do pelotão leste.",
+      "context": "corredor; {n} = m01.east_platoon_survivors por extenso (doze a dezoito)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 3409.9,
+          "battle": "06:17:46",
+          "text": "Jan Wrona: doze. São doze do pelotão leste."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_050",
+      "speaker": "pawel_krawiec",
+      "text": "Última chamada! Quem estiver no encontro, sai agora!",
+      "context": "aviso antes da demolição oeste (06:36)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4072.9,
+          "battle": "06:36:00",
+          "text": "Paweł Krawiec: Última chamada! Quem estiver no encontro, sai agora!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_051",
+      "speaker": "marek_zielinski",
+      "text": "Boca aberta, cabeça baixa.",
+      "context": "aviso final (06:38:30)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4162.7,
+          "battle": "06:38:31",
+          "text": "Marek Zieliński: Boca aberta, cabeça baixa."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_052",
+      "speaker": "franciszek_lipski",
+      "text": "Meu avô atravessava por ela para ir à feira.",
+      "context": "após a demolição oeste; Lipski perto do barracão, olhando a ponte",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4425.2,
+          "battle": "06:45:11",
+          "text": "Franciszek Lipski: Meu avô atravessava por ela para ir à feira."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_053",
+      "speaker": "marek_zielinski",
+      "text": "Chamada.",
+      "context": "abrigo",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_054",
+      "speaker": "marek_zielinski",
+      "text": "Kowal.",
+      "context": "abrigo",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_055",
+      "speaker": "szymon_kowal",
+      "text": "Presente.",
+      "context": "abrigo",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4460.1,
+          "battle": "07:05:00",
+          "text": "Szymon Kowal: Presente."
+        },
+        {
+          "real": 4473,
+          "battle": "07:05:00",
+          "text": "Leon Dudek: Presente."
+        },
+        {
+          "real": 4478.9,
+          "battle": "07:05:00",
+          "text": "Jan Wrona: Presente."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_056a",
+      "speaker": "leon_dudek",
+      "text": "Bąk está no posto de socorro. Vivo. Diz que agora a dívida é com o Wrona, não comigo.",
+      "context": "abrigo; Bąk resgatado pelo jogador (retoma o trato de dlg_m01_006/007)",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4466,
+          "battle": "07:05:00",
+          "text": "Leon Dudek: Bąk está no posto de socorro. Vivo. Diz que agora a dívida é com o Wrona, não comigo."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_056b",
+      "speaker": "staszek_pawlak",
+      "text": "Levaram o Bąk para a estação. O Dudek foi junto, com o braço aberto.",
+      "context": "abrigo; Bąk resgatado por Dudek, que cumpriu o trato de dlg_m01_006/007",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_056c",
+      "speaker": "jozef_bak",
+      "text": "Presente.",
+      "context": "abrigo; Bąk não foi ferido",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4460.1,
+          "battle": "07:05:00",
+          "text": "Szymon Kowal: Presente."
+        },
+        {
+          "real": 4473,
+          "battle": "07:05:00",
+          "text": "Leon Dudek: Presente."
+        },
+        {
+          "real": 4478.9,
+          "battle": "07:05:00",
+          "text": "Jan Wrona: Presente."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_057a",
+      "speaker": "leon_dudek",
+      "text": "Presente.",
+      "context": "abrigo; Dudek ileso",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4460.1,
+          "battle": "07:05:00",
+          "text": "Szymon Kowal: Presente."
+        },
+        {
+          "real": 4473,
+          "battle": "07:05:00",
+          "text": "Leon Dudek: Presente."
+        },
+        {
+          "real": 4478.9,
+          "battle": "07:05:00",
+          "text": "Jan Wrona: Presente."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_057b",
+      "speaker": "marek_zielinski",
+      "text": "Dudek… na estação. Eu sei.",
+      "context": "abrigo; Dudek ferido",
+      "recorded_as_subtitle": false,
+      "samples": []
+    },
+    {
+      "id": "dlg_m01_058",
+      "speaker": "jan_wrona",
+      "text": "Presente.",
+      "context": "abrigo; resposta de Jan a dlg_m01_065",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4460.1,
+          "battle": "07:05:00",
+          "text": "Szymon Kowal: Presente."
+        },
+        {
+          "real": 4473,
+          "battle": "07:05:00",
+          "text": "Leon Dudek: Presente."
+        },
+        {
+          "real": 4478.9,
+          "battle": "07:05:00",
+          "text": "Jan Wrona: Presente."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_059",
+      "speaker": "marek_zielinski",
+      "text": "Nowicki.",
+      "context": "abrigo; dita duas vezes, sem resposta",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 548.5,
+          "battle": "04:36:02",
+          "text": "Marek Zieliński: Quem está inteiro, levanta a mão. Kowal. Bąk. Wrona. Nowicki? …Nowicki."
+        },
+        {
+          "real": 4482,
+          "battle": "07:05:00",
+          "text": "Marek Zieliński: Nowicki."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_060",
+      "speaker": "marek_zielinski",
+      "text": "Continuamos.",
+      "context": "abrigo; após o silêncio",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4496.4,
+          "battle": "07:05:00",
+          "text": "Marek Zieliński: Continuamos."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_061",
+      "speaker": "szymon_kowal",
+      "text": "Agora é no norte.",
+      "context": "abrigo; tiros distantes às 07:00",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4507,
+          "battle": "07:05:00",
+          "text": "Szymon Kowal: Agora é no norte."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_062",
+      "speaker": "marek_zielinski",
+      "text": "O norte é de quem está lá. Bebam água. Durmam se conseguirem.",
+      "context": "abrigo; última fala",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4511.6,
+          "battle": "07:05:00",
+          "text": "Marek Zieliński: O norte é de quem está lá. Bebam água. Durmam se conseguirem."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_063",
+      "speaker": "marek_zielinski",
+      "text": "Bąk.",
+      "context": "abrigo; chamada",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4463.2,
+          "battle": "07:05:00",
+          "text": "Marek Zieliński: Bąk."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_064",
+      "speaker": "marek_zielinski",
+      "text": "Dudek.",
+      "context": "abrigo; chamada",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4470.5,
+          "battle": "07:05:00",
+          "text": "Marek Zieliński: Dudek."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_065",
+      "speaker": "marek_zielinski",
+      "text": "Wrona.",
+      "context": "abrigo; chamada",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 4475.8,
+          "battle": "07:05:00",
+          "text": "Marek Zieliński: Wrona."
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_066",
+      "speaker": "tadeusz_nowicki",
+      "text": "Vou avisar os sapadores! Fique no chão!",
+      "context": "evt_m01_planes_heard, ao sair correndo do posto pela encosta",
+      "recorded_as_subtitle": true,
+      "samples": [
+        {
+          "real": 222.2,
+          "battle": "04:33:23",
+          "text": "Tadeusz Nowicki: Vou avisar os sapadores! Fique no chão!"
+        }
+      ]
+    },
+    {
+      "id": "dlg_m01_067",
+      "speaker": "marek_zielinski",
+      "text": "Wrona! Nowicki! Saiam do posto!",
+      "context": "evt_m01_planes_heard, gritado de longe",
+      "recorded_as_subtitle": false,
+      "samples": []
+    }
+  ]
+}

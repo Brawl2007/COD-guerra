@@ -1,0 +1,10 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "branch": "codex/m01-quality-inspector-20261018",
+  "started_at": "2026-10-18T15:03:02.953758+00:00",
+  "production_files_hashed": 433,
+  "pilot": "tools/m01-browser-playthrough.mjs (unaltered)",
+  "pilot_sha256": "b91e577a960b19f2e995ac5f970639f6aa3f4d4e4060c9619a03a8e28dc8be12",
+  "production_mutations_authorized": false,
+  "reference_network_observation": "Steam manual/YouTube search: CONNECT 403; no gameplay viewed"
+}

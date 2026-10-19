@@ -1,0 +1,53 @@
+{
+  "method": "30 s wall samples. Stable planar position and no increment in sampled player-shot audio counter; excludes locked cinematic frame. Not a claim of no camera motion, no event, no danger or human boredom. Gaps between samples can hide short actions.",
+  "windows": [
+    {
+      "from_game": 894.6658999997358,
+      "objective": "Mantenha o corredor — conte os que passam",
+      "repair_from": 100,
+      "new_events": [],
+      "to_game": 1083.3829999995662,
+      "repair_to": 100,
+      "duration_game": 188.71709999983045
+    },
+    {
+      "from_game": 607.5994999999949,
+      "objective": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+      "repair_from": 100,
+      "new_events": [
+        "evt_m01_north_contact_distant",
+        "evt_m01_runner_pressure_report"
+      ],
+      "to_game": 756.2991999998604,
+      "repair_to": 100,
+      "duration_game": 148.69969999986552
+    },
+    {
+      "from_game": 372.1494000000501,
+      "objective": "Proteja o reparo da linha",
+      "repair_from": 50.83333333333286,
+      "new_events": [],
+      "to_game": 495.13280000007796,
+      "repair_to": 97.37779999999685,
+      "duration_game": 122.98340000002787
+    },
+    {
+      "from_game": 69.89959999999814,
+      "objective": "Mantenha contacto com a secção",
+      "repair_from": 0,
+      "new_events": [],
+      "to_game": 110.69939999999588,
+      "repair_to": 0,
+      "duration_game": 40.79979999999773
+    },
+    {
+      "from_game": 503.1328000000798,
+      "objective": "Mantenha contacto com a secção",
+      "repair_from": 100,
+      "new_events": [],
+      "to_game": 532.6495000000632,
+      "repair_to": 100,
+      "duration_game": 29.516699999983416
+    }
+  ]
+}

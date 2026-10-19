@@ -1,0 +1,424 @@
+{
+  "source_pr": 56,
+  "source_sha": "03b61a380c2624ba2b704299a789749a50dc6a93",
+  "documents": [
+    {
+      "file": "COD-GUERRA-CAMPAIGN-CREATIVE-VISION.md",
+      "sha256": "0dc8ea84c093214d96b8b326d52f233b3d6d2e7b385fb4fa0f5f88a1758fddf6",
+      "lines": 113,
+      "headings": [
+        "# COD-GUERRA — CAMPAIGN CREATIVE VISION · 30 missões, 30 situações, uma guerra",
+        "## 1. O que M01 estabelece (e as outras herdam)",
+        "## 2. Seis movimentos (adotados do PR #44, com a assinatura de situação)",
+        "## 3. Uma situação central por missão (o que a torna reconhecível)",
+        "## 4. Arcos emocionais recorrentes (do PR #44, preservados)",
+        "## 5. Variedade de gameplay (matriz de verbos por missão)",
+        "## 6. Atmosfera por frente (direção de arte, resumo)",
+        "## 7. Continuidade e persistência (regras herdadas)",
+        "## 8. O que esta visão pede às próximas 29 missões"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-ATMOSPHERE-ART-DIRECTION.md",
+      "sha256": "cd72b1827b09f7f40136ee1e092a772fcfa79800c2573db040c34aecef837770",
+      "lines": 117,
+      "headings": [
+        "# M01 — ATMOSPHERE ART DIRECTION BIBLE · Sombria, fria, dessaturada, cinematográfica",
+        "## 0. Identidade em uma frase",
+        "## 1. Paleta mestra",
+        "## 2. Evolução da luz por hora (keyframes propostos sobre os existentes)",
+        "## 3. Céu",
+        "## 4. Luz solar, sombras e ofuscamento",
+        "## 5. Névoa, fumo e poeira (sistemas existentes, afinação)",
+        "## 6. Materiais (desgaste, humidade, fuligem)",
+        "## 7. Por setor (composição)",
+        "## 8. Evolução por fase (resumo visual)",
+        "## 9. Antes / depois (o que uma imagem deve transmitir)",
+        "## 10. Método de prova e limites"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-AUDIO-MUSIC-DIRECTION.md",
+      "sha256": "5a35542dce086e9591bfd4b6a3f47cebc9698871729c48e9668efe4fefbe95ca",
+      "lines": 103,
+      "headings": [
+        "# M01 — AUDIO & MUSIC DIRECTION · Fazer o jogador ouvir a guerra",
+        "## 0. O que já existe (não reinventar)",
+        "## 1. Princípios",
+        "## 2. Mapa sonoro por hora",
+        "## 3. Camadas novas propostas",
+        "## 4. Contrato de silêncio (ducking explícito)",
+        "## 5. Música",
+        "## 6. Assinaturas (identidade de cada fonte)",
+        "## 7. Acessibilidade e opções (existentes e propostas)",
+        "## 8. Prova"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-CHARACTER-BIBLE.md",
+      "sha256": "3385c5f1e2e62910bed7bcde1540632feb3f1405fdf4c6d53e38e0dae857583a",
+      "lines": 267,
+      "headings": [
+        "# M01 — CHARACTER BIBLE · As pessoas da primeira manhã",
+        "## 1. Regras de escrita das pessoas (todas)",
+        "## 2. Jan Wrona — ponto de vista",
+        "## 3. Sierżant Marek Zieliński — líder da secção",
+        "## 4. Kapral Paweł Krawiec — sapador",
+        "## 5. Strzelec Tadeusz Nowicki — o homem do posto",
+        "## 6. Starszy strzelec Szymon Kowal — metralhador",
+        "## 7. Strzelec Józef Bąk — o recruta",
+        "## 8. Sanitariusz Leon Dudek — socorrista",
+        "## 9. Strzelec Stanisław \"Staszek\" Pawlak — mensageiro",
+        "## 10. Franciszek Lipski — ferroviário (civil)",
+        "## 11. Novas identidades para vagas existentes",
+        "### 11.1 Strzelec Antoni Rusek — \"o homem do outro lado\" (`east_platoon_voice`)",
+        "### 11.2 Guarnição da ckm wz.30 (`grp_ckm_crew`: `ckm_gunner`, `ckm_loader`, `ckm_reserve`)",
+        "### 11.3 Sapadores (`sapper_2`, `sapper_3`)",
+        "### 11.4 O ferido do pátio (`generic_rifleman`, `STATION_PATIENT`)",
+        "### 11.5 Os alemães (retrato coletivo, sem nomes)",
+        "### 11.6 Pessoas históricas (fora de cena, inalterado)",
+        "## 12. Mapa de relações (atualizado)",
+        "## 13. Evolução psicológica por ato (tabela de atuação)",
+        "## 14. Direção de elenco e voz (para a gravação futura)"
+      ],
+      "explicit_dialogue_ids": [
+        "dlg_m01_1"
+      ],
+      "ids_absent_from_current_data": [
+        "dlg_m01_1"
+      ]
+    },
+    {
+      "file": "M01-CINEMATIC-GAMEPLAY-SETPIECES.md",
+      "sha256": "efafaeb1d9ba65b243333c1d7df6d842a0749807dcc7c0c15fc607bce5beaaa3",
+      "lines": 180,
+      "headings": [
+        "# M01 — CINEMATIC GAMEPLAY SET PIECES · Nove sequências para recordar",
+        "## SP-01 — Os motores (04:33:10–04:34:00)",
+        "## SP-02 — Catorze segundos (04:34:00–04:34:14)",
+        "## SP-03 — A caixa (04:38–04:55)",
+        "## SP-04 — A metralhadora que sobe a encosta (04:46–05:15)",
+        "## SP-05 — A ordem sob o zumbido (05:30–05:34)",
+        "## SP-06 — Contra o sol (05:34–06:00)",
+        "## SP-07 — O clarão e o som (06:00–06:12)",
+        "## SP-08 — A guarnição sai de casa / Oitenta anos (06:10–06:46)",
+        "## SP-09 — A chamada (07:05)",
+        "## Micro-situações (não são set pieces; dão textura entre eles)",
+        "## Regras transversais"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-CINEMATIC-SHOT-BIBLE.md",
+      "sha256": "c6cd281ab1a488cd5b4f5efef77297511ec0eaedfd7c21cd54fc3b3a4e32203b",
+      "lines": 188,
+      "headings": [
+        "# M01 — CINEMATIC SHOT BIBLE · Planos, câmaras, atuação, duração, transições",
+        "## 0. Princípios",
+        "## 1. Vocabulário de planos (primeira pessoa)",
+        "## 2. Shot list por cena",
+        "### Cena 1 — O posto (`cs_m01_intro`, 44 s)",
+        "### Cena 2 — O caminho (PS livre)",
+        "### Cena 3 — Catorze segundos (`cs_m01_bombing`, PS com movimento −40 %)",
+        "### Cena 4 — Reorganização e a caixa (PS livre)",
+        "### Cena 5 — Mil metros (PS livre; alça)",
+        "### Cena 6 — A ordem sob o zumbido (`cs_m01_order`, PS livre)",
+        "### Cena 7 — Contra o sol (PS livre)",
+        "### Cena 8 — O clarão e o som (PS livre no tabuleiro)",
+        "### Cena 9 — A guarnição / Oitenta anos (PS livre)",
+        "### Cena 10 — A chamada (`cs_m01_roll_call`, PS-sentado, 60 s)",
+        "## 3. Durações e orçamento de \"controlo retirado\"",
+        "## 4. Transições",
+        "## 5. Atuação (regras de animação por cena)",
+        "## 6. O que a Shot Bible não pede"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-COMPLETE-CINEMATIC-SCREENPLAY.md",
+      "sha256": "d177bcecb7291f00fc61783129050dc7fa4b91873d7fe9d3ef15305889addbb3",
+      "lines": 346,
+      "headings": [
+        "# M01 — COMPLETE CINEMATIC SCREENPLAY · \"A Primeira Manhã\"",
+        "## CENA 0 — Ecrã de carregamento",
+        "## CENA 1 — O posto (04:30) · INTRO/SETUP",
+        "## CENA 2 — O caminho e o posto da ponte (04:30–04:33) · SETUP/BUILDUP",
+        "## CENA 3 — Catorze segundos (04:34) · FIRST_CONTACT",
+        "## CENA 4 — Reorganização e a caixa (04:36–04:55) · ESCALADA",
+        "## CENA 5 — Mil metros (04:45–05:30) · COMBATE PRINCIPAL",
+        "## CENA 6 — A ordem sob o zumbido (05:30–05:34) · COMBATE PRINCIPAL",
+        "## CENA 7 — Contra o sol (05:34–06:00) · COMBATE PRINCIPAL",
+        "## CENA 8 — Os nossos no tabuleiro (06:00–06:10) · SET-PIECE/CLÍMAX",
+        "## CENA 9 — Não contes os tiros (06:10–06:45) · CLÍMAX",
+        "## CENA 10 — A chamada (07:05) · AFTERMATH/OUTRO",
+        "## CENAS PARALELAS (o que acontece sem o jogador)",
+        "## ANTES / DEPOIS (resumo do roteiro)"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-CREATIVE-PRESERVATION-HANDOFF.md",
+      "sha256": "dbcd4a96826171114aef87adc13ead7933d3e60665253a734e9b711e20b1500b",
+      "lines": 160,
+      "headings": [
+        "# M01 — CREATIVE PRESERVATION HANDOFF · Estado, preservação, antes/depois, revisão e instruções",
+        "## 1. Estado real do projeto (inspecionado em 2026-10-08)",
+        "## 2. O que esta entrega acrescenta (resumo)",
+        "## 3. Conteúdo preservado (não tocado, não contradito)",
+        "## 4. Antes / depois (exemplos concretos)",
+        "### 4.1 A ordem (05:30)",
+        "### 4.2 Depois da explosão leste (06:10)",
+        "### 4.3 A retirada (06:10–06:45)",
+        "### 4.4 Atmosfera",
+        "## 5. Problemas encontrados durante a investigação (para corrigir fora desta entrega)",
+        "## 6. Revisão criativa profissional (0–10, com justificação)",
+        "## 7. Sondas de playtest (acrescentar ao protocolo M01 do PR #44)",
+        "## 8. Instruções para os agentes de implementação",
+        "## 9. Estado da branch e validação",
+        "### 9.1 Resultado dos testes"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-CREATIVE-PRODUCTION-ROADMAP.md",
+      "sha256": "870594ffd544876a8ef56d015311bf2c69c94773b443325c97c3c88555780a0f",
+      "lines": 113,
+      "headings": [
+        "# M01 — CREATIVE PRODUCTION ROADMAP · Por prioridade, dependência, risco e impacto",
+        "## 0. Como ler",
+        "## 1. Fase 0 — Pré-requisitos (não criativos)",
+        "## 2. Fase 1 — \"Vozes\" (tudo [A], dados + falas) · Esforço M · Risco baixo · Impacto alto",
+        "## 3. Fase 2 — \"Luz e lugar\" (apresentação [A], alguns [B]) · Esforço M · Risco baixo · Impacto alto",
+        "## 4. Fase 3 — \"Mãos e gestos\" ([B], depende do ViewModel e do Animation Resolver) · Esforço L · Risco médio · Impacto médio-alto",
+        "## 5. Fase 4 — \"Situações\" ([B]/[C] de gameplay) · Esforço L–XL · Risco médio · Impacto alto",
+        "## 6. Fase 5 — \"Ambição\" ([C]/[D], decisões do Capitão) · Esforço XL",
+        "## 7. Dependências (grafo)",
+        "## 8. Riscos e mitigações",
+        "## 9. Critérios de saída por fase",
+        "## 10. O que esta roadmap não promete"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-DIALOGUE-PRODUCTION-SCRIPT.md",
+      "sha256": "48cc3e635649e76d05d356cf1df25f656af4f7bbab4a36e658c1c2e2618a7ac8",
+      "lines": 221,
+      "headings": [
+        "# M01 — DIALOGUE PRODUCTION SCRIPT · Falas, variações, callouts e política de idioma",
+        "## 0. Como o sistema atual fala (o que existe, para não inventar)",
+        "## 1. Política de idiomas, legendas e adaptação",
+        "## 2. Falas canónicas (inalteradas) — mapa de uso",
+        "## 3. Falas novas por personagem",
+        "### 3.1 Jan Wrona (100–109)",
+        "### 3.2 Zieliński (110–119)",
+        "### 3.3 Krawiec (120–129)",
+        "### 3.4 Kowal (130–139)",
+        "### 3.5 Bąk (140–149)",
+        "### 3.6 Dudek (150–159)",
+        "### 3.7 Pawlak (160–169)",
+        "### 3.8 Lipski (170–179)",
+        "### 3.9 Rusek (180–189)",
+        "### 3.10 Guarnição da ckm (190–199)",
+        "### 3.11 Sapadores (200–209)",
+        "### 3.12 Callouts a ligar (IDs novos para os já especificados) **[A/B]**",
+        "## 4. Variação contextual (anti-repetição)",
+        "## 5. O que fica em silêncio (contrato)",
+        "## 6. Falas que não existem (decisões)",
+        "## 7. Entrega para gravação (checklist)"
+      ],
+      "explicit_dialogue_ids": [
+        "dlg_m01_001",
+        "dlg_m01_029",
+        "dlg_m01_100"
+      ],
+      "ids_absent_from_current_data": [
+        "dlg_m01_100"
+      ]
+    },
+    {
+      "file": "M01-ENVIRONMENTAL-WAR-STORYTELLING.md",
+      "sha256": "928045411283d23005f105e8c77763037c2b8ca2e9968704c679eb478006aa1d",
+      "lines": 172,
+      "headings": [
+        "# M01 — ENVIRONMENTAL WAR STORYTELLING · O ambiente como personagem, hora a hora",
+        "## 0. Princípios do ambiente",
+        "## 1. S1 — Cabeça de ponte oeste e aterro",
+        "### 1.1 Estado inicial (04:30)",
+        "### 1.2 Atividade militar (04:30–04:33)",
+        "### 1.3 Início da tensão (04:33:10–04:34)",
+        "### 1.4 Combate (04:34–06:10)",
+        "### 1.5 Momentos humanos (S1)",
+        "### 1.6 Consequências (06:10–06:45)",
+        "### 1.7 Transição (06:46–07:05)",
+        "## 2. S2 — Cabeça de ponte leste (Lisewo), 780–1250 m",
+        "### 2.1 Estado inicial (04:30)",
+        "### 2.2 Atividade e tensão (04:45–04:52)",
+        "### 2.3 Combate (04:46–06:10)",
+        "### 2.4 Momentos humanos (a 700–1200 m)",
+        "### 2.5 Consequências e transição",
+        "## 3. S3 — Estação de Tczew e pátio, 250–460 m",
+        "### 3.1 Estado inicial (04:30) · `night_shift`",
+        "### 3.2 Bombardeio (04:34) · `bombed`",
+        "### 3.3 Socorro (04:35:30–05:30) · `wounded_evacuation` → `aid_post`",
+        "### 3.4 Raid alto (05:30–05:34) · `second_raid`",
+        "### 3.5 Carroças (05:40) · `carts_evacuating`",
+        "### 3.6 Poeira (06:45) · `dust_fall`",
+        "### 3.7 Momentos humanos e transição",
+        "## 4. S4 — Perímetro norte, 800–1500 m",
+        "## 5. S5 — Céu a leste e linha para Szymankowo, 0,8–40 km",
+        "## 6. Detritos com origem identificável (catálogo)",
+        "## 7. O que o jogador vê às 07:05 (prova de que o ambiente contou a história)",
+        "## 8. Dependências e limites"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-GAMEPLAY-VARIETY-DESIGN.md",
+      "sha256": "dbef41561110807c2aea514876be6dc3e2cd653d3275c615393457b3427263ec",
+      "lines": 191,
+      "headings": [
+        "# M01 — GAMEPLAY VARIETY DESIGN · Cinco setores, doze objetivos, nenhum corredor",
+        "## 0. A pergunta de cada confronto: *o que torna este combate diferente dos outros?*",
+        "## 1. Os cinco setores (análise experiencial)",
+        "### S1 — Cabeça de ponte oeste e aterro (próximo, 0–150 m)",
+        "### S2 — Cabeça de ponte leste, Lisewo (médio/longo, 780–1250 m)",
+        "### S3 — Estação de Tczew e pátio (próximo/médio, 250–460 m)",
+        "### S4 — Perímetro norte (longo, 800–1500 m)",
+        "### S5 — Céu a leste e linha para Szymankowo (longo, 0,8–40 km)",
+        "## 2. Os doze objetivos (o que é hoje, o que pode tornar-se genérico, o que se propõe)",
+        "### O1 `obj_m01_deliver_message` — \"Leve a mensagem e o café ao posto da ponte\"",
+        "### O2 `obj_m01_take_cover` — \"Abrigue-se!\"",
+        "### O3 `obj_m01_follow_sergeant` — \"Siga a voz do sargento\"",
+        "### O4 `obj_m01_find_sappers` — \"Encontre os sapadores no aterro\"",
+        "### O5 `obj_m01_fetch_material` — \"Traga o material dos sapadores do barracão\"",
+        "### O6 `obj_m01_cover_repair` — \"Proteja o reparo da linha\"",
+        "### O7 `obj_m01_hold_access` — \"Mantenha a cabeça de ponte — mude de cobertura quando mandarem\"",
+        "### O8 `obj_m01_cover_withdrawal` — \"Cubra a retirada do pelotão leste\"",
+        "### O9 `obj_m01_rescue_bak` — \"(Opcional) Leve Bąk até o socorrista\"",
+        "### O10 `obj_m01_leave_bridge` — \"Saia da ponte! Para o posto de disparo\"",
+        "### O11 `obj_m01_hold_corridor` — \"Mantenha o corredor — conte os que passam\"",
+        "### O12 `obj_m01_reach_shelter` — \"Vá para o abrigo\"",
+        "## 3. Catálogo de \"situações\" (o que acontece *durante* o gameplay, além de disparar)",
+        "## 4. O que não se propõe (e porquê)",
+        "## 5. Expansões ambiciosas (separadas, para decisão)"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-HISTORICAL-VALIDATION.md",
+      "sha256": "8494f788f6648cab13776e17f7a974a72369bb491f16f7fa7ec048615b55342f",
+      "lines": 199,
+      "headings": [
+        "# M01 — HISTORICAL VALIDATION · Tczew, 1 de setembro de 1939",
+        "## 0. Como ler (correspondência com as classes do repositório)",
+        "## 1. O que foi possível verificar nesta sessão (2026-10-08)",
+        "## 2. Cronologia validada (o que o jogo mostra vs o que as fontes dizem)",
+        "## 3. Geografia, luz, som e clima",
+        "### 3.1 Geografia (estado: medido, com pendências)",
+        "### 3.2 Luz (C01, cálculo próprio, certeza ALTA)",
+        "### 3.3 Clima (decisão de direção)",
+        "### 3.4 Som (C02)",
+        "## 4. Forças e pessoas",
+        "### 4.1 Polónia",
+        "### 4.2 Alemanha",
+        "### 4.3 Regra de representação do inimigo (Prompt §72, preservada)",
+        "## 5. Divergências e decisões (consolidado)",
+        "## 6. Szymankowo e crueldade: o que a direção pode e não pode fazer",
+        "## 7. Matriz de asserções do conteúdo criativo novo",
+        "## 8. O que a direção criativa não faz (lista de proibições)",
+        "## 9. Pendências (P1–P16 mantidas) e novas (P-NOVA)",
+        "## 10. Gate histórico para cada cena nova"
+      ],
+      "explicit_dialogue_ids": [
+        "dlg_m01_008"
+      ],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "M01-INTEGRATION-MATRIX.md",
+      "sha256": "4654103dd4cfa41dea83d04d334ae4885193d20c76a7eb564b05a7e87a4bca68",
+      "lines": 132,
+      "headings": [
+        "# M01 — INTEGRATION MATRIX · Cada proposta ligada a um sistema real",
+        "## 0. Inventário dos sistemas reais (o que podemos aproveitar)",
+        "## 1. Matriz de propostas",
+        "### 1.1 Falas e callouts",
+        "### 1.2 Cenas e beats",
+        "### 1.3 Gameplay (dentro da estrutura)",
+        "### 1.4 Ambiente e arte",
+        "### 1.5 Áudio",
+        "## 2. Estados persistentes (resumo)",
+        "## 3. O que cada agente precisa de ler antes de implementar",
+        "## 4. Conflitos conhecidos com trabalho em curso (evitar)"
+      ],
+      "explicit_dialogue_ids": [
+        "dlg_m01_100",
+        "dlg_m01_111"
+      ],
+      "ids_absent_from_current_data": [
+        "dlg_m01_100",
+        "dlg_m01_111"
+      ]
+    },
+    {
+      "file": "M01-MASTER-STORY-BIBLE.md",
+      "sha256": "e3cade23a9ba600a99c06b53135a2d6008c7b17e7abe6fbce7d94cca10d35a21",
+      "lines": 262,
+      "headings": [
+        "# M01 — MASTER STORY BIBLE · \"A Primeira Manhã\"",
+        "## 0. Índice da biblioteca",
+        "## 1. Logline e promessa",
+        "## 2. Identidade narrativa",
+        "### 2.1 Três ideias que governam tudo",
+        "### 2.2 O que torna M01 reconhecível entre 30 missões",
+        "### 2.3 O que M01 recusa",
+        "## 3. Temas e onde vivem na missão",
+        "## 4. Estrutura dramática",
+        "### 4.1 Cinco atos sobre os cinco setores e os doze objetivos (estrutura preservada)",
+        "### 4.2 Curva de intensidade (não é uma rampa)",
+        "### 4.3 Ritmo por fases (Prompt §39)",
+        "## 5. Conflitos",
+        "### 5.1 Externo (histórico, fixo)",
+        "### 5.2 Internos (ficção, o que a missão realmente conta)",
+        "### 5.3 O conflito moral de M01 (brutalidade com significado, brief §5)",
+        "## 6. Arcos (estado de entrada → vínculo → perda → mudança → estado de saída)",
+        "## 7. O que aprendemos com os clássicos sem os copiar",
+        "## 8. Objetos narrativos (o ambiente conta a história)",
+        "## 9. Continuidade e persistência (inalteradas)",
+        "## 10. Antes / depois (ao nível da história)",
+        "## 11. O que fica intacto (lista de proteção)",
+        "## 12. Critérios de aceitação narrativa (para o playtest humano futuro)"
+      ],
+      "explicit_dialogue_ids": [
+        "dlg_m01_001",
+        "dlg_m01_048",
+        "dlg_m01_049",
+        "dlg_m01_052"
+      ],
+      "ids_absent_from_current_data": []
+    },
+    {
+      "file": "README.md",
+      "sha256": "c9ae965bfc20d52ebaac97191c76d2358cb654fa792d30189c834bc8ba956a14",
+      "lines": 25,
+      "headings": [
+        "# Direção criativa de M01 — biblioteca de produção"
+      ],
+      "explicit_dialogue_ids": [],
+      "ids_absent_from_current_data": []
+    }
+  ]
+}

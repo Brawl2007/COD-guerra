@@ -1,0 +1,38 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "method": "Separate disposable simulation control route from new mission; Space-equivalent skip and walk controls via existing driver. No player/event/clock assignment. Not browser footage or a human physics test.",
+  "steps": 379,
+  "drops": [
+    {
+      "step": 265,
+      "dt": 0.05,
+      "from": {
+        "x": 9.892727737002808,
+        "y": -0.35000020265579224,
+        "z": 29.847706558770547
+      },
+      "to": {
+        "x": 10.192724914376694,
+        "y": -3,
+        "z": 29.849007930240226
+      },
+      "deltaY": -2.6499997973442078
+    },
+    {
+      "step": 315,
+      "dt": 0.05,
+      "from": {
+        "x": 24.892586605696984,
+        "y": -3,
+        "z": 29.91277513225453
+      },
+      "to": {
+        "x": 25.192583783070866,
+        "y": -10,
+        "z": 29.91407650372421
+      },
+      "deltaY": -7
+    }
+  ],
+  "end": "controlled shoreline route completed"
+}

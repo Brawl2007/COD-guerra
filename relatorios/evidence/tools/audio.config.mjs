@@ -1,0 +1,2 @@
+import {defineConfig} from '/workspace/COD-guerra/node_modules/@playwright/test/index.mjs';
+export default defineConfig({testDir:'/workspace/COD-guerra/tests/browser',testMatch:'m01-audio-offline-render.spec.js',workers:1,retries:0,timeout:180000,outputDir:'/workspace/scratch/m01-quality-inspector/audio-test-results',reporter:'list',use:{launchOptions:{executablePath:'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage']}}});

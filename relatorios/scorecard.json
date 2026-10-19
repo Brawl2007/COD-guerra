@@ -1,0 +1,186 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "method": "Editorial score for the explicitly observed/local scope. No human entertainment or hearing test. No verified reference gameplay. Not a certification.",
+  "categories": [
+    {
+      "category": "História",
+      "score": 5,
+      "confidence": "média",
+      "reason": "Premissa escrita 7/10; apresentação parcial perde interlocutores e objeto. Ver D e fotos High.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Desenvolvimento de personagens",
+      "score": 3.5,
+      "confidence": "média",
+      "reason": "Traços textuais específicos; atuação observada e ausência de VO limitam reconhecimento.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Diálogos",
+      "score": 6,
+      "confidence": "média",
+      "reason": "Nota do texto canónico: humor, dívida e ausência; interpretação vocal não avaliada.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Ritmo narrativo",
+      "score": 4,
+      "confidence": "baixa",
+      "reason": "Julgamento de estrutura e janelas da cronologia; tempo real do SwiftShader não é ritmo no PC.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Qualidade dos cenários",
+      "score": 4.5,
+      "confidence": "média",
+      "reason": "Silhueta própria e geografia funcional; taludes/materiais e ocupação pouco articulados nas vistas High.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Gráficos",
+      "score": 3.5,
+      "confidence": "média",
+      "reason": "Imagens High revelam humanos/folhagem/material simplificados e acabamento desigual de primeira pessoa.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Iluminação",
+      "score": 5,
+      "confidence": "média",
+      "reason": "Madrugada legível, céu e silhuetas; direção de luz nos interlocutores não demonstrada.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Animações",
+      "score": null,
+      "confidence": "insuficiente para qualidade dinâmica",
+      "reason": "Foram inspecionadas poses, clips e fotos; não houve vídeo em cadência normal que permita aprovar fluidez/transições. A direção da amostra é criticada em E.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Física e colisões",
+      "score": null,
+      "confidence": "insuficiente",
+      "reason": "Queda instantânea de 7 m/0,05 s reproduzida em controlos da simulação; falta cobertura visual suficiente para dar nota global às colisões.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Inteligência artificial",
+      "score": null,
+      "confidence": "insuficiente",
+      "reason": "Não há observação suficiente de decisão tática inimiga; estados e código não equivalem a comportamento convincente.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Coordenação dos aliados",
+      "score": 3.5,
+      "confidence": "baixa",
+      "reason": "Papéis distintos e trabalho existem; orientação espacial e atuação por ordens incompletas na amostra.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Combate",
+      "score": 4,
+      "confidence": "baixa",
+      "reason": "Avaliação de legibilidade/feedback dos encontros e desenho de longa distância; diversão humana não medida.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Armas",
+      "score": 3.5,
+      "confidence": "média na apresentação, insuficiente na sensação",
+      "reason": "wz.29 tem estados funcionais, mas arma/braço ficam descompostos depois do resgate, persistindo em aim sem transporte; sensação e realismo auditivo não julgados.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Áudio",
+      "score": null,
+      "confidence": "insuficiente para qualidade perceptiva",
+      "reason": "31 sinais medidos e ativos, sem escuta humana. Sinal técnico não é nota de impacto/realismo.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Efeitos visuais",
+      "score": 5,
+      "confidence": "baixa",
+      "reason": "Há consequências e camadas de efeitos; fotografias não aprovam massa, fluidez e sincronização integral.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Direção cinematográfica",
+      "score": 4,
+      "confidence": "média",
+      "reason": "Cartelas e motivos claros no texto; composição de abertura não apresenta bem a secção.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Clareza dos objetivos",
+      "score": 3,
+      "confidence": "alta nos contratos reproduzidos",
+      "reason": "Guia ausente em hold, sugestão da própria cobertura e dois prompts com alcance divergente.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Variedade de gameplay",
+      "score": 4,
+      "confidence": "média",
+      "reason": "Verbos de mensageiro, transporte, proteção e recuo; repetição de espera/observação pede direção e escolhas.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Envolvimento estimado",
+      "score": null,
+      "confidence": "insuficiente",
+      "reason": "Requer playtest humano; riscos de atenção são analisados sem inventar emoções.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    },
+    {
+      "category": "Qualidade geral observável",
+      "score": 4,
+      "confidence": "média, amostra limitada",
+      "reason": "Juízo editorial local de protótipo. Não é média aritmética nem equivalência a qualquer COD.",
+      "world_at_war": "NÃO VERIFICADO",
+      "wwii": "NÃO VERIFICADO",
+      "cod_2003": "NÃO VERIFICADO"
+    }
+  ]
+}

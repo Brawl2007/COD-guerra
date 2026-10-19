@@ -1,0 +1,13 @@
+from pathlib import Path
+import json,collections,re
+r=Path('/workspace/COD-guerra');out=r/'docs/verification/m01-quality-inspector';m=json.loads((r/'missions/m01-tczew/mission.json').read_text());run=json.loads((out/'evidence/route/report.json').read_text());subs=run['subtitles'];rows=[];counts=collections.defaultdict(lambda:{'canonical':0,'recorded':0})
+for d in m['dialogue']:
+ pattern=re.escape(d['text']).replace(re.escape('{n}'),r'(?:doze|treze|catorze|quinze|dezasseis|dezassete|dezoito)')+'$';hits=[s for s in subs if re.search(pattern,s['text'])];counts[d['speaker']]['canonical']+=1;counts[d['speaker']]['recorded']+=bool(hits)
+ rows.append({'id':d['id'],'speaker':d['speaker'],'text':d['text'],'context':d.get('context'),'recorded_as_subtitle':bool(hits),'samples':hits})
+proof={'head':'68301b779b856af46ed35a10fde42df9559d9ed4','method':'Suffix match between canonical dialogue text (including its {n} survivor-count substitution) and subtitles recorded by the browser pilot. Not voice listening. Conditional, optional and alternate-branch lines need not play in this route. Not-recorded is not proof of missing implementation. Sampling and time in screenshots can miss short lines. The pilot ignores empty subtitles when updating last.subtitle; an identical line repeated after silence can be omitted from this log. Counts are recorded canonical lines, not all utterances.','recorded_subtitle_changes':len(subs),'canonical_lines':len(rows),'canonical_lines_recorded':sum(x['recorded_as_subtitle'] for x in rows),'by_speaker':counts,'lines':rows}
+(out/'evidence/dialogue-exposure.json').write_text(json.dumps(proof,ensure_ascii=False,indent=2)+'\n')
+lines=['# Exposição de diálogo nesta corrida','','Cruzamento literal das legendas recolhidas pelo piloto com o texto canónico. «Não registada» não significa ausente do jogo: há variantes, condições e possíveis lacunas de amostragem. Não houve escuta de vozes. O piloto pode omitir repetição idêntica depois de silêncio, pois não atualiza last.subtitle nas transições vazias.','','| Personagem / ID | Falas canónicas | Registadas como legenda |','| --- | ---: | ---: |']
+for speaker,c in counts.items():lines.append(f"| {speaker} | {c['canonical']} | {c['recorded']} |")
+lines+=['','| Fala | Contexto canónico | Registo nesta corrida |','| --- | --- | --- |']
+for row in rows:lines.append(f"| {row['id']} — {row['speaker']} | {row['context']} | "+('; '.join(f"{s['battle']} / real {s['real']} s" for s in row['samples']) if row['samples'] else 'Não registada; não inferir ausência')+' |')
+(out/'EXPOSICAO-DIALOGO.md').write_text('\n'.join(lines)+'\n');print(json.dumps({k:proof[k] for k in ['recorded_subtitle_changes','canonical_lines','canonical_lines_recorded','by_speaker']},ensure_ascii=False))

@@ -1,0 +1,19 @@
+{
+  "baseline_head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "checked_at": "2026-10-18T21:12:52.953013+00:00",
+  "roots": [
+    "src",
+    "missions",
+    "assets"
+  ],
+  "before_count": 433,
+  "after_count": 433,
+  "before_manifest_sha256": "5d56745a7411aa8b83ee4cc2d4ecff4c30bba89b32de068f5adb723c870f7815",
+  "after_manifest_sha256": "5d56745a7411aa8b83ee4cc2d4ecff4c30bba89b32de068f5adb723c870f7815",
+  "changed": [],
+  "added": [],
+  "removed": [],
+  "git_production_diff_against_baseline": [],
+  "production_unchanged": true,
+  "method": "Per-file SHA-256 against the preserved pre-audit manifest; aggregate digests use sorted canonical JSON. Documentation and audit tools do not mutate production."
+}

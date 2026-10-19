@@ -1,0 +1,9 @@
+{
+  "outcome": "interrompido pelo auditor; não aprovado",
+  "reason": "Software rendering: 42.1 simulation seconds / 203 wall seconds; first-waypoint block needs controller vs collision diagnosis",
+  "original_pilot_unmodified": true,
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "progress": "intro completed, CP-A, first waypoint not reached",
+  "interruption": "SIGINT sent to own node pilot; no production mutation",
+  "source_log": "original-attempt.log"
+}

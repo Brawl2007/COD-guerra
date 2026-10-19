@@ -1,0 +1,12 @@
+{"real":11.8,"kind":"started","game":0,"battle":"04:30:00","pos":[-66,22],"objective":"04:30 · Tczew, Polónia"}
+{"real":13.3,"kind":"objective","game":0.8,"battle":"04:30:01","pos":[-66,22],"objective":"04:30 · Tczew, Polónia","text":"04:30 · Tczew, Polónia"}
+{"real":215.9,"kind":"objective","game":44.1,"battle":"04:30:44","pos":[-66,22],"objective":"Leve a mensagem e o café ao posto da ponte","text":"Leve a mensagem e o café ao posto da ponte"}
+{"real":220.6,"kind":"checkpoint","game":45.1,"battle":"04:30:45","pos":[-66,22],"objective":"Leve a mensagem e o café ao posto da ponte","id":"cp_m01_a_orientacao"}
+{"real":203,"kind":"waited","game":42.1,"battle":"04:30:45","pos":[-66,22],"objective":"Leve a mensagem e o café ao posto da ponte","label":"intro","battleFrom":"04:30:02","battleTo":"04:30:44"}
+{"real":230.2,"kind":"message","game":48.1,"battle":"04:30:48","pos":[-62.8,21.8],"objective":"Leve a mensagem e o café ao posto da ponte","text":"Posto da ponte ferroviária: 83 m, à sua direita"}
+{"real":245.7,"kind":"blocked","game":53.3,"battle":"04:30:53","pos":[-62.3,21.8],"objective":"Leve a mensagem e o café ao posto da ponte","at":[-62.33,21.76],"to":[-66,26],"label":"posto da ponte"}
+{"real":272.6,"kind":"message","game":63.2,"battle":"04:31:03","pos":[-69.6,19.3],"objective":"Leve a mensagem e o café ao posto da ponte","text":"Posto da ponte ferroviária: 89 m, à sua esquerda"}
+{"real":279,"kind":"blocked","game":65.2,"battle":"04:31:05","pos":[-71,19.1],"objective":"Leve a mensagem e o café ao posto da ponte","at":[-70.97,19.06],"to":[-66,26],"label":"posto da ponte"}
+{"real":287.8,"kind":"blocked","game":67.7,"battle":"04:31:08","pos":[-71.8,18.4],"objective":"Leve a mensagem e o café ao posto da ponte","at":[-71.75,18.45],"to":[-66,26],"label":"posto da ponte"}
+{"real":301.9,"kind":"blocked","game":73,"battle":"04:31:13","pos":[-68.5,14.4],"objective":"Leve a mensagem e o café ao posto da ponte","at":[-68.5,14.36],"to":[-66,26],"label":"posto da ponte"}
+{"real":312.6,"kind":"failure","error":"page.waitForTimeout: Target page, context or browser has been closed"}

@@ -1,0 +1,181 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "outcome": "debrief",
+  "real_seconds": 4520.6,
+  "final": {
+    "game": 1160.4,
+    "battle": "07:05:00",
+    "complete": true,
+    "flags": {
+      "m01.completed": true,
+      "m01.nowicki_status": "missing",
+      "m01.bak_status": "rescued_by_player",
+      "m01.dudek_status": "unhurt",
+      "m01.east_platoon_survivors": 12,
+      "m01.second_raid_state": "ended",
+      "m01.forward_post_state": "intact_near_miss"
+    },
+    "checkpoints": [
+      "cp_m01_a_orientacao",
+      "cp_m01_b_reorganizacao",
+      "cp_m01_c_engenheiros",
+      "cp_m01_d_retirada"
+    ],
+    "objectives": {
+      "obj_m01_deliver_message": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_take_cover": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_follow_sergeant": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_find_sappers": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_fetch_material": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_cover_repair": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_hold_access": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_cover_withdrawal": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_rescue_bak": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_leave_bridge": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_hold_corridor": {
+        "state": "done",
+        "progress": 100
+      },
+      "obj_m01_reach_shelter": {
+        "state": "done",
+        "progress": 100
+      }
+    },
+    "health": 76,
+    "weapon": {
+      "id": "kb_wz29",
+      "mag": 2,
+      "reserve": 15,
+      "state": "READY",
+      "until": 0,
+      "started": 789365.8999998322,
+      "lastShot": 789365.8999998322,
+      "shotCount": 28,
+      "received": 0,
+      "sight": 500,
+      "reloadMode": null
+    },
+    "enemyAlive": 44,
+    "events": 25
+  },
+  "shots": 28,
+  "blockers": 0,
+  "deaths": 0,
+  "control_pauses": 0,
+  "message_repetitions": [
+    [
+      "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente",
+      14
+    ],
+    [
+      "Um homem caiu na retirada! Suprima o fogo do tabuleiro leste.",
+      3
+    ],
+    [
+      "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 51%.",
+      2
+    ],
+    [
+      "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão.",
+      2
+    ],
+    [
+      "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão.",
+      2
+    ],
+    [
+      "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores.",
+      2
+    ],
+    [
+      "Posto da ponte ferroviária: 76 m, em frente",
+      1
+    ],
+    [
+      "Abrigue-se! Cabeça baixa, junto à cobertura!",
+      1
+    ]
+  ],
+  "minute_samples": 76,
+  "observer_samples": 149,
+  "long_stationary_windows": [
+    {
+      "from_game": 894.6658999997358,
+      "objective": "Mantenha o corredor — conte os que passam",
+      "repair_from": 100,
+      "new_events": [],
+      "to_game": 1083.3829999995662,
+      "repair_to": 100,
+      "duration_game": 188.71709999983045
+    },
+    {
+      "from_game": 607.5994999999949,
+      "objective": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+      "repair_from": 100,
+      "new_events": [
+        "evt_m01_north_contact_distant",
+        "evt_m01_runner_pressure_report"
+      ],
+      "to_game": 756.2991999998604,
+      "repair_to": 100,
+      "duration_game": 148.69969999986552
+    },
+    {
+      "from_game": 372.1494000000501,
+      "objective": "Proteja o reparo da linha",
+      "repair_from": 50.83333333333286,
+      "new_events": [],
+      "to_game": 495.13280000007796,
+      "repair_to": 97.37779999999685,
+      "duration_game": 122.98340000002787
+    },
+    {
+      "from_game": 69.89959999999814,
+      "objective": "Mantenha contacto com a secção",
+      "repair_from": 0,
+      "new_events": [],
+      "to_game": 110.69939999999588,
+      "repair_to": 0,
+      "duration_game": 40.79979999999773
+    },
+    {
+      "from_game": 503.1328000000798,
+      "objective": "Mantenha contacto com a secção",
+      "repair_from": 100,
+      "new_events": [],
+      "to_game": 532.6495000000632,
+      "repair_to": 100,
+      "duration_game": 29.516699999983416
+    }
+  ]
+}

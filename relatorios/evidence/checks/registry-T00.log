@@ -1,0 +1,1 @@
+{"candidate": "PR:#80", "live_refs": [], "name": "PLANS CONSOLIDATION", "note": "Planos paralelos fora do trunk (docs).", "refs": ["PR:#56", "PR:#58", "PR:#44"], "status": "NEEDS_AUDIT", "task": "T00", "verdict": "AUDIT_EXISTING_FIRST"}

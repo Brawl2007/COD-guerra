@@ -1,0 +1,286 @@
+{
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "scope": "Independent audit, no production fixes. P1 means high experience priority, not proven crash or security failure. Risks/recommendations are not all observed defects.",
+  "findings": [
+    {
+      "id": "QI01",
+      "severity": "P1",
+      "title": "Defesa sem destino no guia",
+      "status": "Confirmado por código e rota de simulação",
+      "observation": "hold_access devolve guia null, apesar de ter ordem e uma cobertura sugerida.",
+      "evidence": [
+        "evidence/cover-contract.json"
+      ],
+      "impact": "Clareza espacial e compreensão do papel",
+      "owner_coordination": "HUD/orientação; coordenar pacing",
+      "recommendation": "Ler área da definição e apresentar a posição/tarefa real; feedback ao ocupar.",
+      "acceptance": "Jogador identifica área, ameaça e ação sem consultar coordenadas."
+    },
+    {
+      "id": "QI02",
+      "severity": "P1",
+      "title": "Mudança recomenda a própria cobertura",
+      "status": "Confirmado por rota de simulação",
+      "observation": "Na primeira salva, occupied=suggested=cv_sandbag_mid_2.",
+      "evidence": [
+        "evidence/cover-contract.json"
+      ],
+      "impact": "Uma ordem pode contradizer o estado real",
+      "owner_coordination": "pacing/combate e contrato de apresentação",
+      "recommendation": "Garantir nó ativo diferente do ocupado; não inventar ameaça ou segurança no HUD.",
+      "acceptance": "Salva real gera destino diferente e válido; recomendações iguais são rejeitadas."
+    },
+    {
+      "id": "QI03",
+      "severity": "P1",
+      "title": "Prompt de E pode anunciar ação impossível",
+      "status": "Confirmado por testes isolados",
+      "observation": "Bąk: E aparece a 3,5 m mas não recolhe; caixa: E aparece a 5,5 m mas não recolhe.",
+      "evidence": [
+        "evidence/interaction-probes.json"
+      ],
+      "impact": "Confiança nas interações",
+      "owner_coordination": "pacing/simulação + HUD",
+      "recommendation": "Partilhar o predicado de disponibilidade entre prompt e execução.",
+      "acceptance": "Todo E anunciado como disponível executa nessa posição; testar os limites e obstáculos."
+    },
+    {
+      "id": "QI04",
+      "severity": "P1",
+      "title": "Ajuda termina antes do alcance da entrega",
+      "status": "Confirmado por código; causa de desorientação plausível",
+      "observation": "Guia cala abaixo de 10 m, entrega de Bąk exige abaixo de 4 m.",
+      "evidence": [
+        "../../../src/game/m01-simulation.js"
+      ],
+      "impact": "Resgate e acessibilidade espacial",
+      "owner_coordination": "HUD/orientação com pacing",
+      "recommendation": "Manter referência ao aid_position até ao alcance real e dar confirmação de entrega.",
+      "acceptance": "Rota sem coordenadas encontra o destino e entrega com o mesmo critério apresentado."
+    },
+    {
+      "id": "QI05",
+      "severity": "P1",
+      "title": "Falas sem VO correspondente",
+      "status": "Confirmado por dados e diagnóstico no trecho High",
+      "observation": "activeVoiceLines=0, loader entries=0/decoded=0; falas observadas são legendas.",
+      "evidence": [
+        "evidence/manual-high/observations.json"
+      ],
+      "impact": "Personagens, orientação pela voz e direção sonora",
+      "owner_coordination": "T45/áudio e narrativa",
+      "recommendation": "Gravar/licenciar núcleo de falas, ligar fonte espacial e prioridades; preservar legendas.",
+      "acceptance": "Ordens essenciais e falas de relação têm voz, legendas corretas e inteligibilidade validada por escuta."
+    },
+    {
+      "id": "QI06",
+      "severity": "P1",
+      "title": "Abertura enquadra o local e perde os interlocutores",
+      "status": "Observado em High e Low",
+      "observation": "A fala sobre o café decorre com a câmara virada para as pontes; virar revela a secção.",
+      "evidence": [
+        "evidence/manual-high/01-high-intro-default.png"
+      ],
+      "impact": "Introdução e identificação do elenco",
+      "owner_coordination": "direção/apresentação e skin",
+      "recommendation": "Compor abertura para mostrar o orador/ação, mantendo liberdade de olhar.",
+      "acceptance": "Sem documentação, jogador identifica quem lhe dá a ordem e reconhece dois companheiros."
+    },
+    {
+      "id": "QI07",
+      "severity": "P1",
+      "title": "Acabamento humano limitado no trecho High",
+      "status": "Observado; avaliação artística",
+      "observation": "Rostos, mãos, silhuetas e similaridade de poses continuam simplificados no encontro.",
+      "evidence": [
+        "evidence/manual-high/03-high-approach-section.png"
+      ],
+      "impact": "Credibilidade das pessoas",
+      "owner_coordination": "skin/assets/anim — trabalho ativo do Capitão",
+      "recommendation": "Rever a entrega da branch skin antes de encomendar outro kit; testar no mesmo enquadramento.",
+      "acceptance": "Galeria e cena real mostram proporção, mãos, equipamento e identidade coerentes sem novo clipping."
+    },
+    {
+      "id": "QI08",
+      "severity": "P1",
+      "title": "Arma e braço descompostos após entregar Bąk",
+      "status": "Observado em várias capturas Low e diagnóstico persistente; causa ainda não isolada",
+      "observation": "Em g903,45 carrying=false, clip=aim, runBlend=0 e scene=null; fotos do corredor mostram arma à esquerda e braço separado após a entrega.",
+      "evidence": [
+        "evidence/route/45-corridor-3.png"
+      ],
+      "impact": "Primeira pessoa e confiança nas transições de transporte",
+      "owner_coordination": "viewmodel/anim; coordenar T40 e skin",
+      "recommendation": "Reproduzir carry→putdown→aim com o rig atual; investigar restauro de transformações e contacto, sem substituir todo o sistema.",
+      "acceptance": "Depois de entrega, espera, corrida, ADS e restore, mãos voltam a segurar a arma; comparação visual antes/depois e teste da transição."
+    },
+    {
+      "id": "QI09",
+      "severity": "P1",
+      "title": "Ordem de reparar continua depois do reparo concluído",
+      "status": "Observado na partida e explicado pelo código",
+      "observation": "Em g503,1 o objetivo passa a Mantenha contacto; em g504,1 reaparece Proteja o reparo. updateContinuity escolhe o cue pelo intervalo de batalha, mesmo com reparo concluído.",
+      "evidence": [
+        "evidence/route/log.jsonl"
+      ],
+      "impact": "Validade e confiança nas ordens",
+      "owner_coordination": "HUD/narrativa + pacing",
+      "recommendation": "Condicionar cues ao estado real; definir validade e prioridade das falas sem preencher silêncios.",
+      "acceptance": "Nenhum aviso pede um objetivo já concluído; avisos urgentes e restores preservam a ordem correta."
+    },
+    {
+      "id": "QI10",
+      "severity": "P1",
+      "title": "Movimento vertical é assentamento instantâneo",
+      "status": "Confirmado por código e rota de simulação; não observado em vídeo",
+      "observation": "Na aproximação à água, Y passa de -3 para -10 num passo de 0,05 s. TczewWorld.move atribui actor.y=heightAt.",
+      "evidence": [
+        "evidence/height-probe.json"
+      ],
+      "impact": "Fisicalidade do jogador e NPCs",
+      "owner_coordination": "phys; evitar implementação concorrente",
+      "recommendation": "Auditar a branch phys e medir degraus, declives, quedas e limites antes de outra correção.",
+      "acceptance": "Percursos de queda/degrau têm resultado coerente e repetível; sem atravessar volumes ou quebrar gates."
+    },
+    {
+      "id": "QI11",
+      "severity": "P2",
+      "title": "Manter acesso é armazenado como visita",
+      "status": "Confirmado por código; decisão de design",
+      "observation": "holdAccessVisited fica true por entrada na área; o objetivo não mede defesa contínua.",
+      "evidence": [
+        "../../../src/game/m01-simulation.js"
+      ],
+      "impact": "Significado do verbo militar",
+      "owner_coordination": "pacing/Captain",
+      "recommendation": "Decidir contrato e explicar o papel que realmente existe; não adicionar timer fictício no HUD.",
+      "acceptance": "Descrição, condição e feedback concordam em visita, posição e duração."
+    },
+    {
+      "id": "QI12",
+      "severity": "P2",
+      "title": "A ida e volta da caixa depende de observação incidental",
+      "status": "Risco de direção; confrontar com cronologia e fotos da rota",
+      "observation": "A tarefa combina deslocação longa, E e regresso mais lento, sem arma utilizável.",
+      "evidence": [
+        "D-HISTORIA-E-ROTEIRO.md"
+      ],
+      "impact": "Variedade e ritmo",
+      "owner_coordination": "pacing/direção",
+      "recommendation": "Distribuir acontecimento legível, rota com decisão ou reação útil; medir exposição antes de encurtar arbitrariamente.",
+      "acceptance": "O jogador identifica uma mudança relevante durante o transporte; pausa de deslocação tem propósito verificável."
+    },
+    {
+      "id": "QI13",
+      "severity": "P2",
+      "title": "Transporte da caixa conserva mãos esféricas",
+      "status": "Observado em Low e confirmado na geometria do código",
+      "observation": "Na captura g262, a caixa é segurada por volumes arredondados sem dedos; m01-view.js cria duas esferas no carryCrate.",
+      "evidence": [
+        "evidence/observer/observer-3-g262.png"
+      ],
+      "impact": "Continuidade visual da primeira pessoa",
+      "owner_coordination": "viewmodel/anim; extensão pontual, não reabrir o transporte de Bąk",
+      "recommendation": "Reutilizar mãos/rig existentes para o transporte de material e manter a faixa branca visível.",
+      "acceptance": "Arma, caixa e Bąk mantêm a mesma linguagem de mãos e contacto físico em High e em movimento."
+    },
+    {
+      "id": "QI14",
+      "severity": "P2",
+      "title": "Transições do terreno e escala dos materiais",
+      "status": "Observado em High; avaliação artística",
+      "observation": "Taludes e grandes manchas de materiais têm regularidade e acabamento visivelmente simplificados.",
+      "evidence": [
+        "evidence/manual-high/03-high-approach-section.png"
+      ],
+      "impact": "Credibilidade do lugar",
+      "owner_coordination": "terreno/materiais; preservar colisores",
+      "recommendation": "Articular percursos, balastro e desgaste por uso; rever escala de textura em vistas fixas.",
+      "acceptance": "Imagens High próxima/média não dependem de enchimento de props para esconder transições; colisão coincide."
+    },
+    {
+      "id": "QI15",
+      "severity": "P2",
+      "title": "Cue da cena concorre com ordem para oeste",
+      "status": "Observado em fotografia e confirmado nos dados",
+      "observation": "Durante Siga a voz, o cue ainda diz ENE aeronaves até t=14 do bombardeio.",
+      "evidence": [
+        "../../../missions/m01-tczew/mission.json"
+      ],
+      "impact": "Hierarquia de orientação",
+      "owner_coordination": "HUD/cinema + dados sob coordenação",
+      "recommendation": "Ceder o cue ao objetivo urgente, ou limitar o intervalo à validade da indicação aérea.",
+      "acceptance": "Nenhum fotograma pede simultaneamente duas direções incompatíveis para a ação urgente."
+    },
+    {
+      "id": "QI16",
+      "severity": "P2",
+      "title": "Música planeada sem amostras distribuídas",
+      "status": "Confirmado por código e diagnóstico do trecho",
+      "observation": "Conductor calcula layers, mas playing/musicSlots estão vazios e o loader não tem entries.",
+      "evidence": [
+        "evidence/manual-high/observations.json"
+      ],
+      "impact": "Produção sonora; não confundir ausência com silêncio dirigido",
+      "owner_coordination": "T45/música",
+      "recommendation": "Decidir se a missão precisa do motivo proposto; gravar/licenciar só os trechos úteis e preservar silêncios.",
+      "acceptance": "Quando declarada música entregue, existe áudio real; chamada e janelas de silêncio mantêm a intenção."
+    },
+    {
+      "id": "QI17",
+      "severity": "P2",
+      "title": "Aquisição de alvos a cerca de 1 km",
+      "status": "Risco e requisito de teste; não avaliação humana conclusiva",
+      "observation": "Layout e guia pedem identificar clarões longínquos; o piloto usa coordenadas/conhecimento da rota.",
+      "evidence": [
+        "../../../missions/m01-tczew/map-layout.json"
+      ],
+      "impact": "Combate, arma e leitura da ameaça",
+      "owner_coordination": "combate/direção; não mudar escala histórica por impulso",
+      "recommendation": "Teste com jogador no PC-alvo: origem, alvo, efeito da supressão e resposta de aliados.",
+      "acceptance": "Jogador aponta a origem e reconhece o efeito do seu tiro sem recorrer ao diagnóstico."
+    },
+    {
+      "id": "QI18",
+      "severity": "P2",
+      "title": "Instrução de encenação é publicada no HUD",
+      "status": "Observado em captura/log e causa confirmada no código",
+      "observation": "Na demolição oeste aparece Zieliński abaixa a cabeça de Jan com a mão (se o jogador estiver a até 3 m); updatePreRoll envia beat.action para message.",
+      "evidence": [
+        "evidence/route/92-west-demolition.png"
+      ],
+      "impact": "Imersão, atuação e separação entre roteiro e apresentação",
+      "owner_coordination": "narrativa/apresentação; coordenação com autoridade de eventos",
+      "recommendation": "Separar ação de encenação e texto para o jogador; executar gesto apenas com condição real, sem expor instrução interna.",
+      "acceptance": "Nenhum action de produção ou condição técnica chega ao HUD; cada gesto tem condição/resultado verificáveis na cena."
+    },
+    {
+      "id": "QI19",
+      "severity": "P2",
+      "title": "Transição acumula cinco camadas de texto sobre o combate",
+      "status": "Observado em captura Low; avaliação de hierarquia",
+      "observation": "Na retirada, objetivo fixo, tarefa anterior riscada, novo objetivo central, mensagem e legenda coexistem no corredor de mira.",
+      "evidence": [
+        "evidence/route/19-withdrawal.png"
+      ],
+      "impact": "Leitura da ameaça durante a mudança de ordem",
+      "owner_coordination": "HUD/apresentação; preservar canais existentes",
+      "recommendation": "Arbitrar a transição: uma confirmação breve e uma ordem prioritária, reduzindo duplicação central quando há diálogo/ameaça.",
+      "acceptance": "Nas mesmas transições desktop/móvel, objetivo e ordem são legíveis sem acumular avisos no corredor da mira."
+    },
+    {
+      "id": "QI20",
+      "severity": "P2",
+      "title": "Guia de combate repete apesar do progresso do reparo",
+      "status": "Observado no log e explicado pelo código",
+      "observation": "A mensagem da MG a 1083 m já se repete enquanto repair% avança; o guia mede aproximação ao alvo, não progresso do trabalho.",
+      "evidence": [
+        "evidence/route/log.jsonl"
+      ],
+      "impact": "Ruído informativo e orientação adaptativa",
+      "owner_coordination": "HUD/orientação com pacing",
+      "recommendation": "Usar progresso real e estado de ameaça para repetir; para o reparo, aproximar-se da MG não é a condição de avanço.",
+      "acceptance": "Durante progresso normal e sem mudança de ameaça não se repete a mesma ordem de direção; ajuda regressa quando útil."
+    }
+  ]
+}

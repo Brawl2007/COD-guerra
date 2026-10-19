@@ -1,0 +1,22 @@
+{
+  "method": "Separate simulation control route through existing toCoverAdjustment; no event/clock/actor assignment; not the browser playthrough.",
+  "head": "68301b779b856af46ed35a10fde42df9559d9ed4",
+  "clock": 507.9000000000812,
+  "player": {
+    "x": -27.53133592613605,
+    "z": 27.978412532858382
+  },
+  "occupied": "cv_sandbag_mid_2",
+  "suggested": "cv_sandbag_mid_2",
+  "guide": null,
+  "visited": false,
+  "fire": {
+    "by": "de_east_0",
+    "at": 507.9000000000812,
+    "x": 1053.7314813329297,
+    "y": 0.3695089,
+    "z": 31.89734575657787,
+    "age": 0
+  },
+  "status": "Metralhadora nos portões de Lisewo · 1081 m, em frente · mude de cobertura"
+}

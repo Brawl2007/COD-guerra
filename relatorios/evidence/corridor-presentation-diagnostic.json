@@ -1,0 +1,666 @@
+{
+  "observedAt": "2026-10-18T16:04:52.881Z",
+  "clock": 903.4491999997281,
+  "player": {
+    "x": -292.18751049728843,
+    "y": -3,
+    "z": 25.98886496462234,
+    "angle": -6.2018,
+    "pitch": 0.0009999999999999011,
+    "health": 92,
+    "crouched": false,
+    "aiming": false
+  },
+  "eventIds": [
+    "evt_m01_intro_card",
+    "evt_m01_prelude_start",
+    "evt_m01_railway_worker_report",
+    "evt_m01_planes_heard",
+    "evt_m01_bombing_0434",
+    "evt_m01_cable_cut",
+    "evt_m01_forward_post_bombed",
+    "evt_m01_nowicki_lost",
+    "evt_m01_wounded_dragged",
+    "evt_m01_second_air_pass",
+    "evt_m01_train963_arrives",
+    "evt_m01_panzerzug_arrives",
+    "evt_m01_repair_complete",
+    "evt_m01_order_demolish",
+    "evt_m01_bombing_0530",
+    "evt_m01_runner_pressure_report",
+    "evt_m01_north_contact_distant",
+    "evt_m01_east_platoon_withdraws",
+    "evt_m01_bak_wounded",
+    "evt_m01_germans_on_east_spans",
+    "evt_m01_east_demolition"
+  ],
+  "quality": "low",
+  "viewModel": {
+    "active": true,
+    "visible": true,
+    "lod": 0,
+    "native": {
+      "clock": 903.4491999997281,
+      "triangles": 3264,
+      "calls": 6,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        }
+      ]
+    },
+    "clock": 903.4491999997281,
+    "fpVariant": "fp-arms-v2",
+    "drawnTriangles": 3264,
+    "drawnMeshes": [
+      {
+        "name": "body",
+        "triangles": 600
+      },
+      {
+        "name": "rifle",
+        "triangles": 1414
+      },
+      {
+        "name": "fp_sleeve_caps",
+        "triangles": 102
+      },
+      {
+        "name": "fp_hands",
+        "triangles": 1028
+      },
+      {
+        "name": "fp_cuffs",
+        "triangles": 96
+      },
+      {
+        "name": "fp_straps",
+        "triangles": 24
+      }
+    ],
+    "carryFrame": null,
+    "clip": "aim",
+    "clipTime": 0,
+    "carrying": false,
+    "singleRound": false,
+    "armTriangles": 1850,
+    "aimBlend": 0,
+    "runBlend": 0,
+    "phase": 0.601,
+    "visualMuzzle": [
+      -0.19261750124414095,
+      -0.13768814763273518,
+      -0.9573255928966815
+    ],
+    "visualSights": {
+      "rear": [
+        0.1469953149860106,
+        -0.17300313576488768,
+        -0.7400000000000002
+      ],
+      "front": [
+        0.1469953149860106,
+        -0.17300313576488768,
+        -0.7400000000000002
+      ]
+    },
+    "presentation": {
+      "profile": "wz29",
+      "mechanical": 0,
+      "boltStroke": 0,
+      "wallDistance": null,
+      "wallTarget": 0,
+      "wallLower": 0,
+      "fov": 70,
+      "breath": 0.000455,
+      "bob": 0,
+      "gait": 0.601,
+      "aimEased": 0,
+      "muzzleReach": 0.74,
+      "lookYaw": 0,
+      "lookPitch": 0,
+      "clipEjected": false,
+      "flash": 0,
+      "layers": 0,
+      "light": 0,
+      "wisps": 0
+    }
+  },
+  "damage": [
+    {
+      "id": "station_bomb",
+      "x": -400,
+      "y": -3,
+      "z": 37.5,
+      "started": 114.19939999999568,
+      "soundAt": 115.41375059428121
+    },
+    {
+      "id": "forward_post",
+      "x": 0,
+      "y": -3,
+      "z": -40,
+      "started": 116.33269999999554,
+      "soundAt": 116.46267141470818
+    },
+    {
+      "id": "repair_crater",
+      "x": -40,
+      "y": -2.1427259525418814,
+      "z": 10,
+      "started": 119.21599999999538,
+      "soundAt": 119.37806010542198
+    },
+    {
+      "id": "raid_0530",
+      "x": -600,
+      "y": -3,
+      "z": 100,
+      "started": 536.2995000000599,
+      "soundAt": 537.979993560806
+    },
+    {
+      "id": "raid_0530_1",
+      "x": -680,
+      "y": -3,
+      "z": 65,
+      "started": 541.3328000000553,
+      "soundAt": 543.1769559018893
+    },
+    {
+      "id": "raid_0530_2",
+      "x": -760,
+      "y": -3,
+      "z": 130,
+      "started": 546.2995000000507,
+      "soundAt": 548.3082147566898
+    },
+    {
+      "id": "raid_0530_3",
+      "x": -820,
+      "y": -3,
+      "z": -20,
+      "started": 551.2995000000461,
+      "soundAt": 553.3801476296926
+    },
+    {
+      "id": "raid_0530_4",
+      "x": -650,
+      "y": -3,
+      "z": -130,
+      "started": 556.2995000000416,
+      "soundAt": 557.9825810500638
+    },
+    {
+      "id": "raid_0530_5",
+      "x": -740,
+      "y": -3,
+      "z": 210,
+      "started": 561.299500000037,
+      "soundAt": 563.3320592018813
+    },
+    {
+      "id": "east_demolition",
+      "x": 800,
+      "y": 0,
+      "z": 20,
+      "started": 837.3991999997879,
+      "soundAt": 839.7485783727865
+    }
+  ],
+  "weapon": {
+    "id": "kb_wz29",
+    "mag": 2,
+    "reserve": 15,
+    "state": "READY",
+    "until": 0,
+    "started": 789365.8999998322,
+    "lastShot": 789365.8999998322,
+    "shotCount": 28,
+    "received": 0,
+    "sight": 500,
+    "reloadMode": null
+  },
+  "demolition": {
+    "clock": 903.4491999997281,
+    "collapseSeconds": 3.2,
+    "budget": {
+      "low": {
+        "puffs": 24,
+        "debris": 18
+      },
+      "medium": {
+        "puffs": 36,
+        "debris": 28
+      },
+      "high": {
+        "puffs": 48,
+        "debris": 36
+      }
+    },
+    "entries": [
+      {
+        "id": "east_demolition",
+        "started": 837.3991999997879,
+        "age": 66.04999999994016,
+        "progress": 1,
+        "duration": 3.2,
+        "distance": 1092.2039299461567,
+        "far": {
+          "applies": true,
+          "exposure": 0,
+          "tremor": 0,
+          "exposureAt": 0,
+          "tremorAt": 3.1842680173357336
+        },
+        "farActive": true,
+        "silence": {
+          "id": "east_demolition",
+          "from": 837.3991999997879,
+          "to": 839.3991999997879,
+          "active": false
+        },
+        "fall": [
+          {
+            "x": 663.5,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 795,
+            "z": 0,
+            "surface": "earth"
+          },
+          {
+            "x": 663.3,
+            "z": 40,
+            "surface": "earth"
+          },
+          {
+            "x": 808.6,
+            "z": 40,
+            "surface": "earth"
+          }
+        ]
+      }
+    ],
+    "pieces": [
+      {
+        "name": "rail_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          793.8,
+          0,
+          0
+        ],
+        "basePosition": [
+          793.8,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "rail_span_06_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.5270520423911,
+          -0.0021660935158588357,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ],
+        "baseQuaternion": [
+          0.02999274578134724,
+          -0.0004064884910973335,
+          -0.013545551241086147,
+          0.9994582472565711
+        ]
+      },
+      {
+        "name": "rail_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          794.9577500287935,
+          -3.501693537492439,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ],
+        "baseQuaternion": [
+          -0.01999419469371582,
+          -0.00042290431638380803,
+          0.02114239638189532,
+          0.9995764364998405
+        ]
+      },
+      {
+        "name": "road_support_06_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_portal_old_east_rubble",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          807.5,
+          0,
+          0
+        ],
+        "basePosition": [
+          807.5,
+          0,
+          0
+        ],
+        "quaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "name": "road_span_06_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "basePosition": [
+          663.3244241671775,
+          -0.0020983124652897978,
+          0.059964006479444595
+        ],
+        "quaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ],
+        "baseQuaternion": [
+          0.029993255021697248,
+          -0.00036699536965776794,
+          -0.012229508814679593,
+          0.9994752168421955
+        ]
+      },
+      {
+        "name": "road_span_07_collapsed",
+        "lod": 2,
+        "damageId": "east_demolition",
+        "phase": "settled",
+        "progress": 1,
+        "position": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "basePosition": [
+          808.6494540829125,
+          -3.502079179785747,
+          -0.03998933418663416
+        ],
+        "quaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ],
+        "baseQuaternion": [
+          -0.019992264542544987,
+          -0.0005059920670607598,
+          0.02529622998263334,
+          0.9994799418093163
+        ]
+      }
+    ],
+    "flash": null,
+    "far": [
+      {
+        "key": "east_demolition@837.3991999997879",
+        "id": "east_demolition",
+        "started": 837.3991999997879,
+        "distance": 805.8367819385068,
+        "applies": true,
+        "exposure": 0,
+        "tremor": 0,
+        "exposureAt": 0,
+        "tremorAt": 2.349378372998562
+      }
+    ],
+    "camera": {
+      "position": [
+        -292.18751049728843,
+        -1.36,
+        25.98886496462234
+      ],
+      "quaternion": [
+        0.00033887763832139863,
+        -0.7352874346413262,
+        0.0003676437479575849,
+        0.6777552201632964
+      ],
+      "fov": 70,
+      "aspect": 1.7777777777777777,
+      "near": 0.05,
+      "far": 7500,
+      "width": 640,
+      "height": 360
+    }
+  },
+  "battlefieldFx": {
+    "active": 0,
+    "counts": {
+      "flash": 0,
+      "core": 0,
+      "fire": 0,
+      "smoke": 0,
+      "dust": 0,
+      "shard": 0
+    },
+    "meta": {
+      "kinds": {
+        "small": 0,
+        "bombing": 0,
+        "demolition": 0
+      },
+      "bands": {
+        "near": 0,
+        "mid": 0,
+        "far": 0
+      }
+    },
+    "limits": {
+      "bursts": 16,
+      "flash": 16,
+      "core": 48,
+      "fire": 96,
+      "smoke": 128,
+      "dust": 128,
+      "shards": 96,
+      "lights": 1
+    },
+    "extraLights": 0,
+    "atmosphere": {
+      "puffs": 112,
+      "puffCapacity": 256,
+      "railwayPuffs": 12,
+      "trainPuffs": 10,
+      "railwayBudget": 12,
+      "smokeByDamage": {
+        "station_bomb": 5,
+        "forward_post": 0,
+        "repair_crater": 0,
+        "station_wagon_fire": 0,
+        "raid_0530": 13,
+        "raid_0530_1": 13,
+        "raid_0530_2": 13,
+        "raid_0530_3": 13,
+        "raid_0530_4": 13,
+        "raid_0530_5": 13,
+        "east_demolition": 17
+      },
+      "debris": 0,
+      "debrisCapacity": 64,
+      "puffBatches": 8,
+      "demolition": {
+        "puffs": 0,
+        "chips": 0
+      }
+    }
+  },
+  "visiblePieces": 57,
+  "scene": null,
+  "flags": {
+    "m01.completed": false,
+    "m01.nowicki_status": "missing",
+    "m01.bak_status": "rescued_by_player",
+    "m01.dudek_status": "unhurt",
+    "m01.east_platoon_survivors": 12,
+    "m01.second_raid_state": "ended",
+    "m01.forward_post_state": "intact_near_miss"
+  },
+  "hud": {
+    "banner": null,
+    "queued": [],
+    "fade": 0,
+    "checkpoint": 0,
+    "titleCard": null,
+    "resumeCard": null,
+    "cinematic": false,
+    "sceneBeats": {
+      "scene": null,
+      "elapsed": 0,
+      "letterbox": false,
+      "dimHud": 0,
+      "lookPrompt": "",
+      "subtitlePause": false,
+      "shake": 0
+    }
+  }
+}

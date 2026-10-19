@@ -1,0 +1,49 @@
+--- original/tools/m01-browser-playthrough.mjs
++++ audit-only/pilot-adapted.mjs
+@@ -19,7 +19,7 @@
+ // --cover help|ignore: em "Proteja o reparo" e "Cubra a retirada", o piloto cala a MG dos portões e os alemães do tabuleiro
+ // (mirando o último clarão que viu) ou não dispara e espera abrigado. Sem a opção, mantém o fogo esporádico para leste.
+ const COVER = opt('--cover', null);
+-const { chromium } = createRequire(import.meta.url)('@playwright/test');
++const { chromium } = createRequire('/workspace/COD-guerra/package.json')('@playwright/test');
+ 
+ await mkdir(OUT, { recursive: true });
+ const logFile = `${OUT}/log.jsonl`;
+@@ -27,13 +27,13 @@
+ const t0 = Date.now();
+ const real = () => +((Date.now() - t0) / 1000).toFixed(1);
+ const report = { adverse: ADVERSE, cover: COVER && { mode: COVER, shots: 0, suppressingShots: 0, repair: {}, mgSamples: 0, mgSuppressedSamples: 0, casualties: [], statusLines: [], hudMismatches: [], fxFrames: 0 }, adverseResults: [], verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
+-  startedAt: new Date().toISOString(), viewport: [1280, 720], timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
++  startedAt: new Date().toISOString(), viewport: [640, 360], timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
+ 
+ const browser = await chromium.launch({
+   ...(process.env.CHROME_EXECUTABLE ? { executablePath: process.env.CHROME_EXECUTABLE } : {}),
+-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
++  args: ['--remote-debugging-port=9223', '--no-sandbox', '--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+ });
+-const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
++const page = await browser.newPage({ viewport: { width: 640, height: 360 } });
+ const pageErrors = [], failed = [];
+ page.on('pageerror', e => pageErrors.push(e.message));
+ page.on('response', r => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
+@@ -61,7 +61,11 @@
+   const s = await state();
+   report.screenshots.push({ file: path.split('/').pop(), note, real: real(), battle: hms(s.battle), pos: [+s.player.x.toFixed(1), +s.player.z.toFixed(1)], angle: +s.player.angle.toFixed(2), objective: s.hud.objective });
+ }
+-const look = (dx, dy = 0) => page.evaluate(([x, y]) => window.dispatchEvent(new MouseEvent('mousemove', { movementX: x, movementY: y })), [dx, dy]);
++const look = async (dx,dy=0) => {
++ const before=await page.evaluate(()=>window.gameDiagnostics().clock);
++ await page.evaluate(([x,y])=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y})),[dx,dy]);
++ await page.waitForFunction(t=>window.gameDiagnostics().clock>t,before,{polling:'raf',timeout:15000});
++};
+ const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
+ const held = new Set();
+ async function hold(code, on) { if (on) { await page.keyboard.down(code); held.add(code); } else if (held.has(code)) { await page.keyboard.up(code); held.delete(code); } }
+@@ -221,6 +225,7 @@
+   await shot('menu', 'Menu com Tczew seleccionado');
+   await page.locator('#start').click();
+   await page.waitForFunction(() => document.pointerLockElement?.id === 'game' && !window.gameDiagnostics().paused, null, { timeout: 60000 });
++  await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0})));
+   await log('started');
+   await tick(1500); await shot('intro', 'Intro (cartela 04:30)');
+   if (SKIP_CUTSCENES) await page.keyboard.press('Space');

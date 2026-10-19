@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://store.steampowered.com/manual/10090",
+    "observed_at": "2026-10-18T15:53:29.650887+00:00",
+    "returncode": 56,
+    "headers": "HTTP/1.1 200 OK\ndate: Sun, 18 Oct 2026 15:53:27 GMT\nHTTP/2 302 \nlocation: https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/10090/manuals/manual_english.pdf?t=1780962495\ndate: Sun, 18 Oct 2026 15:53:29 GMT\nHTTP/1.1 403 Forbidden\ndate: Sun, 18 Oct 2026 15:53:29 GMT",
+    "stderr": "curl: (56) CONNECT tunnel failed, response 403\n"
+  },
+  {
+    "url": "https://www.youtube.com/results?search_query=Call+of+Duty+WWII+D+Day+gameplay",
+    "observed_at": "2026-10-18T15:53:29.671694+00:00",
+    "returncode": 56,
+    "headers": "HTTP/1.1 403 Forbidden\ndate: Sun, 18 Oct 2026 15:53:29 GMT",
+    "stderr": "curl: (56) CONNECT tunnel failed, response 403\n"
+  },
+  {
+    "url": "https://www.ign.com/articles/2017/11/03/call-of-duty-wwii-review",
+    "observed_at": "2026-10-18T15:53:29.686617+00:00",
+    "returncode": 56,
+    "headers": "HTTP/1.1 403 Forbidden\ndate: Sun, 18 Oct 2026 15:53:29 GMT",
+    "stderr": "curl: (56) CONNECT tunnel failed, response 403\n"
+  },
+  {
+    "url": "https://www.ign.com/articles/2008/11/12/call-of-duty-world-at-war-review",
+    "observed_at": "2026-10-18T15:53:29.707201+00:00",
+    "returncode": 56,
+    "headers": "HTTP/1.1 403 Forbidden\ndate: Sun, 18 Oct 2026 15:53:29 GMT",
+    "stderr": "curl: (56) CONNECT tunnel failed, response 403\n"
+  }
+]
