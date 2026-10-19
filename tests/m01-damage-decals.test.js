@@ -97,7 +97,7 @@ test('damage decals never write simulation state: the real repair route stays bi
   // groups): the gate riflemen fire about 20 % slower at a visible player, because the AI's flat 16.5 s per round replaced the old ~13.5 s, and the repair is 18 s shorter with
   // 10 -> 3 pins; rounds landing within 60 m of the player 50 -> 25, cracks past him 55 -> 34 (tools/verification/m01-combat-ai-metrics.mjs nearImpacts.toHoldAccess, 5d99df8
   // against 9cd2aca). The deck assault (combat slice 2, amendment 08) does not reach this window (it begins at 06:05); over the whole route it brings the near rounds back
-  // above the old level (whole support route 19390901: within 60 m 50 -> 88, cracks 52 -> 96; 5d99df8 had 78 / 73).
+  // above the old level (whole support route 19390901: within 60 m 50 -> 90, cracks 52 -> 107; 5d99df8 had 78 / 73).
   assert.ok(fed.impacts>65&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
   assert.ok(a.counts.placed>15&&a.marks.length>0&&a.marks.length<=LIMITS.quality.medium.marks,JSON.stringify(a.counts));
   // Two instances fed the same frozen events are identical: variation is a hash of event data, not a random source.

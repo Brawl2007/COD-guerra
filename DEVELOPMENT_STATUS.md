@@ -1,5 +1,14 @@
 # Estado de desenvolvimento
 
+## M01 combate, fatia 2: assalto do tabuleiro («traga o combate para perto») + correcções da revisão crítica — 2026-10-18
+
+Branch local `claude/busy-ritchie-3fkvk2-slice2` (de `9cd2aca`). **Não publicada**, sem revisão crítica independente desta fatia, sem CI, **sem playtest humano**. Detalhe, medições e desvios: `docs/direction/COD_WAW_WWII_BENCHMARK.md`, «Fatia 2: assalto do tabuleiro»; evidência em `docs/verification/m01-runtime/deck-assault-2026-10-18/`.
+- **Jogo:** às 06:05 dez alemães entram no tabuleiro rodoviário; quatro ficam no vão 8, seis avançam por lanços até x 458–578 (nunca a oeste de x 450), ajoelham em cobertura, levantam-se para disparar tiros reais sobre o pelotão e o jogador, e recuam (perdas, supressão, tempo) para leste de x 945. A demolição leste espera que o tabuleiro fique livre (relógio parado em 06:09:30), por isso o combate corre ≈ 250–260 s reais sem mudar nenhuma hora fixa. Alemão mais próximo 964 → 430 m (controlo), < 600 m em 40 % do combate do tabuleiro; < 300 m: 0 % com os pilotos do golden. Caixa de munição da secção no posto do tabuleiro (120 cartuchos); evento `enemy_down_by_player`.
+- **Desvios do desenho escrito:** o recuo é **antes** da explosão (os vãos 06–07 caem; ninguém pode ficar do lado polaco); a ckm wz.30 e o Kowal **não vêem** o tabuleiro (medido), o empurrão é do jogador.
+- **Revisão crítica (5 correcções):** comentário dos decalques e frase da vida corrigidos; quase-bala da MG34 imobiliza os sapadores 5 s (margem mínima ajuda × ignora em 12 sementes 4,9 → 10,9 s, teste novo); fogo de busca no último sítio do jogador sai como rondas `player` (`ai.seen.who`); notas da D2 (`rifleGateEastThreshold`, `spansPickPlayerThreshold` mortos).
+- **Golden:** emenda 08 (`--amendment 08`, predecessor `9cd2aca`, delta `deck-assault`); 06 e 07 re-verificadas idênticas; invariantes `--live` 24/24.
+- **Testes:** ver o ledger (linha da fatia 2) para os números finais.
+
 ## M01: integração passos 3 e 4 (pacing → combate) sobre phys + npc + skin + anim + áudio — 2026-10-18
 
 Branch local `claude/busy-ritchie-3fkvk2-integ-pc` (de `66e47b2`). **Não publicada**, sem revisão crítica independente, sem CI, sem playtest humano.
