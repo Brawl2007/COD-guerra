@@ -1,4 +1,4 @@
-// H9 D1 (M01-H9-D1-DIFFICULTY-DATA-V1): level table + save/restore plumbing. Nothing reads the table yet, so recruta must stay
+// H9 D1 (M01-H9-D1-DIFFICULTY-DATA-V1): level table + save/restore plumbing. Since D2 (2026-10-19) the simulation reads the table; recruta must stay
 // byte-identical to the pre-H9 simulation (the committed x86 golden in m01-animation-contract.test.js proves it per tick on CI).
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,17 +15,19 @@ const played=(seed,options,ticks=120)=>{
 };
 
 // The design table (docs/direction/H9_DIFICULDADE.md, section 2), written independently of the module under test.
+// 2026-10-19 (H9 D2): soldado and veterano are the CALIBRATED rows (tools/verification/m01-difficulty-sweep.mjs, 24 audit routes; the D35 starting values are kept in
+// the design document's calibration note and in m01-difficulty.js). recruta is unchanged.
 const loadout={grenades:2,mag:5,reserve:40};
 const DESIGN={
   recruta:{id:'recruta',woundChance:{exposed:.2,cover:.06},woundDamage:8,burstWoundCap:null,aimErrorScale:1,cooldownScale:1,
     rifleGateEastThreshold:.5,spansPickPlayerThreshold:.25,deEast0Repair:{share:0,withinSappersM:8},coverAdjustSalvoSec:42,reactionGraceSec:null,
     healing:null,hpOnCheckpoint:null,kowalRounds:30,loadout,bombsLethal:false},
-  soldado:{id:'soldado',woundChance:{exposed:.9,cover:.35},woundDamage:34,burstWoundCap:2,aimErrorScale:.55,cooldownScale:.75,
-    rifleGateEastThreshold:.35,spansPickPlayerThreshold:.4,deEast0Repair:{share:.3,withinSappersM:8},coverAdjustSalvoSec:30,reactionGraceSec:1.5,
+  soldado:{id:'soldado',woundChance:{exposed:.45,cover:.15},woundDamage:25,burstWoundCap:1,aimErrorScale:.85,cooldownScale:.9,
+    rifleGateEastThreshold:.35,spansPickPlayerThreshold:.3,deEast0Repair:{share:.3,withinSappersM:8},coverAdjustSalvoSec:30,reactionGraceSec:1.5,
     healing:{ratePerSec:5,afterUnhitSec:8,cap:100},hpOnCheckpoint:100,kowalRounds:30,loadout,bombsLethal:false},
-  veterano:{id:'veterano',woundChance:{exposed:1,cover:.5},woundDamage:50,burstWoundCap:null,aimErrorScale:.4,cooldownScale:.6,
-    rifleGateEastThreshold:.25,spansPickPlayerThreshold:.5,deEast0Repair:{share:.5,withinSappersM:8},coverAdjustSalvoSec:20,reactionGraceSec:.8,
-    healing:null,hpOnCheckpoint:100,kowalRounds:15,loadout,bombsLethal:false}
+  veterano:{id:'veterano',woundChance:{exposed:.8,cover:.3},woundDamage:40,burstWoundCap:null,aimErrorScale:.55,cooldownScale:.7,
+    rifleGateEastThreshold:.25,spansPickPlayerThreshold:.4,deEast0Repair:{share:.5,withinSappersM:8},coverAdjustSalvoSec:20,reactionGraceSec:.8,
+    healing:{ratePerSec:3,afterUnhitSec:10,cap:100},hpOnCheckpoint:100,kowalRounds:15,loadout,bombsLethal:false}
 };
 const frozenDeep=(v,path='table')=>{
   if(v&&typeof v==='object'){assert.ok(Object.isFrozen(v),path+' is frozen');for(const [k,item] of Object.entries(v))frozenDeep(item,path+'.'+k);}
@@ -41,7 +43,7 @@ test('the level table equals the approved design table exactly and is deeply fro
   assert.throws(()=>{M01_DIFFICULTY.soldado.woundChance.exposed=0;},TypeError);
   assert.throws(()=>{M01_DIFFICULTY.veterano.healing={};},TypeError);
   assert.throws(()=>{M01_DIFFICULTY_IDS.push('lenda');},TypeError);
-  assert.equal(M01_DIFFICULTY.soldado.woundDamage,34);assert.equal(M01_DIFFICULTY.veterano.kowalRounds,15);
+  assert.equal(M01_DIFFICULTY.soldado.woundDamage,25);assert.equal(M01_DIFFICULTY.veterano.kowalRounds,15);
 });
 
 test('the shipped design document is the approved copy and states the same table values',()=>{
@@ -49,12 +51,12 @@ test('the shipped design document is the approved copy and states the same table
   assert.match(doc,/^Desenho aprovado pelo Captain \(D35, ao abrigo de D34\)\. Implementação faseada D1–D5\./);
   const row=name=>doc.split('\n').find(line=>line.startsWith('| '+name));
   const cells=name=>{const line=row(name);assert.ok(line,name);return line.split('|').slice(2,5).map(c=>c.trim());};
-  assert.deepEqual(cells('Wound chance on collision, exposed / in cover (585)'),['.20 / .06','.90 / .35','1.0 / .50']);
-  assert.deepEqual(cells('Damage per wound (587)'),['8','34 (3 wounds)','50 (2 wounds)']);
-  assert.deepEqual(cells('Aim error ×'),['1.0','0.55','0.40']);
-  assert.deepEqual(cells('Cooldown × for fire at the west bank (478–492, 502)'),['1.0','0.75','0.60']);
+  assert.deepEqual(cells('Wound chance on collision, exposed / in cover (585)'),['.20 / .06','.45 / .15','.80 / .30']);
+  assert.deepEqual(cells('Damage per wound (587)'),['8','25 (4 wounds)','40 (3 wounds)']);
+  assert.deepEqual(cells('Aim error ×'),['1.0','0.85','0.55']);
+  assert.deepEqual(cells('Cooldown × for fire at the west bank (478–492, 502)'),['1.0','0.90','0.70']);
   assert.deepEqual(cells('Rifle gate shooters: east-only threshold `r()<.5` (488)'),['.50','.35','.25']);
-  assert.deepEqual(cells('Spans pick player `r()<.25` (504)'),['.25','.40','.50']);
+  assert.deepEqual(cells('Spans pick player `r()<.25` (504)'),['.25','.30','.40']);
   assert.deepEqual(cells('Cover-adjust salvo after N s in one cover (700, 707)'),['42','30','20']);
   assert.deepEqual(cells('Kowal resupply pool `timers.kowalRounds` (94, 323)'),['30','30','15']);
 });

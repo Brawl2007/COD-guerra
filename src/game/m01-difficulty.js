@@ -40,15 +40,21 @@ export const M01_DIFFICULTY=deepFreeze({
     loadout:LOADOUT,
     bombsLethal:false
   },
+  // D2 CALIBRATION (2026-10-19, tools/verification/m01-difficulty-sweep.mjs on the 24 audit routes, after the 05:35 fill). The D35 starting values in brackets killed the
+  // scripted routes: soldado [.90/.35, 34, cap 2, aim .55, cooldown .75, spans .40] died on 3 of 4 worst routes (control pilot standing at the deck post through the
+  // 260 s deck fight: 22-27 collisions); veterano [1/.50, 50, aim .40, cooldown .60, spans .50, no regen] killed even the support pilot in the repair (2-3 wounds).
+  // Values outside the D35 starting table are reported in DEVELOPMENT_STATUS (human decision): soldado's are inside the D35 calibration latitude; veterano's REGEN is a
+  // departure from D35 section 7 item 2 (recommended none), taken because without it no scripted route, the competent support pilot included, survives the long
+  // checkpoint segments (CP-B 04:38 -> CP-C 05:34 holds the whole repair).
   soldado:{
     id:'soldado',
-    woundChance:{exposed:.90,cover:.35},
-    woundDamage:34,                             // 3 wounds to die
-    burstWoundCap:2,                            // full HP survives any one burst
-    aimErrorScale:.55,
-    cooldownScale:.75,
+    woundChance:{exposed:.45,cover:.15},        // [.90/.35]
+    woundDamage:25,                             // 4 wounds to die [34]
+    burstWoundCap:1,                            // one wound per MG burst [2]
+    aimErrorScale:.85,                          // [.55]
+    cooldownScale:.90,                          // [.75]
     rifleGateEastThreshold:.35,
-    spansPickPlayerThreshold:.40,
+    spansPickPlayerThreshold:.30,               // deck player weight x1.29 [.40, x2]
     deEast0Repair:{share:.30,withinSappersM:8},
     coverAdjustSalvoSec:30,
     reactionGraceSec:1.5,
@@ -60,17 +66,17 @@ export const M01_DIFFICULTY=deepFreeze({
   },
   veterano:{
     id:'veterano',
-    woundChance:{exposed:1,cover:.50},
-    woundDamage:50,                             // 2 wounds to die
+    woundChance:{exposed:.80,cover:.30},        // [1/.50]
+    woundDamage:40,                             // 3 wounds to die [50]
     burstWoundCap:null,
-    aimErrorScale:.40,
-    cooldownScale:.60,
+    aimErrorScale:.55,                          // [.40]
+    cooldownScale:.70,                          // [.60]
     rifleGateEastThreshold:.25,
-    spansPickPlayerThreshold:.50,
+    spansPickPlayerThreshold:.40,               // deck player weight x2 [.50, x3]
     deEast0Repair:{share:.50,withinSappersM:8},
     coverAdjustSalvoSec:20,
     reactionGraceSec:.8,
-    healing:null,
+    healing:{ratePerSec:3,afterUnhitSec:10,cap:100},   // [none] slower and later than soldado's; see the calibration note above
     hpOnCheckpoint:100,
     kowalRounds:15,
     loadout:LOADOUT,
