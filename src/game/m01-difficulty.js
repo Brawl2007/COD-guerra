@@ -1,7 +1,10 @@
 // H9 difficulty levels for M01 (design approved D35: docs/direction/H9_DIFICULDADE.md, section 2 table).
-// Step D1 is DATA ONLY: nothing in the simulation reads these numbers yet (wiring is D2..D4). Pure data, no imports.
-// `recruta` is today's prototype tuning, so its snapshots stay byte-identical; the other two levels are the design's starting values,
-// still to be calibrated in D2 against the time-to-death bands. Conventions: `null` means "not applicable / none / as saved".
+// D1 (data) and D2 (2026-10-19, wiring): src/game/m01-simulation.js reads every row of the table through `sim.level` (landRound, burst, aiFire, aiTarget, deckFire,
+// deckTarget, eastFire, spansFire, the hold_access cover salvo, saveCheckpoint, the regen in tick, Kowal's pool and the section-ammo invariant of the validator).
+// `recruta` is today's prototype tuning and stays byte-identical (every multiplier is exactly 1, every new rule and every new saved key is off/absent on it);
+// the other two levels are calibrated in D2 over the 24 audit routes (tools/verification/m01-difficulty-sweep.mjs). Conventions: `null` means "not applicable / none / as saved".
+// NOT in the D35 table, so not per level (D2 does not invent them): suppression of the player (there is none), the AI's reaction/peek/bolt timings, the deck ammo box (timers.deckAmmo).
+// Pure data and pure helpers, no imports.
 const deepFreeze=value=>{
   if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.freeze(value);for(const item of Object.values(value))deepFreeze(item);}
   return value;
@@ -21,12 +24,13 @@ export const M01_DIFFICULTY=deepFreeze({
     burstWoundCap:null,                         // max wounds per single MG burst; null = no cap
     aimErrorScale:1,                            // x bias and cone, kinds `player`/`cover` only
     cooldownScale:1,                            // x fire cooldown at the west bank
-    // DEAD for D2 as written (2026-10-18 review): since combat AI slice 1 the gate riflemen pick by weights (aiTarget: east 1, repair 0.8, player 0.6 + 1.6 when he is the
-    // threat), not by this draw; D2 must re-express it as a weight on 'east' or drop it.
-    rifleGateEastThreshold:.50,                 // r()< : east-only rifle gate shooters (old eastFire draw; only a German without actor.ai still uses .5 literally)
-    // DEAD for D2 as written (2026-10-18): the deck assault (combat slice 2) picks by weights (deckTarget: platoon 2.3, player 1 + 1.6 threat); only a spans man without the
-    // deck record (an older save) still uses the old 0.25 literal of spansFire. D2 must re-express it as the player weight of deckTarget.
-    spansPickPlayerThreshold:.25,               // r()< : spans riflemen pick the player
+    // D2 2026-10-19 (was DEAD after combat AI slice 1, review of 2026-10-18): re-expressed as a weight. The old draw `r()<.5` gave 'east' odds of t/(1-t) against the rest;
+    // aiTarget now multiplies the gate rifleman's 'east' weight (1) by oddsWeight(level, recruta) = (t/(1-t)) / (.5/.5): recruta 1 exactly, soldado .54, veterano .33.
+    // A German without actor.ai (an older save) still draws `r()<t` in eastFire, now from this field.
+    rifleGateEastThreshold:.50,
+    // D2 2026-10-19 (was DEAD after combat slice 2): re-expressed as the player weight of deckTarget, x oddsWeight(level, recruta) = (t/(1-t)) / (.25/.75): recruta 1
+    // exactly, soldado 2, veterano 3. A spans man without the deck record (an older save) still draws `r()<t` in spansFire, now from this field.
+    spansPickPlayerThreshold:.25,
     deEast0Repair:{share:0,withinSappersM:8},   // share of de_east_0 fire on a visible player within 8 m of the sappers during the repair
     coverAdjustSalvoSec:42,                     // seconds in one cover before the adjusted-fire salvo
     reactionGraceSec:null,                      // grace after a shooter's first telegraph (fair-death rule F1); null = no rule
@@ -73,3 +77,16 @@ export const M01_DIFFICULTY=deepFreeze({
     bombsLethal:false
   }
 });
+
+// D2 helpers (pure). The odds of an old `r()<t` draw against the level's own, as a multiplier of the weight that replaced the draw: exactly 1 when t is recruta's.
+export const oddsWeight=(t,base)=>t===base?1:(t/(1-t))/(base/(1-base));
+// Fire "at the west bank" (cooldownScale, aimErrorScale reads only player/cover): the kinds of round aimed at the Polish side. 'east' (the show of fire at the east
+// bridgehead block) and 'platoon' (the men crossing the deck) keep their cadence on every level.
+export const M01_WEST_BANK_KINDS=Object.freeze(['player','cover','repair','squad','area']);
+export const M01_AIMED_AT_PLAYER_KINDS=Object.freeze(['player','cover']);
+// Rule F1 (H9 section 3), draw-free: a shooter "engages" the player from his first round of kind player/cover; the engagement is broken by a gap of more than
+// F1_TELEGRAPH_GAP_SEC between his rounds at the player. A wound may take the player to 0 only from a round fired reactionGraceSec or more after the first round of the
+// current engagement of the same shooter; otherwise health stays >= 1. Rule F2: rounds of one shooter fired within BURST_GROUP_SEC of the first wounding round are
+// one burst (a 7-round MG34 burst spans 6 x 0.075 = 0.45 s; the next burst of a group starts >= 0.75 s after the last).
+export const F1_TELEGRAPH_GAP_SEC=6;
+export const BURST_GROUP_SEC=.45;

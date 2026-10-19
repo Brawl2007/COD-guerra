@@ -143,12 +143,15 @@ test('invalid difficulty values are rejected by the validator and restore leaves
 test('a resumeCheckpoint whose difficulty differs from the outer save is rejected (absent counts as recruta)',()=>{
   const soldado=played(17,{difficulty:'soldado'}).snapshot(),recruta=played(17).snapshot();
   assert.ok(soldado.resumeCheckpoint&&recruta.resumeCheckpoint);
+  // H9 D2 (2026-10-19): veterano's Kowal pool is 15, so a soldado save relabelled veterano also gets veterano's pool (15, nothing taken yet), or the validator rejects it
+  // earlier for the pool; the case under test stays the level mismatch alone.
+  const asVeteran=st=>{st.difficulty='veterano';st.timers.kowalRounds=15;return st;};
   const cases={
-    'soldado outer, veterano backup':s=>{s.resumeCheckpoint.difficulty='veterano';return s;},
+    'soldado outer, veterano backup':s=>{asVeteran(s.resumeCheckpoint);return s;},
     'soldado outer, recruta backup (explicit)':s=>{s.resumeCheckpoint.difficulty='recruta';return s;},
     'soldado outer, backup without difficulty':s=>{delete s.resumeCheckpoint.difficulty;return s;},
     'outer without difficulty, soldado backup':s=>{delete s.difficulty;return s;},
-    'outer veterano, soldado backup':s=>{s.difficulty='veterano';return s;}
+    'outer veterano, soldado backup':s=>{asVeteran(s);return s;}
   };
   const target=new M01Simulation(44),before=text(target.snapshot());
   for(const [name,mutate] of Object.entries(cases)){
@@ -160,6 +163,6 @@ test('a resumeCheckpoint whose difficulty differs from the outer save is rejecte
   const outerRecruta=json(recruta);outerRecruta.resumeCheckpoint.difficulty='soldado';
   assert.throws(()=>validateM01Snapshot(outerRecruta),/dificuldade do checkpoint de retoma/);
   const outerExplicit=json(recruta);outerExplicit.difficulty='recruta';assert.doesNotThrow(()=>validateM01Snapshot(outerExplicit),'explicit recruta equals an absent backup level');
-  const veteran=json(soldado);veteran.difficulty='veterano';veteran.resumeCheckpoint.difficulty='veterano';
+  const veteran=json(soldado);asVeteran(veteran);asVeteran(veteran.resumeCheckpoint);
   assert.doesNotThrow(()=>validateM01Snapshot(veteran));
 });
