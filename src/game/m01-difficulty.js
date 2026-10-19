@@ -68,7 +68,7 @@ export const M01_DIFFICULTY=deepFreeze({
     id:'veterano',
     woundChance:{exposed:.80,cover:.30},        // [1/.50]
     woundDamage:40,                             // 3 wounds to die [50]
-    burstWoundCap:null,
+    burstWoundCap:1,                            // [none] measured: with no cap one MG34 group (2-3 bursts in ~1.5 s) killed the support pilot at full health on 2 of 12 seeds
     aimErrorScale:.55,                          // [.40]
     cooldownScale:.70,                          // [.60]
     rifleGateEastThreshold:.25,

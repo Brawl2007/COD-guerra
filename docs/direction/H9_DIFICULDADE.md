@@ -50,7 +50,7 @@ clamp, burst cap, regen, CP-B2) are active only on soldado/veterano. Starting va
 
 **D2 calibration (2026-10-19).** The table below is the SHIPPED table (`src/game/m01-difficulty.js`), calibrated with `tools/verification/m01-difficulty-sweep.mjs`
 on the 24 audit routes. The D35 starting values were: soldado wound .90 / .35, damage 34, burst cap 2, aim 0.55, cooldown 0.75, spans .40; veterano wound 1.0 / .50,
-damage 50, aim 0.40, cooldown 0.60, spans .50, healing none. With them soldado killed the control pilot on 3 of 4 worst routes and veterano killed every route,
+damage 50, no burst cap, aim 0.40, cooldown 0.60, spans .50, healing none. With them soldado killed the control pilot on 3 of 4 worst routes and veterano killed every route,
 the support pilot included, inside the repair. **Departure for human decision:** veterano has a slow regen (§7 item 2 recommended none). Rows not changed: recruta
 (byte-identical), the gate threshold, the de_east_0 share, the cover salvo, the grace, checkpoint health, Kowal's pool, loadout, bombs. The two thresholds are read
 as target weights (odds against recruta's) since combat AI slice 1/2 picks by weights: see `oddsWeight` in `m01-difficulty.js`.
@@ -59,7 +59,7 @@ as target weights (odds against recruta's) since combat AI slice 1/2 picks by we
 |---|---|---|---|
 | Wound chance on collision, exposed / in cover (585) | .20 / .06 | .45 / .15 | .80 / .30 |
 | Damage per wound (587) | 8 | 25 (4 wounds) | 40 (3 wounds) |
-| Max wounds per single MG burst | — | 1 | none |
+| Max wounds per single MG burst | — | 1 | 1 |
 | Aim error × (bias & cone, kinds `player`/`cover` only, 489/505/710) | 1.0 | 0.85 | 0.55 |
 | Cooldown × for fire at the west bank (478–492, 502) | 1.0 | 0.90 | 0.70 |
 | Rifle gate shooters: east-only threshold `r()<.5` (488) | .50 | .35 | .25 |

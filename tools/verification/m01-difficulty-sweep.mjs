@@ -1,6 +1,8 @@
 // H9 D2 calibration sweep (2026-10-19): the player's health and deaths per difficulty level over the 24 audit routes (12 seeds x {control route, support pilot}) of
 // tools/verification/m01-combat-posture-staging-audit.mjs, driven by the real test pilot (tests/helpers/m01-route.js). Read-only: nothing here changes a simulation.
-//   node tools/verification/m01-difficulty-sweep.mjs [--levels recruta,soldado,veterano] [--seeds 19390901,1,...] [--support both|0|1] [--jsonl <file>]
+//   node tools/verification/m01-difficulty-sweep.mjs [--levels recruta,soldado,veterano] [--seeds 19390901,1,...] [--support both|0|1] [--routes 19390901:0,7:1] [--jsonl <file>]
+//     [--override '{"soldado":{"woundDamage":25}}']   (calibration only: a candidate row merged over the frozen table, through the `level` getter; recorded in the output)
+// collisions = enemy rounds whose trace hit the player's collider (each one is one wound roll in landRound); by phase = the active objective(s).
 // One JSON line per route (stdout, and appended to --jsonl so a restart loses nothing), then a summary per level. Deterministic (no clocks, no paths).
 // A death ends that route (the scripted pilot cannot resume sensibly from a checkpoint): it is recorded with the battle clock, the objective and the shooter.
 // fightRealSec = the deck fight, evt_m01_germans_on_east_spans -> evt_m01_east_demolition, real seconds (the longest fight of the mission).

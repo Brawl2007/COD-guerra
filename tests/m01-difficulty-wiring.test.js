@@ -34,16 +34,17 @@ test('a wound: the level damage; recruta writes nothing new, the other levels re
   }
 });
 
-test('burst cap F2: on soldado one MG34 burst wounds at most burstWoundCap times; the next burst wounds again; veterano has no cap',()=>{
+test('burst cap F2: one MG34 burst wounds at most burstWoundCap times (soldado and veterano: once); the next burst wounds again',()=>{
   const sim=fresh('soldado'),L=M01_DIFFICULTY.soldado;assert.ok(L.burstWoundCap>=1);
   for(let k=0;k<7;k++)sim.woundPlayer(round(sim,'de_east_0',k*.075));
   assert.equal(sim.player.health,Math.max(1,100-L.burstWoundCap*L.woundDamage),'at most the cap from one burst');
   const before=sim.player.health;sim.woundPlayer(round(sim,'de_east_1',.1));assert.ok(sim.player.health<before||sim.player.health===1,'another gun is another burst');
   const s2=fresh('soldado');s2.woundPlayer(round(s2,'de_east_0',0));s2.woundPlayer(round(s2,'de_east_0',BURST_GROUP_SEC+.3));
   assert.equal(s2.player.health,100-2*L.woundDamage,'two bursts of the same gun are two bursts');
-  const v=fresh('veterano'),V=M01_DIFFICULTY.veterano;assert.equal(V.burstWoundCap,null);
-  v.player.health=100;for(let k=0;k<3;k++)v.woundPlayer(round(v,'de_east_0',k*.075));
-  assert.equal(v.player.health,Math.max(1,100-3*V.woundDamage),'veterano: no cap (F1 alone keeps the first burst from killing)');
+  // veterano (calibrated 2026-10-19): also one wound per burst, so one MG34 group cannot kill from full health with its 2-3 bursts in ~1.5 s.
+  const v=fresh('veterano'),V=M01_DIFFICULTY.veterano;assert.equal(V.burstWoundCap,1);
+  for(let k=0;k<7;k++)v.woundPlayer(round(v,'de_east_0',k*.075));
+  assert.equal(v.player.health,100-V.woundDamage,'veterano: one wound per burst');
 });
 
 test('fair death F1: a lethal wound needs the same shooter engaging the player for reactionGraceSec, with no gap over 6 s; else health stays at 1',()=>{

@@ -25,7 +25,7 @@ const DESIGN={
   soldado:{id:'soldado',woundChance:{exposed:.45,cover:.15},woundDamage:25,burstWoundCap:1,aimErrorScale:.85,cooldownScale:.9,
     rifleGateEastThreshold:.35,spansPickPlayerThreshold:.3,deEast0Repair:{share:.3,withinSappersM:8},coverAdjustSalvoSec:30,reactionGraceSec:1.5,
     healing:{ratePerSec:5,afterUnhitSec:8,cap:100},hpOnCheckpoint:100,kowalRounds:30,loadout,bombsLethal:false},
-  veterano:{id:'veterano',woundChance:{exposed:.8,cover:.3},woundDamage:40,burstWoundCap:null,aimErrorScale:.55,cooldownScale:.7,
+  veterano:{id:'veterano',woundChance:{exposed:.8,cover:.3},woundDamage:40,burstWoundCap:1,aimErrorScale:.55,cooldownScale:.7,
     rifleGateEastThreshold:.25,spansPickPlayerThreshold:.4,deEast0Repair:{share:.5,withinSappersM:8},coverAdjustSalvoSec:20,reactionGraceSec:.8,
     healing:{ratePerSec:3,afterUnhitSec:10,cap:100},hpOnCheckpoint:100,kowalRounds:15,loadout,bombsLethal:false}
 };
