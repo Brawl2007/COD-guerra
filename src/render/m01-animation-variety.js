@@ -170,10 +170,18 @@ export const isAlert=(actor,time)=>Math.min(ageOf(actor?.firedAt,time),ageOf(act
 
 /** A prone soldier flinches (prone_flinch, once) for 0.45 s after the sim stamps a near miss or a hit on him, else his candidate is unchanged.
  *  The prone idle's own time comes from postureSince (sim stamp driven), so it is not a time+offset loop and varyLoop never sees it. */
+// Scratch results (no allocation per actor per frame). Each is valid until the next call of the same function; the only caller
+// (refineCandidate in m01-animation-resolver.js) copies it with a spread before anything else runs. One object per return shape, so a
+// stale `rate` can never leak into a rate-less result.
+const FLINCH={clip:'prone_flinch',time:0,loop:false};
+const TRANSITION={clip:'',time:0,loop:false};
+const FIDGET={clip:'',time:0,loop:false};
+const LOOPED={clip:'',time:0,loop:true,rate:1};
 export function proneReaction(c,actor,time,clips){
   if(c.clip!=='prone_idle'||!has(clips,'prone_flinch'))return c;
   const age=Math.min(ageOf(actor.suppressedAt,time),ageOf(actor.hitAt,time));
-  return age<durationOf(clips,'prone_flinch',.45)?{clip:'prone_flinch',time:age,loop:false}:c;
+  if(!(age<durationOf(clips,'prone_flinch',.45)))return c;
+  FLINCH.time=age;return FLINCH;
 }
 
 /**
@@ -189,11 +197,12 @@ export function varyLoop(c,{actor,pose,time,clips}){
   else if(name==='crouched_idle'&&pose.name==='crouched')family='crouch';
   if(family){
     const tr=postureTransition(actor,time,clips);
-    if(tr)return {clip:tr.clip,time:tr.age,loop:false};
+    if(tr){TRANSITION.clip=tr.clip;TRANSITION.time=tr.age;return TRANSITION;}
     const choice=idleChoice(actor,time,family,clips,{coverLow:coverLowOf(actor),alert:isAlert(actor,time)});
-    if(choice.fidget)return {clip:choice.fidget,time:choice.fidgetAge,loop:false};
+    if(choice.fidget){FIDGET.clip=choice.fidget;FIDGET.time=choice.fidgetAge;return FIDGET;}
     clip=choice.clip;
   }else if(name==='seated'&&has(clips,'seated_b')&&unit(v.seed,6)>=.5)clip='seated_b';
   const duration=durationOf(clips,clip,0);
-  return duration>0?{clip,time:loopTime(v,time,duration),loop:true,rate:v.rate}:c;
+  if(!(duration>0))return c;
+  LOOPED.clip=clip;LOOPED.time=loopTime(v,time,duration);LOOPED.rate=v.rate;return LOOPED;
 }

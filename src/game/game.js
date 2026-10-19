@@ -7,6 +7,7 @@ import { M01Simulation } from './m01-simulation.js';
 import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
 import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
+import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the nine aerial impacts emitted by M01. Schema 2 stores their IDs,
@@ -23,9 +24,9 @@ export class Game {
     this.audioDirector=new M01AudioDirector(this.audio);   // presentation only: reads the sim, hooked below by optional-chained lines
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
-    this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];
+    this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];this.playSoundBound=sound=>this.playSound(sound);
     const listen=(target,type,callback)=>{target.addEventListener(type,callback);this.listeners.push(()=>target.removeEventListener(type,callback));};
-    listen(window,'resize',()=>this.renderer.resize());
+    listen(window,'resize',()=>{this.renderer.resize();this.m01Hud.resize();});
     listen(window,'blur',()=>this.pause());
     listen(document,'visibilitychange',()=>{if(document.hidden)this.pause();});
     listen(document,'pointerlockchange',()=>{
@@ -104,18 +105,19 @@ export class Game {
         fire:this.input.consumeFire(),reload:this.input.consumePressed('KeyR'),grenade:this.input.consumePressed('KeyG'),
         interact:this.input.consumePressed('KeyE'),skip:this.input.consumePressed('Space'),
         crouch:this.input.consumePressed('KeyC'),sight:this.input.consumePressed('KeyV')};
-      // M01 catches up a slow rendered frame with bounded physics steps in this same loop.
-      // Single-press actions and relative look are consumed once, never once per substep.
-      let remaining=this.isM01?dt:Math.min(.05,dt),first=true;
+      // M01 catches up a slow rendered frame with bounded physics steps in this same loop (at most 3 steps = 150 ms of simulation per frame;
+      // the rest of a long frame is dropped, so one hitch cannot snowball). Single-press actions and relative look are consumed once, never once per substep.
+      let remaining=frameSimBudget(dt,this.isM01),first=true,stop=false;
       while(remaining>1e-7&&!this.paused){
-        const step=Math.min(.05,remaining);
-        this.sim.tick(step,first?controls:{...controls,lookX:0,lookY:0,fire:false,reload:false,grenade:false,interact:false,skip:false,crouch:false,sight:false});
-        const events=this.sim.drainEvents();for(const event of events)this.handleEvent(event);
-        remaining-=step;first=false;if(events.some(event=>event.type==='restored')||this.sim.mission.complete)break;
+        const step=Math.min(SIM_STEP,remaining);
+        this.sim.tick(step,controls);
+        if(first){controls.lookX=0;controls.lookY=0;controls.fire=false;controls.reload=false;controls.grenade=false;controls.interact=false;controls.skip=false;controls.crouch=false;controls.sight=false;}   // tick() keeps no reference to controls
+        const events=this.sim.drainEvents();
+        for(let i=0;i<events.length;i++){this.handleEvent(events[i]);if(events[i].type==='restored')stop=true;}
+        remaining-=step;first=false;if(stop||this.sim.mission.complete)break;
       }
-      const due=this.pendingSounds.filter(sound=>sound.at<=this.sim.clock);
-      this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
-      due.forEach(sound=>this.playSound(sound));
+      // Due sounds play in this same pass; the rest is compacted in place (no filter() arrays per frame). playSound never touches pendingSounds.
+      playDueSounds(this.pendingSounds,this.sim.clock,this.playSoundBound);
       if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
         phase:this.sim.mission.phase,quality:this.renderer.quality});
       if(this.isM01)this.audioDirector?.update(this.sim);
@@ -307,7 +309,7 @@ export class Game {
       hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
-    this.audioDirector?.dispose();
+    this.audioDirector?.dispose();this.m01Hud.dispose();
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();
   }
 }
