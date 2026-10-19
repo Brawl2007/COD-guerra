@@ -351,7 +351,9 @@ test('the getter is computed on every read and detached; the plan and the pairs 
   const view=sim.germanWithdrawal;view.carried.length=0;view.regrouped.push('x');
   assert.deepEqual(sim.snapshot(),saved,'reading the getter writes nothing and returns detached data');
   assert.ok(!JSON.stringify(saved).includes('germanWithdrawal'));
-  assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_4')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
+  // 2026-10-19 re-pin de_spans_4 -> de_spans_5 (golden amendment 12, the 05:35 fill moves the main RNG): on this route de_spans_4 now falls in the deck fight (x 459), so the
+  // retreat record is read on a man who lives to retreat; the record itself is unchanged.
+  assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_5')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
   assert.deepEqual(restore(sim).germanWithdrawal,sim.germanWithdrawal);
 });
 

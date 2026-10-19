@@ -41,7 +41,10 @@ test('candidate grid on the west bridgehead: 1066 points, 39 excluded (36 inside
 
 test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted posts see gate riflemen (S1,S2), the span group (S3) or only the south reserve (S4)',{timeout:240000},async()=>{
   const win=await collectWindowTargets({everyTicks:20});
-  assert.equal(win.samples,880);assert.equal(win.enemySamples,27550);assert.deepEqual(win.phaseSamples,{repair:7320,post_repair:7080,withdrawal:13150});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
+  // 2026-10-19 re-pin 27550 -> 27431, withdrawal 13150 -> 13031 (golden amendment 12, the 05:35 fill): the dike riflemen now also fire at the player at the deck post, which moves the
+  // main RNG from 05:35 on, so the deck fight of this neutral route plays out differently (its Germans fall or fall back at other times: 119 fewer living-German samples in the
+  // withdrawal); the route's length in samples (880) and every phase before the withdrawal are unchanged.
+  assert.equal(win.samples,880);assert.equal(win.enemySamples,27431);assert.deepEqual(win.phaseSamples,{repair:7320,post_repair:7080,withdrawal:13031});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
   const c0=evaluateCandidate(win,muzzleFlashWorld());assert.equal(c0.productionClearEntries,0);assert.deepEqual(c0.phases,{});
   const by=Object.fromEntries(SHORTLIST.map(c=>[c.id,describeCandidate(win,c)]));
   // S1 abutment top, north edge: 14 gate riflemen (incl. both MG34 gunners); production also lets rays through the rail trusses (28 actors), strict removes them.
@@ -56,7 +59,8 @@ test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted 
   const s3=by.S3;assert.deepEqual(ids(s3,'repair'),[]);assert.deepEqual(ids(s3,'post_repair'),[]);assert.deepEqual(ids(s3,'withdrawal'),range(0,9));
   // 2026-10-19 re-pin 1234 -> 1235 (combat slice 2b): the rearguard fires on the deck assault from 06:09:30, so the deck Germans the S3 post samples along the route are where they
   // are pinned, fall or fall back sooner (one more clear entry); the post itself, its clearance and its group are unchanged.
-  assert.equal(s3.strictClearEntries,1235);assert.equal(s3.minClearanceM,.35);assert.ok(Object.keys(s3.groups).join()==='grp_de_spans');
+  // 2026-10-19 re-pin 1235 -> 1250 (golden amendment 12, the 05:35 fill): the same cause as above, the deck Germans are elsewhere at the sampled ticks of the withdrawal.
+  assert.equal(s3.strictClearEntries,1250);assert.equal(s3.minClearanceM,.35);assert.ok(Object.keys(s3.groups).join()==='grp_de_spans');
   // S4 south flank: only the south reserve group de_east_28..39, never the gate riflemen.
   const s4=by.S4;for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s4,p),range(28,39));assert.equal(s4.throughBridgeEntries,0);
   // Muzzle height 0.6..0.9 m above ground does not change the shortlisted actor counts.

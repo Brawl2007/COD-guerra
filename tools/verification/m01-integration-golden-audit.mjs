@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue) and 11 (rearguard + director review) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review) and 12 (H9 D2 difficulty wiring + the 05:35 fill) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -104,7 +104,9 @@ const AMENDMENTS={
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.filter(e=>!(e.type==='message'&&/^(Zieliński chama-o da trincheira|Zieliński: .*mude de cobertura)/.test(e.message)));
       return frame;}},
-  '11':{task:'M01-REARGUARD-V1',delta:'rearguard',predecessor:'c1a3ecf304f1e8a30283d251d2ff8ec174e0ba93',after:null,
+  '11':{task:'M01-REARGUARD-V1',delta:'rearguard',predecessor:'c1a3ecf304f1e8a30283d251d2ff8ec174e0ba93',
+    // History since amendment 12: the rearguard golden pins the simulation of a59c129 (bf56966's simulation, the amendment 11 tree), not the live one.
+    after:'a59c129609ea4aef182ede0a172f745967d0cb30',
     previousGolden:'tests/fixtures/m01-dialogue-gameplay-baseline.json',golden:'tests/fixtures/m01-rearguard-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/rearguard-2026-10-19',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js'],
@@ -119,8 +121,26 @@ const AMENDMENTS={
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^pl_east_[0-2]$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10 or 11`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^pl_east_[0-2]$/},
+  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',after:null,
+    previousGolden:'tests/fixtures/m01-rearguard-gameplay-baseline.json',golden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/difficulty-0535-2026-10-19',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js'],
+    generationStage:'H9 D2 on the rearguard tree: the D35 level table is read by the simulation (wound chance and damage, burst cap F2, fair-death clamp F1, aim error, cadence and target weights of the fire at the player, the gate MG repair share, the cover salvo, regen, checkpoint health, Kowal pool); recruta, the level of these routes, keeps every number and writes no new key. And the 05:35 fill: from hold_access to the east demolition a dike rifleman who sees the player at the deck post (HOLD_AREA) may take him as a target (weight 1 against the east bridgehead block, 2.3 for a withdrawing man), so the stretch from 05:34:54 is no longer empty.',
+    // MEASURED below (first run of this amendment): the first lockstep difference and, with the dike riflemen's new sighting stripped, the first behaviour difference.
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,
+    // Measured (first run): the first lockstep difference is the new sighting of a dike rifleman (de_east_18's ai.seen, 05:35:26, control route); the next is what the bark
+    // director reads from it (timers.barks.seen.peek, a peek line, 05:37:09). With the sightings and the dialogue state stripped, as amendment 11 did, the first BEHAVIOUR
+    // difference is the dike rifleman who takes the player as his target.
+    stateOnly:frame=>{
+      const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];delete st.timers?.barks;
+        for(const a of st.actors??[])if(a.ai)delete a.ai.seen;strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
+      return frame;},
+    // Measured (control route): de_east_20 turns to the player at the deck post (facing, 05:38:43, the first key of the man that differs: his ai.target moves in the same tick).
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11 or 12`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);
