@@ -4,7 +4,7 @@
   "delta": "deck-assault",
   "predecessor": "9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec",
   "predecessorSourceSha256": "571042afd816fd3d66278d02d87af89057b21406cc338afb3b12b68fe99dcaae",
-  "sourceSha256": "7e85d7a7b42aef4f8d85a234a3ea76885e9dd00f0b7fdf65e137d5894bf6d416",
+  "sourceSha256": "d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23",
   "previousGolden": {
     "task": "M01-COMBAT-AI-V1",
     "file": "tests/fixtures/m01-combat-ai-gameplay-baseline.json",
