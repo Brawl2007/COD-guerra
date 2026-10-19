@@ -183,3 +183,30 @@ test('every difficulty level the simulation supports completes the control route
   }
   assert.ok(o.sim.player.health>=50,`the control route ends with ${o.sim.player.health} health`);
 });
+
+// 2026-10-19 review fixes (critical review of slice 2).
+test('seed 3 with support: a German killed on spans 06-07 falls with them at the east demolition, and a man already dead does not "retreat"',()=>{
+  let after=null;
+  const r=route(3,{support:true,onStep:({sim})=>{if(!after&&sim.consumedEvent(BLAST))after=json(spans(sim).map(a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,state:a.state,carriedBy:a.carriedBy??null})));}});
+  const ground=r.sim.world,onFallen=after.filter(a=>!a.alive&&!a.carriedBy&&a.x>=663&&a.x<=877);
+  assert.ok(onFallen.length>=1,`a body on the collapsed spans (${JSON.stringify(after.filter(a=>!a.alive).map(a=>[a.id,+a.x.toFixed(0)]))})`);
+  for(const a of after.filter(a=>!a.alive&&!a.carriedBy)){assert.equal(a.y,ground.heightAt(a.x,a.z),`${a.id} lies on the ground under him`);assert.equal(a.state,'DOWN',a.id);}
+  for(const a of onFallen)assert.ok(a.y<-1,`${a.id} fell with the span (y ${a.y})`);
+  for(const a of spans(r.sim).filter(a=>!a.alive&&!a.carriedBy))assert.equal(a.y,r.sim.world.heightAt(a.x,a.z),`${a.id} still on the ground at the end`);
+});
+
+test('the deck hold has an absolute bound: a man of the assault stuck west of clearX in full view is placed after maxSec + 240 s of hold and the clock resumes',()=>{
+  class Stuck extends M01Simulation{stepDeck(a,dt){if(a.id==='de_spans_5'&&a.x<P.clearX){a.deck.phase='hold';a.deck.until=this.clock+1;a.state='GUARD';return;}return super.stepDeck(a,dt);}}
+  const s=new Stuck(1);s.restoreSnapshot(observed().snap.mid);s.drainEvents();const man=s.actor('de_spans_5'),t0=s.clock;
+  let held=0;
+  for(let i=0;i<20*900&&!s.consumedEvent(BLAST);i++){
+    s.player.health=100;man.suppressedUntil=s.clock+1;   // keep the player alive and the stuck man down (he does not shoot him)
+    const p=s.player;p.angle=Math.atan2(man.z-p.z,man.x-p.x);   // the player looks straight at him: he is in view
+    s.tick(.05);held=Math.max(held,s.gate?.hold??0);
+    if(s.gate?.id==='evt_m01_east_demolition'&&s.gate.hold>P.maxSec+120&&s.gate.hold<P.maxSec+240)assert.ok(s.inView(man)||man.x>=P.clearX,'in view while the cap has not passed');
+  }
+  assert.ok(s.consumedEvent(BLAST),`the demolition came (${(s.clock-t0).toFixed(0)} s after the save, longest hold ${held.toFixed(0)} s)`);
+  assert.ok(held<=P.maxSec+240+1,'never longer than the absolute bound');
+  assert.ok(s.recoveries.some(r=>r.id==='de_spans_5'&&r.reason==='deck_hold_cap'),'placed by the cap, not by being out of view');
+  validateM01Snapshot(s.snapshot());
+});

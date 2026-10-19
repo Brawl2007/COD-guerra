@@ -25,7 +25,7 @@ import pacing from './fixtures/m01-pacing-gameplay-baseline.json' with {type:'js
 // --amendment 07 after its lockstep audit against that exact predecessor, is this one.
 import combat from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:'json'};
 // M01-COMBAT-DECK-ASSAULT-V1 (golden amendment 08, 2026-10-18, branch claude/busy-ritchie-3fkvk2-slice2): combat slice 2, the deck assault (grp_de_spans to mid-deck and back, the east
-// demolition waits for the deck to clear, enemy_down_by_player, the platoon's two clips). The combat AI golden above is history since then (it pins the simulation of 5d13d32 =
+// demolition waits for the deck to clear, enemy_down_by_player, the section's 120-round ammo box at the deck post, the 5 s MG34 pin and the review fixes). The combat AI golden above is history since then (it pins the simulation of 5d13d32 =
 // 9cd2aca); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 08 after its lockstep audit, is this one.
 import deck from './fixtures/m01-deck-assault-gameplay-baseline.json' with {type:'json'};
 const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // the named delta of amendment 08, as measured (tools/verification/m01-integration-golden-audit.mjs)

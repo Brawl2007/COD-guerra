@@ -255,6 +255,9 @@ const REGROUP_AHEAD=17,REGROUP_EAST_END=1080,REGROUP_Z=40.2,GERMAN_FELLED=4,GERM
 export const DECK_AMMO_POOL=120,DECK_AMMO_LOW=15,DECK_AMMO_SEC=3;
 // Combat slice 2: how far along the player's ray, from where his round lands or ends, a man of the deck assault is still pinned by its near miss (see fire()).
 const DECK_SUPPRESS_ALONG_M=25;
+// Combat slice 2 (2026-10-19 review fix): seconds of gate hold, past DECK_ASSAULT.maxSec, after which a man of the assault still west of clearX is placed on his fall-back
+// place even in the player's view (the absolute bound of the 06:09:30 hold).
+const DECK_HOLD_CAP_SEC=240;
 const REGROUP_SLOTS=[[0,0],[-1.8,1.1],[-1.8,-1.1],[1.8,1.1],[1.8,-1.1],[0,2.2]];   // metres east/south of the knot centre, westmost survivor first
 
 export class M01Simulation {
@@ -428,10 +431,11 @@ export class M01Simulation {
         }
         // Combat slice 2: the deck assault always falls back by DECK_ASSAULT.maxSec; a man still west of clearX long after that (a route the navigator could not walk) is
         // placed on his fall-back place when the player cannot see him, as the platoon's offscreen stragglers above. Measured: never on the audited routes.
+        // 2026-10-19 review fix: and after DECK_HOLD_CAP_SEC of hold he is placed even in view, so the clock held at 06:09:30 always resumes (a stuck man in sight held it for good).
         if(segment.gate===E('east_demolition')&&this.gate.hold>DECK_ASSAULT.maxSec+120)for(const a of this.actors.filter(a=>a.group==='grp_de_spans'&&a.deck&&a.alive&&a.active&&deckRole(a)==='assault'&&a.x<DECK_ASSAULT.clearX)){
-          if(this.inView(a))continue;const f=DECK_ASSAULT.fallback[assaultIndex(a)];
+          const cap=this.gate.hold>DECK_ASSAULT.maxSec+DECK_HOLD_CAP_SEC;if(!cap&&this.inView(a))continue;const f=DECK_ASSAULT.fallback[assaultIndex(a)];
           Object.assign(a,{x:f.x,z:f.z,state:'GUARD',facing:Math.PI});a.y=this.world.heightAt(a.x,a.z);delete a.nav;Object.assign(a.deck,{phase:'clear',since:this.clock,until:this.clock});
-          this.recoveries.push({id:a.id,reason:'offscreen_deck_straggler',clock:this.clock});
+          this.recoveries.push({id:a.id,reason:cap?'deck_hold_cap':'offscreen_deck_straggler',clock:this.clock});
         }
         if(segment.gate===E('west_demolition')&&this.gate.hold>120&&this.player.x>=-90&&!this.timers.escort){this.timers.escort=true;this.message('Zieliński vem buscá-lo. A demolição espera pela saída da secção.');}
       }
@@ -494,7 +498,8 @@ export class M01Simulation {
         this.beginDeckAssault();this.timers.withdrawalCasualty=this.battleClock;this.message('Eles entram pelo tabuleiro leste! Cubra os últimos homens do pelotão.');break;
       case E('east_demolition'):
         this.finish('cover_withdrawal');this.activate('leave_bridge');this.destruction.push('east_ends_destroyed');this.mission.phase='CLIMAX';
-        this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{const wasAlive=a.alive;if(i<GERMAN_FELLED){a.health=0;a.alive=false;a.state='DOWN';recordDeath(a,wasAlive,this.clock);}else{a.state='RETREAT';}});
+        // 2026-10-19 review fix: only a living man retreats; a man already dead stays DOWN (he lay on the deck with state RETREAT).
+        this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{const wasAlive=a.alive;if(i<GERMAN_FELLED){a.health=0;a.alive=false;a.state='DOWN';recordDeath(a,wasAlive,this.clock);}else if(a.alive)a.state='RETREAT';});
         this.beginFallBack();
         this.startScene('cs_m01_east_blast');this.impact('east_demolition',{x:800,y:0,z:20},false);
         if(this.flags['m01.bak_status']==='rescued_by_player'&&this.actor('jozef_bak').active)this.actor('leon_dudek').task='evacuate_bak';break;
@@ -508,6 +513,9 @@ export class M01Simulation {
       default:throw new Error(`Evento M01 sem resultado implementado: ${id}`);
     }
     this.world.refresh(Object.keys(this.consumed),this.flags);
+    // 2026-10-19 review fix: a German who died on spans 06-07 falls with them. After the east demolition every dead, uncarried man of the spans lies on the ground under him
+    // (the riverbed where the deck has gone), not in the air where the deck was.
+    if(id===E('east_demolition'))for(const a of this.actors)if(a.group==='grp_de_spans'&&!a.alive&&!a.carriedBy)a.y=this.world.heightAt(a.x,a.z);
     // T38: an event can open or close the rkm gunner's firing window (train 963, east demolition): stage him at once, as he will be drawn.
     const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);
     for(const a of this.actors)updatePosture(a,this.clock);
