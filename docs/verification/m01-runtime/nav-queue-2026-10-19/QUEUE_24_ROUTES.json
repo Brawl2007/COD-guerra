@@ -1,0 +1,244 @@
+{
+ "tool": "tools/verification/m01-nav-perf.mjs",
+ "root": "navq",
+ "mode": "time",
+ "node": "v22.22.0",
+ "arch": "x64",
+ "cpus": 4,
+ "loadAverageAtStart": [
+  5.73,
+  5.96,
+  5.51
+ ],
+ "routes": [],
+ "free": null,
+ "queue": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "ticks": 23839,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 1,
+   "support": false,
+   "ticks": 23763,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 2,
+   "support": false,
+   "ticks": 23946,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 3,
+   "support": false,
+   "ticks": 24076,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 4,
+   "support": false,
+   "ticks": 23405,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 5,
+   "support": false,
+   "ticks": 23819,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 6,
+   "support": false,
+   "ticks": 23929,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 7,
+   "support": false,
+   "ticks": 23975,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 8,
+   "support": false,
+   "ticks": 23667,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 9,
+   "support": false,
+   "ticks": 23886,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 10,
+   "support": false,
+   "ticks": 24385,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 11,
+   "support": false,
+   "ticks": 24018,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 19390901,
+   "support": true,
+   "ticks": 22977,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 1,
+   "support": true,
+   "ticks": 23208,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 2,
+   "support": true,
+   "ticks": 23001,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 3,
+   "support": true,
+   "ticks": 22990,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 4,
+   "support": true,
+   "ticks": 23073,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 5,
+   "support": true,
+   "ticks": 23036,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 6,
+   "support": true,
+   "ticks": 23277,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "ticks": 23051,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 8,
+   "support": true,
+   "ticks": 23085,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 9,
+   "support": true,
+   "ticks": 23138,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 10,
+   "support": true,
+   "ticks": 23273,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  },
+  {
+   "seed": 11,
+   "support": true,
+   "ticks": 22801,
+   "routeCalls": 5,
+   "maxRoutesInOneTick": 1,
+   "refusedRequests": 0,
+   "ticksWithARefusal": 0
+  }
+ ],
+ "queueSummary": {
+  "routes": 24,
+  "routeCalls": 120,
+  "maxRoutesInOneTick": 1,
+  "refusedRequests": 0
+ },
+ "loadAverageAtEnd": [
+  5.46,
+  5.71,
+  5.53
+ ]
+}

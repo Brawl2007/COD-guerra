@@ -2,14 +2,14 @@
   "task": "M01-NAV-QUEUE-V1",
   "amendment": "amendment-09",
   "delta": "nav-queue",
-  "predecessor": "ff65255c7a40497a74ceb1ba4bd666e838266dc1",
-  "predecessorSourceSha256": "7e85d7a7b42aef4f8d85a234a3ea76885e9dd00f0b7fdf65e137d5894bf6d416",
-  "sourceSha256": "70662f312ae40ae6a2901fb65e4ee884a2f0db6a4b4868904c0f6e269cd6e58b",
+  "predecessor": "c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d",
+  "predecessorSourceSha256": "d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23",
+  "sourceSha256": "4a44a6338d9911e8bf0679e91936ea819a9a96f5e29ee3baa36d970165c3e374",
   "previousGolden": {
     "task": "M01-COMBAT-DECK-ASSAULT-V1",
     "file": "tests/fixtures/m01-deck-assault-gameplay-baseline.json",
-    "sha256": "a79170dafec1a7f4ca3fd2f483aa4d56fa964789b5e65ce867adb84c3b7961d5",
-    "sourceSha256": "7e85d7a7b42aef4f8d85a234a3ea76885e9dd00f0b7fdf65e137d5894bf6d416"
+    "sha256": "2a94d73de17335ca83250e5711187d389859f390275c8057fb3420ef9f6c5f6a",
+    "sourceSha256": "d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23"
   },
   "identical": true,
   "authority": "Written only by tools/verification/m01-integration-golden-audit.mjs --amendment 09 --write (x86); never edited by hand.",
