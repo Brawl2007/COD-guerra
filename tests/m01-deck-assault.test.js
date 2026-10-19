@@ -189,9 +189,11 @@ test('every difficulty level on the control route with the deck assault: recruta
 });
 
 // 2026-10-19 review fixes (critical review of slice 2).
-test('seed 3 with support: a German killed on spans 06-07 falls with them at the east demolition, and a man already dead does not "retreat"',()=>{
+// 2026-10-19 re-pin seed 3 -> seed 4 with support (golden amendment 12): the 05:35 fill moves the main RNG, and on seed 3 no German dies on spans 06-07 any more; on seed 4 with
+// support de_spans_7 lies dead at x 802 when the east demolition comes (measured over seeds 19390901, 1, 2, 4 with support; the first that has the case). The rule tested is unchanged.
+test('seed 4 with support: a German killed on spans 06-07 falls with them at the east demolition, and a man already dead does not "retreat"',()=>{
   let after=null;
-  const r=route(3,{support:true,onStep:({sim})=>{if(!after&&sim.consumedEvent(BLAST))after=json(spans(sim).map(a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,state:a.state,carriedBy:a.carriedBy??null})));}});
+  const r=route(4,{support:true,onStep:({sim})=>{if(!after&&sim.consumedEvent(BLAST))after=json(spans(sim).map(a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,state:a.state,carriedBy:a.carriedBy??null})));}});
   const ground=r.sim.world,onFallen=after.filter(a=>!a.alive&&!a.carriedBy&&a.x>=663&&a.x<=877);
   assert.ok(onFallen.length>=1,`a body on the collapsed spans (${JSON.stringify(after.filter(a=>!a.alive).map(a=>[a.id,+a.x.toFixed(0)]))})`);
   for(const a of after.filter(a=>!a.alive&&!a.carriedBy)){assert.equal(a.y,ground.heightAt(a.x,a.z),`${a.id} lies on the ground under him`);assert.equal(a.state,'DOWN',a.id);}
