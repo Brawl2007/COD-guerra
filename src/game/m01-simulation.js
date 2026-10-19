@@ -17,7 +17,8 @@ import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADE
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
-import {barkEvent,barkTrigger,barkPoll,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
+import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01-rearguard.js';
+import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -202,10 +203,11 @@ const aiCount=(ai,w)=>{const u=aiNext(ai)*(w[0]+w[1]+w[2]);return u<w[0]?1:u<w[0
 // Combat slice 2 (deck assault): the men of grp_de_spans get their record when they enter the deck (evt_m01_germans_on_east_spans), derived from the main state of that
 // tick, never at reset and never by the restore migration, so a save made before the entry has none and gets none (AI_MIGRATE).
 const AI_MIGRATE=a=>a.group==='grp_de_east'||a.id==='szymon_kowal';
-const AI_ACTOR=a=>AI_MIGRATE(a)||a.group==='grp_de_spans';
+// Combat slice 2b: a man of the Polish rearguard gets his record the tick it forms (formRearguard), never at reset or by the restore migration.
+const AI_ACTOR=a=>AI_MIGRATE(a)||a.group==='grp_de_spans'||(a.rear!==undefined&&rearguardIndex(a)>=0);
 // ponytail: the state machine is implicit in existing fields (cooldown = time to the next trigger, suppressedUntil, reload, the T38 rise/hold posture rule); actor.ai
 // only adds what those cannot hold (the open peek/group, the stream, the suppression episode). No movement between cover nodes yet (slice 2), no callout events.
-const aiIndex=id=>id==='szymon_kowal'?40:id.startsWith('de_spans_')?41+Number(id.slice(9)):Number(id.slice(8));
+const aiIndex=id=>id==='szymon_kowal'?40:id.startsWith('de_spans_')?41+Number(id.slice(9)):id.startsWith('pl_east_')?51+Number(id.slice(8)):Number(id.slice(8));
 const fixedMG34=a=>a.alive&&a.active&&!['ADVANCE','RETREAT','WOUNDED','DOWN','reached_safety'].includes(a.state)&&
   !(a.target&&dist(a,a.target)>=.8);
 const canMG34Fire=a=>!proneGunner(a)||(fixedMG34(a)&&['idle','aim','reload'].includes(a.mg34Prone?.phase));
@@ -330,7 +332,9 @@ export class M01Simulation {
    * Says a line: queues its subtitle. A scripted line (every line without a `bark` rule) keeps the old FIFO and is never dropped, cut or jumped. A reactive line (a `bark` rule,
    * src/game/m01-barks.js) is ordered by its priority (1 is the most urgent) among the reactive ones, waits behind every scripted line, and lives only `barks.ttlSec` in the queue
    * (advanceSubtitle); at most `barks.voices` lines are on screen and waiting together, so a reactive line is dropped unless it is more urgent than one it can replace.
-   * Returns true when the line was queued, false when it was not (already said under this token, unknown, no room). The director is told what was said, for «tocou há N s».
+   * Returns true when the line was queued, false when it was not (already said under this token, unknown, no room). The director is told what was said, for «tocou há N s»:
+   * a scripted line when it is queued (it is always shown), a reactive one when it goes on screen (barkShown; review N1, 2026-10-19: a reactive line dropped by its time to live or
+   * by a more urgent one was never said, so it spends no `max`, no cooldown and no budget, and its token is given back). Until then it carries `queuedAt` and its `token`.
    */
   line(id,token=id){
     if(this.dialogueConsumed.includes(token))return false;
@@ -342,19 +346,25 @@ export class M01Simulation {
     let at=queue.length;
     if(rule){
       if(!this.makeRoom(rule.priority))return false;
-      Object.assign(record,{priority:rule.priority,bark:true,expires:this.clock+BARK_CONFIG.ttlSec[rule.priority]});
+      Object.assign(record,{priority:rule.priority,bark:true,expires:this.clock+BARK_CONFIG.ttlSec[rule.priority],queuedAt:this.clock,token});
       at=queue.length;while(at>0&&queue[at-1].bark&&queue[at-1].priority>rule.priority)at--;
     }else while(at>0&&queue[at-1].bark)at--;
     this.dialogueConsumed.push(token);
     queue.splice(at,0,record);
-    noteSpoken(this,id);
+    if(!rule)noteSpoken(this,id);
     return true;
+  }
+  /** A reactive line leaves the queue unseen (its time to live, a more urgent line, a skipped scene): its token is given back, and the HUD message it stood for, if any, is shown. */
+  dropBark(record,{fallback=true}={}){
+    if(record.queuedAt===undefined)return;   // a line of an older save: it was counted when it was queued, as then
+    const i=this.dialogueConsumed.indexOf(record.token);if(i>=0)this.dialogueConsumed.splice(i,1);
+    if(fallback&&record.fallback)this.message(record.fallback);
   }
   /** Room for one more reactive line of this priority: fewer than `barks.voices` lines on screen and waiting, or a waiting reactive line less urgent than it (which it replaces), or a reactive line on screen that it may cut (advanceSubtitle). */
   makeRoom(priority){
     const queue=this.dialogueQueue,last=queue[queue.length-1],shown=this.subtitle;
     if((shown?1:0)+queue.length<BARK_CONFIG.voices)return true;
-    if(last?.bark&&last.priority>priority){queue.pop();return true;}
+    if(last?.bark&&last.priority>priority){this.dropBark(queue.pop());return true;}
     return Boolean(shown?.bark&&shown.priority-priority>=BARK_CUT_STEP&&this.clock-(shown.until-shown.duration)>=BARK_CONFIG.cutAfterSec);
   }
   /**
@@ -365,8 +375,8 @@ export class M01Simulation {
     const queue=this.dialogueQueue;let shown=this.subtitle;
     if(shown&&this.clock>=shown.until)shown=this.subtitle=null;
     if(shown?.bark&&queue.length&&(!queue[0].bark||shown.priority-queue[0].priority>=BARK_CUT_STEP)&&this.clock-(shown.until-shown.duration)>=BARK_CONFIG.cutAfterSec)shown=this.subtitle=null;
-    while(queue.length&&queue[0].expires!==undefined&&this.clock>queue[0].expires)queue.shift();
-    if(!shown&&queue.length){this.subtitle=queue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
+    while(queue.length&&queue[0].expires!==undefined&&this.clock>queue[0].expires)this.dropBark(queue.shift());
+    if(!shown&&queue.length){this.subtitle=queue.shift();this.subtitle.until=this.clock+this.subtitle.duration;if(this.subtitle.queuedAt!==undefined)barkShown(this,this.subtitle);}
   }
   message(message){this.emit({type:'message',message});}
   startScene(id){if(this.sceneDone.includes(id))return;this.scene={id,elapsed:0,beats:[]};}
@@ -380,6 +390,7 @@ export class M01Simulation {
     const data=definition.cutscenes.find(c=>c.id===this.scene.id);
     if(skip&&data.skippable){
       data.timeline.forEach((b,i)=>{const token=`${data.id}:${i}:${b.line}`;if(b.line&&!this.dialogueConsumed.includes(token))this.dialogueConsumed.push(token);});
+      for(const q of this.dialogueQueue)this.dropBark(q,{fallback:false});
       this.dialogueQueue=[];this.subtitle=null;this.endScene();return;
     }
     this.scene.elapsed+=dt;
@@ -945,7 +956,7 @@ export class M01Simulation {
         else if(c.phase==='putdown'){playerPatient.carriedBy=null;delete playerPatient.carry;const aid=this.world.point('aid_position');playerPatient.x=aid.x-1.2;playerPatient.z=aid.z+.6;playerPatient.y=this.world.heightAt(playerPatient.x,playerPatient.z);}}
     }
     const retreat=this.consumedEvent(E('east_demolition')),holding=this.holdingEast();
-    this.holdEastPlatoon();
+    this.holdEastPlatoon();this.formRearguard();
     // T47: the ckm gunner decides first (his own saved stream, never this.rng); the other two men then copy his phase.
     const gunner=this.actors.find(a=>a.id==='ckm_gunner');
     this.updateCKMGunner(gunner,retreat);
@@ -986,6 +997,7 @@ export class M01Simulation {
       }
       if(a.group==='grp_east_platoon'){
         if(holding){a.crouched=true;continue;}   // T23: parado no tabuleiro até à retirada das 06:00 (hold.until); T38: de joelhos no seu lugar
+        if(a.rear&&a.rear.phase!=='released'){this.stepRearguard(a,dt);continue;}   // combat slice 2b: the rearguard holds the deck while the gate waits for it
         a.crouched=false;   // T38: na retirada levantam-se e correm
         // Etapas do recuo: portal rodoviário, sul do barracão e passagem pelo posto de disparo até junto da estação.
         // Os limiares ficam aquém dos pontos (moveActor pára a 0,8 m), para nenhum soldado ficar preso numa etapa.
@@ -1069,7 +1081,7 @@ export class M01Simulation {
       if(a.cooldown>0)continue;
       if(a.group==='grp_de_spans'){if(a.deck)this.deckFire(a,retreat);else this.spansFire(a,retreat);}else this.eastFire(a,retreat,withdrawal);
     }
-    this.attritionTick();this.kowalFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();
+    this.attritionTick();this.kowalFire(dt);this.rearguardFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();this.stageRearguard();
     const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);   // T38: up or down after his burst
     updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
@@ -1177,7 +1189,9 @@ export class M01Simulation {
   aiTarget(a,withdrawal,sees,west,threat){
     const ai=a.ai,u=()=>aiNext(ai),p=this.player,mg=a.weapon==='mg34',gate=gateShooter(a),c=[];
     const add=(id,target,kind,w)=>c.push({id,target,kind,w:w*(id===ai.target?3:1)});
-    const seesPlayer=()=>west&&sees(p),sapper=()=>{const s=this.actors.filter(x=>x.role==='ENGINEER'&&x.alive&&x.active);
+    // 2026-10-19 (bark director review B1): a sight of the player is remembered in the man's own record (ai.seen, who 'player'), riflemen too, so the director's peek
+    // lines read what the AI already saw instead of tracing their own lines of sight every tick. Only the MG34's searching fire reads ai.seen, and it is set there as before.
+    const seesPlayer=()=>{if(!(west&&sees(p)))return false;ai.seen={x:p.x,y:p.y,z:p.z,at:this.clock,who:'player'};return true;},sapper=()=>{const s=this.actors.filter(x=>x.role==='ENGINEER'&&x.alive&&x.active);
       return s.length?s[Math.floor(u()*s.length)]:this.world.point('repair_site_2');};
     if(withdrawal){
       const near=this.withdrawingPlatoon().filter(s=>s.x>650&&dist(s,a)<520),s=near.find(m=>m.id===ai.target)??(near.length?near[Math.floor(u()*near.length)]:null);
@@ -1313,6 +1327,109 @@ export class M01Simulation {
     const men=this.actors.filter(a=>a.group==='grp_de_spans'&&a.deck);
     return {active:men.length>0&&!this.consumedEvent(E('east_demolition')),clear:this.deckClear(),
       men:men.map(a=>({id:a.id,role:deckRole(a),phase:a.deck.phase,node:a.deck.node,x:a.x,z:a.z,alive:a.alive,pinned:a.deck.pinned}))};
+  }
+  /**
+   * Combat slice 2b (grp_east_platoon.rearguard in mission.json, src/game/m01-rearguard.js): true while the east demolition's gate holds the clock for the deck, from
+   * 06:09:30 (CKM_CEASE_AT, the gate time: 30 s before the segment's end) until no man of the deck assault is alive west of clearX. The 20 s rule runs on the battle
+   * clock, which is held then, so nothing the rearguard does can move a casualty.
+   */
+  rearguardHolds(){return this.consumedEvent(REARGUARD.from)&&this.battleClock>=CKM_CEASE_AT&&!this.consumedEvent(E('east_demolition'))&&!this.deckClear();}
+  /**
+   * Forms and releases the rearguard. The tick the hold begins, each man of it still on the deck east of (his post - joinWithinM) gets his record `rear` and his combat AI
+   * stream, derived from the main state of this tick (read, never drawn); once the hold is over he is `released` for good and runs on with the withdrawal. Writes actor data only.
+   */
+  formRearguard(){
+    const holds=this.rearguardHolds();
+    for(const id of REARGUARD.men){
+      const a=this.actor(id);if(!a?.alive||!a.active)continue;
+      if(!a.rear){
+        if(holds&&a.x>rearguardPost(a).x-REARGUARD.joinWithinM){a.rear={v:1,phase:'post',since:this.clock};a.ai=newAI(this.rng.state,aiIndex(a.id),a.suppressedUntil);a.firedAt??=-1e9;}
+        continue;
+      }
+      if(a.rear.phase!=='released'&&!holds){a.rear.phase='released';a.rear.since=this.clock;a.ai.peek=0;a.crouched=false;}
+    }
+  }
+  /** A man of the rearguard, every tick of the hold: he runs to his post (moveActor: the navigator, local avoidance and the queue), then stays there; his posture is set after the combat step. */
+  stepRearguard(a,dt){
+    const r=a.rear,post=rearguardPost(a);
+    if(r.phase==='post'){
+      if(dist(a,post)>=.9){a.crouched=false;this.moveActor(a,post,dt,REARGUARD.runSpeed);return;}
+      r.phase='hold';r.since=this.clock;a.facing=0;delete a.nav;a.cooldown=Math.max(a.cooldown,.6+.8*aiNext(a.ai));
+    }
+    if(this.clock-a.firedAt>=REARGUARD.fire.holdAfterSec)a.state='GUARD';
+  }
+  /** The rearguard's trigger, after the Germans' (updateCombat): the slice-1 cycle (aiPinned under fire, peeks, bolt, pause, the clip reloaded in cover). */
+  rearguardFire(dt){
+    for(const id of REARGUARD.men){
+      const a=this.actor(id);if(!a?.alive||!a.active||a.rear?.phase!=='hold')continue;
+      a.cooldown-=dt;
+      if(this.clock<a.suppressedUntil){this.aiPinned(a);a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+1.2+a.ai.recover);}
+      else if(a.cooldown<=0)this.rearguardShot(a);
+    }
+  }
+  /** T38 as the deck men, after this tick's shots and suppression (the rounds landed): a rearguard man at his post kneels, is up riseBeforeSec before his trigger and holdAfterSec after his shot, and is down while suppressed. */
+  stageRearguard(){
+    const F=REARGUARD.fire;
+    for(const id of REARGUARD.men){const a=this.actor(id);if(a?.alive&&a.active&&a.rear?.phase==='hold')a.crouched=this.clock<a.suppressedUntil||!(a.cooldown<=F.riseBeforeSec||this.clock-a.firedAt<F.holdAfterSec);}
+  }
+  /** The living deck-assault man the rearguard man shoots: the one he aimed at last while he still sees him, else the nearest in sight within rangeM (ties: roster order). No draw. */
+  rearguardTarget(a){
+    const F=REARGUARD.fire,standing={...a,crouched:false};let best=null,bestD=Infinity;
+    for(const m of this.actors){
+      if(m.group!=='grp_de_spans'||!m.deck||!m.alive||!m.active||deckRole(m)!=='assault'||m.deck.phase==='clear')continue;
+      const d=dist(a,m);if(d>F.rangeM||!this.world.lineOfSight(standing,m))continue;
+      if(m.id===a.ai.target)return m;
+      if(d<bestD){best=m;bestD=d;}
+    }
+    return best;
+  }
+  /** Everyone of our side a rearguard round must never go through: the player and every living, present ally but the shooter. */
+  rearguardFriends(a){const out=this.actors.filter(b=>b!==a&&b.team==='ally'&&!b.displayOnly&&b.alive&&b.active);if(this.player.alive)out.push(this.player);return out;}
+  /**
+   * Line-of-fire rule: a friend ahead of the muzzle (from 0.5 m to the target) within clearanceM of the aimed line in plan blocks the shot, unless the line passes more than
+   * headroomM over the top of his body there (the hitbox top: 1.88 m standing, 1.40 m kneeling, src/world/spatial.js), so a man may fire over a comrade who kneels in front
+   * of him but never past one who stands, runs or is in line with the shot. Pure geometry.
+   */
+  lineOfFireBlocked(origin,aim,friends){
+    const dx=aim.x-origin.x,dz=aim.z-origin.z,h=Math.hypot(dx,dz);if(h<1e-6)return false;
+    const ux=dx/h,uz=dz/h,F=REARGUARD.fire;
+    for(const f of friends){
+      const fx=f.x-origin.x,fz=f.z-origin.z,along=fx*ux+fz*uz;if(along<=.5||along>=h||Math.abs(fx*uz-fz*ux)>=F.clearanceM)continue;
+      if(origin.y+(aim.y-origin.y)*along/h<f.y+(f.crouched?1.4:1.88)+F.headroomM)return true;
+    }
+    return false;
+  }
+  /**
+   * One aimed kb wz.29 round of a rearguard man. Dispersion from his own stream only (sigmaMil, wider while shaken); held, with no round, when the line-of-fire rule
+   * blocks it or the dispersed ray itself would reach a friend. The round is the player's: traced at once against everyone (traceShot), a German it hits takes the
+   * rifle's damage, and suppressAlong() pins the Germans it cracks past by the same rule as the player's shots. One `npc-shot` (the allied rifle report) per round.
+   */
+  rearguardShot(a){
+    const ai=a.ai,u=()=>aiNext(ai),F=REARGUARD.fire;
+    if(!(a.rounds>0)){ai.peek=0;if(!a.reload)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};a.cooldown=Math.max(.3,a.reload.startedAt+a.reload.duration-this.clock)+.4+u();return;}
+    const t=this.rearguardTarget(a);
+    if(!t){ai.peek=0;ai.target=null;a.cooldown=AI_RESCAN[0]+AI_RESCAN[1]*u();return;}
+    if(ai.peek===0)ai.peek=aiCount(ai,[.4,.4,.2]);
+    ai.target=t.id;a.crouched=false;
+    const origin=eyePosition(a),aim=aimPoint(t),dx=aim.x-origin.x,dy=aim.y-origin.y,dz=aim.z-origin.z,h=Math.hypot(dx,dz);
+    const k=this.clock<ai.shakenUntil?AI_SHAKEN_BIAS:1,angle=Math.atan2(dz,dx)+aiGauss(ai)*F.sigmaMil[0]/1000*k,pitch=Math.atan2(dy,h)+aiGauss(ai)*F.sigmaMil[1]/1000*k;
+    const dir=aimDirection(angle,pitch),friends=this.rearguardFriends(a);
+    if(this.lineOfFireBlocked(origin,aim,friends)||traceShot(this.world,origin,dir,friends,Math.hypot(h,dy)+1)?.kind==='actor'){ai.peek=0;a.cooldown=.6+.6*u();return;}
+    const hit=traceShot(this.world,origin,dir,this.combatants.filter(b=>b!==a),1200);
+    if(hit?.actor?.team==='enemy'){const e=hit.actor,health=e.health,wasAlive=e.alive;e.health=Math.max(0,e.health-this.weapon.profile.damage*hit.multiplier);e.alive=e.health>0;e.state=e.alive?'HIT_REACTION':'DOWN';
+      recordDamage(e,health,wasAlive,this.clock,a);this.updateMG34Posture(e);}
+    this.suppressAlong(origin,dir,hit);
+    a.rounds=Math.max(0,a.rounds-1);if(a.rounds===0)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};
+    a.shot=.135;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=angle;
+    // The report of an allied rifle (audio weapon id `ally_rifle`, the profile of a Polish rifle heard at a distance); `by` names the man.
+    this.emit({type:'npc-shot',weapon:'ally_rifle',point:origin,rounds:1,by:a.id});
+    ai.peek=Math.max(0,ai.peek-1);
+    if(ai.peek>0&&a.rounds>0)a.cooldown=AI_BOLT[0]+AI_BOLT[1]*u();
+    else{ai.peek=0;let pause=aiPause(ai,F.pauseSec*1.8-1.8,3);if(!(a.rounds>0))pause=Math.max(pause,AI_RELOAD_COVER+u());a.cooldown=pause;}
+  }
+  /** Read-only diagnostics of the rearguard (never saved). */
+  get rearguard(){
+    return {holds:this.rearguardHolds(),men:REARGUARD.men.map(id=>{const a=this.actor(id);return {id,phase:a.rear?.phase??null,x:a.x,z:a.z,crouched:a.crouched,rounds:a.rounds,target:a.rear?a.ai?.target??null:null};})};
   }
   /** Tiro certeiro da regra dos 20 s: a vítima é o homem cuja baixa a contagem por ID já define. */
   lethalShot(spans){
@@ -1527,6 +1644,18 @@ export class M01Simulation {
     if(hit?.actor?.team==='enemy'){const a=hit.actor,health=a.health,wasAlive=a.alive;a.health=Math.max(0,a.health-this.weapon.profile.damage*hit.multiplier);a.alive=a.health>0;a.state=a.alive?'HIT_REACTION':'DOWN';recordDamage(a,health,wasAlive,this.clock,p);
       if(wasAlive&&!a.alive)this.enemyDown(a,'kb_wz29');}
     const targetPoint=hit?.point??{x:origin.x+dir.x*1200,y:origin.y+dir.y*1200,z:origin.z+dir.z*1200};
+    this.suppressAlong(origin,dir,hit);
+    for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
+    for(const a of this.actors)updatePosture(a,this.clock);
+    this.emit({type:'player-shot',point:targetPoint,material:hit?.material,hit:hit?.actor?.team==='enemy',weapon:'kb_wz29'});
+  }
+  /**
+   * What a rifle round of our side does to the Germans it cracks past (the player's kb wz.29, and since slice 2b the rearguard's): every living German within 3 m of the
+   * ray, short of what it hit, is suppressed 5 s; on the road deck only the deck man it came closest to and his neighbours along the ray. Then Kowal's callout when the
+   * round has just silenced an MG34 or the men on the spans. Extracted unchanged from fire() (2026-10-19) so the rearguard's rounds follow the same rule.
+   */
+  suppressAlong(origin,dir,hit){
+    const p=this.player;
     let silenced=false;
     const along=a=>Math.max(0,(a.x-origin.x)*dir.x+(a.y+1-origin.y)*dir.y+(a.z-origin.z)*dir.z),off=(a,d)=>Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d);
     const passes=a=>{const d=along(a);return d>0&&d<1200&&off(a,d)<3&&(!hit||d<=hit.distance+3);};
@@ -1542,14 +1671,11 @@ export class M01Simulation {
         recordSuppression(a,previousUntil,this.clock);
       }
     }
-    // Callout real (enemy_group_suppressed): só quando o tiro do jogador acabou de calar uma MG ou os alemães do tabuleiro.
+    // Callout real (enemy_group_suppressed): só quando o tiro (do jogador ou, desde a fatia 2b, da retaguarda) acabou de calar uma MG ou os alemães do tabuleiro.
     const kowal=this.actor('szymon_kowal');
     if(silenced&&this.clock-this.timers.calloutAt>25&&kowal.alive&&kowal.active&&dist(kowal,p)<150){
       this.timers.calloutAt=this.clock;this.line('co_m01_enemy_group_suppressed',`co_m01_enemy_group_suppressed:${Math.round(this.clock)}`);
     }
-      for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
-    for(const a of this.actors)updatePosture(a,this.clock);
-    this.emit({type:'player-shot',point:targetPoint,material:hit?.material,hit:hit?.actor?.team==='enemy',weapon:'kb_wz29'});
   }
   /** The reactive dialogue's NEEDS_EVENT (docs/direction/M01_REACTIVE_DIALOGUE.md, lines 141/142): a German the player's own rifle or grenade has just killed. */
   enemyDown(a,weapon){this.emit({type:'enemy_down_by_player',id:a.id,group:a.group??null,weapon,distance:dist(a,this.player),point:{x:a.x,y:a.y,z:a.z},at:this.clock});}
@@ -1637,7 +1763,9 @@ export class M01Simulation {
         for(const a of shooters[0]?.weapon==='mg34'?shooters.slice(0,1):shooters){
           this.burst(a,p,'cover',a.weapon==='mg34'?{rounds:7,bias:[.5,.3],cone:[.6,.4],tracer:true}:{rounds:1,bias:[.8,.5],cone:[0,0]});a.cooldown=Math.max(a.cooldown,6);
         }
-        if(shooters.length){this.mission.status=this.coverFireStatus();if(!spoken)this.message(`Zieliński: ${this.mission.status}.`);}
+        if(shooters.length){this.mission.status=this.coverFireStatus();const toast=`Zieliński: ${this.mission.status}.`;
+          // Review N1 (2026-10-19): the voice is only queued here; if it expires unseen the HUD message is shown then (dropBark), so the order is never lost.
+          if(!spoken)this.message(toast);else{const q=this.dialogueQueue.findLast(q=>q.queuedAt===this.clock&&BARK_RULES.get(q.id)?.on==='coverRotation');if(q)q.fallback=toast;}}
       }
     }
     barkPoll(this);   // the reactive lines that read state (m01-barks.js)
@@ -2029,6 +2157,8 @@ export function validateM01Snapshot(s){
   // Combat slice 2, versioned rule (deck record v1, src/game/m01-deck-assault.js): a man of grp_de_spans who carries the deck record may stand west of x 690 down to
   // DECK_SAFE_X (450, mission data); every other German, and any man of the spans without the record (every save made before this rule), keeps x >= 690.
   for(const a of s.actors)if(a.deck!==undefined&&(a.group!=='grp_de_spans'||!Object.hasOwn(s.consumed??{},DECK_ASSAULT.from)||!validDeckRecord(a,s.clock)||a.ai===undefined))reject('assalto do tabuleiro '+a.id);
+  // Combat slice 2b (rearguard record v1, src/game/m01-rearguard.js): only a man of the rearguard, after the deck assault began, with his combat AI stream.
+  for(const a of s.actors)if(a.rear!==undefined&&(a.group!=='grp_east_platoon'||!Object.hasOwn(s.consumed??{},REARGUARD.from)||!validRearguardRecord(a,s.clock)||a.ai===undefined))reject('retaguarda '+a.id);
   if(s.actors.some(a=>a.team==='enemy'&&a.x<(a.group==='grp_de_spans'&&a.deck!==undefined?DECK_SAFE_X:690))||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','REGROUP','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
@@ -2160,6 +2290,9 @@ export function validateM01Snapshot(s){
   const dialogue=d=>{
     if(!d||!BARK_LINES.has(d.id)||typeof d.speaker!=='string'||typeof d.text!=='string'||d.text.length>=600||!finite(d.duration,1,15))return false;
     if(d.bark===undefined)return d.priority===undefined&&d.expires===undefined;
+    // Not yet on screen (review N1): when it was queued, its token (among the consumed ones) and, for the order to change cover, the HUD message it stands for.
+    if(d.queuedAt!==undefined&&(!finite(d.queuedAt,0,s.clock)||typeof d.token!=='string'||!s.dialogueConsumed.includes(d.token)))return false;
+    if(d.fallback!==undefined&&(typeof d.fallback!=='string'||d.fallback.length>=300||d.queuedAt===undefined))return false;
     return d.bark===true&&BARK_RULES.get(d.id)?.priority===d.priority&&finite(d.expires);
   };
   if(s.dialogueQueue.some(d=>!dialogue(d))||(s.subtitle&&(!dialogue(s.subtitle)||!finite(s.subtitle.until))))reject('legendas');

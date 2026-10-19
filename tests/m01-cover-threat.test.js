@@ -71,7 +71,12 @@ test('covering fire on the Germans on the spans saves men; without it the platoo
     for(let i=1;i<times.length;i++)assert.ok(times[i]-times[i-1]>=19.9,'one casualty per 20 s of battle clock');
     assert.ok(n>=12&&n<=18);
   }
-  assert.ok(ignore.sim.enemies.filter(a=>a.group==='grp_de_spans').every(a=>a.suppressedUntil===0),'Kowal never covers the withdrawal for the player');
+  // 2026-10-19 re-pin (combat slice 2b): the end-state check `every(suppressedUntil===0)` was true only because nobody of ours ever reached the deck; the new rearguard
+  // (pl_east_0..2, src/game/m01-rearguard.js) fires on the deck Germans while the gate holds the clock at 06:09:30, after the 20 s rule has stopped. What the check protected
+  // is kept, as a count: on the route that ignores the deck, no German of the spans is ever suppressed while the 20 s rule runs, so nobody covers the withdrawal for the player
+  // (Kowal and the ckm do not, the rearguard is not there yet) and the platoon still falls to the predicted minimum (12, above).
+  assert.equal(ignore.stats.spansSuppressedWhileRuleRuns??0,0,'nobody covers the withdrawal for the player while the 20 s rule runs');
+  assert.ok((help.stats.spansSuppressedWhileRuleRuns??0)>0,'the covering player does');
 });
 
 test('historical times, checkpoints and demolition safety are unchanged in both routes',()=>{

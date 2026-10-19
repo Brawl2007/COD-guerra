@@ -29,6 +29,7 @@ import combat from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:
 // 9cd2aca); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 08 after its lockstep audit, is this one.
 import deck from './fixtures/m01-deck-assault-gameplay-baseline.json' with {type:'json'};
 const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // the named delta of amendment 08, as measured (tools/verification/m01-integration-golden-audit.mjs)
+const REARGUARD_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,REARGUARD_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 11, as measured
 // M01-NAV-QUEUE-V1 (golden amendment 09, 2026-10-19, branch claude/busy-ritchie-3fkvk2-navq): at most one route() per tick, work buffers reused, the navigator's solid list built before the first
 // plan, the neighbour queries on reused storage. It moves the SOURCE LOCK only: not one tick of either golden route differs from the deck assault golden (the tool's lockstep finds no difference,
 // and the digests equal amendment 08's, block for block). The deck assault golden above is history since then (it pins the simulation of c7c82ee); the golden of the live simulation,
@@ -40,7 +41,12 @@ import nav from './fixtures/m01-nav-queue-gameplay-baseline.json' with {type:'js
 // differs from the navigator queue golden above, which is history since then (it pins the simulation of 167dccc, byte for byte below); the golden of the live simulation, regenerated
 // on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 10 after its lockstep audit against that exact predecessor, is this one.
 import dialogue from './fixtures/m01-dialogue-gameplay-baseline.json' with {type:'json'};
-const current=dialogue;   // the golden of the live simulation
+// M01-REARGUARD-V1 (golden amendment 11, 2026-10-19, branch claude/busy-ritchie-3fkvk2-rear): combat slice 2b, the Polish rearguard of the deck assault (pl_east_0..2 hold the deck at
+// x 165-175 while the gate holds the clock at 06:09:30 and fire real kb wz.29 rounds), with the bark director review fixes (B1: the peek lines read the AI's own sight, ai.seen, written
+// for riflemen too; N1: reactive lines counted when shown; N3: 030 to Kowal). The dialogue golden above is history since then (it pins the simulation of c1a3ecf); the golden of
+// the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 11 after its lockstep audit against that exact predecessor, is this one.
+import rearguard from './fixtures/m01-rearguard-gameplay-baseline.json' with {type:'json'};
+const current=rearguard;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -374,8 +380,10 @@ test('the reactive dialogue golden (amendment 10) chains to the navigator queue 
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(dialogue,{amendment:'10',task:'M01-DIALOGUE-V1',delta:'dialogue',previous:nav,previousFile:'m01-nav-queue-gameplay-baseline.json',
     predecessor:'167dccc9194b6062947d02e0a0cc30176cc57461',deltaFields:/^\$\.(state|checkpoint)\.(dialogueConsumed|dialogueQueue|subtitle|timers\.(barks|guide|guideDist))(\.|$)/});
-  assert.equal(sha('../src/game/m01-simulation.js'),dialogue.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(dialogue.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // History since the rearguard (amendment 11): this golden pins the simulation of c1a3ecf (the dialogue on the navigator-queue tree), not the live one.
+  assert.equal(dialogue.sourceSha256,'c9118414abd2be8cbfe3db449756e522d25420ebb5b82efdb7eeac650eb43119','the dialogue golden pins the simulation of c1a3ecf');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),dialogue.sourceSha256,'the dialogue golden is history: the rearguard moved the simulation');
+  assert.equal(dialogue.inputsSha256['src/game/m01-deck-assault.js'],sha('../src/game/m01-deck-assault.js'),'and the deck module is unchanged');
   // What the amendment is: the dialogue only. With the dialogue state (queue, subtitle, consumed tokens, timers.barks / guide / guideDist) and the two HUD messages that became voices stripped
   // from both frames, the live simulation and the predecessor are byte identical on EVERY tick of both routes; the first raw difference is the dialogue itself.
   assert.equal(account.noBehaviourDifference,true);
@@ -384,6 +392,22 @@ test('the reactive dialogue golden (amendment 10) chains to the navigator queue 
     assert.equal(r.firstDifference.battleClock,'04:33:10','evt_m01_planes_heard: the orphan line 067 is now said');assert.match(r.firstDifference.path,/\.dialogueConsumed\.\d+$/);
     assert.equal(r.firstBehaviourDifference,null,'not one tick differs once the dialogue is stripped');
     assert.deepEqual(r.movedEvents,[],'no consumed event moved by a tick');
+  }
+});
+
+test('the rearguard golden (amendment 11) chains to the dialogue golden, pins the live simulation, the rearguard, the director and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(rearguard,{amendment:'11',task:'M01-REARGUARD-V1',delta:'rearguard',previous:dialogue,previousFile:'m01-dialogue-gameplay-baseline.json',
+    predecessor:'c1a3ecf304f1e8a30283d251d2ff8ec174e0ba93',deltaFields:REARGUARD_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // The first difference is B1's new sighting record of a gate rifleman (ai.seen, 04:45:16, de_east_2 sees the player); with the new state stripped (the dialogue state, ai.seen,
+  // the rearguard's records), the first BEHAVIOUR difference is the rearguard itself: pl_east_0 leaves the platoon file for his post the tick the gate holds the clock (06:09:30).
+  assert.equal(account.behaviourFields,REARGUARD_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.actor,'de_east_2');assert.match(r.firstDifference.path,/\.ai\.seen$/);
+    assert.match(r.firstBehaviourDifference.path,REARGUARD_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^pl_east_[0-2]$/);
+    assert.equal(r.firstBehaviourDifference.battleClock,'06:09:30');assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
   }
 });
 

@@ -44,13 +44,23 @@ function present(s,id){
 const objectiveIs=(s,list,state)=>{for(let i=0;i<list.length;i++)if(s.objectives[list[i]]?.state===state)return true;return false;};   // (loops, not closures: this runs every tick)
 const flagsOk=(s,flag)=>{for(const k in flag)if(s.flags[k]!==flag[k])return false;return true;};
 const bearing=(s,pt)=>{const rel=Math.atan2(pt.z-s.player.z,pt.x-s.player.x)-s.player.angle;return Math.atan2(Math.sin(rel),Math.cos(rel));};   // positive is the player's right, as in directionTo()
-function peekers(s,los){   // men of grp_de_east with an open peek (and in the player's sight when `los`)
+// 2026-10-19 (review B1, the director's cost had no bound): the peek conditions traced a line of sight from every peeking German to the player, twice per tick (132 and
+// 133), up to 11 ms per tick when the gate's ten men peek at 04:46. Now they read the AI's own sight of the player (ai.seen.who 'player', refreshed at each of his shots, so
+// within PEEK_SIGHT_SEC during an open peek: AI_BOLT is at most 2.8 s) and count once per run of the rules, stopping at the number asked for. No line of sight here.
+const PEEK_SIGHT_SEC=3;
+const PEEK_MEMO={run:-1,los:-1,all:-1};
+let RUN=0;
+function peekers(s,los,need=Infinity){   // men of grp_de_east with an open peek (who saw the player at his last shot when `los`), counted up to `need`
+  const m=PEEK_MEMO,key=los?'los':'all';
+  if(m.run===RUN&&m[key]>=0&&(m[key]>=need||m[key+'Full']))return m[key];
   let n=0;
   for(const a of s.actors){
     if(a.group!=='grp_de_east'||!a.alive||!a.active||!(a.ai&&a.ai.peek>0))continue;
-    if(los&&!s.world.lineOfSight(a,s.player))continue;
-    n++;
+    if(los){const seen=a.ai.seen;if(!seen||seen.who!=='player'||s.clock-seen.at>PEEK_SIGHT_SEC)continue;}
+    if(++n>=need)break;
   }
+  if(m.run!==RUN){m.run=RUN;m.los=-1;m.all=-1;m.losFull=false;m.allFull=false;}
+  m[key]=n;m[key+'Full']=n<need;
   return n;
 }
 const SUN=mapLayout.sun.keyframes.map(k=>({t:seconds(k.clock),az:k.azimuthDeg}));
@@ -98,6 +108,9 @@ const CONDITIONS={
   ckmTarget:kind=>[1,s=>{const t=gunner(s)?.ckm?.burstPlan?.target;return typeof t==='string'&&kind==='gate'&&t.startsWith('de_east_')&&gateIndex(t)<14;}],
   ckmFeed:()=>[1,s=>{const g=gunner(s);return g?.ckm?.phase==='feed'&&(g.ckmFire?.belt??CKM_BELT_FULL)<CKM_BURST_ROUNDS_FULL;}],   // a real belt change: the quiet cycle's feed has belt to spare
   ckmBeltFull:()=>[1,s=>(gunner(s)?.ckmFire?.belt??0)>=CKM_BELT_FULL-CKM_BURST_ROUNDS_FULL*2],
+  // -- our side
+  // 2026-10-19 (review N3): the man really fired in the last `sec` seconds (his firedAt: Kowal's rkm bursts, the rearguard's rounds), so «Cubro você!» is said by a man who covers.
+  fired:({of,sec},k)=>{if(!(sec>0))k.fail('fired.sec');return [1,(s,c,r)=>{const a=present(s,of==='speaker'?r.speaker:of);return a!==null&&Number.isFinite(a.firedAt)&&s.clock-a.firedAt<=sec;}];},
   // -- the player
   playerStill:mps=>[1,s=>s.player.moveBlend*3.8<mps],   // moveBlend is the fraction of the 3.8 m/s walk the last tick covered
   playerHurt:()=>[1,s=>s.player.health<100],
@@ -124,10 +137,10 @@ const CONDITIONS={
   mg34:({phase,los})=>[2,s=>{
     for(const id of ['de_east_0','de_east_1']){const a=s.actor(id);if(a&&a.alive&&a.active&&a.mg34Prone?.phase===phase&&(!los||s.world.lineOfSight(a,s.player)))return true;}
     return false;}],
-  peek:({los})=>[2,s=>peekers(s,los)>0],
-  peekCount:({min})=>[2,s=>peekers(s,false)>=min],
+  peek:({los})=>[2,s=>peekers(s,los,1)>0],
+  peekCount:({min})=>[2,s=>peekers(s,false,min)>=min],
   peekClosed:()=>[2,s=>{   // a visible peek that was open a moment ago and is closed now
-    const now=peekers(s,true),last=ledger(s).seen.peek;
+    const now=peekers(s,true,1),last=ledger(s).seen.peek;
     if(now>0){if(last===undefined||s.clock-last>=.25)ensure(s).seen.peek=s.clock;return false;}
     return last!==undefined&&s.clock-last>=.3&&s.clock-last<=2;}],
   mgSilenced:()=>[2,s=>{for(const id of ['de_east_0','de_east_1']){const a=s.actor(id);if(a&&a.alive&&a.active&&a.suppressedAt===s.clock&&a.suppressedUntil>s.clock)return true;}return false;},['player-shot']],
@@ -280,9 +293,16 @@ function cooledDown(L,r,clock){
   const last=r.after||!r.group?L.at[r.id]:L.g[r.group]?.[1];   // a follow-up waits on its own line; a group shares one clock
   return last===undefined||clock-last>=r.cooldown;
 }
+/** A line of this rule, or of its group, is queued and not yet shown (review N1: it is counted when it is shown, so it must not be offered twice meanwhile). */
+function pending(sim,r){
+  const q=sim.dialogueQueue;
+  for(let i=0;i<q.length;i++){if(q[i].queuedAt===undefined)continue;if(q[i].id===r.id)return true;if(r.group&&BARK_RULES.get(q[i].id)?.group===r.group)return true;}
+  return false;
+}
 function eligible(sim,r,c){
   const L=ledger(sim);
   if(r.max&&(L.n[r.id]??0)>=r.max)return false;
+  if(pending(sim,r))return false;
   if(!cooledDown(L,r,sim.clock))return false;
   for(let i=0;i<r.checks.length;i++)if(!r.checks[i](sim,c,r))return false;
   return true;
@@ -290,18 +310,25 @@ function eligible(sim,r,c){
 /** The global limits: a minimum gap since the last bark began (shorter for a follow-up) and a rolling 60 s budget per priority. */
 export function barkAdmits(sim,priority,followUp){
   const L=ledger(sim),clock=sim.clock,cfg=BARK_CONFIG;
-  if(clock-L.last<(followUp?cfg.followGapSec:cfg.gapSec[priority]))return false;
-  let n=0;
+  // A reactive line that waits in the queue counts from when it was queued, as before review N1; once shown it counts from then, and if it is dropped it never counted.
+  let last=L.last,n=0;
+  for(const q of sim.dialogueQueue)if(q.queuedAt!==undefined){if(q.queuedAt>last)last=q.queuedAt;if(clock-q.queuedAt<60)n++;}
+  if(clock-last<(followUp?cfg.followGapSec:cfg.gapSec[priority]))return false;
   for(let i=L.recent.length-1;i>=0&&clock-L.recent[i]<60;i--)n++;
   return n<cfg.budget60[priority];
 }
 function speak(sim,r){
   const L0=ledger(sim),token=`${r.id}#${(L0.n[r.id]??0)+1}`;
-  if(!sim.line(r.id,token))return false;   // the channel is full: nothing is recorded, the chance has passed
-  const L=ensure(sim);   // (line() has told noteSpoken: the time of this line is in `last` and `recent`)
-  L.n[r.id]=(L.n[r.id]??0)+1;
+  return sim.line(r.id,token);   // queued, or the channel is full and the chance has passed; counted when it is shown (barkShown)
+}
+/** M01Simulation.advanceSubtitle() puts a reactive line on screen: now it is said (review N1). The time goes into the ledger (noteSpoken) and, for a line the director chose
+ *  (its token is `id#k`), its count and its group's turn. */
+export function barkShown(sim,record){
+  const id=record.token,r=BARK_RULES.get(record.id);delete record.queuedAt;delete record.token;delete record.fallback;
+  noteSpoken(sim,record.id);
+  if(!r||!id.startsWith(record.id+'#'))return;
+  const L=ensure(sim);L.n[r.id]=(L.n[r.id]??0)+1;
   if(r.group){const g=BARK_GROUPS.get(r.group);L.g[r.group]=[(g.index.get(r.id)+1)%g.members.length,sim.clock];}
-  return true;
 }
 /** Takes the eligible rules (already in arbitration order) and says at most one: a line that substitutes another drops it from the offer, a group offers only the member
  *  whose turn it is, and the first of what is left that the global limits admit is spoken. */
@@ -323,6 +350,7 @@ function choose(sim,E){
   return false;
 }
 function run(sim,rules,c){
+  RUN++;   // the peek count is memoised for one run of the rules (one state)
   const E=SCRATCH;E.length=0;
   for(let i=0;i<rules.length;i++)if(eligible(sim,rules[i],c))E.push(rules[i]);
   const said=E.length>0&&choose(sim,E);

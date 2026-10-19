@@ -18,6 +18,10 @@ const D=n=>`dlg_m01_${String(n).padStart(3,'0')}`;
 function fresh(seed=11){const s=new M01Simulation(seed);s.tick(DT,{skip:true});s.drainEvents();s.clock=300;return s;}
 const reactive=s=>s.dialogueConsumed.filter(t=>/#\d+$/.test(t));
 const delta=(s,fn)=>{const n=s.dialogueConsumed.length;fn();return s.dialogueConsumed.slice(n);};
+// 2026-10-19 (review N1): a reactive line is counted (max, cooldown, «tocou há N s», the 60 s budget) when it goes on SCREEN, not when it is queued. The fixtures that cleared
+// the queue to stand for «it was said» now put the line on screen first (advanceSubtitle), which is what saying it is.
+const heard=s=>s.advanceSubtitle();
+const sawPlayer=(s,a)=>{a.ai.seen={x:s.player.x,y:s.player.y,z:s.player.z,at:s.clock,who:'player'};};
 const near=(s,id,dx=3,dz=0)=>{const a=s.actor(id);Object.assign(s.player,{x:a.x+dx,z:a.z+dz,y:a.y});};
 const impact=(s,o={})=>s.emit({type:'round-impact',kind:'player',by:'de_east_2',point:{x:s.player.x+5,y:0,z:s.player.z},material:'earth',crack:false,distance:5,pass:'none',victim:null,pinned:[],...o});
 const crack=(s,o={})=>impact(s,{crack:true,pass:'crack',distance:3,...o});
@@ -196,7 +200,7 @@ test('variant rotation: ally_hit alternates 100 and 101, each at most 3 times, a
     s.clock+=21;   // past the cooldown of the group
     near(s,'marek_zielinski');
     said.push(...delta(s,()=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})));
-    s.dialogueQueue=[];s.subtitle=null;
+    heard(s);s.dialogueQueue=[];s.subtitle=null;
   }
   assert.deepEqual(said,[`${D(100)}#1`,`${D(101)}#1`,`${D(100)}#2`,`${D(101)}#2`,`${D(100)}#3`,`${D(101)}#3`,'co_m01_ally_hit#1','co_m01_ally_hit#2'],
     '100 and 101 alternate and run out at 3; then the old callout «Sanitário!» takes over');
@@ -204,7 +208,7 @@ test('variant rotation: ally_hit alternates 100 and 101, each at most 3 times, a
 
 test('cooldowns run on the real clock, never on the compressed battle clock',()=>{
   const s=fresh();near(s,'szymon_kowal');
-  assert.deepEqual(delta(s,()=>crack(s)),[`${D(139)}#1`]);
+  assert.deepEqual(delta(s,()=>crack(s)),[`${D(139)}#1`]);heard(s);
   s.battleClock+=3600;   // an hour of battle clock in no time (the 24x and 27x of the pacing)
   s.clock+=5;assert.deepEqual(delta(s,()=>crack(s)),[],'5 s of real time: still cooling down (12 s)');
   s.battleClock-=3000;s.clock+=7.5;assert.deepEqual(delta(s,()=>crack(s)),[`${D(139)}#2`]);
@@ -212,7 +216,7 @@ test('cooldowns run on the real clock, never on the compressed battle clock',()=
 
 test('max repeats: a line stops at its maximum, and one that is used up is not said again',()=>{
   const s=fresh();near(s,'szymon_kowal');s.actor('jozef_bak').alive=false;let said=0;   // (with Bąk by, 121 and 139 alternate)
-  for(let k=0;k<12;k++){s.clock+=13;said+=delta(s,()=>crack(s)).length;s.dialogueQueue=[];s.subtitle=null;}
+  for(let k=0;k<12;k++){s.clock+=13;said+=delta(s,()=>crack(s)).length;heard(s);s.dialogueQueue=[];s.subtitle=null;}
   assert.equal(said,BARK_RULES.get(D(139)).max);
   assert.equal(ledger(s).n[D(139)],6);
 });
@@ -223,7 +227,7 @@ test('substitution: a casualty speaks 100/101 instead of the callout, and the ca
   assert.deepEqual(delta(s,()=>impact(s,{victim:'pl_east_17',point})),[`${D(100)}#1`],'the substitute, not «Sanitário!»');
   // the callout spoke by itself 10 s ago (e.g. another trigger): 100 and 101 keep quiet, and so does the callout (its own cooldown)
   const t=withdrawal(fresh());near(t,'marek_zielinski');
-  assert.equal(t.line('co_m01_ally_hit','manual'),true);t.clock+=10;
+  assert.equal(t.line('co_m01_ally_hit','manual'),true);heard(t);t.clock+=10;
   const sayings=ids=>delta(t,ids).filter(x=>/^(dlg_m01_10[01]|co_m01_ally_hit)#/.test(x));
   assert.deepEqual(sayings(()=>impact(t,{victim:'pl_east_17',point:{x:t.player.x+10,y:0,z:t.player.z}})),[],'tocou há 10 s < 15 s');
   t.clock+=6;t.dialogueQueue=[];t.subtitle=null;
@@ -253,7 +257,7 @@ test('substitution of the combat callouts: 120 comes only after the first co_m01
 test('a follow-up comes between its time and its window after the line it answers, once, and only if the conditions still hold',()=>{
   const s=withdrawal(fresh());
   withLedger(s,{n:unspoken(s,[D(100),D(101),'co_m01_ally_hit'])});near(s,'marek_zielinski');
-  assert.deepEqual(delta(s,()=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})),[`${D(102)}#1`]);
+  assert.deepEqual(delta(s,()=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})),[`${D(102)}#1`]);heard(s);
   s.clock+=2;assert.deepEqual(delta(s,()=>barkPoll(s)),[],'too early: 103 is due 5 s after 102');
   s.clock+=3.1;s.player.moveBlend=1;assert.deepEqual(delta(s,()=>barkPoll(s)),[],'the player is running: «Deixe. Depois.» is for a man who stands');
   s.player.moveBlend=0;assert.deepEqual(delta(s,()=>barkPoll(s)),[`${D(103)}#1`]);
@@ -342,6 +346,7 @@ test('an older save without timers.barks restores, and the first line creates th
   const t=new M01Simulation(2);t.restoreSnapshot(snap);t.clock=300;near(t,'szymon_kowal');
   assert.equal(t.timers.barks,undefined);
   assert.deepEqual(delta(t,()=>crack(t)),[`${D(139)}#1`]);
+  validateM01Snapshot(t.snapshot());heard(t);
   assert.ok(t.timers.barks);validateM01Snapshot(t.snapshot());
 });
 
@@ -389,12 +394,13 @@ test('067, 042 and 047 are said by their events, in the order of the script',()=
   assert.deepEqual(said.slice(0,2),[D('047'),D('048')],'count aloud, then count ours and not the shots');
 });
 
-test('030: Bąk covers the player who reloads next to him, between train 963 and the east demolition, not once he is wounded',()=>{
-  const s=fresh();s.consumed.evt_m01_train963_arrives=0;near(s,'jozef_bak',2);
-  assert.deepEqual(delta(s,()=>s.emit({type:'reload',weapon:'kb_wz29'})),[`${D(30)}#1`]);
-  s.clock+=50;near(s,'jozef_bak',12);assert.deepEqual(delta(s,()=>s.emit({type:'reload',weapon:'kb_wz29'})),[],'12 m is too far (8 m)');
-  s.clock+=50;near(s,'jozef_bak',2);s.flags['m01.bak_status']='wounded';assert.deepEqual(delta(s,()=>s.emit({type:'reload',weapon:'kb_wz29'})),[],'wounded');
-  const t=fresh();near(t,'jozef_bak',2);assert.deepEqual(delta(t,()=>t.emit({type:'reload',weapon:'kb_wz29'})),[],'before train 963');
+// 2026-10-19 re-pin (bark director review N3): 030 «Cubro você!» was Bąk's, and Bąk never fires in the game; it is Kowal's now, said only when his rkm really fired in the last 6 s.
+test('030: Kowal covers the player who reloads next to him while his rkm is firing, between train 963 and the east demolition',()=>{
+  const s=fresh();s.consumed.evt_m01_train963_arrives=0;near(s,'szymon_kowal',2);const k=s.actor('szymon_kowal');
+  k.firedAt=-1e9;assert.deepEqual(delta(s,()=>s.emit({type:'reload',weapon:'kb_wz29'})),[],'he has not fired: he says nothing');
+  k.firedAt=s.clock-2;assert.deepEqual(delta(s,()=>s.emit({type:'reload',weapon:'kb_wz29'})),[`${D(30)}#1`]);
+  s.clock+=50;k.firedAt=s.clock-2;s.advanceSubtitle();near(s,'szymon_kowal',12);assert.deepEqual(delta(s,()=>s.emit({type:'reload',weapon:'kb_wz29'})),[],'12 m is too far (8 m)');
+  const t=fresh();near(t,'szymon_kowal',2);t.actor('szymon_kowal').firedAt=t.clock-1;assert.deepEqual(delta(t,()=>t.emit({type:'reload',weapon:'kb_wz29'})),[],'before train 963');
 });
 
 test('the «siga a voz» guide is a voice, not a message every 7 s: variants, 14 s apart, silent while the player closes in, a message only as the fallback',()=>{
@@ -466,8 +472,9 @@ const CASES={
   [D(129)]:{stage:s=>{near(s,'szymon_kowal');withLedger(s,{at:{co_m01_enemy_mg_fire_on_squad:s.clock-100},g:{located:[1,0]}});},act:s=>s.emit({type:'enemy-fire',origin:{x:1055,y:0,z:13},rounds:1,interval:.075,weapon:'mg34',at:s.clock})},
   [D(130)]:{stage:s=>{near(s,'szymon_kowal');Object.assign(s.player,{x:-28,z:28});s.timers.coverFire={by:'de_east_5',at:s.clock-1,x:1053,y:0,z:10};},act:s=>s.emit({type:'enemy-fire',origin:{x:1053,y:0,z:10},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})},
   [D(131)]:{stage:s=>{near(s,'szymon_kowal');Object.assign(s.player,{x:-28,z:28});s.timers.coverFire={by:'de_east_5',at:s.clock-1,x:1053,y:0,z:31};},act:s=>s.emit({type:'enemy-fire',origin:{x:1053,y:0,z:31},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})},
-  [D(132)]:{stage:s=>{inCover(s);const g=s.actor('de_east_5');g.active=true;g.ai.peek=1;assert.ok(sees(s,'de_east_5'),'the gate rifleman sees the cover');},act:s=>barkPoll(s)},
-  [D(133)]:{stage:s=>{inCover(s);withLedger(s,{n:unspoken(s,[D(132)])});const g=s.actor('de_east_5');g.active=true;g.ai.peek=1;barkPoll(s);s.clock+=.6;g.ai.peek=0;},act:s=>barkPoll(s)},
+  // (review B1, 2026-10-19: the director reads the AI's own sight of the player, ai.seen, written by aiTarget when the man picks his target: the staging writes what he saw.)
+  [D(132)]:{stage:s=>{inCover(s);const g=s.actor('de_east_5');g.active=true;g.ai.peek=1;assert.ok(sees(s,'de_east_5'),'the gate rifleman sees the cover');sawPlayer(s,g);},act:s=>barkPoll(s)},
+  [D(133)]:{stage:s=>{inCover(s);withLedger(s,{n:unspoken(s,[D(132)])});const g=s.actor('de_east_5');g.active=true;g.ai.peek=1;sawPlayer(s,g);barkPoll(s);s.clock+=.6;g.ai.peek=0;},act:s=>barkPoll(s)},
   [D(134)]:{stage:s=>{near(s,'marek_zielinski');for(const id of ['de_east_4','de_east_5']){const g=s.actor(id);g.active=true;g.ai.peek=1;}},act:s=>barkPoll(s)},
   [D(135)]:{stage:s=>{s.consumed.evt_m01_germans_on_east_spans=s.clock-5;s.battleClock=seconds('06:06:00');},act:s=>s.emit({type:'enemy-fire',origin:{x:600,y:0,z:40},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})},
   [D(136)]:{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_portal_road_n'})},
@@ -492,7 +499,7 @@ const CASES={
     assert.equal(s.readiness('evt_m01_west_demolition'),true);},act:s=>barkPoll(s)},
   [D(153)]:{stage:s=>{s.activate('hold_corridor');s.battleClock=seconds('06:30:00');},act:s=>barkPoll(s)},
   [D(154)]:{stage:s=>{s.activate('cover_repair');},act:s=>barkPoll(s)},
-  [D('030')]:{stage:s=>{s.consumed.evt_m01_train963_arrives=0;near(s,'jozef_bak',2);},act:s=>s.emit({type:'reload',weapon:'kb_wz29'})},
+  [D('030')]:{stage:s=>{s.consumed.evt_m01_train963_arrives=0;near(s,'szymon_kowal',2);s.actor('szymon_kowal').firedAt=s.clock-1;},act:s=>s.emit({type:'reload',weapon:'kb_wz29'})},
   [D('035')]:{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_tower_p1_n'})},
   [D('036')]:{stage:s=>{s.activate('hold_access');s.battleClock=seconds('05:40:00');Object.assign(s.player,{angle:-.12,pitch:.1});withLedger(s,{n:unspoken(s,[D(154)])});},
     act:s=>{for(let i=0;i<150;i++){s.clock+=.05;s.battleClock+=.05;barkPoll(s);}}},
@@ -594,4 +601,23 @@ test('the HUD names the speaker of each subtitle: 118 and 119 are two different 
   s.clock+=4;s.line(D(119));s.advanceSubtitle();const second=s.subtitle.speaker;
   assert.equal(first,'Soldado da ckm');assert.equal(second,'Atirador da ckm');
   assert.ok(mapLayout.sun.keyframes.length>2);   // the sun data the glare rule reads
+});
+
+test('review N1: a reactive line that leaves the queue unseen was never said: no max, no cooldown, its token back; the order to change cover falls back to the HUD',()=>{
+  const s=fresh();near(s,'szymon_kowal');
+  assert.deepEqual(delta(s,()=>crack(s)),[`${D(139)}#1`]);
+  const q=s.dialogueQueue.find(l=>l.id===D(139));assert.ok(q.queuedAt!==undefined);
+  assert.equal(ledger(s)?.n?.[D(139)]??0,0,'not counted while it waits');
+  s.subtitle={id:D('029'),speaker:'x',text:'x',duration:15,until:s.clock+1e3};   // somebody talks for a long time: the bark waits past its time to live
+  s.clock=q.expires+.01;s.advanceSubtitle();
+  assert.ok(!s.dialogueQueue.some(l=>l.id===D(139)),'dropped');assert.ok(!s.dialogueConsumed.includes(`${D(139)}#1`),'its token is given back');
+  assert.equal(ledger(s)?.n?.[D(139)]??0,0,'its max is untouched');
+  s.subtitle=null;assert.deepEqual(delta(s,()=>crack(s)),[`${D(139)}#1`],'said again at once: no cooldown was spent');heard(s);
+  assert.equal(ledger(s).n[D(139)],1,'counted when shown');
+  // The cover rotation: the voice is queued instead of the HUD message; when it expires unseen, the message is shown then.
+  const t=fresh();t.drainEvents();t.line(D('029'));heard(t);t.subtitle.until=t.clock+1e3;
+  assert.equal(t.line('co_m01_cover_rotation','co_m01_cover_rotation#1'),true);const v=t.dialogueQueue.find(l=>l.id==='co_m01_cover_rotation');v.fallback='Zieliński: mude de cobertura.';
+  validateM01Snapshot(t.snapshot());
+  t.clock=v.expires+.01;t.advanceSubtitle();
+  assert.ok(t.drainEvents().some(e=>e.type==='message'&&e.message==='Zieliński: mude de cobertura.'),'the HUD message stands in for the voice that was not heard');
 });

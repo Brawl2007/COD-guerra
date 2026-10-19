@@ -131,10 +131,12 @@ test('they fall back on their cue: the squad breaks on breakOut men out of the f
   const pinned=load(o.snap.mid),man=assault(pinned).find(a=>a.alive&&a.deck.phase==='cover')??assault(pinned).find(a=>a.alive&&a.x<=P.pursuitToX);
   for(let i=0;i<4000&&man.deck.phase!=='fallback';i++){if(man.deck.phase==='cover'||man.deck.phase==='hold')man.suppressedUntil=pinned.clock+1;pinned.tick(.05);}
   assert.equal(man.deck.phase,'fallback');assert.ok(man.deck.pinned>=P.breakPinnedSec);
-  // maxSec: with nobody shooting at them, every assault man is falling back or clear by maxSec after the entry.
+  // maxSec: with no player shooting at them, every living assault man is falling back or clear by maxSec after the entry.
+  // 2026-10-19 re-pin (combat slice 2b): the rearguard (pl_east_0..2, src/game/m01-rearguard.js) now shoots at them from 06:09:30, so a man it killed lies where he fell
+  // and keeps the phase he had (measured: de_spans_6 dead in 'cover'); the rule is checked on the living, the dead are out of the fight.
   const late=load(o.snap.entry),t0=late.clock;
   while(late.clock<t0+P.maxSec+.1)late.tick(.05);
-  for(const a of assault(late))assert.ok(['fallback','clear'].includes(a.deck.phase),`${a.id} ${a.deck.phase}`);
+  for(const a of assault(late).filter(a=>a.alive))assert.ok(['fallback','clear'].includes(a.deck.phase),`${a.id} ${a.deck.phase}`);
   // The fall-back runs to the place east of clearX; then T48 takes over at the demolition (the knot forms within 20 m, at most at x 1080).
   while(!late.consumedEvent(BLAST))late.tick(.05);
   while(late.battleClock<seconds('06:12:00'))late.tick(.05);
@@ -196,7 +198,9 @@ test('seed 3 with support: a German killed on spans 06-07 falls with them at the
 });
 
 test('the deck hold has an absolute bound: a man of the assault stuck west of clearX in full view is placed after maxSec + 240 s of hold and the clock resumes',()=>{
-  class Stuck extends M01Simulation{stepDeck(a,dt){if(a.id==='de_spans_5'&&a.x<P.clearX){a.deck.phase='hold';a.deck.until=this.clock+1;a.state='GUARD';return;}return super.stepDeck(a,dt);}}
+  // 2026-10-19 (combat slice 2b): the fixture isolates the cap. Without rearguardHolds() off, the rearguard kills the stuck man and the deck clears before the cap (measured).
+  class Stuck extends M01Simulation{stepDeck(a,dt){if(a.id==='de_spans_5'&&a.x<P.clearX){a.deck.phase='hold';a.deck.until=this.clock+1;a.state='GUARD';return;}return super.stepDeck(a,dt);}
+    rearguardHolds(){return false;}}
   const s=new Stuck(1);s.restoreSnapshot(observed().snap.mid);s.drainEvents();const man=s.actor('de_spans_5'),t0=s.clock;
   let held=0;
   for(let i=0;i<20*900&&!s.consumedEvent(BLAST);i++){

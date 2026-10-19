@@ -177,8 +177,9 @@ test('the gun draws from its own stream only: with and without it firing at all,
   const {pre}=firstBurst();
   const ghost=new CkmGhostSimulation(),neutral=new CkmNeutralSimulation();ghost.restoreSnapshot(structuredClone(pre));neutral.restoreSnapshot(structuredClone(pre));
   // timers.barks is the dialogue director's ledger (src/game/m01-barks.js): what the voices heard, not an actor. It hears the gun by design - an ally-fire is "our side fired" for its
-  // `quiet` condition - so the ledger of the world where the gun shoots is not the one of the world where it never engages. The main random state is compared on its own line below.
-  const strip=s=>{const v=s.snapshot(false);v.actors=v.actors.filter(a=>!a.id.startsWith('ckm_'));delete v.resumeCheckpoint;delete v.timers.barks;return v;};
+  // `quiet` condition (timers.barks.seen.allyFire) - so that one memory of the world where the gun shoots is not the one of the world where it never engages. 2026-10-19 (review N4):
+  // only that key is set aside; the rest of the ledger must be the same. The main random state is compared on its own line below.
+  const strip=s=>{const v=s.snapshot(false);v.actors=v.actors.filter(a=>!a.id.startsWith('ckm_'));delete v.resumeCheckpoint;if(v.timers.barks?.seen)delete v.timers.barks.seen.allyFire;return v;};
   let bursts=0;
   for(let i=0;i<700;i++){
     ghost.tick(.05,{crouch:i===0});neutral.tick(.05,{crouch:i===0});

@@ -293,7 +293,18 @@
           "weapon": "kb_wz29", "rounds": [1, 1], "intervalSec": [8, 20], "tracerEvery": 0, "targetGroup": "grp_de_east",
           "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
           "note": "Fogo só visual: um tiro de espingarda por homem a cada 8–20 s, sem traçante." }
-      ]
+      ],
+      "rearguard": {
+        "version": 1,
+        "from": "evt_m01_germans_on_east_spans",
+        "men": ["pl_east_0", "pl_east_1", "pl_east_2"],
+        "posts": [[165, 38.7], [170, 38.7], [175, 38.7]],
+        "joinWithinM": 30,
+        "runSpeed": 5.5,
+        "fire": { "weapon": "kb_wz29", "pauseSec": 5, "sigmaMil": [5, 4], "clearanceM": 1.5, "headroomM": 0.15, "rangeM": 600, "riseBeforeSec": 0.9, "holdAfterSec": 1.8 },
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "Fatia 2b (2026-10-19): enquanto o gate da demolição leste segura o relógio em 06:09:30 por causa do tabuleiro (alemães do assalto vivos a oeste de clearX), os três homens de número mais baixo do pelotão (nunca vítimas da regra dos 20 s: a vítima é pl_east_{n-1}, n ≥ 12) param nos seus lugares a x 165–175, fora da HOLD_AREA, e disparam rondas reais de kb wz.29 (dano e supressão como o tiro do jogador, fluxo próprio) sobre o homem do assalto mais próximo à vista; nunca disparam com o jogador ou um homem do pelotão a menos de clearanceM da linha de tiro (salvo se a linha lhe passa mais de headroomM acima do corpo: um camarada de joelhos à frente), nem quando o raio desviado acertaria um deles. Quando o tabuleiro fica livre retomam a retirada. Lugares a z 38,7, e não na treliça sul como no desenho escrito: medido (2026-10-19), o piloto de apoio no posto (38; 42,4) dispara por z ≈ 41,7 a x 170, à altura de um homem de pé, e a fila do pelotão corre a z 37,8/38,15 (espaço pessoal 0,5 m); 38,7 fica a 0,55 m da fila e a 0,4 m da linha do posto (30; 40) à faixa mais a norte. Dispersão 5 / 4 mil (desvio-padrão, × 1,9 abalado) e alvos até 600 m, medido em 5 sementes passivas (19390901, 7, 3, 4, 11): com 3 / 2,5 mil e 800 m caíam 3–7 dos 10 alemães do tabuleiro por rota (média 4,8; em 2 sementes o nó da T48 ficava com 1 homem); com 5 / 4 mil e 600 m, 2–4 (média 2,8). Não morrem: as baixas do pelotão são por ID (vivo ⇔ índice < m01.east_platoon_survivors, mínimo 12) e o relógio da regra dos 20 s está parado durante o gate."
+      }
     },
     {
       "id": "grp_de_east",
@@ -1790,7 +1801,7 @@
       "priority": 1
     },
     { "id": "dlg_m01_029", "speaker": "szymon_kowal", "text": "Trocando carregador!", "context": "callout recarga (real, quando o rkm recarrega)", "priority": 2 },
-    { "id": "dlg_m01_030", "speaker": "jozef_bak", "text": "Cubro você!", "context": "callout; Bąk atira enquanto o jogador recarrega", "priority": 2, "bark": {"on": "reload", "when": {"flag": {"m01.bak_status": "unhurt"}, "consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
+    { "id": "dlg_m01_030", "speaker": "szymon_kowal", "text": "Cubro você!", "context": "callout; quem cobre o jogador enquanto ele recarrega. 2026-10-19 (revisão N3): era de Bąk, que nunca dispara no jogo; passa a Kowal, cujo rkm wz.28 dispara de verdade, e só se ele disparou nos últimos 6 s", "priority": 2, "bark": {"on": "reload", "when": {"consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "fired": {"of": "speaker", "sec": 6}, "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
     { "id": "dlg_m01_031", "speaker": "pawel_krawiec", "text": "Linha inteira. Avisem o oficial: está pronta.", "context": "evt_m01_repair_complete", "priority": 1 },
     { "id": "dlg_m01_032", "speaker": "marek_zielinski", "text": "Pawlak, vai.", "context": "evt_m01_repair_complete", "priority": 1 },
     {
@@ -2011,7 +2022,7 @@
     "lines": [
       { "id": "co_m01_enemy_mg_fire_on_squad", "event": "enemy_mg_fire_on_squad", "speaker": "szymon_kowal", "text": "Metralhadora no dique!" },
       { "event": "npc_reloading", "speaker": "any_pl", "text": "Recarregando!" },
-      { "event": "player_reloading_near_ally", "speaker": "jozef_bak", "text": "Cubro você!" },
+      { "event": "player_reloading_near_ally", "speaker": "szymon_kowal", "text": "Cubro você!" },
       { "id": "co_m01_ally_hit", "event": "ally_hit", "speaker": "any_pl", "text": "Sanitário!", "priority": 1, "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 40}}, "cooldown": 15, "max": 6} },
       { "id": "co_m01_cover_rotation", "event": "cover_rotation", "speaker": "marek_zielinski", "text": "Mudar! Próxima posição!", "priority": 1, "bark": {"on": "coverRotation", "when": {"node": ["cv_sandbag_*"]}, "cooldown": 20, "unless": [{"line": "dlg_m01_136", "within": 20}, {"line": "dlg_m01_137", "within": 20}, {"line": "dlg_m01_035", "within": 20}]} },
       { "event": "sun_glare_player_facing_east", "speaker": "marek_zielinski", "text": "Tira os olhos do sol!" },

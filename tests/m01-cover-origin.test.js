@@ -86,6 +86,8 @@ test('the rotation names the node: portal, truss and tower have their own lines,
   }
   const s=quiet();
   assert.equal(barkTrigger(s,'coverRotation',{node:'cv_portal_road_n'}),true);
+  // 2026-10-19 (bark director review N1): a reactive line counts when it goes on screen, so the fixture lets 136 be shown (advanceSubtitle) before the 20 s are measured.
+  s.advanceSubtitle();
   s.clock+=10;
   assert.equal(barkTrigger(s,'coverRotation',{node:'cv_tower_p1_n'}),false,'035 does not speak 10 s after 136');
   s.clock+=12;

@@ -54,7 +54,9 @@ test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted 
   for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s2,p),range(0,13));
   // S3 road axis on the abutment: sees the 10 span Germans only in the withdrawal phase, 0.35 m above the deck; no gate rifleman.
   const s3=by.S3;assert.deepEqual(ids(s3,'repair'),[]);assert.deepEqual(ids(s3,'post_repair'),[]);assert.deepEqual(ids(s3,'withdrawal'),range(0,9));
-  assert.equal(s3.strictClearEntries,1234);assert.equal(s3.minClearanceM,.35);assert.ok(Object.keys(s3.groups).join()==='grp_de_spans');
+  // 2026-10-19 re-pin 1234 -> 1235 (combat slice 2b): the rearguard fires on the deck assault from 06:09:30, so the deck Germans the S3 post samples along the route are where they
+  // are pinned, fall or fall back sooner (one more clear entry); the post itself, its clearance and its group are unchanged.
+  assert.equal(s3.strictClearEntries,1235);assert.equal(s3.minClearanceM,.35);assert.ok(Object.keys(s3.groups).join()==='grp_de_spans');
   // S4 south flank: only the south reserve group de_east_28..39, never the gate riflemen.
   const s4=by.S4;for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s4,p),range(28,39));assert.equal(s4.throughBridgeEntries,0);
   // Muzzle height 0.6..0.9 m above ground does not change the shortlisted actor counts.
