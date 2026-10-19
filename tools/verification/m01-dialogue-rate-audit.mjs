@@ -81,11 +81,18 @@ const probeDrive=({driver,toRepair},onStep)=>{
 const timeline=process.argv.includes('--timeline');
 const sha=root=>createHash('sha256').update(readFileSync(join(root,'src/game/m01-simulation.js'))).digest('hex');
 const account={task:'M01-DIALOGUE-V1',trees:{after:{simulationSha256:sha(LIVE)},...(BEFORE?{before:{label:arg('--before-label'),simulationSha256:sha(BEFORE)}}:{})},what:'lines per minute, reactive lines per minute, busiest 60 s, longest silence in combat, voices alive; deterministic (no clock, no path)',
-  definitions:{line:'first tick a subtitle (id, until) appears',combat:`real time while the battle clock is in [${COMBAT[0]}, ${COMBAT[1]}), edges included`,busiest60s:'largest number of line starts in any [t, t+60) real seconds'},
+  definitions:{scriptedLines:'with --before: every scripted line the predecessor said is still said, in order (lost must be empty, orderKept true)',line:'first tick a subtitle (id, until) appears',combat:`real time while the battle clock is in [${COMBAT[0]}, ${COMBAT[1]}), edges included`,busiest60s:'largest number of line starts in any [t, t+60) real seconds'},
   routes:[],probe:null};
+/** The scripted lines (no bark rule) the predecessor said are all still said, in the same order; `gained` are the ones that were wired (030/035/036 have rules, 042/047/067 events). */
+function scriptedCheck(before,after){
+  const sb=before.lines.map(l=>l.id),sa=after.lines.filter(l=>!l.bark).map(l=>l.id);
+  const count=list=>list.reduce((m,id)=>(m[id]=(m[id]??0)+1,m),{}),cb=count(sb),ca=count(sa);
+  let matched=0;for(const id of sa)if(id===sb[matched])matched++;
+  return {before:sb.length,after:sa.length,lost:Object.keys(cb).filter(id=>(ca[id]??0)<cb[id]),gained:Object.keys(ca).filter(id=>(cb[id]??0)<ca[id]),orderKept:matched===sb.length};
+}
 for(const {seed,support} of ROUTES){
-  const row={seed,support,after:summary(await record(LIVE,routeDrive({seed,support})),{timeline})};
-  if(BEFORE)row.before=summary(await record(BEFORE,routeDrive({seed,support})),{timeline});
+  const now=await record(LIVE,routeDrive({seed,support})),row={seed,support,after:summary(now,{timeline})};
+  if(BEFORE){const was=await record(BEFORE,routeDrive({seed,support}));row.before=summary(was,{timeline});row.scriptedLines=scriptedCheck(was,now);}
   account.routes.push(row);
   console.log(JSON.stringify({seed,support,after:{...row.after,barks:{...row.after.barks,perLine:undefined},timeline:undefined},before:row.before&&{...row.before,timeline:undefined}}));
 }

@@ -11,6 +11,7 @@
  },
  "what": "lines per minute, reactive lines per minute, busiest 60 s, longest silence in combat, voices alive; deterministic (no clock, no path)",
  "definitions": {
+  "scriptedLines": "with --before: every scripted line the predecessor said is still said, in order (lost must be empty, orderKept true)",
   "line": "first tick a subtitle (id, until) appears",
   "combat": "real time while the battle clock is in [04:45:00, 06:10:00), edges included",
   "busiest60s": "largest number of line starts in any [t, t+60) real seconds"
@@ -123,6 +124,17 @@
     "maxReactiveVoicesAlive": 0,
     "scriptedStartedOverAnother": 0,
     "reactiveCutByTheNextLine": 0
+   },
+   "scriptedLines": {
+    "before": 46,
+    "after": 49,
+    "lost": [],
+    "gained": [
+     "dlg_m01_067",
+     "dlg_m01_042",
+     "dlg_m01_047"
+    ],
+    "orderKept": true
    }
   },
   {
@@ -227,6 +239,17 @@
     "maxReactiveVoicesAlive": 0,
     "scriptedStartedOverAnother": 0,
     "reactiveCutByTheNextLine": 0
+   },
+   "scriptedLines": {
+    "before": 52,
+    "after": 55,
+    "lost": [],
+    "gained": [
+     "dlg_m01_067",
+     "dlg_m01_042",
+     "dlg_m01_047"
+    ],
+    "orderKept": true
    }
   }
  ],
