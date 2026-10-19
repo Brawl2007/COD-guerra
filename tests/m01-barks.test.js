@@ -299,6 +299,24 @@ test('the global limits: a minimum gap since the last line of any kind, and at m
   assert.deepEqual(delta(u,()=>barkPoll(u)),[],'priority 3 is allowed 5 in a minute: six are there');
 });
 
+test('the quiet condition counts the whole of our side: the gun (ally-fire), Kowal\'s rkm (npc-shot) and the player\'s own shot hold «Quieto demais» back for 20 s',()=>{
+  const cases=[
+    ['the ckm',s=>s.emit({type:'ally-fire',by:'ckm_gunner',weapon:'ckm_wz30',origin:{x:8,y:-2.36,z:26},rounds:8,interval:.1,at:s.clock})],
+    ['Kowal\'s rkm',s=>s.emit({type:'npc-shot',weapon:'rkm_wz28',point:{x:0,y:1.5,z:0},rounds:3})],
+    ['the player',s=>{s.player.weaponShotAt=s.clock*1000;}],
+  ];
+  for(const [label,fire] of cases){
+    const s=fresh();s.activate('hold_corridor');s.battleClock=seconds('06:30:00');fire(s);
+    assert.deepEqual(delta(s,()=>barkPoll(s)),[],`${label}: our side has just fired`);
+    s.clock+=19;assert.deepEqual(delta(s,()=>barkPoll(s)),[],`${label}: 19 s later`);
+    s.clock+=2;assert.equal(delta(s,()=>barkPoll(s)).length,1,`${label}: 21 s later it is quiet`);
+  }
+  // and the ledger that remembers it is saved: a restore in the middle of the wait keeps waiting
+  const s=fresh();s.activate('hold_corridor');s.battleClock=seconds('06:30:00');s.emit({type:'npc-shot',weapon:'rkm_wz28',point:{x:0,y:1.5,z:0},rounds:3});
+  const r=new M01Simulation(11);r.restoreSnapshot(structuredClone(s.snapshot()));r.clock+=10;
+  assert.deepEqual(delta(r,()=>barkPoll(r)),[],'restored: 10 s after the shot, still waiting');
+});
+
 test('the director draws nothing from the random streams and writes no actor',()=>{
   const s=fresh();near(s,'szymon_kowal');const rng=s.rng.state,ai=s.actors.map(a=>a.ai?.rng);
   const bodies=JSON.stringify(s.actors);

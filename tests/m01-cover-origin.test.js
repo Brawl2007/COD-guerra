@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {toCoverAdjustment} from './helpers/m01-route.js';
-import {newBarkState,barkTrigger} from '../src/game/m01-barks.js';
+import {newBarkState,barkTrigger,barkChannelOpen} from '../src/game/m01-barks.js';
 
 let flow;
 const scenario=()=>flow??=toCoverAdjustment();
@@ -68,13 +68,23 @@ test('when no voice can be said the adjustment warning is still the HUD message,
 });
 
 test('the rotation names the node: portal, truss and tower have their own lines, the sandbag has the callout; none repeats inside 20 s of another',()=>{
+  // From a quiet moment of the same state: the restore point is inside the order scene (voices are shut for 12 s) and the minute is busy with the continuity cues and other voices, whose
+  // global limits (gap, budget) have their own tests (tests/m01-barks.test.js); here only the node decides.
+  const quiet=()=>{
+    const s=load(scenario().beforeCoverAdjustment);
+    for(let i=0;i<20*20&&!barkChannelOpen(s);i++)s.tick(.05,{});
+    assert.equal(barkChannelOpen(s),true,'the order scene is over');assert.equal(s.timers.coverFire,undefined,'before the first salvo');
+    s.timers.barks=newBarkState();s.subtitle=null;s.dialogueQueue=[];
+    return s;
+  };
   const rows=[['cv_sandbag_mid_2','co_m01_cover_rotation'],['cv_portal_road_n','dlg_m01_136'],['cv_road_truss_1','dlg_m01_137'],['cv_road_truss_3','dlg_m01_137'],['cv_tower_p1_n','dlg_m01_035']];
   for(const [node,expected] of rows){
-    const s=load(scenario().beforeCoverAdjustment);s.flags['m01.suggested_cover']=node;
+    const s=quiet();s.flags['m01.suggested_cover']=node;
+    const before=s.dialogueConsumed.length;
     assert.equal(barkTrigger(s,'coverRotation',{node}),true,node);
-    assert.deepEqual(s.dialogueConsumed.filter(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),[`${expected}#1`],node);
+    assert.deepEqual(s.dialogueConsumed.slice(before).filter(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),[`${expected}#1`],node);
   }
-  const s=load(scenario().beforeCoverAdjustment);
+  const s=quiet();
   assert.equal(barkTrigger(s,'coverRotation',{node:'cv_portal_road_n'}),true);
   s.clock+=10;
   assert.equal(barkTrigger(s,'coverRotation',{node:'cv_tower_p1_n'}),false,'035 does not speak 10 s after 136');

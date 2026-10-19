@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {driver,route} from '../helpers/m01-route.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {newBarkState} from '../../src/game/m01-barks.js';
 
 // Apresentação do HUD de M01: cena real da introdução, controlos reais e snapshot alcançado pela rota da simulação.
 // Verifica apresentação e contratos de texto; não é playtest humano nem medição de desempenho.
@@ -82,12 +83,14 @@ test('a continued save shows the place card and keyed interaction prompt; HUD fi
 });
 
 // Reactive dialogue (src/game/m01-barks.js): the subtitles of a real run reach the page with the speaker's name, 118 and 119 are two different voices, and the caption block
-// does not touch the rest of the HUD at 1366x768. The save is made by the Node pilot: the golden control route up to the east demolition, then a few ticks with the player standing
-// by the ckm crew as it retreats along the embankment, stopped one tick before the second man asks the way (118). It proves the page shows what the simulation says; not a playtest.
+// does not touch the rest of the HUD at 1366x768. The save is made by the Node pilot: the golden control route up to the east demolition, then a quiet minute (the director's ledger
+// cleared: at this point the route has just spoken five lines and a priority-3 remark has to wait for the budget) with the player standing by the ckm crew as it retreats along the
+// embankment, stopped one tick before the second man asks the way (118). It proves the page shows what the simulation says; not a playtest.
 function crewSave(){
   const sim=new M01Simulation();
   sim.restoreSnapshot(route(19390901).combatSnapshots.eastDemolitionOutside);sim.drainEvents();
-  for(let i=0;i<4000;i++){
+  sim.timers.barks=newBarkState();sim.subtitle=null;sim.dialogueQueue=[];
+  for(let i=0;i<400;i++){
     const crew=sim.actor('ckm_reserve'),x=crew.x+6;
     Object.assign(sim.player,{x,z:crew.z,y:sim.world.heightAt(x,crew.z)});
     const before=sim.snapshot();sim.tick(.05,{});

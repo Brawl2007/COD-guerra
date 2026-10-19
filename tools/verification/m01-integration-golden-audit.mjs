@@ -21,7 +21,8 @@
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
 // Amendment 10 (`noBehaviourDifference`) is the dialogue: the lines the director says, the callouts and the guide change what is SAID (the queue, the subtitle, the consumed tokens, the
 // director's record timers.barks, the guide's cadence and two HUD messages that became voices) and nothing that HAPPENS. Its lockstep proves that: with exactly those paths stripped from both
-// frames the two simulations must be byte identical on every tick of both routes, and the first difference itself must be the director's new record.
+// frames the two simulations must be byte identical on every tick of both routes, and the first difference itself must be one of those dialogue paths (measured: tick 355, the
+// scripted line 067 now said on evt_m01_planes_heard, so dialogueConsumed and the queue differ before the director's new record timers.barks).
 // Without --write nothing is written: the regenerated account and golden must equal the committed files byte for byte. When a later amendment has moved the simulation, an
 // amendment is history: CFG.after names the commit whose simulation its golden pins, and the check runs that tree's simulation and pilot instead of the working tree's.
 import assert from 'node:assert/strict';
@@ -91,9 +92,10 @@ const AMENDMENTS={
     // The director lives in its own module too; it is hashed for this amendment only.
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js'],
     generationStage:'Reactive dialogue on the navigator-queue integration tree: the 55 reviewed lines (dlg_m01_100-154, 114/115 unwired) and the guide variants 015a-d as data (a bark rule per line), a deterministic director (src/game/m01-barks.js) with cooldowns on the real clock, repeats, variant rotation and substitution against the callouts, a priority queue with a two-voice limit and a rolling 60 s budget in line(), the six canonical lines nothing said (030 035 036 042 047 067) wired, the cover rotation and the guide spoken instead of messaged; state in timers.barks; golden amendment 10',
-    // Measured on both golden routes: the first lockstep difference is the director's new record timers.barks (tick 355, 04:33:10, the first line: dlg_m01_009), missing in the predecessor.
-    // The behaviour does not move at all: with the dialogue state stripped from both frames (stateOnly) the two simulations are byte identical on every tick of both routes.
-    deltaFields:/^\$\.(state|checkpoint)\.timers\.barks$/,
+    // Measured (dry run of the strip, predecessor 167dccc against the working tree, 23839 ticks of the control route): the first lockstep difference is the dialogue itself at tick 355 (04:33:10,
+    // evt_m01_planes_heard): the orphan line 067 is now said there, so dialogueConsumed[12] and the queue differ, and timers.barks is new. The behaviour does not move at all: with the dialogue
+    // state stripped from both frames (stateOnly) the two simulations are byte identical on every tick of both routes.
+    deltaFields:/^\$\.(state|checkpoint)\.(dialogueConsumed|dialogueQueue|subtitle|timers\.(barks|guide|guideDist))(\.|$)/,
     stripped:['dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»'],
     stateOnly:frame=>{
       const strip=s=>{if(!s)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete s[k];for(const k of ['barks','guide','guideDist'])delete s.timers?.[k];strip(s.resumeCheckpoint);};
