@@ -1,0 +1,262 @@
+{
+ "tool": "tools/verification/m01-nav-perf.mjs",
+ "root": "before-tree",
+ "mode": "alloc",
+ "node": "v22.22.0",
+ "arch": "x64",
+ "cpus": 4,
+ "loadAverageAtStart": [
+  5.8,
+  5.33,
+  4.73
+ ],
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "ticks": 23839,
+   "tickMs": {
+    "mean": 0.7518,
+    "p50": 0.3525,
+    "p99": 9.3903,
+    "p999": 21.2335,
+    "max": 74.256
+   },
+   "over": {
+    "ms5": 559,
+    "ms16": 58,
+    "ms50": 4,
+    "ms100": 0
+   },
+   "route": {
+    "calls": 5,
+    "maxPerTick": 1,
+    "totalMs": 107.73,
+    "maxMs": 51.38
+   },
+   "slowest": [
+    {
+     "ms": 74.256,
+     "clock": 582.25,
+     "battle": 21732,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 56.332,
+     "clock": 464.75,
+     "battle": 19800,
+     "routes": 1,
+     "events": []
+    },
+    {
+     "ms": 53.807,
+     "clock": 580.1,
+     "battle": 21714,
+     "routes": 0,
+     "events": [
+      "enemy-fire"
+     ]
+    },
+    {
+     "ms": 53.241,
+     "clock": 704.85,
+     "battle": 22170,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 48.334,
+     "clock": 362.1,
+     "battle": 18051,
+     "routes": 0,
+     "events": [
+      "enemy-fire"
+     ]
+    }
+   ],
+   "allocBytesPerTick": {
+    "sampled": 23793,
+    "mean": 432751,
+    "p50": 297816,
+    "p99": 2313768,
+    "max": 16059432,
+    "discarded": 46
+   },
+   "wallSec": 18.1
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "ticks": 23051,
+   "tickMs": {
+    "mean": 0.727,
+    "p50": 0.3269,
+    "p99": 8.6977,
+    "p999": 17.7389,
+    "max": 114.742
+   },
+   "over": {
+    "ms5": 508,
+    "ms16": 50,
+    "ms50": 3,
+    "ms100": 1
+   },
+   "route": {
+    "calls": 5,
+    "maxPerTick": 1,
+    "totalMs": 42.47,
+    "maxMs": 19.76
+   },
+   "slowest": [
+    {
+     "ms": 114.742,
+     "clock": 604.15,
+     "battle": 22121,
+     "routes": 0,
+     "events": [
+      "player-shot"
+     ]
+    },
+    {
+     "ms": 64.463,
+     "clock": 119.15,
+     "battle": 16620,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 52.855,
+     "clock": 222.25,
+     "battle": 16981,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 38.347,
+     "clock": 0.05,
+     "battle": 16244,
+     "routes": 0,
+     "events": [
+      "checkpoint"
+     ]
+    },
+    {
+     "ms": 36.815,
+     "clock": 843.8,
+     "battle": 22350,
+     "routes": 0,
+     "events": []
+    }
+   ],
+   "allocBytesPerTick": {
+    "sampled": 23007,
+    "mean": 461203,
+    "p50": 313136,
+    "p99": 2197632,
+    "max": 11894768,
+    "discarded": 44
+   },
+   "wallSec": 17.8
+  }
+ ],
+ "free": {
+  "walks": 150,
+  "failed": 0,
+  "arrivedTicksTotal": 72031,
+  "ticks": 72031,
+  "tickMs": {
+   "mean": 0.1705,
+   "p50": 0.1137,
+   "p99": 0.5259,
+   "p999": 9.8813,
+   "max": 48.025
+  },
+  "over": {
+   "ms5": 201,
+   "ms16": 25,
+   "ms50": 0,
+   "ms100": 0
+  },
+  "route": {
+   "calls": 50,
+   "maxPerTick": 1,
+   "totalMs": 363.58,
+   "maxMs": 33.02
+  },
+  "slowest": [
+   {
+    "ms": 48.025,
+    "clock": 18.5,
+    "battle": 16262,
+    "routes": 0,
+    "events": [
+     "checkpoint",
+     "message"
+    ]
+   },
+   {
+    "ms": 46.418,
+    "clock": 4.45,
+    "battle": 16248,
+    "routes": 0,
+    "events": [
+     "checkpoint",
+     "message"
+    ]
+   },
+   {
+    "ms": 33.613,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 30.529,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 29.517,
+    "clock": 11.9,
+    "battle": 16256,
+    "routes": 0,
+    "events": [
+     "checkpoint",
+     "message"
+    ]
+   }
+  ],
+  "allocBytesPerTick": {
+   "sampled": 71962,
+   "mean": 163936,
+   "p50": 152608,
+   "p99": 168616,
+   "max": 115013136,
+   "discarded": 69
+  },
+  "constructionMs": {
+   "mean": 3.122,
+   "p50": 2.384,
+   "max": 15.559
+  },
+  "firstTickMs": {
+   "mean": 1.899,
+   "p50": 1.341,
+   "max": 44.719
+  },
+  "wallSec": 13.2
+ },
+ "loadAverageAtEnd": [
+  5.68,
+  5.37,
+  4.78
+ ]
+}

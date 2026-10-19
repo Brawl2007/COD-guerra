@@ -1,7 +1,8 @@
 // M01 actor navigation: a deterministic, data-only route planner over the same solids the player collides with.
 //
 // What it is: a uniform grid rasterised on demand over a window round one query, A* over it, then string pulling with exact segment tests. Nothing here
-// draws from a random stream, keeps hidden state or reads the clock; the same world, start and goal always give the same corners. It never moves anybody:
+// draws from a random stream, keeps state between queries or reads the clock; the same world, start and goal always give the same corners (2026-10-19: the work buffers of a plan
+// are kept and grown in the navigator, and every one of them is written over [0, n) before it is read, so a plan never sees an earlier one). It never moves anybody:
 // the simulation keeps the corners it was given in the actor's own (saved) data and walks them with the ordinary TczewWorld.move.
 //
 // ponytail: reuse first. The map has no waypoint graph and its cover nodes are firing positions, not routes (nothing leads round the hut door, the station or the yard wagons),
@@ -24,7 +25,7 @@
 // edge strips: solids of a span, `walkerBand`) keep the walker's own height: their ground is the river or the lowland below, which a man on the span never reaches.
 import {M01_PASSAGES,ckmEmplacementSolids} from './m01-nav-layout.js';
 
-export const NAV={margin:.15,tightMargin:.03,cell:.5,maxCells:120000,band:{low:.1,high:1.45},edge:2,bucket:32,voidBelow:-6,maxSnap:6,reachSnap:3,retrySec:5,widePadMax:200};
+export const NAV={margin:.15,tightMargin:.03,cell:.5,maxCells:120000,band:{low:.1,high:1.45},edge:2,bucket:32,voidBelow:-6,maxSnap:6,reachSnap:3,retrySec:5,widePadMax:200,routesPerTick:1};
 const EAST='evt_m01_east_demolition',WEST='evt_m01_west_demolition';
 
 // Rectangle minus rectangle (xz): up to four pieces, the y range is kept.
@@ -38,30 +39,37 @@ function subtract(b,h){
   return out;
 }
 
-// Open-interval slab test of the segment a->b against the box [x0,x1]x[z0,z1]: touching a face is not a crossing. The part of the segment inside, [t0, t1], or null.
+// Open-interval slab test of the segment a->b against the box [x0,x1]x[z0,z1]: touching a face is not a crossing. True when the segment crosses it; the part of the segment
+// inside, [SPAN.t0, SPAN.t1], is left in SPAN (one shared record: the planner is synchronous and every caller reads it before the next test).
+const SPAN={t0:0,t1:1};
 function segmentSpan(ax,az,bx,bz,x0,x1,z0,z1){
   const dx=bx-ax,dz=bz-az;let t0=0,t1=1;
-  if(Math.abs(dx)<1e-12){if(ax<=x0||ax>=x1)return null;}
-  else{let u=(x0-ax)/dx,v=(x1-ax)/dx;if(u>v){const w=u;u=v;v=w;}t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>=t1)return null;}
-  if(Math.abs(dz)<1e-12){if(az<=z0||az>=z1)return null;}
-  else{let u=(z0-az)/dz,v=(z1-az)/dz;if(u>v){const w=u;u=v;v=w;}t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>=t1)return null;}
-  return [t0,t1];
+  if(Math.abs(dx)<1e-12){if(ax<=x0||ax>=x1)return false;}
+  else{let u=(x0-ax)/dx,v=(x1-ax)/dx;if(u>v){const w=u;u=v;v=w;}t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>=t1)return false;}
+  if(Math.abs(dz)<1e-12){if(az<=z0||az>=z1)return false;}
+  else{let u=(z0-az)/dz,v=(z1-az)/dz;if(u>v){const w=u;u=v;v=w;}t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>=t1)return false;}
+  SPAN.t0=t0;SPAN.t1=t1;return true;
 }
 const inBand=(s,y)=>y+NAV.band.high>s.min.y&&y+NAV.band.low<s.max.y;
 
+// Binary min-heap of (key, cell) on typed arrays, kept between plans; ties on the key break on the lower cell so the route never depends on insertion order.
 class Heap {
-  constructor(){this.f=[];this.i=[];}
-  get size(){return this.f.length;}
-  less(a,b){return this.f[a]<this.f[b]||this.f[a]===this.f[b]&&this.i[a]<this.i[b];}
+  constructor(){this.cap=4096;this.f=new Float64Array(this.cap);this.i=new Int32Array(this.cap);this.n=0;}
+  get size(){return this.n;}
+  reset(){this.n=0;}
+  less(a,b){const f=this.f;return f[a]<f[b]||f[a]===f[b]&&this.i[a]<this.i[b];}
   swap(a,b){const f=this.f[a],i=this.i[a];this.f[a]=this.f[b];this.i[a]=this.i[b];this.f[b]=f;this.i[b]=i;}
-  push(f,i){let k=this.f.push(f)-1;this.i.push(i);while(k>0){const p=(k-1)>>1;if(!this.less(k,p))break;this.swap(k,p);k=p;}}
+  grow(){const cap=this.cap*2,f=new Float64Array(cap),i=new Int32Array(cap);f.set(this.f);i.set(this.i);this.f=f;this.i=i;this.cap=cap;}
+  push(f,i){if(this.n===this.cap)this.grow();let k=this.n++;this.f[k]=f;this.i[k]=i;while(k>0){const p=(k-1)>>1;if(!this.less(k,p))break;this.swap(k,p);k=p;}}
   pop(){
-    const top=this.i[0],lf=this.f.pop(),li=this.i.pop();
-    if(this.f.length){this.f[0]=lf;this.i[0]=li;let k=0;for(;;){const l=2*k+1,r=l+1;let m=k;
-      if(l<this.f.length&&this.less(l,m))m=l;if(r<this.f.length&&this.less(r,m))m=r;if(m===k)break;this.swap(k,m);k=m;}}
+    const top=this.i[0],n=--this.n;
+    if(n>0){this.f[0]=this.f[n];this.i[0]=this.i[n];let k=0;for(;;){const l=2*k+1,r=l+1;let m=k;
+      if(l<n&&this.less(l,m))m=l;if(r<n&&this.less(r,m))m=r;if(m===k)break;this.swap(k,m);k=m;}}
     return top;
   }
 }
+// The eight neighbours of a cell, in the fixed order of the search (E, W, S, N, SE, NE, SW, NW).
+const DI=Int8Array.of(1,-1,0,0,1,1,-1,-1),DJ=Int8Array.of(0,0,1,-1,1,-1,1,-1);
 
 /** The kinds of world.playerSolids the actors route round and are kept out of (see 5. above). 'obstacle' is world.obstacles again, 'deck' is ground for TczewWorld.move,
  * 'emplacement' is solid 4 again (one table, m01-nav-layout.js). */
@@ -74,8 +82,8 @@ export function playerSolidsForNav(world){
       walkerBand:b.kind==='truss'});   // girders and joint rails belong to a span, like the girders of the colliders
   return out;
 }
-// A point in the frame of an oriented box, and the box's own extent there.
-const toLocal=(o,x,z)=>{const dx=x-o.cx,dz=z-o.cz;return [dx*o.c-dz*o.s,dx*o.s+dz*o.c];};
+// A point in the frame of an oriented box, one coordinate at a time (no array per call).
+const localX=(o,x,z)=>(x-o.cx)*o.c-(z-o.cz)*o.s,localZ=(o,x,z)=>(x-o.cx)*o.s+(z-o.cz)*o.c;
 
 export class M01Navigator {
   /**
@@ -84,7 +92,12 @@ export class M01Navigator {
    * from `obstacles`, e.g. what only the player collides with), optionally with an `obb` frame (playerSolidsForNav). They have no world collider, so they are 'decor': routed
    * round like the colliders and enforced by `settle`; read again whenever the world's revision changes.
    */
-  constructor(world,{emplacement=null,extraSolids=null}={}){this.world=world;this.emplacement=emplacement;this.extraSolids=extraSolids;this.built=-1;this.solids=[];this.buckets=new Map();this.stamp=0;}
+  constructor(world,{emplacement=null,extraSolids=null}={}){this.world=world;this.emplacement=emplacement;this.extraSolids=extraSolids;this.built=-1;this.solids=[];this.buckets=new Map();this.stamp=0;this.marks=new Int32Array(0);
+    // Work space reused by every query (see the header): the plan's grids, and one result list per place that holds a `near` list while calling another one.
+    this.buf=null;this.nearBlocked=[];this.nearClear=[];this.nearPlan=[];this.nearSettle=[];this.nearPush=[];
+    this.exitObjects=[{depth:0,x:0,z:0},{depth:0,x:0,z:0},{depth:0,x:0,z:0},{depth:0,x:0,z:0}];this.exitOrder=this.exitObjects.slice();}
+  /** Builds the solid list and the buckets for the world as it stands now (the simulation does it at construction and after a load, so the first plan does not). */
+  prewarm(){this.sync();return this;}
   /** What the saved routes depend on besides the map: which spans and which walls still stand. Stable across a save and a restore. */
   get key(){const e=this.world.events;return (e.includes(EAST)?1:0)+(e.includes(WEST)?2:0);}
   sync(){
@@ -116,23 +129,28 @@ export class M01Navigator {
   }
   /**
    * Indices of the solids whose xz box meets the rectangle and whose height band meets the body standing at `y`. With `ground`, only the deck attachments are filtered by `y`
-   * (the others are returned for the caller to test against the ground under each place: see the header).
+   * (the others are returned for the caller to test against the ground under each place: see the header). The indices are written into `out` (emptied first, and returned): a caller
+   * that keeps the list while it asks again (settle, plan) uses a list of its own.
    */
-  near(x0,z0,x1,z1,y,ground=false){
-    this.sync();const c=NAV.bucket,out=[],stamp=++this.stamp;
-    for(let bx=Math.floor(x0/c);bx<=Math.floor(x1/c);bx++)for(let bz=Math.floor(z0/c);bz<=Math.floor(z1/c);bz++){
+  near(x0,z0,x1,z1,y,ground=false,out=[]){
+    this.sync();const c=NAV.bucket,stamp=this.nextStamp();out.length=0;
+    const bx1=Math.floor(x1/c),bz1=Math.floor(z1/c),marks=this.marks,solids=this.solids;
+    for(let bx=Math.floor(x0/c);bx<=bx1;bx++)for(let bz=Math.floor(z0/c);bz<=bz1;bz++){
       const l=this.buckets.get(bx*65536+bz);if(!l)continue;
-      for(const i of l){
-        if(this.marks[i]===stamp)continue;this.marks[i]=stamp;const s=this.solids[i];
+      for(let q=0;q<l.length;q++){
+        const i=l[q];if(marks[i]===stamp)continue;marks[i]=stamp;const s=solids[i];
         if((ground&&!s.walkerBand||inBand(s,y))&&s.max.x>x0&&s.min.x<x1&&s.max.z>z0&&s.min.z<z1)out.push(i);
       }
     }
     return out;
   }
+  /** The mark that tells a bucket scan which solids it has already listed; wraps well inside the 31 bits of the mark table. */
+  nextStamp(){if(this.stamp>=0x3fffffff){this.marks.fill(0);this.stamp=0;}return ++this.stamp;}
   /** True when a body of `radius` standing at (x,z) touches a solid (the TczewWorld.move test, plus the navigation solids). */
   blockedAt(x,z,radius,y){
-    for(const i of this.near(x-radius,z-radius,x+radius,z+radius,y)){const s=this.solids[i];
-      if(s.obb){const [lx,lz]=toLocal(s.obb,x,z);if(Math.abs(lx)<s.obb.hx+radius&&Math.abs(lz)<s.obb.hz+radius)return true;continue;}
+    const list=this.near(x-radius,z-radius,x+radius,z+radius,y,false,this.nearBlocked);
+    for(let q=0;q<list.length;q++){const s=this.solids[list[q]];
+      if(s.obb){if(Math.abs(localX(s.obb,x,z))<s.obb.hx+radius&&Math.abs(localZ(s.obb,x,z))<s.obb.hz+radius)return true;continue;}
       if(x+radius>s.min.x&&x-radius<s.max.x&&z+radius>s.min.z&&z-radius<s.max.z)return true;}
     return false;
   }
@@ -142,14 +160,15 @@ export class M01Navigator {
    */
   clear(ax,az,bx,bz,radius,y,margin=0){
     const r=radius+margin,len=Math.hypot(bx-ax,bz-az);
-    for(const i of this.near(Math.min(ax,bx)-r,Math.min(az,bz)-r,Math.max(ax,bx)+r,Math.max(az,bz)+r,y,true)){const s=this.solids[i];
-      let span;
-      if(s.obb){const o=s.obb,[pa,qa]=toLocal(o,ax,az),[pb,qb]=toLocal(o,bx,bz);span=segmentSpan(pa,qa,pb,qb,-o.hx-r,o.hx+r,-o.hz-r,o.hz+r);}
-      else span=segmentSpan(ax,az,bx,bz,s.min.x-r,s.max.x+r,s.min.z-r,s.max.z+r);
-      if(!span)continue;
+    const list=this.near(Math.min(ax,bx)-r,Math.min(az,bz)-r,Math.max(ax,bx)+r,Math.max(az,bz)+r,y,true,this.nearClear);
+    for(let q=0;q<list.length;q++){const s=this.solids[list[q]];
+      let hit;
+      if(s.obb){const o=s.obb;hit=segmentSpan(localX(o,ax,az),localZ(o,ax,az),localX(o,bx,bz),localZ(o,bx,bz),-o.hx-r,o.hx+r,-o.hz-r,o.hz+r);}
+      else hit=segmentSpan(ax,az,bx,bz,s.min.x-r,s.max.x+r,s.min.z-r,s.max.z+r);
+      if(!hit)continue;
       if(s.walkerBand)return false;
-      const k=Math.max(1,Math.ceil((span[1]-span[0])*len/.5));
-      for(let j=0;j<=k;j++){const t=span[0]+(span[1]-span[0])*j/k;if(inBand(s,this.world.heightAt(ax+(bx-ax)*t,az+(bz-az)*t)))return false;}
+      const t0=SPAN.t0,t1=SPAN.t1,k=Math.max(1,Math.ceil((t1-t0)*len/.5));
+      for(let j=0;j<=k;j++){const t=t0+(t1-t0)*j/k;if(inBand(s,this.world.heightAt(ax+(bx-ax)*t,az+(bz-az)*t)))return false;}
     }
     return true;
   }
@@ -163,10 +182,11 @@ export class M01Navigator {
     this.sync();
     for(let pass=0;pass<2;pass++){
       let moved=false;
-      for(const i of this.near(a.x-a.radius,a.z-a.radius,a.x+a.radius,a.z+a.radius,a.y)){const s=this.solids[i];
+      const list=this.near(a.x-a.radius,a.z-a.radius,a.x+a.radius,a.z+a.radius,a.y,false,this.nearSettle);
+      for(let q=0;q<list.length;q++){const i=list[q],s=this.solids[i];
         if(s.kind!=='decor')continue;
         const exits=this.exits(a,s);if(!exits)continue;
-        const out=exits.find(e=>this.pushFree(a,e.x,e.z,i));
+        let out=null;for(let e=0;e<4&&!out;e++)if(this.pushFree(a,exits[e].x,exits[e].z,i))out=exits[e];
         if(out){a.x=out.x;a.z=out.z;}else this.world.move(a,exits[0].x-a.x,exits[0].z-a.z);
         moved=true;
       }
@@ -174,25 +194,32 @@ export class M01Navigator {
       a.y=this.world.heightAt(a.x,a.z);
     }
   }
-  /** The four places just outside solid `s` for the body of `a`, shallowest first (faces in the fixed order -x, +x, -z, +z on ties), or null when he does not overlap it. */
+  /**
+   * The four places just outside solid `s` for the body of `a`, shallowest first (faces in the fixed order -x, +x, -z, +z on ties), or null when he does not overlap it.
+   * The four records are the navigator's own and are overwritten by the next call: read them before asking again.
+   */
   exits(a,s){
-    const r=a.radius;
+    const r=a.radius,e=this.exitObjects,order=this.exitOrder;
     if(s.obb){   // the same faces in the box's own frame, then back to the world
-      const o=s.obb,[lx,lz]=toLocal(o,a.x,a.z),d=[lx+r+o.hx,o.hx-(lx-r),lz+r+o.hz,o.hz-(lz-r)];
-      if(d.some(v=>v<=0))return null;
-      const at=(px,pz)=>({x:o.cx+px*o.c+pz*o.s,z:o.cz-px*o.s+pz*o.c});
-      return [{depth:d[0],...at(-o.hx-r,lz)},{depth:d[1],...at(o.hx+r,lz)},{depth:d[2],...at(lx,-o.hz-r)},{depth:d[3],...at(lx,o.hz+r)}].sort((p,q)=>p.depth-q.depth);
+      const o=s.obb,lx=localX(o,a.x,a.z),lz=localZ(o,a.x,a.z),d0=lx+r+o.hx,d1=o.hx-(lx-r),d2=lz+r+o.hz,d3=o.hz-(lz-r);
+      if(d0<=0||d1<=0||d2<=0||d3<=0)return null;
+      const at=(rec,px,pz)=>{rec.x=o.cx+px*o.c+pz*o.s;rec.z=o.cz-px*o.s+pz*o.c;};
+      e[0].depth=d0;at(e[0],-o.hx-r,lz);e[1].depth=d1;at(e[1],o.hx+r,lz);e[2].depth=d2;at(e[2],lx,-o.hz-r);e[3].depth=d3;at(e[3],lx,o.hz+r);
+    }else{
+      const d0=a.x+r-s.min.x,d1=s.max.x-(a.x-r),d2=a.z+r-s.min.z,d3=s.max.z-(a.z-r);
+      if(d0<=0||d1<=0||d2<=0||d3<=0)return null;
+      e[0].depth=d0;e[0].x=s.min.x-r;e[0].z=a.z;e[1].depth=d1;e[1].x=s.max.x+r;e[1].z=a.z;e[2].depth=d2;e[2].x=a.x;e[2].z=s.min.z-r;e[3].depth=d3;e[3].x=a.x;e[3].z=s.max.z+r;
     }
-    const d=[a.x+r-s.min.x,s.max.x-(a.x-r),a.z+r-s.min.z,s.max.z-(a.z-r)];
-    if(d.some(v=>v<=0))return null;
-    return [{depth:d[0],x:s.min.x-r,z:a.z},{depth:d[1],x:s.max.x+r,z:a.z},{depth:d[2],x:a.x,z:s.min.z-r},{depth:d[3],x:a.x,z:s.max.z+r}].sort((p,q)=>p.depth-q.depth);
+    for(let i=0;i<4;i++)order[i]=e[i];
+    for(let i=1;i<4;i++){const item=order[i];let j=i-1;while(j>=0&&order[j].depth>item.depth){order[j+1]=order[j];j--;}order[j+1]=item;}   // stable: equal depths keep the face order
+    return order;
   }
   /** True when the body of `a` can be pushed in a straight line to (x, z) without meeting any solid but `skip` (at his own height). */
   pushFree(a,x,z,skip){
-    const r=a.radius;
-    for(const j of this.near(Math.min(a.x,x)-r,Math.min(a.z,z)-r,Math.max(a.x,x)+r,Math.max(a.z,z)+r,a.y)){
-      if(j===skip)continue;const s=this.solids[j];
-      if(s.obb){const o=s.obb,[pa,qa]=toLocal(o,a.x,a.z),[pb,qb]=toLocal(o,x,z);if(segmentSpan(pa,qa,pb,qb,-o.hx-r,o.hx+r,-o.hz-r,o.hz+r))return false;}
+    const r=a.radius,list=this.near(Math.min(a.x,x)-r,Math.min(a.z,z)-r,Math.max(a.x,x)+r,Math.max(a.z,z)+r,a.y,false,this.nearPush);
+    for(let q=0;q<list.length;q++){
+      const j=list[q];if(j===skip)continue;const s=this.solids[j];
+      if(s.obb){const o=s.obb;if(segmentSpan(localX(o,a.x,a.z),localZ(o,a.x,a.z),localX(o,x,z),localZ(o,x,z),-o.hx-r,o.hx+r,-o.hz-r,o.hz+r))return false;}
       else if(segmentSpan(a.x,a.z,x,z,s.min.x-r,s.max.x+r,s.min.z-r,s.max.z+r))return false;
     }
     return true;
@@ -205,6 +232,15 @@ export class M01Navigator {
     this.sync();
     for(const margin of [NAV.margin,NAV.tightMargin])for(const wide of [false,true]){const r=this.plan(a,goal,margin,wide);if(r)return r;}
     return null;
+  }
+  /** The work grids for a window of `n` cells: the navigator's own, grown (never shrunk) when a window needs more than they hold. Contents are NOT cleared here: `plan` writes every cell it reads. */
+  buffers(n){
+    let b=this.buf;
+    if(!b||b.cap<n){
+      const cap=Math.max(n,Math.min(b?b.cap*2:32768,Math.ceil(NAV.maxCells*1.25)));   // doubles, never past a quarter above the cell budget (a window may round a few rows over it)
+      b=this.buf={cap,blocked:new Uint8Array(cap),groundY:new Float32Array(cap),g:new Float32Array(cap),parent:new Int32Array(cap),closed:new Uint8Array(cap),heap:b?b.heap:new Heap()};
+    }
+    return b;
   }
   plan(a,goal,margin,wide=false){
     const radius=a.radius+margin,y=a.y;
@@ -219,18 +255,20 @@ export class M01Navigator {
     }
     const x0=Math.min(a.x,goal.x)-pad,x1=Math.max(a.x,goal.x)+pad,z0=Math.min(a.z,goal.z)-pad,z1=Math.max(a.z,goal.z)+pad;
     let cell=NAV.cell;while((x1-x0)/cell*((z1-z0)/cell)>NAV.maxCells)cell*=2;
-    const nx=Math.ceil((x1-x0)/cell),nz=Math.ceil((z1-z0)/cell),n=nx*nz,blocked=new Uint8Array(n);
+    const nx=Math.ceil((x1-x0)/cell),nz=Math.ceil((z1-z0)/cell),n=nx*nz,B=this.buffers(n),blocked=B.blocked,groundY=B.groundY;
+    blocked.fill(0,0,n);groundY.fill(NaN,0,n);
     const cx=i=>x0+(i%nx+.5)*cell,cz=i=>z0+(Math.floor(i/nx)+.5)*cell;
-    const near=this.near(x0,z0,x1,z1,y,true);
+    const near=this.near(x0,z0,x1,z1,y,true,this.nearPlan);
     // The ground under a cell, measured once per cell and only where a solid could block it.
-    const groundY=new Float32Array(n).fill(NaN),ground=i=>{let g=groundY[i];if(g!==g)g=groundY[i]=this.world.heightAt(x0+(i%nx+.5)*cell,z0+(Math.floor(i/nx)+.5)*cell);return g;};
-    for(const k of near){
-      const s=this.solids[k],ax=s.min.x-radius,bx=s.max.x+radius,az=s.min.z-radius,bz=s.max.z+radius;
+    const ground=i=>{let g=groundY[i];if(g!==g)g=groundY[i]=this.world.heightAt(x0+(i%nx+.5)*cell,z0+(Math.floor(i/nx)+.5)*cell);return g;};
+    for(let q=0;q<near.length;q++){
+      const s=this.solids[near[q]],ax=s.min.x-radius,bx=s.max.x+radius,az=s.min.z-radius,bz=s.max.z+radius;
       const i0=Math.max(0,Math.floor((ax-x0)/cell-.5)+1),i1=Math.min(nx-1,Math.ceil((bx-x0)/cell-.5)-1);
       const j0=Math.max(0,Math.floor((az-z0)/cell-.5)+1),j1=Math.min(nz-1,Math.ceil((bz-z0)/cell-.5)-1);
       const wall=c=>s.walkerBand||inBand(s,ground(c));   // a deck attachment at the walker's height (near() kept only those in his band); anything else at the ground under the cell
       if(s.obb){const o=s.obb;   // a rotated box: the cells of its bounds whose centre is inside it grown by the radius, in its own frame
-        for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const c=j*nx+i;if(blocked[c])continue;const [lx,lz]=toLocal(o,x0+(i+.5)*cell,z0+(j+.5)*cell);if(Math.abs(lx)<o.hx+radius&&Math.abs(lz)<o.hz+radius&&wall(c))blocked[c]=1;}
+        for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const c=j*nx+i;if(blocked[c])continue;const px=x0+(i+.5)*cell,pz=z0+(j+.5)*cell;
+          if(Math.abs(localX(o,px,pz))<o.hx+radius&&Math.abs(localZ(o,px,pz))<o.hz+radius&&wall(c))blocked[c]=1;}
         continue;}
       for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const c=j*nx+i;if(!blocked[c]&&wall(c))blocked[c]=1;}
     }
@@ -250,15 +288,15 @@ export class M01Navigator {
     const start=snap(a.x,a.z,NAV.maxSnap),end=snap(goal.x,goal.z,NAV.maxSnap);
     if(start<0||end<0)return null;
     // A*, eight neighbours, no corner cutting; ties break on the lower index so the route never depends on insertion order.
-    const g=new Float32Array(n).fill(Infinity),parent=new Int32Array(n).fill(-1),closed=new Uint8Array(n),heap=new Heap();
+    const g=B.g,parent=B.parent,closed=B.closed,heap=B.heap;g.fill(Infinity,0,n);parent.fill(-1,0,n);closed.fill(0,0,n);heap.reset();
     const ex=end%nx,ez=Math.floor(end/nx),h=i=>{const dx=Math.abs(i%nx-ex),dz=Math.abs(Math.floor(i/nx)-ez);return (Math.max(dx,dz)+(Math.SQRT2-1)*Math.min(dx,dz))*cell;};
     g[start]=0;heap.push(h(start),start);
-    const D=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];let found=false;
+    let found=false;
     while(heap.size){
       const c=heap.pop();if(closed[c])continue;closed[c]=1;if(c===end){found=true;break;}
       const ci=c%nx,cj=Math.floor(c/nx);
-      for(const [di,dj]of D){
-        const i=ci+di,j=cj+dj;if(i<0||j<0||i>=nx||j>=nz)continue;const m=j*nx+i;if(blocked[m]||closed[m])continue;
+      for(let k=0;k<8;k++){
+        const di=DI[k],dj=DJ[k],i=ci+di,j=cj+dj;if(i<0||j<0||i>=nx||j>=nz)continue;const m=j*nx+i;if(blocked[m]||closed[m])continue;
         if(di&&dj&&(blocked[cj*nx+i]||blocked[j*nx+ci]))continue;
         const cost=g[c]+(di&&dj?Math.SQRT2:1)*cell;if(cost<g[m]-1e-9){g[m]=cost;parent[m]=c;heap.push(cost+h(m),m);}
       }
