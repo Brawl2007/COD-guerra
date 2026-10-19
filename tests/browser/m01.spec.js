@@ -73,7 +73,11 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
-  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+  // The clip reload is 3.4 s of SIMULATION time (kb_wz29 reloadClipSec) and the loop simulates at most 5 fixed steps (250 ms) per rendered frame (src/game/frame-catchup.js, unchanged
+  // since 5378fb4: dt was already clamped to .25 s), so under software rendering the wait is a frame budget, not seconds. Measured on a shared 4-CPU runner (load 6-7): 0.8-1.2 frames/s,
+  // i.e. 0.2-0.3 s of simulation per real second at 5378fb4 and at 8a978fb alike, so the reload needs 11-17 s of wall time and the old 15 s window failed in the 2026-10-19 integration run.
+  // Same CI budget as waitForBearingFrame/waitForFrameAfterRestore; the expectation itself (the reload ends with 5 in the magazine and 35 in reserve) is unchanged.
+  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:process.env.CI?60000:15000});await expect(page.locator('#reserve')).toHaveText('35');
   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
   await page.screenshot({path:info.outputPath('m01-playing.png')});
