@@ -18,7 +18,7 @@ import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js'
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
 import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01-rearguard.js';
-import {barkEvent,barkTrigger,barkPoll,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
+import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -332,7 +332,9 @@ export class M01Simulation {
    * Says a line: queues its subtitle. A scripted line (every line without a `bark` rule) keeps the old FIFO and is never dropped, cut or jumped. A reactive line (a `bark` rule,
    * src/game/m01-barks.js) is ordered by its priority (1 is the most urgent) among the reactive ones, waits behind every scripted line, and lives only `barks.ttlSec` in the queue
    * (advanceSubtitle); at most `barks.voices` lines are on screen and waiting together, so a reactive line is dropped unless it is more urgent than one it can replace.
-   * Returns true when the line was queued, false when it was not (already said under this token, unknown, no room). The director is told what was said, for «tocou há N s».
+   * Returns true when the line was queued, false when it was not (already said under this token, unknown, no room). The director is told what was said, for «tocou há N s»:
+   * a scripted line when it is queued (it is always shown), a reactive one when it goes on screen (barkShown; review N1, 2026-10-19: a reactive line dropped by its time to live or
+   * by a more urgent one was never said, so it spends no `max`, no cooldown and no budget, and its token is given back). Until then it carries `queuedAt` and its `token`.
    */
   line(id,token=id){
     if(this.dialogueConsumed.includes(token))return false;
@@ -344,19 +346,25 @@ export class M01Simulation {
     let at=queue.length;
     if(rule){
       if(!this.makeRoom(rule.priority))return false;
-      Object.assign(record,{priority:rule.priority,bark:true,expires:this.clock+BARK_CONFIG.ttlSec[rule.priority]});
+      Object.assign(record,{priority:rule.priority,bark:true,expires:this.clock+BARK_CONFIG.ttlSec[rule.priority],queuedAt:this.clock,token});
       at=queue.length;while(at>0&&queue[at-1].bark&&queue[at-1].priority>rule.priority)at--;
     }else while(at>0&&queue[at-1].bark)at--;
     this.dialogueConsumed.push(token);
     queue.splice(at,0,record);
-    noteSpoken(this,id);
+    if(!rule)noteSpoken(this,id);
     return true;
+  }
+  /** A reactive line leaves the queue unseen (its time to live, a more urgent line, a skipped scene): its token is given back, and the HUD message it stood for, if any, is shown. */
+  dropBark(record,{fallback=true}={}){
+    if(record.queuedAt===undefined)return;   // a line of an older save: it was counted when it was queued, as then
+    const i=this.dialogueConsumed.indexOf(record.token);if(i>=0)this.dialogueConsumed.splice(i,1);
+    if(fallback&&record.fallback)this.message(record.fallback);
   }
   /** Room for one more reactive line of this priority: fewer than `barks.voices` lines on screen and waiting, or a waiting reactive line less urgent than it (which it replaces), or a reactive line on screen that it may cut (advanceSubtitle). */
   makeRoom(priority){
     const queue=this.dialogueQueue,last=queue[queue.length-1],shown=this.subtitle;
     if((shown?1:0)+queue.length<BARK_CONFIG.voices)return true;
-    if(last?.bark&&last.priority>priority){queue.pop();return true;}
+    if(last?.bark&&last.priority>priority){this.dropBark(queue.pop());return true;}
     return Boolean(shown?.bark&&shown.priority-priority>=BARK_CUT_STEP&&this.clock-(shown.until-shown.duration)>=BARK_CONFIG.cutAfterSec);
   }
   /**
@@ -367,8 +375,8 @@ export class M01Simulation {
     const queue=this.dialogueQueue;let shown=this.subtitle;
     if(shown&&this.clock>=shown.until)shown=this.subtitle=null;
     if(shown?.bark&&queue.length&&(!queue[0].bark||shown.priority-queue[0].priority>=BARK_CUT_STEP)&&this.clock-(shown.until-shown.duration)>=BARK_CONFIG.cutAfterSec)shown=this.subtitle=null;
-    while(queue.length&&queue[0].expires!==undefined&&this.clock>queue[0].expires)queue.shift();
-    if(!shown&&queue.length){this.subtitle=queue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
+    while(queue.length&&queue[0].expires!==undefined&&this.clock>queue[0].expires)this.dropBark(queue.shift());
+    if(!shown&&queue.length){this.subtitle=queue.shift();this.subtitle.until=this.clock+this.subtitle.duration;if(this.subtitle.queuedAt!==undefined)barkShown(this,this.subtitle);}
   }
   message(message){this.emit({type:'message',message});}
   startScene(id){if(this.sceneDone.includes(id))return;this.scene={id,elapsed:0,beats:[]};}
@@ -382,6 +390,7 @@ export class M01Simulation {
     const data=definition.cutscenes.find(c=>c.id===this.scene.id);
     if(skip&&data.skippable){
       data.timeline.forEach((b,i)=>{const token=`${data.id}:${i}:${b.line}`;if(b.line&&!this.dialogueConsumed.includes(token))this.dialogueConsumed.push(token);});
+      for(const q of this.dialogueQueue)this.dropBark(q,{fallback:false});
       this.dialogueQueue=[];this.subtitle=null;this.endScene();return;
     }
     this.scene.elapsed+=dt;
@@ -1180,7 +1189,9 @@ export class M01Simulation {
   aiTarget(a,withdrawal,sees,west,threat){
     const ai=a.ai,u=()=>aiNext(ai),p=this.player,mg=a.weapon==='mg34',gate=gateShooter(a),c=[];
     const add=(id,target,kind,w)=>c.push({id,target,kind,w:w*(id===ai.target?3:1)});
-    const seesPlayer=()=>west&&sees(p),sapper=()=>{const s=this.actors.filter(x=>x.role==='ENGINEER'&&x.alive&&x.active);
+    // 2026-10-19 (bark director review B1): a sight of the player is remembered in the man's own record (ai.seen, who 'player'), riflemen too, so the director's peek
+    // lines read what the AI already saw instead of tracing their own lines of sight every tick. Only the MG34's searching fire reads ai.seen, and it is set there as before.
+    const seesPlayer=()=>{if(!(west&&sees(p)))return false;ai.seen={x:p.x,y:p.y,z:p.z,at:this.clock,who:'player'};return true;},sapper=()=>{const s=this.actors.filter(x=>x.role==='ENGINEER'&&x.alive&&x.active);
       return s.length?s[Math.floor(u()*s.length)]:this.world.point('repair_site_2');};
     if(withdrawal){
       const near=this.withdrawingPlatoon().filter(s=>s.x>650&&dist(s,a)<520),s=near.find(m=>m.id===ai.target)??(near.length?near[Math.floor(u()*near.length)]:null);
@@ -1752,7 +1763,9 @@ export class M01Simulation {
         for(const a of shooters[0]?.weapon==='mg34'?shooters.slice(0,1):shooters){
           this.burst(a,p,'cover',a.weapon==='mg34'?{rounds:7,bias:[.5,.3],cone:[.6,.4],tracer:true}:{rounds:1,bias:[.8,.5],cone:[0,0]});a.cooldown=Math.max(a.cooldown,6);
         }
-        if(shooters.length){this.mission.status=this.coverFireStatus();if(!spoken)this.message(`Zieliński: ${this.mission.status}.`);}
+        if(shooters.length){this.mission.status=this.coverFireStatus();const toast=`Zieliński: ${this.mission.status}.`;
+          // Review N1 (2026-10-19): the voice is only queued here; if it expires unseen the HUD message is shown then (dropBark), so the order is never lost.
+          if(!spoken)this.message(toast);else{const q=this.dialogueQueue.findLast(q=>q.queuedAt===this.clock&&BARK_RULES.get(q.id)?.on==='coverRotation');if(q)q.fallback=toast;}}
       }
     }
     barkPoll(this);   // the reactive lines that read state (m01-barks.js)
@@ -2277,6 +2290,9 @@ export function validateM01Snapshot(s){
   const dialogue=d=>{
     if(!d||!BARK_LINES.has(d.id)||typeof d.speaker!=='string'||typeof d.text!=='string'||d.text.length>=600||!finite(d.duration,1,15))return false;
     if(d.bark===undefined)return d.priority===undefined&&d.expires===undefined;
+    // Not yet on screen (review N1): when it was queued, its token (among the consumed ones) and, for the order to change cover, the HUD message it stands for.
+    if(d.queuedAt!==undefined&&(!finite(d.queuedAt,0,s.clock)||typeof d.token!=='string'||!s.dialogueConsumed.includes(d.token)))return false;
+    if(d.fallback!==undefined&&(typeof d.fallback!=='string'||d.fallback.length>=300||d.queuedAt===undefined))return false;
     return d.bark===true&&BARK_RULES.get(d.id)?.priority===d.priority&&finite(d.expires);
   };
   if(s.dialogueQueue.some(d=>!dialogue(d))||(s.subtitle&&(!dialogue(s.subtitle)||!finite(s.subtitle.until))))reject('legendas');

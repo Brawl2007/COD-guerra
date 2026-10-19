@@ -1801,7 +1801,7 @@
       "priority": 1
     },
     { "id": "dlg_m01_029", "speaker": "szymon_kowal", "text": "Trocando carregador!", "context": "callout recarga (real, quando o rkm recarrega)", "priority": 2 },
-    { "id": "dlg_m01_030", "speaker": "jozef_bak", "text": "Cubro você!", "context": "callout; Bąk atira enquanto o jogador recarrega", "priority": 2, "bark": {"on": "reload", "when": {"flag": {"m01.bak_status": "unhurt"}, "consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
+    { "id": "dlg_m01_030", "speaker": "szymon_kowal", "text": "Cubro você!", "context": "callout; quem cobre o jogador enquanto ele recarrega. 2026-10-19 (revisão N3): era de Bąk, que nunca dispara no jogo; passa a Kowal, cujo rkm wz.28 dispara de verdade, e só se ele disparou nos últimos 6 s", "priority": 2, "bark": {"on": "reload", "when": {"consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "fired": {"of": "speaker", "sec": 6}, "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
     { "id": "dlg_m01_031", "speaker": "pawel_krawiec", "text": "Linha inteira. Avisem o oficial: está pronta.", "context": "evt_m01_repair_complete", "priority": 1 },
     { "id": "dlg_m01_032", "speaker": "marek_zielinski", "text": "Pawlak, vai.", "context": "evt_m01_repair_complete", "priority": 1 },
     {
@@ -2022,7 +2022,7 @@
     "lines": [
       { "id": "co_m01_enemy_mg_fire_on_squad", "event": "enemy_mg_fire_on_squad", "speaker": "szymon_kowal", "text": "Metralhadora no dique!" },
       { "event": "npc_reloading", "speaker": "any_pl", "text": "Recarregando!" },
-      { "event": "player_reloading_near_ally", "speaker": "jozef_bak", "text": "Cubro você!" },
+      { "event": "player_reloading_near_ally", "speaker": "szymon_kowal", "text": "Cubro você!" },
       { "id": "co_m01_ally_hit", "event": "ally_hit", "speaker": "any_pl", "text": "Sanitário!", "priority": 1, "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 40}}, "cooldown": 15, "max": 6} },
       { "id": "co_m01_cover_rotation", "event": "cover_rotation", "speaker": "marek_zielinski", "text": "Mudar! Próxima posição!", "priority": 1, "bark": {"on": "coverRotation", "when": {"node": ["cv_sandbag_*"]}, "cooldown": 20, "unless": [{"line": "dlg_m01_136", "within": 20}, {"line": "dlg_m01_137", "within": 20}, {"line": "dlg_m01_035", "within": 20}]} },
       { "event": "sun_glare_player_facing_east", "speaker": "marek_zielinski", "text": "Tira os olhos do sol!" },
