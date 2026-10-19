@@ -105,7 +105,7 @@ export class Game {
         fire:this.input.consumeFire(),reload:this.input.consumePressed('KeyR'),grenade:this.input.consumePressed('KeyG'),
         interact:this.input.consumePressed('KeyE'),skip:this.input.consumePressed('Space'),
         crouch:this.input.consumePressed('KeyC'),sight:this.input.consumePressed('KeyV')};
-      // M01 catches up a slow rendered frame with bounded physics steps in this same loop (at most 3 steps = 150 ms of simulation per frame;
+      // M01 catches up a slow rendered frame with bounded physics steps in this same loop (at most 5 steps = 250 ms of simulation per frame;
       // the rest of a long frame is dropped, so one hitch cannot snowball). Single-press actions and relative look are consumed once, never once per substep.
       let remaining=frameSimBudget(dt,this.isM01),first=true,stop=false;
       while(remaining>1e-7&&!this.paused){

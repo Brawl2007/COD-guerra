@@ -2,8 +2,8 @@
 // A slow rendered frame is caught up with bounded simulation steps. Without a cap a single hitch (shader compile, GC, tab switch) makes the
 // next frame simulate up to 0.25 s, which costs more than the hitch itself and snowballs. The excess real time is dropped, not carried over.
 export const SIM_STEP=.05;
-export const M01_MAX_CATCHUP_STEPS=3;
-/** Simulation seconds to run for a rendered frame of `dt` real seconds: the whole frame up to 3 steps (150 ms) for M01, one step otherwise. */
+export const M01_MAX_CATCHUP_STEPS=5;
+/** Simulation seconds to run for a rendered frame of `dt` real seconds: the whole frame up to 5 steps (250 ms) for M01, one step otherwise. */
 export const frameSimBudget=(dt,m01)=>Math.max(0,Math.min(dt,m01?SIM_STEP*M01_MAX_CATCHUP_STEPS:SIM_STEP));
 /** Number of fixed steps that budget is split into (diagnostics/tests). Mirrors the loop in game.js: step=min(SIM_STEP,remaining) while remaining>1e-7. */
 export function frameSimSteps(budget){let n=0,remaining=budget;while(remaining>1e-7){remaining-=Math.min(SIM_STEP,remaining);n++;}return n;}
