@@ -31,10 +31,14 @@ const phaseText={INTRO:'04:30 · Tczew, Polónia',OUTRO:'07:05 · Chamada no abr
 // Dudek leva Bąk para junto da estação ("Levaram o Bąk para a estação", dlg_m01_056b), fora da zona de demolição oeste.
 const EVACUATION={x:-332,y:-3,z:24};
 // Personal space of walking men (moveActor): a shoulder's slack off the sum of the radii, the longest push of one tick, and the last metres in which a crowd queues.
-const SEPARATION_SLACK=.1,SEPARATION_PUSH=.15,CROWD_NEAR=2.5;
+const SEPARATION_SLACK=.1,SEPARATION_PUSH=.15,CROWD_NEAR=2.5,STEER_TURNS=Object.freeze([.6,-.6,1.2,-1.2]);   // STEER_TURNS: the turns steerAround tries, in order, to the free side
 // The actors' navigator: the colliders, girders and ckm sandbags, plus (2026-10-18, phys x npc integration) every solid the player's body meets that no collider covers
 // (the casemate, the shelter walls, the bridge heads, the prop kit: playerSolidsForNav), so a man routes round what the player walks into and is never left inside it.
-const simulationNavigator=world=>new M01Navigator(world,{emplacement:CKM_POSITION,extraSolids:playerSolidsForNav});
+// It is built and warmed (solid list, buckets) at construction and after a load, so the first plan of a mission does not pay for them.
+const simulationNavigator=world=>new M01Navigator(world,{emplacement:CKM_POSITION,extraSolids:playerSolidsForNav}).prewarm();
+// The men a walking man must keep clear of, gathered by gatherBodies into one list that is reused and never shortened (its first n entries are the answer; the callers read them
+// before they ask again).
+const BODY_SCRATCH=[];
 // The scripted station casualty is fictional and already in the yard before the raid, avoiding a visible relocation.
 const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
@@ -268,6 +272,7 @@ export class M01Simulation {
   }
   reset(seed=19390901){
     this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();this.navigator=simulationNavigator(this.world);
+    this.navPlanAt=-1;this.navPlans=0;   // the tick (clock) of the last route() and how many that tick has had: NAV.routesPerTick (not saved: a tick starts from the saved clock)
     this.clock=0;this.battleClock=seconds(definition.clock.start);this.events=[];this.consumed={};this.objectives={};
     definition.objectives.forEach(o=>{this.objectives[o.id]={state:'locked',progress:0};});
     this.flags={'m01.completed':false,'m01.nowicki_status':'present','m01.bak_status':'unhurt','m01.dudek_status':'unhurt',
@@ -303,6 +308,7 @@ export class M01Simulation {
     this.sectors={sectors:definition.sectors.map(s=>({id:s.id,state:s.schedule[0].state,strength:100,morale:1,supply:1})),damage:[]};
     this.mission={phase:'INTRO',complete:false,text:phaseText.INTRO,status:''};
     this.consume(E('intro_card'));this.startScene('cs_m01_intro');this.checkpoint=this.snapshot(false);
+    this.navigator.prewarm();   // after the events above moved the world's revision: the first plan finds the solid list already made
   }
   actor(id){return this.actors.find(a=>a.id===id);}
   get enemies(){return this.actors.filter(a=>a.team==='enemy'&&!a.displayOnly);}
@@ -635,7 +641,7 @@ export class M01Simulation {
     if(!a.alive||!a.active||a.state==='WOUNDED')return;
     const d=dist(a,target);
     if(d<.8){delete a.nav;return this.walkStraight(a,target,dt,speed);}
-    const aim=this.navAim(a,target),detour=aim!==target,before={x:a.x,z:a.z};
+    const aim=this.navAim(a,target),detour=aim!==target,beforeX=a.x,beforeZ=a.z;
     const wanted=Math.atan2(aim.z-a.z,aim.x-a.x),step=Math.min(detour?dist(a,aim):d,speed*dt);
     const heading=this.steerAround(a,wanted,step);
     // settle after the straight walk too: a no-op unless he ended inside a solid without a world collider (the failed-route fallback and the sidestep of walkStraight can).
@@ -648,17 +654,22 @@ export class M01Simulation {
       this.navigator.settle(a);
     }
     this.separate(a);
-    if(detour&&a.nav)a.nav.stall=dist(a,before)<step*.25?a.nav.stall+1:0;
+    if(detour&&a.nav)a.nav.stall=Math.hypot(a.x-beforeX,a.z-beforeZ)<step*.25?a.nav.stall+1:0;
   }
   /** Everyone whose body counts for a walking man: the other living, present men on his level, and the player. Nobody carried (he is part of his carrier). */
-  bodiesNear(a,x,z,reach){
-    const out=[];
-    for(const b of this.actors){
-      if(b===a||!b.alive||!b.active||b.carriedBy||a.carriedBy===b.id||Math.abs(b.y-a.y)>1.5)continue;
-      if(Math.abs(b.x-x)<=reach&&Math.abs(b.z-z)<=reach)out.push(b);
+  bodiesNear(a,x,z,reach){const n=this.gatherBodies(a,x,z,reach);return BODY_SCRATCH.slice(0,n);}
+  /** The same men in the same (roster) order as bodiesNear, written into BODY_SCRATCH[0..n) (the player last); returns n. What a walking man asks every tick, so it builds no list of its own. */
+  gatherBodies(a,x,z,reach){
+    const out=BODY_SCRATCH,actors=this.actors,ay=a.y,carrier=a.carriedBy;let n=0;
+    for(let i=0;i<actors.length;i++){
+      const b=actors[i];
+      if(!b.alive||!b.active)continue;   // the men who are not there (most of the roster), then the far ones: nearly every call rejects by here
+      if(!(Math.abs(b.x-x)<=reach&&Math.abs(b.z-z)<=reach))continue;
+      if(b===a||b.carriedBy||carrier===b.id||Math.abs(b.y-ay)>1.5)continue;
+      out[n++]=b;
     }
-    const p=this.player;if(p.alive&&Math.abs(p.y-a.y)<=1.5&&Math.abs(p.x-x)<=reach&&Math.abs(p.z-z)<=reach)out.push(p);
-    return out;
+    const p=this.player;if(p.alive&&Math.abs(p.y-ay)<=1.5&&Math.abs(p.x-x)<=reach&&Math.abs(p.z-z)<=reach)out[n++]=p;
+    return n;
   }
   /**
    * Local avoidance. A step is "in the way" when it ends within personal space of somebody and closer to him than the walker is now; the walker then turns
@@ -667,13 +678,17 @@ export class M01Simulation {
    */
   // ponytail: two turns (35 and 70 degrees) to the free side and a stop, no look-ahead and no reciprocal avoidance; enough for a file of men and a crowd at one goal.
   steerAround(a,wanted,step){
-    const near=this.bodiesNear(a,a.x,a.z,step+1.2);if(!near.length)return wanted;
-    const at=(h)=>({x:a.x+Math.cos(h)*step,z:a.z+Math.sin(h)*step});
-    const blocker=(h)=>{const p=at(h);return near.find(b=>{const n=dist(b,p);return n<a.radius+b.radius-SEPARATION_SLACK&&n<dist(b,a);});};
-    const first=blocker(wanted);if(!first)return wanted;
+    const n=this.gatherBodies(a,a.x,a.z,step+1.2);if(!n)return wanted;
+    const first=this.blockingBody(n,a,wanted,step);if(!first)return wanted;
     const cross=Math.cos(wanted)*(first.z-a.z)-Math.sin(wanted)*(first.x-a.x),side=Math.abs(cross)>1e-3?(cross>0?-1:1):(this.actors.indexOf(a)%2?1:-1);
-    for(const turn of [.6,-.6,1.2,-1.2]){const h=wanted+side*turn;if(!blocker(h))return h;}
+    for(let k=0;k<4;k++){const h=wanted+side*STEER_TURNS[k];if(!this.blockingBody(n,a,h,step))return h;}
     return null;
+  }
+  /** The first of the `n` men in BODY_SCRATCH (roster order) that a step of `a` along heading `h` would end inside the personal space of, closer to him than `a` is now; undefined when the step is free. */
+  blockingBody(n,a,h,step){
+    const px=a.x+Math.cos(h)*step,pz=a.z+Math.sin(h)*step;
+    for(let i=0;i<n;i++){const b=BODY_SCRATCH[i],d=Math.hypot(b.x-px,b.z-pz);if(d<a.radius+b.radius-SEPARATION_SLACK&&d<dist(b,a))return b;}
+    return undefined;
   }
   /**
    * Personal space: after a walking man moves, anyone nearer than the sum of both radii less a shoulder's slack pushes him away along the line between
@@ -682,8 +697,9 @@ export class M01Simulation {
    */
   // ponytail: a push for walkers only; men who stand are never moved by it, so authored slots (kneeling squad, gate riflemen) keep their places.
   separate(a){
-    for(const b of this.bodiesNear(a,a.x,a.z,1)){
-      const space=a.radius+b.radius-SEPARATION_SLACK;let dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);
+    const n=this.gatherBodies(a,a.x,a.z,1);
+    for(let i=0;i<n;i++){
+      const b=BODY_SCRATCH[i],space=a.radius+b.radius-SEPARATION_SLACK;let dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);
       if(d>=space)continue;
       if(d<1e-6){const angle=(this.actors.indexOf(a)-Math.max(0,this.actors.indexOf(b)))*2.399963;dx=Math.cos(angle);dz=Math.sin(angle);d=1;}
       const push=Math.min(SEPARATION_PUSH,(space-Math.min(d,space))*(b.state==='ADVANCE'?.5:1));
@@ -704,6 +720,9 @@ export class M01Simulation {
     if(n?.fail&&n.key===nav.key&&Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)<=1.5&&this.clock-n.at<NAV.retrySec)return target;
     const spent=n&&n.i>=n.pts.length-1&&Math.hypot(n.pts[n.pts.length-1][0]-a.x,n.pts[n.pts.length-1][1]-a.z)<.06;
     if(!n||spent||n.key!==nav.key||Math.hypot(n.goal[0]-target.x,n.goal[1]-target.z)>1.5||n.stall>=20){
+      // One route() per tick (NAV.routesPerTick; a plan can cost tens of milliseconds and several men may need one at once): the walker the roster reaches first plans, the others keep the
+      // straight walk of this tick and ask again at the next. Nothing is saved for a man who waits, so the queue is the roster order and the saved routes, and a restored run makes the same choices.
+      if(!this.takeRouteSlot())return target;
       const pts=nav.route(a,target);
       if(!pts){a.nav={goal:[target.x,target.z],key:nav.key,at:this.clock,i:0,stall:0,pts:[[target.x,target.z]],fail:true};return target;}   // no way round: the old walk, with its sidestep
       n=a.nav={goal:[target.x,target.z],key:nav.key,at:this.clock,i:0,stall:0,pts};
@@ -711,6 +730,12 @@ export class M01Simulation {
     while(n.i<n.pts.length-1&&nav.clear(a.x,a.z,n.pts[n.i+1][0],n.pts[n.i+1][1],a.radius,a.y,NAV.tightMargin))n.i++;
     if(n.i<n.pts.length-1&&Math.hypot(n.pts[n.i][0]-a.x,n.pts[n.i][1]-a.z)<.06)n.i++;
     return {x:n.pts[n.i][0],z:n.pts[n.i][1]};
+  }
+  /** True when this tick (this clock) has a route() left to spend; spends it. A tick always moves the clock on, so the count starts again at the next one. */
+  takeRouteSlot(){
+    if(this.navPlanAt!==this.clock){this.navPlanAt=this.clock;this.navPlans=0;}
+    if(this.navPlans>=NAV.routesPerTick)return false;
+    this.navPlans++;return true;
   }
   walkStraight(a,target,dt,speed=3.6){
     if(!a.alive||!a.active||a.state==='WOUNDED')return;
@@ -1844,7 +1869,7 @@ export class M01Simulation {
     if(!('enemyFire' in s)&&!('withdrawalPressure' in s.timers))for(const a of candidate.actors.filter(a=>a.group==='grp_east_platoon'&&Number(a.id.split('_').at(-1))>=18))
       Object.assign(a,{active:false,alive:false,health:0,state:'DOWN'});
     for(const a of candidate.actors)initializePresentation(a,candidate.clock);
-    candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);
+    candidate.weapon.restore(s.weapon);candidate.rng.state=s.rng;candidate.events=[];candidate.world.refresh(Object.keys(s.consumed),s.flags);candidate.navigator.prewarm();   // the refresh moved the world's revision: the navigator's solids are made now, not by the first plan
     // 2026-10-18 (phys x npc integration): no release from the ckm sandbag ring any more. The ring has a door at the rear (one table, src/world/m01-nav-layout.js), so a player
     // saved inside it walks out, and a new save made there is restored where it was made; a body overlapping a new solid is pushed out by its first move.
     candidate.display=createDisplayFire(displaySeed(s.rng,s.clock),displayProfiles(definition,{actors:candidate.actors}));   // not saved: restarts empty, re-seeded from the saved state
