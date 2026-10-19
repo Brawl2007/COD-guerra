@@ -1,3 +1,4 @@
+import {DECK_SAFE_X} from '../src/game/m01-deck-assault.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
@@ -22,7 +23,8 @@ test('real control routes compare covering and ignoring: faster repair, fewer ne
     assert.equal(r.sim.mission.complete,true);assert.equal(r.sim.battleClock,seconds('07:05'));
     assert.equal(Object.keys(r.sim.consumed).length,r.sim.definition.events.length);
     assert.equal(platoon(r.sim).length,r.sim.flags['m01.east_platoon_survivors']);
-    assert.ok(r.sim.enemies.every(e=>e.x>=690));
+    // Combat slice 2 (versioned save rule, deck record v1): a German of the deck assault may lie or stand down to the safety line x 450; every other German at x >= 690.
+    assert.ok(r.sim.enemies.every(e=>e.x>=(e.group==='grp_de_spans'&&e.deck?DECK_SAFE_X:690)));
   }
 });
 
@@ -80,4 +82,17 @@ test('the air-raid cover instruction remains visible briefly even if the player 
   assert.ok(s.drainEvents().some(e=>e.type==='message'&&e.message.startsWith('Abrigue-se!')));
   run(s,2);assert.equal(s.active('take_cover'),true);assert.match(s.mission.text,/Abrigue-se/);
   run(s,1);assert.equal(s.done('take_cover'),true);assert.equal(s.active('follow_sergeant'),true);
+});
+
+// 2026-10-18 review fix (critical review of pacing + combat AI): on seed 4 covering fire beat ignoring the MG by only 4.9 real s, under the 5 s guard above, which runs one
+// seed. The cause: a near miss of the gate MG pinned the sappers as briefly as a rifle round (3.5 s), so a seed on which the MG happened to land few bursts made ignoring it
+// cheap. An MG34 near miss now keeps the working sappers down 5 s. The same guard on the twelve audited seeds, each pilot up to the end of the repair only.
+test('covering the repair beats ignoring the gate MG by at least 5 real s on every one of the 12 audited seeds',async()=>{
+  const {driver,toRepair}=await import('./helpers/m01-route.js');
+  const repair=(seed,support)=>{const d=toRepair(driver(seed,{support})),{sim,step,until,walk}=d,start=sim.clock;
+    if(support)walk(-120,16.5);else{walk(-115,27);walk(-28,28);step({crouch:true});}
+    until(()=>!sim.active('cover_repair'),500);return sim.clock-start;};
+  const margins=[];
+  for(const seed of [19390901,1,2,3,4,5,6,7,8,9,10,11]){const ignore=repair(seed,false),help=repair(seed,true);margins.push({seed,margin:+(ignore-help).toFixed(2)});}
+  for(const m of margins)assert.ok(m.margin>=5,`seed ${m.seed}: covering fire ${m.margin} s faster (all: ${JSON.stringify(margins)})`);
 });

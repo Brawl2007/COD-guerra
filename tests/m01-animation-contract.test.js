@@ -24,7 +24,12 @@ import pacing from './fixtures/m01-pacing-gameplay-baseline.json' with {type:'js
 // above is history since then (it pins the simulation of 5d99df8); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs
 // --amendment 07 after its lockstep audit against that exact predecessor, is this one.
 import combat from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:'json'};
-const current=combat;   // the golden of the live simulation
+// M01-COMBAT-DECK-ASSAULT-V1 (golden amendment 08, 2026-10-18, branch claude/busy-ritchie-3fkvk2-slice2): combat slice 2, the deck assault (grp_de_spans to mid-deck and back, the east
+// demolition waits for the deck to clear, enemy_down_by_player, the platoon's two clips). The combat AI golden above is history since then (it pins the simulation of 5d13d32 =
+// 9cd2aca); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 08 after its lockstep audit, is this one.
+import deck from './fixtures/m01-deck-assault-gameplay-baseline.json' with {type:'json'};
+const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // the named delta of amendment 08, as measured (tools/verification/m01-integration-golden-audit.mjs)
+const current=deck;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -295,11 +300,26 @@ test('the pacing golden (amendment 06) chains to the NPC navigation golden, pins
 test('the combat AI golden (amendment 07) chains to the pacing golden, pins the live simulation and cites its lockstep account',()=>{
   const account=integrationAmendment(combat,{amendment:'07',task:'M01-COMBAT-AI-V1',delta:'combat-ai',previous:pacing,previousFile:'m01-pacing-gameplay-baseline.json',
     predecessor:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai$/});
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),combat.sourceSha256,'the golden pins the live simulation');
+  // History since the deck assault (amendment 08): this golden pins the simulation of 5d13d32 / 9cd2aca (combat AI slice 1), not the live one.
+  assert.equal(combat.sourceSha256,'571042afd816fd3d66278d02d87af89057b21406cc338afb3b12b68fe99dcaae','the combat AI golden pins the simulation of 5d13d32');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),combat.sourceSha256,'the combat AI golden is history: the deck assault moved the simulation');
   // The first difference is the new saved record (actor.ai); the first BEHAVIOUR difference (actor.ai stripped from both frames) is a combat field of a man the AI drives.
   assert.equal(account.behaviourFields,'^\\$\\.(state|checkpoint)\\.actors\\.\\d+\\.(shot|cooldown|firedAt|rounds)$');
   for(const r of account.routes){assert.equal(r.firstDifference.missing,true,'actor.ai is new');assert.match(r.firstBehaviourDifference.path,new RegExp(account.behaviourFields));
     assert.match(r.firstBehaviourDifference.actor,new RegExp(account.behaviourActors));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);}
+});
+
+test('the deck assault golden (amendment 08) chains to the combat AI golden, pins the live simulation and cites its lockstep account',()=>{
+  const account=integrationAmendment(deck,{amendment:'08',task:'M01-COMBAT-DECK-ASSAULT-V1',delta:'deck-assault',previous:combat,previousFile:'m01-combat-ai-gameplay-baseline.json',
+    predecessor:'9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec',deltaFields:DECK_DELTA});
+  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),deck.sourceSha256,'the golden pins the live simulation');
+  assert.equal(deck.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
+  // The first difference is the review fix's new key of a sighting (ai.seen.who, the rail-gate MG sees the player after train 963); with it stripped, the first BEHAVIOUR
+  // difference is the 5 s MG pin of a working sapper (control route) or the new enemy_down_by_player event (support route, the pilot kills the gate MG gunner).
+  assert.equal(account.behaviourFields,'^\\$\\.((state|checkpoint)\\.actors\\.\\d+\\.suppressedUntil|events\\.\\d+\\.type)$');
+  for(const r of account.routes){assert.equal(r.firstDifference.missing,true,'ai.seen.who is new');assert.equal(r.firstDifference.actor,'de_east_1');
+    assert.match(r.firstBehaviourDifference.path,new RegExp(account.behaviourFields));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+    if(r.firstBehaviourDifference.actor!==null)assert.match(r.firstBehaviourDifference.actor,new RegExp(account.behaviourActors));else assert.equal(r.firstBehaviourDifference.live,'enemy_down_by_player');}
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

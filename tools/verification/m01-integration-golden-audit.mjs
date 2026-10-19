@@ -45,7 +45,9 @@ const AMENDMENTS={
     // Measured on both golden routes (first lockstep difference, tick 355, 04:33:10): the objective panel shows the pacing interlude after obj_m01_deliver_message
     // ("Mensagem entregue. Fique com o posto - avioes a norte") where the predecessor showed "Mantenha contacto com a seccao". Only the HUD text and status lines.
     deltaFields:/^\$\.state\.mission\.(text|status)$/},
-  '07':{task:'M01-COMBAT-AI-V1',delta:'combat-ai',predecessor:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',after:null,
+  '07':{task:'M01-COMBAT-AI-V1',delta:'combat-ai',predecessor:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',
+    // History since amendment 08: the combat AI golden pins the simulation of 5d13d32 (the amendment 07 commit; 9cd2aca, the predecessor of 08, has the same gameplay inputs).
+    after:'5d13d32d91bfa1434a18c5aba3d5ab268d69bc6b',
     previousGolden:'tests/fixtures/m01-pacing-gameplay-baseline.json',golden:'tests/fixtures/m01-combat-ai-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/combat-ai-2026-10-18',
     generationStage:'Combat AI slice 1 on the pacing integration tree: per-actor actor.ai streams, rifle peeks, MG34 burst groups, line-of-sight and threat targets, suppression breaking peeks, Kowal 2-5 round bursts; golden amendment 07',
@@ -53,8 +55,22 @@ const AMENDMENTS={
     // both frames (stateOnly), the first BEHAVIOUR difference is Kowal's first rkm burst at tick 5129 (256.45 s): shot 0.25 -> 0.44 s (a 4-round burst instead of the fixed 3).
     deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai$/,
     stateOnly:frame=>{for(const k of ['state','checkpoint'])for(const x of frame[k]?.actors??[])delete x.ai;return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(shot|cooldown|firedAt|rounds)$/,behaviourActors:/^(szymon_kowal|de_east_\d+)$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06 or 07`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(shot|cooldown|firedAt|rounds)$/,behaviourActors:/^(szymon_kowal|de_east_\d+)$/},
+  '08':{task:'M01-COMBAT-DECK-ASSAULT-V1',delta:'deck-assault',predecessor:'9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec',after:null,
+    previousGolden:'tests/fixtures/m01-combat-ai-gameplay-baseline.json',golden:'tests/fixtures/m01-deck-assault-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/deck-assault-2026-10-18',
+    // The deck assault lives in its own module too; it is hashed for this amendment only (06 and 07 keep their input lists byte for byte).
+    extraInputs:['src/game/m01-deck-assault.js'],
+    generationStage:'Combat slice 2, the deck assault on the combat AI integration tree: at 06:05 the ten Germans of grp_de_spans enter the road deck, four post on span 08 and six bound by cover to mid-deck (x 458-578, never west of x 450) with the slice-1 AI and real rounds, fall back east of x 945 on losses, suppression, the end of their hold or 165 s; the east demolition waits for the deck to clear; enemy_down_by_player; the platoon hands two clips to the player; golden amendment 08',
+    // Measured on both golden routes: the first lockstep difference is the new key `who` of a sighting (actor.ai.seen.who, the review fix that sends searching fire on the player's
+    // last-seen spot as player rounds), first written by the rail-gate MG when it sees the player after train 963. With it stripped from both frames (stateOnly), the first
+    // BEHAVIOUR difference is recorded below (behaviourFields / behaviourActors are measured, then pinned).
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/,
+    stateOnly:frame=>{for(const k of ['state','checkpoint'])for(const x of frame[k]?.actors??[])if(x.ai?.seen)delete x.ai.seen.who;return frame;},
+    // Measured: route 19390901 (control), tick 5331 (04:46:31): sapper pawel_krawiec suppressedUntil +1.5 s (an MG34 near miss pins the working sappers 5 s, was 3.5 s);
+    // route 7 support, tick 5195 (04:45:30): the new event enemy_down_by_player where the predecessor emitted only player-shot (the pilot kills the gate MG gunner).
+    behaviourFields:/^\$\.((state|checkpoint)\.actors\.\d+\.suppressedUntil|events\.\d+\.type)$/,behaviourActors:/^(pawel_krawiec|sapper_\d)$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07 or 08`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);
@@ -80,7 +96,7 @@ if(CFG.after){liveRoot=extract(CFG.after);Live=(await import(pathToFileURL(join(
 const liveSource=readFileSync(join(liveRoot,'src/game/m01-simulation.js'));
 const definition=JSON.parse(readFileSync(join(liveRoot,'missions/m01-tczew/mission.json'),'utf8'));
 const blob=(commit,f)=>{try{return sha(execFileSync('git',['-C',ROOT,'show',`${commit}:${f}`],{maxBuffer:1<<26,stdio:['ignore','pipe','ignore']}));}catch{return null;}};
-const changedInputs=INPUTS.filter(f=>{let now=null;try{now=sha(readFileSync(join(liveRoot,f)));}catch{}return blob(CFG.predecessor,f)!==now;});
+const changedInputs=[...INPUTS,...(CFG.extraInputs??[])].filter(f=>{let now=null;try{now=sha(readFileSync(join(liveRoot,f)));}catch{}return blob(CFG.predecessor,f)!==now;});
 assert.ok(changedInputs.length>0,'the live gameplay inputs moved');
 
 const NOT_PLOT=new Set(['m01.suggested_cover']);
@@ -117,7 +133,7 @@ const report={task:CFG.task,amendment:KEY,delta:CFG.delta,predecessor:CFG.predec
   changedGameplayInputsSincePredecessor:changedInputs,routes:[]};
 const golden={task:CFG.task,generationStage:CFG.generationStage,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,
   previousGolden:{task:previous.task,file:CFG.previousGolden,sha256:sha(previousText)},historicalGoldenSha256:previous.historicalGoldenSha256,sourceSha256:sha(liveSource),
-  inputsSha256:Object.fromEntries(INPUTS.map(f=>{try{return [f,sha(readFileSync(join(liveRoot,f)))];}catch{return [f,null];}})),routes:[]};
+  inputsSha256:Object.fromEntries([...INPUTS,...(CFG.extraInputs??[])].map(f=>{try{return [f,sha(readFileSync(join(liveRoot,f)))];}catch{return [f,null];}})),routes:[]};
 
 for(const {seed,support,ticks,blocks} of previous.routes){
   // 0. The predecessor on the live pilot reproduces the previous golden.
@@ -147,7 +163,8 @@ for(const {seed,support,ticks,blocks} of previous.routes){
   assert.ok(row.firstDifference,'the live simulation differs from the predecessor on this route');
   assert.match(row.firstDifference.path,CFG.deltaFields,`1. the first difference is a path of the named delta \`${CFG.delta}\``);
   if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
-    assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
+    // An event path has no actor (amendment 08: the new enemy_down_by_player event); an actor path must be a man of the named delta.
+    if(row.firstBehaviourDifference.actor!==null||!/\.events\./.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
   for(let i=0;i<Math.min(fin.blocks.length,blocks.length)&&JSON.stringify(fin.blocks[i])===JSON.stringify(blocks[i]);i++)row.identicalBlocks++;
   // 2. Invariants against the predecessor on its own route.
   const endOld=endState(own,po),endNew=endState(sim,lo);

@@ -25,7 +25,9 @@ test('unmodified weapon ballistics, RNG and spatial gameplay sources remain byte
     'src/game/simulation.js':'59b206413ab76abf9c93d6d76e48831f13c7358cb1caade409e2a759238c34f3',
     'src/game/wz29.js':'3bd376bf1d1d6d4978871a4a35e4067779a1c9afda0adde155aba27b10636be5',
     // T23 (M01-EAST-FRONT-VISIBLE-V1) adds the 'attrition' round kind and its validRound rule; makeRound, traceRound and the ballistics constants are untouched.
-    'src/game/m01-fire.js':'e73713e21799fa70ec2e97c9049eb95c5bdcc9efdde3da216a4656ff008bd46c',
+    // Combat slice 2 (2026-10-18): validRound accepts a round of de_spans_* from the deck safety line x 450 (DECK_SAFE_X) instead of x 690; makeRound, traceRound and the
+    // ballistics constants are untouched (git diff 9cd2aca -- src/game/m01-fire.js: one import and the origin rule of validRound).
+    'src/game/m01-fire.js':'0450e20bed05b900b74a54191bc8d72dbc9b65736e71bf2b475e89f25038450e',
     'src/game/grenade.js':'8b588b862e5ffe0b7144412807ae89df14553bd55b6bc1187b0d9bd3813c846d',
     'src/world/spatial.js':'49409541cf8b9c8542aba5cdaf79a46227e973932fa795743969a0f893551dcb',
     'src/core/random.js':'c7fe17d39b70b37adeab22bfdb488029476b489a8e940d43db06558251b273e1',

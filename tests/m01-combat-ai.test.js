@@ -146,3 +146,19 @@ test('display fire: respondSec answers the flash of the last seconds, followUp m
   const plain=normalizeDisplayProfile({id:'p',shooters:['s'],weapon:'ckm_wz30',rounds:[5,5],intervalSec:[9,24],targetGroup:'g1'});
   assert.equal(plain.respondSec,undefined);assert.equal(plain.followUp,undefined);
 });
+
+// 2026-10-18 review fix: searching fire on the spot where the MG last saw the PLAYER is fire at the player (round kind 'player', so the per-target player settings of
+// H9 D2 reach it); on Kowal's spot it stays area fire. Its choice, burst length (4-5 rounds) and callouts are those of searching fire, unchanged.
+test('MG34 searching fire at the player\'s last-seen spot leaves as player rounds; at Kowal\'s spot as area rounds',()=>{
+  for(const [who,kind] of [['player','player'],['szymon_kowal','area']]){
+    const s=underFire(),a=s.actor('de_east_1');a.ai.peek=0;a.ai.seen={x:40,y:0,z:40,at:s.clock,who};
+    const pick=s.aiTarget(a,false,()=>false,true,false);assert.equal(pick.kind,'area');assert.equal(pick.roundKind,who==='player'?'player':undefined);
+    const fired=[];const burst=s.burst.bind(s);s.burst=(m,t,k,o)=>{fired.push({k,rounds:o.rounds});return burst(m,t,k,o);};
+    const sees=s.world.lineOfSight.bind(s.world);s.world.lineOfSight=()=>false;a.cooldown=0;a.mg34Prone={...a.mg34Prone,phase:'aim'};
+    s.aiFire(a,false,()=>false,true);s.world.lineOfSight=sees;
+    assert.equal(fired.length,1,'one searching burst');assert.equal(fired[0].k,kind);assert.ok(fired[0].rounds>=4&&fired[0].rounds<=5,'searching burst length');
+    validateM01Snapshot(s.snapshot());
+  }
+  const s=underFire(),raw=json(s.snapshot());raw.actors.find(a=>a.id==='de_east_1').ai.seen={x:1,y:2,z:3,at:0,who:'jozef_bak'};
+  assert.throws(()=>validateM01Snapshot(raw),/IA de combate/);
+});

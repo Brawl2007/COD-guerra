@@ -16,6 +16,9 @@ export function validateM01AudioEvent(event){
   // T47: the ckm wz.30 of the west bridgehead answers the German fire. One event per burst, at its first round (rounds * interval long); never persisted.
   if(event.type==='ally-fire'&&(!Number.isFinite(event.at)||typeof event.weapon!=='string'||!event.weapon||typeof event.by!=='string'||!event.origin||
     ![event.origin.x,event.origin.y,event.origin.z].every(Number.isFinite)||!Number.isInteger(event.rounds)||event.rounds<1||!(event.interval>0)))throw Error('M01 ally-fire origin/clock/weapon/rounds required');
+  // Combat slice 2: a German the player's own rifle or grenade has just killed (the reactive dialogue's NEEDS_EVENT enemy_down_by_player). One per death, never persisted.
+  if(event.type==='enemy_down_by_player'&&(typeof event.id!=='string'||!/^de_(east|spans)_\d+$/.test(event.id)||!['kb_wz29','grenade'].includes(event.weapon)||!Number.isFinite(event.at)||
+    !Number.isFinite(event.distance)||!event.point||![event.point.x,event.point.y,event.point.z].every(Number.isFinite)))throw Error('M01 enemy_down_by_player id/weapon/distance/point/at required');
   return event;
 }
 export function enemyFireSoundPlan(event,player){
