@@ -2,11 +2,12 @@
 // at a time (no scripted line starts over another) and at most two reactive voices alive, on the two golden routes (seed 19390901 control and seed 7 with the covering-fire pilot, the
 // routes of every golden) and on a probe route (not a golden) where the player holds the squad post beside Kowal, Bąk and Zieliński so that every rule bound to a speaker in earshot is live.
 // It only reads sim.subtitle and sim.dialogueQueue after each tick of the real pilots (tests/helpers/m01-route.js): nothing is simulated twice, nothing draws from a random stream.
-//   node tools/verification/m01-dialogue-rate-audit.mjs [--before <checkout of the predecessor>] [--out <file>] [--timeline]
+//   node tools/verification/m01-dialogue-rate-audit.mjs [--before <checkout of the predecessor> [--before-label <commit>]] [--out <file>] [--timeline]
 // `--before` runs the same measurement on another tree (git archive of the predecessor, node_modules linked) so that the account carries before and after side by side.
 // Definitions: a LINE starts the first tick its subtitle (id, until) appears; "combat" is the real-time stretch in which the battle clock is between 04:45:00 and 06:10:00 (the silence is
 // counted from the start of that stretch to its end, so the edges count); "busiest 60 s" is the largest number of line starts in any [t, t+60) real seconds.
-import {writeFileSync,mkdirSync} from 'node:fs';
+import {writeFileSync,mkdirSync,readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {dirname,join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -78,7 +79,8 @@ const probeDrive=({driver,toRepair},onStep)=>{
 };
 
 const timeline=process.argv.includes('--timeline');
-const account={task:'M01-DIALOGUE-V1',what:'lines per minute, reactive lines per minute, busiest 60 s, longest silence in combat, voices alive; deterministic (no clock, no path)',
+const sha=root=>createHash('sha256').update(readFileSync(join(root,'src/game/m01-simulation.js'))).digest('hex');
+const account={task:'M01-DIALOGUE-V1',trees:{after:{simulationSha256:sha(LIVE)},...(BEFORE?{before:{label:arg('--before-label'),simulationSha256:sha(BEFORE)}}:{})},what:'lines per minute, reactive lines per minute, busiest 60 s, longest silence in combat, voices alive; deterministic (no clock, no path)',
   definitions:{line:'first tick a subtitle (id, until) appears',combat:`real time while the battle clock is in [${COMBAT[0]}, ${COMBAT[1]}), edges included`,busiest60s:'largest number of line starts in any [t, t+60) real seconds'},
   routes:[],probe:null};
 for(const {seed,support} of ROUTES){

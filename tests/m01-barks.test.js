@@ -572,18 +572,18 @@ test('the worst case: every trigger firing all the time for ten minutes never gi
 
 test('both golden routes: lines per minute, the busiest minute, the longest silence in combat; the reactive lines stay inside the budget and never overlap',{timeout:240000},()=>{
   const COMBAT=[seconds('04:45:00'),seconds('06:10:00')];
-  for(const support of [false,true]){
-    let rec;const r=route(19390901,{support,onStep:({sim})=>{rec??=lineStats(sim);rec.step();}});
+  for(const [seed,support] of [[19390901,false],[7,true]]){   // the two routes of every golden: the control route and the covering-fire pilot of seed 7
+    let rec;const r=route(seed,{support,onStep:({sim})=>{rec??=lineStats(sim);rec.step();}});
     const all=rec.starts,barks=all.filter(x=>x.bark),combat=all.filter(x=>x.battle>=COMBAT[0]&&x.battle<COMBAT[1]);
     let silence=0;for(let i=1;i<combat.length;i++)silence=Math.max(silence,combat[i].at-(combat[i-1].at+combat[i-1].dur));
     const minutes=r.sim.clock/60;
-    assert.ok(barks.length>=15,`support ${support}: ${barks.length} reactive lines on the route`);
-    assert.ok(busiest(barks)<=BARK_CONFIG.budget60['1'],`support ${support}: ${busiest(barks)} reactive lines in the busiest minute`);
-    assert.ok(busiest(all)<=14,`support ${support}: ${busiest(all)} lines (scripted and reactive) in the busiest minute`);
-    assert.ok(barks.length/minutes<=60/BARK_CONFIG.gapSec['2'],`support ${support}: ${(barks.length/minutes).toFixed(2)} reactive lines per minute`);
-    assert.ok(silence<=75,`support ${support}: ${silence.toFixed(1)} s of silence in combat`);
-    for(let i=1;i<all.length;i++)assert.ok(all[i].at>=all[i-1].at+Math.min(all[i-1].dur,BARK_CONFIG.cutAfterSec)-1e-6,`support ${support}: ${all[i-1].id} then ${all[i].id}`);
-    for(const id of ['dlg_m01_042','dlg_m01_047','dlg_m01_067'])assert.ok(all.some(x=>x.id===id),`support ${support}: ${id} was said on the route`);
+    assert.ok(barks.length>=15,`seed ${seed} support ${support}: ${barks.length} reactive lines on the route`);
+    assert.ok(busiest(barks)<=BARK_CONFIG.budget60['1'],`seed ${seed} support ${support}: ${busiest(barks)} reactive lines in the busiest minute`);
+    assert.ok(busiest(all)<=14,`seed ${seed} support ${support}: ${busiest(all)} lines (scripted and reactive) in the busiest minute`);
+    assert.ok(barks.length/minutes<=60/BARK_CONFIG.gapSec['2'],`seed ${seed} support ${support}: ${(barks.length/minutes).toFixed(2)} reactive lines per minute`);
+    assert.ok(silence<=70,`seed ${seed} support ${support}: ${silence.toFixed(1)} s of silence in combat`);   // measured 64.8 s (control, the deck assault) and 37.8 s; it was 84.7 s and 74.7 s before the reactive lines
+    for(let i=1;i<all.length;i++)assert.ok(all[i].at>=all[i-1].at+Math.min(all[i-1].dur,BARK_CONFIG.cutAfterSec)-1e-6,`seed ${seed} support ${support}: ${all[i-1].id} then ${all[i].id}`);
+    for(const id of ['dlg_m01_042','dlg_m01_047','dlg_m01_067'])assert.ok(all.some(x=>x.id===id),`seed ${seed} support ${support}: ${id} was said on the route`);
     assert.equal(r.sim.mission.complete,true);
   }
 });
