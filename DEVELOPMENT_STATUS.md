@@ -1,5 +1,13 @@
 # Estado de desenvolvimento
 
+## M01: desempenho de apresentação e ciclo de frames (cadência de pose distante, tecto de recuperação, GC) — 2026-10-19
+
+Branch local `claude/busy-ritchie-3fkvk2-perf2` sobre `7282242`. **Não publicada**, sem revisão crítica independente, sem playtest humano, sem FPS medido no PC alvo. Só apresentação e ciclo de frames: `m01-simulation.js`, navegação, pacing e dados da missão intactos (resultado da simulação idêntico para frames ≤ 250 ms).
+- **Pose distante.** Atores a mais de 120 m refazem clip, mixer, IK e upload de ossos a cada 34/50/67 ms de tempo de simulação (2.º–4.º fotograma a 60 fps), escalonados por ator; o tempo de animação é o tempo absoluto da simulação. Banco Node (48 atores, 33 distantes): 48 → 27,7 poses/frame, `update()` 1,32 → 0,91 ms, `skeleton.update` 0,46 → 0,32 ms. Draw calls inalteradas (400 em pausa, 06:10 leste, High): neste ponto só há 20 atores e 6 na banda 150–350 m. Sem fusão do LOD2 (um Skeleton por malha; ver «próxima melhoria»).
+- **Frame.** Recuperação de frame limitada a 5 passos (250 ms) por frame; `pendingSounds` compactado no lugar; HUD guarda `clientWidth/Height` no resize e memoriza o marcador por relógio/pose; `varyLoop`/`proneReaction` sem alocação.
+- **Qualidade inicial.** Intel «HD Graphics» (HD 5500 incluído) arranca em Medium; UHD/Iris mantêm High; a escolha guardada prevalece.
+- **Inferior / próximo:** um Skeleton por malha (≈6 uploads por soldado) é o maior custo restante; diagnósticos de atores distantes atrasam até 67 ms.
+
 ## M01: integração passos 3 e 4 (pacing → combate) sobre phys + npc + skin + anim + áudio — 2026-10-18
 
 Branch local `claude/busy-ritchie-3fkvk2-integ-pc` (de `66e47b2`). **Não publicada**, sem revisão crítica independente, sem CI, sem playtest humano.

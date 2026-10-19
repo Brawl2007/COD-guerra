@@ -4,7 +4,7 @@ import { AssetManager } from '../assets/asset-manager.js';
 import { actorPose } from './m01-actor-pose.js';
 import { AnimationPlayer } from './m01-animation-player.js';
 import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
-import {lodProfile,selectConsumerLod,createLodCounters,tallyLod,lodCounterTotals} from './m01-lod-policy.js';
+import {lodProfile,selectConsumerLod,createLodCounters,tallyLod,lodCounterTotals,actorPoseQuantum,actorPoseDue} from './m01-lod-policy.js';
 import { CKM_POSITION } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
 import {
@@ -20,6 +20,7 @@ import {
   refineCandidate,
   resolveAnimation
 } from './m01-animation-resolver.js';
+import { animationSeed, unit as animationUnit } from './m01-animation-variety.js';
 import { bindCharacterIkRig, createIkDiagnosticsState, formatIkDiagnostics, restoreIkPose, updateActorsIk } from './m01-hand-pin.js';
 
 const BASE='assets/models/provisional/m01/characters/';
@@ -47,6 +48,7 @@ const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1']
 const stationClips=['station_drag_medic_grab','station_drag_patient_grab','station_drag_medic_release','station_drag_patient_release','drag_wounded','crouched_idle','wounded'];
 const SPINE_NAMES=['spine_02','spine_01','spine','chest','Spine2','Spine1','Spine'];
 const SUPPORT_ARM_NAMES=['upperarm_l','arm_l','LeftArm','mixamorigLeftArm'];
+const POSE_HOLD_MAX_DRIFT_M=1.5;   // a walking/running soldier moves < 0.5 m in the longest hold (0.067 s); anything more is not a normal frame
 const UP_AXIS=new THREE.Vector3(0,1,0);
 const debugEnabled=()=>typeof window!=='undefined'&&typeof location!=='undefined'&&new URLSearchParams(location.search).has('debug');
 
@@ -69,6 +71,8 @@ export class M01Characters {
     this.anim=new Map();
     // Per-preset tally of the band an actor switched into (T43 diagnostics); presentation only, never saved.
     this.lodCounters=createLodCounters();this.lodSwitches=0;
+    // Reduced pose rate of distant actors (m01-lod-policy.js). Cumulative counters feed the diagnostics; carriers is a reused scratch set.
+    this.poseStats={applied:0,held:0,boneUploads:0,boneSkips:0};this.lastUpdateTime=NaN;this.carriers=new Set();
   }
   /** Fog colour for the German distance rim (presentation only). */
   setRimFog(fog){this.visuals?.setFog(fog);}
@@ -289,6 +293,14 @@ export class M01Characters {
       muzzle:weaponRoot?MG34_MUZZLE_SOCKET:profile?.weapons?.[weapon]?.muzzle??profile?.sockets?.muzzle??[0,.032,-.765],
       mixer:new THREE.AnimationMixer(root),action:null,clip:null,ikRig:bindCharacterIkRig(root),ik:null,ikApplied:false};
     v.player=new AnimationPlayer(v.mixer);
+    // Reduced pose rate (far actors): while `hold.frozen` the bone-matrix recompute and texture upload of an already uploaded pose are skipped.
+    // `serial` counts applied poses, so a pose is always uploaded at least once before any frame may reuse it.
+    v.posePhase=animationUnit(animationSeed(actor.id),11);v.appliedTime=-Infinity;v.hold={frozen:false,serial:0};v.view=null;v.sampleClip=null;
+    const stats=this.poseStats;
+    for(const skeleton of new Set(meshes.filter(n=>n.isSkinnedMesh).map(n=>n.skeleton))){
+      let uploaded=-1;const real=skeleton.update;
+      skeleton.update=function(){if(v.hold.frozen&&uploaded===v.hold.serial){stats.boneSkips++;return;}uploaded=v.hold.serial;stats.boneUploads++;real.call(this);};
+    }
     this.instances.set(actor.id,v);return v;
   }
   // Station-yard props of the civilians that the procedural body used to draw (hand lantern, aid armband), on the rig's own bones so they follow the clip.
@@ -327,6 +339,7 @@ export class M01Characters {
     if(quality==='high')for(const lod of [0,1]){void this.loadMG(lod);void this.loadCKM(lod);}
     this.updateCKM(actors,time,player,quality);
     const selected=new Set(),visible=[],clips={},bands=[0,0,0];let submitted=0;
+    this.carriers.clear();for(let i=0;i<actors.length;i++)if(actors[i].carriedBy)this.carriers.add(actors[i].carriedBy);
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
     const candidates=actors.filter(a=>a.active&&(!a.civilian||dressedCivilian(a))&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a)))
       .map(a=>({a,d:Math.hypot(a.x-player.x,a.z-player.z)})).filter(p=>mgCrew(p.a)?p.d<1800:selectConsumerLod('actors',p.d,preset,instanceLod(this.instances.get(p.a.id)))<3)
@@ -339,6 +352,12 @@ export class M01Characters {
       if(lod===3)continue;
       let weaponLOD=lod;
       if(mgGunner(a)){while(weaponLOD<3&&!this.sources.has(`mg34:${weaponLOD}`))weaponLOD++;if(weaponLOD===3)continue;}
+      // Distant actors re-pose at a reduced rate (staggered by actor); a held actor keeps its last pose, root transform and bone upload.
+      if(prevInst&&prevInst.key===`${nation}:${lod}`&&this.poseHeld(prevInst,a,d,time,quality,ikOn)){
+        selected.add(a.id);bands[lod]++;prevInst.hold.frozen=true;this.poseStats.held++;
+        for(let i=0;i<prevInst.meshes.length;i++)if(prevInst.meshes[i].visible)submitted++;if(prevInst.weaponRoot?.visible)submitted++;
+        clips[prevInst.sampleClip]=(clips[prevInst.sampleClip]??0)+1;visible.push(prevInst.view);continue;
+      }
       const key=`${nation}:${lod}`,pose=actorPose(a,time),sample=this.describe(a,time,actors,pose,battleClock,(()=>{const pv=this.anim.get(a.id);return pv&&time>=pv.t&&time-pv.t<=GAP?pv.target:undefined;})()),clip=this.clips.get(sample.clip);
       if(!clip)continue;
       if(a.id==='szymon_kowal'&&!this.sources.get(key).scene.getObjectByName('rkm_wz28'))continue;
@@ -350,6 +369,7 @@ export class M01Characters {
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       if(prevInst&&prevInst.key!==key){this.lodSwitches++;tallyLod(this.lodCounters,preset,lod);}   // a camera-driven band change (first appearance is not a switch)
       v??=this.create(a,key,weaponLOD);selected.add(a.id);bands[lod]++;
+      v.hold.frozen=false;v.hold.serial++;v.appliedTime=time;v.appliedX=a.x;v.appliedZ=a.z;v.appliedQuality=quality;v.appliedIk=ikOn;this.poseStats.applied++;
       // Undo last frame's IK first: the mixer only rewrites a track whose value changed, and the caches below hold the clip pose.
       if(v.ikApplied){restoreIkPose(v.ikRig);v.ikApplied=false;}
       // Specialist animated rigs (CKM, prone MG34, station drag) keep their authored pose: the torso twist and support-arm hint
@@ -407,7 +427,7 @@ export class M01Characters {
       });
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
       for(let i=0;i<v.meshes.length;i++)if(v.meshes[i].visible)submitted++;if(v.weaponRoot?.visible)submitted++;   // meshes handed to the GPU this frame
-      v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;
+      v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;v.sampleClip=sample.clip;
       const fading=plan.blend.filter(b=>!b.target).reduce((m,b)=>!m||b.weight>m.weight?b:m,null);
       visible.push({...((mgGunner(a)&&a.mg34Prone)?{prone:{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}}:{}),
         id:a.id,lod,key,visual:v.visual,clip:sample.clip,clipTime:v.action.time,loop:sample.loop,blend:plan.blend.map(({clip,weight,time})=>({clip,weight,time})),
@@ -415,6 +435,7 @@ export class M01Characters {
         ...(fading?{blendClip:fading.clip,blendWeight:fading.weight}:{}),
         weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:this.muzzle(a.id)?.toArray(),
         weaponMeshes:v.meshes.filter(n=>weaponParts.has(n.name)&&n.visible||n.name.startsWith('mg34_')&&n.visible&&v.weaponRoot?.visible).map(n=>n.name)});
+      v.view=visible[visible.length-1];
       if(ikOn){const e=this.ikEntries[ikCount]??={actor:null,inst:null,distance:0,view:null};e.actor=a;e.inst=v;e.distance=d;e.view=visible[visible.length-1];ikCount++;}
     }
     // Foot IK, ramp lean and hand pin run after every clip/additive correction, on the already sampled pose of the selected actors.
@@ -427,9 +448,21 @@ export class M01Characters {
     for(const [id,v]of this.instances)if(!selected.has(id)){this.release(v);this.instances.delete(id);}
     // A record older than GAP (or from a later clock after a load) would be reset anyway: drop it.
     for(const [id,r]of this.anim)if(!(time>=r.t&&time-r.t<=GAP))this.anim.delete(id);
-    this.stats={active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible,lodPreset:preset,lodBands:bands,submittedMeshes:submitted,lodSwitches:this.lodSwitches,
+    this.lastUpdateTime=time;
+    this.stats={poseUpdates:this.poseStats.applied,heldPoses:this.poseStats.held,boneUploads:this.poseStats.boneUploads,boneSkips:this.poseStats.boneSkips,active:selected.size,limit:limits.count,instances:this.instances.size,clips,actors:visible,lodPreset:preset,lodBands:bands,submittedMeshes:submitted,lodSwitches:this.lodSwitches,
       lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')}};
     return selected;
+  }
+  /** True when this far instance keeps its previous pose this frame. Never for carried/carrying actors, MG34/CKM crews, the prone MG34 gunner and
+   *  its loader (their rigs are attached or authored per phase). A repeated update at the same clock (pause, second render) refreshes any stale pose. */
+  poseHeld(v,a,distance,time,quality,ikOn){
+    const quantum=actorPoseQuantum(distance);
+    if(v.appliedQuality!==quality||v.appliedIk!==ikOn)return false;   // a quality tier / IK switch changes the pose pipeline: re-pose at once
+    if(!(quantum>0)||a.carriedBy||this.carriers.has(a.id)||mgCrew(a)||ckmRole(a)||a.mg34Prone||a.mg34Loader)return false;
+    if(Math.abs(a.x-v.appliedX)+Math.abs(a.z-v.appliedZ)>POSE_HOLD_MAX_DRIFT_M)return false;   // teleport / restore to the same clock: re-pose at once
+    if(time===v.appliedTime)return true;
+    if(time===this.lastUpdateTime)return false;
+    return !actorPoseDue(time,v.appliedTime,quantum,v.posePhase*quantum);
   }
   updateCKM(actors,time,player,quality){
     const gunner=actors.find(a=>a.id==='ckm_gunner'),d=Math.hypot(player.x-CKM_POSITION.x,player.z-CKM_POSITION.z);

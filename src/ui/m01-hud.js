@@ -106,7 +106,7 @@ export const lowHealthLevel=health=>clamp((45-health)/45);
 
 export class M01HudPresenter {
   constructor(el,{document:doc=globalThis.document}={}){
-    this.el=el;this.doc=doc;this.cache=new Map();this.queue=[];this.reset('new',0);
+    this.el=el;this.doc=doc;this.cache=new Map();this.queue=[];this.aspect=16/9;this.reset('new',0);
     if(!el.sceneCue&&el.root?.appendChild&&doc?.createElement){el.sceneCue=this.node('div','scene-look-prompt','');el.root.appendChild(el.sceneCue);}
     // P2: world marker of the current objective and the "Mais tarde…" card of a compressed clock (created here, like the scene cue: no index.html change).
     if(!el.objectiveMarker&&el.root?.appendChild&&doc?.createElement){
@@ -118,14 +118,20 @@ export class M01HudPresenter {
       el.tempoCard=this.node('div','tempo-card','');el.tempoLabel=this.node('strong','','');el.tempoReason=this.node('small','','');
       el.tempoCard.append?.(el.tempoLabel,el.tempoReason);el.root.appendChild(el.tempoCard);
     }
+    // The HUD root size is read here and on resize, never per frame (a clientWidth read after the frame's style writes forces a synchronous layout).
+    this.resize();
+    if(typeof ResizeObserver==='function'&&el.root?.nodeType===1){this.sizeObserver=new ResizeObserver(()=>this.resize());this.sizeObserver.observe(el.root);}
   }
+  /** Re-reads the HUD root size once (window resize / ResizeObserver). Fallback 16:9 while the root has no layout box. */
+  resize(){const root=this.el.root;this.aspect=root?.clientWidth&&root?.clientHeight?root.clientWidth/root.clientHeight:16/9;return this.aspect;}
+  dispose(){this.sizeObserver?.disconnect();this.sizeObserver=null;}
   /** kind: new (missão nova), continue (save carregado), restore (checkpoint reposto). */
   reset(kind='new',clock=0){
     this.clearSceneCues();
     this.kind=kind;this.baseline=kind==='new'?null:undefined;this.queue=[];this.banner=null;this.checkpointAt=-Infinity;this.checkpointName='';
     this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.tempoSince=null;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
     this.announceCurrent=kind!=='new';this.resumeLines=null;
-    this.hitAt=-Infinity;this.opacity('hitMarker',0);
+    this.hitAt=-Infinity;this.opacity('hitMarker',0);this.markerMemo=null;
   }
   /** Confirmed hit by the player's shot (player-shot hit:true) at mission clock `clock`. */
   hit(clock){this.hitAt=clock;}
@@ -138,7 +144,7 @@ export class M01HudPresenter {
     for(const key of ['class:root:scene-beats','text:sceneCue','opacity:sceneCue'])this.cache.delete(key);
   }
   clear(){
-    this.clearSceneCues();
+    this.clearSceneCues();this.markerMemo=null;
     const e=this.el;this.cache.clear();
     e.root?.classList.remove('cinematic','m01');
     for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName','markerLabel','markerDistance','tempoLabel','tempoReason'])if(e[k])e[k].textContent='';
@@ -168,7 +174,7 @@ export class M01HudPresenter {
     // Estado da ameaça: o texto é exactamente o da simulação.
     this.text('objectiveStatus',sim.mission.status??'');
     this.text('clock',clockText(sim.battleClock));
-    this.updateMarker(sim.objectiveMarker??null,cine.locked||beats.letterbox);
+    this.updateMarker(this.markerFor(sim),cine.locked||beats.letterbox);
     this.updateTempo(sim.tempo??null,clock,cine.locked);
     this.updateInteraction(sim.interaction??'');
     this.updateSubtitle(sim.subtitle);
@@ -242,10 +248,20 @@ export class M01HudPresenter {
     if(!active)this.resumeLines=null;
     this.updateCard('resumeCard',data,'show');
   }
+  /** sim.objectiveMarker runs the pacing target search (filter().sort() in some phases). Everything it reads changes only on a simulation tick,
+   *  so it is evaluated once per (simulation, clock, player pose) instead of once per rendered frame. reset()/clear() drop the memo. */
+  markerFor(sim){
+    const p=sim.player,m=this.markerMemo;
+    if(m&&m.sim===sim&&m.clock===sim.clock&&m.x===p?.x&&m.z===p?.z&&m.angle===p?.angle)return m.value;
+    const value=sim.objectiveMarker??null;
+    if(m){m.sim=sim;m.clock=sim.clock;m.x=p?.x;m.z=p?.z;m.angle=p?.angle;m.value=value;}
+    else this.markerMemo={sim,clock:sim.clock,x:p?.x,z:p?.z,angle:p?.angle,value};
+    return value;
+  }
   updateMarker(marker,hidden){
     const node=this.el.objectiveMarker;if(!node)return;
     if(!marker||hidden){this.opacity('objectiveMarker',0);return;}
-    const root=this.el.root,aspect=root?.clientWidth&&root?.clientHeight?root.clientWidth/root.clientHeight:16/9,place=markerScreen(marker.bearing,aspect);
+    const place=markerScreen(marker.bearing,this.aspect);
     this.set('marker:x',place.x.toFixed(4),v=>node.style?.setProperty('--marker-x',v));
     this.set('marker:side',place.side??'',v=>{if(node.dataset)node.dataset.side=v;});
     this.text('markerLabel',marker.label);this.text('markerDistance',`${Math.round(marker.distance)} m`);

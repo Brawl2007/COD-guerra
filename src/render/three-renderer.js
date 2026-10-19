@@ -13,6 +13,9 @@ export function initialQuality({saved,cores=0,memory=0,renderer='',maxTexture=0}
   if(Object.hasOwn(QUALITY,saved))return saved;
   // PC target (owner directive 2026-10-17): a capable hardware GPU starts at maximum quality; software rasterisers stay low.
   if(!renderer||/swiftshader|llvmpipe|software/i.test(renderer))return 'low';
+  // Reference laptop GPU (H12: Intel HD Graphics 5500, also reported through ANGLE as "ANGLE (Intel, Intel(R) HD Graphics 5500 Direct3D11 ...)"):
+  // High is for capable GPUs, so Intel "HD Graphics" parts (not UHD/Iris Xe) start at medium. A saved choice above still wins.
+  if(/\bintel\b.*\bHD Graphics\b/i.test(renderer))return 'medium';
   return cores>=4&&memory>=4&&maxTexture>=8192?'high':'medium';
 }
 const matrix=new THREE.Object3D();
