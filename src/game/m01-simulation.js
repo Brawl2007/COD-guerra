@@ -17,7 +17,7 @@ import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADE
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
-import {barkEvent,barkTrigger,barkPoll,noteSpoken,validateBarkState,barkAdmits,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
+import {barkEvent,barkTrigger,barkPoll,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -25,9 +25,9 @@ const E=name=>`evt_m01_${name}`,O=name=>`obj_m01_${name}`;
 const clone=value=>JSON.parse(JSON.stringify(value));
 const definitionMapCover=cover=>mapLayout.coverNodes.some(n=>n.id===cover.nodeId&&n.type===cover.type&&cover.height===(n.heightM??0));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
-// The cast that has a body in the world. The three ckm crew voices (`voiceOnly`) are cast for the subtitles; their bodies are the crew makeCKMCrew makes.
 // A reactive line cuts the reactive line on screen only when it is this many priorities more urgent (priority 1, danger, over 3, ambient); a scripted line always may (after cutAfterSec).
 const BARK_CUT_STEP=2;
+// The cast that has a body in the world. The three ckm crew voices (`voiceOnly`) are cast for the subtitles; their bodies are the crew makeCKMCrew makes.
 const ACTOR_CAST=definition.cast.filter(c=>c.id!=='jan_wrona'&&!c.voiceOnly);
 const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
 const entity=(id,point,team='ally',extra={})=>({id,space:'metres',...point,team,health:100,alive:true,active:true,

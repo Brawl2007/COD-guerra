@@ -237,6 +237,11 @@ test('substitution of the combat callouts: 120 comes only after the first co_m01
   assert.equal(s.line('co_m01_enemy_mg_fire_on_squad'),true);s.dialogueQueue=[];s.subtitle=null;
   s.clock+=20;assert.deepEqual(delta(s,mg),[],'20 s after the callout');
   s.clock+=11;assert.deepEqual(delta(s,mg),[`${D(120)}#1`],'31 s after it');
+  // 128 (a flash at the gates) is held back for 30 s by the same callout, and speaks after it
+  const u=fresh();near(u,'szymon_kowal');u.line('co_m01_enemy_mg_fire_on_squad');u.dialogueQueue=[];u.subtitle=null;u.clock+=10;
+  const flash=()=>u.emit({type:'enemy-fire',origin:{x:1055,y:0,z:30},rounds:1,interval:.075,weapon:'kar98k',at:u.clock});
+  assert.deepEqual(delta(u,flash),[],'10 s after the callout');
+  u.clock+=25;assert.deepEqual(delta(u,flash),[`${D(128)}#1`],'35 s after it');
   // 143 is held back for 10 s by co_m01_enemy_group_suppressed
   const t=fresh();t.activate('cover_repair');
   const mgOff=()=>{const g=t.actor('de_east_0');Object.assign(g,{active:true,alive:true,suppressedAt:t.clock,suppressedUntil:t.clock+5});t.emit({type:'player-shot',point:{x:1055,y:0,z:32},material:'earth',hit:false,weapon:'kb_wz29'});};

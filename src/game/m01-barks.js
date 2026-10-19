@@ -41,7 +41,7 @@ function present(s,id){
   const a=s.actor(id);
   return a&&a.alive&&(a.active||a.carriedBy)?a:null;   // a man carried on the shoulder is still a voice (Bąk, 146)
 }
-const anyOf=(list,test)=>{for(let i=0;i<list.length;i++)if(test(list[i]))return true;return false;};
+const objectiveIs=(s,list,state)=>{for(let i=0;i<list.length;i++)if(s.objectives[list[i]]?.state===state)return true;return false;};   // (loops, not closures: this runs every tick)
 const flagsOk=(s,flag)=>{for(const k in flag)if(s.flags[k]!==flag[k])return false;return true;};
 const bearing=(s,pt)=>{const rel=Math.atan2(pt.z-s.player.z,pt.x-s.player.x)-s.player.angle;return Math.atan2(Math.sin(rel),Math.cos(rel));};   // positive is the player's right, as in directionTo()
 function peekers(s,los){   // men of grp_de_east with an open peek (and in the player's sight when `los`)
@@ -80,8 +80,8 @@ const CONDITIONS={
   node:list=>{const prefixes=list.map(p=>p.endsWith('*')?[p.slice(0,-1),true]:[p,false]);
     return [0,(s,c)=>{const n=c.node;if(typeof n!=='string')return false;for(const [p,glob] of prefixes)if(glob?n.startsWith(p):n===p)return true;return false;},['coverRotation']];},
   // -- the state of the mission
-  active:list=>[1,s=>anyOf(list,id=>s.objectives[id]?.state==='active')],
-  done:list=>[1,s=>anyOf(list,id=>s.objectives[id]?.state==='done')],
+  active:list=>[1,s=>objectiveIs(s,list,'active')],
+  done:list=>[1,s=>objectiveIs(s,list,'done')],
   consumed:id=>[1,s=>s.consumedEvent(id)],
   notConsumed:id=>[1,s=>!s.consumedEvent(id)],
   flag:flag=>[1,s=>flagsOk(s,flag)],
@@ -371,6 +371,7 @@ export function validateBarkState(b,clock,reject){
   const fin=(v,lo=0,hi=Infinity)=>Number.isFinite(v)&&v>=lo&&v<=hi,plain=v=>Boolean(v)&&typeof v==='object'&&!Array.isArray(v);
   if(!plain(b)||Object.keys(b).some(k=>!['last','recent','at','n','g','seen'].includes(k))||['last','recent','at','n','g','seen'].some(k=>!Object.hasOwn(b,k)))reject('barks');
   if(!fin(b.last,-1e9,clock)||!Array.isArray(b.recent)||b.recent.length>RECENT_MAX||b.recent.some((t,i)=>!fin(t,0,clock)||(i>0&&t<b.recent[i-1])))reject('barks last/recent');
+  if(b.last!==(b.recent.length?b.recent[b.recent.length-1]:-1e9))reject('barks last is the time of the last of recent');
   if(!plain(b.at)||Object.entries(b.at).some(([id,t])=>!BARK_WATCHED.has(id)||!fin(t,0,clock)))reject('barks at');
   if(!plain(b.n)||Object.entries(b.n).some(([id,n])=>!BARK_RULES.has(id)||!Number.isInteger(n)||n<1||n>(BARK_RULES.get(id).max||10000)))reject('barks n');
   if(!plain(b.g)||Object.entries(b.g).some(([name,v])=>!BARK_GROUPS.has(name)||!Array.isArray(v)||v.length!==2||!Number.isInteger(v[0])||v[0]<0||v[0]>=BARK_GROUPS.get(name).members.length||!fin(v[1],0,clock)))reject('barks g');

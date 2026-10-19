@@ -176,7 +176,9 @@ test('A/B: the same save run twice gives identical events, snapshots and gun sta
 test('the gun draws from its own stream only: with and without it firing at all, the main random state and every other actor are identical tick by tick',{timeout:240000},()=>{
   const {pre}=firstBurst();
   const ghost=new CkmGhostSimulation(),neutral=new CkmNeutralSimulation();ghost.restoreSnapshot(structuredClone(pre));neutral.restoreSnapshot(structuredClone(pre));
-  const strip=s=>{const v=s.snapshot(false);v.actors=v.actors.filter(a=>!a.id.startsWith('ckm_'));delete v.resumeCheckpoint;return v;};
+  // timers.barks is the dialogue director's ledger (src/game/m01-barks.js): what the voices heard, not an actor. It hears the gun by design - an ally-fire is "our side fired" for its
+  // `quiet` condition - so the ledger of the world where the gun shoots is not the one of the world where it never engages. The main random state is compared on its own line below.
+  const strip=s=>{const v=s.snapshot(false);v.actors=v.actors.filter(a=>!a.id.startsWith('ckm_'));delete v.resumeCheckpoint;delete v.timers.barks;return v;};
   let bursts=0;
   for(let i=0;i<700;i++){
     ghost.tick(.05,{crouch:i===0});neutral.tick(.05,{crouch:i===0});
