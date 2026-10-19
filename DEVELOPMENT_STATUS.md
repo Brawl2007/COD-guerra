@@ -7,7 +7,7 @@ Branch local `claude/busy-ritchie-3fkvk2-slice2` (de `9cd2aca`). **Não publicad
 - **Desvios do desenho escrito:** o recuo é **antes** da explosão (os vãos 06–07 caem; ninguém pode ficar do lado polaco); a ckm wz.30 e o Kowal **não vêem** o tabuleiro (medido), o empurrão é do jogador.
 - **Revisão crítica (5 correcções):** comentário dos decalques e frase da vida corrigidos; quase-bala da MG34 imobiliza os sapadores 5 s (margem mínima ajuda × ignora em 12 sementes 4,9 → 10,9 s, teste novo); fogo de busca no último sítio do jogador sai como rondas `player` (`ai.seen.who`); notas da D2 (`rifleGateEastThreshold`, `spansPickPlayerThreshold` mortos).
 - **Golden:** emenda 08 (`--amendment 08`, predecessor `9cd2aca`, delta `deck-assault`); 06 e 07 re-verificadas idênticas; invariantes `--live` 24/24.
-- **Testes:** ver o ledger (linha da fatia 2) para os números finais.
+- **Testes:** focados (combate, pacing, npc, jogador, ckm, decalques, fatia 2) 346 + 90 corridas, falhas corrigidas e re-corridas; `npm test` completo em `b1631aa`: **1303 testes, 1302 passam, 1 falha** (pin de fonte de `m01-fire.js`, actualizado em `4eed57e`, ficheiro re-corrido 27/27; a suite completa não foi re-corrida depois disso). `npm run build` OK. Browser `m01-ckm-fire.spec.js` 2/2 (porta 4186, flock).
 
 ## M01: integração passos 3 e 4 (pacing → combate) sobre phys + npc + skin + anim + áudio — 2026-10-18
 
