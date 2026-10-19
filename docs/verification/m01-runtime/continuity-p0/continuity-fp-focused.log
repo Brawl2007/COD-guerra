@@ -1,0 +1,42 @@
+✔ T40 original third-person soldier files and clips remain byte-identical (10.012211ms)
+✔ T40 dedicated GLB closes all welded source cuts and retains articulated finger weights (291.247878ms)
+✔ T40 actual full FP mesh budget and near clearance through real ADS/reload/carry clips (703.978048ms)
+✔ T40 completed carry restores the same carrier bones and rifle as a fresh view in every weapon pose (417.928804ms)
+✔ ADS curve is eased, exact at both ends and takes 0.30 s in and 0.22 s out at any frame schedule (2.140974ms)
+✔ world field of view 70 -> 48 uses the very same curve as the weapon pose (0.704228ms)
+✔ ADS keeps the exact sight pose: breath, bob, wall and recoil terms are exact zeros at rest in full ADS (1.08613ms)
+✔ breath sway and gait bob are pure functions of the clock and gait weights; a gait change never pops (5.860658ms)
+✔ every changed render module is free of randomness, wall clocks and timers (0.788764ms)
+✔ recoil kicks, returns to rest exactly and is deterministic per shot index (9.167783ms)
+✔ wall probe measures the first collision box along the aim and ignores what is not in front, without writing (0.586891ms)
+✔ wall lowering target: none beyond the reach, full at the lowest pose, linear between; lowers fast, raises slowly (0.221482ms)
+✔ production viewmodel aims in 0.30 s and out 0.22 s of mission time; the camera FOV rides the same curve; a repeated clock is frozen (175.910611ms)
+✔ ADS timing, gait bob and breath are the same at 40, 20 and 4 frames per second of mission time (40.96645ms)
+✔ walking bob and breath are alive on the hip, frozen when the clock stops, and absent in ADS (94.771673ms)
+✔ wall lowering keeps the rifle in front of the wall down to the lowest pose and never cuts geometry at the near plane (40.867011ms)
+✔ wall lowering lowers fast when the wall arrives and raises once it is clear, on the mission clock only (53.213575ms)
+✔ wall lowering needs the render camera and the world boxes; without either the pose is the old one (3.775568ms)
+✔ real mission: the rifle lowers at the road portal wall on the sim collision boxes and raises when turning away; aim, shots and saves are untouched (590.871519ms)
+✔ measured real clips and asset socket metadata are locked; archived BASE is exact (156.00964ms)
+✔ integration keeps Wz29/muzzle/hitboxes/RNG bytes and locks the approved simulation gameplay baseline (0.602354ms)
+✔ ADS aligns actual rear/front with camera -Z on LOD0, all qualities (109.946625ms)
+✔ ADS aligns actual rear/front with camera -Z on LOD1, all qualities (64.063623ms)
+✔ visual flash starts exactly on the barrel socket through hip, ADS, bolt, reload and run (117.624921ms)
+✔ dense clipping matrix samples all referenced vertices, LOD0 (354.222978ms)
+✔ dense clipping matrix samples all referenced vertices, LOD1 (208.810581ms)
+✔ local arm skin/pose/material changes leave source geometry, bones, clips and materials intact (109.849969ms)
+✔ pause freezes phase, transition, arms and mechanics including clamped clip endpoint (84.931972ms)
+✔ ADS/run transitions are controlled by mission dt and converge without action rebind (92.627524ms)
+✔ recoil is finite, damped, bounded and has weaker ADS presentation (1.89859ms)
+✔ missing optional model/clips returns to existing caller fallback; LOD1 remains viable (59.841977ms)
+✔ restore mid-bolt and both reloads reconstruct mechanical phase without saving a mixer (209.180171ms)
+✔ an existing menu/checkpoint renderer reconstructs ADS at a replaced world boundary (127.08995ms)
+✔ BASE/CANDIDATE whole save, HP/ammo/shots/hits/transforms/muzzle/RNG/clocks/CP remain exact for 600 input ticks (2504.581875ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4333.166408

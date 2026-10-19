@@ -72,3 +72,37 @@ test('T40 actual full FP mesh budget and near clearance through real ADS/reload/
   const restored=new M01ViewModel(new THREE.Scene(),c,new THREE.Texture());try{restored.update(s,'high',0);assert.deepEqual(restored.stats.carryFrame,v.stats.carryFrame);assert.equal(restored.stats.clipTime,v.stats.clipTime);}finally{restored.dispose();}
  }finally{v.dispose();c.dispose();}
 });
+
+test('T40 completed carry restores the same carrier bones and rifle as a fresh view in every weapon pose',async()=>{
+ const c=await fixture(),v=new M01ViewModel(new THREE.Scene(),c,new THREE.Texture());
+ const s={clock:10,world:{},player:{id:'player',aiming:false,moveBlend:0,sprinting:false},weapon:new Wz29(),renderState:{weaponVisible:true},actors:[]};
+ const bones=root=>{const result={};root.traverse(n=>{if(n.isBone)result[n.name]=n.matrixWorld.toArray();});return result;};
+ try{
+  v.update(s,'high',0);const carrierWeapon=v.root.getObjectByName('weapon');
+  for(let cycle=0;cycle<2;cycle++){
+   s.player.carrying='jozef_bak';s.actors=[{id:'jozef_bak',carriedBy:'player',carry:{phase:'pickup',startedAt:s.clock}}];
+   for(const phase of ['pickup','carry','putdown']){
+    s.actors[0].carry={phase,startedAt:s.clock};
+    for(let i=0;i<=32;i++){s.clock+=.05;v.update(s,'high',0);}
+    assert.equal(v.root.getObjectByName('weapon'),carrierWeapon,'carrier lookups never enter the patient rig');
+   }
+   s.player.carrying=null;s.actors=[];
+   for(const [aiming,moveBlend,sprinting]of [[false,0,false],[false,1,false],[false,1,true],[true,0,false]]){
+    Object.assign(s.player,{aiming,moveBlend,sprinting});
+    for(const state of ['READY','BOLT_CYCLE','RELOAD_CLIP','RELOAD_SINGLE']){
+     s.clock+=1;s.weapon.state=state;s.weapon.started=s.clock*1000-700;s.weapon.until=s.weapon.started+(state==='BOLT_CYCLE'?1050:3400);
+     // Isolate reconstruction from the documented transient ADS/run interpolation.
+     v.visual=null;v.update(s,'high',0);
+     const restored=new M01ViewModel(new THREE.Scene(),c,new THREE.Texture());
+     try{
+      restored.update(s,'high',0);assert.deepEqual(bones(v.root),bones(restored.root),`${cycle}/${state}/${aiming}/${sprinting}`);
+      assert.deepEqual(v.stats.visualSights,restored.stats.visualSights);
+      assert.equal(v.wounded.root.visible,false);
+      const frozen=bones(v.root);v.update(s,'high',0);assert.deepEqual(bones(v.root),frozen,'pause');
+     }finally{restored.dispose();}
+    }
+   }
+  }
+  const patient=v.wounded.root;v.dispose();assert.equal(patient.parent,null,'independent patient is released');
+ }finally{if(v.root)v.dispose();c.dispose();}
+});

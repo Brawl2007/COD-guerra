@@ -1,0 +1,43 @@
+{
+  "before": {
+    "clock": 588.8001000000123,
+    "carrying": false,
+    "clip": "aim",
+    "visualSights": {
+      "rear": [
+        0.14221166770682042,
+        -0.17598502680608358,
+        -0.7399999999999998
+      ],
+      "front": [
+        0.14221166770682042,
+        -0.17598502680608358,
+        -0.7399999999999998
+      ]
+    },
+    "sightLineMetres": 0.0
+  },
+  "after": {
+    "clock": 588.6833000000124,
+    "carrying": false,
+    "clip": "aim",
+    "visualSights": {
+      "rear": [
+        0.1420961429277133,
+        -0.1758657970846782,
+        -0.74
+      ],
+      "front": [
+        0.0723014739384856,
+        -0.2004335046237437,
+        -1.1961251274891125
+      ]
+    },
+    "sightLineMetres": 0.4620876540224809
+  },
+  "base": "afaded912c5c3a7f8a4e6e567be9a98cd35ac24f",
+  "files": {
+    "src/render/m01-viewmodel.js": "7c29ab826c570a0ff0835f7c6ae4abab7c9ba093d0c1ad6f570f4aeac1477ba2",
+    "src/render/m01-fp-carry.js": "3516d1c8aed856385fb6aa31d9d51ea1173ecafd2de1471b46c7de012413433f"
+  }
+}
