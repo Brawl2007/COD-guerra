@@ -442,7 +442,10 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
 // 2026-10-18: after the combat AI slice 1 integration (golden amendment 07, the route is 19224 ticks and Kowal's rkm bursts changed) the casualties of this route at CP-D are de_east_3 and
 // de_spans_0..3, i.e. 45 alive. Measured on the route's own save with a Node M01Simulation.restoreSnapshot (45 enemies alive); the browser restore must reproduce exactly that.
-const CPD_ENEMIES_ALIVE=45;
+// 2026-10-19: the rearguard of combat slice 2b (c9469e6, golden amendment 11) now fells three more men of the deck assault on this route before the demolition: the casualties of the route's CP-D
+// save are de_east_3, de_spans_0..3 and de_spans_7..9, i.e. 42 alive (de_spans_7, 8 and 9 on seed 19390901, the same measurement as tests/m01-german-retreat.test.js). Measured on the route's own
+// save with a Node M01Simulation.restoreSnapshot at 5378fb4..c1a3ecf (45) and c9469e6 / 8a978fb (42); the browser restore must still reproduce exactly the route's casualties, so the pin stays exact.
+const CPD_ENEMIES_ALIVE=42;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
