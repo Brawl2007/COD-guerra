@@ -17,6 +17,7 @@ import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADE
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
+import {barkEvent,barkTrigger,barkPoll,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -24,6 +25,10 @@ const E=name=>`evt_m01_${name}`,O=name=>`obj_m01_${name}`;
 const clone=value=>JSON.parse(JSON.stringify(value));
 const definitionMapCover=cover=>mapLayout.coverNodes.some(n=>n.id===cover.nodeId&&n.type===cover.type&&cover.height===(n.heightM??0));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
+// A reactive line cuts the reactive line on screen only when it is this many priorities more urgent (priority 1, danger, over 3, ambient); a scripted line always may (after cutAfterSec).
+const BARK_CUT_STEP=2;
+// The cast that has a body in the world. The three ckm crew voices (`voiceOnly`) are cast for the subtitles; their bodies are the crew makeCKMCrew makes.
+const ACTOR_CAST=definition.cast.filter(c=>c.id!=='jan_wrona'&&!c.voiceOnly);
 const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
 const entity=(id,point,team='ally',extra={})=>({id,space:'metres',...point,team,health:100,alive:true,active:true,
   state:'GUARD',facing:0,shot:0,radius:.3,crouched:false,suppressedUntil:0,cooldown:0,rounds:5,...extra});
@@ -71,7 +76,7 @@ const migrateCKMPlacement=(actors,consumed)=>{
 // T38: saves made before the staging carry the old waiting places. A man still standing exactly on his old authored place (the only unambiguous
 // signature) and not sent anywhere is put on his new slot when the save loads; anyone who has moved keeps his position.
 const migrateT38Staging=(actors,world)=>{
-  const castIds=definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),seat=(a,x,z,facing)=>{a.x=x;a.z=z;a.y=world.heightAt(x,z);if(facing!==undefined&&a.facing===0)a.facing=facing;};
+  const castIds=ACTOR_CAST.map(c=>c.id),seat=(a,x,z,facing)=>{a.x=x;a.z=z;a.y=world.heightAt(x,z);if(facing!==undefined&&a.facing===0)a.facing=facing;};
   for(const a of actors){
     const i=castIds.indexOf(a.id),slot=STAGE.squad.slots[a.id]??STAGE.sappers[a.id],idle=!a.target&&!a.task&&!a.carriedBy&&a.alive;
     if(slot&&idle&&a.role==='ENGINEER'&&a.x===-42-i*.6&&a.z===10&&a.y===-2)seat(a,slot.x,slot.z,slot.facing);
@@ -284,7 +289,7 @@ export class M01Simulation {
     this.weapon=new Wz29();this.grenades={ammo:2,active:[],nextId:0};this.projectileTraces=[];
     // T38: the section and the sappers start on their staged slots (grp_squad.stage / grp_sappers.stage), on the ground, with their own facing.
     const staged=id=>{const s=STAGE.squad.slots[id]??STAGE.sappers[id];return s&&{x:s.x,y:this.world.heightAt(s.x,s.z),z:s.z};};
-    this.actors=definition.cast.filter(c=>c.id!=='jan_wrona').map((c,i)=>entity(c.id,
+    this.actors=ACTOR_CAST.map((c,i)=>entity(c.id,
       c.id==='tadeusz_nowicki'?{x:17,y:0,z:3}:c.id===STATION_PATIENT?STATION_YARD:staged(c.id)??(c.role==='ENGINEER'?{x:-42-i*.6,y:-2,z:10}:
       c.role==='MEDIC'?this.world.point('aid_position'):{x:-76-i*1.6,y:-3,z:24+i%3*2}),'ally',{role:c.role,essential:Boolean(c.essential),civilian:c.role==='CIVILIAN',
       ...(c.id==='szymon_kowal'?{rounds:20}:{}),...(staged(c.id)?{facing:(STAGE.squad.slots[c.id]??STAGE.sappers[c.id]).facing}:{})}));   // Kowal: carregador de 20 da rkm wz.28
@@ -314,20 +319,54 @@ export class M01Simulation {
   get enemies(){return this.actors.filter(a=>a.team==='enemy'&&!a.displayOnly);}
   get allies(){return this.actors.filter(a=>a.team==='ally'&&!a.displayOnly);}
   get combatants(){return this.actors.filter(a=>!a.displayOnly);}
-  emit(event){this.events.push(validateM01AudioEvent(event));}
+  emit(event){this.events.push(validateM01AudioEvent(event));barkEvent(this,event);}   // reactive dialogue (m01-barks.js): the director reads the event, it writes only dialogue state
   drainEvents(){const events=this.events;this.events=[];return events;}
   consumedEvent(id){return Object.hasOwn(this.consumed,id);}
   active(name){return this.objectives[O(name)]?.state==='active';}
   done(name){return this.objectives[O(name)]?.state==='done';}
   activate(name){const o=this.objectives[O(name)];if(o.state==='locked')o.state='active';}
   finish(name){const o=this.objectives[O(name)];if(o.state==='done')return;o.state='done';o.progress=100;}
+  /**
+   * Says a line: queues its subtitle. A scripted line (every line without a `bark` rule) keeps the old FIFO and is never dropped, cut or jumped. A reactive line (a `bark` rule,
+   * src/game/m01-barks.js) is ordered by its priority (1 is the most urgent) among the reactive ones, waits behind every scripted line, and lives only `barks.ttlSec` in the queue
+   * (advanceSubtitle); at most `barks.voices` lines are on screen and waiting together, so a reactive line is dropped unless it is more urgent than one it can replace.
+   * Returns true when the line was queued, false when it was not (already said under this token, unknown, no room). The director is told what was said, for «tocou há N s».
+   */
   line(id,token=id){
-    if(this.dialogueConsumed.includes(token))return;
-    const line=definition.dialogue.find(d=>d.id===id)??definition.callouts.lines.find(d=>d.id===id);if(!line)return;
+    if(this.dialogueConsumed.includes(token))return false;
+    const line=BARK_LINES.get(id);if(!line)return false;
+    const rule=BARK_RULES.get(id),count=['doze','treze','catorze','quinze','dezasseis','dezassete','dezoito'][this.flags['m01.east_platoon_survivors']-12];
+    const record={id,speaker:definition.cast.find(c=>c.id===line.speaker)?.name??'Soldado',
+      text:line.text.replaceAll('{n}',count),duration:Math.max(2.5,Math.min(6,line.text.length/24))};
+    const queue=this.dialogueQueue;
+    let at=queue.length;
+    if(rule){
+      if(!this.makeRoom(rule.priority))return false;
+      Object.assign(record,{priority:rule.priority,bark:true,expires:this.clock+BARK_CONFIG.ttlSec[rule.priority]});
+      at=queue.length;while(at>0&&queue[at-1].bark&&queue[at-1].priority>rule.priority)at--;
+    }else while(at>0&&queue[at-1].bark)at--;
     this.dialogueConsumed.push(token);
-    const count=['doze','treze','catorze','quinze','dezasseis','dezassete','dezoito'][this.flags['m01.east_platoon_survivors']-12];
-    this.dialogueQueue.push({id,speaker:definition.cast.find(c=>c.id===line.speaker)?.name??'Soldado',
-      text:line.text.replaceAll('{n}',count),duration:Math.max(2.5,Math.min(6,line.text.length/24))});
+    queue.splice(at,0,record);
+    noteSpoken(this,id);
+    return true;
+  }
+  /** Room for one more reactive line of this priority: fewer than `barks.voices` lines on screen and waiting, or a waiting reactive line less urgent than it (which it replaces), or a reactive line on screen that it may cut (advanceSubtitle). */
+  makeRoom(priority){
+    const queue=this.dialogueQueue,last=queue[queue.length-1],shown=this.subtitle;
+    if((shown?1:0)+queue.length<BARK_CONFIG.voices)return true;
+    if(last?.bark&&last.priority>priority){queue.pop();return true;}
+    return Boolean(shown?.bark&&shown.priority-priority>=BARK_CUT_STEP&&this.clock-(shown.until-shown.duration)>=BARK_CONFIG.cutAfterSec);
+  }
+  /**
+   * The end of every tick: the line on screen ends at its time, or is cut (the head of the queue is a scripted line, or a reactive one at least BARK_CUT_STEP priorities more urgent: a
+   * danger call over an ambient remark; and the reactive line on screen has been up for `barks.cutAfterSec`); a reactive line that waited past its time to live is dropped; the head of the queue goes on screen. One subtitle at a time: nobody talks over anybody.
+   */
+  advanceSubtitle(){
+    const queue=this.dialogueQueue;let shown=this.subtitle;
+    if(shown&&this.clock>=shown.until)shown=this.subtitle=null;
+    if(shown?.bark&&queue.length&&(!queue[0].bark||shown.priority-queue[0].priority>=BARK_CUT_STEP)&&this.clock-(shown.until-shown.duration)>=BARK_CONFIG.cutAfterSec)shown=this.subtitle=null;
+    while(queue.length&&queue[0].expires!==undefined&&this.clock>queue[0].expires)queue.shift();
+    if(!shown&&queue.length){this.subtitle=queue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
   }
   message(message){this.emit({type:'message',message});}
   startScene(id){if(this.sceneDone.includes(id))return;this.scene={id,elapsed:0,beats:[]};}
@@ -389,7 +428,7 @@ export class M01Simulation {
       }
     }
     if(this.consumedEvent(E('panzerzug_arrives'))&&this.inView({x:1119,y:0,z:2.5}))this.line('dlg_m01_038');
-    if(this.active('hold_corridor')&&this.clock-this.consumed[E('east_demolition')]>=10){this.line('dlg_m01_048');
+    if(this.active('hold_corridor')&&this.clock-this.consumed[E('east_demolition')]>=10){this.line('dlg_m01_047');this.line('dlg_m01_048');
       if(!this.dialogueQueue.some(l=>l.id==='dlg_m01_048')&&this.subtitle?.id!=='dlg_m01_048')this.line('dlg_m01_049');}
   }
   trigger(t){
@@ -458,7 +497,7 @@ export class M01Simulation {
       case E('intro_card'):break;
       case E('prelude_start'):this.activate('deliver_message');this.mission.phase='SETUP';break;
       case E('railway_worker_report'):if(dist(this.player,this.actor('franciszek_lipski'))<15)line(8);break;
-      case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
+      case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(67);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
         this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
@@ -498,7 +537,7 @@ export class M01Simulation {
           if(!a.active)Object.assign(a,{alive:false,health:0,state:'DOWN'});});
         this.actor('jozef_bak').target=this.world.point('bak_wound_point');break;
       case E('bak_wounded'):{const bak=this.actor('jozef_bak');
-        if(inside(bak,{minX:20,maxX:160,minZ:30,maxZ:50})){bak.state='WOUNDED';bak.target=null;this.flags['m01.bak_status']='wounded';this.activate('rescue_bak');line(41);line(43);recordHit(bak,this.clock);}break;}
+        if(inside(bak,{minX:20,maxX:160,minZ:30,maxZ:50})){bak.state='WOUNDED';bak.target=null;this.flags['m01.bak_status']='wounded';this.activate('rescue_bak');line(41);if(this.actor('leon_dudek').alive&&this.actor('leon_dudek').active)line(42);line(43);recordHit(bak,this.clock);}break;}
       // Os 20 s de relógio da regra de baixas contam a partir da entrada dos alemães no tabuleiro (cover_withdrawal.mechanic).
       case E('germans_on_east_spans'):this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{a.active=true;a.cooldown=2+i*.7;});
         this.beginDeckAssault();this.timers.withdrawalCasualty=this.battleClock;this.message('Eles entram pelo tabuleiro leste! Cubra os últimos homens do pelotão.');break;
@@ -1578,7 +1617,7 @@ export class M01Simulation {
       if(sector.id==='s2_east_bridgehead')sector.strength=this.enemies.filter(a=>a.alive).length*2;}
     if(this.battleClock>=seconds('06:36:00')&&!this.consumedEvent(E('west_demolition')))this.line('dlg_m01_050');
     if(this.battleClock>=seconds('06:38:30')&&!this.consumedEvent(E('west_demolition')))this.line('dlg_m01_051');
-    if(this.active('follow_sergeant')&&this.clock>this.timers.guide){this.timers.guide=this.clock+7;this.message('Zieliński chama-o da trincheira, a oeste.');}
+    if(this.active('follow_sergeant')&&this.clock>this.timers.guide)this.followCall();
     this.updateGuide();
     if(this.active('hold_access')){
       const cover=this.world.coverAt(p)?.id??null;
@@ -1593,14 +1632,16 @@ export class M01Simulation {
         // No warning or cover reservation until a real salvo is emitted. Retry at a bounded cadence.
         this.timers.nextCoverCall=this.clock+(shooters.length?42:4);
         if(shooters.length)this.flags['m01.suggested_cover']=rotation[this.timers.coverCallIndex++%rotation.length];
+        // The order to change cover is spoken (a line of m01-barks.js for the node: 035, 136, 137 or the generic callout), before the salvo; the HUD message below is what is left when no voice can be said.
+        const spoken=shooters.length>0&&barkTrigger(this,'coverRotation',{node:this.flags['m01.suggested_cover']});
         for(const a of shooters[0]?.weapon==='mg34'?shooters.slice(0,1):shooters){
           this.burst(a,p,'cover',a.weapon==='mg34'?{rounds:7,bias:[.5,.3],cone:[.6,.4],tracer:true}:{rounds:1,bias:[.8,.5],cone:[0,0]});a.cooldown=Math.max(a.cooldown,6);
         }
-        if(shooters.length){this.mission.status=this.coverFireStatus();this.message(`Zieliński: ${this.mission.status}.`);}
+        if(shooters.length){this.mission.status=this.coverFireStatus();if(!spoken)this.message(`Zieliński: ${this.mission.status}.`);}
       }
     }
-    if(this.subtitle&&this.clock>=this.subtitle.until)this.subtitle=null;
-    if(!this.subtitle&&this.dialogueQueue.length){this.subtitle=this.dialogueQueue.shift();this.subtitle.until=this.clock+this.subtitle.duration;}
+    barkPoll(this);   // the reactive lines that read state (m01-barks.js)
+    this.advanceSubtitle();
   }
   /** The player's body moves (walls, ledges, gravity: src/world/m01-player-physics.js) and, if it touched down after a fall, lands. Every move of the player goes through here. */
   moveBody(dx,dz,dt){const landing=movePlayer(this.world,this.player,dx,dz,dt);if(landing)this.playerLanded(landing);}
@@ -1710,6 +1751,18 @@ export class M01Simulation {
     present.forEach((a,i)=>{const [x,z]=ROLL_CALL_SEATS[i%ROLL_CALL_SEATS.length];
       Object.assign(a,{x,z,target:null,task:null,state:'GUARD',pose:'seated',crouched:true});a.y=this.world.heightAt(x,z);a.facing=Math.atan2(p.z-z,p.x-x);});
     p.angle=Math.atan2(72.6-p.z,-260-p.x);
+  }
+  /**
+   * Zieliński calls the player to the rally point («siga a voz»): once the voice that is speaking has finished, then every 14 s, and not while the player is closing in (8 m since the last
+   * call). It was the same HUD message every 7 s; it is a voice now (the guide variants dlg_m01_015a-d, m01-barks.js) and the message is only what is left when no voice can be said.
+   */
+  followCall(){
+    const t=this.timers;
+    if(this.subtitle||this.dialogueQueue.length)return;   // wait for the voice that is speaking; asked again at the next tick
+    const d=dist(this.player,this.world.point('rally_point')),progressing=t.guide!==0&&t.guideDist-d>=8;   // guide 0: the first call
+    t.guide=this.clock+14;t.guideDist=d;
+    if(progressing)return;
+    if(!barkTrigger(this,'guide'))this.message('Zieliński chama-o da trincheira, a oeste.');
   }
   /** Destino do objectivo activo que exige deslocação (dados do mapa ou actor). */
   guideTarget(){
@@ -1931,7 +1984,7 @@ export function validateM01Snapshot(s){
   // An airborne player carries his fall (src/world/m01-player-physics.js); a grounded one has none, so older saves need no migration.
   if(s.player.fall!==undefined){const f=s.player.fall;
     if(!f||typeof f!=='object'||Object.keys(f).length!==5||['vy','vx','vz','startY','t'].some(k=>!Number.isFinite(f[k]))||f.vy>0||f.vy<-60||Math.abs(f.vx)>20||Math.abs(f.vz)>20||f.t<0||f.t>30)reject('queda do jogador');}
-  const actorIds=[...definition.cast.filter(c=>c.id!=='jan_wrona').map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
+  const actorIds=[...ACTOR_CAST.map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
   const hasCKM=Array.isArray(s.actors)&&s.actors.some(a=>CKM_IDS.includes(a?.id));
   if(hasCKM)actorIds.push(...CKM_IDS);
   const hasAuxiliary=Array.isArray(s.actors)&&s.actors.some(a=>AUXILIARY_IDS.includes(a?.id));
@@ -2071,6 +2124,7 @@ export function validateM01Snapshot(s){
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
   if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');
   if('nextCombatCall' in s.timers&&!finite(s.timers.nextCombatCall))reject('timer nextCombatCall');
+  if('barks' in s.timers)validateBarkState(s.timers.barks,s.clock,reject);   // reactive dialogue: cooldowns, repeats, rotation, what was seen (m01-barks.js); absent in older saves
   if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
   if(s.timers.raidSchedule!==undefined){
     const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];
@@ -2102,8 +2156,18 @@ export function validateM01Snapshot(s){
   if(s.checkpointsReached.some(id=>!definition.checkpoints.some(c=>c.id===id))||new Set(s.checkpointsReached).size!==s.checkpointsReached.length||
     (s.pendingCheckpoint!==null&&!definition.checkpoints.some(c=>c.id===s.pendingCheckpoint)))reject('checkpoint');
   if(s.dialogueConsumed.some(token=>typeof token!=='string')||new Set(s.dialogueConsumed).size!==s.dialogueConsumed.length)reject('falas consumidas');
-  const dialogue=d=>d&&[...definition.dialogue,...definition.callouts.lines].some(line=>line.id&&line.id===d.id)&&typeof d.speaker==='string'&&typeof d.text==='string'&&d.text.length<600&&finite(d.duration,1,15);
+  // A scripted line is {id, speaker, text, duration}; a reactive one (a line with a `bark` rule) also carries its rule's priority, `bark: true` and the time it expires in the queue.
+  const dialogue=d=>{
+    if(!d||!BARK_LINES.has(d.id)||typeof d.speaker!=='string'||typeof d.text!=='string'||d.text.length>=600||!finite(d.duration,1,15))return false;
+    if(d.bark===undefined)return d.priority===undefined&&d.expires===undefined;
+    return d.bark===true&&BARK_RULES.get(d.id)?.priority===d.priority&&finite(d.expires);
+  };
   if(s.dialogueQueue.some(d=>!dialogue(d))||(s.subtitle&&(!dialogue(s.subtitle)||!finite(s.subtitle.until))))reject('legendas');
+  // The queue keeps its order: scripted lines first (as they came), then the reactive ones from the most urgent.
+  for(let i=1;i<s.dialogueQueue.length;i++){
+    const before=s.dialogueQueue[i-1],now=s.dialogueQueue[i];
+    if(before.bark&&(!now.bark||before.priority>now.priority))reject('ordem das legendas');
+  }
   if(s.mission.complete!==s.flags['m01.completed']||s.mission.complete!==Object.hasOwn(s.consumed,E('debrief')))reject('estado final');
   if(!['INTRO','SETUP','BUILDUP','FIRST_CONTACT','MAIN_COMBAT','SET_PIECE','CLIMAX','AFTERMATH','OUTRO'].includes(s.mission.phase))reject('fase');
   if(s.resumeCheckpoint!==undefined){

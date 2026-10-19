@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2) and 09 (navigator queue) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue) and 10 (reactive dialogue) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,10 +15,14 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
+// Amendment 10 (`noBehaviourDifference`) is the dialogue: the lines the director says, the callouts and the guide change what is SAID (the queue, the subtitle, the consumed tokens, the
+// director's record timers.barks, the guide's cadence and two HUD messages that became voices) and nothing that HAPPENS. Its lockstep proves that: with exactly those paths stripped from both
+// frames the two simulations must be byte identical on every tick of both routes, and the first difference itself must be one of those dialogue paths (measured: tick 355, the
+// scripted line 067 now said on evt_m01_planes_heard, so dialogueConsumed and the queue differ before the director's new record timers.barks).
 // Without --write nothing is written: the regenerated account and golden must equal the committed files byte for byte. When a later amendment has moved the simulation, an
 // amendment is history: CFG.after names the commit whose simulation its golden pins, and the check runs that tree's simulation and pilot instead of the working tree's.
 import assert from 'node:assert/strict';
@@ -75,12 +79,30 @@ const AMENDMENTS={
     // Measured: route 19390901 (control), tick 5331 (04:46:31): sapper pawel_krawiec suppressedUntil +1.5 s (an MG34 near miss pins the working sappers 5 s, was 3.5 s);
     // route 7 support, tick 5195 (04:45:30): the new event enemy_down_by_player where the predecessor emitted only player-shot (the pilot kills the gate MG gunner).
     behaviourFields:/^\$\.((state|checkpoint)\.actors\.\d+\.suppressedUntil|events\.\d+\.type)$/,behaviourActors:/^(pawel_krawiec|sapper_\d)$/},
-  '09':{task:'M01-NAV-QUEUE-V1',delta:'nav-queue',predecessor:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d',after:null,identical:true,
+  '09':{task:'M01-NAV-QUEUE-V1',delta:'nav-queue',predecessor:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d',
+    // History since amendment 10: the nav-queue golden pins the simulation of 167dccc (the navigator branch with its amendment 09 remade), not the working tree's.
+    after:'167dccc9194b6062947d02e0a0cc30176cc57461',identical:true,
     previousGolden:'tests/fixtures/m01-deck-assault-gameplay-baseline.json',golden:'tests/fixtures/m01-nav-queue-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/nav-queue-2026-10-19',
     extraInputs:['src/game/m01-deck-assault.js'],
-    generationStage:'NPC navigator work on the deck assault integration tree: at most one route() per tick, taken in roster order (the others keep the straight walk of that tick and ask again), work buffers reused between plans, the solid list built at construction and after a load, the neighbour queries of a walking man on reused storage; golden amendment 09 moves the source lock only'}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08 or 09`);
+    generationStage:'NPC navigator work on the deck assault integration tree: at most one route() per tick, taken in roster order (the others keep the straight walk of that tick and ask again), work buffers reused between plans, the solid list built at construction and after a load, the neighbour queries of a walking man on reused storage; golden amendment 09 moves the source lock only'},
+  '10':{task:'M01-DIALOGUE-V1',delta:'dialogue',predecessor:'167dccc9194b6062947d02e0a0cc30176cc57461',after:null,noBehaviourDifference:true,
+    previousGolden:'tests/fixtures/m01-nav-queue-gameplay-baseline.json',golden:'tests/fixtures/m01-dialogue-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/dialogue-2026-10-19',
+    // The director lives in its own module too; it is hashed for this amendment only.
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js'],
+    generationStage:'Reactive dialogue on the navigator-queue integration tree: the 55 reviewed lines (dlg_m01_100-154, 114/115 unwired) and the guide variants 015a-d as data (a bark rule per line), a deterministic director (src/game/m01-barks.js) with cooldowns on the real clock, repeats, variant rotation and substitution against the callouts, a priority queue with a two-voice limit and a rolling 60 s budget in line(), the six canonical lines nothing said (030 035 036 042 047 067) wired, the cover rotation and the guide spoken instead of messaged; state in timers.barks; golden amendment 10',
+    // Measured (dry run of the strip, predecessor 167dccc against the working tree, 23839 ticks of the control route): the first lockstep difference is the dialogue itself at tick 355 (04:33:10,
+    // evt_m01_planes_heard): the orphan line 067 is now said there, so dialogueConsumed[12] and the queue differ, and timers.barks is new. The behaviour does not move at all: with the dialogue
+    // state stripped from both frames (stateOnly) the two simulations are byte identical on every tick of both routes.
+    deltaFields:/^\$\.(state|checkpoint)\.(dialogueConsumed|dialogueQueue|subtitle|timers\.(barks|guide|guideDist))(\.|$)/,
+    stripped:['dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»'],
+    stateOnly:frame=>{
+      const strip=s=>{if(!s)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete s[k];for(const k of ['barks','guide','guideDist'])delete s.timers?.[k];strip(s.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.filter(e=>!(e.type==='message'&&/^(Zieliński chama-o da trincheira|Zieliński: .*mude de cobertura)/.test(e.message)));
+      return frame;}}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09 or 10`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);
@@ -138,7 +160,7 @@ function clockEvents(now,old){
 
 const report={task:CFG.task,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,sourceSha256:sha(liveSource),
   previousGolden:{task:previous.task,file:CFG.previousGolden,sha256:sha(previousText),sourceSha256:previous.sourceSha256},...(CFG.identical?{identical:true}:{deltaFields:CFG.deltaFields.source}),
-  ...(CFG.stateOnly?{behaviourFields:CFG.behaviourFields.source,behaviourActors:CFG.behaviourActors.source}:{}),
+  ...(CFG.stateOnly?(CFG.noBehaviourDifference?{noBehaviourDifference:true,stripped:CFG.stripped}:{behaviourFields:CFG.behaviourFields.source,behaviourActors:CFG.behaviourActors.source}):{}),
   authority:`Written only by tools/verification/m01-integration-golden-audit.mjs --amendment ${amendmentArg} --write (x86); never edited by hand.`,
   changedGameplayInputsSincePredecessor:changedInputs,routes:[]};
 const golden={task:CFG.task,generationStage:CFG.generationStage,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,
@@ -163,7 +185,7 @@ for(const {seed,support,ticks,blocks} of previous.routes){
           predecessor:d.a??null,live:d.b??null,missing:d.missing??false};
         row.identicalTicksBeforeIt=row.newTicks-1;console.log(JSON.stringify({seed,support,firstDifference:row.firstDifference}));}}
     // The first difference that is not the new saved state alone (copies of both frames, with CFG.stateOnly stripped).
-    if(CFG.stateOnly&&row.firstDifference&&!row.firstBehaviourDifference){const d=firstDifference(CFG.stateOnly(structuredClone(gameplayFrame(a,ea))),CFG.stateOnly(structuredClone(live)));
+    if(CFG.stateOnly&&row.firstDifference&&!row.firstBehaviourDifference){const sa=CFG.stateOnly(structuredClone(gameplayFrame(a,ea))),sb=CFG.stateOnly(structuredClone(live));const d=JSON.stringify(sa)===JSON.stringify(sb)?null:firstDifference(sa,sb);   // (equal text first: the common case, cheap)
       if(d){const m=/^\$\.(?:state|checkpoint)\.actors\.(\d+)\./.exec(d.path);
         row.firstBehaviourDifference={tick:row.newTicks,clock:+sim.clock.toFixed(2),battleClock:clockText(sim.battleClock),path:d.path,actor:m?sim.actors[Number(m[1])].id:null,predecessor:d.a??null,live:d.b??null};
         console.log(JSON.stringify({seed,support,firstBehaviourDifference:row.firstBehaviourDifference}));}}
@@ -177,7 +199,8 @@ for(const {seed,support,ticks,blocks} of previous.routes){
   }else{
   assert.ok(row.firstDifference,'the live simulation differs from the predecessor on this route');
   assert.match(row.firstDifference.path,CFG.deltaFields,`1. the first difference is a path of the named delta \`${CFG.delta}\``);
-  if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
+  if(CFG.noBehaviourDifference)assert.equal(row.firstBehaviourDifference,null,'1b. with the dialogue state stripped the two simulations are identical on every tick of the route: the dialogue is presentation only');
+  else if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
     // An event path has no actor (amendment 08: the new enemy_down_by_player event); an actor path must be a man of the named delta.
     if(row.firstBehaviourDifference.actor!==null||!/\.events\./.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
   }

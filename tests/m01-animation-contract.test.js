@@ -34,7 +34,13 @@ const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // th
 // and the digests equal amendment 08's, block for block). The deck assault golden above is history since then (it pins the simulation of c7c82ee); the golden of the live simulation,
 // regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 09, is this one.
 import nav from './fixtures/m01-nav-queue-gameplay-baseline.json' with {type:'json'};
-const current=nav;   // the golden of the live simulation
+// M01-DIALOGUE-V1 (golden amendment 10, 2026-10-19, branch claude/busy-ritchie-3fkvk2-dlgwire): the reactive dialogue. 55 reviewed lines (dlg_m01_100-154; 114/115 unwired), the six orphan
+// lines wired, a deterministic director (src/game/m01-barks.js) with cooldowns, repeats, rotation and substitution against the callouts, a priority queue with a two-voice limit in line(),
+// the cover rotation and the guide as voices. It changes what is SAID and nothing that HAPPENS: with the dialogue state stripped from both frames not one tick of either golden route
+// differs from the navigator queue golden above, which is history since then (it pins the simulation of 167dccc, byte for byte below); the golden of the live simulation, regenerated
+// on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 10 after its lockstep audit against that exact predecessor, is this one.
+import dialogue from './fixtures/m01-dialogue-gameplay-baseline.json' with {type:'json'};
+const current=dialogue;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -356,10 +362,29 @@ function identicalAmendment(g,{amendment,task,delta,previous,previousFile,predec
   for(const r of account.otherRoutes){assert.equal(r.clipping,0);assert.equal(r.stacked,0);assert.deepEqual(r.same,{objectives:true,checkpoints:true,consumedEventIds:true,finalBattleClock:true});assert.deepEqual(r.survivors.live,r.survivors.predecessor);assert.equal(r.real.live,r.real.predecessor);}
   return account;
 }
-test('the navigator queue golden (amendment 09) chains to the deck assault golden, moves the source lock only, pins the live simulation and cites its lockstep account',()=>{
+test('the navigator queue golden (amendment 09) chains to the deck assault golden, moves the source lock only, pins the simulation of 167dccc and cites its lockstep account',()=>{
   identicalAmendment(nav,{amendment:'09',task:'M01-NAV-QUEUE-V1',delta:'nav-queue',previous:deck,previousFile:'m01-deck-assault-gameplay-baseline.json',predecessor:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d'});
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),nav.sourceSha256,'the golden pins the live simulation');
+  // History since the reactive dialogue (amendment 10): this golden pins the simulation of 167dccc (the navigator queue merged on the slice-2 tree), not the live one.
+  assert.equal(nav.sourceSha256,'4a44a6338d9911e8bf0679e91936ea819a9a96f5e29ee3baa36d970165c3e374','the navigator queue golden pins the simulation of 167dccc');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),nav.sourceSha256,'the navigator queue golden is history: the dialogue moved the simulation source');
   assert.equal(nav.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
+});
+
+test('the reactive dialogue golden (amendment 10) chains to the navigator queue golden, pins the live simulation, the director and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(dialogue,{amendment:'10',task:'M01-DIALOGUE-V1',delta:'dialogue',previous:nav,previousFile:'m01-nav-queue-gameplay-baseline.json',
+    predecessor:'167dccc9194b6062947d02e0a0cc30176cc57461',deltaFields:/^\$\.(state|checkpoint)\.(dialogueConsumed|dialogueQueue|subtitle|timers\.(barks|guide|guideDist))(\.|$)/});
+  assert.equal(sha('../src/game/m01-simulation.js'),dialogue.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(dialogue.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // What the amendment is: the dialogue only. With the dialogue state (queue, subtitle, consumed tokens, timers.barks / guide / guideDist) and the two HUD messages that became voices stripped
+  // from both frames, the live simulation and the predecessor are byte identical on EVERY tick of both routes; the first raw difference is the dialogue itself.
+  assert.equal(account.noBehaviourDifference,true);
+  assert.deepEqual(account.stripped,['dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»']);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.battleClock,'04:33:10','evt_m01_planes_heard: the orphan line 067 is now said');assert.match(r.firstDifference.path,/\.dialogueConsumed\.\d+$/);
+    assert.equal(r.firstBehaviourDifference,null,'not one tick differs once the dialogue is stripped');
+    assert.deepEqual(r.movedEvents,[],'no consumed event moved by a tick');
+  }
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{
