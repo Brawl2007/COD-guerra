@@ -1072,7 +1072,7 @@ export class M01Simulation {
       if(a.cooldown>0)continue;
       if(a.group==='grp_de_spans'){if(a.deck)this.deckFire(a,retreat);else this.spansFire(a,retreat);}else this.eastFire(a,retreat,withdrawal);
     }
-    this.attritionTick();this.kowalFire(dt);this.rearguardFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();
+    this.attritionTick();this.kowalFire(dt);this.rearguardFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();this.stageRearguard();
     const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);   // T38: up or down after his burst
     updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
@@ -1347,17 +1347,19 @@ export class M01Simulation {
     }
     if(this.clock-a.firedAt>=REARGUARD.fire.holdAfterSec)a.state='GUARD';
   }
-  /** The rearguard's trigger, after the Germans' (updateCombat): the slice-1 cycle (aiPinned under fire, peeks, bolt, pause, the clip reloaded in cover), then the posture. */
+  /** The rearguard's trigger, after the Germans' (updateCombat): the slice-1 cycle (aiPinned under fire, peeks, bolt, pause, the clip reloaded in cover). */
   rearguardFire(dt){
-    const F=REARGUARD.fire;
     for(const id of REARGUARD.men){
       const a=this.actor(id);if(!a?.alive||!a.active||a.rear?.phase!=='hold')continue;
       a.cooldown-=dt;
       if(this.clock<a.suppressedUntil){this.aiPinned(a);a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+1.2+a.ai.recover);}
       else if(a.cooldown<=0)this.rearguardShot(a);
-      // T38 as the deck men: kneeling at his place, up riseBeforeSec before his trigger and holdAfterSec after his shot; down while suppressed.
-      a.crouched=this.clock<a.suppressedUntil||!(a.cooldown<=F.riseBeforeSec||this.clock-a.firedAt<F.holdAfterSec);
     }
+  }
+  /** T38 as the deck men, after this tick's shots and suppression (the rounds landed): a rearguard man at his post kneels, is up riseBeforeSec before his trigger and holdAfterSec after his shot, and is down while suppressed. */
+  stageRearguard(){
+    const F=REARGUARD.fire;
+    for(const id of REARGUARD.men){const a=this.actor(id);if(a?.alive&&a.active&&a.rear?.phase==='hold')a.crouched=this.clock<a.suppressedUntil||!(a.cooldown<=F.riseBeforeSec||this.clock-a.firedAt<F.holdAfterSec);}
   }
   /** The living deck-assault man the rearguard man shoots: the one he aimed at last while he still sees him, else the nearest in sight within rangeM (ties: roster order). No draw. */
   rearguardTarget(a){

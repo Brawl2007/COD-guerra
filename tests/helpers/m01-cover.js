@@ -14,6 +14,9 @@ export function coverRoute(seed=19390901,mode='ignore',options={}){
   const watch=()=>{
     for(const id of historic)if(!times[id]&&sim.consumedEvent(`evt_m01_${id}`))times[id]=clockText(sim.battleClock);
     if(sim.active('cover_repair')&&sim.consumedEvent('evt_m01_train963_arrives')){stats.repairUnderFire+=.05;if(sim.threat.mgSuppressed.includes('de_east_0'))stats.repairMgSuppressed+=.05;}
+    // 2026-10-19 (combat slice 2b): ticks with a German of the spans suppressed while the 20 s casualty rule runs (the battle clock before the gate holds it at 06:09:30).
+    if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock<seconds('06:09:30')&&
+      sim.enemies.some(a=>a.group==='grp_de_spans'&&a.alive&&a.suppressedUntil>sim.clock))stats.spansSuppressedWhileRuleRuns=(stats.spansSuppressedWhileRuleRuns??0)+1;
     const alive=sim.enemies.filter(a=>a.alive).length;if(alive<germans&&!sim.consumedEvent('evt_m01_east_demolition'))(stats.germanCasualties??=[]).push(clockText(sim.battleClock));germans=alive;
     const n=sim.flags['m01.east_platoon_survivors'];if(n<survivors)stats.casualties.push(clockText(sim.battleClock));survivors=n;
     if(!stats.repair.end&&sim.done('cover_repair'))stats.repair={...stats.repair,end:clockText(sim.battleClock),realSeconds:+(sim.clock-stats.repair.deliveredAt).toFixed(2),pins:sim.timers.repairPins};
