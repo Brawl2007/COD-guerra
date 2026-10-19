@@ -29,7 +29,7 @@ export function buildTerrainEnvelope(world){
   // T38: staged waiting slots of the section and the sappers (grp_*.stage.slots [x, z, facing]).
   for(const group of definition.groups)if(group.stage?.slots)add(`stage:${group.id}`,Object.values(group.stage.slots).map(([x,z])=>[x,z]));
   // src/game/m01-simulation.js reset/eastPosition: every cast slot and both inactive eastern groups.
-  const cast=definition.cast.filter(c=>c.id!=='jan_wrona');
+  const cast=definition.cast.filter(c=>c.id!=='jan_wrona'&&!c.voiceOnly);   // the ckm crew voices have no spawn slot: their bodies are the crew
   const staged=id=>definition.groups.map(g=>g.stage?.slots?.[id]).find(Boolean);
   const spawn=cast.map((c,i)=>c.id==='tadeusz_nowicki'?[17,3]:c.id==='generic_rifleman'?[-300,30]:staged(c.id)?staged(c.id).slice(0,2):c.role==='ENGINEER'?[-42-i*.6,10]:c.role==='MEDIC'?[world.point('aid_position').x,world.point('aid_position').z]:[-76-i*1.6,24+i%3*2]);
   add('source:reset-cast',spawn);
