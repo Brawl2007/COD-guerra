@@ -1,5 +1,14 @@
 # Estado de desenvolvimento
 
+## M01 combate, fatia 2b: retaguarda polaca do tabuleiro + revisão crítica do realizador de falas (B1, N1–N4) — 2026-10-19
+
+Branch local `claude/busy-ritchie-3fkvk2-rear` (de `c1a3ecf`, emenda 10). **Não publicada**, sem revisão crítica independente, **sem playtest humano**. Detalhe e medidas: `docs/direction/COD_WAW_WWII_BENCHMARK.md` «Fatia 2b» e `docs/direction/M01_REACTIVE_DIALOGUE.md` §7b; evidência: `docs/verification/m01-runtime/rearguard-2026-10-19/`.
+- **Jogo.** Enquanto o gate segura o relógio em 06:09:30 pelo tabuleiro, `pl_east_0..2` param a x 165–175 (z 38,7), de joelhos, e disparam rondas reais de kb wz.29 (dano e supressão do tiro do jogador, fluxo próprio, ciclo da fatia 1) contra o assalto; nunca com o jogador ou um aliado na linha de tiro; retomam a retirada quando o tabuleiro fica livre. Não morrem: sobreviventes 12 / 18 inalterados (decisão com causa no benchmark).
+- **Medido** (antes `c1a3ecf` → depois): jogador passivo / escondido — rondas polacas no tabuleiro 0 → 22 / 23; maior troço sem ronda 262 → 131 / 138 s (no gate 202 → 71 / 78 s); dano ao jogador 8 → 0 / 40 → 0; alemães do tabuleiro caídos 0 → 4 / 1. **Duração do combate passivo quase igual** (golden 262,3 → 262,3 s; 5 sementes: soma −36 s): o chão é `maxSec` + a corrida de volta; a alavanca é a posição x dos postos (decisão humana, números no benchmark).
+- **Realizador de falas.** B1: as falas de espreitar leem a vista da própria IA (`ai.seen`), sem linhas de vista no realizador — tick médio 0,568 / 0,539 → 0,447 / 0,447 ms, combate 0,904 / 0,868 → 0,656 / 0,693 ms, ticks > 5 ms 21 / 9 → 6 / 6, picos das 04:46 eliminados (`tools/verification/m01-tick-cost.mjs`). N1: uma fala reativa conta quando aparece; se cai sem ser vista devolve a ficha e a mensagem de HUD de mudar de cobertura volta a aparecer. N3: 030 passa a Kowal (condição nova `fired`), 130/131 ficam com 8 s documentado. N4, N2: teste da ckm e documento.
+- **Golden:** emenda **11**, delta `rearguard` (predecessor `c1a3ecf`); a emenda 10 passa a história. 1.ª diferença `ai.seen` de `de_east_2` (04:45:16); 1.ª diferença de comportamento `pl_east_0` às 06:09:30. Clipping 0, empilhados 0.
+- **Testes:** ver o ledger (linha da fatia 2b).
+
 ## M01 diálogo reativo: realizador de falas, fila com prioridade, as 55 falas de combate e as seis falas órfãs — 2026-10-19
 
 Branch local `claude/busy-ritchie-3fkvk2-dlgwire` (de `ee4bb7b`, com o merge do ramo `-navq` @ `167dccc`, emenda 09). **Não publicada**, sem revisão crítica independente, **sem playtest humano** (só legendas, não há voz gravada; ninguém jogou isto). Detalhe, desvios e o que falta: `docs/direction/M01_REACTIVE_DIALOGUE.md` §7; evidência: `docs/verification/m01-runtime/dialogue-2026-10-19/`.
