@@ -23,7 +23,8 @@
      "gateHold": 71.3
     },
     "firstDeckRoundAfterEntrySec": 131.3,
-    "deckGermansDownBeforeDemolition": 4
+    "deckGermansDownBeforeDemolition": 4,
+    "playerInSightOfDeckGermansShare": 1
    },
    "closeness": {
     "mission": {
@@ -357,7 +358,8 @@
      "gateHold": 73.6
     },
     "firstDeckRoundAfterEntrySec": 133.6,
-    "deckGermansDownBeforeDemolition": 3
+    "deckGermansDownBeforeDemolition": 3,
+    "playerInSightOfDeckGermansShare": 1
    },
    "closeness": {
     "mission": {
@@ -691,7 +693,8 @@
      "gateHold": 77.8
     },
     "firstDeckRoundAfterEntrySec": 137.8,
-    "deckGermansDownBeforeDemolition": 1
+    "deckGermansDownBeforeDemolition": 1,
+    "playerInSightOfDeckGermansShare": 0.039
    },
    "closeness": {
     "mission": {
@@ -1026,7 +1029,8 @@
      "gateHold": 4.6
     },
     "firstDeckRoundAfterEntrySec": 0,
-    "deckGermansDownBeforeDemolition": 2
+    "deckGermansDownBeforeDemolition": 2,
+    "playerInSightOfDeckGermansShare": 1
    },
    "closeness": {
     "mission": {
@@ -1360,7 +1364,8 @@
      "gateHold": 35.9
     },
     "firstDeckRoundAfterEntrySec": 95.9,
-    "deckGermansDownBeforeDemolition": 6
+    "deckGermansDownBeforeDemolition": 6,
+    "playerInSightOfDeckGermansShare": 1
    },
    "closeness": {
     "mission": {
