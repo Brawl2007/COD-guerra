@@ -16,6 +16,7 @@ import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, rec
 import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADER_IDS,YARD_TASKS} from './m01-yard-life.js';
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
+import {nextCover,coverOrder} from './m01-cover-guidance.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
 import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01-rearguard.js';
 import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
@@ -381,7 +382,7 @@ export class M01Simulation {
     while(queue.length&&queue[0].expires!==undefined&&this.clock>queue[0].expires)this.dropBark(queue.shift());
     if(!shown&&queue.length){this.subtitle=queue.shift();this.subtitle.until=this.clock+this.subtitle.duration;if(this.subtitle.queuedAt!==undefined)barkShown(this,this.subtitle);}
   }
-  message(message){this.emit({type:'message',message});}
+  message(message,options={}){this.emit({type:'message',message,...options});}
   startScene(id){if(this.sceneDone.includes(id))return;this.scene={id,elapsed:0,beats:[]};}
   endScene(){
     if(!this.scene)return;const id=this.scene.id;this.sceneDone.push(id);this.scene=null;
@@ -416,7 +417,9 @@ export class M01Simulation {
       if(elapsed<0||elapsed>pre.duration||!this.readiness(pre.event))continue;
       pre.timeline.forEach((beat,i)=>{if(elapsed<beat.t)return;const token=`${scene.id}:pre:${i}`;
         if(beat.line){this.line(beat.line);return;}
-        if(this.dialogueConsumed.includes(token))return;this.dialogueConsumed.push(token);this.message(beat.action);
+        if(this.dialogueConsumed.includes(token))return;this.dialogueConsumed.push(token);
+        // beat.action is an internal staging direction, never player-facing prose.
+        // Keep its legacy token for saves; no physical action is claimed here.
       });
     }
   }
@@ -514,7 +517,7 @@ export class M01Simulation {
       case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(67);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
-        this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
+        this.message('Abrigue-se! Cabeça baixa, junto à cobertura!',{priority:3});
         this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');
         this.impact('station_bomb',this.world.point('tczew_station'),true);break;
       case E('forward_post_bombed'):{const p=this.world.point('forward_post');
@@ -613,8 +616,8 @@ export class M01Simulation {
     this.checkpoint=this.snapshot(false);this.emit({type:'checkpoint',id});
   }
   updateObjectives(dt,interact){
-    const p=this.player;
-    if(this.active('deliver_message')&&interact&&dist(p,this.world.point('forward_post'))<4){
+    const p=this.player,action=interact?this.interactionAction()?.id:null;
+    if(action==='deliver_message'){
       this.finish('deliver_message');[9,10,11].forEach(n=>this.line(`dlg_m01_${String(n).padStart(3,'0')}`));
       this.battleClock=Math.max(this.battleClock,seconds('04:33:10'));
     }
@@ -632,9 +635,9 @@ export class M01Simulation {
       // Junto ao cabo, na encosta sul do aterro (z≈10–11): é aí que o fogo mergulhante dos portões de Lisewo chega e de onde o
       // jogador vê os clarões. Mais acima (z≈8), a crista e o portal ferroviário tapam-nos desse fogo.
       this.actors.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active).forEach((a,i)=>{a.target={x:site.x-1.5-i*1.2,y:site.y,z:site.z+1+i%2};});}
-    if(this.active('fetch_material')&&interact){
-      if(!p.carrying&&dist(p,this.world.point('rail_hut'))<5){p.carrying='sapper_crate';this.message('Material recolhido. Leve a caixa aos sapadores.');}
-      else if(p.carrying==='sapper_crate'&&dist(p,this.world.point('repair_site_2'))<6){p.carrying=null;this.finish('fetch_material');this.activate('cover_repair');this.line('dlg_m01_024');}
+    if(action==='take_crate'||action==='deliver_crate'){
+      if(action==='take_crate'){p.carrying='sapper_crate';this.message('Material recolhido. Leve a caixa aos sapadores.');}
+      else if(action==='deliver_crate'){p.carrying=null;this.finish('fetch_material');this.activate('cover_repair');this.line('dlg_m01_024');}
     }
     if(this.active('cover_repair')){
       const repair=this.objectives[O('cover_repair')];
@@ -644,19 +647,19 @@ export class M01Simulation {
       if(this.timers.repairStall>120){this.timers.fireEase=true;this.timers.repairSuppressedUntil=this.clock;}
       if(repair.progress>=40)this.line('dlg_m01_022');   // fala obrigatória: se ainda não houve supressão, não fica por dizer
     }
-    if(this.active('rescue_bak')&&interact){
+    if(action==='take_bak'||action==='deliver_bak'){
       const bak=this.actor('jozef_bak');
-      if(!p.carrying&&dist(p,bak)<3){p.carrying='jozef_bak';bak.active=false;bak.carriedBy=p.id;bak.carry={phase:'pickup',startedAt:this.clock,duration:1.6};
-        const aid=this.world.point('aid_position');this.message(`Bąk está consigo. Leve-o ao socorrista Dudek: ${Math.round(dist(p,aid))} m, ${this.directionTo(aid)}.`);}
-      else if(p.carrying==='jozef_bak'&&dist(p,this.world.point('aid_position'))<4){p.carrying=null;this.finish('rescue_bak');
-        this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';this.message('Bąk entregue. Dudek trata dele — volte à secção.');
+      if(action==='take_bak'){p.carrying='jozef_bak';bak.active=false;bak.carriedBy=p.id;bak.carry={phase:'pickup',startedAt:this.clock,duration:1.6};
+        const aid=this.world.point('aid_position');this.message(`Bąk está consigo. Leve-o ao socorrista Dudek: ${Math.round(dist(p,aid))} m, ${this.directionTo(aid)}.`,{priority:2,durationMs:3600,scope:{id:O('rescue_bak'),state:'active'}});}
+      else if(action==='deliver_bak'){p.carrying=null;this.finish('rescue_bak');
+        this.flags['m01.bak_status']='rescued_by_player';this.flags['m01.dudek_status']='unhurt';this.message('Bąk entregue. Dudek trata dele — volte à secção.',{priority:2,durationMs:3600,scope:{id:O('rescue_bak'),state:'done'}});
         const aid=this.world.point('aid_position');Object.assign(bak,{active:true,state:'WOUNDED',target:null,x:aid.x-1.2,z:aid.z+.6});bak.y=this.world.heightAt(bak.x,bak.z);
         bak.carriedBy=p.id;bak.carry={phase:'putdown',startedAt:this.clock,duration:1.6};
         // Entregue depois das 06:10, Dudek leva-o já: ninguém pode ficar ferido junto ao portal (x≈−9) à espera da demolição oeste.
         if(this.consumedEvent(E('east_demolition')))this.actor('leon_dudek').task='evacuate_bak';}
     }
     const kowal=this.actor('szymon_kowal'),kowalRounds=this.timers.kowalRounds??0;
-    if(interact&&!p.carrying&&kowalRounds>0&&kowal.alive&&kowal.active&&dist(p,kowal)<3&&this.weapon.reserve<=25){
+    if(action==='kowal_ammo'){
       const given=this.weapon.resupply(Math.min(15,kowalRounds));this.timers.kowalRounds=kowalRounds-given;this.timers.lowAmmoHint=false;
       this.message(`Kowal passa-lhe ${given/5} carregador${given>5?'es':''} (+${given}).`);
     }
@@ -1764,7 +1767,7 @@ export class M01Simulation {
     this.timers.boundary=out?this.timers.boundary+dt:0;
     this.timers.water=p.y<=-9?this.timers.water+dt:0;
     const countdown=Math.max(0,Math.ceil(b.outOfBoundsGraceSec-this.timers.boundary));
-    if(out&&countdown!==this.timers.boundaryCountdown){this.timers.boundaryCountdown=countdown;this.message(`Você se afastou da sua secção. Volte em ${countdown} s.`);}
+    if(out&&countdown!==this.timers.boundaryCountdown){this.timers.boundaryCountdown=countdown;this.message(`Você se afastou da sua secção. Volte em ${countdown} s.`,{priority:3});}
     if(this.timers.boundary>=b.outOfBoundsGraceSec||this.timers.water>=8){
       this.failure=this.timers.water>=8?'Você caiu no Vístula.':'Você se afastou da sua secção.';this.player.alive=false;
     }
@@ -1809,14 +1812,14 @@ export class M01Simulation {
       if(cover!==this.timers.occupiedCover){this.timers.occupiedCover=cover;this.timers.coverExposure=0;}
       else if(cover)this.timers.coverExposure+=dt;
       if(this.timers.coverExposure>=this.level.coverAdjustSalvoSec&&this.clock>this.timers.nextCoverCall){
-        const rotation=['cv_sandbag_mid_2','cv_portal_road_n','cv_road_truss_1','cv_road_truss_3','cv_tower_p1_n'];
         // "Ajusta sobre a cobertura": rajada real de uma MG que vê o jogador (impactos na cobertura, não dano garantido).
         // Uma MG que o veja dispara uma rajada; sem MG, uma salva de até quatro atiradores (um tiro cada).
-        const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil&&canMG34Fire(a)).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
+        const shooters=this.germanSilence()?[]:this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil&&canMG34Fire(a)).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
           .filter(a=>this.world.lineOfSight(a,p)).slice(0,4);
         // No warning or cover reservation until a real salvo is emitted. Retry at a bounded cadence.
         this.timers.nextCoverCall=this.clock+(shooters.length?this.level.coverAdjustSalvoSec:4);   // H9 D2: 42 / 30 / 20 s
-        if(shooters.length)this.flags['m01.suggested_cover']=rotation[this.timers.coverCallIndex++%rotation.length];
+        if(shooters.length){const next=nextCover(this.world,p,this.timers.coverCallIndex++);
+          if(next)this.flags['m01.suggested_cover']=next;else delete this.flags['m01.suggested_cover'];}
         // The order to change cover is spoken (a line of m01-barks.js for the node: 035, 136, 137 or the generic callout), before the salvo; the HUD message below is what is left when no voice can be said.
         const spoken=shooters.length>0&&barkTrigger(this,'coverRotation',{node:this.flags['m01.suggested_cover']});
         for(const a of shooters[0]?.weapon==='mg34'?shooters.slice(0,1):shooters){
@@ -1954,12 +1957,16 @@ export class M01Simulation {
   /** Destino do objectivo activo que exige deslocação (dados do mapa ou actor). */
   guideTarget(){
     const p=this.player,pt=id=>this.world.point(id);
-    if(this.active('rescue_bak'))return p.carrying==='jozef_bak'?{label:'Socorrista Dudek',point:pt('aid_position')}:{label:'Bąk ferido',point:this.actor('jozef_bak')};
+    if(this.active('rescue_bak'))return p.carrying==='jozef_bak'?{label:'Socorrista Dudek',point:pt('aid_position'),arrivalRadius:4}:{label:'Bąk ferido',point:this.actor('jozef_bak'),arrivalRadius:3};
     if(this.active('deliver_message'))return {label:'Posto da ponte ferroviária',point:pt('forward_post')};
     if(this.active('find_sappers'))return {label:'Sapadores no aterro',point:pt('repair_site_1')};
     if(this.active('fetch_material'))return p.carrying?{label:'Sapadores no segundo corte da linha',point:pt('repair_site_2')}:{label:'Barracão ferroviário, porta oeste',point:pt('rail_hut')};
-    if(this.active('cover_repair')){const mg=this.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');if(mg)return {label:'Metralhadora no dique · V para alça 1000 m',point:mg};}
-    if(this.active('hold_access')&&!this.timers.holdAccessVisited)return {label:'Posição no tabuleiro rodoviário',point:HOLD_POSITION};
+    if(this.active('cover_repair')&&this.clock<this.timers.repairSuppressedUntil){const mg=this.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');if(mg)return {label:'Metralhadora no dique · V para alça 1000 m',point:mg};}
+    if(this.active('hold_access')){
+      const order=coverOrder(this);
+      if(order)return order.arrived?null:{label:`Mude para ${order.label}`,point:order.point};
+      if(!this.timers.holdAccessVisited||!inside(p,HOLD_AREA))return {label:'Posição no tabuleiro rodoviário',point:HOLD_POSITION};
+    }
     if(this.active('leave_bridge'))return {label:'Posto de disparo',point:pt('firing_point')};
     if(this.active('reach_shelter'))return {label:'Abrigo',point:pt('shelter')};
     return null;
@@ -1972,9 +1979,10 @@ export class M01Simulation {
     if(t.guideKey!==g.label){t.guideKey=g.label;t.guideAt=this.clock+4;t.guideDist=d;t.guideShown=false;return;}
     if(this.clock<t.guideAt)return;
     const progressing=t.guideDist-d>=8;t.guideAt=this.clock+15;t.guideDist=d;
-    if(d<10||(t.guideShown&&progressing))return;
+    if(d<(g.arrivalRadius??10)||(t.guideShown&&progressing))return;
     t.guideShown=true;
-    this.message(`${g.label}: ${Math.round(d)} m, ${this.directionTo(g.point)}`);
+    const objective=this.active('rescue_bak')?O('rescue_bak'):definition.objectives.find(o=>o.required&&this.objectives[o.id].state==='active')?.id;
+    this.message(`${g.label}: ${Math.round(d)} m, ${this.directionTo(g.point)}`,{priority:0,...(objective?{scope:{id:objective,state:'active'}}:{})});
   }
   directionTo(point){
     const p=this.player,rel=Math.atan2(point.z-p.z,point.x-p.x)-p.angle;
@@ -2017,7 +2025,9 @@ export class M01Simulation {
     if(!this.active('hold_access')||!fire||this.clock<fire.at||this.clock-fire.at>=8)return '';
     const actor=this.actor(fire.by),gate=gateShooter(actor);
     const source=gate?(actor.weapon==='mg34'?'Metralhadora':'Atiradores')+' nos portões de Lisewo':`Salva do dique ${fire.z<0?'norte':'sul'}`;
-    return `${source} · ${Math.round(dist(this.player,fire))} m, ${this.directionTo(fire)} · mude de cobertura`;
+    const order=coverOrder(this);
+    return order?.arrived?`Na posição indicada · ${order.label}`:
+      `${source} · ${Math.round(dist(this.player,fire))} m, ${this.directionTo(fire)} · ${order?`mude para ${order.label}, ${Math.round(dist(this.player,order.point))} m, ${this.directionTo(order.point)}`:'procure outra cobertura'}`;
   }
   /** Diagnóstico só de leitura: o que um jogador vê (clarões recentes) e o estado real por trás do HUD. */
   get stationEvacuation(){
@@ -2043,15 +2053,29 @@ export class M01Simulation {
   get tempo(){return tempoState(this);}
   /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
   get battleReadout(){return computeBattleReadout(this.display,this);}
-  get interaction(){
-    const p=this.player;
-    if(this.scene&&definition.cutscenes.find(c=>c.id===this.scene.id).skippable)return 'Espaço · saltar cena';
-    if(this.active('deliver_message')&&dist(p,this.world.point('forward_post'))<4)return 'E · entregar mensagem e café';
-    if(this.active('fetch_material')&&dist(p,this.world.point(p.carrying?'repair_site_2':'rail_hut'))<6)return p.carrying?'E · entregar material':'E · carregar material';
-    if(this.active('rescue_bak')&&dist(p,p.carrying?this.world.point('aid_position'):this.actor('jozef_bak'))<4)return p.carrying?'E · entregar Bąk':'E · levar Bąk';
+  /** One authoritative, read-only offer: prompt and E consume this same rule. */
+  interactionAction(){
+    const p=this.player,bak=this.actor('jozef_bak');
+    if(!p.alive||!p.active||this.mission.complete||['cs_m01_intro','cs_m01_roll_call'].includes(this.scene?.id)||
+      bak.carriedBy===p.id&&bak.carry&&bak.carry.phase!=='carry')return null;
+    const offer=(id,text)=>({id,text:`E · ${text}`});
+    if(this.active('deliver_message')&&!p.carrying&&dist(p,this.world.point('forward_post'))<4)return offer('deliver_message','entregar mensagem e café');
+    if(this.active('fetch_material')){
+      if(!p.carrying&&dist(p,this.world.point('rail_hut'))<5)return offer('take_crate','carregar material');
+      if(p.carrying==='sapper_crate'&&dist(p,this.world.point('repair_site_2'))<6)return offer('deliver_crate','entregar material');
+    }
+    if(this.active('rescue_bak')){
+      if(!p.carrying&&bak.alive&&bak.active&&bak.state==='WOUNDED'&&!bak.carriedBy&&dist(p,bak)<3)return offer('take_bak','levar Bąk');
+      if(p.carrying==='jozef_bak'&&dist(p,this.world.point('aid_position'))<4)return offer('deliver_bak','entregar Bąk');
+    }
     const kowal=this.actor('szymon_kowal');
-    if(!p.carrying&&(this.timers.kowalRounds??0)>0&&kowal.alive&&kowal.active&&dist(p,kowal)<3&&this.weapon.reserve<=25)return 'E · pedir munição a Kowal';
-    return p.carrying?'Está a transportar '+(p.carrying==='jozef_bak'?'Bąk':'material dos sapadores'):'';
+    if(!p.carrying&&(this.timers.kowalRounds??0)>0&&kowal.alive&&kowal.active&&dist(p,kowal)<3&&this.weapon.reserve<=25)return offer('kowal_ammo','pedir munição a Kowal');
+    return null;
+  }
+  get interaction(){
+    if(this.scene&&definition.cutscenes.find(c=>c.id===this.scene.id).skippable)return 'Espaço · saltar cena';
+    const offer=this.interactionAction();if(offer)return offer.text;
+    return this.player.carrying?'Está a transportar '+(this.player.carrying==='jozef_bak'?'Bąk':'material dos sapadores'):'';
   }
   get renderState(){
     const parts={};for(const file of manifest.files.filter(f=>f.lod===0))for(const n of file.nodes){

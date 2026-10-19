@@ -1,0 +1,13 @@
+✔ T40 original third-person soldier files and clips remain byte-identical (12.997661ms)
+✔ T40 dedicated GLB closes all welded source cuts and retains articulated finger weights (493.757094ms)
+✔ T40 actual full FP mesh budget and near clearance through real ADS/reload/carry clips (873.224354ms)
+✔ T40 completed carry restores the same carrier bones and rifle as a fresh view in every weapon pose (554.998725ms)
+✔ sapper crate uses the same articulated rig with hand contact through movement and restores the rifle (382.980239ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2519.368788

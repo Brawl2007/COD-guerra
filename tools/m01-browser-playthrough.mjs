@@ -13,6 +13,8 @@ const args = process.argv.slice(2);
 const opt = (name, fallback) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : fallback; };
 const OUT = opt('--out', 'docs/verification/m01-runtime/continuous');
 const URL_BASE = opt('--url', 'http://127.0.0.1:4173/COD-guerra/');
+const VIEWPORT=opt('--viewport','1280x720').split('x').map(Number);
+if(VIEWPORT.length!==2||VIEWPORT.some(v=>!Number.isInteger(v)||v<240||v>3840))throw new Error('Use --viewport WIDTHxHEIGHT (240..3840)');
 const SKIP_CUTSCENES = args.includes('--skip-cutscenes');
 // --adverse: antes da rota normal, sair dos limites e cair no Vístula (cada um restaura CP-A) e ficar parado sem seguir o sargento.
 const ADVERSE = args.includes('--adverse');
@@ -27,13 +29,13 @@ await writeFile(logFile, '');
 const t0 = Date.now();
 const real = () => +((Date.now() - t0) / 1000).toFixed(1);
 const report = { adverse: ADVERSE, cover: COVER && { mode: COVER, shots: 0, suppressingShots: 0, repair: {}, mgSamples: 0, mgSuppressedSamples: 0, casualties: [], statusLines: [], hudMismatches: [], fxFrames: 0 }, adverseResults: [], verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
-  startedAt: new Date().toISOString(), viewport: [1280, 720], timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
+  startedAt: new Date().toISOString(), viewport: VIEWPORT, timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
 
 const browser = await chromium.launch({
   ...(process.env.CHROME_EXECUTABLE ? { executablePath: process.env.CHROME_EXECUTABLE } : {}),
   args: ['--no-sandbox', '--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 });
-const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+const page = await browser.newPage({ viewport: { width: VIEWPORT[0], height: VIEWPORT[1] } });
 const pageErrors = [], failed = [];
 page.on('pageerror', e => pageErrors.push(e.message));
 page.on('response', r => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
@@ -61,7 +63,12 @@ async function shot(name, note) {
   const s = await state();
   report.screenshots.push({ file: path.split('/').pop(), note, real: real(), battle: hms(s.battle), pos: [+s.player.x.toFixed(1), +s.player.z.toFixed(1)], angle: +s.player.angle.toFixed(2), objective: s.hud.objective });
 }
-const look = (dx, dy = 0) => page.evaluate(([x, y]) => window.dispatchEvent(new MouseEvent('mousemove', { movementX: x, movementY: y })), [dx, dy]);
+// A slow software frame must consume this relative sample before the pilot computes another turn.
+const look = async (dx,dy=0) => {
+ const before=await page.evaluate(()=>window.gameDiagnostics().clock);
+ await page.evaluate(([x,y])=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y})),[dx,dy]);
+ await page.waitForFunction(t=>window.gameDiagnostics().clock>t,before,{polling:'raf',timeout:15000});
+};
 const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
 const held = new Set();
 async function hold(code, on) { if (on) { await page.keyboard.down(code); held.add(code); } else if (held.has(code)) { await page.keyboard.up(code); held.delete(code); } }
@@ -221,6 +228,8 @@ try {
   await shot('menu', 'Menu com Tczew seleccionado');
   await page.locator('#start').click();
   await page.waitForFunction(() => document.pointerLockElement?.id === 'game' && !window.gameDiagnostics().paused, null, { timeout: 60000 });
+  // Consume the intentional first-sample guard after pointer lock before steering.
+  await page.evaluate(()=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:0,movementY:0})));
   await log('started');
   await tick(1500); await shot('intro', 'Intro (cartela 04:30)');
   if (SKIP_CUTSCENES) await page.keyboard.press('Space');
@@ -231,7 +240,7 @@ try {
     await untilRestored('Vístula (margem a x ≈ 25)', [[-66, 26], [-15, 26], [10, 30], [45, 30]]);
   }
   // 1. Mensagem e café ao posto da ponte ferroviária (RUNBOOK: contornar a trincheira pelo sul, portal ferroviário).
-  await path([[-66, 26], [-15, 26], [-15, 2], [16, 2]], 'posto da ponte');
+  await path([[-66, 26], [-30, 26], [-30, 2], [16, 2]], 'posto da ponte');
   await press('KeyE', 'entregar mensagem');
   await shot('delivered', 'Entrega ao posto da ponte');
   // 2. Bombardeamento: abrigar-se e seguir o sargento.
@@ -245,12 +254,12 @@ try {
     const result = { label: 'parado 2 min em "Siga a voz do sargento"', battleFrom: hms(s0.battle), battleTo: hms(s1.battle), objective: s1.hud.objective, messages: [...msgs] };
     report.adverseResults.push(result); await log('adverse', result);
   }
-  await path([[-15, 2], [-15, 11], [-147, 11]], 'reorganização (Zieliński)');
+  await path([[-30, 2], [-30, 11], [-147, 11]], 'reorganização (Zieliński)');
   // 3. Sapadores no aterro e material do barracão.
   await path([[-50, 11], [-44, 11]], 'sapadores no aterro');
-  await path([[-245, 9], [-274, 9], [-274, 21], [-265, 21]], 'barracão ferroviário (porta oeste)');
+  await path([[-150, 15.5], [-245, 9], [-275.5, 9], [-275.5, 21], [-265, 21]], 'barracão ferroviário (porta oeste)');
   await press('KeyE', 'carregar material');
-  await path([[-274, 21], [-274, 8], [-140, 8]], 'aproximação ao segundo corte', { sprint: true });
+  await path([[-275.5, 21], [-275.5, 8], [-155, 15.5], [-140, 15.5]], 'aproximação ao segundo corte', { sprint: true });
   await shot('sappers-site2', 'Sapadores no segundo corte (ponto de entrega)');
   await path([[-123, 8]], 'entregar material', { sprint: true });
   await press('KeyE', 'entregar material');
@@ -294,7 +303,7 @@ try {
   }
   await wait('reparo e ordem de demolição', s => active(s, 'hold_access'), { limitReal: 1200, engageEast: !COVER, faceAngle: 0, aimPitch: 0.01, keepRounds: 30, every: 15 });
   await page.keyboard.press('KeyC');
-  await path([[-115, 32], [-10, 32], [-10, 40], [30, 40]], 'acesso rodoviário');
+  await path([[-115, 32], [-30, 40], [-10, 40], [30, 40]], 'acesso rodoviário');
   await shot('hold-access', 'Na ponte rodoviária, a manter o acesso');
   await wait('retirada do pelotão leste', s => s.eventIds.includes('evt_m01_east_platoon_withdraws'), { limitReal: 1200, engageEast: !COVER, faceAngle: 0, aimPitch: 0.01, keepRounds: 25, every: 15 });
   await shot('withdrawal', 'Pelotão leste em retirada');
@@ -312,7 +321,7 @@ try {
   if (active(wounded, 'rescue_bak')) {
     await shot('bak-wounded', 'Bąk ferido na ponte rodoviária');
     let found = false;
-    for (const x of [55, 45, 35, 25, 65, 75, 85, 95, 105]) {
+    for (const x of [55, 50, 45, 40, 35, 30, 25, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105]) {
       await walk(x, 40, { label: 'procurar Bąk', tolerance: 1.5 });
       const s = await state();
       if (s.hud.interaction.includes('levar Bąk')) { found = true; break; }
@@ -335,7 +344,7 @@ try {
   if (report.cover) report.cover.survivorsAtDemolition = blast.threat.survivors;
   await page.waitForTimeout(700); await shot('east-demolition', 'Demolição leste das 06:10: clarão');
   await page.waitForTimeout(6000); await shot('east-demolition-6s', 'Demolição leste, coluna de poeira 6 s depois');
-  await path([[-15, 40], [-115, 27], [-275, 27], [-292, 26]], 'posto de disparo');
+  await path([[-15, 40], [-30, 40], [-115, 27], [-275, 27], [-292, 26]], 'posto de disparo');
   await shot('firing-point', 'No posto de disparo; corredor');
   // Olhar para o corredor para ver os retardatários passarem.
   await wait('demolição oeste', s => s.eventIds.includes('evt_m01_west_demolition'), { limitReal: 1200, faceAngle: 0.08, snapEvery: 20, snapLabel: 'corridor' });

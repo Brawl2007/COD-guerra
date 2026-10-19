@@ -106,3 +106,20 @@ test('T40 completed carry restores the same carrier bones and rifle as a fresh v
   const patient=v.wounded.root;v.dispose();assert.equal(patient.parent,null,'independent patient is released');
  }finally{if(v.root)v.dispose();c.dispose();}
 });
+
+test('sapper crate uses the same articulated rig with hand contact through movement and restores the rifle',async()=>{
+ const c=await fixture(),v=new M01ViewModel(new THREE.Scene(),c,new THREE.Texture());
+ const s={clock:10,world:{},player:{id:'player',aiming:false,moveBlend:0,sprinting:false,carrying:'sapper_crate'},weapon:new Wz29(),renderState:{weaponVisible:false},actors:[]};
+ try{
+  for(const move of [0,1])for(const sprint of [false,true])for(let i=0;i<20;i++){
+   s.clock+=.05;s.player.moveBlend=move;s.player.sprinting=sprint;v.update(s,'high',0);
+   assert.equal(v.stats.cargo,'sapper_crate');assert.equal(v.root.visible,true);assert.equal(v.root.getObjectByName('rifle').visible,false);assert.equal(v.wounded,null);
+   const bob=move*Math.sin(s.clock*(sprint?14:9))*.014*1.5;
+   for(const [index,hand]of v.stats.carryFrame.hands.entries())for(const [axis,want]of [index===0?-.245:.245,-.28+bob,-.57].entries())assert.ok(Math.abs(hand[axis]-want)<1e-6);
+   for(const [name,g]of Object.entries(geometryReport(v)))assert.equal(g.nearViolations,0,name);
+  }
+  s.player.carrying=null;s.renderState.weaponVisible=true;s.player.moveBlend=0;s.player.sprinting=false;s.clock+=.05;v.update(s,'high',0);
+  assert.equal(v.stats.cargo,null);assert.equal(v.root.getObjectByName('rifle').visible,true);
+  const restored=new M01ViewModel(new THREE.Scene(),c,new THREE.Texture());try{restored.update(s,'high',0);assert.deepEqual(v.stats.visualSights,restored.stats.visualSights);}finally{restored.dispose();}
+ }finally{v.dispose();c.dispose();}
+});

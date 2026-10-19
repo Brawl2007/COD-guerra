@@ -1,0 +1,16 @@
+✔ adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat (4299.113763ms)
+✔ a salvo from the dike behind the trusses identifies its actual origin, rather than the visible gate MG (4661.124993ms)
+✔ an occluding wall prevents an adjustment warning and cover reservation, with a bounded retry (601.192223ms)
+✔ saved origin restores as data, expires after eight active seconds, and invalid or legacy saves remain safe (206.772833ms)
+✔ when no voice can be said the adjustment warning is still the HUD message, and no line is invented (490.747643ms)
+✔ the rotation names the node: portal, truss and tower have their own lines, the sandbag has the callout; none repeats inside 20 s of another (941.122033ms)
+✔ T48 silence cannot reserve a new cover or emit an empty order without a salvo (33.044772ms)
+✔ guidance proof projection is immutable and retains actor, RNG, clock, mission and shot changes (29.030759ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11404.000506

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {M01Simulation} from '../src/game/m01-simulation.js';
+import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
 import {toCoverAdjustment} from './helpers/m01-route.js';
+import {coverOrder} from '../src/game/m01-cover-guidance.js';
 import {newBarkState,barkTrigger,barkChannelOpen} from '../src/game/m01-barks.js';
 
 let flow;
@@ -11,11 +12,13 @@ const load=snapshot=>{const s=new M01Simulation();s.restoreSnapshot(snapshot);re
 test('adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat',()=>{
   const d=scenario(),s=d.sim,fire=s.timers.coverFire;
   assert.ok(s.enemyFire.rounds.some(r=>r.kind==='cover'&&r.by===fire.by&&r.firedAt===fire.at));
-  // The order to change cover is a spoken line (the node of the first rotation, the sandbag, has the generic callout); the HUD message is only what is left when no voice can be said.
-  assert.deepEqual(s.dialogueConsumed.filter(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),['co_m01_cover_rotation#1']);
-  assert.equal(s.flags['m01.suggested_cover'],'cv_sandbag_mid_2');
+  // 2026-10-19 continuity P0-D: skip the occupied sandbag and the portal's solid interior.
+  // The first playable alternative is the truss; its spoken line and spatial order must agree.
+  assert.deepEqual(s.dialogueConsumed.filter(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),['dlg_m01_137#1']);
+  assert.equal(s.flags['m01.suggested_cover'],'cv_road_truss_1');
+  assert.notEqual(coverOrder(s).id,s.world.coverAt(s.player)?.id);
   assert.equal(d.events.some(e=>e.type==='message'&&e.message.startsWith('Zieliński:')),false,'a voice was said: no duplicate message');
-  assert.match(s.mission.status,/Metralhadora nos portões de Lisewo · \d+ m, em frente · mude de cobertura/);
+  assert.match(s.mission.status,/Metralhadora nos portões de Lisewo · \d+ m, em frente · mude para primeira treliça/);
   const front=load(s.snapshot()),back=load(s.snapshot());
   back.tick(.05,{lookX:Math.PI/.0022});front.tick(.05,{});
   assert.match(back.mission.status,/atrás de si/);
@@ -64,7 +67,7 @@ test('when no voice can be said the adjustment warning is still the HUD message,
   assert.ok(s.timers.coverFire,'the salvo came');
   assert.equal(s.dialogueConsumed.some(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),false);
   assert.ok(s.drainEvents().some(e=>e.type==='message'&&e.message.startsWith('Zieliński: Metralhadora nos portões')));
-  assert.match(s.mission.status,/mude de cobertura/);
+  assert.match(s.mission.status,/mude para primeira treliça/);
 });
 
 test('the rotation names the node: portal, truss and tower have their own lines, the sandbag has the callout; none repeats inside 20 s of another',()=>{
@@ -92,4 +95,15 @@ test('the rotation names the node: portal, truss and tower have their own lines,
   assert.equal(barkTrigger(s,'coverRotation',{node:'cv_tower_p1_n'}),false,'035 does not speak 10 s after 136');
   s.clock+=12;
   assert.equal(barkTrigger(s,'coverRotation',{node:'cv_tower_p1_n'}),true);
+});
+
+test('T48 silence cannot reserve a new cover or emit an empty order without a salvo',()=>{
+ const s=load(scenario().beforeCoverAdjustment);
+ // Isolate the cover rule in the real 06:10 silence; do not replay all intervening plot events in this fixture.
+ s.battleClock=seconds('06:10:00');s.scene=null;s.subtitle=null;s.dialogueQueue=[];s.timers.barks=newBarkState();
+ s.timers.coverExposure=100;s.timers.nextCoverCall=0;s.processEvents=()=>{};s.drainEvents();
+ assert.equal(s.germanSilence(),true);s.tick(.05);
+ assert.equal(s.timers.coverFire,undefined);assert.equal(s.flags['m01.suggested_cover'],undefined);assert.equal(s.timers.coverCallIndex,0);
+ assert.equal(s.enemyFire.rounds.some(r=>r.kind==='cover'),false);
+ assert.equal(s.drainEvents().some(e=>e.type==='message'&&e.message.startsWith('Zieliński:')),false);
 });

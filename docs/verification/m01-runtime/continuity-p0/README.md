@@ -15,3 +15,19 @@ Base verificada: PR #91, `afaded912c5c3a7f8a4e6e567be9a98cd35ac24f`. A versão a
 **Limites:** os testes de navegador começam em snapshots produzidos pelo piloto da simulação; são testes focados de interação/restauro, não uma nova partida integral nem playtest humano. Fotos autênticas do renderer; só o menu de pausa é ocultado na captura indicada. Sem vídeo grande. A pose/movimentação do paciente ainda exige revisão em cadência normal e a licença do fp-arms-v2 continua pendente. Nenhum asset ou clip de terceiros foi alterado.
 
 Os logs antes/depois são preservados, incluindo a falha anterior. Não há alegação de FPS no PC alvo ou equivalência a Call of Duty.
+
+## Interações, orientação e caixa
+
+- `interactionAction()` define o mesmo ID/alcance/estado para o prompt e E. Evita recolher Bąk durante transporte por outro ator, transições, cenas fechadas ou morte. Não cria novas regras de linha de visão ou alcance vertical: mantém o alcance horizontal do jogo e corrige a divergência entre apresentação e execução.
+- A rotação só recomenda outro nó ativo com um ponto que a cápsula pode ocupar. O portal e a torre, cujos centros são sólidos, não recebem marcadores dentro da parede. Só uma salva real sustenta a ordem; a posição é uma recomendação, e treliças continuam explicitamente parciais, sem promessa de proteção balística.
+- [Ordem](cover-order-high.png) e [chegada](cover-arrival-high.png): estado/marker derivados da mesma simulação. O teste final pausa por input e valida o snapshot independentemente antes de exigir opacity=0. Uma tentativa anterior consultou estado e CSS em momentos separados; o FAIL fica no log. Não se relaxou a asserção, não se aumentou timeout nem se injetou uma posição para obter a chegada.
+- [Caixa High](crate-high.png): mesmos braços, dedos e clips, com contacto nas laterais; a caixa foi afastada do olho para caberem mãos e volume no enquadramento. Velocidade, conteúdo e entrega não mudam. As esferas só ficam como fallback quando o rig opcional não pode ser apresentado.
+- [Resgate tátil](mobile-bak-delivered.png): o botão USAR executou a entrega; o aviso confirmou Bąk e o objetivo atualizou. A captura é tirada em pausa, por isso os botões ficam ocultos na foto. O spec tátil existente também percorreu andar, olhar, disparar, recarregar e pausar/retomar.
+- [Demolição](west-preroll-high.png): `beat.action` não é prosa para o jogador. Mantém-se o token de save e a fala; nenhum gesto físico inexistente é apresentado como concluído.
+- Uma revisão adicional reproduziu uma reserva de cobertura sem tiro e «Zieliński: .» no silêncio real das 06:10. A regra passa a respeitar `germanSilence()` antes de selecionar atiradores. O teste isolado não é uma partida: coloca o relógio nesse período e isola o consumo de eventos, apenas para verificar a ausência de reserva/ordem/tiro.
+
+## Como ler os resultados do navegador
+
+O grupo de cinco cenários terminou 4/5 na primeira execução conjunta. A cobertura passou depois 1/1 com captura congelada e verificação independente de chegada/marcador. Não se apresenta isso como uma execução conjunta 5/5. O regresso à arma também passou novamente após a adaptação dos braços para a caixa. Os logs anteriores e a reprodução do defeito inicial ficam preservados; o relatório final distingue os runs e as versões exatas.
+
+A [matriz dos 20 achados](MATRIZ.md) liga a auditoria original às correções já existentes na #91, à continuação e às pendências. As tabelas antigas do Capitão não demonstram integração ou prova visual por si só; a ancestralidade mostrou que D2 já estava no HEAD `afaded9`.

@@ -30,17 +30,26 @@ export function frameFirstPersonCarry(root,patient,{phase='carry',age=0}={}){
   fold(patient.getObjectByName(`upperarm_${side}`),patient.getObjectByName(`lowerarm_${side}`),patient.getObjectByName(`hand_${side}`),vector([side==='l'?-.08:.10,-.43-drop,-1.02]),vector([-.1,-1,.1]));
  }
 
+ const hands=frameCarryArms(root,{lift,drop,update});
+ return {lift,patientJoints:Object.fromEntries(['head','hips','calf_l','calf_r','foot_l','foot_r'].map(name=>[name,patient.getObjectByName(name).getWorldPosition(new THREE.Vector3()).toArray()])),patientHip:targetHip.toArray(),hands};
+}
+
+// Same articulated arms and two-bone contacts for the sapper crate; no new rig or clip.
+function frameCarryArms(root,{lift=1,drop=0,crate=false,bob=0,update=()=>root.updateMatrixWorld(true)}={}){
  for(const side of ['l','r']){
   const upper=root.getObjectByName(`upperarm_${side}`),lower=root.getObjectByName(`lowerarm_${side}`),hand=root.getObjectByName(`hand_${side}`),finger=root.getObjectByName(`middle_01_${side}`);
   const oldShoulder=upper.getWorldPosition(new THREE.Vector3()),oldElbow=lower.getWorldPosition(new THREE.Vector3()),oldHand=hand.getWorldPosition(new THREE.Vector3()),oldFinger=finger.getWorldPosition(new THREE.Vector3()).sub(oldHand).normalize();
   const uq=worldQ(upper),lq=worldQ(lower),hq=worldQ(hand),a=oldShoulder.distanceTo(oldElbow),b=oldElbow.distanceTo(oldHand);
-  const target=vector([side==='l'?-.26:.28,-.47-drop,-.94-(1-lift)*.12]),shoulder=vector([side==='l'?-.34:.34,-.53,-.04]),direction=target.clone().sub(shoulder).normalize();
+  const target=vector(crate?[side==='l'?-.245:.245,-.28+bob,-.57]:[side==='l'?-.26:.28,-.47-drop,-.94-(1-lift)*.12]),shoulder=vector([side==='l'?-.34:.34,-.53,crate?-.20:-.04]),direction=target.clone().sub(shoulder).normalize();
   let distance=shoulder.distanceTo(target);const reach=a+b-.001;if(distance>reach){shoulder.addScaledVector(direction,distance-reach);distance=reach;}
-  const along=(a*a-b*b+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,a*a-along*along)),pole=vector([side==='l'?-.5:.5,-1,.1]);pole.addScaledVector(direction,-pole.dot(direction)).normalize();
+  const along=(a*a-b*b+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,a*a-along*along)),pole=vector([side==='l'?-.5:.5,-1,crate?-.5:.1]);pole.addScaledVector(direction,-pole.dot(direction)).normalize();
   const elbow=shoulder.clone().addScaledVector(direction,along).addScaledVector(pole,height);
   upper.position.copy(upper.parent.worldToLocal(shoulder.clone()));setWorldQ(upper,new THREE.Quaternion().setFromUnitVectors(oldElbow.clone().sub(oldShoulder).normalize(),elbow.clone().sub(shoulder).normalize()).multiply(uq));update();
   setWorldQ(lower,new THREE.Quaternion().setFromUnitVectors(oldHand.clone().sub(oldElbow).normalize(),target.clone().sub(elbow).normalize()).multiply(lq));update();
-  const forward=vector([side==='l'?.35:-.15,.25,-1]).normalize();setWorldQ(hand,new THREE.Quaternion().setFromUnitVectors(oldFinger,forward).multiply(hq));update();
+  const forward=vector(crate?[side==='l'?.3:-.3,-.4,-1]:[side==='l'?.35:-.15,.25,-1]).normalize();setWorldQ(hand,new THREE.Quaternion().setFromUnitVectors(oldFinger,forward).multiply(hq));update();
  }
- return {lift,patientJoints:Object.fromEntries(['head','hips','calf_l','calf_r','foot_l','foot_r'].map(name=>[name,patient.getObjectByName(name).getWorldPosition(new THREE.Vector3()).toArray()])),patientHip:targetHip.toArray(),hands:['l','r'].map(s=>root.getObjectByName(`hand_${s}`).getWorldPosition(new THREE.Vector3()).toArray())};
+ return ['l','r'].map(s=>root.getObjectByName(`hand_${s}`).getWorldPosition(new THREE.Vector3()).toArray());
+}
+export function frameFirstPersonCrate(root,bob=0){
+ return {kind:'crate',hands:frameCarryArms(root,{crate:true,bob})};
 }

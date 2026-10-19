@@ -1,6 +1,7 @@
 // M01 mission flow: time compression once the player has done what the phase needs, the world marker of the current objective
 // and the objective status line. Pure functions of the simulation state and the mission data (missions/m01-tczew/mission.json):
 // nothing here is saved, draws from the RNG or changes the battle-clock time of any historical event. The HUD only reads the result.
+import {coverOrder} from './m01-cover-guidance.js';
 import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
@@ -100,6 +101,8 @@ export function pacingStatus(sim){
     if(sim.active('leave_bridge')||sim.active('hold_corridor'))return `Bąk ferido no tabuleiro · ${where(bak)} · E para o levantar; sem si, Dudek vai buscá-lo às 06:14`;
   }
   if(sim.active('hold_access')){
+    const order=coverOrder(sim);
+    if(order)return order.arrived?`Na posição indicada · ${order.label} · mantenha a observação da ponte`:`Salva sobre a posição anterior · mude para ${order.label} · ${where(order.point)}`;
     if(!sim.timers.holdAccessVisited)return `Tome posição no tabuleiro rodoviário · ${where(HOLD_POSITION)}`;
     if(!inside(p,HOLD_AREA))return `Volte à posição no tabuleiro · ${where(HOLD_POSITION)}`;
     return `Em posição · o pelotão leste (${n} homens) segura a cabeça de ponte; a secção cobre-o até à ordem de retirada`;

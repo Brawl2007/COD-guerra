@@ -145,7 +145,7 @@ body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #sub
 .settings{position:relative}.audio-mix summary{font-size:.6rem;color:#9da690;letter-spacing:.2em;cursor:pointer;list-style:none;padding-top:2px;white-space:nowrap}.audio-mix summary::after{content:" ▸"}.audio-mix[open] summary::after{content:" ▾"}
 .audio-mix-panel{position:absolute;left:0;bottom:calc(100% + 8px);display:grid;grid-template-columns:repeat(2,auto);gap:14px 24px;padding:14px 16px;background:rgba(20,24,18,.96);border:1px solid #46503d;z-index:5}.settings label.check{display:flex;align-items:center;gap:10px}.settings input[type=checkbox]{width:auto}
 /* P2 (M01 pacing): objective marker on the horizon band and the "Mais tarde…" card of a compressed battle clock. */
-.objective-marker{position:absolute;top:22vh;left:calc(var(--marker-x,.5) * 100%);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.15em;
+.objective-marker{position:absolute;top:var(--guidance-y,22vh);left:calc(var(--marker-x,.5) * 100%);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.15em;
   color:var(--brass);font-size:.74em;letter-spacing:.06em;text-shadow:0 1px 2px #000;pointer-events:none;opacity:0;transition:opacity .4s ease;white-space:nowrap}
 .objective-marker .marker-pip{width:.8em;height:.8em;border:2px solid var(--brass);transform:rotate(45deg);box-shadow:0 0 6px rgba(0,0,0,.7)}
 .objective-marker .marker-distance{color:var(--ink);font-variant-numeric:tabular-nums}
@@ -160,3 +160,12 @@ body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #sub
 #hud.tempo-compressed #battle-clock{color:var(--brass);animation:tempo-pulse 1.2s ease-in-out infinite}
 @keyframes tempo-pulse{50%{opacity:.55}}
 #hud.cinematic :is(.objective-marker,.tempo-card){opacity:0!important}
+
+/* Difficulty is a new-mission setting; small landscape screens keep the menu scrollable. */
+#menu{overflow-y:auto;justify-content:flex-start}
+#menu>.menu-content{margin-block:auto;flex-shrink:0}
+.settings{flex-wrap:wrap}
+.difficulty-hint{flex-basis:100%;margin:0;font:400 .65rem/1.4 Arial,sans-serif;color:#b3baaa;letter-spacing:.02em}
+@media(max-height:650px){.centered{overflow-y:auto;justify-content:flex-start}#menu>.menu-footer{position:static;margin-top:20px}}
+
+#hud.compact-guidance .objective-marker .marker-label{display:none}

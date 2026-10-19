@@ -4,7 +4,7 @@ import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
-import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
+import { M01HudPresenter, playerImpactSoundPlan, difficultyText, messageIsCurrent, acceptsMessage } from '../ui/m01-hud.js';
 import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
@@ -43,6 +43,7 @@ export class Game {
   get allies(){return this.sim.allies;}
   get mission(){return this.sim.mission;}
   get isM01(){return this.sim.missionId==='m01_tczew';}
+  get difficultyLabel(){return this.isM01?difficultyText(this.sim.difficulty):'';}
   get saveKey(){return this.isM01?'cod-guerra:checkpoint:m01:v2':SAVE_KEY;}
   get hasSave(){try{return Boolean(localStorage.getItem(this.saveKey));}catch{return false;}}
   selectMission(id){
@@ -82,8 +83,10 @@ export class Game {
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
-  restartMission(){
-    this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
+  restartMission({difficulty}={}){
+    // Selection applies only to a NEW M01. Continue/checkpoint restore use the saved level.
+    if(this.isM01&&difficulty!==undefined)this.sim=new M01Simulation(19390901,{difficulty});
+    else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
@@ -198,7 +201,10 @@ export class Game {
   handleM01Event(event){
     const now=this.sim.clock*1000;
     if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim);   // presentation only
-    if(event.type==='message')this.say(event.message,2600);
+    if(event.type==='message'){
+      const required=event.continuity&&this.sim.definition?.continuityCues?.find(c=>c.kind===event.continuity.kind)?.requires;
+      this.say(event.message,event.durationMs??2600,{priority:event.priority??(event.continuity?0:1),scope:event.scope??(required?{id:required,state:'active'}:null)});
+    }
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode,`reload:${this.sim.clock.toFixed(3)}`);
     if(event.type==='player-shot'){
       this.audio.wz29Shot(0,0,`wz29:${this.sim.weapon.shotCount}`);this.audio.wz29Mechanism('bolt',`bolt:${this.sim.weapon.shotCount}`);this.renderer.m01.muzzle(this.sim.clock);
@@ -257,7 +263,7 @@ export class Game {
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();
-      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name}`,this.sim.clock);
+      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name} · ${this.difficultyLabel}`,this.sim.clock);
     }
     if(event.type==='restored'){
       this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
@@ -271,10 +277,18 @@ export class Game {
     try{localStorage.setItem(this.saveKey,JSON.stringify(this.sim.checkpoint));}
     catch{this.say('Checkpoint guardado nesta partida. O navegador não permitiu guardá-lo no dispositivo.',2800);}
   }
-  say(text,ms=1600){this.hud.message.textContent=text;this.messageUntil=this.sim.clock*1000+ms;}
+  say(text,ms=1600,{priority=1,scope=null}={}){
+    const now=this.sim.clock*1000;
+    if(this.isM01){
+      const current=this.messageWorld===this.sim.world&&this.messageUntil>now?this.messageRecord:null;
+      if(!acceptsMessage(current,priority,now,this.sim.objectives))return;
+      this.messageRecord={priority,scope,until:now+ms};this.messageWorld=this.sim.world;
+    }
+    this.hud.message.textContent=text;this.messageUntil=now+ms;
+  }
   updateHud(){
     const now=this.sim.clock*1000,p=this.sim.player;
-    if(now>=this.messageUntil)this.hud.message.textContent='';
+    if(now>=this.messageUntil||this.isM01&&(!messageIsCurrent(this.messageRecord,now,this.sim.objectives)||this.messageWorld!==this.sim.world)){this.hud.message.textContent='';this.messageUntil=0;}
     this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(this.isM01){
       // Apresentação de M01: textos, cartelas, fades e avisos lidos da simulação (src/ui/m01-hud.js).

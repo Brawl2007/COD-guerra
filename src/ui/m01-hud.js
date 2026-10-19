@@ -77,6 +77,8 @@ export function objectiveChanges(previous,current,definitions){
   return changes.sort((a,b)=>(a.kind==='new')-(b.kind==='new'));
 }
 export const objectiveText=o=>o.text.replace(/^\(Opcional\)\s*/,'');
+const DIFFICULTY_LABELS=Object.freeze({recruta:'Recruta',soldado:'Soldado',veterano:'Veterano'});
+export const difficultyText=id=>DIFFICULTY_LABELS[id??'recruta']??'';
 const BANNER_LABEL={new:'Novo objectivo',done:'Objectivo concluído',expired:'Objectivo encerrado',current:'Objectivo'};
 export function bannerLabel(change){return change.optional&&change.kind!=='done'?(change.kind==='new'?'Objectivo opcional':BANNER_LABEL[change.kind]):BANNER_LABEL[change.kind];}
 
@@ -102,6 +104,13 @@ export function markerScreen(bearing,aspect=16/9,vfovDeg=M01_VFOV_DEG){
   return {x:bearing>0?1-edge:edge,side:bearing>0?'right':'left'};
 }
 /** Intensidade do aviso de vida baixa (0 a partir de 45 de saúde). */
+// The existing single message line: active scoped confirmations survive lower-priority guide chatter.
+export function messageIsCurrent(message,clock,objectives){
+  return Boolean(message)&&clock<message.until&&(!message.scope||objectives?.[message.scope.id]?.state===message.scope.state);
+}
+export function acceptsMessage(current,priority,clock,objectives){
+  return !messageIsCurrent(current,clock,objectives)||priority>=(current.priority??1);
+}
 export const lowHealthLevel=health=>clamp((45-health)/45);
 
 export class M01HudPresenter {
@@ -120,10 +129,20 @@ export class M01HudPresenter {
     }
     // The HUD root size is read here and on resize, never per frame (a clientWidth read after the frame's style writes forces a synchronous layout).
     this.resize();
-    if(typeof ResizeObserver==='function'&&el.root?.nodeType===1){this.sizeObserver=new ResizeObserver(()=>this.resize());this.sizeObserver.observe(el.root);}
+    if(typeof ResizeObserver==='function'&&el.root?.nodeType===1){this.sizeObserver=new ResizeObserver(()=>this.resize());this.sizeObserver.observe(el.root);if(el.objectivePanel)this.sizeObserver.observe(el.objectivePanel);}
   }
   /** Re-reads the HUD root size once (window resize / ResizeObserver). Fallback 16:9 while the root has no layout box. */
-  resize(){const root=this.el.root;this.aspect=root?.clientWidth&&root?.clientHeight?root.clientWidth/root.clientHeight:16/9;return this.aspect;}
+  resize(){
+    const root=this.el.root,height=root?.clientHeight??0;this.aspect=root?.clientWidth&&height?root.clientWidth/height:16/9;
+    // ResizeObserver runs after layout and only when a box changes size: never measure per combat frame.
+    const panel=this.el.objectivePanel;
+    if(root?.nodeType===1&&height&&root.classList.contains('m01')&&panel){
+      const bottom=panel.getBoundingClientRect().bottom-root.getBoundingClientRect().top;
+      root.style.setProperty('--guidance-y',`${Math.max(height*.22,bottom+10)}px`);
+      root.classList.toggle('compact-guidance',height<500);
+    }
+    return this.aspect;
+  }
   dispose(){this.sizeObserver?.disconnect();this.sizeObserver=null;}
   /** kind: new (missão nova), continue (save carregado), restore (checkpoint reposto). */
   reset(kind='new',clock=0){
@@ -146,7 +165,7 @@ export class M01HudPresenter {
   clear(){
     this.clearSceneCues();this.markerMemo=null;
     const e=this.el;this.cache.clear();
-    e.root?.classList.remove('cinematic','m01');
+    e.root?.classList.remove('cinematic','m01','compact-guidance');e.root?.style?.removeProperty('--guidance-y');
     for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName','markerLabel','markerDistance','tempoLabel','tempoReason'])if(e[k])e[k].textContent='';
     for(const k of ['objectiveMarker','tempoCard'])e[k]?.style?.removeProperty('opacity');e.root?.classList.remove('tempo-compressed');
     e.ammo?.classList.remove('low','empty');e.objectivePanel?.classList.remove('fresh');e.interaction?.classList.remove('show');e.subtitle?.classList.remove('show');
@@ -174,9 +193,11 @@ export class M01HudPresenter {
     // Estado da ameaça: o texto é exactamente o da simulação.
     this.text('objectiveStatus',sim.mission.status??'');
     this.text('clock',clockText(sim.battleClock));
-    this.updateMarker(this.markerFor(sim),cine.locked||beats.letterbox);
+    const interaction=sim.interaction??'';
+    // Once an action is available, its prompt is the local guidance. Keep one clear invitation to act.
+    this.updateMarker(this.markerFor(sim),cine.locked||beats.letterbox||splitInteraction(interaction).key==='E');
     this.updateTempo(sim.tempo??null,clock,cine.locked);
-    this.updateInteraction(sim.interaction??'');
+    this.updateInteraction(interaction);
     this.updateSubtitle(sim.subtitle);
     this.opacity('subtitle',beats.subtitlePause?0:1);
     this.updateWeapon(sim);
@@ -241,7 +262,7 @@ export class M01HudPresenter {
   updateResumeCard(sim,clock,locked){
     const t=clock-this.resumeAt,active=!locked&&t>=0&&t<HUD_TIMING.resumeCard&&this.kind==='continue';
     const cp=sim.definition.checkpoints.find(c=>c.id===sim.checkpointsReached.at(-1));
-    const data=active?card('resume',['Tczew — pontes do Vístula',`1 de setembro de 1939 · ${clockText(sim.battleClock).slice(0,5)}`,...(cp?[`${cp.label} · ${cp.name}`]:[])],
+    const data=active?card('resume',['Tczew — pontes do Vístula',`1 de setembro de 1939 · ${clockText(sim.battleClock).slice(0,5)}`,...(cp?[`${cp.label} · ${cp.name} · ${difficultyText(sim.difficulty)}`]:[])],
       Math.min(ramp(t,.3,.3+HUD_TIMING.cardFade),1-ramp(t,HUD_TIMING.resumeCard-.7,HUD_TIMING.resumeCard)),t-.3):null;
     // As linhas fixam-se no primeiro fotograma; o relógio da batalha continua a correr no HUD.
     if(data&&this.resumeLines)data.lines=this.resumeLines;else if(data)this.resumeLines=data.lines;

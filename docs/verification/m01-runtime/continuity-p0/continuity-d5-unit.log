@@ -1,0 +1,26 @@
+✔ new mission selects recruta, replay and checkpoint keep that level (52.055831ms)
+✔ new mission selects soldado, replay and checkpoint keep that level (17.909811ms)
+✔ new mission selects veterano, replay and checkpoint keep that level (13.854315ms)
+✔ a new Recruta game remains byte-identical to the existing simulation default (8.533046ms)
+✔ Continue honours an old save without difficulty even when the current menu game is Soldado (9.861271ms)
+✔ an invalid new-game level rejects without destroying the running state (3.460754ms)
+✔ checkpoint notification names the saved level; sandbox receives no M01 difficulty (3.126523ms)
+✔ intro cards and fade follow the cs_m01_intro beats in mission data (1.300181ms)
+✔ roll call fades in with the 07:05 card from the battle clock and fades out at the debrief beat (0.57974ms)
+✔ objective transitions, interaction keys and optional objective split are presentation parsing only (0.485228ms)
+✔ the presenter never changes simulation state and keeps HUD text contracts on a real route (4903.00117ms)
+✔ checkpoint feedback, restore fade and continue card are timed by the simulation clock (37.582216ms)
+✔ switching from an active free M01 cue to French clears all owned cue DOM and reset reapplies the same scene deterministically (2.763687ms)
+✔ continue card names the authoritative level, including legacy Recruta (36.991709ms)
+✔ T50 Barlow is self-hosted with OFL licence, source and matching hashes (1.160481ms)
+✔ T50 @font-face blocks (no FOUT), file resolves, index preloads it, credits mention OFL (0.474822ms)
+✔ T50 menu footer reflects loading state (loading, ready, error, non-M01) (1.826462ms)
+✔ T50 entry static import graph excludes three and the game graph (kept behind import()) (0.990677ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5146.331161

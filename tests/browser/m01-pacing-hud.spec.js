@@ -123,7 +123,10 @@ test('with the post off screen the marker is pinned to the nearer edge on the si
 test('delivering the message takes the marker away, and every later objective gets its own label and distance',async({page})=>{
   test.setTimeout(process.env.CI?300000:200000);
   let errors=await open(page,scenes.near);
-  expect((await markerText(page)).label).toBe(POST_LABEL);
+  // At usable range the local action takes over from the distance marker.
+  await expect(page.locator('#interaction')).toContainText('E ·');
+  await expect(page.locator('.objective-marker')).toHaveCSS('opacity','0');
+  expect((await hud(page)).marker.label).toBe(POST_LABEL);
   await page.keyboard.press('KeyE');
   // Once delivered no required objective is active until the sappers are called: the simulation publishes no marker, so none is drawn (and none is left pointing at the post).
   await page.waitForFunction(()=>window.gameDiagnostics().m01.hudPresentation.marker===null&&Number(getComputedStyle(document.querySelector('.objective-marker')).opacity)===0,null,{timeout:60000});

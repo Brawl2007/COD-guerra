@@ -52,7 +52,10 @@ import rearguard from './fixtures/m01-rearguard-gameplay-baseline.json' with {ty
 // golden above is history since then (it pins the simulation of a59c129); the golden of the live simulation, regenerated on x86 by
 // tools/verification/m01-integration-golden-audit.mjs --amendment 12 after its lockstep audit against that exact predecessor, is this one.
 import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.json' with {type:'json'};
-const current=difficulty0535;   // the golden of the live simulation
+// Amendment 13 preserves amendment 12 byte-for-byte as history and records only the named guidance/message delta.
+import continuityGuidance from './fixtures/m01-continuity-guidance-gameplay-baseline.json' with {type:'json'};
+const GUIDANCE_DELTA=/^\$\.events\.\d+\.priority$/;
+const current=continuityGuidance;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -419,11 +422,11 @@ test('the rearguard golden (amendment 11) chains to the dialogue golden, pins th
   }
 });
 
-test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golden, pins the live simulation, the level table and the mission data, and cites its lockstep account',()=>{
+test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golden, pins PR91 afaded9 as history, the level table and the mission data, and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(difficulty0535,{amendment:'12',task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',previous:rearguard,previousFile:'m01-rearguard-gameplay-baseline.json',
     predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',deltaFields:D0535_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the golden pins the live simulation');
+  assert.equal(difficulty0535.sourceSha256,'d7f6afec8494c47cc7afd42d9150c19bcadc1d81e55fb383a8e2faff8b43e5da','amendment 12 pins PR91 afaded9, kept as history');
   for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
   // The D2 wiring alone moves nothing on these (recruta) routes: the first difference is the 05:35 fill, a dike rifleman's sighting of the player at the deck post after 05:30
   // (hold_access); with the sightings and the dialogue state stripped, the first BEHAVIOUR difference is a dike rifleman turning to (taking) the player.
@@ -433,6 +436,19 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
     assert.match(r.firstBehaviourDifference.path,D0535_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);
     assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
   }
+});
+
+test('guidance amendment 13 pins the live source and preserves combat, physics, RNG and plot tick by tick against PR91',()=>{
+ const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+ const account=integrationAmendment(continuityGuidance,{amendment:'13',task:'M01-CONTINUITY-GUIDANCE-P0-V1',delta:'guidance+interaction',previous:difficulty0535,previousFile:'m01-difficulty-0535-gameplay-baseline.json',predecessor:'afaded912c5c3a7f8a4e6e567be9a98cd35ac24f',deltaFields:GUIDANCE_DELTA});
+ assert.equal(sha('../src/game/m01-simulation.js'),continuityGuidance.sourceSha256);
+ for(const [file,expected]of Object.entries(continuityGuidance.inputsSha256))assert.equal(sha('../'+file),expected,file);
+ assert.equal(account.noBehaviourDifference,true);
+ for(const r of account.routes){
+  assert.equal(r.firstBehaviourDifference,null,'only the listed dialogue, guide and HUD paths may differ');
+  assert.equal(r.endState.live.playerHealth,r.endState.predecessorOwnRoute.playerHealth);
+  assert.deepEqual(r.measured.germanRoundsPerRealMin.live,r.measured.germanRoundsPerRealMin.predecessor);
+ }
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

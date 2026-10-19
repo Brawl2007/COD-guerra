@@ -1,0 +1,66 @@
+[1A[2K[WebServer] (node:84107) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 5 tests using 1 worker
+
+[1A[2K(node:84140) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84140) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/5] tests/browser/m01-continuity-p0.spec.js:18:1 › crate pickup renders articulated hands in the production High weapon pass
+[1A[2K[2/5] tests/browser/m01-continuity-p0.spec.js:29:1 › real cover salvo guides to another playable position and reduces the marker on arrival
+[1A[2K  1) tests/browser/m01-continuity-p0.spec.js:29:1 › real cover salvo guides to another playable position and reduces the marker on arrival 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCSS[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.objective-marker')
+    Expected: [32m"0"[39m
+    Received: [31m"1"[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCSS" with timeout 5000ms[22m
+    [2m  - waiting for locator('.objective-marker')[22m
+    [2m    9 × locator resolved to <div data-side="" aria-hidden="true" class="objective-marker">…</div>[22m
+    [2m      - unexpected value "1"[22m
+
+
+      36 |  await page.keyboard.down('KeyW');
+      37 |  await page.waitForFunction(()=>/Na posição indicada/.test(window.gameDiagnostics().m01.hudStatus));await page.keyboard.up('KeyW');
+    > 38 |  await expect(page.locator('.objective-marker')).toHaveCSS('opacity','0');
+         |                                                  ^
+      39 |  await capture(page,info,'cover-arrival-high');
+      40 | });
+      41 |
+        at /workspace/COD-guerra/tests/browser/m01-continuity-p0.spec.js:38:50
+
+    Error Context: ../artifacts/continuity-reviewed-browser/m01-continuity-p0-real-cov-ac3b6-duces-the-marker-on-arrival/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../artifacts/continuity-reviewed-browser/m01-continuity-p0-real-cov-ac3b6-duces-the-marker-on-arrival/trace.zip
+    Usage:
+
+        npx playwright show-trace ../artifacts/continuity-reviewed-browser/m01-continuity-p0-real-cov-ac3b6-duces-the-marker-on-arrival/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:84372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:84372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[3/5] tests/browser/m01-continuity-p0.spec.js:42:1 › west demolition pre-roll never exposes an internal staging direction
+[1A[2K[4/5] tests/browser/m01-continuity-p0.spec.js:54:2 › mobile rescue › touch interaction delivers Bąk and the HUD switches to the next objective
+[1A[2K[5/5] tests/browser/m01-fp-arms.spec.js:95:1 › T40 native putdown returns to an intact rifle and survives checkpoint reload
+[1A[2K  1 failed
+    tests/browser/m01-continuity-p0.spec.js:29:1 › real cover salvo guides to another playable position and reduces the marker on arrival 
+  4 passed (3.4m)

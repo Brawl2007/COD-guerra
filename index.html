@@ -25,6 +25,7 @@
         </div>
         <div class="menu-actions"><button id="start">INICIAR MISSÃO <span>→</span></button><button id="continue" class="secondary hidden">CONTINUAR CHECKPOINT</button></div>
         <div class="settings">
+          <label id="difficulty-control" for="difficulty">DIFICULDADE · NOVA MISSÃO<select id="difficulty" aria-describedby="difficulty-help"><option value="recruta">Recruta</option><option value="soldado" selected>Soldado</option><option value="veterano">Veterano</option></select></label>
           <label for="quality">QUALIDADE<select id="quality"><option value="low">Baixa</option><option value="medium">Média</option><option value="high">Alta</option></select></label>
           <label for="volume">VOLUME GERAL<input id="volume" type="range" min="0" max="1" step=".01" value=".68" /></label>
           <details class="audio-mix"><summary>MISTURA</summary><div class="audio-mix-panel">
@@ -33,6 +34,7 @@
           <label for="volume-music">MÚSICA<input id="volume-music" type="range" min="0" max="1" step=".01" value="1" /></label>
           <label for="reduce-tinnitus" class="check"><input id="reduce-tinnitus" type="checkbox" />REDUZIR ZUMBIDO</label>
           </div></details>
+          <p id="difficulty-help" class="difficulty-hint">Os checkpoints mantêm a dificuldade guardada.</p>
         </div>
         <p class="controls">WASD mover · Rato olhar · Clique disparar · Botão direito mirar<br>R recarregar · G granada · Shift correr · C agachar · E interagir<br>V alça de mira · Espaço saltar cena · Esc pausa</p>
         <p class="controls touch-hint hidden">TÁTIL: joystick à esquerda para andar · arraste à direita para olhar · botões FOGO / MIRA / REC / GRN / USAR / AGA</p>
