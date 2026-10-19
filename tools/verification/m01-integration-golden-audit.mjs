@@ -131,14 +131,15 @@ const AMENDMENTS={
     deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,
     // Measured (first run): the first lockstep difference is the new sighting of a dike rifleman (de_east_18's ai.seen, 05:35:26, control route); the next is what the bark
     // director reads from it (timers.barks.seen.peek, a peek line, 05:37:09). With the sightings and the dialogue state stripped, as amendment 11 did, the first BEHAVIOUR
-    // difference is the target the dike rifleman picks.
+    // difference is the dike rifleman who takes the player as his target.
     stateOnly:frame=>{
       const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];delete st.timers?.barks;
         for(const a of st.actors??[])if(a.ai)delete a.ai.seen;strip(st.resumeCheckpoint);};
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.target$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/}};
+    // Measured (control route): de_east_20 turns to the player at the deck post (facing, 05:38:43, the first key of the man that differs: his ai.target moves in the same tick).
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/}};
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11 or 12`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;

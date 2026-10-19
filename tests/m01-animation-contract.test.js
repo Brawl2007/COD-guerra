@@ -30,6 +30,7 @@ import combat from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:
 import deck from './fixtures/m01-deck-assault-gameplay-baseline.json' with {type:'json'};
 const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // the named delta of amendment 08, as measured (tools/verification/m01-integration-golden-audit.mjs)
 const REARGUARD_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,REARGUARD_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 11, as measured
+const D0535_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,D0535_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/;   // amendment 12, as measured
 // M01-NAV-QUEUE-V1 (golden amendment 09, 2026-10-19, branch claude/busy-ritchie-3fkvk2-navq): at most one route() per tick, work buffers reused, the navigator's solid list built before the first
 // plan, the neighbour queries on reused storage. It moves the SOURCE LOCK only: not one tick of either golden route differs from the deck assault golden (the tool's lockstep finds no difference,
 // and the digests equal amendment 08's, block for block). The deck assault golden above is history since then (it pins the simulation of c7c82ee); the golden of the live simulation,
@@ -46,7 +47,12 @@ import dialogue from './fixtures/m01-dialogue-gameplay-baseline.json' with {type
 // for riflemen too; N1: reactive lines counted when shown; N3: 030 to Kowal). The dialogue golden above is history since then (it pins the simulation of c1a3ecf); the golden of
 // the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 11 after its lockstep audit against that exact predecessor, is this one.
 import rearguard from './fixtures/m01-rearguard-gameplay-baseline.json' with {type:'json'};
-const current=rearguard;   // the golden of the live simulation
+// M01-H9-D2-DIFFICULTY-0535-V1 (golden amendment 12, 2026-10-19, branch claude/busy-ritchie-3fkvk2-d2): the H9 D2 level wiring (recruta, the level of these routes, keeps every number
+// and writes no new key) and the 05:35 fill (a dike rifleman who sees the player at the deck post from hold_access to the east demolition may take him as a target). The rearguard
+// golden above is history since then (it pins the simulation of a59c129); the golden of the live simulation, regenerated on x86 by
+// tools/verification/m01-integration-golden-audit.mjs --amendment 12 after its lockstep audit against that exact predecessor, is this one.
+import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.json' with {type:'json'};
+const current=difficulty0535;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -399,8 +405,10 @@ test('the rearguard golden (amendment 11) chains to the dialogue golden, pins th
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(rearguard,{amendment:'11',task:'M01-REARGUARD-V1',delta:'rearguard',previous:dialogue,previousFile:'m01-dialogue-gameplay-baseline.json',
     predecessor:'c1a3ecf304f1e8a30283d251d2ff8ec174e0ba93',deltaFields:REARGUARD_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // History since amendment 12 (H9 D2 + the 05:35 fill): this golden pins the simulation of a59c129, not the live one.
+  assert.equal(rearguard.sourceSha256,'fc818782531d6c643330ad0bf2d6de608211f6c27e6b74798ad4ee3298da0dbf','the rearguard golden pins the simulation of a59c129');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the rearguard golden is history: amendment 12 moved the simulation');
+  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
   // The first difference is B1's new sighting record of a gate rifleman (ai.seen, 04:45:16, de_east_2 sees the player); with the new state stripped (the dialogue state, ai.seen,
   // the rearguard's records), the first BEHAVIOUR difference is the rearguard itself: pl_east_0 leaves the platoon file for his post the tick the gate holds the clock (06:09:30).
   assert.equal(account.behaviourFields,REARGUARD_BEHAVIOUR.source);
@@ -408,6 +416,22 @@ test('the rearguard golden (amendment 11) chains to the dialogue golden, pins th
     assert.equal(r.firstDifference.actor,'de_east_2');assert.match(r.firstDifference.path,/\.ai\.seen$/);
     assert.match(r.firstBehaviourDifference.path,REARGUARD_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^pl_east_[0-2]$/);
     assert.equal(r.firstBehaviourDifference.battleClock,'06:09:30');assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+  }
+});
+
+test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golden, pins the live simulation, the level table and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(difficulty0535,{amendment:'12',task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',previous:rearguard,previousFile:'m01-rearguard-gameplay-baseline.json',
+    predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',deltaFields:D0535_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // The D2 wiring alone moves nothing on these (recruta) routes: the first difference is the 05:35 fill, a dike rifleman's sighting of the player at the deck post after 05:30
+  // (hold_access); with the sightings and the dialogue state stripped, the first BEHAVIOUR difference is a dike rifleman turning to (taking) the player.
+  assert.equal(account.behaviourFields,D0535_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.match(r.firstDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);assert.match(r.firstDifference.path,/\.ai\.seen$/);assert.ok(r.firstDifference.battleClock>='05:30:00');
+    assert.match(r.firstBehaviourDifference.path,D0535_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);
+    assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
   }
 });
 
