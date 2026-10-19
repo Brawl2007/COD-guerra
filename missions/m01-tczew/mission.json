@@ -293,7 +293,18 @@
           "weapon": "kb_wz29", "rounds": [1, 1], "intervalSec": [8, 20], "tracerEvery": 0, "targetGroup": "grp_de_east",
           "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
           "note": "Fogo só visual: um tiro de espingarda por homem a cada 8–20 s, sem traçante." }
-      ]
+      ],
+      "rearguard": {
+        "version": 1,
+        "from": "evt_m01_germans_on_east_spans",
+        "men": ["pl_east_0", "pl_east_1", "pl_east_2"],
+        "posts": [[165, 38.7], [170, 38.7], [175, 38.7]],
+        "joinWithinM": 30,
+        "runSpeed": 5.5,
+        "fire": { "weapon": "kb_wz29", "pauseSec": 5, "sigmaMil": [3, 2.5], "clearanceM": 1.5, "headroomM": 0.15, "rangeM": 800, "riseBeforeSec": 0.9, "holdAfterSec": 1.8 },
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "Fatia 2b (2026-10-19): enquanto o gate da demolição leste segura o relógio em 06:09:30 por causa do tabuleiro (alemães do assalto vivos a oeste de clearX), os três homens de número mais baixo do pelotão (nunca vítimas da regra dos 20 s: a vítima é pl_east_{n-1}, n ≥ 12) param nos seus lugares a x 165–175, fora da HOLD_AREA, e disparam rondas reais de kb wz.29 (dano e supressão como o tiro do jogador, fluxo próprio) sobre o homem do assalto mais próximo à vista; nunca disparam com o jogador ou um homem do pelotão a menos de clearanceM da linha de tiro (salvo se a linha lhe passa mais de headroomM acima do corpo: um camarada de joelhos à frente), nem quando o raio desviado acertaria um deles. Quando o tabuleiro fica livre retomam a retirada. Lugares a z 38,7, e não na treliça sul como no desenho escrito: medido (2026-10-19), o piloto de apoio no posto (38; 42,4) dispara por z ≈ 41,7 a x 170, à altura de um homem de pé, e a fila do pelotão corre a z 37,8/38,15 (espaço pessoal 0,5 m); 38,7 fica a 0,55 m da fila e a 0,4 m da linha do posto (30; 40) à faixa mais a norte. Não morrem: as baixas do pelotão são por ID (vivo ⇔ índice < m01.east_platoon_survivors, mínimo 12) e o relógio da regra dos 20 s está parado durante o gate."
+      }
     },
     {
       "id": "grp_de_east",

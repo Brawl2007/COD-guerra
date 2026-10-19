@@ -18,9 +18,15 @@
 //                the player's damage (100 minus the lowest health, player-hit events) and the Germans the player killed (enemy_down_by_player events).
 //   nearImpacts  enemy rounds landing within 60 m of the player and rounds cracking past him (round-impact), per stretch: to hold_access (the damage-decals route window),
 //                hold_access to the deck, the deck window, after the east demolition.
+//   deck         (combat slice 2b, 2026-10-19) the fight on the road deck, from evt_m01_germans_on_east_spans to the east demolition (`windowRealSec`, the fight length) and its part
+//                with the clock held by the gate (battle clock 06:09:30, `gateHoldRealSec`): Polish rounds AT THE DECK = rounds of our side (the player's rifle, the rearguard's,
+//                the ckm's) that suppressed or wounded a man of the deck assault (his suppressedUntil or health changed by that round), by shooter; the longest stretch of
+//                the window (and of the gate hold) with no such round, edges included; the rounds the rearguard fired; the deck Germans down before the demolition.
 // Routes: seed:mode with mode 0 = the golden control route (never fires), 1 = the golden support pilot, 2 = FORWARD (this file only, not a golden pilot): the control route until
 // the Germans enter the deck, then a player who walks up the road deck to x 255 (short of the 270 m warning) and shoots at the deck Germans within 400 m, aimed at the chest, until the east
 // demolition, then the same way out as the route. It shows what the deck assault gives a player who advances; the golden pilots stand at x 29-37.
+// 3 = HIDDEN (this file only, not a golden pilot): the control route, but when the Germans enter the deck the player walks back off the deck to the squad-post sandbags (-28, 28),
+// crouches there out of their sight and never fires, and comes back by the route's own way out after the east demolition (losShare in its phases shows whether he was seen).
 import {execFileSync} from 'node:child_process';
 import {mkdtempSync,symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -30,9 +36,10 @@ import {route,driver,toRepair,coverControls} from '../../tests/helpers/m01-route
 import {eyePosition} from '../../src/world/spatial.js';
 
 const ROOT=resolve(import.meta.dirname,'../..');
+const seconds=text=>text.split(':').map(Number).reduce((n,x)=>n*60+x,0);
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
 const rev=arg('--rev');
-const routes=(arg('--routes')??'19390901:0,7:1,19390901:2').split(',').map(s=>{const [seed,mode]=s.split(':');return {seed:Number(seed),support:mode==='1',forward:mode==='2'};});
+const routes=(arg('--routes')??'19390901:0,7:1,19390901:2').split(',').map(s=>{const [seed,mode]=s.split(':');return {seed:Number(seed),support:mode==='1',forward:mode==='2',hidden:mode==='3'};});
 function extract(at){
   const dir=mkdtempSync(join(tmpdir(),'m01-combat-metrics-'));
   const data=execFileSync('git',['-C',ROOT,'ls-tree','-r','--name-only',at,'assets','research'],{encoding:'utf8',maxBuffer:1<<26}).split('\n').filter(p=>p.endsWith('.json'));
@@ -75,16 +82,43 @@ function forwardRoute(seed,{Simulation,onStep}){
   walk(-263,58);walk(-263,70);until(()=>sim.scene?.id==='cs_m01_roll_call',30);step({skip:true});until(()=>sim.mission.complete,10);
   return {sim};
 }
-async function measure({seed,support,forward}){
+// The HIDDEN pilot (mode 3): the control route's steps to the deck post (hold_access needs the visit), off the deck when the Germans enter it, back by the route's way out.
+function hiddenRoute(seed,{Simulation,onStep}){
+  const d=toRepair(driver(seed,{support:false,onStep,Simulation})),{sim,step,until,walk}=d;
+  walk(-115,27);walk(-28,28);step({crouch:true});until(()=>sim.active('hold_access'),500);step({crouch:true});
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);
+  until(()=>sim.consumedEvent('evt_m01_germans_on_east_spans'),500);
+  walk(-10,40);walk(-30,40);walk(-28,28);if(!sim.player.crouched)step({crouch:true});
+  until(()=>sim.consumedEvent('evt_m01_east_demolition'),900);
+  walk(-115,27);walk(-275,27);walk(-292,26);
+  until(()=>sim.consumedEvent('evt_m01_west_demolition'),500);
+  walk(-263,58);walk(-263,70);until(()=>sim.scene?.id==='cs_m01_roll_call',30);step({skip:true});until(()=>sim.mission.complete,10);
+  return {sim};
+}
+async function measure({seed,support,forward,hidden}){
   const starts={},rounds={},display={rounds:0,bursts:0},samples={},contacts=[];let window=null,last=null,tick=0,displayLast={};
   const push=(id,t)=>{(starts[id]??=[]).push(t);};
+  const deckRounds=[],deckBy={};
+  const deckKey=sim=>sim.actors.filter(a=>a.group==='grp_de_spans'&&a.deck).map(a=>`${a.suppressedUntil}/${a.health}`).join();
   class Probe extends Base{
     burst(a,target,kind,opts){const ok=super.burst(a,target,kind,opts);if(ok){push(a.id,this.clock);rounds[kind]=(rounds[kind]??0)+(opts?.rounds??1);}return ok;}
+    // A round of our side that changed a deck man (suppressed or wounded him) is a round AT THE DECK. Read-only wrappers: the same calls, in the same order.
+    deckRound(by,run){const live=this.consumedEvent('evt_m01_germans_on_east_spans')&&!this.consumedEvent('evt_m01_east_demolition'),before=live?deckKey(this):null;run();
+      if(live&&deckKey(this)!==before){deckRounds.push(this.clock);deckBy[by]=(deckBy[by]??0)+1;}}
+    fire(){this.deckRound('player',()=>super.fire());}
+    ckmImpact(r){this.deckRound('ckm',()=>super.ckmImpact(r));}
+    rearguardShot(a){this.deckRound('rearguard',()=>super.rearguardShot(a));}
   }
+  let deckEntry=null,deckEnd=null,gateAt=null,rearguardFired=0,deckDown=0,deckAlive=null;
   const nearImpacts=Object.fromEntries(['toHoldAccess','toDeck','deck','after'].map(k=>[k,{within60m:0,cracks:0}]));
   const seenAttrition=new Set(),close={mission:[],battle:[],deck:[]},player={minHealth:100,hits:0},kills=[],battleAt=[];
-  (forward?forwardRoute:route)(seed,{support,Simulation:Probe,onStep:({sim,events})=>{
+  (forward?forwardRoute:hidden?hiddenRoute:route)(seed,{support,Simulation:Probe,onStep:({sim,events})=>{
     tick++;last=sim;
+    if(deckEntry===null&&sim.consumedEvent('evt_m01_germans_on_east_spans'))deckEntry=sim.clock;
+    if(deckEntry!==null&&gateAt===null&&sim.battleClock>=seconds('06:09:30'))gateAt=sim.clock;
+    if(deckEnd===null&&sim.consumedEvent('evt_m01_east_demolition'))deckEnd=sim.clock;
+    if(deckEntry!==null&&deckEnd===null){const n=sim.actors.filter(a=>a.group==='grp_de_spans'&&a.alive).length;if(deckAlive!==null&&n<deckAlive)deckDown+=deckAlive-n;deckAlive=n;}
+    for(const e of events)if(e.type==='npc-shot'&&/^pl_east_/.test(e.by??''))rearguardFired++;
     for(const e of events){
       if(e.type==='npc-shot'&&e.weapon==='rkm_wz28')push('szymon_kowal',sim.clock);
       if(e.type==='ally-fire'&&e.by==='ckm_gunner')push('ckm_gunner',e.at);
@@ -131,7 +165,13 @@ async function measure({seed,support,forward}){
   const share=(xs,m)=>xs.length?round(xs.filter(x=>x<m).length/xs.length,3):null;
   const closeness=Object.fromEntries(Object.entries(close).map(([k,xs])=>[k,{realSec:round(xs.length*.5,1),nearestGermanM:{min:round(quant(xs,0),0),p10:round(quant(xs,.1),0),p50:round(quant(xs,.5),0)},
     shareUnder600m:share(xs,600),shareUnder300m:share(xs,300),shareUnder150m:share(xs,150)}]));
-  return {seed,support,forward,realSec:round(last.clock,1),closeness,nearImpacts,player:{damageTaken:100-player.minHealth,finalHealth:last.player.health,hitEvents:player.hits},killsByPlayer:kills,cadence:cadenceOut,shots:{gameplayRoundsByKind:Object.fromEntries(Object.entries(rounds).sort()),aimedRounds:aimed,scriptedOrAreaRounds:scripted,
+  const gapsIn=(from,to)=>{if(from===null||to===null)return null;const pts=[from,...deckRounds.filter(t=>t>from&&t<to),to];let g=0;for(let i=1;i<pts.length;i++)g=Math.max(g,pts[i]-pts[i-1]);return round(g,1);};
+  const inWindow=deckRounds.length;
+  const deck={windowRealSec:deckEntry!==null&&deckEnd!==null?round(deckEnd-deckEntry,1):null,gateHoldRealSec:gateAt!==null&&deckEnd!==null?round(Math.max(0,deckEnd-gateAt),1):null,
+    polishRoundsAtDeck:{total:inWindow,by:Object.fromEntries(Object.entries(deckBy).sort())},rearguardRoundsFired:rearguardFired,
+    longestNoDeckRoundRealSec:{window:gapsIn(deckEntry,deckEnd),gateHold:gapsIn(gateAt,deckEnd)},firstDeckRoundAfterEntrySec:deckRounds.find(t=>t>=deckEntry)!==undefined?round(deckRounds.find(t=>t>=deckEntry)-deckEntry,1):null,
+    deckGermansDownBeforeDemolition:deckDown};
+  return {seed,support,forward,hidden,realSec:round(last.clock,1),deck,closeness,nearImpacts,player:{damageTaken:100-player.minHealth,finalHealth:last.player.health,hitEvents:player.hits},killsByPlayer:kills,cadence:cadenceOut,shots:{gameplayRoundsByKind:Object.fromEntries(Object.entries(rounds).sort()),aimedRounds:aimed,scriptedOrAreaRounds:scripted,
       displayRounds:display.rounds,displayBursts:display.bursts,aimedShareOfAllRounds:round(aimed/(aimed+scripted+display.rounds),3)},
     phases,contact:{windowRealSec:window?round((window.end??last.clock)-window.start,1):null,contactMoments:contacts.length,longestGapRealSec:round(Math.max(0,...gaps),1),
       longestGapStartsAt:{realSec:longestAt,battleClock:bcAt},
