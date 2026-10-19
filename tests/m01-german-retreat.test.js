@@ -309,7 +309,10 @@ test('a save made after the east demolition by the code before T48 keeps the old
   Object.assign(legacy.player,{x:-290,y:-3,z:26});
   const before=structuredClone(legacy);validateM01Snapshot(legacy);
   const sim=fromSnapshot(legacy);assert.deepEqual(legacy,before,'restoring never edits the supplied save');
-  const survivors=SURVIVORS.map(id=>sim.actor(id)),start=survivors.map(a=>a.x);
+  // 2026-10-19 re-pin (combat slice 2b): the rearguard now kills men of the assault on this route before the demolition (measured: de_spans_7, 8 and 9 on 19390901); the old retreat is
+  // checked on the men of SURVIVORS who are alive at the demolition, and there are still some.
+  const survivors=SURVIVORS.map(id=>sim.actor(id)).filter(a=>a.alive),start=survivors.map(a=>a.x);
+  assert.ok(survivors.length>=2,`${survivors.length} living men march back`);
   for(let i=0;i<20*90;i++)sim.tick(.05);
   assert.ok(survivors.every((a,i)=>a.state==='RETREAT'&&a.x>start[i]&&a.fallBack===undefined),'still on the old retreat, never REGROUP');
   assert.ok(survivors.every(a=>Math.abs(a.x-1080)<1e-9),'and they reach the old destination');
