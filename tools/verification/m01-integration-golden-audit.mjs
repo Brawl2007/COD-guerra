@@ -60,8 +60,8 @@ const AMENDMENTS={
     stateOnly:frame=>{for(const k of ['state','checkpoint'])for(const x of frame[k]?.actors??[])delete x.ai;return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(shot|cooldown|firedAt|rounds)$/,behaviourActors:/^(szymon_kowal|de_east_\d+)$/},
   '08':{task:'M01-COMBAT-DECK-ASSAULT-V1',delta:'deck-assault',predecessor:'9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec',
-    // History since amendment 09: the deck assault golden pins the simulation of ff65255 (the amendment 08 commit), not the working tree's.
-    after:'ff65255c7a40497a74ceb1ba4bd666e838266dc1',
+    // History since amendment 09: the deck assault golden pins the simulation of c7c82ee (the slice-2 branch head after its review fixes: the amendment 08 regenerated at 204a5a8), not the working tree's.
+    after:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d',
     previousGolden:'tests/fixtures/m01-combat-ai-gameplay-baseline.json',golden:'tests/fixtures/m01-deck-assault-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/deck-assault-2026-10-18',
     // The deck assault lives in its own module too; it is hashed for this amendment only (06 and 07 keep their input lists byte for byte).
@@ -75,7 +75,7 @@ const AMENDMENTS={
     // Measured: route 19390901 (control), tick 5331 (04:46:31): sapper pawel_krawiec suppressedUntil +1.5 s (an MG34 near miss pins the working sappers 5 s, was 3.5 s);
     // route 7 support, tick 5195 (04:45:30): the new event enemy_down_by_player where the predecessor emitted only player-shot (the pilot kills the gate MG gunner).
     behaviourFields:/^\$\.((state|checkpoint)\.actors\.\d+\.suppressedUntil|events\.\d+\.type)$/,behaviourActors:/^(pawel_krawiec|sapper_\d)$/},
-  '09':{task:'M01-NAV-QUEUE-V1',delta:'nav-queue',predecessor:'ff65255c7a40497a74ceb1ba4bd666e838266dc1',after:null,identical:true,
+  '09':{task:'M01-NAV-QUEUE-V1',delta:'nav-queue',predecessor:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d',after:null,identical:true,
     previousGolden:'tests/fixtures/m01-deck-assault-gameplay-baseline.json',golden:'tests/fixtures/m01-nav-queue-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/nav-queue-2026-10-19',
     extraInputs:['src/game/m01-deck-assault.js'],

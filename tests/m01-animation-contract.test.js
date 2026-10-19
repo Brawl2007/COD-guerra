@@ -31,7 +31,7 @@ import deck from './fixtures/m01-deck-assault-gameplay-baseline.json' with {type
 const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // the named delta of amendment 08, as measured (tools/verification/m01-integration-golden-audit.mjs)
 // M01-NAV-QUEUE-V1 (golden amendment 09, 2026-10-19, branch claude/busy-ritchie-3fkvk2-navq): at most one route() per tick, work buffers reused, the navigator's solid list built before the first
 // plan, the neighbour queries on reused storage. It moves the SOURCE LOCK only: not one tick of either golden route differs from the deck assault golden (the tool's lockstep finds no difference,
-// and the digests equal amendment 08's, block for block). The deck assault golden above is history since then (it pins the simulation of ff65255); the golden of the live simulation,
+// and the digests equal amendment 08's, block for block). The deck assault golden above is history since then (it pins the simulation of c7c82ee); the golden of the live simulation,
 // regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 09, is this one.
 import nav from './fixtures/m01-nav-queue-gameplay-baseline.json' with {type:'json'};
 const current=nav;   // the golden of the live simulation
@@ -314,11 +314,11 @@ test('the combat AI golden (amendment 07) chains to the pacing golden, pins the 
     assert.match(r.firstBehaviourDifference.actor,new RegExp(account.behaviourActors));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);}
 });
 
-test('the deck assault golden (amendment 08) chains to the combat AI golden, pins the simulation of ff65255 and cites its lockstep account',()=>{
+test('the deck assault golden (amendment 08) chains to the combat AI golden, pins the simulation of c7c82ee and cites its lockstep account',()=>{
   const account=integrationAmendment(deck,{amendment:'08',task:'M01-COMBAT-DECK-ASSAULT-V1',delta:'deck-assault',previous:combat,previousFile:'m01-combat-ai-gameplay-baseline.json',
     predecessor:'9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec',deltaFields:DECK_DELTA});
-  // History since the navigator queue (amendment 09): this golden pins the simulation of ff65255 (the deck assault on the integration tree), not the live one.
-  assert.equal(deck.sourceSha256,'7e85d7a7b42aef4f8d85a234a3ea76885e9dd00f0b7fdf65e137d5894bf6d416','the deck assault golden pins the simulation of ff65255');
+  // History since the navigator queue (amendment 09): this golden pins the simulation of c7c82ee (the deck assault with its review fixes, slice-2 branch), not the live one.
+  assert.equal(deck.sourceSha256,'d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23','the deck assault golden pins the simulation of c7c82ee');
   assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),deck.sourceSha256,'the deck assault golden is history: the navigator queue moved the simulation source');
   assert.equal(deck.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
   // The first difference is the review fix's new key of a sighting (ai.seen.who, the rail-gate MG sees the player after train 963); with it stripped, the first BEHAVIOUR
@@ -357,7 +357,7 @@ function identicalAmendment(g,{amendment,task,delta,previous,previousFile,predec
   return account;
 }
 test('the navigator queue golden (amendment 09) chains to the deck assault golden, moves the source lock only, pins the live simulation and cites its lockstep account',()=>{
-  identicalAmendment(nav,{amendment:'09',task:'M01-NAV-QUEUE-V1',delta:'nav-queue',previous:deck,previousFile:'m01-deck-assault-gameplay-baseline.json',predecessor:'ff65255c7a40497a74ceb1ba4bd666e838266dc1'});
+  identicalAmendment(nav,{amendment:'09',task:'M01-NAV-QUEUE-V1',delta:'nav-queue',previous:deck,previousFile:'m01-deck-assault-gameplay-baseline.json',predecessor:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d'});
   assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),nav.sourceSha256,'the golden pins the live simulation');
   assert.equal(nav.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
 });
