@@ -1,6 +1,12 @@
 # Estado de desenvolvimento
 
-## Continuação Codex — correções da auditoria e D5
+## Continuação Codex — D3, morte e checkpoint do reparo
+
+Código `3e674ed` + testes históricos `cfa017d`, entrega na mesma PR draft #92 sobre #91 `afaded9`, **não integrada na #91/#80/main**. Publica causa real da morte, reutiliza a cartela durante 2,5 s sem ticks da simulação e retoma o checkpoint; CP-B2 depois da entrega da caixa só em Soldado/Veterano. A D2 (regeneração, HP e calibração) foi preservada. [Handoff e evidências](docs/verification/m01-runtime/continuity-d3/HANDOFF.md).
+
+`npm test` **1499/1499 PASS em cfa017d**, zero falhas/skips; build/bundle PASS (entrada 13 648 B); golden 14 com duas rotas Recruta inteiramente idênticas a 23313aa, quatro guardas de navegação e invariantes 24/24. Browser 5/5 e entrega/gravação/Continuar 1/1 separado após duas correções da fixture; falhas preservadas. Partida contínua 12/12 abaixo pertence à versão pré-D3, não é uma nova partida desta entrega. Sem aprovação humana/escuta/medição no hardware alvo. D4 está isolada e em desenvolvimento, fora desta entrega; SP-08, oferta de baixar nível e audiovisual pendentes. #84 PAUSED, main e deploy preservados.
+
+## Continuação Codex — correções da auditoria e D5 (entrega anterior à D3)
 
 `codex/m01-continuity-p0`, PR draft #92 sobre #91 `afaded9`; **não integrada na candidata #80**. Código `0261829` + `b197f03`: corrige braço/arma após Bąk, rubricas internas no HUD, divergência prompt/E, destino de cobertura, validade/prioridade das pistas e mãos da caixa; adapta guia ao ecrã curto. A D2 `048aedc` já está na #91: foi acrescentada a fatia de nível da D5 (seleção para nova missão, indicação do nível real em pausa/checkpoint/retoma; save legado Recruta, novo padrão Soldado).
 

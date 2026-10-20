@@ -1,5 +1,7 @@
 # Continuação M01 — entrega P0/P1 e D5
 
+Este documento descreve o lote P0/P1/D5 anterior à D3. A [entrega posterior D3](../continuity-d3/HANDOFF.md) acrescenta causa da morte e CP-B2, com validação separada; não altera o significado histórico das provas abaixo.
+
 ## Identificação e integração
 
 - TASK_ID: `M01-CONTINUITY-GUIDANCE-P0-V1` (extensão de T02/T04/T40 existentes); D5 é a interface para a D2 já integrada.

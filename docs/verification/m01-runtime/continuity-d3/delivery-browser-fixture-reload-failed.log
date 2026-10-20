@@ -1,0 +1,203 @@
+[1A[2K[WebServer] (node:124680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+[1A[2K(node:124704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:124704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] tests/browser/m01-player-down.spec.js:35:1 › E delivers the real crate, persists CP-B2 and Continue resumes its actual objective
+[1A[2K  1) tests/browser/m01-player-down.spec.js:35:1 › E delivers the real crate, persists CP-B2 and Continue resumes its actual objective 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"cp_m01_b[7m2[27m_re[7mpar[27mo"[39m
+    Received: [31m"cp_m01_b_re[7morganizaca[27mo"[39m
+
+      42 |  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();await page.screenshot({path:info.outputPath('delivery-checkpoint.png'),style:'#pause{visibility:hidden!important}'});
+      43 |  await page.reload();await expect(page.locator('#continue')).toBeEnabled({timeout:90000});await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);
+    > 44 |  const continued=await state(page);expect(continued.s.checkpointsReached.at(-1)).toBe('cp_m01_b2_reparo');expect(continued.s.objectives.obj_m01_cover_repair.state).toBe('active');expect(continued.s.player.carrying).toBeNull();expect(continued.s.player.health).toBe(100);expect(continued.s.difficulty).toBe('soldado');
+         |                                                                                  ^
+      45 |  await expect(page.locator('#resume-card')).toContainText('Soldado');await expect(page.locator('#message')).not.toContainText('Você caiu');
+      46 |  writeFileSync(info.outputPath('delivery-continue.json'),JSON.stringify({persisted,continued,errors},null,2));expect(errors).toEqual([]);
+      47 | });
+        at /workspace/COD-guerra-d3/tests/browser/m01-player-down.spec.js:44:82
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/trace.zip
+    Usage:
+
+        npx playwright show-trace ../artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  1 failed
+    tests/browser/m01-player-down.spec.js:35:1 › E delivers the real crate, persists CP-B2 and Continue resumes its actual objective 
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra-d3/playwright.d3.config.js",
+    "rootDir": "/workspace/COD-guerra-d3/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/artifacts/continuity-d3-delivery-browser-rerun",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra-d3/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview -- --port 4193",
+      "url": "http://127.0.0.1:4193/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-player-down.spec.js",
+      "file": "m01-player-down.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E delivers the real crate, persists CP-B2 and Continue resumes its actual objective",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27421,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"cp_m01_b\u001b[7m2\u001b[27m_re\u001b[7mpar\u001b[27mo\"\u001b[39m\nReceived: \u001b[31m\"cp_m01_b_re\u001b[7morganizaca\u001b[27mo\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"cp_m01_b\u001b[7m2\u001b[27m_re\u001b[7mpar\u001b[27mo\"\u001b[39m\nReceived: \u001b[31m\"cp_m01_b_re\u001b[7morganizaca\u001b[27mo\"\u001b[39m\n    at /workspace/COD-guerra-d3/tests/browser/m01-player-down.spec.js:44:82",
+                    "location": {
+                      "file": "/workspace/COD-guerra-d3/tests/browser/m01-player-down.spec.js",
+                      "column": 82,
+                      "line": 44
+                    },
+                    "snippet": "  42 |  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();await page.screenshot({path:info.outputPath('delivery-checkpoint.png'),style:'#pause{visibility:hidden!important}'});\n  43 |  await page.reload();await expect(page.locator('#continue')).toBeEnabled({timeout:90000});await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);\n> 44 |  const continued=await state(page);expect(continued.s.checkpointsReached.at(-1)).toBe('cp_m01_b2_reparo');expect(continued.s.objectives.obj_m01_cover_repair.state).toBe('active');expect(continued.s.player.carrying).toBeNull();expect(continued.s.player.health).toBe(100);expect(continued.s.difficulty).toBe('soldado');\n     |                                                                                  ^\n  45 |  await expect(page.locator('#resume-card')).toContainText('Soldado');await expect(page.locator('#message')).not.toContainText('Você caiu');\n  46 |  writeFileSync(info.outputPath('delivery-continue.json'),JSON.stringify({persisted,continued,errors},null,2));expect(errors).toEqual([]);\n  47 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/COD-guerra-d3/tests/browser/m01-player-down.spec.js",
+                        "column": 82,
+                        "line": 44
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"cp_m01_b\u001b[7m2\u001b[27m_re\u001b[7mpar\u001b[27mo\"\u001b[39m\nReceived: \u001b[31m\"cp_m01_b_re\u001b[7morganizaca\u001b[27mo\"\u001b[39m\n\n  42 |  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();await page.screenshot({path:info.outputPath('delivery-checkpoint.png'),style:'#pause{visibility:hidden!important}'});\n  43 |  await page.reload();await expect(page.locator('#continue')).toBeEnabled({timeout:90000});await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);\n> 44 |  const continued=await state(page);expect(continued.s.checkpointsReached.at(-1)).toBe('cp_m01_b2_reparo');expect(continued.s.objectives.obj_m01_cover_repair.state).toBe('active');expect(continued.s.player.carrying).toBeNull();expect(continued.s.player.health).toBe(100);expect(continued.s.difficulty).toBe('soldado');\n     |                                                                                  ^\n  45 |  await expect(page.locator('#resume-card')).toContainText('Soldado');await expect(page.locator('#message')).not.toContainText('Você caiu');\n  46 |  writeFileSync(info.outputPath('delivery-continue.json'),JSON.stringify({persisted,continued,errors},null,2));expect(errors).toEqual([]);\n  47 | });\n    at /workspace/COD-guerra-d3/tests/browser/m01-player-down.spec.js:44:82"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T11:13:20.875Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/workspace/artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/artifacts/continuity-d3-delivery-browser-rerun/m01-player-down-E-delivers-2ccb9-esumes-its-actual-objective/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/COD-guerra-d3/tests/browser/m01-player-down.spec.js",
+                    "column": 82,
+                    "line": 44
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e27424fc4d0f09353739-e4d5948cfb3f1c290213",
+          "file": "m01-player-down.spec.js",
+          "line": 35,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T11:13:19.802Z",
+    "duration": 29750.652000000002,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

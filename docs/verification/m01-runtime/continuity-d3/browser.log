@@ -1,0 +1,299 @@
+[1A[2K[WebServer] (node:122511) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 5 tests using 1 worker
+
+[1A[2K(node:122535) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:122535) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/5] tests/browser/m01-difficulty-ui.spec.js:11:1 › new mission defaults to Soldado and every selected level reaches the real simulation
+[1A[2K[2/5] tests/browser/m01-difficulty-ui.spec.js:25:1 › legacy checkpoint wins over Veterano preference and its continue card says Recruta
+[1A[2K[3/5] tests/browser/m01-difficulty-ui.spec.js:34:2 › mobile difficulty › selector stays reachable on a short touch screen and checkpoint reports Soldado
+[1A[2K[4/5] tests/browser/m01-player-down.spec.js:33:1 › desktop: actual water death pauses presentation and restores the real repair checkpoint
+[1A[2K[5/5] tests/browser/m01-player-down.spec.js:34:120 › touch › actual death disables touch controls and restores them with CP-B2
+[1A[2K  5 passed (4.5m)
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra-d3/playwright.d3.config.js",
+    "rootDir": "/workspace/COD-guerra-d3/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/artifacts/continuity-d3-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra-d3/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview -- --port 4193",
+      "url": "http://127.0.0.1:4193/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-difficulty-ui.spec.js",
+      "file": "m01-difficulty-ui.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "new mission defaults to Soldado and every selected level reaches the real simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43131,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T10:54:26.437Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edf4d6a0c3f7a8ecdb2c-b4b1eb57092b0fdb432f",
+          "file": "m01-difficulty-ui.spec.js",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "legacy checkpoint wins over Veterano preference and its continue card says Recruta",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21986,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T10:55:09.787Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edf4d6a0c3f7a8ecdb2c-02591578a444e3c77550",
+          "file": "m01-difficulty-ui.spec.js",
+          "line": 25,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "mobile difficulty",
+          "file": "m01-difficulty-ui.spec.js",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selector stays reachable on a short touch screen and checkpoint reports Soldado",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20732,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T10:55:31.797Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "edf4d6a0c3f7a8ecdb2c-eba921db5f9613df3964",
+              "file": "m01-difficulty-ui.spec.js",
+              "line": 34,
+              "column": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "m01-player-down.spec.js",
+      "file": "m01-player-down.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop: actual water death pauses presentation and restores the real repair checkpoint",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 113937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T10:55:52.559Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e27424fc4d0f09353739-ce86d2d3e15ea931fbd5",
+          "file": "m01-player-down.spec.js",
+          "line": 33,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "touch",
+          "file": "m01-player-down.spec.js",
+          "line": 34,
+          "column": 6,
+          "specs": [
+            {
+              "title": "actual death disables touch controls and restores them with CP-B2",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 68521,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T10:57:46.504Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e27424fc4d0f09353739-c5d112ea7cdfd2fb680d",
+              "file": "m01-player-down.spec.js",
+              "line": 34,
+              "column": 120
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T10:54:24.439Z",
+    "duration": 271267.44800000003,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

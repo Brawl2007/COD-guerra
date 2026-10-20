@@ -1,0 +1,9 @@
+{
+  "head": "3e674ed3c7d997aa1dccd45323a40dcefcb75d83",
+  "status": "ABORTED after known failures; not a complete suite",
+  "knownFailures": [
+    "amendment11 historical mission hash still compared with live CP-B2 data",
+    "amendment12 historical mission hash still compared with live CP-B2 data"
+  ],
+  "runtimeChangeForFix": false
+}

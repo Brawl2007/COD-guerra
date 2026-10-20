@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "base": "23313aa5ef5ca8063d33cad7895e0850dac09c0f",
+  "configuration": "standard npm run build; Low real death/restore, High menu; desktop 1280x720 and emulated touch 896x414",
+  "filesSha256": {
+    "dist/assets/three-loaders-xoHaYwaR.js": "e7509c9e67d5d5a6bda866b374aac7a12d48c7c26bc01c4433d799bb4ab8a636",
+    "dist/assets/game-KEek6gnM.js": "ceef09a19fce2dcc7a124c83227236aa602e6703c07a4f6e610fd3f8538a519b",
+    "dist/assets/index-BwBCha_I.css": "abd2c46899e2fae1ddfe7cdc46e9764d93cfd3e74f11c21d819304ec9d6f1e9f",
+    "dist/assets/m01-difficulty-DzgKWyuq.js": "1b3195da1f06d92fd9d0299241096c38bf150f991e57ed63ef73870753d2bcfe",
+    "dist/assets/three-core-DHJZDzJU.js": "e1005510a93e2c1eae530101b8805f9b949f7712099b9bb81a865191d6d1f53c",
+    "dist/assets/asset-progress-B1UdpVEN.js": "7a1bb12d7d5a7c5ec96f68ffacf0538b6550217538c23d53452a830dade8e559",
+    "dist/assets/m01-difficulty-DUjzTxGo.js": "1092477574d423f56ec961814b271750d074e49412cc1e65d916854af7b18cb6",
+    "dist/assets/index-DgxmaNsJ.js": "a189f3911827a8fd4b9a29206da9227fea04e1ef2601d25b7d74539cbb738813"
+  },
+  "runtimeSourceCommit": "3e674ed3c7d997aa1dccd45323a40dcefcb75d83",
+  "testCommit": "cfa017d187da37a7906255442851ea5acf1ab74b",
+  "note": "Build/browser ran before commit creation on the same runtime bytes subsequently committed in 3e674ed; cfa017d changes only historical test pins."
+}

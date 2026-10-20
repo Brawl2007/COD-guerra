@@ -330,7 +330,11 @@ export class M01Simulation {
   consumedEvent(id){return Object.hasOwn(this.consumed,id);}
   active(name){return this.objectives[O(name)]?.state==='active';}
   done(name){return this.objectives[O(name)]?.state==='done';}
-  activate(name){const o=this.objectives[O(name)];if(o.state==='locked')o.state='active';}
+  checkpointEnabled(id){return id!=='cp_m01_b2_reparo'||this.difficulty!=='recruta';}
+  activate(name){const o=this.objectives[O(name)];if(o.state==='locked'){
+    o.state='active';
+    if(O(name)===O('cover_repair')&&this.checkpointEnabled('cp_m01_b2_reparo'))this.pendingCheckpoint='cp_m01_b2_reparo';
+  }}
   finish(name){const o=this.objectives[O(name)];if(o.state==='done')return;o.state='done';o.progress=100;}
   /**
    * Says a line: queues its subtitle. A scripted line (every line without a `bark` rule) keeps the old FIFO and is never dropped, cut or jumped. A reactive line (a `bark` rule,
@@ -609,7 +613,8 @@ export class M01Simulation {
     }
   }
   saveCheckpoint(id){
-    if(this.checkpointsReached.includes(id))return;
+    if(!this.checkpointEnabled(id)||this.checkpointsReached.includes(id))return;
+    if(id==='cp_m01_b2_reparo'&&(!this.active('cover_repair')||!this.done('fetch_material')||this.player.carrying))return;
     this.checkpointsReached.push(id);this.pendingCheckpoint=null;
     // H9 D2: on soldado/veterano a checkpoint is saved (and so restored) with full health, no death spiral; recruta keeps the health as it is.
     if(this.level.hpOnCheckpoint!==null&&this.player.alive)this.player.health=this.level.hpOnCheckpoint;
@@ -1618,8 +1623,8 @@ export class M01Simulation {
    * has engaged the player for reactionGraceSec before this round); the time of the wound feeds the regen. No draw here: the roll was made by landRound.
    */
   woundPlayer(r){
-    const p=this.player,L=this.level;
-    if(L===M01_DIFFICULTY.recruta){p.health=Math.max(0,p.health-L.woundDamage);p.alive=p.health>0;this.emit({type:'player-hit'});return;}
+    const p=this.player,L=this.level,wasAlive=p.alive;
+    if(L===M01_DIFFICULTY.recruta){p.health=Math.max(0,p.health-L.woundDamage);p.alive=p.health>0;this.emit({type:'player-hit'});if(wasAlive&&!p.alive)this.playerDownFromRound(r);return;}
     if(L.burstWoundCap!==null){
       const b=this.timers.burstWound,same=b&&b.by===r.by&&Math.abs(r.firedAt-b.at)<=BURST_GROUP_SEC+1e-9;
       if(same&&b.n>=L.burstWoundCap)return;   // the cap: the round still struck (impact, crack, suppression), it does not wound again
@@ -1628,6 +1633,15 @@ export class M01Simulation {
     let health=Math.max(0,p.health-L.woundDamage);
     if(health<=0&&L.reactionGraceSec!==null){const e=this.timers.telegraph?.[r.by];if(!e||r.firedAt-e.first<L.reactionGraceSec-1e-9)health=1;}
     p.health=health;p.alive=health>0;this.timers.lastHitAt=this.clock;this.emit({type:'player-hit'});
+    if(wasAlive&&!p.alive)this.playerDownFromRound(r);
+  }
+  /** Transient cause from the authority that actually killed the player; never saved or sampled from RNG. */
+  playerDown(cause,by=null){this.failure=cause;this.emit({type:'player-down',cause,by});}
+  playerDownFromRound(r){
+    const shooter=this.actor(r.by),weapon=r.weapon??shooter?.weapon;
+    const label=weapon==='mg34'?'MG34':weapon==='kar98k'?'espingarda alemã':null;
+    const origin=shooter&&gateShooter(shooter)?'nos portões de Lisewo':shooter?.group==='grp_de_spans'?'a leste, no tabuleiro':null;
+    this.playerDown(label?`Abatido por ${label}${origin?' '+origin:''}.`:'Abatido por fogo inimigo.',r.by??null);
   }
   /** H9 D2 rule F1 bookkeeping (soldado/veterano only, draw-free): a shooter's rounds of kind player/cover open or extend his engagement of the player. */
   noteTelegraph(a,kind,rounds,interval){
@@ -1754,7 +1768,8 @@ export class M01Simulation {
         if(a.alive&&a.active&&distance<8&&this.world.lineOfSight({...g,space:'metres',eyeHeight:.04},a)){
           const health=a.health,wasAlive=a.alive;
           a.health=Math.max(0,a.health-(1-distance/8)*100);a.alive=a.health>0;
-          if(a!==this.player){recordDamage(a,health,wasAlive,this.clock,g);if(wasAlive&&!a.alive)this.enemyDown(a,'grenade');}}
+          if(a!==this.player){recordDamage(a,health,wasAlive,this.clock,g);if(wasAlive&&!a.alive)this.enemyDown(a,'grenade');}
+          else if(wasAlive&&!a.alive)this.playerDown('Explosão de granada.');}
       }}
     }this.grenades.active=this.grenades.active.filter(g=>g.fuse>0);
     for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
@@ -1768,8 +1783,8 @@ export class M01Simulation {
     this.timers.water=p.y<=-9?this.timers.water+dt:0;
     const countdown=Math.max(0,Math.ceil(b.outOfBoundsGraceSec-this.timers.boundary));
     if(out&&countdown!==this.timers.boundaryCountdown){this.timers.boundaryCountdown=countdown;this.message(`Você se afastou da sua secção. Volte em ${countdown} s.`,{priority:3});}
-    if(this.timers.boundary>=b.outOfBoundsGraceSec||this.timers.water>=8){
-      this.failure=this.timers.water>=8?'Você caiu no Vístula.':'Você se afastou da sua secção.';this.player.alive=false;
+    if(this.player.alive&&(this.timers.boundary>=b.outOfBoundsGraceSec||this.timers.water>=8)){
+      this.player.alive=false;this.playerDown(this.timers.water>=8?'Você caiu no Vístula.':'Você se afastou da sua secção.');
     }
   }
   tick(dt,controls={}){
@@ -1832,6 +1847,8 @@ export class M01Simulation {
     }
     barkPoll(this);   // the reactive lines that read state (m01-barks.js)
     this.advanceSubtitle();
+    // Capture the whole delivery tick, including its dialogue, objective text and presentation state.
+    if(this.pendingCheckpoint==='cp_m01_b2_reparo'&&p.alive&&!p.carrying)this.saveCheckpoint(this.pendingCheckpoint);
   }
   /** The player's body moves (walls, ledges, gravity: src/world/m01-player-physics.js) and, if it touched down after a fall, lands. Every move of the player goes through here. */
   moveBody(dx,dz,dt){const landing=movePlayer(this.world,this.player,dx,dz,dt);if(landing)this.playerLanded(landing);}
@@ -1840,10 +1857,10 @@ export class M01Simulation {
    * and a splash in the river costs nothing. The event is transient (presentation: camera dip, thud); the health is the only state.
    */
   playerLanded(landing){
-    const p=this.player,{speed,drop,damage,surface,x,y,z}=landing;
+    const p=this.player,wasAlive=p.alive,{speed,drop,damage,surface,x,y,z}=landing;
     if(damage>0){p.health=Math.max(0,p.health-damage);p.alive=p.health>0;if(this.level.healing)this.timers.lastHitAt=this.clock;}
     this.emit({type:'player-landing',speed,drop,damage,surface,point:{x,y,z}});
-    if(!p.alive)this.failure='Você caiu de uma altura fatal.';
+    if(!p.alive){this.failure='Você caiu de uma altura fatal.';if(wasAlive)this.playerDown(this.failure);}
     else if(damage>0)this.message(`Queda dura: -${damage} de vida.`);
   }
   /** 04:35:30: Dudek reaches the station casualty, drags him to the aid point, then returns to his bridge post. */
@@ -2381,6 +2398,7 @@ export function validateM01Snapshot(s){
   if(s.gate&&(![E('repair_complete'),E('east_demolition'),E('west_demolition')].includes(s.gate.id)||!finite(s.gate.started,0,s.clock)||!finite(s.gate.hold)))reject('gate');
   if(s.checkpointsReached.some(id=>!definition.checkpoints.some(c=>c.id===id))||new Set(s.checkpointsReached).size!==s.checkpointsReached.length||
     (s.pendingCheckpoint!==null&&!definition.checkpoints.some(c=>c.id===s.pendingCheckpoint)))reject('checkpoint');
+  if((s.difficulty??'recruta')==='recruta'&&(s.checkpointsReached.includes('cp_m01_b2_reparo')||s.pendingCheckpoint==='cp_m01_b2_reparo'))reject('checkpoint de dificuldade');
   if(s.dialogueConsumed.some(token=>typeof token!=='string')||new Set(s.dialogueConsumed).size!==s.dialogueConsumed.length)reject('falas consumidas');
   // A scripted line is {id, speaker, text, duration}; a reactive one (a line with a `bark` rule) also carries its rule's priority, `bark: true` and the time it expires in the queue.
   const dialogue=d=>{
