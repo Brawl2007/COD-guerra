@@ -31,3 +31,7 @@ Os logs antes/depois são preservados, incluindo a falha anterior. Não há aleg
 O grupo de cinco cenários terminou 4/5 na primeira execução conjunta. A cobertura passou depois 1/1 com captura congelada e verificação independente de chegada/marcador. Não se apresenta isso como uma execução conjunta 5/5. O regresso à arma também passou novamente após a adaptação dos braços para a caixa. Os logs anteriores e a reprodução do defeito inicial ficam preservados; o relatório final distingue os runs e as versões exatas.
 
 A [matriz dos 20 achados](MATRIZ.md) liga a auditoria original às correções já existentes na #91, à continuação e às pendências. As tabelas antigas do Capitão não demonstram integração ou prova visual por si só; a ancestralidade mostrou que D2 já estava no HEAD `afaded9`.
+
+## Validação do lote atual
+
+[Código, testes e limites por entrega](HANDOFF.md): produção `b197f03`, suite completa **1482/1482** em `ce70422`, build/bundle PASS. Browser final **14/15**, seguido do cenário corrigido **1/1** em `35f3215`, com produção idêntica. [Capturas atuais](browser-final/manifest.json): [menu de dificuldade](browser-final/difficulty-menu-high.png), [guia de resgate em ecrã curto](browser-final/rescue-guidance-small.png), [tátil](browser-final/touch-resumed.png). A D5 inclui seleção e indicação de nível; apresentação da morte/oferta de baixar nível dependem de D3, pendentes. Primeiro percurso contínuo incompleto 11/12 por rota do piloto contra a cerca; novo percurso do menu ao debrief em Soldado em curso.

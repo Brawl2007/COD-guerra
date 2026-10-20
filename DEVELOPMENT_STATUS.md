@@ -1,5 +1,13 @@
 # Estado de desenvolvimento
 
+## Continuação Codex — correções da auditoria e D5
+
+`codex/m01-continuity-p0`, PR draft #92 sobre #91 `afaded9`; **não integrada na candidata #80**. Código `0261829` + `b197f03`: corrige braço/arma após Bąk, rubricas internas no HUD, divergência prompt/E, destino de cobertura, validade/prioridade das pistas e mãos da caixa; adapta guia ao ecrã curto. A D2 `048aedc` já está na #91: foi acrescentada a fatia de nível da D5 (seleção para nova missão, indicação do nível real em pausa/checkpoint/retoma; save legado Recruta, novo padrão Soldado).
+
+Build atual PASS, golden 13 sem diferenças de comportamento após remover apenas a apresentação declarada e invariantes 24/24. Suite completa **1482/1482 em ce70422**; browser final 14/15, caso corrigido 1/1 em 35f3215 (produção idêntica). Novo percurso contínuo em Soldado em curso; sem conclusão antecipada. [Handoff, antes/depois e limites](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). M01 continua PROTÓTIPO JOGÁVEL; sem novo score, playtest humano, escuta, FPS do PC alvo ou comparação externa observada. Main, deploy e integrador #84 PAUSED preservados. D3/D4/SP-08 e VO/arte continuam por fechar.
+
+O conteúdo seguinte conserva os relatos históricos do Capitão. Quando disser «D2 não publicada», a ancestralidade atual prevalece: #91 `afaded9` inclui `048aedc`.
+
 ## M01 H9 D2: níveis de dificuldade ligados à simulação + o intervalo vazio das 05:35 — 2026-10-19
 
 Branch local `claude/busy-ritchie-3fkvk2-d2` (de `a59c129`, emenda 11). **Não publicada**, sem revisão crítica independente, **sem playtest humano** (nenhum nível foi jogado; o seletor de nível é a D5 e ainda não existe na UI). Detalhe: `docs/direction/COD_WAW_WWII_BENCHMARK.md` «D2 e intervalo das 05:35, 2026-10-19»; evidência: `docs/verification/m01-runtime/difficulty-0535-2026-10-19/`.

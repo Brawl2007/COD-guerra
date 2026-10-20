@@ -1,0 +1,89 @@
+{"real":8.8,"kind":"started","game":0,"battle":"04:30:00","pos":[-66,22],"objective":"04:30 · Tczew, Polónia"}
+{"real":10.3,"kind":"objective","game":1.3,"battle":"04:30:01","pos":[-66,22],"objective":"04:30 · Tczew, Polónia","text":"04:30 · Tczew, Polónia"}
+{"real":116.4,"kind":"objective","game":44,"battle":"04:30:44","pos":[-66,22],"objective":"Leve a mensagem e o café ao posto da ponte","text":"Leve a mensagem e o café ao posto da ponte"}
+{"real":118.5,"kind":"checkpoint","game":45,"battle":"04:30:45","pos":[-66,22],"objective":"Leve a mensagem e o café ao posto da ponte","id":"cp_m01_a_orientacao"}
+{"real":97.8,"kind":"waited","game":40.4,"battle":"04:30:45","pos":[-66,22],"objective":"Leve a mensagem e o café ao posto da ponte","label":"intro","battleFrom":"04:30:04","battleTo":"04:30:44"}
+{"real":125.4,"kind":"message","game":48.1,"battle":"04:30:48","pos":[-55.5,25.6],"objective":"Leve a mensagem e o café ao posto da ponte","text":"Posto da ponte ferroviária: 77 m, em frente"}
+{"real":164.9,"kind":"arrived","game":64.3,"battle":"04:31:04","pos":[15.2,2],"objective":"Leve a mensagem e o café ao posto da ponte","label":"posto da ponte"}
+{"real":168.2,"kind":"objective","game":65.1,"battle":"04:33:11","pos":[15.2,2],"objective":"Mensagem entregue. Fique com o posto — aviões a norte","text":"Mensagem entregue. Fique com o posto — aviões a norte"}
+{"real":314.1,"kind":"objective","game":114.8,"battle":"04:34:02","pos":[15.2,2],"objective":"Abrigue-se!","text":"Abrigue-se!"}
+{"real":316,"kind":"message","game":115.6,"battle":"04:34:05","pos":[15.2,2],"objective":"Abrigue-se!","text":"Abrigue-se! Cabeça baixa, junto à cobertura!"}
+{"real":320.3,"kind":"objective","game":116.9,"battle":"04:34:09","pos":[15.2,2],"objective":"Siga a voz do sargento","text":"Siga a voz do sargento"}
+{"real":154.3,"kind":"waited","game":51.8,"battle":"04:34:12","pos":[15.2,2],"objective":"Siga a voz do sargento","label":"bombardeamento e abrigo","battleFrom":"04:33:11","battleTo":"04:34:09"}
+{"real":324.6,"kind":"message","game":118.4,"battle":"04:34:14","pos":[15.2,2],"objective":"Siga a voz do sargento","text":"Zieliński chama-o da trincheira, a oeste."}
+{"real":391,"kind":"objective","game":148.8,"battle":"04:36:01","pos":[-144.2,11],"objective":"Encontre os sapadores no aterro","text":"Encontre os sapadores no aterro"}
+{"real":392.5,"kind":"checkpoint","game":149.5,"battle":"04:36:03","pos":[-147.6,11.3],"objective":"Encontre os sapadores no aterro","id":"cp_m01_b_reorganizacao"}
+{"real":392.6,"kind":"arrived","game":149.5,"battle":"04:36:03","pos":[-147.6,11.3],"objective":"Encontre os sapadores no aterro","label":"reorganização (Zieliński)"}
+{"real":397.6,"kind":"message","game":152.5,"battle":"04:36:14","pos":[-134.1,11.2],"objective":"Encontre os sapadores no aterro","text":"Sapadores no aterro: 94 m, em frente"}
+{"real":425.6,"kind":"objective","game":167.4,"battle":"04:37:06","pos":[-44.9,11],"objective":"Traga o material dos sapadores do barracão ferroviário","text":"Traga o material dos sapadores do barracão ferroviário"}
+{"real":427.4,"kind":"arrived","game":168.3,"battle":"04:37:09","pos":[-39.3,11],"objective":"Traga o material dos sapadores do barracão ferroviário","label":"sapadores no aterro"}
+{"real":433.9,"kind":"message","game":171.3,"battle":"04:37:20","pos":[-52.9,11.5],"objective":"Traga o material dos sapadores do barracão ferroviário","text":"Barracão ferroviário, porta oeste: 210 m, em frente"}
+{"real":513.9,"kind":"arrived","game":213.3,"battle":"04:39:46","pos":[-264.7,21],"objective":"Traga o material dos sapadores do barracão ferroviário","label":"barracão ferroviário (porta oeste)"}
+{"real":515.6,"kind":"message","game":213.8,"battle":"04:39:48","pos":[-264.7,21],"objective":"Traga o material dos sapadores do barracão ferroviário","text":"Material recolhido. Leve a caixa aos sapadores."}
+{"real":522.1,"kind":"message","game":217.4,"battle":"04:40:01","pos":[-274.9,21],"objective":"Traga o material dos sapadores do barracão ferroviário","text":"Sapadores no segundo corte da linha: 155 m, atrás de si"}
+{"real":605.2,"kind":"arrived","game":263.1,"battle":"04:42:41","pos":[-140.6,15.5],"objective":"Traga o material dos sapadores do barracão ferroviário","label":"aproximação ao segundo corte"}
+{"real":617.7,"kind":"arrived","game":269.9,"battle":"04:43:05","pos":[-123.6,8.3],"objective":"Traga o material dos sapadores do barracão ferroviário","label":"entregar material"}
+{"real":620.3,"kind":"objective","game":270.9,"battle":"04:43:08","pos":[-123.6,8.3],"objective":"Proteja o reparo da linha","text":"Proteja o reparo da linha"}
+{"real":655.8,"kind":"arrived","game":289.9,"battle":"04:44:15","pos":[-29,28],"objective":"Proteja o reparo da linha","label":"posição de cobertura do reparo"}
+{"real":656.6,"kind":"message","game":290.4,"battle":"04:44:16","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Alça: 500 m"}
+{"real":709.8,"kind":"message","game":309.7,"battle":"04:46:01","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 25%."}
+{"real":780.4,"kind":"message","game":334,"battle":"04:49:40","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 37%."}
+{"real":851.8,"kind":"message","game":355.9,"battle":"04:52:57","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Metralhadora no dique · V para alça 1000 m: 1084 m, em frente"}
+{"real":860.6,"kind":"message","game":358.6,"battle":"04:53:22","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 50%."}
+{"real":907,"kind":"message","game":371.8,"battle":"04:55:21","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Metralhadora no dique · V para alça 1000 m: 1084 m, em frente"}
+{"real":943.3,"kind":"message","game":383.1,"battle":"04:57:02","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 61%."}
+{"real":1000.7,"kind":"message","game":404.1,"battle":"05:00:11","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Metralhadora no dique · V para alça 1000 m: 1084 m, em frente"}
+{"real":1009.6,"kind":"message","game":407.4,"battle":"05:00:40","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 72%."}
+{"real":1078.3,"kind":"message","game":431.8,"battle":"05:04:20","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 85%."}
+{"real":1120.2,"kind":"message","game":447.1,"battle":"05:06:38","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Metralhadora no dique · V para alça 1000 m: 1084 m, em frente"}
+{"real":1146.4,"kind":"message","game":456.4,"battle":"05:08:01","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 93%."}
+{"real":1170.5,"kind":"message","game":464.9,"battle":"05:09:18","pos":[-29,28],"objective":"Proteja o reparo da linha","text":"Metralhadora no dique · V para alça 1000 m: 1084 m, em frente"}
+{"real":1204.7,"kind":"objective","game":476.9,"battle":"05:11:07","pos":[-29,28],"objective":"Reparo concluído. Aguarde a ordem com a secção","text":"Reparo concluído. Aguarde a ordem com a secção"}
+{"real":1324.7,"kind":"objective","game":519.1,"battle":"05:30:02","pos":[-29,28],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","text":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem"}
+{"real":1327,"kind":"message","game":520.2,"battle":"05:30:11","pos":[-29,28],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","text":"Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."}
+{"real":671.2,"kind":"waited","game":229.1,"battle":"05:30:11","pos":[-29,28],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","label":"reparo e ordem de demolição","battleFrom":"04:44:15","battleTo":"05:30:02"}
+{"real":1333.9,"kind":"message","game":523,"battle":"05:30:33","pos":[-42.7,28.9],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","text":"Posição no tabuleiro rodoviário: 73 m, atrás de si"}
+{"real":1368.5,"kind":"message","game":538.1,"battle":"05:32:34","pos":[-99.8,33.4],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","text":"Posição no tabuleiro rodoviário: 131 m, em frente"}
+{"real":1373.4,"kind":"message","game":539.7,"battle":"05:32:46","pos":[-90.6,34.3],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","text":"Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."}
+{"real":1396.5,"kind":"checkpoint","game":549.1,"battle":"05:34:02","pos":[-34.4,39.7],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","id":"cp_m01_c_engenheiros"}
+{"real":1423.5,"kind":"arrived","game":559.9,"battle":"05:37:11","pos":[28.9,40],"objective":"Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem","label":"acesso rodoviário"}
+{"real":1592.4,"kind":"objective","game":622,"battle":"06:00:01","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste","text":"Cubra a retirada do pelotão leste"}
+{"real":1594.9,"kind":"message","game":623,"battle":"06:00:09","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste","text":"O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."}
+{"real":169.3,"kind":"waited","game":61.1,"battle":"06:00:09","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste","label":"retirada do pelotão leste","battleFrom":"05:37:35","battleTo":"06:00:01"}
+{"real":1646.2,"kind":"message","game":642.6,"battle":"06:02:46","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste","text":"Caixa de carregadores da secção no posto do tabuleiro: +5. Fique no posto para recarregar."}
+{"real":1650.1,"kind":"message","game":644.6,"battle":"06:03:02","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste","text":"O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."}
+{"real":1666.5,"kind":"objective","game":652.2,"battle":"06:04:02","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","text":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"}
+{"real":70.8,"kind":"waited","game":28.1,"battle":"06:04:10","pos":[28.9,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","label":"Bąk ferido","battleFrom":"06:00:17","battleTo":"06:04:02"}
+{"real":1676.5,"kind":"message","game":656.2,"battle":"06:04:34","pos":[42.4,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","text":"Bąk ferido: 13 m, em frente"}
+{"real":1684.1,"kind":"message","game":659.5,"battle":"06:05:00","pos":[54.4,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","text":"Bąk está consigo. Leve-o ao socorrista Dudek: 63 m, à sua esquerda."}
+{"real":1694.3,"kind":"message","game":663.5,"battle":"06:05:32","pos":[42.9,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","text":"Socorrista Dudek: 52 m, em frente"}
+{"real":1704.5,"kind":"message","game":667,"battle":"06:06:00","pos":[31.3,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","text":"O pelotão atravessa. Conte os nossos e cubra os últimos homens. 16 homens no pelotão."}
+{"real":1705.2,"kind":"arrived","game":667.2,"battle":"06:06:02","pos":[30.5,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","label":"socorrista com Bąk"}
+{"real":1709,"kind":"message","game":668.2,"battle":"06:06:10","pos":[30.5,40],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","text":"Um homem caiu na retirada! Suprima o fogo do tabuleiro leste."}
+{"real":1746.3,"kind":"arrived","game":682.1,"battle":"06:08:02","pos":[-9.9,44.9],"objective":"Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista","label":"socorrista com Bąk"}
+{"real":1749,"kind":"objective","game":683.7,"battle":"06:08:14","pos":[-9.9,44.9],"objective":"Cubra a retirada do pelotão leste","text":"Cubra a retirada do pelotão leste"}
+{"real":1750.5,"kind":"message","game":684.4,"battle":"06:08:20","pos":[-9.9,44.9],"objective":"Cubra a retirada do pelotão leste","text":"Bąk entregue. Dudek trata dele — volte à secção."}
+{"real":1754.1,"kind":"arrived","game":686,"battle":"06:08:33","pos":[-5.5,40.6],"objective":"Cubra a retirada do pelotão leste","label":"eixo do portal rodoviário"}
+{"real":1764.4,"kind":"message","game":689.4,"battle":"06:09:00","pos":[-5.5,40.6],"objective":"Cubra a retirada do pelotão leste","text":"O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."}
+{"real":1791.9,"kind":"message","game":699.2,"battle":"06:09:10","pos":[-5.5,40.6],"objective":"Cubra a retirada do pelotão leste","text":"Os alemães avançam pelo tabuleiro! Faça-os recuar a tiro."}
+{"real":2086.4,"kind":"message","game":799.2,"battle":"06:09:30","pos":[-5.5,40.6],"objective":"Cubra a retirada do pelotão leste","text":"Recuam! Os alemães largam o tabuleiro."}
+{"real":2390.3,"kind":"message","game":915.5,"battle":"06:09:47","pos":[-5.5,40.6],"objective":"Cubra a retirada do pelotão leste","text":"O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."}
+{"real":2396.3,"kind":"objective","game":917.5,"battle":"06:10:03","pos":[-5.5,40.6],"objective":"Saia da ponte! Para o posto de disparo","text":"Saia da ponte! Para o posto de disparo"}
+{"real":645.2,"kind":"waited","game":231.3,"battle":"06:10:11","pos":[-5.5,40.6],"objective":"Saia da ponte! Para o posto de disparo","label":"demolição leste","battleFrom":"06:08:33","battleTo":"06:10:01"}
+{"real":2411,"kind":"message","game":922.7,"battle":"06:10:48","pos":[-5.5,40.6],"objective":"Saia da ponte! Para o posto de disparo","text":"Posto de disparo: 285 m, atrás de si"}
+{"real":2417.5,"kind":"checkpoint","game":926,"battle":"06:11:15","pos":[-20.5,40],"objective":"Saia da ponte! Para o posto de disparo","id":"cp_m01_d_retirada"}
+{"real":2557,"kind":"objective","game":970.1,"battle":"06:17:31","pos":[-279.9,26.7],"objective":"Mantenha o corredor aberto até à demolição oeste — conte os que passam","text":"Mantenha o corredor aberto até à demolição oeste — conte os que passam"}
+{"real":2564.9,"kind":"arrived","game":972.2,"battle":"06:17:48","pos":[-292,26],"objective":"Mantenha o corredor aberto até à demolição oeste — conte os que passam","label":"posto de disparo"}
+{"real":2577.9,"kind":"message","game":975.5,"battle":"06:18:16","pos":[-292,26],"objective":"Mantenha o corredor aberto até à demolição oeste — conte os que passam","text":"Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."}
+{"real":3353,"kind":"objective","game":1164.6,"battle":"06:45:00","pos":[-292,26],"objective":"Vá para o abrigo","text":"Vá para o abrigo"}
+{"real":788,"kind":"waited","game":191.1,"battle":"06:45:01","pos":[-292,26],"objective":"Vá para o abrigo","label":"demolição oeste","battleFrom":"06:17:57","battleTo":"06:45:00"}
+{"real":3368.6,"kind":"message","game":1169.2,"battle":"06:45:05","pos":[-292,26],"objective":"Vá para o abrigo","text":"Abrigo: 54 m, à sua direita"}
+{"real":3384.1,"kind":"blocked","game":1179.3,"battle":"06:45:15","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-292,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3394,"kind":"blocked","game":1185.5,"battle":"06:45:21","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-291.97,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3404,"kind":"blocked","game":1192.7,"battle":"06:45:28","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-292,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3410.6,"kind":"message","game":1198.4,"battle":"06:45:34","pos":[-292,65.6],"objective":"Vá para o abrigo","text":"Abrigo: 32 m, à sua esquerda"}
+{"real":3412.3,"kind":"blocked","game":1199.8,"battle":"06:45:36","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-291.99,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3421.3,"kind":"blocked","game":1207,"battle":"06:45:43","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-291.99,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3430.8,"kind":"blocked","game":1214.4,"battle":"06:45:50","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-292.03,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3439.5,"kind":"blocked","game":1221.6,"battle":"06:45:57","pos":[-292,65.6],"objective":"Vá para o abrigo","at":[-291.98,65.59],"to":[-292,68],"label":"abrigo"}
+{"real":3441.9,"kind":"failure","game":1223.2,"battle":"06:45:59","pos":[-295.3,64],"objective":"Vá para o abrigo","error":"Bloqueio persistente em -291.98,65.59 a caminho de abrigo"}

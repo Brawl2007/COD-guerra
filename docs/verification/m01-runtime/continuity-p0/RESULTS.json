@@ -1,0 +1,62 @@
+{
+  "productionCode": "b197f03",
+  "unitHead": "ce70422",
+  "unit": {
+    "command": "npm test",
+    "passed": 1482,
+    "failed": 0,
+    "skipped": 0,
+    "log": "final-node-ce70422.log"
+  },
+  "browser": {
+    "groupHead": "ce70422",
+    "passed": 14,
+    "failed": 1,
+    "rerunHead": "35f3215",
+    "rerunPassed": 1,
+    "rerunFailed": 0,
+    "productionChangedForRerun": false,
+    "retry": 0,
+    "skipped": 0
+  },
+  "build": "PASS (standard npm run build)",
+  "bundle": {
+    "status": "PASS",
+    "entryBytes": 13635
+  },
+  "golden": {
+    "amendment": 13,
+    "predecessor": "afaded912c5c3a7f8a4e6e567be9a98cd35ac24f",
+    "noBehaviourDifference": true,
+    "difficulty": "recruta",
+    "routes": [
+      23746,
+      21660
+    ]
+  },
+  "invariants": {
+    "routes": 24,
+    "violations": 0
+  },
+  "continuousFirst": {
+    "outcome": "incompleto",
+    "objectivesDone": 11,
+    "checkpoints": 4,
+    "health": 76,
+    "failure": "pilot route toward closed west shelter fence"
+  },
+  "continuousFinal": {
+    "status": "running",
+    "head": "35f3215",
+    "gameBundleIdenticalTo": "ce70422",
+    "plannedDifficulty": "soldado",
+    "viewport": [
+      640,
+      360
+    ],
+    "cutscenesSkipped": false
+  },
+  "humanPlaytest": false,
+  "externalReferenceGameplayObserved": false,
+  "mainMergeOrDeployInvoked": false
+}

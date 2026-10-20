@@ -1,0 +1,23 @@
+{
+  "method": "real simulation controls only; no state assignment",
+  "legs": [
+    {
+      "label": "road",
+      "player": {
+        "x": 28.83831995614863,
+        "y": 0,
+        "z": 39.9998417687077
+      },
+      "clock": 545.050000000052
+    },
+    {
+      "label": "west",
+      "player": {
+        "x": -290.8702524968613,
+        "y": -3,
+        "z": 26.063160933155288
+      },
+      "clock": 598.5000000000034
+    }
+  ]
+}

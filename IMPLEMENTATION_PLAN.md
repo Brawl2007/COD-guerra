@@ -1,5 +1,7 @@
 # Plano de implementação
 
+Continuação Codex: PR draft #92 sobre #91 `afaded9`, código `0261829` + `b197f03`; correções P0/P1 e a fatia de nível da D5 implementadas na origem, Node 1482/1482, build/bundle PASS e browser 14/15 + correção 1/1; percurso contínuo final em curso, sem promoção de contagens históricas ou integração na #80. [Handoff](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). D2 já integrada na #91, D3/D4/SP-08 e revisão humana pendentes.
+
 ## Onze tarefas parciais aceites — 2026-10-16
 
 O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.

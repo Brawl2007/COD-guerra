@@ -1,0 +1,37 @@
+{
+  "order": {
+    "id": "cv_road_truss_1",
+    "label": "primeira treliça · cobertura parcial",
+    "point": {
+      "x": 38.8,
+      "y": 0,
+      "z": 38.5
+    },
+    "arrived": true
+  },
+  "marker": null,
+  "status": "Na posição indicada · primeira treliça · cobertura parcial · mantenha a observação da ponte",
+  "presentation": {
+    "banner": {
+      "kind": "current",
+      "id": "obj_m01_hold_access"
+    },
+    "queued": [],
+    "fade": 0,
+    "checkpoint": 0,
+    "titleCard": null,
+    "resumeCard": "resume|Tczew — pontes do Vístula|1 de setembro de 1939 · 05:47|CP-C · Proteção dos engenheiros · Recruta",
+    "cinematic": false,
+    "sceneBeats": {
+      "scene": null,
+      "elapsed": 0,
+      "letterbox": false,
+      "dimHud": 0,
+      "lookPrompt": "",
+      "subtitlePause": false,
+      "shake": 0
+    },
+    "marker": null,
+    "tempo": true
+  }
+}

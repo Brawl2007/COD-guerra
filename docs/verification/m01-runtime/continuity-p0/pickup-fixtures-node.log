@@ -1,0 +1,39 @@
+✔ the sappers walk to the second cut where the crate is delivered, so "leve a caixa aos sapadores" is true (8201.164381ms)
+✔ Bąk takes the deck position with the 05:30 order and falls at bak_wound_point, in front of the player (971.389821ms)
+✔ a direction hint names the destination, distance and side when the player does not approach it (90.405066ms)
+✔ once the repair gate is ready the rest of seg_repair runs at readyScale; before that it keeps scale (3.853635ms)
+✔ the full control route still reaches the debrief with every required objective after the fixes (0.25929ms)
+✔ the withdrawing east platoon runs past the firing point during the corridor phase and does not stall at x = -109 (6719.97015ms)
+✔ a Bąk delivered by the player stays visible beside Dudek, who carries him west before the west demolition (946.239257ms)
+✔ when Dudek retrieves Bąk he walks to him on the deck and carries him to the station, visible all the way (1352.673286ms)
+✔ the roll call positions the present section in the shelter facing Jan; the absent stay away (1192.981802ms)
+✔ Kowal hands over at most six clips of section ammunition; saves keep the ammunition invariant (34.52158ms)
+✔ legacy schema 2 saves receive the unused section supply and can resupply after loading (22.614026ms)
+✔ the bridge trusses contain movement: no falling off a span sideways or into a blown gap; the river bank still can (4.437031ms)
+✔ a Bąk delivered after the east demolition is still evacuated, so the west demolition is not held forever (923.016234ms)
+✔ the pure collision JSON remains reproducible from the checked GLB translations (68.113165ms)
+✔ debug diagnostics return copies; editing a returned gate or failure cannot change live state (16.591335ms)
+✔ wz.29 requires a bolt cycle; an empty magazine uses a clip of five, preserving ammunition (0.203405ms)
+✔ wz.29 partial loading commits one round at a time and can be interrupted; in-progress saves resume it (0.224046ms)
+✔ M01 complete control route reaches debrief, all required objectives, unique events and all four actual checkpoints (8342.040793ms)
+✔ every M01 checkpoint restores exact actors, ammunition, RNG, dialogue, destruction and real clocks after death (56.588966ms)
+✔ damaged bridge pieces and German casualties survive LOD changes and checkpoint restoration (14.058853ms)
+✔ overdue events use >=; delayed events wait active seconds; pause freezes both clocks and weapon work (26.152848ms)
+✔ a late message never rewinds battle time and every aerial impact stays at least thirty metres away (4.072763ms)
+✔ west demolition requires actual delivery and waits while the player remains inside the safety zone (74.947884ms)
+✔ boundary warning precedes failure and its eight second timer resets when the player returns (3.528527ms)
+✔ metre-space hitboxes, actual cover and bridge joints support shots and continuous travel (1.915856ms)
+✔ corrupt M01 state is rejected atomically before an active scene, grenade or missing timer can crash the game (33.81577ms)
+✔ outro calls Nowicki twice as distinct beats and consumes completion once, including skip after partial playback (74.933132ms)
+✔ optional Bąk rescue cannot be taken away mid-carry; delivery chooses the player continuity branch (25.8944ms)
+✔ all five sectors keep their schedule and stable casualties for ninety seconds while the player looks away (1429.925396ms)
+✔ west hold timeout sends the sergeant to escort the player without demolition damage (953.795756ms)
+✔ grenade blast starts at its real height; solid cover shields a nearby actor and inactive actors stay unharmed (3.004671ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20580.638539

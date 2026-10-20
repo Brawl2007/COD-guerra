@@ -37,9 +37,11 @@
         "PR:#63",
         "PR:#76",
         "branch:codex/m01-partials-completion-integration-v1@9a1535b",
-        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)"
+        "PR:#78@d151a97 (merge c24ee0b na candidata pós-#76)",
+        "PR:#92",
+        "branch:codex/m01-continuity-p0@b197f03"
       ],
-      "note": "T02-min aceite (#63); fecho T02 (018/019, 038, 048/049, 051, pré-roll, mensagens de continuidade) do lote partials integrado na candidata 2026-10-15; sem verifier/reviewer independentes."
+      "note": "T02-min aceite (#63); fecho T02 (018/019, 038, 048/049, 051, pré-roll, mensagens de continuidade) do lote partials integrado na candidata 2026-10-15; sem verifier/reviewer independentes. [Continuidade Codex] Continuação #92 sobre #91 afaded9: rubricas fora do HUD e validade das pistas; entrega na origem, sem promoção de integração/aceitação."
     },
     "T03": {
       "name": "BLAST DATA GROUNDING",
@@ -57,9 +59,11 @@
       "status": "IN_CANDIDATE_UNVERIFIED",
       "refs": [
         "PR:#59",
-        "PR:#76"
+        "PR:#76",
+        "PR:#92",
+        "branch:codex/m01-continuity-p0@b197f03"
       ],
-      "note": "HUD da V7."
+      "note": "HUD da V7. [Continuidade Codex] Continuação #92 b197f03 sobre #91: cobertura real, interação única, resgate, prioridades, HUD curto e D5; não integrada na candidata e sem playtest humano."
     },
     "T05": {
       "name": "AUDIO DATA FIELDS",
@@ -440,9 +444,11 @@
         "branch:codex/m01-viewmodel-visual-v2",
         "PR:#90",
         "branch:claude/busy-ritchie-3fkvk2@5fde48f",
-        "branch:claude/busy-ritchie-3fkvk2-t40@3ca910e"
+        "branch:claude/busy-ritchie-3fkvk2-t40@3ca910e",
+        "PR:#92",
+        "branch:codex/m01-continuity-p0@b197f03"
       ],
-      "note": "Branch pré-V7; confirmar se foi absorvida. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest."
+      "note": "Branch pré-V7; confirmar se foi absorvida. [2026-10-17] No PR #90 (candidata de integração), testes npm 1095/1095 em 5fde48f; ainda não em #80/main, sem revisão independente/CI/playtest. [Continuidade Codex] Verificação Git de continuidade: PR #90 já contida em #80 68301b7; #91 contém D2 e braços. PR #92: correção do paciente/arma 0261829 e caixa articulada b197f03. Sem integração da continuação na #80 ou novo aceite."
     },
     "T41": {
       "name": "BRIDGE FINISH",

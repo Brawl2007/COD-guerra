@@ -1,0 +1,143 @@
+{
+  "codeHead": "ce70422f73c7665f9626c2da6674da13e518a25f",
+  "capture": "Authentic browser render; paused captures explicitly hide pause/resume/fade overlays in the specs. Menu captures are unmodified. Focused fixtures, not a continuous human playtest.",
+  "files": [
+    {
+      "file": "cover-arrival-high.png",
+      "sha256": "2ab2b9ed263d185d3929600bb50c571b05380da147c4f5128112b0f84fd947dc",
+      "test": "m01-continuity-p0-real-cov-ac3b6-duces-the-marker-on-arrival",
+      "imagePixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "cover-order-high.png",
+      "sha256": "8420fcc75e02857a836a053eb56f682eb5ce94743d82f4e83af36f1b887bb145",
+      "test": "m01-continuity-p0-real-cov-ac3b6-duces-the-marker-on-arrival",
+      "imagePixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "crate-high.png",
+      "sha256": "1e589f10a73b3069258854091e936b1c16f84a262390d51a88ea6a239cd655b7",
+      "test": "m01-continuity-p0-crate-pi-da5a2-production-High-weapon-pass",
+      "imagePixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "difficulty-menu-high.png",
+      "sha256": "a8d7de706d11b9cd745328700c216adfcb6dbf82bae3fd73cd34f065c5710935",
+      "test": "m01-difficulty-ui-new-miss-8d362-reaches-the-real-simulation",
+      "imagePixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "difficulty-mobile-menu.png",
+      "sha256": "31204188f4096abab80c1436f7191e28400bb0f048d05bc8755bd74fa93c4ab6",
+      "test": "m01-difficulty-ui-mobile-d-d921d--checkpoint-reports-Soldado",
+      "imagePixels": [
+        896,
+        414
+      ]
+    },
+    {
+      "file": "legacy-recruta-pause.png",
+      "sha256": "6838f0b6b3a69b82999938a04c81999370a90cae450f2a6c93c2061d8776afc0",
+      "test": "m01-difficulty-ui-legacy-c-1c6ee--continue-card-says-Recruta",
+      "imagePixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "mais-tarde-card-ready-1366x768.png",
+      "test": "m01-pacing-hud.spec.js",
+      "sha256": "fd8894ad07a90bc56797db0206cfae1f1ebd93ed0a99a6bc4626a1ae7c4cbac6",
+      "imagePixels": [
+        1366,
+        768
+      ]
+    },
+    {
+      "file": "marker-ahead-1366x768.png",
+      "test": "m01-pacing-hud.spec.js",
+      "sha256": "412c90022b3c52c43d0c0c03a725a3e4ea705548b73d1953933faa74a9e2bede",
+      "imagePixels": [
+        1366,
+        768
+      ]
+    },
+    {
+      "file": "mobile-bak-delivered.png",
+      "sha256": "3700e61f838a9fb07b32ac52ecdde58413684d9b8045a517995e91792239e039",
+      "test": "m01-continuity-p0-mobile-r-ab884-tches-to-the-next-objective",
+      "imagePixels": [
+        896,
+        414
+      ]
+    },
+    {
+      "file": "rescue-guidance-small.png",
+      "sha256": "86197fa04cb16268579c5229d7ef510c09e75ad92115251ab4381cf48a669eb2",
+      "test": "m01-continuity-p0-short-sc-b4307--before-E-becomes-available",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "touch-controls.png",
+      "test": "touch.spec.js",
+      "sha256": "b88004a663b28f2fa6faa32ea4762003521945ea990b454e7350553dec4ecc81",
+      "imagePixels": [
+        1792,
+        828
+      ]
+    },
+    {
+      "file": "touch-resumed.png",
+      "test": "touch.spec.js",
+      "sha256": "1ba5e290aa6cf404b02ea1319d8979101e0d92ce82a07df35f6f93776dd7bc15",
+      "imagePixels": [
+        1792,
+        828
+      ]
+    },
+    {
+      "file": "west-preroll-high.png",
+      "sha256": "f499541815feed0c8d29688443cec90e555f2abcb8ba16cdfc50d517b727f0a2",
+      "test": "m01-continuity-p0-west-dem-0dd3c--internal-staging-direction",
+      "imagePixels": [
+        1280,
+        720
+      ]
+    },
+    {
+      "file": "arrival-check.json",
+      "sha256": "29f47e0a45b1cd0f20db869dcf1b3e6f4a2a8232a9dcb57d15b7181d91954ce9",
+      "test": "m01-continuity-p0-real-cov-ac3b6-duces-the-marker-on-arrival"
+    }
+  ],
+  "groupResult": {
+    "passed": 14,
+    "failed": 1,
+    "sourceCommit": "ce70422",
+    "failedCase": "message delivery: read .label of a hidden/null HUD marker before pressing E",
+    "fixCommit": "35f3215",
+    "productionChanged": false,
+    "rerun": {
+      "passed": 1,
+      "failed": 0,
+      "sourceCommit": "35f3215",
+      "case": "message delivery and every later objective label/distance"
+    }
+  },
+  "note": "PNG dimensions are image pixels; touch.spec uses CSS 896x414 at device scale 2. Browser specs contain exact viewport/quality settings."
+}

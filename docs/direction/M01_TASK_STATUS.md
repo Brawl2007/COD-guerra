@@ -1,5 +1,7 @@
 # Estado das tarefas do M01 — entregas globais e integração
 
+Continuação Codex: PR draft #92 sobre #91 `afaded9`, código `0261829` + `b197f03`; correções P0/P1 e a fatia de nível da D5 implementadas na origem, Node 1482/1482, build/bundle PASS e browser 14/15 + correção 1/1; percurso contínuo final em curso, sem promoção de contagens históricas ou integração na #80. [Handoff](../verification/m01-runtime/continuity-p0/HANDOFF.md). D2 já integrada na #91, D3/D4/SP-08 e revisão humana pendentes.
+
 Atualização de 2026-10-16: a união reúne a pilha anterior `529e7de`, gráficos `8a0c362`, áudio `af81657` e acabamento das pontes `fd2b0c7`, preservando a proveniência. O código aceite do lote é `e377a07`; a branch de trabalho é `codex/m01-partials-browser-sampling-repair-v1`, com integração autorizada em `claude/m01-integration`. [Handoff e provas](../verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md).
 
 **37 tarefas principais confirmadas; 15 por fechar incluindo T53.** O lote fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41 sobre as26 já confirmadas. T01 está anulada e T11 incorporada em T24; subtarefas não são somadas novamente. Permanecem sem fecho formal: T00/T21/T37/T38/T40/T43/T45/T46/T47/T48/T49/T50/T51/T52/T53. Existem entregas candidatas fora deste lote; esta lista não significa15 tarefas por começar.

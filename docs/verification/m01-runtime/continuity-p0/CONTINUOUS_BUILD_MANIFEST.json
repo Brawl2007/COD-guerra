@@ -1,0 +1,33 @@
+{
+  "scope": "Frozen production build used by the continuous browser run; built from working tree after initial P0/P1 batch, before germanSilence guard, D5 and responsive HUD refinements. Not the final b197f03 build.",
+  "base": "afaded912c5c3a7f8a4e6e567be9a98cd35ac24f",
+  "earlierCommittedFix": "0261829",
+  "version": "0.2.0",
+  "difficulty": "recruta (legacy constructor default before D5 menu selection)",
+  "viewport": [
+    640,
+    360
+  ],
+  "quality": "low",
+  "cutscenesSkipped": false,
+  "gameStateInjection": false,
+  "filesSha256": {
+    "assets/asset-progress-B1UdpVEN.js": "7a1bb12d7d5a7c5ec96f68ffacf0538b6550217538c23d53452a830dade8e559",
+    "assets/game-B_IG7V_y.js": "f52867c0f2bb6a294f1a658d02c0849de02e22d3387a8ac3f3343bb149cff836",
+    "assets/index-tO-PRyZg.js": "1b86f674d09a4a3e71ecd8c0ca684175e7a0cd9606d020be3d7ec4216e71138b",
+    "assets/three-core-DHJZDzJU.js": "e1005510a93e2c1eae530101b8805f9b949f7712099b9bb81a865191d6d1f53c",
+    "assets/three-loaders-xoHaYwaR.js": "e7509c9e67d5d5a6bda866b374aac7a12d48c7c26bc01c4433d799bb4ab8a636"
+  },
+  "controllerAdaptation": "Two waypoint arrays were corrected in the Node pilot through its debugger. No browser/game state writes. See controller-route-patch.jsonl.",
+  "result": {
+    "outcome": "incompleto",
+    "objectivesDone": 11,
+    "objectivesTotal": 12,
+    "health": 76,
+    "checkpoints": 4,
+    "pageErrors": [],
+    "failedRequests": [],
+    "blocker": "Pilot route crossed the closed west fence toward the shelter. Corrected to the existing open passage used by tests/helpers/m01-route.js; no change to collision geometry.",
+    "report": "continuous-first/report.json"
+  }
+}
