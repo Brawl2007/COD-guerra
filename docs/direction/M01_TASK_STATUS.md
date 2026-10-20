@@ -1,5 +1,9 @@
 # Estado das tarefas do M01 — entregas globais e integração
 
+## Continuação Codex — D4, avisos reais e morte justa
+
+D4 Codex: `a7866e3`, mesma PR draft #92 sobre #91 `afaded9`; **CONCLUÍDA NA ORIGEM**, sem integração na #91/#80/main. A F1 exige aviso real recente do mesmo atirador além da janela D2 original; F4 impede golpe fatal de combate em cenas nos níveis Soldado/Veterano. Tabela D2 e Recruta preservadas; cartela longa passa a caber em ecrã curto. Node **1520/1520** nesse commit, golden15 idêntica em Recruta, invariantes24/24, comparação48 sem mortes novas/antecipadas ou diferenças finais/RNG nas36 conclusões; navegador final5/5, após primeira execução7/8 com falha da expectativa de checkpoint, e build/bundle PASS. Política inicial rejeitada por regressão e preservada como FAIL. [Handoff D4](../verification/m01-runtime/continuity-d4/HANDOFF.md). Revisão crítica/playtest, SP-08, oferta de baixar nível e audiovisual pendentes. #84 PAUSED, main e deploy preservados. Os registos seguintes conservam o estado das entregas anteriores.
+
 D3 Codex: runtime `3e674ed`, testes `cfa017d`, mesma PR draft #92 sobre #91 `afaded9`; concluída na origem, sem integração na #91/#80/main. Causa real + cartela sem ticks + retoma; CP-B2 só Soldado/Veterano após entregar material. Node **1499/1499**, golden 14 inteiramente idêntica em Recruta, invariantes 24/24, build/bundle PASS; browser 5/5 + adicional 1/1 após correções de fixture documentadas. [Handoff D3](../verification/m01-runtime/continuity-d3/HANDOFF.md). D4 isolada/em desenvolvimento; SP-08, audiovisual e revisão humana pendentes.
 
 O parágrafo seguinte descreve o lote P0/P1/D5 anterior à D3:

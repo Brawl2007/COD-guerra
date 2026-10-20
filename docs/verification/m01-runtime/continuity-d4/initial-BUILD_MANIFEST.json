@@ -1,0 +1,40 @@
+{
+  "baseCommit": "8ebc9086f8429fdc3197b88bd136411840d32cc4",
+  "sourceSha256": "aa66ca55d5e59c580d2d4a83f496a5da502d2d2b02f8388c1c10866bfc953c61",
+  "compiledFiles": {
+    "assets/asset-progress-B1UdpVEN.js": {
+      "bytes": 1143,
+      "sha256": "7a1bb12d7d5a7c5ec96f68ffacf0538b6550217538c23d53452a830dade8e559"
+    },
+    "assets/game-Dr7a1zvZ.js": {
+      "bytes": 1288324,
+      "sha256": "0931f9f035378145112cf5fe2f0f94ec19ea0bad11d213b02f8e9c548a36f809"
+    },
+    "assets/index-BmPJkyL7.js": {
+      "bytes": 13648,
+      "sha256": "babe101f0e9127104f77ef5e310d862ca6e84e0098ccb7205f33c64990ae04a9"
+    },
+    "assets/index-BwBCha_I.css": {
+      "bytes": 21862,
+      "sha256": "abd2c46899e2fae1ddfe7cdc46e9764d93cfd3e74f11c21d819304ec9d6f1e9f"
+    },
+    "assets/m01-difficulty-DUjzTxGo.js": {
+      "bytes": 1513,
+      "sha256": "1092477574d423f56ec961814b271750d074e49412cc1e65d916854af7b18cb6"
+    },
+    "assets/m01-difficulty-DzgKWyuq.js": {
+      "bytes": 332,
+      "sha256": "1b3195da1f06d92fd9d0299241096c38bf150f991e57ed63ef73870753d2bcfe"
+    },
+    "assets/three-core-DHJZDzJU.js": {
+      "bytes": 626268,
+      "sha256": "e1005510a93e2c1eae530101b8805f9b949f7712099b9bb81a865191d6d1f53c"
+    },
+    "assets/three-loaders-xoHaYwaR.js": {
+      "bytes": 63176,
+      "sha256": "e7509c9e67d5d5a6bda866b374aac7a12d48c7c26bc01c4433d799bb4ab8a636"
+    }
+  },
+  "browser": "Chromium / SwiftShader; mobile emulated",
+  "notes": "Built before source commit; final source hash must match. No deploy."
+}

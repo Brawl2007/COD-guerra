@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "8ebc9086f8429fdc3197b88bd136411840d32cc4",
+  "sourceSha256": "9f416636fe3e6cb4976c16919e7e607b81d74ee705948831da58f8163a5b4d2e",
+  "method": "published D3 simulation and route helper, Soldado, seed 19390901, normal controls to actual cover-adjustment salvo; no state/clock/HP/event injection",
+  "difficulty": "soldado",
+  "clock": 489.8000000000771,
+  "health": 100,
+  "engagementRecords": 3,
+  "fixtureSha256": "98432d840de432c2d41dedccac5441427f317e9f7d21e7c68a608053fb8819b0"
+}

@@ -1,0 +1,52 @@
+# Page snapshot
+
+```yaml
+- main [ref=e2]:
+  - generic "Jogo de tiro em primeira pessoa" [active] [ref=e3]
+  - text: ▸
+  - generic [ref=e4]:
+    - paragraph [ref=e5]: MISSÃO SUSPENSA
+    - heading "PAUSADO" [level=2] [ref=e6]
+    - paragraph [ref=e7]: A batalha está em pausa. Retome quando estiver pronto.
+    - paragraph [ref=e8]: "Objectivo: Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem · Dificuldade: Soldado"
+    - button "RETOMAR" [ref=e9] [cursor=pointer]
+    - button "REINICIAR CHECKPOINT" [ref=e10] [cursor=pointer]
+    - button "VOLTAR AO MENU" [ref=e11] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic: OBJECTIVO
+      - strong: "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem"
+      - generic: Metralhadora nos portões de Lisewo · 1081 m, em frente · mude para primeira treliça · cobertura parcial, 67 m, em frente
+    - generic:
+      - generic: Objectivo
+      - strong: "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem"
+    - generic:
+      - generic: 1 · IX · 1939
+      - time: 05:34:03
+      - status:
+        - generic: PROGRESSO GUARDADO
+        - generic: CP-C · Proteção dos engenheiros · Soldado
+    - generic:
+      - generic: Tczew — pontes do Vístula
+      - generic: 1 de setembro de 1939 · 05:34
+      - generic: CP-C · Proteção dos engenheiros · Soldado
+    - generic:
+      - generic: "Marek Zieliński: Ele se debruça. Espere."
+    - generic:
+      - generic:
+        - generic: SAÚDE
+        - generic: "100"
+      - generic:
+        - generic: KARABINEK WZ.29
+        - generic:
+          - generic: "5"
+          - emphasis: /
+          - generic: "40"
+        - generic: Alça 300 m
+        - generic: Granadas ×2
+    - generic:
+      - generic: Mude para primeira treliça · cobertura parcial
+      - generic: 67 m
+    - generic:
+      - strong
+```

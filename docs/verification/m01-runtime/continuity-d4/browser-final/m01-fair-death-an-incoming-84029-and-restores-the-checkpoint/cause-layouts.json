@@ -1,0 +1,166 @@
+[
+  {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "lines": [
+      {
+        "text": "Abatido por espingarda alemã nos portões de Lisewo.",
+        "left": 115.1875,
+        "right": 1164.78125,
+        "top": 454.375,
+        "bottom": 497.5625,
+        "width": 1050,
+        "scrollWidth": 1050,
+        "height": 43,
+        "scrollHeight": 43
+      },
+      {
+        "text": "A retomar CP-C · Proteção dos engenheiros",
+        "left": 115.1875,
+        "right": 1164.78125,
+        "top": 508.75,
+        "bottom": 534.328125,
+        "width": 1050,
+        "scrollWidth": 1050,
+        "height": 26,
+        "scrollHeight": 26
+      },
+      {
+        "text": "Veterano",
+        "left": 115.1875,
+        "right": 1164.78125,
+        "top": 538.109375,
+        "bottom": 558,
+        "width": 1050,
+        "scrollWidth": 1050,
+        "height": 20,
+        "scrollHeight": 20
+      }
+    ]
+  },
+  {
+    "viewport": {
+      "width": 896,
+      "height": 414
+    },
+    "lines": [
+      {
+        "text": "Abatido por espingarda alemã nos portões de Lisewo.",
+        "left": 80.625,
+        "right": 815.34375,
+        "top": 212.515625,
+        "bottom": 275.390625,
+        "width": 735,
+        "scrollWidth": 735,
+        "height": 63,
+        "scrollHeight": 63
+      },
+      {
+        "text": "A retomar CP-C · Proteção dos engenheiros",
+        "left": 80.625,
+        "right": 815.34375,
+        "top": 283.53125,
+        "bottom": 302.890625,
+        "width": 735,
+        "scrollWidth": 735,
+        "height": 19,
+        "scrollHeight": 19
+      },
+      {
+        "text": "Veterano",
+        "left": 80.625,
+        "right": 815.34375,
+        "top": 305.75,
+        "bottom": 320.859375,
+        "width": 735,
+        "scrollWidth": 735,
+        "height": 15,
+        "scrollHeight": 15
+      }
+    ]
+  },
+  {
+    "viewport": {
+      "width": 640,
+      "height": 360
+    },
+    "lines": [
+      {
+        "text": "Abatido por espingarda alemã nos portões de Lisewo.",
+        "left": 57.59375,
+        "right": 582.390625,
+        "top": 190.6875,
+        "bottom": 239.28125,
+        "width": 525,
+        "scrollWidth": 525,
+        "height": 49,
+        "scrollHeight": 49
+      },
+      {
+        "text": "A retomar CP-C · Proteção dos engenheiros",
+        "left": 57.59375,
+        "right": 582.390625,
+        "top": 245.578125,
+        "bottom": 261.765625,
+        "width": 525,
+        "scrollWidth": 525,
+        "height": 16,
+        "scrollHeight": 16
+      },
+      {
+        "text": "Veterano",
+        "left": 57.59375,
+        "right": 582.390625,
+        "top": 264.15625,
+        "bottom": 279,
+        "width": 525,
+        "scrollWidth": 525,
+        "height": 15,
+        "scrollHeight": 15
+      }
+    ]
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "lines": [
+      {
+        "text": "Abatido por espingarda alemã nos portões de Lisewo.",
+        "left": 35.09375,
+        "right": 354.890625,
+        "top": 541.5,
+        "bottom": 614.390625,
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 73,
+        "scrollHeight": 73
+      },
+      {
+        "text": "A retomar CP-C · Proteção dos engenheiros",
+        "left": 35.09375,
+        "right": 354.890625,
+        "top": 620.6875,
+        "bottom": 636.875,
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 16,
+        "scrollHeight": 16
+      },
+      {
+        "text": "Veterano",
+        "left": 35.09375,
+        "right": 354.890625,
+        "top": 639.265625,
+        "bottom": 654.109375,
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 15,
+        "scrollHeight": 15
+      }
+    ]
+  }
+]

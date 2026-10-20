@@ -1,0 +1,85 @@
+{
+  "level": "veterano",
+  "seed": 19390901,
+  "support": false,
+  "deaths": [
+    {
+      "clock": 719.7499999998931,
+      "firedAt": 718.2999999998945,
+      "by": "de_spans_0",
+      "kind": "player",
+      "health": 1,
+      "alive": true,
+      "scene": null,
+      "engagement": {
+        "first": 714.4999999998979,
+        "last": 718.2999999998945,
+        "cue": {
+          "first": 714.4999999998979,
+          "last": 718.2999999998945,
+          "kind": "flash"
+        }
+      },
+      "cue": {
+        "first": 714.4999999998979,
+        "last": 718.2999999998945,
+        "kind": "flash"
+      },
+      "proof": {
+        "first": {
+          "at": 714.4999999998979,
+          "cue": "flash",
+          "by": "de_spans_0",
+          "valid": true,
+          "source": {
+            "type": "enemy-fire",
+            "round": "m01_round_1686",
+            "by": "de_spans_0",
+            "firedAt": 714.4999999998979,
+            "emittedAt": 714.4999999998979,
+            "visible": true,
+            "tracer": false,
+            "origin": {
+              "x": 926.89999999999,
+              "y": 1.64,
+              "z": 38.16
+            }
+          }
+        },
+        "last": {
+          "at": 718.2999999998945,
+          "cue": "flash",
+          "by": "de_spans_0",
+          "valid": true,
+          "source": {
+            "type": "enemy-fire",
+            "round": "m01_round_1693",
+            "by": "de_spans_0",
+            "firedAt": 718.2999999998945,
+            "emittedAt": 718.2999999998945,
+            "visible": true,
+            "tracer": false,
+            "origin": {
+              "x": 926.89999999999,
+              "y": 1.64,
+              "z": 38.16
+            }
+          }
+        }
+      },
+      "rng": 1455362752,
+      "rngAfter": 1455362752,
+      "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+      "qualifyingCue": true
+    }
+  ],
+  "method": "Snapshot observed before a real fatal round on a route driven by normal controls; no injected HP, clock, positions, rounds or events.",
+  "snapshotSha256": "eedf92730f4891705b64f1440e71d113ecac1dfc60ab74ffd2232f676e8d9a9d",
+  "sourceCommitBase": "8ebc9086f8429fdc3197b88bd136411840d32cc4",
+  "auditInputsSha256": {
+    "src/game/m01-simulation.js": "aa66ca55d5e59c580d2d4a83f496a5da502d2d2b02f8388c1c10866bfc953c61",
+    "src/game/m01-difficulty.js": "8dafe026c8c1bf6ccc16e730618e9c8fd7675414257233d2c6a949fdc926501e",
+    "tests/helpers/m01-danger.js": "4ff6c34dff42c50b36c87c5996d7b8b4400d1ab67662cae833979b53edfc5a20",
+    "tests/helpers/m01-route.js": "fa2f2420f3115c279aaf7ce17dfe4872ea0f5a0d6ec9001c19ae05652eca0efe"
+  }
+}

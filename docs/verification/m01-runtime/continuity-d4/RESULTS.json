@@ -1,0 +1,72 @@
+{
+  "task": "M01-H9-D4-FAIR-DEATH-V1",
+  "runtimeCommit": "a7866e303871e36b472b886a809ca191f5076b85",
+  "version": "operation-ashen-road 0.2.0 / M01 Tczew",
+  "unit": {
+    "command": "npm test",
+    "tests": 1520,
+    "pass": 1520,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "browserFinal": {
+    "expected": 5,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "initialRun": "7/8; legacy fixture expected a static checkpoint list; corrected to require the real next CP-C"
+  },
+  "fairnessAudit": {
+    "routes": 48,
+    "deaths": 12,
+    "violatingRoutes": [],
+    "deathFixtureCaptured": true
+  },
+  "causalComparison": {
+    "routes": 48,
+    "newDeaths": [],
+    "earlierDeaths": [],
+    "survivingRouteDifferences": [],
+    "rescuedRoutes": [],
+    "delayedDeaths": [
+      {
+        "level": "veterano",
+        "seed": 3,
+        "support": false,
+        "beforeClock": 485.050000000076,
+        "afterClock": 673.9999999999347
+      },
+      {
+        "level": "veterano",
+        "seed": 5,
+        "support": false,
+        "beforeClock": 521.8000000000732,
+        "afterClock": 736.4999999998779
+      }
+    ]
+  },
+  "invariants": {
+    "routes": 24,
+    "violatingRoutes": []
+  },
+  "golden": {
+    "amendment": 15,
+    "predecessor": "8ebc9086f8429fdc3197b88bd136411840d32cc4",
+    "recrutaTicks": [
+      23746,
+      21660
+    ],
+    "additionalNavigationRoutes": 4,
+    "previousGoldensUnchanged": true
+  },
+  "notPerformed": [
+    "human playtest",
+    "human audio review",
+    "Safari / real mobile hardware",
+    "target PC FPS",
+    "new continuous browser menu-to-debrief run",
+    "main/candidate merge",
+    "deploy"
+  ]
+}

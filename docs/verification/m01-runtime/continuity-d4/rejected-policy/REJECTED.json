@@ -1,0 +1,8 @@
+{
+  "status": "REJECTED initial D4 policy; not integrated or approved",
+  "reason": "Veterano seed2 supported route completes on exact D3 8ebc908 but dies on initial D4; preserve D2 calibration gates while requiring actual cue",
+  "stoppedGolden15Pids": [
+    136904
+  ],
+  "nativeFairnessAudit": "48 routes, 13 deaths all with valid cues; this alone did not prove calibration preserved"
+}

@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -149,14 +149,19 @@ const AMENDMENTS={
     deltaFields:/^\$\.events\.\d+\.priority$/,
     stripped:['dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guideKey','timers.guideAt','timers.guideDist','timers.guideShown','flags.m01.suggested_cover','mission.status','events: changed guide/cover/staging message text and message priority/scope/durationMs'],
     stateOnly:frame=>guidanceFrame(frame,new Set(definition.cutscenes.flatMap(s=>(s.preRoll?.timeline??[]).map(b=>b.action).filter(Boolean))))},
-  '14':{task:'M01-H9-D3-DEATH-CHECKPOINT-V1',delta:'death+repair-checkpoint',predecessor:'23313aa5ef5ca8063d33cad7895e0850dac09c0f',identical:true,
+  '14':{after:'cfa017d187da37a7906255442851ea5acf1ab74b',task:'M01-H9-D3-DEATH-CHECKPOINT-V1',delta:'death+repair-checkpoint',predecessor:'23313aa5ef5ca8063d33cad7895e0850dac09c0f',identical:true,
     previousGolden:'tests/fixtures/m01-continuity-guidance-gameplay-baseline.json',golden:'tests/fixtures/m01-death-checkpoint-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/continuity-d3',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-cover-guidance.js','src/world/m01-player-physics.js','src/game/m01-audio-events.js'],
-    generationStage:'D3: actual player-down cause and CP-B2 after material delivery on Soldado/Veterano. The default Recruta routes, including original four checkpoints, must remain byte-identical to PR92 23313aa; presentation time never advances simulation.'}
+    generationStage:'D3: actual player-down cause and CP-B2 after material delivery on Soldado/Veterano. The default Recruta routes, including original four checkpoints, must remain byte-identical to PR92 23313aa; presentation time never advances simulation.'},
+  '15':{task:'M01-H9-D4-FAIR-DEATH-V1',delta:'actual-danger-cues',predecessor:'8ebc9086f8429fdc3197b88bd136411840d32cc4',identical:true,
+    previousGolden:'tests/fixtures/m01-death-checkpoint-gameplay-baseline.json',golden:'tests/fixtures/m01-fair-death-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/continuity-d4',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-cover-guidance.js','src/world/m01-player-physics.js','src/game/m01-audio-events.js'],
+    generationStage:'H9 D4: actual emitted flash/tracer with world LOS or a real near-miss crack; same-shooter cue with full reaction grace and freshness; no fatal combat wound in scenes on Soldado/Veterano. Legacy engagement records remain readable and cannot license a death until an actual cue. No table, AI, physics or clock change. Default Recruta routes must stay entirely identical to D3 8ebc908.'}
 
 };
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13 or 14`);
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14 or 15`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);
