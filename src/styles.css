@@ -140,6 +140,8 @@ button:disabled{opacity:.45;cursor:wait}#complete{overflow:auto;justify-content:
 body.touch #objective{top:max(12px,env(safe-area-inset-top));left:max(16px,env(safe-area-inset-left));max-width:34vw;padding:4px 10px}body.touch #objective strong{font-size:.7rem}
 body.touch :is(#battle-clock,#clock-date){display:none}body.touch #status{display:contents}
 body.touch #health-wrap{position:absolute;left:max(16px,env(safe-area-inset-left));top:78px;transform:scale(.8);transform-origin:top left}
+/* The objective/status panel can wrap: use the presenter's measured panel edge, leaving room for its marker. */
+body.touch #hud.m01 #health-wrap{top:calc(var(--guidance-y,22vh) + 3em)}
 body.touch #ammo{position:absolute;right:max(16px,env(safe-area-inset-right));top:56px;transform:scale(.8);transform-origin:top right}body.touch #ammo b{font-size:2.2rem}
 body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #subtitle{bottom:44%;left:20%;width:60%}
 .settings{position:relative}.audio-mix summary{font-size:.6rem;color:#9da690;letter-spacing:.2em;cursor:pointer;list-style:none;padding-top:2px;white-space:nowrap}.audio-mix summary::after{content:" ▸"}.audio-mix[open] summary::after{content:" ▾"}

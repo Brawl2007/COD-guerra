@@ -1,0 +1,27 @@
+{
+  "baseCommit": "738d294edcc993fa65e434d7fd36ddda3dbe166c",
+  "method": "Existing route/driver controls on Soldado; read-only snapshots; outside-post uses normal walking after restoring the genuine carrying snapshot. No position, HP, clock, events or LOS injected.",
+  "simulationSha256": "aa66ca55d5e59c580d2d4a83f496a5da502d2d2b02f8388c1c10866bfc953c61",
+  "fixtures": {
+    "tests/fixtures/m01-sp08-entry.json": {
+      "sha256": "635d3ff4be8164d54cf6411514952bea86f142b0b6d88816d8af976d6c6f1eb2",
+      "clock": 906.1499999997236
+    },
+    "tests/fixtures/m01-sp08-medic-carrying.json": {
+      "sha256": "cb27316c17766103aa461b550b3d96befcab633699382bbc4561d0b38826eca5",
+      "clock": 918.9999999997119
+    },
+    "tests/fixtures/m01-sp08-all-clear.json": {
+      "sha256": "e0c3533ab7f07dac970b9e263e25b41396eaaf9d627cae21705f12bf3b25f8d1",
+      "clock": 1162.4499999994905
+    },
+    "tests/fixtures/m01-sp08-west-blast.json": {
+      "sha256": "e82358f4148fbf94e8dc6d8053822211d7baae594c2bd4e25c0744cec83eb023",
+      "clock": 1165.9999999994873
+    },
+    "tests/fixtures/m01-sp08-outside-post.json": {
+      "sha256": "39ce68e984682ebe4327e12b9ce6cefd7f6d5b5e287c4c3bb2a2bc31dbfd1ab8",
+      "clock": 921.4999999997096
+    }
+  }
+}
