@@ -170,3 +170,7 @@ body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #sub
 
 #hud.compact-guidance .objective-marker .marker-label{display:none}
 #hud.player-down :is(#objective,#status,#ammo,#health-wrap,#clock-wrap,#crosshair,#captions,#interaction,#objective-update,#resume-card,#hit-marker,.objective-marker,.tempo-card){opacity:0!important;pointer-events:none}
+/* A causa real pode ser longa: a cartela de morte mostra todas as palavras, também em ecrãs curtos. */
+#hud.player-down #title-card{width:82vw}
+#hud.player-down #title-card .card-line{white-space:normal;overflow-wrap:anywhere;max-width:100%;line-height:1.35}
+#hud.player-down #title-card .card-line-0{--ls:.04em;font-size:clamp(18px,2.6vw,32px)}

@@ -9,7 +9,7 @@ const CP='cp_m01_b2_reparo';
 const fresh=id=>{const s=new M01Simulation(19390901,{difficulty:id});s.tick(.05,{skip:true});s.drainEvents();return s;};
 function lethal(s,by='de_east_0'){
  const a=s.actor(by);s.player.health=s.level.woundDamage;
- if(s.level.reactionGraceSec!==null){s.noteTelegraph(a,'player',1,.075);s.clock+=s.level.reactionGraceSec+.1;s.noteTelegraph(a,'player',1,.075);}
+ if(s.level.reactionGraceSec!==null){s.noteTelegraph(a,'player',1,.075);s.noteDangerCue(a,'player','flash');s.clock+=s.level.reactionGraceSec+.1;s.noteTelegraph(a,'player',1,.075);s.noteDangerCue(a,'player','flash');}
  const before=s.rng.state;s.woundPlayer({by,weapon:a.weapon,firedAt:s.clock,kind:'player'});assert.equal(s.rng.state,before);return s.drainEvents();
 }
 for(const id of ['recruta','soldado','veterano'])test(`${id}: the actual lethal round publishes its source once, with no additional draw`,()=>{
@@ -77,8 +77,15 @@ for(const id of ['recruta','soldado','veterano'])test(`${id}: actual supported r
  }});
  assert.deepEqual(Object.keys(checkpoints),['cp_m01_c_engenheiros','cp_m01_d_retirada']);
  for(const [cp,snapshot]of Object.entries(checkpoints)){
-  const sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();
-  assert.equal(lethal(sim).filter(e=>e.type==='player-down').length,1);assert.equal(sim.player.alive,false);
+  const sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();const down=[];
+  // D4: CP-C saves the order scene. Combat cannot kill in that scene on hard levels, so let its real ticks finish first.
+  if(id!=='recruta'&&sim.scene){
+   const data=sim.definition.cutscenes.find(c=>c.id===sim.scene.id),limit=Math.ceil((data.maxDurationSec+.1)/.05);
+   for(let i=0;sim.scene&&sim.player.alive&&i<limit;i++){sim.tick(.05,{skip:true});down.push(...sim.drainEvents().filter(e=>e.type==='player-down'));}
+   assert.equal(sim.scene,null,'the checkpoint scene finishes before a lethal combat wound');
+  }
+  if(sim.player.alive)down.push(...lethal(sim).filter(e=>e.type==='player-down'));
+  assert.equal(down.length,1);assert.equal(sim.player.alive,false);
   sim.tick(.05);assert.equal(sim.player.alive,true);assert.equal(sim.checkpointsReached.at(-1),cp);assert.deepEqual(sim.snapshot(false),snapshot);
  }
 });

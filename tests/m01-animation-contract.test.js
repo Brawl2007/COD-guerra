@@ -56,7 +56,8 @@ import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.jso
 import continuityGuidance from './fixtures/m01-continuity-guidance-gameplay-baseline.json' with {type:'json'};
 const GUIDANCE_DELTA=/^\$\.events\.\d+\.priority$/;
 import deathCheckpoint from './fixtures/m01-death-checkpoint-gameplay-baseline.json' with {type:'json'};
-const current=deathCheckpoint;   // the golden of the live simulation
+import fairDeath from './fixtures/m01-fair-death-gameplay-baseline.json' with {type:'json'};
+const current=fairDeath;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -456,11 +457,18 @@ test('guidance amendment 13 pins PR92 23313aa as history and preserves combat, p
  }
 });
 
-test('D3 amendment 14 pins the live source and keeps every Recruta gameplay byte identical to PR92 23313aa',()=>{
+test('D3 amendment 14 pins cfa017d as history and keeps its Recruta gameplay bytes identical to PR92 23313aa',()=>{
  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
  identicalAmendment(deathCheckpoint,{amendment:'14',task:'M01-H9-D3-DEATH-CHECKPOINT-V1',delta:'death+repair-checkpoint',previous:continuityGuidance,previousFile:'m01-continuity-guidance-gameplay-baseline.json',predecessor:'23313aa5ef5ca8063d33cad7895e0850dac09c0f'});
- assert.equal(sha('../src/game/m01-simulation.js'),deathCheckpoint.sourceSha256);
- for(const [file,expected]of Object.entries(deathCheckpoint.inputsSha256))assert.equal(sha('../'+file),expected,file);
+ assert.equal(deathCheckpoint.sourceSha256,'9f416636fe3e6cb4976c16919e7e607b81d74ee705948831da58f8163a5b4d2e','the D3 source, before D4 actual cues');
+ for(const [file,expected]of Object.entries(deathCheckpoint.inputsSha256))if(file!=='src/game/m01-simulation.js')assert.equal(sha('../'+file),expected,file);
+});
+
+test('D4 amendment 15 pins the live source and preserves every Recruta gameplay byte against published D3',()=>{
+ const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+ identicalAmendment(fairDeath,{amendment:'15',task:'M01-H9-D4-FAIR-DEATH-V1',delta:'actual-danger-cues',previous:deathCheckpoint,previousFile:'m01-death-checkpoint-gameplay-baseline.json',predecessor:'8ebc9086f8429fdc3197b88bd136411840d32cc4'});
+ assert.equal(sha('../src/game/m01-simulation.js'),fairDeath.sourceSha256);
+ for(const [file,expected]of Object.entries(fairDeath.inputsSha256))assert.equal(sha('../'+file),expected,file);
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{
