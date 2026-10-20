@@ -1,0 +1,474 @@
+{
+  "config": {
+    "configFile": "/workspace/artifacts/continuity-sp08-playwright.config.mjs",
+    "rootDir": "/workspace/COD-guerra-sp08/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/artifacts/continuity-sp08-browser-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra-sp08/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/artifacts/continuity-sp08-browser-final-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview -- --port 4195 --strictPort",
+      "url": "http://127.0.0.1:4195/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000,
+      "cwd": "/workspace/COD-guerra-sp08"
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-corridor-role.spec.js",
+      "file": "m01-corridor-role.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop: normal controls return to the post; observing Dudek does not order following; checkpoint restart clears the role",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 59374,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"\u001b[7mMantenha o post\u001b[27mo\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mRegresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demoliçã\u001b[27mo\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    14 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 9 de 12 h…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Corredor · passaram 9 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    2 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 10 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 10 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    3 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 11 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 11 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    15 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Dudek leva Bąk para a estação…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"\u001b[7mMantenha o post\u001b[27mo\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mRegresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demoliçã\u001b[27mo\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    14 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 9 de 12 h…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Corredor · passaram 9 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    2 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 10 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 10 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    3 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 11 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 11 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    15 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Dudek leva Bąk para a estação…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição\"\u001b[22m\n\n    at returning (/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:23:51)\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:31:2",
+                    "location": {
+                      "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                      "column": 51,
+                      "line": 23
+                    },
+                    "snippet": "  21 |    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:1,x,y:y+Math.min(65,b.height*.35)}]});\n  22 |   }else await page.keyboard.down('KeyS');\n> 23 |   await expect(page.locator('#objective-status')).toContainText('Mantenha o posto',{timeout:30000});\n     |                                                   ^\n  24 |  }finally{if(touch&&cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else if(!touch)await page.keyboard.up('KeyS');}\n  25 |  await pause(page,touch);const arrived=await state(page),p=arrived.snapshot.player,bp=before.snapshot.player;\n  26 |  expect(Math.hypot(p.x-bp.x,p.z-bp.z)).toBeGreaterThan(2);expect(p.alive).toBe(true);expect(arrived.status).toBe('Mantenha o posto · '+arrived.snapshot.mission.status);expect(arrived.marker).toBe('Dudek com Bąk · observe a retirada');expect(arrived.snapshot.objectives.obj_m01_hold_corridor.state).toBe('active');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                        "column": 51,
+                        "line": 23
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"\u001b[7mMantenha o post\u001b[27mo\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mRegresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demoliçã\u001b[27mo\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    14 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 9 de 12 h…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Corredor · passaram 9 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    2 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 10 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 10 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    3 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 11 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 11 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    15 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Dudek leva Bąk para a estação…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição\"\u001b[22m\n\n\n  21 |    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:1,x,y:y+Math.min(65,b.height*.35)}]});\n  22 |   }else await page.keyboard.down('KeyS');\n> 23 |   await expect(page.locator('#objective-status')).toContainText('Mantenha o posto',{timeout:30000});\n     |                                                   ^\n  24 |  }finally{if(touch&&cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else if(!touch)await page.keyboard.up('KeyS');}\n  25 |  await pause(page,touch);const arrived=await state(page),p=arrived.snapshot.player,bp=before.snapshot.player;\n  26 |  expect(Math.hypot(p.x-bp.x,p.z-bp.z)).toBeGreaterThan(2);expect(p.alive).toBe(true);expect(arrived.status).toBe('Mantenha o posto · '+arrived.snapshot.mission.status);expect(arrived.marker).toBe('Dudek com Bąk · observe a retirada');expect(arrived.snapshot.objectives.obj_m01_hold_corridor.state).toBe('active');\n    at returning (/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:23:51)\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:31:2"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T16:01:12.832Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/workspace/artifacts/continuity-sp08-browser-final/m01-corridor-role-desktop--e1321-int-restart-clears-the-role/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/artifacts/continuity-sp08-browser-final/m01-corridor-role-desktop--e1321-int-restart-clears-the-role/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/artifacts/continuity-sp08-browser-final/m01-corridor-role-desktop--e1321-int-restart-clears-the-role/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                    "column": 51,
+                    "line": 23
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4d48011e6451c605788d-ba4596caa60268ed3192",
+          "file": "m01-corridor-role.spec.js",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "the real ready corridor proceeds to west demolition and removes the old role without scripted game writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 25611,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T16:03:15.146Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4d48011e6451c605788d-4382ba281c7956102d4f",
+          "file": "m01-corridor-role.spec.js",
+          "line": 45,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "mobile corridor",
+          "file": "m01-corridor-role.spec.js",
+          "line": 37,
+          "column": 6,
+          "specs": [
+            {
+              "title": "real touch controls return to the post and the context fits short screens",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 58687,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"\u001b[7mMantenha o post\u001b[27mo\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mRegresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demoliçã\u001b[27mo\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    8 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 9 de 12 h…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 9 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    - locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 10 de 12 …</span>\u001b[22m\n\u001b[2m    - unexpected value \"Regresse ao posto · Corredor · passaram 10 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    2 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 11 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 11 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    23 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Dudek leva Bąk para a estação…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"\u001b[7mMantenha o post\u001b[27mo\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mRegresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demoliçã\u001b[27mo\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    8 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 9 de 12 h…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 9 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    - locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 10 de 12 …</span>\u001b[22m\n\u001b[2m    - unexpected value \"Regresse ao posto · Corredor · passaram 10 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    2 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 11 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 11 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    23 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Dudek leva Bąk para a estação…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição\"\u001b[22m\n\n    at returning (/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:23:51)\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:38:2",
+                        "location": {
+                          "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                          "column": 51,
+                          "line": 23
+                        },
+                        "snippet": "  21 |    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:1,x,y:y+Math.min(65,b.height*.35)}]});\n  22 |   }else await page.keyboard.down('KeyS');\n> 23 |   await expect(page.locator('#objective-status')).toContainText('Mantenha o posto',{timeout:30000});\n     |                                                   ^\n  24 |  }finally{if(touch&&cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else if(!touch)await page.keyboard.up('KeyS');}\n  25 |  await pause(page,touch);const arrived=await state(page),p=arrived.snapshot.player,bp=before.snapshot.player;\n  26 |  expect(Math.hypot(p.x-bp.x,p.z-bp.z)).toBeGreaterThan(2);expect(p.alive).toBe(true);expect(arrived.status).toBe('Mantenha o posto · '+arrived.snapshot.mission.status);expect(arrived.marker).toBe('Dudek com Bąk · observe a retirada');expect(arrived.snapshot.objectives.obj_m01_hold_corridor.state).toBe('active');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                            "column": 51,
+                            "line": 23
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#objective-status')\nExpected substring: \u001b[32m\"\u001b[7mMantenha o post\u001b[27mo\"\u001b[39m\nReceived string:    \u001b[31m\"\u001b[7mRegresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demoliçã\u001b[27mo\"\u001b[39m\nTimeout: 30000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for locator('#objective-status')\u001b[22m\n\u001b[2m    8 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 9 de 12 h…</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 9 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    - locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 10 de 12 …</span>\u001b[22m\n\u001b[2m    - unexpected value \"Regresse ao posto · Corredor · passaram 10 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    2 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Corredor · passaram 11 de 12 …</span>\u001b[22m\n\u001b[2m      - unexpected value \"Regresse ao posto · Corredor · passaram 11 de 12 homens do pelotão leste\"\u001b[22m\n\u001b[2m    23 × locator resolved to <span id=\"objective-status\">Regresse ao posto · Dudek leva Bąk para a estação…</span>\u001b[22m\n\u001b[2m       - unexpected value \"Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição\"\u001b[22m\n\n\n  21 |    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{id:1,x,y:y+Math.min(65,b.height*.35)}]});\n  22 |   }else await page.keyboard.down('KeyS');\n> 23 |   await expect(page.locator('#objective-status')).toContainText('Mantenha o posto',{timeout:30000});\n     |                                                   ^\n  24 |  }finally{if(touch&&cdp)await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});else if(!touch)await page.keyboard.up('KeyS');}\n  25 |  await pause(page,touch);const arrived=await state(page),p=arrived.snapshot.player,bp=before.snapshot.player;\n  26 |  expect(Math.hypot(p.x-bp.x,p.z-bp.z)).toBeGreaterThan(2);expect(p.alive).toBe(true);expect(arrived.status).toBe('Mantenha o posto · '+arrived.snapshot.mission.status);expect(arrived.marker).toBe('Dudek com Bąk · observe a retirada');expect(arrived.snapshot.objectives.obj_m01_hold_corridor.state).toBe('active');\n    at returning (/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:23:51)\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:38:2"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T16:02:14.430Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/artifacts/continuity-sp08-browser-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/artifacts/continuity-sp08-browser-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/workspace/artifacts/continuity-sp08-browser-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                        "column": 51,
+                        "line": 23
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4d48011e6451c605788d-082a7a32b6c205ae18d5",
+              "file": "m01-corridor-role.spec.js",
+              "line": 37,
+              "column": 130
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "m01-fair-death.spec.js",
+      "file": "m01-fair-death.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a genuine D3 danger save remains playable in D4 with its actual saved level",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T16:03:40.926Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "80d64fbe28f4b01dc148-1dd25c020b013893c4c1",
+          "file": "m01-fair-death.spec.js",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "an incoming round from the real audited route publishes its actual shooter and restores the checkpoint",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22520,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T16:03:51.872Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "80d64fbe28f4b01dc148-f29a16076e752b50f965",
+          "file": "m01-fair-death.spec.js",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "m01-player-down.spec.js",
+      "file": "m01-player-down.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop: actual water death pauses presentation and restores the real repair checkpoint",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 73833,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T16:04:14.512Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e27424fc4d0f09353739-ce86d2d3e15ea931fbd5",
+          "file": "m01-player-down.spec.js",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "E delivers the real crate, persists CP-B2 and Continue resumes its actual objective",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24313,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T16:06:18.567Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e27424fc4d0f09353739-e4d5948cfb3f1c290213",
+          "file": "m01-player-down.spec.js",
+          "line": 35,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "touch",
+          "file": "m01-player-down.spec.js",
+          "line": 34,
+          "column": 6,
+          "specs": [
+            {
+              "title": "actual death disables touch controls and restores them with CP-B2",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 50199,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T16:05:28.355Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e27424fc4d0f09353739-c5d112ea7cdfd2fb680d",
+              "file": "m01-player-down.spec.js",
+              "line": 34,
+              "column": 120
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T16:01:11.448Z",
+    "duration": 332070.002,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

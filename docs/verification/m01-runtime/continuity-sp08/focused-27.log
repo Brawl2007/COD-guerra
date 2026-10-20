@@ -1,0 +1,35 @@
+✔ the real entry keeps its actual 9/12 count and identifies the post as the player role (74.21986ms)
+✔ Dudek is an observation target while the real patient is on his shoulder (35.296966ms)
+✔ the genuine walk away from the post points back to the actual completion point (32.463606ms)
+✔ the position boundary is the mission completion radius, including its exact edge (33.586367ms)
+✔ relative direction follows the actual player view, without rotating or moving the player (34.002178ms)
+✔ a player carrying Bąk keeps the rescue destination and its original status priority (27.205399ms)
+✔ an optional unclaimed rescue keeps the original offer and target (18.297731ms)
+✔ all-clear is actual B4 readiness: preserve its confirmation and reduce the marker (17.747354ms)
+✔ the real west demolition ends the corridor context and cannot leave an outdated order (17.258561ms)
+✔ cinema, death, another objective and missing contracts never invent a corridor order (88.994429ms)
+✔ repeated presentation is draw-free and cannot write gameplay state, events or saved data (38.580444ms)
+✔ the existing marker memo freezes corridor context between ticks and is cleared by restore/menu (37.111417ms)
+✔ HUD marker: clientWidth/clientHeight are cached on resize, not read in updateMarker every frame (2.215918ms)
+✔ HUD marker: sim.objectiveMarker (pacing filter().sort()) runs once per simulation clock/pose, not once per rendered frame; reset drops the memo (0.487051ms)
+✔ varyLoop / proneReaction: reuse scratch objects (no allocation per actor per frame) with the same values; refineCandidate output stays independent per actor (3.235499ms)
+✔ guidance proof projection is immutable and retains actor, RNG, clock, mission and shot changes (24.366365ms)
+✔ intro cards and fade follow the cs_m01_intro beats in mission data (1.842628ms)
+✔ roll call fades in with the 07:05 card from the battle clock and fades out at the debrief beat (0.620502ms)
+✔ objective transitions, interaction keys and optional objective split are presentation parsing only (0.717127ms)
+✔ the presenter never changes simulation state and keeps HUD text contracts on a real route (3900.308895ms)
+✔ checkpoint feedback, restore fade and continue card are timed by the simulation clock (44.288926ms)
+✔ switching from an active free M01 cue to French clears all owned cue DOM and reset reapplies the same scene deterministically (3.997734ms)
+✔ continue card names the authoritative level, including legacy Recruta (26.05866ms)
+✔ an available E prompt replaces the redundant local marker; the marker returns outside action range (6.352682ms)
+✔ single HUD message prioritises confirmation and urgency; objective change or clock expiry invalidates stale guidance (0.58573ms)
+✔ Game uses the existing message node, honours priority, and a replaced world cannot retain a confirmation (0.196695ms)
+✔ continuity messages inherit their real objective scope and cannot survive its completion (11.897328ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4191.025454

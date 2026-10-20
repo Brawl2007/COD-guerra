@@ -1,5 +1,7 @@
 # Auditoria original → estado na continuação
 
+**Fatia SP-08 posterior:** [clareza do posto e do papel durante a retirada](../continuity-sp08/HANDOFF.md), com [antes/depois e limites](../continuity-sp08/MATRIZ.md), na mesma PR #92. Contagem, ritmo e B4 preservados; SP-08 global continua parcial e não há nova nota de qualidade.
+
 **Atualização posterior:** D3 e D4 já têm entregas próprias na origem da mesma PR #92: [D3](../continuity-d3/HANDOFF.md), [D4](../continuity-d4/HANDOFF.md), [comparação D4](../continuity-d4/MATRIZ.md). As pendências H9 abaixo são o estado histórico do lote P0; não anulam essas entregas posteriores. Sem promoção de aceitação humana ou integração na candidata.
 
 Os sete relatórios A–G e as 15 respostas de CONCLUSOES pertencem a `8d420eb`, avaliando `68301b7`. [Originais completos e evidências](https://github.com/Brawl2007/COD-guerra/tree/codex/m01-audit-download-8d420eb/relatorios). Esta matriz não os substitui nem altera as notas. Base de desenvolvimento: **PR #91 `afaded912c5c3a7f8a4e6e567be9a98cd35ac24f`**, versão npm **0.2.0**, M01 Tczew.

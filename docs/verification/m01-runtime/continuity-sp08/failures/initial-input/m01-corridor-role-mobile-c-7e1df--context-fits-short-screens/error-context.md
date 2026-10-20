@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- main [ref=e2]:
+  - generic "Jogo de tiro em primeira pessoa" [ref=e3]
+  - text: ▸
+  - generic:
+    - generic:
+      - generic: OBJECTIVO
+      - strong: Mantenha o corredor aberto até à demolição oeste — conte os que passam
+      - generic: Regresse ao posto · Dudek leva Bąk para a estação · a carga oeste espera por eles · ainda na zona de demolição
+    - generic:
+      - generic: Objectivo
+      - strong: Mantenha o corredor aberto até à demolição oeste — conte os que passam
+    - generic:
+      - status:
+        - generic: PROGRESSO GUARDADO
+    - generic:
+      - generic: "Szymon Kowal: Quieto. Quieto demais."
+    - generic:
+      - generic:
+        - generic: SAÚDE
+        - generic: "70"
+      - generic:
+        - generic: KARABINEK WZ.29
+        - generic:
+          - generic: "5"
+          - emphasis: /
+          - generic: "40"
+        - generic: Alça 500 m
+        - generic: Granadas ×2
+    - generic:
+      - generic: 15 m
+    - generic:
+      - strong
+  - generic "Controlos táteis":
+    - button "Pausa" [ref=e6] [cursor=pointer]: II
+    - button "Saltar cena" [ref=e7] [cursor=pointer]: SKIP
+    - button "Disparar" [ref=e8] [cursor=pointer]: FOGO
+    - button "Mirar" [ref=e9] [cursor=pointer]: MIRA
+    - button "Recarregar" [ref=e10] [cursor=pointer]: REC
+    - button "Granada" [ref=e11] [cursor=pointer]: GRN
+    - button "Interagir" [ref=e12] [cursor=pointer]: USAR
+    - button "Agachar" [ref=e13] [cursor=pointer]: AGA
+    - button "Alça de mira" [ref=e14] [cursor=pointer]: ALÇA
+```
