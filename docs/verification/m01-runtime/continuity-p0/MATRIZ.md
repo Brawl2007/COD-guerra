@@ -39,4 +39,4 @@ Git prevalece sobre o texto desatualizado dos handoffs: PR #90 está contida em 
 4. 114/115 continuam sem uma mecânica de encravamento; não disparar falas falsas. T45 e revisão nativa do polaco continuam dependências reais.
 5. Atuação da abertura/chamada e arte High constituem os recortes seguintes; uma nova avaliação humana é necessária antes de declarar a M01 pronta.
 
-A validação do lote e as versões exatas estão no [handoff](HANDOFF.md): Node 1482/1482 em ce70422; grupo browser 14/15 + correção 1/1 em 35f3215, sem alteração de produção; build/bundle PASS. Nova partida contínua em Soldado ainda em curso, sem aprovação antecipada.
+A validação do lote e as versões exatas estão no [handoff](HANDOFF.md): Node 1482/1482 em ce70422; grupo browser 14/15 + correção 1/1 em 35f3215, sem alteração de produção; build/bundle PASS. Partida contínua em Soldado PASS: 12/12 objetivos, quatro checkpoints, Bąk entregue, saúde final 100, zero mortes/restauros e erros de página/HTTP; [report e limites](continuous-covered/report.json). Low 640×360; sem nova nota de qualidade ou playtest humano.

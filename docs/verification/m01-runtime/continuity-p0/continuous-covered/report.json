@@ -1,0 +1,3468 @@
+{
+ "adverse": false,
+ "cover": null,
+ "adverseResults": [],
+ "verification": "Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.",
+ "startedAt": "2026-10-20T09:33:07.257Z",
+ "viewport": [
+  640,
+  360
+ ],
+ "timeline": [
+  {
+   "real": 10.1,
+   "game": 1,
+   "battle": "04:30:01",
+   "objective": "04:30 · Tczew, Polónia",
+   "pos": [
+    -66,
+    22
+   ]
+  },
+  {
+   "real": 91.4,
+   "game": 44.1,
+   "battle": "04:30:44",
+   "objective": "Leve a mensagem e o café ao posto da ponte",
+   "pos": [
+    -66,
+    22
+   ]
+  },
+  {
+   "real": 128.1,
+   "game": 65.2,
+   "battle": "04:33:11",
+   "objective": "Mensagem entregue. Fique com o posto — aviões a norte",
+   "pos": [
+    15.2,
+    2
+   ]
+  },
+  {
+   "real": 227.2,
+   "game": 114.3,
+   "battle": "04:34:00",
+   "objective": "Abrigue-se!",
+   "pos": [
+    15.2,
+    2
+   ]
+  },
+  {
+   "real": 234.1,
+   "game": 117.1,
+   "battle": "04:34:10",
+   "objective": "Siga a voz do sargento",
+   "pos": [
+    15.2,
+    2
+   ]
+  },
+  {
+   "real": 293.7,
+   "game": 148.6,
+   "battle": "04:36:00",
+   "objective": "Encontre os sapadores no aterro",
+   "pos": [
+    -143.7,
+    11.1
+   ]
+  },
+  {
+   "real": 321.2,
+   "game": 167.1,
+   "battle": "04:37:05",
+   "objective": "Traga o material dos sapadores do barracão ferroviário",
+   "pos": [
+    -45.7,
+    11
+   ]
+  },
+  {
+   "real": 483.3,
+   "game": 269.9,
+   "battle": "04:43:05",
+   "objective": "Proteja o reparo da linha",
+   "pos": [
+    -123.5,
+    8.2
+   ]
+  },
+  {
+   "real": 952.6,
+   "game": 484.3,
+   "battle": "05:12:16",
+   "objective": "Reparo concluído. Aguarde a ordem com a secção",
+   "pos": [
+    -27.8,
+    28
+   ]
+  },
+  {
+   "real": 1046.9,
+   "game": 523.8,
+   "battle": "05:30:00",
+   "objective": "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem",
+   "pos": [
+    -27.8,
+    28
+   ]
+  },
+  {
+   "real": 1274.8,
+   "game": 626.5,
+   "battle": "06:00:01",
+   "objective": "Cubra a retirada do pelotão leste",
+   "pos": [
+    29.9,
+    40
+   ]
+  },
+  {
+   "real": 1338.7,
+   "game": 656.6,
+   "battle": "06:04:01",
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista",
+   "pos": [
+    29.9,
+    40
+   ]
+  },
+  {
+   "real": 1407.9,
+   "game": 687.1,
+   "battle": "06:08:05",
+   "objective": "Cubra a retirada do pelotão leste",
+   "pos": [
+    -9.8,
+    44.9
+   ]
+  },
+  {
+   "real": 1882.4,
+   "game": 926.3,
+   "battle": "06:10:01",
+   "objective": "Saia da ponte! Para o posto de disparo",
+   "pos": [
+    -28,
+    27.9
+   ]
+  },
+  {
+   "real": 1968.1,
+   "game": 975,
+   "battle": "06:16:55",
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam",
+   "pos": [
+    -280.2,
+    26.7
+   ]
+  },
+  {
+   "real": 2456,
+   "game": 1173.3,
+   "battle": "06:45:00",
+   "objective": "Vá para o abrigo",
+   "pos": [
+    -292.2,
+    26
+   ]
+  },
+  {
+   "real": 2488.3,
+   "game": 1187.3,
+   "battle": "06:45:14",
+   "objective": "Mantenha contacto com a secção",
+   "pos": [
+    -263.2,
+    66.3
+   ]
+  },
+  {
+   "real": 2489.9,
+   "game": 1188.5,
+   "battle": "07:05:00",
+   "objective": "07:05 · Chamada no abrigo",
+   "pos": [
+    -260.5,
+    68.8
+   ]
+  },
+  {
+   "real": 2556.9,
+   "game": 1248.3,
+   "battle": "07:05:00",
+   "objective": "Mantenha contacto com a secção",
+   "pos": [
+    -260.5,
+    68.8
+   ]
+  }
+ ],
+ "blockers": [],
+ "waits": [
+  {
+   "label": "intro",
+   "real": 81.2,
+   "game": 41.9,
+   "battleFrom": "04:30:02",
+   "battleTo": "04:30:44"
+  },
+  {
+   "label": "bombardeamento e abrigo",
+   "real": 108.2,
+   "game": 51.9,
+   "battleFrom": "04:33:11",
+   "battleTo": "04:34:10"
+  },
+  {
+   "label": "reparo e ordem de demolição",
+   "real": 534.6,
+   "game": 234.4,
+   "battleFrom": "04:44:13",
+   "battleTo": "05:30:00"
+  },
+  {
+   "label": "retirada do pelotão leste",
+   "real": 147.3,
+   "game": 61.1,
+   "battleFrom": "05:37:34",
+   "battleTo": "06:00:01"
+  },
+  {
+   "label": "Bąk ferido",
+   "real": 61,
+   "game": 28.3,
+   "battleFrom": "06:00:15",
+   "battleTo": "06:04:01"
+  },
+  {
+   "label": "demolição leste",
+   "real": 464.6,
+   "game": 232.2,
+   "battleFrom": "06:09:01",
+   "battleTo": "06:10:01"
+  },
+  {
+   "label": "demolição oeste",
+   "real": 485.4,
+   "game": 195.5,
+   "battleFrom": "06:17:19",
+   "battleTo": "06:45:00"
+  },
+  {
+   "label": "chamada",
+   "real": 1.6,
+   "game": 0.5,
+   "battleFrom": "06:45:15",
+   "battleTo": "07:05:00"
+  },
+  {
+   "label": "outro até ao debrief",
+   "real": 55.1,
+   "game": 48.6,
+   "battleFrom": "07:05:00",
+   "battleTo": "07:05:00"
+  }
+ ],
+ "pauses": [],
+ "deaths": [],
+ "subtitles": [
+  {
+   "real": 44.4,
+   "battle": "04:30:13",
+   "text": "Szymon Kowal: Café de verdade hoje. Mau sinal."
+  },
+  {
+   "real": 51.6,
+   "battle": "04:30:18",
+   "text": "Marek Zieliński: Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinista."
+  },
+  {
+   "real": 59.3,
+   "battle": "04:30:23",
+   "text": "Paweł Krawiec: Os meus rapazes conferiram tudo duas vezes. Só não quero ninguém tropeçando no que é nosso."
+  },
+  {
+   "real": 67.9,
+   "battle": "04:30:28",
+   "text": "Józef Bąk: Dudek, se eu desmaiar, você me carrega?"
+  },
+  {
+   "real": 72.5,
+   "battle": "04:30:31",
+   "text": "Leon Dudek: Carrego. Depois cobro."
+  },
+  {
+   "real": 78.2,
+   "battle": "04:30:35",
+   "text": "Marek Zieliński: Wrona. Leve isto ao posto da ponte. E o café, antes que esfrie."
+  },
+  {
+   "real": 85.3,
+   "battle": "04:30:40",
+   "text": "Marek Zieliński: Confira o homem do posto. Ele está sozinho."
+  },
+  {
+   "real": 129.8,
+   "battle": "04:33:11",
+   "text": "Jan Wrona: O sargento mandou isto. E o café."
+  },
+  {
+   "real": 131.8,
+   "battle": "04:33:13",
+   "text": "Tadeusz Nowicki: Na caneca amassada. Então ainda gostam de mim."
+  },
+  {
+   "real": 136.5,
+   "battle": "04:33:15",
+   "text": "Tadeusz Nowicki: \"Atenção redobrada a leste.\" Como se desse para olhar para outro lado."
+  },
+  {
+   "real": 142.1,
+   "battle": "04:33:18",
+   "text": "Tadeusz Nowicki: Ouve isso? Não é trem."
+  },
+  {
+   "real": 147.1,
+   "battle": "04:33:21",
+   "text": "Tadeusz Nowicki: Aviões! A leste, contra a claridade!"
+  },
+  {
+   "real": 152.3,
+   "battle": "04:33:23",
+   "text": "Marek Zieliński: Wrona! Nowicki! Saiam do posto!"
+  },
+  {
+   "real": 157.5,
+   "battle": "04:33:26",
+   "text": "Tadeusz Nowicki: Vou avisar os sapadores! Fique no chão!"
+  },
+  {
+   "real": 229.6,
+   "battle": "04:34:03",
+   "text": "Marek Zieliński: Para o chão! Todo mundo no chão!"
+  },
+  {
+   "real": 251,
+   "battle": "04:34:35",
+   "text": "Soldado: O aterro! Acertaram o aterro!"
+  },
+  {
+   "real": 255.9,
+   "battle": "04:34:44",
+   "text": "Marek Zieliński: Wrona! Para a trincheira! Siga a minha voz!"
+  },
+  {
+   "real": 295.2,
+   "battle": "04:36:00",
+   "text": "Marek Zieliński: Quem está inteiro, levanta a mão. Kowal. Bąk. Wrona. Nowicki? …Nowicki."
+  },
+  {
+   "real": 298.2,
+   "battle": "04:36:11",
+   "text": "Marek Zieliński: Wrona, com o Kowal. Achem o Krawiec no aterro."
+  },
+  {
+   "real": 322.7,
+   "battle": "04:37:05",
+   "text": "Paweł Krawiec: Cortaram a linha em dois lugares. Eu sei onde. Não sei é se vão me deixar trabalhar."
+  },
+  {
+   "real": 328,
+   "battle": "04:37:18",
+   "text": "Paweł Krawiec: Wrona! A caixa no barracão ferroviário, a da faixa branca. Corre!"
+  },
+  {
+   "real": 385.1,
+   "battle": "04:39:20",
+   "text": "Leon Dudek: Segura a perna dele! Segura, eu disse!"
+  },
+  {
+   "real": 485.9,
+   "battle": "04:43:05",
+   "text": "Paweł Krawiec: Isso. Agora vire para o rio e não olhe para mim."
+  },
+  {
+   "real": 495.5,
+   "battle": "04:43:31",
+   "text": "Józef Bąk: Wrona, que horas são?"
+  },
+  {
+   "real": 542.9,
+   "battle": "04:45:01",
+   "text": "Stanisław „Staszek” Pawlak: Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando!"
+  },
+  {
+   "real": 549.9,
+   "battle": "04:45:30",
+   "text": "Marek Zieliński: Wrona, alça em mil. Mire nos clarões, não na fumaça."
+  },
+  {
+   "real": 555.8,
+   "battle": "04:45:52",
+   "text": "Szymon Kowal: Metralhadora no dique!"
+  },
+  {
+   "real": 561.7,
+   "battle": "04:46:15",
+   "text": "Marek Zieliński: Kowal, rajadas curtas nos clarões do dique. Ninguém desperdiça."
+  },
+  {
+   "real": 567.4,
+   "battle": "04:46:37",
+   "text": "Paweł Krawiec: Precisamos de espaço para trabalhar!"
+  },
+  {
+   "real": 584.8,
+   "battle": "04:47:56",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 589.2,
+   "battle": "04:48:18",
+   "text": "Szymon Kowal: Clarões junto aos vagões. Mil metros, talvez mais."
+  },
+  {
+   "real": 613,
+   "battle": "04:50:13",
+   "text": "Szymon Kowal: Clarão no portão!"
+  },
+  {
+   "real": 636.8,
+   "battle": "04:52:01",
+   "text": "Szymon Kowal: Trem blindado! Na outra via, atrás dos vagões!"
+  },
+  {
+   "real": 672.8,
+   "battle": "04:54:18",
+   "text": "Paweł Krawiec: Três… quatro… agora."
+  },
+  {
+   "real": 687.2,
+   "battle": "04:55:12",
+   "text": "Paweł Krawiec: Metade. Não comemorem."
+  },
+  {
+   "real": 694.2,
+   "battle": "04:55:39",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 703.4,
+   "battle": "04:56:15",
+   "text": "Szymon Kowal: Ele recarrega! Agora!"
+  },
+  {
+   "real": 718.2,
+   "battle": "04:57:11",
+   "text": "Marek Zieliński: Esperem a pausa!"
+  },
+  {
+   "real": 755.5,
+   "battle": "04:59:34",
+   "text": "Marek Zieliński: Ele se debruça. Espere."
+  },
+  {
+   "real": 801.7,
+   "battle": "05:02:32",
+   "text": "Paweł Krawiec: Cabeças baixas!"
+  },
+  {
+   "real": 815.9,
+   "battle": "05:03:26",
+   "text": "Paweł Krawiec: Três… quatro… agora."
+  },
+  {
+   "real": 825.6,
+   "battle": "05:04:04",
+   "text": "Szymon Kowal: Clarão junto aos vagões!"
+  },
+  {
+   "real": 861.9,
+   "battle": "05:06:20",
+   "text": "Marek Zieliński: Esperem a pausa!"
+  },
+  {
+   "real": 871,
+   "battle": "05:06:56",
+   "text": "Marek Zieliński: Pausa! Atire!"
+  },
+  {
+   "real": 884.3,
+   "battle": "05:07:50",
+   "text": "Paweł Krawiec: Três… quatro… agora."
+  },
+  {
+   "real": 898,
+   "battle": "05:08:44",
+   "text": "Marek Zieliński: Ele se debruça. Espere."
+  },
+  {
+   "real": 918.9,
+   "battle": "05:10:00",
+   "text": "Paweł Krawiec: Cabeças baixas!"
+  },
+  {
+   "real": 932,
+   "battle": "05:10:52",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 954.9,
+   "battle": "05:12:16",
+   "text": "Paweł Krawiec: Linha inteira. Avisem o oficial: está pronta."
+  },
+  {
+   "real": 958.5,
+   "battle": "05:13:23",
+   "text": "Marek Zieliński: Pawlak, vai."
+  },
+  {
+   "real": 1009.5,
+   "battle": "05:23:24",
+   "text": "Marek Zieliński: Ele se debruça. Espere."
+  },
+  {
+   "real": 1035.8,
+   "battle": "05:28:20",
+   "text": "Szymon Kowal: Clarão no portão!"
+  },
+  {
+   "real": 1050.6,
+   "battle": "05:30:13",
+   "text": "Stanisław „Staszek” Pawlak: Ordem do comandante do batalhão: destruir as pontes. O pelotão do outro lado recua primeiro."
+  },
+  {
+   "real": 1060.1,
+   "battle": "05:30:52",
+   "text": "Marek Zieliński: Ouviram. Quando os sapadores disserem, ninguém fica na ponte."
+  },
+  {
+   "real": 1092,
+   "battle": "05:32:58",
+   "text": "Marek Zieliński: Sol nos olhos. Fique na sombra da treliça e espere o clarão."
+  },
+  {
+   "real": 1109.1,
+   "battle": "05:34:12",
+   "text": "Atirador da ckm: A fita está acabando!"
+  },
+  {
+   "real": 1114.3,
+   "battle": "05:34:40",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 1137.3,
+   "battle": "05:39:04",
+   "text": "Marek Zieliński: Seguramos esta cabeça de ponte. Até a ordem."
+  },
+  {
+   "real": 1143.1,
+   "battle": "05:40:05",
+   "text": "Stanisław „Staszek” Pawlak: Do outro lado dizem que não aguentam muito. Perderam uma metralhadora."
+  },
+  {
+   "real": 1232.1,
+   "battle": "05:55:12",
+   "text": "Atirador da ckm: Fogo no portão!"
+  },
+  {
+   "real": 1277.2,
+   "battle": "06:00:01",
+   "text": "Marek Zieliński: Aí vêm os nossos. Fogo em quem vem atrás deles. Nos nossos, não!"
+  },
+  {
+   "real": 1309.6,
+   "battle": "06:01:57",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 1324.6,
+   "battle": "06:03:03",
+   "text": "Szymon Kowal: Escondeu-se. Já volta."
+  },
+  {
+   "real": 1340.5,
+   "battle": "06:04:01",
+   "text": "Józef Bąk: Estou bem… Não. Não estou."
+  },
+  {
+   "real": 1345.3,
+   "battle": "06:04:20",
+   "text": "Leon Dudek: Bąk está no chão! Alguém me cubra!"
+  },
+  {
+   "real": 1350.5,
+   "battle": "06:04:42",
+   "text": "Marek Zieliński: Wrona! Traga o Bąk até o Dudek. Eu cubro!"
+  },
+  {
+   "real": 1355.6,
+   "battle": "06:05:02",
+   "text": "Soldado: Sanitário, aqui! Rápido!"
+  },
+  {
+   "real": 1369.3,
+   "battle": "06:05:45",
+   "text": "Józef Bąk: Não me deixe cair."
+  },
+  {
+   "real": 1409.4,
+   "battle": "06:08:05",
+   "text": "Leon Dudek: Não olhe para a perna. Olhe para mim."
+  },
+  {
+   "real": 1432.4,
+   "battle": "06:09:07",
+   "text": "Szymon Kowal: Ele recarrega! Agora!"
+  },
+  {
+   "real": 1447.9,
+   "battle": "06:09:16",
+   "text": "Marek Zieliński: Bąk está com Dudek. Volte."
+  },
+  {
+   "real": 1464,
+   "battle": "06:09:24",
+   "text": "Szymon Kowal: Clarão no portão!"
+  },
+  {
+   "real": 1481,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 1524.9,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Alemães no tabuleiro! Na treliça!"
+  },
+  {
+   "real": 1550.5,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Escondeu-se. Já volta."
+  },
+  {
+   "real": 1580.1,
+   "battle": "06:09:30",
+   "text": "Marek Zieliński: Pausa! Atire!"
+  },
+  {
+   "real": 1588.4,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Alemães no tabuleiro! Na treliça!"
+  },
+  {
+   "real": 1630.8,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Deitaram! Continua!"
+  },
+  {
+   "real": 1651.2,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Alemães no tabuleiro! Na treliça!"
+  },
+  {
+   "real": 1657.4,
+   "battle": "06:09:30",
+   "text": "Soldado do pelotão leste: Não parem! Eles estão no tabuleiro atrás de nós!"
+  },
+  {
+   "real": 1685,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 1692.5,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Deitaram! Continua!"
+  },
+  {
+   "real": 1722.2,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Ele recarrega! Agora!"
+  },
+  {
+   "real": 1754.7,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Deitaram! Continua!"
+  },
+  {
+   "real": 1783,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Escondeu-se. Já volta."
+  },
+  {
+   "real": 1836.9,
+   "battle": "06:09:30",
+   "text": "Szymon Kowal: Clarão junto aos vagões!"
+  },
+  {
+   "real": 1845.4,
+   "battle": "06:09:30",
+   "text": "Marek Zieliński: Pausa! Atire!"
+  },
+  {
+   "real": 1876.7,
+   "battle": "06:09:43",
+   "text": "Szymon Kowal: Trocando carregador!"
+  },
+  {
+   "real": 1900.8,
+   "battle": "06:11:14",
+   "text": "Szymon Kowal: …Lá se foi o outro lado."
+  },
+  {
+   "real": 1905.3,
+   "battle": "06:11:35",
+   "text": "Marek Zieliński: Todos fora da ponte! Para o posto de disparo, agora!"
+  },
+  {
+   "real": 1910.7,
+   "battle": "06:12:00",
+   "text": "Atirador da ckm: Levamos ela. Comigo!"
+  },
+  {
+   "real": 1932.6,
+   "battle": "06:13:47",
+   "text": "Szymon Kowal: Abaixa!"
+  },
+  {
+   "real": 1969.4,
+   "battle": "06:16:55",
+   "text": "Marek Zieliński: Contem os homens do pelotão leste quando passarem. Em voz alta."
+  },
+  {
+   "real": 1972.9,
+   "battle": "06:17:19",
+   "text": "Marek Zieliński: Wrona, conte os nossos. Não conte os tiros."
+  },
+  {
+   "real": 1978.2,
+   "battle": "06:17:40",
+   "text": "Jan Wrona: doze. São doze do pelotão leste."
+  },
+  {
+   "real": 1992,
+   "battle": "06:18:30",
+   "text": "Marek Zieliński: Esperamos o Bąk."
+  },
+  {
+   "real": 2059,
+   "battle": "06:22:21",
+   "text": "Szymon Kowal: Quieto. Quieto demais."
+  },
+  {
+   "real": 2139.9,
+   "battle": "06:27:00",
+   "text": "Marek Zieliński: Esperamos o Bąk."
+  },
+  {
+   "real": 2284.1,
+   "battle": "06:35:08",
+   "text": "Szymon Kowal: Quieto. Quieto demais."
+  },
+  {
+   "real": 2299.8,
+   "battle": "06:36:01",
+   "text": "Paweł Krawiec: Última chamada! Quem estiver no encontro, sai agora!"
+  },
+  {
+   "real": 2343.3,
+   "battle": "06:38:31",
+   "text": "Marek Zieliński: Boca aberta, cabeça baixa."
+  },
+  {
+   "real": 2483.6,
+   "battle": "06:45:11",
+   "text": "Franciszek Lipski: Meu avô atravessava por ela para ir à feira."
+  },
+  {
+   "real": 2502.9,
+   "battle": "07:05:00",
+   "text": "Szymon Kowal: Presente."
+  },
+  {
+   "real": 2505.2,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Bąk."
+  },
+  {
+   "real": 2507.7,
+   "battle": "07:05:00",
+   "text": "Leon Dudek: Bąk está no posto de socorro. Vivo. Diz que agora a dívida é com o Wrona, não comigo."
+  },
+  {
+   "real": 2511.6,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Dudek."
+  },
+  {
+   "real": 2513.9,
+   "battle": "07:05:00",
+   "text": "Leon Dudek: Presente."
+  },
+  {
+   "real": 2516.9,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Wrona."
+  },
+  {
+   "real": 2519.5,
+   "battle": "07:05:00",
+   "text": "Jan Wrona: Presente."
+  },
+  {
+   "real": 2522.6,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Nowicki."
+  },
+  {
+   "real": 2535.4,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: Continuamos."
+  },
+  {
+   "real": 2544.9,
+   "battle": "07:05:00",
+   "text": "Szymon Kowal: Agora é no norte."
+  },
+  {
+   "real": 2549.6,
+   "battle": "07:05:00",
+   "text": "Marek Zieliński: O norte é de quem está lá. Bebam água. Durmam se conseguirem."
+  }
+ ],
+ "messages": [
+  {
+   "real": 97.4,
+   "battle": "04:30:48",
+   "text": "Posto da ponte ferroviária: 77 m, em frente"
+  },
+  {
+   "real": 229.3,
+   "battle": "04:34:00",
+   "text": "Abrigue-se! Cabeça baixa, junto à cobertura!"
+  },
+  {
+   "real": 238,
+   "battle": "04:34:16",
+   "text": "Zieliński chama-o da trincheira, a oeste."
+  },
+  {
+   "real": 299.6,
+   "battle": "04:36:14",
+   "text": "Sapadores no aterro: 94 m, em frente"
+  },
+  {
+   "real": 329.1,
+   "battle": "04:37:19",
+   "text": "Barracão ferroviário, porta oeste: 208 m, em frente"
+  },
+  {
+   "real": 397.1,
+   "battle": "04:39:47",
+   "text": "Material recolhido. Leve a caixa aos sapadores."
+  },
+  {
+   "real": 402.3,
+   "battle": "04:40:00",
+   "text": "Sapadores no segundo corte da linha: 155 m, à sua direita"
+  },
+  {
+   "real": 515.1,
+   "battle": "04:44:14",
+   "text": "Alça: 500 m"
+  },
+  {
+   "real": 558.1,
+   "battle": "04:46:01",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 25%."
+  },
+  {
+   "real": 562.8,
+   "battle": "04:46:19",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 606.1,
+   "battle": "04:49:42",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 37%."
+  },
+  {
+   "real": 643.2,
+   "battle": "04:52:26",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 657.7,
+   "battle": "04:53:22",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 48%."
+  },
+  {
+   "real": 668.6,
+   "battle": "04:54:03",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 715.3,
+   "battle": "04:57:00",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 57%."
+  },
+  {
+   "real": 731.9,
+   "battle": "04:58:02",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 773.3,
+   "battle": "05:00:42",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 70%."
+  },
+  {
+   "real": 811,
+   "battle": "05:03:08",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 831.1,
+   "battle": "05:04:22",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 83%."
+  },
+  {
+   "real": 840.6,
+   "battle": "05:05:00",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 887.4,
+   "battle": "05:08:01",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 87%."
+  },
+  {
+   "real": 928.1,
+   "battle": "05:10:36",
+   "text": "Metralhadora no dique · V para alça 1000 m: 1083 m, em frente"
+  },
+  {
+   "real": 944.4,
+   "battle": "05:11:42",
+   "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo. Reparo: 97%."
+  },
+  {
+   "real": 1048.9,
+   "battle": "05:30:00",
+   "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+  },
+  {
+   "real": 1055,
+   "battle": "05:30:33",
+   "text": "Posição no tabuleiro rodoviário: 74 m, atrás de si"
+  },
+  {
+   "real": 1084.8,
+   "battle": "05:32:34",
+   "text": "Posição no tabuleiro rodoviário: 128 m, em frente"
+  },
+  {
+   "real": 1088.8,
+   "battle": "05:32:46",
+   "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
+  },
+  {
+   "real": 1277.2,
+   "battle": "06:00:01",
+   "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 18 homens no pelotão."
+  },
+  {
+   "real": 1323.6,
+   "battle": "06:02:59",
+   "text": "Caixa de carregadores da secção no posto do tabuleiro: +5. Fique no posto para recarregar."
+  },
+  {
+   "real": 1348.1,
+   "battle": "06:04:32",
+   "text": "Bąk ferido: 11 m, em frente"
+  },
+  {
+   "real": 1353.9,
+   "battle": "06:04:54",
+   "text": "Bąk está consigo. Leve-o ao socorrista Dudek: 63 m, à sua esquerda."
+  },
+  {
+   "real": 1362.3,
+   "battle": "06:05:24",
+   "text": "Um homem caiu na retirada! Suprima o fogo do tabuleiro leste."
+  },
+  {
+   "real": 1375.2,
+   "battle": "06:06:01",
+   "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 16 homens no pelotão."
+  },
+  {
+   "real": 1378.2,
+   "battle": "06:06:10",
+   "text": "Um homem caiu na retirada! Suprima o fogo do tabuleiro leste."
+  },
+  {
+   "real": 1409.4,
+   "battle": "06:08:05",
+   "text": "Bąk entregue. Dudek trata dele — volte à secção."
+  },
+  {
+   "real": 1420,
+   "battle": "06:09:00",
+   "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."
+  },
+  {
+   "real": 1437.6,
+   "battle": "06:09:10",
+   "text": "Os alemães avançam pelo tabuleiro! Faça-os recuar a tiro."
+  },
+  {
+   "real": 1624.1,
+   "battle": "06:09:30",
+   "text": "Recuam! Os alemães largam o tabuleiro."
+  },
+  {
+   "real": 1877.2,
+   "battle": "06:09:45",
+   "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens. 12 homens no pelotão."
+  },
+  {
+   "real": 1895.4,
+   "battle": "06:10:49",
+   "text": "Posto de disparo: 262 m, atrás de si"
+  },
+  {
+   "real": 1973.3,
+   "battle": "06:17:21",
+   "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
+  },
+  {
+   "real": 2469.7,
+   "battle": "06:45:05",
+   "text": "Abrigo: 55 m, à sua direita"
+  }
+ ],
+ "shots": 28,
+ "screenshots": [
+  {
+   "file": "01-menu.png",
+   "note": "Menu com Tczew seleccionado",
+   "real": 8.2,
+   "battle": "04:30:00",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "04:30 · Tczew, Polónia"
+  },
+  {
+   "file": "02-obj-1.png",
+   "note": "Ao aparecer: 04:30 · Tczew, Polónia",
+   "real": 11,
+   "battle": "04:30:02",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "04:30 · Tczew, Polónia"
+  },
+  {
+   "file": "03-intro.png",
+   "note": "Intro (cartela 04:30)",
+   "real": 11.7,
+   "battle": "04:30:02",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "04:30 · Tczew, Polónia"
+  },
+  {
+   "file": "04-obj-2.png",
+   "note": "Ao aparecer: Leve a mensagem e o café ao posto da ponte",
+   "real": 92.9,
+   "battle": "04:30:45",
+   "pos": [
+    -66,
+    22
+   ],
+   "angle": 0,
+   "objective": "Leve a mensagem e o café ao posto da ponte"
+  },
+  {
+   "file": "05-delivered.png",
+   "note": "Entrega ao posto da ponte",
+   "real": 127.8,
+   "battle": "04:33:11",
+   "pos": [
+    15.2,
+    2
+   ],
+   "angle": -0.02,
+   "objective": "Mensagem entregue. Fique com o posto — aviões a norte"
+  },
+  {
+   "file": "06-obj-3.png",
+   "note": "Ao aparecer: Mensagem entregue. Fique com o posto — aviões a norte",
+   "real": 129.8,
+   "battle": "04:33:12",
+   "pos": [
+    15.2,
+    2
+   ],
+   "angle": -0.02,
+   "objective": "Mensagem entregue. Fique com o posto — aviões a norte"
+  },
+  {
+   "file": "07-obj-4.png",
+   "note": "Ao aparecer: Abrigue-se!",
+   "real": 229.3,
+   "battle": "04:34:03",
+   "pos": [
+    15.2,
+    2
+   ],
+   "angle": -0.02,
+   "objective": "Abrigue-se!"
+  },
+  {
+   "file": "08-obj-5.png",
+   "note": "Ao aparecer: Siga a voz do sargento",
+   "real": 236,
+   "battle": "04:34:13",
+   "pos": [
+    15.2,
+    2
+   ],
+   "angle": -0.02,
+   "objective": "Siga a voz do sargento"
+  },
+  {
+   "file": "09-bombing.png",
+   "note": "Depois do bombardeamento das 04:34",
+   "real": 238,
+   "battle": "04:34:16",
+   "pos": [
+    15.2,
+    2
+   ],
+   "angle": -0.02,
+   "objective": "Siga a voz do sargento"
+  },
+  {
+   "file": "10-obj-6.png",
+   "note": "Ao aparecer: Encontre os sapadores no aterro",
+   "real": 295.2,
+   "battle": "04:36:03",
+   "pos": [
+    -147.6,
+    11.3
+   ],
+   "angle": -3.13,
+   "objective": "Encontre os sapadores no aterro"
+  },
+  {
+   "file": "11-obj-7.png",
+   "note": "Ao aparecer: Traga o material dos sapadores do barracão ferroviário",
+   "real": 322.7,
+   "battle": "04:37:08",
+   "pos": [
+    -41.1,
+    11
+   ],
+   "angle": -0.01,
+   "objective": "Traga o material dos sapadores do barracão ferroviário"
+  },
+  {
+   "file": "12-sappers-site2.png",
+   "note": "Sapadores no segundo corte (ponto de entrega)",
+   "real": 472.6,
+   "battle": "04:42:41",
+   "pos": [
+    -141,
+    15.5
+   ],
+   "angle": 0.01,
+   "objective": "Traga o material dos sapadores do barracão ferroviário"
+  },
+  {
+   "file": "13-repair.png",
+   "note": "Reparo da linha a decorrer",
+   "real": 483.3,
+   "battle": "04:43:05",
+   "pos": [
+    -123.5,
+    8.2
+   ],
+   "angle": -0.42,
+   "objective": "Proteja o reparo da linha"
+  },
+  {
+   "file": "14-obj-8.png",
+   "note": "Ao aparecer: Proteja o reparo da linha",
+   "real": 485.9,
+   "battle": "04:43:08",
+   "pos": [
+    -123.5,
+    8.2
+   ],
+   "angle": -0.42,
+   "objective": "Proteja o reparo da linha"
+  },
+  {
+   "file": "15-obj-9.png",
+   "note": "Ao aparecer: Reparo concluído. Aguarde a ordem com a secção",
+   "real": 954.9,
+   "battle": "05:12:43",
+   "pos": [
+    -27.8,
+    28
+   ],
+   "angle": 0,
+   "objective": "Reparo concluído. Aguarde a ordem com a secção"
+  },
+  {
+   "file": "16-obj-10.png",
+   "note": "Ao aparecer: Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem",
+   "real": 1048.9,
+   "battle": "05:30:07",
+   "pos": [
+    -27.8,
+    28
+   ],
+   "angle": 0,
+   "objective": "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem"
+  },
+  {
+   "file": "17-hold-access.png",
+   "note": "Na ponte rodoviária, a manter o acesso",
+   "real": 1129.8,
+   "battle": "05:37:34",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": -0.02,
+   "objective": "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem"
+  },
+  {
+   "file": "18-obj-11.png",
+   "note": "Ao aparecer: Cubra a retirada do pelotão leste",
+   "real": 1277.2,
+   "battle": "06:00:09",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "19-withdrawal.png",
+   "note": "Pelotão leste em retirada",
+   "real": 1279.5,
+   "battle": "06:00:15",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "20-withdrawal-1.png",
+   "note": "Bąk ferido: vista para leste",
+   "real": 1294.3,
+   "battle": "06:01:03",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "21-withdrawal-2.png",
+   "note": "Bąk ferido: vista para leste",
+   "real": 1305.8,
+   "battle": "06:01:43",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "22-withdrawal-3.png",
+   "note": "Bąk ferido: vista para leste",
+   "real": 1317.4,
+   "battle": "06:02:31",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "23-withdrawal-4.png",
+   "note": "Bąk ferido: vista para leste",
+   "real": 1330.2,
+   "battle": "06:03:25",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "24-obj-12.png",
+   "note": "Ao aparecer: Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista",
+   "real": 1340.5,
+   "battle": "06:04:08",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "25-bak-wounded.png",
+   "note": "Bąk ferido na ponte rodoviária",
+   "real": 1343.3,
+   "battle": "06:04:14",
+   "pos": [
+    29.9,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "26-bak-found.png",
+   "note": "Junto de Bąk: aviso \"levar Bąk\"",
+   "real": 1353.4,
+   "battle": "06:04:52",
+   "pos": [
+    54,
+    40
+   ],
+   "angle": 0,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "27-bak-carry-deck.png",
+   "note": "Bąk ao ombro, no tabuleiro",
+   "real": 1375.1,
+   "battle": "06:06:01",
+   "pos": [
+    30.6,
+    40
+   ],
+   "angle": -3.16,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "28-bak-carry.png",
+   "note": "A levar Bąk ao socorrista",
+   "real": 1406.8,
+   "battle": "06:07:59",
+   "pos": [
+    -9.8,
+    44.9
+   ],
+   "angle": -4.54,
+   "objective": "Cubra a retirada do pelotão leste · (Opcional) Leve Bąk até o socorrista"
+  },
+  {
+   "file": "29-bak-delivered.png",
+   "note": "Bąk entregue ao socorrista",
+   "real": 1407.9,
+   "battle": "06:08:05",
+   "pos": [
+    -9.8,
+    44.9
+   ],
+   "angle": -4.54,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "30-obj-13.png",
+   "note": "Ao aparecer: Cubra a retirada do pelotão leste",
+   "real": 1409.4,
+   "battle": "06:08:10",
+   "pos": [
+    -9.8,
+    44.9
+   ],
+   "angle": -4.54,
+   "objective": "Cubra a retirada do pelotão leste"
+  },
+  {
+   "file": "31-obj-14.png",
+   "note": "Ao aparecer: Saia da ponte! Para o posto de disparo",
+   "real": 1884.9,
+   "battle": "06:10:10",
+   "pos": [
+    -28,
+    27.9
+   ],
+   "angle": 0,
+   "objective": "Saia da ponte! Para o posto de disparo"
+  },
+  {
+   "file": "32-east-demolition.png",
+   "note": "Demolição leste das 06:10: clarão",
+   "real": 1887.3,
+   "battle": "06:10:19",
+   "pos": [
+    -28,
+    27.9
+   ],
+   "angle": 0,
+   "objective": "Saia da ponte! Para o posto de disparo"
+  },
+  {
+   "file": "33-east-demolition-6s.png",
+   "note": "Demolição leste, coluna de poeira 6 s depois",
+   "real": 1895.2,
+   "battle": "06:10:49",
+   "pos": [
+    -28,
+    27.9
+   ],
+   "angle": 0,
+   "objective": "Saia da ponte! Para o posto de disparo"
+  },
+  {
+   "file": "34-obj-15.png",
+   "note": "Ao aparecer: Mantenha o corredor aberto até à demolição oeste — conte os que passam",
+   "real": 1969.4,
+   "battle": "06:17:02",
+   "pos": [
+    -284.8,
+    26.4
+   ],
+   "angle": -3.08,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "35-firing-point.png",
+   "note": "No posto de disparo; corredor",
+   "real": 1972.6,
+   "battle": "06:17:19",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -3.08,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "36-corridor-1.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 1995,
+   "battle": "06:18:40",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "37-corridor-2.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2015.2,
+   "battle": "06:19:44",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "38-corridor-3.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2035.5,
+   "battle": "06:20:56",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "39-corridor-4.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2055.4,
+   "battle": "06:22:08",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "40-corridor-5.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2075.5,
+   "battle": "06:23:16",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "41-corridor-6.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2095.7,
+   "battle": "06:24:28",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "42-corridor-7.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2115.6,
+   "battle": "06:25:39",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "43-corridor-8.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2136.3,
+   "battle": "06:26:47",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "44-corridor-9.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2156.6,
+   "battle": "06:27:56",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "45-corridor-10.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2176.6,
+   "battle": "06:29:06",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "46-corridor-11.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2196.4,
+   "battle": "06:30:09",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "47-corridor-12.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2216.4,
+   "battle": "06:31:19",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "48-corridor-13.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2236.6,
+   "battle": "06:32:25",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "49-corridor-14.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2256.5,
+   "battle": "06:33:34",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "50-corridor-15.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2277.1,
+   "battle": "06:34:48",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "51-corridor-16.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2297.2,
+   "battle": "06:35:53",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "52-corridor-17.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2317,
+   "battle": "06:37:01",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "53-corridor-18.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2337.9,
+   "battle": "06:38:14",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "54-corridor-19.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2357.1,
+   "battle": "06:39:18",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "55-corridor-20.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2377.4,
+   "battle": "06:40:28",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "56-corridor-21.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2397.6,
+   "battle": "06:41:40",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "57-corridor-22.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2417.7,
+   "battle": "06:42:51",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "58-corridor-23.png",
+   "note": "demolição oeste: vista para leste",
+   "real": 2437.4,
+   "battle": "06:44:01",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Mantenha o corredor aberto até à demolição oeste — conte os que passam"
+  },
+  {
+   "file": "59-obj-16.png",
+   "note": "Ao aparecer: Vá para o abrigo",
+   "real": 2458,
+   "battle": "06:45:01",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Vá para o abrigo"
+  },
+  {
+   "file": "60-west-demolition.png",
+   "note": "Demolição oeste das 06:45",
+   "real": 2460.5,
+   "battle": "06:45:02",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.2,
+   "objective": "Vá para o abrigo"
+  },
+  {
+   "file": "61-west-demolition-6s.png",
+   "note": "Demolição oeste, coluna de poeira 6 s depois, acima do barracão",
+   "real": 2469.7,
+   "battle": "06:45:05",
+   "pos": [
+    -292.2,
+    26
+   ],
+   "angle": -6.13,
+   "objective": "Vá para o abrigo"
+  },
+  {
+   "file": "62-obj-17.png",
+   "note": "Ao aparecer: Mantenha contacto com a secção",
+   "real": 2489.1,
+   "battle": "06:45:15",
+   "pos": [
+    -263,
+    70.4
+   ],
+   "angle": -4.77,
+   "objective": "Mantenha contacto com a secção"
+  },
+  {
+   "file": "63-obj-18.png",
+   "note": "Ao aparecer: 07:05 · Chamada no abrigo",
+   "real": 2490.8,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.8
+   ],
+   "angle": 1.44,
+   "objective": "07:05 · Chamada no abrigo"
+  },
+  {
+   "file": "64-roll-call.png",
+   "note": "Chamada no abrigo (outro)",
+   "real": 2491.9,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.8
+   ],
+   "angle": 1.44,
+   "objective": "07:05 · Chamada no abrigo"
+  },
+  {
+   "file": "65-roll-call-10s.png",
+   "note": "Chamada: secção reunida no abrigo",
+   "real": 2502.6,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.8
+   ],
+   "angle": 1.44,
+   "objective": "07:05 · Chamada no abrigo"
+  },
+  {
+   "file": "66-obj-19.png",
+   "note": "Ao aparecer: Mantenha contacto com a secção",
+   "real": 2557.7,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.8
+   ],
+   "angle": 1.44,
+   "objective": "Mantenha contacto com a secção"
+  },
+  {
+   "file": "67-debrief.png",
+   "note": "Debrief",
+   "real": 2557.8,
+   "battle": "07:05:00",
+   "pos": [
+    -260.5,
+    68.8
+   ],
+   "angle": 1.44,
+   "objective": "Mantenha contacto com a secção"
+  }
+ ],
+ "healthSamples": [
+  {
+   "real": 11,
+   "game": 1,
+   "battle": "04:30:01",
+   "health": 100,
+   "pos": [
+    -66,
+    -3,
+    22
+   ],
+   "crouched": false
+  },
+  {
+   "real": 633.4,
+   "game": 348.1,
+   "battle": "04:51:48",
+   "health": 75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 652,
+   "game": 356.1,
+   "battle": "04:53:00",
+   "health": 75.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 652.6,
+   "game": 356.4,
+   "battle": "04:53:02",
+   "health": 77,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 653.1,
+   "game": 356.6,
+   "battle": "04:53:04",
+   "health": 78.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 653.4,
+   "game": 356.9,
+   "battle": "04:53:06",
+   "health": 79.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 654.1,
+   "game": 357.1,
+   "battle": "04:53:09",
+   "health": 80.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 654.6,
+   "game": 357.4,
+   "battle": "04:53:11",
+   "health": 82,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 655.4,
+   "game": 357.6,
+   "battle": "04:53:13",
+   "health": 83.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 655.9,
+   "game": 357.9,
+   "battle": "04:53:15",
+   "health": 84.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 656.4,
+   "game": 358.1,
+   "battle": "04:53:18",
+   "health": 85.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 657.2,
+   "game": 358.4,
+   "battle": "04:53:20",
+   "health": 87,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 657.7,
+   "game": 358.6,
+   "battle": "04:53:22",
+   "health": 88.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 658.3,
+   "game": 358.9,
+   "battle": "04:53:24",
+   "health": 89.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 659.1,
+   "game": 359.1,
+   "battle": "04:53:27",
+   "health": 90.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 659.6,
+   "game": 359.4,
+   "battle": "04:53:29",
+   "health": 92,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 660.1,
+   "game": 359.6,
+   "battle": "04:53:31",
+   "health": 93.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 660.6,
+   "game": 359.9,
+   "battle": "04:53:33",
+   "health": 94.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 661.4,
+   "game": 360.1,
+   "battle": "04:53:36",
+   "health": 95.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 661.9,
+   "game": 360.4,
+   "battle": "04:53:38",
+   "health": 97,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 662.7,
+   "game": 360.6,
+   "battle": "04:53:40",
+   "health": 98.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 663.2,
+   "game": 360.9,
+   "battle": "04:53:42",
+   "health": 99.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 663.9,
+   "game": 361.1,
+   "battle": "04:53:45",
+   "health": 100,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 849.3,
+   "game": 439.9,
+   "battle": "05:05:33",
+   "health": 75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 868.1,
+   "game": 447.8,
+   "battle": "05:06:45",
+   "health": 75.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 868.7,
+   "game": 448,
+   "battle": "05:06:47",
+   "health": 76.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 869.4,
+   "game": 448.3,
+   "battle": "05:06:49",
+   "health": 77.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 870,
+   "game": 448.5,
+   "battle": "05:06:51",
+   "health": 79,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 870.5,
+   "game": 448.8,
+   "battle": "05:06:54",
+   "health": 80.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 871,
+   "game": 449,
+   "battle": "05:06:56",
+   "health": 81.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 871.8,
+   "game": 449.3,
+   "battle": "05:06:58",
+   "health": 82.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 872.3,
+   "game": 449.5,
+   "battle": "05:07:00",
+   "health": 84,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 872.8,
+   "game": 449.8,
+   "battle": "05:07:03",
+   "health": 85.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 873.3,
+   "game": 450,
+   "battle": "05:07:05",
+   "health": 86.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 873.8,
+   "game": 450.3,
+   "battle": "05:07:07",
+   "health": 87.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 874.3,
+   "game": 450.5,
+   "battle": "05:07:09",
+   "health": 89,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 875.1,
+   "game": 450.8,
+   "battle": "05:07:12",
+   "health": 90.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 875.6,
+   "game": 451,
+   "battle": "05:07:14",
+   "health": 91.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 876.1,
+   "game": 451.3,
+   "battle": "05:07:16",
+   "health": 92.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 876.6,
+   "game": 451.5,
+   "battle": "05:07:18",
+   "health": 94,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 877.2,
+   "game": 451.8,
+   "battle": "05:07:21",
+   "health": 95.25,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 877.9,
+   "game": 452,
+   "battle": "05:07:23",
+   "health": 96.5,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 878.4,
+   "game": 452.3,
+   "battle": "05:07:25",
+   "health": 97.75,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 879,
+   "game": 452.5,
+   "battle": "05:07:27",
+   "health": 99,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 879.5,
+   "game": 452.8,
+   "battle": "05:07:30",
+   "health": 100,
+   "pos": [
+    -27.800843966657183,
+    -3,
+    28.00745741210999
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1593,
+   "game": 783.2,
+   "battle": "06:09:30",
+   "health": 75,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1609,
+   "game": 791.2,
+   "battle": "06:09:30",
+   "health": 75.75,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1609.5,
+   "game": 791.5,
+   "battle": "06:09:30",
+   "health": 77,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1610,
+   "game": 791.7,
+   "battle": "06:09:30",
+   "health": 78.25,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1610.6,
+   "game": 792,
+   "battle": "06:09:30",
+   "health": 79.5,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1611.1,
+   "game": 792.2,
+   "battle": "06:09:30",
+   "health": 80.75,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1611.3,
+   "game": 792.5,
+   "battle": "06:09:30",
+   "health": 82,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1611.9,
+   "game": 792.7,
+   "battle": "06:09:30",
+   "health": 83.25,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1612.4,
+   "game": 793,
+   "battle": "06:09:30",
+   "health": 84.5,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1612.9,
+   "game": 793.2,
+   "battle": "06:09:30",
+   "health": 85.75,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1613.4,
+   "game": 793.5,
+   "battle": "06:09:30",
+   "health": 87,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1614,
+   "game": 793.7,
+   "battle": "06:09:30",
+   "health": 88.25,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1614.5,
+   "game": 794,
+   "battle": "06:09:30",
+   "health": 89.5,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1614.7,
+   "game": 794.2,
+   "battle": "06:09:30",
+   "health": 90.75,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1615.3,
+   "game": 794.5,
+   "battle": "06:09:30",
+   "health": 92,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1615.8,
+   "game": 794.7,
+   "battle": "06:09:30",
+   "health": 93.25,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1616.3,
+   "game": 795,
+   "battle": "06:09:30",
+   "health": 94.5,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1617.1,
+   "game": 795.2,
+   "battle": "06:09:30",
+   "health": 95.75,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1617.6,
+   "game": 795.5,
+   "battle": "06:09:30",
+   "health": 97,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1618.1,
+   "game": 795.7,
+   "battle": "06:09:30",
+   "health": 98.25,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1618.4,
+   "game": 796,
+   "battle": "06:09:30",
+   "health": 99.5,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1618.9,
+   "game": 796.2,
+   "battle": "06:09:30",
+   "health": 100,
+   "pos": [
+    -27.99033811272459,
+    -3,
+    27.8579713999363
+   ],
+   "crouched": true
+  },
+  {
+   "real": 1920.3,
+   "game": 945.6,
+   "battle": "06:12:45",
+   "health": 75,
+   "pos": [
+    -105.08567983804278,
+    -3,
+    27.010454877165213
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1932.6,
+   "game": 952.9,
+   "battle": "06:13:47",
+   "health": 50,
+   "pos": [
+    -148.5820467364527,
+    -3,
+    27.43976137564741
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1945.9,
+   "game": 960.4,
+   "battle": "06:14:51",
+   "health": 25,
+   "pos": [
+    -193.77888932208978,
+    -3,
+    27.557571799904288
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1958.5,
+   "game": 968.5,
+   "battle": "06:16:00",
+   "health": 26.25,
+   "pos": [
+    -242.47923096946536,
+    -3,
+    27.23650266615319
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1959.2,
+   "game": 968.8,
+   "battle": "06:16:02",
+   "health": 27.666500000000234,
+   "pos": [
+    -244.17899403032652,
+    -3,
+    27.225296554757005
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1959.6,
+   "game": 969,
+   "battle": "06:16:04",
+   "health": 28.916500000000234,
+   "pos": [
+    -245.6789614331335,
+    -3,
+    27.2154076460064
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1959.9,
+   "game": 969.3,
+   "battle": "06:16:06",
+   "health": 30.166500000000234,
+   "pos": [
+    -247.1789288359405,
+    -3,
+    27.205518737255797
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1960.3,
+   "game": 969.5,
+   "battle": "06:16:08",
+   "health": 31.416500000000234,
+   "pos": [
+    -248.67889623874748,
+    -3,
+    27.195629828505194
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1960.6,
+   "game": 969.8,
+   "battle": "06:16:11",
+   "health": 32.666500000000234,
+   "pos": [
+    -250.17886364155447,
+    -3,
+    27.18574091975459
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1961,
+   "game": 970,
+   "battle": "06:16:13",
+   "health": 33.916500000000234,
+   "pos": [
+    -251.67883104436146,
+    -3,
+    27.175852011003986
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1961.3,
+   "game": 970.3,
+   "battle": "06:16:15",
+   "health": 35.166500000000234,
+   "pos": [
+    -253.17879844716845,
+    -3,
+    27.165963102253382
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1961.7,
+   "game": 970.5,
+   "battle": "06:16:17",
+   "health": 36.416500000000234,
+   "pos": [
+    -254.67876584997543,
+    -3,
+    27.15607419350278
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1962,
+   "game": 970.8,
+   "battle": "06:16:19",
+   "health": 37.666500000000234,
+   "pos": [
+    -256.1787332527824,
+    -3,
+    27.146185284752175
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1962.4,
+   "game": 971,
+   "battle": "06:16:21",
+   "health": 38.916500000000234,
+   "pos": [
+    -257.6787006555894,
+    -3,
+    27.13629637600157
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1962.7,
+   "game": 971.3,
+   "battle": "06:16:23",
+   "health": 40.166500000000234,
+   "pos": [
+    -259.1786680583964,
+    -3,
+    27.126407467250967
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1963.1,
+   "game": 971.5,
+   "battle": "06:16:25",
+   "health": 41.416500000000234,
+   "pos": [
+    -260.6786354612034,
+    -3,
+    27.116518558500363
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1963.4,
+   "game": 971.8,
+   "battle": "06:16:28",
+   "health": 42.666500000000234,
+   "pos": [
+    -262.1786028640104,
+    -3,
+    27.10662964974976
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1963.8,
+   "game": 972,
+   "battle": "06:16:30",
+   "health": 43.916500000000234,
+   "pos": [
+    -263.67857026681736,
+    -3,
+    27.096740740999156
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1964.1,
+   "game": 972.3,
+   "battle": "06:16:32",
+   "health": 45.166500000000234,
+   "pos": [
+    -265.17853766962435,
+    -3,
+    27.086851832248552
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1964.5,
+   "game": 972.5,
+   "battle": "06:16:34",
+   "health": 46.416500000000234,
+   "pos": [
+    -266.67850507243134,
+    -3,
+    27.07696292349795
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1964.8,
+   "game": 972.8,
+   "battle": "06:16:36",
+   "health": 47.666500000000234,
+   "pos": [
+    -268.1784724752383,
+    -3,
+    27.067074014747345
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1965.3,
+   "game": 973,
+   "battle": "06:16:38",
+   "health": 48.916500000000234,
+   "pos": [
+    -269.6784398780453,
+    -3,
+    27.05718510599674
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1965.7,
+   "game": 973.3,
+   "battle": "06:16:40",
+   "health": 50.166500000000234,
+   "pos": [
+    -271.1784072808523,
+    -3,
+    27.047296197246137
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1966.1,
+   "game": 973.5,
+   "battle": "06:16:42",
+   "health": 51.416500000000234,
+   "pos": [
+    -272.6783746836593,
+    -3,
+    27.037407288495533
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1966.5,
+   "game": 973.8,
+   "battle": "06:16:45",
+   "health": 52.666500000000234,
+   "pos": [
+    -274.1783420864663,
+    -3,
+    27.02751837974493
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1966.8,
+   "game": 974,
+   "battle": "06:16:47",
+   "health": 53.916500000000234,
+   "pos": [
+    -274.1783420864663,
+    -3,
+    27.02751837974493
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1967.1,
+   "game": 974.3,
+   "battle": "06:16:49",
+   "health": 55.166500000000234,
+   "pos": [
+    -275.67588950538993,
+    -3,
+    26.941776160998824
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1967.4,
+   "game": 974.5,
+   "battle": "06:16:51",
+   "health": 56.416500000000234,
+   "pos": [
+    -277.1734369243136,
+    -3,
+    26.85603394225272
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1967.8,
+   "game": 974.8,
+   "battle": "06:16:53",
+   "health": 57.666500000000234,
+   "pos": [
+    -278.67098434323725,
+    -3,
+    26.770291723506613
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1969.4,
+   "game": 975,
+   "battle": "06:16:55",
+   "health": 58.916500000000234,
+   "pos": [
+    -280.1685317621609,
+    -3,
+    26.684549504760508
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1969.5,
+   "game": 975.8,
+   "battle": "06:17:02",
+   "health": 62.75,
+   "pos": [
+    -284.7612101865157,
+    -3,
+    26.421595268309968
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1969.8,
+   "game": 976.1,
+   "battle": "06:17:04",
+   "health": 64,
+   "pos": [
+    -286.25875760543937,
+    -3,
+    26.335853049563863
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1970.1,
+   "game": 976.3,
+   "battle": "06:17:06",
+   "health": 65.25,
+   "pos": [
+    -287.75630502436303,
+    -3,
+    26.250110830817757
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1970.5,
+   "game": 976.6,
+   "battle": "06:17:08",
+   "health": 66.5,
+   "pos": [
+    -289.2538524432867,
+    -3,
+    26.16436861207165
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1970.9,
+   "game": 976.8,
+   "battle": "06:17:10",
+   "health": 67.75,
+   "pos": [
+    -290.75139986221035,
+    -3,
+    26.078626393325546
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1971.2,
+   "game": 977.1,
+   "battle": "06:17:12",
+   "health": 69,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1972.9,
+   "game": 977.8,
+   "battle": "06:17:19",
+   "health": 72.83349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1973.3,
+   "game": 978.1,
+   "battle": "06:17:21",
+   "health": 74.08349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1973.5,
+   "game": 978.3,
+   "battle": "06:17:23",
+   "health": 75.33349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1974.1,
+   "game": 978.6,
+   "battle": "06:17:25",
+   "health": 76.58349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1974.6,
+   "game": 978.8,
+   "battle": "06:17:27",
+   "health": 77.83349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1975.1,
+   "game": 979.1,
+   "battle": "06:17:30",
+   "health": 79.08349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1975.8,
+   "game": 979.3,
+   "battle": "06:17:32",
+   "health": 80.33349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1976.4,
+   "game": 979.6,
+   "battle": "06:17:34",
+   "health": 81.58349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1976.9,
+   "game": 979.8,
+   "battle": "06:17:36",
+   "health": 82.83349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1977.7,
+   "game": 980.1,
+   "battle": "06:17:38",
+   "health": 84.08349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1978.2,
+   "game": 980.3,
+   "battle": "06:17:40",
+   "health": 85.33349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1978.7,
+   "game": 980.6,
+   "battle": "06:17:42",
+   "health": 86.58349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1979.2,
+   "game": 980.8,
+   "battle": "06:17:44",
+   "health": 87.83349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1980,
+   "game": 981.1,
+   "battle": "06:17:47",
+   "health": 89.08349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1980.5,
+   "game": 981.3,
+   "battle": "06:17:49",
+   "health": 90.33349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1981,
+   "game": 981.6,
+   "battle": "06:17:51",
+   "health": 91.58349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1981.5,
+   "game": 981.8,
+   "battle": "06:17:53",
+   "health": 92.83349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1982.3,
+   "game": 982.1,
+   "battle": "06:17:55",
+   "health": 94.08349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1982.8,
+   "game": 982.3,
+   "battle": "06:17:57",
+   "health": 95.33349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1983.3,
+   "game": 982.6,
+   "battle": "06:17:59",
+   "health": 96.58349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1984.1,
+   "game": 982.8,
+   "battle": "06:18:01",
+   "health": 97.83349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1984.6,
+   "game": 983.1,
+   "battle": "06:18:04",
+   "health": 99.08349999999977,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  },
+  {
+   "real": 1985.1,
+   "game": 983.3,
+   "battle": "06:18:06",
+   "health": 100,
+   "pos": [
+    -292.248947281134,
+    -3,
+    25.99288417457944
+   ],
+   "crouched": false
+  }
+ ],
+ "settings": {
+  "difficulty": "soldado",
+  "quality": "low"
+ },
+ "finishedAt": "2026-10-20T10:15:45.044Z",
+ "realSeconds": 2557.8,
+ "outcome": "debrief",
+ "failure": null,
+ "pageErrors": [],
+ "failedRequests": [],
+ "final": {
+  "game": 1248.3,
+  "battle": "07:05:00",
+  "complete": true,
+  "flags": {
+   "m01.completed": true,
+   "m01.nowicki_status": "missing",
+   "m01.bak_status": "rescued_by_player",
+   "m01.dudek_status": "unhurt",
+   "m01.east_platoon_survivors": 12,
+   "m01.second_raid_state": "ended",
+   "m01.forward_post_state": "intact_near_miss"
+  },
+  "checkpoints": [
+   "cp_m01_a_orientacao",
+   "cp_m01_b_reorganizacao",
+   "cp_m01_c_engenheiros",
+   "cp_m01_d_retirada"
+  ],
+  "objectives": {
+   "obj_m01_deliver_message": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_take_cover": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_follow_sergeant": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_find_sappers": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_fetch_material": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_cover_repair": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_hold_access": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_cover_withdrawal": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_rescue_bak": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_leave_bridge": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_hold_corridor": {
+    "state": "done",
+    "progress": 100
+   },
+   "obj_m01_reach_shelter": {
+    "state": "done",
+    "progress": 100
+   }
+  },
+  "health": 100,
+  "weapon": {
+   "id": "kb_wz29",
+   "mag": 2,
+   "reserve": 20,
+   "state": "READY",
+   "until": 0,
+   "started": 656366.49999995,
+   "lastShot": 656366.49999995,
+   "shotCount": 28,
+   "received": 5,
+   "sight": 500,
+   "reloadMode": null
+  },
+  "enemyAlive": 43,
+  "events": 25
+ },
+ "debrief": "Às 04:34, bombardeiros alemães atacaram Tczew. O dano nos cabos e o reparo representados nesta missão seguem uma versão histórica disputada.\n\nPor volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição.\n\nO roteiro adopta demolições às 06:10 e 06:45, conforme H01-PDF; outras fontes dão 06:40 para a segunda. O plano alemão de tomar as pontes intactas fracassou.\n\nA guarnição continuou a combater e retirou-se de Tczew até às 20:00. A campanha continuou. Destruir as pontes atrasou o inimigo; não mudou o rumo da guerra.\n\nStanisław Janik comandava o 2.º Batalhão de Fuzileiros. Os sapadores eram comandados pelo subtenente Norbert Juchtman.\n\nO pelotão da cabeça de ponte leste, que recuou pela ponte antes da primeira explosão, era comandado por Walenty Faterkowski.\n\nEm Szymankowo, ferroviários e aduaneiros poloneses avisaram Tczew e atrasaram o plano alemão. Em represália, combatentes alemães assassinaram 21 poloneses, sobretudo ferroviários e aduaneiros.\n\nJan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios."
+}

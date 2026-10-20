@@ -1,6 +1,6 @@
 # Plano de implementação
 
-Continuação Codex: PR draft #92 sobre #91 `afaded9`, código `0261829` + `b197f03`; correções P0/P1 e a fatia de nível da D5 implementadas na origem, Node 1482/1482, build/bundle PASS e browser 14/15 + correção 1/1; percurso contínuo final em curso, sem promoção de contagens históricas ou integração na #80. [Handoff](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). D2 já integrada na #91, D3/D4/SP-08 e revisão humana pendentes.
+Continuação Codex: PR draft #92 sobre #91 `afaded9`, código `0261829` + `b197f03`; correções P0/P1 e a fatia de nível da D5 implementadas na origem, Node 1482/1482, build/bundle PASS e browser 14/15 + correção 1/1; percurso contínuo Soldado PASS 12/12, sem mortes/erros (Low 640×360; não é playtest humano), sem promoção de contagens históricas ou integração na #80. [Handoff](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). D2 já integrada na #91, D3/D4/SP-08 e revisão humana pendentes.
 
 ## Onze tarefas parciais aceites — 2026-10-16
 

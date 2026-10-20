@@ -1,0 +1,95 @@
+{
+  "controllerHead": "245fafa",
+  "gameProductionIdenticalTo": "ce70422",
+  "gameChangesCommit": "b197f03",
+  "basePR91": "afaded912c5c3a7f8a4e6e567be9a98cd35ac24f",
+  "version": "0.2.0",
+  "settings": {
+    "difficulty": "soldado",
+    "quality": "low"
+  },
+  "viewport": [
+    640,
+    360
+  ],
+  "skipCutscenes": false,
+  "runtimeControllerPatch": false,
+  "directGameStateWrites": false,
+  "result": "debrief",
+  "objectivesDone": 12,
+  "checkpoints": 4,
+  "healthFinal": 100,
+  "healthMinimumSampled": 25,
+  "healthSamples": 126,
+  "deaths": 0,
+  "pageErrors": [],
+  "httpErrors": [],
+  "durationSeconds": 2557.8,
+  "note": "Automated single-session keyboard/mouse route, not human playtest, hardware/FPS benchmark or a High-quality full playthrough. Existing cover and crouch inputs used; no changes to damage/AI/physics/clock. Cinematic actor/player staging belongs to the simulation.",
+  "files": [
+    {
+      "file": "17-hold-access.png",
+      "sha256": "69351597d6bc1c72d7af90078b8ba57eb13645c95e4c7e7828b7326f386f470a",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "28-bak-carry.png",
+      "sha256": "7ed62c7924104e24e88e641dbc8935b577613b9d4c96ddb8641c9fa0a2359fca",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "29-bak-delivered.png",
+      "sha256": "be076bcac787df0813e678c5968223395b3dc4cdddd57ce871af8e2730957ce5",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "35-firing-point.png",
+      "sha256": "e1db08d164e23d9d5732289aeaa48f8de0eaa3a736b588f60839d1737e09cf6a",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "60-west-demolition.png",
+      "sha256": "499580fe43a3ba11b15fe4c700596dc374ff9f4f060d66fdfc8ccbfac7163e36",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "65-roll-call-10s.png",
+      "sha256": "f0a7bbce080bd57008ed4a3333e8e556027026ba60bb61e5e696dbccdaf3c25a",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "67-debrief.png",
+      "sha256": "7f86425cef39a7bad0de0122b1d679889293c5bd0c78ce57573fc3fd2df768e5",
+      "imagePixels": [
+        640,
+        360
+      ]
+    },
+    {
+      "file": "log.jsonl",
+      "sha256": "2bdd9f557a2db06338d0892020209944a4987bf1fef91aee8b58cc3490a665ed"
+    },
+    {
+      "file": "report.json",
+      "sha256": "3c8d5266ab3ef9dcedbfb0d4c3c8771e77084169311bc8ac6127db942b2b23ce"
+    }
+  ]
+}

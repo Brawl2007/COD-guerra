@@ -62,15 +62,33 @@
   "externalReferenceGameplayObserved": false,
   "mainMergeOrDeployInvoked": false,
   "continuousCovered": {
-    "status": "running",
     "controllerHead": "245fafa",
-    "productionIdenticalTo": "ce70422",
-    "difficulty": "soldado",
+    "gameProductionIdenticalTo": "ce70422",
+    "gameChangesCommit": "b197f03",
+    "basePR91": "afaded912c5c3a7f8a4e6e567be9a98cd35ac24f",
+    "version": "0.2.0",
+    "settings": {
+      "difficulty": "soldado",
+      "quality": "low"
+    },
     "viewport": [
       640,
       360
     ],
     "skipCutscenes": false,
-    "runtimeControllerPatch": false
+    "runtimeControllerPatch": false,
+    "directGameStateWrites": false,
+    "result": "debrief",
+    "objectivesDone": 12,
+    "checkpoints": 4,
+    "healthFinal": 100,
+    "healthMinimumSampled": 25,
+    "healthSamples": 126,
+    "deaths": 0,
+    "pageErrors": [],
+    "httpErrors": [],
+    "durationSeconds": 2557.8,
+    "note": "Automated single-session keyboard/mouse route, not human playtest, hardware/FPS benchmark or a High-quality full playthrough. Existing cover and crouch inputs used; no changes to damage/AI/physics/clock. Cinematic actor/player staging belongs to the simulation.",
+    "report": "continuous-covered/report.json"
   }
 }

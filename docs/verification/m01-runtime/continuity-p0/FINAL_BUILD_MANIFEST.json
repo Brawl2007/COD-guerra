@@ -174,5 +174,8 @@
   },
   "browserRerunHead": "35f3215",
   "continuousRunHead": "35f3215",
-  "note": "Production sources and built JavaScript are identical to ce70422; 35f3215 changes one browser assertion and verifies actual message delivery."
+  "note": "Production sources and built JavaScript are identical to ce70422; 35f3215 changes one browser assertion and verifies actual message delivery.",
+  "coveredControllerHead": "245fafa",
+  "coveredRunResult": "PASS: 12/12 goals, rescued_by_player, 4 checkpoints, no deaths/pageErrors/HTTP errors",
+  "productionDiffSinceCodeHead": []
 }
