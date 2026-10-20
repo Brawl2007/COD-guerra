@@ -1,5 +1,9 @@
 # Plano de implementação
 
+D3 Codex: runtime `3e674ed`, testes `cfa017d`, mesma PR draft #92 sobre #91 `afaded9`; concluída na origem, sem integração na #91/#80/main. Causa real + cartela sem ticks + retoma; CP-B2 só Soldado/Veterano após entregar material. Node **1499/1499**, golden 14 inteiramente idêntica em Recruta, invariantes 24/24, build/bundle PASS; browser 5/5 + adicional 1/1 após correções de fixture documentadas. [Handoff D3](docs/verification/m01-runtime/continuity-d3/HANDOFF.md). D4 isolada/em desenvolvimento; SP-08, audiovisual e revisão humana pendentes.
+
+O parágrafo seguinte descreve o lote P0/P1/D5 anterior à D3:
+
 Continuação Codex: PR draft #92 sobre #91 `afaded9`, código `0261829` + `b197f03`; correções P0/P1 e a fatia de nível da D5 implementadas na origem, Node 1482/1482, build/bundle PASS e browser 14/15 + correção 1/1; percurso contínuo Soldado PASS 12/12, sem mortes/erros (Low 640×360; não é playtest humano), sem promoção de contagens históricas ou integração na #80. [Handoff](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). D2 já integrada na #91, D3/D4/SP-08 e revisão humana pendentes.
 
 ## Onze tarefas parciais aceites — 2026-10-16

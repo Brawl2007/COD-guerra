@@ -1,0 +1,41 @@
+{
+  "method": "real simulation control route to crate delivery, not browser playtest",
+  "clock": 209.1000000000133,
+  "battleClock": 16934.549999997944,
+  "checkpoints": [
+    "cp_m01_a_orientacao",
+    "cp_m01_b_reorganizacao",
+    "cp_m01_b2_reparo"
+  ],
+  "mission": {
+    "phase": "FIRST_CONTACT",
+    "complete": false,
+    "text": "Proteja o reparo da linha",
+    "status": "Reparo 0% · sapadores a trabalhar"
+  },
+  "dialogue24": true,
+  "sectors": {
+    "s1_west_bridgehead": "reorganizing",
+    "s2_east_bridgehead": "quiet",
+    "s3_station_yard": "wounded_evacuation",
+    "s4_north_perimeter": "quiet",
+    "s5_sky_east": "second_pass_distant"
+  },
+  "eventsConsumed": [
+    "evt_m01_intro_card",
+    "evt_m01_prelude_start",
+    "evt_m01_railway_worker_report",
+    "evt_m01_planes_heard",
+    "evt_m01_bombing_0434",
+    "evt_m01_cable_cut",
+    "evt_m01_forward_post_bombed",
+    "evt_m01_nowicki_lost",
+    "evt_m01_wounded_dragged",
+    "evt_m01_second_air_pass"
+  ],
+  "destruction": [
+    "ignition_line_damaged",
+    "station_wagon_fire"
+  ],
+  "health": 100
+}

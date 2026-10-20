@@ -1,0 +1,12 @@
+✔ the rearguard golden (amendment 11) chains to the dialogue golden, pins the live simulation, the rearguard, the director and the mission data, and cites its lockstep account (2.977712ms)
+✔ the difficulty + 05:35 golden (amendment 12) chains to the rearguard golden, pins PR91 afaded9 as history, the level table and the mission data, and cites its lockstep account (0.789686ms)
+✔ guidance amendment 13 pins PR92 23313aa as history and preserves combat, physics, RNG and plot tick by tick against PR91 (0.929826ms)
+✔ D3 amendment 14 pins the live source and keeps every Recruta gameplay byte identical to PR92 23313aa (1.360333ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75.531943

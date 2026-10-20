@@ -1,0 +1,24 @@
+✔ recruta: the actual lethal round publishes its source once, with no additional draw (32.504826ms)
+✔ soldado: the actual lethal round publishes its source once, with no additional draw (14.052013ms)
+✔ veterano: the actual lethal round publishes its source once, with no additional draw (10.90412ms)
+✔ a nonlethal or fair-death-clamped wound never creates a death event (26.590881ms)
+✔ fall and water publish their actual existing reasons, not an invented shooter (8.636128ms)
+✔ soldado: the real crate-delivery route captures CP-B2 only when applicable, after the complete tick (1108.442824ms)
+✔ veterano: the real crate-delivery route captures CP-B2 only when applicable, after the complete tick (831.054237ms)
+✔ recruta: the real crate-delivery route captures CP-B2 only when applicable, after the complete tick (754.870132ms)
+✔ CP-B2 cannot be disguised as a legacy Recruit save; rejection is atomic (763.882397ms)
+✔ presentation freezes simulation and resumes at the real checkpoint only after 2.5 active seconds; pausing preserves the beat (31.170216ms)
+✔ only a real down player can enter the beat and the event contract requires cause/source (3.310759ms)
+✔ repair checkpoint cannot be captured before actual material delivery or while carrying cargo (4.86748ms)
+✔ a real grenade blast that kills the player publishes the grenade cause once (3.668577ms)
+✔ recruta: actual supported route restores CP-C and CP-D exactly after a lethal round (12722.725973ms)
+✔ soldado: actual supported route restores CP-C and CP-D exactly after a lethal round (15334.249472ms)
+✔ veterano: actual supported route restores CP-C and CP-D exactly after a lethal round (11330.551174ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43214.224294
