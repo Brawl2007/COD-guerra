@@ -2,6 +2,7 @@
 // Nunca altera objectivos, relógios, eventos, cenas ou checkpoints; os tempos derivam do relógio da simulação,
 // por isso tudo congela na pausa e recomeça coerente depois de um restauro.
 import { clockText } from '../game/m01-simulation.js';
+import { corridorGuidance } from './m01-corridor-guidance.js';
 
 const clamp=(v,min=0,max=1)=>Math.max(min,Math.min(max,v));
 const ramp=(t,from,to)=>clamp((t-from)/(to-from));
@@ -197,12 +198,13 @@ export class M01HudPresenter {
     this.opacity('fade',Math.max(cine.black,resume));
     this.updateCard('titleCard',cine.card,'cinema');
     this.updateResumeCard(sim,clock,cine.locked);
-    // Estado da ameaça: o texto é exactamente o da simulação.
-    this.text('objectiveStatus',sim.mission.status??'');
+    // Keep the simulation's count/threat/wait reason; corridor presentation adds the player's role, never an invented threat.
+    const marker=this.markerFor(sim);
+    this.text('objectiveStatus',this.markerMemo?.corridorStatus??sim.mission.status??'');
     this.text('clock',clockText(sim.battleClock));
     const interaction=sim.interaction??'';
     // Once an action is available, its prompt is the local guidance. Keep one clear invitation to act.
-    this.updateMarker(this.markerFor(sim),cine.locked||beats.letterbox||splitInteraction(interaction).key==='E');
+    this.updateMarker(marker,cine.locked||beats.letterbox||splitInteraction(interaction).key==='E');
     this.updateTempo(sim.tempo??null,clock,cine.locked);
     this.updateInteraction(interaction);
     this.updateSubtitle(sim.subtitle);
@@ -281,9 +283,9 @@ export class M01HudPresenter {
   markerFor(sim){
     const p=sim.player,m=this.markerMemo;
     if(m&&m.sim===sim&&m.clock===sim.clock&&m.x===p?.x&&m.z===p?.z&&m.angle===p?.angle)return m.value;
-    const value=sim.objectiveMarker??null;
-    if(m){m.sim=sim;m.clock=sim.clock;m.x=p?.x;m.z=p?.z;m.angle=p?.angle;m.value=value;}
-    else this.markerMemo={sim,clock:sim.clock,x:p?.x,z:p?.z,angle:p?.angle,value};
+    const original=sim.objectiveMarker??null,guidance=corridorGuidance(sim,original),value=guidance?guidance.marker:original;
+    if(m){m.sim=sim;m.clock=sim.clock;m.x=p?.x;m.z=p?.z;m.angle=p?.angle;m.value=value;m.corridorStatus=guidance?.status;}
+    else this.markerMemo={sim,clock:sim.clock,x:p?.x,z:p?.z,angle:p?.angle,value,corridorStatus:guidance?.status};
     return value;
   }
   updateMarker(marker,hidden){

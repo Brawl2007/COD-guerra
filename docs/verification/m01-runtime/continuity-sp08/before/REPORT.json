@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "738d294edcc993fa65e434d7fd36ddda3dbe166c",
+  "method": "Real Continue loads of alive control-generated views on published D4 build; six active simulation seconds, ordinary pointer-lock pause, no gameplay writes. Pause overlay hidden only for photos.",
+  "rows": [
+    {
+      "name": "medic-carrying",
+      "fixtureSha256": "cb27316c17766103aa461b550b3d96befcab633699382bbc4561d0b38826eca5",
+      "clock": 925.1499999997064,
+      "status": "Corredor · passaram 9 de 12 homens do pelotão leste",
+      "marker": "Dudek com Bąk"
+    },
+    {
+      "name": "outside-post",
+      "fixtureSha256": "39ce68e984682ebe4327e12b9ce6cefd7f6d5b5e287c4c3bb2a2bc31dbfd1ab8",
+      "clock": 927.5832999997042,
+      "status": "Corredor · passaram 9 de 12 homens do pelotão leste",
+      "marker": "Dudek com Bąk"
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "config": {
+    "configFile": "/workspace/artifacts/continuity-sp08-playwright-layout.config.mjs",
+    "rootDir": "/workspace/COD-guerra-sp08/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/artifacts/continuity-sp08-browser-layout-final",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra-sp08/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/artifacts/continuity-sp08-browser-layout-final-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview -- --port 4195 --strictPort",
+      "url": "http://127.0.0.1:4195/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000,
+      "cwd": "/workspace/COD-guerra-sp08"
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-corridor-role.spec.js",
+      "file": "m01-corridor-role.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "mobile corridor",
+          "file": "m01-corridor-role.spec.js",
+          "line": 38,
+          "column": 6,
+          "specs": [
+            {
+              "title": "real touch controls return to the post and the context fits short screens",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 34955,
+                      "error": {
+                        "message": "Error: page.waitForFunction: TypeError: Cannot read properties of null (reading 'getBoundingClientRect')\n    at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)\n    at predicate (eval at evaluate (:290:30), <anonymous>:7:23)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)\n    at eval (eval at evaluate (:290:30), <anonymous>:42:9)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.waitForFunction: TypeError: Cannot read properties of null (reading 'getBoundingClientRect')\n    at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)\n    at predicate (eval at evaluate (:290:30), <anonymous>:7:23)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)\n    at eval (eval at evaluate (:290:30), <anonymous>:42:9)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)\n    at predicate (eval at evaluate (:290:30), <anonymous>:7:23)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)\n    at eval (eval at evaluate (:290:30), <anonymous>:42:9)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:42:14",
+                        "location": {
+                          "file": "eval at predicate (eval at evaluate (:290:30)), <anonymous>",
+                          "column": 118,
+                          "line": 1
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "eval at predicate (eval at evaluate (:290:30)), <anonymous>",
+                            "column": 118,
+                            "line": 1
+                          },
+                          "message": "Error: page.waitForFunction: TypeError: Cannot read properties of null (reading 'getBoundingClientRect')\n    at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)\n    at predicate (eval at evaluate (:290:30), <anonymous>:7:23)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)\n    at eval (eval at evaluate (:290:30), <anonymous>:42:9)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)\n    at predicate (eval at evaluate (:290:30), <anonymous>:7:23)\n    at next (eval at evaluate (:290:30), <anonymous>:29:29)\n    at eval (eval at evaluate (:290:30), <anonymous>:42:9)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:42:14"
+                        },
+                        {
+                          "location": {
+                            "file": "/workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js",
+                            "column": 180,
+                            "line": 4
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Cannot read properties of null (reading 'getBoundingClientRect')\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  2 | import {readFileSync,writeFileSync} from 'node:fs';\n  3 | test.describe.configure({timeout:180000});\n> 4 | const errors=new WeakMap();test.beforeEach(({page})=>{const e=[];errors.set(page,e);page.on('pageerror',x=>e.push(x.message));});test.afterEach(({page})=>expect(errors.get(page)).toEqual([]));\n    |                                                                                                                                                                                    ^\n  5 | const state=page=>page.evaluate(()=>({diagnostics:window.gameDiagnostics(),snapshot:window.gameVerificationState().snapshot,status:document.querySelector('#objective-status').textContent,marker:document.querySelector('.marker-label').textContent}));\n  6 | async function boot(page,name,touch=false){\n  7 |  const saved=JSON.parse(readFileSync(new URL(`../fixtures/m01-sp08-${name}.json`,import.meta.url)));\n    at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:4:180"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T16:12:07.186Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/workspace/artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/workspace/artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/workspace/artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "eval at predicate (eval at evaluate (:290:30)), <anonymous>",
+                        "column": 118,
+                        "line": 1
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4d48011e6451c605788d-082a7a32b6c205ae18d5",
+              "file": "m01-corridor-role.spec.js",
+              "line": 38,
+              "column": 130
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "m01-player-down.spec.js",
+      "file": "m01-player-down.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "touch",
+          "file": "m01-player-down.spec.js",
+          "line": 34,
+          "column": 6,
+          "specs": [
+            {
+              "title": "actual death disables touch controls and restores them with CP-B2",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 49902,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T16:12:43.728Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e27424fc4d0f09353739-c5d112ea7cdfd2fb680d",
+              "file": "m01-player-down.spec.js",
+              "line": 34,
+              "column": 120
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T16:12:06.148Z",
+    "duration": 88243.88,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

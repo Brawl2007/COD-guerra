@@ -1,0 +1,55 @@
+{
+  "task": "M01-CONTINUITY-SP08-PRESENTATION-V1",
+  "runtimeCommit": "45852b53cce0abb1de46eb54450e91aa94364d3b",
+  "baseCommit": "738d294edcc993fa65e434d7fd36ddda3dbe166c",
+  "version": "0.2.0 / M01 Tczew",
+  "unit": {
+    "command": "npm test",
+    "tests": 1532,
+    "pass": 1532,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "focusedPass": 27,
+  "browserRuns": {
+    "initial": {
+      "startTime": "2026-10-20T16:01:11.448Z",
+      "duration": 332070.002,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "driverCorrected": {
+      "startTime": "2026-10-20T16:07:29.566Z",
+      "duration": 74676.00499999999,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "layoutInitial": {
+      "startTime": "2026-10-20T16:12:06.148Z",
+      "duration": 88243.88,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "layoutFinal": {
+      "startTime": "2026-10-20T16:14:34.235Z",
+      "duration": 37343.099,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "browserSingleEightOfEightRun": false,
+  "gameplayInputsUnchangedFromD4": true,
+  "newGoldenGenerated": false,
+  "globalSP08": "PARTIAL: clarity slice only; no new activities, acting, voices or pacing change",
+  "humanPlaytest": false,
+  "realMobileHardware": false
+}

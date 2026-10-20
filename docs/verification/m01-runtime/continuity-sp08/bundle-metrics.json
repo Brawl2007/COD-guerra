@@ -1,0 +1,37 @@
+{
+  "entry": {
+    "name": "index-D7cnc2m5.js",
+    "bytes": 13648
+  },
+  "total": 1995883,
+  "chunks": [
+    {
+      "name": "game-BrSl-hyo.js",
+      "bytes": 1289803
+    },
+    {
+      "name": "three-core-DHJZDzJU.js",
+      "bytes": 626268
+    },
+    {
+      "name": "three-loaders-xoHaYwaR.js",
+      "bytes": 63176
+    },
+    {
+      "name": "index-D7cnc2m5.js",
+      "bytes": 13648
+    },
+    {
+      "name": "m01-difficulty-DUjzTxGo.js",
+      "bytes": 1513
+    },
+    {
+      "name": "asset-progress-B1UdpVEN.js",
+      "bytes": 1143
+    },
+    {
+      "name": "m01-difficulty-DzgKWyuq.js",
+      "bytes": 332
+    }
+  ]
+}

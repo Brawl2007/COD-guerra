@@ -1,0 +1,47 @@
+[
+  {
+    "text": "Mantenha o posto · Corredor · passaram 10 de 12 homens do pelotão leste",
+    "left": 28,
+    "right": 310.625,
+    "bottom": 90.53125,
+    "health": {
+      "top": 140.53125,
+      "bottom": 170.6687469482422,
+      "left": 16,
+      "right": 102.4000015258789
+    },
+    "panelBottom": 94.53125,
+    "width": 896,
+    "height": 414
+  },
+  {
+    "text": "Mantenha o posto · Corredor · passaram 10 de 12 homens do pelotão leste",
+    "left": 28,
+    "right": 223.59375,
+    "bottom": 119.203125,
+    "health": {
+      "top": 169.203125,
+      "bottom": 199.3406219482422,
+      "left": 16,
+      "right": 102.4000015258789
+    },
+    "panelBottom": 123.203125,
+    "width": 640,
+    "height": 360
+  },
+  {
+    "text": "Mantenha o posto · Corredor · passaram 10 de 12 homens do pelotão leste",
+    "left": 28,
+    "right": 138.59375,
+    "bottom": 162.4375,
+    "health": {
+      "top": 221.671875,
+      "bottom": 251.8093719482422,
+      "left": 16,
+      "right": 102.4000015258789
+    },
+    "panelBottom": 166.4375,
+    "width": 390,
+    "height": 844
+  }
+]

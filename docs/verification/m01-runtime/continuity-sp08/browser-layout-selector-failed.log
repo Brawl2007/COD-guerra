@@ -1,0 +1,86 @@
+[1A[2K[2m[WebServer] [22m(node:154767) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22m(node:154780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:154804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:154804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m01-corridor-role.spec.js:38:130 › mobile corridor › real touch controls return to the post and the context fits short screens
+[1A[2K  1) tests/browser/m01-corridor-role.spec.js:38:130 › mobile corridor › real touch controls return to the post and the context fits short screens 
+
+    Error: page.waitForFunction: TypeError: Cannot read properties of null (reading 'getBoundingClientRect')
+        at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)
+        at predicate (eval at evaluate (:290:30), <anonymous>:7:23)
+        at next (eval at evaluate (:290:30), <anonymous>:29:29)
+        at eval (eval at evaluate (:290:30), <anonymous>:42:9)
+        at UtilityScript.evaluate (<anonymous>:292:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at predicate (eval at evaluate (:290:30)), <anonymous>:1:118)
+        at predicate (eval at evaluate (:290:30), <anonymous>:7:23)
+        at next (eval at evaluate (:290:30), <anonymous>:29:29)
+        at eval (eval at evaluate (:290:30), <anonymous>:42:9)
+        at UtilityScript.evaluate (<anonymous>:292:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:42:14
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Cannot read properties of null (reading 'getBoundingClientRect')",[39m
+    [31m+ ][39m
+
+      2 | import {readFileSync,writeFileSync} from 'node:fs';
+      3 | test.describe.configure({timeout:180000});
+    > 4 | const errors=new WeakMap();test.beforeEach(({page})=>{const e=[];errors.set(page,e);page.on('pageerror',x=>e.push(x.message));});test.afterEach(({page})=>expect(errors.get(page)).toEqual([]));
+        |                                                                                                                                                                                    ^
+      5 | const state=page=>page.evaluate(()=>({diagnostics:window.gameDiagnostics(),snapshot:window.gameVerificationState().snapshot,status:document.querySelector('#objective-status').textContent,marker:document.querySelector('.marker-label').textContent}));
+      6 | async function boot(page,name,touch=false){
+      7 |  const saved=JSON.parse(readFileSync(new URL(`../fixtures/m01-sp08-${name}.json`,import.meta.url)));
+        at /workspace/COD-guerra-sp08/tests/browser/m01-corridor-role.spec.js:4:180
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/trace.zip
+    Usage:
+
+        npx playwright show-trace ../artifacts/continuity-sp08-browser-layout-final/m01-corridor-role-mobile-c-7e1df--context-fits-short-screens/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:154950) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:154950) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[2/2] tests/browser/m01-player-down.spec.js:34:120 › touch › actual death disables touch controls and restores them with CP-B2
+[1A[2K  1 failed
+    tests/browser/m01-corridor-role.spec.js:38:130 › mobile corridor › real touch controls return to the post and the context fits short screens 
+  1 passed (1.5m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
