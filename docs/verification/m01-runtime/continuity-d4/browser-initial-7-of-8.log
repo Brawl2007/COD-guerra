@@ -1,0 +1,79 @@
+[1A[2K[2m[WebServer] [22m(node:140716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22m(node:140729) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 8 tests using 1 worker
+
+[1A[2K(node:140777) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:140777) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/8] tests/browser/m01-difficulty-ui.spec.js:11:1 › new mission defaults to Soldado and every selected level reaches the real simulation
+[1A[2K[2/8] tests/browser/m01-difficulty-ui.spec.js:25:1 › legacy checkpoint wins over Veterano preference and its continue card says Recruta
+[1A[2K[3/8] tests/browser/m01-difficulty-ui.spec.js:34:2 › mobile difficulty › selector stays reachable on a short touch screen and checkpoint reports Soldado
+[1A[2K[4/8] tests/browser/m01-fair-death.spec.js:12:1 › a genuine D3 danger save remains playable in D4 with its actual saved level
+[1A[2K  1) tests/browser/m01-fair-death.spec.js:12:1 › a genuine D3 danger save remains playable in D4 with its actual saved level 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 0[39m
+    [31m+ Received  + 1[39m
+
+    [2m  Array [[22m
+    [2m    "cp_m01_a_orientacao",[22m
+    [2m    "cp_m01_b_reorganizacao",[22m
+    [2m    "cp_m01_b2_reparo",[22m
+    [31m+   "cp_m01_c_engenheiros",[39m
+    [2m  ][22m
+
+      13 |  expect(Object.values(legacy.timers.telegraph).every(e=>!('cue'in e))).toBe(true);await boot(page,legacy);await page.waitForFunction(clock=>window.gameDiagnostics().clock>clock,legacy.clock);
+      14 |  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();await expect(page.locator('#error')).toBeHidden();
+    > 15 |  const result=await state(page);expect(result.s.difficulty).toBe('soldado');expect(result.s.player.alive).toBe(true);expect(result.s.checkpointsReached).toEqual(legacy.checkpointsReached);
+         |                                                                                                                                                          ^
+      16 |  await expect(page.locator('#pause-objective')).toContainText('Soldado');await page.screenshot({path:info.outputPath('d3-legacy-danger-save.png')});writeFileSync(info.outputPath('d3-legacy-loaded.json'),JSON.stringify(result,null,2));
+      17 | });
+      18 | test('an incoming round from the real audited route publishes its actual shooter and restores the checkpoint',async({page},info)=>{
+        at /workspace/COD-guerra-d4/tests/browser/m01-fair-death.spec.js:15:154
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../artifacts/continuity-d4-browser/m01-fair-death-a-genuine-D-87bb8-with-its-actual-saved-level/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../artifacts/continuity-d4-browser/m01-fair-death-a-genuine-D-87bb8-with-its-actual-saved-level/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../artifacts/continuity-d4-browser/m01-fair-death-a-genuine-D-87bb8-with-its-actual-saved-level/trace.zip
+    Usage:
+
+        npx playwright show-trace ../artifacts/continuity-d4-browser/m01-fair-death-a-genuine-D-87bb8-with-its-actual-saved-level/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:141416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:141416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[5/8] tests/browser/m01-fair-death.spec.js:18:1 › an incoming round from the real audited route publishes its actual shooter and restores the checkpoint
+[1A[2K[6/8] tests/browser/m01-player-down.spec.js:33:1 › desktop: actual water death pauses presentation and restores the real repair checkpoint
+[1A[2K[7/8] tests/browser/m01-player-down.spec.js:34:120 › touch › actual death disables touch controls and restores them with CP-B2
+[1A[2K[8/8] tests/browser/m01-player-down.spec.js:35:1 › E delivers the real crate, persists CP-B2 and Continue resumes its actual objective
+[1A[2K  1 failed
+    tests/browser/m01-fair-death.spec.js:12:1 › a genuine D3 danger save remains playable in D4 with its actual saved level 
+  7 passed (5.5m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

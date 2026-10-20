@@ -2,7 +2,7 @@ Desenho aprovado pelo Captain (D35, ao abrigo de D34). Implementação faseada D
 
 # H9 — M01 difficulty and danger: design
 
-**Estado atual da continuação Codex:** D1/D2 já estão na #91 `afaded9`. D3 implementada na origem (`3e674ed`, testes `cfa017d`, PR #92): causa/evento real, cartela sem ticks e CP-B2; Node 1499/1499, golden 14, invariantes e browser registados no [handoff](../verification/m01-runtime/continuity-d3/HANDOFF.md). D5 tem seletor/indicação do nível e cartela, mas oferta de baixar nível ainda pendente. D4 está isolada em desenvolvimento, fora das provas desta entrega. Sem nova calibração D2 ou promoção na candidata.
+**Estado atual da continuação Codex:** D1/D2 já estão na #91 `afaded9`. D3 implementada na origem (`3e674ed`, testes `cfa017d`, PR #92): causa/evento real, cartela sem ticks e CP-B2; Node 1499/1499, golden 14, invariantes e browser registados no [handoff](../verification/m01-runtime/continuity-d3/HANDOFF.md). D5 tem seletor/indicação do nível e cartela, mas oferta de baixar nível ainda pendente. D4 implementada na origem (`a7866e3`, Node 1520/1520, [provas próprias](../verification/m01-runtime/continuity-d4/HANDOFF.md)): a janela D2 continua e exige adicionalmente `cue={first,last,kind}` real/recente do mesmo atirador; F4 protege contra golpe fatal de combate nas cenas S/V. Saves anteriores continuam aceites; builds antigos podem rejeitar o campo novo `cue`. Recruta idêntica na emenda15. Sem nova calibração D2 ou promoção na candidata.
 
 **Histórico do desenho, antes da implementação:**
 

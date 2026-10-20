@@ -1,0 +1,28 @@
+✔ soldado: a legacy engagement is readable but cannot license a lethal wound; an actual fresh cue starts a new grace (42.8032ms)
+✔ soldado: a stale cue cannot kill even if no later burst ran the pruning loop (5.884907ms)
+✔ soldado: every cinematic scene blocks a fatal combat round without consuming RNG (27.058359ms)
+✔ soldado: a real grenade blast cannot kill during the order scene (3.57894ms)
+✔ soldado: rifle fire emits the existing event, but only a visible actual shot becomes a cue (8.165336ms)
+✔ soldado: a planned MG burst adds no warning until its actual visible shots; suppression cancels future cues (4.041065ms)
+✔ soldado: an isolated real near-miss trajectory emits crack and records that source with no additional draw (5.678557ms)
+✔ soldado: cue records round-trip, while invented, future or extra cue fields fail atomically (65.113691ms)
+✔ veterano: a legacy engagement is readable but cannot license a lethal wound; an actual fresh cue starts a new grace (23.567672ms)
+✔ veterano: a stale cue cannot kill even if no later burst ran the pruning loop (3.255063ms)
+✔ veterano: every cinematic scene blocks a fatal combat round without consuming RNG (18.428945ms)
+✔ veterano: a real grenade blast cannot kill during the order scene (2.956014ms)
+✔ veterano: rifle fire emits the existing event, but only a visible actual shot becomes a cue (7.434557ms)
+✔ veterano: a planned MG burst adds no warning until its actual visible shots; suppression cancels future cues (3.352089ms)
+✔ veterano: an isolated real near-miss trajectory emits crack and records that source with no additional draw (5.786449ms)
+✔ veterano: cue records round-trip, while invented, future or extra cue fields fail atomically (46.969143ms)
+✔ Recruta keeps its original lethal behavior during scenes and has no cue record (3.092559ms)
+✔ D4 retains D2 first-targeted-burst protection even when a real earlier cue exists (3.422766ms)
+✔ the real published D3 danger save restores intact without inventing actual cue evidence (22.35007ms)
+✔ Veterano seed 2 with support completes its real route after preserving D2 protection (8767.389758ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9153.781529

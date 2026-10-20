@@ -1,5 +1,7 @@
 # Auditoria original → estado na continuação
 
+**Atualização posterior:** D3 e D4 já têm entregas próprias na origem da mesma PR #92: [D3](../continuity-d3/HANDOFF.md), [D4](../continuity-d4/HANDOFF.md), [comparação D4](../continuity-d4/MATRIZ.md). As pendências H9 abaixo são o estado histórico do lote P0; não anulam essas entregas posteriores. Sem promoção de aceitação humana ou integração na candidata.
+
 Os sete relatórios A–G e as 15 respostas de CONCLUSOES pertencem a `8d420eb`, avaliando `68301b7`. [Originais completos e evidências](https://github.com/Brawl2007/COD-guerra/tree/codex/m01-audit-download-8d420eb/relatorios). Esta matriz não os substitui nem altera as notas. Base de desenvolvimento: **PR #91 `afaded912c5c3a7f8a4e6e567be9a98cd35ac24f`**, versão npm **0.2.0**, M01 Tczew.
 
 Git prevalece sobre o texto desatualizado dos handoffs: PR #90 está contida em #80 `68301b7`; #91 contém #80 e também **D2 `048aedc`**, via merge `afaded9`. Não existe `-d2` remota separada na listagem consultada. A configuração do integrador #84 foi lida e permanece **PAUSED**, sem owner/token. A issue #72 regista [o escopo da continuação](https://github.com/Brawl2007/COD-guerra/issues/72#issuecomment-6278662723). T02/T04/T40 live: REUSE_OR_REVIEW_EXISTING, sem nova claim.

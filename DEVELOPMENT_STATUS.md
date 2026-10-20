@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## Continuação Codex — D4, avisos reais e morte justa
+
+D4 Codex: `a7866e3`, mesma PR draft #92 sobre #91 `afaded9`; **CONCLUÍDA NA ORIGEM**, sem integração na #91/#80/main. A F1 exige aviso real recente do mesmo atirador além da janela D2 original; F4 impede golpe fatal de combate em cenas nos níveis Soldado/Veterano. Tabela D2 e Recruta preservadas; cartela longa passa a caber em ecrã curto. Node **1520/1520** nesse commit, golden15 idêntica em Recruta, invariantes24/24, comparação48 sem mortes novas/antecipadas ou diferenças finais/RNG nas36 conclusões; navegador final5/5, após primeira execução7/8 com falha da expectativa de checkpoint, e build/bundle PASS. Política inicial rejeitada por regressão e preservada como FAIL. [Handoff D4](docs/verification/m01-runtime/continuity-d4/HANDOFF.md). Revisão crítica/playtest, SP-08, oferta de baixar nível e audiovisual pendentes. #84 PAUSED, main e deploy preservados. Os registos seguintes conservam o estado das entregas anteriores.
+
 ## Continuação Codex — D3, morte e checkpoint do reparo
 
 Código `3e674ed` + testes históricos `cfa017d`, entrega na mesma PR draft #92 sobre #91 `afaded9`, **não integrada na #91/#80/main**. Publica causa real da morte, reutiliza a cartela durante 2,5 s sem ticks da simulação e retoma o checkpoint; CP-B2 depois da entrega da caixa só em Soldado/Veterano. A D2 (regeneração, HP e calibração) foi preservada. [Handoff e evidências](docs/verification/m01-runtime/continuity-d3/HANDOFF.md).
