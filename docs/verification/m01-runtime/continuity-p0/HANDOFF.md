@@ -50,7 +50,9 @@ Física/gravidade/colisores, navegação/IA, regras de dano/cadência/RNG, tabel
 
 ## Novo percurso contínuo e reprodução
 
-Uma nova partida está em curso sobre o build final, por controlos reais do navegador e sem saltar cenas, com o menu novo a aplicar Soldado. O resultado será acrescentado quando terminar; não se antecipa o debrief. Servidor padrão de produção reiniciado após o build para servir o conjunto correto de bundles. Não se recompila nem altera o jogo durante a execução.
+A primeira partida do build final em Soldado entregou Bąk às 06:08:09 e depois sofreu um restauro automático do CP-C durante o assalto. O piloto não repetia os objetivos; uma tentativa de replay no controlador Node falhou com `path is not defined` antes de mover o jogador. Essa execução é **incompleta**, com [report e histórico preservados](continuous-soldado-first/report.json), não uma aprovação. A causa específica do restauro não é publicada pela simulação atual; D3 continua necessária.
+
+O commit de **harness** `245fafa` faz o piloto falhar claramente num restauro inesperado, regista saúde e permite escolher o nível pela UI. Na nova partida Soldado em curso, usa cobertura física existente e agacha-se durante o assalto; não altera dano/IA/HP/relógio. [Script do piloto](../../../../../tools/m01-browser-playthrough.mjs). Sem replay em runtime nesta nova execução, sem saltar cenas ou injetar estado. Resultado só quando terminar. Servidor padrão de produção reiniciado após o build para servir o conjunto correto de bundles. Não se recompila nem altera o jogo durante a execução.
 
 Reproduzir num checkout limpo: `npm ci`, `npm test`, `npm run build`, `npm run verify:bundle`. Browser: `CHROME_EXECUTABLE=/usr/bin/chromium npx playwright test tests/browser/m01-continuity-p0.spec.js tests/browser/m01-difficulty-ui.spec.js tests/browser/m01-pacing-hud.spec.js tests/browser/touch.spec.js --workers=1 --retries=0`. O servidor da porta 4173 deve estar livre; a configuração arranca o preview. Percurso: iniciar `npm run preview` e executar `CHROME_EXECUTABLE=/usr/bin/chromium node tools/m01-browser-playthrough.mjs --viewport 640x360 --out /tmp/m01-continuous`. Goldens/invariantes têm os comandos nos JSONs gerados; a emenda 13 foi gerada com a comparação causal real, não editada à mão.
 
@@ -61,3 +63,5 @@ As falhas anteriores do harness (prontidão, pointer lock e leitura de chegada e
 Próximas frentes: D3 (`player-down` causal, orientação justa e CP-B2), D4 (telegráficos de ameaça verificados), SP-08 (participação na escolta/corredor mantendo B4 e horas), abertura/chamada, arte High e T45/VO com direitos/escuta. 114/115 continuam sem encravamento real, e a licença do fp-arms-v2 permanece pendência anterior. Playtest humano de compreensão, diversão e hardware alvo é obrigatório antes de declarar campanha pronta.
 
 ZIP original preservado: SHA-256 `5cee677efdcd85f5d2bd95f39414036a6d3ec65dc2b05aa7399c9b804a04d2aa`; não se adicionam vídeos grandes.
+
+Nas linhas `waited` dos logs, `real` e `game` representam a duração dessa espera, não timestamps absolutos; `battleFrom`/`battleTo` e a timeline do report mantêm a referência da missão.

@@ -46,17 +46,31 @@
     "failure": "pilot route toward closed west shelter fence"
   },
   "continuousFinal": {
-    "status": "running",
+    "status": "incompleto",
     "head": "35f3215",
-    "gameBundleIdenticalTo": "ce70422",
-    "plannedDifficulty": "soldado",
+    "difficulty": "soldado",
+    "deathCount": 1,
+    "restoredCheckpoint": "CP-C",
+    "controllerFailure": "runtime replay attempted; path is not defined before any replay movement",
+    "report": "continuous-soldado-first/report.json",
+    "deliveryBeforeDeath": {
+      "battle": "06:08:09",
+      "message": "Bąk entregue. Dudek trata dele — volte à secção."
+    }
+  },
+  "humanPlaytest": false,
+  "externalReferenceGameplayObserved": false,
+  "mainMergeOrDeployInvoked": false,
+  "continuousCovered": {
+    "status": "running",
+    "controllerHead": "245fafa",
+    "productionIdenticalTo": "ce70422",
+    "difficulty": "soldado",
     "viewport": [
       640,
       360
     ],
-    "cutscenesSkipped": false
-  },
-  "humanPlaytest": false,
-  "externalReferenceGameplayObserved": false,
-  "mainMergeOrDeployInvoked": false
+    "skipCutscenes": false,
+    "runtimeControllerPatch": false
+  }
 }
