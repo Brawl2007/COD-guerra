@@ -55,7 +55,8 @@ import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.jso
 // Amendment 13 preserves amendment 12 byte-for-byte as history and records only the named guidance/message delta.
 import continuityGuidance from './fixtures/m01-continuity-guidance-gameplay-baseline.json' with {type:'json'};
 const GUIDANCE_DELTA=/^\$\.events\.\d+\.priority$/;
-const current=continuityGuidance;   // the golden of the live simulation
+import deathCheckpoint from './fixtures/m01-death-checkpoint-gameplay-baseline.json' with {type:'json'};
+const current=deathCheckpoint;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -438,17 +439,24 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
   }
 });
 
-test('guidance amendment 13 pins the live source and preserves combat, physics, RNG and plot tick by tick against PR91',()=>{
+test('guidance amendment 13 pins PR92 23313aa as history and preserves combat, physics, RNG and plot tick by tick against PR91',()=>{
  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
  const account=integrationAmendment(continuityGuidance,{amendment:'13',task:'M01-CONTINUITY-GUIDANCE-P0-V1',delta:'guidance+interaction',previous:difficulty0535,previousFile:'m01-difficulty-0535-gameplay-baseline.json',predecessor:'afaded912c5c3a7f8a4e6e567be9a98cd35ac24f',deltaFields:GUIDANCE_DELTA});
- assert.equal(sha('../src/game/m01-simulation.js'),continuityGuidance.sourceSha256);
- for(const [file,expected]of Object.entries(continuityGuidance.inputsSha256))assert.equal(sha('../'+file),expected,file);
+ assert.equal(continuityGuidance.sourceSha256,'df676fb6c2948bfa37d77319d5839171199955c6234704c0a5ff9e3bb7f96ee6');
+ for(const [file,expected]of Object.entries(continuityGuidance.inputsSha256)){if(!['src/game/m01-simulation.js','missions/m01-tczew/mission.json'].includes(file))assert.equal(sha('../'+file),expected,file);}
  assert.equal(account.noBehaviourDifference,true);
  for(const r of account.routes){
   assert.equal(r.firstBehaviourDifference,null,'only the listed dialogue, guide and HUD paths may differ');
   assert.equal(r.endState.live.playerHealth,r.endState.predecessorOwnRoute.playerHealth);
   assert.deepEqual(r.measured.germanRoundsPerRealMin.live,r.measured.germanRoundsPerRealMin.predecessor);
  }
+});
+
+test('D3 amendment 14 pins the live source and keeps every Recruta gameplay byte identical to PR92 23313aa',()=>{
+ const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+ identicalAmendment(deathCheckpoint,{amendment:'14',task:'M01-H9-D3-DEATH-CHECKPOINT-V1',delta:'death+repair-checkpoint',previous:continuityGuidance,previousFile:'m01-continuity-guidance-gameplay-baseline.json',predecessor:'23313aa5ef5ca8063d33cad7895e0850dac09c0f'});
+ assert.equal(sha('../src/game/m01-simulation.js'),deathCheckpoint.sourceSha256);
+ for(const [file,expected]of Object.entries(deathCheckpoint.inputsSha256))assert.equal(sha('../'+file),expected,file);
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

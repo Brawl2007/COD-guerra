@@ -169,3 +169,4 @@ body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #sub
 @media(max-height:650px){.centered{overflow-y:auto;justify-content:flex-start}#menu>.menu-footer{position:static;margin-top:20px}}
 
 #hud.compact-guidance .objective-marker .marker-label{display:none}
+#hud.player-down :is(#objective,#status,#ammo,#health-wrap,#clock-wrap,#crosshair,#captions,#interaction,#objective-update,#resume-card,#hit-marker,.objective-marker,.tempo-card){opacity:0!important;pointer-events:none}

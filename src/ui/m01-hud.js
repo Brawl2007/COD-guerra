@@ -79,6 +79,8 @@ export function objectiveChanges(previous,current,definitions){
 export const objectiveText=o=>o.text.replace(/^\(Opcional\)\s*/,'');
 const DIFFICULTY_LABELS=Object.freeze({recruta:'Recruta',soldado:'Soldado',veterano:'Veterano'});
 export const difficultyText=id=>DIFFICULTY_LABELS[id??'recruta']??'';
+export const DEATH_BEAT_MS=2500;
+export function deathCard(down){return {id:'player-down',lines:[down.cause,down.checkpoint?`A retomar ${down.checkpoint}`:'A retomar o início da missão',difficultyText(down.difficulty)],opacity:1,elapsed:999};}
 const BANNER_LABEL={new:'Novo objectivo',done:'Objectivo concluído',expired:'Objectivo encerrado',current:'Objectivo'};
 export function bannerLabel(change){return change.optional&&change.kind!=='done'?(change.kind==='new'?'Objectivo opcional':BANNER_LABEL[change.kind]):BANNER_LABEL[change.kind];}
 
@@ -165,7 +167,7 @@ export class M01HudPresenter {
   clear(){
     this.clearSceneCues();this.markerMemo=null;
     const e=this.el;this.cache.clear();
-    e.root?.classList.remove('cinematic','m01','compact-guidance');e.root?.style?.removeProperty('--guidance-y');
+    e.root?.classList.remove('cinematic','m01','compact-guidance','player-down');e.root?.style?.removeProperty('--guidance-y');
     for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName','markerLabel','markerDistance','tempoLabel','tempoReason'])if(e[k])e[k].textContent='';
     for(const k of ['objectiveMarker','tempoCard'])e[k]?.style?.removeProperty('opacity');e.root?.classList.remove('tempo-compressed');
     e.ammo?.classList.remove('low','empty');e.objectivePanel?.classList.remove('fresh');e.interaction?.classList.remove('show');e.subtitle?.classList.remove('show');
@@ -177,7 +179,12 @@ export class M01HudPresenter {
   opacity(key,value){const node=this.el[key];if(node)this.set(`opacity:${key}`,value.toFixed(3),v=>node.style.setProperty('opacity',v));}
   toggle(key,name,on){const node=this.el[key];if(node)this.set(`class:${key}:${name}`,Boolean(on),v=>node.classList.toggle(name,v));}
   node(tag,className,text){const n=this.doc.createElement(tag);if(className)n.className=className;n.textContent=text;return n;}
-  update(sim){
+  update(sim,down=null){
+    this.toggle('root','player-down',Boolean(down));
+    if(down){
+      this.toggle('root','m01',true);this.clearSceneCues();
+      this.opacity('fade',.8);this.updateCard('titleCard',deathCard(down),'cinema');return;
+    }
     const clock=sim.clock,e=this.el,scene=sim.scene,cine=cinematicFrame(scene,sim.battleClock),defs=sim.definition.objectives;
     if(clock<this.lastClock-1e-6)this.reset('restore',clock);this.lastClock=clock;
     const beats=this.beatFrame=sceneBeatFrame(sim);

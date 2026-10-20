@@ -28,7 +28,7 @@ const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'
 let game,touchState;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
 function stateChanged(state,detail){
-  if(touchState){const live=state==='playing';touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
+  if(touchState){const live=state==='playing'&&!game?.m01Down;touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
   if(state==='menu'){
     menu.classList.remove('hidden');pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.add('hidden');
     $('#continue').classList.toggle('hidden',!game.hasSave);return;
