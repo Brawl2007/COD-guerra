@@ -26,6 +26,8 @@ CP-B2 «Reparo» é guardado apenas em Soldado/Veterano, depois da entrega efeti
 
 **Regressões/limites:** CP-B2 é aditivo e builds antigos não reconhecem esse ID; saves antigos continuam aceites no build novo. A garantia completa de perigo justo/cenas pertence à D4, ainda pendente. Oferta de baixar nível após mortes repetidas continua pendente. O percurso contínuo 12/12 anterior prova a versão P0/P1/D5, não automaticamente esta D3. Sem playtest humano, escuta humana, Safari/hardware móvel ou benchmark de FPS.
 
+**Branch final:** a união local `e628353` preserva os commits D3 com merge `--no-ff` apenas na nossa branch de revisão. [Prova do build final](ROOT_DELIVERY_BUILD.json): fontes/testes iguais a `cfa017d`, build/bundle da raiz PASS e os oito JS/CSS iguais ao build usado no browser, também confirmados por HTTP no preview local. Não foi repetida a suite sobre uma alteração exclusivamente documental.
+
 **Resultado:** D3 concluída na origem para revisão, com causa real, pausa de apresentação, retoma e CP-B2 persistido/testado. Não equivale a integração na #91/#80 ou aprovação humana.
 
 **Próxima ação:** revisão crítica e playtest humano desta entrega; continuar a D4 no worktree isolado `codex/m01-continuity-d4`, sem recalibrar a D2. [Escopo D4](https://github.com/Brawl2007/COD-guerra/issues/72#issuecomment-6289776487). A D4 em desenvolvimento não faz parte das provas nem do código desta entrega.

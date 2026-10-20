@@ -1,0 +1,98 @@
+{
+  "version": "0.2.0",
+  "branch": "codex/m01-continuity-p0",
+  "assembledHead": "e628353d815f8d06235209362e0ca5bebe6f3f5f",
+  "unitTestedHead": "cfa017d187da37a7906255442851ea5acf1ab74b",
+  "runtimeCommit": "3e674ed3c7d997aa1dccd45323a40dcefcb75d83",
+  "sourceAndTestsIdenticalToUnitTestedHead": true,
+  "standardRootBuild": "PASS",
+  "bundle": {
+    "entry": {
+      "name": "index-DgxmaNsJ.js",
+      "bytes": 13648
+    },
+    "total": 1993039,
+    "chunks": [
+      {
+        "name": "game-KEek6gnM.js",
+        "bytes": 1286959
+      },
+      {
+        "name": "three-core-DHJZDzJU.js",
+        "bytes": 626268
+      },
+      {
+        "name": "three-loaders-xoHaYwaR.js",
+        "bytes": 63176
+      },
+      {
+        "name": "index-DgxmaNsJ.js",
+        "bytes": 13648
+      },
+      {
+        "name": "m01-difficulty-DUjzTxGo.js",
+        "bytes": 1513
+      },
+      {
+        "name": "asset-progress-B1UdpVEN.js",
+        "bytes": 1143
+      },
+      {
+        "name": "m01-difficulty-DzgKWyuq.js",
+        "bytes": 332
+      }
+    ]
+  },
+  "preview": "local only; no deploy command",
+  "httpCompiledAssets": [
+    {
+      "file": "dist/assets/three-loaders-xoHaYwaR.js",
+      "status": 200,
+      "sha256": "e7509c9e67d5d5a6bda866b374aac7a12d48c7c26bc01c4433d799bb4ab8a636",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/game-KEek6gnM.js",
+      "status": 200,
+      "sha256": "ceef09a19fce2dcc7a124c83227236aa602e6703c07a4f6e610fd3f8538a519b",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/index-BwBCha_I.css",
+      "status": 200,
+      "sha256": "abd2c46899e2fae1ddfe7cdc46e9764d93cfd3e74f11c21d819304ec9d6f1e9f",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/m01-difficulty-DzgKWyuq.js",
+      "status": 200,
+      "sha256": "1b3195da1f06d92fd9d0299241096c38bf150f991e57ed63ef73870753d2bcfe",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/three-core-DHJZDzJU.js",
+      "status": 200,
+      "sha256": "e1005510a93e2c1eae530101b8805f9b949f7712099b9bb81a865191d6d1f53c",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/asset-progress-B1UdpVEN.js",
+      "status": 200,
+      "sha256": "7a1bb12d7d5a7c5ec96f68ffacf0538b6550217538c23d53452a830dade8e559",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/m01-difficulty-DUjzTxGo.js",
+      "status": 200,
+      "sha256": "1092477574d423f56ec961814b271750d074e49412cc1e65d916854af7b18cb6",
+      "matchesTestedBuild": true
+    },
+    {
+      "file": "dist/assets/index-DgxmaNsJ.js",
+      "status": 200,
+      "sha256": "a189f3911827a8fd4b9a29206da9227fea04e1ef2601d25b7d74539cbb738813",
+      "matchesTestedBuild": true
+    }
+  ],
+  "recordedUTC": "2026-10-20T14:14:24.840842+00:00"
+}
