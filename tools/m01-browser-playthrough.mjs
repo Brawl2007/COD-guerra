@@ -16,6 +16,8 @@ const URL_BASE = opt('--url', 'http://127.0.0.1:4173/COD-guerra/');
 const VIEWPORT=opt('--viewport','1280x720').split('x').map(Number);
 if(VIEWPORT.length!==2||VIEWPORT.some(v=>!Number.isInteger(v)||v<240||v>3840))throw new Error('Use --viewport WIDTHxHEIGHT (240..3840)');
 const SKIP_CUTSCENES = args.includes('--skip-cutscenes');
+const DIFFICULTY=opt('--difficulty',null);
+if(DIFFICULTY!==null&&!['recruta','soldado','veterano'].includes(DIFFICULTY))throw new Error('Use --difficulty recruta|soldado|veterano');
 // --adverse: antes da rota normal, sair dos limites e cair no Vístula (cada um restaura CP-A) e ficar parado sem seguir o sargento.
 const ADVERSE = args.includes('--adverse');
 // --cover help|ignore: em "Proteja o reparo" e "Cubra a retirada", o piloto cala a MG dos portões e os alemães do tabuleiro
@@ -29,7 +31,7 @@ await writeFile(logFile, '');
 const t0 = Date.now();
 const real = () => +((Date.now() - t0) / 1000).toFixed(1);
 const report = { adverse: ADVERSE, cover: COVER && { mode: COVER, shots: 0, suppressingShots: 0, repair: {}, mgSamples: 0, mgSuppressedSamples: 0, casualties: [], statusLines: [], hudMismatches: [], fxFrames: 0 }, adverseResults: [], verification: 'Partida contínua de M01 numa única sessão Chromium (piloto automático com input do navegador); não é playtest humano.',
-  startedAt: new Date().toISOString(), viewport: VIEWPORT, timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [] };
+  startedAt: new Date().toISOString(), viewport: VIEWPORT, timeline: [], blockers: [], waits: [], pauses: [], deaths: [], subtitles: [], messages: [], shots: 0, screenshots: [], healthSamples: [] };
 
 const browser = await chromium.launch({
   ...(process.env.CHROME_EXECUTABLE ? { executablePath: process.env.CHROME_EXECUTABLE } : {}),
@@ -98,7 +100,10 @@ async function observe(s) {
     last.enemyAlive = s.enemyAlive;
   }
   if (s.checkpoints.length !== last.checkpoints) { last.checkpoints = s.checkpoints.length; await log('checkpoint', { id: s.checkpoints.at(-1) }); }
-  if (s.clock + 0.5 < last.clock) { report.deaths.push({ real: real(), battle: hms(s.battle), restoredTo: +s.clock.toFixed(1) }); await log('restored', {}); }
+  if (s.clock + 0.5 < last.clock) { report.deaths.push({ real: real(), battle: hms(s.battle), restoredTo: +s.clock.toFixed(1) }); await log('restored', {});
+    if(!ADVERSE)throw new Error('Checkpoint restaurado durante o percurso: interromper o piloto em vez de continuar a fase anterior');
+  }
+  if(report.healthSamples.at(-1)?.health!==s.player.health)report.healthSamples.push({real:real(),game:+s.clock.toFixed(1),battle:hms(s.battle),health:s.player.health,alive:s.player.alive,pos:[s.player.x,s.player.y,s.player.z],crouched:s.player.crouched});
   last.clock = s.clock;
   if ((!s.locked || s.paused) && !s.complete && !s.completeVisible) {
     report.pauses.push({ real: real(), battle: hms(s.battle) });
@@ -225,6 +230,7 @@ let outcome = 'incompleto', failure = null;
 try {
   await page.goto(`${URL_BASE}?debug=1`);
   await page.waitForFunction(() => window.gameDiagnostics?.().m01?.models.length === 9, null, { timeout: 120000 });
+  if(DIFFICULTY)await page.locator('#difficulty').selectOption(DIFFICULTY);
   report.settings=await page.evaluate(()=>({difficulty:document.querySelector('#difficulty')?.value??'recruta (legacy menu)',quality:document.querySelector('#quality')?.value??null}));
   await shot('menu', 'Menu com Tczew seleccionado');
   await page.locator('#start').click();
@@ -339,13 +345,18 @@ try {
       await shot('bak-delivered', 'Bąk entregue ao socorrista');
     }
   }
-  // 6. Demolição leste e saída da ponte. Esperar no eixo do portal rodoviário, com vista livre para leste.
-  if (!(await state()).eventIds.includes('evt_m01_east_demolition')) await path([[-10, 46], [-5, 40]], 'eixo do portal rodoviário');
+  // 6. Use the existing western sandbags while the deck assault clears. The old pilot stood exposed at the portal and died on Soldado.
+  // This is a change to player inputs, not to danger, damage, AI or checkpoint state.
+  if (!(await state()).eventIds.includes('evt_m01_east_demolition')) {
+    await path([[-30,40],[-28,28]], 'cobertura oeste durante a retirada');
+    if(!(await state()).player.crouched){await page.keyboard.press('KeyC');await tick(200);}
+  }
   const blast = await wait('demolição leste', s => s.eventIds.includes('evt_m01_east_demolition'), { limitReal: 900, faceAngle: 0 });
   if (report.cover) report.cover.survivorsAtDemolition = blast.threat.survivors;
   await page.waitForTimeout(700); await shot('east-demolition', 'Demolição leste das 06:10: clarão');
   await page.waitForTimeout(6000); await shot('east-demolition-6s', 'Demolição leste, coluna de poeira 6 s depois');
-  await path([[-15, 40], [-30, 40], [-115, 27], [-275, 27], [-292, 26]], 'posto de disparo');
+  if((await state()).player.crouched){await page.keyboard.press('KeyC');await tick(200);}
+  await path([[-115,27],[-275,27],[-292,26]], 'posto de disparo');
   await shot('firing-point', 'No posto de disparo; corredor');
   // Olhar para o corredor para ver os retardatários passarem.
   await wait('demolição oeste', s => s.eventIds.includes('evt_m01_west_demolition'), { limitReal: 1200, faceAngle: 0.08, snapEvery: 20, snapLabel: 'corridor' });
