@@ -138,6 +138,7 @@ test('optional Bąk rescue cannot be taken away mid-carry; delivery chooses the 
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   const bak=sim.actor('jozef_bak');assert.equal(sim.active('rescue_bak'),true);
   sim.player.x=bak.x;sim.player.z=bak.z;sim.updateObjectives(0,true);assert.equal(sim.player.carrying,'jozef_bak');
+  assert.equal(sim.interactionAction(),null,'pickup has not finished');run(sim,1.65);assert.equal(bak.carry.phase,'carry');
   sim.battleClock=seconds('06:15');sim.processEvents();assert.equal(sim.consumedEvent(E('dudek_retrieves_bak')),false);
   Object.assign(sim.player,sim.world.point('aid_position'));sim.updateObjectives(0,true);
   assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');assert.equal(sim.flags['m01.dudek_status'],'unhurt');assert.equal(sim.player.carrying,null);

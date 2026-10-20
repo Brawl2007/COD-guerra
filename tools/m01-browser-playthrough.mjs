@@ -225,6 +225,7 @@ let outcome = 'incompleto', failure = null;
 try {
   await page.goto(`${URL_BASE}?debug=1`);
   await page.waitForFunction(() => window.gameDiagnostics?.().m01?.models.length === 9, null, { timeout: 120000 });
+  report.settings=await page.evaluate(()=>({difficulty:document.querySelector('#difficulty')?.value??'recruta (legacy menu)',quality:document.querySelector('#quality')?.value??null}));
   await shot('menu', 'Menu com Tczew seleccionado');
   await page.locator('#start').click();
   await page.waitForFunction(() => document.pointerLockElement?.id === 'game' && !window.gameDiagnostics().paused, null, { timeout: 60000 });
@@ -351,7 +352,8 @@ try {
   await shot('west-demolition', 'Demolição oeste das 06:45');
   { const s = await state(); const turn = wrap(0.15 - s.player.angle); await look(turn / 0.0022, (s.player.pitch + 0.12) / 0.0022); }
   await page.waitForTimeout(6000); await shot('west-demolition-6s', 'Demolição oeste, coluna de poeira 6 s depois, acima do barracão');
-  await path([[-292, 68], [-262, 70]], 'abrigo');
+  // Use the existing open fence gate and L-shaped shelter passage, like the simulation pilot.
+  await path([[-263, 58], [-263, 70]], 'abrigo');
   await wait('chamada', s => s.scene === 'cs_m01_roll_call', { limitReal: 120 });
   await shot('roll-call', 'Chamada no abrigo (outro)');
   await page.waitForTimeout(10000); await shot('roll-call-10s', 'Chamada: secção reunida no abrigo');
