@@ -1,0 +1,67 @@
+{
+  "testedRuntimeCommit": "45852b53cce0abb1de46eb54450e91aa94364d3b",
+  "rootMergeCommit": "6fdc98aad0a02237e380bfd995d6ee1e2bdb5d25",
+  "mergeTarget": "codex/m01-continuity-p0 only; not PR91/80/main",
+  "runtimeAndTestsEqualToTestedCommit": true,
+  "files": {
+    "assets/asset-progress-B1UdpVEN.js": {
+      "bytes": 1143,
+      "sha256": "7a1bb12d7d5a7c5ec96f68ffacf0538b6550217538c23d53452a830dade8e559",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/game-BrSl-hyo.js": {
+      "bytes": 1289803,
+      "sha256": "3327a618393d8a9625109d874c1c4cb77fd272faacb88cdffc16a03df579cfe5",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/index-D7cnc2m5.js": {
+      "bytes": 13648,
+      "sha256": "4950eac79416edd69c7f9b45cc3d4d2bc3c93bf786d3f90342dd49b3ec56659d",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/index-Dyuw5kQx.css": {
+      "bytes": 22174,
+      "sha256": "27f63a999c89dc59984e53b979a810bd4fa0e0ee10c4e2b8783ca8ef92e136f6",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/m01-difficulty-DUjzTxGo.js": {
+      "bytes": 1513,
+      "sha256": "1092477574d423f56ec961814b271750d074e49412cc1e65d916854af7b18cb6",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/m01-difficulty-DzgKWyuq.js": {
+      "bytes": 332,
+      "sha256": "1b3195da1f06d92fd9d0299241096c38bf150f991e57ed63ef73870753d2bcfe",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/three-core-DHJZDzJU.js": {
+      "bytes": 626268,
+      "sha256": "e1005510a93e2c1eae530101b8805f9b949f7712099b9bb81a865191d6d1f53c",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    },
+    "assets/three-loaders-xoHaYwaR.js": {
+      "bytes": 63176,
+      "sha256": "e7509c9e67d5d5a6bda866b374aac7a12d48c7c26bc01c4433d799bb4ab8a636",
+      "httpStatus": 200,
+      "browserBuildIdentical": true,
+      "servedIdentical": true
+    }
+  },
+  "build": "PASS",
+  "bundle": "PASS",
+  "http": "local preview only; no deploy"
+}
