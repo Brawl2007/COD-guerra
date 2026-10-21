@@ -15,6 +15,7 @@ const SAVE_KEY='cod-guerra:checkpoint:v1';
 const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5']);
 const blastScale=id=>id?.startsWith('m01_grenade_')?'small':id?.includes('demolition')?'demolition':'large';
 
+export { M01_DIFFICULTY_LABELS } from '../ui/m01-hud.js';export { M01_DIFFICULTY_NEW_GAME } from './m01-difficulty.js';
 export class Game {
   constructor(canvas,hud,onState=()=>{},missionId='m01_tczew',{touch=false}={}){
     this.touch=touch;
@@ -82,8 +83,10 @@ export class Game {
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
-  restartMission(){
-    this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
+  get difficulty(){return this.isM01?this.sim.difficulty:null;}
+  /** H9 D5: the UI only passes the chosen level; the simulation owns it. A different level means a fresh M01Simulation (same seed), as in selectMission. */
+  restartMission(difficulty){
+    if(this.isM01&&difficulty&&difficulty!==this.sim.difficulty)this.sim=new M01Simulation(undefined,{difficulty});else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
@@ -297,7 +300,7 @@ export class Game {
     this.hud.vignette.classList.remove('combat-feedback');
     this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
-  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
+  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,difficulty:this.difficulty,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
     player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health,crouched:Boolean(this.player.crouched),aiming:Boolean(this.player.aiming)},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],

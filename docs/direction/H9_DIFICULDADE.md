@@ -159,6 +159,7 @@ except a CP-B2 id (forward-only, acceptable). Legacy saves load as recruta.
 - **D5 UI/presentation**. Files: `index.html`, `src/main.js`, `src/game/game.js`, `src/ui/m01-hud.js`. Death beat, level
   select, checkpoint card level, optional "lower level" offer. Tests: `tests/game.test.js` additions + one Playwright check.
   Renderer only reads events/state; no damage logic.
+  **D5 selector done (2026-10-21):** `#difficulty` in the menu (default soldado, `M01_DIFFICULTY_NEW_GAME`) is read only by "INICIAR MISSÃO"/"JOGAR NOVAMENTE" (`Game.restartMission(level)` builds `new M01Simulation(undefined,{difficulty})` when it differs); "CONTINUAR CHECKPOINT" keeps the save's own level; the pause shows "Dificuldade: X" and the HUD a small badge (`M01_DIFFICULTY_LABELS`, `src/styles-d5-difficulty.css`). Tests: `tests/m01-difficulty-ui.test.js`, `tests/browser/m01-difficulty-ui.spec.js`. Still open: death beat, checkpoint-card level, "lower level" offer.
 
 ## 6. Test and evidence plan
 
