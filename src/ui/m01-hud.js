@@ -18,6 +18,8 @@ export const HUD_TIMING=Object.freeze({
 });
 
 /** Speed of sound used for every delayed M01 sound (m/s). */
+/** H9 D5: pt-PT names of the three difficulty levels (the ids are the simulation's; this is presentation only). */
+export const M01_DIFFICULTY_LABELS=Object.freeze({recruta:'Recruta',soldado:'Soldado',veterano:'Veterano'});
 export const SOUND_SPEED=343;
 /** Impacts of the player's own shot closer than this are heard at once; farther ones arrive after distance/343 s. */
 export const PLAYER_IMPACT_DELAY_FROM=60;
