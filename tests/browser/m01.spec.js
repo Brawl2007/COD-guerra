@@ -449,7 +449,9 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // 2026-10-19: the rearguard of combat slice 2b (c9469e6, golden amendment 11) now fells three more men of the deck assault on this route before the demolition: the casualties of the route's CP-D
 // save are de_east_3, de_spans_0..3 and de_spans_7..9, i.e. 42 alive (de_spans_7, 8 and 9 on seed 19390901, the same measurement as tests/m01-german-retreat.test.js). Measured on the route's own
 // save with a Node M01Simulation.restoreSnapshot at 5378fb4..c1a3ecf (45) and c9469e6 / 8a978fb (42); the browser restore must still reproduce exactly the route's casualties, so the pin stays exact.
-const CPD_ENEMIES_ALIVE=42;
+// 2026-10-21: the H9 D2 wiring and the 05:35 fill (afaded9, golden amendment 12) change the deck fight of this route: the casualties of the route's CP-D save are now de_east_3 and
+// de_spans_0..4, i.e. 44 alive (de_spans_7..9 survive, de_spans_4 falls). Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot at f446d83 (44).
+const CPD_ENEMIES_ALIVE=44;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
