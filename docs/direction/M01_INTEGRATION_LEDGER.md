@@ -2,7 +2,7 @@
 
 Ler isto primeiro em cada sessão; atualizar só com factos verificados pelo Git. A política está no `AGENTS.md`, secção «uma IA entrega, um jogo recebe».
 
-**Candidata atual:** `claude/quirky-heisenberg-9l4m7b` · PR #80 (draft) · base `main@6697956`, que é o PR #76 já integrado. HEAD da candidata: `4e2588f` (2026-10-22: merge `--no-ff` do PR #91 @ `b04c5f1`, autorizado pelo proprietário; árvore idêntica à de `b04c5f1`).
+**Candidata atual:** `claude/quirky-heisenberg-9l4m7b` · PR #80 (draft) · base `main@6697956`, que é o PR #76 já integrado. HEAD da candidata: `ffb65e7` (2026-10-22: PR #91 `4e2588f`, depois WP1 dificuldade D3/D4/D5 `3eb21b3`, WP3 escolta SP-08 + coordenação `c99a432`, WP2 encravamento da ckm `af3f382`, WP4 desempenho do renderer `86e1a1a`; `npm test` 1524/1524, golden 13/14/15 «identical», browser 45/47 + as 2 expectativas corrigidas 2/2 isoladas; sem playtest humano).
 Testar a candidata localmente: `git checkout claude/quirky-heisenberg-9l4m7b && npm ci && npm run dev`, depois abrir `http://localhost:5173/COD-guerra/`.
 O link de pré-visualização é o que o Vercel publicar no PR #80 para o SHA indicado. Não usar um link de outro SHA.
 
