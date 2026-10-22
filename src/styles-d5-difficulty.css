@@ -1,4 +1,4 @@
-/* H9 D5: difficulty selector (menu), pause line and HUD badge. Presentation only. */
+/* H9 D5: difficulty selector (menu), pause line, HUD badge, death beat and the lower-level offer. Presentation only. */
 .difficulty-choice{display:grid;gap:8px;font:600 .65rem Arial,sans-serif;letter-spacing:.2em;color:#bcb99f;max-width:460px}
 .difficulty-choice select{background:#242b22;color:#ede4cd;border:1px solid #606650;padding:10px;font:400 .85rem Arial,sans-serif;max-width:100%}
 .difficulty-choice small{font:400 .7rem Arial,sans-serif;letter-spacing:.02em;color:#8f8c76}
@@ -7,3 +7,11 @@
 #pause-difficulty:empty{display:none}
 #difficulty-badge{display:block;margin-top:4px;font:600 .6rem Arial,sans-serif;letter-spacing:.22em;color:#bcb99f}
 #difficulty-badge:empty{display:none}
+/* The death beat: opacity (black) and --death-text are written by Game.paintDeathBeat from the REAL time of the beat; the simulation is not ticked meanwhile. */
+#death-beat{inset:0;display:grid;place-content:center;gap:.7em;text-align:center;background:#030403;opacity:0;pointer-events:none;z-index:4;--death-text:0}
+#death-beat>*{opacity:var(--death-text)}
+#death-beat small{font-size:.75rem;letter-spacing:.42em;color:#c4ba8e}
+#death-beat strong{display:block;font:700 clamp(1.3rem,3vw,2.5rem)/1.3 'Barlow',Arial,sans-serif;letter-spacing:.03em;color:#ece6d2;text-shadow:0 2px 4px #000;max-width:min(900px,86vw)}
+#death-beat span{display:block;font:400 .85rem Arial,sans-serif;letter-spacing:.14em;color:#9da394;text-transform:uppercase}
+#death-beat span:empty{display:none}
+#death-offer h2{font-size:clamp(2rem,5vw,3.5rem)}

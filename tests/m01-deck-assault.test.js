@@ -174,18 +174,18 @@ test('the section\'s clips at the deck post: one clip every 3 s while the player
   for(const bad of [t=>{t.deckAmmo=DECK_AMMO_POOL+1;},t=>{t.deckAmmo=5;delete t.deckAmmoAt;},t=>{t.deckAmmo=0;},t=>{t.deckAmmoAt=1e9;}]){const raw=s.snapshot();bad(raw.timers);assert.throws(()=>validateM01Snapshot(raw),/deckAmmo|munição|arma/);}
 });
 
-// H9 D2 (2026-10-19): the levels are read by the simulation, so this test no longer asserts "the same damage on every level" (D1, data only). It now pins what each
-// level does to the passive control pilot (it never fires back and stands at the deck post through the deck fight): recruta and soldado bring him home alive,
-// veterano kills him in the deck fight. The per-level health over the 24 audit routes: tools/verification/m01-difficulty-sweep.mjs (DEVELOPMENT_STATUS).
-test('every difficulty level on the control route with the deck assault: recruta and soldado complete it alive, veterano kills the passive pilot (H9 D2)',()=>{
+// H9 D2 (2026-10-19): the levels are read by the simulation, so this test no longer asserts "the same damage on every level" (D1, data only). It pins what each
+// level does to the passive control pilot (it never fires back and stands at the deck post through the deck fight). The per-level health over the 24 audit routes:
+// tools/verification/m01-difficulty-sweep.mjs (docs/verification/m01-runtime/difficulty-d3-d4-2026-10-22/README.md).
+// 2026-10-22 (H9 D3/D4, owner decision of the same day: veterano without regeneration and the hard levels recalibrated to the section 6 bars of docs/direction/H9_DIFICULDADE.md,
+// where a man who stands still in the open in sight of the gate MG34s lives 15-25 s on soldado and 8-12 s on veterano): soldado kills the passive pilot as well now (D2 brought him
+// home alive on soldado and killed him on veterano only). Recruta, the level of every golden route, is untouched and still completes the route alive.
+test('every difficulty level on the control route with the deck assault: recruta completes it alive, soldado and veterano kill the passive pilot (H9 D2, recalibrated 2026-10-22)',()=>{
   const o=observed();
   assert.ok(o.sim.player.health>=50,`recruta: the control route ends with ${o.sim.player.health} health`);
   const level=difficulty=>class extends M01Simulation{constructor(seed){super(seed,{difficulty});}};
-  let hits=0;const r=route(19390901,{Simulation:level('soldado'),onStep:({events})=>{hits+=events.filter(e=>e.type==='player-hit').length;}});
-  assert.equal(r.sim.mission.complete,true);assert.equal(r.sim.difficulty,'soldado');assert.equal(r.sim.player.alive,true);
-  assert.ok(hits>0,'soldado wounds the passive pilot');assert.equal(r.sim.flags['m01.east_platoon_survivors'],12);
-  assert.ok(M01_DIFFICULTY_IDS.includes('veterano'));
-  assert.throws(()=>route(19390901,{Simulation:level('veterano')}),/^Error: Route died at /,'veterano: standing in sight of the deck assault without firing back is fatal');
+  assert.ok(M01_DIFFICULTY_IDS.includes('soldado')&&M01_DIFFICULTY_IDS.includes('veterano'));
+  for(const id of ['soldado','veterano'])assert.throws(()=>route(19390901,{Simulation:level(id)}),/^Error: Route died at /,`${id}: standing without firing back in sight of the gate MG34s is fatal`);
 });
 
 // 2026-10-19 review fixes (critical review of slice 2).

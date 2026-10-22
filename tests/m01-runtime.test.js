@@ -1,4 +1,5 @@
 import {DECK_SAFE_X} from '../src/game/m01-deck-assault.js';
+import {checkpointApplies} from '../src/game/m01-difficulty.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { M01Simulation, seconds, validateM01Snapshot } from '../src/game/m01-simulation.js';
@@ -46,7 +47,9 @@ test('M01 complete control route reaches debrief, all required objectives, uniqu
   assert.equal(sim.mission.complete,true);assert.equal(sim.flags['m01.completed'],true);assert.equal(sim.battleClock,seconds('07:05'));
   assert.equal(Object.keys(sim.consumed).length,sim.definition.events.length);
   for(const o of sim.definition.objectives.filter(o=>o.required))assert.equal(sim.objectives[o.id].state,'done',o.id);
-  assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.map(c=>c.id));
+  // 2026-10-22 (H9 D3): mission.json gained CP-B2 ("Reparo"), which exists on soldado and veterano only; this route runs on recruta, so it reaches exactly the ids that apply to its level.
+  assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.map(c=>c.id).filter(id=>checkpointApplies(id,sim.difficulty)));
+  assert.equal(sim.difficulty,'recruta');assert.ok(!Object.hasOwn(checkpoints,'cp_m01_b2_reparo'),'recruta never saves CP-B2');
   assert.equal(events.filter(e=>e.type==='complete').length,1);
   // Combat slice 2 (versioned save rule, deck record v1): the deck assault may reach the safety line x 450; every other German stays at x >= 690.
   assert.ok(sim.enemies.every(a=>a.x>=(a.group==='grp_de_spans'&&a.deck?DECK_SAFE_X:690)));assert.equal(sim.flags['m01.nowicki_status'],'missing');

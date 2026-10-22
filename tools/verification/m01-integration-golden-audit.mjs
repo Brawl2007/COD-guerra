@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review) and 12 (H9 D2 difficulty wiring + the 05:35 fill) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) and 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -122,7 +122,9 @@ const AMENDMENTS={
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^pl_east_[0-2]$/},
-  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',after:null,
+  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',
+    // History since amendment 13 (H9 D3/D4): the difficulty + 05:35 golden pins the simulation of efb8eb00 (the candidate head 4e2588fa plus a CI-only commit; same simulation), not the live one.
+    after:'efb8eb00d37a3370018e6193c4c0b158094f0241',
     previousGolden:'tests/fixtures/m01-rearguard-gameplay-baseline.json',golden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/difficulty-0535-2026-10-19',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js'],
@@ -139,8 +141,16 @@ const AMENDMENTS={
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
     // Measured (control route): de_east_20 turns to the player at the deck post (facing, 05:38:43, the first key of the man that differs: his ai.target moves in the same tick).
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11 or 12`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/},
+  // Amendment 13 (`identical`, like 09) moves the source lock and nothing else on the two golden routes, which run on recruta: the death with a cause (failure and player-down only at a death),
+  // CP-B2 (saved only on soldado and veterano), the fair-death clamp F4 (soldado and veterano), lowerDifficulty, the level table (veterano: no regeneration) and the new mission.json entry change
+  // not one byte of what a tick computes there. Its lockstep must find NO differing tick in either route (a first difference is a failure), and the digests equal the previous golden's.
+  '13':{task:'M01-H9-D3-D4-DEATH-V1',delta:'death+cp-b2+fair-death',predecessor:'efb8eb00d37a3370018e6193c4c0b158094f0241',after:null,identical:true,
+    previousGolden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',golden:'tests/fixtures/m01-difficulty-d3-d4-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/difficulty-d3-d4-2026-10-22',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js'],
+    generationStage:'H9 D3/D4 on the difficulty + 05:35 tree: every death has a cause and one player-down event (F5), CP-B2 "Reparo" is saved when the repair begins on soldado and veterano only (D3), no lethal wound in a cutscene on soldado and veterano (F4), lowerDifficulty re-levels a checkpoint to a lower level (D5), the veterano level has no regeneration (owner decision 2026-10-22) and the table is recalibrated; recruta, the level of these routes, keeps every number and writes no new key: golden amendment 13 moves the source lock only'}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12 or 13`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);
