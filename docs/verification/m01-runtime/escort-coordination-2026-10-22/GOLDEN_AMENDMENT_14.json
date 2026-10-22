@@ -4,7 +4,7 @@
   "delta": "escort+coordination",
   "predecessor": "4e2588faeb8054cea70f8bd014d3aa0dcd3effba",
   "predecessorSourceSha256": "d7f6afec8494c47cc7afd42d9150c19bcadc1d81e55fb383a8e2faff8b43e5da",
-  "sourceSha256": "c28cf0d256180629477519aa8427bf1b2006cf527cb5de5c8f341c2984a2c1ae",
+  "sourceSha256": "24eb286da612693ae7a9569653bbc848b418f695e6b6597cbfbcabaafa3c0f8b",
   "previousGolden": {
     "task": "M01-H9-D2-DIFFICULTY-0535-V1",
     "file": "tests/fixtures/m01-difficulty-0535-gameplay-baseline.json",

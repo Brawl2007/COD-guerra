@@ -1,0 +1,648 @@
+{
+ "tool": "tools/verification/m01-escort-coordination-metrics.mjs",
+ "rev": "working tree",
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "timeline": {
+    "eastDemolition": 860.9,
+    "atFiringPoint": 912.4,
+    "escortOrder": 939.2,
+    "bakOnShoulder": 925.2,
+    "bakDelivered": 1178,
+    "westDemolition": 1181.6,
+    "missionEnd": 1196.6,
+    "missionMin": 19.94,
+    "corridorSec": 320.6
+   },
+   "idle": {
+    "corridorIdleSec": 0.1,
+    "longestStillSec": 24.9
+   },
+   "contact": {
+    "corridorMoments": 113,
+    "longestGapEastToWestSec": 33.5,
+    "longestGapFiringPointToWestSec": 33.5,
+    "longestGapTrain963ToWestSec": 33.5
+   },
+   "escort": {
+    "escortedShare": 0.808,
+    "dudekDownUnderFireSec": 21.4,
+    "squadRoundsAtDudek": 98
+   },
+   "squad": {
+    "bounds": [
+     {
+      "move": 0,
+      "start": 872.9,
+      "end": 891.3
+     },
+     {
+      "move": 1,
+      "start": 891.8,
+      "end": 911.4
+     },
+     {
+      "move": 2,
+      "start": 1044.5,
+      "end": 1048
+     },
+     {
+      "move": 3,
+      "start": 1048.1,
+      "end": 1051.1
+     }
+    ],
+    "linesSaid": [
+     {
+      "id": "dlg_m01_155",
+      "at": 874.6
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 903
+     },
+     {
+      "id": "dlg_m01_162",
+      "at": 941.8
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 945.7
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 968.1
+     },
+     {
+      "id": "dlg_m01_161",
+      "at": 985.1
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 998
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 1024.5
+     },
+     {
+      "id": "dlg_m01_157",
+      "at": 1047
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 1094.4
+     }
+    ],
+    "kowalCoverBursts": 27
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 84,
+    "survivors": 12,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "timeline": {
+    "eastDemolition": 756.6,
+    "atFiringPoint": 809.5,
+    "escortOrder": 834.9,
+    "bakOnShoulder": 820.9,
+    "bakDelivered": 1068.9,
+    "westDemolition": 1072.4,
+    "missionEnd": 1087.5,
+    "missionMin": 18.12,
+    "corridorSec": 315.8
+   },
+   "idle": {
+    "corridorIdleSec": 0.1,
+    "longestStillSec": 23.4
+   },
+   "contact": {
+    "corridorMoments": 50,
+    "longestGapEastToWestSec": 36.7,
+    "longestGapFiringPointToWestSec": 30.1,
+    "longestGapTrain963ToWestSec": 51.4
+   },
+   "escort": {
+    "escortedShare": 0.808,
+    "dudekDownUnderFireSec": 16.3,
+    "squadRoundsAtDudek": 76
+   },
+   "squad": {
+    "bounds": [
+     {
+      "move": 0,
+      "start": 768.6,
+      "end": 787
+     },
+     {
+      "move": 1,
+      "start": 905,
+      "end": 924.6
+     },
+     {
+      "move": 2,
+      "start": 940.2,
+      "end": 943.7
+     },
+     {
+      "move": 3,
+      "start": 943.8,
+      "end": 946.8
+     }
+    ],
+    "linesSaid": [
+     {
+      "id": "dlg_m01_155",
+      "at": 770.3
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 791.4
+     },
+     {
+      "id": "dlg_m01_162",
+      "at": 837.5
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 867.7
+     },
+     {
+      "id": "dlg_m01_161",
+      "at": 879.8
+     },
+     {
+      "id": "dlg_m01_156",
+      "at": 905
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 915.9
+     },
+     {
+      "id": "dlg_m01_159",
+      "at": 924.6
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 980.5
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 986.3
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 1037.5
+     }
+    ],
+    "kowalCoverBursts": 26
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 100,
+    "survivors": 18,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 3,
+   "support": false,
+   "timeline": {
+    "eastDemolition": 879.1,
+    "atFiringPoint": 930.6,
+    "escortOrder": 957.4,
+    "bakOnShoulder": 943.4,
+    "bakDelivered": 1186.8,
+    "westDemolition": 1190.4,
+    "missionEnd": 1205.4,
+    "missionMin": 20.09,
+    "corridorSec": 311.2
+   },
+   "idle": {
+    "corridorIdleSec": 0.1,
+    "longestStillSec": 24.9
+   },
+   "contact": {
+    "corridorMoments": 95,
+    "longestGapEastToWestSec": 33.1,
+    "longestGapFiringPointToWestSec": 33.1,
+    "longestGapTrain963ToWestSec": 33.1
+   },
+   "escort": {
+    "escortedShare": 0.809,
+    "dudekDownUnderFireSec": 11.6,
+    "squadRoundsAtDudek": 79
+   },
+   "squad": {
+    "bounds": [
+     {
+      "move": 0,
+      "start": 891.1,
+      "end": 909.5
+     },
+     {
+      "move": 1,
+      "start": 1023,
+      "end": 1042.6
+     },
+     {
+      "move": 2,
+      "start": 1062.7,
+      "end": 1066.2
+     },
+     {
+      "move": 3,
+      "start": 1066.3,
+      "end": 1069.3
+     }
+    ],
+    "linesSaid": [
+     {
+      "id": "dlg_m01_155",
+      "at": 892.8
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 919.1
+     },
+     {
+      "id": "dlg_m01_162",
+      "at": 960
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 971.2
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 989.9
+     },
+     {
+      "id": "dlg_m01_161",
+      "at": 1015.4
+     },
+     {
+      "id": "dlg_m01_156",
+      "at": 1023
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 1034.6
+     },
+     {
+      "id": "dlg_m01_159",
+      "at": 1042.6
+     },
+     {
+      "id": "dlg_m01_159",
+      "at": 1069.3
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 1108.5
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 1122.2
+     }
+    ],
+    "kowalCoverBursts": 27
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 68,
+    "survivors": 12,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 3,
+   "support": true,
+   "timeline": {
+    "eastDemolition": 827.1,
+    "atFiringPoint": 879.9,
+    "escortOrder": 905.4,
+    "bakOnShoulder": 891.4,
+    "bakDelivered": 1142.9,
+    "westDemolition": 1146.4,
+    "missionEnd": 1161.5,
+    "missionMin": 19.36,
+    "corridorSec": 319.3
+   },
+   "idle": {
+    "corridorIdleSec": 0.1,
+    "longestStillSec": 23.4
+   },
+   "contact": {
+    "corridorMoments": 73,
+    "longestGapEastToWestSec": 36.4,
+    "longestGapFiringPointToWestSec": 28.3,
+    "longestGapTrain963ToWestSec": 90.6
+   },
+   "escort": {
+    "escortedShare": 0.808,
+    "dudekDownUnderFireSec": 20.1,
+    "squadRoundsAtDudek": 91
+   },
+   "squad": {
+    "bounds": [
+     {
+      "move": 0,
+      "start": 839.1,
+      "end": 857.4
+     },
+     {
+      "move": 1,
+      "start": 867.7,
+      "end": 887.3
+     },
+     {
+      "move": 2,
+      "start": 1010.6,
+      "end": 1014.2
+     },
+     {
+      "move": 3,
+      "start": 1014.2,
+      "end": 1017.2
+     }
+    ],
+    "linesSaid": [
+     {
+      "id": "dlg_m01_155",
+      "at": 840.7
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 862.4
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 902.5
+     },
+     {
+      "id": "dlg_m01_162",
+      "at": 907.9
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 935.6
+     },
+     {
+      "id": "dlg_m01_161",
+      "at": 951
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 960.8
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 991.3
+     },
+     {
+      "id": "dlg_m01_157",
+      "at": 1013.2
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 1060.6
+     }
+    ],
+    "kowalCoverBursts": 23
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 76,
+    "survivors": 18,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 7,
+   "support": false,
+   "timeline": {
+    "eastDemolition": 872.4,
+    "atFiringPoint": 923.8,
+    "escortOrder": 950.7,
+    "bakOnShoulder": 936.7,
+    "bakDelivered": 1187.5,
+    "westDemolition": 1191,
+    "missionEnd": 1206.1,
+    "missionMin": 20.1,
+    "corridorSec": 318.6
+   },
+   "idle": {
+    "corridorIdleSec": 0.1,
+    "longestStillSec": 24.9
+   },
+   "contact": {
+    "corridorMoments": 133,
+    "longestGapEastToWestSec": 23.6,
+    "longestGapFiringPointToWestSec": 21.9,
+    "longestGapTrain963ToWestSec": 23.6
+   },
+   "escort": {
+    "escortedShare": 0.808,
+    "dudekDownUnderFireSec": 21,
+    "squadRoundsAtDudek": 110
+   },
+   "squad": {
+    "bounds": [
+     {
+      "move": 0,
+      "start": 884.4,
+      "end": 902.7
+     },
+     {
+      "move": 1,
+      "start": 909,
+      "end": 928.6
+     },
+     {
+      "move": 2,
+      "start": 1055.9,
+      "end": 1059.5
+     },
+     {
+      "move": 3,
+      "start": 1059.5,
+      "end": 1062.5
+     }
+    ],
+    "linesSaid": [
+     {
+      "id": "dlg_m01_155",
+      "at": 886
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 907.5
+     },
+     {
+      "id": "dlg_m01_162",
+      "at": 953.2
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 956
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 980.3
+     },
+     {
+      "id": "dlg_m01_161",
+      "at": 996.1
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 1007
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 1036.4
+     },
+     {
+      "id": "dlg_m01_157",
+      "at": 1058.5
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 1107.3
+     }
+    ],
+    "kowalCoverBursts": 25
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 84,
+    "survivors": 12,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  },
+  {
+   "seed": 19390901,
+   "support": true,
+   "timeline": {
+    "eastDemolition": 822.5,
+    "atFiringPoint": 875.3,
+    "escortOrder": 900.8,
+    "bakOnShoulder": 886.8,
+    "bakDelivered": 1139.6,
+    "westDemolition": 1143.2,
+    "missionEnd": 1158.2,
+    "missionMin": 19.3,
+    "corridorSec": 320.7
+   },
+   "idle": {
+    "corridorIdleSec": 0.1,
+    "longestStillSec": 23.4
+   },
+   "contact": {
+    "corridorMoments": 85,
+    "longestGapEastToWestSec": 42.2,
+    "longestGapFiringPointToWestSec": 29.6,
+    "longestGapTrain963ToWestSec": 71.6
+   },
+   "escort": {
+    "escortedShare": 0.808,
+    "dudekDownUnderFireSec": 21.5,
+    "squadRoundsAtDudek": 85
+   },
+   "squad": {
+    "bounds": [
+     {
+      "move": 0,
+      "start": 834.5,
+      "end": 852.8
+     },
+     {
+      "move": 1,
+      "start": 870.9,
+      "end": 890.5
+     },
+     {
+      "move": 2,
+      "start": 1006,
+      "end": 1009.6
+     },
+     {
+      "move": 3,
+      "start": 1009.6,
+      "end": 1012.6
+     }
+    ],
+    "linesSaid": [
+     {
+      "id": "dlg_m01_155",
+      "at": 836.1
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 863.3
+     },
+     {
+      "id": "dlg_m01_162",
+      "at": 903.3
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 910.4
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 935.7
+     },
+     {
+      "id": "dlg_m01_161",
+      "at": 958.8
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 965
+     },
+     {
+      "id": "dlg_m01_160",
+      "at": 993.2
+     },
+     {
+      "id": "dlg_m01_157",
+      "at": 1008.6
+     },
+     {
+      "id": "dlg_m01_163",
+      "at": 1052.7
+     }
+    ],
+    "kowalCoverBursts": 26
+   },
+   "guard": {
+    "clipping": 0,
+    "stacked": 0,
+    "minPlayerHealth": 100,
+    "survivors": 18,
+    "bak": "rescued_by_dudek",
+    "complete": true
+   }
+  }
+ ]
+}

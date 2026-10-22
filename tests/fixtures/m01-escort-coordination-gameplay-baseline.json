@@ -11,9 +11,9 @@
     "sha256": "72aaf7ff239e97bd20532b4a57c9420a3599dff4f9371aca39eb3c1f2d18ecf4"
   },
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
-  "sourceSha256": "c28cf0d256180629477519aa8427bf1b2006cf527cb5de5c8f341c2984a2c1ae",
+  "sourceSha256": "24eb286da612693ae7a9569653bbc848b418f695e6b6597cbfbcabaafa3c0f8b",
   "inputsSha256": {
-    "src/game/m01-simulation.js": "c28cf0d256180629477519aa8427bf1b2006cf527cb5de5c8f341c2984a2c1ae",
+    "src/game/m01-simulation.js": "24eb286da612693ae7a9569653bbc848b418f695e6b6597cbfbcabaafa3c0f8b",
     "src/game/m01-pacing.js": "b5e6ede4828fbd82aa85fdb6975c71a4a03ebaadd1f6a8c8269facf6965300ca",
     "missions/m01-tczew/mission.json": "e5abfc2771a5527cd809a2c7100830f9c000e8fe3fdd9f28fb259295b1741776",
     "missions/m01-tczew/map-layout.json": "d0cec6dbb3098ebfb33797c5ba75bced07a34b521afe91205565fa44de4bae7e",
@@ -186,7 +186,7 @@
         },
         {
           "tick": 18944,
-          "sha256": "aa35927395949dc685f83823185c749abb322ff3288c49a1e9979d3346fe048d"
+          "sha256": "36badf247c13528d074d7ef8ce8ac3c5e40a05c326ba3ac81fe94e30774751aa"
         },
         {
           "tick": 19456,
@@ -226,7 +226,7 @@
         },
         {
           "tick": 23933,
-          "sha256": "f28d6f29ac9e130b3cb126434979fb4b970f7077c778b49c48c29f3a0816e44d"
+          "sha256": "0b8b5f256ec70fad353f423e2e44f5b058e72e3c9ccfbf17567502e19d626a91"
         }
       ]
     },
@@ -365,7 +365,7 @@
         },
         {
           "tick": 16896,
-          "sha256": "b1d20eb0d8ed755128b94bfa53bcd3d520a103d96f882db90481be046b6cdb17"
+          "sha256": "02a65326ff867b14e6fa850b5fdfcf1eaf1528bf2f4bb5f28f6c805db1765e64"
         },
         {
           "tick": 17408,
@@ -411,5 +411,5 @@
     }
   ],
   "audit": "docs/verification/m01-runtime/escort-coordination-2026-10-22/GOLDEN_AMENDMENT_14.json",
-  "auditSha256": "7e05304be6b235db8c99c8aa0a15bd69b59b1316d130304e63c1db82c9198c8a"
+  "auditSha256": "3e21b65ff697ecd2c8cf344e1a7bcbc333508697f4138485f5ce82ca7191e4b3"
 }
