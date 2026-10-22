@@ -809,7 +809,7 @@ export class M01View {
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     this.weaponLighting.sync({sky:this.skyLight,sun:this.lightingModel?{position:this.sun.position,target:this.sun.target,color:this.sun.color,intensity:this.lightingModel.sun.intensity}:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
-    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
+    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov},state)){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
     // Once, before any shot: compile and link the shot-FX programs now instead of stalling the first shot frame.

@@ -39,6 +39,7 @@ export function viewModelArmsGeometry(source,jointNames){
   return geometry;
 }
 
+const KEY_SIZE=25;   // slots of the per-frame change key in update()
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.
 export class M01ViewModel {
   // worldFx (optional) receives world-space brass, clips and muzzle smoke; texture stays for caller compatibility.
@@ -158,9 +159,10 @@ export class M01ViewModel {
     const {a,b,c}=this.tmp,q=camera.quaternion,frame={origin:camera.position,forward:a.set(0,0,-1).applyQuaternion(q),right:b.set(1,0,0).applyQuaternion(q),up:c.set(0,1,0).applyQuaternion(q)};
     return frame;
   }
+  // state (optional): the caller's `sim.renderState` of this frame (a getter that rebuilds the whole render state on every read); read here only if not passed.
   // view (optional): {camera, viewFov}. The camera is READ for the brass/clip/smoke spawns and the wall probe, and its field of
   // view is WRITTEN (applyFov) to the aim transition's value: the one camera property this class sets.
-  update(sim,quality,flashUntil,view=null){
+  update(sim,quality,flashUntil,view=null,state=sim.renderState){
     const characters=this.characters;this.observeNative(sim.clock);
     const lod=characters.sources.has('pl:0')?0:1;
     if(!characters.sources.has(`pl:${lod}`)||!['aim','reload_clip','fire_bolt','carry_wounded','carried'].every(name=>characters.clips.has(name)))return false;
@@ -172,11 +174,19 @@ export class M01ViewModel {
     // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) with or without an actor index.
     const p=sim.player,w=sim.weapon,t=sim.clock,patient=typeof sim.actor==='function'?sim.actor('jozef_bak'):sim.actors?.find(a=>a.id==='jozef_bak'),carryPhase=patient?.carry,
       carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
-    const key=JSON.stringify([characters.revision,t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
-      p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
-    if(this.sampleKey===key){this.applyFov(view);return true;}
-    this.sampleKey=key;this.fovDriven=false;
-    this.root.visible=sim.renderState.weaponVisible||carry;
+    // Per-frame change key: scalars compared in place against the previous key (no JSON.stringify, no per-frame arrays).
+    // A NaN or an absent field matches itself, as it did in the serialised key.
+    const cam=view?.camera,k=this.keyScratch??=new Array(KEY_SIZE).fill(null);
+    k[0]=characters.revision;k[1]=t;k[2]=p.aiming;k[3]=p.moveBlend;k[4]=p.sprinting;k[5]=p.crouched;k[6]=p.carrying;k[7]=state.weaponVisible;k[8]=w.state;k[9]=w.started;k[10]=w.until;
+    k[11]=w.lastShot;k[12]=w.shotCount;k[13]=flashUntil;k[14]=p.angle;k[15]=p.pitch;k[16]=sim.world?.revision;
+    if(cam){const c=cam.position,q=cam.quaternion;k[17]=true;k[18]=c.x;k[19]=c.y;k[20]=c.z;k[21]=q.x;k[22]=q.y;k[23]=q.z;k[24]=q.w;}
+    else{k[17]=false;k[18]=k[19]=k[20]=k[21]=k[22]=k[23]=k[24]=null;}
+    const prev=this.sampleKey;let same=Boolean(prev);
+    if(same)for(let i=0;i<KEY_SIZE;i++){const x=k[i],y=prev[i];if(x!==y&&!(x!==x&&y!==y)&&!(x==null&&y==null)){same=false;break;}}
+    if(same){this.applyFov(view);return true;}
+    if(prev)for(let i=0;i<KEY_SIZE;i++)prev[i]=k[i];else this.sampleKey=k.slice();
+    this.fovDriven=false;
+    this.root.visible=state.weaponVisible||carry;
     if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod,clock:t,drawnTriangles:0,drawnMeshes:[],native:this.native};return true;}
     let clip='aim',sample=0;
     if(carry){const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_carrier`:null;
