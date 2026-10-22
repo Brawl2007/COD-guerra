@@ -15,6 +15,19 @@ export function coverControls(sim){
   return {aim:true,lookX:Math.atan2(Math.sin(turn),Math.cos(turn))/.0022,lookY:(p.pitch-pitch)/.0022,fire:sim.weapon.state==='READY'};
 }
 
+/**
+ * SP-08 (2026-10-22): the corridor task through the same controls as Game. While Jan counts he stays at the post; when Zieliński sends him back he runs to Dudek and walks
+ * with him 3 m behind, on the river side (within the 10 m escort distance); afterwards he waits there for the blast. A simulation without the corridor task (the predecessors of
+ * the golden amendments) gets no control at all: the old wait at the post, byte for byte.
+ */
+export function corridorControls(sim){
+  const task=sim.corridorTask;if(!task)return {};
+  if(task.phase==='done'&&sim.player.x<-300)return {};   // after the escort he waits by the station with Dudek and Zieliński for the blast, then walks back (route)
+  const p=sim.player,goal=task.phase==='escort'&&task.carrier?{x:task.carrier.x+3,z:task.carrier.z+1.5}:{x:-292,z:26};
+  const dx=goal.x-p.x,dz=goal.z-p.z,d=Math.hypot(dx,dz);if(d<1)return {};
+  let turn=Math.atan2(dz,dx)-p.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));
+  return {lookX:turn/.0022,forward:1,sprint:d>12};
+}
 // A bounded route through the real simulation; no event, clock or objective injection.
 // This is an automated state/control test, not a browser playthrough.
 export function driver(seed=19390901,{support=false,onStep,Simulation=M01Simulation}={}){
@@ -107,7 +120,8 @@ export function route(seed=19390901,{support=false,onStep,Simulation=M01Simulati
   walk(-115,32);walk(-30,40);walk(-10,40);walk(support?38:30,support?42.4:40);
   until(()=>sim.consumedEvent('evt_m01_east_demolition'),500);
   walk(-15,40);walk(-115,27);walk(-275,27);walk(-292,26);
-  until(()=>sim.consumedEvent('evt_m01_west_demolition'),500);
+  until(()=>sim.consumedEvent('evt_m01_west_demolition'),500,()=>corridorControls(sim));
+  if(sim.corridorTask)walk(-292,26);   // SP-08: back to the post after the escort (a simulation without the task never left it)
   walk(-263,58);walk(-263,70);   // the shelter is entered by its open north passage (x -265..-261.5) through the gate of the fence, not through the west wall
   until(()=>sim.scene?.id==='cs_m01_roll_call',30);const outro=sim.snapshot();step({skip:true});
   until(()=>sim.mission.complete,10);

@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review) and 12 (H9 D2 difficulty wiring + the 05:35 fill) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) and 14 (SP-08 escort + slice-3 squad coordination; 13 is reserved for the ckm jam of a parallel branch) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|14 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -122,7 +122,9 @@ const AMENDMENTS={
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^pl_east_[0-2]$/},
-  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',after:null,
+  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',
+    // History since amendment 14 (2026-10-22): the difficulty + 05:35 golden pins the simulation of 4e2588fa (candidate #80 after PR #91), not the working tree's.
+    after:'4e2588faeb8054cea70f8bd014d3aa0dcd3effba',
     previousGolden:'tests/fixtures/m01-rearguard-gameplay-baseline.json',golden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/difficulty-0535-2026-10-19',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js'],
@@ -139,8 +141,25 @@ const AMENDMENTS={
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
     // Measured (control route): de_east_20 turns to the player at the deck post (facing, 05:38:43, the first key of the man that differs: his ai.target moves in the same tick).
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11 or 12`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/},
+  // 13 is reserved for the ckm jam (a parallel branch, 2026-10-22); 14 is written against amendment 12 and is re-based at integration.
+  '14':{task:'M01-SP08-ESCORT-COORDINATION-V1',delta:'escort+coordination',predecessor:'4e2588faeb8054cea70f8bd014d3aa0dcd3effba',after:null,
+    previousGolden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',golden:'tests/fixtures/m01-escort-coordination-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/escort-coordination-2026-10-22',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-corridor.js','src/game/m01-squad.js'],
+    generationStage:'Owner order 2026-10-22 on the amendment 12 tree (candidate #80 at 4e2588fa): SP-08, the corridor becomes a task (Jan counts the east platoon one man at a time, «passaram X de Y»; Zieliński sends him back to escort Dudek carrying Bąk; Dudek keeps an escort pace of 1.7 m/s beside him and stops under fire alone; the east bank, the dike over the road approach and the Germans regrouped on the spans fire on the escort with squad rounds that never wound an ally, searching fire 25 s where they lost it; Zieliński lowers Jan\'s head within 3 m in the west pre-roll), B4 unchanged; and slice 3, the section falls back by four bounds between posts along the corridor (fire team A, Kowal) on order, on the escort passing, on suppression or at 06:36, with Kowal covering the escort with rkm bursts and callouts through the bark director (trigger squadMove, lines 155-163); recruta routes, no new objective, flag or event.',
+    // Measured (first run of this amendment, both routes): nothing differs before the east demolition; the first lockstep difference is Kowal's x at 06:10:00 (control tick 17220,
+    // support tick 15134): he holds his T38 slot at the squad post (x -71.1) where the predecessor sets off for the single retreat point (x -170, z 22). It is behaviour at once:
+    // with the new records (timers.squad, timers.corridor), the sightings and the dialogue state stripped, the first behaviour difference is the same path of the same man.
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,
+    stateOnly:frame=>{
+      const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];for(const k of ['barks','squad','corridor'])delete st.timers?.[k];
+        for(const a of st.actors??[])if(a.ai)delete a.ai.seen;strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
+      return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^(szymon_kowal|staszek_pawlak|east_platoon_voice)$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12 or 14`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);

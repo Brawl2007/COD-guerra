@@ -2,6 +2,7 @@
 // and the objective status line. Pure functions of the simulation state and the mission data (missions/m01-tczew/mission.json):
 // nothing here is saved, draws from the RNG or changes the battle-clock time of any historical event. The HUD only reads the result.
 import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
+import {corridorStatus,corridorRecord,PASSED_X} from './m01-corridor.js';
 
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const E=name=>`evt_m01_${name}`;
@@ -16,8 +17,7 @@ export const HOLD_POSITION=Object.freeze({x:30,y:0,z:40});
 export const WEST_SAFE_X=-90;
 /** Real seconds between two continuity messages, whatever the clock scale (a compressed clock must not flood the caption line). */
 export const CONTINUITY_MIN_GAP_SEC=20;
-/** The withdrawing men count as "passed" once they are this far west, at the firing point (x -290). */
-const PASSED_X=-275;
+// PASSED_X (the withdrawing men count as "passed" once they are this far west, at the firing point x -290) lives in m01-corridor.js since SP-08 (2026-10-22).
 
 /** Conditions named by clock.segments[].compress.when. Each is something the player has done, never a clock value alone. */
 const COMPRESS_WHEN={
@@ -56,6 +56,8 @@ export function interludeText(sim){
 /** Continuity cue gate: the cue's own objective must be active, and the last continuity message must be CONTINUITY_MIN_GAP_SEC real seconds old. */
 export function continuityAllowed(sim,cue){
   if(cue.requires&&sim.objectives[cue.requires]?.state!=='active')return false;
+  // SP-08 (2026-10-22): «Aguarde o sinal dos sapadores» is not said while the player counts or escorts (his task is on the status line).
+  if(cue.kind==='corridor'&&['count','escort'].includes(corridorRecord(sim)?.phase))return false;
   return sim.clock-(sim.timers.continuityAt??-1e9)>=CONTINUITY_MIN_GAP_SEC;
 }
 
@@ -74,8 +76,9 @@ export function markerTarget(sim){
     if(last)return {label:'Últimos homens do pelotão leste',point:last};
   }
   if(sim.active('hold_corridor')){
-    const bak=sim.actor('jozef_bak'),carrier=carrierOf(sim,bak);
-    if(carrier)return {label:'Dudek com Bąk',point:carrier};
+    const bak=sim.actor('jozef_bak'),carrier=carrierOf(sim,bak),phase=corridorRecord(sim)?.phase;
+    // SP-08 (2026-10-22): while the player counts, the marker stays on the post (or nothing beside it); Dudek is shown once the escort is the task (or with no record, as before).
+    if(carrier&&phase!=='count')return {label:'Dudek com Bąk',point:carrier};
     const fp=sim.world.point('firing_point');if(dist(p,fp)>15)return {label:'Posto de disparo',point:fp};
   }
   return null;
@@ -105,6 +108,7 @@ export function pacingStatus(sim){
     return `Em posição · o pelotão leste (${n} homens) segura a cabeça de ponte; a secção cobre-o até à ordem de retirada`;
   }
   if(sim.active('hold_corridor')){
+    const sp08=corridorStatus(sim,where);if(sp08)return sp08;   // SP-08: the count one man at a time, then the escort (src/game/m01-corridor.js)
     const men=sim.actors.filter(a=>a.group==='grp_east_platoon'&&a.alive&&a.active),passed=men.filter(a=>a.x<=PASSED_X).length;
     if(passed<men.length)return `Corredor · passaram ${passed} de ${men.length} homens do pelotão leste`;
     const carrier=carrierOf(sim,bak);

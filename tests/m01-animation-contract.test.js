@@ -52,7 +52,13 @@ import rearguard from './fixtures/m01-rearguard-gameplay-baseline.json' with {ty
 // golden above is history since then (it pins the simulation of a59c129); the golden of the live simulation, regenerated on x86 by
 // tools/verification/m01-integration-golden-audit.mjs --amendment 12 after its lockstep audit against that exact predecessor, is this one.
 import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.json' with {type:'json'};
-const current=difficulty0535;   // the golden of the live simulation
+// M01-SP08-ESCORT-COORDINATION-V1 (golden amendment 14, 2026-10-22, branch wp3-escort, owner order «Corrigir a escolta SP-08 e a coordenação dos soldados»): the corridor becomes a task
+// (count, escort of Dudek with Bąk under real fire, Zieliński's head beat; B4 unchanged) and the section falls back by bounds with callouts (slice 3). The difficulty + 05:35 golden above
+// is history since then (it pins the simulation of 4e2588fa); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs
+// --amendment 14 after its lockstep audit against that exact predecessor, is this one. (13 is reserved for the ckm jam of a parallel branch; 14 is re-based at integration.)
+import escort from './fixtures/m01-escort-coordination-gameplay-baseline.json' with {type:'json'};
+const ESCORT_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,ESCORT_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 14, as measured
+const current=escort;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -408,7 +414,8 @@ test('the rearguard golden (amendment 11) chains to the dialogue golden, pins th
   // History since amendment 12 (H9 D2 + the 05:35 fill): this golden pins the simulation of a59c129, not the live one.
   assert.equal(rearguard.sourceSha256,'fc818782531d6c643330ad0bf2d6de608211f6c27e6b74798ad4ee3298da0dbf','the rearguard golden pins the simulation of a59c129');
   assert.notEqual(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the rearguard golden is history: amendment 12 moved the simulation');
-  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
+  // 2026-10-22 (amendment 14): the director (new trigger squadMove and its lines) and the mission data (lines 155-163, the head beat's `near`) moved; the rearguard and deck modules did not.
+  for(const f of ['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
   // The first difference is B1's new sighting record of a gate rifleman (ai.seen, 04:45:16, de_east_2 sees the player); with the new state stripped (the dialogue state, ai.seen,
   // the rearguard's records), the first BEHAVIOUR difference is the rearguard itself: pl_east_0 leaves the platoon file for his post the tick the gate holds the clock (06:09:30).
   assert.equal(account.behaviourFields,REARGUARD_BEHAVIOUR.source);
@@ -423,8 +430,10 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(difficulty0535,{amendment:'12',task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',previous:rearguard,previousFile:'m01-rearguard-gameplay-baseline.json',
     predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',deltaFields:D0535_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // History since amendment 14 (2026-10-22, SP-08 escort + squad coordination): this golden pins the simulation of 4e2588fa, not the live one.
+  assert.equal(difficulty0535.sourceSha256,'d7f6afec8494c47cc7afd42d9150c19bcadc1d81e55fb383a8e2faff8b43e5da','the difficulty + 05:35 golden pins the simulation of 4e2588fa');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the difficulty + 05:35 golden is history: amendment 14 moved the simulation');
+  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
   // The D2 wiring alone moves nothing on these (recruta) routes: the first difference is the 05:35 fill, a dike rifleman's sighting of the player at the deck post after 05:30
   // (hold_access); with the sightings and the dialogue state stripped, the first BEHAVIOUR difference is a dike rifleman turning to (taking) the player.
   assert.equal(account.behaviourFields,D0535_BEHAVIOUR.source);
@@ -432,6 +441,23 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
     assert.match(r.firstDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);assert.match(r.firstDifference.path,/\.ai\.seen$/);assert.ok(r.firstDifference.battleClock>='05:30:00');
     assert.match(r.firstBehaviourDifference.path,D0535_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);
     assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+  }
+});
+
+test('the escort + coordination golden (amendment 14) chains to the difficulty + 05:35 golden, pins the live simulation, the corridor, squad and director modules and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(escort,{amendment:'14',task:'M01-SP08-ESCORT-COORDINATION-V1',delta:'escort+coordination',previous:difficulty0535,previousFile:'m01-difficulty-0535-gameplay-baseline.json',
+    predecessor:'4e2588faeb8054cea70f8bd014d3aa0dcd3effba',deltaFields:ESCORT_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),escort.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-corridor.js','src/game/m01-squad.js','src/game/m01-barks.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])
+    assert.equal(escort.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // Nothing moves before the east demolition: the first difference is the section at 06:10:00, Kowal holding his slot at the squad post where he used to set off for the single
+  // retreat point (x -170, z 22). It is behaviour at once (no new record precedes it in the frame), so the first behaviour difference is the same path.
+  assert.equal(account.behaviourFields,ESCORT_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.battleClock,'06:10:00');assert.equal(r.firstDifference.actor,'szymon_kowal');assert.match(r.firstDifference.path,ESCORT_DELTA);
+    assert.match(r.firstBehaviourDifference.path,ESCORT_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^(szymon_kowal|staszek_pawlak|east_platoon_voice)$/);
+    assert.equal(r.endState.objectives.hold_corridor,'done');assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
   }
 });
 

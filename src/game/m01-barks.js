@@ -2,7 +2,7 @@
 // There is no second dialogue system: a bark is an ordinary entry of mission.json `dialogue` (or of `callouts.lines`, once it has an id) that carries a `bark` rule,
 // and it is spoken through M01Simulation.line(). The director only decides WHEN a rule's line may be said:
 //   trigger  `on`      an event that M01Simulation.emit() has just recorded (round-impact, ally-fire, player-hit, player-shot, reload, enemy_down_by_player, enemy-fire),
-//                      an explicit call of the simulation (coverRotation, guide), or `poll` (a state read at the end of every tick)
+//                      an explicit call of the simulation (coverRotation, guide, squadMove: a bound of the section, slice 3), or `poll` (a state read at the end of every tick)
 //   when     {...}     conditions, all of which must hold (the vocabulary below is closed; an unknown name stops the game at load, like a typo in the combat data)
 //   cooldown, max      real seconds on `clock` (never the compressed battle clock) and times per mission; group: lines that alternate and share a cooldown
 //   replaces/unless/requires/after   substitution against the callouts and other lines: «substitui X», «não toca se X tocou há N s», «só depois de X», «X + N s»
@@ -13,6 +13,7 @@
 import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import mapLayout from '../../missions/m01-tczew/map-layout.json' with { type: 'json' };
 import { HOLD_AREA, WEST_SAFE_X } from './m01-pacing.js';
+import { escorted } from './m01-corridor.js';
 
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
@@ -21,7 +22,7 @@ const gateIndex=id=>Number(id.slice(id.lastIndexOf('_')+1));
 /** The ckm wz.30 belt and burst length of m01-simulation.js (CKM_BELT, CKM_BURST_ROUNDS), pinned by tests/m01-barks.test.js. */
 export const CKM_BELT_FULL=330,CKM_BURST_ROUNDS_FULL=8;
 const RECENT_MAX=8;
-export const TRIGGERS=Object.freeze(['poll','coverRotation','guide','round-impact','ally-fire','player-hit','player-shot','reload','enemy_down_by_player','enemy-fire']);
+export const TRIGGERS=Object.freeze(['poll','coverRotation','guide','squadMove','round-impact','ally-fire','player-hit','player-shot','reload','enemy_down_by_player','enemy-fire']);
 
 /** The saved record (timers.barks). last, recent: when the last line was queued and the last RECENT_MAX ones, scripted or reactive alike (the gap and the 60 s budget count all voices);
  *  at: when each watched line was last said; n: how often each rule line was said; g: per variant group [next member, when the group last spoke];
@@ -78,6 +79,7 @@ const CONDITIONS={
   victim:()=>[0,(s,c)=>c.event.victim!=null,EVENT_ONLY],
   crack:()=>[0,(s,c)=>c.event.pass==='crack',EVENT_ONLY],
   pinned:()=>[0,(s,c)=>c.event.pinned.length>0,EVENT_ONLY],
+  pinnedId:id=>[0,(s,c)=>c.event.pinned.includes(id),EVENT_ONLY],   // SP-08 (2026-10-22): this man was pinned by the round (Dudek under fire in the escort)
   pinnedSapper:()=>[0,(s,c)=>{for(const id of c.event.pinned)if(SAPPERS.includes(id))return true;return false;},EVENT_ONLY],
   byMg34:()=>[0,(s,c)=>c.event.by==='de_east_0'||c.event.by==='de_east_1',EVENT_ONLY],
   hit:()=>[0,(s,c)=>c.event.hit===true,['player-shot']],
@@ -88,7 +90,7 @@ const CONDITIONS={
   everyNth:n=>{NEEDS.hits=true;return [0,(s,c)=>(c.hitN-1)%n===0,['player-shot']];},
   repeatKill:sec=>{NEEDS.kill=true;return [0,(s,c)=>c.prevKill!==undefined&&s.clock-c.prevKill<=sec,['enemy_down_by_player']];},
   node:list=>{const prefixes=list.map(p=>p.endsWith('*')?[p.slice(0,-1),true]:[p,false]);
-    return [0,(s,c)=>{const n=c.node;if(typeof n!=='string')return false;for(const [p,glob] of prefixes)if(glob?n.startsWith(p):n===p)return true;return false;},['coverRotation']];},
+    return [0,(s,c)=>{const n=c.node;if(typeof n!=='string')return false;for(const [p,glob] of prefixes)if(glob?n.startsWith(p):n===p)return true;return false;},['coverRotation','squadMove']];},
   // -- the state of the mission
   active:list=>[1,s=>objectiveIs(s,list,'active')],
   done:list=>[1,s=>objectiveIs(s,list,'done')],
@@ -112,6 +114,7 @@ const CONDITIONS={
   // 2026-10-19 (review N3): the man really fired in the last `sec` seconds (his firedAt: Kowal's rkm bursts, the rearguard's rounds), so «Cubro você!» is said by a man who covers.
   fired:({of,sec},k)=>{if(!(sec>0))k.fail('fired.sec');return [1,(s,c,r)=>{const a=present(s,of==='speaker'?r.speaker:of);return a!==null&&Number.isFinite(a.firedAt)&&s.clock-a.firedAt<=sec;}];},
   // -- the player
+  escorting:()=>[2,s=>escorted(s)],   // SP-08: the player is within the escort distance of Dudek carrying Bąk
   playerStill:mps=>[1,s=>s.player.moveBlend*3.8<mps],   // moveBlend is the fraction of the 3.8 m/s walk the last tick covered
   playerHurt:()=>[1,s=>s.player.health<100],
   notAiming:()=>[1,s=>!s.player.aiming],
@@ -122,7 +125,7 @@ const CONDITIONS={
   bearing:({point,side})=>[1,s=>{const a=bearing(s,s.world.point(point));return side==='left'?a<-.35&&a>-2.09:a>.35&&a<2.09;}],   // the side directionTo() calls «à sua esquerda/direita»
   platoonPassing:()=>[2,s=>{for(const a of s.actors)if(a.group==='grp_east_platoon'&&a.alive&&a.active&&a.x>-275)return true;return false;}],
   westWait:()=>[2,s=>{   // the three first terms of readiness(west_demolition), and Bąk still on a man's shoulder: the charge waits for him
-    if(!s.consumedEvent('evt_m01_east_demolition')||s.player.x>=WEST_SAFE_X)return false;
+    if(!s.consumedEvent('evt_m01_east_demolition')||s.player.x>=WEST_SAFE_X||escorted(s))return false;   // SP-08: not while the player walks beside Dudek
     const bak=s.actor('jozef_bak');if(!(bak.carry||bak.carriedBy))return false;
     for(const a of s.actors)if(a.alive&&a.active&&a.team==='ally'&&!a.civilian&&a.x>=WEST_SAFE_X)return false;
     return true;}],
@@ -217,7 +220,7 @@ export function compileBarks(def=definition){
     const nearTest=near=>{
       if(!near||typeof near!=='object'||!(near.m>0))at('near needs {of, m}');
       const of=near.of;if(of!=='event'&&of!=='speaker'&&!castIds.has(of))at(`near.of ${of}`);
-      if(of==='event'&&['poll','coverRotation','guide'].includes(b.on))at('near.of event needs an event trigger');
+      if(of==='event'&&['poll','coverRotation','guide','squadMove'].includes(b.on))at('near.of event needs an event trigger');
       return (s,c,r)=>{
         const t=of==='event'?c.point:of==='speaker'?present(s,r.speaker):present(s,of);
         return t!=null&&Math.hypot(s.player.x-t.x,s.player.z-t.z)<=near.m;
