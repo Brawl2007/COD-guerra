@@ -18,7 +18,9 @@ function route(){
   const nav=(x,z)=>{for(let i=0;i<3000;i++){const p=d.sim.player,dx=x-p.x,dz=z-p.z;if(Math.hypot(dx,dz)<1.2)return;
     let turn=Math.atan2(dz,dx)-p.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));d.step({lookX:turn/.0022,forward:1,sprint:true});}throw new Error('route: walk');};
   const face=angle=>{let turn=angle-d.sim.player.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));d.step({lookX:turn/.0022});};
-  nav(-10.9,32.8);face(0);
+  // Since the body physics (P0, D44) the west road abutment (x -22..10, z 29.5..50.5, top -0.35 m) is a 1.1 m ledge from the lowland at z 32.8: not steppable (stepUp 0.45 m).
+  // The player climbs the road embankment (crest at the approach line, z 40) and then walks to the fixture, exactly as tests/helpers/m01-route.js does (walk(-30,40);walk(-10,40)).
+  nav(-30,40);nav(-10.9,32.8);face(0);
   // Walk up to the road portal wall (face at x = -7) and stop about a metre short of it, like a player would.
   let guard=0;while(-7-d.sim.player.x>1.05&&guard++<80)d.step({forward:1});
   for(let i=0;i<10;i++)d.step({});
