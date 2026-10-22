@@ -100,15 +100,27 @@ Nenhuma asserção foi apagada. As que dependiam do tempo de uma rota amostrada 
 | `m01-cover-threat.test.js` | margem de picadas 10 → 4 | 29 / 41 (folga 12) → 31 / 36 (folga 5) na semente 19390901 | caos de uma só semente: nas 12 sementes auditadas a folga (ignorar − cobrir) é 22,0 (dp 18,0) com e 22,8 (dp 13,9) sem encravamentos, diferença emparelhada −0,8 (e.p. 3,9); `COVER_PINS_12_SEEDS.json` |
 | `m01-damage-decals.test.js` | limite 65 → 58 impactos; a rota corre até a 4.ª bomba | 71 → 64 impactos (3 tiros do jogador, como antes); `raid_0530` cai 1 tick depois de `hold_access` | o primeiro encravamento está dentro da janela e a rota anda 2,3 s; o relógio de batalha chega ao evento das 05:30 a 19 799,99999999992 (era 19 800): o evento consome-se com tolerância e o impacto do raide (`≥ 05:30:00`) não. Ver «Em aberto» |
 | `m01-german-retreat.test.js` | `de_spans_5` → `de_spans_7` (portadores) e `de_spans_6` (registo de recuo) | na rota de controlo `de_spans_5` cai no tabuleiro (x 507) e os dois portadores são `de_spans_6` e `de_spans_7` | amostra de rota, mesmas mutações num homem que de facto carrega |
+| `m01-soldier-visual-variation.test.js` | camada nova `CKMJAM_DELTA` no bloqueio de bytes de `src/render/m01-characters.js` (3 troços revertidos, cada um encontrado uma só vez, antes das camadas T47 e T36 que já lá estavam); tudo o resto continua fixo | falhava com «approved T47 delta occurs exactly once» (1 ≠ 2) | o renderizador lê a fase de clip de um registo ckm por `ckmClipPhase` (um `stoppage` toca o gesto `feed` no fim do desencrave) |
 
 Ficheiros novos: `tests/m01-ckm-stoppage.test.js` (13 testes), `firstStoppage()` em `tests/helpers/m01-ckm-scenario.js`, dois testes de clips em `m01-ckm-live-presentation.test.js`, o terceiro teste de `tests/browser/m01-ckm-fire.spec.js` (com `tools/verification/playwright-port-4194.config.mjs`), `tools/verification/m01-ckm-jam-audit.mjs` e `tools/verification/m01-ckm-jam-pins-audit.mjs`.
 
 ## Verificação
 
-@@VERIFICATION@@
+- `node --test tests/m01-ckm*.test.js tests/m01-barks.test.js`, antes do `npm test`: **167/167**. Testes novos desta emenda: 13 em `m01-ckm-stoppage`, 2 em `m01-barks`, 2 em `m01-ckm-live-presentation`, 1 no contrato de animação (a emenda 13) e o 3.º do navegador.
+- `npm test` completo, **uma só corrida** (94 min, 4 núcleos partilhados com outras branches): **1476 testes, 1475 verdes, 1 vermelho**. O vermelho era o bloqueio de bytes de `m01-soldier-visual-variation` (que não conhecia a camada nova do renderizador); corrigido com a camada `CKMJAM_DELTA` e o ficheiro corrido de novo: 9/9. Os outros 153 ficheiros passaram na mesma corrida, incluindo as re-fixações da tabela acima e o contrato de animação (31/31, as duas rotas do golden tick a tick).
+- `npm run build` e `npm run verify:bundle`: OK.
+- `node tools/verification/m01-integration-golden-audit.mjs --amendment 13` (modo de verificação, regenera a prova e o golden e compara byte a byte): «check: identical». `--amendment 12` (história, `after` `4e2588f`): «check: identical».
+- Navegador: `tests/browser/m01-ckm-fire.spec.js` **3/3** com `CI=1`, porta 4194 (`tools/verification/playwright-port-4194.config.mjs`), Chromium com render por software (6,9 min), sobre as mesmas fontes de `src/`; não repetido depois.
+- **Não** feito: playtest humano, FPS, qualquer medida de sensação de jogo.
 
 Captura do navegador (`m01-ckm-stoppage-browser.png`, 04:58:52): a legenda «Atirador da ckm: Travou! Recarregar!» a meio do reparo (render por software; prova que o evento chega ao ecrã, não é imagem de qualidade).
 
 ## Em aberto
 
-@@OPEN@@
+1. **A 115 não se ouve** (0 de 21 vezes; a 114 em 11 de 21). Decisão do proprietário: (a) a 115 em prioridade 2 (um número em `mission.json`, exige regenerar o golden; na variante de teste 2 de 4 nas rotas do golden) ou (b) uma pequena tolerância para eventos de um só instante no realizador (código de todas as falas). Não toquei em nenhuma das duas.
+2. **Sem som próprio do encravamento**: a arma cala-se e as legendas 114 / 115 dizem-no; não há amostra de «clique» nem de manivela (os eventos `ckm_stoppage*` existem para o áudio, ninguém os ouve ainda).
+3. **Instantes e durações são balanço de jogo, sem fonte histórica** (14.ª e 45.ª rajadas; 3,8 e 4,6 s). Um save antigo feito depois dessas rajadas apanha o encravamento na rajada seguinte, e os dois um a seguir ao outro se passou a 45.ª. Uma rota com menos de 45 rajadas só tem um (as 14 medidas têm 51 a 62).
+4. **Número da emenda.** Esta é a 13 sobre `4e2588f`; outras branches estavam a gerar as suas emendas sobre o mesmo predecessor (vi «13» e «14» a correr noutras worktrees). Duas emendas em paralelo não se encadeiam: a segunda a entrar tem de ser regenerada sobre a primeira (`--amendment N --write`). Conflitos prováveis: a tabela `AMENDMENTS` de `tools/verification/m01-integration-golden-audit.mjs`, `tests/m01-animation-contract.test.js`, `DEVELOPMENT_STATUS.md`, as listas de camadas de `tests/m01-soldier-visual-variation.test.js`.
+5. **Achado, não corrigido** (entrada do golden, fora do âmbito): o evento das 05:30 consome-se com tolerância de 1e-6 s no relógio de batalha (`trigger`) e o primeiro impacto do raide (`updateRaidSchedule`, `raid_0530`) com `>=` exacto; quando o relógio chega a 19 799,99999999992 o impacto cai um tick depois do evento (sem efeito de jogo; só `m01-damage-decals` o sentiu).
+6. **Rotas amostradas.** As re-fixações da tabela acima são caos de rota (qualquer mudança de tempo move os sorteios seguintes dos alemães), medido onde importa (`COVER_PINS_12_SEEDS.json`: folga de picadas 22,0 contra 22,8, diferença emparelhada −0,8 ± 3,9; `CKM_JAM_ROUTES.json`: rondas da ckm −1 %); não escondem uma regressão que eu tenha visto, mas só o jogo a correr o confirma.
+7. **Base.** `efb8eb0` (só mudou o workflow de CI) sobre `4e2588f`; não publicada nem revista por um revisor independente.
