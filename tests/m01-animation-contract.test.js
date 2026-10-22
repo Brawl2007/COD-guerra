@@ -11,6 +11,48 @@ import t38Golden from './fixtures/m01-t38-gameplay-baseline.json' with {type:'js
 // T47 (M01-T47-CKM-LIVE-FIRE-V1) was merged onto that staging: its golden, regenerated on x86 by tools/verification/m01-t47-ckm-fire-audit.mjs after the per-tick delta audit
 // against the exact staging predecessor, is the golden of the live simulation.
 import golden from './fixtures/m01-t47-gameplay-baseline.json' with {type:'json'};
+// M01-NPC-NAVIGATION-V1 (golden amendment 05, 2026-10-18, phys x npc integration): the actors got a deterministic navigation round every solid (the colliders and the player's
+// layer) and local avoidance, so the simulation moved again. The T47 golden above is history since then (it pins the simulation of the physics tree c7d8341 = 98f094f, byte for
+// byte below); the golden of the live simulation, regenerated on x86 by tools/verification/m01-npc-navigation-golden-audit.mjs after its lockstep audit against that exact
+// predecessor, is this one.
+import live from './fixtures/m01-npc-navigation-gameplay-baseline.json' with {type:'json'};
+// M01-P2-PACING-V1 (golden amendment 06, 2026-10-18, integration claude/busy-ritchie-3fkvk2-integ-pc): the hold clock compresses once the player holds the deck, the objective panel
+// and status lines changed and the continuity cues are gated. The NPC navigation golden above is history since then (it pins the simulation of 66e47b2, byte for byte below); the
+// golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 06 after its lockstep audit against that exact predecessor, is this one.
+import pacing from './fixtures/m01-pacing-gameplay-baseline.json' with {type:'json'};
+// M01-COMBAT-AI-V1 (golden amendment 07, 2026-10-18, same integration): combat AI slice 1 (actor.ai, peeks, MG34 burst groups, threat, suppression, Kowal bursts). The pacing golden
+// above is history since then (it pins the simulation of 5d99df8); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs
+// --amendment 07 after its lockstep audit against that exact predecessor, is this one.
+import combat from './fixtures/m01-combat-ai-gameplay-baseline.json' with {type:'json'};
+// M01-COMBAT-DECK-ASSAULT-V1 (golden amendment 08, 2026-10-18, branch claude/busy-ritchie-3fkvk2-slice2): combat slice 2, the deck assault (grp_de_spans to mid-deck and back, the east
+// demolition waits for the deck to clear, enemy_down_by_player, the section's 120-round ammo box at the deck post, the 5 s MG34 pin and the review fixes). The combat AI golden above is history since then (it pins the simulation of 5d13d32 =
+// 9cd2aca); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 08 after its lockstep audit, is this one.
+import deck from './fixtures/m01-deck-assault-gameplay-baseline.json' with {type:'json'};
+const DECK_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen\.who$/;   // the named delta of amendment 08, as measured (tools/verification/m01-integration-golden-audit.mjs)
+const REARGUARD_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,REARGUARD_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 11, as measured
+const D0535_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.ai\.seen$/,D0535_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/;   // amendment 12, as measured
+// M01-NAV-QUEUE-V1 (golden amendment 09, 2026-10-19, branch claude/busy-ritchie-3fkvk2-navq): at most one route() per tick, work buffers reused, the navigator's solid list built before the first
+// plan, the neighbour queries on reused storage. It moves the SOURCE LOCK only: not one tick of either golden route differs from the deck assault golden (the tool's lockstep finds no difference,
+// and the digests equal amendment 08's, block for block). The deck assault golden above is history since then (it pins the simulation of c7c82ee); the golden of the live simulation,
+// regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 09, is this one.
+import nav from './fixtures/m01-nav-queue-gameplay-baseline.json' with {type:'json'};
+// M01-DIALOGUE-V1 (golden amendment 10, 2026-10-19, branch claude/busy-ritchie-3fkvk2-dlgwire): the reactive dialogue. 55 reviewed lines (dlg_m01_100-154; 114/115 unwired), the six orphan
+// lines wired, a deterministic director (src/game/m01-barks.js) with cooldowns, repeats, rotation and substitution against the callouts, a priority queue with a two-voice limit in line(),
+// the cover rotation and the guide as voices. It changes what is SAID and nothing that HAPPENS: with the dialogue state stripped from both frames not one tick of either golden route
+// differs from the navigator queue golden above, which is history since then (it pins the simulation of 167dccc, byte for byte below); the golden of the live simulation, regenerated
+// on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 10 after its lockstep audit against that exact predecessor, is this one.
+import dialogue from './fixtures/m01-dialogue-gameplay-baseline.json' with {type:'json'};
+// M01-REARGUARD-V1 (golden amendment 11, 2026-10-19, branch claude/busy-ritchie-3fkvk2-rear): combat slice 2b, the Polish rearguard of the deck assault (pl_east_0..2 hold the deck at
+// x 165-175 while the gate holds the clock at 06:09:30 and fire real kb wz.29 rounds), with the bark director review fixes (B1: the peek lines read the AI's own sight, ai.seen, written
+// for riflemen too; N1: reactive lines counted when shown; N3: 030 to Kowal). The dialogue golden above is history since then (it pins the simulation of c1a3ecf); the golden of
+// the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 11 after its lockstep audit against that exact predecessor, is this one.
+import rearguard from './fixtures/m01-rearguard-gameplay-baseline.json' with {type:'json'};
+// M01-H9-D2-DIFFICULTY-0535-V1 (golden amendment 12, 2026-10-19, branch claude/busy-ritchie-3fkvk2-d2): the H9 D2 level wiring (recruta, the level of these routes, keeps every number
+// and writes no new key) and the 05:35 fill (a dike rifleman who sees the player at the deck post from hold_access to the east demolition may take him as a target). The rearguard
+// golden above is history since then (it pins the simulation of a59c129); the golden of the live simulation, regenerated on x86 by
+// tools/verification/m01-integration-golden-audit.mjs --amendment 12 after its lockstep audit against that exact predecessor, is this one.
+import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.json' with {type:'json'};
+const current=difficulty0535;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -82,7 +124,7 @@ test('historical approved golden remains immutable; the partials golden and the 
   assert.equal(amendment2.afterSourceSha256,t38Golden.sourceSha256);assert.notEqual(t38Golden.sourceSha256,replaced.sourceSha256,'amendment 02 moved the simulation source');
 });
 
-test('the T47 golden of the combined tree chains to the staging, pins the live simulation, cites its per-tick delta audit, and keeps amendments 01, 02 and 03 as history',()=>{
+test('the T47 golden of the combined tree chains to the staging, pins the simulation of the physics tree, cites its per-tick delta audit, and keeps amendments 01 to 03 as history',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   // The original partials golden (the candidate #80 alone, the predecessor of T47 amendment 01 and of T48) is kept as ...-before-amendment-02.json: an immutable record, pinned here.
   const original='./fixtures/m01-partials-gameplay-baseline-before-amendment-02.json',partialsOriginal=JSON.parse(readFileSync(new URL(original,import.meta.url),'utf8'));
@@ -98,31 +140,60 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   assert.equal(golden.previousGolden.sha256,sha('./fixtures/m01-t38-gameplay-baseline.json'));
   assert.equal(golden.historicalGoldenSha256,t38Golden.historicalGoldenSha256);
   assert.deepEqual(golden.routes.map(r=>[r.seed,r.support]),t38Golden.routes.map(r=>[r.seed,r.support]),'the same routes are audited');
-  assert.equal(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the golden pins the live simulation');
+  // History since the NPC navigation (amendment 05): this golden pins the simulation of the physics tree (c7d8341, the same file as 98f094f), not the live one.
+  assert.equal(golden.sourceSha256,'64523d0c78cddde49c0e87eac38790f55738743cd4bc6d562853c8d2a5f39482','the T47 golden pins the simulation of the physics tree');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),golden.sourceSha256,'the T47 golden is history: the NPC navigation moved the simulation');
+  assert.equal(sha('./fixtures/m01-t47-gameplay-baseline.json'),live.previousGolden.sha256,'and it is kept byte for byte');
   assert.notEqual(golden.sourceSha256,t38Golden.sourceSha256,'the T38 golden is history: T47 moved the simulation');
   assert.equal(sha('../docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json'),golden.auditSha256,'the delta audit that justifies this golden is the committed one');
+  // Amendment 04 (the player's body physics, docs/verification/m01-runtime/player-collision-2026-10-18/README.md): the player collides with every visible solid, steps, slides and falls under
+  // gravity, and the scripted pilot (tests/helpers/m01-route.js) walks where a player can walk. The golden and delta audit it replaces (f6913a0, amendment 03) are kept as byte copies, the
+  // chain is pinned here, and tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 04 wrote the account (GOLDEN_AMENDMENT_04.json). Amendments 03, 02 and 01 live in the kept goldens.
+  const kept4='./fixtures/m01-t47-gameplay-baseline-before-amendment-04.json',gold3=JSON.parse(readFileSync(new URL(kept4,import.meta.url),'utf8')),amendment4=golden.amendment04;
+  assert.equal(amendment4.task,golden.task);assert.equal(amendment4.beforeCommit,'f6913a0dae3ae227ab0421c6b59f992e8685e9a6');assert.equal(golden.amendment03,undefined);
+  assert.equal(sha(kept4),'92a69ba178bdf3e8071940135db873c34f6269b9c7c2427d4e8efd845c58b1ff');
+  assert.equal(sha(kept4),amendment4.beforeFixtureSha256,'the T47 golden of amendment 03 is kept byte for byte');
+  assert.equal(gold3.sourceSha256,amendment4.beforeSourceSha256);assert.notEqual(gold3.sourceSha256,golden.sourceSha256,'amendment 04 moved the source lock');
+  assert.equal(gold3.task,golden.task);assert.equal(gold3.predecessor,golden.predecessor);assert.equal(gold3.predecessorSourceSha256,golden.predecessorSourceSha256);assert.equal(gold3.amendment04,undefined);
+  assert.equal(gold3.previousGolden.sha256,golden.previousGolden.sha256,'amendment 04 keeps the chain to the staging golden');
+  assert.equal(sha('../'+amendment4.beforeAudit),'6480330aff018fa53e89d2ad379ba6cff22e628bc522d2d38a89ab92e0922d4f');
+  assert.equal(sha('../'+amendment4.beforeAudit),amendment4.beforeAuditSha256);assert.equal(gold3.auditSha256,amendment4.beforeAuditSha256,'the replaced golden cites the kept delta audit');
+  const account4=JSON.parse(readFileSync(new URL('../'+amendment4.audit,import.meta.url)));
+  assert.equal(account4.amendment,'amendment-04');assert.equal(account4.beforeCommit,amendment4.beforeCommit);assert.equal(account4.predecessor,golden.predecessor);
+  assert.equal(account4.beforeFixtureSha256,amendment4.beforeFixtureSha256);assert.equal(account4.beforeSourceSha256,amendment4.beforeSourceSha256);assert.equal(account4.beforeAuditSha256,amendment4.beforeAuditSha256);
+  assert.equal(account4.afterSourceSha256,golden.sourceSha256);assert.equal(account4.afterAuditSha256,golden.auditSha256);
+  assert.equal(account4.afterFixtureSha256,sha('./fixtures/m01-t47-gameplay-baseline.json'),'the account describes this very golden');
+  assert.deepEqual(account4.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]));
+  account4.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,gold3.routes[i].ticks);assert.equal(r.newTicks,golden.routes[i].ticks);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(golden.routes[i].blocks[b],gold3.routes[i].blocks[b],'the blocks before the first difference are the replaced golden\'s');
+    if(r.identicalBlocks<Math.min(gold3.routes[i].blocks.length,golden.routes[i].blocks.length))assert.notDeepEqual(golden.routes[i].blocks[r.identicalBlocks],gold3.routes[i].blocks[r.identicalBlocks],'and the next block differs');
+    // The old pilot is held by the geometry it used to walk through, on the new simulation: its player parts from the old simulation's at a named tick, and its own walk() gives up.
+    const held=r.oldPilotOnNewSimulation;
+    assert.ok(held.firstTickPlayerDiffers&&held.firstTickPlayerDiffers.tick>0,'the old pilot touches the new geometry');assert.equal(held.oldPilotCompletesOnNewSimulation,false);assert.match(held.stopped,/^Movement blocked en route to /);
+  });
   // Amendment 03 (D43, docs/verification/m01-runtime/ckm-fire-live-2026-10-16/T47_T38_INTERACTION.md): the T47 x T38 interaction fix moved the simulation again, on the same
   // staging predecessor. The golden and delta audit it replaces (bc4523f, amendment 02) are kept as byte copies, the chain is pinned here, and
   // tools/verification/m01-t47-golden-amendment-audit.mjs --amendment 03 wrote the account (GOLDEN_AMENDMENT_03.json). Amendments 02 and 01 live in the kept goldens.
-  const kept3='./fixtures/m01-t47-gameplay-baseline-before-amendment-03.json',prev=JSON.parse(readFileSync(new URL(kept3,import.meta.url),'utf8')),amendment3=golden.amendment03;
-  assert.equal(amendment3.task,golden.task);assert.equal(amendment3.beforeCommit,'bc4523fc2e8161846828b77e7c1a49697f3372e8');assert.equal(golden.amendment02,undefined);
+  const kept3='./fixtures/m01-t47-gameplay-baseline-before-amendment-03.json',prev=JSON.parse(readFileSync(new URL(kept3,import.meta.url),'utf8')),amendment3=gold3.amendment03;
+  assert.equal(amendment3.task,gold3.task);assert.equal(amendment3.beforeCommit,'bc4523fc2e8161846828b77e7c1a49697f3372e8');assert.equal(gold3.amendment02,undefined);
   assert.equal(sha(kept3),'664df540ec94e2e51b6fcab20e766f9a5db1f2fd695b23e5075ebd786fced24f');
   assert.equal(sha(kept3),amendment3.beforeFixtureSha256,'the T47 golden of amendment 02 is kept byte for byte');
-  assert.equal(prev.sourceSha256,amendment3.beforeSourceSha256);assert.notEqual(prev.sourceSha256,golden.sourceSha256,'amendment 03 moved the source lock');
-  assert.equal(prev.task,golden.task);assert.equal(prev.predecessor,golden.predecessor);assert.equal(prev.predecessorSourceSha256,golden.predecessorSourceSha256);assert.equal(prev.amendment03,undefined);
-  assert.equal(prev.previousGolden.sha256,golden.previousGolden.sha256,'amendment 03 keeps the chain to the staging golden');
+  assert.equal(prev.sourceSha256,amendment3.beforeSourceSha256);assert.notEqual(prev.sourceSha256,gold3.sourceSha256,'amendment 03 moved the source lock');
+  assert.equal(prev.task,gold3.task);assert.equal(prev.predecessor,gold3.predecessor);assert.equal(prev.predecessorSourceSha256,gold3.predecessorSourceSha256);assert.equal(prev.amendment03,undefined);
+  assert.equal(prev.previousGolden.sha256,gold3.previousGolden.sha256,'amendment 03 keeps the chain to the staging golden');
   assert.equal(sha('../'+amendment3.beforeAudit),'61a12ae5d14268e99ed26fb09e4b658d420b9eb2197a363159b929e99aa53d1a');
   assert.equal(sha('../'+amendment3.beforeAudit),amendment3.beforeAuditSha256);assert.equal(prev.auditSha256,amendment3.beforeAuditSha256,'the replaced golden cites the kept delta audit');
   const account3=JSON.parse(readFileSync(new URL('../'+amendment3.audit,import.meta.url)));
-  assert.equal(account3.amendment,'amendment-03');assert.equal(account3.beforeCommit,amendment3.beforeCommit);assert.equal(account3.predecessor,golden.predecessor);
+  assert.equal(account3.amendment,'amendment-03');assert.equal(account3.beforeCommit,amendment3.beforeCommit);assert.equal(account3.predecessor,gold3.predecessor);
   assert.equal(account3.beforeFixtureSha256,amendment3.beforeFixtureSha256);assert.equal(account3.beforeSourceSha256,amendment3.beforeSourceSha256);assert.equal(account3.beforeAuditSha256,amendment3.beforeAuditSha256);
-  assert.equal(account3.afterSourceSha256,golden.sourceSha256);assert.equal(account3.afterAuditSha256,golden.auditSha256);
-  assert.equal(account3.afterFixtureSha256,sha('./fixtures/m01-t47-gameplay-baseline.json'),'the account describes this very golden');
-  assert.deepEqual(account3.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]));
+  assert.equal(account3.afterSourceSha256,gold3.sourceSha256);assert.equal(account3.afterAuditSha256,gold3.auditSha256);
+  assert.equal(account3.afterFixtureSha256,sha(kept4),'the account describes the golden that amendment 04 replaced');
+  assert.deepEqual(account3.routes.map(r=>[r.seed,r.support]),gold3.routes.map(r=>[r.seed,r.support]));
   account3.routes.forEach((r,i)=>{
-    assert.equal(r.oldTicks,prev.routes[i].ticks);assert.equal(r.newTicks,golden.routes[i].ticks);
-    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(golden.routes[i].blocks[b],prev.routes[i].blocks[b],'the blocks before the first difference are the replaced golden\'s');
-    if(r.identicalBlocks<Math.min(prev.routes[i].blocks.length,golden.routes[i].blocks.length))assert.notDeepEqual(golden.routes[i].blocks[r.identicalBlocks],prev.routes[i].blocks[r.identicalBlocks],'and the next block differs');
+    assert.equal(r.oldTicks,prev.routes[i].ticks);assert.equal(r.newTicks,gold3.routes[i].ticks);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(gold3.routes[i].blocks[b],prev.routes[i].blocks[b],'the blocks before the first difference are the replaced golden\'s');
+    if(r.identicalBlocks<Math.min(prev.routes[i].blocks.length,gold3.routes[i].blocks.length))assert.notDeepEqual(gold3.routes[i].blocks[r.identicalBlocks],prev.routes[i].blocks[r.identicalBlocks],'and the next block differs');
     assert.equal(r.cadenceFirstDifferenceAfter.difference.path,'$.state.timers.withdrawalCasualty','D43: the named cadence delta first changes only the withdrawal timer');
   });
   // D43 (b): the S2 visibility count of tests/m01-ckm-live-fire.test.js, re-measured with tools/m01-ckm-fire-arc.mjs on both sides of the amendment.
@@ -172,7 +243,199 @@ test('the T47 golden of the combined tree chains to the staging, pins the live s
   });
 });
 
-for(const expected of golden.routes)test(`all gameplay bytes hashed each tick against the T47-audited candidate (the staging with the live ckm fire): seed ${expected.seed}, support ${expected.support}`,()=>{
+test('the NPC navigation golden (amendment 05) chains to the T47 golden, pins the simulation of 66e47b2 and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  assert.equal(live.task,'M01-NPC-NAVIGATION-V1');assert.equal(live.predecessor,'c7d834126e9f94195379b331370b14ebb465224c');
+  assert.equal(live.predecessorSourceSha256,golden.sourceSha256,'the audited predecessor is exactly the simulation the T47 golden pins');
+  // The T47 golden is history: kept byte for byte where it was, pinned here.
+  assert.equal(live.previousGolden.task,golden.task);assert.equal(live.previousGolden.file,'tests/fixtures/m01-t47-gameplay-baseline.json');
+  assert.equal(live.previousGolden.sha256,sha('./fixtures/m01-t47-gameplay-baseline.json'));
+  assert.equal(live.historicalGoldenSha256,golden.historicalGoldenSha256);
+  assert.deepEqual(live.routes.map(r=>[r.seed,r.support]),golden.routes.map(r=>[r.seed,r.support]),'the same two routes are audited');
+  // History since the P2 pacing (amendment 06): this golden pins the simulation of the integration tree 66e47b2 (phys + npc + skin + anim + audio), not the live one.
+  assert.equal(live.sourceSha256,'e961cc5566a0acad80115dff5f2ad1be971b86a7604c6f62800b2fe13075c2b8','the NPC navigation golden pins the simulation of 66e47b2');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),live.sourceSha256,'the NPC navigation golden is history: the pacing moved the simulation');assert.notEqual(live.sourceSha256,golden.sourceSha256);
+  assert.equal(sha('./fixtures/m01-npc-navigation-gameplay-baseline.json'),pacing.previousGolden.sha256,'and it is kept byte for byte');
+  // The account written by the audit tool from real runs of the predecessor and the live tree, with nothing typed by hand.
+  assert.equal(live.audit,'docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json');assert.equal(sha('../'+live.audit),live.auditSha256);
+  const account=JSON.parse(readFileSync(new URL('../'+live.audit,import.meta.url)));
+  assert.equal(account.task,live.task);assert.equal(account.amendment,'amendment-05');assert.equal(account.predecessor,live.predecessor);
+  assert.equal(account.sourceSha256,live.sourceSha256);assert.equal(account.predecessorSourceSha256,golden.sourceSha256);
+  assert.equal(account.previousGolden.sha256,live.previousGolden.sha256);
+  assert.deepEqual(account.routes.map(r=>[r.seed,r.support]),live.routes.map(r=>[r.seed,r.support]));
+  account.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,golden.routes[i].ticks);assert.equal(r.newTicks,live.routes[i].ticks);
+    assert.match(r.firstDifference.path,new RegExp(account.navigationFields),'the first difference from the predecessor is a navigation field of one actor');
+    assert.equal(r.identicalTicksBeforeIt,r.firstDifference.tick-1);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(live.routes[i].blocks[b],golden.routes[i].blocks[b],'the blocks before the first difference are the T47 golden\'s');
+    if(r.identicalBlocks<Math.min(golden.routes[i].blocks.length,live.routes[i].blocks.length))assert.notDeepEqual(live.routes[i].blocks[r.identicalBlocks],golden.routes[i].blocks[r.identicalBlocks]);
+    // Mission invariants against the predecessor on its own route: 12 objectives, four checkpoints, the same consumed events, the survivors and the final battle clock.
+    assert.deepEqual(r.endState.identical,{objectives:true,checkpoints:true,consumedEventIds:true,survivors:true,finalBattleClock:true,complete:true});
+    // The measured effect: nobody in a wall, a girder or a solid of the player layer, nobody inside another man, on the live route.
+    assert.equal(r.measured.clipping.live.events,0);assert.equal(r.measured.stacked.live.pairs,0);
+  });
+  // The same measured effect on seeds 3 and 7, with and without the covering-fire pilot.
+  assert.deepEqual(account.otherRoutes.map(r=>[r.seed,r.support]),[[3,false],[3,true],[7,false],[7,true]]);
+  for(const r of account.otherRoutes){assert.equal(r.clipping.live.events,0);assert.equal(r.stacked.live.pairs,0);}
+});
+
+/** An integration amendment (06 pacing, 07 combat AI) written by tools/verification/m01-integration-golden-audit.mjs: chain, source lock, account and invariants. */
+function integrationAmendment(g,{amendment,task,delta,previous,previousFile,predecessor,deltaFields}){
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  assert.equal(g.task,task);assert.equal(g.amendment,`amendment-${amendment}`);assert.equal(g.delta,delta);assert.equal(g.predecessor,predecessor);
+  assert.equal(g.predecessorSourceSha256,previous.sourceSha256,'the audited predecessor is exactly the simulation the previous golden pins');
+  assert.equal(g.previousGolden.task,previous.task);assert.equal(g.previousGolden.file,'tests/fixtures/'+previousFile);
+  assert.equal(g.previousGolden.sha256,sha('./fixtures/'+previousFile),'the previous golden is kept byte for byte');
+  assert.equal(g.historicalGoldenSha256,previous.historicalGoldenSha256);
+  assert.deepEqual(g.routes.map(r=>[r.seed,r.support]),previous.routes.map(r=>[r.seed,r.support]),'the same two routes are audited');
+  assert.notEqual(g.sourceSha256,previous.sourceSha256,'the simulation moved');
+  assert.equal(sha('../'+g.audit),g.auditSha256,'the account is the committed one');
+  const account=JSON.parse(readFileSync(new URL('../'+g.audit,import.meta.url)));
+  assert.equal(account.task,task);assert.equal(account.amendment,g.amendment);assert.equal(account.delta,delta);assert.equal(account.predecessor,predecessor);
+  assert.equal(account.sourceSha256,g.sourceSha256);assert.equal(account.previousGolden.sha256,g.previousGolden.sha256);assert.equal(account.deltaFields,deltaFields.source);
+  account.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,previous.routes[i].ticks);assert.equal(r.newTicks,g.routes[i].ticks);
+    assert.match(r.firstDifference.path,deltaFields,`the first difference from the predecessor is a path of the named delta ${delta}`);
+    assert.equal(r.identicalTicksBeforeIt,r.firstDifference.tick-1);
+    for(let b=0;b<r.identicalBlocks;b++)assert.deepEqual(g.routes[i].blocks[b],previous.routes[i].blocks[b],'the blocks before the first difference are the previous golden\'s');
+    if(r.identicalBlocks<Math.min(previous.routes[i].blocks.length,g.routes[i].blocks.length))assert.notDeepEqual(g.routes[i].blocks[r.identicalBlocks],previous.routes[i].blocks[r.identicalBlocks]);
+    // The plot is the predecessor's: 12 objectives done or expired as before, CP-A..D, 07:05 (the tool also proved consumed events, survivors and plot flags identical).
+    assert.equal(Object.keys(r.endState.objectives).length,12);assert.equal(r.endState.checkpoints.length,4);assert.equal(r.endState.finalBattleClock,'07:05:00');
+    assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
+    // Fixed battle-clock beats stay at their historical time (non-gated: within one tick at 30x).
+    for(const e of r.battleClockEvents)if(e.fixed&&!e.jump)assert.ok(Math.abs(e.battle.live-e.battle.predecessor)<=1.5,`${e.id} ${e.at}`);
+    assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);
+  });
+  assert.deepEqual(account.otherRoutes.map(r=>[r.seed,r.support]),[[3,false],[3,true],[7,false],[7,true]]);
+  for(const r of account.otherRoutes){assert.equal(r.clipping,0);assert.equal(r.stacked,0);}
+  return account;
+}
+test('the pacing golden (amendment 06) chains to the NPC navigation golden, pins the simulation of 5d99df8 and cites its lockstep account',()=>{
+  const account=integrationAmendment(pacing,{amendment:'06',task:'M01-P2-PACING-V1',delta:'pacing',previous:live,previousFile:'m01-npc-navigation-gameplay-baseline.json',
+    predecessor:'66e47b239a9e0bc586375481fb1a554e46b845e2',deltaFields:/^\$\.state\.mission\.(text|status)$/});
+  // History since the combat AI (amendment 07): this golden pins the simulation of 5d99df8 (the pacing on phys + npc + skin + anim + audio), not the live one.
+  assert.equal(pacing.sourceSha256,'a220e2935efe4bdd54e855e33e095b69d00c5fd6651449965164e13da6782292','the pacing golden pins the simulation of 5d99df8');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),pacing.sourceSha256,'the pacing golden is history: the combat AI moved the simulation');
+  // What the pacing is for: the player in position reaches 06:00 sooner in real time, on both golden routes.
+  for(const r of account.routes)assert.ok(r.endState.live.to0600<r.endState.predecessorOwnRoute.to0600,`06:00 sooner (${r.endState.predecessorOwnRoute.to0600} -> ${r.endState.live.to0600} s)`);
+});
+
+test('the combat AI golden (amendment 07) chains to the pacing golden, pins the live simulation and cites its lockstep account',()=>{
+  const account=integrationAmendment(combat,{amendment:'07',task:'M01-COMBAT-AI-V1',delta:'combat-ai',previous:pacing,previousFile:'m01-pacing-gameplay-baseline.json',
+    predecessor:'5d99df87875b4e8712c6378fbd4d0b19b3395aa7',deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.ai$/});
+  // History since the deck assault (amendment 08): this golden pins the simulation of 5d13d32 / 9cd2aca (combat AI slice 1), not the live one.
+  assert.equal(combat.sourceSha256,'571042afd816fd3d66278d02d87af89057b21406cc338afb3b12b68fe99dcaae','the combat AI golden pins the simulation of 5d13d32');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),combat.sourceSha256,'the combat AI golden is history: the deck assault moved the simulation');
+  // The first difference is the new saved record (actor.ai); the first BEHAVIOUR difference (actor.ai stripped from both frames) is a combat field of a man the AI drives.
+  assert.equal(account.behaviourFields,'^\\$\\.(state|checkpoint)\\.actors\\.\\d+\\.(shot|cooldown|firedAt|rounds)$');
+  for(const r of account.routes){assert.equal(r.firstDifference.missing,true,'actor.ai is new');assert.match(r.firstBehaviourDifference.path,new RegExp(account.behaviourFields));
+    assert.match(r.firstBehaviourDifference.actor,new RegExp(account.behaviourActors));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);}
+});
+
+test('the deck assault golden (amendment 08) chains to the combat AI golden, pins the simulation of c7c82ee and cites its lockstep account',()=>{
+  const account=integrationAmendment(deck,{amendment:'08',task:'M01-COMBAT-DECK-ASSAULT-V1',delta:'deck-assault',previous:combat,previousFile:'m01-combat-ai-gameplay-baseline.json',
+    predecessor:'9cd2aca86c377e74ff6cc4f9444431a2ff1aa7ec',deltaFields:DECK_DELTA});
+  // History since the navigator queue (amendment 09): this golden pins the simulation of c7c82ee (the deck assault with its review fixes, slice-2 branch), not the live one.
+  assert.equal(deck.sourceSha256,'d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23','the deck assault golden pins the simulation of c7c82ee');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),deck.sourceSha256,'the deck assault golden is history: the navigator queue moved the simulation source');
+  assert.equal(deck.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
+  // The first difference is the review fix's new key of a sighting (ai.seen.who, the rail-gate MG sees the player after train 963); with it stripped, the first BEHAVIOUR
+  // difference is the 5 s MG pin of a working sapper (control route) or the new enemy_down_by_player event (support route, the pilot kills the gate MG gunner).
+  assert.equal(account.behaviourFields,'^\\$\\.((state|checkpoint)\\.actors\\.\\d+\\.suppressedUntil|events\\.\\d+\\.type)$');
+  for(const r of account.routes){assert.equal(r.firstDifference.missing,true,'ai.seen.who is new');assert.equal(r.firstDifference.actor,'de_east_1');
+    assert.match(r.firstBehaviourDifference.path,new RegExp(account.behaviourFields));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+    if(r.firstBehaviourDifference.actor!==null)assert.match(r.firstBehaviourDifference.actor,new RegExp(account.behaviourActors));else assert.equal(r.firstBehaviourDifference.live,'enemy_down_by_player');}
+});
+
+/** An amendment that moves the source lock and nothing else (09), written by tools/verification/m01-integration-golden-audit.mjs: chain, source lock, account, and that no tick moved. */
+function identicalAmendment(g,{amendment,task,delta,previous,previousFile,predecessor}){
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  assert.equal(g.task,task);assert.equal(g.amendment,`amendment-${amendment}`);assert.equal(g.delta,delta);assert.equal(g.predecessor,predecessor);
+  assert.equal(g.predecessorSourceSha256,previous.sourceSha256,'the audited predecessor is exactly the simulation the previous golden pins');
+  assert.equal(g.previousGolden.task,previous.task);assert.equal(g.previousGolden.file,'tests/fixtures/'+previousFile);
+  assert.equal(g.previousGolden.sha256,sha('./fixtures/'+previousFile),'the previous golden is kept byte for byte');
+  assert.equal(g.historicalGoldenSha256,previous.historicalGoldenSha256);
+  assert.deepEqual(g.routes,previous.routes,'the two routes, every block of every tick digest: the previous golden\'s, byte for byte');
+  assert.notEqual(g.sourceSha256,previous.sourceSha256,'the simulation source moved');
+  assert.equal(sha('../'+g.audit),g.auditSha256,'the account is the committed one');
+  const account=JSON.parse(readFileSync(new URL('../'+g.audit,import.meta.url)));
+  assert.equal(account.task,task);assert.equal(account.amendment,g.amendment);assert.equal(account.delta,delta);assert.equal(account.predecessor,predecessor);assert.equal(account.identical,true);
+  assert.equal(account.sourceSha256,g.sourceSha256);assert.equal(account.previousGolden.sha256,g.previousGolden.sha256);assert.equal(account.deltaFields,undefined);
+  account.routes.forEach((r,i)=>{
+    assert.equal(r.oldTicks,previous.routes[i].ticks);assert.equal(r.newTicks,g.routes[i].ticks);assert.equal(r.oldTicks,r.newTicks);
+    assert.equal(r.firstDifference,null,'not one tick of the route differs from the predecessor');assert.equal(r.identicalTicksBeforeIt,r.newTicks);
+    assert.equal(r.identicalBlocks,g.routes[i].blocks.length,'every block');
+    assert.equal(Object.keys(r.endState.objectives).length,12);assert.equal(r.endState.checkpoints.length,4);assert.equal(r.endState.finalBattleClock,'07:05:00');
+    assert.deepEqual(r.endState.live,r.endState.predecessorOwnRoute,'the same end of the mission, tick for tick');
+    assert.deepEqual(r.movedEvents,[],'no consumed event moved by a tick');
+    assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);
+  });
+  assert.deepEqual(account.otherRoutes.map(r=>[r.seed,r.support]),[[3,false],[3,true],[7,false],[7,true]]);
+  for(const r of account.otherRoutes){assert.equal(r.clipping,0);assert.equal(r.stacked,0);assert.deepEqual(r.same,{objectives:true,checkpoints:true,consumedEventIds:true,finalBattleClock:true});assert.deepEqual(r.survivors.live,r.survivors.predecessor);assert.equal(r.real.live,r.real.predecessor);}
+  return account;
+}
+test('the navigator queue golden (amendment 09) chains to the deck assault golden, moves the source lock only, pins the simulation of 167dccc and cites its lockstep account',()=>{
+  identicalAmendment(nav,{amendment:'09',task:'M01-NAV-QUEUE-V1',delta:'nav-queue',previous:deck,previousFile:'m01-deck-assault-gameplay-baseline.json',predecessor:'c7c82ee6a2c44318b06bd674dbe94dc1ff43aa1d'});
+  // History since the reactive dialogue (amendment 10): this golden pins the simulation of 167dccc (the navigator queue merged on the slice-2 tree), not the live one.
+  assert.equal(nav.sourceSha256,'4a44a6338d9911e8bf0679e91936ea819a9a96f5e29ee3baa36d970165c3e374','the navigator queue golden pins the simulation of 167dccc');
+  assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),nav.sourceSha256,'the navigator queue golden is history: the dialogue moved the simulation source');
+  assert.equal(nav.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
+});
+
+test('the reactive dialogue golden (amendment 10) chains to the navigator queue golden, pins the live simulation, the director and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(dialogue,{amendment:'10',task:'M01-DIALOGUE-V1',delta:'dialogue',previous:nav,previousFile:'m01-nav-queue-gameplay-baseline.json',
+    predecessor:'167dccc9194b6062947d02e0a0cc30176cc57461',deltaFields:/^\$\.(state|checkpoint)\.(dialogueConsumed|dialogueQueue|subtitle|timers\.(barks|guide|guideDist))(\.|$)/});
+  // History since the rearguard (amendment 11): this golden pins the simulation of c1a3ecf (the dialogue on the navigator-queue tree), not the live one.
+  assert.equal(dialogue.sourceSha256,'c9118414abd2be8cbfe3db449756e522d25420ebb5b82efdb7eeac650eb43119','the dialogue golden pins the simulation of c1a3ecf');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),dialogue.sourceSha256,'the dialogue golden is history: the rearguard moved the simulation');
+  assert.equal(dialogue.inputsSha256['src/game/m01-deck-assault.js'],sha('../src/game/m01-deck-assault.js'),'and the deck module is unchanged');
+  // What the amendment is: the dialogue only. With the dialogue state (queue, subtitle, consumed tokens, timers.barks / guide / guideDist) and the two HUD messages that became voices stripped
+  // from both frames, the live simulation and the predecessor are byte identical on EVERY tick of both routes; the first raw difference is the dialogue itself.
+  assert.equal(account.noBehaviourDifference,true);
+  assert.deepEqual(account.stripped,['dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»']);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.battleClock,'04:33:10','evt_m01_planes_heard: the orphan line 067 is now said');assert.match(r.firstDifference.path,/\.dialogueConsumed\.\d+$/);
+    assert.equal(r.firstBehaviourDifference,null,'not one tick differs once the dialogue is stripped');
+    assert.deepEqual(r.movedEvents,[],'no consumed event moved by a tick');
+  }
+});
+
+test('the rearguard golden (amendment 11) chains to the dialogue golden, pins the live simulation, the rearguard, the director and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(rearguard,{amendment:'11',task:'M01-REARGUARD-V1',delta:'rearguard',previous:dialogue,previousFile:'m01-dialogue-gameplay-baseline.json',
+    predecessor:'c1a3ecf304f1e8a30283d251d2ff8ec174e0ba93',deltaFields:REARGUARD_DELTA});
+  // History since amendment 12 (H9 D2 + the 05:35 fill): this golden pins the simulation of a59c129, not the live one.
+  assert.equal(rearguard.sourceSha256,'fc818782531d6c643330ad0bf2d6de608211f6c27e6b74798ad4ee3298da0dbf','the rearguard golden pins the simulation of a59c129');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the rearguard golden is history: amendment 12 moved the simulation');
+  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
+  // The first difference is B1's new sighting record of a gate rifleman (ai.seen, 04:45:16, de_east_2 sees the player); with the new state stripped (the dialogue state, ai.seen,
+  // the rearguard's records), the first BEHAVIOUR difference is the rearguard itself: pl_east_0 leaves the platoon file for his post the tick the gate holds the clock (06:09:30).
+  assert.equal(account.behaviourFields,REARGUARD_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.actor,'de_east_2');assert.match(r.firstDifference.path,/\.ai\.seen$/);
+    assert.match(r.firstBehaviourDifference.path,REARGUARD_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^pl_east_[0-2]$/);
+    assert.equal(r.firstBehaviourDifference.battleClock,'06:09:30');assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+  }
+});
+
+test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golden, pins the live simulation, the level table and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(difficulty0535,{amendment:'12',task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',previous:rearguard,previousFile:'m01-rearguard-gameplay-baseline.json',
+    predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',deltaFields:D0535_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // The D2 wiring alone moves nothing on these (recruta) routes: the first difference is the 05:35 fill, a dike rifleman's sighting of the player at the deck post after 05:30
+  // (hold_access); with the sightings and the dialogue state stripped, the first BEHAVIOUR difference is a dike rifleman turning to (taking) the player.
+  assert.equal(account.behaviourFields,D0535_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.match(r.firstDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);assert.match(r.firstDifference.path,/\.ai\.seen$/);assert.ok(r.firstDifference.battleClock>='05:30:00');
+    assert.match(r.firstBehaviourDifference.path,D0535_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^de_east_(1[4-9]|[2-9]\d)$/);
+    assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+  }
+});
+
+for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
     trace.add(gameplayFrame(sim,events));

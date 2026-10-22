@@ -43,6 +43,18 @@ const CLIPS=[
   {name:'stuka-formation-near',seconds:2.5,call:'aircraft',args:[200]},
   {name:'stuka-formation-far',seconds:2.5,call:'aircraft',args:[2200]},
   {name:'fire-near',seconds:3,call:'fire',args:[12]},
+  // Escada de distâncias com várias chaves (variações) por degrau: a monotonia da distância não pode depender da chave escolhida.
+  ...[15,150,600,1400].flatMap(d=>['a','b','c','d','e'].map(k=>({name:`ladder-${d}m-${k}`,seconds:d>=600?3:2,call:'weaponFire',args:['kar98k',.2,d,{key:`ladder${d}${k}`}]}))),
+  // Corpo e equipamento do jogador (antes bips fixos; os passos nem existiam).
+  {name:'footstep-earth-walk',seconds:.6,call:'footstep',args:['earth',{key:'fe',pace:'walk'}]},
+  {name:'footstep-metal-walk',seconds:.8,call:'footstep',args:['metal',{key:'fm',pace:'walk'}]},
+  {name:'footstep-metal-run',seconds:.8,call:'footstep',args:['metal',{key:'fm',pace:'run'}]},
+  {name:'footstep-wood-walk',seconds:.6,call:'footstep',args:['wood',{key:'fw',pace:'walk'}]},
+  {name:'footstep-stone-walk',seconds:.6,call:'footstep',args:['stone',{key:'fs',pace:'walk'}]},
+  {name:'footstep-water-walk',seconds:.6,call:'footstep',args:['water',{key:'fx',pace:'walk'}]},
+  {name:'wz29-bolt-cycle',seconds:1.4,call:'wz29Mechanism',args:['bolt','bolt-a']},
+  {name:'player-hit',seconds:.8,call:'hit',args:['hit-a']},
+  {name:'landing-8mps',seconds:1,call:'landing',args:[8,'ground','land-a']},
 ];
 
 async function serveSources(page){
@@ -124,8 +136,14 @@ test('offline render: each weapon, distance band, impact, blast, vehicle and fir
 
   for(const [name,v] of Object.entries(r)){expect(v.metrics.nan,name).toBe(0);expect(v.metrics.peak,name).toBeGreaterThan(1e-4);expect(v.metrics.peak,name).toBeLessThanOrEqual(1);}
   // Distância: menos pico, mais escuro e com mais cauda (reflexões/reverberação) à medida que se afasta.
+  // A média de cinco chaves por distância (cada uma com a sua variante): picos, centróide e cauda têm de seguir a distância, sem depender de uma chave.
+  const avg=(d,field)=>['a','b','c','d','e'].reduce((sum,k)=>sum+m(`ladder-${d}m-${k}`)[field],0)/5;
+  const ladder=[15,150,600,1400].map(d=>({peak:avg(d,'peak'),centroid:avg(d,'centroid'),lateEnergyRatio:avg(d,'lateEnergyRatio')}));
+  for(let i=1;i<ladder.length;i++){expect(ladder[i].peak).toBeLessThan(ladder[i-1].peak);expect(ladder[i].centroid).toBeLessThan(ladder[i-1].centroid);expect(ladder[i].lateEnergyRatio).toBeGreaterThan(ladder[i-1].lateEnergyRatio);}
+  // Cada chave isolada ainda tem de ficar mais escura e mais baixa de perto para longe a 150 m / 600 m (o salto grande), e o ouvido não deve ver inversões gritantes.
+  for(const k of ['a','b','c','d','e']){expect(m(`ladder-600m-${k}`).centroid).toBeLessThan(m(`ladder-150m-${k}`).centroid);expect(m(`ladder-1400m-${k}`).peak).toBeLessThan(m(`ladder-600m-${k}`).peak);}
   const bands=['kar98k-15m','kar98k-150m','kar98k-600m','kar98k-1400m'].map(m);
-  for(let i=1;i<bands.length;i++){expect(bands[i].peak).toBeLessThan(bands[i-1].peak);expect(bands[i].centroid).toBeLessThan(bands[i-1].centroid);expect(bands[i].lateEnergyRatio).toBeGreaterThan(bands[i-1].lateEnergyRatio);}
+  for(let i=1;i<bands.length;i++)expect(bands[i].peak).toBeLessThan(bands[i-1].peak);
   expect(m('mg34-burst-900m').centroid).toBeLessThan(m('mg34-burst-30m').centroid);
   // Identidade: os disparos isolados das armas automáticas e das espingardas diferem no espectro.
   const ids=['kar98k-15m','ally-rifle-15m','mg34-single-30m','rkm-single-30m','ckm-single-30m','wz29-player'];
@@ -148,6 +166,14 @@ test('offline render: each weapon, distance band, impact, blast, vehicle and fir
   // Ju 87: perto rasga (mais agudo), longe só ronca.
   expect(m('stuka-formation-near').centroid).toBeGreaterThan(m('stuka-formation-far').centroid);expect(m('stuka-formation-near').rms).toBeGreaterThan(m('stuka-formation-far').rms);
   expect(r['fire-near'].diagnostics.eventCounts['fire-crackle']).toBeGreaterThan(3);
+  // Passos: bem abaixo de um tiro. O aço (calcanhar duro, tabuleiro oco) é naturalmente o mais forte, mas a andar fica a menos de 1,3x da superfície
+  // mais forte entre terra/madeira/pedra/água, e a correr (ganho 1,55x do passo) a menos de 28 % do pico de um tiro do wz.29.
+  const softWalks=['footstep-earth-walk','footstep-wood-walk','footstep-stone-walk','footstep-water-walk'];
+  for(const n of [...softWalks,'footstep-metal-walk'])expect(m(n).peak,n).toBeLessThan(m('wz29-player').peak*.22);
+  expect(m('footstep-metal-walk').peak).toBeLessThan(1.3*Math.max(...softWalks.map(n=>m(n).peak)));
+  expect(m('footstep-metal-run').peak).toBeLessThan(m('wz29-player').peak*.28);
+  expect(m('footstep-metal-run').centroid).toBeGreaterThan(m('footstep-earth-walk').centroid);expect(m('footstep-stone-walk').centroid).toBeGreaterThan(m('footstep-earth-walk').centroid);
+  expect(m('footstep-earth-walk').lowRatio).toBeGreaterThan(m('footstep-stone-walk').lowRatio);
   expect(r['mg34-per-round-30m'].diagnostics.peakVoices,'per-round events share one burst voice').toBe(1);
   expect(m('dense-mix-worst-case').peak).toBeLessThan(1);
   expect(errors).toEqual([]);

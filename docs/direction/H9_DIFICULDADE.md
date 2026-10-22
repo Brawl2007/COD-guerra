@@ -1,6 +1,6 @@
 Desenho aprovado pelo Captain (D35, ao abrigo de D34). Implementação faseada D1–D5.
 
-# H9 — M01 difficulty and danger: design (not implemented)
+# H9 — M01 difficulty and danger: design (D1 data, D2 wiring and calibration implemented 2026-10-19; D3–D5 not)
 
 Worktree `COD-guerra-v7-cert`, branch `claude/m01-stack-integration-t44-t20-v1`. Approved by the user as H9 (DECISIONS.md on
 `claude/gracious-franklin-u8kdin`). Design only; no code changed. Line numbers are `src/game/m01-simulation.js` unless stated.
@@ -48,19 +48,26 @@ Internal levels `recruta | soldado | veterano`. **`recruta` = today's constants 
 fixture and A/B proof stays byte-identical, and legacy saves keep the tuning they were played with. New rules (telegraph
 clamp, burst cap, regen, CP-B2) are active only on soldado/veterano. Starting values (calibrated in D2; see bands below):
 
+**D2 calibration (2026-10-19).** The table below is the SHIPPED table (`src/game/m01-difficulty.js`), calibrated with `tools/verification/m01-difficulty-sweep.mjs`
+on the 24 audit routes. The D35 starting values were: soldado wound .90 / .35, damage 34, burst cap 2, aim 0.55, cooldown 0.75, spans .40; veterano wound 1.0 / .50,
+damage 50, no burst cap, aim 0.40, cooldown 0.60, spans .50, healing none. With them soldado killed the control pilot on 3 of 4 worst routes and veterano killed every route,
+the support pilot included, inside the repair. **Departure for human decision:** veterano has a slow regen (§7 item 2 recommended none). Rows not changed: recruta
+(byte-identical), the gate threshold, the de_east_0 share, the cover salvo, the grace, checkpoint health, Kowal's pool, loadout, bombs. The two thresholds are read
+as target weights (odds against recruta's) since combat AI slice 1/2 picks by weights: see `oddsWeight` in `m01-difficulty.js`.
+
 | Parameter (code site) | recruta | soldado (default) | veterano |
 |---|---|---|---|
-| Wound chance on collision, exposed / in cover (585) | .20 / .06 | .90 / .35 | 1.0 / .50 |
-| Damage per wound (587) | 8 | 34 (3 wounds) | 50 (2 wounds) |
-| Max wounds per single MG burst | — | 2 (full HP survives any one burst) | none |
-| Aim error × (bias & cone, kinds `player`/`cover` only, 489/505/710) | 1.0 | 0.55 | 0.40 |
-| Cooldown × for fire at the west bank (478–492, 502) | 1.0 | 0.75 | 0.60 |
+| Wound chance on collision, exposed / in cover (585) | .20 / .06 | .45 / .15 | .80 / .30 |
+| Damage per wound (587) | 8 | 25 (4 wounds) | 40 (3 wounds) |
+| Max wounds per single MG burst | — | 1 | 1 |
+| Aim error × (bias & cone, kinds `player`/`cover` only, 489/505/710) | 1.0 | 0.85 | 0.55 |
+| Cooldown × for fire at the west bank (478–492, 502) | 1.0 | 0.90 | 0.70 |
 | Rifle gate shooters: east-only threshold `r()<.5` (488) | .50 | .35 | .25 |
-| Spans pick player `r()<.25` (504) | .25 | .40 | .50 |
+| Spans pick player `r()<.25` (504) | .25 | .30 | .40 |
 | de_east_0 during repair: share on a visible player within 8 m of the sappers | 0 | 30 % | 50 % |
 | Cover-adjust salvo after N s in one cover (700, 707) | 42 | 30 | 20 |
 | Reaction grace after a shooter's first telegraph (§3) | — | 1.5 s | 0.8 s |
-| Healing | none | +5 HP/s after 8 s unhit, cap 100 | none |
+| Healing | none | +5 HP/s after 8 s unhit, cap 100 | +3 HP/s after 10 s unhit, cap 100 |
 | HP on checkpoint save/restore | as saved | 100 | 100 |
 | Kowal resupply pool `timers.kowalRounds` (94, 323) | 30 | 30 | 15 |
 | Grenades / start ammo | 2 / 5+40 | 2 / 5+40 | 2 / 5+40 |
@@ -152,6 +159,7 @@ except a CP-B2 id (forward-only, acceptable). Legacy saves load as recruta.
 - **D5 UI/presentation**. Files: `index.html`, `src/main.js`, `src/game/game.js`, `src/ui/m01-hud.js`. Death beat, level
   select, checkpoint card level, optional "lower level" offer. Tests: `tests/game.test.js` additions + one Playwright check.
   Renderer only reads events/state; no damage logic.
+  **D5 selector done (2026-10-21):** `#difficulty` in the menu (default soldado, `M01_DIFFICULTY_NEW_GAME`) is read only by "INICIAR MISSÃO"/"JOGAR NOVAMENTE" (`Game.restartMission(level)` builds `new M01Simulation(undefined,{difficulty})` when it differs); "CONTINUAR CHECKPOINT" keeps the save's own level; the pause shows "Dificuldade: X" and the HUD a small badge (`M01_DIFFICULTY_LABELS`, `src/styles-d5-difficulty.css`). Tests: `tests/m01-difficulty-ui.test.js`, `tests/browser/m01-difficulty-ui.spec.js`. Still open: death beat, checkpoint-card level, "lower level" offer.
 
 ## 6. Test and evidence plan
 

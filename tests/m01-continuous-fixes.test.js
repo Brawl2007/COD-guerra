@@ -113,7 +113,9 @@ test('the roll call positions the present section in the shelter facing Jan; the
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   Object.assign(sim.player,{x:-291,y:-3,z:26});
   untilEvent(sim,'west_demolition');
-  for(const [x,z] of [[-292,68],[-262,70]])for(let i=0;i<20*60&&Math.hypot(sim.player.x-x,sim.player.z-z)>1.2;i++){
+  // By the gate of the barbed-wire fence (x -264..-258 at z 66), not through the wire; the pilot stops pressing keys once the scene has taken the player to the shelter (it kept
+  // steering for 60 s after, and the final facing it left was a coincidence of the old straight line, 59.5 degrees off Pawel against the 60 allowed).
+  for(const [x,z] of [[-292,62],[-261,62],[-261,69]])for(let i=0;i<20*60&&sim.scene?.id!=='cs_m01_roll_call'&&Math.hypot(sim.player.x-x,sim.player.z-z)>1.2;i++){
     const p=sim.player;sim.tick(.05,{lookX:(Math.atan2(z-p.z,x-p.x)-p.angle)/.0022,forward:1});
   }
   for(let i=0;i<20*30&&sim.scene?.id!=='cs_m01_roll_call';i++)sim.tick(.05);

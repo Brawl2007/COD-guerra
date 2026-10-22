@@ -71,7 +71,12 @@ test('covering fire on the Germans on the spans saves men; without it the platoo
     for(let i=1;i<times.length;i++)assert.ok(times[i]-times[i-1]>=19.9,'one casualty per 20 s of battle clock');
     assert.ok(n>=12&&n<=18);
   }
-  assert.ok(ignore.sim.enemies.filter(a=>a.group==='grp_de_spans').every(a=>a.suppressedUntil===0),'Kowal never covers the withdrawal for the player');
+  // 2026-10-19 re-pin (combat slice 2b): the end-state check `every(suppressedUntil===0)` was true only because nobody of ours ever reached the deck; the new rearguard
+  // (pl_east_0..2, src/game/m01-rearguard.js) fires on the deck Germans while the gate holds the clock at 06:09:30, after the 20 s rule has stopped. What the check protected
+  // is kept, as a count: on the route that ignores the deck, no German of the spans is ever suppressed while the 20 s rule runs, so nobody covers the withdrawal for the player
+  // (Kowal and the ckm do not, the rearguard is not there yet) and the platoon still falls to the predicted minimum (12, above).
+  assert.equal(ignore.stats.spansSuppressedWhileRuleRuns??0,0,'nobody covers the withdrawal for the player while the 20 s rule runs');
+  assert.ok((help.stats.spansSuppressedWhileRuleRuns??0)>0,'the covering player does');
 });
 
 test('historical times, checkpoints and demolition safety are unchanged in both routes',()=>{
@@ -113,7 +118,7 @@ test('after 120 s of continuous suppression the fire on the repair eases without
 test('the withdrawal HUD line reports the real count by ID and whether the Germans on the spans are suppressed',()=>{
   const d=toRepair(driver()),{sim,walk,until}=d;
   walk(-115,27);walk(-28,28);until(()=>sim.active('hold_access'),500);
-  walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);
   until(()=>sim.consumedEvent('evt_m01_east_platoon_withdraws'),500);d.step({});
   assert.equal(sim.mission.status,'Pelotão leste: 18 homens a atravessar o tabuleiro');
   until(()=>sim.flags['m01.east_platoon_survivors']<18,200);

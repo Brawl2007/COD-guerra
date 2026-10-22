@@ -53,7 +53,7 @@ export const M01_LOD_PROFILES=Object.freeze({
   // Actors (m01-characters.js): bands = [near, middle, far]; band 0..2 are skinned LODs, band 3 = culled beyond `far`. Low/Medium have no
   // near LOD (0 collapses band 0). near/middle keep the shipped 0.5 m margin; the cull edge is new in T43 and holds a visible actor for 15%
   // of `far` (15/19.5/24 m), so a soldier hovering on the cull distance does not pop in and out. Only applied when `previous` is passed.
-  actors:Object.freeze({upperInclusive:false,presets:Object.freeze({low:actorProfile(0,15,100),medium:actorProfile(0,40,130),high:actorProfile(14,45,160)})}),
+  actors:Object.freeze({upperInclusive:false,presets:Object.freeze({low:actorProfile(0,15,100),medium:actorProfile(0,40,130),high:actorProfile(14,45,350)})}),
   // Bridge parts ignore the preset. Authority owns 400/800; renderer enters 412/824 and leaves 388/776 (directional enter/exit thresholds).
   bridgeParts:Object.freeze({upperInclusive:false,directional:true,presets:Object.freeze({low:profile([400,800],[12,24]),medium:profile([400,800],[12,24]),high:profile([400,800],[12,24])})}),
 });
@@ -96,3 +96,22 @@ export function lodBayer4(x,y){
   return (4*(2*ax+3*ay-4*ax*ay)+(2*bx+3*by-4*bx*by)+.5)/16;
 }
 export const instanceFadeKeeps=(value,x,y)=>{const t=lodBayer4(x,y);return value<0?t>=1+value:t<value;};
+
+// Reduced pose rate of distant skinned actors (presentation only). Beyond ACTOR_POSE_NEAR_M the clip sample, the animation mixer, the IK and
+// the bone-matrix upload of an actor run once per `quantum` seconds of SIMULATION time instead of every rendered frame (about every 2nd, 3rd
+// or 4th frame at 60 fps; every frame when frames are slower than the quantum). Animation time is the absolute sim time at the frame the pose
+// is applied (the mixer is never advanced by a delta), so nothing has to be accumulated and the pose is always exact at the apply instant.
+// Actors are staggered by a per-actor phase so they do not all refresh on the same frame.
+export const ACTOR_POSE_QUANTA=Object.freeze([Object.freeze({from:120,quantum:.034}),Object.freeze({from:200,quantum:.05}),Object.freeze({from:280,quantum:.067})]);
+export const ACTOR_POSE_NEAR_M=ACTOR_POSE_QUANTA[0].from;
+/** Seconds of sim time between pose applications at `distance` metres; 0 = every frame. */
+export function actorPoseQuantum(distance){
+  let q=0;for(let i=0;i<ACTOR_POSE_QUANTA.length;i++)if(distance>=ACTOR_POSE_QUANTA[i].from)q=ACTOR_POSE_QUANTA[i].quantum;
+  return q;
+}
+/** Pure decision: is a new pose due at `time` for an instance last posed at `appliedTime`? `phase` (seconds, 0..quantum) staggers the actors.
+ *  Due when never posed, the clock went backwards (restore), or `time` is in a later quantum bucket than `appliedTime`. */
+export function actorPoseDue(time,appliedTime,quantum,phase=0){
+  if(!(quantum>0)||!Number.isFinite(appliedTime)||!Number.isFinite(time)||time<appliedTime)return true;
+  return Math.floor((time+phase)/quantum)!==Math.floor((appliedTime+phase)/quantum);
+}

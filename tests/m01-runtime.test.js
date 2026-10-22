@@ -1,3 +1,4 @@
+import {DECK_SAFE_X} from '../src/game/m01-deck-assault.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { M01Simulation, seconds, validateM01Snapshot } from '../src/game/m01-simulation.js';
@@ -47,7 +48,8 @@ test('M01 complete control route reaches debrief, all required objectives, uniqu
   for(const o of sim.definition.objectives.filter(o=>o.required))assert.equal(sim.objectives[o.id].state,'done',o.id);
   assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.map(c=>c.id));
   assert.equal(events.filter(e=>e.type==='complete').length,1);
-  assert.ok(sim.enemies.every(a=>a.x>=690));assert.equal(sim.flags['m01.nowicki_status'],'missing');
+  // Combat slice 2 (versioned save rule, deck record v1): the deck assault may reach the safety line x 450; every other German stays at x >= 690.
+  assert.ok(sim.enemies.every(a=>a.x>=(a.group==='grp_de_spans'&&a.deck?DECK_SAFE_X:690)));assert.equal(sim.flags['m01.nowicki_status'],'missing');
   const c=checkpoints.cp_m01_c_engenheiros,d=checkpoints.cp_m01_d_retirada;
   assert.ok(c.battleClock>=seconds('05:34'));assert.equal(c.flags['m01.second_raid_state'],'ended');
   assert.ok(d.battleClock>=seconds('06:10'));assert.ok(d.player.x<-20);assert.equal(d.player.carrying,null);

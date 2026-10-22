@@ -7,6 +7,7 @@ import { M01Simulation } from './m01-simulation.js';
 import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
 import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
+import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the nine aerial impacts emitted by M01. Schema 2 stores their IDs,
@@ -14,6 +15,7 @@ const SAVE_KEY='cod-guerra:checkpoint:v1';
 const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5']);
 const blastScale=id=>id?.startsWith('m01_grenade_')?'small':id?.includes('demolition')?'demolition':'large';
 
+export { M01_DIFFICULTY_LABELS } from '../ui/m01-hud.js';export { M01_DIFFICULTY_NEW_GAME } from './m01-difficulty.js';
 export class Game {
   constructor(canvas,hud,onState=()=>{},missionId='m01_tczew',{touch=false}={}){
     this.touch=touch;
@@ -23,9 +25,9 @@ export class Game {
     this.audioDirector=new M01AudioDirector(this.audio);   // presentation only: reads the sim, hooked below by optional-chained lines
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
-    this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];
+    this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];this.playSoundBound=sound=>this.playSound(sound);
     const listen=(target,type,callback)=>{target.addEventListener(type,callback);this.listeners.push(()=>target.removeEventListener(type,callback));};
-    listen(window,'resize',()=>this.renderer.resize());
+    listen(window,'resize',()=>{this.renderer.resize();this.m01Hud.resize();});
     listen(window,'blur',()=>this.pause());
     listen(document,'visibilitychange',()=>{if(document.hidden)this.pause();});
     listen(document,'pointerlockchange',()=>{
@@ -81,8 +83,10 @@ export class Game {
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
-  restartMission(){
-    this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
+  get difficulty(){return this.isM01?this.sim.difficulty:null;}
+  /** H9 D5: the UI only passes the chosen level; the simulation owns it. A different level means a fresh M01Simulation (same seed), as in selectMission. */
+  restartMission(difficulty){
+    if(this.isM01&&difficulty&&difficulty!==this.sim.difficulty)this.sim=new M01Simulation(undefined,{difficulty});else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
@@ -104,18 +108,19 @@ export class Game {
         fire:this.input.consumeFire(),reload:this.input.consumePressed('KeyR'),grenade:this.input.consumePressed('KeyG'),
         interact:this.input.consumePressed('KeyE'),skip:this.input.consumePressed('Space'),
         crouch:this.input.consumePressed('KeyC'),sight:this.input.consumePressed('KeyV')};
-      // M01 catches up a slow rendered frame with bounded physics steps in this same loop.
-      // Single-press actions and relative look are consumed once, never once per substep.
-      let remaining=this.isM01?dt:Math.min(.05,dt),first=true;
+      // M01 catches up a slow rendered frame with bounded physics steps in this same loop (at most 5 steps = 250 ms of simulation per frame;
+      // the rest of a long frame is dropped, so one hitch cannot snowball). Single-press actions and relative look are consumed once, never once per substep.
+      let remaining=frameSimBudget(dt,this.isM01),first=true,stop=false;
       while(remaining>1e-7&&!this.paused){
-        const step=Math.min(.05,remaining);
-        this.sim.tick(step,first?controls:{...controls,lookX:0,lookY:0,fire:false,reload:false,grenade:false,interact:false,skip:false,crouch:false,sight:false});
-        const events=this.sim.drainEvents();for(const event of events)this.handleEvent(event);
-        remaining-=step;first=false;if(events.some(event=>event.type==='restored')||this.sim.mission.complete)break;
+        const step=Math.min(SIM_STEP,remaining);
+        this.sim.tick(step,controls);
+        if(first){controls.lookX=0;controls.lookY=0;controls.fire=false;controls.reload=false;controls.grenade=false;controls.interact=false;controls.skip=false;controls.crouch=false;controls.sight=false;}   // tick() keeps no reference to controls
+        const events=this.sim.drainEvents();
+        for(let i=0;i<events.length;i++){this.handleEvent(events[i]);if(events[i].type==='restored')stop=true;}
+        remaining-=step;first=false;if(stop||this.sim.mission.complete)break;
       }
-      const due=this.pendingSounds.filter(sound=>sound.at<=this.sim.clock);
-      this.pendingSounds=this.pendingSounds.filter(sound=>sound.at>this.sim.clock);
-      due.forEach(sound=>this.playSound(sound));
+      // Due sounds play in this same pass; the rest is compacted in place (no filter() arrays per frame). playSound never touches pendingSounds.
+      playDueSounds(this.pendingSounds,this.sim.clock,this.playSoundBound);
       if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
         phase:this.sim.mission.phase,quality:this.renderer.quality});
       if(this.isM01)this.audioDirector?.update(this.sim);
@@ -136,6 +141,7 @@ export class Game {
       return;
     }
     if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
+    if(sound.kind==='distant-battle'){this.audio.distantBattle('rifle',sound.pan,sound.distance,sound.key,{rounds:sound.rounds,front:sound.front});return;}
     if(sound.kind==='blast'){
       this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
       // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
@@ -196,9 +202,9 @@ export class Game {
     const now=this.sim.clock*1000;
     if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim);   // presentation only
     if(event.type==='message')this.say(event.message,2600);
-    if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode);
+    if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode,`reload:${this.sim.clock.toFixed(3)}`);
     if(event.type==='player-shot'){
-      this.audio.wz29Shot();this.audio.wz29Mechanism('bolt');this.renderer.m01.muzzle(this.sim.clock);
+      this.audio.wz29Shot(0,0,`wz29:${this.sim.weapon.shotCount}`);this.audio.wz29Mechanism('bolt',`bolt:${this.sim.weapon.shotCount}`);this.renderer.m01.muzzle(this.sim.clock);
       if(event.hit===true)this.m01Hud.hit(this.sim.clock);
       if(event.material&&event.material!=='character'){
         const s=this.spatial(event.point),key=`player:${this.sim.weapon.shotCount}`,material=this.renderer.m01.lastSurface?.kind==='water'?'water':event.material,plan=playerImpactSoundPlan(s.distance,this.sim.clock);
@@ -207,13 +213,16 @@ export class Game {
         else this.pendingSounds.push({...s,at:plan.at,kind:'impact',material,key});
       }
     }
+    // Allies (Kowal's rkm, the allied riflemen) and the scripted far shot: the report reaches the player after distance / 343 s, like enemy fire,
+    // so the muzzle flash is seen before the shot is heard. Presentation only (pendingSounds is cleared on a restore).
     if(event.type==='npc-shot'){
-      const s=this.spatial(event.point);
-      if(event.rounds>1)this.audio.rkmBurst(s.pan,s.distance,event.rounds,.11,`kowal:${this.sim.clock.toFixed(3)}`,s.front);
-      else this.audio.rifleShot(s.pan,s.distance,'ally-rifle',`ally:${this.sim.clock.toFixed(3)}`,undefined,s.front);
+      const s=this.spatial(event.point),clock=this.sim.clock.toFixed(3);
+      this.pendingSounds.push(event.rounds>1?{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'rkm_wz28',rounds:event.rounds,interval:.11,key:`kowal:${clock}`}
+        :{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'ally_rifle',key:`ally:${clock}`});
     }
     if(event.type==='distant-shot'){
-      const s=this.spatial(event.point);this.audio.distantBattle('rifle',s.pan,Math.max(500,s.distance),`scripted:${this.sim.clock.toFixed(3)}`,{rounds:3,front:s.front});
+      const s=this.spatial(event.point),d=Math.max(500,s.distance);
+      this.pendingSounds.push({...s,distance:d,at:this.sim.clock+d/343,kind:'distant-battle',rounds:3,key:`scripted:${this.sim.clock.toFixed(3)}`});
     }
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
     // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
@@ -235,9 +244,11 @@ export class Game {
       if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key,s.front);
     }
     if(event.type==='player-hit'){
-      this.audio.hit();this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
+      this.audio.hit(`hit:${this.sim.clock.toFixed(3)}`);this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};
       this.renderer.m01.playerHit(this.sim.clock);
     }
+    // The simulation decided the landing (speed, damage, surface); the thud and the camera dip only present it.
+    if(event.type==='player-landing'){this.audio.landing(event.speed,event.surface,`landing:${this.sim.clock.toFixed(3)}`);this.renderer.m01.playerLanding(this.sim.clock,event.speed,event.surface);}
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);
@@ -289,7 +300,7 @@ export class Game {
     this.hud.vignette.classList.remove('combat-feedback');
     this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
-  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,clock:this.sim.clock,paused:this.paused,
+  get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,difficulty:this.difficulty,clock:this.sim.clock,paused:this.paused,
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
     player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health,crouched:Boolean(this.player.crouched),aiming:Boolean(this.player.aiming)},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],
@@ -301,7 +312,7 @@ export class Game {
       hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
-    this.audioDirector?.dispose();
+    this.audioDirector?.dispose();this.m01Hud.dispose();
     this.listeners.forEach(remove=>remove());this.input.dispose();this.audio.dispose?.();this.renderer.dispose();
   }
 }

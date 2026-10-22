@@ -4,6 +4,7 @@ import {
   audioHash,audioVariation,audioDistanceShape,acousticShape,presentationNoise,weaponProfileId,
   planWeaponShot,planWeaponBurst,planBulletPass,planImpact,planExplosion,planDebris,planBridgeDemolition,planDistantArtillery,
   planTrainArrival,planLocomotiveIdleTick,planJu87PullOut,planFireCrackle,planDistantBattleSlot,volleyOffsets,
+  planWz29Mechanism,planPlayerHit,planLanding,planFootstep,footstepSurface,
   aircraftLayerMix,dopplerFactor,intensityWeight,m01FireEmitters,BattleIntensity,impactMaterial,
 } from './battlefield-audio.js';
 import { AudioCore,sfxVoiceCap } from './audio/index.js';
@@ -15,6 +16,7 @@ const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 export const AUDIO_LIMITS=Object.freeze({maxVoices:32,maxLoops:8,eventHistory:40});
 const EVENT_NAME=Object.freeze({kar98k:'rifle',ally_rifle:'rifle',mg34:'mg34',rkm_wz28:'rkm',ckm_wz30:'ckm',kb_wz29:'wz29-shot'});
 const NOISE_SECONDS=Object.freeze({white:2.37,brown:6.83});
+const STUKA_INDEXES=Object.freeze(Array.from({length:M01_STUKA_COUNT},(_,i)=>i));   // fixed list: the 20 Hz loop update never rebuilds it
 const LOOP_UPDATE_SEC=.05,AIRCRAFT_DOPPLER_MAX_MPS=500,AIRCRAFT_DOPPLER_MAX_DT=1;
 const layer=(name,src,o)=>Object.freeze({name,src,...o,filter:o.filter&&Object.freeze(o.filter)});
 const WIND_LAYERS=Object.freeze([layer('low','noise',{noise:'brown',rate:.8,filter:{type:'lowpass',freq:520,q:.5}}),
@@ -33,6 +35,9 @@ const FIRE_LAYERS=Object.freeze([layer('roar','noise',{noise:'brown',rate:.9,fil
   layer('hiss','noise',{noise:'white',rate:.6,gain:.15,filter:{type:'highpass',freq:2600,q:.5}})]);
 // Orçamento de fontes vivas (grãos agendados + loops): o limite de 32 vozes conta eventos, não nós.
 export const SOURCE_BUDGET=Object.freeze({low:260,medium:420,high:600});
+// Reserva de nós reutilizáveis (ganhos, filtros, panners): um disparo deixa de criar ~15 nós novos. As fontes (osciladores e
+// buffers) são de uso único pela especificação Web Audio e continuam a ser criadas por grão.
+const NODE_POOL_CAP=Object.freeze({gain:160,biquad:160,pan:64});
 const GRAIN_FLOOR=6e-4;            // grãos abaixo de ~-64 dB (antes do master) não são criados: inaudíveis sob o fundo da batalha
 const RELEASE_FADE=.008;           // libertação antecipada: rampa curta em vez de corte seco (sem clique)
 
@@ -52,7 +57,7 @@ export class AudioManager {
     this.core=new AudioCore({quality,maxVoices,store:this.buffers,fetchImpl,baseUrl:assetBaseUrl});
     this.voices=this.core.pool.sets.sfx;this.loops=new Map();this.events=new Map();this.history=[];
     this.peakVoices=0;this.dropped=0;this.evicted=0;this.loopRefused=0;this.categoryDropped={};this.nodesCreated=0;this.nodesDisposed=0;this.serial=0;this.noiseBuffers={};
-    this.fading=new Set();this.liveSources=0;this.peakSources=0;this.budgetDropped=0;this.culledGrains=0;this.bursts=new Map();
+    this.fading=new Set();this.nodePool={gain:[],biquad:[],pan:[]};this.poolHits=0;this.poolMisses=0;this.liveSources=0;this.peakSources=0;this.budgetDropped=0;this.culledGrains=0;this.bursts=new Map();
     this.intensity=new BattleIntensity();this.clock=0;this.lastDuck=null;this.duck=null;
     this.occlusion=null;this.directorProbe=null;   // T06b hooks: zone occlusion for the voices the director creates, and its diagnostics
     this.presentation=this._freshPresentation(0,null);
@@ -72,6 +77,27 @@ export class AudioManager {
     return true;
   }
   _node(node){this.nodesCreated++;return node;}
+  /** Param reposto para um valor limpo: sem automação antiga nem o alvo em cache de `_param`. */
+  _fresh(param,value){
+    if(!param)return;param.cancelScheduledValues?.(0);delete param._target;param.value=value;
+  }
+  _take(kind){
+    const list=this.nodePool[kind],node=list.pop();
+    if(node){this.poolHits++;return node;}
+    this.poolMisses++;
+    return this._node(kind==='gain'?this.ctx.createGain():kind==='biquad'?this.ctx.createBiquadFilter():this.ctx.createStereoPanner());
+  }
+  _takeGain(value=1){const n=this._take('gain');this._fresh(n.gain,value);return n;}
+  _takeBiquad(type='lowpass',freq=1000,q=1){const n=this._take('biquad');n.type=type;this._fresh(n.frequency,freq);if(n.Q)this._fresh(n.Q,q);return n;}
+  _takePanner(pan=0){const n=this._take('pan');this._fresh(n.pan,pan);return n;}
+  /** Devolve um nó já desligado das suas fontes à reserva; se a reserva está cheia (ou o gestor foi libertado), é descartado. */
+  _recycle(node){
+    if(!node)return;
+    try{node.disconnect();}catch{}
+    const kind=node.frequency?'biquad':node.pan?'pan':'gain',list=this.nodePool[kind];
+    if(!this.disposed&&list.length<NODE_POOL_CAP[kind]){list.push(node);return;}
+    this.nodesDisposed++;
+  }
   _buildGraph(){
     // Mix graph (buses -> limiter -> master -> destination), zone reverb and the SFX group buses now live in src/core/audio/mix.js.
     const mix=this.mix=this.core.attach(this.ctx,{volume:this.volume,track:()=>this.nodesCreated++,untrack:n=>{this.nodesDisposed+=n;}});
@@ -88,6 +114,7 @@ export class AudioManager {
     if(this.disposed)return;this.disposed=true;this.stopAll(false);
     for(const voice of [...this.fading])this._disconnectVoice(voice,true);
     this.buffers.clear();this.noiseBuffers={};
+    for(const list of Object.values(this.nodePool)){for(const node of list){try{node.disconnect();}catch{}this.nodesDisposed++;}list.length=0;}
     for(const node of Object.values(this.buses)){try{node.disconnect();}catch{}this.nodesDisposed++;}
     this.nodesDisposed+=this.core.dispose();
     this.master=this.reverb=this.concussion=this.compressor=this.mix=null;this.buses={};
@@ -130,12 +157,11 @@ export class AudioManager {
     if(!loop&&this.liveSources>=(SOURCE_BUDGET[this.quality]??SOURCE_BUDGET.high)&&priority<AUDIO_PRIORITY.explosion){this.budgetDropped++;return null;}
     if(loop?this.voices.size>=this.maxVoices:!this._admit(category,priority)){if(loop)this.loopRefused++;return null;}
     const shape=acousticShape(distance,{category,front}),ctx=this.ctx;
-    const gain=this._node(ctx.createGain()),low=this._node(ctx.createBiquadFilter()),panner=this._node(ctx.createStereoPanner());
     const occ=this.occlusion;   // {hz,gain} while the director plays a source outside the listener's interior zone; null otherwise (unchanged path)
-    gain.gain.value=volume*shape.gain*(occ?occ.gain:1);low.type='lowpass';low.frequency.value=occ?Math.min(filter??shape.filter,occ.hz):filter??shape.filter;panner.pan.value=clamp(pan,-1,1);
+    const gain=this._takeGain(volume*shape.gain*(occ?occ.gain:1)),low=this._takeBiquad('lowpass',occ?Math.min(filter??shape.filter,occ.hz):filter??shape.filter,1),panner=this._takePanner(clamp(pan,-1,1));
     low.connect(panner);panner.connect(gain);gain.connect(this.buses[CATEGORY_BUS[category]??'weapons']??this.master);
     let send=null;const sendLevel=shape.send*(this.quality==='low'?.5:1);
-    if(this.reverb&&sendLevel>0){send=this._node(ctx.createGain());send.gain.value=sendLevel;gain.connect(send);send.connect(this.reverb);}
+    if(this.reverb&&sendLevel>0){send=this._takeGain(sendLevel);gain.connect(send);send.connect(this.reverb);}
     const voice={kind,category,priority,volume,pan,distance,front,shapeGain:shape.gain,serial:this.serial++,gain,filter:low,panner,send,sources:new Map(),layers:new Map(),loop,closed:false};
     this.voices.add(voice);this.peakVoices=Math.max(this.peakVoices,this.voices.size);return voice;
   }
@@ -145,10 +171,15 @@ export class AudioManager {
     this.liveSources++;this.peakSources=Math.max(this.peakSources,this.liveSources);
     source.onended=()=>{
       if(!voice.sources.has(source))return;voice.sources.delete(source);this.liveSources--;
-      for(const node of [source,...nodes]){try{node.disconnect();}catch{}this.nodesDisposed++;}
+      this._dropSource(source,nodes);
       if(!voice.sources.size){if(voice.closed)this._disconnectVoice(voice);else if(!voice.loop)this._release(voice,false);}
     };
     return true;
+  }
+  /** A fonte (uso único) é descartada; os nós de envelope/filtro que a seguiam voltam à reserva. */
+  _dropSource(source,nodes){
+    try{source.disconnect();}catch{}this.nodesDisposed++;
+    for(const node of nodes)this._recycle(node);
   }
   /**
    * Fecha uma voz: sai logo do orçamento. Com `stopSources`, faz uma rampa de ~8 ms e pára as fontes logo a seguir
@@ -168,10 +199,10 @@ export class AudioManager {
   }
   _disconnectVoice(voice,sources=false){
     if(voice.disconnected)return;
-    if(sources)for(const [source,nodes] of voice.sources){try{source.onended=null;source.stop?.();}catch{}this.liveSources--;for(const node of [source,...nodes]){try{node.disconnect();}catch{}this.nodesDisposed++;}}
+    if(sources)for(const [source,nodes] of voice.sources){try{source.onended=null;source.stop?.();}catch{}this.liveSources--;this._dropSource(source,nodes);}
     if(sources)voice.sources.clear();if(voice.sources.size)return;
     voice.disconnected=true;this.fading.delete(voice);
-    for(const node of [voice.filter,voice.panner,voice.gain,voice.send])if(node){try{node.disconnect();}catch{}this.nodesDisposed++;}
+    for(const node of [voice.filter,voice.panner,voice.gain,voice.send])this._recycle(node);
   }
   stopAll(fade=true){for(const voice of [...this.voices])this._release(voice,true,fade);this.loops.clear();this.bursts.clear();}
   stopTransient(){for(const voice of [...this.voices])if(!voice.loop)this._release(voice,true);}
@@ -191,16 +222,21 @@ export class AudioManager {
     if(spec.src==='osc'){const o=ctx.createOscillator();o.type=spec.wave??'sine';return o;}
     const s=ctx.createBufferSource();s.buffer=this._noiseBuffer(spec.noise??'white');s.playbackRate.value=spec.rate??1;return s;
   }
-  _shapeFilter(spec){
-    if(!spec.filter)return null;const f=this._node(this.ctx.createBiquadFilter());f.type=spec.filter.type??'lowpass';
-    f.frequency.value=clamp(spec.filter.freq??1000,20,20000);if(f.Q)f.Q.value=spec.filter.q??.7;return f;
+  /** Filtro de um grão ou loop. `freqEnd` (+ `t`, `dur`) faz o corte descer/subir exponencialmente durante o grão: o ruído de um tiro escurece enquanto morre. */
+  _shapeFilter(spec,t=0,dur=0){
+    if(!spec.filter)return null;const hz=clamp(spec.filter.freq??1000,20,20000);
+    const f=this._takeBiquad(spec.filter.type??'lowpass',hz,spec.filter.q??.7);
+    if(Number.isFinite(spec.filter.freqEnd)&&dur>0&&f.frequency.exponentialRampToValueAtTime){
+      f.frequency.setValueAtTime(hz,t);f.frequency.exponentialRampToValueAtTime(clamp(spec.filter.freqEnd,20,20000),t+dur);
+    }
+    return f;
   }
   /** Um grão: fonte com envelope próprio (ataque curto, decaimento exponencial), opcionalmente filtrada. */
   _grain(voice,g,t0,key){
     if(![g.at??0,g.dur??.1,g.vol??.05,g.freq??440,g.freqEnd??440].every(Number.isFinite))return true;   // entrada inválida: ignora o grão
     if((g.vol??.05)*voice.volume*voice.shapeGain<GRAIN_FLOOR){this.culledGrains++;return true;}
-    const ctx=this.ctx,t=t0+Math.max(0,g.at??0),dur=Math.max(.004,g.dur??.1),src=this._source(g),filter=this._shapeFilter(g);
-    const env=this._node(ctx.createGain()),attack=Math.min(g.attack??.002,dur*.5),peak=Math.max(.0002,g.vol??.05);
+    const ctx=this.ctx,t=t0+Math.max(0,g.at??0),dur=Math.max(.004,g.dur??.1),src=this._source(g),filter=this._shapeFilter(g,t,dur);
+    const env=this._takeGain(),attack=Math.min(g.attack??.002,dur*.5),peak=Math.max(.0002,g.vol??.05);
     env.gain.setValueAtTime(.0001,t);env.gain.exponentialRampToValueAtTime(peak,t+attack);env.gain.exponentialRampToValueAtTime(.0001,t+dur);
     if(g.src==='osc'){src.frequency.setValueAtTime(Math.max(20,g.freq??440),t);src.frequency.exponentialRampToValueAtTime(Math.max(20,g.freqEnd??g.freq??440),t+dur);}
     if(filter)src.connect(filter);(filter??src).connect(env);
@@ -257,26 +293,51 @@ export class AudioManager {
     if(!this._attach(voice,source))return false;source.start();return true;
   }
   shot(pan=0,distant=false){return this.rifleShot(pan,distant?220:15,'generic');}
-  reload(){if(!this.play('reload',{volume:.7,priority:AUDIO_PRIORITY.rifle,kind:'reload',category:'player'})){for(const [delay,freq]of [[0,780],[.38,510],[.82,690],[1.2,430]])this.tone(freq,.045,'square',.025,-180,0,delay,{priority:AUDIO_PRIORITY.rifle,kind:'reload',category:'player'});}}
-  hit(){this._record('player-hit',{priority:AUDIO_PRIORITY.critical,key:`hit:${this.serial}`});this.tone(95,.08,'sawtooth',.05,-45,0,0,{priority:AUDIO_PRIORITY.critical,kind:'player-hit',category:'player',filter:1800});}
+  reload(key=''){
+    if(this.play('reload',{volume:.7,priority:AUDIO_PRIORITY.rifle,kind:'reload',category:'player'}))return;
+    const id=key||`reload:${this.serial}`;
+    this._playPlan(planWz29Mechanism('magazine',{key:id}),{kind:'reload',category:'player',priority:AUDIO_PRIORITY.rifle,key:id});
+  }
+  hit(key=''){
+    const id=key||`hit:${this.serial}`;this._record('player-hit',{priority:AUDIO_PRIORITY.critical,key:id});
+    this._playPlan(planPlayerHit({key:id}),{kind:'player-hit',category:'player',priority:AUDIO_PRIORITY.critical,key:id,filter:4200});
+  }
 
+  /**
+   * The player's feet meet the ground after a fall (M01 `player-landing`, speed in m/s): a low body thud, the gear and grit of the impact and, from a hard
+   * drop, a second heavier knock; a splash in the river instead of earth. Synthesised, no sample: the loudness follows the landing speed.
+   */
+  landing(speed=6,surface='ground',key=''){
+    const s=Math.max(0,Math.min(1,(speed-2.5)/10.5)),id=key||`landing:${this.serial}`;
+    this._record('player-landing',{priority:AUDIO_PRIORITY.impact,key:id,detail:{surface,speed:Number(speed.toFixed?.(2)??speed)}});
+    this._playPlan(planLanding(speed,surface,{key:id}),{kind:'player-landing',category:'player',priority:AUDIO_PRIORITY.impact,key:id,volume:1+.25*s});
+  }
+  /**
+   * Um passo do jogador sobre o material sob os pés (`surface` do audio-layout; "ground" = terra). `side` (-1/+1) desloca
+   * levemente o panorama, pé esquerdo/direito. Prioridade baixa: nunca expulsa tiros nem explosões.
+   */
+  footstep(surface='earth',{key='',pace='walk',side=0,load=0,npc=null}={}){
+    const id=key||`step:${this.serial}`,m=footstepSurface(surface);
+    // An ally's step (`npc`: {distance, pan, front}) is a spatial 'foley' voice (cap 4) a little quieter than the player's own.
+    const pan=npc?npc.pan:side*.1,distance=npc?npc.distance:0;
+    this._record('footstep',{pan,distance,priority:AUDIO_PRIORITY.fire,key:id,detail:{surface:m,pace,npc:Boolean(npc)}});
+    return this._playPlan(planFootstep(m,{key:id,pace,load}),{kind:npc?'footstep-npc':'footstep',category:npc?'foley':'player',priority:AUDIO_PRIORITY.fire,pan,distance,front:npc?.front??1,key:id,volume:npc?1.3:1.8});
+  }
   // ------------------------------------------------------------ armas
   // wz.29 do jogador: mantém as camadas/tempos já estabelecidos (estalo .26, corpo 78 Hz, cauda a .15 s) e ganha corpo médio e reflexão.
-  wz29Shot(pan=0,distance=0){const key=`wz29:${this.serial}`;this._record('wz29-shot',{pan,distance,priority:AUDIO_PRIORITY.rifle,key});this._feel('rifle',distance);
+  wz29Shot(pan=0,distance=0,shotKey=''){const key=shotKey||`wz29:${this.serial}`;this._record('wz29-shot',{pan,distance,priority:AUDIO_PRIORITY.rifle,key});this._feel('rifle',distance);
     this._playPlan(planWeaponShot('kb_wz29',distance,{key,detail:this.detail}),{kind:'wz29-shot',category:'player',priority:AUDIO_PRIORITY.rifle,pan,distance,key});}
-  wz29Mechanism(kind){
+  wz29Mechanism(kind,mechKey=''){
     this._record('wz29-mechanism',{priority:AUDIO_PRIORITY.rifle,key:kind,detail:kind});
-    const o={priority:AUDIO_PRIORITY.rifle,kind:'mechanism',category:'player'};
-    if(kind==='bolt'){this.tone(620,.035,'square',.023,-260,0,.13,o);this.noise(.06,.017,0,.44,o);this.tone(440,.04,'square',.022,-160,0,.91,o);}
-    else if(kind==='clip'){this.tone(970,.04,'square',.017,-400,0,.25,o);this.noise(.1,.021,0,1.15,o);this.tone(360,.045,'square',.024,-140,0,2.8,o);}
-    else{this.tone(710,.03,'square',.014,-230,0,0,o);this.noise(.045,.012,0,.46,o);}
+    const key=mechKey||`${kind}:${this.serial}`;
+    this._playPlan(planWz29Mechanism(kind,{key}),{kind:'mechanism',category:'player',priority:AUDIO_PRIORITY.rifle,key});
   }
   /**
    * Disparo/rajada de qualquer arma com perfil próprio. `distant` encaminha para o bus longínquo de baixa prioridade.
    * `source` identifica a arma que dispara (só apresentação): tiros únicos de uma metralhadora que chegam em cadência
    * (a MG34 deitada emite um evento por tiro) juntam-se à mesma voz como tiros seguintes da rajada.
    */
-  weaponFire(weapon,pan=0,distance=0,{rounds=1,interval=null,key='',front=1,distant=false,priority=null,source=null}={}){
+  weaponFire(weapon,pan=0,distance=0,{rounds=1,interval=null,key='',front=1,distant=false,priority=null,source=null,cadenceJitter=0}={}){
     const id=weaponProfileId(weapon),p=WEAPON_SOUND_PROFILES[id],category=distant?'distant':p.category,pr=priority??(distant?AUDIO_PRIORITY.distant:AUDIO_PRIORITY[p.priority]);
     const n=clamp(Math.round(rounds)||1,1,p.family==='mg'?9:4),step=interval??p.cadence,k=key||`${id}:${this.serial}`,name=EVENT_NAME[id]??'rifle';
     this._record(name,{pan,distance,priority:pr,key:k,detail:p.family==='mg'?{weapon:id,rounds:n,interval:step}:weapon});
@@ -293,7 +354,7 @@ export class AudioManager {
       if(voice)this.bursts.set(source,{voice,at:now,round:0,key:k});else this.bursts.delete(source);
       return voice;
     }
-    const grains=n>1?planWeaponBurst(id,distance,{rounds:n,interval,key:k,detail:this.detail}):planWeaponShot(id,distance,{key:k,detail:this.detail});
+    const grains=n>1?planWeaponBurst(id,distance,{rounds:n,interval,key:k,detail:this.detail,cadenceJitter}):planWeaponShot(id,distance,{key:k,detail:this.detail});
     return this._playPlan(grains,{kind:id,category,priority:pr,pan,distance,front,key:k});
   }
   rifleShot(pan=0,distance=0,weapon='kar98k',key='',priority=AUDIO_PRIORITY.rifle,front=1){
@@ -373,7 +434,7 @@ export class AudioManager {
     const id=key||`battle:${kind}:${this.serial}`;this._record('distant-battle',{pan,distance,priority:AUDIO_PRIORITY.distant,key:id,detail:kind});
     if(kind==='artillery'){this._record('distant-artillery',{pan,distance,priority:AUDIO_PRIORITY.distant,key:id,detail:salvo});this._feel('artillery',distance);
       return this._playPlan(planDistantArtillery(distance,{key:id,salvo}),{kind:'distant-artillery',category:'distant',priority:AUDIO_PRIORITY.distant,pan,distance,front,key:id});}
-    if(kind==='mg')return this.weaponFire('mg34',pan,Math.max(distance,500),{rounds:rounds??3,interval:.075,key:id,front,distant:true});
+    if(kind==='mg')return this.weaponFire('mg34',pan,Math.max(distance,500),{rounds:rounds??3,interval:.075,key:id,front,distant:true,cadenceJitter:.07});
     const n=Math.max(1,rounds??1);if(n===1)return this.weaponFire('kar98k',pan,Math.max(distance,500),{key:id,front,distant:true});
     // Salva de vários atiradores: tiros desalinhados numa só voz.
     this._feel('distant',distance);const offsets=volleyOffsets(id,n),grains=[];
@@ -389,7 +450,7 @@ export class AudioManager {
     const voice=this._voice({kind,category,priority,volume,pan,distance,front,filter,loop:true});if(!voice)return null;
     voice.gain.gain.value=.0001;   // entra em rampa pelo primeiro _setLoop (sem estalo)
     for(const layer of layers){
-      const src=this._source(layer),f=this._shapeFilter(layer),g=this._node(this.ctx.createGain());g.gain.value=layer.gain??1;
+      const src=this._source(layer),f=this._shapeFilter(layer),g=this._takeGain(layer.gain??1);
       if(layer.src==='osc')src.frequency.value=layer.freq??90;else src.loop=true;
       if(f)src.connect(f);(f??src).connect(g);
       if(!this._attach(voice,src,f?[g,f]:[g])){this._release(voice,true);return null;}
@@ -464,7 +525,7 @@ export class AudioManager {
       this._setLoop('battle-bed',{volume:bed*(.8+.4*presentationNoise('m01-front',clock,5.3)),layers:{crackle:.04+.12*level}});
       // Ju 87: formação de três (motor perto rasga, longe só ronca) e o avião alto do segundo raide.
       // Positions are pure functions of the bombing/raid anchors in the state (see m01-aircraft-path.js); planes that left are silent.
-      const since=m01StukaSince(clock,state),flying=Array.from({length:M01_STUKA_COUNT},(_,i)=>i).filter(i=>m01StukaActive(since,i));
+      const since=m01StukaSince(clock,state),flying=STUKA_INDEXES.filter(i=>m01StukaActive(since,i));
       if(state.stukas&&flying.length)this._updateAircraftLoop('aircraft',flying.map(i=>m01StukaPosition(since,i)),spatial,loopDt,.07);else this._stopLoop('aircraft');
       const raidSince=m01RaidSince(clock,state);
       if(state.secondRaid&&m01RaidPlaneActive(raidSince))this._updateAircraftLoop('aircraft-high',[m01RaidPlanePosition(raidSince)],spatial,loopDt,.06);else this._stopLoop('aircraft-high');
@@ -544,6 +605,7 @@ export class AudioManager {
       loops:[...this.loops.keys()].sort(),permanentLoops:this.loops.size,buffers:this.buffers.size,proceduralBuffers:Object.keys(this.noiseBuffers).length,
       estimatedBufferBytes:bytes+reverbBytes,reverb:Boolean(this.reverb),compressor:Boolean(this.compressor),buses:Object.keys(this.buses),
       intensity:Number(this.intensity.level(this.clock).toFixed(4)),quality:this.quality,lastDuck:this.lastDuck?{...this.lastDuck}:null,
+      nodePool:{idle:{gain:this.nodePool.gain.length,biquad:this.nodePool.biquad.length,pan:this.nodePool.pan.length},hits:this.poolHits,misses:this.poolMisses},
       core:this.core.diagnostics,director:this.directorProbe?.()??null,nodesCreated:this.nodesCreated,nodesDisposed:this.nodesDisposed,eventCounts:Object.fromEntries([...this.events.entries()].sort()),lastEvents:this.history.slice(-12)};
   }
 }

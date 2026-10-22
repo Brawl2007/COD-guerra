@@ -35,6 +35,9 @@ test('the ckm fires for real: fire_burst clips on the gun and both crew roles, a
   expect(start.m01.ckm).toMatchObject({phase:expect.any(String),belt:expect.any(Number)});
   expect(start.m01.characters.ckm.position).toEqual(Object.values(CKM_POSITION));   // S2, not the casemate
   const belt0=start.m01.ckm.belt;
+  // gameDiagnostics().audio.lastEvents is only the last 12 of the manager's history, and footsteps and foley (audio feel) now share it, so the ckm report scrolls out of that window
+  // before a poll can see it. Collect every event the diagnostics exposes, keyed by its serial, and look the ckm one up by kind in that log (nothing is injected or filtered out).
+  await page.evaluate(()=>{window.__audioLog=new Map();const pull=()=>{for(const e of window.gameDiagnostics?.().audio?.lastEvents??[])window.__audioLog.set(e.serial,e);};pull();setInterval(pull,20);});
   // The burst: simulation phase, then the clips drawn from it (gun + gunner + loader), then the flash frames counted by the view.
   await page.waitForFunction(()=>{const d=window.gameDiagnostics(),c=d.m01.characters;
     return d.m01.ckm?.phase==='fire_burst'&&c.ckm?.clip==='ckm_wz30_gun_fire_burst'&&c.actors.some(a=>a.id==='ckm_gunner'&&a.clip==='ckm_wz30_gunner_fire_burst')&&c.actors.some(a=>a.id==='ckm_loader'&&a.clip==='ckm_wz30_loader_fire_burst');},null,{timeout:60000});
@@ -43,9 +46,9 @@ test('the ckm fires for real: fire_burst clips on the gun and both crew roles, a
   await page.waitForFunction(()=>window.gameDiagnostics().m01.ckmPresentation.frames>0,null,{timeout:60000});
   await page.screenshot({path:info.outputPath('m01-ckm-burst.png')});
   // The report reaches the player after distance / 343 s: one ckm event recorded by the audio manager, tagged with the muzzle position the simulation published.
-  await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts.ckm??0)>=1,null,{timeout:60000});
+  await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts.ckm??0)>=1&&[...window.__audioLog.values()].some(e=>e.kind==='ckm'),null,{timeout:60000});
   const heard=await page.evaluate(()=>window.gameDiagnostics());
-  const last=heard.audio.lastEvents.find(e=>e.kind==='ckm');
+  const last=await page.evaluate(()=>[...window.__audioLog.values()].find(e=>e.kind==='ckm'));
   expect(last).toBeTruthy();expect(last.detail).toMatchObject({weapon:'ckm_wz30',rounds:8,interval:.1});expect(last.key.startsWith('ckm_wz30@8,26:')).toBe(true);
   // Presentation only: the pending queue holds fire/blast kinds, the view drew the flash from the saved plan, and the belt fell by the rounds issued.
   expect(heard.m01.pendingAudio.every(s=>['fire','blast','impact'].includes(s.kind))).toBe(true);

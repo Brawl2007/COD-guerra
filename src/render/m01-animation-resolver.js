@@ -8,6 +8,7 @@
 //    sim time yields the same weights and clip times; pause, LOD swaps and reloads rebuild the same pose.
 
 import {selectLodBand,LOD_ACTOR_HYSTERESIS_M} from './m01-lod-policy.js';
+import {varietyOf,varietyActive,varyLoop,proneReaction,deathVariant,hitReactionClip,duckReactionClip,isDeathClip} from './m01-animation-variety.js';
 
 // ================================ clip selection (Argon V1/V2) ================================
 export const STRIDE_METRES=Object.freeze({
@@ -20,7 +21,8 @@ export const CLIP_DURATIONS=Object.freeze({
   turn_left:1.14,turn_right:1.14,hit_front:.76,near_miss_duck:.98,
   fire_bolt:1.17,reload_clip:3.4,rkm_fire_burst:.8,rkm_reload:3.4,
   pinned:2.4,sapper_work:3,sapper_work_pinned:2,
-  carry_wounded:2.5,carried:2.5,drag_wounded:1.4,wounded:2,fallen:1.4,aim:2
+  carry_wounded:2.5,carried:2.5,drag_wounded:1.4,wounded:2,fallen:1.4,aim:2,
+  hit_back:.76,hit_left:.76,hit_right:.76,blast_duck:1
 });
 
 export const CLIP_FALLBACKS=Object.freeze({
@@ -169,14 +171,15 @@ export function resolveSupportHandIK(actor,pose,orientation,sample=null){
 export function resolveCombatReaction(actor,time=0,pose=null,clips=null){
   if(!actor?.alive||actor?.shot>0)return null;
   if(Number.isFinite(actor.hitAt)){
-    const hitAge=time-actor.hitAt,hitDur=clips?.get?.('hit_front')?.duration??CLIP_DURATIONS.hit_front;
-    if(hitAge>=0&&hitAge<hitDur&&(!clips||clips.size===0||clips.has('hit_front')))
-      return {clip:'hit_front',time:hitAge,loop:false};
+    // T08 library: the clip follows the side the round came from (hit_front when the sim recorded no direction or the library is absent).
+    const name=hitReactionClip(actor,clips),hitAge=time-actor.hitAt,hitDur=clips?.get?.(name)?.duration??CLIP_DURATIONS[name]??CLIP_DURATIONS.hit_front;
+    if(hitAge>=0&&hitAge<hitDur&&(!clips||clips.size===0||clips.has(name)))
+      return {clip:name,time:hitAge,loop:false};
   }
   if(Number.isFinite(actor.suppressedAt)){
-    const supAge=time-actor.suppressedAt,duckDur=clips?.get?.('near_miss_duck')?.duration??CLIP_DURATIONS.near_miss_duck;
-    if(supAge>=0&&supAge<duckDur&&(!clips||clips.size===0||clips.has('near_miss_duck')))
-      return {clip:'near_miss_duck',time:supAge,loop:false};
+    const name=duckReactionClip(actor,clips),supAge=time-actor.suppressedAt,duckDur=clips?.get?.(name)?.duration??CLIP_DURATIONS[name]??CLIP_DURATIONS.near_miss_duck;
+    if(supAge>=0&&supAge<duckDur&&(!clips||clips.size===0||clips.has(name)))
+      return {clip:name,time:supAge,loop:false};
   }
   return null;
 }
@@ -213,17 +216,17 @@ export function resolveTransitionBlend(actor,pose,primary,time=0,clips=null){
   if(!primary||!primary.loop||!BLENDABLE_CLIPS.has(primary.clip))return null;
   let fromClip=null,fromTime=0,fromLoop=true,elapsed=-1;
   if(Number.isFinite(actor?.hitAt)){
-    const hitDur=clips?.get?.('hit_front')?.duration??CLIP_DURATIONS.hit_front;
+    const hitName=hitReactionClip(actor,clips),hitDur=clips?.get?.(hitName)?.duration??CLIP_DURATIONS[hitName]??CLIP_DURATIONS.hit_front;
     const afterHit=time-actor.hitAt-hitDur;
-    if(afterHit>=0&&afterHit<BLEND_DURATION&&(!clips||clips.size===0||clips.has('hit_front'))){
-      fromClip='hit_front';fromTime=hitDur;fromLoop=false;elapsed=afterHit;
+    if(afterHit>=0&&afterHit<BLEND_DURATION&&(!clips||clips.size===0||clips.has(hitName))){
+      fromClip=hitName;fromTime=hitDur;fromLoop=false;elapsed=afterHit;
     }
   }
   if(!fromClip&&Number.isFinite(actor?.suppressedAt)){
-    const duckDur=clips?.get?.('near_miss_duck')?.duration??CLIP_DURATIONS.near_miss_duck;
+    const duckName=duckReactionClip(actor,clips),duckDur=clips?.get?.(duckName)?.duration??CLIP_DURATIONS[duckName]??CLIP_DURATIONS.near_miss_duck;
     const afterDuck=time-actor.suppressedAt-duckDur;
-    if(afterDuck>=0&&afterDuck<BLEND_DURATION&&(!clips||clips.size===0||clips.has('near_miss_duck'))){
-      fromClip='near_miss_duck';fromTime=duckDur;fromLoop=false;elapsed=afterDuck;
+    if(afterDuck>=0&&afterDuck<BLEND_DURATION&&(!clips||clips.size===0||clips.has(duckName))){
+      fromClip=duckName;fromTime=duckDur;fromLoop=false;elapsed=afterDuck;
     }
   }
   if(!fromClip){
@@ -258,6 +261,9 @@ export function resolveLodWithHysteresis(distance,limits,currentKey,nation,quali
   let lod=selectLodBand(distance,[limits.near,limits.middle],previous,{hysteresis:LOD_HYSTERESIS_M});
   if(nation==='de'&&quality!=='high'&&lod<2)lod=2;
   while(lod<3&&sources&&!sources.has(`${nation}:${lod}`))lod++;
+  // Playtest 2026-10-18 follow-up: when nothing at or beyond the wanted band is loaded (a failed or late far-LOD GLB), the old
+  // loop returned 3 and the soldier was drawn as a procedural box. Use the nearest loaded dressed band instead (more detail beats a box).
+  if(lod===3&&sources){for(let k=2;k>=0;k--)if(sources.has(`${nation}:${k}`)){lod=k;break;}}
   return lod;
 }
 
@@ -293,7 +299,9 @@ export function genericCandidate(actor,pose,time,offset,clips){
 // ================================ cross-fade (T35) ================================
 
 // Cross-fade lengths in sim seconds. Posture changes are the slow ones (stand <-> crouch, ~0.3 s).
-export const FADE=Object.freeze({posture:.3,death:.2,fromLoco:.25,toFire:.08,fromFire:.15,toPinned:.15,fromPinned:.3,default:.2});
+export const FADE=Object.freeze({posture:.3,death:.2,fromLoco:.25,toFire:.08,fromFire:.15,toPinned:.15,fromPinned:.3,default:.2,
+  // T08 library: idle variants swap slowly (the poses are close), fidgets and posture transitions are short authored one-shots.
+  variant:.45,toFidget:.25,fromFidget:.3,toTransition:.15,fromTransition:.2});
 // A stopped gait is only trusted after this long: a mover pushed against cover alternates 0/non-zero distance every tick.
 export const HOLD=.25;
 // More than this long without seeing the actor (or going back in time after a load) resets the blend record.
@@ -304,9 +312,10 @@ const finite=Number.isFinite;
 export const smoothstep=x=>{const t=clamp(x,0,1);return t*t*(3-2*t);};
 export const wrapTime=(t,d)=>d>0?(t>=0?t%d:((t%d)+d)%d):0;
 
-const IDLE=new Set(['standing_idle','crouched_idle','rkm_standing_idle','rkm_crouched_idle']);
+const IDLE=new Set(['standing_idle','standing_idle_b','standing_idle_c','crouched_idle','crouched_idle_b','cover_low_idle','rkm_standing_idle','rkm_crouched_idle']);
 const LOCO=new Set(['walk','run','sprint','crouch_walk','rkm_walk','rkm_run']);
-const CROUCHED=new Set(['crouched_idle','rkm_crouched_idle','pinned','crouch_walk','sapper_work','sapper_work_pinned','rkm_reload']);
+const CROUCHED=new Set(['crouched_idle','crouched_idle_b','cover_low_idle','stand_to_crouch','rkm_crouched_idle','pinned','crouch_walk','sapper_work','sapper_work_pinned','rkm_reload']);
+const FIDGET=/^fidget_/;
 // Authored, simulation-synchronised clips (MG34 prone/burst, CKM crew, station drag pairs): muzzle and partner timing must not drift.
 const EXACT=/^(mg34_|ckm_wz30_|station_drag_)/;
 export const isExactClip=name=>EXACT.test(name);
@@ -316,12 +325,17 @@ const crouchedClip=name=>CROUCHED.has(name);
 
 // Seconds of cross-fade when the target clip changes from `from` to `to`; 0 means a deliberate hard switch.
 export function fadeDuration(from,to){
-  if(to==='fallen')return FADE.death;
+  if(to==='fallen'||isDeathClip(to))return FADE.death;
   if(isExactClip(from)||isExactClip(to))return 0;
   if(to==='fire_bolt'||to==='rkm_fire_burst')return FADE.toFire;
   if(from==='fire_bolt'||from==='rkm_fire_burst')return FADE.fromFire;
   if(to==='pinned')return FADE.toPinned;
   if(from==='pinned')return FADE.fromPinned;
+  if(from==='stand_to_crouch'||from==='crouch_to_stand')return FADE.fromTransition;
+  if(to==='stand_to_crouch'||to==='crouch_to_stand')return FADE.toTransition;
+  if(FIDGET.test(to))return FADE.toFidget;
+  if(FIDGET.test(from))return FADE.fromFidget;
+  if(IDLE.has(from)&&IDLE.has(to)&&crouchedClip(from)===crouchedClip(to))return FADE.variant;
   if(crouchedClip(from)!==crouchedClip(to))return FADE.posture;
   if(LOCO.has(from)&&!LOCO.has(to))return FADE.fromLoco;
   return FADE.default;
@@ -336,12 +350,15 @@ export function strideCycle(info){
 }
 // With schema-2 motion data the clip phase is odometer/cycle: feet advance exactly as far as the root, whatever the speed.
 // Without it (legacy saves, plain fixtures) the old wall-free `time+offset` playback is kept.
-export function locomotionSample(name,info,actor,time,offset){
-  const cycle=strideCycle(info),m=actor.motion;
-  if(cycle>0&&m&&finite(m.odometer)){
-    const phase=m.odometer/cycle+offset/OFFSET_SPAN;
+// `v` (optional, varietyOf(actor.id)) replaces the weak id offset by the actor's own well-mixed phase and stretches the stride by his
+// stride factor, so a platoon moving at one speed no longer puts every left foot down on the same frame. Without it: the previous behaviour.
+export function locomotionSample(name,info,actor,time,offset,v=null){
+  const cycle0=strideCycle(info),m=actor.motion;
+  if(cycle0>0&&m&&finite(m.odometer)){
+    const cycle=v?cycle0*v.stride:cycle0,phase=m.odometer/cycle+(v?v.phase:offset/OFFSET_SPAN);
     return {clip:name,time:(phase-Math.floor(phase))*info.duration,loop:true,rate:finite(m.speed)?m.speed/cycle*info.duration:1,source:'odometer'};
   }
+  if(v)return {clip:name,time:time*v.rate+v.phase*(info?.duration??0),loop:true,rate:v.rate,source:'time'};
   return {clip:name,time:time+offset,loop:true,rate:1,source:'time'};
 }
 // Locomotion is the pose label AND real motion; a label with a gait that has been idle for HOLD seconds means "blocked".
@@ -366,23 +383,35 @@ export const nominalSpeed=info=>{const c=strideCycle(info);return c>0?c/info.dur
 // stands instead of marching on the spot, a corpse gets a fall clock, and each clip says how fast its time runs.
 const MOVER=new Set(['walk','run','rkm_walk','rkm_run']);
 // Non-looping clips driven by "age" (time since a sim stamp) advance in real sim time; held frames do not.
-const AGE_DRIVEN=/^(fire_bolt|rkm_fire_burst|rkm_reload|mg34_|ckm_wz30_|station_drag_)/;
-export function refineCandidate(s,{actor,pose,time,offset,clips,hint}){
+// T08 library one-shots (fidgets, directional hits, deaths, posture transitions, prone flinch) are age driven too: an outgoing one keeps playing through its fade.
+const AGE_DRIVEN=/^(fire_bolt|rkm_fire_burst|rkm_reload|mg34_|ckm_wz30_|station_drag_|fidget_|hit_|blast_duck|near_miss_duck|death_|stand_to_crouch|crouch_to_stand|prone_flinch)/;
+// `variety`: T08 per-actor variety (m01-animation-variety.js): own phase and rate for every time driven loop, stride phase and length for odometer
+// locomotion, idle variants and fidgets, directional deaths, posture transitions. Default: on exactly when the T08 clip library is loaded; `false`
+// forces the previous behaviour, `true` forces the layer on (it still only picks clips that exist).
+export function refineCandidate(s,{actor,pose,time,offset,clips,hint,variety}){
   let c=s;
+  const v=(variety??varietyActive(clips))?varietyOf(actor.id):null;
   if(pose.name==='fallen'&&s.clip==='fallen'){
-    c={clip:'fallen',time:s.time,loop:false,rate:0,kind:'death',...(finite(actor.diedAt)?{since:actor.diedAt}:{})};
+    c={clip:v?deathVariant(actor,clips):'fallen',time:s.time,loop:false,rate:0,kind:'death',...(finite(actor.diedAt)?{since:actor.diedAt}:{})};
   }else if(MOVER.has(s.clip)&&pose.moving){
     const rkm=s.clip.startsWith('rkm_');
     if(isLocomoting(actor,pose,time)){
       const name=locomotionClip(actor,clips,{rkm,hint}),use=clips.has(name)?name:s.clip;
-      c=locomotionSample(use,clips.info(use),actor,time,offset);
+      c=locomotionSample(use,clips.info(use),actor,time,offset,v);
     }else{
       const idle=rkm?'rkm_standing_idle':'standing_idle'; // a moving pose is never crouched or aiming
       if(clips.has(idle))c={clip:idle,time:time+offset,loop:true,rate:1};
     }
   }else if(s.clip==='crouched_idle'&&pose.name==='crouched'&&!pose.underFire&&actor.motion?.gait==='crouch_walk'&&clips.has('crouch_walk')){
-    c=locomotionSample('crouch_walk',clips.info('crouch_walk'),actor,time,offset);
+    c=locomotionSample('crouch_walk',clips.info('crouch_walk'),actor,time,offset,v);
   }
+  // sprint / crouch_walk (and a walk/run the generic path kept) arrive stride-synced from genericCandidate with the weak id phase: same stride, own phase.
+  if(v&&c===s&&LOCO.has(s.clip)&&s.loop&&s.strideSynced&&finite(actor.motion?.odometer)&&clips.info(s.clip))
+    c=locomotionSample(s.clip,clips.info(s.clip),actor,time,offset,v);
+  // A plain time driven loop (exactly time+offset: no sim stamp, odometer or crew/station sync behind it) gets the actor's own phase, rate and clip variant.
+  if(v&&c.loop&&c.source!=='odometer'&&c.kind!=='death'&&finite(c.time)&&Math.abs(c.time-(time+offset))<1e-9&&!isExactClip(c.clip))
+    c=varyLoop(c,{actor,pose,time,clips});
+  if(v&&c.clip==='prone_idle')c=proneReaction(c,actor,time,clips);
   const loop=Boolean(c.loop);
   return {...c,loop,duration:clips.info(c.clip)?.duration??0,rate:finite(c.rate)?c.rate:loop||AGE_DRIVEN.test(c.clip)?1:0,exact:isExactClip(c.clip)};
 }

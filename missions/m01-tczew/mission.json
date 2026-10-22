@@ -179,7 +179,10 @@
       "fictional": true,
       "loadout": ["kb_wz29"]
     },
-    { "id": "generic_rifleman", "name": "Soldado", "rank": "strzelec", "role": "RIFLEMAN", "faction": "PL", "fictional": true, "loadout": ["kb_wz29"] }
+    { "id": "generic_rifleman", "name": "Soldado", "rank": "strzelec", "role": "RIFLEMAN", "faction": "PL", "fictional": true, "loadout": ["kb_wz29"] },
+    { "id": "ckm_gunner", "name": "Atirador da ckm", "rank": "strzelec (celowniczy)", "role": "SUPPORT", "faction": "PL", "fictional": true, "loadout": ["ckm_wz30"], "voiceOnly": true },
+    { "id": "ckm_loader", "name": "Municiador da ckm", "rank": "strzelec (amunicyjny)", "role": "SUPPORT", "faction": "PL", "fictional": true, "loadout": ["ckm_wz30"], "voiceOnly": true },
+    { "id": "ckm_reserve", "name": "Soldado da ckm", "rank": "strzelec", "role": "RIFLEMAN", "faction": "PL", "fictional": true, "loadout": ["ckm_wz30"], "voiceOnly": true }
   ],
   "historicalPersonsOffscreen": [
     {
@@ -281,15 +284,27 @@
         { "victim": "pl_east_18", "at": "05:49:00", "cutoff": "05:56:00", "classification": "RECONSTRUCTED" }
       ],
       "displayFire": [
-        { "id": "dp_east_pl_ckm", "shooters": ["pl_east_0", "pl_east_1"], "weapon": "ckm_wz30", "rounds": [5, 9], "intervalSec": [6, 14], "tracerEvery": 3,
+        { "id": "dp_east_pl_ckm", "shooters": ["pl_east_0", "pl_east_1"], "weapon": "ckm_wz30", "rounds": [5, 9], "intervalSec": [9, 24], "tracerEvery": 3,
           "targetGroup": "grp_de_east", "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
-          "note": "Fogo só visual (T22): as duas metralhadoras pesadas do pelotão respondem aos alemães do dique. Não acerta, não suprime, não fere." },
+          "respondSec": 10, "followUp": [0.45, [1.2, 2.6]],
+          "note": "Fogo só visual (T22): as duas metralhadoras pesadas do pelotão respondem aos alemães do dique. Não acerta, não suprime, não fere. IA de combate (fatia 1): respondem ao clarão de quem disparou nos últimos 10 s (respondSec) e, em 45 % das rajadas, voltam a disparar 1,2–2,6 s depois (followUp); o intervalo longo passou de 6–14 s para 9–24 s, para a média (≈ 10 s por rajada) ficar a mesma sem o ciclo regular." },
         { "id": "dp_east_pl_rifles", "shooters": ["pl_east_2", "pl_east_3", "pl_east_4", "pl_east_5", "pl_east_6", "pl_east_7", "pl_east_8", "pl_east_9", "pl_east_10", "pl_east_11",
             "pl_east_12", "pl_east_13", "pl_east_14", "pl_east_15", "pl_east_16", "pl_east_17", "pl_east_18", "pl_east_19", "pl_east_20", "pl_east_21", "pl_east_22", "pl_east_23"],
           "weapon": "kb_wz29", "rounds": [1, 1], "intervalSec": [8, 20], "tracerEvery": 0, "targetGroup": "grp_de_east",
           "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
           "note": "Fogo só visual: um tiro de espingarda por homem a cada 8–20 s, sem traçante." }
-      ]
+      ],
+      "rearguard": {
+        "version": 1,
+        "from": "evt_m01_germans_on_east_spans",
+        "men": ["pl_east_0", "pl_east_1", "pl_east_2"],
+        "posts": [[165, 38.7], [170, 38.7], [175, 38.7]],
+        "joinWithinM": 30,
+        "runSpeed": 5.5,
+        "fire": { "weapon": "kb_wz29", "pauseSec": 5, "sigmaMil": [5, 4], "clearanceM": 1.5, "headroomM": 0.15, "rangeM": 600, "riseBeforeSec": 0.9, "holdAfterSec": 1.8 },
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "Fatia 2b (2026-10-19): enquanto o gate da demolição leste segura o relógio em 06:09:30 por causa do tabuleiro (alemães do assalto vivos a oeste de clearX), os três homens de número mais baixo do pelotão (nunca vítimas da regra dos 20 s: a vítima é pl_east_{n-1}, n ≥ 12) param nos seus lugares a x 165–175, fora da HOLD_AREA, e disparam rondas reais de kb wz.29 (dano e supressão como o tiro do jogador, fluxo próprio) sobre o homem do assalto mais próximo à vista; nunca disparam com o jogador ou um homem do pelotão a menos de clearanceM da linha de tiro (salvo se a linha lhe passa mais de headroomM acima do corpo: um camarada de joelhos à frente), nem quando o raio desviado acertaria um deles. Quando o tabuleiro fica livre retomam a retirada. Lugares a z 38,7, e não na treliça sul como no desenho escrito: medido (2026-10-19), o piloto de apoio no posto (38; 42,4) dispara por z ≈ 41,7 a x 170, à altura de um homem de pé, e a fila do pelotão corre a z 37,8/38,15 (espaço pessoal 0,5 m); 38,7 fica a 0,55 m da fila e a 0,4 m da linha do posto (30; 40) à faixa mais a norte. Dispersão 5 / 4 mil (desvio-padrão, × 1,9 abalado) e alvos até 600 m, medido em 5 sementes passivas (19390901, 7, 3, 4, 11): com 3 / 2,5 mil e 800 m caíam 3–7 dos 10 alemães do tabuleiro por rota (média 4,8; em 2 sementes o nó da T48 ficava com 1 homem); com 5 / 4 mil e 600 m, 2–4 (média 2,8). Não morrem: as baixas do pelotão são por ID (vivo ⇔ índice < m01.east_platoon_survivors, mínimo 12) e o relógio da regra dos 20 s está parado durante o gate."
+      }
     },
     {
       "id": "grp_de_east",
@@ -310,9 +325,10 @@
       ],
       "fireModel": "Aproximação de jogo, não balística medida: cada tiro é uma recta da boca ao ponto visado com flecha parabólica h = 6e-6·R² (≈9 m a 1,2 km) e ~620 m/s de média (≈1,6 s a 1 km, dentro dos 1,5–2 s do perfil do wz.29). Dispersão em milésimos por rajada e por tiro. Tiros que passam a menos de 3 m de um sapador suprimem o reparo (obj_m01_cover_repair.mechanic).",
       "displayFire": [
-        { "id": "dp_east_de_mg", "shooters": ["de_east_16", "de_east_17"], "weapon": "mg34", "rounds": [4, 7], "intervalSec": [7, 15], "tracerEvery": 2,
+        { "id": "dp_east_de_mg", "shooters": ["de_east_16", "de_east_17"], "weapon": "mg34", "rounds": [4, 7], "intervalSec": [9, 27], "tracerEvery": 2,
           "targetGroup": "grp_east_platoon", "from": "evt_m01_train963_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
-          "note": "Fogo só visual (T22): dois homens do dique norte (não dos portões, não vêem a margem oeste) disparam rajadas de traçantes sobre o pelotão; `weapon` é só a etiqueta de exibição (a arma de jogo deles continua kar98k)." },
+          "followUp": [0.45, [1.2, 2.6]],
+          "note": "Fogo só visual (T22): dois homens do dique norte (não dos portões, não vêem a margem oeste) disparam rajadas de traçantes sobre o pelotão; `weapon` é só a etiqueta de exibição (a arma de jogo deles continua kar98k). IA de combate (fatia 1): em 45 % das rajadas há outra 1,2–2,6 s depois (followUp) e o intervalo longo passou de 7–15 s para 9–27 s, para a média (≈ 11 s por rajada) ficar a mesma sem o ciclo regular." },
         { "id": "dp_east_panzerzug", "origin": [1121, 3, 2.5], "weapon": "pz7_75mm", "rounds": [1, 1], "intervalSec": [60, 180], "targetBox": [995, 1045, -5, 45],
           "from": "evt_m01_panzerzug_arrives", "until": "evt_m01_east_platoon_withdraws", "classification": "RECONSTRUCTED",
           "note": "Fogo só visual: o Panzerzug 7 (parado em x 1111–1203, z 2,5; o modelo não tem boca de peça, a origem é a plataforma do tecto da primeira carruagem) dispara de vez em quando sobre a cabeça de ponte leste. Só leste: a caixa-alvo fica toda a mais de 550 m da área jogável. Clarão, fumo e baforada de chegada são só renderização." }
@@ -325,7 +341,33 @@
       "size": 10,
       "maxAdvanceX": 690,
       "weapons": ["kar98k", "mg34"],
-      "sector": "s2_east_bridgehead"
+      "sector": "s2_east_bridgehead",
+      "deckAssault": {
+        "version": 1,
+        "from": "evt_m01_germans_on_east_spans",
+        "safeX": 450,
+        "clearX": 945,
+        "overwatch": ["de_spans_0", "de_spans_1", "de_spans_2", "de_spans_3"],
+        "assault": ["de_spans_4", "de_spans_5", "de_spans_6", "de_spans_7", "de_spans_8", "de_spans_9"],
+        "entry": [[1040, 38.16], [1040, 41.84], [1043, 39.08], [1043, 40.92], [1036, 37.7], [1036, 42.3], [1033, 40.46], [1030, 41.38], [1030, 38.62], [1027, 39.54]],
+        "overwatchNodes": [[926, 38.16], [930, 41.84], [934, 39.08], [937, 40.92]],
+        "stations": [1022, 998, 974, 950, 926, 902, 870, 846, 822, 798, 774, 750, 726, 702, 678, 654, 630, 606, 582, 558, 534, 510, 486, 462],
+        "lanes": [[37.7, 0], [42.3, 3], [40.46, 6], [41.38, 9], [38.62, 12], [39.54, 15]],
+        "limits": [458, 506, 482, 554, 530, 578],
+        "fallback": [[946, 37.7], [949, 42.3], [952, 40.46], [955, 41.38], [958, 38.62], [961, 39.54]],
+        "pursuitToX": 830,
+        "rushStations": 2,
+        "rushSpeed": 5.2,
+        "coverSec": [2.2, 5.5],
+        "holdSec": [20, 38],
+        "pinnedWaitMaxSec": 4,
+        "breakPinnedSec": 30,
+        "breakOut": 3,
+        "maxSec": 165,
+        "fire": { "assaultPauseSec": 7, "overwatchPauseSec": 10, "platoonRangeM": 520, "riseBeforeSec": 0.9, "holdAfterSec": 1.8 },
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "Fatia 2 do combate (playtest P1: combate a ~1 km). Destacamento de cobertura das 06:05: os quatro de overwatch correm até ao vão 8 (x 926-937, dentro do raio da demolição leste, bz_east 800 +- 140 m: são os quatro que a demolição derruba, GERMAN_FELLED) e disparam dali; os seis de assalto perseguem o pelotão a correr até x 830 (pursuitToX) e depois avançam por lanços de rushStations estações (rushSpeed m/s) entre os montantes da treliça, cada um na sua faixa lanes[k] = [z, desvio em x] (seis faixas distintas, 0,92 m entre elas, para nenhum passar por dentro de outro; os postos do overwatch ficam entre faixas), até ao seu limite limits[k] (x 458-578, nunca a oeste de safeX). Disparam só parados (espreitar 1-3 tiros, IA da fatia 1, tiros reais sobre o pelotão e o jogador). Cada um recua (fallback, a correr até ao seu lugar a leste de clearX) quando o seu lugar se esgota (holdSec) ou quando a supressão que sofreu em cobertura passa breakPinnedSec; o grupo inteiro recua quando breakOut dos seis caem ou maxSec reais depois da entrada (a supressão atrasa e por fim faz recuar um homem, não desfaz o grupo). A demolição leste espera (gate de 06:10, o relógio fica em 06:09:30) até nenhum homem vivo do assalto estar a oeste de clearX: os vãos 06-07 (x 663-877) caem e ninguém fica do lado polaco. Plausível para Tczew em 1/9/1939 (elementos de assalto alemães entraram na ponte antes das demolições), mas não documentado homem a homem. safeX é o número que o proprietário pode mover."
+      }
     },
     { "id": "grp_de_stukas", "faction": "DE", "vehicles": ["ju87b"], "count": 3, "sector": "s5_sky_east" },
     { "id": "grp_railway_workers", "faction": "PL_CIV", "members": ["franciszek_lipski"], "extras": 3, "sector": "s3_station_yard" }
@@ -333,7 +375,7 @@
   "clock": {
     "start": "04:30:00",
     "end": "07:05:00",
-    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; um segmento com 'readyScale' usa essa escala quando o seu gate já está pronto; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
+    "policy": "battleClock só avança durante jogo ativo; menus, pausa e carregamento suspendem. Segmentos têm escala própria; um segmento com 'readyScale' usa essa escala quando o seu gate já está pronto; um segmento com 'compress' corre à escala 'compress.scale' dentro da janela from–to enquanto a condição do jogador 'compress.when' se cumpre (src/game/m01-pacing.js), sem mudar a hora de nenhum evento; eventos marcados como 'gate' seguram o relógio (escala cai para 1,0 a 60 s de jogo do gate e para em gate − 30 s) enquanto setores seguem comportamentos 'sustain' sem repetição perceptível.",
     "segments": [
       {
         "id": "seg_prelude",
@@ -344,9 +386,25 @@
         "targetRealMin": 3.0
       },
       { "id": "seg_bombing", "from": "04:34:00", "to": "04:45:00", "scale": 3.5, "targetRealMin": 3.1 },
-      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "readyScale": 27.0, "targetRealMin": 5.0, "readyScaleNote": "Partida contínua no navegador: com o reparo concluído (~04:49) restavam ~4,5 min reais sem tarefa até às 05:30. Com o gate pronto, o resto do segmento corre a 27× (~1,5 min). Horários dos eventos inalterados." },
-      { "id": "seg_hold", "from": "05:30:00", "to": "06:10:00", "scale": 8.0, "gate": "evt_m01_east_demolition", "targetRealMin": 5.0 },
-      { "id": "seg_climax", "from": "06:10:00", "to": "06:45:00", "scale": 8.5, "gate": "evt_m01_west_demolition", "targetRealMin": 4.1 },
+      { "id": "seg_repair", "from": "04:45:00", "to": "05:30:00", "scale": 9.0, "gate": "evt_m01_repair_complete", "readyScale": 27.0, "readyLabel": "Mais tarde…", "readyReason": "Reparo concluído. A secção espera a ordem do tenente.", "targetRealMin": 5.0, "readyScaleNote": "Partida contínua no navegador: com o reparo concluído (~04:49) restavam ~4,5 min reais sem tarefa até às 05:30. Com o gate pronto, o resto do segmento corre a 27× (~1,5 min). Horários dos eventos inalterados." },
+      {
+        "id": "seg_hold",
+        "from": "05:30:00",
+        "to": "06:10:00",
+        "scale": 8.0,
+        "gate": "evt_m01_east_demolition",
+        "targetRealMin": 5.0,
+        "compress": { "from": "05:34:00", "to": "05:59:00", "scale": 24.0, "when": "hold_in_position", "label": "Mais tarde…", "reason": "Em posição no tabuleiro. O pelotão leste aguenta a cabeça de ponte até à ordem de retirada." },
+        "compressNote": "Playtest do proprietário (P2): o jogador já em posição esperava ~3,5 min reais pelas 06:00. Só com o jogador no tabuleiro e o 2.º raide terminado, 05:34–05:59 corre a 24× (~1 min). Fora da posição volta a 8×. Horários históricos (05:40, 05:50, 06:00) inalterados."
+      },
+      {
+        "id": "seg_climax",
+        "from": "06:10:00",
+        "to": "06:45:00",
+        "scale": 8.5,
+        "gate": "evt_m01_west_demolition",
+        "targetRealMin": 4.1
+      },
       {
         "id": "seg_aftermath",
         "from": "06:45:00",
@@ -432,7 +490,7 @@
     },
     {
       "id": "obj_m01_hold_access",
-      "text": "Mantenha a cabeça de ponte — mude de cobertura quando mandarem",
+      "text": "Defenda a ponte: tome posição no tabuleiro e mude de cobertura quando mandarem",
       "required": true,
       "activation": { "event": "evt_m01_order_demolish" },
       "completion": {
@@ -452,7 +510,7 @@
       "required": true,
       "activation": { "event": "evt_m01_east_platoon_withdraws" },
       "completion": { "event": "evt_m01_east_demolition" },
-      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans avança até x ≥ 690. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). No protótipo, a partir de evt_m01_germans_on_east_spans, um alemão do tabuleiro não suprimido que vê o último homem pode disparar um tiro letal; a baixa só conta quando o tiro chega, com intervalo mínimo de 20 s de relógio entre baixas e mínimo de 12 sobreviventes. Sem tiro desobstruído não há baixas automáticas. Guardar os tiros em voo e cada baixa por ID. Nunca falha a missão; estes valores são tuning de gameplay, não efectivos históricos.",
+      "mechanic": "O pelotão leste atravessa o tabuleiro por conta própria (≈8 min de relógio). grp_de_spans: assalto do tabuleiro (grp_de_spans.deckAssault): seis homens avançam por lanços até meio do tabuleiro (x 458–578, nunca a oeste de x 450) e recuam para leste de x 945; a demolição leste espera que o tabuleiro fique livre (o relógio fica em 06:09:30), por isso o combate dura minutos reais sem mexer em nenhuma hora fixa. Tiros do jogador a menos de 3 m de um grupo alemão o suprimem (param, deitam). No protótipo, a partir de evt_m01_germans_on_east_spans, um alemão do tabuleiro não suprimido que vê o último homem pode disparar um tiro letal; a baixa só conta quando o tiro chega, com intervalo mínimo de 20 s de relógio entre baixas e mínimo de 12 sobreviventes. Sem tiro desobstruído não há baixas automáticas. Guardar os tiros em voo e cada baixa por ID. Nunca falha a missão; estes valores são tuning de gameplay, não efectivos históricos.",
       "failure": null
     },
     {
@@ -483,7 +541,7 @@
     },
     {
       "id": "obj_m01_hold_corridor",
-      "text": "Mantenha o corredor — conte os que passam",
+      "text": "Mantenha o corredor aberto até à demolição oeste — conte os que passam",
       "required": true,
       "activation": { "objective": "obj_m01_leave_bridge" },
       "completion": { "event": "evt_m01_west_demolition" },
@@ -1743,7 +1801,7 @@
       "priority": 1
     },
     { "id": "dlg_m01_029", "speaker": "szymon_kowal", "text": "Trocando carregador!", "context": "callout recarga (real, quando o rkm recarrega)", "priority": 2 },
-    { "id": "dlg_m01_030", "speaker": "jozef_bak", "text": "Cubro você!", "context": "callout; Bąk atira enquanto o jogador recarrega", "priority": 2 },
+    { "id": "dlg_m01_030", "speaker": "szymon_kowal", "text": "Cubro você!", "context": "callout; quem cobre o jogador enquanto ele recarrega. 2026-10-19 (revisão N3): era de Bąk, que nunca dispara no jogo; passa a Kowal, cujo rkm wz.28 dispara de verdade, e só se ele disparou nos últimos 6 s", "priority": 2, "bark": {"on": "reload", "when": {"consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "fired": {"of": "speaker", "sec": 6}, "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
     { "id": "dlg_m01_031", "speaker": "pawel_krawiec", "text": "Linha inteira. Avisem o oficial: está pronta.", "context": "evt_m01_repair_complete", "priority": 1 },
     { "id": "dlg_m01_032", "speaker": "marek_zielinski", "text": "Pawlak, vai.", "context": "evt_m01_repair_complete", "priority": 1 },
     {
@@ -1768,14 +1826,16 @@
       "speaker": "marek_zielinski",
       "text": "Mudar! Estão acertando a nossa posição. Para a torre!",
       "context": "rotação de cobertura (variantes por nó)",
-      "priority": 1
+      "priority": 1,
+      "bark": {"on": "coverRotation", "when": {"node": ["cv_tower_p1_*"]}, "cooldown": 20, "unless": [{"line": "dlg_m01_136", "within": 20}, {"line": "dlg_m01_137", "within": 20}]}
     },
     {
       "id": "dlg_m01_036",
       "speaker": "marek_zielinski",
       "text": "Sol nos olhos. Fique na sombra da treliça e espere o clarão.",
       "context": "05:30+, contraluz (C01)",
-      "priority": 2
+      "priority": 2,
+      "bark": {"on": "poll", "when": {"clock": ["05:30:00", "06:40:00"], "active": ["obj_m01_hold_access", "obj_m01_cover_withdrawal"], "sunGlare": {"deg": 25, "holdSec": 6}}, "cooldown": 120, "max": 1}
     },
     {
       "id": "dlg_m01_037",
@@ -1896,19 +1956,130 @@
       "context": "evt_m01_planes_heard, ao sair correndo do posto pela encosta",
       "priority": 1
     },
-    { "id": "dlg_m01_067", "speaker": "marek_zielinski", "text": "Wrona! Nowicki! Saiam do posto!", "context": "evt_m01_planes_heard, gritado de longe", "priority": 1 }
+    { "id": "dlg_m01_067", "speaker": "marek_zielinski", "text": "Wrona! Nowicki! Saiam do posto!", "context": "evt_m01_planes_heard, gritado de longe", "priority": 1 },
+    { "id": "dlg_m01_015a", "speaker": "marek_zielinski", "text": "Wrona! Aqui! Trincheira!", "context": "siga a voz (guia a cada 14 s, em vez da mensagem de HUD)", "priority": 1, "note": "Fable 5.1 (PR #56, M01-DIALOGUE-PRODUCTION-SCRIPT 3.2), sem referência PL; rever com falante nativo", "bark": {"on": "guide", "cooldown": 13, "group": "guide"} },
+    { "id": "dlg_m01_015b", "speaker": "marek_zielinski", "text": "Pela esquerda! Cabeça baixa!", "context": "siga a voz; só se o ponto de reunião está à esquerda do jogador", "priority": 1, "note": "Fable 5.1 (PR #56, M01-DIALOGUE-PRODUCTION-SCRIPT 3.2), sem referência PL; rever com falante nativo", "bark": {"on": "guide", "when": {"bearing": {"point": "rally_point", "side": "left"}}, "cooldown": 13, "group": "guide"} },
+    { "id": "dlg_m01_015c", "speaker": "marek_zielinski", "text": "Mais vinte metros!", "context": "siga a voz; só entre 12 e 40 m do ponto de reunião", "priority": 1, "note": "Fable 5.1 (PR #56, M01-DIALOGUE-PRODUCTION-SCRIPT 3.2), sem referência PL; rever com falante nativo", "bark": {"on": "guide", "when": {"distTo": {"point": "rally_point", "min": 12, "max": 40}}, "cooldown": 13, "group": "guide"} },
+    { "id": "dlg_m01_015d", "speaker": "marek_zielinski", "text": "Estou a ouvi-lo. Venha.", "context": "siga a voz", "priority": 1, "note": "Fable 5.1 (PR #56, M01-DIALOGUE-PRODUCTION-SCRIPT 3.2), sem referência PL; rever com falante nativo", "bark": {"on": "guide", "cooldown": 13, "group": "guide"} },
+    { "id": "dlg_m01_100", "speaker": "generic_rifleman", "text": "Acertaram ele! Sanitário!", "context": "reativa; round-impact (victim != null)", "priority": 1, "note": "PL: Trafili go! Sanitariusz!", "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 40}}, "cooldown": 20, "max": 3, "group": "ally_hit", "replaces": ["co_m01_ally_hit"], "unless": [{"line": "co_m01_ally_hit", "within": 15}]} },
+    { "id": "dlg_m01_101", "speaker": "generic_rifleman", "text": "Ferido! Temos um ferido!", "context": "reativa; round-impact (victim != null)", "priority": 1, "note": "PL: Ranny! Mamy rannego!", "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 40}}, "cooldown": 20, "max": 3, "group": "ally_hit", "replaces": ["co_m01_ally_hit"], "unless": [{"line": "co_m01_ally_hit", "within": 15}]} },
+    { "id": "dlg_m01_102", "speaker": "szymon_kowal", "text": "Um caiu. Na ponte.", "context": "reativa; round-impact (victim != null)", "priority": 2, "note": "PL: Jeden padł. Na moście.", "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 80}}, "cooldown": 25, "max": 3} },
+    { "id": "dlg_m01_103", "speaker": "marek_zielinski", "text": "Deixe. Depois.", "context": "reativa; round-impact (victim != null)", "priority": 2, "note": "PL: Zostaw. Potem.", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_withdrawal"], "playerStill": 0.5}, "cooldown": 40, "max": 2, "after": [{"line": "dlg_m01_102", "sec": 5, "window": 15}]} },
+    { "id": "dlg_m01_104", "speaker": "leon_dudek", "text": "Segure o curativo. Estou aqui.", "context": "reativa; evt_m01_bak_wounded (seguimento de 042)", "priority": 2, "note": "PL: Trzymaj opatrunek. Jestem.", "bark": {"on": "poll", "when": {"flag": {"m01.bak_status": "wounded"}}, "max": 1, "after": [{"event": "evt_m01_bak_wounded", "sec": 4, "window": 15}]} },
+    { "id": "dlg_m01_105", "speaker": "marek_zielinski", "text": "Wrona! Foi atingido? Responda!", "context": "reativa; player-hit", "priority": 1, "note": "PL: Wrona! Trafiony? Odpowiedz!", "bark": {"on": "player-hit", "when": {"playerHurt": true, "near": {"of": "speaker", "m": 30}}, "cooldown": 25, "max": 3} },
+    { "id": "dlg_m01_106", "speaker": "generic_rifleman", "text": "Sanitário, aqui! Rápido!", "context": "reativa; round-impact (victim != null) ou bak_wounded (evt_m01_bak_wounded)", "priority": 1, "note": "PL: Sanitariusz, tutaj! Szybko!", "bark": {"on": "poll", "cooldown": 15, "max": 2, "group": "medic_call", "unless": [{"line": "co_m01_ally_hit", "within": 15}], "after": [{"line": "dlg_m01_100", "sec": 8, "window": 20}, {"line": "dlg_m01_101", "sec": 8, "window": 20}, {"event": "evt_m01_bak_wounded", "sec": 6, "window": 20, "near": {"of": "jozef_bak", "m": 40}}]} },
+    { "id": "dlg_m01_107", "speaker": "generic_rifleman", "text": "Sanitário! Aqui comigo!", "context": "reativa; idem", "priority": 1, "note": "PL: Sanitariusz! Do mnie!", "bark": {"on": "poll", "cooldown": 15, "max": 2, "group": "medic_call", "unless": [{"line": "co_m01_ally_hit", "within": 15}], "after": [{"line": "dlg_m01_100", "sec": 8, "window": 20}, {"line": "dlg_m01_101", "sec": 8, "window": 20}, {"event": "evt_m01_bak_wounded", "sec": 6, "window": 20, "near": {"of": "jozef_bak", "m": 40}}]} },
+    { "id": "dlg_m01_108", "speaker": "leon_dudek", "text": "Já vou! Não mexam nele!", "context": "reativa; evt_m01_dudek_retrieves_bak", "priority": 2, "note": "PL: Idę! Nie ruszajcie go!", "bark": {"on": "poll", "when": {"flag": {"m01.bak_status": "rescued_by_dudek"}}, "max": 1, "after": [{"event": "evt_m01_dudek_retrieves_bak", "sec": 2, "window": 15}]} },
+    { "id": "dlg_m01_109", "speaker": "leon_dudek", "text": "Pelo cinto, não pelo braço.", "context": "reativa; player.carrying === jozef_bak", "priority": 2, "note": "PL: Za pas, nie za rękę.", "bark": {"on": "poll", "when": {"carrying": "jozef_bak", "near": {"of": "leon_dudek", "m": 25}}, "max": 1, "after": [{"line": "dlg_m01_146", "sec": 8, "window": 25}]} },
+    { "id": "dlg_m01_110", "speaker": "ckm_gunner", "text": "Rajada no dique!", "context": "reativa; ally-fire (by ckm_gunner, one per burst)", "priority": 3, "note": "PL: Seria po wale!", "bark": {"on": "ally-fire", "when": {"by": "ckm_gunner", "ckmBurst": {"max": 2}, "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 120, "max": 2, "group": "ckm_fire"} },
+    { "id": "dlg_m01_111", "speaker": "ckm_gunner", "text": "Fogo no portão!", "context": "reativa; ally-fire (by ckm_gunner)", "priority": 3, "note": "PL: Ognia na bramę!", "bark": {"on": "ally-fire", "when": {"by": "ckm_gunner", "ckmTarget": "gate", "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 60, "max": 4, "group": "ckm_fire"} },
+    { "id": "dlg_m01_112", "speaker": "ckm_gunner", "text": "A fita está acabando!", "context": "reativa; ckm.phase → feed (troca real de fita, belt < CKM_BURST_ROUNDS)", "priority": 2, "note": "PL: Taśma się kończy!", "bark": {"on": "poll", "when": {"ckmFeed": true, "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 90, "max": 3} },
+    { "id": "dlg_m01_113", "speaker": "ckm_loader", "text": "Fita nova! Pronto!", "context": "reativa; ckm.phase feed → aim (CKM_FEED_SEC acabou)", "priority": 3, "note": "PL: Nowa taśma! Gotowe!", "bark": {"on": "poll", "when": {"ckmBeltFull": true, "near": {"of": "ckm_loader", "m": 60}}, "cooldown": 90, "max": 3, "after": [{"line": "dlg_m01_112", "sec": 3, "window": 6}]} },
+    { "id": "dlg_m01_114", "speaker": "ckm_gunner", "text": "Travou! Recarregar!", "context": "reativa; NEEDS_EVENT:ckm_stoppage", "priority": 2, "note": "PL: Zacięcie! Przeładować! | NEEDS_EVENT:ckm_stoppage" },
+    { "id": "dlg_m01_115", "speaker": "ckm_loader", "text": "Pronto. Atire!", "context": "reativa; NEEDS_EVENT:ckm_stoppage_cleared", "priority": 3, "note": "PL: Jest. Strzelaj! | NEEDS_EVENT:ckm_stoppage_cleared" },
+    { "id": "dlg_m01_116", "speaker": "ckm_gunner", "text": "Levamos ela. Comigo!", "context": "reativa; ckm.phase → abandon", "priority": 1, "note": "PL: Zabieramy go. Za mną!", "bark": {"on": "poll", "when": {"ckmPhase": ["abandon", "retreat"], "sinceEvent": {"event": "evt_m01_east_demolition", "min": 0, "max": 60}, "near": {"of": "ckm_gunner", "m": 60}}, "max": 1} },
+    { "id": "dlg_m01_117", "speaker": "ckm_loader", "text": "Esvazie a água. Caixas. Vamos.", "context": "reativa; ckm.phase abandon + 1,5 s", "priority": 3, "note": "PL: Wylej wodę. Skrzynki. Idziemy.", "bark": {"on": "poll", "when": {"near": {"of": "ckm_loader", "m": 60}}, "max": 1, "after": [{"line": "dlg_m01_116", "sec": 1.5, "window": 20}]} },
+    { "id": "dlg_m01_118", "speaker": "ckm_reserve", "text": "Cabo, pelo aterro para oeste?", "context": "reativa; ckm.phase → retreat", "priority": 3, "note": "PL: Panie kapralu, nasypem na zachód?", "bark": {"on": "poll", "when": {"ckmPhase": ["retreat"], "sinceEvent": {"event": "evt_m01_east_demolition", "min": 0, "max": 90}, "near": {"of": "ckm_reserve", "m": 12}}, "max": 1} },
+    { "id": "dlg_m01_119", "speaker": "ckm_gunner", "text": "Pelo aterro. De lá também atira.", "context": "reativa; 118 + 2 s", "priority": 2, "note": "PL: Nasypem. Stamtąd też strzela.", "bark": {"on": "poll", "max": 1, "after": [{"line": "dlg_m01_118", "sec": 2, "window": 15}]} },
+    { "id": "dlg_m01_120", "speaker": "szymon_kowal", "text": "Metralhadora do dique! Cabeças baixas!", "context": "reativa; enemy-fire (weapon mg34) + round-impact.pinned não vazio", "priority": 1, "note": "PL: Cekaem z wału! Głowy nisko!", "bark": {"on": "round-impact", "when": {"byMg34": true, "pinned": true, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 45, "max": 4, "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
+    { "id": "dlg_m01_121", "speaker": "jozef_bak", "text": "Ha… raios, foi perto.", "context": "reativa; round-impact (crack, distance <= 6 m)", "priority": 2, "note": "PL: Ha… psiakrew, blisko.", "bark": {"on": "round-impact", "when": {"crack": true, "flag": {"m01.bak_status": "unhurt"}, "notConsumed": "evt_m01_bak_wounded", "near": {"of": "jozef_bak", "m": 20}}, "cooldown": 30, "max": 4, "group": "mg34_crack"} },
+    { "id": "dlg_m01_122", "speaker": "marek_zielinski", "text": "Esperem a pausa!", "context": "reativa; mg34Prone.phase === fire_burst (rajada de grupo aberta)", "priority": 2, "note": "PL: Czekać na przerwę!", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_repair", "obj_m01_hold_access"], "inCover": true, "mg34": {"phase": "fire_burst", "los": false}, "notConsumed": "evt_m01_east_demolition"}, "cooldown": 60, "max": 3} },
+    { "id": "dlg_m01_123", "speaker": "szymon_kowal", "text": "Ele recarrega! Agora!", "context": "reativa; mg34Prone.phase === reload (carregador a trocar, 4,8 s)", "priority": 1, "note": "PL: Ładuje! Teraz!", "bark": {"on": "poll", "when": {"mg34": {"phase": "reload", "los": true}, "notConsumed": "evt_m01_east_demolition"}, "cooldown": 40, "max": 4, "group": "mg34_reload"} },
+    { "id": "dlg_m01_124", "speaker": "marek_zielinski", "text": "Pausa! Atire!", "context": "reativa; idem", "priority": 1, "note": "PL: Przerwa! Strzelaj!", "bark": {"on": "poll", "when": {"mg34": {"phase": "reload", "los": true}, "notConsumed": "evt_m01_east_demolition"}, "cooldown": 40, "max": 4, "group": "mg34_reload"} },
+    { "id": "dlg_m01_125", "speaker": "pawel_krawiec", "text": "Cabeças baixas!", "context": "reativa; timers.repairPins >= 2", "priority": 1, "note": "PL: Głowy nisko!", "bark": {"on": "round-impact", "when": {"active": ["obj_m01_cover_repair"], "pinnedSapper": true, "repairPins": {"min": 2}}, "cooldown": 30, "max": 3} },
+    { "id": "dlg_m01_126", "speaker": "sapper_3", "text": "Outra vez não…", "context": "reativa; timers.repairPins === 3", "priority": 2, "note": "PL: Tylko nie znowu…", "bark": {"on": "round-impact", "when": {"active": ["obj_m01_cover_repair"], "pinnedSapper": true, "repairPins": {"eq": 3}}, "max": 1} },
+    { "id": "dlg_m01_127", "speaker": "pawel_krawiec", "text": "Três… quatro… agora.", "context": "reativa; timers.repairSuppressedUntil expira com repairPins >= 1", "priority": 2, "note": "PL: Trzy… cztery… teraz.", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_repair"], "repairResume": true}, "cooldown": 25, "max": 3} },
+    { "id": "dlg_m01_128", "speaker": "szymon_kowal", "text": "Clarão no portão!", "context": "reativa; threat.recentFire (age < 2,5 s) em gateShooter", "priority": 1, "note": "PL: Błysk przy bramie!", "bark": {"on": "enemy-fire", "when": {"fireFrom": "gates", "near": {"of": "speaker", "m": 80}}, "cooldown": 90, "max": 3, "group": "located", "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
+    { "id": "dlg_m01_129", "speaker": "szymon_kowal", "text": "Clarão junto aos vagões!", "context": "reativa; threat.recentFire junto ao trem 963 (vagões)", "priority": 1, "note": "PL: Błysk przy wagonach!", "bark": {"on": "enemy-fire", "when": {"fireFrom": "wagons", "near": {"of": "speaker", "m": 80}}, "cooldown": 90, "max": 3, "group": "located", "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
+    { "id": "dlg_m01_130", "speaker": "szymon_kowal", "text": "À esquerda do portão!", "context": "reativa; timers.coverFire (origem nos portões, à esquerda do portão vista do jogador)", "priority": 1, "note": "PL: Na lewo od bramy!", "bark": {"on": "enemy-fire", "when": {"coverFire": {"side": "left", "ageMax": 8, "zone": "gateStrip"}, "near": {"of": "speaker", "m": 80}}, "cooldown": 45, "max": 4, "group": "located", "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
+    { "id": "dlg_m01_131", "speaker": "szymon_kowal", "text": "À direita do portão!", "context": "reativa; timers.coverFire (origem nos portões, à direita do portão vista do jogador)", "priority": 1, "note": "PL: Na prawo od bramy!", "bark": {"on": "enemy-fire", "when": {"coverFire": {"side": "right", "ageMax": 8, "zone": "gateStrip"}, "near": {"of": "speaker", "m": 80}}, "cooldown": 45, "max": 4, "group": "located", "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
+    { "id": "dlg_m01_132", "speaker": "marek_zielinski", "text": "Ele se debruça. Espere.", "context": "reativa; ai.peek > 0 num grp_de_east com LOS ao jogador", "priority": 2, "note": "PL: Wychyla się. Czekaj.", "bark": {"on": "poll", "when": {"peek": {"los": true}, "notAiming": true, "notShotFor": 3, "notConsumed": "evt_m01_east_demolition"}, "cooldown": 45, "max": 3} },
+    { "id": "dlg_m01_133", "speaker": "szymon_kowal", "text": "Escondeu-se. Já volta.", "context": "reativa; ai.peek passa de > 0 a 0 (peek fechado)", "priority": 3, "note": "PL: Schował się. Zaraz wróci.", "bark": {"on": "poll", "when": {"peekClosed": true, "notConsumed": "evt_m01_east_demolition"}, "cooldown": 60, "max": 3} },
+    { "id": "dlg_m01_134", "speaker": "marek_zielinski", "text": "Dois no portão!", "context": "reativa; >= 2 enemies com ai.peek > 0 em simultâneo", "priority": 1, "note": "PL: Dwóch przy bramie!", "bark": {"on": "poll", "when": {"peekCount": {"min": 2}, "notConsumed": "evt_m01_east_demolition", "near": {"of": "speaker", "m": 80}}, "cooldown": 60, "max": 3, "group": "located"} },
+    { "id": "dlg_m01_135", "speaker": "szymon_kowal", "text": "Alemães no tabuleiro! Na treliça!", "context": "reativa; consumedEvent(germans_on_east_spans) + enemy-fire de grp_de_spans", "priority": 1, "note": "PL: Niemcy na przęsłach! W kratownicy!", "bark": {"on": "enemy-fire", "when": {"fireFrom": "deck", "consumed": "evt_m01_germans_on_east_spans", "notConsumed": "evt_m01_east_demolition", "clock": ["06:00:00", null]}, "cooldown": 30, "max": 3, "group": "located"} },
+    { "id": "dlg_m01_136", "speaker": "marek_zielinski", "text": "Ao portal! Atrás do pilar!", "context": "reativa; flags[m01.suggested_cover] = cv_portal_*", "priority": 1, "note": "PL: Do portalu! Za filar!", "bark": {"on": "coverRotation", "when": {"node": ["cv_portal_*"]}, "cooldown": 20, "max": 4, "replaces": ["dlg_m01_035", "co_m01_cover_rotation"], "unless": [{"line": "dlg_m01_035", "within": 20}]} },
+    { "id": "dlg_m01_137", "speaker": "marek_zielinski", "text": "Atrás da treliça! Rasteje!", "context": "reativa; flags[m01.suggested_cover] = cv_road_truss_*", "priority": 1, "note": "PL: Za kratownicę! Czołgaj się!", "bark": {"on": "coverRotation", "when": {"node": ["cv_road_truss_*"]}, "cooldown": 20, "max": 4, "replaces": ["dlg_m01_035", "co_m01_cover_rotation"], "unless": [{"line": "dlg_m01_035", "within": 20}]} },
+    { "id": "dlg_m01_138", "speaker": "szymon_kowal", "text": "Granada! Abaixem!", "context": "reativa; m01-blast kind grenade (granada do jogador) ou grenades.active com id m01_grenade_*", "priority": 1, "note": "PL: Granat! Padnij! | NOTE: só granada do jogador; não há granadas alemãs", "bark": {"on": "poll", "when": {"grenade": {"fuseMax": 3, "fuseMin": 0.5, "allyWithin": 12}}, "cooldown": 20, "max": 4} },
+    { "id": "dlg_m01_139", "speaker": "szymon_kowal", "text": "Abaixa!", "context": "reativa; round-impact (crack, distance <= 6 m do jogador)", "priority": 1, "note": "PL: Padnij!", "bark": {"on": "round-impact", "when": {"crack": true, "near": {"of": "szymon_kowal", "m": 25}}, "cooldown": 12, "max": 6, "group": "mg34_crack"} },
+    { "id": "dlg_m01_140", "speaker": "szymon_kowal", "text": "Pegou. Mude de posição.", "context": "reativa; player-shot (hit: true)", "priority": 2, "note": "PL: Dostał. Zmień stanowisko.", "bark": {"on": "player-shot", "when": {"hit": true, "everyNth": 3, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 25, "max": 4, "group": "player_hit_enemy"} },
+    { "id": "dlg_m01_141", "speaker": "szymon_kowal", "text": "Um a menos no portão. Mude de posição.", "context": "reativa; enemy_down_by_player (alemão dos portões morto pelo jogador)", "priority": 2, "note": "PL: Jeden mniej przy bramie. Zmień stanowisko.", "bark": {"on": "enemy_down_by_player", "when": {"downGroup": "grp_de_east", "downGate": true, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 30, "max": 4, "group": "player_hit_enemy"} },
+    { "id": "dlg_m01_142", "speaker": "marek_zielinski", "text": "Wrona. Não conte. Mude de posição.", "context": "reativa; enemy_down_by_player (2.º abate seguido em < 20 s)", "priority": 2, "note": "PL: Wrona. Nie licz. Zmień stanowisko.", "bark": {"on": "enemy_down_by_player", "when": {"repeatKill": 20}, "cooldown": 60, "max": 2, "group": "player_hit_enemy"} },
+    { "id": "dlg_m01_143", "speaker": "szymon_kowal", "text": "A metralhadora calou. Trabalhem!", "context": "reativa; de_east_0/1.suppressedUntil por tiro do jogador (state)", "priority": 1, "note": "PL: Cekaem ucichł. Do roboty!", "bark": {"on": "player-shot", "when": {"active": ["obj_m01_cover_repair"], "mgSilenced": true}, "cooldown": 20, "max": 4, "unless": [{"line": "co_m01_enemy_group_suppressed", "within": 10}]} },
+    { "id": "dlg_m01_144", "speaker": "pawel_krawiec", "text": "Metade. Não comemorem.", "context": "reativa; cover_repair.progress >= 50", "priority": 2, "note": "PL: Połowa. Nie cieszcie się.", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_repair"], "progress": {"objective": "obj_m01_cover_repair", "min": 50}}, "max": 1} },
+    { "id": "dlg_m01_145", "speaker": "marek_zielinski", "text": "Seguramos esta cabeça de ponte. Até a ordem.", "context": "reativa; active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA", "priority": 2, "note": "PL: Trzymamy ten przyczółek. Do rozkazu.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_access"], "holdVisited": true, "inArea": "hold", "clock": [null, "06:00:00"]}, "max": 1} },
+    { "id": "dlg_m01_146", "speaker": "jozef_bak", "text": "Não me deixe cair.", "context": "reativa; player.carrying = jozef_bak", "priority": 1, "note": "PL: Nie upuść mnie.", "bark": {"on": "poll", "when": {"carrying": "jozef_bak"}, "max": 1} },
+    { "id": "dlg_m01_147", "speaker": "leon_dudek", "text": "Aqui, atrás do portal da estrada!", "context": "reativa; player.carrying = jozef_bak e dist(aid_position) > 20 m", "priority": 1, "note": "PL: Tu, za portal drogowy!", "bark": {"on": "poll", "when": {"carrying": "jozef_bak", "farFrom": {"point": "aid_position", "m": 20}}, "cooldown": 25, "max": 4} },
+    { "id": "dlg_m01_148", "speaker": "leon_dudek", "text": "Não olhe para a perna. Olhe para mim.", "context": "reativa; finish(rescue_bak)", "priority": 1, "note": "PL: Nie patrz na nogę. Patrz na mnie.", "bark": {"on": "poll", "when": {"done": ["obj_m01_rescue_bak"], "flag": {"m01.bak_status": "rescued_by_player"}}, "max": 1} },
+    { "id": "dlg_m01_149", "speaker": "marek_zielinski", "text": "Bąk está com Dudek. Volte.", "context": "reativa; finish(rescue_bak) + 3 s", "priority": 1, "note": "PL: Bąk u Dudka. Wracaj.", "bark": {"on": "poll", "max": 1, "after": [{"line": "dlg_m01_148", "sec": 3, "window": 20}]} },
+    { "id": "dlg_m01_150", "speaker": "jan_wrona", "text": "{n}. Continuo contando.", "context": "reativa; dlg_m01_049 + 25 s (sem evento novo)", "priority": 2, "note": "PL: [n]. Liczę dalej.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_corridor"], "platoonPassing": true}, "max": 1, "after": [{"line": "dlg_m01_049", "sec": 25, "window": 60}]} },
+    { "id": "dlg_m01_151", "speaker": "marek_zielinski", "text": "Esperamos o Bąk.", "context": "reativa; consumedEvent(east_demolition) e !readiness(west_demolition) só por causa de Bąk", "priority": 1, "note": "PL: Czekamy na Bąka.", "bark": {"on": "poll", "when": {"westWait": true, "clock": [null, "06:36:00"]}, "cooldown": 60, "max": 2} },
+    { "id": "dlg_m01_152", "speaker": "sapper_2", "text": "Acendedor pronto, cabo.", "context": "reativa; readiness(west_demolition) verdadeiro", "priority": 2, "note": "PL: Zapalarka gotowa, panie kapralu.", "bark": {"on": "poll", "when": {"readiness": "evt_m01_west_demolition", "notConsumed": "evt_m01_west_demolition", "clock": [null, "06:36:00"]}, "max": 1} },
+    { "id": "dlg_m01_153", "speaker": "szymon_kowal", "text": "Quieto. Quieto demais.", "context": "reativa; threat.recentFire vazio, threat.inFlight 0 e silêncio aliado (sem ally-fire/npc-shot/player-shot há 15 s)", "priority": 3, "note": "PL: Cicho. Za cicho.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_corridor"], "clock": ["06:11:00", null], "quiet": {"allySec": 20}}, "cooldown": 90, "max": 2, "group": "quiet"} },
+    { "id": "dlg_m01_154", "speaker": "jozef_bak", "text": "Wrona, que horas são?", "context": "reativa; threat.recentFire vazio e silêncio aliado (sem ally-fire/npc-shot/player-shot há 15 s)", "priority": 3, "note": "PL: Wrona, która godzina?", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_repair", "obj_m01_hold_access"], "flag": {"m01.bak_status": "unhurt"}, "notConsumed": "evt_m01_bak_wounded", "quiet": {"allySec": 15}}, "cooldown": 90, "max": 2, "group": "quiet"} }
   ],
   "callouts": {
     "note": "Falas curtas acionadas por eventos reais (Prompt §31). Só tocar quando o evento correspondente acontece de fato; limite de 2 vozes simultâneas; granada/aviso de demolição têm prioridade sobre ambiente.",
     "lines": [
       { "id": "co_m01_enemy_mg_fire_on_squad", "event": "enemy_mg_fire_on_squad", "speaker": "szymon_kowal", "text": "Metralhadora no dique!" },
       { "event": "npc_reloading", "speaker": "any_pl", "text": "Recarregando!" },
-      { "event": "player_reloading_near_ally", "speaker": "jozef_bak", "text": "Cubro você!" },
-      { "event": "ally_hit", "speaker": "any_pl", "text": "Sanitário!" },
-      { "event": "cover_rotation", "speaker": "marek_zielinski", "text": "Mudar! Próxima posição!" },
+      { "event": "player_reloading_near_ally", "speaker": "szymon_kowal", "text": "Cubro você!" },
+      { "id": "co_m01_ally_hit", "event": "ally_hit", "speaker": "any_pl", "text": "Sanitário!", "priority": 1, "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 40}}, "cooldown": 15, "max": 6} },
+      { "id": "co_m01_cover_rotation", "event": "cover_rotation", "speaker": "marek_zielinski", "text": "Mudar! Próxima posição!", "priority": 1, "bark": {"on": "coverRotation", "when": {"node": ["cv_sandbag_*"]}, "cooldown": 20, "unless": [{"line": "dlg_m01_136", "within": 20}, {"line": "dlg_m01_137", "within": 20}, {"line": "dlg_m01_035", "within": 20}]} },
       { "event": "sun_glare_player_facing_east", "speaker": "marek_zielinski", "text": "Tira os olhos do sol!" },
       { "id": "co_m01_enemy_group_suppressed", "event": "enemy_group_suppressed", "speaker": "szymon_kowal", "text": "Deitaram! Continua!" }
     ]
+  },
+  "barks": {
+    "note": "Diálogo reativo (src/game/m01-barks.js, docs/direction/M01_REACTIVE_DIALOGUE.md): cada fala com `bark` diz quando pode ser dita; estes são os limites globais do canal. Prioridade 1 = mais urgente. Cooldowns em segundos de `clock` (tempo real de jogo), nunca no relógio de batalha comprimido.",
+    "voices": 2,
+    "cutAfterSec": 1,
+    "gapSec": {
+      "1": 4,
+      "2": 6,
+      "3": 8
+    },
+    "followGapSec": 2.6,
+    "ttlSec": {
+      "1": 2.5,
+      "2": 5,
+      "3": 8
+    },
+    "budget60": {
+      "1": 8,
+      "2": 7,
+      "3": 5
+    },
+    "anonymous": [
+      "generic_rifleman",
+      "east_platoon_voice",
+      "any_pl"
+    ],
+    "zones": {
+      "gateStrip": {
+        "minX": 1050,
+        "maxX": 1062,
+        "minZ": 5,
+        "maxZ": 35
+      },
+      "gates": {
+        "minX": 1050,
+        "maxX": 1062,
+        "minZ": 21,
+        "maxZ": 35
+      },
+      "wagons": {
+        "minX": 1050,
+        "maxX": 1800,
+        "minZ": -30,
+        "maxZ": 21
+      },
+      "deck": {
+        "minX": 440,
+        "maxX": 1050,
+        "minZ": 25,
+        "maxZ": 55
+      }
+    }
   },
   "continuityFlags": {
     "m01.completed": "boolean",
@@ -1969,12 +2140,20 @@
       { "id": "db_07", "enabled": true, "text": "Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios." }
     ]
   },
+  "pacing": {
+    "note": "Playtest do proprietário (P2). Texto do painel enquanto nenhum objectivo obrigatório está activo; cada pista de continuidade só fala com o seu objectivo activo e com pelo menos 20 s reais entre mensagens (relógio comprimido não inunda a legenda).",
+    "interludes": [
+      { "after": "obj_m01_deliver_message", "until": "evt_m01_bombing_0434", "text": "Mensagem entregue. Fique com o posto — aviões a norte" },
+      { "after": "obj_m01_cover_repair", "until": "evt_m01_order_demolish", "text": "Reparo concluído. Aguarde a ordem com a secção" }
+    ]
+  },
   "continuityCues": [
     {
       "from": "04:46:00",
       "until": "05:30:00",
       "intervalSec": 55,
       "kind": "repair",
+      "requires": "obj_m01_cover_repair",
       "text": "Sapadores na linha. Proteja o reparo; observe os portões de Lisewo."
     },
     {
@@ -1982,6 +2161,7 @@
       "until": "06:00:00",
       "intervalSec": 55,
       "kind": "hold",
+      "requires": "obj_m01_hold_access",
       "text": "Mantenha o acesso. O pelotão leste ainda segura a cabeça de ponte."
     },
     {
@@ -1989,6 +2169,7 @@
       "until": "06:10:00",
       "intervalSec": 45,
       "kind": "withdrawal",
+      "requires": "obj_m01_cover_withdrawal",
       "text": "O pelotão atravessa. Conte os nossos e cubra os últimos homens."
     },
     {
@@ -1996,6 +2177,7 @@
       "until": "06:45:00",
       "intervalSec": 55,
       "kind": "corridor",
+      "requires": "obj_m01_hold_corridor",
       "text": "Mantenha o corredor para oeste livre. Aguarde o sinal dos sapadores."
     }
   ],

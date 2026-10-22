@@ -1,0 +1,9 @@
+/* H9 D5: difficulty selector (menu), pause line and HUD badge. Presentation only. */
+.difficulty-choice{display:grid;gap:8px;font:600 .65rem Arial,sans-serif;letter-spacing:.2em;color:#bcb99f;max-width:460px}
+.difficulty-choice select{background:#242b22;color:#ede4cd;border:1px solid #606650;padding:10px;font:400 .85rem Arial,sans-serif;max-width:100%}
+.difficulty-choice small{font:400 .7rem Arial,sans-serif;letter-spacing:.02em;color:#8f8c76}
+.difficulty-choice.hidden{display:none}
+#pause-difficulty{margin:0;color:#bcb99f;font:600 .75rem Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+#pause-difficulty:empty{display:none}
+#difficulty-badge{display:block;margin-top:4px;font:600 .6rem Arial,sans-serif;letter-spacing:.22em;color:#bcb99f}
+#difficulty-badge:empty{display:none}

@@ -1,0 +1,254 @@
+{
+ "tool": "tools/verification/m01-nav-perf.mjs",
+ "root": "before-tree",
+ "mode": "gc",
+ "node": "v22.22.0",
+ "arch": "x64",
+ "cpus": 4,
+ "loadAverageAtStart": [
+  5.7,
+  5.42,
+  4.83
+ ],
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "ticks": 23839,
+   "tickMs": {
+    "mean": 1.4705,
+    "p50": 0.4042,
+    "p99": 14.9852,
+    "p999": 36.7056,
+    "max": 154.917
+   },
+   "over": {
+    "ms5": 2039,
+    "ms16": 198,
+    "ms50": 14,
+    "ms100": 3
+   },
+   "route": {
+    "calls": 5,
+    "maxPerTick": 1,
+    "totalMs": 144.81,
+    "maxMs": 64.34
+   },
+   "slowest": [
+    {
+     "ms": 154.917,
+     "clock": 746.75,
+     "battle": 22170,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 113.007,
+     "clock": 630.7,
+     "battle": 22119,
+     "routes": 0,
+     "events": [
+      "ally-fire"
+     ]
+    },
+    {
+     "ms": 101.926,
+     "clock": 131.7,
+     "battle": 16664,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 91.177,
+     "clock": 378.35,
+     "battle": 18198,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 81.224,
+     "clock": 13.65,
+     "battle": 16258,
+     "routes": 0,
+     "events": []
+    }
+   ],
+   "allocBytesPerTick": {
+    "sampled": 1191,
+    "mean": 489399,
+    "p50": 325128,
+    "p99": 2996936,
+    "max": 3758112,
+    "discarded": 0
+   },
+   "wallSec": 63
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "ticks": 23051,
+   "tickMs": {
+    "mean": 1.273,
+    "p50": 0.3851,
+    "p99": 13.0676,
+    "p999": 28.2127,
+    "max": 103.754
+   },
+   "over": {
+    "ms5": 1666,
+    "ms16": 115,
+    "ms50": 9,
+    "ms100": 1
+   },
+   "route": {
+    "calls": 5,
+    "maxPerTick": 1,
+    "totalMs": 128.82,
+    "maxMs": 33.82
+   },
+   "slowest": [
+    {
+     "ms": 103.754,
+     "clock": 685.7,
+     "battle": 22170,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 90.355,
+     "clock": 563.3,
+     "battle": 21794,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 89.506,
+     "clock": 544.05,
+     "battle": 21640,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 79.379,
+     "clock": 437.4,
+     "battle": 19758,
+     "routes": 0,
+     "events": []
+    },
+    {
+     "ms": 68.592,
+     "clock": 554.15,
+     "battle": 21721,
+     "routes": 0,
+     "events": []
+    }
+   ],
+   "allocBytesPerTick": {
+    "sampled": 1152,
+    "mean": 496158,
+    "p50": 317840,
+    "p99": 2463232,
+    "max": 4770864,
+    "discarded": 0
+   },
+   "wallSec": 55.7
+  }
+ ],
+ "free": {
+  "walks": 150,
+  "failed": 0,
+  "arrivedTicksTotal": 72031,
+  "ticks": 72031,
+  "tickMs": {
+   "mean": 0.3349,
+   "p50": 0.1212,
+   "p99": 8.2005,
+   "p999": 16.9884,
+   "max": 251.936
+  },
+  "over": {
+   "ms5": 978,
+   "ms16": 96,
+   "ms50": 24,
+   "ms100": 8
+  },
+  "route": {
+   "calls": 50,
+   "maxPerTick": 1,
+   "totalMs": 2193.33,
+   "maxMs": 250.98
+  },
+  "slowest": [
+   {
+    "ms": 251.936,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 166.106,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 140.219,
+    "clock": 10.9,
+    "battle": 16255,
+    "routes": 0,
+    "events": [
+     "checkpoint",
+     "message"
+    ]
+   },
+   {
+    "ms": 126.834,
+    "clock": 0.1,
+    "battle": 16244,
+    "routes": 1,
+    "events": [
+     "checkpoint"
+    ]
+   },
+   {
+    "ms": 120.298,
+    "clock": 3.7,
+    "battle": 16248,
+    "routes": 0,
+    "events": [
+     "checkpoint"
+    ]
+   }
+  ],
+  "allocBytesPerTick": {
+   "sampled": 3601,
+   "mean": 176960,
+   "p50": 166152,
+   "p99": 192976,
+   "max": 13165998,
+   "discarded": 0
+  },
+  "constructionMs": {
+   "mean": 10.153,
+   "p50": 10.832,
+   "max": 23.748
+  },
+  "firstTickMs": {
+   "mean": 4.621,
+   "p50": 2.053,
+   "max": 21.89
+  },
+  "wallSec": 82.7
+ },
+ "loadAverageAtEnd": [
+  6.25,
+  5.91,
+  5.14
+ ]
+}

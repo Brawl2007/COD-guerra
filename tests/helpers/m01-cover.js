@@ -14,6 +14,9 @@ export function coverRoute(seed=19390901,mode='ignore',options={}){
   const watch=()=>{
     for(const id of historic)if(!times[id]&&sim.consumedEvent(`evt_m01_${id}`))times[id]=clockText(sim.battleClock);
     if(sim.active('cover_repair')&&sim.consumedEvent('evt_m01_train963_arrives')){stats.repairUnderFire+=.05;if(sim.threat.mgSuppressed.includes('de_east_0'))stats.repairMgSuppressed+=.05;}
+    // 2026-10-19 (combat slice 2b): ticks with a German of the spans suppressed while the 20 s casualty rule runs (the battle clock before the gate holds it at 06:09:30).
+    if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock<seconds('06:09:30')&&
+      sim.enemies.some(a=>a.group==='grp_de_spans'&&a.alive&&a.suppressedUntil>sim.clock))stats.spansSuppressedWhileRuleRuns=(stats.spansSuppressedWhileRuleRuns??0)+1;
     const alive=sim.enemies.filter(a=>a.alive).length;if(alive<germans&&!sim.consumedEvent('evt_m01_east_demolition'))(stats.germanCasualties??=[]).push(clockText(sim.battleClock));germans=alive;
     const n=sim.flags['m01.east_platoon_survivors'];if(n<survivors)stats.casualties.push(clockText(sim.battleClock));survivors=n;
     if(!stats.repair.end&&sim.done('cover_repair'))stats.repair={...stats.repair,end:clockText(sim.battleClock),realSeconds:+(sim.clock-stats.repair.deliveredAt).toFixed(2),pins:sim.timers.repairPins};
@@ -43,14 +46,14 @@ export function coverRoute(seed=19390901,mode='ignore',options={}){
   walk(-115,27);walk(-28,28);tick({crouch:true});
   wait(()=>sim.active('hold_access'),500);
   tick({crouch:true});
-  walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);
   wait(()=>sim.consumedEvent('evt_m01_germans_on_east_spans'),500);
   if(mode==='help'){walk(38,42.4);lastFlash=null;wait(()=>sim.consumedEvent('evt_m01_east_demolition'),500,cover(f=>f.id.startsWith('de_spans'),()=>sim.threat.spansSuppressed,3.5));}
   wait(()=>sim.consumedEvent('evt_m01_east_demolition'),500);
   stats.survivors=sim.flags['m01.east_platoon_survivors'];
   walk(-15,40);walk(-115,27);walk(-275,27);walk(-292,26);
   wait(()=>sim.consumedEvent('evt_m01_west_demolition'),500);
-  walk(-292,68);walk(-262,70);
+  walk(-263,58);walk(-263,70);
   wait(()=>sim.scene?.id==='cs_m01_roll_call',30);step({skip:true});
   wait(()=>sim.mission.complete,10);
   if(sim.battleClock!==seconds('07:05:00'))throw new Error('Wrong final battle clock');

@@ -31,8 +31,8 @@ test('actors: Low submits fewer skinned bodies and meshes than High for the same
       out[preset]={active:c.stats.active,meshes:c.stats.submittedMeshes,limit:c.stats.limit,bands:[...c.stats.lodBands],preset:c.diagnostics.lodPreset};
     }finally{c.dispose();}
   }
-  assert.deepEqual([out.low.limit,out.medium.limit,out.high.limit],[18,24,28],'skinning budgets 18/24/28 are untouched');
-  assert.deepEqual([out.low.active,out.medium.active,out.high.active],[18,24,28]);
+  assert.deepEqual([out.low.limit,out.medium.limit,out.high.limit],[18,24,48],'skinning budgets: Low/Medium untouched (18/24); High raised 28 -> 48 on 2026-10-18 (playtest-skin-visibility)');
+  assert.deepEqual([out.low.active,out.medium.active,out.high.active],[18,24,40],'High now skins the whole 40-actor crowd');
   assert.ok(out.low.meshes<out.medium.meshes&&out.medium.meshes<out.high.meshes,JSON.stringify(out));
   assert.ok(out.low.meshes>0);
   assert.deepEqual([out.low.preset,out.medium.preset,out.high.preset],['low','medium','high']);

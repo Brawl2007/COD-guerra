@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
-import {seconds} from '../../src/game/m01-simulation.js';
+import {seconds,M01Simulation} from '../../src/game/m01-simulation.js';
 import {M01_BOMBING_BATTLE_SECONDS} from '../../src/world/m01-aircraft-path.js';
 
 let result;
@@ -73,7 +73,11 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
-  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+  // The clip reload is 3.4 s of SIMULATION time (kb_wz29 reloadClipSec) and the loop simulates at most 5 fixed steps (250 ms) per rendered frame (src/game/frame-catchup.js, unchanged
+  // since 5378fb4: dt was already clamped to .25 s), so under software rendering the wait is a frame budget, not seconds. Measured on a shared 4-CPU runner (load 6-7): 0.8-1.2 frames/s,
+  // i.e. 0.2-0.3 s of simulation per real second at 5378fb4 and at 8a978fb alike, so the reload needs 11-17 s of wall time and the old 15 s window failed in the 2026-10-19 integration run.
+  // Same CI budget as waitForBearingFrame/waitForFrameAfterRestore; the expectation itself (the reload ends with 5 in the magazine and 35 in reserve) is unchanged.
+  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:process.env.CI?60000:15000});await expect(page.locator('#reserve')).toHaveText('35');
   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
   await page.screenshot({path:info.outputPath('m01-playing.png')});
@@ -246,6 +250,9 @@ test('missing close-up LOD0 falls back to intact LOD1 hands while the light worl
 });
 test('the station clip alone cannot enable a viewmodel when the required weapon animations fail to download',async({page})=>{
   await page.route('**/m01_soldier_animations.glb',r=>r.abort());
+  // 2026-10-18: the six motion clips (V7) and the clip library V2 (T08: idle variants, fidgets) are separate GLBs that the renderer loads next to the soldier pack; left to download they give
+  // idle/fidget clips to three light actors, so "the station clip alone" needs them to fail too. The viewmodel must still stay off and no soldier may be drawn from the station clip alone.
+  await page.route('**/m01_soldier_motion_clips.glb',r=>r.abort());await page.route('**/m01_soldier_clip_library_v2.glb',r=>r.abort());
   const {errors}=await open(page);await start(page);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
   const data=await page.evaluate(()=>window.gameDiagnostics());
@@ -346,7 +353,10 @@ test('real keyboard movement traverses the approaches and E delivers the message
     await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?150000:45000});
     await page.keyboard.up(code);
   }
-  await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await page.keyboard.up('ShiftLeft');
+  // The route a player can walk: the abutments of both bridges are walls (the old route climbed their faces at x=-15), so go west of them (x=-30), up the
+  // embankment to the rail line (z=3), then east along the track to the forward post. Strafe to z=26 first: a straight line along z=22 meets the crates and
+  // carts at x=-43 (checked with the same keys in Node, 246 ticks door to door).
+  await axis('KeyD','z',26,1);await axis('KeyW','x',-30,1);await page.keyboard.up('ShiftLeft');
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
@@ -361,6 +371,23 @@ test('real keyboard movement traverses the approaches and E delivers the message
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(paused.clock);expect(still.m01.renderedFrames).toBe(paused.m01.renderedFrames);
   await page.screenshot({path:info.outputPath('m01-message-delivered-paused.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('walking off the rail abutment edge in the real game is a fall: gravity, one presented landing, no damage and no console error',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:120000);
+  // The real game, a real key: the abutment top (-0.35 m) ends at x=11.9 and the lowland is 2.65 m below it (outside the trusses, z=8).
+  const sim=new M01Simulation();sim.tick(.05,{skip:true});sim.drainEvents();Object.assign(sim.player,{x:10.9,z:8,y:-.35,angle:0});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.keyboard.down('KeyW');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.bodyFeedback.landings>=1,null,{timeout:process.env.CI?120000:60000});
+  await page.keyboard.up('KeyW');
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.bodyFeedback.landings).toBe(1);
+  expect(data.m01.bodyFeedback.lastSpeed).toBeGreaterThan(6.8);expect(data.m01.bodyFeedback.lastSpeed).toBeLessThan(7.6);   // sqrt(2 g 2.65 m) = 7.21 m/s
+  expect(data.player.y).toBeCloseTo(-3,2);expect(data.player.health).toBe(100);expect(data.player.x).toBeGreaterThan(11.9);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-landed-below-the-abutment.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss':'at the gates'} restores its actual origin and follows mouse look`,async({page},info)=>{
@@ -417,7 +444,14 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // T47: 46 Germans stood at CP-D on the route before the ckm fired. On the candidate #80 the gun felled one of them (de_east_5 after the review fix, so 45). Over the T38 staging it wounds
 // three men on this route since T47 amendment 03 (live.hits 3, live.men.hit; D43) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
 // tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
-const CPD_ENEMIES_ALIVE=46;
+// 2026-10-18: after the combat AI slice 1 integration (golden amendment 07, the route is 19224 ticks and Kowal's rkm bursts changed) the casualties of this route at CP-D are de_east_3 and
+// de_spans_0..3, i.e. 45 alive. Measured on the route's own save with a Node M01Simulation.restoreSnapshot (45 enemies alive); the browser restore must reproduce exactly that.
+// 2026-10-19: the rearguard of combat slice 2b (c9469e6, golden amendment 11) now fells three more men of the deck assault on this route before the demolition: the casualties of the route's CP-D
+// save are de_east_3, de_spans_0..3 and de_spans_7..9, i.e. 42 alive (de_spans_7, 8 and 9 on seed 19390901, the same measurement as tests/m01-german-retreat.test.js). Measured on the route's own
+// save with a Node M01Simulation.restoreSnapshot at 5378fb4..c1a3ecf (45) and c9469e6 / 8a978fb (42); the browser restore must still reproduce exactly the route's casualties, so the pin stays exact.
+// 2026-10-21: the H9 D2 wiring and the 05:35 fill (afaded9, golden amendment 12) change the deck fight of this route: the casualties of the route's CP-D save are now de_east_3 and
+// de_spans_0..4, i.e. 44 alive (de_spans_7..9 survive, de_spans_4 falls). Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot at f446d83 (44).
+const CPD_ENEMIES_ALIVE=44;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});

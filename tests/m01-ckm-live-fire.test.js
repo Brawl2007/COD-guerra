@@ -65,7 +65,7 @@ test('post S2 is confirmed in the production trace: the gate riflemen are in cle
   const s2=evaluateCandidate(win,MUZZLE,{explain:true}),casemate=evaluateCandidate(win,muzzleFlashWorld());
   assert.equal(casemate.productionClearEntries,0,'the pre-T47 casemate muzzle sees no German');
   assert.equal(s2.productionClearEntries,s2.strictClearEntries,'production line == strict: nothing the production trace lets through is a bridge collider');
-  assert.equal(s2.strictClearEntries,271,'D43: was 270 before T47 amendment 03 (the T23 withdrawal cadence counted on landing changes the neutral route after 06:05; re-measured with tools/m01-ckm-fire-arc.mjs, GOLDEN_AMENDMENT_03.json s2Visibility); 214 before the T38 gate places (re-measured when T47 joined the staging, 3c9cab7; tests/m01-ckm-candidate-posts.test.js)');assert.equal(s2.throughBridgeEntries,0);
+  assert.equal(s2.strictClearEntries,255,'combat slice 2 (golden amendment 08, 2026-10-18): was 254; the longer repair and the deck fight move the 20-tick samples, one more distinct entry of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); combat AI slice 1 (golden amendment 07, 2026-10-18): was 275; the repair of the neutral route ends sooner, so the window has fewer distinct entries of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); P2 pacing (golden amendment 06, 2026-10-18): 275 was 271; the hold at 24x moves the 20-tick samples onto other ticks, 4 more distinct (world, actor, eye) entries of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); D43: 271 was 270 before T47 amendment 03 (the T23 withdrawal cadence counted on landing changes the neutral route after 06:05; re-measured with tools/m01-ckm-fire-arc.mjs, GOLDEN_AMENDMENT_03.json s2Visibility); 214 before the T38 gate places (re-measured when T47 joined the staging, 3c9cab7; tests/m01-ckm-candidate-posts.test.js)');assert.equal(s2.throughBridgeEntries,0);
   for(const phase of ['repair','post_repair','withdrawal']){
     assert.deepEqual(s2.phases[phase].strict.ids,Array.from({length:14},(_,i)=>`de_east_${i}`).sort(),phase);
   }
@@ -176,7 +176,10 @@ test('A/B: the same save run twice gives identical events, snapshots and gun sta
 test('the gun draws from its own stream only: with and without it firing at all, the main random state and every other actor are identical tick by tick',{timeout:240000},()=>{
   const {pre}=firstBurst();
   const ghost=new CkmGhostSimulation(),neutral=new CkmNeutralSimulation();ghost.restoreSnapshot(structuredClone(pre));neutral.restoreSnapshot(structuredClone(pre));
-  const strip=s=>{const v=s.snapshot(false);v.actors=v.actors.filter(a=>!a.id.startsWith('ckm_'));delete v.resumeCheckpoint;return v;};
+  // timers.barks is the dialogue director's ledger (src/game/m01-barks.js): what the voices heard, not an actor. It hears the gun by design - an ally-fire is "our side fired" for its
+  // `quiet` condition (timers.barks.seen.allyFire) - so that one memory of the world where the gun shoots is not the one of the world where it never engages. 2026-10-19 (review N4):
+  // only that key is set aside; the rest of the ledger must be the same. The main random state is compared on its own line below.
+  const strip=s=>{const v=s.snapshot(false);v.actors=v.actors.filter(a=>!a.id.startsWith('ckm_'));delete v.resumeCheckpoint;if(v.timers.barks?.seen)delete v.timers.barks.seen.allyFire;return v;};
   let bursts=0;
   for(let i=0;i<700;i++){
     ghost.tick(.05,{crouch:i===0});neutral.tick(.05,{crouch:i===0});
@@ -357,7 +360,11 @@ test('the whole route still completes: all 12 objectives resolve, the scripted b
   assert.deepEqual(sim.checkpointsReached,neutral.checkpointsReached);
   assert.equal(sim.flags['m01.east_platoon_survivors'],neutral.flags['m01.east_platoon_survivors']);
   for(let i=18;i<24;i++)assert.equal(sim.actor('pl_east_'+i).alive,false,`T23 attrition: pl_east_${i} still falls`);
-  assert.equal(sim.battleClock,seconds('07:05:00'));assert.ok(rec.ticks>20000);
+  assert.equal(sim.battleClock,seconds('07:05:00'));
+  // Re-measured on purpose for the P2 pacing (golden amendment 06, 2026-10-18): the hold at 24x shortens this route from 21 888 to 19 410 ticks (GOLDEN_AMENDMENT_06.json newTicks);
+  // the combat AI slice 1 (golden amendment 07, same day) ends the repair sooner: 19 224 ticks (GOLDEN_AMENDMENT_07.json newTicks). The bound still proves the whole route was
+  // flown (no short-circuit), just under the measured length.
+  assert.ok(rec.ticks>19000,`${rec.ticks} ticks`);
 });
 test('the two MG34 gunners are never chosen as a target, but nothing shields them: rounds that pass within 3 m suppress them like any German',{timeout:240000},()=>{
   const {rec,sim,log}=routeFixture(),mg=['de_east_0','de_east_1'];
