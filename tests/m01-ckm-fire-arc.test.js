@@ -78,10 +78,13 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   // Re-measured on purpose for combat slice 2 (golden amendment 08, 2026-10-18): the MG34 pin of 5 s lengthens the repair and the east demolition waits for the deck assault
   // (~220 s more before it), so samples 959 -> 1206, 633 -> 880; enemy samples 30426 -> 42546, 15430 -> 27550. The clear-sample census below is unchanged (135, the same nine
   // targets, nothing before the west demolition).
-  assert.equal(r.samples,1206);assert.equal(r.samplesBeforeEastDemolition,880);
+  // Re-measured on purpose for SP-08 + slice 3 (golden amendment 14, 2026-10-22): after the east demolition the player escorts Dudek with Bąk instead of waiting at the post, and on
+  // this neutral route the delivery (hence the west demolition) comes 3 samples sooner (1206 -> 1203); nothing before the east demolition moved (880).
+  assert.equal(r.samples,1203);assert.equal(r.samplesBeforeEastDemolition,880);
   // Re-measured on purpose for the 05:35 fill (golden amendment 12, 2026-10-19): the dike riflemen also fire at the player at the deck post, the main RNG moves from 05:35 and the
   // deck fight of this route plays out differently (enemy samples 42546 -> 42427, 27550 -> 27431); samples and the clear-sample census below are unchanged (135, the same nine).
-  assert.equal(r.enemySamples,42427);assert.equal(r.enemySamplesBeforeEastDemolition,27431);
+  // Amendment 14 (2026-10-22): the 3 samples fewer after the east demolition take 138 enemy samples with them (42427 -> 42289); before it unchanged (27431), census unchanged.
+  assert.equal(r.enemySamples,42289);assert.equal(r.enemySamplesBeforeEastDemolition,27431);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
   // Re-measured on purpose, with the repo tool, for the NPC navigation round every solid (golden amendment 05, 2026-10-18, phys x npc integration): the west demolition, which waits
   // for every ally west of x -90, is consumed 0.15 s later on this route (movedEvents in docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json) while the

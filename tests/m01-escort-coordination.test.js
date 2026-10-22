@@ -68,7 +68,8 @@ test('control route: Jan counts the platoon one man at a time («passaram X de Y
   const total=o.counts[0].total;assert.ok(total>=12&&total<=18);assert.equal(total,o.sim.flags['m01.east_platoon_survivors']);
   o.counts.forEach((c,i)=>{assert.equal(c.counted,i,'one man at a time');if(i>0)assert.ok(c.clock-o.counts[i-1].clock>=CORRIDOR.countStepSec-1e-6);});
   assert.equal(o.counts.at(-1).counted,total);
-  for(let n=0;n<=total;n++)assert.ok(o.statuses.includes(`Corredor · passaram ${n} de ${total} homens do pelotão leste`),`HUD shows ${n} of ${total}`);
+  // The last man counted ends the count in the same tick (the escort line replaces it), so the HUD shows 0 .. total-1 and the record reaches total.
+  for(let n=0;n<total;n++)assert.ok(o.statuses.includes(`Corredor · passaram ${n} de ${total} homens do pelotão leste`),`HUD shows ${n} of ${total}`);
   const at=id=>o.lines.find(l=>l.id===id)?.clock;
   assert.ok(at('dlg_m01_047')<at('dlg_m01_048')&&at('dlg_m01_048')<at('dlg_m01_049')&&at('dlg_m01_049')<at('dlg_m01_162'),'047, 048, 049, the order');
   assert.deepEqual(o.phases.map(p=>p.phase),['count','escort','done']);
@@ -116,6 +117,7 @@ test('old saves load: a corridor save and a CP-D checkpoint without the new reco
     const old=strip(save);assert.ok(!('corridor' in old.timers)&&!('squad' in old.timers));
     validateM01Snapshot(old);
     const d=driver();d.sim.restoreSnapshot(old);
+    if(d.sim.active('leave_bridge')){d.walk(-115,27);d.walk(-275,27);d.walk(-292,26);}   // CP-D: the route's own way to the firing point
     d.until(()=>d.sim.consumedEvent('evt_m01_west_demolition'),500,()=>corridorControls(d.sim));
     assert.ok(d.sim.timers.squad,`${label}: the squad record started`);
     if(d.sim.corridorTask)d.walk(-292,26);

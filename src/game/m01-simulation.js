@@ -685,6 +685,8 @@ export class M01Simulation {
     if(this.active('leave_bridge')&&dist(p,this.world.point('firing_point'))<12){this.finish('leave_bridge');this.activate('hold_corridor');}
     if(this.active('hold_corridor')&&this.consumedEvent(E('west_demolition')))this.finish('hold_corridor');
     stepCorridor(this);   // SP-08: count, escort (src/game/m01-corridor.js)
+    // Slice 3: the escort may have begun in this very tick (the count is complete): Kowal's end-of-tick posture follows his covering rule at once, as stageSection does after combat.
+    if(this.timers.squad&&this.mission.phase!=='OUTRO'){const k=this.actor('szymon_kowal');if(k.alive&&k.active){this.squadPosture(k);updatePosture(k,this.clock);}}
     if(this.active('reach_shelter')&&this.done('hold_access')&&this.done('hold_corridor')&&dist(p,this.world.point('shelter'))<5)this.finish('reach_shelter');
     if(this.pendingCheckpoint==='cp_m01_b_reorganizacao'&&this.clock-this.consumed[E('bombing_0434')]>=20)this.saveCheckpoint(this.pendingCheckpoint);
     if(this.pendingCheckpoint==='cp_m01_c_engenheiros'&&this.flags['m01.second_raid_state']==='ended')this.saveCheckpoint(this.pendingCheckpoint);
