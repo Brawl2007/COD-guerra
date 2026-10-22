@@ -67,4 +67,48 @@ Cada rota foi corrida duas vezes com o mesmo piloto: com a tabela (a simulação
 
 Nada passa de 1,3 erros-padrão: **o efeito é pequeno e não se distingue do ruído**, como é de esperar de 8,4 s de silêncio numa arma que dispara 8 rondas a cada ≈ 6 s. As duas rotas do golden, uma a uma: controlo 58 → 58 rajadas, acertos 4 → 4, mortes 1 → 0, fixações 529 → 429, 23 746 → 23 557 ticks; apoio 56 → 56 rajadas, acertos 2 → 4, mortes 1 → 0, fixações 413 → 423, 21 660 → 23 030 ticks. Uma rota é caótica (qualquer mudança de tempo move todos os sorteios seguintes dos alemães), por isso uma só rota nada prova: as diferenças por rota vão de −16 a +24 rondas e de −65 a +69 s. **Os invariantes do enredo mantêm-se nas 14 rotas** (`plotEqual`: os mesmos 12 estados de objectivo, CP-A..D, eventos consumidos, bandeiras do enredo, sobreviventes 12 / 18 e 07:05:00 com e sem encravamentos; todas completam).
 
-{{GOLDEN}}
+## Golden: emenda 13 (`ckm-jam`)
+
+Gerada por `node tools/verification/m01-integration-golden-audit.mjs --amendment 13 --write` (x86; nunca editada à mão): o predecessor é a árvore de `4e2588f` (a emenda 12) extraída do git com os seus dados e conduzida pelo piloto vivo (reproduz o golden da emenda 12; soma `d7f6afec…`, a da cadeia). Ficheiros: `tests/fixtures/m01-ckm-jam-gameplay-baseline.json` (o golden, `sourceSha256` `4b3bfda7…`) e `GOLDEN_AMENDMENT_13.json` (a prova passo a passo, este directório). Entradas de jogo que mudaram desde o predecessor: `src/game/m01-simulation.js`, `missions/m01-tczew/mission.json`, `src/game/m01-barks.js`, `src/game/m01-audio-events.js`.
+
+| | Controlo (semente 19390901) | Apoio (semente 7) |
+|---|---|---|
+| 1.ª diferença | tick 6957, 04:58:43 (347,85 s): `actors.86.ckm.phase` do `ckm_gunner`, `fire_burst` → `stoppage` | tick 7002, 04:59:03 (350,10 s): o mesmo caminho |
+| Ticks idênticos antes dela | 6956 (13 blocos de 512) | 7001 (13 blocos de 512) |
+| 1.ª diferença de comportamento (sem o estado da ckm, as falas e os eventos da arma) | tick 6991, 04:58:58: `de_east_9.suppressedUntil` 351,05 → 327,95 (a rajada que o fixaria não existe) | tick 7173, 05:00:20: `de_east_10.crouched` verdadeiro → falso |
+| Ticks | 23 746 → 23 557 | 21 660 → 23 030 |
+| 06:00 (s reais) | 565,8 → 560,5 | 539,0 → 542,7 |
+| Fim (s reais) | 1187,3 → 1177,85 | 1083,0 → 1151,5 |
+| Sobreviventes / vida do jogador | 12 → 12 / 92 → 100 | 18 → 18 / 100 → 84 |
+| Clipping / empilhados | 0 / 0 | 0 / 0 |
+
+A 1.ª diferença está no campo declarado (`$.state|checkpoint.actors.N.ckm|ckmFire`), no instante em que a rajada 14 não sai, e todos os 13 blocos anteriores são os do golden da emenda 12. Dos 26 eventos da missão, 14 mudam de relógio real em cada rota (a rota anda para um lado e para o outro) e **só um muda de relógio de batalha: `evt_m01_repair_complete`** (18 561,6 → 18 490,5 s no controlo, 18 214,65 → 18 264,6 s no apoio), que acontece quando os sapadores acabam e depende de quanto foram picados; os outros 25 mantêm a hora do enredo (04:31:00 … 06:10:00, 06:45:00, 07:00:00). Os mesmos 12 objectivos, CP-A..D, eventos consumidos e 07:05:00 nas duas rotas do golden e nas quatro rotas de invariantes da prova (sementes 3 e 7, controlo e apoio; a do apoio da semente 7 é a do golden): sobreviventes 12 / 18 em todas, relógios reais de fim 1205,5 → 1201,35 e 1153,45 → 1151,2 (semente 3), 1198,75 → 1204,1 e 1083,0 → 1151,5 (semente 7); clipping e empilhados 0.
+
+A cadeia: `tests/m01-animation-contract.test.js` fixa `sourceSha256` à simulação viva, os `inputsSha256` do realizador, dos eventos de áudio e dos dados da missão, o `deltaFields`, a 1.ª diferença (`ckm_gunner`, `.ckm.phase`, `fire_burst` → `stoppage`, dentro da janela de fogo) e a 1.ª diferença de comportamento, e corre as duas rotas tick a tick contra o golden (2 de 2). As emendas 12 e 11 passam a história (o hash de `m01-barks.js` e de `mission.json` fixado nelas é o mesmo nas duas, e já não é o vivo).
+
+## Testes alterados pela emenda (cada um com causa datada no ficheiro)
+
+Nenhuma asserção foi apagada. As que dependiam do tempo de uma rota amostrada foram re-fixadas com o valor medido; as que provam uma propriedade mantêm-se como estavam.
+
+| Ficheiro | O que mudou | Medido | Causa |
+|---|---|---|---|
+| `m01-barks.test.js` | o teste que proibia as palavras *stoppage / encrav / jam* na simulação passa a exigir o contrário; casos de 114 e 115 em `CASES`; dois testes novos | — | a ckm encrava |
+| `m01-ckm-live-fire.test.js` | a cópia de fase pela guarnição inclui `stoppage` e `clearAt` | — | fase nova |
+| `m01-animation-contract.test.js` | emenda 13 viva; 12 e 11 história (o hash de `m01-barks.js` / `mission.json` fixado nelas é igual entre si e já não é o vivo) | — | a emenda |
+| `m01-cover-combat.test.js` (save antigo) | a fixture de save antigo apaga também `mg34Prone` | o save de 06:00 apanha duas MG34 a meio de rajada (relógio 598,0 contra 603,3) | um save sem `enemyFire` não pode ter uma rajada em voo (a postura MG34 é de 15/10, o `enemyFire` de 10/10); o validador recusou com razão a fixture meio antiga |
+| `m01-cover-origin.test.js` (1.º teste) | corre na semente 2, a primeira das sementes auditadas em que a chamada é falada | semente 19390901: chamada às 501,45 s, 3,15 s depois de `dlg_m01_129` (intervalo de 4 s): mensagem no HUD em vez de voz; sementes 2, 3, 4 falam, 19390901, 1 e 5 não | o canal está ocupado em metade dos instantes; o ramo do HUD continua provado pelo teste «when no voice can be said»; as asserções são as mesmas |
+| `m01-cover-threat.test.js` | margem de picadas 10 → 4 | 29 / 41 (folga 12) → 31 / 36 (folga 5) na semente 19390901 | caos de uma só semente: nas 12 sementes auditadas a folga (ignorar − cobrir) é 22,0 (dp 18,0) com e 22,8 (dp 13,9) sem encravamentos, diferença emparelhada −0,8 (e.p. 3,9); `COVER_PINS_12_SEEDS.json` |
+| `m01-damage-decals.test.js` | limite 65 → 58 impactos; a rota corre até a 4.ª bomba | 71 → 64 impactos (3 tiros do jogador, como antes); `raid_0530` cai 1 tick depois de `hold_access` | o primeiro encravamento está dentro da janela e a rota anda 2,3 s; o relógio de batalha chega ao evento das 05:30 a 19 799,99999999992 (era 19 800): o evento consome-se com tolerância e o impacto do raide (`≥ 05:30:00`) não. Ver «Em aberto» |
+| `m01-german-retreat.test.js` | `de_spans_5` → `de_spans_7` (portadores) e `de_spans_6` (registo de recuo) | na rota de controlo `de_spans_5` cai no tabuleiro (x 507) e os dois portadores são `de_spans_6` e `de_spans_7` | amostra de rota, mesmas mutações num homem que de facto carrega |
+
+Ficheiros novos: `tests/m01-ckm-stoppage.test.js` (13 testes), `firstStoppage()` em `tests/helpers/m01-ckm-scenario.js`, dois testes de clips em `m01-ckm-live-presentation.test.js`, o terceiro teste de `tests/browser/m01-ckm-fire.spec.js` (com `tools/verification/playwright-port-4194.config.mjs`), `tools/verification/m01-ckm-jam-audit.mjs` e `tools/verification/m01-ckm-jam-pins-audit.mjs`.
+
+## Verificação
+
+@@VERIFICATION@@
+
+Captura do navegador (`m01-ckm-stoppage-browser.png`, 04:58:52): a legenda «Atirador da ckm: Travou! Recarregar!» a meio do reparo (render por software; prova que o evento chega ao ecrã, não é imagem de qualidade).
+
+## Em aberto
+
+@@OPEN@@

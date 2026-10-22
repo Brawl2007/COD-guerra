@@ -336,9 +336,12 @@ test('the validator accepts the new data and rejects malformed withdrawal data a
     ['REGROUP together with a plan',mid,s=>{span(s,'de_spans_6').state='REGROUP';},/reagrupamento/],
     ['REGROUP on a Pole',mid,s=>{span(s,'marek_zielinski').state='REGROUP';},/reagrupamento/],
     ['a living German carried',mid,s=>{const a=span(s,'de_spans_2');Object.assign(a,{alive:true,health:50});},/transporte alemão|apresentação/],
-    ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_5').fallBack;},/transporte alemão/],
+    // 2026-10-22 re-pin de_spans_5 -> de_spans_7 (golden amendment 13: after the first ckm stoppage, 04:58, the Germans draw the main RNG in another order): on this route de_spans_5 now falls on the deck (x 507) and the
+    // two men who carry are de_spans_6 (de_spans_3) and de_spans_7 (de_spans_2); before, they were de_spans_5 (de_spans_3) and de_spans_6 (de_spans_2). The two mutations are the same
+    // ones, on a man who really carries.
+    ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_7').fallBack;},/transporte alemão/],
     ['a German carried by a Pole',mid,s=>{span(s,'de_spans_2').carriedBy='marek_zielinski';},/transporte alemão/],
-    ['a German carried by a dead man',mid,s=>{span(s,'de_spans_5').alive=false;},/transporte/],
+    ['a German carried by a dead man',mid,s=>{span(s,'de_spans_7').alive=false;},/transporte/],
   ];
   for(const [name,base,alter,pattern] of alterations){
     const bad=structuredClone(base);alter(bad);const raw=structuredClone(bad),target=new M01Simulation(),saved=target.snapshot();
@@ -353,7 +356,8 @@ test('the getter is computed on every read and detached; the plan and the pairs 
   assert.ok(!JSON.stringify(saved).includes('germanWithdrawal'));
   // 2026-10-19 re-pin de_spans_4 -> de_spans_5 (golden amendment 12, the 05:35 fill moves the main RNG): on this route de_spans_4 now falls in the deck fight (x 459), so the
   // retreat record is read on a man who lives to retreat; the record itself is unchanged.
-  assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_5')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
+  // 2026-10-22 re-pin de_spans_5 -> de_spans_6 (golden amendment 13, the ckm stoppages): de_spans_5 now falls on the deck (x 507, dead before the demolition); de_spans_6 retreats and carries.
+  assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_6')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
   assert.deepEqual(restore(sim).germanWithdrawal,sim.germanWithdrawal);
 });
 

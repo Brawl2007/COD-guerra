@@ -67,6 +67,11 @@ test('casualty IDs and rounds in flight survive reload and checkpoint restore; i
 test('legacy schema 2 saves migrate and the six reserve slots stay outside the eighteen-man platoon',()=>{
   const old=structuredClone(scenarios().ignored.combatSnapshots.withdrawal);
   delete old.timers.nextCombatCall;delete old.enemyFire;
+  // 2026-10-22 (ckm stoppage, golden amendment 13): a legacy save has neither enemyFire nor the MG34 posture record. This route's withdrawal save used to fall between two German
+  // bursts; with the stoppages in the timeline it falls with both gate MG34 mid-burst (clock 598.0 against 603.3), and a burst in flight cannot exist without enemyFire, so the
+  // validator rightly rejected the half-legacy fixture ('rajada MG34'). The fixture now strips the posture record too, as a save of that age never had it
+  // (tests/m01-mg34-prone-runtime.test.js strips it the same way).
+  for(const a of old.actors)delete a.mg34Prone;
   for(const a of old.actors.filter(a=>a.group==='grp_east_platoon')){
     Object.assign(a,{active:true,alive:true,health:100,state:'ADVANCE'});
     // T23: the reserve men now fall with recorded hit and death times; a legacy save never had them, and a living man cannot carry a death time.

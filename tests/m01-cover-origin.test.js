@@ -1,15 +1,23 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01Simulation} from '../src/game/m01-simulation.js';
-import {toCoverAdjustment} from './helpers/m01-route.js';
+import {toCoverAdjustment,driver,toRepair} from './helpers/m01-route.js';
 import {newBarkState,barkTrigger,barkChannelOpen} from '../src/game/m01-barks.js';
 
-let flow;
+let flow,spokenFlow;
 const scenario=()=>flow??=toCoverAdjustment();
 const load=snapshot=>{const s=new M01Simulation();s.restoreSnapshot(snapshot);return s;};
+// 2026-10-22 (ckm stoppage, golden amendment 13): the first cover call is spoken only if the dialogue channel is open at that instant, and on half the seeds it is not (seeds 2, 3 and 4
+// speak it; 19390901, 1 and 5 show the HUD message, which is the branch pinned by the test 'when no voice can be said' below). Before the stoppage entered the timeline the default seed
+// happened to have the channel open at clock 506.75; now the call falls at clock 501.45, 3.15 s after dlg_m01_129 (the channel keeps a 4 s gap) and the HUD message is shown instead.
+// The assertions of the first test are unchanged; it needs a route on which a voice can be said, so it runs on seed 2 (same pilot as toCoverAdjustment, which has no seed parameter).
+const spokenScenario=()=>spokenFlow??=(()=>{
+  const d=toRepair(driver(2)),{sim,walk,step,until}=d;
+  walk(-115,27);walk(-26.5,28);step({crouch:true});until(()=>sim.active('hold_access'),500);
+  d.beforeCoverAdjustment=sim.snapshot();until(()=>sim.timers.coverFire,65);return d;})();
 
 test('adjustment warning and HUD identify a real salvo; view direction changes the bearing without changing combat',()=>{
-  const d=scenario(),s=d.sim,fire=s.timers.coverFire;
+  const d=spokenScenario(),s=d.sim,fire=s.timers.coverFire;
   assert.ok(s.enemyFire.rounds.some(r=>r.kind==='cover'&&r.by===fire.by&&r.firedAt===fire.at));
   // The order to change cover is a spoken line (the node of the first rotation, the sandbag, has the generic callout); the HUD message is only what is left when no voice can be said.
   assert.deepEqual(s.dialogueConsumed.filter(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),['co_m01_cover_rotation#1']);

@@ -48,6 +48,10 @@ function repairRoute(instances=[]){
     for(const decals of instances)decals.update({state,time:sim.clock,world:sim.world,trees,quality:'medium',camera:eyePosition(sim.player)});
   }});
   toRepair(d);d.walk(-120,16.5);d.until(()=>d.sim.active('hold_access'),500);
+  // 2026-10-22 (ckm stoppage, golden amendment 13): the 05:30 event fires with a tolerance on the battle clock and the first impact of the raid (raid_0530, at 05:30:00 exactly)
+  // does not. On this timeline the battle clock reaches the event at 19799.99999999992 (it was 19800 before), so the impact lands one tick after hold_access becomes active
+  // and the four scripted bombs below were three at the instant the route used to stop. The route now runs on until the fourth bomb is in the saved damage (0 ticks before, 1 now).
+  d.until(()=>d.sim.sectors.damage.length>=4,5);
   return {sim:d.sim,trees,impacts,playerShots};
 }
 
@@ -98,7 +102,10 @@ test('damage decals never write simulation state: the real repair route stays bi
   // 10 -> 3 pins; rounds landing within 60 m of the player 50 -> 25, cracks past him 55 -> 34 (tools/verification/m01-combat-ai-metrics.mjs nearImpacts.toHoldAccess, 5d99df8
   // against 9cd2aca). The deck assault (combat slice 2, amendment 08) does not reach this window (it begins at 06:05); over the whole route it brings the near rounds back
   // above the old level (whole support route 19390901: within 60 m 50 -> 90, cracks 52 -> 107; 5d99df8 had 78 / 73).
-  assert.ok(fed.impacts>65&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
+  // 2026-10-22 re-pin (ckm stoppage, golden amendment 13): the first stoppage (burst 13, 04:58:43) falls inside this window. The ckm is silent for 3.8 s and the route diverges
+  // from there: hold_access starts 2.3 s later (clock 434.2 against 431.9) and 71 -> 64 impacts reach the decals (3 player shots, as before). Measured with the stoppage hook
+  // disabled in the same tree: 71 again (bit-identical to amendment 12). The bound stays just under the measured count, as at 95 -> 71: 65 -> 58.
+  assert.ok(fed.impacts>58&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
   assert.ok(a.counts.placed>15&&a.marks.length>0&&a.marks.length<=LIMITS.quality.medium.marks,JSON.stringify(a.counts));
   // Two instances fed the same frozen events are identical: variation is a hash of event data, not a random source.
   assert.deepEqual(a.marks.map(markData),b.marks.map(markData));assert.deepEqual(a.counts,b.counts);
