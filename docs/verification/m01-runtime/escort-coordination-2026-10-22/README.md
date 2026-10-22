@@ -61,6 +61,15 @@ Cada homem anda com o `moveActor` da simulação: A* determinista, uma `route()`
 - Node focados: `tests/m01-escort-coordination.test.js`, `m01-barks`, `m01-combat-posture-staging` (re-pin com data: Kowal levanta-se para a cobertura), `m01-ckm-fire-arc` (re-pin com data: 1206 → 1203 amostras, 42427 → 42289), `m01-animation-contract` (emenda 14 viva, 12 histórico), `m01-partials-correction-01`.
 - Browser: `tests/browser/m01-escort-hud.spec.js` (contador «passaram X de Y» no HUD, a subir de um em um; linha e marcador da escolta) e `tests/browser/m01-pacing-hud.spec.js`, em Chromium/SwiftShader na porta 4195.
 
+## Resultados (SHA `10f963bf`)
+
+- `node --test tests/*.test.js`, corrido em duas metades: 830/830 + 641/641 = **1471/1471**.
+- Golden 14 em modo de verificação: `check: identical`.
+- `npm run build`: OK.
+- Browser (Chromium/SwiftShader, porta 4195):
+  - `m01-escort-hud.spec.js`: 2/2.
+  - `m01-pacing-hud.spec.js`: 6/6. Uma primeira corrida deu 4 falhas, todas por timeout de carregamento com a máquina sob carga média de 15 a 20; repetida com a máquina livre, passou.
+
 ## Por fazer
 
 - Playtest humano da escolta e dos lanços.
