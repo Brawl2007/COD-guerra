@@ -1,0 +1,1283 @@
+{
+  "task": "M01-CKM-JAM-V1",
+  "what": "the ckm stoppage table (CKM_STOPPAGES) against the same routes without it; deterministic, no clock, no path",
+  "table": [
+    {
+      "after": 13,
+      "sec": 3.8
+    },
+    {
+      "after": 44,
+      "sec": 4.6
+    }
+  ],
+  "summary": {
+    "routes": 14,
+    "stoppagesPerRoute": {
+      "n": 14,
+      "mean": 2,
+      "sd": 0,
+      "min": 2,
+      "max": 2
+    },
+    "stoppagesInWindow": true,
+    "stoppedRealSec": {
+      "n": 14,
+      "mean": 8.45,
+      "sd": 0,
+      "min": 8.45,
+      "max": 8.45
+    },
+    "withStoppages": {
+      "bursts": {
+        "n": 14,
+        "mean": 56.5,
+        "sd": 3.48,
+        "min": 51,
+        "max": 62
+      },
+      "hits": {
+        "n": 14,
+        "mean": 2.14,
+        "sd": 1.61,
+        "min": 0,
+        "max": 6
+      },
+      "kills": {
+        "n": 14,
+        "mean": 0.14,
+        "sd": 0.36,
+        "min": 0,
+        "max": 1
+      },
+      "pinned": {
+        "n": 14,
+        "mean": 431.07,
+        "sd": 77.7,
+        "min": 304,
+        "max": 535
+      }
+    },
+    "withoutStoppages": {
+      "bursts": {
+        "n": 14,
+        "mean": 57.07,
+        "sd": 2.37,
+        "min": 53,
+        "max": 61
+      },
+      "hits": {
+        "n": 14,
+        "mean": 1.93,
+        "sd": 1.44,
+        "min": 0,
+        "max": 5
+      },
+      "kills": {
+        "n": 14,
+        "mean": 0.29,
+        "sd": 0.47,
+        "min": 0,
+        "max": 1
+      },
+      "pinned": {
+        "n": 14,
+        "mean": 436.21,
+        "sd": 65.72,
+        "min": 342,
+        "max": 529
+      }
+    },
+    "delta": {
+      "bursts": {
+        "n": 14,
+        "mean": -0.57,
+        "sd": 1.7,
+        "min": -2,
+        "max": 3
+      },
+      "rounds": {
+        "n": 14,
+        "mean": -4.57,
+        "sd": 13.57,
+        "min": -16,
+        "max": 24
+      },
+      "hits": {
+        "n": 14,
+        "mean": 0.21,
+        "sd": 1.81,
+        "min": -3,
+        "max": 3
+      },
+      "kills": {
+        "n": 14,
+        "mean": -0.14,
+        "sd": 0.53,
+        "min": -1,
+        "max": 1
+      },
+      "pinned": {
+        "n": 14,
+        "mean": -5.14,
+        "sd": 47.7,
+        "min": -100,
+        "max": 94
+      },
+      "realSec": {
+        "n": 14,
+        "mean": -9.22,
+        "sd": 34.08,
+        "min": -64.9,
+        "max": 68.5
+      }
+    },
+    "allComplete": true,
+    "survivorsEqual": true,
+    "plotEqual": [],
+    "lines": {
+      "l114": 11,
+      "l115": 0,
+      "stoppages": 28
+    },
+    "whatIf115Priority2": {
+      "routes": 2,
+      "l114": 3,
+      "l115": 2,
+      "stoppages": 4
+    }
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "jam": {
+        "seed": 19390901,
+        "support": false,
+        "variant": "jam",
+        "ticks": 23557,
+        "realSec": 1177.8,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 100,
+        "bursts": 58,
+        "rounds": 464,
+        "hits": 4,
+        "kills": 0,
+        "pinned": 429,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:58:43",
+            "clock": 347.85,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 351.65
+          },
+          {
+            "n": 2,
+            "battle": "05:54:40",
+            "clock": 542.15,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 546.8
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 347.85,
+            "stoppage": 1
+          },
+          {
+            "id": "dlg_m01_114",
+            "at": 542.15,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 19390901,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 23746,
+        "realSec": 1187.3,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "bursts": 58,
+        "rounds": 464,
+        "hits": 4,
+        "kills": 1,
+        "pinned": 529,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "whatIf115Priority2": {
+        "seed": 19390901,
+        "support": false,
+        "variant": "p2",
+        "ticks": 23557,
+        "realSec": 1177.8,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 100,
+        "bursts": 58,
+        "rounds": 464,
+        "hits": 4,
+        "kills": 0,
+        "pinned": 429,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:58:43",
+            "clock": 347.85,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 351.65
+          },
+          {
+            "n": 2,
+            "battle": "05:54:40",
+            "clock": 542.15,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 546.8
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 347.85,
+            "stoppage": 1
+          },
+          {
+            "id": "dlg_m01_114",
+            "at": 542.15,
+            "stoppage": 2
+          },
+          {
+            "id": "dlg_m01_115",
+            "at": 546.8,
+            "stoppage": 2
+          }
+        ]
+      },
+      "delta": {
+        "ticks": -189,
+        "realSec": -9.5,
+        "bursts": 0,
+        "rounds": 0,
+        "hits": 0,
+        "kills": -1,
+        "pinned": -100
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "jam": {
+        "seed": 7,
+        "support": true,
+        "variant": "jam",
+        "ticks": 23030,
+        "realSec": 1151.5,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 84,
+        "bursts": 56,
+        "rounds": 448,
+        "hits": 4,
+        "kills": 0,
+        "pinned": 423,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:59:03",
+            "clock": 350.1,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 353.9
+          },
+          {
+            "n": 2,
+            "battle": "06:01:07",
+            "clock": 551.05,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 555.7
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 551.05,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 7,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 21660,
+        "realSec": 1083,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "bursts": 56,
+        "rounds": 448,
+        "hits": 2,
+        "kills": 1,
+        "pinned": 413,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "whatIf115Priority2": {
+        "seed": 7,
+        "support": true,
+        "variant": "p2",
+        "ticks": 23030,
+        "realSec": 1151.5,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 84,
+        "bursts": 56,
+        "rounds": 448,
+        "hits": 4,
+        "kills": 0,
+        "pinned": 423,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:59:03",
+            "clock": 350.1,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 353.9
+          },
+          {
+            "n": 2,
+            "battle": "06:01:07",
+            "clock": 551.05,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 555.7
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 551.05,
+            "stoppage": 2
+          },
+          {
+            "id": "dlg_m01_115",
+            "at": 555.7,
+            "stoppage": 2
+          }
+        ]
+      },
+      "delta": {
+        "ticks": 1370,
+        "realSec": 68.5,
+        "bursts": 0,
+        "rounds": 0,
+        "hits": 2,
+        "kills": -1,
+        "pinned": 10
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 1,
+      "support": false,
+      "jam": {
+        "seed": 1,
+        "support": false,
+        "variant": "jam",
+        "ticks": 23683,
+        "realSec": 1184.1,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "bursts": 57,
+        "rounds": 456,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 455,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:58:36",
+            "clock": 347.1,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 350.9
+          },
+          {
+            "n": 2,
+            "battle": "05:59:08",
+            "clock": 551.55,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 556.2
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 551.55,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 1,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 23763,
+        "realSec": 1188.1,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 52,
+        "bursts": 58,
+        "rounds": 464,
+        "hits": 3,
+        "kills": 0,
+        "pinned": 479,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -80,
+        "realSec": -4,
+        "bursts": -1,
+        "rounds": -8,
+        "hits": -2,
+        "kills": 0,
+        "pinned": -24
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 1,
+      "support": true,
+      "jam": {
+        "seed": 1,
+        "support": true,
+        "variant": "jam",
+        "ticks": 21527,
+        "realSec": 1076.3,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "bursts": 51,
+        "rounds": 408,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 387,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "05:00:37",
+            "clock": 360.5,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 364.3
+          },
+          {
+            "n": 2,
+            "battle": "06:04:45",
+            "clock": 569.9,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 574.55
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": []
+      },
+      "nojam": {
+        "seed": 1,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 22306,
+        "realSec": 1115.3,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "bursts": 53,
+        "rounds": 424,
+        "hits": 0,
+        "kills": 0,
+        "pinned": 395,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -779,
+        "realSec": -39,
+        "bursts": -2,
+        "rounds": -16,
+        "hits": 1,
+        "kills": 0,
+        "pinned": -8
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 2,
+      "support": false,
+      "jam": {
+        "seed": 2,
+        "support": false,
+        "variant": "jam",
+        "ticks": 23971,
+        "realSec": 1198.5,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 100,
+        "bursts": 62,
+        "rounds": 496,
+        "hits": 0,
+        "kills": 0,
+        "pinned": 513,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:57:51",
+            "clock": 342.1,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 345.9
+          },
+          {
+            "n": 2,
+            "battle": "05:45:37",
+            "clock": 539.3,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 543.95
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": []
+      },
+      "nojam": {
+        "seed": 2,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 23423,
+        "realSec": 1171.1,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "bursts": 59,
+        "rounds": 472,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 491,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": 548,
+        "realSec": 27.4,
+        "bursts": 3,
+        "rounds": 24,
+        "hits": -2,
+        "kills": 0,
+        "pinned": 22
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 2,
+      "support": true,
+      "jam": {
+        "seed": 2,
+        "support": true,
+        "variant": "jam",
+        "ticks": 21477,
+        "realSec": 1073.8,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 84,
+        "bursts": 52,
+        "rounds": 416,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 304,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:59:28",
+            "clock": 352.8,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 356.6
+          },
+          {
+            "n": 2,
+            "battle": "06:03:03",
+            "clock": 554.8,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 559.45
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 554.8,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 2,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 21579,
+        "realSec": 1078.9,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "bursts": 54,
+        "rounds": 432,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 387,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -102,
+        "realSec": -5.1,
+        "bursts": -2,
+        "rounds": -16,
+        "hits": 1,
+        "kills": 0,
+        "pinned": -83
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 3,
+      "support": false,
+      "jam": {
+        "seed": 3,
+        "support": false,
+        "variant": "jam",
+        "ticks": 24027,
+        "realSec": 1201.3,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 60,
+        "bursts": 60,
+        "rounds": 480,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 505,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:59:03",
+            "clock": 350.05,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 353.85
+          },
+          {
+            "n": 2,
+            "battle": "05:55:04",
+            "clock": 557.85,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 562.5
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 350.05,
+            "stoppage": 1
+          },
+          {
+            "id": "dlg_m01_114",
+            "at": 557.85,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 3,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 24110,
+        "realSec": 1205.5,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "bursts": 61,
+        "rounds": 488,
+        "hits": 5,
+        "kills": 1,
+        "pinned": 487,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -83,
+        "realSec": -4.2,
+        "bursts": -1,
+        "rounds": -8,
+        "hits": -3,
+        "kills": -1,
+        "pinned": 18
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 3,
+      "support": true,
+      "jam": {
+        "seed": 3,
+        "support": true,
+        "variant": "jam",
+        "ticks": 23024,
+        "realSec": 1151.2,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "bursts": 53,
+        "rounds": 424,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 376,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:58:45",
+            "clock": 348.1,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 351.9
+          },
+          {
+            "n": 2,
+            "battle": "06:02:05",
+            "clock": 559.15,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 563.8
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 559.15,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 3,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 23069,
+        "realSec": 1153.4,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 68,
+        "bursts": 54,
+        "rounds": 432,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 350,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -45,
+        "realSec": -2.2,
+        "bursts": -1,
+        "rounds": -8,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 26
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 4,
+      "support": false,
+      "jam": {
+        "seed": 4,
+        "support": false,
+        "variant": "jam",
+        "ticks": 23153,
+        "realSec": 1157.6,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 76,
+        "bursts": 57,
+        "rounds": 456,
+        "hits": 6,
+        "kills": 1,
+        "pinned": 532,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:57:59",
+            "clock": 343,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 346.8
+          },
+          {
+            "n": 2,
+            "battle": "05:58:03",
+            "clock": 543.9,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 548.55
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 543.9,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 4,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 23511,
+        "realSec": 1175.5,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "bursts": 57,
+        "rounds": 456,
+        "hits": 3,
+        "kills": 1,
+        "pinned": 438,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -358,
+        "realSec": -17.9,
+        "bursts": 0,
+        "rounds": 0,
+        "hits": 3,
+        "kills": 0,
+        "pinned": 94
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 4,
+      "support": true,
+      "jam": {
+        "seed": 4,
+        "support": true,
+        "variant": "jam",
+        "ticks": 22481,
+        "realSec": 1124,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "bursts": 56,
+        "rounds": 448,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 362,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:58:13",
+            "clock": 344.5,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 348.3
+          },
+          {
+            "n": 2,
+            "battle": "05:59:49",
+            "clock": 539.7,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 544.35
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": []
+      },
+      "nojam": {
+        "seed": 4,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 23045,
+        "realSec": 1152.2,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "bursts": 58,
+        "rounds": 464,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 397,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -564,
+        "realSec": -28.2,
+        "bursts": -2,
+        "rounds": -16,
+        "hits": 0,
+        "kills": 0,
+        "pinned": -35
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 5,
+      "support": false,
+      "jam": {
+        "seed": 5,
+        "support": false,
+        "variant": "jam",
+        "ticks": 24047,
+        "realSec": 1202.3,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 84,
+        "bursts": 62,
+        "rounds": 496,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 535,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:59:05",
+            "clock": 350.3,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 354.1
+          },
+          {
+            "n": 2,
+            "battle": "05:49:25",
+            "clock": 555.2,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 559.85
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 555.2,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 5,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 23726,
+        "realSec": 1186.3,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 60,
+        "bursts": 59,
+        "rounds": 472,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 523,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": 321,
+        "realSec": 16,
+        "bursts": 3,
+        "rounds": 24,
+        "hits": -1,
+        "kills": 0,
+        "pinned": 12
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 5,
+      "support": true,
+      "jam": {
+        "seed": 5,
+        "support": true,
+        "variant": "jam",
+        "ticks": 21605,
+        "realSec": 1080.2,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "bursts": 54,
+        "rounds": 432,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 347,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:57:54",
+            "clock": 342.4,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 346.2
+          },
+          {
+            "n": 2,
+            "battle": "06:01:52",
+            "clock": 551.75,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.6,
+            "clearedAt": 556.4
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": []
+      },
+      "nojam": {
+        "seed": 5,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 22902,
+        "realSec": 1145.1,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "bursts": 56,
+        "rounds": 448,
+        "hits": 2,
+        "kills": 0,
+        "pinned": 367,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -1297,
+        "realSec": -64.9,
+        "bursts": -2,
+        "rounds": -16,
+        "hits": 0,
+        "kills": 0,
+        "pinned": -20
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 6,
+      "support": false,
+      "jam": {
+        "seed": 6,
+        "support": false,
+        "variant": "jam",
+        "ticks": 23799,
+        "realSec": 1189.9,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "bursts": 59,
+        "rounds": 472,
+        "hits": 3,
+        "kills": 1,
+        "pinned": 510,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:59:35",
+            "clock": 353.6,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 35.5,
+            "clearedAt": 357.4
+          },
+          {
+            "n": 2,
+            "battle": "05:56:18",
+            "clock": 557.05,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 26.5,
+            "clearedAt": 561.7
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": [
+          {
+            "id": "dlg_m01_114",
+            "at": 557.05,
+            "stoppage": 2
+          }
+        ]
+      },
+      "nojam": {
+        "seed": 6,
+        "support": false,
+        "variant": "nojam",
+        "ticks": 23929,
+        "realSec": 1196.4,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 68,
+        "bursts": 60,
+        "rounds": 480,
+        "hits": 0,
+        "kills": 0,
+        "pinned": 509,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -130,
+        "realSec": -6.5,
+        "bursts": -1,
+        "rounds": -8,
+        "hits": 3,
+        "kills": 1,
+        "pinned": 1
+      },
+      "plotEqual": true
+    },
+    {
+      "seed": 6,
+      "support": true,
+      "jam": {
+        "seed": 6,
+        "support": true,
+        "variant": "jam",
+        "ticks": 21692,
+        "realSec": 1084.6,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "bursts": 54,
+        "rounds": 432,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 357,
+        "stoppages": [
+          {
+            "n": 1,
+            "battle": "04:58:51",
+            "clock": 348.75,
+            "sec": 3.8,
+            "burstsBefore": 13,
+            "playerM": 127.3,
+            "clearedAt": 352.55
+          },
+          {
+            "n": 2,
+            "battle": "06:01:38",
+            "clock": 556.9,
+            "sec": 4.6,
+            "burstsBefore": 44,
+            "playerM": 34.8,
+            "clearedAt": 561.55
+          }
+        ],
+        "stoppedRealSec": 8.45,
+        "lines": []
+      },
+      "nojam": {
+        "seed": 6,
+        "support": true,
+        "variant": "nojam",
+        "ticks": 22882,
+        "realSec": 1144.1,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "bursts": 56,
+        "rounds": 448,
+        "hits": 1,
+        "kills": 0,
+        "pinned": 342,
+        "stoppages": [],
+        "stoppedRealSec": 0,
+        "lines": []
+      },
+      "delta": {
+        "ticks": -1190,
+        "realSec": -59.5,
+        "bursts": -2,
+        "rounds": -16,
+        "hits": 0,
+        "kills": 0,
+        "pinned": 15
+      },
+      "plotEqual": true
+    }
+  ]
+}

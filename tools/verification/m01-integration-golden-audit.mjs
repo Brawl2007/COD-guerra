@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review) and 12 (H9 D2 difficulty wiring + the 05:35 fill) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) and 13 (ckm wz.30 stoppages) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -122,7 +122,9 @@ const AMENDMENTS={
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^pl_east_[0-2]$/},
-  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',after:null,
+  '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',
+    // History since amendment 13 (the ckm stoppages): the difficulty + 05:35 golden pins the simulation of 4e2588f (the integration of PR #91 into the candidate; efb8eb0 on top of it changed the CI workflow only), not the working tree's.
+    after:'4e2588faeb8054cea70f8bd014d3aa0dcd3effba',
     previousGolden:'tests/fixtures/m01-rearguard-gameplay-baseline.json',golden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/difficulty-0535-2026-10-19',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js'],
@@ -139,8 +141,27 @@ const AMENDMENTS={
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
     // Measured (control route): de_east_20 turns to the player at the deck post (facing, 05:38:43, the first key of the man that differs: his ai.target moves in the same tick).
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11 or 12`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|ai\.target)$/,behaviourActors:/^de_east_(1[4-9]|[2-9]\d)$/},
+  '13':{task:'M01-CKM-JAM-V1',delta:'ckm-jam',predecessor:'4e2588faeb8054cea70f8bd014d3aa0dcd3effba',after:null,
+    previousGolden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',golden:'tests/fixtures/m01-ckm-jam-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/ckm-jam-2026-10-22',
+    // The director (triggers and rules of 114 / 115) and the audio-event contract (the two new events) are gameplay inputs of this amendment too; the mission data is already one.
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js'],
+    generationStage:'The ckm wz.30 stops (owner decision 2026-10-22), on the H9 D2 tree: a table (CKM_STOPPAGES) stops the gun instead of the burst it was about to fire, before the 14th burst (3.8 s) and before the 45th (4.6 s); the gunner\'s machine gets a fifth phase, `stoppage`, with its `clearAt`, copied by the loader and the third man; the loader clears it with the authored feed drill, `ckm_stoppage_cleared` says so and the burst follows on that tick; not a round, not a draw from any random stream; new saved state only when it happens (ckmFire.jams, ckm.clearAt); the events ckm_stoppage / ckm_stoppage_cleared and the director rules of lines 114 and 115 on them; golden amendment 13',
+    // Measured on both golden routes: the first lockstep difference is the stoppage itself, the gunner's phase (`ckm.phase`: the predecessor fires the 14th burst, `fire_burst`; the live gun is `stoppage`)
+    // on the tick the gun would have fired it (control tick 6957, 04:58:43; support tick 7002, 04:59:03). Until then the two simulations are byte identical, tick for tick (13 blocks of 512 ticks).
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(ckm|ckmFire)(\.|$)/,
+    // With the gun's own records (ckm, ckmFire of the three men), the dialogue state and the gun's events stripped from both frames (stateOnly), the first BEHAVIOUR difference is the rounds that
+    // are not there: 1.7 s (control, tick 6991) and 8.5 s (support, tick 7173) later, a rifleman of the gate group that the burst would have pinned is not pinned (suppressedUntil of de_east_9, or
+    // the crouched flag that follows it, de_east_10).
+    stateOnly:frame=>{
+      const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];delete st.timers?.barks;
+        for(const a of st.actors??[])if(/^ckm_/.test(a.id)){delete a.ckm;delete a.ckmFire;}strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.filter(e=>!['ally-fire','ckm_stoppage','ckm_stoppage_cleared'].includes(e.type)&&(e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message)));
+      return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(suppressedUntil|crouched)$/,behaviourActors:/^de_east_(\d|1[0-3])$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12 or 13`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);

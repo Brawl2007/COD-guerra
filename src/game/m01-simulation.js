@@ -93,6 +93,16 @@ const migrateT38Staging=(actors,world)=>{
 // (ckm_wz30_gun_fire_burst events.fire 0..0.7 s). Everything below is simulation data: the renderer and the audio only read it.
 export const CKM_BELT=330,CKM_BURST_ROUNDS=8,CKM_INTERVAL=.1,CKM_BURST_SEC=1.3,CKM_FEED_SEC=3.2;
 const CKM_FIRE_FROM=seconds('04:46:00'),CKM_CEASE_AT=seconds('06:09:30');   // 06:09:30 = 30 s before the east demolition, where advanceBattle holds the clock (gate - 30 s)
+// Stoppages (owner decision 2026-10-22, golden amendment 13; docs/verification/m01-runtime/ckm-jam-2026-10-22/README.md). The wz.30 is a Browning M1917 copy fed from a fabric belt: a bad
+// round or a twisted belt stops the gun. A table, not a lottery: the k-th stoppage strikes when the gunner is about to fire the burst after the `after`-th one (he has fired `after` bursts of 8
+// rounds), and the loader clears it in `sec` real seconds: the 3.2 s feed drill of the authored clips (belt tip in, handle back twice, `ready` at 3.0 s) behind a lead in which the gunner calls it.
+// Nothing is drawn, so no random stream moves and every burst keeps the dispersion it had; the only saved state is the phase `stoppage` with its `clearAt`, and `ckmFire.jams` (how many have
+// struck; the key is absent until the first, so every older save loads as it was). A stoppage can only strike where a burst could start, from 04:46:00 to 06:09:30 (CKM_FIRE_FROM, CKM_CEASE_AT);
+// one already under way clears by the clock (at most CKM_STOPPAGE_MAX_SEC later) or gives way to the abandon of the demolition. The two slots: burst 14 (about 04:58, the repair under the MG34s) and burst 45
+// (about 05:54 to 06:01, the end of the hold, three bursts after the belt change of burst 42 so that 112 / 113 and 114 / 115 are two stories); both strike on the two golden routes (58 and 56 bursts).
+export const CKM_STOPPAGES=Object.freeze([{after:13,sec:3.8},{after:44,sec:4.6}].map(s=>Object.freeze(s)));
+const CKM_STOPPAGE_MAX_SEC=5,CKM_STOPPAGE_HOLD=1;   // the longest clearance a record may carry; the gun stays laid this long after clearing, so the burst it was about to fire follows at once
+const CKM_PHASES=Object.freeze(['idle','aim','feed','fire_burst','stoppage']);   // the phases the gunner's machine drives; abandon and retreat belong to the demolition
 const CKM_ENGAGE_SEC=10,CKM_SCAN_MAX=50,CKM_RESCAN_SEC=.5,CKM_AIM_SEC=1.2,CKM_HOLD_SEC=8,CKM_COOLDOWN=[3,7],CKM_TRIES=6;
 // Suppressive area fire at ~1050 m, not aimed fire (game balance, not measured ballistics): the beaten zone floats CKM_AIM_UP over the chest aim of the
 // German answered, with a burst-wide bias and a per-round cone in thousandths (makeRound). Most rounds only pass within NEAR_MISS (3 m) of a German and
@@ -845,16 +855,22 @@ export class M01Simulation {
    * While nobody is engaged the T36 quiet cycle runs unchanged. A German rifleman who fired in the last CKM_ENGAGE_SEC and has a clear line (the
    * production straight line AND the arc, none through a bridge collider) is answered with an 8-round burst (the authored clip), then a
    * cooldown; a spent belt is changed through the feed phase. No new burst starts from 30 s before the east demolition, and none after it.
+   * Stoppage (CKM_STOPPAGES): when the table says the gun is due one, the burst it was about to fire is not fired; the phase is `stoppage` until `clearAt`, the gun silent, the crew
+   * showing the clearance; then `ckm_stoppage_cleared` and, the gun being still laid, the burst follows. Events `ckm_stoppage` / `ckm_stoppage_cleared`; the director says 114 / 115 on them.
    */
   updateCKMGunner(g,retreat){
     // Only a live plan is kept. A typed plan of the old disabled policy (TASK D, older saves; it is inert, never emitted a round) would keep the planning gate
     // below shut for ever, so it goes at the first tick. The save itself still round-trips with it (validateM01Snapshot accepts it).
     if(g?.ckm?.burstPlan&&g.ckm.burstPlan.policy!=='live')delete g.ckm.burstPlan;
-    if(!g||retreat||this.battleClock<CKM_FIRE_FROM||!g.alive||!g.active||!['idle','aim','feed','fire_burst'].includes(g.ckm.phase))return;
+    if(!g||retreat||this.battleClock<CKM_FIRE_FROM||!g.alive||!g.active||!CKM_PHASES.includes(g.ckm.phase))return;
     const f=g.ckmFire??=newCKMFire(this.rng.state),clock=this.clock,p=g.ckm,live=p.burstPlan?.policy==='live';
     // Every phase change keeps the plan of rounds still in flight; the plan is removed when its last round has landed (landCKMRounds).
     const to=(phase,startedAt)=>{g.ckm={phase,startedAt,visible:p.visible,...(g.ckm.burstPlan?.policy==='live'?{burstPlan:g.ckm.burstPlan}:{})};};
-    if(p.phase==='fire_burst'){
+    if(p.phase==='stoppage'){
+      if(clock<p.clearAt)return;   // the loader is clearing it: the gun is silent and nothing else of the machine moves
+      to('aim',clock);f.engagedUntil=Math.max(f.engagedUntil,clock+CKM_STOPPAGE_HOLD);   // still laid on the German: the burst he was about to fire follows below, on this tick
+      this.emit({type:'ckm_stoppage_cleared',by:'ckm_loader',at:clock,origin:ckmMuzzle(),n:f.jams});
+    }else if(p.phase==='fire_burst'){
       if(!live)return;   // a typed plan of the disabled policy: the generic reversion to aim handles it
       this.emitCKMRounds(g);
       if(clock-p.startedAt<CKM_BURST_SEC)return;
@@ -869,11 +885,21 @@ export class M01Simulation {
       const target=this.ckmTarget();
       if(target){
         if(!(clock<f.engagedUntil)){to('aim',clock);f.engagedUntil=clock+CKM_HOLD_SEC;f.nextAt=clock+CKM_AIM_SEC;return;}   // lay the gun first
+        if(this.ckmJamDue(f)){this.startCKMStoppage(g);return;}
         this.startCKMBurst(g,target);return;
       }
       f.nextAt=clock+CKM_RESCAN_SEC;
     }
     if(!firing||!(clock<f.engagedUntil)){const q=ckmQuiet(this.battleClock,clock);if(g.ckm.phase!==q.phase)to(q.phase,q.startedAt);}
+  }
+  /** The next stoppage of the table is due: the gun has fired the bursts it waits for. Also the hook that the tests and the audit switch off to run the same route without stoppages. */
+  ckmJamDue(f){const slot=CKM_STOPPAGES[f.jams??0];return slot!==undefined&&f.bursts>=slot.after;}
+  /** The burst about to start is not fired: the gun stops for the slot's `sec` seconds. No plan is in flight here (the planning gate above), so the phase record has none to keep. */
+  startCKMStoppage(g){
+    const f=g.ckmFire,clock=this.clock,clearAt=clock+CKM_STOPPAGES[f.jams??0].sec;
+    f.jams=(f.jams??0)+1;
+    g.ckm={phase:'stoppage',startedAt:clock,visible:g.ckm.visible,clearAt};
+    this.emit({type:'ckm_stoppage',by:g.id,at:clock,clearAt,origin:ckmMuzzle(),n:f.jams});
   }
   /**
    * The gun is laid on the flash it answered, not on the man's posture of the moment: a rifleman fires standing (T38 gate riflemen rise to shoot), so the
@@ -945,10 +971,11 @@ export class M01Simulation {
       recordSuppression(a,previousUntil,this.clock);this.updateMG34Posture(a);
     }
   }
-  /** Read-only diagnostics of the gun (never saved): phase, belt, cooldown and the burst in progress. */
+  /** Read-only diagnostics of the gun (never saved): phase, belt, cooldown, the stoppages so far (and when the one under way clears) and the burst in progress. */
   get ckm(){
     const g=this.actor('ckm_gunner'),f=g?.ckmFire,b=g?.ckm?.burstPlan;
     return g?{phase:g.ckm.phase,startedAt:g.ckm.startedAt,belt:f?.belt??null,bursts:f?.bursts??null,nextAt:f?.nextAt??null,engagedUntil:f?.engagedUntil??null,
+      jams:f?f.jams??0:null,clearAt:g.ckm.clearAt??null,
       plan:b?.policy==='live'?{target:b.target,emitted:b.emitted,landed:b.landed,rounds:b.rounds,startedAt:b.startedAt}:null}:null;
   }
   updateActors(dt){
@@ -975,17 +1002,19 @@ export class M01Simulation {
         if(a.ckm.phase==='fire_burst'&&!(a.id==='ckm_gunner'?a.ckm.burstPlan?.policy==='live':bursting))a.ckm={phase:'aim',startedAt:this.clock,visible:a.ckm.visible};
         if(a.ckm.burstPlan&&a.ckm.burstPlan.policy!=='live')delete a.ckm.burstPlan;   // an inert typed plan of the old disabled policy never outlives the first tick
         if(!a.alive||!a.active)delete a.ckm.burstPlan;
+        // A man who falls (or leaves the scene) in the middle of a stoppage does not keep a clearance nobody is working: his record goes back to aim, like his plan above.
+        if(a.ckm.phase==='stoppage'&&(!a.alive||!a.active))a.ckm={phase:'aim',startedAt:this.clock,visible:a.ckm.visible};
       }
       a.shot=Math.max(0,a.shot-dt);this.updateMG34Posture(a);if(!a.alive||!a.active)continue;
       if(proneGunner(a)&&a.mg34Prone.phase==='exit')continue;
       if(a.team==='enemy')a.crouched=this.clock<a.suppressedUntil||this.gateKneels(a)||this.deckKneels(a);   // T38: gate riflemen kneel until they rise to shoot; slice 2: so do the deck men in cover
       if(a.group==='grp_ckm_crew'){
         // An unfinished burst plan is dropped here: the crew leaves the gun (no new round is issued after the demolition).
-        if(retreat&&['idle','aim','feed','fire_burst'].includes(a.ckm.phase))a.ckm={phase:'abandon',startedAt:this.clock,visible:a.ckm.visible};
+        if(retreat&&CKM_PHASES.includes(a.ckm.phase))a.ckm={phase:'abandon',startedAt:this.clock,visible:a.ckm.visible};   // (a stoppage under way too: the crew leaves the jammed gun)
         if(!retreat&&this.battleClock>=CKM_FIRE_FROM&&a.id!=='ckm_gunner'){
-          // The gunner's phase (live fire, or the quiet cycle when nobody is engaged) is copied; with the gunner down the old quiet cycle runs alone.
-          const lead=gunner?.alive&&gunner.active&&['idle','aim','feed','fire_burst'].includes(gunner.ckm.phase)?gunner.ckm:ckmQuiet(this.battleClock,this.clock);
-          if(a.ckm.phase!==lead.phase||a.ckm.startedAt!==lead.startedAt)a.ckm={phase:lead.phase,startedAt:lead.startedAt,visible:a.ckm.visible};
+          // The gunner's phase (live fire, a stoppage with its clearAt, or the quiet cycle when nobody is engaged) is copied; with the gunner down the old quiet cycle runs alone.
+          const lead=gunner?.alive&&gunner.active&&CKM_PHASES.includes(gunner.ckm.phase)?gunner.ckm:ckmQuiet(this.battleClock,this.clock);
+          if(a.ckm.phase!==lead.phase||a.ckm.startedAt!==lead.startedAt)a.ckm={phase:lead.phase,startedAt:lead.startedAt,visible:a.ckm.visible,...(lead.clearAt!==undefined?{clearAt:lead.clearAt}:{})};
         }
         if(a.ckm.phase==='abandon'&&this.clock-a.ckm.startedAt>=CKM_ABANDON_SEC)
           a.ckm={phase:'retreat',startedAt:this.clock,visible:a.ckm.visible};
@@ -2126,10 +2155,20 @@ export class M01Simulation {
 
 // T47. The gunner's fire record: own random stream, belt, bursts fired, cooldown and engagement window (all finite and inside what the machine can produce).
 function validateCKMFire(a,s,reject){
-  const f=a.ckmFire,finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max;
-  if(a.id!=='ckm_gunner'||!f||Object.keys(f).length!==5||['rng','belt','bursts','nextAt','engagedUntil'].some(k=>!Object.hasOwn(f,k))||
+  const f=a.ckmFire,finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max,jammed=f?.jams!==undefined;
+  if(a.id!=='ckm_gunner'||!f||Object.keys(f).length!==(jammed?6:5)||['rng','belt','bursts','nextAt','engagedUntil',...(jammed?['jams']:[])].some(k=>!Object.hasOwn(f,k))||
     !Number.isInteger(f.rng)||!finite(f.rng,0,0xffffffff)||!Number.isInteger(f.belt)||!finite(f.belt,0,CKM_BELT)||!Number.isInteger(f.bursts)||f.bursts<0||
-    !finite(f.nextAt,0,s.clock+CKM_BURST_SEC+CKM_COOLDOWN[1]+CKM_FEED_SEC+1)||!finite(f.engagedUntil,0,s.clock+CKM_HOLD_SEC+1e-6))reject('ckm fire record');
+    !finite(f.nextAt,0,s.clock+CKM_BURST_SEC+CKM_COOLDOWN[1]+CKM_FEED_SEC+1)||!finite(f.engagedUntil,0,s.clock+CKM_HOLD_SEC+1e-6)||
+    // `jams` (CKM_STOPPAGES) is absent until the first stoppage, so every save of an earlier build is valid as it is; then it counts the slots struck, each only after the bursts it waits for.
+    (jammed&&(!Number.isInteger(f.jams)||f.jams<1||f.jams>CKM_STOPPAGES.length||f.bursts<CKM_STOPPAGES[f.jams-1].after)))reject('ckm fire record');
+}
+// A stoppage under way (CKM_STOPPAGES): a living man at the gun, from 04:46:00 on, with a clearAt that is one clearance away from its start and still ahead; no burst in the air. The gunner's own
+// record names the slot (his ckmFire.jams) and so the exact clearance; the other two men are a copy of his phase, start and clearAt, never anything of their own.
+function validateCKMStoppage(a,s,reject){
+  const t=a.ckm,f=a.ckmFire,g=s.actors.find(x=>x.id==='ckm_gunner')?.ckm??{},finite=(v,min=0,max=Infinity)=>Number.isFinite(v)&&v>=min&&v<=max;
+  if(!a.alive||!a.active||t.burstPlan!==undefined||s.battleClock<CKM_FIRE_FROM||!finite(t.clearAt,t.startedAt+CKM_FEED_SEC-1e-9,t.startedAt+CKM_STOPPAGE_MAX_SEC+1e-9)||!(s.clock<t.clearAt))reject('ckm stoppage');
+  if(a.id==='ckm_gunner'){if(!f||!Number.isInteger(f.jams)||f.jams<1||!(Math.abs(t.clearAt-t.startedAt-(CKM_STOPPAGES[f.jams-1]?.sec??-1))<=1e-9))reject('ckm stoppage slot');}
+  else if(g.phase!=='stoppage'||g.startedAt!==t.startedAt||g.clearAt!==t.clearAt)reject('ckm stoppage copy');
 }
 // A live burst plan: the 8 rounds of the authored clip, issued in time (emitted) and landed in order (landed); nothing the machine could not have planned.
 function validateCKMLive(a,s,reject){
@@ -2196,14 +2235,16 @@ export function validateM01Snapshot(s){
   for(const a of s.actors)if(CKM_IDS.includes(a.id)||a.ckm!==undefined||a.group==='grp_ckm_crew'){
     const t=a.ckm,i=CKM_IDS.indexOf(a.id);
     if(i<0||a.group!=='grp_ckm_crew'||a.role!==(i<2?'SUPPORT':'RIFLEMAN')||!t||
-      Object.keys(t).some(k=>!['phase','startedAt','visible','burstPlan'].includes(k))||!['idle','aim','feed','fire_burst','abandon','retreat'].includes(t.phase)||
+      Object.keys(t).some(k=>!['phase','startedAt','visible','burstPlan','clearAt'].includes(k))||!['idle','aim','feed','fire_burst','stoppage','abandon','retreat'].includes(t.phase)||
       !finite(t.startedAt,0,s.clock)||typeof t.visible!=='boolean'||
       ['abandon','retreat'].includes(t.phase)&&!finite(s.consumed?.[E('east_demolition')],0,t.startedAt))reject('guarnição ckm');
     if(t.phase==='fire_burst'&&!t.burstPlan&&a.id==='ckm_gunner')reject('ckm burst plan required');   // the other two men copy the gunner's burst without a plan
+    if((t.phase==='stoppage')!==(t.clearAt!==undefined))reject('ckm stoppage clearAt');   // only a stoppage has one
+    if(t.phase==='stoppage')validateCKMStoppage(a,s,reject);
     if(t.burstPlan){
       const b=t.burstPlan;
       if(b.policy==='live')validateCKMLive(a,s,reject);
-      else if(Object.keys(b).some(k=>!['policy','startedAt','rounds','interval','emitted'].includes(k))||b.policy!=='disabled'||b.emitted!==0||!finite(b.startedAt,0,s.clock)||!Number.isInteger(b.rounds)||!finite(b.rounds,4,7)||b.interval!==.075||a.shot!==0||!a.alive||!a.active||['abandon','retreat'].includes(t.phase))reject('ckm disabled burst plan');
+      else if(Object.keys(b).some(k=>!['policy','startedAt','rounds','interval','emitted'].includes(k))||b.policy!=='disabled'||b.emitted!==0||!finite(b.startedAt,0,s.clock)||!Number.isInteger(b.rounds)||!finite(b.rounds,4,7)||b.interval!==.075||a.shot!==0||!a.alive||!a.active||['abandon','retreat','stoppage'].includes(t.phase))reject('ckm disabled burst plan');
     }
     if(a.ckmFire!==undefined)validateCKMFire(a,s,reject);
   }

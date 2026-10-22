@@ -37,7 +37,9 @@ function routeFixture(){
   const result=route(19390901,{Simulation:Recording,onStep:({sim,events})=>{
     rec.ticks++;
     const [g,l,r]=crewOf(sim),f=g.ckmFire,p=g.ckm.phase;
-    if(['idle','aim','feed','fire_burst'].includes(p)&&sim.battleClock>=seconds('04:46:00')&&(l.ckm.phase!==p||r.ckm.phase!==p||l.ckm.startedAt!==g.ckm.startedAt||r.ckm.startedAt!==g.ckm.startedAt))rec.phaseMismatch++;
+    // 2026-10-22 (ckm stoppage, golden amendment 13): the stoppage is a fifth phase the two men copy, with its clearAt (tests/m01-ckm-stoppage.test.js).
+    if(['idle','aim','feed','fire_burst','stoppage'].includes(p)&&sim.battleClock>=seconds('04:46:00')&&(l.ckm.phase!==p||r.ckm.phase!==p||l.ckm.startedAt!==g.ckm.startedAt||r.ckm.startedAt!==g.ckm.startedAt||
+      l.ckm.clearAt!==g.ckm.clearAt||r.ckm.clearAt!==g.ckm.clearAt))rec.phaseMismatch++;
     rec.beltMin=Math.min(rec.beltMin,f.belt);
     if(f.belt>rec.lastBelt)rec.refills++;
     rec.lastBelt=f.belt;

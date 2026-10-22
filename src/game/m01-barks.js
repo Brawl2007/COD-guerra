@@ -1,7 +1,8 @@
 // M01 reactive dialogue: a small deterministic director over the existing dialogue and callout lines (docs/direction/M01_REACTIVE_DIALOGUE.md).
 // There is no second dialogue system: a bark is an ordinary entry of mission.json `dialogue` (or of `callouts.lines`, once it has an id) that carries a `bark` rule,
 // and it is spoken through M01Simulation.line(). The director only decides WHEN a rule's line may be said:
-//   trigger  `on`      an event that M01Simulation.emit() has just recorded (round-impact, ally-fire, player-hit, player-shot, reload, enemy_down_by_player, enemy-fire),
+//   trigger  `on`      an event that M01Simulation.emit() has just recorded (round-impact, ally-fire, player-hit, player-shot, reload, enemy_down_by_player, enemy-fire,
+//                      ckm_stoppage, ckm_stoppage_cleared),
 //                      an explicit call of the simulation (coverRotation, guide), or `poll` (a state read at the end of every tick)
 //   when     {...}     conditions, all of which must hold (the vocabulary below is closed; an unknown name stops the game at load, like a typo in the combat data)
 //   cooldown, max      real seconds on `clock` (never the compressed battle clock) and times per mission; group: lines that alternate and share a cooldown
@@ -21,7 +22,8 @@ const gateIndex=id=>Number(id.slice(id.lastIndexOf('_')+1));
 /** The ckm wz.30 belt and burst length of m01-simulation.js (CKM_BELT, CKM_BURST_ROUNDS), pinned by tests/m01-barks.test.js. */
 export const CKM_BELT_FULL=330,CKM_BURST_ROUNDS_FULL=8;
 const RECENT_MAX=8;
-export const TRIGGERS=Object.freeze(['poll','coverRotation','guide','round-impact','ally-fire','player-hit','player-shot','reload','enemy_down_by_player','enemy-fire']);
+export const TRIGGERS=Object.freeze(['poll','coverRotation','guide','round-impact','ally-fire','player-hit','player-shot','reload','enemy_down_by_player','enemy-fire',
+  'ckm_stoppage','ckm_stoppage_cleared']);   // (the last two: the ckm gun stops and is cleared, 2026-10-22; lines 114 and 115)
 
 /** The saved record (timers.barks). last, recent: when the last line was queued and the last RECENT_MAX ones, scripted or reactive alike (the gap and the 60 s budget count all voices);
  *  at: when each watched line was last said; n: how often each rule line was said; g: per variant group [next member, when the group last spoke];
