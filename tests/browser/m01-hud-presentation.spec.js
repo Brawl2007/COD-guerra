@@ -46,7 +46,9 @@ test('the intro is presented as black screen, typed title card and letterbox; sk
   h=await hud(page);expect(h.cinematic).toBe(false);expect(h.fade).toBe(0);expect(h.banner).toEqual({kind:'new',id:'obj_m01_deliver_message'});
   expect(h.checkpoint).toBeGreaterThan(.9);
   await expect(page.locator('#objective-update')).toContainText('Leve a mensagem e o café ao posto da ponte');
-  await expect(page.locator('#checkpoint-name')).toHaveText('CP-A · Orientação');
+  // 2026-10-22 (integration): the checkpoint card carries the difficulty level since H9 D5 (game.js: `${label} · ${name} · ${level}`; a new game starts on soldado), as tests/browser/m01-difficulty-ui.spec.js
+  // already expects; this assertion kept the text from before the level was on the card. Same assertion, the text the card now has.
+  await expect(page.locator('#checkpoint-name')).toHaveText('CP-A · Orientação · Soldado');
   const d=await page.evaluate(()=>window.gameDiagnostics());
   expect(await page.locator('#objective-text').textContent()).toBe('Leve a mensagem e o café ao posto da ponte');
   expect(await page.locator('#objective-status').textContent()).toBe(d.m01.threat.status);
