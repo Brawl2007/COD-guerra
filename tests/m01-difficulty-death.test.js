@@ -118,8 +118,8 @@ test('death restores CP-C and CP-D on every level (a checkpoint of the recruta r
 });
 
 test('old saves still load: a soldado save without CP-B2 (made before D3) and a legacy save without difficulty; the soldado one gets CP-B2 only when the crate arrives',()=>{
-  const hold=atLevel(phaseStart(1,'hold'),'soldado');
-  assert.deepEqual(hold.checkpointsReached,['cp_m01_a_orientacao','cp_m01_b_reorganizacao']);assert.equal(Object.hasOwn(hold,'resumeCheckpoint'),false);
+  const hold=atLevel(phaseStart(1,'hold'),'soldado');   // the hold phase starts at CP-C (05:34): A, B and C reached, and no CP-B2 (this save is of a recruta route re-levelled, as a pre-D3 soldado save would be)
+  assert.deepEqual(hold.checkpointsReached,['cp_m01_a_orientacao','cp_m01_b_reorganizacao','cp_m01_c_engenheiros']);assert.equal(Object.hasOwn(hold,'resumeCheckpoint'),false);
   const sim=new M01Simulation(5);assert.deepEqual(sim.loadCheckpoint(text(hold)),{ok:true});assert.equal(sim.difficulty,'soldado');
   for(let i=0;i<200;i++)sim.tick(STEP,{});validateM01Snapshot(sim.snapshot());assert.ok(!sim.checkpointsReached.includes(M01_CHECKPOINT_B2));
   // a soldado save made while the repair was running (CP-B2 never saved): loads, plays, no CP-B2 appears (the crate was delivered long before)
