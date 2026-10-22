@@ -23,7 +23,8 @@ const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'
   objective:$('#objective-text'),objectiveStatus:$('#objective-status'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
   weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair'),hitMarker:$('#hit-marker'),
   root:hudRoot,objectivePanel:$('#objective'),objectiveUpdate:$('#objective-update'),checkpointName:$('#checkpoint-name'),status:$('#status'),ammo:$('#ammo'),
-  rounds:$('#rounds'),lowHealth:$('#low-health'),fade:$('#fade'),titleCard:$('#title-card'),resumeCard:$('#resume-card')};
+  rounds:$('#rounds'),lowHealth:$('#low-health'),fade:$('#fade'),titleCard:$('#title-card'),resumeCard:$('#resume-card'),
+  death:$('#death-beat'),deathCause:$('#death-cause'),deathNote:$('#death-note')};   // H9 D5: the death beat is painted by Game from real time
 let game,touchState;
 $('#difficulty').value=M01_DIFFICULTY_NEW_GAME;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
@@ -32,6 +33,14 @@ function showDifficulty(){const id=game.difficulty;$('#pause-difficulty').textCo
 const newGame=()=>game.restartMission(game.isM01?$('#difficulty').value:undefined);
 function stateChanged(state,detail){
   if(touchState){const live=state==='playing';touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
+  if(state!=='death-offer')$('#death-offer').classList.add('hidden');
+  if(state==='death-offer'){   // H9 D5: repeated deaths at one checkpoint; the simulation is not ticked until the player chooses
+    pause.classList.add('hidden');complete.classList.add('hidden');$('#death-offer').classList.remove('hidden');
+    $('#death-offer-text').textContent=`Caiu ${detail.deaths} vezes em ${detail.card}. Pode tentar de novo no mesmo nível ou continuar daqui em nível mais baixo (o nível nunca sobe a meio da missão).`;
+    $('#death-lower').textContent=`CONTINUAR EM NÍVEL MAIS BAIXO · ${M01_DIFFICULTY_LABELS[detail.to].toUpperCase()}`;
+    $('#death-retry').textContent=`TENTAR DE NOVO · ${M01_DIFFICULTY_LABELS[game.difficulty].toUpperCase()}`;
+    return;
+  }
   if(state==='menu'){
     menu.classList.remove('hidden');pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.add('hidden');
     $('#continue').classList.toggle('hidden',!game.hasSave);return;
@@ -97,6 +106,9 @@ try{
   });
   $('#resume').addEventListener('click',()=>game.resume());
   $('#restart-checkpoint').addEventListener('click',()=>game.restartCheckpoint());
+  $('#death-lower').addEventListener('click',()=>game.continueLowerLevel());
+  $('#death-retry').addEventListener('click',()=>game.restartCheckpoint());
+  $('#death-menu').addEventListener('click',()=>{game.deathOffer=null;game.menu();});
   $('#back-menu').addEventListener('click',()=>game.menu());
   $('#replay').addEventListener('click',()=>{complete.classList.add('hidden');hudRoot.classList.remove('hidden');newGame();});
   $('#complete-menu').addEventListener('click',()=>game.menu());

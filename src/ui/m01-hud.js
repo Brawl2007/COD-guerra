@@ -20,6 +20,15 @@ export const HUD_TIMING=Object.freeze({
 /** Speed of sound used for every delayed M01 sound (m/s). */
 /** H9 D5: pt-PT names of the three difficulty levels (the ids are the simulation's; this is presentation only). */
 export const M01_DIFFICULTY_LABELS=Object.freeze({recruta:'Recruta',soldado:'Soldado',veterano:'Veterano'});
+/**
+ * H9 D5, the death beat (presentation only, REAL seconds: the simulation is not ticked while it runs). sec = how long; offerAfterDeaths = deaths at one checkpoint after which a level above
+ * recruta is offered the next lower level. deathBeatFrame(age) = how black the screen is (full in 0.45 s) and how visible the cause text is (in from 0.3 s, out over the last 0.4 s).
+ */
+export const DEATH_BEAT=Object.freeze({sec:2.5,fadeInSec:.45,textFrom:.3,textInSec:.35,textOutSec:.4,offerAfterDeaths:3});
+export function deathBeatFrame(age){
+  const T=DEATH_BEAT;if(!(age>=0))return {black:0,text:0};
+  return {black:ramp(age,0,T.fadeInSec),text:ramp(age,T.textFrom,T.textFrom+T.textInSec)*(1-ramp(age,T.sec-T.textOutSec,T.sec))};
+}
 export const SOUND_SPEED=343;
 /** Impacts of the player's own shot closer than this are heard at once; farther ones arrive after distance/343 s. */
 export const PLAYER_IMPACT_DELAY_FROM=60;

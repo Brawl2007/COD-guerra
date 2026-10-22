@@ -4,7 +4,8 @@ import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
-import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
+import { M01HudPresenter, playerImpactSoundPlan, M01_DIFFICULTY_LABELS, DEATH_BEAT, deathBeatFrame } from '../ui/m01-hud.js';
+import { lowerLevelOf } from './m01-difficulty.js';
 import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
@@ -26,12 +27,13 @@ export class Game {
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
     this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];this.playSoundBound=sound=>this.playSound(sound);
+    this.deathBeat=null;this.deathOffer=null;this.deaths={};   // H9 D5: presentation of a death the simulation decided (never saved); deaths = a session counter per checkpoint id
     const listen=(target,type,callback)=>{target.addEventListener(type,callback);this.listeners.push(()=>target.removeEventListener(type,callback));};
     listen(window,'resize',()=>{this.renderer.resize();this.m01Hud.resize();});
     listen(window,'blur',()=>this.pause());
     listen(document,'visibilitychange',()=>{if(document.hidden)this.pause();});
     listen(document,'pointerlockchange',()=>{
-      if(document.pointerLockElement===canvas&&this.started&&!document.hidden){this.paused=false;this.canvas.focus();this.audio.init();this.onState('playing');}
+      if(document.pointerLockElement===canvas&&this.started&&!document.hidden&&!this.deathOffer){this.paused=false;this.canvas.focus();this.audio.init();this.onState('playing');}
       else if(this.started)this.pause();
     });
     listen(document,'pointerlockerror',()=>{this.pause();this.onState('control-error');});
@@ -50,7 +52,7 @@ export class Game {
     this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
-    this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();
+    this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();this.endDeathBeat();this.deathOffer=null;this.deaths={};
     this.m01Hud.clear();this.m01Hud.reset('new',this.sim.clock);
     if(this.isM01)this.renderer.prepareM01();this.onState('menu');
   }
@@ -73,15 +75,50 @@ export class Game {
     try{const request=this.canvas.requestPointerLock();request?.catch(()=>{this.pause();this.onState('control-error');});}
     catch{this.pause();this.onState('control-error');}
   }
-  resume(){if(!this.started||this.sim.mission.complete)return;this.audio.init();this.input.clear();this.requestControl();}
+  resume(){if(!this.started||this.sim.mission.complete||this.deathOffer)return;this.audio.init();this.input.clear();this.requestControl();}
   pause(){
     this.paused=true;this.input.clear();this.audio.suspend?.();
-    if(this.started&&!this.sim.mission.complete)this.onState('paused');
+    if(this.started&&!this.sim.mission.complete)this.onState(this.deathOffer?'death-offer':'paused',this.deathOffer??undefined);
   }
   restartCheckpoint(){
-    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;this.m01Hud.reset('restore',this.sim.clock);
+    this.endDeathBeat();this.deathOffer=null;
+    this.sim.restoreCheckpoint();this.afterRestore();
+  }
+  afterRestore(){
+    this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;this.m01Hud.reset('restore',this.sim.clock);
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
+  }
+  /**
+   * H9 D5, the death beat. The simulation decided the death (`player-down`: cause and shooter in the event, `failure` in the sim); this only PRESENTS it: for DEATH_BEAT.sec of real time the
+   * simulation is not ticked (like a menu), the screen fades to black over the cause, then the next tick restores the checkpoint as it always did. A session counter per checkpoint id
+   * (not saved) counts the deaths; from DEATH_BEAT.offerAfterDeaths at the same checkpoint on a level above recruta the player is offered the next lower level (never a higher one).
+   */
+  beginDeathBeat(event){
+    const at=this.sim.respawn,id=at?.id??'?',n=this.deaths[id]=(this.deaths[id]??0)+1,lower=lowerLevelOf(this.sim.difficulty);
+    const card=at?`${at.label} · ${at.name} · ${M01_DIFFICULTY_LABELS[this.sim.difficulty]}`:'';
+    this.deathBeat={age:0,text:event.text,cause:event.cause,by:event.by,checkpoint:id,card,deaths:n,offer:lower&&n>=DEATH_BEAT.offerAfterDeaths?{to:lower,deaths:n,checkpoint:id,card}:null};
+    this.input.clear();
+    const h=this.hud;if(h?.deathCause)h.deathCause.textContent=event.text;if(h?.deathNote)h.deathNote.textContent=card?`A retomar em ${card}`:'';
+    this.paintDeathBeat();
+  }
+  paintDeathBeat(){
+    const e=this.hud?.death;if(!e?.style)return;const f=this.deathBeat?deathBeatFrame(this.deathBeat.age):{black:0,text:0};
+    e.style.setProperty('opacity',f.black.toFixed(3));e.style.setProperty('--death-text',f.text.toFixed(3));
+  }
+  /** Real seconds of the beat while the game runs (not paused); at its end the offer (if any) pauses the game on the offer screen, else the next frame ticks and the simulation restores. */
+  stepDeathBeat(dt){
+    const b=this.deathBeat;b.age+=dt;
+    if(b.age<DEATH_BEAT.sec-1e-9){this.paintDeathBeat();return;}   // (tolerance: fifty 50 ms frames add up to 2.499999999999999)
+    const offer=b.offer;this.endDeathBeat();
+    if(offer){this.deathOffer=offer;if(typeof document!=='undefined'&&document.pointerLockElement===this.canvas)document.exitPointerLock();this.pause();}
+  }
+  endDeathBeat(){this.deathBeat=null;this.paintDeathBeat();}
+  /** "Continuar em nível mais baixo": the simulation restores the checkpoint it would have restored, as a save of the lower level (it refuses a level that is not lower); the save keeps it. */
+  continueLowerLevel(){
+    const offer=this.deathOffer;if(!offer||!this.isM01)return false;
+    this.sim.lowerDifficulty(offer.to);
+    this.deaths={};this.endDeathBeat();this.deathOffer=null;this.persistCheckpoint();this.afterRestore();return true;
   }
   get difficulty(){return this.isM01?this.sim.difficulty:null;}
   /** H9 D5: the UI only passes the chosen level; the simulation owns it. A different level means a fresh M01Simulation (same seed), as in selectMission. */
@@ -90,7 +127,7 @@ export class Game {
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
-    this.renderer.resetEffects();this.resume();
+    this.renderer.resetEffects();this.endDeathBeat();this.deathOffer=null;this.deaths={};this.resume();
   }
   menu(){
     this.pause();this.started=false;this.input.clear();
@@ -99,8 +136,10 @@ export class Game {
   }
   loop(now){
     if(this.disposed)return;
-    const dt=Math.min(.25,Math.max(0,(now-this.last)/1000));this.last=now;
-    if(this.started&&!this.paused&&!document.hidden&&(this.touch||document.pointerLockElement===this.canvas)){
+    const elapsed=Math.max(0,(now-this.last)/1000),dt=Math.min(.25,elapsed);this.last=now;
+    const live=this.started&&!this.paused&&!document.hidden&&(this.touch||document.pointerLockElement===this.canvas);
+    if(live&&this.deathBeat)this.stepDeathBeat(Math.min(1,elapsed));   // H9 D5: the death beat runs on REAL time (a slow frame does not stretch it to 0.25 s per frame; one frame counts 1 s at most) and the simulation is not ticked
+    else if(live){
       const controls={lookX:this.input.consumeLook(),lookY:this.input.consumeLookY(),
         forward:this.input.forwardAxis(),
         side:this.input.sideAxis(),
@@ -111,12 +150,12 @@ export class Game {
       // M01 catches up a slow rendered frame with bounded physics steps in this same loop (at most 5 steps = 250 ms of simulation per frame;
       // the rest of a long frame is dropped, so one hitch cannot snowball). Single-press actions and relative look are consumed once, never once per substep.
       let remaining=frameSimBudget(dt,this.isM01),first=true,stop=false;
-      while(remaining>1e-7&&!this.paused){
+      while(remaining>1e-7&&!this.paused&&!this.deathBeat){
         const step=Math.min(SIM_STEP,remaining);
         this.sim.tick(step,controls);
         if(first){controls.lookX=0;controls.lookY=0;controls.fire=false;controls.reload=false;controls.grenade=false;controls.interact=false;controls.skip=false;controls.crouch=false;controls.sight=false;}   // tick() keeps no reference to controls
         const events=this.sim.drainEvents();
-        for(let i=0;i<events.length;i++){this.handleEvent(events[i]);if(events[i].type==='restored')stop=true;}
+        for(let i=0;i<events.length;i++){this.handleEvent(events[i]);if(events[i].type==='restored'||events[i].type==='player-down')stop=true;}
         remaining-=step;first=false;if(stop||this.sim.mission.complete)break;
       }
       // Due sounds play in this same pass; the rest is compacted in place (no filter() arrays per frame). playSound never touches pendingSounds.
@@ -260,10 +299,11 @@ export class Game {
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();
-      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name}`,this.sim.clock);
+      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name} · ${M01_DIFFICULTY_LABELS[this.sim.difficulty]}`,this.sim.clock);   // H9 D5: the level on the card
     }
+    if(event.type==='player-down')this.beginDeathBeat(event);   // H9 D5: the loop stops ticking until the beat ends
     if(event.type==='restored'){
-      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
+      this.endDeathBeat();this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
     }
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
@@ -301,6 +341,7 @@ export class Game {
     this.hud.vignette.classList.toggle('hit',now<this.hitUntil);
   }
   get diagnostics(){return structuredClone({...this.renderer.diagnostics,audio:this.audio?.diagnostics??null,missionId:this.sim.missionId,difficulty:this.difficulty,clock:this.sim.clock,paused:this.paused,
+    death:{beat:this.deathBeat?{age:this.deathBeat.age,text:this.deathBeat.text,cause:this.deathBeat.cause,checkpoint:this.deathBeat.checkpoint,deaths:this.deathBeat.deaths}:null,deaths:{...this.deaths},offer:this.deathOffer},
     missionPhase:this.sim.mission.phase,complete:this.sim.mission.complete,
     player:{x:this.player.x,y:this.player.y,z:this.player.z,angle:this.player.angle,pitch:this.player.pitch,health:this.player.health,crouched:Boolean(this.player.crouched),aiming:Boolean(this.player.aiming)},
     sectors:this.sim.sectors.sectors.map(s=>({...s})),eventIds:this.isM01?Object.keys(this.sim.consumed):[...this.sim.sectors.consumed],

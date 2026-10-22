@@ -1141,6 +1141,52 @@
       "neverSaveIf": "bombas ainda caindo (menos de 20 s depois de evt_m01_bombing_0434)"
     },
     {
+      "id": "cp_m01_b2_reparo",
+      "label": "CP-B2",
+      "name": "Reparo",
+      "trigger": { "objective": "obj_m01_cover_repair" },
+      "player": { "position": null, "positionPolicy": "current", "facing": [1, 0, 0] },
+      "clock": "current",
+      "clockNote": "relógio no momento do salvamento: o instante em que o material chega aos sapadores e obj_m01_cover_repair fica activo (entre 04:4x e 04:5x)",
+      "difficultyPolicy": "só em soldado e veterano (H9 D3, docs/direction/H9_DIFICULDADE.md secção 4); em recruta este ponto de controlo não existe e a rota fica byte a byte a de hoje",
+      "restore": {
+        "eventsConsumed": [
+          "evt_m01_intro_card",
+          "evt_m01_prelude_start",
+          "evt_m01_railway_worker_report",
+          "evt_m01_planes_heard",
+          "evt_m01_bombing_0434",
+          "evt_m01_forward_post_bombed",
+          "evt_m01_nowicki_lost",
+          "evt_m01_cable_cut",
+          "evt_m01_wounded_dragged"
+        ],
+        "eventsConsumedByClock": "mais os eventos de relógio cuja hora já passou à data do salvamento (evt_m01_second_air_pass 04:40, evt_m01_train963_arrives 04:45, evt_m01_panzerzug_arrives 04:52)",
+        "objectives": {
+          "done": [
+            "obj_m01_deliver_message",
+            "obj_m01_take_cover",
+            "obj_m01_follow_sergeant",
+            "obj_m01_find_sappers",
+            "obj_m01_fetch_material"
+          ],
+          "active": ["obj_m01_cover_repair"]
+        },
+        "actors": "sapadores no segundo corte (repair_site_2) com o reparo a começar (progresso abaixo de 1 %); Nowicki 'missing'; ferido de S3 no posto de socorro; demais vivos",
+        "destruction": ["forward_post_state (conforme m01.forward_post_state)", "craters_embankment", "station_wagon_fire", "dented_mug_on_ground"],
+        "sectors": {
+          "s1_west_bridgehead": "repair_under_fire",
+          "s2_east_bridgehead": "firefight",
+          "s3_station_yard": "aid_post",
+          "s4_north_perimeter": "quiet",
+          "s5_sky_east": "train_smoke_east"
+        },
+        "loadout": "munição e granadas do momento do salvamento; vida a 100 (HP do checkpoint de soldado e veterano)",
+        "flags": ["m01.forward_post_state"]
+      },
+      "neverSaveIf": "o jogador ainda leva a caixa dos sapadores (só no instante em que a entrega a activa) ou o nível é recruta"
+    },
+    {
       "id": "cp_m01_c_engenheiros",
       "label": "CP-C",
       "name": "Proteção dos engenheiros",

@@ -22,12 +22,14 @@ const DESIGN={
   recruta:{id:'recruta',woundChance:{exposed:.2,cover:.06},woundDamage:8,burstWoundCap:null,aimErrorScale:1,cooldownScale:1,
     rifleGateEastThreshold:.5,spansPickPlayerThreshold:.25,deEast0Repair:{share:0,withinSappersM:8},coverAdjustSalvoSec:42,reactionGraceSec:null,
     healing:null,hpOnCheckpoint:null,kowalRounds:30,loadout,bombsLethal:false},
-  soldado:{id:'soldado',woundChance:{exposed:.45,cover:.15},woundDamage:25,burstWoundCap:1,aimErrorScale:.85,cooldownScale:.9,
-    rifleGateEastThreshold:.35,spansPickPlayerThreshold:.3,deEast0Repair:{share:.3,withinSappersM:8},coverAdjustSalvoSec:30,reactionGraceSec:1.5,
+  // 2026-10-22 (H9 D3/D4 recalibration, owner decision): soldado and veterano are re-set to the section 6 bars (tools/verification/m01-danger-sweep.mjs); the D2 rows were
+  // soldado .45/.15, 25, aim .85, cooldown .9, grace 1.5 and veterano .8/.3, 40, aim .55, cooldown .7, regen 3/s after 10 s. recruta is unchanged.
+  soldado:{id:'soldado',woundChance:{exposed:1,cover:.06},woundDamage:34,burstWoundCap:1,aimErrorScale:.35,cooldownScale:.5,
+    rifleGateEastThreshold:.35,spansPickPlayerThreshold:.3,deEast0Repair:{share:.3,withinSappersM:8},coverAdjustSalvoSec:30,reactionGraceSec:1.2,
     healing:{ratePerSec:5,afterUnhitSec:8,cap:100},hpOnCheckpoint:100,kowalRounds:30,loadout,bombsLethal:false},
-  veterano:{id:'veterano',woundChance:{exposed:.8,cover:.3},woundDamage:40,burstWoundCap:1,aimErrorScale:.55,cooldownScale:.7,
+  veterano:{id:'veterano',woundChance:{exposed:1,cover:.08},woundDamage:50,burstWoundCap:1,aimErrorScale:.35,cooldownScale:.5,
     rifleGateEastThreshold:.25,spansPickPlayerThreshold:.4,deEast0Repair:{share:.5,withinSappersM:8},coverAdjustSalvoSec:20,reactionGraceSec:.8,
-    healing:{ratePerSec:3,afterUnhitSec:10,cap:100},hpOnCheckpoint:100,kowalRounds:15,loadout,bombsLethal:false}
+    healing:null,hpOnCheckpoint:100,kowalRounds:15,loadout,bombsLethal:false}   // 2026-10-22 owner decision (D35 section 7 item 2): veterano has NO regeneration (was 3/s after 10 s in the D2 calibration)
 };
 const frozenDeep=(v,path='table')=>{
   if(v&&typeof v==='object'){assert.ok(Object.isFrozen(v),path+' is frozen');for(const [k,item] of Object.entries(v))frozenDeep(item,path+'.'+k);}
@@ -43,7 +45,7 @@ test('the level table equals the approved design table exactly and is deeply fro
   assert.throws(()=>{M01_DIFFICULTY.soldado.woundChance.exposed=0;},TypeError);
   assert.throws(()=>{M01_DIFFICULTY.veterano.healing={};},TypeError);
   assert.throws(()=>{M01_DIFFICULTY_IDS.push('lenda');},TypeError);
-  assert.equal(M01_DIFFICULTY.soldado.woundDamage,25);assert.equal(M01_DIFFICULTY.veterano.kowalRounds,15);
+  assert.equal(M01_DIFFICULTY.soldado.woundDamage,34);assert.equal(M01_DIFFICULTY.veterano.kowalRounds,15);   // 2026-10-22: 34 (was 25 in D2), see DESIGN above
 });
 
 test('the shipped design document is the approved copy and states the same table values',()=>{
@@ -51,10 +53,11 @@ test('the shipped design document is the approved copy and states the same table
   assert.match(doc,/^Desenho aprovado pelo Captain \(D35, ao abrigo de D34\)\. Implementação faseada D1–D5\./);
   const row=name=>doc.split('\n').find(line=>line.startsWith('| '+name));
   const cells=name=>{const line=row(name);assert.ok(line,name);return line.split('|').slice(2,5).map(c=>c.trim());};
-  assert.deepEqual(cells('Wound chance on collision, exposed / in cover (585)'),['.20 / .06','.45 / .15','.80 / .30']);
-  assert.deepEqual(cells('Damage per wound (587)'),['8','25 (4 wounds)','40 (3 wounds)']);
-  assert.deepEqual(cells('Aim error ×'),['1.0','0.85','0.55']);
-  assert.deepEqual(cells('Cooldown × for fire at the west bank (478–492, 502)'),['1.0','0.90','0.70']);
+  // 2026-10-22: the recalibrated rows (see DESIGN above); the document table carries the same numbers.
+  assert.deepEqual(cells('Wound chance on collision, exposed / in cover (585)'),['.20 / .06','1.00 / .06','1.00 / .08']);
+  assert.deepEqual(cells('Damage per wound (587)'),['8','34 (3 wounds)','50 (2 wounds)']);
+  assert.deepEqual(cells('Aim error ×'),['1.0','0.35','0.35']);
+  assert.deepEqual(cells('Cooldown × for fire at the west bank (478–492, 502)'),['1.0','0.50','0.50']);
   assert.deepEqual(cells('Rifle gate shooters: east-only threshold `r()<.5` (488)'),['.50','.35','.25']);
   assert.deepEqual(cells('Spans pick player `r()<.25` (504)'),['.25','.30','.40']);
   assert.deepEqual(cells('Cover-adjust salvo after N s in one cover (700, 707)'),['42','30','20']);

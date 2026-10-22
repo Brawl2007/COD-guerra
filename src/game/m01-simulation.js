@@ -5,7 +5,8 @@ import { TczewWorld } from '../world/tczew-world.js';
 import { movePlayer } from '../world/m01-player-physics.js';
 import { M01Navigator, NAV, playerSolidsForNav } from '../world/m01-navigation.js';
 import { Wz29 } from './wz29.js';
-import { M01_DIFFICULTY, M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT, oddsWeight, M01_WEST_BANK_KINDS, M01_AIMED_AT_PLAYER_KINDS, F1_TELEGRAPH_GAP_SEC, BURST_GROUP_SEC } from './m01-difficulty.js';
+import { M01_DIFFICULTY, M01_DIFFICULTY_IDS, M01_DIFFICULTY_SIM_DEFAULT, oddsWeight, M01_WEST_BANK_KINDS, M01_AIMED_AT_PLAYER_KINDS, F1_TELEGRAPH_GAP_SEC, BURST_GROUP_SEC,
+  M01_CHECKPOINT_B2, checkpointApplies, deathText } from './m01-difficulty.js';
 import { Random } from '../core/random.js';
 import { eyePosition, aimDirection, muzzlePosition, traceShot, traceObstruction, rayBox } from '../world/spatial.js';
 import { makeRound, traceRound, closestApproach, roundPoint, validRound, NEAR_MISS, ATTRITION_VICTIM, ARC_K, ROUND_SPEED } from './m01-fire.js';
@@ -634,7 +635,9 @@ export class M01Simulation {
       this.actors.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active).forEach((a,i)=>{a.target={x:site.x-1.5-i*1.2,y:site.y,z:site.z+1+i%2};});}
     if(this.active('fetch_material')&&interact){
       if(!p.carrying&&dist(p,this.world.point('rail_hut'))<5){p.carrying='sapper_crate';this.message('Material recolhido. Leve a caixa aos sapadores.');}
-      else if(p.carrying==='sapper_crate'&&dist(p,this.world.point('repair_site_2'))<6){p.carrying=null;this.finish('fetch_material');this.activate('cover_repair');this.line('dlg_m01_024');}
+      else if(p.carrying==='sapper_crate'&&dist(p,this.world.point('repair_site_2'))<6){p.carrying=null;this.finish('fetch_material');this.activate('cover_repair');this.line('dlg_m01_024');
+        // H9 D3: the repair is the first hard phase and CP-B (04:38) lies before find_sappers and fetch_material, so soldado and veterano save CP-B2 here (below, at the end of this tick); recruta does not.
+        if(checkpointApplies(M01_CHECKPOINT_B2,this.difficulty))this.pendingCheckpoint=M01_CHECKPOINT_B2;}
     }
     if(this.active('cover_repair')){
       const repair=this.objectives[O('cover_repair')];
@@ -679,6 +682,7 @@ export class M01Simulation {
     if(this.active('hold_corridor')&&this.consumedEvent(E('west_demolition')))this.finish('hold_corridor');
     if(this.active('reach_shelter')&&this.done('hold_access')&&this.done('hold_corridor')&&dist(p,this.world.point('shelter'))<5)this.finish('reach_shelter');
     if(this.pendingCheckpoint==='cp_m01_b_reorganizacao'&&this.clock-this.consumed[E('bombing_0434')]>=20)this.saveCheckpoint(this.pendingCheckpoint);
+    if(this.pendingCheckpoint===M01_CHECKPOINT_B2)this.saveCheckpoint(this.pendingCheckpoint);   // H9 D3: soldado and veterano only (it is set above only for them)
     if(this.pendingCheckpoint==='cp_m01_c_engenheiros'&&this.flags['m01.second_raid_state']==='ended')this.saveCheckpoint(this.pendingCheckpoint);
     if(this.consumedEvent(E('east_demolition'))&&p.x<-20&&!p.carrying&&!(this.battleClock>=seconds('06:36:00')&&p.x>=-90))this.saveCheckpoint('cp_m01_d_retirada');
     const active=definition.objectives.find(o=>o.required&&this.objectives[o.id].state==='active');
@@ -1616,15 +1620,30 @@ export class M01Simulation {
    */
   woundPlayer(r){
     const p=this.player,L=this.level;
-    if(L===M01_DIFFICULTY.recruta){p.health=Math.max(0,p.health-L.woundDamage);p.alive=p.health>0;this.emit({type:'player-hit'});return;}
+    if(L===M01_DIFFICULTY.recruta){p.health=Math.max(0,p.health-L.woundDamage);p.alive=p.health>0;this.emit({type:'player-hit'});if(!p.alive)this.playerDown('shot',r.by,r.weapon);return;}
     if(L.burstWoundCap!==null){
       const b=this.timers.burstWound,same=b&&b.by===r.by&&Math.abs(r.firedAt-b.at)<=BURST_GROUP_SEC+1e-9;
       if(same&&b.n>=L.burstWoundCap)return;   // the cap: the round still struck (impact, crack, suppression), it does not wound again
       this.timers.burstWound=same?{by:b.by,at:b.at,n:b.n+1}:{by:r.by,at:r.firedAt,n:1};
     }
     let health=Math.max(0,p.health-L.woundDamage);
-    if(health<=0&&L.reactionGraceSec!==null){const e=this.timers.telegraph?.[r.by];if(!e||r.firedAt-e.first<L.reactionGraceSec-1e-9)health=1;}
+    if(health<=0&&L.reactionGraceSec!==null){const e=this.timers.telegraph?.[r.by];if(!e||r.firedAt-e.first<L.reactionGraceSec-1e-9)health=1;}   // F1
+    if(health<=0&&this.scene)health=1;   // F4 (H9 D4): no lethal wound while a cutscene is playing (rounds do land during cs_m01_order, the bombing and the blast scenes); soldado and veterano only
     p.health=health;p.alive=health>0;this.timers.lastHitAt=this.clock;this.emit({type:'player-hit'});
+    if(!p.alive)this.playerDown('shot',r.by,r.weapon);
+  }
+  /**
+   * H9 F5 (D3/D4): the player is down. `failure` carries the cause and the shooter (the restore of the next tick shows it as a message, like the fall and the river did before) and one
+   * `player-down` event tells the presentation, which shows the death beat WITHOUT ticking the simulation; the simulation has already decided: the next tick restores the checkpoint.
+   * No draw, no state beyond `failure` (never saved: a snapshot is always of a living player).
+   */
+  playerDown(cause,by=null,weapon=null){
+    this.failure=deathText(cause,by,weapon);this.emit({type:'player-down',cause,by,text:this.failure});
+  }
+  /** What the next tick restores (H9 D5, the death beat and the checkpoint card): the last checkpoint reached, from the saved respawn point. */
+  get respawn(){
+    const id=this.checkpoint?.checkpointsReached?.at(-1)??null,cp=id&&this.definition.checkpoints.find(c=>c.id===id);
+    return cp?{id,label:cp.label,name:cp.name,difficulty:this.checkpoint.difficulty??M01_DIFFICULTY_SIM_DEFAULT}:null;
   }
   /** H9 D2 rule F1 bookkeeping (soldado/veterano only, draw-free): a shooter's rounds of kind player/cover open or extend his engagement of the player. */
   noteTelegraph(a,kind,rounds,interval){
@@ -1751,7 +1770,8 @@ export class M01Simulation {
         if(a.alive&&a.active&&distance<8&&this.world.lineOfSight({...g,space:'metres',eyeHeight:.04},a)){
           const health=a.health,wasAlive=a.alive;
           a.health=Math.max(0,a.health-(1-distance/8)*100);a.alive=a.health>0;
-          if(a!==this.player){recordDamage(a,health,wasAlive,this.clock,g);if(wasAlive&&!a.alive)this.enemyDown(a,'grenade');}}
+          if(a!==this.player){recordDamage(a,health,wasAlive,this.clock,g);if(wasAlive&&!a.alive)this.enemyDown(a,'grenade');}
+          else if(wasAlive&&!a.alive)this.playerDown('grenade');}   // F5: his own grenade
       }}
     }this.grenades.active=this.grenades.active.filter(g=>g.fuse>0);
     for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
@@ -1766,7 +1786,8 @@ export class M01Simulation {
     const countdown=Math.max(0,Math.ceil(b.outOfBoundsGraceSec-this.timers.boundary));
     if(out&&countdown!==this.timers.boundaryCountdown){this.timers.boundaryCountdown=countdown;this.message(`Você se afastou da sua secção. Volte em ${countdown} s.`);}
     if(this.timers.boundary>=b.outOfBoundsGraceSec||this.timers.water>=8){
-      this.failure=this.timers.water>=8?'Você caiu no Vístula.':'Você se afastou da sua secção.';this.player.alive=false;
+      const was=this.player.alive,cause=this.timers.water>=8?'water':'bounds';this.player.alive=false;
+      if(was)this.playerDown(cause);else this.failure=deathText(cause);   // F5: 'Você caiu no Vístula.' / 'Você se afastou da sua secção.' (the event once, the text as before)
     }
   }
   tick(dt,controls={}){
@@ -1840,7 +1861,7 @@ export class M01Simulation {
     const p=this.player,{speed,drop,damage,surface,x,y,z}=landing;
     if(damage>0){p.health=Math.max(0,p.health-damage);p.alive=p.health>0;if(this.level.healing)this.timers.lastHitAt=this.clock;}
     this.emit({type:'player-landing',speed,drop,damage,surface,point:{x,y,z}});
-    if(!p.alive)this.failure='Você caiu de uma altura fatal.';
+    if(!p.alive)this.playerDown('fall');   // 'Você caiu de uma altura fatal.' (F5: the event after player-landing)
     else if(damage>0)this.message(`Queda dura: -${damage} de vida.`);
   }
   /** 04:35:30: Dudek reaches the station casualty, drags him to the aid point, then returns to his bridge post. */
@@ -2121,7 +2142,31 @@ export class M01Simulation {
     Object.assign(this,candidate);return true;
   }
   restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
+  /**
+   * H9 D5, "continuar em nível mais baixo" after repeated deaths at one checkpoint: the checkpoint the next tick would restore is restored as a save of the lower level `to` (strictly
+   * lower than this simulation's: a running mission is never made harder), and becomes its respawn point. The presentation only asks; the simulation re-levels (relevelSnapshot).
+   */
+  lowerDifficulty(to){
+    if(!M01_DIFFICULTY_IDS.includes(to)||M01_DIFFICULTY_IDS.indexOf(to)>=M01_DIFFICULTY_IDS.indexOf(this.difficulty))throw new RangeError(`Nível M01 não é mais baixo: ${String(to)} (agora ${this.difficulty})`);
+    return this.restoreSnapshot(relevelSnapshot(this.checkpoint,to));
+  }
   loadCheckpoint(text){try{if(typeof text!=='string'||text.length>1000000)throw new Error('Ficheiro ausente ou demasiado grande.');this.restoreSnapshot(JSON.parse(text));return {ok:true};}catch(error){return {ok:false,error:error.message};}}
+}
+
+/**
+ * H9 D5: the snapshot `raw` as a save of the LOWER (or the same) level `to`; pure, `raw` is not touched, and the result is for restoreSnapshot (which validates it). What depends on the
+ * level in a save: the key `difficulty` (omitted on recruta, as snapshot() does), Kowal's pool (timers.kowalRounds counts down from the level's pool, so the rounds already taken stay
+ * taken: veterano 15 -> soldado 30 gives back 15 rounds of the pool) and the state only soldado and veterano write (timers.lastHitAt, burstWound, telegraph: the validator rejects them on
+ * recruta). A checkpoint reached on a harder level (CP-B2) stays reached. Raising the level is refused.
+ */
+export function relevelSnapshot(raw,to){
+  const s=clone(raw),from=M01_DIFFICULTY[s.difficulty??M01_DIFFICULTY_SIM_DEFAULT],target=M01_DIFFICULTY[to];
+  if(!target||M01_DIFFICULTY_IDS.indexOf(to)>M01_DIFFICULTY_IDS.indexOf(from.id))throw new RangeError(`Nível M01 não é mais baixo: ${String(to)} (a gravação é ${from.id})`);
+  if(to===M01_DIFFICULTY_SIM_DEFAULT)delete s.difficulty;else s.difficulty=to;
+  if(s.timers&&'kowalRounds' in s.timers)s.timers.kowalRounds+=target.kowalRounds-from.kowalRounds;
+  if(to===M01_DIFFICULTY_SIM_DEFAULT&&s.timers)for(const k of ['lastHitAt','burstWound','telegraph'])delete s.timers[k];
+  if(s.resumeCheckpoint)s.resumeCheckpoint=relevelSnapshot(s.resumeCheckpoint,to);
+  return s;
 }
 
 // T47. The gunner's fire record: own random stream, belt, bursts fired, cooldown and engagement window (all finite and inside what the machine can produce).

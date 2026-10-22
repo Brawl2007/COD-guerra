@@ -1,0 +1,307 @@
+{
+ "tool": "tools/verification/m01-danger-sweep.mjs",
+ "note": "tabela da D2 (efb8eb00) com o mesmo auxiliar e os mesmos cenários",
+ "levels": {
+  "recruta": {
+   "pooled": {
+    "exposed/recruta": {
+     "runs": 24,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "verdict": {
+      "ok": true,
+      "why": "0 deaths of 24"
+     }
+    },
+    "covered/recruta": {
+     "runs": 24,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "verdict": {
+      "ok": true,
+      "why": "0 deaths of 24"
+     }
+    }
+   },
+   "summary": {
+    "exposed/repair/recruta": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 1,
+     "collisionsMedian": 6,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 deaths of 12"
+     }
+    },
+    "covered/repair/recruta": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 0,
+     "collisionsMedian": 2,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 deaths of 12"
+     }
+    },
+    "exposed/hold/recruta": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 2,
+     "collisionsMedian": 10,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 deaths of 12"
+     }
+    },
+    "covered/hold/recruta": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 0,
+     "collisionsMedian": 5,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 deaths of 12"
+     }
+    }
+   }
+  },
+  "soldado": {
+   "pooled": {
+    "exposed/soldado": {
+     "runs": 24,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "verdict": {
+      "ok": false,
+      "why": "median TTD Infinity s (band 15-25), 0 deaths of 24"
+     }
+    },
+    "covered/soldado": {
+     "runs": 24,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "verdict": {
+      "ok": true,
+      "why": "0 runs died before 120 s (min Infinity s), 0 deaths of 24"
+     }
+    }
+   },
+   "summary": {
+    "exposed/repair/soldado": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 6,
+     "collisionsMedian": 14,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": false,
+      "why": "median TTD Infinity s (band 15-25), 0 deaths of 12"
+     }
+    },
+    "covered/repair/soldado": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 0,
+     "collisionsMedian": 3,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 runs died before 120 s (min Infinity s), 0 deaths of 12"
+     }
+    },
+    "exposed/hold/soldado": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 4,
+     "collisionsMedian": 15,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": false,
+      "why": "median TTD Infinity s (band 15-25), 0 deaths of 12"
+     }
+    },
+    "covered/hold/soldado": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 1,
+     "collisionsMedian": 6,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 runs died before 120 s (min Infinity s), 0 deaths of 12"
+     }
+    }
+   }
+  },
+  "veterano": {
+   "pooled": {
+    "exposed/veterano": {
+     "runs": 24,
+     "deaths": 23,
+     "medianTtd": 40.9,
+     "minTtd": 12.85,
+     "verdict": {
+      "ok": false,
+      "why": "median TTD 40.9 s (band 8-12), 23 deaths of 24"
+     }
+    },
+    "covered/veterano": {
+     "runs": 24,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "verdict": {
+      "ok": true,
+      "why": "0 runs died before 60 s (min Infinity s), 0 deaths of 24"
+     }
+    }
+   },
+   "summary": {
+    "exposed/repair/veterano": {
+     "runs": 12,
+     "deaths": 12,
+     "medianTtd": 48.9,
+     "minTtd": 23.75,
+     "maxTtd": 191.9,
+     "diedWalking": 0,
+     "woundsMedian": 5,
+     "collisionsMedian": 9,
+     "lethalWounds": 12,
+     "f1": {
+      "minEngagedFor": 1.025,
+      "maxSinceTelegraph": 0,
+      "lethalInCutscene": 0,
+      "gapSec": 6
+     },
+     "killers": {
+      "de_east_0": 4,
+      "de_east_1": 6,
+      "de_east_5": 1,
+      "de_east_8": 1
+     },
+     "verdict": {
+      "ok": false,
+      "why": "median TTD 48.9 s (band 8-12), 12 deaths of 12"
+     }
+    },
+    "covered/repair/veterano": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 1,
+     "collisionsMedian": 6,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 runs died before 60 s (min Infinity s), 0 deaths of 12"
+     }
+    },
+    "exposed/hold/veterano": {
+     "runs": 12,
+     "deaths": 11,
+     "medianTtd": 40.9,
+     "minTtd": 12.85,
+     "maxTtd": 153.75,
+     "diedWalking": 0,
+     "woundsMedian": 4,
+     "collisionsMedian": 9,
+     "lethalWounds": 11,
+     "f1": {
+      "minEngagedFor": 1.4,
+      "maxSinceTelegraph": 0,
+      "lethalInCutscene": 0,
+      "gapSec": 6
+     },
+     "killers": {
+      "de_east_0": 5,
+      "de_east_1": 5,
+      "de_east_8": 1
+     },
+     "verdict": {
+      "ok": false,
+      "why": "median TTD 40.9 s (band 8-12), 11 deaths of 12"
+     }
+    },
+    "covered/hold/veterano": {
+     "runs": 12,
+     "deaths": 0,
+     "medianTtd": "no death within the limit",
+     "minTtd": null,
+     "maxTtd": null,
+     "diedWalking": 0,
+     "woundsMedian": 3,
+     "collisionsMedian": 10,
+     "lethalWounds": 0,
+     "f1": null,
+     "killers": {},
+     "verdict": {
+      "ok": true,
+      "why": "0 runs died before 60 s (min Infinity s), 0 deaths of 12"
+     }
+    }
+   }
+  }
+ }
+}
