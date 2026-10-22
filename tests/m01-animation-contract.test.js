@@ -55,10 +55,16 @@ import difficulty0535 from './fixtures/m01-difficulty-0535-gameplay-baseline.jso
 // M01-H9-D3-D4-DEATH-V1 (golden amendment 13, 2026-10-22, branch wp1-difficulty): H9 D3/D4 and the rest of D5. Every death has a cause and one player-down event, CP-B2 "Reparo" exists on soldado
 // and veterano only, no lethal wound in a cutscene on those two levels (F4), lowerDifficulty re-levels a checkpoint to a lower level, veterano has no regeneration (owner decision) and the soldado /
 // veterano rows are recalibrated. recruta, the level of these routes, keeps every number and writes no new key, so the amendment moves the source lock and the inputs and NOT ONE TICK of either route
-// (identical, like amendment 09). The difficulty + 05:35 golden above is history since then (it pins the simulation of efb8eb00); the golden of the live simulation, regenerated on x86 by
-// tools/verification/m01-integration-golden-audit.mjs --amendment 13 after its lockstep audit against that exact predecessor, is this one.
+// (identical, like amendment 09). The difficulty + 05:35 golden above is history since then (it pins the simulation of efb8eb00); the D3/D4 golden, regenerated on x86 by
+// tools/verification/m01-integration-golden-audit.mjs --amendment 13 after its lockstep audit against that exact predecessor, is history since amendment 14 (it pins the simulation of 3eb21b38).
 import difficultyD3D4 from './fixtures/m01-difficulty-d3-d4-gameplay-baseline.json' with {type:'json'};
-const current=difficultyD3D4;   // the golden of the live simulation
+// M01-SP08-ESCORT-COORDINATION-V1 (golden amendment 14, 2026-10-22, branch wp3-escort, owner order «Corrigir a escolta SP-08 e a coordenação dos soldados»): the corridor becomes a task
+// (count, escort of Dudek with Bąk under real fire, Zieliński's head beat; B4 unchanged) and the section falls back by bounds with callouts (slice 3). The H9 D3/D4 golden above
+// is history since then (it pins the simulation of 3eb21b38, candidate #80 + WP1); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs
+// --amendment 14 after its lockstep audit against that exact predecessor, is this one. (Written first as amendment 14 against amendment 12 at 4e2588fa, then re-based at integration onto the amendment 13 tree.)
+import escort from './fixtures/m01-escort-coordination-gameplay-baseline.json' with {type:'json'};
+const ESCORT_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,ESCORT_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 14, as measured
+const current=escort;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -414,8 +420,9 @@ test('the rearguard golden (amendment 11) chains to the dialogue golden, pins th
   // History since amendment 12 (H9 D2 + the 05:35 fill): this golden pins the simulation of a59c129, not the live one.
   assert.equal(rearguard.sourceSha256,'fc818782531d6c643330ad0bf2d6de608211f6c27e6b74798ad4ee3298da0dbf','the rearguard golden pins the simulation of a59c129');
   assert.notEqual(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the rearguard golden is history: amendment 12 moved the simulation');
-  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
-  // 2026-10-22 (golden amendment 13): the mission data is no longer compared with the live file, which gained the CP-B2 entry; amendment 12 did not touch it, so both goldens pin the same bytes.
+  // 2026-10-22 (amendment 14): the director (new trigger squadMove and its lines) moved; the rearguard and deck modules did not.
+  for(const f of ['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
+  // 2026-10-22 (golden amendments 13 and 14): the mission data is no longer compared with the live file, which gained the CP-B2 entry and the squad lines; amendment 12 did not touch it, so both goldens pin the same bytes.
   assert.equal(rearguard.inputsSha256['missions/m01-tczew/mission.json'],difficulty0535.inputsSha256['missions/m01-tczew/mission.json'],'and the mission data is the one the difficulty golden pins');
   // The first difference is B1's new sighting record of a gate rifleman (ai.seen, 04:45:16, de_east_2 sees the player); with the new state stripped (the dialogue state, ai.seen,
   // the rearguard's records), the first BEHAVIOUR difference is the rearguard itself: pl_east_0 leaves the platoon file for his post the tick the gate holds the clock (06:09:30).
@@ -432,10 +439,10 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
   const account=integrationAmendment(difficulty0535,{amendment:'12',task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',previous:rearguard,previousFile:'m01-rearguard-gameplay-baseline.json',
     predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',deltaFields:D0535_DELTA});
   // History since amendment 13 (H9 D3/D4, 2026-10-22): this golden pins the simulation of efb8eb00 (the candidate head 4e2588fa plus a CI-only commit), not the live one. The level table (m01-difficulty.js)
-  // and the mission data moved with it, so they are no longer compared with the live files; the three modules amendment 13 did not touch still are.
+  // and the mission data moved with it, and amendment 14 moved the director, so they are no longer compared with the live files; the two modules neither amendment touched still are.
   assert.equal(difficulty0535.sourceSha256,'d7f6afec8494c47cc7afd42d9150c19bcadc1d81e55fb383a8e2faff8b43e5da','the difficulty + 05:35 golden pins the simulation of efb8eb00');
   assert.notEqual(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the difficulty + 05:35 golden is history: amendment 13 moved the simulation');
-  for(const f of ['src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
+  for(const f of ['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
   // The D2 wiring alone moves nothing on these (recruta) routes: the first difference is the 05:35 fill, a dike rifleman's sighting of the player at the deck post after 05:30
   // (hold_access); with the sightings and the dialogue state stripped, the first BEHAVIOUR difference is a dike rifleman turning to (taking) the player.
   assert.equal(account.behaviourFields,D0535_BEHAVIOUR.source);
@@ -446,14 +453,34 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
   }
 });
 
-test('the H9 D3/D4 golden (amendment 13) chains to the difficulty + 05:35 golden, moves the source lock and the inputs only, pins the live simulation, the level table and the mission data, and cites its lockstep account',()=>{
+test('the H9 D3/D4 golden (amendment 13) chains to the difficulty + 05:35 golden, moves the source lock and the inputs only, pins the simulation of 3eb21b38 (history since amendment 14), the level table and the mission data of that tree, and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   identicalAmendment(difficultyD3D4,{amendment:'13',task:'M01-H9-D3-D4-DEATH-V1',delta:'death+cp-b2+fair-death',previous:difficulty0535,previousFile:'m01-difficulty-0535-gameplay-baseline.json',
     predecessor:'efb8eb00d37a3370018e6193c4c0b158094f0241'});
-  assert.equal(sha('../src/game/m01-simulation.js'),difficultyD3D4.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-rearguard.js','src/game/m01-barks.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(difficultyD3D4.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // History since amendment 14 (2026-10-22, SP-08 escort + squad coordination): this golden pins the simulation of 3eb21b38, not the live one. The director and the mission data moved with it, so they are
+  // no longer compared with the live files; the level table, the audio events and the rearguard and deck modules amendment 14 did not touch still are.
+  assert.equal(difficultyD3D4.sourceSha256,'b52dff98f0466dfd1081332a7052e59ae3c04ab53ee94b982325780afd78215d','the D3/D4 golden pins the simulation of 3eb21b38');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),difficultyD3D4.sourceSha256,'the D3/D4 golden is history: amendment 14 moved the simulation');
+  for(const f of ['src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(difficultyD3D4.inputsSha256[f],sha('../'+f),`and ${f}`);
   // What moved and what did not: the level table and the mission data (the CP-B2 entry) are new bytes; the two recruta routes are the previous golden's, every block of every tick (identicalAmendment).
   for(const f of ['src/game/m01-difficulty.js','missions/m01-tczew/mission.json'])assert.notEqual(difficultyD3D4.inputsSha256[f],difficulty0535.inputsSha256[f],`${f} moved`);
+});
+
+test('the escort + coordination golden (amendment 14) chains to the H9 D3/D4 golden, pins the live simulation, the corridor, squad and director modules and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(escort,{amendment:'14',task:'M01-SP08-ESCORT-COORDINATION-V1',delta:'escort+coordination',previous:difficultyD3D4,previousFile:'m01-difficulty-d3-d4-gameplay-baseline.json',
+    predecessor:'3eb21b387205140e3e6ea9ef13cf9f8f296a6c87',deltaFields:ESCORT_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),escort.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-corridor.js','src/game/m01-squad.js','src/game/m01-barks.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])
+    assert.equal(escort.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // Nothing moves before the east demolition: the first difference is the section at 06:10:00, Kowal holding his slot at the squad post where he used to set off for the single
+  // retreat point (x -170, z 22). It is behaviour at once (no new record precedes it in the frame), so the first behaviour difference is the same path.
+  assert.equal(account.behaviourFields,ESCORT_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.battleClock,'06:10:00');assert.equal(r.firstDifference.actor,'szymon_kowal');assert.match(r.firstDifference.path,ESCORT_DELTA);
+    assert.match(r.firstBehaviourDifference.path,ESCORT_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^(szymon_kowal|staszek_pawlak|east_platoon_voice)$/);
+    assert.equal(r.endState.objectives.hold_corridor,'done');assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
+  }
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

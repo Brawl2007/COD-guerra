@@ -53,7 +53,9 @@ test('the canonical lines nothing said now have a trigger: 030, 035 and 036 a ru
   const sim=readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url),'utf8');
   assert.match(sim,/line\(12\);line\(13\);line\(67\);line\(66\)/,'067 between 013 and 066');
   assert.match(sim,/line\(41\);if\(this\.actor\('leon_dudek'\)\.alive&&this\.actor\('leon_dudek'\)\.active\)line\(42\);line\(43\)/);
-  assert.match(sim,/this\.line\('dlg_m01_047'\);this\.line\('dlg_m01_048'\)/);
+  // 2026-10-22 (SP-08, owner order): 047 and 048 moved with the corridor count into src/game/m01-corridor.js (stepCorridor), said when the count starts; 049 when it is complete.
+  const corridor=readFileSync(new URL('../src/game/m01-corridor.js',import.meta.url),'utf8');
+  assert.match(corridor,/sim\.line\('dlg_m01_047'\);sim\.line\('dlg_m01_048'\)/);assert.match(corridor,/sim\.line\('dlg_m01_049'\)/);
 });
 
 test('the three ckm crew voices are cast for the subtitle only: no extra body, no duplicate id, 97 actors as before',()=>{
@@ -507,6 +509,14 @@ const CASES={
   [D('015b')]:{stage:()=>{},act:s=>barkTrigger(s,'guide')},   // staged below: the rally point must be on the player's left
   [D('015c')]:{stage:s=>{const r=s.world.point('rally_point');Object.assign(s.player,{x:r.x+25,z:r.z,angle:0});withLedger(s,{g:{guide:[2,0]}});},act:s=>barkTrigger(s,'guide')},
   [D('015d')]:{stage:s=>{const r=s.world.point('rally_point');Object.assign(s.player,{x:r.x+60,z:r.z,angle:0});withLedger(s,{g:{guide:[3,0]}});},act:s=>barkTrigger(s,'guide')},
+  // 2026-10-22 (slice 3 and SP-08): the section's bounds (trigger squadMove), Dudek under fire and covered in the escort, the east bank's fire on the road.
+  [D(156)]:{stage:()=>{},act:s=>barkTrigger(s,'squadMove',{node:'passed'})},
+  [D(157)]:{stage:()=>{},act:s=>barkTrigger(s,'squadMove',{node:'fallback'})},
+  [D(158)]:{stage:()=>{},act:s=>barkTrigger(s,'squadMove',{node:'pinned'})},
+  [D(159)]:{stage:()=>{},act:s=>barkTrigger(s,'squadMove',{node:'hold'})},
+  [D(160)]:{stage:s=>{s.consumed.evt_m01_east_demolition=s.clock-30;near(s,'leon_dudek',30);},act:s=>impact(s,{kind:'squad',pinned:['leon_dudek']})},
+  [D(161)]:{stage:s=>{s.timers.corridor={phase:'escort',counted:12,total:12,at:s.clock,since:s.clock};s.actor('leon_dudek').task='evacuate_bak';near(s,'leon_dudek',4);},act:s=>barkPoll(s)},
+  [D(163)]:{stage:s=>{s.consumed.evt_m01_east_demolition=s.clock-30;near(s,'szymon_kowal',40);},act:s=>s.emit({type:'enemy-fire',origin:{x:1055,y:0,z:30},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})},
   'co_m01_ally_hit':{stage:s=>{withdrawal(s);near(s,'marek_zielinski');withLedger(s,{n:unspoken(s,[D(100),D(101),D(102)])});},act:s=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})},
   'co_m01_cover_rotation':{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_sandbag_mid_2'})},
 };

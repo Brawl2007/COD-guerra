@@ -258,7 +258,9 @@ function stagedRoute(seed,support=false){
       const a=sim.actor(id),slot=PLAN.squad.slots[id];
       if(a.alive&&a.active&&!a.task&&a.state!=='WOUNDED'&&d2(a,slot)<.5&&!(a.target&&d2(a.target,a)>=.8)){
         // Everyone kneels behind the sandbags; Kowal rises over them for his rkm burst only (rkm.riseBeforeSec before, holdAfterSec after).
-        const rkm=PLAN.squad.rkm,up=id===rkm.actor&&sim.consumedEvent(E('train963_arrives'))&&!sim.consumedEvent(E('east_demolition'))&&
+        // 2026-10-22 (slice 3, owner order «coordenação dos soldados»): after the east demolition Kowal also rises, by the same rkm rule, while he covers the SP-08 escort from
+        // the post he holds (M01Simulation.kowalCovers, squadCoverFire); before that change he never fired again after 06:10.
+        const rkm=PLAN.squad.rkm,up=id===rkm.actor&&(sim.consumedEvent(E('train963_arrives'))&&!sim.consumedEvent(E('east_demolition'))||sim.kowalCovers?.())&&
           (a.cooldown<=rkm.riseBeforeSec||clock-a.firedAt<rkm.holdAfterSec);
         assert.equal(a.crouched,!up,`${id} ${up?'up for the rkm':'kneels at his slot under fire'}`);assert.equal(a.posture,up?'stand':'crouch',`${id} posture`);
         if(up)st.kowalUp++;else st.sectionKneel++;

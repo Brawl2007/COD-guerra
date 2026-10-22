@@ -20,6 +20,8 @@ import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMa
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
 import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01-rearguard.js';
 import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
+import {stepCorridor,escortPace,escortTarget,zielinskiJoinPoint,escortSubject,corridorView,corridorRecord,validateCorridorRecord,CORRIDOR} from './m01-corridor.js';
+import {SQUAD,SQUAD_IDS,updateSquad,squadSlot,teamPost,squadMoving,validateSquadRecord} from './m01-squad.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -174,6 +176,9 @@ const eastPosition=(i,world)=>{
   const k=i-14;return k<14?{x:1076+(k%4)*7,y:-1,z:-80+k*5}:{x:1076+(k%4)*6,y:-1,z:52+(k-14)*4};   // dique, atrás das treliças
 };
 const gateShooter=a=>Number(a.id.split('_').at(-1))<14;
+// SP-08 (2026-10-22): the east bank's fire on the escort: [MG34, rifle, spread] seconds between a man's shots at Dudek (or at where he saw him last), and how long he keeps firing
+// where he lost him (the dead ground of the road approach, x -100..-150, where nobody on the east bank sees the road).
+const ESCORT_FIRE_SEC=[10,12,10],ESCORT_SEARCH_SEC=25;
 /** T38: a gate rifleman of grp_de_east (not an MG34 gunner, not the dike). */
 const gateRifleman=a=>a.group==='grp_de_east'&&a.weapon==='kar98k'&&gateShooter(a);
 const MG34_IDS=['de_east_0','de_east_1'],MG34_TRANSITION_SEC=1.9,MG34_INTERVAL=.075;
@@ -417,7 +422,10 @@ export class M01Simulation {
       if(elapsed<0||elapsed>pre.duration||!this.readiness(pre.event))continue;
       pre.timeline.forEach((beat,i)=>{if(elapsed<beat.t)return;const token=`${scene.id}:pre:${i}`;
         if(beat.line){this.line(beat.line);return;}
-        if(this.dialogueConsumed.includes(token))return;this.dialogueConsumed.push(token);this.message(beat.action);
+        if(this.dialogueConsumed.includes(token))return;
+        // SP-08 (2026-10-22): a beat with `near` happens only with that man within its distance of the player (Zieliński lowers Jan's head: ≤ 3 m), and may wait for him in the window.
+        if(beat.near){const who=this.actor(beat.near.of);if(!who?.alive||!who.active||dist(who,this.player)>beat.near.m)return;}
+        this.dialogueConsumed.push(token);this.message(beat.action);
       });
     }
   }
@@ -436,15 +444,14 @@ export class M01Simulation {
     }
     // Finite delivery milestones remain legible in real time while the existing west gate holds battleClock.
     const bak=this.actor('jozef_bak');
-    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)){
+    if(this.gate?.id===E('west_demolition')&&(bak.carry||bak.carriedBy)&&corridorRecord(this)?.phase!=='escort'){   // SP-08: in the escort the status line counts the metres
       const remaining=dist(bak,EVACUATION),metres=[360,300,240,180,120,60,30,10].findLast(limit=>remaining<=limit),token=`continuity:bak_delivery_hold:${metres}`;
       if(metres!==undefined&&!this.dialogueConsumed.includes(token)){
         this.dialogueConsumed.push(token);this.emit({type:'message',message:`Dudek leva Bąk para a estação. Corredor livre; faltam cerca de ${Math.ceil(remaining)} metros.`,continuity:{kind:'bak_delivery_hold',slot:metres,battleClock:this.battleClock}});
       }
     }
     if(this.consumedEvent(E('panzerzug_arrives'))&&this.inView({x:1119,y:0,z:2.5}))this.line('dlg_m01_038');
-    if(this.active('hold_corridor')&&this.clock-this.consumed[E('east_demolition')]>=10){this.line('dlg_m01_047');this.line('dlg_m01_048');
-      if(!this.dialogueQueue.some(l=>l.id==='dlg_m01_048')&&this.subtitle?.id!=='dlg_m01_048')this.line('dlg_m01_049');}
+    // SP-08 (2026-10-22): 047 and 048 when the count starts, 049 when it is complete (src/game/m01-corridor.js, from updateObjectives).
   }
   trigger(t){
     if(t.type==='missionStart')return true;
@@ -680,6 +687,9 @@ export class M01Simulation {
     if(this.active('hold_access')&&inside(p,HOLD_AREA)){this.timers.holdAccessVisited=true;if(this.consumedEvent(E('east_platoon_withdraws')))this.finish('hold_access');}
     if(this.active('leave_bridge')&&dist(p,this.world.point('firing_point'))<12){this.finish('leave_bridge');this.activate('hold_corridor');}
     if(this.active('hold_corridor')&&this.consumedEvent(E('west_demolition')))this.finish('hold_corridor');
+    stepCorridor(this);   // SP-08: count, escort (src/game/m01-corridor.js)
+    // Slice 3: the escort may have begun in this very tick (the count is complete): Kowal's end-of-tick posture follows his covering rule at once, as stageSection does after combat.
+    if(this.timers.squad&&this.mission.phase!=='OUTRO'){const k=this.actor('szymon_kowal');if(k.alive&&k.active){this.squadPosture(k);updatePosture(k,this.clock);}}
     if(this.active('reach_shelter')&&this.done('hold_access')&&this.done('hold_corridor')&&dist(p,this.world.point('shelter'))<5)this.finish('reach_shelter');
     if(this.pendingCheckpoint==='cp_m01_b_reorganizacao'&&this.clock-this.consumed[E('bombing_0434')]>=20)this.saveCheckpoint(this.pendingCheckpoint);
     if(this.pendingCheckpoint===M01_CHECKPOINT_B2)this.saveCheckpoint(this.pendingCheckpoint);   // H9 D3: soldado and veterano only (it is set above only for them)
@@ -967,6 +977,8 @@ export class M01Simulation {
     }
     const retreat=this.consumedEvent(E('east_demolition')),holding=this.holdingEast();
     this.holdEastPlatoon();this.formRearguard();
+    // Slice 3 (2026-10-22): the section's bounds along the corridor (src/game/m01-squad.js), decided once before anyone walks; null before the east demolition and at the roll call.
+    const squad=retreat&&this.mission.phase!=='OUTRO'?this.stepSquad():null;
     // T47: the ckm gunner decides first (his own saved stream, never this.rng); the other two men then copy his phase.
     const gunner=this.actors.find(a=>a.id==='ckm_gunner');
     this.updateCKMGunner(gunner,retreat);
@@ -1035,6 +1047,7 @@ export class M01Simulation {
       if(a.task==='evacuate_bak'){this.evacuate(a,dt);continue;}
       if(a.task==='evacuate_station_wounded'){this.evacuateStation(a,dt);continue;}
       if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
+      if(squad&&this.squadWalk(a,squad,dt))continue;   // slice 3: a man of a fire team bounds or holds; Zieliński comes to the player at the end of the escort (SP-08)
       if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
       this.stageSection(a);
@@ -1078,6 +1091,61 @@ export class M01Simulation {
     updateMotion(this.actors,motionBefore,dt,this.clock);
     updateLoaders(this.actors,this.clock);updateActorDetails(this.actors,this.clock,this.world);
   }
+  /** Slice 3: the section's bound of this tick (src/game/m01-squad.js); the callouts go through the bark director (trigger squadMove). */
+  stepSquad(){
+    return updateSquad(this,{stageSlots:STAGE.squad.slots,carrier:escortSubject(this),east:this.consumed[E('east_demolition')],say:node=>node==='order'?this.line('dlg_m01_155'):barkTrigger(this,'squadMove',{node})});   // the first order is scripted (always said), the rest are callouts
+  }
+  /**
+   * Slice 3: one man of a fire team in the retreat: he runs to his next post while his team bounds, otherwise he holds his slot there, kneeling and facing the river.
+   * SP-08: Zieliński (not a team man) comes to the player at the end of the escort and stays beside him for the head beat of the west pre-roll. False: not handled here.
+   */
+  squadWalk(a,q,dt){
+    if(a.id==='marek_zielinski'){
+      if(this.timers.escort)return false;   // the old fetch of a player left in the demolition zone keeps its own walk
+      const join=zielinskiJoinPoint(this);
+      if(join){a.crouched=false;a.target=join;this.moveActor(a,join,dt);return true;}
+      if(this.consumedEvent(E('west_demolition'))&&corridorRecord(this)&&a.x<CORRIDOR.zielinskiJoinX){a.state='GUARD';return true;}   // he stays beside the player after the blast
+      return false;
+    }
+    if(!SQUAD_IDS.includes(a.id))return false;
+    const team=SQUAD.teams.findIndex(t=>t.includes(a.id)),slot=squadSlot(STAGE.squad.slots,a.id,teamPost(q,team));
+    // His target is the slot he walks to (as every staged man's, T38: a target 0.8 m away or more means he is leaving and stands); none while he holds.
+    if(squadMoving(q,a)){a.crouched=false;a.target=slot;this.moveActor(a,slot,dt,SQUAD.pace);return true;}
+    if(dist(a,slot)>=.8){a.crouched=false;a.target=slot;this.moveActor(a,slot,dt);return true;}
+    if(a.state!=='GUARD')a.facing=0;   // he turns to the river once, on arrival
+    a.target=null;a.state='GUARD';this.squadPosture(a);return true;
+  }
+  /** Slice 3: a fire-team man's gameplay crouch. Moving or walking in: up. Holding: he kneels; Kowal rises over his cover riseBeforeSec before each look and holdAfterSec after each
+   *  covering burst (the T38 rkm rule). Also called by stageSection, so the rkm's end-of-tick posture follows his cooldown as before 06:10. */
+  squadPosture(a){
+    if(squadMoving(this.timers.squad,a)||a.target){a.crouched=false;return;}
+    const rkm=STAGE.squad.rkm,up=a.id===rkm.actor&&this.kowalCovers()&&(a.cooldown<=rkm.riseBeforeSec||this.clock-a.firedAt<rkm.holdAfterSec);
+    a.crouched=!up;
+  }
+  /** Slice 3: Kowal covers the escort now (he holds a post, SP-08 escort phase, not in the German silence or the roll call). Read by squadWalk and squadCoverFire. */
+  kowalCovers(){
+    const q=this.timers.squad,k=this.actor('szymon_kowal');
+    return Boolean(q)&&k.alive&&k.active&&!squadMoving(q,k)&&!this.germanSilence()&&this.mission.phase!=='OUTRO'&&corridorRecord(this)?.phase==='escort';
+  }
+  /**
+   * Slice 3: Kowal covers the escort from the post he holds. While the escort lasts (SP-08) a gate German who fired in the last SQUAD.cover.freshSec seconds and whom he sees gets
+   * an rkm burst: the suppression, cadence and magazine of kowalFire, drawn from his own AI stream; the empty magazine is changed for real (line 029). No round is traced.
+   */
+  squadCoverFire(){
+    const kowal=this.actor('szymon_kowal');
+    if(kowal.cooldown>0||!this.kowalCovers())return;
+    const ai=kowal.ai,u=ai?()=>aiNext(ai):()=>.5;
+    const target=this.enemies.filter(a=>a.group==='grp_de_east'&&gateShooter(a)&&a.alive&&a.active&&this.clock-a.firedAt<SQUAD.cover.freshSec).sort((a,b)=>b.firedAt-a.firedAt)
+      .find(a=>this.world.lineOfSight(kowal,a));
+    if(!target){kowal.cooldown=SQUAD.cover.lookSec[0]+SQUAD.cover.lookSec[1]*u();return;}
+    let n=Math.min(kowal.rounds,2+Math.floor(u()*2)+Math.floor(u()*2.2));if(kowal.rounds-n===1)n+=n<5?1:-1;
+    kowal.cooldown=n*.11+3.4+2.8*u();if(ai)ai.target=target.id;
+    kowal.shot=Math.max(.25,n*.11);kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=n;kowal.crouched=false;   // up over his cover for the burst
+    const previousUntil=target.suppressedUntil;
+    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n});
+    recordSuppression(target,previousUntil,this.clock);
+    if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5+u();if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
+  }
   combatCall(message){if(this.clock<this.timers.nextCombatCall)return;this.timers.nextCombatCall=this.clock+4;this.message(message);}
   updateCombat(dt){
     if(this.mission.phase==='OUTRO')return;
@@ -1091,7 +1159,7 @@ export class M01Simulation {
       if(a.cooldown>0)continue;
       if(a.group==='grp_de_spans'){if(a.deck)this.deckFire(a,retreat);else this.spansFire(a,retreat);}else this.eastFire(a,retreat,withdrawal);
     }
-    this.attritionTick();this.kowalFire(dt);this.rearguardFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();this.stageRearguard();
+    this.attritionTick();this.kowalFire(dt);this.squadCoverFire();this.rearguardFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();this.stageRearguard();
     const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);   // T38: up or down after his burst
     updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
@@ -1100,6 +1168,8 @@ export class M01Simulation {
    * The rkm gunner rises over the sandbags rkm.riseBeforeSec before each burst and stays up rkm.holdAfterSec after it (the burst clip).
    */
   stageSection(a){
+    // Slice 3 (2026-10-22): in the retreat a fire-team man's posture is the bound's (squadPosture), not his slot at the squad post's.
+    if(this.timers.squad&&SQUAD_IDS.includes(a.id)&&this.mission.phase!=='OUTRO'){this.squadPosture(a);return;}
     const slot=STAGE.squad.slots[a.id];if(!slot||!this.consumedEvent(STAGE.squad.underFireFrom))return;
     const rkm=STAGE.squad.rkm,firing=a.id===rkm.actor&&this.consumedEvent(E('train963_arrives'))&&!this.consumedEvent(E('east_demolition'))&&
       (a.cooldown<=rkm.riseBeforeSec||this.clock-a.firedAt<rkm.holdAfterSec);
@@ -1126,7 +1196,14 @@ export class M01Simulation {
     const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=inside(p,this.world.layout.bounds.playable);
     let target=null,kind=null;
     if(retreat){   // s2 german_regroup: fogo esporádico da margem leste depois da demolição
-      a.cooldown=(mg?16:32)+r()*20;if(gateShooter(a)&&west&&sees(p)){target=p;kind='player';}
+      const u=r();a.cooldown=(mg?16:32)+u*20;if(gateShooter(a)&&west&&sees(p)){target=p;kind='player';}
+      // SP-08 (2026-10-22): in the escort a man of the east bank who sees Dudek with Bąk (the gates, or the dike where it looks down the road approach) shoots at him
+      // ('squad' rounds pin, never wound an ally) and remembers where (ai.seen, who 'leon_dudek'); for ESCORT_SEARCH_SEC after he lost them in the dead ground of the road
+      // approach he fires where he saw them last ('area' rounds), at the escort cadence; one who sees nobody looks again in 2-5 s instead of a whole cycle. The same single draw.
+      else{const e=escortTarget(this),seen=a.ai?.seen;
+        if(e&&sees(e)){target=e;kind='squad';if(a.ai)a.ai.seen={x:e.x,y:e.y,z:e.z,at:this.clock,who:e.id};a.cooldown=(mg?ESCORT_FIRE_SEC[0]:ESCORT_FIRE_SEC[1])+u*ESCORT_FIRE_SEC[2];}
+        else if(e&&seen?.who===e.id&&this.clock-seen.at<ESCORT_SEARCH_SEC){target={x:seen.x,y:seen.y,z:seen.z};kind='area';a.cooldown=(mg?ESCORT_FIRE_SEC[0]:ESCORT_FIRE_SEC[1])+u*ESCORT_FIRE_SEC[2];}
+        else if(e)a.cooldown=2+u*3;}
     }else if(a.ai)return this.aiFire(a,withdrawal,sees,west);   // combat AI slice 1: peeks, burst groups, threat (until the east demolition)
     else if(withdrawal){
       a.cooldown=mg?6+r()*5:8+r()*10;
@@ -1322,7 +1399,14 @@ export class M01Simulation {
    * A peek of 1-3 aimed rounds 1.7-2.8 s apart, then a skewed pause around fire.assaultPauseSec / overwatchPauseSec per round, never shorter than his clip reload.
    */
   deckFire(a,retreat){
-    if(retreat){a.cooldown=99;return;}
+    if(retreat){
+      // SP-08 (2026-10-22): the men of the deck assault who regrouped on the surviving spans fire on the escort when they see Dudek with Bąk (their own AI stream); otherwise,
+      // as before, nothing (looked at again every 2 s once the corridor task exists, every 99 s before it).
+      const e=escortTarget(this);
+      if(!e||a.state!=='REGROUP'||!(a.rounds>0)||!this.world.lineOfSight(a,e)){a.cooldown=corridorRecord(this)?2:99;return;}
+      this.burst(a,e,'squad',{rounds:1,bias:[2,1.4],cone:[0,0]});a.state='REGROUP';   // he shoots from his place in the knot and stays in it (burst() marks a shooter SUPPRESS)
+      a.cooldown=DECK_ASSAULT.fire.assaultPauseSec+4*aiNext(a.ai);return;
+    }
     const d=a.deck,ai=a.ai,u=()=>aiNext(ai),p=this.player,over=deckRole(a)==='overwatch';
     if(!['cover','hold','clear'].includes(d.phase)){ai.peek=0;a.cooldown=.4;return;}
     if(!(a.rounds>0)){ai.peek=0;if(!a.reload)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};a.cooldown=Math.max(.3,a.reload.startedAt+a.reload.duration-this.clock)+.4+u();return;}
@@ -1940,7 +2024,8 @@ export class M01Simulation {
       return;
     }
     if(phase.phase==='putdown'&&this.clock-phase.startedAt<phase.duration)return;
-    if(phase.phase==='carry')this.moveActor(medic,EVACUATION,dt,1.6);
+    // SP-08 (2026-10-22): with the player beside him Dudek keeps his escort pace; alone in the escort, a near miss puts him down until it passes (src/game/m01-corridor.js).
+    if(phase.phase==='carry'){const pace=escortPace(this,medic);if(pace===null){medic.state='GUARD';return;}this.moveActor(medic,EVACUATION,dt,pace);}
     if(dist(medic,EVACUATION)<1.2){
       if(phase.phase!=='putdown'){bak.carry={phase:'putdown',startedAt:this.clock,duration:1.6};medic.state='GUARD';return;}
       bak.carriedBy=null;bak.x=medic.x+.9;bak.z=medic.z+.7;bak.y=this.world.heightAt(bak.x,bak.z);bak.facing=medic.facing;
@@ -2061,6 +2146,8 @@ export class M01Simulation {
   get displayFire(){return displayFireView(this.display);}
   /** P2, computed on every read and never saved: the current objective's marker (label, point, distance, bearing) and the battle-clock tempo. */
   get objectiveMarker(){return objectiveMarker(this);}
+  /** SP-08, computed on every read: the corridor task (phase, count, Dudek with Bąk, escorted) or null before the corridor. */
+  get corridorTask(){return corridorView(this);}
   get tempo(){return tempoState(this);}
   /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
   get battleReadout(){return computeBattleReadout(this.display,this);}
@@ -2257,7 +2344,7 @@ export function validateM01Snapshot(s){
     if(!AI_ACTOR(a)||!ai||typeof ai!=='object'||Array.isArray(ai)||Object.keys(ai).length!==AI_KEYS.length||AI_KEYS.some(k=>!Object.hasOwn(ai,k))||
       !Number.isInteger(ai.rng)||!finite(ai.rng,0,0xffffffff)||!Number.isInteger(ai.peek)||!finite(ai.peek,0,3)||!finite(ai.shakenUntil,0,s.clock+20)||
       !finite(ai.pinnedUntil,0,s.clock+10)||!finite(ai.recover,0,3)||(ai.target!==null&&(typeof ai.target!=='string'||!/^[a-z0-9_]{1,40}$/.test(ai.target)))||
-      (seen!==null&&(!seen||typeof seen!=='object'||Object.keys(seen).length!==(seen.who===undefined?4:5)||(seen.who!==undefined&&!['player','szymon_kowal'].includes(seen.who))||
+      (seen!==null&&(!seen||typeof seen!=='object'||Object.keys(seen).length!==(seen.who===undefined?4:5)||(seen.who!==undefined&&!['player','szymon_kowal','leon_dudek'].includes(seen.who))||
         ![seen.x,seen.y,seen.z,seen.at].every(Number.isFinite)||!finite(seen.at,0,s.clock))))reject('IA de combate '+a.id);   // `who`: optional, absent in saves before the 2026-10-18 fix
   }
   // Combat slice 2, versioned rule (deck record v1, src/game/m01-deck-assault.js): a man of grp_de_spans who carries the deck record may stand west of x 690 down to
@@ -2371,7 +2458,10 @@ export function validateM01Snapshot(s){
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
   if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');
   if('nextCombatCall' in s.timers&&!finite(s.timers.nextCombatCall))reject('timer nextCombatCall');
-  if('barks' in s.timers)validateBarkState(s.timers.barks,s.clock,reject);   // reactive dialogue: cooldowns, repeats, rotation, what was seen (m01-barks.js); absent in older saves
+  if('barks' in s.timers)validateBarkState(s.timers.barks,s.clock,reject);
+  // SP-08 and slice 3 (2026-10-22): the corridor task and the section's bounds; absent in older saves and before the east demolition.
+  if('corridor' in s.timers){validateCorridorRecord(s.timers.corridor,s.clock,reject);if(!Object.hasOwn(s.consumed,E('east_demolition')))reject('timer corridor');}
+  if('squad' in s.timers){validateSquadRecord(s.timers.squad,s.clock,reject);if(!Object.hasOwn(s.consumed,E('east_demolition')))reject('timer squad');}   // reactive dialogue: cooldowns, repeats, rotation, what was seen (m01-barks.js); absent in older saves
   if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
   if(s.timers.raidSchedule!==undefined){
     const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];
