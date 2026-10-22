@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) and 14 (SP-08 escort + slice-3 squad coordination, re-based on the amendment 13 tree) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) 14 (SP-08 escort + slice-3 squad coordination, re-based on the amendment 13 tree) and 15 (ckm wz.30 stoppages, re-based on the amendment 14 tree) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -123,7 +123,7 @@ const AMENDMENTS={
       return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^pl_east_[0-2]$/},
   '12':{task:'M01-H9-D2-DIFFICULTY-0535-V1',delta:'difficulty+0535',predecessor:'a59c129609ea4aef182ede0a172f745967d0cb30',
-    // History since amendment 13 (H9 D3/D4) and 14: the difficulty + 05:35 golden pins the simulation of efb8eb00 (the candidate head 4e2588fa plus a CI-only commit; same simulation), not the live one.
+    // History since amendment 13 (H9 D3/D4), 14 and 15: the difficulty + 05:35 golden pins the simulation of efb8eb00 (the candidate head 4e2588fa plus a CI-only commit; same simulation), not the live one.
     after:'efb8eb00d37a3370018e6193c4c0b158094f0241',
     previousGolden:'tests/fixtures/m01-rearguard-gameplay-baseline.json',golden:'tests/fixtures/m01-difficulty-0535-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/difficulty-0535-2026-10-19',
@@ -152,7 +152,8 @@ const AMENDMENTS={
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js'],
     generationStage:'H9 D3/D4 on the difficulty + 05:35 tree: every death has a cause and one player-down event (F5), CP-B2 "Reparo" is saved when the repair begins on soldado and veterano only (D3), no lethal wound in a cutscene on soldado and veterano (F4), lowerDifficulty re-levels a checkpoint to a lower level (D5), the veterano level has no regeneration (owner decision 2026-10-22) and the table is recalibrated; recruta, the level of these routes, keeps every number and writes no new key: golden amendment 13 moves the source lock only'},
   // Amendment 14 was written against amendment 12 (4e2588fa) on the WP3 branch and is re-based at integration onto the amendment 13 tree (3eb21b38, candidate #80 + WP1); 15 (ckm jam) follows it.
-  '14':{task:'M01-SP08-ESCORT-COORDINATION-V1',delta:'escort+coordination',predecessor:'3eb21b387205140e3e6ea9ef13cf9f8f296a6c87',after:null,
+  // History since amendment 15 (the ckm stoppages): the escort + coordination golden pins the simulation of c99a4326 (the integration of WP3 on the amendment 13 tree), not the working tree's.
+  '14':{task:'M01-SP08-ESCORT-COORDINATION-V1',delta:'escort+coordination',predecessor:'3eb21b387205140e3e6ea9ef13cf9f8f296a6c87',after:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',
     previousGolden:'tests/fixtures/m01-difficulty-d3-d4-gameplay-baseline.json',golden:'tests/fixtures/m01-escort-coordination-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/escort-coordination-2026-10-22',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-corridor.js','src/game/m01-squad.js'],
@@ -167,8 +168,28 @@ const AMENDMENTS={
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.filter(e=>e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message));
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^(szymon_kowal|staszek_pawlak|east_platoon_voice)$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13 or 14`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^(szymon_kowal|staszek_pawlak|east_platoon_voice)$/},
+  // Amendment 15 was written first as amendment 13 against amendment 12 (4e2588fa) on the WP2 branch (45a61a33) and is re-based at integration onto the amendment 14 tree (c99a4326 = candidate #80 + WP1 + WP3).
+  '15':{task:'M01-CKM-JAM-V1',delta:'ckm-jam',predecessor:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',after:null,
+    previousGolden:'tests/fixtures/m01-escort-coordination-gameplay-baseline.json',golden:'tests/fixtures/m01-ckm-jam-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/ckm-jam-2026-10-22',
+    // The director (triggers and rules of 114 / 115) and the audio-event contract (the two new events) are gameplay inputs of this amendment too; the mission data is already one.
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js'],
+    generationStage:'The ckm wz.30 stops (owner decision 2026-10-22), on the amendment 14 tree (candidate #80 + WP1 H9 D3/D4 + WP3 escort and squad coordination at c99a4326; written first against the H9 D2 tree 4e2588fa): a table (CKM_STOPPAGES) stops the gun instead of the burst it was about to fire, before the 14th burst (3.8 s) and before the 45th (4.6 s); the gunner\'s machine gets a fifth phase, `stoppage`, with its `clearAt`, copied by the loader and the third man; the loader clears it with the authored feed drill, `ckm_stoppage_cleared` says so and the burst follows on that tick; not a round, not a draw from any random stream; new saved state only when it happens (ckmFire.jams, ckm.clearAt); the events ckm_stoppage / ckm_stoppage_cleared and the director rules of lines 114 and 115 on them; golden amendment 15',
+    // Measured on both golden routes: the first lockstep difference is the stoppage itself, the gunner's phase (`ckm.phase`: the predecessor fires the 14th burst, `fire_burst`; the live gun is `stoppage`)
+    // on the tick the gun would have fired it (control tick 6957, 04:58:43; support tick 7002, 04:59:03). Until then the two simulations are byte identical, tick for tick (13 blocks of 512 ticks).
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(ckm|ckmFire)(\.|$)/,
+    // With the gun's own records (ckm, ckmFire of the three men), the dialogue state and the gun's events stripped from both frames (stateOnly), the first BEHAVIOUR difference is the rounds that
+    // are not there: 1.7 s (control, tick 6991) and 8.5 s (support, tick 7173) later, a rifleman of the gate group that the burst would have pinned is not pinned (suppressedUntil of de_east_9, or
+    // the crouched flag that follows it, de_east_10).
+    stateOnly:frame=>{
+      const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];delete st.timers?.barks;
+        for(const a of st.actors??[])if(/^ckm_/.test(a.id)){delete a.ckm;delete a.ckmFire;}strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.filter(e=>!['ally-fire','ckm_stoppage','ckm_stoppage_cleared'].includes(e.type)&&(e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message)));
+      return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(suppressedUntil|crouched)$/,behaviourActors:/^de_east_(\d|1[0-3])$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14 or 15`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);

@@ -35,15 +35,20 @@ const unspoken=(s,ids)=>{ // the director must not fall back on these lines: mak
 // Data
 const LINES=new Map([...definition.dialogue,...definition.callouts.lines].filter(l=>l.id).map(l=>[l.id,l]));
 
-test('the 55 reviewed lines are in the mission data; every one is wired except the two the ckm cannot say (no jam or belt-failure model exists)',()=>{
+test('the 55 reviewed lines are in the mission data and every one is wired (114 and 115 since 2026-10-22: the ckm now stops, and says so through its events)',()=>{
   for(let n=100;n<=154;n++){
     const line=LINES.get(D(n));assert.ok(line,`${D(n)} in mission.json`);
     assert.ok(line.text&&line.note&&line.context,D(n));
-    if(n===114||n===115){assert.equal(line.bark,undefined,`${D(n)} stays unwired`);assert.match(line.note,/NEEDS_EVENT:ckm_stoppage/);}
-    else{assert.ok(line.bark,`${D(n)} has a rule`);assert.ok(BARK_RULES.has(D(n)),D(n));}
+    assert.ok(line.bark,`${D(n)} has a rule`);assert.ok(BARK_RULES.has(D(n)),D(n));
+    assert.doesNotMatch(`${line.context} ${line.note}`,/NEEDS_EVENT/,`${D(n)}: the event it needed exists`);
   }
+  // 2026-10-22 (owner decision, golden amendment 15): this test used to forbid the words stoppage / jam in the simulation (the ckm had no model of either, so 114 and 115 stayed unwired
+  // with NEEDS_EVENT). The ckm now stops (CKM_STOPPAGES, tests/m01-ckm-stoppage.test.js) and emits the two events the lines wait on; the rules are on those events.
   const sim=readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url),'utf8');
-  assert.doesNotMatch(sim,/stoppage|encrav|\bjam\b/i,'the ckm has no stoppage or jam: 114 and 115 have nothing to answer to');
+  assert.match(sim,/type:'ckm_stoppage',by:g\.id/);assert.match(sim,/type:'ckm_stoppage_cleared',by:'ckm_loader'/);
+  assert.equal(BARK_RULES.get(D(114)).on,'ckm_stoppage');assert.equal(BARK_RULES.get(D(115)).on,'ckm_stoppage_cleared');
+  assert.ok(TRIGGERS.includes('ckm_stoppage')&&TRIGGERS.includes('ckm_stoppage_cleared'));
+  assert.equal(LINES.get(D(114)).speaker,'ckm_gunner');assert.equal(LINES.get(D(115)).speaker,'ckm_loader');
   assert.equal(LINES.get(D(118)).speaker,'ckm_reserve');assert.equal(LINES.get(D(119)).speaker,'ckm_gunner');
   assert.notEqual(definition.cast.find(c=>c.id==='ckm_reserve').name,definition.cast.find(c=>c.id==='ckm_gunner').name,'118 and 119 are two different speakers on the subtitle');
 });
@@ -439,6 +444,10 @@ const sees=(s,id)=>s.world.lineOfSight(s.actor(id),s.player);
 const wherever={x:-26.5,z:28};
 const inCover=s=>{Object.assign(s.player,{x:wherever.x,z:wherever.z});return s;};
 const gunner=s=>s.actor('ckm_gunner');
+// The events as the simulation emits them (the contract is in tests/m01-ckm-stoppage.test.js): the gun stops, and the loader clears it `sec` seconds later.
+const MUZZLE={x:8,y:-2.36,z:26};
+const stoppage=(s,sec=3.8,n=1)=>s.emit({type:'ckm_stoppage',by:'ckm_gunner',at:s.clock,clearAt:s.clock+sec,origin:MUZZLE,n});
+const cleared=(s,n=1)=>s.emit({type:'ckm_stoppage_cleared',by:'ckm_loader',at:s.clock,origin:MUZZLE,n});
 const speakFirst=(s,id,sec)=>{ // the line `id` was said `sec` seconds ago (for the follow-ups), and used up
   const L=s.timers.barks??(s.timers.barks=newBarkState());L.at[id]=s.clock-sec;L.n[id]=1;return s;
 };
@@ -458,6 +467,9 @@ const CASES={
     act:s=>s.emit({type:'ally-fire',by:'ckm_gunner',weapon:'ckm_wz30',origin:{x:8,y:-2,z:26},rounds:8,interval:.1,at:s.clock})},
   [D(112)]:{stage:s=>{near(s,'ckm_gunner',20);gunner(s).ckm={...gunner(s).ckm,phase:'feed'};gunner(s).ckmFire.belt=3;},act:s=>barkPoll(s)},
   [D(113)]:{stage:s=>{near(s,'ckm_loader',4);speakFirst(s,D(112),3.5);gunner(s).ckmFire.belt=CKM_BELT;},act:s=>barkPoll(s)},
+  // 2026-10-22 (ckm stoppage): the two events of the simulation (startCKMStoppage and the clearance in updateCKMGunner of m01-simulation.js)
+  [D(114)]:{stage:s=>{near(s,'ckm_gunner',20);},act:s=>stoppage(s)},
+  [D(115)]:{stage:s=>{near(s,'ckm_loader',4);speakFirst(s,D(114),3.8);},act:s=>cleared(s)},
   [D(116)]:{stage:s=>{near(s,'ckm_gunner',20);s.battleClock=seconds('06:12:30');s.consumed.evt_m01_east_demolition=s.clock-12;gunner(s).ckm={...gunner(s).ckm,phase:'retreat'};},act:s=>barkPoll(s)},
   [D(117)]:{stage:s=>{near(s,'ckm_loader',4);s.battleClock=seconds('06:12:30');speakFirst(s,D(116),2);},act:s=>barkPoll(s)},
   [D(118)]:{stage:s=>{near(s,'ckm_reserve',6);s.battleClock=seconds('06:12:30');s.consumed.evt_m01_east_demolition=s.clock-20;gunner(s).ckm={...gunner(s).ckm,phase:'retreat'};withLedger(s,{n:unspoken(s,[D(116)])});},act:s=>barkPoll(s)},
@@ -552,6 +564,66 @@ test('the same rules stay silent when their conditions do not hold (the player i
   assert.deepEqual(delta(s,()=>s.emit({type:'enemy-fire',origin:{x:1200,y:0,z:30},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})),[],'a flash that is not at the gates');
   s=fresh();near(s,'szymon_kowal');Object.assign(s.player,{x:-28,z:28});s.timers.coverFire={by:'de_east_5',at:s.clock-1,x:1053,y:0,z:10};
   assert.deepEqual(delta(s,()=>s.emit({type:'enemy-fire',origin:{x:1053,y:0,z:10},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})).filter(t=>t.startsWith(D(131))),[],'131 is for the right, the flash is on the left');
+});
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 2026-10-22 (ckm stoppage, golden amendment 15): 114 and 115 on the two events of the simulation
+test('114 and 115: the gunner calls the stoppage, the loader answers when it is cleared, only to a player in earshot, only as a pair, and each stoppage gets one of each',()=>{
+  let s=fresh();near(s,'ckm_gunner',300);
+  assert.deepEqual(delta(s,()=>stoppage(s)),[],'114: the player is 300 m from the gunner');
+  s=fresh();near(s,'ckm_loader',300);speakFirst(s,D(114),3.8);
+  assert.deepEqual(delta(s,()=>cleared(s)),[],'115: nor from the loader');
+  s=fresh();near(s,'ckm_loader',4);
+  assert.deepEqual(delta(s,()=>cleared(s)),[],'115 answers a 114: none was said');
+  s=fresh();near(s,'ckm_loader',4);speakFirst(s,D(114),20);
+  assert.deepEqual(delta(s,()=>cleared(s)),[],'115 is for a 114 of the last 8 s: this one was 20 s ago');
+  // The pair, with the speaker, priority and text the data says.
+  s=fresh();near(s,'ckm_gunner',6);
+  assert.deepEqual(delta(s,()=>stoppage(s)),[`${D(114)}#1`]);heard(s);
+  assert.equal(s.subtitle.id,D(114));assert.equal(s.subtitle.speaker,'Atirador da ckm');assert.equal(s.subtitle.priority,2);assert.equal(s.subtitle.text,'Travou! Recarregar!');
+  s.clock+=3.8;
+  assert.deepEqual(delta(s,()=>cleared(s)),[`${D(115)}#1`]);heard(s);
+  assert.equal(s.subtitle.id,D(115));assert.equal(s.subtitle.speaker,'Municiador da ckm');assert.equal(s.subtitle.priority,2);assert.equal(s.subtitle.text,'Pronto. Atire!');   // 2026-10-22 (Captain's decision at integration): 115 is priority 2, like the call it answers (it was 3 and was heard 0 times in 21 stoppages in earshot)
+  assert.deepEqual(delta(s,()=>cleared(s)),[],'one 115 for the 114: a second clearance finds no anchor of its own');
+  // The second stoppage of the mission: both again (their cooldowns long over), counted by the ledger.
+  s.clock+=60;s.dialogueQueue=[];s.subtitle=null;
+  assert.deepEqual(delta(s,()=>stoppage(s,4.6,2)),[`${D(114)}#2`]);heard(s);s.clock+=4.6;s.subtitle=null;
+  assert.deepEqual(delta(s,()=>cleared(s,2)),[`${D(115)}#2`]);heard(s);
+  assert.equal(ledger(s).n[D(114)],2);assert.equal(ledger(s).n[D(115)],2);
+  // A save in the middle of a stoppage keeps the 114 in the ledger: the 115 still follows it after the restore.
+  const t=fresh(5);near(t,'ckm_gunner',6);delta(t,()=>stoppage(t));heard(t);t.tick(DT,{});
+  const r=new M01Simulation(5);r.restoreSnapshot(structuredClone(t.snapshot()));r.clock+=3.8;near(r,'ckm_loader',4);
+  assert.deepEqual(delta(r,()=>cleared(r)),[`${D(115)}#1`]);validateM01Snapshot(r.snapshot());
+  // A man who is not there says nothing: the loader fallen, the 114 is said and the 115 is not.
+  const u=fresh();near(u,'ckm_gunner',6);delta(u,()=>stoppage(u));heard(u);u.clock+=3.8;u.actor('ckm_loader').alive=false;
+  assert.deepEqual(delta(u,()=>cleared(u)),[],'115: the loader is down');
+  // Only the events say them: a poll with a stoppage under way says nothing.
+  const v=fresh();near(v,'ckm_gunner',6);const g=gunner(v);g.ckm={phase:'stoppage',startedAt:v.clock,visible:true,clearAt:v.clock+3.8};
+  assert.deepEqual(delta(v,()=>barkPoll(v)),[],'no rule is on the poll');
+});
+
+test('114 and 115 respect the channel like every bark: the gap of priority 2 (6 s) holds the call back, two voices alive take the answer away, and neither displaces a more urgent line',()=>{
+  // Another bark began 2 s ago: priority 2 needs 6 s.
+  let s=fresh();near(s,'ckm_gunner',6);withLedger(s,{last:s.clock-2,recent:[s.clock-2]});
+  assert.deepEqual(delta(s,()=>stoppage(s)),[],'114: the channel was used 2 s ago');
+  s.clock+=4.1;assert.deepEqual(delta(s,()=>stoppage(s)),[`${D(114)}#1`],'114: 6.1 s later it is said (the event is one-shot: the first chance was lost)');
+  // Two voices alive (a scripted line on screen, a reactive one that has waited 4 s): the answer finds no room and is not queued; the call finds none unless it is more urgent.
+  const crowd=(s,waiting)=>{   // the scene by hand: one scripted line on screen, one reactive line waiting since 7 s ago (so the gap of any priority is over)
+    s.subtitle={id:D('014'),speaker:'Marek Zieliński',text:'x',duration:15,until:s.clock+15};
+    s.dialogueConsumed.push('waiting');s.dialogueQueue.push({id:waiting.id,speaker:'x',text:'x',duration:2.5,bark:true,priority:waiting.priority,expires:s.clock+5,queuedAt:s.clock-7,token:'waiting'});};
+  s=fresh();near(s,'ckm_loader',4);speakFirst(s,D(114),3.8);crowd(s,{id:D(144),priority:2});
+  assert.deepEqual(delta(s,()=>cleared(s)),[],'115: two voices are alive already');
+  assert.deepEqual(s.dialogueQueue.map(l=>l.id),[D(144)],'and it displaced nobody');
+  // A more urgent line waiting is not replaced by the call (priority 2 against 1); a less urgent one is: the call takes its place.
+  s=fresh();near(s,'ckm_gunner',6);crowd(s,{id:D(139),priority:1});
+  assert.deepEqual(delta(s,()=>stoppage(s)),[],'114 does not displace a priority 1 line');assert.deepEqual(s.dialogueQueue.map(l=>l.id),[D(139)]);
+  s=fresh();near(s,'ckm_gunner',6);crowd(s,{id:D(153),priority:3});
+  stoppage(s);assert.deepEqual(s.dialogueQueue.map(l=>l.id),[D(114)],'114 (priority 2) replaces a waiting priority 3 line');
+  assert.ok(s.dialogueConsumed.includes(`${D(114)}#1`)&&!s.dialogueConsumed.includes('waiting'),'and the token of the line it displaced is given back');
+  // The budget of the minute: priority 2 is allowed 7 lines in 60 s and the minute is full of them (2026-10-22: 115 moved from priority 3, budget 5 with six lines, to priority 2, budget 7 with seven lines; the assertion is the same).
+  s=fresh();near(s,'ckm_loader',4);speakFirst(s,D(114),3.8);
+  const minute=Array.from({length:7},(_,i)=>s.clock-55+i*5);withLedger(s,{...s.timers.barks,last:minute[6],recent:minute});
+  assert.deepEqual(delta(s,()=>cleared(s)),[],'115: seven lines in the last minute, the budget of priority 2 is seven');
 });
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------

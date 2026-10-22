@@ -1,13 +1,13 @@
 import {test,expect} from '@playwright/test';
-import {firstBurst} from '../helpers/m01-ckm-scenario.js';
-import {CKM_POSITION,ckmMuzzle} from '../../src/game/m01-simulation.js';
+import {firstBurst,firstStoppage} from '../helpers/m01-ckm-scenario.js';
+import {CKM_POSITION,CKM_STOPPAGES,CKM_FEED_SEC,ckmMuzzle} from '../../src/game/m01-simulation.js';
 
 // T47, real game (production build, Chromium): the ckm wz.30 at post S2 actually fires. The saves come from the real route (tests/helpers/m01-ckm-scenario.js):
 // one tick before the first burst, and in the middle of it. Nothing is injected into the page; the simulation decides, and the page must show what it decided:
 // the fire_burst clips of the gun and both crew roles, the muzzle flash, the ckm burst in the audio, the sandbag emplacement, and no console error.
 const key='cod-guerra:checkpoint:m01:v2';
-let fixture;
-test.beforeAll(()=>{fixture=firstBurst();});
+let fixture,jammed;
+test.beforeAll(()=>{test.setTimeout(300000);fixture=firstBurst();jammed=firstStoppage();});   // (two real routes in Node: the hook gets more than the 180 s of a test)
 
 // The player stands 14 m behind-left of the gun, looking at it: the gun, the crew and the emplacement are in the frame for the screenshot.
 function nearTheGun(snapshot){
@@ -74,5 +74,38 @@ test('a save in the middle of a burst resumes it in the browser: the remaining r
   expect(done.m01.ckm.belt).toBeLessThanOrEqual(resumed.belt);
   expect(done.m01.ckm.phase).not.toBe('abandon');
   expect(done.m01.characters.ckm.clip.startsWith('ckm_wz30_gun_')).toBe(true);
+  expect(seen.errors).toEqual([]);expect(seen.consoleErrors).toEqual([]);expect(seen.failed).toEqual([]);
+});
+
+// 2026-10-22 (ckm stoppage, golden amendment 15): the save is the real route one tick before the first stoppage of the table, with the dialogue ledger and queue emptied (so that the page
+// shows what the director says when the channel is free: its limits are proved in tests/m01-barks.test.js). The simulation strikes the stoppage; the page must show the gun stopped.
+test('the ckm stops for real: the aim pose then the feed drill on the gun and both crew roles, no flash while it is stopped, 114 and 115 on the subtitle, then the gun fires again',async({page},info)=>{
+  test.setTimeout(process.env.CI?900000:400000);   // (the stoppage and the line after it need sim time: on a software GL under load a frame is seconds)
+  const seen=watch(page),slot=CKM_STOPPAGES[0],save=nearTheGun(jammed.pre);
+  delete save.timers.barks;save.subtitle=null;save.dialogueQueue=[];
+  // every subtitle that appears, in order, as the page shows it (speaker and text): the observer is there before the game starts, the stoppage strikes on its first ticks
+  await page.addInitScript(()=>{window.__subtitles=[];document.addEventListener('DOMContentLoaded',()=>{const node=document.getElementById('subtitle');
+    new MutationObserver(()=>{const speaker=(node.querySelector('.subtitle-speaker')?.textContent??'').replace(/:\s*$/,''),text=node.querySelector('.subtitle-text')?.textContent.trim()??'';
+      if(speaker&&window.__subtitles.at(-1)?.text!==text)window.__subtitles.push({speaker,text});}).observe(node,{childList:true,subtree:true,characterData:true});});});
+  await startFrom(page,save);
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.ckm,null,{timeout:240000});   // the optional ckm kit is loaded
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.ckm?.phase==='stoppage',null,{timeout:240000});
+  const struck=await page.evaluate(()=>window.gameDiagnostics());
+  expect(struck.m01.ckm).toMatchObject({phase:'stoppage',jams:1,plan:null,bursts:slot.after});expect(struck.m01.ckm.clearAt-struck.m01.ckm.startedAt).toBeCloseTo(slot.sec,6);
+  const belt=struck.m01.ckm.belt,flashFrames=struck.m01.ckmPresentation.frames;
+  // The drill: the gun, the gunner and the loader all play the feed clip while the simulation says stoppage (the aim pose comes first, for the lead).
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics(),c=d.m01.characters;
+    return d.m01.ckm?.phase==='stoppage'&&c.ckm?.clip==='ckm_wz30_gun_feed'&&c.actors.some(a=>a.id==='ckm_gunner'&&a.clip==='ckm_wz30_gunner_feed')&&c.actors.some(a=>a.id==='ckm_loader'&&a.clip==='ckm_wz30_loader_feed');},null,{timeout:240000});
+  await page.screenshot({path:info.outputPath('m01-ckm-stoppage.png')});
+  const drill=await page.evaluate(()=>window.gameDiagnostics());
+  expect(drill.m01.ckm.phase).toBe('stoppage');expect(drill.m01.ckm.belt).toBe(belt);expect(drill.m01.ckmPresentation.frames).toBe(flashFrames);   // not a round, not a flash
+  // The loader clears it, the voices say so, and the burst it was about to fire follows.
+  await page.waitForFunction(()=>{const d=window.gameDiagnostics();return !d.paused&&d.m01.ckm?.phase!=='stoppage'&&d.m01.ckm?.bursts>=1;},null,{timeout:240000});
+  await page.waitForFunction(()=>window.__subtitles.some(s=>s.text==='Pronto. Atire!'),null,{timeout:120000}).catch(()=>{});
+  const after=await page.evaluate(()=>({d:window.gameDiagnostics(),subs:window.__subtitles}));
+  expect(after.d.m01.ckm.jams).toBe(1);expect(after.d.m01.ckm.clearAt).toBeNull();expect(after.d.m01.ckm.bursts).toBeGreaterThanOrEqual(slot.after);
+  // (the page may show other lines meanwhile: the gun fires again and the others talk; the two of the stoppage must be there, in this order, with their speakers)
+  expect(after.subs.filter(s=>['Travou! Recarregar!','Pronto. Atire!'].includes(s.text)).map(s=>[s.speaker,s.text])).toEqual([['Atirador da ckm','Travou! Recarregar!'],['Municiador da ckm','Pronto. Atire!']]);
+  await info.attach('ckm-stoppage.json',{body:JSON.stringify({slot,struck:struck.m01.ckm,drill:{clock:drill.clock,ckm:drill.m01.ckm,characters:drill.m01.characters.ckm},after:{clock:after.d.clock,ckm:after.d.m01.ckm},subtitles:after.subs,drillSeconds:CKM_FEED_SEC},null,2),contentType:'application/json'});
   expect(seen.errors).toEqual([]);expect(seen.consoleErrors).toEqual([]);expect(seen.failed).toEqual([]);
 });

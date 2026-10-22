@@ -1,0 +1,798 @@
+{
+ "task": "M01-CKM-JAM-V1",
+ "what": "repair pins of tests/helpers/m01-cover.js (help / ignore) over the audited seeds, with (jam) and without (nojam) the ckm stoppage table",
+ "seeds": [
+  19390901,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "jam": {
+  "perSeed": [
+   {
+    "seed": 19390901,
+    "helpPins": 31,
+    "ignorePins": 36,
+    "pinsGap": 5,
+    "helpSeconds": 190.25,
+    "ignoreSeconds": 201.8,
+    "secondsGap": 11.6
+   },
+   {
+    "seed": 1,
+    "helpPins": 22,
+    "ignorePins": 44,
+    "pinsGap": 22,
+    "helpSeconds": 200.5,
+    "ignoreSeconds": 198.05,
+    "secondsGap": -2.4
+   },
+   {
+    "seed": 2,
+    "helpPins": 33,
+    "ignorePins": 55,
+    "pinsGap": 22,
+    "helpSeconds": 211.35,
+    "ignoreSeconds": 231.45,
+    "secondsGap": 20.1
+   },
+   {
+    "seed": 3,
+    "helpPins": 36,
+    "ignorePins": 56,
+    "pinsGap": 20,
+    "helpSeconds": 209.05,
+    "ignoreSeconds": 223.85,
+    "secondsGap": 14.8
+   },
+   {
+    "seed": 4,
+    "helpPins": 29,
+    "ignorePins": 27,
+    "pinsGap": -2,
+    "helpSeconds": 219.8,
+    "ignoreSeconds": 191.75,
+    "secondsGap": -28.1
+   },
+   {
+    "seed": 5,
+    "helpPins": 10,
+    "ignorePins": 72,
+    "pinsGap": 62,
+    "helpSeconds": 176.7,
+    "ignoreSeconds": 241.1,
+    "secondsGap": 64.4
+   },
+   {
+    "seed": 6,
+    "helpPins": 12,
+    "ignorePins": 62,
+    "pinsGap": 50,
+    "helpSeconds": 181.45,
+    "ignoreSeconds": 218.05,
+    "secondsGap": 36.6
+   },
+   {
+    "seed": 7,
+    "helpPins": 19,
+    "ignorePins": 43,
+    "pinsGap": 24,
+    "helpSeconds": 197.1,
+    "ignoreSeconds": 228.45,
+    "secondsGap": 31.3
+   },
+   {
+    "seed": 8,
+    "helpPins": 17,
+    "ignorePins": 38,
+    "pinsGap": 21,
+    "helpSeconds": 187.6,
+    "ignoreSeconds": 207.6,
+    "secondsGap": 20
+   },
+   {
+    "seed": 9,
+    "helpPins": 27,
+    "ignorePins": 36,
+    "pinsGap": 9,
+    "helpSeconds": 209.1,
+    "ignoreSeconds": 205.55,
+    "secondsGap": -3.5
+   },
+   {
+    "seed": 10,
+    "helpPins": 31,
+    "ignorePins": 42,
+    "pinsGap": 11,
+    "helpSeconds": 212.7,
+    "ignoreSeconds": 223.8,
+    "secondsGap": 11.1
+   },
+   {
+    "seed": 11,
+    "helpPins": 20,
+    "ignorePins": 40,
+    "pinsGap": 20,
+    "helpSeconds": 183.05,
+    "ignoreSeconds": 220.6,
+    "secondsGap": 37.5
+   }
+  ],
+  "pinsGap": {
+   "mean": 22,
+   "sd": 18,
+   "min": -2,
+   "max": 62,
+   "seedsAtLeast11": 9
+  },
+  "secondsGap": {
+   "mean": 17.8,
+   "coveringFaster": 9
+  }
+ },
+ "nojam": {
+  "perSeed": [
+   {
+    "seed": 19390901,
+    "helpPins": 29,
+    "ignorePins": 41,
+    "pinsGap": 12,
+    "helpSeconds": 192.65,
+    "ignoreSeconds": 209.7,
+    "secondsGap": 17
+   },
+   {
+    "seed": 1,
+    "helpPins": 20,
+    "ignorePins": 52,
+    "pinsGap": 32,
+    "helpSeconds": 193.7,
+    "ignoreSeconds": 204.05,
+    "secondsGap": 10.4
+   },
+   {
+    "seed": 2,
+    "helpPins": 37,
+    "ignorePins": 40,
+    "pinsGap": 3,
+    "helpSeconds": 234.95,
+    "ignoreSeconds": 217.75,
+    "secondsGap": -17.2
+   },
+   {
+    "seed": 3,
+    "helpPins": 33,
+    "ignorePins": 50,
+    "pinsGap": 17,
+    "helpSeconds": 215.45,
+    "ignoreSeconds": 230.05,
+    "secondsGap": 14.6
+   },
+   {
+    "seed": 4,
+    "helpPins": 25,
+    "ignorePins": 25,
+    "pinsGap": 0,
+    "helpSeconds": 205.35,
+    "ignoreSeconds": 185.15,
+    "secondsGap": -20.2
+   },
+   {
+    "seed": 5,
+    "helpPins": 13,
+    "ignorePins": 50,
+    "pinsGap": 37,
+    "helpSeconds": 187.2,
+    "ignoreSeconds": 208.2,
+    "secondsGap": 21
+   },
+   {
+    "seed": 6,
+    "helpPins": 12,
+    "ignorePins": 57,
+    "pinsGap": 45,
+    "helpSeconds": 181.45,
+    "ignoreSeconds": 216.45,
+    "secondsGap": 35
+   },
+   {
+    "seed": 7,
+    "helpPins": 19,
+    "ignorePins": 48,
+    "pinsGap": 29,
+    "helpSeconds": 196.9,
+    "ignoreSeconds": 219.9,
+    "secondsGap": 23
+   },
+   {
+    "seed": 8,
+    "helpPins": 5,
+    "ignorePins": 30,
+    "pinsGap": 25,
+    "helpSeconds": 166.15,
+    "ignoreSeconds": 196.85,
+    "secondsGap": 30.7
+   },
+   {
+    "seed": 9,
+    "helpPins": 26,
+    "ignorePins": 44,
+    "pinsGap": 18,
+    "helpSeconds": 208.5,
+    "ignoreSeconds": 213.25,
+    "secondsGap": 4.8
+   },
+   {
+    "seed": 10,
+    "helpPins": 30,
+    "ignorePins": 67,
+    "pinsGap": 37,
+    "helpSeconds": 201.35,
+    "ignoreSeconds": 250.7,
+    "secondsGap": 49.3
+   },
+   {
+    "seed": 11,
+    "helpPins": 29,
+    "ignorePins": 48,
+    "pinsGap": 19,
+    "helpSeconds": 201.95,
+    "ignoreSeconds": 223.15,
+    "secondsGap": 21.2
+   }
+  ],
+  "pinsGap": {
+   "mean": 22.8,
+   "sd": 13.9,
+   "min": 0,
+   "max": 45,
+   "seedsAtLeast11": 10
+  },
+  "secondsGap": {
+   "mean": 15.8,
+   "coveringFaster": 10
+  }
+ },
+ "pairedPinsGapDifference": {
+  "mean": -0.8,
+  "standardError": 3.9
+ },
+ "rows": [
+  {
+   "seed": 1,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 22,
+   "realSeconds": 200.5,
+   "end": "05:07:59",
+   "mgSuppressedPct": 87,
+   "survivors": 16,
+   "stoppages": 2
+  },
+  {
+   "seed": 1,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 44,
+   "realSeconds": 198.05,
+   "end": "05:07:37",
+   "mgSuppressedPct": 10,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 1,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 20,
+   "realSeconds": 193.7,
+   "end": "05:06:58",
+   "mgSuppressedPct": 87,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 1,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 52,
+   "realSeconds": 204.05,
+   "end": "05:08:31",
+   "mgSuppressedPct": 11,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 2,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 33,
+   "realSeconds": 211.35,
+   "end": "05:09:36",
+   "mgSuppressedPct": 94,
+   "survivors": 15,
+   "stoppages": 2
+  },
+  {
+   "seed": 2,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 55,
+   "realSeconds": 231.45,
+   "end": "05:12:37",
+   "mgSuppressedPct": 17,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 2,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 37,
+   "realSeconds": 234.95,
+   "end": "05:13:09",
+   "mgSuppressedPct": 92,
+   "survivors": 16,
+   "stoppages": 0
+  },
+  {
+   "seed": 2,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 40,
+   "realSeconds": 217.75,
+   "end": "05:10:34",
+   "mgSuppressedPct": 14,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 3,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 36,
+   "realSeconds": 209.05,
+   "end": "05:09:16",
+   "mgSuppressedPct": 87,
+   "survivors": 17,
+   "stoppages": 2
+  },
+  {
+   "seed": 3,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 56,
+   "realSeconds": 223.85,
+   "end": "05:11:29",
+   "mgSuppressedPct": 12,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 3,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 33,
+   "realSeconds": 215.45,
+   "end": "05:10:13",
+   "mgSuppressedPct": 86,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 3,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 50,
+   "realSeconds": 230.05,
+   "end": "05:12:25",
+   "mgSuppressedPct": 17,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 4,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 29,
+   "realSeconds": 219.8,
+   "end": "05:10:53",
+   "mgSuppressedPct": 91,
+   "survivors": 15,
+   "stoppages": 2
+  },
+  {
+   "seed": 4,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 27,
+   "realSeconds": 191.75,
+   "end": "05:06:40",
+   "mgSuppressedPct": 21,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 4,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 25,
+   "realSeconds": 205.35,
+   "end": "05:08:42",
+   "mgSuppressedPct": 91,
+   "survivors": 15,
+   "stoppages": 0
+  },
+  {
+   "seed": 4,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 25,
+   "realSeconds": 185.15,
+   "end": "05:05:41",
+   "mgSuppressedPct": 14,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 5,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 10,
+   "realSeconds": 176.7,
+   "end": "05:04:25",
+   "mgSuppressedPct": 91,
+   "survivors": 16,
+   "stoppages": 2
+  },
+  {
+   "seed": 5,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 72,
+   "realSeconds": 241.1,
+   "end": "05:14:04",
+   "mgSuppressedPct": 14,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 5,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 13,
+   "realSeconds": 187.2,
+   "end": "05:05:59",
+   "mgSuppressedPct": 89,
+   "survivors": 16,
+   "stoppages": 0
+  },
+  {
+   "seed": 5,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 50,
+   "realSeconds": 208.2,
+   "end": "05:09:08",
+   "mgSuppressedPct": 15,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 6,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 12,
+   "realSeconds": 181.45,
+   "end": "05:05:07",
+   "mgSuppressedPct": 90,
+   "survivors": 17,
+   "stoppages": 2
+  },
+  {
+   "seed": 6,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 62,
+   "realSeconds": 218.05,
+   "end": "05:10:37",
+   "mgSuppressedPct": 17,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 6,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 12,
+   "realSeconds": 181.45,
+   "end": "05:05:07",
+   "mgSuppressedPct": 92,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 6,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 57,
+   "realSeconds": 216.45,
+   "end": "05:10:22",
+   "mgSuppressedPct": 20,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 7,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 19,
+   "realSeconds": 197.1,
+   "end": "05:07:28",
+   "mgSuppressedPct": 88,
+   "survivors": 17,
+   "stoppages": 2
+  },
+  {
+   "seed": 7,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 43,
+   "realSeconds": 228.45,
+   "end": "05:12:10",
+   "mgSuppressedPct": 15,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 7,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 19,
+   "realSeconds": 196.9,
+   "end": "05:07:26",
+   "mgSuppressedPct": 88,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 7,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 48,
+   "realSeconds": 219.9,
+   "end": "05:10:53",
+   "mgSuppressedPct": 10,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 8,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 17,
+   "realSeconds": 187.6,
+   "end": "05:06:03",
+   "mgSuppressedPct": 89,
+   "survivors": 17,
+   "stoppages": 2
+  },
+  {
+   "seed": 8,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 38,
+   "realSeconds": 207.6,
+   "end": "05:09:03",
+   "mgSuppressedPct": 16,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 8,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 5,
+   "realSeconds": 166.15,
+   "end": "05:02:50",
+   "mgSuppressedPct": 91,
+   "survivors": 16,
+   "stoppages": 0
+  },
+  {
+   "seed": 8,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 30,
+   "realSeconds": 196.85,
+   "end": "05:07:26",
+   "mgSuppressedPct": 16,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 9,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 27,
+   "realSeconds": 209.1,
+   "end": "05:09:16",
+   "mgSuppressedPct": 90,
+   "survivors": 16,
+   "stoppages": 2
+  },
+  {
+   "seed": 9,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 36,
+   "realSeconds": 205.55,
+   "end": "05:08:44",
+   "mgSuppressedPct": 7,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 9,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 26,
+   "realSeconds": 208.5,
+   "end": "05:09:11",
+   "mgSuppressedPct": 89,
+   "survivors": 16,
+   "stoppages": 0
+  },
+  {
+   "seed": 9,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 44,
+   "realSeconds": 213.25,
+   "end": "05:09:54",
+   "mgSuppressedPct": 8,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 10,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 31,
+   "realSeconds": 212.7,
+   "end": "05:09:49",
+   "mgSuppressedPct": 91,
+   "survivors": 16,
+   "stoppages": 2
+  },
+  {
+   "seed": 10,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 42,
+   "realSeconds": 223.8,
+   "end": "05:11:29",
+   "mgSuppressedPct": 12,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 10,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 30,
+   "realSeconds": 201.35,
+   "end": "05:08:06",
+   "mgSuppressedPct": 90,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 10,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 67,
+   "realSeconds": 250.7,
+   "end": "05:15:31",
+   "mgSuppressedPct": 14,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 11,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 20,
+   "realSeconds": 183.05,
+   "end": "05:05:22",
+   "mgSuppressedPct": 84,
+   "survivors": 17,
+   "stoppages": 2
+  },
+  {
+   "seed": 11,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 40,
+   "realSeconds": 220.6,
+   "end": "05:11:00",
+   "mgSuppressedPct": 14,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 11,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 29,
+   "realSeconds": 201.95,
+   "end": "05:08:12",
+   "mgSuppressedPct": 86,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 11,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 48,
+   "realSeconds": 223.15,
+   "end": "05:11:23",
+   "mgSuppressedPct": 15,
+   "survivors": 12,
+   "stoppages": 0
+  },
+  {
+   "seed": 19390901,
+   "mode": "help",
+   "variant": "jam",
+   "pins": 31,
+   "realSeconds": 190.25,
+   "end": "05:06:27",
+   "mgSuppressedPct": 85,
+   "survivors": 17,
+   "stoppages": 2
+  },
+  {
+   "seed": 19390901,
+   "mode": "ignore",
+   "variant": "jam",
+   "pins": 36,
+   "realSeconds": 201.8,
+   "end": "05:08:11",
+   "mgSuppressedPct": 11,
+   "survivors": 12,
+   "stoppages": 2
+  },
+  {
+   "seed": 19390901,
+   "mode": "help",
+   "variant": "nojam",
+   "pins": 29,
+   "realSeconds": 192.65,
+   "end": "05:06:48",
+   "mgSuppressedPct": 85,
+   "survivors": 17,
+   "stoppages": 0
+  },
+  {
+   "seed": 19390901,
+   "mode": "ignore",
+   "variant": "nojam",
+   "pins": 41,
+   "realSeconds": 209.7,
+   "end": "05:09:22",
+   "mgSuppressedPct": 16,
+   "survivors": 12,
+   "stoppages": 0
+  }
+ ]
+}

@@ -5,7 +5,7 @@ import { actorPose } from './m01-actor-pose.js';
 import { AnimationPlayer } from './m01-animation-player.js';
 import {SoldierVisualVariations,soldierVisualVariant} from './m01-soldier-variation.js';
 import {lodProfile,selectConsumerLod,createLodCounters,tallyLod,lodCounterTotals,actorPoseQuantum,actorPoseDue} from './m01-lod-policy.js';
-import { CKM_POSITION } from '../game/m01-simulation.js';
+import { CKM_POSITION, CKM_FEED_SEC } from '../game/m01-simulation.js';
 import {mg34ProneSample,MG34_MUZZLE_SOCKET,eyePosition,actorHitboxes,muzzlePosition} from '../world/spatial.js';
 import {
   actorHash as hash,
@@ -30,6 +30,17 @@ const PRONE_CLIPS=['enter','idle','aim','fire_burst','exit','reload'].map(n=>`mg
 const CKM='assets/models/provisional/m01/weapons/ckm_wz30/';
 const ckmRole=a=>a.group==='grp_ckm_crew'&&['ckm_gunner','ckm_loader'].includes(a.id);
 const ckmAtPost=a=>ckmRole(a)&&a.ckm?.phase!=='retreat';
+/**
+ * The authored ckm clip phase a saved ckm record plays at `time`, and the time in it: the saved phase and its start, nothing else. A stoppage (CKM_STOPPAGES) reuses the `feed` drill (belt tip
+ * in, handle back twice, `ready` at 3.0 s of 3.2 s), placed at the END of the clearance (clearAt - CKM_FEED_SEC) so that `ready` lands as the loader says 115; in the lead before it
+ * (0.6 / 1.4 s) the crew holds the aim pose while the gunner calls it. Presentation only: the simulation decided when it clears.
+ */
+export function ckmClipPhase(c,time){
+  const age=Math.max(0,time-c.startedAt);
+  if(c.phase!=='stoppage')return {phase:c.phase,time:age};
+  const lead=Number.isFinite(c.clearAt)?Math.max(0,c.clearAt-c.startedAt-CKM_FEED_SEC):0;   // (a record always carries its clearAt: the simulation validates it)
+  return age<lead?{phase:'aim',time:age}:{phase:'feed',time:age-lead};
+}
 // Distances come from the single LOD policy (m01-lod-policy.js 'actors'); only the skinning budgets (18/24/28) live here.
 const actorLimits=(preset,count)=>{const [near,middle,far]=lodProfile('actors',preset).bands;return {count,near,middle,far};};
 // High keeps skinned bodies up to the impostor hand-off (350 m) for 48 actors, so no actor in normal combat range is a box proxy.
@@ -174,9 +185,9 @@ export class M01Characters {
     const prone=mg34ProneSample(actor,time);
     if(prone&&actor.mg34Prone.phase!=='standing'&&this.hasProne())return {clip:prone.clip,time:prone.time,loop:false};
     if(ckmAtPost(actor)&&this.hasCKM()&&!['wounded','carried'].includes(pose.name)){
-      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';
+      const role=actor.id==='ckm_gunner'?'gunner':'loader',{phase,time:age}=ckmClipPhase(actor.ckm,time);
       const name=`ckm_wz30_${role}_${phase}`;
-      return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'||phase==='aim'};
+      return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:age,loop:phase==='idle'||phase==='aim'};
     }
     const stationPatient=actor.id==='generic_rifleman'?actor:actors.find(a=>a.id==='generic_rifleman'&&a.carriedBy===actor.id);
     const stationMedic=stationPatient&&actors.find(a=>a.id===stationPatient.carriedBy);
@@ -477,11 +488,11 @@ export class M01Characters {
       const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
       this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
     }
-    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
+    const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
     if(!clip){v.root.visible=false;return;}
     v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
     v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
-    const age=gunner.ckm.phase==='retreat'?clip.duration:Math.max(0,time-gunner.ckm.startedAt);
+    const age=gunner.ckm.phase==='retreat'?clip.duration:drawn.time;
     v.mixer.setTime(phase==='idle'?age%clip.duration:Math.min(age,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
   }
   muzzle(id){

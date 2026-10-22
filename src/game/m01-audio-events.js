@@ -20,6 +20,11 @@ export function validateM01AudioEvent(event){
   // T47: the ckm wz.30 of the west bridgehead answers the German fire. One event per burst, at its first round (rounds * interval long); never persisted.
   if(event.type==='ally-fire'&&(!Number.isFinite(event.at)||typeof event.weapon!=='string'||!event.weapon||typeof event.by!=='string'||!event.origin||
     ![event.origin.x,event.origin.y,event.origin.z].every(Number.isFinite)||!Number.isInteger(event.rounds)||event.rounds<1||!(event.interval>0)))throw Error('M01 ally-fire origin/clock/weapon/rounds required');
+  // The ckm wz.30 stops (CKM_STOPPAGES, owner decision 2026-10-22): one `ckm_stoppage` when the burst it was about to fire is not fired (clearAt: when the loader will have cleared it) and one
+  // `ckm_stoppage_cleared` when he has; `n` is the stoppage of the mission (1, 2...). The reactive dialogue says 114 and 115 on them. Never persisted.
+  if((event.type==='ckm_stoppage'||event.type==='ckm_stoppage_cleared')&&(!Number.isFinite(event.at)||typeof event.by!=='string'||!event.by||!event.origin||
+    ![event.origin.x,event.origin.y,event.origin.z].every(Number.isFinite)||!Number.isInteger(event.n)||event.n<1||
+    (event.type==='ckm_stoppage'&&!(Number.isFinite(event.clearAt)&&event.clearAt>event.at))))throw Error(`M01 ${event.type} by/at/origin/n${event.type==='ckm_stoppage'?'/clearAt':''} required`);
   // Combat slice 2: a German the player's own rifle or grenade has just killed (the reactive dialogue's NEEDS_EVENT enemy_down_by_player). One per death, never persisted.
   if(event.type==='enemy_down_by_player'&&(typeof event.id!=='string'||!/^de_(east|spans)_\d+$/.test(event.id)||!['kb_wz29','grenade'].includes(event.weapon)||!Number.isFinite(event.at)||
     !Number.isFinite(event.distance)||!event.point||![event.point.x,event.point.y,event.point.z].every(Number.isFinite)))throw Error('M01 enemy_down_by_player id/weapon/distance/point/at required');

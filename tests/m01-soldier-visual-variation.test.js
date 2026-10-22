@@ -115,7 +115,19 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
   ["    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n",
    "    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n"]
  ];
+ // 2026-10-22 (ckm stoppage, golden amendment 15): the renderer reads the clip phase of a saved ckm record through ckmClipPhase (a stoppage plays the authored `feed` drill at the end of its
+ // clearance; every other phase comes back as it was, with the same start). Same method one level up: revert exactly those three hunks, each found once, back to the T47 text, then the T47 and
+ // T36 reversions below apply unchanged and every other byte stays locked.
+ const CKMJAM_DELTA=[
+  ["      const role=actor.id==='ckm_gunner'?'gunner':'loader',{phase,time:age}=ckmClipPhase(actor.ckm,time);\n      const name=`ckm_wz30_${role}_${phase}`;\n      return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:age,loop:phase==='idle'||phase==='aim'};\n",
+   "      const phase=actor.ckm.phase,role=actor.id==='ckm_gunner'?'gunner':'loader';\n      const name=`ckm_wz30_${role}_${phase}`;\n      return {clip:this.clips.has(name)?name:`ckm_wz30_${role}_idle`,time:Math.max(0,time-actor.ckm.startedAt),loop:phase==='idle'||phase==='aim'};\n"],
+  ["    const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n",
+   "    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');\n"],
+  ["    const age=gunner.ckm.phase==='retreat'?clip.duration:drawn.time;\n",
+   "    const age=gunner.ckm.phase==='retreat'?clip.duration:Math.max(0,time-gunner.ckm.startedAt);\n"]
+ ];
  let current=section(file,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')")+section(file,'  updateCKM(','  get diagnostics');
+ for(const [now,original]of CKMJAM_DELTA){assert.equal(current.split(now).length,2,'approved ckm-stoppage delta occurs exactly once');current=current.replace(now,()=>original);}
  for(const [now,original]of T47_DELTA){assert.equal(current.split(now).length,2,'approved T47 delta occurs exactly once');current=current.replace(now,()=>original);}
  for(const [now,original]of T36_DELTA){assert.equal(current.split(now).length,2,'approved T36 delta occurs exactly once');current=current.replace(now,()=>original);}
  assert.equal(current,section(old,'    const prone=mg34ProneSample(actor,time);',"    if(pose.name==='carried')")+section(old,'  updateCKM(','  get diagnostics'));
@@ -125,7 +137,9 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
  const t47CKM="    const v=this.ckm,phase=['idle','aim','fire_burst','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');";
  const currentCKM="    const v=this.ckm,phase=gunner.ckm.phase==='fire_burst'?'aim':['idle','aim','feed'].includes(gunner.ckm.phase)?gunner.ckm.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');";
  const priorCKM="    const v=this.ckm,phase=gunner.ckm.phase==='idle'?'idle':'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`);";
- const ckmSection=section(file,'  updateCKM(','  get diagnostics');assert.equal(ckmSection.split(t47CKM).length,2,'exact T47 live fire_burst/aim/feed adapter');
+ let ckmSection=section(file,'  updateCKM(','  get diagnostics');
+ for(const [now,original]of CKMJAM_DELTA.slice(1)){assert.equal(ckmSection.split(now).length,2,'approved ckm-stoppage delta occurs exactly once in updateCKM');ckmSection=ckmSection.replace(now,()=>original);}
+ assert.equal(ckmSection.split(t47CKM).length,2,'exact T47 live fire_burst/aim/feed adapter');
  const t36Section=ckmSection.replace(t47CKM,currentCKM);assert.equal(t36Section.split(currentCKM).length,2,'exact T36 disabled-burst/aim/feed adapter once T47 is reverted');
  assert.equal(t36Section.replace(currentCKM,priorCKM),section(old,'  updateCKM(','  get diagnostics'));
 });

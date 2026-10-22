@@ -6,14 +6,14 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {M01Simulation,validateM01Snapshot,CKM_POSITION,CKM_BURST_SEC,CKM_FEED_SEC,ckmMuzzle} from '../src/game/m01-simulation.js';
+import {M01Simulation,validateM01Snapshot,CKM_POSITION,CKM_BURST_SEC,CKM_FEED_SEC,CKM_STOPPAGES,ckmMuzzle} from '../src/game/m01-simulation.js';
 import {validateM01AudioEvent,enemyFireSoundPlan} from '../src/game/m01-audio-events.js';
 import {Game} from '../src/game/game.js';
 import {AudioManager} from '../src/core/audio.js';
-import {M01Characters} from '../src/render/m01-characters.js';
+import {M01Characters,ckmClipPhase} from '../src/render/m01-characters.js';
 import {ckmFlashes,ckmSmoke,CKM_FLASH_SEC,CKM_SMOKE_SEC} from '../src/render/m01-ckm-fx.js';
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
-import {firstBurst} from './helpers/m01-ckm-scenario.js';
+import {firstBurst,firstStoppage} from './helpers/m01-ckm-scenario.js';
 
 const load=async path=>{const b=readFileSync(new URL('../assets/models/provisional/m01/'+path,import.meta.url));const loader=new GLTFLoader();loader.register(()=>({name:'node_no_texture_decode',loadTexture:()=>Promise.resolve(null)}));return loader.parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'');};
 const [rig,gun,soldier]=await Promise.all([load('weapons/ckm_wz30/m01_ckm_wz30_animations.glb'),load('weapons/ckm_wz30/m01_ckm_wz30_lod2.glb'),load('characters/m01_soldier_animations.glb')]);
@@ -23,6 +23,7 @@ const restore=raw=>{const s=new M01Simulation();s.restoreSnapshot(structuredClon
 const gunnerOf=s=>s.actors.find(a=>a.id==='ckm_gunner');
 const PLAYER={x:-10,z:26};
 let burst;const scenario=()=>burst??=firstBurst();
+let stop;const stoppage=()=>stop??=firstStoppage();
 
 test('the ally-fire event contract: one event per burst with origin, clock, weapon, shooter, rounds and interval; anything else is refused',()=>{
   const good={type:'ally-fire',by:'ckm_gunner',weapon:'ckm_wz30',origin:{x:8,y:-2.36,z:26},rounds:8,interval:.1,at:12.5};
@@ -123,4 +124,40 @@ test('the renderer reads and never decides: rendering a burst leaves the simulat
     }
     assert.ok(gunnerOf(b).ckmFire.bursts>=1);
   }finally{c.dispose();}
+});
+
+// 2026-10-22 (ckm stoppage, golden amendment 15): the stoppage reuses the authored `feed` clips (belt tip in by the loader, tab pulled and the handle back twice by the gunner, `ready` at 3.0 s
+// of 3.2 s), placed at the END of the clearance so that `ready` lands as the loader says 115; the lead before it holds the aim pose while the gunner calls the jam.
+test('ckmClipPhase: the saved phase and its start decide the clip and the time in it; a stoppage plays the aim pose for its lead, then the feed drill to its last frame at clearAt',()=>{
+  for(const phase of ['idle','aim','fire_burst','feed','abandon','retreat'])assert.deepEqual(ckmClipPhase({phase,startedAt:10},12.5),{phase,time:2.5},phase);
+  assert.deepEqual(ckmClipPhase({phase:'aim',startedAt:10},9),{phase:'aim',time:0},'a frame drawn before the saved start does not go negative');
+  const s={phase:'stoppage',startedAt:10,clearAt:14.6},lead=14.6-10-CKM_FEED_SEC;
+  assert.ok(Math.abs(lead-1.4)<1e-9);
+  assert.deepEqual(ckmClipPhase(s,10),{phase:'aim',time:0});assert.equal(ckmClipPhase(s,10+lead-.01).phase,'aim');
+  const at=ckmClipPhase(s,10+lead+1e-9);assert.equal(at.phase,'feed');assert.ok(Math.abs(at.time)<1e-6,'the drill starts when the lead ends');
+  const end=ckmClipPhase(s,14.6);assert.equal(end.phase,'feed');assert.ok(Math.abs(end.time-CKM_FEED_SEC)<1e-9,'and ends as the clearance does');
+  assert.deepEqual(ckmClipPhase({phase:'stoppage',startedAt:10,clearAt:10+CKM_FEED_SEC},10),{phase:'feed',time:0},'no lead when the clearance is exactly the drill');
+});
+
+test('the GLB clips of a stoppage: the aim pose in the lead, then feed to its last frame at clearAt, for the gun and for both crew roles; a repeated frame and a restored save draw the same',{timeout:240000},()=>{
+  const {mid}=stoppage(),sim=restore(mid),g=gunnerOf(sim),saved=sim.snapshot(),{startedAt,clearAt}=g.ckm,lead=clearAt-startedAt-CKM_FEED_SEC;
+  assert.equal(g.ckm.phase,'stoppage');assert.ok(lead>=0&&lead<=5-CKM_FEED_SEC+1e-9,`lead ${lead}`);
+  const frames=[[ 'aim',startedAt+lead/2,lead/2 ],[ 'feed',startedAt+lead+1,1 ],[ 'feed',startedAt+lead+2.6,2.6 ],[ 'feed',clearAt-.001,CKM_FEED_SEC-.001 ]].filter(([phase,,age])=>phase!=='aim'||lead>.1);
+  for(const [phase,time,age] of frames){
+    const c=fixture(),copy=fixture();
+    try{
+      c.update(sim.actors,time,PLAYER);
+      for(const [id,role] of [['ckm_gunner','gunner'],['ckm_loader','loader']]){
+        const v=c.instances.get(id);assert.equal(v.clip,`ckm_wz30_${role}_${phase}`,`${id} at ${age.toFixed(2)} s into the drill`);
+        if(phase==='feed')assert.ok(Math.abs(v.action.time-Math.min(age,v.action.getClip().duration))<1e-6,`${id} time ${v.action.time} vs ${age}`);
+      }
+      assert.equal(c.ckm.clip,`ckm_wz30_gun_${phase}`);assert.equal(c.ckm.root.visible,true);
+      const clip=c.ckm.clips.find(x=>x.name===c.ckm.clip);if(phase==='feed')assert.ok(Math.abs(c.ckm.time-Math.min(age,clip.duration))<1e-6,`gun time ${c.ckm.time} vs ${age}`);
+      const pose=matrices(c);c.update(sim.actors,time,PLAYER);assert.deepEqual(matrices(c),pose);assert.deepEqual(sim.snapshot(),saved,'the renderer wrote nothing');
+      const other=restore(saved);copy.update(other.actors,time,PLAYER);assert.deepEqual(matrices(copy),pose,'a fresh renderer on a restored save draws exactly the same frame');
+    }finally{c.dispose();copy.dispose();}
+  }
+  // The drill is the one the feed clip authors: the handle is pulled twice and `ready` is at 3.0 s of 3.2 s, so it reads as the loader\'s «Pronto» at clearAt.
+  const feed=gun.animations.find(x=>x.name==='ckm_wz30_gun_feed');assert.ok(feed&&Math.abs(feed.duration-CKM_FEED_SEC)<1e-3,'the clip is 3.2 s long (stored as a float32)');
+  assert.ok(CKM_STOPPAGES.every(x=>x.sec-CKM_FEED_SEC>=0),'every slot leaves room for the whole drill');
 });
