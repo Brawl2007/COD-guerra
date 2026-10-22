@@ -1,0 +1,1855 @@
+{
+  "task": "M01-H9-D4-FAIR-DEATH-V1",
+  "method": "normal simulation route controls, actual fire/impact events and world LOS; observer instruments RNG calls without replacing their results; no gameplay state/clock/HP/LOS/table overrides",
+  "inputsSha256": {
+    "src/game/m01-simulation.js": "fa3ba33e7831385c99f40b747565be53c2c11dbce1a92fde86afa393ffe8fd27",
+    "src/game/m01-difficulty.js": "8dafe026c8c1bf6ccc16e730618e9c8fd7675414257233d2c6a949fdc926501e",
+    "tests/helpers/m01-danger.js": "5a8bc33368005be031bd915f8810738f9ec001170054a6d445d5c76c0f23adaa",
+    "tests/helpers/m01-route.js": "fa2f2420f3115c279aaf7ce17dfe4872ea0f5a0d6ec9001c19ae05652eca0efe"
+  },
+  "summary": {
+    "routes": 48,
+    "deaths": 13,
+    "violatingRoutes": [],
+    "deathFixtureCaptured": true
+  },
+  "rows": [
+    {
+      "level": "soldado",
+      "seed": 19390901,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1181.0499999994736,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 478,
+        "tracer": 36,
+        "crack": 364
+      },
+      "collisions": 12,
+      "woundRolls": 12,
+      "wounds": 6,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 19390901,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1155.8499999994965,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 211,
+        "tracer": 1,
+        "crack": 122
+      },
+      "collisions": 10,
+      "woundRolls": 10,
+      "wounds": 3,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 1,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1197.9499999994582,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 550,
+        "tracer": 43,
+        "crack": 431
+      },
+      "collisions": 17,
+      "woundRolls": 17,
+      "wounds": 10,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 1,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1152.5999999994995,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 236,
+        "tracer": 1,
+        "crack": 160
+      },
+      "collisions": 11,
+      "woundRolls": 11,
+      "wounds": 4,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 2,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1210.249999999447,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 629,
+        "tracer": 55,
+        "crack": 461
+      },
+      "collisions": 15,
+      "woundRolls": 15,
+      "wounds": 7,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 2,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1103.2999999995443,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 222,
+        "tracer": 2,
+        "crack": 155
+      },
+      "collisions": 11,
+      "woundRolls": 11,
+      "wounds": 5,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 3,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1220.3499999994378,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 591,
+        "tracer": 52,
+        "crack": 446
+      },
+      "collisions": 22,
+      "woundRolls": 22,
+      "wounds": 10,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 3,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1146.1999999995053,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 233,
+        "tracer": 2,
+        "crack": 153
+      },
+      "collisions": 10,
+      "woundRolls": 10,
+      "wounds": 2,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 4,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1200.1999999994562,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 64.5,
+      "cueCounts": {
+        "flash": 532,
+        "tracer": 42,
+        "crack": 392
+      },
+      "collisions": 24,
+      "woundRolls": 24,
+      "wounds": 8,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 4,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1154.0499999994981,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 272,
+        "tracer": 2,
+        "crack": 169
+      },
+      "collisions": 12,
+      "woundRolls": 12,
+      "wounds": 4,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 5,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1203.9499999994528,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 49.25,
+      "cueCounts": {
+        "flash": 568,
+        "tracer": 36,
+        "crack": 410
+      },
+      "collisions": 32,
+      "woundRolls": 32,
+      "wounds": 12,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 5,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1095.0499999995518,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 100,
+      "cueCounts": {
+        "flash": 197,
+        "tracer": 2,
+        "crack": 146
+      },
+      "collisions": 5,
+      "woundRolls": 5,
+      "wounds": 0,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 6,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1187.0499999994681,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 503,
+        "tracer": 38,
+        "crack": 360
+      },
+      "collisions": 19,
+      "woundRolls": 19,
+      "wounds": 7,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 6,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1095.7999999995511,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 200,
+        "tracer": 2,
+        "crack": 132
+      },
+      "collisions": 8,
+      "woundRolls": 8,
+      "wounds": 1,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 7,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1197.3999999994587,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 73.75,
+      "cueCounts": {
+        "flash": 586,
+        "tracer": 50,
+        "crack": 436
+      },
+      "collisions": 24,
+      "woundRolls": 24,
+      "wounds": 10,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 7,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1145.9999999995055,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 245,
+        "tracer": 1,
+        "crack": 158
+      },
+      "collisions": 9,
+      "woundRolls": 9,
+      "wounds": 3,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 8,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1195.4499999994605,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 527,
+        "tracer": 40,
+        "crack": 383
+      },
+      "collisions": 15,
+      "woundRolls": 15,
+      "wounds": 5,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 8,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1162.6999999994903,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 235,
+        "tracer": 2,
+        "crack": 165
+      },
+      "collisions": 10,
+      "woundRolls": 10,
+      "wounds": 2,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 9,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1189.2499999994661,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 547,
+        "tracer": 37,
+        "crack": 419
+      },
+      "collisions": 14,
+      "woundRolls": 14,
+      "wounds": 5,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 9,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1074.5499999995704,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 50,
+      "cueCounts": {
+        "flash": 213,
+        "tracer": 2,
+        "crack": 140
+      },
+      "collisions": 11,
+      "woundRolls": 11,
+      "wounds": 3,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 10,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1203.1999999994534,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 41.25,
+      "cueCounts": {
+        "flash": 572,
+        "tracer": 44,
+        "crack": 420
+      },
+      "collisions": 27,
+      "woundRolls": 27,
+      "wounds": 16,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 10,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1121.3999999995278,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 100,
+      "cueCounts": {
+        "flash": 216,
+        "tracer": 2,
+        "crack": 136
+      },
+      "collisions": 6,
+      "woundRolls": 6,
+      "wounds": 0,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 11,
+      "support": false,
+      "complete": true,
+      "died": false,
+      "clock": 1193.1499999994626,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 590,
+        "tracer": 40,
+        "crack": 449
+      },
+      "collisions": 19,
+      "woundRolls": 19,
+      "wounds": 4,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "soldado",
+      "seed": 11,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1099.0499999995482,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 75,
+      "cueCounts": {
+        "flash": 218,
+        "tracer": 2,
+        "crack": 148
+      },
+      "collisions": 11,
+      "woundRolls": 11,
+      "wounds": 2,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 19390901,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 719.7499999998931,
+      "battleClock": 22170,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 390,
+        "tracer": 31,
+        "crack": 347
+      },
+      "collisions": 21,
+      "woundRolls": 21,
+      "wounds": 14,
+      "deaths": [
+        {
+          "clock": 719.7499999998931,
+          "firedAt": 718.2999999998945,
+          "by": "de_spans_0",
+          "kind": "player",
+          "health": 1,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 714.4999999998979,
+            "last": 718.2999999998945,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 714.4999999998979,
+              "cue": "flash",
+              "by": "de_spans_0",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1686",
+                "by": "de_spans_0",
+                "firedAt": 714.4999999998979,
+                "emittedAt": 714.4999999998979,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 926.89999999999,
+                  "y": 1.64,
+                  "z": 38.16
+                }
+              }
+            },
+            "last": {
+              "at": 718.2999999998945,
+              "cue": "flash",
+              "by": "de_spans_0",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1693",
+                "by": "de_spans_0",
+                "firedAt": 718.2999999998945,
+                "emittedAt": 718.2999999998945,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 926.89999999999,
+                  "y": 1.64,
+                  "z": 38.16
+                }
+              }
+            }
+          },
+          "rng": 1455362752,
+          "rngAfter": 1455362752,
+          "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 19390901,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1169.699999999484,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 20,
+      "cueCounts": {
+        "flash": 287,
+        "tracer": 1,
+        "crack": 220
+      },
+      "collisions": 21,
+      "woundRolls": 21,
+      "wounds": 7,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 1,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 488.1500000000767,
+      "battleClock": 19696.050000002135,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 259,
+        "tracer": 38,
+        "crack": 237
+      },
+      "collisions": 13,
+      "woundRolls": 13,
+      "wounds": 8,
+      "deaths": [
+        {
+          "clock": 488.1500000000767,
+          "firedAt": 486.3750000000763,
+          "by": "de_east_1",
+          "kind": "player",
+          "health": 34.099999999999866,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 485.100000000076,
+            "last": 488.0500000000767,
+            "cue": "crack"
+          },
+          "proof": {
+            "first": {
+              "at": 485.100000000076,
+              "cue": "flash",
+              "by": "de_east_1",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1006",
+                "by": "de_east_1",
+                "firedAt": 485.100000000076,
+                "emittedAt": 485.100000000076,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1053.7298768874648,
+                  "y": 0.3695089,
+                  "z": 12.919596135651888
+                }
+              }
+            },
+            "last": {
+              "at": 488.0500000000767,
+              "cue": "crack",
+              "by": "de_east_1",
+              "valid": true,
+              "source": {
+                "type": "round-impact",
+                "by": "de_east_1",
+                "kind": "player",
+                "crack": true,
+                "point": {
+                  "x": -87.72155130713251,
+                  "y": -3.0455226595237344,
+                  "z": 29.65332413576589
+                }
+              }
+            }
+          },
+          "rng": 2131349220,
+          "rngAfter": 2131349220,
+          "cause": "Abatido por MG34 nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 1,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1122.6499999995267,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 20,
+      "cueCounts": {
+        "flash": 256,
+        "tracer": 1,
+        "crack": 207
+      },
+      "collisions": 21,
+      "woundRolls": 21,
+      "wounds": 6,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 2,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 363.80000000004844,
+      "battleClock": 18066.600000001563,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 122,
+        "tracer": 16,
+        "crack": 104
+      },
+      "collisions": 5,
+      "woundRolls": 5,
+      "wounds": 4,
+      "deaths": [
+        {
+          "clock": 363.80000000004844,
+          "firedAt": 362.050000000048,
+          "by": "de_east_1",
+          "kind": "player",
+          "health": 29.899999999999906,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 360.9000000000478,
+            "last": 363.75000000004843,
+            "cue": "crack"
+          },
+          "proof": {
+            "first": {
+              "at": 360.9000000000478,
+              "cue": "flash",
+              "by": "de_east_1",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_481",
+                "by": "de_east_1",
+                "firedAt": 360.9000000000478,
+                "emittedAt": 360.9000000000478,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1053.7298768874648,
+                  "y": 0.3695089,
+                  "z": 12.919596135651888
+                }
+              }
+            },
+            "last": {
+              "at": 363.75000000004843,
+              "cue": "crack",
+              "by": "de_east_1",
+              "valid": true,
+              "source": {
+                "type": "round-impact",
+                "by": "de_east_1",
+                "kind": "player",
+                "crack": true,
+                "point": {
+                  "x": -70.74958505333205,
+                  "y": -3.0462660591461534,
+                  "z": 28.07141387103585
+                }
+              }
+            }
+          },
+          "rng": 2136219639,
+          "rngAfter": 2136219639,
+          "cause": "Abatido por MG34 nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 2,
+      "support": true,
+      "complete": false,
+      "died": true,
+      "clock": 346.0500000000444,
+      "battleClock": 17906.850000001305,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 61,
+        "tracer": 2,
+        "crack": 64
+      },
+      "collisions": 9,
+      "woundRolls": 9,
+      "wounds": 5,
+      "deaths": [
+        {
+          "clock": 346.0500000000444,
+          "firedAt": 344.150000000044,
+          "by": "de_east_10",
+          "kind": "player",
+          "health": 16.149999999999658,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 341.7000000000434,
+            "last": 344.150000000044,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 341.7000000000434,
+              "cue": "crack",
+              "by": "de_east_10",
+              "valid": true,
+              "source": {
+                "type": "round-impact",
+                "by": "de_east_10",
+                "kind": "repair",
+                "crack": true,
+                "point": {
+                  "x": -246.6658996041889,
+                  "y": -3.042334387488767,
+                  "z": 15.154930232744743
+                }
+              }
+            },
+            "last": {
+              "at": 344.150000000044,
+              "cue": "flash",
+              "by": "de_east_10",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_277",
+                "by": "de_east_10",
+                "firedAt": 344.150000000044,
+                "emittedAt": 344.150000000044,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1053.5,
+                  "y": 0.3400000000000001,
+                  "z": 24.8
+                }
+              }
+            }
+          },
+          "rng": 2382657681,
+          "rngAfter": 2382657681,
+          "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 3,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 673.9999999999347,
+      "battleClock": 22160.450000001885,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 278,
+        "tracer": 33,
+        "crack": 238
+      },
+      "collisions": 15,
+      "woundRolls": 15,
+      "wounds": 12,
+      "deaths": [
+        {
+          "clock": 673.9999999999347,
+          "firedAt": 672.2499999999363,
+          "by": "de_east_16",
+          "kind": "player",
+          "health": 20,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 669.7499999999386,
+            "last": 672.2499999999363,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 669.7499999999386,
+              "cue": "flash",
+              "by": "de_east_16",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1640",
+                "by": "de_east_16",
+                "firedAt": 669.7499999999386,
+                "emittedAt": 669.7499999999386,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1090,
+                  "y": 0.6399999999999999,
+                  "z": -70
+                }
+              }
+            },
+            "last": {
+              "at": 672.2499999999363,
+              "cue": "flash",
+              "by": "de_east_16",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1645",
+                "by": "de_east_16",
+                "firedAt": 672.2499999999363,
+                "emittedAt": 672.2499999999363,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1090,
+                  "y": 0.6399999999999999,
+                  "z": -70
+                }
+              }
+            }
+          },
+          "rng": 1269201236,
+          "rngAfter": 1269201236,
+          "cause": "Abatido por espingarda alemã.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 3,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1097.4999999995496,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 60,
+      "cueCounts": {
+        "flash": 247,
+        "tracer": 2,
+        "crack": 203
+      },
+      "collisions": 16,
+      "woundRolls": 16,
+      "wounds": 6,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 4,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 760.9999999998556,
+      "battleClock": 22170,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 359,
+        "tracer": 33,
+        "crack": 315
+      },
+      "collisions": 21,
+      "woundRolls": 21,
+      "wounds": 15,
+      "deaths": [
+        {
+          "clock": 760.9999999998556,
+          "firedAt": 759.499999999857,
+          "by": "de_spans_3",
+          "kind": "player",
+          "health": 36.899999999999615,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 752.7499999998631,
+            "last": 759.499999999857,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 752.7499999998631,
+              "cue": "flash",
+              "by": "de_spans_3",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1857",
+                "by": "de_spans_3",
+                "firedAt": 752.7499999998631,
+                "emittedAt": 752.7499999998631,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 937.6999999999871,
+                  "y": 1.64,
+                  "z": 40.92
+                }
+              }
+            },
+            "last": {
+              "at": 759.499999999857,
+              "cue": "flash",
+              "by": "de_spans_3",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1870",
+                "by": "de_spans_3",
+                "firedAt": 759.499999999857,
+                "emittedAt": 759.499999999857,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 937.6999999999871,
+                  "y": 1.64,
+                  "z": 40.92
+                }
+              }
+            }
+          },
+          "rng": 1096448182,
+          "rngAfter": 1096448182,
+          "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 4,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1188.199999999467,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 1,
+      "cueCounts": {
+        "flash": 342,
+        "tracer": 2,
+        "crack": 287
+      },
+      "collisions": 28,
+      "woundRolls": 28,
+      "wounds": 10,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 5,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 736.4999999998779,
+      "battleClock": 22170,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 344,
+        "tracer": 41,
+        "crack": 307
+      },
+      "collisions": 24,
+      "woundRolls": 24,
+      "wounds": 14,
+      "deaths": [
+        {
+          "clock": 736.4999999998779,
+          "firedAt": 734.9999999998793,
+          "by": "de_spans_1",
+          "kind": "player",
+          "health": 1,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 732.2499999998818,
+            "last": 734.9999999998793,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 732.2499999998818,
+              "cue": "flash",
+              "by": "de_spans_1",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1848",
+                "by": "de_spans_1",
+                "firedAt": 732.2499999998818,
+                "emittedAt": 732.2499999998818,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 930.7999999999898,
+                  "y": 1.64,
+                  "z": 41.84
+                }
+              }
+            },
+            "last": {
+              "at": 734.9999999998793,
+              "cue": "flash",
+              "by": "de_spans_1",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1852",
+                "by": "de_spans_1",
+                "firedAt": 734.9999999998793,
+                "emittedAt": 734.9999999998793,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 930.7999999999898,
+                  "y": 1.64,
+                  "z": 41.84
+                }
+              }
+            }
+          },
+          "rng": 2153271715,
+          "rngAfter": 2153271715,
+          "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 5,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1143.5499999995077,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 1,
+      "cueCounts": {
+        "flash": 336,
+        "tracer": 2,
+        "crack": 264
+      },
+      "collisions": 28,
+      "woundRolls": 28,
+      "wounds": 9,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 6,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 414.05000000005987,
+      "battleClock": 18518.850000002294,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 133,
+        "tracer": 18,
+        "crack": 120
+      },
+      "collisions": 9,
+      "woundRolls": 9,
+      "wounds": 8,
+      "deaths": [
+        {
+          "clock": 414.05000000005987,
+          "firedAt": 412.3000000000594,
+          "by": "de_east_1",
+          "kind": "player",
+          "health": 1,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 407.75000000005844,
+            "last": 414.00000000005986,
+            "cue": "crack"
+          },
+          "proof": {
+            "first": {
+              "at": 407.75000000005844,
+              "cue": "flash",
+              "by": "de_east_1",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_626",
+                "by": "de_east_1",
+                "firedAt": 407.75000000005844,
+                "emittedAt": 407.75000000005844,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1053.7298768874648,
+                  "y": 0.3695089,
+                  "z": 12.919596135651888
+                }
+              }
+            },
+            "last": {
+              "at": 414.00000000005986,
+              "cue": "crack",
+              "by": "de_east_1",
+              "valid": true,
+              "source": {
+                "type": "round-impact",
+                "by": "de_east_1",
+                "kind": "player",
+                "crack": true,
+                "point": {
+                  "x": -24.549999999999997,
+                  "y": -2.2079482851907724,
+                  "z": 27.627063131494523
+                }
+              }
+            }
+          },
+          "rng": 1393042221,
+          "rngAfter": 1393042221,
+          "cause": "Abatido por MG34 nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 6,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1136.0499999995145,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 36.20000000000043,
+      "cueCounts": {
+        "flash": 281,
+        "tracer": 2,
+        "crack": 223
+      },
+      "collisions": 20,
+      "woundRolls": 20,
+      "wounds": 4,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 7,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 688.9999999999211,
+      "battleClock": 22156.550000001942,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 327,
+        "tracer": 33,
+        "crack": 270
+      },
+      "collisions": 14,
+      "woundRolls": 14,
+      "wounds": 11,
+      "deaths": [
+        {
+          "clock": 688.9999999999211,
+          "firedAt": 687.2499999999227,
+          "by": "de_east_17",
+          "kind": "player",
+          "health": 1,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 685.4499999999243,
+            "last": 687.2499999999227,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 685.4499999999243,
+              "cue": "flash",
+              "by": "de_east_17",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1746",
+                "by": "de_east_17",
+                "firedAt": 685.4499999999243,
+                "emittedAt": 685.4499999999243,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1097,
+                  "y": 0.6399999999999999,
+                  "z": -65
+                }
+              }
+            },
+            "last": {
+              "at": 687.2499999999227,
+              "cue": "flash",
+              "by": "de_east_17",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1749",
+                "by": "de_east_17",
+                "firedAt": 687.2499999999227,
+                "emittedAt": 687.2499999999227,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1097,
+                  "y": 0.6399999999999999,
+                  "z": -65
+                }
+              }
+            }
+          },
+          "rng": 3416972578,
+          "rngAfter": 3416972578,
+          "cause": "Abatido por espingarda alemã.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 7,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1114.4499999995342,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 20,
+      "cueCounts": {
+        "flash": 263,
+        "tracer": 1,
+        "crack": 215
+      },
+      "collisions": 21,
+      "woundRolls": 21,
+      "wounds": 9,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 8,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 672.9999999999357,
+      "battleClock": 22167.350000001785,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 246,
+        "tracer": 25,
+        "crack": 223
+      },
+      "collisions": 12,
+      "woundRolls": 12,
+      "wounds": 9,
+      "deaths": [
+        {
+          "clock": 672.9999999999357,
+          "firedAt": 671.7499999999368,
+          "by": "de_spans_5",
+          "kind": "player",
+          "health": 4.9,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 669.1999999999391,
+            "last": 671.7499999999368,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 669.1999999999391,
+              "cue": "flash",
+              "by": "de_spans_5",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1569",
+                "by": "de_spans_5",
+                "firedAt": 669.1999999999391,
+                "emittedAt": 669.1999999999391,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 777.8199999999986,
+                  "y": 1.64,
+                  "z": 42.3
+                }
+              }
+            },
+            "last": {
+              "at": 671.7499999999368,
+              "cue": "flash",
+              "by": "de_spans_5",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1575",
+                "by": "de_spans_5",
+                "firedAt": 671.7499999999368,
+                "emittedAt": 671.7499999999368,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 777.8199999999986,
+                  "y": 1.64,
+                  "z": 42.3
+                }
+              }
+            }
+          },
+          "rng": 661069610,
+          "rngAfter": 661069610,
+          "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 8,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1084.6999999995612,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 1,
+      "cueCounts": {
+        "flash": 246,
+        "tracer": 2,
+        "crack": 190
+      },
+      "collisions": 27,
+      "woundRolls": 27,
+      "wounds": 15,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 9,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 441.5000000000661,
+      "battleClock": 19041.300000002026,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 176,
+        "tracer": 27,
+        "crack": 160
+      },
+      "collisions": 8,
+      "woundRolls": 8,
+      "wounds": 6,
+      "deaths": [
+        {
+          "clock": 441.5000000000661,
+          "firedAt": 439.7500000000657,
+          "by": "de_east_0",
+          "kind": "player",
+          "health": 28.799999999999585,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 434.25000000006446,
+            "last": 441.15000000006603,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 434.25000000006446,
+              "cue": "flash",
+              "by": "de_east_0",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_706",
+                "by": "de_east_0",
+                "firedAt": 434.25000000006446,
+                "emittedAt": 434.25000000006446,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1053.7314809934198,
+                  "y": 0.3695089,
+                  "z": 31.89734995205412
+                }
+              }
+            },
+            "last": {
+              "at": 441.15000000006603,
+              "cue": "flash",
+              "by": "de_east_0",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_739",
+                "by": "de_east_0",
+                "firedAt": 441.1500000000659,
+                "emittedAt": 441.15000000006603,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1053.7416533404325,
+                  "y": 0.40811278922829686,
+                  "z": 31.899680983910912
+                }
+              }
+            }
+          },
+          "rng": 564310897,
+          "rngAfter": 564310897,
+          "cause": "Abatido por MG34 nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 9,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1161.2999999994915,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 20,
+      "cueCounts": {
+        "flash": 301,
+        "tracer": 2,
+        "crack": 241
+      },
+      "collisions": 24,
+      "woundRolls": 24,
+      "wounds": 9,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 10,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 728.9499999998848,
+      "battleClock": 22170,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 374,
+        "tracer": 35,
+        "crack": 329
+      },
+      "collisions": 16,
+      "woundRolls": 16,
+      "wounds": 10,
+      "deaths": [
+        {
+          "clock": 728.9499999998848,
+          "firedAt": 727.7999999998858,
+          "by": "de_spans_5",
+          "kind": "player",
+          "health": 1,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 725.8999999998875,
+            "last": 727.7999999998858,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 725.8999999998875,
+              "cue": "flash",
+              "by": "de_spans_5",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1842",
+                "by": "de_spans_5",
+                "firedAt": 725.8999999998875,
+                "emittedAt": 725.8999999998875,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 729.7200000000003,
+                  "y": 1.64,
+                  "z": 42.3
+                }
+              }
+            },
+            "last": {
+              "at": 727.7999999998858,
+              "cue": "flash",
+              "by": "de_spans_5",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1845",
+                "by": "de_spans_5",
+                "firedAt": 727.7999999998858,
+                "emittedAt": 727.7999999998858,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 729.7200000000003,
+                  "y": 1.64,
+                  "z": 42.3
+                }
+              }
+            }
+          },
+          "rng": 2457023244,
+          "rngAfter": 2457023244,
+          "cause": "Abatido por espingarda alemã nos portões de Lisewo.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 10,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1068.0499999995764,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 3.2500000000006963,
+      "cueCounts": {
+        "flash": 249,
+        "tracer": 2,
+        "crack": 201
+      },
+      "collisions": 20,
+      "woundRolls": 20,
+      "wounds": 9,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 11,
+      "support": false,
+      "complete": false,
+      "died": true,
+      "clock": 750.7999999998649,
+      "battleClock": 22170,
+      "health": 0,
+      "minHealth": 0,
+      "cueCounts": {
+        "flash": 391,
+        "tracer": 38,
+        "crack": 348
+      },
+      "collisions": 28,
+      "woundRolls": 28,
+      "wounds": 14,
+      "deaths": [
+        {
+          "clock": 750.7999999998649,
+          "firedAt": 749.0499999998665,
+          "by": "de_east_15",
+          "kind": "player",
+          "health": 23.79999999999995,
+          "alive": true,
+          "scene": null,
+          "cue": {
+            "first": 746.8999999998684,
+            "last": 749.0499999998665,
+            "cue": "flash"
+          },
+          "proof": {
+            "first": {
+              "at": 746.8999999998684,
+              "cue": "flash",
+              "by": "de_east_15",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1861",
+                "by": "de_east_15",
+                "firedAt": 746.8999999998684,
+                "emittedAt": 746.8999999998684,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1083,
+                  "y": 0.6399999999999999,
+                  "z": -75
+                }
+              }
+            },
+            "last": {
+              "at": 749.0499999998665,
+              "cue": "flash",
+              "by": "de_east_15",
+              "valid": true,
+              "source": {
+                "type": "enemy-fire",
+                "round": "m01_round_1866",
+                "by": "de_east_15",
+                "firedAt": 749.0499999998665,
+                "emittedAt": 749.0499999998665,
+                "visible": true,
+                "tracer": false,
+                "origin": {
+                  "x": 1083,
+                  "y": 0.6399999999999999,
+                  "z": -75
+                }
+              }
+            }
+          },
+          "rng": 1096364562,
+          "rngAfter": 1096364562,
+          "cause": "Abatido por espingarda alemã.",
+          "qualifyingCue": true
+        }
+      ],
+      "violations": [],
+      "error": null
+    },
+    {
+      "level": "veterano",
+      "seed": 11,
+      "support": true,
+      "complete": true,
+      "died": false,
+      "clock": 1087.049999999559,
+      "battleClock": 25500,
+      "health": 100,
+      "minHealth": 20,
+      "cueCounts": {
+        "flash": 261,
+        "tracer": 2,
+        "crack": 211
+      },
+      "collisions": 16,
+      "woundRolls": 16,
+      "wounds": 8,
+      "deaths": [],
+      "violations": [],
+      "error": null
+    }
+  ]
+}

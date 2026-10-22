@@ -89,3 +89,30 @@ test('T40 frozen carry phases exact source snapshots and camera',async({browser}
   }finally{await page.close();}
  }
 });
+
+// Regression: the patient used to remain inside the carrier's name lookup tree.
+// Complete the action with E; inspecting a saved carry pose alone missed this.
+test('T40 native putdown returns to an intact rifle and survives checkpoint reload',async({page},info)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const snapshot=carryViews().beforePutdown;
+ await seed(page,snapshot,'high');
+ await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.loaded.includes('fp:0'));
+ await page.locator('#continue').click();
+ await page.waitForFunction(()=>document.pointerLockElement?.id==='game'&&!window.gameDiagnostics().paused);
+ await page.keyboard.press('KeyE');
+ await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.clip==='carry_putdown_carrier');
+ await page.waitForFunction(()=>{const v=window.gameDiagnostics().m01.viewModel;return v.visible&&!v.carrying&&v.clip==='aim';});
+ await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+ const after=await capture(page,info,'after-native-putdown'),v=after.diagnostics.m01.viewModel;
+ expect(after.state.snapshot.player.carrying).toBe(null);
+ expect(after.state.snapshot.objectives.obj_m01_rescue_bak.state).toBe('done');
+ const sightLength=Math.hypot(...v.visualSights.front.map((n,i)=>n-v.visualSights.rear[i]));
+ expect(sightLength,'the visible rifle must retain its 462 mm sight line after delivery').toBeGreaterThan(.45);
+ const saved=after.state.snapshot;
+ await page.evaluate(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:saved});
+ await page.reload();await expect(page.locator('#start')).toBeEnabled({timeout:180000});await frozen(page,saved);
+ await page.waitForFunction(()=>window.gameDiagnostics().m01.viewModel.fpVariant==='fp-arms-v2');
+ const restored=await capture(page,info,'after-putdown-restored');
+ for(const name of ['rear','front'])for(let i=0;i<3;i++)expect(restored.diagnostics.m01.viewModel.visualSights[name][i]).toBeCloseTo(v.visualSights[name][i],5);
+ expect(errors).toEqual([]);
+});

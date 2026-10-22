@@ -1,0 +1,169 @@
+{
+  "clock": 157.61660000000157,
+  "quality": "high",
+  "player": {
+    "x": -266.1485983740963,
+    "y": -3,
+    "z": 20.895501037278862,
+    "angle": -6.192455539284205,
+    "pitch": 0,
+    "health": 100,
+    "crouched": false,
+    "aiming": false
+  },
+  "hudStatus": "",
+  "viewModel": {
+    "active": true,
+    "visible": true,
+    "lod": 0,
+    "native": {
+      "clock": 157.61660000000157,
+      "triangles": 1874,
+      "calls": 7,
+      "meshes": [
+        {
+          "name": "Mesh",
+          "triangles": 12
+        },
+        {
+          "name": "Mesh",
+          "triangles": 12
+        },
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        }
+      ]
+    },
+    "clock": 157.61660000000157,
+    "fpVariant": "fp-arms-v2",
+    "drawnTriangles": 1850,
+    "drawnMeshes": [
+      {
+        "name": "body",
+        "triangles": 600
+      },
+      {
+        "name": "fp_sleeve_caps",
+        "triangles": 102
+      },
+      {
+        "name": "fp_hands",
+        "triangles": 1028
+      },
+      {
+        "name": "fp_cuffs",
+        "triangles": 96
+      },
+      {
+        "name": "fp_straps",
+        "triangles": 24
+      }
+    ],
+    "carryFrame": {
+      "kind": "crate",
+      "hands": [
+        [
+          -0.24500000000496538,
+          -0.2799999999952491,
+          -0.5700000000063357
+        ],
+        [
+          0.24499999996716948,
+          -0.2799999999065729,
+          -0.5699999999623677
+        ]
+      ]
+    },
+    "clip": "carry_walk",
+    "clipTime": 0.3165965906158874,
+    "carrying": true,
+    "cargo": "sapper_crate",
+    "singleRound": false,
+    "armTriangles": 1850,
+    "aimBlend": null,
+    "runBlend": null,
+    "phase": 0,
+    "visualMuzzle": [
+      -0.35227364516845305,
+      0.28661029518665004,
+      0.36168799213158964
+    ],
+    "visualSights": {
+      "rear": [
+        -0.09197744970529466,
+        -0.09723027862281819,
+        0.4671076512328382
+      ],
+      "front": [
+        -0.34402956897254267,
+        0.28348556588382634,
+        0.39604306853173904
+      ]
+    },
+    "presentation": {
+      "profile": "wz29",
+      "mechanical": 0,
+      "boltStroke": 0,
+      "wallDistance": null,
+      "wallTarget": 0,
+      "wallLower": 0,
+      "fov": null,
+      "breath": 0,
+      "bob": 0,
+      "gait": 0,
+      "muzzleReach": -0.3617,
+      "lookYaw": 0,
+      "lookPitch": 0,
+      "clipEjected": false,
+      "flash": 0,
+      "layers": 0,
+      "light": 0,
+      "wisps": 0
+    }
+  },
+  "hudPresentation": {
+    "banner": {
+      "kind": "current",
+      "id": "obj_m01_fetch_material"
+    },
+    "queued": [],
+    "fade": 0,
+    "checkpoint": 0,
+    "titleCard": null,
+    "resumeCard": "resume|Tczew \u2014 pontes do V\u00edstula|1 de setembro de 1939 \u00b7 04:39|CP-B \u00b7 Reorganiza\u00e7\u00e3o ap\u00f3s o ataque",
+    "cinematic": false,
+    "sceneBeats": {
+      "scene": null,
+      "elapsed": 0,
+      "letterbox": false,
+      "dimHud": 0,
+      "lookPrompt": "",
+      "subtitlePause": false,
+      "shake": 0
+    },
+    "marker": {
+      "label": "Sapadores no segundo corte da linha",
+      "x": 0.4302,
+      "side": null
+    },
+    "tempo": false
+  },
+  "bak": "unhurt"
+}

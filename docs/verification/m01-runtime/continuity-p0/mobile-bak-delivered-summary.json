@@ -1,0 +1,230 @@
+{
+  "clock": 589.8667000000113,
+  "quality": "high",
+  "player": {
+    "x": -7.850838873755955,
+    "y": -0.35000020265579224,
+    "z": 46.83503342931931,
+    "angle": -4.585042891447158,
+    "pitch": 0.02546651683848734,
+    "health": 100,
+    "crouched": false,
+    "aiming": false
+  },
+  "hudStatus": "Pelot\u00e3o leste: 12 homens \u00b7 alem\u00e3es no tabuleiro a disparar sobre eles",
+  "viewModel": {
+    "active": true,
+    "visible": true,
+    "lod": 0,
+    "native": {
+      "clock": 589.8667000000113,
+      "triangles": 5869,
+      "calls": 9,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        },
+        {
+          "name": "body",
+          "triangles": 2451
+        },
+        {
+          "name": "gear",
+          "triangles": 204
+        },
+        {
+          "name": "head_bak",
+          "triangles": 983
+        },
+        {
+          "name": "helmet_wz31",
+          "triangles": 381
+        }
+      ]
+    },
+    "clock": 589.8667000000113,
+    "fpVariant": "fp-arms-v2",
+    "drawnTriangles": 5869,
+    "drawnMeshes": [
+      {
+        "name": "body",
+        "triangles": 600
+      },
+      {
+        "name": "fp_sleeve_caps",
+        "triangles": 102
+      },
+      {
+        "name": "fp_hands",
+        "triangles": 1028
+      },
+      {
+        "name": "fp_cuffs",
+        "triangles": 96
+      },
+      {
+        "name": "fp_straps",
+        "triangles": 24
+      },
+      {
+        "name": "body",
+        "triangles": 2451
+      },
+      {
+        "name": "head_bak",
+        "triangles": 983
+      },
+      {
+        "name": "helmet_wz31",
+        "triangles": 381
+      },
+      {
+        "name": "gear",
+        "triangles": 204
+      }
+    ],
+    "carryFrame": {
+      "lift": 0.02471923828167022,
+      "patientJoints": {
+        "head": [
+          -0.40676129770109093,
+          -0.7536344093471197,
+          -1.315246098921668
+        ],
+        "hips": [
+          0.21999999999999995,
+          -0.8886291503904317,
+          -1.2670336914061995
+        ],
+        "calf_l": [
+          0.4606960419040314,
+          -1.1083964010536458,
+          -1.2508461795026118
+        ],
+        "calf_r": [
+          0.4314404054356767,
+          -1.2794987674805887,
+          -1.1374283344863005
+        ],
+        "foot_l": [
+          0.8700000000000003,
+          -1.268629150390432,
+          -1.25
+        ],
+        "foot_r": [
+          0.8699999999999999,
+          -1.2686291503904317,
+          -1.11
+        ]
+      },
+      "patientHip": [
+        0.22,
+        -0.8886291503904318,
+        -1.2670336914061995
+      ],
+      "hands": [
+        [
+          -0.2600000000032081,
+          -0.9186291503966307,
+          -1.0570336914187537
+        ],
+        [
+          0.28000000000881814,
+          -0.9186291503986757,
+          -1.0570336914261886
+        ]
+      ]
+    },
+    "clip": "carry_putdown_carrier",
+    "clipTime": 1.4499999999986812,
+    "carrying": true,
+    "cargo": "jozef_bak",
+    "singleRound": false,
+    "armTriangles": 1850,
+    "aimBlend": null,
+    "runBlend": null,
+    "phase": 0,
+    "visualMuzzle": [
+      0.37098429566992447,
+      0.36543792488241766,
+      0.310703008103694
+    ],
+    "visualSights": {
+      "rear": [
+        0.37098429566992447,
+        0.36543792488241766,
+        0.310703008103694
+      ],
+      "front": [
+        0.37098429566992447,
+        0.36543792488241766,
+        0.310703008103694
+      ]
+    },
+    "presentation": {
+      "profile": "wz29",
+      "mechanical": 0,
+      "boltStroke": 0,
+      "wallDistance": null,
+      "wallTarget": 0,
+      "wallLower": 0,
+      "fov": null,
+      "breath": 0,
+      "bob": 0,
+      "gait": 0,
+      "muzzleReach": -0.3107,
+      "lookYaw": 0,
+      "lookPitch": 0,
+      "clipEjected": false,
+      "flash": 0,
+      "layers": 0,
+      "light": 0,
+      "wisps": 0
+    }
+  },
+  "hudPresentation": {
+    "banner": {
+      "kind": "done",
+      "id": "obj_m01_rescue_bak"
+    },
+    "queued": [],
+    "fade": 0,
+    "checkpoint": 0,
+    "titleCard": null,
+    "resumeCard": "resume|Tczew \u2014 pontes do V\u00edstula|1 de setembro de 1939 \u00b7 06:07|CP-C \u00b7 Prote\u00e7\u00e3o dos engenheiros",
+    "cinematic": false,
+    "sceneBeats": {
+      "scene": null,
+      "elapsed": 0,
+      "letterbox": false,
+      "dimHud": 0,
+      "lookPrompt": "",
+      "subtitlePause": false,
+      "shake": 0
+    },
+    "marker": {
+      "label": "Alem\u00e3es no tabuleiro leste",
+      "x": 0.05,
+      "side": "left"
+    },
+    "tempo": false
+  },
+  "bak": "rescued_by_player"
+}

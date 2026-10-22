@@ -4,7 +4,7 @@ import { AudioSystem } from '../core/audio.js';
 import { Renderer } from '../render/three-renderer.js';
 import { Simulation } from './simulation.js';
 import { M01Simulation } from './m01-simulation.js';
-import { M01HudPresenter, playerImpactSoundPlan } from '../ui/m01-hud.js';
+import { M01HudPresenter, playerImpactSoundPlan, difficultyText, messageIsCurrent, acceptsMessage, DEATH_BEAT_MS } from '../ui/m01-hud.js';
 import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
@@ -25,6 +25,7 @@ export class Game {
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
     this.pendingSounds=[];this.pendingM01HitFeedback=null;this.frame=null;this.listeners=[];this.playSoundBound=sound=>this.playSound(sound);
+    this.m01Down=null;this.m01Deaths=new Map();this.restoredCauseToSkip=null;
     const listen=(target,type,callback)=>{target.addEventListener(type,callback);this.listeners.push(()=>target.removeEventListener(type,callback));};
     listen(window,'resize',()=>{this.renderer.resize();this.m01Hud.resize();});
     listen(window,'blur',()=>this.pause());
@@ -43,9 +44,27 @@ export class Game {
   get allies(){return this.sim.allies;}
   get mission(){return this.sim.mission;}
   get isM01(){return this.sim.missionId==='m01_tczew';}
+  get difficultyLabel(){return this.isM01?difficultyText(this.sim.difficulty):'';}
   get saveKey(){return this.isM01?'cod-guerra:checkpoint:m01:v2':SAVE_KEY;}
   get hasSave(){try{return Boolean(localStorage.getItem(this.saveKey));}catch{return false;}}
+  clearPlayerDown(resetCounts=false){this.m01Down=null;this.restoredCauseToSkip=null;if(resetCounts)this.m01Deaths=new Map();}
+  beginPlayerDown(event){
+    if(!this.isM01||this.sim.player.alive||this.m01Down)return;
+    const id=this.sim.checkpointsReached.at(-1),cp=this.sim.definition.checkpoints.find(c=>c.id===id);
+    this.m01Deaths??=new Map();this.m01Deaths.set(id??'inicio',(this.m01Deaths.get(id??'inicio')??0)+1);
+    this.m01Down={cause:event.cause||'Missão interrompida.',by:event.by??null,checkpoint:cp?`${cp.label} · ${cp.name}`:null,
+      difficulty:this.sim.difficulty,elapsedMs:0,lastNow:Number.isFinite(this.last)?this.last:null};
+    this.input.clear();this.onState?.('down');
+  }
+  /** Presentation wall time only; no simulation tick/RNG or saved counter. Pause/hidden/control loss freezes the beat. */
+  playerDownBlocksFrame(now,active){
+    const down=this.m01Down;if(!down)return false;
+    if(!active){down.lastNow=null;return true;}
+    if(down.lastNow!==null)down.elapsedMs+=Math.max(0,now-down.lastNow);
+    down.lastNow=now;return down.elapsedMs<DEATH_BEAT_MS;
+  }
   selectMission(id){
+    this.clearPlayerDown(true);
     this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
@@ -61,6 +80,7 @@ export class Game {
       if(!result.ok){this.onState('save-error',result.error);return false;}
       this.m01Hud.reset('continue',this.sim.clock);
     }
+    this.clearPlayerDown();
     this.started=true;this.rebuildSounds();
     if(this.sim.mission.complete){this.onState('complete');return true;}
     this.audio.init();this.requestControl();return true;
@@ -74,16 +94,20 @@ export class Game {
   }
   resume(){if(!this.started||this.sim.mission.complete)return;this.audio.init();this.input.clear();this.requestControl();}
   pause(){
+    if(this.m01Down)this.m01Down.lastNow=null;
     this.paused=true;this.input.clear();this.audio.suspend?.();
     if(this.started&&!this.sim.mission.complete)this.onState('paused');
   }
   restartCheckpoint(){
-    this.sim.restoreCheckpoint();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;this.m01Hud.reset('restore',this.sim.clock);
+    this.sim.restoreCheckpoint();this.clearPlayerDown();this.rebuildSounds();this.messageUntil=0;this.hitUntil=0;this.pendingM01HitFeedback=null;this.m01Hud.reset('restore',this.sim.clock);
     this.renderer.resetEffects();this.input.clear();
     if(this.sim.mission.complete)this.onState('complete');else this.resume();
   }
-  restartMission(){
-    this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
+  restartMission({difficulty}={}){
+    // Selection applies only to a NEW M01. Continue/checkpoint restore use the saved level.
+    if(this.isM01&&difficulty!==undefined)this.sim=new M01Simulation(19390901,{difficulty});
+    else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
+    this.clearPlayerDown(true);
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
@@ -97,7 +121,9 @@ export class Game {
   loop(now){
     if(this.disposed)return;
     const dt=Math.min(.25,Math.max(0,(now-this.last)/1000));this.last=now;
-    if(this.started&&!this.paused&&!document.hidden&&(this.touch||document.pointerLockElement===this.canvas)){
+    const active=this.started&&!this.paused&&!document.hidden&&(this.touch||document.pointerLockElement===this.canvas);
+    const downBlocks=this.playerDownBlocksFrame(now,active);
+    if(active&&!downBlocks){
       const controls={lookX:this.input.consumeLook(),lookY:this.input.consumeLookY(),
         forward:this.input.forwardAxis(),
         side:this.input.sideAxis(),
@@ -113,7 +139,7 @@ export class Game {
         this.sim.tick(step,controls);
         if(first){controls.lookX=0;controls.lookY=0;controls.fire=false;controls.reload=false;controls.grenade=false;controls.interact=false;controls.skip=false;controls.crouch=false;controls.sight=false;}   // tick() keeps no reference to controls
         const events=this.sim.drainEvents();
-        for(let i=0;i<events.length;i++){this.handleEvent(events[i]);if(events[i].type==='restored')stop=true;}
+        for(let i=0;i<events.length;i++){this.handleEvent(events[i]);if(events[i].type==='restored'||events[i].type==='player-down')stop=true;}
         remaining-=step;first=false;if(stop||this.sim.mission.complete)break;
       }
       // Due sounds play in this same pass; the rest is compacted in place (no filter() arrays per frame). playSound never touches pendingSounds.
@@ -197,8 +223,13 @@ export class Game {
   }
   handleM01Event(event){
     const now=this.sim.clock*1000;
+    if(event.type==='player-down')this.beginPlayerDown(event);
     if(event.type==='round-impact'||event.type==='player-shot')this.renderer.m01.surfaceDamage(event,this.sim);   // presentation only
-    if(event.type==='message')this.say(event.message,2600);
+    if(event.type==='message'){
+      const duplicate=event.message===this.restoredCauseToSkip;this.restoredCauseToSkip=null;
+      const required=event.continuity&&this.sim.definition?.continuityCues?.find(c=>c.kind===event.continuity.kind)?.requires;
+      if(!duplicate)this.say(event.message,event.durationMs??2600,{priority:event.priority??(event.continuity?0:1),scope:event.scope??(required?{id:required,state:'active'}:null)});
+    }
     if(event.type==='reload')this.audio.wz29Mechanism(this.sim.weapon.reloadMode,`reload:${this.sim.clock.toFixed(3)}`);
     if(event.type==='player-shot'){
       this.audio.wz29Shot(0,0,`wz29:${this.sim.weapon.shotCount}`);this.audio.wz29Mechanism('bolt',`bolt:${this.sim.weapon.shotCount}`);this.renderer.m01.muzzle(this.sim.clock);
@@ -257,10 +288,12 @@ export class Game {
     }
     if(event.type==='checkpoint'){
       this.checkpointUntil=now+2400;this.persistCheckpoint();
-      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name}`,this.sim.clock);
+      const checkpoint=this.sim.definition.checkpoints.find(c=>c.id===event.id);this.m01Hud.checkpoint(`${checkpoint.label} · ${checkpoint.name} · ${this.difficultyLabel}`,this.sim.clock);
     }
     if(event.type==='restored'){
-      this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
+      const wasDown=this.m01Down;this.restoredCauseToSkip=wasDown?.cause??null;this.m01Down=null;
+      this.rebuildSounds();this.pendingM01HitFeedback=null;this.messageUntil=0;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
+      if(wasDown)this.onState?.('playing');
     }
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
@@ -271,14 +304,22 @@ export class Game {
     try{localStorage.setItem(this.saveKey,JSON.stringify(this.sim.checkpoint));}
     catch{this.say('Checkpoint guardado nesta partida. O navegador não permitiu guardá-lo no dispositivo.',2800);}
   }
-  say(text,ms=1600){this.hud.message.textContent=text;this.messageUntil=this.sim.clock*1000+ms;}
+  say(text,ms=1600,{priority=1,scope=null}={}){
+    const now=this.sim.clock*1000;
+    if(this.isM01){
+      const current=this.messageWorld===this.sim.world&&this.messageUntil>now?this.messageRecord:null;
+      if(!acceptsMessage(current,priority,now,this.sim.objectives))return;
+      this.messageRecord={priority,scope,until:now+ms};this.messageWorld=this.sim.world;
+    }
+    this.hud.message.textContent=text;this.messageUntil=now+ms;
+  }
   updateHud(){
     const now=this.sim.clock*1000,p=this.sim.player;
-    if(now>=this.messageUntil)this.hud.message.textContent='';
+    if(now>=this.messageUntil||this.isM01&&(!messageIsCurrent(this.messageRecord,now,this.sim.objectives)||this.messageWorld!==this.sim.world)){this.hud.message.textContent='';this.messageUntil=0;}
     this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
     if(this.isM01){
       // Apresentação de M01: textos, cartelas, fades e avisos lidos da simulação (src/ui/m01-hud.js).
-      this.m01Hud.update(this.sim);
+      this.m01Hud.update(this.sim,this.m01Down);
       const feedback=this.renderer.m01.feedbackState(this.sim.clock),v=this.hud.vignette;
       v.classList.remove('hit');v.classList.add('combat-feedback');
       v.style.setProperty('--combat-edge',feedback.overlayAlpha.toFixed(3));
@@ -304,6 +345,7 @@ export class Game {
     ...(this.isM01?{m01:{...this.renderer.m01.diagnostics,battleClock:this.sim.battleClock,weapon:this.sim.weapon.snapshot(),
       grenades:structuredClone(this.sim.grenades),damage:(this.sim.sectors.damage??[]).map(d=>({...d})),pendingAudio:(this.pendingSounds??[]).map(s=>({...s})),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
+      playerDown:this.m01Down?{cause:this.m01Down.cause,by:this.m01Down.by,checkpoint:this.m01Down.checkpoint,difficulty:this.m01Down.difficulty,elapsedMs:this.m01Down.elapsedMs}:null,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
       threat:this.sim.threat,ckm:this.sim.ckm,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,
       hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}

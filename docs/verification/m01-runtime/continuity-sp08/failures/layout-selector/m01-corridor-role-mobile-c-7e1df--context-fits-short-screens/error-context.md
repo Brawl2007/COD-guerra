@@ -1,0 +1,42 @@
+# Page snapshot
+
+```yaml
+- main [ref=e2]:
+  - generic "Jogo de tiro em primeira pessoa" [ref=e3]
+  - text: ▸
+  - generic [ref=e4]:
+    - paragraph [ref=e5]: MISSÃO SUSPENSA
+    - heading "PAUSADO" [level=2] [ref=e6]
+    - paragraph [ref=e7]: A batalha está em pausa. Retome quando estiver pronto.
+    - paragraph [ref=e8]: "Objectivo: Mantenha o corredor aberto até à demolição oeste — conte os que passam · Dificuldade: Soldado"
+    - button "RETOMAR" [ref=e9] [cursor=pointer]
+    - button "REINICIAR CHECKPOINT" [ref=e10] [cursor=pointer]
+    - button "VOLTAR AO MENU" [ref=e11] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic: OBJECTIVO
+      - strong: Mantenha o corredor aberto até à demolição oeste — conte os que passam
+      - generic: Mantenha o posto · Corredor · passaram 10 de 12 homens do pelotão leste
+    - generic:
+      - generic: Objectivo
+      - strong: Mantenha o corredor aberto até à demolição oeste — conte os que passam
+    - generic:
+      - status:
+        - generic: PROGRESSO GUARDADO
+    - generic:
+      - generic:
+        - generic: SAÚDE
+        - generic: "100"
+      - generic:
+        - generic: KARABINEK WZ.29
+        - generic:
+          - generic: "5"
+          - emphasis: /
+          - generic: "40"
+        - generic: Alça 300 m
+        - generic: Granadas ×2
+    - generic:
+      - generic: 320 m
+    - generic:
+      - strong
+```

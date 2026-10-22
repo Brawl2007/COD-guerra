@@ -1,0 +1,674 @@
+{
+  "config": {
+    "configFile": "/workspace/COD-guerra/artifacts/continuity-final.config.mjs",
+    "rootDir": "/workspace/COD-guerra/tests/browser",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/artifacts/continuity-final-browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/COD-guerra/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/artifacts/continuity-final-browser-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run preview",
+      "url": "http://127.0.0.1:4173/COD-guerra/",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "m01-continuity-p0.spec.js",
+      "file": "m01-continuity-p0.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "crate pickup renders articulated hands in the production High weapon pass",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28079,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:37:45.478Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "60a09f06e05c8048141f-af9aae4f8b9f8f0c7315",
+          "file": "m01-continuity-p0.spec.js",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "real cover salvo guides to another playable position and reduces the marker on arrival",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 72313,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:38:13.718Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "60a09f06e05c8048141f-1729c5ddfd996f853a65",
+          "file": "m01-continuity-p0.spec.js",
+          "line": 29,
+          "column": 1
+        },
+        {
+          "title": "west demolition pre-roll never exposes an internal staging direction",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 50293,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:39:26.040Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "60a09f06e05c8048141f-3f16a842118b1d4018f0",
+          "file": "m01-continuity-p0.spec.js",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "short-screen rescue guidance stays below the objective panel before E becomes available",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23236,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:40:59.166Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "60a09f06e05c8048141f-4fd887608e07259190e1",
+          "file": "m01-continuity-p0.spec.js",
+          "line": 71,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "mobile rescue",
+          "file": "m01-continuity-p0.spec.js",
+          "line": 55,
+          "column": 6,
+          "specs": [
+            {
+              "title": "touch interaction delivers Bąk and the HUD switches to the next objective",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 42813,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T08:40:16.340Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "60a09f06e05c8048141f-253b8c2d632692cb0dd7",
+              "file": "m01-continuity-p0.spec.js",
+              "line": 57,
+              "column": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "m01-difficulty-ui.spec.js",
+      "file": "m01-difficulty-ui.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "new mission defaults to Soldado and every selected level reaches the real simulation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 51539,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:41:22.454Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edf4d6a0c3f7a8ecdb2c-b4b1eb57092b0fdb432f",
+          "file": "m01-difficulty-ui.spec.js",
+          "line": 11,
+          "column": 1
+        },
+        {
+          "title": "legacy checkpoint wins over Veterano preference and its continue card says Recruta",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:42:14.000Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "edf4d6a0c3f7a8ecdb2c-02591578a444e3c77550",
+          "file": "m01-difficulty-ui.spec.js",
+          "line": 25,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "mobile difficulty",
+          "file": "m01-difficulty-ui.spec.js",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selector stays reachable on a short touch screen and checkpoint reports Soldado",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24262,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-20T08:42:33.208Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "edf4d6a0c3f7a8ecdb2c-eba921db5f9613df3964",
+              "file": "m01-difficulty-ui.spec.js",
+              "line": 34,
+              "column": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "m01-pacing-hud.spec.js",
+      "file": "m01-pacing-hud.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "the objective marker names the active objective, shows a distance that follows the player, and sits centred above the crosshair when it is ahead",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 47358,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:42:57.501Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d09d5d0b7d6b810569a-fcc20e28a3370ab8abfa",
+          "file": "m01-pacing-hud.spec.js",
+          "line": 78,
+          "column": 1
+        },
+        {
+          "title": "with the post off screen the marker is pinned to the nearer edge on the side where it lies",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 69399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:43:53.010Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d09d5d0b7d6b810569a-d140b7671682c8e00076",
+          "file": "m01-pacing-hud.spec.js",
+          "line": 105,
+          "column": 1
+        },
+        {
+          "title": "delivering the message takes the marker away, and every later objective gets its own label and distance",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19853,
+                  "error": {
+                    "message": "TypeError: Cannot read properties of null (reading 'label')",
+                    "stack": "TypeError: Cannot read properties of null (reading 'label')\n    at /workspace/COD-guerra/tests/browser/m01-pacing-hud.spec.js:129:35",
+                    "location": {
+                      "file": "/workspace/COD-guerra/tests/browser/m01-pacing-hud.spec.js",
+                      "column": 35,
+                      "line": 129
+                    },
+                    "snippet": "  127 |   await expect(page.locator('#interaction')).toContainText('E ·');\n  128 |   await expect(page.locator('.objective-marker')).toHaveCSS('opacity','0');\n> 129 |   expect((await hud(page)).marker.label).toBe(POST_LABEL);\n      |                                   ^\n  130 |   await page.keyboard.press('KeyE');\n  131 |   // Once delivered no required objective is active until the sappers are called: the simulation publishes no marker, so none is drawn (and none is left pointing at the post).\n  132 |   await page.waitForFunction(()=>window.gameDiagnostics().m01.hudPresentation.marker===null&&Number(getComputedStyle(document.querySelector('.objective-marker')).opacity)===0,null,{timeout:60000});"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/COD-guerra/tests/browser/m01-pacing-hud.spec.js",
+                        "column": 35,
+                        "line": 129
+                      },
+                      "message": "TypeError: Cannot read properties of null (reading 'label')\n\n  127 |   await expect(page.locator('#interaction')).toContainText('E ·');\n  128 |   await expect(page.locator('.objective-marker')).toHaveCSS('opacity','0');\n> 129 |   expect((await hud(page)).marker.label).toBe(POST_LABEL);\n      |                                   ^\n  130 |   await page.keyboard.press('KeyE');\n  131 |   // Once delivered no required objective is active until the sappers are called: the simulation publishes no marker, so none is drawn (and none is left pointing at the post).\n  132 |   await page.waitForFunction(()=>window.gameDiagnostics().m01.hudPresentation.marker===null&&Number(getComputedStyle(document.querySelector('.objective-marker')).opacity)===0,null,{timeout:60000});\n    at /workspace/COD-guerra/tests/browser/m01-pacing-hud.spec.js:129:35"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:45:02.441Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/artifacts/continuity-final-browser/m01-pacing-hud-delivering--b2a1f--its-own-label-and-distance/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/artifacts/continuity-final-browser/m01-pacing-hud-delivering--b2a1f--its-own-label-and-distance/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/COD-guerra/tests/browser/m01-pacing-hud.spec.js",
+                    "column": 35,
+                    "line": 129
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "6d09d5d0b7d6b810569a-388b6bc44b7d71244110",
+          "file": "m01-pacing-hud.spec.js",
+          "line": 123,
+          "column": 1
+        },
+        {
+          "title": "\"Mais tarde…\" appears when the clock compresses (ready), with its reason, and hides after its few seconds while the clock stays accelerated",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 90670,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:45:24.260Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d09d5d0b7d6b810569a-0236f04a59d6978c9012",
+          "file": "m01-pacing-hud.spec.js",
+          "line": 147,
+          "column": 1
+        },
+        {
+          "title": "\"Mais tarde…\" appears when the clock compresses (start), with its reason, and hides after its few seconds while the clock stays accelerated",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 103360,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:47:04.195Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d09d5d0b7d6b810569a-1fdd39d6804b3d4b266a",
+          "file": "m01-pacing-hud.spec.js",
+          "line": 147,
+          "column": 1
+        },
+        {
+          "title": "\"Mais tarde…\" and the accelerated clock end together when the compression window closes at 05:59",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 55249,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:48:47.574Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d09d5d0b7d6b810569a-ca642c8aac13916cee0b",
+          "file": "m01-pacing-hud.spec.js",
+          "line": 168,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "touch.spec.js",
+      "file": "touch.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "touch plays M01 without pointer lock: walk, look, fire, reload, pause/resume",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 69515,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-20T08:49:42.885Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1b23c4b63e84cb335f82-daa905c2835b9362bd53",
+          "file": "touch.spec.js",
+          "line": 23,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-20T08:37:44.387Z",
+    "duration": 788828.617,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

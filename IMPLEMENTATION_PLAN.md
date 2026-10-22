@@ -1,5 +1,19 @@
 # Plano de implementação
 
+## Continuação Codex — clareza do corredor SP-08
+
+SP-08, fatia de clareza Codex: `45852b5`, mesma PR draft #92 sobre #91 `afaded9`, **CONCLUÍDA NA ORIGEM**; SP-08 global continua parcial. O HUD existente distingue manter o posto, observar Dudek e regressar à posição definida pela missão; conserva contagem/B4 e prioridade do resgate. Saúde tátil sem sobreposição em896×414,640×360,390×844. Node **1532/1532** nesse commit, focados27/27, build/bundle PASS; browser principal6/8, pilotos corrigidos2/2, layout1/2 e correção1/1, com FAILs preservados e sem declarar um run único8/8. Todos os inputs de gameplay da emenda15 intactos; sem novo golden, calibração ou mudanças em simulação/IA/física/ritmo. [Provas e limites](docs/verification/m01-runtime/continuity-sp08/HANDOFF.md). Atuação/VO, participação durante a espera, revisão crítica e playtest humano pendentes. Sem merge na #91/#80/main ou comando de deploy; #84 PAUSED. Os registos seguintes são históricos.
+
+## Continuação Codex — D4, avisos reais e morte justa
+
+D4 Codex: `a7866e3`, mesma PR draft #92 sobre #91 `afaded9`; **CONCLUÍDA NA ORIGEM**, sem integração na #91/#80/main. A F1 exige aviso real recente do mesmo atirador além da janela D2 original; F4 impede golpe fatal de combate em cenas nos níveis Soldado/Veterano. Tabela D2 e Recruta preservadas; cartela longa passa a caber em ecrã curto. Node **1520/1520** nesse commit, golden15 idêntica em Recruta, invariantes24/24, comparação48 sem mortes novas/antecipadas ou diferenças finais/RNG nas36 conclusões; navegador final5/5, após primeira execução7/8 com falha da expectativa de checkpoint, e build/bundle PASS. Política inicial rejeitada por regressão e preservada como FAIL. [Handoff D4](docs/verification/m01-runtime/continuity-d4/HANDOFF.md). Revisão crítica/playtest, SP-08, oferta de baixar nível e audiovisual pendentes. #84 PAUSED, main e deploy preservados. Os registos seguintes conservam o estado das entregas anteriores.
+
+D3 Codex: runtime `3e674ed`, testes `cfa017d`, mesma PR draft #92 sobre #91 `afaded9`; concluída na origem, sem integração na #91/#80/main. Causa real + cartela sem ticks + retoma; CP-B2 só Soldado/Veterano após entregar material. Node **1499/1499**, golden 14 inteiramente idêntica em Recruta, invariantes 24/24, build/bundle PASS; browser 5/5 + adicional 1/1 após correções de fixture documentadas. [Handoff D3](docs/verification/m01-runtime/continuity-d3/HANDOFF.md). D4 isolada/em desenvolvimento; SP-08, audiovisual e revisão humana pendentes.
+
+O parágrafo seguinte descreve o lote P0/P1/D5 anterior à D3:
+
+Continuação Codex: PR draft #92 sobre #91 `afaded9`, código `0261829` + `b197f03`; correções P0/P1 e a fatia de nível da D5 implementadas na origem, Node 1482/1482, build/bundle PASS e browser 14/15 + correção 1/1; percurso contínuo Soldado PASS 12/12, sem mortes/erros (Low 640×360; não é playtest humano), sem promoção de contagens históricas ou integração na #80. [Handoff](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). D2 já integrada na #91, D3/D4/SP-08 e revisão humana pendentes.
+
 ## Onze tarefas parciais aceites — 2026-10-16
 
 O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.

@@ -1,0 +1,28 @@
+[1A[2K[2m[WebServer] [22m(node:142781) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2m[WebServer] [22m(node:142794) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 5 tests using 1 worker
+
+[1A[2K(node:142822) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:142822) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/5] tests/browser/m01-fair-death.spec.js:12:1 › a genuine D3 danger save remains playable in D4 with its actual saved level
+[1A[2K[2/5] tests/browser/m01-fair-death.spec.js:19:1 › an incoming round from the real audited route publishes its actual shooter and restores the checkpoint
+[1A[2K[3/5] tests/browser/m01-player-down.spec.js:33:1 › desktop: actual water death pauses presentation and restores the real repair checkpoint
+[1A[2K[4/5] tests/browser/m01-player-down.spec.js:34:120 › touch › actual death disables touch controls and restores them with CP-B2
+[1A[2K[5/5] tests/browser/m01-player-down.spec.js:35:1 › E delivers the real crate, persists CP-B2 and Continue resumes its actual objective
+[1A[2K  5 passed (3.6m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

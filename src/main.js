@@ -7,8 +7,10 @@ import { AUDIO_MIX_KEY, AUDIO_MIX_DEFAULTS, parseAudioMix, concussionScaleFor } 
 // Render a genuine loading screen before requesting the large 3D game graph.
 const t50Loading=new M01LoadingController(document);
 t50Loading.begin();
-let Game;
-try{({Game}=await import('./game/game.js'));}
+let Game,difficultyIds,newGameDifficulty;
+try{({Game}=await import('./game/game.js'));
+  ({M01_DIFFICULTY_IDS:difficultyIds,M01_DIFFICULTY_NEW_GAME:newGameDifficulty}=await import('./game/m01-difficulty.js'));
+}
 catch(error){
   t50Loading.fail(error);
   document.querySelector('#error-text').textContent=String(error?.message??error);
@@ -26,7 +28,7 @@ const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'
 let game,touchState;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
 function stateChanged(state,detail){
-  if(touchState){const live=state==='playing';touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
+  if(touchState){const live=state==='playing'&&!game?.m01Down;touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
   if(state==='menu'){
     menu.classList.remove('hidden');pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.add('hidden');
     $('#continue').classList.toggle('hidden',!game.hasSave);return;
@@ -36,7 +38,7 @@ function stateChanged(state,detail){
     pause.classList.remove('hidden');
     $('#pause-text').textContent=state==='control-error'?'O Chrome não capturou o rato. Clique em Retomar para tentar novamente.':'A batalha está em pausa. Retome quando estiver pronto.';
     const objective=game.isM01&&game.sim.scene?.id!=='cs_m01_intro'&&game.sim.scene?.id!=='cs_m01_roll_call'?game.sim.mission.text:'';
-    $('#pause-objective').textContent=objective?`Objectivo: ${objective}`:'';
+    $('#pause-objective').textContent=[objective?`Objectivo: ${objective}`:'',...(game.isM01?[`Dificuldade: ${game.difficultyLabel}`]:[])].filter(Boolean).join(' · ');
   }
   if(state==='save-error'){showError(`Não foi possível abrir o checkpoint: ${detail} Pode iniciar uma nova missão.`);menu.classList.remove('hidden');}
   if(state==='complete'){
@@ -54,6 +56,7 @@ function missionMenu(){
   $('#mission-briefing').textContent=m01?'Tczew, 04:30. Leve a mensagem ao posto da ponte. Mantenha contacto com a secção e cubra os sapadores.':'O posto avançado deixou de responder. Atravesse a aldeia com a patrulha e restabeleça as comunicações na capela.';
   $('#mission-note').textContent=m01?'AS PONTES DO VÍSTULA':'COMUNICAÇÕES INTERROMPIDAS';
   $('#mission-status').textContent=m01?'PROTÓTIPO · MODELOS E ÁUDIO PROVISÓRIOS':'BANCADA FICCIONAL · FRANÇA, 1944';
+  $('#difficulty-control').classList.toggle('hidden',!m01);$('#difficulty-help').classList.toggle('hidden',!m01);
   t50Loading.selectMission(m01);
   $('#continue').classList.toggle('hidden',!game.hasSave);
   $('#start').disabled=false;$('#continue').disabled=false;
@@ -79,11 +82,15 @@ try{
     document.body.classList.add('touch');document.querySelector('.touch-hint').classList.remove('hidden');
     touchState=new TouchState(game.input,{onPause:()=>game.pause()});bindTouchControls($('#touch-controls'),touchState);
   }
+  const difficultyKey='cod-guerra:difficulty';let preferredDifficulty=newGameDifficulty;
+  try{const stored=localStorage.getItem(difficultyKey);if(difficultyIds.includes(stored))preferredDifficulty=stored;}catch{}
+  $('#difficulty').value=preferredDifficulty;
+  $('#difficulty').addEventListener('change',e=>{if(!difficultyIds.includes(e.target.value))return;try{localStorage.setItem(difficultyKey,e.target.value);}catch{}});
   missionMenu();
   $('#mission-select').addEventListener('change',e=>{game.selectMission(e.target.value);missionMenu();});
   $('#start').addEventListener('click',()=>{
     menu.classList.add('hidden');errorPanel.classList.add('hidden');hudRoot.classList.remove('hidden');
-    game.restartMission();
+    game.restartMission(game.isM01?{difficulty:$('#difficulty').value}:undefined);
   });
   $('#continue').addEventListener('click',()=>{
     menu.classList.add('hidden');errorPanel.classList.add('hidden');hudRoot.classList.remove('hidden');

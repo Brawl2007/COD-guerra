@@ -1,0 +1,8 @@
+import {readFileSync,appendFileSync} from 'node:fs';
+const out='/workspace/artifacts/continuity-recovery-controller.jsonl';
+const record=x=>{appendFileSync(out,JSON.stringify(x)+'\n');console.log(JSON.stringify(x));};
+const [target]=await(await fetch('http://127.0.0.1:9229/json/list')).json();const socket=new WebSocket(target.webSocketDebuggerUrl),pending=new Map();let seq=0,bp;
+const call=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});
+socket.addEventListener('message',async e=>{const d=JSON.parse(e.data);if(d.id){const p=pending.get(d.id);if(!p)return;pending.delete(d.id);d.error?p.reject(Error(d.error.message)):p.resolve(d.result);return;}if(d.method!=='Debugger.paused')return;
+ try{const r=await call('Debugger.evaluateOnCallFrame',{callFrameId:d.params.callFrames[0].callFrameId,expression:readFileSync('/workspace/artifacts/continuity-recovery-expression.js','utf8'),returnByValue:true});record(r.exceptionDetails?{error:r.exceptionDetails}:r.result.value);}catch(e){record({error:e.message});}finally{await call('Debugger.removeBreakpoint',{breakpointId:bp});await call('Debugger.resume');socket.close();}});
+await new Promise((r,j)=>{socket.addEventListener('open',r,{once:true});socket.addEventListener('error',j,{once:true});});await call('Debugger.enable');const r=await call('Debugger.setBreakpointByUrl',{url:'file:///workspace/COD-guerra/tools/m01-browser-playthrough.mjs',lineNumber:110,condition:'report.deaths.length>0'});bp=r.breakpointId;record({armed:true,locations:r.locations});await new Promise(r=>socket.addEventListener('close',r,{once:true}));

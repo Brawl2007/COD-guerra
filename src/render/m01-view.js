@@ -625,8 +625,8 @@ export class M01View {
     for(const dx of [-.035,.035])this.mesh('box','dark',[.13+dx,-.36,-.6],[.05,.045,.09],this.carryBody);
     this.mesh('sphere','skin',[.33,-.25,-.47],[.04,.048,.055],this.carryBody);
     this.carryCrate=new THREE.Group();this.weaponScene.add(this.carryCrate);
-    this.mesh('box','wood',[0,-.28,-.48],[.42,.24,.26],this.carryCrate);this.mesh('box','stone',[0,-.28,-.346],[.43,.04,.005],this.carryCrate);
-    for(const x of [-.19,.19])this.mesh('sphere','skin',[x,-.2,-.42],[.05,.06,.07],this.carryCrate);
+    this.mesh('box','wood',[0,-.38,-.72],[.42,.24,.26],this.carryCrate);this.mesh('box','stone',[0,-.38,-.586],[.43,.04,.005],this.carryCrate);
+    this.crateFallbackHands=[-.19,.19].map(x=>this.mesh('sphere','skin',[x,-.3,-.66],[.05,.06,.07],this.carryCrate));
     this.carryBody.visible=this.carryCrate.visible=false;
   }
   createAircraft(){
@@ -809,10 +809,12 @@ export class M01View {
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     this.weaponLighting.sync({sky:this.skyLight,sun:this.lightingModel?{position:this.sun.position,target:this.sun.target,color:this.sun.color,intensity:this.lightingModel.sun.intensity}:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
-    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
+    const viewModelReady=this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov});
+    if(viewModelReady){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
     // Once, before any shot: compile and link the shot-FX programs now instead of stalling the first shot frame.
+    for(const hand of this.crateFallbackHands)hand.visible=!(viewModelReady&&this.viewModel.stats.visible&&this.viewModel.stats.cargo==='sapper_crate');
     this.weaponFxWarm??=prewarmWeaponFx(this.engine,[{scene:this.weaponScene,camera:this.weaponCamera,objects:[...this.fallbackFx.warmObjects,...this.viewModel.fx.warmObjects]},
       {scene:this.scene,camera:this.camera,objects:this.weaponWorldFx.warmObjects([WEAPON_PRESENTATION.wz29.casing.kind])}]);
     this.updateBattlefieldFx(state,time);

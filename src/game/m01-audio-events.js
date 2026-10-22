@@ -5,6 +5,7 @@ export const PASS_KINDS=Object.freeze(['crack','whizz','none']);
 export function blastKind(id,aerial){return id.startsWith('m01_grenade_')?'grenade':id.includes('demolition')?'demolition':aerial?'bomb':'shell';}
 export function impactPass(crack,distance){return crack?'crack':distance<=12?'whizz':'none';}
 export function validateM01AudioEvent(event){
+  if(event.type==='player-down'&&(typeof event.cause!=='string'||!event.cause.trim()||event.cause.length>300||event.by!==null&&typeof event.by!=='string'))throw Error('M01 player-down cause/by required');
   if(event.type==='npc-shot'&&(typeof event.weapon!=='string'||!event.weapon))throw Error('M01 npc-shot.weapon required');
   if(event.type==='m01-blast'&&!BLAST_KINDS.includes(event.kind))throw Error('M01 m01-blast.kind required');
   // The player's feet meet the ground after a fall (src/world/m01-player-physics.js); one event per landing, never persisted. The audio and the camera dip read the speed.

@@ -81,6 +81,8 @@ test('a Bąk delivered by the player stays visible beside Dudek, who carries him
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   const bak=sim.actor('jozef_bak'),dudek=sim.actor('leon_dudek');
   Object.assign(sim.player,{x:bak.x,y:bak.y,z:bak.z});sim.updateObjectives(0,true);
+  assert.equal(sim.player.carrying,'jozef_bak');assert.equal(sim.interactionAction(),null,'pickup is not yet a delivery offer');
+  run(sim,1.65);assert.equal(bak.carry.phase,'carry');
   Object.assign(sim.player,sim.world.point('aid_position'));sim.updateObjectives(0,true);
   assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');
   assert.equal(bak.active,true);assert.equal(bak.state,'WOUNDED');assert.ok(near(bak,sim.world.point('aid_position'),2));
@@ -174,6 +176,8 @@ test('a Bąk delivered after the east demolition is still evacuated, so the west
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   const bak=sim.actor('jozef_bak');assert.equal(sim.active('rescue_bak'),true);assert.equal(sim.consumedEvent(E('east_demolition')),true);
   Object.assign(sim.player,{x:bak.x,z:bak.z});sim.updateObjectives(0,true);
+  assert.equal(sim.player.carrying,'jozef_bak');assert.equal(sim.interactionAction(),null);
+  run(sim,1.65);assert.equal(bak.carry.phase,'carry');
   Object.assign(sim.player,sim.world.point('aid_position'));sim.updateObjectives(0,true);
   assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');assert.equal(sim.actor('leon_dudek').task,'evacuate_bak');
   sim.player.x=-292;sim.player.z=26;sim.player.y=sim.world.heightAt(-292,26);

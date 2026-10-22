@@ -1,0 +1,44 @@
+{
+  "baseCommit": "738d294edcc993fa65e434d7fd36ddda3dbe166c",
+  "runtimeCommit": "45852b53cce0abb1de46eb54450e91aa94364d3b",
+  "sourceSha256": {
+    "src/ui/m01-hud.js": "2a55b45b62d302653772cb9e7248a49674e9309b9068d1da6ff0abf9a48570e8",
+    "src/ui/m01-corridor-guidance.js": "0ee920033ba0d40d8509c36bd1974e13e9e829df95e01f4268882177ae4364b1",
+    "src/styles.css": "5ffa5fe007cc383e00f5ba06c3136fa4d7cf6b5a535250afffcaf247c229810b"
+  },
+  "compiledFiles": {
+    "assets/asset-progress-B1UdpVEN.js": {
+      "bytes": 1143,
+      "sha256": "7a1bb12d7d5a7c5ec96f68ffacf0538b6550217538c23d53452a830dade8e559"
+    },
+    "assets/game-BrSl-hyo.js": {
+      "bytes": 1289803,
+      "sha256": "3327a618393d8a9625109d874c1c4cb77fd272faacb88cdffc16a03df579cfe5"
+    },
+    "assets/index-D7cnc2m5.js": {
+      "bytes": 13648,
+      "sha256": "4950eac79416edd69c7f9b45cc3d4d2bc3c93bf786d3f90342dd49b3ec56659d"
+    },
+    "assets/index-Dyuw5kQx.css": {
+      "bytes": 22174,
+      "sha256": "27f63a999c89dc59984e53b979a810bd4fa0e0ee10c4e2b8783ca8ef92e136f6"
+    },
+    "assets/m01-difficulty-DUjzTxGo.js": {
+      "bytes": 1513,
+      "sha256": "1092477574d423f56ec961814b271750d074e49412cc1e65d916854af7b18cb6"
+    },
+    "assets/m01-difficulty-DzgKWyuq.js": {
+      "bytes": 332,
+      "sha256": "1b3195da1f06d92fd9d0299241096c38bf150f991e57ed63ef73870753d2bcfe"
+    },
+    "assets/three-core-DHJZDzJU.js": {
+      "bytes": 626268,
+      "sha256": "e1005510a93e2c1eae530101b8805f9b949f7712099b9bb81a865191d6d1f53c"
+    },
+    "assets/three-loaders-xoHaYwaR.js": {
+      "bytes": 63176,
+      "sha256": "e7509c9e67d5d5a6bda866b374aac7a12d48c7c26bc01c4433d799bb4ab8a636"
+    }
+  },
+  "browser": "Chromium / SwiftShader; touch emulated; no target-PC FPS claim"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://store.steampowered.com/manual/10090",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "url": "https://www.youtube.com/results?search_query=Call+of+Duty+WWII+D+Day+gameplay",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  {
+    "url": "https://www.youtube.com/results?search_query=Call+of+Duty+2003+campaign+gameplay",
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  }
+]

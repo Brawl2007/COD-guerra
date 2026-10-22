@@ -1,0 +1,17 @@
+✔ the level table equals the approved design table exactly and is deeply frozen (1.237188ms)
+✔ the shipped design document is the approved copy and states the same table values (0.656246ms)
+✔ recruta snapshots carry no difficulty key and equal a snapshot built without the option (150.07959ms)
+✔ a legacy save without difficulty restores as recruta, even into a harder instance (118.447342ms)
+✔ soldado: snapshot -> restore -> snapshot is byte-identical, level and backup checkpoint included (70.571169ms)
+✔ veterano: snapshot -> restore -> snapshot is byte-identical, level and backup checkpoint included (66.25763ms)
+✔ the constructor stores the level, rejects unknown ones, and reset() keeps the instance level (16.77946ms)
+✔ invalid difficulty values are rejected by the validator and restore leaves the target untouched (96.450095ms)
+✔ a resumeCheckpoint whose difficulty differs from the outer save is rejected (absent counts as recruta) (59.87167ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 649.209977

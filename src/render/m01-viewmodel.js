@@ -4,7 +4,7 @@ import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type
 import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,placeViewArms,riflePresentationMaterial,viewAtlasMaterial,
   adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
-import {frameFirstPersonCarry} from './m01-fp-carry.js';
+import {frameFirstPersonCarry,frameFirstPersonCrate} from './m01-fp-carry.js';
 import {visualNoise} from './m01-atmosphere.js';
 
 const PROFILE=WEAPON_PRESENTATION.wz29,BOLT_SECONDS=wz29Profile.gameplay.boltCycleSec,RELOAD_CLIP_SECONDS=3.4;
@@ -171,15 +171,15 @@ export class M01ViewModel {
     if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
     // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) with or without an actor index.
     const p=sim.player,w=sim.weapon,t=sim.clock,patient=typeof sim.actor==='function'?sim.actor('jozef_bak'):sim.actors?.find(a=>a.id==='jozef_bak'),carryPhase=patient?.carry,
-      carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
+      crate=p.carrying==='sapper_crate',carry=crate||p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
     const key=JSON.stringify([characters.revision,t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
       p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
     if(this.sampleKey===key){this.applyFov(view);return true;}
     this.sampleKey=key;this.fovDriven=false;
     this.root.visible=sim.renderState.weaponVisible||carry;
-    if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod,clock:t,drawnTriangles:0,drawnMeshes:[],native:this.native};return true;}
+    if(!this.root.visible){if(this.wounded)this.wounded.root.visible=false;this.fx.hide();this.stats={active:true,visible:false,lod,clock:t,drawnTriangles:0,drawnMeshes:[],native:this.native};return true;}
     let clip='aim',sample=0;
-    if(carry){const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_carrier`:null;
+    if(carry){const transition=!crate&&carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_carrier`:null;
       clip=transition&&characters.clips.has(transition)?transition:characters.clips.has('carry_walk')?'carry_walk':'carry_wounded';
       sample=transition&&clip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(clip).duration;}
     else if(w.reloading){clip='reload_clip';sample=w.reloadProgress(t*1000)*characters.clips.get(clip).duration;}
@@ -236,7 +236,7 @@ export class M01ViewModel {
     this.root.getObjectByName('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
     // Partial reload inserts one cartridge. The five-round clip mesh stays hidden.
     this.round.visible=!carry&&w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;
-    if(carry&&!this.wounded){
+    if(carry&&!crate&&!this.wounded){
       // Dedicated carry budget: detailed LOD1 face/body with compact LOD2 webbing.
       const patientLod=characters.sources.has('pl:1')?1:characters.sources.has('pl:2')?2:lod;
       const patientSource=characters.sources.get('fp:patient')??characters.sources.get(`pl:${patientLod}`);
@@ -249,20 +249,24 @@ export class M01ViewModel {
         geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));gear.geometry=geometry;this.patientGearGeometry=geometry;
       }
       root.traverse(n=>{if(n.isMesh){n.visible=['body','head_bak','helmet_wz31','gear'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.material=this.atlasMaterial;}});
-      this.root.getObjectByName('carry_socket').add(root);
+      // A separate rig must stay outside carrier lookups/AnimationMixer bindings.
+      // Both GLBs contain bones named weapon, hand_l, etc.; nesting the patient
+      // made getObjectByName('weapon') select his hidden rifle after delivery.
+      this.scene.add(root);
       this.wounded={root,mixer:new THREE.AnimationMixer(root),fpPatient:characters.sources.has('fp:patient')};
     }
     if(this.wounded){
-      this.wounded.root.visible=carry;
-      if(carry){
-        const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_patient`:null;
+      this.wounded.root.visible=carry&&!crate;
+      if(carry&&!crate){
+        const transition=!crate&&carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_patient`:null;
         const patientClip=transition&&characters.clips.has(transition)?transition:'carried';
         this.wounded.root.position.set(0,0,0);this.wounded.root.quaternion.identity();
         this.play(this.wounded.root,this.wounded.mixer,patientClip,patientClip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(patientClip).duration);
         this.carryFrame=frameFirstPersonCarry(this.root,this.wounded.root,{phase:carryPhase?.phase??'carry',age:t-(carryPhase?.startedAt??t)});
       }
     }
-    this.root.updateMatrixWorld(true);this.observeNative(t);
+    if(crate)this.carryFrame=frameFirstPersonCrate(this.root,p.moveBlend*Math.sin(t*(p.sprinting?14:9))*.014*1.5);
+    this.root.updateMatrixWorld(true);this.wounded?.root.updateMatrixWorld(true);this.observeNative(t);
     const weapon=this.root.getObjectByName('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
     // Low frame rates can step past the 60 ms window in one frame: the first frame after a shot event always flashes.
     const fresh=!carry&&w.shotCount!==this.flashShot&&t<flashUntil+.2&&t-shotAt>=0&&t-shotAt<.25;if(fresh)this.flashShot=w.shotCount;
@@ -271,8 +275,8 @@ export class M01ViewModel {
       port:weapon.localToWorld(c.fromArray(this.port)),up:viewUp(p.pitch??0,up),chamberAt:shotAt+PROFILE.mechanics.chamberOpen*BOLT_SECONDS});
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);
     let drawnTriangles=0;const drawnMeshes=[];
-    this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position')?.count??0)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
-    this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
+    for(const root of [this.root,this.wounded?.root])root?.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position')?.count??0)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
+    this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,cargo:crate?'sapper_crate':carry?'jozef_bak':null,singleRound:this.round.visible,
       armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
       phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(a).toArray(),
       visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(a.fromArray(WZ29_VISUAL[name])).toArray()])),

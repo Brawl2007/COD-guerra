@@ -1,0 +1,5 @@
+
+> operation-ashen-road@0.2.0 verify:bundle
+> node tools/verify-t50-bundle.mjs
+
+{"entry":{"name":"index-DgvhXLeR.js","bytes":13635},"total":1988421,"chunks":[{"name":"game-CeJ6G7th.js","bytes":1282354},{"name":"three-core-DHJZDzJU.js","bytes":626268},{"name":"three-loaders-xoHaYwaR.js","bytes":63176},{"name":"index-DgvhXLeR.js","bytes":13635},{"name":"m01-difficulty-DUjzTxGo.js","bytes":1513},{"name":"asset-progress-B1UdpVEN.js","bytes":1143},{"name":"m01-difficulty-DzgKWyuq.js","bytes":332}]}

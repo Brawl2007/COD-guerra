@@ -1,0 +1,3 @@
+{"armed":true,"locations":[{"scriptId":"87","lineNumber":161,"columnNumber":64}],"scope":"Node pilot waypoints only"}
+{"controllerOnly":true,"label":"acesso rodoviário","before":[[-115,32],[-10,32],[-10,40],[30,40]],"after":[[-115,32],[-30,40],[-10,40],[30,40]],"gameStateWrites":0}
+{"controllerOnly":true,"label":"posto de disparo","before":[[-15,40],[-115,27],[-275,27],[-292,26]],"after":[[-15,40],[-30,40],[-115,27],[-275,27],[-292,26]],"gameStateWrites":0}

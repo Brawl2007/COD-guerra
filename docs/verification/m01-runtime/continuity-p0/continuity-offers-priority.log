@@ -1,0 +1,22 @@
+✔ rotation excludes occupied, inactive and solid cover destinations without promising safety (10.437218ms)
+✔ a real salvo names a different cover, survives restore and confirms arrival with marker reduction (3565.099621ms)
+✔ rescue guide stays active inside 10 m until the real interaction range; repair progress suppresses MG nagging (4.783559ms)
+✔ the take_bak offer and action agree at both sides of the 3 m boundary (47.928187ms)
+✔ the deliver_bak offer and action agree at both sides of the 4 m boundary (34.230823ms)
+✔ the take_crate offer and action agree at both sides of the 5 m boundary (19.736456ms)
+✔ the deliver_crate offer and action agree at both sides of the 6 m boundary (13.783835ms)
+✔ the deliver_message offer and action agree at both sides of the 4 m boundary (13.041198ms)
+✔ invalid actor, death, locked scene, other cargo and carry transitions never offer or execute E (31.56306ms)
+✔ saved carry reconstructs the same delivery offer and completion without an extra saved field (32.863644ms)
+✔ pre-roll staging directions are consumed once without leaking to messages or claiming a gesture (4.242943ms)
+✔ interaction confirmations carry priority and exact objective scope for the existing HUD line (4.662634ms)
+✔ single HUD message prioritises confirmation and urgency; objective change or clock expiry invalidates stale guidance (0.482184ms)
+✔ Game uses the existing message node, honours priority, and a replaced world cannot retain a confirmation (0.152228ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3649.166224

@@ -1,0 +1,93 @@
+{
+  "task": "M01-H9-D3-DEATH-CHECKPOINT-V1",
+  "version": "0.2.0",
+  "base": "23313aa5ef5ca8063d33cad7895e0850dac09c0f",
+  "runtimeCommit": "3e674ed3c7d997aa1dccd45323a40dcefcb75d83",
+  "testHead": "cfa017d187da37a7906255442851ea5acf1ab74b",
+  "destination": {
+    "branch": "codex/m01-continuity-p0",
+    "pr": 92,
+    "draft": true,
+    "integratedInPR91Or80": false
+  },
+  "unit": {
+    "command": "npm test",
+    "passed": 1499,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "log": "npm-test-final-cfa017d.log"
+  },
+  "focused": [
+    {
+      "passed": 53,
+      "log": "focused-53.log"
+    },
+    {
+      "passed": 16,
+      "log": "focused-16-with-cp-cd.log"
+    },
+    {
+      "passed": 4,
+      "log": "historical-pins-focused.log"
+    }
+  ],
+  "browser": {
+    "group": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "report": "browser-report.json"
+    },
+    "additionalDelivery": {
+      "initialFailures": 2,
+      "failureCauses": [
+        "test expected a nested resumeCheckpoint in a directly persisted checkpoint",
+        "fixture addInitScript reset the initial save on reload"
+      ],
+      "runtimeChangedForFix": false,
+      "finalPassed": 1,
+      "finalFailed": 0,
+      "report": "delivery-browser-final-report.json"
+    },
+    "automaticRetries": 0,
+    "pageErrors": 0,
+    "continuousRunOfD3": false
+  },
+  "golden": {
+    "amendment": 14,
+    "predecessor": "23313aa5ef5ca8063d33cad7895e0850dac09c0f",
+    "difficulty": "recruta",
+    "identical": true,
+    "ticks": [
+      23746,
+      21660
+    ],
+    "strippedFields": [],
+    "extraNavigationRoutes": 4,
+    "clipping": 0,
+    "stacked": 0,
+    "historicalGoldensRewritten": false
+  },
+  "invariants": {
+    "routes": 24,
+    "violatingRoutes": []
+  },
+  "build": "PASS",
+  "bundle": {
+    "status": "PASS",
+    "entryBytes": 13648
+  },
+  "initialFullSuite": {
+    "status": "ABORTED after 2 historical hash assertions failed; incomplete, not a full-suite count",
+    "runtimeChangedForFix": false,
+    "log": "npm-test-initial-aborted.log"
+  },
+  "humanPlaytest": false,
+  "humanAudioReview": false,
+  "targetHardwareFPSMeasured": false,
+  "externalCODGameplayObserved": false,
+  "mainMergeOrDeployInvoked": false,
+  "integrator84": "PAUSED preserved",
+  "D4Included": false
+}

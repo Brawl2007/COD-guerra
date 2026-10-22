@@ -1,0 +1,63 @@
+[2m[WebServer] [22m(node:110962) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:110975) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 15 tests using 1 worker
+
+(node:110999) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:110999) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/m01-continuity-p0.spec.js:18:1 › crate pickup renders articulated hands in the production High weapon pass (28.1s)
+  ✓   2 tests/browser/m01-continuity-p0.spec.js:29:1 › real cover salvo guides to another playable position and reduces the marker on arrival (1.2m)
+  ✓   3 tests/browser/m01-continuity-p0.spec.js:45:1 › west demolition pre-roll never exposes an internal staging direction (50.3s)
+  ✓   4 tests/browser/m01-continuity-p0.spec.js:57:2 › mobile rescue › touch interaction delivers Bąk and the HUD switches to the next objective (42.8s)
+  ✓   5 tests/browser/m01-continuity-p0.spec.js:71:1 › short-screen rescue guidance stays below the objective panel before E becomes available (23.2s)
+  ✓   6 tests/browser/m01-difficulty-ui.spec.js:11:1 › new mission defaults to Soldado and every selected level reaches the real simulation (51.5s)
+  ✓   7 tests/browser/m01-difficulty-ui.spec.js:25:1 › legacy checkpoint wins over Veterano preference and its continue card says Recruta (19.2s)
+  ✓   8 tests/browser/m01-difficulty-ui.spec.js:34:2 › mobile difficulty › selector stays reachable on a short touch screen and checkpoint reports Soldado (24.3s)
+  ✓   9 tests/browser/m01-pacing-hud.spec.js:78:1 › the objective marker names the active objective, shows a distance that follows the player, and sits centred above the crosshair when it is ahead (47.4s)
+  ✓  10 tests/browser/m01-pacing-hud.spec.js:105:1 › with the post off screen the marker is pinned to the nearer edge on the side where it lies (1.2m)
+  ✘  11 tests/browser/m01-pacing-hud.spec.js:123:1 › delivering the message takes the marker away, and every later objective gets its own label and distance (19.9s)
+(node:112777) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:112777) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 tests/browser/m01-pacing-hud.spec.js:147:1 › "Mais tarde…" appears when the clock compresses (ready), with its reason, and hides after its few seconds while the clock stays accelerated (1.5m)
+  ✓  13 tests/browser/m01-pacing-hud.spec.js:147:1 › "Mais tarde…" appears when the clock compresses (start), with its reason, and hides after its few seconds while the clock stays accelerated (1.7m)
+  ✓  14 tests/browser/m01-pacing-hud.spec.js:168:1 › "Mais tarde…" and the accelerated clock end together when the compression window closes at 05:59 (55.2s)
+  ✓  15 tests/browser/touch.spec.js:23:1 › touch plays M01 without pointer lock: walk, look, fire, reload, pause/resume (1.2m)
+
+
+  1) tests/browser/m01-pacing-hud.spec.js:123:1 › delivering the message takes the marker away, and every later objective gets its own label and distance 
+
+    TypeError: Cannot read properties of null (reading 'label')
+
+      127 |   await expect(page.locator('#interaction')).toContainText('E ·');
+      128 |   await expect(page.locator('.objective-marker')).toHaveCSS('opacity','0');
+    > 129 |   expect((await hud(page)).marker.label).toBe(POST_LABEL);
+          |                                   ^
+      130 |   await page.keyboard.press('KeyE');
+      131 |   // Once delivered no required objective is active until the sappers are called: the simulation publishes no marker, so none is drawn (and none is left pointing at the post).
+      132 |   await page.waitForFunction(()=>window.gameDiagnostics().m01.hudPresentation.marker===null&&Number(getComputedStyle(document.querySelector('.objective-marker')).opacity)===0,null,{timeout:60000});
+        at /workspace/COD-guerra/tests/browser/m01-pacing-hud.spec.js:129:35
+
+    Error Context: ../artifacts/continuity-final-browser/m01-pacing-hud-delivering--b2a1f--its-own-label-and-distance/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../artifacts/continuity-final-browser/m01-pacing-hud-delivering--b2a1f--its-own-label-and-distance/trace.zip
+    Usage:
+
+        npx playwright show-trace ../artifacts/continuity-final-browser/m01-pacing-hud-delivering--b2a1f--its-own-label-and-distance/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/m01-pacing-hud.spec.js:123:1 › delivering the message takes the marker away, and every later objective gets its own label and distance 
+  14 passed (13.1m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

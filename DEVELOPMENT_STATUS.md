@@ -1,5 +1,27 @@
 # Estado de desenvolvimento
 
+## Continuação Codex — clareza do corredor SP-08
+
+SP-08, fatia de clareza Codex: `45852b5`, mesma PR draft #92 sobre #91 `afaded9`, **CONCLUÍDA NA ORIGEM**; SP-08 global continua parcial. O HUD existente distingue manter o posto, observar Dudek e regressar à posição definida pela missão; conserva contagem/B4 e prioridade do resgate. Saúde tátil sem sobreposição em896×414,640×360,390×844. Node **1532/1532** nesse commit, focados27/27, build/bundle PASS; browser principal6/8, pilotos corrigidos2/2, layout1/2 e correção1/1, com FAILs preservados e sem declarar um run único8/8. Todos os inputs de gameplay da emenda15 intactos; sem novo golden, calibração ou mudanças em simulação/IA/física/ritmo. [Provas e limites](docs/verification/m01-runtime/continuity-sp08/HANDOFF.md). Atuação/VO, participação durante a espera, revisão crítica e playtest humano pendentes. Sem merge na #91/#80/main ou comando de deploy; #84 PAUSED. Os registos seguintes são históricos.
+
+## Continuação Codex — D4, avisos reais e morte justa
+
+D4 Codex: `a7866e3`, mesma PR draft #92 sobre #91 `afaded9`; **CONCLUÍDA NA ORIGEM**, sem integração na #91/#80/main. A F1 exige aviso real recente do mesmo atirador além da janela D2 original; F4 impede golpe fatal de combate em cenas nos níveis Soldado/Veterano. Tabela D2 e Recruta preservadas; cartela longa passa a caber em ecrã curto. Node **1520/1520** nesse commit, golden15 idêntica em Recruta, invariantes24/24, comparação48 sem mortes novas/antecipadas ou diferenças finais/RNG nas36 conclusões; navegador final5/5, após primeira execução7/8 com falha da expectativa de checkpoint, e build/bundle PASS. Política inicial rejeitada por regressão e preservada como FAIL. [Handoff D4](docs/verification/m01-runtime/continuity-d4/HANDOFF.md). Revisão crítica/playtest, SP-08, oferta de baixar nível e audiovisual pendentes. #84 PAUSED, main e deploy preservados. Os registos seguintes conservam o estado das entregas anteriores.
+
+## Continuação Codex — D3, morte e checkpoint do reparo
+
+Código `3e674ed` + testes históricos `cfa017d`, entrega na mesma PR draft #92 sobre #91 `afaded9`, **não integrada na #91/#80/main**. Publica causa real da morte, reutiliza a cartela durante 2,5 s sem ticks da simulação e retoma o checkpoint; CP-B2 depois da entrega da caixa só em Soldado/Veterano. A D2 (regeneração, HP e calibração) foi preservada. [Handoff e evidências](docs/verification/m01-runtime/continuity-d3/HANDOFF.md).
+
+`npm test` **1499/1499 PASS em cfa017d**, zero falhas/skips; build/bundle PASS (entrada 13 648 B); golden 14 com duas rotas Recruta inteiramente idênticas a 23313aa, quatro guardas de navegação e invariantes 24/24. Browser 5/5 e entrega/gravação/Continuar 1/1 separado após duas correções da fixture; falhas preservadas. Partida contínua 12/12 abaixo pertence à versão pré-D3, não é uma nova partida desta entrega. Sem aprovação humana/escuta/medição no hardware alvo. D4 está isolada e em desenvolvimento, fora desta entrega; SP-08, oferta de baixar nível e audiovisual pendentes. #84 PAUSED, main e deploy preservados.
+
+## Continuação Codex — correções da auditoria e D5 (entrega anterior à D3)
+
+`codex/m01-continuity-p0`, PR draft #92 sobre #91 `afaded9`; **não integrada na candidata #80**. Código `0261829` + `b197f03`: corrige braço/arma após Bąk, rubricas internas no HUD, divergência prompt/E, destino de cobertura, validade/prioridade das pistas e mãos da caixa; adapta guia ao ecrã curto. A D2 `048aedc` já está na #91: foi acrescentada a fatia de nível da D5 (seleção para nova missão, indicação do nível real em pausa/checkpoint/retoma; save legado Recruta, novo padrão Soldado).
+
+Build atual PASS, golden 13 sem diferenças de comportamento após remover apenas a apresentação declarada e invariantes 24/24. Suite completa **1482/1482 em ce70422**; browser final 14/15, caso corrigido 1/1 em 35f3215 (produção idêntica). Percurso contínuo Soldado PASS: 12/12, Bąk entregue, quatro checkpoints, saúde final 100, zero mortes/restauros e erros de página/HTTP (Low 640×360; não é playtest humano). [Handoff, antes/depois e limites](docs/verification/m01-runtime/continuity-p0/HANDOFF.md). M01 continua PROTÓTIPO JOGÁVEL; sem novo score, playtest humano, escuta, FPS do PC alvo ou comparação externa observada. Main, deploy e integrador #84 PAUSED preservados. D3/D4/SP-08 e VO/arte continuam por fechar.
+
+O conteúdo seguinte conserva os relatos históricos do Capitão. Quando disser «D2 não publicada», a ancestralidade atual prevalece: #91 `afaded9` inclui `048aedc`.
+
 ## M01 H9 D2: níveis de dificuldade ligados à simulação + o intervalo vazio das 05:35 — 2026-10-19
 
 Branch local `claude/busy-ritchie-3fkvk2-d2` (de `a59c129`, emenda 11). **Não publicada**, sem revisão crítica independente, **sem playtest humano** (nenhum nível foi jogado; o seletor de nível é a D5 e ainda não existe na UI). Detalhe: `docs/direction/COD_WAW_WWII_BENCHMARK.md` «D2 e intervalo das 05:35, 2026-10-19»; evidência: `docs/verification/m01-runtime/difficulty-0535-2026-10-19/`.

@@ -46,7 +46,7 @@ test('M01 complete control route reaches debrief, all required objectives, uniqu
   assert.equal(sim.mission.complete,true);assert.equal(sim.flags['m01.completed'],true);assert.equal(sim.battleClock,seconds('07:05'));
   assert.equal(Object.keys(sim.consumed).length,sim.definition.events.length);
   for(const o of sim.definition.objectives.filter(o=>o.required))assert.equal(sim.objectives[o.id].state,'done',o.id);
-  assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.map(c=>c.id));
+  assert.deepEqual(Object.keys(checkpoints),sim.definition.checkpoints.filter(c=>sim.checkpointEnabled(c.id)).map(c=>c.id));
   assert.equal(events.filter(e=>e.type==='complete').length,1);
   // Combat slice 2 (versioned save rule, deck record v1): the deck assault may reach the safety line x 450; every other German stays at x >= 690.
   assert.ok(sim.enemies.every(a=>a.x>=(a.group==='grp_de_spans'&&a.deck?DECK_SAFE_X:690)));assert.equal(sim.flags['m01.nowicki_status'],'missing');
@@ -138,6 +138,7 @@ test('optional Bąk rescue cannot be taken away mid-carry; delivery chooses the 
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
   const bak=sim.actor('jozef_bak');assert.equal(sim.active('rescue_bak'),true);
   sim.player.x=bak.x;sim.player.z=bak.z;sim.updateObjectives(0,true);assert.equal(sim.player.carrying,'jozef_bak');
+  assert.equal(sim.interactionAction(),null,'pickup has not finished');run(sim,1.65);assert.equal(bak.carry.phase,'carry');
   sim.battleClock=seconds('06:15');sim.processEvents();assert.equal(sim.consumedEvent(E('dudek_retrieves_bak')),false);
   Object.assign(sim.player,sim.world.point('aid_position'));sim.updateObjectives(0,true);
   assert.equal(sim.flags['m01.bak_status'],'rescued_by_player');assert.equal(sim.flags['m01.dudek_status'],'unhurt');assert.equal(sim.player.carrying,null);

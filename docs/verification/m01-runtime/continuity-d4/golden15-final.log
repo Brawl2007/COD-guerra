@@ -1,0 +1,7 @@
+{"seed":19390901,"support":false,"ticks":[23746,23746],"to0600":[565.8,565.8],"end":[1187.3,1187.3],"identicalBlocks":47}
+{"seed":7,"support":true,"ticks":[21660,21660],"to0600":[539,539],"end":[1083,1083],"identicalBlocks":43}
+{"seed":3,"support":false,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":12,"live":12},"real":{"predecessor":1205.5,"live":1205.5},"repairComplete":{"predecessor":439.15,"live":439.15}}
+{"seed":3,"support":true,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":18,"live":18},"real":{"predecessor":1153.45,"live":1153.45},"repairComplete":{"predecessor":383.6,"live":383.6}}
+{"seed":7,"support":false,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":12,"live":12},"real":{"predecessor":1198.75,"live":1198.75},"repairComplete":{"predecessor":429,"live":429}}
+{"seed":7,"support":true,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":18,"live":18},"real":{"predecessor":1083,"live":1083},"repairComplete":{"predecessor":380.25,"live":380.25}}
+written

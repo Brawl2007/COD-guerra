@@ -57,7 +57,7 @@ test('fair death F1: a lethal wound needs the same shooter engaging the player f
     sim=fresh(id);sim.player.health=L.woundDamage;sim.noteTelegraph(a,'player',1,.075);sim.woundPlayer(round(sim,a.id));
     assert.equal(sim.player.health,1,`${id}: the first round never kills`);
     // Engaged for longer than the grace: the wound kills.
-    sim=fresh(id);sim.noteTelegraph(a,'player',1,.075);sim.clock+=L.reactionGraceSec+.2;sim.noteTelegraph(a,'player',1,.075);
+    sim=fresh(id);sim.noteTelegraph(a,'player',1,.075);sim.noteDangerCue(a,'player','flash');sim.clock+=L.reactionGraceSec+.2;sim.noteTelegraph(a,'player',1,.075);sim.noteDangerCue(a,'player','flash');
     sim.player.health=L.woundDamage;sim.woundPlayer(round(sim,a.id));assert.equal(sim.player.health,0,`${id}: engaged >= grace, lethal`);assert.equal(sim.player.alive,false);
     // A gap of more than 6 s breaks the engagement: the next round is a first round again.
     sim=fresh(id);sim.noteTelegraph(a,'player',1,.075);sim.clock+=F1_TELEGRAPH_GAP_SEC+1;sim.noteTelegraph(a,'player',1,.075);

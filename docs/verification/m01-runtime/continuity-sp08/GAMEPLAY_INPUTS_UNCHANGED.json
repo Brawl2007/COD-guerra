@@ -1,0 +1,93 @@
+{
+  "baseCommit": "738d294edcc993fa65e434d7fd36ddda3dbe166c",
+  "runtimeCommit": "45852b53cce0abb1de46eb54450e91aa94364d3b",
+  "gameplayDirectoriesChanged": [],
+  "golden15Inputs": {
+    "src/game/m01-simulation.js": {
+      "golden15": "aa66ca55d5e59c580d2d4a83f496a5da502d2d2b02f8388c1c10866bfc953c61",
+      "current": "aa66ca55d5e59c580d2d4a83f496a5da502d2d2b02f8388c1c10866bfc953c61"
+    },
+    "src/game/m01-pacing.js": {
+      "golden15": "e53e62578425eec8df14fc98a60c9f680e89e89b061d7ad52a86986911ad6bdc",
+      "current": "e53e62578425eec8df14fc98a60c9f680e89e89b061d7ad52a86986911ad6bdc"
+    },
+    "missions/m01-tczew/mission.json": {
+      "golden15": "c6a921f816eca7f7db79c34ce2a4d8ef65d85bf42fb6f252d0e6f399dea0fbf1",
+      "current": "c6a921f816eca7f7db79c34ce2a4d8ef65d85bf42fb6f252d0e6f399dea0fbf1"
+    },
+    "missions/m01-tczew/map-layout.json": {
+      "golden15": "d0cec6dbb3098ebfb33797c5ba75bced07a34b521afe91205565fa44de4bae7e",
+      "current": "d0cec6dbb3098ebfb33797c5ba75bced07a34b521afe91205565fa44de4bae7e"
+    },
+    "src/game/m01-animation-presentation.js": {
+      "golden15": "5a2714475e6be3bd49deeb179db46b838598725c1a9c762b94a569f401b4a61f",
+      "current": "5a2714475e6be3bd49deeb179db46b838598725c1a9c762b94a569f401b4a61f"
+    },
+    "src/game/m01-aim.js": {
+      "golden15": "fb4a39f421fb891866496f4a2740770ce12d60e81ccdf534f691acd1d50cbe4d",
+      "current": "fb4a39f421fb891866496f4a2740770ce12d60e81ccdf534f691acd1d50cbe4d"
+    },
+    "src/game/m01-fire.js": {
+      "golden15": "0450e20bed05b900b74a54191bc8d72dbc9b65736e71bf2b475e89f25038450e",
+      "current": "0450e20bed05b900b74a54191bc8d72dbc9b65736e71bf2b475e89f25038450e"
+    },
+    "src/game/m01-display-fire.js": {
+      "golden15": "4f6184c3a051c968f973805b653964ce09b662259508fc7bfa3924d387c2a96b",
+      "current": "4f6184c3a051c968f973805b653964ce09b662259508fc7bfa3924d387c2a96b"
+    },
+    "src/game/m01-yard-life.js": {
+      "golden15": "ce3c02d3750872b7a3e329bc4fc8fb5f01b914f5ea082e1ee9d2db83e24b728f",
+      "current": "ce3c02d3750872b7a3e329bc4fc8fb5f01b914f5ea082e1ee9d2db83e24b728f"
+    },
+    "src/world/spatial.js": {
+      "golden15": "13fbb4d3064190ea0bbd7c1d1f7b425cdaf9c9c2ffaec34bd2814797fde4e05d",
+      "current": "13fbb4d3064190ea0bbd7c1d1f7b425cdaf9c9c2ffaec34bd2814797fde4e05d"
+    },
+    "src/world/tczew-world.js": {
+      "golden15": "4965200c113d7d2d72806eb0d9e3af25b411ab6316daca572017cad43f4587a9",
+      "current": "4965200c113d7d2d72806eb0d9e3af25b411ab6316daca572017cad43f4587a9"
+    },
+    "src/world/m01-navigation.js": {
+      "golden15": "7339a237bb69eac8eef1d7d4004ac64cf861ccb3b5521e24bbdcec3bb10422a5",
+      "current": "7339a237bb69eac8eef1d7d4004ac64cf861ccb3b5521e24bbdcec3bb10422a5"
+    },
+    "src/world/m01-nav-layout.js": {
+      "golden15": "1a82043a8ea33acedc57bb2e6001f00c566d60ddfb0ee7a0443d4387c0617c14",
+      "current": "1a82043a8ea33acedc57bb2e6001f00c566d60ddfb0ee7a0443d4387c0617c14"
+    },
+    "tests/helpers/m01-route.js": {
+      "golden15": "fa2f2420f3115c279aaf7ce17dfe4872ea0f5a0d6ec9001c19ae05652eca0efe",
+      "current": "fa2f2420f3115c279aaf7ce17dfe4872ea0f5a0d6ec9001c19ae05652eca0efe"
+    },
+    "src/game/m01-deck-assault.js": {
+      "golden15": "006dcc742c2ffed3e2038d2377775a6348d77c3fdac9b59a44975c4cfcdba38f",
+      "current": "006dcc742c2ffed3e2038d2377775a6348d77c3fdac9b59a44975c4cfcdba38f"
+    },
+    "src/game/m01-barks.js": {
+      "golden15": "954b3d60a387e920f92fdcd3c15d9db33b695c58dc0f0848437a69575cd9c133",
+      "current": "954b3d60a387e920f92fdcd3c15d9db33b695c58dc0f0848437a69575cd9c133"
+    },
+    "src/game/m01-rearguard.js": {
+      "golden15": "0c28f6436bb10bce9927a075fbd283a51b1f9647e22aa3df2d6c3df9bb210627",
+      "current": "0c28f6436bb10bce9927a075fbd283a51b1f9647e22aa3df2d6c3df9bb210627"
+    },
+    "src/game/m01-difficulty.js": {
+      "golden15": "8dafe026c8c1bf6ccc16e730618e9c8fd7675414257233d2c6a949fdc926501e",
+      "current": "8dafe026c8c1bf6ccc16e730618e9c8fd7675414257233d2c6a949fdc926501e"
+    },
+    "src/game/m01-cover-guidance.js": {
+      "golden15": "4357acf02ebad1991348bd8bb4620c90f97e3e69499a753a5d1e9a260d30eea4",
+      "current": "4357acf02ebad1991348bd8bb4620c90f97e3e69499a753a5d1e9a260d30eea4"
+    },
+    "src/world/m01-player-physics.js": {
+      "golden15": "631b62a1f6854f0b24d50afdd46c5ce06d7a5efd587809b9213ed298dad72803",
+      "current": "631b62a1f6854f0b24d50afdd46c5ce06d7a5efd587809b9213ed298dad72803"
+    },
+    "src/game/m01-audio-events.js": {
+      "golden15": "56ff23155edcefc17a51bedbb546f94c7455eb6a34a5d4c091b5eac4b2108f48",
+      "current": "56ff23155edcefc17a51bedbb546f94c7455eb6a34a5d4c091b5eac4b2108f48"
+    }
+  },
+  "newGoldenGenerated": false,
+  "explanation": "Only UI/CSS changed; simulation and gameplay inputs are byte-identical to published D4. Previous audit/goldens are preserved, not relabelled as fresh gameplay runs."
+}

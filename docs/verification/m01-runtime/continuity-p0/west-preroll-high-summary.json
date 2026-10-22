@@ -1,0 +1,152 @@
+{
+  "clock": 1172.916699999481,
+  "quality": "high",
+  "player": {
+    "x": -291.0085934195111,
+    "y": -3,
+    "z": 26.05492442682826,
+    "angle": 3.1969365856502545,
+    "pitch": 0,
+    "health": 92,
+    "crouched": false,
+    "aiming": false
+  },
+  "hudStatus": "Demoli\u00e7\u00e3o oeste \u00b7 361 m, atr\u00e1s de si \u00b7 siga para o abrigo",
+  "viewModel": {
+    "active": true,
+    "visible": true,
+    "lod": 0,
+    "native": {
+      "clock": 1172.916699999481,
+      "triangles": 3264,
+      "calls": 6,
+      "meshes": [
+        {
+          "name": "fp_sleeve_caps",
+          "triangles": 102
+        },
+        {
+          "name": "fp_cuffs",
+          "triangles": 96
+        },
+        {
+          "name": "fp_straps",
+          "triangles": 24
+        },
+        {
+          "name": "rifle",
+          "triangles": 1414
+        },
+        {
+          "name": "fp_hands",
+          "triangles": 1028
+        },
+        {
+          "name": "body",
+          "triangles": 600
+        }
+      ]
+    },
+    "clock": 1172.916699999481,
+    "fpVariant": "fp-arms-v2",
+    "drawnTriangles": 3264,
+    "drawnMeshes": [
+      {
+        "name": "body",
+        "triangles": 600
+      },
+      {
+        "name": "rifle",
+        "triangles": 1414
+      },
+      {
+        "name": "fp_sleeve_caps",
+        "triangles": 102
+      },
+      {
+        "name": "fp_hands",
+        "triangles": 1028
+      },
+      {
+        "name": "fp_cuffs",
+        "triangles": 96
+      },
+      {
+        "name": "fp_straps",
+        "triangles": 24
+      }
+    ],
+    "carryFrame": null,
+    "clip": "aim",
+    "clipTime": 0,
+    "carrying": false,
+    "cargo": null,
+    "singleRound": false,
+    "armTriangles": 1850,
+    "aimBlend": 0,
+    "runBlend": 0,
+    "phase": 0.499,
+    "visualMuzzle": [
+      0.07361303330955117,
+      -0.23580762708999659,
+      -1.2062376093217122
+    ],
+    "visualSights": {
+      "rear": [
+        0.14576492681872943,
+        -0.17566117318775426,
+        -0.74
+      ],
+      "front": [
+        0.07715933416954684,
+        -0.2019721947628191,
+        -1.1962082888340926
+      ]
+    },
+    "presentation": {
+      "profile": "wz29",
+      "mechanical": 0,
+      "boltStroke": 0,
+      "wallDistance": null,
+      "wallTarget": 0,
+      "wallLower": 0,
+      "fov": 70,
+      "breath": 0.00071,
+      "bob": 0,
+      "gait": 0.499,
+      "aimEased": 0,
+      "muzzleReach": 1.2062,
+      "lookYaw": 0,
+      "lookPitch": 0,
+      "clipEjected": false,
+      "flash": 0,
+      "layers": 0,
+      "light": 0,
+      "wisps": 0
+    }
+  },
+  "hudPresentation": {
+    "banner": {
+      "kind": "new",
+      "id": "obj_m01_reach_shelter"
+    },
+    "queued": [],
+    "fade": 0,
+    "checkpoint": 0,
+    "titleCard": null,
+    "resumeCard": "resume|Tczew \u2014 pontes do V\u00edstula|1 de setembro de 1939 \u00b7 06:44|CP-D \u00b7 Retirada",
+    "cinematic": false,
+    "sceneBeats": {
+      "scene": "cs_m01_west_blast",
+      "elapsed": 0.65,
+      "letterbox": true,
+      "dimHud": 0.35,
+      "lookPrompt": "\u25bc Ponte oeste \u00b7 cabe\u00e7a baixa",
+      "subtitlePause": false,
+      "shake": 0
+    },
+    "marker": null,
+    "tempo": false
+  },
+  "bak": "rescued_by_dudek"
+}

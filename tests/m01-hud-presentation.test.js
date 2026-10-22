@@ -130,3 +130,19 @@ test('switching from an active free M01 cue to French clears all owned cue DOM a
   presenter.update(sim);const frame=presenter.beatFrame;assert.equal(el.root.classes.has('scene-beats'),true);presenter.reset('new',sim.clock);
   assert.equal(el.root.classes.has('scene-beats'),false);assert.equal(el.sceneCue.textContent,'');presenter.update(sim);assert.deepEqual(presenter.beatFrame,frame);assert.equal(el.root.classes.has('scene-beats'),true);
 });
+
+test('continue card names the authoritative level, including legacy Recruta',()=>{
+ for(const difficulty of ['recruta','soldado','veterano']){
+  const sim=new M01Simulation(19390901,{difficulty});sim.tick(.05,{skip:true});const {presenter}=hud();presenter.reset('continue',sim.clock);
+  for(let i=0;i<20;i++)sim.tick(.05);presenter.update(sim);
+  assert.ok(presenter.diagnostics.resumeCard.endsWith(' · '+difficulty[0].toUpperCase()+difficulty.slice(1)));
+ }
+});
+
+test('an available E prompt replaces the redundant local marker; the marker returns outside action range',()=>{
+ const {el,presenter}=hud(),sim=new M01Simulation();sim.tick(.05,{skip:true});
+ el.objectiveMarker=new FakeElement();el.markerLabel=new FakeElement();el.markerDistance=new FakeElement();
+ Object.assign(sim.player,sim.world.point('forward_post'));assert.match(sim.interaction,/^E ·/);assert.ok(sim.objectiveMarker);
+ presenter.update(sim);assert.equal(opacity(el.objectiveMarker),0);
+ sim.player.x-=6;sim.tick(.05);assert.doesNotMatch(sim.interaction,/^E ·/);presenter.update(sim);assert.equal(opacity(el.objectiveMarker),1);
+});
