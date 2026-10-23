@@ -12,6 +12,7 @@ import {driver,toRepair,route} from './helpers/m01-route.js';
 // Casualties here are GAMEPLAY_DRAMATIZATION (no source gives Polish losses); nothing below is a count of real dead.
 
 const E=n=>'evt_m01_'+n;
+const N=definition.raidTargets0434.length;   // the impacts of the 04:34 raid's schedule
 const active=(seed=17)=>{const s=new M01Simulation(seed);s.tick(.05,{skip:true});s.drainEvents();return s;};
 const place=(s,a,x,z,extra={})=>{Object.assign(a,{x,z,active:true,...extra});a.y=s.world.heightAt(x,z);return a;};
 const CRATER={x:-160,z:26};   // open ground along the x axis (the strip between the approaches): no cover between the crater and any man placed on z 26
@@ -129,9 +130,9 @@ test('a stunned player loses speed and cannot sprint when badly stunned, aims le
   assert.deepEqual(Object.keys(JSON.parse(JSON.stringify(end.player))),Object.keys(JSON.parse(before)));
 });
 
-test('the 04:34 raid plan: ten fixed-time impacts after the scripted three, in the playable area, clear of the objectives, deterministic',()=>{
+test('the 04:34 raid plan: eleven fixed-time impacts after the scripted three, in the playable area, clear of the objectives, deterministic',()=>{
   const plan=earlyRaidPlan();
-  assert.equal(plan.length,10);assert.deepEqual(plan.map(t=>t.id),Array.from({length:10},(_,i)=>`raid_0434_${i+1}`));
+  assert.equal(N,11);assert.equal(plan.length,N);assert.deepEqual(plan.map(t=>t.id),Array.from({length:N},(_,i)=>`raid_0434_${i+1}`));
   assert.ok(plan[0].at>seconds('04:34:20')&&plan.at(-1).at<seconds('04:44:00'),'inside the raid of 04:34-04:44');
   for(let i=1;i<plan.length;i++)assert.ok(plan[i].at>plan[i-1].at);
   const world=new M01Simulation(1).world,b=world.layout.bounds.playable;
@@ -153,7 +154,7 @@ test('the raid schedule is created by the 04:34 event, emits each impact once at
   const s=active();s.battleClock=seconds('04:34:00');const rng=s.rng.state;
   assert.equal(s.timers.raidSchedule0434,undefined,'nothing before the event');
   s.consume(E('bombing_0434'));const schedule=s.timers.raidSchedule0434,plan=earlyRaidPlan();
-  assert.equal(schedule.length,10);assert.ok(schedule.every(t=>!t.emitted),'the first impact is after 04:34:20');assert.deepEqual(schedule.map(t=>t.at),plan.map(t=>t.at));
+  assert.equal(schedule.length,N);assert.ok(schedule.every(t=>!t.emitted),'the first impact is after 04:34:20');assert.deepEqual(schedule.map(t=>t.at),plan.map(t=>t.at));
   Object.assign(s.player,{x:-300,z:40,y:s.world.heightAt(-300,40)});
   for(const t of schedule){
     s.battleClock=t.at-.001;s.updateEarlyRaid();assert.equal(s.sectors.damage.filter(d=>d.id===t.id).length,0,`${t.id} is not early`);
@@ -199,7 +200,7 @@ test('legacy saves: a save made after the 04:34 event without the schedule loads
   assert.deepEqual(old.sectors.damage.map(d=>d.id).filter(id=>!before.includes(id)),['forward_post','repair_crater'],'the older save plays on with the scripted bombs of its own event and nothing else');
   // a save from before the event: the event creates the schedule as in a new game
   const early=active(),save=early.snapshot();const fresh=new M01Simulation(1);fresh.restoreSnapshot(save);fresh.battleClock=seconds('04:34:00');fresh.consume(E('bombing_0434'));
-  assert.equal(fresh.timers.raidSchedule0434.length,10);
+  assert.equal(fresh.timers.raidSchedule0434.length,N);
 });
 
 test('the validator accepts the schedule and the stun mid-raid and refuses what the machine could not have made',()=>{
@@ -244,7 +245,7 @@ test('a save and its restore agree tick for tick through the raid, with a stunne
   const r=compareContinuation(s,{label:'raid with casualties and a stunned player',ticks:260,doubleAt:[40,130],
     input:tick=>tick<120?{forward:1,sprint:true}:{}});
   assert.equal(r.firstDivergence,null);
-  assert.ok(s.sectors.damage.some(d=>d.id==='raid_0434_7')&&s.sectors.damage.some(d=>d.id==='raid_0434_8'),'the yard impacts fell during the comparison');
+  const yard=earlyRaidPlan().filter(t=>t.point.x<-300).map(t=>t.id);assert.equal(yard.length,2);assert.ok(yard.every(id=>s.sectors.damage.some(d=>d.id===id)),'the yard impacts fell during the comparison');
 });
 
 test('the 04:34 window on the golden control route: the raid is felt, never closer than 30 m, nobody the plot needs is hurt, and a generic man falls',()=>{
@@ -258,8 +259,8 @@ test('the 04:34 window on the golden control route: the raid is felt, never clos
     }
   }});
   toRepair(d);const sim=d.sim;
-  assert.deepEqual(impacts.map(i=>i.id),['station_bomb','forward_post','repair_crater',...Array.from({length:10},(_,i)=>`raid_0434_${i+1}`).filter(id=>sim.sectors.damage.some(x=>x.id===id))]);
-  assert.ok(impacts.length>=10,`${impacts.length} impacts before the repair begins`);
+  assert.deepEqual(impacts.map(i=>i.id),['station_bomb','forward_post','repair_crater',...Array.from({length:N},(_,i)=>`raid_0434_${i+1}`).filter(id=>sim.sectors.damage.some(x=>x.id===id))]);
+  assert.ok(impacts.length>=11,`${impacts.length} impacts before the repair begins`);
   for(const i of impacts.slice(1))assert.ok(i.distance>=30,`${i.id} ${i.distance}`);   // (the first is the scripted station, 400 m away)
   assert.ok(nearest>=30&&nearest<45,`the nearest bomb to the player: ${nearest}`);
   assert.ok(impacts.some(i=>i.concussion>=.5),'at least one bomb stuns him hard');assert.ok(stunned>0);
@@ -276,7 +277,7 @@ test('the whole mission still completes on the control route with the raid: the 
   assert.equal(sim.mission.complete,true);assert.equal(sim.battleClock,seconds('07:05:00'));assert.equal(sim.checkpointsReached.length,4);
   const states=Object.values(sim.objectives).map(o=>o.state);assert.equal(states.length,12);assert.ok(states.every(x=>x==='done'||x==='expired'));
   const survivors=sim.flags['m01.east_platoon_survivors'];assert.ok(survivors>=12&&survivors<=18);
-  assert.ok(sim.sectors.damage.filter(d=>/^raid_0434_/.test(d.id)).length===10);
+  assert.equal(sim.sectors.damage.filter(d=>/^raid_0434_/.test(d.id)).length,N);
   assert.equal(sim.player.health>0,true);
 });
 

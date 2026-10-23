@@ -35,7 +35,7 @@ export const BOMB_REACH_M=Math.ceil(BOMB_BLAST.shakenM/(1-BOMB_BLAST.jitter));
 export const CONCUSSION=Object.freeze({
   reachM:60,fullM:30,                                   // intensity 0 at reachM (scaled by cover and posture), 1 at fullM, the nearest a bomb can fall (safeImpact)
   coverMul:1.35,crouchMul:1.25,                         // a bank between the player and the crater (the rail embankment's crest) takes a quarter off the distance, no more: the shock goes over it
-  minSec:2,maxSec:6,                                    // length of the effect at intensity 0+ and 1
+  minSec:2,maxSec:5,                                    // length of the effect at intensity 0+ and 1
   sprintCut:.45,walkCut:.12,                            // fraction of the speed lost at full strength
   sprintOffAt:.6,                                       // above this the player cannot sprint at all
   aimSway:2.5,                                          // the rifle's dispersion is multiplied by 1 + aimSway x level

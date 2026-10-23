@@ -122,7 +122,7 @@ test('concussion: full at the nearest a bomb can fall, none at 60 m, softened by
 
 test('concussion level: the saved peak falls linearly to zero at concussedUntil; nothing saved means nothing',()=>{
   assert.equal(concussionLevel({},10),0);assert.equal(concussionLevel({concussion:.8},10),0,'a peak without its end is nothing');
-  assert.equal(concussionSeconds(0),CONCUSSION.minSec);assert.equal(concussionSeconds(1),CONCUSSION.maxSec);assert.ok(Math.abs(concussionSeconds(.5)-4)<1e-12);
+  assert.equal(concussionSeconds(0),CONCUSSION.minSec);assert.equal(concussionSeconds(1),CONCUSSION.maxSec);assert.ok(Math.abs(concussionSeconds(.5)-3.5)<1e-12);
   const player={concussion:1,concussedUntil:10+CONCUSSION.maxSec};
   assert.equal(concussionLevel(player,10),1);assert.equal(concussionLevel(player,9),1,'before the blast the level is capped at the peak');
   assert.ok(Math.abs(concussionLevel(player,10+CONCUSSION.maxSec/2)-.5)<1e-12);assert.equal(concussionLevel(player,10+CONCUSSION.maxSec),0);assert.equal(concussionLevel(player,99),0);
