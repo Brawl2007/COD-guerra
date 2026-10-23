@@ -225,10 +225,11 @@ test('the validator accepts the schedule and the stun mid-raid and refuses what 
   const due=JSON.parse(JSON.stringify(good));due.battleClock=due.timers.raidSchedule0434[3].at+.01;validateM01Snapshot(due);
   // the stun
   const stunned=JSON.parse(JSON.stringify(good));Object.assign(stunned.player,{concussion:.5,concussedUntil:stunned.clock+3});validateM01Snapshot(stunned);
-  for(const [name,patch] of Object.entries({zero:{concussion:0},above:{concussion:1.5},nan:{concussion:'x'},noEnd:{concussedUntil:undefined},past:{concussedUntil:stunned.clock},far:{concussedUntil:stunned.clock+7}})){
+  for(const [name,patch] of Object.entries({zero:{concussion:0},above:{concussion:1.5},nan:{concussion:'x'},noEnd:{concussedUntil:undefined},far:{concussedUntil:stunned.clock+7}})){
     const x=JSON.parse(JSON.stringify(stunned));Object.assign(x.player,patch);if(patch.concussedUntil===undefined&&'concussedUntil' in patch)delete x.player.concussedUntil;
     assert.throws(()=>validateM01Snapshot(x),/atordoamento/,name);
   }
+  const past=JSON.parse(JSON.stringify(stunned));past.player.concussedUntil=past.clock-1;validateM01Snapshot(past);   // an end already past (a clock moved without a tick) is harmless: the next tick deletes it
   const lone=JSON.parse(JSON.stringify(good));delete lone.player.concussedUntil;lone.player.concussion=.5;assert.throws(()=>validateM01Snapshot(lone),/atordoamento/,'a peak without its end');
   const end=JSON.parse(JSON.stringify(good));delete end.player.concussion;end.player.concussedUntil=end.clock+2;assert.throws(()=>validateM01Snapshot(end),/atordoamento/,'an end without its peak');
 });

@@ -2439,10 +2439,11 @@ export function validateM01Snapshot(s){
   // An airborne player carries his fall (src/world/m01-player-physics.js); a grounded one has none, so older saves need no migration.
   if(s.player.fall!==undefined){const f=s.player.fall;
     if(!f||typeof f!=='object'||Object.keys(f).length!==5||['vy','vx','vz','startY','t'].some(k=>!Number.isFinite(f[k]))||f.vy>0||f.vy<-60||Math.abs(f.vx)>20||Math.abs(f.vz)>20||f.t<0||f.t>30)reject('queda do jogador');}
-  // R1-a: a player stunned by a bomb carries his peak (0..1] and the time it ends, both or neither; absent in every older save and once the stun is over (the tick deletes them).
+  // R1-a: a player stunned by a bomb carries his peak (0..1] and the time it ends, both or neither; absent in every older save and once the stun is over (the next tick deletes them, so a
+  // save whose end is already past is harmless and accepted). The end is never farther than the longest stun.
   if(s.player.concussion!==undefined||s.player.concussedUntil!==undefined){
     const k=s.player.concussion,u=s.player.concussedUntil;
-    if(!(Number.isFinite(k)&&k>0&&k<=1)||!Number.isFinite(u)||!(u>s.clock)||u>s.clock+CONCUSSION.maxSec+1e-6)reject('atordoamento do jogador');
+    if(!(Number.isFinite(k)&&k>0&&k<=1)||!Number.isFinite(u)||u>s.clock+CONCUSSION.maxSec+1e-6)reject('atordoamento do jogador');
   }
   const actorIds=[...ACTOR_CAST.map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
   const hasCKM=Array.isArray(s.actors)&&s.actors.some(a=>CKM_IDS.includes(a?.id));
