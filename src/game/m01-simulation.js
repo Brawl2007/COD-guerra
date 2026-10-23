@@ -651,7 +651,7 @@ export class M01Simulation {
    * how he lies, and a jitter from the (man, impact) pair give the outcome: killed (DOWN, the body stays), wounded (WOUNDED if he is ours, HIT_REACTION if he is a German, health down but
    * at least 1), or shaken (suppressedUntil, the existing suppression: the sappers stop and lie down, the allies are drawn pinned, a German goes to cover). The cast, the east platoon, the
    * ckm crew and the scenery of the station yard are only ever shaken (blastProtection): the plot needs them. The player is never hurt (F4/F1) but is stunned near a blast
-   * (player.concussion / concussedUntil: reduced sprint and a less steady rifle for a few seconds), and the audio reads the strength from the event. No draw from any random stream.
+   * (player.concussion / concussedUntil: reduced sprint and a less steady rifle for a few seconds), and the audio presents the strength the crater records. No draw from any random stream.
    * Returns {casualties: {killed, wounded, suppressed: [ids]}, concussion: 0..1}; the transient `m01-blast` event carries both.
    */
   bombEffects(id,p){

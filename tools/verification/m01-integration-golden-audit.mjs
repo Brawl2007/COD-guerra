@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) 14 (SP-08 escort + slice-3 squad coordination, re-based on the amendment 13 tree) and 15 (ckm wz.30 stoppages, re-based on the amendment 14 tree) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) 14 (SP-08 escort + slice-3 squad coordination, re-based on the amendment 13 tree), 15 (ckm wz.30 stoppages, re-based on the amendment 14 tree) and 16 (R1-a: the bombs of the 04:34 raid hurt the men beside them and stun the player; the raid goes on to 04:44) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15|16 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -170,7 +170,8 @@ const AMENDMENTS={
       return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^(szymon_kowal|staszek_pawlak|east_platoon_voice)$/},
   // Amendment 15 was written first as amendment 13 against amendment 12 (4e2588fa) on the WP2 branch (45a61a33) and is re-based at integration onto the amendment 14 tree (c99a4326 = candidate #80 + WP1 + WP3).
-  '15':{task:'M01-CKM-JAM-V1',delta:'ckm-jam',predecessor:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',after:null,
+  // History since amendment 16 (R1-a, 2026-10-23): the ckm stoppage golden pins the simulation of e7f5f28 (candidate #80 at the head before the bomb effects), not the working tree's.
+  '15':{task:'M01-CKM-JAM-V1',delta:'ckm-jam',predecessor:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',after:'e7f5f2879b1bdbddad7c94ae12fad97627758758',
     previousGolden:'tests/fixtures/m01-escort-coordination-gameplay-baseline.json',golden:'tests/fixtures/m01-ckm-jam-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/ckm-jam-2026-10-22',
     // The director (triggers and rules of 114 / 115) and the audio-event contract (the two new events) are gameplay inputs of this amendment too; the mission data is already one.
@@ -188,8 +189,28 @@ const AMENDMENTS={
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.filter(e=>!['ally-fire','ckm_stoppage','ckm_stoppage_cleared'].includes(e.type)&&(e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message)));
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(suppressedUntil|crouched)$/,behaviourActors:/^de_east_(\d|1[0-3])$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14 or 15`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(suppressedUntil|crouched)$/,behaviourActors:/^de_east_(\d|1[0-3])$/},
+  // Amendment 16 (R1-a, 2026-10-23, owner playtest: «os soldados junto dos bombardeamentos sobrevivem sem consequências; a guerra devia sentir-se desde as 04:34»): an aerial bomb now does something to the
+  // men beside it (m01-blast.js: a lethal core, a wounding ring and a shaken ring, cover and posture, the cast / the east platoon / the ckm crew only shaken), the player is never hurt but is stunned
+  // near a blast (reduced sprint, a less steady rifle, the audio's concussion duck), and the 04:34 raid goes on with eleven more impacts until 04:43:10 (mission.json raidTargets0434). No draw from any
+  // random stream. Measured on both golden routes (tools/verification/m01-integration-golden-audit.mjs --amendment 16): the two simulations are byte identical, tick for tick, until 04:34:00 (tick 1355,
+  // 67.75 s); the first difference is the new saved schedule `timers.raidSchedule0434` the 04:34 event creates (missing in the predecessor). With the new records stripped from both frames (stateOnly: that
+  // schedule, the player's concussion fields, the crater's concussion, the event's concussion and effects) the first BEHAVIOUR difference is the player himself, tick 1407 (04:34:09): the scripted bomb of
+  // forward_post falls 44.6 m from him at the post and stuns him (0.51), so the first step of his walk west is shorter (player.x 14.6396 against 14.6994).
+  '16':{task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',after:null,
+    previousGolden:'tests/fixtures/m01-ckm-jam-gameplay-baseline.json',golden:'tests/fixtures/m01-bomb-effects-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/bomb-effects-2026-10-23',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js'],
+    generationStage:'R1-a on the amendment 15 tree (candidate #80 at e7f5f28): an aerial bomb kills the man at its crater, wounds the man beyond and shakes the next (killed: DOWN, wounded: WOUNDED, shaken: the existing suppression; cover and posture shelter a man; the cast, the east platoon, the ckm crew and the station-yard stretcher and cart are only ever shaken); the player is never hurt by a bomb but is stunned near one (player.concussion / concussedUntil: reduced sprint, a less steady rifle, the audio concussion duck from the crater record); the 04:34 raid goes on to 04:44 with eleven impacts (timers.raidSchedule0434, mission.json raidTargets0434, 30 m from the player, 20 m from the objectives); a wounded railwayman of the station yard lies where he fell; no draw from any random stream; golden amendment 16',
+    deltaFields:/^\$\.(state|checkpoint)\.timers\.raidSchedule0434$/,
+    stateOnly:frame=>{
+      const strip=st=>{if(!st)return;delete st.timers?.raidSchedule0434;if(st.player){delete st.player.concussion;delete st.player.concussedUntil;}
+        for(const d of st.sectors?.damage??[])delete d.concussion;strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.map(e=>{if(e.type!=='m01-blast')return e;const {concussion,effects,...rest}=e;return rest;});
+      return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.player\.x$/,behaviourActors:/^$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15 or 16`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);
@@ -288,8 +309,8 @@ for(const {seed,support,ticks,blocks} of previous.routes){
   assert.match(row.firstDifference.path,CFG.deltaFields,`1. the first difference is a path of the named delta \`${CFG.delta}\``);
   if(CFG.noBehaviourDifference)assert.equal(row.firstBehaviourDifference,null,'1b. with the dialogue state stripped the two simulations are identical on every tick of the route: the dialogue is presentation only');
   else if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
-    // An event path has no actor (amendment 08: the new enemy_down_by_player event); an actor path must be a man of the named delta.
-    if(row.firstBehaviourDifference.actor!==null||!/\.events\./.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
+    // An event path has no actor (amendment 08: the new enemy_down_by_player event) and neither has the player's own record (amendment 16: his first step after the first stun); an actor path must be a man of the named delta.
+    if(row.firstBehaviourDifference.actor!==null||!/\.(events|player)\./.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
   }
   for(let i=0;i<Math.min(fin.blocks.length,blocks.length)&&JSON.stringify(fin.blocks[i])===JSON.stringify(blocks[i]);i++)row.identicalBlocks++;
   // 2. Invariants against the predecessor on its own route.
