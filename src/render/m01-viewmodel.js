@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type:'json'};
-import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,placeViewArms,riflePresentationMaterial,viewAtlasMaterial,
+import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,riflePresentationMaterial,viewAtlasMaterial,
   adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
 import {frameFirstPersonCarry} from './m01-fp-carry.js';
+import {ViewHands} from './m01-fp-hands.js';
 import {visualNoise} from './m01-atmosphere.js';
 
 const PROFILE=WEAPON_PRESENTATION.wz29,BOLT_SECONDS=wz29Profile.gameplay.boltCycleSec,RELOAD_CLIP_SECONDS=3.4;
@@ -76,6 +77,8 @@ export class M01ViewModel {
     if(hands){this.skinMaterial=viewAtlasMaterial(hands.material);this.skinMaterial.name='FP skin';hands.material=this.skinMaterial;}
     this.atlasMaterial=viewAtlasMaterial(body.material);body.material=this.atlasMaterial;this.root.getObjectByName('clip').material=this.atlasMaterial;
     this.mixer=new THREE.AnimationMixer(this.root);
+    // Bind finger rotations first, then learn each phalanx's flex axis from the authored grip pose (aim clip, t = 0).
+    this.hands=new ViewHands(this.root);this.play(this.root,this.mixer,'aim',0);this.hands.calibrate();
     let sockets=null;this.root.traverse(n=>{sockets??=n.userData?.sockets??null;});
     this.port=sockets?.ejection_port?[...sockets.ejection_port]:PORT;
     this.fx.attach(this.root.getObjectByName('weapon'),WZ29_VISUAL.muzzle);this.root.getObjectByName('weapon_clip').add(this.round);
@@ -238,7 +241,7 @@ export class M01ViewModel {
       placeWz29(this.root,this.root.getObjectByName('weapon'),pose);
       const gripWeight=w.reloading?1-reloadEnvelope(sample):w.boltCycling?
         1-THREE.MathUtils.smoothstep(sample,.12,.25)+THREE.MathUtils.smoothstep(sample,1.08,characters.clips.get('fire_bolt').duration):1;
-      placeViewArms(this.root,this.root.getObjectByName('weapon'),gripWeight);
+      this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.root.getObjectByName('weapon'),{r:gripWeight,l:1});
     }
     this.root.getObjectByName('rifle').visible=!carry;
     // From clip_ejected the empty clip continues as a world object; the asset's short arc would otherwise vanish mid-air.
