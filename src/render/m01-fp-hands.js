@@ -6,12 +6,15 @@ import {refreshBone,setWorldQuaternion,worldPosition,worldQuaternion} from './m0
 //
 // The soldier clips were authored for a third-person body whose shoulders sit beside the head. In the view the camera is the head and the
 // shoulders are not drawn, so the arms are re-solved from the hands outwards:
-//   1. the hand keeps its authored weapon-relative pose (plus the per-weapon hold below), so every authored contact (bolt knob, clip, forend)
-//      survives;
-//   2. the elbow is placed on the circle of valid elbows of a shoulder anchor that lives in the VIEW frame (camera space), as close as possible
-//      to the authored forearm. The wrist angle therefore stays the authored one (no folded hand on a straight sleeve) and, because the anchor
-//      does not follow the rifle, the elbows flex as the rifle moves between hip, shoulder and reload instead of the whole arm turning rigidly;
-//   3. when the hand is out of reach the sleeve start slides along the shoulder-hand line, as before.
+//   1. each hand keeps its authored weapon-relative pose (bolt knob, clip, forend contacts all survive), plus a per-weapon HOLD for the idle
+//      grip: a wrist offset and finger flex/spread targets (trigger finger on the trigger, fingers wrapped round the forend instead of through it);
+//   2. the elbow is placed on the circle of valid elbows of a shoulder anchor that lives in the VIEW frame (camera space), as close as possible to
+//      the authored forearm. The anchor does not follow the rifle, so the elbows flex as the rifle moves between hip, shoulder and reload instead of
+//      the whole arm turning rigidly with it;
+//   3. the forearm never turns more than `wristLimit` away from its authored direction, so the hand does not fold back onto a re-aimed forearm.
+//      When the limit binds the elbow follows the authored one and the sleeve start trails off the frame (never a cut end floating in view);
+//   4. when the hand is out of reach the sleeve start slides along the shoulder-hand line.
+// Bone lengths are an invariant: bones are only rotated and placed.
 
 /** Finger bone names per hand. */
 const FINGERS=['thumb','index','middle','ring','pinky'];
@@ -20,8 +23,10 @@ const clamp=THREE.MathUtils.clamp;
 
 /**
  * Per-weapon hand profile. Weapon-bone frame for `offset` (metres; +X right, +Y up, -Z towards the muzzle), view frame for `shoulders`
- * (eye at the origin, -Z forward). `rotation` is a small wrist rotation (Euler XYZ, radians, weapon frame, about the wrist). `curl` is the absolute flex (radians) of the three phalanges about each finger's own authored flex axis;
- * `null` keeps the authored value; `spread` (optional) swings single fingers sideways. `hold` blends the hand from the authored clip pose to this hold (1 = fully held).
+ * (eye at the origin, -Z forward). `curl` is the absolute flex (radians) of the three phalanges about each finger's own authored flex axis, `null`
+ * keeps the authored value; `spread` (optional, radians) swings a finger sideways in the palm plane. `hold` blends the hand from the authored clip pose to
+ * this hold (1 = fully held). The numbers were fitted to the real wz.29 mesh with tests/helpers/m01-fp-hand-metrics.js (see
+ * docs/verification/m01-runtime/fp-hands-2026-10-23/README.md) and are checked by tests/m01-fp-hand-grip.test.js.
  */
 export const WZ29_HANDS=Object.freeze({
   id:'wz29',
@@ -32,9 +37,9 @@ export const WZ29_HANDS=Object.freeze({
   wristLimit:.61,
   sleeveRadius:.05,
   hold:Object.freeze({
-    r:Object.freeze({offset:Object.freeze([.0335,.0159,.0187]),rotation:Object.freeze([0,0,0]),spread:Object.freeze({index:-.206}),
+    r:Object.freeze({offset:Object.freeze([.0335,.0159,.0187]),spread:Object.freeze({index:-.206}),
       curl:Object.freeze({thumb:Object.freeze([.325,.52,.52]),index:Object.freeze([0,0,0]),middle:Object.freeze([.756,.68,.529]),ring:Object.freeze([.751,.676,.526]),pinky:Object.freeze([.95,.855,.665])})}),
-    l:Object.freeze({offset:Object.freeze([.0113,-.0134,-.0054]),rotation:Object.freeze([0,0,0]),
+    l:Object.freeze({offset:Object.freeze([.0113,-.0134,-.0054]),
       curl:Object.freeze({thumb:Object.freeze([.172,.274,.274]),index:Object.freeze([.236,.225,.305]),middle:Object.freeze([.873,.786,.611]),ring:Object.freeze([.826,.743,.578]),pinky:Object.freeze([1.077,.969,.754])})}),
   }),
 });
@@ -51,8 +56,8 @@ export function frameMargin(p,radius=.05){
 
 // Module scratch: nothing below allocates per frame.
 const _sA=new THREE.Vector3(),_eA=new THREE.Vector3(),_wA=new THREE.Vector3(),_W=new THREE.Vector3(),_E=new THREE.Vector3(),_S=new THREE.Vector3();
-const _fA=new THREE.Vector3(),_n=new THREE.Vector3(),_c=new THREE.Vector3(),_v=new THREE.Vector3(),_u=new THREE.Vector3(),_anchor=new THREE.Vector3();
-const _dirA=new THREE.Vector3(),_dirB=new THREE.Vector3(),_off=new THREE.Vector3(),_eu=new THREE.Euler(),_id=new THREE.Quaternion(),_rq=new THREE.Quaternion(),_wi=new THREE.Quaternion();
+const _fA=new THREE.Vector3(),_n=new THREE.Vector3(),_c=new THREE.Vector3(),_v=new THREE.Vector3(),_u=new THREE.Vector3();
+const _dirA=new THREE.Vector3(),_dirB=new THREE.Vector3(),_off=new THREE.Vector3(),_id=new THREE.Quaternion(),_rq=new THREE.Quaternion();
 const _uq=new THREE.Quaternion(),_lq=new THREE.Quaternion(),_hq=new THREE.Quaternion(),_q=new THREE.Quaternion(),_wq=new THREE.Quaternion(),_rel=new THREE.Quaternion();
 
 export class ViewHands {
@@ -60,13 +65,14 @@ export class ViewHands {
   constructor(root,profile=WZ29_HANDS){
     this.root=root;this.profile=profile;this.arms={};this.fingers=[];
     for(const side of SIDES){
-      this.arms[side]={upper:root.getObjectByName(`upperarm_${side}`),lower:root.getObjectByName(`lowerarm_${side}`),hand:root.getObjectByName(`hand_${side}`)};
+      const arm={upper:root.getObjectByName(`upperarm_${side}`),lower:root.getObjectByName(`lowerarm_${side}`),hand:root.getObjectByName(`hand_${side}`)};
+      this.arms[side]=arm.upper&&arm.lower&&arm.hand?arm:null;   // a rig without arms (optional fallback body) is left alone
       for(const finger of FINGERS){
-        const bones=[1,2,3].map(k=>root.getObjectByName(`${finger}_0${k}_${side}`));
+        const bones=[1,2,3].map(k=>root.getObjectByName(`${finger}_0${k}_${side}`));if(bones.some(b=>!b))continue;
         this.fingers.push({side,finger,bones,bind:bones.map(b=>b.quaternion.clone()),axis:bones.map(()=>new THREE.Vector3(1,0,0)),spread:new THREE.Vector3(0,1,0)});
       }
     }
-    this.stats={elbow:{r:0,l:0},slid:{r:false,l:false},deviation:{r:0,l:0}};
+    this.stats={elbow:{r:0,l:0},slid:{r:false,l:false},deviation:{r:0,l:0}};this.calibrated=false;
   }
   /** Learns each phalanx's flex axis from the bone's current (authored) rotation relative to its bind rotation. */
   calibrate(){
@@ -111,14 +117,10 @@ export class ViewHands {
     const root=this.root,profile=this.profile;
     root.updateMatrixWorld(true);weapon.getWorldQuaternion(_wq);
     for(const side of SIDES){
+      if(!this.arms[side])continue;
       const {upper,lower,hand}=this.arms[side],h=profile.hold[side],w=hold[side]??0;
       worldPosition(upper,_sA);worldPosition(lower,_eA);worldPosition(hand,_wA);
       worldQuaternion(upper,_uq);worldQuaternion(lower,_lq);worldQuaternion(hand,_hq);
-      // Hold rotation: a weapon-frame rotation of the hand about the wrist, applied in the view frame (r_w = W * r * W^-1), weighted by `w`.
-      if(w>0&&(h.rotation[0]||h.rotation[1]||h.rotation[2])){
-        _rq.setFromEuler(_eu.set(h.rotation[0],h.rotation[1],h.rotation[2],'XYZ'));_rq.copy(_id.identity()).slerp(_rq,w);
-        _wi.copy(_wq).invert();_rq.premultiply(_wq).multiply(_wi);_hq.premultiply(_rq);
-      }
       const a=_sA.distanceTo(_eA),b=_eA.distanceTo(_wA);
       // 1. wrist target: authored position plus the hold offset (weapon frame -> view frame).
       _W.copy(_wA);if(w>0&&(h.offset[0]||h.offset[1]||h.offset[2]))_W.add(_off.fromArray(h.offset).multiplyScalar(w).applyQuaternion(_wq));
@@ -163,7 +165,8 @@ export class ViewHands {
       setWorldQuaternion(lower,_q.setFromUnitVectors(_dirA,_dirB).multiply(_lq));
       refreshBone(lower);refreshBone(hand);
       setWorldQuaternion(hand,_hq);refreshBone(hand);
-      this.stats.elbow[side]=Math.acos(clamp((a*a+b*b-d*d)/(2*a*b),-1,1))*180/Math.PI;this.stats.slid[side]=slid;
+      _n.subVectors(_S,_E);_v.subVectors(_W,_E);
+      this.stats.elbow[side]=_n.angleTo(_v)*180/Math.PI;this.stats.slid[side]=slid;
     }
     root.updateMatrixWorld(true);
   }

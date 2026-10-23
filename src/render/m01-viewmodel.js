@@ -40,6 +40,9 @@ export function viewModelArmsGeometry(source,jointNames){
   return geometry;
 }
 
+// Interrupted reload (a shot during the single-round reload): the rig eases back from where it was over this much mission time (R6-a).
+const FADE_SECONDS=.2,FADE_MIN_PROGRESS=.88;
+const _fq=new THREE.Quaternion();
 const KEY_SIZE=25;   // slots of the per-frame change key in update()
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.
 export class M01ViewModel {
@@ -47,6 +50,8 @@ export class M01ViewModel {
   // muzzleLight (optional): the weapon pass's existing muzzle light, shared instead of adding a second one.
   constructor(scene,characters,texture,worldFx=null,{muzzleLight=null}={}){
     this.native={clock:null,triangles:0,calls:0,meshes:[]};this.nativeFrame=null;this.nativeHooks=new Map();
+    // Last final local pose of the rig and the one an interrupted reload eases away from (see capturePose/blendPose).
+    this.poseBones=[];this.poseLast=null;this.poseFrom=null;this.poseValid=false;this.fade=null;this.lastReloading=false;this.lastReload=0;this.lastPoseClock=0;
     this.scene=scene;this.characters=characters;this.root=null;this.lod=null;this.mixer=null;this.worldFx=worldFx;
     // Layered flash, muzzle light and barrel/chamber smoke. `flash` remains the core sprite on the real muzzle socket.
     this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;this.boltSeconds=BOLT_SECONDS;
@@ -68,6 +73,8 @@ export class M01ViewModel {
     this.root=clone(this.characters.sources.get(this.fpSource?'fp:0':`pl:${lod}`).scene);this.scene.add(this.root);
     this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip','fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
     const body=this.root.getObjectByName('body');
+    this.poseBones=[];this.root.traverse(n=>{if(n.isBone)this.poseBones.push(n);});
+    this.poseLast=new Float32Array((this.poseBones.length+1)*7);this.poseFrom=new Float32Array(this.poseLast.length);this.poseValid=false;this.fade=null;
     this.root.updateMatrixWorld(true);
     this.root.userData.viewArmBind=Object.fromEntries(['l','r'].map(side=>[side,this.root.getObjectByName(`upperarm_${side}`).position.toArray()]));
     this.armGeometry=this.fpSource?body.geometry.clone():viewModelArmsGeometry(body.geometry,body.skeleton.bones.map(b=>b.name));
@@ -147,6 +154,23 @@ export class M01ViewModel {
     mixer.setTime(time);
     root.updateMatrixWorld(true);
   }
+  /** Local pose of the rig root and of every bone into `out` (position xyz, rotation xyzw), no allocation. */
+  capturePose(out){
+    let o=0;const r=this.root;
+    out[o++]=r.position.x;out[o++]=r.position.y;out[o++]=r.position.z;out[o++]=r.quaternion.x;out[o++]=r.quaternion.y;out[o++]=r.quaternion.z;out[o++]=r.quaternion.w;
+    for(const b of this.poseBones){out[o++]=b.position.x;out[o++]=b.position.y;out[o++]=b.position.z;out[o++]=b.quaternion.x;out[o++]=b.quaternion.y;out[o++]=b.quaternion.z;out[o++]=b.quaternion.w;}
+    return out;
+  }
+  /** Moves the root and every bone `weight` (0..1) of the way back to a captured pose: lerp for positions, slerp for rotations. */
+  blendPose(from,weight){
+    let o=0;const r=this.root;
+    r.position.set(r.position.x+(from[o]-r.position.x)*weight,r.position.y+(from[o+1]-r.position.y)*weight,r.position.z+(from[o+2]-r.position.z)*weight);
+    r.quaternion.slerp(_fq.set(from[o+3],from[o+4],from[o+5],from[o+6]),weight);o+=7;
+    for(const b of this.poseBones){
+      b.position.set(b.position.x+(from[o]-b.position.x)*weight,b.position.y+(from[o+1]-b.position.y)*weight,b.position.z+(from[o+2]-b.position.z)*weight);
+      b.quaternion.slerp(_fq.set(from[o+3],from[o+4],from[o+5],from[o+6]),weight);o+=7;
+    }
+  }
   /**
    * World field of view for the aim transition (70 hip, 48 sights), on the same eased progress as the weapon pose. The mission
    * view sets the camera before this frame's viewmodel pass, so this is the last write before the world is drawn; the
@@ -173,7 +197,7 @@ export class M01ViewModel {
     if(this.wounded&&this.wounded.fpPatient!==characters.sources.has('fp:patient')){this.release(this.wounded.root,this.wounded.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;this.sampleKey=null;}
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
-    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
+    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.poseValid=false;this.fade=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
     // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) with or without an actor index.
     const p=sim.player,w=sim.weapon,t=sim.clock,patient=typeof sim.actor==='function'?sim.actor('jozef_bak'):sim.actors?.find(a=>a.id==='jozef_bak'),carryPhase=patient?.carry,
       carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
@@ -197,6 +221,8 @@ export class M01ViewModel {
       sample=transition&&clip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(clip).duration;}
     else if(w.reloading){clip='reload_clip';sample=w.reloadProgress(t*1000)*characters.clips.get(clip).duration;}
     else if(w.boltCycling){clip='fire_bolt';sample=Math.min(1,(t*1000-w.started)/(w.until-w.started))*characters.clips.get(clip).duration;}
+    // A shot cuts a single-round reload short: the hands and the rifle would jump to the aim pose; ease them back from the last drawn pose instead.
+    if(!carry&&this.poseValid&&this.lastReloading&&!w.reloading&&this.lastReload<FADE_MIN_PROGRESS&&t>=this.lastPoseClock&&t-this.lastPoseClock<.5){this.poseFrom.set(this.poseLast);this.fade={start:t};}
     this.root.position.set(0,0,0);this.root.rotation.set(0,0,0);
     this.play(this.root,this.mixer,clip,sample);
     // Carry presentation is preserved; the rifle path uses measured sight landmarks.
@@ -274,6 +300,11 @@ export class M01ViewModel {
         this.play(this.wounded.root,this.wounded.mixer,patientClip,patientClip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(patientClip).duration);
         this.carryFrame=frameFirstPersonCarry(this.root,this.wounded.root,{phase:carryPhase?.phase??'carry',age:t-(carryPhase?.startedAt??t)});
       }
+    }
+    if(carry)this.poseValid=false;
+    else{
+      if(this.fade){const x=(t-this.fade.start)/FADE_SECONDS;if(x>=1||x<0)this.fade=null;else this.blendPose(this.poseFrom,1-THREE.MathUtils.smoothstep(x,0,1));}
+      this.capturePose(this.poseLast);this.poseValid=true;this.lastReloading=w.reloading;this.lastReload=w.reloadProgress(t*1000);this.lastPoseClock=t;
     }
     this.root.updateMatrixWorld(true);this.observeNative(t);
     const weapon=this.root.getObjectByName('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
