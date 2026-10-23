@@ -69,7 +69,13 @@ const ESCORT_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,ESCORT_BEHAVIOUR=/
 // 114 and 115 on the events. The escort + coordination golden above is history since then (it pins the simulation of c99a4326); the golden of the live simulation, regenerated on x86 by
 // tools/verification/m01-integration-golden-audit.mjs --amendment 15 after its lockstep audit against that exact predecessor, is this one.
 import ckmJam from './fixtures/m01-ckm-jam-gameplay-baseline.json' with {type:'json'};
-const current=ckmJam;   // the golden of the live simulation
+// M01-BOMB-EFFECTS-V1 (golden amendment 16, 2026-10-23, R1-a; owner playtest «os soldados junto dos bombardeamentos sobrevivem sem consequências; a guerra devia sentir-se desde as 04:34»): an aerial bomb kills, wounds
+// and shakes the men beside it (src/game/m01-blast.js; the cast, the east platoon, the ckm crew and the station-yard scenery are only shaken), the player is never hurt by a bomb but is stunned near one, and the 04:34 raid
+// goes on with eleven more impacts until 04:43:10 (mission.json raidTargets0434, timers.raidSchedule0434). The ckm stoppage golden above is history since then (it pins the simulation of e7f5f28); the golden of the live
+// simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 16 after its lockstep audit against that exact predecessor, is this one.
+import bombs from './fixtures/m01-bomb-effects-gameplay-baseline.json' with {type:'json'};
+const BOMBS_DELTA=/^\$\.(state|checkpoint)\.timers\.raidSchedule0434$/,BOMBS_BEHAVIOUR=/^\$\.(state|checkpoint)\.player\.x$/;   // amendment 16, as measured
+const current=bombs;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -497,12 +503,16 @@ test('the escort + coordination golden (amendment 14) chains to the H9 D3/D4 gol
   }
 });
 
-test('the ckm stoppage golden (amendment 15) chains to the escort + coordination golden, pins the live simulation, the director, the audio events and the mission data, and cites its lockstep account',()=>{
+test('the ckm stoppage golden (amendment 15) chains to the escort + coordination golden, pins the simulation of e7f5f28 (history since amendment 16), the director and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(ckmJam,{amendment:'15',task:'M01-CKM-JAM-V1',delta:'ckm-jam',previous:escort,previousFile:'m01-escort-coordination-gameplay-baseline.json',
     predecessor:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',deltaFields:CKMJAM_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),ckmJam.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // History since amendment 16 (the bombs of the 04:34 raid, 2026-10-23): this golden pins the simulation of e7f5f28 (candidate #80 before the bomb effects), not the live one. The audio events and the mission data
+  // moved with the bombs, so they are no longer compared with the live files (they still have to be recorded); the director, the level table, the rearguard and the deck module did not move.
+  assert.equal(ckmJam.sourceSha256,'1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f','the ckm stoppage golden pins the simulation of e7f5f28');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),ckmJam.sourceSha256,'the ckm stoppage golden is history: amendment 16 moved the simulation');
+  for(const f of ['src/game/m01-barks.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
+  for(const f of ['src/game/m01-audio-events.js','missions/m01-tczew/mission.json']){assert.ok(ckmJam.inputsSha256[f],`${f} is recorded`);assert.notEqual(ckmJam.inputsSha256[f],sha('../'+f),`${f} moved with amendment 16`);}
   // The first difference is the stoppage itself: on the tick the gun would have fired its 14th burst (04:58:43 on the control route, 04:59:03 with the covering-fire pilot) the predecessor's gunner
   // is in fire_burst and the live one in `stoppage`; until then the two simulations are byte identical, tick for tick (13 blocks of 512 ticks on both routes). With the gun's own records, the
   // dialogue state and the gun's events stripped from both frames, the first BEHAVIOUR difference is the rounds that are not there: a rifleman of the gate group the burst would have pinned is not.
@@ -514,6 +524,28 @@ test('the ckm stoppage golden (amendment 15) chains to the escort + coordination
     assert.ok(r.identicalBlocks>=Math.floor((r.firstDifference.tick-1)/512)&&r.identicalBlocks<=Math.ceil(r.firstDifference.tick/512),'the blocks before the first difference are the previous golden\'s');
     assert.match(r.firstBehaviourDifference.path,CKMJAM_BEHAVIOUR);assert.match(r.firstBehaviourDifference.actor,/^de_east_(\d|1[0-3])$/);
     assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+  }
+});
+
+test('the bomb effects golden (amendment 16) chains to the ckm stoppage golden, pins the live simulation, the blast module, the audio events and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(bombs,{amendment:'16',task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',previous:ckmJam,previousFile:'m01-ckm-jam-gameplay-baseline.json',
+    predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',deltaFields:BOMBS_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),bombs.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-blast.js','src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','src/game/m01-yard-life.js','missions/m01-tczew/mission.json'])
+    assert.equal(bombs.inputsSha256[f],sha('../'+f),`and ${f}`);
+  assert.equal(ckmJam.inputsSha256['src/game/m01-blast.js'],undefined,'the predecessor had no blast module');
+  // The two simulations are byte identical, tick for tick, until the 04:34 event creates the raid's schedule (a record the predecessor does not have); with the new records stripped from both frames
+  // (the schedule, the player's concussion, the craters' concussion, the events' concussion and effects) the first BEHAVIOUR difference is the player himself, 9 s later: the scripted bomb of forward_post falls
+  // 44.6 m from him at the post and stuns him, so the first step of his walk west is shorter. Nothing before 04:34 moved: 2 blocks of 512 ticks equal to the previous golden's.
+  assert.equal(account.behaviourFields,BOMBS_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.battleClock,'04:34:00');assert.equal(r.firstDifference.actor,null);assert.match(r.firstDifference.path,BOMBS_DELTA);assert.equal(r.firstDifference.predecessor,null);assert.ok(Array.isArray(r.firstDifference.live));
+    assert.ok(r.identicalBlocks>=Math.floor((r.firstDifference.tick-1)/512)&&r.identicalBlocks<=Math.ceil(r.firstDifference.tick/512),'the blocks before the first difference are the previous golden\'s');
+    assert.match(r.firstBehaviourDifference.path,BOMBS_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,null);assert.equal(r.firstBehaviourDifference.battleClock,'04:34:09');
+    assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);assert.ok(r.firstBehaviourDifference.live>r.firstBehaviourDifference.predecessor,'a shorter first step west (x from 15 downwards): the stun');
+    // the plot is the predecessor's: the tool proved the 12 objective states, CP-A..D, consumed events, plot flags and survivors identical; nobody of the cast is touched (the audit of the routes: BOMB_EFFECTS_ROUTES.json)
+    assert.equal(r.endState.objectives.cover_repair,'done');assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
   }
 });
 
@@ -648,8 +680,10 @@ test('legacy 86/89 schema-2 saves initialize without inventing events, mutating 
     const before=json(legacy),s=new M01Simulation();s.restoreSnapshot(legacy);
     assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,97);
     assert.deepEqual(s.actors.slice(0,86).map(a=>a.id),legacy.actors.slice(0,86).map(a=>a.id));
+    // 2026-10-23 (R1-a, golden amendment 16): CP-B now falls after the first bombs, which shake the men beside them (suppressedUntil > 0 in the save). initializePresentation derives the unknown
+    // suppressedAt of such a man from his saved suppressedUntil (a documented rule: 1.5 s before it, at most the clock); everyone else, and every diedAt and hitAt, is the unknown history -1e9 as before.
     for(const a of s.actors){assert.equal(a.motion.odometer,0);assert.equal(a.motion.speed,0);assert.equal(a.bodyYaw,a.facing);
-      assert.equal(a.diedAt,-1e9);assert.equal(a.hitAt,-1e9);assert.equal(a.suppressedAt,-1e9);}
+      assert.equal(a.diedAt,-1e9);assert.equal(a.hitAt,-1e9);assert.equal(a.suppressedAt,a.suppressedUntil>0?Math.max(0,Math.min(legacy.clock,a.suppressedUntil-1.5)):-1e9,a.id);}
     record(s,{label:'legacy-'+count,ticks:160,doubleAt:[1,50,100],input:t=>({fire:t===2,reload:t===50})});
   }
 });

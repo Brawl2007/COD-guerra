@@ -191,9 +191,12 @@ test('every difficulty level on the control route with the deck assault: recruta
 // 2026-10-19 review fixes (critical review of slice 2).
 // 2026-10-19 re-pin seed 3 -> seed 4 with support (golden amendment 12): the 05:35 fill moves the main RNG, and on seed 3 no German dies on spans 06-07 any more; on seed 4 with
 // support de_spans_7 lies dead at x 802 when the east demolition comes (measured over seeds 19390901, 1, 2, 4 with support; the first that has the case). The rule tested is unchanged.
-test('seed 4 with support: a German killed on spans 06-07 falls with them at the east demolition, and a man already dead does not "retreat"',()=>{
+// 2026-10-23 re-pin seed 4 -> seed 1 with support (golden amendment 16, R1-a): the stun of the bombs delays the pilot a few seconds and every later draw of the Germans moves; on seed 4 with
+// support only the four men the demolition fells itself lie on the ground at x 927-954 (and de_spans_7 at x 954), none on the collapsed spans. Measured over seeds 4, 19390901, 1, 2, 3, 5 with
+// support: no case on 4, 19390901 and 5; seed 1 (de_spans_8 dead at x 767, y -5) is the first of the list that has it (seeds 2 and 3 have it too). The rule tested is unchanged.
+test('seed 1 with support: a German killed on spans 06-07 falls with them at the east demolition, and a man already dead does not "retreat"',()=>{
   let after=null;
-  const r=route(4,{support:true,onStep:({sim})=>{if(!after&&sim.consumedEvent(BLAST))after=json(spans(sim).map(a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,state:a.state,carriedBy:a.carriedBy??null})));}});
+  const r=route(1,{support:true,onStep:({sim})=>{if(!after&&sim.consumedEvent(BLAST))after=json(spans(sim).map(a=>({id:a.id,x:a.x,y:a.y,z:a.z,alive:a.alive,state:a.state,carriedBy:a.carriedBy??null})));}});
   const ground=r.sim.world,onFallen=after.filter(a=>!a.alive&&!a.carriedBy&&a.x>=663&&a.x<=877);
   assert.ok(onFallen.length>=1,`a body on the collapsed spans (${JSON.stringify(after.filter(a=>!a.alive).map(a=>[a.id,+a.x.toFixed(0)]))})`);
   for(const a of after.filter(a=>!a.alive&&!a.carriedBy)){assert.equal(a.y,ground.heightAt(a.x,a.z),`${a.id} lies on the ground under him`);assert.equal(a.state,'DOWN',a.id);}

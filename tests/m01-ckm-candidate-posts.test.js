@@ -44,25 +44,31 @@ test('whole-route window: the casemate baseline sees 0 Germans; the shortlisted 
   // 2026-10-19 re-pin 27550 -> 27431, withdrawal 13150 -> 13031 (golden amendment 12, the 05:35 fill): the dike riflemen now also fire at the player at the deck post, which moves the
   // main RNG from 05:35 on, so the deck fight of this neutral route plays out differently (its Germans fall or fall back at other times: 119 fewer living-German samples in the
   // withdrawal); the route's length in samples (880) and every phase before the withdrawal are unchanged.
-  assert.equal(win.samples,880);assert.equal(win.enemySamples,27431);assert.deepEqual(win.phaseSamples,{repair:7320,post_repair:7080,withdrawal:13031});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
+  // 2026-10-23 re-pin (R1-a, golden amendment 16: the bombs of the 04:34 raid stun the player): the pilot is delayed by a few seconds on his way to the crate (delivery at 213.35 s of the mission clock instead of 209.1),
+  // and the neutral route (the ckm never engages) plays out differently from there, as after every change of timing: the window is one sample longer (880 -> 881), the repair phase 7320 -> 7680 and
+  // the post-repair 7080 -> 7000, the withdrawal 13031 -> 12741, enemy samples 27431 -> 27421; the distinct entries follow (S1 254/380 -> 252/378, S2 255 -> 253 and at muzzle heights 0.6 and 0.9 m,
+  // S3 1250 -> 1157). What these tests are about is unchanged: the casemate sees nobody, S2 sees the same 14 gate riflemen in every phase, production == strict, no S2 ray touches a bridge collider,
+  // the same gaps and distances (tools/verification/m01-bomb-effects-audit.mjs; docs/verification/m01-runtime/bomb-effects-2026-10-23).
+  assert.equal(win.samples,881);assert.equal(win.enemySamples,27421);assert.deepEqual(win.phaseSamples,{repair:7680,post_repair:7000,withdrawal:12741});assert.deepEqual(win.phaseActors,{repair:40,post_repair:40,withdrawal:50});
   const c0=evaluateCandidate(win,muzzleFlashWorld());assert.equal(c0.productionClearEntries,0);assert.deepEqual(c0.phases,{});
   const by=Object.fromEntries(SHORTLIST.map(c=>[c.id,describeCandidate(win,c)]));
   // S1 abutment top, north edge: 14 gate riflemen (incl. both MG34 gunners); production also lets rays through the rail trusses (28 actors), strict removes them.
   const s1=by.S1;assert.equal(s1.groundY,-.35);assert.equal(s1.muzzleY,.35);assert.equal(s1.distanceToCasemateM,4);
   for(const p of ['repair','post_repair','withdrawal']){assert.deepEqual(ids(s1,p),range(0,13));assert.equal(s1.phases[p].production.actors,28);}
-  assert.equal(s1.strictClearEntries,254);assert.equal(s1.productionClearEntries,380);assert.equal(s1.throughBridgeEntries,126);assert.ok(s1.minGapToBridgeM<.1,'grazes road_collider_tower_05_n for de_east_0');
+  assert.equal(s1.strictClearEntries,252);assert.equal(s1.productionClearEntries,378);assert.equal(s1.throughBridgeEntries,126);assert.ok(s1.minGapToBridgeM<.1,'grazes road_collider_tower_05_n for de_east_0');
   assert.ok(s1.minTargetDistanceM>1044&&s1.maxTargetDistanceM<1051);
   // S2 embankment between the bridges: same 14 actors, production == strict, no ray touches any bridge collider (>0.9 m gap).
-  const s2=by.S2;assert.equal(s2.groundY,-3);assert.equal(s2.muzzleY,-2.3);assert.equal(s2.throughBridgeEntries,0);assert.equal(s2.strictClearEntries,255);assert.equal(s2.productionClearEntries,255);assert.equal(s2.minGapToBridgeM,.7,'smallest gap of an S2 ray to a bridge collider (was 0.98 m before the T38 gate places)');
+  const s2=by.S2;assert.equal(s2.groundY,-3);assert.equal(s2.muzzleY,-2.3);assert.equal(s2.throughBridgeEntries,0);assert.equal(s2.strictClearEntries,253);assert.equal(s2.productionClearEntries,253);assert.equal(s2.minGapToBridgeM,.7,'smallest gap of an S2 ray to a bridge collider (was 0.98 m before the T38 gate places)');
   for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s2,p),range(0,13));
   // S3 road axis on the abutment: sees the 10 span Germans only in the withdrawal phase, 0.35 m above the deck; no gate rifleman.
   const s3=by.S3;assert.deepEqual(ids(s3,'repair'),[]);assert.deepEqual(ids(s3,'post_repair'),[]);assert.deepEqual(ids(s3,'withdrawal'),range(0,9));
   // 2026-10-19 re-pin 1234 -> 1235 (combat slice 2b): the rearguard fires on the deck assault from 06:09:30, so the deck Germans the S3 post samples along the route are where they
   // are pinned, fall or fall back sooner (one more clear entry); the post itself, its clearance and its group are unchanged.
   // 2026-10-19 re-pin 1235 -> 1250 (golden amendment 12, the 05:35 fill): the same cause as above, the deck Germans are elsewhere at the sampled ticks of the withdrawal.
-  assert.equal(s3.strictClearEntries,1250);assert.equal(s3.minClearanceM,.35);assert.ok(Object.keys(s3.groups).join()==='grp_de_spans');
+  assert.equal(s3.strictClearEntries,1157);   // 2026-10-23 re-pin 1250 -> 1157 (golden amendment 16): the span Germans are elsewhere at the sampled ticks of the withdrawal, as in the re-pins above
+  assert.equal(s3.minClearanceM,.35);assert.ok(Object.keys(s3.groups).join()==='grp_de_spans');
   // S4 south flank: only the south reserve group de_east_28..39, never the gate riflemen.
   const s4=by.S4;for(const p of ['repair','post_repair','withdrawal'])assert.deepEqual(ids(s4,p),range(28,39));assert.equal(s4.throughBridgeEntries,0);
   // Muzzle height 0.6..0.9 m above ground does not change the shortlisted actor counts.
-  for(const above of [.6,.9]){const a=describeCandidate(win,SHORTLIST[0],{above}),b=describeCandidate(win,SHORTLIST[1],{above});assert.equal(a.strictClearEntries,254);assert.equal(b.strictClearEntries,255);}
+  for(const above of [.6,.9]){const a=describeCandidate(win,SHORTLIST[0],{above}),b=describeCandidate(win,SHORTLIST[1],{above});assert.equal(a.strictClearEntries,252);assert.equal(b.strictClearEntries,253);}
 });
