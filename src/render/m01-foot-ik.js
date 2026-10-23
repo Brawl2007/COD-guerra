@@ -219,7 +219,7 @@ const _qWorld = new THREE.Quaternion();
 const _qDelta = new THREE.Quaternion();
 
 /**
- * Analytical two-bone IK (law of cosines, same formulation as `placeViewArms` in m01-wz29-presentation.js).
+ * Analytical two-bone IK (law of cosines; the first-person arms in m01-fp-hands.js use the same formulation).
  * Preserves both segment lengths, rotates only `upperBone` and `midBone`, and leaves their bone offsets untouched.
  * Preconditions: matrixWorld of the three bones is current. Postcondition: it is current for the three bones again.
  * `poleHint` (world position, optional) picks the bend plane; without it the current mid-joint side is kept.

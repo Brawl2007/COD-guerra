@@ -64,6 +64,10 @@ test('arms: bone lengths exact, right elbow bent in the idle holds, no sleeve cu
     assert.ok(m.armNearest>=.12,`${n}: a visible arm vertex is ${cm(m.armNearest).toFixed(1)} cm from the lens`);
   }
   each(/^(hip|ads|sprint)$/,(n,m)=>assert.ok(m.elbowR<=135,`${n}: right elbow ${m.elbowR.toFixed(0)} deg (a stiff arm reads as a rod)`));
+  // Not one rigid body with the rifle: the shoulder anchor lives in the view frame, so the elbow flexes as the rifle goes from the hip to the
+  // shoulder and back to the run (BEFORE it was 130.3 deg in all three).
+  assert.ok(Math.abs(rows.get('ads').elbowR-rows.get('hip').elbowR)>=20&&Math.abs(rows.get('sprint').elbowR-rows.get('ads').elbowR)>=20,
+    `right elbow hip ${rows.get('hip').elbowR.toFixed(0)} / ads ${rows.get('ads').elbowR.toFixed(0)} / sprint ${rows.get('sprint').elbowR.toFixed(0)} deg`);
   // Bone lengths are an invariant of the rig: the solve only rotates and places bones.
   for(const [state,opts] of [['READY',{}],['BOLT_CYCLE',{fraction:.5}],['RELOAD_CLIP',{fraction:.3}],['RELOAD_CLIP',{fraction:.72,aiming:true}]]){
     sample(view,rig,sim,{state,...opts,authored:false});

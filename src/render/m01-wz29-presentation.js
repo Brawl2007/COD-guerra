@@ -147,40 +147,7 @@ export function placeWz29(root,weapon,pose){
   root.updateMatrixWorld(true);
 }
 
-// First-person-only two-segment arm placement. The source rig's shoulders are at
-// the world character's head; place their sleeve ends below this camera instead.
-// Mechanical hand targets/orientations still come from the sampled GLB clip.
-export const VIEW_SHOULDERS=Object.freeze({l:Object.freeze([-.30,-.43,-.10]),r:Object.freeze([.32,-.40,0])});
-export function placeViewArms(root,weapon,gripWeight,shoulders=VIEW_SHOULDERS){
-  const quaternion=new THREE.Quaternion();
-  const worldQuaternion=bone=>bone.getWorldQuaternion(new THREE.Quaternion());
-  const setWorldQuaternion=(bone,q)=>bone.quaternion.copy(worldQuaternion(bone.parent).invert().multiply(q));
-  for(const side of ['l','r']){
-    const upper=root.getObjectByName(`upperarm_${side}`),lower=root.getObjectByName(`lowerarm_${side}`),hand=root.getObjectByName(`hand_${side}`);
-    const oldShoulder=upper.getWorldPosition(new THREE.Vector3()),oldElbow=lower.getWorldPosition(new THREE.Vector3()),oldHand=hand.getWorldPosition(new THREE.Vector3());
-    const uq=worldQuaternion(upper),lq=worldQuaternion(lower),hq=worldQuaternion(hand);
-    const a=oldShoulder.distanceTo(oldElbow),b=oldElbow.distanceTo(oldHand);
-    const target=oldHand.clone();
-    if(side==='r'&&gripWeight>0){
-      const grip=weapon.localToWorld(new THREE.Vector3(.055,-.025,.065));target.lerp(grip,gripWeight);
-    }
-    const shoulder=weapon.localToWorld(new THREE.Vector3(...shoulders[side]));
-    const direction=target.clone().sub(shoulder).normalize();
-    let distance=shoulder.distanceTo(target);
-    // Preserve exact hand contact even during the original pouch reach. Move only
-    // the off-screen sleeve anchor when the two existing bones cannot span it.
-    const reach=a+b-.001;if(distance>reach){shoulder.addScaledVector(direction,distance-reach);distance=reach;}
-    const along=(a*a-b*b+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,a*a-along*along));
-    const pole=new THREE.Vector3(side==='l'?-.4:.4,-1,.15);
-    pole.addScaledVector(direction,-pole.dot(direction)).normalize();
-    const elbow=shoulder.clone().addScaledVector(direction,along).addScaledVector(pole,height);
-    upper.position.copy(upper.parent.worldToLocal(shoulder.clone()));
-    quaternion.setFromUnitVectors(oldElbow.clone().sub(oldShoulder).normalize(),elbow.clone().sub(shoulder).normalize()).multiply(uq);
-    setWorldQuaternion(upper,quaternion);root.updateMatrixWorld(true);
-    quaternion.setFromUnitVectors(oldHand.clone().sub(oldElbow).normalize(),target.clone().sub(elbow).normalize()).multiply(lq);
-    setWorldQuaternion(lower,quaternion);root.updateMatrixWorld(true);setWorldQuaternion(hand,hq);root.updateMatrixWorld(true);
-  }
-}
+// The first-person arms and hands are solved in m01-fp-hands.js (R6-a replaced the fixed-shoulder placeViewArms that lived here).
 
 export function riflePresentationMaterial(source){
   const material=source.clone();material.name='wz29_first_person_atlas';

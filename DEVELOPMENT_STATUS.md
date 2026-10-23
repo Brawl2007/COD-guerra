@@ -1,5 +1,12 @@
 # Estado de desenvolvimento
 
+## M01 mãos e braços em primeira pessoa da kb wz.29 (R6-a) — 2026-10-23
+
+Branch `claude/exciting-bohr-k8v5xm-r6a` (de `e7f5f28`, candidata #80). **Não publicada**, sem playtest humano e **sem inspeção visual humana**. Só renderização: `git diff e7f5f28 -- src/game` vazio, nenhum golden tocado. Queixa do proprietário (mãos que não seguram a arma, defeitos em ADS e na recarga, «rotação rígida»); causas, tabela antes/depois e limites: `docs/verification/m01-runtime/fp-hands-2026-10-23/README.md`.
+- **Causas-raiz:** os braços eram resolvidos a partir de ombros presos à arma com a orientação mundial da mão do clip (pulso até 133° mais dobrado que o autorado; cotovelo direito 130,3° na anca, em ADS e na corrida); o pulso direito era arrastado 4,5 cm para baixo do punho (indicador a 6,2 cm do gatilho); a mão esquerda atravessava o fuste (1,8 cm) e subia 4,7 cm para a linha de pontaria; a pose de recarga trazia a coronha a 30 cm da cara (5,8 % do quadro); um tiro a cortar a recarga de cartucho dava um salto de 38,6 cm no pulso.
+- **Correcção:** `src/render/m01-fp-hands.js` (braços a partir das mãos, ombro âncora no referencial da câmara, limite de pulso de 35°, início da manga fora do quadro, pega por arma `WZ29_HANDS` com indicador no gatilho e dedos à volta do fuste), pose de recarga em `WZ29_FEEL.reload`, esbatimento de 0,20 s quando um tiro corta a recarga (`m01-viewmodel.js`).
+- **Prova:** `tests/m01-fp-hand-grip.test.js` (9 testes; sobre o código antigo 8 falham, no novo 9/9), 148/148 nos 12 ficheiros de teste que tocam o view model, capturas `before/`/`after/` do renderizador real, `tools/verification/m01-fp-hands-metrics.mjs`.
+
 ## M01 ckm wz.30: encravamentos e as falas 114/115 — 2026-10-22
 
 Branch local `wp2-ckm-jam` (de `efb8eb0`; a árvore de jogo é a de `4e2588f`, emenda 12; `efb8eb0` só mudou o workflow de CI). **Não publicada**, sem revisão crítica independente, **sem playtest humano**. Decisão do proprietário. Detalhe e tabelas: `docs/verification/m01-runtime/ckm-jam-2026-10-22/README.md`; falas: `docs/direction/M01_REACTIVE_DIALOGUE.md` §7c; linha «Encravamento da ckm» do benchmark.
