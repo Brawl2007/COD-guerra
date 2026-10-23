@@ -1,0 +1,4527 @@
+{
+  "task": "M01-BOMB-EFFECTS-V1",
+  "what": "the aerial bombs of the 04:34 raid (effects on men, concussion, the extra schedule) against the same routes without them; deterministic, no clock, no path",
+  "window": "04:33:59-04:44:30 (battle clock)",
+  "summary": {
+    "routes": 15,
+    "allComplete": true,
+    "playerNeverHurt": true,
+    "plotEqual": [],
+    "survivorsEqual": true,
+    "castKilledOrWounded": [],
+    "impactsInWindow": {
+      "n": 15,
+      "mean": 14,
+      "sd": 0,
+      "min": 14,
+      "max": 14
+    },
+    "nearestImpactM": {
+      "n": 15,
+      "mean": 31.1,
+      "sd": 0,
+      "min": 31.1,
+      "max": 31.1
+    },
+    "minimumOverAllRoutesM": 31.1,
+    "stunnedRealSec": {
+      "n": 15,
+      "mean": 33.31,
+      "sd": 1.34,
+      "min": 32.1,
+      "max": 34.7
+    },
+    "maxConcussion": {
+      "n": 15,
+      "mean": 0.96,
+      "sd": 0,
+      "min": 0.964,
+      "max": 0.964
+    },
+    "killed": {
+      "n": 15,
+      "mean": 3,
+      "sd": 0,
+      "min": 3,
+      "max": 3
+    },
+    "wounded": {
+      "n": 15,
+      "mean": 1,
+      "sd": 0,
+      "min": 1,
+      "max": 1
+    },
+    "shaken": {
+      "n": 15,
+      "mean": 31,
+      "sd": 0,
+      "min": 31,
+      "max": 31
+    },
+    "routesWithAGenericCasualty": 15,
+    "deltaRealSec": {
+      "n": 15,
+      "mean": 18.15,
+      "sd": 30.67,
+      "min": -27,
+      "max": 71.7
+    },
+    "ticksWithBombs": {
+      "n": 15,
+      "mean": 23408.07,
+      "sd": 529.91,
+      "min": 22538,
+      "max": 24443
+    },
+    "ticksWithout": {
+      "n": 15,
+      "mean": 23044.93,
+      "sd": 940.1,
+      "min": 21621,
+      "max": 24163
+    }
+  },
+  "routes": [
+    {
+      "seed": 19390901,
+      "support": false,
+      "bombs": {
+        "seed": 19390901,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 23401,
+        "realSec": 1170,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 76,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 19390901,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 23655,
+        "realSec": 1182.7,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": -12.7
+    },
+    {
+      "seed": 7,
+      "support": true,
+      "bombs": {
+        "seed": 7,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 23353,
+        "realSec": 1167.6,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 7,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 23148,
+        "realSec": 1157.4,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 10.2
+    },
+    {
+      "seed": 19390901,
+      "support": true,
+      "bombs": {
+        "seed": 19390901,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 23307,
+        "realSec": 1165.3,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 19390901,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 23048,
+        "realSec": 1152.4,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 12.9
+    },
+    {
+      "seed": 1,
+      "support": false,
+      "bombs": {
+        "seed": 1,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 23849,
+        "realSec": 1192.4,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 68,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 1,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 23688,
+        "realSec": 1184.4,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 8
+    },
+    {
+      "seed": 1,
+      "support": true,
+      "bombs": {
+        "seed": 1,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 22981,
+        "realSec": 1149,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 84,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 1,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 21630,
+        "realSec": 1081.5,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 67.5
+    },
+    {
+      "seed": 2,
+      "support": false,
+      "bombs": {
+        "seed": 2,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 24117,
+        "realSec": 1205.8,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 76,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 2,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 24073,
+        "realSec": 1203.6,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 100,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 2.2
+    },
+    {
+      "seed": 2,
+      "support": true,
+      "bombs": {
+        "seed": 2,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 22930,
+        "realSec": 1146.5,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 76,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 2,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 21621,
+        "realSec": 1081,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 84,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 65.5
+    },
+    {
+      "seed": 3,
+      "support": false,
+      "bombs": {
+        "seed": 3,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 24443,
+        "realSec": 1222.1,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 68,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 3,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 24146,
+        "realSec": 1207.3,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 36,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 14.8
+    },
+    {
+      "seed": 3,
+      "support": true,
+      "bombs": {
+        "seed": 3,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 22813,
+        "realSec": 1140.6,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 3,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 23161,
+        "realSec": 1158,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 84,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": -17.4
+    },
+    {
+      "seed": 4,
+      "support": false,
+      "bombs": {
+        "seed": 4,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 23546,
+        "realSec": 1177.3,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 76,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 4,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 23302,
+        "realSec": 1165.1,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 84,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 12.2
+    },
+    {
+      "seed": 4,
+      "support": true,
+      "bombs": {
+        "seed": 4,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 23165,
+        "realSec": 1158.2,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 4,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 22571,
+        "realSec": 1128.5,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 29.7
+    },
+    {
+      "seed": 5,
+      "support": false,
+      "bombs": {
+        "seed": 5,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 24124,
+        "realSec": 1206.2,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 100,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 5,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 24163,
+        "realSec": 1208.1,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 76,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": -1.9
+    },
+    {
+      "seed": 5,
+      "support": true,
+      "bombs": {
+        "seed": 5,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 23240,
+        "realSec": 1162,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 5,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 21807,
+        "realSec": 1090.3,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 71.7
+    },
+    {
+      "seed": 6,
+      "support": false,
+      "bombs": {
+        "seed": 6,
+        "support": false,
+        "variant": "bombs",
+        "ticks": 23314,
+        "realSec": 1165.7,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 76,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 34.7,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -59.8,
+            "z": 66.7,
+            "playerM": 40,
+            "concussion": 0.2,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 6,
+        "support": false,
+        "variant": "nobombs",
+        "ticks": 23855,
+        "realSec": 1192.7,
+        "complete": true,
+        "survivors": 12,
+        "playerHealth": 92,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": -27
+    },
+    {
+      "seed": 6,
+      "support": true,
+      "bombs": {
+        "seed": 6,
+        "support": true,
+        "variant": "bombs",
+        "ticks": 22538,
+        "realSec": 1126.9,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 92,
+        "impactsInWindow": 14,
+        "raidImpacts": 11,
+        "nearestImpactM": 31.1,
+        "stunnedRealSec": 32.1,
+        "maxConcussion": 0.964,
+        "killed": 3,
+        "wounded": 1,
+        "shaken": 31,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_aid": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_orderly": {
+            "state": "WOUNDED",
+            "health": 31
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_railway_0": {
+            "state": "DOWN",
+            "health": 0
+          },
+          "yard_railway_1": {
+            "state": "DOWN",
+            "health": 0
+          }
+        },
+        "impacts": [
+          {
+            "id": "station_bomb",
+            "battle": "04:34:00",
+            "real": 67.75,
+            "x": -400,
+            "z": 37.5,
+            "playerM": 416.5,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "forward_post",
+            "battle": "04:34:07",
+            "real": 69.9,
+            "x": 0,
+            "z": -40,
+            "playerM": 44.6,
+            "concussion": 0.508,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "repair_crater",
+            "battle": "04:34:17",
+            "real": 72.8,
+            "x": -40,
+            "z": 10,
+            "playerM": 42.5,
+            "concussion": 0.084,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "pawel_krawiec",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "sapper_2",
+              "sapper_3",
+              "ckm_gunner"
+            ]
+          },
+          {
+            "id": "raid_0434_1",
+            "battle": "04:34:46",
+            "real": 80.95,
+            "x": -44,
+            "z": 50,
+            "playerM": 40.1,
+            "concussion": 0.196,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_2",
+            "battle": "04:35:12",
+            "real": 88.4,
+            "x": -108,
+            "z": 30,
+            "playerM": 31.1,
+            "concussion": 0.964,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "szymon_kowal",
+              "jozef_bak",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_3",
+            "battle": "04:35:30",
+            "real": 93.55,
+            "x": -140,
+            "z": -16,
+            "playerM": 41.3,
+            "concussion": 0.139,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_4",
+            "battle": "04:36:35",
+            "real": 112.1,
+            "x": -96,
+            "z": 38,
+            "playerM": 35.5,
+            "concussion": 0.813,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "szymon_kowal",
+              "jozef_bak",
+              "leon_dudek",
+              "staszek_pawlak",
+              "franciszek_lipski",
+              "east_platoon_voice"
+            ]
+          },
+          {
+            "id": "raid_0434_5",
+            "battle": "04:37:30",
+            "real": 127.85,
+            "x": -150,
+            "z": 46,
+            "playerM": 54,
+            "concussion": 0.197,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_6",
+            "battle": "04:37:50",
+            "real": 133.55,
+            "x": -178,
+            "z": 6,
+            "playerM": 38.8,
+            "concussion": 0.705,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "marek_zielinski",
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_7",
+            "battle": "04:38:10",
+            "real": 139.25,
+            "x": -215,
+            "z": 36,
+            "playerM": 49.6,
+            "concussion": 0.345,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "leon_dudek"
+            ]
+          },
+          {
+            "id": "raid_0434_8",
+            "battle": "04:38:52",
+            "real": 151.25,
+            "x": -338,
+            "z": 14,
+            "playerM": 97.2,
+            "concussion": 0,
+            "killed": [
+              "yard_railway_0",
+              "yard_railway_1",
+              "yard_aid"
+            ],
+            "wounded": [
+              "yard_orderly"
+            ],
+            "suppressed": [
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_9",
+            "battle": "04:39:08",
+            "real": 155.85,
+            "x": -346,
+            "z": 24,
+            "playerM": 78.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": [
+              "yard_orderly",
+              "yard_patient",
+              "yard_cart"
+            ]
+          },
+          {
+            "id": "raid_0434_10",
+            "battle": "04:40:30",
+            "real": 179.25,
+            "x": -245,
+            "z": 46,
+            "playerM": 36.6,
+            "concussion": 0.779,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          },
+          {
+            "id": "raid_0434_11",
+            "battle": "04:43:10",
+            "real": 224.95,
+            "x": -62,
+            "z": 52,
+            "playerM": 68.9,
+            "concussion": 0,
+            "killed": [],
+            "wounded": [],
+            "suppressed": []
+          }
+        ]
+      },
+      "nobombs": {
+        "seed": 6,
+        "support": true,
+        "variant": "nobombs",
+        "ticks": 21806,
+        "realSec": 1090.3,
+        "complete": true,
+        "survivors": 18,
+        "playerHealth": 100,
+        "impactsInWindow": 3,
+        "raidImpacts": 0,
+        "nearestImpactM": 40.7,
+        "stunnedRealSec": 0,
+        "maxConcussion": 0,
+        "killed": 0,
+        "wounded": 0,
+        "shaken": 0,
+        "castKilledOrWounded": [],
+        "bodies": {
+          "generic_rifleman": {
+            "state": "WOUNDED",
+            "health": 45
+          },
+          "yard_patient": {
+            "state": "WOUNDED",
+            "health": 45
+          }
+        }
+      },
+      "plotEqual": true,
+      "deltaRealSec": 36.6
+    }
+  ]
+}
