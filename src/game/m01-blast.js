@@ -34,7 +34,7 @@ export const BOMB_REACH_M=Math.ceil(BOMB_BLAST.shakenM/(1-BOMB_BLAST.jitter));
 /** The player: never wounded or killed by a bomb (F4/F1 fairness), but a near blast leaves him stunned for a few seconds: reduced sprint and a less steady rifle. */
 export const CONCUSSION=Object.freeze({
   reachM:60,fullM:30,                                   // intensity 0 at reachM (scaled by cover and posture), 1 at fullM, the nearest a bomb can fall (safeImpact)
-  coverMul:1.6,crouchMul:1.25,
+  coverMul:1.35,crouchMul:1.25,                         // a bank between the player and the crater (the rail embankment's crest) takes a quarter off the distance, no more: the shock goes over it
   minSec:2,maxSec:6,                                    // length of the effect at intensity 0+ and 1
   sprintCut:.45,walkCut:.12,                            // fraction of the speed lost at full strength
   sprintOffAt:.6,                                       // above this the player cannot sprint at all
@@ -122,4 +122,23 @@ export function mergeConcussion(player,clock,peak){
   if(!(peak>0))return null;
   if(concussionLevel(player,clock)>=peak)return null;
   return {concussion:peak,concussedUntil:clock+concussionSeconds(peak)};
+}
+
+/**
+ * Where a scheduled impact of the 04:34 raid really falls. The planned point if the player is at least 30 m from it (safeImpact's rule) and it is free (inside the playable area, not in the
+ * river or a building, 20 m from the places the objectives use). Otherwise the nearest of the points 40 m from the player (the distance safeImpact would give) on bearings turned away from
+ * the planned one by 0, +-30, +-60... degrees, the first that is free: so a crater is never forced onto the repair site, the rally point or the shed by the safety shift. Null when none is free,
+ * and the caller falls back to safeImpact. The result is never more than 70 m from the planned point (the player stands within 30 m of it, the shift is 40 m): the validator's envelope.
+ * Pure geometry; `free(x,z)` is the caller's test of the map.
+ */
+export const SAFE_IMPACT_M=30,SHIFTED_IMPACT_M=40;
+export function earlyRaidPoint(planned,player,free){
+  const away=Math.hypot(planned.x-player.x,planned.z-player.z);
+  if(away>=SAFE_IMPACT_M)return free(planned.x,planned.z)?{x:planned.x,z:planned.z}:null;
+  const base=Math.atan2(planned.z-player.z,planned.x-player.x);
+  for(const k of [0,1,-1,2,-2,3,-3,4,-4,5,-5,6]){
+    const a=base+k*Math.PI/6,x=player.x+Math.cos(a)*SHIFTED_IMPACT_M,z=player.z+Math.sin(a)*SHIFTED_IMPACT_M;
+    if(free(x,z))return {x,z};
+  }
+  return null;
 }

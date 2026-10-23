@@ -613,6 +613,19 @@
     }
   ],
   "raidTargetsNote": "Seis alvos estimados para gameplay a oeste da área jogável; não são localizações históricas precisas. Horas fixas (H16), sem consumo do RNG de combate. Fumo persistente até ao fim da missão; atmosfera/avião adicionais ficam em T17/T21.",
+  "raidTargets0434": [
+    { "id": "raid_0434_1", "at": "04:34:46", "position": [-44, 50], "target": "acesso rodoviário, junto às pontes", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_2", "at": "04:35:12", "position": [-112, 34], "target": "faixa entre os acessos, linha de Bydgoszcz", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_3", "at": "04:35:30", "position": [-140, -16], "target": "linha de Gdańsk, a norte do aterro", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_4", "at": "04:37:30", "position": [-150, 46], "target": "acesso rodoviário, a sul do ponto de reunião", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_5", "at": "04:37:50", "position": [-186, 4], "target": "aterro ferroviário, linha de ignição", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_6", "at": "04:38:10", "position": [-215, 36], "target": "faixa entre os acessos, linha de Bydgoszcz", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_7", "at": "04:38:52", "position": [-338, 14], "target": "pátio da estação, vias do desvio", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_8", "at": "04:39:08", "position": [-346, 24], "target": "pátio da estação, fachada sul", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_9", "at": "04:40:30", "position": [-245, 46], "target": "acesso rodoviário, perto do abrigo", "certainty": "GAMEPLAY_DRAMATIZATION" },
+    { "id": "raid_0434_10", "at": "04:43:10", "position": [-62, 52], "target": "acesso rodoviário, a sul do posto da secção", "certainty": "GAMEPLAY_DRAMATIZATION" }
+  ],
+  "raidTargets0434Note": "Dez impactos aéreos, além dos três de evt_m01_bombing_0434 (estação, posto avançado, cabo de ignição), entre 04:34:46 e 04:43:10 (o ataque durou cerca de dez minutos, 04:34-04:44: HISTORICAL_RESEARCH.md, certeza baixa). Posições e horas: GAMEPLAY_DRAMATIZATION ao longo da margem oeste (acessos às pontes, encosta sul do aterro, pátio da estação); não são localizações históricas. Horas fixas de relógio de batalha, sem consumo do RNG de combate; cada impacto passa por safeImpact (nunca a menos de 30 m do jogador) e fica a 20 m, no mínimo, dos locais dos objectivos. Os impactos ferem os homens junto à cratera (src/game/m01-blast.js): as baixas são dramatização de jogo, sem fonte histórica e sem número em ecrã; o elenco, o pelotão leste e a guarnição da ckm só são abalados, nunca mortos ou feridos.",
   "events": [
     {
       "id": "evt_m01_intro_card",
