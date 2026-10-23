@@ -20,24 +20,39 @@ const clamp=THREE.MathUtils.clamp;
 
 /**
  * Per-weapon hand profile. Weapon-bone frame for `offset` (metres; +X right, +Y up, -Z towards the muzzle), view frame for `shoulders`
- * (eye at the origin, -Z forward). `curl` is the absolute flex (radians) of the three phalanges about each finger's own authored flex axis;
- * `null` keeps the authored value. `hold` blends the hand from the authored clip pose to this hold (1 = fully held).
+ * (eye at the origin, -Z forward). `rotation` is a small wrist rotation (Euler XYZ, radians, weapon frame, about the wrist). `curl` is the absolute flex (radians) of the three phalanges about each finger's own authored flex axis;
+ * `null` keeps the authored value; `spread` (optional) swings single fingers sideways. `hold` blends the hand from the authored clip pose to this hold (1 = fully held).
  */
 export const WZ29_HANDS=Object.freeze({
   id:'wz29',
-  shoulders:Object.freeze({r:Object.freeze([.24,-.36,-.10]),l:Object.freeze([-.24,-.36,-.10])}),
+  shoulders:Object.freeze({r:Object.freeze([.24,-.36,-.12]),l:Object.freeze([-.24,-.36,-.12])}),
   // The sleeve start (cut end of the upper arm) must stay this far in front of the eye so it never meets the near plane or the lens.
   sleeveStartZ:-.12,
+  // Largest turn (radians) of the forearm away from its authored direction, i.e. of the wrist angle: 35 degrees.
+  wristLimit:.61,
+  sleeveRadius:.05,
   hold:Object.freeze({
-    r:Object.freeze({offset:Object.freeze([0,0,0]),curl:Object.freeze({thumb:null,index:null,middle:null,ring:null,pinky:null})}),
-    l:Object.freeze({offset:Object.freeze([0,0,0]),curl:Object.freeze({thumb:null,index:null,middle:null,ring:null,pinky:null})}),
+    r:Object.freeze({offset:Object.freeze([.0335,.0159,.0187]),rotation:Object.freeze([0,0,0]),spread:Object.freeze({index:-.206}),
+      curl:Object.freeze({thumb:Object.freeze([.325,.52,.52]),index:Object.freeze([0,0,0]),middle:Object.freeze([.756,.68,.529]),ring:Object.freeze([.751,.676,.526]),pinky:Object.freeze([.95,.855,.665])})}),
+    l:Object.freeze({offset:Object.freeze([.0113,-.0134,-.0054]),rotation:Object.freeze([0,0,0]),
+      curl:Object.freeze({thumb:Object.freeze([.172,.274,.274]),index:Object.freeze([.236,.225,.305]),middle:Object.freeze([.873,.786,.611]),ring:Object.freeze([.826,.743,.578]),pinky:Object.freeze([1.077,.969,.754])})}),
   }),
 });
+
+const smooth01=x=>{const t=clamp(x,0,1);return t*t*(3-2*t);};
+/**
+ * How far a point (view frame) lies beyond the edge of the weapon camera's frame: >= 1 means a sleeve end of radius `radius` centred there
+ * is outside the frame. Uses the 58 degree vertical field of view and the widest aspect the game allows (21:9), so it holds on any window.
+ */
+export function frameMargin(p,radius=.05){
+  const depth=Math.max(.03,-p.z);
+  return Math.max((Math.abs(p.x)-radius)/(1.3*depth),(Math.abs(p.y)-radius)/(.554*depth));
+}
 
 // Module scratch: nothing below allocates per frame.
 const _sA=new THREE.Vector3(),_eA=new THREE.Vector3(),_wA=new THREE.Vector3(),_W=new THREE.Vector3(),_E=new THREE.Vector3(),_S=new THREE.Vector3();
 const _fA=new THREE.Vector3(),_n=new THREE.Vector3(),_c=new THREE.Vector3(),_v=new THREE.Vector3(),_u=new THREE.Vector3(),_anchor=new THREE.Vector3();
-const _dirA=new THREE.Vector3(),_dirB=new THREE.Vector3(),_off=new THREE.Vector3();
+const _dirA=new THREE.Vector3(),_dirB=new THREE.Vector3(),_off=new THREE.Vector3(),_eu=new THREE.Euler(),_id=new THREE.Quaternion(),_rq=new THREE.Quaternion(),_wi=new THREE.Quaternion();
 const _uq=new THREE.Quaternion(),_lq=new THREE.Quaternion(),_hq=new THREE.Quaternion(),_q=new THREE.Quaternion(),_wq=new THREE.Quaternion(),_rel=new THREE.Quaternion();
 
 export class ViewHands {
@@ -48,10 +63,10 @@ export class ViewHands {
       this.arms[side]={upper:root.getObjectByName(`upperarm_${side}`),lower:root.getObjectByName(`lowerarm_${side}`),hand:root.getObjectByName(`hand_${side}`)};
       for(const finger of FINGERS){
         const bones=[1,2,3].map(k=>root.getObjectByName(`${finger}_0${k}_${side}`));
-        this.fingers.push({side,finger,bones,bind:bones.map(b=>b.quaternion.clone()),axis:bones.map(()=>new THREE.Vector3(1,0,0))});
+        this.fingers.push({side,finger,bones,bind:bones.map(b=>b.quaternion.clone()),axis:bones.map(()=>new THREE.Vector3(1,0,0)),spread:new THREE.Vector3(0,1,0)});
       }
     }
-    this.stats={elbow:{r:0,l:0},slid:{r:false,l:false}};
+    this.stats={elbow:{r:0,l:0},slid:{r:false,l:false},deviation:{r:0,l:0}};
   }
   /** Learns each phalanx's flex axis from the bone's current (authored) rotation relative to its bind rotation. */
   calibrate(){
@@ -60,6 +75,9 @@ export class ViewHands {
       if(_rel.w<0){_rel.x*=-1;_rel.y*=-1;_rel.z*=-1;_rel.w*=-1;}
       if(Math.hypot(_rel.x,_rel.y,_rel.z)>1e-3)f.axis[i].set(_rel.x,_rel.y,_rel.z).normalize();
     });
+    // Spread axis of each finger's first phalanx: perpendicular to its flex axis and to its own direction (the palm normal), so a rotation
+    // about it swings the finger sideways within the palm plane (a trigger finger leaving the other three).
+    for(const f of this.fingers){_v.copy(f.bones[1].position).normalize();f.spread.copy(_v).cross(f.axis[0]).normalize();}
     this.calibrated=true;
   }
   /** Flex (rad) of a phalanx about its calibrated axis, from the bone's current local rotation. */
@@ -69,16 +87,19 @@ export class ViewHands {
   }
   /**
    * Closes (or opens) the fingers of one hand towards the profile's curl, weighted by `weight`. Only the flex angle changes: the bone
-   * keeps its bind rotation and its authored axis, so no phalanx twists or leaves the hand.
+   * keeps its bind rotation and its authored axis, so no phalanx twists or leaves the hand. `spread` (radians, first phalanx only) swings
+   * a finger sideways within the palm plane.
    */
   curl(side,weight){
-    const target=this.profile.hold[side].curl;
+    const hold=this.profile.hold[side],target=hold.curl,spread=hold.spread;
     if(!(weight>0))return;
     for(const f of this.fingers){
-      if(f.side!==side)continue;const goal=target[f.finger];if(!goal)continue;
+      if(f.side!==side)continue;const goal=target[f.finger],swing=spread?.[f.finger]??0;if(!goal&&!swing)continue;
       f.bones.forEach((bone,i)=>{
-        const authored=this.flex(f,i),angle=authored+(goal[i]-authored)*weight;
-        bone.quaternion.copy(f.bind[i]).multiply(_q.setFromAxisAngle(f.axis[i],angle));
+        const authored=this.flex(f,i),angle=goal?authored+(goal[i]-authored)*weight:authored;
+        bone.quaternion.copy(f.bind[i]);
+        if(i===0&&swing)bone.quaternion.multiply(_q.setFromAxisAngle(f.spread,swing*weight));
+        bone.quaternion.multiply(_q.setFromAxisAngle(f.axis[i],angle));
       });
     }
   }
@@ -93,6 +114,11 @@ export class ViewHands {
       const {upper,lower,hand}=this.arms[side],h=profile.hold[side],w=hold[side]??0;
       worldPosition(upper,_sA);worldPosition(lower,_eA);worldPosition(hand,_wA);
       worldQuaternion(upper,_uq);worldQuaternion(lower,_lq);worldQuaternion(hand,_hq);
+      // Hold rotation: a weapon-frame rotation of the hand about the wrist, applied in the view frame (r_w = W * r * W^-1), weighted by `w`.
+      if(w>0&&(h.rotation[0]||h.rotation[1]||h.rotation[2])){
+        _rq.setFromEuler(_eu.set(h.rotation[0],h.rotation[1],h.rotation[2],'XYZ'));_rq.copy(_id.identity()).slerp(_rq,w);
+        _wi.copy(_wq).invert();_rq.premultiply(_wq).multiply(_wi);_hq.premultiply(_rq);
+      }
       const a=_sA.distanceTo(_eA),b=_eA.distanceTo(_wA);
       // 1. wrist target: authored position plus the hold offset (weapon frame -> view frame).
       _W.copy(_wA);if(w>0&&(h.offset[0]||h.offset[1]||h.offset[2]))_W.add(_off.fromArray(h.offset).multiplyScalar(w).applyQuaternion(_wq));
@@ -108,6 +134,26 @@ export class ViewHands {
       _v.subVectors(_E,_c);_v.addScaledVector(_n,-_v.dot(_n));
       if(_v.lengthSq()<1e-8)_v.set(side==='r'?.4:-.4,-1,.15).addScaledVector(_n,-_n.dot(_v.set(side==='r'?.4:-.4,-1,.15)));
       _E.copy(_c).addScaledVector(_v.normalize(),height);
+      // 3b. wrist limit: never let the forearm turn further than `wristLimit` from the authored forearm. The elbow follows the authored one
+      // as far as needed and the sleeve start trails off towards the anchor (its z stays behind the lens limit below).
+      _dirA.subVectors(_W,_E).divideScalar(b);const deviation=_dirA.angleTo(_fA);
+      if(deviation>profile.wristLimit){
+        _q.setFromUnitVectors(_dirA,_fA);_rq.copy(_id.identity()).slerp(_q,1-profile.wristLimit/deviation);_dirA.applyQuaternion(_rq);
+        _E.copy(_W).addScaledVector(_dirA,-b);
+        // The sleeve start trails off towards the anchor; if that would leave a cut end inside the frame (a raised elbow), it goes outwards
+        // along the line from the view axis through the elbow instead, blended by how far the anchor direction is from leaving the frame.
+        _u.subVectors(_S,_E).normalize();_S.copy(_E).addScaledVector(_u,a);
+        const m=frameMargin(_S,profile.sleeveRadius);
+        if(m<1){
+          const t=1-smooth01((m-.6)/.4);_v.set(_E.x,_E.y,0);if(_v.lengthSq()<1e-6)_v.set(0,-1,0);
+          _v.normalize().multiplyScalar(.8);_v.z=.6;_u.multiplyScalar(1-t).addScaledVector(_v,t).normalize();_S.copy(_E).addScaledVector(_u,a);
+        }
+      }
+      if(_S.z>profile.sleeveStartZ){
+        _u.subVectors(_S,_E).divideScalar(a);const nz=clamp((profile.sleeveStartZ-_E.z)/a,-1,1),k=Math.sqrt(Math.max(0,1-nz*nz))/(Math.hypot(_u.x,_u.y)||1);
+        _u.set(_u.x*k,_u.y*k,nz);_S.copy(_E).addScaledVector(_u,a);
+      }
+      this.stats.deviation[side]=deviation*180/Math.PI;
       // 4. write the three bones: upper arm swings (keeping its authored twist), forearm swings, hand keeps its authored orientation.
       upper.position.copy(upper.parent.worldToLocal(_u.copy(_S)));
       _dirA.subVectors(_eA,_sA).divideScalar(a);_dirB.subVectors(_E,_S).divideScalar(a);
@@ -118,7 +164,6 @@ export class ViewHands {
       refreshBone(lower);refreshBone(hand);
       setWorldQuaternion(hand,_hq);refreshBone(hand);
       this.stats.elbow[side]=Math.acos(clamp((a*a+b*b-d*d)/(2*a*b),-1,1))*180/Math.PI;this.stats.slid[side]=slid;
-      void worldPosition;
     }
     root.updateMatrixWorld(true);
   }

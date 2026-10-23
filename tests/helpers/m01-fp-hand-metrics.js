@@ -3,8 +3,9 @@ import {M01ViewModel} from '../../src/render/m01-viewmodel.js';
 import {Wz29} from '../../src/game/wz29.js';
 import {loadCharacterGLB,viewModelFixture} from './m01-viewmodel-fixture.js';
 
-// R6-a: measures how the first-person hands sit on the wz.29, from the real rig, the real clips and the real M01ViewModel.
-// Everything is expressed in the weapon bone frame (metres; +X right, +Y up, -Z towards the muzzle), the frame of the GLB sockets.
+// R6-a: measures how the first-person hands and arms sit on the wz.29, from the real rig, the real clips and the real M01ViewModel.
+// Hand/rifle measures are expressed in the weapon bone frame (metres; +X right, +Y up, -Z towards the muzzle), the frame of the GLB sockets.
+// Arm/screen measures are in the view frame of the weapon pass (eye at the origin, -Z forward, 58 degree vertical field of view).
 
 /** Landmarks of the wz.29 mesh in the weapon bone frame. Trigger/guard come from tools/assets/m01-soldiers/src/weapon.mjs (rifle_trigger, rifle_guard). */
 export const WZ29_LANDMARKS=Object.freeze({
@@ -29,7 +30,6 @@ export function setWeapon(sim,state,fraction=0){
   if(state==='RELOAD_CLIP')sim.weapon.mag=0;
   return sim;
 }
-
 
 // Analytic solids of the wz.29 (weapon.mjs): the stock/handguard are superelliptic lofts (exponent e = .45 -> |x/a|^q + |y/b|^q = 1, q = 2/e),
 // the receiver and barrel are tubes. Thin parts (guard, sling, floor plate) are not solids.
@@ -56,22 +56,27 @@ export function solidDepth(x,y,z){
   return Math.max(0,d);
 }
 
-const tri=new THREE.Triangle(),pt=new THREE.Vector3(),cl=new THREE.Vector3(),nrm=new THREE.Vector3();
+const tri=new THREE.Triangle(),pt=new THREE.Vector3(),cl=new THREE.Vector3(),nrm=new THREE.Vector3(),mat=new THREE.Matrix4();
+const dominant=(geometry,names)=>{
+  const idx=geometry.getAttribute('skinIndex'),wgt=geometry.getAttribute('skinWeight'),out=new Array(idx.count);
+  for(let i=0;i<idx.count;i++){
+    let best=-1,bw=0;const j=[idx.getX(i),idx.getY(i),idx.getZ(i),idx.getW(i)],w=[wgt.getX(i),wgt.getY(i),wgt.getZ(i),wgt.getW(i)];
+    for(let k=0;k<4;k++)if(w[k]>bw){bw=w[k];best=j[k];}
+    out[i]=names[best];
+  }
+  return out;
+};
 
-/** Rig-level measurement helper. Create once per view model, call measure() after every update(). */
+/** Rig-level measurement helper. Create once per view model (after its first update()), call measure() after every update(). */
 export class HandRig {
-  constructor(view){
+  constructor(view,{fov=58,aspect=16/9}={}){
     this.view=view;const root=view.root;this.root=root;
     this.weapon=root.getObjectByName('weapon');this.bolt=root.getObjectByName('weapon_bolt');this.clipBone=root.getObjectByName('weapon_clip');
     this.hands=root.getObjectByName('fp_hands');this.rifle=root.getObjectByName('rifle');this.clipMesh=root.getObjectByName('clip');
-    const names=this.hands.skeleton.bones.map(b=>b.name),skinIndex=this.hands.geometry.getAttribute('skinIndex'),skinWeight=this.hands.geometry.getAttribute('skinWeight');
-    // Vertex ids dominated by each finger-tip bone (xx_03_side) and by the hand bone itself.
-    this.groups=new Map();
-    const count=this.hands.geometry.getAttribute('position').count;
-    for(let i=0;i<count;i++){
-      let best=-1,bw=0;for(const [k,get]of [[0,'getX'],[1,'getY'],[2,'getZ'],[3,'getW']]){const w=[skinWeight.getX(i),skinWeight.getY(i),skinWeight.getZ(i),skinWeight.getW(i)][k];if(w>bw){bw=w;best=[skinIndex.getX(i),skinIndex.getY(i),skinIndex.getZ(i),skinIndex.getW(i)][k];}}
-      const name=names[best];if(!this.groups.has(name))this.groups.set(name,[]);this.groups.get(name).push(i);
-    }
+    this.camera=new THREE.PerspectiveCamera(fov,aspect,.03,6);this.camera.updateMatrixWorld(true);
+    // Vertex ids dominated by each bone of the hand mesh (hand_x and the finger phalanges).
+    const owners=dominant(this.hands.geometry,this.hands.skeleton.bones.map(b=>b.name));this.groups=new Map();
+    owners.forEach((name,i)=>{if(!this.groups.has(name))this.groups.set(name,[]);this.groups.get(name).push(i);});
     // Static triangle flags of the rifle: +1 when the winding normal agrees with the vertex normals (outward), -1 otherwise.
     const rp=this.rifle.geometry.getAttribute('position'),rn=this.rifle.geometry.getAttribute('normal'),ri=this.rifle.geometry.index.array;
     this.rifleIndex=ri;this.rifleFlip=new Int8Array(ri.length/3);
@@ -83,20 +88,27 @@ export class HandRig {
     }
     // Knob: the rifle vertices skinned to weapon_bolt that sit beyond x = 5 cm in bind space (the knob sphere, centre (6, 3.2, 3.6) cm). Their
     // centroid follows the real mesh through the bolt's travel and rotation.
-    const rs=this.rifle.geometry.getAttribute('skinIndex'),rw=this.rifle.geometry.getAttribute('skinWeight'),rnames=this.rifle.skeleton.bones.map(b=>b.name);this.knobIds=[];
-    for(let i=0;i<rp.count;i++){
-      let best=-1,bw=0;for(let k=0;k<4;k++){const w=[rw.getX(i),rw.getY(i),rw.getZ(i),rw.getW(i)][k];if(w>bw){bw=w;best=[rs.getX(i),rs.getY(i),rs.getZ(i),rs.getW(i)][k];}}
-      if(rnames[best]==='weapon_bolt'&&rp.getX(i)>.05)this.knobIds.push(i);
+    const rifleOwners=dominant(this.rifle.geometry,this.rifle.skeleton.bones.map(x=>x.name));this.knobIds=[];
+    rifleOwners.forEach((name,i)=>{if(name==='weapon_bolt'&&rp.getX(i)>.05)this.knobIds.push(i);});
+    // Cut end of each sleeve: vertices of the arm meshes owned by the upper arm and within 7 cm of the shoulder joint in bind space.
+    this.sleeveStart={r:[],l:[]};
+    for(const mesh of [root.getObjectByName('body'),root.getObjectByName('fp_sleeve_caps')]){
+      if(!mesh?.skeleton)continue;const names=mesh.skeleton.bones.map(x=>x.name),own=dominant(mesh.geometry,names),pos=mesh.geometry.getAttribute('position'),drawn=new Set(mesh.geometry.index.array);
+      for(const side of ['r','l']){
+        const k=names.indexOf(`upperarm_${side}`);if(k<0)continue;const origin=new THREE.Vector3().setFromMatrixPosition(mat.copy(mesh.skeleton.boneInverses[k]).invert());
+        const ids=[];own.forEach((name,i)=>{if(drawn.has(i)&&name===`upperarm_${side}`&&pt.fromBufferAttribute(pos,i).distanceTo(origin)<.07)ids.push(i);});
+        this.sleeveStart[side].push({mesh,ids});
+      }
     }
-    this.rifleLocal=new Float32Array(rp.count*3);this.handLocal=new Float32Array(count*3);this.inv=new THREE.Matrix4();
+    this.rifleLocal=new Float32Array(rp.count*3);this.handLocal=new Float32Array(this.hands.geometry.getAttribute('position').count*3);this.inv=new THREE.Matrix4();
   }
   /** Weapon-frame position of a bone's origin. */
   bone(name,out=new THREE.Vector3()){return this.weapon.worldToLocal(this.root.getObjectByName(name).getWorldPosition(out));}
-  /** Skinned mesh vertices (weapon frame) into `target` (Float32Array xyz). */
-  skinned(mesh,target){
+  /** Skinned mesh vertices into `target` (Float32Array xyz), in the weapon bone frame (default) or the view frame. */
+  skinned(mesh,target,space='weapon'){
     this.root.updateMatrixWorld(true);this.inv.copy(this.weapon.matrixWorld).invert();
     const pos=mesh.geometry.getAttribute('position');
-    for(let i=0;i<pos.count;i++){pt.fromBufferAttribute(pos,i);mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld).applyMatrix4(this.inv);target[i*3]=pt.x;target[i*3+1]=pt.y;target[i*3+2]=pt.z;}
+    for(let i=0;i<pos.count;i++){pt.fromBufferAttribute(pos,i);mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld);if(space==='weapon')pt.applyMatrix4(this.inv);target[i*3]=pt.x;target[i*3+1]=pt.y;target[i*3+2]=pt.z;}
     return target;
   }
   /** Tip of a finger: the vertex dominated by its 03 bone that lies furthest from the 02 joint. */
@@ -116,11 +128,6 @@ export class HandRig {
     this.skinned(this.rifle,this.rifleLocal);out.set(0,0,0);
     for(const i of this.knobIds)out.x+=this.rifleLocal[i*3],out.y+=this.rifleLocal[i*3+1],out.z+=this.rifleLocal[i*3+2];
     return out.multiplyScalar(1/this.knobIds.length);
-  }
-  /** Centroid of the (visible) clip mesh vertices, weapon frame. */
-  clipCentre(out=new THREE.Vector3()){
-    const pos=this.clipMesh.geometry.getAttribute('position'),buf=this._clip??=new Float32Array(pos.count*3);this.skinned(this.clipMesh,buf);out.set(0,0,0);
-    for(let i=0;i<pos.count;i++)out.x+=buf[i*3],out.y+=buf[i*3+1],out.z+=buf[i*3+2];return out.multiplyScalar(1/pos.count);
   }
   /** Minimum distance from any vertex of the clip mesh to the given point set (weapon frame). */
   clipDistanceTo(points){
@@ -156,7 +163,90 @@ export class HandRig {
     }
     return {depth,deepest,palmGap};
   }
-  /** Everything the grip test asks, in metres. */
+  /** Distance (m) from a weapon-frame point to the rifle mesh surface (after skinned(rifle) has run for this pose). */
+  surfaceGap(p){
+    const ri=this.rifleIndex,R=this.rifleLocal,A=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()];let best=Infinity;
+    for(let t=0;t<ri.length;t+=3){
+      for(let k=0;k<3;k++)A[k].set(R[ri[t+k]*3],R[ri[t+k]*3+1],R[ri[t+k]*3+2]);
+      tri.set(A[0],A[1],A[2]);tri.closestPointToPoint(p,cl);best=Math.min(best,cl.distanceTo(p));
+    }
+    return best;
+  }
+  /** Distance (m) from each fingertip of one hand to the rifle surface: {thumb,index,middle,ring,pinky}. */
+  tipGaps(side){
+    this.skinned(this.hands,this.handLocal);this.skinned(this.rifle,this.rifleLocal);const out={},p=new THREE.Vector3();
+    for(const f of ['thumb','index','middle','ring','pinky'])out[f]=this.surfaceGap(this.tip(f,side,p));
+    return out;
+  }
+  /** Angle (degrees) between the forearm axis (elbow -> wrist) and the hand axis (wrist -> middle knuckle). */
+  wristBend(side){
+    const e=this.bone(`lowerarm_${side}`),w=this.bone(`hand_${side}`),m=this.bone(`middle_01_${side}`);
+    return e.negate().add(w).angleTo(m.sub(w))*180/Math.PI;
+  }
+  /** Elbow interior angle (degrees) from the bone positions. */
+  elbowAngle(side){
+    const s=this.bone(`upperarm_${side}`),e=this.bone(`lowerarm_${side}`),w=this.bone(`hand_${side}`);
+    return s.sub(e).angleTo(w.sub(e))*180/Math.PI;
+  }
+  /** Number of the sleeve's cut-end vertices that fall inside the weapon camera's frustum (a visible floating cut), and the nearest one's depth. */
+  sleeveStartInView(side){
+    this.root.updateMatrixWorld(true);let inside=0,nearest=Infinity;
+    for(const {mesh,ids}of this.sleeveStart[side])for(const i of ids){
+      pt.fromBufferAttribute(mesh.geometry.getAttribute('position'),i);mesh.applyBoneTransform(i,pt).applyMatrix4(mesh.matrixWorld);
+      nearest=Math.min(nearest,-pt.z);
+      const depth=-pt.z;pt.applyMatrix4(this.camera.matrixWorldInverse).applyMatrix4(this.camera.projectionMatrix);
+      if(depth>this.camera.near&&Math.abs(pt.x)<=1&&Math.abs(pt.y)<=1)inside++;
+    }
+    return {inside,nearest};
+  }
+  /** Rifle vertices that are inside the weapon camera's frustum closer to the eye than `depth` metres (the stock filling the view). */
+  rifleNearView(depth=.42){
+    const R=this.skinned(this.rifle,this.rifleLocal,'view');let count=0;
+    for(let i=0;i<R.length/3;i++){
+      const z=-R[i*3+2];if(!(z>this.camera.near&&z<depth))continue;
+      pt.set(R[i*3],R[i*3+1],R[i*3+2]).applyMatrix4(this.camera.matrixWorldInverse).applyMatrix4(this.camera.projectionMatrix);
+      if(Math.abs(pt.x)<=1&&Math.abs(pt.y)<=1)count++;
+    }
+    return count;
+  }
+  /** Vertices of the skin/sleeve/cuff meshes that fall inside the sight window (|ndc| <= half) and in front of the front sight: they would hide the sights. */
+  sightWindowOcclusion(half=.05){
+    this.root.updateMatrixWorld(true);let count=0;
+    for(const name of ['fp_hands','body','fp_cuffs','fp_sleeve_caps','fp_straps']){
+      const mesh=this.root.getObjectByName(name);if(!mesh?.visible)continue;const pos=mesh.geometry.getAttribute('position');
+      for(const i of new Set(mesh.geometry.index.array)){   // only vertices a triangle really draws
+        pt.fromBufferAttribute(pos,i);if(mesh.isSkinnedMesh)mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld);
+        const depth=-pt.z;if(!(depth>this.camera.near&&depth<1.2))continue;
+        pt.applyMatrix4(this.camera.projectionMatrix);if(Math.abs(pt.x)<=half&&Math.abs(pt.y)<=half)count++;
+      }
+    }
+    return count;
+  }
+  /**
+   * Fraction of the frame (64 x 36 cells, weapon camera) covered by rifle triangles nearer than `depth` metres (default any) and, with `minZ`, only
+   * those behind that weapon-frame z: `{minZ:.06}` is the stock behind the receiver. The butt beside the shoulder at the hip is a percent or two;
+   * a butt swung in front of the face is a fifth of the screen.
+   */
+  rifleCoverage(depth=Infinity,{minZ=-Infinity}={},cols=64,rows=36){
+    const R=this.skinned(this.rifle,this.rifleLocal,'view'),W=this.skinned(this.rifle,this._rifleW??=new Float32Array(this.rifleLocal.length)),ri=this.rifleIndex,cells=new Uint8Array(cols*rows),P=[[0,0],[0,0],[0,0]];
+    for(let t=0;t<ri.length;t+=3){
+      let zc=0,ok=true;if((W[ri[t]*3+2]+W[ri[t+1]*3+2]+W[ri[t+2]*3+2])/3<minZ)continue;
+      for(let k=0;k<3;k++){
+        const i=ri[t+k];pt.set(R[i*3],R[i*3+1],R[i*3+2]);zc+=-pt.z/3;if(!(-pt.z>this.camera.near)){ok=false;break;}
+        pt.applyMatrix4(this.camera.projectionMatrix);P[k][0]=(pt.x*.5+.5)*cols;P[k][1]=(pt.y*.5+.5)*rows;
+      }
+      if(!ok||zc>=depth)continue;
+      const x0=Math.max(0,Math.floor(Math.min(P[0][0],P[1][0],P[2][0]))),x1=Math.min(cols-1,Math.ceil(Math.max(P[0][0],P[1][0],P[2][0])));
+      const y0=Math.max(0,Math.floor(Math.min(P[0][1],P[1][1],P[2][1]))),y1=Math.min(rows-1,Math.ceil(Math.max(P[0][1],P[1][1],P[2][1])));
+      const [a,b,c]=P,den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);if(Math.abs(den)<1e-9)continue;
+      for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
+        const px=x+.5,py=y+.5,l1=((b[1]-c[1])*(px-c[0])+(c[0]-b[0])*(py-c[1]))/den,l2=((c[1]-a[1])*(px-c[0])+(a[0]-c[0])*(py-c[1]))/den,l3=1-l1-l2;
+        if(l1>=0&&l2>=0&&l3>=0)cells[y*cols+x]=1;
+      }
+    }
+    let n=0;for(const v of cells)n+=v;return n/cells.length;
+  }
+  /** Everything the grip test asks, in metres (distances), degrees (angles) and counts. */
   measure({contacts=false}={}){
     this.root.updateMatrixWorld(true);this.skinned(this.hands,this.handLocal);
     const trigger=new THREE.Vector3(...WZ29_LANDMARKS.trigger),sock=this.sockets??=(()=>{let s=null;this.root.traverse(n=>{s??=n.userData?.sockets??null;});return s;})();
@@ -169,10 +259,30 @@ export class HandRig {
       pinchToKnob:pinch.distanceTo(knob),
       knobToIndexTip:rIndexTip.distanceTo(knob),knobToThumbTip:rThumbTip.distanceTo(knob),
       leftTopTip:Math.max(...lTips.map(t=>t.y)),
+      wristBendR:this.wristBend('r'),wristBendL:this.wristBend('l'),elbowR:this.elbowAngle('r'),elbowL:this.elbowAngle('l'),
+      rifleNearView:this.rifleNearView(),stockCoverage:this.rifleCoverage(Infinity,{minZ:.06}),sightOcclusion:this.sightWindowOcclusion(),
       rightPalm:this.palm('r').toArray(),knob:knob.toArray(),indexTip:rIndexTip.toArray(),thumbTip:rThumbTip.toArray(),
     };
+    const sr=this.sleeveStartInView('r'),sl=this.sleeveStartInView('l');
+    out.sleeveStartInViewR=sr.inside;out.sleeveStartInViewL=sl.inside;out.sleeveStartNearest=Math.min(sr.nearest,sl.nearest);
     if(this.clipMesh.visible){const r=['index','middle','ring','pinky','thumb'].map(f=>this.tip(f,'r')).concat([this.palm('r')]);out.clipToRightHand=this.clipDistanceTo(r);}
     if(contacts)Object.assign(out,{right:this.contact('r'),left:this.contact('l')});
     return out;
   }
 }
+
+/**
+ * Drives a view model through one authoritative state and returns the measurements. `authored` additionally samples the bare clip pose
+ * (no presentation) to report the authored wrist bend of the same frame; the rig is left in that authored pose afterwards.
+ */
+export function sample(view,rig,sim,{state='READY',fraction=0,aiming=false,sprinting=false,contacts=false,authored=true}={}){
+  sim.player.aiming=aiming;sim.player.sprinting=sprinting;sim.player.moveBlend=sprinting?1:0;setWeapon(sim,state,fraction);
+  view.visual=null;view.sampleKey=null;view.update(sim,'high',0);
+  const out=rig.measure({contacts});
+  if(authored){
+    view.root.position.set(0,0,0);view.root.rotation.set(0,0,0);view.play(view.root,view.mixer,view.stats.clip,view.stats.clipTime);
+    out.authoredWristBendR=rig.wristBend('r');out.authoredWristBendL=rig.wristBend('l');
+  }
+  return out;
+}
+export {M01ViewModel};

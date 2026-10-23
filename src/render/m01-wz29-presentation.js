@@ -29,6 +29,10 @@ export const WZ29_FEEL=Object.freeze({
   // draws it at most 0.71 m in front of the eye and keeps every vertex of rifle, hands and sleeves beyond the 0.03 m near plane.
   wall:Object.freeze({reach:1.45,full:.8,probes:Object.freeze([[0,0],[-.14,0],[.2,0],[.145,-.17],[0,.1]].map(p=>Object.freeze(p))),
     tauIn:.05,tauOut:.2,pitch:1.35,yaw:1.35,roll:.2,back:.04,drop:.05,across:.02}),
+  // Reload pose the rifle eases into (weight 1 = fully reloading): the rear sight's view position (m), then pitch/yaw/roll (rad) added to the
+  // hold. R6-a: the first version brought the rear sight 18 cm further out with the muzzle down, which swung the butt to 30 cm in front of the
+  // face (a stock filling 6 % of the frame); the butt now stays beside the shoulder, as at the hip, and the action cants towards the eye.
+  reload:Object.freeze({position:Object.freeze([.09,-.15,-.78]),pitch:.12,yaw:.10,roll:-.20}),
   // Step rate (rad/s of the first harmonic) and amplitudes in metres/radians per gait.
   gait:Object.freeze({walk:Object.freeze({rate:9,x:.003,y:.004,roll:.006,pitch:.002}),run:Object.freeze({rate:14,x:.005,y:.0085,roll:.013,pitch:.005}),
     crouch:Object.freeze({rate:6.5,x:.0022,y:.0026,roll:.004,pitch:.0014})}),
@@ -99,7 +103,8 @@ export function wallLowerTarget(clearance,{reach,full}=WZ29_FEEL.wall){
 /** Lower fast when the wall arrives, raise slowly once it is clear; exponential in simulation seconds. */
 export function advanceWallLower(value,target,dt,{tauIn,tauOut}=WZ29_FEEL.wall){return advanceVisualBlend(value,target,dt,target>value?tauIn:tauOut);}
 
-export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phase,shot=0,look=null,mechanical=0,stroke=0,crouch=0,wall=0,wallPose=WZ29_FEEL.wall,profile=WEAPON_PRESENTATION.wz29}){
+const _reloadTarget=new THREE.Vector3();
+export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phase,shot=0,look=null,mechanical=0,stroke=0,crouch=0,wall=0,wallPose=WZ29_FEEL.wall,reloadPose=WZ29_FEEL.reload,profile=WEAPON_PRESENTATION.wz29}){
   // Presentation offsets only. At rest in full ADS every extra term is zero, so the measured sight line is exact.
   // `phase` is accepted for older callers; the step bob is now a function of the clock and gait weights (gaitBob).
   const recoil=weaponRecoil(profile,clock-lastShot/1000,aim,shot),eased=adsEase(aim),hip=1-eased,active=1-reload;
@@ -111,13 +116,13 @@ export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phas
   position.x+=gait.x*bob+sway.x*hold-yawLag*.05;
   position.y+=gait.y*bob+breath.y*hip*active+sway.y*hold-.010*arc+pitchLag*.04;
   position.y-=.065*run*hip;position.z-=.025*run*hip;
-  position.lerp(new THREE.Vector3(.045,-.10,-.92),reload);
+  position.lerp(_reloadTarget.fromArray(reloadPose.position),reload);
   position.y+=recoil.rise-.018*stroke;position.z+=recoil.back+mechanical*.004;
   // Raising to the shoulder dips and cants the rifle mid-way; the lag trails mouse look; recoil/settle are per weapon.
   const euler=new THREE.Euler(
-    -.06*hip-.13*run*hip-.18*reload+recoil.pitch+sway.pitch*hold-.016*arc+pitchLag-mechanical*.006+gait.pitch*bob+breath.pitch*hip*active,
-    .15*hip+.04*reload+recoil.yaw+sway.yaw*hold+yawLag,
-    -.055*hip-.13*run*hip-.22*reload+recoil.roll+sway.roll*hold+.05*arc-yawLag*.5+gait.roll*bob-.10*stroke);
+    -.06*hip-.13*run*hip+reloadPose.pitch*reload+recoil.pitch+sway.pitch*hold-.016*arc+pitchLag-mechanical*.006+gait.pitch*bob+breath.pitch*hip*active,
+    .15*hip+reloadPose.yaw*reload+recoil.yaw+sway.yaw*hold+yawLag,
+    -.055*hip-.13*run*hip+reloadPose.roll*reload+recoil.roll+sway.roll*hold+.05*arc-yawLag*.5+gait.roll*bob-.10*stroke);
   // Held low near a wall: pulled back and down, canted across the body with the muzzle dropped to the floor. wall = 0 adds exact zeros.
   if(wall>0){
     const w=adsEase(wall),k=wallPose;
