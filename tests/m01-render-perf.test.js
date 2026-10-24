@@ -59,7 +59,7 @@ test('pose parity: the bone matrices of every skinned mesh are bit-identical to 
     for(let f=0;f<24;f++){
       const t=20+f*(1/60);c.update(actors.map(a=>({...a})),t,player,'high');
       for(const [id,v] of c.instances){
-        const meshes=skinned(v.root);
+        const meshes=v.meshes.filter(m=>m.isSkinnedMesh);   // the logical parts: R8-a draws them as merged batches (tests/m01-soldier-batching.test.js), the bone data is the same
         assert.equal(distinct(v.root).size,1,`${id}: one Skeleton per soldier`);
         const reference=referencePose(v,v.key);assert.equal(reference.size,meshes.length);
         for(const m of meshes){

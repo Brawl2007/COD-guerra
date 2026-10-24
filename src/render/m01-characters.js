@@ -358,7 +358,7 @@ export class M01Characters {
   }
   /** R8-a: merges the skinned parts that are drawn for good (body, one head, helmet, gear, badges) into one SkinnedMesh and the parts that follow `armed`
    *  (rifle + clip, wz.98a, rkm) into a second one, once, at instantiation. The logical parts stay in `meshes` (name, geometry, material, `visible`) for the
-   *  update rules and the diagnostics but leave the scene; the rkm bipods and rag (own visibility rules, one soldier) and the MG34 kit stay individual meshes. */
+   *  update rules and the diagnostics but move under an invisible holder (not drawn, still found by name); the rkm bipods and rag (own visibility rules, one soldier) and the MG34 kit stay individual meshes. */
   batchParts(meshes,actor){
     const kowal=actor.id==='szymon_kowal',bak=actor.id==='jozef_bak';
     const armedNames=actor.civilian||actor.role==='MEDIC'||mgCrew(actor)?NO_NAMES:kowal?KOWAL_ARMED:bak?BAK_ARMED:RIFLE_ARMED;
@@ -372,7 +372,7 @@ export class M01Characters {
     for(const r of merged.fixed)if(r.merged)batches.push(r);
     for(const r of merged.switched)if(r.merged)batches.push(r);
     const loose=[],looseWeapon=[];
-    for(const n of meshes)if(n.parent)(n.name.startsWith('mg34_')?looseWeapon:loose).push(n);   // merged parts left the scene; the rest keeps its own draw call
+    for(const n of meshes)if(n.parent!==merged.holder)(n.name.startsWith('mg34_')?looseWeapon:loose).push(n);   // merged parts sit under the invisible holder; the rest keeps its own draw call
     return {batches,loose,looseWeapon};
   }
   /** Meshes handed to the GPU for this instance in its current state: merged batches, remaining individual parts and, when shown, the MG34 kit parts. */

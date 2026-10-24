@@ -85,7 +85,7 @@ export class SoldierMergeCache{
   dispose(){this.disposed=true;for(const g of this.geometries.values())g.dispose();this.geometries.clear();}
 }
 
-function build(parts,name,cache,visuals){
+function build(parts,name,cache,visuals,holder){
   // Parts with vertex colours decide the material; an unvaried part (white colour) may join it only if it is its source material.
   const lead=parts.find(p=>p.material.vertexColors)??parts[0];
   const groups=[{material:lead.material,parts:[]}];
@@ -99,7 +99,7 @@ function build(parts,name,cache,visuals){
     if(mesh!==ref){
       mesh.name=`${name}${i?`_${i}`:''}`;mesh.frustumCulled=false;mesh.receiveShadow=true;mesh.matrixAutoUpdate=true;
       ref.parent.add(mesh);mesh.bind(ref.skeleton,ref.bindMatrix);
-      for(const p of g.parts)p.removeFromParent();   // logical part: keeps its name, geometry, material and `visible` for diagnostics, no longer drawn
+      for(const p of g.parts)holder.add(p);   // logical part: keeps its name, geometry, material and `visible` (diagnostics, update rules, getObjectByName) but sits under an invisible holder, so it is not drawn
     }
     return {mesh,parts:g.parts,merged:mesh!==ref};
   });
@@ -108,12 +108,14 @@ function build(parts,name,cache,visuals){
 /**
  * Merges the parts of one instantiated soldier. `staticParts` are skinned meshes drawn whenever the soldier is (visibility fixed at create),
  * `switchedParts` follow one boolean (`armed`). Returns the renderable batch records, or [] when the parts cannot be merged safely.
- * Parts that fail the compatibility check simply stay as they are (own draw call).
+ * Parts that fail the compatibility check simply stay as they are (own draw call). The merged-away parts move under an invisible `holder` Group.
  */
 export function batchSoldier(staticParts,switchedParts,cache,visuals){
   const reference=staticParts[0]??switchedParts[0];
-  if(!reference)return {fixed:[],switched:[]};
+  if(!reference)return {fixed:[],switched:[],holder:null};
   const ok=list=>list.filter(m=>compatible(m,reference));
   const a=ok(staticParts),b=ok(switchedParts);
-  return {fixed:a.length?build(a,'batch_body',cache,visuals):[],switched:b.length?build(b,'batch_weapon',cache,visuals):[]};
+  // One invisible holder per soldier next to the parts: three skips the whole subtree when rendering (projectObject / shadow pass).
+  const holder=new THREE.Group();holder.name='m01_batched_parts';holder.visible=false;reference.parent.add(holder);
+  return {fixed:a.length?build(a,'batch_body',cache,visuals,holder):[],switched:b.length?build(b,'batch_weapon',cache,visuals,holder):[],holder};
 }
