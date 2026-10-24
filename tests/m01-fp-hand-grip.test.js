@@ -115,6 +115,18 @@ test('a shot that cuts a single-round reload short eases the hands and rifle bac
   }
 });
 
+test('aim and sprint pressed and released during a clip reload never snap the rifle or the left hand (60 Hz steps)',()=>{
+  const pos=n=>view.root.getObjectByName(n).getWorldPosition(new THREE.Vector3());
+  const s=fakeSim();s.weapon.mag=0;s.clock=40;view.visual=null;view.sampleKey=null;view.poseValid=false;view.update(s,'high',0);s.weapon.reload(s.clock*1000);
+  const toggles=[[40,'aiming',true],[80,'sprinting',true],[140,'aiming',false],[170,'sprinting',false]];let prev=null,rifle=0,left=0;
+  for(let i=0;i<260;i++){
+    s.clock+=1/60;s.weapon.update(s.clock*1000);for(const [frame,flag,value] of toggles)if(i===frame){s.player[flag]=value;s.player.moveBlend=s.player.sprinting?1:0;}
+    view.update(s,'high',0);const w=pos('weapon'),l=pos('hand_l');
+    if(prev){rifle=Math.max(rifle,w.distanceTo(prev.w)*100);left=Math.max(left,l.distanceTo(prev.l)*100);}prev={w,l};
+  }
+  assert.ok(rifle<=1.5,`rifle stepped ${rifle.toFixed(2)} cm in one frame`);assert.ok(left<=1.5,`left wrist stepped ${left.toFixed(2)} cm in one frame`);
+});
+
 test('mechanical markers of the presentation profile coincide with the authored clips (timing sync: no marker needs moving)',()=>{
   const M=WEAPON_PRESENTATION.wz29.mechanics,at=(clip,t)=>{view.root.position.set(0,0,0);view.root.rotation.set(0,0,0);view.play(view.root,view.mixer,clip,t);return {bolt:rig.bone('weapon_bolt').z,clip:rig.bone('weapon_clip'),knob:rig.knob()};};
   const boltDuration=characters.clips.get('fire_bolt').duration,rest=at('fire_bolt',0),open=at('fire_bolt',.7);
