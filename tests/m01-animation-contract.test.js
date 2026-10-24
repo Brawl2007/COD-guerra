@@ -73,8 +73,12 @@ import ckmJam from './fixtures/m01-ckm-jam-gameplay-baseline.json' with {type:'j
 // and shakes the men beside it (src/game/m01-blast.js; the cast, the east platoon, the ckm crew and the station-yard scenery are only shaken), the player is never hurt by a bomb but is stunned near one, and the 04:34 raid
 // goes on with eleven more impacts until 04:43:10 (mission.json raidTargets0434, timers.raidSchedule0434). The ckm stoppage golden above is history since then (it pins the simulation of e7f5f28); the golden of the live
 // simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 16 after its lockstep audit against that exact predecessor, is this one.
+// Regenerated the same day (R1-a follow-up, decisions of the Captain): six unnamed men of the west garrison (pl_west_0..5, displayOnly) join the roster, so that the bombs have men to kill and wound and the
+// player sees them fall, and the three sappers of the cable camp run for the sandbags of the section when Nowicki warns them (grp_sappers.stage.shelter) instead of kneeling 1.6 m from the bomb. The
+// first difference from the predecessor is therefore the first of the new actors, appended to the roster on the very first tick; the first BEHAVIOUR difference (with the garrison, the schedule and the stun
+// records stripped from both frames) is the first step of Krawiec towards the sandbags at 04:33:30.
 import bombs from './fixtures/m01-bomb-effects-gameplay-baseline.json' with {type:'json'};
-const BOMBS_DELTA=/^\$\.(state|checkpoint)\.timers\.raidSchedule0434$/,BOMBS_BEHAVIOUR=/^\$\.(state|checkpoint)\.player\.x$/;   // amendment 16, as measured
+const BOMBS_DELTA=/^\$\.(state|checkpoint)\.actors\.(9[7-9]|10[0-2])$/,BOMBS_BEHAVIOUR=/^\$\.(state|checkpoint)\.(player|actors\.\d+)\.x$/;   // amendment 16, as measured
 const current=bombs;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot,GARRISON_IDS} from '../src/game/m01-simulation.js';
@@ -534,18 +538,19 @@ test('the bomb effects golden (amendment 16) chains to the ckm stoppage golden, 
   const account=integrationAmendment(bombs,{amendment:'16',task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',previous:ckmJam,previousFile:'m01-ckm-jam-gameplay-baseline.json',
     predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',deltaFields:BOMBS_DELTA});
   assert.equal(sha('../src/game/m01-simulation.js'),bombs.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-blast.js','src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','src/game/m01-yard-life.js','missions/m01-tczew/mission.json'])
+  for(const f of ['src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','src/game/m01-yard-life.js','missions/m01-tczew/mission.json'])
     assert.equal(bombs.inputsSha256[f],sha('../'+f),`and ${f}`);
-  assert.equal(ckmJam.inputsSha256['src/game/m01-blast.js'],undefined,'the predecessor had no blast module');
-  // The two simulations are byte identical, tick for tick, until the 04:34 event creates the raid's schedule (a record the predecessor does not have); with the new records stripped from both frames
-  // (the schedule, the player's concussion, the craters' concussion, the events' concussion and effects) the first BEHAVIOUR difference is the player himself, 9 s later: the scripted bomb of forward_post falls
-  // 44.6 m from him at the post and stuns him, so the first step of his walk west is shorter. Nothing before 04:34 moved: 2 blocks of 512 ticks equal to the previous golden's.
+  assert.equal(ckmJam.inputsSha256['src/game/m01-blast.js'],undefined,'the predecessor had no blast module');assert.equal(ckmJam.inputsSha256['src/game/m01-garrison.js'],undefined,'nor a garrison');
+  // The two simulations differ from the very first tick: the six men of the west garrison are appended to the roster (actors 97..102, which the predecessor does not have); with those men and the other new
+  // records stripped from both frames (the schedule, the player's concussion, the craters' concussion, the events' concussion and effects) the first BEHAVIOUR difference is Krawiec's first step towards the sandbags
+  // at 04:33:30 (tick 756): the sappers run for cover when Nowicki warns them, 30 s of battle time before the planes. Nothing else moved before it.
   assert.equal(account.behaviourFields,BOMBS_BEHAVIOUR.source);
   for(const r of account.routes){
-    assert.equal(r.firstDifference.battleClock,'04:34:00');assert.equal(r.firstDifference.actor,null);assert.match(r.firstDifference.path,BOMBS_DELTA);assert.equal(r.firstDifference.predecessor,null);assert.ok(Array.isArray(r.firstDifference.live));
-    assert.ok(r.identicalBlocks>=Math.floor((r.firstDifference.tick-1)/512)&&r.identicalBlocks<=Math.ceil(r.firstDifference.tick/512),'the blocks before the first difference are the previous golden\'s');
-    assert.match(r.firstBehaviourDifference.path,BOMBS_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,null);assert.equal(r.firstBehaviourDifference.battleClock,'04:34:09');
-    assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);assert.ok(r.firstBehaviourDifference.live>r.firstBehaviourDifference.predecessor,'a shorter first step west (x from 15 downwards): the stun');
+    assert.equal(r.firstDifference.tick,1);assert.equal(r.firstDifference.actor,null);assert.match(r.firstDifference.path,BOMBS_DELTA);assert.equal(r.firstDifference.predecessor,null);
+    assert.equal(r.firstDifference.live.id,'pl_west_0');assert.equal(r.firstDifference.live.group,'grp_west_garrison');assert.equal(r.firstDifference.live.displayOnly,true);
+    assert.equal(r.identicalBlocks,0,'the roster differs on the first tick');
+    assert.match(r.firstBehaviourDifference.path,BOMBS_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,'pawel_krawiec');assert.equal(r.firstBehaviourDifference.battleClock,'04:33:30');
+    assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);assert.ok(r.firstBehaviourDifference.live<r.firstBehaviourDifference.predecessor,'the first step west, towards the sandbags of the section (x from -41.4 downwards)');
     // the plot is the predecessor's: the tool proved the 12 objective states, CP-A..D, consumed events, plot flags and survivors identical; nobody of the cast is touched (the audit of the routes: BOMB_EFFECTS_ROUTES.json)
     assert.equal(r.endState.objectives.cover_repair,'done');assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
   }

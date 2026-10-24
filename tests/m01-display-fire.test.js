@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import * as THREE from 'three';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
-import {M01Simulation,seconds} from '../src/game/m01-simulation.js';
+import {M01Simulation,seconds,GARRISON_IDS} from '../src/game/m01-simulation.js';
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01View} from '../src/render/m01-view.js';
 import {validRound} from '../src/game/m01-fire.js';
@@ -26,7 +26,8 @@ const report={task:'M01-BATTLE-READOUT-DISPLAY-ROUNDS-V1',node:process.version,a
 after(()=>{if(process.env.M01_DISPLAY_FIRE_REPORT)writeFileSync(process.env.M01_DISPLAY_FIRE_REPORT,JSON.stringify(report,null,2)+'\n');});
 const SEEDS=process.env.M01_DISPLAY_FIRE_SEEDS?process.env.M01_DISPLAY_FIRE_SEEDS.split(',').map(Number):[19390901,1,2,3,4,5,6,7,8,9,10,11];
 const keysOf=(o,out=[])=>{if(o&&typeof o==='object')for(const [k,v] of Object.entries(o)){out.push(k);keysOf(v,out);}return out;};
-function withoutAuxiliaryMarkers(raw){const save=structuredClone(raw);for(const actor of save.actors??[])if(AUXILIARY_IDS.includes(actor.id)&&actor.displayOnly===true)delete actor.displayOnly;if(save.resumeCheckpoint)save.resumeCheckpoint=withoutAuxiliaryMarkers(save.resumeCheckpoint);return save;}
+// (2026-10-23, R1-a: the six men of the west garrison carry the same unrelated save flag displayOnly as the auxiliaries)
+function withoutAuxiliaryMarkers(raw){const save=structuredClone(raw);for(const actor of save.actors??[])if((AUXILIARY_IDS.includes(actor.id)||GARRISON_IDS.includes(actor.id))&&actor.displayOnly===true)delete actor.displayOnly;if(save.resumeCheckpoint)save.resumeCheckpoint=withoutAuxiliaryMarkers(save.resumeCheckpoint);return save;}
 const deepFreeze=o=>{if(o&&typeof o==='object'&&!Object.isFrozen(o)){Object.freeze(o);Object.values(o).forEach(deepFreeze);}return o;};
 const norm=p=>normalizeDisplayProfile(p,{events:EVENT_IDS});
 
@@ -246,9 +247,9 @@ test('without profiles nothing is drawn and nothing is saved; the getters leave 
   void s.displayFire;void s.battleReadout;
   assert.equal(JSON.stringify(s.snapshot()),before);assert.equal(s.rng.state,rng);assert.equal(s.display.rng.state,displayRng);
   const save=s.snapshot();assert.ok(save.resumeCheckpoint,'the save carries a nested checkpoint, scanned below too');
-  // T34 (partials): the eight auxiliary actors carry the unrelated save flag displayOnly; it is the only /display/ key allowed and only on them.
+  // T34 (partials): the eight auxiliary actors carry the unrelated save flag displayOnly; it is the only /display/ key allowed and only on them. (2026-10-23, R1-a: and on the six men of the west garrison.)
   assert.ok(!keysOf(save).some(k=>/display/i.test(k)&&k!=='displayOnly'));assert.ok(!keysOf(s.snapshot(false)).some(k=>/display/i.test(k)&&k!=='displayOnly'));
-  assert.deepEqual(s.snapshot(false).actors.filter(a=>Object.hasOwn(a,'displayOnly')).map(a=>a.id),[...AUXILIARY_IDS]);
+  assert.deepEqual(s.snapshot(false).actors.filter(a=>Object.hasOwn(a,'displayOnly')).map(a=>a.id),[...AUXILIARY_IDS,...GARRISON_IDS]);
   assert.ok(!keysOf(withoutAuxiliaryMarkers(save)).some(k=>/display/i.test(k)));assert.ok(!keysOf(withoutAuxiliaryMarkers(s.snapshot(false))).some(k=>/display/i.test(k)));
   const readonly=s.displayFire;readonly.rounds.push({});readonly.firedAt.x=1;assert.deepEqual(s.displayFire.rounds,[]);assert.deepEqual(s.displayFire.firedAt,{});
 });

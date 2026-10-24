@@ -10,7 +10,9 @@ import {spawn} from 'node:child_process';
 import {writeFileSync,mkdirSync} from 'node:fs';
 import {dirname,join,resolve} from 'node:path';
 import definition from '../../missions/m01-tczew/mission.json' with {type:'json'};
-import {M01Simulation,seconds,clockText} from '../../src/game/m01-simulation.js';
+import {M01Simulation,seconds,clockText,GARRISON_IDS} from '../../src/game/m01-simulation.js';
+import {YARD_IDS} from '../../src/game/m01-yard-life.js';
+import {eyePosition} from '../../src/world/spatial.js';
 import {castIds} from '../../src/game/m01-blast.js';
 import {route} from '../../tests/helpers/m01-route.js';
 
@@ -35,8 +37,14 @@ function runOne(seed,support,variant){
       if(e.type!=='m01-blast'||!e.aerial||!inWindow)continue;
       const hit=sim.sectors.damage.at(-1),distance=Math.hypot(e.point.x-sim.player.x,e.point.z-sim.player.z);
       if(hit.id!=='station_bomb')minDistance=Math.min(minDistance,distance);
+      const fx=e.effects??{killed:[],wounded:[],suppressed:[]};
+      // R1-a follow-up: the men of the west garrison who fell at this impact, how far the player was from each and whether his eye saw the body (the world's line of sight, 0.6 m above the ground)
+      const seen=[...fx.killed,...fx.wounded].filter(id=>GARRISON_IDS.includes(id)).map(id=>{const m=sim.actor(id);
+        return {id,fate:fx.killed.includes(id)?'killed':'wounded',playerM:r1(Math.hypot(m.x-sim.player.x,m.z-sim.player.z)),
+          inSight:sim.world.lineOfSight(eyePosition(sim.player),{space:'metres',x:m.x,y:m.y+.6,z:m.z,eyeHeight:0})};});
+      const sappersM=hit.id==='repair_crater'?['pawel_krawiec','sapper_2','sapper_3'].map(id=>{const a=sim.actor(id);return r1(Math.hypot(a.x-e.point.x,a.z-e.point.z));}):undefined;
       impacts.push({id:hit.id,battle:clockText(sim.battleClock),real:r2(sim.clock),x:r1(e.point.x),z:r1(e.point.z),playerM:r1(distance),concussion:r3(e.concussion??0),
-        killed:e.effects?.killed??[],wounded:e.effects?.wounded??[],suppressed:e.effects?.suppressed??[]});
+        killed:fx.killed,wounded:fx.wounded,suppressed:fx.suppressed,...(seen.length?{garrisonSeen:seen}:{}),...(sappersM?{sappersM}:{})});
     }
     if(inWindow)for(const a of sim.actors)if(!a.alive||a.state==='WOUNDED')bodies.set(a.id,{state:a.state,health:Math.round(a.health)});
   }});
@@ -45,6 +53,9 @@ function runOne(seed,support,variant){
     impactsInWindow:impacts.length,raidImpacts:impacts.filter(i=>/^raid_0434_/.test(i.id)).length,nearestImpactM:Number.isFinite(minDistance)?r1(minDistance):null,
     stunnedRealSec:r2(stunTicks*.05),maxConcussion:r3(maxStun),
     killed:all('killed').length,wounded:all('wounded').length,shaken:all('suppressed').length,
+    garrison:{killed:all('killed').filter(id=>GARRISON_IDS.includes(id)).length,wounded:all('wounded').filter(id=>GARRISON_IDS.includes(id)).length,
+      shaken:new Set(all('suppressed').filter(id=>GARRISON_IDS.includes(id))).size,seen:impacts.flatMap(i=>i.garrisonSeen??[])},
+    yard:{killed:all('killed').filter(id=>YARD_IDS.includes(id)).length,wounded:all('wounded').filter(id=>YARD_IDS.includes(id)).length},
     castKilledOrWounded:[...all('killed'),...all('wounded')].filter(id=>CAST.has(id)),
     bodies:Object.fromEntries([...bodies].sort(([a],[b])=>a<b?-1:1)),impacts,
     plot:{objectives:Object.fromEntries(Object.entries(sim.objectives).map(([id,o])=>[id.replace('obj_m01_',''),o.state])),checkpoints:[...sim.checkpointsReached],
@@ -89,6 +100,10 @@ if(process.argv.includes('--one')){
     nearestImpactM:stat(rows.map(r=>r.bombs.nearestImpactM)),minimumOverAllRoutesM:Math.min(...rows.map(r=>r.bombs.nearestImpactM)),
     stunnedRealSec:stat(rows.map(r=>r.bombs.stunnedRealSec)),maxConcussion:stat(rows.map(r=>r.bombs.maxConcussion)),
     killed:stat(rows.map(r=>r.bombs.killed)),wounded:stat(rows.map(r=>r.bombs.wounded)),shaken:stat(rows.map(r=>r.bombs.shaken)),
+    garrisonKilled:stat(rows.map(r=>r.bombs.garrison.killed)),garrisonWounded:stat(rows.map(r=>r.bombs.garrison.wounded)),garrisonShaken:stat(rows.map(r=>r.bombs.garrison.shaken)),
+    yardKilled:stat(rows.map(r=>r.bombs.yard.killed)),yardWounded:stat(rows.map(r=>r.bombs.yard.wounded)),
+    garrisonSeenAtM:stat(rows.flatMap(r=>r.bombs.garrison.seen.map(s=>s.playerM))),garrisonSeenInSight:rows.flatMap(r=>r.bombs.garrison.seen).filter(s=>s.inSight).length+'/'+rows.flatMap(r=>r.bombs.garrison.seen).length,
+    sappersAtTheCableBombM:stat(rows.flatMap(r=>r.bombs.impacts.find(i=>i.id==='repair_crater')?.sappersM??[])),
     routesWithAGenericCasualty:rows.filter(r=>r.bombs.killed+r.bombs.wounded>0).length,
     deltaRealSec:stat(rows.map(r=>r.deltaRealSec)),ticksWithBombs:stat(rows.map(r=>r.bombs.ticks)),ticksWithout:stat(rows.map(r=>r.nobombs.ticks))};
   for(const r of rows){for(const v of [r.bombs,r.nobombs])delete v.plot;delete r.nobombs.impacts;}

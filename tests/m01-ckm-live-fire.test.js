@@ -3,7 +3,7 @@
 // The route is the real one of tests/helpers/m01-route.js (no injected event, clock or objective); its numbers are balance facts of THIS build, not ballistics.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {M01Simulation,validateM01Snapshot,seconds,ckmMuzzle,ckmThroughBridge,CKM_POSITION,CKM_POST,CKM_BELT,CKM_BURST_ROUNDS,CKM_INTERVAL,CKM_BURST_SEC,CKM_FEED_SEC} from '../src/game/m01-simulation.js';
+import {M01Simulation,validateM01Snapshot,seconds,ckmMuzzle,ckmThroughBridge,CKM_POSITION,CKM_POST,CKM_BELT,CKM_BURST_ROUNDS,CKM_INTERVAL,CKM_BURST_SEC,CKM_FEED_SEC,GARRISON_IDS} from '../src/game/m01-simulation.js';
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {makeRound,traceRound,closestApproach,NEAR_MISS} from '../src/game/m01-fire.js';
 import {route} from './helpers/m01-route.js';
@@ -303,7 +303,7 @@ test('saves made before T47 (86 and 89 actors, crew on the casemate post, no fir
     const old=structuredClone(pre);
     // What the previous build saved: crew on the casemate post, in the quiet cycle, with no fire record (the T34 yard actors and, for 86, the crew come later).
     old.actors.filter(a=>a.ckm).forEach((a,i)=>{[a.x,a.z]=casemate[i];a.ckm={phase:'aim',startedAt:Math.max(0,old.clock-1),visible:true};delete a.ckmFire;});
-    old.actors=old.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&(roster===89||!a.ckm));
+    old.actors=old.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&!GARRISON_IDS.includes(a.id)&&(roster===89||!a.ckm));   // (2026-10-23, R1-a: nor the six men of the west garrison, which came later)
     assert.equal(old.actors.length,roster);delete old.resumeCheckpoint;
     const keep=structuredClone(old),s=new M01Simulation();validateM01Snapshot(structuredClone(old));s.restoreSnapshot(old);
     assert.deepEqual(old,keep,'the supplied save is not edited');

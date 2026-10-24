@@ -128,13 +128,13 @@
    {
     "seed": 9,
     "helpPins": 29,
-    "ignorePins": 36,
-    "pinsGap": 7,
+    "ignorePins": 37,
+    "pinsGap": 8,
     "helpSeconds": 195.2,
-    "ignoreSeconds": 205.55,
-    "secondsGap": 10.4,
+    "ignoreSeconds": 207.4,
+    "secondsGap": 12.2,
     "helpMgPct": 95,
-    "ignoreMgPct": 9,
+    "ignoreMgPct": 8,
     "helpShots": 56
    },
    {
@@ -163,15 +163,15 @@
    }
   ],
   "pinsGap": {
-   "mean": 29.9,
-   "sd": 15.7,
+   "mean": 30,
+   "sd": 15.6,
    "min": 7,
    "max": 57,
    "seedsAtLeast11": 10,
    "seedsAtLeast5": 12
   },
   "secondsGap": {
-   "mean": 28.7,
+   "mean": 28.9,
    "coveringFaster": 11
   },
   "helpMgPct": {
@@ -180,7 +180,7 @@
    "seedsAtLeast80": 12
   },
   "ignoreMgPct": {
-   "mean": 14.1,
+   "mean": 14,
    "max": 21,
    "seedsAtMost20": 11
   }
@@ -298,13 +298,13 @@
    {
     "seed": 9,
     "helpPins": 29,
-    "ignorePins": 36,
-    "pinsGap": 7,
+    "ignorePins": 37,
+    "pinsGap": 8,
     "helpSeconds": 195.2,
-    "ignoreSeconds": 205.55,
-    "secondsGap": 10.4,
+    "ignoreSeconds": 207.4,
+    "secondsGap": 12.2,
     "helpMgPct": 95,
-    "ignoreMgPct": 7,
+    "ignoreMgPct": 9,
     "helpShots": 89
    },
    {
@@ -321,9 +321,9 @@
    },
    {
     "seed": 11,
-    "helpPins": 17,
+    "helpPins": 18,
     "ignorePins": 40,
-    "pinsGap": 23,
+    "pinsGap": 22,
     "helpSeconds": 182.4,
     "ignoreSeconds": 220.6,
     "secondsGap": 38.2,
@@ -341,7 +341,7 @@
    "seedsAtLeast5": 12
   },
   "secondsGap": {
-   "mean": 27.2,
+   "mean": 27.4,
    "coveringFaster": 11
   },
   "helpMgPct": {
@@ -350,13 +350,13 @@
    "seedsAtLeast80": 12
   },
   "ignoreMgPct": {
-   "mean": 13.8,
+   "mean": 14,
    "max": 21,
    "seedsAtMost20": 11
   }
  },
  "pairedPinsGapDifference": {
-  "mean": 1.7,
+  "mean": 1.8,
   "standardError": 1
  },
  "rows": [
@@ -760,10 +760,10 @@
    "seed": 9,
    "mode": "ignore",
    "variant": "bombs",
-   "pins": 36,
-   "realSeconds": 205.55,
-   "end": "05:09:23",
-   "mgSuppressedPct": 9,
+   "pins": 37,
+   "realSeconds": 207.4,
+   "end": "05:09:39",
+   "mgSuppressedPct": 8,
    "survivors": 12,
    "shots": 0,
    "deliveredAt": 213.35
@@ -784,10 +784,10 @@
    "seed": 9,
    "mode": "ignore",
    "variant": "nobombs",
-   "pins": 36,
-   "realSeconds": 205.55,
-   "end": "05:08:44",
-   "mgSuppressedPct": 7,
+   "pins": 37,
+   "realSeconds": 207.4,
+   "end": "05:09:01",
+   "mgSuppressedPct": 9,
    "survivors": 12,
    "shots": 0,
    "deliveredAt": 209.1
@@ -868,7 +868,7 @@
    "seed": 11,
    "mode": "help",
    "variant": "nobombs",
-   "pins": 17,
+   "pins": 18,
    "realSeconds": 182.4,
    "end": "05:05:16",
    "mgSuppressedPct": 95,
