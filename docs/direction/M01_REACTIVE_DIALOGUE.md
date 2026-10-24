@@ -26,7 +26,7 @@
 
 **Nota sobre baixas:** `round-impact.victim` é sempre uma baixa letal de um homem `pl_east_*` no tabuleiro (06:00–06:10); as baixas de `landAttrition` (a ~1000 m em `hold_access`) não emitem e ficam sem fala, de propósito (o jogador nunca as vê).
 
-**NÃO existem (marcados `NEEDS_EVENT`):** `enemy_down_by_player` (`fire()` só põe `a.state='DOWN'`), `platoon_man_crossed`. *(Actualização 2026-10-22: `ckm_stoppage` e `ckm_stoppage_cleared` passaram a existir, a ckm encrava duas vezes por rota — §7c; `enemy_down_by_player` existe desde a fatia 2.)* (Não existem granadas alemãs: 139 foi reaproveitada para `Padnij!` por estalo.)
+**NÃO existem (marcados `NEEDS_EVENT`):** `enemy_down_by_player` (`fire()` só põe `a.state='DOWN'`), `platoon_man_crossed`. *(Actualização 2026-10-22: `ckm_stoppage` e `ckm_stoppage_cleared` passaram a existir, a ckm encrava duas vezes por rota — §7c; `enemy_down_by_player` existe desde a fatia 2.)* (Granadas alemãs: não existiam; desde R2-b (2026-10-24) os homens do assalto ao tabuleiro lançam uma Stielhandgranate contra um polaco que não conseguem atingir com a espingarda, e a 138 avisa-a como à do jogador — nenhuma fala nova; 139 foi reaproveitada para `Padnij!` por estalo.)
 
 ## 2. Falas por gatilho
 
@@ -98,7 +98,7 @@
 
 | ID | Falante | Polaco (original) / Legenda PT | Gatilho | Condições | CD clock / Pri / Máx | Grupo de variantes | Ref. Fable/GAP | Marcas |
 |---|---|---|---|---|---|---|---|---|
-| 138 | `szymon_kowal` | *Granat! Padnij!*<br>Granada! Abaixem! | m01-blast kind grenade (granada do jogador) ou grenades.active com id m01_grenade_* | só o jogador lança granadas hoje: aviso quando há aliados <= 12 m do ponto de queda; 1 s antes de soundAt | 20 s / 1 / 4 | grenade (138) | GAP 110 | NOTE: só granada do jogador; não há granadas alemãs |
+| 138 | `szymon_kowal` | *Granat! Padnij!*<br>Granada! Abaixem! | m01-blast kind grenade (granada do jogador) ou grenades.active com id m01_grenade_* | o jogador lança granadas e, desde R2-b, os homens do assalto ao tabuleiro (`by` de_spans_N em grenades.active): aviso quando há aliados <= 12 m do ponto de queda; 1 s antes de soundAt | 20 s / 1 / 4 | grenade (138) | GAP 110 | NOTE: a granada do jogador e, desde R2-b (2026-10-24), a granada de mão alemã do tabuleiro: a espera entre o arremesso e a explosão é o aviso |
 
 ### G. Tiro certeiro / alemão abatido pelo jogador (sem elogio) (4)
 
@@ -451,7 +451,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
     "text": "Granada! Abaixem!",
     "context": "reativa; m01-blast kind grenade (granada do jogador) ou grenades.active com id m01_grenade_*",
     "priority": 1,
-    "note": "PL: Granat! Padnij! | NOTE: só granada do jogador; não há granadas alemãs"
+    "note": "PL: Granat! Padnij! | NOTE: a granada do jogador e, desde R2-b (2026-10-24), a granada de mão alemã do tabuleiro (deckAssault.tactics.grenade): a espera entre o arremesso e a explosão (fuseSec 3.8, flightSec 1.4) é o aviso"
   },
   {
     "id": "dlg_m01_139",

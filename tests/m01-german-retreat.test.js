@@ -328,12 +328,12 @@ test('the validator accepts the new data and rejects malformed withdrawal data a
     ['plan on a Pole',mid,s=>{span(s,'marek_zielinski').fallBack={t0:seconds('06:10:00'),x0:0,z0:0,x1:1,z1:1};},/retirada alemã/],
     ['plan on a German of the dike',mid,s=>{span(s,'de_east_3').fallBack={t0:seconds('06:10:00'),x0:0,z0:0,x1:1,z1:1};},/retirada alemã/],
     ['plan before the east demolition',early,s=>{span(s,'de_spans_4').fallBack={t0:seconds('04:30:00'),x0:1050,z0:40,x1:1020,z1:40};},/retirada alemã/],
-    ['plan with an extra key',mid,s=>{span(s,'de_spans_8').fallBack.speed=2;},/retirada alemã/],
-    ['plan with a missing key',mid,s=>{delete span(s,'de_spans_8').fallBack.z1;},/retirada alemã/],
-    ['plan with a place that is not finite',mid,s=>{span(s,'de_spans_8').fallBack.x1=null;},/retirada alemã|Checkpoint M01 inválido/],
-    ['plan from the future',mid,s=>{span(s,'de_spans_8').fallBack.t0=s.battleClock+1;},/retirada alemã/],
-    ['plan from before the mission',mid,s=>{span(s,'de_spans_8').fallBack.t0=seconds('04:00:00');},/retirada alemã/],
-    ['REGROUP together with a plan',mid,s=>{span(s,'de_spans_8').state='REGROUP';},/reagrupamento/],
+    ['plan with an extra key',mid,s=>{span(s,'de_spans_7').fallBack.speed=2;},/retirada alemã/],
+    ['plan with a missing key',mid,s=>{delete span(s,'de_spans_7').fallBack.z1;},/retirada alemã/],
+    ['plan with a place that is not finite',mid,s=>{span(s,'de_spans_7').fallBack.x1=null;},/retirada alemã|Checkpoint M01 inválido/],
+    ['plan from the future',mid,s=>{span(s,'de_spans_7').fallBack.t0=s.battleClock+1;},/retirada alemã/],
+    ['plan from before the mission',mid,s=>{span(s,'de_spans_7').fallBack.t0=seconds('04:00:00');},/retirada alemã/],
+    ['REGROUP together with a plan',mid,s=>{span(s,'de_spans_7').state='REGROUP';},/reagrupamento/],
     ['REGROUP on a Pole',mid,s=>{span(s,'marek_zielinski').state='REGROUP';},/reagrupamento/],
     ['a living German carried',mid,s=>{const a=span(s,'de_spans_2');Object.assign(a,{alive:true,health:50});},/transporte alemão|apresentação/],
     // 2026-10-22 re-pin de_spans_5 -> de_spans_7 (golden amendment 15: after the first ckm stoppage, 04:58, the Germans draw the main RNG in another order): on this route de_spans_5 now falls on the deck (x 507) and the
@@ -342,6 +342,9 @@ test('the validator accepts the new data and rejects malformed withdrawal data a
     // 2026-10-23 re-pin de_spans_6 -> de_spans_8 and de_spans_7 -> de_spans_9 (golden amendment 16, R1-a: the stun of the bombs delays the pilot and the Germans draw the main RNG in another order): on this route de_spans_4 to
     // de_spans_7 now fall in the deck fight (x 459, 507, 552, 667) and the two men who retreat and carry are de_spans_8 (de_spans_3) and de_spans_9 (de_spans_2); before, they were de_spans_6 and de_spans_7. The same mutations,
     // on men who really retreat and carry.
+    // 2026-10-24 re-pin de_spans_8 -> de_spans_7 for the first six mutations above and for the getter test below (golden amendment 18, R2-b: the Poles' real fire and the closing lines change who falls in the deck fight): on this route
+    // de_spans_4, 5, 6 and 8 now fall (x 322-567, the rearguard's rifles) and the two men who retreat and carry are de_spans_7 (de_spans_3) and de_spans_9 (de_spans_2); before, they were de_spans_8 and de_spans_9. The same mutations,
+    // on a man who really retreats and carries.
     ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_9').fallBack;},/transporte alemão/],
     ['a German carried by a Pole',mid,s=>{span(s,'de_spans_2').carriedBy='marek_zielinski';},/transporte alemão/],
     ['a German carried by a dead man',mid,s=>{span(s,'de_spans_9').alive=false;},/transporte/],
@@ -361,7 +364,8 @@ test('the getter is computed on every read and detached; the plan and the pairs 
   // retreat record is read on a man who lives to retreat; the record itself is unchanged.
   // 2026-10-22 re-pin de_spans_5 -> de_spans_6 (golden amendment 15, the ckm stoppages): de_spans_5 now falls on the deck (x 507, dead before the demolition); de_spans_6 retreats and carries.
   // 2026-10-23 re-pin de_spans_6 -> de_spans_8 (golden amendment 16): de_spans_4 to de_spans_7 now fall in the deck fight (x 459-667); de_spans_8 retreats and carries (de_spans_3), de_spans_9 too (de_spans_2).
-  assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_8')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
+  // 2026-10-24 re-pin de_spans_8 -> de_spans_7 (golden amendment 18, R2-b): de_spans_8 now falls in the deck fight (x 567); de_spans_7 retreats and carries (de_spans_3), de_spans_9 too (de_spans_2).
+  assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_7')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
   assert.deepEqual(restore(sim).germanWithdrawal,sim.germanWithdrawal);
 });
 
