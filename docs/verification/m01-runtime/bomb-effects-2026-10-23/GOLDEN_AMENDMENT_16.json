@@ -4,7 +4,7 @@
   "delta": "bomb-effects",
   "predecessor": "e7f5f2879b1bdbddad7c94ae12fad97627758758",
   "predecessorSourceSha256": "1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f",
-  "sourceSha256": "5b9ed6ae310d838e5cc505f5236b7f56653b16217818b7239e7dba1a921864ae",
+  "sourceSha256": "945a2bf53ca089d3e3ecb420ec8bb0e455b934dc3eecf60ae7630560c91ca7b9",
   "previousGolden": {
     "task": "M01-CKM-JAM-V1",
     "file": "tests/fixtures/m01-ckm-jam-gameplay-baseline.json",

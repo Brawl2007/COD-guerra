@@ -11,11 +11,11 @@
     "sha256": "0b49a97d6b56a2563ceb27368cf3e24ae4f2c84cd1de32038855231cda79937b"
   },
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
-  "sourceSha256": "5b9ed6ae310d838e5cc505f5236b7f56653b16217818b7239e7dba1a921864ae",
+  "sourceSha256": "945a2bf53ca089d3e3ecb420ec8bb0e455b934dc3eecf60ae7630560c91ca7b9",
   "inputsSha256": {
-    "src/game/m01-simulation.js": "5b9ed6ae310d838e5cc505f5236b7f56653b16217818b7239e7dba1a921864ae",
+    "src/game/m01-simulation.js": "945a2bf53ca089d3e3ecb420ec8bb0e455b934dc3eecf60ae7630560c91ca7b9",
     "src/game/m01-pacing.js": "b5e6ede4828fbd82aa85fdb6975c71a4a03ebaadd1f6a8c8269facf6965300ca",
-    "missions/m01-tczew/mission.json": "4bb9f0cefac3e64d5374042025e49a58e9ed84e5f3ba577a2ba3b1abd54b93e2",
+    "missions/m01-tczew/mission.json": "e0309049aaec398153b7fbf2d15c1cce67edebd117f668a46b98cf0c805984b5",
     "missions/m01-tczew/map-layout.json": "d0cec6dbb3098ebfb33797c5ba75bced07a34b521afe91205565fa44de4bae7e",
     "src/game/m01-animation-presentation.js": "5a2714475e6be3bd49deeb179db46b838598725c1a9c762b94a569f401b4a61f",
     "src/game/m01-aim.js": "fb4a39f421fb891866496f4a2740770ce12d60e81ccdf534f691acd1d50cbe4d",
@@ -420,5 +420,5 @@
     }
   ],
   "audit": "docs/verification/m01-runtime/bomb-effects-2026-10-23/GOLDEN_AMENDMENT_16.json",
-  "auditSha256": "b7ca56754cd76a69b157bcf20607a41d864f1dafa45c8206deede045fe9ff7d0"
+  "auditSha256": "c691b1fb0b20f01fcb8b0dcb35a313687b6ebcf89f7e1ba6cd82324688f181ae"
 }
