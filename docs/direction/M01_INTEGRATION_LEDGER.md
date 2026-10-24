@@ -2,7 +2,9 @@
 
 Ler isto primeiro em cada sessão; atualizar só com factos verificados pelo Git. A política está no `AGENTS.md`, secção «uma IA entrega, um jogo recebe».
 
-**Candidata atual:** `claude/quirky-heisenberg-9l4m7b` · PR #80 (draft) · base `main@6697956`, que é o PR #76 já integrado. HEAD da candidata: `ffb65e7` (2026-10-22: PR #91 `4e2588f`, depois WP1 dificuldade D3/D4/D5 `3eb21b3`, WP3 escolta SP-08 + coordenação `c99a432`, WP2 encravamento da ckm `af3f382`, WP4 desempenho do renderer `86e1a1a`; `npm test` 1524/1524, golden 13/14/15 «identical», browser 45/47 + as 2 expectativas corrigidas 2/2 isoladas; sem playtest humano).
+**Integração 2026-10-24 (proposta de reconstrução, opção B):** merge `--no-ff` `a4b253c7` na candidata #80 a partir de `claude/exciting-bohr-k8v5xm` @ `3b672346` (pais: `9c1d7f2b` e `3b672346`). Inclui R1-a bombas com consequências (`c66436d4`, golden emenda 16), R6-a mãos FP (`bc6d4b0`), R6-b corte da coronha em ADS (`2ac59cc`), R8-a soldados em 2 draw calls (`eedc860`), VIS-a clarão por tiro real (`e85336e6`), matriz R0 e plano R4. `npm test` 1605/1606 em `c66436d4`; a falha (golden T49 dos impostores, contraste alemão intencional do VIS-a) re-registada em `3b672346` (8/8); build OK. Estado: **INTEGRADA SEM VALIDAÇÃO DE JOGO** (sem playtest humano, sem FPS). Próximo: R2-a coordenação polaca 05:30–06:10 (emenda 17).
+
+**Candidata atual:** `claude/quirky-heisenberg-9l4m7b` · PR #80 (draft) · base `main@6697956`, que é o PR #76 já integrado. HEAD da candidata: `a4b253c7` (2026-10-24, ver acima); antes `ffb65e7` (2026-10-22: PR #91 `4e2588f`, depois WP1 dificuldade D3/D4/D5 `3eb21b3`, WP3 escolta SP-08 + coordenação `c99a432`, WP2 encravamento da ckm `af3f382`, WP4 desempenho do renderer `86e1a1a`; `npm test` 1524/1524, golden 13/14/15 «identical», browser 45/47 + as 2 expectativas corrigidas 2/2 isoladas; sem playtest humano).
 Testar a candidata localmente: `git checkout claude/quirky-heisenberg-9l4m7b && npm ci && npm run dev`, depois abrir `http://localhost:5173/COD-guerra/`.
 O link de pré-visualização é o que o Vercel publicar no PR #80 para o SHA indicado. Não usar um link de outro SHA.
 
