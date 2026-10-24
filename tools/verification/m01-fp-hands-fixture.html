@@ -35,9 +35,9 @@ window.fp={
     inspectCamera.position.copy(centre).addScaledVector(d,distance);inspectCamera.up.set(0,1,0);inspectCamera.lookAt(centre);
     inspectCamera.updateProjectionMatrix();inspectCamera.updateMatrixWorld(true);
     // The aimed stock shade is a function of the distance to the player's eye: off for the free camera, which stands closer to the rifle than the eye does.
-    const shade=vm.rifleMaterial?.userData.m01StockShade,kept=shade?.value;if(shade)shade.value=0;
+    const shade=vm.rifleMaterial?.userData.m01StockShade,kept=shade?.value,head=vm.rifleMaterial?.userData.m01FaceClip,keptHead=head?.value;if(shade)shade.value=0;if(head)head.value=0;   // R6-b: the head clip, like the shade, belongs to the player's eye
     engine.setClearColor(0x2b3330,1);engine.clear();engine.render(view.weaponScene,inspectCamera);engine.setClearColor(0x000000,0);
-    if(shade)shade.value=kept;
+    if(shade)shade.value=kept;if(head)head.value=keptHead;
   },
 };
 window.fp.png=()=>canvas.toDataURL('image/png');
