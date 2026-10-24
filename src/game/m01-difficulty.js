@@ -116,6 +116,7 @@ export const lowerLevelOf=id=>M01_DIFFICULTY_IDS[M01_DIFFICULTY_IDS.indexOf(id)-
 // the men of the road deck (de_spans_*). The strings of the fall, the river and the boundary are the ones those deaths already had.
 export const M01_DEATH_CAUSES=Object.freeze(['shot','grenade','fall','water','bounds']);
 const shooterPhrase=(by,weapon)=>{
+  if(weapon==='stielhandgranate'&&/^de_spans_\d+$/.test(by??''))return 'por uma granada de mão do tabuleiro';   // R2-b: the stick grenades of the deck assault
   const east=/^de_east_(\d+)$/.exec(by??'');
   if(east)return weapon==='mg34'||Number(east[1])<2?'pela MG34 do dique (portões)':Number(east[1])<14?'por um atirador Kar98k dos portões':'por um atirador Kar98k do dique';
   if(/^de_spans_\d+$/.test(by??''))return 'por um atirador Kar98k do tabuleiro';

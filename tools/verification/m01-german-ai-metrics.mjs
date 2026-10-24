@@ -1,10 +1,12 @@
 // M01 R2-b: how the fight for the road deck unfolds (the deck assault of grp_de_spans against the Polish side), measured on the real test routes (tests/helpers/m01-route.js).
 // Read-only: nothing here changes a simulation. Deterministic (no wall clock, no paths).
 //   node tools/verification/m01-german-ai-metrics.mjs [--rev <git rev>] [--set 'groups.grp_de_spans.deckAssault.safeX=450' ...] [--routes 19390901:0,7:1,...] [--jsonl <file>]
-//     [--label <text>] [--audit] [--timeline <file>]
+//     [--label <text>] [--audit] [--timeline <file>] [--snap <dir> [--level soldado|veterano]] [--sed 'src/game/m01-section.js|old text|new text' ...]
+// --snap <dir> measures only the deck fight, from the saves of the first tick of the window (snap-<seed>-<0|1>.json, taken from a route of recruta), with the pilot's own controls, re-levelled to
+// --level (the paired comparison of tests/helpers/m01-danger.js); a death ends the run and is recorded (`death`). Without it the whole route is played.
 //   node tools/verification/m01-german-ai-metrics.mjs --summary <file.jsonl> [--label <text>]
 // Which tree is measured: the working tree by default; --rev <rev> extracts that commit (src, missions, the json data of assets / research) with `git archive`; --set <path>=<json value>
-// (repeatable) measures a COPY of the working tree whose mission.json carries that value, so one tree can be measured at two values of a data constant (`safeX` 450 against the shipped
+// (repeatable) measures a COPY of the working tree whose mission.json carries that value (--sed does the same for a constant of a source file: file|exact old text|new text, which must occur once), so one tree can be measured at two values of a data constant (`safeX` 450 against the shipped
 // one). The pilot, the routes and the counting are always THIS tool's and THIS tree's tests/helpers/m01-route.js, so a before / after pair runs the same controls. Routes: seed:mode
 // with mode 0 = the golden control route, 1 = the support pilot; the default is the 24 audit routes (12 seeds x both pilots). One JSON line per route (stdout, and appended to
 // --jsonl so a restart loses nothing; a route already in the file under the same label is skipped).
@@ -24,7 +26,8 @@ import {mkdtempSync,symlinkSync,readFileSync,writeFileSync,existsSync,appendFile
 import {tmpdir} from 'node:os';
 import {join,resolve,dirname} from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {route} from '../../tests/helpers/m01-route.js';
+import {route,coverControls} from '../../tests/helpers/m01-route.js';
+import {atLevel} from '../../tests/helpers/m01-danger.js';
 import {clippingAudit,stackingAudit} from '../../tests/helpers/m01-clipping.js';
 
 const ROOT=resolve(import.meta.dirname,'../..');
@@ -68,8 +71,8 @@ if(arg('--summary')){
   process.exit(0);
 }
 
-const rev=arg('--rev'),sets=args('--set'),jsonl=arg('--jsonl'),timelineFile=arg('--timeline'),audit=process.argv.includes('--audit');
-const label=arg('--label')??(rev??(sets.length?`working-tree ${sets.join(' ')}`:'working-tree'));
+const rev=arg('--rev'),sets=args('--set'),seds=args('--sed'),jsonl=arg('--jsonl'),timelineFile=arg('--timeline'),audit=process.argv.includes('--audit'),snapDir=arg('--snap'),level=arg('--level');
+const label=arg('--label')??((rev??(sets.length||seds.length?`working-tree ${[...sets,...seds].join(' ')}`:'working-tree'))+(level?` ${level}`:''));
 const DEFAULT_ROUTES=[19390901,1,2,3,4,5,6,7,8,9,10,11].flatMap(seed=>[`${seed}:0`,`${seed}:1`]).join(',');
 const routes=(arg('--routes')??DEFAULT_ROUTES).split(',').map(s=>{const [seed,mode]=s.split(':');return {seed:Number(seed),support:mode==='1',key:`${seed}:${mode}`};});
 
@@ -81,7 +84,7 @@ function extract(at){
   return dir;
 }
 /** A copy of the working tree (src, missions, the json data of assets / research) with the mission.json paths of --set replaced by the given JSON values. */
-function copyWithPatches(patches){
+function copyWithPatches(patches,sources=[]){
   const dir=mkdtempSync(join(tmpdir(),'m01-r2b-metrics-'));
   cpSync(join(ROOT,'src'),join(dir,'src'),{recursive:true});cpSync(join(ROOT,'missions'),join(dir,'missions'),{recursive:true});
   for(const top of ['assets','research'])cpSync(join(ROOT,top),join(dir,top),{recursive:true,filter:p=>statSync(p).isDirectory()||p.endsWith('.json')});
@@ -94,9 +97,14 @@ function copyWithPatches(patches){
     node[path.at(-1)]=value;
   }
   writeFileSync(file,JSON.stringify(def,null,2));
+  for(const x of sources){
+    const [f,from,to]=x.split('|'),path=join(dir,f),text=readFileSync(path,'utf8');
+    if(text.split(from).length!==2)throw new Error(`--sed ${f}: the text must occur exactly once (${from})`);
+    writeFileSync(path,text.replace(from,()=>to));
+  }
   return dir;
 }
-const treeRoot=rev?extract(rev):sets.length?copyWithPatches(sets):ROOT;
+const treeRoot=rev?extract(rev):sets.length||seds.length?copyWithPatches(sets,seds):ROOT;
 const {M01Simulation:Base,seconds}=await import(pathToFileURL(join(treeRoot,'src/game/m01-simulation.js')));
 const {eyePosition}=await import(pathToFileURL(join(treeRoot,'src/world/spatial.js')));
 
@@ -122,8 +130,8 @@ function measure({seed,support}){
         const a=this.actor(id);
         if(a.health<health-1e-9)struck=true;
         if(alive&&!a.alive&&!o.casualties.some(c=>c.id===id)){
-          o.casualties.push({id,source,at:round(this.clock-o.t0,1),x:round(a.x,0),phase:a.deck?.phase??null});o.bySource[source]=(o.bySource[source]??0)+1;
-          note(this.clock-o.t0,`CASUALTY ${id} by ${source} at x ${a.x.toFixed(0)} (${a.deck?.phase})`);
+          o.casualties.push({id,source,at:round(this.clock-o.t0,1),x:round(a.x,0),phase:a.deck?.phase??null,speed:round(a.motion?.speed??0,1),facing:round(a.facing,2)});o.bySource[source]=(o.bySource[source]??0)+1;
+          note(this.clock-o.t0,`CASUALTY ${id} by ${source} at x ${a.x.toFixed(0)} (${a.deck?.phase}, speed ${(a.motion?.speed??0).toFixed(1)})`);
         }
       }
       if(shotKey){
@@ -170,7 +178,19 @@ function measure({seed,support}){
       return out;
     }
   }
-  const result=route(seed,{support,Simulation:Probe,onStep:step=>{
+  const play=onStep=>{
+    if(!snapDir)return route(seed,{support,Simulation:Probe,onStep});
+    let raw=JSON.parse(readFileSync(join(snapDir,`snap-${seed}-${support?1:0}.json`),'utf8'));if(level)raw=atLevel(raw,level);
+    const sim=new Probe(1);sim.restoreSnapshot(raw);sim.drainEvents();let after=0;
+    for(let i=0;i<20*600&&!o.death;i++){
+      const controls=support&&(sim.active('cover_repair')||sim.active('cover_withdrawal'))?coverControls(sim):{};
+      sim.tick(.05,controls);const events=sim.drainEvents();onStep({sim,controls,events,dt:.05});
+      if(events.some(e=>e.type==='player-down')){o.death={at:round(sim.clock-o.t0,1),cause:events.find(e=>e.type==='player-down').cause,by:events.find(e=>e.type==='player-down').by};break;}
+      if(sim.consumedEvent(BLAST)&&++after>40)break;
+    }
+    return {sim};
+  };
+  const result=play(step=>{
     const {sim,events}=step;
     if(audit){clip.observe(step);stack.observe(step);}
     if(!o.inWin&&sim.consumedEvent(ENTRY)&&!sim.consumedEvent(BLAST)){o.inWin=true;o.t0=sim.consumed[ENTRY];o.health0=sim.player.health;note(0,'ENTRY');}
@@ -180,9 +200,10 @@ function measure({seed,support}){
       if(e.type==='enemy-grenade'){o.grenadeThrown++;note(sim.clock-o.t0,`GRENADE thrown by ${e.by} at (${e.target.x.toFixed(0)},${e.target.z.toFixed(1)}) from (${e.origin.x.toFixed(0)},${e.origin.z.toFixed(1)})`);}
       if(e.type==='m01-blast'&&e.kind==='grenade'&&e.by){o.grenadeExploded++;note(sim.clock-o.t0,`GRENADE exploded (${e.by}) at (${e.point.x.toFixed(0)},${e.point.z.toFixed(1)})`);}
       if(e.type==='german-grenade-hit'){o.grenadePlayerWounds++;o.grenadePlayerDamage+=e.damage??0;note(sim.clock-o.t0,`GRENADE hit on the player -${(e.damage??0).toFixed(0)}`);}
-      if(e.type==='deck-tactic'){if(e.kind==='pullback')o.pullBacks++;if(e.kind==='search')o.searches++;if(e.kind==='stage'){o.maxStage=Math.max(o.maxStage,e.stage);}note(sim.clock-o.t0,`TACTIC ${e.kind} ${e.by} ${JSON.stringify(e.info??{})}`);}
+      if(e.type==='deck-tactic'){if(e.kind==='pullback')o.pullBacks++;if(e.kind==='search')o.searches++;if(e.kind==='stage'){o.maxStage=Math.max(o.maxStage,e.line);}note(sim.clock-o.t0,`TACTIC ${e.kind} ${e.by} ${JSON.stringify(e.info??{})}`);}
     }
     o.ticks++;
+    for(const e of events)if(e.type==='player-down'&&!o.death)o.death={at:round(sim.clock-o.t0,1),cause:e.cause,by:e.by};
     const p=sim.player,assault=spansOf(sim).filter(a=>isAssault(a)&&a.alive&&a.active&&!a.carriedBy);
     o.minHealth=Math.min(o.minHealth,p.health);
     // The Polish POSTS on the bridge (x > 0): the player, the section's pair, Bąk, and the rearguard that holds the deck (not the platoon that is still running west: it is a target, not a post).
@@ -195,11 +216,10 @@ function measure({seed,support}){
       }
       o.toPlayer.push(dp);o.toPost.push(dq);o.sideTicks++;if(north&&south)o.bothSides++;
       for(const g of assault){o.assaultTicks++;if(g.suppressedUntil>sim.clock)o.assaultSuppTicks++;}
-      for(const g of assault){const stage=g.deck.stage??0;if(stage>o.maxStage)o.maxStage=stage;}
     }
     const polesOnDeck=sim.allies.filter(a=>a.alive&&a.active&&!a.civilian&&!a.displayOnly&&a.x>0&&(a.id==='staszek_pawlak'||a.id==='east_platoon_voice'||a.rear?.phase==='hold'));
     if(polesOnDeck.length){o.polesTicks++;if(polesOnDeck.some(a=>a.suppressedUntil>sim.clock))o.polesPinned++;}
-  }});
+  });
   const sim=result.sim;
   const durSec=(o.t1??sim.clock)-o.t0,pct=(xs,lim)=>xs.length?round(100*xs.filter(x=>x<lim).length/xs.length,1):null;
   const stat=xs=>({min:round(Math.min(...xs),1),median:round(median(xs),1),p10:round(quant(xs,.1),1),pctUnder300:pct(xs,300),pctUnder150:pct(xs,150),pctUnder100:pct(xs,100)});
@@ -214,6 +234,7 @@ function measure({seed,support}){
     grenades:{thrown:o.grenadeThrown,exploded:o.grenadeExploded,playerWounds:o.grenadePlayerWounds,playerDamage:round(o.grenadePlayerDamage,1)},
     lines:{bothSidesPct:o.sideTicks?round(100*o.bothSides/o.sideTicks,1):null},
     tactics:{maxStage:o.maxStage,pullBacks:o.pullBacks,searches:o.searches},
+    death:o.death??null,snapshot:Boolean(snapDir),
     integrity:{complete:sim.mission.complete,checkpoints:sim.checkpointsReached.length,survivors:sim.flags['m01.east_platoon_survivors'],
       objectives:Object.fromEntries(Object.entries(sim.objectives).map(([id,x])=>[id.replace('obj_m01_',''),x.state])),entryAt:round(o.t0,2),demolitionAt:round(o.t1,2),routeRealSec:round(sim.clock,1),
       clipping:clip?clip.events.length:null,stackedPairs:stack?stack.summary().pairs:null}};
