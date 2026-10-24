@@ -109,6 +109,24 @@ test('the shelter is a pure function of the clocks and of the saved time of the 
   const back=compareContinuation(s,{label:'sappers coming back',ticks:160,doubleAt:[30,90],input:()=>({})});assert.equal(back.firstDivergence,null);
 });
 
+// 2026-10-24: the full suite found it (m01-continuous-fixes: "the sappers walk to the second cut"). The order to go to the second cut is given once, when the player reaches the cable
+// (find_sappers done); a shelter that kept running until 04:36:00 wiped that order for any player who got there earlier, and the sappers stayed kneeling at the cable for good.
+test('a player who finds the sappers before the shelter ends still sends them to the second cut: the shelter never undoes that order',()=>{
+  const plan=sapperShelterPlan(),ids=Object.keys(combatStagePlan().sappers);
+  const s=active(19390901);Object.assign(s.player,{x:14.9,z:2,y:s.world.heightAt(14.9,2)});
+  const until=(done,limit=20*900)=>{for(let i=0;i<limit&&!done();i++){s.tick(.05);s.drainEvents();}assert.ok(done(),'the flow reaches the next step');};
+  const put=id=>{const p=s.world.point(id);Object.assign(s.player,{x:p.x,z:p.z,y:s.world.heightAt(p.x,p.z)});};
+  until(()=>s.consumedEvent(E('nowicki_lost')));
+  until(()=>s.active('follow_sergeant'));put('rally_point');
+  until(()=>s.active('find_sappers'));put('repair_site_1');
+  until(()=>s.active('fetch_material'));
+  assert.ok(s.battleClock>=plan.from&&s.battleClock<plan.until,`the order is given at ${clockText(s.battleClock)}, inside the shelter window`);
+  const site=s.world.point('repair_site_2'),at=id=>Math.hypot(s.actor(id).x-site.x,s.actor(id).z-site.z);
+  until(()=>ids.every(id=>at(id)<=6),20*80);
+  for(const id of ids){assert.equal(s.actor(id).alive,true);assert.ok(at(id)<=6,`${id} reached the second cut`);}
+  s.tick(.05);assert.equal(s.active('fetch_material'),true,'and the repair has not begun: the order is the only thing that moved them');
+});
+
 test('the shelter plan is validated (a typo in the data stops the game): times, the 26 m rule and a slot per sapper',()=>{
   const bad=mutate=>{const d=JSON.parse(JSON.stringify(definition));mutate(d.groups.find(g=>g.id==='grp_sappers').stage.shelter);return ()=>sapperShelterPlan(d);};
   assert.throws(bad(sh=>{sh.from='04:34:10';}),/from before the bombing/);assert.throws(bad(sh=>{sh.until='04:34:20';}),/until after it/);assert.throws(bad(sh=>{sh.returnAfterSec=1;}),/return 2 to 20/);

@@ -1316,14 +1316,17 @@ export class M01Simulation {
       (a.cooldown<=rkm.riseBeforeSec||this.clock-a.firedAt<rkm.holdAfterSec);
     a.crouched=a.state!=='WOUNDED'&&!a.carriedBy&&!a.task&&dist(a,slot)<.5&&!(a.target&&dist(a.target,a)>=.8)&&!firing;
   }
+  /** R1-a: the sappers have been called to the second cut (the player found them at repair_site_1: find_sappers done) or the repair is already further on. The order to go is given once, then; the shelter never undoes it. */
+  sappersCalled(){return this.done('find_sappers')||['fetch_material','cover_repair'].some(n=>this.active(n)||this.done(n));}
   /**
    * R1-a: the sappers of the cable camp take cover while the bomb that cuts the cable falls (sapperShelterPlan): from `from` they walk to the sandbags of the section's post, and
    * `returnAfterSec` real seconds after evt_m01_nowicki_lost they walk back to their places at the cable. A pure function of the battle clock, the clock and the saved time of that event:
-   * no saved state of its own, so a save made at any moment of the walk goes on as it was. Never after `until` and never once the repair has begun. No draw.
+   * no saved state of its own, so a save made at any moment of the walk goes on as it was. Never after `until` and never once the player has called them to the second cut (sappersCalled:
+   * that order is given once, and the shelter must not undo it). No draw.
    */
   sapperShelter(a){
     const haven=SHELTER.slots[a.id],home=STAGE.sappers[a.id];
-    if(!haven||!home||!a.alive||!a.active||this.battleClock<SHELTER.from||this.battleClock>=SHELTER.until||this.active('cover_repair')||this.done('cover_repair'))return;
+    if(!haven||!home||!a.alive||!a.active||this.battleClock<SHELTER.from||this.battleClock>=SHELTER.until||this.sappersCalled())return;
     const lostAt=this.consumed[E('nowicki_lost')],goal=lostAt!==undefined&&this.clock>=lostAt+SHELTER.returnAfterSec?home:haven;
     if(dist(a,goal)<1){if(a.target){a.target=null;delete a.nav;}a.facing=goal.facing;a.state='GUARD';return;}   // there: kneeling (no target), on guard, facing as staged
     if(!a.target||Math.abs(a.target.x-goal.x)>.01||Math.abs(a.target.z-goal.z)>.01)a.target={x:goal.x,z:goal.z};
