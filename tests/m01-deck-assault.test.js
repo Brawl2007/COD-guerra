@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import layout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation,validateM01Snapshot,seconds,DECK_AMMO_POOL} from '../src/game/m01-simulation.js';
-import {DECK_ASSAULT,DECK_SAFE_X,deckAssaultPlan,deckRole} from '../src/game/m01-deck-assault.js';
+import {DECK_ASSAULT,DECK_SAFE_X,deckAssaultPlan,deckRole,deckLineNumber} from '../src/game/m01-deck-assault.js';
 import {validRound} from '../src/game/m01-fire.js';
 import {validateM01AudioEvent} from '../src/game/m01-audio-events.js';
 import {M01_DIFFICULTY_IDS} from '../src/game/m01-difficulty.js';
@@ -43,15 +43,19 @@ function observed(){
   o.sim=r.sim;o.t0=t0;memo=o;return o;
 }
 
+// 2026-10-24 re-pin (R2-b, owner complaint «os polacos fazem pouco para contrariar o ataque; os inimigos mostram pouca inteligência», golden amendment 18): safeX, the single number the owner moves, goes from 450 to 250,
+// and every man of the assault has closing lines between his old limit (line 0 = the forward line of before, x 458-578) and a deepest line safeX + 8 m + his place in the formation (x 258-378). The number 450 still
+// gives the assault of before node for node (tests/m01-german-ai.test.js). Measured: docs/verification/m01-runtime/german-ai-r2b-2026-10-24/README.md.
 test('the deck assault plan is mission data validated at load: the overwatch posts lie in the east blast, the assault places beyond it, the forward line x 450-600',()=>{
   const bz=layout.blastZones.find(b=>b.event===BLAST),inBlast=p=>Math.hypot(p.x-bz.center[0],p.z-bz.center[2])<=bz.radiusM;
-  assert.equal(DECK_SAFE_X,450);assert.equal(P.safeX,definition.groups.find(g=>g.id==='grp_de_spans').deckAssault.safeX);
+  assert.equal(DECK_SAFE_X,250);assert.equal(P.safeX,definition.groups.find(g=>g.id==='grp_de_spans').deckAssault.safeX);
   assert.ok(P.overwatchNodes.every(p=>inBlast(p)),'the four the blast fells (GERMAN_FELLED) post inside the blast radius');
   assert.ok(P.fallback.every(p=>p.x>=P.clearX&&p.x>=bz.center[0]+bz.radiusM),'the assault falls back beyond the blast radius');
   assert.ok(P.paths.every(path=>path.every(p=>p.x>=P.safeX&&p.z>37.5&&p.z<42.5)),'every node on the road deck, east of the safety line');
-  assert.ok(P.paths.every(path=>path.at(-1).x>=450&&path.at(-1).x<=600),'the forward line of each assault man is mid-deck, x 450-600');
+  assert.ok(P.paths.every((path,k)=>path[P.lines[k][0]].x===P.limits[k]&&P.limits[k]>=450&&P.limits[k]<=600),'line 0 of each assault man (his forward line of before) is mid-deck, x 450-600');
+  assert.ok(P.paths.every(path=>path.at(-1).x>=DECK_SAFE_X+8&&path.at(-1).x<=400),'and the deepest closing line lies west of it, east of safeX');
   const mutate=f=>{const d=json(definition);f(d.groups.find(g=>g.id==='grp_de_spans').deckAssault);return d;};
-  for(const [name,f] of Object.entries({safeX:d=>{d.safeX=300;},limit:d=>{d.limits[0]=440;},version:d=>{d.version=2;},lane:d=>{d.lanes[1][0]=43;},order:d=>{d.assault.reverse();},
+  for(const [name,f] of Object.entries({safeX:d=>{d.safeX=100;},limit:d=>{d.limits[0]=240;},version:d=>{d.version=2;},lane:d=>{d.lanes[1][0]=43;},order:d=>{d.assault.reverse();},
     fallback:d=>{d.fallback[0][0]=900;},overwatch:d=>{d.overwatchNodes[0][0]=950;},stations:d=>{d.stations.reverse();},timing:d=>{d.maxSec=-1;}}))
     assert.throws(()=>deckAssaultPlan(mutate(f)),/deck assault/,name);
 });
@@ -64,7 +68,8 @@ test('real route: the assault advances from the east end to mid-deck and back, f
   assert.ok(o.rounds.platoon>0&&o.rounds.player>0,`real rounds at the platoon (${o.rounds.platoon}) and the player (${o.rounds.player})`);
   assert.ok(o.nearPlayer>=5,`rounds of the deck land or crack near the player (${o.nearPlayer})`);
   assert.ok(o.clearAt!==null&&o.blastClock>=o.clearAt,'the east demolition comes only after the deck is clear');
-  assert.ok(o.maxReal<=P.maxSec+(P.clearX-P.safeX)/P.rushSpeed+15,`the assault never holds the clock longer than maxSec plus the run back (${o.maxReal.toFixed(1)} s)`);
+  // 2026-10-24 re-pin (R2-b): while a man is on a closing line the squad's deadline is maxSec + closeExtraSec (holdBaseSec adds the way from line 0 to the deepest line), and the run back is from the deepest line.
+  assert.ok(o.maxReal<=P.holdBaseSec+(P.clearX-P.safeX)/P.rushSpeed+15,`the assault never holds the clock longer than its deadline plus the run back (${o.maxReal.toFixed(1)} s)`);
   const blast=load(o.snap.blast);
   assert.equal(blast.battleClock>=seconds('06:10:00'),true);
   assert.ok(assault(blast).filter(a=>a.alive).every(a=>a.x>=P.clearX),'nobody of the assault is left west of the falling spans');
@@ -134,8 +139,13 @@ test('they fall back on their cue: the squad breaks on breakOut men out of the f
   // maxSec: with no player shooting at them, every living assault man is falling back or clear by maxSec after the entry.
   // 2026-10-19 re-pin (combat slice 2b): the rearguard (pl_east_0..2, src/game/m01-rearguard.js) now shoots at them from 06:09:30, so a man it killed lies where he fell
   // and keeps the phase he had (measured: de_spans_6 dead in 'cover'); the rule is checked on the living, the dead are out of the fight.
+  // 2026-10-24 re-pin (R2-b): the deadline is maxSec, and maxSec + closeExtraSec while any living man has a closing line as his limit (deckExtraSec): at maxSec every living man is falling back or clear unless a man
+  // has gone on to a closing line, and at maxSec + closeExtraSec every living man is falling back or clear, whatever the lines.
   const late=load(o.snap.entry),t0=late.clock;
   while(late.clock<t0+P.maxSec+.1)late.tick(.05);
+  const onLine=assault(late).some(a=>a.alive&&a.active&&deckLineNumber(a)>0);
+  if(!onLine)for(const a of assault(late).filter(a=>a.alive))assert.ok(['fallback','clear'].includes(a.deck.phase),`${a.id} ${a.deck.phase}`);
+  while(late.clock<t0+P.maxSec+P.tactics.closeExtraSec+.1)late.tick(.05);
   for(const a of assault(late).filter(a=>a.alive))assert.ok(['fallback','clear'].includes(a.deck.phase),`${a.id} ${a.deck.phase}`);
   // The fall-back runs to the place east of clearX; then T48 takes over at the demolition (the knot forms within 20 m, at most at x 1080).
   while(!late.consumedEvent(BLAST))late.tick(.05);
@@ -157,9 +167,9 @@ test('saves: an older save (no deck record) keeps the old march and rule; malfor
   reject(s=>{delete s.consumed[ENTRY];},/assalto do tabuleiro|eventos/);
   for(const bad of [d=>{d.v=2;},d=>{d.phase='charge';},d=>{d.node=99;},d=>{d.extra=1;},d=>{d.pinned=-1;},d=>{d.until=1e9;}])reject(s=>bad(man(s).deck),/assalto do tabuleiro/);
   reject(s=>{delete man(s).ai;},/assalto do tabuleiro/);
-  // A round of the deck leaves from the deck: from x >= 450 for de_spans_*, from x >= 690 for everyone else.
+  // A round of the deck leaves from the deck: from x >= safeX for de_spans_* (250 since R2-b, 450 before), from x >= 690 for everyone else.
   const r={id:'m01_round_1',by:'de_spans_5',weapon:'kar98k',kind:'player',ox:470,oy:1.6,oz:40,ax:30,ay:1,az:40,h:1.2,firedAt:5,arriveAt:5.7,tracer:false,victim:null};
-  assert.ok(validRound(r,5));assert.ok(!validRound({...r,ox:449},5));assert.ok(!validRound({...r,by:'de_east_5'},5));
+  assert.ok(validRound(r,5));assert.ok(!validRound({...r,ox:DECK_SAFE_X-1},5));assert.ok(validRound({...r,ox:DECK_SAFE_X},5));assert.ok(!validRound({...r,by:'de_east_5'},5));
 });
 
 test('the section\'s clips at the deck post: one clip every 3 s while the player covers from the deck with 15 or fewer in reserve, DECK_AMMO_POOL rounds at most, saved and accounted',()=>{
@@ -204,7 +214,8 @@ test('seed 1 with support: a German killed on spans 06-07 falls with them at the
   for(const a of spans(r.sim).filter(a=>!a.alive&&!a.carriedBy))assert.equal(a.y,r.sim.world.heightAt(a.x,a.z),`${a.id} still on the ground at the end`);
 });
 
-test('the deck hold has an absolute bound: a man of the assault stuck west of clearX in full view is placed after maxSec + 240 s of hold and the clock resumes',()=>{
+// 2026-10-24 re-pin (R2-b): the bound is holdBaseSec + 240 (holdBaseSec = maxSec + closeExtraSec + the way from line 0 to the deepest line: the longest normal fight), it was maxSec + 240.
+test('the deck hold has an absolute bound: a man of the assault stuck west of clearX in full view is placed after holdBaseSec + 240 s of hold and the clock resumes',()=>{
   // 2026-10-19 (combat slice 2b): the fixture isolates the cap. Without rearguardHolds() off, the rearguard kills the stuck man and the deck clears before the cap (measured).
   class Stuck extends M01Simulation{stepDeck(a,dt){if(a.id==='de_spans_5'&&a.x<P.clearX){a.deck.phase='hold';a.deck.until=this.clock+1;a.state='GUARD';return;}return super.stepDeck(a,dt);}
     rearguardHolds(){return false;}}
@@ -214,10 +225,10 @@ test('the deck hold has an absolute bound: a man of the assault stuck west of cl
     s.player.health=100;man.suppressedUntil=s.clock+1;   // keep the player alive and the stuck man down (he does not shoot him)
     const p=s.player;p.angle=Math.atan2(man.z-p.z,man.x-p.x);   // the player looks straight at him: he is in view
     s.tick(.05);held=Math.max(held,s.gate?.hold??0);
-    if(s.gate?.id==='evt_m01_east_demolition'&&s.gate.hold>P.maxSec+120&&s.gate.hold<P.maxSec+240)assert.ok(s.inView(man)||man.x>=P.clearX,'in view while the cap has not passed');
+    if(s.gate?.id==='evt_m01_east_demolition'&&s.gate.hold>P.holdBaseSec+120&&s.gate.hold<P.holdBaseSec+240)assert.ok(s.inView(man)||man.x>=P.clearX,'in view while the cap has not passed');
   }
   assert.ok(s.consumedEvent(BLAST),`the demolition came (${(s.clock-t0).toFixed(0)} s after the save, longest hold ${held.toFixed(0)} s)`);
-  assert.ok(held<=P.maxSec+240+1,'never longer than the absolute bound');
+  assert.ok(held<=P.holdBaseSec+240+1,'never longer than the absolute bound');
   assert.ok(s.recoveries.some(r=>r.id==='de_spans_5'&&r.reason==='deck_hold_cap'),'placed by the cap, not by being out of view');
   validateM01Snapshot(s.snapshot());
 });

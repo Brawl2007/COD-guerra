@@ -1513,6 +1513,7 @@ export class M01Simulation {
       const e=deckEntry(a);Object.assign(a,{x:e.x,z:e.z,facing:Math.PI,state:'ADVANCE',crouched:false});a.y=this.world.heightAt(a.x,a.z);delete a.nav;
       a.ai=newAI(this.rng.state,aiIndex(a.id),a.suppressedUntil);
       a.deck={v:1,phase:'advance',node:0,until:this.clock,since:this.clock,t0:this.clock,pinned:0};
+      a.playerSuppressedUntil=0;   // R2-b: until when the PLAYER's rifle keeps him down (the rule of the 20 s); suppressedUntil is anybody's
     }
   }
   /**
@@ -2545,8 +2546,9 @@ export class M01Simulation {
       const gunner=candidate.actors.find(a=>a.id==='ckm_gunner');if(gunner&&!gunner.ckmFire)gunner.ckmFire=newCKMFire(s.rng);
     }
     migrateT38Staging(candidate.actors,candidate.world);
-    // R2-b: a save made before it has no record of who suppressed a man of the spans; all of that suppression was the player's, which the rule of the 20 s reads (no draw, nothing else touched).
-    for(const a of candidate.actors)if(a.group==='grp_de_spans'&&a.playerSuppressedUntil===undefined&&a.suppressedUntil>s.clock)a.playerSuppressedUntil=a.suppressedUntil;
+    // R2-b: every man of the deck assault carries playerSuppressedUntil from the entry (beginDeckAssault), so a deck man without it is from a save made before R2-b, which kept no record of who suppressed him: all of that
+    // suppression was the player's, and the rule of the 20 s reads it (no draw, nothing else touched). A save of R2-b always has the key, so restoring it changes nothing.
+    for(const a of candidate.actors)if(a.group==='grp_de_spans'&&a.deck!==undefined&&a.playerSuppressedUntil===undefined)a.playerSuppressedUntil=a.suppressedUntil>s.clock?a.suppressedUntil:0;
     // Combat AI slice 1: a save made before it has no actor.ai. Each German of grp_de_east and Kowal gets his stream, derived from the saved main state (no draw
     // from it), no open peek and his current suppression already taken into account, so his saved cooldown runs out exactly as it would have.
     for(const a of candidate.actors)if(AI_MIGRATE(a)&&a.ai===undefined)a.ai=newAI(s.rng,aiIndex(a.id),a.suppressedUntil);

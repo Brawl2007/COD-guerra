@@ -217,5 +217,5 @@ test('the platoon\'s fate stays the player\'s: the rule of the 20 s reads the su
   // an older save has no record of who suppressed a man: all of that suppression was the player's
   const raw=json(entry());const man=raw.actors.find(a=>a.id==='de_spans_5');man.suppressedUntil=raw.clock+30;delete man.playerSuppressedUntil;
   const s=load(raw);assert.equal(s.actor('de_spans_5').playerSuppressedUntil,raw.clock+30,'an older save: all of it was the player\'s');
-  const clean=load(entry());assert.equal(clean.actor('de_spans_6').playerSuppressedUntil,undefined,'and an unsuppressed man has none');
+  const clean=load(entry());assert.equal(clean.actor('de_spans_6').playerSuppressedUntil,0,'a man of the deck the player has not suppressed has 0 from the entry on (the key is how a save of R2-b is told from an older one)');
 });
