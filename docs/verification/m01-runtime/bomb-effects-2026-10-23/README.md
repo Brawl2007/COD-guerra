@@ -113,18 +113,20 @@ Rota de controlo, impacto a impacto (`impacts` no JSON): 04:34:17 a 42,5 m (a bo
 
 ## Golden: emenda 16 (`bomb-effects`)
 
-Gerada por `node tools/verification/m01-integration-golden-audit.mjs --amendment 16 --write` (x86; nunca editada à mão): predecessor `e7f5f28` (a árvore da emenda 15, extraída do repositório com os seus dados e conduzida pelo piloto vivo: reproduz o golden da emenda 15). Ficheiros: `tests/fixtures/m01-bomb-effects-gameplay-baseline.json` (o golden, `sourceSha256` `370b9163…`) e `GOLDEN_AMENDMENT_16.json` (a prova passo a passo, este directório). A emenda 15 passa a história (`after: e7f5f28` na ferramenta). Entradas de jogo que mudaram: `src/game/m01-simulation.js`, `missions/m01-tczew/mission.json`, `src/game/m01-yard-life.js`, `src/game/m01-audio-events.js`, `src/game/m01-blast.js` (novo).
+**Regenerada na 2.ª fase** (o Capitão pediu: «substitui a tua 16 anterior, documentado»): a 1.ª geração (sem a guarnição nem o abrigo dos sapadores; 1.ª diferença no tick 1355, `timers.raidSchedule0434`; 1.ª de comportamento no tick 1407, `player.x`) deixa de existir no ramo; a história dela está nos commits `aac1a20` e `37ec22f`. Gerada por `node tools/verification/m01-integration-golden-audit.mjs --amendment 16 --write` (x86; nunca editada à mão): predecessor `e7f5f28` (a árvore da emenda 15, extraída do repositório com os seus dados e conduzida pelo piloto vivo: reproduz o golden da emenda 15). Ficheiros: `tests/fixtures/m01-bomb-effects-gameplay-baseline.json` (o golden, `sourceSha256` `5b9ed6ae…`, 21 entradas em `inputsSha256`) e `GOLDEN_AMENDMENT_16.json` (a prova passo a passo, este directório). A emenda 15 passa a história (`after: e7f5f28` na ferramenta). Entradas de jogo que mudaram: `src/game/m01-simulation.js`, `missions/m01-tczew/mission.json`, `src/game/m01-yard-life.js`, `src/game/m01-barks.js` (a regra `westWait` ignora `displayOnly`), `src/game/m01-audio-events.js`, `src/game/m01-blast.js` e `src/game/m01-garrison.js` (novos).
 
 | | Controlo (semente 19390901) | Apoio (semente 7) |
 |---|---|---|
-| 1.ª diferença | tick 1355, 04:34:00 (67,75 s): `state.timers.raidSchedule0434` (registo novo que o evento cria; não existe no predecessor) | idem |
-| Ticks idênticos antes dela | 1354 (2 blocos de 512) | 1354 (2 blocos) |
-| 1.ª diferença de comportamento (sem os registos novos: agenda, atordoamento do jogador, `concussion` das crateras, `concussion`/`effects` dos eventos) | tick 1407, 04:34:09: `state.player.x` 14,6396 → 14,6994 (a bomba do posto avançado cai a 44,6 m e atordoa-o; o primeiro passo para oeste é mais curto) | idem |
-| Ticks | 23 655 → 23 401 | 23 148 → 23 353 |
+| 1.ª diferença | tick 1 (0,05 s reais; relógio de batalha 04:30:44): `state.actors.97`, `pl_west_0`, o primeiro dos seis homens novos que o predecessor não tem | idem |
+| Ticks idênticos antes dela / blocos de 512 | 0 / 0 (o roster difere desde o 1.º tick) | 0 / 0 |
+| 1.ª diferença de comportamento (sem os homens da guarnição, a agenda, o atordoamento do jogador, `concussion` das crateras e `concussion`/`effects` dos eventos) | tick 756, 04:33:30: `state.actors.1.x` (Krawiec) −41,4 → −41,5725: o primeiro passo dos sapadores para os sacos de areia (Nowicki avisou-os) | idem |
+| Ticks | 23 655 → 23 402 | 23 148 → 23 354 |
 | 06:00 (s reais) | 560,5 → 568,65 | 542,7 → 547,85 |
-| Fim (s reais) | 1182,75 → 1170,05 | 1157,4 → 1167,65 |
-| Sobreviventes / vida do jogador | 12 → 12 / 92 → 76 | 18 → 18 / 100 → 100 |
+| Fim (s reais) | 1182,75 → 1170,1 | 1157,4 → 1167,7 |
+| Sobreviventes / vida do jogador | 12 → 12 / 92 → 84 | 18 → 18 / 100 → 100 |
 | Clipping / empilhados | 0 / 0 | 0 / 0 |
+
+Nota de leitura: a 1.ª diferença no tick 1 é **estado novo** (o roster passa de 97 a 103), não comportamento; a de comportamento é a corrida dos sapadores, 30 s de relógio de batalha antes dos aviões. A partir daí os dois jogos divergem como em qualquer emenda de ritmo (o atordoamento do jogador às 04:34:07 e as quedas dos homens), por isso o `identicalBlocks` é 0.
 
 Dos 26 eventos da missão, 14 mudam de relógio real em cada rota (a rota anda para um lado e para o outro) e **só um muda de relógio de batalha: `evt_m01_repair_complete`** (18 490,5 → 18 600,3 s no controlo, 18 264,6 → 18 334,35 no apoio, como na emenda 15: depende de quanto os sapadores foram picados); os outros 25 mantêm a hora do enredo. Os mesmos 12 objectivos, CP-A..D, eventos consumidos, bandeiras do enredo e 07:05:00 nas duas rotas do golden e nas quatro rotas de invariantes da prova (sementes 3 e 7, controlo e apoio): sobreviventes 12/12 e 18/18, clipping e empilhados 0. A cadeia: `tests/m01-animation-contract.test.js` fixa `sourceSha256` à simulação viva, os `inputsSha256`, o `deltaFields`, a 1.ª diferença e a de comportamento, e corre as duas rotas tick a tick contra o golden.
 

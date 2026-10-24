@@ -514,11 +514,12 @@ test('the ckm stoppage golden (amendment 15) chains to the escort + coordination
   const account=integrationAmendment(ckmJam,{amendment:'15',task:'M01-CKM-JAM-V1',delta:'ckm-jam',previous:escort,previousFile:'m01-escort-coordination-gameplay-baseline.json',
     predecessor:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',deltaFields:CKMJAM_DELTA});
   // History since amendment 16 (the bombs of the 04:34 raid, 2026-10-23): this golden pins the simulation of e7f5f28 (candidate #80 before the bomb effects), not the live one. The audio events and the mission data
-  // moved with the bombs, so they are no longer compared with the live files (they still have to be recorded); the director, the level table, the rearguard and the deck module did not move.
+  // moved with the bombs, so they are no longer compared with the live files (they still have to be recorded); the level table, the rearguard and the deck module did not move. 2026-10-23 (R1-a follow-up,
+  // the west garrison): the director moved too, by one clause (the westWait rule, «Esperamos o Bąk», ignores displayOnly men like readiness(west_demolition) does).
   assert.equal(ckmJam.sourceSha256,'1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f','the ckm stoppage golden pins the simulation of e7f5f28');
   assert.notEqual(sha('../src/game/m01-simulation.js'),ckmJam.sourceSha256,'the ckm stoppage golden is history: amendment 16 moved the simulation');
-  for(const f of ['src/game/m01-barks.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
-  for(const f of ['src/game/m01-audio-events.js','missions/m01-tczew/mission.json']){assert.ok(ckmJam.inputsSha256[f],`${f} is recorded`);assert.notEqual(ckmJam.inputsSha256[f],sha('../'+f),`${f} moved with amendment 16`);}
+  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
+  for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','missions/m01-tczew/mission.json']){assert.ok(ckmJam.inputsSha256[f],`${f} is recorded`);assert.notEqual(ckmJam.inputsSha256[f],sha('../'+f),`${f} moved with amendment 16`);}
   // The first difference is the stoppage itself: on the tick the gun would have fired its 14th burst (04:58:43 on the control route, 04:59:03 with the covering-fire pilot) the predecessor's gunner
   // is in fire_burst and the live one in `stoppage`; until then the two simulations are byte identical, tick for tick (13 blocks of 512 ticks on both routes). With the gun's own records, the
   // dialogue state and the gun's events stripped from both frames, the first BEHAVIOUR difference is the rounds that are not there: a rifleman of the gate group the burst would have pinned is not.
