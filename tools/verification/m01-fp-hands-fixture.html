@@ -1,0 +1,45 @@
+<!doctype html><meta charset="utf-8"><title>M01 first-person hands verification</title>
+<style>html,body{margin:0;background:#151918}canvas{width:1280px;height:720px;display:block}</style>
+<canvas id="frame" width="1280" height="720"></canvas>
+<script type="module">
+// R6-a evidence fixture: the real M01View/M01ViewModel/GLBs driven by the real M01Simulation at the production 0.05 s step.
+// Presentation only: it never writes the simulation except through the same controls Game passes to tick().
+import * as THREE from 'three';
+import {M01View} from '../../src/render/m01-view.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+const canvas=document.querySelector('canvas'),engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
+engine.setSize(1280,720,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.toneMappingExposure=1.15;engine.autoClear=false;engine.shadowMap.type=THREE.PCFSoftShadowMap;
+const owner={canvas,engine,quality:'medium'},view=new M01View(owner);await view.ready;
+engine.shadowMap.enabled=true;await view.characters.load(owner.quality);
+const sim=new M01Simulation(19390901),inspectCamera=new THREE.PerspectiveCamera(32,1280/720,.02,6);
+const v3=new THREE.Vector3();
+window.fp={
+  sim,view,
+  step(controls={},render=true){
+    sim.tick(.05,controls);
+    for(const e of sim.drainEvents())if(e.type==='player-shot')view.muzzle(sim.clock);
+    if(render)view.render(sim);
+    return this.info();
+  },
+  render(){view.lastFrame=null;view.render(sim);return this.info();},
+  info(){
+    const s=view.viewModel.stats,w=sim.weapon,p=sim.player;
+    return {clock:+sim.clock.toFixed(3),state:w.state,mag:w.mag,aiming:p.aiming,sprinting:p.sprinting,clip:s.clip,clipTime:s.clipTime,aim:s.aimBlend,run:s.runBlend,
+      presentation:s.presentation&&{boltStroke:s.presentation.boltStroke,mechanical:s.presentation.mechanical,wallLower:s.presentation.wallLower,fov:s.presentation.fov}};
+  },
+  /** Weapon-pass only, from a free camera beside the rifle: shows how the fingers sit on the stock, trigger and bolt. */
+  inspect(side='right',distance=.55){
+    const vm=view.viewModel,weapon=vm.root.getObjectByName('weapon');weapon.updateWorldMatrix(true,false);
+    const centre=weapon.localToWorld(v3.set(0,0,-.25)).clone(),dirs={right:[1,.08,0],left:[-1,.08,0],top:[.02,1,0],back:[.25,.2,1],front:[.3,.1,-1]};
+    const d=new THREE.Vector3(...dirs[side]).normalize().applyQuaternion(weapon.getWorldQuaternion(new THREE.Quaternion()));
+    inspectCamera.position.copy(centre).addScaledVector(d,distance);inspectCamera.up.set(0,1,0);inspectCamera.lookAt(centre);
+    inspectCamera.updateProjectionMatrix();inspectCamera.updateMatrixWorld(true);
+    // The aimed stock shade is a function of the distance to the player's eye: off for the free camera, which stands closer to the rifle than the eye does.
+    const shade=vm.rifleMaterial?.userData.m01StockShade,kept=shade?.value;if(shade)shade.value=0;
+    engine.setClearColor(0x2b3330,1);engine.clear();engine.render(view.weaponScene,inspectCamera);engine.setClearColor(0x000000,0);
+    if(shade)shade.value=kept;
+  },
+};
+window.fp.png=()=>canvas.toDataURL('image/png');
+window.fpReady=true;
+</script>

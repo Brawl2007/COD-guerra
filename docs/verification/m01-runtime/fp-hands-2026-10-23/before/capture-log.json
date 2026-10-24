@@ -1,0 +1,281 @@
+{
+ "kind": "LOCAL Chromium/SwiftShader, real M01View + M01Simulation, 0.05 s steps, medium quality",
+ "viewport": [
+  1280,
+  720
+ ],
+ "log": [
+  {
+   "name": "01-hip-idle",
+   "clock": 1.05,
+   "state": "READY",
+   "mag": 5,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "02-ads-transition-mid",
+   "clock": 1.2,
+   "state": "READY",
+   "mag": 5,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 0.5000000000000004,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 59
+   }
+  },
+  {
+   "name": "03-ads-settled",
+   "clock": 1.65,
+   "state": "READY",
+   "mag": 5,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "04a-fire-bolt-ads-0.20s",
+   "clock": 1.9,
+   "state": "BOLT_CYCLE",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.22285713468279156,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0.6684,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "04b-fire-bolt-ads-0.45s",
+   "clock": 2.15,
+   "state": "BOLT_CYCLE",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.5014285530362805,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 1,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "04c-fire-bolt-ads-0.70s",
+   "clock": 2.4,
+   "state": "BOLT_CYCLE",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.7799999713897691,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 1,
+    "mechanical": 0.0529,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "05-fire-bolt-hip-0.40s",
+   "clock": 3.75,
+   "state": "BOLT_CYCLE",
+   "mag": 3,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.44571426936558145,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "06a-reload-clip-0.45s",
+   "clock": 10.2,
+   "state": "RELOAD_CLIP",
+   "mag": 0,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "reload_clip",
+   "clipTime": 0.4000000112197033,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "06b-reload-clip-1.05s",
+   "clock": 10.8,
+   "state": "RELOAD_CLIP",
+   "mag": 0,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "reload_clip",
+   "clipTime": 1.0000000280492591,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "06c-reload-clip-1.75s",
+   "clock": 11.5,
+   "state": "RELOAD_CLIP",
+   "mag": 0,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "reload_clip",
+   "clipTime": 1.7000000476837411,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "06d-reload-clip-2.50s",
+   "clock": 12.25,
+   "state": "RELOAD_CLIP",
+   "mag": 0,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "reload_clip",
+   "clipTime": 2.450000068720684,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "06e-reload-clip-2.80s",
+   "clock": 12.55,
+   "state": "RELOAD_CLIP",
+   "mag": 0,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "reload_clip",
+   "clipTime": 2.750000077135463,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0.5792,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "06f-reload-clip-3.25s",
+   "clock": 12.95,
+   "state": "RELOAD_CLIP",
+   "mag": 0,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "reload_clip",
+   "clipTime": 3.1500000883551658,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "07-sprint",
+   "clock": 14.25,
+   "state": "READY",
+   "mag": 5,
+   "aiming": false,
+   "sprinting": true,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 0,
+   "run": 0.9990881180344455,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "08-ads-walk",
+   "clock": 14.5,
+   "state": "READY",
+   "mag": 5,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 0.8333333333333452,
+   "run": 0.08201014679401109,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 49.6296
+   }
+  }
+ ],
+ "errors": [],
+ "failed": []
+}
