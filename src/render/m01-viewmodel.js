@@ -42,7 +42,7 @@ export function viewModelArmsGeometry(source,jointNames){
 
 // Interrupted reload (a shot during the single-round reload): the rig eases back from where it was over this much mission time (R6-a).
 const FADE_SECONDS=.2,FADE_MIN_PROGRESS=.88;
-const HAND_RETURN=Object.freeze({from:.96,to:1.08});   // fire_bolt clip seconds: the right wrist goes back to its hold position
+const HAND_RETURN=Object.freeze({from:.93,to:1.1});   // fire_bolt clip seconds: the right wrist goes back to its hold position
 const _fq=new THREE.Quaternion();
 const KEY_SIZE=25;   // slots of the per-frame change key in update()
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.

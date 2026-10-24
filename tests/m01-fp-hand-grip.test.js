@@ -93,14 +93,18 @@ test('reload keeps the butt at the shoulder: the stock never fills more of the f
 // BEFORE (e7f5f28): 216 skin vertices in the window when aiming (the hands were on the sights); round 1 (d600fe0): 122; thumb across the top of the
 // wrist at idle: 366 px, 0 pixels now.
 test('aiming: no skin in the sight window around the front post: shoulder idle and the whole bolt cycle on the shoulder',()=>{
-  // The only frame that is not on the sights is 0.85: the right thumb pushes the bolt home while the rifle is still 39 % down (the stroke eases it
-  // back on the eye by 0.95); it is allowed 60 px (0.9 % of the window), every other frame 20 px (0.3 %).
   each(/^(ads|bolt-ads-)/,(n,m)=>{
-    const allowed=n==='bolt-ads-0.85'?60:20;
-    assert.ok(m.sightFlesh<=allowed,`${n}: ${m.sightFlesh} px of skin inside the sight window (${allowed} allowed)`);
-    assert.ok(m.sightOcclusion<=allowed,`${n}: ${m.sightOcclusion} px of hand/sleeve inside the sight window (${allowed} allowed)`);
+    assert.ok(m.sightFlesh<=20,`${n}: ${m.sightFlesh} px of skin inside the sight window (20 allowed)`);
+    assert.ok(m.sightOcclusion<=20,`${n}: ${m.sightOcclusion} px of hand/sleeve inside the sight window (20 allowed)`);
   });
-  assert.ok(rows.get('ads').sightFlesh<=10,`ads: ${rows.get('ads').sightFlesh} px of skin`);
+  assert.equal(rows.get('ads').sightFlesh,0,'ads: skin in the sight window');
+  // Every hundredth of the cycle, not only the grid: the thumb crossing the sights for three frames is what a grid of twentieths can miss.
+  let worst=0,at=0;
+  for(let i=0;i<=100;i++){
+    sample(view,rig,sim,{state:'BOLT_CYCLE',fraction:i/100,aiming:true,lite:true});
+    const px=rig.sightWindowOcclusion(['fp_hands']);if(px>worst){worst=px;at=i/100;}
+  }
+  assert.ok(worst<=20,`bolt cycle at ${at}: ${worst} px of skin inside the sight window`);
 });
 
 test('aiming: both forearms leave through the bottom edge (right to the lower right, left to the lower left) and the sleeves stay under 12 % of the frame',()=>{

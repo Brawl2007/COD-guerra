@@ -387,9 +387,11 @@ export class HandRig {
  * Drives a view model through one authoritative state and returns the measurements. `authored` additionally samples the bare clip pose
  * (no presentation) to report the authored wrist bend of the same frame; the rig is left in that authored pose afterwards.
  */
-export function sample(view,rig,sim,{state='READY',fraction=0,aiming=false,sprinting=false,contacts=false,authored=true}={}){
+/** `lite`: pose the view model only and return nothing (for sweeps that ask the rig one cheap question per frame). */
+export function sample(view,rig,sim,{state='READY',fraction=0,aiming=false,sprinting=false,contacts=false,authored=true,lite=false}={}){
   sim.player.aiming=aiming;sim.player.sprinting=sprinting;sim.player.moveBlend=sprinting?1:0;setWeapon(sim,state,fraction);
   view.visual=null;view.sampleKey=null;view.update(sim,'high',0);
+  if(lite)return null;
   const out=rig.measure({contacts});
   if(authored){
     view.root.position.set(0,0,0);view.root.rotation.set(0,0,0);view.play(view.root,view.mixer,view.stats.clip,view.stats.clipTime);

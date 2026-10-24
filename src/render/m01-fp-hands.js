@@ -40,8 +40,8 @@ export const WZ29_HANDS=Object.freeze({
   // each forearm is drawn towards, weighted by the aim blend (reload excluded). It stays inside `wristLimit` of the authored forearm.
   tuck:Object.freeze({r:Object.freeze([-.2,.96,-.2]),l:Object.freeze([.4,.7,-.6])}),
   hold:Object.freeze({
-    r:Object.freeze({offset:Object.freeze([.0412,.0038,.008]),spread:Object.freeze({index:-.0935}),
-      curl:Object.freeze({thumb:Object.freeze([.695,.18,-.2]),index:Object.freeze([0,.167,.698]),middle:Object.freeze([.687,.618,.481]),ring:Object.freeze([1.032,.929,.722]),pinky:Object.freeze([.915,.823,.64])})}),
+    r:Object.freeze({offset:Object.freeze([.0435,.0081,.0056]),spread:Object.freeze({index:-.0935}),
+      curl:Object.freeze({thumb:Object.freeze([1.447,.466,-.097]),index:Object.freeze([0,.167,.698]),middle:Object.freeze([.687,.618,.481]),ring:Object.freeze([1.032,.929,.722]),pinky:Object.freeze([.915,.823,.64])})}),
     l:Object.freeze({offset:Object.freeze([.0118,-.0364,-.0121]),
       curl:Object.freeze({thumb:Object.freeze([.232,.372,.372]),index:Object.freeze([.242,.241,.473]),middle:Object.freeze([.822,.74,.575]),ring:Object.freeze([.812,.73,.568]),pinky:Object.freeze([.968,.871,.678])})}),
   }),
