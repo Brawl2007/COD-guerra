@@ -52,7 +52,7 @@ test('the tactics are mission data validated at load: a typo stops the game',()=
   const bad={
     safeX_low:d=>{d.safeX=100;},limit_west:d=>{d.limits[0]=240;},stations_order:d=>{d.stations.push(900);},no_tactics:d=>{delete d.tactics;},stages:d=>{d.tactics.stages=0;},closeGap:d=>{d.tactics.closeGapM=0;},
     pressure_share:d=>{d.tactics.pressure.share=0;},pressure_window:d=>{d.tactics.pressure.windowSec=-1;},hold:d=>{d.tactics.closeHoldSec=[9,3];},extra:d=>{d.tactics.closeExtraSec=1e3;},wait:d=>{d.tactics.alternateWaitSec=-1;},
-    pin:d=>{d.tactics.pinSec=30;},squad:d=>{d.tactics.squadTargets.rangeM=10;},search:d=>{d.tactics.search.gapSec=0;},grenade_range:d=>{d.tactics.grenade.rangeM=5;},grenade_fuse:d=>{d.tactics.grenade.fuseSec=d.tactics.grenade.flightSec;},
+    pin:d=>{d.tactics.pinSec=30;},squad:d=>{d.tactics.squadTargets.rangeM=10;},search:d=>{d.tactics.search.afterSec=d.tactics.search.memorySec;},grenade_range:d=>{d.tactics.grenade.rangeM=5;},grenade_fuse:d=>{d.tactics.grenade.fuseSec=d.tactics.grenade.flightSec;},
     grenade_wound:d=>{d.tactics.grenade.woundM=9;d.tactics.grenade.reachM=8;},grenade_per:d=>{d.tactics.grenade.perMan=5;},
   };
   for(const [name,f] of Object.entries(bad))assert.throws(()=>deckAssaultPlan(plan(f)),/deck assault/,name);

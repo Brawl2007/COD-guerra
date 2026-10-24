@@ -1667,13 +1667,13 @@ export class M01Simulation {
     let x=u()*c.reduce((t,o)=>t+o.w,0);return c.find(o=>(x-=o.w)<0)??c.at(-1);
   }
   /**
-   * R2-b: SEARCH. A man in cover or on a line who saw a Pole in the last search.memorySec seconds and has none in sight now (afterSec on) moves to the next station toward his forward limit
-   * (at most one bound of rushStations) from which a man on his feet would see the place where the Pole was last seen, instead of firing at the place; once per search.gapSec since his phase began.
-   * Reads the sight record (ai.seen) and the world's line of sight; no draw.
+   * R2-b: SEARCH. A man in cover on the way to his line who saw a Pole in the last search.memorySec seconds and has none in sight now (afterSec on) moves on to the first station toward his forward limit
+   * (at most one bound of rushStations, never past the limit: the closing lines are the pressure's to open) from which a man on his feet would see the place where the Pole was last seen, instead of waiting
+   * out his cover; it can repeat only while the memory lasts and ends at the limit. Reads the sight record (ai.seen) and the world's line of sight; no draw.
    */
   deckSearch(a){
     const P=DECK_ASSAULT,S=P.tactics.search,d=a.deck,ai=a.ai,now=this.clock,seen=ai.seen;
-    if(!seen||!['cover','hold'].includes(d.phase)||now-seen.at>S.memorySec||now-seen.at<S.afterSec||now-d.since<S.gapSec)return false;
+    if(!seen||d.phase!=='cover'||now-seen.at>S.memorySec||now-seen.at<S.afterSec)return false;
     const path=P.paths[assaultIndex(a)],last=Math.min(deckLimitNode(a),d.node+P.rushStations),target={space:'metres',x:seen.x,y:seen.y,z:seen.z,crouched:true};
     for(let n=d.node+1;n<=last;n++){
       const p=path[n],probe={space:'metres',x:p.x,y:this.world.heightAt(p.x,p.z),z:p.z,crouched:false};

@@ -6,6 +6,7 @@ import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {DECK_ASSAULT,deckLines} from '../../src/game/m01-deck-assault.js';
 import {route} from './m01-route.js';
 import {json} from './m01-determinism.js';
+import {atLevel} from './m01-danger.js';
 
 export const P=DECK_ASSAULT,T=P.tactics,ENTRY='evt_m01_germans_on_east_spans',BLAST='evt_m01_east_demolition';
 export const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -30,14 +31,16 @@ export function station(s,id,node,{phase='cover',since=0,until=null,lim,cooldown
   a.ai.peek=0;a.ai.target=null;
   return a;
 }
-/** Everybody else of the assault out of the way (far east, in phase `clear`), so that a scene is about the men it names. */
+/** Everybody else of the assault out of the way (far east, in phase `clear`), so that a scene is about the men it names; the four of the overwatch (span 08, 900 m out: their rounds at the player crack past the
+ *  pair and pin it) hold their fire. */
 export function isolate(s,keep){
   for(const id of P.assault)if(!keep.includes(id)){const a=s.actor(id);Object.assign(a,{x:1000,z:40,state:'GUARD',cooldown:600});a.y=0;a.deck.phase='clear';a.deck.node=0;delete a.nav;}
+  for(const id of P.overwatch)s.actor(id).cooldown=1e6;
 }
 export const pair=s=>[s.actor('staszek_pawlak'),s.actor('east_platoon_voice')];
-/** The platoon out of the way (it is a target and a friend in the line of fire), the Germans of the east bank out of it too (their fire at the pair, 1 km away, would pin it all the time), Kowal's rkm out of the scene, Pawlak on his feet, one German of the assault put at `at`. */
-export function scene({support=false,at=[320,41.2],crouched=true,east=false}={}){
-  const s=load(entry(19390901,support));
+/** The platoon out of the way (it is a target and a friend in the line of fire; `level` re-levels the save as tests/helpers/m01-danger.js does), the Germans of the east bank out of it too (their fire at the pair, 1 km away, would pin it all the time), Kowal's rkm out of the scene, Pawlak on his feet, one German of the assault put at `at`. */
+export function scene({support=false,at=[320,41.2],crouched=true,east=false,level='recruta'}={}){
+  const s=load(level==='recruta'?entry(19390901,support):atLevel(entry(19390901,support),level));
   for(const a of s.actors)if(a.group==='grp_east_platoon'||(!east&&(a.group==='grp_de_east'||a.group==='grp_mg34_loaders')))a.active=false;
   s.actor('szymon_kowal').active=false;
   const shooter=s.actor('staszek_pawlak'),t=s.actor('de_spans_4');shooter.crouched=false;

@@ -387,7 +387,7 @@
           "alternateWaitSec": 6,
           "squadTargets": { "weight": 1, "rangeM": 520 },
           "pinSec": 4,
-          "search": { "memorySec": 12, "afterSec": 3, "gapSec": 15 },
+          "search": { "memorySec": 12, "afterSec": 3 },
           "grenade": { "rangeM": 32, "minM": 6, "perMan": 1, "gapSec": 15, "flightSec": 1.4, "fuseSec": 3.8, "woundM": 3.5, "reachM": 7, "suppressSec": 3, "suppressM": 10 }
         },
         "classification": "GAMEPLAY_DRAMATIZATION",

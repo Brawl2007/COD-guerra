@@ -48,7 +48,7 @@ export function deckAssaultPlan(def=definition){
     !num(t.casualtyHoldSec,0,120)||!range(t.closeHoldSec,1,120)||!num(t.closeExtraSec,0,300)||!num(t.alternateWaitSec,0,60))fail('tactics: closing lines / pressure / casualty hold / holds / alternation');
   const sq=t.squadTargets;if(!plain(sq)||!num(sq.weight,0,5)||!num(sq.rangeM,50,1200))fail('tactics.squadTargets');
   if(!num(t.pinSec,0,10))fail('tactics.pinSec');
-  const se=t.search;if(!plain(se)||!num(se.memorySec,1,60)||!num(se.afterSec,.5,30)||!num(se.gapSec,1,120))fail('tactics.search');
+  const se=t.search;if(!plain(se)||!num(se.memorySec,1,60)||!num(se.afterSec,.5,30)||se.afterSec>=se.memorySec)fail('tactics.search');
   const gr=t.grenade;
   if(!plain(gr)||!num(gr.rangeM,10,60)||!num(gr.minM,2,gr.rangeM)||!Number.isInteger(gr.perMan)||gr.perMan<0||gr.perMan>2||!num(gr.gapSec,1,120)||!num(gr.flightSec,.8,3)||!num(gr.fuseSec,gr.flightSec+1.5,6)||
     !num(gr.woundM,1,gr.reachM??10)||!num(gr.reachM,gr.woundM,12)||!num(gr.suppressSec,0,10)||!num(gr.suppressM,1,30))fail('tactics.grenade');
