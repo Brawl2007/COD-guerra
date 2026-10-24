@@ -270,3 +270,15 @@ test('sampled real route (control): every Polish round that ended maps to exactl
   assert.equal(drawnTracers,marked,'every MG34 round the simulation marked is drawable, and no marked rifle round is');
   assert.ok(rifleTracerMarks>=0);
 });
+
+test('a validated enemy-grenade event gives the throw sound at the thrower, delayed by distance/343 and only near; its blast keeps the small grenade explosion of the existing path',async()=>{
+  const {validateM01AudioEvent}=await import('../src/game/m01-audio-events.js');
+  const fs=await import('node:fs');
+  const ev=validateM01AudioEvent({type:'enemy-grenade',by:'de_spans_4',origin:{x:-6.5,y:1.5,z:28},target:{x:-26.5,y:0,z:28},fuse:3.8,flight:1.4,at:700});
+  const player={x:-26.5,z:28},d=Math.hypot(ev.origin.x-player.x,ev.origin.z-player.z),plan=grenadeThrowSoundPlan(d,ev.at);
+  assert.ok(plan.audible&&plan.band==='close'&&Math.abs(plan.at-(700+d/343))<1e-9,`${d} m`);
+  assert.equal(grenadeThrowSoundPlan(300,ev.at).audible,false,'a throw 300 m away is not heard; the blast is');
+  const src=fs.readFileSync(new URL('../src/game/game.js',import.meta.url),'utf8');
+  assert.match(src,/blastScale=id=>id\?\.startsWith\('m01_grenade_'\)\?'small'/,'a German grenade is m01_grenade_N: the small explosion of the closest-range grenade');
+  assert.match(src,/event\.type==='enemy-grenade'/);
+});

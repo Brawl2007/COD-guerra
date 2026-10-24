@@ -12,16 +12,17 @@ const out=process.argv[2],seed=Number(process.argv[3]??19390901);
 mkdirSync(out,{recursive:true});
 const hhmm=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=Math.floor(s%60);return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;};
 const ring=[];   // {battleClock, snap}
-const want={repair:null,deckPolish:null,deckMg:null};
+const want={repair:null,deckPolish:null,deckMg:null,polish:new Map()};   // polish: Nth ended round -> save 2 s before it
 const timeline={impacts:[],polishEnded:[],mgTracers:[],crack:[],grenades:[]};
-const at=(lead)=>{for(let i=ring.length-1;i>=0;i--)if(ring[i].battleClock<=ring.at(-1).battleClock-lead)return ring[i];return ring[0];};
+const at=(lead)=>{const t=ring.at(-1).clock;for(let i=ring.length-1;i>=0;i--)if(ring[i].clock<=t-lead)return ring[i];return ring[0];};
 route(seed,{support:false,onStep:({sim,events})=>{
   const bc=sim.battleClock;
-  if(Math.round(bc*20)%60===0){ring.push({battleClock:bc,clock:sim.clock,snap:sim.snapshot()});if(ring.length>12)ring.shift();}
+  if(Math.round(sim.clock*20)%10===0){ring.push({battleClock:bc,clock:sim.clock,snap:sim.snapshot()});if(ring.length>16)ring.shift();}
   for(const e of events){
     if(e.type==='round-impact'){timeline.impacts.push([hhmm(bc),Math.round(e.distance),e.material,e.crack?'crack':'']);if(e.crack)timeline.crack.push(hhmm(bc));
       if(!want.repair&&bc>=4*3600+48*60&&bc<=4*3600+53*60&&e.distance<80&&ring.length>2)want.repair=at(4);}
-    if(e.type==='npc-shot'&&e.end){timeline.polishEnded.push([hhmm(bc),Math.round(Math.hypot(e.end.x-sim.player.x,e.end.z-sim.player.z)),e.hit]);if(!want.deckPolish&&bc>=6*3600+4*60&&ring.length>2)want.deckPolish=at(3);}
+    if(e.type==='npc-shot'&&e.end){timeline.polishEnded.push([hhmm(bc),Number(sim.clock.toFixed(2)),Math.round(Math.hypot(e.end.x-sim.player.x,e.end.z-sim.player.z)),e.hit,Math.round(Math.hypot(e.point.x-sim.player.x,e.point.z-sim.player.z))]);if(!want.deckPolish&&bc>=6*3600+4*60&&ring.length>2)want.deckPolish=at(3);
+      if([5,8,10].includes(timeline.polishEnded.length)&&ring.length>2)want.polish.set(timeline.polishEnded.length,at(2.5));}
     if(e.type==='enemy-grenade')timeline.grenades.push(hhmm(bc));
   }
   if(bc>=6*3600&&bc<=6*3600+10*60&&sim.enemyFire.rounds.some(r=>r.tracer&&r.weapon==='mg34')){
@@ -30,7 +31,7 @@ route(seed,{support:false,onStep:({sim,events})=>{
   }
 }});
 const meta={};
-for(const [name,w] of Object.entries({'repair-1':want.repair,'deck-polish':want.deckPolish,'deck-mg':want.deckMg})){
+for(const [name,w] of Object.entries({'repair-1':want.repair,'deck-polish':want.deckPolish,'deck-mg':want.deckMg,...Object.fromEntries([...want.polish].map(([n,v])=>[`deck-polish-${n}`,v]))})){
   if(!w){meta[name]=null;continue;}
   writeFileSync(`${out}/${name}.json`,JSON.stringify(w.snap));meta[name]={battleClock:w.battleClock,time:hhmm(w.battleClock),simClock:w.clock};
 }

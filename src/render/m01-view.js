@@ -4,7 +4,7 @@ import manifest from '../../assets/models/provisional/m01/bridges.manifest.json'
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
 import { ckmFlashes, ckmSmoke, CKM_SMOKE_SEC } from './m01-ckm-fx.js';
-import { RoundImpactPool, scheduleRoundImpact, classifyRoundEnd, drawRoundImpacts, tracerDrawn, tracerQuota, tracerHalfWidth, tracerHalfLength, tracerTint, IMPACT_POOL_SLOTS } from './m01-long-range-fx.js';
+import { RoundImpactPool, scheduleRoundImpact, classifyRoundEnd, drawRoundImpacts, tracerDrawn, tracerQuota, tracerHalfWidth, tracerHalfLength, tracerTint, IMPACT_POOL_SLOTS, IMPACT_MATERIALS } from './m01-long-range-fx.js';
 import { collectShotFlashes, createFlashList, ShotSmokeTable, flashRadius, flashTint, smokeRadius, SMOKE_SLOTS_BY_TIER, SMOKE_SEC as SHOT_SMOKE_SEC, NEAR_BODY_M } from './m01-shot-fx.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
@@ -388,7 +388,9 @@ export class M01View {
   /** `gameDiagnostics().m01.longRangeFire`: what the long-range presentation did (read-only counters). */
   get longRangeDiagnostics(){
     const lr=this.longRange;if(!lr)return {events:0,scheduled:0,dropped:0,live:0,pending:0,airborne:0,tracers:{drawn:0,quota:0,suppressed:0}};
-    const t=this.lastClock??0;return {events:lr.events,scheduled:lr.pool.scheduled,dropped:lr.pool.dropped,live:lr.pool.live(t),pending:lr.pool.pending(t),drawn:lr.pool.lastDrawn,airborne:lr.airborne,tracers:{...lr.tracers}};
+    const t=this.lastClock??0,p=lr.pool,sample=[];
+    for(let i=0;i<p.slots&&sample.length<8;i++)if(p.at[i]+1>=t&&Number.isFinite(p.at[i]))sample.push({x:p.x[i],y:p.y[i],z:p.z[i],at:p.at[i],material:IMPACT_MATERIALS[p.mat[i]]});
+    return {events:lr.events,scheduled:p.scheduled,dropped:p.dropped,live:p.live(t),pending:p.pending(t),drawn:p.lastDrawn,airborne:lr.airborne,tracers:{...lr.tracers},sample};
   }
   /** VIS-a: flashes (one per round) and smoke puffs of every NPC shooter; see m01-shot-fx.js. Allocation-free after construction apart from the ally eye point. */
   updateShotFx(sim,time,put,far){

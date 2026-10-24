@@ -34,7 +34,7 @@ try{
       window.requestAnimationFrame=cb=>raf(t=>{cb(t);
         try{const g=window.gameDiagnostics?.();if(!g||window.__grabs.length>=count||g.paused||g.clock<window.__next)return;
           const c=document.querySelector('#game');
-          window.__grabs.push({clock:g.clock,offset:g.clock-snapshot.clock,fx:g.m01?.fireEffects??null,longRange:g.m01?.longRangeFire??null,distant:g.m01?.distantFire?.flashes??null,
+          window.__grabs.push({clock:g.clock,offset:g.clock-snapshot.clock,fx:g.m01?.fireEffects??null,longRange:g.m01?.longRangeFire??null,camera:g.m01?.bridgeCamera??null,distant:g.m01?.distantFire?.flashes??null,
             png:c.toDataURL('image/png'),draw:g.drawCalls,triangles:g.triangles});
           window.__next=snapshot.clock+from+window.__grabs.length*step;}catch{}
       });
@@ -47,7 +47,7 @@ try{
     const grabs=await page.evaluate(()=>window.__grabs),diag=await page.evaluate(()=>{const d=window.gameDiagnostics();return {clock:d.clock,drawCalls:d.drawCalls,triangles:d.triangles,player:d.player,longRange:d.m01.longRangeFire??null,memory:d.memory??null};});
     const files=[];
     for(let i=0;i<grabs.length;i++){const f=`${name}-${label}-${String(i).padStart(2,'0')}.png`;await writeFile(`${out}/${f}`,Buffer.from(grabs[i].png.split(',')[1],'base64'));
-      files.push({file:f,clock:grabs[i].clock,offset:Number(grabs[i].offset.toFixed(3)),fx:grabs[i].fx,longRange:grabs[i].longRange,draw:grabs[i].draw,triangles:grabs[i].triangles});}
+      files.push({file:f,clock:grabs[i].clock,offset:Number(grabs[i].offset.toFixed(3)),fx:grabs[i].fx,longRange:grabs[i].longRange,camera:grabs[i].camera,draw:grabs[i].draw,triangles:grabs[i].triangles});}
     report.shots.push({name,errors,files,diag});console.log(name,label,'frames',files.length,'errors',errors.length);
     await ctx.close();
   }
