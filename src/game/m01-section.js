@@ -243,7 +243,7 @@ function handleCasualties(sim,q){
     let caller=null,best=SECTION.casHearM;
     for(const id of SECTION.casualtyCallers){const a=sim.actor(id);if(id===c.id||!present(a))continue;const d=Math.hypot(a.x-c.x,a.z-c.z);if(d<best){best=d;caller=a;}}
     c.called=true;
-    if(caller&&clock-(q.seen[`casualty:${c.id}`]??-1e9)>=SECTION.repeatSec.casualty&&clock-q.at.callout>=SECTION.calloutGapSec){
+    if(caller&&clock-(q.seen[`casualty:${c.id}`]??-1e9)>=SECTION.repeatSec.casualty){   // (a man down is called whatever else the section has just called)
       c.orderAt=t3(clock+between(q,SECTION.leader,SECTION.casOrderSec));q.n.casualties++;
       callout(sim,q,caller,'casualty',sim.actor(c.id),`casualty:${c.id}`);
     }else c.done=true;
@@ -348,10 +348,10 @@ export function sectionAfter(sim){
     if(!present(a))continue;
     if(a.state==='SUPPRESS'&&id!==SECTION.rkm&&clock-a.firedAt>=SECTION.fire.holdSec+.9)a.state='GUARD';
     if(id===SECTION.rkm||id===SECTION.leader){   // they only turn: Kowal's posture is his burst cycle's (what the MG34s see of him is not touched) and the sergeant stands anyway
-      if(q.hold[id]?.yaw!=null)a.facing=q.hold[id].yaw;
+      if(q.hold[id]?.yaw!=null&&clock-(a.firedAt??-1e9)>=1.2)a.facing=q.hold[id].yaw;   // (not while Kowal is bursting: he faces the German he fires at)
       continue;
     }
-    if(q.post[id]?.moving||walking(a))continue;   // a man on the move keeps his stride (Bąk walking to the deck, the pair between posts)
+    if(q.post[id]?.moving||walking(a)||a.motion?.speed>0)continue;   // a man on the move keeps his stride (Bąk walking to the deck, the pair between posts, the tick he arrives)
     const cur=q.hold[id],due=q.shots.some(s=>s.id===id&&s.at-clock<=SECTION.fire.riseSec)||clock-(a.firedAt??-1e9)<SECTION.fire.holdSec;
     if(due)a.crouched=false;
     else if(cur?.k==='look'){a.crouched=false;if(cur.yaw!=null)a.facing=cur.yaw;}
@@ -380,7 +380,8 @@ export function validateSectionRecord(q,s,reject){
   const german=id=>typeof id==='string'&&/^de_(east|spans)_\d+$/.test(id),man=id=>SECTION.men.includes(id);
   const bad=what=>reject('secção '+what);
   if(!keys(q,RECORD_KEYS)||q.v!==SECTION.version)bad('registo');
-  if(!Object.hasOwn(s.consumed,SECTION.from)||Object.hasOwn(s.consumed,SECTION.until))bad('janela');
+  // The window runs from the first bomb to the tick that consumes the east demolition (the save of that very tick still carries the record: the next tick removes it, endSection).
+  if(!Object.hasOwn(s.consumed,SECTION.from)||(Object.hasOwn(s.consumed,SECTION.until)&&!(s.consumed[SECTION.until]>=clock-1e-6)))bad('janela');
   if(!keys(q.rng,SECTION.men)||SECTION.men.some(id=>!Number.isInteger(q.rng[id])||!fin(q.rng[id],0,0xffffffff)))bad('fluxos');
   if(!keys(q.at,AT_KEYS)||AT_KEYS.some(k=>!fin(q.at[k],-1e9,clock)))bad('tempos');
   if(!keys(q.next,NEXT_KEYS)||NEXT_KEYS.some(k=>!fin(q.next[k],0,clock+SECTION.holdEverySec[1]+SECTION.look.everySec[1]+SECTION.look.holdSec[1]+60)))bad('agendas');

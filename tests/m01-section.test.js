@@ -114,7 +114,9 @@ test('the window and the record: absent before the first bomb and after the east
     assert.throws(()=>validateM01Snapshot(bad),/secção/,`mutation ${i}`);});
   // the window: a record before the first bomb, or after the east demolition, is not a record the machine writes
   const early=json(snap);delete early.consumed.evt_m01_bombing_0434;assert.throws(()=>validateSectionRecord(early.timers.section,early,reject),/janela/);
-  const late=json(snap);late.consumed.evt_m01_east_demolition=late.clock;assert.throws(()=>validateSectionRecord(late.timers.section,late,reject),/janela/);
+  // (the save of the very tick that consumes the demolition still carries the record, the next tick removes it; a record a tick or more after it is not one the machine writes)
+  const late=json(snap);late.consumed.evt_m01_east_demolition=late.clock-.05;assert.throws(()=>validateSectionRecord(late.timers.section,late,reject),/janela/);
+  const same=json(snap);same.consumed.evt_m01_east_demolition=same.clock;assert.doesNotThrow(()=>validateSectionRecord(same.timers.section,same,reject));
   // a fresh record is a valid record (every key present, the streams derived from the state of the main stream)
   const fresh=new M01Simulation(5);fresh.consumed.evt_m01_bombing_0434=0;const q=newSection(fresh);
   assert.doesNotThrow(()=>validateSectionRecord(q,{clock:fresh.clock+1,consumed:fresh.consumed},reject));
