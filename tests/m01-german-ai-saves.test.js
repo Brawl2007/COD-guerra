@@ -19,10 +19,11 @@ const spans=s=>s.actors.filter(a=>a.group==='grp_de_spans'),assault=s=>spans(s).
 const strict=raw=>{validateM01Snapshot(json(raw));return load(raw);};
 
 /** One whole route observed every tick: saves at the first tick each new record exists, the audits, the lowest x of a German, the end state. */
-function record(seed,support){
-  const snaps={},o={snaps,minX:Infinity,westViolations:[],clip:clippingAudit(),stack:stackingAudit(),blast:null,clearAt:null};let t0=null;
+function record(seed,support,audit=true){
+  // (the clipping and stacking audits cost ten times the route: the control route carries them, the support route's are in the 24-route audit of the evidence and in the golden audit's seeds 3 and 7)
+  const snaps={},o={snaps,minX:Infinity,westViolations:[],clip:audit?clippingAudit():null,stack:audit?stackingAudit():null,blast:null,clearAt:null};let t0=null;
   const r=route(seed,{support,onStep:step=>{
-    const {sim}=step;o.clip.observe(step);o.stack.observe(step);
+    const {sim}=step;if(audit){o.clip.observe(step);o.stack.observe(step);}
     for(const a of sim.actors)if(a.team==='enemy'&&a.group==='grp_de_spans'&&a.deck&&a.x<DECK_SAFE_X-1e-9)o.westViolations.push({id:a.id,x:a.x,clock:sim.clock});
     if(!sim.consumedEvent(ENTRY)){if(!snaps.pre&&sim.battleClock>=seconds('06:04:50'))snaps.pre=sim.snapshot();return;}   // (10 battle seconds before the deck assault)
     if(sim.consumedEvent(BLAST)&&o.blast!==null)return;
@@ -40,7 +41,7 @@ function record(seed,support){
   o.sim=r.sim;return o;
 }
 let control,support;
-const ctl=()=>control??=record(19390901,false),sup=()=>support??=record(3,true);
+const ctl=()=>control??=record(19390901,false),sup=()=>support??=record(3,true,false);
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 test('mid-fight saves of the control route validate, restore without editing, and continue identically to the original after double restores: the cycle of the real fire, a closing line, the fight at 120 s',()=>{
@@ -141,7 +142,7 @@ test('every malformed field of R2-b is refused: the grenade (shape, thrower, tim
 test('the whole route of each pilot with the fight of R2-b: nobody of the deck west of safeX, nobody inside a solid or another man, the survivors (12 control, 18 support), the east demolition after the deck is clear',()=>{
   for(const [label,o,survivors] of [['control',ctl(),12],['support',sup(),18]]){
     assert.deepEqual(o.westViolations,[],`${label}: nobody west of safeX`);assert.ok(o.minX>=DECK_SAFE_X-1e-9,`${label}: the lowest x of the assault ${o.minX}`);
-    assert.equal(o.clip.events.length,0,`${label}: no clipping`);assert.equal(o.stack.summary().pairs,0,`${label}: nobody inside another man`);
+    if(o.clip){assert.equal(o.clip.events.length,0,`${label}: no clipping`);assert.equal(o.stack.summary().pairs,0,`${label}: nobody inside another man`);}
     assert.equal(o.sim.flags['m01.east_platoon_survivors'],survivors,`${label}: the survivors`);
     assert.ok(o.clearAt!==null&&o.blast>=o.clearAt,`${label}: the east demolition comes only after the deck is clear`);
     assert.equal(o.sim.mission.complete,true,`${label}: the route completes`);

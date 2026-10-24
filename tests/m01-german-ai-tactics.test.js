@@ -374,3 +374,27 @@ test('the warning: the grenade lies on the ground for the rest of its fuse and t
   assert.ok(T.grenade.fuseSec-T.grenade.flightSec>=1.5,'at least 1.5 s on the ground');
   assert.equal(german(s).length,0,'and it went off');
 });
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+test('the squad\'s deadline grows by closeExtraSec only while a living man has a closing line as his limit; the bound of the hold follows the longest normal fight',()=>{
+  const at=(secsAfterEntry,line)=>{
+    const {s}=scene();calm(s);
+    const man=station(s,'de_spans_4',P.lines[0][line],{phase:'hold',until:s.clock+1e3,cooldown:1e6,lim:line===0?undefined:P.lines[0][line]});
+    man.deck.t0=s.clock-secsAfterEntry;
+    s.tick(.05);return {s,man};
+  };
+  // line 0: the old deadline, maxSec
+  let r=at(P.maxSec-1,0);assert.equal(r.s.deckExtraSec(),0);assert.equal(r.man.deck.phase,'hold','just before maxSec');
+  r=at(P.maxSec+.1,0);assert.equal(r.man.deck.phase,'fallback','at maxSec');
+  // line 1: maxSec + closeExtraSec (the other men of the assault are out of the way, in phase clear: only he counts)
+  r=at(P.maxSec+1,1);assert.equal(r.s.deckExtraSec(),T.closeExtraSec);assert.equal(r.man.deck.phase,'hold','the extra is his');
+  r=at(P.maxSec+T.closeExtraSec-1,2);assert.equal(r.man.deck.phase,'hold');
+  r=at(P.maxSec+T.closeExtraSec+.1,2);assert.equal(r.man.deck.phase,'fallback','and then he goes');
+  // the extra is a function of the records: a dead man, an inactive one or one that fell back to line 0 does not give it
+  {const {s}=scene();calm(s);isolate(s,['de_spans_4']);const man=station(s,'de_spans_4',P.lines[0][1],{phase:'cover',lim:P.lines[0][1],cooldown:1e6});assert.equal(s.deckExtraSec(),T.closeExtraSec);
+   man.alive=false;assert.equal(s.deckExtraSec(),0);man.alive=true;man.active=false;assert.equal(s.deckExtraSec(),0);man.active=true;delete man.deck.lim;assert.equal(s.deckExtraSec(),0);}
+  // the absolute bound of the gate's hold (holdBaseSec + 240) is the longest normal fight plus the way from line 0 to the deepest line
+  const longest=Math.max(...P.limits.map((l,k)=>(l-P.paths[k].at(-1).x)/P.rushSpeed)),shortest=Math.min(...P.limits.map((l,k)=>(l-P.paths[k].at(-1).x)/P.rushSpeed));
+  assert.ok(P.holdBaseSec>=P.maxSec+T.closeExtraSec&&P.holdBaseSec<=P.maxSec+T.closeExtraSec+longest+1e-9,`holdBaseSec ${P.holdBaseSec} within [${P.maxSec+T.closeExtraSec}, +${longest.toFixed(1)}]`);
+  assert.ok(shortest>0);
+});
