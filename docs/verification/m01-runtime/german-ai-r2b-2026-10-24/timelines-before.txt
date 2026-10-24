@@ -1,0 +1,240 @@
+# before 19390901:0
+0.00 ENTRY
+146.85 CASUALTY de_spans_5 by rearguard at x 507 (hold)
+160.60 CASUALTY de_spans_7 by rearguard at x 667 (fallback)
+165.00 CASUALTY de_spans_4 by rearguard at x 459 (hold)
+173.00 PLAYER WOUND -8 by de_east_19 (kar98k/player) health 92
+173.95 CASUALTY de_spans_6 by rearguard at x 552 (fallback)
+235.60 CASUALTY de_spans_0 by demolition at x 927 (clear)
+235.60 CASUALTY de_spans_1 by demolition at x 931 (clear)
+235.60 CASUALTY de_spans_2 by demolition at x 960 (clear)
+235.60 CASUALTY de_spans_3 by demolition at x 957 (clear)
+235.60 DEMOLITION
+# before 19390901:1
+0.00 ENTRY
+143.80 CASUALTY de_spans_8 by player at x 882 (fallback)
+149.25 CASUALTY de_spans_7 by rearguard at x 561 (fallback)
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear)
+262.30 DEMOLITION
+# before 1:0
+0.00 ENTRY
+126.40 CASUALTY de_spans_2 by rearguard at x 935 (clear)
+132.65 CASUALTY de_spans_9 by rearguard at x 585 (fallback)
+136.60 PLAYER WOUND -8 by de_east_21 (kar98k/player) health 84
+153.30 CASUALTY de_spans_7 by rearguard at x 603 (fallback)
+167.25 CASUALTY de_spans_4 by rearguard at x 471 (fallback)
+240.00 PLAYER WOUND -8 by de_spans_8 (kar98k/player) health 76
+257.65 CASUALTY de_spans_0 by demolition at x 927 (clear)
+257.65 CASUALTY de_spans_1 by demolition at x 931 (clear)
+257.65 CASUALTY de_spans_3 by demolition at x 948 (clear)
+257.65 DEMOLITION
+# before 1:1
+0.00 ENTRY
+61.00 CASUALTY de_spans_8 by player at x 767 (advance)
+192.55 PLAYER WOUND -8 by de_spans_7 (kar98k/player) health 92
+199.75 CASUALTY de_spans_1 by rearguard at x 931 (clear)
+238.35 CASUALTY de_spans_0 by demolition at x 927 (clear)
+238.35 CASUALTY de_spans_2 by demolition at x 948 (clear)
+238.35 CASUALTY de_spans_3 by demolition at x 945 (clear)
+238.35 DEMOLITION
+# before 2:0
+0.00 ENTRY
+91.80 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+136.15 PLAYER WOUND -8 by de_spans_5 (kar98k/platoon) health 84
+153.30 CASUALTY de_spans_6 by rearguard at x 483 (hold)
+178.20 CASUALTY de_spans_4 by rearguard at x 527 (fallback)
+194.85 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 76
+201.05 CASUALTY de_spans_7 by rearguard at x 826 (fallback)
+253.10 CASUALTY de_spans_0 by demolition at x 927 (clear)
+253.10 CASUALTY de_spans_1 by demolition at x 931 (clear)
+253.10 CASUALTY de_spans_2 by demolition at x 957 (clear)
+253.10 CASUALTY de_spans_3 by demolition at x 948 (clear)
+253.10 DEMOLITION
+# before 2:1
+0.00 ENTRY
+51.30 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 84
+126.55 CASUALTY de_spans_8 by player at x 792 (fallback)
+244.85 CASUALTY de_spans_0 by demolition at x 927 (clear)
+244.85 CASUALTY de_spans_1 by demolition at x 931 (clear)
+244.85 CASUALTY de_spans_2 by demolition at x 948 (clear)
+244.85 CASUALTY de_spans_3 by demolition at x 945 (clear)
+244.85 DEMOLITION
+# before 3:0
+0.00 ENTRY
+166.75 CASUALTY de_spans_8 by rearguard at x 584 (fallback)
+191.30 PLAYER WOUND -8 by de_spans_1 (kar98k/player) health 84
+228.00 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 76
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear)
+262.30 DEMOLITION
+# before 3:1
+0.00 ENTRY
+125.10 CASUALTY de_spans_7 by rearguard at x 690 (fallback)
+135.75 CASUALTY de_spans_8 by player at x 834 (fallback)
+186.85 CASUALTY de_spans_0 by rearguard at x 927 (clear)
+219.70 CASUALTY de_spans_5 by player at x 826 (fallback)
+223.40 CASUALTY de_spans_1 by demolition at x 931 (clear)
+223.40 CASUALTY de_spans_2 by demolition at x 951 (clear)
+223.40 CASUALTY de_spans_3 by demolition at x 945 (clear)
+223.40 DEMOLITION
+# before 4:0
+0.00 ENTRY
+39.50 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 84
+149.00 CASUALTY de_spans_9 by rearguard at x 663 (fallback)
+164.25 CASUALTY de_spans_4 by rearguard at x 459 (hold)
+166.80 CASUALTY de_spans_5 by rearguard at x 516 (fallback)
+247.85 CASUALTY de_spans_0 by demolition at x 927 (clear)
+247.85 CASUALTY de_spans_1 by demolition at x 931 (clear)
+247.85 CASUALTY de_spans_2 by demolition at x 954 (clear)
+247.85 CASUALTY de_spans_3 by demolition at x 951 (clear)
+247.85 DEMOLITION
+# before 4:1
+0.00 ENTRY
+203.55 CASUALTY de_spans_7 by rearguard at x 954 (clear)
+244.85 CASUALTY de_spans_0 by demolition at x 927 (clear)
+244.85 CASUALTY de_spans_1 by demolition at x 931 (clear)
+244.85 CASUALTY de_spans_2 by demolition at x 948 (clear)
+244.85 CASUALTY de_spans_3 by demolition at x 945 (clear)
+244.85 DEMOLITION
+# before 5:0
+0.00 ENTRY
+194.55 CASUALTY de_spans_4 by rearguard at x 612 (fallback)
+202.35 CASUALTY de_spans_8 by rearguard at x 740 (fallback)
+251.60 CASUALTY de_spans_0 by demolition at x 927 (clear)
+251.60 CASUALTY de_spans_1 by demolition at x 931 (clear)
+251.60 CASUALTY de_spans_2 by demolition at x 951 (clear)
+251.60 CASUALTY de_spans_3 by demolition at x 948 (clear)
+251.60 DEMOLITION
+# before 5:1
+0.00 ENTRY
+204.00 CASUALTY de_spans_2 by rearguard at x 935 (clear)
+248.80 CASUALTY de_spans_0 by demolition at x 927 (clear)
+248.80 CASUALTY de_spans_1 by demolition at x 931 (clear)
+248.80 CASUALTY de_spans_3 by demolition at x 945 (clear)
+248.80 DEMOLITION
+# before 6:0
+0.00 ENTRY
+91.15 PLAYER WOUND -8 by de_spans_2 (kar98k/player) health 92
+109.45 PLAYER WOUND -8 by de_east_20 (kar98k/player) health 84
+183.65 CASUALTY de_spans_8 by rearguard at x 722 (fallback)
+188.60 CASUALTY de_spans_4 by rearguard at x 589 (fallback)
+196.05 CASUALTY de_spans_6 by rearguard at x 644 (fallback)
+201.25 CASUALTY de_spans_5 by rearguard at x 700 (fallback)
+222.00 CASUALTY de_spans_0 by demolition at x 927 (clear)
+222.00 CASUALTY de_spans_1 by demolition at x 931 (clear)
+222.00 CASUALTY de_spans_2 by demolition at x 960 (clear)
+222.00 CASUALTY de_spans_3 by demolition at x 954 (clear)
+222.00 DEMOLITION
+# before 6:1
+0.00 ENTRY
+159.00 CASUALTY de_spans_5 by rearguard at x 507 (hold)
+186.55 CASUALTY de_spans_7 by rearguard at x 700 (fallback)
+217.35 CASUALTY de_spans_0 by demolition at x 927 (clear)
+217.35 CASUALTY de_spans_1 by demolition at x 931 (clear)
+217.35 CASUALTY de_spans_2 by demolition at x 951 (clear)
+217.35 CASUALTY de_spans_3 by demolition at x 945 (clear)
+217.35 DEMOLITION
+# before 7:0
+0.00 ENTRY
+242.45 PLAYER WOUND -8 by de_spans_7 (kar98k/player) health 92
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear)
+262.30 DEMOLITION
+# before 7:1
+0.00 ENTRY
+121.95 CASUALTY de_spans_8 by player at x 768 (fallback)
+179.15 CASUALTY de_spans_7 by rearguard at x 749 (fallback)
+199.95 CASUALTY de_spans_6 by rearguard at x 951 (clear)
+247.90 CASUALTY de_spans_0 by demolition at x 927 (clear)
+247.90 CASUALTY de_spans_1 by demolition at x 931 (clear)
+247.90 CASUALTY de_spans_2 by demolition at x 948 (clear)
+247.90 CASUALTY de_spans_3 by demolition at x 945 (clear)
+247.90 DEMOLITION
+# before 8:0
+0.00 ENTRY
+119.75 CASUALTY de_spans_8 by rearguard at x 545 (advance)
+187.55 CASUALTY de_spans_4 by rearguard at x 576 (fallback)
+256.15 CASUALTY de_spans_0 by demolition at x 927 (clear)
+256.15 CASUALTY de_spans_1 by demolition at x 931 (clear)
+256.15 CASUALTY de_spans_2 by demolition at x 951 (clear)
+256.15 CASUALTY de_spans_3 by demolition at x 948 (clear)
+256.15 DEMOLITION
+# before 8:1
+0.00 ENTRY
+145.80 CASUALTY de_spans_7 by rearguard at x 555 (hold)
+171.30 CASUALTY de_spans_5 by rearguard at x 558 (fallback)
+175.05 CASUALTY de_spans_0 by demolition at x 927 (clear)
+175.05 CASUALTY de_spans_1 by demolition at x 931 (clear)
+175.05 CASUALTY de_spans_2 by demolition at x 951 (clear)
+175.05 CASUALTY de_spans_3 by demolition at x 945 (clear)
+175.05 DEMOLITION
+# before 9:0
+0.00 ENTRY
+77.80 PLAYER WOUND -8 by de_east_17 (kar98k/player) health 92
+214.35 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 84
+262.30 CASUALTY de_spans_0 by demolition at x 927 (clear)
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear)
+262.30 DEMOLITION
+# before 9:1
+0.00 ENTRY
+154.55 CASUALTY de_spans_5 by rearguard at x 516 (fallback)
+190.55 CASUALTY de_spans_4 by rearguard at x 622 (fallback)
+203.55 CASUALTY de_spans_6 by rearguard at x 951 (clear)
+240.85 CASUALTY de_spans_0 by demolition at x 927 (clear)
+240.85 CASUALTY de_spans_1 by demolition at x 931 (clear)
+240.85 CASUALTY de_spans_2 by demolition at x 957 (clear)
+240.85 CASUALTY de_spans_3 by demolition at x 954 (clear)
+240.85 DEMOLITION
+# before 10:0
+0.00 ENTRY
+112.85 PLAYER WOUND -8 by de_spans_3 (kar98k/player) health 92
+129.75 CASUALTY de_spans_4 by rearguard at x 487 (cover)
+152.65 CASUALTY de_spans_7 by rearguard at x 569 (fallback)
+162.80 CASUALTY de_spans_3 by rearguard at x 938 (clear)
+166.45 CASUALTY de_spans_5 by rearguard at x 585 (fallback)
+211.80 PLAYER WOUND -8 by de_east_14 (kar98k/player) health 84
+244.35 PLAYER WOUND -8 by de_east_20 (kar98k/player) health 76
+253.30 CASUALTY de_spans_0 by demolition at x 927 (clear)
+253.30 CASUALTY de_spans_1 by demolition at x 931 (clear)
+253.30 CASUALTY de_spans_2 by demolition at x 957 (clear)
+253.30 DEMOLITION
+# before 10:1
+0.00 ENTRY
+93.20 CASUALTY de_spans_9 by player at x 679 (advance)
+186.95 CASUALTY de_spans_8 by rearguard at x 886 (fallback)
+195.30 CASUALTY de_spans_5 by rearguard at x 664 (fallback)
+217.20 CASUALTY de_spans_0 by demolition at x 927 (clear)
+217.20 CASUALTY de_spans_1 by demolition at x 931 (clear)
+217.20 CASUALTY de_spans_2 by demolition at x 951 (clear)
+217.20 CASUALTY de_spans_3 by demolition at x 945 (clear)
+217.20 DEMOLITION
+# before 11:0
+0.00 ENTRY
+158.40 CASUALTY de_spans_6 by rearguard at x 483 (hold)
+169.60 CASUALTY de_spans_8 by rearguard at x 622 (fallback)
+175.45 PLAYER WOUND -8 by de_east_17 (kar98k/player) health 84
+209.70 CASUALTY de_spans_0 by rearguard at x 927 (clear)
+239.20 PLAYER WOUND -8 by de_spans_7 (kar98k/player) health 76
+262.30 CASUALTY de_spans_1 by demolition at x 931 (clear)
+262.30 CASUALTY de_spans_2 by demolition at x 948 (clear)
+262.30 CASUALTY de_spans_3 by demolition at x 945 (clear)
+262.30 DEMOLITION
+# before 11:1
+0.00 ENTRY
+32.25 CASUALTY de_spans_8 by player at x 871 (advance)
+141.70 CASUALTY de_spans_4 by rearguard at x 688 (fallback)
+153.00 CASUALTY de_spans_9 by player at x 703 (fallback)
+241.05 CASUALTY de_spans_0 by demolition at x 927 (clear)
+241.05 CASUALTY de_spans_1 by demolition at x 931 (clear)
+241.05 CASUALTY de_spans_2 by demolition at x 951 (clear)
+241.05 CASUALTY de_spans_3 by demolition at x 948 (clear)
+241.05 DEMOLITION

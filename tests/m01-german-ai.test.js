@@ -108,6 +108,10 @@ test('the new events are validated: the stick grenade thrown, the explosion with
   assert.throws(()=>validateM01AudioEvent({...blast,kind:'bomb'}),/m01-blast.by/);assert.throws(()=>validateM01AudioEvent({...blast,by:'jan_wrona'}),/m01-blast.by/);
   assert.doesNotThrow(()=>validateM01AudioEvent({type:'m01-blast',kind:'grenade',point:t,soundAt:1,aerial:false}),'the player\'s grenade has no thrower');
   assert.deepEqual([...DECK_TACTIC_KINDS],['stage','pullback','search']);
+  // a real round of the section: where it stopped and whether it struck, together; the display-grade shot of R2-a has neither
+  const shot={type:'npc-shot',weapon:'ally_rifle',point:p,rounds:1,by:'staszek_pawlak',target:'de_spans_4'};assert.doesNotThrow(()=>validateM01AudioEvent(shot));
+  assert.doesNotThrow(()=>validateM01AudioEvent({...shot,end:t,hit:true}));
+  for(const bad of [{end:t},{hit:true},{end:{x:1,y:NaN,z:2},hit:false},{end:t,hit:'yes'},{end:null,hit:false}])assert.throws(()=>validateM01AudioEvent({...shot,...bad}),/npc-shot/,JSON.stringify(bad));
   const d={type:'deck-tactic',kind:'stage',by:'de_spans_4',line:1,at:700};assert.doesNotThrow(()=>validateM01AudioEvent(d));
   for(const bad of [{kind:'charge'},{by:'pl_east_1'},{line:-1},{line:1.5},{at:null}])assert.throws(()=>validateM01AudioEvent({...d,...bad}),/deck-tactic/,JSON.stringify(bad));
   assert.equal(deathText('shot','de_spans_6','stielhandgranate'),'Abatido por uma granada de mão do tabuleiro.');
@@ -179,6 +183,9 @@ test('from the deck assault the pair fires real rounds on a cycle of its own at 
   const by=id=>shots.filter(x=>x.by===id);
   assert.ok(by('staszek_pawlak').length>=2&&by('east_platoon_voice').length>=2,`both men fire (${by('staszek_pawlak').length}, ${by('east_platoon_voice').length})`);
   assert.ok(shots.every(x=>x.target==='de_spans_4'),'at the one German of the assault in sight');
+  // a real round says where it stopped and whether it struck him (the presentation draws it): somewhere between the pair and 40 m past him (a truss member or the deck can stop it earlier)
+  assert.ok(shots.every(x=>x.end&&typeof x.hit==='boolean'&&Number.isFinite(x.end.x)&&x.end.x>=10&&x.end.x<=458+40+1),'every real round has an end and a hit flag');
+  assert.ok(shots.some(x=>x.hit)===killed>0,'and the flag is the one the German felt');
   for(const id of ['staszek_pawlak','east_platoon_voice']){
     const mine=by(id);for(let i=1;i<mine.length;i++)assert.ok(mine[i].at-mine[i-1].at>=1.0-1e-9,`${id}: the bolt of his rifle (${(mine[i].at-mine[i-1].at).toFixed(2)} s)`);
     const gaps=mine.slice(1).map((x,i)=>x.at-mine[i].at);assert.ok(gaps.some(g=>g>=3),`${id}: a pause between peeks`);

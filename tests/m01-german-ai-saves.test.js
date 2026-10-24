@@ -71,7 +71,7 @@ test('an older save (no key of R2-b: no cycle of the fire, no closing line, no g
     const s=json(raw);delete s.timers.section?.fire;delete s.timers.deckGrenadeAt;
     for(const a of s.actors){
       if(a.group!=='grp_de_spans')continue;
-      delete a.playerSuppressedUntil;if(a.deck){delete a.deck.lim;delete a.deck.gr;}if(a.ai?.seen)delete a.ai.seen;
+      delete a.playerSuppressedUntil;if(a.deck){delete a.deck.lim;delete a.deck.gr;}if(a.ai)a.ai.seen=null;   // (an older build's deck men never wrote their sight record: it is null)
     }
     return s;
   };

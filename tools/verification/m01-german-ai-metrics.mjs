@@ -180,7 +180,7 @@ function measure({seed,support}){
   }
   const play=onStep=>{
     if(!snapDir)return route(seed,{support,Simulation:Probe,onStep});
-    let raw=JSON.parse(readFileSync(join(snapDir,`snap-${seed}-${support?1:0}.json`),'utf8'));if(level)raw=atLevel(raw,level);
+    let raw=JSON.parse(readFileSync(join(snapDir,`snap-${seed}-${support?1:0}.json`),'utf8'));if(level){delete raw.resumeCheckpoint;raw=atLevel(raw,level);}   // (the save of the window has no use for the resume checkpoint: a death ends the run, nothing is restored)
     const sim=new Probe(1);sim.restoreSnapshot(raw);sim.drainEvents();let after=0;
     for(let i=0;i<20*600&&!o.death;i++){
       const controls=support&&(sim.active('cover_repair')||sim.active('cover_withdrawal'))?coverControls(sim):{};

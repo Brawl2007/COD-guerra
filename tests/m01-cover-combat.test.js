@@ -42,7 +42,12 @@ test('inactive or suppressed Germans on the spans cause no withdrawal losses; lo
   for(const mode of ['inactive','suppressed']){
     const s=load(snapshot);
     for(const a of s.enemies.filter(a=>a.group==='grp_de_spans')){if(mode==='inactive')a.active=false;else a.suppressedUntil=s.clock+100;}
-    run(s,25);assert.equal(s.flags['m01.east_platoon_survivors'],18);assert.equal(platoon(s).length,18);
+    // 2026-10-24 re-pin (R2-b, golden amendment 18): the rule of the 20 s reads the suppression the PLAYER causes (actor.playerSuppressedUntil, set by his own rifle: fire() -> suppressAlong(..., true)), not any
+    // suppression: the Poles' own fire (the rearguard's and, since R2-b, the section's) pins the Germans without shielding the platoon (tests/m01-german-ai.test.js). The player's covering fire is kept up
+    // here as his rifle keeps it, 5 s from every round.
+    if(mode==='suppressed'){for(let i=0;i<25*20;i++){for(const a of s.enemies.filter(a=>a.group==='grp_de_spans'))a.playerSuppressedUntil=s.clock+5;s.tick(.05);}}
+    else run(s,25);
+    assert.equal(s.flags['m01.east_platoon_survivors'],18);assert.equal(platoon(s).length,18);
     assert.equal(s.drainEvents().filter(e=>e.type==='round-impact'&&e.by?.startsWith('de_spans')).length,0);
   }
   const front=load(snapshot),away=load(snapshot);away.player.angle+=Math.PI;run(front,25);run(away,25);

@@ -1824,7 +1824,7 @@ export class M01Simulation {
    * torso of the posture the German is in, with milliradian dispersion (sigmaMil, the error grows with the range as every German round's does; wider while shaken), held with no round when a friend
    * stands in the line of fire or the dispersed ray itself would reach one (the rule of the rearguard), traced at once against everyone, damage by part (a torso kills, a limb wounds), and the
    * suppression of suppressAlong for the Germans it cracks past, NOT marked as the player's (the rule of the 20 s does not count it: the platoon's fate stays the player's). `gauss()` draws
-   * from the man's own stream. Returns {fired, hit, angle}: fired false means no round was fired and no ammunition spent.
+   * from the man's own stream. Returns {fired, hit, angle, end}: fired false means no round was fired and no ammunition spent; `end` is where the round stopped (what it struck, or 40 m past the German), for the presentation.
    */
   alliedRound(a,t,{gauss,sigmaMil,shaken=false,clearanceM=REARGUARD.fire.clearanceM}){
     const origin=eyePosition(a),aim=aimPoint(t),dx=aim.x-origin.x,dy=aim.y-origin.y,dz=aim.z-origin.z,h=Math.hypot(dx,dz),k=shaken?AI_SHAKEN_BIAS:1;
@@ -1842,7 +1842,7 @@ export class M01Simulation {
       recordDamage(e,health,wasAlive,this.clock,a);this.updateMG34Posture(e);struck=true;
     }
     this.suppressAlong(origin,dir,hit,false,R);
-    return {fired:true,hit:struck,angle:aimed};
+    return {fired:true,hit:struck,angle:aimed,end:hit?.point?{x:hit.point.x,y:hit.point.y,z:hit.point.z}:{x:origin.x+dir.x*R,y:origin.y+dir.y*R,z:origin.z+dir.z*R}};
   }
   /** Read-only diagnostics of the rearguard (never saved). */
   get rearguard(){

@@ -54,7 +54,7 @@ export const lcg=seed=>{let st=seed>>>0;const u=()=>{st=(Math.imul(1664525,st)+1
 /** Ticks the scene `ticks` times and returns the `npc-shot` events with a target (optionally of the men `who`); `each(s,i)` runs before every tick. */
 export const shotsOf=(s,ticks,{each=()=>{},who=null}={})=>{
   const out=[];
-  for(let i=0;i<ticks;i++){each(s,i);s.tick(.05);for(const e of s.drainEvents())if(e.type==='npc-shot'&&e.target&&(!who||who.includes(e.by)))out.push({by:e.by,target:e.target,at:s.clock});}
+  for(let i=0;i<ticks;i++){each(s,i);s.tick(.05);for(const e of s.drainEvents())if(e.type==='npc-shot'&&e.target&&(!who||who.includes(e.by)))out.push({by:e.by,target:e.target,at:s.clock,end:e.end,hit:e.hit});}
   return out;
 };
 /** All the events of `ticks` ticks. */

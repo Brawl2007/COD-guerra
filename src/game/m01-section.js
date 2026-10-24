@@ -445,14 +445,15 @@ export function sectionAfter(sim){
  */
 function shoot(sim,q,a,t){
   const clock=sim.clock;
-  a.crouched=false;
+  a.crouched=false;let real=null;
   if(t.group==='grp_de_spans'&&realOn(sim)&&dist(a,t)<=SECTION.real.rangeM){
-    const r=sim.alliedRound(a,t,{gauss:()=>gauss(q,a.id),sigmaMil:SECTION.real.sigmaMil,clearanceM:SECTION.real.clearanceM,shaken:clock<a.suppressedUntil+SECTION.real.shakenSec});
-    if(!r.fired)return false;
+    real=sim.alliedRound(a,t,{gauss:()=>gauss(q,a.id),sigmaMil:SECTION.real.sigmaMil,clearanceM:SECTION.real.clearanceM,shaken:clock<a.suppressedUntil+SECTION.real.shakenSec});
+    if(!real.fired)return false;
   }
   a.rounds=Math.max(0,a.rounds-1);if(a.rounds===0)a.reload={startedAt:clock,duration:3.4,mode:'clip'};
   a.shot=.135;a.firedAt=clock;a.state='SUPPRESS';a.facing=Math.atan2(t.z-a.z,t.x-a.x);
-  sim.emit({type:'npc-shot',weapon:'ally_rifle',point:eyePosition(a),rounds:1,by:a.id,target:t.id});
+  // a real round also says where it stopped (`end`) and whether it struck the German (`hit`), so that the presentation can draw it and its impact; a display-grade one does not
+  sim.emit({type:'npc-shot',weapon:'ally_rifle',point:eyePosition(a),rounds:1,by:a.id,target:t.id,...(real?{end:real.end,hit:real.hit}:{})});
   return true;
 }
 

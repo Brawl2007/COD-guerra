@@ -13,6 +13,8 @@ export const DECK_TACTIC_KINDS=Object.freeze(['stage','pullback','search']);
 const finitePoint=p=>Boolean(p)&&[p.x,p.y,p.z].every(Number.isFinite);
 export function validateM01AudioEvent(event){
   if(event.type==='npc-shot'&&(typeof event.weapon!=='string'||!event.weapon))throw Error('M01 npc-shot.weapon required');
+  // R2-b: a real round of the Polish section also carries where it stopped (`end`) and whether it struck its target (`hit`). Optional; the display-grade shots of R2-a and the rearguard's carry neither.
+  if(event.type==='npc-shot'&&(event.end!==undefined||event.hit!==undefined)&&(!finitePoint(event.end)||typeof event.hit!=='boolean'))throw Error('M01 npc-shot.end/hit: a point and a boolean, together');
   // R2-a: a man of the section has seen (or heard, or suffered) something new: who called, what, where he stands (`from` = `point`, the place the bark director measures hearing from) and where it is
   // (`aim`, null when there is no target), the side of the gates as the player sees them (mg / gate only), and what each listener did about it. Never persisted.
   if(event.type==='section-callout'&&(!SECTION_CALLOUT_KINDS.includes(event.kind)||typeof event.by!=='string'||!event.by||!(event.target===null||typeof event.target==='string')||
