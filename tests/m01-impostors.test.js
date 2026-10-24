@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {sunState,lightingModel,M01_FOG_RANGE} from '../src/render/m01-lighting.js';
 import {seconds} from '../src/game/m01-simulation.js';
 import {HANDOFF_M,IMPOSTOR_CAPACITY,POSTURES,MIN_CONTRAST,MIN_WIDTH_PX,BACKLIGHT_FROM,BACKLIGHT_TO,focalPx,projectedHeightPx,impostorSize,impostorPosture,stepPhase,handoff,
-  selectImpostors,contrastRatio,fogFactor,backdropColor,impostorInk,backlightStrength,sunFacing,M01Impostors} from '../src/render/m01-impostors.js';
+  selectImpostors,NATION_CONTRAST,luminance,contrastRatio,fogFactor,backdropColor,impostorInk,backlightStrength,sunFacing,M01Impostors} from '../src/render/m01-impostors.js';
 
 const layout=JSON.parse(readFileSync(new URL('../missions/m01-tczew/map-layout.json',import.meta.url)));
 const modelAt=c=>{const s=sunState(layout.sun.keyframes,seconds(c));return lightingModel(s.altDeg,s.azDeg);};
@@ -85,6 +85,18 @@ test('minimum contrast against the backdrop at the actor distance, every phase, 
   assert.ok(!impostorInk('de',[.02,.025,.04],1100).dark,'blue-hour fog => light ink');
   assert.ok(impostorInk('de',[.5,.5,.5],1100).ratio>=MIN_CONTRAST);
   assert.notDeepEqual(impostorInk('pl',[.5,.5,.5],900).ink.map(v=>+v.toFixed(3)),impostorInk('de',[.5,.5,.5],900).ink.map(v=>+v.toFixed(3)),'nations keep their hue');
+});
+test('VIS-a: the German silhouette keeps more contrast than the Polish one (never below MIN_CONTRAST), same size, so the nations differ in tone at 350-700 m, 04:45-06:10 (past ~800 m both inks are near black against the hazed ground: tone cannot separate them there)',()=>{
+  assert.deepEqual({...NATION_CONTRAST},{pl:MIN_CONTRAST,de:3.9});
+  for(const clock of ['04:45','04:50','05:15','05:45','06:00','06:10'])for(const d of [350,500,700]){
+    const fog=modelAt(clock).fog.color,pl=impostorInk('pl',fog,d),de=impostorInk('de',fog,d);
+    assert.ok(pl.ratio>=MIN_CONTRAST-1e-6&&de.ratio>=NATION_CONTRAST.de-1e-6,`${clock} ${d}: ${pl.ratio} / ${de.ratio}`);
+    assert.ok(!pl.dark,'light ink at these ranges');
+    assert.equal(pl.dark,de.dark,'both nations use the same ink mode');
+    assert.ok(Math.abs(luminance(de.ink)-luminance(pl.ink))>=.05,`${clock} ${d} m: tone separation ${Math.abs(luminance(de.ink)-luminance(pl.ink)).toFixed(3)}`);
+  }
+  for(const clock of ['04:50','06:00'])for(const d of [900,1050,1400])assert.ok(impostorInk('de',modelAt(clock).fog.color,d).ratio>=MIN_CONTRAST-1e-6,'beyond 800 m the German ink is still never below the minimum');
+  assert.deepEqual(Object.keys(impostorSize('standing',700,70,768)).sort(),['aspect','floored','heightM','heightPx','widthM','widthPx'],'size has no nation input: only the ink differs');
 });
 test('backlight is active 05:30-06:40 only and only when the camera faces the sun',()=>{
   assert.equal(BACKLIGHT_FROM,seconds('05:30'));assert.equal(BACKLIGHT_TO,seconds('06:40'));

@@ -5,6 +5,7 @@ import { eyePosition, aimDirection } from '../world/spatial.js';
 import { roundPoint } from '../game/m01-fire.js';
 import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
 import { ckmFlashes, ckmSmoke, CKM_SMOKE_SEC } from './m01-ckm-fx.js';
+import { collectShotFlashes, createFlashList, ShotSmokeTable, flashRadius, flashTint, smokeRadius, SMOKE_SLOTS_BY_TIER, SMOKE_SEC as SHOT_SMOKE_SEC, NEAR_BODY_M } from './m01-shot-fx.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -16,7 +17,7 @@ import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
 import { M01Grading } from './m01-grading.js';
-import { M01Impostors } from './m01-impostors.js';
+import { M01Impostors, POSTURES } from './m01-impostors.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand,blastFlashEnvelope,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
 import {M01AmbientDirector,resolveSquadLivingMotion} from './m01-ambient.js';
 import { M01Environment } from './m01-environment.js';
@@ -42,6 +43,8 @@ import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collap
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
+/** Height of the rifle muzzle of an impostor as a share of its figure height (the silhouette's rifle ends at .77 h, see m01-impostors.js). */
+const IMPOSTOR_MUZZLE_H=.74;
 const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({}),fixed:Object.freeze({})});
 // A fixed-origin display shot (the Panzerzug's 75 mm gun, T23): muzzle smoke lasts GUN_SMOKE_SEC and the burst where the shell lands SHELL_PUFF_SEC,
 // SHELL_SCALE times the size of a rifle round's impact. Presentation only: no damage record, no decal, no sound.
@@ -333,6 +336,7 @@ export class M01View {
     this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
     this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
+    this.initShotFx();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
       const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
       const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects,name==='puff'?'dust':'smoke'):
@@ -341,6 +345,7 @@ export class M01View {
     }
     // Allocate instance colours before the first chip, keeping its shader variant stable.
     this.fireBatches.chip.setColorAt(0,this.fireColor.set('#ffffff'));
+    this.fireBatches.muzzle.setColorAt(0,this.fireColor.set('#ffffff'));   // per-shot flash tint (daylight), allocated up front so the shader variant is stable
     this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
     for(const [name,capacity,color]of [
       ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
@@ -351,6 +356,61 @@ export class M01View {
     this.battlefieldShards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.battlefieldShards.count=0;this.battlefieldShards.frustumCulled=false;this.effects.add(this.battlefieldShards);
     this.battlefieldShards.setColorAt(0,this.battlefieldColor.set('#665747'));   // allocate instance colours up front: stable shader variant
     this.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);this.explosionLight.visible=false;this.explosionLight.castShadow=false;this.effects.add(this.explosionLight);
+  }
+  /** VIS-a: preallocated state of the per-shot flashes and smoke (m01-shot-fx.js); created once (the view test rigs call updateFire on a bare view, so also lazily). */
+  initShotFx(){
+    this.shotFx={list:createFlashList(),smoke:new ShotSmokeTable(),frames:0,drawn:0,smokeDrawn:0,smokeCap:0,nearest:Infinity};
+    this.shotTint=new THREE.Color();this.shotSmokeColor=new THREE.Color('#b9b8ae');this.shotPoint={x:0,y:0,z:0};this.shotRoot=new THREE.Object3D();this.shotMuzzle=new THREE.Vector3();
+    this.shotActors=new Map();this.shotActorsRef=null;this.shotActorsSize=-1;
+  }
+  /** VIS-a: flashes (one per round) and smoke puffs of every NPC shooter; see m01-shot-fx.js. Allocation-free after construction apart from the ally eye point. */
+  updateShotFx(sim,time,put,far){
+    if(!this.shotFx)this.initShotFx();
+    const fx=this.shotFx,list=fx.list,fov=this.camera.fov||70,vh=this.owner?.canvas?.height||768,daylight=this.lightingModel?.daylight??.5,quality=this.owner?.quality;
+    const actors=sim.actors,index=this.shotActors;
+    if(this.shotActorsRef!==actors||this.shotActorsSize!==actors.length){index.clear();for(let i=0;i<actors.length;i++)index.set(actors[i].id,actors[i]);this.shotActorsRef=actors;this.shotActorsSize=actors.length;}
+    collectShotFlashes(sim,time,list,index);
+    const tint=flashTint(daylight);this.shotTint.setRGB(tint,tint,tint);
+    const cam=this.camera.position,P=this.shotPoint;
+    for(let i=0;i<list.count;i++){
+      P.x=list.x[i];P.y=list.y[i];P.z=list.z[i];
+      const a=index.get(list.by[i]);
+      if(a){
+        const item=this.impostors?.byId.get(a.id);
+        if(item){P.x=a.x;P.z=a.z;P.y=a.y+POSTURES[item.posture].heightM*IMPOSTOR_MUZZLE_H;}   // the rifle of the drawn silhouette, not the sim eye
+        else if(Math.hypot(P.x-cam.x,P.z-cam.z)<NEAR_BODY_M)this.bodyMuzzle(a,time,P);        // a drawn body keeps its true muzzle
+      }
+      list.x[i]=P.x;list.y[i]=P.y;list.z[i]=P.z;
+    }
+    fx.smoke.note(list,time,SMOKE_SLOTS_BY_TIER[quality]??SMOKE_SLOTS_BY_TIER.low);
+    const cap=SMOKE_SLOTS_BY_TIER[quality]??SMOKE_SLOTS_BY_TIER.low;let flashesDrawn=0,smokeDrawn=0,nearest=Infinity;
+    for(let i=0;i<list.count;i++){
+      P.x=list.x[i];P.y=list.y[i];P.z=list.z[i];const d=far(P),heavy=list.heavy[i]===1,seed=(Math.floor(list.at[i]*1000)^Math.floor((P.x+4096)*73)^Math.floor((P.z+4096)*197))>>>0;
+      put('muzzle',P,flashRadius(heavy,d,fov,vh,daylight)*(.85+.3*visualNoise(seed,3+list.index[i])),null,1,this.shotTint);flashesDrawn++;if(d<nearest)nearest=d;
+    }
+    const sm=fx.smoke;
+    for(let s=0;s<sm.slots&&smokeDrawn<cap;s++){
+      if(!sm.alive(s,time))continue;
+      const heavy=sm.heavy[s]===1,k=(time-sm.at[s])/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle),seed=sm.seed[s],n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+      P.x=sm.x[s]+(n0-.5)*.3*k+k*.35;P.y=sm.y[s]+.15+k*(heavy?1.6:1.1)*(.8+.4*n1);P.z=sm.z[s]+(n1-.5)*.25*k;
+      const d=far(P);
+      put('smoke',P,smokeRadius(heavy,k,d,fov,vh),null,(heavy?.5:.42)*Math.pow(1-k,1.15)*(.45+.4*daylight),this.shotSmokeColor,seed,4);smokeDrawn++;
+    }
+    fx.frames+=list.count?1:0;fx.drawn=flashesDrawn;fx.smokeDrawn=smokeDrawn;fx.smokeCap=cap;fx.nearest=nearest;
+  }
+  /** `gameDiagnostics().m01.distantFire`: what the last frame drew for NPC shots (read-only; the sample lists the first flashes with their world point). */
+  get shotDiagnostics(){
+    const fx=this.shotFx;if(!fx)return {frames:0,flashes:0,smoke:0,smokeCap:0,list:[]};
+    const l=fx.list,n=Math.min(l.count,8),list=[];for(let i=0;i<n;i++)list.push({by:l.by[i],heavy:l.heavy[i]===1,source:l.source[i],x:l.x[i],y:l.y[i],z:l.z[i],at:l.at[i]});
+    return {frames:fx.frames,flashes:fx.drawn,smoke:fx.smokeDrawn,smokeCap:fx.smokeCap,nearestM:Number.isFinite(fx.nearest)?fx.nearest:null,dropped:l.dropped,smokeSkipped:fx.smoke.skipped,list};
+  }
+  /** True muzzle of a drawn body (skinned socket first, else the procedural pose), written into `out`; scratch objects only. */
+  bodyMuzzle(a,time,out){
+    const pose=actorPose(a,time),root=this.shotRoot,m=this.shotMuzzle;root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+    root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+    m.fromArray(pose.rifle.muzzle);m.y-=pose.root.pivotY;m.applyMatrix4(root.matrix);
+    const skinned=this.characters?.muzzle(a.id);if(skinned)m.copy(skinned);
+    out.x=m.x;out.y=m.y;out.z=m.z;
   }
   updateFire(sim){
     const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
@@ -365,34 +425,11 @@ export class M01View {
       if(batch.geometry.attributes.puffSpin)this.atmosphere.stylePuff(batch,index,styleSeed??fxSeed(p,time),variant);
       if(color)batch.setColorAt(index,this.fireColor.set(color));counts[name]++;
     };
-    const root=new THREE.Object3D(),muzzle=new THREE.Vector3();
-    for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
-      const age=time-(a.firedAt??-1e9);if(a.shot<=0&&age>2.2)continue;
-      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
-      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p),seed=fxSeed(p,a.firedAt??time);
-      if(a.mg34Prone?pose.firing:(pose.firing||pose.aiming&&age>=0&&age<.25))put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-      if(age>=0&&age<2.2){
-        const k=age/2.2,n0=visualNoise(seed,1),n1=visualNoise(seed,2);
-        put('smoke',{x:p.x+(n0-.5)*.22*k,y:p.y+.34+k*(1.3+n1*.55),z:p.z+(n1-.5)*.18*k},
-          Math.max(.22,d*.0065)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
-      }
-    }
-    // Display fire (T22) is visual only: the simulation never marks its shooters as firing, so the flash window comes from display.firedAt.
-    // A gameplay shot in the last 0.25 s (enemy flash above) already shows a flash at that muzzle, so it is not drawn twice.
+    // VIS-a (m01-shot-fx.js): one flash per real NPC shot read from the simulation's own rounds (German gameplay rounds, MG34 round by round, display
+    // fire) and from the fire state of allied actors (Kowal's rkm, the allied riflemen); a pooled gun-smoke puff per shooter. Sized in pixels (physical
+    // up close, a bright point at 1 km) and tinted by the daylight of the lighting model. The renderer only places what the simulation already issued.
     const display=sim.displayFire??NO_DISPLAY_FIRE;
-    for(const a of sim.actors){
-      const at=display.firedAt[a.id],age=time-at;
-      if(at===undefined||!a.alive||!a.active||!(age>=0&&age<DISPLAY_FLASH_SEC)||a.team==='enemy'&&(a.shot>0||time-(a.firedAt??-1e9)<.25))continue;
-      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
-      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
-      put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-    }
+    this.updateShotFx(sim,time,put,far);
     // Fixed-origin display shots have no actor to flash: the simulation publishes origin, aim point and times in display.fixed, so the flash, the
     // gun smoke and the arrival burst are pure functions of the clock (they survive a frame that never saw the round in flight).
     for(const shot of Object.values(display.fixed??{})){
@@ -884,6 +921,7 @@ export class M01View {
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.demolitionState={entries:[],pieces:[],flash:null};
+    this.shotFx?.smoke.reset();if(this.shotFx){this.shotFx.list.count=0;this.shotFx.frames=0;}
     this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
@@ -908,7 +946,7 @@ export class M01View {
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
-    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},
+    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},distantFire:this.shotDiagnostics,
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),bodyFeedback:this.bodyFeedback.diagnostics(),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,

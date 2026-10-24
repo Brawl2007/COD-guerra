@@ -453,32 +453,32 @@ test('renderer: gameplay tracers are drawn first when the 48-instance batch is f
   }finally{r.dispose();}
 });
 
-test('renderer: display muzzle flashes last 0.15 s, serve any team, need a living active man, and are not doubled on a gameplay flash',()=>{
+test('renderer: a display round draws one muzzle flash for 0.06 s (VIS-a, was a 0.15 s window per actor), serves any team, needs a living active man; a gameplay round is its own flash',()=>{
   const r=rig(),sim=new M01Simulation(19390901);sim.tick(.05,{skip:true});
   try{
-    const flash=(patch,id,age,after)=>{
-      const a=sim.actor(id),saved={...a};Object.assign(a,patch);sim.display.firedAt[id]=sim.clock-age;after?.();
-      try{return r.draw(sim).muzzle;}finally{Object.assign(a,saved);delete sim.display.firedAt[id];}
+    const flashRound=(id,age,kind='display')=>({id:`t_${id}_${age}_${kind}`,by:id,weapon:'kar98k',kind,ox:900,oy:1,oz:0,ax:0,ay:1,az:0,h:0,firedAt:sim.clock-age,arriveAt:sim.clock+1,tracer:false,victim:null});
+    const flash=(patch,id,age)=>{
+      const a=sim.actor(id),saved={...a};Object.assign(a,patch);sim.display.rounds.push(flashRound(id,age));
+      try{return r.draw(sim).muzzle;}finally{Object.assign(a,saved);sim.display.rounds.pop();}
     };
-    assert.equal(DISPLAY_FLASH_SEC,.15);
+    assert.equal(DISPLAY_FLASH_SEC,.15,'the fixed-origin gun (Panzerzug) keeps its 0.15 s flash');
     assert.equal(r.draw(sim).muzzle,0,'no display shooters, no gameplay fire: no flash');
-    assert.equal(flash({active:true},'pl_east_0',.1),1,'an ally');
+    assert.equal(flash({active:true},'pl_east_0',.03),1,'an ally');
     assert.equal(flash({active:true},'pl_east_0',0),1);
-    assert.equal(flash({active:true},'pl_east_0',.2),0,'older than the window');
+    assert.equal(flash({active:true},'pl_east_0',.1),0,'older than the window');
     assert.equal(flash({active:true},'pl_east_0',-.01),0,'not yet');
-    assert.equal(flash({},'pl_east_0',.1),0,'inactive');
-    assert.equal(flash({active:true,alive:false,health:0,state:'DOWN'},'pl_east_0',.1),0,'dead');
-    assert.equal(flash({active:true},'de_east_20',.1),1,'an enemy that only fires as display (no gameplay shot)');
-    // gameplay flash on the same enemy: one flash, not two
-    const gameplay={active:true,state:'SUPPRESS',shot:.3,firedAt:sim.clock-.05};
-    const alone=(()=>{const a=sim.actor('de_east_21'),saved={...a};Object.assign(a,gameplay);try{return r.draw(sim).muzzle;}finally{Object.assign(a,saved);}})();
-    assert.equal(alone,1,'the gameplay flash alone');
-    assert.equal(flash(gameplay,'de_east_21',.05),1,'display flash on a gameplay flash is not doubled');
-    // two different men: two flashes
-    const other=sim.actor('de_east_22'),savedOther={...other};Object.assign(other,gameplay);
-    try{assert.equal(flash({active:true},'pl_east_1',.05),2);}finally{Object.assign(other,savedOther);}
+    assert.equal(flash({active:false},'pl_east_0',.03),0,'inactive');
+    assert.equal(flash({active:true,alive:false,health:0,state:'DOWN'},'pl_east_0',.03),0,'dead');
+    assert.equal(flash({active:true},'de_east_20',.03),1,'an enemy that only fires as display (no gameplay shot)');
+    // gameplay round of the same enemy: its own flash (an overlapping display round is another shot at the same muzzle)
+    sim.enemyFire.rounds.push(flashRound('de_east_21',.02,'player'));sim.actor('de_east_21').active=true;
+    try{
+      assert.equal(r.draw(sim).muzzle,1,'the gameplay round alone');
+      sim.display.rounds.push(flashRound('de_east_22',.02));sim.actor('de_east_22').active=true;
+      assert.equal(r.draw(sim).muzzle,2,'two different men: two flashes');
+    }finally{sim.enemyFire.rounds.pop();sim.display.rounds.pop();sim.actor('de_east_21').active=false;sim.actor('de_east_22').active=false;}
     // drawing never writes to the simulation or its display list
-    const before=JSON.stringify([sim.snapshot(),sim.displayFire]);sim.display.firedAt.pl_east_0=sim.clock-.05;sim.actor('pl_east_0').active=true;
+    const before=JSON.stringify([sim.snapshot(),sim.displayFire]);sim.display.rounds.push(flashRound('pl_east_0',.03));sim.actor('pl_east_0').active=true;
     const withFlash=JSON.stringify([sim.snapshot(),sim.displayFire]);r.draw(sim);r.draw(sim);
     assert.equal(JSON.stringify([sim.snapshot(),sim.displayFire]),withFlash);assert.notEqual(before,withFlash);
   }finally{r.dispose();}

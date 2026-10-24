@@ -1,0 +1,590 @@
+{
+  "label": "after",
+  "quality": "medium",
+  "viewport": [
+    1366,
+    768
+  ],
+  "shots": [
+    {
+      "name": "snap-post1-kar98k",
+      "errors": [],
+      "files": [
+        {
+          "file": "snap-post1-kar98k-after-0.png",
+          "clock": 283.30000000003014,
+          "muzzle": 1,
+          "distant": {
+            "frames": 0,
+            "flashes": 0,
+            "smoke": 0,
+            "smokeCap": 24,
+            "nearestM": null,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": []
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.009013496395485395,
+              -0.7062659330227495,
+              0.008993552702304678,
+              0.7078321162140248
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post1-kar98k-after-1.png",
+          "clock": 283.5500000000302,
+          "muzzle": 4,
+          "distant": {
+            "frames": 1,
+            "flashes": 3,
+            "smoke": 3,
+            "smokeCap": 24,
+            "nearestM": 51.14890231418266,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_26",
+                "heavy": false,
+                "source": 0,
+                "x": 1076,
+                "y": 0.258,
+                "z": -20,
+                "at": 283.5000000000302
+              },
+              {
+                "by": "de_east_7",
+                "heavy": false,
+                "source": 0,
+                "x": 1058.3,
+                "y": -0.14900000000000002,
+                "z": 17,
+                "at": 283.5500000000302
+              },
+              {
+                "by": "szymon_kowal",
+                "heavy": true,
+                "source": 2,
+                "x": -69.96829409108696,
+                "y": -1.539902151006481,
+                "z": 23.488017742893998,
+                "at": 283.5500000000302
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.009013496395485395,
+              -0.7062659330227495,
+              0.008993552702304678,
+              0.7078321162140248
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post1-kar98k-after-2.png",
+          "clock": 283.80000000003025,
+          "muzzle": 2,
+          "distant": {
+            "frames": 2,
+            "flashes": 1,
+            "smoke": 3,
+            "smokeCap": 24,
+            "nearestM": 51.144044806682935,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "szymon_kowal",
+                "heavy": true,
+                "source": 2,
+                "x": -69.97495614868805,
+                "y": -1.4792733762069978,
+                "z": 23.500183459370632,
+                "at": 283.7700000000302
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.009013496395485395,
+              -0.7062659330227495,
+              0.008993552702304678,
+              0.7078321162140248
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post1-kar98k-after-3.png",
+          "clock": 284.0500000000303,
+          "muzzle": 1,
+          "distant": {
+            "frames": 2,
+            "flashes": 0,
+            "smoke": 3,
+            "smokeCap": 24,
+            "nearestM": null,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": []
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.009013496395485395,
+              -0.7062659330227495,
+              0.008993552702304678,
+              0.7078321162140248
+            ],
+            "fov": 70
+          }
+        }
+      ],
+      "diag": {
+        "clock": 284.5500000000304,
+        "drawCalls": 523,
+        "triangles": 947921,
+        "impostors": 62,
+        "distantFire": {
+          "frames": 2,
+          "flashes": 0,
+          "smoke": 3,
+          "smokeCap": 24,
+          "nearestM": null,
+          "dropped": 0,
+          "smokeSkipped": 0,
+          "list": []
+        },
+        "player": {
+          "x": -120.49020106479271,
+          "y": -3,
+          "z": 15.505865219790596,
+          "angle": -0.002215097534045441,
+          "pitch": 0.02546651683848734,
+          "health": 100,
+          "crouched": false,
+          "aiming": false
+        }
+      }
+    },
+    {
+      "name": "snap-post2-kar98k",
+      "errors": [],
+      "files": [
+        {
+          "file": "snap-post2-kar98k-after-0.png",
+          "clock": 528.6500000000669,
+          "muzzle": 1,
+          "distant": {
+            "frames": 1,
+            "flashes": 1,
+            "smoke": 1,
+            "smokeCap": 24,
+            "nearestM": 1046.0936614624854,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_14",
+                "heavy": false,
+                "source": 0,
+                "x": 1076,
+                "y": 0.258,
+                "z": -80,
+                "at": 528.6500000000669
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              37.08748734951596,
+              1.64,
+              42.3553418786706
+            ],
+            "quaternion": [
+              0.008780721374891913,
+              -0.7241240134634119,
+              0.00922095654566671,
+              0.6895522358880144
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post2-kar98k-after-1.png",
+          "clock": 529.7668000000659,
+          "muzzle": 1,
+          "distant": {
+            "frames": 2,
+            "flashes": 1,
+            "smoke": 2,
+            "smokeCap": 24,
+            "nearestM": 1019.7722970818741,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_13",
+                "heavy": false,
+                "source": 0,
+                "x": 1056.8,
+                "y": 0.258,
+                "z": 31.4,
+                "at": 529.7668000000659
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              37.08748734951596,
+              1.64,
+              42.3553418786706
+            ],
+            "quaternion": [
+              0.008780721374891913,
+              -0.7241240134634119,
+              0.00922095654566671,
+              0.6895522358880144
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post2-kar98k-after-2.png",
+          "clock": 530.6334000000652,
+          "muzzle": 1,
+          "distant": {
+            "frames": 3,
+            "flashes": 1,
+            "smoke": 2,
+            "smokeCap": 24,
+            "nearestM": 1021.3412670467984,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_11",
+                "heavy": false,
+                "source": 0,
+                "x": 1058.3,
+                "y": 0.258,
+                "z": 26.2,
+                "at": 530.6334000000652
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              37.087447011086056,
+              1.6401430488330486,
+              42.3553418786706
+            ],
+            "quaternion": [
+              0.00880699636656881,
+              -0.7241236943763284,
+              0.009195935986614135,
+              0.6895525700184918
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post2-kar98k-after-3.png",
+          "clock": 531.3334000000646,
+          "muzzle": 2,
+          "distant": {
+            "frames": 4,
+            "flashes": 1,
+            "smoke": 2,
+            "smokeCap": 24,
+            "nearestM": 108.75190989200554,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "szymon_kowal",
+                "heavy": true,
+                "source": 2,
+                "x": -69.97023394068371,
+                "y": -1.5468577128928982,
+                "z": 23.50153178026895,
+                "at": 531.3334000000646
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              37.08748734951596,
+              1.64,
+              42.3553418786706
+            ],
+            "quaternion": [
+              0.008780721374891913,
+              -0.7241240134634119,
+              0.00922095654566671,
+              0.6895522358880144
+            ],
+            "fov": 70
+          }
+        }
+      ],
+      "diag": {
+        "clock": 531.6667000000643,
+        "drawCalls": 479,
+        "triangles": 767224,
+        "impostors": 57,
+        "distantFire": {
+          "frames": 4,
+          "flashes": 0,
+          "smoke": 2,
+          "smokeCap": 24,
+          "nearestM": null,
+          "dropped": 0,
+          "smokeSkipped": 0,
+          "list": []
+        },
+        "player": {
+          "x": 37.08748734951596,
+          "y": 0,
+          "z": 42.3553418786706,
+          "angle": 0.04890071271151534,
+          "pitch": 0.02546651683848734,
+          "health": 100,
+          "crouched": false,
+          "aiming": false
+        }
+      }
+    },
+    {
+      "name": "snap-post0-mg34",
+      "errors": [],
+      "files": [
+        {
+          "file": "snap-post0-mg34-after-0.png",
+          "clock": 258.5500000000245,
+          "muzzle": 2,
+          "distant": {
+            "frames": 1,
+            "flashes": 2,
+            "smoke": 2,
+            "smokeCap": 24,
+            "nearestM": 1174.2323922081384,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_1",
+                "heavy": true,
+                "source": 0,
+                "x": 1053.7380092222224,
+                "y": 0.3843987384524238,
+                "z": 12.902377166770364,
+                "at": 258.50000000002444
+              },
+              {
+                "by": "de_east_3",
+                "heavy": false,
+                "source": 0,
+                "x": 1056.8,
+                "y": 0.258,
+                "z": 9.6,
+                "at": 258.5500000000245
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.0005187768776355356,
+              -0.7063821595824787,
+              0.0005177155325545617,
+              0.7078302815398422
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post0-mg34-after-1.png",
+          "clock": 258.5500000000245,
+          "muzzle": 2,
+          "distant": {
+            "frames": 1,
+            "flashes": 2,
+            "smoke": 2,
+            "smokeCap": 24,
+            "nearestM": 1174.2323922081384,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_1",
+                "heavy": true,
+                "source": 0,
+                "x": 1053.7380092222224,
+                "y": 0.3843987384524238,
+                "z": 12.902377166770364,
+                "at": 258.50000000002444
+              },
+              {
+                "by": "de_east_3",
+                "heavy": false,
+                "source": 0,
+                "x": 1056.8,
+                "y": 0.258,
+                "z": 9.6,
+                "at": 258.5500000000245
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.0005187768776355356,
+              -0.7063821595824787,
+              0.0005177155325545617,
+              0.7078302815398422
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post0-mg34-after-2.png",
+          "clock": 258.80000000002457,
+          "muzzle": 1,
+          "distant": {
+            "frames": 2,
+            "flashes": 1,
+            "smoke": 3,
+            "smokeCap": 24,
+            "nearestM": 1209.0421853132252,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_28",
+                "heavy": false,
+                "source": 0,
+                "x": 1088,
+                "y": 0.258,
+                "z": 52,
+                "at": 258.80000000002457
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.0005187768776355356,
+              -0.7063821595824787,
+              0.0005177155325545617,
+              0.7078302815398422
+            ],
+            "fov": 70
+          }
+        },
+        {
+          "file": "snap-post0-mg34-after-3.png",
+          "clock": 259.3000000000247,
+          "muzzle": 1,
+          "distant": {
+            "frames": 3,
+            "flashes": 1,
+            "smoke": 4,
+            "smokeCap": 24,
+            "nearestM": 1173.6908800220601,
+            "dropped": 0,
+            "smokeSkipped": 0,
+            "list": [
+              {
+                "by": "de_east_5",
+                "heavy": false,
+                "source": 0,
+                "x": 1053.2,
+                "y": -0.10199999999999099,
+                "z": 15.4,
+                "at": 259.3000000000247
+              }
+            ]
+          },
+          "camera": {
+            "position": [
+              -120.49020106479271,
+              -1.36,
+              15.505865219790596
+            ],
+            "quaternion": [
+              0.0005187768776355356,
+              -0.7063821595824787,
+              0.0005177155325545617,
+              0.7078302815398422
+            ],
+            "fov": 70
+          }
+        }
+      ],
+      "diag": {
+        "clock": 259.7667000000248,
+        "drawCalls": 532,
+        "triangles": 950578,
+        "impostors": 62,
+        "distantFire": {
+          "frames": 4,
+          "flashes": 0,
+          "smoke": 5,
+          "smokeCap": 24,
+          "nearestM": null,
+          "dropped": 0,
+          "smokeSkipped": 0,
+          "list": []
+        },
+        "player": {
+          "x": -120.49020106479271,
+          "y": -3,
+          "z": 15.505865219790596,
+          "angle": -0.002047954620002958,
+          "pitch": 0.0014658225234964195,
+          "health": 100,
+          "crouched": false,
+          "aiming": false
+        }
+      }
+    }
+  ]
+}
