@@ -4,7 +4,7 @@
   "delta": "german-ai",
   "predecessor": "3389652895ac52d0bbf191301b4bce55e8e3b673",
   "predecessorSourceSha256": "5236c1730015940ae7cd9168fb3e6eda76f6c5d720bf58ff7b0618ebb62c3217",
-  "sourceSha256": "94fe9ae822962bb5cf2e58910e17cbd9c95274008a6c0ff0ee6ab35871cc7773",
+  "sourceSha256": "14e14803b7cf7e369a143258d74820d35c246ee1774765519b507af05b678d95",
   "previousGolden": {
     "task": "M01-SQUAD-COORDINATION-V1",
     "file": "tests/fixtures/m01-squad-coordination-gameplay-baseline.json",

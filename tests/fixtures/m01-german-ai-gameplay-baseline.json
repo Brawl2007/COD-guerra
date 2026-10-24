@@ -11,9 +11,9 @@
     "sha256": "340994e566158e1c584839ab887ed583c013407c1e001fbbc224064407a93644"
   },
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
-  "sourceSha256": "94fe9ae822962bb5cf2e58910e17cbd9c95274008a6c0ff0ee6ab35871cc7773",
+  "sourceSha256": "14e14803b7cf7e369a143258d74820d35c246ee1774765519b507af05b678d95",
   "inputsSha256": {
-    "src/game/m01-simulation.js": "94fe9ae822962bb5cf2e58910e17cbd9c95274008a6c0ff0ee6ab35871cc7773",
+    "src/game/m01-simulation.js": "14e14803b7cf7e369a143258d74820d35c246ee1774765519b507af05b678d95",
     "src/game/m01-pacing.js": "b5e6ede4828fbd82aa85fdb6975c71a4a03ebaadd1f6a8c8269facf6965300ca",
     "missions/m01-tczew/mission.json": "1cbf97ca50d3e1ade3ec652407a46b42753769135dc70d78125bf72efe15c361",
     "missions/m01-tczew/map-layout.json": "d0cec6dbb3098ebfb33797c5ba75bced07a34b521afe91205565fa44de4bae7e",
@@ -426,5 +426,5 @@
     }
   ],
   "audit": "docs/verification/m01-runtime/german-ai-r2b-2026-10-24/GOLDEN_AMENDMENT_18.json",
-  "auditSha256": "900fcafa57df098bc9e36cb9f4af3d8809ec9ff9b6dc5b5a7c368f9db35e8cd2"
+  "auditSha256": "728bd00a69a987f6aa41fd8904ddb3c3a48ce2bd2babda1ae01241ba20fad178"
 }
