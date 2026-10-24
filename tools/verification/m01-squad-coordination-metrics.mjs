@@ -37,12 +37,21 @@ if(arg('--summary')){
   const label=arg('--label'),rows=readFileSync(arg('--summary'),'utf8').split('\n').filter(l=>l.trim()).map(l=>JSON.parse(l)).filter(r=>!label||r.label===label);
   const labels=[...new Set(rows.map(r=>r.label))];
   const mean=xs=>xs.length?round(xs.reduce((a,b)=>a+b,0)/xs.length,2):null,median=xs=>{const s=[...xs].sort((a,b)=>a-b);return s.length?s[Math.floor((s.length-1)/2+.5)]:null;};
+  // The reactive lines that CALL something (a threat, a man down, a man pinned): the alerts that already existed (110-111 the ckm, 120-124 the MG34s, 128-135 the gates and the deck, 138-139, 143, 160 and the
+  // callout «Metralhadora no dique!») and the new calls of R2-a (164-185). The rest of 164-199 are the answers, the orders and the arrival of the pair.
+  const CALLS=/^(co_m01_enemy_mg_fire_on_squad|dlg_m01_(110|111|12[0-4]|13[0-5]|138|139|143|160|16[4-9]|17\d|18[0-5]))$/,ORDERS=/^dlg_m01_(18[6-9]|19\d)$/;
+  const countOf=(r,re)=>Object.entries(r.lines.reactiveIds).filter(([id])=>re.test(id)).reduce((a,[,n])=>a+n,0);
   const out={};
   for(const l of labels){
     const rs=rows.filter(r=>r.label===l),pick=f=>rs.map(f);
     const patterns=new Set(rs.flatMap(r=>r.patterns.list));
+    const perMin=(r,re)=>r.windowRealSec>0?countOf(r,re)/(r.windowRealSec/60):0;
     out[l]={routes:rs.length,windowRealSec:{mean:mean(pick(r=>r.windowRealSec))},
       reactiveLinesPerMin:{mean:mean(pick(r=>r.lines.reactivePerMin)),min:Math.min(...pick(r=>r.lines.reactivePerMin)),max:Math.max(...pick(r=>r.lines.reactivePerMin))},
+      callLinesPerMin:{mean:mean(pick(r=>perMin(r,CALLS))),min:round(Math.min(...pick(r=>perMin(r,CALLS)))),max:round(Math.max(...pick(r=>perMin(r,CALLS))))},
+      orderAnswerLinesPerMin:{mean:mean(pick(r=>perMin(r,ORDERS)))},
+      maxRepeatOfOneReactiveId:{mean:mean(pick(r=>Math.max(0,...Object.values(r.lines.reactiveIds)))),max:Math.max(...pick(r=>Math.max(0,...Object.values(r.lines.reactiveIds))))},
+      distinctReactiveIds:{mean:mean(pick(r=>Object.keys(r.lines.reactiveIds).length)),acrossAllRoutes:new Set(rs.flatMap(r=>Object.keys(r.lines.reactiveIds))).size},
       calloutEventsPerMin:{mean:mean(pick(r=>r.callouts.perMin)),min:Math.min(...pick(r=>r.callouts.perMin)),max:Math.max(...pick(r=>r.callouts.perMin))},
       distinctLineIds:{mean:mean(pick(r=>r.lines.distinctIds))},maxRepeatOfOneId:{max:Math.max(...pick(r=>r.lines.maxRepeatOfOneId)),mean:mean(pick(r=>r.lines.maxRepeatOfOneId))},
       patternsPerRoute:{mean:mean(pick(r=>r.patterns.distinct)),min:Math.min(...pick(r=>r.patterns.distinct)),max:Math.max(...pick(r=>r.patterns.distinct))},patternsAcrossAllRoutes:patterns.size,
