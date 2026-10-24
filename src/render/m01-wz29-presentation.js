@@ -149,17 +149,25 @@ export function placeWz29(root,weapon,pose){
 
 // The first-person arms and hands are solved in m01-fp-hands.js (R6-a replaced the fixed-shoulder placeViewArms that lived here).
 
+/** Aimed-down-sights shade of the stock wood: strength (0..1 of the light removed) and the eye distances (m) where it is full / gone. */
+export const STOCK_SHADE=Object.freeze({strength:.6,near:.56,far:.68});
 export function riflePresentationMaterial(source){
   const material=source.clone();material.name='wz29_first_person_atlas';
   material.color.multiply(new THREE.Color(.94,.92,.89));material.normalScale?.multiplyScalar(.65);
+  // R6-a: with the eye 11 cm behind the butt the wood of the stock is a bright wedge under the sights. Aimed down the sights it sits in the head's
+  // shadow: wood texels between STOCK_SHADE.near and .far metres of the eye lose up to m01StockShade of their light (0 at the hip, set by M01ViewModel).
+  const shade=material.userData.m01StockShade={value:0};
   // Preserve baked wood grain, wear and metal masks. The weapon pass now has a low sky/ground reflection
   // environment, so blued steel may read as metal (sheen) while oiled wood stays satin, never mirror-like.
-  material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
+  material.onBeforeCompile=shader=>{shader.uniforms.m01StockShade=shade;
+    shader.fragmentShader='uniform float m01StockShade;\n'+shader.fragmentShader.replace('#include <opaque_fragment>',
+      'outgoingLight *= 1.0 - m01StockShade * (1.0 - metalnessFactor) * (1.0 - smoothstep('+STOCK_SHADE.near.toFixed(2)+', '+STOCK_SHADE.far.toFixed(2)+', length(vViewPosition)));\n#include <opaque_fragment>');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
     '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
     '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
   // Reflection strength is the weapon pass's scene.environmentIntensity (three ignores envMapIntensity without an own envMap).
-  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
+  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v4';
   return material;
 }
 /** Hands/sleeves/clip use a private atlas copy: the eye pass has its own environment and must not flip the world soldiers' programs. */

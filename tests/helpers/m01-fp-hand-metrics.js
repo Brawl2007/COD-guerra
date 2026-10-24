@@ -16,6 +16,9 @@ export const {M01ViewModel}=await import(base?pathToFileURL(resolve(base,'src/re
 /** Landmarks of the wz.29 mesh in the weapon bone frame. Trigger/guard come from tools/assets/m01-soldiers/src/weapon.mjs (rifle_trigger, rifle_guard). */
 export const WZ29_LANDMARKS=Object.freeze({
   trigger:Object.freeze([0,-.035,-.03]),
+  // Tips of the sights as drawn by the rifle mesh (highest vertices of the front post and of the rear notch).
+  frontPost:Object.freeze([0,.066,-.752]),
+  rearNotch:Object.freeze([0,.055,-.29]),
 });
 
 export async function fpFixture(){
@@ -60,6 +63,25 @@ export function solidDepth(x,y,z){
   if(z<=.035&&z>=-.25)d=Math.max(d,.0165-Math.hypot(x,y-.03));
   if(z<=-.25&&z>=-.765){const r=.0125+(.0092-.0125)*((-.25-z)/.515);d=Math.max(d,r-Math.hypot(x,y-.032));}
   return Math.max(0,d);
+}
+
+/** Meshes that draw the arms: skin first, then sleeves (body), cuffs, sleeve caps, straps. */
+const SLEEVE_MESHES=['body','fp_cuffs','fp_sleeve_caps','fp_straps'],ARM_MESHES=['fp_hands',...SLEEVE_MESHES];
+/**
+ * The sight window: the part of the sight picture around the front post that must stay free of hands and sleeves. It is centred on the tip of the
+ * front post (so it follows the rifle through recoil, ndc about 0,0 in the aimed rest pose) and its half sizes in normalised device coordinates of
+ * the weapon camera are 0.075 x 0.10, that is 48 x 36 px at 1280 x 720.
+ */
+export const SIGHT_WINDOW=Object.freeze({x:.075,y:.10});
+/** Marks the cells (cols x rows) whose centre lies inside the screen-space triangle P (cell units). */
+function rasterTriangle(cells,P,cols,rows){
+  const [a,b,c]=P,den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);if(Math.abs(den)<1e-9)return;
+  const x0=Math.max(0,Math.floor(Math.min(a[0],b[0],c[0]))),x1=Math.min(cols-1,Math.ceil(Math.max(a[0],b[0],c[0])));
+  const y0=Math.max(0,Math.floor(Math.min(a[1],b[1],c[1]))),y1=Math.min(rows-1,Math.ceil(Math.max(a[1],b[1],c[1])));
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
+    const px=x+.5,py=y+.5,l1=((b[1]-c[1])*(px-c[0])+(c[0]-b[0])*(py-c[1]))/den,l2=((c[1]-a[1])*(px-c[0])+(a[0]-c[0])*(py-c[1]))/den,l3=1-l1-l2;
+    if(l1>=0&&l2>=0&&l3>=0)cells[y*cols+x]=1;
+  }
 }
 
 const tri=new THREE.Triangle(),pt=new THREE.Vector3(),cl=new THREE.Vector3(),nrm=new THREE.Vector3(),mat=new THREE.Matrix4();
@@ -207,6 +229,28 @@ export class HandRig {
     const s=this.bone(`upperarm_${side}`),e=this.bone(`lowerarm_${side}`),w=this.bone(`hand_${side}`);
     return s.sub(e).angleTo(w.sub(e))*180/Math.PI;
   }
+  /**
+   * Where an arm leaves the frame: the chain wrist -> elbow -> shoulder joint (view frame), each segment cut at the near plane, followed on the
+   * screen until it crosses the border. `edge` is 'bottom' | 'top' | 'left' | 'right', or 'lens' when the chain reaches the lens plane inside
+   * the frame (an arm coming out of the eye); `dx` is the horizontal screen travel (ndc) from the wrist to the crossing: > 0 runs to the right.
+   */
+  armExit(side){
+    this.root.updateMatrixWorld(true);
+    const joint=name=>this.root.getObjectByName(`${name}_${side}`).getWorldPosition(new THREE.Vector3()),chain=[joint('hand'),joint('lowerarm'),joint('upperarm')];
+    const project=v=>v.clone().applyMatrix4(this.camera.matrixWorldInverse).applyMatrix4(this.camera.projectionMatrix),first=project(chain[0]);
+    for(let i=0;i+1<chain.length;i++){
+      const A=chain[i],B=chain[i+1].clone();let clipped=false;
+      if(-B.z<this.camera.near){B.copy(A).lerp(B,(-this.camera.near-A.z)/(B.z-A.z));clipped=true;}
+      const a=project(A),b=project(B);let best=Infinity,edge=null;
+      for(const [k,low,high] of [['x','left','right'],['y','bottom','top']]){
+        const d=b[k]-a[k];if(!d)continue;
+        for(const [limit,name] of [[-1,low],[1,high]]){const t=(limit-a[k])/d;if(t>=0&&t<=1&&t<best){best=t;edge=name;}}
+      }
+      if(edge)return {edge,dx:a.x+(b.x-a.x)*best-first.x};
+      if(clipped)return {edge:'lens',dx:b.x-first.x};
+    }
+    return {edge:'inside',dx:0};
+  }
   /** Number of the sleeve's cut-end vertices that fall inside the weapon camera's frustum (a visible floating cut), and the nearest one's depth. */
   sleeveStartInView(side){
     this.root.updateMatrixWorld(true);let inside=0,nearest=Infinity;
@@ -237,18 +281,43 @@ export class HandRig {
     }
     return nearest;
   }
-  /** Vertices of the skin/sleeve/cuff meshes that fall inside the sight window (|ndc| <= half) and in front of the front sight: they would hide the sights. */
-  sightWindowOcclusion(half=.05){
-    this.root.updateMatrixWorld(true);let count=0;
-    for(const name of ['fp_hands','body','fp_cuffs','fp_sleeve_caps','fp_straps']){
+  /** Where the tip of the front post is drawn (normalised device coordinates of the weapon camera). */
+  frontPostNdc(){
+    this.root.updateMatrixWorld(true);pt.fromArray(WZ29_LANDMARKS.frontPost).applyMatrix4(this.weapon.matrixWorld).applyMatrix4(this.camera.projectionMatrix);
+    this._post??=new THREE.Vector2();return this._post.set(pt.x,pt.y);
+  }
+  /**
+   * Drawn vertices of the given meshes that fall inside the sight window and in front of the front sight (nearer than 1.2 m): they would sit
+   * in the sight picture. Default meshes: skin, sleeves, cuffs, sleeve caps and straps. `['fp_hands']` is the flesh only.
+   */
+  sightWindowOcclusion(meshes=ARM_MESHES,{x=SIGHT_WINDOW.x,y=SIGHT_WINDOW.y}={}){
+    this.root.updateMatrixWorld(true);let count=0;const post=this.frontPostNdc(),cx=post.x,cy=post.y;
+    for(const name of meshes){
       const mesh=this.root.getObjectByName(name);if(!mesh?.visible)continue;const pos=mesh.geometry.getAttribute('position');
       for(const i of new Set(mesh.geometry.index.array)){   // only vertices a triangle really draws
         pt.fromBufferAttribute(pos,i);if(mesh.isSkinnedMesh)mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld);
         const depth=-pt.z;if(!(depth>this.camera.near&&depth<1.2))continue;
-        pt.applyMatrix4(this.camera.projectionMatrix);if(Math.abs(pt.x)<=half&&Math.abs(pt.y)<=half)count++;
+        pt.applyMatrix4(this.camera.projectionMatrix);if(Math.abs(pt.x-cx)<=x&&Math.abs(pt.y-cy)<=y)count++;
       }
     }
     return count;
+  }
+  /** Fraction of the frame (96 x 54 cells, weapon camera) covered by the triangles of the given meshes (default: sleeves, cuffs, caps, straps; not the skin). */
+  armCoverage(meshes=SLEEVE_MESHES,cols=96,rows=54){
+    this.root.updateMatrixWorld(true);const cells=new Uint8Array(cols*rows),P=[[0,0],[0,0],[0,0]],V=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()];
+    for(const name of meshes){
+      const mesh=this.root.getObjectByName(name);if(!mesh?.visible)continue;const pos=mesh.geometry.getAttribute('position'),idx=mesh.geometry.index.array;
+      const buf=new Float32Array(pos.count*3);this.skinned(mesh,buf,'view');
+      for(let t=0;t<idx.length;t+=3){
+        let ok=true;
+        for(let k=0;k<3;k++){
+          const i=idx[t+k];V[k].set(buf[i*3],buf[i*3+1],buf[i*3+2]);if(!(-V[k].z>this.camera.near)){ok=false;break;}
+          pt.copy(V[k]).applyMatrix4(this.camera.projectionMatrix);P[k][0]=(pt.x*.5+.5)*cols;P[k][1]=(pt.y*.5+.5)*rows;
+        }
+        if(!ok)continue;rasterTriangle(cells,P,cols,rows);
+      }
+    }
+    let n=0;for(const v of cells)n+=v;return n/cells.length;
   }
   /**
    * Fraction of the frame (64 x 36 cells, weapon camera) covered by rifle triangles nearer than `depth` metres (default any) and, with `minZ`, only
@@ -264,13 +333,7 @@ export class HandRig {
         pt.applyMatrix4(this.camera.projectionMatrix);P[k][0]=(pt.x*.5+.5)*cols;P[k][1]=(pt.y*.5+.5)*rows;
       }
       if(!ok||zc>=depth)continue;
-      const x0=Math.max(0,Math.floor(Math.min(P[0][0],P[1][0],P[2][0]))),x1=Math.min(cols-1,Math.ceil(Math.max(P[0][0],P[1][0],P[2][0])));
-      const y0=Math.max(0,Math.floor(Math.min(P[0][1],P[1][1],P[2][1]))),y1=Math.min(rows-1,Math.ceil(Math.max(P[0][1],P[1][1],P[2][1])));
-      const [a,b,c]=P,den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);if(Math.abs(den)<1e-9)continue;
-      for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
-        const px=x+.5,py=y+.5,l1=((b[1]-c[1])*(px-c[0])+(c[0]-b[0])*(py-c[1]))/den,l2=((c[1]-a[1])*(px-c[0])+(a[0]-c[0])*(py-c[1]))/den,l3=1-l1-l2;
-        if(l1>=0&&l2>=0&&l3>=0)cells[y*cols+x]=1;
-      }
+      rasterTriangle(cells,P,cols,rows);
     }
     let n=0;for(const v of cells)n+=v;return n/cells.length;
   }
@@ -288,10 +351,11 @@ export class HandRig {
       knobToIndexTip:rIndexTip.distanceTo(knob),knobToThumbTip:rThumbTip.distanceTo(knob),
       leftTopTip:Math.max(...lTips.map(t=>t.y)),
       wristBendR:this.wristBend('r'),wristBendL:this.wristBend('l'),elbowR:this.elbowAngle('r'),elbowL:this.elbowAngle('l'),
-      rifleNearView:this.rifleNearView(),stockCoverage:this.rifleCoverage(Infinity,{minZ:.06}),sightOcclusion:this.sightWindowOcclusion(),armNearest:this.armNearestDepth(),
+      rifleNearView:this.rifleNearView(),stockCoverage:this.rifleCoverage(Infinity,{minZ:.06}),sightOcclusion:this.sightWindowOcclusion(),sightFlesh:this.sightWindowOcclusion(['fp_hands']),armCoverage:this.armCoverage(),armNearest:this.armNearestDepth(),
       rightPalm:this.palm('r').toArray(),knob:knob.toArray(),indexTip:rIndexTip.toArray(),thumbTip:rThumbTip.toArray(),
     };
     const sr=this.sleeveStartInView('r'),sl=this.sleeveStartInView('l');
+    out.armExitR=this.armExit('r');out.armExitL=this.armExit('l');
     out.sleeveStartInViewR=sr.inside;out.sleeveStartInViewL=sl.inside;out.sleeveStartNearest=Math.min(sr.nearest,sl.nearest);
     out.handToKnob=this.handToPoint('r',knob);
     if(this.clipMesh.visible)out.clipToRightHand=this.handToClip('r');
@@ -319,6 +383,8 @@ export function sample(view,rig,sim,{state='READY',fraction=0,aiming=false,sprin
 export const GRID=[
   ['hip',{state:'READY'}],['ads',{state:'READY',aiming:true}],['sprint',{state:'READY',sprinting:true}],
   ...Array.from({length:19},(_,i)=>[`bolt-ads-${((i+1)*.05).toFixed(2)}`,{state:'BOLT_CYCLE',fraction:(i+1)*.05,aiming:true}]),
+  // Finer steps where the right hand comes home along the sights (the thumb crosses the window there if the hand is late).
+  ...[.87,.89,.92,.97].map(f=>[`bolt-ads-${f.toFixed(2)}`,{state:'BOLT_CYCLE',fraction:f,aiming:true}]),
   ...Array.from({length:19},(_,i)=>[`bolt-hip-${((i+1)*.05).toFixed(2)}`,{state:'BOLT_CYCLE',fraction:(i+1)*.05}]),
   ...Array.from({length:21},(_,i)=>[`reload-${(i*.05).toFixed(2)}`,{state:'RELOAD_CLIP',fraction:i*.05}]),
   ...Array.from({length:11},(_,i)=>[`single-${(i*.1).toFixed(1)}`,{state:'RELOAD_SINGLE',fraction:i*.1}]),

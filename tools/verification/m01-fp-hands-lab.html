@@ -34,7 +34,7 @@ const views={
   forendBottom:[[.1,-1,0],[0,0,-.34],.34],forendFront:[[.2,.1,-1],[0,0,-.34],.34],forendTop:[[0,1,.1],[0,0,-.34],.34],
 };
 window.lab={
-  vm,sim,
+  vm,sim,scene,lighting,
   /** Advance the presentation clock by dt seconds with the given player flags and weapon state. */
   step({dt=.05,state='READY',fraction=0,aiming=false,sprinting=false,moveBlend=null}={}){
     sim.clock+=dt;sim.player.aiming=aiming;sim.player.sprinting=sprinting;sim.player.moveBlend=moveBlend??(sprinting?1:0);
@@ -50,6 +50,16 @@ window.lab={
     const d=new THREE.Vector3(...dir).normalize().applyQuaternion(q4);
     free.position.copy(c).addScaledVector(d,distance);free.up.set(0,1,0).applyQuaternion(q4);free.lookAt(c);free.updateProjectionMatrix();free.updateMatrixWorld(true);
     engine.render(scene,free);
+  },
+  /** Flat colour per mesh (rifle blue, clip yellow, hands red, sleeves green, cuffs magenta, sleeve caps cyan, straps orange) to tell which mesh is which. */
+  tint(on){
+    const colours={rifle:0x3b6cff,clip:0xffe14d,fp_hands:0xff2a2a,body:0x39d353,fp_cuffs:0xff3df0,fp_sleeve_caps:0x25e6e6,fp_straps:0xff9a1f};
+    this.originals??=new Map();
+    vm.root.traverse(n=>{
+      if(!n.isMesh||!(n.name in colours))return;
+      if(on){if(!this.originals.has(n))this.originals.set(n,n.material);n.material=new THREE.MeshBasicMaterial({color:colours[n.name]});}
+      else if(this.originals.has(n)){n.material.dispose();n.material=this.originals.get(n);this.originals.delete(n);}
+    });
   },
   png(){return canvas.toDataURL('image/png');},
   stats(){return vm.stats;},

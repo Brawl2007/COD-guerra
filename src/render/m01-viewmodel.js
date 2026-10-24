@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type:'json'};
-import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,riflePresentationMaterial,viewAtlasMaterial,
+import {WZ29_VISUAL,STOCK_SHADE,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,riflePresentationMaterial,viewAtlasMaterial,
   adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
 import {frameFirstPersonCarry} from './m01-fp-carry.js';
@@ -42,6 +42,7 @@ export function viewModelArmsGeometry(source,jointNames){
 
 // Interrupted reload (a shot during the single-round reload): the rig eases back from where it was over this much mission time (R6-a).
 const FADE_SECONDS=.2,FADE_MIN_PROGRESS=.88;
+const HAND_RETURN=Object.freeze({from:.96,to:1.08});   // fire_bolt clip seconds: the right wrist goes back to its hold position
 const _fq=new THREE.Quaternion();
 const KEY_SIZE=25;   // slots of the per-frame change key in update()
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.
@@ -260,14 +261,18 @@ export class M01ViewModel {
       // Bolt-action convention: the stroke takes the rifle off the eye, canted to show the bolt and the ejection,
       // and it is back on the sights before the weapon is READY. player.aiming and authoritative spread are untouched.
       stroke=clip==='fire_bolt'?THREE.MathUtils.smoothstep(sample,.10,.30)*(1-THREE.MathUtils.smoothstep(sample,.92,1.12))*v.aim:0;
-      const pose=presentationPose({clock:t,lastShot:w.lastShot,aim:v.aim*(1-.6*stroke),move:v.move,run:v.run,crouch:v.crouch,wall:v.wall,reload:w.reloading?reloadEnvelope(sample):0,
+      const reloadWeight=w.reloading?reloadEnvelope(sample):0,pose=presentationPose({clock:t,lastShot:w.lastShot,aim:v.aim*(1-.6*stroke),move:v.move,run:v.run,crouch:v.crouch,wall:v.wall,reload:reloadWeight,
         shot:w.shotCount??0,look:v.look,mechanical,stroke,profile:PROFILE});
       Object.assign(feel,{wallLower:+v.wall.toFixed(4),fov:+adsFieldOfView(v.aim).toFixed(4),aimEased:+adsEase(v.aim).toFixed(5),gait:+pose.gait.phase.toFixed(4),
         bob:+(pose.gait.y*v.move*(1-adsEase(v.aim))).toFixed(6),breath:+(breathSway(t).y*(1-adsEase(v.aim))).toFixed(6)});
       placeWz29(this.root,this.root.getObjectByName('weapon'),pose);
+      if(this.rifleMaterial)this.rifleMaterial.userData.m01StockShade.value=STOCK_SHADE.strength*adsEase(v.aim*(1-.6*stroke));
       const gripWeight=w.reloading?1-reloadEnvelope(sample):w.boltCycling?
         1-THREE.MathUtils.smoothstep(sample,.12,.25)+THREE.MathUtils.smoothstep(sample,1.08,characters.clips.get('fire_bolt').duration):1;
-      this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.root.getObjectByName('weapon'),{r:gripWeight,l:1});
+      // The right wrist is back on its hold position a little before the fingers close on it: the thumb crosses the sights if the hand comes home
+      // along the authored path with the rifle already back on the eye (R6-a).
+      const wristWeight=w.boltCycling?Math.max(gripWeight,THREE.MathUtils.smoothstep(sample,HAND_RETURN.from,HAND_RETURN.to)):gripWeight;
+      this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.root.getObjectByName('weapon'),{r:wristWeight,l:1},adsEase(v.aim)*(1-reloadWeight));
     }
     this.root.getObjectByName('rifle').visible=!carry;
     // From clip_ejected the empty clip continues as a world object; the asset's short arc would otherwise vanish mid-air.

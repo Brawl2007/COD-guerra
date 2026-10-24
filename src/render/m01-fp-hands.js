@@ -36,11 +36,14 @@ export const WZ29_HANDS=Object.freeze({
   // Largest turn (radians) of the forearm away from its authored direction, i.e. of the wrist angle: 35 degrees.
   wristLimit:.61,
   sleeveRadius:.05,
+  // Down the sights both forearms leave through the bottom of the frame, elbows tucked under the rifle: the view-frame unit direction from elbow to wrist
+  // each forearm is drawn towards, weighted by the aim blend (reload excluded). It stays inside `wristLimit` of the authored forearm.
+  tuck:Object.freeze({r:Object.freeze([-.2,.96,-.2]),l:Object.freeze([.4,.7,-.6])}),
   hold:Object.freeze({
-    r:Object.freeze({offset:Object.freeze([.0335,.0159,.0187]),spread:Object.freeze({index:-.206}),
-      curl:Object.freeze({thumb:Object.freeze([.325,.52,.52]),index:Object.freeze([0,0,0]),middle:Object.freeze([.756,.68,.529]),ring:Object.freeze([.751,.676,.526]),pinky:Object.freeze([.95,.855,.665])})}),
-    l:Object.freeze({offset:Object.freeze([.0113,-.0134,-.0054]),
-      curl:Object.freeze({thumb:Object.freeze([.172,.274,.274]),index:Object.freeze([.236,.225,.305]),middle:Object.freeze([.873,.786,.611]),ring:Object.freeze([.826,.743,.578]),pinky:Object.freeze([1.077,.969,.754])})}),
+    r:Object.freeze({offset:Object.freeze([.045,.0041,.0099]),spread:Object.freeze({index:-.0935}),
+      curl:Object.freeze({thumb:Object.freeze([.299,.478,.478]),index:Object.freeze([0,.167,.698]),middle:Object.freeze([.687,.618,.481]),ring:Object.freeze([1.032,.929,.722]),pinky:Object.freeze([.915,.823,.64])})}),
+    l:Object.freeze({offset:Object.freeze([.0118,-.0364,-.0121]),
+      curl:Object.freeze({thumb:Object.freeze([.232,.372,.372]),index:Object.freeze([.242,.241,.473]),middle:Object.freeze([.822,.74,.575]),ring:Object.freeze([.812,.73,.568]),pinky:Object.freeze([.968,.871,.678])})}),
   }),
 });
 
@@ -56,7 +59,7 @@ export function frameMargin(p,radius=.05){
 
 // Module scratch: nothing below allocates per frame.
 const _sA=new THREE.Vector3(),_eA=new THREE.Vector3(),_wA=new THREE.Vector3(),_W=new THREE.Vector3(),_E=new THREE.Vector3(),_S=new THREE.Vector3();
-const _fA=new THREE.Vector3(),_n=new THREE.Vector3(),_c=new THREE.Vector3(),_v=new THREE.Vector3(),_u=new THREE.Vector3();
+const _fD=new THREE.Vector3(),_tuck=new THREE.Vector3(),_fA=new THREE.Vector3(),_n=new THREE.Vector3(),_c=new THREE.Vector3(),_v=new THREE.Vector3(),_u=new THREE.Vector3();
 const _dirA=new THREE.Vector3(),_dirB=new THREE.Vector3(),_off=new THREE.Vector3(),_id=new THREE.Quaternion(),_rq=new THREE.Quaternion();
 const _uq=new THREE.Quaternion(),_lq=new THREE.Quaternion(),_hq=new THREE.Quaternion(),_q=new THREE.Quaternion(),_wq=new THREE.Quaternion(),_rel=new THREE.Quaternion();
 
@@ -110,10 +113,11 @@ export class ViewHands {
     }
   }
   /**
-   * Solves both arms. `weapon` is the weapon bone; `hold` = {r,l} blends the authored hand to the profile hold. The root's matrices must be
-   * current (after the rigid weapon placement). Leaves every matrix current.
+   * Solves both arms. `weapon` is the weapon bone; `hold` = {r,l} blends the authored hand to the profile hold; `tuck` (0..1) draws both forearms
+   * towards the profile's tuck directions (down the sights). The root's matrices must be current (after the rigid weapon placement). Leaves every
+   * matrix current.
    */
-  place(weapon,hold){
+  place(weapon,hold,tuck=0){
     const root=this.root,profile=this.profile;
     root.updateMatrixWorld(true);weapon.getWorldQuaternion(_wq);
     for(const side of SIDES){
@@ -129,7 +133,15 @@ export class ViewHands {
       let d=_S.distanceTo(_W);const reach=a+b-.001;let slid=false;
       if(d>reach){_n.subVectors(_W,_S).normalize();_S.copy(_W).addScaledVector(_n,-reach);d=reach;slid=true;}
       // 3. elbow: the point of the shoulder-wrist circle nearest to the authored forearm (wrist angle preserved).
-      _fA.subVectors(_wA,_eA).divideScalar(b);_E.copy(_W).addScaledVector(_fA,-b);   // preferred elbow
+      _fA.subVectors(_wA,_eA).divideScalar(b);
+      // Desired forearm: the authored one drawn towards the tuck direction by `tuck`, never further than the wrist limit from the authored one.
+      _fD.copy(_fA);
+      if(tuck>0){
+        _fD.lerp(_tuck.fromArray(profile.tuck[side]),tuck).normalize();const away=_fD.angleTo(_fA);
+        if(away>profile.wristLimit){_q.setFromUnitVectors(_fA,_fD);_rq.copy(_id.identity()).slerp(_q,profile.wristLimit/away);_fD.copy(_fA).applyQuaternion(_rq);}
+      }
+      const slack=Math.max(.05,profile.wristLimit-_fD.angleTo(_fA));
+      _E.copy(_W).addScaledVector(_fD,-b);   // preferred elbow
       _n.subVectors(_W,_S).divideScalar(d);
       const along=(a*a-b*b+d*d)/(2*d),height=Math.sqrt(Math.max(0,a*a-along*along));
       _c.copy(_S).addScaledVector(_n,along);
@@ -138,9 +150,9 @@ export class ViewHands {
       _E.copy(_c).addScaledVector(_v.normalize(),height);
       // 3b. wrist limit: never let the forearm turn further than `wristLimit` from the authored forearm. The elbow follows the authored one
       // as far as needed and the sleeve start trails off towards the anchor (its z stays behind the lens limit below).
-      _dirA.subVectors(_W,_E).divideScalar(b);const deviation=_dirA.angleTo(_fA);
-      if(deviation>profile.wristLimit){
-        _q.setFromUnitVectors(_dirA,_fA);_rq.copy(_id.identity()).slerp(_q,1-profile.wristLimit/deviation);_dirA.applyQuaternion(_rq);
+      _dirA.subVectors(_W,_E).divideScalar(b);const deviation=_dirA.angleTo(_fD);
+      if(deviation>slack){
+        _q.setFromUnitVectors(_dirA,_fD);_rq.copy(_id.identity()).slerp(_q,1-slack/deviation);_dirA.applyQuaternion(_rq);
         _E.copy(_W).addScaledVector(_dirA,-b);
         // The sleeve start trails off towards the anchor; if that would leave a cut end inside the frame (a raised elbow), it goes outwards
         // along the line from the view axis through the elbow instead, blended by how far the anchor direction is from leaving the frame.
@@ -155,7 +167,7 @@ export class ViewHands {
         _u.subVectors(_S,_E).divideScalar(a);const nz=clamp((profile.sleeveStartZ-_E.z)/a,-1,1),k=Math.sqrt(Math.max(0,1-nz*nz))/(Math.hypot(_u.x,_u.y)||1);
         _u.set(_u.x*k,_u.y*k,nz);_S.copy(_E).addScaledVector(_u,a);
       }
-      this.stats.deviation[side]=deviation*180/Math.PI;
+      this.stats.deviation[side]=_dirA.angleTo(_fA)*180/Math.PI;
       // 4. write the three bones: upper arm swings (keeping its authored twist), forearm swings, hand keeps its authored orientation.
       upper.position.copy(upper.parent.worldToLocal(_u.copy(_S)));
       _dirA.subVectors(_eA,_sA).divideScalar(a);_dirB.subVectors(_E,_S).divideScalar(a);
