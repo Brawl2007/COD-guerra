@@ -180,7 +180,7 @@ export function sapperCover(world,a){
   }
   if(!node)return null;
   const spot={x:node.position[0]-1.1,z:node.position[2]+Math.max(-1.2,Math.min(1.2,a.z-node.position[2]))};
-  return dist(a,spot)<.6?null:spot;
+  return dist(a,spot)<.9?null:spot;   // moveActor stops a walker 0.8 m short of his target: that is behind it
 }
 
 const capital=t=>t.charAt(0).toUpperCase()+t.slice(1);

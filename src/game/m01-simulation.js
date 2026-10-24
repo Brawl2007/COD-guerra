@@ -1213,6 +1213,7 @@ export class M01Simulation {
       let pace,creep=null;
       if(a.role==='ENGINEER'){
         this.sapperShelter(a);
+        delete a.coverRun;   // (set again below on the ticks of a run for cover)
         const goal=sapperGoal(this,a,sapperNow);
         if(goal.mode==='none')a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';
         else({pace,creep}=this.sapperSet(a,goal));
@@ -1220,8 +1221,8 @@ export class M01Simulation {
           // R3-a: suppressed or shaken (a pin, a bomb), the stage is interrupted. If a cover node lies within seek.coverM he makes for it by his own decision (the lee side of the nearest one) and lies down there;
           // otherwise he goes down where he is, as before. The stage resumes where it left off, from his place of the stage, when the suppression ends. (Not in the camp or the retreat.)
           const cover=goal.mode==='none'?null:sapperCover(this.world,a);
-          if(cover){a.target=cover;a.crouched=false;this.moveActor(a,cover,dt,SAPPERS.seek.speed);}
-          else if(goal.mode!=='none')a.state='GUARD';   // he stopped where he was: no longer «on the move», so he is drawn lying down
+          if(cover){a.target=cover;a.crouched=false;a.coverRun=true;this.moveActor(a,cover,dt,SAPPERS.seek.speed);}   // coverRun: drawn running, not prone, until he is behind it
+          else if(goal.mode!=='none')a.state='GUARD';   // he stopped where he was: no longer «on the move»
           continue;
         }
         if(creep)this.sapperCreep(a,creep,dt);
@@ -2727,6 +2728,7 @@ export function validateM01Snapshot(s){
     if(a.displayOnly!==undefined&&(!(AUXILIARY_IDS.includes(a.id)||GARRISON_IDS.includes(a.id))||a.displayOnly!==true))reject('display-only actor');
     if(GARRISON_IDS.includes(a.id)&&(a.displayOnly!==true||a.group!==GARRISON_GROUP||a.team!=='ally'||a.role!=='RIFLEMAN'||a.civilian))reject('west garrison');
     if(a.nav!==undefined&&!validNavRoute(a.nav,s.clock))reject('route '+a.id);   // NPC navigation: a saved detour round the solids (absent in older saves, re-made on demand)
+    if(a.coverRun!==undefined&&(a.coverRun!==true||a.role!=='ENGINEER'||a.team!=='ally'||!(s.clock<a.suppressedUntil)||!a.target))reject('corrida para a cobertura '+a.id);   // R3-a: a shaken sapper running for cover (absent in every older save)
     if(AUXILIARY_IDS.includes(a.id)&&(!a.displayOnly||a.group!==(YARD_IDS.includes(a.id)?'grp_station_yard':'grp_mg34_loaders')))reject('auxiliary group');
     if(MG_LOADER_IDS.includes(a.id)){
       const p=a.mg34Loader,index=MG_LOADER_IDS.indexOf(a.id);
