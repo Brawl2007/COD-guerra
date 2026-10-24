@@ -32,8 +32,7 @@ const inside=(x,y,z,b)=>Math.abs(x)<=b.x&&y>=b.y0&&y<=b.y1&&z>=b.z0&&z<=b.z1;
 /**
  * Per-triangle class of the `rifle` mesh in the pose it is in now (all of these parts are rigid on the weapon bone): PART.stock for the wood of the stock
  * from the receiver forward (wrist and forend) and PART.comb for the wood behind the receiver ring (weapon z >= 0.035: the comb, the heel and the butt, the part
- * that rises as a triangle under the sights),
- * PART.rear for the rear sight block, PART.front for the front sight, PART.bolt for the bolt, PART.metal for everything else (receiver, barrel, bands, guard, butt plate).
+ * that rises as a triangle under the sights), PART.rear for the rear sight block, PART.front for the front sight, PART.bolt for the bolt, PART.metal for everything else (receiver, barrel, bands, guard, butt plate).
  */
 export function classifyRifle(rig){
   const R=rig.skinned(rig.rifle,new Float32Array(rig.rifle.geometry.getAttribute('position').count*3)),index=rig.rifle.geometry.index.array,out=new Uint8Array(index.length/3);
@@ -49,7 +48,6 @@ export function classifyRifle(rig){
 }
 
 const MESHES=[['rifle',null],['clip',PART.metal],['fp_hands',PART.hands],['body',PART.sleeves],['fp_cuffs',PART.sleeves],['fp_sleeve_caps',PART.sleeves],['fp_straps',PART.sleeves]];
-const _p=new THREE.Vector3();
 
 /**
  * Rasterises every visible view model mesh. `classes` is classifyRifle(rig). Returns {cols, rows, part (Uint8Array, PART.*), depth (Float32Array, m)},
@@ -59,7 +57,7 @@ const _p=new THREE.Vector3();
 export function sightPicture(rig,classes,{cols=640,rows=360,fov=58,near=.03,faceClip=0}={}){
   rig.root.updateMatrixWorld(true);
   const part=new Uint8Array(cols*rows),depth=new Float32Array(cols*rows).fill(Infinity),aspect=cols/rows,ty=Math.tan(THREE.MathUtils.degToRad(fov)/2),tx=ty*aspect;
-  const poly=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]],V=[new Float32Array(3),new Float32Array(3),new Float32Array(3)];
+  const poly=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
   for(const [name,fixed] of MESHES){
     const mesh=rig.root.getObjectByName(name);if(!mesh?.visible)continue;
     const pos=mesh.geometry.getAttribute('position'),index=mesh.geometry.index.array,buf=rig.skinned(mesh,new Float32Array(pos.count*3),'view');

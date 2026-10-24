@@ -84,6 +84,14 @@ test('the head clip is presentation only: 0 at the hip, the engaged ease of its 
   probe.dispose();
 });
 
+test('through the view model: the clip is on the sights at rest, off in the middle of a clip reload with the aim button held, and back when the bolt is closed',()=>{
+  const at=(state,fraction)=>{sample(view,rig,sim,{state,fraction,aiming:true,authored:false,lite:true});return clipDepth();};
+  assert.equal(at('READY',0),FACE_CLIP.depth);
+  assert.equal(at('RELOAD_CLIP',.5),0,'the rifle is across the body in the middle of the reload: nothing is cut');
+  assert.ok(at('RELOAD_CLIP',.99)>FACE_CLIP.depth*.99,'and the clip is back by the end of it');
+  assert.equal(at('READY',0),FACE_CLIP.depth);
+});
+
 test('aimed: the top of the stock (the comb) is not in the picture, and all the stock wood fills at most 5 % of the lower-centre region, at rest and while the rifle is on the eye',()=>{
   // Fractions of the shouldered bolt cycle with the rifle still (or again) on the eye; the comb filled 27 to 33 % of the region at every one of them BEFORE.
   const rows=[['ads',pose({state:'READY',aiming:true})],...[.05,.10,.12,.15,.90,.92,.95,.97].map(f=>[`bolt-ads-${f.toFixed(2)}`,pose({state:'BOLT_CYCLE',fraction:f,aiming:true})])];

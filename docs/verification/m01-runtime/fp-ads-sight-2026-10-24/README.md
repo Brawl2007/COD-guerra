@@ -51,7 +51,7 @@ Uma busca aleatória (500 avaliações) sobre as âncoras de ombro e as direcç�
 | Alça visível (px de 1280 × 720) / fiel | 104 / 0 | 104 / 0 (inalterado, ver causa 3) |
 | Janela da mira 96 × 72 px, pele/mangas (R6-a) | 0 / 0 | 0 / 0 |
 | Fases ADS com o olho à altura (ferrolho 0,05/0,10/0,12/0,15/0,90…0,97): cume | 27–33 % | 0 % |
-| Curso do ferrolho (0,20…0,87): cume | até 31 % | ≤ 10 % (como antes ou menos, em todas) |
+| Curso do ferrolho (0,20…0,87): cume | até 21 % | ≤ 10 % (como antes ou menos, em todas as fases) |
 | Subida à ADS a 60 Hz: maior salto de madeira por fotograma | 5,4 % | 5,3 % (pico de madeira na região 11,7 %, antes 30 %) |
 | Descida da ADS: maior salto de madeira por fotograma | 6,9 % | 3,9 % |
 | Recuo (5 fotogramas): passo da alça / cume | 0,88 cm / 0 % | 0,88 cm / 0,1 % |
@@ -64,7 +64,12 @@ Uma busca aleatória (500 avaliações) sobre as âncoras de ombro e as direcç�
 
 ## Testes
 
-Ver o fim deste ficheiro (preenchido com as corridas finais).
+- `node --test tests/m01-fp-ads-sight.test.js` (novo, 9 testes: alinhamento intacto e olho na linha de mira, geometria de que o corte deriva, peso do corte, uniforme e shader, corte pelo view model (recarga), coronha fora do quadro, curso do ferrolho, subida/descida/recuo contínuos, alça e fiel): 9/9. Os números «antes» estão nos comentários do teste e em `before/sight-metrics.json`.
+- Os 13 ficheiros de teste que tocam o view model, as mãos e a ADS (`m01-animation-variety`, `m01-character-assets`, `m01-consolidation-lifecycle`, `m01-fp-arms`, `m01-fp-hand-grip`, `m01-lighting`, `m01-render-perf`, `m01-t37-foot-ik-hand-pin`, `m01-t49-scratch-reuse`, `m01-viewmodel-feel`, `m01-weapon-presentation`, `m01-wz29-viewmodel`, `m01-fp-ads-sight`): **160/160** na ponta (SwiftShader não entra; Node, ≈ 4 min). Alterações de teste, todas em `tests/m01-fp-hand-grip.test.js` (teste da sombra da coronha): o shader de exemplo ganhou `vertexShader` (o material agora também altera o vértice) e a chave de programa passou de `v4` para `v5`; nenhuma asserção apagada, nenhum limite relaxado (mangas ≤ 12 %, janela da mira, saída dos braços, cotovelos, 12/12).
+- `m01-locomotive`, `m01-panzerzug` e `m01-soldier-visual-variation`: 3 falhas (`git ls-tree 5f3cc34…: not a tree object`), o mesmo defeito de objectos git em falta neste clone que a R6-a documentou; não dependem desta alteração.
+- `npm run build`: OK.
+- Navegador (Chromium/SwiftShader, `npm run build` + `vite preview` noutra porta, `CI=1`): `m01-weapon-presentation` **3/3** (ADS com tiro, clipe a sair aos 2,45 s, carabina M1) e `m01-wz29-viewmodel` (miras reais em ADS) **baixa e média passam; alta falha** em `expect(#pause).toBeVisible()` (5 s por omissão) antes de chegar à ADS, o mesmo sintoma «`#pause` demora mais de 5 s» que a R6-a registou; com `expect.timeout` de 40 s a de qualidade alta **passa** (47 s). Ou seja, lentidão do software, não uma regressão medida. As capturas do renderizador real correram sem erro de página nem resposta ≥ 400 (o shader novo compilou).
+- `npm test` completo **não** foi repetido (60 min nesta máquina partilhada).
 
 ## Por decidir / o que um humano tem de julgar
 

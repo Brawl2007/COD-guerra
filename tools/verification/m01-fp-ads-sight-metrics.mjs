@@ -55,7 +55,7 @@ export async function sightAudit(){
 }
 const rows=await sightAudit();
 if(process.argv.includes('--table')){
-  console.table(Object.fromEntries(Object.entries(rows).filter(([,v])=>!Array.isArray(v)).map(([k,v])=>[k,{...v,eye:undefined,eyeRelief:+v.eye.eyeRelief.toFixed(3),eyeToLine:+v.eye.eyeToLine.toExponential(1),forwardOfButt:+v.eye.forwardOfButt.toFixed(3),aboveComb:v.eye.aboveComb===null?null:+v.eye.aboveComb.toFixed(4)}])));
+  console.table(Object.fromEntries(Object.entries(rows).filter(([,v])=>!Array.isArray(v)).map(([k,v])=>[k,{...Object.fromEntries(Object.entries(v).filter(([n])=>n!=='eye')),eyeRelief:+v.eye.eyeRelief.toFixed(3),eyeToLine:+v.eye.eyeToLine.toExponential(1),forwardOfButt:+v.eye.forwardOfButt.toFixed(3),aboveComb:v.eye.aboveComb===null?null:+v.eye.aboveComb.toFixed(4)}])));
   console.log('transition',JSON.stringify(rows.transition));console.log('recoil',JSON.stringify(rows.recoil));
 }
 if(out){mkdirSync(dirname(resolve(out)),{recursive:true});writeFileSync(out,JSON.stringify({source:src??'working tree',frame:'1280x720 pixel counts from a 640x360 software raster; lower centre = |x|<=0.25, -1<=y<=-0.05 (ndc)',rows},null,1));}
