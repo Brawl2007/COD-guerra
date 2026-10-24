@@ -68,6 +68,7 @@ const _twist=new THREE.Quaternion(),_muzzle=new THREE.Vector3();
 const HIGH_SOURCES=['pl:0','de:0','de:1','mg34:0','ckm:0','mg34:1','ckm:1'];
 // Candidate order: reserved MG34 gunners, then their loaders, then nearest first, ties by id (a total order, so the in-place sort is deterministic).
 const byCandidate=(a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id);
+const unarmedKind=a=>Boolean(a.civilian)||a.role==='MEDIC'||mgCrew(a);   // never carries the rifle: its weapon parts are not batched (decided at create, recreated if it ever changes)
 const NO_NAMES=[],RIFLE_ARMED=['rifle','clip'],BAK_ARMED=['clip','rifle_wz98a'],KOWAL_ARMED=['rkm_wz28'];   // parts whose visibility is exactly `armed` (see the update loop)
 const sameBones=(a,b)=>a===b||a.length===b.length&&a.every((bone,i)=>bone===b[i]);
 const sameInverses=(a,b)=>a===b||a.length===b.length&&a.every((m,i)=>m.equals(b[i]));
@@ -336,7 +337,7 @@ export class M01Characters {
     for(const name of SUPPORT_ARM_NAMES){const b=root.getObjectByName(name);if(b?.isBone){supportArmBone=b;break;}}
     const spineBaseQuat=spineBone?.quaternion?spineBone.quaternion.clone():null,spineBaseRotY=spineBone?.rotation?.y??0;
     const armBaseQuat=supportArmBone?.quaternion.clone()??null;
-    const v={id:actor.id,root,key,meshes,batches:batch.batches,loose:batch.loose,looseWeapon:batch.looseWeapon,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,
+    const v={id:actor.id,root,key,unarmed:unarmedKind(actor),meshes,batches:batch.batches,loose:batch.loose,looseWeapon:batch.looseWeapon,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,
       supportArmBone,armBaseQuat,
       // Cache the clip-sampled pose BEFORE any additive torso/arm correction,
       // so repeated rendering of the same simulation time is bit-identical.
@@ -361,7 +362,7 @@ export class M01Characters {
    *  update rules and the diagnostics but move under an invisible holder (not drawn, still found by name); the rkm bipods and rag (own visibility rules, one soldier) and the MG34 kit stay individual meshes. */
   batchParts(meshes,actor){
     const kowal=actor.id==='szymon_kowal',bak=actor.id==='jozef_bak';
-    const armedNames=actor.civilian||actor.role==='MEDIC'||mgCrew(actor)?NO_NAMES:kowal?KOWAL_ARMED:bak?BAK_ARMED:RIFLE_ARMED;
+    const armedNames=unarmedKind(actor)?NO_NAMES:kowal?KOWAL_ARMED:bak?BAK_ARMED:RIFLE_ARMED;
     const fixed=[],switched=[];
     for(const n of meshes){
       if(!n.isSkinnedMesh||n.name.startsWith('mg34_'))continue;
@@ -371,6 +372,11 @@ export class M01Characters {
     const merged=batchSoldier(fixed,switched,this.mergeCache,this.visuals),batches=[];
     for(const r of merged.fixed)if(r.merged)batches.push(r);
     for(const r of merged.switched)if(r.merged)batches.push(r);
+    // Parts that can never be drawn for this actor (other heads, ranks, rkm kit of everybody but Kowal, rifle of a medic...) join them under the holder.
+    if(merged.holder)for(const n of meshes){
+      if(!n.isSkinnedMesh||n.parent===merged.holder||n.name.startsWith('mg34_')||fixed.includes(n)||switched.includes(n))continue;
+      if(weaponParts.has(n.name)?!kowal:!n.visible)merged.holder.add(n);   // the update loop keeps these false (weapon parts follow `armed` / Kowal only)
+    }
     const loose=[],looseWeapon=[];
     for(const n of meshes)if(n.parent!==merged.holder)(n.name.startsWith('mg34_')?looseWeapon:loose).push(n);   // merged parts sit under the invisible holder; the rest keeps its own draw call
     return {batches,loose,looseWeapon};
@@ -455,7 +461,7 @@ export class M01Characters {
       if(mgLoader(a)&&a.alive&&!this.clips.has(`mg34_loader_prone_${a.mg34Loader.phase}`))continue;
       let v=prevInst;
       // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
-      if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
+      if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD||v.unarmed!==unarmedKind(a))){this.release(v);this.instances.delete(a.id);v=null;}
       if(prevInst&&prevInst.key!==key){this.lodSwitches++;tallyLod(this.lodCounters,preset,lod);}   // a camera-driven band change (first appearance is not a switch)
       v??=this.create(a,key,weaponLOD);selected.add(a.id);bands[lod]++;
       v.hold.frozen=false;v.hold.serial++;v.appliedTime=time;v.appliedX=a.x;v.appliedZ=a.z;v.appliedQuality=quality;v.appliedIk=ikOn;this.poseStats.applied++;

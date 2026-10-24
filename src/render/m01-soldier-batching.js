@@ -13,6 +13,7 @@
 import * as THREE from 'three';
 
 const IDENTITY=new THREE.Matrix4();
+const SKIP_SUBTREE=function(){};
 const ATTRIBUTES=['position','normal','uv','skinIndex','skinWeight'];
 // glTF attributes arrive interleaved (byteStride): the typed array of the underlying buffer, not a per-attribute one.
 const arrayType=a=>(a.isInterleavedBufferAttribute?a.data.array:a.array).constructor;
@@ -117,5 +118,8 @@ export function batchSoldier(staticParts,switchedParts,cache,visuals){
   const a=ok(staticParts),b=ok(switchedParts);
   // One invisible holder per soldier next to the parts: three skips the whole subtree when rendering (projectObject / shadow pass).
   const holder=new THREE.Group();holder.name='m01_batched_parts';holder.visible=false;reference.parent.add(holder);
+  // Nothing under the holder is drawn, so its world matrices (and the bindMatrixInverse inversions of its skinned parts) are never needed: skip the subtree.
+  // The bones, which drive the merged meshes, are not below it.
+  holder.updateMatrixWorld=SKIP_SUBTREE;
   return {fixed:a.length?build(a,'batch_body',cache,visuals,holder):[],switched:b.length?build(b,'batch_weapon',cache,visuals,holder):[],holder};
 }
