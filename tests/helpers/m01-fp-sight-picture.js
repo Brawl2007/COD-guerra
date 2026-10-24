@@ -6,7 +6,7 @@ import * as THREE from 'three';
 // back-face culling (closed meshes: the nearest surface wins the depth test). The camera is the weapon pass camera: eye at the origin, -Z
 // forward, 58 degrees vertical field of view, 16:9 by default.
 
-export const PART={none:0,stock:1,metal:2,hands:3,sleeves:4,rear:5,front:6,handguard:7};
+export const PART={none:0,stock:1,metal:2,hands:3,sleeves:4,rear:5,front:6,handguard:7,comb:8};
 const Q=2/.45;
 // Stock loft of the wz.29 (tools/assets/m01-soldiers/src/weapon.mjs STOCK.wz29): [z, centre y, width, height]. A rifle vertex lies on the stock
 // surface when it satisfies the section's superellipse equation at its own z; that separates the wood of the stock from the steel parts that
@@ -30,14 +30,17 @@ const HANDGUARD_BOX={x:.0155,y0:.0265,y1:.0455,z0:-.6205,z1:-.2695};
 const inside=(x,y,z,b)=>Math.abs(x)<=b.x&&y>=b.y0&&y<=b.y1&&z>=b.z0&&z<=b.z1;
 
 /**
- * Per-triangle class of the `rifle` mesh in the pose it is in now (all of these parts are rigid on the weapon bone): PART.stock for the wood of the stock,
+ * Per-triangle class of the `rifle` mesh in the pose it is in now (all of these parts are rigid on the weapon bone): PART.stock for the wood of the stock
+ * from the receiver forward (wrist and forend) and PART.comb for the wood behind the receiver ring (weapon z >= 0.035: the comb, the heel and the butt, the part
+ * that rises as a triangle under the sights),
  * PART.rear for the rear sight block, PART.front for the front sight, PART.metal for everything else (receiver, barrel, bands, bolt, guard, butt plate).
  */
 export function classifyRifle(rig){
   const R=rig.skinned(rig.rifle,new Float32Array(rig.rifle.geometry.getAttribute('position').count*3)),index=rig.rifle.geometry.index.array,out=new Uint8Array(index.length/3);
+  const centroidZ=t=>(R[index[t]*3+2]+R[index[t+1]*3+2]+R[index[t+2]*3+2])/3;
   const all=(t,test)=>{for(let k=0;k<3;k++){const i=index[t+k];if(!test(R[i*3],R[i*3+1],R[i*3+2]))return false;}return true;};
   for(let t=0;t<index.length;t+=3){
-    out[t/3]=all(t,(x,y,z)=>inside(x,y,z,REAR_BOX))?PART.rear:all(t,(x,y,z)=>inside(x,y,z,FRONT_BOX))?PART.front:all(t,onStockSurface)?PART.stock:all(t,(x,y,z)=>inside(x,y,z,HANDGUARD_BOX))?PART.handguard:PART.metal;
+    out[t/3]=all(t,(x,y,z)=>inside(x,y,z,REAR_BOX))?PART.rear:all(t,(x,y,z)=>inside(x,y,z,FRONT_BOX))?PART.front:all(t,onStockSurface)?(centroidZ(t)>=.035?PART.comb:PART.stock):all(t,(x,y,z)=>inside(x,y,z,HANDGUARD_BOX))?PART.handguard:PART.metal;
   }
   return out;
 }
@@ -74,7 +77,7 @@ export function sightPicture(rig,classes,{cols=640,rows=360,fov=58,near=.03,face
           const px=x+.5,py=y+.5,l0=((P[1][1]-P[2][1])*(px-P[2][0])+(P[2][0]-P[1][0])*(py-P[2][1]))/den,l1=((P[2][1]-P[0][1])*(px-P[2][0])+(P[0][0]-P[2][0])*(py-P[2][1]))/den,l2=1-l0-l1;
           if(l0<0||l1<0||l2<0)continue;
           const d=1/(l0*P[0][2]+l1*P[1][2]+l2*P[2][2]);
-          if(d<faceClip&&(kind===PART.stock||kind===PART.handguard))continue;
+          if(d<faceClip&&(kind===PART.stock||kind===PART.comb||kind===PART.handguard))continue;
           if(d<depth[y*cols+x]){depth[y*cols+x]=d;part[y*cols+x]=kind;}
         }
       }

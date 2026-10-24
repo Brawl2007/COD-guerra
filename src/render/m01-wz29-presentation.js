@@ -3,8 +3,10 @@ import {WEAPON_PRESENTATION,weaponRecoil,idleSway} from './first-person-weapon-f
 
 // Asset landmarks, metres in the weapon bone frame. Rear is the GLB socket;
 // front is the existing blade tip (weapon.mjs), not a new gameplay sight/ray.
+// rearDepth is the eye relief when shouldered (eye to rear sight along the sight line, R6-b: 0.52 m, was 0.74 m = 11.5 cm BEHIND the butt plate);
+// hipDepth is the rear sight's depth in every other hold (hip, run), unchanged.
 export const WZ29_VISUAL=Object.freeze({rear:Object.freeze([0,.056,-.29]),front:Object.freeze([0,.065,-.752]),
-  muzzle:Object.freeze([0,.032,-.765]),rearDepth:.74,near:.03,adsTolerancePixels:.5,flashToleranceMetres:1e-8});
+  muzzle:Object.freeze([0,.032,-.765]),rearDepth:.56,hipDepth:.74,near:.03,adsTolerancePixels:.5,flashToleranceMetres:1e-8});
 const clamp=THREE.MathUtils.clamp,smooth=THREE.MathUtils.smoothstep;
 export function recoilEnvelope(clock,lastShot){
   if(!Number.isFinite(lastShot))return 0;
@@ -112,7 +114,8 @@ export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phas
   // Down the sights the rifle follows the view exactly, also while turning: the sights show where the round goes.
   const hold=hip*active*(1-.65*Math.min(1,move)),sway=idleSway(clock),lag=(1-eased)*active;
   const yawLag=(look?.yaw??0)*lag,pitchLag=(look?.pitchLag??0)*lag;
-  const position=new THREE.Vector3(.145*hip,-.175*hip,-WZ29_VISUAL.rearDepth);
+  // The eye comes in along the sight line as the rifle is shouldered: hipDepth at the hip, rearDepth (exactly) on the sights, on the same ease as everything else.
+  const position=new THREE.Vector3(.145*hip,-.175*hip,-(WZ29_VISUAL.rearDepth+(WZ29_VISUAL.hipDepth-WZ29_VISUAL.rearDepth)*hip));
   position.x+=gait.x*bob+sway.x*hold-yawLag*.05;
   position.y+=gait.y*bob+breath.y*hip*active+sway.y*hold-.010*arc+pitchLag*.04;
   position.y-=.065*run*hip;position.z-=.025*run*hip;
@@ -149,6 +152,13 @@ export function placeWz29(root,weapon,pose){
 
 // The first-person arms and hands are solved in m01-fp-hands.js (R6-a replaced the fixed-shoulder placeViewArms that lived here).
 
+/**
+ * Aimed-down-sights clip of the stock wood (R6-b). The comb, the heel and the butt behind the receiver ring are below and behind the eye; the player's head rests
+ * on them and no head is drawn, so with the rifle on the shoulder the wood of the view model that is closer to the eye than `depth` metres is not drawn
+ * (steel is: the shroud, the receiver and the bolt are not wood). `depth` is the distance from the eye to the rear end of the receiver ring (weapon z = .035) plus 5 mm:
+ * the cut falls on the ring, which hides it. Its weight is the aim ease (0 at the hip, exactly 1 on the sights), so it grows with the raise.
+ */
+export const FACE_CLIP=Object.freeze({depth:WZ29_VISUAL.rearDepth+WZ29_VISUAL.rear[2]-.035+.005});
 /** Aimed-down-sights shade of the stock wood: strength (0..1 of the light removed) and the eye distances (m) where it is full / gone. */
 export const STOCK_SHADE=Object.freeze({strength:.6,near:.56,far:.68});
 export function riflePresentationMaterial(source){
@@ -156,18 +166,18 @@ export function riflePresentationMaterial(source){
   material.color.multiply(new THREE.Color(.94,.92,.89));material.normalScale?.multiplyScalar(.65);
   // R6-a: with the eye 11 cm behind the butt the wood of the stock is a bright wedge under the sights. Aimed down the sights it sits in the head's
   // shadow: wood texels between STOCK_SHADE.near and .far metres of the eye lose up to m01StockShade of their light (0 at the hip, set by M01ViewModel).
-  const shade=material.userData.m01StockShade={value:0};
+  const shade=material.userData.m01StockShade={value:0},faceClip=material.userData.m01FaceClip={value:0,depth:FACE_CLIP.depth};
   // Preserve baked wood grain, wear and metal masks. The weapon pass now has a low sky/ground reflection
   // environment, so blued steel may read as metal (sheen) while oiled wood stays satin, never mirror-like.
-  material.onBeforeCompile=shader=>{shader.uniforms.m01StockShade=shade;
-    shader.fragmentShader='uniform float m01StockShade;\n'+shader.fragmentShader.replace('#include <opaque_fragment>',
+  material.onBeforeCompile=shader=>{shader.uniforms.m01StockShade=shade;shader.uniforms.m01FaceClip=faceClip;
+    shader.fragmentShader='uniform float m01StockShade;\nuniform float m01FaceClip;\n'+shader.fragmentShader.replace('#include <opaque_fragment>',
       'outgoingLight *= 1.0 - m01StockShade * (1.0 - metalnessFactor) * (1.0 - smoothstep('+STOCK_SHADE.near.toFixed(2)+', '+STOCK_SHADE.far.toFixed(2)+', length(vViewPosition)));\n#include <opaque_fragment>');
     shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
-    '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
+    '#include <metalnessmap_fragment>\nif ( m01FaceClip > 0.0 && metalnessFactor < 0.5 && vViewPosition.z < m01FaceClip * '+FACE_CLIP.depth.toFixed(4)+' ) discard;\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
     '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
   // Reflection strength is the weapon pass's scene.environmentIntensity (three ignores envMapIntensity without an own envMap).
-  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v4';
+  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v5';
   return material;
 }
 /** Hands/sleeves/clip use a private atlas copy: the eye pass has its own environment and must not flip the world soldiers' programs. */
