@@ -8,9 +8,13 @@ export function impactPass(crack,distance){return crack?'crack':distance<=12?'wh
 /** R2-a (src/game/m01-section.js): what a Pole of the section can call (a German by class, the deck assault by phase, a man down, a man pinned) and what the sergeant can order. */
 export const SECTION_CALLOUT_KINDS=Object.freeze(['mg','gate','dike','deck','advance','fallback','down','pinned','casualty']);
 export const SECTION_ORDER_KINDS=Object.freeze(['focus','hold','shift','return','deck','sector']);
+/** R2-b: what a man of the deck assault does besides the old bounds: press on to a closing line, fall back one line, search for the Pole he lost. */
+export const DECK_TACTIC_KINDS=Object.freeze(['stage','pullback','search']);
 const finitePoint=p=>Boolean(p)&&[p.x,p.y,p.z].every(Number.isFinite);
 export function validateM01AudioEvent(event){
   if(event.type==='npc-shot'&&(typeof event.weapon!=='string'||!event.weapon))throw Error('M01 npc-shot.weapon required');
+  // R2-b: a real round of the Polish section also carries where it stopped (`end`) and whether it struck its target (`hit`). Optional; the display-grade shots of R2-a and the rearguard's carry neither.
+  if(event.type==='npc-shot'&&(event.end!==undefined||event.hit!==undefined)&&(!finitePoint(event.end)||typeof event.hit!=='boolean'))throw Error('M01 npc-shot.end/hit: a point and a boolean, together');
   // R2-a: a man of the section has seen (or heard, or suffered) something new: who called, what, where he stands (`from` = `point`, the place the bark director measures hearing from) and where it is
   // (`aim`, null when there is no target), the side of the gates as the player sees them (mg / gate only), and what each listener did about it. Never persisted.
   if(event.type==='section-callout'&&(!SECTION_CALLOUT_KINDS.includes(event.kind)||typeof event.by!=='string'||!event.by||!(event.target===null||typeof event.target==='string')||
@@ -22,6 +26,13 @@ export function validateM01AudioEvent(event){
     !(event.target===null||typeof event.target==='string')||!(event.side===null||event.side==='left'||event.side==='right')||!finitePoint(event.from)||!finitePoint(event.point)||!Number.isFinite(event.at)))
     throw Error('M01 section-order kind/by/to/target/side/from/point/at required');
   if(event.type==='m01-blast'&&!BLAST_KINDS.includes(event.kind))throw Error('M01 m01-blast.kind required');
+  // R2-b: a stick grenade of the deck assault has been thrown (the warning: who, from where, where it is aimed, the fuse from the throw and the flight) and, on its explosion, the m01-blast of kind grenade
+  // carries `by` (the thrower). A change of line of the assault is `deck-tactic` (stage: on to a closing line, pullback: one line back, search: a bound to see where the Pole was last seen). Never persisted.
+  if(event.type==='enemy-grenade'&&(!/^de_spans_\d+$/.test(event.by??'')||!finitePoint(event.origin)||!finitePoint(event.target)||!(event.fuse>0)||!(event.flight>0)||!Number.isFinite(event.at)))
+    throw Error('M01 enemy-grenade by/origin/target/fuse/flight/at required');
+  if(event.type==='m01-blast'&&event.by!==undefined&&(event.kind!=='grenade'||!/^de_spans_\d+$/.test(event.by)))throw Error('M01 m01-blast.by is the thrower of a stick grenade');
+  if(event.type==='deck-tactic'&&(!DECK_TACTIC_KINDS.includes(event.kind)||!/^de_spans_\d+$/.test(event.by??'')||!Number.isInteger(event.line)||event.line<0||!Number.isFinite(event.at)))
+    throw Error('M01 deck-tactic kind/by/line/at required');
   // R1-a: an aerial bomb also says how hard it stunned the player (`concussion`, 0..1: the audio presents it as the mix's concussion duck) and whom it killed, wounded and shook (`effects`, ids).
   // Both are optional, and a grenade or a demolition carries neither. Transient: never persisted (the state is in the actors and in player.concussion).
   if(event.type==='m01-blast'&&event.concussion!==undefined&&!(Number.isFinite(event.concussion)&&event.concussion>=0&&event.concussion<=1))throw Error('M01 m01-blast.concussion must be 0..1');

@@ -1,0 +1,105 @@
+{
+ "tool": "tools/verification/m01-german-ai-metrics.mjs --summary",
+ "summary": {
+  "safex450": {
+   "routes": 24,
+   "fightRealSec": {
+    "mean": 244.89,
+    "min": 178.1,
+    "max": 262.3
+   },
+   "toPlayerM": {
+    "minOfMin": 421.7,
+    "meanOfMin": 446.06,
+    "meanOfMedian": 668.07,
+    "pctUnder300": 0,
+    "pctUnder150": 0,
+    "routesUnder300": 0,
+    "routesUnder150": 0
+   },
+   "toPostM": {
+    "minOfMin": 256.8,
+    "meanOfMin": 264.85,
+    "meanOfMedian": 446.61,
+    "pctUnder300": 14.41,
+    "pctUnder150": 0,
+    "pctUnder100": 0,
+    "routesUnder150": 0,
+    "routesUnder100": 0
+   },
+   "germanCasualtiesPerRoute": {
+    "assaultDead": 0.92,
+    "bySource": {
+     "player": 0.21,
+     "rearguard": 0.67,
+     "section": 0.04,
+     "ckm": 0,
+     "demolition": 4,
+     "grenade": 0,
+     "other": 0
+    },
+    "routesWithBreakOut": 1,
+    "assaultAliveAtEnd": 5.08
+   },
+   "polishRounds": {
+    "section": {
+     "shots": 18.79,
+     "hits": 0.13
+    },
+    "rearguard": {
+     "shots": 113.92,
+     "hits": 0.83
+    },
+    "player": {
+     "shots": 63.17,
+     "hits": 0.21
+    },
+    "kowalBursts": 25.83
+   },
+   "pressure": {
+    "assaultSuppressedPct": 33.56,
+    "polesPinnedPct": 57.15
+   },
+   "germanFire": {
+    "roundsPerRoute": 137.63,
+    "collisionsOnPlayer": 4.29,
+    "woundsOnPlayer": 0.88,
+    "minHealthInWindow": 60,
+    "meanMinHealth": 89.67
+   },
+   "grenades": {
+    "thrownPerRoute": 0,
+    "routesWithAny": 0,
+    "exploded": 0,
+    "playerWounds": 0,
+    "playerDamage": 0
+   },
+   "twoLinesPct": 58.4,
+   "stages": {
+    "maxStageReachedMean": 0,
+    "routesAtStage1": 0,
+    "routesAtStage2": 0,
+    "pullBacks": 0,
+    "searches": 0
+   },
+   "integrity": {
+    "complete": "24/24",
+    "checkpoints4": "24/24",
+    "survivors": {
+     "12": 12,
+     "18": 12
+    },
+    "demolitionRealSec": {
+     "mean": 840.14,
+     "min": 751,
+     "max": 886.45
+    },
+    "routeRealSec": {
+     "mean": 1172.28
+    },
+    "clippingEvents": null,
+    "stackedPairs": null
+   }
+  }
+ }
+}

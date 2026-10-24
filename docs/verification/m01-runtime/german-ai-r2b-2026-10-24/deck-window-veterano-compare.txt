@@ -1,0 +1,29 @@
+level veterano: old (33896528) | new (R2-b)
+        1:0  DEAD  41.2s by de_east_16 w3 c2 fight   41.2  |  DEAD  41.2s by de_east_16 w3 c2 fight   41.2
+        2:0  DEAD  60.2s by de_east_17 w3 c0 fight   60.2  |  DEAD  60.2s by de_east_17 w3 c0 fight   60.2
+        3:0  DEAD  63.1s by de_spans_8 w3 c2 fight   63.1  |  DEAD  63.1s by de_spans_8 w3 c2 fight   63.1
+        4:0  DEAD  37.1s by de_east_16 w3 c2 fight   37.1  |  DEAD  37.1s by de_east_16 w3 c2 fight   37.1
+        5:0  DEAD  46.6s by de_east_14 w2 c0 fight   46.6  |  DEAD  46.6s by de_east_14 w2 c0 fight   46.6
+        6:0  DEAD  46.9s by de_east_19 w3 c0 fight   46.9  |  DEAD  46.9s by de_east_19 w3 c0 fight   46.9
+        7:0  DEAD  38.2s by de_east_16 w3 c0 fight   38.2  |  DEAD  38.2s by de_east_16 w3 c0 fight   38.2
+        8:0  DEAD  48.2s by de_spans_7 w2 c1 fight   48.2  |  DEAD  48.2s by de_spans_7 w2 c1 fight   48.2
+        9:0  DEAD  45.7s by de_spans_5 w3 c2 fight   45.7  |  DEAD  45.7s by de_spans_5 w3 c2 fight   45.7
+       10:0  DEAD  47.7s by de_east_17 w3 c1 fight   47.7  |  DEAD  47.7s by de_east_17 w3 c1 fight   47.7
+       11:0  DEAD  25.8s by de_spans_3 w3 c2 fight   25.8  |  DEAD  25.8s by de_spans_3 w3 c2 fight   25.8
+ 19390901:0  DEAD  48.8s by de_east_17 w3 c5 fight   48.8  |  DEAD  48.8s by de_east_17 w3 c5 fight   48.8
+        1:1  DEAD 236.1s by de_spans_7 w2 c25 fight  236.1  |  alive minHP   1       w2 c24 fight  251.7
+        2:1  alive minHP  42       w1 c25 fight  195.5  |  alive minHP  42       w1 c25 fight  195.5
+        3:1  alive minHP  42       w1 c24 fight  241.6  |  DEAD 158.1s by de_east_14 w3 c23 fight  158.1
+        4:1  alive minHP   1       w2 c30 fight  244.5  |  DEAD 226.5s by de_spans_7 w2 c28 fight  226.5
+        5:1  DEAD  69.4s by de_east_15 w2 c4 fight   69.4  |  DEAD  69.4s by de_east_15 w2 c4 fight   69.4
+        6:1  DEAD  43.5s by de_spans_1 w2 c4 fight   43.5  |  DEAD  43.5s by de_spans_1 w2 c4 fight   43.5
+        7:1  DEAD 117.9s by de_spans_1 w3 c12 fight  117.9  |  DEAD 117.9s by de_spans_1 w3 c12 fight  117.9
+        8:1  DEAD  87.5s by de_spans_1 w2 c7 fight   87.5  |  DEAD  87.5s by de_spans_1 w2 c7 fight   87.5
+        9:1  DEAD  71.9s by de_spans_3 w2 c12 fight   71.9  |  DEAD  71.9s by de_spans_3 w2 c12 fight   71.9
+       10:1  DEAD  36.3s by de_east_14 w2 c1 fight   36.3  |  DEAD  36.3s by de_east_14 w2 c1 fight   36.3
+       11:1  alive minHP  50       w1 c28 fight  248.7  |  alive minHP   1       w2 c28 fight  248.7
+ 19390901:1  alive minHP  92       w0 c33 fight  225.2  |  alive minHP  42       w1 c20 fight  206.0
+old control {'routes': 12, 'deaths': 12, 'ttd_median': 46.75, 'ttd_min': 25.8, 'ttd_max': 63.1, 'wounds_mean': 2.83, 'fight_mean': 0.0}
+old support {'routes': 12, 'deaths': 7, 'ttd_median': 71.9, 'ttd_min': 36.3, 'ttd_max': 236.1, 'wounds_mean': 1.67, 'fight_mean': 231.1}
+new control {'routes': 12, 'deaths': 12, 'ttd_median': 46.75, 'ttd_min': 25.8, 'ttd_max': 63.1, 'wounds_mean': 2.83, 'fight_mean': 0.0}
+new support {'routes': 12, 'deaths': 8, 'ttd_median': 79.7, 'ttd_min': 36.3, 'ttd_max': 226.5, 'wounds_mean': 2.0, 'fight_mean': 225.5}

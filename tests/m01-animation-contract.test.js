@@ -83,10 +83,29 @@ const BOMBS_DELTA=/^\$\.(state|checkpoint)\.actors\.(9[7-9]|10[0-2])$/,BOMBS_BEH
 // retirada»): from the first bomb of 04:34 to the east demolition the Polish section sees, calls, reacts and is ordered (src/game/m01-section.js, slice 4 on the machinery of slice 3): callouts of a new threat, a
 // reaction of every man within hearing drawn from five streams of its own, orders of the sergeant (focus, hold, shift, return, deck, sector), a pair that walks between authored posts. The bomb effects golden above
 // is history since then (it pins the simulation of c66436d4); the golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 17 after its lockstep audit
-// against that exact predecessor, is this one. It moves no German, no round and no byte of the player's route: the plot, the real-time clock of every event and the tick count are the predecessor's on both routes.
+// against that exact predecessor, is history since amendment 18 (it pins the simulation of 33896528). It moves no German, no round and no byte of the player's route: the plot, the real-time clock of every event and
+// the tick count are the predecessor's on both routes.
 import squad from './fixtures/m01-squad-coordination-gameplay-baseline.json' with {type:'json'};
 const SQUAD_DELTA=/^\$\.(state|checkpoint)\.timers\.section$/,SQUAD_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|crouched)$/;   // amendment 17, as measured
-const current=squad;   // the golden of the live simulation
+// M01-GERMAN-AI-V1 (golden amendment 18, 2026-10-24, R2-b; owner complaint «os polacos fazem pouco para contrariar o ataque; os inimigos mostram pouca inteligência; combate artificial»): from the deck assault (06:05)
+// the Polish section fires REAL rounds at the Germans of the deck (the model of the rearguard's rifles), the German assault closes in stages down to safeX (250, it was 450) while the Poles who hold the deck are under
+// fire, falls back a line on a casualty, bounds on the two girders in turn, takes the Poles for targets, searches and throws a stick grenade at a Pole it cannot hit (src/game/m01-section.js, src/game/m01-deck-assault.js,
+// mission.json deckAssault.tactics). The squad coordination golden above is history since then (it pins the simulation of 33896528); the golden of the live simulation, regenerated on x86 by
+// tools/verification/m01-integration-golden-audit.mjs --amendment 18 after its lockstep audit against that exact predecessor, is this one. The plot, the 12 objectives, CP-A..D and the survivors are the predecessor's;
+// the real-time clock of the events from the deck fight on moves (the fight is longer on the control route), which the account lists (movedEvents); the battle-clock anchors do not.
+import german from './fixtures/m01-german-ai-gameplay-baseline.json' with {type:'json'};
+const GERMAN_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.playerSuppressedUntil$/,GERMAN_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|crouched)$/;   // amendment 18, as measured
+const current=german;   // the golden of the live simulation
+/** 2026-10-24 (golden amendment 18, R2-b): the deck module (the closing lines and the tactics) and the level table (the words of the death by a stick grenade) moved with it, so the older goldens that record them are
+ *  history for those two files: they are still recorded, and no longer the live bytes. Every other module a history test names is still compared with the live file. */
+const MOVED_BY_18=new Set(['src/game/m01-deck-assault.js','src/game/m01-difficulty.js']);
+function unchangedSince(recorded,files,live,label='and'){
+  for(const f of files){
+    if(MOVED_BY_18.has(f)){assert.ok(recorded[f],`${f} is recorded`);assert.notEqual(recorded[f],live('../'+f),`${f} moved with amendment 18`);}
+    else assert.equal(recorded[f],live('../'+f),`${label} ${f}`);
+  }
+}
+const liveSha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {M01Simulation,validateM01Snapshot,GARRISON_IDS} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
@@ -374,7 +393,7 @@ test('the deck assault golden (amendment 08) chains to the combat AI golden, pin
   // History since the navigator queue (amendment 09): this golden pins the simulation of c7c82ee (the deck assault with its review fixes, slice-2 branch), not the live one.
   assert.equal(deck.sourceSha256,'d3725c9991094d919cee93e725dfbf290973409c4ef504e656d0854ffae43e23','the deck assault golden pins the simulation of c7c82ee');
   assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),deck.sourceSha256,'the deck assault golden is history: the navigator queue moved the simulation source');
-  assert.equal(deck.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
+  unchangedSince(deck.inputsSha256,['src/game/m01-deck-assault.js'],liveSha,'and the deck module');   // (history since amendment 18: the deck module moved)
   // The first difference is the review fix's new key of a sighting (ai.seen.who, the rail-gate MG sees the player after train 963); with it stripped, the first BEHAVIOUR
   // difference is the 5 s MG pin of a working sapper (control route) or the new enemy_down_by_player event (support route, the pilot kills the gate MG gunner).
   assert.equal(account.behaviourFields,'^\\$\\.((state|checkpoint)\\.actors\\.\\d+\\.suppressedUntil|events\\.\\d+\\.type)$');
@@ -415,7 +434,7 @@ test('the navigator queue golden (amendment 09) chains to the deck assault golde
   // History since the reactive dialogue (amendment 10): this golden pins the simulation of 167dccc (the navigator queue merged on the slice-2 tree), not the live one.
   assert.equal(nav.sourceSha256,'4a44a6338d9911e8bf0679e91936ea819a9a96f5e29ee3baa36d970165c3e374','the navigator queue golden pins the simulation of 167dccc');
   assert.notEqual(createHash('sha256').update(readFileSync(new URL('../src/game/m01-simulation.js',import.meta.url))).digest('hex'),nav.sourceSha256,'the navigator queue golden is history: the dialogue moved the simulation source');
-  assert.equal(nav.inputsSha256['src/game/m01-deck-assault.js'],createHash('sha256').update(readFileSync(new URL('../src/game/m01-deck-assault.js',import.meta.url))).digest('hex'),'and the deck module');
+  unchangedSince(nav.inputsSha256,['src/game/m01-deck-assault.js'],liveSha,'and the deck module');   // (history since amendment 18: the deck module moved)
 });
 
 test('the reactive dialogue golden (amendment 10) chains to the navigator queue golden, pins the live simulation, the director and the mission data, and cites its lockstep account',()=>{
@@ -425,7 +444,7 @@ test('the reactive dialogue golden (amendment 10) chains to the navigator queue 
   // History since the rearguard (amendment 11): this golden pins the simulation of c1a3ecf (the dialogue on the navigator-queue tree), not the live one.
   assert.equal(dialogue.sourceSha256,'c9118414abd2be8cbfe3db449756e522d25420ebb5b82efdb7eeac650eb43119','the dialogue golden pins the simulation of c1a3ecf');
   assert.notEqual(sha('../src/game/m01-simulation.js'),dialogue.sourceSha256,'the dialogue golden is history: the rearguard moved the simulation');
-  assert.equal(dialogue.inputsSha256['src/game/m01-deck-assault.js'],sha('../src/game/m01-deck-assault.js'),'and the deck module is unchanged');
+  unchangedSince(dialogue.inputsSha256,['src/game/m01-deck-assault.js'],sha,'and the deck module');   // (history since amendment 18: the deck module moved)
   // What the amendment is: the dialogue only. With the dialogue state (queue, subtitle, consumed tokens, timers.barks / guide / guideDist) and the two HUD messages that became voices stripped
   // from both frames, the live simulation and the predecessor are byte identical on EVERY tick of both routes; the first raw difference is the dialogue itself.
   assert.equal(account.noBehaviourDifference,true);
@@ -445,7 +464,8 @@ test('the rearguard golden (amendment 11) chains to the dialogue golden, pins th
   assert.equal(rearguard.sourceSha256,'fc818782531d6c643330ad0bf2d6de608211f6c27e6b74798ad4ee3298da0dbf','the rearguard golden pins the simulation of a59c129');
   assert.notEqual(sha('../src/game/m01-simulation.js'),rearguard.sourceSha256,'the rearguard golden is history: amendment 12 moved the simulation');
   // 2026-10-22 (amendments 13 to 15): the rearguard and deck modules did not move.
-  for(const f of ['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(rearguard.inputsSha256[f],sha('../'+f),`and ${f} is unchanged`);
+  // 2026-10-24 (golden amendment 18, R2-b): the deck module moved; the rearguard module did not.
+  unchangedSince(rearguard.inputsSha256,['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'],sha,'and (unchanged)');
   // History since amendments 13, 14 and 15 (2026-10-22): the director (the squadMove trigger, the ckm stoppage triggers) and the mission data (the CP-B2 entry, the squad lines, the rules of 114 / 115) moved with them.
   // They were still the bytes of this golden when amendment 12 was written (its golden records the same hashes), so the chain is exact: nothing moved between amendments 11 and 12.
   for(const f of ['src/game/m01-barks.js','missions/m01-tczew/mission.json']){
@@ -470,7 +490,7 @@ test('the difficulty + 05:35 golden (amendment 12) chains to the rearguard golde
   // and the mission data moved with it, and amendments 14 and 15 moved the director, so they are no longer compared with the live files; the two modules none of them touched still are.
   assert.equal(difficulty0535.sourceSha256,'d7f6afec8494c47cc7afd42d9150c19bcadc1d81e55fb383a8e2faff8b43e5da','the difficulty + 05:35 golden pins the simulation of efb8eb00');
   assert.notEqual(sha('../src/game/m01-simulation.js'),difficulty0535.sourceSha256,'the difficulty + 05:35 golden is history: amendment 13 moved the simulation');
-  for(const f of ['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(difficulty0535.inputsSha256[f],sha('../'+f),`and ${f}`);
+  unchangedSince(difficulty0535.inputsSha256,['src/game/m01-rearguard.js','src/game/m01-deck-assault.js'],sha);   // (2026-10-24, amendment 18: the deck module moved)
   for(const f of ['src/game/m01-barks.js','missions/m01-tczew/mission.json']){assert.ok(difficulty0535.inputsSha256[f],`${f} is recorded`);assert.notEqual(difficulty0535.inputsSha256[f],sha('../'+f),`${f} moved since`);}
   // The D2 wiring alone moves nothing on these (recruta) routes: the first difference is the 05:35 fill, a dike rifleman's sighting of the player at the deck post after 05:30
   // (hold_access); with the sightings and the dialogue state stripped, the first BEHAVIOUR difference is a dike rifleman turning to (taking) the player.
@@ -490,7 +510,7 @@ test('the H9 D3/D4 golden (amendment 13) chains to the difficulty + 05:35 golden
   // no longer compared with the live files; the level table and the rearguard and deck modules amendments 14 and 15 did not touch still are.
   assert.equal(difficultyD3D4.sourceSha256,'b52dff98f0466dfd1081332a7052e59ae3c04ab53ee94b982325780afd78215d','the D3/D4 golden pins the simulation of 3eb21b38');
   assert.notEqual(sha('../src/game/m01-simulation.js'),difficultyD3D4.sourceSha256,'the D3/D4 golden is history: amendment 14 moved the simulation');
-  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(difficultyD3D4.inputsSha256[f],sha('../'+f),`and ${f}`);
+  unchangedSince(difficultyD3D4.inputsSha256,['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'],sha);   // (2026-10-24, amendment 18: the level table and the deck module moved)
   // What moved and what did not: the level table and the mission data (the CP-B2 entry) are new bytes; the two recruta routes are the previous golden's, every block of every tick (identicalAmendment).
   for(const f of ['src/game/m01-difficulty.js','missions/m01-tczew/mission.json'])assert.notEqual(difficultyD3D4.inputsSha256[f],difficulty0535.inputsSha256[f],`${f} moved`);
 });
@@ -505,8 +525,8 @@ test('the escort + coordination golden (amendment 14) chains to the H9 D3/D4 gol
   assert.notEqual(sha('../src/game/m01-simulation.js'),escort.sourceSha256,'the escort golden is history: amendment 15 moved the simulation');
   // 2026-10-24 (R2-a, golden amendment 17): the squad module moved too, by one clause (suppression brings a bound forward but never the scripted first order, line 155: the pair now holds the road deck
   // until the demolition, in view of the deck assault, so it can be pinned on that very tick). The golden still records the module it was written against; it is only no longer the live file.
-  for(const f of ['src/game/m01-corridor.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])
-    assert.equal(escort.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // (2026-10-24, amendment 18: the level table and the deck module moved too.)
+  unchangedSince(escort.inputsSha256,['src/game/m01-corridor.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'],sha);
   for(const f of ['src/game/m01-barks.js','src/game/m01-squad.js','missions/m01-tczew/mission.json']){assert.ok(escort.inputsSha256[f],`${f} is recorded`);assert.notEqual(escort.inputsSha256[f],sha('../'+f),`${f} moved with amendment 15 or 17`);}
   // Nothing moves before the east demolition: the first difference is the section at 06:10:00, Kowal holding his slot at the squad post where he used to set off for the single
   // retreat point (x -170, z 22). It is behaviour at once (no new record precedes it in the frame), so the first behaviour difference is the same path.
@@ -527,7 +547,7 @@ test('the ckm stoppage golden (amendment 15) chains to the escort + coordination
   // the west garrison): the director moved too, by one clause (the westWait rule, «Esperamos o Bąk», ignores displayOnly men like readiness(west_demolition) does).
   assert.equal(ckmJam.sourceSha256,'1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f','the ckm stoppage golden pins the simulation of e7f5f28');
   assert.notEqual(sha('../src/game/m01-simulation.js'),ckmJam.sourceSha256,'the ckm stoppage golden is history: amendment 16 moved the simulation');
-  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
+  unchangedSince(ckmJam.inputsSha256,['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'],sha);   // (2026-10-24, amendment 18: the level table and the deck module moved)
   for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','missions/m01-tczew/mission.json']){assert.ok(ckmJam.inputsSha256[f],`${f} is recorded`);assert.notEqual(ckmJam.inputsSha256[f],sha('../'+f),`${f} moved with amendment 16`);}
   // The first difference is the stoppage itself: on the tick the gun would have fired its 14th burst (04:58:43 on the control route, 04:59:03 with the covering-fire pilot) the predecessor's gunner
   // is in fire_burst and the live one in `stoppage`; until then the two simulations are byte identical, tick for tick (13 blocks of 512 ticks on both routes). With the gun's own records, the
@@ -552,8 +572,8 @@ test('the bomb effects golden (amendment 16) chains to the ckm stoppage golden, 
   // and the yard did not move.
   assert.equal(bombs.sourceSha256,'945a2bf53ca089d3e3ecb420ec8bb0e455b934dc3eecf60ae7630560c91ca7b9','the bomb effects golden pins the simulation of c66436d4');
   assert.notEqual(sha('../src/game/m01-simulation.js'),bombs.sourceSha256,'the bomb effects golden is history: amendment 17 moved the simulation');
-  for(const f of ['src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','src/game/m01-yard-life.js'])
-    assert.equal(bombs.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // (2026-10-24, amendment 18: the level table and the deck module moved too.)
+  unchangedSince(bombs.inputsSha256,['src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','src/game/m01-yard-life.js'],sha);
   for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','missions/m01-tczew/mission.json']){assert.ok(bombs.inputsSha256[f],`${f} is recorded`);assert.notEqual(bombs.inputsSha256[f],sha('../'+f),`${f} moved with amendment 17`);}
   assert.equal(bombs.inputsSha256['src/game/m01-section.js'],undefined,'the section module did not exist');
   assert.equal(ckmJam.inputsSha256['src/game/m01-blast.js'],undefined,'the predecessor had no blast module');assert.equal(ckmJam.inputsSha256['src/game/m01-garrison.js'],undefined,'nor a garrison');
@@ -572,14 +592,18 @@ test('the bomb effects golden (amendment 16) chains to the ckm stoppage golden, 
   }
 });
 
-test('the squad coordination golden (amendment 17) chains to the bomb effects golden, pins the live simulation, the section, the squad, the director and the mission data, and cites its lockstep account',()=>{
+test('the squad coordination golden (amendment 17) chains to the bomb effects golden, pins the simulation of 33896528 (history since amendment 18), the section, the squad, the director and the mission data, and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(squad,{amendment:'17',task:'M01-SQUAD-COORDINATION-V1',delta:'squad-coordination',previous:bombs,previousFile:'m01-bomb-effects-gameplay-baseline.json',
     predecessor:'c66436d444e94fa4a9f083c303a58185c4177d85',deltaFields:SQUAD_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),squad.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-section.js','src/game/m01-squad.js','src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js',
-    'src/game/m01-deck-assault.js','src/game/m01-yard-life.js','missions/m01-tczew/mission.json'])
+  // History since amendment 18 (the German AI and the Polish fire of the deck, 2026-10-24): this golden pins the simulation of 33896528 (candidate #80 + R1-a + R2-a), not the live one. The section, the deck
+  // module, the audio events, the level table and the mission data moved with R2-b, so they are no longer compared with the live files (they still have to be recorded); the squad module, the director, the blast
+  // module, the garrison, the rearguard and the yard did not move.
+  assert.equal(squad.sourceSha256,'5236c1730015940ae7cd9168fb3e6eda76f6c5d720bf58ff7b0618ebb62c3217','the squad coordination golden pins the simulation of 33896528');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),squad.sourceSha256,'the squad coordination golden is history: amendment 18 moved the simulation');
+  for(const f of ['src/game/m01-squad.js','src/game/m01-barks.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-rearguard.js','src/game/m01-yard-life.js'])
     assert.equal(squad.inputsSha256[f],sha('../'+f),`and ${f}`);
+  for(const f of ['src/game/m01-section.js','src/game/m01-deck-assault.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','missions/m01-tczew/mission.json']){assert.ok(squad.inputsSha256[f],`${f} is recorded`);assert.notEqual(squad.inputsSha256[f],sha('../'+f),`${f} moved with amendment 18`);}
   assert.equal(bombs.inputsSha256['src/game/m01-section.js'],undefined,'the predecessor had no section module');
   for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','missions/m01-tczew/mission.json'])assert.notEqual(squad.inputsSha256[f],bombs.inputsSha256[f],`${f} moved`);
   // The two simulations are byte identical, tick for tick, until 04:34:00 (tick 1355: the first bomb of the raid); the first difference is the section's own saved record, created by the first tick of the window
@@ -598,6 +622,45 @@ test('the squad coordination golden (amendment 17) chains to the bomb effects go
     assert.equal(r.endState.objectives.hold_corridor,'done');
   }
   for(const r of account.otherRoutes)assert.equal(r.real.live,r.real.predecessor,`seed ${r.seed} support ${r.support}: the same real time`);
+});
+
+test('the German AI golden (amendment 18) chains to the squad coordination golden, pins the live simulation, the section, the deck assault and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(german,{amendment:'18',task:'M01-GERMAN-AI-V1',delta:'german-ai',previous:squad,previousFile:'m01-squad-coordination-gameplay-baseline.json',
+    predecessor:'3389652895ac52d0bbf191301b4bce55e8e3b673',deltaFields:GERMAN_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),german.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-section.js','src/game/m01-squad.js','src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js',
+    'src/game/m01-deck-assault.js','src/game/m01-yard-life.js','missions/m01-tczew/mission.json'])
+    assert.equal(german.inputsSha256[f],sha('../'+f),`and ${f}`);
+  assert.deepEqual(account.changedGameplayInputsSincePredecessor,['src/game/m01-simulation.js','missions/m01-tczew/mission.json','src/game/m01-deck-assault.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-section.js'],
+    'what moved since 33896528: the simulation, the mission data, the deck module, the level table\'s death words, the audio events and the section; the squad module, the director and the rearguard did not');
+  for(const f of ['src/game/m01-section.js','src/game/m01-deck-assault.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','missions/m01-tczew/mission.json'])assert.notEqual(german.inputsSha256[f],squad.inputsSha256[f],`${f} moved`);
+  for(const f of ['src/game/m01-squad.js','src/game/m01-barks.js','src/game/m01-rearguard.js'])assert.equal(german.inputsSha256[f],squad.inputsSha256[f],`${f} did not move`);
+  // The two simulations are byte identical, tick for tick, until the deck assault (06:05:00 of the battle clock: tick 12123 on the control route, 11707 with the covering-fire pilot); the first difference is the key
+  // every man of the deck gets at the entry (playerSuppressedUntil, 0; missing in the predecessor). With the new records stripped from both frames (that key, the lines and the grenade count of the deck record, the
+  // deck men's sight record, the grenade timer, the section's record, the director's, the dialogue state and the section's and the assault's own events) the first BEHAVIOUR difference is a man of the pair: the platoon
+  // voice turns to fire his first real round (control, tick 12372, 06:06:40, facing) or kneels under the first pin of the assault (support, tick 11758, 06:05:20, crouched).
+  assert.equal(account.behaviourFields,GERMAN_BEHAVIOUR.source);assert.equal(account.behaviourActors,'^(marek_zielinski|szymon_kowal|staszek_pawlak|east_platoon_voice|jozef_bak)$');
+  const expected={false:{first:12123,behaviour:12372,at:'06:06:40',field:'facing',blocks:23,old:23402,now:25126,shift:91.25},true:{first:11707,behaviour:11758,at:'06:05:20',field:'crouched',blocks:22,old:23354,now:21886,shift:-69.15}};
+  for(const r of account.routes){
+    const e=expected[r.support];
+    assert.equal(r.firstDifference.tick,e.first);assert.equal(r.firstDifference.battleClock,'06:05:00','the deck assault is where the two simulations part');assert.equal(r.firstDifference.actor,'de_spans_0');
+    assert.equal(r.firstDifference.path,'$.state.actors.52.playerSuppressedUntil');assert.equal(r.firstDifference.predecessor,null);assert.equal(r.firstDifference.missing,true);assert.equal(r.firstDifference.live,0);
+    assert.equal(r.identicalBlocks,e.blocks);
+    assert.match(r.firstBehaviourDifference.path,GERMAN_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,'east_platoon_voice');assert.equal(r.firstBehaviourDifference.tick,e.behaviour);
+    assert.equal(r.firstBehaviourDifference.battleClock,e.at);assert.ok(r.firstBehaviourDifference.path.endsWith('.'+e.field));assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);
+    assert.equal(r.oldTicks,e.old);assert.equal(r.newTicks,e.now);
+    // The plot and the anchors are the predecessor's: the 12 objectives, CP-A..D, the consumed events, the survivors (12 control, 18 support) and the final battle clock; the battle-clock time of every event is the
+    // same (the east demolition is at 22200 = 06:10:00 on both sides). What moves is the REAL time of the events from the deck fight on, because the fight is longer when nobody suppresses the Germans (control +91.25 s)
+    // and shorter when the pilot does (support -69.15 s); the account lists them.
+    assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);assert.equal(r.endState.live.to0600,r.endState.predecessorOwnRoute.to0600,'nothing moves before 06:00');
+    assert.deepEqual(r.movedEvents.map(m=>m.event),['evt_m01_debrief','evt_m01_dudek_retrieves_bak','evt_m01_east_demolition','evt_m01_kozliny_attack_distant','evt_m01_roll_call','evt_m01_west_demolition']);
+    for(const m of r.movedEvents)assert.equal(m.battle.live,m.battle.predecessor,`${m.event}: the same battle-clock time`);
+    const blast=r.movedEvents.find(m=>m.event==='evt_m01_east_demolition');assert.equal(blast.battle.live,22200);assert.ok(Math.abs((blast.real.live-blast.real.predecessor)-e.shift)<.01,`the east demolition moves ${blast.real.live-blast.real.predecessor} s in real time`);
+    assert.equal(r.endState.objectives.hold_corridor,'done');assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);
+    assert.ok(Math.abs(r.measured.germanRoundsPerRealMin.live-r.measured.germanRoundsPerRealMin.predecessor)<3,'German rounds per real minute: the same order');
+  }
+  for(const r of account.otherRoutes){assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);}
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

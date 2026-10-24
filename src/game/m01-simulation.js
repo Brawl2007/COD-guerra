@@ -18,12 +18,12 @@ import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADE
 import {GARRISON_GROUP,garrisonPlan,makeGarrison} from './m01-garrison.js';
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
-import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
+import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,deckLines,deckLineNumber,validDeckRecord} from './m01-deck-assault.js';
 import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01-rearguard.js';
 import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 import {stepCorridor,escortPace,escortTarget,zielinskiJoinPoint,escortSubject,corridorView,corridorRecord,validateCorridorRecord,CORRIDOR} from './m01-corridor.js';
 import {SQUAD,SQUAD_IDS,updateSquad,squadSlot,teamPost,squadMoving,validateSquadRecord} from './m01-squad.js';
-import {updateSection,sectionWalk,sectionAfter,sectionCasualty,sectionView,validateSectionRecord} from './m01-section.js';
+import {SECTION,updateSection,sectionWalk,sectionAfter,sectionCasualty,sectionView,sectionRealOn,validateSectionRecord} from './m01-section.js';
 import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,blastPosture,blastTarget,sightPoint,blastOutcome,concussionPeak,concussionLevel,mergeConcussion,earlyRaidPoint} from './m01-blast.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
@@ -338,6 +338,8 @@ const REGROUP_AHEAD=17,REGROUP_EAST_END=1080,REGROUP_Z=40.2,GERMAN_FELLED=4,GERM
 export const DECK_AMMO_POOL=120,DECK_AMMO_LOW=15,DECK_AMMO_SEC=3;
 // Combat slice 2: how far along the player's ray, from where his round lands or ends, a man of the deck assault is still pinned by its near miss (see fire()).
 const DECK_SUPPRESS_ALONG_M=25;
+// R2-b: the most grenades in the air at once (the player's two and the stick grenades of the assault: perMan x six men, one for the squad every gapSec) and in a save.
+const DECK_GRENADES_MAX=8;
 // Combat slice 2 (2026-10-19 review fix): seconds of gate hold, past DECK_ASSAULT.maxSec, after which a man of the assault still west of clearX is placed on his fall-back
 // place even in the player's view (the absolute bound of the 06:09:30 hold).
 const DECK_HOLD_CAP_SEC=240;
@@ -560,11 +562,11 @@ export class M01Simulation {
           const inView=this.inView(a);
           if(!inView){a.x=655;a.state='reached_safety';this.recoveries.push({id:a.id,reason:'offscreen_straggler',clock:this.clock});}
         }
-        // Combat slice 2: the deck assault always falls back by DECK_ASSAULT.maxSec; a man still west of clearX long after that (a route the navigator could not walk) is
+        // Combat slice 2: the deck assault always falls back by DECK_ASSAULT.maxSec (R2-b: plus closeExtraSec while a man is on a closing line, and the longer run back from there: holdBaseSec); a man still west of clearX long after that (a route the navigator could not walk) is
         // placed on his fall-back place when the player cannot see him, as the platoon's offscreen stragglers above. Measured: never on the audited routes.
         // 2026-10-19 review fix: and after DECK_HOLD_CAP_SEC of hold he is placed even in view, so the clock held at 06:09:30 always resumes (a stuck man in sight held it for good).
-        if(segment.gate===E('east_demolition')&&this.gate.hold>DECK_ASSAULT.maxSec+120)for(const a of this.actors.filter(a=>a.group==='grp_de_spans'&&a.deck&&a.alive&&a.active&&deckRole(a)==='assault'&&a.x<DECK_ASSAULT.clearX)){
-          const cap=this.gate.hold>DECK_ASSAULT.maxSec+DECK_HOLD_CAP_SEC;if(!cap&&this.inView(a))continue;const f=DECK_ASSAULT.fallback[assaultIndex(a)];
+        if(segment.gate===E('east_demolition')&&this.gate.hold>DECK_ASSAULT.holdBaseSec+120)for(const a of this.actors.filter(a=>a.group==='grp_de_spans'&&a.deck&&a.alive&&a.active&&deckRole(a)==='assault'&&a.x<DECK_ASSAULT.clearX)){
+          const cap=this.gate.hold>DECK_ASSAULT.holdBaseSec+DECK_HOLD_CAP_SEC;if(!cap&&this.inView(a))continue;const f=DECK_ASSAULT.fallback[assaultIndex(a)];
           Object.assign(a,{x:f.x,z:f.z,state:'GUARD',facing:Math.PI});a.y=this.world.heightAt(a.x,a.z);delete a.nav;Object.assign(a.deck,{phase:'clear',since:this.clock,until:this.clock});
           this.recoveries.push({id:a.id,reason:cap?'deck_hold_cap':'offscreen_deck_straggler',clock:this.clock});
         }
@@ -659,7 +661,7 @@ export class M01Simulation {
       p={x:this.player.x+Math.cos(angle)*40,z:this.player.z+Math.sin(angle)*40,y:point.y};}
     if(dist(p,this.player)<30)throw new Error('Impacto aéreo inseguro.');return p;
   }
-  impact(id,point,aerial){
+  impact(id,point,aerial,extra={}){
     const p=aerial?this.safeImpact(point):{...point};
     if(aerial)p.y=this.world.heightAt(p.x,p.z);   // Ground only after the existing safety shift, including near-miss alternatives.
     const kind=blastKind(id,aerial);
@@ -668,7 +670,7 @@ export class M01Simulation {
     const effects=aerial&&kind==='bomb'?this.bombEffects(id,p):null;
     if(effects)for(const how of ['killed','wounded'])for(const who of effects.casualties[how])this.noteCasualty(who,how,'bomb');   // R2-a: the section calls the men of ours a bomb has hit
     this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343,...(kind==='grenade'?{smokeSeconds:20}:{}),...(effects?{concussion:effects.concussion}:{})});
-    this.emit({type:'m01-blast',kind,point:p,soundAt:this.clock+dist(p,this.player)/343,aerial,...(effects?{concussion:effects.concussion,effects:effects.casualties}:{})});return p;
+    this.emit({type:'m01-blast',kind,point:p,soundAt:this.clock+dist(p,this.player)/343,aerial,...(effects?{concussion:effects.concussion,effects:effects.casualties}:{}),...extra});return p;
   }
   /**
    * What an aerial bomb does to everyone near its crater (R1-a; the numbers and the reasons are in m01-blast.js, gameplay values and never a count of real dead). For every living, present
@@ -1231,7 +1233,7 @@ export class M01Simulation {
       if(this.enemyFire.rounds.some(r=>r.victim))this.timers.withdrawalCasualty=this.battleClock;
       else if(this.battleClock-this.timers.withdrawalCasualty>=20){
         const spans=this.enemies.filter(a=>a.group==='grp_de_spans'&&a.alive&&a.active);
-        this.timers.withdrawalCasualty=this.battleClock;if(!spans.some(a=>a.suppressedUntil>this.clock))this.lethalShot(spans);
+        this.timers.withdrawalCasualty=this.battleClock;if(!spans.some(a=>(a.playerSuppressedUntil??0)>this.clock))this.lethalShot(spans);   // R2-b: only the player's covering fire shields the platoon (the Poles' own fire does not)
       }
     }
     updateMotion(this.actors,motionBefore,dt,this.clock);
@@ -1511,6 +1513,7 @@ export class M01Simulation {
       const e=deckEntry(a);Object.assign(a,{x:e.x,z:e.z,facing:Math.PI,state:'ADVANCE',crouched:false});a.y=this.world.heightAt(a.x,a.z);delete a.nav;
       a.ai=newAI(this.rng.state,aiIndex(a.id),a.suppressedUntil);
       a.deck={v:1,phase:'advance',node:0,until:this.clock,since:this.clock,t0:this.clock,pinned:0};
+      a.playerSuppressedUntil=0;   // R2-b: until when the PLAYER's rifle keeps him down (the rule of the 20 s); suppressedUntil is anybody's
     }
   }
   /**
@@ -1522,14 +1525,16 @@ export class M01Simulation {
    * then he is CLEAR. He shoots only standing still (deckFire). Movement is the ordinary moveActor (navigator, local avoidance, queue). Draws only from a.ai.rng.
    */
   stepDeck(a,dt){
-    const P=DECK_ASSAULT,d=a.deck,now=this.clock,over=deckRole(a)==='overwatch',u=()=>aiNext(a.ai),suppressed=now<a.suppressedUntil;
+    const P=DECK_ASSAULT,T=P.tactics,d=a.deck,now=this.clock,over=deckRole(a)==='overwatch',u=()=>aiNext(a.ai),suppressed=now<a.suppressedUntil;
     if(suppressed&&(d.phase==='cover'||d.phase==='hold'))d.pinned+=dt;
     const set=(phase,until=now)=>{d.phase=phase;d.since=now;d.until=until;};
     // The squad breaks when breakOut of its six are down: the rest go back with them. Suppression alone slows a man (and in the end sends him back), it does not rout the squad.
     const out=P.assault.filter(id=>{const m=this.actor(id);return !m.alive||!m.active;}).length;
     const pursuit=d.phase==='advance'&&deckGoal(a).x>P.pursuitToX;
+    // R2-b: at a line a man presses on to the next closing line while the Poles who hold the deck are pinned and nobody of the assault has fallen lately, or is pulled back one line by a casualty.
+    if(!over&&d.phase==='hold'&&deckLines(a).length>1)this.deckLine(a,set,u);
     if(!over&&['advance','cover','hold'].includes(d.phase)){
-      if(out>=P.breakOut||now-d.t0>=P.maxSec||!pursuit&&(d.pinned>=P.breakPinnedSec||d.phase==='hold'&&now>=d.until)){
+      if(out>=P.breakOut||now-d.t0>=P.maxSec+this.deckExtraSec()||!pursuit&&(d.pinned>=P.breakPinnedSec||d.phase==='hold'&&now>=d.until)){
         set('fallback');a.ai.peek=0;
         if(!this.dialogueConsumed.includes('deck:fallback')){this.dialogueConsumed.push('deck:fallback');this.message('Recuam! Os alemães largam o tabuleiro.');}
       }
@@ -1541,13 +1546,67 @@ export class M01Simulation {
       if(over||d.phase==='fallback'){set('clear');return;}
       if(goal.x>P.pursuitToX){d.node++;return;}   // the pursuit leg: on to the next station at once
       if(!this.dialogueConsumed.includes('deck:advance')){this.dialogueConsumed.push('deck:advance');this.message('Os alemães avançam pelo tabuleiro! Faça-os recuar a tiro.');}
-      if(d.node>=deckLimitNode(a))set('hold',now+P.holdSec[0]+(P.holdSec[1]-P.holdSec[0])*u());
+      const hold=deckLineNumber(a)>0?T.closeHoldSec:P.holdSec;   // (a closing line is held for less than line 0)
+      if(d.node>=deckLimitNode(a))set('hold',now+hold[0]+(hold[1]-hold[0])*u());
       else set('cover',now+P.coverSec[0]+(P.coverSec[1]-P.coverSec[0])*u());
       return;
     }
     if(d.phase==='cover'&&now>=d.until&&(!suppressed||now>=d.until+P.pinnedWaitMaxSec)){
+      if(!this.deckMayRush(a))return;   // R2-b: on the closing lines the two girders bound in turn
       d.node=Math.min(deckLimitNode(a),d.node+P.rushStations);set('advance');a.ai.peek=0;a.crouched=false;
     }
+  }
+  /**
+   * R2-b (2026-10-24), a man holding a line of the assault, every tick: a casualty on a closing line since he took his puts him back one line (his forward limit and his node go to the line behind;
+   * he walks back to it at a run), the Poles pinned and no casualty for casualtyHoldSec put him on to the next closing line (a cover, then bounds like any other). Pure functions of the actors'
+   * saved data (suppressedUntil of the pair and of the rearguard, diedAt of the dead); the man's own stream is drawn only for the cover that follows. No draw from this.rng.
+   */
+  deckLine(a,set,u){
+    const P=DECK_ASSAULT,T=P.tactics,d=a.deck,now=this.clock,lines=deckLines(a),line=deckLineNumber(a),fell=this.deckLastCasualty();
+    if(line>0&&this.deckLastCasualty(true)>d.since){
+      const to=lines[line-1];if(line-1===0)delete d.lim;else d.lim=to;
+      d.node=to;set('advance');a.ai.peek=0;a.crouched=false;a.facing=0;   // (he turns to the east: the section reads a man going back as a fall-back, not as a rush)
+      this.emit({type:'deck-tactic',kind:'pullback',by:a.id,line:line-1,at:now});
+    }else if(line<lines.length-1&&now-fell>=T.casualtyHoldSec&&this.deckPressure()>=T.pressure.share){
+      d.lim=lines[line+1];set('cover',now+P.coverSec[0]+(P.coverSec[1]-P.coverSec[0])*u());
+      this.emit({type:'deck-tactic',kind:'stage',by:a.id,line:line+1,at:now});
+    }
+  }
+  /** The squad's deadline grows by closeExtraSec while any living man of the assault has a closing line as his forward limit (a function of the records, so it needs no saved key). */
+  deckExtraSec(){
+    for(const id of DECK_ASSAULT.assault){const m=this.actor(id);if(m.deck&&m.alive&&m.active&&deckLineNumber(m)>0)return DECK_ASSAULT.tactics.closeExtraSec;}
+    return 0;
+  }
+  /** When the last man of the assault fell (his diedAt), -Infinity when none has (a test that kills a man by hand leaves diedAt at its default, which counts as long ago); with `forward`, only a man who fell
+   *  on or west of his own line 0 (on a closing line: the ones who fell on the approach do not turn the front back). */
+  deckLastCasualty(forward=false){
+    let at=-Infinity;
+    for(const id of DECK_ASSAULT.assault){const m=this.actor(id);if(!m.alive&&m.diedAt>0&&m.diedAt>at&&(!forward||m.x<=DECK_ASSAULT.limits[DECK_ASSAULT.assault.indexOf(id)]))at=m.diedAt;}
+    return at;
+  }
+  /** A Pole who holds the deck against the assault: the section's pair at its deck post and the rearguard at its posts (present, on their feet, on the bridge). */
+  isDeckDefender(a){return a.team==='ally'&&a.alive&&a.active&&!a.carriedBy&&a.state!=='WOUNDED'&&a.x>0&&(a.id==='staszek_pawlak'||a.id==='east_platoon_voice'||a.rear?.phase==='hold');}
+  deckDefenders(){
+    const out=[];
+    for(const a of this.actors)if(this.isDeckDefender(a))out.push(a);
+    return out;
+  }
+  /** The share of them under fire now or within tactics.pressure.windowSec (the suppression of a near miss is the sim's own: suppressedUntil); 0 when none of them is on the deck. */
+  deckPressure(){
+    const W=DECK_ASSAULT.tactics.pressure.windowSec,now=this.clock,men=this.deckDefenders();let n=0;
+    for(const a of men)if(a.suppressedUntil>now-W)n++;
+    return men.length?n/men.length:0;
+  }
+  /** On the closing lines the two girders bound in turn: a man whose cover is over waits (at most tactics.alternateWaitSec) while a man of the other girder is still on the run. Line 0 and before: no wait. */
+  deckMayRush(a){
+    const P=DECK_ASSAULT,T=P.tactics,d=a.deck,lines=deckLines(a);
+    if(!(T.alternateWaitSec>0)||lines.length<2||d.node<lines[0]||this.clock-d.until>=T.alternateWaitSec)return true;
+    const north=P.lanes[assaultIndex(a)][0]<40;
+    for(const id of P.assault){
+      const m=this.actor(id);if(m===a||!m.alive||!m.active||m.deck.phase!=='advance')continue;
+      if((P.lanes[assaultIndex(m)][0]<40)!==north&&dist(m,deckGoal(m))>=.9)return false;
+    }
+    return true;
   }
   /** Combat slice 2: a deck man still in cover kneels at the girder, and stands up to shoot (riseBeforeSec before his trigger, holdAfterSec after his shot), as T38's gate riflemen. */
   deckKneels(a){
@@ -1573,8 +1632,9 @@ export class M01Simulation {
     if(!['cover','hold','clear'].includes(d.phase)){ai.peek=0;a.cooldown=.4;return;}
     if(!(a.rounds>0)){ai.peek=0;if(!a.reload)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};a.cooldown=Math.max(.3,a.reload.startedAt+a.reload.duration-this.clock)+.4+u();return;}
     const west=inside(p,this.world.layout.bounds.playable),threat=west&&this.clock*1000-p.weaponShotAt<AI_THREAT_SEC*1000;
+    if(!over&&this.deckGrenade(a))return;   // R2-b: a Pole he cannot hit with the rifle, within a stick grenade's throw
     const open=ai.peek===0,pick=this.deckTarget(a,west,threat,over);
-    if(!pick){ai.peek=0;ai.target=null;a.cooldown=AI_RESCAN[0]+AI_RESCAN[1]*u();return;}
+    if(!pick){ai.peek=0;ai.target=null;a.cooldown=AI_RESCAN[0]+AI_RESCAN[1]*u();if(!over)this.deckSearch(a);return;}
     if(open)ai.peek=aiCount(ai,[.4,.4,.2]);
     ai.target=pick.id;
     const k=this.clock<ai.shakenUntil?AI_SHAKEN_BIAS:1;
@@ -1594,9 +1654,66 @@ export class M01Simulation {
     const s=near.find(m=>m.id===ai.target)??(near.length?near[Math.floor(u()*near.length)]:null);
     if(s)add(s.id,s,'platoon',2.3);
     // H9 D2: spansPickPlayerThreshold as a weight (oddsWeight: recruta x1, soldado x2, veterano x3).
-    if(west&&this.world.lineOfSight(a,p))add('player',p,'player',((over?.6:1)+(threat?1.6:0))*oddsWeight(this.level.spansPickPlayerThreshold,M01_DIFFICULTY.recruta.spansPickPlayerThreshold));
+    const seesPlayer=west&&this.world.lineOfSight(a,p);
+    if(seesPlayer)add('player',p,'player',((over?.6:1)+(threat?1.6:0))*oddsWeight(this.level.spansPickPlayerThreshold,M01_DIFFICULTY.recruta.spansPickPlayerThreshold));
+    // R2-b: the Poles who hold the deck are targets too (rounds of kind `squad`: they pin whoever they pass, they never wound an ally); the nearest he sees, or the player, is what he remembers (ai.seen, for the search).
+    const SQ=DECK_ASSAULT.tactics.squadTargets;let seen=seesPlayer?p:null,seenId='player';
+    if(!over)for(const b of this.deckDefenders()){
+      if(b.x>=a.x||dist(a,b)>SQ.rangeM||!this.world.lineOfSight(a,b))continue;
+      if(SQ.weight>0)add(b.id,b,'squad',SQ.weight*(this.clock-b.firedAt<AI_THREAT_SEC?3:1));   // (the ones who fire at him are the ones he answers: x3, as for the player who fires)
+      if(!seen||dist(a,b)<dist(a,seen)){seen=b;seenId=b.id;}
+    }
+    if(seen)a.ai.seen={x:seen.x,y:seen.y,z:seen.z,at:this.clock,who:seenId};
     if(!c.length)return null;
     let x=u()*c.reduce((t,o)=>t+o.w,0);return c.find(o=>(x-=o.w)<0)??c.at(-1);
+  }
+  /**
+   * R2-b: SEARCH. A man in cover on the way to his line who saw a Pole in the last search.memorySec seconds and has none in sight now (afterSec on) moves on to the first station toward his forward limit
+   * (at most one bound of rushStations, never past the limit: the closing lines are the pressure's to open) from which a man on his feet would see the place where the Pole was last seen, instead of waiting
+   * out his cover; it can repeat only while the memory lasts and ends at the limit. Reads the sight record (ai.seen) and the world's line of sight; no draw.
+   */
+  deckSearch(a){
+    const P=DECK_ASSAULT,S=P.tactics.search,d=a.deck,ai=a.ai,now=this.clock,seen=ai.seen;
+    if(!seen||d.phase!=='cover'||now-seen.at>S.memorySec||now-seen.at<S.afterSec)return false;
+    const path=P.paths[assaultIndex(a)],last=Math.min(deckLimitNode(a),d.node+P.rushStations),target={space:'metres',x:seen.x,y:seen.y,z:seen.z,crouched:true};
+    for(let n=d.node+1;n<=last;n++){
+      const p=path[n],probe={space:'metres',x:p.x,y:this.world.heightAt(p.x,p.z),z:p.z,crouched:false};
+      if(this.world.lineOfSight(probe,target)){
+        d.node=n;d.phase='advance';d.since=now;d.until=now;ai.peek=0;a.crouched=false;
+        this.emit({type:'deck-tactic',kind:'search',by:a.id,line:deckLineNumber(a),at:now});return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * R2-b: a stick grenade (Stielhandgranate). A man of the assault in cover or on a line, with a Pole between tactics.grenade.minM and rangeM from him whom he cannot hit with the rifle (no line of sight,
+   * the player in authored cover, or a defender pinned down on his post), lobs one at him: at most perMan each, one for the squad every gapSec, thrown from his feet on a flat arc of flightSec to the Pole's place plus an error of 5 % of the range
+   * (his own stream), a fuse of fuseSec from the throw (so the grenade lies on the ground for the rest of it: the warning). A transient `enemy-grenade` event and, when it falls near the player, a HUD message
+   * say it is coming; it is a grenade of grenades.active (the renderer draws it) with `by` and `at`, which the explosion (germanGrenadeBlast) reads. Never against the player when he sees him and is not in cover.
+   */
+  deckGrenade(a){
+    const G=DECK_ASSAULT.tactics.grenade,d=a.deck,now=this.clock;
+    if(G.perMan<1||(d.gr??0)>=G.perMan||!['cover','hold'].includes(d.phase)||now-(this.timers.deckGrenadeAt??-1e9)<G.gapSec||this.germanSilence()||this.grenades.active.length>=DECK_GRENADES_MAX)return false;
+    const p=this.player;let best=null,bd=Infinity;
+    for(const b of [p,...this.deckDefenders()]){
+      if(!b.alive||(b!==p&&!b.active)||b.x>=a.x)continue;
+      const dd=dist(a,b);if(dd<G.minM||dd>G.rangeM||dd>=bd)continue;
+      // A Pole he cannot hit with the rifle: out of his sight; or the player in authored cover (the sim's own test of cover, world.coverAt); or a defender pinned down on his post (kneeling and suppressed:
+      // there is nothing to aim at but the cover he lies in, which is what a grenade is for). A standing or an unsuppressed Pole in his sight is the rifle's.
+      const covered=b===p?Boolean(this.world.coverAt(p)):Boolean(b.crouched)&&this.clock<b.suppressedUntil;
+      if(this.world.lineOfSight(a,b)&&!covered)continue;   // he can hit him with his rifle
+      best=b;bd=dd;
+    }
+    if(!best)return false;
+    const ai=a.ai,g=()=>aiGauss(ai),sigma=.05*bd,T=G.flightSec;
+    const tx=best.x+g()*sigma,tz=best.z+g()*sigma,ty=this.world.heightAt(tx,tz)+.1,ox=a.x,oy=a.y+1.5,oz=a.z;
+    this.grenades.active.push({id:`m01_grenade_${this.grenades.nextId++}`,x:ox,y:oy,z:oz,vx:(tx-ox)/T,vy:(ty-oy)/T+.5*9.81*T,vz:(tz-oz)/T,fuse:G.fuseSec,by:a.id,at:now});
+    this.timers.deckGrenadeAt=now;d.gr=(d.gr??0)+1;
+    a.firedAt=now;a.state='SUPPRESS';a.facing=Math.atan2(best.z-a.z,best.x-a.x);a.crouched=false;ai.peek=0;a.cooldown=G.gapSec;
+    if(best===p)this.noteTelegraph(a,'player',1,0);   // F1: the throw is the telegraph (the fuse is the grace)
+    this.emit({type:'enemy-grenade',by:a.id,origin:{x:ox,y:oy,z:oz},target:{x:tx,y:ty,z:tz},fuse:G.fuseSec,flight:T,at:now});
+    if(dist({x:tx,z:tz},p)<G.reachM+10)this.combatCall('Granada alemã! Afaste-se!');
+    return true;
   }
   /** Read-only diagnostics of the deck assault (never saved): each man's phase and place, and the nearest living German to the player. */
   get deckAssault(){
@@ -1666,11 +1783,11 @@ export class M01Simulation {
    * headroomM over the top of his body there (the hitbox top: 1.88 m standing, 1.40 m kneeling, src/world/spatial.js), so a man may fire over a comrade who kneels in front
    * of him but never past one who stands, runs or is in line with the shot. Pure geometry.
    */
-  lineOfFireBlocked(origin,aim,friends){
+  lineOfFireBlocked(origin,aim,friends,clearanceM=REARGUARD.fire.clearanceM){
     const dx=aim.x-origin.x,dz=aim.z-origin.z,h=Math.hypot(dx,dz);if(h<1e-6)return false;
     const ux=dx/h,uz=dz/h,F=REARGUARD.fire;
     for(const f of friends){
-      const fx=f.x-origin.x,fz=f.z-origin.z,along=fx*ux+fz*uz;if(along<=.5||along>=h||Math.abs(fx*uz-fz*ux)>=F.clearanceM)continue;
+      const fx=f.x-origin.x,fz=f.z-origin.z,along=fx*ux+fz*uz;if(along<=.5||along>=h||Math.abs(fx*uz-fz*ux)>=clearanceM)continue;
       if(origin.y+(aim.y-origin.y)*along/h<f.y+(f.crouched?1.4:1.88)+F.headroomM)return true;
     }
     return false;
@@ -1691,10 +1808,11 @@ export class M01Simulation {
     const k=this.clock<ai.shakenUntil?AI_SHAKEN_BIAS:1,angle=Math.atan2(dz,dx)+aiGauss(ai)*F.sigmaMil[0]/1000*k,pitch=Math.atan2(dy,h)+aiGauss(ai)*F.sigmaMil[1]/1000*k;
     const dir=aimDirection(angle,pitch),friends=this.rearguardFriends(a);
     if(this.lineOfFireBlocked(origin,aim,friends)||traceShot(this.world,origin,dir,friends,Math.hypot(h,dy)+1)?.kind==='actor'){ai.peek=0;a.cooldown=.6+.6*u();return;}
-    const hit=traceShot(this.world,origin,dir,this.combatants.filter(b=>b!==a),1200);
+    // R2-b: the round ends 40 m past the German it was aimed at (a miss at 450 m killed men at the far end of the bridge, 750 m away, who had run clear: the four of the overwatch are the demolition's)
+    const R=Math.hypot(h,dy)+40,hit=traceShot(this.world,origin,dir,this.combatants.filter(b=>b!==a),R);
     if(hit?.actor?.team==='enemy'){const e=hit.actor,health=e.health,wasAlive=e.alive;e.health=Math.max(0,e.health-this.weapon.profile.damage*hit.multiplier);e.alive=e.health>0;e.state=e.alive?'HIT_REACTION':'DOWN';
       recordDamage(e,health,wasAlive,this.clock,a);this.updateMG34Posture(e);}
-    this.suppressAlong(origin,dir,hit);
+    this.suppressAlong(origin,dir,hit,false,R);
     a.rounds=Math.max(0,a.rounds-1);if(a.rounds===0)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};
     a.shot=.135;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=angle;
     // The report of an allied rifle (audio weapon id `ally_rifle`, the profile of a Polish rifle heard at a distance); `by` names the man.
@@ -1702,6 +1820,31 @@ export class M01Simulation {
     ai.peek=Math.max(0,ai.peek-1);
     if(ai.peek>0&&a.rounds>0)a.cooldown=AI_BOLT[0]+AI_BOLT[1]*u();
     else{ai.peek=0;let pause=aiPause(ai,F.pauseSec*1.8-1.8,3);if(!(a.rounds>0))pause=Math.max(pause,AI_RELOAD_COVER+u());a.cooldown=pause;}
+  }
+  /**
+   * R2-b (2026-10-24): one aimed round of a man of the Polish section (kb wz.29) at a German of the deck assault, by the model of the player's rifle and of the rearguard's: a ray from his eye to the
+   * torso of the posture the German is in, with milliradian dispersion (sigmaMil, the error grows with the range as every German round's does; wider while shaken), held with no round when a friend
+   * stands in the line of fire or the dispersed ray itself would reach one (the rule of the rearguard), traced at once against everyone, damage by part (a torso kills, a limb wounds), and the
+   * suppression of suppressAlong for the Germans it cracks past, NOT marked as the player's (the rule of the 20 s does not count it: the platoon's fate stays the player's). `gauss()` draws
+   * from the man's own stream. Returns {fired, hit, angle, end}: fired false means no round was fired and no ammunition spent; `end` is where the round stopped (what it struck, or 40 m past the German), for the presentation.
+   */
+  alliedRound(a,t,{gauss,sigmaMil,shaken=false,clearanceM=REARGUARD.fire.clearanceM}){
+    const origin=eyePosition(a),aim=aimPoint(t),dx=aim.x-origin.x,dy=aim.y-origin.y,dz=aim.z-origin.z,h=Math.hypot(dx,dz),k=shaken?AI_SHAKEN_BIAS:1;
+    const aimed=Math.atan2(dz,dx),angle=aimed+gauss()*sigmaMil[0]/1000*k,pitch=Math.atan2(dy,h)+gauss()*sigmaMil[1]/1000*k;
+    // A man of ours who lies wounded on the deck (Bąk, 06:04) is under the line of fire, not in it: his hitbox is the standing one, which would swallow every round of the pair.
+    const lying=b=>b.team==='ally'&&(b.state==='WOUNDED'||b.state==='DOWN');
+    const dir=aimDirection(angle,pitch),friends=this.rearguardFriends(a).filter(b=>!lying(b));
+    if(this.lineOfFireBlocked(origin,aim,friends,clearanceM)||traceShot(this.world,origin,dir,friends,Math.hypot(h,dy)+1)?.kind==='actor')return {fired:false,hit:false,angle:aimed};
+    // The round ends 40 m past the German it was aimed at (what a rifle does at 500 m is a hit or a miss on him, not a death at the other end of the bridge: the four of the overwatch are the demolition's).
+    const R=Math.hypot(h,dy)+40,hit=traceShot(this.world,origin,dir,this.combatants.filter(b=>b!==a&&!lying(b)),R);
+    let struck=false;
+    if(hit?.actor?.team==='enemy'){
+      const e=hit.actor,health=e.health,wasAlive=e.alive;
+      e.health=Math.max(0,e.health-this.weapon.profile.damage*hit.multiplier);e.alive=e.health>0;e.state=e.alive?'HIT_REACTION':'DOWN';
+      recordDamage(e,health,wasAlive,this.clock,a);this.updateMG34Posture(e);struck=true;
+    }
+    this.suppressAlong(origin,dir,hit,false,R);
+    return {fired:true,hit:struck,angle:aimed,end:hit?.point?{x:hit.point.x,y:hit.point.y,z:hit.point.z}:{x:origin.x+dir.x*R,y:origin.y+dir.y*R,z:origin.z+dir.z*R}};
   }
   /** Read-only diagnostics of the rearguard (never saved). */
   get rearguard(){
@@ -1713,6 +1856,8 @@ export class M01Simulation {
    *  man of ours has been hit. Methods so that a test (and the audit) can run the same route without the section and prove it changes nothing the Germans or the player can feel. */
   stepSection(){return updateSection(this,{say:node=>barkTrigger(this,'squadMove',{node})});}   // the arrival of a man at a post is called through the director (trigger squadMove), as slice 3's bounds are
   afterSection(){sectionAfter(this);}
+  /** R2-b: from the deck assault on, the section's riflemen fire REAL rounds at the Germans of the deck (alliedRound) and Kowal's rkm answers them too. A hook so that a test (and the audit) can run the same route with the display-grade fire of R2-a. */
+  sectionRealFire(){return sectionRealOn(this);}
   noteCasualty(id,how,by){sectionCasualty(this,id,how,by);}
   /** Tiro certeiro da regra dos 20 s: a vítima é o homem cuja baixa a contagem por ID já define. */
   lethalShot(spans){
@@ -1850,7 +1995,9 @@ export class M01Simulation {
     if(!kowal.alive||!kowal.active||kowal.cooldown>0||!this.consumedEvent(E('train963_arrives'))||this.consumedEvent(E('east_demolition')))return;
     // ponytail: Kowal keeps the old target rule (latest visible flash, else an MG) and ignores fire on himself; only his burst and reaction change.
     const ai=kowal.ai,u=ai?()=>aiNext(ai):()=>.5;   // combat AI slice 1: his own stream (a legacy actor without one keeps the mean cycle)
-    const dike=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active);
+    // R2-b: from the deck assault on, a man of the assault who fired in the last 10 s within the rkm's reach is a target like the dike's.
+    const deckToo=this.sectionRealFire();
+    const dike=this.enemies.filter(a=>a.alive&&a.active&&(a.group==='grp_de_east'||(deckToo&&a.deck!==undefined&&deckRole(a)==='assault'&&dist(a,kowal)<=SECTION.real.rkmRangeM)));
     const fresh=dike.filter(a=>this.clock-a.firedAt<10).sort((a,b)=>b.firedAt-a.firedAt).find(a=>this.world.lineOfSight(kowal,a));
     const target=fresh??dike.find(a=>a.weapon==='mg34'&&this.world.lineOfSight(kowal,a));
     // Nothing to answer: he stays behind the sandbags and looks again (he rises riseBeforeSec before each look, as before every burst).
@@ -1943,7 +2090,10 @@ export class M01Simulation {
       if(closestApproach(r,hit.t,{x:a.x,y:a.y+.9,z:a.z})>NEAR_MISS)continue;
       const working=a.role==='ENGINEER'&&this.active('cover_repair')&&dist(a,site)<6;
       const previousUntil=a.suppressedUntil;
-      a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+(working?repairPin:a.group==='grp_east_platoon'?1:1.5));pinned||=working;near.push(a.id);
+      // R2-b: a round of the deck assault that cracks past a man who holds the deck (the section's pair, the rearguard) pins him for tactics.pinSec, as a rifle round of ours pins a German for 5 s (suppressAlong); every other
+      // ally keeps the 1.5 s (1 s for a man of the platoon) the rounds at the escort and the platoon always gave.
+      const pin=working?repairPin:/^de_spans_/.test(r.by)&&this.isDeckDefender(a)?DECK_ASSAULT.tactics.pinSec:a.group==='grp_east_platoon'?1:1.5;
+      a.suppressedUntil=Math.max(a.suppressedUntil,this.clock+pin);pinned||=working;near.push(a.id);
       recordSuppression(a,previousUntil,this.clock);
     }
     if(pinned){   // o trabalho pára e a equipa inteira abriga-se
@@ -1977,7 +2127,7 @@ export class M01Simulation {
     if(hit?.actor?.team==='enemy'){const a=hit.actor,health=a.health,wasAlive=a.alive;a.health=Math.max(0,a.health-this.weapon.profile.damage*hit.multiplier);a.alive=a.health>0;a.state=a.alive?'HIT_REACTION':'DOWN';recordDamage(a,health,wasAlive,this.clock,p);
       if(wasAlive&&!a.alive)this.enemyDown(a,'kb_wz29');}
     const targetPoint=hit?.point??{x:origin.x+dir.x*1200,y:origin.y+dir.y*1200,z:origin.z+dir.z*1200};
-    this.suppressAlong(origin,dir,hit);
+    this.suppressAlong(origin,dir,hit,true);
     for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
     for(const a of this.actors)updatePosture(a,this.clock);
     this.emit({type:'player-shot',point:targetPoint,material:hit?.material,hit:hit?.actor?.team==='enemy',weapon:'kb_wz29'});
@@ -1987,11 +2137,11 @@ export class M01Simulation {
    * ray, short of what it hit, is suppressed 5 s; on the road deck only the deck man it came closest to and his neighbours along the ray. Then Kowal's callout when the
    * round has just silenced an MG34 or the men on the spans. Extracted unchanged from fire() (2026-10-19) so the rearguard's rounds follow the same rule.
    */
-  suppressAlong(origin,dir,hit){
+  suppressAlong(origin,dir,hit,fromPlayer=false,reach=1200){
     const p=this.player;
     let silenced=false;
     const along=a=>Math.max(0,(a.x-origin.x)*dir.x+(a.y+1-origin.y)*dir.y+(a.z-origin.z)*dir.z),off=(a,d)=>Math.hypot(a.x-origin.x-dir.x*d,a.y+1-origin.y-dir.y*d,a.z-origin.z-dir.z*d);
-    const passes=a=>{const d=along(a);return d>0&&d<1200&&off(a,d)<3&&(!hit||d<=hit.distance+3);};
+    const passes=a=>{const d=along(a);return d>0&&d<reach&&off(a,d)<3&&(!hit||d<=hit.distance+3);};
     // Combat slice 2: on the road deck the ray runs down a 5.6 m corridor and passed within 3 m of every man of the assault, so one rifle pinned all ten for good. A man of the
     // deck assault is pinned only when the round cracks past the deck man it came closest to, or a man within DECK_SUPPRESS_ALONG_M of him along the ray (his neighbours).
     const deck=!this.consumedEvent(E('east_demolition'))&&this.enemies.filter(a=>a.alive&&a.active&&a.deck&&passes(a)).sort((a,b)=>off(a,along(a))-off(b,along(b))||this.actors.indexOf(a)-this.actors.indexOf(b))[0];
@@ -2001,6 +2151,7 @@ export class M01Simulation {
       if(passes(a)){
         const previousUntil=a.suppressedUntil;
         silenced||=a.suppressedUntil<=this.clock&&(a.weapon==='mg34'||a.group==='grp_de_spans');a.suppressedUntil=this.clock+5;
+        if(fromPlayer&&a.group==='grp_de_spans')a.playerSuppressedUntil=this.clock+5;   // R2-b: the rule of the 20 s (updateActors) reads this, not suppressedUntil
         recordSuppression(a,previousUntil,this.clock);
       }
     }
@@ -2021,6 +2172,7 @@ export class M01Simulation {
       if(hit){g.vx*=-.3;g.vz*=-.3;g.vy=Math.abs(g.vy)*.3;}
       else{g.x+=step.x;g.y+=step.y;g.z+=step.z;}
       const floor=this.world.heightAt(g.x,g.z)+.08;if(g.y<floor){g.y=floor;g.vy=Math.abs(g.vy)*.3;g.vx*=.65;g.vz*=.65;}
+      if(g.fuse<=0&&g.by){this.germanGrenadeBlast(g);continue;}   // R2-b: a stick grenade of the deck assault hurts the Poles' side, never the Germans
       if(g.fuse<=0){this.impact(g.id,g,false);for(const a of [this.player,...this.enemies]){
         const distance=Math.hypot(a.x-g.x,a.y+.9-g.y,a.z-g.z);
         if(a.alive&&a.active&&distance<8&&this.world.lineOfSight({...g,space:'metres',eyeHeight:.04},a)){
@@ -2031,6 +2183,23 @@ export class M01Simulation {
       }}
     }this.grenades.active=this.grenades.active.filter(g=>g.fuse>0);
     for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
+  }
+  /**
+   * R2-b: a German stick grenade goes off (updateGrenades, fuse spent). The m01-blast of kind grenade with its smoke (impact, `by` on the event); the player takes ONE wound of his level (woundPlayer: the
+   * level's damage, the burst cap, the fair-death clamp F1, F4) when he is within tactics.grenade.woundM of it with the grenade's own line of sight to him, and nothing otherwise; the Poles of the section and of
+   * the rearguard within suppressM with a clear path are pinned for suppressSec (never wounded: allies fall only by their scripted rules). The thrower's telegraph is the throw (noteTelegraph at the throw),
+   * so the first grenade of an engagement can never take the player to 0. No draw.
+   */
+  germanGrenadeBlast(g){
+    const G=DECK_ASSAULT.tactics.grenade,clock=this.clock,at={x:g.x,y:g.y,z:g.z};
+    this.impact(g.id,at,false,{by:g.by});
+    const clear=b=>this.world.lineOfSight({space:'metres',...at,eyeHeight:.04},b);
+    const p=this.player;
+    if(p.alive&&Math.hypot(p.x-g.x,p.y+.9-g.y,p.z-g.z)<=G.woundM&&clear(p))this.woundPlayer({by:g.by,weapon:'stielhandgranate',kind:'grenade',firedAt:g.at});
+    for(const a of this.allies){
+      if(!a.alive||!a.active||a.carriedBy||Math.hypot(a.x-g.x,a.z-g.z)>G.suppressM||!clear(a))continue;
+      const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(a.suppressedUntil,clock+G.suppressSec);recordSuppression(a,previousUntil,clock);
+    }
   }
   boundaries(dt){
     const p=this.player,b=this.world.layout.bounds;
@@ -2379,6 +2548,9 @@ export class M01Simulation {
       const gunner=candidate.actors.find(a=>a.id==='ckm_gunner');if(gunner&&!gunner.ckmFire)gunner.ckmFire=newCKMFire(s.rng);
     }
     migrateT38Staging(candidate.actors,candidate.world);
+    // R2-b: every man of the deck assault carries playerSuppressedUntil from the entry (beginDeckAssault), so a deck man without it is from a save made before R2-b, which kept no record of who suppressed him: all of that
+    // suppression was the player's, and the rule of the 20 s reads it (no draw, nothing else touched). A save of R2-b always has the key, so restoring it changes nothing.
+    for(const a of candidate.actors)if(a.group==='grp_de_spans'&&a.deck!==undefined&&a.playerSuppressedUntil===undefined)a.playerSuppressedUntil=a.suppressedUntil>s.clock?a.suppressedUntil:0;
     // Combat AI slice 1: a save made before it has no actor.ai. Each German of grp_de_east and Kowal gets his stream, derived from the saved main state (no draw
     // from it), no open peek and his current suppression already taken into account, so his saved cooldown runs out exactly as it would have.
     for(const a of candidate.actors)if(AI_MIGRATE(a)&&a.ai===undefined)a.ai=newAI(s.rng,aiIndex(a.id),a.suppressedUntil);
@@ -2542,7 +2714,7 @@ export function validateM01Snapshot(s){
     if(!AI_ACTOR(a)||!ai||typeof ai!=='object'||Array.isArray(ai)||Object.keys(ai).length!==AI_KEYS.length||AI_KEYS.some(k=>!Object.hasOwn(ai,k))||
       !Number.isInteger(ai.rng)||!finite(ai.rng,0,0xffffffff)||!Number.isInteger(ai.peek)||!finite(ai.peek,0,3)||!finite(ai.shakenUntil,0,s.clock+20)||
       !finite(ai.pinnedUntil,0,s.clock+10)||!finite(ai.recover,0,3)||(ai.target!==null&&(typeof ai.target!=='string'||!/^[a-z0-9_]{1,40}$/.test(ai.target)))||
-      (seen!==null&&(!seen||typeof seen!=='object'||Object.keys(seen).length!==(seen.who===undefined?4:5)||(seen.who!==undefined&&!['player','szymon_kowal','leon_dudek'].includes(seen.who))||
+      (seen!==null&&(!seen||typeof seen!=='object'||Object.keys(seen).length!==(seen.who===undefined?4:5)||(seen.who!==undefined&&!/^(player|szymon_kowal|leon_dudek|staszek_pawlak|east_platoon_voice|pl_east_\d+)$/.test(seen.who))||
         ![seen.x,seen.y,seen.z,seen.at].every(Number.isFinite)||!finite(seen.at,0,s.clock))))reject('IA de combate '+a.id);   // `who`: optional, absent in saves before the 2026-10-18 fix
   }
   // Combat slice 2, versioned rule (deck record v1, src/game/m01-deck-assault.js): a man of grp_de_spans who carries the deck record may stand west of x 690 down to
@@ -2605,6 +2777,7 @@ export function validateM01Snapshot(s){
     if(Math.abs(a.shot-Math.max(0,last.firedAt+.06-s.clock))>1e-8)reject('tiro MG34');
   }
   if(s.actors.some(a=>(a.firedAt!==undefined&&!Number.isFinite(a.firedAt))||(a.rounds!==undefined&&(!Number.isInteger(a.rounds)||a.rounds<-2||a.rounds>20))))reject('fogo dos actores');
+  if(s.actors.some(a=>a.playerSuppressedUntil!==undefined&&(a.group!=='grp_de_spans'||!finite(a.playerSuppressedUntil,0,s.clock+5+1e-6))))reject('supressão do jogador');   // R2-b: only on the Germans of the spans
   if(s.enemyFire!==undefined&&(!s.enemyFire||!Array.isArray(s.enemyFire.rounds)||s.enemyFire.rounds.length>200||!Number.isInteger(s.enemyFire.nextId)||s.enemyFire.nextId<0||
     new Set(s.enemyFire.rounds.map(r=>r?.id)).size!==s.enemyFire.rounds.length||s.enemyFire.rounds.some(r=>!validRound(r,s.clock))))reject('fogo em voo');
   if(s.actors.some(a=>a.pose!=null&&a.pose!=='seated'))reject('pose');
@@ -2627,7 +2800,10 @@ export function validateM01Snapshot(s){
     ![sector.strength,sector.morale,sector.supply].every(Number.isFinite)))reject('sectores');
   if(s.sectors.damage.some(d=>typeof d.id!=='string'||![d.x,d.y,d.z].every(Number.isFinite)||!finite(d.started,0,s.clock)||!finite(d.soundAt,d.started)||
     d.smokeSeconds!==undefined&&!finite(d.smokeSeconds,0,d.id.startsWith('m01_grenade_')?20:240)||d.concussion!==undefined&&!finite(d.concussion,0,1)))reject('destruição');
-  if(!Number.isInteger(s.grenades.nextId)||s.grenades.nextId<0||s.grenades.active.length>2||s.grenades.active.some(g=>typeof g.id!=='string'||![g.x,g.y,g.z,g.vx,g.vy,g.vz,g.fuse].every(Number.isFinite)||g.fuse<=0))reject('granadas em voo');
+  // R2-b: besides the player's (at most two), the stick grenades of the deck assault: `by` the thrower of the assault and `at` the time of the throw, the fuse at most the stick grenade's.
+  const german=g=>g.by!==undefined;
+  if(!Number.isInteger(s.grenades.nextId)||s.grenades.nextId<0||s.grenades.active.filter(g=>!german(g)).length>2||s.grenades.active.length>DECK_GRENADES_MAX||s.grenades.active.some(g=>typeof g.id!=='string'||![g.x,g.y,g.z,g.vx,g.vy,g.vz,g.fuse].every(Number.isFinite)||g.fuse<=0||
+    (german(g)&&(Object.keys(g).length!==10||!/^de_spans_\d$/.test(g.by)||!Number.isFinite(g.at)||g.at>s.clock||g.fuse>DECK_ASSAULT.tactics.grenade.fuseSec||!/^m01_grenade_\d+$/.test(g.id)||!Object.hasOwn(s.consumed,DECK_ASSAULT.from)))))reject('granadas em voo');
   for(const key of ['boundary','water','cover','repairStall','repairSuppressedUntil','withdrawalCasualty','ambient','nextCoverCall','guide',
     'boundaryCountdown','coverExposure','coverCallIndex'])if(!finite(s.timers[key]))reject('timer '+key);
   for(const key of ['guideAt','guideDist'])if(key in s.timers&&!finite(s.timers[key]))reject('timer '+key);
@@ -2652,6 +2828,7 @@ export function validateM01Snapshot(s){
       e.first>e.last||e.last>s.clock+1)reject('timer telegraph');}
   if(level===M01_DIFFICULTY.recruta&&['lastHitAt','burstWound','telegraph'].some(k=>k in s.timers))reject('estado de dificuldade em recruta');
   if('lowAmmoHint' in s.timers&&typeof s.timers.lowAmmoHint!=='boolean')reject('timer lowAmmoHint');
+  if('deckGrenadeAt' in s.timers&&(!finite(s.timers.deckGrenadeAt,0,s.clock)||!Object.hasOwn(s.consumed,DECK_ASSAULT.from)))reject('timer deckGrenadeAt');   // R2-b: the time of the last stick grenade of the assault
   for(const key of ['repairPins','calloutAt','firstMgAt'])if(key in s.timers&&!Number.isFinite(s.timers[key]))reject('timer '+key);
   if('fireEase' in s.timers&&typeof s.timers.fireEase!=='boolean')reject('timer fireEase');
   if('withdrawalPressure' in s.timers&&(!Number.isInteger(s.timers.withdrawalPressure)||!finite(s.timers.withdrawalPressure,0,7)))reject('timer withdrawalPressure');

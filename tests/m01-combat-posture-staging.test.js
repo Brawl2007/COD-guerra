@@ -213,7 +213,7 @@ function stagedRoute(seed,support=false){
   const st={platoonKneel:0,platoonTurned:0,gateKneel:0,gateUp:0,gateShots:0,gateShotsUp:0,attritionGate:0,sectionKneel:0,sectionUp:0,kowalShots:0,
     sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,hitboxChecks:0},deaths={},saves=[];
   let holdTicks=0,withdrawFlag=null,seenRounds=new Set();
-  let lastClock=0;const lastSup=new Map();   // suppression of every German at the end of the previous tick
+  let lastClock=0,lastCovers=false;const lastSup=new Map();   // suppression of every German at the end of the previous tick; whether Kowal covered the escort at the end of the previous tick
   const onStep=({sim,events})=>{
     const clock=sim.clock;
     if(sim.holdingEast()){
@@ -273,8 +273,12 @@ function stagedRoute(seed,support=false){
       }else if(d2(a,slot)>=1&&a.alive&&a.active&&!a.carriedBy&&a.state!=='WOUNDED'&&!a.task&&a.motion.speed>0)assert.equal(a.crouched,false,`${id} stands up to move`);
     }
     for(const e of events)if(e.type==='npc-shot'&&e.weapon==='rkm_wz28'){
-      const k=sim.actor('szymon_kowal');assert.deepEqual(e.point,eyePosition(k));
-      assert.equal(+(e.point.y-k.y).toFixed(9),EYE_HEIGHT,'Kowal fires standing over the sandbags');assert.equal(k.crouched,false);st.kowalShots++;
+      // 2026-10-24 re-pin (R2-b, golden amendment 18): the burst leaves from his standing eye, and he is down at the end of the tick only when the cover of the SP-08 escort ended in this very tick (kowalCovers true at the
+      // end of the previous tick, false now: the escort reached the shelter at the tick of his burst). That is a tick the longer deck fight moved on to seed 7 (06:44:30, measured: he was not pinned, suppressedAt 570.15);
+      // the property tested is unchanged: nobody stands unless something asks him to.
+      const k=sim.actor('szymon_kowal'),down=lastCovers&&!sim.kowalCovers?.();
+      assert.deepEqual(e.point,eyePosition(down?{...k,crouched:false}:k));
+      assert.equal(+(e.point.y-k.y).toFixed(9),EYE_HEIGHT,'Kowal fires standing over the sandbags');assert.equal(k.crouched,Boolean(down));st.kowalShots++;
     }
     const site=sim.world.point('repair_site_2');
     for(const id of SAPPERS){
@@ -300,7 +304,7 @@ function stagedRoute(seed,support=false){
       withdrawFlag=sim.flags['m01.east_platoon_survivors'];
       for(const a of platoon(sim).slice(0,18))assert.equal(a.crouched,false,`${a.id} stands to run at the withdrawal`);
     }
-    lastClock=clock;for(const a of sim.enemies)lastSup.set(a.id,a.suppressedUntil);
+    lastClock=clock;lastCovers=Boolean(sim.kowalCovers?.());for(const a of sim.enemies)lastSup.set(a.id,a.suppressedUntil);
   };
   const r=route(seed,{support,onStep}),s=r.sim;
   const times=Object.fromEntries(Object.entries(s.consumed).map(([k,v])=>[k.replace('evt_m01_',''),v]));

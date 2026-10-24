@@ -50,6 +50,12 @@ export const SECTION=Object.freeze({
   role:Object.freeze({marek_zielinski:'watch',szymon_kowal:'watch',staszek_pawlak:'rifle',east_platoon_voice:'rifle',jozef_bak:'rifle'}),
   sayWindowSec:8,orderGapSec:7,orderAfterCallSec:1.6,pinWindowSec:18,shiftLoad:3.2,shiftGapSec:40,dwellSec:Object.freeze([14,26]),holdEverySec:Object.freeze([45,80]),holdSec:20,focusWindowSec:25,focusGapSec:40,
   stallSec:40,casHearM:70,casDelaySec:Object.freeze([1.2,2.4]),casOrderSec:Object.freeze([2.2,4]),casMax:6,pinMax:8,seenMax:16,
+  // R2-b (2026-10-24): from the deck assault (evt_m01_germans_on_east_spans, 06:05) to the east demolition the section's riflemen fire REAL rounds at the Germans of the deck within rangeM (the model of the
+  // rearguard's rifles: sigmaMil, the dispersion in thousandths of the range, wider by 1.9 for shakenSec after the man was pinned; held when a friend stands in the line of fire) on a cycle of their own
+  // (a peek of 1-3 rounds, then a pause around pauseSec like the rearguard's; none while pinned; held when a friend is within clearanceM of the line of fire: the pair stands 1.1-1.3 m from the player's posts, so the
+  // rearguard's 1.5 m would silence it for good, and the ray itself is still traced against every friend), and Kowal's rkm answers the deck within rkmRangeM. The Germans of the gates and the dike (1 km and more) stay
+  // display-grade fire as in R2-a, so the duel the repair and the hold were calibrated on is untouched. Every draw is from the man's own stream.
+  real:Object.freeze({from:E('germans_on_east_spans'),rangeM:650,rkmRangeM:600,sigmaMil:Object.freeze([5,4]),clearanceM:.8,shakenSec:4,pauseSec:5,recoverSec:Object.freeze([1.2,3]),rescanSec:Object.freeze([2.5,5.5]),blockedRetrySec:1.5}),
   // Posts of the pair, [x, z, facing] per man. 0 is the T38 slot at the squad post. 1 and 2 lie along the communication trench (cv_trench_2 12 m east, cv_trench_1 27 m east) just west of the node,
   // which gives the man the cover pose of the existing coverAt rule; 3 is the road deck, west of both pilots' posts (control (30, 40), support (38, 42.4)), on the south side of the lane: the platoon's
   // file runs along the north girder (z 37.8 - 38.15), the south side is the one left free for covering fire.
@@ -66,6 +72,8 @@ const SEEN_KEY=/^(mg:de_east_[01]|gate:[NS]|dike|deck:[a-z]+|pinned:[a-z_]+|casu
 const KINDS=new Set(SECTION_CALLOUT_KINDS),ORDERS=new Set(SECTION_ORDER_KINDS);
 const HOLD_KINDS=new Set(['look','drop']);
 const RECORD_KEYS=Object.freeze(['v','rng','at','next','seen','deckSig','focus','shots','hold','pin','pins','post','order','cas','recent','done','say','n']);
+/** R2-b: the record of the deck window carries one more key, `fire` (id -> the time of the man's next peek), created at the first tick of the real fire; every older record lacks it and is valid as it is. */
+const RECORD_KEYS_FIRE=Object.freeze([...RECORD_KEYS,'fire']);
 const SAY_NODES=Object.freeze(['arrive_home','arrive_deck','arrive_trench']);
 const AT_KEYS=['scan','callout','order','shift'],NEXT_KEYS=[...SECTION.pair,'hold','focus'],N_KEYS=['scans','callouts','orders','shifts','shots','casualties'];
 const CAS_KEYS=['id','how','by','at','x','z','called','orderAt','done'];
@@ -78,12 +86,16 @@ export function sectionSlot(stageSlots,id,k){
 
 /** True from the first bomb of 04:34 to the east demolition (the retreat of slice 3 takes over there). */
 export const sectionOn=sim=>sim.consumedEvent(SECTION.from)&&!sim.consumedEvent(SECTION.until)&&sim.mission.phase!=='OUTRO';
+/** R2-b: true from the deck assault to the east demolition: the section's rifles fire real rounds at the deck and Kowal's rkm answers it (the simulation's hook sectionRealFire reads this). */
+export const sectionRealOn=sim=>sim.consumedEvent(SECTION.real.from)&&sectionOn(sim);
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 // The record and its streams
 const sectionSeed=(state,index)=>Math.imul(((state>>>0)^0x5ec70a15)+Math.imul(index+1,0x9e3779b9)|0,2654435761)>>>0;
 const next=(q,id)=>{const r=q.rng[id]=(Math.imul(1664525,q.rng[id])+1013904223)>>>0;return r/4294967296;};
 const between=(q,id,[lo,hi])=>lo+(hi-lo)*next(q,id);
+/** A normal draw from the man's own stream (Box-Muller, two uniforms), as the combat AI's aiGauss does. */
+const gauss=(q,id)=>{let u=0;while(u<=1e-12)u=next(q,id);return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*next(q,id));};
 const t3=v=>+v.toFixed(3);
 /** A fresh record, its streams derived from the state of the main stream (read, never drawn). Every key is always present. */
 export function newSection(sim){
@@ -111,6 +123,7 @@ export function updateSection(sim,ctx){
   watch(sim,q);
   handleCasualties(sim,q);
   decide(sim,q);
+  discipline(sim,q);
   return q;
 }
 /** The window is over: the pair that was shifted forward is left to the retreat of slice 3 (which walks every man of its teams from where he stands). */
@@ -176,7 +189,8 @@ function gateSide(sim,a){
   return sin>.002?'right':sin<-.002?'left':null;
 }
 const LETTER={advance:'a',cover:'c',hold:'h',fallback:'f',clear:'x'};
-const deckSignature=sim=>DECK_ASSAULT.assault.map(id=>{const m=sim.actor(id);return !m||!m.alive||!m.active?'d':LETTER[m.deck?.phase]??'x';}).join('');
+// (R2-b: a man in the advance phase who is walking east is going back a line, which the section reads as a fall-back)
+const deckSignature=sim=>DECK_ASSAULT.assault.map(id=>{const m=sim.actor(id);return !m||!m.alive||!m.active?'d':m.deck?.phase==='advance'&&Math.cos(m.facing)>0?'f':LETTER[m.deck?.phase]??'x';}).join('');
 /** The deck assault as a watcher sees it: the first sight, the fall back, a man down, a new rush. The watcher must see the westmost man still up; the signature is only read (and kept) then. */
 function watchDeck(sim,q,w){
   const clock=sim.clock,men=DECK_ASSAULT.assault.map(id=>sim.actor(id)).filter(m=>m&&m.alive&&m.active&&m.deck).sort((a,b)=>a.x-b.x);
@@ -231,7 +245,46 @@ function queueShots(q,clock,id,target){
 }
 /** He can answer: a rifle with rounds, not reloading, on his feet where he is, and a line of sight to the German from his eyes standing. */
 function canFire(sim,q,a,target){
-  return a.id!==SECTION.rkm&&a.id!==SECTION.leader&&a.rounds>0&&!a.reload&&!walking(a)&&!q.post[a.id]?.moving&&dist(a,target)<=SECTION.rangeM&&sim.world.lineOfSight(standing(a),target);
+  return a.id!==SECTION.rkm&&a.id!==SECTION.leader&&a.rounds>0&&!a.reload&&!walking(a)&&!q.post[a.id]?.moving&&dist(a,target)<=reach(sim,target)&&sim.world.lineOfSight(standing(a),target)&&!(target.group==='grp_de_spans'&&realOn(sim)&&sim.clock<a.suppressedUntil);
+}
+/** How far a section rifleman answers a German: the real rounds' reach for the deck from the deck assault on, else R2-a's display range. */
+const reach=(sim,target)=>target.group==='grp_de_spans'&&realOn(sim)?SECTION.real.rangeM:SECTION.rangeM;
+const realOn=sim=>sim.sectionRealFire();
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+// R2-b: the fire of the riflemen of the section at the deck, on a cycle of their own. A peek of 1-3 rounds at the nearest German of the deck they see within real.rangeM (queueShots, then the
+// rounds of sectionAfter), then a pause around real.pauseSec (the rearguard's), a man pinned stays down until it is over and for a drawn moment after, a man with no German in sight looks
+// again in a few seconds. `q.fire[id]` is the time of his next peek (created at the first tick of the real fire).
+function discipline(sim,q){
+  if(!realOn(sim))return;
+  const clock=sim.clock,F=SECTION.real;q.fire??={};
+  for(const id of SECTION.men){
+    if(SECTION.role[id]!=='rifle')continue;
+    const a=sim.actor(id);
+    if(!present(a)||q.post[id]?.moving||walking(a)||q.shots.some(s=>s.id===id)||clock<(q.fire[id]??0))continue;
+    if(clock<a.suppressedUntil){q.fire[id]=t3(a.suppressedUntil+between(q,id,F.recoverSec));continue;}
+    if(!(a.rounds>0)||a.reload){q.fire[id]=t3(clock+1);continue;}
+    const t=realTarget(sim,a);
+    if(!t){q.fire[id]=t3(clock+between(q,id,F.rescanSec));continue;}
+    queueShots(q,clock,id,t);q.fire[id]=t3(clock+120);   // (the pause is set when the last round of the peek is fired: settle)
+  }
+}
+/** The nearest living man of the deck assault he sees from his feet within real.rangeM. */
+function realTarget(sim,a){
+  const eye=standing(a);let best=null,bd=Infinity;
+  for(const m of sim.actors){
+    if(m.group!=='grp_de_spans'||m.deck===undefined||!m.alive||!m.active||m.carriedBy)continue;
+    const d=dist(a,m);if(d>SECTION.real.rangeM||d>=bd||!sim.world.lineOfSight(eye,m))continue;
+    best=m;bd=d;
+  }
+  return best;
+}
+/** The pause after a peek: a skewed draw around the rearguard's (pauseSec x 1.8 - 1.8 s, never under 3 s, at most 3 x the mean). */
+function pauseOf(q,id){const mean=SECTION.real.pauseSec*1.8-1.8;return Math.min(3*mean,Math.max(3,mean*Math.exp(.5*gauss(q,id)-.125)));}
+/** The end of a peek (or of a round that was not fired): the man's next peek is a pause away, or soon when a friend stood in the line of fire. */
+function settle(sim,q,id,blocked=false){
+  if(!q.fire||!realOn(sim))return;
+  q.fire[id]=t3(sim.clock+(blocked?SECTION.real.blockedRetrySec:pauseOf(q,id)));
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -362,11 +415,12 @@ export function sectionAfter(sim){
   const clock=sim.clock;
   for(let i=0;i<q.shots.length;){
     const s=q.shots[i],a=sim.actor(s.id),t=sim.actor(s.target);
-    if(!present(a)||!t||!t.alive||!t.active||q.post[s.id]?.moving||walking(a)){q.shots.splice(i,1);continue;}
+    if(!present(a)||!t||!t.alive||!t.active||q.post[s.id]?.moving||walking(a)){q.shots.splice(i,1);settle(sim,q,s.id);continue;}
     if(clock<s.at){i++;continue;}
-    if(!(a.rounds>0)||a.reload||!sim.world.lineOfSight(standing(a),t)){q.shots.splice(i,1);continue;}
-    shoot(sim,a,t);q.n.shots++;
-    if(--s.left>0){s.at=t3(clock+between(q,s.id,SECTION.fire.boltSec));i++;}else q.shots.splice(i,1);
+    if(!(a.rounds>0)||a.reload||!sim.world.lineOfSight(standing(a),t)||(clock<a.suppressedUntil&&t.group==='grp_de_spans'&&realOn(sim))){q.shots.splice(i,1);settle(sim,q,s.id);continue;}   // (R2-b: a man pinned by the deck's fire keeps his head down)
+    if(!shoot(sim,q,a,t)){q.shots.splice(i,1);settle(sim,q,s.id,true);continue;}   // (a friend in the line of fire: no round, no ammunition; he tries again soon)
+    q.n.shots++;
+    if(--s.left>0){s.at=t3(clock+between(q,s.id,SECTION.fire.boltSec));i++;}else{q.shots.splice(i,1);settle(sim,q,s.id);}
   }
   for(const id of SECTION.men){
     const a=sim.actor(id),h=q.hold[id];
@@ -384,12 +438,23 @@ export function sectionAfter(sim){
     else if(cur?.k==='drop')a.crouched=true;
   }
 }
-/** A rifle shot that is seen and heard but not traced: the flash of the allied rifleman (shot, firedAt, SUPPRESS), the clip, the report. */
-function shoot(sim,a,t){
+/**
+ * A rifle shot of the section: the flash of the allied rifleman (shot, firedAt, SUPPRESS), the clip, the report. At a German of the deck from the deck assault on (realOn, within real.rangeM) it is
+ * a REAL round (sim.alliedRound: dispersion from the man's own stream, line of fire, damage, suppression) and is not fired, with no ammunition spent, when a friend stands in the line of fire (returns
+ * false); every other shot is display-grade as in R2-a (seen and heard, not traced). The man is on his feet when he fires (his eye is the standing eye).
+ */
+function shoot(sim,q,a,t){
   const clock=sim.clock;
+  a.crouched=false;let real=null;
+  if(t.group==='grp_de_spans'&&realOn(sim)&&dist(a,t)<=SECTION.real.rangeM){
+    real=sim.alliedRound(a,t,{gauss:()=>gauss(q,a.id),sigmaMil:SECTION.real.sigmaMil,clearanceM:SECTION.real.clearanceM,shaken:clock<a.suppressedUntil+SECTION.real.shakenSec});
+    if(!real.fired)return false;
+  }
   a.rounds=Math.max(0,a.rounds-1);if(a.rounds===0)a.reload={startedAt:clock,duration:3.4,mode:'clip'};
-  a.shot=.135;a.firedAt=clock;a.state='SUPPRESS';a.crouched=false;a.facing=Math.atan2(t.z-a.z,t.x-a.x);
-  sim.emit({type:'npc-shot',weapon:'ally_rifle',point:eyePosition(a),rounds:1,by:a.id,target:t.id});
+  a.shot=.135;a.firedAt=clock;a.state='SUPPRESS';a.facing=Math.atan2(t.z-a.z,t.x-a.x);
+  // a real round also says where it stopped (`end`) and whether it struck the German (`hit`), so that the presentation can draw it and its impact; a display-grade one does not
+  sim.emit({type:'npc-shot',weapon:'ally_rifle',point:eyePosition(a),rounds:1,by:a.id,target:t.id,...(real?{end:real.end,hit:real.hit}:{})});
+  return true;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -405,7 +470,9 @@ export function validateSectionRecord(q,s,reject){
   const keys=(o,list)=>plain(o)&&Object.keys(o).length===list.length&&list.every(k=>Object.hasOwn(o,k));
   const german=id=>typeof id==='string'&&/^de_(east|spans)_\d+$/.test(id),man=id=>SECTION.men.includes(id);
   const bad=what=>reject('secção '+what);
-  if(!keys(q,RECORD_KEYS)||q.v!==SECTION.version)bad('registo');
+  if(!(keys(q,RECORD_KEYS)||keys(q,RECORD_KEYS_FIRE))||q.v!==SECTION.version)bad('registo');
+  // R2-b: the cycle of the real fire exists only from the deck assault on, for the riflemen of the section, with the time of the next peek (at most a peek and a long pause ahead).
+  if(q.fire!==undefined&&(!Object.hasOwn(s.consumed,SECTION.real.from)||!plain(q.fire)||Object.entries(q.fire).some(([id,t])=>!man(id)||SECTION.role[id]!=='rifle'||!fin(t,0,clock+SECTION.real.pauseSec*6+130))))bad('ciclo de fogo');
   // The window runs from the first bomb to the tick that consumes the east demolition (the save of that very tick still carries the record: the next tick removes it, endSection).
   if(!Object.hasOwn(s.consumed,SECTION.from)||(Object.hasOwn(s.consumed,SECTION.until)&&!(s.consumed[SECTION.until]>=clock-1e-6)))bad('janela');
   if(!keys(q.rng,SECTION.men)||SECTION.men.some(id=>!Number.isInteger(q.rng[id])||!fin(q.rng[id],0,0xffffffff)))bad('fluxos');
