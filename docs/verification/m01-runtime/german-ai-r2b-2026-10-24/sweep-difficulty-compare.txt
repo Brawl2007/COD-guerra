@@ -1,0 +1,151 @@
+rows before 72, after 72, in both 72, identical 46
+DIFF ('recruta', '1', 'False') ['collisionsByPhase', 'fightRealSec', 'finalHealth', 'minHealth', 'realSec', 'wounds', 'woundsByPhase']
+     collisionsByPhase {"FIRST_CONTACT": 1, "cover_withdrawal+rescue_bak": 6, "hold_corridor": 4} -> {"FIRST_CONTACT": 1, "cover_withdrawal+rescue_bak": 9, "hold_corridor": 1}
+     fightRealSec 257.6 -> 351.5
+     finalHealth 76 -> 84
+     minHealth 76 -> 84
+     realSec 1192.5 -> 1283
+DIFF ('recruta', '1', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 8 -> 6
+     collisionsByPhase {"FIRST_CONTACT": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 4, "hold_corridor": 2} -> {"FIRST_CONTACT": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 2, "hold_corridor": 2}
+     fightRealSec 238.3 -> 178.8
+     finalHealth 84 -> 92
+     minAt "06:27:01" -> "06:28:42"
+DIFF ('recruta', '10', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 17 -> 13
+     collisionsByPhase {"cover_repair": 1, "cover_withdrawal+rescue_bak": 13, "hold_corridor": 3} -> {"cover_repair": 1, "cover_withdrawal+rescue_bak": 11, "hold_corridor": 1}
+     fightRealSec 253.3 -> 318.3
+     finalHealth 76 -> 92
+     minAt "06:09:30" -> "06:44:20"
+DIFF ('recruta', '10', 'True') ['collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds', 'woundsByPhase']
+     collisionsByPhase {"cover_repair": 1, "cover_withdrawal+rescue_bak": 1, "leave_bridge": 1, "hold_corridor": 3} -> {"cover_repair": 1, "cover_withdrawal+rescue_bak": 4, "hold_corridor": 1}
+     fightRealSec 217.2 -> 290.8
+     finalHealth 84 -> 92
+     minAt "06:44:24" -> "06:09:30"
+     minHealth 84 -> 92
+DIFF ('recruta', '11', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 16 -> 12
+     collisionsByPhase {"cover_repair": 1, "cover_withdrawal+rescue_bak": 11, "leave_bridge": 1, "hold_corridor": 3} -> {"cover_repair": 1, "cover_withdrawal+rescue_bak": 8, "hold_corridor": 3}
+     fightRealSec 262.3 -> 266.4
+     finalHealth 76 -> 84
+     minAt "06:09:30" -> "06:26:32"
+DIFF ('recruta', '11', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'realSec']
+     collisions 6 -> 4
+     collisionsByPhase {"cover_repair": 1, "cover_withdrawal+rescue_bak": 3, "leave_bridge": 1, "hold_corridor": 1} -> {"cover_repair": 1, "cover_withdrawal+rescue_bak": 2, "leave_bridge": 1}
+     fightRealSec 241 -> 261.7
+     realSec 1144.3 -> 1164
+DIFF ('recruta', '19390901', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 18 -> 20
+     collisionsByPhase {"cover_repair": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 13, "hold_corridor": 3} -> {"cover_repair": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 15, "hold_corridor": 3}
+     fightRealSec 235.6 -> 326.8
+     finalHealth 84 -> 92
+     minAt "06:22:20" -> "06:09:30"
+DIFF ('recruta', '19390901', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 10 -> 8
+     collisionsByPhase {"cover_repair": 1, "FIRST_CONTACT": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 7} -> {"cover_repair": 1, "FIRST_CONTACT": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 3, "hold_corridor": 2}
+     fightRealSec 262.3 -> 239.9
+     finalHealth 92 -> 84
+     minAt "05:24:08" -> "06:09:30"
+DIFF ('recruta', '2', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'minAt', 'realSec']
+     collisions 16 -> 21
+     collisionsByPhase {"cover_repair": 1, "hold_access": 4, "cover_withdrawal+rescue_bak": 8, "hold_corridor": 3} -> {"cover_repair": 1, "hold_access": 4, "cover_withdrawal+rescue_bak": 11, "leave_bridge": 1, "hold_corridor": 4}
+     fightRealSec 253.1 -> 356.1
+     minAt "06:44:20" -> "06:44:30"
+     realSec 1205.8 -> 1300.7
+DIFF ('recruta', '2', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'minAt', 'realSec', 'woundsByPhase']
+     collisions 11 -> 9
+     collisionsByPhase {"cover_repair": 4, "hold_access": 1, "cover_withdrawal+rescue_bak": 3, "leave_bridge": 2, "hold_corridor": 1} -> {"cover_repair": 4, "hold_access": 1, "cover_withdrawal+rescue_bak": 3, "hold_corridor": 1}
+     fightRealSec 244.8 -> 178.7
+     minAt "06:15:48" -> "06:44:25"
+     realSec 1146.5 -> 1084.3
+DIFF ('recruta', '3', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'minAt', 'realSec', 'woundsByPhase']
+     collisions 16 -> 17
+     collisionsByPhase {"cover_repair": 4, "cover_withdrawal+rescue_bak": 8, "hold_corridor": 4} -> {"cover_repair": 4, "cover_withdrawal+rescue_bak": 8, "rescue_bak+leave_bridge": 2, "hold_corridor": 3}
+     fightRealSec 262.3 -> 345.3
+     minAt "06:09:30" -> "06:13:23"
+     realSec 1222.1 -> 1291.9
+DIFF ('recruta', '3', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'realSec']
+     collisions 9 -> 5
+     collisionsByPhase {"cover_repair": 2, "cover_withdrawal+rescue_bak": 6, "hold_corridor": 1} -> {"cover_repair": 2, "cover_withdrawal+rescue_bak": 2, "hold_corridor": 1}
+     fightRealSec 223.4 -> 178.1
+     realSec 1140.7 -> 1091.4
+DIFF ('recruta', '4', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 15 -> 23
+     collisionsByPhase {"cover_repair": 2, "FIRST_CONTACT": 5, "cover_withdrawal+rescue_bak": 5, "rescue_bak+leave_bridge": 2, "hold_corridor": 1} -> {"cover_repair": 2, "FIRST_CONTACT": 5, "cover_withdrawal+rescue_bak": 12, "hold_corridor": 4}
+     fightRealSec 247.8 -> 358.6
+     finalHealth 76 -> 52
+     minAt "06:10:01" -> "06:41:37"
+DIFF ('recruta', '4', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 11 -> 8
+     collisionsByPhase {"cover_repair": 3, "cover_withdrawal+rescue_bak": 5, "hold_corridor": 3} -> {"cover_repair": 3, "cover_withdrawal+rescue_bak": 3, "hold_corridor": 2}
+     fightRealSec 244.8 -> 189.2
+     finalHealth 84 -> 92
+     minAt "06:41:32" -> "04:50:52"
+DIFF ('recruta', '5', 'False') ['collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds', 'woundsByPhase']
+     collisionsByPhase {"cover_repair": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 9, "rescue_bak+leave_bridge": 1, "hold_corridor": 5} -> {"cover_repair": 1, "hold_access": 1, "cover_withdrawal+rescue_bak": 13, "hold_corridor": 2}
+     fightRealSec 251.6 -> 360.7
+     finalHealth 92 -> 44
+     minAt "06:44:06" -> "06:44:18"
+     minHealth 92 -> 44
+DIFF ('recruta', '5', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'realSec']
+     collisions 4 -> 3
+     collisionsByPhase {"hold_access": 1, "cover_withdrawal+rescue_bak": 1, "hold_corridor": 2} -> {"hold_access": 1, "cover_withdrawal+rescue_bak": 1, "leave_bridge": 1}
+     fightRealSec 248.8 -> 245.9
+     realSec 1162 -> 1157.7
+DIFF ('recruta', '6', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'minAt', 'realSec', 'woundsByPhase']
+     collisions 17 -> 15
+     collisionsByPhase {"hold_access": 1, "cover_withdrawal+rescue_bak": 6, "rescue_bak+leave_bridge": 1, "leave_bridge": 2, "hold_corridor": 7} -> {"hold_access": 1, "cover_withdrawal+rescue_bak": 10, "hold_corridor": 4}
+     fightRealSec 222 -> 323.4
+     minAt "06:44:30" -> "06:09:30"
+     realSec 1165.7 -> 1271.9
+DIFF ('recruta', '6', 'True') ['collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds', 'woundsByPhase']
+     collisionsByPhase {"cover_repair": 1, "cover_withdrawal+rescue_bak": 2, "hold_corridor": 1} -> {"cover_repair": 1, "cover_withdrawal+rescue_bak": 3}
+     fightRealSec 217.3 -> 281.2
+     finalHealth 92 -> 100
+     minAt "06:27:33" -> null
+     minHealth 92 -> 100
+DIFF ('recruta', '7', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'minAt', 'realSec', 'woundsByPhase']
+     collisions 17 -> 18
+     collisionsByPhase {"FIRST_CONTACT": 2, "cover_withdrawal": 1, "cover_withdrawal+rescue_bak": 8, "hold_corridor": 6} -> {"FIRST_CONTACT": 2, "cover_withdrawal": 1, "cover_withdrawal+rescue_bak": 10, "leave_bridge": 2, "hold_corridor": 3}
+     fightRealSec 262.3 -> 300.1
+     minAt "06:44:27" -> "06:15:00"
+     realSec 1212.1 -> 1256.1
+DIFF ('recruta', '7', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'realSec']
+     collisions 10 -> 5
+     collisionsByPhase {"cover_repair": 3, "cover_withdrawal+rescue_bak": 6, "hold_corridor": 1} -> {"cover_repair": 3, "cover_withdrawal+rescue_bak": 2}
+     fightRealSec 247.9 -> 178.7
+     realSec 1167.7 -> 1094.3
+DIFF ('recruta', '8', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 22 -> 17
+     collisionsByPhase {"FIRST_CONTACT": 1, "hold_access": 2, "cover_withdrawal+rescue_bak": 12, "leave_bridge": 2, "hold_corridor": 5} -> {"FIRST_CONTACT": 1, "hold_access": 2, "cover_withdrawal+rescue_bak": 13, "hold_corridor": 1}
+     fightRealSec 256.1 -> 329.3
+     finalHealth 92 -> 68
+     minAt "06:17:08" -> "06:28:30"
+DIFF ('recruta', '8', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 8 -> 7
+     collisionsByPhase {"cover_repair": 2, "FIRST_CONTACT": 1, "cover_withdrawal+rescue_bak": 2, "leave_bridge": 1, "hold_corridor": 2} -> {"cover_repair": 2, "FIRST_CONTACT": 1, "cover_withdrawal+rescue_bak": 2, "leave_bridge": 1, "hold_corridor": 1}
+     fightRealSec 175 -> 176.8
+     finalHealth 84 -> 92
+     minAt "06:44:30" -> "05:10:32"
+DIFF ('recruta', '9', 'False') ['collisions', 'collisionsByPhase', 'fightRealSec', 'finalHealth', 'minAt', 'minHealth', 'realSec', 'wounds']
+     collisions 22 -> 26
+     collisionsByPhase {"cover_repair": 2, "hold_access": 1, "cover_withdrawal+rescue_bak": 15, "hold_corridor": 4} -> {"cover_repair": 2, "hold_access": 1, "cover_withdrawal+rescue_bak": 18, "leave_bridge": 3, "hold_corridor": 2}
+     fightRealSec 262.3 -> 356.1
+     finalHealth 68 -> 84
+     minAt "06:44:30" -> "06:09:30"
+DIFF ('recruta', '9', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'realSec']
+     collisions 9 -> 10
+     collisionsByPhase {"cover_repair": 3, "FIRST_CONTACT": 1, "cover_withdrawal+rescue_bak": 4, "leave_bridge": 1} -> {"cover_repair": 3, "FIRST_CONTACT": 1, "cover_withdrawal+rescue_bak": 5, "hold_corridor": 1}
+     fightRealSec 240.8 -> 224.3
+     realSec 1144.2 -> 1128.2
+DIFF ('soldado', '3', 'True') ['collisions', 'collisionsByPhase', 'fightRealSec', 'realSec', 'wounds', 'woundsByPhase']
+     collisions 46 -> 49
+     collisionsByPhase {"cover_repair": 6, "FIRST_CONTACT": 3, "hold_access": 3, "cover_withdrawal+rescue_bak": 27, "hold_corridor": 7} -> {"cover_repair": 6, "FIRST_CONTACT": 3, "hold_access": 3, "cover_withdrawal+rescue_bak": 32, "rescue_bak+leave_bridge": 1, "leave_bridge": 2, "hold_corridor": 2
+     fightRealSec 171 -> 189.2
+     realSec 1095.1 -> 1115
+     wounds 17 -> 16
+DIFF ('soldado', '8', 'True') ['collisions', 'collisionsByPhase', 'realSec', 'woundsByPhase']
+     collisions 62 -> 61
+     collisionsByPhase {"cover_repair": 14, "FIRST_CONTACT": 2, "hold_access": 2, "cover_withdrawal": 1, "cover_withdrawal+rescue_bak": 28, "hold_corridor": 15} -> {"cover_repair": 14, "FIRST_CONTACT": 2, "hold_access": 2, "cover_withdrawal": 1, "cover_withdrawal+rescue_bak": 30, "rescue_bak+leave_bridge": 1, "leave_bridge
+     realSec 1170.7 -> 1170.2
+     woundsByPhase {"cover_repair": 8, "FIRST_CONTACT": 2, "hold_corridor": 12} -> {"cover_repair": 8, "FIRST_CONTACT": 2, "rescue_bak+leave_bridge": 1, "leave_bridge": 1, "hold_corridor": 10}

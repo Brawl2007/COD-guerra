@@ -239,7 +239,7 @@ function bomber({level='recruta',gap=20,phase='cover',node=17,player=[COVER.x,CO
 }
 const german=s=>s.grenades.active.filter(g=>g.by);
 
-test('the stick grenade: thrown at a Pole the man cannot hit with the rifle (the player in authored cover, a defender behind a wall) within a throw, from his feet, once per man and once per gapSec for the squad; a flat arc, the fuse as the warning',()=>{
+test('the stick grenade: thrown at a Pole the man cannot hit with the rifle (the player in authored cover, a defender behind a wall or pinned down on his post) within a throw, from his feet, once per man and once per gapSec for the squad; a flat arc, the fuse as the warning',()=>{
   let {s,man}=bomber({level:'soldado'});
   assert.ok(s.world.coverAt(s.player),'the player is in authored cover');assert.equal(s.world.lineOfSight(man,s.player),true,'and in the sight of the German: cover is what keeps the rifle off him');
   const rng=s.rng.state,clock=s.clock;
@@ -293,6 +293,12 @@ test('the stick grenade is never unfair: not at a player he can hit, not out of 
     const {s,man}=bomber({pairOn:true});Object.assign(s.player,{x:-60,z:20,crouched:false});
     const [pawlak]=pair(s);Object.assign(man,{x:pawlak.x+25,z:pawlak.z,y:s.world.heightAt(pawlak.x+25,pawlak.z)});
     assert.equal(s.world.lineOfSight(man,pawlak),true);assert.equal(s.deckGrenade(man),false,'Pawlak is in his sight: the rifle');
+    // pinned down on his post (kneeling and suppressed) he is a target even in sight; standing, or kneeling and not suppressed, he is not
+    pawlak.crouched=true;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),false,'kneeling, not suppressed');
+    pawlak.crouched=false;pawlak.suppressedUntil=s.clock+3;assert.equal(s.deckGrenade(man),false,'suppressed but standing');
+    pawlak.crouched=true;assert.equal(s.deckGrenade(man),true,'kneeling and suppressed: pinned down on his post');
+    const g0=german(s)[0],aim=Math.hypot(g0.vx*T.grenade.flightSec+g0.x-pawlak.x,g0.vz*T.grenade.flightSec+g0.z-pawlak.z);assert.ok(aim<5,`at Pawlak (${aim.toFixed(1)} m)`);
+    s.grenades.active.length=0;man.deck.gr=0;delete s.timers.deckGrenadeAt;pawlak.suppressedUntil=0;pawlak.crouched=true;
     s.world.obstacles.push({id:'t_wall',min:{x:30,y:-1,z:30},max:{x:32,y:8,z:50},material:'stone'});
     assert.equal(s.world.lineOfSight(man,pawlak),false);assert.equal(s.deckGrenade(man),true,'behind a wall he is a target');
     const g=german(s)[0],dd=Math.hypot(g.vx*T.grenade.flightSec+g.x-pawlak.x,g.vz*T.grenade.flightSec+g.z-pawlak.z);assert.ok(dd<5,`the throw is at Pawlak (${dd.toFixed(1)} m)`);

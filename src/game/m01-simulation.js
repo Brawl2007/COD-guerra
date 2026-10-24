@@ -1687,7 +1687,7 @@ export class M01Simulation {
   }
   /**
    * R2-b: a stick grenade (Stielhandgranate). A man of the assault in cover or on a line, with a Pole between tactics.grenade.minM and rangeM from him whom he cannot hit with the rifle (no line of sight,
-   * or the player in authored cover), lobs one at him: at most perMan each, one for the squad every gapSec, thrown from his feet on a flat arc of flightSec to the Pole's place plus an error of 5 % of the range
+   * the player in authored cover, or a defender pinned down on his post), lobs one at him: at most perMan each, one for the squad every gapSec, thrown from his feet on a flat arc of flightSec to the Pole's place plus an error of 5 % of the range
    * (his own stream), a fuse of fuseSec from the throw (so the grenade lies on the ground for the rest of it: the warning). A transient `enemy-grenade` event and, when it falls near the player, a HUD message
    * say it is coming; it is a grenade of grenades.active (the renderer draws it) with `by` and `at`, which the explosion (germanGrenadeBlast) reads. Never against the player when he sees him and is not in cover.
    */
@@ -1698,8 +1698,10 @@ export class M01Simulation {
     for(const b of [p,...this.deckDefenders()]){
       if(!b.alive||(b!==p&&!b.active)||b.x>=a.x)continue;
       const dd=dist(a,b);if(dd<G.minM||dd>G.rangeM||dd>=bd)continue;
-      const cover=b===p?this.world.coverAt(p):null;
-      if(this.world.lineOfSight(a,b)&&!cover)continue;   // he can hit him with his rifle
+      // A Pole he cannot hit with the rifle: out of his sight; or the player in authored cover (the sim's own test of cover, world.coverAt); or a defender pinned down on his post (kneeling and suppressed:
+      // there is nothing to aim at but the cover he lies in, which is what a grenade is for). A standing or an unsuppressed Pole in his sight is the rifle's.
+      const covered=b===p?Boolean(this.world.coverAt(p)):Boolean(b.crouched)&&this.clock<b.suppressedUntil;
+      if(this.world.lineOfSight(a,b)&&!covered)continue;   // he can hit him with his rifle
       best=b;bd=dd;
     }
     if(!best)return false;
