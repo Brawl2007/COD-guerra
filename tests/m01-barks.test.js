@@ -449,6 +449,11 @@ const gunner=s=>s.actor('ckm_gunner');
 const MUZZLE={x:8,y:-2.36,z:26};
 const stoppage=(s,sec=3.8,n=1)=>s.emit({type:'ckm_stoppage',by:'ckm_gunner',at:s.clock,clearAt:s.clock+sec,origin:MUZZLE,n});
 const cleared=(s,n=1)=>s.emit({type:'ckm_stoppage_cleared',by:'ckm_loader',at:s.clock,origin:MUZZLE,n});
+// R2-a: the events of the section as src/game/m01-section.js emits them (the contract is in tests/m01-section.test.js and validateM01AudioEvent): who called, what, where he stands, where it is.
+const callOut=(s,o={})=>{const by=s.actor(o.by??'staszek_pawlak');
+  return s.emit({type:'section-callout',kind:'mg',by:by.id,target:'de_east_0',side:'left',landmark:'gate',from:{x:by.x,y:by.y,z:by.z},point:{x:by.x,y:by.y,z:by.z},aim:{x:1055,y:0,z:32},at:s.clock,reactions:[],...o});};
+const orderOut=(s,o={})=>{const l=s.actor('marek_zielinski');
+  return s.emit({type:'section-order',kind:'hold',by:l.id,to:['szymon_kowal'],target:null,side:null,from:{x:l.x,y:l.y,z:l.z},point:{x:l.x,y:l.y,z:l.z},at:s.clock,...o});};
 const speakFirst=(s,id,sec)=>{ // the line `id` was said `sec` seconds ago (for the follow-ups), and used up
   const L=s.timers.barks??(s.timers.barks=newBarkState());L.at[id]=s.clock-sec;L.n[id]=1;return s;
 };
@@ -530,6 +535,44 @@ const CASES={
   [D(160)]:{stage:s=>{s.consumed.evt_m01_east_demolition=s.clock-30;near(s,'leon_dudek',30);},act:s=>impact(s,{kind:'squad',pinned:['leon_dudek']})},
   [D(161)]:{stage:s=>{s.timers.corridor={phase:'escort',counted:12,total:12,at:s.clock,since:s.clock};s.actor('leon_dudek').task='evacuate_bak';near(s,'leon_dudek',4);},act:s=>barkPoll(s)},
   [D(163)]:{stage:s=>{s.consumed.evt_m01_east_demolition=s.clock-30;near(s,'szymon_kowal',40);},act:s=>s.emit({type:'enemy-fire',origin:{x:1055,y:0,z:30},rounds:1,interval:.075,weapon:'kar98k',at:s.clock})},
+  // 2026-10-24 (R2-a, golden amendment 17): the section's calls (section-callout), the answer, the sergeant's orders (section-order) and the arrival of the pair at a post (squadMove), the events as
+  // src/game/m01-section.js emits them. Each pair of lines of a group is staged twice: the first member's turn, and the second's (the ledger's group record).
+  [D(164)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>callOut(s,{kind:'mg',side:'left'})},
+  [D(165)]:{stage:s=>{near(s,'jozef_bak');withLedger(s,{g:{sec_mg_left:[1,0]}});},act:s=>callOut(s,{kind:'mg',side:'left'})},
+  [D(166)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>callOut(s,{kind:'mg',side:'right'})},
+  [D(167)]:{stage:s=>{near(s,'jozef_bak');withLedger(s,{g:{sec_mg_right:[1,0]}});},act:s=>callOut(s,{kind:'mg',side:'right'})},
+  [D(168)]:{stage:s=>near(s,'east_platoon_voice'),act:s=>callOut(s,{kind:'gate',side:null})},
+  [D(169)]:{stage:s=>{near(s,'jozef_bak');withLedger(s,{g:{sec_gate:[1,0]}});},act:s=>callOut(s,{kind:'gate',side:'right'})},
+  [D(170)]:{stage:s=>near(s,'jozef_bak'),act:s=>callOut(s,{kind:'dike',side:null,landmark:'dike',target:'de_east_20'})},
+  [D(171)]:{stage:s=>{near(s,'staszek_pawlak');withLedger(s,{g:{sec_dike:[1,0]}});},act:s=>callOut(s,{kind:'dike',side:null,landmark:'dike',target:'de_east_20'})},
+  [D(172)]:{stage:s=>near(s,'staszek_pawlak',60),act:s=>callOut(s,{kind:'deck',side:null,landmark:'deck',target:'de_spans_7'})},
+  [D(173)]:{stage:s=>{near(s,'east_platoon_voice',60);withLedger(s,{g:{sec_deck:[1,0]}});},act:s=>callOut(s,{kind:'deck',side:null,landmark:'deck',target:'de_spans_7'})},
+  [D(174)]:{stage:s=>near(s,'staszek_pawlak',60),act:s=>callOut(s,{kind:'advance',side:null,landmark:'deck',target:'de_spans_7'})},
+  [D(175)]:{stage:s=>{near(s,'east_platoon_voice',60);withLedger(s,{g:{sec_advance:[1,0]}});},act:s=>callOut(s,{kind:'advance',side:null,landmark:'deck',target:'de_spans_7'})},
+  [D(176)]:{stage:s=>near(s,'staszek_pawlak',60),act:s=>callOut(s,{kind:'fallback',side:null,landmark:'deck',target:'de_spans_5'})},
+  [D(177)]:{stage:s=>{near(s,'east_platoon_voice',60);withLedger(s,{g:{sec_fall:[1,0]}});},act:s=>callOut(s,{kind:'fallback',side:null,landmark:'deck',target:'de_spans_5'})},
+  [D(178)]:{stage:s=>near(s,'staszek_pawlak',60),act:s=>callOut(s,{kind:'down',side:null,landmark:'deck',target:'de_spans_5'})},
+  [D(179)]:{stage:s=>{near(s,'east_platoon_voice',60);withLedger(s,{g:{sec_down:[1,0]}});},act:s=>callOut(s,{kind:'down',side:null,landmark:'deck',target:'de_spans_5'})},
+  [D(180)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>callOut(s,{kind:'pinned',by:'staszek_pawlak',target:null,side:null,landmark:null})},
+  [D(181)]:{stage:s=>near(s,'east_platoon_voice'),act:s=>callOut(s,{kind:'pinned',by:'east_platoon_voice',target:null,side:null,landmark:null})},
+  [D(182)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>callOut(s,{kind:'casualty',by:'staszek_pawlak',target:'pl_west_0',side:null,landmark:null})},
+  [D(183)]:{stage:s=>near(s,'east_platoon_voice'),act:s=>callOut(s,{kind:'casualty',by:'east_platoon_voice',target:'pl_west_0',side:null,landmark:null})},
+  [D(184)]:{stage:s=>near(s,'szymon_kowal'),act:s=>callOut(s,{kind:'casualty',by:'szymon_kowal',target:'pl_west_1',side:null,landmark:null})},
+  [D(185)]:{stage:s=>near(s,'ckm_gunner',20),act:s=>callOut(s,{kind:'casualty',by:'ckm_loader',target:'jozef_bak',side:null,landmark:null})},
+  [D(186)]:{stage:s=>{near(s,'szymon_kowal');speakFirst(s,D(164),2);},act:s=>barkPoll(s)},
+  [D(187)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'focus',side:'left',target:'de_east_0'})},
+  [D(188)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'focus',side:'right',target:'de_east_0'})},
+  [D(189)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'focus',side:null,target:'de_east_14'})},
+  [D(190)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'hold'})},
+  [D(191)]:{stage:s=>{near(s,'marek_zielinski');withLedger(s,{g:{sec_hold:[1,0]}});},act:s=>orderOut(s,{kind:'hold'})},
+  [D(192)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'shift',to:['staszek_pawlak','east_platoon_voice']})},
+  [D(193)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'return',to:['staszek_pawlak','east_platoon_voice']})},
+  [D(194)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'deck',to:['staszek_pawlak','east_platoon_voice']})},
+  [D(195)]:{stage:s=>near(s,'marek_zielinski'),act:s=>orderOut(s,{kind:'sector',to:['staszek_pawlak'],target:'pl_west_0'})},
+  [D(196)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'squadMove',{node:'arrive_deck'})},
+  [D(197)]:{stage:s=>{near(s,'east_platoon_voice');withLedger(s,{g:{sec_arrive_deck:[1,0]}});},act:s=>barkTrigger(s,'squadMove',{node:'arrive_deck'})},
+  [D(198)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'squadMove',{node:'arrive_trench'})},
+  [D(199)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'squadMove',{node:'arrive_home'})},
   'co_m01_ally_hit':{stage:s=>{withdrawal(s);near(s,'marek_zielinski');withLedger(s,{n:unspoken(s,[D(100),D(101),D(102)])});},act:s=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})},
   'co_m01_cover_rotation':{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_sandbag_mid_2'})},
 };
