@@ -1,5 +1,13 @@
 # Executar e validar
 
+## Onze tarefas parciais aceites — 2026-10-16
+
+O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.
+
+**37 tarefas principais confirmadas;15 por fechar**, incluindo T53. T21/PR65 e T50/PR66 são candidatos existentes fora deste lote. M01 continua PROTÓTIPO JOGÁVEL; playtest humano e performance no PC-alvo pendentes. As variâncias T24-CAMERA-01 e T36-EXPOSURE-01 e os FAIL históricos permanecem explícitos; main não é modificada.
+
+O conteúdo abaixo é histórico e conserva o estado da respetiva data.
+
 Node >=22.12.0; CI em Node 24. Dependências fixadas: Three.js 0.186.1, Vite 8.3.1, Playwright 1.58.2. `package-lock.json` versionado.
 
 ```sh
@@ -183,3 +191,7 @@ Compara duas continuações com os mesmos inputs/dt a cada tick e indica o prime
 `M01Simulation.snapshot()` cria um save de continuação com `resumeCheckpoint` opcional plano para preservar o CP anterior. `snapshot(false)` cria um snapshot plano para instalar explicitamente um novo checkpoint ou fabricar uma fixture legacy. Os CP-A..D e a persistência normal do jogo continuam planos em schema 2. Saves antigos sem o novo campo conservam o contrato anterior. Não guardar cadeias de backups; o validador rejeita aninhamento, backups futuros e campos de arma que não pertencem ao snapshot real.
 
 Evidências/reprodução/limites: `docs/verification/m01-runtime/schema2-determinism-audit-2026-10-03/HANDOFF.md`.
+
+## Guarda do bundle inicial (T50)
+
+Depois de `npm run build`, `npm run verify:bundle` (`tools/verify-t50-bundle.mjs`) escreve `artifacts/t50-proof/t50-bundle-metrics.json` e falha se o chunk de entrada `index-*.js` tiver >= 600 000 bytes. `tests/m01-t50-font-footer-bundle.test.js` garante sem build que o grafo estático de `src/main.js` não importa `three` nem `src/game|render|sim` (carregados por `import()`), e verifica a fonte Barlow self-hosted, o `@font-face`/preload e o rodapé ligado ao estado.

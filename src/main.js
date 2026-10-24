@@ -1,13 +1,15 @@
 import { detectTouch, TouchState, bindTouchControls } from './core/touch-controls.js';
 import './styles.css';
 import './styles-t50-loading.css';
+import './styles-d5-difficulty.css';
 import { M01LoadingController } from './ui/m01-loading-controller.js';
+import { AUDIO_MIX_KEY, AUDIO_MIX_DEFAULTS, parseAudioMix, concussionScaleFor } from './core/audio/settings.js';
 
 // Render a genuine loading screen before requesting the large 3D game graph.
 const t50Loading=new M01LoadingController(document);
 t50Loading.begin();
-let Game;
-try{({Game}=await import('./game/game.js'));}
+let Game,M01_DIFFICULTY_LABELS,M01_DIFFICULTY_NEW_GAME;   // re-exported by game.js: the entry graph must not statically reach the game graph
+try{({Game,M01_DIFFICULTY_LABELS,M01_DIFFICULTY_NEW_GAME}=await import('./game/game.js'));}
 catch(error){
   t50Loading.fail(error);
   document.querySelector('#error-text').textContent=String(error?.message??error);
@@ -21,15 +23,29 @@ const hud={health:$('#health'),healthBar:$('#health-bar'),grenades:$('#grenades'
   objective:$('#objective-text'),objectiveStatus:$('#objective-status'),message:$('#message'),checkpoint:$('#checkpoint'),vignette:$('#damage-vignette'),
   weaponName:$('#weapon-name'),weaponState:$('#weapon-state'),clock:$('#battle-clock'),interaction:$('#interaction'),subtitle:$('#subtitle'),crosshair:$('#crosshair'),hitMarker:$('#hit-marker'),
   root:hudRoot,objectivePanel:$('#objective'),objectiveUpdate:$('#objective-update'),checkpointName:$('#checkpoint-name'),status:$('#status'),ammo:$('#ammo'),
-  rounds:$('#rounds'),lowHealth:$('#low-health'),fade:$('#fade'),titleCard:$('#title-card'),resumeCard:$('#resume-card')};
+  rounds:$('#rounds'),lowHealth:$('#low-health'),fade:$('#fade'),titleCard:$('#title-card'),resumeCard:$('#resume-card'),
+  death:$('#death-beat'),deathCause:$('#death-cause'),deathNote:$('#death-note')};   // H9 D5: the death beat is painted by Game from real time
 let game,touchState;
+$('#difficulty').value=M01_DIFFICULTY_NEW_GAME;
 const showError=message=>{$('#error-text').textContent=message;errorPanel.classList.remove('hidden');};
+const difficultyText=id=>id?`Dificuldade: ${M01_DIFFICULTY_LABELS[id]}`:'';
+function showDifficulty(){const id=game.difficulty;$('#pause-difficulty').textContent=difficultyText(id);$('#difficulty-badge').textContent=id?M01_DIFFICULTY_LABELS[id].toUpperCase():'';}
+const newGame=()=>game.restartMission(game.isM01?$('#difficulty').value:undefined);
 function stateChanged(state,detail){
   if(touchState){const live=state==='playing';touchState.setActive(live);$('#touch-controls').classList.toggle('hidden',!live);}
+  if(state!=='death-offer')$('#death-offer').classList.add('hidden');
+  if(state==='death-offer'){   // H9 D5: repeated deaths at one checkpoint; the simulation is not ticked until the player chooses
+    pause.classList.add('hidden');complete.classList.add('hidden');$('#death-offer').classList.remove('hidden');
+    $('#death-offer-text').textContent=`Caiu ${detail.deaths} vezes em ${detail.card}. Pode tentar de novo no mesmo nível ou continuar daqui em nível mais baixo (o nível nunca sobe a meio da missão).`;
+    $('#death-lower').textContent=`CONTINUAR EM NÍVEL MAIS BAIXO · ${M01_DIFFICULTY_LABELS[detail.to].toUpperCase()}`;
+    $('#death-retry').textContent=`TENTAR DE NOVO · ${M01_DIFFICULTY_LABELS[game.difficulty].toUpperCase()}`;
+    return;
+  }
   if(state==='menu'){
     menu.classList.remove('hidden');pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.add('hidden');
     $('#continue').classList.toggle('hidden',!game.hasSave);return;
   }
+  if(state==='playing'||state==='paused'||state==='control-error')showDifficulty();
   if(state==='playing'){pause.classList.add('hidden');complete.classList.add('hidden');hudRoot.classList.remove('hidden');}
   if(state==='paused'||state==='control-error'){
     pause.classList.remove('hidden');
@@ -47,7 +63,7 @@ function stateChanged(state,detail){
   }
 }
 function missionMenu(){
-  const m01=game.isM01;$('#mission-select').value=m01?'m01_tczew':'sandbox-1944';
+  const m01=game.isM01;$('#difficulty-choice').classList.toggle('hidden',!m01);$('#mission-select').value=m01?'m01_tczew':'sandbox-1944';
   $('#mission-place').textContent=m01?'POLÓNIA · 1 SETEMBRO 1939':'FRANÇA · 1944';
   $('#mission-title').innerHTML=m01?'A PRIMEIRA<br><span>MANHÃ</span>':'ESTRADA<br><span>DE CINZAS</span>';
   $('#mission-briefing').textContent=m01?'Tczew, 04:30. Leve a mensagem ao posto da ponte. Mantenha contacto com a secção e cubra os sapadores.':'O posto avançado deixou de responder. Atravesse a aldeia com a patrulha e restabeleça as comunicações na capela.';
@@ -82,7 +98,7 @@ try{
   $('#mission-select').addEventListener('change',e=>{game.selectMission(e.target.value);missionMenu();});
   $('#start').addEventListener('click',()=>{
     menu.classList.add('hidden');errorPanel.classList.add('hidden');hudRoot.classList.remove('hidden');
-    game.restartMission();
+    newGame();
   });
   $('#continue').addEventListener('click',()=>{
     menu.classList.add('hidden');errorPanel.classList.add('hidden');hudRoot.classList.remove('hidden');
@@ -90,12 +106,22 @@ try{
   });
   $('#resume').addEventListener('click',()=>game.resume());
   $('#restart-checkpoint').addEventListener('click',()=>game.restartCheckpoint());
+  $('#death-lower').addEventListener('click',()=>game.continueLowerLevel());
+  $('#death-retry').addEventListener('click',()=>game.restartCheckpoint());
+  $('#death-menu').addEventListener('click',()=>{game.deathOffer=null;game.menu();});
   $('#back-menu').addEventListener('click',()=>game.menu());
-  $('#replay').addEventListener('click',()=>{complete.classList.add('hidden');hudRoot.classList.remove('hidden');game.restartMission();});
+  $('#replay').addEventListener('click',()=>{complete.classList.add('hidden');hudRoot.classList.remove('hidden');newGame();});
   $('#complete-menu').addEventListener('click',()=>game.menu());
   $('#quality').value=game.renderer.quality;
   $('#quality').addEventListener('change',e=>{game.renderer.setQuality(e.target.value);game.audio.setQuality(e.target.value);try{localStorage.setItem('cod-guerra:visual-quality',e.target.value);}catch{}});
-  $('#volume').addEventListener('input',e=>game.audio.setVolume(e.target.value));
+  const mixKey=AUDIO_MIX_KEY;let mix={...AUDIO_MIX_DEFAULTS};
+  try{mix=parseAudioMix(localStorage.getItem(mixKey));}catch{}
+  const applyMix=()=>{game.audio.setVolume(mix.master);for(const b of ['sfx','voice','music'])game.audio.setBusVolume(b,mix[b]);game.audio.setConcussionScale(concussionScaleFor(mix.reduceTinnitus));};
+  const saveMix=()=>{try{localStorage.setItem(mixKey,JSON.stringify(mix));}catch{}};
+  $('#volume').value=mix.master;$('#reduce-tinnitus').checked=mix.reduceTinnitus;
+  for(const [id,key] of [['volume','master'],['volume-sfx','sfx'],['volume-voice','voice'],['volume-music','music']]){if(key!=='master')$('#'+id).value=mix[key];$('#'+id).addEventListener('input',e=>{mix=parseAudioMix({...mix,[key]:Number(e.target.value)});applyMix();saveMix();});}
+  $('#reduce-tinnitus').addEventListener('change',e=>{mix.reduceTinnitus=e.target.checked;applyMix();saveMix();});
+  applyMix();
   $('#close-error').addEventListener('click',()=>errorPanel.classList.add('hidden'));
   // A persisted page retains its WebGL/audio objects and resumes via the usual
   // pause controls after Back. Only a real unload destroys the game.

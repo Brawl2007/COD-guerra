@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type:'json'};
-import {WZ29_VISUAL,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,placeViewArms,riflePresentationMaterial,viewAtlasMaterial,
-  adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
+import {WZ29_VISUAL,STOCK_SHADE,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,riflePresentationMaterial,viewAtlasMaterial,
+  adsEase,adsFieldOfView,advanceAdsProgress,faceClipWeight,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
+import {frameFirstPersonCarry} from './m01-fp-carry.js';
+import {ViewHands} from './m01-fp-hands.js';
 import {visualNoise} from './m01-atmosphere.js';
 
 const PROFILE=WEAPON_PRESENTATION.wz29,BOLT_SECONDS=wz29Profile.gameplay.boltCycleSec,RELOAD_CLIP_SECONDS=3.4;
@@ -38,11 +40,19 @@ export function viewModelArmsGeometry(source,jointNames){
   return geometry;
 }
 
+// Interrupted reload (a shot during the single-round reload): the rig eases back from where it was over this much mission time (R6-a).
+const FADE_SECONDS=.2,FADE_MIN_PROGRESS=.88;
+const HAND_RETURN=Object.freeze({from:.93,to:1.1});   // fire_bolt clip seconds: the right wrist goes back to its hold position
+const _fq=new THREE.Quaternion();
+const KEY_SIZE=25;   // slots of the per-frame change key in update()
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.
 export class M01ViewModel {
   // worldFx (optional) receives world-space brass, clips and muzzle smoke; texture stays for caller compatibility.
   // muzzleLight (optional): the weapon pass's existing muzzle light, shared instead of adding a second one.
   constructor(scene,characters,texture,worldFx=null,{muzzleLight=null}={}){
+    this.native={clock:null,triangles:0,calls:0,meshes:[]};this.nativeFrame=null;this.nativeHooks=new Map();
+    // Last final local pose of the rig and the one an interrupted reload eases away from (see capturePose/blendPose).
+    this.poseBones=[];this.poseLast=null;this.poseFrom=null;this.poseValid=false;this.fade=null;this.lastReloading=false;this.lastReload=0;this.lastPoseClock=0;
     this.scene=scene;this.characters=characters;this.root=null;this.lod=null;this.mixer=null;this.worldFx=worldFx;
     // Layered flash, muzzle light and barrel/chamber smoke. `flash` remains the core sprite on the real muzzle socket.
     this.fx=new WeaponViewFx(scene,PROFILE,{light:muzzleLight});this.flash=this.fx.core;this.boltSeconds=BOLT_SECONDS;
@@ -54,25 +64,49 @@ export class M01ViewModel {
     this.tmp={a:new THREE.Vector3(),b:new THREE.Vector3(),c:new THREE.Vector3(),q:new THREE.Quaternion(),r:new THREE.Quaternion(),r2:new THREE.Quaternion(),up:new THREE.Vector3()};
   }
   release(root,mixer){
-    if(!root)return;root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(root);
+    if(!root)return;root.traverse(n=>{if(this.nativeHooks.has(n)){n.onBeforeRender=this.nativeHooks.get(n);this.nativeHooks.delete(n);}});root.removeFromParent();mixer.stopAllAction();mixer.uncacheRoot(root);
     const skins=new Set();root.traverse(n=>{if(n.isSkinnedMesh)skins.add(n.skeleton);});skins.forEach(s=>s.dispose());
   }
   build(lod){
-    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;
-    this.release(this.root,this.mixer);this.armGeometry?.dispose();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.lod=lod;this.visual=null;this.sampleKey=null;
-    this.root=clone(this.characters.sources.get(`pl:${lod}`).scene);this.scene.add(this.root);
-    this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
+    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;
+    this.release(this.root,this.mixer);this.armGeometry?.dispose();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.skinMaterial?.dispose();this.skinMaterial=null;this.lod=lod;this.visual=null;this.sampleKey=null;
+    this.fpSource=this.characters.sources.has('fp:0');
+    this.root=clone(this.characters.sources.get(this.fpSource?'fp:0':`pl:${lod}`).scene);this.scene.add(this.root);
+    this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip','fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
     const body=this.root.getObjectByName('body');
+    this.poseBones=[];this.root.traverse(n=>{if(n.isBone)this.poseBones.push(n);});
+    this.poseLast=new Float32Array((this.poseBones.length+1)*7);this.poseFrom=new Float32Array(this.poseLast.length);this.poseValid=false;this.fade=null;
     this.root.updateMatrixWorld(true);
     this.root.userData.viewArmBind=Object.fromEntries(['l','r'].map(side=>[side,this.root.getObjectByName(`upperarm_${side}`).position.toArray()]));
-    this.armGeometry=viewModelArmsGeometry(body.geometry,body.skeleton.bones.map(b=>b.name));
+    this.armGeometry=this.fpSource?body.geometry.clone():viewModelArmsGeometry(body.geometry,body.skeleton.bones.map(b=>b.name));
     body.geometry=this.armGeometry;
-    const rifle=this.root.getObjectByName('rifle');this.rifleMaterial=riflePresentationMaterial(rifle.material);rifle.material=this.rifleMaterial;
+    const rifle=this.root.getObjectByName('rifle');this.rifleMaterial=riflePresentationMaterial(rifle.material,rifle.skeleton?.bones.findIndex(b=>b.name==='weapon_bolt')??-1);rifle.material=this.rifleMaterial;
+    const hands=this.root.getObjectByName('fp_hands');
+    if(hands){this.skinMaterial=viewAtlasMaterial(hands.material);this.skinMaterial.name='FP skin';hands.material=this.skinMaterial;}
     this.atlasMaterial=viewAtlasMaterial(body.material);body.material=this.atlasMaterial;this.root.getObjectByName('clip').material=this.atlasMaterial;
     this.mixer=new THREE.AnimationMixer(this.root);
+    // Bind finger rotations first, then learn each phalanx's flex axis from the authored grip pose (aim clip, t = 0).
+    this.hands=new ViewHands(this.root);this.play(this.root,this.mixer,'aim',0);this.hands.calibrate();
     let sockets=null;this.root.traverse(n=>{sockets??=n.userData?.sockets??null;});
     this.port=sockets?.ejection_port?[...sockets.ejection_port]:PORT;
     this.fx.attach(this.root.getObjectByName('weapon'),WZ29_VISUAL.muzzle);this.root.getObjectByName('weapon_clip').add(this.round);
+  }
+  // Actual draw callbacks from the complete weapon scene, including patient, clip, FX and fallbacks.
+  // These observations never advance presentation or simulation time.
+  observeNative(clock){
+    this.native.clock=clock;
+    this.scene.traverse(n=>{
+      if(!(n.isMesh||n.isSprite)||this.nativeHooks.has(n))return;
+      const original=n.onBeforeRender;this.nativeHooks.set(n,original);
+      n.onBeforeRender=(renderer,scene,camera,geometry,material,group)=>{
+        original?.call(n,renderer,scene,camera,geometry,material,group);
+        const frame=renderer.info.render.frame,report=this.native;
+        if(this.nativeFrame!==frame){this.nativeFrame=frame;report.triangles=0;report.calls=0;report.meshes=[];}
+        const count=n.isSprite?6:Math.min(group?.count??Infinity,geometry.drawRange.count,(geometry.index?.count??geometry.getAttribute('position')?.count??0));
+        const triangles=count/3;report.triangles+=triangles;report.calls++;
+        report.meshes.push({name:n.name||n.type,triangles});
+      };
+    });
   }
   /** Presentation-only ejection/smoke spawns in world space, keyed by authoritative shot/reload ids. */
   emitWorld(sim,view,weapon,clip,sample){
@@ -121,6 +155,23 @@ export class M01ViewModel {
     mixer.setTime(time);
     root.updateMatrixWorld(true);
   }
+  /** Local pose of the rig root and of every bone into `out` (position xyz, rotation xyzw), no allocation. */
+  capturePose(out){
+    let o=0;const r=this.root;
+    out[o++]=r.position.x;out[o++]=r.position.y;out[o++]=r.position.z;out[o++]=r.quaternion.x;out[o++]=r.quaternion.y;out[o++]=r.quaternion.z;out[o++]=r.quaternion.w;
+    for(const b of this.poseBones){out[o++]=b.position.x;out[o++]=b.position.y;out[o++]=b.position.z;out[o++]=b.quaternion.x;out[o++]=b.quaternion.y;out[o++]=b.quaternion.z;out[o++]=b.quaternion.w;}
+    return out;
+  }
+  /** Moves the root and every bone `weight` (0..1) of the way back to a captured pose: lerp for positions, slerp for rotations. */
+  blendPose(from,weight){
+    let o=0;const r=this.root;
+    r.position.set(r.position.x+(from[o]-r.position.x)*weight,r.position.y+(from[o+1]-r.position.y)*weight,r.position.z+(from[o+2]-r.position.z)*weight);
+    r.quaternion.slerp(_fq.set(from[o+3],from[o+4],from[o+5],from[o+6]),weight);o+=7;
+    for(const b of this.poseBones){
+      b.position.set(b.position.x+(from[o]-b.position.x)*weight,b.position.y+(from[o+1]-b.position.y)*weight,b.position.z+(from[o+2]-b.position.z)*weight);
+      b.quaternion.slerp(_fq.set(from[o+3],from[o+4],from[o+5],from[o+6]),weight);o+=7;
+    }
+  }
   /**
    * World field of view for the aim transition (70 hip, 48 sights), on the same eased progress as the weapon pose. The mission
    * view sets the camera before this frame's viewmodel pass, so this is the last write before the world is drawn; the
@@ -136,35 +187,47 @@ export class M01ViewModel {
     const {a,b,c}=this.tmp,q=camera.quaternion,frame={origin:camera.position,forward:a.set(0,0,-1).applyQuaternion(q),right:b.set(1,0,0).applyQuaternion(q),up:c.set(0,1,0).applyQuaternion(q)};
     return frame;
   }
+  // state (optional): the caller's `sim.renderState` of this frame (a getter that rebuilds the whole render state on every read); read here only if not passed.
   // view (optional): {camera, viewFov}. The camera is READ for the brass/clip/smoke spawns and the wall probe, and its field of
   // view is WRITTEN (applyFov) to the aim transition's value: the one camera property this class sets.
-  update(sim,quality,flashUntil,view=null){
-    const characters=this.characters;
+  update(sim,quality,flashUntil,view=null,state=sim.renderState){
+    const characters=this.characters;this.observeNative(sim.clock);
     const lod=characters.sources.has('pl:0')?0:1;
     if(!characters.sources.has(`pl:${lod}`)||!['aim','reload_clip','fire_bolt','carry_wounded','carried'].every(name=>characters.clips.has(name)))return false;
-    if(this.lod!==lod)this.build(lod);
+    if(this.lod!==lod||this.fpSource!==characters.sources.has('fp:0'))this.build(lod);
+    if(this.wounded&&this.wounded.fpPatient!==characters.sources.has('fp:patient')){this.release(this.wounded.root,this.wounded.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;this.sampleKey=null;}
     // Restore replaces the data world; reconstruct visual flags/phase at that safe
     // boundary instead of blending from an old menu/checkpoint presentation.
-    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
-    // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) without an actor index.
-    const p=sim.player,w=sim.weapon,t=sim.clock,bak=typeof sim.actor==='function'?sim.actor('jozef_bak'):null,carryPhase=bak?.carry,
-      carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&bak?.carriedBy===p.id;
-    const key=JSON.stringify([t,p.aiming,p.moveBlend,p.sprinting,p.crouched,p.carrying,sim.renderState.weaponVisible,w.state,w.started,w.until,w.lastShot,w.shotCount,flashUntil,
-      p.angle,p.pitch,sim.world?.revision,view?.camera?[...view.camera.position.toArray(),...view.camera.quaternion.toArray()]:null]);
-    if(this.sampleKey===key){this.applyFov(view);return true;}
-    this.sampleKey=key;this.fovDriven=false;
-    this.root.visible=sim.renderState.weaponVisible||carry;
-    if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod};return true;}
+    if(this.sourceWorld!==sim.world){this.sourceWorld=sim.world;this.visual=null;this.sampleKey=null;this.poseValid=false;this.fade=null;this.flashShot=sim.weapon.shotCount;this.fx.reset();}
+    // Read-only lookup. Callers may pass the minimal presentation record (clock/player/weapon/renderState) with or without an actor index.
+    const p=sim.player,w=sim.weapon,t=sim.clock,patient=typeof sim.actor==='function'?sim.actor('jozef_bak'):sim.actors?.find(a=>a.id==='jozef_bak'),carryPhase=patient?.carry,
+      carry=p.carrying==='jozef_bak'||carryPhase?.phase==='putdown'&&patient?.carriedBy===p.id;
+    // Per-frame change key: scalars compared in place against the previous key (no JSON.stringify, no per-frame arrays).
+    // A NaN or an absent field matches itself, as it did in the serialised key.
+    const cam=view?.camera,k=this.keyScratch??=new Array(KEY_SIZE).fill(null);
+    k[0]=characters.revision;k[1]=t;k[2]=p.aiming;k[3]=p.moveBlend;k[4]=p.sprinting;k[5]=p.crouched;k[6]=p.carrying;k[7]=state.weaponVisible;k[8]=w.state;k[9]=w.started;k[10]=w.until;
+    k[11]=w.lastShot;k[12]=w.shotCount;k[13]=flashUntil;k[14]=p.angle;k[15]=p.pitch;k[16]=sim.world?.revision;
+    if(cam){const c=cam.position,q=cam.quaternion;k[17]=true;k[18]=c.x;k[19]=c.y;k[20]=c.z;k[21]=q.x;k[22]=q.y;k[23]=q.z;k[24]=q.w;}
+    else{k[17]=false;k[18]=k[19]=k[20]=k[21]=k[22]=k[23]=k[24]=null;}
+    const prev=this.sampleKey;let same=Boolean(prev);
+    if(same)for(let i=0;i<KEY_SIZE;i++){const x=k[i],y=prev[i];if(x!==y&&!(x!==x&&y!==y)&&!(x==null&&y==null)){same=false;break;}}
+    if(same){this.applyFov(view);return true;}
+    if(prev)for(let i=0;i<KEY_SIZE;i++)prev[i]=k[i];else this.sampleKey=k.slice();
+    this.fovDriven=false;
+    this.root.visible=state.weaponVisible||carry;
+    if(!this.root.visible){this.fx.hide();this.stats={active:true,visible:false,lod,clock:t,drawnTriangles:0,drawnMeshes:[],native:this.native};return true;}
     let clip='aim',sample=0;
     if(carry){const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_carrier`:null;
       clip=transition&&characters.clips.has(transition)?transition:characters.clips.has('carry_walk')?'carry_walk':'carry_wounded';
       sample=transition&&clip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(clip).duration;}
     else if(w.reloading){clip='reload_clip';sample=w.reloadProgress(t*1000)*characters.clips.get(clip).duration;}
     else if(w.boltCycling){clip='fire_bolt';sample=Math.min(1,(t*1000-w.started)/(w.until-w.started))*characters.clips.get(clip).duration;}
+    // A shot cuts a single-round reload short: the hands and the rifle would jump to the aim pose; ease them back from the last drawn pose instead.
+    if(!carry&&this.poseValid&&this.lastReloading&&!w.reloading&&this.lastReload<FADE_MIN_PROGRESS&&t>=this.lastPoseClock&&t-this.lastPoseClock<.5){this.poseFrom.set(this.poseLast);this.fade={start:t};}
     this.root.position.set(0,0,0);this.root.rotation.set(0,0,0);
     this.play(this.root,this.mixer,clip,sample);
     // Carry presentation is preserved; the rifle path uses measured sight landmarks.
-    const eye=new THREE.Vector3();this.root.getObjectByName('eye_r').getWorldPosition(eye);
+    const eye=this._eye??=new THREE.Vector3();this.root.getObjectByName('eye_r').getWorldPosition(eye);
     let mechanical=0,stroke=0,feel={wallDistance:null,wallTarget:0,wallLower:0,fov:null,breath:0,bob:0,gait:0};
     if(carry){
       this.root.position.copy(eye).multiplyScalar(-1);
@@ -198,32 +261,57 @@ export class M01ViewModel {
       // Bolt-action convention: the stroke takes the rifle off the eye, canted to show the bolt and the ejection,
       // and it is back on the sights before the weapon is READY. player.aiming and authoritative spread are untouched.
       stroke=clip==='fire_bolt'?THREE.MathUtils.smoothstep(sample,.10,.30)*(1-THREE.MathUtils.smoothstep(sample,.92,1.12))*v.aim:0;
-      const pose=presentationPose({clock:t,lastShot:w.lastShot,aim:v.aim*(1-.6*stroke),move:v.move,run:v.run,crouch:v.crouch,wall:v.wall,reload:w.reloading?reloadEnvelope(sample):0,
+      const reloadWeight=w.reloading?reloadEnvelope(sample):0,pose=presentationPose({clock:t,lastShot:w.lastShot,aim:v.aim*(1-.6*stroke),move:v.move,run:v.run,crouch:v.crouch,wall:v.wall,reload:reloadWeight,
         shot:w.shotCount??0,look:v.look,mechanical,stroke,profile:PROFILE});
       Object.assign(feel,{wallLower:+v.wall.toFixed(4),fov:+adsFieldOfView(v.aim).toFixed(4),aimEased:+adsEase(v.aim).toFixed(5),gait:+pose.gait.phase.toFixed(4),
         bob:+(pose.gait.y*v.move*(1-adsEase(v.aim))).toFixed(6),breath:+(breathSway(t).y*(1-adsEase(v.aim))).toFixed(6)});
       placeWz29(this.root,this.root.getObjectByName('weapon'),pose);
+      if(this.rifleMaterial){const ease=adsEase(v.aim*(1-.6*stroke)),u=this.rifleMaterial.userData;u.m01StockShade.value=STOCK_SHADE.strength*ease;u.m01FaceClip.value=u.m01FaceClip.depth*faceClipWeight(v.aim*(1-.6*stroke),stroke,reloadWeight,v.wall);}
       const gripWeight=w.reloading?1-reloadEnvelope(sample):w.boltCycling?
         1-THREE.MathUtils.smoothstep(sample,.12,.25)+THREE.MathUtils.smoothstep(sample,1.08,characters.clips.get('fire_bolt').duration):1;
-      placeViewArms(this.root,this.root.getObjectByName('weapon'),gripWeight);
+      // The right wrist is back on its hold position a little before the fingers close on it: the thumb crosses the sights if the hand comes home
+      // along the authored path with the rifle already back on the eye (R6-a).
+      const wristWeight=w.boltCycling?Math.max(gripWeight,THREE.MathUtils.smoothstep(sample,HAND_RETURN.from,HAND_RETURN.to)):gripWeight;
+      this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.root.getObjectByName('weapon'),{r:wristWeight,l:1},adsEase(v.aim)*(1-reloadWeight));
     }
     this.root.getObjectByName('rifle').visible=!carry;
     // From clip_ejected the empty clip continues as a world object; the asset's short arc would otherwise vanish mid-air.
     const clipEjected=Boolean(this.worldFx&&view)&&w.state==='RELOAD_CLIP'&&sample>=PROFILE.mechanics.clipEjected;
     this.root.getObjectByName('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
     // Partial reload inserts one cartridge. The five-round clip mesh stays hidden.
-    this.round.visible=w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;
+    this.round.visible=!carry&&w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;
     if(carry&&!this.wounded){
-      const root=clone(characters.sources.get(`pl:${lod}`).scene);
+      // Dedicated carry budget: detailed LOD1 face/body with compact LOD2 webbing.
+      const patientLod=characters.sources.has('pl:1')?1:characters.sources.has('pl:2')?2:lod;
+      const patientSource=characters.sources.get('fp:patient')??characters.sources.get(`pl:${patientLod}`);
+      const root=clone(patientSource.scene);
+      const gear=root.getObjectByName('gear'),compact=characters.sources.get('pl:2')?.scene.getObjectByName('gear');
+      if(gear&&compact&&patientLod===1&&!characters.sources.has('fp:patient')){
+        const geometry=compact.geometry.clone(),old=geometry.getAttribute('skinIndex'),names=compact.skeleton.bones.map(b=>b.name);
+        const indices=new Uint16Array(old.count*4),target=gear.skeleton.bones.map(b=>b.name);
+        for(let i=0;i<old.count;i++)[old.getX(i),old.getY(i),old.getZ(i),old.getW(i)].forEach((j,k)=>indices[i*4+k]=target.indexOf(names[j]));
+        geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));gear.geometry=geometry;this.patientGearGeometry=geometry;
+      }
       root.traverse(n=>{if(n.isMesh){n.visible=['body','head_bak','helmet_wz31','gear'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.material=this.atlasMaterial;}});
       this.root.getObjectByName('carry_socket').add(root);
-      this.wounded={root,mixer:new THREE.AnimationMixer(root)};
+      this.wounded={root,mixer:new THREE.AnimationMixer(root),fpPatient:characters.sources.has('fp:patient')};
     }
     if(this.wounded){
       this.wounded.root.visible=carry;
-      if(carry)this.play(this.wounded.root,this.wounded.mixer,'carried',t%characters.clips.get('carried').duration);
+      if(carry){
+        const transition=carryPhase&&carryPhase.phase!=='carry'?`carry_${carryPhase.phase}_patient`:null;
+        const patientClip=transition&&characters.clips.has(transition)?transition:'carried';
+        this.wounded.root.position.set(0,0,0);this.wounded.root.quaternion.identity();
+        this.play(this.wounded.root,this.wounded.mixer,patientClip,patientClip===transition?Math.min(1.6,Math.max(0,t-carryPhase.startedAt)):t%characters.clips.get(patientClip).duration);
+        this.carryFrame=frameFirstPersonCarry(this.root,this.wounded.root,{phase:carryPhase?.phase??'carry',age:t-(carryPhase?.startedAt??t)});
+      }
     }
-    this.root.updateMatrixWorld(true);
+    if(carry)this.poseValid=false;
+    else{
+      if(this.fade){const x=(t-this.fade.start)/FADE_SECONDS;if(x>=1||x<0)this.fade=null;else this.blendPose(this.poseFrom,1-THREE.MathUtils.smoothstep(x,0,1));}
+      this.capturePose(this.poseLast);this.poseValid=true;this.lastReloading=w.reloading;this.lastReload=w.reloadProgress(t*1000);this.lastPoseClock=t;
+    }
+    this.root.updateMatrixWorld(true);this.observeNative(t);
     const weapon=this.root.getObjectByName('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
     // Low frame rates can step past the 60 ms window in one frame: the first frame after a shot event always flashes.
     const fresh=!carry&&w.shotCount!==this.flashShot&&t<flashUntil+.2&&t-shotAt>=0&&t-shotAt<.25;if(fresh)this.flashShot=w.shotCount;
@@ -231,19 +319,22 @@ export class M01ViewModel {
       muzzle:weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)),axis:b.set(0,0,-1).transformDirection(weapon.matrixWorld),
       port:weapon.localToWorld(c.fromArray(this.port)),up:viewUp(p.pitch??0,up),chamberAt:shotAt+PROFILE.mechanics.chamberOpen*BOLT_SECONDS});
     if(this.worldFx&&view&&!carry)this.emitWorld(sim,view,weapon,clip,sample);
-    this.stats={active:true,visible:true,lod,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
-      armTriangles:this.armGeometry.index.count/3,aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
-      phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(new THREE.Vector3()).toArray(),
-      visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(new THREE.Vector3(...WZ29_VISUAL[name])).toArray()])),
+    let drawnTriangles=0;const drawnMeshes=[];
+    this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position')?.count??0)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
+    this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
+      armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
+      phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(a).toArray(),
+      visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(a.fromArray(WZ29_VISUAL[name])).toArray()])),
       // muzzleReach: how far the drawn muzzle stands in front of the eye (m); wallDistance is the probe's clearance the lowering answers.
       presentation:{profile:PROFILE.id,mechanical:+mechanical.toFixed(4),boltStroke:+stroke.toFixed(4),...feel,muzzleReach:+(-weapon.localToWorld(a.fromArray(WZ29_VISUAL.muzzle)).z).toFixed(4),lookYaw:+(this.visual?.look?.yaw??0).toFixed(5),
         lookPitch:+(this.visual?.look?.pitchLag??0).toFixed(5),clipEjected:Boolean(clipEjected),...fx}};
     return true;
   }
   dispose(){
-    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.release(this.root,this.mixer);this.root=null;
+    this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;this.release(this.root,this.mixer);this.root=null;
     this.armGeometry?.dispose();this.armGeometry=null;
-    this.rifleMaterial?.dispose();this.rifleMaterial=null;this.atlasMaterial?.dispose();this.atlasMaterial=null;
+    this.rifleMaterial?.dispose();this.rifleMaterial=null;this.atlasMaterial?.dispose();this.atlasMaterial=null;this.skinMaterial?.dispose();this.skinMaterial=null;
+    for(const [node,callback]of this.nativeHooks)node.onBeforeRender=callback;this.nativeHooks.clear();
     this.fx.dispose();this.roundGeometry.dispose();this.round.material.dispose();
   }
 }

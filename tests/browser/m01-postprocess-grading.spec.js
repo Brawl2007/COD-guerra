@@ -348,12 +348,17 @@ test('indicative frame time: Medium graded vs bypass in the same live scene (alt
   try{
     await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:180000});
     await page.locator('#quality').selectOption('medium');await page.locator('#continue').click();
-    await page.waitForFunction(()=>{const d=window.gameDiagnostics?.();return d&&!d.paused&&d.m01.renderedFrames>=6;},null,{timeout:240000});
+    // One-time work must not fall inside the first measured window (a cold bypass round once drew 1 frame in 8 s locally and 0 on CI):
+    // the paused-frame/boot waits above do not cover the decal atlas upload, the optional crew/wagon/bridge-finish loads or the prop runtime.
+    await page.waitForFunction(()=>{const d=window.gameDiagnostics?.();return d&&!d.paused&&d.m01.renderedFrames>=6&&d.m01.damageDecals.atlasReady&&d.m01.bridgeFinish.status==='ready'&&d.m01.wagons.loaded.length===6&&d.m01.fieldStructures.ready&&d.m01.environmentProps.runtime.ready;},null,{timeout:240000});
     const rounds=[];
     for(const bypass of [true,false,true,false]){
       await page.evaluate(b=>window.m01GradingDebug.set({bypass:b}),bypass);await page.waitForTimeout(2000);
       const s0=await page.evaluate(()=>({f:window.gameDiagnostics().m01.renderedFrames,t:performance.now()}));
       await page.waitForTimeout(8000);
+      // A software-GL frame can cost several seconds on a shared runner (2.7 s locally, frames are 1.3 s multiples): a fixed 8 s window can close
+      // before a single frame completes (CI: frames 0 in the window). Keep the window and also require two completed frames, so every round measures a rate.
+      await page.waitForFunction(f=>window.gameDiagnostics().m01.renderedFrames>=f+2,s0.f,{timeout:120000});
       const s1=await page.evaluate(()=>({f:window.gameDiagnostics().m01.renderedFrames,t:performance.now(),g:window.gameDiagnostics().m01.grading}));
       rounds.push({bypass,frames:s1.f-s0.f,msPerFrame:(s1.t-s0.t)/Math.max(1,s1.f-s0.f),passes:s1.g.passes,renderTargets:s1.g.renderTargets});
     }

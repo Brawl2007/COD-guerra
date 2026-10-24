@@ -83,7 +83,7 @@ test('the presenter never changes simulation state and keeps HUD text contracts 
   const introFrames=[];
   const run=d=>{
     for(let i=0;i<200;i++){d.step({});if(d===shown){introFrames.push({black:opacity(el.fade),card:presenter.diagnostics.titleCard,banner:presenter.diagnostics.banner});}}
-    d.step({skip:true});d.walk(-66,26);d.walk(-15,26);d.walk(-15,2);d.walk(16,2);d.step({interact:true});
+    d.step({skip:true});d.walk(-66,26);d.walk(-30,26);d.walk(-30,2);d.walk(16,2);d.step({interact:true});
     d.until(()=>d.sim.active('follow_sergeant'),120);
   };
   run(plain);run(shown);

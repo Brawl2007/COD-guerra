@@ -111,11 +111,12 @@ test('legacy 86/89 actors, missing optional fields and old CKM placement migrate
   for(const roster of [86,89]){
     const legacy=new M01Simulation(123).snapshot(false);
     if(roster===86)legacy.actors=legacy.actors.filter(a=>!a.ckm);
-    else legacy.actors.filter(a=>a.ckm).forEach((a,i)=>{a.x=[21.206,22.08,20.4][i];});
+    // T47: the crew now starts at S2, so the old authored post needs its z as well as its x to be the exact legacy placement (it then migrates to S2).
+    else legacy.actors.filter(a=>a.ckm).forEach((a,i)=>{a.x=[21.206,22.08,20.4][i];a.z=[42.971,42.48,41.6][i];});
     delete legacy.enemyFire;delete legacy.weapon.received;
     for(const key of ['kowalRounds','lowAmmoHint','nextCombatCall'])delete legacy.timers[key];
     const before=json(legacy),a=new M01Simulation();a.restoreSnapshot(legacy);
-    assert.deepEqual(legacy,before);assert.equal(a.rng.state,123);assert.equal(a.actors.length,97);
+    assert.deepEqual(legacy,before);assert.equal(a.rng.state,123);assert.equal(a.actors.length,103);   // 2026-10-23 (R1-a, amendment 16): 97 + the six unnamed men of the west garrison
     record(a,{label:'legacy-'+roster,ticks:200,doubleAt:[1,50,150],input:t=>({skip:t===1,fire:t===30,reload:t===70})});
   }
 });

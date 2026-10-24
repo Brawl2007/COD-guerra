@@ -48,6 +48,10 @@ function repairRoute(instances=[]){
     for(const decals of instances)decals.update({state,time:sim.clock,world:sim.world,trees,quality:'medium',camera:eyePosition(sim.player)});
   }});
   toRepair(d);d.walk(-120,16.5);d.until(()=>d.sim.active('hold_access'),500);
+  // 2026-10-22 (ckm stoppage, golden amendment 15): the 05:30 event fires with a tolerance on the battle clock and the first impact of the raid (raid_0530, at 05:30:00 exactly)
+  // does not. On this timeline the battle clock reaches the event at 19799.99999999992 (it was 19800 before), so the impact lands one tick after hold_access becomes active
+  // and the four scripted bombs below were three at the instant the route used to stop. The route now runs on until the fourth bomb is in the saved damage (0 ticks before, 1 now).
+  d.until(()=>d.sim.sectors.damage.length>=4,5);
   return {sim:d.sim,trees,impacts,playerShots};
 }
 
@@ -92,14 +96,24 @@ function mixedVolley(b){
 test('damage decals never write simulation state: the real repair route stays bit-identical with them attached',()=>{
   const plain=repairRoute(),a=new M01DamageDecals(new THREE.Scene()),b=new M01DamageDecals(new THREE.Scene()),fed=repairRoute([a,b]);
   assert.deepEqual(fed.sim.snapshot(false),plain.sim.snapshot(false));
-  assert.ok(fed.impacts>80&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
+  // Re-measured on purpose for the combat AI slice 1 (golden amendment 07, 2026-10-18, integration integ-pc): on this support route up to hold_access 95 -> 71 impacts (4 -> 3
+  // player shots) reach the decals; the bound stays just under the measured count. Causes (corrected 2026-10-18 after the critical review; the first note blamed peeks and burst
+  // groups): the gate riflemen fire about 20 % slower at a visible player, because the AI's flat 16.5 s per round replaced the old ~13.5 s, and the repair is 18 s shorter with
+  // 10 -> 3 pins; rounds landing within 60 m of the player 50 -> 25, cracks past him 55 -> 34 (tools/verification/m01-combat-ai-metrics.mjs nearImpacts.toHoldAccess, 5d99df8
+  // against 9cd2aca). The deck assault (combat slice 2, amendment 08) does not reach this window (it begins at 06:05); over the whole route it brings the near rounds back
+  // above the old level (whole support route 19390901: within 60 m 50 -> 90, cracks 52 -> 107; 5d99df8 had 78 / 73).
+  // 2026-10-22 re-pin (ckm stoppage, golden amendment 15): the first stoppage (burst 13, 04:58:43) falls inside this window. The ckm is silent for 3.8 s and the route diverges
+  // from there: hold_access starts 2.3 s later (clock 434.2 against 431.9) and 71 -> 64 impacts reach the decals (3 player shots, as before). Measured with the stoppage hook
+  // disabled in the same tree: 71 again (bit-identical to amendment 12). The bound stays just under the measured count, as at 95 -> 71: 65 -> 58.
+  assert.ok(fed.impacts>58&&fed.playerShots>0,`${fed.impacts} authoritative impacts, ${fed.playerShots} player shots reached the decals`);
   assert.ok(a.counts.placed>15&&a.marks.length>0&&a.marks.length<=LIMITS.quality.medium.marks,JSON.stringify(a.counts));
   // Two instances fed the same frozen events are identical: variation is a hash of event data, not a random source.
   assert.deepEqual(a.marks.map(markData),b.marks.map(markData));assert.deepEqual(a.counts,b.counts);
   assert.deepEqual(residueData(a),residueData(b));assert.deepEqual(a.diagnostics,b.diagnostics);
-  // All four scripted bombs of the route (saved in sectors.damage) left persistent residue.
+  // Every bomb of the route (saved in sectors.damage) left persistent residue. 2026-10-23 (R1-a, golden amendment 16): the 04:34 raid goes on with the eleven impacts of mission.json raidTargets0434
+  // (raid_0434_1..11, 04:34:46-04:43:10), so the route now holds the three scripted bombs of 04:34, those eleven and the first of the 05:30 raid: 15 craters, inside the 16 the decals keep.
   const ids=fed.sim.sectors.damage.map(d=>d.id);
-  assert.deepEqual(ids,['station_bomb','forward_post','repair_crater','raid_0530']);
+  assert.deepEqual(ids,['station_bomb','forward_post','repair_crater',...Array.from({length:11},(_,i)=>`raid_0434_${i+1}`),'raid_0530']);
   assert.deepEqual(a.residue.map(r=>r.id),ids);
   for(const r of a.residue)assert.ok(r.polys.length>0&&r.debris.length>0,`${r.id}: ${r.polys.length} polygons, ${r.debris.length} debris`);
   assert.ok(a.residueTriangles>0&&a.residueTriangles<=LIMITS.residueTriangles);

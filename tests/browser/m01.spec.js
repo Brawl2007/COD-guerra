@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 import {route,driver,toRepair,toCoverAdjustment,toStationEvacuation} from '../helpers/m01-route.js';
-import {seconds} from '../../src/game/m01-simulation.js';
+import {seconds,M01Simulation} from '../../src/game/m01-simulation.js';
 import {M01_BOMBING_BATTLE_SECONDS} from '../../src/world/m01-aircraft-path.js';
 
 let result;
@@ -47,6 +47,15 @@ async function waitForBearingFrame(page,angle,bearing,minFrame){
   },{angle,bearing,minFrame},{timeout:process.env.CI?60000:30000});
   return page.evaluate(()=>({data:window.gameDiagnostics(),hud:document.querySelector('#objective-status').textContent}));
 }
+async function waitForFrameAfterRestore(page){
+  // Continue restores the save inside the click handler, outside the frame loop, and the HUD text is written only by the next rendered
+  // frame (loop: tick -> renderMission -> updateHud, one task). Under software rendering that frame can arrive after the pointer-lock
+  // handoff start() waits for: the first sample then paired the restored sim status with the still-empty HUD (m01.spec.js:458 in the
+  // final integration run, "Reparo 35% · sapadores deitados..." vs ""). Sample only once a frame has been rendered after the restore;
+  // every later task boundary follows a whole frame, so HUD and simulation are compared exactly and the equality stays strict.
+  const restored=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(frame=>window.gameDiagnostics().m01.renderedFrames>frame,restored,{timeout:process.env.CI?60000:30000});
+}
 test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, aiming, pause and CP-A',async({page},info)=>{
   test.setTimeout(process.env.CI?180000:90000);
   const {errors,failed}=await open(page);await page.screenshot({path:info.outputPath('m01-menu.png')});await start(page);
@@ -64,7 +73,11 @@ test('M01 loads the nine bridge LODs; real controls operate bolt, clip, sight, a
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const frozen=await page.evaluate(()=>window.gameDiagnostics());await page.waitForTimeout(350);
   const still=await page.evaluate(()=>window.gameDiagnostics());expect(still.clock).toBe(frozen.clock);expect(still.m01.battleClock).toBe(frozen.m01.battleClock);expect(still.m01.weapon).toEqual(frozen.m01.weapon);
-  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:15000});await expect(page.locator('#reserve')).toHaveText('35');
+  // The clip reload is 3.4 s of SIMULATION time (kb_wz29 reloadClipSec) and the loop simulates at most 5 fixed steps (250 ms) per rendered frame (src/game/frame-catchup.js, unchanged
+  // since 5378fb4: dt was already clamped to .25 s), so under software rendering the wait is a frame budget, not seconds. Measured on a shared 4-CPU runner (load 6-7): 0.8-1.2 frames/s,
+  // i.e. 0.2-0.3 s of simulation per real second at 5378fb4 and at 8a978fb alike, so the reload needs 11-17 s of wall time and the old 15 s window failed in the 2026-10-19 integration run.
+  // Same CI budget as waitForBearingFrame/waitForFrameAfterRestore; the expectation itself (the reload ends with 5 in the magazine and 35 in reserve) is unchanged.
+  await page.locator('#resume').click();await expect(page.locator('#mag')).toHaveText('5',{timeout:process.env.CI?60000:15000});await expect(page.locator('#reserve')).toHaveText('35');
   await page.keyboard.press('KeyV');await expect(page.locator('#weapon-state')).toContainText('500 m');
   await page.mouse.down({button:'right'});await expect(page.locator('#crosshair')).toBeHidden();await page.mouse.up({button:'right'});
   await page.screenshot({path:info.outputPath('m01-playing.png')});
@@ -85,6 +98,11 @@ test('the genuine first raid displays three Ju 87 GLBs with light LODs and freez
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.loaded.length===3);
+  // start() returns once the restored clock is visible, but m01.aircraft is read from the LAST RENDERED frame, which can still be the
+  // pre-restore one (trace: renderedFrames 6, since -240 s, planes hidden at the path start, fade 1 because no 'heard' time yet).
+  // Wait for a frame rendered after the restore, so the presentation sampled below is the restored raid, not the stale frame.
+  const staleFrame=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
+  await page.waitForFunction(n=>window.gameDiagnostics().m01.renderedFrames>n,staleFrame);
   // The planes were heard long before the restored instant: the presentation fade-in has to be complete.
   await page.waitForFunction(()=>window.gameDiagnostics().m01.aircraft.planes.every(p=>p.fade===1));
   const before=await page.evaluate(()=>window.gameDiagnostics()),planes=before.m01.aircraft.planes;
@@ -232,6 +250,9 @@ test('missing close-up LOD0 falls back to intact LOD1 hands while the light worl
 });
 test('the station clip alone cannot enable a viewmodel when the required weapon animations fail to download',async({page})=>{
   await page.route('**/m01_soldier_animations.glb',r=>r.abort());
+  // 2026-10-18: the six motion clips (V7) and the clip library V2 (T08: idle variants, fidgets) are separate GLBs that the renderer loads next to the soldier pack; left to download they give
+  // idle/fidget clips to three light actors, so "the station clip alone" needs them to fail too. The viewmodel must still stay off and no soldier may be drawn from the station clip alone.
+  await page.route('**/m01_soldier_motion_clips.glb',r=>r.abort());await page.route('**/m01_soldier_clip_library_v2.glb',r=>r.abort());
   const {errors}=await open(page);await start(page);
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters.failures.length>0);
   const data=await page.evaluate(()=>window.gameDiagnostics());
@@ -332,7 +353,10 @@ test('real keyboard movement traverses the approaches and E delivers the message
     await page.waitForFunction(({axis,target,direction})=>window.gameDiagnostics().player[axis]*direction>=target*direction,{axis,target,direction},{timeout:process.env.CI?150000:45000});
     await page.keyboard.up(code);
   }
-  await axis('KeyD','z',32,1);await axis('KeyW','x',-15,1);await page.keyboard.up('ShiftLeft');
+  // The route a player can walk: the abutments of both bridges are walls (the old route climbed their faces at x=-15), so go west of them (x=-30), up the
+  // embankment to the rail line (z=3), then east along the track to the forward post. Strafe to z=26 first: a straight line along z=22 meets the crates and
+  // carts at x=-43 (checked with the same keys in Node, 246 ticks door to door).
+  await axis('KeyD','z',26,1);await axis('KeyW','x',-30,1);await page.keyboard.up('ShiftLeft');
   // Walk the final approach. A key-up queued behind a slow software-rendered frame
   // can carry a sprint several metres beyond the point's actual interaction radius.
   await axis('KeyA','z',3,-1);await axis('KeyW','x',17,1);
@@ -347,6 +371,23 @@ test('real keyboard movement traverses the approaches and E delivers the message
   const still=await page.evaluate(()=>window.gameDiagnostics());
   expect(still.clock).toBe(paused.clock);expect(still.m01.renderedFrames).toBe(paused.m01.renderedFrames);
   await page.screenshot({path:info.outputPath('m01-message-delivered-paused.png')});
+  expect(errors).toEqual([]);expect(failed).toEqual([]);
+});
+test('walking off the rail abutment edge in the real game is a fall: gravity, one presented landing, no damage and no console error',async({page},info)=>{
+  test.setTimeout(process.env.CI?240000:120000);
+  // The real game, a real key: the abutment top (-0.35 m) ends at x=11.9 and the lowland is 2.65 m below it (outside the trusses, z=8).
+  const sim=new M01Simulation();sim.tick(.05,{skip:true});sim.drainEvents();Object.assign(sim.player,{x:10.9,z:8,y:-.35,angle:0});
+  await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:sim.snapshot()});
+  const {errors,failed}=await open(page);await start(page,'#continue');
+  await page.keyboard.down('KeyW');
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.bodyFeedback.landings>=1,null,{timeout:process.env.CI?120000:60000});
+  await page.keyboard.up('KeyW');
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.m01.bodyFeedback.landings).toBe(1);
+  expect(data.m01.bodyFeedback.lastSpeed).toBeGreaterThan(6.8);expect(data.m01.bodyFeedback.lastSpeed).toBeLessThan(7.6);   // sqrt(2 g 2.65 m) = 7.21 m/s
+  expect(data.player.y).toBeCloseTo(-3,2);expect(data.player.health).toBe(100);expect(data.player.x).toBeGreaterThan(11.9);
+  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.screenshot({path:info.outputPath('m01-landed-below-the-abutment.png')});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
 for(const truss of [false,true])test(`adjustment salvo ${truss?'behind the truss':'at the gates'} restores its actual origin and follows mouse look`,async({page},info)=>{
@@ -400,15 +441,29 @@ test('demolition inside the road truss shows the actual bearing while mouse look
   await page.screenshot({path:info.outputPath('m01-demolition-inside-truss.png'),timeout:120000});
   expect(errors).toEqual([]);expect(failed).toEqual([]);
 });
+// T47: 46 Germans stood at CP-D on the route before the ckm fired. On the candidate #80 the gun felled one of them (de_east_5 after the review fix, so 45). Over the T38 staging it wounds
+// three men on this route since T47 amendment 03 (live.hits 3, live.men.hit; D43) and fells nobody (live.kills is [] in docs/verification/m01-runtime/ckm-fire-live-2026-10-16/PREDECESSOR_DELTA_AUDIT.json,
+// tools/verification/m01-t47-ckm-fire-audit.mjs), so the route is back to the staging's 46. The restore must keep exactly the casualties of the route.
+// 2026-10-18: after the combat AI slice 1 integration (golden amendment 07, the route is 19224 ticks and Kowal's rkm bursts changed) the casualties of this route at CP-D are de_east_3 and
+// de_spans_0..3, i.e. 45 alive. Measured on the route's own save with a Node M01Simulation.restoreSnapshot (45 enemies alive); the browser restore must reproduce exactly that.
+// 2026-10-19: the rearguard of combat slice 2b (c9469e6, golden amendment 11) now fells three more men of the deck assault on this route before the demolition: the casualties of the route's CP-D
+// save are de_east_3, de_spans_0..3 and de_spans_7..9, i.e. 42 alive (de_spans_7, 8 and 9 on seed 19390901, the same measurement as tests/m01-german-retreat.test.js). Measured on the route's own
+// save with a Node M01Simulation.restoreSnapshot at 5378fb4..c1a3ecf (45) and c9469e6 / 8a978fb (42); the browser restore must still reproduce exactly the route's casualties, so the pin stays exact.
+// 2026-10-21: the H9 D2 wiring and the 05:35 fill (afaded9, golden amendment 12) change the deck fight of this route: the casualties of the route's CP-D save are now de_east_3 and
+// de_spans_0..4, i.e. 44 alive (de_spans_7..9 survive, de_spans_4 falls). Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot at f446d83 (44).
+// 2026-10-22 (integration): the ckm stoppages (WP2, golden amendment 15) move the deck fight of this route again: the casualties of the route's CP-D save are now de_spans_0..5 and de_spans_8
+// (de_east_3 survives; de_spans_5 falls on the deck, as tests/m01-german-retreat.test.js records), i.e. 43 alive. Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot on the
+// merged tree (43); the same measurement at 3eb21b38 (candidate + WP1) and at c99a4326 (+ WP3), before WP2, gives 44 with the casualties named above, so the change is the stoppages' and nothing else.
+const CPD_ENEMIES_ALIVE=43;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
-  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(46);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
+  let d=await page.evaluate(()=>window.gameDiagnostics());expect(d.eventIds).toContain('evt_m01_east_demolition');expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.m01.flags['m01.nowicki_status']).toBe('missing');
   expect(d.m01.parts.road_span_06.visible).toBe(false);expect(d.m01.parts.rail_support_06.visible).toBe(false);
   await page.screenshot({path:info.outputPath('m01-cp-d.png')});await page.evaluate(()=>document.exitPointerLock());
   await page.locator('#restart-checkpoint').click();await page.waitForFunction(()=>document.pointerLockElement?.id==='game');
-  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(46);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
+  d=await page.evaluate(()=>window.gameDiagnostics());expect(d.m01.enemyAlive).toBe(CPD_ENEMIES_ALIVE);expect(d.player.x).toBeCloseTo(snapshot.player.x,2);
   await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);await start(page,'#continue');
   expect((await page.evaluate(()=>window.gameDiagnostics())).m01.parts.road_span_06.visible).toBe(false);
   expect(errors).toEqual([]);expect(failed).toEqual([]);
@@ -428,17 +483,22 @@ test('German fire on the repair is drawn from the Lisewo gates and the HUD statu
   // Staged continuation of a state reached by the simulation route (crate delivered, train 963 firing).
   const d=toRepair(driver());d.walk(-134,13);d.until(()=>d.sim.battleClock>=seconds('04:45:40'),120);
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot:d.sim.snapshot()});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
   const samples=[];
-  for(let i=0;i<60&&!(samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress);i++){
+  // Pinned sappers are drawn prone (e0d494e), so 'pinned' poses only count bystanders a round happens to pass: the sappers show as extra prone bodies
+  // over the free baseline (the MG34 crews are always prone). Sampling continues until every property asserted below has been seen.
+  const sappersDown=()=>{const free=samples.filter(s=>!s.pinned).map(s=>s.prone);return free.length>0&&samples.some(s=>s.pinned&&s.prone>Math.max(...free));};
+  const seen=()=>samples.some(s=>s.fx.muzzle>0)&&samples.some(s=>s.fx.puff>0)&&samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)&&samples.at(-1).progress>samples[0].progress
+    &&sappersDown()&&samples.some(s=>s.animations.aiming>0)&&samples.some(s=>s.pinned&&s.animations.underFire>0);
+  for(let i=0;i<160&&!seen();i++){
     await page.waitForTimeout(250);
     samples.push(await page.evaluate(()=>{const g=window.gameDiagnostics().m01;return {fx:g.fireEffects,hud:document.querySelector('#objective-status').textContent,
-      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),poses:g.actorPoses.pinned,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
+      sim:g.threat.status,pinned:g.threat.repair.pinned,origins:g.threat.recentFire.map(f=>f.x),prone:g.actorPoses.prone,animations:g.actorAnimations,progress:g.objectives.obj_m01_cover_repair.progress};}));
   }
   expect(samples.some(s=>s.fx.muzzle>0)).toBe(true);expect(samples.some(s=>s.fx.puff>0)).toBe(true);
   expect(samples.some(s=>s.pinned)&&samples.some(s=>!s.pinned)).toBe(true);
   // Os sapadores deitados aparecem na pose de quem está sob fogo, e o trabalho retoma depois.
-  expect(samples.some(s=>s.pinned&&s.poses>0)).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
+  expect(sappersDown()).toBe(true);expect(samples.at(-1).progress).toBeGreaterThan(samples[0].progress);
   expect(samples.some(s=>s.animations.aiming>0)).toBe(true);
   expect(samples.some(s=>s.pinned&&s.animations.underFire>0)).toBe(true);
   for(const s of samples){expect(s.hud).toBe(s.sim);expect(s.hud.includes('sapadores deitados')).toBe(s.pinned);for(const x of s.origins)expect(x).toBeGreaterThanOrEqual(1050);}
@@ -526,7 +586,7 @@ test('a real withdrawal continuation loses men only to rounds from the spans, ke
   test.setTimeout(process.env.CI?180000:90000);
   const snapshot=flow().combatSnapshots.withdrawal;
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  const {errors,failed}=await open(page);await start(page,'#continue');
+  const {errors,failed}=await open(page);await start(page,'#continue');await waitForFrameAfterRestore(page);
   // Renderer telemetry is latched only after a world frame with a real muzzle batch was submitted.
   // Unlike polling fireEffects.muzzle, the count remains observable after the short visual flash disappears.
   const muzzleStart=await page.evaluate(()=>window.gameDiagnostics().m01.muzzlePresentation.frames),samples=[];
@@ -607,12 +667,15 @@ test('ckm west crew and weapon use actual saved abandon time, pause and fresh re
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const {errors,failed}=await open(page);await start(page,'#continue');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.characters?.actors.some(a=>a.clip==='ckm_wz30_gunner_abandon'));
+  // T40: the optional first-person arm GLBs (fp:0, fp:patient) load in the background and append to characters.loaded when they arrive (and bump the paused revision): on a slow
+  // runner that can fall inside the 250 ms window below. The pause stability being proven here starts once the optional residency has settled (loaded or failed).
+  await page.waitForFunction(()=>{const c=window.gameDiagnostics().m01.characters;return [['fp:0','m01_fp_arms_v2'],['fp:patient','m01_fp_patient_v2']].every(([k,f])=>c.loaded.includes(k)||c.failures.some(x=>String(x.path).includes(f)));},null,{timeout:120000});
   await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
   const before=await page.evaluate(()=>window.gameDiagnostics()),c=before.m01.characters;
   const gunner=c.actors.find(a=>a.id==='ckm_gunner'),loader=c.actors.find(a=>a.id==='ckm_loader');
   expect(loader.clip).toBe('ckm_wz30_loader_abandon');expect(loader.clipTime).toBeCloseTo(gunner.clipTime,5);
   expect(c.ckm.clip).toBe('ckm_wz30_gun_abandon');expect(c.ckm.time).toBeCloseTo(gunner.clipTime,5);
-  expect(c.ckm.position).toEqual([24.17,-3,43]);expect(c.ckm.lod).toBe(2);
+  expect(c.ckm.position).toEqual([7.17,-3,26]);expect(c.ckm.lod).toBe(2);   // T47: the gun stands at post S2 (it was at the casemate (24.17,-3,43) until then)
   await page.waitForTimeout(250);expect((await page.evaluate(()=>window.gameDiagnostics())).m01.characters).toEqual(c);
   await page.screenshot({path:info.outputPath('m01-ckm-abandon.png'),style:'#pause {visibility:hidden !important;}'});
   await page.reload();await open(page);await start(page,'#continue');

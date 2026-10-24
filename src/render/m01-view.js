@@ -4,6 +4,8 @@ import manifest from '../../assets/models/provisional/m01/bridges.manifest.json'
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { roundPoint } from '../game/m01-fire.js';
 import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
+import { ckmFlashes, ckmSmoke, CKM_SMOKE_SEC } from './m01-ckm-fx.js';
+import { collectShotFlashes, createFlashList, ShotSmokeTable, flashRadius, flashTint, smokeRadius, SMOKE_SLOTS_BY_TIER, SMOKE_SEC as SHOT_SMOKE_SEC, NEAR_BODY_M } from './m01-shot-fx.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -15,7 +17,7 @@ import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
 import { M01Grading } from './m01-grading.js';
-import { M01Impostors } from './m01-impostors.js';
+import { M01Impostors, POSTURES } from './m01-impostors.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand,blastFlashEnvelope,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
 import {M01AmbientDirector,resolveSquadLivingMotion} from './m01-ambient.js';
 import { M01Environment } from './m01-environment.js';
@@ -30,6 +32,7 @@ import {M01StationDamage} from './m01-station-damage.js';
 import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
+import { M01BodyFeedback } from './m01-body-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
@@ -40,6 +43,8 @@ import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collap
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
+/** Height of the rifle muzzle of an impostor as a share of its figure height (the silhouette's rifle ends at .77 h, see m01-impostors.js). */
+const IMPOSTOR_MUZZLE_H=.74;
 const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({}),fixed:Object.freeze({})});
 // A fixed-origin display shot (the Panzerzug's 75 mm gun, T23): muzzle smoke lasts GUN_SMOKE_SEC and the burst where the shell lands SHELL_PUFF_SEC,
 // SHELL_SCALE times the size of a rifle round's impact. Presentation only: no damage record, no decal, no sound.
@@ -98,9 +103,9 @@ export class M01View {
     this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
-    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
+    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
-    this.combatFeedback=new M01CombatFeedback();
+    this.combatFeedback=new M01CombatFeedback();this.bodyFeedback=new M01BodyFeedback();
     this.ambientDirector=new M01AmbientDirector();
     this.horizonGlow=new THREE.Sprite(new THREE.SpriteMaterial({color:'#ff9e52',transparent:true,opacity:0,depthWrite:false,
       blending:THREE.AdditiveBlending,fog:false}));this.horizonGlow.visible=false;this.horizonGlow.renderOrder=6;this.scene.add(this.horizonGlow);
@@ -111,7 +116,7 @@ export class M01View {
     this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
     this.kitsSettled=false;   // every bridge kit GLB has arrived or failed (see M01BridgeFinishRuntime.sync)
     this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null,kitsSettled:false};
-    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
+    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true,clock:null};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);this.trainLife.lampsEnabled=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
     }
@@ -237,7 +242,7 @@ export class M01View {
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
   updateActors(actors,time,player={x:0,z:0},battleClock){
-    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
+    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock,this.world)??new Set();
     const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
@@ -280,12 +285,12 @@ export class M01View {
         put('rifle',[1.7,.52,0],[1.8,.1,.1]);continue;
       }
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
-      const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
+      const cloth=a.civilian?'#8f8a78':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
       put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
-      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#2b3134':helmet);
+      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#4b4a43':helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
@@ -311,7 +316,7 @@ export class M01View {
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
-      if(!a.civilian&&a.role!=='MEDIC'){
+      if(!a.civilian&&a.role!=='MEDIC'&&!a.mg34Loader){
         put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
         const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;
         put('barrel',from.map((v,i)=>(v+to[i])/2),[.012,.57,.012],null,{from,to});
@@ -331,6 +336,7 @@ export class M01View {
     this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
     this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
+    this.initShotFx();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
       const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
       const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects,name==='puff'?'dust':'smoke'):
@@ -339,6 +345,7 @@ export class M01View {
     }
     // Allocate instance colours before the first chip, keeping its shader variant stable.
     this.fireBatches.chip.setColorAt(0,this.fireColor.set('#ffffff'));
+    this.fireBatches.muzzle.setColorAt(0,this.fireColor.set('#ffffff'));   // per-shot flash tint (daylight), allocated up front so the shader variant is stable
     this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
     for(const [name,capacity,color]of [
       ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
@@ -349,6 +356,61 @@ export class M01View {
     this.battlefieldShards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.battlefieldShards.count=0;this.battlefieldShards.frustumCulled=false;this.effects.add(this.battlefieldShards);
     this.battlefieldShards.setColorAt(0,this.battlefieldColor.set('#665747'));   // allocate instance colours up front: stable shader variant
     this.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);this.explosionLight.visible=false;this.explosionLight.castShadow=false;this.effects.add(this.explosionLight);
+  }
+  /** VIS-a: preallocated state of the per-shot flashes and smoke (m01-shot-fx.js); created once (the view test rigs call updateFire on a bare view, so also lazily). */
+  initShotFx(){
+    this.shotFx={list:createFlashList(),smoke:new ShotSmokeTable(),frames:0,drawn:0,smokeDrawn:0,smokeCap:0,nearest:Infinity};
+    this.shotTint=new THREE.Color();this.shotSmokeColor=new THREE.Color('#b9b8ae');this.shotPoint={x:0,y:0,z:0};this.shotRoot=new THREE.Object3D();this.shotMuzzle=new THREE.Vector3();
+    this.shotActors=new Map();this.shotActorsRef=null;this.shotActorsSize=-1;
+  }
+  /** VIS-a: flashes (one per round) and smoke puffs of every NPC shooter; see m01-shot-fx.js. Allocation-free after construction apart from the ally eye point. */
+  updateShotFx(sim,time,put,far){
+    if(!this.shotFx)this.initShotFx();
+    const fx=this.shotFx,list=fx.list,fov=this.camera.fov||70,vh=this.owner?.canvas?.height||768,daylight=this.lightingModel?.daylight??.5,quality=this.owner?.quality;
+    const actors=sim.actors,index=this.shotActors;
+    if(this.shotActorsRef!==actors||this.shotActorsSize!==actors.length){index.clear();for(let i=0;i<actors.length;i++)index.set(actors[i].id,actors[i]);this.shotActorsRef=actors;this.shotActorsSize=actors.length;}
+    collectShotFlashes(sim,time,list,index);
+    const tint=flashTint(daylight);this.shotTint.setRGB(tint,tint,tint);
+    const cam=this.camera.position,P=this.shotPoint;
+    for(let i=0;i<list.count;i++){
+      P.x=list.x[i];P.y=list.y[i];P.z=list.z[i];
+      const a=index.get(list.by[i]);
+      if(a){
+        const item=this.impostors?.byId.get(a.id);
+        if(item){P.x=a.x;P.z=a.z;P.y=a.y+POSTURES[item.posture].heightM*IMPOSTOR_MUZZLE_H;}   // the rifle of the drawn silhouette, not the sim eye
+        else if(Math.hypot(P.x-cam.x,P.z-cam.z)<NEAR_BODY_M)this.bodyMuzzle(a,time,P);        // a drawn body keeps its true muzzle
+      }
+      list.x[i]=P.x;list.y[i]=P.y;list.z[i]=P.z;
+    }
+    fx.smoke.note(list,time,SMOKE_SLOTS_BY_TIER[quality]??SMOKE_SLOTS_BY_TIER.low);
+    const cap=SMOKE_SLOTS_BY_TIER[quality]??SMOKE_SLOTS_BY_TIER.low;let flashesDrawn=0,smokeDrawn=0,nearest=Infinity;
+    for(let i=0;i<list.count;i++){
+      P.x=list.x[i];P.y=list.y[i];P.z=list.z[i];const d=far(P),heavy=list.heavy[i]===1,seed=(Math.floor(list.at[i]*1000)^Math.floor((P.x+4096)*73)^Math.floor((P.z+4096)*197))>>>0;
+      put('muzzle',P,flashRadius(heavy,d,fov,vh,daylight)*(.85+.3*visualNoise(seed,3+list.index[i])),null,1,this.shotTint);flashesDrawn++;if(d<nearest)nearest=d;
+    }
+    const sm=fx.smoke;
+    for(let s=0;s<sm.slots&&smokeDrawn<cap;s++){
+      if(!sm.alive(s,time))continue;
+      const heavy=sm.heavy[s]===1,k=(time-sm.at[s])/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle),seed=sm.seed[s],n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+      P.x=sm.x[s]+(n0-.5)*.3*k+k*.35;P.y=sm.y[s]+.15+k*(heavy?1.6:1.1)*(.8+.4*n1);P.z=sm.z[s]+(n1-.5)*.25*k;
+      const d=far(P);
+      put('smoke',P,smokeRadius(heavy,k,d,fov,vh),null,(heavy?.5:.42)*Math.pow(1-k,1.15)*(.45+.4*daylight),this.shotSmokeColor,seed,4);smokeDrawn++;
+    }
+    fx.frames+=list.count?1:0;fx.drawn=flashesDrawn;fx.smokeDrawn=smokeDrawn;fx.smokeCap=cap;fx.nearest=nearest;
+  }
+  /** `gameDiagnostics().m01.distantFire`: what the last frame drew for NPC shots (read-only; the sample lists the first flashes with their world point). */
+  get shotDiagnostics(){
+    const fx=this.shotFx;if(!fx)return {frames:0,flashes:0,smoke:0,smokeCap:0,list:[]};
+    const l=fx.list,n=Math.min(l.count,8),list=[];for(let i=0;i<n;i++)list.push({by:l.by[i],heavy:l.heavy[i]===1,source:l.source[i],x:l.x[i],y:l.y[i],z:l.z[i],at:l.at[i]});
+    return {frames:fx.frames,flashes:fx.drawn,smoke:fx.smokeDrawn,smokeCap:fx.smokeCap,nearestM:Number.isFinite(fx.nearest)?fx.nearest:null,dropped:l.dropped,smokeSkipped:fx.smoke.skipped,list};
+  }
+  /** True muzzle of a drawn body (skinned socket first, else the procedural pose), written into `out`; scratch objects only. */
+  bodyMuzzle(a,time,out){
+    const pose=actorPose(a,time),root=this.shotRoot,m=this.shotMuzzle;root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+    root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+    m.fromArray(pose.rifle.muzzle);m.y-=pose.root.pivotY;m.applyMatrix4(root.matrix);
+    const skinned=this.characters?.muzzle(a.id);if(skinned)m.copy(skinned);
+    out.x=m.x;out.y=m.y;out.z=m.z;
   }
   updateFire(sim){
     const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
@@ -363,34 +425,11 @@ export class M01View {
       if(batch.geometry.attributes.puffSpin)this.atmosphere.stylePuff(batch,index,styleSeed??fxSeed(p,time),variant);
       if(color)batch.setColorAt(index,this.fireColor.set(color));counts[name]++;
     };
-    const root=new THREE.Object3D(),muzzle=new THREE.Vector3();
-    for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
-      const age=time-(a.firedAt??-1e9);if(a.shot<=0&&age>2.2)continue;
-      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
-      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p),seed=fxSeed(p,a.firedAt??time);
-      if(a.mg34Prone?pose.firing:(pose.firing||pose.aiming&&age>=0&&age<.25))put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-      if(age>=0&&age<2.2){
-        const k=age/2.2,n0=visualNoise(seed,1),n1=visualNoise(seed,2);
-        put('smoke',{x:p.x+(n0-.5)*.22*k,y:p.y+.34+k*(1.3+n1*.55),z:p.z+(n1-.5)*.18*k},
-          Math.max(.22,d*.0065)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
-      }
-    }
-    // Display fire (T22) is visual only: the simulation never marks its shooters as firing, so the flash window comes from display.firedAt.
-    // A gameplay shot in the last 0.25 s (enemy flash above) already shows a flash at that muzzle, so it is not drawn twice.
+    // VIS-a (m01-shot-fx.js): one flash per real NPC shot read from the simulation's own rounds (German gameplay rounds, MG34 round by round, display
+    // fire) and from the fire state of allied actors (Kowal's rkm, the allied riflemen); a pooled gun-smoke puff per shooter. Sized in pixels (physical
+    // up close, a bright point at 1 km) and tinted by the daylight of the lighting model. The renderer only places what the simulation already issued.
     const display=sim.displayFire??NO_DISPLAY_FIRE;
-    for(const a of sim.actors){
-      const at=display.firedAt[a.id],age=time-at;
-      if(at===undefined||!a.alive||!a.active||!(age>=0&&age<DISPLAY_FLASH_SEC)||a.team==='enemy'&&(a.shot>0||time-(a.firedAt??-1e9)<.25))continue;
-      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
-      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
-      put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-    }
+    this.updateShotFx(sim,time,put,far);
     // Fixed-origin display shots have no actor to flash: the simulation publishes origin, aim point and times in display.fixed, so the flash, the
     // gun smoke and the arrival burst are pure functions of the clock (they survive a frame that never saw the round in flight).
     for(const shot of Object.values(display.fixed??{})){
@@ -411,6 +450,16 @@ export class M01View {
           put('puff',{x:aim.x+Math.cos(a)*r,y:aim.y+.06+landed*(profile.rise+.20*n2)*SHELL_SCALE,z:aim.z+Math.sin(a)*r},[sx,sy,1],null,.60*life,profile.color,seed,30+j);
         }
       }
+    }
+    // T47: the west bridgehead ckm. Flash and smoke come from the saved burst plan only (m01-ckm-fx.js); the renderer decides no target and no damage.
+    const ckmShots=ckmFlashes(sim.actors,time);
+    for(const f of ckmShots)put('muzzle',f,Math.max(.2,far(f)*.008)*(.8+.2*Math.sin(time*90)));
+    if(ckmShots.length){this.ckmPresentation.frames++;this.ckmPresentation.flashes=ckmShots.length;this.ckmPresentation.lastClock=time;this.ckmPresentation.lastFrame=this.renderedFrames??0;}
+    const ckmGas=ckmSmoke(sim.actors,time);
+    if(ckmGas){
+      const k=ckmGas.age/CKM_SMOKE_SEC,d=far(ckmGas),seed=fxSeed(ckmGas,sim.actor('ckm_gunner').ckm.burstPlan.startedAt),n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+      put('smoke',{x:ckmGas.x+(n0-.5)*.5*k+k*.6,y:ckmGas.y+.3+k*(1.1+n1*.5),z:ckmGas.z+(n1-.5)*.4*k},
+        Math.max(.3,d*.0085)*(.55+k*.95)*(1-k*k),null,.5*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
     }
     const tracer=r=>{
       const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)return;
@@ -735,17 +784,18 @@ export class M01View {
     this.trainLife.update(battleClock,state);
     this.wagons.update(sim.player,this.owner.quality,battleClock);
     this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
-    this.locomotive.update(sim.player,battleClock,state.train963);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug);
+    this.locomotive.update(sim.player,battleClock,state.train963,this.owner.quality);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug,this.owner.quality);   // T43: preset + battle clock drive the 0.3 s fade (Low snaps)
     this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
-    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
-    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
+    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player,battleClock);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
+    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled,battleClock);   // T43: battle clock drives the 0.3 s instance dither fades
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
+    // The procedural decal atlas completes in pause; its texture uploads must invalidate the frozen frame.
     const frame={clock:sim.clock,battleClock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,kitsSettled:this.kitsSettled,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
+      bridgeFinishRevision:this.bridgeFinish.revision,damageAtlasRevision:this.damageDecals.map.version,damageHeightAtlasRevision:this.damageDecals.heightMap.version,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -769,18 +819,20 @@ export class M01View {
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
     const legacyShake=time<this.shakeUntil?Math.sin(time*85)*.012:0,feedback=this.combatFeedback.sample(time,this.owner.quality);
     // Presentation-only offsets: authoritative yaw/pitch and shot direction remain untouched.
-    this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY,eye.z);
-    this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY,eye.z+dir.z);
+    const body=this.bodyFeedback.sample(time,player,this.owner.quality);   // landing dip and eased stairs: presentation only, the simulation's eye is untouched
+    this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY+body.dy,eye.z);
+    this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY+body.dy-body.tilt,eye.z+dir.z);
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
     if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
     this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
-    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeFinish.select(this.bridgeSelectInput);
+    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeSelectInput.clock=battleClock;this.bridgeFinish.select(this.bridgeSelectInput);   // T43: battle clock drives the truss<->card dither crossfade
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
     this.terrainRelief?.beginFrame(this.camera,time);this.farLandscape?.beginFrame(this.camera);this.farLandscape?.sync(sim.world,this.owner.quality,time,this.lightingModel);
+    this.characters?.setRimFog(this.lightingModel?.fog.color??[.63,.65,.65]);
     this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);
@@ -794,7 +846,7 @@ export class M01View {
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     this.weaponLighting.sync({sky:this.skyLight,sun:this.lightingModel?{position:this.sun.position,target:this.sun.target,color:this.sun.color,intensity:this.lightingModel.sun.intensity}:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
-    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
+    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov},state)){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
     // Once, before any shot: compile and link the shot-FX programs now instead of stalling the first shot frame.
@@ -832,6 +884,7 @@ export class M01View {
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
   playerHit(clock,direction=null){this.combatFeedback.playerHit(clock,direction);this.lastFrame=null;}
+  playerLanding(clock,speed,surface){this.bodyFeedback.landing(clock,speed,surface);this.lastFrame=null;}
   directionalHit(clock,direction){this.combatFeedback.directionalHit(clock,direction);this.lastFrame=null;}
   roundFeedback(event,clock,direction=null,weapon=null){
     this.combatFeedback.roundImpact({clock,distance:event.distance,crack:Boolean(event.crack),direction,weapon,material:event.material});this.lastFrame=null;
@@ -864,11 +917,12 @@ export class M01View {
   resetEffects(){
     for(const plane of this.planes??[])plane.userData.level=null;
     for(const bomb of this.bombs??[])bomb.visible=false;
-    this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
+    this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.bodyFeedback?.reset();this.damageDecals.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.demolitionState={entries:[],pieces:[],flash:null};
-    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
+    this.shotFx?.smoke.reset();if(this.shotFx){this.shotFx.list.count=0;this.shotFx.frames=0;}
+    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
   drawGraded(post){
@@ -892,8 +946,8 @@ export class M01View {
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
-    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
-    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
+    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},distantFire:this.shotDiagnostics,
+    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),bodyFeedback:this.bodyFeedback.diagnostics(),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
       far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions,

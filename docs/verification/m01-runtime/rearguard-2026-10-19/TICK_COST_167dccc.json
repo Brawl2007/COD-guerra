@@ -1,0 +1,81 @@
+{
+ "tool": "tools/verification/m01-tick-cost.mjs",
+ "rev": "167dccc",
+ "runs": 3,
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "ticks": 23839,
+   "meanMs": 0.403,
+   "p99Ms": 2.263,
+   "maxMs": 10.916,
+   "over5ms": 4,
+   "combatWindowMeanMs": 0.591,
+   "slowest": [
+    {
+     "ms": 10.916,
+     "tick": 9295,
+     "battleClock": "05:30:00"
+    },
+    {
+     "ms": 5.699,
+     "tick": 13432,
+     "battleClock": "06:09:30"
+    },
+    {
+     "ms": 5.661,
+     "tick": 13471,
+     "battleClock": "06:09:30"
+    },
+    {
+     "ms": 5.159,
+     "tick": 12554,
+     "battleClock": "06:08:15"
+    },
+    {
+     "ms": 4.696,
+     "tick": 12546,
+     "battleClock": "06:08:12"
+    }
+   ]
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "ticks": 23051,
+   "meanMs": 0.413,
+   "p99Ms": 1.992,
+   "maxMs": 12.811,
+   "over5ms": 6,
+   "combatWindowMeanMs": 0.627,
+   "slowest": [
+    {
+     "ms": 12.811,
+     "tick": 8781,
+     "battleClock": "05:30:00"
+    },
+    {
+     "ms": 8.085,
+     "tick": 10184,
+     "battleClock": "05:50:05"
+    },
+    {
+     "ms": 5.833,
+     "tick": 12430,
+     "battleClock": "06:09:15"
+    },
+    {
+     "ms": 5.779,
+     "tick": 12322,
+     "battleClock": "06:09:10"
+    },
+    {
+     "ms": 5.309,
+     "tick": 12637,
+     "battleClock": "06:09:25"
+    }
+   ]
+  }
+ ]
+}

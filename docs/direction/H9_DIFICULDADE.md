@@ -1,6 +1,6 @@
 Desenho aprovado pelo Captain (D35, ao abrigo de D34). Implementação faseada D1–D5.
 
-# H9 — M01 difficulty and danger: design (not implemented)
+# H9 — M01 difficulty and danger: design (D1 data, D2 wiring and calibration implemented 2026-10-19; D3 morte e CP-B2, D4 morte justa F1–F5 e o resto da D5 implementados 2026-10-22; veterano sem regeneração por decisão do proprietário 2026-10-22)
 
 Worktree `COD-guerra-v7-cert`, branch `claude/m01-stack-integration-t44-t20-v1`. Approved by the user as H9 (DECISIONS.md on
 `claude/gracious-franklin-u8kdin`). Design only; no code changed. Line numbers are `src/game/m01-simulation.js` unless stated.
@@ -48,19 +48,26 @@ Internal levels `recruta | soldado | veterano`. **`recruta` = today's constants 
 fixture and A/B proof stays byte-identical, and legacy saves keep the tuning they were played with. New rules (telegraph
 clamp, burst cap, regen, CP-B2) are active only on soldado/veterano. Starting values (calibrated in D2; see bands below):
 
+**D2 calibration (2026-10-19).** The table below is the SHIPPED table (`src/game/m01-difficulty.js`), calibrated with `tools/verification/m01-difficulty-sweep.mjs`
+on the 24 audit routes. The D35 starting values were: soldado wound .90 / .35, damage 34, burst cap 2, aim 0.55, cooldown 0.75, spans .40; veterano wound 1.0 / .50,
+damage 50, no burst cap, aim 0.40, cooldown 0.60, spans .50, healing none. With them soldado killed the control pilot on 3 of 4 worst routes and veterano killed every route,
+the support pilot included, inside the repair. **Departure for human decision:** veterano has a slow regen (§7 item 2 recommended none). *Resolvido em 2026-10-22: o proprietário decidiu «nenhuma» e mandou recalibrar com a D3/D4 (secção 5, D3).* Rows not changed: recruta
+(byte-identical), the gate threshold, the de_east_0 share, the cover salvo, the grace, checkpoint health, Kowal's pool, loadout, bombs. The two thresholds are read
+as target weights (odds against recruta's) since combat AI slice 1/2 picks by weights: see `oddsWeight` in `m01-difficulty.js`.
+
 | Parameter (code site) | recruta | soldado (default) | veterano |
 |---|---|---|---|
-| Wound chance on collision, exposed / in cover (585) | .20 / .06 | .90 / .35 | 1.0 / .50 |
+| Wound chance on collision, exposed / in cover (585) | .20 / .06 | 1.00 / .06 | 1.00 / .08 |
 | Damage per wound (587) | 8 | 34 (3 wounds) | 50 (2 wounds) |
-| Max wounds per single MG burst | — | 2 (full HP survives any one burst) | none |
-| Aim error × (bias & cone, kinds `player`/`cover` only, 489/505/710) | 1.0 | 0.55 | 0.40 |
-| Cooldown × for fire at the west bank (478–492, 502) | 1.0 | 0.75 | 0.60 |
+| Max wounds per single MG burst | — | 1 | 1 |
+| Aim error × (bias & cone, kinds `player`/`cover` only, 489/505/710) | 1.0 | 0.35 | 0.35 |
+| Cooldown × for fire at the west bank (478–492, 502) | 1.0 | 0.50 | 0.50 |
 | Rifle gate shooters: east-only threshold `r()<.5` (488) | .50 | .35 | .25 |
-| Spans pick player `r()<.25` (504) | .25 | .40 | .50 |
+| Spans pick player `r()<.25` (504) | .25 | .30 | .40 |
 | de_east_0 during repair: share on a visible player within 8 m of the sappers | 0 | 30 % | 50 % |
 | Cover-adjust salvo after N s in one cover (700, 707) | 42 | 30 | 20 |
-| Reaction grace after a shooter's first telegraph (§3) | — | 1.5 s | 0.8 s |
-| Healing | none | +5 HP/s after 8 s unhit, cap 100 | none |
+| Reaction grace after a shooter's first telegraph (§3) | — | 1.2 s | 0.8 s |
+| Healing | none | +5 HP/s after 8 s unhit, cap 100 | none (owner decision 2026-10-22; D2 had +3 HP/s after 10 s) |
 | HP on checkpoint save/restore | as saved | 100 | 100 |
 | Kowal resupply pool `timers.kowalRounds` (94, 323) | 30 | 30 | 15 |
 | Grenades / start ammo | 2 / 5+40 | 2 / 5+40 | 2 / 5+40 |
@@ -98,7 +105,7 @@ Telegraph = any of: (a) a `round-impact` with `crack` (round passed ≤6 m of th
 player, (d) MG callout `co_m01_enemy_mg_fire_on_squad` / `dlg_m01_027` (494), Zieliński's cover message (712),
 `dlg_m01_026` (493). Sim records `timers.telegraph = {lastAt, by:{shooterId:firstAt}}` (optional field, default `{}`).
 
-- **Rule F1:** a wound may reduce health to 0 only if the same shooter telegraphed ≥ grace (1.5 s / 0.8 s) ago **and** some
+- **Rule F1:** a wound may reduce health to 0 only if the same shooter telegraphed ≥ grace (1.5 s / 0.8 s in the D35 design; **shipped 1.2 s / 0.8 s**, soldado's lowered in the 2026-10-22 recalibration) ago **and** some
   telegraph happened within the last **6 s**. Otherwise damage applies but health is clamped at ≥ 1. Kar98k has no tracer,
   so its first round to the player is the telegraph. Consequence: the first burst at you never kills ("MG suppresses first"
   survives as F1 on all hard levels).
@@ -110,6 +117,11 @@ player, (d) MG callout `co_m01_enemy_mg_fire_on_squad` / `dlg_m01_027` (494), Zi
   `cs_m01_order`, bombing and blast scenes; D4 adds the clamp and the assertion. **F5:** every combat death carries `failure` with cause and shooter,
   e.g. "Abatido pela MG34 do dique (portões)."
 - Telegraph bookkeeping makes no RNG draws.
+- **Estado das regras (2026-10-22).** F1, F2 e F3 já estavam da D2; a D4 acrescentou **F4** (um ferimento que mataria durante uma cena, `sim.scene` ativa, deixa o jogador com 1 PV;
+  só soldado e veterano, recruta mantém o seu comportamento) e **F5** (toda a morte tem causa: `failure` e um evento `player-down {cause,by,text}`; causas `shot`, `grenade`, `fall`, `water`,
+  `bounds`; a bala diz quem a disparou pelo lugar, p. ex. «Abatido pela MG34 do dique (portões).», e a queda, o rio e o limite mantêm os textos que já tinham). Nenhuma das cinco regras faz
+  um sorteio, e F4/F5 não escrevem estado guardado (o `failure` não se guarda). Prova: `tests/m01-fair-death.test.js` (inclui 12 sementes × 2 níveis com letalidade máxima) e
+  `tests/m01-difficulty-death.test.js`; os números do varrimento estão em `docs/verification/m01-runtime/difficulty-d3-d4-2026-10-22/README.md`.
 
 ## 4. Death and checkpoint flow
 
@@ -146,12 +158,30 @@ except a CP-B2 id (forward-only, acceptable). Legacy saves load as recruta.
 - **D3 Death + CP-B2 + regen/HP-at-checkpoint** *(reviewer-critical: mission.json + save)*. Files: `m01-simulation.js`
   (failure cause, `player-down`, CP-B2, regen), `missions/m01-tczew/mission.json` (one checkpoint entry). Tests: death →
   restore at CP-B2/C/D per level, cause text, recruta has no CP-B2; update `m01-runtime.test.js:48` to level-applicable ids.
+  **D3 feita (2026-10-22).** Morte com causa: `playerDown(cause,by,weapon)` põe o `failure` (texto de `deathText` em `src/game/m01-difficulty.js`) e emite um só `player-down`
+  por morte (bala, granada própria, queda, rio, limite da secção); o restauro continua a ser o do tick seguinte e diz porquê. **CP-B2** `cp_m01_b2_reparo` («CP-B2 · Reparo»):
+  entrada nova em `missions/m01-tczew/mission.json`, guardada no tick em que a caixa chega aos sapadores e `obj_m01_cover_repair` fica ativo, **só em soldado e veterano**
+  (`checkpointApplies`); em recruta não existe e a rota fica byte a byte a mesma. Vida a 100 em cada checkpoint de soldado e veterano (`hpOnCheckpoint`, da D2). **Regeneração:**
+  decisão do proprietário de 2026-10-22, o veterano **não regenera** (`healing:null`; a D2 tinha +3 PV/s após 10 s) e a tabela foi recalibrada sem ela; o soldado mantém +5 PV/s
+  após 8 s sem ser atingido. Gravações antigas (sem `difficulty`, sem CP-B2) carregam; o soldado antigo ganha o CP-B2 quando a caixa chegar. Testes: `tests/m01-difficulty-death.test.js`,
+  `tests/m01-runtime.test.js` (ids de checkpoint aplicáveis ao nível), `tests/m01-difficulty-save.test.js`.
 - **D4 Telegraph guarantees (F1–F5)**. Files: `m01-simulation.js`, new `tests/helpers/m01-danger.js`,
   `tests/m01-fair-death.test.js`. Tests: every lethal wound in the 12-seed sweep has a qualifying telegraph; first burst
   never kills; zero extra draws.
+  **D4 feita (2026-10-22).** F1–F3 da D2 mais F4 (sem ferimento letal durante uma cena, só soldado e veterano) e F5 (causa e atirador em toda a morte). `tests/helpers/m01-danger.js`
+  (quatro cenários × 12 sementes × 3 níveis, comparação emparelhada: cada nível parte do mesmo estado, o início de fase alcançado em recruta e reajustado) e
+  `tools/verification/m01-danger-sweep.mjs` medem as barras da secção 6 e a prova de F1 em **todos** os ferimentos letais. Resultados exatos, antes e depois:
+  `docs/verification/m01-runtime/difficulty-d3-d4-2026-10-22/README.md`.
 - **D5 UI/presentation**. Files: `index.html`, `src/main.js`, `src/game/game.js`, `src/ui/m01-hud.js`. Death beat, level
   select, checkpoint card level, optional "lower level" offer. Tests: `tests/game.test.js` additions + one Playwright check.
   Renderer only reads events/state; no damage logic.
+  **D5 selector done (2026-10-21):** `#difficulty` in the menu (default soldado, `M01_DIFFICULTY_NEW_GAME`) is read only by "INICIAR MISSÃO"/"JOGAR NOVAMENTE" (`Game.restartMission(level)` builds `new M01Simulation(undefined,{difficulty})` when it differs); "CONTINUAR CHECKPOINT" keeps the save's own level; the pause shows "Dificuldade: X" and the HUD a small badge (`M01_DIFFICULTY_LABELS`, `src/styles-d5-difficulty.css`). Tests: `tests/m01-difficulty-ui.test.js`, `tests/browser/m01-difficulty-ui.spec.js`.
+  **D5 resto feito (2026-10-22).** *Pausa de morte:* ao `player-down`, `Game` mostra durante 2,5 s de **tempo real** (`DEATH_BEAT` em `src/ui/m01-hud.js`: escurece em 0,45 s, a causa aparece a partir de 0,3 s e sai nos últimos 0,4 s)
+  o texto da causa e «A retomar em CP-x · Nome · Nível», **sem fazer `sim.tick`** (apresentação, como um menu; um quadro lento conta no máximo 1 s); só depois o tick seguinte restaura o checkpoint. A simulação decide a morte; o ecrã
+  não decide nada. *Cartão do checkpoint:* «CP-x · Nome · Nível». *«Continuar em nível mais baixo»:* contador de mortes por checkpoint, só de sessão (`Game.deaths`, não se guarda; zera ao mudar de missão ou de nível); à 3.ª morte no mesmo
+  checkpoint, num nível acima de recruta, o jogo pára no ecrã `#death-offer` (continuar em nível mais baixo / tentar de novo / menu). `Game.continueLowerLevel()` só pede; a simulação
+  (`lowerDifficulty(to)`, `relevelSnapshot`) restaura o checkpoint como gravação do nível inferior (recusa um nível que não seja mais baixo: o nível nunca sobe a meio da missão; o pool do Kowal acompanha o nível) e a gravação
+  em localStorage fica com ele. Testes: `tests/m01-difficulty-death-ui.test.js`, `tests/m01-difficulty-death.test.js`, `tests/browser/m01-difficulty-ui.spec.js`.
 
 ## 6. Test and evidence plan
 
@@ -166,14 +196,21 @@ except a CP-B2 id (forward-only, acceptable). Legacy saves load as recruta.
   `m01-combat-feedback`), `tools/verify-m01-route.mjs`, anim baseline helper. The scripted route pilot is **not** expected
   to survive soldado/veterano; full-route tests stay on recruta.
 - Memory rule for sweeps: `MemAvailable ≥ 300 MB`, one run at a time, `timeout 900` (~25 s per seed per run).
+- **Resultado (2026-10-22, D4).** Com a tabela recalibrada as barras cumprem-se, lendo «exposto» como o desenho o define (reparo e retenção agrupados, 24 corridas): soldado mediana 17,65 s e
+  nenhuma morte em cobertura; veterano mediana 9,9 s e nenhuma morte em cobertura antes dos 103,75 s; recruta 0 mortes e as 48 corridas idênticas byte a byte às da candidata anterior; F1 vale
+  nos 53 ferimentos letais medidos. O veterano **não** cumpre a banda fase a fase (reparo 6,3 s, retenção 14,55 s). Antes (D2) o soldado não morria em nenhuma das 24 corridas expostas e o
+  veterano tinha mediana de 40,9 s. Consequência medida: os pilotos de rota (que nunca se mexem) já não sobrevivem a soldado nem a veterano, como este desenho previa. Números exatos, ficheiros
+  e como reproduzir: `docs/verification/m01-runtime/difficulty-d3-d4-2026-10-22/README.md`.
 
 ## 7. PENDENTE HUMANO
 
 1. **Recruta = today's prototype tuning?** Recommended: yes (true A/B baseline; only `m01-runtime.test.js:48` changes, for CP-B2). If recruta must be harder,
    a hidden `prototipo` profile keeps the tests.
 2. **Healing model.** Recommended: soldado slow regen out of fire, veterano none, full HP at each checkpoint on both.
+   **DECIDIDO pelo proprietário em 2026-10-22:** exatamente isto (soldado regenera devagar fora do fogo, veterano **nenhuma**, vida cheia em cada checkpoint de ambos); a D2 tinha dado ao veterano +3 PV/s, e foi retirado.
 3. **Bombs lethal on veterano?** Recommended: no for M01 (scripted historical impacts; a lethal bomb would be a scripted,
    unavoidable death).
 4. **Change level mid-mission?** Recommended: chosen at new mission; after 3 deaths at the same checkpoint the death screen
    offers "continuar em nível mais baixo" (restores the checkpoint with the lower level; never raises mid-mission).
+   **Implementado em 2026-10-22 (D5):** ver a secção 5, «D5 resto feito»; a decisão do proprietário ficou por confirmar no jogo (playtest humano).
 5. **Default for new players.** Recommended: soldado.

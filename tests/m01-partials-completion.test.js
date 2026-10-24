@@ -61,7 +61,8 @@ test('grenade smoke expires at20s even for old records, ground impacts retain sa
 
 test('auxiliary roster is atomic/legacy-compatible; every yard actor clears real solids and the platoon corridor for90s',()=>{
   const s=live(),before=s.rng.state,legacy=s.snapshot(false);legacy.actors=legacy.actors.filter(a=>!AUXILIARY_IDS.includes(a.id));
-  const r=new M01Simulation();r.restoreSnapshot(legacy);assert.equal(r.actors.length,97);assert.equal(r.rng.state,before);assert.equal(r.enemies.length,50);
+  // 2026-10-23 (R1-a, amendment 16): the roster is 103, the 97 of the partials plus the six unnamed men of the west garrison (also displayOnly, kept in this legacy save and not counted among the enemies).
+  const r=new M01Simulation();r.restoreSnapshot(legacy);assert.equal(r.actors.length,103);assert.equal(r.rng.state,before);assert.equal(r.enemies.length,50);
   const invalid=s.snapshot(false);invalid.actors=invalid.actors.filter(a=>a.id!==YARD_IDS[0]);const saved=r.snapshot();
   assert.throws(()=>r.restoreSnapshot(invalid));assert.deepEqual(r.snapshot(),saved);
   for(const at of ['04:30:00','04:36:00','05:41:00'])for(let t=0;t<=90;t+=.5){updateYard(s.actors,seconds(at)+t,t,s.world);

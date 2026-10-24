@@ -9,7 +9,14 @@ const hash=a=>createHash('sha256').update(Buffer.from(a.buffer,a.byteOffset,a.by
 const make=()=>new M01TerrainRelief(new THREE.Group(),new TczewWorld(),new THREE.MeshBasicMaterial());
 test('actual reconstructed source buffers match independently recorded integration ground',()=>{
   // Independently recorded from integration 293a4f1's actual M01View.buildTerrain, not regenerated expectations.
-  const evidence={positionHash:'25c524bd8f1f2b0a80378bacf1ea10bdba8cdd10b8b9d077b8eb5c148c1f376a',normalHash:'f76a0411c090ab56f65c7430498e277fa44b162b7e63c95797d9aae013a6531d',uvHash:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',indexHash:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'},g=createLegacyGround(new TczewWorld());
+  // The player's body physics (D44, golden amendment 04) turned the shelter pit from -4 m flat (a 5 m cliff cut into the road embankment, a wall the player could neither
+  // leave nor reach) into a depression relative to the ground, so exactly five of the 52531 vertices changed: (-265,65) -4 -> -1.216, (-260,65) -4 -> -2.115,
+  // (-255,65) -4 -> -1.935, (-265,75) and (-255,75) -4 -> -3.464. positionHash and normalHash moved with them (the integration values were 25c524bd8f1f... and f76a0411c090...);
+  // uv and index are the integration buffers, byte for byte. The same re-pin is in tests/m01-material-authority.test.js.
+  // 2026-10-18, the river slip (a way out of the Vistula, x 25..40, z 10..15): four more vertices changed, river bed -> ramp: (30,10) and (30,15) -10 -> -5.3333, (35,10) and (35,15)
+  // -10 -> -7.6667 (9 in all). The hashes below are the ones after the slip; those after the shelter pit alone were position 35d11fa7ea41... and normal f7e0d30eb0721....
+
+  const evidence={positionHash:'3fedf7d0c248d93b24b7e7b77fbfdfa7fe964a37a3f5613d496326402f98ba10',normalHash:'1feff156f96275aa99b714a1729373da53ef2920fa5322ad95cfb7449560ea8c',uvHash:'0da77efeb7a2e8cfb7e31f9b9953c1fd1045a460fc7e241d7272d2c6444d5a3d',indexHash:'651345bc42911c8071fc2c38659861331f722b0905e5ed523e89ec16414622f2'},g=createLegacyGround(new TczewWorld());
   assert.equal(g.index.count/3,104000);for(const [attr,key]of [['position','positionHash'],['normal','normalHash'],['uv','uvHash']])assert.equal(hash(g.attributes[attr].array),evidence[key]);assert.equal(hash(g.index.array),evidence.indexHash);g.dispose();
 });
 test('every protected and crossing source triangle, its surface, exact normals and rounded UVs survives extraction',()=>{

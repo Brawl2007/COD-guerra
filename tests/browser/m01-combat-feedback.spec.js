@@ -1,14 +1,20 @@
 import {test,expect} from '@playwright/test';
 import {toCoverAdjustment} from '../helpers/m01-route.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {CkmNeutralSimulation} from '../helpers/m01-ckm-neutral.js';
 
 const key='cod-guerra:checkpoint:m01:v2';
 
+// T47: the live ckm changes the German timeline after 04:46:24 (who is alive, suppressed or still firing), and this builder searches that timeline for a coincidence (a
+// round that hits the crouched player, or one that cracks past him). The fixtures are therefore reached with the gun silenced (CkmNeutralSimulation), which is the
+// timeline this search was written on; the saves are restored into the production game, where the gun is live. Nothing the spec asserts is changed.
 function realRoundFixture({requireHit}){
-  const d=toCoverAdjustment({truss:true}),sim=d.sim;
+  const d=toCoverAdjustment({truss:true,Simulation:CkmNeutralSimulation}),sim=d.sim;
   const shooter=sim.enemies.find(a=>a.active&&a.alive&&a.weapon==='kar98k'&&sim.world.lineOfSight(a,sim.player));
   if(!shooter)throw new Error('No real line-of-sight rifleman available for focused combat fixture');
-  for(let attempt=0;attempt<20;attempt++){
+  // A round that reaches the player wounds him only on a roll (6% in cover, m01-simulation.js landRound), so the first hit is a lottery over the deterministic stream and its
+  // position moves with any change upstream (PR #90 moved it from attempt 16 to 21). The bound is generous: the search is deterministic and ends at the first match.
+  for(let attempt=0;attempt<300;attempt++){
     sim.burst(shooter,sim.player,'player',{rounds:1,bias:[0,0],cone:[0,0]});
     sim.drainEvents(); // firing notification only; the authoritative round remains in enemyFire.rounds.
     const before=sim.snapshot(),health=sim.player.health,rng=sim.rng.state;

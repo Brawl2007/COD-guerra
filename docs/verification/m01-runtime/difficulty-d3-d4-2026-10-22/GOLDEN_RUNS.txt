@@ -1,0 +1,21 @@
+# node tools/verification/m01-integration-golden-audit.mjs --amendment 13 --write   (x86_64, tree wp1-difficulty; exit 0)
+{"seed":19390901,"support":false,"ticks":[23746,23746],"to0600":[565.8,565.8],"end":[1187.3,1187.3],"identicalBlocks":47}
+{"seed":7,"support":true,"ticks":[21660,21660],"to0600":[539,539],"end":[1083,1083],"identicalBlocks":43}
+{"seed":3,"support":false,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":12,"live":12},"real":{"predecessor":1205.5,"live":1205.5},"repairComplete":{"predecessor":439.15,"live":439.15}}
+{"seed":3,"support":true,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":18,"live":18},"real":{"predecessor":1153.45,"live":1153.45},"repairComplete":{"predecessor":383.6,"live":383.6}}
+{"seed":7,"support":false,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":12,"live":12},"real":{"predecessor":1198.75,"live":1198.75},"repairComplete":{"predecessor":429,"live":429}}
+{"seed":7,"support":true,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":18,"live":18},"real":{"predecessor":1083,"live":1083},"repairComplete":{"predecessor":380.25,"live":380.25}}
+written
+
+# node tools/verification/m01-integration-golden-audit.mjs --amendment 12   (verification mode, same tree; exit 0)
+{"seed":19390901,"support":false,"firstDifference":{"tick":9987,"clock":499.35,"battleClock":"05:35:26","path":"$.state.actors.30.ai.seen","actor":"de_east_18","predecessor":null,"live":{"x":8.439457091905668,"y":-0.35000020265579224,"z":39.997068643265024,"at":499.35000000007926,"who":"player"},"missing":false}}
+{"seed":19390901,"support":false,"firstBehaviourDifference":{"tick":10151,"clock":507.55,"battleClock":"05:38:43","path":"$.state.actors.32.facing","actor":"de_east_20","predecessor":2.1524018664465068,"live":3.0569824839215665}}
+{"seed":19390901,"support":false,"ticks":[23839,23746],"to0600":[565.8,565.8],"end":[1191.95,1187.3],"identicalBlocks":19}
+{"seed":7,"support":true,"firstDifference":{"tick":9206,"clock":460.3,"battleClock":"05:32:50","path":"$.state.actors.36.ai.seen","actor":"de_east_24","predecessor":null,"live":{"x":-4.263023023758449,"y":-0.35000020265579224,"z":40.33165912939366,"at":460.3000000000704,"who":"player"},"missing":false}}
+{"seed":7,"support":true,"firstBehaviourDifference":{"tick":9331,"clock":466.55,"battleClock":"05:33:40","path":"$.state.actors.27.facing","actor":"de_east_15","predecessor":1.9275843098301708,"live":3.0304467463551945}}
+{"seed":7,"support":true,"ticks":[21713,21660],"to0600":[539,539],"end":[1085.65,1083],"identicalBlocks":17}
+{"seed":3,"support":false,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":12,"live":12},"real":{"predecessor":1197.4,"live":1205.5},"repairComplete":{"predecessor":439.15,"live":439.15}}
+{"seed":3,"support":true,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":18,"live":18},"real":{"predecessor":1103.1,"live":1153.45},"repairComplete":{"predecessor":383.6,"live":383.6}}
+{"seed":7,"support":false,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":12,"live":12},"real":{"predecessor":1162.2,"live":1198.75},"repairComplete":{"predecessor":429,"live":429}}
+{"seed":7,"support":true,"clipping":0,"stacked":0,"same":{"objectives":true,"checkpoints":true,"consumedEventIds":true,"finalBattleClock":true},"survivors":{"predecessor":18,"live":18},"real":{"predecessor":1085.65,"live":1083},"repairComplete":{"predecessor":380.25,"live":380.25}}
+check: identical

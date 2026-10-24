@@ -1,6 +1,6 @@
 # Ficha: ckm wz.30 (metralhadora pesada polaca)
 
-Arma fixa da seteira sul da casamata oeste de M01. Em `mission.json` é o grupo `grp_ckm_crew` (3 homens, `weapon: "ckm_wz30"`, posto `cv_casemate_emb_s`); a guarnição tem de sair antes de `evt_m01_west_demolition`.
+Arma fixa do oeste de M01. Até T47 estava na seteira sul da casamata oeste (que não vê nenhum alemão); desde T47 está num abrigo de campanha no aterro entre as pontes, o posto S2 (`RECONSTRUCTED`: nenhuma fonte dá a posição da ckm). Em `mission.json` é o grupo `grp_ckm_crew` (3 homens, `weapon: "ckm_wz30"`, posto `cv_ckm_post`, feature `ckm_post`); a guarnição tem de sair antes de `evt_m01_west_demolition`.
 Fontes: T34 (*Ckm wz. 30*, Wikipédia en/pl; muzeum.skarzysko.pl; opisybroni.pl; 1939.pl; dobroni.pl; mhki.kielce.eu e polski-kolekcjoner.pl para a caixa de fita; imfdb.org; comparação com a *M1917 Browning*). T03 confirma pelotões de metralhadoras no batalhão.
 Estado: **ficha preliminar**. Os dados vêm de resumos de busca concordantes. As páginas não foram lidas por inteiro, porque `wikipedia.org` e vários museus estão bloqueados neste ambiente.
 
@@ -11,7 +11,7 @@ Estado: **ficha preliminar**. Os dados vêm de resumos de busca concordantes. As
 | Designação | *ciężki karabin maszynowy wz. 30* (ckm wz.30) | ALTA |
 | Origem | Cópia polaca, sem licença, da Browning M1917 (arrefecida a água), em 7,92 × 57 mm. Produzida pela Państwowa Fabryka Karabinów, 1931–1939, mais de 10 000 unidades | MÉDIA (T34) |
 | Variante modelada | Arma de série de 1939: manga de água lisa com tapa-chamas cónico (*lejek*) e punho de pistola de madeira, num tripé de 1939 na posição baixa. A geometria do tripé é estimada e não distingue o wz.30 do wz.34; o adaptador antiaéreo não foi modelado. A alteração do mecanismo do gatilho de 1938 não se distingue nas fotografias resumidas. Não é a M1917A1 americana | MÉDIA |
-| Em M01 | Fogo da seteira sobre a ponte até ao abandono do posto; NPCs, nunca arma do jogador | — |
+| Em M01 | Fogo de supressão de longo alcance (~1050 m) do posto S2 sobre os atiradores dos portões de Lisewo, de 04:46 até 30 s antes da demolição leste; NPCs, nunca arma do jogador | — |
 
 ## 2. Dados técnicos documentados
 
@@ -33,7 +33,7 @@ Estado: **ficha preliminar**. Os dados vêm de resumos de busca concordantes. As
 
 ## 3. Comportamento no jogo
 
-Esta ficha não acrescenta regras. A missão já declara o grupo, o posto e a condição de saída antes da demolição oeste; o emissor sonoro `ae_s2_ckm_east` existe à parte. Os clips usam 600 tiros/min (intervalo de 0,1 s) e uma rajada de 8. Estes valores servem só a animação: o número de tiros e o intervalo reais vêm da simulação que o Codex ligar.
+Os valores desta ficha não mudam as regras do jogo por si. O emissor sonoro `ae_s2_ckm_east` existe à parte (a ckm do pelotão leste). Desde T47 a simulação liga a arma: rajada de 8 tiros a 0,1 s (600 tiros/min cíclicos, os do clip `fire_burst`), fita de **330** cartuchos (a da ficha; 41 rajadas gastam 328 e a fita é trocada na fase `feed` de 3,2 s), cooldown de 3–7 s entre rajadas e fogo só sobre o atirador alemão que disparou nos últimos 10 s com linha livre. A cadência prática de 400–450 tiros/min não é usada: o jogo segue o clip. **Encravamentos (2026-10-22, decisão do proprietário):** a arma encrava duas vezes por rota (tabela `CKM_STOPPAGES` em `src/game/m01-simulation.js`: ao ir disparar a 14.ª rajada, por volta das 04:58, e a 45.ª, no fim da espera, 3,8 e 4,6 s). Não há fonte histórica para a taxa nem para os instantes (T34 não os dá): são balanço de jogo, escolhidos para o jogador poder ver e ouvir a guarnição desencravar; não são fiabilidade medida da arma. O municiador desencrava com o gesto do clip `feed` já autorado (ponta da fita para dentro, alavanca atrás duas vezes) e diz «Pronto. Atire!» (115); o atirador chama «Travou! Recarregar!» (114). Sem tiros durante o encravamento; a fita não gasta cartuchos; nenhum sorteio. Ver `docs/verification/m01-runtime/ckm-jam-2026-10-22/README.md`. Dispersão, dano e supressão são balanço de jogo (zona batida acima dos alvos, a ~1050 m), não balística medida; ver `DEVELOPMENT_STATUS.md` (entrada T47) e `docs/verification/m01-runtime/ckm-fire-live-2026-10-16/`.
 
 ## 4. Modelo 3D (provisório verificado)
 

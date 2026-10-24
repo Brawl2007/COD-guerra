@@ -1,0 +1,114 @@
+{
+ "tool": "tools/verification/m01-difficulty-sweep.mjs",
+ "note": "tabela recalibrada (esta entrega)",
+ "summary": {
+  "recruta/control": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 52,
+   "medianMinHealth": 84,
+   "medianFinalHealth": 84,
+   "collisions": {
+    "median": 14,
+    "max": 20
+   },
+   "wounds": {
+    "median": 2,
+    "max": 6
+   },
+   "fightRealSec": {
+    "median": 262.3,
+    "min": 236.1,
+    "max": 262.3
+   }
+  },
+  "recruta/support": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 68,
+   "medianMinHealth": 100,
+   "medianFinalHealth": 100,
+   "collisions": {
+    "median": 5,
+    "max": 11
+   },
+   "wounds": {
+    "median": 0,
+    "max": 4
+   },
+   "fightRealSec": {
+    "median": 243.5,
+    "min": 178.1,
+    "max": 260.9
+   }
+  },
+  "soldado/control": {
+   "routes": 12,
+   "deaths": 12,
+   "minHealth": 0,
+   "medianMinHealth": 0,
+   "medianFinalHealth": null,
+   "collisions": {
+    "median": 13,
+    "max": 35
+   },
+   "wounds": {
+    "median": 9,
+    "max": 21
+   },
+   "fightRealSec": null
+  },
+  "soldado/support": {
+   "routes": 12,
+   "deaths": 7,
+   "minHealth": 0,
+   "medianMinHealth": 0,
+   "medianFinalHealth": 100,
+   "collisions": {
+    "median": 8,
+    "max": 68
+   },
+   "wounds": {
+    "median": 4,
+    "max": 18
+   },
+   "fightRealSec": {
+    "median": 219.4,
+    "min": 208.9,
+    "max": 262.3
+   }
+  },
+  "veterano/control": {
+   "routes": 12,
+   "deaths": 12,
+   "minHealth": 0,
+   "medianMinHealth": 0,
+   "medianFinalHealth": null,
+   "collisions": {
+    "median": 3,
+    "max": 18
+   },
+   "wounds": {
+    "median": 3,
+    "max": 3
+   },
+   "fightRealSec": null
+  },
+  "veterano/support": {
+   "routes": 12,
+   "deaths": 12,
+   "minHealth": 0,
+   "medianMinHealth": 0,
+   "medianFinalHealth": null,
+   "collisions": {
+    "median": 5,
+    "max": 23
+   },
+   "wounds": {
+    "median": 3,
+    "max": 5
+   },
+   "fightRealSec": null
+  }
+ }
+}

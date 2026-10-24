@@ -29,6 +29,10 @@ export const WZ29_FEEL=Object.freeze({
   // draws it at most 0.71 m in front of the eye and keeps every vertex of rifle, hands and sleeves beyond the 0.03 m near plane.
   wall:Object.freeze({reach:1.45,full:.8,probes:Object.freeze([[0,0],[-.14,0],[.2,0],[.145,-.17],[0,.1]].map(p=>Object.freeze(p))),
     tauIn:.05,tauOut:.2,pitch:1.35,yaw:1.35,roll:.2,back:.04,drop:.05,across:.02}),
+  // Reload pose the rifle eases into (weight 1 = fully reloading): the rear sight's view position (m), then pitch/yaw/roll (rad) added to the
+  // hold. R6-a: the first version brought the rear sight 18 cm further out with the muzzle down, which swung the butt to 30 cm in front of the
+  // face (a stock filling 6 % of the frame); the butt now stays beside the shoulder, as at the hip, and the action cants towards the eye.
+  reload:Object.freeze({position:Object.freeze([.09,-.15,-.78]),pitch:.12,yaw:.10,roll:-.20}),
   // Step rate (rad/s of the first harmonic) and amplitudes in metres/radians per gait.
   gait:Object.freeze({walk:Object.freeze({rate:9,x:.003,y:.004,roll:.006,pitch:.002}),run:Object.freeze({rate:14,x:.005,y:.0085,roll:.013,pitch:.005}),
     crouch:Object.freeze({rate:6.5,x:.0022,y:.0026,roll:.004,pitch:.0014})}),
@@ -99,7 +103,8 @@ export function wallLowerTarget(clearance,{reach,full}=WZ29_FEEL.wall){
 /** Lower fast when the wall arrives, raise slowly once it is clear; exponential in simulation seconds. */
 export function advanceWallLower(value,target,dt,{tauIn,tauOut}=WZ29_FEEL.wall){return advanceVisualBlend(value,target,dt,target>value?tauIn:tauOut);}
 
-export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phase,shot=0,look=null,mechanical=0,stroke=0,crouch=0,wall=0,wallPose=WZ29_FEEL.wall,profile=WEAPON_PRESENTATION.wz29}){
+const _reloadTarget=new THREE.Vector3();
+export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phase,shot=0,look=null,mechanical=0,stroke=0,crouch=0,wall=0,wallPose=WZ29_FEEL.wall,reloadPose=WZ29_FEEL.reload,profile=WEAPON_PRESENTATION.wz29}){
   // Presentation offsets only. At rest in full ADS every extra term is zero, so the measured sight line is exact.
   // `phase` is accepted for older callers; the step bob is now a function of the clock and gait weights (gaitBob).
   const recoil=weaponRecoil(profile,clock-lastShot/1000,aim,shot),eased=adsEase(aim),hip=1-eased,active=1-reload;
@@ -111,13 +116,13 @@ export function presentationPose({clock,lastShot,aim,move,run,reload,phase:_phas
   position.x+=gait.x*bob+sway.x*hold-yawLag*.05;
   position.y+=gait.y*bob+breath.y*hip*active+sway.y*hold-.010*arc+pitchLag*.04;
   position.y-=.065*run*hip;position.z-=.025*run*hip;
-  position.lerp(new THREE.Vector3(.045,-.10,-.92),reload);
+  position.lerp(_reloadTarget.fromArray(reloadPose.position),reload);
   position.y+=recoil.rise-.018*stroke;position.z+=recoil.back+mechanical*.004;
   // Raising to the shoulder dips and cants the rifle mid-way; the lag trails mouse look; recoil/settle are per weapon.
   const euler=new THREE.Euler(
-    -.06*hip-.13*run*hip-.18*reload+recoil.pitch+sway.pitch*hold-.016*arc+pitchLag-mechanical*.006+gait.pitch*bob+breath.pitch*hip*active,
-    .15*hip+.04*reload+recoil.yaw+sway.yaw*hold+yawLag,
-    -.055*hip-.13*run*hip-.22*reload+recoil.roll+sway.roll*hold+.05*arc-yawLag*.5+gait.roll*bob-.10*stroke);
+    -.06*hip-.13*run*hip+reloadPose.pitch*reload+recoil.pitch+sway.pitch*hold-.016*arc+pitchLag-mechanical*.006+gait.pitch*bob+breath.pitch*hip*active,
+    .15*hip+reloadPose.yaw*reload+recoil.yaw+sway.yaw*hold+yawLag,
+    -.055*hip-.13*run*hip+reloadPose.roll*reload+recoil.roll+sway.roll*hold+.05*arc-yawLag*.5+gait.roll*bob-.10*stroke);
   // Held low near a wall: pulled back and down, canted across the body with the muzzle dropped to the floor. wall = 0 adds exact zeros.
   if(wall>0){
     const w=adsEase(wall),k=wallPose;
@@ -142,52 +147,48 @@ export function placeWz29(root,weapon,pose){
   root.updateMatrixWorld(true);
 }
 
-// First-person-only two-segment arm placement. The source rig's shoulders are at
-// the world character's head; place their sleeve ends below this camera instead.
-// Mechanical hand targets/orientations still come from the sampled GLB clip.
-export const VIEW_SHOULDERS=Object.freeze({l:Object.freeze([-.30,-.43,-.10]),r:Object.freeze([.32,-.40,0])});
-export function placeViewArms(root,weapon,gripWeight,shoulders=VIEW_SHOULDERS){
-  const quaternion=new THREE.Quaternion();
-  const worldQuaternion=bone=>bone.getWorldQuaternion(new THREE.Quaternion());
-  const setWorldQuaternion=(bone,q)=>bone.quaternion.copy(worldQuaternion(bone.parent).invert().multiply(q));
-  for(const side of ['l','r']){
-    const upper=root.getObjectByName(`upperarm_${side}`),lower=root.getObjectByName(`lowerarm_${side}`),hand=root.getObjectByName(`hand_${side}`);
-    const oldShoulder=upper.getWorldPosition(new THREE.Vector3()),oldElbow=lower.getWorldPosition(new THREE.Vector3()),oldHand=hand.getWorldPosition(new THREE.Vector3());
-    const uq=worldQuaternion(upper),lq=worldQuaternion(lower),hq=worldQuaternion(hand);
-    const a=oldShoulder.distanceTo(oldElbow),b=oldElbow.distanceTo(oldHand);
-    const target=oldHand.clone();
-    if(side==='r'&&gripWeight>0){
-      const grip=weapon.localToWorld(new THREE.Vector3(.055,-.025,.065));target.lerp(grip,gripWeight);
-    }
-    const shoulder=weapon.localToWorld(new THREE.Vector3(...shoulders[side]));
-    const direction=target.clone().sub(shoulder).normalize();
-    let distance=shoulder.distanceTo(target);
-    // Preserve exact hand contact even during the original pouch reach. Move only
-    // the off-screen sleeve anchor when the two existing bones cannot span it.
-    const reach=a+b-.001;if(distance>reach){shoulder.addScaledVector(direction,distance-reach);distance=reach;}
-    const along=(a*a-b*b+distance*distance)/(2*distance),height=Math.sqrt(Math.max(0,a*a-along*along));
-    const pole=new THREE.Vector3(side==='l'?-.4:.4,-1,.15);
-    pole.addScaledVector(direction,-pole.dot(direction)).normalize();
-    const elbow=shoulder.clone().addScaledVector(direction,along).addScaledVector(pole,height);
-    upper.position.copy(upper.parent.worldToLocal(shoulder.clone()));
-    quaternion.setFromUnitVectors(oldElbow.clone().sub(oldShoulder).normalize(),elbow.clone().sub(shoulder).normalize()).multiply(uq);
-    setWorldQuaternion(upper,quaternion);root.updateMatrixWorld(true);
-    quaternion.setFromUnitVectors(oldHand.clone().sub(oldElbow).normalize(),target.clone().sub(elbow).normalize()).multiply(lq);
-    setWorldQuaternion(lower,quaternion);root.updateMatrixWorld(true);setWorldQuaternion(hand,hq);root.updateMatrixWorld(true);
-  }
-}
+// The first-person arms and hands are solved in m01-fp-hands.js (R6-a replaced the fixed-shoulder placeViewArms that lived here).
 
-export function riflePresentationMaterial(source){
+/**
+ * Aimed-down-sights clip of everything behind the receiver (R6-b). With the rifle on the shoulder the comb, the heel and the butt (wood and the steel butt plate) are
+ * under and behind the player's head, and no head is drawn: they rose as a wedge of wood under the sights, because the asset's sight line is only 2.7 to 3.5 cm over
+ * the top of its stock. While aimed, every fragment of the rifle closer to the eye than `depth` metres is not drawn, except the bolt (its own bone: shroud, body,
+ * handle and knob stay). `depth` is the distance from the eye to the rear end of the receiver ring (weapon z = .035) less 5 mm, so the cut falls right behind the ring,
+ * which hides it. The uniform carries the clip distance in metres: 0 at the hip, `depth` exactly on the sights, eased with the aim like everything else.
+ */
+export const FACE_CLIP=Object.freeze({depth:WZ29_VISUAL.rearDepth+WZ29_VISUAL.rear[2]-.035-.005,engage:Object.freeze([.35,.75]),strokeFade:Object.freeze([.4,.8])});
+/**
+ * Weight (0..1) of the head clip: it engages only when the rifle is nearly at the eye (the aim ease between `engage`), so that the stock is never sawn through while it
+ * travels up from the hip, and it is gone again while the bolt stroke has the rifle off the eye (stroke between `strokeFade`), while a reload holds it across the body and
+ * while a wall has it lowered: a straight cut through wood seen from the side is the one thing the clip must never show. `aim` is the stroke-reduced aim progress the pose uses.
+ */
+export function faceClipWeight(aim,stroke=0,reload=0,wall=0){
+  return smooth(adsEase(aim),FACE_CLIP.engage[0],FACE_CLIP.engage[1])*(1-smooth(stroke,FACE_CLIP.strokeFade[0],FACE_CLIP.strokeFade[1]))*(1-reload)*(1-adsEase(wall));
+}
+/** Aimed-down-sights shade of the stock wood: strength (0..1 of the light removed) and the eye distances (m) where it is full / gone. */
+export const STOCK_SHADE=Object.freeze({strength:.6,near:.56,far:.68});
+export function riflePresentationMaterial(source,boltBone=-1){
   const material=source.clone();material.name='wz29_first_person_atlas';
   material.color.multiply(new THREE.Color(.94,.92,.89));material.normalScale?.multiplyScalar(.65);
+  // R6-a: with the eye 11 cm behind the butt the wood of the stock is a bright wedge under the sights. Aimed down the sights it sits in the head's
+  // shadow: wood texels between STOCK_SHADE.near and .far metres of the eye lose up to m01StockShade of their light (0 at the hip, set by M01ViewModel).
+  const shade=material.userData.m01StockShade={value:0};
+  // The head clip: `value` is the clip distance in metres (set by M01ViewModel), `depth` its full value; it needs the bolt's bone index to leave the bolt alone.
+  const faceClip=material.userData.m01FaceClip={value:0,depth:boltBone>=0?FACE_CLIP.depth:0},bolt={value:boltBone};
   // Preserve baked wood grain, wear and metal masks. The weapon pass now has a low sky/ground reflection
   // environment, so blued steel may read as metal (sheen) while oiled wood stays satin, never mirror-like.
-  material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
+  material.onBeforeCompile=shader=>{shader.uniforms.m01StockShade=shade;shader.uniforms.m01FaceClip=faceClip;shader.uniforms.m01BoltBone=bolt;
+    shader.vertexShader='uniform float m01BoltBone;\nvarying float vM01Bolt;\n'+shader.vertexShader.replace('#include <begin_vertex>',
+      '#include <begin_vertex>\n#ifdef USE_SKINNING\nvM01Bolt = abs( skinIndex.x - m01BoltBone ) < 0.5 ? 1.0 : 0.0;\n#else\nvM01Bolt = 0.0;\n#endif');
+    shader.fragmentShader='uniform float m01StockShade;\nuniform float m01FaceClip;\nvarying float vM01Bolt;\n'+shader.fragmentShader.replace('#include <clipping_planes_fragment>',
+      '#include <clipping_planes_fragment>\nif ( m01FaceClip > 0.0 && vM01Bolt < 0.5 && vViewPosition.z < m01FaceClip ) discard;').replace('#include <opaque_fragment>',
+      'outgoingLight *= 1.0 - m01StockShade * (1.0 - metalnessFactor) * (1.0 - smoothstep('+STOCK_SHADE.near.toFixed(2)+', '+STOCK_SHADE.far.toFixed(2)+', length(vViewPosition)));\n#include <opaque_fragment>');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
     '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
     '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
   // Reflection strength is the weapon pass's scene.environmentIntensity (three ignores envMapIntensity without an own envMap).
-  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v3';
+  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v5';
   return material;
 }
 /** Hands/sleeves/clip use a private atlas copy: the eye pass has its own environment and must not flip the world soldiers' programs. */

@@ -1,0 +1,69 @@
+<!doctype html><meta charset="utf-8"><title>M01 first-person hands lab</title>
+<style>html,body{margin:0;background:#151918}canvas{width:960px;height:540px;display:block}</style>
+<canvas id="frame" width="960" height="540"></canvas>
+<script type="module">
+// R6-a lab: the real M01ViewModel on the real GLBs, the weapon pass only, driven by a presentation record (no world, no gameplay).
+// Used to inspect the hands from the player's camera and from free cameras around the rifle. Not an FPS or gameplay measurement.
+import * as THREE from 'three';
+import {M01Characters} from '../../src/render/m01-characters.js';
+import {M01ViewModel} from '../../src/render/m01-viewmodel.js';
+import {WeaponLighting} from '../../src/render/first-person-weapon-fx.js';
+import {Wz29} from '../../src/game/wz29.js';
+const canvas=document.querySelector('canvas'),engine=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
+engine.setSize(960,540,false);engine.setPixelRatio(1);engine.outputColorSpace=THREE.SRGBColorSpace;engine.toneMapping=THREE.ACESFilmicToneMapping;engine.toneMappingExposure=1.15;
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(58,960/540,.03,6),free=new THREE.PerspectiveCamera(30,960/540,.02,6);
+const lighting=new WeaponLighting(scene);
+const sky={color:new THREE.Color('#bfd0d5'),groundColor:new THREE.Color('#58422d'),intensity:1.6},sunPosition=new THREE.Object3D(),sunTarget=new THREE.Object3D();
+sunPosition.position.set(30,60,-30);
+lighting.sync({sky,sun:{position:sunPosition.position,target:sunTarget,color:new THREE.Color('#ffe0b0'),intensity:1.6},camera,daylight:1,pitch:0});
+const characters=new M01Characters(new THREE.Scene());await characters.load('high');
+const vm=new M01ViewModel(scene,characters,new THREE.Texture());
+const sim={clock:20,world:{},player:{id:'player',aiming:false,moveBlend:0,sprinting:false,pitch:0,angle:0},weapon:new Wz29(),renderState:{weaponVisible:true},actors:[]};
+const v3=new THREE.Vector3(),q4=new THREE.Quaternion();
+function setWeapon(state,fraction){
+  const dur=state==='BOLT_CYCLE'?1050:state==='RELOAD_SINGLE'?800:3400,w=sim.weapon;
+  w.state=state;w.started=sim.clock*1000-fraction*dur;w.until=w.started+dur;w.lastShot=state==='BOLT_CYCLE'?w.started:-1e9;if(state==='RELOAD_CLIP')w.mag=0;
+  if(state==='READY'){w.until=0;w.mag=5;}
+}
+const views={
+  // [direction in the weapon frame, centre in the weapon frame, distance]
+  right:[[1,.06,0],[0,0,-.05],.8],left:[[-1,.06,0],[0,0,-.05],.8],top:[[.02,1,0],[0,0,-.05],.8],back:[[.15,.15,1],[0,0,-.15],.7],
+  gripR:[[1,.1,.15],[0,-.015,.02],.28],gripRtop:[[.05,1,.15],[0,-.015,.02],.28],forend:[[-1,.2,-.1],[0,0,-.34],.34],forendR:[[1,.2,-.1],[0,0,-.34],.34],
+  bolt:[[.6,.8,.5],[.03,.05,.04],.36],clip:[[.6,.6,-.3],[0,.03,-.08],.34],
+  gripRbottom:[[.1,-1,.1],[0,-.015,.02],.28],gripRfront:[[.45,.05,-1],[0,-.015,.02],.3],gripRleft:[[-1,.1,.15],[0,-.015,.02],.28],
+  forendBottom:[[.1,-1,0],[0,0,-.34],.34],forendFront:[[.2,.1,-1],[0,0,-.34],.34],forendTop:[[0,1,.1],[0,0,-.34],.34],
+};
+window.lab={
+  vm,sim,scene,lighting,
+  /** Advance the presentation clock by dt seconds with the given player flags and weapon state. */
+  step({dt=.05,state='READY',fraction=0,aiming=false,sprinting=false,moveBlend=null}={}){
+    sim.clock+=dt;sim.player.aiming=aiming;sim.player.sprinting=sprinting;sim.player.moveBlend=moveBlend??(sprinting?1:0);
+    setWeapon(state,fraction);vm.update(sim,'high',0);return vm.stats;
+  },
+  /** Reconstruct a pose from authoritative flags (no history), as a restored save does. */
+  pose(opts){vm.visual=null;vm.sampleKey=null;return this.step({dt:0,...opts});},
+  draw(view='player',background='#2b3330'){
+    engine.setClearColor(new THREE.Color(background),1);engine.clear();
+    if(view==='player'){engine.render(scene,camera);return;}
+    const weapon=vm.root.getObjectByName('weapon');weapon.updateWorldMatrix(true,false);
+    const [dir,centre,distance]=views[view],c=weapon.localToWorld(v3.fromArray(centre)).clone();weapon.getWorldQuaternion(q4);
+    const d=new THREE.Vector3(...dir).normalize().applyQuaternion(q4);
+    free.position.copy(c).addScaledVector(d,distance);free.up.set(0,1,0).applyQuaternion(q4);free.lookAt(c);free.updateProjectionMatrix();free.updateMatrixWorld(true);
+    const shade=vm.rifleMaterial?.userData.m01StockShade,kept=shade?.value,head=vm.rifleMaterial?.userData.m01FaceClip,keptHead=head?.value;if(shade)shade.value=0;if(head)head.value=0;   // R6-b: the head clip, like the shade, belongs to the player's eye   // the aimed stock shade belongs to the player's eye
+    engine.render(scene,free);if(shade)shade.value=kept;if(head)head.value=keptHead;
+  },
+  /** Flat colour per mesh (rifle blue, clip yellow, hands red, sleeves green, cuffs magenta, sleeve caps cyan, straps orange) to tell which mesh is which. */
+  tint(on){
+    const colours={rifle:0x3b6cff,clip:0xffe14d,fp_hands:0xff2a2a,body:0x39d353,fp_cuffs:0xff3df0,fp_sleeve_caps:0x25e6e6,fp_straps:0xff9a1f};
+    this.originals??=new Map();
+    vm.root.traverse(n=>{
+      if(!n.isMesh||!(n.name in colours))return;
+      if(on){if(!this.originals.has(n))this.originals.set(n,n.material);n.material=new THREE.MeshBasicMaterial({color:colours[n.name]});}
+      else if(this.originals.has(n)){n.material.dispose();n.material=this.originals.get(n);this.originals.delete(n);}
+    });
+  },
+  png(){return canvas.toDataURL('image/png');},
+  stats(){return vm.stats;},
+};
+window.labReady=true;
+</script>

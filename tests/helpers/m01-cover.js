@@ -6,14 +6,17 @@ import { driver, toRepair } from './m01-route.js';
 // (recent muzzle flashes from sim.threat). State-level comparison: not a browser playthrough, not a human playtest.
 // - ignore: the control route (waits behind the sandbags, never fires; Bąk is left to Dudek).
 // - help: beside the sappers it keeps the gate MG down; on the deck it fires at the Germans on the spans.
-export function coverRoute(seed=19390901,mode='ignore'){
-  const d=toRepair(driver(seed)),{sim,events,step,until,walk}=d;
+export function coverRoute(seed=19390901,mode='ignore',options={}){
+  const d=toRepair(driver(seed,options)),{sim,events,step,until,walk}=d;
   const stats={seed,mode,shots:0,repair:{deliveredAt:sim.clock,start:clockText(sim.battleClock)},casualties:[],repairMgSuppressed:0,repairUnderFire:0};
   let lastFlash=null,flashAt=-1e9,lastShot=-1e9,survivors=sim.flags['m01.east_platoon_survivors'],germans=sim.enemies.filter(a=>a.alive).length;
   const times={},historic=['order_demolish','east_platoon_withdraws','germans_on_east_spans','east_demolition','west_demolition','roll_call'];
   const watch=()=>{
     for(const id of historic)if(!times[id]&&sim.consumedEvent(`evt_m01_${id}`))times[id]=clockText(sim.battleClock);
     if(sim.active('cover_repair')&&sim.consumedEvent('evt_m01_train963_arrives')){stats.repairUnderFire+=.05;if(sim.threat.mgSuppressed.includes('de_east_0'))stats.repairMgSuppressed+=.05;}
+    // 2026-10-19 (combat slice 2b): ticks with a German of the spans suppressed while the 20 s casualty rule runs (the battle clock before the gate holds it at 06:09:30).
+    if(sim.consumedEvent('evt_m01_germans_on_east_spans')&&!sim.consumedEvent('evt_m01_east_demolition')&&sim.battleClock<seconds('06:09:30')&&
+      sim.enemies.some(a=>a.group==='grp_de_spans'&&a.alive&&a.suppressedUntil>sim.clock))stats.spansSuppressedWhileRuleRuns=(stats.spansSuppressedWhileRuleRuns??0)+1;
     const alive=sim.enemies.filter(a=>a.alive).length;if(alive<germans&&!sim.consumedEvent('evt_m01_east_demolition'))(stats.germanCasualties??=[]).push(clockText(sim.battleClock));germans=alive;
     const n=sim.flags['m01.east_platoon_survivors'];if(n<survivors)stats.casualties.push(clockText(sim.battleClock));survivors=n;
     if(!stats.repair.end&&sim.done('cover_repair'))stats.repair={...stats.repair,end:clockText(sim.battleClock),realSeconds:+(sim.clock-stats.repair.deliveredAt).toFixed(2),pins:sim.timers.repairPins};
@@ -34,22 +37,27 @@ export function coverRoute(seed=19390901,mode='ignore'){
     return {lookX,lookY,aim:true,fire,reload:sim.weapon.mag===0&&sim.weapon.state==='READY'};
   };
   if(mode==='help'){
-    walk(-120,16.5);tick({crouch:true});lastFlash=null;
+    // 2026-10-23 (R1-a, golden amendment 16): the pilot squares up (heading and pitch 0) before it engages. The heading it arrived with was the direction of the last step of `walk`, whose sub-count
+    // residue depended on path differences of centimetres; the pilot then turns to the flash in whole mouse counts (2.2 mrad, 2.6 m at 1170 m) from there, so that residue decided whether its rounds pass
+    // within 3 m of the gate MG: the stun of the bombs moves the path by centimetres and the MG was kept down 4 % of the repair instead of 85-90 % on every seed (the seeds share the whole route before
+    // 04:45), with no change to anything a player can do. From a squared-up start the pilot is reproducible (90 % without the bombs, 91 % with them on the golden seed).
+    walk(-120,16.5);tick({crouch:true,lookX:-sim.player.angle/.0022,lookY:sim.player.pitch/.0022});lastFlash=null;
     wait(()=>!sim.active('cover_repair'),400,cover(f=>f.id==='de_east_0',()=>sim.threat.mgSuppressed.includes('de_east_0'),4));
     tick({crouch:true});
-    const kowal=sim.actor('szymon_kowal');walk(kowal.x+1.5,kowal.z);tick({interact:true});tick({});tick({interact:true});
+    // T38: Kowal kneels right behind the squad-post sandbags, so the pilot comes up from behind him (west), not through the sandbags.
+    const kowal=sim.actor('szymon_kowal');walk(kowal.x-1.5,kowal.z);tick({interact:true});tick({});tick({interact:true});
   }
   walk(-115,27);walk(-28,28);tick({crouch:true});
   wait(()=>sim.active('hold_access'),500);
   tick({crouch:true});
-  walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);
   wait(()=>sim.consumedEvent('evt_m01_germans_on_east_spans'),500);
   if(mode==='help'){walk(38,42.4);lastFlash=null;wait(()=>sim.consumedEvent('evt_m01_east_demolition'),500,cover(f=>f.id.startsWith('de_spans'),()=>sim.threat.spansSuppressed,3.5));}
   wait(()=>sim.consumedEvent('evt_m01_east_demolition'),500);
   stats.survivors=sim.flags['m01.east_platoon_survivors'];
   walk(-15,40);walk(-115,27);walk(-275,27);walk(-292,26);
   wait(()=>sim.consumedEvent('evt_m01_west_demolition'),500);
-  walk(-292,68);walk(-262,70);
+  walk(-263,58);walk(-263,70);
   wait(()=>sim.scene?.id==='cs_m01_roll_call',30);step({skip:true});
   wait(()=>sim.mission.complete,10);
   if(sim.battleClock!==seconds('07:05:00'))throw new Error('Wrong final battle clock');

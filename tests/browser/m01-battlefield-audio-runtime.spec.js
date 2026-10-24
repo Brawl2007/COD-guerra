@@ -1,5 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {driver,toRepair,route} from '../helpers/m01-route.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+import {enemyFireSoundPlan} from '../../src/game/m01-audio-events.js';
 
 // Jogo real (build de produção, AudioContext do Chromium): estados guardados pela própria simulação,
 // sem injecção de eventos. Prova que o áudio de campo de batalha corre no runtime; não é um playtest de escuta.
@@ -12,8 +14,13 @@ function snapshotBeforeRealMG34(){
     if(fresh.some(e=>e.type==='enemy-fire'&&e.weapon==='mg34'))return before;}
   throw new Error('No real MG34 event found');
 }
-let combat,demolition;
-test.beforeAll(()=>{combat=snapshotBeforeRealMG34();demolition=route(19390901,{support:true}).combatSnapshots.eastDemolition;});
+let combat,demolition,realMGDue;
+function firstRealMGArrivals(snapshot){
+  const sim=new M01Simulation();sim.restoreSnapshot(snapshot);sim.drainEvents();const arrivals=[];
+  for(let n=0;n<200&&arrivals.length<2;n++){sim.tick(.05,{});for(const event of sim.drainEvents())if(event.type==='enemy-fire'&&event.weapon==='mg34')arrivals.push({event,sound:enemyFireSoundPlan(event,sim.player)});}
+  if(arrivals.length<2)throw Error('Fixture has no two real MG34 shots');return arrivals;
+}
+test.beforeAll(()=>{combat=snapshotBeforeRealMG34();realMGDue=firstRealMGArrivals(combat);demolition=route(19390901,{support:true}).combatSnapshots.eastDemolition;});
 
 async function startFrom(page,snapshot){
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
@@ -32,7 +39,13 @@ test('live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses
   expect(initial.reverb).toBe(true);expect(initial.compressor).toBe(true);expect(initial.maxVoices).toBe(20);
   expect(initial.loops).toEqual(expect.arrayContaining(['wind','battle-bed']));
   // CI budget only (b4dc86f, CI 38871227131 shard 1 rerun): per-frame software-GL cost is ~1.4x V7 since the partials merge; same assertions.
-  await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts.mg34??0)>1,null,{timeout:60000});
+  // The real MG is >1km away: its first two rounds arrive after >3 simulation seconds.
+  // Software WebGL may need >30 wall seconds for that interval; wait for the authoritative acoustic deadline.
+  const deadline=Math.max(...realMGDue.map(row=>row.sound.at))+.1;
+  await page.waitForFunction(deadline=>{const d=window.gameDiagnostics();return !d.paused&&d.clock>=deadline;},deadline,{timeout:120000});
+  const heard=await page.evaluate(()=>window.gameDiagnostics());
+  expect(heard.audio.eventCounts.mg34??0).toBeGreaterThan(1);
+  expect(heard.audio.lastEvents.some(e=>e.kind==='mg34'&&e.key.startsWith('mg34@'))).toBe(true);
   await page.waitForFunction(()=>window.gameDiagnostics().audio.intensity>0,null,{timeout:60000});
   await page.waitForFunction(()=>(window.gameDiagnostics().audio.eventCounts['distant-battle']??0)>0,null,{timeout:60000});
   const live=await page.evaluate(()=>window.gameDiagnostics());
@@ -40,7 +53,7 @@ test('live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses
   expect(live.audio.liveSources).toBeLessThanOrEqual(live.audio.sourceBudget+80);expect(live.audio.quality).toBe('low');
   // A simulação continua a autoridade: o áudio só lê eventos já emitidos (fila pendente = tiros alemães em voo sonoro).
   expect(live.m01.pendingAudio.every(s=>['fire','blast'].includes(s.kind))).toBe(true);
-  await info.attach('live-combat-audio.json',{body:JSON.stringify({initial,live:live.audio},null,2),contentType:'application/json'});
+  await info.attach('live-combat-audio.json',{body:JSON.stringify({initial,realMGDue,deadline,heard:{clock:heard.clock,audio:heard.audio},live:live.audio},null,2),contentType:'application/json'});
   expect(errors).toEqual([]);
 });
 

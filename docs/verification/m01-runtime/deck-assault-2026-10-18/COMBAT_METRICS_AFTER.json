@@ -1,0 +1,1297 @@
+{
+ "tool": "tools/verification/m01-combat-ai-metrics.mjs",
+ "rev": "working-tree",
+ "routes": [
+  {
+   "seed": 19390901,
+   "support": false,
+   "forward": false,
+   "realSec": 1191.9,
+   "closeness": {
+    "mission": {
+     "realSec": 1191.5,
+     "nearestGermanM": {
+      "min": 430,
+      "p10": 634,
+      "p50": 1082
+     },
+     "shareUnder600m": 0.089,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "battle": {
+     "realSec": 609.5,
+     "nearestGermanM": {
+      "min": 430,
+      "p10": 502,
+      "p50": 1025
+     },
+     "shareUnder600m": 0.174,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "deck": {
+     "realSec": 262.5,
+     "nearestGermanM": {
+      "min": 430,
+      "p10": 441,
+      "p50": 657
+     },
+     "shareUnder600m": 0.404,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    }
+   },
+   "nearImpacts": {
+    "toHoldAccess": {
+     "within60m": 173,
+     "cracks": 61
+    },
+    "toDeck": {
+     "within60m": 40,
+     "cracks": 16
+    },
+    "deck": {
+     "within60m": 67,
+     "cracks": 100
+    },
+    "after": {
+     "within60m": 71,
+     "cracks": 56
+    }
+   },
+   "player": {
+    "damageTaken": 8,
+    "finalHealth": 92,
+    "hitEvents": 1
+   },
+   "killsByPlayer": [],
+   "cadence": {
+    "ckm_wz30": {
+     "shooters": 1,
+     "intervals": {
+      "n": 57,
+      "mean": 6.67,
+      "cv": 0.233,
+      "min": 4.4,
+      "p50": 6.7,
+      "max": 9.55
+     },
+     "medianShooterCv": 0.233,
+     "repeatShare": 0
+    },
+    "dike_rifle": {
+     "shooters": 26,
+     "intervals": {
+      "n": 661,
+      "mean": 14.15,
+      "cv": 0.918,
+      "min": 1.75,
+      "p50": 12.1,
+      "max": 67.55
+     },
+     "medianShooterCv": 0.898,
+     "repeatShare": 0.009
+    },
+    "display_dike_rifle": {
+     "shooters": 2,
+     "intervals": {
+      "n": 47,
+      "mean": 12.04,
+      "cv": 0.745,
+      "min": 1.25,
+      "p50": 13.4,
+      "max": 26.25
+     },
+     "medianShooterCv": 0.945,
+     "repeatShare": 0.022
+    },
+    "display_gate_rifle": {
+     "shooters": 1,
+     "intervals": {
+      "n": 5,
+      "mean": 44.71,
+      "cv": 0.397,
+      "min": 24.4,
+      "p50": 47.8,
+      "max": 73.35
+     },
+     "medianShooterCv": 0.397,
+     "repeatShare": 0
+    },
+    "display_other": {
+     "shooters": 1,
+     "intervals": {
+      "n": 1,
+      "mean": 72.3,
+      "cv": 0,
+      "min": 72.3,
+      "p50": 72.3,
+      "max": 72.3
+     },
+     "medianShooterCv": null,
+     "repeatShare": null
+    },
+    "display_pl_ckm": {
+     "shooters": 2,
+     "intervals": {
+      "n": 60,
+      "mean": 9.33,
+      "cv": 0.818,
+      "min": 1.4,
+      "p50": 10.25,
+      "max": 23.65
+     },
+     "medianShooterCv": 0.966,
+     "repeatShare": 0.017
+    },
+    "display_pl_rifle": {
+     "shooters": 22,
+     "intervals": {
+      "n": 392,
+      "mean": 14.22,
+      "cv": 0.248,
+      "min": 8.05,
+      "p50": 14.55,
+      "max": 20
+     },
+     "medianShooterCv": 0.24,
+     "repeatShare": 0.005
+    },
+    "gate_rifle": {
+     "shooters": 12,
+     "intervals": {
+      "n": 299,
+      "mean": 28.1,
+      "cv": 1.846,
+      "min": 0.15,
+      "p50": 16.15,
+      "max": 295.4
+     },
+     "medianShooterCv": 1.827,
+     "repeatShare": 0.007
+    },
+    "kowal_rkm": {
+     "shooters": 1,
+     "intervals": {
+      "n": 137,
+      "mean": 4.44,
+      "cv": 0.225,
+      "min": 2.55,
+      "p50": 4.45,
+      "max": 6.5
+     },
+     "medianShooterCv": 0.225,
+     "repeatShare": 0.044
+    },
+    "mg34": {
+     "shooters": 2,
+     "intervals": {
+      "n": 80,
+      "mean": 19.27,
+      "cv": 2.201,
+      "min": 0.85,
+      "p50": 9.9,
+      "max": 289.75
+     },
+     "medianShooterCv": 2.229,
+     "repeatShare": 0
+    },
+    "spans_rifle": {
+     "shooters": 10,
+     "intervals": {
+      "n": 187,
+      "mean": 12.03,
+      "cv": 1.377,
+      "min": 1.75,
+      "p50": 8.25,
+      "max": 98.2
+     },
+     "medianShooterCv": 1.497,
+     "repeatShare": 0.045
+    }
+   },
+   "shots": {
+    "gameplayRoundsByKind": {
+     "area": 19,
+     "attrition": 6,
+     "east": 699,
+     "platoon": 339,
+     "player": 372,
+     "repair": 148,
+     "squad": 15
+    },
+    "aimedRounds": 874,
+    "scriptedOrAreaRounds": 724,
+    "displayRounds": 1115,
+    "displayBursts": 533,
+    "aimedShareOfAllRounds": 0.322
+   },
+   "phases": {
+    "SETUP": {
+     "realSec": 17.5,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "BUILDUP": {
+     "realSec": 50,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "FIRST_CONTACT": {
+     "realSec": 397,
+     "nearestGermanM": {
+      "min": 1082,
+      "p50": 1082,
+      "max": 1082
+     },
+     "losShare": 0.525,
+     "losInViewShare": 0.525,
+     "noGermanWithin100mShare": 1
+    },
+    "MAIN_COMBAT": {
+     "realSec": 101,
+     "nearestGermanM": {
+      "min": 1025,
+      "p50": 1025,
+      "max": 1167
+     },
+     "losShare": 0.876,
+     "losInViewShare": 0.777,
+     "noGermanWithin100mShare": 1
+    },
+    "SET_PIECE": {
+     "realSec": 300,
+     "nearestGermanM": {
+      "min": 430,
+      "p50": 694,
+      "max": 1025
+     },
+     "losShare": 1,
+     "losInViewShare": 1,
+     "noGermanWithin100mShare": 1
+    },
+    "CLIMAX": {
+     "realSec": 311,
+     "nearestGermanM": {
+      "min": 919,
+      "p50": 1251,
+      "max": 1251
+     },
+     "losShare": 0.981,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "AFTERMATH": {
+     "realSec": 15,
+     "nearestGermanM": {
+      "min": 1224,
+      "p50": 1224,
+      "max": 1251
+     },
+     "losShare": 0.933,
+     "losInViewShare": 0.433,
+     "noGermanWithin100mShare": 1
+    }
+   },
+   "contact": {
+    "windowRealSec": 609.2,
+    "contactMoments": 220,
+    "longestGapRealSec": 131.5,
+    "longestGapStartsAt": {
+     "realSec": 497.3,
+     "battleClock": "05:34:54"
+    },
+    "gapsOver30s": 1,
+    "medianGapRealSec": 0.9
+   }
+  },
+  {
+   "seed": 7,
+   "support": true,
+   "forward": false,
+   "realSec": 1152.5,
+   "closeness": {
+    "mission": {
+     "realSec": 1152.5,
+     "nearestGermanM": {
+      "min": 470,
+      "p10": 645,
+      "p50": 1174
+     },
+     "shareUnder600m": 0.084,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "battle": {
+     "realSec": 570,
+     "nearestGermanM": {
+      "min": 470,
+      "p10": 520,
+      "p50": 1016
+     },
+     "shareUnder600m": 0.17,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "deck": {
+     "realSec": 250,
+     "nearestGermanM": {
+      "min": 470,
+      "p10": 470,
+      "p50": 667
+     },
+     "shareUnder600m": 0.388,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    }
+   },
+   "nearImpacts": {
+    "toHoldAccess": {
+     "within60m": 28,
+     "cracks": 33
+    },
+    "toDeck": {
+     "within60m": 3,
+     "cracks": 2
+    },
+    "deck": {
+     "within60m": 41,
+     "cracks": 55
+    },
+    "after": {
+     "within60m": 19,
+     "cracks": 15
+    }
+   },
+   "player": {
+    "damageTaken": 0,
+    "finalHealth": 100,
+    "hitEvents": 0
+   },
+   "killsByPlayer": [
+    {
+     "id": "de_east_0",
+     "distanceM": 1176,
+     "weapon": "kb_wz29"
+    },
+    {
+     "id": "de_east_1",
+     "distanceM": 1175,
+     "weapon": "kb_wz29"
+    }
+   ],
+   "cadence": {
+    "ckm_wz30": {
+     "shooters": 1,
+     "intervals": {
+      "n": 55,
+      "mean": 6.46,
+      "cv": 0.214,
+      "min": 4.4,
+      "p50": 6.35,
+      "max": 9.45
+     },
+     "medianShooterCv": 0.214,
+     "repeatShare": 0.019
+    },
+    "dike_rifle": {
+     "shooters": 26,
+     "intervals": {
+      "n": 634,
+      "mean": 13.82,
+      "cv": 0.877,
+      "min": 1.75,
+      "p50": 12.5,
+      "max": 67.55
+     },
+     "medianShooterCv": 0.873,
+     "repeatShare": 0.003
+    },
+    "display_dike_rifle": {
+     "shooters": 2,
+     "intervals": {
+      "n": 54,
+      "mean": 9.85,
+      "cv": 0.813,
+      "min": 1.25,
+      "p50": 10.7,
+      "max": 26.2
+     },
+     "medianShooterCv": 0.881,
+     "repeatShare": 0.019
+    },
+    "display_gate_rifle": {
+     "shooters": 1,
+     "intervals": {
+      "n": 5,
+      "mean": 39.35,
+      "cv": 0.456,
+      "min": 24.4,
+      "p50": 27.5,
+      "max": 71.45
+     },
+     "medianShooterCv": 0.456,
+     "repeatShare": 0
+    },
+    "display_other": {
+     "shooters": 1,
+     "intervals": {
+      "n": 0
+     },
+     "medianShooterCv": null,
+     "repeatShare": null
+    },
+    "display_pl_ckm": {
+     "shooters": 2,
+     "intervals": {
+      "n": 61,
+      "mean": 8.66,
+      "cv": 0.846,
+      "min": 1.25,
+      "p50": 2.6,
+      "max": 23.65
+     },
+     "medianShooterCv": 0.865,
+     "repeatShare": 0
+    },
+    "display_pl_rifle": {
+     "shooters": 22,
+     "intervals": {
+      "n": 357,
+      "mean": 14.07,
+      "cv": 0.245,
+      "min": 8.05,
+      "p50": 13.9,
+      "max": 20
+     },
+     "medianShooterCv": 0.243,
+     "repeatShare": 0.006
+    },
+    "gate_rifle": {
+     "shooters": 12,
+     "intervals": {
+      "n": 279,
+      "mean": 28.08,
+      "cv": 1.816,
+      "min": 1.75,
+      "p50": 15.65,
+      "max": 279.6
+     },
+     "medianShooterCv": 1.934,
+     "repeatShare": 0.004
+    },
+    "kowal_rkm": {
+     "shooters": 1,
+     "intervals": {
+      "n": 84,
+      "mean": 4.3,
+      "cv": 0.246,
+      "min": 2.55,
+      "p50": 4.4,
+      "max": 6.5
+     },
+     "medianShooterCv": 0.246,
+     "repeatShare": 0.024
+    },
+    "mg34": {
+     "shooters": 1,
+     "intervals": {
+      "n": 0
+     },
+     "medianShooterCv": null,
+     "repeatShare": null
+    },
+    "spans_rifle": {
+     "shooters": 8,
+     "intervals": {
+      "n": 100,
+      "mean": 9.9,
+      "cv": 1.08,
+      "min": 1.75,
+      "p50": 9.7,
+      "max": 87.4
+     },
+     "medianShooterCv": 0.729,
+     "repeatShare": 0.011
+    }
+   },
+   "shots": {
+    "gameplayRoundsByKind": {
+     "attrition": 6,
+     "cover": 2,
+     "east": 658,
+     "platoon": 204,
+     "player": 174,
+     "repair": 19
+    },
+    "aimedRounds": 399,
+    "scriptedOrAreaRounds": 664,
+    "displayRounds": 1129,
+    "displayBursts": 505,
+    "aimedShareOfAllRounds": 0.182
+   },
+   "phases": {
+    "SETUP": {
+     "realSec": 17.5,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "BUILDUP": {
+     "realSec": 50,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "FIRST_CONTACT": {
+     "realSec": 371,
+     "nearestGermanM": {
+      "min": 1174,
+      "p50": 1174,
+      "max": 1174
+     },
+     "losShare": 0.492,
+     "losInViewShare": 0.492,
+     "noGermanWithin100mShare": 1
+    },
+    "MAIN_COMBAT": {
+     "realSec": 100,
+     "nearestGermanM": {
+      "min": 1016,
+      "p50": 1016,
+      "max": 1174
+     },
+     "losShare": 0.915,
+     "losInViewShare": 0.89,
+     "noGermanWithin100mShare": 1
+    },
+    "SET_PIECE": {
+     "realSec": 287.5,
+     "nearestGermanM": {
+      "min": 470,
+      "p50": 706,
+      "max": 1016
+     },
+     "losShare": 1,
+     "losInViewShare": 1,
+     "noGermanWithin100mShare": 1
+    },
+    "CLIMAX": {
+     "realSec": 311,
+     "nearestGermanM": {
+      "min": 910,
+      "p50": 1251,
+      "max": 1251
+     },
+     "losShare": 0.981,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "AFTERMATH": {
+     "realSec": 15,
+     "nearestGermanM": {
+      "min": 1224,
+      "p50": 1224,
+      "max": 1251
+     },
+     "losShare": 1,
+     "losInViewShare": 0.433,
+     "noGermanWithin100mShare": 1
+    },
+    "OUTRO": {
+     "realSec": 0.5,
+     "nearestGermanM": {
+      "min": 1221,
+      "p50": 1221,
+      "max": 1221
+     },
+     "losShare": 1,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    }
+   },
+   "contact": {
+    "windowRealSec": 569.8,
+    "contactMoments": 97,
+    "longestGapRealSec": 89.4,
+    "longestGapStartsAt": {
+     "realSec": 510.9,
+     "battleClock": "05:50:48"
+    },
+    "gapsOver30s": 3,
+    "medianGapRealSec": 2.2
+   }
+  },
+  {
+   "seed": 19390901,
+   "support": false,
+   "forward": true,
+   "realSec": 1076.9,
+   "closeness": {
+    "mission": {
+     "realSec": 1076.5,
+     "nearestGermanM": {
+      "min": 398,
+      "p10": 664,
+      "p50": 1082
+     },
+     "shareUnder600m": 0.084,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "battle": {
+     "realSec": 494.5,
+     "nearestGermanM": {
+      "min": 398,
+      "p10": 506,
+      "p50": 1025
+     },
+     "shareUnder600m": 0.182,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "deck": {
+     "realSec": 147.5,
+     "nearestGermanM": {
+      "min": 398,
+      "p10": 430,
+      "p50": 554
+     },
+     "shareUnder600m": 0.61,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    }
+   },
+   "nearImpacts": {
+    "toHoldAccess": {
+     "within60m": 173,
+     "cracks": 61
+    },
+    "toDeck": {
+     "within60m": 40,
+     "cracks": 16
+    },
+    "deck": {
+     "within60m": 27,
+     "cracks": 27
+    },
+    "after": {
+     "within60m": 66,
+     "cracks": 41
+    }
+   },
+   "player": {
+    "damageTaken": 16,
+    "finalHealth": 84,
+    "hitEvents": 2
+   },
+   "killsByPlayer": [
+    {
+     "id": "de_spans_8",
+     "distanceM": 400,
+     "weapon": "kb_wz29"
+    },
+    {
+     "id": "de_spans_6",
+     "distanceM": 398,
+     "weapon": "kb_wz29"
+    },
+    {
+     "id": "de_spans_7",
+     "distanceM": 396,
+     "weapon": "kb_wz29"
+    }
+   ],
+   "cadence": {
+    "ckm_wz30": {
+     "shooters": 1,
+     "intervals": {
+      "n": 57,
+      "mean": 6.67,
+      "cv": 0.233,
+      "min": 4.4,
+      "p50": 6.7,
+      "max": 9.55
+     },
+     "medianShooterCv": 0.233,
+     "repeatShare": 0
+    },
+    "dike_rifle": {
+     "shooters": 26,
+     "intervals": {
+      "n": 661,
+      "mean": 14.15,
+      "cv": 0.918,
+      "min": 1.75,
+      "p50": 12.1,
+      "max": 67.55
+     },
+     "medianShooterCv": 0.898,
+     "repeatShare": 0.009
+    },
+    "display_dike_rifle": {
+     "shooters": 2,
+     "intervals": {
+      "n": 47,
+      "mean": 12.04,
+      "cv": 0.745,
+      "min": 1.25,
+      "p50": 13.4,
+      "max": 26.25
+     },
+     "medianShooterCv": 0.945,
+     "repeatShare": 0.022
+    },
+    "display_gate_rifle": {
+     "shooters": 1,
+     "intervals": {
+      "n": 5,
+      "mean": 44.71,
+      "cv": 0.397,
+      "min": 24.4,
+      "p50": 47.8,
+      "max": 73.35
+     },
+     "medianShooterCv": 0.397,
+     "repeatShare": 0
+    },
+    "display_other": {
+     "shooters": 1,
+     "intervals": {
+      "n": 1,
+      "mean": 72.3,
+      "cv": 0,
+      "min": 72.3,
+      "p50": 72.3,
+      "max": 72.3
+     },
+     "medianShooterCv": null,
+     "repeatShare": null
+    },
+    "display_pl_ckm": {
+     "shooters": 2,
+     "intervals": {
+      "n": 60,
+      "mean": 9.33,
+      "cv": 0.818,
+      "min": 1.4,
+      "p50": 10.25,
+      "max": 23.65
+     },
+     "medianShooterCv": 0.966,
+     "repeatShare": 0.017
+    },
+    "display_pl_rifle": {
+     "shooters": 22,
+     "intervals": {
+      "n": 392,
+      "mean": 14.22,
+      "cv": 0.248,
+      "min": 8.05,
+      "p50": 14.55,
+      "max": 20
+     },
+     "medianShooterCv": 0.24,
+     "repeatShare": 0.005
+    },
+    "gate_rifle": {
+     "shooters": 12,
+     "intervals": {
+      "n": 292,
+      "mean": 26.75,
+      "cv": 1.737,
+      "min": 0.15,
+      "p50": 15.55,
+      "max": 283.95
+     },
+     "medianShooterCv": 1.77,
+     "repeatShare": 0.007
+    },
+    "kowal_rkm": {
+     "shooters": 1,
+     "intervals": {
+      "n": 114,
+      "mean": 4.32,
+      "cv": 0.229,
+      "min": 2.55,
+      "p50": 4.4,
+      "max": 6.45
+     },
+     "medianShooterCv": 0.229,
+     "repeatShare": 0.027
+    },
+    "mg34": {
+     "shooters": 2,
+     "intervals": {
+      "n": 78,
+      "mean": 17.97,
+      "cv": 2.165,
+      "min": 0.85,
+      "p50": 9,
+      "max": 270.25
+     },
+     "medianShooterCv": 2.334,
+     "repeatShare": 0
+    },
+    "spans_rifle": {
+     "shooters": 10,
+     "intervals": {
+      "n": 80,
+      "mean": 11.01,
+      "cv": 1.124,
+      "min": 1.75,
+      "p50": 9.45,
+      "max": 62.8
+     },
+     "medianShooterCv": 0.933,
+     "repeatShare": 0.071
+    }
+   },
+   "shots": {
+    "gameplayRoundsByKind": {
+     "area": 19,
+     "attrition": 6,
+     "east": 699,
+     "platoon": 303,
+     "player": 286,
+     "repair": 148,
+     "squad": 15
+    },
+    "aimedRounds": 752,
+    "scriptedOrAreaRounds": 724,
+    "displayRounds": 1115,
+    "displayBursts": 533,
+    "aimedShareOfAllRounds": 0.29
+   },
+   "phases": {
+    "SETUP": {
+     "realSec": 17.5,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "BUILDUP": {
+     "realSec": 50,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "FIRST_CONTACT": {
+     "realSec": 397,
+     "nearestGermanM": {
+      "min": 1082,
+      "p50": 1082,
+      "max": 1082
+     },
+     "losShare": 0.525,
+     "losInViewShare": 0.525,
+     "noGermanWithin100mShare": 1
+    },
+    "MAIN_COMBAT": {
+     "realSec": 101,
+     "nearestGermanM": {
+      "min": 1025,
+      "p50": 1025,
+      "max": 1167
+     },
+     "losShare": 0.876,
+     "losInViewShare": 0.777,
+     "noGermanWithin100mShare": 1
+    },
+    "SET_PIECE": {
+     "realSec": 185,
+     "nearestGermanM": {
+      "min": 398,
+      "p50": 610,
+      "max": 1025
+     },
+     "losShare": 1,
+     "losInViewShare": 1,
+     "noGermanWithin100mShare": 1
+    },
+    "CLIMAX": {
+     "realSec": 311,
+     "nearestGermanM": {
+      "min": 693,
+      "p50": 1251,
+      "max": 1251
+     },
+     "losShare": 0.961,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "AFTERMATH": {
+     "realSec": 15,
+     "nearestGermanM": {
+      "min": 1224,
+      "p50": 1235,
+      "max": 1251
+     },
+     "losShare": 0.9,
+     "losInViewShare": 0.7,
+     "noGermanWithin100mShare": 1
+    }
+   },
+   "contact": {
+    "windowRealSec": 494.2,
+    "contactMoments": 144,
+    "longestGapRealSec": 131.3,
+    "longestGapStartsAt": {
+     "realSec": 497.3,
+     "battleClock": "05:34:54"
+    },
+    "gapsOver30s": 1,
+    "medianGapRealSec": 0.6
+   }
+  },
+  {
+   "seed": 19390901,
+   "support": true,
+   "forward": false,
+   "realSec": 1148.8,
+   "closeness": {
+    "mission": {
+     "realSec": 1148.5,
+     "nearestGermanM": {
+      "min": 470,
+      "p10": 645,
+      "p50": 1174
+     },
+     "shareUnder600m": 0.082,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "battle": {
+     "realSec": 566,
+     "nearestGermanM": {
+      "min": 470,
+      "p10": 525,
+      "p50": 1016
+     },
+     "shareUnder600m": 0.166,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    },
+    "deck": {
+     "realSec": 253,
+     "nearestGermanM": {
+      "min": 470,
+      "p10": 470,
+      "p50": 674
+     },
+     "shareUnder600m": 0.372,
+     "shareUnder300m": 0,
+     "shareUnder150m": 0
+    }
+   },
+   "nearImpacts": {
+    "toHoldAccess": {
+     "within60m": 25,
+     "cracks": 34
+    },
+    "toDeck": {
+     "within60m": 2,
+     "cracks": 3
+    },
+    "deck": {
+     "within60m": 36,
+     "cracks": 54
+    },
+    "after": {
+     "within60m": 27,
+     "cracks": 16
+    }
+   },
+   "player": {
+    "damageTaken": 8,
+    "finalHealth": 92,
+    "hitEvents": 1
+   },
+   "killsByPlayer": [
+    {
+     "id": "de_east_0",
+     "distanceM": 1176,
+     "weapon": "kb_wz29"
+    },
+    {
+     "id": "de_east_1",
+     "distanceM": 1175,
+     "weapon": "kb_wz29"
+    }
+   ],
+   "cadence": {
+    "ckm_wz30": {
+     "shooters": 1,
+     "intervals": {
+      "n": 56,
+      "mean": 6.2,
+      "cv": 0.218,
+      "min": 4.35,
+      "p50": 6.1,
+      "max": 9.45
+     },
+     "medianShooterCv": 0.218,
+     "repeatShare": 0
+    },
+    "dike_rifle": {
+     "shooters": 26,
+     "intervals": {
+      "n": 588,
+      "mean": 14.43,
+      "cv": 0.919,
+      "min": 1.75,
+      "p50": 12.1,
+      "max": 67.55
+     },
+     "medianShooterCv": 0.902,
+     "repeatShare": 0.005
+    },
+    "display_dike_rifle": {
+     "shooters": 2,
+     "intervals": {
+      "n": 42,
+      "mean": 11.95,
+      "cv": 0.742,
+      "min": 1.25,
+      "p50": 13.6,
+      "max": 26.25
+     },
+     "medianShooterCv": 0.822,
+     "repeatShare": 0.05
+    },
+    "display_gate_rifle": {
+     "shooters": 1,
+     "intervals": {
+      "n": 5,
+      "mean": 37.93,
+      "cv": 0.407,
+      "min": 24.4,
+      "p50": 27.5,
+      "max": 64.35
+     },
+     "medianShooterCv": 0.407,
+     "repeatShare": 0
+    },
+    "display_other": {
+     "shooters": 1,
+     "intervals": {
+      "n": 0
+     },
+     "medianShooterCv": null,
+     "repeatShare": null
+    },
+    "display_pl_ckm": {
+     "shooters": 2,
+     "intervals": {
+      "n": 53,
+      "mean": 9.21,
+      "cv": 0.872,
+      "min": 1.3,
+      "p50": 2.6,
+      "max": 23.7
+     },
+     "medianShooterCv": 0.879,
+     "repeatShare": 0.02
+    },
+    "display_pl_rifle": {
+     "shooters": 22,
+     "intervals": {
+      "n": 345,
+      "mean": 14.11,
+      "cv": 0.246,
+      "min": 8.05,
+      "p50": 14.15,
+      "max": 20
+     },
+     "medianShooterCv": 0.238,
+     "repeatShare": 0.003
+    },
+    "gate_rifle": {
+     "shooters": 12,
+     "intervals": {
+      "n": 268,
+      "mean": 31.73,
+      "cv": 1.823,
+      "min": 0.5,
+      "p50": 17,
+      "max": 339.8
+     },
+     "medianShooterCv": 1.866,
+     "repeatShare": 0
+    },
+    "kowal_rkm": {
+     "shooters": 1,
+     "intervals": {
+      "n": 84,
+      "mean": 4.22,
+      "cv": 0.241,
+      "min": 2.55,
+      "p50": 4.3,
+      "max": 6
+     },
+     "medianShooterCv": 0.241,
+     "repeatShare": 0.036
+    },
+    "mg34": {
+     "shooters": 1,
+     "intervals": {
+      "n": 0
+     },
+     "medianShooterCv": null,
+     "repeatShare": null
+    },
+    "spans_rifle": {
+     "shooters": 10,
+     "intervals": {
+      "n": 102,
+      "mean": 13.34,
+      "cv": 1.363,
+      "min": 1.8,
+      "p50": 8.25,
+      "max": 114.9
+     },
+     "medianShooterCv": 1.066,
+     "repeatShare": 0.011
+    }
+   },
+   "shots": {
+    "gameplayRoundsByKind": {
+     "attrition": 6,
+     "cover": 2,
+     "east": 612,
+     "platoon": 191,
+     "player": 178,
+     "repair": 21
+    },
+    "aimedRounds": 392,
+    "scriptedOrAreaRounds": 618,
+    "displayRounds": 1011,
+    "displayBursts": 473,
+    "aimedShareOfAllRounds": 0.194
+   },
+   "phases": {
+    "SETUP": {
+     "realSec": 17.5,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "BUILDUP": {
+     "realSec": 50,
+     "nearestGermanM": {
+      "min": null,
+      "p50": null,
+      "max": null
+     },
+     "losShare": 0,
+     "losInViewShare": 0,
+     "noGermanWithin100mShare": 1
+    },
+    "FIRST_CONTACT": {
+     "realSec": 364,
+     "nearestGermanM": {
+      "min": 1174,
+      "p50": 1174,
+      "max": 1174
+     },
+     "losShare": 0.482,
+     "losInViewShare": 0.482,
+     "noGermanWithin100mShare": 1
+    },
+    "MAIN_COMBAT": {
+     "realSec": 100,
+     "nearestGermanM": {
+      "min": 1016,
+      "p50": 1016,
+      "max": 1174
+     },
+     "losShare": 0.915,
+     "losInViewShare": 0.885,
+     "noGermanWithin100mShare": 1
+    },
+    "SET_PIECE": {
+     "realSec": 290.5,
+     "nearestGermanM": {
+      "min": 470,
+      "p50": 709,
+      "max": 1016
+     },
+     "losShare": 1,
+     "losInViewShare": 1,
+     "noGermanWithin100mShare": 1
+    },
+    "CLIMAX": {
+     "realSec": 311.5,
+     "nearestGermanM": {
+      "min": 908,
+      "p50": 1251,
+      "max": 1251
+     },
+     "losShare": 0.982,
+     "losInViewShare": 0.002,
+     "noGermanWithin100mShare": 1
+    },
+    "AFTERMATH": {
+     "realSec": 15,
+     "nearestGermanM": {
+      "min": 1224,
+      "p50": 1224,
+      "max": 1250
+     },
+     "losShare": 0.967,
+     "losInViewShare": 0.433,
+     "noGermanWithin100mShare": 1
+    }
+   },
+   "contact": {
+    "windowRealSec": 566.1,
+    "contactMoments": 98,
+    "longestGapRealSec": 110.8,
+    "longestGapStartsAt": {
+     "realSec": 503.8,
+     "battleClock": "05:50:50"
+    },
+    "gapsOver30s": 2,
+    "medianGapRealSec": 2.2
+   }
+  }
+ ]
+}

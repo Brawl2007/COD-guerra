@@ -1,0 +1,122 @@
+{
+ "tool": "tools/verification/m01-difficulty-sweep.mjs",
+ "note": "24 audit routes (12 seeds x control/support) per level, the shipped table; one run per level",
+ "summary": {
+  "recruta/control": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 52,
+   "medianMinHealth": 84,
+   "medianFinalHealth": 84,
+   "collisions": {
+    "median": 14,
+    "max": 20
+   },
+   "wounds": {
+    "median": 2,
+    "max": 6
+   },
+   "fightRealSec": {
+    "median": 262.3,
+    "min": 236.1,
+    "max": 262.3
+   }
+  },
+  "recruta/support": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 68,
+   "medianMinHealth": 100,
+   "medianFinalHealth": 100,
+   "collisions": {
+    "median": 5,
+    "max": 11
+   },
+   "wounds": {
+    "median": 0,
+    "max": 4
+   },
+   "fightRealSec": {
+    "median": 243.5,
+    "min": 178.1,
+    "max": 260.9
+   }
+  },
+  "soldado/control": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 41.25,
+   "medianMinHealth": 73.75,
+   "medianFinalHealth": 100,
+   "collisions": {
+    "median": 19,
+    "max": 32
+   },
+   "wounds": {
+    "median": 8,
+    "max": 16
+   },
+   "fightRealSec": {
+    "median": 262.3,
+    "min": 236.4,
+    "max": 262.3
+   }
+  },
+  "soldado/support": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 50,
+   "medianMinHealth": 75,
+   "medianFinalHealth": 100,
+   "collisions": {
+    "median": 10,
+    "max": 12
+   },
+   "wounds": {
+    "median": 3,
+    "max": 5
+   },
+   "fightRealSec": {
+    "median": 241.5,
+    "min": 168.3,
+    "max": 253.1
+   }
+  },
+  "veterano/control": {
+   "routes": 12,
+   "deaths": 12,
+   "minHealth": 0,
+   "medianMinHealth": 0,
+   "medianFinalHealth": null,
+   "collisions": {
+    "median": 13,
+    "max": 28
+   },
+   "wounds": {
+    "median": 9,
+    "max": 15
+   },
+   "fightRealSec": null
+  },
+  "veterano/support": {
+   "routes": 12,
+   "deaths": 0,
+   "minHealth": 1,
+   "medianMinHealth": 20,
+   "medianFinalHealth": 100,
+   "collisions": {
+    "median": 21,
+    "max": 28
+   },
+   "wounds": {
+    "median": 9,
+    "max": 15
+   },
+   "fightRealSec": {
+    "median": 226.6,
+    "min": 160.1,
+    "max": 262.3
+   }
+  }
+ }
+}

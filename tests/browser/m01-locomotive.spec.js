@@ -19,3 +19,20 @@ for(const fallback of [false,true])test(`locomotive 963 production ${fallback?'o
  if(!fallback){await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.locomotive.loaded.length===3);await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);await page.waitForFunction(()=>{const l=window.gameDiagnostics().m01.locomotive;return l.visible&&l.loaded.length===3;});await page.evaluate(()=>document.exitPointerLock());expect((await page.evaluate(()=>window.gameDiagnostics())).m01.locomotive).toEqual(l);}
  expect(errors).toEqual([]);
 });
+// T43 slice 2: a still camera never changes LOD, so the whole-object cross-fade never starts and lodSwitches stays put.
+test('locomotive 963 LOD cross-fade: still camera for 10 s keeps lodSwitches and never fades',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
+ await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
+ await page.locator('#continue').click();await page.waitForFunction(()=>!window.gameDiagnostics().paused);
+ await page.waitForFunction(()=>{const l=window.gameDiagnostics().m01.locomotive;return l.visible&&l.loaded.length===3&&!l.fading;});
+ await page.waitForTimeout(1000);
+ const before=await page.evaluate(()=>window.gameDiagnostics().m01.locomotive);
+ expect(before.fading).toBe(false);expect(before.lodLevel).toBe(before.lod);
+ await page.waitForTimeout(10000);
+ const after=await page.evaluate(()=>window.gameDiagnostics().m01.locomotive);
+ expect(after.lodSwitches).toBe(before.lodSwitches);expect(after.fading).toBe(false);expect(after.lod).toBe(before.lod);
+ // T43 slice 4: the view passes the quality preset, so the counters/fade policy follow it (previously only low/medium from the shared uniform).
+ expect(after.lodPreset).toBe(await page.evaluate(()=>window.gameDiagnostics().quality));
+ expect(errors).toEqual([]);
+});
