@@ -363,7 +363,7 @@ export class M01View {
     this.shotFx={list:createFlashList(),smoke:new ShotSmokeTable(),frames:0,drawn:0,smokeDrawn:0,smokeCap:0,nearest:Infinity};
     this.shotTint=new THREE.Color();this.shotSmokeColor=new THREE.Color('#b9b8ae');this.shotPoint={x:0,y:0,z:0};this.shotRoot=new THREE.Object3D();this.shotMuzzle=new THREE.Vector3();
     this.shotActors=new Map();this.shotActorsRef=null;this.shotActorsSize=-1;
-    this.initLongRangeFx();
+    if(!this.longRange)this.initLongRangeFx();
   }
   /** R2-c: the pool of Polish round impacts and the scratch objects of the tracer/impact draw (m01-long-range-fx.js); created once, never grown. */
   initLongRangeFx(){

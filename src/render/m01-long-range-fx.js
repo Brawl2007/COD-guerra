@@ -22,8 +22,8 @@ export const TRACER_QUOTA_BY_TIER=Object.freeze({low:6,medium:12,high:20});
 /** A tracer ignites a short way out of the muzzle (pyrotechnic burn-in): nothing is drawn for the first metres of its flight. */
 export const TRACER_BURN_IN_M=25;
 export const tracerQuota=quality=>TRACER_QUOTA_BY_TIER[quality]??TRACER_QUOTA_BY_TIER.low;
-/** Half-thickness and half-length (m) of a tracer streak seen from `distance`: about a 1 px wide, 5..9 px long streak, never longer than 6 m (short and fast, not a laser). */
-export const tracerHalfWidth=distance=>Math.max(.012,distance*.00055);
+/** Half-thickness and half-length (m) of a tracer streak seen from `distance`: about a 1 px wide, ~5 px long streak, never longer than 6 m (short and fast, not a laser). */
+export const tracerHalfWidth=distance=>Math.max(.012,distance*.001);
 export const tracerHalfLength=distance=>Math.min(3,Math.max(.4,distance*.0045));
 /** Instance tint of a tracer (the material is orange): bright at night and dawn, dimmer in daylight and with distance (floor .35). */
 export function tracerTint(daylight,distance){
