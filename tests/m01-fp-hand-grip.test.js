@@ -120,17 +120,19 @@ test('aiming: both forearms leave through the bottom edge (right to the lower ri
 
 // The bright wedge under the sights when aimed is the top of the rifle's own wood stock (the eye sits 11 cm behind the butt and the sights are locked
 // by the alignment tests, so the geometry cannot move). It is not skin, but it reads as skin: aimed, the wood near the eye sits in the head's shadow.
+// R6-b: the comb, heel and butt behind the receiver are now not drawn at all while aimed (FACE_CLIP, tests/m01-fp-ads-sight.test.js); the shade stays for the
+// wood that is left (the wrist and forend in front of the receiver ring). The program key moved to v5 with the clip.
 test('aiming: the stock wood is shaded only while aimed (steel and the far forend are not), through the rifle material',()=>{
   const shade=()=>view.rifleMaterial.userData.m01StockShade.value;
   sample(view,rig,sim,{state:'READY',authored:false});assert.equal(shade(),0,'no shade at the hip');
   sample(view,rig,sim,{state:'READY',aiming:true,authored:false});assert.ok(Math.abs(shade()-STOCK_SHADE.strength)<1e-6,`shade ${shade()} on the sights`);
-  const shader={uniforms:{},fragmentShader:THREE.ShaderLib.standard.fragmentShader};view.rifleMaterial.onBeforeCompile(shader);
+  const shader={uniforms:{},vertexShader:THREE.ShaderLib.standard.vertexShader,fragmentShader:THREE.ShaderLib.standard.fragmentShader};view.rifleMaterial.onBeforeCompile(shader);
   assert.equal(shader.uniforms.m01StockShade,view.rifleMaterial.userData.m01StockShade,'the uniform the view model drives is the compiled one');
   const f=shader.fragmentShader,iMetal=f.indexOf('metalnessFactor = min(metalnessFactor, 0.86)'),iShade=f.indexOf('outgoingLight *= 1.0 - m01StockShade * (1.0 - metalnessFactor)'),iOut=f.indexOf('#include <opaque_fragment>');
   assert.ok(iMetal>0&&iShade>iMetal&&iOut>iShade,'wood-only (metalness mask), applied to the final light, before the output');
   assert.match(f,new RegExp(`smoothstep\\(${STOCK_SHADE.near.toFixed(2)}, ${STOCK_SHADE.far.toFixed(2)}, length\\(vViewPosition\\)\\)`),'distance range from STOCK_SHADE');
   assert.ok(STOCK_SHADE.far<.70,'the far forend (hand at 0.8 m) and the sights (0.74 m) are outside the shaded range');
-  assert.match(view.rifleMaterial.customProgramCacheKey(),/v4$/,'program key moved with the shader');
+  assert.match(view.rifleMaterial.customProgramCacheKey(),/v5$/,'program key moved with the shader');
 });
 
 test('a shot that cuts a single-round reload short eases the hands and rifle back instead of snapping them (and settles on the aim pose)',()=>{

@@ -1,12 +1,13 @@
 // R6-a first-person hands evidence: real production renderer + simulation, headless Chromium (SwiftShader), 1280x720.
-//   CHROME_EXECUTABLE=/opt/pw-browsers/chromium node tools/verification/m01-fp-hands-evidence.mjs <out-dir> [port]
+//   CHROME_EXECUTABLE=/opt/pw-browsers/chromium node tools/verification/m01-fp-hands-evidence.mjs <out-dir> [port] [--ads]
+// --ads (R6-b): only the shouldered phases (hip idle, ADS transition, ADS settled, bolt cycle from the shoulder, ADS walking); no hip bolt, reload or sprint.
 // Each phase writes <name>.png (the game camera + weapon pass) and <name>-right.png / <name>-top.png (weapon pass from a free camera).
 // Local visual evidence, not an FPS measurement and not a playtest.
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {spawn} from 'node:child_process';
 import {chromium} from '@playwright/test';
 
-const out=process.argv[2]??'docs/verification/m01-runtime/fp-hands-2026-10-23/before',port=Number(process.argv[3]??5191);
+const adsOnly=process.argv.includes('--ads'),args=process.argv.filter(a=>a!=='--ads'),out=args[2]??'docs/verification/m01-runtime/fp-hands-2026-10-23/before',port=Number(args[3]??5191);
 mkdirSync(out,{recursive:true});
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
 let browser;
@@ -40,20 +41,22 @@ try{
   await steps(5,{aim:true});await shoot('04b-fire-bolt-ads-0.45s',await page.evaluate(()=>window.fp.info()));
   await steps(5,{aim:true});await shoot('04c-fire-bolt-ads-0.70s',await page.evaluate(()=>window.fp.info()));
   for(let i=0;i<10;i++)await step({aim:true});
-  // Bolt from the hip.
-  await steps(8,{});await step({fire:true});
-  await steps(8,{});await shoot('05-fire-bolt-hip-0.40s',await page.evaluate(()=>window.fp.info()));
-  for(let i=0;i<20;i++)await step({});
-  // Empty the magazine, then a clip reload from the hip; five phases plus the closing bolt.
-  for(let n=0;n<4;n++){await step({fire:true});for(let i=0;i<24;i++)await step({});}
-  const before=await page.evaluate(()=>window.fp.info());console.log('mag before reload',before.mag,before.state);
-  await step({reload:true});
-  const marks=[[8,'06a-reload-clip-0.45s'],[12,'06b-reload-clip-1.05s'],[14,'06c-reload-clip-1.75s'],[15,'06d-reload-clip-2.50s'],[6,'06e-reload-clip-2.80s'],[8,'06f-reload-clip-3.25s']];
-  for(const [n,name] of marks){await steps(n,{});await shoot(name,await page.evaluate(()=>window.fp.info()));}
-  for(let i=0;i<12;i++)await step({});
-  // ADS reload (aim held through the reload) at the closing bolt.
-  // Sprint.
-  await steps(14,{forward:1,sprint:true});await shoot('07-sprint',await page.evaluate(()=>window.fp.info()));
+  if(!adsOnly){
+    // Bolt from the hip.
+    await steps(8,{});await step({fire:true});
+    await steps(8,{});await shoot('05-fire-bolt-hip-0.40s',await page.evaluate(()=>window.fp.info()));
+    for(let i=0;i<20;i++)await step({});
+    // Empty the magazine, then a clip reload from the hip; five phases plus the closing bolt.
+    for(let n=0;n<4;n++){await step({fire:true});for(let i=0;i<24;i++)await step({});}
+    const before=await page.evaluate(()=>window.fp.info());console.log('mag before reload',before.mag,before.state);
+    await step({reload:true});
+    const marks=[[8,'06a-reload-clip-0.45s'],[12,'06b-reload-clip-1.05s'],[14,'06c-reload-clip-1.75s'],[15,'06d-reload-clip-2.50s'],[6,'06e-reload-clip-2.80s'],[8,'06f-reload-clip-3.25s']];
+    for(const [n,name] of marks){await steps(n,{});await shoot(name,await page.evaluate(()=>window.fp.info()));}
+    for(let i=0;i<12;i++)await step({});
+    // ADS reload (aim held through the reload) at the closing bolt.
+    // Sprint.
+    await steps(14,{forward:1,sprint:true});await shoot('07-sprint',await page.evaluate(()=>window.fp.info()));
+  }
   await steps(5,{forward:1,aim:true});await shoot('08-ads-walk',await page.evaluate(()=>window.fp.info()));
   writeFileSync(`${out}/capture-log.json`,JSON.stringify({kind:'LOCAL Chromium/SwiftShader, real M01View + M01Simulation, 0.05 s steps, medium quality',viewport:[1280,720],log,errors,failed},null,1));
   console.log(JSON.stringify({frames:log.length,errors,failed}));

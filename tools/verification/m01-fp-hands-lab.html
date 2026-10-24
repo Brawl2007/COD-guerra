@@ -49,8 +49,8 @@ window.lab={
     const [dir,centre,distance]=views[view],c=weapon.localToWorld(v3.fromArray(centre)).clone();weapon.getWorldQuaternion(q4);
     const d=new THREE.Vector3(...dir).normalize().applyQuaternion(q4);
     free.position.copy(c).addScaledVector(d,distance);free.up.set(0,1,0).applyQuaternion(q4);free.lookAt(c);free.updateProjectionMatrix();free.updateMatrixWorld(true);
-    const shade=vm.rifleMaterial?.userData.m01StockShade,kept=shade?.value;if(shade)shade.value=0;   // the aimed stock shade belongs to the player's eye
-    engine.render(scene,free);if(shade)shade.value=kept;
+    const shade=vm.rifleMaterial?.userData.m01StockShade,kept=shade?.value,head=vm.rifleMaterial?.userData.m01FaceClip,keptHead=head?.value;if(shade)shade.value=0;if(head)head.value=0;   // R6-b: the head clip, like the shade, belongs to the player's eye   // the aimed stock shade belongs to the player's eye
+    engine.render(scene,free);if(shade)shade.value=kept;if(head)head.value=keptHead;
   },
   /** Flat colour per mesh (rifle blue, clip yellow, hands red, sleeves green, cuffs magenta, sleeve caps cyan, straps orange) to tell which mesh is which. */
   tint(on){

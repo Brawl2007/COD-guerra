@@ -149,25 +149,46 @@ export function placeWz29(root,weapon,pose){
 
 // The first-person arms and hands are solved in m01-fp-hands.js (R6-a replaced the fixed-shoulder placeViewArms that lived here).
 
+/**
+ * Aimed-down-sights clip of everything behind the receiver (R6-b). With the rifle on the shoulder the comb, the heel and the butt (wood and the steel butt plate) are
+ * under and behind the player's head, and no head is drawn: they rose as a wedge of wood under the sights, because the asset's sight line is only 2.7 to 3.5 cm over
+ * the top of its stock. While aimed, every fragment of the rifle closer to the eye than `depth` metres is not drawn, except the bolt (its own bone: shroud, body,
+ * handle and knob stay). `depth` is the distance from the eye to the rear end of the receiver ring (weapon z = .035) less 5 mm, so the cut falls right behind the ring,
+ * which hides it. The uniform carries the clip distance in metres: 0 at the hip, `depth` exactly on the sights, eased with the aim like everything else.
+ */
+export const FACE_CLIP=Object.freeze({depth:WZ29_VISUAL.rearDepth+WZ29_VISUAL.rear[2]-.035-.005,engage:Object.freeze([.35,.75]),strokeFade:Object.freeze([.4,.8])});
+/**
+ * Weight (0..1) of the head clip: it engages only when the rifle is nearly at the eye (the aim ease between `engage`), so that the stock is never sawn through while it
+ * travels up from the hip, and it is gone again while the bolt stroke has the rifle off the eye (stroke between `strokeFade`), while a reload holds it across the body and
+ * while a wall has it lowered: a straight cut through wood seen from the side is the one thing the clip must never show. `aim` is the stroke-reduced aim progress the pose uses.
+ */
+export function faceClipWeight(aim,stroke=0,reload=0,wall=0){
+  return smooth(adsEase(aim),FACE_CLIP.engage[0],FACE_CLIP.engage[1])*(1-smooth(stroke,FACE_CLIP.strokeFade[0],FACE_CLIP.strokeFade[1]))*(1-reload)*(1-adsEase(wall));
+}
 /** Aimed-down-sights shade of the stock wood: strength (0..1 of the light removed) and the eye distances (m) where it is full / gone. */
 export const STOCK_SHADE=Object.freeze({strength:.6,near:.56,far:.68});
-export function riflePresentationMaterial(source){
+export function riflePresentationMaterial(source,boltBone=-1){
   const material=source.clone();material.name='wz29_first_person_atlas';
   material.color.multiply(new THREE.Color(.94,.92,.89));material.normalScale?.multiplyScalar(.65);
   // R6-a: with the eye 11 cm behind the butt the wood of the stock is a bright wedge under the sights. Aimed down the sights it sits in the head's
   // shadow: wood texels between STOCK_SHADE.near and .far metres of the eye lose up to m01StockShade of their light (0 at the hip, set by M01ViewModel).
   const shade=material.userData.m01StockShade={value:0};
+  // The head clip: `value` is the clip distance in metres (set by M01ViewModel), `depth` its full value; it needs the bolt's bone index to leave the bolt alone.
+  const faceClip=material.userData.m01FaceClip={value:0,depth:boltBone>=0?FACE_CLIP.depth:0},bolt={value:boltBone};
   // Preserve baked wood grain, wear and metal masks. The weapon pass now has a low sky/ground reflection
   // environment, so blued steel may read as metal (sheen) while oiled wood stays satin, never mirror-like.
-  material.onBeforeCompile=shader=>{shader.uniforms.m01StockShade=shade;
-    shader.fragmentShader='uniform float m01StockShade;\n'+shader.fragmentShader.replace('#include <opaque_fragment>',
+  material.onBeforeCompile=shader=>{shader.uniforms.m01StockShade=shade;shader.uniforms.m01FaceClip=faceClip;shader.uniforms.m01BoltBone=bolt;
+    shader.vertexShader='uniform float m01BoltBone;\nvarying float vM01Bolt;\n'+shader.vertexShader.replace('#include <begin_vertex>',
+      '#include <begin_vertex>\n#ifdef USE_SKINNING\nvM01Bolt = abs( skinIndex.x - m01BoltBone ) < 0.5 ? 1.0 : 0.0;\n#else\nvM01Bolt = 0.0;\n#endif');
+    shader.fragmentShader='uniform float m01StockShade;\nuniform float m01FaceClip;\nvarying float vM01Bolt;\n'+shader.fragmentShader.replace('#include <clipping_planes_fragment>',
+      '#include <clipping_planes_fragment>\nif ( m01FaceClip > 0.0 && vM01Bolt < 0.5 && vViewPosition.z < m01FaceClip ) discard;').replace('#include <opaque_fragment>',
       'outgoingLight *= 1.0 - m01StockShade * (1.0 - metalnessFactor) * (1.0 - smoothstep('+STOCK_SHADE.near.toFixed(2)+', '+STOCK_SHADE.far.toFixed(2)+', length(vViewPosition)));\n#include <opaque_fragment>');
     shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',
     '#include <metalnessmap_fragment>\nroughnessFactor = max(roughnessFactor, mix(0.62, 0.46, metalnessFactor));\nmetalnessFactor = min(metalnessFactor, 0.86);'+
     // The atlas paints steel at ~0.03 linear, which a PBR metal turns into a black hole; lift only metal texels to a blued-steel reflectance.
     '\ndiffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 3.2 + vec3(0.025), metalnessFactor);');};
   // Reflection strength is the weapon pass's scene.environmentIntensity (three ignores envMapIntensity without an own envMap).
-  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v4';
+  material.customProgramCacheKey=()=> 'm01-wz29-presentation-v5';
   return material;
 }
 /** Hands/sleeves/clip use a private atlas copy: the eye pass has its own environment and must not flip the world soldiers' programs. */

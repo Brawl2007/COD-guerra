@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 import wz29Profile from '../../research/weapons/kb_wz29.profile.json' with {type:'json'};
 import {WZ29_VISUAL,STOCK_SHADE,reloadEnvelope,advanceVisualBlend,presentationPose,placeWz29,riflePresentationMaterial,viewAtlasMaterial,
-  adsEase,adsFieldOfView,advanceAdsProgress,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
+  adsEase,adsFieldOfView,advanceAdsProgress,faceClipWeight,breathSway,wallClearance,wallLowerTarget,advanceWallLower} from './m01-wz29-presentation.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPointToWorld,viewUp} from './first-person-weapon-fx.js';
 import {frameFirstPersonCarry} from './m01-fp-carry.js';
 import {ViewHands} from './m01-fp-hands.js';
@@ -80,7 +80,7 @@ export class M01ViewModel {
     this.root.userData.viewArmBind=Object.fromEntries(['l','r'].map(side=>[side,this.root.getObjectByName(`upperarm_${side}`).position.toArray()]));
     this.armGeometry=this.fpSource?body.geometry.clone():viewModelArmsGeometry(body.geometry,body.skeleton.bones.map(b=>b.name));
     body.geometry=this.armGeometry;
-    const rifle=this.root.getObjectByName('rifle');this.rifleMaterial=riflePresentationMaterial(rifle.material);rifle.material=this.rifleMaterial;
+    const rifle=this.root.getObjectByName('rifle');this.rifleMaterial=riflePresentationMaterial(rifle.material,rifle.skeleton?.bones.findIndex(b=>b.name==='weapon_bolt')??-1);rifle.material=this.rifleMaterial;
     const hands=this.root.getObjectByName('fp_hands');
     if(hands){this.skinMaterial=viewAtlasMaterial(hands.material);this.skinMaterial.name='FP skin';hands.material=this.skinMaterial;}
     this.atlasMaterial=viewAtlasMaterial(body.material);body.material=this.atlasMaterial;this.root.getObjectByName('clip').material=this.atlasMaterial;
@@ -266,7 +266,7 @@ export class M01ViewModel {
       Object.assign(feel,{wallLower:+v.wall.toFixed(4),fov:+adsFieldOfView(v.aim).toFixed(4),aimEased:+adsEase(v.aim).toFixed(5),gait:+pose.gait.phase.toFixed(4),
         bob:+(pose.gait.y*v.move*(1-adsEase(v.aim))).toFixed(6),breath:+(breathSway(t).y*(1-adsEase(v.aim))).toFixed(6)});
       placeWz29(this.root,this.root.getObjectByName('weapon'),pose);
-      if(this.rifleMaterial)this.rifleMaterial.userData.m01StockShade.value=STOCK_SHADE.strength*adsEase(v.aim*(1-.6*stroke));
+      if(this.rifleMaterial){const ease=adsEase(v.aim*(1-.6*stroke)),u=this.rifleMaterial.userData;u.m01StockShade.value=STOCK_SHADE.strength*ease;u.m01FaceClip.value=u.m01FaceClip.depth*faceClipWeight(v.aim*(1-.6*stroke),stroke,reloadWeight,v.wall);}
       const gripWeight=w.reloading?1-reloadEnvelope(sample):w.boltCycling?
         1-THREE.MathUtils.smoothstep(sample,.12,.25)+THREE.MathUtils.smoothstep(sample,1.08,characters.clips.get('fire_bolt').duration):1;
       // The right wrist is back on its hold position a little before the fingers close on it: the thumb crosses the sights if the hand comes home
