@@ -52,6 +52,10 @@ const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_op
 // Civilians (Lipski, station-yard railwaymen and aid staff) are drawn with the soldier body in workwear (no new asset). The yard patient and the cart keep
 // the procedural stretcher/cart layouts of m01-view.js, which a rigged soldier cannot reproduce.
 const dressedCivilian=a=>Boolean(a.civilian)&&a.task!=='cart'&&a.task!=='yard_patient';
+// R1-a (2026-10-23): the hand lantern hangs from the instance root, not from a bone, so on a railwayman a bomb has killed or wounded (lying where he fell) it would float 0.8 m above the ground
+// beside the body. It is lit only while its carrier stands. Presentation only, read from the actor's state each frame, before the held-pose shortcut.
+const lanternLit=a=>a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
+const setLantern=(v,a)=>{const lit=lanternLit(a);for(const m of v.lantern)m.visible=lit;};
 const civilianHidden=n=>n==='gear'||n==='sapper'||n==='nco'||n==='cap_wz37'||n.startsWith('helmet_')||n.startsWith('rank_')||weaponParts.has(n);
 const mgLoader=a=>a.team==='enemy'&&a.mg34Loader&&['de_mg34_loader_0','de_mg34_loader_1'].includes(a.id)&&a.loaderFor===`de_east_${a.id.at(-1)}`;
 const mgCrew=a=>mgGunner(a)||mgLoader(a);
@@ -322,6 +326,7 @@ export class M01Characters {
     });
     if(this.visuals)this.visuals.apply(root,actor,key,visual);
     if(actor.civilian)this.addCivilianProps(root,actor);
+    const lantern=actor.civilian&&actor.lantern?root.children.filter(n=>n.name==='civilian_lantern'):null;
     this.scene.add(root);
     const weaponBone=root.getObjectByName('weapon')??null;
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
@@ -331,7 +336,7 @@ export class M01Characters {
     for(const name of SUPPORT_ARM_NAMES){const b=root.getObjectByName(name);if(b?.isBone){supportArmBone=b;break;}}
     const spineBaseQuat=spineBone?.quaternion?spineBone.quaternion.clone():null,spineBaseRotY=spineBone?.rotation?.y??0;
     const armBaseQuat=supportArmBone?.quaternion.clone()??null;
-    const v={id:actor.id,root,key,meshes,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,
+    const v={id:actor.id,root,key,meshes,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,lantern,
       supportArmBone,armBaseQuat,
       // Cache the clip-sampled pose BEFORE any additive torso/arm correction,
       // so repeated rendering of the same simulation time is bit-identical.
@@ -403,6 +408,7 @@ export class M01Characters {
       const {a,d}=cands[ci];
       const nation=a.team==='enemy'?'de':'pl';
       const prevInst=this.instances.get(a.id);
+      if(prevInst?.lantern)setLantern(prevInst,a);
       const lod=resolveLodWithHysteresis(d,limits,prevInst?.key,nation,quality,this.sources);
       if(lod===3)continue;
       let weaponLOD=lod;
@@ -424,7 +430,7 @@ export class M01Characters {
       // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
       if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
       if(prevInst&&prevInst.key!==key){this.lodSwitches++;tallyLod(this.lodCounters,preset,lod);}   // a camera-driven band change (first appearance is not a switch)
-      v??=this.create(a,key,weaponLOD);selected.add(a.id);bands[lod]++;
+      v??=this.create(a,key,weaponLOD);if(v.lantern)setLantern(v,a);selected.add(a.id);bands[lod]++;
       v.hold.frozen=false;v.hold.serial++;v.appliedTime=time;v.appliedX=a.x;v.appliedZ=a.z;v.appliedQuality=quality;v.appliedIk=ikOn;this.poseStats.applied++;
       // Undo last frame's IK first: the mixer only rewrites a track whose value changed, and the caches below hold the clip pose.
       if(v.ikApplied){restoreIkPose(v.ikRig);v.ikApplied=false;}

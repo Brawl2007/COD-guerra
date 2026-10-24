@@ -200,16 +200,18 @@ const AMENDMENTS={
   '16':{task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',after:null,
     previousGolden:'tests/fixtures/m01-ckm-jam-gameplay-baseline.json',golden:'tests/fixtures/m01-bomb-effects-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/bomb-effects-2026-10-23',
-    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js'],
-    generationStage:'R1-a on the amendment 15 tree (candidate #80 at e7f5f28): an aerial bomb kills the man at its crater, wounds the man beyond and shakes the next (killed: DOWN, wounded: WOUNDED, shaken: the existing suppression; cover and posture shelter a man; the cast, the east platoon, the ckm crew and the station-yard stretcher and cart are only ever shaken); the player is never hurt by a bomb but is stunned near one (player.concussion / concussedUntil: reduced sprint, a less steady rifle, the audio concussion duck from the crater record); the 04:34 raid goes on to 04:44 with eleven impacts (timers.raidSchedule0434, mission.json raidTargets0434, 30 m from the player, 20 m from the objectives); a wounded railwayman of the station yard lies where he fell; no draw from any random stream; golden amendment 16',
-    deltaFields:/^\$\.(state|checkpoint)\.timers\.raidSchedule0434$/,
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js'],
+    generationStage:'R1-a on the amendment 15 tree (candidate #80 at e7f5f28): an aerial bomb kills the man at its crater, wounds the man beyond and shakes the next (killed: DOWN, wounded: WOUNDED, shaken: the existing suppression; cover and posture shelter a man; the cast, the east platoon, the ckm crew and the station-yard stretcher and cart are only ever shaken); the player is never hurt by a bomb but is stunned near one (player.concussion / concussedUntil: reduced sprint, a less steady rifle, the audio concussion duck from the crater record); the 04:34 raid goes on to 04:44 with eleven impacts (timers.raidSchedule0434, mission.json raidTargets0434, 30 m from the player, 20 m from the objectives); six unnamed riflemen of the west garrison (pl_west_0..5, displayOnly, mission.json westGarrison) stand where the bombs fall, so that the war is seen (two killed, two wounded, two shaken on the golden routes), and the three sappers of the cable camp run for the sandbags of the section when Nowicki warns them and come back after the bomb (grp_sappers.stage.shelter) instead of kneeling 1.6 m from it; a wounded railwayman of the station yard lies where he fell; no draw from any random stream; golden amendment 16 (regenerated twice on the same predecessor: first without the garrison and the shelter, then with them)',
+    // The roster grows by six (97 -> 103): the first lockstep difference is the first of the new actors, appended after the auxiliaries. The new records are stripped from both frames for the behaviour
+    // comparison: the garrison actors (their own states are the delta), the schedule, the player's concussion fields, the crater's concussion, the event's concussion and effects.
+    deltaFields:/^\$\.(state|checkpoint)\.actors\.(9[7-9]|10[0-2])$/,
     stateOnly:frame=>{
       const strip=st=>{if(!st)return;delete st.timers?.raidSchedule0434;if(st.player){delete st.player.concussion;delete st.player.concussedUntil;}
-        for(const d of st.sectors?.damage??[])delete d.concussion;strip(st.resumeCheckpoint);};
+        for(const d of st.sectors?.damage??[])delete d.concussion;if(st.actors)st.actors=st.actors.filter(a=>!/^pl_west_\d$/.test(a.id));strip(st.resumeCheckpoint);};
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.map(e=>{if(e.type!=='m01-blast')return e;const {concussion,effects,...rest}=e;return rest;});
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.player\.x$/,behaviourActors:/^$/}};
+    behaviourFields:/^\$\.(state|checkpoint)\.(player|actors\.\d+)\.x$/,behaviourActors:/^(pawel_krawiec|sapper_2|sapper_3)$/}};
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15 or 16`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;

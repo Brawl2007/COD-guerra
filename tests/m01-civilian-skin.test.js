@@ -67,6 +67,20 @@ test('civilian props: lantern for the lantern carriers, armband for the aid staf
   }finally{c.dispose();}
 });
 
+test('R1-a: the hand lantern is lit only while its carrier stands; a railwayman a bomb has killed or wounded does not leave it floating beside the body',()=>{
+  const c=characters();
+  try{
+    const man=actor('yard_railway_0',-10),lit=()=>{const out=[];c.instances.get('yard_railway_0').root.traverse(o=>{if(o.name==='civilian_lantern')out.push(o.visible);});return out;};
+    let time=12;const draw=()=>{c.update([man],time,{x:0,z:0},'high');time+=.05;return lit();};
+    assert.deepEqual(draw(),[true,true],'the body and the flame of a standing carrier');
+    man.state='WOUNDED';assert.deepEqual(draw(),[false,false],'wounded: he lies where he fell (the WOUNDED pose), the lantern is not drawn in the air');
+    man.state='GUARD';assert.deepEqual(draw(),[true,true],'a state that is not a wound shows it again (nothing else changed)');
+    Object.assign(man,{alive:false,state:'DOWN',health:0});assert.deepEqual(draw(),[false,false],'dead');
+    // the aid staff carries no lantern: nothing to switch, and no record is added for them
+    const medic=actor('yard_orderly',-12,2);c.update([medic],time,{x:0,z:0},'high');assert.equal(c.instances.get('yard_orderly').lantern,null);
+  }finally{c.dispose();}
+});
+
 test('workwear dye: the civilian body colours differ from the soldier tunic of the same profile, and soldiers are untouched',()=>{
   const c=characters();
   try{

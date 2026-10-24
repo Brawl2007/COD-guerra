@@ -77,7 +77,7 @@ import bombs from './fixtures/m01-bomb-effects-gameplay-baseline.json' with {typ
 const BOMBS_DELTA=/^\$\.(state|checkpoint)\.timers\.raidSchedule0434$/,BOMBS_BEHAVIOUR=/^\$\.(state|checkpoint)\.player\.x$/;   // amendment 16, as measured
 const current=bombs;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
-import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
+import {M01Simulation,validateM01Snapshot,GARRISON_IDS} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
 import {actorHitboxes,eyePosition,mg34ProneGeometry} from '../src/world/spatial.js';
 import {route,driver,toStationEvacuation} from './helpers/m01-route.js';
@@ -91,9 +91,11 @@ let completed;
 const wrap=n=>Math.atan2(Math.sin(n),Math.cos(n));
 const active=()=>{const s=new M01Simulation(17);s.tick(.05,{skip:true});return s;};
 
-test('schema 2 initializes all 97 IDs; diagnostics are detached, small presentation records',()=>{
+test('schema 2 initializes all 103 IDs; diagnostics are detached, small presentation records',()=>{
   const s=new M01Simulation(),ids=s.actors.map(a=>a.id),diag=s.animationPresentation;
-  assert.equal(s.snapshot().schema,2);assert.equal(ids.length,97);assert.deepEqual(diag.actors.map(a=>a.id),ids);
+  // 2026-10-23 (R1-a follow-up, golden amendment 16): 97 -> 103. The six unnamed men of the west garrison (pl_west_0..5, displayOnly) join the roster, so that the bombs of 04:34 have
+  // somebody to kill and wound (the cast is only ever shaken). The roster was 97 only by the count of the groups before them; nothing else about the 97 changed.
+  assert.equal(s.snapshot().schema,2);assert.equal(ids.length,103);assert.deepEqual(ids.slice(-GARRISON_IDS.length),[...GARRISON_IDS]);assert.deepEqual(diag.actors.map(a=>a.id),ids);
   for(const a of s.actors){assert.deepEqual(a.motion,{speed:0,odometer:0,gait:'idle',gaitSince:0});assert.equal(a.bodyYaw,a.facing);
     assert.equal(a.posture,'stand');assert.equal(a.postureSince,0);assert.equal(a.hitAt,-1e9);assert.equal(a.diedAt,-1e9);assert.equal(a.suppressedAt,-1e9);}
   diag.actors[0].motion.odometer=99;assert.equal(s.actors[0].motion.odometer,0);
@@ -556,7 +558,7 @@ for(const expected of current.routes)test(`all gameplay bytes hashed each tick a
     for(const a of sim.actors){maxSpeed=Math.max(maxSpeed,a.motion.speed);for(const k of ['hitAt','diedAt','suppressedAt'])if(a[k]!==undefined&&a[k]!==-1e9)seen.add(k);}
   }});
   assert.deepEqual(trace.finish(),{ticks:expected.ticks,blocks:expected.blocks});
-  assert.equal(result.sim.actors.length,97);assert.equal(result.sim.checkpointsReached.length,4);
+  assert.equal(result.sim.actors.length,103);assert.equal(result.sim.checkpointsReached.length,4);   // 2026-10-23 (R1-a, amendment 16): 97 + the six men of the west garrison
   assert.ok(seen.has('hitAt')&&seen.has('diedAt')&&seen.has('suppressedAt'));
   assert.ok(maxSpeed<=8,'published locomotion speed is bounded; actual odometer remains measured');
   report.cases.push({label:'gameplay-baseline',seed:expected.seed,support:expected.support,ticks:trace.ticks,blocks:trace.blocks.length,maxSpeed});
@@ -675,10 +677,11 @@ test('Bąk carry and CKM/MG34 specialized adapters do not lose identity, timesta
 
 test('legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG',()=>{
   for(const count of [86,89]){
-    const legacy=gameplaySnapshot(completed.checkpoints.cp_m01_b_reorganizacao);legacy.actors=legacy.actors.filter(a=>!AUXILIARY_IDS.includes(a.id));
+    // 2026-10-23 (R1-a, amendment 16): a true legacy save has neither the auxiliaries nor the west garrison; both come back whole on restore (97 -> 103 with the six men of the garrison).
+    const legacy=gameplaySnapshot(completed.checkpoints.cp_m01_b_reorganizacao);legacy.actors=legacy.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&!GARRISON_IDS.includes(a.id));
     if(count===86)legacy.actors=legacy.actors.filter(a=>!a.ckm);
     const before=json(legacy),s=new M01Simulation();s.restoreSnapshot(legacy);
-    assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,97);
+    assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,103);
     assert.deepEqual(s.actors.slice(0,86).map(a=>a.id),legacy.actors.slice(0,86).map(a=>a.id));
     // 2026-10-23 (R1-a, golden amendment 16): CP-B now falls after the first bombs, which shake the men beside them (suppressedUntil > 0 in the save). initializePresentation derives the unknown
     // suppressedAt of such a man from his saved suppressedUntil (a documented rule: 1.5 s before it, at most the clock); everyone else, and every diedAt and hitAt, is the unknown history -1e9 as before.

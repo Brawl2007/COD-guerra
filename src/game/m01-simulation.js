@@ -15,6 +15,7 @@ import { createDisplayFire, displaySeed, displayProfiles, updateDisplayFire, dis
 import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, recordSuppression, recordHit, recordDeath,
   recordDamage, validatePresentation, presentationDiagnostics,updateActorDetails } from './m01-animation-presentation.js';
 import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADER_IDS,YARD_TASKS} from './m01-yard-life.js';
+import {GARRISON_GROUP,garrisonPlan,makeGarrison} from './m01-garrison.js';
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
@@ -180,6 +181,24 @@ export function combatStagePlan(def=definition){
     squad:Object.freeze({underFireFrom:squad.stage.underFireFrom,slots:section,rkm:Object.freeze({actor:rkm.actor,riseBeforeSec:rkm.riseBeforeSec,holdAfterSec:rkm.holdAfterSec})}),sappers:crew});
 }
 const STAGE=combatStagePlan();
+/**
+ * R1-a (2026-10-23): the bomb that cuts the cable falls where the three sappers kneel (repair_site_1) and used to fall 1.6 m from the nearest of them. Nowicki arrives shouting that the planes are
+ * coming (dlg_m01_066) and, from `from` (04:33:30), the sappers run for the sandbags of the section's post, 26 m or more from the crater, and come back to the cable `returnAfterSec` real
+ * seconds after the bomb has fallen (evt_m01_nowicki_lost), always before `until`. The crater, the dented mug and the cut cable stay where the script has them. Pure data in mission.json
+ * (grp_sappers.stage.shelter), validated when the module loads; the walk itself is a pure function of the clocks and of the saved event time (M01Simulation.sapperShelter).
+ */
+export function sapperShelterPlan(def=definition,world=new TczewWorld()){
+  const fail=m=>{throw new Error(`M01 sapper shelter: ${m}`);},group=def.groups.find(g=>g.id==='grp_sappers'),sh=group?.stage?.shelter;
+  const from=typeof sh?.from==='string'?seconds(sh.from):NaN,until=typeof sh?.until==='string'?seconds(sh.until):NaN,crater=world.point('repair_site_1');
+  if(!(from>=seconds('04:33:00')&&from<seconds('04:34:00'))||!(until>seconds('04:34:30')&&until<=seconds('04:40:00'))||!(sh.returnAfterSec>=2&&sh.returnAfterSec<=20))
+    fail('from before the bombing, until after it, return 2 to 20 s');
+  const slots=Object.fromEntries(group.members.map(id=>{
+    const s=sh.slots?.[id];if(!Array.isArray(s)||s.length!==3||!s.every(Number.isFinite))fail(`${id}: a slot [x, z, facing]`);
+    if(Math.hypot(s[0]-crater.x,s[1]-crater.z)<26)fail(`${id}: the shelter is within 26 m of the crater`);
+    return [id,Object.freeze({x:s[0],z:s[1],facing:s[2]})];}));
+  return Object.freeze({from,until,returnAfterSec:sh.returnAfterSec,slots:Object.freeze(slots)});
+}
+const SHELTER=sapperShelterPlan();
 const eastPosition=(i,world)=>{
   const mg=FIRE_POSITIONS.find(f=>f.actor===`de_east_${i}`);if(mg)return {x:mg.position[0],y:mg.position[1],z:mg.position[2]};
   // faixa dos portões, entre as pontes (vista da margem oeste); T38: lugares desencontrados contra o portal, no chão
@@ -301,6 +320,9 @@ export function earlyRaidPlan(def=definition,world=new TczewWorld()){
   });
 }
 const RAID0434_PLAN=earlyRaidPlan(),EARLY_RAID_KEEP=earlyRaidKeep();
+// The unnamed garrison of the west bridgehead (m01-garrison.js, mission.json westGarrison): standing where the 04:34 bombs fall. Kept clear of the places of the objectives and of the cable camp.
+const GARRISON_PLAN=(world=>garrisonPlan(definition,world,[...EARLY_RAID_KEEP,world.point('repair_site_1')]))(new TczewWorld());
+export const GARRISON_IDS=Object.freeze(GARRISON_PLAN.map(p=>p.id));
 // Who a bomb may never kill or wound (only shake): the whole cast, by id (m01-blast.js blastProtection).
 const BLAST_CAST=castIds(definition);
 
@@ -355,6 +377,7 @@ export class M01Simulation {
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.actors.push(...makeCKMCrew(this.world,0,false,seed));
     this.actors.push(...makeAuxiliaries(entity,this.world,this.actors));
+    this.actors.push(...makeGarrison(entity,this.world,GARRISON_PLAN));
     for(const a of this.actors)initializePresentation(a,this.clock);
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:this.level.kowalRounds,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
@@ -512,7 +535,7 @@ export class M01Simulation {
     if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.active&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660&&this.deckClear();
     // ponytail: P2 keeps the approved B4 rule (the charge waits for Bąk's delivery at the station, tests/m01-partials-correction-01.test.js); releasing it at
     // x < WEST_SAFE_X would save ~2 min at the firing point but needs a human decision (docs/direction/COD_WAW_WWII_BENCHMARK.md).
-    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<WEST_SAFE_X)&&!bak.carry&&!bak.carriedBy;}
+    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian&&!a.displayOnly).every(a=>a.x<WEST_SAFE_X)&&!bak.carry&&!bak.carriedBy;}
     if(id===E('dudek_retrieves_bak'))return this.player.carrying!=='jozef_bak';
     if(id===E('roll_call'))return this.scene?.id!=='cs_m01_west_blast';
     return true;
@@ -1171,7 +1194,7 @@ export class M01Simulation {
       this.stageSection(a);
       // Sappers: kneeling at the cable until called to the second cut (T38), crouched while working there, kneeling again once they reach the
       // west after the retreat (not under fire there); prone is presentation (T07/T38).
-      if(a.role==='ENGINEER'){a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';if(this.clock<a.suppressedUntil)continue;}
+      if(a.role==='ENGINEER'){this.sapperShelter(a);a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';if(this.clock<a.suppressedUntil)continue;}
       if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt);
     }
     for(const a of this.actors)if(a.carriedBy){
@@ -1292,6 +1315,18 @@ export class M01Simulation {
     const rkm=STAGE.squad.rkm,firing=a.id===rkm.actor&&this.consumedEvent(E('train963_arrives'))&&!this.consumedEvent(E('east_demolition'))&&
       (a.cooldown<=rkm.riseBeforeSec||this.clock-a.firedAt<rkm.holdAfterSec);
     a.crouched=a.state!=='WOUNDED'&&!a.carriedBy&&!a.task&&dist(a,slot)<.5&&!(a.target&&dist(a.target,a)>=.8)&&!firing;
+  }
+  /**
+   * R1-a: the sappers of the cable camp take cover while the bomb that cuts the cable falls (sapperShelterPlan): from `from` they walk to the sandbags of the section's post, and
+   * `returnAfterSec` real seconds after evt_m01_nowicki_lost they walk back to their places at the cable. A pure function of the battle clock, the clock and the saved time of that event:
+   * no saved state of its own, so a save made at any moment of the walk goes on as it was. Never after `until` and never once the repair has begun. No draw.
+   */
+  sapperShelter(a){
+    const haven=SHELTER.slots[a.id],home=STAGE.sappers[a.id];
+    if(!haven||!home||!a.alive||!a.active||this.battleClock<SHELTER.from||this.battleClock>=SHELTER.until||this.active('cover_repair')||this.done('cover_repair'))return;
+    const lostAt=this.consumed[E('nowicki_lost')],goal=lostAt!==undefined&&this.clock>=lostAt+SHELTER.returnAfterSec?home:haven;
+    if(dist(a,goal)<1){if(a.target){a.target=null;delete a.nav;}a.facing=goal.facing;a.state='GUARD';return;}   // there: kneeling (no target), on guard, facing as staged
+    if(!a.target||Math.abs(a.target.x-goal.x)>.01||Math.abs(a.target.z-goal.z)>.01)a.target={x:goal.x,z:goal.z};
   }
   /** T38: after this tick's shots and suppression, each active gate rifleman kneels or stands as he will be drawn (and hit) until the next tick. */
   stageGateRiflemen(){for(const a of this.enemies)if(a.alive&&a.active&&(gateRifleman(a)||a.deck))a.crouched=this.clock<a.suppressedUntil||this.gateKneels(a)||this.deckKneels(a);}
@@ -2332,6 +2367,8 @@ export class M01Simulation {
     // from it), no open peek and his current suppression already taken into account, so his saved cooldown runs out exactly as it would have.
     for(const a of candidate.actors)if(AI_MIGRATE(a)&&a.ai===undefined)a.ai=newAI(s.rng,aiIndex(a.id),a.suppressedUntil);
     if(!s.actors.some(a=>AUXILIARY_IDS.includes(a.id)))candidate.actors.push(...makeAuxiliaries(entity,candidate.world,candidate.actors,candidate.clock));
+    // R1-a: a save made before the west garrison existed gets the whole group at its posts (outside allies / enemies / combatants, no draw): nothing happened to them, nothing is invented.
+    if(!s.actors.some(a=>GARRISON_IDS.includes(a.id)))candidate.actors.push(...makeGarrison(entity,candidate.world,GARRISON_PLAN));
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
     // Legacy MG bursts pre-created future rounds. Keep shots already in flight, cancel unissued ones, and
     // resume from standing on the next update, without a migration marker or an RNG draw.
@@ -2450,11 +2487,14 @@ export function validateM01Snapshot(s){
   if(hasCKM)actorIds.push(...CKM_IDS);
   const hasAuxiliary=Array.isArray(s.actors)&&s.actors.some(a=>AUXILIARY_IDS.includes(a?.id));
   if(hasAuxiliary)actorIds.push(...AUXILIARY_IDS);
+  const hasGarrison=Array.isArray(s.actors)&&s.actors.some(a=>GARRISON_IDS.includes(a?.id));   // R1-a: the unnamed west garrison enters whole or not at all
+  if(hasGarrison)actorIds.push(...GARRISON_IDS);
   if(!Array.isArray(s.actors)||s.actors.length!==actorIds.length||new Set(s.actors.map(a=>a.id)).size!==s.actors.length||!s.actors.every(a=>point(a)&&actorIds.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
   for(const a of s.actors)validatePresentation(a,s.clock,reject);
   for(const a of s.actors){
     if(a.cover&&!definitionMapCover(a.cover))reject('cover node '+a.id);
-    if(a.displayOnly!==undefined&&(!AUXILIARY_IDS.includes(a.id)||a.displayOnly!==true))reject('display-only actor');
+    if(a.displayOnly!==undefined&&(!(AUXILIARY_IDS.includes(a.id)||GARRISON_IDS.includes(a.id))||a.displayOnly!==true))reject('display-only actor');
+    if(GARRISON_IDS.includes(a.id)&&(a.displayOnly!==true||a.group!==GARRISON_GROUP||a.team!=='ally'||a.role!=='RIFLEMAN'||a.civilian))reject('west garrison');
     if(a.nav!==undefined&&!validNavRoute(a.nav,s.clock))reject('route '+a.id);   // NPC navigation: a saved detour round the solids (absent in older saves, re-made on demand)
     if(AUXILIARY_IDS.includes(a.id)&&(!a.displayOnly||a.group!==(YARD_IDS.includes(a.id)?'grp_station_yard':'grp_mg34_loaders')))reject('auxiliary group');
     if(MG_LOADER_IDS.includes(a.id)){
