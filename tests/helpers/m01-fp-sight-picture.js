@@ -6,7 +6,7 @@ import * as THREE from 'three';
 // back-face culling (closed meshes: the nearest surface wins the depth test). The camera is the weapon pass camera: eye at the origin, -Z
 // forward, 58 degrees vertical field of view, 16:9 by default.
 
-export const PART={none:0,stock:1,metal:2,hands:3,sleeves:4,rear:5,front:6,handguard:7,comb:8};
+export const PART={none:0,stock:1,metal:2,hands:3,sleeves:4,rear:5,front:6,handguard:7,comb:8,bolt:9};
 const Q=2/.45;
 // Stock loft of the wz.29 (tools/assets/m01-soldiers/src/weapon.mjs STOCK.wz29): [z, centre y, width, height]. A rifle vertex lies on the stock
 // surface when it satisfies the section's superellipse equation at its own z; that separates the wood of the stock from the steel parts that
@@ -33,14 +33,17 @@ const inside=(x,y,z,b)=>Math.abs(x)<=b.x&&y>=b.y0&&y<=b.y1&&z>=b.z0&&z<=b.z1;
  * Per-triangle class of the `rifle` mesh in the pose it is in now (all of these parts are rigid on the weapon bone): PART.stock for the wood of the stock
  * from the receiver forward (wrist and forend) and PART.comb for the wood behind the receiver ring (weapon z >= 0.035: the comb, the heel and the butt, the part
  * that rises as a triangle under the sights),
- * PART.rear for the rear sight block, PART.front for the front sight, PART.metal for everything else (receiver, barrel, bands, bolt, guard, butt plate).
+ * PART.rear for the rear sight block, PART.front for the front sight, PART.bolt for the bolt, PART.metal for everything else (receiver, barrel, bands, guard, butt plate).
  */
 export function classifyRifle(rig){
   const R=rig.skinned(rig.rifle,new Float32Array(rig.rifle.geometry.getAttribute('position').count*3)),index=rig.rifle.geometry.index.array,out=new Uint8Array(index.length/3);
   const centroidZ=t=>(R[index[t]*3+2]+R[index[t+1]*3+2]+R[index[t+2]*3+2])/3;
+  // Triangles skinned to the bolt bone (shroud, body, handle, knob): the head clip never touches them.
+  const names=rig.rifle.skeleton.bones.map(b=>b.name),skinIndex=rig.rifle.geometry.getAttribute('skinIndex'),skinWeight=rig.rifle.geometry.getAttribute('skinWeight');
+  const boltVertex=i=>{let best=-1,bw=0;for(let k=0;k<4;k++){const w=[skinWeight.getX,skinWeight.getY,skinWeight.getZ,skinWeight.getW][k].call(skinWeight,i);if(w>bw){bw=w;best=[skinIndex.getX,skinIndex.getY,skinIndex.getZ,skinIndex.getW][k].call(skinIndex,i);}}return names[best]==='weapon_bolt';};
   const all=(t,test)=>{for(let k=0;k<3;k++){const i=index[t+k];if(!test(R[i*3],R[i*3+1],R[i*3+2]))return false;}return true;};
   for(let t=0;t<index.length;t+=3){
-    out[t/3]=all(t,(x,y,z)=>inside(x,y,z,REAR_BOX))?PART.rear:all(t,(x,y,z)=>inside(x,y,z,FRONT_BOX))?PART.front:all(t,onStockSurface)?(centroidZ(t)>=.035?PART.comb:PART.stock):all(t,(x,y,z)=>inside(x,y,z,HANDGUARD_BOX))?PART.handguard:PART.metal;
+    out[t/3]=[0,1,2].every(k=>boltVertex(index[t+k]))?PART.bolt:all(t,(x,y,z)=>inside(x,y,z,REAR_BOX))?PART.rear:all(t,(x,y,z)=>inside(x,y,z,FRONT_BOX))?PART.front:all(t,onStockSurface)?(centroidZ(t)>=.035?PART.comb:PART.stock):all(t,(x,y,z)=>inside(x,y,z,HANDGUARD_BOX))?PART.handguard:PART.metal;
   }
   return out;
 }
@@ -50,8 +53,8 @@ const _p=new THREE.Vector3();
 
 /**
  * Rasterises every visible view model mesh. `classes` is classifyRifle(rig). Returns {cols, rows, part (Uint8Array, PART.*), depth (Float32Array, m)},
- * row 0 at the top of the frame. `faceClip` (m) is the view model's own wood clip (the rifle material hides wood fragments nearer to the eye than this,
- * see riflePresentationMaterial): the stock and handguard fragments closer than that are skipped, exactly as the shader discards them.
+ * row 0 at the top of the frame. `faceClip` (m) is the rifle material's head clip (FACE_CLIP in m01-wz29-presentation.js): rifle fragments closer to the eye than
+ * this, bolt excepted, are skipped, exactly as the shader discards them.
  */
 export function sightPicture(rig,classes,{cols=640,rows=360,fov=58,near=.03,faceClip=0}={}){
   rig.root.updateMatrixWorld(true);
@@ -61,7 +64,7 @@ export function sightPicture(rig,classes,{cols=640,rows=360,fov=58,near=.03,face
     const mesh=rig.root.getObjectByName(name);if(!mesh?.visible)continue;
     const pos=mesh.geometry.getAttribute('position'),index=mesh.geometry.index.array,buf=rig.skinned(mesh,new Float32Array(pos.count*3),'view');
     for(let t=0;t<index.length;t+=3){
-      const kind=fixed??classes[t/3];
+      const kind=fixed??classes[t/3],clipped=name==='rifle'&&kind!==PART.bolt;
       // Clip the triangle against z <= -near (Sutherland-Hodgman, one plane): at most four vertices.
       let n=0;
       for(let k=0;k<3;k++){const a=index[t+k],b=index[t+(k+1)%3],za=buf[a*3+2],zb=buf[b*3+2],ina=za<=-near,inb=zb<=-near;
@@ -77,7 +80,7 @@ export function sightPicture(rig,classes,{cols=640,rows=360,fov=58,near=.03,face
           const px=x+.5,py=y+.5,l0=((P[1][1]-P[2][1])*(px-P[2][0])+(P[2][0]-P[1][0])*(py-P[2][1]))/den,l1=((P[2][1]-P[0][1])*(px-P[2][0])+(P[0][0]-P[2][0])*(py-P[2][1]))/den,l2=1-l0-l1;
           if(l0<0||l1<0||l2<0)continue;
           const d=1/(l0*P[0][2]+l1*P[1][2]+l2*P[2][2]);
-          if(d<faceClip&&(kind===PART.stock||kind===PART.comb||kind===PART.handguard))continue;
+          if(clipped&&d<faceClip)continue;
           if(d<depth[y*cols+x]){depth[y*cols+x]=d;part[y*cols+x]=kind;}
         }
       }

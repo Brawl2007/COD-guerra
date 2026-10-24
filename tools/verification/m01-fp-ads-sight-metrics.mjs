@@ -17,13 +17,14 @@ export async function sightAudit(){
   const characters=await fpFixture(),view=new M01ViewModel(new THREE.Scene(),characters,new THREE.Texture()),sim=fakeSim();
   view.update(sim,'high',0);const rig=new HandRig(view);
   sample(view,rig,sim,{state:'READY',aiming:true,authored:false});const classes=classifyRifle(rig);
-  // The rifle material's own wood clip (R6-b); absent on older trees.
-  const clipDepth=()=>{const c=view.rifleMaterial?.userData?.m01FaceClip;return c?c.value*c.depth:0;};
+  // The rifle material's own head clip in metres (R6-b); absent on older trees.
+  const clipDepth=()=>view.rifleMaterial?.userData?.m01FaceClip?.value??0;
   const px=(pic,kind)=>pic.part.reduce((n,k)=>n+(k===kind?1:0),0)*(1280*720)/(pic.cols*pic.rows);
   const measure=()=>{
     const pic=sightPicture(rig,classes,{faceClip:clipDepth()});
-    return {stockLowerCentrePct:+(regionShare(pic,LOWER_CENTRE,PART.stock)*100).toFixed(2),stockFramePct:+(frameShare(pic,PART.stock)*100).toFixed(2),
-      metalLowerCentrePct:+(regionShare(pic,LOWER_CENTRE,PART.metal)*100).toFixed(2),handsFramePct:+(frameShare(pic,PART.hands)*100).toFixed(2),sleevesFramePct:+(frameShare(pic,PART.sleeves)*100).toFixed(2),
+    const wood=[PART.stock,PART.comb];
+    return {combLowerCentrePct:+(regionShare(pic,LOWER_CENTRE,PART.comb)*100).toFixed(2),woodLowerCentrePct:+(regionShare(pic,LOWER_CENTRE,wood)*100).toFixed(2),stockFramePct:+(frameShare(pic,wood)*100).toFixed(2),
+      metalLowerCentrePct:+(regionShare(pic,LOWER_CENTRE,PART.metal)*100).toFixed(2),handsLowerCentrePct:+(regionShare(pic,LOWER_CENTRE,PART.hands)*100).toFixed(2),handsFramePct:+(frameShare(pic,PART.hands)*100).toFixed(2),sleevesFramePct:+(frameShare(pic,PART.sleeves)*100).toFixed(2),
       rearSightPx:Math.round(px(pic,PART.rear)),frontSightPx:Math.round(px(pic,PART.front)),faceClipM:+clipDepth().toFixed(3)};
   };
   const rows={};
@@ -36,7 +37,7 @@ export async function sightAudit(){
   {const s=fakeSim();s.clock=100;view.visual=null;view.sampleKey=null;view.update(s,'high',0);s.player.aiming=true;let prev=null;
     for(let i=0;i<=24;i++){
       s.clock+=1/60;view.update(s,'high',0);const rear=rig.weapon.localToWorld(new THREE.Vector3(0,.056,-.29)),m=measure();
-      steps.push({aim:+view.visual.aim.toFixed(3),stockLowerCentrePct:m.stockLowerCentrePct,rearStepCm:prev?+(rear.distanceTo(prev)*100).toFixed(2):0});prev=rear;
+      steps.push({aim:+view.visual.aim.toFixed(3),combLowerCentrePct:m.combLowerCentrePct,rearStepCm:prev?+(rear.distanceTo(prev)*100).toFixed(2):0});prev=rear;
     }}
   rows.transition=steps;
   // Recoil: one shot from the shoulder, 60 Hz for 0.5 s: stock share and the per-frame step of the rear sight.
@@ -46,7 +47,7 @@ export async function sightAudit(){
     let prev=null;
     for(let i=0;i<=30;i++){
       s.clock+=1/60;view.update(s,'high',0);const rear=rig.weapon.localToWorld(new THREE.Vector3(0,.056,-.29)),m=measure();
-      recoil.push({t:+(i/60).toFixed(3),stockLowerCentrePct:m.stockLowerCentrePct,rearStepCm:prev?+(rear.distanceTo(prev)*100).toFixed(2):0});prev=rear;
+      recoil.push({t:+(i/60).toFixed(3),combLowerCentrePct:m.combLowerCentrePct,rearStepCm:prev?+(rear.distanceTo(prev)*100).toFixed(2):0});prev=rear;
     }}
   rows.recoil=recoil;
   view.dispose();characters.dispose();

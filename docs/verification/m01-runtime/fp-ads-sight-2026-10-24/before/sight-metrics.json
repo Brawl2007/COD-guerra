@@ -1,11 +1,13 @@
 {
- "source": "working tree",
+ "source": "/tmp/claude-0/-home-user-COD-guerra/0c367ee0-faa9-5377-8766-7aef73095669/scratchpad/tree-bc6d4b0",
  "frame": "1280x720 pixel counts from a 640x360 software raster; lower centre = |x|<=0.25, -1<=y<=-0.05 (ndc)",
  "rows": {
   "hip": {
-   "stockLowerCentrePct": 3.98,
+   "combLowerCentrePct": 0,
+   "woodLowerCentrePct": 3.98,
    "stockFramePct": 2.01,
    "metalLowerCentrePct": 2.8,
+   "handsLowerCentrePct": 1.09,
    "handsFramePct": 1.39,
    "sleevesFramePct": 2.99,
    "rearSightPx": 376,
@@ -24,9 +26,11 @@
    }
   },
   "ads": {
-   "stockLowerCentrePct": 30.63,
+   "combLowerCentrePct": 30.06,
+   "woodLowerCentrePct": 30.63,
    "stockFramePct": 3.64,
    "metalLowerCentrePct": 22.13,
+   "handsLowerCentrePct": 6.09,
    "handsFramePct": 0.81,
    "sleevesFramePct": 8.28,
    "rearSightPx": 104,
@@ -45,9 +49,11 @@
    }
   },
   "bolt-ads-0.05": {
-   "stockLowerCentrePct": 33.33,
+   "combLowerCentrePct": 32.77,
+   "woodLowerCentrePct": 33.33,
    "stockFramePct": 3.96,
    "metalLowerCentrePct": 20.71,
+   "handsLowerCentrePct": 6.83,
    "handsFramePct": 0.91,
    "sleevesFramePct": 8.38,
    "rearSightPx": 120,
@@ -66,9 +72,11 @@
    }
   },
   "bolt-ads-0.20": {
-   "stockLowerCentrePct": 13.78,
+   "combLowerCentrePct": 8.68,
+   "woodLowerCentrePct": 13.78,
    "stockFramePct": 3.49,
    "metalLowerCentrePct": 8.68,
+   "handsLowerCentrePct": 0.87,
    "handsFramePct": 1.26,
    "sleevesFramePct": 6.98,
    "rearSightPx": 264,
@@ -87,9 +95,11 @@
    }
   },
   "bolt-ads-0.45": {
-   "stockLowerCentrePct": 7.73,
+   "combLowerCentrePct": 0.09,
+   "woodLowerCentrePct": 7.73,
    "stockFramePct": 1.92,
    "metalLowerCentrePct": 6.15,
+   "handsLowerCentrePct": 1.64,
    "handsFramePct": 0.58,
    "sleevesFramePct": 8.29,
    "rearSightPx": 320,
@@ -108,9 +118,11 @@
    }
   },
   "bolt-ads-0.70": {
-   "stockLowerCentrePct": 7.73,
+   "combLowerCentrePct": 0.09,
+   "woodLowerCentrePct": 7.73,
    "stockFramePct": 1.79,
    "metalLowerCentrePct": 6.2,
+   "handsLowerCentrePct": 1.25,
    "handsFramePct": 0.71,
    "sleevesFramePct": 9.47,
    "rearSightPx": 320,
@@ -129,9 +141,11 @@
    }
   },
   "bolt-ads-0.95": {
-   "stockLowerCentrePct": 30.63,
+   "combLowerCentrePct": 30.07,
+   "woodLowerCentrePct": 30.63,
    "stockFramePct": 3.64,
    "metalLowerCentrePct": 21.98,
+   "handsLowerCentrePct": 8.79,
    "handsFramePct": 1.39,
    "sleevesFramePct": 10.22,
    "rearSightPx": 100,
@@ -152,284 +166,284 @@
   "transition": [
    {
     "aim": 0.056,
-    "stockLowerCentrePct": 4.01,
+    "combLowerCentrePct": 0,
     "rearStepCm": 0
    },
    {
     "aim": 0.111,
-    "stockLowerCentrePct": 4.1,
+    "combLowerCentrePct": 0,
     "rearStepCm": 0.44
    },
    {
     "aim": 0.167,
-    "stockLowerCentrePct": 4.3,
+    "combLowerCentrePct": 0,
     "rearStepCm": 0.78
    },
    {
     "aim": 0.222,
-    "stockLowerCentrePct": 4.63,
+    "combLowerCentrePct": 0,
     "rearStepCm": 1.07
    },
    {
     "aim": 0.278,
-    "stockLowerCentrePct": 5.06,
+    "combLowerCentrePct": 0,
     "rearStepCm": 1.32
    },
    {
     "aim": 0.333,
-    "stockLowerCentrePct": 5.57,
+    "combLowerCentrePct": 0,
     "rearStepCm": 1.52
    },
    {
     "aim": 0.389,
-    "stockLowerCentrePct": 6.21,
+    "combLowerCentrePct": 0,
     "rearStepCm": 1.68
    },
    {
     "aim": 0.444,
-    "stockLowerCentrePct": 6.91,
+    "combLowerCentrePct": 0.52,
     "rearStepCm": 1.79
    },
    {
     "aim": 0.5,
-    "stockLowerCentrePct": 8.46,
+    "combLowerCentrePct": 2.91,
     "rearStepCm": 1.85
    },
    {
     "aim": 0.556,
-    "stockLowerCentrePct": 11.53,
+    "combLowerCentrePct": 6.95,
     "rearStepCm": 1.87
    },
    {
     "aim": 0.611,
-    "stockLowerCentrePct": 15.62,
+    "combLowerCentrePct": 11.96,
     "rearStepCm": 1.85
    },
    {
     "aim": 0.667,
-    "stockLowerCentrePct": 20.43,
+    "combLowerCentrePct": 17.69,
     "rearStepCm": 1.77
    },
    {
     "aim": 0.722,
-    "stockLowerCentrePct": 25.9,
+    "combLowerCentrePct": 23.85,
     "rearStepCm": 1.65
    },
    {
     "aim": 0.778,
-    "stockLowerCentrePct": 29.63,
+    "combLowerCentrePct": 28.24,
     "rearStepCm": 1.49
    },
    {
     "aim": 0.833,
-    "stockLowerCentrePct": 25.87,
+    "combLowerCentrePct": 24.99,
     "rearStepCm": 1.28
    },
    {
     "aim": 0.889,
-    "stockLowerCentrePct": 30.53,
+    "combLowerCentrePct": 29.96,
     "rearStepCm": 1.02
    },
    {
     "aim": 0.944,
-    "stockLowerCentrePct": 30.53,
+    "combLowerCentrePct": 29.99,
     "rearStepCm": 0.72
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0.39
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "aim": 1,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    }
   ],
   "recoil": [
    {
     "t": 0,
-    "stockLowerCentrePct": 30.63,
+    "combLowerCentrePct": 30.06,
     "rearStepCm": 0
    },
    {
     "t": 0.017,
-    "stockLowerCentrePct": 33.74,
+    "combLowerCentrePct": 33.19,
     "rearStepCm": 0.88
    },
    {
     "t": 0.033,
-    "stockLowerCentrePct": 33.78,
+    "combLowerCentrePct": 33.22,
     "rearStepCm": 0.02
    },
    {
     "t": 0.05,
-    "stockLowerCentrePct": 33.41,
+    "combLowerCentrePct": 32.84,
     "rearStepCm": 0.12
    },
    {
     "t": 0.067,
-    "stockLowerCentrePct": 32.97,
+    "combLowerCentrePct": 32.41,
     "rearStepCm": 0.13
    },
    {
     "t": 0.083,
-    "stockLowerCentrePct": 32.52,
+    "combLowerCentrePct": 31.96,
     "rearStepCm": 0.11
    },
    {
     "t": 0.1,
-    "stockLowerCentrePct": 32.09,
+    "combLowerCentrePct": 31.56,
     "rearStepCm": 0.12
    },
    {
     "t": 0.117,
-    "stockLowerCentrePct": 31.83,
+    "combLowerCentrePct": 31.29,
     "rearStepCm": 0.31
    },
    {
     "t": 0.133,
-    "stockLowerCentrePct": 31.87,
+    "combLowerCentrePct": 31.3,
     "rearStepCm": 0.7
    },
    {
     "t": 0.15,
-    "stockLowerCentrePct": 28.65,
+    "combLowerCentrePct": 27.79,
     "rearStepCm": 1.29
    },
    {
     "t": 0.167,
-    "stockLowerCentrePct": 30.12,
+    "combLowerCentrePct": 28.47,
     "rearStepCm": 1.93
    },
    {
     "t": 0.183,
-    "stockLowerCentrePct": 22.87,
+    "combLowerCentrePct": 20.06,
     "rearStepCm": 2.46
    },
    {
     "t": 0.2,
-    "stockLowerCentrePct": 16.57,
+    "combLowerCentrePct": 12.32,
     "rearStepCm": 2.7
    },
    {
     "t": 0.217,
-    "stockLowerCentrePct": 12.11,
+    "combLowerCentrePct": 6.36,
     "rearStepCm": 2.61
    },
    {
     "t": 0.233,
-    "stockLowerCentrePct": 9.28,
+    "combLowerCentrePct": 2.39,
     "rearStepCm": 2.18
    },
    {
     "t": 0.25,
-    "stockLowerCentrePct": 8.13,
+    "combLowerCentrePct": 0.53,
     "rearStepCm": 1.51
    },
    {
     "t": 0.267,
-    "stockLowerCentrePct": 7.78,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.65
    },
    {
     "t": 0.283,
-    "stockLowerCentrePct": 7.78,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.03
    },
    {
     "t": 0.3,
-    "stockLowerCentrePct": 7.76,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.02
    },
    {
     "t": 0.317,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.02
    },
    {
     "t": 0.333,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.02
    },
    {
     "t": 0.35,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.01
    },
    {
     "t": 0.367,
-    "stockLowerCentrePct": 7.74,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.01
    },
    {
     "t": 0.383,
-    "stockLowerCentrePct": 7.74,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0.01
    },
    {
     "t": 0.4,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0
    },
    {
     "t": 0.417,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.04,
     "rearStepCm": 0
    },
    {
     "t": 0.433,
-    "stockLowerCentrePct": 7.77,
+    "combLowerCentrePct": 0.03,
     "rearStepCm": 0
    },
    {
     "t": 0.45,
-    "stockLowerCentrePct": 7.76,
+    "combLowerCentrePct": 0.03,
     "rearStepCm": 0
    },
    {
     "t": 0.467,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.03,
     "rearStepCm": 0
    },
    {
     "t": 0.483,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.03,
     "rearStepCm": 0
    },
    {
     "t": 0.5,
-    "stockLowerCentrePct": 7.75,
+    "combLowerCentrePct": 0.03,
     "rearStepCm": 0
    }
   ]
