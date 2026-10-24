@@ -155,11 +155,13 @@ export function sapperGoal(sim,a,ph){
   return {mode:'hold',slot,crouched:true,face:null};
 }
 
-/** May the repair progress now? {works, cap}: the leader must stand at the work point of the stage (or be walking, in `relocate`) and not be suppressed; `cap` keeps the walk from ending before it has. */
+/**
+ * May the repair progress now? {works, cap}: the leader must stand at the work point of the stage (or be walking, in `relocate`); `cap` keeps the walk from ending before it has. Suppression is not read
+ * here: a pin (landRound) and a bomb that shakes the working men (bombEffects) both set timers.repairSuppressedUntil, which stops the bar and is the one gate the simulation always had.
+ */
 export function sapperRate(sim,ph){
   const L=leaderOf(sim);
   if(!L||!ph.stage)return {works:true,cap:100};
-  if(sim.clock<L.suppressedUntil)return {works:false,cap:100};
   const s=ph.stage;
   if(s.id==='relocate')return {works:true,cap:leaderAt(sim,'second')?100:s.to-1e-6};
   return {works:leaderAt(sim,s.at),cap:100};

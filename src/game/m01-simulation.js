@@ -698,6 +698,8 @@ export class M01Simulation {
       }else{
         const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(previousUntil,clock+r.suppressSec);
         recordSuppression(a,previousUntil,clock);if(a.suppressedUntil>previousUntil)casualties.suppressed.push(a.id);
+        // R3-a: a bomb that shakes a man at work interrupts the stage, as a pin does: the bar stops until he is up again (the same gate as landRound's, timers.repairSuppressedUntil).
+        if(a.role==='ENGINEER'&&this.active('cover_repair')&&workDistance(a)<6)this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,a.suppressedUntil);
       }
       if(proneGunner(a))this.updateMG34Posture(a);
     }
@@ -784,6 +786,7 @@ export class M01Simulation {
       // Tolerância (mechanic): 120 s parado baixa, sem aviso, a cadência sobre o reparo até o trabalho retomar.
       if(this.timers.repairStall>120){this.timers.fireEase=true;this.timers.repairSuppressedUntil=this.clock;}
       if(repair.progress>=40)this.line('dlg_m01_022');   // fala obrigatória: se ainda não houve supressão, não fica por dizer
+      if(sapperPhase(this).id==='fail')this.line('dlg_m01_204');   // R3-a: the one failed test is told by the helper (scripted: the busy minute of train 963 would starve a reactive line); said once, like every scripted line
     }
     if(this.active('rescue_bak')&&interact){
       const bak=this.actor('jozef_bak');
