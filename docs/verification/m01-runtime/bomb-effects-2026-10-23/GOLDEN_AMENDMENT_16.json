@@ -4,161 +4,73 @@
   "delta": "bomb-effects",
   "predecessor": "e7f5f2879b1bdbddad7c94ae12fad97627758758",
   "predecessorSourceSha256": "1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f",
-  "sourceSha256": "370b91639d3711e95f8d6fd5919a259a3431bc0c6cb1156fd23d94a489b2badf",
+  "sourceSha256": "5b9ed6ae310d838e5cc505f5236b7f56653b16217818b7239e7dba1a921864ae",
   "previousGolden": {
     "task": "M01-CKM-JAM-V1",
     "file": "tests/fixtures/m01-ckm-jam-gameplay-baseline.json",
     "sha256": "0b49a97d6b56a2563ceb27368cf3e24ae4f2c84cd1de32038855231cda79937b",
     "sourceSha256": "1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f"
   },
-  "deltaFields": "^\\$\\.(state|checkpoint)\\.timers\\.raidSchedule0434$",
-  "behaviourFields": "^\\$\\.(state|checkpoint)\\.player\\.x$",
-  "behaviourActors": "^$",
+  "deltaFields": "^\\$\\.(state|checkpoint)\\.actors\\.(9[7-9]|10[0-2])$",
+  "behaviourFields": "^\\$\\.(state|checkpoint)\\.(player|actors\\.\\d+)\\.x$",
+  "behaviourActors": "^(pawel_krawiec|sapper_2|sapper_3)$",
   "authority": "Written only by tools/verification/m01-integration-golden-audit.mjs --amendment 16 --write (x86); never edited by hand.",
   "changedGameplayInputsSincePredecessor": [
     "src/game/m01-simulation.js",
     "missions/m01-tczew/mission.json",
     "src/game/m01-yard-life.js",
+    "src/game/m01-barks.js",
     "src/game/m01-audio-events.js",
-    "src/game/m01-blast.js"
+    "src/game/m01-blast.js",
+    "src/game/m01-garrison.js"
   ],
   "routes": [
     {
       "seed": 19390901,
       "support": false,
       "oldTicks": 23655,
-      "newTicks": 23401,
+      "newTicks": 23402,
       "firstDifference": {
-        "tick": 1355,
-        "clock": 67.75,
-        "battleClock": "04:34:00",
-        "path": "$.state.timers.raidSchedule0434",
+        "tick": 1,
+        "clock": 0.05,
+        "battleClock": "04:30:44",
+        "path": "$.state.actors.97",
         "actor": null,
         "predecessor": null,
-        "live": [
-          {
-            "id": "raid_0434_1",
-            "at": 16486,
-            "point": {
-              "x": -44,
-              "y": -1.7642982697777256,
-              "z": 50
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_2",
-            "at": 16512,
-            "point": {
-              "x": -108,
-              "y": -3,
-              "z": 30
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_3",
-            "at": 16530,
-            "point": {
-              "x": -140,
-              "y": -3,
-              "z": -16
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_4",
-            "at": 16595,
-            "point": {
-              "x": -96,
-              "y": -0.09855675814580156,
-              "z": 38
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_5",
-            "at": 16650,
-            "point": {
-              "x": -150,
-              "y": 0.3326800587947085,
-              "z": 46
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_6",
-            "at": 16670,
-            "point": {
-              "x": -178,
-              "y": -1.58438926871173,
-              "z": 6
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_7",
-            "at": 16690,
-            "point": {
-              "x": -215,
-              "y": -3,
-              "z": 36
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_8",
-            "at": 16732,
-            "point": {
-              "x": -338,
-              "y": -3,
-              "z": 14
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_9",
-            "at": 16748,
-            "point": {
-              "x": -346,
-              "y": -3,
-              "z": 24
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_10",
-            "at": 16830,
-            "point": {
-              "x": -245,
-              "y": -1.595002381373747,
-              "z": 46
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_11",
-            "at": 16990,
-            "point": {
-              "x": -62,
-              "y": -2.4639097046631333,
-              "z": 52
-            },
-            "emitted": false
-          }
-        ],
+        "live": {
+          "id": "pl_west_0",
+          "space": "metres",
+          "x": -44,
+          "y": -3,
+          "z": 18,
+          "team": "ally",
+          "health": 100,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "facing": 0,
+          "shot": 0,
+          "radius": 0.3,
+          "crouched": false,
+          "suppressedUntil": 0,
+          "cooldown": 0,
+          "rounds": 5,
+          "group": "grp_west_garrison",
+          "role": "RIFLEMAN",
+          "displayOnly": true
+        },
         "missing": true
       },
-      "identicalTicksBeforeIt": 1354,
-      "identicalBlocks": 2,
+      "identicalTicksBeforeIt": 0,
+      "identicalBlocks": 0,
       "firstBehaviourDifference": {
-        "tick": 1407,
-        "clock": 70.35,
-        "battleClock": "04:34:09",
-        "path": "$.state.player.x",
-        "actor": null,
-        "predecessor": 14.639562119227277,
-        "live": 14.699397411990455
+        "tick": 756,
+        "clock": 37.8,
+        "battleClock": "04:33:30",
+        "path": "$.state.actors.1.x",
+        "actor": "pawel_krawiec",
+        "predecessor": -41.4,
+        "live": -41.57246319511388
       },
       "battleClockEvents": [
         {
@@ -396,7 +308,7 @@
           },
           "real": {
             "predecessor": 1167.7,
-            "live": 1155
+            "live": 1155.05
           }
         },
         {
@@ -410,7 +322,7 @@
           },
           "real": {
             "predecessor": 1182.7,
-            "live": 1170
+            "live": 1170.05
           }
         }
       ],
@@ -441,7 +353,7 @@
           "event": "evt_m01_debrief",
           "real": {
             "predecessor": 1182.75,
-            "live": 1170.05
+            "live": 1170.1
           },
           "battle": {
             "predecessor": 25500,
@@ -496,7 +408,7 @@
           "event": "evt_m01_kozliny_attack_distant",
           "real": {
             "predecessor": 1182.7,
-            "live": 1170
+            "live": 1170.05
           },
           "battle": {
             "predecessor": 25500,
@@ -540,7 +452,7 @@
           "event": "evt_m01_roll_call",
           "real": {
             "predecessor": 1182.7,
-            "live": 1170
+            "live": 1170.05
           },
           "battle": {
             "predecessor": 25500,
@@ -562,7 +474,7 @@
           "event": "evt_m01_west_demolition",
           "real": {
             "predecessor": 1167.7,
-            "live": 1155
+            "live": 1155.05
           },
           "battle": {
             "predecessor": 24300,
@@ -579,11 +491,11 @@
           "playerHealth": 92
         },
         "live": {
-          "ticks": 23401,
-          "real": 1170.05,
+          "ticks": 23402,
+          "real": 1170.1,
           "to0600": 568.65,
           "survivors": 12,
-          "playerHealth": 76
+          "playerHealth": 84
         },
         "objectives": {
           "deliver_message": "done",
@@ -617,7 +529,7 @@
         "stacked": 0,
         "germanRoundsPerRealMin": {
           "predecessor": 92.78,
-          "live": 92.61
+          "live": 92.2
         }
       }
     },
@@ -625,138 +537,48 @@
       "seed": 7,
       "support": true,
       "oldTicks": 23148,
-      "newTicks": 23353,
+      "newTicks": 23354,
       "firstDifference": {
-        "tick": 1355,
-        "clock": 67.75,
-        "battleClock": "04:34:00",
-        "path": "$.state.timers.raidSchedule0434",
+        "tick": 1,
+        "clock": 0.05,
+        "battleClock": "04:30:44",
+        "path": "$.state.actors.97",
         "actor": null,
         "predecessor": null,
-        "live": [
-          {
-            "id": "raid_0434_1",
-            "at": 16486,
-            "point": {
-              "x": -44,
-              "y": -1.7642982697777256,
-              "z": 50
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_2",
-            "at": 16512,
-            "point": {
-              "x": -108,
-              "y": -3,
-              "z": 30
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_3",
-            "at": 16530,
-            "point": {
-              "x": -140,
-              "y": -3,
-              "z": -16
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_4",
-            "at": 16595,
-            "point": {
-              "x": -96,
-              "y": -0.09855675814580156,
-              "z": 38
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_5",
-            "at": 16650,
-            "point": {
-              "x": -150,
-              "y": 0.3326800587947085,
-              "z": 46
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_6",
-            "at": 16670,
-            "point": {
-              "x": -178,
-              "y": -1.58438926871173,
-              "z": 6
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_7",
-            "at": 16690,
-            "point": {
-              "x": -215,
-              "y": -3,
-              "z": 36
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_8",
-            "at": 16732,
-            "point": {
-              "x": -338,
-              "y": -3,
-              "z": 14
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_9",
-            "at": 16748,
-            "point": {
-              "x": -346,
-              "y": -3,
-              "z": 24
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_10",
-            "at": 16830,
-            "point": {
-              "x": -245,
-              "y": -1.595002381373747,
-              "z": 46
-            },
-            "emitted": false
-          },
-          {
-            "id": "raid_0434_11",
-            "at": 16990,
-            "point": {
-              "x": -62,
-              "y": -2.4639097046631333,
-              "z": 52
-            },
-            "emitted": false
-          }
-        ],
+        "live": {
+          "id": "pl_west_0",
+          "space": "metres",
+          "x": -44,
+          "y": -3,
+          "z": 18,
+          "team": "ally",
+          "health": 100,
+          "alive": true,
+          "active": true,
+          "state": "GUARD",
+          "facing": 0,
+          "shot": 0,
+          "radius": 0.3,
+          "crouched": false,
+          "suppressedUntil": 0,
+          "cooldown": 0,
+          "rounds": 5,
+          "group": "grp_west_garrison",
+          "role": "RIFLEMAN",
+          "displayOnly": true
+        },
         "missing": true
       },
-      "identicalTicksBeforeIt": 1354,
-      "identicalBlocks": 2,
+      "identicalTicksBeforeIt": 0,
+      "identicalBlocks": 0,
       "firstBehaviourDifference": {
-        "tick": 1407,
-        "clock": 70.35,
-        "battleClock": "04:34:09",
-        "path": "$.state.player.x",
-        "actor": null,
-        "predecessor": 14.639562119227277,
-        "live": 14.699397411990455
+        "tick": 756,
+        "clock": 37.8,
+        "battleClock": "04:33:30",
+        "path": "$.state.actors.1.x",
+        "actor": "pawel_krawiec",
+        "predecessor": -41.4,
+        "live": -41.57246319511388
       },
       "battleClockEvents": [
         {
@@ -994,7 +816,7 @@
           },
           "real": {
             "predecessor": 1142.35,
-            "live": 1152.6
+            "live": 1152.65
           }
         },
         {
@@ -1008,7 +830,7 @@
           },
           "real": {
             "predecessor": 1157.35,
-            "live": 1167.6
+            "live": 1167.65
           }
         }
       ],
@@ -1039,7 +861,7 @@
           "event": "evt_m01_debrief",
           "real": {
             "predecessor": 1157.4,
-            "live": 1167.65
+            "live": 1167.7
           },
           "battle": {
             "predecessor": 25500,
@@ -1094,7 +916,7 @@
           "event": "evt_m01_kozliny_attack_distant",
           "real": {
             "predecessor": 1157.35,
-            "live": 1167.6
+            "live": 1167.65
           },
           "battle": {
             "predecessor": 25500,
@@ -1138,7 +960,7 @@
           "event": "evt_m01_roll_call",
           "real": {
             "predecessor": 1157.35,
-            "live": 1167.6
+            "live": 1167.65
           },
           "battle": {
             "predecessor": 25500,
@@ -1160,7 +982,7 @@
           "event": "evt_m01_west_demolition",
           "real": {
             "predecessor": 1142.35,
-            "live": 1152.6
+            "live": 1152.65
           },
           "battle": {
             "predecessor": 24300,
@@ -1177,8 +999,8 @@
           "playerHealth": 100
         },
         "live": {
-          "ticks": 23353,
-          "real": 1167.65,
+          "ticks": 23354,
+          "real": 1167.7,
           "to0600": 547.85,
           "survivors": 18,
           "playerHealth": 100
@@ -1215,7 +1037,7 @@
         "stacked": 0,
         "germanRoundsPerRealMin": {
           "predecessor": 61.33,
-          "live": 62.43
+          "live": 62.48
         }
       }
     }
@@ -1262,7 +1084,7 @@
       },
       "real": {
         "predecessor": 1158.05,
-        "live": 1140.65
+        "live": 1140.7
       },
       "repairComplete": {
         "predecessor": 387.1,
@@ -1286,7 +1108,7 @@
       },
       "real": {
         "predecessor": 1208.05,
-        "live": 1212.1
+        "live": 1212.15
       },
       "repairComplete": {
         "predecessor": 437.55,
@@ -1310,7 +1132,7 @@
       },
       "real": {
         "predecessor": 1157.4,
-        "live": 1167.65
+        "live": 1167.7
       },
       "repairComplete": {
         "predecessor": 385.8,
