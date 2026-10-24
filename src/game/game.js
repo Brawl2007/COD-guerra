@@ -9,6 +9,8 @@ import { lowerLevelOf } from './m01-difficulty.js';
 import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
+import {ROUND_SPEED} from './m01-fire.js';
+import {roundImpactSoundPlan,grenadeThrowSoundPlan} from '../core/battlefield-audio.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the aerial impacts emitted by M01: the nine scripted ones and the 04:34 raid's schedule (raid_0434_1..N, mission.json raidTargets0434). Schema 2 stores their IDs,
@@ -180,7 +182,8 @@ export class Game {
       else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
       return;
     }
-    if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
+    if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key,sound.front??1);return;}
+    if(sound.kind==='grenade-throw'){this.audio.grenadeThrow(sound.pan,sound.distance,sound.key,sound.front??1);return;}
     if(sound.kind==='distant-battle'){this.audio.distantBattle('rifle',sound.pan,sound.distance,sound.key,{rounds:sound.rounds,front:sound.front});return;}
     if(sound.kind==='blast'){
       // R1-a: the strength with which the bomb stunned the player is the simulation's (damage.concussion, also after a restore); the audio presents it as the mix's concussion duck.
@@ -260,6 +263,19 @@ export class Game {
       const s=this.spatial(event.point),clock=this.sim.clock.toFixed(3);
       this.pendingSounds.push(event.rounds>1?{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'rkm_wz28',rounds:event.rounds,interval:.11,key:`kowal:${clock}`}
         :{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'ally_rifle',key:`ally:${clock}`});
+      // R2-c: a real Polish round says where it stopped (`end`): one impact puff when it arrives and, if it lands near the player, its thud after the flight and distance / 343 s.
+      if(event.end){
+        this.renderer.m01.longRangeShot(event,this.sim);
+        const e=this.spatial(event.end),flight=Math.hypot(event.end.x-event.point.x,event.end.y-event.point.y,event.end.z-event.point.z)/ROUND_SPEED,
+          plan=roundImpactSoundPlan(e.distance,this.sim.clock,flight);
+        const material=this.renderer.m01.lastEndMaterial;   // the drawn surface (null: the round stopped in the air, nothing to hear)
+        if(plan.audible&&!event.hit&&material)this.pendingSounds.push({...e,at:plan.at,kind:'impact',material,key:`ally-end:${clock}:${event.by}`});
+      }
+    }
+    // R2-c: a German stick grenade leaves a hand: the cord and the igniter are heard near, after distance / 343 s (its blast is the m01-blast of kind grenade).
+    if(event.type==='enemy-grenade'){
+      const s=this.spatial(event.origin),plan=grenadeThrowSoundPlan(s.distance,event.at);
+      if(plan.audible)this.pendingSounds.push({...s,at:plan.at,kind:'grenade-throw',key:`gthrow:${event.by}:${event.at.toFixed(3)}`});
     }
     if(event.type==='distant-shot'){
       const s=this.spatial(event.point),d=Math.max(500,s.distance);
@@ -282,7 +298,10 @@ export class Game {
       }
       // Estalo supersónico só quando a simulação diz que o tiro passou a ≤6 m (o zumbido fica para ricochetes próximos).
       if(event.crack)this.audio.crack(s.pan,Math.min(12,event.distance),key,s.front);
-      if(event.distance<120)this.audio.impact(event.material,s.pan,event.distance,key,s.front);
+      // R2-c: the thud of a round that lands near arrives after distance / 343 s (the crack above is the bullet itself and comes first).
+      const plan=roundImpactSoundPlan(event.distance,this.sim.clock);
+      if(plan.audible){if(plan.immediate)this.audio.impact(event.material,s.pan,event.distance,key,s.front);
+        else this.pendingSounds.push({...s,distance:event.distance,at:plan.at,kind:'impact',material:event.material,key,front:s.front});}
     }
     if(event.type==='player-hit'){
       this.audio.hit(`hit:${this.sim.clock.toFixed(3)}`);this.hitUntil=now+170;this.pendingM01HitFeedback={clock:this.sim.clock};

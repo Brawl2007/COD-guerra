@@ -4,7 +4,7 @@ import {
   audioHash,audioVariation,audioDistanceShape,acousticShape,presentationNoise,weaponProfileId,
   planWeaponShot,planWeaponBurst,planBulletPass,planImpact,planExplosion,planDebris,planBridgeDemolition,planDistantArtillery,
   planTrainArrival,planLocomotiveIdleTick,planJu87PullOut,planFireCrackle,planDistantBattleSlot,volleyOffsets,
-  planWz29Mechanism,planPlayerHit,planLanding,planFootstep,footstepSurface,
+  planWz29Mechanism,planPlayerHit,planLanding,planFootstep,footstepSurface,planGrenadeThrow,
   aircraftLayerMix,dopplerFactor,intensityWeight,m01FireEmitters,BattleIntensity,impactMaterial,
 } from './battlefield-audio.js';
 import { AudioCore,sfxVoiceCap } from './audio/index.js';
@@ -387,6 +387,12 @@ export class AudioManager {
       if(distance<40){this._record('bullet-whizz',{pan,distance,priority:AUDIO_PRIORITY.impact,key:id});grains.push(...planBulletPass('whizz',{key:id}).map(g=>({...g,at:g.at+.03})));}}
     this._playPlan(grains,{kind:'impact-'+m,category:'impact',priority:AUDIO_PRIORITY.impact,pan,distance,front,key:id,volume:1.6});
     return true;
+  }
+
+  /** R2-c: o arremesso de uma granada de mão alemã (cordão e espoleta). A explosão é `explosion(..., {scale:'small'})`. */
+  grenadeThrow(pan=0,distance=0,key='',front=1){
+    const id=key||`grenade-throw:${this.serial}`;this._record('grenade-throw',{pan,distance,priority:AUDIO_PRIORITY.impact,key:id});
+    return this._playPlan(planGrenadeThrow(distance,{key:id}),{kind:'grenade-throw',category:'impact',priority:AUDIO_PRIORITY.impact,pan,distance,front,key:id,volume:1.4});
   }
 
   // ------------------------------------------------------------ explosões
