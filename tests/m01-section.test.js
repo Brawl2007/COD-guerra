@@ -23,7 +23,10 @@ const signature=e=>`${e.kind}|${e.reactions.map(r=>r.join(':')).join(',')}`;
 // One real route per pilot, observed every tick: the section's events, the shots, the pair's places, saves in the middle of a reaction, the lines said, the neutral digest.
 // The digest is what the Germans and the player are: every tick the events (without the section's own, without the lists of Poles that a round pinned and without the HUD message that stands in for
 // the order to change cover when the director cannot say it: dialogue, as in golden amendments 10 and 12), every 5th tick the state itself (the clock, the main stream, the player, his rifle, the
-// grenades, the fire in flight, the objectives, the flags, the events consumed, the checkpoints and every German), from the first tick to the east demolition, where the section's window ends.
+// grenades, the fire in flight, the objectives, the flags, the events consumed, the checkpoints and every German), from the first tick to the deck assault (evt_m01_germans_on_east_spans, 06:05).
+// 2026-10-24 re-pin (R2-b, golden amendment 18): the proof used to run to the east demolition, where the section's window ends. From the deck assault on the section's riflemen fire REAL rounds at the Germans of the
+// deck (src/game/m01-section.js `real`, sim.alliedRound): they pin and kill Germans, so the Germans are no longer the same with and without the section, by design. The neutrality of R2-a is kept for everything before
+// that point (05:30 to 06:05: the whole of the window the section's display-grade fire has), and what the real fire does is proved in tests/m01-german-ai.test.js.
 const memo=new Map();
 const isDialogue=e=>e.type==='message'&&/^Zieliński: .*mude de cobertura/.test(e.message);
 function neutralHash(){
@@ -38,7 +41,7 @@ function neutralHash(){
 class NoSection extends M01Simulation{stepSection(){return null;}afterSection(){}noteCasualty(){}}
 function neutralRun(Simulation,seed,support){
   const hash=neutralHash();
-  route(seed,{support,Simulation,onStep:({sim,events})=>{if(!sim.consumedEvent('evt_m01_east_demolition'))hash.step(sim,events);}});
+  route(seed,{support,Simulation,onStep:({sim,events})=>{if(!sim.consumedEvent('evt_m01_germans_on_east_spans'))hash.step(sim,events);}});
   return hash.digest();
 }
 function observe(seed=19390901,support=false){
@@ -62,7 +65,8 @@ function observe(seed=19390901,support=false){
     if(sim.timers.section)for(const id of SECTION.pair){const h=sim.timers.section.hold[id];
       if(h?.k==='look'&&h.yaw===null&&lookUntil[id]!==h.until){lookUntil[id]=h.until;o.looks.push({id,clock:sim.clock,until:h.until});}}
     const s=sim.subtitle;if(s&&(!lastSub||lastSub.id!==s.id||lastSub.until!==s.until)){lastSub={id:s.id,until:s.until};o.lines.push({id:s.id,clock:sim.clock,bark:s.bark===true,battle:sim.battleClock});}
-    if(!sim.consumedEvent('evt_m01_east_demolition'))o.hash.step(sim,events);
+    if(!sim.consumedEvent('evt_m01_germans_on_east_spans'))o.hash.step(sim,events);
+    if(o.entry===undefined&&sim.consumedEvent('evt_m01_germans_on_east_spans'))o.entry=sim.clock;   // (R2-b: the first tick of the deck assault, where the real fire of the section begins)
     if(sim.battleClock>=WINDOW[0]&&sim.battleClock<WINDOW[1])o.realInWindow+=.05;
     const q=sim.timers.section;
     if(q){
@@ -165,13 +169,17 @@ test('reactions differ between events and between kinds; every answer is at a Ge
   for(const k of ['gate','pinned','dike'])assert.ok(byKind[k].size>=3,`${k}: the same kind of call does not always get the same answer (${byKind[k].size})`);
   assert.deepEqual([...new Set(o.callouts.flatMap(c=>c.reactions.map(r=>r[1])))].sort(),['drop','fire','look']);
   // every rifle shot of the section is at a German somebody called (an answer: within a few seconds of the call; the sergeant's focus order names one called in the last focusWindowSec s), from a man of the pair or Bąk
+  // 2026-10-24 re-pin (R2-b, golden amendment 18): from the deck assault (06:05) the pair fires on a cycle of its own at the nearest German of the deck it sees (src/game/m01-section.js `real`: a peek of one to three
+  // rounds, a pause), not as an answer to a call, so a shot at a German of the deck from that tick on needs no call; every other shot still does. The cycle itself: tests/m01-german-ai.test.js.
   assert.ok(o.shots.length>=20,`${o.shots.length} shots`);
-  const clips={};
+  const clips={};let cycle=0;
   for(const s of o.shots){
     assert.equal(s.weapon,'ally_rifle');assert.ok(['staszek_pawlak','east_platoon_voice','jozef_bak'].includes(s.by),s.by);assert.match(s.target,/^de_(east|spans)_\d+$/);
+    if(o.entry!==undefined&&s.clock>=o.entry&&/^de_spans_/.test(s.target)){cycle++;(clips[s.by]??=[]).push(s.clock);continue;}
     assert.ok(o.callouts.some(c=>c.target===s.target&&s.clock-c.clock>=0&&s.clock-c.clock<=SECTION.focusWindowSec+SECTION.fire.delaySec[1]+2*SECTION.fire.boltSec[1]),`${s.by} fired at ${s.target} at ${s.clock.toFixed(1)} without a call`);
     (clips[s.by]??=[]).push(s.clock);
   }
+  assert.ok(cycle>=3,`${cycle} shots of the cycle at the Germans of the deck`);
   // a clip is five rounds and the sixth shot waits for the 3.4 s of the reload
   for(const [by,times] of Object.entries(clips))for(let i=5;i<times.length;i++)assert.ok(times[i]-times[i-5]>=4*1.7+3.4-1e-6||times[i]-times[i-1]>=3.4-1e-6,`${by}: six shots in ${(times[i]-times[i-5]).toFixed(1)} s`);
 });
