@@ -71,6 +71,7 @@ const out={label,quality:QUALITY,batching:BATCHING,node:process.version,actors:A
   drawCalls:{total:total.calls,perSoldierMean:+(perSoldier.reduce((x,y)=>x+y,0)/perSoldier.length).toFixed(2),perSoldierMin:Math.min(...perSoldier),perSoldierMax:Math.max(...perSoldier),statsSubmittedDrawCalls:c.stats.submittedDrawCalls??null,statsSubmittedMeshes:c.stats.submittedMeshes},
   triangles:{total:total.triangles,perSoldierMean:Math.round(triPerSoldier.reduce((x,y)=>x+y,0)/triPerSoldier.length)},
   lodBands:c.stats.lodBands,
+  mergeCache:c.mergeCache?.diagnostics??null,   // merged geometries kept for reuse (R8-a): count, builds, bytes
   distinctSkeletonsPerSoldier:[...per],
   heapBytesPerUpdate:Math.round(heapBytes/FRAMES)};
 console.log(JSON.stringify(out));
