@@ -1,0 +1,437 @@
+{
+ "source": "working tree",
+ "frame": "1280x720 pixel counts from a 640x360 software raster; lower centre = |x|<=0.25, -1<=y<=-0.05 (ndc)",
+ "rows": {
+  "hip": {
+   "stockLowerCentrePct": 3.98,
+   "stockFramePct": 2.01,
+   "metalLowerCentrePct": 2.8,
+   "handsFramePct": 1.39,
+   "sleevesFramePct": 2.99,
+   "rearSightPx": 376,
+   "frontSightPx": 112,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     -0.26021386037128624,
+     0.15895294827812134,
+     0.4310787536599793
+    ],
+    "eyeRelief": 0.7734760058775668,
+    "eyeToLine": 0.285298169487443,
+    "forwardOfButt": -0.09607875365997925,
+    "aboveComb": null
+   }
+  },
+  "ads": {
+   "stockLowerCentrePct": 30.63,
+   "stockFramePct": 3.64,
+   "metalLowerCentrePct": 22.13,
+   "handsFramePct": 0.81,
+   "sleevesFramePct": 8.28,
+   "rearSightPx": 104,
+   "frontSightPx": 0,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     1.3536370657306093e-17,
+     0.04158715009582119,
+     0.4498596284144985
+    ],
+    "eyeRelief": 0.7400000000000001,
+    "eyeToLine": 3.4897656720739747e-16,
+    "forwardOfButt": -0.11485962841449848,
+    "aboveComb": null
+   }
+  },
+  "bolt-ads-0.05": {
+   "stockLowerCentrePct": 33.33,
+   "stockFramePct": 3.96,
+   "metalLowerCentrePct": 20.71,
+   "handsFramePct": 0.91,
+   "sleevesFramePct": 8.38,
+   "rearSightPx": 120,
+   "frontSightPx": 0,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     0.00015935896919454904,
+     0.04282102885591115,
+     0.44296695961446647
+    ],
+    "eyeRelief": 0.7330854483361218,
+    "eyeToLine": 0.001110887004314775,
+    "forwardOfButt": -0.10796695961446645,
+    "aboveComb": null
+   }
+  },
+  "bolt-ads-0.20": {
+   "stockLowerCentrePct": 13.78,
+   "stockFramePct": 3.49,
+   "metalLowerCentrePct": 8.68,
+   "handsFramePct": 1.26,
+   "sleevesFramePct": 6.98,
+   "rearSightPx": 264,
+   "frontSightPx": 88,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     -0.11234831697600953,
+     0.10016368063603179,
+     0.446341527526651
+    ],
+    "eyeRelief": 0.7461711735084283,
+    "eyeToLine": 0.12666503606654528,
+    "forwardOfButt": -0.111341527526651,
+    "aboveComb": null
+   }
+  },
+  "bolt-ads-0.45": {
+   "stockLowerCentrePct": 7.73,
+   "stockFramePct": 1.92,
+   "metalLowerCentrePct": 6.15,
+   "handsFramePct": 0.58,
+   "sleevesFramePct": 8.29,
+   "rearSightPx": 320,
+   "frontSightPx": 76,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     -0.17699185971402132,
+     0.12136269937153664,
+     0.4432302181335608
+    ],
+    "eyeRelief": 0.7571162088202515,
+    "eyeToLine": 0.19408055496900425,
+    "forwardOfButt": -0.10823021813356076,
+    "aboveComb": null
+   }
+  },
+  "bolt-ads-0.70": {
+   "stockLowerCentrePct": 7.73,
+   "stockFramePct": 1.79,
+   "metalLowerCentrePct": 6.2,
+   "handsFramePct": 0.71,
+   "sleevesFramePct": 9.47,
+   "rearSightPx": 320,
+   "frontSightPx": 76,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     -0.17699185971402132,
+     0.12136269937153664,
+     0.4432302181335608
+    ],
+    "eyeRelief": 0.7571162088202515,
+    "eyeToLine": 0.19408055496900425,
+    "forwardOfButt": -0.10823021813356076,
+    "aboveComb": null
+   }
+  },
+  "bolt-ads-0.95": {
+   "stockLowerCentrePct": 30.63,
+   "stockFramePct": 3.64,
+   "metalLowerCentrePct": 21.98,
+   "handsFramePct": 1.39,
+   "sleevesFramePct": 10.22,
+   "rearSightPx": 100,
+   "frontSightPx": 0,
+   "faceClipM": 0,
+   "eye": {
+    "eye": [
+     -0.0000076055013084701765,
+     0.04159459188981321,
+     0.44979726422027305
+    ],
+    "eyeRelief": 0.7399375027584865,
+    "eyeToLine": 0.000009828698446231103,
+    "forwardOfButt": -0.11479726422027303,
+    "aboveComb": null
+   }
+  },
+  "transition": [
+   {
+    "aim": 0.056,
+    "stockLowerCentrePct": 4.01,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 0.111,
+    "stockLowerCentrePct": 4.1,
+    "rearStepCm": 0.44
+   },
+   {
+    "aim": 0.167,
+    "stockLowerCentrePct": 4.3,
+    "rearStepCm": 0.78
+   },
+   {
+    "aim": 0.222,
+    "stockLowerCentrePct": 4.63,
+    "rearStepCm": 1.07
+   },
+   {
+    "aim": 0.278,
+    "stockLowerCentrePct": 5.06,
+    "rearStepCm": 1.32
+   },
+   {
+    "aim": 0.333,
+    "stockLowerCentrePct": 5.57,
+    "rearStepCm": 1.52
+   },
+   {
+    "aim": 0.389,
+    "stockLowerCentrePct": 6.21,
+    "rearStepCm": 1.68
+   },
+   {
+    "aim": 0.444,
+    "stockLowerCentrePct": 6.91,
+    "rearStepCm": 1.79
+   },
+   {
+    "aim": 0.5,
+    "stockLowerCentrePct": 8.46,
+    "rearStepCm": 1.85
+   },
+   {
+    "aim": 0.556,
+    "stockLowerCentrePct": 11.53,
+    "rearStepCm": 1.87
+   },
+   {
+    "aim": 0.611,
+    "stockLowerCentrePct": 15.62,
+    "rearStepCm": 1.85
+   },
+   {
+    "aim": 0.667,
+    "stockLowerCentrePct": 20.43,
+    "rearStepCm": 1.77
+   },
+   {
+    "aim": 0.722,
+    "stockLowerCentrePct": 25.9,
+    "rearStepCm": 1.65
+   },
+   {
+    "aim": 0.778,
+    "stockLowerCentrePct": 29.63,
+    "rearStepCm": 1.49
+   },
+   {
+    "aim": 0.833,
+    "stockLowerCentrePct": 25.87,
+    "rearStepCm": 1.28
+   },
+   {
+    "aim": 0.889,
+    "stockLowerCentrePct": 30.53,
+    "rearStepCm": 1.02
+   },
+   {
+    "aim": 0.944,
+    "stockLowerCentrePct": 30.53,
+    "rearStepCm": 0.72
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0.39
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "aim": 1,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   }
+  ],
+  "recoil": [
+   {
+    "t": 0,
+    "stockLowerCentrePct": 30.63,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.017,
+    "stockLowerCentrePct": 33.74,
+    "rearStepCm": 0.88
+   },
+   {
+    "t": 0.033,
+    "stockLowerCentrePct": 33.78,
+    "rearStepCm": 0.02
+   },
+   {
+    "t": 0.05,
+    "stockLowerCentrePct": 33.41,
+    "rearStepCm": 0.12
+   },
+   {
+    "t": 0.067,
+    "stockLowerCentrePct": 32.97,
+    "rearStepCm": 0.13
+   },
+   {
+    "t": 0.083,
+    "stockLowerCentrePct": 32.52,
+    "rearStepCm": 0.11
+   },
+   {
+    "t": 0.1,
+    "stockLowerCentrePct": 32.09,
+    "rearStepCm": 0.12
+   },
+   {
+    "t": 0.117,
+    "stockLowerCentrePct": 31.83,
+    "rearStepCm": 0.31
+   },
+   {
+    "t": 0.133,
+    "stockLowerCentrePct": 31.87,
+    "rearStepCm": 0.7
+   },
+   {
+    "t": 0.15,
+    "stockLowerCentrePct": 28.65,
+    "rearStepCm": 1.29
+   },
+   {
+    "t": 0.167,
+    "stockLowerCentrePct": 30.12,
+    "rearStepCm": 1.93
+   },
+   {
+    "t": 0.183,
+    "stockLowerCentrePct": 22.87,
+    "rearStepCm": 2.46
+   },
+   {
+    "t": 0.2,
+    "stockLowerCentrePct": 16.57,
+    "rearStepCm": 2.7
+   },
+   {
+    "t": 0.217,
+    "stockLowerCentrePct": 12.11,
+    "rearStepCm": 2.61
+   },
+   {
+    "t": 0.233,
+    "stockLowerCentrePct": 9.28,
+    "rearStepCm": 2.18
+   },
+   {
+    "t": 0.25,
+    "stockLowerCentrePct": 8.13,
+    "rearStepCm": 1.51
+   },
+   {
+    "t": 0.267,
+    "stockLowerCentrePct": 7.78,
+    "rearStepCm": 0.65
+   },
+   {
+    "t": 0.283,
+    "stockLowerCentrePct": 7.78,
+    "rearStepCm": 0.03
+   },
+   {
+    "t": 0.3,
+    "stockLowerCentrePct": 7.76,
+    "rearStepCm": 0.02
+   },
+   {
+    "t": 0.317,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0.02
+   },
+   {
+    "t": 0.333,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0.02
+   },
+   {
+    "t": 0.35,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0.01
+   },
+   {
+    "t": 0.367,
+    "stockLowerCentrePct": 7.74,
+    "rearStepCm": 0.01
+   },
+   {
+    "t": 0.383,
+    "stockLowerCentrePct": 7.74,
+    "rearStepCm": 0.01
+   },
+   {
+    "t": 0.4,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.417,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.433,
+    "stockLowerCentrePct": 7.77,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.45,
+    "stockLowerCentrePct": 7.76,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.467,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.483,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0
+   },
+   {
+    "t": 0.5,
+    "stockLowerCentrePct": 7.75,
+    "rearStepCm": 0
+   }
+  ]
+ }
+}
