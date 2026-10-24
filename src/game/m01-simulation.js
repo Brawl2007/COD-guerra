@@ -25,6 +25,7 @@ import {stepCorridor,escortPace,escortTarget,zielinskiJoinPoint,escortSubject,co
 import {SQUAD,SQUAD_IDS,updateSquad,squadSlot,teamPost,squadMoving,validateSquadRecord} from './m01-squad.js';
 import {SECTION,updateSection,sectionWalk,sectionAfter,sectionCasualty,sectionView,sectionRealOn,validateSectionRecord} from './m01-section.js';
 import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,blastPosture,blastTarget,sightPoint,blastOutcome,concussionPeak,concussionLevel,mergeConcussion,earlyRaidPoint} from './m01-blast.js';
+import {REPAIR_WORK_SEC,SAPPERS,sapperPhase,sapperGoal,sapperRate,sapperCover,sapperView,workDistance} from './m01-sappers.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -148,9 +149,8 @@ const makeCKMCrew=(world,clock=0,withdrawn=false,seed=0)=>CKM_IDS.map((id,i)=>{
 });
 // Lugares no abrigo de campanha (interior x −264…−256, z 66…75) para a chamada das 07:05.
 const ROLL_CALL_SEATS=[[-262.8,73.6],[-261.2,73.9],[-259.6,73.9],[-258,73.6],[-263.2,71.6],[-256.9,71.6],[-262.9,69.6],[-257.1,69.6]];
-// Trabalho dos sapadores sem supressão, em segundos de jogo. Com 75 s, a caixa entregue por volta das 04:42 deixava
+// Trabalho dos sapadores sem supressão, em segundos de jogo: REPAIR_WORK_SEC = 150 (src/game/m01-sappers.js, com as etapas da operação). Com 75 s, a caixa entregue por volta das 04:42 deixava
 // dois terços do reparo feitos antes do trem 963 (04:45) e nenhum fogo o podia interromper; com 150 s ele decorre sob fogo.
-const REPAIR_WORK_SEC=150;
 // Seconds a near miss keeps the working sappers down: a rifle round, and a round of an MG34 burst (the beaten zone of a machine gun pins a team longer than one shot).
 const REPAIR_PIN_SEC=3.5,REPAIR_PIN_MG_SEC=5;
 // Posições alemãs (grp_de_east.firePositions): as duas MG34 e 12 atiradores na faixa dos portões de Lisewo, entre as pontes, que é o
@@ -774,8 +774,13 @@ export class M01Simulation {
     }
     if(this.active('cover_repair')){
       const repair=this.objectives[O('cover_repair')];
-      if(this.clock>=this.timers.repairSuppressedUntil){repair.progress=Math.min(100,repair.progress+dt*100/REPAIR_WORK_SEC);this.timers.repairStall=0;this.timers.fireEase=false;}
-      else this.timers.repairStall+=dt;
+      // R3-a: the bar still counts the work seconds (REPAIR_WORK_SEC without a pin), but the team works through the stages of its operation (src/game/m01-sappers.js), so it advances only while the leader
+      // stands at the place of the stage (or is walking to the second cut) and is not suppressed, by a pin or by a bomb; the walk cannot end before he is there.
+      if(this.clock>=this.timers.repairSuppressedUntil){
+        const rate=sapperRate(this,sapperPhase(this));
+        if(rate.works)repair.progress=Math.max(repair.progress,Math.min(rate.cap,Math.min(100,repair.progress+dt*100/REPAIR_WORK_SEC)));
+        this.timers.repairStall=0;this.timers.fireEase=false;
+      }else this.timers.repairStall+=dt;
       // Tolerância (mechanic): 120 s parado baixa, sem aviso, a cadência sobre o reparo até o trabalho retomar.
       if(this.timers.repairStall>120){this.timers.fireEase=true;this.timers.repairSuppressedUntil=this.clock;}
       if(repair.progress>=40)this.line('dlg_m01_022');   // fala obrigatória: se ainda não houve supressão, não fica por dizer
@@ -1119,6 +1124,7 @@ export class M01Simulation {
         else if(c.phase==='putdown'){playerPatient.carriedBy=null;delete playerPatient.carry;const aid=this.world.point('aid_position');playerPatient.x=aid.x-1.2;playerPatient.z=aid.z+.6;playerPatient.y=this.world.heightAt(playerPatient.x,playerPatient.z);}}
     }
     const retreat=this.consumedEvent(E('east_demolition')),holding=this.holdingEast();
+    const sapperNow=sapperPhase(this);   // R3-a: the phase of the sappers' operation (src/game/m01-sappers.js), decided once before anyone walks
     this.holdEastPlatoon();this.formRearguard();
     // Slice 3 (2026-10-22): the section's bounds along the corridor (src/game/m01-squad.js), decided once before anyone walks; null before the east demolition and at the roll call.
     const squad=retreat&&this.mission.phase!=='OUTRO'?this.stepSquad():null;
@@ -1199,10 +1205,25 @@ export class M01Simulation {
       if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
       this.stageSection(a);
-      // Sappers: kneeling at the cable until called to the second cut (T38), crouched while working there, kneeling again once they reach the
-      // west after the retreat (not under fire there); prone is presentation (T07/T38).
-      if(a.role==='ENGINEER'){this.sapperShelter(a);a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';if(this.clock<a.suppressedUntil)continue;}
-      if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt);
+      // Sappers: kneeling at the cable until called to the second cut (T38), kneeling again once they reach the west after the retreat (not under fire there); prone is presentation (T07/T38).
+      // R3-a: from the call to the retreat the team carries out its operation (src/game/m01-sappers.js): each man walks to or holds his place of the phase, at the pace of the phase.
+      let pace,creep=null;
+      if(a.role==='ENGINEER'){
+        this.sapperShelter(a);
+        const goal=sapperGoal(this,a,sapperNow);
+        if(goal.mode==='none')a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';
+        else({pace,creep}=this.sapperSet(a,goal));
+        if(this.clock<a.suppressedUntil){
+          // R3-a: suppressed or shaken (a pin, a bomb), the stage is interrupted. If a cover node lies within seek.coverM he makes for it by his own decision (the lee side of the nearest one) and lies down there;
+          // otherwise he goes down where he is, as before. The stage resumes where it left off, from his place of the stage, when the suppression ends. (Not in the camp or the retreat.)
+          const cover=goal.mode==='none'?null:sapperCover(this.world,a);
+          if(cover){a.target=cover;a.crouched=false;this.moveActor(a,cover,dt,SAPPERS.seek.speed);}
+          else if(goal.mode!=='none')a.state='GUARD';   // he stopped where he was: no longer «on the move», so he is drawn lying down
+          continue;
+        }
+        if(creep)this.sapperCreep(a,creep,dt);
+      }
+      if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt,pace);
     }
     for(const a of this.actors)if(a.carriedBy){
       const c=this.actor(a.carriedBy)??(a.carriedBy===this.player.id?this.player:null);
@@ -1338,6 +1359,23 @@ export class M01Simulation {
     const lostAt=this.consumed[E('nowicki_lost')],goal=lostAt!==undefined&&this.clock>=lostAt+SHELTER.returnAfterSec?home:haven;
     if(dist(a,goal)<1){if(a.target){a.target=null;delete a.nav;}a.facing=goal.facing;a.state='GUARD';return;}   // there: kneeling (no target), on guard, facing as staged
     if(!a.target||Math.abs(a.target.x-goal.x)>.01||Math.abs(a.target.z-goal.z)>.01)a.target={x:goal.x,z:goal.z};
+  }
+  /**
+   * R3-a: sets one sapper's target, posture and facing for the phase (sapperGoal): {pace, creep}. On the way (a walk, or more than 0.8 m from his place) he walks upright with the target he is going to;
+   * at his place he has no target, kneels or stands as the phase says and faces as it says, and creeps the last centimetres onto the place (moveActor stops 0.8 m short). Draws nothing.
+   */
+  sapperSet(a,goal){
+    if(goal.mode==='free'){a.target=null;a.crouched=false;a.facing=goal.face;a.state='GUARD';return {};}
+    if(goal.mode==='walk'){a.target={x:goal.target.x,z:goal.target.z};a.crouched=false;return {pace:goal.speed};}
+    const slot=goal.slot,d=dist(a,slot);
+    if(d>=.8){a.target={x:slot.x,z:slot.z};a.crouched=false;return {pace:d>4?3.6:2};}
+    a.target=null;a.crouched=goal.crouched;a.facing=goal.face??slot.facing;a.state='GUARD';
+    return {creep:d>.03?slot:null};
+  }
+  /** R3-a: the last 0.8 m onto a work place, at 0.8 m/s, through the world's move (a wall still stops it). */
+  sapperCreep(a,slot,dt){
+    const d=dist(a,slot),step=Math.min(d,.8*dt);
+    this.world.move(a,(slot.x-a.x)/d*step,(slot.z-a.z)/d*step);this.navigator.settle(a);
   }
   /** T38: after this tick's shots and suppression, each active gate rifleman kneels or stands as he will be drawn (and hit) until the next tick. */
   stageGateRiflemen(){for(const a of this.enemies)if(a.alive&&a.active&&(gateRifleman(a)||a.deck))a.crouched=this.clock<a.suppressedUntil||this.gateKneels(a)||this.deckKneels(a);}
@@ -2084,11 +2122,11 @@ export class M01Simulation {
     // 2026-10-18 review fix (seed 4: covering fire beat ignoring the MG by only 4.9 s): a burst of the MG34 among the working sappers keeps them down REPAIR_PIN_MG_SEC, a rifle
     // round REPAIR_PIN_SEC as before, so silencing the gun is what pays (measured on 12 seeds in tests/m01-cover-combat.test.js).
     const repairPin=r.weapon==='mg34'?REPAIR_PIN_MG_SEC:REPAIR_PIN_SEC;
-    let pinned=false;const site=this.world.point('repair_site_2'),near=[];
+    let pinned=false;const near=[];
     for(const a of this.allies){
       if(!a.alive||!a.active||a===victim||a.carriedBy||(Math.abs(a.x-point.x)>80&&Math.abs(a.x-r.ax)>80))continue;
       if(closestApproach(r,hit.t,{x:a.x,y:a.y+.9,z:a.z})>NEAR_MISS)continue;
-      const working=a.role==='ENGINEER'&&this.active('cover_repair')&&dist(a,site)<6;
+      const working=a.role==='ENGINEER'&&this.active('cover_repair')&&workDistance(a)<6;   // R3-a: within 6 m of the line between the two cuts (it was: of repair site 2)
       const previousUntil=a.suppressedUntil;
       // R2-b: a round of the deck assault that cracks past a man who holds the deck (the section's pair, the rearguard) pins him for tactics.pinSec, as a rifle round of ours pins a German for 5 s (suppressAlong); every other
       // ally keeps the 1.5 s (1 s for a man of the platoon) the rounds at the escort and the platoon always gave.
@@ -2098,7 +2136,7 @@ export class M01Simulation {
     }
     if(pinned){   // o trabalho pára e a equipa inteira abriga-se
       this.timers.repairSuppressedUntil=Math.max(this.timers.repairSuppressedUntil,this.clock+repairPin);this.timers.repairPins++;this.line('dlg_m01_022');
-      for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&dist(a,site)<6){const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);if(!near.includes(a.id))near.push(a.id);recordSuppression(a,previousUntil,this.clock);}
+      for(const a of this.actors)if(a.role==='ENGINEER'&&a.alive&&a.active&&workDistance(a)<6){const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(a.suppressedUntil,this.timers.repairSuppressedUntil);if(!near.includes(a.id))near.push(a.id);recordSuppression(a,previousUntil,this.clock);}
     }
     const approach=closestApproach(r,hit.t,eyePosition(p)),crack=approach<=6,distance=dist(point,p);
     this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack,distance,pass:impactPass(crack,approach),
@@ -2444,7 +2482,7 @@ export class M01Simulation {
     if(this.active('cover_repair')){
       const progress=Math.floor(this.objectives[O('cover_repair')].progress),mg=this.actor('de_east_0');
       if(this.clock<this.timers.repairSuppressedUntil)return `Reparo ${progress}% · sapadores deitados sob fogo da metralhadora do dique`;
-      return `Reparo ${progress}% · sapadores a trabalhar${mg.alive&&this.clock<mg.suppressedUntil?' · metralhadora do dique suprimida':''}`;
+      return `Reparo ${progress}% · ${sapperPhase(this).stage?.text??'sapadores a trabalhar'}${mg.alive&&this.clock<mg.suppressedUntil?' · metralhadora do dique suprimida':''}`;   // R3-a: the stage of the operation
     }
     if(this.active('cover_withdrawal')){
       const n=this.flags['m01.east_platoon_survivors'];
@@ -2493,6 +2531,8 @@ export class M01Simulation {
   /** SP-08, computed on every read: the corridor task (phase, count, Dudek with Bąk, escorted) or null before the corridor. */
   get corridorTask(){return corridorView(this);}
   get tempo(){return tempoState(this);}
+  /** R3-a, computed on every read, never saved: the phase of the sappers' operation (stage, which cut is open, the box, the tester) for the renderer, the HUD and the tests (src/game/m01-sappers.js). */
+  get sapperOps(){return sapperView(this);}
   /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
   get battleReadout(){return computeBattleReadout(this.display,this);}
   get interaction(){

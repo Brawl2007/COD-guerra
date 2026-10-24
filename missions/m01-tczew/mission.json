@@ -253,6 +253,44 @@
         },
         "classification": "GAMEPLAY_DRAMATIZATION",
         "note": "T38: lugares iniciais [x, z, facing em rad] junto à linha de ignição no ponto de reparo 1, espaçados (antes x −42,6, −46,8 e −47,4 na mesma recta, dois a 0,6 m). Ali, até serem chamados para o segundo corte, estão de joelhos a trabalhar no cabo (`crouched`). No segundo corte: agachados a trabalhar durante obj_m01_cover_repair e deitados (postura 'prone' de T07, hitbox deitada) quando suprimidos ou à espera parados (antes da caixa, depois do reparo). Os lugares do segundo corte, a supressão a 3 m e o tempo de reparo não mudam."
+      },
+      "operation": {
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "R3-a (2026-10-24, queixa do proprietário «os sapadores parecem homens a picar o chão repetidamente, sem trabalho visível»): a operação técnica da equipa, por etapas, com consequências em jogo. Tudo é dramatização genérica: examinar, emendar, testar a continuidade, avisar o oficial (HISTORICAL_RESEARCH.md §79: o jogo não mostra conexões, cargas nem procedimentos; só o cabo danificado e o trabalho dos sapadores). Os dois cortes da fala 021 («Cortaram a linha em dois lugares. Eu sei onde.») são o do ponto de reparo 2 (`fault`, onde chega a caixa) e outro a 16 m ao longo do cabo para oeste (`second`); a cratera da bomba (`crater`) é o ponto de reparo 1, onde a equipa começa. Cabo, pontos e lugares são presentação sobre a linha de ignição RECONSTRUÍDA (feature ignition_line): o traçado desenhado passa pelos lugares de trabalho (2 m a sul da linha esquemática) para que as mãos dos sapadores cheguem ao cabo; a altura e a exposição ao fogo dos lugares são as de antes (medidas: 22 rondas a menos de 3 m por 100 s no ponto 2, 24 no `second`). Fases de jogo (sem estado novo guardado: tudo se deduz do progresso do objectivo, dos eventos consumidos e das posições): `camp` (cratera, até serem chamados), `locate` (seguem o cabo, passo `locate.speed`, e param no corte), `standby` (esperam a caixa), as etapas de `stages` durante obj_m01_cover_repair (a soma das durações é o tempo de trabalho de sempre, REPAIR_WORK_SEC = 150 s de trabalho sem supressão; o progresso 0–100 do objectivo continua a ser a barra, e a etapa é uma função dele: um save de antes carrega a meio e cai na etapa certa), `report` (avisam o oficial) e `ready` (aguardam a ordem de demolição das 05:30), e `verify`/`verify_west` (olham o resultado depois de cada demolição, 06:10 e 06:45, antes de seguirem a retirada de sempre). A etapa `fail` é o teste que não dá passagem, uma vez, para todos os níveis: falta o segundo corte, e a equipa segue o cabo até lá (`relocate`). Nenhuma hora histórica se move: repair_complete continua a ser o progresso 100, order_demolish às 05:30 e as demolições às 06:10 e 06:45.",
+        "arriveM": 2.5,
+        "locate": { "speed": 1.8 },
+        "seek": { "coverM": 8, "speed": 3.6 },
+        "verify": { "sec": 8 },
+        "report": { "sec": 8 },
+        "roles": { "pawel_krawiec": "leader", "sapper_2": "helper", "sapper_3": "watch" },
+        "cable": [[-196, 6.0], [-170, 5.4], [-154, 5.2], [-148, 6.4], [-142, 9.6], [-136.6, 11.2], [-120.4, 11.2], [-100, 11.0], [-70, 10.7], [-40.6, 10.5], [-12, 11.6]],
+        "points": {
+          "crater": { "x": -40.6, "z": 10.5, "gapM": 2.4 },
+          "fault": {
+            "x": -120.4, "z": 11.2, "gapM": 1.5,
+            "slots": { "pawel_krawiec": [-120.4, 10.3, 1.5708], "sapper_2": [-121.9, 10.4, 1.35], "sapper_3": [-123.6, 10.0, 0] }
+          },
+          "second": {
+            "x": -136.6, "z": 11.2, "gapM": 1.5,
+            "slots": { "pawel_krawiec": [-136.6, 10.3, 1.5708], "sapper_2": [-138.1, 10.4, 1.35], "sapper_3": [-139.8, 10.0, 0] }
+          }
+        },
+        "stages": [
+          { "id": "inspect", "at": "fault", "sec": 14, "text": "sapadores a examinar a ligação" },
+          { "id": "splice", "at": "fault", "sec": 52, "text": "sapadores a emendar o cabo" },
+          { "id": "test", "at": "fault", "sec": 6, "text": "sapadores a testar a linha" },
+          { "id": "fail", "at": "fault", "sec": 4, "result": "fail", "text": "sem passagem · falta o segundo corte" },
+          { "id": "relocate", "from": "fault", "at": "second", "sec": 10, "speed": 1.8, "text": "sapadores a seguir o cabo até ao segundo corte" },
+          { "id": "inspect2", "at": "second", "sec": 8, "text": "sapadores a examinar o segundo corte" },
+          { "id": "splice2", "at": "second", "sec": 46, "text": "sapadores a emendar o segundo corte" },
+          { "id": "test2", "at": "second", "sec": 10, "result": "pass", "text": "sapadores a testar a linha inteira" }
+        ],
+        "text": {
+          "locate": "os sapadores procuram o corte",
+          "standby": "os sapadores esperam o material junto ao corte",
+          "report": "linha inteira · os sapadores avisam o oficial",
+          "ready": "os sapadores aguardam a ordem de demolição"
+        }
       }
     },
     {
