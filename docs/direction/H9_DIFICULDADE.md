@@ -202,6 +202,8 @@ except a CP-B2 id (forward-only, acceptable). Legacy saves load as recruta.
   veterano tinha mediana de 40,9 s. Consequência medida: os pilotos de rota (que nunca se mexem) já não sobrevivem a soldado nem a veterano, como este desenho previa. Números exatos, ficheiros
   e como reproduzir: `docs/verification/m01-runtime/difficulty-d3-d4-2026-10-22/README.md`.
 
+**R2-b (2026-10-24): a granada de mão alemã segue as tabelas.** Os homens do assalto ao tabuleiro lançam uma Stielhandgranate (6–32 m) contra um polaco que não conseguem atingir com a espingarda (sem linha de vista ou o jogador em cobertura autorada; nunca o jogador a descoberto que vêem). A explosão fere o jogador **uma vez** com o dano do nível (`woundDamage`: recruta 8, soldado 34, veterano 50) a ≤ 3,5 m com caminho livre, sem sorteio (não há `woundChance`: a granada não «falha»); o lançamento é o telegrafo de **F1** (`noteTelegraph` com `first = at`), pelo que **a primeira granada de um combate nunca leva o jogador a 0** (a saúde fica em 1) e só a de quem já o combatia há `reactionGraceSec` o pode matar; a espoleta (3,8 s, a granada no chão desde 1,4 s) e a fala 138 de Kowal são o aviso. Nas 24 rotas do piloto de teste **nenhuma granada é lançada** (os alemães não chegam a 32 m de ninguém); os valores por nível estão em `tests/m01-german-ai-tactics.test.js`. Ver `docs/verification/m01-runtime/german-ai-r2b-2026-10-24/README.md`.
+
 ## 7. PENDENTE HUMANO
 
 1. **Recruta = today's prototype tuning?** Recommended: yes (true A/B baseline; only `m01-runtime.test.js:48` changes, for CP-B2). If recruta must be harder,
