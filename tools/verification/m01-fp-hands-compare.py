@@ -21,6 +21,6 @@ for name in names:
     draw.rectangle((0, 0, 260, 22), fill=(0, 0, 0))
     draw.text((6, 5), 'ANTES (e7f5f28)', fill=(255, 255, 255))
     draw.rectangle((a.width, 0, a.width + 260, 22), fill=(0, 0, 0))
-    draw.text((a.width + 6, 5), 'DEPOIS (R6-a)', fill=(255, 255, 255))
+    draw.text((a.width + 6, 5), 'DEPOIS (R6-a, ronda 2)', fill=(255, 255, 255))
     sheet.resize((sheet.width // 2, sheet.height // 2), Image.LANCZOS).save(os.path.join(out, name + '.jpg'), quality=82)
 print(len(names), 'montages in', out)

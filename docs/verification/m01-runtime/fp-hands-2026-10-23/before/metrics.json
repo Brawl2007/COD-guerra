@@ -24,7 +24,12 @@
    "sleeveStartNearestCm": 40.2,
    "rifleNearView": 152,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.4,
+   "armExitR": "right 0.36",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 40
   },
   "ads": {
@@ -49,7 +54,12 @@
    "sleeveStartNearestCm": 38,
    "rifleNearView": 294,
    "stockCoveragePct": 6.1,
-   "sightOcclusion": 70,
+   "sightOcclusionPx": 1106,
+   "sightFleshPx": 1106,
+   "sightFleshVertices": 216,
+   "armCoveragePct": 7.8,
+   "armExitR": "bottom 0.13",
+   "armExitL": "bottom -0.28",
    "armNearestCm": 32.4
   },
   "sprint": {
@@ -74,7 +84,12 @@
    "sleeveStartNearestCm": 35.2,
    "rifleNearView": 103,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 114,
+   "sightFleshPx": 114,
+   "sightFleshVertices": 18,
+   "armCoveragePct": 1,
+   "armExitR": "right 0.42",
+   "armExitL": "bottom -0.08",
    "armNearestCm": 42.4
   },
   "bolt-ads-0.05": {
@@ -99,7 +114,12 @@
    "sleeveStartNearestCm": 37.5,
    "rifleNearView": 306,
    "stockCoveragePct": 6.1,
-   "sightOcclusion": 105,
+   "sightOcclusionPx": 1121,
+   "sightFleshPx": 1121,
+   "sightFleshVertices": 216,
+   "armCoveragePct": 8,
+   "armExitR": "bottom 0.13",
+   "armExitL": "bottom -0.28",
    "armNearestCm": 31.8
   },
   "bolt-ads-0.10": {
@@ -124,7 +144,12 @@
    "sleeveStartNearestCm": 37.6,
    "rifleNearView": 306,
    "stockCoveragePct": 6.2,
-   "sightOcclusion": 89,
+   "sightOcclusionPx": 1114,
+   "sightFleshPx": 1114,
+   "sightFleshVertices": 218,
+   "armCoveragePct": 7.9,
+   "armExitR": "bottom 0.13",
+   "armExitL": "bottom -0.28",
    "armNearestCm": 32.1
   },
   "bolt-ads-0.15": {
@@ -149,7 +174,12 @@
    "sleeveStartNearestCm": 37.7,
    "rifleNearView": 287,
    "stockCoveragePct": 4.9,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 878,
+   "sightFleshPx": 878,
+   "sightFleshVertices": 181,
+   "armCoveragePct": 8,
+   "armExitR": "bottom 0.16",
+   "armExitL": "bottom -0.25",
    "armNearestCm": 31.9
   },
   "bolt-ads-0.20": {
@@ -174,7 +204,12 @@
    "sleeveStartNearestCm": 37.9,
    "rifleNearView": 208,
    "stockCoveragePct": 3,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 282,
+   "sightFleshPx": 282,
+   "sightFleshVertices": 69,
+   "armCoveragePct": 7.8,
+   "armExitR": "bottom 0.14",
+   "armExitL": "bottom -0.20",
    "armNearestCm": 33.2
   },
   "bolt-ads-0.25": {
@@ -199,7 +234,12 @@
    "sleeveStartNearestCm": 38,
    "rifleNearView": 181,
    "stockCoveragePct": 1.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 39,
+   "sightFleshPx": 39,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 6.7,
+   "armExitR": "bottom 0.10",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 33.8
   },
   "bolt-ads-0.30": {
@@ -224,7 +264,12 @@
    "sleeveStartNearestCm": 37.3,
    "rifleNearView": 174,
    "stockCoveragePct": 1.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 8.2,
+   "armExitR": "bottom 0.15",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 33.7
   },
   "bolt-ads-0.35": {
@@ -249,7 +294,12 @@
    "sleeveStartNearestCm": 36.9,
    "rifleNearView": 182,
    "stockCoveragePct": 1.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 8.8,
+   "armExitR": "bottom 0.20",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 33.4
   },
   "bolt-ads-0.40": {
@@ -274,7 +324,12 @@
    "sleeveStartNearestCm": 36.8,
    "rifleNearView": 209,
    "stockCoveragePct": 1.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 8.9,
+   "armExitR": "bottom 0.20",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 32.9
   },
   "bolt-ads-0.45": {
@@ -299,7 +354,12 @@
    "sleeveStartNearestCm": 36.3,
    "rifleNearView": 217,
    "stockCoveragePct": 1.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 9.3,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 31
   },
   "bolt-ads-0.50": {
@@ -324,7 +384,12 @@
    "sleeveStartNearestCm": 35.8,
    "rifleNearView": 217,
    "stockCoveragePct": 2.1,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 9.9,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 28.4
   },
   "bolt-ads-0.55": {
@@ -349,7 +414,12 @@
    "sleeveStartNearestCm": 35.4,
    "rifleNearView": 217,
    "stockCoveragePct": 2.3,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 10.5,
+   "armExitR": "bottom 0.17",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 26.1
   },
   "bolt-ads-0.60": {
@@ -374,7 +444,12 @@
    "sleeveStartNearestCm": 35.2,
    "rifleNearView": 217,
    "stockCoveragePct": 2.3,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 10.9,
+   "armExitR": "bottom 0.16",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 25.1
   },
   "bolt-ads-0.65": {
@@ -399,7 +474,12 @@
    "sleeveStartNearestCm": 35.3,
    "rifleNearView": 217,
    "stockCoveragePct": 2.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 41,
+   "sightFleshPx": 41,
+   "sightFleshVertices": 15,
+   "armCoveragePct": 10.6,
+   "armExitR": "bottom 0.17",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 26
   },
   "bolt-ads-0.70": {
@@ -424,7 +504,12 @@
    "sleeveStartNearestCm": 35.7,
    "rifleNearView": 217,
    "stockCoveragePct": 2.1,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 10,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 28
   },
   "bolt-ads-0.75": {
@@ -449,7 +534,12 @@
    "sleeveStartNearestCm": 36.2,
    "rifleNearView": 217,
    "stockCoveragePct": 2,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 40,
+   "sightFleshPx": 40,
+   "sightFleshVertices": 9,
+   "armCoveragePct": 9.4,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 30.4
   },
   "bolt-ads-0.80": {
@@ -474,7 +564,12 @@
    "sleeveStartNearestCm": 36.7,
    "rifleNearView": 220,
    "stockCoveragePct": 1.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 49,
+   "sightFleshPx": 49,
+   "sightFleshVertices": 16,
+   "armCoveragePct": 9.1,
+   "armExitR": "bottom 0.21",
+   "armExitL": "bottom -0.17",
    "armNearestCm": 32.4
   },
   "bolt-ads-0.85": {
@@ -499,7 +594,12 @@
    "sleeveStartNearestCm": 36.5,
    "rifleNearView": 206,
    "stockCoveragePct": 3.4,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 1197,
+   "sightFleshPx": 1197,
+   "sightFleshVertices": 111,
+   "armCoveragePct": 10.8,
+   "armExitR": "bottom 0.30",
+   "armExitL": "bottom -0.21",
    "armNearestCm": 33
   },
   "bolt-ads-0.90": {
@@ -524,7 +624,12 @@
    "sleeveStartNearestCm": 36.6,
    "rifleNearView": 291,
    "stockCoveragePct": 5.1,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 1654,
+   "sightFleshPx": 1654,
+   "sightFleshVertices": 209,
+   "armCoveragePct": 12.1,
+   "armExitR": "bottom 0.30",
+   "armExitL": "bottom -0.25",
    "armNearestCm": 32.8
   },
   "bolt-ads-0.95": {
@@ -549,8 +654,133 @@
    "sleeveStartNearestCm": 37.8,
    "rifleNearView": 294,
    "stockCoveragePct": 6,
-   "sightOcclusion": 70,
+   "sightOcclusionPx": 1118,
+   "sightFleshPx": 1118,
+   "sightFleshVertices": 216,
+   "armCoveragePct": 10.4,
+   "armExitR": "bottom 0.27",
+   "armExitL": "bottom -0.28",
    "armNearestCm": 32.9
+  },
+  "bolt-ads-0.87": {
+   "triggerGapCm": 12.2,
+   "palmToGripCm": 9,
+   "leftPalmToForendCm": 3,
+   "handToKnobCm": 1.8,
+   "clipToHandCm": null,
+   "rightDepthCm": 1.4,
+   "rightPalmGapCm": 0.8,
+   "leftDepthCm": 1.8,
+   "leftPalmGapCm": 0.2,
+   "leftTopTipCm": 4.7,
+   "wristBendR": 143.7,
+   "authoredWristBendR": 103.2,
+   "wristBendL": 50.8,
+   "authoredWristBendL": 12.2,
+   "elbowR": 172.8,
+   "elbowL": 172.8,
+   "sleeveStartInViewR": 0,
+   "sleeveStartInViewL": 0,
+   "sleeveStartNearestCm": 36.2,
+   "rifleNearView": 225,
+   "stockCoveragePct": 4.5,
+   "sightOcclusionPx": 2087,
+   "sightFleshPx": 2087,
+   "sightFleshVertices": 169,
+   "armCoveragePct": 11.8,
+   "armExitR": "bottom 0.32",
+   "armExitL": "bottom -0.23",
+   "armNearestCm": 32.9
+  },
+  "bolt-ads-0.89": {
+   "triggerGapCm": 11.5,
+   "palmToGripCm": 8.7,
+   "leftPalmToForendCm": 3,
+   "handToKnobCm": 2.1,
+   "clipToHandCm": null,
+   "rightDepthCm": 0.6,
+   "rightPalmGapCm": 0.1,
+   "leftDepthCm": 1.8,
+   "leftPalmGapCm": 0.2,
+   "leftTopTipCm": 4.7,
+   "wristBendR": 140.2,
+   "authoredWristBendR": 98.7,
+   "wristBendL": 50.8,
+   "authoredWristBendL": 12.2,
+   "elbowR": 172.8,
+   "elbowL": 172.8,
+   "sleeveStartInViewR": 0,
+   "sleeveStartInViewL": 0,
+   "sleeveStartNearestCm": 36.3,
+   "rifleNearView": 284,
+   "stockCoveragePct": 5,
+   "sightOcclusionPx": 2088,
+   "sightFleshPx": 2088,
+   "sightFleshVertices": 205,
+   "armCoveragePct": 12.3,
+   "armExitR": "bottom 0.32",
+   "armExitL": "bottom -0.25",
+   "armNearestCm": 32.8
+  },
+  "bolt-ads-0.92": {
+   "triggerGapCm": 10.1,
+   "palmToGripCm": 7.8,
+   "leftPalmToForendCm": 3,
+   "handToKnobCm": 1.9,
+   "clipToHandCm": null,
+   "rightDepthCm": 0.9,
+   "rightPalmGapCm": 0.5,
+   "leftDepthCm": 1.8,
+   "leftPalmGapCm": 0.2,
+   "leftTopTipCm": 4.7,
+   "wristBendR": 132,
+   "authoredWristBendR": 90.2,
+   "wristBendL": 50.8,
+   "authoredWristBendL": 12.2,
+   "elbowR": 172.8,
+   "elbowL": 172.8,
+   "sleeveStartInViewR": 0,
+   "sleeveStartInViewL": 0,
+   "sleeveStartNearestCm": 37.1,
+   "rifleNearView": 294,
+   "stockCoveragePct": 5.9,
+   "sightOcclusionPx": 1299,
+   "sightFleshPx": 1299,
+   "sightFleshVertices": 216,
+   "armCoveragePct": 11.8,
+   "armExitR": "bottom 0.28",
+   "armExitL": "bottom -0.27",
+   "armNearestCm": 32.6
+  },
+  "bolt-ads-0.97": {
+   "triggerGapCm": 6.3,
+   "palmToGripCm": 6.4,
+   "leftPalmToForendCm": 3,
+   "handToKnobCm": 2.9,
+   "clipToHandCm": null,
+   "rightDepthCm": 1.6,
+   "rightPalmGapCm": 0.1,
+   "leftDepthCm": 1.8,
+   "leftPalmGapCm": 0.2,
+   "leftTopTipCm": 4.7,
+   "wristBendR": 113.3,
+   "authoredWristBendR": 78.4,
+   "wristBendL": 50.8,
+   "authoredWristBendL": 12.2,
+   "elbowR": 140.9,
+   "elbowL": 172.8,
+   "sleeveStartInViewR": 0,
+   "sleeveStartInViewL": 0,
+   "sleeveStartNearestCm": 37.9,
+   "rifleNearView": 294,
+   "stockCoveragePct": 6.1,
+   "sightOcclusionPx": 1106,
+   "sightFleshPx": 1106,
+   "sightFleshVertices": 216,
+   "armCoveragePct": 8.8,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.28",
+   "armNearestCm": 32.1
   },
   "bolt-hip-0.05": {
    "triggerGapCm": 6.2,
@@ -574,7 +804,12 @@
    "sleeveStartNearestCm": 39.7,
    "rifleNearView": 203,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.5,
+   "armExitR": "right 0.34",
+   "armExitL": "bottom -0.10",
    "armNearestCm": 39.2
   },
   "bolt-hip-0.10": {
@@ -599,7 +834,12 @@
    "sleeveStartNearestCm": 39.8,
    "rifleNearView": 184,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.5,
+   "armExitR": "right 0.35",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 39.7
   },
   "bolt-hip-0.15": {
@@ -624,7 +864,12 @@
    "sleeveStartNearestCm": 39.8,
    "rifleNearView": 166,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 2.2,
+   "armExitR": "bottom 0.01",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 35.2
   },
   "bolt-hip-0.20": {
@@ -649,7 +894,12 @@
    "sleeveStartNearestCm": 39.3,
    "rifleNearView": 163,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 4.6,
+   "armExitR": "bottom 0.07",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 34.3
   },
   "bolt-hip-0.25": {
@@ -674,7 +924,12 @@
    "sleeveStartNearestCm": 39.1,
    "rifleNearView": 154,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 5.3,
+   "armExitR": "bottom 0.09",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 34.5
   },
   "bolt-hip-0.30": {
@@ -699,7 +954,12 @@
    "sleeveStartNearestCm": 38.5,
    "rifleNearView": 153,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 6.7,
+   "armExitR": "bottom 0.14",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 34.3
   },
   "bolt-hip-0.35": {
@@ -724,7 +984,12 @@
    "sleeveStartNearestCm": 38,
    "rifleNearView": 162,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 7.1,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 33.8
   },
   "bolt-hip-0.40": {
@@ -749,7 +1014,12 @@
    "sleeveStartNearestCm": 37.9,
    "rifleNearView": 183,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 7.2,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 33.2
   },
   "bolt-hip-0.45": {
@@ -774,7 +1044,12 @@
    "sleeveStartNearestCm": 37.4,
    "rifleNearView": 207,
    "stockCoveragePct": 0.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 7.5,
+   "armExitR": "bottom 0.17",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 31.3
   },
   "bolt-hip-0.50": {
@@ -799,7 +1074,12 @@
    "sleeveStartNearestCm": 36.9,
    "rifleNearView": 203,
    "stockCoveragePct": 1.3,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 8,
+   "armExitR": "bottom 0.16",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 28.7
   },
   "bolt-hip-0.55": {
@@ -824,7 +1104,12 @@
    "sleeveStartNearestCm": 36.4,
    "rifleNearView": 194,
    "stockCoveragePct": 1.4,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 8.5,
+   "armExitR": "bottom 0.14",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 26.5
   },
   "bolt-hip-0.60": {
@@ -849,7 +1134,12 @@
    "sleeveStartNearestCm": 36.2,
    "rifleNearView": 146,
    "stockCoveragePct": 1.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 8.7,
+   "armExitR": "bottom 0.13",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 25.5
   },
   "bolt-hip-0.65": {
@@ -874,7 +1164,12 @@
    "sleeveStartNearestCm": 36.3,
    "rifleNearView": 195,
    "stockCoveragePct": 1.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 8.6,
+   "armExitR": "bottom 0.14",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 26.4
   },
   "bolt-hip-0.70": {
@@ -899,7 +1194,12 @@
    "sleeveStartNearestCm": 36.8,
    "rifleNearView": 203,
    "stockCoveragePct": 1.3,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 8.1,
+   "armExitR": "bottom 0.16",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 28.4
   },
   "bolt-hip-0.75": {
@@ -924,7 +1224,12 @@
    "sleeveStartNearestCm": 37.3,
    "rifleNearView": 207,
    "stockCoveragePct": 1.3,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 7.7,
+   "armExitR": "bottom 0.17",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 30.7
   },
   "bolt-hip-0.80": {
@@ -949,7 +1254,12 @@
    "sleeveStartNearestCm": 37.8,
    "rifleNearView": 204,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 7.3,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 32.7
   },
   "bolt-hip-0.85": {
@@ -974,7 +1284,12 @@
    "sleeveStartNearestCm": 37.9,
    "rifleNearView": 162,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 7.2,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 33.6
   },
   "bolt-hip-0.90": {
@@ -999,7 +1314,12 @@
    "sleeveStartNearestCm": 38.6,
    "rifleNearView": 157,
    "stockCoveragePct": 0.6,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 5.8,
+   "armExitR": "bottom 0.11",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 34.5
   },
   "bolt-hip-0.95": {
@@ -1024,7 +1344,12 @@
    "sleeveStartNearestCm": 39.8,
    "rifleNearView": 152,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 3.4,
+   "armExitR": "bottom 0.05",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 34.3
   },
   "reload-0.00": {
@@ -1049,7 +1374,12 @@
    "sleeveStartNearestCm": 40.3,
    "rifleNearView": 152,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.4,
+   "armExitR": "right 0.36",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 39.8
   },
   "reload-0.05": {
@@ -1074,7 +1404,12 @@
    "sleeveStartNearestCm": 47.3,
    "rifleNearView": 92,
    "stockCoveragePct": 8.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 565,
+   "sightFleshPx": 565,
+   "sightFleshVertices": 97,
+   "armCoveragePct": 6.9,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.22",
    "armNearestCm": 45.2
   },
   "reload-0.10": {
@@ -1099,7 +1434,12 @@
    "sleeveStartNearestCm": 52,
    "rifleNearView": 125,
    "stockCoveragePct": 5.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 10.1,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 48.7
   },
   "reload-0.15": {
@@ -1124,7 +1464,12 @@
    "sleeveStartNearestCm": 50.6,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 8.7,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 46.7
   },
   "reload-0.20": {
@@ -1149,7 +1494,12 @@
    "sleeveStartNearestCm": 47.2,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2889,
+   "sightFleshPx": 2028,
+   "sightFleshVertices": 258,
+   "armCoveragePct": 8.3,
+   "armExitR": "bottom 0.23",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 39.7
   },
   "reload-0.25": {
@@ -1174,7 +1524,12 @@
    "sleeveStartNearestCm": 48.7,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 3105,
+   "sightFleshPx": 2262,
+   "sightFleshVertices": 273,
+   "armCoveragePct": 7.8,
+   "armExitR": "bottom 0.22",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 43.9
   },
   "reload-0.30": {
@@ -1199,7 +1554,12 @@
    "sleeveStartNearestCm": 55.7,
    "rifleNearView": 125,
    "stockCoveragePct": 5.9,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2524,
+   "sightFleshPx": 1618,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 8,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.5
   },
   "reload-0.35": {
@@ -1224,7 +1584,12 @@
    "sleeveStartNearestCm": 55.8,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 7.9,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.5
   },
   "reload-0.40": {
@@ -1249,7 +1614,12 @@
    "sleeveStartNearestCm": 55.6,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 7.9,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.3
   },
   "reload-0.45": {
@@ -1274,7 +1644,12 @@
    "sleeveStartNearestCm": 55.3,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 7.8,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55
   },
   "reload-0.50": {
@@ -1299,7 +1674,12 @@
    "sleeveStartNearestCm": 55.1,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2540,
+   "sightFleshPx": 1641,
+   "sightFleshVertices": 225,
+   "armCoveragePct": 7.7,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.9
   },
   "reload-0.55": {
@@ -1324,7 +1704,12 @@
    "sleeveStartNearestCm": 54.9,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2621,
+   "sightFleshPx": 1722,
+   "sightFleshVertices": 250,
+   "armCoveragePct": 7.7,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.7
   },
   "reload-0.60": {
@@ -1349,7 +1734,12 @@
    "sleeveStartNearestCm": 54.2,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2638,
+   "sightFleshPx": 1739,
+   "sightFleshVertices": 249,
+   "armCoveragePct": 7.6,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.1
   },
   "reload-0.65": {
@@ -1374,7 +1764,12 @@
    "sleeveStartNearestCm": 50.7,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 9.9,
+   "armExitR": "bottom 0.16",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 46.8
   },
   "reload-0.70": {
@@ -1399,7 +1794,12 @@
    "sleeveStartNearestCm": 52.4,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 10,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 48.9
   },
   "reload-0.75": {
@@ -1424,7 +1824,12 @@
    "sleeveStartNearestCm": 54.1,
    "rifleNearView": 125,
    "stockCoveragePct": 5.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 9.6,
+   "armExitR": "bottom 0.20",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 50.6
   },
   "reload-0.80": {
@@ -1449,7 +1854,12 @@
    "sleeveStartNearestCm": 53.1,
    "rifleNearView": 127,
    "stockCoveragePct": 5.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2547,
+   "sightFleshPx": 1626,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 8,
+   "armExitR": "bottom 0.12",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 50.5
   },
   "reload-0.85": {
@@ -1474,7 +1884,12 @@
    "sleeveStartNearestCm": 51.8,
    "rifleNearView": 135,
    "stockCoveragePct": 7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 1642,
+   "sightFleshPx": 1167,
+   "sightFleshVertices": 166,
+   "armCoveragePct": 7.1,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.33",
    "armNearestCm": 45.5
   },
   "reload-0.90": {
@@ -1499,7 +1914,12 @@
    "sleeveStartNearestCm": 49.2,
    "rifleNearView": 74,
    "stockCoveragePct": 8.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 517,
+   "sightFleshPx": 517,
+   "sightFleshVertices": 79,
+   "armCoveragePct": 5.1,
+   "armExitR": "bottom 0.13",
+   "armExitL": "bottom -0.20",
    "armNearestCm": 41.8
   },
   "reload-0.95": {
@@ -1524,7 +1944,12 @@
    "sleeveStartNearestCm": 41.7,
    "rifleNearView": 110,
    "stockCoveragePct": 1.9,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 75,
+   "sightFleshPx": 75,
+   "sightFleshVertices": 13,
+   "armCoveragePct": 2.8,
+   "armExitR": "bottom 0.03",
+   "armExitL": "bottom -0.12",
    "armNearestCm": 37.5
   },
   "reload-1.00": {
@@ -1549,7 +1974,12 @@
    "sleeveStartNearestCm": 40.3,
    "rifleNearView": 152,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.4,
+   "armExitR": "right 0.36",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 39.8
   },
   "single-0.0": {
@@ -1574,7 +2004,12 @@
    "sleeveStartNearestCm": 40.3,
    "rifleNearView": 152,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.4,
+   "armExitR": "right 0.36",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 39.8
   },
   "single-0.1": {
@@ -1599,7 +2034,12 @@
    "sleeveStartNearestCm": 52,
    "rifleNearView": 125,
    "stockCoveragePct": 5.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 10.1,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 48.7
   },
   "single-0.2": {
@@ -1624,7 +2064,12 @@
    "sleeveStartNearestCm": 47.2,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2889,
+   "sightFleshPx": 2028,
+   "sightFleshVertices": 258,
+   "armCoveragePct": 8.3,
+   "armExitR": "bottom 0.23",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 39.7
   },
   "single-0.3": {
@@ -1649,7 +2094,12 @@
    "sleeveStartNearestCm": 55.8,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 8,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.6
   },
   "single-0.4": {
@@ -1674,7 +2124,12 @@
    "sleeveStartNearestCm": 55.6,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 7.9,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.3
   },
   "single-0.5": {
@@ -1699,7 +2154,12 @@
    "sleeveStartNearestCm": 55.1,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2540,
+   "sightFleshPx": 1641,
+   "sightFleshVertices": 225,
+   "armCoveragePct": 7.7,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.9
   },
   "single-0.6": {
@@ -1724,7 +2184,12 @@
    "sleeveStartNearestCm": 54.2,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2638,
+   "sightFleshPx": 1739,
+   "sightFleshVertices": 249,
+   "armCoveragePct": 7.6,
+   "armExitR": "bottom 0.18",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 55.1
   },
   "single-0.7": {
@@ -1749,7 +2214,12 @@
    "sleeveStartNearestCm": 52.4,
    "rifleNearView": 125,
    "stockCoveragePct": 5.8,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 10,
+   "armExitR": "bottom 0.19",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 48.9
   },
   "single-0.8": {
@@ -1774,7 +2244,12 @@
    "sleeveStartNearestCm": 53.3,
    "rifleNearView": 125,
    "stockCoveragePct": 5.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 2507,
+   "sightFleshPx": 1608,
+   "sightFleshVertices": 220,
+   "armCoveragePct": 7.9,
+   "armExitR": "bottom 0.12",
+   "armExitL": "bottom -0.39",
    "armNearestCm": 50.7
   },
   "single-0.9": {
@@ -1799,7 +2274,12 @@
    "sleeveStartNearestCm": 49.2,
    "rifleNearView": 74,
    "stockCoveragePct": 8.5,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 517,
+   "sightFleshPx": 517,
+   "sightFleshVertices": 79,
+   "armCoveragePct": 5.1,
+   "armExitR": "bottom 0.13",
+   "armExitL": "bottom -0.20",
    "armNearestCm": 41.8
   },
   "single-1.0": {
@@ -1824,7 +2304,12 @@
    "sleeveStartNearestCm": 40.3,
    "rifleNearView": 152,
    "stockCoveragePct": 0.7,
-   "sightOcclusion": 0,
+   "sightOcclusionPx": 0,
+   "sightFleshPx": 0,
+   "sightFleshVertices": 0,
+   "armCoveragePct": 1.4,
+   "armExitR": "right 0.36",
+   "armExitL": "bottom -0.09",
    "armNearestCm": 39.8
   }
  }
