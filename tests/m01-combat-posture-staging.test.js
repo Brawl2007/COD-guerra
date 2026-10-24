@@ -9,6 +9,7 @@ import {aimPoint} from '../src/game/m01-aim.js';
 import {actorHitboxes,eyePosition,traceShot} from '../src/world/spatial.js';
 import {actorPoseName,actorPose} from '../src/render/m01-actor-pose.js';
 import {M01Characters} from '../src/render/m01-characters.js';
+import {SECTION as SECTION_PLAN} from '../src/game/m01-section.js';
 import {buildTerrainEnvelope} from '../src/render/m01-terrain-envelope.js';
 import {EYE_HEIGHT} from '../src/config.js';
 import {route} from './helpers/m01-route.js';
@@ -209,7 +210,7 @@ test('renderer: Kowal kneels behind the sandbags (rkm crouched idle) and is draw
 // ---------------------------------------------------------------- the real route, per seed
 const sec=t=>seconds(t);
 function stagedRoute(seed,support=false){
-  const st={platoonKneel:0,platoonTurned:0,gateKneel:0,gateUp:0,gateShots:0,gateShotsUp:0,attritionGate:0,sectionKneel:0,kowalShots:0,
+  const st={platoonKneel:0,platoonTurned:0,gateKneel:0,gateUp:0,gateShots:0,gateShotsUp:0,attritionGate:0,sectionKneel:0,sectionUp:0,kowalShots:0,
     sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,hitboxChecks:0},deaths={},saves=[];
   let holdTicks=0,withdrawFlag=null,seenRounds=new Set();
   let lastClock=0;const lastSup=new Map();   // suppression of every German at the end of the previous tick
@@ -262,8 +263,13 @@ function stagedRoute(seed,support=false){
         // the post he holds (M01Simulation.kowalCovers, squadCoverFire); before that change he never fired again after 06:10.
         const rkm=PLAN.squad.rkm,up=id===rkm.actor&&(sim.consumedEvent(E('train963_arrives'))&&!sim.consumedEvent(E('east_demolition'))||sim.kowalCovers?.())&&
           (a.cooldown<=rkm.riseBeforeSec||clock-a.firedAt<rkm.holdAfterSec);
-        assert.equal(a.crouched,!up,`${id} ${up?'up for the rkm':'kneels at his slot under fire'}`);assert.equal(a.posture,up?'stand':'crouch',`${id} posture`);
-        if(up)st.kowalUp++;else st.sectionKneel++;
+        // 2026-10-24 (R2-a, golden amendment 17, owner order «aliados e inimigos mostram pouca inteligência»): the riflemen of the section (Pawlak, the platoon voice, Bąk) now answer a callout
+        // (m01-section.js). A man rises over the sandbags only while a look of the section is active, a shot of his is due within fire.riseSec or he fired within fire.holdSec; the sergeant and
+        // Kowal's burst cycle are untouched. The property this test pins is unchanged: nobody stands at the squad post unless something asks him to, and only for that long.
+        const q=sim.timers.section,asked=Boolean(q)&&id!==rkm.actor&&id!=='marek_zielinski'&&
+          (q.hold[id]?.k==='look'||q.shots.some(s=>s.id===id&&s.at-clock<=SECTION_PLAN.fire.riseSec)||clock-a.firedAt<SECTION_PLAN.fire.holdSec);
+        assert.equal(a.crouched,!(up||asked),`${id} ${up?'up for the rkm':asked?'up for the section':'kneels at his slot under fire'}`);assert.equal(a.posture,up||asked?'stand':'crouch',`${id} posture`);
+        if(up)st.kowalUp++;else if(asked)st.sectionUp++;else st.sectionKneel++;
       }else if(d2(a,slot)>=1&&a.alive&&a.active&&!a.carriedBy&&a.state!=='WOUNDED'&&!a.task&&a.motion.speed>0)assert.equal(a.crouched,false,`${id} stands up to move`);
     }
     for(const e of events)if(e.type==='npc-shot'&&e.weapon==='rkm_wz28'){
@@ -320,6 +326,8 @@ for(const seed of SEEDS)test(`staged route seed ${seed}: kneeling platoon, gates
   assert.ok(st.sapperLag<=2*SAPPERS.length,`a sapper changes posture at most one tick late at each of the two transitions (${st.sapperLag})`);
   assert.ok(st.sapperWest>0&&st.kowalUp>0,JSON.stringify(st));
   assert.ok(st.sectionKneel>1000&&st.kowalShots>10&&st.sapperCable>100&&st.sapperWork>100&&st.sapperProneWait>0&&st.sapperProneSuppressed>0,JSON.stringify(st));
+  // R2-a (2026-10-24): the section's riflemen do rise now and then (a look, an answer) and still kneel behind the sandbags most of the time (12 seeds: up for 3 to 9 % as many man-ticks as they kneel).
+  assert.ok(st.sectionUp>100&&st.sectionKneel>4*st.sectionUp,JSON.stringify(st));
   // The yaw stage is presentation only: forcing the plain body turn from saves inside the hold changes no gameplay byte, event or draw.
   assert.ok(saves.length>=2);
   for(const save of saves){

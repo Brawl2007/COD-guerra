@@ -15,6 +15,7 @@ import definition from '../../missions/m01-tczew/mission.json' with { type: 'jso
 import mapLayout from '../../missions/m01-tczew/map-layout.json' with { type: 'json' };
 import { HOLD_AREA, WEST_SAFE_X } from './m01-pacing.js';
 import { escorted } from './m01-corridor.js';
+import { SECTION_CALLOUT_KINDS, SECTION_ORDER_KINDS } from './m01-audio-events.js';
 
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
@@ -24,7 +25,8 @@ const gateIndex=id=>Number(id.slice(id.lastIndexOf('_')+1));
 export const CKM_BELT_FULL=330,CKM_BURST_ROUNDS_FULL=8;
 const RECENT_MAX=8;
 export const TRIGGERS=Object.freeze(['poll','coverRotation','guide','squadMove','round-impact','ally-fire','player-hit','player-shot','reload','enemy_down_by_player','enemy-fire',
-  'ckm_stoppage','ckm_stoppage_cleared']);   // (the last two: the ckm gun stops and is cleared, 2026-10-22; lines 114 and 115)
+  'ckm_stoppage','ckm_stoppage_cleared',   // (these two: the ckm gun stops and is cleared, 2026-10-22; lines 114 and 115)
+  'section-callout','section-order']);   // (these two: a man of the section sees something new, the sergeant orders; R2-a, 2026-10-24, src/game/m01-section.js; lines 164 on)
 
 /** The saved record (timers.barks). last, recent: when the last line was queued and the last RECENT_MAX ones, scripted or reactive alike (the gap and the 60 s budget count all voices);
  *  at: when each watched line was last said; n: how often each rule line was said; g: per variant group [next member, when the group last spoke];
@@ -87,6 +89,14 @@ const CONDITIONS={
   hit:()=>[0,(s,c)=>c.event.hit===true,['player-shot']],
   by:id=>[0,(s,c)=>c.event.by===id,['ally-fire']],
   fireFrom:(name,k)=>{const z=k.zone(name);return [0,(s,c)=>inside(c.event.origin,z),['enemy-fire']];},
+  // R2-a: the call of a man of the section (section-callout) and the sergeant's order (section-order), read from the event that fired the rule. `side` is the side of the gates as the player
+  // sees them (null when it does not apply: a rule that asks for `null` wants a call with no side); `by` is the caller, one id or a list.
+  callout:({kind,side,by},k)=>{
+    if(!SECTION_CALLOUT_KINDS.includes(kind))k.fail(`callout.kind ${kind}`);
+    return [0,(s,c)=>{const e=c.event;return e.kind===kind&&(side===undefined||e.side===side)&&(by===undefined||(Array.isArray(by)?by.includes(e.by):e.by===by));},['section-callout']];},
+  order:({kind,side},k)=>{
+    if(!SECTION_ORDER_KINDS.includes(kind))k.fail(`order.kind ${kind}`);
+    return [0,(s,c)=>c.event.kind===kind&&(side===undefined||c.event.side===side),['section-order']];},
   downGroup:g=>[0,(s,c)=>c.event.group===g,['enemy_down_by_player']],
   downGate:()=>[0,(s,c)=>gateIndex(c.event.id)<14&&c.event.id.startsWith('de_east_'),['enemy_down_by_player']],
   everyNth:n=>{NEEDS.hits=true;return [0,(s,c)=>(c.hitN-1)%n===0,['player-shot']];},
