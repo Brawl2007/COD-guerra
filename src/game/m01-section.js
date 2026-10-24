@@ -58,6 +58,9 @@ export const SECTION=Object.freeze({
     Object.freeze({id:'trench_mid',node:'cv_trench_1',slots:Object.freeze({staszek_pawlak:Object.freeze([-47.2,13.9,0]),east_platoon_voice:Object.freeze([-47.0,16.2,0])})}),
     Object.freeze({id:'deck_post',node:null,slots:Object.freeze({staszek_pawlak:Object.freeze([20.5,41.3,0]),east_platoon_voice:Object.freeze([17.2,41.5,0])})})]),
   shiftPosts:Object.freeze([1,2]),deckPost:3,
+  // The pocket of the squad post (see gateGoal): a gate waypoint north of the wall's end for each man (1.5 m apart: two men sent through one waypoint arrive together and stand inside each other, seed 1
+  // at 05:55), and the thresholds that decide when a man goes through it.
+  pocket:Object.freeze({gates:Object.freeze({staszek_pawlak:Object.freeze({x:-70.2,z:25.7}),east_platoon_voice:Object.freeze({x:-71.7,z:26.3})}),westX:-70,eastX:-69,releaseM:1}),
 });
 const SEEN_KEY=/^(mg:de_east_[01]|gate:[NS]|dike|deck:[a-z]+|pinned:[a-z_]+|casualty:[a-z0-9_]+)$/;
 const KINDS=new Set(SECTION_CALLOUT_KINDS),ORDERS=new Set(SECTION_ORDER_KINDS);
@@ -331,12 +334,25 @@ export function sectionWalk(sim,q,a,dt,ctx){
   if(p.moving){
     if(dist(a,slot)<SQUAD.arriveM||sim.clock-p.since>=SECTION.stallSec){
       p.moving=false;p.since=sim.clock;a.target=null;delete a.nav;a.facing=slot.facing;a.state='GUARD';
-      q.say??={node:p.k===0?'arrive_home':p.k===SECTION.deckPost?'arrive_deck':'arrive_trench',at:sim.clock};
-    }else{a.crouched=false;a.target=slot;sim.moveActor(a,slot,dt,SQUAD.pace);return true;}
+      q.say={node:p.k===0?'arrive_home':p.k===SECTION.deckPost?'arrive_deck':'arrive_trench',at:sim.clock};
+    }else{const goal=gateGoal(a,slot);a.crouched=false;a.target=goal;sim.moveActor(a,goal,dt,SQUAD.pace);return true;}
   }
   if(p.k===0)return false;   // at the squad post: the T38 rule of the section (stageSection) is his posture
-  if(dist(a,slot)>=.8){a.crouched=false;a.target=slot;sim.moveActor(a,slot,dt);return true;}
+  if(dist(a,slot)>=.8){const goal=gateGoal(a,slot);a.crouched=false;a.target=goal;sim.moveActor(a,goal,dt);return true;}
   a.target=null;a.state='GUARD';a.crouched=true;return true;
+}
+/**
+ * The squad post is a pocket: the sandbag wall of cv_squad_post (x -70.45..-69.55, z 20.5..23.5) shuts its T38 slots in from the east and the huts at z 17-18 and 20 from the south, so the way in and
+ * out is round the north end of the wall, past Kowal's slot. A man sent straight at the far side slides along the corner and the audit counts the graze as clipping (seed 3, a return from the
+ * trench): the walk to or from the pocket goes through a gate waypoint with clearance. It reads only where the man is and where he is going (no state): from the pocket to the east, out by the gate
+ * first; from the east into the pocket, in by the gate first.
+ */
+function gateGoal(a,slot){
+  const g=SECTION.pocket,gate=g.gates[a.id];
+  // (walkStraight stops 0.8 m short of any target, so a man counts as through the gate when he is within releaseM = 1 m of it; the rules read only where he is and where he goes)
+  if(slot.x<gate.x&&a.x>gate.x+g.releaseM)return gate;                        // into the pocket from the east: round the north end first
+  if(slot.x>g.eastX&&a.x<g.westX&&a.z<gate.z-g.releaseM)return gate;          // out of the pocket to the east: north first
+  return slot;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -427,5 +443,7 @@ export function sectionDataErrors(stageSlots,{blockedAt,heightAt,hasNode}){
     if(post.node&&!hasNode(post.node))errors.push(`${post.id}: unknown cover node ${post.node}`);
   });
   if(SECTION.shiftPosts.some(k=>!SECTION.posts[k]||k===SECTION.deckPost)||!SECTION.posts[SECTION.deckPost])errors.push('shiftPosts / deckPost');
+  for(const id of SECTION.pair){const g=SECTION.pocket.gates[id];if(!g)errors.push(`${id}: no gate`);else if(blockedAt(g.x,g.z,.35,heightAt(g.x,g.z)))errors.push(`${id}: the gate of the pocket is inside a solid`);}
+  const [g1,g2]=SECTION.pair.map(id=>SECTION.pocket.gates[id]);if(g1&&g2&&Math.hypot(g1.x-g2.x,g1.z-g2.z)<1.2)errors.push('the two gates are closer than 1.2 m');
   return errors;
 }
