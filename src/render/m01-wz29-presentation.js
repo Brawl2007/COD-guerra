@@ -156,7 +156,15 @@ export function placeWz29(root,weapon,pose){
  * handle and knob stay). `depth` is the distance from the eye to the rear end of the receiver ring (weapon z = .035) less 5 mm, so the cut falls right behind the ring,
  * which hides it. The uniform carries the clip distance in metres: 0 at the hip, `depth` exactly on the sights, eased with the aim like everything else.
  */
-export const FACE_CLIP=Object.freeze({depth:WZ29_VISUAL.rearDepth+WZ29_VISUAL.rear[2]-.035-.005});
+export const FACE_CLIP=Object.freeze({depth:WZ29_VISUAL.rearDepth+WZ29_VISUAL.rear[2]-.035-.005,engage:Object.freeze([.35,.75]),strokeFade:Object.freeze([.4,.8])});
+/**
+ * Weight (0..1) of the head clip: it engages only when the rifle is nearly at the eye (the aim ease between `engage`), so that the stock is never sawn through while it
+ * travels up from the hip, and it is gone again while the bolt stroke has the rifle off the eye (stroke between `strokeFade`), while a reload holds it across the body and
+ * while a wall has it lowered: a straight cut through wood seen from the side is the one thing the clip must never show. `aim` is the stroke-reduced aim progress the pose uses.
+ */
+export function faceClipWeight(aim,stroke=0,reload=0,wall=0){
+  return smooth(adsEase(aim),FACE_CLIP.engage[0],FACE_CLIP.engage[1])*(1-smooth(stroke,FACE_CLIP.strokeFade[0],FACE_CLIP.strokeFade[1]))*(1-reload)*(1-adsEase(wall));
+}
 /** Aimed-down-sights shade of the stock wood: strength (0..1 of the light removed) and the eye distances (m) where it is full / gone. */
 export const STOCK_SHADE=Object.freeze({strength:.6,near:.56,far:.68});
 export function riflePresentationMaterial(source,boltBone=-1){

@@ -1,0 +1,137 @@
+{
+ "kind": "LOCAL Chromium/SwiftShader, real M01View + M01Simulation, 0.05 s steps, medium quality",
+ "viewport": [
+  1280,
+  720
+ ],
+ "log": [
+  {
+   "name": "01-hip-idle",
+   "clock": 1.05,
+   "state": "READY",
+   "mag": 5,
+   "aiming": false,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 0,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 70
+   }
+  },
+  {
+   "name": "02-ads-transition-mid",
+   "clock": 1.2,
+   "state": "READY",
+   "mag": 5,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 0.5000000000000004,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 59
+   }
+  },
+  {
+   "name": "03-ads-settled",
+   "clock": 1.65,
+   "state": "READY",
+   "mag": 5,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "04a-fire-bolt-ads-0.20s",
+   "clock": 1.9,
+   "state": "BOLT_CYCLE",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.22285713468279156,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0.6684,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "04b-fire-bolt-ads-0.45s",
+   "clock": 2.15,
+   "state": "BOLT_CYCLE",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.5014285530362805,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 1,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "04c-fire-bolt-ads-0.70s",
+   "clock": 2.4,
+   "state": "BOLT_CYCLE",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "fire_bolt",
+   "clipTime": 0.7799999713897691,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 1,
+    "mechanical": 0.0529,
+    "wallLower": 0,
+    "fov": 48
+   }
+  },
+  {
+   "name": "08-ads-walk",
+   "clock": 3.15,
+   "state": "READY",
+   "mag": 4,
+   "aiming": true,
+   "sprinting": false,
+   "clip": "aim",
+   "clipTime": 0,
+   "aim": 1,
+   "run": 0,
+   "presentation": {
+    "boltStroke": 0,
+    "mechanical": 0,
+    "wallLower": 0,
+    "fov": 48
+   }
+  }
+ ],
+ "errors": [],
+ "failed": []
+}
