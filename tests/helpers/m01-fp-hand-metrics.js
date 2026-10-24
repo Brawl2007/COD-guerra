@@ -287,14 +287,33 @@ export class HandRig {
     this._post??=new THREE.Vector2();return this._post.set(pt.x,pt.y);
   }
   /**
-   * Drawn vertices of the given meshes that fall inside the sight window and in front of the front sight (nearer than 1.2 m): they would sit
-   * in the sight picture. Default meshes: skin, sleeves, cuffs, sleeve caps and straps. `['fp_hands']` is the flesh only.
+   * Pixels (1280 x 720 frame) of the sight window that the triangles of the given meshes cover, for parts nearer than the front sight (1.2 m):
+   * what would really sit over the sight picture. Counted on the triangles, not the vertices (a finger is two vertices and a hundred pixels).
+   * Default meshes: skin, sleeves, cuffs, sleeve caps and straps. `['fp_hands']` is the flesh only. The window is 96 x 72 px.
    */
   sightWindowOcclusion(meshes=ARM_MESHES,{x=SIGHT_WINDOW.x,y=SIGHT_WINDOW.y}={}){
+    this.root.updateMatrixWorld(true);const post=this.frontPostNdc(),cols=Math.round(x*640*2),rows=Math.round(y*360*2),cells=new Uint8Array(cols*rows);
+    const P=[[0,0],[0,0],[0,0]],D=[0,0,0];
+    for(const name of meshes){
+      const mesh=this.root.getObjectByName(name);if(!mesh?.visible)continue;const pos=mesh.geometry.getAttribute('position'),idx=mesh.geometry.index.array;
+      const buf=new Float32Array(pos.count*3);this.skinned(mesh,buf,'view');
+      for(let t=0;t<idx.length;t+=3){
+        let ok=true;
+        for(let k=0;k<3;k++){
+          const i=idx[t+k];pt.set(buf[i*3],buf[i*3+1],buf[i*3+2]);D[k]=-pt.z;if(!(D[k]>this.camera.near&&D[k]<1.2)){ok=false;break;}
+          pt.applyMatrix4(this.camera.projectionMatrix);P[k][0]=(pt.x-post.x+x)/(2*x)*cols;P[k][1]=(pt.y-post.y+y)/(2*y)*rows;
+        }
+        if(ok)rasterTriangle(cells,P,cols,rows);
+      }
+    }
+    let n=0;for(const v of cells)n+=v;return n;
+  }
+  /** Drawn vertices of the given meshes inside the sight window (the older, coarser count; kept next to the pixel count). */
+  sightWindowVertices(meshes=ARM_MESHES,{x=SIGHT_WINDOW.x,y=SIGHT_WINDOW.y}={}){
     this.root.updateMatrixWorld(true);let count=0;const post=this.frontPostNdc(),cx=post.x,cy=post.y;
     for(const name of meshes){
       const mesh=this.root.getObjectByName(name);if(!mesh?.visible)continue;const pos=mesh.geometry.getAttribute('position');
-      for(const i of new Set(mesh.geometry.index.array)){   // only vertices a triangle really draws
+      for(const i of new Set(mesh.geometry.index.array)){
         pt.fromBufferAttribute(pos,i);if(mesh.isSkinnedMesh)mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld);
         const depth=-pt.z;if(!(depth>this.camera.near&&depth<1.2))continue;
         pt.applyMatrix4(this.camera.projectionMatrix);if(Math.abs(pt.x-cx)<=x&&Math.abs(pt.y-cy)<=y)count++;
@@ -351,7 +370,7 @@ export class HandRig {
       knobToIndexTip:rIndexTip.distanceTo(knob),knobToThumbTip:rThumbTip.distanceTo(knob),
       leftTopTip:Math.max(...lTips.map(t=>t.y)),
       wristBendR:this.wristBend('r'),wristBendL:this.wristBend('l'),elbowR:this.elbowAngle('r'),elbowL:this.elbowAngle('l'),
-      rifleNearView:this.rifleNearView(),stockCoverage:this.rifleCoverage(Infinity,{minZ:.06}),sightOcclusion:this.sightWindowOcclusion(),sightFlesh:this.sightWindowOcclusion(['fp_hands']),armCoverage:this.armCoverage(),armNearest:this.armNearestDepth(),
+      rifleNearView:this.rifleNearView(),stockCoverage:this.rifleCoverage(Infinity,{minZ:.06}),sightOcclusion:this.sightWindowOcclusion(),sightFlesh:this.sightWindowOcclusion(['fp_hands']),sightFleshVertices:this.sightWindowVertices(['fp_hands']),armCoverage:this.armCoverage(),armNearest:this.armNearestDepth(),
       rightPalm:this.palm('r').toArray(),knob:knob.toArray(),indexTip:rIndexTip.toArray(),thumbTip:rThumbTip.toArray(),
     };
     const sr=this.sleeveStartInView('r'),sl=this.sleeveStartInView('l');

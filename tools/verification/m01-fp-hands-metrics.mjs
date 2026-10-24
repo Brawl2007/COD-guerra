@@ -19,7 +19,7 @@ const table=Object.fromEntries(Object.entries(rows).map(([name,m])=>[name,{
   triggerGapCm:cm(m.triggerGap),palmToGripCm:cm(m.rightPalmToGrip),leftPalmToForendCm:cm(m.leftPalmToForend),handToKnobCm:cm(m.handToKnob),
   clipToHandCm:m.clipToRightHand===undefined?null:cm(m.clipToRightHand),rightDepthCm:cm(m.right.depth),rightPalmGapCm:cm(m.right.palmGap),leftDepthCm:cm(m.left.depth),leftPalmGapCm:cm(m.left.palmGap),leftTopTipCm:cm(m.leftTopTip),
   wristBendR:deg(m.wristBendR),authoredWristBendR:deg(m.authoredWristBendR),wristBendL:deg(m.wristBendL),authoredWristBendL:deg(m.authoredWristBendL),
-  elbowR:deg(m.elbowR),elbowL:deg(m.elbowL),sleeveStartInViewR:m.sleeveStartInViewR,sleeveStartInViewL:m.sleeveStartInViewL,sleeveStartNearestCm:cm(m.sleeveStartNearest),rifleNearView:m.rifleNearView,stockCoveragePct:+(m.stockCoverage*100).toFixed(1),sightOcclusion:m.sightOcclusion,sightFlesh:m.sightFlesh,armCoveragePct:+(m.armCoverage*100).toFixed(1),armNearestCm:cm(m.armNearest),
+  elbowR:deg(m.elbowR),elbowL:deg(m.elbowL),sleeveStartInViewR:m.sleeveStartInViewR,sleeveStartInViewL:m.sleeveStartInViewL,sleeveStartNearestCm:cm(m.sleeveStartNearest),rifleNearView:m.rifleNearView,stockCoveragePct:+(m.stockCoverage*100).toFixed(1),sightOcclusionPx:m.sightOcclusion,sightFleshPx:m.sightFlesh,sightFleshVertices:m.sightFleshVertices,armCoveragePct:+(m.armCoverage*100).toFixed(1),armExitR:`${m.armExitR.edge} ${m.armExitR.dx.toFixed(2)}`,armExitL:`${m.armExitL.edge} ${m.armExitL.dx.toFixed(2)}`,armNearestCm:cm(m.armNearest),
 }]));
 if(process.argv.includes('--table'))console.table(table);
 if(out){mkdirSync(dirname(resolve(out)),{recursive:true});writeFileSync(out,JSON.stringify({source:src??'working tree',units:'cm and degrees',samples:table},null,1));}

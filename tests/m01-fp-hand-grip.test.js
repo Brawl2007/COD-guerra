@@ -87,15 +87,20 @@ test('reload keeps the butt at the shoulder: the stock never fills more of the f
   assert.ok(hipWorst<=.02,`hip stock coverage ${(hipWorst*100).toFixed(1)} %`);
 });
 
-// The sight window is centred on the tip of the front post and is 0.075 x 0.10 ndc on each side (48 x 36 px at 1280 x 720); see SIGHT_WINDOW in the helper.
-// BEFORE (e7f5f28): 224 hand/sleeve vertices in it when aiming, sleeves 7.8 % of the frame but both forearms from the top/right; round 1 of this
-// package (d600fe0): 130 vertices, right sleeve from the upper right, 18.6 % of the frame.
-test('aiming: nothing of the hands in the sight window around the front post, the whole bolt cycle on the shoulder',()=>{
+// The sight window is centred on the tip of the front post: 0.075 x 0.10 ndc on each side = 96 x 72 px of a 1280 x 720 frame (SIGHT_WINDOW in the helper).
+// Pixels are counted on the rasterised triangles (a finger is two vertices and a hundred pixels: the round-1 vertex count said 2 for a thumb that
+// covered 366 px, and it was the thumb that the Captain saw next to the front post).
+// BEFORE (e7f5f28): 216 skin vertices in the window when aiming (the hands were on the sights); round 1 (d600fe0): 122; thumb across the top of the
+// wrist at idle: 366 px, 0 pixels now.
+test('aiming: no skin in the sight window around the front post: shoulder idle and the whole bolt cycle on the shoulder',()=>{
+  // The only frame that is not on the sights is 0.85: the right thumb pushes the bolt home while the rifle is still 39 % down (the stroke eases it
+  // back on the eye by 0.95); it is allowed 60 px (0.9 % of the window), every other frame 20 px (0.3 %).
   each(/^(ads|bolt-ads-)/,(n,m)=>{
-    assert.ok(m.sightFlesh<=4,`${n}: ${m.sightFlesh} skin vertices inside the sight window`);
-    assert.ok(m.sightOcclusion<=4,`${n}: ${m.sightOcclusion} hand/sleeve vertices inside the sight window`);
+    const allowed=n==='bolt-ads-0.85'?60:20;
+    assert.ok(m.sightFlesh<=allowed,`${n}: ${m.sightFlesh} px of skin inside the sight window (${allowed} allowed)`);
+    assert.ok(m.sightOcclusion<=allowed,`${n}: ${m.sightOcclusion} px of hand/sleeve inside the sight window (${allowed} allowed)`);
   });
-  assert.ok(rows.get('ads').sightFlesh<=2,`ads: ${rows.get('ads').sightFlesh} skin vertices`);
+  assert.ok(rows.get('ads').sightFlesh<=10,`ads: ${rows.get('ads').sightFlesh} px of skin`);
 });
 
 test('aiming: both forearms leave through the bottom edge (right to the lower right, left to the lower left) and the sleeves stay under 12 % of the frame',()=>{
