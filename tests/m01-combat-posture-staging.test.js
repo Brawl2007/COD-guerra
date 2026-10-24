@@ -326,6 +326,8 @@ for(const seed of SEEDS)test(`staged route seed ${seed}: kneeling platoon, gates
   assert.ok(st.sapperLag<=2*SAPPERS.length,`a sapper changes posture at most one tick late at each of the two transitions (${st.sapperLag})`);
   assert.ok(st.sapperWest>0&&st.kowalUp>0,JSON.stringify(st));
   assert.ok(st.sectionKneel>1000&&st.kowalShots>10&&st.sapperCable>100&&st.sapperWork>100&&st.sapperProneWait>0&&st.sapperProneSuppressed>0,JSON.stringify(st));
+  // R2-a (2026-10-24): the section's riflemen do rise now and then (a look, an answer) and still kneel behind the sandbags most of the time (12 seeds: up for 3 to 9 % as many man-ticks as they kneel).
+  assert.ok(st.sectionUp>100&&st.sectionKneel>4*st.sectionUp,JSON.stringify(st));
   // The yaw stage is presentation only: forcing the plain body turn from saves inside the hold changes no gameplay byte, event or draw.
   assert.ok(saves.length>=2);
   for(const save of saves){

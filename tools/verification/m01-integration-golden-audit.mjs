@@ -1,4 +1,4 @@
-// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) 14 (SP-08 escort + slice-3 squad coordination, re-based on the amendment 13 tree), 15 (ckm wz.30 stoppages, re-based on the amendment 14 tree) and 16 (R1-a: the bombs of the 04:34 raid hurt the men beside them and stun the player; the raid goes on to 04:44) of the combined tree. Not invoked by npm test.
+// M01 integration golden AMENDMENTS 06 (P2 pacing), 07 (combat AI slice 1), 08 (combat slice 2), 09 (navigator queue), 10 (reactive dialogue), 11 (rearguard + director review), 12 (H9 D2 difficulty wiring + the 05:35 fill) 13 (H9 D3/D4: death with a cause, CP-B2, the fair-death rules, no veterano regen; recruta unchanged) 14 (SP-08 escort + slice-3 squad coordination, re-based on the amendment 13 tree), 15 (ckm wz.30 stoppages, re-based on the amendment 14 tree) 16 (R1-a: the bombs of the 04:34 raid hurt the men beside them and stun the player; the raid goes on to 04:44) and 17 (R2-a: the Polish section sees, calls, reacts and is ordered in the main combat) of the combined tree. Not invoked by npm test.
 //
 // Same method as amendment 05 (tools/verification/m01-npc-navigation-golden-audit.mjs), with the two checks of the reverted branch tools that only an integration can make:
 // each branch (claude/busy-ritchie-3fkvk2-pacing, -combat) wrote its own golden against f6913a0 and the Captain reverted it (5316718, a580b09) so the golden is moved once, here,
@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15|16 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15|16|17 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -197,7 +197,8 @@ const AMENDMENTS={
   // 67.75 s); the first difference is the new saved schedule `timers.raidSchedule0434` the 04:34 event creates (missing in the predecessor). With the new records stripped from both frames (stateOnly: that
   // schedule, the player's concussion fields, the crater's concussion, the event's concussion and effects) the first BEHAVIOUR difference is the player himself, tick 1407 (04:34:09): the scripted bomb of
   // forward_post falls 44.6 m from him at the post and stuns him (0.51), so the first step of his walk west is shorter (player.x 14.6396 against 14.6994).
-  '16':{task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',after:null,
+  // History since amendment 17 (R2-a, 2026-10-24): the bomb effects golden pins the simulation of c66436d4 (candidate #80 + hands / ADS / perf / flashes + R1-a), not the working tree's.
+  '16':{task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',after:'c66436d444e94fa4a9f083c303a58185c4177d85',
     previousGolden:'tests/fixtures/m01-ckm-jam-gameplay-baseline.json',golden:'tests/fixtures/m01-bomb-effects-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/bomb-effects-2026-10-23',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js'],
@@ -211,8 +212,30 @@ const AMENDMENTS={
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.map(e=>{if(e.type!=='m01-blast')return e;const {concussion,effects,...rest}=e;return rest;});
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.(player|actors\.\d+)\.x$/,behaviourActors:/^(pawel_krawiec|sapper_2|sapper_3)$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15 or 16`);
+    behaviourFields:/^\$\.(state|checkpoint)\.(player|actors\.\d+)\.x$/,behaviourActors:/^(pawel_krawiec|sapper_2|sapper_3)$/},
+  // Amendment 17 (R2-a, 2026-10-24, owner complaint: «aliados e inimigos mostram pouca inteligência; os polacos fazem pouco para contrariar o ataque; os aliados só coordenam na retirada»): from the first bomb of
+  // 04:34 to the east demolition the Polish section sees, calls, reacts and is ordered (src/game/m01-section.js, slice 4 on the machinery of slice 3). No draw from the main random stream (the section has five
+  // streams of its own, derived from the state of that stream when its record starts) and nothing a German decides or the player feels: Kowal's cadence, target and posture are untouched, the riflemen's answers are
+  // display-grade (flash, report, clip, no traced round). Measured on both golden routes (this tool, --amendment 17): the two simulations are byte identical, tick for tick, until 04:34:00 (tick 1355, 67.75 s); the
+  // first difference is the new saved record `timers.section`, which the first tick of the window creates (missing in the predecessor). With the new records stripped from both frames (stateOnly: that record, the
+  // director's, the dialogue state, the section's events and the HUD fallback of the cover order) the first BEHAVIOUR difference is the sergeant himself, tick 1481 (04:34:22): Zieliński turns to the man who calls
+  // the first man down by the 04:34 raid (`actors.0.facing`, -3.0406 against 0.11).
+  '17':{task:'M01-SQUAD-COORDINATION-V1',delta:'squad-coordination',predecessor:'c66436d444e94fa4a9f083c303a58185c4177d85',after:null,
+    previousGolden:'tests/fixtures/m01-bomb-effects-gameplay-baseline.json',golden:'tests/fixtures/m01-squad-coordination-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/squad-coordination-r2a-2026-10-24',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-squad.js','src/game/m01-section.js'],
+    generationStage:'R2-a on the amendment 16 tree (candidate #80 + hands / ADS / perf / flashes + R1-a at c66436d4): from the first bomb of 04:34 to the east demolition the Polish section sees, calls, reacts and is ordered (m01-section.js, slice 4 on the machinery of slice 3: the walk of moveActor with its A* navigator, the arrival rule, the squadMove callouts of the bark director, a saved record that is validated and absent in older saves). The section\'s eyes (Zieliński, Pawlak and the platoon voice when they rise over the sandbags, Bąk) take turns to look; a German who fired in the last 2.4 s and whom the watcher sees (the world\'s line of sight) is a new threat unless the section called him lately, and the watcher emits a `section-callout` (kind mg / gate / dike with the side of the gate as the player sees it, the deck assault in four phases deck / advance / fallback / down, a post pinned, a man down by a bomb or by the scripted wound of Bąk); every other man within hearing reacts once, differently each time, by a draw from a stream of his own (a rifleman fires at the called German, looks or kneels; Kowal and the sergeant turn); Zieliński orders (`section-order`: focus, hold, shift and return of the pair along the communication trench when its post has been pinned for 3.2 s of 18, deck at the withdrawal of 06:00, sector when a man is down) and the pair walks between authored posts beside the cover nodes cv_trench_2 / cv_trench_1 and to the road deck; 36 lines (dlg_m01_164..199, Polish by an AI author, to be reviewed by a native speaker) on the new triggers of the bark director (section-callout, section-order, squadMove arrive_deck / arrive_trench / arrive_home); the riflemen\'s answers are display-grade (the flash, the report, the clip and the rearguard\'s rifle animation, no traced round and no German pinned), Kowal\'s cadence, target and posture and every German decision are untouched; no draw from the main random stream; a save made inside the window carries timers.section, an older one gets it at its next tick; golden amendment 17',
+    // The first difference is the new record itself. For the behaviour comparison the record, the director's, the dialogue state, the section's own events (callouts, orders, the display-grade rifle shots of its men) and the HUD
+    // fallback of the cover order (said when the channel is busier) are stripped from both frames.
+    deltaFields:/^\$\.(state|checkpoint)\.timers\.section$/,
+    stateOnly:frame=>{
+      const men=['marek_zielinski','szymon_kowal','staszek_pawlak','east_platoon_voice','jozef_bak'];
+      const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];for(const k of ['barks','section'])delete st.timers?.[k];strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);
+      frame.events=frame.events.filter(e=>!['section-callout','section-order'].includes(e.type)&&!(e.type==='npc-shot'&&e.weapon==='ally_rifle'&&men.includes(e.by))&&(e.type!=='message'||!/^Zieliński: .*mude de cobertura/.test(e.message)));
+      return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.(facing|crouched)$/,behaviourActors:/^(marek_zielinski|szymon_kowal|staszek_pawlak|east_platoon_voice|jozef_bak)$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 or 17`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);

@@ -43,16 +43,24 @@ function neutralRun(Simulation,seed,support){
 }
 function observe(seed=19390901,support=false){
   const key=`${seed}:${support}`;if(memo.has(key))return memo.get(key);
-  const o={callouts:[],orders:[],shots:[],lines:[],snaps:{},deck:null,after:null,realInWindow:0,hash:neutralHash(),validations:0};
-  let tick=0,lastSub=null,demolishedAt=null;
+  const o={callouts:[],orders:[],shots:[],lines:[],snaps:{},deck:null,after:null,realInWindow:0,hash:neutralHash(),validations:0,orderStates:[],looks:[]};
+  let tick=0,lastSub=null,demolishedAt=null;const lookUntil={};
   const r=route(seed,{support,onStep:({sim,events})=>{
     tick++;
     for(const e of events){
       if(e.type==='section-callout')o.callouts.push({...e,clock:sim.clock,battle:sim.battleClock});
-      else if(e.type==='section-order')o.orders.push({...e,clock:sim.clock,battle:sim.battleClock});
+      else if(e.type==='section-order'){
+        o.orders.push({...e,clock:sim.clock,battle:sim.battleClock});
+        // what the order did in its own tick: the holds and the shots queued, the place of the victim and of the men it names
+        const q=sim.timers.section,victim=e.target?sim.actor(e.target):null;
+        o.orderStates.push({kind:e.kind,clock:sim.clock,to:e.to,target:e.target,hold:structuredClone(q.hold),shots:structuredClone(q.shots),victim:victim&&{x:victim.x,z:victim.z},men:Object.fromEntries(e.to.map(id=>[id,{x:sim.actor(id).x,z:sim.actor(id).z}]))});
+      }
       else if(e.type==='npc-shot'&&e.target)o.shots.push({...e,clock:sim.clock,battle:sim.battleClock});
       validateM01AudioEvent(e);
     }
+    // the looks the pair takes on its own (no German to turn to: yaw null), when each began
+    if(sim.timers.section)for(const id of SECTION.pair){const h=sim.timers.section.hold[id];
+      if(h?.k==='look'&&h.yaw===null&&lookUntil[id]!==h.until){lookUntil[id]=h.until;o.looks.push({id,clock:sim.clock,until:h.until});}}
     const s=sim.subtitle;if(s&&(!lastSub||lastSub.id!==s.id||lastSub.until!==s.until)){lastSub={id:s.id,until:s.until};o.lines.push({id:s.id,clock:sim.clock,bark:s.bark===true,battle:sim.battleClock});}
     if(!sim.consumedEvent('evt_m01_east_demolition'))o.hash.step(sim,events);
     if(sim.battleClock>=WINDOW[0]&&sim.battleClock<WINDOW[1])o.realInWindow+=.05;
@@ -149,12 +157,12 @@ test('reactions differ between events and between kinds; every answer is at a Ge
   const byKind={};for(const c of o.callouts)(byKind[c.kind]??=new Set()).add(signature(c));
   for(const k of ['gate','pinned','dike'])assert.ok(byKind[k].size>=3,`${k}: the same kind of call does not always get the same answer (${byKind[k].size})`);
   assert.deepEqual([...new Set(o.callouts.flatMap(c=>c.reactions.map(r=>r[1])))].sort(),['drop','fire','look']);
-  // every rifle shot of the section is at a German somebody called in the last 12 s, from a man of the pair or Bąk
+  // every rifle shot of the section is at a German somebody called (an answer: within a few seconds of the call; the sergeant's focus order names one called in the last focusWindowSec s), from a man of the pair or Bąk
   assert.ok(o.shots.length>=20,`${o.shots.length} shots`);
   const clips={};
   for(const s of o.shots){
     assert.equal(s.weapon,'ally_rifle');assert.ok(['staszek_pawlak','east_platoon_voice','jozef_bak'].includes(s.by),s.by);assert.match(s.target,/^de_(east|spans)_\d+$/);
-    assert.ok(o.callouts.some(c=>c.target===s.target&&s.clock-c.clock>=0&&s.clock-c.clock<=12),`${s.by} fired at ${s.target} at ${s.clock.toFixed(1)} without a call`);
+    assert.ok(o.callouts.some(c=>c.target===s.target&&s.clock-c.clock>=0&&s.clock-c.clock<=SECTION.focusWindowSec+SECTION.fire.delaySec[1]+2*SECTION.fire.boltSec[1]),`${s.by} fired at ${s.target} at ${s.clock.toFixed(1)} without a call`);
     (clips[s.by]??=[]).push(s.clock);
   }
   // a clip is five rounds and the sixth shot waits for the 3.4 s of the reload
@@ -172,6 +180,36 @@ test('the pair moves between posts: a shift along the trench and back when it is
     assert.ok(o.lines.some(l=>l.id==='dlg_m01_196'||l.id==='dlg_m01_197'),`seed ${seed}: the pair says it is in position`);
   }
   assert.ok(observe().orders.some(x=>x.kind==='shift'),'the control route shifts the pair');
+});
+
+test('the sergeant\'s orders are carried out: focus puts the riflemen on the German named, hold keeps heads down, sector turns the man who takes the side to it',()=>{
+  const seen={focus:0,hold:0,sector:0};
+  for(const [seed,support] of [[19390901,false],[7,true]]){
+    const o=observe(seed,support);
+    for(const s of o.orderStates){
+      if(s.kind==='focus'){
+        seen.focus++;
+        // the shots the order queued in its own tick: a man of the pair (the order is given to the rkm and the pair), at the German named, after the delay of an answer; nobody is queued twice
+        // (shots of Bąk or older ones at the same German are not the order's)
+        const queued=s.shots.filter(x=>x.target===s.target&&SECTION.pair.includes(x.id)&&x.at>=s.clock+SECTION.fire.delaySec[0]-1e-3&&x.at<=s.clock+SECTION.fire.delaySec[1]+1e-3);
+        for(const x of queued)assert.ok(s.to.includes(x.id),`${x.id} was given the order`);
+        assert.equal(new Set(s.shots.map(x=>x.id)).size,s.shots.length);
+        s.queued=queued.length;   // (a man who could not fire — no line of sight standing, no rounds — is not queued: an order is answered by those who can)
+      }
+      if(s.kind==='hold'){
+        seen.hold++;
+        // nobody of the pair rises on his own until the hold is over (a look begun in the tick of the order or before it is the pair's last)
+        for(const l of o.looks)if(l.clock>s.clock+1e-9&&l.clock<s.clock+SECTION.holdSec-1e-3)assert.fail(`${l.id} rose on his own at ${l.clock.toFixed(1)} during the hold of ${s.clock.toFixed(1)}`);
+      }
+      if(s.kind==='sector'){
+        seen.sector++;const id=s.to[0],h=s.hold[id];
+        assert.ok(h&&h.k==='look'&&h.yaw!==null,`${id} looks at the sector of the man down`);
+        assert.ok(Math.abs(Math.atan2(Math.sin(h.yaw-Math.atan2(s.victim.z-s.men[id].z,s.victim.x-s.men[id].x)),Math.cos(h.yaw-Math.atan2(s.victim.z-s.men[id].z,s.victim.x-s.men[id].x))))<2e-3,`${id} turns to ${s.target}`);
+      }
+    }
+    assert.ok(o.orderStates.filter(s=>s.kind==='focus').some(s=>s.queued>0),`seed ${seed}: some focus order is answered with shots`);
+  }
+  assert.ok(seen.focus>=4&&seen.hold>=2&&seen.sector>=4,JSON.stringify(seen));
 });
 
 test('what the section does cannot be felt by the Germans or the player: the same route without it is the same, tick for tick, for them (both golden routes, Kowal and the ckm included)',{timeout:600000},()=>{
@@ -222,7 +260,10 @@ test('casualties: the nearest man calls a man down and the sergeant gives the ne
   for(const c of raid){
     assert.match(c.target,/^pl_west_\d$/);assert.ok(SECTION.casualtyCallers.includes(c.by));
     const order=o.orders.find(x=>x.kind==='sector'&&x.target===c.target);
-    if(order){assert.ok(order.clock>=c.clock&&order.clock-c.clock<=8,`the order follows the call within 8 s (${order.clock-c.clock})`);assert.ok(!order.to.includes(c.target));assert.ok(SECTION.men.includes(order.to[0]));}
+    // (the order comes casOrderSec after the call; with two men down in the same tick the second order waits for the sergeant's gap between orders, and a call in the last 1.6 s holds it back once more:
+    // the design bound is 4 + 7 + 1.6 s, 2026-10-24 — the first version of this test said 8 s, which the gap between two simultaneous orders (9.4 s on seed 19390901) had exceeded)
+    if(order){assert.ok(order.clock>=c.clock&&order.clock-c.clock<=SECTION.casOrderSec[1]+SECTION.orderGapSec+SECTION.orderAfterCallSec,`the order follows the call within its design bound (${order.clock-c.clock})`);
+      assert.ok(!order.to.includes(c.target));assert.ok(SECTION.men.includes(order.to[0]));}
   }
   const bak=o.callouts.find(c=>c.kind==='casualty'&&c.target==='jozef_bak');
   if(bak){assert.ok(SECTION.casualtyCallers.includes(bak.by));assert.ok(bak.battle>=seconds('06:04:00'));}

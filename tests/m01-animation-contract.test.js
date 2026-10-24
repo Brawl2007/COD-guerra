@@ -496,9 +496,11 @@ test('the escort + coordination golden (amendment 14) chains to the H9 D3/D4 gol
   // stoppages, so they are no longer compared with the live files (they still have to be recorded); the corridor, squad, level table, rearguard and deck modules did not move.
   assert.equal(escort.sourceSha256,'12b40d86616fdd75459c758ed397d704814fae011577e8f656c684b862413fc2','the escort golden pins the simulation of c99a4326');
   assert.notEqual(sha('../src/game/m01-simulation.js'),escort.sourceSha256,'the escort golden is history: amendment 15 moved the simulation');
-  for(const f of ['src/game/m01-corridor.js','src/game/m01-squad.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])
+  // 2026-10-24 (R2-a, golden amendment 17): the squad module moved too, by one clause (suppression brings a bound forward but never the scripted first order, line 155: the pair now holds the road deck
+  // until the demolition, in view of the deck assault, so it can be pinned on that very tick). The golden still records the module it was written against; it is only no longer the live file.
+  for(const f of ['src/game/m01-corridor.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])
     assert.equal(escort.inputsSha256[f],sha('../'+f),`and ${f}`);
-  for(const f of ['src/game/m01-barks.js','missions/m01-tczew/mission.json']){assert.ok(escort.inputsSha256[f],`${f} is recorded`);assert.notEqual(escort.inputsSha256[f],sha('../'+f),`${f} moved with amendment 15`);}
+  for(const f of ['src/game/m01-barks.js','src/game/m01-squad.js','missions/m01-tczew/mission.json']){assert.ok(escort.inputsSha256[f],`${f} is recorded`);assert.notEqual(escort.inputsSha256[f],sha('../'+f),`${f} moved with amendment 15 or 17`);}
   // Nothing moves before the east demolition: the first difference is the section at 06:10:00, Kowal holding his slot at the squad post where he used to set off for the single
   // retreat point (x -170, z 22). It is behaviour at once (no new record precedes it in the frame), so the first behaviour difference is the same path.
   assert.equal(account.behaviourFields,ESCORT_BEHAVIOUR.source);

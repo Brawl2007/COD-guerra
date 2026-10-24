@@ -30,7 +30,7 @@ import {clippingAudit,stackingAudit} from '../../tests/helpers/m01-clipping.js';
 const ROOT=resolve(import.meta.dirname,'../..');
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
 const round=(v,n=2)=>v===null||v===undefined||!Number.isFinite(v)?null:Math.round(v*10**n)/10**n;
-const NEAR_M=80,MOVE_MPS=.3,CALLED_SEC=12;
+const NEAR_M=80,MOVE_MPS=.3,CALLED_SEC=25;   // (25 s = the section's focusWindowSec: the sergeant's focus order names a German called in the last 25 s)
 const SECTION_MEN=['szymon_kowal','staszek_pawlak','east_platoon_voice','marek_zielinski'];
 
 if(arg('--summary')){

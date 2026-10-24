@@ -73,7 +73,10 @@ export function updateSquad(sim,ctx){
   if(m.orderAfterSec!==undefined)due=!sim.scene&&sim.clock-ctx.east>=m.orderAfterSec;
   else if(m.escortPastX!==undefined)due=escortPoint(sim,ctx.carrier).x<m.escortPastX;
   else if(m.afterArrivalSec!==undefined)due=sim.clock-q.since>=m.afterArrivalSec;
-  if(!due&&(pinned||sim.battleClock>=LAST_CALL)){due=true;if(pinned)call='pinned';}
+  // R2-a (2026-10-24): suppression brings a bound forward, but never the scripted first order (line 155, said after the blast scene): the pair now holds the road deck until the demolition (m01-section.js),
+  // in view of the deck assault, so it can well be pinned on that very tick.
+  const early=pinned&&m.orderAfterSec===undefined;
+  if(!due&&(early||sim.battleClock>=LAST_CALL)){due=true;if(early)call='pinned';}
   if(due){q.moving=true;q.since=sim.clock;ctx.say(call);}
   return q;
 }

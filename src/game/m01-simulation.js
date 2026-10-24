@@ -2659,9 +2659,9 @@ export function validateM01Snapshot(s){
   if('barks' in s.timers)validateBarkState(s.timers.barks,s.clock,reject);
   // SP-08 and slice 3 (2026-10-22): the corridor task and the section's bounds; absent in older saves and before the east demolition.
   if('corridor' in s.timers){validateCorridorRecord(s.timers.corridor,s.clock,reject);if(!Object.hasOwn(s.consumed,E('east_demolition')))reject('timer corridor');}
-  if('squad' in s.timers){validateSquadRecord(s.timers.squad,s.clock,reject);if(!Object.hasOwn(s.consumed,E('east_demolition')))reject('timer squad');}
+  if('squad' in s.timers){validateSquadRecord(s.timers.squad,s.clock,reject);if(!Object.hasOwn(s.consumed,E('east_demolition')))reject('timer squad');}   // reactive dialogue: cooldowns, repeats, rotation, what was seen (m01-barks.js); absent in older saves
   // R2-a (2026-10-24): the section's record, from the first bomb of 04:34 to the east demolition (m01-section.js); absent in older saves, which start it at their next tick.
-  if('section' in s.timers)validateSectionRecord(s.timers.section,s,reject);   // reactive dialogue: cooldowns, repeats, rotation, what was seen (m01-barks.js); absent in older saves
+  if('section' in s.timers)validateSectionRecord(s.timers.section,s,reject);
   if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
   if(s.timers.raidSchedule!==undefined){
     const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];

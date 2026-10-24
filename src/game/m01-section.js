@@ -8,10 +8,11 @@
 //   reactions  every other man within hearing reacts, differently each time: a rifleman FIRES at the called German (display-grade rifle fire: the flash, the report, the clip and the
 //              animation of the rearguard's rifle shot, but no round is traced and no German is pinned or hurt, so the fights the golden routes pin keep every German decision), LOOKS (stands
 //              and turns to him) or DROPS (kneels); Kowal and the sergeant turn to look. Which one is drawn from the man's own stream.
-//   orders     Zieliński adapts: «focus» when two kinds of threat are up, «hold», «shift» (the pair moves along the communication trench to another post when its post has been pinned
-//              for shiftLoad seconds within pinWindowSec) and «return», «deck» (at the withdrawal of 06:00 the pair goes up to the road deck beside the player's post to cover the platoon and
-//              the deck assault) and «sector» (a man down: the nearest man takes his side). The pair walks with moveActor between slots beside authored cover nodes; at the east demolition
-//              the record ends and the retreat of slice 3 takes the men from wherever they stand.
+//   orders     Zieliński adapts: «focus» when two kinds of threat are up (one German for everybody: every rifleman who can fires at him), «hold» (heads down: nobody rises to look for holdSec),
+//              «shift» (the pair moves along the communication trench to another post when its post has been pinned for shiftLoad seconds within pinWindowSec) and «return», «deck» (at the
+//              withdrawal of 06:00 the pair goes up to the road deck beside the player's post to cover the platoon and the deck assault) and «sector» (a man down: the nearest man takes his
+//              side and turns to it). The pair walks with moveActor between slots beside authored cover nodes; at the east demolition the record ends and the retreat of slice 3 takes the men
+//              from wherever they stand.
 //   not touched  Kowal's cadence, his target and his posture, the ckm, every German decision and every draw of this.rng: the section's variety comes from five streams of its own
 //              (rng, derived from the state of the main stream when the record starts, never drawn from it). What the Germans see of the Poles (Kowal alone is a target) is unchanged.
 // State: timers.section (saved; created on the first tick of the window, absent in older saves, which get it at their next tick; validated by validateSectionRecord).
@@ -41,7 +42,7 @@ export const SECTION=Object.freeze({
   look:Object.freeze({everySec:Object.freeze([6,12]),holdSec:Object.freeze([1,1.8])}),
   // A rifleman's answer: after `delaySec`, 1 to 3 shots with the rifle's own bolt (`boltSec`), up on his feet riseSec before and holdSec after each. Display-grade (see the header).
   fire:Object.freeze({delaySec:Object.freeze([.4,1.1]),boltSec:Object.freeze([1.7,2.8]),riseSec:.5,holdSec:.9,count:Object.freeze([.5,.35,.15])}),
-  dropSec:Object.freeze([1.5,3.5]),lookSec:Object.freeze([1,2.2]),
+  dropSec:Object.freeze([1.5,3.5]),lookSec:Object.freeze([1,2.2]),holdLookSec:Object.freeze([0,6]),
   // What each kind of man does when he hears a call: weights [fire, look, drop]; the kinds with no German to shoot at give their share of «fire» to «look».
   react:Object.freeze({
     rifle:Object.freeze({mg:[.40,.35,.25],gate:[.50,.30,.20],dike:[.50,.25,.25],deck:[.60,.25,.15],advance:[.55,.30,.15],fallback:[.30,.50,.20],down:[.15,.55,.30],pinned:[0,.40,.60],casualty:[0,.60,.40]}),
@@ -210,17 +211,20 @@ function react(sim,q,caller,kind,target){
     let [f,l]=SECTION.react[SECTION.role[id]][kind];const u=next(q,id);
     if(!german||!canFire(sim,q,a,target)){l+=f;f=0;}
     const choice=u<f?'fire':u<f+l?'look':'drop';
-    if(choice==='fire'){
-      const n=next(q,id),count=n<SECTION.fire.count[0]?1:n<SECTION.fire.count[0]+SECTION.fire.count[1]?2:3;
-      q.shots=q.shots.filter(s=>s.id!==id);
-      q.shots.push({id,target:target.id,at:t3(clock+between(q,id,SECTION.fire.delaySec)),left:count});
-    }else if(choice==='look'){
+    if(choice==='fire')queueShots(q,clock,id,target);
+    else if(choice==='look'){
       const aim=target??caller;
       q.hold[id]={k:'look',until:t3(clock+between(q,id,SECTION.lookSec)),yaw:+Math.atan2(aim.z-a.z,aim.x-a.x).toFixed(4)};
     }else q.hold[id]={k:'drop',until:t3(clock+between(q,id,SECTION.dropSec)),yaw:null};
     out.push([id,choice]);
   }
   return out;
+}
+/** A rifleman answers: after a delay, 1 to 3 shots at the German, drawn from the man's own stream (a shot already waiting for him is replaced). */
+function queueShots(q,clock,id,target){
+  const n=next(q,id),count=n<SECTION.fire.count[0]?1:n<SECTION.fire.count[0]+SECTION.fire.count[1]?2:3;
+  q.shots=q.shots.filter(s=>s.id!==id);
+  q.shots.push({id,target:target.id,at:t3(clock+between(q,id,SECTION.fire.delaySec)),left:count});
 }
 /** He can answer: a rifle with rounds, not reloading, on his feet where he is, and a line of sight to the German from his eyes standing. */
 function canFire(sim,q,a,target){
@@ -262,7 +266,11 @@ function decide(sim,q){
   if(cas){
     const victim={x:cas.x,z:cas.z};let who=null,best=1e9;
     for(const id of SECTION.men){const a=sim.actor(id);if(id===cas.id||id===SECTION.leader||!present(a))continue;const d=dist(a,victim);if(d<best){best=d;who=id;}}
-    cas.done=true;if(who)return order(sim,q,'sector',[who],cas.id,leader);
+    cas.done=true;
+    if(who){   // the man who takes his side turns to it (stands and looks at the place where the man fell)
+      const a=sim.actor(who);q.hold[who]={k:'look',until:t3(clock+between(q,who,SECTION.lookSec)),yaw:+Math.atan2(cas.z-a.z,cas.x-a.x).toFixed(4)};
+      return order(sim,q,'sector',[who],cas.id,leader);
+    }
   }
   // 2. the platoon withdraws at 06:00: the pair goes up to the road deck beside the player's post to cover it, and the deck assault that follows
   if(contact&&sim.consumedEvent(SECTION.withdrawal)&&!q.done.deck&&mine.length&&SECTION.pair.every(id=>!q.post[id].moving)){   // from the squad post or from wherever the pair holds
@@ -291,14 +299,16 @@ function decide(sim,q){
     const rk=rkmTarget(sim),top=fresh.find(r=>r[2]===rk)??fresh.find(r=>r[0]==='mg')??fresh.at(-1),t=sim.actor(top[2]);   // one target for everybody: the rkm's if it was called, else the MG
     if(t&&t.alive&&t.active){
       q.focus={target:t.id,by:leader.id,kind:top[0],at:clock};q.next.focus=t3(clock+SECTION.focusGapSec);
+      for(const a of mine)if(canFire(sim,q,a,t))queueShots(q,clock,a.id,t);   // the order is carried out: every rifleman who can fires at the German named
       return order(sim,q,'focus',[SECTION.rkm,...mine.map(a=>a.id)],t.id,leader);
     }
   }
-  // 5. nothing has changed for a while and the post is quiet: hold
+  // 5. nothing has changed for a while and the post is quiet: hold. Nobody gets up to look until it is over (heads down), then the pair looks again after a few seconds of its own.
   if(contact&&q.next.hold===0)q.next.hold=t3(clock+between(q,SECTION.leader,SECTION.holdEverySec));   // the first hold is a while after the first shot
   if(contact&&q.next.hold>0&&clock>=q.next.hold&&load<1){
     q.next.hold=t3(clock+between(q,SECTION.leader,SECTION.holdEverySec));
     q.order={kind:'hold',at:clock,until:t3(clock+SECTION.holdSec)};
+    for(const id of SECTION.pair)q.next[id]=t3(Math.max(q.next[id],q.order.until)+between(q,id,SECTION.holdLookSec));
     return order(sim,q,'hold',[SECTION.rkm,...mine.map(a=>a.id)],null,leader);
   }
 }
