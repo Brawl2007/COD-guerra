@@ -69,9 +69,19 @@ const ESCORT_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,ESCORT_BEHAVIOUR=/
 // 114 and 115 on the events. The escort + coordination golden above is history since then (it pins the simulation of c99a4326); the golden of the live simulation, regenerated on x86 by
 // tools/verification/m01-integration-golden-audit.mjs --amendment 15 after its lockstep audit against that exact predecessor, is this one.
 import ckmJam from './fixtures/m01-ckm-jam-gameplay-baseline.json' with {type:'json'};
-const current=ckmJam;   // the golden of the live simulation
+// M01-BOMB-EFFECTS-V1 (golden amendment 16, 2026-10-23, R1-a; owner playtest «os soldados junto dos bombardeamentos sobrevivem sem consequências; a guerra devia sentir-se desde as 04:34»): an aerial bomb kills, wounds
+// and shakes the men beside it (src/game/m01-blast.js; the cast, the east platoon, the ckm crew and the station-yard scenery are only shaken), the player is never hurt by a bomb but is stunned near one, and the 04:34 raid
+// goes on with eleven more impacts until 04:43:10 (mission.json raidTargets0434, timers.raidSchedule0434). The ckm stoppage golden above is history since then (it pins the simulation of e7f5f28); the golden of the live
+// simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 16 after its lockstep audit against that exact predecessor, is this one.
+// Regenerated the same day (R1-a follow-up, decisions of the Captain): six unnamed men of the west garrison (pl_west_0..5, displayOnly) join the roster, so that the bombs have men to kill and wound and the
+// player sees them fall, and the three sappers of the cable camp run for the sandbags of the section when Nowicki warns them (grp_sappers.stage.shelter) instead of kneeling 1.6 m from the bomb. The
+// first difference from the predecessor is therefore the first of the new actors, appended to the roster on the very first tick; the first BEHAVIOUR difference (with the garrison, the schedule and the stun
+// records stripped from both frames) is the first step of Krawiec towards the sandbags at 04:33:30.
+import bombs from './fixtures/m01-bomb-effects-gameplay-baseline.json' with {type:'json'};
+const BOMBS_DELTA=/^\$\.(state|checkpoint)\.actors\.(9[7-9]|10[0-2])$/,BOMBS_BEHAVIOUR=/^\$\.(state|checkpoint)\.(player|actors\.\d+)\.x$/;   // amendment 16, as measured
+const current=bombs;   // the golden of the live simulation
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
-import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
+import {M01Simulation,validateM01Snapshot,GARRISON_IDS} from '../src/game/m01-simulation.js';
 import {PRESENTATION_FIELDS} from '../src/game/m01-animation-presentation.js';
 import {actorHitboxes,eyePosition,mg34ProneGeometry} from '../src/world/spatial.js';
 import {route,driver,toStationEvacuation} from './helpers/m01-route.js';
@@ -85,9 +95,11 @@ let completed;
 const wrap=n=>Math.atan2(Math.sin(n),Math.cos(n));
 const active=()=>{const s=new M01Simulation(17);s.tick(.05,{skip:true});return s;};
 
-test('schema 2 initializes all 97 IDs; diagnostics are detached, small presentation records',()=>{
+test('schema 2 initializes all 103 IDs; diagnostics are detached, small presentation records',()=>{
   const s=new M01Simulation(),ids=s.actors.map(a=>a.id),diag=s.animationPresentation;
-  assert.equal(s.snapshot().schema,2);assert.equal(ids.length,97);assert.deepEqual(diag.actors.map(a=>a.id),ids);
+  // 2026-10-23 (R1-a follow-up, golden amendment 16): 97 -> 103. The six unnamed men of the west garrison (pl_west_0..5, displayOnly) join the roster, so that the bombs of 04:34 have
+  // somebody to kill and wound (the cast is only ever shaken). The roster was 97 only by the count of the groups before them; nothing else about the 97 changed.
+  assert.equal(s.snapshot().schema,2);assert.equal(ids.length,103);assert.deepEqual(ids.slice(-GARRISON_IDS.length),[...GARRISON_IDS]);assert.deepEqual(diag.actors.map(a=>a.id),ids);
   for(const a of s.actors){assert.deepEqual(a.motion,{speed:0,odometer:0,gait:'idle',gaitSince:0});assert.equal(a.bodyYaw,a.facing);
     assert.equal(a.posture,'stand');assert.equal(a.postureSince,0);assert.equal(a.hitAt,-1e9);assert.equal(a.diedAt,-1e9);assert.equal(a.suppressedAt,-1e9);}
   diag.actors[0].motion.odometer=99;assert.equal(s.actors[0].motion.odometer,0);
@@ -497,12 +509,17 @@ test('the escort + coordination golden (amendment 14) chains to the H9 D3/D4 gol
   }
 });
 
-test('the ckm stoppage golden (amendment 15) chains to the escort + coordination golden, pins the live simulation, the director, the audio events and the mission data, and cites its lockstep account',()=>{
+test('the ckm stoppage golden (amendment 15) chains to the escort + coordination golden, pins the simulation of e7f5f28 (history since amendment 16), the director and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(ckmJam,{amendment:'15',task:'M01-CKM-JAM-V1',delta:'ckm-jam',previous:escort,previousFile:'m01-escort-coordination-gameplay-baseline.json',
     predecessor:'c99a4326ea6f83e03c5bf5ea1df01a299ad055db',deltaFields:CKMJAM_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),ckmJam.sourceSha256,'the golden pins the live simulation');
-  for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','missions/m01-tczew/mission.json'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // History since amendment 16 (the bombs of the 04:34 raid, 2026-10-23): this golden pins the simulation of e7f5f28 (candidate #80 before the bomb effects), not the live one. The audio events and the mission data
+  // moved with the bombs, so they are no longer compared with the live files (they still have to be recorded); the level table, the rearguard and the deck module did not move. 2026-10-23 (R1-a follow-up,
+  // the west garrison): the director moved too, by one clause (the westWait rule, «Esperamos o Bąk», ignores displayOnly men like readiness(west_demolition) does).
+  assert.equal(ckmJam.sourceSha256,'1bba0f944ff597b63bd8bbec07b8a99a31537a0b919cfb728a85a4a850b9f73f','the ckm stoppage golden pins the simulation of e7f5f28');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),ckmJam.sourceSha256,'the ckm stoppage golden is history: amendment 16 moved the simulation');
+  for(const f of ['src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js'])assert.equal(ckmJam.inputsSha256[f],sha('../'+f),`and ${f}`);
+  for(const f of ['src/game/m01-barks.js','src/game/m01-audio-events.js','missions/m01-tczew/mission.json']){assert.ok(ckmJam.inputsSha256[f],`${f} is recorded`);assert.notEqual(ckmJam.inputsSha256[f],sha('../'+f),`${f} moved with amendment 16`);}
   // The first difference is the stoppage itself: on the tick the gun would have fired its 14th burst (04:58:43 on the control route, 04:59:03 with the covering-fire pilot) the predecessor's gunner
   // is in fire_burst and the live one in `stoppage`; until then the two simulations are byte identical, tick for tick (13 blocks of 512 ticks on both routes). With the gun's own records, the
   // dialogue state and the gun's events stripped from both frames, the first BEHAVIOUR difference is the rounds that are not there: a rifleman of the gate group the burst would have pinned is not.
@@ -517,6 +534,29 @@ test('the ckm stoppage golden (amendment 15) chains to the escort + coordination
   }
 });
 
+test('the bomb effects golden (amendment 16) chains to the ckm stoppage golden, pins the live simulation, the blast module, the audio events and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(bombs,{amendment:'16',task:'M01-BOMB-EFFECTS-V1',delta:'bomb-effects',previous:ckmJam,previousFile:'m01-ckm-jam-gameplay-baseline.json',
+    predecessor:'e7f5f2879b1bdbddad7c94ae12fad97627758758',deltaFields:BOMBS_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),bombs.sourceSha256,'the golden pins the live simulation');
+  for(const f of ['src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-barks.js','src/game/m01-audio-events.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js','src/game/m01-deck-assault.js','src/game/m01-yard-life.js','missions/m01-tczew/mission.json'])
+    assert.equal(bombs.inputsSha256[f],sha('../'+f),`and ${f}`);
+  assert.equal(ckmJam.inputsSha256['src/game/m01-blast.js'],undefined,'the predecessor had no blast module');assert.equal(ckmJam.inputsSha256['src/game/m01-garrison.js'],undefined,'nor a garrison');
+  // The two simulations differ from the very first tick: the six men of the west garrison are appended to the roster (actors 97..102, which the predecessor does not have); with those men and the other new
+  // records stripped from both frames (the schedule, the player's concussion, the craters' concussion, the events' concussion and effects) the first BEHAVIOUR difference is Krawiec's first step towards the sandbags
+  // at 04:33:30 (tick 756): the sappers run for cover when Nowicki warns them, 30 s of battle time before the planes. Nothing else moved before it.
+  assert.equal(account.behaviourFields,BOMBS_BEHAVIOUR.source);
+  for(const r of account.routes){
+    assert.equal(r.firstDifference.tick,1);assert.equal(r.firstDifference.actor,null);assert.match(r.firstDifference.path,BOMBS_DELTA);assert.equal(r.firstDifference.predecessor,null);
+    assert.equal(r.firstDifference.live.id,'pl_west_0');assert.equal(r.firstDifference.live.group,'grp_west_garrison');assert.equal(r.firstDifference.live.displayOnly,true);
+    assert.equal(r.identicalBlocks,0,'the roster differs on the first tick');
+    assert.match(r.firstBehaviourDifference.path,BOMBS_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,'pawel_krawiec');assert.equal(r.firstBehaviourDifference.battleClock,'04:33:30');
+    assert.ok(r.firstBehaviourDifference.tick>r.firstDifference.tick);assert.ok(r.firstBehaviourDifference.live<r.firstBehaviourDifference.predecessor,'the first step west, towards the sandbags of the section (x from -41.4 downwards)');
+    // the plot is the predecessor's: the tool proved the 12 objective states, CP-A..D, consumed events, plot flags and survivors identical; nobody of the cast is touched (the audit of the routes: BOMB_EFFECTS_ROUTES.json)
+    assert.equal(r.endState.objectives.cover_repair,'done');assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);
+  }
+});
+
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{
   const trace=new GameplayDigest(),seen=new Set();let maxSpeed=0;
   const result=route(expected.seed,{support:expected.support,onStep:({sim,events})=>{
@@ -524,7 +564,7 @@ for(const expected of current.routes)test(`all gameplay bytes hashed each tick a
     for(const a of sim.actors){maxSpeed=Math.max(maxSpeed,a.motion.speed);for(const k of ['hitAt','diedAt','suppressedAt'])if(a[k]!==undefined&&a[k]!==-1e9)seen.add(k);}
   }});
   assert.deepEqual(trace.finish(),{ticks:expected.ticks,blocks:expected.blocks});
-  assert.equal(result.sim.actors.length,97);assert.equal(result.sim.checkpointsReached.length,4);
+  assert.equal(result.sim.actors.length,103);assert.equal(result.sim.checkpointsReached.length,4);   // 2026-10-23 (R1-a, amendment 16): 97 + the six men of the west garrison
   assert.ok(seen.has('hitAt')&&seen.has('diedAt')&&seen.has('suppressedAt'));
   assert.ok(maxSpeed<=8,'published locomotion speed is bounded; actual odometer remains measured');
   report.cases.push({label:'gameplay-baseline',seed:expected.seed,support:expected.support,ticks:trace.ticks,blocks:trace.blocks.length,maxSpeed});
@@ -643,13 +683,16 @@ test('Bąk carry and CKM/MG34 specialized adapters do not lose identity, timesta
 
 test('legacy 86/89 schema-2 saves initialize without inventing events, mutating input or drawing RNG',()=>{
   for(const count of [86,89]){
-    const legacy=gameplaySnapshot(completed.checkpoints.cp_m01_b_reorganizacao);legacy.actors=legacy.actors.filter(a=>!AUXILIARY_IDS.includes(a.id));
+    // 2026-10-23 (R1-a, amendment 16): a true legacy save has neither the auxiliaries nor the west garrison; both come back whole on restore (97 -> 103 with the six men of the garrison).
+    const legacy=gameplaySnapshot(completed.checkpoints.cp_m01_b_reorganizacao);legacy.actors=legacy.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&!GARRISON_IDS.includes(a.id));
     if(count===86)legacy.actors=legacy.actors.filter(a=>!a.ckm);
     const before=json(legacy),s=new M01Simulation();s.restoreSnapshot(legacy);
-    assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,97);
+    assert.deepEqual(legacy,before);assert.equal(s.rng.state,legacy.rng);assert.equal(s.actors.length,103);
     assert.deepEqual(s.actors.slice(0,86).map(a=>a.id),legacy.actors.slice(0,86).map(a=>a.id));
+    // 2026-10-23 (R1-a, golden amendment 16): CP-B now falls after the first bombs, which shake the men beside them (suppressedUntil > 0 in the save). initializePresentation derives the unknown
+    // suppressedAt of such a man from his saved suppressedUntil (a documented rule: 1.5 s before it, at most the clock); everyone else, and every diedAt and hitAt, is the unknown history -1e9 as before.
     for(const a of s.actors){assert.equal(a.motion.odometer,0);assert.equal(a.motion.speed,0);assert.equal(a.bodyYaw,a.facing);
-      assert.equal(a.diedAt,-1e9);assert.equal(a.hitAt,-1e9);assert.equal(a.suppressedAt,-1e9);}
+      assert.equal(a.diedAt,-1e9);assert.equal(a.hitAt,-1e9);assert.equal(a.suppressedAt,a.suppressedUntil>0?Math.max(0,Math.min(legacy.clock,a.suppressedUntil-1.5)):-1e9,a.id);}
     record(s,{label:'legacy-'+count,ticks:160,doubleAt:[1,50,100],input:t=>({fire:t===2,reload:t===50})});
   }
 });

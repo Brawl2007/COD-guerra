@@ -8,6 +8,10 @@ export function impactPass(crack,distance){return crack?'crack':distance<=12?'wh
 export function validateM01AudioEvent(event){
   if(event.type==='npc-shot'&&(typeof event.weapon!=='string'||!event.weapon))throw Error('M01 npc-shot.weapon required');
   if(event.type==='m01-blast'&&!BLAST_KINDS.includes(event.kind))throw Error('M01 m01-blast.kind required');
+  // R1-a: an aerial bomb also says how hard it stunned the player (`concussion`, 0..1: the audio presents it as the mix's concussion duck) and whom it killed, wounded and shook (`effects`, ids).
+  // Both are optional, and a grenade or a demolition carries neither. Transient: never persisted (the state is in the actors and in player.concussion).
+  if(event.type==='m01-blast'&&event.concussion!==undefined&&!(Number.isFinite(event.concussion)&&event.concussion>=0&&event.concussion<=1))throw Error('M01 m01-blast.concussion must be 0..1');
+  if(event.type==='m01-blast'&&event.effects!==undefined&&(!event.effects||['killed','wounded','suppressed'].some(k=>!Array.isArray(event.effects[k])||event.effects[k].some(id=>typeof id!=='string'))))throw Error('M01 m01-blast.effects killed/wounded/suppressed required');
   // The player's feet meet the ground after a fall (src/world/m01-player-physics.js); one event per landing, never persisted. The audio and the camera dip read the speed.
   if(event.type==='player-landing'&&(![event.speed,event.drop,event.damage].every(Number.isFinite)||!['ground','water'].includes(event.surface)||
     !event.point||![event.point.x,event.point.y,event.point.z].every(Number.isFinite)))throw Error('M01 player-landing speed/drop/damage/surface/point required');

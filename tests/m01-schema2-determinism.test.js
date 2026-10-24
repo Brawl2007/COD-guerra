@@ -116,7 +116,7 @@ test('legacy 86/89 actors, missing optional fields and old CKM placement migrate
     delete legacy.enemyFire;delete legacy.weapon.received;
     for(const key of ['kowalRounds','lowAmmoHint','nextCombatCall'])delete legacy.timers[key];
     const before=json(legacy),a=new M01Simulation();a.restoreSnapshot(legacy);
-    assert.deepEqual(legacy,before);assert.equal(a.rng.state,123);assert.equal(a.actors.length,97);
+    assert.deepEqual(legacy,before);assert.equal(a.rng.state,123);assert.equal(a.actors.length,103);   // 2026-10-23 (R1-a, amendment 16): 97 + the six unnamed men of the west garrison
     record(a,{label:'legacy-'+roster,ticks:200,doubleAt:[1,50,150],input:t=>({skip:t===1,fire:t===30,reload:t===70})});
   }
 });

@@ -3,7 +3,7 @@
 // The route is the real one of tests/helpers/m01-route.js (no injected event, clock or objective); its numbers are balance facts of THIS build, not ballistics.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {M01Simulation,validateM01Snapshot,seconds,ckmMuzzle,ckmThroughBridge,CKM_POSITION,CKM_POST,CKM_BELT,CKM_BURST_ROUNDS,CKM_INTERVAL,CKM_BURST_SEC,CKM_FEED_SEC} from '../src/game/m01-simulation.js';
+import {M01Simulation,validateM01Snapshot,seconds,ckmMuzzle,ckmThroughBridge,CKM_POSITION,CKM_POST,CKM_BELT,CKM_BURST_ROUNDS,CKM_INTERVAL,CKM_BURST_SEC,CKM_FEED_SEC,GARRISON_IDS} from '../src/game/m01-simulation.js';
 import {AUXILIARY_IDS} from '../src/game/m01-yard-life.js';
 import {makeRound,traceRound,closestApproach,NEAR_MISS} from '../src/game/m01-fire.js';
 import {route} from './helpers/m01-route.js';
@@ -67,7 +67,7 @@ test('post S2 is confirmed in the production trace: the gate riflemen are in cle
   const s2=evaluateCandidate(win,MUZZLE,{explain:true}),casemate=evaluateCandidate(win,muzzleFlashWorld());
   assert.equal(casemate.productionClearEntries,0,'the pre-T47 casemate muzzle sees no German');
   assert.equal(s2.productionClearEntries,s2.strictClearEntries,'production line == strict: nothing the production trace lets through is a bridge collider');
-  assert.equal(s2.strictClearEntries,255,'combat slice 2 (golden amendment 08, 2026-10-18): was 254; the longer repair and the deck fight move the 20-tick samples, one more distinct entry of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); combat AI slice 1 (golden amendment 07, 2026-10-18): was 275; the repair of the neutral route ends sooner, so the window has fewer distinct entries of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); P2 pacing (golden amendment 06, 2026-10-18): 275 was 271; the hold at 24x moves the 20-tick samples onto other ticks, 4 more distinct (world, actor, eye) entries of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); D43: 271 was 270 before T47 amendment 03 (the T23 withdrawal cadence counted on landing changes the neutral route after 06:05; re-measured with tools/m01-ckm-fire-arc.mjs, GOLDEN_AMENDMENT_03.json s2Visibility); 214 before the T38 gate places (re-measured when T47 joined the staging, 3c9cab7; tests/m01-ckm-candidate-posts.test.js)');assert.equal(s2.throughBridgeEntries,0);
+  assert.equal(s2.strictClearEntries,253,'R1-a (golden amendment 16, 2026-10-23): 255 was 253; the stun of the bombs delays the pilot and the neutral route plays out differently (tests/m01-ckm-candidate-posts.test.js: 255 -> 253 distinct entries of the same 14 actors); combat slice 2 (golden amendment 08, 2026-10-18): was 254; the longer repair and the deck fight move the 20-tick samples, one more distinct entry of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); combat AI slice 1 (golden amendment 07, 2026-10-18): was 275; the repair of the neutral route ends sooner, so the window has fewer distinct entries of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); P2 pacing (golden amendment 06, 2026-10-18): 275 was 271; the hold at 24x moves the 20-tick samples onto other ticks, 4 more distinct (world, actor, eye) entries of the same 14 actors (tests/m01-ckm-candidate-posts.test.js); D43: 271 was 270 before T47 amendment 03 (the T23 withdrawal cadence counted on landing changes the neutral route after 06:05; re-measured with tools/m01-ckm-fire-arc.mjs, GOLDEN_AMENDMENT_03.json s2Visibility); 214 before the T38 gate places (re-measured when T47 joined the staging, 3c9cab7; tests/m01-ckm-candidate-posts.test.js)');assert.equal(s2.throughBridgeEntries,0);
   for(const phase of ['repair','post_repair','withdrawal']){
     assert.deepEqual(s2.phases[phase].strict.ids,Array.from({length:14},(_,i)=>`de_east_${i}`).sort(),phase);
   }
@@ -303,7 +303,7 @@ test('saves made before T47 (86 and 89 actors, crew on the casemate post, no fir
     const old=structuredClone(pre);
     // What the previous build saved: crew on the casemate post, in the quiet cycle, with no fire record (the T34 yard actors and, for 86, the crew come later).
     old.actors.filter(a=>a.ckm).forEach((a,i)=>{[a.x,a.z]=casemate[i];a.ckm={phase:'aim',startedAt:Math.max(0,old.clock-1),visible:true};delete a.ckmFire;});
-    old.actors=old.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&(roster===89||!a.ckm));
+    old.actors=old.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&!GARRISON_IDS.includes(a.id)&&(roster===89||!a.ckm));   // (2026-10-23, R1-a: nor the six men of the west garrison, which came later)
     assert.equal(old.actors.length,roster);delete old.resumeCheckpoint;
     const keep=structuredClone(old),s=new M01Simulation();validateM01Snapshot(structuredClone(old));s.restoreSnapshot(old);
     assert.deepEqual(old,keep,'the supplied save is not edited');

@@ -129,7 +129,7 @@ const CONDITIONS={
   westWait:()=>[2,s=>{   // the three first terms of readiness(west_demolition), and Bąk still on a man's shoulder: the charge waits for him
     if(!s.consumedEvent('evt_m01_east_demolition')||s.player.x>=WEST_SAFE_X||escorted(s))return false;   // SP-08: not while the player walks beside Dudek
     const bak=s.actor('jozef_bak');if(!(bak.carry||bak.carriedBy))return false;
-    for(const a of s.actors)if(a.alive&&a.active&&a.team==='ally'&&!a.civilian&&a.x>=WEST_SAFE_X)return false;
+    for(const a of s.actors)if(a.alive&&a.active&&a.team==='ally'&&!a.civilian&&!a.displayOnly&&a.x>=WEST_SAFE_X)return false;   // R1-a: the unnamed west garrison (displayOnly) is not one of the men the charge waits for
     return true;}],
   readiness:id=>[2,s=>s.readiness(id)],
   grenade:({fuseMax,fuseMin,allyWithin})=>[2,s=>{

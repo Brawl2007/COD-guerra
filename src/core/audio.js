@@ -390,7 +390,7 @@ export class AudioManager {
   }
 
   // ------------------------------------------------------------ explosões
-  explosion(pan=0,distance=0,{scale='large',key='',front=1,material=null}={}){
+  explosion(pan=0,distance=0,{scale='large',key='',front=1,material=null,concussion}={}){
     const id=key||`explosion:${this.serial}`,demolition=scale==='demolition',s=scale==='small'||demolition?scale:'large';
     this._record('explosion',{pan,distance,priority:AUDIO_PRIORITY.explosion,key:id,detail:s});this._feel(demolition?'demolition':'explosion',distance);
     if(demolition){this._record('bridge-demolition',{pan,distance,priority:AUDIO_PRIORITY.explosion,key:id});this._record('metal-stress',{pan,distance,priority:AUDIO_PRIORITY.explosion,key:id});}
@@ -400,8 +400,10 @@ export class AudioManager {
     if(debris.length){this._record('debris',{pan,distance,priority:AUDIO_PRIORITY.debris,key:id,detail:s});
       this._playPlan(debris,{kind:'debris',category:'debris',priority:AUDIO_PRIORITY.debris,pan:pan*.8,distance,front,key:id+':debris'});}
     // Sopro perto: abafa o fundo longínquo e, muito perto, "fecha" a mistura por instantes (concussão). Só apresentação.
+    // `concussion` (0..1) is the strength M01's simulation gave the stun of this blast (cover and posture included): it replaces the distance rule below, so a bank or a crouch softens the ringing.
     const reach=s==='small'?45:demolition?400:160;
-    if(distance<reach){const k=1-distance/reach;this._duck({amount:clamp(1-.75*k,.25,1),hold:.3+k*.9,recover:1.2+k*2,concussion:distance<reach*.35?k*.9:0});}
+    if(distance<reach){const k=1-distance/reach;this._duck({amount:clamp(1-.75*k,.25,1),hold:.3+k*.9,recover:1.2+k*2,
+      concussion:Number.isFinite(concussion)?clamp(concussion,0,1)*.9:distance<reach*.35?k*.9:0});}
     return voice;
   }
   bridgeDemolition(pan=0,distance=0,key='',front=1){return this.explosion(pan,distance,{scale:'demolition',key,front});}

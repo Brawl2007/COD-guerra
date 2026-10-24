@@ -197,6 +197,20 @@ test('loader: a decode finishing after dispose is dropped',async()=>{
   assert.notEqual(await pending,'decoded');assert.equal(audio.buffers.size,0);
 });
 
+test('R1-a: a blast may carry the simulation\'s own concussion strength, which replaces the distance rule; without it the rule is unchanged',()=>{
+  const duck=(options,scale)=>{const {audio}=make();if(scale!==undefined)audio.setConcussionScale(scale);audio.explosion(0,35,{scale:'large',key:'k',...options});const d=audio.lastDuck.concussion;audio.dispose();return d;};
+  const rule=(1-35/160)*.9;
+  assert.ok(Math.abs(duck({})-rule)<1e-3,'no strength given: 35 m under the rule of 160 m reach (k x .9)');
+  assert.ok(Math.abs(duck({concussion:undefined})-rule)<1e-3,'undefined is not a strength');assert.ok(Math.abs(duck({concussion:NaN})-rule)<1e-3,'neither is NaN');
+  assert.ok(Math.abs(duck({concussion:.2})-.18)<1e-3,'a bank between the player and the crater: the simulation says .2, not the rule\'s .70');
+  assert.equal(duck({concussion:0}),0,'the simulation says he was not stunned (cover, distance): no ringing, the rule is not applied');
+  assert.ok(Math.abs(duck({concussion:1})-.9)<1e-3,'full strength is the rule\'s own maximum');assert.ok(Math.abs(duck({concussion:7})-.9)<1e-3,'and clamped');
+  assert.ok(Math.abs(duck({concussion:1},.5)-.45)<1e-3,'the reduced-tinnitus setting still scales it');
+  // the duck of the far bed (ambience, distant) is the distance rule's either way; only the concussion cut changes
+  const {audio}=make();audio.explosion(0,35,{scale:'large',key:'a',concussion:0});const a={...audio.lastDuck};audio.dispose();
+  const {audio:b}=make();b.explosion(0,35,{scale:'large',key:'a'});assert.equal(a.amount,b.lastDuck.amount);b.dispose();
+});
+
 test('concussion ducks the SFX path only: MUSIC is untouched and VOICE is only touched above 0.6',()=>{
   const {audio,ctx}=make(),mix=audio.mix;
   assert.ok(reaches(mix.sfx,mix.concussion));assert.equal(reaches(mix.music,mix.concussion),false,'MUSIC does not pass through the concussion filter');

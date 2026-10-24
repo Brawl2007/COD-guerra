@@ -15,6 +15,7 @@ import { createDisplayFire, displaySeed, displayProfiles, updateDisplayFire, dis
 import { initializePresentation, updateMotion, updatePosture, updateBodyYaw, recordSuppression, recordHit, recordDeath,
   recordDamage, validatePresentation, presentationDiagnostics,updateActorDetails } from './m01-animation-presentation.js';
 import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADER_IDS,YARD_TASKS} from './m01-yard-life.js';
+import {GARRISON_GROUP,garrisonPlan,makeGarrison} from './m01-garrison.js';
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
 import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,validDeckRecord} from './m01-deck-assault.js';
@@ -22,6 +23,7 @@ import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01
 import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 import {stepCorridor,escortPace,escortTarget,zielinskiJoinPoint,escortSubject,corridorView,corridorRecord,validateCorridorRecord,CORRIDOR} from './m01-corridor.js';
 import {SQUAD,SQUAD_IDS,updateSquad,squadSlot,teamPost,squadMoving,validateSquadRecord} from './m01-squad.js';
+import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,blastPosture,blastTarget,sightPoint,blastOutcome,concussionPeak,concussionLevel,mergeConcussion,earlyRaidPoint} from './m01-blast.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -179,6 +181,24 @@ export function combatStagePlan(def=definition){
     squad:Object.freeze({underFireFrom:squad.stage.underFireFrom,slots:section,rkm:Object.freeze({actor:rkm.actor,riseBeforeSec:rkm.riseBeforeSec,holdAfterSec:rkm.holdAfterSec})}),sappers:crew});
 }
 const STAGE=combatStagePlan();
+/**
+ * R1-a (2026-10-23): the bomb that cuts the cable falls where the three sappers kneel (repair_site_1) and used to fall 1.6 m from the nearest of them. Nowicki arrives shouting that the planes are
+ * coming (dlg_m01_066) and, from `from` (04:33:30), the sappers run for the sandbags of the section's post, 26 m or more from the crater, and come back to the cable `returnAfterSec` real
+ * seconds after the bomb has fallen (evt_m01_nowicki_lost), always before `until`. The crater, the dented mug and the cut cable stay where the script has them. Pure data in mission.json
+ * (grp_sappers.stage.shelter), validated when the module loads; the walk itself is a pure function of the clocks and of the saved event time (M01Simulation.sapperShelter).
+ */
+export function sapperShelterPlan(def=definition,world=new TczewWorld()){
+  const fail=m=>{throw new Error(`M01 sapper shelter: ${m}`);},group=def.groups.find(g=>g.id==='grp_sappers'),sh=group?.stage?.shelter;
+  const from=typeof sh?.from==='string'?seconds(sh.from):NaN,until=typeof sh?.until==='string'?seconds(sh.until):NaN,crater=world.point('repair_site_1');
+  if(!(from>=seconds('04:33:00')&&from<seconds('04:34:00'))||!(until>seconds('04:34:30')&&until<=seconds('04:40:00'))||!(sh.returnAfterSec>=2&&sh.returnAfterSec<=20))
+    fail('from before the bombing, until after it, return 2 to 20 s');
+  const slots=Object.fromEntries(group.members.map(id=>{
+    const s=sh.slots?.[id];if(!Array.isArray(s)||s.length!==3||!s.every(Number.isFinite))fail(`${id}: a slot [x, z, facing]`);
+    if(Math.hypot(s[0]-crater.x,s[1]-crater.z)<26)fail(`${id}: the shelter is within 26 m of the crater`);
+    return [id,Object.freeze({x:s[0],z:s[1],facing:s[2]})];}));
+  return Object.freeze({from,until,returnAfterSec:sh.returnAfterSec,slots:Object.freeze(slots)});
+}
+const SHELTER=sapperShelterPlan();
 const eastPosition=(i,world)=>{
   const mg=FIRE_POSITIONS.find(f=>f.actor===`de_east_${i}`);if(mg)return {x:mg.position[0],y:mg.position[1],z:mg.position[2]};
   // faixa dos portões, entre as pontes (vista da margem oeste); T38: lugares desencontrados contra o portal, no chão
@@ -274,6 +294,38 @@ export function raidPlan(def=definition,world=new TczewWorld()){
 }
 const RAID_PLAN=raidPlan();
 
+// The 04:34 raid felt in the playable area (R1-a, 2026-10-23; golden amendment 16). The three scripted Stuka bombs of 04:34 (station_bomb, forward_post, repair_crater) are followed by this fixed
+// schedule of further aerial impacts, in mission.json `raidTargets0434`, until 04:44 (the raid lasted about ten minutes, 04:34-04:44: HISTORICAL_RESEARCH.md, low certainty). The positions are
+// GAMEPLAY_DRAMATIZATION along the west bank: the bridge approaches, the south slope of the rail embankment (the ignition line) and the station area. Fixed battle-clock times, no draw from any
+// random stream. Every impact still passes safeImpact (never within 30 m of the player) and is kept clear of the places the objectives use (EARLY_RAID_CLEAR), so a crater never lies on the
+// repair site, the rally point or the crate's shed. Saved like the 05:30 schedule: timers.raidSchedule0434, created when evt_m01_bombing_0434 is consumed, absent in older saves (which get no
+// retroactive impacts).
+const EARLY_RAID_ID=/^raid_0434_[1-9]\d?$/,EARLY_RAID_CLEAR=Object.freeze(['repair_site_2','rally_point','rail_hut','firing_point','shelter','aid_position','squad_post']),EARLY_RAID_CLEAR_M=20;
+const earlyRaidKeep=(world=new TczewWorld())=>EARLY_RAID_CLEAR.map(id=>world.point(id));
+export function earlyRaidPlan(def=definition,world=new TczewWorld()){
+  const fail=m=>{throw new Error(`M01 early raid: ${m}`);},targets=def.raidTargets0434;
+  if(!Array.isArray(targets)||targets.length<6||targets.length>12)fail('6 to 12 targets required');
+  // After the last scripted impact of 04:34 (repair_crater, 5 s after the event at 3.5x = 04:34:17.5) and before the German arrival at 04:45.
+  const from=seconds('04:34:20'),to=seconds('04:44:00'),b=world.layout.bounds.playable,keep=earlyRaidKeep(world);
+  return targets.map((t,i)=>{
+    const id=`raid_0434_${i+1}`,at=typeof t?.at==='string'?seconds(t.at):NaN;
+    if(t?.id!==id||!EARLY_RAID_ID.test(id)||!Number.isFinite(at)||at<from||at>=to||(i&&at<=seconds(targets[i-1].at)))fail('IDs/times');
+    if(!Array.isArray(t.position)||t.position.length!==2||!t.position.every(Number.isFinite))fail('position');
+    const [x,z]=t.position;
+    if(!(x>=b.minX+10&&x<=b.maxX&&z>=b.minZ+10&&z<=b.maxZ-10))fail(`${id} outside the playable area`);
+    // An impact only moves by safeImpact (30 m approach + 40 m replacement = 70 m), so a point clear of the objectives' places by 20 m stays clear of them unless the player stands within 30 m.
+    if(keep.some(k=>Math.hypot(x-k.x,z-k.z)<EARLY_RAID_CLEAR_M))fail(`${id} too close to an objective`);
+    if(t.certainty!=='GAMEPLAY_DRAMATIZATION')fail('certainty');
+    return {id,at,point:{x,y:world.heightAt(x,z),z}};
+  });
+}
+const RAID0434_PLAN=earlyRaidPlan(),EARLY_RAID_KEEP=earlyRaidKeep();
+// The unnamed garrison of the west bridgehead (m01-garrison.js, mission.json westGarrison): standing where the 04:34 bombs fall. Kept clear of the places of the objectives and of the cable camp.
+const GARRISON_PLAN=(world=>garrisonPlan(definition,world,[...EARLY_RAID_KEEP,world.point('repair_site_1')]))(new TczewWorld());
+export const GARRISON_IDS=Object.freeze(GARRISON_PLAN.map(p=>p.id));
+// Who a bomb may never kill or wound (only shake): the whole cast, by id (m01-blast.js blastProtection).
+const BLAST_CAST=castIds(definition);
+
 // T48 (BX-09), the Germans after the east demolition. Roadmap schedule, in battle clock: no German shot from 06:10 to 06:11 (60 s), regrouped by 06:12.
 // A man's march to the close-up knot is a pure function of the battle clock (fallBack), so 06:12 holds at any time scale and tick length.
 const GERMAN_SILENCE_FROM=seconds('06:10:00'),GERMAN_SILENCE_UNTIL=seconds('06:11:00'),GERMAN_REGROUP_AT=seconds('06:12:00');
@@ -325,6 +377,7 @@ export class M01Simulation {
       {group:'grp_east_platoon',active:false,role:'RIFLEMAN'}));
     this.actors.push(...makeCKMCrew(this.world,0,false,seed));
     this.actors.push(...makeAuxiliaries(entity,this.world,this.actors));
+    this.actors.push(...makeGarrison(entity,this.world,GARRISON_PLAN));
     for(const a of this.actors)initializePresentation(a,this.clock);
     this.timers={boundary:0,water:0,cover:0,repairStall:0,repairSuppressedUntil:0,withdrawalCasualty:seconds('06:00:00'),
       ambient:0,nextCoverCall:40,guide:0,guideKey:null,guideAt:0,guideDist:0,guideShown:false,kowalRounds:this.level.kowalRounds,lowAmmoHint:false,escort:false,escortSpoke:false,boundaryWarning:false,boundaryCountdown:0,holdAccessVisited:false,
@@ -482,7 +535,7 @@ export class M01Simulation {
     if(id===E('east_demolition'))return this.done('hold_access')&&this.actors.filter(a=>a.alive&&a.active&&a.group==='grp_east_platoon').every(a=>a.x<660)&&this.player.x<660&&this.deckClear();
     // ponytail: P2 keeps the approved B4 rule (the charge waits for Bąk's delivery at the station, tests/m01-partials-correction-01.test.js); releasing it at
     // x < WEST_SAFE_X would save ~2 min at the firing point but needs a human decision (docs/direction/COD_WAW_WWII_BENCHMARK.md).
-    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian).every(a=>a.x<WEST_SAFE_X)&&!bak.carry&&!bak.carriedBy;}
+    if(id===E('west_demolition')){const bak=this.actor('jozef_bak');return this.consumedEvent(E('east_demolition'))&&this.player.x<WEST_SAFE_X&&this.actors.filter(a=>a.alive&&a.active&&a.team==='ally'&&!a.civilian&&!a.displayOnly).every(a=>a.x<WEST_SAFE_X)&&!bak.carry&&!bak.carriedBy;}
     if(id===E('dudek_retrieves_bak'))return this.player.carrying!=='jozef_bak';
     if(id===E('roll_call'))return this.scene?.id!=='cs_m01_west_blast';
     return true;
@@ -534,7 +587,9 @@ export class M01Simulation {
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
         this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
         this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');
-        this.impact('station_bomb',this.world.point('tczew_station'),true);break;
+        this.impact('station_bomb',this.world.point('tczew_station'),true);
+        // R1-a: the raid goes on until 04:44 (raidTargets0434). The schedule is data in the save; an older save past this event has none and gets no retroactive impacts.
+        this.timers.raidSchedule0434=RAID0434_PLAN.map(t=>({...clone(t),emitted:false}));this.updateEarlyRaid();break;
       case E('forward_post_bombed'):{const p=this.world.point('forward_post');
         const near=dist(this.player,p)<=30;this.flags['m01.forward_post_state']=near?'intact_near_miss':'destroyed';
         this.impact('forward_post',near?{x:0,y:-10,z:-40}:p,true);break;}
@@ -607,14 +662,71 @@ export class M01Simulation {
     const p=aerial?this.safeImpact(point):{...point};
     if(aerial)p.y=this.world.heightAt(p.x,p.z);   // Ground only after the existing safety shift, including near-miss alternatives.
     const kind=blastKind(id,aerial);
-    this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343,...(kind==='grenade'?{smokeSeconds:20}:{})});
-    this.emit({type:'m01-blast',kind,point:p,soundAt:this.clock+dist(p,this.player)/343,aerial});return p;
+    // R1-a: a bomb now does something to the men beside it (bombEffects). Grenades and the demolitions keep their own rules, and their event is the one it always was. The crater records how hard
+    // the bomb stunned the player (`concussion`, 0..1): the audio presents that strength, also after a restore, and a record without it (an older save) keeps the audio's own distance rule.
+    const effects=aerial&&kind==='bomb'?this.bombEffects(id,p):null;
+    this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343,...(kind==='grenade'?{smokeSeconds:20}:{}),...(effects?{concussion:effects.concussion}:{})});
+    this.emit({type:'m01-blast',kind,point:p,soundAt:this.clock+dist(p,this.player)/343,aerial,...(effects?{concussion:effects.concussion,effects:effects.casualties}:{})});return p;
   }
+  /**
+   * What an aerial bomb does to everyone near its crater (R1-a; the numbers and the reasons are in m01-blast.js, gameplay values and never a count of real dead). For every living, present
+   * man within reach (not carried): the distance to his torso, whether the blast sees that torso (the world's line of sight from the crater, so a bank, a wall or a sandbag line shelters him),
+   * how he lies, and a jitter from the (man, impact) pair give the outcome: killed (DOWN, the body stays), wounded (WOUNDED if he is ours, HIT_REACTION if he is a German, health down but
+   * at least 1), or shaken (suppressedUntil, the existing suppression: the sappers stop and lie down, the allies are drawn pinned, a German goes to cover). The cast, the east platoon, the
+   * ckm crew and the scenery of the station yard are only ever shaken (blastProtection): the plot needs them. The player is never hurt (F4/F1) but is stunned near a blast
+   * (player.concussion / concussedUntil: reduced sprint and a less steady rifle for a few seconds), and the audio presents the strength the crater records. No draw from any random stream.
+   * Returns {casualties: {killed, wounded, suppressed: [ids]}, concussion: 0..1}; the transient `m01-blast` event carries both.
+   */
+  bombEffects(id,p){
+    const clock=this.clock,source=sightPoint({x:p.x,y:p.y+BOMB_BLAST.sourceHeight,z:p.z}),casualties={killed:[],wounded:[],suppressed:[]};
+    for(const a of this.actors){
+      if(!a.alive||!a.active||a.carriedBy||Math.abs(a.x-p.x)>BOMB_REACH_M||Math.abs(a.z-p.z)>BOMB_REACH_M)continue;
+      const target=blastTarget(a),distance=Math.hypot(a.x-p.x,target.y-source.y,a.z-p.z);
+      if(distance>BOMB_REACH_M)continue;
+      const r=blastOutcome({distance,covered:!this.world.lineOfSight(source,sightPoint(target)),posture:blastPosture(a),protectedBy:blastProtection(a,BLAST_CAST),u:blastJitter(a.id,id)});
+      if(r.outcome==='none')continue;
+      const health=a.health,wasAlive=a.alive;
+      if(r.outcome==='kill'){a.health=0;a.alive=false;a.state='DOWN';a.crouched=false;recordDamage(a,health,wasAlive,clock,p);casualties.killed.push(a.id);}
+      else if(r.outcome==='wound'){
+        a.health=Math.max(1,a.health-r.healthLoss);a.crouched=false;
+        if(a.team==='enemy')a.state='HIT_REACTION';else{a.state='WOUNDED';a.target=null;}   // our wounded lie down (the WOUNDED pose); a German is hit as by a round and goes on
+        recordDamage(a,health,wasAlive,clock,p);casualties.wounded.push(a.id);
+      }else{
+        const previousUntil=a.suppressedUntil;a.suppressedUntil=Math.max(previousUntil,clock+r.suppressSec);
+        recordSuppression(a,previousUntil,clock);if(a.suppressedUntil>previousUntil)casualties.suppressed.push(a.id);
+      }
+      if(proneGunner(a))this.updateMG34Posture(a);
+    }
+    // The player: never damaged by a bomb. Stunned by the nearest ones, less behind cover or crouching; the strongest effect wins, they do not add up.
+    const pl=this.player,body=blastTarget(pl),distance=Math.hypot(pl.x-p.x,body.y-source.y,pl.z-p.z);let peak=0;
+    if(pl.alive&&concussionPeak({distance})>0)peak=concussionPeak({distance,covered:!this.world.lineOfSight(source,sightPoint(body)),crouched:Boolean(pl.crouched)});
+    const merged=mergeConcussion(pl,clock,peak);if(merged)Object.assign(pl,merged);
+    return {casualties,concussion:peak};
+  }
+  /** The player's concussion now, 0..1 (read-only; 0 when nothing is wrong with him). */
+  get concussion(){return concussionLevel(this.player,this.clock);}
   updateRaidSchedule(){
     // A missing schedule is a legacy schema-2 raid: never invent retroactive impacts on resume.
     for(const t of this.timers.raidSchedule??[])if(!t.emitted&&this.battleClock>=t.at){
       t.point=this.impact(t.id,t.point,true);t.emitted=true;
     }
+  }
+  /**
+   * The 04:34 raid's schedule (raidTargets0434), same rules as the 05:30 one: fixed battle-clock times, nothing retroactive for a save without the field. Each impact falls on its planned point,
+   * or, when the player stands within 30 m of it, 40 m from him on the first free bearing (earlyRaidPoint: never on an objective's place, in the river or in a building); impact() then
+   * applies safeImpact as for every aerial impact, so the 30 m guarantee holds even if no free place was found.
+   */
+  updateEarlyRaid(){
+    for(const t of this.timers.raidSchedule0434??[])if(!t.emitted&&this.battleClock>=t.at){
+      const free=(x,z)=>this.earlyRaidFree(x,z),at=earlyRaidPoint(t.point,this.player,free);
+      t.point=this.impact(t.id,at?{x:at.x,y:t.point.y,z:at.z}:t.point,true);t.emitted=true;
+    }
+  }
+  /** A place the early raid may drop a bomb: inside the playable area (10 m in), out of the river and the buildings, 20 m from the places of the objectives. */
+  earlyRaidFree(x,z){
+    const b=this.world.layout.bounds.playable;
+    return x>=b.minX+10&&x<=b.maxX&&z>=b.minZ+10&&z<=b.maxZ-10&&!this.world.isWater(x)&&
+      !this.world.buildings.some(o=>x>=o.min.x-2&&x<=o.max.x+2&&z>=o.min.z-2&&z<=o.max.z+2)&&EARLY_RAID_KEEP.every(k=>Math.hypot(x-k.x,z-k.z)>=EARLY_RAID_CLEAR_M);
   }
   processEvents(){
     for(let pass=0;pass<4;pass++)for(const event of definition.events){
@@ -1082,7 +1194,7 @@ export class M01Simulation {
       this.stageSection(a);
       // Sappers: kneeling at the cable until called to the second cut (T38), crouched while working there, kneeling again once they reach the
       // west after the retreat (not under fire there); prone is presentation (T07/T38).
-      if(a.role==='ENGINEER'){a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';if(this.clock<a.suppressedUntil)continue;}
+      if(a.role==='ENGINEER'){this.sapperShelter(a);a.crouched=this.active('cover_repair')&&dist(a,this.world.point('repair_site_2'))<6||!a.target||retreat&&a.state==='GUARD';if(this.clock<a.suppressedUntil)continue;}
       if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt);
     }
     for(const a of this.actors)if(a.carriedBy){
@@ -1203,6 +1315,21 @@ export class M01Simulation {
     const rkm=STAGE.squad.rkm,firing=a.id===rkm.actor&&this.consumedEvent(E('train963_arrives'))&&!this.consumedEvent(E('east_demolition'))&&
       (a.cooldown<=rkm.riseBeforeSec||this.clock-a.firedAt<rkm.holdAfterSec);
     a.crouched=a.state!=='WOUNDED'&&!a.carriedBy&&!a.task&&dist(a,slot)<.5&&!(a.target&&dist(a.target,a)>=.8)&&!firing;
+  }
+  /** R1-a: the sappers have been called to the second cut (the player found them at repair_site_1: find_sappers done) or the repair is already further on. The order to go is given once, then; the shelter never undoes it. */
+  sappersCalled(){return this.done('find_sappers')||['fetch_material','cover_repair'].some(n=>this.active(n)||this.done(n));}
+  /**
+   * R1-a: the sappers of the cable camp take cover while the bomb that cuts the cable falls (sapperShelterPlan): from `from` they walk to the sandbags of the section's post, and
+   * `returnAfterSec` real seconds after evt_m01_nowicki_lost they walk back to their places at the cable. A pure function of the battle clock, the clock and the saved time of that event:
+   * no saved state of its own, so a save made at any moment of the walk goes on as it was. Never after `until` and never once the player has called them to the second cut (sappersCalled:
+   * that order is given once, and the shelter must not undo it). No draw.
+   */
+  sapperShelter(a){
+    const haven=SHELTER.slots[a.id],home=STAGE.sappers[a.id];
+    if(!haven||!home||!a.alive||!a.active||this.battleClock<SHELTER.from||this.battleClock>=SHELTER.until||this.sappersCalled())return;
+    const lostAt=this.consumed[E('nowicki_lost')],goal=lostAt!==undefined&&this.clock>=lostAt+SHELTER.returnAfterSec?home:haven;
+    if(dist(a,goal)<1){if(a.target){a.target=null;delete a.nav;}a.facing=goal.facing;a.state='GUARD';return;}   // there: kneeling (no target), on guard, facing as staged
+    if(!a.target||Math.abs(a.target.x-goal.x)>.01||Math.abs(a.target.z-goal.z)>.01)a.target={x:goal.x,z:goal.z};
   }
   /** T38: after this tick's shots and suppression, each active gate rifleman kneels or stands as he will be drawn (and hit) until the next tick. */
   stageGateRiflemen(){for(const a of this.enemies)if(a.alive&&a.active&&(gateRifleman(a)||a.deck))a.crouched=this.clock<a.suppressedUntil||this.gateKneels(a)||this.deckKneels(a);}
@@ -1829,6 +1956,9 @@ export class M01Simulation {
   fire(){
     const p=this.player,now=this.clock*1000;if(p.carrying||!this.weapon.shoot(now))return;
     const aim=this.weapon.shotDirection(p.angle,p.pitch,p.aiming,p.moveBlend>.1,this.rng.next);
+    // R1-a: a stunned player's rifle is less steady: the same two draws, their deviation from his aim multiplied (exactly 1 when he is not stunned).
+    const sway=1+CONCUSSION.aimSway*concussionLevel(p,this.clock);
+    if(sway!==1){aim.angle=p.angle+(aim.angle-p.angle)*sway;aim.pitch=p.pitch+(aim.pitch-p.pitch)*sway;}
     const dir=aimDirection(aim.angle,aim.pitch),origin=eyePosition(p),hit=traceShot(this.world,origin,dir,this.combatants,1200,muzzlePosition(p));
     p.weaponShotAt=now;p.pitch=Math.min(1.25,p.pitch+.024);
     if(hit?.actor?.team==='enemy'){const a=hit.actor,health=a.health,wasAlive=a.alive;a.health=Math.max(0,a.health-this.weapon.profile.damage*hit.multiplier);a.alive=a.health>0;a.state=a.alive?'HIT_REACTION':'DOWN';recordDamage(a,health,wasAlive,this.clock,p);
@@ -1907,6 +2037,7 @@ export class M01Simulation {
     if(!Number.isFinite(dt)||dt<=0||this.mission.complete)return;dt=Math.min(.05,dt);
     if(!this.player.alive){const reason=this.failure;this.restoreCheckpoint();this.emit({type:'restored'});if(reason)this.message(reason);return;}
     this.clock+=dt;const p=this.player;
+    if(p.concussedUntil!==undefined&&!(this.clock<p.concussedUntil)){delete p.concussion;delete p.concussedUntil;}   // R1-a: the stun is over; the player returns to the shape he had before it
     // Player rays use this tick's transition frame, matching the frame later sampled by presentation.
     for(const a of this.enemies)if(proneGunner(a))this.updateMG34Posture(a);
     p.angle+=(controls.lookX??0)*.0022;p.pitch=Math.max(-1.25,Math.min(1.25,p.pitch-(controls.lookY??0)*.0022));p.aiming=Boolean(controls.aim);
@@ -1916,9 +2047,11 @@ export class M01Simulation {
     if(locked&&this.scene.id==='cs_m01_intro')this.advanceBattle(dt);
     if(!locked){
       const f=controls.forward??0,s=controls.side??0,len=Math.hypot(f,s)||1;
-      const speed=(controls.sprint?6:3.8)*(p.carrying?.55:1)*(p.crouched?.6:1)*(p.aiming?.65:1);
+      // R1-a: a concussed player (a bomb within 60 m, m01-blast.js) loses part of his speed and cannot sprint when badly stunned; stun is 0 for everyone else, and the numbers are then exactly the old ones.
+      const stun=concussionLevel(p,this.clock);
+      const speed=(controls.sprint?6*(1-CONCUSSION.sprintCut*stun):3.8*(1-CONCUSSION.walkCut*stun))*(p.carrying?.55:1)*(p.crouched?.6:1)*(p.aiming?.65:1);
       const dx=(Math.cos(p.angle)*f-Math.sin(p.angle)*s)*speed*dt/len,dz=(Math.sin(p.angle)*f+Math.cos(p.angle)*s)*speed*dt/len;
-      const before={x:p.x,z:p.z};this.moveBody(dx,dz,dt);p.moveBlend=Math.min(1,dist(before,p)/(dt*3.8));p.sprinting=Boolean(controls.sprint)&&p.moveBlend>.1;
+      const before={x:p.x,z:p.z};this.moveBody(dx,dz,dt);p.moveBlend=Math.min(1,dist(before,p)/(dt*3.8));p.sprinting=Boolean(controls.sprint)&&p.moveBlend>.1&&stun<CONCUSSION.sprintOffAt;
       this.weapon.update(this.clock*1000);
       if(controls.reload&&this.weapon.reload(this.clock*1000))this.emit({type:'reload',weapon:'kb_wz29'});
       if(controls.sight)this.message(`Alça: ${this.weapon.adjustSight()} m`);
@@ -1929,7 +2062,7 @@ export class M01Simulation {
     for(const a of this.actors){updatePosture(a,this.clock);updateBodyYaw(a,dt);}
     if(!p.alive)return;
     this.regenerate(dt);
-    this.updateObjectives(dt,controls.interact);this.updatePreRoll();this.processEvents();this.updateRaidSchedule();this.updateContinuity();
+    this.updateObjectives(dt,controls.interact);this.updatePreRoll();this.processEvents();this.updateRaidSchedule();this.updateEarlyRaid();this.updateContinuity();
     if(this.flags['m01.second_raid_state']==='active'&&this.battleClock>=seconds('05:34:00'))this.flags['m01.second_raid_state']='ended';
     for(const sector of this.sectors.sectors){const schedule=definition.sectors.find(s=>s.id===sector.id).schedule;
       const current=schedule.filter(s=>seconds(s.at)<=this.battleClock).at(-1);sector.state=current.state;
@@ -2237,6 +2370,8 @@ export class M01Simulation {
     // from it), no open peek and his current suppression already taken into account, so his saved cooldown runs out exactly as it would have.
     for(const a of candidate.actors)if(AI_MIGRATE(a)&&a.ai===undefined)a.ai=newAI(s.rng,aiIndex(a.id),a.suppressedUntil);
     if(!s.actors.some(a=>AUXILIARY_IDS.includes(a.id)))candidate.actors.push(...makeAuxiliaries(entity,candidate.world,candidate.actors,candidate.clock));
+    // R1-a: a save made before the west garrison existed gets the whole group at its posts (outside allies / enemies / combatants, no draw): nothing happened to them, nothing is invented.
+    if(!s.actors.some(a=>GARRISON_IDS.includes(a.id)))candidate.actors.push(...makeGarrison(entity,candidate.world,GARRISON_PLAN));
     candidate.enemyFire=s.enemyFire??{rounds:[],nextId:0};   // saves anteriores ao fogo em voo começam sem tiros no ar
     // Legacy MG bursts pre-created future rounds. Keep shots already in flight, cancel unissued ones, and
     // resume from standing on the next update, without a migration marker or an RNG draw.
@@ -2344,16 +2479,25 @@ export function validateM01Snapshot(s){
   // An airborne player carries his fall (src/world/m01-player-physics.js); a grounded one has none, so older saves need no migration.
   if(s.player.fall!==undefined){const f=s.player.fall;
     if(!f||typeof f!=='object'||Object.keys(f).length!==5||['vy','vx','vz','startY','t'].some(k=>!Number.isFinite(f[k]))||f.vy>0||f.vy<-60||Math.abs(f.vx)>20||Math.abs(f.vz)>20||f.t<0||f.t>30)reject('queda do jogador');}
+  // R1-a: a player stunned by a bomb carries his peak (0..1] and the time it ends, both or neither; absent in every older save and once the stun is over (the next tick deletes them, so a
+  // save whose end is already past is harmless and accepted). The end is never farther than the longest stun.
+  if(s.player.concussion!==undefined||s.player.concussedUntil!==undefined){
+    const k=s.player.concussion,u=s.player.concussedUntil;
+    if(!(Number.isFinite(k)&&k>0&&k<=1)||!Number.isFinite(u)||u>s.clock+CONCUSSION.maxSec+1e-6)reject('atordoamento do jogador');
+  }
   const actorIds=[...ACTOR_CAST.map(c=>c.id),...Array.from({length:40},(_,i)=>`de_east_${i}`),...Array.from({length:10},(_,i)=>`de_spans_${i}`),...Array.from({length:24},(_,i)=>`pl_east_${i}`)];
   const hasCKM=Array.isArray(s.actors)&&s.actors.some(a=>CKM_IDS.includes(a?.id));
   if(hasCKM)actorIds.push(...CKM_IDS);
   const hasAuxiliary=Array.isArray(s.actors)&&s.actors.some(a=>AUXILIARY_IDS.includes(a?.id));
   if(hasAuxiliary)actorIds.push(...AUXILIARY_IDS);
+  const hasGarrison=Array.isArray(s.actors)&&s.actors.some(a=>GARRISON_IDS.includes(a?.id));   // R1-a: the unnamed west garrison enters whole or not at all
+  if(hasGarrison)actorIds.push(...GARRISON_IDS);
   if(!Array.isArray(s.actors)||s.actors.length!==actorIds.length||new Set(s.actors.map(a=>a.id)).size!==s.actors.length||!s.actors.every(a=>point(a)&&actorIds.includes(a.id)&&Number.isFinite(a.radius)&&a.radius>0))reject('actores');
   for(const a of s.actors)validatePresentation(a,s.clock,reject);
   for(const a of s.actors){
     if(a.cover&&!definitionMapCover(a.cover))reject('cover node '+a.id);
-    if(a.displayOnly!==undefined&&(!AUXILIARY_IDS.includes(a.id)||a.displayOnly!==true))reject('display-only actor');
+    if(a.displayOnly!==undefined&&(!(AUXILIARY_IDS.includes(a.id)||GARRISON_IDS.includes(a.id))||a.displayOnly!==true))reject('display-only actor');
+    if(GARRISON_IDS.includes(a.id)&&(a.displayOnly!==true||a.group!==GARRISON_GROUP||a.team!=='ally'||a.role!=='RIFLEMAN'||a.civilian))reject('west garrison');
     if(a.nav!==undefined&&!validNavRoute(a.nav,s.clock))reject('route '+a.id);   // NPC navigation: a saved detour round the solids (absent in older saves, re-made on demand)
     if(AUXILIARY_IDS.includes(a.id)&&(!a.displayOnly||a.group!==(YARD_IDS.includes(a.id)?'grp_station_yard':'grp_mg34_loaders')))reject('auxiliary group');
     if(MG_LOADER_IDS.includes(a.id)){
@@ -2469,7 +2613,7 @@ export function validateM01Snapshot(s){
   if(s.sectors.sectors.some((sector,i)=>sector.id!==definition.sectors[i].id||!definition.sectors[i].schedule.some(entry=>entry.state===sector.state)||
     ![sector.strength,sector.morale,sector.supply].every(Number.isFinite)))reject('sectores');
   if(s.sectors.damage.some(d=>typeof d.id!=='string'||![d.x,d.y,d.z].every(Number.isFinite)||!finite(d.started,0,s.clock)||!finite(d.soundAt,d.started)||
-    d.smokeSeconds!==undefined&&!finite(d.smokeSeconds,0,d.id.startsWith('m01_grenade_')?20:240)))reject('destruição');
+    d.smokeSeconds!==undefined&&!finite(d.smokeSeconds,0,d.id.startsWith('m01_grenade_')?20:240)||d.concussion!==undefined&&!finite(d.concussion,0,1)))reject('destruição');
   if(!Number.isInteger(s.grenades.nextId)||s.grenades.nextId<0||s.grenades.active.length>2||s.grenades.active.some(g=>typeof g.id!=='string'||![g.x,g.y,g.z,g.vx,g.vy,g.vz,g.fuse].every(Number.isFinite)||g.fuse<=0))reject('granadas em voo');
   for(const key of ['boundary','water','cover','repairStall','repairSuppressedUntil','withdrawalCasualty','ambient','nextCoverCall','guide',
     'boundaryCountdown','coverExposure','coverCallIndex'])if(!finite(s.timers[key]))reject('timer '+key);
@@ -2518,6 +2662,23 @@ export function validateM01Snapshot(s){
         damage.length!==(emitted?1:0)||damage.some(d=>d.x!==p.x||d.y!==p.y||d.z!==p.z||d.started<raidAt))reject('raid target');
     }
     if(s.sectors.damage.some(d=>RAID_ID.test(d.id)&&!schedule.some(t=>t.id===d.id&&t.emitted)))reject('raid damage');
+  }
+  // R1-a: the 04:34 raid's schedule (raidTargets0434), created by evt_m01_bombing_0434 and absent in an older save. An entry is emitted once the battle clock has reached its time; the checkpoint of a
+  // tick may be written between the clock's advance and the schedule's update (updateObjectives saves CP-B and CP-B2 before updateEarlyRaid), so a due entry that is not yet emitted is valid: the next
+  // tick emits it. What cannot be is an impact before its time, a crater without its entry, an entry moved off the plan, or a point the safety shift (70 m at most) could not have made.
+  if(s.timers.raidSchedule0434===undefined&&s.sectors.damage.some(d=>EARLY_RAID_ID.test(d.id)))reject('missing raid schedule 0434');
+  if(s.timers.raidSchedule0434!==undefined){
+    const schedule=s.timers.raidSchedule0434,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0434')];
+    if(!Array.isArray(schedule)||schedule.length!==RAID0434_PLAN.length||raidAt===undefined)reject('raid schedule 0434');
+    for(const [i,t] of schedule.entries()){
+      const plan=RAID0434_PLAN[i],p=t?.point,emitted=t?.emitted,damage=s.sectors.damage.filter(d=>d.id===plan.id);
+      if(!t||Object.keys(t).some(k=>!['id','at','point','emitted'].includes(k))||t.id!==plan.id||t.at!==plan.at||
+        !p||Object.keys(p).some(k=>!['x','y','z'].includes(k))||![p.x,p.y,p.z].every(Number.isFinite)||p.y!==world.heightAt(p.x,p.z)||
+        typeof emitted!=='boolean'||(emitted&&s.battleClock<plan.at)||
+        (emitted?dist(p,plan.point)>70.000001:p.x!==plan.point.x||p.y!==plan.point.y||p.z!==plan.point.z)||
+        damage.length!==(emitted?1:0)||damage.some(d=>d.x!==p.x||d.y!==p.y||d.z!==p.z||d.started<raidAt))reject('raid target 0434');
+    }
+    if(s.sectors.damage.some(d=>EARLY_RAID_ID.test(d.id)&&!schedule.some(t=>t.id===d.id&&t.emitted)))reject('raid damage 0434');
   }
   if(s.timers.coverFire!==undefined){
     const fire=s.timers.coverFire,actor=s.actors.find(a=>a.id===fire?.by);
