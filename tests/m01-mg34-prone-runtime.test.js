@@ -119,7 +119,7 @@ test('inactivity discards pending combat and the optional display loader leaves 
   const s=firing(),a=s.actor(GUNNER);a.active=false;s.updateMG34Posture(a);
   assert.equal(a.mg34Prone,undefined);assert.equal(a.shot,0);
   at(s,s.clock+.05);const loader=s.actor('de_mg34_loader_0');assert.equal(loader.loaderFor,GUNNER);assert.equal(loader.mg34Loader.phase,'leave');assert.equal(loader.shot,0);assert.ok(s.enemies.every(x=>!x.displayOnly));
-  assert.equal(s.actors.length,97);assert.equal(s.snapshot().schema,2);
+  assert.equal(s.actors.length,103);assert.equal(s.snapshot().schema,2);   // 2026-10-23 (R1-a, golden amendment 16): 97 + the six unnamed men of the west garrison
 });
 
 test('legacy missing prone data resumes safely with no marker; 86 roster/CKM migration stays unchanged',()=>{
@@ -131,7 +131,7 @@ test('legacy missing prone data resumes safely with no marker; 86 roster/CKM mig
   s.updateMG34Posture(s.actor(GUNNER));assert.equal(phase(s),'enter');
   const oldest=new M01Simulation().snapshot();oldest.actors=oldest.actors.filter(a=>!a.ckm);
   const r=new M01Simulation();r.restoreSnapshot(oldest);
-  assert.equal(r.actors.length,97);assert.deepEqual(r.actors.filter(a=>!a.ckm),oldest.actors);assert.equal(r.rng.state,oldest.rng);
+  assert.equal(r.actors.length,103);assert.deepEqual(r.actors.filter(a=>!a.ckm),oldest.actors);assert.equal(r.rng.state,oldest.rng);   // 2026-10-23 (R1-a, amendment 16): 97 -> 103, the west garrison
 });
 
 test('invalid partial/impossible prone fields reject atomically without changing source or target',()=>{

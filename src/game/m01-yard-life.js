@@ -21,6 +21,8 @@ export function updateYard(actors,battleClock,clock,world){
   for(const a of actors)if(a.group==='grp_station_yard'){
     if(!a.alive||!a.active)continue;
     const i=YARD_IDS.indexOf(a.id);
+    // R1-a: a railwayman a bomb has wounded (state WOUNDED, m01-blast.js) lies where he fell; the patrol and the guard change no longer move him or reset his state.
+    if((i===0||i===1)&&a.state==='WOUNDED'){a.y=world.heightAt(a.x,a.z);continue;}
     if(i===0||i===1){const slot=Math.floor((battleClock-16200)/45),phase=slot%3;
       a.task=beforeRaid?['patrol','guard_change','watch_bridge'][phase]:afterRaid?'guard_change':'watch_bridge';
       const base=i===0?-326:-348;a.x=base+(a.task==='patrol'?Math.sin((battleClock-16200)*Math.PI/45)*2:0);

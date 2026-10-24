@@ -37,7 +37,11 @@ export function coverRoute(seed=19390901,mode='ignore',options={}){
     return {lookX,lookY,aim:true,fire,reload:sim.weapon.mag===0&&sim.weapon.state==='READY'};
   };
   if(mode==='help'){
-    walk(-120,16.5);tick({crouch:true});lastFlash=null;
+    // 2026-10-23 (R1-a, golden amendment 16): the pilot squares up (heading and pitch 0) before it engages. The heading it arrived with was the direction of the last step of `walk`, whose sub-count
+    // residue depended on path differences of centimetres; the pilot then turns to the flash in whole mouse counts (2.2 mrad, 2.6 m at 1170 m) from there, so that residue decided whether its rounds pass
+    // within 3 m of the gate MG: the stun of the bombs moves the path by centimetres and the MG was kept down 4 % of the repair instead of 85-90 % on every seed (the seeds share the whole route before
+    // 04:45), with no change to anything a player can do. From a squared-up start the pilot is reproducible (90 % without the bombs, 91 % with them on the golden seed).
+    walk(-120,16.5);tick({crouch:true,lookX:-sim.player.angle/.0022,lookY:sim.player.pitch/.0022});lastFlash=null;
     wait(()=>!sim.active('cover_repair'),400,cover(f=>f.id==='de_east_0',()=>sim.threat.mgSuppressed.includes('de_east_0'),4));
     tick({crouch:true});
     // T38: Kowal kneels right behind the squad-post sandbags, so the pilot comes up from behind him (west), not through the sandbags.

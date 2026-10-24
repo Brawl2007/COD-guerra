@@ -1,6 +1,9 @@
 // T49 pillar E (ported from PR #88 / f70ff8a): per-frame scratch reuse and no GPU upload for empty instance sets.
 // Presentation only. The golden file was generated with the code BEFORE this change (M01_T49_WRITE_GOLDEN=1 on 625a169),
 // so the equality assertions below prove the refactor is output-identical, not merely self-consistent.
+// 2026-10-24 (VIS-a, merge e85336e6): German impostors are drawn at contrast 3.9 instead of 3 (NATION_CONTRAST in m01-impostors.js), an intended
+// presentation change. Only the `impostors` record was re-recorded (M01_T49_WRITE_GOLDEN=1 on c66436d4); the diff against the previous file is
+// exactly impostors.{east,north,east2}.arrays.de.ink and the contrast of the three German items; every other record is byte-identical.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';

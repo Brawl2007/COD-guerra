@@ -110,9 +110,10 @@ test('damage decals never write simulation state: the real repair route stays bi
   // Two instances fed the same frozen events are identical: variation is a hash of event data, not a random source.
   assert.deepEqual(a.marks.map(markData),b.marks.map(markData));assert.deepEqual(a.counts,b.counts);
   assert.deepEqual(residueData(a),residueData(b));assert.deepEqual(a.diagnostics,b.diagnostics);
-  // All four scripted bombs of the route (saved in sectors.damage) left persistent residue.
+  // Every bomb of the route (saved in sectors.damage) left persistent residue. 2026-10-23 (R1-a, golden amendment 16): the 04:34 raid goes on with the eleven impacts of mission.json raidTargets0434
+  // (raid_0434_1..11, 04:34:46-04:43:10), so the route now holds the three scripted bombs of 04:34, those eleven and the first of the 05:30 raid: 15 craters, inside the 16 the decals keep.
   const ids=fed.sim.sectors.damage.map(d=>d.id);
-  assert.deepEqual(ids,['station_bomb','forward_post','repair_crater','raid_0530']);
+  assert.deepEqual(ids,['station_bomb','forward_post','repair_crater',...Array.from({length:11},(_,i)=>`raid_0434_${i+1}`),'raid_0530']);
   assert.deepEqual(a.residue.map(r=>r.id),ids);
   for(const r of a.residue)assert.ok(r.polys.length>0&&r.debris.length>0,`${r.id}: ${r.polys.length} polygons, ${r.debris.length} debris`);
   assert.ok(a.residueTriangles>0&&a.residueTriangles<=LIMITS.residueTriangles);

@@ -21,6 +21,7 @@ import {
   resolveAnimation
 } from './m01-animation-resolver.js';
 import { animationSeed, unit as animationUnit } from './m01-animation-variety.js';
+import {SoldierMergeCache,batchSoldier} from './m01-soldier-batching.js';
 import { bindCharacterIkRig, createIkDiagnosticsState, formatIkDiagnostics, restoreIkPose, updateActorsIk } from './m01-hand-pin.js';
 
 const BASE='assets/models/provisional/m01/characters/';
@@ -52,6 +53,10 @@ const weaponParts=new Set(['rifle','clip','rifle_wz98a','rkm_wz28','rkm_bipod_op
 // Civilians (Lipski, station-yard railwaymen and aid staff) are drawn with the soldier body in workwear (no new asset). The yard patient and the cart keep
 // the procedural stretcher/cart layouts of m01-view.js, which a rigged soldier cannot reproduce.
 const dressedCivilian=a=>Boolean(a.civilian)&&a.task!=='cart'&&a.task!=='yard_patient';
+// R1-a (2026-10-23): the hand lantern hangs from the instance root, not from a bone, so on a railwayman a bomb has killed or wounded (lying where he fell) it would float 0.8 m above the ground
+// beside the body. It is lit only while its carrier stands. Presentation only, read from the actor's state each frame, before the held-pose shortcut.
+const lanternLit=a=>a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
+const setLantern=(v,a)=>{const lit=lanternLit(a);for(const m of v.lantern)m.visible=lit;};
 const civilianHidden=n=>n==='gear'||n==='sapper'||n==='nco'||n==='cap_wz37'||n.startsWith('helmet_')||n.startsWith('rank_')||weaponParts.has(n);
 const mgLoader=a=>a.team==='enemy'&&a.mg34Loader&&['de_mg34_loader_0','de_mg34_loader_1'].includes(a.id)&&a.loaderFor===`de_east_${a.id.at(-1)}`;
 const mgCrew=a=>mgGunner(a)||mgLoader(a);
@@ -67,6 +72,8 @@ const _twist=new THREE.Quaternion(),_muzzle=new THREE.Vector3();
 const HIGH_SOURCES=['pl:0','de:0','de:1','mg34:0','ckm:0','mg34:1','ckm:1'];
 // Candidate order: reserved MG34 gunners, then their loaders, then nearest first, ties by id (a total order, so the in-place sort is deterministic).
 const byCandidate=(a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id);
+const unarmedKind=a=>Boolean(a.civilian)||a.role==='MEDIC'||mgCrew(a);   // never carries the rifle: its weapon parts are not batched (decided at create, recreated if it ever changes)
+const NO_NAMES=[],RIFLE_ARMED=['rifle','clip'],BAK_ARMED=['clip','rifle_wz98a'],KOWAL_ARMED=['rkm_wz28'];   // parts whose visibility is exactly `armed` (see the update loop)
 const sameBones=(a,b)=>a===b||a.length===b.length&&a.every((bone,i)=>bone===b[i]);
 const sameInverses=(a,b)=>a===b||a.length===b.length&&a.every((m,i)=>m.equals(b[i]));
 /** SkeletonUtils.clone() gives every skinned mesh its own Skeleton, although all meshes of one soldier come from the same source skin (same bones,
@@ -92,8 +99,10 @@ export function soldierProfile(root,nation){
   return found;
 }
 export class M01Characters {
-  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled(),ikMeasure=debug}={}){
+  constructor(scene,{visualVariation=true,ik=true,world=null,debug=debugEnabled(),ikMeasure=debug,batching=true}={}){
     this.visuals=visualVariation?new SoldierVisualVariations():null;
+    // R8-a: the visible skinned parts of a soldier are drawn as 2 merged meshes (body, weapon) instead of one mesh per part. `batching:false` keeps the former per-part path (A/B, tests).
+    this.batching=Boolean(batching);this.mergeCache=new SoldierMergeCache();
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
     // T37 foot IK / ramp lean / hand pin (m01-foot-ik.js, m01-hand-pin.js). Presentation only; off = plain clip output, bit-identical.
@@ -322,6 +331,8 @@ export class M01Characters {
     });
     if(this.visuals)this.visuals.apply(root,actor,key,visual);
     if(actor.civilian)this.addCivilianProps(root,actor);
+    const batch=this.batching?this.batchParts(meshes,actor):{batches:[],loose:meshes.filter(n=>!n.name.startsWith('mg34_')),looseWeapon:meshes.filter(n=>n.name.startsWith('mg34_'))};
+    const lantern=actor.civilian&&actor.lantern?root.children.filter(n=>n.name==='civilian_lantern'):null;
     this.scene.add(root);
     const weaponBone=root.getObjectByName('weapon')??null;
     const weapon=weaponRoot?'mg34':actor.id==='szymon_kowal'?'rkm_wz28':actor.id==='jozef_bak'?'wz98a':nation==='pl'?'wz29':'kar98k';
@@ -331,7 +342,7 @@ export class M01Characters {
     for(const name of SUPPORT_ARM_NAMES){const b=root.getObjectByName(name);if(b?.isBone){supportArmBone=b;break;}}
     const spineBaseQuat=spineBone?.quaternion?spineBone.quaternion.clone():null,spineBaseRotY=spineBone?.rotation?.y??0;
     const armBaseQuat=supportArmBone?.quaternion.clone()??null;
-    const v={id:actor.id,root,key,meshes,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,
+    const v={id:actor.id,root,key,unarmed:unarmedKind(actor),meshes,batches:batch.batches,loose:batch.loose,looseWeapon:batch.looseWeapon,visual,weapon,weaponRoot,weaponLOD,spineBone,spineBaseQuat,spineBaseRotY,lantern,
       supportArmBone,armBaseQuat,
       // Cache the clip-sampled pose BEFORE any additive torso/arm correction,
       // so repeated rendering of the same simulation time is bit-identical.
@@ -350,6 +361,38 @@ export class M01Characters {
       skeleton.update=function(){if(v.hold.frozen&&uploaded===v.hold.serial){stats.boneSkips++;return;}uploaded=v.hold.serial;stats.boneUploads++;real.call(this);};
     }
     this.instances.set(actor.id,v);return v;
+  }
+  /** R8-a: merges the skinned parts that are drawn for good (body, one head, helmet, gear, badges) into one SkinnedMesh and the parts that follow `armed`
+   *  (rifle + clip, wz.98a, rkm) into a second one, once, at instantiation. The logical parts stay in `meshes` (name, geometry, material, `visible`) for the
+   *  update rules and the diagnostics but move under an invisible holder (not drawn, still found by name); the rkm bipods and rag (own visibility rules, one soldier) and the MG34 kit stay individual meshes. */
+  batchParts(meshes,actor){
+    const kowal=actor.id==='szymon_kowal',bak=actor.id==='jozef_bak';
+    const armedNames=unarmedKind(actor)?NO_NAMES:kowal?KOWAL_ARMED:bak?BAK_ARMED:RIFLE_ARMED;
+    const fixed=[],switched=[];
+    for(const n of meshes){
+      if(!n.isSkinnedMesh||n.name.startsWith('mg34_'))continue;
+      if(armedNames.includes(n.name))switched.push(n);
+      else if(n.visible&&!weaponParts.has(n.name)||kowal&&n.name==='rkm_pouch')fixed.push(n);
+    }
+    const merged=batchSoldier(fixed,switched,this.mergeCache,this.visuals),batches=[];
+    for(const r of merged.fixed)if(r.merged)batches.push(r);
+    for(const r of merged.switched)if(r.merged)batches.push(r);
+    // Parts that can never be drawn for this actor (other heads, ranks, rkm kit of everybody but Kowal, rifle of a medic...) join them under the holder.
+    if(merged.holder)for(const n of meshes){
+      if(!n.isSkinnedMesh||n.parent===merged.holder||n.name.startsWith('mg34_')||fixed.includes(n)||switched.includes(n))continue;
+      if(weaponParts.has(n.name)?!kowal:!n.visible)merged.holder.add(n);   // the update loop keeps these false (weapon parts follow `armed` / Kowal only)
+    }
+    const loose=[],looseWeapon=[];
+    for(const n of meshes)if(n.parent!==merged.holder)(n.name.startsWith('mg34_')?looseWeapon:loose).push(n);   // merged parts sit under the invisible holder; the rest keeps its own draw call
+    return {batches,loose,looseWeapon};
+  }
+  /** Meshes handed to the GPU for this instance in its current state: merged batches, remaining individual parts and, when shown, the MG34 kit parts. */
+  drawCallsOf(v){
+    let n=0;const b=v.batches,l=v.loose,w=v.looseWeapon;
+    for(let i=0;i<b.length;i++)if(b[i].mesh.visible)n++;
+    for(let i=0;i<l.length;i++)if(l[i].visible)n++;
+    if(v.weaponRoot?.visible)for(let i=0;i<w.length;i++)if(w[i].visible)n++;
+    return n;
   }
   // Station-yard props of the civilians that the procedural body used to draw (hand lantern, aid armband), on the rig's own bones so they follow the clip.
   // Geometry/materials are shared by every civilian and owned by this instance (disposed in dispose()).
@@ -385,7 +428,7 @@ export class M01Characters {
     const ikOn=this.ikEnabled&&Boolean(world);let ikCount=0;
     if(quality==='high')this.requestHighSources();
     this.updateCKM(actors,time,player,quality);
-    const selected=new Set(),visible=[],clips={},bands=[0,0,0];let submitted=0;
+    const selected=new Set(),visible=[],clips={},bands=[0,0,0];let submitted=0,drawCalls=0;
     this.carriers.clear();for(let i=0;i<actors.length;i++)if(actors[i].carriedBy)this.carriers.add(actors[i].carriedBy);
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
     // Candidates live in a reused record pool and array (no filter/map/slice chain per frame); the sort is in place.
@@ -403,6 +446,7 @@ export class M01Characters {
       const {a,d}=cands[ci];
       const nation=a.team==='enemy'?'de':'pl';
       const prevInst=this.instances.get(a.id);
+      if(prevInst?.lantern)setLantern(prevInst,a);
       const lod=resolveLodWithHysteresis(d,limits,prevInst?.key,nation,quality,this.sources);
       if(lod===3)continue;
       let weaponLOD=lod;
@@ -411,6 +455,7 @@ export class M01Characters {
       if(prevInst&&prevInst.key===`${nation}:${lod}`&&this.poseHeld(prevInst,a,d,time,quality,ikOn)){
         selected.add(a.id);bands[lod]++;prevInst.hold.frozen=true;this.poseStats.held++;
         for(let i=0;i<prevInst.meshes.length;i++)if(prevInst.meshes[i].visible)submitted++;if(prevInst.weaponRoot?.visible)submitted++;
+        drawCalls+=this.drawCallsOf(prevInst);
         clips[prevInst.sampleClip]=(clips[prevInst.sampleClip]??0)+1;visible.push(prevInst);continue;
       }
       const key=`${nation}:${lod}`,pose=actorPose(a,time),pv=this.anim.get(a.id),
@@ -422,9 +467,9 @@ export class M01Characters {
       if(mgLoader(a)&&a.alive&&!this.clips.has(`mg34_loader_prone_${a.mg34Loader.phase}`))continue;
       let v=prevInst;
       // A new LOD gets new actions but keeps the actor's blend record (this.anim), so a fade survives the swap.
-      if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD)){this.release(v);this.instances.delete(a.id);v=null;}
+      if(v&&(v.key!==key||mgGunner(a)&&v.weaponLOD!==weaponLOD||v.unarmed!==unarmedKind(a))){this.release(v);this.instances.delete(a.id);v=null;}
       if(prevInst&&prevInst.key!==key){this.lodSwitches++;tallyLod(this.lodCounters,preset,lod);}   // a camera-driven band change (first appearance is not a switch)
-      v??=this.create(a,key,weaponLOD);selected.add(a.id);bands[lod]++;
+      v??=this.create(a,key,weaponLOD);if(v.lantern)setLantern(v,a);selected.add(a.id);bands[lod]++;
       v.hold.frozen=false;v.hold.serial++;v.appliedTime=time;v.appliedX=a.x;v.appliedZ=a.z;v.appliedQuality=quality;v.appliedIk=ikOn;this.poseStats.applied++;
       // Undo last frame's IK first: the mixer only rewrites a track whose value changed, and the caches below hold the clip pose.
       if(v.ikApplied){restoreIkPose(v.ikRig);v.ikApplied=false;}
@@ -492,6 +537,13 @@ export class M01Characters {
           armed&&kowal&&n.name===`rkm_bipod_${bipod}`;
       }
       if(v.weaponRoot)v.weaponRoot.visible=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy;
+      // Merged batches: a batch is drawn when any of its logical parts is, and casts a shadow like its parts (all decided above).
+      for(let i=0;i<v.batches.length;i++){
+        const b=v.batches[i],parts=b.parts;let any=false;
+        for(let k=0;k<parts.length;k++)if(parts[k].visible){any=true;break;}
+        b.mesh.visible=any;b.mesh.castShadow=castShadow;
+      }
+      drawCalls+=this.drawCallsOf(v);
       for(let i=0;i<meshes.length;i++)if(meshes[i].visible)submitted++;if(v.weaponRoot?.visible)submitted++;   // meshes handed to the GPU this frame
       v.root.updateMatrixWorld(true);clips[sample.clip]=(clips[sample.clip]??0)+1;v.sampleClip=sample.clip;
       // Diagnostics snapshot of this applied pose; the entry itself is built by the stats getter. The muzzle is taken here, before IK moves the bones.
@@ -520,7 +572,7 @@ export class M01Characters {
     let built=null;const chars=this;
     this.stats={poseUpdates:this.poseStats.applied,heldPoses:this.poseStats.held,boneUploads:this.poseStats.boneUploads,boneSkips:this.poseStats.boneSkips,active:selected.size,limit:limits.count,instances:this.instances.size,clips,
       get actors(){return built??=chars.diagnosticsViews(visible);},
-      lodPreset:preset,lodBands:bands,submittedMeshes:submitted,lodSwitches:this.lodSwitches,
+      lodPreset:preset,lodBands:bands,submittedMeshes:submitted,submittedDrawCalls:drawCalls,lodSwitches:this.lodSwitches,
       lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')}};
     return selected;
   }
@@ -579,6 +631,6 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.assets.dispose();
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.mergeCache.dispose();this.assets.dispose();
     if(typeof window!=='undefined'&&this.ikDebug&&window.m01CharacterIkDebug===this.ikDebug)delete window.m01CharacterIkDebug;}
 }

@@ -11,9 +11,10 @@ import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
-// These are the nine aerial impacts emitted by M01. Schema 2 stores their IDs,
+// These are the aerial impacts emitted by M01: the nine scripted ones and the 04:34 raid's schedule (raid_0434_1..N, mission.json raidTargets0434). Schema 2 stores their IDs,
 // so delayed presentation can be recovered without extending simulation/save data.
 const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5']);
+const aerialBlast=id=>AERIAL_BLAST_IDS.has(id)||/^raid_0434_[1-9]\d?$/.test(id);
 const blastScale=id=>id?.startsWith('m01_grenade_')?'small':id?.includes('demolition')?'demolition':'large';
 
 export { M01_DIFFICULTY_LABELS } from '../ui/m01-hud.js';export { M01_DIFFICULTY_NEW_GAME } from './m01-difficulty.js';
@@ -182,7 +183,8 @@ export class Game {
     if(sound.kind==='impact'){this.audio.impact(sound.material,sound.pan,sound.distance,sound.key);return;}
     if(sound.kind==='distant-battle'){this.audio.distantBattle('rifle',sound.pan,sound.distance,sound.key,{rounds:sound.rounds,front:sound.front});return;}
     if(sound.kind==='blast'){
-      this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front});
+      // R1-a: the strength with which the bomb stunned the player is the simulation's (damage.concussion, also after a restore); the audio presents it as the mix's concussion duck.
+      this.audio.explosion(sound.pan,sound.distance,{scale:sound.scale??'large',key:sound.key,front:sound.front,...(Number.isFinite(sound.concussion)?{concussion:sound.concussion}:{})});
       // Ju 87 a sair da picada: só depois de um sopro aéreo real, vindo de cima do ponto de impacto.
       if(sound.aerial&&this.isM01)this.audio.ju87PullOutNearest(this.sim.clock,point=>this.spatial(point),`${sound.key}:ju87`,this.sim.renderState.stukas);
     }
@@ -232,9 +234,9 @@ export class Game {
     this.pendingSounds=[];this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);if(!this.isM01)return;
     this.audioDirector?.reset(this.sim);
     for(const damage of this.sim.sectors.damage)if(damage.soundAt>this.sim.clock){
-      const s=this.spatial(damage),aerial=AERIAL_BLAST_IDS.has(damage.id);
+      const s=this.spatial(damage),aerial=aerialBlast(damage.id);
       this.pendingSounds.push({...s,at:damage.soundAt,kind:'blast',scale:blastScale(damage.id),key:damage.id,
-        shake:s.distance<(aerial?500:1000),aerial,point:{x:damage.x,y:damage.y,z:damage.z}});
+        shake:s.distance<(aerial?500:1000),aerial,point:{x:damage.x,y:damage.y,z:damage.z},...(Number.isFinite(damage.concussion)?{concussion:damage.concussion}:{})});
     }
   }
   handleM01Event(event){
@@ -293,7 +295,7 @@ export class Game {
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);
       const scale=blastScale(damage?.id);
       this.pendingSounds.push({...s,at:event.soundAt,kind:'blast',scale,key:damage?.id??`blast:${event.soundAt.toFixed(3)}`,shake:s.distance<(event.aerial?500:1000),
-        aerial:Boolean(event.aerial),point:{x:event.point.x,y:event.point.y,z:event.point.z}});
+        aerial:Boolean(event.aerial),point:{x:event.point.x,y:event.point.y,z:event.point.z},...(Number.isFinite(damage?.concussion)?{concussion:damage.concussion}:{})});
       this.renderer.m01.explosionFeedback(this.sim.clock,s.distance,s.pan,damage?.id);
       this.renderer.m01.explosion(event.point,this.sim.clock,event.aerial);
     }

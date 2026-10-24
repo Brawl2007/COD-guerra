@@ -63,12 +63,13 @@ test('the canonical lines nothing said now have a trigger: 030, 035 and 036 a ru
   assert.match(corridor,/sim\.line\('dlg_m01_047'\);sim\.line\('dlg_m01_048'\)/);assert.match(corridor,/sim\.line\('dlg_m01_049'\)/);
 });
 
-test('the three ckm crew voices are cast for the subtitle only: no extra body, no duplicate id, 97 actors as before',()=>{
+test('the three ckm crew voices are cast for the subtitle only: no extra body, no duplicate id, 103 actors (97 + the west garrison)',()=>{
   const voices=definition.cast.filter(c=>c.voiceOnly);
   assert.deepEqual(voices.map(c=>c.id),['ckm_gunner','ckm_loader','ckm_reserve']);
   assert.ok(voices.every(c=>c.fictional&&c.faction==='PL'&&c.loadout.every(i=>definition.allowedEquipment.includes(i))));
   const s=new M01Simulation(),ids=s.actors.map(a=>a.id);
-  assert.equal(ids.length,97);assert.equal(new Set(ids).size,97);
+  // 2026-10-23 (R1-a, golden amendment 16): 97 -> 103, the six unnamed men of the west garrison (pl_west_0..5, displayOnly); the voices still have no body of their own.
+  assert.equal(ids.length,103);assert.equal(new Set(ids).size,103);
   assert.equal(s.actors.filter(a=>a.id.startsWith('ckm_')).length,3);
   validateM01Snapshot(s.snapshot());
 });
