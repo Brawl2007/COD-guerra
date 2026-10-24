@@ -14,7 +14,8 @@ export function validateM01AudioEvent(event){
   // R2-a: a man of the section has seen (or heard, or suffered) something new: who called, what, where he stands (`from` = `point`, the place the bark director measures hearing from) and where it is
   // (`aim`, null when there is no target), the side of the gates as the player sees them (mg / gate only), and what each listener did about it. Never persisted.
   if(event.type==='section-callout'&&(!SECTION_CALLOUT_KINDS.includes(event.kind)||typeof event.by!=='string'||!event.by||!(event.target===null||typeof event.target==='string')||
-    !(event.side===null||event.side==='left'||event.side==='right')||!finitePoint(event.from)||!finitePoint(event.point)||!(event.aim===null||finitePoint(event.aim))||!Number.isFinite(event.at)||
+    !(event.side===null||event.side==='left'||event.side==='right')||!(event.landmark===null||['gate','dike','deck'].includes(event.landmark))||!finitePoint(event.from)||!finitePoint(event.point)||
+    !(event.aim===null||finitePoint(event.aim))||!Number.isFinite(event.at)||
     !Array.isArray(event.reactions)||event.reactions.some(r=>!Array.isArray(r)||r.length!==2||typeof r[0]!=='string'||!['fire','look','drop'].includes(r[1]))))throw Error('M01 section-callout kind/by/target/side/from/point/aim/at/reactions required');
   // R2-a: the sergeant's order (to the men it names, about a target when it has one). Never persisted.
   if(event.type==='section-order'&&(!SECTION_ORDER_KINDS.includes(event.kind)||typeof event.by!=='string'||!event.by||!Array.isArray(event.to)||!event.to.length||event.to.some(id=>typeof id!=='string')||

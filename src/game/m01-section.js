@@ -47,7 +47,7 @@ export const SECTION=Object.freeze({
     rifle:Object.freeze({mg:[.40,.35,.25],gate:[.50,.30,.20],dike:[.50,.25,.25],deck:[.60,.25,.15],advance:[.55,.30,.15],fallback:[.30,.50,.20],down:[.15,.55,.30],pinned:[0,.40,.60],casualty:[0,.60,.40]}),
     watch:Object.freeze({mg:[0,1,0],gate:[0,1,0],dike:[0,1,0],deck:[0,1,0],advance:[0,1,0],fallback:[0,1,0],down:[0,1,0],pinned:[0,1,0],casualty:[0,1,0]})}),
   role:Object.freeze({marek_zielinski:'watch',szymon_kowal:'watch',staszek_pawlak:'rifle',east_platoon_voice:'rifle',jozef_bak:'rifle'}),
-  orderGapSec:7,orderAfterCallSec:1.6,pinWindowSec:18,shiftLoad:3.2,shiftGapSec:40,dwellSec:Object.freeze([14,26]),holdEverySec:Object.freeze([45,80]),holdSec:20,focusWindowSec:25,focusGapSec:40,
+  sayWindowSec:8,orderGapSec:7,orderAfterCallSec:1.6,pinWindowSec:18,shiftLoad:3.2,shiftGapSec:40,dwellSec:Object.freeze([14,26]),holdEverySec:Object.freeze([45,80]),holdSec:20,focusWindowSec:25,focusGapSec:40,
   stallSec:40,casHearM:70,casDelaySec:Object.freeze([1.2,2.4]),casOrderSec:Object.freeze([2.2,4]),casMax:6,pinMax:8,seenMax:16,
   // Posts of the pair, [x, z, facing] per man. 0 is the T38 slot at the squad post. 1 and 2 lie along the communication trench (cv_trench_2 12 m east, cv_trench_1 27 m east) just west of the node,
   // which gives the man the cover pose of the existing coverAt rule; 3 is the road deck, west of both pilots' posts (control (30, 40), support (38, 42.4)), on the south side of the lane: the platoon's
@@ -61,7 +61,8 @@ export const SECTION=Object.freeze({
 const SEEN_KEY=/^(mg:de_east_[01]|gate:[NS]|dike|deck:[a-z]+|pinned:[a-z_]+|casualty:[a-z0-9_]+)$/;
 const KINDS=new Set(SECTION_CALLOUT_KINDS),ORDERS=new Set(SECTION_ORDER_KINDS);
 const HOLD_KINDS=new Set(['look','drop']);
-const RECORD_KEYS=Object.freeze(['v','rng','at','next','seen','deckSig','focus','shots','hold','pin','pins','post','order','cas','recent','done','n']);
+const RECORD_KEYS=Object.freeze(['v','rng','at','next','seen','deckSig','focus','shots','hold','pin','pins','post','order','cas','recent','done','say','n']);
+const SAY_NODES=Object.freeze(['arrive_home','arrive_deck','arrive_trench']);
 const AT_KEYS=['scan','callout','order','shift'],NEXT_KEYS=[...SECTION.pair,'hold','focus'],N_KEYS=['scans','callouts','orders','shifts','shots','casualties'];
 const CAS_KEYS=['id','how','by','at','x','z','called','orderAt','done'];
 
@@ -82,7 +83,7 @@ const between=(q,id,[lo,hi])=>lo+(hi-lo)*next(q,id);
 const t3=v=>+v.toFixed(3);
 /** A fresh record, its streams derived from the state of the main stream (read, never drawn). Every key is always present. */
 export function newSection(sim){
-  const q={v:SECTION.version,rng:{},at:Object.fromEntries(AT_KEYS.map(k=>[k,-1e9])),next:{},seen:{},deckSig:'',focus:null,shots:[],hold:{},pin:{},pins:[],post:{},order:null,cas:[],recent:[],done:{deck:false},
+  const q={v:SECTION.version,rng:{},at:Object.fromEntries(AT_KEYS.map(k=>[k,-1e9])),next:{},seen:{},deckSig:'',focus:null,shots:[],hold:{},pin:{},pins:[],post:{},order:null,cas:[],recent:[],done:{deck:false},say:null,
     n:Object.fromEntries(N_KEYS.map(k=>[k,0]))};
   for(const id of SECTION.men)q.rng[id]=sectionSeed(sim.rng.state,SECTION.streams[id]);
   for(const id of SECTION.pair){q.post[id]={k:0,since:sim.clock,moving:false,until:0};q.next[id]=t3(sim.clock+between(q,id,SECTION.look.everySec));}
@@ -96,9 +97,11 @@ const pairHome=q=>SECTION.pair.every(id=>q.post[id].k===0&&!q.post[id].moving);
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 // The step: decisions, once per tick before the men walk (updateActors). Returns the record (null outside the window).
-export function updateSection(sim){
+export function updateSection(sim,ctx){
   if(!sectionOn(sim)){if(sim.timers.section)endSection(sim);return null;}
   const q=sim.timers.section??=newSection(sim);
+  // A man has reached his post: the director gets a few seconds to say so (a line that arrives while another is on screen waits for a gap instead of being lost).
+  if(q.say&&(ctx.say(q.say.node)||sim.clock-q.say.at>SECTION.sayWindowSec))q.say=null;
   trackPins(sim,q);
   scheduleLooks(sim,q);
   watch(sim,q);
@@ -150,15 +153,19 @@ function watch(sim,q){
   q.at.scan=clock;const w=sim.actor(SECTION.watchers[q.n.scans++%SECTION.watchers.length]);
   if(!present(w)||clock-q.at.callout<SECTION.calloutGapSec)return;
   if(sim.consumedEvent(SECTION.deckFrom)&&watchDeck(sim,q,w))return;
-  let best=null;
+  // Among the Germans who fired just now and whom he sees, the watcher calls the one the rkm is on (the section follows Kowal's burst), else the freshest flash.
+  const rk=rkmTarget(sim);let best=null;
   for(const a of sim.actors){
     if(a.team!=='enemy'||a.displayOnly||!a.alive||!a.active||a.group==='grp_de_spans'||!(clock-a.firedAt<SECTION.noticeSec))continue;
     const kind=kindOf(a),key=keyOf(a,kind);
     if(clock-(q.seen[key]??-1e9)<SECTION.repeatSec[kind]||dist(w,a)>SECTION.rangeM||!sim.world.lineOfSight(w,a))continue;
-    if(!best||a.firedAt>best.a.firedAt)best={a,kind,key};
+    if(!best||(a.id===rk&&best.a.id!==rk)||(a.id!==rk&&best.a.id!==rk&&a.firedAt>best.a.firedAt))best={a,kind,key};
   }
   if(best)callout(sim,q,w,best.kind,best.a,best.key);
 }
+/** Whom Kowal's rkm is firing at: the German of his last burst, if the burst was in the last 10 s (his own choice, kowalFire; the section never changes it). */
+function rkmTarget(sim){const k=sim.actor(SECTION.rkm),t=k?.ai?.target;return t&&sim.clock-(k.firedAt??-1e9)<10?t:null;}
+const LANDMARK=Object.freeze({mg:'gate',gate:'gate',dike:'dike',deck:'deck',advance:'deck',fallback:'deck',down:'deck'});
 /** Which side of the gates a shooter is on as the player sees them (the sign of the cross product, as the director's coverFire reads a bearing): positive is the player's right. */
 function gateSide(sim,a){
   const p=sim.player,dx=1056-p.x,dz=20-p.z,ox=a.x-p.x,oz=a.z-p.z,sin=(dx*oz-dz*ox)/(Math.hypot(dx,dz)*Math.hypot(ox,oz));
@@ -192,7 +199,7 @@ function callout(sim,q,w,kind,target,key){
   const reactions=react(sim,q,w,kind,target);
   if(target&&target.team==='enemy'){q.focus={target:target.id,by:w.id,kind,at:clock};q.recent.push([kind,clock,target.id]);if(q.recent.length>4)q.recent.shift();}
   const side=target&&target.team==='enemy'&&(kind==='mg'||kind==='gate')?gateSide(sim,target):null;
-  sim.emit({type:'section-callout',kind,by:w.id,target:target?.id??null,side,from:{x:w.x,y:w.y,z:w.z},point:{x:w.x,y:w.y,z:w.z},aim:target?{x:target.x,y:target.y,z:target.z}:null,at:clock,reactions});
+  sim.emit({type:'section-callout',kind,by:w.id,target:target?.id??null,side,landmark:LANDMARK[kind]??null,from:{x:w.x,y:w.y,z:w.z},point:{x:w.x,y:w.y,z:w.z},aim:target?{x:target.x,y:target.y,z:target.z}:null,at:clock,reactions});
 }
 /** Everyone within hearing of the caller reacts once, with a draw of his own: [id, 'fire' | 'look' | 'drop']. */
 function react(sim,q,caller,kind,target){
@@ -281,7 +288,7 @@ function decide(sim,q){
   // 4. two kinds of threat are up: one target for everybody
   const fresh=q.recent.filter(r=>clock-r[1]<=SECTION.focusWindowSec);
   if(clock>=q.next.focus&&new Set(fresh.map(r=>r[0])).size>=2){
-    const top=fresh.find(r=>r[0]==='mg')??fresh.at(-1),t=sim.actor(top[2]);
+    const rk=rkmTarget(sim),top=fresh.find(r=>r[2]===rk)??fresh.find(r=>r[0]==='mg')??fresh.at(-1),t=sim.actor(top[2]);   // one target for everybody: the rkm's if it was called, else the MG
     if(t&&t.alive&&t.active){
       q.focus={target:t.id,by:leader.id,kind:top[0],at:clock};q.next.focus=t3(clock+SECTION.focusGapSec);
       return order(sim,q,'focus',[SECTION.rkm,...mine.map(a=>a.id)],t.id,leader);
@@ -314,7 +321,7 @@ export function sectionWalk(sim,q,a,dt,ctx){
   if(p.moving){
     if(dist(a,slot)<SQUAD.arriveM||sim.clock-p.since>=SECTION.stallSec){
       p.moving=false;p.since=sim.clock;a.target=null;delete a.nav;a.facing=slot.facing;a.state='GUARD';
-      ctx.say(p.k===0?'arrive_home':p.k===SECTION.deckPost?'arrive_deck':'arrive_trench');
+      q.say??={node:p.k===0?'arrive_home':p.k===SECTION.deckPost?'arrive_deck':'arrive_trench',at:sim.clock};
     }else{a.crouched=false;a.target=slot;sim.moveActor(a,slot,dt,SQUAD.pace);return true;}
   }
   if(p.k===0)return false;   // at the squad post: the T38 rule of the section (stageSection) is his posture
@@ -392,6 +399,7 @@ export function validateSectionRecord(q,s,reject){
     ![c.x,c.z].every(Number.isFinite)||typeof c.called!=='boolean'||typeof c.done!=='boolean'||!(c.orderAt===null||fin(c.orderAt,0,clock+SECTION.casOrderSec[1]+SECTION.casDelaySec[1]+60))))bad('baixas');
   if(!Array.isArray(q.recent)||q.recent.length>4||q.recent.some(r=>!Array.isArray(r)||r.length!==3||!KINDS.has(r[0])||!fin(r[1],0,clock)||!german(r[2])))bad('recentes');
   if(!keys(q.done,['deck'])||typeof q.done.deck!=='boolean')bad('feitos');
+  if(q.say!==null&&(!keys(q.say,['node','at'])||!SAY_NODES.includes(q.say.node)||!fin(q.say.at,0,clock)))bad('chegada');
   if(!keys(q.n,N_KEYS)||N_KEYS.some(k=>!Number.isInteger(q.n[k])||q.n[k]<0))bad('contadores');
 }
 /** The data this module relies on (tests): every post has a slot for both men, apart, clear of every solid the navigator knows, and a cover node that exists. */

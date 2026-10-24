@@ -625,7 +625,7 @@ export class M01Simulation {
           if(!a.active)Object.assign(a,{alive:false,health:0,state:'DOWN'});});
         this.actor('jozef_bak').target=this.world.point('bak_wound_point');break;
       case E('bak_wounded'):{const bak=this.actor('jozef_bak');
-        if(inside(bak,{minX:20,maxX:160,minZ:30,maxZ:50})){bak.state='WOUNDED';bak.target=null;this.flags['m01.bak_status']='wounded';this.activate('rescue_bak');line(41);if(this.actor('leon_dudek').alive&&this.actor('leon_dudek').active)line(42);line(43);recordHit(bak,this.clock);sectionCasualty(this,'jozef_bak','wounded','script');}break;}
+        if(inside(bak,{minX:20,maxX:160,minZ:30,maxZ:50})){bak.state='WOUNDED';bak.target=null;this.flags['m01.bak_status']='wounded';this.activate('rescue_bak');line(41);if(this.actor('leon_dudek').alive&&this.actor('leon_dudek').active)line(42);line(43);recordHit(bak,this.clock);this.noteCasualty('jozef_bak','wounded','script');}break;}
       // Os 20 s de relógio da regra de baixas contam a partir da entrada dos alemães no tabuleiro (cover_withdrawal.mechanic).
       case E('germans_on_east_spans'):this.enemies.filter(a=>a.group==='grp_de_spans').forEach((a,i)=>{a.active=true;a.cooldown=2+i*.7;});
         this.beginDeckAssault();this.timers.withdrawalCasualty=this.battleClock;this.message('Eles entram pelo tabuleiro leste! Cubra os últimos homens do pelotão.');break;
@@ -666,7 +666,7 @@ export class M01Simulation {
     // R1-a: a bomb now does something to the men beside it (bombEffects). Grenades and the demolitions keep their own rules, and their event is the one it always was. The crater records how hard
     // the bomb stunned the player (`concussion`, 0..1): the audio presents that strength, also after a restore, and a record without it (an older save) keeps the audio's own distance rule.
     const effects=aerial&&kind==='bomb'?this.bombEffects(id,p):null;
-    if(effects)for(const how of ['killed','wounded'])for(const who of effects.casualties[how])sectionCasualty(this,who,how,'bomb');   // R2-a: the section calls the men of ours a bomb has hit
+    if(effects)for(const how of ['killed','wounded'])for(const who of effects.casualties[how])this.noteCasualty(who,how,'bomb');   // R2-a: the section calls the men of ours a bomb has hit
     this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343,...(kind==='grenade'?{smokeSeconds:20}:{}),...(effects?{concussion:effects.concussion}:{})});
     this.emit({type:'m01-blast',kind,point:p,soundAt:this.clock+dist(p,this.player)/343,aerial,...(effects?{concussion:effects.concussion,effects:effects.casualties}:{})});return p;
   }
@@ -1121,7 +1121,7 @@ export class M01Simulation {
     // Slice 3 (2026-10-22): the section's bounds along the corridor (src/game/m01-squad.js), decided once before anyone walks; null before the east demolition and at the roll call.
     const squad=retreat&&this.mission.phase!=='OUTRO'?this.stepSquad():null;
     // Slice 4 / R2-a (2026-10-24, src/game/m01-section.js): from the first bomb of 04:34 to the east demolition the section sees, calls, reacts and is ordered; null outside that window.
-    const section=updateSection(this),sectionCtx=section&&{stageSlots:STAGE.squad.slots,say:node=>barkTrigger(this,'squadMove',{node})};
+    const section=this.stepSection(),sectionCtx={stageSlots:STAGE.squad.slots};
     // T47: the ckm gunner decides first (his own saved stream, never this.rng); the other two men then copy his phase.
     const gunner=this.actors.find(a=>a.id==='ckm_gunner');
     this.updateCKMGunner(gunner,retreat);
@@ -1307,7 +1307,7 @@ export class M01Simulation {
     }
     this.attritionTick();this.kowalFire(dt);this.squadCoverFire();this.rearguardFire(dt);this.landRounds();this.landCKMRounds();this.stageGateRiflemen();this.stageRearguard();
     const rkm=this.actor(STAGE.squad.rkm.actor);if(rkm.alive&&rkm.active&&this.mission.phase!=='OUTRO')this.stageSection(rkm);   // T38: up or down after his burst
-    sectionAfter(this);   // slice 4: the answers of the section that are due (display-grade rifle shots) and the postures its reactions ask for, on top of T38's
+    this.afterSection();   // slice 4: the answers of the section that are due (display-grade rifle shots) and the postures its reactions ask for, on top of T38's
     updateDisplayFire(this.display,{clock:this.clock,battleClock:this.battleClock,actors:this.actors,consumedEvent:id=>this.consumedEvent(id),heightAt:(x,z)=>this.world.heightAt(x,z)},dt);
   }
   /**
@@ -1709,6 +1709,11 @@ export class M01Simulation {
   }
   /** R2-a: read-only diagnostics of the section's record (never saved): the focus, the last order, the posts of the pair, the shots waiting, the pin load and the counters. */
   get section(){return sectionView(this);}
+  /** R2-a (src/game/m01-section.js), the three entry points of the section in the simulation: its decisions before the men walk, its answers and postures after the combat step, and the news that a
+   *  man of ours has been hit. Methods so that a test (and the audit) can run the same route without the section and prove it changes nothing the Germans or the player can feel. */
+  stepSection(){return updateSection(this,{say:node=>barkTrigger(this,'squadMove',{node})});}   // the arrival of a man at a post is called through the director (trigger squadMove), as slice 3's bounds are
+  afterSection(){sectionAfter(this);}
+  noteCasualty(id,how,by){sectionCasualty(this,id,how,by);}
   /** Tiro certeiro da regra dos 20 s: a vítima é o homem cuja baixa a contagem por ID já define. */
   lethalShot(spans){
     const n=this.flags['m01.east_platoon_survivors'],victim=this.actor(`pl_east_${n-1}`);
