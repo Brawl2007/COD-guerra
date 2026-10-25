@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "missionId": "m01_tczew",
+  "enabled": false,
+  "enabledNote": "R4 INC-1 (2026-10-25). Desligado até à aceitação humana: com false o jogo é exatamente o de antes (M01Simulation, saves de esquema 2, debrief às 07:05). QA: ?acts=1 liga a cadeia de atos nesta página; ?act=vii-a começa diretamente no ato VII-a (src/main.js). O plano R4 (§3.1) punha este bloco em mission.json; mission.json é uma entrada fixada por sha256 no golden da emenda 20 (tests/fixtures/m01-opening-gameplay-baseline.json inputsSha256), por isso fica aqui, ao lado, sem mexer num byte do ato atual.",
+  "order": ["act_bw_0430_0705", "act_vii_a_north"],
+  "entries": {
+    "act_bw_0430_0705": {
+      "area": "bw",
+      "window": ["04:30:00", "07:05:00"],
+      "timeCertainty": "existing",
+      "simulation": "M01Simulation",
+      "save": "schema 2 (inalterado)",
+      "next": "act_vii_a_north"
+    },
+    "act_vii_a_north": {
+      "area": "np",
+      "window": "manhã · ~07:00 (fonte única T08); depois da chamada",
+      "timeCertainty": "LOW",
+      "simulation": "M01AreaSimulation",
+      "data": "areas/np/act.json",
+      "layout": "areas/np/layout.json",
+      "save": "schema 3 (envelope com carry + actSave)",
+      "transition": "cartão cs_np_entry depois do fim da chamada (cs_m01_roll_call), antes do debrief",
+      "next": null
+    }
+  }
+}
