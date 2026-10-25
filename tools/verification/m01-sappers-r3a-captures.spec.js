@@ -8,11 +8,11 @@ import {sapperPhase,SAPPERS} from '../../src/game/m01-sappers.js';
 // SAPPERS_DIST metres from the team, on its south-east side, looking at it, the way a player who covers the repair stands), three frames are rendered and the game is paused. Not part of
 // `npm run test:browser`; not a playtest; SwiftShader, no FPS. Run (after `npm run build`):
 //   CHROME_EXECUTABLE=/opt/pw-browsers/chromium SAPPERS_OUT=<dir> npx playwright test -c tools/verification/playwright.sappers-r3a.config.js
-// SAPPERS_VIEWS: comma-separated phases to run only some views; SAPPERS_DIST: distance in metres (default 10); SAPPERS_QUALITY: high (default), medium or low.
+// SAPPERS_VIEWS: comma-separated phases to run only some views; SAPPERS_DIST: distance in metres (default 8); SAPPERS_QUALITY: high (default), medium or low.
 const key='cod-guerra:checkpoint:m01:v2';
 const OUT=process.env.SAPPERS_OUT||'test-results/m01-sappers-r3a';
 const ONLY=process.env.SAPPERS_VIEWS?process.env.SAPPERS_VIEWS.split(',').map(s=>s.trim()).filter(Boolean):null;
-const DIST=Number(process.env.SAPPERS_DIST||10),QUALITY=process.env.SAPPERS_QUALITY||'high';
+const DIST=Number(process.env.SAPPERS_DIST||8),QUALITY=process.env.SAPPERS_QUALITY||'high';
 const SEED=Number(process.env.SAPPERS_SEED||19390901);
 
 function relocated(snapshot,x,z,y,target){
@@ -47,13 +47,19 @@ test('sappers R3-a captures',async({browser})=>{
   test.setTimeout(3600000);
   mkdirSync(OUT,{recursive:true});
   // One route; the snapshots: the middle of each stage, one second into every other phase, outside any scene and with the player not carrying anything.
-  const snaps={},ticks={};
+  const snaps={},ticks={};let pinStart=null;
   route(SEED,{support:true,onStep:({sim})=>{
     const ph=sapperPhase(sim),id=ph.id;ticks[id]=(ticks[id]??0)+1;
-    if(snaps[id]||sim.scene||sim.player.carrying)return;
-    if(ph.stage?ph.t>=ph.stage.sec*.5:ticks[id]>=24)snaps[id]=sim.snapshot(false);
+    // `pinned`: 1.2 s into the first pin (a round landed on the line: the whole crew lies down and the bar stops) of a work stage, outside any scene.
+    const pinned=Boolean(ph.stage)&&sim.clock<sim.timers.repairSuppressedUntil;if(pinned)pinStart??=sim.clock;else pinStart=null;
+    if(!snaps.pinned&&pinned&&sim.clock-pinStart>=1.2&&!sim.scene&&!sim.player.carrying)snaps.pinned=sim.snapshot(false);
+    // Not inside a scene, and (but for the wait for the box, when the pilot is already carrying it back) with the player carrying nothing.
+    if(snaps[id]||sim.scene||(sim.player.carrying&&id!=='standby'))return;
+    if(ph.stage?ph.t>=ph.stage.sec*.5:ticks[id]>=(id==='standby'?500:24))snaps[id]=sim.snapshot(false);
   }});
-  const order=['camp','locate','standby','inspect','splice','test','fail','relocate','inspect2','splice2','test2','report','ready','verify'];
+  // `verify` (the 8 s after the 06:10 blast) is not here: it falls inside cs_m01_east_blast, which is not skippable, so the player's camera is the scene's and the sappers (150 m behind the post) are not in
+  // it; the pose is in the fixture captures (tools/verification/m01-sappers-r3a-fixture-capture.mjs) only.
+  const order=['camp','locate','standby','inspect','splice','test','fail','relocate','inspect2','splice2','test2','report','ready','pinned'];
   const out=[];
   for(const [i,id] of order.entries()){
     if(ONLY&&!ONLY.includes(id))continue;

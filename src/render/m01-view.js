@@ -127,7 +127,8 @@ export class M01View {
     this.weaponWorldFx=new WeaponWorldFx(this.effects);
     // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.
     this.characters=new M01Characters(this.scene);
-    this.repairLine=new M01RepairLine(this.scene);   // R3-a: the cable the sappers work on, its cuts and splices, the crate on the ground (reads sim.sapperOps)
+    // R3-a: the cable the sappers work on, its cuts and splices, the crate on the ground (reads sim.sapperOps); seated on the drawn terrain (the 5 m lattice), not on the analytic height
+    this.repairLine=new M01RepairLine(this.scene,{surfaceY:(x,z)=>this.terrainRelief?this.terrainRelief.surfaceHeightAt(x,z):null});
     this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)
     this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){

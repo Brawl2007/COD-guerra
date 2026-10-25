@@ -4,12 +4,21 @@
 // they walk; that one is drawn by the characters) and a coil of spare cable. Original procedural shapes (a low-poly tube along the sampled route, boxes and cylinders), no file and no asset:
 // the game shows no connections, charges or procedures (HISTORICAL_RESEARCH.md §79). The simulation decides which cut is open (sim.sapperOps.gaps) and where the box is; this only draws it.
 // The tube is rebuilt only when a cut changes state (three times in a mission); nothing here is saved or decides anything, and a paused frame is a pure function of the same state.
+// Legibility (first captures in the real game, 2026-10-24: a 3 cm black cable and a 44 cm brown crate vanish on the dark slope at the dawn of the mission, from the 8-15 m at which the player covers the
+// repair): the cable is a pale, dry khaki 6 cm thick (a stylised stand-in for a heavy field cable), an open cut is marked by two stakes with white rags, the splice sleeve and the crate are pale and bigger, the
+// tools lie on a pale cloth. The ground under all of it is the terrain MESH, not the analytic height: the playable ground is a 5 m lattice of terrainHeightAt (m01-terrain-relief.js), whose chords
+// stand above the analytic profile where it is concave (the toe of the embankment slope, where the cable lies) and buried the 3 cm cable there in the first captures; M01View passes
+// `surfaceY` (the raycast on the submitted triangles, already used to seat the far landscape) and the tests fall back to terrainHeightAt. Each of them has a faint emissive floor (a fraction of its own colour) so that it does not vanish in the shade of the slope at the dawn of the mission; no light source is added.
 import * as THREE from 'three';
 import {SAPPERS} from '../game/m01-sappers.js';
 
-const STEP=1.4,RADIUS=.016,SIDES=5,LIFT=.012;
-const COLORS={cable:'#23211d',sleeve:'#b7a98a',tape:'#e4dfcc',copper:'#b87333',wood:'#7d5d38',white:'#e7e2cf',coil:'#2b2925',steel:'#6b6e70',cloth:'#5c5a45'};
+const STEP=1.4,RADIUS=.03,SIDES=6,LIFT=.01;
+/** The marker stakes of an open cut: how far from the edge of the gap along the cable and how far to the player's side (south, +z). */
+export const STAKE={along:.45,aside:.4,height:.95};
+const COLORS={cable:'#8d8670',sleeve:'#e1d6b2',tape:'#f4efdc',copper:'#c9803d',wood:'#a8844f',white:'#f1ecda',coil:'#8d8670',steel:'#9aa0a4',cloth:'#c0b391',stake:'#bda16c'};
 const smooth=(a,b,u)=>a+(b-a)*u;
+/** A standard material with an emissive floor of `glow` times its own colour (see the note on legibility above). */
+const lit=(color,roughness,glow,extra={})=>new THREE.MeshStandardMaterial({color,roughness,emissive:new THREE.Color(color).multiplyScalar(glow),...extra});
 
 /** The route sampled every ~STEP metres: [{x,z,s}] with s the arc length from the first point, and its total length. Pure; tests use it. */
 export function cableSamples(cable=SAPPERS.cable,step=STEP){
@@ -27,43 +36,49 @@ export function cableSamples(cable=SAPPERS.cable,step=STEP){
 export function arcOf(samples,x,z){let best=0,bd=Infinity;for(const p of samples.pts){const d=Math.hypot(p.x-x,p.z-z);if(d<bd){bd=d;best=p.s;}}return best;}
 
 export class M01RepairLine {
-  constructor(parent){
+  /** `surfaceY(x, z)` is the height of the ground that is drawn (see above); without it the world's terrainHeightAt. */
+  constructor(parent,{surfaceY=null}={}){
+    this.surfaceY=surfaceY;this.placed=null;
     this.group=new THREE.Group();this.group.name='m01_repair_line';parent.add(this.group);
     this.samples=cableSamples();this.key=null;this.revision=0;
     this.arc={crater:arcOf(this.samples,SAPPERS.points.crater.x,SAPPERS.points.crater.z),fault:arcOf(this.samples,SAPPERS.points.fault.x,SAPPERS.points.fault.z),second:arcOf(this.samples,SAPPERS.points.second.x,SAPPERS.points.second.z)};
-    this.material={cable:new THREE.MeshStandardMaterial({color:COLORS.cable,roughness:.85}),sleeve:new THREE.MeshStandardMaterial({color:COLORS.sleeve,roughness:.8}),
-      tape:new THREE.MeshStandardMaterial({color:COLORS.tape,roughness:.9}),copper:new THREE.MeshStandardMaterial({color:COLORS.copper,roughness:.5,metalness:.7}),
-      wood:new THREE.MeshStandardMaterial({color:COLORS.wood,roughness:.95}),white:new THREE.MeshStandardMaterial({color:COLORS.white,roughness:.9}),
-      coil:new THREE.MeshStandardMaterial({color:COLORS.coil,roughness:.9}),steel:new THREE.MeshStandardMaterial({color:COLORS.steel,roughness:.45,metalness:.6}),
-      cloth:new THREE.MeshStandardMaterial({color:COLORS.cloth,roughness:1})};
-    this.geometry={sleeve:new THREE.CylinderGeometry(.026,.026,.24,8),tape:new THREE.CylinderGeometry(.029,.029,.03,8),end:new THREE.CylinderGeometry(.006,.016,.07,6),
-      crate:new THREE.BoxGeometry(.44,.22,.27),stripe:new THREE.BoxGeometry(.45,.04,.005),lid:new THREE.BoxGeometry(.44,.02,.27),coil:new THREE.TorusGeometry(.13,.015,6,18),
-      tool:new THREE.BoxGeometry(.03,.012,.17),tin:new THREE.BoxGeometry(.11,.05,.08),cloth:new THREE.PlaneGeometry(.75,.5)};
+    this.material={cable:lit(COLORS.cable,.85,.5),sleeve:lit(COLORS.sleeve,.8,.45),tape:lit(COLORS.tape,.9,.45),copper:new THREE.MeshStandardMaterial({color:COLORS.copper,roughness:.5,metalness:.7,emissive:new THREE.Color(COLORS.copper).multiplyScalar(.25)}),
+      wood:lit(COLORS.wood,.95,.4),white:lit(COLORS.white,.9,.5),coil:lit(COLORS.coil,.9,.5),steel:new THREE.MeshStandardMaterial({color:COLORS.steel,roughness:.45,metalness:.6,emissive:new THREE.Color(COLORS.steel).multiplyScalar(.2)}),
+      cloth:lit(COLORS.cloth,1,.45),stake:lit(COLORS.stake,.95,.4),rag:lit(COLORS.white,1,.5,{side:THREE.DoubleSide})};
+    this.geometry={sleeve:new THREE.CylinderGeometry(.05,.05,.34,8),tape:new THREE.CylinderGeometry(.056,.056,.045,8),end:new THREE.CylinderGeometry(.012,.03,.12,6),
+      crate:new THREE.BoxGeometry(.54,.28,.34),stripe:new THREE.BoxGeometry(.55,.06,.005),lid:new THREE.BoxGeometry(.54,.025,.34),coil:new THREE.TorusGeometry(.2,.035,6,18),
+      tool:new THREE.BoxGeometry(.05,.018,.26),tin:new THREE.BoxGeometry(.17,.08,.12),cloth:new THREE.PlaneGeometry(1.1,.75),
+      stake:new THREE.CylinderGeometry(.014,.024,STAKE.height,6),rag:new THREE.PlaneGeometry(.24,.32)};
     this.cable=null;this.dynamic=new THREE.Group();this.group.add(this.dynamic);
+    this.markers=new THREE.Group();this.markers.name='m01_cut_markers';this.group.add(this.markers);   // the stakes with white rags of the cuts that are open (rebuilt with the cable)
     this.crate=this.buildCrate();this.group.add(this.crate);this.crate.visible=false;
     this.coil=new THREE.Mesh(this.geometry.coil,this.material.coil);this.coil.rotation.x=-Math.PI/2;this.coil.visible=false;this.group.add(this.coil);
     this.tools=this.buildTools();this.group.add(this.tools);this.tools.visible=false;
   }
   buildCrate(){
     const g=new THREE.Group(),body=new THREE.Mesh(this.geometry.crate,this.material.wood),stripe=new THREE.Mesh(this.geometry.stripe,this.material.white),lid=new THREE.Mesh(this.geometry.lid,this.material.wood);
-    body.position.y=.11;stripe.position.set(0,.11,.1375);lid.position.set(0,.25,-.2);lid.rotation.x=-Math.PI*.52;   // the lid stands open at the back
+    body.position.y=.14;stripe.position.set(0,.14,.1725);lid.position.set(0,.31,-.25);lid.rotation.x=-Math.PI*.52;   // the lid stands open at the back
     g.add(body,stripe,lid);g.name='sapper_crate_ground';return g;
   }
   buildTools(){
     const g=new THREE.Group(),cloth=new THREE.Mesh(this.geometry.cloth,this.material.cloth),p1=new THREE.Mesh(this.geometry.tool,this.material.steel),p2=new THREE.Mesh(this.geometry.tool,this.material.steel),tin=new THREE.Mesh(this.geometry.tin,this.material.cloth);
-    cloth.rotation.x=-Math.PI/2;cloth.position.y=.004;p1.position.set(-.18,.014,.04);p1.rotation.y=.35;p2.position.set(-.1,.014,.08);p2.rotation.y=-.25;tin.position.set(.16,.03,.0);
+    cloth.rotation.x=-Math.PI/2;cloth.position.y=.004;p1.position.set(-.28,.02,.06);p1.rotation.y=.35;p2.position.set(-.16,.02,.12);p2.rotation.y=-.25;tin.position.set(.26,.045,.0);
     g.add(cloth,p1,p2,tin);g.name='sapper_tools_ground';return g;
   }
+  ground(world){const f=this.surfaceY;return (x,z)=>{const y=f?f(x,z):null;return Number.isFinite(y)?y:world.terrainHeightAt(x,z);};}
   /** Rebuilds the cable tube: sampled along the route, lifted on the ground, without the interval of every cut that is open (ends frayed), with a splice sleeve where a cut is closed. */
   buildCable(world,gaps){
+    const height=this.ground(world);
     for(const c of [...this.dynamic.children])this.dynamic.remove(c);
+    for(const c of [...this.markers.children])this.markers.remove(c);
     if(this.cable){this.cable.geometry.dispose();this.cable=null;}
     const {pts}=this.samples,open=[];
     const cuts=[['crater',this.arc.crater,SAPPERS.points.crater.gapM],['fault',this.arc.fault,SAPPERS.points.fault.gapM],['second',this.arc.second,SAPPERS.points.second.gapM]];
     const state=name=>gaps?.[name]??'none';
     for(const [name,s,gap] of cuts)if(state(name)==='open')open.push({name,s0:s-gap/2,s1:s+gap/2});
     // The tube: the route outside every open gap, in pieces that end exactly at the edge of the gap, as quads round a 5-sided ring (the gap ends get their own frayed stubs).
-    const pos=[],idx=[],at=(p)=>({x:p.x,y:world.terrainHeightAt(p.x,p.z)+RADIUS+LIFT,z:p.z});
+    // The tube follows the drawn ground: the highest of the point and of the two points 1.2 m across the slope, so that a chord of the lattice never covers it.
+    const pos=[],idx=[],at=(p)=>({x:p.x,y:Math.max(height(p.x,p.z),height(p.x,p.z-1.2),height(p.x,p.z+1.2))+RADIUS+LIFT,z:p.z});
     const ring=(c,d)=>{const nx=-d.z,nz=d.x,out=[];for(let k=0;k<SIDES;k++){const a=k/SIDES*Math.PI*2,ca=Math.cos(a),sa=Math.sin(a);out.push([c.x+nx*ca*RADIUS,c.y+sa*RADIUS,c.z+nz*ca*RADIUS]);}return out;};
     const emit=(a,b)=>{
       const ca=at(a),cb=at(b),d={x:b.x-a.x,z:b.z-a.z},len=Math.hypot(d.x,d.z)||1;d.x/=len;d.z/=len;
@@ -92,8 +107,13 @@ export class M01RepairLine {
       }
       for(const side of [-1,1]){
         const p=this.sampleAt(s+side*gap/2),e=at(p),stub=new THREE.Mesh(this.geometry.end,this.material.copper);
-        stub.position.set(e.x-Math.cos(ang)*side*.01,e.y+.018,e.z-Math.sin(ang)*side*.01);stub.rotation.set(0,-ang,side*(Math.PI/2)-side*.35);
+        stub.position.set(e.x-Math.cos(ang)*side*.01,e.y+.03,e.z-Math.sin(ang)*side*.01);stub.rotation.set(0,-ang,side*(Math.PI/2)-side*.35);
         this.dynamic.add(stub);
+        // The stake that marks this end: beyond the edge of the gap along the cable, on the player's side, a white rag hanging from its top toward the gap.
+        const q=this.sampleAt(s+side*(gap/2+STAKE.along)),y=height(q.x,q.z+STAKE.aside),post=new THREE.Mesh(this.geometry.stake,this.material.stake),rag=new THREE.Mesh(this.geometry.rag,this.material.rag);
+        post.position.set(q.x,y+STAKE.height/2,q.z+STAKE.aside);post.name='cut_stake';
+        rag.position.set(q.x-Math.cos(ang)*side*.13,y+STAKE.height-.2,q.z+STAKE.aside-Math.sin(ang)*side*.13);rag.rotation.y=-ang;rag.name='cut_rag';
+        this.markers.add(post,rag);
       }
     };
     for(const [name,s,gap] of cuts)cut(name,s,gap);
@@ -104,22 +124,25 @@ export class M01RepairLine {
     const a=pts[i-1],b=pts[i],u=b.s>a.s?Math.max(0,Math.min(1,(s-a.s)/(b.s-a.s))):0;
     return {x:smooth(a.x,b.x,u),z:smooth(a.z,b.z,u),s};
   }
-  /** `ops` is sim.sapperOps (null: nothing is drawn); `world` gives the ground height. */
+  /** `ops` is sim.sapperOps (null: nothing is drawn); `world` gives the ground height (when no `surfaceY` was injected). */
   sync(ops,world){
     if(!ops||!world){this.group.visible=false;return;}
     this.group.visible=true;
     const key=`${ops.gaps.crater}|${ops.gaps.fault}|${ops.gaps.second}`;
-    if(key!==this.key||!this.cable){this.buildCable(world,ops.gaps);this.key=key;}
+    if(key!==this.key||!this.cable){this.buildCable(world,ops.gaps);this.key=key;this.placed=null;}
     // The crate and the tools on the ground: at the cut they work at, from the delivery until the helper lifts the crate for the walk; the other cut gets them when the walk ends.
     const ground=ops.box.state==='ground',p=ground?SAPPERS.points[ops.box.point]:null;
     this.crate.visible=this.tools.visible=this.coil.visible=Boolean(ground);
-    if(ground){
-      const slot=p.slots[SAPPERS.helper],y=world.terrainHeightAt(p.x,p.z+1.3);
+    if(ground&&this.placed!==ops.box.point){
+      this.placed=ops.box.point;
+      const height=this.ground(world),slot=p.slots[SAPPERS.helper],top=(x,z,r)=>Math.max(height(x-r,z-r),height(x+r,z-r),height(x-r,z+r),height(x+r,z+r)),   // the highest corner of the footprint: it rests on the slope, it does not sink into it
+        y=top(slot.x-.7,p.z+1.25,.3)+.02;
       // On the player's side of the cable, beside the helper's place (he reaches it), the open lid toward the cut.
-      this.crate.position.set(slot.x-.55,y,p.z+1.25);this.crate.rotation.y=.12;
-      this.tools.position.set(slot.x+.55,world.terrainHeightAt(slot.x+.55,p.z+1.0),p.z+1.0);this.tools.rotation.y=-.2;
-      this.coil.position.set(slot.x-1.5,world.terrainHeightAt(slot.x-1.5,p.z+1.1)+.03,p.z+1.1);
+      this.crate.position.set(slot.x-.7,y,p.z+1.25);this.crate.rotation.y=.12;
+      this.tools.position.set(slot.x+.7,top(slot.x+.7,p.z+1.0,.5)+.015,p.z+1.0);this.tools.rotation.y=-.2;
+      this.coil.position.set(slot.x-1.8,top(slot.x-1.8,p.z+1.1,.2)+.05,p.z+1.1);
     }
+    if(!ground)this.placed=null;
   }
   get diagnostics(){return {revision:this.revision,key:this.key,visible:this.group.visible,crate:this.crate.visible};}
   dispose(){

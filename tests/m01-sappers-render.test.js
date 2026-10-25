@@ -8,8 +8,8 @@ import * as THREE from 'three';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {SAPPERS,sapperPhase,sapperView,SAPPER_PHASES,SAPPER_STAGE_IDS} from '../src/game/m01-sappers.js';
 import {sapperSample,SAPPER_POSE_CLIPS,WORK_RATE,CALL_OUT_SEC} from '../src/render/m01-sapper-pose.js';
-import {SapperKit,KIT_FIT,LAMP_COLOR} from '../src/render/m01-sapper-kit.js';
-import {M01RepairLine,cableSamples,arcOf} from '../src/render/m01-repair-line.js';
+import {SapperKit,KIT_FIT,LAMP_COLOR,GLOW} from '../src/render/m01-sapper-kit.js';
+import {M01RepairLine,cableSamples,arcOf,STAKE} from '../src/render/m01-repair-line.js';
 import {M01Characters} from '../src/render/m01-characters.js';
 import {actorPose} from '../src/render/m01-actor-pose.js';
 import {driver,toRepair} from './helpers/m01-route.js';
@@ -84,9 +84,15 @@ test('the props: pliers while the leader examines or splices, the tester while t
   // the kit builds on a rig with the bones (the soldier GLB's names) and hides everything until a phase asks
   const root=new THREE.Group(),bones={};for(const f of Object.values(KIT_FIT)){bones[f.bone]??=new THREE.Object3D();bones[f.bone].name=f.bone;root.add(bones[f.bone]);}
   const kit=new SapperKit(),made=kit.attach(root);
-  assert.ok(made&&[made.pliers,made.tester,made.coil,made.crate].every(m=>m.visible===false));
+  assert.ok(made&&[made.pliers,made.tester,made.coil,made.crate,made.glow].every(m=>m.visible===false));
   kit.sync(made,'leader',ops('test2',{lamp:{on:true,result:'pass'}}));assert.equal(made.tester.visible,true);assert.equal(made.pliers.visible,false);assert.equal(made.lamp.material.color.getHexString(),new THREE.Color(LAMP_COLOR.pass).getHexString());
-  kit.sync(made,'leader',ops('retreat'));assert.ok([made.pliers,made.tester,made.coil,made.crate].every(m=>!m.visible));
+  // the glow around the lamp is what is read from 8-15 m: its colour follows the lamp (amber while it tests, red with no passage, green with passage), it is unlit and additive, and it is off when the lamp is dim or the tester is not in his hand
+  assert.equal(made.glow.visible,true);assert.equal(made.glow.material.color.getHexString(),new THREE.Color(LAMP_COLOR.pass).getHexString());assert.equal(made.glow.material.blending,THREE.AdditiveBlending);assert.equal(made.glow.material.depthWrite,false);
+  assert.ok(made.glow.scale.x===GLOW.size&&GLOW.size>=.3,'a glow of at least 30 cm: about 20 px at 10 m on the 720 p frame');
+  kit.sync(made,'leader',ops('test',{lamp:{on:true,result:null}}));assert.equal(made.glow.visible,true);assert.equal(made.glow.material.color.getHexString(),new THREE.Color(LAMP_COLOR.testing).getHexString());
+  kit.sync(made,'leader',ops('fail',{lamp:{on:true,result:'fail'}}));assert.equal(made.glow.material.color.getHexString(),new THREE.Color(LAMP_COLOR.fail).getHexString());
+  kit.sync(made,'helper',ops('test'));assert.equal(made.glow.visible,false,'the helper does not hold the tester');
+  kit.sync(made,'leader',ops('retreat'));assert.ok([made.pliers,made.tester,made.coil,made.crate,made.glow].every(m=>!m.visible));
   kit.sync(null,'x',null);   // a LOD without the bones has no kit: nothing happens
   assert.equal(kit.attach(new THREE.Group()),null);
   kit.dispose();
@@ -112,16 +118,37 @@ test('the cable: sampled along the drawn route, cut where the simulation says (o
     const inside=open.filter(([x,z])=>Math.hypot(x-c.x,z-c.z)<c.gapM/2-.05);assert.equal(inside.length,0,`no cable inside the ${p} cut`);
     assert.ok(open.some(([x,z])=>Math.hypot(x-c.x,z-c.z)<c.gapM/2+.2),`cable reaches the edge of the ${p} cut`);}
   const stubs=line.dynamic.children.filter(o=>o!==line.cable).length;assert.equal(stubs,6,'two frayed ends at each open cut');
+  // each open cut is marked by two stakes with white rags (legible from 8-15 m on the dark slope), beyond the edges of the gap, on the player's side; a closed cut has none
+  assert.equal(line.markers.children.length,12,'a stake and a rag at each end of three cuts');
+  for(const p of ['crater','fault','second']){const c=SAPPERS.points[p],near=line.markers.children.filter(o=>o.name==='cut_stake'&&Math.hypot(o.position.x-c.x,o.position.z-c.z)<c.gapM/2+STAKE.along+STAKE.aside+.3);
+    assert.equal(near.length,2,`two stakes at the ${p} cut`);for(const o of near){const dx=Math.abs(o.position.x-c.x);assert.ok(dx>c.gapM/2&&dx<c.gapM/2+STAKE.along+.4,`${p}: a stake beyond the edge of the gap, not on it (dx ${dx.toFixed(2)})`);assert.ok(o.position.z>c.z,`${p}: on the player's (south) side`);}}
+  assert.ok(line.markers.children.every(o=>o.name==='cut_stake'||o.name==='cut_rag'));
   line.sync(view({crater:'closed',fault:'closed',second:'open'}),world);
   assert.equal(line.dynamic.children.filter(o=>o!==line.cable).length,3+3+2,'a sleeve and two rings of tape at each of the two closed cuts, two frayed ends at the open one');
-  line.sync(view({crater:'closed',fault:'closed',second:'closed'}),world);assert.equal(verts().length,whole,'all closed: the whole cable again');
+  assert.equal(line.markers.children.length,4,'only the open cut keeps its stakes');
+  line.sync(view({crater:'closed',fault:'closed',second:'closed'}),world);assert.equal(verts().length,whole,'all closed: the whole cable again');assert.equal(line.markers.children.length,0,'no stake at a repaired cut');
   assert.equal(line.diagnostics.revision,4);
   // the crate is drawn on the ground from the delivery, at the cut they work at, and not while the helper carries it
   line.sync(view({crater:'closed',fault:'closed',second:'open'},{state:'ground',point:'second'}),world);assert.equal(line.crate.visible,true);
-  assert.ok(Math.abs(line.crate.position.x-(SAPPERS.points.second.slots.sapper_2.x-.55))<1e-9);
+  assert.ok(Math.abs(line.crate.position.x-(SAPPERS.points.second.slots.sapper_2.x-.7))<1e-9,'0.7 m west of the helper\'s place (2026-10-24: .55 -> .7 with the bigger crate)');
   line.sync(view({crater:'closed',fault:'closed',second:'open'},{state:'carried',carrier:'sapper_2'}),world);assert.equal(line.crate.visible,false);
   line.sync(null,world);assert.equal(line.group.visible,false);
   line.dispose();
+});
+
+test('the cable and the crate rest on the drawn ground (the injected surface), not on the analytic height, and fall back to it when the surface has no answer',()=>{
+  // 2026-10-24: the terrain mesh is a 5 m lattice of terrainHeightAt, whose chords stand above the analytic profile at the toe of the slope: a 3 cm cable on the analytic height was buried there.
+  const surface=(x,z)=>-2.4+.2*Math.sin(x*.7)+.05*z,world={terrainHeightAt:()=>-2.6},gaps={crater:'none',fault:'open',second:'none'},ops={gaps,box:{state:'ground',point:'fault'}};
+  const line=new M01RepairLine(new THREE.Scene(),{surfaceY:surface});line.sync(ops,world);
+  const a=line.cable.geometry.getAttribute('position');let lowest=Infinity;for(let i=0;i<a.count;i++){const x=a.getX(i),z=a.getZ(i),floor=Math.max(surface(x,z),surface(x,z-1.2),surface(x,z+1.2));lowest=Math.min(lowest,a.getY(i)-floor);}
+  assert.ok(lowest>-.031,`no vertex of the tube is below the drawn ground by more than its radius (${lowest.toFixed(3)})`);
+  const slot=SAPPERS.points.fault.slots[SAPPERS.helper],z=SAPPERS.points.fault.z+1.25,x=slot.x-.7;
+  const corners=[[-.3,-.3],[.3,-.3],[-.3,.3],[.3,.3]].map(([dx,dz])=>surface(x+dx,z+dz));
+  assert.ok(Math.abs(line.crate.position.y-(Math.max(...corners)+.02))<1e-9,'the crate rests on the highest corner of its footprint');
+  const y0=line.crate.position.y;line.sync(ops,world);assert.equal(line.crate.position.y,y0,'placed once per cut, not every frame');
+  const fallback=new M01RepairLine(new THREE.Scene(),{surfaceY:()=>null});fallback.sync(ops,world);
+  const b=fallback.cable.geometry.getAttribute('position');for(let i=0;i<b.count;i++)assert.ok(Number.isFinite(b.getY(i))&&Math.abs(b.getY(i)+2.6)<.1,'no answer from the surface: the world\'s height');
+  line.dispose();fallback.dispose();
 });
 
 test('the wiring: M01Characters draws a sapper with the clip of his phase when it has the operation view and with the old rules when it has none',async()=>{

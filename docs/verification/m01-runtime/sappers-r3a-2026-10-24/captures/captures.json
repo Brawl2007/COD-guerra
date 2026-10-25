@@ -1,0 +1,497 @@
+{
+  "seed": 19390901,
+  "dist": 8,
+  "quality": "high",
+  "views": [
+    {
+      "view": "01-camp",
+      "quality": "high",
+      "clock": 16246.199999999968,
+      "player": {
+        "x": -40.21,
+        "z": 17.4
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 0.9
+        },
+        {
+          "id": "sapper_3",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 2.43
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 0.82
+        }
+      ],
+      "hud": {
+        "objective": "Leve a mensagem e o café ao posto da ponte",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "02-locate",
+      "quality": "high",
+      "clock": 16620.658099999247,
+      "player": {
+        "x": -43.3,
+        "z": 17.79
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "walk",
+          "lod": 0,
+          "clipTime": 0.56
+        },
+        {
+          "id": "sapper_2",
+          "clip": "walk",
+          "lod": 0,
+          "clipTime": 0.34
+        },
+        {
+          "id": "sapper_3",
+          "clip": "walk",
+          "lod": 0,
+          "clipTime": 0.54
+        }
+      ],
+      "hud": {
+        "objective": "Traga o material dos sapadores do barracão ferroviário",
+        "status": "Os sapadores procuram o corte",
+        "subtitle": "Paweł Krawiec: Cortaram a linha em dois lugares. Eu sei onde. Não sei é se vão me deixar trabalhar."
+      },
+      "errors": []
+    },
+    {
+      "view": "03-standby",
+      "quality": "high",
+      "clock": 16850.958449998292,
+      "player": {
+        "x": -118.2,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "clipTime": 1.55
+        },
+        {
+          "id": "sapper_2",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "clipTime": 3.42
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "clipTime": 0.88
+        }
+      ],
+      "hud": {
+        "objective": "Traga o material dos sapadores do barracão ferroviário",
+        "status": "Os sapadores esperam o material junto ao corte",
+        "subtitle": "Paweł Krawiec: Aqui está o corte. Quando a caixa chegar, começamos."
+      },
+      "errors": []
+    },
+    {
+      "view": "04-inspect",
+      "quality": "high",
+      "clock": 16977.366899997767,
+      "player": {
+        "x": -118.2,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 0.85
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 2.73
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 0.1
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 5% · sapadores a examinar a ligação",
+        "subtitle": "Paweł Krawiec: Caixa aberta. Vejam as pontas."
+      },
+      "errors": []
+    },
+    {
+      "view": "05-splice",
+      "quality": "high",
+      "clock": 17092.166549997288,
+      "player": {
+        "x": -118.2,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 1.71
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 1.76
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 2.08
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 27% · sapadores a emendar o cabo",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "06-test",
+      "quality": "high",
+      "clock": 17372.99970000044,
+      "player": {
+        "x": -118.2,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 2.7
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "clipTime": 2.93
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 0.87
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 46% · sapadores a testar a linha",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "07-fail",
+      "quality": "high",
+      "clock": 17417.849400000512,
+      "player": {
+        "x": -118.2,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "clipTime": 2.99
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "clipTime": 1.7
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 2.73
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 49% · sem passagem · falta o segundo corte",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "08-relocate",
+      "quality": "high",
+      "clock": 17512.949700000667,
+      "player": {
+        "x": -127.38,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "walk",
+          "lod": 0,
+          "clipTime": 0.2
+        },
+        {
+          "id": "sapper_2",
+          "clip": "carry_walk",
+          "lod": 0,
+          "clipTime": 0.23
+        },
+        {
+          "id": "sapper_3",
+          "clip": "walk",
+          "lod": 0,
+          "clipTime": 0.99
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 54% · sapadores a seguir o cabo até ao segundo corte",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "09-inspect2",
+      "quality": "high",
+      "clock": 17593.200000000797,
+      "player": {
+        "x": -134.4,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 2.27
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 1.16
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 0.72
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 60% · sapadores a examinar o segundo corte",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "10-splice2",
+      "quality": "high",
+      "clock": 17867.84940000124,
+      "player": {
+        "x": -134.4,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 2.6
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 1.51
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 0.48
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 78% · sapadores a emendar o segundo corte",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "11-test2",
+      "quality": "high",
+      "clock": 18157.50000000171,
+      "player": {
+        "x": -134.4,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "clipTime": 0.21
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "clipTime": 2.29
+        },
+        {
+          "id": "sapper_3",
+          "clip": "cover_low_idle",
+          "lod": 0,
+          "clipTime": 1.86
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 97% · sapadores a testar a linha inteira",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "12-report",
+      "quality": "high",
+      "clock": 18251.550000001705,
+      "player": {
+        "x": -134.4,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "clipTime": 3.63
+        },
+        {
+          "id": "sapper_2",
+          "clip": "standing_idle_b",
+          "lod": 0,
+          "clipTime": 1.75
+        },
+        {
+          "id": "sapper_3",
+          "clip": "fidget_check_rifle",
+          "lod": 0,
+          "clipTime": 2.05
+        }
+      ],
+      "hud": {
+        "objective": "Reparo concluído. Aguarde a ordem com a secção",
+        "status": "",
+        "subtitle": "Paweł Krawiec: Linha inteira. Avisem o oficial: está pronta."
+      },
+      "errors": []
+    },
+    {
+      "view": "13-ready",
+      "quality": "high",
+      "clock": 18467.099100001473,
+      "player": {
+        "x": -134.4,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "clipTime": 1.08
+        },
+        {
+          "id": "sapper_2",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "clipTime": 1.38
+        },
+        {
+          "id": "sapper_3",
+          "clip": "standing_idle",
+          "lod": 0,
+          "clipTime": 2.74
+        }
+      ],
+      "hud": {
+        "objective": "Reparo concluído. Aguarde a ordem com a secção",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": []
+    },
+    {
+      "view": "14-pinned",
+      "quality": "high",
+      "clock": 17181.45090000013,
+      "player": {
+        "x": -118.2,
+        "z": 17.3
+      },
+      "sappers": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "prone_idle",
+          "lod": 0,
+          "clipTime": 0.8
+        },
+        {
+          "id": "sapper_2",
+          "clip": "prone_idle",
+          "lod": 0,
+          "clipTime": 0.8
+        },
+        {
+          "id": "sapper_3",
+          "clip": "prone_idle",
+          "lod": 0,
+          "clipTime": 0.8
+        }
+      ],
+      "hud": {
+        "objective": "Proteja o reparo da linha",
+        "status": "Reparo 33% · sapadores deitados sob fogo da metralhadora do dique",
+        "subtitle": "Szymon Kowal: Metralhadora no dique!"
+      },
+      "errors": []
+    }
+  ]
+}

@@ -454,6 +454,7 @@ const callOut=(s,o={})=>{const by=s.actor(o.by??'staszek_pawlak');
   return s.emit({type:'section-callout',kind:'mg',by:by.id,target:'de_east_0',side:'left',landmark:'gate',from:{x:by.x,y:by.y,z:by.z},point:{x:by.x,y:by.y,z:by.z},aim:{x:1055,y:0,z:32},at:s.clock,reactions:[],...o});};
 const orderOut=(s,o={})=>{const l=s.actor('marek_zielinski');
   return s.emit({type:'section-order',kind:'hold',by:l.id,to:['szymon_kowal'],target:null,side:null,from:{x:l.x,y:l.y,z:l.z},point:{x:l.x,y:l.y,z:l.z},at:s.clock,...o});};
+const sapperBar=(s,progress)=>{s.activate('cover_repair');s.objectives.obj_m01_cover_repair.progress=progress;return s;};   // R3-a: the repair is under way, the bar at `progress` % (the stage of the sappers' operation follows it)
 const speakFirst=(s,id,sec)=>{ // the line `id` was said `sec` seconds ago (for the follow-ups), and used up
   const L=s.timers.barks??(s.timers.barks=newBarkState());L.at[id]=s.clock-sec;L.n[id]=1;return s;
 };
@@ -518,7 +519,8 @@ const CASES={
   [D(152)]:{stage:s=>{s.battleClock=seconds('06:30:00');s.consumed.evt_m01_east_demolition=s.clock-100;Object.assign(s.player,{x:-100});for(const a of s.actors)if(a.team==='ally'&&a.alive&&a.active&&!a.civilian)a.x=-120;
     assert.equal(s.readiness('evt_m01_west_demolition'),true);},act:s=>barkPoll(s)},
   [D(153)]:{stage:s=>{s.activate('hold_corridor');s.battleClock=seconds('06:30:00');},act:s=>barkPoll(s)},
-  [D(154)]:{stage:s=>{s.activate('cover_repair');},act:s=>barkPoll(s)},
+  // 2026-10-24 (R3-a): at 0 % the sappers' stage is `inspect`, and the director now has a line for it (201); made used up so that 154 is the one that is left, as it always was.
+  [D(154)]:{stage:s=>{s.activate('cover_repair');withLedger(s,{n:unspoken(s,[D(201)])});},act:s=>barkPoll(s)},
   [D('030')]:{stage:s=>{s.consumed.evt_m01_train963_arrives=0;near(s,'szymon_kowal',2);s.actor('szymon_kowal').firedAt=s.clock-1;},act:s=>s.emit({type:'reload',weapon:'kb_wz29'})},
   [D('035')]:{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_tower_p1_n'})},
   [D('036')]:{stage:s=>{s.activate('hold_access');s.battleClock=seconds('05:40:00');Object.assign(s.player,{angle:-.12,pitch:.1});withLedger(s,{n:unspoken(s,[D(154)])});},
@@ -573,6 +575,15 @@ const CASES={
   [D(197)]:{stage:s=>{near(s,'east_platoon_voice');withLedger(s,{g:{sec_arrive_deck:[1,0]}});},act:s=>barkTrigger(s,'squadMove',{node:'arrive_deck'})},
   [D(198)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'squadMove',{node:'arrive_trench'})},
   [D(199)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'squadMove',{node:'arrive_home'})},
+  // 2026-10-24 (R3-a, the sappers' operation): the stage lines (200-207; 204 is scripted, said by the simulation, so it has no rule) on the `sapperStage` condition. The phase is a pure function of the objectives, the bar
+  // and the clock (src/game/m01-sappers.js): the staging sets exactly those.
+  [D(200)]:{stage:s=>{s.activate('fetch_material');Object.assign(s.actor('pawel_krawiec'),{x:-120.4,z:10.3});near(s,'pawel_krawiec');},act:s=>barkPoll(s)},
+  [D(201)]:{stage:s=>{sapperBar(s,2);near(s,'pawel_krawiec');},act:s=>barkPoll(s)},
+  [D(202)]:{stage:s=>{sapperBar(s,20);near(s,'sapper_2');withLedger(s,{n:unspoken(s,[D(154)])});},act:s=>barkPoll(s)},   // 154 (the repair is under way) outranks it in this bare world: made used up
+  [D(203)]:{stage:s=>{sapperBar(s,46);near(s,'pawel_krawiec');},act:s=>barkPoll(s)},
+  [D(205)]:{stage:s=>{sapperBar(s,54);near(s,'pawel_krawiec');withLedger(s,{n:unspoken(s,[D(144),D(154)])});},act:s=>barkPoll(s)},   // 144 and 154 (the repair is half done, under way) outrank it in this bare world: made used up
+  [D(206)]:{stage:s=>{sapperBar(s,97);near(s,'sapper_3');withLedger(s,{n:unspoken(s,[D(144),D(154)])});},act:s=>barkPoll(s)},
+  [D(207)]:{stage:s=>{s.objectives.obj_m01_cover_repair.state='done';s.consumed.evt_m01_repair_complete=s.clock-300;s.consumed.evt_m01_east_demolition=s.clock-2;near(s,'pawel_krawiec');},act:s=>barkPoll(s)},
   'co_m01_ally_hit':{stage:s=>{withdrawal(s);near(s,'marek_zielinski');withLedger(s,{n:unspoken(s,[D(100),D(101),D(102)])});},act:s=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})},
   'co_m01_cover_rotation':{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_sandbag_mid_2'})},
 };

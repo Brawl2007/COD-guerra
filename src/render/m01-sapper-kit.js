@@ -3,6 +3,8 @@
 // holds the splice, and the crate on the helper's shoulder (the carry_socket bone) on the walk to the second cut. Original procedural shapes (boxes and cylinders; no third-party asset, no
 // file): the game shows no connections, charges or procedures (HISTORICAL_RESEARCH.md §79), only the damaged line and the sappers' abstract work. Geometry and materials are shared by the
 // three men and owned by the kit (disposed with the characters); a prop is visible only in the phases that ask for it (sim.sapperOps). Nothing here is saved or decides anything.
+// The tester's lamp is the one thing that has to be read from the 8-15 m at which the player covers the repair, so it is a stylised signal lamp (4 cm bulb) with a soft glow sprite of its colour (amber
+// while it tests, red with no passage, green with passage): additive, unlit, no light source in the scene (first captures in the real game: a 2.4 cm bulb was under two pixels).
 import * as THREE from 'three';
 
 const deg=d=>d*Math.PI/180;
@@ -13,13 +15,21 @@ export const KIT_FIT=Object.freeze({
   coil:{bone:'hand_l',pos:[-.03,-.06,-.07],rot:[70,0,0]},
   crate:{bone:'carry_socket',pos:[.04,.12,-.02],rot:[0,-10,0]},
 });
-export const LAMP_COLOR=Object.freeze({idle:'#3a2f16',testing:'#c98a1f',fail:'#a3261a',pass:'#4fe07c'});
+export const LAMP_COLOR=Object.freeze({idle:'#3a2f16',testing:'#e0a020',fail:'#e0301c',pass:'#4fe07c'});
+/** The glow around the lamp: its diameter in metres and its opacity. */
+export const GLOW=Object.freeze({size:.36,opacity:.85});
+/** A soft round alpha ramp, generated (no file, no canvas: it also builds under Node). */
+function glowTexture(){
+  const n=32,data=new Uint8Array(n*n*4);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const d=Math.hypot((x+.5)/n*2-1,(y+.5)/n*2-1),a=Math.max(0,1-d),i=(y*n+x)*4;data[i]=data[i+1]=data[i+2]=255;data[i+3]=Math.round(255*a*a);}
+  const t=new THREE.DataTexture(data,n,n,THREE.RGBAFormat);t.colorSpace=THREE.SRGBColorSpace;t.needsUpdate=true;return t;
+}
 
 export class SapperKit {
   constructor(){
     this.geometry={
       plierHandle:new THREE.BoxGeometry(.012,.012,.15),plierHead:new THREE.BoxGeometry(.03,.012,.05),
-      testerBody:new THREE.BoxGeometry(.075,.035,.11),testerLamp:new THREE.SphereGeometry(.012,8,6),probe:new THREE.CylinderGeometry(.003,.003,.14,5),
+      testerBody:new THREE.BoxGeometry(.075,.035,.11),testerLamp:new THREE.SphereGeometry(.02,8,6),probe:new THREE.CylinderGeometry(.003,.003,.14,5),
       coil:new THREE.TorusGeometry(.065,.014,6,14),
       crate:new THREE.BoxGeometry(.42,.24,.26),crateStripe:new THREE.BoxGeometry(.43,.04,.005),crateLid:new THREE.BoxGeometry(.42,.02,.26),
     };
@@ -29,6 +39,7 @@ export class SapperKit {
       wood:new THREE.MeshStandardMaterial({color:'#7d5d38',roughness:.95}),white:new THREE.MeshStandardMaterial({color:'#e7e2cf',roughness:.9}),
       lamp:new THREE.MeshBasicMaterial({color:LAMP_COLOR.idle,toneMapped:false,fog:false}),
     };
+    this.texture=glowTexture();this.clones=[];
   }
   /** The props of one sapper, parented to the bones of his rig (invisible until a phase asks for them). Returns null for a man without the bones. */
   attach(root){
@@ -38,11 +49,14 @@ export class SapperKit {
     const pliers=new THREE.Group(),a=new THREE.Mesh(g.plierHandle,m.rubber),b=new THREE.Mesh(g.plierHandle,m.rubber),head=new THREE.Mesh(g.plierHead,m.steel);
     a.position.set(.012,0,.075);a.rotation.y=deg(-5);b.position.set(-.012,0,.075);b.rotation.y=deg(5);head.position.set(0,0,-.012);pliers.add(a,b,head);
     const tester=new THREE.Group(),body=new THREE.Mesh(g.testerBody,m.tester),lamp=new THREE.Mesh(g.testerLamp,m.lamp.clone()),probe=new THREE.Mesh(g.probe,m.steel);
-    lamp.position.set(0,.024,-.03);probe.position.set(.03,.0,-.12);probe.rotation.x=deg(90);tester.add(body,lamp,probe);
+    const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:this.texture,color:LAMP_COLOR.testing,blending:THREE.AdditiveBlending,transparent:true,opacity:GLOW.opacity,depthWrite:false,toneMapped:false,fog:false}));
+    this.clones.push(lamp.material,glow.material);
+    lamp.position.set(0,.03,-.03);glow.position.copy(lamp.position);glow.scale.set(GLOW.size,GLOW.size,1);glow.visible=false;glow.frustumCulled=false;glow.name='sapper_lamp_glow';
+    probe.position.set(.03,.0,-.12);probe.rotation.x=deg(90);tester.add(body,lamp,probe,glow);
     const coil=new THREE.Mesh(g.coil,m.cable);
     const crate=new THREE.Group(),box=new THREE.Mesh(g.crate,m.wood),stripe=new THREE.Mesh(g.crateStripe,m.white);stripe.position.set(0,0,.133);crate.add(box,stripe);
     if(!(place(pliers,KIT_FIT.pliers)&place(tester,KIT_FIT.tester)&place(coil,KIT_FIT.coil)&place(crate,KIT_FIT.crate)))return null;
-    kit.pliers=pliers;kit.tester=tester;kit.lamp=lamp;kit.coil=coil;kit.crate=crate;
+    kit.pliers=pliers;kit.tester=tester;kit.lamp=lamp;kit.glow=glow;kit.coil=coil;kit.crate=crate;
     return kit;
   }
   /** Which props a sapper shows in this phase (a pure function of the role and the phase; the renderer applies it). */
@@ -60,7 +74,8 @@ export class SapperKit {
     if(!kit)return;
     const v=SapperKit.visibility(role,ops);
     kit.pliers.visible=v.pliers;kit.tester.visible=v.tester;kit.coil.visible=v.coil;kit.crate.visible=v.crate;
-    if(v.tester)kit.lamp.material.color.set(SapperKit.lamp(ops));
+    if(v.tester){const c=SapperKit.lamp(ops);kit.lamp.material.color.set(c);kit.glow.material.color.set(c);kit.glow.visible=c!==LAMP_COLOR.idle;}
+    else kit.glow.visible=false;
   }
-  dispose(){for(const o of [...Object.values(this.geometry),...Object.values(this.material)])o.dispose();}
+  dispose(){for(const o of [...Object.values(this.geometry),...Object.values(this.material),...this.clones,this.texture])o.dispose();}
 }
