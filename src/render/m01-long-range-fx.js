@@ -12,10 +12,10 @@ import {visualNoise} from './m01-atmosphere.js';
  * GAMEPLAY_DRAMATIZATION. Which weapons may be drawn with a tracer. The simulation marks the traced rounds (`round.tracer`: one in a burst of the MG34, a fixed
  * cadence authored per display profile); the renderer only decides whether that mark is DRAWN. German MG belts of 1939 were commonly loaded with a tracer
  * round mixed among the ball rounds (the practice, not a ratio, is what is claimed here; no primary source is cited in this repository, so treat the look
- * as dramatization, not as ballistic evidence). A rifle (Kar98k, kb wz.29) shot has no tracer. The Polish rkm/ckm are left out too: no source for their loading
- * is in the project. One constant: add a weapon id here to draw its tracers.
+ * as dramatization, not as ballistic evidence). A rifle (Kar98k, kb wz.29) shot has no tracer. The Polish rkm wz.28 and ckm wz.30 keep the tracers they had before R2-c
+ * (owner decision: the Poles must not look idle); likewise GAMEPLAY_DRAMATIZATION, no loading source in the project. One constant: add/remove a weapon id here.
  */
-export const TRACER_WEAPONS=Object.freeze(['mg34']);
+export const TRACER_WEAPONS=Object.freeze(['mg34','rkm_wz28','ckm_wz30']);
 export const tracerWeapon=weapon=>TRACER_WEAPONS.includes(weapon);
 /** Tracers drawn at once, by quality tier (the view's tracer batch has 48 instances; gameplay rounds first, then display rounds up to DISPLAY_TRACER_CAP). Low stays readable. */
 export const TRACER_QUOTA_BY_TIER=Object.freeze({low:6,medium:12,high:20});

@@ -24,9 +24,9 @@ import {route} from './helpers/m01-route.js';
 const shot=(over={})=>({type:'npc-shot',weapon:'ally_rifle',point:{x:600,y:1.4,z:40},rounds:1,by:'staszek_pawlak',target:'de_spans_1',end:{x:850,y:0,z:42},hit:false,...over});
 const round=(over={})=>({id:'r',by:'de_spans_0',weapon:'mg34',kind:'squad',ox:900,oy:1.2,oz:20,ax:600,ay:1,az:20,h:1,firedAt:10,arriveAt:10.5,tracer:true,victim:null,...over});
 
-test('tracer rule: only an MG34 belt is drawn with tracers (one constant), never a rifle, never inside the burn-in stretch, and never unless the simulation marked the round',()=>{
-  assert.deepEqual([...TRACER_WEAPONS],['mg34'],'GAMEPLAY_DRAMATIZATION constant: the MG34 only');
-  assert.ok(tracerWeapon('mg34')&&!tracerWeapon('kar98k')&&!tracerWeapon('kb_wz29')&&!tracerWeapon('ally_rifle')&&!tracerWeapon('rkm_wz28')&&!tracerWeapon('ckm_wz30')&&!tracerWeapon(undefined));
+test('tracer rule: only machine-gun belts (MG34, Polish rkm/ckm) are drawn with tracers (one constant), never a rifle, never inside the burn-in stretch, and never unless the simulation marked the round',()=>{
+  assert.deepEqual([...TRACER_WEAPONS],['mg34','rkm_wz28','ckm_wz30'],'GAMEPLAY_DRAMATIZATION constant: the MG belts, the Polish rkm/ckm keep theirs');
+  assert.ok(tracerWeapon('mg34')&&tracerWeapon('rkm_wz28')&&tracerWeapon('ckm_wz30')&&!tracerWeapon('kar98k')&&!tracerWeapon('kb_wz29')&&!tracerWeapon('ally_rifle')&&!tracerWeapon(undefined));
   const range=300;
   assert.equal(tracerDrawn(round(),.5,range),true);
   assert.equal(tracerDrawn(round({weapon:'kar98k'}),.5,range),false,'a rifle round marked as a tracer by the simulation is not drawn as one');

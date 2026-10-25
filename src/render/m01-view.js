@@ -431,7 +431,7 @@ export class M01View {
       const heavy=sm.heavy[s]===1,k=(time-sm.at[s])/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle),seed=sm.seed[s],n0=visualNoise(seed,1),n1=visualNoise(seed,2);
       P.x=sm.x[s]+(n0-.5)*.3*k+k*.35;P.y=sm.y[s]+.15+k*(heavy?1.6:1.1)*(.8+.4*n1);P.z=sm.z[s]+(n1-.5)*.25*k;
       const d=far(P);
-      put('smoke',P,smokeRadius(heavy,k,d,fov,vh),null,(heavy?.5:.42)*Math.pow(1-k,1.15)*(.45+.4*daylight),this.shotSmokeColor,seed,4);smokeDrawn++;
+      put('smoke',P,2*smokeRadius(heavy,k,d,fov,vh),null,(heavy?.5:.42)*Math.pow(1-k,1.15)*(.45+.4*daylight),this.shotSmokeColor,seed,4);smokeDrawn++;
     }
     fx.frames+=list.count?1:0;fx.drawn=flashesDrawn;fx.smokeDrawn=smokeDrawn;fx.smokeCap=cap;fx.nearest=nearest;
   }
