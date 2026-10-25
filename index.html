@@ -33,6 +33,7 @@
           <label for="volume-voice">VOZES<input id="volume-voice" type="range" min="0" max="1" step=".01" value="1" /></label>
           <label for="volume-music">MÚSICA<input id="volume-music" type="range" min="0" max="1" step=".01" value="1" /></label>
           <label for="reduce-tinnitus" class="check"><input id="reduce-tinnitus" type="checkbox" />REDUZIR ZUMBIDO</label>
+          <p class="audio-status" id="audio-status">Áudio provisório sintetizado — gravações finais pendentes (T45)</p>
           </div></details>
         </div>
         <p class="controls">WASD mover · Rato olhar · Clique disparar · Botão direito mirar<br>R recarregar · G granada · Shift correr · C agachar · E interagir<br>V alça de mira · Espaço saltar cena · Esc pausa</p>
@@ -41,7 +42,7 @@
       <div class="mission-note"><span id="mission-note">AS PONTES DO VÍSTULA</span><p>Mantenha contacto.<br>Avance sob cobertura.</p></div>
       <p class="menu-footer" id="mission-status">PROTÓTIPO JOGÁVEL · MODELOS E ÁUDIO PROVISÓRIOS</p>
     </section>
-    <section id="pause" class="overlay centered hidden"><p class="eyebrow">MISSÃO SUSPENSA</p><h2>PAUSADO</h2><p id="pause-text"></p><p id="pause-objective"></p><p id="pause-difficulty"></p><button id="resume">RETOMAR</button><button id="restart-checkpoint" class="secondary">REINICIAR CHECKPOINT</button><button id="back-menu" class="quiet">VOLTAR AO MENU</button></section>
+    <section id="pause" class="overlay centered hidden"><p class="eyebrow">MISSÃO SUSPENSA</p><h2>PAUSADO</h2><p id="pause-text"></p><p id="pause-objective"></p><p id="pause-difficulty"></p><p class="audio-status" id="pause-audio-status">Áudio provisório sintetizado — gravações finais pendentes (T45)</p><button id="resume">RETOMAR</button><button id="restart-checkpoint" class="secondary">REINICIAR CHECKPOINT</button><button id="back-menu" class="quiet">VOLTAR AO MENU</button></section>
     <section id="death-offer" class="overlay centered hidden" aria-live="assertive"><p class="eyebrow">CAIU DE NOVO</p><h2>MESMO PONTO</h2><p id="death-offer-text"></p><button id="death-lower">CONTINUAR EM NÍVEL MAIS BAIXO</button><button id="death-retry" class="secondary">TENTAR DE NOVO</button><button id="death-menu" class="quiet">VOLTAR AO MENU</button></section>
     <section id="complete" class="overlay centered hidden"><p class="eyebrow" id="complete-place">TCZEW · 1 SETEMBRO 1939</p><h2>MISSÃO CONCLUÍDA</h2><div id="debrief"></div><button id="replay">JOGAR NOVAMENTE</button><button id="complete-menu" class="secondary">VOLTAR AO MENU</button></section>
     <section id="error" class="error-panel hidden" role="alert"><h2>Não foi possível continuar</h2><p id="error-text"></p><button id="close-error" class="secondary">FECHAR</button></section>

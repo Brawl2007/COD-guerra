@@ -164,7 +164,7 @@ export class Game {
       // Due sounds play in this same pass; the rest is compacted in place (no filter() arrays per frame). playSound never touches pendingSounds.
       playDueSounds(this.pendingSounds,this.sim.clock,this.playSoundBound);
       if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
-        phase:this.sim.mission.phase,quality:this.renderer.quality});
+        phase:this.sim.mission.phase,quality:this.renderer.quality,listener:this.sim.player});
       if(this.isM01)this.audioDirector?.update(this.sim);
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
@@ -176,8 +176,8 @@ export class Game {
   playSound(sound){
     if(sound.kind==='fire'){
       // T47: the ckm wz.30 burst of the simulation (`ally-fire`, 8 rounds at 0.1 s) is played whole through its own burst call.
-      if(this.isM01&&sound.weapon==='ckm_wz30')this.audio.ckmBurst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key,sound.front);
-      else if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source});
+      if(this.isM01&&sound.weapon==='ckm_wz30')this.audio.ckmBurst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key,sound.front,sound.water);
+      else if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source,water:sound.water});
       else if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
       else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
       return;

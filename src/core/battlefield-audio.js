@@ -3,7 +3,12 @@
 // pela simulação e devolve descrições deterministas que o AudioManager apenas toca.
 // Os sons são sintetizados de raiz (ruído + osciladores); nenhum é amostrado ou copiado de outro jogo.
 
+import mapLayout from '../../missions/m01-tczew/map-layout.json' with { type: 'json' };
+
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+
+/** R7-a: texto de estado do áudio mostrado no menu de definições e na pausa (nunca como sobreposição em jogo). */
+export const AUDIO_PROVISIONAL_LABEL='Áudio provisório sintetizado — gravações finais pendentes (T45)';
 
 export const SPEED_OF_SOUND=343;
 export const soundDelay=distance=>Math.max(0,Number(distance)||0)/SPEED_OF_SOUND;
@@ -40,14 +45,69 @@ export function humanize(grains,key,{pitch=.07,spread=.04,gain=.2,time=0}={}){
   return grains;
 }
 /** Escolhe 0..count-1 de forma estável para (família, chave): a "variante" estrutural de um som. */
-export const pickVariant=(family,key,count)=>audioHash(`${family}:${key}:variant`)%count;
+export const pickVariant=(family,key,count,tracker=null,group=family)=>{
+  const v=audioHash(`${family}:${key}:variant`)%count;
+  return tracker?tracker.resolve(group,v,count,`${family}:${key}`):v;
+};
+/**
+ * R7-a: guarda de repetição. O hash por id dá variedade, mas é sem memória: com 3-4 variantes repete a mesma de seguida 1 vez em 3-4.
+ * O rastreador (um por AudioManager; estado de apresentação, nunca da simulação) lembra as últimas variantes por grupo e nunca devolve
+ * a mesma duas vezes seguidas; com 4 ou mais variantes evita também a penúltima (sem ciclos A-B-A-B). Continua determinista: depende só
+ * da ordem dos eventos e dos seus ids. `guard=false` reproduz o comportamento anterior (só regista), para medir antes/depois.
+ */
+export class VariantTracker{
+  constructor({guard=true,log=false}={}){this.guard=guard;this.last=new Map();this.log=log?[]:null;this.adjusted=0;}
+  resolve(group,v,count,key=''){
+    let out=v;
+    if(this.guard&&count>1){
+      const h=this.last.get(group),a=h?.[0]??-1,b=count>=4?h?.[1]??-1:-1;
+      if(out===a||out===b){
+        const free=[];for(let i=0;i<count;i++)if(i!==a&&i!==b)free.push(i);
+        out=free[audioHash(`${group}:${key}:guard`)%free.length];this.adjusted++;
+      }
+    }
+    this.last.set(group,[out,this.last.get(group)?.[0]??-1]);
+    if(this.log)this.log.push({group,variant:out});
+    return out;
+  }
+  reset(){this.last.clear();if(this.log)this.log.length=0;this.adjusted=0;}
+}
 
 // Bandas acústicas: escolhem camadas (mecanismo, estalo, eco), não saltos de ganho. 45/220/950 m cobrem a ponte e os diques.
 export const ACOUSTIC_BANDS=Object.freeze([
   Object.freeze({id:'close',max:45}),Object.freeze({id:'mid',max:220}),
   Object.freeze({id:'distant',max:950}),Object.freeze({id:'very-distant',max:Infinity}),
 ]);
-export const acousticBand=distance=>{const d=Math.max(0,Number(distance)||0);return ACOUSTIC_BANDS.find(b=>d<b.max).id;};
+export const acousticBand=(distance,{water=0}={})=>{
+  const d=Math.max(0,Number(distance)||0);
+  // R7-a: fogo que atravessa o canal aberto (margem oposta) é uma banda própria: lê-se diferente do fogo perto, à mesma distância.
+  if(water>=FAR_BANK_MIN_WATER_M&&d>=FAR_BANK_MIN_DISTANCE_M)return 'far-bank';
+  return ACOUSTIC_BANDS.find(b=>d<b.max).id;
+};
+
+// ---------------------------------------------------------------- R7-a: geografia do Vístula (dados de missions/m01-tczew/map-layout.json, só leitura)
+const channelFeature=mapLayout.features.find(f=>f.id==='vistula_channel');
+const channelXs=channelFeature.polygon.map(p=>p[0]);
+/** Canal principal do rio (metros, eixo x do jogo): a ponte atravessa-o entre as margens oeste (x<25) e leste (x>265). */
+export const VISTULA_CHANNEL=Object.freeze({minX:Math.min(...channelXs),maxX:Math.max(...channelXs)});
+export const FAR_BANK_MIN_WATER_M=60,FAR_BANK_MIN_DISTANCE_M=90;
+/** Metros de água aberta que o som atravessa entre o ouvinte e a fonte (sobreposição do segmento x com o canal). 0 = sem rio pelo meio. */
+export function waterCrossing(listenerX,sourceX){
+  const lx=Number(listenerX),sx=Number(sourceX);if(!Number.isFinite(lx)||!Number.isFinite(sx))return 0;
+  return Math.max(0,Math.min(Math.max(lx,sx),VISTULA_CHANNEL.maxX)-Math.max(Math.min(lx,sx),VISTULA_CHANNEL.minX));
+}
+/** Margem de uma posição: 'west' (x<25), 'channel' ou 'east' (x>265). */
+export const bankOf=x=>x<VISTULA_CHANNEL.minX?'west':x>VISTULA_CHANNEL.maxX?'east':'channel';
+/**
+ * Tratamento de "outra margem": reflexo na água (brilho curto), eco de rebote da margem/dique (atraso cresce com a água atravessada) e mais perda de agudos.
+ * Heurística de apresentação afinada de ouvido de papel; ninguém ouviu ainda. Sem água suficiente: inactivo.
+ */
+export function farBankTreatment(water){
+  const w=Math.max(0,Number(water)||0);if(w<FAR_BANK_MIN_WATER_M)return {active:false,k:0,slapDelay:0,slapGain:0,hfScale:1,sheenDelay:0};
+  const k=clamp((w-FAR_BANK_MIN_WATER_M)/200,0,1);
+  return {active:true,k,slapDelay:clamp(.1+w/SPEED_OF_SOUND*.55,.14,.7),slapGain:.3+.2*k,hfScale:1-.42*k,sheenDelay:.012+.018*k};
+}
+
 
 // Atenuação contínua por categoria (ref = distância de ganho 1; span = metros para metade do ganho além de ref).
 // Afinada para mistura de jogo (gama dinâmica comprimida), não para níveis SPL medidos.
@@ -61,7 +121,7 @@ export const ATTENUATION=Object.freeze({
  * Forma acústica de uma fonte: ganho, corte de absorção do ar, envio para a reverberação exterior e sombra da cabeça.
  * `front` é cos(ângulo relativo à frente do ouvinte): fontes atrás ficam um pouco mais escuras e baixas.
  */
-export function acousticShape(distance,{category='weapon',front=1}={}){
+export function acousticShape(distance,{category='weapon',front=1,water=0}={}){
   const d=Math.max(0,Number(distance)||0),a=ATTENUATION[category]??ATTENUATION.weapon,f=clamp(Number.isFinite(front)?front:1,-1,1);
   const behind=Math.max(0,-f);
   const gain=(1/(1+Math.max(0,d-a.ref)/a.span))*(1-.14*behind);
@@ -69,7 +129,8 @@ export function acousticShape(distance,{category='weapon',front=1}={}){
   // (1 + d/50)^1.05. Antes 18000/(1 + d/95) deixava passar quase tudo acima de 4 kHz aos 150 m, e o estalo de um tiro longe soava tão "nítido" como o de um perto.
   const filter=clamp(20000/Math.pow(1+d/50,1.05),category==='explosion'||category==='aircraft'?320:480,18000)*(1-.38*behind);
   const send=category==='player'||category==='danger'?.16:category==='ambience'?0:clamp(.14+d/700,.14,.82);
-  return {band:acousticBand(d),gain,filter,send};
+  const fb=farBankTreatment(category==='player'||category==='danger'||category==='ambience'?0:water);   // R7-a: fogo de outra margem perde mais agudos e sobra mais ambiente
+  return {band:acousticBand(d,{water:fb.active?water:0}),gain,filter:filter*fb.hfScale,send:fb.active?clamp(send+.1*fb.k,0,.9):send};
 }
 /** Compatibilidade com o primeiro production pass: forma de uma arma em campo aberto, de frente. */
 export const audioDistanceShape=distance=>{const s=acousticShape(distance,{category:'fx'});return {gain:s.gain,filter:s.filter};};
@@ -146,14 +207,14 @@ const SHOT_PITCH=.12,SHOT_GAIN=.22,SHOT_MIX=.4;   // ±12 % altura/filtro (≈ �
  * Camadas de um disparo isolado, à distância dada. `round` (>0) marca tiros seguintes de uma rajada.
  * A "arma" (chave sem a ronda) dá um timbre próprio ao longo da rajada; cada tiro acrescenta variante e desvios seus.
  */
-export function planWeaponShot(weapon,distance,{key='',round=0,at=0,detail='high'}={}){
+export function planWeaponShot(weapon,distance,{key='',round=0,at=0,detail='high',water=0,tracker=null}={}){
   const id=weaponProfileId(weapon),p=WEAPON_SOUND_PROFILES[id],d=Math.max(0,Number(distance)||0),band=acousticBand(d);
   const vr=(k,j)=>audioVariation(`${id}:${key}:${round}:${k}`,1-j,1+j);           // este tiro
   const vg=(k,j)=>audioVariation(`${id}:${key}:gun:${k}`,1-j,1+j);                // esta arma/execução (igual em toda a rajada)
   const v=(k,j=SHOT_PITCH)=>vg(k,j*.55)*vr(k,j*.8);
   const gv=k=>vr(k,SHOT_GAIN)*vg(k,SHOT_GAIN*.4);
   const mix=k=>vr(k,SHOT_MIX)*vg(k,SHOT_MIX*.3);   // equilíbrio entre camadas: o corpo, a cauda e as reflexões pesam diferente em cada tiro
-  const variant=pickVariant(`${id}:${round}`,key,SHOT_VARIANTS),S=SHOT_VARIANT_SHAPES[variant];
+  const variant=pickVariant(`${id}:${round}`,key,SHOT_VARIANTS,tracker,`shot:${id}`),S=SHOT_VARIANT_SHAPES[variant];
   const fixedTiming=p.fixedTiming===true,cd=fixedTiming?1:S.crackDur,bd=fixedTiming?1:S.crackDur;
   const near=band==='close',mid=band==='mid',far=band==='distant',vfar=band==='very-distant',grains=[];
   const crackScale=near?1:mid?.62:far?.3:.12,crackHz=p.crack.hz*S.crackHz*v('cf');
@@ -191,6 +252,17 @@ export function planWeaponShot(weapon,distance,{key='',round=0,at=0,detail='high
     grains.push({layer:'echo',src:'noise',noise:'white',at:at+delay,dur:p.crack.dur*(2+i),vol:p.crack.vol*(near?.12:.22)/(i+1)*mix('ev'+i),
       filter:{type:'lowpass',freq:2200/(1+i*.7)*v('ee'+i,.2),q:.6,freqEnd:900/(1+i*.7)}});
   }
+  // R7-a: outra margem. O ar sobre a água aberta carrega o estalo com um brilho de reflexo (curto, logo atrás do tiro) e, bem depois, o rebote
+  // da margem/dique; os agudos de tudo o resto caem mais (o filtro de ar da voz também desce em acousticShape). Só com água suficiente pelo meio.
+  const bank=farBankTreatment(water);
+  if(bank.active){
+    for(const g of grains)if(g.filter&&Number.isFinite(g.filter.freq)&&g.layer!=='echo'){g.filter.freq*=bank.hfScale;if(Number.isFinite(g.filter.freqEnd))g.filter.freqEnd*=bank.hfScale;}
+    grains.push({layer:'water-sheen',src:'noise',noise:'white',at:at+bank.sheenDelay*vr('wsd',.3),dur:.05+.04*bank.k,vol:p.crack.vol*.16*bank.slapGain*gv('wsv'),
+      filter:{type:'bandpass',freq:2100*v('wsf'),q:1.4,freqEnd:1300}});
+    const slaps=detail==='low'?1:2;
+    for(let i=0;i<slaps;i++)grains.push({layer:'water-slap',src:'noise',noise:'brown',at:at+bank.slapDelay*(1+.55*i)*vr('wl'+i,.18),dur:.2+.16*i+.1*bank.k,vol:p.crack.vol*bank.slapGain*(i?.5:1)*mix('wlv'+i),
+      filter:{type:'lowpass',freq:1500/(1+i*.6)*v('wle'+i,.2),q:.6,freqEnd:620/(1+i*.6)}});
+  }
   return grains;
 }
 /**
@@ -198,11 +270,11 @@ export function planWeaponShot(weapon,distance,{key='',round=0,at=0,detail='high
  * `cadenceJitter` (fracção do intervalo, média nula) só é usado por fogo de ambiente e de fundo, sem cadência autoritária:
  * uma metralhadora mecânica real oscila alguns por cento de tiro para tiro. A cadência da simulação nunca é alterada.
  */
-export function planWeaponBurst(weapon,distance,{rounds=1,interval=null,key='',detail='high',cadenceJitter=0}={}){
+export function planWeaponBurst(weapon,distance,{rounds=1,interval=null,key='',detail='high',cadenceJitter=0,water=0,tracker=null}={}){
   const id=weaponProfileId(weapon),p=WEAPON_SOUND_PROFILES[id],n=clamp(Math.round(rounds)||1,1,p.family==='mg'?9:4),step=interval??p.cadence;
   const grains=[];for(let i=0;i<n;i++){
     const at=i*step+(i>0&&cadenceJitter>0?audioVariation(`${id}:${key}:cadence:${i}`,-1,1)*cadenceJitter*step:0);
-    grains.push(...planWeaponShot(id,distance,{key,round:i,at,detail}));}
+    grains.push(...planWeaponShot(id,distance,{key,round:i,at,detail,water,tracker}));}
   return grains;
 }
 
@@ -252,8 +324,8 @@ export const PASS_VARIANTS=3;
  * o 7,92 mm ainda é supersónico, por isso uma passagem directa mais afastada não "zumbe".
  * Três variantes de cada: a onda de choque muda com a distância de passagem, o ângulo e a velocidade da bala.
  */
-export function planBulletPass(type,{key=''}={}){
-  const v=(k,j=.08)=>audioVariation(`pass:${key}:${k}`,1-j,1+j),variant=pickVariant(`pass:${type}`,key,PASS_VARIANTS);
+export function planBulletPass(type,{key='',tracker=null}={}){
+  const v=(k,j=.08)=>audioVariation(`pass:${key}:${k}`,1-j,1+j),variant=pickVariant(`pass:${type}`,key,PASS_VARIANTS,tracker);
   if(type==='whizz')return humanize([
     {layer:'whizz',src:'noise',noise:'white',at:0,dur:[.2,.26,.15][variant]*v('d'),vol:.05,filter:{type:'bandpass',freq:[2300,1800,2900][variant]*v('f'),q:[5,3.5,7][variant],freqEnd:[1500,1100,1900][variant]},rate:v('r',.2)},
     {layer:'whizz-tone',src:'osc',wave:'sine',freq:[1700,1300,2100][variant]*v('t'),freqEnd:[760,600,980][variant],at:.01,dur:.18,vol:.012},
@@ -279,9 +351,9 @@ const METAL_MODES=Object.freeze([
   Object.freeze([[960,.05,.5],[1730,.035,.36],[2890,.02,.22]]),
 ]);
 /** Impactos com identidade por material, três variantes cada, estilhaços/terra a seguir e, às vezes, ricochete (pedra/metal). */
-export function planImpact(material,distance,{key=''}={}){
+export function planImpact(material,distance,{key='',tracker=null}={}){
   const m=impactMaterial(material),v=(k,j=.14)=>audioVariation(`impact:${m}:${key}:${k}`,1-j,1+j),near=distance<25,g=[];
-  const variant=pickVariant(`impact:${m}`,key,IMPACT_VARIANTS);
+  const variant=pickVariant(`impact:${m}`,key,IMPACT_VARIANTS,tracker);
   if(m==='metal'){
     const modes=METAL_MODES[audioHash(`impact:metal:${key}:modes`)%METAL_MODES.length];
     g.push({layer:'hit',src:'noise',noise:'white',at:0,dur:[.03,.045,.022][variant],vol:.05,filter:{type:'highpass',freq:6000*v('h'),q:.7}});
@@ -330,10 +402,10 @@ export const EXPLOSION_VARIANTS=3;
  * Corpo de uma explosão (transiente, corpo, grave, cauda e reflexões rolantes) à distância dada. Três variantes:
  * seca e cortante (estilhaços), cheia (corpo e sub mais longos) e rolante (cauda e ecos mais longos).
  */
-export function planExplosion(scale,distance,{key='',at=0,detail='high'}={}){
+export function planExplosion(scale,distance,{key='',at=0,detail='high',tracker=null}={}){
   const s=EXPLOSION_SCALES[scale]??EXPLOSION_SCALES.large,d=Math.max(0,Number(distance)||0),band=acousticBand(d);
   const v=(k,j=.1)=>audioVariation(`blast:${scale}:${key}:${k}`,1-j,1+j),far=band==='distant'||band==='very-distant',g=[];
-  const variant=pickVariant(`blast:${scale}`,key,EXPLOSION_VARIANTS),bodyK=[.75,1.25,1][variant],tailK=[.65,1,1.5][variant],echoK=[.8,1,1.35][variant];
+  const variant=pickVariant(`blast:${scale}`,key,EXPLOSION_VARIANTS,tracker),bodyK=[.75,1.25,1][variant],tailK=[.65,1,1.5][variant],echoK=[.8,1,1.35][variant];
   g.push({layer:'transient',src:'noise',noise:'white',at,dur:scale==='small'?.05:.07,vol:.3*s.vol*(far?.45:1),attack:.0008,filter:{type:'highpass',freq:(scale==='small'?1800:1100)*v('t'),q:.6}});
   // Banda média do sopro: o "estalo" seco que dá definição perto (sobretudo granadas); longe quase desaparece.
   g.push({layer:'blast',src:'noise',noise:'white',at:at+.004,dur:(scale==='small'?.22:.3)*v('m'),vol:(scale==='small'?.22:.16)*s.vol*(far?.25:1),
@@ -476,8 +548,8 @@ export function planWz29Mechanism(kind,{key=''}={}){
   return humanize(g,`wz29mech:${k}:${key}:h`,{pitch:.04,spread:.03,gain:.18});
 }
 /** O jogador é atingido: pancada do corpo, bofetada de tecido/equipamento e inspiração brusca (sem voz gravada). */
-export function planPlayerHit({key=''}={}){
-  const v=(n,j=.1)=>audioVariation(`phit:${key}:${n}`,1-j,1+j),variant=pickVariant('phit',key,3);
+export function planPlayerHit({key='',tracker=null}={}){
+  const v=(n,j=.1)=>audioVariation(`phit:${key}:${n}`,1-j,1+j),variant=pickVariant('phit',key,3,tracker);
   return humanize([
     {layer:'thump',src:'osc',wave:'sine',freq:[105,90,125][variant]*v('t'),freqEnd:[52,44,64][variant],at:0,dur:.13,vol:.07},
     {layer:'slap',src:'noise',noise:'brown',at:0,dur:.1,vol:.09,filter:{type:'lowpass',freq:1500*v('s'),q:.7,freqEnd:500}},
@@ -513,9 +585,9 @@ export const FOOTSTEP_VARIANTS=3;
  * `load` (0..1) acrescenta peso e ranger (a carregar o ferido). Cada passo difere: três variantes por material,
  * desvios de altura e ganho, e o equipamento só se ouve a correr ou de vez em quando a andar.
  */
-export function planFootstep(surface,{key='',pace='walk',load=0}={}){
+export function planFootstep(surface,{key='',pace='walk',load=0,tracker=null}={}){
   const m=footstepSurface(surface),pg=(PACE_GAIN[pace]??1)*(1+.35*clamp(load,0,1)),g=[],v=(n,j=.14)=>audioVariation(`step:${m}:${key}:${n}`,1-j,1+j);
-  const variant=pickVariant(`step:${m}`,key,FOOTSTEP_VARIANTS),toe=.065+.03*v('toe',.5)*(pace==='run'?.6:1);
+  const variant=pickVariant(`step:${m}`,key,FOOTSTEP_VARIANTS,tracker),toe=.065+.03*v('toe',.5)*(pace==='run'?.6:1);
   if(m==='earth'){
     g.push({layer:'heel',src:'noise',noise:'brown',at:0,dur:[.07,.09,.06][variant],vol:.07*pg,filter:{type:'lowpass',freq:[520,420,650][variant]*v('h'),q:.7,freqEnd:230}});
     g.push({layer:'grit',src:'noise',noise:'white',at:.008,dur:.05,vol:.014*pg,filter:{type:'bandpass',freq:[1700,2300,1300][variant]*v('g'),q:.9,freqEnd:900}});
@@ -624,4 +696,89 @@ export function m01FireEmitters(state={},clock=0){
     else if(age<240&&d.smokeVisible!==false)fires.push({id:d.id,x:d.x,y:d.y??0,z:d.z,size:clamp(.55*(1-age/240),.12,.55)});
   }
   return fires;
+}
+
+// ---------------------------------------------------------------- R7-a: o Vístula (cama contínua) e o pátio ferroviário
+// Tudo apresentação: lê só a posição do ouvinte (e o estado de apresentação já existente), nunca a simulação nem o RNG de jogo.
+/** Ganho de 0..1 da cama do rio pela posição do ouvinte: cheio sobre a água (tabuleiro da ponte), cai com a distância à margem mais próxima. */
+export const RIVER_BANK_SPAN_M=50;
+export function riverBedMix(x,z=0){
+  const lx=Number(x),lz=Number(z)||0;if(!Number.isFinite(lx))return {inChannel:false,distance:Infinity,gain:0,nearest:{x:VISTULA_CHANNEL.minX,z:lz}};
+  const inChannel=lx>=VISTULA_CHANNEL.minX&&lx<=VISTULA_CHANNEL.maxX,nx=clamp(lx,VISTULA_CHANNEL.minX,VISTULA_CHANNEL.maxX);
+  const distance=Math.abs(lx-nx);
+  return {inChannel,distance,gain:1/(1+distance/RIVER_BANK_SPAN_M),nearest:{x:nx,z:lz}};
+}
+/**
+ * Camadas da cama do rio: ruído castanho/branco em loop com velocidades de leitura distintas (períodos de buffer sem divisor comum útil, ver
+ * RIVER_LAYER_PERIODS_MS) e níveis moduladores de ruído de valor com células primas diferentes: nenhum período audível abaixo de 60 s.
+ */
+export const RIVER_LAYERS=Object.freeze([
+  Object.freeze({name:'deep',noise:'brown',rate:.41,cell:29.7,filter:Object.freeze({type:'lowpass',freq:120,q:.5}),gain:1}),
+  Object.freeze({name:'flow',noise:'brown',rate:.53,cell:17.3,filter:Object.freeze({type:'lowpass',freq:430,q:.5}),gain:1}),
+  Object.freeze({name:'rush',noise:'white',rate:.61,cell:11.9,filter:Object.freeze({type:'bandpass',freq:1100,q:.5}),gain:.3}),
+  Object.freeze({name:'lap',noise:'white',rate:.83,cell:7.3,filter:Object.freeze({type:'bandpass',freq:2600,q:.8}),gain:.12}),
+]);
+const RIVER_BUFFER_SEC=Object.freeze({brown:6.83,white:2.37});   // as durações de NOISE_SECONDS em audio.js
+/** Período do buffer de cada camada à sua velocidade de leitura, em milissegundos inteiros. */
+export const RIVER_LAYER_PERIODS_MS=Object.freeze(RIVER_LAYERS.map(l=>Math.round(RIVER_BUFFER_SEC[l.noise]/l.rate*1000)));
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+/** Menor múltiplo comum dos períodos (ms): o mais cedo em que as camadas voltam a alinhar-se, sem contar as modulações. */
+export const riverAlignmentPeriodMs=(periods=RIVER_LAYER_PERIODS_MS)=>periods.reduce((a,b)=>a/gcd(a,b)*b,1);
+/** Nível 0..1 de cada camada no instante t (relógio da simulação): lento, não periódico. */
+export function riverLayerLevels(t){
+  const out={};for(const l of RIVER_LAYERS)out[l.name]=.35+.65*presentationNoise(`m01-river:${l.name}`,t,l.cell);
+  return out;
+}
+/** Volume mestre da cama (antes do ganho espacial) com respiração lenta de ~±20 %. */
+export const riverBedVolume=(mix,t)=>.05*mix.gain*(.8+.4*presentationNoise('m01-river:master',t,43.1));
+
+// Pátio ferroviário oeste: vagões de carga parados a 352 m do encontro oeste da ponte (M01_AUDIO_EMITTERS.yardWagonFire, mesma posição que o renderer).
+export const RAIL_SLOT_SEC=2.5;
+export const RAIL_AUDIBLE_M=800;
+export const RAIL_QUIET_AFTER_BLAST_SEC=5;
+/**
+ * Fase do ambiente ferroviário. Antes do bombardeamento da estação (04:34, damage 'station_bomb' audível): 'shunting'. Depois: 'aftermath'
+ * (a estação foi atingida: acabam a manobra e o vapor, ficam só metais a arrefecer). Nos primeiros segundos de qualquer sopro audível: 'quiet'.
+ */
+export function railAmbiencePhase(state={},clock=0){
+  const damage=state?.damage??[];let hit=false,quiet=false;
+  for(const d of damage){
+    if(!d)continue;const at=d.soundAt??d.started;if(!Number.isFinite(at)||clock<at)continue;
+    if(d.id==='station_bomb')hit=true;
+    if(clock-at<RAIL_QUIET_AFTER_BLAST_SEC)quiet=true;
+  }
+  return quiet?'quiet':hit?'aftermath':'shunting';
+}
+const RAIL_KINDS=Object.freeze(['couplers','creak','buffer','steam']);
+/** Tipo de acontecimento ferroviário de uma janela (null = silêncio). Nunca igual ao da janela imediatamente anterior. */
+export function railSlotKind(slot,phase='shunting'){
+  if(phase==='quiet')return null;
+  if(phase!=='shunting')return audioVariation(`m01-rail-after:${slot}`)<.12?'tick':null;
+  const raw=s=>audioVariation(`m01-rail:${s}`)<.62?RAIL_KINDS[audioHash(`m01-rail-kind:${s}`)%RAIL_KINDS.length]:null;
+  const cur=raw(slot);if(cur===null)return null;
+  const prev=raw(slot-1);
+  return prev===cur?RAIL_KINDS[(RAIL_KINDS.indexOf(cur)+1+audioHash(`m01-rail-alt:${slot}`)%(RAIL_KINDS.length-1))%RAIL_KINDS.length]:cur;
+}
+/** Grãos de uma janela ferroviária ao longe: cascata de engates, rangido de vagão, batente, sopro de vapor; ou, após o ataque, tiques de metal a arrefecer. */
+export function planRailAmbienceSlot(slot,phase='shunting'){
+  const kind=railSlotKind(slot,phase);if(!kind)return [];
+  const k=`rail:${slot}`,v=(n,j=.1)=>audioVariation(`${k}:${n}`,1-j,1+j),g=[];
+  if(kind==='couplers'){
+    const n=3+audioHash(`${k}:n`)%4;
+    for(let i=0;i<n;i++){const at=i*.11*v('a'+i,.35),hz=audioVariation(`${k}:hz${i}`,260,520);
+      g.push({layer:'coupler',src:'noise',noise:'white',at,dur:.05,vol:.05*(1-i/(n*1.5)),attack:.001,filter:{type:'bandpass',freq:hz*2,q:5}},
+        {layer:'coupler-body',src:'osc',wave:'sine',freq:hz*.5,freqEnd:hz*.3,at,dur:.12,vol:.03*(1-i/(n*1.5))});}
+  }else if(kind==='creak'){
+    const hz=audioVariation(`${k}:hz`,380,640);
+    g.push({layer:'wagon-creak',src:'osc',wave:'sawtooth',freq:hz*v('f'),freqEnd:hz*audioVariation(`${k}:glide`,.78,1.18),at:0,dur:audioVariation(`${k}:d`,.5,1.3),vol:.022,attack:.15,filter:{type:'bandpass',freq:hz*1.4,q:7}});
+  }else if(kind==='buffer'){
+    g.push({layer:'buffer-thump',src:'osc',wave:'sine',freq:88*v('f'),freqEnd:44,at:0,dur:.22,vol:.07},
+      {layer:'buffer-clank',src:'noise',noise:'white',at:.01,dur:.09,vol:.04,attack:.001,filter:{type:'bandpass',freq:1500*v('c'),q:3,freqEnd:800}});
+  }else if(kind==='steam'){
+    g.push({layer:'steam-hiss',src:'noise',noise:'white',at:0,dur:audioVariation(`${k}:d`,.9,1.9),vol:.026,attack:.25,filter:{type:'highpass',freq:2800*v('f'),q:.6}});
+  }else{   // tick: metal a arrefecer depois do bombardeamento
+    const hz=audioVariation(`${k}:hz`,520,1400);
+    g.push({layer:'metal-tick',src:'osc',wave:'sine',freq:hz,freqEnd:hz*.96,at:0,dur:.09,vol:.008},{layer:'metal-tick',src:'noise',noise:'white',at:0,dur:.015,vol:.012,filter:{type:'bandpass',freq:hz*2.4,q:6}});
+  }
+  return g;
 }

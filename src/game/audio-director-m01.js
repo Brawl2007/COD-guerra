@@ -1,5 +1,5 @@
 import audioLayout from '../../missions/m01-tczew/audio-layout.json' with { type: 'json' };
-import { audioHash, audioVariation, presentationNoise, SPEED_OF_SOUND } from '../core/battlefield-audio.js';
+import { audioHash, audioVariation, presentationNoise, waterCrossing, SPEED_OF_SOUND } from '../core/battlefield-audio.js';
 import { MusicConductor, createMusicInput, readoutIntensity, MUSIC_TUNING, isEmitterAudible, surfaceAt } from '../core/audio/index.js';
 
 /**
@@ -71,12 +71,12 @@ export class M01AudioDirector {
     this.input = createMusicInput();
     this.sim = null; this.disposed = false; this.errors = 0; this.lastError = null;
     this.lastClock = -Infinity; this.restoredAt = -Infinity; this.emitterSlot = NaN;
-    this.active = []; this.spatialOut = { distance: 0, pan: 0, front: 1 }; this.occ = { hz: 0, gain: 1 };
+    this.waterM = 0; this.active = []; this.spatialOut = { distance: 0, pan: 0, front: 1 }; this.occ = { hz: 0, gain: 1 };
     this.step={ready:false,x:0,z:0,dist:0,count:0,side:1};   // the player's footsteps: distance walked since the last step (a pure function of the path)
     this.npcSteps=new Map(); this.clk=new Float64Array([NaN]); this.npcStats={played:0,capped:0};   // per ally: {v:[x,z,distance walked],n}, created once per man
     this.trainArrivals=[{id:'train963',from:17010,until:17100,x:1675,y:2,z:-2.5,heard:false,pending:false,at:0},
       {id:'panzerzug',from:17460,until:17520,x:1519,y:2,z:2.5,heard:false,pending:false,at:0}];
-    this.pending = Array.from({ length: MAX_PENDING }, () => ({ used: false, at: 0, emitter: null, pan: 0, distance: 0, front: 1, rounds: 1, key: '' }));
+    this.pending = Array.from({ length: MAX_PENDING }, () => ({ used: false, at: 0, emitter: null, pan: 0, distance: 0, front: 1, rounds: 1, key: '', water: 0 }));
     this.stats = { slots: 0, scheduled: 0, played: 0, suppressed: 0, dropped: 0, occluded: 0, rewinds: 0, readoutSamples: 0, readoutMissing: 0 };
     this.derived = { grenade: 0, demolition: 0, bomb: 0, shell: 0, rkm_wz28: 0, ally_rifle: 0, other: 0, crack: 0, whizz: 0, none: 0 };
     // Bound once: the emitter gate reads the CURRENT sector states every call (a restore replaces sim.sectors wholesale).
@@ -229,6 +229,7 @@ export class M01AudioDirector {
     this._spatial(e.x, e.z, player);
     const s = this.spatialOut;
     if (s.distance > AUDIBLE_RANGE_M) return;
+    this.waterM = waterCrossing(player.x, e.x);   // R7-a: open water between the listener and the gun (east MG34/ckm across the Vistula)
     // Round counts: the MG34 mixes short 2-4 round taps with long 4-9 round runs; the other guns keep 3-6.
     const h = audioHash(`${key}:rounds`), rounds = e.weapon === 'mg34' ? (audioVariation(`${key}:long`) < .4 ? 2 + h % 3 : 4 + h % 6) : 3 + h % 4;
     const first = clock + audioVariation(`${key}:at`, 0, EMITTER_SLOT_SEC * .8) + s.distance / SPEED_OF_SOUND;
@@ -241,7 +242,7 @@ export class M01AudioDirector {
     for (let i = 0; i < this.pending.length; i++) if (!this.pending[i].used) { free = this.pending[i]; break; }
     if (!free) { this.stats.dropped++; return false; }
     free.used = true; free.emitter = e; free.pan = s.pan; free.distance = s.distance; free.front = s.front;
-    free.rounds = rounds; free.key = key; free.at = at;   // the shot is heard after distance/343 (already inside `at`)
+    free.rounds = rounds; free.key = key; free.at = at; free.water = this.waterM;   // the shot is heard after distance/343 (already inside `at`)
     this.stats.scheduled++;
     return true;
   }
@@ -259,7 +260,7 @@ export class M01AudioDirector {
   _play(e, p) {
     const audio = this.audio, core = this.core, occ = occlusionFor(core?.layout, core?.zone, e.x, e.y, e.z, p.distance, this.occ);
     if (occ) { audio.setOcclusion?.(occ); this.stats.occluded++; }
-    try { audio.weaponFire(e.weapon, p.pan, p.distance, { rounds: p.rounds, key: p.key, front: p.front, distant: p.distance >= DISTANT_FROM_M, cadenceJitter: CADENCE_JITTER }); this.stats.played++; }
+    try { audio.weaponFire(e.weapon, p.pan, p.distance, { rounds: p.rounds, key: p.key, front: p.front, distant: p.distance >= DISTANT_FROM_M, cadenceJitter: CADENCE_JITTER, water: p.water }); this.stats.played++; }
     catch (error) { this._fail(error); }
     finally { if (occ) audio.setOcclusion?.(null); }
   }
