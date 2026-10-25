@@ -3,17 +3,17 @@ import {test,expect} from '@playwright/test';
 import {M01Simulation,seconds,clockText} from '../../src/game/m01-simulation.js';
 import {openingPilot} from './m01-opening-pilot.mjs';
 
-// R1-b (the opening 04:30-04:34): captures in the game itself, from the player's own place. A pilot of the real simulation (the `tourist` of tools/verification/m01-opening-pilot.mjs: the intro watched,
-// the section looked at from the post, the sappers' camp, the forward post and the planes) is run in Node and a REAL snapshot is taken the first time the battle clock reaches each time of the list;
+// R1-b (the opening 04:30-04:34): captures in the game itself, from the player's own place. A pilot of the real simulation (the `witness` of tools/verification/m01-opening-pilot.mjs: the intro watched,
+// the section looked at from the post, the strip with the sappers' camp and the garrison, the garrison line where the planes are heard and the first bombs fall) is run in Node and a REAL snapshot is taken the first time the battle clock reaches each time of the list;
 // each snapshot is loaded in the built game (the player exactly where and looking where the pilot was, nothing relocated), three frames are rendered, the game is paused and the page is captured.
 // Besides the pixels, each capture records what the game itself reports: the clip every actor in the frame plays (gameDiagnostics().m01.characters.actors), the subtitle, the player and the clock.
 // Not part of `npm run test:browser`; not a playtest; SwiftShader, so pixels and never FPS. Run (after `npm run build`):
 //   CHROME_EXECUTABLE=/opt/pw-browsers/chromium OPENING_OUT=<dir> npx playwright test -c tools/verification/playwright.opening-r1b.config.js
-// OPENING_TIMES: comma-separated battle clocks (default the list below); OPENING_QUALITY: high (default), medium or low; OPENING_SEED; OPENING_PILOT (default tourist).
+// OPENING_TIMES: comma-separated battle clocks (default the list below); OPENING_QUALITY: high (default), medium or low; OPENING_SEED; OPENING_PILOT (default witness: the intro watched, then among the men to the first bombs).
 const key='cod-guerra:checkpoint:m01:v2';
 const OUT=process.env.OPENING_OUT||'test-results/m01-opening-r1b';
-const TIMES=(process.env.OPENING_TIMES||'04:30:10,04:30:20,04:31:00,04:32:00,04:32:30,04:33:20,04:33:40,04:34:20').split(',').map(s=>s.trim()).filter(Boolean);
-const QUALITY=process.env.OPENING_QUALITY||'high',SEED=Number(process.env.OPENING_SEED||19390901),PILOT=process.env.OPENING_PILOT||'tourist';
+const TIMES=(process.env.OPENING_TIMES||'04:30:10,04:31:00,04:32:30,04:33:20,04:33:40,04:34:10,04:34:20').split(',').map(s=>s.trim()).filter(Boolean);
+const QUALITY=process.env.OPENING_QUALITY||'high',SEED=Number(process.env.OPENING_SEED||19390901),PILOT=process.env.OPENING_PILOT||'witness';
 const HALF=51.3*Math.PI/180;
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
 
@@ -34,12 +34,13 @@ async function openView(browser,{name,snapshot}){
   const hud=await page.evaluate(()=>({objective:document.querySelector('#objective-text')?.textContent??'',status:document.querySelector('#objective-status')?.textContent??'',subtitle:document.querySelector('#subtitle')?.textContent??''}));
   await page.screenshot({path:`${OUT}/${name}.png`,style:'#pause,#menu {visibility:hidden!important}',timeout:180000});
   const p=data.player;
-  const inFrame=(data.m01.characters?.actors??[]).map(a=>{
-    const actor=data.m01.animationPresentation?.actors?.find(x=>x.id===a.id);return {id:a.id,clip:a.clip,lod:a.lod,t:+(a.clipTime??0).toFixed(2),...(actor?{}:{})};
-  });
+  // what the game itself says each man in the frame does: the clip it plays, and (R1-b) the act of the simulation, whether its procedural pose was applied and the props it shows
+  const inFrame=(data.m01.characters?.actors??[]).map(a=>({id:a.id,clip:a.clip,lod:a.lod,t:+(a.clipTime??0).toFixed(2),
+    ...(a.opening?{opening:a.opening}:{}),...(data.m01.opening?.acts?.[a.id]?{act:data.m01.opening.acts[a.id].act}:{})}));
+  const opening=data.m01.opening?{tension:data.m01.opening.tension,courier:data.m01.opening.courier.leg,sappers:data.m01.opening.sap.leg,acts:Object.fromEntries(Object.entries(data.m01.opening.acts).map(([id,v])=>[id,v.act]))}:null;
   await page.close();
   return {view:name,quality:data.quality,clock:+data.clock.toFixed(2),battle:clockText(data.m01.battleClock),scene:data.m01.scene,player:{x:+p.x.toFixed(2),z:+p.z.toFixed(2),angle:+p.angle.toFixed(3),pitch:+p.pitch.toFixed(3)},
-    clips:inFrame,hud,errors};
+    clips:inFrame,opening,hud,errors};
 }
 
 test('opening R1-b captures',async({browser})=>{
@@ -56,7 +57,7 @@ test('opening R1-b captures',async({browser})=>{
     // who is in the frame according to the snapshot: Polish soldiers within 120 m inside the horizontal field of view (the game's own clips are matched by id in captures.json)
     const pl=snap.player,inView=snap.actors.filter(a=>a.team==='ally'&&a.alive&&a.active&&!a.carriedBy&&Math.hypot(a.x-pl.x,a.z-pl.z)<=120&&Math.abs(wrap(Math.atan2(a.z-pl.z,a.x-pl.x)-pl.angle))<HALF).map(a=>a.id);
     const c=await openView(browser,{name,snapshot:snap});c.inFrame=c.clips.filter(x=>inView.includes(x.id));
-    out.push(c);console.log('OPENING_CAPTURE '+JSON.stringify({view:c.view,battle:c.battle,player:c.player,frame:c.inFrame.map(x=>`${x.id}:${x.clip}`)}));
+    out.push(c);console.log('OPENING_CAPTURE '+JSON.stringify({view:c.view,battle:c.battle,player:c.player,frame:c.inFrame.map(x=>`${x.id}:${x.act??''}:${x.clip}`)}));
   }
   writeFileSync(`${OUT}/captures.json`,JSON.stringify({seed:SEED,pilot:PILOT,quality:QUALITY,views:out},null,2)+'\n');
   expect(out.every(c=>c.errors.length===0)).toBe(true);

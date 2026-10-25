@@ -31,7 +31,8 @@ export function openingSample(actor,time,offset,clips,pose){
   if(actor.id==='ckm_gunner'||actor.id==='ckm_loader')return null;
   const t=tOf(act,time),stand=name=>({clip:has(clips,name)?name:'standing_idle',time:t+offset,loop:true,source:'opening'});
   switch(act.k){
-    case 'map':case 'binoculars':case 'look_up':case 'point':case 'brace':case 'deliver':return stand('standing_idle_c');
+    case 'map':case 'binoculars':case 'look_up':case 'point':case 'deliver':return stand('standing_idle_c');
+    case 'brace':return stand('standing_idle');   // hunched over the rifle at the ready
     case 'cable_hold':return stand('crouched_idle_b');   // the helper kneels beside the leader with the coil
     case 'cable_watch':return stand('crouched_idle');   // the watch kneels, the glasses to his eyes
     case 'smoke':case 'coffee':return stand('standing_idle_b');
@@ -93,7 +94,7 @@ export function openingPose(actor,time){
     case 'track_check':  // peering down at the rails
       SPEC.lean=.3*w;SPEC.head=-.3*w;return SPEC;
     case 'look_up':      // the planes: the head goes up
-      SPEC.head=.55*smooth(t/.35)*smooth(leftOf(act,time)/.4+.3);return SPEC;
+      SPEC.head=.55*smooth(t/.35)*smooth(leftOf(act,time)/.4+.3);SPEC.lean=-.12*smooth(t/.4)*smooth(leftOf(act,time)/.4+.3);return SPEC;
     case 'point':        // and the right arm points east, up
       SPEC.head=.45*smooth(t/.35);DIR.dir[0]=EAST_UP[0];DIR.dir[1]=EAST_UP[1];DIR.dir[2]=EAST_UP[2];DIR.len=.55;DIR.w=smooth(t/.4)*smooth(leftOf(act,time)/.4+.2);DIR.p=DOWN_R;SPEC.r=DIR;return SPEC;
     case 'deliver':      // the runner holds the sergeant's note out to the man he tells
@@ -106,8 +107,8 @@ export function openingPose(actor,time){
       SPEC.head=.5*smooth(t/.35)*smooth(leftOf(act,time)/.4+.3);SPEC.look=glance(act,t,.25)*w;return SPEC;
     case 'ckm_belt':     // the loader looks down at the belt, now and then up
       SPEC.head=-.38*w+.12*smooth(Math.sin(t*.7+unit(act.s,8)*6)*.5+.5)*w;SPEC.look=glance(act,t,.12)*w;return SPEC;
-    case 'brace':        // alert: glances up now and then
-      SPEC.head=.2*smooth(Math.sin(t*.9+unit(act.s,6)*6)*.5+.5);return SPEC;
+    case 'brace':        // the bombers are coming: hunched, the head down, now and then a glance up at them (standing: the gameplay posture is his)
+      SPEC.lean=.3*w;SPEC.head=(-.12+.46*smooth(Math.sin(t*.9+unit(act.s,6)*6)*.5+.5))*w;return SPEC;
     case 'cover':        // kneeling: eyes up now and then
       SPEC.head=.3*smooth(Math.sin(t*.8+unit(act.s,7)*6)*.5+.5);return SPEC;
     default:return null;

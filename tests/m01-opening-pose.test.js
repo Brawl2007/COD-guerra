@@ -28,7 +28,7 @@ test('every clip the opening plays is in the T08 library or the base packs: noth
 
 test('the clip of each act: the watching and talking acts use the library\'s idles, the work acts their own, the crew keeps the crew\'s clips and only its own acts leave them',()=>{
   const clip=(id,act,t=14,extra={})=>openingSample(man(id,act,extra),t,0,clips,{name:'standing'})?.clip??null;
-  for(const act of ['map','binoculars','look_up','point','brace','deliver'])assert.equal(clip('pl_west_2',act),'standing_idle_c',act);
+  for(const act of ['map','binoculars','look_up','point','deliver'])assert.equal(clip('pl_west_2',act),'standing_idle_c',act);assert.equal(clip('pl_west_2','brace'),'standing_idle','brace: hunched over the rifle at the ready');
   for(const act of ['smoke','coffee'])assert.equal(clip('pl_west_2',act),'standing_idle_b',act);
   for(const act of ['phone','phone_dead','ammo_check','aid_kit'])assert.equal(clip('pl_west_2',act),'standing_idle',act);
   assert.equal(clip('franciszek_lipski','track_check'),'crouched_idle');assert.equal(clip('jozef_bak','cover',14,{crouched:true}),'crouched_idle');

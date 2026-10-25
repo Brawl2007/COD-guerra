@@ -34,7 +34,7 @@ export const TENSIONS=Object.freeze(['calm','warned','planes']);
 export const OPENING_ACTS=Object.freeze({
   idle:{},map:{},binoculars:{face:'east',scan:.55},smoke:{},coffee:{},clean_rkm:{},rifle_check:{},phone:{},phone_dead:{hook:'phone_dead'},
   ammo_check:{},track_check:{crouch:true},aid_kit:{},ckm_scan:{},ckm_belt:{hook:'ammo'},ckm_up:{},
-  order:{face:'courier',hook:'order'},look_up:{face:'east'},point:{face:'east'},shout:{face:'east',hook:'shout'},brace:{face:'east',scan:.25,repeat:true},cover:{crouch:true,face:'east',scan:.3,repeat:true},
+  order:{face:'courier',hook:'order'},look_up:{face:'east'},point:{face:'east'},shout:{face:'east'},brace:{face:'east',scan:.25,repeat:true},cover:{crouch:true,face:'east',scan:.3,repeat:true},
   errand:{walk:true},deliver:{face:'recipient',hook:'deliver'},cover_run:{walk:true},
   cable_walk:{walk:true},cable_inspect:{crouch:true,face:'west'},cable_hold:{crouch:true,face:'leader'},cable_wait:{crouch:true},cable_watch:{crouch:true,face:'east',scan:.5},home:{walk:true},
 });
@@ -170,7 +170,7 @@ function endOpening(sim){
   const c=sim.actor(OPENING.courier.id);if(c&&c.target&&!c.task){c.target=null;delete c.nav;c.state='GUARD';}
   delete sim.timers.opening;
 }
-function releaseAct(a){delete a.act;a.crouched=false;}
+function releaseAct(a){delete a.act;}   // (the posture stays as it is: a man kneeling in cover when the bombs begin stays down; nobody stands up for the first bomb)
 
 /** What a man does next, by the weights of the tension he is in: never the act he has just had (unless it may repeat), the `first` act of a tension before any other, `when` the news has come or the message is delivered. */
 function pickAct(sim,q,st,plan,tn){
@@ -244,9 +244,8 @@ function poke(sim,id,sec,st=null){
 /** What an act says when it begins: the bark director decides whether it is heard (the player within hearing, once, cooldowns). */
 function hook(sim,q,a,st){
   const h=OPENING_ACTS[st.k].hook;if(!h)return;
-  if(h==='phone_dead'){q.flags.lineDead=sim.clock;barkTrigger(sim,'opening',{node:'phone_dead',point:a});poke(sim,ZIELINSKI,[1,2.2],st);}
+  if(h==='phone_dead'){q.flags.lineDead=sim.clock;barkTrigger(sim,'opening',{node:'phone_dead',point:a});poke(sim,ZIELINSKI,[3.2,4.2],st);}   // (the order follows the line by 3.2-4.2 s: the director's follow-up gap is 2.6 s and dlg_m01_211 waits 2.7 s for dlg_m01_210)
   else if(h==='order'){q.flags.order=sim.clock;barkTrigger(sim,'opening',{node:'alert_order',point:a});}
-  else if(h==='shout')barkTrigger(sim,'opening',{node:a.id===ZIELINSKI?'planes_order':'planes_shout',point:a});
   else if(h==='deliver')barkTrigger(sim,'opening',{node:'courier_report',point:a});
   else if(h==='ammo')barkTrigger(sim,'opening',{node:'ammo_report',point:a});
 }
@@ -313,7 +312,7 @@ function stepSappers(sim,q,tn){
   for(const a of men)if(a.act.tn<tn)a.act.tn=tn;
   const goTo=(a,p,spd)=>{if(!a.target||Math.abs(a.target.x-p.x)>.01||Math.abs(a.target.z-p.z)>.01){a.target={x:p.x,z:p.z};delete a.nav;}a.act.spd=spd;};
   const setAct=(a,k)=>{const st=a.act;if(st.k!==k){st.k=k;delete st.w;st.at=clock;st.n++;st.s=seedOf(st);if(k!=='cable_walk'&&k!=='home')delete st.spd;}st.until=clock+OPEN_SEC;};
-  const stay=a=>{if(a.target)a.target=null;delete a.nav;};
+  const stay=a=>{if(a.target)a.target=null;delete a.nav;a.crouched=true;};   // (a man of the team who is let stand where he is kneels in this very tick: none of the three ever stands still)
   const helperAt=stop=>({x:stop.x+S.followM+.3,z:stop.z+.5});
   const atHome=a=>dist(a,home(a))<1e-6||!a.target&&dist(a,home(a))<1;   // on the place, or stopped within a metre of it (a body is on it: openingWalk lets him be)
   if(tn>=2&&sap.leg!=='home'){sap.leg='home';sap.at=clock;}

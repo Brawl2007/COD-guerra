@@ -115,6 +115,21 @@ test('the news of 04:31 changes the post: the line is dead, the sergeant orders 
   run(s,12);assert.ok(s.timers.opening.courier.e>=1||s.timers.opening.courier.leg!=='post','the second errand was taken or is under way');
 });
 
+test('the voices of the alert chain, with the player at the post: the runner\'s order, Pawlak\'s dead line, the sergeant\'s order 3-5 s later, the runner\'s alert; each once, nothing at the planes but the scripted lines',()=>{
+  const s=fresh(),said=[];
+  Object.assign(s.player,{x:-66,z:22,y:s.world.heightAt(-66,22)});
+  run(s,150,sim=>{for(const t of sim.dialogueConsumed)if(!said.some(x=>x.t===t))said.push({t,clock:sim.clock});});
+  const ids=said.map(x=>x.t).filter(t=>/^(co_m01_opening|dlg_m01_21)/.test(t));
+  assert.deepEqual(ids,['co_m01_opening_order#1','dlg_m01_210#1','dlg_m01_211#1','co_m01_opening_alert#1'],'in the order of the chain, once each');
+  const at=Object.fromEntries(said.map(x=>[x.t,x.clock]));
+  assert.ok(at['dlg_m01_211#1']-at['dlg_m01_210#1']>=2.7&&at['dlg_m01_211#1']-at['dlg_m01_210#1']<6,'the order follows the dead line by 2.7-6 s: the director\'s follow-up gap');
+  assert.ok(at['dlg_m01_210#1']<seconds('04:31:30')-seconds('04:30:44')+10,'within a minute of control the war is spoken of');
+  const lines=definition.dialogue.filter(l=>/^dlg_m01_21\d$/.test(l.id)).map(l=>l.id).sort();assert.deepEqual(lines,['dlg_m01_210','dlg_m01_211','dlg_m01_212'],'three new lines in the dialogue (the planes have theirs already: 012, 013, 066, 067)');
+  assert.deepEqual(definition.callouts.lines.filter(l=>/^co_m01_opening/.test(l.id)).map(l=>l.id),['co_m01_opening_order','co_m01_opening_alert'],'and two callouts of the runner');
+  for(const l of [...definition.dialogue.filter(l=>/^dlg_m01_21\d$/.test(l.id)),...definition.callouts.lines.filter(l=>/^co_m01_opening/.test(l.id))])
+    assert.match(l.note,/^PL: .+ \| 2026-10-25 \(R1-b, abertura\): texto original escrito por agente de IA; polaco por rever por falante nativo\.$/,`${l.id}: Polish flagged for a native speaker`);
+});
+
 test('the runner: waits at his post, runs the east errand by the simulation\'s walk, tells the two men he is sent to (who are alert at once), comes back and stands exactly on his post',()=>{
   const s=fresh(),c=s.actor(OPENING.courier.id),post={x:c.x,z:c.z},legs=[],told=[];
   let idle=0;
@@ -180,7 +195,9 @@ test('the sappers walk the cable before the bomb: out to a joint, kneel and test
 
 test('the first bomb ends it: no act on anybody, no record, and the six men of the garrison are on their posts to the bit (R1-a\'s bombs find them where they always found them)',()=>{
   const posts=new Map(new M01Simulation().actors.filter(a=>GARRISON.includes(a.id)).map(a=>[a.id,{x:a.x,z:a.z}])),s=fresh();
-  until(s,x=>x.consumedEvent(E('bombing_0434')),260);
+  until(s,x=>x.battleClock>=seconds('04:33:59.9'),260);const kneeling=new Map(s.actors.map(a=>[a.id,a.crouched]));   // the postures a tick before the bomb
+  until(s,x=>x.consumedEvent(E('bombing_0434')),5);
+  for(const a of s.actors)assert.equal(a.crouched,kneeling.get(a.id),`${a.id}: nobody stands up (or kneels) for the first bomb: the opening lets the posture be`);
   assert.equal(s.timers.opening,undefined);assert.ok(s.actors.every(a=>a.act===undefined),'nobody has an act');
   for(const id of GARRISON){const a=s.actor(id),p=posts.get(id);assert.ok(Math.hypot(a.x-p.x,a.z-p.z)<1e-9,`${id} on his post`);assert.equal(a.crouched,false);}
   validateM01Snapshot(s.snapshot());run(s,5);assert.equal(s.timers.opening,undefined,'and it does not come back');
