@@ -23,6 +23,8 @@ import {
 import { animationSeed, unit as animationUnit } from './m01-animation-variety.js';
 import {SoldierMergeCache,batchSoldier} from './m01-soldier-batching.js';
 import { bindCharacterIkRig, createIkDiagnosticsState, formatIkDiagnostics, restoreIkPose, updateActorsIk } from './m01-hand-pin.js';
+import { sapperSample } from './m01-sapper-pose.js';
+import { SapperKit } from './m01-sapper-kit.js';
 
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
@@ -105,6 +107,8 @@ export class M01Characters {
     this.batching=Boolean(batching);this.mergeCache=new SoldierMergeCache();
     this.scene=scene;this.assets=new AssetManager();this.sources=new Map();this.pending=new Set();
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
+    // R3-a: the phase of the sappers' operation (sim.sapperOps, set by update()) and the props the sappers hold (m01-sapper-kit.js); presentation only.
+    this.ops=null;this.sapperKit=null;
     // T37 foot IK / ramp lean / hand pin (m01-foot-ik.js, m01-hand-pin.js). Presentation only; off = plain clip output, bit-identical.
     this.ikEnabled=Boolean(ik);this.ikMeasure=Boolean(ikMeasure);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
     if(debug&&typeof window!=='undefined'){this.ikDebug={setEnabled:on=>this.setIkEnabled(on),isEnabled:()=>this.ikEnabled};window.m01CharacterIkDebug=this.ikDebug;}
@@ -268,6 +272,8 @@ export class M01Characters {
       const carryStride=resolveStrideSample(actor,'carry_wounded',time,this.clips);
       return {clip:'carry_wounded',time:carryStride.time,loop:true,stridePhase:carryStride.stridePhase};
     }
+    // R3-a: from the call to the retreat the sappers play the clip of the phase of their operation and role (m01-sapper-pose.js); the camp and the retreat keep the rules below.
+    if(actor.role==='ENGINEER'&&this.ops){const s=sapperSample(actor,this.ops,time,offset,this.clipView,pose);if(s)return s;}
     if(actor.role==='ENGINEER'&&(actor.crouched||actor.posture==='crouch')){
       const sapperMoving=actor.motion&&actor.motion.gait==='crouch_walk'&&actor.motion.speed>.05&&actor.task!=='repair_bridge'&&actor.state!=='REPAIR';
       if(!sapperMoving){
@@ -352,6 +358,7 @@ export class M01Characters {
       // Snapshot read by the diagnostics getter (see snapshot()); the entries are built only when someone reads them.
       weaponBone,dMuzzle:[0,0,0],dMuzzleOk:false,dProne:null,dBlend:null,dTime:0,dLoop:false,dIk:false};
     v.player=new AnimationPlayer(v.mixer);
+    if(actor.role==='ENGINEER')v.kit=(this.sapperKit??=new SapperKit()).attach(root);   // R3-a: pliers, tester, coil and crate on the bones, hidden until a phase asks for them
     // Reduced pose rate (far actors): while `hold.frozen` the bone-matrix recompute and texture upload of an already uploaded pose are skipped.
     // `serial` counts applied poses, so a pose is always uploaded at least once before any frame may reuse it.
     v.posePhase=animationUnit(animationSeed(actor.id),11);v.appliedTime=-Infinity;v.hold={frozen:false,serial:0};v.view=null;v.sampleClip=null;
@@ -423,7 +430,8 @@ export class M01Characters {
     skeletons.forEach(s=>s.dispose());
     // Geometry, materials and atlases belong to the source cache, shared by all clones/LODs.
   }
-  update(actors,time,player,quality='low',battleClock,world=this.world){
+  update(actors,time,player,quality='low',battleClock,world=this.world,ops=null){
+    this.ops=ops;   // R3-a: the sappers' operation (sim.sapperOps), null for a caller that has none
     const limits=LIMITS[quality]??LIMITS.low,preset=LIMITS[quality]?quality:'low';
     const ikOn=this.ikEnabled&&Boolean(world);let ikCount=0;
     if(quality==='high')this.requestHighSources();
@@ -509,6 +517,7 @@ export class M01Characters {
       }
       layers.length=layerCount;
       v.player.apply(layers);
+      if(v.kit)this.sapperKit.sync(v.kit,this.ops?.roles?.[a.id],this.ops);
       v.action=v.player.target;v.clip=plan.clip;
       // Cache the clip-sampled pose BEFORE any additive torso/arm correction, so a repeated sim time is bit-identical.
       if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
@@ -631,6 +640,6 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.mergeCache.dispose();this.assets.dispose();
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.mergeCache.dispose();this.sapperKit?.dispose();this.assets.dispose();
     if(typeof window!=='undefined'&&this.ikDebug&&window.m01CharacterIkDebug===this.ikDebug)delete window.m01CharacterIkDebug;}
 }

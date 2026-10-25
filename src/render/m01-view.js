@@ -22,6 +22,7 @@ import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impac
 import {M01AmbientDirector,resolveSquadLivingMotion} from './m01-ambient.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
+import { M01RepairLine } from './m01-repair-line.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
@@ -126,6 +127,8 @@ export class M01View {
     this.weaponWorldFx=new WeaponWorldFx(this.effects);
     // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.
     this.characters=new M01Characters(this.scene);
+    // R3-a: the cable the sappers work on, its cuts and splices, the crate on the ground (reads sim.sapperOps); seated on the drawn terrain (the 5 m lattice), not on the analytic height
+    this.repairLine=new M01RepairLine(this.scene,{surfaceY:(x,z)=>this.terrainRelief?this.terrainRelief.surfaceHeightAt(x,z):null});
     this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)
     this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){
@@ -241,8 +244,8 @@ export class M01View {
     this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,PROCEDURAL_ACTOR_CAPACITY);
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
-  updateActors(actors,time,player={x:0,z:0},battleClock){
-    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock,this.world)??new Set();
+  updateActors(actors,time,player={x:0,z:0},battleClock,ops=null){
+    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock,this.world,ops)??new Set();
     const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
@@ -857,8 +860,9 @@ export class M01View {
     this.terrain?.sync(this.owner.quality);
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
+    const sapperOps=sim.sapperOps;this.repairLine.sync(sapperOps,sim.world);   // R3-a: before the demolition and the actors (tests/m01-demolition.test.js pins updateDemolition directly before updateActors)
     this.updateDemolition(state,time,sim);
-    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
+    this.updateActors(sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
     this.horizonGlow.visible=Boolean(flash.active);
     if(flash.active){const angle=flash.azimuthDeg*Math.PI/180,d=flash.distance;
@@ -1011,7 +1015,7 @@ export class M01View {
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     if(this.disposed)return;
-    this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.repairLine?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;

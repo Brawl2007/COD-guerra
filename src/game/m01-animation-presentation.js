@@ -28,7 +28,8 @@ export function holdStageSlot(a){
 const bodyGoal=a=>{const i=holdStageSlot(a);return i<0?a.facing:angle(a.facing+EAST_HOLD_STAGE.yaw[i]);};
 /** T38: a sapper sent to the second cut who waits still on guard, not working (`crouched`), lies prone. */
 const waitingProne=a=>a.role==='ENGINEER'&&a.target!=null&&!a.crouched&&a.alive&&a.active&&!a.carriedBy&&a.state==='GUARD'&&(a.motion?.speed??0)===0;
-const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&(clock<a.suppressedUntil||waitingProne(a))?'prone':a.crouched?'crouch':'stand';
+// R3-a: a suppressed sapper who is running for cover by his own decision (src/game/m01-sappers.js sapperCover; `coverRun`, set for the ticks of the run only) is not drawn prone on the way; he lies down where he arrives.
+const posture=(a,clock)=>a.mg34Prone?.progress>0||a.team==='ally'&&a.role==='ENGINEER'&&(clock<a.suppressedUntil&&!a.coverRun||waitingProne(a))?'prone':a.crouched?'crouch':'stand';
 const fixedBody=a=>!a.alive||a.state==='WOUNDED'||a.carriedBy||a.pose==='seated'||
   (a.mg34Prone&&a.mg34Prone.phase!=='standing')||(a.ckm&&a.ckm.phase!=='retreat');
 

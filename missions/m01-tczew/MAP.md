@@ -86,7 +86,7 @@ Regras (Prompt §71):
 
 ## 6. Cobertura
 
-26 nós em `map-layout.json → coverNodes`, cada um com posição, normal (todos voltados a +X, leste), altura e lados de exposição (`peek`). Tipos usados: `WALL_CORNER`, `WINDOW`, `SANDBAG`, `TRENCH`, `LOW_COVER`, `HIGH_COVER`, `BUILDING_CORNER` e `VEHICLE`.
+28 nós em `map-layout.json → coverNodes`, cada um com posição, normal (todos voltados a +X, leste), altura e lados de exposição (`peek`). Tipos usados: `WALL_CORNER`, `WINDOW`, `SANDBAG`, `TRENCH`, `LOW_COVER`, `HIGH_COVER`, `BUILDING_CORNER` e `VEHICLE`.
 
 - **Treliças da ponte** (`partial: true`): cobertura parcial. A engine deve usar a geometria real das barras e deixar passar tiros pelas aberturas. Nada de "cobre 50%" por sorteio.
 - **Nós dinâmicos:**
@@ -94,6 +94,7 @@ Regras (Prompt §71):
   - `cv_crater_1` surge após o bombardeio.
   - As seteiras das casamatas desaparecem às 06:45.
 - **Reserva:** `cv_ckm_post` (8,8; −3; 26) fica reservado à guarnição da ckm wz.30, que desde a T47 está no posto S2 (8; −3; 26), no aterro entre as pontes, encostado à face norte do encontro rodoviário (`RECONSTRUCTED`: nenhuma fonte dá a posição da ckm). `cv_casemate_emb_s` (casamata, 24; −3; 43) deixou de estar reservado: a seteira da casamata não vê nenhum alemão.
+- **Sapadores (R3-a, revisão de 2026-10-25):** `cv_cable_fault` (−117; −2,2; 8) e `cv_cable_second` (−133,5; −2,2; 8) são duas fiadas de sacos de areia (1,2 m) na encosta sul do aterro, a 3,4 m e a 3,1 m a leste dos dois cortes do cabo (`GAMEPLAY_DRAMATIZATION`, sem fonte histórica). A equipa abriga-se aqui por decisão própria quando é suprimida (`src/game/m01-sappers.js`, `seek.lanes`: um lugar por sapador, a oeste da fiada) e volta ao trabalho quando a supressão acaba. As fiadas ficam a norte da linha do cabo (z 10,7) e do chão raso por onde anda o jogador, para não tapar o caminho da equipa nem o do jogador.
 
 ## 7. Luz (cálculo C01)
 

@@ -44,11 +44,43 @@ export const T47_LAYOUT_DELTA=[
 `],
 ];
 
-/** Today's layout bytes with the T47 hunks reverted: the layout of the base commit and of the bridge kit. */
+// R3-a (review of 2026-10-25, golden amendment 19) added two cover nodes to missions/m01-tczew/map-layout.json: cv_cable_fault and cv_cable_second, the sandbag rows on the south slope of the
+// embankment that the sappers run to when they are suppressed (src/game/m01-sappers.js). The hunk holds no bridge geometry (the GLBs and colliders were not rebuilt), so the guards revert it
+// exactly like T47's, first (it is the newer change), found exactly once; what is left is the T47 layout and then the base.
+export const R3A_LAYOUT_DELTA=[
+  [`    {
+      "id": "cv_cable_fault",
+      "type": "SANDBAG",
+      "position": [-117, -2.2, 8],
+      "normal": [1, 0, 0],
+      "heightM": 1.2,
+      "peek": ["over"],
+      "notes": "R3-a, GAMEPLAY_DRAMATIZATION (sem fonte histórica): fiada de sacos de areia na encosta sul do aterro, 3,4 m a leste do corte do ponto de reparo 2 (fault, em mission.json grp_sappers.operation) e a norte da linha do cabo, fora do chão raso por onde anda o jogador (z 11-17). Os sapadores abrigam-se aqui quando suprimidos (src/game/m01-sappers.js, seek.lanes). A base (y -2,2) é a do pé da encosta, onde ficam os três lugares de abrigo; mais a norte a fiada entra no talude."
+    },
+    {
+      "id": "cv_cable_second",
+      "type": "SANDBAG",
+      "position": [-133.5, -2.2, 8],
+      "normal": [1, 0, 0],
+      "heightM": 1.2,
+      "peek": ["over"],
+      "notes": "R3-a, GAMEPLAY_DRAMATIZATION (sem fonte histórica): o mesmo, 3,1 m a leste do segundo corte (second). A fiada acaba a 1,2 m da linha do cabo (z 10,7) para deixar passar a equipa quando segue o cabo de um corte ao outro."
+    },
+`,''],
+];
+// R3-a also updated MAP.md: the count of cover nodes (26 -> 28) and one bullet on the sappers' cover. Same guard: [text now, text before R3-a], each found exactly once.
+export const R3A_MAP_DELTA=[
+  ["28 nós em `map-layout.json → coverNodes`",
+   "26 nós em `map-layout.json → coverNodes`"],
+  ["- **Sapadores (R3-a, revisão de 2026-10-25):** `cv_cable_fault` (−117; −2,2; 8) e `cv_cable_second` (−133,5; −2,2; 8) são duas fiadas de sacos de areia (1,2 m) na encosta sul do aterro, a 3,4 m e a 3,1 m a leste dos dois cortes do cabo (`GAMEPLAY_DRAMATIZATION`, sem fonte histórica). A equipa abriga-se aqui por decisão própria quando é suprimida (`src/game/m01-sappers.js`, `seek.lanes`: um lugar por sapador, a oeste da fiada) e volta ao trabalho quando a supressão acaba. As fiadas ficam a norte da linha do cabo (z 10,7) e do chão raso por onde anda o jogador, para não tapar o caminho da equipa nem o do jogador.\n",
+   ''],
+];
+
+/** Today's layout bytes with the R3-a and T47 hunks reverted: the layout of the base commit and of the bridge kit. */
 export function layoutWithoutT47(input){
   let text=Buffer.isBuffer(input)?input.toString('utf8'):input;
-  for(const [now,before] of T47_LAYOUT_DELTA){
-    assert.equal(text.split(now).length,2,'approved T47 layout hunk occurs exactly once');
+  for(const [now,before] of [...R3A_LAYOUT_DELTA,...T47_LAYOUT_DELTA]){
+    assert.equal(text.split(now).length,2,'approved R3-a / T47 layout hunk occurs exactly once');
     text=text.replace(now,()=>before);
   }
   return Buffer.from(text);
@@ -78,11 +110,11 @@ export const T47_MAP_DELTA=[
    "- A ckm wz.30 da casamata (24, −3, 43) soa próxima e abafada pelo interior de pedra."],
 ];
 
-/** Today's MAP.md with the T47 hunks reverted: the base commit's bytes. */
+/** Today's MAP.md with the R3-a and T47 hunks reverted: the base commit's bytes. */
 export function mapWithoutT47(input){
   let text=Buffer.isBuffer(input)?input.toString('utf8'):input;
-  for(const [now,before] of T47_MAP_DELTA){
-    assert.equal(text.split(now).length,2,'approved T47 MAP.md hunk occurs exactly once');
+  for(const [now,before] of [...R3A_MAP_DELTA,...T47_MAP_DELTA]){
+    assert.equal(text.split(now).length,2,'approved R3-a / T47 MAP.md hunk occurs exactly once');
     text=text.replace(now,()=>before);
   }
   return Buffer.from(text);

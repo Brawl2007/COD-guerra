@@ -10,6 +10,7 @@ import {actorHitboxes,eyePosition,traceShot} from '../src/world/spatial.js';
 import {actorPoseName,actorPose} from '../src/render/m01-actor-pose.js';
 import {M01Characters} from '../src/render/m01-characters.js';
 import {SECTION as SECTION_PLAN} from '../src/game/m01-section.js';
+import {SAPPERS as OPERATION,sapperPhase} from '../src/game/m01-sappers.js';
 import {buildTerrainEnvelope} from '../src/render/m01-terrain-envelope.js';
 import {EYE_HEIGHT} from '../src/config.js';
 import {route} from './helpers/m01-route.js';
@@ -24,7 +25,8 @@ import {rowTriples,lineQuads,closestPair} from './helpers/m01-staging.js';
 //   de_east_2..13     staggered gate positions against the 1912 portal, facing west, kneeling; they rise riseBeforeSec before a shot of their
 //                     own and stay up holdAfterSec after it (so a shot, its line of sight and its origin are a standing man's).
 //   grp_squad         behind the sandbags of the squad post (cv_squad_post), kneeling at their slot from the 04:34 bombing.
-//   grp_sappers       kneeling at the cable at repair site 1; at the second cut crouched while working, prone (T07) when suppressed or waiting.
+//   grp_sappers       kneeling at the cable at repair site 1; then their staged operation (R3-a, src/game/m01-sappers.js): on the way upright, at the cut kneeling or standing as the phase says
+//                     (KNEELS below), prone (T07) when suppressed. Until R3-a they lay prone at the second cut while they waited (before the box, after the repair).
 // Environment: M01_STAGING_SEEDS=19390901,1  run only these seeds (default: 12 seeds); M01_STAGING_REPORT=<file> writes the per-seed outcomes.
 const E=name=>`evt_m01_${name}`;
 const SEEDS=process.env.M01_STAGING_SEEDS?process.env.M01_STAGING_SEEDS.split(',').map(Number):[19390901,1,2,3,4,5,6,7,8,9,10,11];
@@ -209,10 +211,16 @@ test('renderer: Kowal kneels behind the sandbags (rkm crouched idle) and is draw
 
 // ---------------------------------------------------------------- the real route, per seed
 const sec=t=>seconds(t);
+// R3-a (2026-10-24, golden amendment 19): the posture of a sapper who has no target (he stands at his place) is the phase's: a man on the move has a target and walks upright. The table is written out here,
+// independent of sapperGoal: who kneels (true) and who stands (false) in each phase of the operation, by role. The camp and the retreat keep the old rule (a man with no target kneels at the cable).
+const WORK=Object.freeze({leader:true,helper:true,watch:true});
+const KNEELS=Object.freeze({camp:WORK,retreat:WORK,standby:{leader:true,helper:false,watch:true},inspect:WORK,splice:WORK,test:WORK,fail:{leader:false,helper:true,watch:true},inspect2:WORK,splice2:WORK,test2:WORK,
+  report:{leader:false,helper:false,watch:false},ready:{leader:true,helper:false,watch:false},verify:{leader:false,helper:false,watch:false},verify_west:{leader:false,helper:false,watch:false}});
+const TIMED=new Set(['report>ready','verify>retreat','retreat>verify_west','verify_west>retreat']);   // the phases that end by the clock
 function stagedRoute(seed,support=false){
   const st={platoonKneel:0,platoonTurned:0,gateKneel:0,gateUp:0,gateShots:0,gateShotsUp:0,attritionGate:0,sectionKneel:0,sectionUp:0,kowalShots:0,
-    sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,hitboxChecks:0},deaths={},saves=[];
-  let holdTicks=0,withdrawFlag=null,seenRounds=new Set();
+    sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,sapperCoverRun:0,sapperStand:0,hitboxChecks:0},deaths={},saves=[];
+  let holdTicks=0,withdrawFlag=null,seenRounds=new Set(),prevPhase='camp';
   let lastClock=0,lastCovers=false;const lastSup=new Map();   // suppression of every German at the end of the previous tick; whether Kowal covered the escort at the end of the previous tick
   const onStep=({sim,events})=>{
     const clock=sim.clock;
@@ -283,8 +291,19 @@ function stagedRoute(seed,support=false){
     const site=sim.world.point('repair_site_2');
     for(const id of SAPPERS){
       const a=sim.actor(id);if(!a.alive||!a.active||sim.mission.phase==='OUTRO')continue;
-      if(!a.target){assert.equal(a.crouched,true,`${id} kneels at the cable`);assert.equal(a.posture,clock<a.suppressedUntil?'prone':'crouch');st.sapperCable++;continue;}
-      if(clock<a.suppressedUntil){assert.equal(a.posture,'prone',`${id} lies prone under fire`);st.sapperProneSuppressed++;}
+      if(!a.target){
+        // R3-a re-pin (was: «no target => crouched, kneels at the cable»): a man at his place kneels or stands as the phase of the tick he moved in says (the actors move before the objectives are
+        // updated, so that is the phase at the end of the previous tick: prevPhase). Prone when suppressed, as before.
+        // (A phase that ends by the clock - report, verify - ends as the tick starts, so on that one tick the man moved in the next phase already.)
+        const nowPhase=sapperPhase(sim).id,timed=`${prevPhase}>${nowPhase}`,role=OPERATION.roles[id],want=TIMED.has(timed)&&a.crouched===KNEELS[nowPhase][role]?KNEELS[nowPhase][role]:KNEELS[prevPhase][role];
+        assert.equal(a.crouched,want,`${id} in ${prevPhase} (now ${nowPhase}, ${clock.toFixed(2)} s): ${want?'kneels':'stands'}`);
+        assert.equal(a.posture,clock<a.suppressedUntil?'prone':want?'crouch':'stand');
+        if(want){st.sapperCable++;if(sim.active('cover_repair'))st.sapperWork++;}else st.sapperStand++;
+        continue;
+      }
+      // 2026-10-25 re-pin (R3-a review, golden amendment 19, regenerated): a suppressed sapper with a sandbag row within reach (cv_cable_fault, cv_cable_second: before, none within 50 m of the cuts and the run for
+      // cover never happened on these routes) runs for it upright (actor.coverRun, drawn running, not prone) and lies prone once he is behind it; so he is prone under fire exactly when he is not running.
+      if(clock<a.suppressedUntil){assert.equal(a.posture,a.coverRun?'stand':'prone',a.coverRun?`${id} runs for cover upright`:`${id} lies prone under fire`);if(a.coverRun)st.sapperCoverRun++;else st.sapperProneSuppressed++;}
       else if(a.crouched&&sim.consumedEvent(E('east_demolition'))){assert.equal(a.posture,'crouch',`${id} kneels in the west after the retreat`);st.sapperWest++;}
       else if(a.crouched){assert.equal(a.posture,'crouch',`${id} works crouched`);
         // The tick he is called away from the cable, and the tick the repair is done, the change comes after the actors moved: one tick late.
@@ -292,6 +311,7 @@ function stagedRoute(seed,support=false){
       else if(a.state==='GUARD'&&a.motion.speed===0){assert.equal(a.posture,'prone',`${id} waits prone`);if(d2(a,site)<6)st.sapperProneWait++;}
       else assert.equal(a.posture,'stand',`${id} moves upright`);
     }
+    prevPhase=sapperPhase(sim).id;
     // Hitboxes follow the gameplay posture: kneeling head top 1.4 m, prone head below 0.6 m once he is down.
     if(sim.clock%1<.05)for(const a of sim.actors.filter(x=>x.alive&&x.active&&!x.displayOnly&&!x.mg34Prone&&!x.carriedBy)){
       const top=Math.max(...actorHitboxes(a).map(b=>b.max.y))-a.y;
@@ -329,7 +349,9 @@ for(const seed of SEEDS)test(`staged route seed ${seed}: kneeling platoon, gates
   assert.ok(st.gateKneel>st.gateUp,'the gate riflemen spend most of the time kneeling');assert.ok(st.gateShots>20&&st.gateShotsUp===st.gateShots,JSON.stringify(st));
   assert.ok(st.sapperLag<=2*SAPPERS.length,`a sapper changes posture at most one tick late at each of the two transitions (${st.sapperLag})`);
   assert.ok(st.sapperWest>0&&st.kowalUp>0,JSON.stringify(st));
-  assert.ok(st.sectionKneel>1000&&st.kowalShots>10&&st.sapperCable>100&&st.sapperWork>100&&st.sapperProneWait>0&&st.sapperProneSuppressed>0,JSON.stringify(st));
+  // R3-a re-pin (was `sapperProneWait>0`: the sappers lay prone at the second cut while they waited for the box and after the repair): they now wait kneeling or standing as the phase says
+  // (sapperStand: the standby, the report, the ready and the looks after the blasts), and the test above asserts the exact posture of every man at his place on every tick.
+  assert.ok(st.sectionKneel>1000&&st.kowalShots>10&&st.sapperCable>100&&st.sapperWork>100&&st.sapperStand>100&&st.sapperProneSuppressed>0&&st.sapperCoverRun>0,JSON.stringify(st));   // (2026-10-25: and the run for cover happens on every one of the 12 seeds)
   // R2-a (2026-10-24): the section's riflemen do rise now and then (a look, an answer) and still kneel behind the sandbags most of the time (12 seeds: up for 3 to 9 % as many man-ticks as they kneel).
   assert.ok(st.sectionUp>100&&st.sectionKneel>4*st.sectionUp,JSON.stringify(st));
   // The yaw stage is presentation only: forcing the plain body turn from saves inside the hold changes no gameplay byte, event or draw.
