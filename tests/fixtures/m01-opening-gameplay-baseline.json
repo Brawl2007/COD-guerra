@@ -38,7 +38,7 @@
     "src/game/m01-section.js": "61134f133e29c99cd2e076278791487ea075936a7ebb9de5ea87882198cbb56d",
     "src/game/m01-sappers.js": "193adc12374ca1e84e606ad84815553967765b1937a65cbfa11fb0e85e6c1ed5",
     "src/game/m01-retreat.js": "96d540f18a32054bc856bd25fb88ff637b415a0a871313ad16b158cd6a0b9f1d",
-    "src/game/m01-opening.js": "cab6a3cf93d6f9dd7e86706ed5eafdd8596835a31e289d4a69a91d2fe45a57b2"
+    "src/game/m01-opening.js": "e261400b61113a62715f26a8f06ba008087748ebf06c4389e0ed2383d277ffdd"
   },
   "routes": [
     {

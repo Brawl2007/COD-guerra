@@ -65,7 +65,7 @@ O `npc-shot` da retaguarda polaca (`rearguardShot`) leva agora onde a bala parou
 
 ## 4. Capturas no jogo (`captures-before/`, `captures-after/`, `captures-closeup-before/`, `captures-closeup-after/`: o jogo construído, um save verdadeiro do piloto carregado, SwiftShader: pixels, nunca FPS)
 
-Todas do jogo a sério (`npm run build` + `vite preview`; o «antes» é `77175d85` construído à parte numa pasta própria, a mesma especificação, o mesmo piloto: os mesmos controlos do jogador nas duas árvores). Cada imagem tem em `captures.json` os homens à vista com o clip, o acto e os adereços (`opening: {act, pose, props}`) e a lista de erros de consola (**vazia nas 20 imagens**). Vistas uma a uma.
+Todas do jogo a sério (`npm run build` + `vite preview`; o «antes» é `77175d85` construído à parte numa pasta própria, a mesma especificação, o mesmo piloto: os mesmos controlos do jogador nas duas árvores). Cada imagem tem em `captures.json` os homens à vista com o clip, o acto e os adereços (`opening: {act, pose, props}`) e a lista de erros de consola (**vazia nas 26 imagens**: 7 + 7 + 6 + 6). Vistas uma a uma. **Estas capturas são da árvore de `018b9151`, anterior à última correcção do código** (os sapadores cedem a uma ordem alheia): os pilotos só carregam em teclas de movimento e nunca mandam um alvo a um sapador, de modo que o caminho de código novo não corre nelas (e o golden regenerado depois tem os mesmos resumos por tick nas duas rotas, §7).
 
 ### 4.1 O piloto `witness` (sete instantes; o jogador vê a abertura e fica entre os homens até às bombas)
 
