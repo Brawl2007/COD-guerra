@@ -59,13 +59,18 @@ export function validateM02Snapshot(snap) {
   if (!snap || (snap.schema !== 'm02-01-bench-snapshot-v1' && snap.schema !== 'm02-02-snapshot-v2')) {
     return { valid: false, reason: 'Schema de snapshot M02 inválido.' };
   }
+  if (snap.rngState !== undefined && (!Number.isInteger(snap.rngState) || snap.rngState<0 || snap.rngState>0xffffffff)) return {valid:false,reason:'Estado aleatório inválido.'};
+  if (snap.worldRevision !== undefined && (!Number.isInteger(snap.worldRevision)||snap.worldRevision<0)) return {valid:false,reason:'Revisão de mundo inválida.'};
+  if (snap.grenadeSeq !== undefined && (!Number.isInteger(snap.grenadeSeq)||snap.grenadeSeq<0)) return {valid:false,reason:'Sequência de granadas inválida.'};
+  if (snap.grenades !== undefined && (!Array.isArray(snap.grenades) || snap.grenades.some(g=>!g||!g.id||!['x','y','z','vx','vy','vz','spawnedAt','fuseAt'].every(k=>Number.isFinite(g[k]))))) return {valid:false,reason:'Granada inválida.'};
+  if (snap.doorLocks !== undefined && (!Array.isArray(snap.doorLocks)||snap.doorLocks.some(e=>!Array.isArray(e)||e.length!==2||typeof e[0]!=='string'||!e[1]||typeof e[1].actorId!=='string'||!Number.isFinite(e[1].expiresAt)))) return {valid:false,reason:'Fila de porta inválida.'};
   if (typeof snap.clock !== 'number' || !Number.isFinite(snap.clock) || snap.clock < 0) {
     return { valid: false, reason: 'Clock de snapshot inválido.' };
   }
   if (
     !snap.player ||
-    typeof snap.player.x !== 'number' ||
-    typeof snap.player.z !== 'number' ||
+    !Number.isFinite(snap.player.x) ||
+    !Number.isFinite(snap.player.z) ||
     typeof snap.player.health !== 'number' ||
     snap.player.health < 0 ||
     snap.player.health > 100
@@ -107,7 +112,7 @@ export function validateM02Snapshot(snap) {
   if (snap.allies) {
     if (!Array.isArray(snap.allies)) return { valid: false, reason: 'Lista de aliados inválida.' };
     for (const a of snap.allies) {
-      if (!a.id || typeof a.x !== 'number' || typeof a.z !== 'number' || a.mag < 0 || a.reserve < 0) {
+      if (!a.id || !Number.isFinite(a.x) || !Number.isFinite(a.z) || a.mag < 0 || a.reserve < 0) {
         return { valid: false, reason: `Aliado inválido no snapshot: ${a?.id}` };
       }
     }
@@ -115,7 +120,7 @@ export function validateM02Snapshot(snap) {
   if (snap.enemies) {
     if (!Array.isArray(snap.enemies)) return { valid: false, reason: 'Lista de inimigos inválida.' };
     for (const e of snap.enemies) {
-      if (!e.id || typeof e.x !== 'number' || typeof e.z !== 'number' || e.mag < 0 || e.reserve < 0) {
+      if (!e.id || !Number.isFinite(e.x) || !Number.isFinite(e.z) || e.mag < 0 || e.reserve < 0) {
         return { valid: false, reason: `Inimigo inválido no snapshot: ${e?.id}` };
       }
     }
@@ -1366,6 +1371,11 @@ export class M02BenchSimulation {
   snapshot() {
     return {
       schema: 'm02-01-bench-snapshot-v1',
+      rngState: this.rng.state,
+      worldRevision: this.world.revision,
+      grenades: structuredClone(this.grenades),
+      grenadeSeq: this.grenadeSeq,
+      doorLocks: structuredClone([...this.doorLocks]),
       clock: this.clock,
       activeCellId: this.activeCellId,
       player: structuredClone(this.player),
@@ -1407,6 +1417,10 @@ export class M02BenchSimulation {
       throw new Error(`Snapshot M02 inválido: ${validation.reason}`);
     }
     this.clock = snap.clock;
+    this.rng.state = snap.rngState ?? this.seed;
+    this.grenades = structuredClone(snap.grenades ?? []);
+    this.grenadeSeq = snap.grenadeSeq ?? 0;
+    this.doorLocks = new Map(structuredClone(snap.doorLocks ?? []));
     const targetCellId = snap.activeCellId ?? 'A';
     if (this.activeCellId !== targetCellId) {
       this.world = this.zoneStreamer.switchToCell(targetCellId);
@@ -1434,6 +1448,8 @@ export class M02BenchSimulation {
     for (const [k, v] of Object.entries(snap.fences ?? {})) this.world.fenceStates.set(k, v);
     syncAreaCWorldDamage(this);
     this.world.refresh();
+    if(snap.worldRevision!==undefined)this.world.revision=snap.worldRevision;
+    this.navigator.built=-1;
     this.navigator.sync();
     if (snap.allies) this.allies = structuredClone(snap.allies);
     if (snap.enemies) this.enemies = structuredClone(snap.enemies);

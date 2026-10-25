@@ -1,3 +1,4 @@
+import { M02Environment } from './m02-environment.js';
 import * as THREE from 'three';
 import { M01MaterialLibrary } from './materials.js';
 import { createSoldierRigMaterials, rigCreate, rigPose } from './m02-claude-soldier-rig.js';
@@ -141,9 +142,10 @@ export class M02BenchRenderer {
     this.renderer.toneMappingExposure = 1.04;
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, 1200);
+    this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, 8000);
     this.camera.rotation.order = 'YXZ';
 
+    this.environment = new M02Environment(this.scene, sim.world, this.qualityProfile.id);
     this.materials = { ...this.#createMaterials(), ...createSoldierRigMaterials() };
     this.presentation = new M02Presentation(this.scene, this.camera, sim);
     this.materialLibraryReady = this.#loadMaterialLibrary();
@@ -369,11 +371,7 @@ export class M02BenchRenderer {
     terrainGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     terrainGeo.computeVertexNormals();
 
-    const terrainMat = new THREE.MeshStandardMaterial({
-      vertexColors: true,
-      roughness: 0.96,
-      metalness: 0.02,
-    });
+    const terrainMat = this.environment.terrain.material;
     const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
     terrainMesh.receiveShadow = true;
     this.staticGroup.add(terrainMesh);
@@ -433,6 +431,7 @@ export class M02BenchRenderer {
         (ob.min.y + ob.max.y) / 2,
         (ob.min.z + ob.max.z) / 2,
       );
+      mesh.userData.vegetationFallback = ob.role==='tree_trunk';
       mesh.castShadow = ob.role !== 'terrain_bank';
       mesh.receiveShadow = true;
       this.staticGroup.add(mesh);
@@ -450,6 +449,7 @@ export class M02BenchRenderer {
         (sb.min.y + sb.max.y) / 2,
         (sb.min.z + sb.max.z) / 2,
       );
+      crownMesh.userData.vegetationFallback=true;
       crownMesh.castShadow = true;
       this.staticGroup.add(crownMesh);
     }
@@ -730,6 +730,7 @@ export class M02BenchRenderer {
       const w = 42 + (i % 3) * 14;
       const h = 12 + (i % 4) * 3.8;
       const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 9), this.materials.horizon_treeline);
+      treeBlock.userData.vegetationFallback=true;
       treeBlock.position.set(hx, h / 2 - 1, hz);
       treeBlock.rotation.y = -a + Math.PI / 2;
       this.horizonGroup.add(treeBlock);
@@ -969,7 +970,7 @@ export class M02BenchRenderer {
       const entry = this.hsA2Meshes.get(ev.id);
       if (!entry) continue;
       entry.flash.visible = Boolean(ev.flashed && !ev.soundPlayed);
-      entry.plume.visible = Boolean(ev.smokeActive);
+      entry.plume.visible = Boolean(ev.smokeActive)&&!this.environment.loaded;
     }
     for (const v of this.sim.horizon?.hsA3.vehicles ?? []) {
       const cart = this.hsA3Meshes.get(v.id);
@@ -981,6 +982,7 @@ export class M02BenchRenderer {
     // Drain simulation events to spawn shot tracers, actor bursts, grenade blasts, or MG bursts
     const events = this.sim.drainEvents();
     this.presentation.consume(events, this.sim);
+    this.environment.consume(events, this.sim);
     for (const evt of events) {
       if (evt.type === 'shot-fired' && evt.shot) {
         this.spawnShotVisual(evt.shot);
@@ -1047,6 +1049,8 @@ export class M02BenchRenderer {
       entry.group.visible = !actor.detachedOutOfCell && !this.presentation.hasCharacter(actor.id);
     }
 
+    for(const lg of this.sim.areaC?.lastGroup??[]){const fallback=this.lastGroupMeshes.get(lg.id);if(fallback)fallback.group.visible=this.sim.areaC.c10Started&&lg.alive&&!lg.evacuated&&!this.presentation.hasCharacter(lg.id);}
+
     // Camera pose from simulation player
     const eye = eyePosition(player);
     this.camera.position.set(eye.x, eye.y, eye.z);
@@ -1064,6 +1068,10 @@ export class M02BenchRenderer {
     );
 
     this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
+    this.environment.update(this.sim,this.qualityProfile.id);
+    this.staticGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});
+    this.horizonGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});
+    if(this.lightingPreset.temporalId!=='T1' && this.lightingPreset.id!=='neutral_review') this.hemiLight.intensity=1.55;
     this.renderer.info.autoReset=false;
     this.renderer.info.reset();
     this.renderer.render(this.scene, this.camera);

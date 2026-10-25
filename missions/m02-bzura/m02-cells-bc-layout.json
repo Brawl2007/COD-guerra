@@ -7,7 +7,7 @@
       "id": "B",
       "title": "Área B · Corredor Logístico nos Acessos de Łęczyca",
       "bounds": [-120, 120, -140, 140],
-      "playerSpawn": { "x": 0, "y": 0, "z": 85, "angle": -1.5708, "pitch": 0 },
+      "playerSpawn": { "x": -50, "y": 0, "z": 51, "angle": -1.5708, "pitch": 0 },
       "panoramaPoint": { "id": "P4", "x": 0, "z": 0, "angle": -1.5708, "pitch": 0, "label": "P4 · Cruzamento de Łęczyca (0, 0)" },
       "cartRoute": [
         [-50, 41],

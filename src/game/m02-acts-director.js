@@ -92,7 +92,7 @@ function mapEnemyEntry(sim, e) {
     memory: null,
     goal: null,
     reloadingUntil: 0,
-    nextFireAt: 0.6,
+    nextFireAt: Number((sim.clock + 0.6).toFixed(3)),
     shotsFired: 0,
     hitsReceived: 0,
     lastHitPart: null,

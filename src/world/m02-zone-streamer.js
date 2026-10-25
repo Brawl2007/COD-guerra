@@ -173,8 +173,7 @@ export function buildCellWorldLayout(cellId) {
     cellId,
     title: rawCell.title,
     bounds: {
-      ...rawCell.bounds,
-      playable: { ...rawCell.bounds },
+      playable: { minX: rawCell.bounds[0], maxX: rawCell.bounds[1], minZ: rawCell.bounds[2], maxZ: rawCell.bounds[3] },
     },
     playerSpawn: structuredClone(rawCell.playerSpawn),
     panoramaPoint: structuredClone(rawCell.panoramaPoint),

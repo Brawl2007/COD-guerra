@@ -11,7 +11,7 @@ export function m02VisualActor(actor, team, clock) {
   const wounded = actor.state === 'WOUNDED_UNARMED';
   return { ...actor, team, active: !actor.detachedOutOfCell,
     id: actor.weapon === 'rkm_wz28' ? 'szymon_kowal' : actor.id,
-    role: wounded || surrendered ? 'MEDIC' : 'RIFLEMAN',
+    role: wounded || surrendered || actor.role==='medic' ? 'MEDIC' : 'RIFLEMAN',
     state: wounded ? 'WOUNDED' : actor.moving ? 'ADVANCE' : actor.shot > 0 ? 'SUPPRESS' : 'GUARD',
     posture: actor.crouched ? 'crouch' : 'stand',
     shot: actor.shot ?? (clock - (actor.lastShotAt ?? -Infinity) < .15 ? .15 : 0),
@@ -41,11 +41,16 @@ export class M02Presentation {
     if (sim.clock < this.resetClock) { this.audio.resetPresentation(sim.clock); this.fireTimes.clear(); this.stepAt=sim.clock; }
     this.resetClock = sim.clock;
     this.audio.setQuality(quality);
+    this.audio.updateM01Presentation({clock:sim.clock,quality,state:{},fires:[],phase:sim.areaC?.c12Completed?'OUTRO':'MAIN_COMBAT',spatial:point=>this.spatial(point,sim)});
+    if(sim.weapon.state!==this.weaponState){
+      if(sim.weapon.reloading)this.audio.wz29Mechanism(sim.weapon.reloadMode,`reload:${sim.clock}`);
+      this.weaponState=sim.weapon.state;
+    }
     this.audio.setConcussionScale(sim.audiovisual?.accessibility?.tinnitusIntensity??1);
     this.ids.clear();
     let mgIndex=0;
     const actors = [];
-    for (const [list, team] of [[sim.allies,'ally'],[sim.enemies,'enemy']]) {
+    for (const [list, team] of [[sim.allies,'ally'],[sim.enemies,'enemy'],[(sim.areaC?.c10Started?sim.areaC.lastGroup:[]).filter(a=>!a.evacuated).map(a=>({...a,state:a.wounded?'WOUNDED_UNARMED':'ACTIVE',weapon:'wz29'})),'ally']]) {
       for (const actor of list ?? []) {
         // Preserve Claude's explicit hands-up surrender pose, not an armed idle.
         if (actor.state === 'SURRENDERED') continue;
@@ -62,6 +67,12 @@ export class M02Presentation {
       this.audio.footstep('earth', {pace:sim.player.sprinting?'run':'walk'});
       this.stepAt=sim.clock+(sim.player.sprinting?.28:.5);
     }
+  }
+  spatial(point,sim) {
+    if(!point)return {pan:0,distance:900,front:1};
+    const x=point.x-sim.player.x,z=point.z-sim.player.z;
+    const angle=Math.atan2(z,x)-sim.player.angle;
+    return {pan:Math.sin(angle),distance:Math.hypot(x,z),front:Math.cos(angle)};
   }
   hasCharacter(id) { return this.characters.instances.has(this.ids.get(id)); }
   updateWeapon(sim, quality) {
@@ -91,10 +102,15 @@ export class M02Presentation {
       const distance=Math.hypot(dx,dz);
       const pan=Math.sin(Math.atan2(dz,dx)-sim.player.angle);
       if (event.type==='shot-fired') {
-        this.audio.wz29Shot();
+        this.audio.wz29Shot(); this.audio.wz29Mechanism('bolt',`bolt:${sim.weapon.shotCount}`);
         if (event.shot?.blockedBySolid) this.audio.impact(event.shot.material??'earth',pan,event.shot.distance??distance);
       }
       if (event.type==='actor-burst') this.audio.weaponFire(event.weapon,pan,distance,{rounds:event.rounds,key:`${event.shooterId}:${event.clock}`,source:event.shooterId});
+      if(event.type==='horizon-acoustic-boom'){
+        const source=sim.horizon.hsA2.events.find(e=>e.id===event.eventId);
+        const spatial=this.spatial(source,sim);this.audio.distantBattle('artillery',spatial.pan,spatial.distance,`horizon:${event.eventId}`);
+      }
+      if (event.type==='mg-burst')this.audio.mg34Burst(pan,distance,event.rounds??3,.09,`mg:${event.clock}`);
       if (event.type==='grenade-exploded') this.audio.explosion(pan,distance);
 
     }

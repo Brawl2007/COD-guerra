@@ -919,7 +919,7 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders neutralized)
-    if (!enemy.nonCombatant && mgDown && neutralizedCount >= 7) {
+    if (sim.activeCellId === 'A' && enemy.encounterId !== 'EA0' && !enemy.nonCombatant && mgDown && neutralizedCount >= 7) {
       enemy.state = 'SURRENDERED';
       enemy.nonCombatant = true;
       enemy.moving = false;
