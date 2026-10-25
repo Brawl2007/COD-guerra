@@ -4,6 +4,8 @@ import {M01Simulation,validateM01Snapshot,combatStagePlan} from '../src/game/m01
 import {createDisplayFire,normalizeDisplayProfile,updateDisplayFire} from '../src/game/m01-display-fire.js';
 import {compareContinuation,json} from './helpers/m01-determinism.js';
 import {eyePosition} from '../src/world/spatial.js';
+import {validateM01AudioEvent} from '../src/game/m01-audio-events.js';
+import {createHash} from 'node:crypto';
 
 // Combat AI slice 1 (M01-COMBAT-AI-SLICE-1; docs/direction/COD_WAW_WWII_BENCHMARK.md, «Combate e IA»). The owner's playtest: Germans fire in repeating cycles,
 // the allied MGs in looped bursts. These tests drive the real simulation from the arrival of train 963 (the first German shots) with no input.
@@ -113,6 +115,26 @@ test('Kowal answers flashes with 2-5 round bursts and an uneven reaction, never 
   const repeated=g.slice(1).filter((x,i)=>Math.abs(x-g[i])<=.05).length/(g.length-1);assert.ok(repeated<.2,`repeat share ${repeated.toFixed(2)}`);
   // T38 posture rule still holds: up over the sandbags only around his own burst.
   const k=s.actor('szymon_kowal'),slot=PLAN.squad.slots.szymon_kowal;assert.ok(Math.hypot(k.x-slot.x,k.z-slot.z)<.5);
+});
+
+// R1-b (2026-10-25, golden amendment 20): Kowal's burst says where it landed, for the presentation only (the long-range impact FX draws it, as it draws the section's real rounds): a point on the
+// ground just past the German it is aimed at, along the line from the gun, hit false (display-grade suppression: nothing is traced and nobody is struck). It is output only: no state, no random number.
+test('Kowal\'s burst carries where it landed and hit false: 1.2 m past the German it was aimed at, at his feet, valid for the audio contract; nothing of the fight depends on it',()=>{
+  const s=underFire(),seen=[],emit=s.emit.bind(s);
+  s.emit=e=>{   // the positions of the gun and of the German at the instant of the burst
+    if(e.type==='npc-shot'&&e.weapon==='rkm_wz28'){const k=s.actor('szymon_kowal'),t=s.actor(k.ai.target);seen.push({e:structuredClone(e),t:{x:t.x,y:t.y,z:t.z},k:{x:k.x,z:k.z}});}
+    return emit(e);};
+  shots(s,600);
+  assert.ok(seen.length>60,`bursts (${seen.length})`);
+  for(const {e,t,k} of seen){
+    assert.doesNotThrow(()=>validateM01AudioEvent(e));assert.equal(e.hit,false);assert.ok([e.end.x,e.end.y,e.end.z].every(Number.isFinite));
+    const d=Math.hypot(t.x-k.x,t.z-k.z),past=Math.hypot(e.end.x-k.x,e.end.z-k.z)-d;
+    assert.ok(Math.abs(past-1.2)<1e-6,`the burst lands 1.2 m past the German (${past})`);assert.ok(Math.abs(e.end.y-(t.y+.05))<1e-9,'at his feet');
+  }
+  // output only: with every end point replaced the whole fight is the same, tick for tick (the state digest does not read the events' end)
+  const digest=mod=>{const sim=underFire(),h=createHash('sha256');if(mod)sim.kowalBurstEnd=()=>({x:1,y:2,z:3});
+    shots(sim,600,(x)=>{h.update(JSON.stringify(x.snapshot(false)));});return h.digest('hex');};
+  assert.equal(digest(true),digest(false),'the fight does not depend on where the burst is drawn');
 });
 
 test('combat AI state continues identically across save/restore, and a save without it migrates without touching the main stream',()=>{

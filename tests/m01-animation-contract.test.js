@@ -112,10 +112,24 @@ const GERMAN_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.playerSuppressedUntil$
 // (21 s), the repair 8.6 s / 7.0 s sooner in real time; the plot is still the predecessor's (the tool proved it again) and the clipping and stacking counts are still 0.
 import sappers from './fixtures/m01-sappers-gameplay-baseline.json' with {type:'json'};
 const SAPPERS_DELTA=/^\$\.state\.mission\.(text|status)$/,SAPPERS_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 19, as measured
-const current=sappers;   // the golden of the live simulation
+// M01-OPENING-LIFE-V1 (golden amendment 20, 2026-10-25, R1-b; owner order, item 4: «rebuild the mission opening to convey that the war begins at 04:34»): the four minutes before the first bomb are no longer a row of
+// men standing still. Each Polish man of the post (the section, the garrison, the sappers) is a small state machine of his own (src/game/m01-opening.js, mission.json openingLife): 30 acts (map, binoculars, smoke, coffee,
+// telephone, ammunition count, cable walk and test, ...), three tensions (calm; warned by the railway worker's report of 04:31:00: the line is dead, the sergeant orders eyes to the east, the runner pl_west_1 walks the word
+// along the line by the simulation's own A*; the planes of 04:33:10: each man looks up, points, shouts, braces or kneels at a moment of his own, the runner goes back to his post, the sappers go home, Nowicki looks up and
+// points for 5 s before he runs), and the first bomb ends the record and every act. The act of each man is the saved actor.act and the record timers.opening (both optional, validated, absent before R1-b and after the
+// first bomb); every man draws from a stream of his own derived from the state of the main stream, which is read and never drawn (not one draw in Act I: tested). The rearguard's and Kowal's npc-shot events carry the
+// display-only end / hit. Outcome parity with R1-a and R3-a: the garrison stands on its posts to the bit and the sappers kneel on their places when the bombs fall, so the plot, the 12 objectives, CP-A..D, the survivors and
+// the real-time clock of every event are the predecessor's. The golden of the live simulation, regenerated on x86 by tools/verification/m01-integration-golden-audit.mjs --amendment 20 after its lockstep audit against
+// 77175d85, is this one; the sappers golden above is history since then (it pins the simulation of 77175d85).
+import opening from './fixtures/m01-opening-gameplay-baseline.json' with {type:'json'};
+const OPENING_DELTA=/^\$\.(state|checkpoint)\.(actors\.\d+\.act|timers\.opening)(\.|$)/,OPENING_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.facing$/;   // amendment 20, as measured
+const current=opening;   // the golden of the live simulation
 /** 2026-10-24 (golden amendment 18, R2-b): the deck module (the closing lines and the tactics) and the level table (the words of the death by a stick grenade) moved with it, so the older goldens that record them are
  *  history for those two files: they are still recorded, and no longer the live bytes. Every other module a history test names is still compared with the live file. */
 const MOVED_BY_18=new Set(['src/game/m01-deck-assault.js','src/game/m01-difficulty.js']);
+/** 2026-10-25 (golden amendment 20, R1-b): the simulation, the director (the `opening` trigger) and the mission data (openingLife, the lines 210-212, the two callouts) moved with the opening life, so the golden of amendment 19
+ *  (history since then) records them and no longer equals the live files. */
+const MOVED_BY_20=new Set(['src/game/m01-simulation.js','src/game/m01-barks.js','missions/m01-tczew/mission.json']);
 function unchangedSince(recorded,files,live,label='and'){
   for(const f of files){
     if(MOVED_BY_18.has(f)){assert.ok(recorded[f],`${f} is recorded`);assert.notEqual(recorded[f],live('../'+f),`${f} moved with amendment 18`);}
@@ -686,12 +700,18 @@ test('the German AI golden (amendment 18) chains to the squad coordination golde
   for(const r of account.otherRoutes){assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);}
 });
 
-test('the sappers golden (amendment 19) chains to the German AI golden, pins the live simulation, the sapper module, the director and the mission data, and cites its lockstep account',()=>{
+test('the sappers golden (amendment 19) chains to the German AI golden, pins the simulation of 77175d85 (history since amendment 20), the sapper module and the other modules, and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(sappers,{amendment:'19',task:'M01-SAPPERS-OPERATION-V1',delta:'sapper-operation',previous:german,previousFile:'m01-german-ai-gameplay-baseline.json',
     predecessor:'3c8e576dfdfefa7a2158a50dffb74fed4695385f',deltaFields:SAPPERS_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),sappers.sourceSha256,'the golden pins the live simulation');
-  for(const [f,h] of Object.entries(sappers.inputsSha256))if(h!==null)assert.equal(h,sha('../'+f),`and ${f}`);
+  // History since amendment 20 (the opening life, R1-b, 2026-10-25): this golden pins the simulation of 77175d85 (candidate #80 + R1-a + R2-a + R2-b + R3-a), not the live one. The director (the new `opening` trigger) and the
+  // mission data (openingLife, three lines, two callouts) moved with the opening life, so they are no longer compared with the live files (they still have to be recorded); every other recorded input is still the live file.
+  assert.equal(sappers.sourceSha256,'2d6bc32d95a44a6612d81774dcdb529fca0e35ed95bd4ea9dc94902a0b9b2781','the sappers golden pins the simulation of 77175d85');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),sappers.sourceSha256,'the sappers golden is history: amendment 20 moved the simulation');
+  for(const [f,h] of Object.entries(sappers.inputsSha256))if(h!==null){
+    if(MOVED_BY_20.has(f)){assert.ok(h,`${f} is recorded`);assert.notEqual(h,sha('../'+f),`${f} moved with amendment 20`);}
+    else assert.equal(h,sha('../'+f),`and ${f}`);
+  }
   assert.ok(sappers.inputsSha256['src/game/m01-sappers.js'],'the sapper module is a recorded input');assert.equal(german.inputsSha256['src/game/m01-sappers.js'],undefined,'the predecessor had no sapper module');
   assert.ok(sappers.inputsSha256['src/game/m01-retreat.js'],'the retreat module is a recorded input');assert.equal(german.inputsSha256['src/game/m01-retreat.js'],undefined,'the predecessor had no retreat module');
   // 2026-10-25 (the review of R3-a, same amendment regenerated): the layout (two sandbag rows at the cuts: cv_cable_fault, cv_cable_second) and the retreat module (a place of his own for each man of the section) moved too.
@@ -734,6 +754,48 @@ test('the sappers golden (amendment 19) chains to the German AI golden, pins the
     // (2026-10-25: < 10 -> < 15: the sandbag rows stop some of the rounds that pinned the team and the repair is sooner by up to 12.65 s on the control route of seed 3 (442.2 -> 429.55); 24 routes measured:
     //  tools/verification/m01-sappers-metrics.mjs, docs/verification/m01-runtime/sappers-r3a-2026-10-24/METRICS_SUMMARY_after_review.json)
     assert.ok(Math.abs(r.repairComplete.live-r.repairComplete.predecessor)<15,`seed ${r.seed} support ${r.support}: the repair is complete within seconds of where it was (${r.repairComplete.predecessor} -> ${r.repairComplete.live})`);}
+});
+
+test('the opening golden (amendment 20) chains to the sappers golden, pins the live simulation, the opening module, the director and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(opening,{amendment:'20',task:'M01-OPENING-LIFE-V1',delta:'opening-life',previous:sappers,previousFile:'m01-sappers-gameplay-baseline.json',
+    predecessor:'77175d8591e4dcf51e0bf3ef0a34c1319ab51cb8',deltaFields:OPENING_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),opening.sourceSha256,'the golden pins the live simulation');
+  for(const [f,h] of Object.entries(opening.inputsSha256))if(h!==null)assert.equal(h,sha('../'+f),`and ${f}`);
+  assert.ok(opening.inputsSha256['src/game/m01-opening.js'],'the opening module is a recorded input');assert.equal(sappers.inputsSha256['src/game/m01-opening.js'],undefined,'the predecessor had no opening module');
+  assert.deepEqual(account.changedGameplayInputsSincePredecessor,['src/game/m01-simulation.js','missions/m01-tczew/mission.json','src/game/m01-barks.js','src/game/m01-opening.js'],
+    'what moved since 77175d85: the simulation (the opening hooks, the display-only end / hit), the mission data (openingLife, three lines, two callouts), the director (the `opening` trigger) and the new module; the section, the sappers, the retreat, the rearguard, the deck module, the level table, the audio events and the layout did not');
+  for(const f of Object.keys(sappers.inputsSha256)){
+    if(MOVED_BY_20.has(f))assert.notEqual(opening.inputsSha256[f],sappers.inputsSha256[f],`${f} moved with amendment 20`);
+    else assert.equal(opening.inputsSha256[f],sappers.inputsSha256[f],`${f} did not move with amendment 20`);
+  }
+  // The two simulations differ from the very first tick (2026-10-25, measured on both golden routes): every man of the plan has an act from the first tick, and the first one in the roster, the sergeant, is the first difference
+  // (actors.0.act, an idle of about four seconds, missing in the predecessor). With the new records stripped from both frames (every act, timers.opening, the director's record, the dialogue state and the display-only end /
+  // hit of the npc-shots) the first BEHAVIOUR difference is also at the first tick: the watch of the sappers, sapper_3, turns his eyes east (actors.9.facing, -0.4 in the predecessor; the glances of his act are drawn from
+  // his own stream: 0.4878 on the control route and 0.0065 on the support route). No block of 512 ticks is the predecessor's.
+  assert.equal(account.behaviourFields,OPENING_BEHAVIOUR.source);assert.equal(account.behaviourActors,'^(pawel_krawiec|sapper_2|sapper_3|marek_zielinski|szymon_kowal|jozef_bak|staszek_pawlak|east_platoon_voice|tadeusz_nowicki|leon_dudek|ckm_gunner|ckm_loader|ckm_reserve|franciszek_lipski|pl_west_[0-5])$');
+  // And nothing else moves: the opening life is outcome-neutral. The tool proved on both routes that the plot (12 objectives, CP-A..D, consumed events, survivors, flags) is the predecessor's, and the account shows
+  // that so is the whole timeline: not one tick more or less, the same real time for the end of both routes and for every event of the battle clock, the same German rounds per real minute, no event moved.
+  const expected={false:{ticks:25987,real:1299.35,to0600:562.95,survivors:12,health:76,facing:.4877693436574191,rounds:94.34},true:{ticks:22551,real:1127.55,to0600:543.2,survivors:18,health:100,facing:.006512794876471162,rounds:62.26}};
+  for(const r of account.routes){
+    const e=expected[r.support];
+    assert.equal(r.firstDifference.tick,1);assert.equal(r.firstDifference.battleClock,'04:30:44','the opening acts from the first tick the player has control');assert.equal(r.firstDifference.actor,'marek_zielinski');
+    assert.equal(r.firstDifference.path,'$.state.actors.0.act');assert.equal(r.firstDifference.predecessor,null);assert.equal(r.firstDifference.missing,true);assert.equal(r.firstDifference.live.k,'idle');assert.equal(r.firstDifference.live.n,0);
+    assert.equal(r.identicalBlocks,0);assert.equal(r.identicalTicksBeforeIt,0);
+    assert.match(r.firstBehaviourDifference.path,OPENING_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.tick,1);assert.equal(r.firstBehaviourDifference.battleClock,'04:30:44');
+    assert.equal(r.firstBehaviourDifference.actor,'sapper_3');assert.equal(r.firstBehaviourDifference.path,'$.state.actors.9.facing');assert.equal(r.firstBehaviourDifference.predecessor,-.4);assert.equal(r.firstBehaviourDifference.live,e.facing);
+    assert.equal(r.oldTicks,e.ticks);assert.equal(r.newTicks,e.ticks,'not one tick more or less');
+    assert.deepEqual(r.endState.live,r.endState.predecessorOwnRoute,'the end of the route is the predecessor\'s');assert.deepEqual(r.endState.live,{ticks:e.ticks,real:e.real,to0600:e.to0600,survivors:e.survivors,playerHealth:e.health});
+    assert.deepEqual(r.movedEvents,[],'no event of the battle moves in real time');
+    for(const ev of r.battleClockEvents){assert.equal(ev.battle.live,ev.battle.predecessor,`${ev.id}: the same battle clock`);assert.equal(ev.real.live,ev.real.predecessor,`${ev.id}: the same real time`);}
+    assert.equal(r.battleClockEvents.find(ev=>ev.id==='evt_m01_bombing_0434').real.live,67.75,'the first bomb is at 67.75 s of real time on both routes: the opening does not move it');
+    assert.equal(r.endState.objectives.cover_repair,'done');assert.equal(r.endState.objectives.hold_corridor,'done');assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);
+    assert.equal(r.measured.germanRoundsPerRealMin.live,e.rounds);assert.equal(r.measured.germanRoundsPerRealMin.predecessor,e.rounds);
+  }
+  for(const r of account.otherRoutes){
+    assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);
+    assert.equal(r.real.live,r.real.predecessor,`seed ${r.seed} support ${r.support}: the same real time`);assert.equal(r.repairComplete.live,r.repairComplete.predecessor,`seed ${r.seed} support ${r.support}: the repair completes when it did`);
+  }
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

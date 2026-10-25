@@ -371,7 +371,7 @@ export class Game {
       grenades:structuredClone(this.sim.grenades),damage:(this.sim.sectors.damage??[]).map(d=>({...d})),pendingAudio:(this.pendingSounds??[]).map(s=>({...s})),
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
-      threat:this.sim.threat,ckm:this.sim.ckm,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,
+      threat:this.sim.threat,ckm:this.sim.ckm,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,opening:this.sim.openingView,
       hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
