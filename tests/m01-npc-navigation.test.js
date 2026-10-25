@@ -133,7 +133,10 @@ test('the straight walk is untouched: an actor with a free line moves exactly as
   s.tick(.05,{});assert.equal(a.nav,undefined);assert.ok(Math.abs(a.x-(-150+3.6*.05))<1e-9);assert.equal(a.z,20);
 });
 
-const DETOURS=49;   // measured 2026-10-18 on the integration tree (the first 150 pairs of the stream; 49 need a detour round some solid)
+// measured 2026-10-18 on the integration tree (the first 150 pairs of the stream; 49 need a detour round some solid)
+// 2026-10-25 re-pin 49 -> 51 (R3-a review, golden amendment 19 regenerated): the two sandbag rows of the sappers (map-layout.json cv_cable_fault at (-117, 8) and cv_cable_second at (-133.5, 8), each a 0.9 x 3.0 m solid on
+// the south slope of the embankment) are new solids on the west bank, so two more of the same 150 pairs have a straight line that crosses one and need a detour (51); every walk still arrives and none clips (asserted below).
+const DETOURS=51;
 test('free play: 150 deterministic walks across the west bank all arrive, none clips a wall, a girder or a solid of the player layer (the old walker left about one in fifteen stuck)',{timeout:900000},()=>{
   // The pairs are drawn with a fixed linear-congruential stream over free ground that has a route; DETOURS of these 150 need a detour round a hut, wagons, sandbags, the station
   // or (since the phys x npc integration) a prop, the casemate or the shelter (on f6913a0 the first 60 of the same stream left four walkers stuck against a wall, 10 of the first 150 in all).

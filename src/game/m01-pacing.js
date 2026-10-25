@@ -3,6 +3,7 @@
 // nothing here is saved, draws from the RNG or changes the battle-clock time of any historical event. The HUD only reads the result.
 import definition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import {corridorStatus,corridorRecord,PASSED_X} from './m01-corridor.js';
+import {sapperPhase,sapperStatusLine} from './m01-sappers.js';
 
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const E=name=>`evt_m01_${name}`;
@@ -97,6 +98,7 @@ export function objectiveMarker(sim){
 export function pacingStatus(sim){
   const p=sim.player,n=sim.flags['m01.east_platoon_survivors'],bak=sim.actor('jozef_bak');
   const where=point=>`${Math.round(dist(p,point))} m, ${sim.directionTo(point)}`;
+  if(sim.active('fetch_material')){const ph=sapperPhase(sim);if(ph.id==='locate'||ph.id==='standby')return sapperStatusLine(ph);}   // R3-a: what the sappers do while the player fetches the box
   if(sim.active('rescue_bak')){
     const aid=sim.world.point('aid_position');
     if(p.carrying==='jozef_bak')return `A carregar Bąk · socorrista Dudek no posto de socorro, ${where(aid)} · E junto dele para o entregar`;

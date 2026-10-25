@@ -4,6 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { M01Simulation, seconds } from '../src/game/m01-simulation.js';
 import { route } from './helpers/m01-route.js';
+import { SAPPERS } from '../src/game/m01-sappers.js';
 
 const E=name=>'evt_m01_'+name;
 let completed;
@@ -16,7 +17,11 @@ test('the sappers walk to the second cut where the crate is delivered, so "leve 
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_b_reorganizacao);
   Object.assign(sim.player,sim.world.point('repair_site_1'));run(sim,.1);
   assert.equal(sim.active('fetch_material'),true);
-  run(sim,40);
+  // 2026-10-24 re-pin 40 s -> 55 s (R3-a, golden amendment 19, owner complaint «os sapadores parecem homens a picar o chão»): the team no longer runs to the cut at 3.6 m/s (22 s for the 78 m)
+  // but follows the cable line looking for the break at SAPPERS.locateSpeed = 1.8 m/s (43 s: m01-sappers.js `locate`). The property tested is unchanged: they are at the cut before the crate can be.
+  // The quickest possible player cannot be: the shed is 222 m from repair site 1 and the cut 142 m from the shed, at the sprint of 6 m/s (61 s), so the walk is shorter than his trip.
+  assert.ok(78/SAPPERS.locateSpeed<(222+142)/6,'the sappers arrive before the quickest crate');
+  run(sim,55);
   const site=sim.world.point('repair_site_2'),engineers=sim.allies.filter(a=>a.role==='ENGINEER'&&a.alive&&a.active);
   assert.ok(engineers.length>=1);
   for(const a of engineers)assert.ok(near(a,site,6),`${a.id} em ${a.x.toFixed(1)},${a.z.toFixed(1)}, entrega em ${site.x},${site.z}`);

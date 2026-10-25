@@ -85,13 +85,21 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   // Re-measured on purpose for R2-b (golden amendment 18, 2026-10-24): the Polish fire of the deck is real and the German assault closes in stages, so on this neutral route (the pilot never fires) the east demolition
   // waits 94 s longer for the deck: the window before it is 94 samples longer (881 -> 975) and the whole route as well (1218 -> 1310); the census of clear samples is unchanged (135, the same nine targets, nothing
   // before the west demolition: no German on the deck, now as near as 250 m, is ever in clear sight of the casemate gun).
-  assert.equal(r.samples,1310);assert.equal(r.samplesBeforeEastDemolition,975);
+  // Re-measured on purpose for R3-a (golden amendment 19, 2026-10-24: the sappers' staged operation, owner complaint «os sapadores parecem homens a picar o chão repetidamente»): the team walks the cable at 1.8 m/s and works at
+  // two cuts 16 m apart, so the pins fall at other moments and the neutral route (the pilot never fires) plays out differently from the repair on: the window before the east demolition is two samples longer (975 -> 977)
+  // and the whole route five (1310 -> 1315); the census of clear samples is unchanged (135, the same nine targets, nothing before the west demolition; tools/m01-ckm-fire-arc.mjs routeSweep).
+  // Re-measured on purpose again for the review of R3-a (golden amendment 19, regenerated, 2026-10-25): the sappers run to a sandbag row at each cut when they are shaken and the section withdraws to places of its own
+  // (map-layout.json cv_cable_fault / cv_cable_second, mission.json retreat), so the neutral route plays out differently from the repair on: the window before the east demolition is three samples longer (977 -> 980)
+  // and the whole route three fewer than before (1315 -> 1312); the census of clear samples is unchanged (135, the same nine targets, nothing before the west demolition; tools/m01-ckm-fire-arc.mjs routeSweep).
+  assert.equal(r.samples,1312);assert.equal(r.samplesBeforeEastDemolition,980);
   // Re-measured on purpose for the 05:35 fill (golden amendment 12, 2026-10-19): the dike riflemen also fire at the player at the deck post, the main RNG moves from 05:35 and the
   // deck fight of this route plays out differently (enemy samples 42546 -> 42427, 27550 -> 27431); samples and the clear-sample census below are unchanged (135, the same nine).
   // Amendment 14 (2026-10-22): the 3 samples fewer after the east demolition take 138 enemy samples with them (42427 -> 42289); before it unchanged (27431), census unchanged.
   // Amendment 16 (2026-10-23): enemy samples 42289 -> 42249, before the east demolition 27431 -> 27421.
   // Amendment 18 (2026-10-24): enemy samples 42249 -> 46765, before the east demolition 27421 -> 32025.
-  assert.equal(r.enemySamples,46765);assert.equal(r.enemySamplesBeforeEastDemolition,32025);
+  // Amendment 19 (2026-10-24, R3-a): enemy samples 46765 -> 47450, before the east demolition 32025 -> 32240 (the longer window above; the same cause).
+  // Amendment 19 (2026-10-25, the R3-a review): enemy samples 47450 -> 46756, before the east demolition 32240 -> 32148 (the window above; the same cause).
+  assert.equal(r.enemySamples,46756);assert.equal(r.enemySamplesBeforeEastDemolition,32148);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
   // Re-measured on purpose, with the repo tool, for the NPC navigation round every solid (golden amendment 05, 2026-10-18, phys x npc integration): the west demolition, which waits
   // for every ally west of x -90, is consumed 0.15 s later on this route (movedEvents in docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json) while the

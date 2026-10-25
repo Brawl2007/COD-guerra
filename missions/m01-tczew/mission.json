@@ -253,6 +253,44 @@
         },
         "classification": "GAMEPLAY_DRAMATIZATION",
         "note": "T38: lugares iniciais [x, z, facing em rad] junto à linha de ignição no ponto de reparo 1, espaçados (antes x −42,6, −46,8 e −47,4 na mesma recta, dois a 0,6 m). Ali, até serem chamados para o segundo corte, estão de joelhos a trabalhar no cabo (`crouched`). No segundo corte: agachados a trabalhar durante obj_m01_cover_repair e deitados (postura 'prone' de T07, hitbox deitada) quando suprimidos ou à espera parados (antes da caixa, depois do reparo). Os lugares do segundo corte, a supressão a 3 m e o tempo de reparo não mudam."
+      },
+      "operation": {
+        "classification": "GAMEPLAY_DRAMATIZATION",
+        "note": "R3-a (2026-10-24, queixa do proprietário «os sapadores parecem homens a picar o chão repetidamente, sem trabalho visível»): a operação técnica da equipa, por etapas, com consequências em jogo. Tudo é dramatização genérica: examinar, emendar, testar a continuidade, avisar o oficial (HISTORICAL_RESEARCH.md §79: o jogo não mostra conexões, cargas nem procedimentos; só o cabo danificado e o trabalho dos sapadores). Os dois cortes da fala 021 («Cortaram a linha em dois lugares. Eu sei onde.») são o do ponto de reparo 2 (`fault`, onde chega a caixa) e outro a 16 m ao longo do cabo para oeste (`second`); a cratera da bomba (`crater`) é o ponto de reparo 1, onde a equipa começa. Cabo, pontos e lugares são presentação sobre a linha de ignição RECONSTRUÍDA (feature ignition_line): o traçado desenhado passa pelos lugares de trabalho (2 m a sul da linha esquemática) para que as mãos dos sapadores cheguem ao cabo; a altura e a exposição ao fogo dos lugares são as de antes (medidas: 22 rondas a menos de 3 m por 100 s no ponto 2, 24 no `second`). Fases de jogo (sem estado novo guardado: tudo se deduz do progresso do objectivo, dos eventos consumidos e das posições): `camp` (cratera, até serem chamados), `locate` (seguem o cabo, passo `locate.speed`, e param no corte), `standby` (esperam a caixa), as etapas de `stages` durante obj_m01_cover_repair (a soma das durações é o tempo de trabalho de sempre, REPAIR_WORK_SEC = 150 s de trabalho sem supressão; o progresso 0–100 do objectivo continua a ser a barra, e a etapa é uma função dele: um save de antes carrega a meio e cai na etapa certa), `report` (avisam o oficial) e `ready` (aguardam a ordem de demolição das 05:30), e `verify`/`verify_west` (olham o resultado depois de cada demolição, 06:10 e 06:45, antes de seguirem a retirada de sempre). A etapa `fail` é o teste que não dá passagem, uma vez, para todos os níveis: falta o segundo corte, e a equipa segue o cabo até lá (`relocate`). Nenhuma hora histórica se move: repair_complete continua a ser o progresso 100, order_demolish às 05:30 e as demolições às 06:10 e 06:45. Cobertura (revisão do Capitão, 2026-10-25): um sapador suprimido ou abalado corre para o nó de cobertura com caixa mais próximo a menos de seek.coverM metros e deita-se a sotavento (a oeste) dele, no lugar do seu papel (seek.lanes: [dx, dz] a partir do centro do nó, três lugares a 0,9 m ou mais um do outro, para que os três não se deitem no mesmo sítio); cada corte tem o seu: cv_cable_fault e cv_cable_second (map-layout.json), duas fiadas de sacos de areia na encosta a norte da linha do cabo. Quando a supressão acaba voltam ao lugar da etapa e a etapa continua onde ficou. Sem nó ao alcance deitam-se onde estão, como antes; a validação ao carregar recusa dados em que algum lugar de trabalho fique sem cobertura ao alcance.",
+        "arriveM": 2.5,
+        "locate": { "speed": 1.8 },
+        "seek": { "coverM": 8, "speed": 3.6, "lanes": { "leader": [-1.1, 1.2], "helper": [-2.2, 0.8], "watch": [-3.3, 0.4] } },
+        "verify": { "sec": 8 },
+        "report": { "sec": 8 },
+        "roles": { "pawel_krawiec": "leader", "sapper_2": "helper", "sapper_3": "watch" },
+        "cable": [[-196, 6.0], [-170, 5.4], [-154, 5.2], [-148, 6.4], [-142, 9.4], [-136.6, 10.72], [-120.4, 10.72], [-100, 10.8], [-70, 10.7], [-40.6, 10.5], [-12, 11.6]],
+        "points": {
+          "crater": { "x": -40.6, "z": 10.5, "gapM": 2.4 },
+          "fault": {
+            "x": -120.4, "z": 10.72, "gapM": 1.5,
+            "slots": { "pawel_krawiec": [-120.4, 10.3, 1.5708], "sapper_2": [-121.9, 10.4, 1.35], "sapper_3": [-123.6, 10.0, 0] }
+          },
+          "second": {
+            "x": -136.6, "z": 10.72, "gapM": 1.5,
+            "slots": { "pawel_krawiec": [-136.6, 10.3, 1.5708], "sapper_2": [-138.1, 10.4, 1.35], "sapper_3": [-139.8, 10.0, 0] }
+          }
+        },
+        "stages": [
+          { "id": "inspect", "at": "fault", "sec": 14, "text": "sapadores a examinar a ligação" },
+          { "id": "splice", "at": "fault", "sec": 52, "text": "sapadores a emendar o cabo" },
+          { "id": "test", "at": "fault", "sec": 6, "text": "sapadores a testar a linha" },
+          { "id": "fail", "at": "fault", "sec": 4, "result": "fail", "text": "sem passagem · falta o segundo corte" },
+          { "id": "relocate", "from": "fault", "at": "second", "sec": 10, "speed": 1.8, "text": "sapadores a seguir o cabo até ao segundo corte" },
+          { "id": "inspect2", "at": "second", "sec": 8, "text": "sapadores a examinar o segundo corte" },
+          { "id": "splice2", "at": "second", "sec": 46, "text": "sapadores a emendar o segundo corte" },
+          { "id": "test2", "at": "second", "sec": 10, "result": "pass", "text": "sapadores a testar a linha inteira" }
+        ],
+        "text": {
+          "locate": "os sapadores procuram o corte",
+          "standby": "os sapadores esperam o material junto ao corte",
+          "report": "linha inteira · os sapadores avisam o oficial",
+          "ready": "os sapadores aguardam a ordem de demolição"
+        }
       }
     },
     {
@@ -665,6 +703,19 @@
     ]
   },
   "westGarrisonNote": "Seis soldados sem nome da guarnição da cabeça de ponte oeste, nas trincheiras junto ao cabo de ignição e ao longo do acesso rodoviário (HISTORICAL_RESEARCH.md: o ataque das 04:34 atingiu a margem oeste junto às pontes; T08/T27 documentam um posto na cabeça de ponte oeste). Os dois primeiros ficam a 9 e 20 m da cratera do cabo (evt_m01_nowicki_lost) e os outros nos troços que os impactos de raidTargets0434 batem, todos à vista do aterro. Que houve guarnição ali é RECONSTRUCTED; os homens, os postos e o que as bombas lhes fazem são GAMEPLAY_DRAMATIZATION: nenhuma fonte dá baixas polacas neste ataque, e nada disto aparece em ecrã como número nem como facto. São actores de apresentação (displayOnly, como o pátio da estação): fora de allies / enemies / combatants, sem comportamento próprio, sem sorteios. Não pertencem ao elenco: uma bomba pode matá-los, feri-los (ficam onde caíram, na pose de ferido que já existe) ou abalá-los (a supressão que já existe). Os sobreviventes ficam nos postos até ao fim da missão.",
+  "retreat": {
+    "classification": "GAMEPLAY_DRAMATIZATION",
+    "point": [-170, 22],
+    "slots": {
+      "marek_zielinski": [-167.0, 22.4, 0],
+      "pawel_krawiec": [-168.4, 25.4, 0],
+      "sapper_2": [-168.4, 19.4, 0],
+      "sapper_3": [-171.6, 19.2, 0],
+      "leon_dudek": [-174.8, 21.6, 0],
+      "jozef_bak": [-172.2, 27.4, 0]
+    },
+    "note": "R3-a, revisão do Capitão (2026-10-25): depois da demolição leste os homens do elenco que não estão num lanço de equipa de fogo (m01-squad.js), na guarnição da ckm (que tem os seus lugares finais) nem são civis iam todos para um só ponto (-170, 22) e paravam a 0,8 m dele (um homem a menos de 0,8 m do destino fica parado) sem se afastarem uns dos outros: o sargento, os sapadores e o artilheiro da ckm acabavam a 0,5-1,2 m uns dos outros e o sargento não conseguia sair do monte para ir buscar o jogador (README §7 de docs/verification/m01-runtime/sappers-r3a-2026-10-24). Agora cada um tem um lugar [x, z, facing em rad] seu, no chão aberto a oeste dos lugares de reunião da secção (m01-squad.js, rally_west) e a 3 m ou mais dos outros e dos lugares finais da ckm, e ajoelha-se de frente para o rio ao chegar. O ponto continua a ser o lugar final do artilheiro da ckm. Nowicki (desaparece com a bomba que corta o cabo), o doente da estação, o jogador, os civis e as equipas de fogo não têm lugar aqui. Dramatização de jogo: sem fonte histórica; os lugares são validados ao carregar (src/game/m01-retreat.js) e sem obstáculos (tests/m01-retreat-slots.test.js)."
+  },
   "events": [
     {
       "id": "evt_m01_intro_card",
@@ -2160,7 +2211,15 @@
     { "id": "dlg_m01_196", "speaker": "staszek_pawlak", "text": "Em posição no tabuleiro!", "context": "reativa; squadMove arrive_deck (R2-a): a dupla chega ao posto do tabuleiro", "priority": 2, "note": "PL: Na pozycji na przęśle! | 2026-10-24 (R2-a, coordenação da secção): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "squadMove", "when": {"node": ["arrive_deck"], "near": {"of": "speaker", "m": 100}}, "cooldown": 30, "max": 1, "group": "sec_arrive_deck"} },
     { "id": "dlg_m01_197", "speaker": "east_platoon_voice", "text": "Daqui cobrimos!", "context": "reativa; squadMove arrive_deck", "priority": 2, "note": "PL: Stąd osłaniamy! | 2026-10-24 (R2-a, coordenação da secção): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "squadMove", "when": {"node": ["arrive_deck"], "near": {"of": "speaker", "m": 100}}, "cooldown": 30, "max": 1, "group": "sec_arrive_deck"} },
     { "id": "dlg_m01_198", "speaker": "staszek_pawlak", "text": "Na trincheira!", "context": "reativa; squadMove arrive_trench: a dupla chega ao outro posto da trincheira", "priority": 2, "note": "PL: W rowie! | 2026-10-24 (R2-a, coordenação da secção): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "squadMove", "when": {"node": ["arrive_trench"], "near": {"of": "speaker", "m": 100}}, "cooldown": 30, "max": 3} },
-    { "id": "dlg_m01_199", "speaker": "staszek_pawlak", "text": "De volta aos sacos!", "context": "reativa; squadMove arrive_home: a dupla volta ao posto da secção", "priority": 2, "note": "PL: Z powrotem za workami! | 2026-10-24 (R2-a, coordenação da secção): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "squadMove", "when": {"node": ["arrive_home"], "near": {"of": "speaker", "m": 100}}, "cooldown": 30, "max": 3} }
+    { "id": "dlg_m01_199", "speaker": "staszek_pawlak", "text": "De volta aos sacos!", "context": "reativa; squadMove arrive_home: a dupla volta ao posto da secção", "priority": 2, "note": "PL: Z powrotem za workami! | 2026-10-24 (R2-a, coordenação da secção): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "squadMove", "when": {"node": ["arrive_home"], "near": {"of": "speaker", "m": 100}}, "cooldown": 30, "max": 3} },
+    {"id": "dlg_m01_200", "speaker": "pawel_krawiec", "text": "Aqui está o corte. Quando a caixa chegar, começamos.", "context": "reativa; operação dos sapadores (R3-a), fase standby: a equipa seguiu o cabo e parou no corte, à espera da caixa", "priority": 2, "note": "PL: Tu jest przerwa. Jak przyjdzie skrzynka, zaczynamy. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["standby"], "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}},
+    {"id": "dlg_m01_201", "speaker": "pawel_krawiec", "text": "Caixa aberta. Vejam as pontas.", "context": "reativa; etapa inspect: a caixa chegou, examina-se a ligação", "priority": 2, "note": "PL: Skrzynka otwarta. Obejrzyjcie końce. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["inspect"], "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}},
+    {"id": "dlg_m01_202", "speaker": "sapper_2", "text": "Seguro aqui. Pode emendar.", "context": "reativa; etapa splice: o ajudante segura o cabo", "priority": 3, "note": "PL: Trzymam tutaj. Możesz łączyć. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["splice"], "progress": {"objective": "obj_m01_cover_repair", "min": 12}, "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}},
+    {"id": "dlg_m01_203", "speaker": "pawel_krawiec", "text": "Testem a linha.", "context": "reativa; etapa test: a emenda do primeiro corte está feita", "priority": 2, "note": "PL: Sprawdźcie linię. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["test"], "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}},
+    {"id": "dlg_m01_204", "speaker": "sapper_2", "text": "Sem passagem. Falta o outro corte.", "context": "operação dos sapadores (R3-a), etapa fail: o teste do primeiro corte não dá passagem (falha única e determinista, para todos os níveis); guionada, sempre dita, no instante em que a etapa começa", "priority": 1, "note": "PL: Brak przejścia. Brakuje drugiego przerwania. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo."},
+    {"id": "dlg_m01_205", "speaker": "pawel_krawiec", "text": "Seguimos o cabo. O outro corte é mais adiante.", "context": "reativa; etapa relocate: a equipa segue o cabo até ao segundo corte", "priority": 2, "note": "PL: Idziemy za kablem. Drugie przerwanie jest dalej. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["relocate"], "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}},
+    {"id": "dlg_m01_206", "speaker": "sapper_3", "text": "Último teste.", "context": "reativa; etapa test2: a linha inteira", "priority": 3, "note": "PL: Ostatnia próba. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["test2"], "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}},
+    {"id": "dlg_m01_207", "speaker": "pawel_krawiec", "text": "O vão caiu. Vejo-o daqui.", "context": "reativa; fase verify: os sapadores olham o resultado da demolição leste (06:10) antes de seguirem a retirada", "priority": 2, "note": "PL: Przęsło leży. Widzę je stąd. | 2026-10-24 (R3-a, operação dos sapadores): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "poll", "when": {"sapperStage": ["verify"], "near": {"of": "speaker", "m": 90}}, "cooldown": 0, "max": 1}}
   ],
   "callouts": {
     "note": "Falas curtas acionadas por eventos reais (Prompt §31). Só tocar quando o evento correspondente acontece de fato; limite de 2 vozes simultâneas; granada/aviso de demolição têm prioridade sobre ambiente.",

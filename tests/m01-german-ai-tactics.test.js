@@ -12,11 +12,16 @@ import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
 import {DECK_SAFE_X,deckLines,deckLimitNode,deckLineNumber} from '../src/game/m01-deck-assault.js';
 import {M01_DIFFICULTY} from '../src/game/m01-difficulty.js';
 import {validateM01AudioEvent} from '../src/game/m01-audio-events.js';
+import {newBarkState} from '../src/game/m01-barks.js';
 import {atLevel} from './helpers/m01-danger.js';
 import {json} from './helpers/m01-determinism.js';
 import {P,T,dist,load,entry,station,isolate,pair,scene,eventsOf} from './helpers/m01-deck-scene.js';
 
-const calm=s=>{for(const a of pair(s))a.rounds=0;};   // the Poles of the section hold their fire (a scene about the lines is not about their rifles)
+// the Poles of the section hold their fire (a scene about the lines is not about their rifles) and are not under fire when the scene begins.
+// 2026-10-25 re-pin (R3-a review, golden amendment 19 regenerated): the save of the first tick of the deck assault on the control route now falls 2.85 s after the last pin of the pair (suppressedUntil 597.60 at clock 600.45),
+// inside the 3 s window of the pressure (pressure.windowSec), so a man at line 0 stepped to line 1 on the first tick of every scene that said «the Poles are not under fire». A calm scene starts with nobody pinned (what
+// the scenes meant); the pins they want they set themselves (pin(), suppressedUntil = clock + n).
+const calm=s=>{for(const a of pair(s)){a.rounds=0;a.suppressedUntil=0;}};
 const tactic=(evs,kind)=>evs.filter(e=>e.type==='deck-tactic'&&(!kind||e.kind===kind));
 const pin=s=>{for(const a of pair(s))a.suppressedUntil=s.clock+5;};
 
@@ -268,7 +273,9 @@ test('the stick grenade: thrown at a Pole the man cannot hit with the rifle (the
   s.clock-=T.grenade.gapSec/2;assert.equal(s.deckGrenade(other),false,'and the squad throws one every gapSec');
   s.clock+=T.grenade.gapSec;assert.equal(s.deckGrenade(other),true);assert.equal(german(s).length,2);
   // his trigger throws before it fires: the same call through deckFire (the rifle is not used)
-  ({s,man}=bomber());const fired=man.firedAt;man.cooldown=0;s.deckFire(man,false);assert.equal(german(s).length,1);assert.equal(s.enemyFire.rounds.length,0,'no round with the grenade');assert.ok(man.firedAt>fired);
+  // 2026-10-24 re-pin (R3-a, golden amendment 19: the sappers' staged operation): the save of the first tick of the deck assault now has six rounds of other Germans in flight (the control route plays out differently from
+  // the repair on); the property is that THE THROW adds none, so it is counted against the rounds already in the air instead of against zero.
+  ({s,man}=bomber());const fired=man.firedAt,inFlight=s.enemyFire.rounds.length;man.cooldown=0;s.deckFire(man,false);assert.equal(german(s).length,1);assert.equal(s.enemyFire.rounds.length,inFlight,'no round with the grenade');assert.ok(man.firedAt>fired);
   // the overwatch never throws
   ({s,man}=bomber());const over=s.actor('de_spans_0');Object.assign(over,{x:man.x,z:man.z});over.deck.phase='clear';over.cooldown=0;over.rounds=5;s.deckFire(over,false);assert.equal(german(s).length,0);
 });
@@ -366,6 +373,10 @@ test('the explosion is fair: the first grenade of an engagement never takes the 
 
 test('the warning: the grenade lies on the ground for the rest of its fuse and the existing bark of Kowal (dlg_m01_138, «Granada! Abaixem!») fires for it; the renderer\'s data is the grenades.active entry',()=>{
   const {s,man}=bomber();
+  // 2026-10-25 re-pin (R3-a review, golden amendment 19 regenerated): the save of the first tick of the deck assault now ends a busy minute of the bark director (eight lines in the last 60 s: the budget of the channel is
+  // spent, so no line is said) and falls 7.5 s after the wound of Bąk, inside the 4-19 s window of his follow-up line (dlg_m01_104, priority 2), which would take the free channel before the warning of priority 1 can
+  // cut it. The scene is about the grenade's warning, so the director starts from an empty ledger and Bąk's follow-up is not due (as tests/m01-cover-origin.test.js does for its quiet moment).
+  s.timers.barks=newBarkState();s.flags['m01.bak_status']='rescued_by_dudek';
   const kowal=s.actor('szymon_kowal');Object.assign(kowal,{active:true,x:COVER.x+2,z:COVER.z+1,y:s.world.heightAt(COVER.x+2,COVER.z+1),state:'GUARD'});
   assert.equal(s.deckGrenade(man),true);
   const g=german(s)[0];

@@ -16,6 +16,7 @@ import mapLayout from '../../missions/m01-tczew/map-layout.json' with { type: 'j
 import { HOLD_AREA, WEST_SAFE_X } from './m01-pacing.js';
 import { escorted } from './m01-corridor.js';
 import { SECTION_CALLOUT_KINDS, SECTION_ORDER_KINDS } from './m01-audio-events.js';
+import { sapperPhase, SAPPER_PHASES } from './m01-sappers.js';
 
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const inside=(p,a)=>p.x>=a.minX&&p.x<=a.maxX&&p.z>=a.minZ&&p.z<=a.maxZ;
@@ -116,6 +117,7 @@ const CONDITIONS={
   holdVisited:()=>[1,s=>s.timers.holdAccessVisited===true],
   inArea:(name,k)=>{const a=area(name,k.fail);return [1,s=>inside(s.player,a)];},
   repairPins:({min,eq})=>[1,s=>{const n=s.timers.repairPins??0;return eq!==undefined?n===eq:n>=min;}],
+  sapperStage:list=>[1,s=>list.includes(sapperPhase(s).id)],   // R3-a: the phase of the sappers' operation (m01-sappers.js: camp, locate, standby, inspect ... test2, report, ready, verify)
   repairResume:()=>[1,s=>{const u=s.timers.repairSuppressedUntil;return (s.timers.repairPins??0)>=1&&u>0&&s.clock>=u&&s.clock-u<1.5;}],
   ckmPhase:list=>[1,s=>{const g=gunner(s);return Boolean(g?.ckm)&&list.includes(g.ckm.phase);}],
   ckmBurst:({max})=>[1,s=>(gunner(s)?.ckmFire?.bursts??Infinity)<=max],
@@ -224,6 +226,7 @@ export function compileBarks(def=definition){
       if(name==='sinceEvent')eventKnown(arg.event);
       if(name==='progress')objectiveKnown(arg.objective);
       if(name==='readiness')eventKnown(arg);
+      if(name==='sapperStage'&&(!Array.isArray(arg)||!arg.length||!arg.every(x=>SAPPER_PHASES.includes(x))))at(`sapperStage needs a list of phases of ${SAPPER_PHASES.join(', ')}`);
       if(name==='farFrom'||name==='distTo'||name==='bearing')featureIds.has(arg.point)||at(`unknown map point ${arg.point}`);
       const [rank,test,only]=make(arg,k);
       if(only&&!only.includes(b.on))at(`condition ${name} needs the trigger ${only.join('/')}, not ${b.on}`);

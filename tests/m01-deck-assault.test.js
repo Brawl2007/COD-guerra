@@ -142,6 +142,10 @@ test('they fall back on their cue: the squad breaks on breakOut men out of the f
   // 2026-10-24 re-pin (R2-b): the deadline is maxSec, and maxSec + closeExtraSec while any living man has a closing line as his limit (deckExtraSec): at maxSec every living man is falling back or clear unless a man
   // has gone on to a closing line, and at maxSec + closeExtraSec every living man is falling back or clear, whatever the lines.
   const late=load(o.snap.entry),t0=late.clock;
+  // 2026-10-24 re-pin (R3-a, golden amendment 19: the sappers' staged operation): the control route plays out differently from the repair on (the same chaotic divergence as after every change of timing), and from
+  // the save at the entry the section's real fire (R2-b) and the rearguard now kill all six of the assault before the blast (de_spans_9 at t0+178 s ... de_spans_7 at t0+266 s: measured), so there is no knot to look at.
+  // What this check is about is where the living regroup, not how many of them the Poles happen to kill on this route: the six are made unkillable here (health 1e9), nothing else is touched.
+  for(const a of assault(late))a.health=1e9;
   while(late.clock<t0+P.maxSec+.1)late.tick(.05);
   const onLine=assault(late).some(a=>a.alive&&a.active&&deckLineNumber(a)>0);
   if(!onLine)for(const a of assault(late).filter(a=>a.alive))assert.ok(['fallback','clear'].includes(a.deck.phase),`${a.id} ${a.deck.phase}`);
