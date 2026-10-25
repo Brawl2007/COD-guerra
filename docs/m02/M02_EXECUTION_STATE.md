@@ -1,6 +1,6 @@
 # M02 — Continuação efetiva após publicação do Claude API
 
-Atualizado em 2026-10-25. Branch local única: `codex/m02-recovery-v1`.
+Atualizado em 2026-10-25. Branch única publicada: `codex/m02-recovery-v1`. Último checkpoint de código: `caf3541` (atlas e interações), após `7f25739` (GLB/arma/áudio).
 **Estado atual: integração de apresentação e interações em progresso; NÃO declarar M02 concluída.**
 
 ## Origem recuperada e decisões
@@ -30,7 +30,7 @@ Atualizado em 2026-10-25. Branch local única: `codex/m02-recovery-v1`.
 - O teste de áudio foi reforçado para usar Espaço no controlador normal, em vez de chamar o sintetizador diretamente; **PASS** na execução focada final: 1 tiro real registado, contexto running e pico de amostra **0,187886**. Gravação MediaRecorder evita perder o sinal quando o frame de software atrasa o processamento da tecla. Tentativas anteriores mediam antes do input e falharam; não foram contadas como sucesso. Log: `browser-input-audio.txt`.
 - A suíte Node global `npm test` foi **interrompida**, não aprovada: testes longos M01 continuavam a executar. Não somar os casos parcialmente executados nem afirmar regressão global verde. Os 35 testes M02 e as verificações browser acima são os resultados concluídos.
 - Evidência versionada: `docs/verification/m02-runtime/recovery-2026-10-25/`. Capturas são verificações por cenas, não playtest contínuo. Telemetria do spec legado ainda contém `renderFrame(0.016, 0.5)`; os seus 62,5 FPS não são benchmark.
-- Código da simulação, layouts, testes anteriores e ficheiros M01 não alterados. Main, produção e remoto não modificados. Sem force-push. A publicação da branch de progresso é indicada no relatório final.
+- Código da simulação, layouts, testes anteriores e ficheiros M01 não alterados. Main, produção e remoto não modificados. Sem force-push. Push normal da branch confirmado. PR não criado: a operação de leitura `gh api repos/Brawl2007/COD-guerra/pulls?...` devolveu Forbidden em api.github.com. Git HTTPS read/write funciona; não inferir falta de acesso Git nem pedir token apenas a partir do estado do gh.
 
 ## Ainda necessário para concluir a missão
 
