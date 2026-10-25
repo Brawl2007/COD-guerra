@@ -806,8 +806,8 @@ export class M01View {
     this.terrain?.sync(this.owner.quality);
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
+    const sapperOps=sim.sapperOps;this.repairLine.sync(sapperOps,sim.world);   // R3-a: before the demolition and the actors (tests/m01-demolition.test.js pins updateDemolition directly before updateActors)
     this.updateDemolition(state,time,sim);
-    const sapperOps=sim.sapperOps;this.repairLine.sync(sapperOps,sim.world);
     this.updateActors(sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
     this.horizonGlow.visible=Boolean(flash.active);

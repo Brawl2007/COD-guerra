@@ -11,8 +11,11 @@ const load=snapshot=>{const s=new M01Simulation();s.restoreSnapshot(snapshot);re
 // speak it; 19390901, 1 and 5 show the HUD message, which is the branch pinned by the test 'when no voice can be said' below). Before the stoppage entered the timeline the default seed
 // happened to have the channel open at clock 506.75; now the call falls at clock 501.45, 3.15 s after dlg_m01_129 (the channel keeps a 4 s gap) and the HUD message is shown instead.
 // The assertions of the first test are unchanged; it needs a route on which a voice can be said, so it runs on seed 2 (same pilot as toCoverAdjustment, which has no seed parameter).
+// 2026-10-24 re-pin 2 -> 3 (R3-a, golden amendment 19: the sappers' staged operation, whose stage lines and timing move the busy minutes of the channel): on seed 2 the call now falls 3 s after another line and the HUD message
+// is shown; the call is still spoken on half the seeds (measured on the 12 standard seeds: 1, 3, 6, 7, 10 and 11 speak it, 2, 4, 5, 8, 9 and 19390901 show the message), and seed 3 is the next that does, with the same node,
+// flag and status line as before.
 const spokenScenario=()=>spokenFlow??=(()=>{
-  const d=toRepair(driver(2)),{sim,walk,step,until}=d;
+  const d=toRepair(driver(3)),{sim,walk,step,until}=d;
   walk(-115,27);walk(-26.5,28);step({crouch:true});until(()=>sim.active('hold_access'),500);
   d.beforeCoverAdjustment=sim.snapshot();until(()=>sim.timers.coverFire,65);return d;})();
 
@@ -71,7 +74,9 @@ test('when no voice can be said the adjustment warning is still the HUD message,
   for(let i=0;i<70*20&&!s.timers.coverFire;i++)s.tick(.05,{});
   assert.ok(s.timers.coverFire,'the salvo came');
   assert.equal(s.dialogueConsumed.some(t=>/^(co_m01_cover_rotation|dlg_m01_(035|136|137))#/.test(t)),false);
-  assert.ok(s.drainEvents().some(e=>e.type==='message'&&e.message.startsWith('Zieliński: Metralhadora nos portões')));
+  // 2026-10-24 re-pin (R3-a): on this route the first salvo is a gate rifleman's (de_east_7), not an MG34's, so the message says «Atiradores nos portões de Lisewo» (src/game/m01-simulation.js coverFireStatus words it by
+  // the weapon of the shooter); the property is the same: the order to change cover is still the HUD message when no voice can be said.
+  assert.ok(s.drainEvents().some(e=>e.type==='message'&&/^Zieliński: (Metralhadora|Atiradores) nos portões/.test(e.message)));
   assert.match(s.mission.status,/mude de cobertura/);
 });
 
