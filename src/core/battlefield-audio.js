@@ -206,6 +206,44 @@ export function planWeaponBurst(weapon,distance,{rounds=1,interval=null,key='',d
   return grains;
 }
 
+// ---------------------------------------------------------------- R2-c: chegada de impactos e granadas ao ouvinte
+// O som de um impacto de bala chega com o atraso da distância (343 m/s), depois do voo da bala; o estalo supersónico de quem passa perto (planBulletPass)
+// continua a ser da simulação (event.crack) e chega ANTES do relatório da arma (a bala é mais rápida do que o som). Só apresentação: nada aqui decide.
+/** Até aqui (= banda 'close') o impacto ouve-se de imediato; além, soundDelay(d). */
+export const IMPACT_IMMEDIATE_M=45;
+/** Além disto o impacto de uma bala de espingarda já não se distingue do fundo (ganho de ATTENUATION.impact < 0,1 e corte de ar). */
+export const IMPACT_AUDIBLE_M=160;
+/**
+ * Quando e se se ouve o impacto de uma ronda. `distance` = impacto -> ouvinte; `flightSec` = voo da ronda desde o disparo até ao impacto (0 se o evento
+ * já é o da chegada, como o `round-impact` alemão). Devolve {audible, immediate, at, band}; `at` em relógio da missão.
+ */
+export function roundImpactSoundPlan(distance,clock,flightSec=0){
+  const d=Math.max(0,Number(distance)||0),fly=Math.max(0,Number(flightSec)||0),band=acousticBand(d);
+  if(!(d<=IMPACT_AUDIBLE_M))return {audible:false,immediate:false,at:clock+fly,band};
+  const immediate=fly===0&&d<=IMPACT_IMMEDIATE_M;
+  return {audible:true,immediate,at:clock+fly+(immediate?0:soundDelay(d)),band};
+}
+/** O arremesso de uma Stielhandgranate (cordão, espoleta) só se ouve perto; a explosão tem o seu próprio som (m01-blast, escala 'small'). */
+export const GRENADE_THROW_AUDIBLE_M=110;
+export function grenadeThrowSoundPlan(distance,clock){
+  const d=Math.max(0,Number(distance)||0),band=acousticBand(d);
+  return d<=GRENADE_THROW_AUDIBLE_M?{audible:true,at:clock+soundDelay(d),band}:{audible:false,at:clock,band};
+}
+/**
+ * Arremesso de uma granada de mão alemã com espoleta de cordão: o estalido do cordão, o deslizar, o "pop" da espoleta que começa a arder e o
+ * chiado fraco do rastilho. Curto e seco: não é uma explosão. Estrutura própria (nenhum recurso de áudio novo).
+ */
+export function planGrenadeThrow(distance,{key=''}={}){
+  const d=Math.max(0,Number(distance)||0),near=d<45,v=(k,j=.1)=>audioVariation(`gthrow:${key}:${k}`,1-j,1+j);
+  const g=[
+    {layer:'cord-click',src:'noise',noise:'white',at:0,dur:.012*v('cd',.3),vol:.05*(near?1:.6),attack:.0004,filter:{type:'highpass',freq:4200*v('cf'),q:.8}},
+    {layer:'cord-slide',src:'noise',noise:'white',at:.012,dur:.09*v('sd',.2),vol:.03,filter:{type:'bandpass',freq:2400*v('sf'),q:3,freqEnd:1500}},
+    {layer:'igniter-pop',src:'noise',noise:'white',at:.1,dur:.05*v('pd',.25),vol:.055,filter:{type:'bandpass',freq:1100*v('pf'),q:.8,freqEnd:700}},
+    {layer:'igniter-thump',src:'osc',wave:'triangle',freq:190*v('tf'),freqEnd:92,at:.1,dur:.05,vol:.025},
+  ];
+  if(near)g.push({layer:'fuse-hiss',src:'noise',noise:'white',at:.15,dur:.24*v('hd',.2),vol:.016,filter:{type:'highpass',freq:5200*v('hf'),q:.7,freqEnd:3400}});
+  return humanize(g,`gthrow:${key}:h`,{pitch:.05,gain:.2,time:.003});
+}
 // ---------------------------------------------------------------- balas que passam e impactos
 export const PASS_VARIANTS=3;
 /**
