@@ -65,5 +65,7 @@ export function buildM01AcceptedPropPlacements(world){
  for(let x=-318;x<-42;x+=3)if(x<M01_FENCE_GATE.x0||x>M01_FENCE_GATE.x1)add('fence_barbed',x,66,0,'low',0,[1,1,1],'combat-area');
  for(let x=-450;x<-354;x+=3)add('fence_wood',x,61,0,'medium',0,[1,1,1],'station-yard');
  for(const [type,x,z,yaw]of [['water_crane',-415,-23,0],['coal_pile',-402,-24,0],['semaphore_signal',-345,-22,0],['semaphore_signal',-60,-9,Math.PI],['point_lever',-438,-24,.25]])add(type,x,z,yaw,'low',0,[1,1,1],'station-yard');
+ // R4 WP-1: a new act's area world (src/world/m01-area-world.js) adds its own kit placements after these; the current act's TczewWorld has none, so its list is unchanged.
+ for(const p of world.areaProps??[])add(p.type,p.x,p.z,p.yaw,p.quality,p.lift,[1,1,1],p.area,p.cluster);
  return items;
 }

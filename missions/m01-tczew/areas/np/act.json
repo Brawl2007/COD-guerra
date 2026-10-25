@@ -1,0 +1,609 @@
+{
+  "schemaVersion": 1,
+  "id": "act_vii_a_north",
+  "area": "np",
+  "title": "VII-a · Perímetro norte, manhã",
+  "status": "INC-1 (R4 WP-0 + WP-1). Só corre com acts.enabled (mission.json) ou com ?acts=1 / ?act=vii-a (QA). Nada aqui está VALIDADO em jogo.",
+  "classificationLegend": {
+    "DOCUMENTED": "Facto com fonte no repositório (pode ser fonte única: a certeza vai indicada).",
+    "RECONSTRUCTED": "Lugar, forma ou posição construída a partir de fontes indiretas.",
+    "GAMEPLAY_DRAMATIZATION": "Inventado para o ritmo do jogo; nunca apresentado como facto."
+  },
+  "history": [
+    {
+      "id": "h_np_attack",
+      "text": "Por volta das 07:00, ataque alemão vindo do norte (Koźlin/Koźliny): uma companhia com veículos blindados; um veículo destruído por um canhão AT; a infantaria repelida por metralhadoras.",
+      "classification": "DOCUMENTED",
+      "certainty": "BAIXA (fonte única)",
+      "sources": [
+        "T08"
+      ],
+      "gaps": [
+        "topónimo exato",
+        "tipo dos blindados",
+        "posição do canhão AT",
+        "hora exata"
+      ]
+    },
+    {
+      "id": "h_np_heimwehr",
+      "text": "A SS-Heimwehr Danzig chegou a norte de Dirschau de madrugada; atacou a partir do norte durante o dia.",
+      "classification": "DOCUMENTED",
+      "certainty": "BAIXA",
+      "sources": [
+        "T16"
+      ],
+      "use": "Só contexto: em jogo são «tropas alemãs vindas do norte», sem insígnias nem nome de unidade (decisão D-2 pendente)."
+    },
+    {
+      "id": "h_np_positions",
+      "text": "Posições de campo a norte e noroeste: 2.ª e 3.ª companhias, pelotões de metralhadoras, pelotão AT (Bofors wz.36), morteiros.",
+      "classification": "DOCUMENTED",
+      "certainty": "MÉDIA (composição); posições pendentes (P4)",
+      "sources": [
+        "T03",
+        "T08"
+      ]
+    },
+    {
+      "id": "h_np_arrival",
+      "text": "A secção de Zieliński e Wrona chega da cabeça de ponte como reforço.",
+      "classification": "GAMEPLAY_DRAMATIZATION",
+      "sources": []
+    }
+  ],
+  "clock": {
+    "battleClockStart": "07:05:00",
+    "label": "MANHÃ · ~07:00",
+    "labelNote": "A hora nunca aparece exata no ecrã: o ataque de ~07:00 é de fonte única (T08) e a chegada do jogador é dramatização. O relógio interno (07:05 em diante) só serve à luz e ao som.",
+    "classification": "DOCUMENTED (hora aproximada, fonte única) / GAMEPLAY_DRAMATIZATION (duração do ato)"
+  },
+  "cards": {
+    "entry": {
+      "id": "cs_np_entry",
+      "seconds": 9,
+      "skippable": true,
+      "lines": [
+        "Perímetro norte de Tczew",
+        "1 de setembro de 1939 · manhã, pouco depois da chamada",
+        "O ataque de ~07:00 vindo do norte continua · hora de fonte única (T08)",
+        "Reforço da secção: dramatização · trincheira e posições: reconstrução"
+      ]
+    },
+    "end": {
+      "id": "cs_np_end",
+      "seconds": 9,
+      "skippable": true,
+      "lines": [
+        "Ataque vindo do norte repelido",
+        "Fonte única (T08): um veículo blindado destruído por canhão AT; infantaria repelida por metralhadoras",
+        "Os ataques a norte continuaram durante o dia (T16) · tipo dos veículos e lugar exato: desconhecidos"
+      ]
+    }
+  },
+  "objectives": [
+    {
+      "id": "obj_np_reach_trench",
+      "text": "Junte-se à secção no parapeito norte",
+      "required": true,
+      "marker": "trench_post",
+      "reachM": 3.5,
+      "classification": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "obj_np_hold_north",
+      "text": "Repila o ataque vindo do norte",
+      "required": true,
+      "classification": "DOCUMENTED (ataque repelido, T08) / GAMEPLAY_DRAMATIZATION (papel do jogador)"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "cp_np_e_perimetro",
+      "label": "CP-E",
+      "name": "Perímetro norte — chegada",
+      "trigger": "end of cs_np_entry",
+      "note": "O plano R4 chama CP-F à chegada; a ordem do INC-1 fixa CP-E. Um só checkpoint neste incremento."
+    }
+  ],
+  "events": [
+    {
+      "id": "evt_np_wave",
+      "trigger": {
+        "type": "battleClock",
+        "at": "07:06:10"
+      },
+      "alsoWhen": "o jogador chega ao parapeito (obj_np_reach_trench)",
+      "results": [
+        "a vaga alemã entra pela orla norte"
+      ],
+      "certainty": "DOCUMENTED (ataque) / GAMEPLAY_DRAMATIZATION (momento)",
+      "sources": [
+        "T08"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "grp_np_line",
+      "name": "Fuzileiros da linha norte (companhia do perímetro, nomes fictícios)",
+      "classification": "DOCUMENTED (2.ª/3.ª companhias a norte, T03) / GAMEPLAY_DRAMATIZATION (homens, número)",
+      "rearguard": {
+        "version": 1,
+        "from": "evt_np_wave",
+        "men": [
+          "pl_np_0",
+          "pl_np_1",
+          "pl_np_2",
+          "pl_np_3",
+          "pl_np_4",
+          "pl_np_5",
+          "pl_np_6"
+        ],
+        "posts": [
+          [
+            -497,
+            -1159.2
+          ],
+          [
+            -483,
+            -1159.2
+          ],
+          [
+            -467,
+            -1159.2
+          ],
+          [
+            -455,
+            -1159.2
+          ],
+          [
+            -375,
+            -1159.2
+          ],
+          [
+            -361,
+            -1159.2
+          ],
+          [
+            -346,
+            -1159.2
+          ]
+        ],
+        "joinWithinM": 30,
+        "runSpeed": 5.5,
+        "fire": {
+          "weapon": "kb_wz29",
+          "pauseSec": 6.5,
+          "sigmaMil": [
+            7,
+            6
+          ],
+          "clearanceM": 1.2,
+          "headroomM": 0.15,
+          "rangeM": 250,
+          "riseBeforeSec": 0.9,
+          "holdAfterSec": 1.6
+        },
+        "note": "Mesma fábrica e mesmo modelo de tiro da retaguarda do tabuleiro (m01-rearguard.js rearguardPlan): homens ajoelhados no posto, sobem para disparar uma ronda real (dispersão em milésimos, dano por parte, supressão a 3 m)."
+      }
+    },
+    {
+      "id": "grp_np_section",
+      "name": "Secção de Zieliński (chega com o jogador)",
+      "classification": "GAMEPLAY_DRAMATIZATION",
+      "leader": {
+        "id": "marek_zielinski",
+        "from": [
+          -417,
+          -1083
+        ],
+        "post": [
+          -417,
+          -1159.2
+        ]
+      },
+      "stage": {
+        "slots": {
+          "staszek_pawlak": [
+            -407.5,
+            -1082
+          ],
+          "szymon_kowal": [
+            -404,
+            -1080.5
+          ]
+        }
+      },
+      "squad": {
+        "teams": [
+          [
+            "staszek_pawlak"
+          ],
+          [
+            "szymon_kowal"
+          ]
+        ],
+        "posts": [
+          null,
+          {
+            "id": "np_trench",
+            "slots": {
+              "staszek_pawlak": [
+                -402,
+                -1159.2
+              ],
+              "szymon_kowal": [
+                -390,
+                -1159.2
+              ]
+            }
+          }
+        ],
+        "moves": [
+          {
+            "team": 0,
+            "to": 1,
+            "call": "order",
+            "orderAfterSec": 1.5
+          },
+          {
+            "team": 1,
+            "to": 1,
+            "call": "follow",
+            "afterArrivalSec": 1
+          }
+        ],
+        "pace": 4.2,
+        "arriveM": 0.9,
+        "stallSec": 45,
+        "lastCall": "07:20:00",
+        "cover": {
+          "freshSec": 10,
+          "lookSec": [
+            2.5,
+            2
+          ]
+        }
+      },
+      "note": "Os lanços da secção usam a fábrica de m01-squad.js (makeSquadPlan) com os mesmos campos da retirada da cabeça de ponte."
+    },
+    {
+      "id": "grp_np_ckm",
+      "name": "Guarnição da ckm wz.30 (pelotão de metralhadoras do perímetro)",
+      "classification": "DOCUMENTED (metralhadoras repelem a infantaria, T08; pelotões de mtr, T03) / RECONSTRUCTED (posição)",
+      "root": [
+        -440,
+        -3,
+        -1159.5
+      ],
+      "yawDeg": 0,
+      "fire": {
+        "belt": 330,
+        "burstRounds": 8,
+        "interval": 0.1,
+        "burstSec": 1.3,
+        "feedSec": 3.2,
+        "aimSec": 1.2,
+        "holdSec": 8,
+        "cooldown": [
+          3,
+          6
+        ],
+        "bias": [
+          2.5,
+          1.2
+        ],
+        "cone": [
+          5,
+          2.5
+        ],
+        "damage": 34,
+        "suppressSec": 2.5,
+        "engageSec": 10,
+        "closeM": 120,
+        "rangeM": 400
+      },
+      "fireNote": "Responde aos clarões (um alemão que disparou há menos de engageSec) como a ckm do ato atual; abaixo de closeM varre qualquer alemão que veja. Dispersão de uma posição improvisada a 100-250 m (mil): valores de jogo, não balística medida."
+    },
+    {
+      "id": "grp_np_de",
+      "name": "Tropas alemãs vindas do norte (sem insígnias)",
+      "classification": "DOCUMENTED (ataque do norte, T08/T16) / GAMEPLAY_DRAMATIZATION (efetivo, movimentos)",
+      "uniformNote": "Modelo alemão genérico do jogo; sem insígnias SS nem nome de unidade até haver fonte de uniformes de 1939 (D-2).",
+      "assault": {
+        "version": 1,
+        "from": "evt_np_wave",
+        "entryZ": -1385,
+        "clearZ": -1380,
+        "overwatch": [
+          {
+            "id": "de_np_0",
+            "weapon": "mg34",
+            "node": [
+              -461,
+              -1322
+            ]
+          },
+          {
+            "id": "de_np_1",
+            "weapon": "mg34",
+            "node": [
+              -382,
+              -1326
+            ]
+          },
+          {
+            "id": "de_np_2",
+            "weapon": "kar98k",
+            "node": [
+              -521,
+              -1318
+            ]
+          },
+          {
+            "id": "de_np_3",
+            "weapon": "kar98k",
+            "node": [
+              -339,
+              -1318
+            ]
+          }
+        ],
+        "lanes": [
+          {
+            "id": "west",
+            "men": [
+              "de_np_4",
+              "de_np_5",
+              "de_np_6"
+            ],
+            "x": [
+              -507,
+              -501,
+              -495
+            ]
+          },
+          {
+            "id": "centre",
+            "men": [
+              "de_np_7",
+              "de_np_8",
+              "de_np_9"
+            ],
+            "x": [
+              -433,
+              -427,
+              -421
+            ]
+          },
+          {
+            "id": "east",
+            "men": [
+              "de_np_10",
+              "de_np_11",
+              "de_np_12"
+            ],
+            "x": [
+              -361,
+              -355,
+              -349
+            ]
+          }
+        ],
+        "stations": [
+          -1300,
+          -1276,
+          -1252,
+          -1230,
+          -1210
+        ],
+        "limitStation": 3,
+        "cover": {
+          "widthM": 2.2,
+          "depthM": 0.9,
+          "heightM": 1.15,
+          "aheadM": 0.7,
+          "bypassM": 1.9
+        },
+        "walkSpeed": 2.2,
+        "rushSpeed": 4.6,
+        "fallbackSpeed": 5.2,
+        "coverSec": [
+          1.5,
+          4
+        ],
+        "holdSec": [
+          10,
+          20
+        ],
+        "closeAfterSec": 60,
+        "pinnedWaitMaxSec": 4,
+        "breakPinnedSec": 75,
+        "breakOut": 7,
+        "maxSec": 200,
+        "fire": {
+          "assaultPauseSec": 6,
+          "overwatchPauseSec": 8,
+          "riseBeforeSec": 0.9,
+          "holdAfterSec": 1.5,
+          "rangeM": 420,
+          "rifle": {
+            "bias": [
+              1.6,
+              1.0
+            ],
+            "cone": [
+              3.2,
+              2.2
+            ]
+          },
+          "mg": {
+            "rounds": 6,
+            "interval": 0.075,
+            "bias": [
+              1.4,
+              0.9
+            ],
+            "cone": [
+              2.6,
+              1.6
+            ]
+          }
+        },
+        "playerWeight": {
+          "recruta": 1,
+          "soldado": 1.5,
+          "veterano": 2
+        },
+        "note": "Generalização do assalto do tabuleiro (m01-deck-assault.js: fases advance/cover/hold/fallback/clear, registo `deck` com as mesmas chaves) a uma linha de aproximação norte → sul: lanços entre estações, abrigo atrás de terra revolvida, linha de apoio com duas MG34, recuo quando as baixas ou a supressão o impõem."
+      }
+    }
+  ],
+  "cast": [
+    {
+      "id": "marek_zielinski",
+      "name": "Zieliński",
+      "role": "SQUAD_LEADER",
+      "essential": true
+    },
+    {
+      "id": "staszek_pawlak",
+      "name": "Pawlak",
+      "role": "RADIO_OPERATOR",
+      "essential": true
+    },
+    {
+      "id": "szymon_kowal",
+      "name": "Kowal",
+      "role": "SUPPORT",
+      "essential": true,
+      "rounds": 20
+    },
+    {
+      "id": "ckm_gunner",
+      "name": "Atirador da ckm",
+      "role": "SUPPORT",
+      "essential": true
+    },
+    {
+      "id": "ckm_loader",
+      "name": "Municiador da ckm",
+      "role": "SUPPORT",
+      "essential": true
+    }
+  ],
+  "callouts": [
+    {
+      "id": "np_001",
+      "on": "arrive_card_end",
+      "speaker": "marek_zielinski",
+      "text": "Wrona, para o parapeito! Ao meu lado, depressa.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_002",
+      "on": "wave_seen",
+      "speaker": "marek_zielinski",
+      "text": "Movimento na orla norte! Infantaria a avançar em lanços.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_003",
+      "on": "open_fire",
+      "speaker": "marek_zielinski",
+      "text": "Fogo à vontade! Apontem aos que se levantam para correr.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_004",
+      "on": "mg_fire",
+      "speaker": "staszek_pawlak",
+      "text": "Metralhadora deles na orla, à frente!",
+      "cooldownSec": 40
+    },
+    {
+      "id": "np_005",
+      "on": "man_down",
+      "speaker": "staszek_pawlak",
+      "text": "Homem atingido na linha!",
+      "cooldownSec": 20
+    },
+    {
+      "id": "np_006",
+      "on": "kowal_reload",
+      "speaker": "szymon_kowal",
+      "text": "Carregador! Cubram-me!",
+      "cooldownSec": 25
+    },
+    {
+      "id": "np_007",
+      "on": "enemy_down",
+      "speaker": "marek_zielinski",
+      "text": "Caiu um. Continuem a disparar!",
+      "cooldownSec": 18
+    },
+    {
+      "id": "np_008",
+      "on": "player_pinned",
+      "speaker": "marek_zielinski",
+      "text": "Baixe a cabeça, Wrona! Dispare entre as rajadas.",
+      "cooldownSec": 30
+    },
+    {
+      "id": "np_009",
+      "on": "close",
+      "speaker": "staszek_pawlak",
+      "text": "Estão a cinquenta metros!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_010",
+      "on": "fallback",
+      "speaker": "marek_zielinski",
+      "text": "Estão a recuar! A ckm que varra a orla.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_011",
+      "on": "repelled",
+      "speaker": "marek_zielinski",
+      "text": "Repelidos. Por agora. Contem as munições.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "np_012",
+      "on": "ckm_feed",
+      "speaker": "ckm_loader",
+      "text": "Fita nova!",
+      "cooldownSec": 30
+    }
+  ],
+  "speakers": {
+    "marek_zielinski": "Zieliński",
+    "staszek_pawlak": "Pawlak",
+    "szymon_kowal": "Kowal",
+    "ckm_loader": "Municiador"
+  },
+  "endBeatSec": 7,
+  "resupply": {
+    "reachM": 2.2,
+    "reserveTo": 40,
+    "text": "E · reabastecer na caixa de munições",
+    "note": "Caixas de munições atrás do parapeito (props do kit T12): GAMEPLAY_DRAMATIZATION."
+  },
+  "debrief": {
+    "insertAfter": "db_03",
+    "paragraphs": [
+      {
+        "id": "db_np_01",
+        "enabled": true,
+        "sources": [
+          "T08",
+          "T16"
+        ],
+        "text": "Por volta das 07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blindados, foi detido no perímetro norte de Tczew: um veículo foi destruído por um canhão anticarro e a infantaria foi repelida por metralhadoras. O tipo dos veículos, o lugar exato e a posição do canhão não estão confirmados; o parapeito, a chegada da secção e o combate de Wrona são reconstrução para o jogo."
+      }
+    ]
+  }
+}

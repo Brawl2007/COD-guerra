@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "missionId": "m01_tczew",
+  "area": "np",
+  "title": "Perímetro norte de Tczew — fatia VII-a (400 × 300 m, x −620…−220, z −1350…−1050)",
+  "status": "INC-1 (R4 WP-1). Atrás de mission.json acts.enabled=false: o jogo distribuído não carrega esta área.",
+  "coordinateSystem": "O da M01 (map-layout.json): metros, X+ leste, Z+ sul, norte = −Z, origem no encontro oeste da ponte ferroviária. A fatia fica dentro de north_perimeter (x −900…−100, z −1500…−800).",
+  "classification": "RECONSTRUCTED",
+  "classificationNote": "Direção norte e composição das companhias DOCUMENTED (T03, T08, T16); nenhuma fonte do repositório dá o traçado das trincheiras, a posição da ckm, do canhão AT ou do destroço (P4, P9). Tudo o que está aqui é reconstrução de jogo: um parapeito de terra e sacos (breastwork) de 180 m, um ninho de ckm, terra revolvida e crateras à frente, um destroço genérico.",
+  "bounds": {
+    "playable": {
+      "minX": -620,
+      "maxX": -220,
+      "minZ": -1350,
+      "maxZ": -1050
+    },
+    "outOfBoundsGraceSec": 8,
+    "terrainRegion": {
+      "id": "np_slice",
+      "minX": -630,
+      "maxX": -200,
+      "minZ": -1400,
+      "maxZ": -1030,
+      "note": "O relevo de apresentação (m01-terrain-relief) fica plano aqui, como dentro da área atual, para o solo desenhado coincidir com o da simulação (−3 m). Só com acts.enabled. O limite oeste (x −630) fica a 23 m das árvores da silhueta da cidade (m01-far-landscape, x ≤ −653): a fatia do plano (x −700…−300) foi deslocada 80 m para leste para não as cortar."
+    },
+    "note": "Fora do retângulo: aviso e falha legível após 8 s, como na área atual. A física do jogador trava 10 m além."
+  },
+  "groundY": -3,
+  "points": {
+    "spawn": {
+      "x": -412,
+      "z": -1078,
+      "facingDeg": -90,
+      "note": "Chegada pelo sul (lado da cidade), como reforço: GAMEPLAY_DRAMATIZATION."
+    },
+    "trench_post": {
+      "x": -410,
+      "z": -1159.2,
+      "note": "Posto do jogador no parapeito, entre Zieliński e Pawlak."
+    },
+    "ckm_nest": {
+      "x": -440,
+      "z": -1159.5,
+      "yawDeg": 0,
+      "note": "Raiz da ckm wz.30, virada a norte (−Z). RECONSTRUCTED."
+    },
+    "wreck": {
+      "x": -390,
+      "z": -1240,
+      "note": "Destroço genérico do veículo blindado do ataque de ~07:00 (T08: um veículo destruído por canhão AT). Tipo, modelo e posição desconhecidos (P9): caixa de casco sem torre, rodas nem lagartas visíveis."
+    },
+    "command_post": {
+      "x": -425,
+      "z": -1110,
+      "note": "Ponto de reunião atrás da linha (só marcação)."
+    }
+  },
+  "parapets": {
+    "z0": -1161.2,
+    "z1": -1160.2,
+    "heightM": 1.15,
+    "segments": [
+      [
+        -520,
+        -510
+      ],
+      [
+        -510,
+        -500
+      ],
+      [
+        -500,
+        -490
+      ],
+      [
+        -490,
+        -480
+      ],
+      [
+        -480,
+        -470
+      ],
+      [
+        -470,
+        -460
+      ],
+      [
+        -460,
+        -450
+      ],
+      [
+        -450,
+        -442.5
+      ],
+      [
+        -437.5,
+        -430
+      ],
+      [
+        -430,
+        -420
+      ],
+      [
+        -420,
+        -410
+      ],
+      [
+        -410,
+        -400
+      ],
+      [
+        -400,
+        -390
+      ],
+      [
+        -390,
+        -380
+      ],
+      [
+        -380,
+        -370
+      ],
+      [
+        -370,
+        -360
+      ],
+      [
+        -360,
+        -350
+      ],
+      [
+        -350,
+        -340
+      ],
+      [
+        -340,
+        -330
+      ]
+    ],
+    "nestFront": {
+      "x0": -442.5,
+      "x1": -437.5,
+      "heightM": 0.55,
+      "note": "Frente baixa do ninho: o cano da ckm (0,64 m) dispara por cima."
+    },
+    "note": "Parapeito de terra (breastwork) de 1,15 m: um homem de joelhos (olhos a 1,08 m) fica tapado; de pé (olhos a 1,6 m) vê e dispara por cima. Segmentos de 10 m (caixas da simulação)."
+  },
+  "wreck": {
+    "boxes": [
+      {
+        "id": "np_wreck_hull",
+        "min": [
+          -392.6,
+          -3,
+          -1241.2
+        ],
+        "max": [
+          -387.4,
+          -1.1,
+          -1238.8
+        ]
+      },
+      {
+        "id": "np_wreck_upper",
+        "min": [
+          -391.2,
+          -1.1,
+          -1240.6
+        ],
+        "max": [
+          -388.6,
+          -0.45,
+          -1239.4
+        ]
+      }
+    ],
+    "smoke": {
+      "id": "np_wreck_fire",
+      "x": -390,
+      "y": -1.2,
+      "z": -1240,
+      "burningSinceSec": 420
+    },
+    "classification": "DOCUMENTED (um veículo destruído, T08, fonte única) / RECONSTRUCTED (forma, sítio)"
+  },
+  "props": {
+    "note": "Kit T12 existente (assets/models/provisional/m01/props, original do projecto, sem conteúdo de terceiros). Desenhados pelo M01PropsRuntime e sólidos para o jogador (m01-collision-layout propSolids).",
+    "sandbagRuns": {
+      "z": -1161.52,
+      "fromX": -518.9,
+      "toX": -331,
+      "stepX": 2.2,
+      "skipX": [
+        [
+          -444,
+          -436
+        ]
+      ],
+      "courses": [
+        {
+          "lift": 0,
+          "offsetX": 0
+        },
+        {
+          "lift": 0.565,
+          "offsetX": 1.1
+        }
+      ],
+      "note": "Duas fiadas de sacos (kit T12 sandbag_run, 0,585 m) contra a face norte do parapeito: o topo desenhado (1,15 m) é o topo da caixa da simulação, sem tapar a vista de quem está de pé (olhos a 1,6 m)."
+    },
+    "ammo": [
+      [
+        -414,
+        -1156.8
+      ],
+      [
+        -398,
+        -1156.8
+      ],
+      [
+        -478,
+        -1156.8
+      ],
+      [
+        -358,
+        -1156.8
+      ],
+      [
+        -443.8,
+        -1157.4
+      ]
+    ],
+    "wire": {
+      "z": -1190,
+      "runs": [
+        [
+          -532,
+          -516
+        ],
+        [
+          -480,
+          -442
+        ],
+        [
+          -412,
+          -372
+        ],
+        [
+          -340,
+          -322
+        ]
+      ],
+      "stepX": 3.1
+    }
+  },
+  "craters": [
+    [
+      -450,
+      -1205
+    ],
+    [
+      -375,
+      -1215
+    ],
+    [
+      -520,
+      -1240
+    ],
+    [
+      -398,
+      -1285
+    ],
+    [
+      -325,
+      -1290
+    ],
+    [
+      -480,
+      -1300
+    ],
+    [
+      -390,
+      -1180
+    ],
+    [
+      -530,
+      -1260
+    ]
+  ],
+  "cratersNote": "Só desenho (discos e bordos baixos, sem colisão): marcas do fogo de morteiros/artilharia da manhã (T03, T16: apoio de artilharia, sem posições). Fora das linhas de avanço alemãs.",
+  "features": [
+    {
+      "id": "np_track_south",
+      "type": "road",
+      "polyline": [
+        [
+          -412,
+          -3,
+          -1050
+        ],
+        [
+          -414,
+          -3,
+          -1110
+        ],
+        [
+          -412,
+          -3,
+          -1150
+        ]
+      ],
+      "classification": "RECONSTRUCTED",
+      "note": "Trilho de acesso do sul até à linha (só pintura do solo)."
+    }
+  ],
+  "ground": {
+    "minX": -700,
+    "maxX": 20,
+    "minZ": -1500,
+    "maxZ": -900,
+    "note": "Parte plana do relevo de apresentação à volta da área (m01-terrain-relief: todas as células que tocam a região ficam a −3 m). O campo desenhado (m01-area-dressing) cobre-a com o solo procedural do jogo."
+  },
+  "treeLine": {
+    "minX": -760,
+    "maxX": -120,
+    "z": -1440,
+    "depthM": 40,
+    "count": 64,
+    "note": "Orla arborizada a norte, fora da área jogável e atrás da entrada alemã: só desenho (RECONSTRUCTED; nenhuma fonte dá a vegetação)."
+  }
+}
