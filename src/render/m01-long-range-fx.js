@@ -123,6 +123,16 @@ export function scheduleRoundImpact(pool,event,clock,material,seed){
   return pool.schedule(e.x,e.y,e.z,clock+fly,mat,seed,clock);
 }
 
+/**
+ * A German round that has already landed (`round-impact`, simulation material): from IMPACT_SPECK_FROM_M on it also gets the far dust disc (nearer ones keep the puffs and
+ * chips of the existing impact FX). `material` is the simulation's ('character' = it struck a man: the faint body puff). Returns the slot or -1.
+ */
+export function scheduleLandedRound(pool,event,clock,seed,fromM=IMPACT_SPECK_FROM_M){
+  const p=event?.point;if(!p||![p.x,p.y,p.z].every(Number.isFinite)||!(event.distance>=fromM))return -1;
+  const mat=event.material==='character'?MAT.body:MAT[event.material];if(mat===undefined)return -1;
+  return pool.schedule(p.x,p.y,p.z,clock,mat,seed,clock);
+}
+
 /** Surface class of the end of a round (the same drawn-surface classification the damage decals use for the player's rounds). Event-time only: it allocates. */
 export function classifyRoundEnd(world,end,{trees=null,dir=null}={}){
   if(!world||!end||![end.x,end.y,end.z].every(Number.isFinite))return null;

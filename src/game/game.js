@@ -290,6 +290,7 @@ export class Game {
       this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
       this.renderer.m01.impact(event.point,event.material,this.sim.clock);
+      this.renderer.m01.longRangeLanding(event,this.sim);   // R2-c: a far landing is also a small disc of dust (>= 60 m)
       const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`,shooter=this.sim.actor?.(event.by);
       const direction=shooter?this.spatial(shooter).pan:s.pan,weapon=shooter?.weapon??null;
       this.renderer.m01.roundFeedback(event,this.sim.clock,direction,weapon);

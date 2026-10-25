@@ -4,7 +4,7 @@ import manifest from '../../assets/models/provisional/m01/bridges.manifest.json'
 import { eyePosition, aimDirection } from '../world/spatial.js';
 import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
 import { ckmFlashes, ckmSmoke, CKM_SMOKE_SEC } from './m01-ckm-fx.js';
-import { RoundImpactPool, scheduleRoundImpact, classifyRoundEnd, drawRoundImpacts, tracerDrawn, tracerQuota, tracerHalfWidth, tracerHalfLength, tracerTint, IMPACT_POOL_SLOTS, IMPACT_MATERIALS } from './m01-long-range-fx.js';
+import { RoundImpactPool, scheduleRoundImpact, scheduleLandedRound, classifyRoundEnd, drawRoundImpacts, tracerDrawn, tracerQuota, tracerHalfWidth, tracerHalfLength, tracerTint, IMPACT_POOL_SLOTS, IMPACT_MATERIALS } from './m01-long-range-fx.js';
 import { collectShotFlashes, createFlashList, ShotSmokeTable, flashRadius, flashTint, smokeRadius, SMOKE_SLOTS_BY_TIER, SMOKE_SEC as SHOT_SMOKE_SEC, NEAR_BODY_M } from './m01-shot-fx.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
@@ -386,6 +386,11 @@ export class M01View {
     this.lastEndMaterial=event.hit===true?null:material;   // read by Game for the thud of a round that lands near the player
     if(material===null&&event.hit!==true){lr.airborne++;return -1;}
     return scheduleRoundImpact(lr.pool,event,sim.clock,material,fxSeed(event.end,sim.clock));
+  }
+  /** R2-c: a German round that landed 60 m or more from the camera also draws the far dust disc (the existing near impact FX are untouched). Presentation only. */
+  longRangeLanding(event,sim){
+    if(!this.longRange)this.initLongRangeFx();
+    return scheduleLandedRound(this.longRange.pool,event,sim.clock,fxSeed(event.point,sim.clock));
   }
   /** `gameDiagnostics().m01.longRangeFire`: what the long-range presentation did (read-only counters). */
   get longRangeDiagnostics(){

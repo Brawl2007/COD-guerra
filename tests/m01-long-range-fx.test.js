@@ -10,7 +10,7 @@ import {ROUND_SPEED} from '../src/game/m01-fire.js';
 import {
   TRACER_WEAPONS,TRACER_QUOTA_BY_TIER,TRACER_BURN_IN_M,tracerWeapon,tracerQuota,tracerDrawn,tracerHalfWidth,tracerHalfLength,tracerTint,
   IMPACT_MATERIALS,ROUND_IMPACT_PROFILE,IMPACT_POOL_SLOTS,IMPACT_DRAW_BY_TIER,IMPACT_MIN_PX,IMPACT_RADIUS_M,RoundImpactPool,scheduleRoundImpact,classifyRoundEnd,
-  drawRoundImpacts,impactDustCount,impactChipCount,impactSparkCount,impactPuffRadius,
+  drawRoundImpacts,scheduleLandedRound,IMPACT_SPECK_FROM_M,impactDustCount,impactChipCount,impactSparkCount,impactPuffRadius,
 } from '../src/render/m01-long-range-fx.js';
 import {AudioManager} from '../src/core/audio.js';
 import {
@@ -70,6 +70,15 @@ test('event -> impact: one pooled impact per ended round, at the end point, arri
   const h=scheduleRoundImpact(pool,shot({hit:true}),clock,'earth',2);assert.equal(IMPACT_MATERIALS[pool.mat[h]],'body');
   // Every class has a profile and a slot index.
   for(const m of IMPACT_MATERIALS){const s=scheduleRoundImpact(new RoundImpactPool(),shot(),0,m==='body'?'earth':m,3);assert.ok(s>=0,m);}
+});
+
+test('German rounds that landed far away (round-impact) also get the far dust disc, near ones keep the existing FX only; character hits are a body puff',()=>{
+  const pool=new RoundImpactPool(),ev=(over={})=>({type:'round-impact',point:{x:400,y:0,z:30},material:'earth',distance:350,crack:false,...over});
+  assert.ok(scheduleLandedRound(pool,ev(),100,1)>=0);assert.equal(pool.at[0],100,'it landed now');
+  assert.equal(scheduleLandedRound(pool,ev({distance:IMPACT_SPECK_FROM_M-1}),100,1),-1,'near: the existing puffs and chips');
+  assert.equal(IMPACT_MATERIALS[pool.mat[scheduleLandedRound(pool,ev({material:'character'}),100,2)]],'body');
+  assert.equal(scheduleLandedRound(pool,ev({material:'lava'}),100,3),-1);assert.equal(scheduleLandedRound(pool,{type:'round-impact'},100,3),-1);
+  assert.equal(pool.scheduled,2);
 });
 
 test('pool bounds: it never grows, never evicts an impact that has not arrived, drops (counted) when every slot is pending, and recycles expired slots',()=>{
