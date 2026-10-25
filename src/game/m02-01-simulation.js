@@ -13,6 +13,7 @@ import { M02QuintaWorld, BALLISTIC_MATERIAL_POLICY } from '../world/m02-quinta-w
 import { M02HorizonDirector, M02_TEMPORAL_STATES } from '../world/m02-horizon-system.js';
 import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
+import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
@@ -39,6 +40,7 @@ import {
   updateAreaC as runUpdateAreaC,
   completeC12Epilogue as runCompleteC12Epilogue,
   exportCampaignResultToM03 as runExportCampaignResultToM03,
+  syncAreaCWorldDamage,
 } from './m02-acts-director.js';
 
 const WALK_SPEED = 4.2;
@@ -150,6 +152,7 @@ export class M02BenchSimulation {
     this.weapon = new Wz29();
     this.dialogue = new M02DialogueDirector();
     this.horizon = new M02HorizonDirector();
+    this.audiovisual = new M02AudiovisualDirector();
     this.events = [];
     this.shotLog = [];
     this.combatLog = [];
@@ -166,6 +169,7 @@ export class M02BenchSimulation {
     this.doorLocks = new Map();
     this.dialogue.reset();
     this.horizon.reset();
+    this.audiovisual.reset();
     this.grenades = [];
     this.grenadeSeq = 0;
     this.grenadeAmmo = 2;
@@ -969,6 +973,7 @@ export class M02BenchSimulation {
         );
     const dir = aimDirection(shotAngles.angle, shotAngles.pitch);
     const rec = this.fireDirectRay(eye, dir, this.weapon.profile.range, muzzle);
+    this.audiovisual.onPlayerShotFired(this, rec);
     this.rendererHintLastShot = rec;
     return rec;
   }
@@ -1059,6 +1064,7 @@ export class M02BenchSimulation {
       affectedActors,
       clock: Number(this.clock.toFixed(2)),
     };
+    this.audiovisual.onExplosionDetonated(this, blastRecord);
     this.combatLog.push(blastRecord);
     this.events.push(blastRecord);
     this.updateTacticalContext();
@@ -1322,6 +1328,7 @@ export class M02BenchSimulation {
     }
     this.horizon.update(this, dt);
     this.dialogue.update(this);
+    this.audiovisual.update(this, dt);
     this.updateTacticalContext();
 
     if (this.mgState.seeingPlayer && this.clock >= this.mgState.nextBurstAt) {
@@ -1389,6 +1396,7 @@ export class M02BenchSimulation {
       squadOrder: structuredClone(this.squadOrder),
       dialogue: this.dialogue.snapshot(),
       horizon: this.horizon.snapshot(),
+      audiovisual: this.audiovisual.snapshot(),
       objective: structuredClone(this.objective),
     };
   }
@@ -1424,6 +1432,7 @@ export class M02BenchSimulation {
     for (const [k, v] of Object.entries(snap.doors ?? {})) this.world.doorStates.set(k, v);
     for (const [k, v] of Object.entries(snap.windows ?? {})) this.world.windowStates.set(k, v);
     for (const [k, v] of Object.entries(snap.fences ?? {})) this.world.fenceStates.set(k, v);
+    syncAreaCWorldDamage(this);
     this.world.refresh();
     this.navigator.sync();
     if (snap.allies) this.allies = structuredClone(snap.allies);
@@ -1438,7 +1447,12 @@ export class M02BenchSimulation {
     if (snap.squadOrder) this.squadOrder = structuredClone(snap.squadOrder);
     if (snap.dialogue) this.dialogue.restore(snap.dialogue);
     if (snap.horizon) this.horizon.restore(snap.horizon);
+    if (snap.audiovisual) this.audiovisual.restore(snap.audiovisual);
     this.objective = structuredClone(snap.objective);
     this.events.push({ type: 'restored', clock: this.clock });
+  }
+
+  setAccessibilityOptions(partial = {}) {
+    return this.audiovisual.setAccessibilityOptions(partial);
   }
 }

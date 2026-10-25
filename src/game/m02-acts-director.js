@@ -531,22 +531,47 @@ export function startC10OrderChanges(sim) {
   return true;
 }
 
+export const SP03_DEBRIS_COVER_ID = 'sp03_street_debris_crater';
+
+// SAVE-01 / G4: the SP03 crater exists in the Cell C world if and only if the snapshot says the impact happened.
+// Restoring a checkpoint taken before the impact removes the debris; restoring one taken after re-creates it exactly once.
+export function syncAreaCWorldDamage(sim) {
+  if (sim.activeCellId !== 'C' || !sim.world?.layout?.exteriorCovers) return false;
+  const covers = sim.world.layout.exteriorCovers;
+  const idx = covers.findIndex((c) => c.id === SP03_DEBRIS_COVER_ID);
+  const shouldExist = Boolean(sim.areaC?.artilleryDetonated);
+  if (shouldExist && idx === -1) {
+    const spec = sim.areaC.fixedImpactSpec;
+    covers.push({
+      id: SP03_DEBRIS_COVER_ID,
+      name: 'Cratera e entulho de artilharia na rua exterior (SP03)',
+      min: [spec.debrisBounds[0], 0, spec.debrisBounds[2]],
+      max: [spec.debrisBounds[1], 1.85, spec.debrisBounds[3]],
+      material: 'stone',
+      destructibleFence: false,
+    });
+  } else if (!shouldExist && idx !== -1) {
+    covers.splice(idx, 1);
+  } else {
+    return false;
+  }
+  sim.world.refresh();
+  sim.navigator?.sync?.();
+  return true;
+}
+
 export function detonateC10FixedArtillery(sim) {
   if (!sim.areaC || sim.areaC.artilleryDetonated) return null;
   sim.areaC.artilleryDetonated = true;
   sim.areaC.corridorExteriorBlocked = true;
+  if (sim.horizon?.hsC2) {
+    sim.horizon.hsC2.detonatedOnce = true;
+    sim.horizon.hsC2.state = 'IMPACTED';
+  }
 
   const spec = sim.areaC.fixedImpactSpec;
   // Add persistent debris obstacle blocking the exterior street at (4, 18), forcing evacuation through B09 nave!
-  sim.world.layout.exteriorCovers.push({
-    id: 'sp03_street_debris_crater',
-    name: 'Cratera e entulho de artilharia na rua exterior (SP03)',
-    min: [spec.debrisBounds[0], 0, spec.debrisBounds[2]],
-    max: [spec.debrisBounds[1], 1.85, spec.debrisBounds[3]],
-    material: 'stone',
-    destructibleFence: false,
-  });
-  sim.world.refresh();
+  syncAreaCWorldDamage(sim);
 
   // Apply causal explosion damage at the fixed coordinates (never shifts to chase or spare player!)
   const blastReport = sim.detonateGrenadeAt(spec.x, 0.6, spec.z, spec.radius);

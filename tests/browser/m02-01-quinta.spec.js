@@ -208,6 +208,35 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     expect(c12State.m03ExportPackage.nextMissionId).toBe('M03');
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-05-c12-epilogue-m03-bridge.png') });
 
+    // 16. M02-06 Document L & Accessibility + Weapon Clearance Verification in Browser
+    await page.evaluate(() => {
+      window.m02Bench.sim.reset();
+      window.m02Bench.setAccessibilityOptions({
+        subtitlesEnabled: true,
+        directionalIndicatorsEnabled: true,
+        reducedCameraShake: true,
+        reducedDynamicRange: true,
+        tinnitusIntensity: 0.0,
+      });
+      window.m02Bench.teleportPlayer(-25.5, -12.0, Math.PI, 0);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const a11ySummary = await page.evaluate(() => window.m02Bench.getStateSummary());
+    expect(a11ySummary.audiovisual.accessibility.reducedCameraShake).toBe(true);
+    expect(a11ySummary.audiovisual.accessibility.tinnitusIntensity).toBe(0.0);
+
+    const clearanceNear = await page.evaluate(() => window.m02Bench.evaluateWeaponClearance());
+    expect(clearanceNear.clearanceState).toBe('LOWERED_NEAR_OBSTACLE');
+
+    await page.evaluate(() => {
+      window.m02Bench.teleportPlayer(-24.5, -12.0, Math.PI, 0);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const clearanceFar = await page.evaluate(() => window.m02Bench.evaluateWeaponClearance());
+    expect(clearanceFar.clearanceState).toBe('READY');
+
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-06-accessibility-weapon-clearance.png') });
+
     // Restore T0 afternoon lighting before telemetry collection
     await page.evaluate(() => window.m02Bench.setTemporalState('T0'));
 

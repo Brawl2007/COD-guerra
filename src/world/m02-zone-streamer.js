@@ -188,6 +188,8 @@ export function buildCellWorldLayout(cellId) {
       cart: rawCell.cartRoute ?? [],
       evac: rawCell.evacRoute ?? [],
     },
+    evacRoute: rawCell.evacRoute ? rawCell.evacRoute.map(([x, z]) => ({ x, z })) : null,
+    cartRoute: rawCell.cartRoute ? rawCell.cartRoute.map(([x, z]) => ({ x, z })) : null,
     buildings,
     exteriorCovers,
     orchardTrees: [],

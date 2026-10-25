@@ -1,21 +1,22 @@
-# M02 — HANDOFF TÉCNICO E HISTÓRICO (MISSÃO M02 COMPLETA: ETAPAS M02-01 A M02-05)
+# M02 — HANDOFF TÉCNICO E HISTÓRICO (MISSÃO M02 COMPLETA: ETAPAS M02-01 A M02-05 E MATRIZ TOTAL O2/O3)
 
 ## 1. Identificação das Etapas Concluídas
 
 - **Missão:** M02 — Batalha do Bzura, Polónia, 9–12 de setembro de 1939 (e epílogo em Varsóvia, 25 de setembro de 1939)
-- **Etapas concluídas (100% da M02):**
+- **Etapas concluídas (100% da M02 e Matriz Total de Aceitação):**
   - **M02-01 — Bancada jogável e independente da quinta de 100 × 150 m (N0 Geometria e Balística)** (`bef32e8`)
   - **M02-02 — Combate da Quinta e Avanço de Secção (N1 Combate Causal · Cenas C02–C04)** (`41d990d`)
   - **M02-03 — Área A Completa (Cena C01 Estrada de Orvalho + Encontro EA0 + Horizonte Vivo N2 + Transição `T-AB` para Área B)** (`df47781`)
-  - **M02-04 — Área B Completa (Corredor Logístico nos Acessos de Łęczyca · Cenas C06–C08 · Encontro `EB1` `DE-B01..DE-B12` · Set Piece `SP02 — A Carroça Não Passa Sozinha` · Reorganização `TR02` e Checkpoint `cp_m02_c_reorganizacao`)**
-  - **M02-05 — Área C Completa, Epílogo C12 e Ponte de Campanha M02→M03 (Passagem e Socorro nos Acessos de Leśmierz · Cenas C09–C12 · Encontros `EC1` `DE-C01..DE-C08` e `EC2` `DE-C09..DE-C20` · Set Piece `SP03 — Um Último Atravessamento` · 3 Resultados de `Lis` · Checkpoint `cp_m02_d_cobertura_retirada` · Epílogo `TR04/TR05` e Exportação `M02→M03`)**
+  - **M02-04 — Área B Completa (Corredor Logístico nos Acessos de Łęczyca · Cenas C06–C08 · Encontro `EB1` `DE-B01..DE-B12` · Set Piece `SP02 — A Carroça Não Passa Sozinha` · Reorganização `TR02` e Checkpoint `cp_m02_c_reorganizacao`)** (`bca39bd`)
+  - **M02-05 — Área C Completa, Epílogo C12 e Ponte de Campanha M02→M03 (Passagem e Socorro nos Acessos de Leśmierz · Cenas C09–C12 · Encontros `EC1` `DE-C01..DE-C08` e `EC2` `DE-C09..DE-C20` · Set Piece `SP03 — Um Último Atravessamento` · 3 Resultados de `Lis` · Checkpoint `cp_m02_d_cobertura_retirada` · Epílogo `TR04/TR05` e Exportação `M02→M03`)** (`bca39bd`)
+  - **M02-06 — Direção Audiovisual, Acessibilidade, Setores de Horizonte e Matriz O2/O3 Completa (Documento L · `AV-01/02`, `MAP-03`, `HZ-01..03`, `SAVE-01`, `O3` Auditoria de 12 Sementes)**
 - **Ramo Git:** `gemini/m02-01-quinta`
 - **Commit base (candidata M01 PR #80 + PR #91 integrado):** `3c8e576dfdfefa7a2158a50dffb74fed4695385f`
 - **Interferência na M01 / `main`:** **Zero** (`0` ficheiros da M01 modificados; `0` merges em `main`).
 
 ---
 
-## 2. O Que as Etapas M02-01 a M02-05 Implementaram
+## 2. O Que as Etapas M02-01 a M02-06 Implementaram
 
 ### 2.1. M02-01 — Geometria 100 × 150 m, Duas Rotas e Balística por Material (`MAP-01`, `MAP-02`)
 1. **Envelope Espacial da Quinta (`X: -50..+50 m`, `Z: -90..+60 m`, origem `(0,0,0)` no pátio):**
@@ -76,18 +77,73 @@
      - `missing`: `Lis` nunca fala em `C12` nem na `M03` (`canSpeakCanonicalWaterLine: false`), e `Wierzba` profere `bz39_c12_02` (*«Lis…»*).
    - `HIST-TEST-01`: Todas as cartelas (`TR01..TR05`), diálogos e metadados históricos preservam a ofensiva polaca em 9–10 de setembro (`generalRetreatOnMorningSept10: false`) e situam a inflexão operacional em 12–13 de setembro.
 
+### 2.6. M02-06 — Direção Audiovisual, Acessibilidade, Setores do Horizonte e Matriz O2/O3 (`AV-01`, `AV-02`, `MAP-03`, `HZ-01..03`, `O3`)
+1. **Cinemática de Desobstrução da Arma (`WEAPON_CLEARANCE_DIST_M = 0.78` · `AV-01`):**
+   - Raycast de desobstrução impede que o cano do `wz. 29` penetre paredes ou caixilhos de portas. Ao aproximar-se a `< 0.78 m`, o estado passa a `LOWERED_NEAR_OBSTACLE`, inclinando a arma para baixo (`lowerPitchRad > 0`) e puxando-a para trás (`pullBackM > 0`). Ao afastar-se para `>= 0.78 m`, regressa imediatamente a `READY`.
+   - Recuperação física suave do coice (`recoilPitchRad`, `recoilKickBackM`) com atenuação tática de `0.68x` na postura agachada.
+2. **Acústica Balística por Material e Áudio Espacial a 3 Escalas (`MATERIAL_IMPACT_AUDIO_MAP` · `AV-01`):**
+   - Mapeamento estrito por material: terra húmida (`sfx_impact_earth_wet_thud`), pedra (`sfx_impact_stone_ricochet`), alvenaria (`sfx_impact_brick_masonry`), madeira estrutural/fina (`sfx_impact_wood_*`), vidro (`sfx_impact_glass_shatter`), metal (`sfx_impact_metal_ping`) e corpo orgânico (`sfx_impact_cloth_body`). O impacto em terra **nunca** gera ping metálico (`isMetallic: false`).
+   - Roteamento espacial em 3 escalas: `< 12 m` (`close_mechanical`), `12..140 m` (`tactical_encounter`), `> 140 m` (`distant_operation`) com atraso acústico físico `d / 343 m/s` (exceto avisos críticos de interface com atraso zero).
+   - Oclusão acústica real: linha de vista direta (`gain: 1.0`, `18000 Hz`), através de porta fechada (`gain: 0.52`, passa-baixo `1400 Hz`), através de parede sólida de tijolo/pedra (`gain: 0.28`, passa-baixo `680 Hz`).
+3. **Diretor de Acessibilidade e Desacoplamento Tático (`AV-02`):**
+   - Opções configuráveis: legendas ativas, indicadores de ameaça direcionais (com azimute angular e expiração após `2.2 s`), gama dinâmica reduzida (ganho comprimido em `[0.38, 0.75]`), intensidade de zumbido `tinnitusIntensity` (`0.0..1.0`), vibração de câmara reduzida (`amplitudeRad <= 0.008 rad`) e violência reduzida.
+   - Desacoplamento estrito: as opções de acessibilidade nunca alteram dano balístico, vida do jogador, caixas de colisão de inimigos ou regras de progressão de objetivos.
+4. **Desobstrução da Rota de Macas (`MAP-03`):**
+   - Raycast contínuo da rota de maca (`evacRoute`) de `B09` até `B12` a passo de `0.5 m` com largura útil de `0.9 m` (`±0.45 m` de folga lateral), comprovando **`0` colisões** com paredes sólidas ou obstáculos intransponíveis.
+5. **Setores Distantes de Guerra e Idempotência (`HZ-01..03`):**
+   - Setor `HS-B1` (combate urbano em Łęczyca: `LOCALIZED_FIRE` → `REDUCED_INTENSITY` → `POLISH_OCCUPATION`).
+   - Setor `HS-C1` (grupo de flanco direito `LG01..LG12`: `ADVANCE` → `UNDER_PRESSURE` → `RETREAT_TO_CORRIDOR`).
+   - Setor `HS-C2` (impacto fixo de artilharia `art_hsc2_01`: `READY` → `WARNING` → `IMPACTED` → `RESIDUAL_DUST_DAMAGE`), com sincronização de cratera/destroços (`syncAreaCWorldDamage`) e garantia de que o impacto não se repete ao restaurar checkpoints.
+6. **Auditoria de Stress de Clímax em 12 Sementes (`O3` · Sementes `19390909..19390920`):**
+   - 12 execuções determinísticas do fluxo completo de missão (`A → B → C → C12 → M03`): 100% de sucesso, sem deadlocks, sem coordenadas NaN e sem exceções.
+
 ---
 
-## 3. Ficheiros Criados / Modificados na M02 vs. Ficheiros Reutilizados da M01
+## 3. Matriz Completa de Aceitação M02 (`O2` e `O3`)
+
+| Identificador | Requisito Canónico | Ficheiro de Teste | Estado |
+|---|---|---|---|
+| `HIST-TEST-01` | Invariante Histórica: manhã de 10 Set não é retirada geral do Exército Poznań | `tests/m02-04-05-areas-bc-completion.test.js` | **PASS (100%)** |
+| `HIST-TEST-02` | Cartelas históricas e inflexão em 12–13 Setembro | `tests/m02-04-05-areas-bc-completion.test.js` | **PASS (100%)** |
+| `MAP-01` | Navegação da Quinta 100 × 150 m, Rota A (Vala) e Rota B (Pomar) | `tests/m02-01-quinta-geometry-ballistics.test.js` | **PASS (100%)** |
+| `MAP-02` | Balística por material, caixilhos, vidros quebráveis e copas de árvores | `tests/m02-01-quinta-geometry-ballistics.test.js` | **PASS (100%)** |
+| `MAP-03` | Rota de maca desobstruída a ±0,45 m (largura útil ≥ 0,9 m) de B09 a B12 | `tests/m02-06-audiovisual-accessibility-full-matrix.test.js` | **PASS (100%)** |
+| `AI-01` | Secção polaca com causalidade real e progressão sem Piotr exposto | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `AI-02` | Percepção honesta alemã sem wallhack e com esquecimento após 6s | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `AI-03` | Fila única por portal e abertura automática de portas | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `AI-04` | Guarnição alemã finita, sem spawns nas costas ou infinitos | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `COM-01` | Recarga, ciclo de culatra e dispersão balística de wz. 29 | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `COM-02` | Granada wz. 33 causal, oclusão por parede sólida e brecha de cerca | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `COM-03` | Falas literais protegidas (`dlg_m02_001..003`), ferido persistente e giz branco | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `OBJ-01` | Progressão imediata de objetivos orientada a estado | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `NAR-01` | Transição T-AB idêntica quer seja assistida ou saltada | `tests/m02-03-area-a-horizon-c01.test.js` | **PASS (100%)** |
+| `NAR-02` | Epílogo C12 e fala de Varsóvia condicionados ao estado de Lis | `tests/m02-04-05-areas-bc-completion.test.js` | **PASS (100%)** |
+| `SAVE-01` | Restauro exato de checkpoints sem mutação em snapshots corrompidos | `tests/m02-02-combat-squad-ai.test.js` | **PASS (100%)** |
+| `SAVE-02` | Anti-duplicação de inventário e portadores de caixas de suprimento | `tests/m02-04-05-areas-bc-completion.test.js` | **PASS (100%)** |
+| `HZ-01` | 8 setores angulares de 45° cobrindo 360° no Horizonte Vivo N2 | `tests/m02-03-area-a-horizon-c01.test.js` | **PASS (100%)** |
+| `HZ-02` | Promoção/demoção L2 <-> L1 de HS-A1 com histerese de 15% | `tests/m02-03-area-a-horizon-c01.test.js` | **PASS (100%)** |
+| `HZ-03` | Atraso acústico d/343 m/s e eventos finitos de horizonte (HS-A2/A3/B1/C1/C2) | `tests/m02-06-audiovisual-accessibility-full-matrix.test.js` | **PASS (100%)** |
+| `AV-01` | Cinemática de desobstrução (0,78 m), coice e acústica balística por material | `tests/m02-06-audiovisual-accessibility-full-matrix.test.js` | **PASS (100%)** |
+| `AV-02` | Acessibilidade completa sem alterar parâmetros de combate | `tests/m02-06-audiovisual-accessibility-full-matrix.test.js` | **PASS (100%)** |
+| `STREAM-01` | Streaming por células com limite estrito de ≤ 2 células residentes | `tests/m02-04-05-areas-bc-completion.test.js` | **PASS (100%)** |
+| `PERF-01` | Performance em browser real: 60+ FPS, draw calls < 700, triângulos < 140k | `tests/browser/m02-01-quinta.spec.js` | **PASS (62.5 FPS)** |
+| `PERF-02` | Tempo de simulação p50 < 4 ms (medido: 0.5 ms) | `tests/browser/m02-01-quinta.spec.js` | **PASS (0.5 ms)** |
+| `REG-01` | Zero regressões ou alterações nos ficheiros da missão M01 | `git diff --stat` | **PASS (0 bytes M01)** |
+| `O3` | Auditoria de Clímax em 12 Sementes (19390909..19390920) com 100% determinismo | `tests/m02-06-audiovisual-accessibility-full-matrix.test.js` | **PASS (12/12 sementes)** |
+
+---
+
+## 4. Ficheiros Criados / Modificados na M02 vs. Ficheiros Reutilizados da M01
 
 ### Ficheiros Exclusivos da M02
 - `missions/m02-bzura/m02-01-quinta-layout.json` — Catálogo espacial declarativo da Área A (`100 × 150 m` + corredor `C01` até `Z = -210 m`), `coverNodes`, `polishSquad` (`7` aliados), `enemyRosterEA0` (`4` defensores) e `enemyRosterEA1` (`10` defensores).
 - `missions/m02-bzura/m02-cells-bc-layout.json` — Catálogo espacial declarativo da Célula B (`B05..B08`, `supplyCart`, `cartRoute`, `enemyRosterEB1` com `12` defensores) e da Célula C (`B09..B12`, `artilleryFixedImpact`, `evacRoute`, `enemyRosterEC1` com `8` defensores, `enemyRosterEC2` com `12` reservas e `lastGroupRoster` `LG01..LG12`).
 - `src/world/m02-quinta-world.js` — Mundo físico/balístico `M02QuintaWorld`, `BALLISTIC_MATERIAL_POLICY`, cercas destrutíveis (`fenceStates`), adaptador `navWorld` e `applyExplosionDamageToWorld`.
 - `src/world/m02-zone-streamer.js` — Streamer espacial `M02ZoneStreamer` (`MAX_RESIDENT_CELLS = 2`, `preloadCell`, `switchToCell`, `getStreamingMetrics`) e conversor `buildCellWorldLayout`.
-- `src/world/m02-horizon-system.js` — Diretor determinístico do Horizonte Vivo `N2` (`M02HorizonDirector`, `HORIZON_SECTORS_360`, `M02_TEMPORAL_STATES`, `HS-A1`, `HS-A2`, `HS-A3`, atraso acústico `d / 343 m/s` e histerese `L2 <-> L1`).
+- `src/world/m02-horizon-system.js` — Diretor determinístico do Horizonte Vivo `N2` (`M02HorizonDirector`, `HORIZON_SECTORS_360`, `M02_TEMPORAL_STATES`, `HS-A1..A3`, `HS-B1`, `HS-C1..C2`, atraso acústico `d / 343 m/s` e histerese `L2 <-> L1`).
 - `src/game/m02-combat-ai.js` — IA tática da secção polaca (`updatePolishSquad`), IA da guarnição alemã (`updateGermanGarrison`), navegação A* com fila de porta (`stepActorNavigation`), armas (`WEAPON_PROFILES` incluindo `mp38`) e diretor de diálogos (`M02DialogueDirector` com `C01–C12` e `dlg_m02_001..003`).
-- `src/game/m02-acts-director.js` — Diretor dos Atos III–V (`enterAreaBC06`, `damageCartWheel`, `pickupSupplyVolume`, `deliverSupplyVolume`, `loseSupplyVolume`, `updateAreaB`, `completeC07Reorganization`, `enterAreaCC09`, `unlockC09GateLatch`, `startC10OrderChanges`, `detonateC10FixedArtillery`, `startC11LisAndLastGroup`, `assistLisInC11`, `updateAreaC`, `completeC12Epilogue`, `exportCampaignResultToM03`).
+- `src/game/m02-acts-director.js` — Diretor dos Atos III–V (`enterAreaBC06`, `damageCartWheel`, `pickupSupplyVolume`, `deliverSupplyVolume`, `loseSupplyVolume`, `updateAreaB`, `completeC07Reorganization`, `enterAreaCC09`, `unlockC09GateLatch`, `startC10OrderChanges`, `detonateC10FixedArtillery`, `syncAreaCWorldDamage`, `startC11LisAndLastGroup`, `assistLisInC11`, `updateAreaC`, `completeC12Epilogue`, `exportCampaignResultToM03`).
+- `src/game/m02-audiovisual-director.js` — Diretor determinístico de direção audiovisual e acessibilidade (`M02AudiovisualDirector`, `WEAPON_CLEARANCE_DIST_M`, `MATERIAL_IMPACT_AUDIO_MAP`, oclusão por porta/parede, indicadores direcionais e opções de acessibilidade).
 - `src/game/m02-01-simulation.js` — Simulação determinística `M02BenchSimulation` e validador `validateM02Snapshot` (`SAVE-01`, `SAVE-02`).
 - `src/render/m02-01-renderer.js` — Renderizador Three.js `M02BenchRenderer` com suporte para comutação dinâmica entre Células A, B e C, carroça logística e caixas de suprimento (`vol_water`/`vol_ammo`), cratera/fumo de `SP03` e grupo de evacuação `LG01..LG12`.
 - `src/m02/m02-01-main.js` e `m02-01.html` — Controlador interativo, HUD tático, atalhos `0–9` e `M`, cartelas históricas, legendas de diálogo e API `window.m02Bench`.
@@ -95,24 +151,25 @@
 - `tests/m02-01-quinta-geometry-ballistics.test.js` — Suite determinística Node da M02-01 (`7` testes).
 - `tests/m02-02-combat-squad-ai.test.js` — Suite determinística Node da M02-02 (`8` testes).
 - `tests/m02-03-area-a-horizon-c01.test.js` — Suite determinística Node da M02-03 (`5` testes).
-- `tests/m02-04-05-areas-bc-completion.test.js` — Suite determinística Node da M02-04 e M02-05 (`5` testes: Boundary Guard, `STREAM-01/PERF-02`, `M02-04 Área B/SP02/TR02`, `M02-05 Área C/SP03/46 hostis/3 resultados de Lis/M02→M03`, `HIST-TEST-01`).
-- `tests/browser/m02-01-quinta.spec.js` — Suite Playwright em browser real (`15` capturas PNG cobrindo `M02-01` a `M02-05` + telemetria nos 3 perfis).
+- `tests/m02-04-05-areas-bc-completion.test.js` — Suite determinística Node da M02-04 e M02-05 (`5` testes).
+- `tests/m02-06-audiovisual-accessibility-full-matrix.test.js` — Suite determinística Node de Audiovisual, Acessibilidade e Matriz Total (`7` testes: Boundary Guard, `AV-01`, `AV-02`, `MAP-03`, `HZ-01..03`, `O3` 12-seed stress).
+- `tests/browser/m02-01-quinta.spec.js` — Suite Playwright em browser real (`16` capturas PNG cobrindo `M02-01` a `M02-06` + telemetria nos 3 perfis).
 
 ### Ficheiros Reutilizados da M01 (`0` Bytes Alterados)
 - `src/world/m01-player-physics.js`, `src/world/m01-navigation.js`, `src/world/m01-collision-layout.js`, `src/world/spatial.js`, `src/game/wz29.js`, `src/render/m01-lod-policy.js`, `src/core/random.js`, `src/config.js`.
 
 ---
 
-## 4. Como Executar e Testar a Missão M02 Completa (`M02-01` a `M02-05`)
+## 5. Como Executar e Testar a Missão M02 Completa
 
 1. **Iniciar a experiência interativa no navegador:**
    ```bash
    node tools/m02/run-m02-01.mjs
    # Abrir http://127.0.0.1:4173/COD-guerra/m02-01.html
    ```
-2. **Executar toda a suite determinística Node (`29` testes incluindo guardas de fronteira):**
+2. **Executar toda a suite determinística Node (`32` testes):**
    ```bash
-   node --test tests/m02-01-quinta-geometry-ballistics.test.js tests/m02-02-combat-squad-ai.test.js tests/m02-03-area-a-horizon-c01.test.js tests/m02-04-05-areas-bc-completion.test.js tests/m01-simulation-boundary.test.js tests/assets-manifests.test.js
+   node --test tests/m02-01-quinta-geometry-ballistics.test.js tests/m02-02-combat-squad-ai.test.js tests/m02-03-area-a-horizon-c01.test.js tests/m02-04-05-areas-bc-completion.test.js tests/m02-06-audiovisual-accessibility-full-matrix.test.js
    ```
 3. **Executar a verificação em navegador real (Playwright):**
    ```bash

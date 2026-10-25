@@ -92,6 +92,33 @@ export class M02HorizonDirector {
       ],
     };
 
+    // HS-B1 (H4): Distant urban combat in Łęczyca (LOCALIZED_FIRE -> REDUCED_INTENSITY -> POLISH_OCCUPATION)
+    this.hsB1 = {
+      id: 'HS-B1',
+      state: 'LOCALIZED_FIRE',
+      sector: 'S',
+      flashesTriggered: 0,
+      maxFlashes: 3,
+    };
+
+    // HS-C1 (H4): Right-flank group at 70-110 m in Leśmierz (ADVANCE -> UNDER_PRESSURE -> RETREAT_TO_CORRIDOR, linked to LG01..LG12)
+    this.hsC1 = {
+      id: 'HS-C1',
+      state: 'ADVANCE',
+      linkedRosterIds: ['LG01', 'LG02', 'LG03', 'LG04', 'LG05', 'LG06', 'LG07', 'LG08', 'LG09', 'LG10', 'LG11', 'LG12'],
+    };
+
+    // HS-C2 (H4): Fixed-position artillery event in Area C (WARNING -> IMPACTED -> RESIDUAL_DUST_DAMAGE, 1 unique ID, never repeats on restore)
+    this.hsC2 = {
+      id: 'HS-C2',
+      impactId: 'art_hsc2_01',
+      state: 'READY', // READY -> WARNING -> IMPACTED -> RESIDUAL_DUST_DAMAGE
+      x: 4.0,
+      y: 0.0,
+      z: 18.0,
+      detonatedOnce: false,
+    };
+
     this.acousticLog = [];
   }
 
@@ -205,6 +232,38 @@ export class M02HorizonDirector {
       v.x = Number((this.hsA3.x + v.offset).toFixed(2));
       v.visible = this.hsA3.state === 'PASSING_ONCE';
     }
+
+    // 4. Update HS-B1 (Distant urban combat in Area B: LOCALIZED_FIRE -> REDUCED_INTENSITY -> POLISH_OCCUPATION)
+    if (sim.activeCellId === 'B' || sim.areaB?.reorganizedC07) {
+      if (sim.areaB?.reorganizedC07) {
+        this.hsB1.state = 'POLISH_OCCUPATION';
+      } else if (sim.flags?.['m02.corridor_held']) {
+        this.hsB1.state = 'REDUCED_INTENSITY';
+      } else {
+        this.hsB1.state = 'LOCALIZED_FIRE';
+      }
+    }
+
+    // 5. Update HS-C1 (Right-flank group LG01..LG12 in Area C: ADVANCE -> UNDER_PRESSURE -> RETREAT_TO_CORRIDOR)
+    if (sim.activeCellId === 'C' && sim.areaC) {
+      if (sim.areaC.c11Started) {
+        this.hsC1.state = 'RETREAT_TO_CORRIDOR';
+      } else if (sim.areaC.c10Started) {
+        this.hsC1.state = 'UNDER_PRESSURE';
+      } else {
+        this.hsC1.state = 'ADVANCE';
+      }
+    }
+
+    // 6. Update HS-C2 (Fixed-position artillery event in Area C: WARNING -> IMPACTED -> RESIDUAL_DUST_DAMAGE)
+    if (sim.activeCellId === 'C' && sim.areaC) {
+      if (sim.areaC.artilleryDetonated) {
+        this.hsC2.detonatedOnce = true;
+        this.hsC2.state = sim.areaC.c11Started ? 'RESIDUAL_DUST_DAMAGE' : 'IMPACTED';
+      } else if (sim.areaC.c10Started) {
+        this.hsC2.state = 'WARNING';
+      }
+    }
   }
 
   snapshot() {
@@ -213,6 +272,9 @@ export class M02HorizonDirector {
       hsA1: structuredClone(this.hsA1),
       hsA2: structuredClone(this.hsA2),
       hsA3: structuredClone(this.hsA3),
+      hsB1: structuredClone(this.hsB1),
+      hsC1: structuredClone(this.hsC1),
+      hsC2: structuredClone(this.hsC2),
       acousticLog: structuredClone(this.acousticLog),
     };
   }
@@ -223,6 +285,9 @@ export class M02HorizonDirector {
     if (snap.hsA1) this.hsA1 = structuredClone(snap.hsA1);
     if (snap.hsA2) this.hsA2 = structuredClone(snap.hsA2);
     if (snap.hsA3) this.hsA3 = structuredClone(snap.hsA3);
+    if (snap.hsB1) this.hsB1 = structuredClone(snap.hsB1);
+    if (snap.hsC1) this.hsC1 = structuredClone(snap.hsC1);
+    if (snap.hsC2) this.hsC2 = structuredClone(snap.hsC2);
     if (snap.acousticLog) this.acousticLog = structuredClone(snap.acousticLog);
   }
 }

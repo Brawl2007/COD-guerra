@@ -370,6 +370,8 @@ window.m02Bench = {
   assistLisInC11: (mode = 'wounded_evacuated') => sim.assistLisInC11(mode),
   completeC12Epilogue: (opts = {}) => sim.completeC12Epilogue(opts),
   exportCampaignResultToM03: () => sim.exportCampaignResultToM03(),
+  setAccessibilityOptions: (opts = {}) => sim.setAccessibilityOptions(opts),
+  evaluateWeaponClearance: () => sim.audiovisual.evaluateWeaponClearance(sim),
   setTemporalState: (stateId) => {
     const res = sim.horizon.setTemporalState(stateId);
     const preset = renderer.applyLightingPreset(res.lightingPreset);
@@ -391,6 +393,7 @@ window.m02Bench = {
     areaC: structuredClone(sim.areaC),
     m03ExportPackage: sim.m03ExportPackage ? structuredClone(sim.m03ExportPackage) : null,
     horizon: sim.horizon ? sim.horizon.snapshot() : null,
+    audiovisual: sim.audiovisual ? sim.audiovisual.snapshot() : null,
     player: {
       x: Number(sim.player.x.toFixed(2)),
       y: Number(sim.player.y.toFixed(2)),
