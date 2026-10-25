@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     target:'es2022',
     chunkSizeWarningLimit:600,
-    rollupOptions:{output:{manualChunks(id){
+    rollupOptions:{input:{main:'index.html',m02:'m02-01.html'},output:{manualChunks(id){
       const n=String(id).replace(/\\/g,'/');
       if(n.includes('/node_modules/three/examples/')||n.includes('/node_modules/three/addons/'))return 'three-loaders';
       if(n.includes('/node_modules/three/'))return 'three-core';

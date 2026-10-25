@@ -272,3 +272,39 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     expect(pageErrors).toEqual([]);
   });
 });
+
+test('M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation', async ({page}) => {
+  const errors=[];page.on('pageerror', e=>errors.push(e.message));
+  await page.goto('/COD-guerra/m02-01.html?quality=low');
+  await page.waitForFunction(()=>window.m02Bench?.renderer.presentation.characters.instances.size>0);
+  await page.keyboard.press('KeyV'); // trusted input unlocks Web Audio
+  const result=await page.evaluate(async()=>{
+    const {sim,renderer}=window.m02Bench, p=renderer.presentation;
+    await p.ready;
+    const before=JSON.stringify(sim.snapshot());
+    renderer.renderFrame(.016,0);
+    const unchanged=before===JSON.stringify(sim.snapshot());
+    const a=p.audio, analyser=a.ctx.createAnalyser();analyser.fftSize=2048;
+    a.master.connect(analyser);
+    a.wz29Shot();
+    let peak=0;
+    const samples=new Float32Array(analyser.fftSize);
+    for(let i=0;i<12;i++){
+      await new Promise(r=>setTimeout(r,25));
+      analyser.getFloatTimeDomainData(samples);
+      for(const value of samples)peak=Math.max(peak,Math.abs(value));
+    }
+    analyser.disconnect();
+    return {unchanged,peak,state:a.ctx.state,models:[...p.characters.sources.keys()],clips:p.characters.clips.size,characters:p.characters.instances.size,weapon:p.weapon.stats.active,failures:p.characters.assets.failures};
+  });
+  expect(result.unchanged).toBe(true);
+  expect(result.state).toBe('running');
+  expect(result.peak).toBeGreaterThan(.001);
+  expect(result.models).toContain('pl:0');
+  expect(result.models).toContain('de:2');
+  expect(result.clips).toBeGreaterThan(0);
+  expect(result.characters).toBeGreaterThan(0);
+  expect(result.weapon).toBe(true);
+  expect(result.failures).toEqual([]);
+  expect(errors).toEqual([]);
+});

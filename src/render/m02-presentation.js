@@ -1,0 +1,104 @@
+import * as THREE from 'three';
+import { M01Characters } from './m01-characters.js';
+import { M01ViewModel } from './m01-viewmodel.js';
+import { WEAPON_PROFILES } from '../game/m02-combat-ai.js';
+import { AudioManager } from '../core/audio.js';
+
+// Translated actors and weapon records belong to presentation. The shared renderers
+// read the collision layout; they never decide M02 combat or advance its clock.
+export function m02VisualActor(actor, team, clock) {
+  const surrendered = actor.state === 'SURRENDERED';
+  const wounded = actor.state === 'WOUNDED_UNARMED';
+  return { ...actor, team, active: !actor.detachedOutOfCell,
+    id: actor.weapon === 'rkm_wz28' ? 'szymon_kowal' : actor.id,
+    role: wounded || surrendered ? 'MEDIC' : 'RIFLEMAN',
+    state: wounded ? 'WOUNDED' : actor.moving ? 'ADVANCE' : actor.shot > 0 ? 'SUPPRESS' : 'GUARD',
+    posture: actor.crouched ? 'crouch' : 'stand',
+    shot: actor.shot ?? (clock - (actor.lastShotAt ?? -Infinity) < .15 ? .15 : 0),
+    reload: actor.reloadingUntil > clock ? {startedAt:actor.reloadingUntil-(WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8)} : null,
+    motion: { speed: actor.moving ? (actor.sprinting ? 4 : 1.6) : 0 },
+  };
+}
+
+export class M02Presentation {
+  constructor(scene, camera, sim) {
+    this.camera = camera;
+    this.weaponCamera = new THREE.PerspectiveCamera(68,1,.01,20);
+    this.fireTimes = new Map();
+    this.stepAt = 0;
+    this.characters = new M01Characters(scene, { ik:false });
+    this.weaponScene = new THREE.Scene();
+    this.weaponScene.add(new THREE.HemisphereLight(0xdce6ed, 0x585245, 2));
+    // M01 viewmodel lives in camera space and has its own depth pass.
+    this.weapon = new M01ViewModel(this.weaponScene, this.characters);
+    this.audio = new AudioManager({quality:'medium'});
+    this.ready = this.characters.load('medium');
+    this.ids = new Map();
+    this.resetClock = sim.clock;
+  }
+  unlockAudio() { this.audio.init(); }
+  update(sim, quality) {
+    if (sim.clock < this.resetClock) { this.audio.resetPresentation(sim.clock); this.fireTimes.clear(); this.stepAt=sim.clock; }
+    this.resetClock = sim.clock;
+    this.audio.setQuality(quality);
+    this.audio.setConcussionScale(sim.audiovisual?.accessibility?.tinnitusIntensity??1);
+    this.ids.clear();
+    let mgIndex=0;
+    const actors = [];
+    for (const [list, team] of [[sim.allies,'ally'],[sim.enemies,'enemy']]) {
+      for (const actor of list ?? []) {
+        // Preserve Claude's explicit hands-up surrender pose, not an armed idle.
+        if (actor.state === 'SURRENDERED') continue;
+        const visual = m02VisualActor(actor, team, sim.clock);
+        if (actor.weapon==='mg34') visual.id=`de_east_${mgIndex++}`;
+        const firedAt=this.fireTimes.get(actor.id)??-1e9;
+        visual.firedAt=firedAt; visual.shot=Math.max(0,.2-(sim.clock-firedAt));
+        visual.suppressedUntil=actor.suppressed>.4?sim.clock+.1:0;
+        this.ids.set(actor.id, visual.id); actors.push(visual);
+      }
+    }
+    this.characters.update(actors, sim.clock, {...sim.player}, quality);
+    if (this.audio.ctx?.state==='running' && sim.player.moving && sim.clock>=this.stepAt) {
+      this.audio.footstep('earth', {pace:sim.player.sprinting?'run':'walk'});
+      this.stepAt=sim.clock+(sim.player.sprinting?.28:.5);
+    }
+  }
+  hasCharacter(id) { return this.characters.instances.has(this.ids.get(id)); }
+  updateWeapon(sim, quality) {
+    const record = { clock:sim.clock, player:{...sim.player,moveBlend:sim.player.moving?1:0},
+      world:{revision:sim.world.revision,obstacles:sim.world.obstacles},
+      weapon:Object.assign(Object.create(Object.getPrototypeOf(sim.weapon)), sim.weapon),
+      renderState:{weaponVisible:sim.player.health>0} };
+    this.visualWorld ??= {};
+    Object.assign(this.visualWorld, record.world); record.world=this.visualWorld;
+    return this.weapon.update(record, quality, sim.weapon.lastShot/1000+.08, {camera:this.camera, viewFov:68});
+  }
+  renderWeapon(renderer) {
+    if (!this.weapon.root?.visible) return;
+    const autoClear=renderer.autoClear;
+    renderer.autoClear=false; renderer.clearDepth();
+    const camera=this.weaponCamera; camera.fov=this.camera.fov; camera.aspect=this.camera.aspect; camera.updateProjectionMatrix();
+    renderer.render(this.weaponScene,camera); renderer.autoClear=autoClear;
+  }
+  consume(events, sim) {
+    for (const event of events) {
+      if (event.type==='actor-burst') this.fireTimes.set(event.shooterId,sim.clock);
+      if (this.audio.ctx?.state !== 'running') continue;
+      const origin=event.origin??event.shot?.origin??event.center??sim.player;
+      const dx=origin.x-sim.player.x, dz=origin.z-sim.player.z;
+      const distance=Math.hypot(dx,dz);
+      const pan=Math.sin(Math.atan2(dz,dx)-sim.player.angle);
+      if (event.type==='shot-fired') {
+        this.audio.wz29Shot();
+        if (event.shot?.blockedBySolid) this.audio.impact(event.shot.material??'earth',pan,event.shot.distance??distance);
+      }
+      if (event.type==='actor-burst') this.audio.weaponFire(event.weapon,pan,distance,{rounds:event.rounds,key:`${event.shooterId}:${event.clock}`,source:event.shooterId});
+      if (event.type==='grenade-exploded') this.audio.explosion(pan,distance);
+
+    }
+  }
+  get diagnostics() {
+    return {characters:this.characters.stats, loadedModels:[...this.characters.sources.keys()], clips:this.characters.clips.size, failures:this.characters.assets.failures,
+      weapon:this.weapon.stats, audio:this.audio.diagnostics};
+  }
+}

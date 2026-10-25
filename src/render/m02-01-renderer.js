@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { createSoldierRigMaterials, rigCreate, rigPose } from './m02-claude-soldier-rig.js';
+import { M02Presentation } from './m02-presentation.js';
 import { eyePosition } from '../world/spatial.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
 
@@ -141,7 +143,8 @@ export class M02BenchRenderer {
     this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, 1200);
     this.camera.rotation.order = 'YXZ';
 
-    this.materials = this.#createMaterials();
+    this.materials = { ...this.#createMaterials(), ...createSoldierRigMaterials() };
+    this.presentation = new M02Presentation(this.scene, this.camera, sim);
     this.staticGroup = new THREE.Group();
     this.dynamicDoorsGroup = new THREE.Group();
     this.dynamicWindowsGroup = new THREE.Group();
@@ -631,47 +634,7 @@ export class M02BenchRenderer {
   }
 
   #createSoldierMesh({ isPolish = false, isMg = false, isRkm = false } = {}) {
-    const group = new THREE.Group();
-    const uniformMat = isPolish
-      ? this.materials.polish_uniform
-      : isMg
-        ? this.materials.target_mg
-        : this.materials.target_uniform;
-    const helmetMat = isPolish ? this.materials.polish_helmet : this.materials.target_helmet;
-
-    const legs = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.78, 0.24), uniformMat);
-    legs.position.y = 0.39;
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.62, 0.26), uniformMat);
-    torso.position.y = 1.09;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), this.materials.brick_B01);
-    head.position.y = 1.54;
-    const helmet = new THREE.Mesh(
-      new THREE.SphereGeometry(0.148, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.58),
-      helmetMat,
-    );
-    helmet.position.y = 1.56;
-
-    const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.52, 0.12), uniformMat);
-    leftArm.position.set(-0.29, 1.12, -0.08);
-    const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.52, 0.12), uniformMat);
-    rightArm.position.set(0.29, 1.12, -0.08);
-
-    const weaponGroup = new THREE.Group();
-    const gunStock = new THREE.Mesh(
-      new THREE.BoxGeometry(0.05, 0.08, isRkm ? 0.72 : 0.58),
-      this.materials.gun_wood,
-    );
-    gunStock.position.set(0.18, 1.12, -0.28);
-    const gunBarrel = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.014, 0.016, isRkm ? 0.68 : 0.54, 6),
-      this.materials.gun_metal,
-    );
-    gunBarrel.rotation.x = Math.PI / 2;
-    gunBarrel.position.set(0.18, 1.14, -0.58);
-    weaponGroup.add(gunStock, gunBarrel);
-
-    group.add(legs, torso, head, helmet, leftArm, rightArm, weaponGroup);
-    return { group, legs, torso, head, helmet, leftArm, rightArm, weaponGroup, uniformMat };
+    return rigCreate(this.materials, { faction: isPolish ? 'pl' : 'de', weapon: isMg ? 'mg34' : isRkm ? 'rkm_wz28' : isPolish ? 'wz29' : 'kar98k' });
   }
 
   #buildTargets() {
@@ -984,6 +947,7 @@ export class M02BenchRenderer {
 
     // Drain simulation events to spawn shot tracers, actor bursts, grenade blasts, or MG bursts
     const events = this.sim.drainEvents();
+    this.presentation.consume(events, this.sim);
     for (const evt of events) {
       if (evt.type === 'shot-fired' && evt.shot) {
         this.spawnShotVisual(evt.shot);
@@ -1036,89 +1000,17 @@ export class M02BenchRenderer {
       }
     }
 
-    // Update Polish squad meshes (7 allies) and German EA1 defender meshes (10 defenders)
     const player = this.sim.player;
-    for (const a of this.sim.allies ?? []) {
-      const entry = this.allyMeshes.get(a.id);
+    this.presentation.update(this.sim, this.qualityProfile.id);
+    for (const [actors, meshes, side] of [
+      [this.sim.allies, this.allyMeshes, 'ally'],
+      [this.sim.enemies, this.enemyMeshes, 'enemy'],
+    ]) for (const actor of actors ?? []) {
+      const entry = meshes.get(actor.id);
       if (!entry) continue;
-      entry.group.visible = !a.detachedOutOfCell;
-      const dist = Math.hypot(a.x - player.x, a.z - player.z);
-      entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
-      entry.group.position.set(a.x, a.y, a.z);
-      entry.group.rotation.y = -(a.facing ?? 0) + Math.PI / 2;
-
-      if (!a.alive || a.state === 'DOWN') {
-        entry.group.rotation.x = -Math.PI / 2.2;
-        entry.torso.material = this.materials.target_down;
-      } else {
-        entry.group.rotation.x = 0;
-        const crouchDrop = a.crouched ? -0.32 : 0;
-        const stride = a.moving ? Math.sin(this.sim.clock * 9.5 + a.x) * 0.04 : 0;
-        entry.torso.position.y = 1.09 + crouchDrop + stride;
-        entry.head.position.y = 1.54 + crouchDrop + stride;
-        entry.helmet.position.y = 1.56 + crouchDrop + stride;
-        entry.leftArm.position.y = 1.12 + crouchDrop + stride;
-        entry.rightArm.position.y = 1.12 + crouchDrop + stride;
-        entry.weaponGroup.position.y = crouchDrop + stride;
-        entry.torso.material = entry.uniformMat;
-      }
-    }
-
-    for (const e of this.sim.enemies ?? []) {
-      const entry = this.enemyMeshes.get(e.id);
-      if (!entry) continue;
-      const dist = Math.hypot(e.x - player.x, e.z - player.z);
-      entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
-      entry.group.position.set(e.x, e.y, e.z);
-      entry.group.rotation.y = -(e.facing ?? 0) + Math.PI / 2;
-
-      if (!e.alive || e.state === 'DEAD') {
-        entry.group.rotation.x = -Math.PI / 2.2;
-        entry.torso.material = this.materials.target_down;
-        entry.weaponGroup.visible = false;
-      } else if (e.state === 'WOUNDED_UNARMED') {
-        // Seated unarmed posture in southern orchard (Scene C04)
-        entry.group.rotation.x = 0;
-        entry.legs.position.y = 0.2;
-        entry.legs.rotation.x = Math.PI / 2.2;
-        entry.torso.position.y = 0.58;
-        entry.head.position.y = 0.98;
-        entry.helmet.position.y = 1.0;
-        entry.leftArm.position.y = 0.58;
-        entry.rightArm.position.y = 0.58;
-        entry.leftArm.rotation.x = 0.35;
-        entry.rightArm.rotation.x = 0.35;
-        entry.weaponGroup.visible = false;
-        entry.torso.material = this.materials.target_wounded;
-      } else if (e.state === 'SURRENDERED') {
-        entry.group.rotation.x = 0;
-        entry.legs.position.y = 0.39;
-        entry.legs.rotation.x = 0;
-        entry.torso.position.y = 1.09;
-        entry.head.position.y = 1.54;
-        entry.helmet.position.y = 1.56;
-        entry.leftArm.position.y = 1.38;
-        entry.rightArm.position.y = 1.38;
-        entry.leftArm.rotation.x = Math.PI * 0.85;
-        entry.rightArm.rotation.x = Math.PI * 0.85;
-        entry.weaponGroup.visible = false;
-        entry.torso.material = this.materials.target_surrendered;
-      } else {
-        entry.group.rotation.x = 0;
-        entry.legs.position.y = 0.39;
-        entry.legs.rotation.x = 0;
-        const crouchDrop = e.crouched ? -0.32 : 0;
-        entry.torso.position.y = 1.09 + crouchDrop;
-        entry.head.position.y = 1.54 + crouchDrop;
-        entry.helmet.position.y = 1.56 + crouchDrop;
-        entry.leftArm.position.y = 1.12 + crouchDrop;
-        entry.rightArm.position.y = 1.12 + crouchDrop;
-        entry.leftArm.rotation.x = 0;
-        entry.rightArm.rotation.x = 0;
-        entry.weaponGroup.position.y = crouchDrop;
-        entry.weaponGroup.visible = true;
-        entry.torso.material = e.hitsReceived > 0 ? this.materials.target_hit : entry.uniformMat;
-      }
+      const band = selectConsumerLod('actors', Math.hypot(actor.x-player.x, actor.z-player.z), this.qualityProfile.id);
+      rigPose(entry, actor, {clock:this.sim.clock, dt, side, lodBand:band});
+      entry.group.visible = !actor.detachedOutOfCell && !this.presentation.hasCharacter(actor.id);
     }
 
     // Camera pose from simulation player
@@ -1137,7 +1029,12 @@ export class M02BenchRenderer {
       player.aiming ? 0.08 : 0,
     );
 
+    this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
+    this.renderer.info.autoReset=false;
+    this.renderer.info.reset();
     this.renderer.render(this.scene, this.camera);
+    this.presentation.renderWeapon(this.renderer);
+    this.renderer.info.autoReset=true;
 
     const renderMs = performance.now() - renderStart;
     const frameTimeMs = dt * 1000;

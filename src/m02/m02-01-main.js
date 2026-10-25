@@ -40,6 +40,8 @@ if (selQuality) selQuality.value = renderer.qualityProfile.id;
 if (selLighting) selLighting.value = renderer.lightingPreset.id;
 
 const keys = new Set();
+window.addEventListener('pointerdown', () => renderer.presentation.unlockAudio());
+window.addEventListener('keydown', () => renderer.presentation.unlockAudio());
 let pendingSingleActions = {
   interact: false,
   reload: false,
