@@ -123,6 +123,8 @@ export class M02BenchRenderer {
 
     this.lastWorldRevision = -1;
     this.targetMeshes = new Map();
+    this.allyMeshes = new Map();
+    this.enemyMeshes = new Map();
     this.roofMeshes = new Map();
     this.activeTracers = [];
     this.debugLoSVisible = false;
@@ -171,11 +173,17 @@ export class M02BenchRenderer {
         metalness: 0.05,
       }),
       glass_shard: new THREE.MeshBasicMaterial({ color: 0xcbe7f5, transparent: true, opacity: 0.65 }),
+      polish_uniform: new THREE.MeshStandardMaterial({ color: 0x665e3b, roughness: 0.84, metalness: 0.08 }),
+      polish_helmet: new THREE.MeshStandardMaterial({ color: 0x4b4b2f, roughness: 0.62, metalness: 0.28 }),
       target_uniform: new THREE.MeshStandardMaterial({ color: 0x485249, roughness: 0.8, metalness: 0.1 }),
       target_mg: new THREE.MeshStandardMaterial({ color: 0x3b443e, roughness: 0.72, metalness: 0.2 }),
       target_helmet: new THREE.MeshStandardMaterial({ color: 0x2c322f, roughness: 0.55, metalness: 0.35 }),
       target_hit: new THREE.MeshStandardMaterial({ color: 0xc94a38, roughness: 0.6, metalness: 0.1 }),
+      target_wounded: new THREE.MeshStandardMaterial({ color: 0x6e5246, roughness: 0.85, metalness: 0.06 }),
+      target_surrendered: new THREE.MeshStandardMaterial({ color: 0x5c665e, roughness: 0.85, metalness: 0.05 }),
       target_down: new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.9, metalness: 0.05 }),
+      chalk_white: new THREE.MeshBasicMaterial({ color: 0xf7f7f0 }),
+      grenade_body: new THREE.MeshStandardMaterial({ color: 0x3e4a33, roughness: 0.6, metalness: 0.35 }),
       gun_metal: new THREE.MeshStandardMaterial({ color: 0x25282a, roughness: 0.42, metalness: 0.75 }),
       gun_wood: new THREE.MeshStandardMaterial({ color: 0x5e3c22, roughness: 0.72, metalness: 0.08 }),
       horizon_treeline: new THREE.MeshStandardMaterial({ color: 0x394934, roughness: 0.95, metalness: 0.0 }),
@@ -291,9 +299,10 @@ export class M02BenchRenderer {
       this.roofsGroup.add(roofGroup);
     }
 
-    // 3. Static obstacles from world.obstacles (excluding dynamic door_leaf and window_glass)
+    // 3. Static obstacles from world.obstacles (excluding dynamic door_leaf, window_glass, and destructible fences)
     for (const ob of this.world.obstacles) {
       if (ob.role === 'door_leaf' || ob.role === 'window_glass') continue;
+      if (ob.id === 'cov_south_fence_west' || ob.id === 'cov_south_fence_east') continue;
       const sx = ob.max.x - ob.min.x;
       const sy = ob.max.y - ob.min.y;
       const sz = ob.max.z - ob.min.z;
@@ -357,6 +366,20 @@ export class M02BenchRenderer {
     mgBipod.position.set(12.05, 1.16, -30.0);
     mgGroup.add(mgBarrel, mgBipod);
     this.staticGroup.add(mgGroup);
+
+    // 6. C04 Southern Orchard wooden post & white chalk sign next to wounded German soldier (-4.6, 36.2)
+    const c04Post = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.45, 0.18), this.materials.wood_frame);
+    c04Post.position.set(-4.6, 0.725, 36.2);
+    c04Post.castShadow = true;
+    this.c04ChalkMesh = new THREE.Group();
+    const chalkBarA = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.32, 0.05), this.materials.chalk_white);
+    chalkBarA.rotation.x = 0.65;
+    const chalkBarB = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.32, 0.05), this.materials.chalk_white);
+    chalkBarB.rotation.x = -0.65;
+    this.c04ChalkMesh.add(chalkBarA, chalkBarB);
+    this.c04ChalkMesh.position.set(-4.6, 1.12, 36.2);
+    this.c04ChalkMesh.visible = false;
+    this.staticGroup.add(c04Post, this.c04ChalkMesh);
   }
 
   #createGableRoof(b) {
@@ -461,31 +484,106 @@ export class M02BenchRenderer {
       }
     }
 
+    // Destructible wooden fences (intact vs breached)
+    for (const fence of this.world.fences ?? []) {
+      const sx = fence.max.x - fence.min.x;
+      const sy = fence.max.y - fence.min.y;
+      const sz = fence.max.z - fence.min.z;
+      const cx = (fence.min.x + fence.max.x) / 2;
+      const cz = (fence.min.z + fence.max.z) / 2;
+      if (fence.state === 'intact') {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), this.materials.wood_thin);
+        mesh.position.set(cx, sy / 2, cz);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        this.dynamicDoorsGroup.add(mesh);
+      } else {
+        // Breached fence: render low splintered posts on the edges and a wide gap in the center
+        const stubLeft = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.36, sz), this.materials.wood_thin);
+        stubLeft.position.set(fence.min.x + 0.7, 0.18, cz);
+        stubLeft.rotation.z = -0.18;
+        const stubRight = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.36, sz), this.materials.wood_thin);
+        stubRight.position.set(fence.max.x - 0.7, 0.18, cz);
+        stubRight.rotation.z = 0.22;
+        this.dynamicDoorsGroup.add(stubLeft, stubRight);
+      }
+    }
+
     this.lastWorldRevision = this.world.revision;
+  }
+
+  #createSoldierMesh({ isPolish = false, isMg = false, isRkm = false } = {}) {
+    const group = new THREE.Group();
+    const uniformMat = isPolish
+      ? this.materials.polish_uniform
+      : isMg
+        ? this.materials.target_mg
+        : this.materials.target_uniform;
+    const helmetMat = isPolish ? this.materials.polish_helmet : this.materials.target_helmet;
+
+    const legs = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.78, 0.24), uniformMat);
+    legs.position.y = 0.39;
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.62, 0.26), uniformMat);
+    torso.position.y = 1.09;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), this.materials.brick_B01);
+    head.position.y = 1.54;
+    const helmet = new THREE.Mesh(
+      new THREE.SphereGeometry(0.148, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.58),
+      helmetMat,
+    );
+    helmet.position.y = 1.56;
+
+    const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.52, 0.12), uniformMat);
+    leftArm.position.set(-0.29, 1.12, -0.08);
+    const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.52, 0.12), uniformMat);
+    rightArm.position.set(0.29, 1.12, -0.08);
+
+    const weaponGroup = new THREE.Group();
+    const gunStock = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.08, isRkm ? 0.72 : 0.58),
+      this.materials.gun_wood,
+    );
+    gunStock.position.set(0.18, 1.12, -0.28);
+    const gunBarrel = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.014, 0.016, isRkm ? 0.68 : 0.54, 6),
+      this.materials.gun_metal,
+    );
+    gunBarrel.rotation.x = Math.PI / 2;
+    gunBarrel.position.set(0.18, 1.14, -0.58);
+    weaponGroup.add(gunStock, gunBarrel);
+
+    group.add(legs, torso, head, helmet, leftArm, rightArm, weaponGroup);
+    return { group, legs, torso, head, helmet, leftArm, rightArm, weaponGroup, uniformMat };
   }
 
   #buildTargets() {
     this.targetsGroup.clear();
     this.targetMeshes.clear();
+    this.allyMeshes.clear();
+    this.enemyMeshes.clear();
 
-    for (const t of this.sim.targets) {
-      const group = new THREE.Group();
-      group.position.set(t.x, t.y, t.z);
-      group.rotation.y = -(t.facing ?? 0) + Math.PI / 2;
+    // Build Polish squad meshes (7 allies)
+    for (const a of this.sim.allies ?? []) {
+      const soldier = this.#createSoldierMesh({
+        isPolish: true,
+        isRkm: a.weapon === 'rkm_wz28',
+      });
+      soldier.group.position.set(a.x, a.y, a.z);
+      soldier.group.rotation.y = -(a.facing ?? 0) + Math.PI / 2;
+      this.targetsGroup.add(soldier.group);
+      this.allyMeshes.set(a.id, soldier);
+    }
 
-      const bodyMat = t.role === 'mg_gunner' ? this.materials.target_mg : this.materials.target_uniform;
-      const legs = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.78, 0.24), bodyMat);
-      legs.position.y = 0.39;
-      const torso = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.62, 0.26), bodyMat);
-      torso.position.y = 1.09;
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), this.materials.brick_B01);
-      head.position.y = 1.54;
-      const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.148, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.58), this.materials.target_helmet);
-      helmet.position.y = 1.56;
-
-      group.add(legs, torso, head, helmet);
-      this.targetsGroup.add(group);
-      this.targetMeshes.set(t.id, { group, torso, legs });
+    // Build German EA1 defender meshes (10 defenders)
+    for (const e of this.sim.enemies ?? []) {
+      const soldier = this.#createSoldierMesh({
+        isPolish: false,
+        isMg: e.weapon === 'mg34',
+      });
+      soldier.group.position.set(e.x, e.y, e.z);
+      soldier.group.rotation.y = -(e.facing ?? 0) + Math.PI / 2;
+      this.targetsGroup.add(soldier.group);
+      this.enemyMeshes.set(e.id, soldier);
     }
   }
 
@@ -617,11 +715,33 @@ export class M02BenchRenderer {
       this.#rebuildDynamicOpenings();
     }
 
-    // Drain simulation events to spawn shot tracers or MG bursts
+    // Drain simulation events to spawn shot tracers, actor bursts, grenade blasts, or MG bursts
     const events = this.sim.drainEvents();
     for (const evt of events) {
       if (evt.type === 'shot-fired' && evt.shot) {
         this.spawnShotVisual(evt.shot);
+      } else if (evt.type === 'actor-burst' && evt.origin && evt.target) {
+        this.spawnShotVisual(
+          {
+            origin: evt.origin,
+            point: evt.target,
+            hitTarget: evt.hitAny,
+          },
+          evt.side === 'ally' ? 0xffe082 : 0xff6e40,
+        );
+      } else if (evt.type === 'grenade-exploded' && evt.center) {
+        const ring = new THREE.Mesh(
+          new THREE.SphereGeometry(1.6, 12, 10),
+          new THREE.MeshBasicMaterial({ color: 0xff8a3d, transparent: true, opacity: 0.55 }),
+        );
+        ring.position.set(evt.center.x, evt.center.y, evt.center.z);
+        const core = new THREE.Mesh(
+          new THREE.SphereGeometry(0.45, 8, 8),
+          new THREE.MeshBasicMaterial({ color: 0xfff3b0 }),
+        );
+        core.position.set(evt.center.x, evt.center.y, evt.center.z);
+        this.tracersGroup.add(ring, core);
+        this.activeTracers.push({ line: ring, impact: core, expiresAt: this.sim.clock + 1.1 });
       } else if (evt.type === 'mg-burst') {
         this.spawnShotVisual(
           {
@@ -632,6 +752,10 @@ export class M02BenchRenderer {
           0xff5252,
         );
       }
+    }
+
+    if (this.c04ChalkMesh) {
+      this.c04ChalkMesh.visible = Boolean(this.sim.flags?.['m02.pomar_wounded_marked']);
     }
 
     // Clean expired tracers
@@ -645,23 +769,87 @@ export class M02BenchRenderer {
       }
     }
 
-    // Update target meshes & apply shared M01 LOD policy for actor detail without hiding tactical targets
+    // Update Polish squad meshes (7 allies) and German EA1 defender meshes (10 defenders)
     const player = this.sim.player;
-    for (const t of this.sim.targets) {
-      const entry = this.targetMeshes.get(t.id);
+    for (const a of this.sim.allies ?? []) {
+      const entry = this.allyMeshes.get(a.id);
       if (!entry) continue;
-      const dist = Math.hypot(t.x - player.x, t.z - player.z);
-      const lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
-      entry.group.visible = true; // Tactical targets are NEVER hidden by quality profile
-      entry.group.userData.lodBand = lodBand;
-      if (!t.alive) {
+      const dist = Math.hypot(a.x - player.x, a.z - player.z);
+      entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
+      entry.group.position.set(a.x, a.y, a.z);
+      entry.group.rotation.y = -(a.facing ?? 0) + Math.PI / 2;
+
+      if (!a.alive || a.state === 'DOWN') {
         entry.group.rotation.x = -Math.PI / 2.2;
         entry.torso.material = this.materials.target_down;
       } else {
         entry.group.rotation.x = 0;
-        entry.torso.material = t.hitsReceived > 0 ? this.materials.target_hit : (
-          t.role === 'mg_gunner' ? this.materials.target_mg : this.materials.target_uniform
-        );
+        const crouchDrop = a.crouched ? -0.32 : 0;
+        const stride = a.moving ? Math.sin(this.sim.clock * 9.5 + a.x) * 0.04 : 0;
+        entry.torso.position.y = 1.09 + crouchDrop + stride;
+        entry.head.position.y = 1.54 + crouchDrop + stride;
+        entry.helmet.position.y = 1.56 + crouchDrop + stride;
+        entry.leftArm.position.y = 1.12 + crouchDrop + stride;
+        entry.rightArm.position.y = 1.12 + crouchDrop + stride;
+        entry.weaponGroup.position.y = crouchDrop + stride;
+        entry.torso.material = entry.uniformMat;
+      }
+    }
+
+    for (const e of this.sim.enemies ?? []) {
+      const entry = this.enemyMeshes.get(e.id);
+      if (!entry) continue;
+      const dist = Math.hypot(e.x - player.x, e.z - player.z);
+      entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
+      entry.group.position.set(e.x, e.y, e.z);
+      entry.group.rotation.y = -(e.facing ?? 0) + Math.PI / 2;
+
+      if (!e.alive || e.state === 'DEAD') {
+        entry.group.rotation.x = -Math.PI / 2.2;
+        entry.torso.material = this.materials.target_down;
+        entry.weaponGroup.visible = false;
+      } else if (e.state === 'WOUNDED_UNARMED') {
+        // Seated unarmed posture in southern orchard (Scene C04)
+        entry.group.rotation.x = 0;
+        entry.legs.position.y = 0.2;
+        entry.legs.rotation.x = Math.PI / 2.2;
+        entry.torso.position.y = 0.58;
+        entry.head.position.y = 0.98;
+        entry.helmet.position.y = 1.0;
+        entry.leftArm.position.y = 0.58;
+        entry.rightArm.position.y = 0.58;
+        entry.leftArm.rotation.x = 0.35;
+        entry.rightArm.rotation.x = 0.35;
+        entry.weaponGroup.visible = false;
+        entry.torso.material = this.materials.target_wounded;
+      } else if (e.state === 'SURRENDERED') {
+        entry.group.rotation.x = 0;
+        entry.legs.position.y = 0.39;
+        entry.legs.rotation.x = 0;
+        entry.torso.position.y = 1.09;
+        entry.head.position.y = 1.54;
+        entry.helmet.position.y = 1.56;
+        entry.leftArm.position.y = 1.38;
+        entry.rightArm.position.y = 1.38;
+        entry.leftArm.rotation.x = Math.PI * 0.85;
+        entry.rightArm.rotation.x = Math.PI * 0.85;
+        entry.weaponGroup.visible = false;
+        entry.torso.material = this.materials.target_surrendered;
+      } else {
+        entry.group.rotation.x = 0;
+        entry.legs.position.y = 0.39;
+        entry.legs.rotation.x = 0;
+        const crouchDrop = e.crouched ? -0.32 : 0;
+        entry.torso.position.y = 1.09 + crouchDrop;
+        entry.head.position.y = 1.54 + crouchDrop;
+        entry.helmet.position.y = 1.56 + crouchDrop;
+        entry.leftArm.position.y = 1.12 + crouchDrop;
+        entry.rightArm.position.y = 1.12 + crouchDrop;
+        entry.leftArm.rotation.x = 0;
+        entry.rightArm.rotation.x = 0;
+        entry.weaponGroup.position.y = crouchDrop;
+        entry.weaponGroup.visible = true;
+        entry.torso.material = e.hitsReceived > 0 ? this.materials.target_hit : entry.uniformMat;
       }
     }
 

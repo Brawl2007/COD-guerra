@@ -64,10 +64,37 @@ export class M02QuintaWorld {
 
     this.doorStates = new Map();
     this.windowStates = new Map();
+    this.fenceStates = new Map();
     for (const b of this.layout.buildings) {
       for (const d of b.doors ?? []) this.doorStates.set(d.id, d.initialState ?? 'closed');
       for (const w of b.windows ?? []) this.windowStates.set(w.id, w.glassState ?? 'open');
     }
+    for (const cov of this.layout.exteriorCovers ?? []) {
+      if (cov.destructibleFence) {
+        this.fenceStates.set(cov.id, 'intact');
+      }
+    }
+
+    const self = this;
+    this.navWorld = {
+      get revision() {
+        return self.revision;
+      },
+      get obstacles() {
+        return self.navObstacles;
+      },
+      colliders: [],
+      spanDecks: [],
+      events: [],
+      heightAt(x, z) {
+        return self.heightAt(x, z);
+      },
+      move(actor, dx, dz) {
+        actor.x += dx;
+        actor.z += dz;
+        actor.y = self.heightAt(actor.x, actor.z);
+      },
+    };
 
     this.refresh();
   }
@@ -111,6 +138,72 @@ export class M02QuintaWorld {
     this.windowStates.set(windowId, state);
     this.refresh();
     return true;
+  }
+
+  getFenceState(fenceId) {
+    return this.fenceStates.get(fenceId) ?? null;
+  }
+
+  setFenceState(fenceId, state) {
+    if (!this.fenceStates.has(fenceId)) throw new Error(`Cerca M02 desconhecida: ${fenceId}`);
+    if (state !== 'intact' && state !== 'breached') {
+      throw new Error(`Estado de cerca inválido: ${state}`);
+    }
+    const prev = this.fenceStates.get(fenceId);
+    if (prev === state) return false;
+    this.fenceStates.set(fenceId, state);
+    this.refresh();
+    return true;
+  }
+
+  applyExplosionDamageToWorld(origin, radius = 5.5) {
+    const changes = {
+      brokenWindows: [],
+      destroyedDoors: [],
+      breachedFences: [],
+    };
+    let changed = false;
+
+    for (const win of this.windows) {
+      if (win.state !== 'intact') continue;
+      const d = Math.hypot(win.center.x - origin.x, win.center.y - origin.y, win.center.z - origin.z);
+      if (d <= radius * 1.45) {
+        this.windowStates.set(win.id, 'broken');
+        changes.brokenWindows.push(win.id);
+        changed = true;
+      }
+    }
+
+    for (const door of this.doors) {
+      if (door.state === 'destroyed') continue;
+      const d = Math.hypot(door.center.x - origin.x, door.center.y - origin.y, door.center.z - origin.z);
+      if (d <= radius * 0.85) {
+        this.doorStates.set(door.id, 'destroyed');
+        changes.destroyedDoors.push(door.id);
+        changed = true;
+      }
+    }
+
+    for (const cov of this.layout.exteriorCovers ?? []) {
+      if (!cov.destructibleFence) continue;
+      if (this.fenceStates.get(cov.id) === 'breached') continue;
+      const cx = (cov.min[0] + cov.max[0]) / 2;
+      const cy = (cov.min[1] + cov.max[1]) / 2;
+      const cz = (cov.min[2] + cov.max[2]) / 2;
+      // Check distance from explosion to the fence segment along X
+      const clampedX = Math.max(cov.min[0], Math.min(cov.max[0], origin.x));
+      const d = Math.hypot(clampedX - origin.x, cy - origin.y, cz - origin.z);
+      if (d <= radius * 0.95) {
+        this.fenceStates.set(cov.id, 'breached');
+        changes.breachedFences.push(cov.id);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      this.refresh();
+    }
+    return changes;
   }
 
   terrainHeightAt(x, z) {
@@ -399,13 +492,29 @@ export class M02QuintaWorld {
       }
     }
 
+    const fenceDescriptors = [];
     // Exterior tactical covers (stone well, courtyard walls, fences, woodpile)
     for (const cov of this.layout.exteriorCovers ?? []) {
+      const fState = cov.destructibleFence ? (this.fenceStates.get(cov.id) ?? 'intact') : 'intact';
+      if (cov.destructibleFence) {
+        fenceDescriptors.push({
+          id: cov.id,
+          name: cov.name,
+          state: fState,
+          min: xyz(cov.min),
+          max: xyz(cov.max),
+          material: cov.material ?? 'wood_thin',
+        });
+      }
+      if (fState === 'breached') {
+        continue;
+      }
       obstacles.push(
         makeBox(cov.id, cov.min, cov.max, {
           role: 'cover',
           name: cov.name,
           material: cov.material ?? 'earth',
+          destructibleFence: Boolean(cov.destructibleFence),
         }),
       );
     }
@@ -454,13 +563,14 @@ export class M02QuintaWorld {
     }
 
     this.obstacles = obstacles;
+    this.navObstacles = obstacles.filter((b) => !b.walkThrough);
     this.sightBlockers = sightBlockers;
     this.doors = doorDescriptors;
     this.windows = windowDescriptors;
+    this.fences = fenceDescriptors;
 
     // Player solids exclude low `walkThrough` earth lips so the player steps smoothly over the ditch bank while bullets hit the bank
-    this.playerSolids = obstacles
-      .filter((b) => !b.walkThrough)
+    this.playerSolids = this.navObstacles
       .map((b) => aabbToSolid(b, b.role === 'prop' ? 'prop' : 'structure'));
     this.solidIndex = indexSolids(this.playerSolids);
     this.revision++;

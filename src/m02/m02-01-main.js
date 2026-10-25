@@ -22,11 +22,15 @@ const renderer = new M02BenchRenderer(canvas, sim, {
 
 const elObjective = document.getElementById('hud-objective');
 const elPos = document.getElementById('hud-pos');
+const elHealth = document.getElementById('hud-health');
 const elMgStatus = document.getElementById('hud-mg-status');
+const elSquadStatus = document.getElementById('hud-squad-status');
 const elRouteStatus = document.getElementById('hud-route-status');
 const elAmmo = document.getElementById('hud-ammo');
+const elGrenades = document.getElementById('hud-grenades');
 const elLastShot = document.getElementById('hud-last-shot');
 const elDoorPrompt = document.getElementById('door-prompt');
+const elDialogueBanner = document.getElementById('dialogue-banner');
 const elTelemetry = document.getElementById('hud-telemetry');
 const selQuality = document.getElementById('select-quality');
 const selLighting = document.getElementById('select-lighting');
@@ -40,6 +44,10 @@ let pendingSingleActions = {
   reload: false,
   crouch: false,
   fire: false,
+  grenade: false,
+  orderSuppress: false,
+  orderAdvance: false,
+  orderFlank: false,
 };
 
 window.addEventListener('keydown', (e) => {
@@ -48,9 +56,26 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyR') pendingSingleActions.reload = true;
   if (e.code === 'KeyC') pendingSingleActions.crouch = true;
   if (e.code === 'Space') pendingSingleActions.fire = true;
+  if (e.code === 'KeyG') pendingSingleActions.grenade = true;
+  if (e.code === 'KeyZ') pendingSingleActions.orderSuppress = true;
+  if (e.code === 'KeyX') pendingSingleActions.orderAdvance = true;
+  if (e.code === 'KeyB') pendingSingleActions.orderFlank = true;
   if (e.code === 'F3') {
     e.preventDefault();
     renderer.toggleDebugOverlay();
+  }
+  if (e.code === 'F5') {
+    e.preventDefault();
+    sim.saveCheckpoint('cp_m02_manual');
+  }
+  if (e.code === 'F9') {
+    e.preventDefault();
+    const id = sim.checkpoints.has('cp_m02_manual')
+      ? 'cp_m02_manual'
+      : sim.checkpoints.has('cp_m02_b_acesso')
+        ? 'cp_m02_b_acesso'
+        : 'cp_m02_a_preparacao';
+    sim.restoreCheckpoint(id);
   }
   if (e.code === 'Digit1') teleportToPanorama('SN1');
   if (e.code === 'Digit2') teleportToPanorama('SN2');
@@ -97,6 +122,16 @@ document.getElementById('btn-reset-bench')?.addEventListener('click', () => {
   sim.reset();
 });
 
+document.getElementById('btn-order-suppress')?.addEventListener('click', () => {
+  sim.issueSquadOrder('suppress');
+});
+document.getElementById('btn-order-advance')?.addEventListener('click', () => {
+  sim.issueSquadOrder('advance');
+});
+document.getElementById('btn-order-flank')?.addEventListener('click', () => {
+  sim.issueSquadOrder('flank_east');
+});
+
 for (const btn of document.querySelectorAll('[data-tp]')) {
   btn.addEventListener('click', () => {
     const id = btn.getAttribute('data-tp');
@@ -114,10 +149,13 @@ function teleportToPanorama(id) {
 function updateHud() {
   const p = sim.player;
   if (elObjective) {
-    elObjective.textContent = `Objetivo: ${sim.objective.title}`;
+    elObjective.textContent = `Objetivo [${sim.objective.id}]: ${sim.objective.title}`;
   }
   if (elPos) {
     elPos.textContent = `X: ${p.x.toFixed(1)}m, Y: ${p.y.toFixed(2)}m, Z: ${p.z.toFixed(1)}m`;
+  }
+  if (elHealth) {
+    elHealth.textContent = `${p.health}`;
   }
   if (elMgStatus) {
     if (sim.mgState.canHitPlayer) {
@@ -129,6 +167,16 @@ function updateHud() {
       elMgStatus.className = 'badge-covered';
     }
   }
+  if (elSquadStatus) {
+    const alliesOk = sim.allies.filter((a) => a.alive && a.state !== 'DOWN').length;
+    const enemiesActive = sim.enemies.filter((e) => e.alive && !e.nonCombatant).length;
+    const enemiesSurrendered = sim.enemies.filter((e) => e.alive && e.state === 'SURRENDERED').length;
+    const enemiesWounded = sim.enemies.filter((e) => e.alive && e.state === 'WOUNDED_UNARMED').length;
+    elSquadStatus.textContent =
+      `Secção Polaca ${alliesOk}/${sim.allies.length} · Guarnição EA1 ${enemiesActive}/${sim.enemies.length} ativos` +
+      (enemiesSurrendered > 0 ? ` · ${enemiesSurrendered} rendidos` : '') +
+      (enemiesWounded > 0 ? ` · ${enemiesWounded} ferido C04` : '');
+  }
   if (elRouteStatus) {
     const ditchCount = sim.routeProgress.ditchWaypointsVisited.filter(Boolean).length;
     const orchardCount = sim.routeProgress.orchardWaypointsVisited.filter(Boolean).length;
@@ -137,6 +185,9 @@ function updateHud() {
   }
   if (elAmmo) {
     elAmmo.textContent = `${sim.weapon.mag} / ${sim.weapon.reserve}`;
+  }
+  if (elGrenades) {
+    elGrenades.textContent = `${sim.grenadeAmmo}`;
   }
   if (elLastShot) {
     const last = sim.shotLog[sim.shotLog.length - 1];
@@ -153,13 +204,23 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentDoorPrompt();
+  const prompt = sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';
       elDoorPrompt.textContent = `${prompt.prompt} (${prompt.distance}m)`;
     } else {
       elDoorPrompt.style.display = 'none';
+    }
+  }
+
+  if (elDialogueBanner) {
+    const line = sim.dialogue.activeLine;
+    if (line) {
+      elDialogueBanner.style.display = 'block';
+      elDialogueBanner.innerHTML = `<span class="speaker">${line.speakerName}:</span> «${line.text}»`;
+    } else {
+      elDialogueBanner.style.display = 'none';
     }
   }
 
@@ -197,6 +258,10 @@ function animate(now) {
     reload: pendingSingleActions.reload,
     crouch: pendingSingleActions.crouch,
     fire: pendingSingleActions.fire,
+    grenade: pendingSingleActions.grenade,
+    orderSuppress: pendingSingleActions.orderSuppress,
+    orderAdvance: pendingSingleActions.orderAdvance,
+    orderFlank: pendingSingleActions.orderFlank,
   });
   const simMs = performance.now() - simStart;
 
@@ -204,6 +269,10 @@ function animate(now) {
   pendingSingleActions.reload = false;
   pendingSingleActions.crouch = false;
   pendingSingleActions.fire = false;
+  pendingSingleActions.grenade = false;
+  pendingSingleActions.orderSuppress = false;
+  pendingSingleActions.orderAdvance = false;
+  pendingSingleActions.orderFlank = false;
 
   renderer.renderFrame(dt, simMs);
   updateHud();
@@ -226,6 +295,12 @@ window.m02Bench = {
   },
   interactDoor: (doorId = null) => sim.interactDoor(doorId),
   fireWeapon: () => sim.firePlayerWeapon(true, true),
+  throwGrenade: (origin = null, dir = null) => sim.throwGrenade(origin, dir),
+  detonateGrenadeAt: (x, y, z, r = 6.5) => sim.detonateGrenadeAt(x, y, z, r),
+  issueSquadOrder: (type, axis = null) => sim.issueSquadOrder(type, axis),
+  markWoundedSoldierWithChalk: () => sim.markWoundedSoldierWithChalk(),
+  saveCheckpoint: (id) => sim.saveCheckpoint(id),
+  restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),
@@ -239,9 +314,17 @@ window.m02Bench = {
     },
     mgState: structuredClone(sim.mgState),
     routeProgress: structuredClone(sim.routeProgress),
-    doorPrompt: sim.currentDoorPrompt(),
+    objective: structuredClone(sim.objective),
+    flags: structuredClone(sim.flags),
+    squadOrder: structuredClone(sim.squadOrder),
+    activeDialogue: sim.dialogue.activeLine ? structuredClone(sim.dialogue.activeLine) : null,
+    alliesCount: sim.allies.length,
+    enemiesCount: sim.enemies.length,
+    enemiesActiveCount: sim.enemies.filter((e) => e.alive && !e.nonCombatant).length,
+    doorPrompt: sim.currentChalkPrompt() ?? sim.currentDoorPrompt(),
     doors: Object.fromEntries(sim.world.doorStates.entries()),
     windows: Object.fromEntries(sim.world.windowStates.entries()),
+    fences: Object.fromEntries(sim.world.fenceStates.entries()),
     lastShot: sim.shotLog[sim.shotLog.length - 1] ?? null,
     telemetry: renderer.getTelemetrySummary(),
   }),

@@ -148,6 +148,29 @@
         letter-spacing: 0.03em;
         display: none;
       }
+      #dialogue-banner {
+        position: fixed;
+        bottom: 122px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(14, 16, 14, 0.92);
+        border-left: 3px solid var(--accent);
+        border-top: 1px solid var(--border-panel);
+        border-right: 1px solid var(--border-panel);
+        border-bottom: 1px solid var(--border-panel);
+        padding: 8px 16px;
+        border-radius: 4px;
+        max-width: 680px;
+        font-size: 13.5px;
+        line-height: 1.4;
+        display: none;
+        pointer-events: none;
+      }
+      #dialogue-banner .speaker {
+        color: var(--accent);
+        font-weight: 700;
+        margin-right: 6px;
+      }
       .bottom-bar {
         display: flex;
         justify-content: space-between;
@@ -192,16 +215,17 @@
     <canvas id="m02-canvas"></canvas>
     <div class="center-reticle"></div>
     <div id="door-prompt"></div>
+    <div id="dialogue-banner"></div>
 
     <div class="hud-layer">
       <div class="top-bar">
         <div class="panel mission-header">
-          <h1>M02-01 · Bancada da Quinta (100 × 150 m)</h1>
+          <h1>M02-01 / M02-02 · Quinta e Combate de Secção (100 × 150 m)</h1>
           <div class="sub">
             Setor rural Kwiatkówek–Tum · 9 Set 1939 · 56.º Regimento / 25.ª DI (BANCADA DE PRODUÇÃO · RECONSTRUÍDO)
           </div>
           <div class="objective-box" id="hud-objective">
-            Objetivo: Ensaiar rotas (Vala ou Pomar), interiores B01/B02 e linhas de tiro
+            Objetivo: Escolher eixo de aproximação (Vala Oeste ou Pomar Leste) e fixar a MG34 em B02
           </div>
           <div class="controls-bar">
             <button type="button" data-tp="SN1" title="Entrada da bancada (0, -80)">1: SN1 Entrada</button>
@@ -209,6 +233,9 @@
             <button type="button" data-tp="SN3" title="Flanco este B01 (-23, -12)">3: SN3 Casa B01</button>
             <button type="button" data-tp="SN4" title="Frente oeste Celeiro B02 (8, -28)">4: SN4 Celeiro B02</button>
             <button type="button" data-tp="SN5" title="Pomar sul (0, 45)">5: SN5 Pomar</button>
+            <button type="button" id="btn-order-suppress" title="Ordem à secção: Suprimir MG34">Z: Suprimir MG</button>
+            <button type="button" id="btn-order-advance" title="Ordem à secção: Avançar pela Vala/Casa B01">X: Avançar B01</button>
+            <button type="button" id="btn-order-flank" title="Ordem à secção: Flanquear pelo Pomar Leste">B: Flanquear Pomar</button>
             <button type="button" id="btn-toggle-debug">F3: Guias/LoS</button>
             <button type="button" id="btn-reset-bench">Reset Bancada</button>
           </div>
@@ -236,16 +263,17 @@
 
       <div class="bottom-bar">
         <div class="panel status-grid" id="hud-tactical">
-          <div>Posição: <span id="hud-pos">X: 0.0, Y: 0.0, Z: -80.0</span></div>
+          <div>Posição: <span id="hud-pos">X: 0.0, Y: 0.0, Z: -80.0</span> · Saúde: <span id="hud-health">100</span>%</div>
           <div>Linha de Fogo MG34 (B02): <span id="hud-mg-status" class="badge-covered">A calcular...</span></div>
+          <div>Efetivos: <span id="hud-squad-status">Secção Polaca 7/7 · Guarnição Alemã EA1 10/10 ativos</span></div>
           <div>Progresso Rotas: <span id="hud-route-status">Vala 1/6 · Pomar 1/6 · B01 0/5 salas</span></div>
           <div style="color: var(--text-dim); font-size: 11px; margin-top: 3px">
-            Controlos: WASD mover · Shift correr · C agachar · Rato/Setas olhar · Clique/Espaço disparar · E abrir/fechar porta · R recarregar
+            Controlos: WASD mover · Shift correr · C agachar · Clique/Espaço disparar · G granada wz.33 · E porta/giz C04 · Z/X/B ordens secção · F5/F9 checkpoint
           </div>
         </div>
 
         <div class="panel weapon-box">
-          <div class="w-name">Karabinek wz. 29 (7,92×57mm)</div>
+          <div class="w-name">kb wz. 29 · Granada wz. 33 (<span id="hud-grenades">2</span>)</div>
           <div class="w-ammo" id="hud-ammo">5 / 45</div>
           <div class="shot-feedback" id="hud-last-shot">Último disparo: —</div>
         </div>

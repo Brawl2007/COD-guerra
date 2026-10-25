@@ -1,54 +1,66 @@
-# M02 — HANDOFF TÉCNICO E HISTÓRICO (ETAPA M02-01)
+# M02 — HANDOFF TÉCNICO E HISTÓRICO (ETAPAS M02-01 E M02-02)
 
-## 1. Identificação da Etapa
+## 1. Identificação das Etapas Concluídas
 
 - **Missão:** M02 — Batalha do Bzura, Polónia, 9–12 de setembro de 1939
-- **Etapa concluída:** **M02-01 — Bancada jogável e independente da quinta de 100 × 150 m**
+- **Etapas concluídas:**
+  - **M02-01 — Bancada jogável e independente da quinta de 100 × 150 m (N0 Geometria e Balística)** (`bef32e8`)
+  - **M02-02 — Combate da Quinta e Avanço de Secção (N1 Combate Causal · Cenas C02–C04)**
 - **Ramo Git:** `gemini/m02-01-quinta`
 - **Commit base (candidata M01 PR #80 + PR #91 integrado):** `3c8e576dfdfefa7a2158a50dffb74fed4695385f`
-- **Interferência na M01 / `main`:** **Zero** (0 ficheiros da M01 modificados; 0 merges em `main`).
+- **Interferência na M01 / `main`:** **Zero** (`0` ficheiros da M01 modificados; `0` merges em `main`).
 
 ---
 
-## 2. O Que a M02-01 Implementou
+## 2. O Que a M02-01 e a M02-02 Implementaram
 
+### 2.1. M02-01 — Geometria 100 × 150 m, Duas Rotas e Balística por Material (`MAP-01`, `MAP-02`)
 1. **Envelope Espacial de 100 × 150 m (`X: -50..+50 m`, `Z: -90..+60 m`, origem `(0,0,0)` no pátio):**
-   - **B01 — Casa rural da família ausente (`X: -40..-26, Z: -18..-8`, `14 × 10 m`):** 5 divisões interiores navegáveis (`cozinha`, `despensa`, `sala`, `quarto_oeste`, `quarto_este`), 6 portas funcionais com dobradiça e estado `open`/`closed`, 4 janelas reais (2 abertas, 2 com vidro quebrável `intact` → `broken`), mobiliário de cobertura interior (fogão de alvenaria, mesa, duas camas).
-   - **B02 — Celeiro do portão norte (`X: 12..36, Z: -38..-24`, `24 × 14 m`):** interior navegável, portão norte aberto de `3.0 m`, porta sul funcional de `1.2 m` (`initialState: closed`), abertura oeste de tiro de metralhadora (`win_b02_west_mg`, `X = 12, Z = -30`), 4 pilares estruturais de madeira (`wood_thick`), coberturas internas (sacos, feixes, palha, carroça, bancada MG34) e posição simulada de MG34 (`de_b02_mg34`) para validação de linha de fogo e oclusão.
-   - **B03 — Estábulo (`X: 20..38, Z: 0..12`, `18 × 12 m`):** corredor central norte–sul com portas abertas de `2.4 m` e janela alta oeste, validando o flanco leste/sul.
-   - **B04 — Forno e anexo (`X: -37..-29, Z: 20..26`, `8 × 6 m`):** porta sul aberta, forno de alvenaria interior e pilha de lenha exterior para cobertura.
+   - **B01 — Casa rural da família ausente (`X: -40..-26, Z: -18..-8`, `14 × 10 m`):** 5 divisões interiores navegáveis (`cozinha`, `despensa`, `sala`, `quarto_oeste`, `quarto_este`), 6 portas funcionais (`open`/`closed`/`destroyed`), 4 janelas reais (2 abertas, 2 com vidro quebrável `intact` → `broken`), mobiliário interior de cobertura.
+   - **B02 — Celeiro do portão norte (`X: 12..36, Z: -38..-24`, `24 × 14 m`):** interior navegável, portão norte aberto de `3.0 m`, porta sul de `1.2 m` (`closed`), abertura oeste de tiro de metralhadora (`win_b02_west_mg`), 4 pilares internos e posição defensiva de `MG34` (`DE-A05`).
+   - **B03 — Estábulo (`X: 20..38, Z: 0..12`, `18 × 12 m`):** corredor central norte–sul com portas abertas de `2.4 m` e janela alta oeste.
+   - **B04 — Forno e anexo (`X: -37..-29, Z: 20..26`, `8 × 6 m`):** porta sul aberta, forno interior e pilha de lenha exterior.
 2. **Duas Rotas Táticas Completas e Comutáveis:**
-   - **Rota A — Vala Húmida (`(0,-80) → (-45,-70) → (-45,-5) → (-24,0) → (-15,-8) → (0,-24)`):** depressão física real no terreno (`Y = -1.10 m`), rampas suaves de entrada e saída e talude leste (`ditch_east_lip_north`/`south`) que bloqueia o fogo da MG34 do Celeiro B02 enquanto o jogador avança agachado ou de pé na vala.
-   - **Rota B — Pomar e Flanco Leste/Sul (`(0,-80) → (43,-55) → (43,27) → (8,42) → (0,20) → (0,-24)`):** flanco leste com micro-relevo agrícola e pomar sul (`7` macieiras onde apenas o tronco estreito de madeira `wood_thick` bloqueia projéteis e movimento, enquanto a copa `foliage` funciona exclusivamente como oclusão visual sem bloquear tiros como se fosse parede).
-3. **Balística Por Material (`BALLISTIC_MATERIAL_POLICY`) e Aberturas Reais (`MAP-02`):**
-   - Segmentação automática de todas as paredes em torno de portas e janelas: cada janela gera ombreiras (`window_frame`), peitoril (`window_sill`) e verga (`window_lintel`) físicos; cada porta gera batentes (`door_frame`), verga (`door_lintel`) e folha móvel (`door_leaf`) ativa apenas quando `state === 'closed'`.
-   - Vidros intactos (`glass`) partem no primeiro disparo (`glassBrokenId`) e deixam passar os disparos seguintes.
-4. **Perfis Gráficos Escaláveis e Telemetria (`src/render/m02-01-renderer.js`):**
-   - Perfis `high` (Máxima), `medium` (Equilibrada) e `low` (Otimizada) integrados com `selectConsumerLod` de `src/render/m01-lod-policy.js`, garantindo que coberturas, paredes, portas, janelas e alvos nunca são ocultados.
-   - Telemetria real medida em Chromium Headless (`1280 × 720`, Linux `aarch64`, WebGL por software SwiftShader):
-     - **Perfil `high` (Máxima):** `simMs p50 = 0.5 ms`, `renderMs p50 = 20.3 ms`, `drawCalls = 320`, `triangles = 23 245`
-     - **Perfil `medium` (Equilibrada):** `simMs p50 = 0.6 ms`, `renderMs p50 = 23.3 ms`, `drawCalls = 320`, `triangles = 23 245`
-     - **Perfil `low` (Otimizada):** `simMs p50 = 0.5 ms`, `renderMs p50 = 12.1 ms`, `drawCalls = 190`, `triangles = 21 069`
+   - **Rota A — Vala Húmida (`(0,-80) → (-45,-70) → (-45,-5) → (-24,0) → (-15,-8) → (0,-24)`):** depressão física (`Y = -1.10 m`), rampas suaves e talude leste que protege contra a `MG34` do Celeiro B02.
+   - **Rota B — Pomar e Flanco Leste/Sul (`(0,-80) → (43,-55) → (43,27) → (8,42) → (0,20) → (0,-24)`):** flanco leste e pomar sul (`7` macieiras onde apenas o tronco estreito `wood_thick` bloqueia projéteis e movimento, enquanto a copa `foliage` funciona exclusivamente como oclusão visual sem bloquear tiros).
+
+### 2.2. M02-02 — Secção Polaca Causal, Guarnição Alemã `EA1` Finita, Granadas e Cena C04 (`AI-01..04`, `COM-01..03`, `OBJ-01`, `SAVE-01/02`)
+1. **Secção Polaca com Efeito Causal Real (`7` aliados + `Piotr Sokół`, `AI-01`, `AI-03`):**
+   - Efetivo completo segundo `K-PERSONAGENS-DIALOGOS.md`: `sierż. Władysław Gruca` (`pl_gruca`), `strz. Andrzej Lis` (`pl_lis`), `strz. Tomasz Wierzba` (`pl_wierzba`), `strz. Jurek Małek` (`pl_malek`), `sanit. Edmund Szymczak` (`pl_szymczak`), `strz. Nowak` (`pl_aux_01`, `rkm wz. 28`) e `strz. Kowalski` (`pl_aux_02`, auxiliar `rkm`).
+   - Consumo real de munição e ciclos de recarga (`wz29` 5 cartuchos; `rkm_wz28` 20 cartuchos), navegação A* (`M01Navigator`), abertura automática de portas fechadas na rota, fila única por portal (`doorLocks`) em portas estreitas (`1.0–1.2 m`) sem empilhamento de cápsulas (`AI-03`), verificação de linha limpa sem fogo amigo (`friendlyFireClear`) e disparos por raycast balístico real (`traceShot`) que suprimem e causam dano/baixas reais na guarnição alemã (`AI-01`).
+   - Ordens táticas do jogador (`suppress` `[Z]`, `advance` `[X]`, `flank_east` `[B]`) + autonomia tática sob comando de `Gruca`.
+2. **Guarnição Alemã Finita `EA1` (`10` defensores `DE-A05`..`DE-A14`, `AI-02`, `AI-04`, `COM-03`):**
+   - `DE-A05` (`MG34` em `B02`) + `DE-A06` (auxiliar `Kar98k` em `B02`), `DE-A07` e `DE-A08` (`B01` cozinha e sala), `DE-A09` e `DE-A10` (`B03` estábulo), `DE-A11` (portão norte), `DE-A12` e `DE-A13` (reservas locais junto ao poço e cerca sul que deslocam para o flanco ameaçado `west`/`east`), e `DE-A14` (pomar sul, candidato da cena `C04`).
+   - Zero spawns infinitos e zero spawns nas costas do jogador (`AI-04`).
+   - Percepção honesta (`AI-02`): cone visual + `world.lineOfSight` real e memória auditiva/visual (`lastKnownPosition` com expiração de `5.5–6.0 s`) — paredes sólidas bloqueiam visão e os inimigos nunca seguem movimento oculto atrás de paredes (`wallhack` proibido).
+   - Colapso moral / rendição (`SURRENDERED`) quando a `MG34` e `>= 6` defensores caem, e transição persistente de `DE-A14` no pomar sul para `WOUNDED_UNARMED` (`COM-03`).
+3. **Granadas Causais (`wz. 33`), Cercas Destrutíveis e Estados de Dano (`COM-01`, `COM-02`):**
+   - O jogador dispõe de `2` granadas de fragmentação (`KeyG`) com física balística, ressalto e detonação em ponto fixo (`detonateGrenadeAt`).
+   - A explosão verifica `traceObstruction`: paredes sólidas (`brick`, `stone`, `earth`, `wood_thick`) bloqueiam o dano da explosão, enquanto alvos expostos sofrem dano graduado e supressão; janelas intactas no raio partem (`intact → broken`), portas finas fechadas próximas ficam destruídas (`closed → destroyed`) e as cercas de madeira sul (`cov_south_fence_west`, `cov_south_fence_east`) abrem brecha física e visual (`intact → breached`).
+4. **Objetivos por Estado (`O01 → O02 → O03 → C04 → COMPLETE`), Diálogos (`K2/K3/K4`) e Cena C04 (`OBJ-01`, `SAVE-01/02`):**
+   - Fala literal protegida `dlg_m02_001` (`Lis`: *«Era a estrada de casa. Agora procuro onde esconder a cabeça.»*) e catálogo `bz39_c01_01`..`bz39_c05_01` com prioridades `0/1/2` (onde prioridade `0` interrompe imediatamente falas de menor prioridade).
+   - Interação de giz branco na Cena **C04 (Pomar e Água)**: aproximar-se de `DE-A14` (`WOUNDED_UNARMED`) e premir `[E]` marca o poste do pomar com giz branco (`m02.pomar_wounded_marked = true`, `bz39_c04_03`); disparar sobre o ferido desarmado regista `m02.fired_on_wounded = true` e aciona imediatamente a reação de prioridade `0` de `Gruca` (`bz39_c04_05`: *«Baixe a arma. Ele já não combate.»*).
+   - Checkpoints semânticos `cp_m02_a_preparacao` e `cp_m02_b_acesso` com validação em duas fases (`validateM02Snapshot`, `SAVE-01`, `SAVE-02`).
 
 ---
 
-## 3. Ficheiros Criados vs. Ficheiros Reutilizados da M01
+## 3. Ficheiros Criados / Modificados na M02 vs. Ficheiros Reutilizados da M01
 
-### Ficheiros Novos Criados (Exclusivos da M02-01)
-- `missions/m02-bzura/m02-01-quinta-layout.json` — Catálogo espacial declarativo da quinta de 100 × 150 m.
-- `src/world/m02-quinta-world.js` — Mundo físico/balístico `M02QuintaWorld` e `BALLISTIC_MATERIAL_POLICY`.
-- `src/game/m02-01-simulation.js` — Simulação determinística `M02BenchSimulation` (sem DOM/Three.js/`Math.random`/`Date.now`).
-- `src/render/m02-01-renderer.js` — Renderizador Three.js `M02BenchRenderer` com perfis gráficos, presets de iluminação e telemetria.
-- `src/m02/m02-01-main.js` — Controlador interativo e API de inspeção `window.m02Bench`.
-- `m02-01.html` — Ponto de entrada independente da bancada M02-01.
-- `tools/m02/run-m02-01.mjs` — Script de arranque isolado da bancada.
-- `tools/m02/playwright-m02-01.config.js` — Configuração Playwright isolada para verificação browser da M02-01.
-- `tests/m02-01-quinta-geometry-ballistics.test.js` — Suite determinística Node (`MAP-01`, `MAP-02`, fronteira de simulação e snapshots).
-- `tests/browser/m02-01-quinta.spec.js` — Suite Playwright em browser real com capturas `SN1–SN5` + interior `B01` e telemetria.
-- `docs/m02/M02_HANDOFF.md` — Este documento de handoff.
+### Ficheiros Exclusivos da M02
+- `missions/m02-bzura/m02-01-quinta-layout.json` — Catálogo espacial declarativo da quinta (`100 × 150 m`), `coverNodes`, `polishSquad` (`7` aliados) e `enemyRosterEA1` (`10` defensores).
+- `src/world/m02-quinta-world.js` — Mundo físico/balístico `M02QuintaWorld`, `BALLISTIC_MATERIAL_POLICY`, cercas destrutíveis (`fenceStates`), adaptador `navWorld` e `applyExplosionDamageToWorld`.
+- `src/game/m02-combat-ai.js` — IA tática da secção polaca (`updatePolishSquad`), IA da guarnição alemã (`updateGermanGarrison`), navegação A* com fila de porta (`stepActorNavigation`), armas (`WEAPON_PROFILES`) e diretor de diálogos (`M02DialogueDirector`).
+- `src/game/m02-01-simulation.js` — Simulação determinística `M02BenchSimulation` e validador `validateM02Snapshot`.
+- `src/render/m02-01-renderer.js` — Renderizador Three.js `M02BenchRenderer` (edifícios, telhados com empenas, cercas dinâmicas, poste C04 com giz, soldados polacos e alemães articulados, granadas e traçantes).
+- `src/m02/m02-01-main.js` e `m02-01.html` — Controlador interativo, HUD tático, legendas de diálogo e API `window.m02Bench`.
+- `tools/m02/run-m02-01.mjs` e `tools/m02/playwright-m02-01.config.js` — Ferramentas de execução e teste browser isoladas.
+- `tests/m02-01-quinta-geometry-ballistics.test.js` — Suite determinística Node da M02-01 (`7` testes).
+- `tests/m02-02-combat-squad-ai.test.js` — Suite determinística Node da M02-02 (`8` testes: `AI-01..04`, `COM-01..03`, `OBJ-01`, `SAVE-01/02`).
+- `tests/browser/m02-01-quinta.spec.js` — Suite Playwright em browser real (`9` capturas PNG + telemetria nos 3 perfis).
 
-### Ficheiros Reutilizados da M01 (Sem Qualquer Modificação — 0 Bytes Alterados)
+### Ficheiros Reutilizados da M01 (`0` Bytes Alterados)
 - `src/world/m01-player-physics.js` (`movePlayer`, `PLAYER_PHYSICS`)
+- `src/world/m01-navigation.js` (`M01Navigator`)
 - `src/world/m01-collision-layout.js` (`indexSolids`, `queryNearbySolids`)
 - `src/world/spatial.js` (`eyePosition`, `aimDirection`, `muzzlePosition`, `traceShot`, `traceObstruction`, `visible`)
 - `src/game/wz29.js` (`Wz29`)
@@ -58,60 +70,29 @@
 
 ---
 
-## 4. Como Executar e Testar a M02-01
+## 4. Como Executar e Testar a M02-01 e M02-02
 
-1. **Iniciar a bancada interativa no navegador:**
+1. **Iniciar a experiência interativa no navegador:**
    ```bash
    node tools/m02/run-m02-01.mjs
    # Abrir http://127.0.0.1:4173/COD-guerra/m02-01.html
    ```
-2. **Executar os testes unitários e balísticos determinísticos (Node):**
+2. **Executar toda a suite determinística Node (`19` testes):**
    ```bash
-   node --test tests/m02-01-quinta-geometry-ballistics.test.js
+   node --test tests/m02-01-quinta-geometry-ballistics.test.js tests/m02-02-combat-squad-ai.test.js tests/m01-simulation-boundary.test.js tests/assets-manifests.test.js
    ```
-3. **Executar os testes de fronteira e manifestos da M01 + M02-01:**
+3. **Executar a verificação em navegador real (Playwright):**
    ```bash
-   node --test tests/m01-simulation-boundary.test.js tests/assets-manifests.test.js tests/m02-01-quinta-geometry-ballistics.test.js
-   ```
-4. **Executar a verificação em navegador real (Playwright):**
-   ```bash
-   npx playwright test -c tools/m02/playwright-m02-01.config.js
+   npx playwright test -c tools/m02/playwright-m02-01.config.js tests/browser/m02-01-quinta.spec.js
    ```
 
 ---
 
-## 5. Auditoria das Lições da M01 e Reconciliação Documental (Pacote A–Q vs. PR #58)
+## 5. O Que a Etapa Seguinte (M02-03 — Área A Completa, Cena C01 e Horizonte Vivo N2) Deve Fazer
 
-| Domínio / Lição da M01 (Relatórios A–E, PR #80/#91) | Estado na Base `3c8e576` | Aplicação na M02-01 |
-| :--- | :--- | :--- |
-| Colisão cápsula vs. OBB/AABB e suporte contínuo de piso | **Corrigido e testado** (`m01-player-physics.js`) | Reutilizado diretamente; validado na vala (`Y = -1.1 m`) e rampas sem quedas bruscas nem bloqueios. |
-| Portas e janelas como aberturas físicas e balísticas reais | **Parcial na M01** (foco em pontes/vagões) | **Implementado e testado na M02-01** (`m02-quinta-world.js`): segmentação real de paredes em ombreiras, peitoris, vergas, folhas de porta e vidros quebráveis. |
-| Copas de árvores vs. troncos (evitar colisão balística de caixa gigante) | **Corrigido no PR #91** (`b04c5f1`) | **Aplicado de raiz na M02-01**: troncos estreitos (`wood_thick`) em `obstacles`; copas (`foliage`) apenas em `sightBlockers` (oclusão visual, não bloqueiam balas). |
-| Fronteira estrita Simulação vs. Apresentação | **Corrigido e testado** (`m01-simulation-boundary.test.js`) | `M02BenchSimulation` e `M02QuintaWorld` são 100% determinísticos e livres de DOM/Three.js. |
-| Reconciliação Pacote A–Q (Astra) vs. PR #58 (`7849522`) | Auditado | O PR #58 continha apenas documentação criativa preliminar de campanha (`M02–M30`) sem implementação espacial da quinta. O Pacote A–Q governa a engenharia espacial, histórica e de aceitação (`MAP-01`/`MAP-02`) da M02, preservando a continuidade narrativa de Piotr Sokół, Kruk, Marek, Janek e Nowak. |
-
----
-
-## 6. Rigor Histórico: Provado vs. Reconstruído vs. Dramatização
-
-- **PROVADO (`[H01]–[H07]`):**
-  - Ofensiva do Exército Poznań / 25.ª Divisão de Infantaria / 56.º Regimento de Infantaria polaco iniciada a 9 de setembro de 1939 no setor de Łęczyca / Kwiatkówek / Tum contra elementos da 30.ª DI alemã (`IR 26`).
-  - **Regra histórica cumprida:** A M02 representa a ofensiva polaca de 9–12 de setembro de 1939 (e posterior mudança operacional), **nunca** uma retirada geral na manhã de 10 de setembro.
-  - Armamento sem anacronismos de 1944–1945: espingarda polaca `kb wz. 29` (`7,92×57 mm`) e posição defensiva alemã `MG34`.
-- **RECONSTRUÍDO:**
-  - Tipologia arquitetónica da quinta polaca da região de Łęczyca (`B01` casa de alvenaria rebocada de 5 divisões, `B02` celeiro de madeira de 3 vãos, `B03` estábulo com corredor central, `B04` forno exterior, vala de drenagem agrícola e pomar).
-- **DRAMATIZAÇÃO / BANCADA DE PRODUÇÃO (Pendências `GEO-01` e `HIST-01`):**
-  - A geometria de `100 × 150 m` e as coordenadas locais da bancada são uma composição de level design claramente identificada no código e no HUD como `BANCADA DE PRODUÇÃO · RECONSTRUÍDO`.
-  - Não foram inventadas coordenadas GPS/WIG nem subunidades abaixo do 56.º Regimento até fecho documental de `GEO-01` (carta WIG 1:100 000 Pas 41 Słup 29 Łęczyca) e `HIST-01`.
-
----
-
-## 7. O Que a Etapa Seguinte (M02-02 — Combate da Quinta e Avanço de Secção) Deve Fazer
-
-1. **Integrar a secção polaca e defensores alemães sobre `M02QuintaWorld`:**
-   - Instanciar a secção polaca (`sierż. Kruk`, `kpr. Marek`, `strz. Janek`, `strz. Nowak`) e os defensores alemães (`DE-A1-01` a `DE-A1-08`) utilizando a máquina de estados tática (`AdvanceOrder`, `HoldAndSuppress`, `FlankMove`, `ClearRoom`, `FallbackToCover`) definida no Documento M (`M-ARQUITETURA-TECNICA.md`).
-2. **Garantir combate real (Proibição de Teatro Falso):**
-   - Substituir os alvos estáticos de calibração (`testTargets`) da bancada M02-01 por agentes com munição, percepção por raycast real (`M02QuintaWorld.lineOfSight`), supressão e dano efetivo.
-   - Fazer com que a neutralização da MG34 em `B02` ou a limpeza de `B01` pelos aliados ou pelo jogador faça progredir os objetivos (`OBJ-A1` → `OBJ-A5`) por estado real do mundo, sem temporizadores artificiais.
-3. **Preservar os contratos validados na M02-01:**
-   - Manter `missions/m02-bzura/m02-01-quinta-layout.json` e `src/world/m02-quinta-world.js` como autoridade geométrica e balística da Área A.
+1. **Integrar o Prólogo em Marcha (`C01 — Estrada de Orvalho`, `Z = -220..0 m`) à entrada norte da quinta:**
+   - Ligar a coluna em marcha na estrada húmida ao ponto de contacto inicial (`SN1`, `cp_m02_a_preparacao`), incluindo os soldados `DE-A01..DE-A04` da linha avançada da estrada.
+2. **Ativar a Camada de Horizonte Vivo (`N2`, Documento H):**
+   - Adicionar eventos distantes sincronizados (`L2`/`L3`: clarões e fumo de artilharia no corredor de Łęczyca/Tum com atraso acústico físico `d / 340 m/s`), respeitando o orçamento de `<= 10%` do frame e `0` impacto balístico no combate local.
+3. **Preparar a transição `T-AB` (`cp_m02_b_acesso`) para a Área B (Acessos de Łęczyca):**
+   - Consumir o estado persistido em `cp_m02_b_acesso` (`flags`, munição de Piotr e estado de `Małek`/`Wierzba`) na abertura da Área B.
