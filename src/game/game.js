@@ -265,7 +265,7 @@ export class Game {
         :{...s,at:this.sim.clock+s.distance/343,kind:'fire',weapon:'ally_rifle',key:`ally:${clock}`});
       // R2-c: a real Polish round says where it stopped (`end`): one impact puff when it arrives and, if it lands near the player, its thud after the flight and distance / 343 s.
       if(event.end){
-        this.renderer.m01.longRangeShot(event,this.sim);
+        this.renderer.m01.longRangeShot?.(event,this.sim);
         const e=this.spatial(event.end),flight=Math.hypot(event.end.x-event.point.x,event.end.y-event.point.y,event.end.z-event.point.z)/ROUND_SPEED,
           plan=roundImpactSoundPlan(e.distance,this.sim.clock,flight);
         const material=this.renderer.m01.lastEndMaterial;   // the drawn surface (null: the round stopped in the air, nothing to hear)
@@ -290,7 +290,7 @@ export class Game {
       this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     if(event.type==='round-impact'){
       this.renderer.m01.impact(event.point,event.material,this.sim.clock);
-      this.renderer.m01.longRangeLanding(event,this.sim);   // R2-c: a far landing is also a small disc of dust (>= 60 m)
+      this.renderer.m01.longRangeLanding?.(event,this.sim);   // R2-c: a far landing is also a small disc of dust (>= 60 m)
       const s=this.spatial(event.point),key=`${event.by}:${this.sim.clock.toFixed(3)}`,shooter=this.sim.actor?.(event.by);
       const direction=shooter?this.spatial(shooter).pan:s.pan,weapon=shooter?.weapon??null;
       this.renderer.m01.roundFeedback(event,this.sim.clock,direction,weapon);
