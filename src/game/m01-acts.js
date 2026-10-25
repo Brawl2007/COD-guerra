@@ -61,7 +61,8 @@ export class M01ActRunner {
   /** `enabled`: the switch (acts.json, or the QA override of the page); `startAct`: QA start directly at an act (only when enabled). */
   constructor({enabled=ACTS.enabled,startAct=null}={}){
     this.enabled=Boolean(enabled);
-    this.startAct=this.enabled&&startAct&&startAct!==BW_ACT?(ACT_ALIASES[startAct]??null):null;
+    if(startAct&&!ACT_ALIASES[startAct])throw new Error(`M01 acts: unknown start act ${startAct}`);
+    this.startAct=this.enabled&&startAct&&ACT_ALIASES[startAct]!==BW_ACT?ACT_ALIASES[startAct]:null;
     if(this.startAct&&!ACTS.order.includes(this.startAct))throw new Error(`M01 acts: unknown start act ${startAct}`);
   }
   /** The first simulation of a new game. Off (or no QA start): new M01Simulation exactly as Game always made it. */

@@ -186,8 +186,7 @@
   "props": {
     "note": "Kit T12 existente (assets/models/provisional/m01/props, original do projecto, sem conteúdo de terceiros). Desenhados pelo M01PropsRuntime e sólidos para o jogador (m01-collision-layout propSolids).",
     "sandbagRuns": {
-      "z": -1160.7,
-      "lift": 1.15,
+      "z": -1161.52,
       "fromX": -518.9,
       "toX": -331,
       "stepX": 2.2,
@@ -196,7 +195,18 @@
           -444,
           -436
         ]
-      ]
+      ],
+      "courses": [
+        {
+          "lift": 0,
+          "offsetX": 0
+        },
+        {
+          "lift": 0.565,
+          "offsetX": 1.1
+        }
+      ],
+      "note": "Duas fiadas de sacos (kit T12 sandbag_run, 0,585 m) contra a face norte do parapeito: o topo desenhado (1,15 m) é o topo da caixa da simulação, sem tapar a vista de quem está de pé (olhos a 1,6 m)."
     },
     "ammo": [
       [

@@ -17,12 +17,15 @@ function build(){
   const tickUntil=(done,max=6000)=>{for(let i=0;i<max&&!done();i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}};
   tickUntil(()=>!sim.scene);
   const spawn=envelope(sim);spawn.actSave.player.angle=-Math.PI/2;spawn.actSave.player.pitch=.03;
-  tickUntil(()=>sim.timers.wave&&sim.clock-sim.timers.wave.at>14);
-  const mid=envelope(sim);Object.assign(mid.actSave.player,{crouched:false,angle:-Math.PI/2-.12,pitch:.02});
-  const west=envelope(sim);Object.assign(west.actSave.player,{crouched:false,angle:Math.PI+.12,pitch:-.02});
+  // Mid-wave: the first tick, 8 s into the wave, with at least three Germans up (bounding or rising to fire) in the player's field of view.
+  const p=sim.player,inView=a=>Math.abs(Math.atan2(Math.sin(Math.atan2(a.z-p.z,a.x-p.x)+Math.PI/2),Math.cos(Math.atan2(a.z-p.z,a.x-p.x)+Math.PI/2)))<.6;
+  tickUntil(()=>sim.timers.wave&&sim.clock-sim.timers.wave.at>8&&sim.enemies.filter(a=>a.alive&&a.active&&!a.crouched&&inView(a)).length>=3);
+  const mid=envelope(sim);Object.assign(mid.actSave.player,{crouched:false,angle:-Math.PI/2,pitch:.015});
+  const west=envelope(sim);Object.assign(west.actSave.player,{crouched:false,angle:Math.PI+.06,pitch:-.03});
+  const w=sim.plan.layout.points.wreck,wreck=envelope(sim);Object.assign(wreck.actSave.player,{crouched:false,angle:Math.atan2(w.z-p.z,w.x-p.x),pitch:.01,aiming:true});
   tickUntil(()=>sim.timers.endAt!==null);
   const end=envelope(sim);
-  return {spawn,mid,west,end};
+  return {spawn,mid,west,wreck,end};
 }
 test.beforeAll(()=>{scenes=build();mkdirSync(OUT,{recursive:true});});
 
@@ -59,7 +62,7 @@ test('QA flag ?act=vii-a boots Act VII-a on its card; the HUD shows only the app
 
 test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west), the end beat and the debrief after the last act',async({page,context})=>{
   test.setTimeout(600000);
-  const shots=[['spawn','03-spawn-north.png'],['mid','04-line-north-midwave.png'],['west','05-line-west-ckm.png']],report={};
+  const shots=[['spawn','03-spawn-north.png'],['mid','04-line-north-midwave.png'],['west','05-line-west-ckm.png'],['wreck','05b-wreck-aimed.png']],report={};
   for(const [name,file] of shots){
     const p=name==='spawn'?page:await context.newPage();
     const errors=await boot(p,'?debug=1&acts=1',{save:scenes[name],click:'#continue'});

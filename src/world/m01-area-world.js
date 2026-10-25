@@ -12,7 +12,7 @@ export function areaPropPlacements(layout){
   const p=layout.props,out=[],y=layout.groundY;
   if(!p)return out;
   const s=p.sandbagRuns;
-  for(let x=s.fromX;x<=s.toX+1e-9;x+=s.stepX){if(s.skipX.some(([a,b])=>x+1.06>a&&x-1.06<b))continue;out.push({type:'sandbag_run',x:Math.round(x*100)/100,z:s.z,yaw:0,lift:s.lift,quality:'low'});}
+  for(const c of s.courses)for(let x=s.fromX+c.offsetX;x<=s.toX+1e-9;x+=s.stepX){if(s.skipX.some(([a,b])=>x+1.06>a&&x-1.06<b))continue;out.push({type:'sandbag_run',x:Math.round(x*100)/100,z:s.z,yaw:0,lift:c.lift,quality:'low'});}
   for(const [x,z]of p.ammo)out.push({type:'ammo_crate_wood',x,z,yaw:0,lift:0,quality:'low'});
   for(const [a,b]of p.wire.runs)for(let x=a+p.wire.stepX/2;x<=b-p.wire.stepX/2+1e-9;x+=p.wire.stepX)out.push({type:'fence_barbed',x:Math.round(x*100)/100,z:p.wire.z,yaw:0,lift:0,quality:'low'});
   return out.map(o=>({...o,y,area:'north-perimeter',cluster:`np_${o.type}`}));

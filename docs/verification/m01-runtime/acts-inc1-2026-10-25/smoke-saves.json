@@ -1,0 +1,98 @@
+{
+ "spawn": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ARRIVAL",
+  "complete": false,
+  "clock": 1.5500000000000007,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0.03,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 13,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Junte-se à secção no parapeito norte",
+  "card": "",
+  "frames": 7,
+  "errors": []
+ },
+ "mid": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ATTACK",
+  "complete": false,
+  "clock": 23.01670000000019,
+  "player": {
+   "x": -410.01242546324204,
+   "y": -3,
+   "z": -1158.6955261923713,
+   "angle": -1.5707963267948966,
+   "pitch": 0.015,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 12,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Repila o ataque vindo do norte",
+  "card": "",
+  "frames": 8,
+  "errors": []
+ },
+ "west": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ATTACK",
+  "complete": false,
+  "clock": 23.016600000000196,
+  "player": {
+   "x": -410.01242546324204,
+   "y": -3,
+   "z": -1158.6955261923713,
+   "angle": 3.201592653589793,
+   "pitch": -0.03,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 12,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Repila o ataque vindo do norte",
+  "card": "",
+  "frames": 8,
+  "errors": []
+ },
+ "wreck": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ATTACK",
+  "complete": false,
+  "clock": 23.016700000000192,
+  "player": {
+   "x": -410.01242546324204,
+   "y": -3,
+   "z": -1158.6955261923713,
+   "angle": -1.3294522413809347,
+   "pitch": 0.01,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 12,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Repila o ataque vindo do norte",
+  "card": "",
+  "frames": 8,
+  "errors": []
+ },
+ "end": {
+  "debrief": "Às 04:34, bombardeiros alemães atacaram Tczew. O dano nos cabos e o reparo representados nesta missão seguem uma versão histórica disputada.Por volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição.O roteiro adopta demolições às 06:10 e 06:45, conforme H01-PDF; outras fontes dão 06:40 para a segunda. O plano alemão de tomar as pontes intactas fracassou.Por volta das 07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blindados, foi detido no perímetro norte de Tczew: um veículo foi destruído por um canhão anticarro e a infantaria foi repelida por metralhadoras. O tipo dos veículos, o lugar exato e a posição do canhão não estão confirmados; o parapeito, a chegada da secção e o combate de Wrona são reconstrução para o jogo.A guarnição continuou a combater e retirou-se de Tczew até às 20:00. A campanha continuou. Destruir as pontes atrasou o inimigo; não mudou o rumo da guerra.Stanisław Janik comandava o 2.º Batalhão de Fuzileiros. Os sapadores eram comandados pelo subtenente Norbert Juchtman.O pelotão da cabeça de ponte leste, que recuou pela ponte antes da primeira explosão, era comandado por Walenty Faterkowski.Em Szymankowo, ferroviários e aduaneiros poloneses avisaram Tczew e atrasaram o plano alemão. Em represália, combatentes alemães assassinaram 21 poloneses, sobretudo ferroviários e aduaneiros.Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios.",
+  "errors": []
+ }
+}

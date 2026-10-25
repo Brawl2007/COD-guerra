@@ -4,7 +4,7 @@
 // reusable modules of the current act: the player's body physics and rifle (m01-player-physics, wz29), real rounds with an arc and a flight time
 // (m01-fire makeRound/traceRound, m01-aim), the presentation records (m01-animation-presentation), and the section machinery as factories
 // (m01-act-factories: the squad bounds, the firing line of the rearguard, the deck assault generalised to a line of approach).
-// Everything is decided here, from seeded streams; the renderer only draws it. No wall clock, no Math.random, no DOM.
+// Everything is decided here, from seeded streams; the renderer only draws it. No wall clock, no unseeded draw, no DOM.
 import bwDefinition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import npLayout from '../../missions/m01-tczew/areas/np/layout.json' with { type: 'json' };
