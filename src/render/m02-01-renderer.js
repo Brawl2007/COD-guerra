@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { M01MaterialLibrary } from './materials.js';
 import { createSoldierRigMaterials, rigCreate, rigPose } from './m02-claude-soldier-rig.js';
 import { M02Presentation } from './m02-presentation.js';
 import { eyePosition } from '../world/spatial.js';
@@ -145,6 +146,7 @@ export class M02BenchRenderer {
 
     this.materials = { ...this.#createMaterials(), ...createSoldierRigMaterials() };
     this.presentation = new M02Presentation(this.scene, this.camera, sim);
+    this.materialLibraryReady = this.#loadMaterialLibrary();
     this.staticGroup = new THREE.Group();
     this.dynamicDoorsGroup = new THREE.Group();
     this.dynamicWindowsGroup = new THREE.Group();
@@ -206,6 +208,37 @@ export class M02BenchRenderer {
     this.applyQualityProfile(this.qualityProfile.id);
     this.applyLightingPreset(this.lightingPreset.id);
     this.resize();
+  }
+
+  async #loadMaterialLibrary() {
+    try {
+      const library = await M01MaterialLibrary.load({quality:this.qualityProfile.id});
+      this.materialLibrary = library;
+      const replacements = new Map();
+      for (const [name, id] of Object.entries({brick_B01:'plaster',brick_B04:'plaster',brick_cover:'brick',
+        wood_thick:'wood',wood_thin:'wood',wood_frame:'wood',door_open:'wood',door_closed:'wood',
+        stone:'stone',earth:'mud',roof_wood:'wood',roof_tile:'roof-tile',roof_thatch:'canvas'})) {
+        const old=this.materials[name], material=library.createMaterial(id);
+        material.side=old.side;
+        replacements.set(old,material); this.materials[name]=material;
+      }
+      this.scene.traverse(node=>{
+        if (!node.isMesh || !replacements.has(node.material)) return;
+        node.material=replacements.get(node.material);
+        // Box UVs otherwise stretch one brick across a 20 m facade.
+        const geometry=node.geometry, uv=geometry.attributes.uv, position=geometry.attributes.position, normal=geometry.attributes.normal;
+        if (!uv || !normal) return;
+        const tile=node.material.userData.m01Atlas.tileMetres;
+        const metres=Array.isArray(tile)?tile[0]:tile;
+        for(let i=0;i<uv.count;i++) {
+          const nx=Math.abs(normal.getX(i)), ny=Math.abs(normal.getY(i));
+          uv.setXY(i,(nx>.5?position.getZ(i):position.getX(i))/(metres||2),
+            (ny>.5?position.getZ(i):position.getY(i))/(metres||2));
+        }
+        uv.needsUpdate=true;
+      });
+      for (const old of replacements.keys()) old.dispose();
+    } catch(error) { this.materialLibraryFailure=error.message; }
   }
 
   #createMaterials() {
@@ -1008,6 +1041,7 @@ export class M02BenchRenderer {
     ]) for (const actor of actors ?? []) {
       const entry = meshes.get(actor.id);
       if (!entry) continue;
+      if (this.presentation.hasCharacter(actor.id)) { entry.group.visible=false; continue; }
       const band = selectConsumerLod('actors', Math.hypot(actor.x-player.x, actor.z-player.z), this.qualityProfile.id);
       rigPose(entry, actor, {clock:this.sim.clock, dt, side, lodBand:band});
       entry.group.visible = !actor.detachedOutOfCell && !this.presentation.hasCharacter(actor.id);

@@ -1,3 +1,4 @@
+import { m02PlayerAction, performM02PlayerAction } from '../game/m02-player-actions.js';
 import { M02BenchSimulation } from '../game/m02-01-simulation.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 
@@ -252,7 +253,7 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
+  const prompt = sim.currentChalkPrompt() ?? sim.currentDoorPrompt() ?? m02PlayerAction(sim);
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';
@@ -304,6 +305,7 @@ function animate(now) {
   const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
 
   const simStart = performance.now();
+  const missionInteraction = pendingSingleActions.interact && performM02PlayerAction(sim);
   sim.tick(dt, {
     forward,
     side,
@@ -311,7 +313,7 @@ function animate(now) {
     aim: keys.has('KeyV'),
     lookX,
     lookY: 0,
-    interact: pendingSingleActions.interact,
+    interact: pendingSingleActions.interact && !missionInteraction,
     reload: pendingSingleActions.reload,
     crouch: pendingSingleActions.crouch,
     fire: pendingSingleActions.fire,
@@ -331,7 +333,7 @@ function animate(now) {
   pendingSingleActions.orderAdvance = false;
   pendingSingleActions.orderFlank = false;
 
-  renderer.renderFrame(dt, simMs);
+  renderer.renderFrame(rawDt, simMs);
   updateHud();
   requestAnimationFrame(animate);
 }

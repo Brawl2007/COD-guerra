@@ -22,3 +22,29 @@ test('M02 presentation adapts live roles and reload timing without changing snap
   const reloading=m02VisualActor({...sim.enemies[0],weapon:'kar98k',reloadingUntil:12.8},'enemy',11);
   assert.equal(reloading.reload.startedAt,10);
 });
+
+import { m02PlayerAction, performM02PlayerAction } from '../src/game/m02-player-actions.js';
+
+test('contextual actions cannot skip unfinished combat or manufacture supplies', () => {
+  const sim=new M02BenchSimulation();
+  const before=sim.snapshot();
+  assert.equal(m02PlayerAction(sim),null);
+  assert.equal(performM02PlayerAction(sim),false);
+  assert.deepEqual(sim.snapshot(),before);
+  sim.enterAreaBC06();
+  sim.teleportPlayer(0,-70,0);
+  assert.notEqual(m02PlayerAction(sim)?.id,'reorganize');
+  assert.equal(sim.areaB.reorganizedC07,false);
+});
+
+test('resolved farm enables normal interaction to enter area B with state retained', () => {
+  const sim=new M02BenchSimulation();
+  sim.teleportPlayer(0,50,0);
+  sim.objective={id:'COMPLETE',status:'completed'};
+  const weapon=sim.weapon.snapshot();
+  assert.equal(m02PlayerAction(sim)?.id,'area-b');
+  assert.equal(performM02PlayerAction(sim),true);
+  assert.equal(sim.activeCellId,'B');
+  assert.deepEqual(sim.weapon.snapshot(),weapon);
+  assert.equal(performM02PlayerAction(sim),false);
+});

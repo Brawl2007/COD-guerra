@@ -83,7 +83,9 @@ export class M02Presentation {
   consume(events, sim) {
     for (const event of events) {
       if (event.type==='actor-burst') this.fireTimes.set(event.shooterId,sim.clock);
-      if (this.audio.ctx?.state !== 'running') continue;
+      // A trusted gesture may still be resuming the context. Web Audio accepts
+      // scheduled voices while suspended; dropping this event loses the first shot.
+      if (!this.audio.ctx || this.audio.ctx.state==='closed') continue;
       const origin=event.origin??event.shot?.origin??event.center??sim.player;
       const dx=origin.x-sim.player.x, dz=origin.z-sim.player.z;
       const distance=Math.hypot(dx,dz);
