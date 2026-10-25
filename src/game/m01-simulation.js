@@ -27,6 +27,7 @@ import {SECTION,updateSection,sectionWalk,sectionAfter,sectionCasualty,sectionVi
 import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,blastPosture,blastTarget,sightPoint,blastOutcome,concussionPeak,concussionLevel,mergeConcussion,earlyRaidPoint} from './m01-blast.js';
 import {REPAIR_WORK_SEC,SAPPERS,sapperPhase,sapperGoal,sapperRate,sapperCover,sapperView,workDistance} from './m01-sappers.js';
 import {ckmFinal,retreatSlot} from './m01-retreat.js';
+import {updateOpening,openingWalk,holdNowicki,closeOpening,openingView,validateOpeningRecord,validateOpeningAct} from './m01-opening.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -586,8 +587,10 @@ export class M01Simulation {
       case E('intro_card'):break;
       case E('prelude_start'):this.activate('deliver_message');this.mission.phase='SETUP';break;
       case E('railway_worker_report'):if(dist(this.player,this.actor('franciszek_lipski'))<15)line(8);break;
-      case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(67);line(66);this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
+      // R1-b: Nowicki looks up and points for the length of lines 012 and 013 (OPENING.planesRun.afterSec) before he runs for the sappers, when the opening life is running (without its record: the old immediate run)
+      case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(67);line(66);if(!holdNowicki(this))this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
+        closeOpening(this);   // R1-b: the first bomb ends the opening life (every act, the record), here and not a tick later, so that no state holds the event and the record together
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
         this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
         this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');
@@ -1134,6 +1137,9 @@ export class M01Simulation {
     const squad=retreat&&this.mission.phase!=='OUTRO'?this.stepSquad():null;
     // Slice 4 / R2-a (2026-10-24, src/game/m01-section.js): from the first bomb of 04:34 to the east demolition the section sees, calls, reacts and is ordered; null outside that window.
     const section=this.stepSection(),sectionCtx={stageSlots:STAGE.squad.slots};
+    // R1-b (2026-10-25, src/game/m01-opening.js): until the first bomb of 04:34 each man near the opening route has an act of his own (actor.act), the runner walks his errands and the sapper team walks the
+    // cable that is not cut yet; null from the first bomb on.
+    const opening=updateOpening(this,dt);
     // T47: the ckm gunner decides first (his own saved stream, never this.rng); the other two men then copy his phase.
     const gunner=this.actors.find(a=>a.id==='ckm_gunner');
     this.updateCKMGunner(gunner,retreat);
@@ -1205,6 +1211,7 @@ export class M01Simulation {
       if(a.task==='evacuate_station_wounded'){this.evacuateStation(a,dt);continue;}
       if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
       if(section&&sectionWalk(this,section,a,dt,sectionCtx))continue;   // slice 4: the pair moves between posts (shift, return, the road deck); false for everybody else and for the pair at the squad post
+      if(opening&&openingWalk(this,opening,a,dt))continue;   // R1-b: the sapper team walks the cable and rests at its camp until the shelter time (04:33:30); false for everybody else
       if(squad&&this.squadWalk(a,squad,dt))continue;   // slice 3: a man of a fire team bounds or holds; Zieliński comes to the player at the end of the escort (SP-08)
       // R3-a review (2026-10-25, src/game/m01-retreat.js): in the retreat each man of the section walks to a place of his own near the old retreat point (-170, 22), not to that one point
       // where they stopped inside each other's personal space (a walker stops 0.8 m short of his goal and nothing parts men who stand) and the sergeant could not get out of the pile.
@@ -1307,6 +1314,14 @@ export class M01Simulation {
     return Boolean(q)&&k.alive&&k.active&&!squadMoving(q,k)&&!this.germanSilence()&&this.mission.phase!=='OUTRO'&&corridorRecord(this)?.phase==='escort';
   }
   /**
+   * R1-b: where a burst of Kowal's rkm lands, for the presentation only (the `end` of its `npc-shot`, with `hit:false`): on the ground just past the German it is aimed at, along the line from the gun. The burst
+   * is display-grade suppression (the target's suppressedUntil; no round is traced and nobody is struck), so this point decides nothing and draws no random number: the impact dust beside the German is all it gives.
+   */
+  kowalBurstEnd(kowal,target){
+    const dx=target.x-kowal.x,dz=target.z-kowal.z,d=Math.hypot(dx,dz)||1;
+    return {x:target.x+dx/d*1.2,y:target.y+.05,z:target.z+dz/d*1.2};
+  }
+  /**
    * Slice 3: Kowal covers the escort from the post he holds. While the escort lasts (SP-08) a gate German who fired in the last SQUAD.cover.freshSec seconds and whom he sees gets
    * an rkm burst: the suppression, cadence and magazine of kowalFire, drawn from his own AI stream; the empty magazine is changed for real (line 029). No round is traced.
    */
@@ -1321,7 +1336,7 @@ export class M01Simulation {
     kowal.cooldown=n*.11+3.4+2.8*u();if(ai)ai.target=target.id;
     kowal.shot=Math.max(.25,n*.11);kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=n;kowal.crouched=false;   // up over his cover for the burst
     const previousUntil=target.suppressedUntil;
-    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n});
+    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n,end:this.kowalBurstEnd(kowal,target),hit:false});
     recordSuppression(target,previousUntil,this.clock);
     if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5+u();if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
   }
@@ -1864,7 +1879,7 @@ export class M01Simulation {
     a.rounds=Math.max(0,a.rounds-1);if(a.rounds===0)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};
     a.shot=.135;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=angle;
     // The report of an allied rifle (audio weapon id `ally_rifle`, the profile of a Polish rifle heard at a distance); `by` names the man.
-    this.emit({type:'npc-shot',weapon:'ally_rifle',point:origin,rounds:1,by:a.id});
+    this.emit({type:'npc-shot',weapon:'ally_rifle',point:origin,rounds:1,by:a.id,end:hit?.point?{x:hit.point.x,y:hit.point.y,z:hit.point.z}:{x:origin.x+dir.x*R,y:origin.y+dir.y*R,z:origin.z+dir.z*R},hit:hit?.actor?.team==='enemy'});   // R1-b: where it stopped and whether it struck, for the presentation (as the section's real rounds say)
     ai.peek=Math.max(0,ai.peek-1);
     if(ai.peek>0&&a.rounds>0)a.cooldown=AI_BOLT[0]+AI_BOLT[1]*u();
     else{ai.peek=0;let pause=aiPause(ai,F.pauseSec*1.8-1.8,3);if(!(a.rounds>0))pause=Math.max(pause,AI_RELOAD_COVER+u());a.cooldown=pause;}
@@ -2057,7 +2072,7 @@ export class M01Simulation {
     if(ai)ai.target=target.id;
     kowal.shot=Math.max(.25,n*.11);kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=n;
     const previousUntil=target.suppressedUntil;
-    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n});
+    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n,end:this.kowalBurstEnd(kowal,target),hit:false});
     recordSuppression(target,previousUntil,this.clock);
     if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5+(ai?u():0);if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
   }
@@ -2543,6 +2558,8 @@ export class M01Simulation {
   get tempo(){return tempoState(this);}
   /** R3-a, computed on every read, never saved: the phase of the sappers' operation (stage, which cut is open, the box, the tester) for the renderer, the HUD and the tests (src/game/m01-sappers.js). */
   get sapperOps(){return sapperView(this);}
+  /** R1-b: what the men of the opening are doing (read-only, never saved; null from the first bomb of 04:34): the renderer, the HUD, the metrics and the tests read it. */
+  get openingView(){return openingView(this);}
   /** Computed on every read, never stored or saved: clock, phase, scene, event flags, per-sector men and fire, recent blasts. */
   get battleReadout(){return computeBattleReadout(this.display,this);}
   get interaction(){
@@ -2734,6 +2751,7 @@ export function validateM01Snapshot(s){
     if(a.displayOnly!==undefined&&(!(AUXILIARY_IDS.includes(a.id)||GARRISON_IDS.includes(a.id))||a.displayOnly!==true))reject('display-only actor');
     if(GARRISON_IDS.includes(a.id)&&(a.displayOnly!==true||a.group!==GARRISON_GROUP||a.team!=='ally'||a.role!=='RIFLEMAN'||a.civilian))reject('west garrison');
     if(a.nav!==undefined&&!validNavRoute(a.nav,s.clock))reject('route '+a.id);   // NPC navigation: a saved detour round the solids (absent in older saves, re-made on demand)
+    if(a.act!==undefined)validateOpeningAct(a,s,reject);   // R1-b: what a man of the opening is doing (absent in every older save and from the first bomb of 04:34)
     if(a.coverRun!==undefined&&(a.coverRun!==true||a.role!=='ENGINEER'||a.team!=='ally'||!(s.clock<a.suppressedUntil)||!a.target))reject('corrida para a cobertura '+a.id);   // R3-a: a shaken sapper running for cover (absent in every older save)
     if(AUXILIARY_IDS.includes(a.id)&&(!a.displayOnly||a.group!==(YARD_IDS.includes(a.id)?'grp_station_yard':'grp_mg34_loaders')))reject('auxiliary group');
     if(MG_LOADER_IDS.includes(a.id)){
@@ -2890,6 +2908,8 @@ export function validateM01Snapshot(s){
   if('squad' in s.timers){validateSquadRecord(s.timers.squad,s.clock,reject);if(!Object.hasOwn(s.consumed,E('east_demolition')))reject('timer squad');}   // reactive dialogue: cooldowns, repeats, rotation, what was seen (m01-barks.js); absent in older saves
   // R2-a (2026-10-24): the section's record, from the first bomb of 04:34 to the east demolition (m01-section.js); absent in older saves, which start it at their next tick.
   if('section' in s.timers)validateSectionRecord(s.timers.section,s,reject);
+  // R1-b (2026-10-25): the opening life's record, from the first tick to the first bomb of 04:34 (m01-opening.js); absent in older saves, which start it at their next tick (before 04:34 only).
+  if('opening' in s.timers)validateOpeningRecord(s.timers.opening,s,reject);
   if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
   if(s.timers.raidSchedule!==undefined){
     const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];

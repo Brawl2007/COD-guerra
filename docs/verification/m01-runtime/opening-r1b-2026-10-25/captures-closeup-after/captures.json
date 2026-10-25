@@ -1,0 +1,2316 @@
+{
+  "seed": 19390901,
+  "pilot": "closeup",
+  "quality": "high",
+  "views": [
+    {
+      "view": "01-043100",
+      "quality": "high",
+      "clock": 60.85,
+      "battle": "04:31:01",
+      "scene": null,
+      "player": {
+        "x": -66,
+        "z": 22,
+        "angle": -3.079,
+        "pitch": 0
+      },
+      "clips": [
+        {
+          "id": "marek_zielinski",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 2.09,
+          "opening": {
+            "act": "map",
+            "pose": true,
+            "props": [
+              "map"
+            ]
+          },
+          "act": "map"
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "rkm_clean",
+          "lod": 0,
+          "t": 4.46,
+          "opening": {
+            "act": "clean_rkm",
+            "pose": false,
+            "props": []
+          },
+          "act": "clean_rkm"
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "fidget_check_rifle",
+          "lod": 0,
+          "t": 0.78,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "standing_idle_b",
+          "lod": 0,
+          "t": 3.1,
+          "opening": {
+            "act": "smoke",
+            "pose": true,
+            "props": [
+              "cigarette"
+            ]
+          },
+          "act": "smoke"
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 2.76,
+          "opening": {
+            "act": "phone",
+            "pose": true,
+            "props": [
+              "handset",
+              "phone"
+            ]
+          },
+          "act": "phone"
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 1.15,
+          "opening": {
+            "act": "cable_inspect",
+            "pose": false,
+            "props": [
+              "meter"
+            ]
+          },
+          "act": "cable_inspect"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 1,
+          "t": 2.52,
+          "opening": {
+            "act": "cable_hold",
+            "pose": false,
+            "props": [
+              "coil"
+            ]
+          },
+          "act": "cable_hold"
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 2.73,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 2.62,
+          "opening": {
+            "act": "cable_watch",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "cable_watch"
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle_c",
+          "lod": 1,
+          "t": 0.69,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 2.33,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_1",
+          "clip": "sprint",
+          "lod": 2,
+          "t": 0.08,
+          "opening": {
+            "act": "errand",
+            "pose": false,
+            "props": [
+              "note"
+            ]
+          },
+          "act": "errand"
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 0.81,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.26,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 0.56,
+          "opening": {
+            "act": "smoke",
+            "pose": false,
+            "props": [
+              "cigarette"
+            ]
+          },
+          "act": "smoke"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.96,
+          "opening": {
+            "act": "ammo_check",
+            "pose": false,
+            "props": [
+              "box"
+            ]
+          },
+          "act": "ammo_check"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 0.85,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 0.85,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.13,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_5",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 2.86,
+          "opening": {
+            "act": "coffee",
+            "pose": false,
+            "props": [
+              "mug"
+            ]
+          },
+          "act": "coffee"
+        },
+        {
+          "id": "generic_rifleman",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.84
+        },
+        {
+          "id": "yard_orderly",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.2
+        },
+        {
+          "id": "yard_railway_0",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.35
+        },
+        {
+          "id": "yard_aid",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.14
+        },
+        {
+          "id": "yard_railway_1",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 2.86
+        }
+      ],
+      "opening": {
+        "tension": "warned",
+        "courier": "run",
+        "sappers": "inspect",
+        "acts": {
+          "marek_zielinski": "map",
+          "szymon_kowal": "clean_rkm",
+          "jozef_bak": "rifle_check",
+          "staszek_pawlak": "phone",
+          "east_platoon_voice": "smoke",
+          "tadeusz_nowicki": "idle",
+          "leon_dudek": "binoculars",
+          "ckm_gunner": "ckm_scan",
+          "ckm_loader": "ckm_belt",
+          "ckm_reserve": "ammo_check",
+          "franciszek_lipski": "idle",
+          "pl_west_0": "binoculars",
+          "pl_west_1": "errand",
+          "pl_west_2": "idle",
+          "pl_west_3": "rifle_check",
+          "pl_west_4": "smoke",
+          "pl_west_5": "coffee",
+          "pawel_krawiec": "cable_inspect",
+          "sapper_2": "cable_hold",
+          "sapper_3": "cable_watch"
+        }
+      },
+      "hud": {
+        "objective": "Leve a mensagem e o café ao posto da ponte",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": [],
+      "inFrame": [
+        {
+          "id": "marek_zielinski",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 2.09,
+          "opening": {
+            "act": "map",
+            "pose": true,
+            "props": [
+              "map"
+            ]
+          },
+          "act": "map"
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "rkm_clean",
+          "lod": 0,
+          "t": 4.46,
+          "opening": {
+            "act": "clean_rkm",
+            "pose": false,
+            "props": []
+          },
+          "act": "clean_rkm"
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "fidget_check_rifle",
+          "lod": 0,
+          "t": 0.78,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "standing_idle_b",
+          "lod": 0,
+          "t": 3.1,
+          "opening": {
+            "act": "smoke",
+            "pose": true,
+            "props": [
+              "cigarette"
+            ]
+          },
+          "act": "smoke"
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 2.76,
+          "opening": {
+            "act": "phone",
+            "pose": true,
+            "props": [
+              "handset",
+              "phone"
+            ]
+          },
+          "act": "phone"
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 2.73,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 2.33,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.26,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 0.56,
+          "opening": {
+            "act": "smoke",
+            "pose": false,
+            "props": [
+              "cigarette"
+            ]
+          },
+          "act": "smoke"
+        }
+      ]
+    },
+    {
+      "view": "02-043225",
+      "quality": "high",
+      "clock": 145.93,
+      "battle": "04:32:26",
+      "scene": null,
+      "player": {
+        "x": -52.16,
+        "z": 21.08,
+        "angle": -0.361,
+        "pitch": 0
+      },
+      "clips": [
+        {
+          "id": "pl_west_1",
+          "clip": "standing_idle_b",
+          "lod": 0,
+          "t": 2.08,
+          "opening": {
+            "act": "smoke",
+            "pose": true,
+            "props": [
+              "cigarette"
+            ]
+          },
+          "act": "smoke"
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 2.93,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle",
+          "lod": 0,
+          "t": 0.7,
+          "opening": {
+            "act": "cable_watch",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "cable_watch"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 0.28,
+          "opening": {
+            "act": "cable_wait",
+            "pose": false,
+            "props": [
+              "coil"
+            ]
+          },
+          "act": "cable_wait"
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 1.13,
+          "opening": {
+            "act": "cable_wait",
+            "pose": false,
+            "props": [
+              "meter"
+            ]
+          },
+          "act": "cable_wait"
+        },
+        {
+          "id": "marek_zielinski",
+          "clip": "standing_idle_c",
+          "lod": 1,
+          "t": 3.52,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 2.65,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 2.23,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "standing_idle_c",
+          "lod": 1,
+          "t": 1.78,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "standing_idle_c",
+          "lod": 1,
+          "t": 0.39,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 2.61,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.14,
+          "opening": {
+            "act": "aid_kit",
+            "pose": true,
+            "props": [
+              "bag"
+            ]
+          },
+          "act": "aid_kit"
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 3.39,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.36,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 1.93,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 1.93,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.88,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 0.64,
+          "opening": {
+            "act": "binoculars",
+            "pose": false,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.39,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "pl_west_5",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 3.07,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "generic_rifleman",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.68
+        },
+        {
+          "id": "yard_orderly",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.25
+        },
+        {
+          "id": "yard_railway_0",
+          "clip": "walk",
+          "lod": 2,
+          "t": 0.47
+        },
+        {
+          "id": "yard_aid",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.66
+        },
+        {
+          "id": "yard_railway_1",
+          "clip": "walk",
+          "lod": 2,
+          "t": 0.12
+        }
+      ],
+      "opening": {
+        "tension": "warned",
+        "courier": "post",
+        "sappers": "rest",
+        "acts": {
+          "marek_zielinski": "binoculars",
+          "szymon_kowal": "brace",
+          "jozef_bak": "brace",
+          "staszek_pawlak": "binoculars",
+          "east_platoon_voice": "binoculars",
+          "tadeusz_nowicki": "idle",
+          "leon_dudek": "aid_kit",
+          "ckm_gunner": "ckm_scan",
+          "ckm_loader": "ckm_belt",
+          "ckm_reserve": "rifle_check",
+          "franciszek_lipski": "idle",
+          "pl_west_0": "binoculars",
+          "pl_west_1": "smoke",
+          "pl_west_2": "binoculars",
+          "pl_west_3": "rifle_check",
+          "pl_west_4": "binoculars",
+          "pl_west_5": "idle",
+          "pawel_krawiec": "cable_wait",
+          "sapper_2": "cable_wait",
+          "sapper_3": "cable_watch"
+        }
+      },
+      "hud": {
+        "objective": "Leve a mensagem e o café ao posto da ponte",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": [],
+      "inFrame": [
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 2.93,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle",
+          "lod": 0,
+          "t": 0.7,
+          "opening": {
+            "act": "cable_watch",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "cable_watch"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 0.28,
+          "opening": {
+            "act": "cable_wait",
+            "pose": false,
+            "props": [
+              "coil"
+            ]
+          },
+          "act": "cable_wait"
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 1.13,
+          "opening": {
+            "act": "cable_wait",
+            "pose": false,
+            "props": [
+              "meter"
+            ]
+          },
+          "act": "cable_wait"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.36,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 1.93,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 1.93,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.88,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        }
+      ]
+    },
+    {
+      "view": "03-043242",
+      "quality": "high",
+      "clock": 162.92,
+      "battle": "04:32:43",
+      "scene": null,
+      "player": {
+        "x": -59.15,
+        "z": 15.22,
+        "angle": -0.694,
+        "pitch": 0
+      },
+      "clips": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "t": 2.26,
+          "opening": {
+            "act": "cable_inspect",
+            "pose": false,
+            "props": [
+              "meter"
+            ]
+          },
+          "act": "cable_inspect"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "t": 1.53,
+          "opening": {
+            "act": "cable_hold",
+            "pose": false,
+            "props": [
+              "coil"
+            ]
+          },
+          "act": "cable_hold"
+        },
+        {
+          "id": "pl_west_1",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 3.75,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle",
+          "lod": 0,
+          "t": 2.69,
+          "opening": {
+            "act": "cable_watch",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "cable_watch"
+        },
+        {
+          "id": "marek_zielinski",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 0.15,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 0.34,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 2.98,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 2.01,
+          "opening": {
+            "act": "ammo_check",
+            "pose": true,
+            "props": [
+              "box"
+            ]
+          },
+          "act": "ammo_check"
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "standing_idle_c",
+          "lod": 1,
+          "t": 3.55,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "standing_idle_c",
+          "lod": 1,
+          "t": 2.61,
+          "opening": {
+            "act": "binoculars",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 0.15,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 2.24,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.37,
+          "opening": {
+            "act": "aid_kit",
+            "pose": true,
+            "props": [
+              "bag"
+            ]
+          },
+          "act": "aid_kit"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "fidget_check_rifle",
+          "lod": 2,
+          "t": 2.4,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 2.92,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 2.92,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.3,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 3.42,
+          "opening": {
+            "act": "idle",
+            "pose": false,
+            "props": []
+          },
+          "act": "idle"
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.43,
+          "opening": {
+            "act": "brace",
+            "pose": false,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_5",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 3.68,
+          "opening": {
+            "act": "binoculars",
+            "pose": false,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "binoculars"
+        },
+        {
+          "id": "generic_rifleman",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.41
+        },
+        {
+          "id": "yard_orderly",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.02
+        },
+        {
+          "id": "yard_railway_0",
+          "clip": "walk",
+          "lod": 2,
+          "t": 0.16
+        },
+        {
+          "id": "yard_aid",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.73
+        },
+        {
+          "id": "yard_railway_1",
+          "clip": "walk",
+          "lod": 2,
+          "t": 0.79
+        }
+      ],
+      "opening": {
+        "tension": "warned",
+        "courier": "post",
+        "sappers": "inspect",
+        "acts": {
+          "marek_zielinski": "binoculars",
+          "szymon_kowal": "binoculars",
+          "jozef_bak": "idle",
+          "staszek_pawlak": "binoculars",
+          "east_platoon_voice": "idle",
+          "tadeusz_nowicki": "rifle_check",
+          "leon_dudek": "aid_kit",
+          "ckm_gunner": "ckm_scan",
+          "ckm_loader": "ckm_belt",
+          "ckm_reserve": "rifle_check",
+          "franciszek_lipski": "idle",
+          "pl_west_0": "ammo_check",
+          "pl_west_1": "idle",
+          "pl_west_2": "idle",
+          "pl_west_3": "idle",
+          "pl_west_4": "brace",
+          "pl_west_5": "binoculars",
+          "pawel_krawiec": "cable_inspect",
+          "sapper_2": "cable_hold",
+          "sapper_3": "cable_watch"
+        }
+      },
+      "hud": {
+        "objective": "Leve a mensagem e o café ao posto da ponte",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": [],
+      "inFrame": [
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 0,
+          "t": 2.26,
+          "opening": {
+            "act": "cable_inspect",
+            "pose": false,
+            "props": [
+              "meter"
+            ]
+          },
+          "act": "cable_inspect"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle_b",
+          "lod": 0,
+          "t": 1.53,
+          "opening": {
+            "act": "cable_hold",
+            "pose": false,
+            "props": [
+              "coil"
+            ]
+          },
+          "act": "cable_hold"
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle",
+          "lod": 0,
+          "t": 2.69,
+          "opening": {
+            "act": "cable_watch",
+            "pose": true,
+            "props": [
+              "binoculars"
+            ]
+          },
+          "act": "cable_watch"
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 2.01,
+          "opening": {
+            "act": "ammo_check",
+            "pose": true,
+            "props": [
+              "box"
+            ]
+          },
+          "act": "ammo_check"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "fidget_check_rifle",
+          "lod": 2,
+          "t": 2.4,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 2.92,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 2.92,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.3,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        }
+      ]
+    },
+    {
+      "view": "04-043320",
+      "quality": "high",
+      "clock": 200.9,
+      "battle": "04:33:21",
+      "scene": null,
+      "player": {
+        "x": -51.87,
+        "z": 20.39,
+        "angle": -0.079,
+        "pitch": 0.05
+      },
+      "clips": [
+        {
+          "id": "pl_west_1",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 0.85,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 1.44,
+          "opening": {
+            "act": "point",
+            "pose": true,
+            "props": []
+          },
+          "act": "point"
+        },
+        {
+          "id": "sapper_3",
+          "clip": "crouched_idle",
+          "lod": 0,
+          "t": 0.67,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 0.62,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 2.64,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "marek_zielinski",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 0.14,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "rkm_crouched_idle",
+          "lod": 1,
+          "t": 2.06,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 1.39,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 1.9,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 1.16,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 3.56,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "run",
+          "lod": 2,
+          "t": 0.49
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.16,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.85,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.36,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 0.9,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 0.9,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.26,
+          "opening": {
+            "act": "brace",
+            "pose": false,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.26,
+          "opening": {
+            "act": "brace",
+            "pose": false,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_5",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.61,
+          "opening": {
+            "act": "brace",
+            "pose": false,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "generic_rifleman",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.84
+        },
+        {
+          "id": "yard_orderly",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.54
+        },
+        {
+          "id": "yard_railway_0",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.6
+        },
+        {
+          "id": "yard_aid",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.91
+        },
+        {
+          "id": "yard_railway_1",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 0.07
+        }
+      ],
+      "opening": {
+        "tension": "planes",
+        "courier": "post",
+        "sappers": "home",
+        "acts": {
+          "marek_zielinski": "brace",
+          "szymon_kowal": "cover",
+          "jozef_bak": "cover",
+          "staszek_pawlak": "cover",
+          "east_platoon_voice": "cover",
+          "leon_dudek": "brace",
+          "ckm_gunner": "ckm_scan",
+          "ckm_loader": "ckm_belt",
+          "ckm_reserve": "brace",
+          "franciszek_lipski": "brace",
+          "pl_west_0": "point",
+          "pl_west_1": "brace",
+          "pl_west_2": "brace",
+          "pl_west_3": "brace",
+          "pl_west_4": "brace",
+          "pl_west_5": "brace",
+          "pawel_krawiec": "cover",
+          "sapper_2": "cover",
+          "sapper_3": "cover"
+        }
+      },
+      "hud": {
+        "objective": "Leve a mensagem e o café ao posto da ponte",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": [],
+      "inFrame": [
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 1.44,
+          "opening": {
+            "act": "point",
+            "pose": true,
+            "props": []
+          },
+          "act": "point"
+        },
+        {
+          "id": "sapper_2",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 0.62,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 2.64,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "run",
+          "lod": 2,
+          "t": 0.49
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.16,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 2.36,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 0.9,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 0.9,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": false,
+            "props": []
+          },
+          "act": "ckm_belt"
+        }
+      ]
+    },
+    {
+      "view": "05-043335",
+      "quality": "high",
+      "clock": 215.93,
+      "battle": "04:33:36",
+      "scene": null,
+      "player": {
+        "x": -51.87,
+        "z": 20.39,
+        "angle": -0.079,
+        "pitch": 0.05
+      },
+      "clips": [
+        {
+          "id": "pl_west_1",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 2.68,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 1.23,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "run",
+          "lod": 0,
+          "t": 0.22
+        },
+        {
+          "id": "sapper_2",
+          "clip": "run",
+          "lod": 0,
+          "t": 0.64
+        },
+        {
+          "id": "sapper_3",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 0.83
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 0.43
+        },
+        {
+          "id": "marek_zielinski",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 1.37,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "rkm_crouched_idle",
+          "lod": 1,
+          "t": 0.3,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 0.68,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 2.53,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 1.19,
+          "opening": {
+            "act": "cover",
+            "pose": true,
+            "props": []
+          },
+          "act": "cover"
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 0.59,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.69,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.89,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.5,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 3.93,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": true,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 3.93,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": true,
+            "props": []
+          },
+          "act": "ckm_belt"
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.09,
+          "opening": {
+            "act": "rifle_check",
+            "pose": false,
+            "props": []
+          },
+          "act": "rifle_check"
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 1.69,
+          "opening": {
+            "act": "look_up",
+            "pose": false,
+            "props": []
+          },
+          "act": "look_up"
+        },
+        {
+          "id": "pl_west_5",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.85,
+          "opening": {
+            "act": "brace",
+            "pose": false,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "generic_rifleman",
+          "clip": "fidget_helmet",
+          "lod": 2,
+          "t": 0.52
+        },
+        {
+          "id": "yard_orderly",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.39
+        },
+        {
+          "id": "yard_railway_0",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.44
+        },
+        {
+          "id": "yard_aid",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 3.02
+        },
+        {
+          "id": "yard_railway_1",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 3.23
+        }
+      ],
+      "opening": {
+        "tension": "planes",
+        "courier": "post",
+        "sappers": "home",
+        "acts": {
+          "marek_zielinski": "brace",
+          "szymon_kowal": "cover",
+          "jozef_bak": "cover",
+          "staszek_pawlak": "cover",
+          "east_platoon_voice": "cover",
+          "leon_dudek": "brace",
+          "ckm_gunner": "ckm_scan",
+          "ckm_loader": "ckm_belt",
+          "ckm_reserve": "brace",
+          "franciszek_lipski": "brace",
+          "pl_west_0": "brace",
+          "pl_west_1": "brace",
+          "pl_west_2": "brace",
+          "pl_west_3": "rifle_check",
+          "pl_west_4": "look_up",
+          "pl_west_5": "brace"
+        }
+      },
+      "hud": {
+        "objective": "Leve a mensagem e o café ao posto da ponte",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": [],
+      "inFrame": [
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 1.23,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "tadeusz_nowicki",
+          "clip": "standing_idle",
+          "lod": 1,
+          "t": 0.43
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.69,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.5,
+          "opening": {
+            "act": "brace",
+            "pose": true,
+            "props": []
+          },
+          "act": "brace"
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 3.93,
+          "opening": {
+            "act": "ckm_scan",
+            "pose": true,
+            "props": []
+          },
+          "act": "ckm_scan"
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 3.93,
+          "opening": {
+            "act": "ckm_belt",
+            "pose": true,
+            "props": []
+          },
+          "act": "ckm_belt"
+        }
+      ]
+    },
+    {
+      "view": "06-043414",
+      "quality": "high",
+      "clock": 245.02,
+      "battle": "04:34:17",
+      "scene": "cs_m01_bombing",
+      "player": {
+        "x": -51.87,
+        "z": 20.39,
+        "angle": -0.079,
+        "pitch": 0.05
+      },
+      "clips": [
+        {
+          "id": "pl_west_1",
+          "clip": "standing_idle_c",
+          "lod": 0,
+          "t": 0.26
+        },
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 3.92
+        },
+        {
+          "id": "pawel_krawiec",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 1.56
+        },
+        {
+          "id": "sapper_3",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 2.19
+        },
+        {
+          "id": "sapper_2",
+          "clip": "sapper_work",
+          "lod": 1,
+          "t": 2.04
+        },
+        {
+          "id": "marek_zielinski",
+          "clip": "cover_low_idle",
+          "lod": 1,
+          "t": 1.65
+        },
+        {
+          "id": "szymon_kowal",
+          "clip": "rkm_crouched_idle",
+          "lod": 1,
+          "t": 1.57
+        },
+        {
+          "id": "jozef_bak",
+          "clip": "cover_low_idle",
+          "lod": 1,
+          "t": 0.59
+        },
+        {
+          "id": "east_platoon_voice",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 1.5
+        },
+        {
+          "id": "staszek_pawlak",
+          "clip": "crouched_idle",
+          "lod": 1,
+          "t": 1.58
+        },
+        {
+          "id": "franciszek_lipski",
+          "clip": "standing_idle_b",
+          "lod": 1,
+          "t": 0.95
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.22
+        },
+        {
+          "id": "pl_west_2",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 2.61
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "pinned",
+          "lod": 2,
+          "t": 1.64
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 1.02
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 1.02
+        },
+        {
+          "id": "pl_west_3",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 3.18
+        },
+        {
+          "id": "pl_west_4",
+          "clip": "standing_idle_c",
+          "lod": 2,
+          "t": 3
+        },
+        {
+          "id": "pl_west_5",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 1.74
+        },
+        {
+          "id": "generic_rifleman",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.31
+        },
+        {
+          "id": "yard_orderly",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.12
+        },
+        {
+          "id": "yard_railway_0",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.15
+        },
+        {
+          "id": "yard_aid",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 0.25
+        },
+        {
+          "id": "yard_railway_1",
+          "clip": "standing_idle_b",
+          "lod": 2,
+          "t": 0.55
+        }
+      ],
+      "opening": null,
+      "hud": {
+        "objective": "Abrigue-se!",
+        "status": "",
+        "subtitle": ""
+      },
+      "errors": [],
+      "inFrame": [
+        {
+          "id": "pl_west_0",
+          "clip": "standing_idle",
+          "lod": 0,
+          "t": 3.92
+        },
+        {
+          "id": "leon_dudek",
+          "clip": "standing_idle",
+          "lod": 2,
+          "t": 1.22
+        },
+        {
+          "id": "ckm_reserve",
+          "clip": "pinned",
+          "lod": 2,
+          "t": 1.64
+        },
+        {
+          "id": "ckm_gunner",
+          "clip": "ckm_wz30_gunner_idle",
+          "lod": 2,
+          "t": 1.02
+        },
+        {
+          "id": "ckm_loader",
+          "clip": "ckm_wz30_loader_idle",
+          "lod": 2,
+          "t": 1.02
+        }
+      ]
+    }
+  ]
+}

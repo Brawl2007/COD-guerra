@@ -167,10 +167,12 @@ test('free play: 150 deterministic walks across the west bank all arrive, none c
 });
 
 // ---- A route that cannot be made is not asked for every tick ----
-const counting=sim=>{const calls={n:0},real=sim.navigator.route.bind(sim.navigator);sim.navigator.route=(...args)=>{calls.n++;return real(...args);};return calls;};
+// (2026-10-25, R1-b, golden amendment 20: `only` counts the plans of one man. The runner of the opening life, pl_west_1, takes the sergeant's messages along the line by the same A* (src/game/m01-opening.js), so the
+//  route() calls of the whole simulation are no longer one man's: in the walk below Pawlak plans once, at tick 2, exactly as in 77175d85, and the runner twice, at ticks 182 and 454. The assertion is the same, on the man it is about.)
+const counting=(sim,only=null)=>{const calls={n:0},real=sim.navigator.route.bind(sim.navigator);sim.navigator.route=(a,...rest)=>{if(only===null||a.id===only)calls.n++;return real(a,...rest);};return calls;};
 
 test('a goal behind the whole station (122 m) is reached: the second try with the widest window walks round it, and no wall is touched',{timeout:300000},()=>{
-  const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit(),calls=counting(s);
+  const s=ready(),man=s.actor('staszek_pawlak'),audit=clippingAudit(),calls=counting(s,'staszek_pawlak');
   Object.assign(man,{x:-400,z:25,y:s.world.heightAt(-400,25),target:{x:-400,z:58},state:'GUARD'});
   for(let i=0;i<20*90&&Math.hypot(man.x+400,man.z-58)>=.8;i++){s.tick(.05,{});audit.observe({sim:s});}
   assert.ok(Math.hypot(man.x+400,man.z-58)<.8,`arrived (${man.x.toFixed(1)},${man.z.toFixed(1)})`);
