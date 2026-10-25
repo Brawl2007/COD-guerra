@@ -66,6 +66,18 @@ export class M01RepairLine {
     g.add(cloth,p1,p2,tin);g.name='sapper_tools_ground';return g;
   }
   ground(world){const f=this.surfaceY;return (x,z)=>{const y=f?f(x,z):null;return Number.isFinite(y)?y:world.terrainHeightAt(x,z);};}
+  /** The height the tube lies at for each sample of the route, found once (the terrain does not change): the highest of the point and of the two points 1.2 m across the slope, so that a chord of the lattice never covers it.
+   *  Finding it costs a raycast on the drawn mesh per point (~400), so the five rebuilds of a mission interpolate this profile instead of casting again. */
+  profile(world){
+    if(this.ground0?.world===world)return this.ground0.y;
+    const height=this.ground(world),y=this.samples.pts.map(p=>Math.max(height(p.x,p.z),height(p.x,p.z-1.2),height(p.x,p.z+1.2)));
+    this.ground0={world,y};return y;
+  }
+  profileY(world,s){
+    const y=this.profile(world),{pts}=this.samples;let i=1;while(i<pts.length-1&&pts[i].s<s)i++;
+    const a=pts[i-1],b=pts[i],u=b.s>a.s?Math.max(0,Math.min(1,(s-a.s)/(b.s-a.s))):0;
+    return smooth(y[i-1],y[i],u);
+  }
   /** Rebuilds the cable tube: sampled along the route, lifted on the ground, without the interval of every cut that is open (ends frayed), with a splice sleeve where a cut is closed. */
   buildCable(world,gaps){
     const height=this.ground(world);
@@ -77,8 +89,8 @@ export class M01RepairLine {
     const state=name=>gaps?.[name]??'none';
     for(const [name,s,gap] of cuts)if(state(name)==='open')open.push({name,s0:s-gap/2,s1:s+gap/2});
     // The tube: the route outside every open gap, in pieces that end exactly at the edge of the gap, as quads round a 5-sided ring (the gap ends get their own frayed stubs).
-    // The tube follows the drawn ground: the highest of the point and of the two points 1.2 m across the slope, so that a chord of the lattice never covers it.
-    const pos=[],idx=[],at=(p)=>({x:p.x,y:Math.max(height(p.x,p.z),height(p.x,p.z-1.2),height(p.x,p.z+1.2))+RADIUS+LIFT,z:p.z});
+    // The tube follows the drawn ground (profile above).
+    const pos=[],idx=[],at=(p)=>({x:p.x,y:this.profileY(world,p.s)+RADIUS+LIFT,z:p.z});
     const ring=(c,d)=>{const nx=-d.z,nz=d.x,out=[];for(let k=0;k<SIDES;k++){const a=k/SIDES*Math.PI*2,ca=Math.cos(a),sa=Math.sin(a);out.push([c.x+nx*ca*RADIUS,c.y+sa*RADIUS,c.z+nz*ca*RADIUS]);}return out;};
     const emit=(a,b)=>{
       const ca=at(a),cb=at(b),d={x:b.x-a.x,z:b.z-a.z},len=Math.hypot(d.x,d.z)||1;d.x/=len;d.z/=len;

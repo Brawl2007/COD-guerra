@@ -146,6 +146,11 @@ test('the cable and the crate rest on the drawn ground (the injected surface), n
   const corners=[[-.3,-.3],[.3,-.3],[-.3,.3],[.3,.3]].map(([dx,dz])=>surface(x+dx,z+dz));
   assert.ok(Math.abs(line.crate.position.y-(Math.max(...corners)+.02))<1e-9,'the crate rests on the highest corner of its footprint');
   const y0=line.crate.position.y;line.sync(ops,world);assert.equal(line.crate.position.y,y0,'placed once per cut, not every frame');
+  // The ground under the tube is found once (a raycast on the drawn mesh per point of the route): a later rebuild interpolates that profile and only the stakes and the crate ask the surface again.
+  let calls=0;const counting=new M01RepairLine(new THREE.Scene(),{surfaceY:(x,z)=>{calls++;return surface(x,z);}});counting.sync(ops,world);const first=calls;
+  assert.ok(first>300,`the profile asks the surface for every sample of the route (${first} calls)`);
+  counting.sync({...ops,gaps:{crater:'closed',fault:'open',second:'none'}},world);assert.ok(calls-first<40,`a rebuild asks only for the stakes and the crate (${calls-first} calls)`);
+  counting.dispose();
   const fallback=new M01RepairLine(new THREE.Scene(),{surfaceY:()=>null});fallback.sync(ops,world);
   const b=fallback.cable.geometry.getAttribute('position');for(let i=0;i<b.count;i++)assert.ok(Number.isFinite(b.getY(i))&&Math.abs(b.getY(i)+2.6)<.1,'no answer from the surface: the world\'s height');
   line.dispose();fallback.dispose();
