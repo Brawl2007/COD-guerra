@@ -451,9 +451,30 @@ export function updatePolishSquad(sim, dt) {
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     stepActorWeapon(sim, ally, dt);
 
-    // 1. rkm wz. 28 support pair (Nowak + Kowalski) holds fire base and advances to north courtyard wall once ditch team reaches B01
-    if (ally.id === 'pl_aux_01' || ally.id === 'pl_aux_02') {
-      const ditchAdvanced = sim.clock >= 18 || sim.player.z > -35;
+    // 0. If C01/EA0 northern approach is active, bound from P1 (0,-175) to the transverse outpost trench (-18,-110)
+    if (sim.c01Active) {
+      const c01Elapsed = sim.clock - (sim.c01StartedAt ?? 0);
+      const c01Stage = c01Elapsed < 4.5 ? 0 : c01Elapsed < 14.0 ? 1 : 2;
+      const c01Map = {
+        pl_aux_01: ['cv_c01_p1_e', 'cv_c01_mid_e', 'cv_c01_mid_e'],
+        pl_aux_02: ['cv_c01_p1_w', 'cv_c01_mid_e', 'cv_c01_mid_e'],
+        pl_szymczak: ['cv_c01_p1_w', 'cv_c01_p1_w', 'cv_c01_mid_w'],
+        pl_gruca: ['cv_c01_p1_w', 'cv_c01_mid_w', 'cv_c01_outpost_clear'],
+        pl_lis: ['cv_c01_p1_w', 'cv_c01_mid_w', 'cv_c01_outpost_clear'],
+        pl_wierzba: ['cv_c01_p1_e', 'cv_c01_mid_e', 'cv_c01_outpost_clear'],
+        pl_malek: ['cv_c01_p1_w', 'cv_c01_mid_w', 'cv_c01_outpost_clear'],
+      };
+      const seq = c01Map[ally.id] ?? c01Map.pl_gruca;
+      const nodeId = seq[Math.min(c01Stage, seq.length - 1)];
+      const node = coverById.get(nodeId);
+      if (node) {
+        ally.goal = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
+        ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
+      }
+    } else if (ally.id === 'pl_aux_01' || ally.id === 'pl_aux_02') {
+      // 1. rkm wz. 28 support pair (Nowak + Kowalski) holds fire base and advances to north courtyard wall once ditch team reaches B01
+      const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
+      const ditchAdvanced = combatElapsed >= 18 || sim.player.z > -35;
       const nodeId = ditchAdvanced
         ? (ally.id === 'pl_aux_01' ? 'cv_gate_wall_west_s' : 'cv_b01_east_corner')
         : (ally.id === 'pl_aux_01' ? 'cv_start_parapet_e' : 'cv_start_parapet_w');
@@ -464,10 +485,11 @@ export function updatePolishSquad(sim, dt) {
       }
     } else if (ally.id === 'pl_szymczak') {
       // Medic stays in covered support behind Gruca and moves to orchard in C04
+      const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
       const c04Ready = sim.objective.id === 'C04' || sim.objective.id === 'O03';
       const nodeId = c04Ready
         ? 'cv_courtyard_consolidate'
-        : sim.clock >= 14
+        : combatElapsed >= 14
           ? 'cv_ditch_mid_b'
           : 'cv_start_parapet_w';
       const node = coverById.get(nodeId);
@@ -477,9 +499,10 @@ export function updatePolishSquad(sim, dt) {
       }
     } else {
       // Assault & flank team (Gruca, Lis, Wierzba, Małek)
+      const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
       const orderMode = sim.squadOrder?.type ?? 'auto';
       if (activeAxis === 'orchard' || orderMode === 'flank_east') {
-        const stage = sim.clock < 12 ? 0 : sim.clock < 26 ? 1 : 2;
+        const stage = combatElapsed < 12 ? 0 : combatElapsed < 26 ? 1 : 2;
         const mapByRole = {
           pl_gruca: ['cv_orchard_bank_e', 'cv_b03_south_entry', 'cv_courtyard_consolidate'],
           pl_wierzba: ['cv_orchard_bank_e', 'cv_b03_north_exit', 'cv_gate_wall_west_s'],
@@ -495,7 +518,7 @@ export function updatePolishSquad(sim, dt) {
         }
       } else {
         // Default / Ditch + B01 clearing bound progression
-        const stage = sim.clock < 8 ? 0 : sim.clock < 18 ? 1 : sim.clock < 30 ? 2 : 3;
+        const stage = combatElapsed < 8 ? 0 : combatElapsed < 18 ? 1 : combatElapsed < 30 ? 2 : 3;
         const mapByRole = {
           pl_gruca: ['cv_ditch_north_a', 'cv_ditch_mid_a', 'cv_b01_north_wall', 'cv_b01_east_corner'],
           pl_lis: ['cv_ditch_north_b', 'cv_ditch_south_a', 'cv_b01_kitchen_in', 'cv_b01_hall_in'],
@@ -547,12 +570,14 @@ export function updatePolishSquad(sim, dt) {
     let bestScore = -Infinity;
     for (const enemy of sim.enemies) {
       if (!enemy.alive || enemy.nonCombatant) continue;
+      if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
       const dist = Math.hypot(enemy.x - ally.x, enemy.z - ally.z);
       if (dist > (WEAPON_PROFILES[ally.weapon]?.range ?? 180)) continue;
 
       const hasLoS = sim.world.lineOfSight(ally, enemy, { includeFoliage: true });
       // rkm_gunner can also lay suppressive fire on the B02 MG aperture if it has clear ray to the aperture lip
       const isMgSuppressTarget =
+        !sim.c01Active &&
         ally.id === 'pl_aux_01' &&
         enemy.id === 'DE-A05' &&
         sim.world.lineOfSight(ally, { x: 11.85, y: 0, z: -30.0, eyeHeight: 1.42, space: 'metres' }, { includeFoliage: false });
@@ -578,7 +603,7 @@ export function updatePolishSquad(sim, dt) {
       const { enemy, aimPt } = bestEnemy;
       ally.facing = Math.atan2(aimPt.z - ally.z, aimPt.x - ally.x);
       sim.fireActorBurst(ally, enemy, aimPt, 'ally');
-      if (ally.id === 'pl_lis' && enemy.id === 'DE-A05') {
+      if (ally.id === 'pl_lis' && (enemy.id === 'DE-A05' || enemy.encounterId === 'EA0')) {
         sim.dialogue.trigger('bz39_c02_02', sim);
       }
     }
@@ -586,8 +611,9 @@ export function updatePolishSquad(sim, dt) {
 }
 
 export function updateGermanGarrison(sim, dt) {
-  const livingCombatEnemies = sim.enemies.filter((e) => e.alive && !e.nonCombatant);
-  const neutralizedCount = sim.enemies.length - livingCombatEnemies.length;
+  const ea1Enemies = sim.enemies.filter((e) => e.encounterId !== 'EA0');
+  const livingEa1Combat = ea1Enemies.filter((e) => e.alive && !e.nonCombatant);
+  const neutralizedCount = ea1Enemies.length - livingEa1Combat.length;
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05');
   const mgDown = !mgGunner || !mgGunner.alive || mgGunner.nonCombatant;
 
@@ -601,6 +627,7 @@ export function updateGermanGarrison(sim, dt) {
 
   for (const enemy of sim.enemies) {
     if (!enemy.alive) continue;
+    if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
     enemy.suppressed = Math.max(0, enemy.suppressed - dt * 0.25);
 
     // Check C04 wounded non-combatant transition in southern orchard

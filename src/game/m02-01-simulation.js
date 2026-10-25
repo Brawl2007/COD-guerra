@@ -10,6 +10,7 @@ import {
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { M01Navigator } from '../world/m01-navigation.js';
 import { M02QuintaWorld, BALLISTIC_MATERIAL_POLICY } from '../world/m02-quinta-world.js';
+import { M02HorizonDirector, M02_TEMPORAL_STATES } from '../world/m02-horizon-system.js';
 import { Wz29 } from './wz29.js';
 import {
   WEAPON_PROFILES,
@@ -100,21 +101,23 @@ export function validateM02Snapshot(snap) {
 }
 
 export class M02BenchSimulation {
-  constructor(seed = 19390909) {
+  constructor(seed = 19390909, { startScene = 'C02' } = {}) {
     this.seed = seed;
+    this.defaultStartScene = startScene;
     this.rng = new Random(seed);
     this.world = new M02QuintaWorld();
     this.navigator = new M01Navigator(this.world.navWorld).prewarm();
     this.weapon = new Wz29();
     this.dialogue = new M02DialogueDirector();
+    this.horizon = new M02HorizonDirector();
     this.events = [];
     this.shotLog = [];
     this.combatLog = [];
     this.checkpoints = new Map();
-    this.reset();
+    this.reset(startScene);
   }
 
-  reset() {
+  reset(startScene = this.defaultStartScene) {
     this.rng = new Random(this.seed);
     this.clock = 0;
     this.events = [];
@@ -122,10 +125,16 @@ export class M02BenchSimulation {
     this.combatLog = [];
     this.doorLocks = new Map();
     this.dialogue.reset();
+    this.horizon.reset();
     this.grenades = [];
     this.grenadeSeq = 0;
     this.grenadeAmmo = 2;
     this.squadOrder = { type: 'auto', axis: null, issuedAt: 0 };
+    this.c01Active = false;
+    this.c01StartedAt = 0;
+    this.ea1StartedAt = 0;
+    this.activeCartela = M02_TEMPORAL_STATES.T0.cartela;
+    this.transitionTABPayload = null;
 
     for (const b of this.world.layout.buildings) {
       for (const d of b.doors ?? []) this.world.doorStates.set(d.id, d.initialState ?? 'closed');
@@ -137,8 +146,12 @@ export class M02BenchSimulation {
     this.world.refresh();
     this.navigator.sync();
 
+    const allCoverNodes = [
+      ...(this.world.layout.coverNodes ?? []),
+      ...(this.world.layout.c01Corridor?.coverNodes ?? []),
+    ];
     this.coverNodesById = new Map(
-      (this.world.layout.coverNodes ?? []).map((n) => [n.id, { ...n, y: this.world.heightAt(n.x, n.z) }]),
+      allCoverNodes.map((n) => [n.id, { ...n, y: this.world.heightAt(n.x, n.z) }]),
     );
 
     const start = this.world.layout.start;
@@ -276,12 +289,125 @@ export class M02BenchSimulation {
       status: 'active',
     };
 
+    if (startScene === 'C01') {
+      this.startAreaAFullC01({ saveInitialCheckpoint: false });
+    }
+
     this.dialogue.trigger('bz39_c01_01', this);
     this.dialogue.trigger('dlg_m02_001', this);
     this.dialogue.update(this);
 
     this.updateTacticalContext();
     this.saveCheckpoint('cp_m02_a_preparacao');
+  }
+
+  startAreaAFullC01({ saveInitialCheckpoint = true } = {}) {
+    const p1 = this.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175, angle: Math.PI / 2, pitch: 0 };
+    this.player.x = p1.x;
+    this.player.z = p1.z;
+    this.player.y = this.world.heightAt(p1.x, p1.z);
+    this.player.angle = p1.angle ?? Math.PI / 2;
+    this.player.pitch = p1.pitch ?? 0;
+
+    // Position the 7 Polish squad allies in the P1 preparation trench (around Z = -174..-178)
+    for (const ally of this.allies) {
+      ally.z = Number((ally.z - 96.0).toFixed(2));
+      ally.y = this.world.heightAt(ally.x, ally.z);
+      ally.goal = null;
+      ally.reachedNodeId = null;
+    }
+
+    // Prepend EA0 outpost defenders (DE-A01..DE-A04 at -18, -110) if not already loaded
+    const existingIds = new Set(this.enemies.map((e) => e.id));
+    const ea0 = (this.world.layout.c01Corridor?.enemyRosterEA0 ?? [])
+      .filter((e) => !existingIds.has(e.id))
+      .map((e) => ({
+        ...e,
+        space: 'metres',
+        y: this.world.heightAt(e.x, e.z),
+        radius: PLAYER_PHYSICS.radius,
+        eyeHeight: EYE_HEIGHT,
+        crouched: false,
+        moving: false,
+        alive: true,
+        active: true,
+        maxHealth: e.health ?? 85,
+        suppressed: 0,
+        state: 'HOLD_SECTOR',
+        nonCombatant: false,
+        chalkMarked: false,
+        seeingTargetId: null,
+        memory: null,
+        goal: null,
+        reloadingUntil: 0,
+        nextFireAt: 0.6,
+        shotsFired: 0,
+        hitsReceived: 0,
+        lastHitPart: null,
+      }));
+    this.enemies = [...ea0, ...this.enemies];
+
+    this.c01Active = true;
+    this.c01StartedAt = this.clock;
+    this.activeCartela = {
+      text: M02_TEMPORAL_STATES.T0.cartela,
+      expiresAt: this.clock + 8.0,
+    };
+    this.objective = {
+      id: 'O00',
+      title: 'C01/EA0: Avançar de P1 (0,-175) e tomar o posto avançado na vala transversal (-18,-110)',
+      status: 'active',
+    };
+    this.updateTacticalContext();
+    if (saveInitialCheckpoint) {
+      this.saveCheckpoint('cp_m02_a_preparacao');
+    }
+    return this.objective;
+  }
+
+  triggerTransitionTAB({ skip = false } = {}) {
+    // NAR-01: Watching vs skipping C05 transition produces identical semantic end state without duplicating ammo/health changes
+    this.dialogue.trigger('bz39_c05_01', this);
+    const t1 = this.horizon.setTemporalState('T1', this);
+    const cartelaText = t1?.cartela ?? 'Acessos de Łęczyca — noite de 9 para 10 de setembro';
+    this.activeCartela = {
+      text: cartelaText,
+      expiresAt: this.clock + 8.0,
+    };
+    this.flags['m02.completed'] = true;
+    this.flags['m02.transicao_tab_pronta'] = true;
+
+    this.transitionTABPayload = {
+      transitionId: 'T-AB',
+      fromCell: 'A',
+      toCell: 'B',
+      targetArea: 'AREA_B_LECZYCA',
+      temporalState: 'T1',
+      cartela: cartelaText,
+      playerHealth: this.player.health,
+      weapon: {
+        mag: this.weapon.mag,
+        reserve: this.weapon.reserve,
+      },
+      grenadeAmmo: this.grenadeAmmo,
+      flags: structuredClone(this.flags),
+      squadStatuses: Object.fromEntries(
+        this.allies.map((a) => [a.id, { alive: a.alive, state: a.state, health: a.health }]),
+      ),
+    };
+
+    this.objective = {
+      id: 'T-AB',
+      title: 'C05 (Deslocação A→B concluída): Secção em marcha noturna para os Acessos de Łęczyca (Área B)',
+      status: 'completed',
+    };
+    this.events.push({
+      type: 'transition-tab',
+      skipped: Boolean(skip),
+      payload: structuredClone(this.transitionTABPayload),
+      clock: this.clock,
+    });
+    return this.transitionTABPayload;
   }
 
   drainEvents() {
@@ -914,9 +1040,35 @@ export class M02BenchSimulation {
     this.mgState.blockedById = mgStatus.blockedById;
     this.mgState.blockedByMaterial = mgStatus.blockedByMaterial;
 
+    // Check if C01/EA0 outpost (DE-A01..DE-A04) is active and whether it has been cleared
+    if (this.c01Active) {
+      const activeEa0 = this.enemies.filter((e) => e.encounterId === 'EA0' && e.alive && !e.nonCombatant);
+      if (activeEa0.length === 0) {
+        this.c01Active = false;
+        this.ea1StartedAt = this.clock;
+        this.flags['m02.prep_avanco_ok'] = true;
+        this.flags['m02.ea0_posto_cleared'] = true;
+        this.dialogue.trigger('bz39_c02_01', this);
+        this.combatLog.push({
+          clock: Number(this.clock.toFixed(2)),
+          type: 'ea0_outpost_cleared',
+        });
+        this.saveCheckpoint('cp_m02_a_preparacao');
+      } else {
+        this.objective.id = 'O00';
+        this.objective.title = `C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (${activeEa0.length}/4 ativos)`;
+        this.objective.status = 'active';
+        return;
+      }
+    }
+
+    if (this.objective.id === 'T-AB') {
+      return;
+    }
+
     const mgEnemy = this.enemies.find((e) => e.id === 'DE-A05');
     const mgNeutralized = !mgEnemy || !mgEnemy.alive || mgEnemy.nonCombatant;
-    const activeCombatDefenders = this.enemies.filter((e) => e.alive && !e.nonCombatant);
+    const activeCombatDefenders = this.enemies.filter((e) => e.encounterId !== 'EA0' && e.alive && !e.nonCombatant);
     const b01DefendersDown = this.enemies
       .filter((e) => e.buildingId === 'B01')
       .every((e) => !e.alive || e.nonCombatant);
@@ -1039,6 +1191,7 @@ export class M02BenchSimulation {
     this.updateGrenades(dt);
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
+    this.horizon.update(this, dt);
     this.dialogue.update(this);
     this.updateTacticalContext();
 
@@ -1081,6 +1234,11 @@ export class M02BenchSimulation {
       player: structuredClone(this.player),
       weapon: this.weapon.snapshot(),
       grenadeAmmo: this.grenadeAmmo,
+      c01Active: this.c01Active,
+      c01StartedAt: this.c01StartedAt,
+      ea1StartedAt: this.ea1StartedAt,
+      activeCartela: this.activeCartela,
+      transitionTABPayload: this.transitionTABPayload ? structuredClone(this.transitionTABPayload) : null,
       doors: Object.fromEntries(this.world.doorStates.entries()),
       windows: Object.fromEntries(this.world.windowStates.entries()),
       fences: Object.fromEntries(this.world.fenceStates.entries()),
@@ -1092,6 +1250,7 @@ export class M02BenchSimulation {
       flags: structuredClone(this.flags),
       squadOrder: structuredClone(this.squadOrder),
       dialogue: this.dialogue.snapshot(),
+      horizon: this.horizon.snapshot(),
       objective: structuredClone(this.objective),
     };
   }
@@ -1105,6 +1264,11 @@ export class M02BenchSimulation {
     this.player = structuredClone(snap.player);
     this.weapon.restore(structuredClone(snap.weapon));
     this.grenadeAmmo = snap.grenadeAmmo ?? 2;
+    this.c01Active = Boolean(snap.c01Active);
+    this.c01StartedAt = snap.c01StartedAt ?? 0;
+    this.ea1StartedAt = snap.ea1StartedAt ?? 0;
+    this.activeCartela = snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela;
+    this.transitionTABPayload = snap.transitionTABPayload ? structuredClone(snap.transitionTABPayload) : null;
     for (const [k, v] of Object.entries(snap.doors ?? {})) this.world.doorStates.set(k, v);
     for (const [k, v] of Object.entries(snap.windows ?? {})) this.world.windowStates.set(k, v);
     for (const [k, v] of Object.entries(snap.fences ?? {})) this.world.fenceStates.set(k, v);
@@ -1121,6 +1285,7 @@ export class M02BenchSimulation {
     if (snap.flags) this.flags = structuredClone(snap.flags);
     if (snap.squadOrder) this.squadOrder = structuredClone(snap.squadOrder);
     if (snap.dialogue) this.dialogue.restore(snap.dialogue);
+    if (snap.horizon) this.horizon.restore(snap.horizon);
     this.objective = structuredClone(snap.objective);
     this.events.push({ type: 'restored', clock: this.clock });
   }

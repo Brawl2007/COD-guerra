@@ -238,6 +238,11 @@ export class M02QuintaWorld {
       return ditch.floorY * xFactor * zFactor;
     }
 
+    // Transverse outpost trench at (-18, -110) for C01/EA0
+    if (x >= -26.5 && x <= -9.0 && z >= -112.5 && z <= -109.2) {
+      return -0.32;
+    }
+
     // Gentle agricultural micro-relief on the eastern/southern flank only outside roads and courtyard
     if (Math.abs(x) <= 3.5) return 0;
     if (x > 38 && z >= -60 && z <= 35) {
@@ -493,8 +498,12 @@ export class M02QuintaWorld {
     }
 
     const fenceDescriptors = [];
-    // Exterior tactical covers (stone well, courtyard walls, fences, woodpile)
-    for (const cov of this.layout.exteriorCovers ?? []) {
+    // Exterior tactical covers (stone well, courtyard walls, fences, woodpile, plus C01 northern approach covers)
+    const allExteriorCovers = [
+      ...(this.layout.exteriorCovers ?? []),
+      ...(this.layout.c01Corridor?.covers ?? []),
+    ];
+    for (const cov of allExteriorCovers) {
       const fState = cov.destructibleFence ? (this.fenceStates.get(cov.id) ?? 'intact') : 'intact';
       if (cov.destructibleFence) {
         fenceDescriptors.push({

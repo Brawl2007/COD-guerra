@@ -38,11 +38,12 @@ export const M02_QUALITY_PROFILES = Object.freeze({
 export const M02_LIGHTING_PRESETS = Object.freeze({
   afternoon_1939_09_09: Object.freeze({
     id: 'afternoon_1939_09_09',
-    label: 'Fim de tarde · 9 Set 1939 (Bzura)',
+    temporalId: 'T0',
+    label: 'T0 · Fim de tarde · 9 Set 1939 (Bzura)',
     skyColor: 0x9aa9b8,
     fogColor: 0xaab4bc,
     fogNear: 55,
-    fogFar: 260,
+    fogFar: 320,
     hemiSky: 0xc8d4e0,
     hemiGround: 0x564d3e,
     hemiIntensity: 0.72,
@@ -50,13 +51,59 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     sunIntensity: 1.35,
     sunPosition: [-75, 48, 32],
   }),
+  night_1939_09_09: Object.freeze({
+    id: 'night_1939_09_09',
+    temporalId: 'T1',
+    label: 'T1 · Noite de 9–10 Set 1939 (Acessos Łęczyca)',
+    skyColor: 0x161d29,
+    fogColor: 0x1c2432,
+    fogNear: 38,
+    fogFar: 230,
+    hemiSky: 0x3b4d6b,
+    hemiGround: 0x1c1a17,
+    hemiIntensity: 0.36,
+    sunColor: 0x8aa8d6,
+    sunIntensity: 0.42,
+    sunPosition: [40, 62, -45],
+  }),
+  morning_1939_09_10: Object.freeze({
+    id: 'morning_1939_09_10',
+    temporalId: 'T2',
+    label: 'T2 · Manhã de 10 Set 1939 (Neblina baixa)',
+    skyColor: 0xb8c5ce,
+    fogColor: 0xc4cfd6,
+    fogNear: 42,
+    fogFar: 250,
+    hemiSky: 0xdce6ed,
+    hemiGround: 0x585245,
+    hemiIntensity: 0.82,
+    sunColor: 0xfff0d4,
+    sunIntensity: 1.12,
+    sunPosition: [72, 42, -25],
+  }),
+  afternoon_1939_09_10: Object.freeze({
+    id: 'afternoon_1939_09_10',
+    temporalId: 'T3',
+    label: 'T3 · Tarde de 10 Set 1939 (Fumo denso)',
+    skyColor: 0x8c877e,
+    fogColor: 0x968f84,
+    fogNear: 48,
+    fogFar: 260,
+    hemiSky: 0xb8b0a4,
+    hemiGround: 0x4a4236,
+    hemiIntensity: 0.66,
+    sunColor: 0xffc58a,
+    sunIntensity: 1.18,
+    sunPosition: [-68, 44, 28],
+  }),
   neutral_review: Object.freeze({
     id: 'neutral_review',
+    temporalId: null,
     label: 'Luz técnica neutra (Inspeção)',
     skyColor: 0xcad4de,
     fogColor: 0xcad4de,
     fogNear: 120,
-    fogFar: 420,
+    fogFar: 460,
     hemiSky: 0xffffff,
     hemiGround: 0x7c7870,
     hemiIntensity: 1.05,
@@ -122,9 +169,13 @@ export class M02BenchRenderer {
     this.scene.add(this.camera);
 
     this.lastWorldRevision = -1;
+    this.lastSyncedTemporalState = null;
     this.targetMeshes = new Map();
     this.allyMeshes = new Map();
     this.enemyMeshes = new Map();
+    this.hsA1Meshes = new Map();
+    this.hsA2Meshes = new Map();
+    this.hsA3Meshes = new Map();
     this.roofMeshes = new Map();
     this.activeTracers = [];
     this.debugLoSVisible = false;
@@ -188,6 +239,8 @@ export class M02BenchRenderer {
       gun_wood: new THREE.MeshStandardMaterial({ color: 0x5e3c22, roughness: 0.72, metalness: 0.08 }),
       horizon_treeline: new THREE.MeshStandardMaterial({ color: 0x394934, roughness: 0.95, metalness: 0.0 }),
       horizon_study: new THREE.MeshBasicMaterial({ color: 0x6d7782, wireframe: false, transparent: true, opacity: 0.55 }),
+      horizon_smoke: new THREE.MeshBasicMaterial({ color: 0x4e4a44, transparent: true, opacity: 0.52 }),
+      horizon_flash: new THREE.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0.85 }),
     };
   }
 
@@ -229,11 +282,11 @@ export class M02BenchRenderer {
     this.decorativeGroup.clear();
     this.roofMeshes.clear();
 
-    // 1. Terrain mesh with ditch depression and vertex colors
-    const width = 160;
-    const length = 210;
-    const segX = 80;
-    const segZ = 105;
+    // 1. Terrain mesh with ditch depression, C01 northern approach (P1 at Z=-175, EA0 at Z=-110), and vertex colors
+    const width = 240;
+    const length = 340;
+    const segX = 64;
+    const segZ = 90;
     const terrainGeo = new THREE.PlaneGeometry(width, length, segX, segZ);
     terrainGeo.rotateX(-Math.PI / 2);
 
@@ -243,7 +296,7 @@ export class M02BenchRenderer {
 
     for (let i = 0; i < pos.count; i++) {
       const vx = pos.getX(i);
-      const vz = pos.getZ(i) - 15; // center around Z = -15 (playable -90..60)
+      const vz = pos.getZ(i) - 65; // center around Z = -65 (covers -235..+105)
       pos.setZ(i, vz);
       const vy = this.world.terrainHeightAt(vx, vz);
       pos.setY(i, vy);
@@ -251,8 +304,11 @@ export class M02BenchRenderer {
       if (vx >= -48.5 && vx <= -41.5 && vz >= -85 && vz <= 48) {
         // Wet ditch bottom and muddy banks
         color.setHex(vy < -0.75 ? 0x353126 : 0x4d4331);
+      } else if (vx >= -27.0 && vx <= -8.5 && vz >= -113.0 && vz <= -108.5) {
+        // EA0 northern outpost transverse trench
+        color.setHex(0x3e3729);
       } else if (Math.abs(vx) <= 3.1 && vz <= 20) {
-        // North-south cart track
+        // North-south cart track (from C01 P1 Z=-175 down to farmstead)
         color.setHex(0x6e5d45);
       } else if (vx >= -22 && vx <= 16 && vz >= -20 && vz <= 20) {
         // Farmstead packed-earth courtyard
@@ -589,22 +645,26 @@ export class M02BenchRenderer {
 
   #buildHorizonRing() {
     this.horizonGroup.clear();
-    // L2/L3 360-degree distant treeline ring around the 100x150m farmstead
-    const ringCount = 28;
-    const radius = 195;
+    this.hsA1Meshes.clear();
+    this.hsA2Meshes.clear();
+    this.hsA3Meshes.clear();
+
+    // L2/L3 360-degree distant treeline ring around Area A (8 sectors of 45 degrees)
+    const ringCount = 32;
+    const radius = 285;
     for (let i = 0; i < ringCount; i++) {
       const a = (i / ringCount) * Math.PI * 2;
       const hx = Math.cos(a) * radius;
-      const hz = Math.sin(a) * radius - 15;
-      const w = 34 + (i % 3) * 12;
-      const h = 11 + (i % 4) * 3.5;
-      const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 8), this.materials.horizon_treeline);
+      const hz = Math.sin(a) * radius - 55;
+      const w = 42 + (i % 3) * 14;
+      const h = 12 + (i % 4) * 3.8;
+      const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 9), this.materials.horizon_treeline);
       treeBlock.position.set(hx, h / 2 - 1, hz);
       treeBlock.rotation.y = -a + Math.PI / 2;
       this.horizonGroup.add(treeBlock);
     }
 
-    // Provisional L3 study volume (Document H: Tum / Kolegiata study silhouette — explicitly tagged provisional)
+    // Provisional L3 study volume in SW sector (Document H: Tum / Kolegiata study silhouette — explicitly tagged provisional)
     const studyGroup = new THREE.Group();
     const nave = new THREE.Mesh(new THREE.BoxGeometry(28, 18, 14), this.materials.horizon_study);
     nave.position.set(-260, 9, 280);
@@ -613,7 +673,58 @@ export class M02BenchRenderer {
     const towerB = new THREE.Mesh(new THREE.BoxGeometry(7, 32, 7), this.materials.horizon_study);
     towerB.position.set(-248, 16, 280);
     studyGroup.add(nave, towerA, towerB);
+
+    // Provisional L3 study volume in E sector (Łęczyca urban horizon profile)
+    const leczycaBlockA = new THREE.Mesh(new THREE.BoxGeometry(22, 14, 48), this.materials.horizon_study);
+    leczycaBlockA.position.set(340, 7, -15);
+    const leczycaTower = new THREE.Mesh(new THREE.BoxGeometry(8, 28, 8), this.materials.horizon_study);
+    leczycaTower.position.set(335, 14, -2);
+    studyGroup.add(leczycaBlockA, leczycaTower);
     this.horizonGroup.add(studyGroup);
+
+    // HS-A1: 6 persistent Polish support soldiers on west flank (promote L2 <-> L1)
+    for (const actor of this.sim.horizon?.hsA1.actors ?? []) {
+      const soldier = this.#createSoldierMesh({ isPolish: true });
+      soldier.group.position.set(actor.x, 0, actor.z);
+      soldier.group.rotation.y = -(actor.facing ?? 0) + Math.PI / 2;
+      this.horizonGroup.add(soldier.group);
+      this.hsA1Meshes.set(actor.id, soldier);
+    }
+
+    // HS-A2: 5 finite distant barrage/smoke events (L3)
+    for (const ev of this.sim.horizon?.hsA2.events ?? []) {
+      const group = new THREE.Group();
+      group.position.set(ev.x, 0, ev.z);
+      const flash = new THREE.Mesh(new THREE.SphereGeometry(7.5, 10, 8), this.materials.horizon_flash);
+      flash.position.y = 8;
+      flash.visible = false;
+
+      const plume = new THREE.Group();
+      const colLow = new THREE.Mesh(new THREE.CylinderGeometry(8, 5, 34, 8), this.materials.horizon_smoke);
+      colLow.position.y = 17;
+      const colHigh = new THREE.Mesh(new THREE.SphereGeometry(14, 10, 8), this.materials.horizon_smoke);
+      colHigh.position.y = 38;
+      plume.add(colLow, colHigh);
+      plume.visible = false;
+
+      group.add(flash, plume);
+      this.horizonGroup.add(group);
+      this.hsA2Meshes.set(ev.id, { group, flash, plume });
+    }
+
+    // HS-A3: 3 rear logistics carts passing once at Z = -245
+    for (const v of this.sim.horizon?.hsA3.vehicles ?? []) {
+      const cart = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.3, 1.8), this.materials.wood_thick);
+      body.position.y = 0.85;
+      const canopy = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.9, 1.7), this.materials.roof_thatch);
+      canopy.position.y = 1.65;
+      cart.add(body, canopy);
+      cart.position.set(v.x, 0, v.z);
+      cart.visible = Boolean(v.visible);
+      this.horizonGroup.add(cart);
+      this.hsA3Meshes.set(v.id, cart);
+    }
   }
 
   #buildDebugOverlay() {
@@ -713,6 +824,46 @@ export class M02BenchRenderer {
 
     if (this.world.revision !== this.lastWorldRevision) {
       this.#rebuildDynamicOpenings();
+    }
+
+    // Rebuild actor meshes if enemy/ally roster count changed (e.g. C01 EA0 added or reset)
+    if (
+      this.enemyMeshes.size !== (this.sim.enemies?.length ?? 0) ||
+      this.allyMeshes.size !== (this.sim.allies?.length ?? 0)
+    ) {
+      this.#buildTargets();
+    }
+
+    // Auto-sync temporal lighting preset (T0..T3) unless user selected neutral_review
+    if (
+      this.sim.horizon?.temporalState &&
+      this.sim.horizon.temporalState !== this.lastSyncedTemporalState
+    ) {
+      this.lastSyncedTemporalState = this.sim.horizon.temporalState;
+      if (this.lightingPreset.id !== 'neutral_review') {
+        this.applyLightingPreset(this.sim.horizon.lightingPreset);
+      }
+    }
+
+    // Update Horizon N2 visual representations (HS-A1, HS-A2, HS-A3)
+    for (const actor of this.sim.horizon?.hsA1.actors ?? []) {
+      const entry = this.hsA1Meshes.get(actor.id);
+      if (!entry) continue;
+      entry.group.position.set(actor.x, this.world.terrainHeightAt(actor.x, actor.z), actor.z);
+      entry.group.rotation.y = -(actor.facing ?? 0) + Math.PI / 2;
+      entry.group.userData.lodBand = actor.representation;
+    }
+    for (const ev of this.sim.horizon?.hsA2.events ?? []) {
+      const entry = this.hsA2Meshes.get(ev.id);
+      if (!entry) continue;
+      entry.flash.visible = Boolean(ev.flashed && !ev.soundPlayed);
+      entry.plume.visible = Boolean(ev.smokeActive);
+    }
+    for (const v of this.sim.horizon?.hsA3.vehicles ?? []) {
+      const cart = this.hsA3Meshes.get(v.id);
+      if (!cart) continue;
+      cart.visible = Boolean(v.visible);
+      cart.position.set(v.x, 0, v.z);
     }
 
     // Drain simulation events to spawn shot tracers, actor bursts, grenade blasts, or MG bursts

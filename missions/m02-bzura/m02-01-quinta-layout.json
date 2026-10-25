@@ -83,6 +83,84 @@
     { "id": "SN4", "label": "Frente oeste do Celeiro B02", "x": 8, "z": -28 },
     { "id": "SN5", "label": "Pomar sul", "x": 0, "z": 45 }
   ],
+  "c01Corridor": {
+    "startP1": { "x": 0, "y": 0, "z": -175, "angle": 1.5707963267948966, "pitch": 0 },
+    "outpostPosition": { "x": -18, "z": -110 },
+    "covers": [
+      { "id": "cov_c01_p1_trench_lip", "name": "Talude da vala de partida (P1)", "min": [-6.5, 0, -172.5], "max": [6.5, 0.95, -171.8], "material": "earth" },
+      { "id": "cov_c01_mid_culvert", "name": "Murete da estrada norte", "min": [2.2, 0, -143.0], "max": [7.2, 1.02, -142.2], "material": "stone" },
+      { "id": "cov_c01_outpost_parapet", "name": "Parapeito da vala transversal alemã (EA0)", "min": [-25.5, 0, -109.2], "max": [-9.5, 0.92, -108.5], "material": "earth" }
+    ],
+    "coverNodes": [
+      { "id": "cv_c01_p1_w", "x": -3.2, "z": -173.5, "facing": 1.5707963267948966, "crouch": false, "sector": "c01" },
+      { "id": "cv_c01_p1_e", "x": 3.2, "z": -173.5, "facing": 1.5707963267948966, "crouch": false, "sector": "c01" },
+      { "id": "cv_c01_mid_w", "x": -8.5, "z": -142.0, "facing": 1.75, "crouch": false, "sector": "c01" },
+      { "id": "cv_c01_mid_e", "x": 4.2, "z": -143.8, "facing": 1.85, "crouch": false, "sector": "c01" },
+      { "id": "cv_c01_outpost_clear", "x": -16.0, "z": -111.5, "facing": 1.5707963267948966, "crouch": false, "sector": "c01" }
+    ],
+    "enemyRosterEA0": [
+      {
+        "id": "DE-A01",
+        "name": "Vorposten Schütze 1 (Vala Transversal)",
+        "role": "outpost_rifleman",
+        "weapon": "kar98k",
+        "buildingId": null,
+        "encounterId": "EA0",
+        "x": -21.5,
+        "z": -110.2,
+        "facing": -1.35,
+        "fallback": [-24.0, -92.0],
+        "mag": 5,
+        "reserve": 30,
+        "health": 85
+      },
+      {
+        "id": "DE-A02",
+        "name": "Vorposten Schütze 2 (Vala Transversal)",
+        "role": "outpost_rifleman",
+        "weapon": "kar98k",
+        "buildingId": null,
+        "encounterId": "EA0",
+        "x": -18.0,
+        "z": -110.0,
+        "facing": -1.35,
+        "fallback": [-18.0, -90.0],
+        "mag": 5,
+        "reserve": 30,
+        "health": 85
+      },
+      {
+        "id": "DE-A03",
+        "name": "Vorposten Schütze 3 (Vala Transversal)",
+        "role": "outpost_rifleman",
+        "weapon": "kar98k",
+        "buildingId": null,
+        "encounterId": "EA0",
+        "x": -14.2,
+        "z": -110.4,
+        "facing": -1.35,
+        "fallback": [-12.0, -90.0],
+        "mag": 5,
+        "reserve": 30,
+        "health": 85
+      },
+      {
+        "id": "DE-A04",
+        "name": "Vorposten Schütze 4 (Vala Transversal)",
+        "role": "outpost_rifleman",
+        "weapon": "kar98k",
+        "buildingId": null,
+        "encounterId": "EA0",
+        "x": -11.0,
+        "z": -111.2,
+        "facing": -1.35,
+        "fallback": [-6.0, -88.0],
+        "mag": 5,
+        "reserve": 30,
+        "health": 85
+      }
+    ]
+  },
   "buildings": [
     {
       "id": "B01",

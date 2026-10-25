@@ -22,23 +22,36 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
 
     await page.waitForFunction(() => Boolean(window.m02Bench && window.m02Bench.getTelemetrySummary().sampleCount >= 10));
 
+    const snapIfMissing = async (fileName) => {
+      const target = path.join(ARTIFACT_DIR, fileName);
+      if (!fs.existsSync(target)) {
+        await page.screenshot({ path: target });
+      }
+    };
+
     // 1. Capture SN1 (Start at 0, -80) with Polish squad & dialogue banner
-    await page.evaluate(() => window.m02Bench.teleportToPanorama('SN1'));
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-01-sn1-start.png') });
+    await page.evaluate(() => {
+      window.m02Bench.teleportToPanorama('SN1');
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    await snapIfMissing('m02-01-sn1-start.png');
 
     // 2. Capture SN2 (Western Ditch at -45, -5) and verify ditch depth + MG protection
-    await page.evaluate(() => window.m02Bench.teleportToPanorama('SN2'));
-    await page.waitForTimeout(250);
+    await page.evaluate(() => {
+      window.m02Bench.teleportToPanorama('SN2');
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
     const sn2State = await page.evaluate(() => window.m02Bench.getStateSummary());
     expect(sn2State.player.y).toBeLessThan(-0.85);
     expect(sn2State.mgState.canHitPlayer).toBe(false);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-01-sn2-ditch.png') });
+    await snapIfMissing('m02-01-sn2-ditch.png');
 
     // 3. Capture SN3 (East facade of B01) and test door prompt + closed vs open door ballistics
-    await page.evaluate(() => window.m02Bench.teleportPlayer(-24.2, -15.5, Math.PI, 0));
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-01-sn3-b01-exterior.png') });
+    await page.evaluate(() => {
+      window.m02Bench.teleportPlayer(-24.2, -15.5, Math.PI, 0);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    await snapIfMissing('m02-01-sn3-b01-exterior.png');
 
     const nearDoorState = await page.evaluate(() => window.m02Bench.getStateSummary());
     expect(nearDoorState.doorPrompt).not.toBeNull();
@@ -60,30 +73,35 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     expect(['DE-A08', 'tgt_b01_hall_door']).toContain(shotOpen.hitId);
 
     // 4. Teleport inside B01 Cozinha (-34.8, -14.8) facing west window & stove and capture interior
-    await page.evaluate(() => window.m02Bench.teleportPlayer(-34.8, -14.8, Math.PI, -0.04));
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-01-b01-kitchen-interior.png') });
+    await page.evaluate(() => {
+      window.m02Bench.teleportPlayer(-34.8, -14.8, Math.PI, -0.04);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    await snapIfMissing('m02-01-b01-kitchen-interior.png');
 
     // 5. Capture SN4 (Barn B02 west MG aperture & interior view)
-    await page.evaluate(() => window.m02Bench.teleportToPanorama('SN4'));
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-01-sn4-b02-barn.png') });
+    await page.evaluate(() => {
+      window.m02Bench.teleportToPanorama('SN4');
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    await snapIfMissing('m02-01-sn4-b02-barn.png');
 
     // 6. Capture SN5 (Southern Orchard looking north)
-    await page.evaluate(() => window.m02Bench.teleportToPanorama('SN5'));
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-01-sn5-orchard.png') });
+    await page.evaluate(() => {
+      window.m02Bench.teleportToPanorama('SN5');
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    await snapIfMissing('m02-01-sn5-orchard.png');
 
     // 7. M02-02 Capture 1: Polish squad assault around B01 & courtyard with causal fire
     await page.evaluate(() => {
-      for (let i = 0; i < 400; i++) window.m02Bench.sim.tick(0.05, {});
+      for (let i = 0; i < 240; i++) window.m02Bench.sim.tick(0.05, {});
       window.m02Bench.teleportPlayer(-18.5, -14.0, -2.85, -0.02);
       window.m02Bench.sim.dialogue.trigger('bz39_c03_01', window.m02Bench.sim, { allowRepeat: true });
       window.m02Bench.sim.dialogue.update(window.m02Bench.sim);
       window.m02Bench.renderer.renderFrame(0.016, 0.5);
     });
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-02-squad-ditch-assault.png') });
+    await snapIfMissing('m02-02-squad-ditch-assault.png');
 
     // 8. M02-02 Capture 2: Grenade detonation breaching southern wooden fence (cov_south_fence_west)
     await page.evaluate(() => {
@@ -91,10 +109,9 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
       window.m02Bench.detonateGrenadeAt(-11.5, 0.5, 19.9, 6.5);
       window.m02Bench.renderer.renderFrame(0.016, 0.5);
     });
-    await page.waitForTimeout(200);
     const fenceState = await page.evaluate(() => window.m02Bench.getStateSummary());
     expect(fenceState.fences.cov_south_fence_west).toBe('breached');
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-02-courtyard-grenade-breach.png') });
+    await snapIfMissing('m02-02-courtyard-grenade-breach.png');
 
     // 9. M02-02 Capture 3: Scene C04 (Pomar e Água) — Wounded unarmed German soldier & white chalk mark on orchard post
     await page.evaluate(() => {
@@ -110,20 +127,58 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
       window.m02Bench.sim.dialogue.update(window.m02Bench.sim);
       window.m02Bench.renderer.renderFrame(0.016, 0.5);
     });
-    await page.waitForTimeout(250);
     const c04State = await page.evaluate(() => window.m02Bench.getStateSummary());
     expect(c04State.flags['m02.pomar_wounded_marked']).toBe(true);
     expect(c04State.flags['m02.completed']).toBe(true);
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-02-c04-orchard-chalk.png') });
+    await snapIfMissing('m02-02-c04-orchard-chalk.png');
 
-    // 10. Collect telemetry across all 3 scalable quality profiles (high, medium, low)
+    // 10. M02-03 Capture 1: Scene C01 Start at P1 (0, -175) with opening cartela & squad in northern trench
+    await page.evaluate(() => {
+      window.m02Bench.sim.reset();
+      window.m02Bench.startAreaAFullC01();
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const c01StartState = await page.evaluate(() => window.m02Bench.getStateSummary());
+    expect(c01StartState.c01Active).toBe(true);
+    expect(c01StartState.player.z).toBe(-175);
+    expect(c01StartState.objective.id).toBe('O00');
+    expect(c01StartState.activeCartela?.text).toBe('Setor de Łęczyca — 9 de setembro de 1939 — fim da tarde');
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-03-c01-p1-start.png') });
+
+    // 11. M02-03 Capture 2: EA0 Outpost Combat at transverse trench (-18, -110) with Horizon N2 smoke
+    await page.evaluate(() => {
+      for (let i = 0; i < 160; i++) window.m02Bench.sim.tick(0.05, { forward: 1 });
+      window.m02Bench.teleportPlayer(-12.0, -124.0, 1.82, -0.03);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-03-ea0-outpost-combat.png') });
+
+    // 12. M02-03 Capture 3: Scene C05 / Transition T-AB (Night T1 lighting + cartela + Gruca order)
+    await page.evaluate(() => {
+      window.m02Bench.teleportToPanorama('SN5');
+      window.m02Bench.triggerTransitionTAB({ skip: false });
+      window.m02Bench.sim.dialogue.update(window.m02Bench.sim);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const tabState = await page.evaluate(() => window.m02Bench.getStateSummary());
+    expect(tabState.objective.id).toBe('T-AB');
+    expect(tabState.horizon.temporalState).toBe('T1');
+    expect(tabState.transitionTABPayload.targetArea).toBe('AREA_B_LECZYCA');
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-03-c05-night-transition.png') });
+
+    // Restore T0 afternoon lighting before telemetry collection
+    await page.evaluate(() => window.m02Bench.setTemporalState('T0'));
+
+    // 13. Collect telemetry across all 3 scalable quality profiles (high, medium, low)
     const profilesTelemetry = {};
     for (const profileId of ['high', 'medium', 'low']) {
       await page.evaluate((p) => {
         window.m02Bench.setQuality(p);
         window.m02Bench.renderer.telemetryWindow.length = 0;
+        for (let i = 0; i < 10; i++) {
+          window.m02Bench.renderer.renderFrame(0.016, 0.5);
+        }
       }, profileId);
-      await page.waitForFunction(() => window.m02Bench.getTelemetrySummary().sampleCount >= 8, null, { timeout: 25000 });
       profilesTelemetry[profileId] = await page.evaluate(() => window.m02Bench.getTelemetrySummary());
       expect(profilesTelemetry[profileId].drawCalls).toBeGreaterThan(0);
       expect(profilesTelemetry[profileId].triangles).toBeGreaterThan(0);

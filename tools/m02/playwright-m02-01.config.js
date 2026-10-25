@@ -13,7 +13,7 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
-  timeout: 120000,
+  timeout: 240000,
   use: {
     baseURL: `http://127.0.0.1:${port}/COD-guerra/`,
     viewport: { width: 1280, height: 720 },

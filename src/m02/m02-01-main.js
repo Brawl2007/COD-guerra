@@ -30,6 +30,7 @@ const elAmmo = document.getElementById('hud-ammo');
 const elGrenades = document.getElementById('hud-grenades');
 const elLastShot = document.getElementById('hud-last-shot');
 const elDoorPrompt = document.getElementById('door-prompt');
+const elCartelaBanner = document.getElementById('cartela-banner');
 const elDialogueBanner = document.getElementById('dialogue-banner');
 const elTelemetry = document.getElementById('hud-telemetry');
 const selQuality = document.getElementById('select-quality');
@@ -77,11 +78,13 @@ window.addEventListener('keydown', (e) => {
         : 'cp_m02_a_preparacao';
     sim.restoreCheckpoint(id);
   }
+  if (e.code === 'Digit0') sim.startAreaAFullC01();
   if (e.code === 'Digit1') teleportToPanorama('SN1');
   if (e.code === 'Digit2') teleportToPanorama('SN2');
   if (e.code === 'Digit3') teleportToPanorama('SN3');
   if (e.code === 'Digit4') teleportToPanorama('SN4');
   if (e.code === 'Digit5') teleportToPanorama('SN5');
+  if (e.code === 'Digit6') sim.triggerTransitionTAB({ skip: false });
 });
 
 window.addEventListener('keyup', (e) => {
@@ -111,7 +114,19 @@ selQuality?.addEventListener('change', (e) => {
 });
 
 selLighting?.addEventListener('change', (e) => {
-  renderer.applyLightingPreset(e.target.value);
+  const val = e.target.value;
+  const preset = renderer.applyLightingPreset(val);
+  if (preset.temporalId && sim.horizon) {
+    sim.horizon.setTemporalState(preset.temporalId);
+  }
+});
+
+document.getElementById('btn-start-c01')?.addEventListener('click', () => {
+  sim.startAreaAFullC01();
+});
+
+document.getElementById('btn-transition-tab')?.addEventListener('click', () => {
+  sim.triggerTransitionTAB({ skip: false });
 });
 
 document.getElementById('btn-toggle-debug')?.addEventListener('click', () => {
@@ -181,7 +196,12 @@ function updateHud() {
     const ditchCount = sim.routeProgress.ditchWaypointsVisited.filter(Boolean).length;
     const orchardCount = sim.routeProgress.orchardWaypointsVisited.filter(Boolean).length;
     const roomsCount = Object.values(sim.routeProgress.visitedB01Rooms).filter(Boolean).length;
-    elRouteStatus.textContent = `Vala ${ditchCount}/6 · Pomar ${orchardCount}/6 · B01 ${roomsCount}/5 salas`;
+    const tState = sim.horizon?.temporalState ?? 'T0';
+    const hsA1State = sim.horizon?.hsA1.state ?? 'PREPARE';
+    const hsA2State = sim.horizon?.hsA2.state ?? 'OFFENSIVE_FIRE';
+    elRouteStatus.textContent =
+      `Vala ${ditchCount}/6 · Pomar ${orchardCount}/6 · B01 ${roomsCount}/5 salas · ` +
+      `Horizonte ${tState} (HS-A1: ${hsA1State} · HS-A2: ${hsA2State})`;
   }
   if (elAmmo) {
     elAmmo.textContent = `${sim.weapon.mag} / ${sim.weapon.reserve}`;
@@ -211,6 +231,15 @@ function updateHud() {
       elDoorPrompt.textContent = `${prompt.prompt} (${prompt.distance}m)`;
     } else {
       elDoorPrompt.style.display = 'none';
+    }
+  }
+
+  if (elCartelaBanner) {
+    if (sim.activeCartela && sim.clock <= sim.activeCartela.expiresAt) {
+      elCartelaBanner.style.display = 'block';
+      elCartelaBanner.textContent = sim.activeCartela.text;
+    } else {
+      elCartelaBanner.style.display = 'none';
     }
   }
 
@@ -299,11 +328,23 @@ window.m02Bench = {
   detonateGrenadeAt: (x, y, z, r = 6.5) => sim.detonateGrenadeAt(x, y, z, r),
   issueSquadOrder: (type, axis = null) => sim.issueSquadOrder(type, axis),
   markWoundedSoldierWithChalk: () => sim.markWoundedSoldierWithChalk(),
+  startAreaAFullC01: () => sim.startAreaAFullC01(),
+  triggerTransitionTAB: (opts = {}) => sim.triggerTransitionTAB(opts),
+  setTemporalState: (stateId) => {
+    const res = sim.horizon.setTemporalState(stateId);
+    const preset = renderer.applyLightingPreset(res.lightingPreset);
+    if (selLighting) selLighting.value = preset.id;
+    return res;
+  },
   saveCheckpoint: (id) => sim.saveCheckpoint(id),
   restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),
+    c01Active: sim.c01Active,
+    activeCartela: sim.activeCartela ? structuredClone(sim.activeCartela) : null,
+    transitionTABPayload: sim.transitionTABPayload ? structuredClone(sim.transitionTABPayload) : null,
+    horizon: sim.horizon ? sim.horizon.snapshot() : null,
     player: {
       x: Number(sim.player.x.toFixed(2)),
       y: Number(sim.player.y.toFixed(2)),
