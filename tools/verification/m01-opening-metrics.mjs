@@ -33,7 +33,7 @@ if(arg('--summary')){
     const rs=rows.filter(r=>r.label===label&&r.pilot===pilot);if(!rs.length)continue;
     out[`${label}/${pilot}`]={runs:rs.length,
       planesHeardReal:mean(rs.map(r=>r.stimuli.planesHeard?.real)),aircraftVisibleReal:mean(rs.map(r=>r.stimuli.aircraftVisible?.real)),
-      bombVisibleReal:mean(rs.map(r=>r.stimuli.bombVisible?.real)),casualtyVisibleReal:mean(rs.map(r=>r.stimuli.casualtyVisible?.real)),firstVisibleReal:mean(rs.map(r=>r.stimuli.firstVisible?.real)),
+      bombVisibleReal:mean(rs.map(r=>r.stimuli.bombVisible?.real)),casualtyVisibleReal:mean(rs.map(r=>r.stimuli.casualtyVisible?.real)),firstVisibleReal:mean(rs.map(r=>r.stimuli.firstVisible?.real)),warCueReal:mean(rs.map(r=>r.stimuli.warCue?.real)),warCueAnyReal:mean(rs.map(r=>r.stimuli.warCueAny?.real)),
       distinctInViewMean:mean(rs.map(r=>r.census.inView.distinctMean)),distinctInViewMax:Math.max(...rs.map(r=>r.census.inView.distinctMax)),distinctInViewTotal:mean(rs.map(r=>r.census.inView.distinctTotal)),
       distinctWithin60Mean:mean(rs.map(r=>r.census.within60.distinctMean)),distinctWithin60Max:Math.max(...rs.map(r=>r.census.within60.distinctMax)),distinctWithin60Total:mean(rs.map(r=>r.census.within60.distinctTotal)),
       soldiersInViewMean:mean(rs.map(r=>r.census.inView.countMean)),soldiersInViewMax:Math.max(...rs.map(r=>r.census.inView.countMax))};
@@ -80,14 +80,24 @@ function labelOf(sim,a){
   return 'stand';
 }
 const polish=(sim,a)=>a.team==='ally'&&a.alive&&a.active&&!a.carriedBy&&a.state!=='DOWN';
+/** The acts that exist only as a reaction to the news of 04:31 or to the planes (the sergeant at the telephone and giving orders, looking up, pointing, shouting, bracing, taking cover): a man in view who shows one of them is a war cue the player can see. */
+const WAR_CUES=new Set(['phone_dead','order','shout','look_up','point','brace','cover']);
 
 function measure(seed,pilot){
   const sim=new Sim(seed);
-  const o={planesHeard:null,aircraftVisible:null,bombVisible:null,casualtyVisible:null,shot:null,bomb:null,casualty:null,firstBomb:null};
+  const o={planesHeard:null,aircraftVisible:null,bombVisible:null,casualtyVisible:null,shot:null,bomb:null,casualty:null,firstBomb:null,warCue:null,warCueAny:null};
   const rows=[];let lastCensus=-1;
   const stamp=()=>({real:round(sim.clock,2),battle:clockText(sim.battleClock)});
   function observe(events){
     if(o.planesHeard===null&&sim.consumedEvent('evt_m01_planes_heard'))o.planesHeard=stamp();
+    // the first war cue: a man who reacts to the news or the planes (any man: warCueAny; one the player has in view, within 120 m with a line of sight: warCue); trees before R1-b have no acts and give null
+    if(o.warCue===null&&sim.openingView){
+      for(const [id,v] of Object.entries(sim.openingView.acts)){
+        if(!WAR_CUES.has(v.act))continue;const a=sim.actor(id);if(!polish(sim,a))continue;
+        o.warCueAny??={...stamp(),id,act:v.act};
+        if(hdist(a,sim.player)<=120&&inFov(sim,a)&&seen(sim,a,1)){o.warCue={...stamp(),id,act:v.act,distance:round(hdist(a,sim.player),1)};break;}
+      }
+    }
     if(o.planesHeard&&o.aircraftVisible===null){
       const state={consumed:sim.consumed,damage:sim.sectors.damage,battleClock:sim.battleClock},since=sim.clock-aircraft.m01StukaAnchor(sim.clock,state);
       for(let i=0;i<aircraft.M01_STUKA_COUNT;i++){
@@ -130,7 +140,7 @@ function measure(seed,pilot){
     return {distinctMean:mean(d),distinctMax:Math.max(0,...d),distinctTotal:total(key),countMean:mean(c),countMax:Math.max(0,...c),labels:histo(key)};};
   const first=[o.bombVisible,o.casualtyVisible,o.shot].filter(Boolean).sort((a,b)=>a.real-b.real)[0]??null;
   const result={tool:'tools/verification/m01-opening-metrics.mjs',label,pilot,seed,
-    stimuli:{planesHeard:o.planesHeard,aircraftVisible:o.aircraftVisible,firstBomb:o.bomb,bombVisible:o.bombVisible,casualtyAny:o.casualty,casualtyVisible:o.casualtyVisible,shot:o.shot,firstVisible:first},
+    stimuli:{planesHeard:o.planesHeard,aircraftVisible:o.aircraftVisible,firstBomb:o.bomb,bombVisible:o.bombVisible,casualtyAny:o.casualty,casualtyVisible:o.casualtyVisible,shot:o.shot,firstVisible:first,warCue:o.warCue,warCueAny:o.warCueAny},
     census:{seconds:rows.length,inView:sum('inView'),within60:sum('near')},
     end:{real:round(sim.clock,2),battle:clockText(sim.battleClock),delivered:sim.done('deliver_message')}};
   if(series)result.series=rows;

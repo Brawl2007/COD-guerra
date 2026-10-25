@@ -7,6 +7,7 @@ import { M01Simulation, seconds } from '../src/game/m01-simulation.js';
 import { REARGUARD, rearguardPlan } from '../src/game/m01-rearguard.js';
 import { HOLD_AREA } from '../src/game/m01-pacing.js';
 import { traceShot } from '../src/world/spatial.js';
+import { validateM01AudioEvent } from '../src/game/m01-audio-events.js';
 import { driver, toRepair, route } from './helpers/m01-route.js';
 
 const MEN=REARGUARD.men;
@@ -68,6 +69,19 @@ test('the rearguard resumes the withdrawal once the deck is clear and is west of
   for(const t of released)assert.ok(t<=blast,'released at the latest on the east demolition tick');
   for(const id of MEN)assert.ok(sim.actor(id).x<-90,`${id} reached the west (x ${sim.actor(id).x.toFixed(1)})`);
   assert.ok(all.filter(e=>e.type==='npc-shot'&&MEN.includes(e.by)).every(e=>Number.isFinite(e.point.x)&&e.point.x>160&&e.point.x<180),'every report from a post');
+});
+
+// R1-b (2026-10-25, golden amendment 20): the rearguard's report says where its round stopped and whether it struck, as the section's real rounds do (m01-section.js), so that the long-range impact FX
+// draws it. Output only: the round was already traced; `hit` is the trace's own answer (a German struck), `end` its end point (what it struck, or 40 m past the German aimed at).
+test('the rearguard\'s npc-shot carries where the round stopped and whether it struck a German: the trace\'s own answer, a finite point, valid for the audio contract',()=>{
+  const {sim,all}=controlRun(),shots=sim.rearShots,reports=all.filter(e=>e.type==='npc-shot'&&MEN.includes(e.by));
+  assert.equal(reports.length,shots.length,'one report per round');assert.ok(reports.length>=20);
+  reports.forEach((e,i)=>{
+    assert.doesNotThrow(()=>validateM01AudioEvent(e),`report ${i}`);assert.ok([e.end.x,e.end.y,e.end.z].every(Number.isFinite));
+    assert.equal(e.hit,Boolean(shots[i].hit?.startsWith('de_')),`report ${i}: hit is the trace's answer (${shots[i].hit})`);
+    assert.ok(Math.hypot(e.end.x-e.point.x,e.end.y-e.point.y,e.end.z-e.point.z)<1500,'a round of a rifle, within the range of the trace');
+  });
+  assert.ok(reports.some(e=>e.hit)&&reports.some(e=>!e.hit),'some struck a German and some missed');
 });
 
 test('posture: kneeling at the post, up only to shoot (riseBeforeSec / holdAfterSec), down while suppressed',()=>{

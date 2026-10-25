@@ -134,11 +134,11 @@ test('the runner: waits at his post, runs the east errand by the simulation\'s w
 test('the planes: each man reacts after a delay of his own (look up, point, shout, cover), the runner goes back to his post at once and the garrison stands where the bombs will find it',()=>{
   const s=fresh();
   until(s,x=>x.timers.opening.courier.leg==='deliver',60);   // (away from his post: the first stop is 9 m from it)
-  const c=s.actor(OPENING.courier.id),post={x:c.act.hx,z:c.act.hz};
+  const c=s.actor(OPENING.courier.id),post={x:c.act.hx,z:c.act.hz},crewFacing=['ckm_gunner','ckm_loader'].map(id=>s.actor(id).facing);
   s.consume(E('planes_heard'));
   assert.equal(tensionOf(s),2);run(s,.1);
   assert.equal(s.timers.opening.courier.leg,'cover','the runner runs for his post at once');
-  run(s,3.2);
+  run(s,3.2);assert.deepEqual(['ckm_gunner','ckm_loader'].map(id=>s.actor(id).facing),crewFacing,'the ckm crew is turned by nothing: its body stays on the gun (the acts of the crew move the head only)');
   for(const id of OPENING.order){
     const a=s.actor(id),m=OPENING.men[id];if(m.driver)continue;
     assert.equal(a.act.tn,2,`${id} heard them`);

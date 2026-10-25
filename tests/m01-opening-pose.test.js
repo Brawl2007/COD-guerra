@@ -36,7 +36,7 @@ test('the clip of each act: the watching and talking acts use the library\'s idl
   assert.equal(clip('pawel_krawiec','cable_inspect'),'sapper_work');assert.equal(openingSample(man('pawel_krawiec','cable_inspect'),14,0,clips,{}).rate,.55);
   assert.equal(clip('pl_west_2','cable_hold'),'crouched_idle_b');assert.equal(clip('sapper_3','cable_watch'),'crouched_idle');
   // the crew keeps the clips authored to the gun's own animation: the opening moves their heads only
-  for(const act of ['ckm_scan','ckm_belt','idle','look_up','brace','map','binoculars'])for(const id of ['ckm_gunner','ckm_loader'])assert.equal(clip(id,act),null,`${id} ${act}: the crew keeps the crew's clips`);
+  for(const act of ['ckm_scan','ckm_belt','ckm_up','idle','look_up','brace','map','binoculars'])for(const id of ['ckm_gunner','ckm_loader'])assert.equal(clip(id,act),null,`${id} ${act}: the crew keeps the crew's clips`);
   assert.equal(clip('pl_west_2','ckm_scan'),null);assert.equal(clip('pl_west_2','ckm_belt'),null);
   // the walking acts, and idle: the ordinary rules of the gait and the idles decide
   for(const act of ['idle','errand','deliver_walk','cover_run','cable_walk','cable_wait','home'])if(Object.hasOwn(OPENING_ACTS,act))assert.ok([null,'standing_idle_c'].includes(clip('pl_west_2',act)),act);
@@ -71,10 +71,10 @@ test('the procedural pose is a pure function of the act and the time: finite num
     }
     seen.set(act,(seen.get(act)??0)+1);
   }
-  for(const act of ['binoculars','smoke','coffee','phone','phone_dead','map','ammo_check','aid_kit','track_check','look_up','point','deliver','brace','cover','cable_watch','ckm_scan','ckm_belt'])assert.ok(seen.get(act)>10,`${act} has a pose`);
+  for(const act of ['binoculars','smoke','coffee','phone','phone_dead','map','ammo_check','aid_kit','track_check','look_up','point','deliver','brace','cover','cable_watch','ckm_scan','ckm_belt','ckm_up'])assert.ok(seen.get(act)>10,`${act} has a pose`);
   for(const act of ['idle','errand','cable_walk','home','shout','rifle_check','cable_inspect','cable_hold','clean_rkm'])assert.ok(!seen.has(act),`${act}: the clip alone`);
   // the crew's acts are the head and nothing else: no hand, no lean (the clips are authored to the gun), a look that moves
-  for(const act of ['ckm_scan','ckm_belt']){const looks=new Set();for(let t=10;t<40;t+=.5){const p=spec(act,t);assert.ok(p&&!p.l&&!p.r&&p.lean===0,act);looks.add(p.look.toFixed(2));}assert.ok(looks.size>5,`${act}: the head moves (${looks.size} looks)`);}
+  for(const act of ['ckm_scan','ckm_belt','ckm_up']){const looks=new Set();for(let t=10;t<40;t+=.5){const p=spec(act,t);assert.ok(p&&!p.l&&!p.r&&p.lean===0,act);looks.add(p.look.toFixed(2));}assert.ok(looks.size>5,`${act}: the head moves (${looks.size} looks)`);}
   // the same questions in another order give the same answers (the reused record is read at once, never kept)
   const A=[],B=[];for(const act of ['binoculars','map'])for(const t of [12,20,31])A.push(spec(act,t));
   for(const act of ['map','binoculars'].reverse())for(const t of [31,20,12])B.unshift(spec(act,t));

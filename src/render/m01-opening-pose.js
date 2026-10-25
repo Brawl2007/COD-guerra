@@ -102,6 +102,8 @@ export function openingPose(actor,time){
       return null;
     case 'ckm_scan':     // the gunner keeps the gun's authored pose and only turns his head along the east bank, from glance to glance
       SPEC.look=glance(act,t,.5)*w;SPEC.head=.04*w;return SPEC;
+    case 'ckm_up':       // the crew hears the planes: the head goes up and turns east, the gun's pose stays
+      SPEC.head=.5*smooth(t/.35)*smooth(leftOf(act,time)/.4+.3);SPEC.look=glance(act,t,.25)*w;return SPEC;
     case 'ckm_belt':     // the loader looks down at the belt, now and then up
       SPEC.head=-.38*w+.12*smooth(Math.sin(t*.7+unit(act.s,8)*6)*.5+.5)*w;SPEC.look=glance(act,t,.12)*w;return SPEC;
     case 'brace':        // alert: glances up now and then
