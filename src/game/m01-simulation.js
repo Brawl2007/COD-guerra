@@ -26,6 +26,7 @@ import {SQUAD,SQUAD_IDS,updateSquad,squadSlot,teamPost,squadMoving,validateSquad
 import {SECTION,updateSection,sectionWalk,sectionAfter,sectionCasualty,sectionView,sectionRealOn,validateSectionRecord} from './m01-section.js';
 import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,blastPosture,blastTarget,sightPoint,blastOutcome,concussionPeak,concussionLevel,mergeConcussion,earlyRaidPoint} from './m01-blast.js';
 import {REPAIR_WORK_SEC,SAPPERS,sapperPhase,sapperGoal,sapperRate,sapperCover,sapperView,workDistance} from './m01-sappers.js';
+import {ckmFinal,retreatSlot} from './m01-retreat.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -142,7 +143,7 @@ export const ckmThroughBridge=(world,r)=>{
 };
 const makeCKMCrew=(world,clock=0,withdrawn=false,seed=0)=>CKM_IDS.map((id,i)=>{
   const [x,z]=CKM_POST[i];
-  const point=withdrawn?{x:-170-i*1.6,z:22+i*1.2}:{x,z};
+  const point=withdrawn?ckmFinal(i):{x,z};
   return entity(id,{...point,y:withdrawn?world.heightAt(point.x,point.z):CKM_POSITION.y},'ally',{
     group:'grp_ckm_crew',role:i<2?'SUPPORT':'RIFLEMAN',facing:i===1?112*Math.PI/180:0,
     ckm:{phase:withdrawn?'retreat':'idle',startedAt:clock,visible:true},...(i===0?{ckmFire:newCKMFire(seed)}:{})});
@@ -1164,7 +1165,7 @@ export class M01Simulation {
         if(a.ckm.phase==='retreat'){
           // T47: from the S2 post the way out is west along the embankment between the bridges (z 22..26, clear of both portals). A save made on the old
           // way out under the deck (z >= 33) keeps it, ramp included: legs to (9, 41.4) and (-14, 40), then the common way to the rally point.
-          const i=CKM_IDS.indexOf(a.id),underDeck=a.z>=33&&a.x>-12,final={x:-170-i*1.6,z:22+i*1.2},
+          const i=CKM_IDS.indexOf(a.id),underDeck=a.z>=33&&a.x>-12,final=ckmFinal(i),
             target=underDeck?(a.x>10?{x:9,z:41.4}:{x:-14,z:40}):final;
           this.moveActor(a,target,dt);
           // Physical west passage of the old post: the cellar floor remains -3 until the exit, then a finite 12 m ramp reaches the road approach.
@@ -1205,7 +1206,10 @@ export class M01Simulation {
       if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
       if(section&&sectionWalk(this,section,a,dt,sectionCtx))continue;   // slice 4: the pair moves between posts (shift, return, the road deck); false for everybody else and for the pair at the squad post
       if(squad&&this.squadWalk(a,squad,dt))continue;   // slice 3: a man of a fire team bounds or holds; Zieliński comes to the player at the end of the escort (SP-08)
-      if(retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED')a.target={x:-170,z:22};
+      // R3-a review (2026-10-25, src/game/m01-retreat.js): in the retreat each man of the section walks to a place of his own near the old retreat point (-170, 22), not to that one point
+      // where they stopped inside each other's personal space (a walker stops 0.8 m short of his goal and nothing parts men who stand) and the sergeant could not get out of the pile.
+      const post=retreat&&a.team==='ally'&&!a.civilian&&a.state!=='WOUNDED'?retreatSlot(a.id):null;
+      if(post)a.target={x:post.x,z:post.z};
       if(this.timers.escort&&a.id==='marek_zielinski')a.target=this.player;
       this.stageSection(a);
       // Sappers: kneeling at the cable until called to the second cut (T38), kneeling again once they reach the west after the retreat (not under fire there); prone is presentation (T07/T38).
@@ -1227,7 +1231,9 @@ export class M01Simulation {
         }
         if(creep)this.sapperCreep(a,creep,dt);
       }
+      const arriving=post&&a.state==='ADVANCE';
       if(a.target&&(!proneGunner(a)||a.mg34Prone.phase==='standing'))this.moveActor(a,a.target,dt,pace);
+      if(arriving&&a.state==='GUARD'&&post.facing!==undefined&&dist(a,post)<.8)a.facing=post.facing;   // on arrival at his place he turns to the river, once (as the squad's men do at their posts)
     }
     for(const a of this.actors)if(a.carriedBy){
       const c=this.actor(a.carriedBy)??(a.carriedBy===this.player.id?this.player:null);

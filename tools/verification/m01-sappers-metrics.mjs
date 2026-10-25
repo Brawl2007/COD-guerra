@@ -13,6 +13,9 @@
 //   interruptions  the episodes of timers.repairSuppressedUntil (a pin or a bomb stopped the bar): how many, how long, the stage each fell in, and who interrupted: the shooter of the
 //               first round that pinned the crew (de_east_0 and _1 are the MG34s, 2-13 the gate riflemen, the rest the dike), or a bomb.
 //   cover       the share of the time after train 963 (during the repair) that the gate MG (de_east_0) was suppressed or dead: the player's covering fire; and the pins.
+//   coverRun    (new tree only; whole operation, locate to verify, not the camp or the retreat) the suppression episodes of the three sappers, how many of them became a run for cover (actor.coverRun
+//               rising), the real seconds suppressed, the real seconds of them spent lying at the lee place of his role behind the cover node he runs to (not running; sapperCover has nothing more
+//               to ask of him), the real seconds spent running, and the phase each episode fell in.
 //   integrity   completion, the four checkpoints, the survivors, the twelve objective states; with --audit the clipping events and the men standing inside each other over the whole route.
 import {execFileSync} from 'node:child_process';
 import {mkdtempSync,symlinkSync,readFileSync,appendFileSync,existsSync} from 'node:fs';
@@ -21,7 +24,7 @@ import {join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {route} from '../../tests/helpers/m01-route.js';
 import {clippingAudit,stackingAudit} from '../../tests/helpers/m01-clipping.js';
-import {SAPPERS,sapperPhase} from '../../src/game/m01-sappers.js';
+import {SAPPERS,sapperPhase,sapperCover} from '../../src/game/m01-sappers.js';
 
 const ROOT=resolve(import.meta.dirname,'../..');
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
@@ -42,6 +45,14 @@ if(arg('--summary')){
       pins:{mean:mean(rs2.map(r=>r.repair.pins)),min:Math.min(...rs2.map(r=>r.repair.pins)),max:Math.max(...rs2.map(r=>r.repair.pins))},
       episodes:{mean:mean(rs2.map(r=>r.interruptions.episodes)),meanSec:mean(rs2.map(r=>r.interruptions.meanSec)),stoppedSec:mean(rs2.map(r=>r.interruptions.stoppedSec))},
       mgSuppressedPct:mean(rs2.map(r=>r.cover.mgSuppressedPct)),
+      coverRun:rs2.every(r=>r.coverRun)?{runs:{mean:mean(rs2.map(r=>r.coverRun.runs)),min:Math.min(...rs2.map(r=>r.coverRun.runs)),max:Math.max(...rs2.map(r=>r.coverRun.runs)),total:rs2.reduce((n,r)=>n+r.coverRun.runs,0)},
+        suppressions:{mean:mean(rs2.map(r=>r.coverRun.suppressions)),total:rs2.reduce((n,r)=>n+r.coverRun.suppressions,0)},
+        runShare:round(rs2.reduce((n,r)=>n+r.coverRun.runs,0)/Math.max(1,rs2.reduce((n,r)=>n+r.coverRun.suppressions,0)),2),
+        suppressedSec:mean(rs2.map(r=>r.coverRun.suppressedSec)),lyingSec:mean(rs2.map(r=>r.coverRun.lyingSec)),
+        lyingPct:round(100*rs2.reduce((n,r)=>n+r.coverRun.lyingSec,0)/Math.max(1e-9,rs2.reduce((n,r)=>n+r.coverRun.suppressedSec,0)),1),
+        meanRunSec:round(rs2.reduce((n,r)=>n+r.coverRun.runningSec,0)/Math.max(1,rs2.reduce((n,r)=>n+r.coverRun.runs,0)),2),
+        byPhase:Object.fromEntries([...new Set(rs2.flatMap(r=>Object.keys(r.coverRun.byPhase)))].sort().map(k=>[k,mean(rs2.map(r=>r.coverRun.byPhase[k]??0))])),
+        byNode:Object.fromEntries([...new Set(rs2.flatMap(r=>Object.keys(r.coverRun.byNode)))].sort().map(k=>[k,mean(rs2.map(r=>r.coverRun.byNode[k]??0))]))}:null,
       byShooter:Object.fromEntries([...new Set(rs2.flatMap(r=>Object.keys(r.interruptions.byShooter)))].sort().map(k=>[k,mean(rs2.map(r=>r.interruptions.byShooter[k]??0))])),
       byStage:Object.fromEntries(STAGES.map(s=>[s,{episodes:mean(rs2.map(r=>r.interruptions.byStage[s]??0)),realSec:mean(rs2.map(r=>r.stages[s]?.realSec??0)),workSec:mean(rs2.map(r=>r.stages[s]?.workSec??0))}])),
       realMinutes:{orderReal:mean(rs2.map(r=>r.integrity.orderRealSec)),eastReal:mean(rs2.map(r=>r.integrity.eastRealSec)),routeReal:mean(rs2.map(r=>r.integrity.routeRealSec))},
@@ -73,6 +84,9 @@ const done=new Set(jsonl&&existsSync(jsonl)?readFileSync(jsonl,'utf8').split('\n
 function measure({seed,support,key}){
   const o={delivered:null,complete:null,episodes:[],open:null,pinsAtTick:[],stageReal:{},stageWork:{},phaseAt:{},mgSup:0,mgTicks:0,
     events:{order:null,east:null,west:null},lastProgress:0,lastStage:null,pending:null};
+  const cr={sup:0,runs:0,lying:0,running:0,suppressed:0,byPhase:{},byNode:{},open:{},runOpen:{}};
+  // the cover node a man would run to (the nearest with a box within SAPPERS.seek.coverM, as sapperCover chooses it), or null
+  const reach=(world,a)=>{let node=null,best=SAPPERS.seek.coverM;for(const c of world.coverNodes){if(c.partial||['WINDOW','WALL_CORNER','BUILDING_CORNER','VEHICLE'].includes(c.type))continue;const d=Math.hypot(a.x-c.position[0],a.z-c.position[2]);if(d<best){best=d;node=c;}}return node;};
   const clip=audit?clippingAudit():null,stack=audit?stackingAudit():null;
   const r=route(seed,{support,Simulation:Sim,onStep:step=>{
     const {sim,events}=step,t=sim.clock;
@@ -81,7 +95,20 @@ function measure({seed,support,key}){
     if(o.complete===null&&sim.done('cover_repair')){o.complete=t;o.completeBattle=sim.battleClock;}
     if(o.events.order===null&&sim.consumedEvent('evt_m01_order_demolish'))o.events.order=sim.consumed.evt_m01_order_demolish;
     if(o.events.east===null&&sim.consumedEvent('evt_m01_east_demolition'))o.events.east=sim.consumed.evt_m01_east_demolition;
-    if(!rev){const ph=sapperPhase(sim).id;if(o.phaseAt[ph]===undefined)o.phaseAt[ph]=round(t,2);}   // the real clock each phase of the operation began
+    if(!rev){const ph=sapperPhase(sim).id;if(o.phaseAt[ph]===undefined)o.phaseAt[ph]=round(t,2);   // the real clock each phase of the operation began
+      const operating=ph!=='camp'&&ph!=='retreat';
+      for(const id of IDS){   // the run for cover: suppression episodes, runs, and the time lying behind a node
+        const a=sim.actor(id);if(!a?.alive||!a.active)continue;
+        const sup=operating&&t<a.suppressedUntil;
+        if(sup&&!cr.open[id]){cr.sup++;cr.open[id]=true;cr.byPhase[ph]=(cr.byPhase[ph]??0)+1;}
+        if(!sup)cr.open[id]=false;
+        if(sup){cr.suppressed+=.05;const node=reach(sim.world,a);   // lying: not running, a node within reach and he is at his lee place of it (sapperCover has nothing more to ask of him)
+          if(!a.coverRun&&node&&!sapperCover(sim.world,a)){cr.lying+=.05;cr.byNode[node.id]=round((cr.byNode[node.id]??0)+.05,2);}}
+        if(a.coverRun)cr.running+=.05;
+        if(a.coverRun&&!cr.runOpen[id]){cr.runOpen[id]=true;cr.runs++;}
+        if(!a.coverRun)cr.runOpen[id]=false;
+      }
+    }
     if(sim.active('cover_repair')){
       const p=sim.objectives.obj_m01_cover_repair.progress,st=stageOf(p);
       o.stageReal[st]=(o.stageReal[st]??0)+.05;o.stageWork[st]=(o.stageWork[st]??0)+(p-o.lastProgress)/100*150;o.lastProgress=p;
@@ -106,6 +133,8 @@ function measure({seed,support,key}){
     phaseAt:rev?null:o.phaseAt,
     interruptions:{episodes:eps.length,meanSec:eps.length?round(eps.reduce((a,e)=>a+e.sec,0)/eps.length,2):0,stoppedSec:round(eps.reduce((a,e)=>a+e.sec,0),1),byStage,byShooter,list:eps.map(e=>[round(e.at-o.delivered,1),e.stage,e.by,e.sec])},
     cover:{mgSuppressedPct:round(100*o.mgSup/Math.max(1,o.mgTicks),1)},
+    coverRun:rev?null:{suppressions:cr.sup,runs:cr.runs,runShare:round(cr.runs/Math.max(1,cr.sup),2),suppressedSec:round(cr.suppressed,1),lyingSec:round(cr.lying,1),runningSec:round(cr.running,1),byPhase:cr.byPhase,
+      byNode:Object.fromEntries(Object.entries(cr.byNode).map(([k,v])=>[k,round(v,1)]))},
     integrity:{complete:s.mission.complete,checkpoints:s.checkpointsReached.length,survivors:s.flags['m01.east_platoon_survivors'],objectives:Object.fromEntries(Object.entries(s.objectives).map(([k,v])=>[k.replace('obj_m01_',''),v.state])),
       orderRealSec:sec(o.events.order),eastRealSec:sec(o.events.east),routeRealSec:sec(s.clock),clipping:audit?clip.events.length:null,stackedPairs:audit?stack.summary().pairs:null}};
 }

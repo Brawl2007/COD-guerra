@@ -20,7 +20,9 @@ const body=(world,x,z,extra={})=>({x,z,y:world.heightAt(x,z),radius:R,crouched:f
 const walk=(world,p,dx,dz,ticks,dt=.05)=>{const path=[];for(let i=0;i<ticks;i++){const landing=movePlayer(world,p,dx,dz,dt);path.push({x:p.x,y:p.y,z:p.z,landing});}return path;};
 
 // The open patch between the embankments: no solid of any kind (asserted), terrain only.
-const PATCH={x0:-130,x1:-90,z0:8,z1:26},O={x:-110,z:16};   // O: the middle of the patch, flat ground at -3
+// 2026-10-25 re-pin z0 8 -> 12 (R3-a review, golden amendment 19 regenerated): the sappers' sandbag row cv_cable_fault (x -117.45..-116.55, z 6.5..9.5, on the south slope of the embankment, a cover node of
+// map-layout.json) now stands in the north strip of the former patch, so the patch begins at the flat ground (z 12 and south of it); the property is the same: on solid-free ground the new movement is bit-identical to the old.
+const PATCH={x0:-130,x1:-90,z0:12,z1:26},O={x:-110,z:16};   // O: the middle of the patch, flat ground at -3
 
 test('open ground: the new movement is bit-identical to the movement it replaced (so free-space routes and goldens do not move)',()=>{
   const world=new TczewWorld();

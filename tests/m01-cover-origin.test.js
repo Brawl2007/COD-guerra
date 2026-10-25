@@ -14,8 +14,11 @@ const load=snapshot=>{const s=new M01Simulation();s.restoreSnapshot(snapshot);re
 // 2026-10-24 re-pin 2 -> 3 (R3-a, golden amendment 19: the sappers' staged operation, whose stage lines and timing move the busy minutes of the channel): on seed 2 the call now falls 3 s after another line and the HUD message
 // is shown; the call is still spoken on half the seeds (measured on the 12 standard seeds: 1, 3, 6, 7, 10 and 11 speak it, 2, 4, 5, 8, 9 and 19390901 show the message), and seed 3 is the next that does, with the same node,
 // flag and status line as before.
+// 2026-10-25 re-pin 3 -> 2 (the review of R3-a, golden amendment 19 regenerated: a sandbag row at each cut, the sappers run to it when shaken and go back to work, which moves the busy minutes of the channel once more):
+// measured on the 12 standard seeds, 2, 5, 6, 8 and 9 speak the first call now and 1, 3, 4, 7, 10, 11 and 19390901 show the HUD message; seed 2, the one this test was written for, speaks it again, with the same node,
+// flag and status line as before.
 const spokenScenario=()=>spokenFlow??=(()=>{
-  const d=toRepair(driver(3)),{sim,walk,step,until}=d;
+  const d=toRepair(driver(2)),{sim,walk,step,until}=d;
   walk(-115,27);walk(-26.5,28);step({crouch:true});until(()=>sim.active('hold_access'),500);
   d.beforeCoverAdjustment=sim.snapshot();until(()=>sim.timers.coverFire,65);return d;})();
 

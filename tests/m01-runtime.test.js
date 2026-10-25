@@ -157,13 +157,6 @@ test('all five sectors keep their schedule and stable casualties for ninety seco
 });
 test('west hold timeout sends the sergeant to escort the player without demolition damage',()=>{
   const sim=new M01Simulation();sim.restoreSnapshot(full().checkpoints.cp_m01_d_retirada);
-  // 2026-10-24 re-pin (R3-a, golden amendment 19: the sappers' staged operation): every ally walks to the one retreat point (-170, 22) and stops 0.8 m short of it, and moveActor does not push a man apart inside
-  // those 0.8 m (navigation, before R3-a): the three sappers (and the ckm gunner) end up 0.5-0.9 m from the sergeant, who stands on the point, and he cannot get out. That pile forms in the real route of the
-  // predecessor too (3c8e576d: sappers 0.5-0.6 m, gunner 0.9 m from him at t0+55 s) and with it the predecessor's sergeant is as stuck (measured: 0.0 m moved in 160 s, the player never escorted); this test
-  // passed there only because this restore from the checkpoint happened to leave a ring 3.1-3.6 m wide round him. Now that the sappers come from the second cut they arrive together and close the pile on all
-  // 12 seeds (predecessor 12 / 12 escorts, now 0 / 12). The escort is what this test is about, not the pile (README §7 of docs/verification/m01-runtime/sappers-r3a-2026-10-24): the three sappers are left out of
-  // the scene; everything else is as it was.
-  for(const a of sim.actors)if(a.role==='ENGINEER')a.active=false;
   sim.player.x=30;sim.player.z=40;sim.battleClock=seconds('06:44:30');run(sim,121);
   assert.equal(sim.consumedEvent(E('west_demolition')),false);assert.equal(sim.timers.escort,true);
   run(sim,160);assert.ok(sim.player.x<-90);assert.equal(sim.consumedEvent(E('west_demolition')),true);assert.ok(sim.player.alive);

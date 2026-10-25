@@ -46,6 +46,13 @@ test('the operation is mission data, validated when it loads: stages that add up
     ['an arrive radius out of range',o=>{o.arriveM=9;},/arriveM/],
     ['a short cable',o=>{o.cable=o.cable.slice(0,3);},/cable/],
     ['no text for the wait',o=>{delete o.text.standby;},/text\.standby/],
+    // R3-a review (2026-10-25): the lee places of the run for cover, and the cover that must be within reach of every work place
+    ['no lee places',o=>{delete o.seek.lanes;},/seek\.lanes/],
+    ['a role without a lee place',o=>{delete o.seek.lanes.watch;},/seek\.lanes/],
+    ['two roles on one lee spot',o=>{o.seek.lanes.helper=[...o.seek.lanes.leader];},/seek\.lanes: .* closer than 0\.9 m/],
+    ['a lee place inside the box',o=>{o.seek.lanes.watch[0]=-.5;},/seek\.lanes/],
+    ['a lee place beyond the end of the box',o=>{o.seek.lanes.watch[1]=2;},/seek\.lanes/],
+    ['cover out of reach of a work place',o=>{o.seek.coverM=3;},/no cover node within seek\.coverM \(3 m\)/],
   ])assert.throws(()=>sapperOperationPlan(mutate(fn)),re,name);
   assert.throws(()=>sapperOperationPlan({...definition,groups:definition.groups.filter(g=>g.id!=='grp_sappers')}),/is missing|Cannot read/);
 });
@@ -214,23 +221,47 @@ test('a pin interrupts the stage and the whole crew goes down; the stage resumes
   for(let i=0;i<20*12;i++)b.tick(.05,{});assert.ok(b.objectives.obj_m01_cover_repair.progress>q,'resumed');
 });
 
-test('a shaken man makes for the nearest cover node within reach by his own decision and lies down behind it; without cover within reach he goes down where he is',()=>{
+test('a shaken man makes for the nearest cover node within reach by his own decision, to the lee place of his role, and lies down behind it; the crew goes back to its places when the suppression ends',()=>{
   const sim=new M01Simulation(1);sim.tick(.05,{skip:true});
-  // no cover within 8 m of either cut or of the line between them: they go down where they are
-  for(const id of IDS)for(const point of ['fault','second'])assert.equal(sapperCover(sim.world,SAPPERS.points[point].slots[id]),null,`${id} at the ${point}`);
-  // beside the squad post's sandbags the nearest cover is cv_squad_post (x -70, z 22): its lee side, 1.1 m west
-  const spot=sapperCover(sim.world,{x:-74,z:19});assert.ok(spot);assert.ok(Math.abs(spot.x-(-71.1))<1e-9&&spot.z>=20.5&&spot.z<=23.5,JSON.stringify(spot));
-  assert.equal(sapperCover(sim.world,{...spot}),null,'already behind it');
-  // on the route: in the stage, shaken beside the post
+  // R3-a review (2026-10-25): each cut has a sandbag row of its own within reach (cv_cable_fault east of the fault, cv_cable_second east of the second cut: before, the nearest cover was 40 m away and the
+  // run never happened) and each role a lee place of his own at it (SAPPERS.seek.lanes), so that three men do not lie on one spot.
+  const nodeOf={fault:'cv_cable_fault',second:'cv_cable_second'};
+  for(const point of ['fault','second']){
+    const node=sim.world.coverNodes.find(c=>c.id===nodeOf[point]),spots=[];
+    assert.ok(node&&sim.world.covers.some(c=>c.id===node.id),`${node?.id} is a cover node with a box (a collider)`);
+    for(const id of IDS){
+      const slot=SAPPERS.points[point].slots[id],lane=SAPPERS.seek.lanes[SAPPERS.roles[id]],spot=sapperCover(sim.world,{id,x:slot.x,z:slot.z});
+      assert.ok(spot,`${id} at the ${point} has cover within reach`);
+      assert.ok(Math.hypot(spot.x-(node.position[0]+lane[0]),spot.z-(node.position[2]+lane[1]))<1e-9,`${id} at the ${point}: the lee place of his role at ${node.id}`);
+      assert.ok(dist(slot,spot)<=SAPPERS.seek.coverM,`${id}: a short run`);
+      assert.equal(sapperCover(sim.world,{id,x:spot.x,z:spot.z}),null,'already behind it');
+      spots.push(spot);
+    }
+    for(let i=0;i<spots.length;i++)for(let j=i+1;j<spots.length;j++)assert.ok(dist(spots[i],spots[j])>=.9,`${point}: three men, three spots`);
+  }
+  // a man without a role (no id) keeps the old place, the lee of the node at his own z: beside the squad post's sandbags the nearest cover is cv_squad_post (x -70, z 22), 1.1 m west
+  const post=sapperCover(sim.world,{x:-74,z:19});assert.ok(post);assert.ok(Math.abs(post.x-(-71.1))<1e-9&&post.z>=20.5&&post.z<=23.5,JSON.stringify(post));
+  assert.equal(sapperCover(sim.world,{...post}),null,'already behind it');
+  // far from every box (the middle of the field) there is no cover within reach: he goes down where he is
+  assert.equal(sapperCover(sim.world,{id:'pawel_krawiec',x:-200,z:30}),null);
+  // on the route: the whole crew shaken at the fault in the splice makes for the sandbags, each to his place, running (not drawn prone on the way) and lies down there
   const {sim:s,step}=atStage('splice');
-  const leader=s.actor('pawel_krawiec');Object.assign(leader,{x:-74,z:19});leader.y=s.world.heightAt(-74,19);
-  leader.suppressedUntil=s.clock+6;s.timers.repairSuppressedUntil=s.clock+6;
-  let ran=false;for(let i=0;i<20*3;i++){step({});if(leader.state==='ADVANCE'&&leader.posture!=='prone')ran=true;}
-  assert.ok(ran,'he is not drawn prone on the way');assert.ok(Math.hypot(leader.x-spot.x,leader.z-spot.z)<1.2,`he is behind the post at (${leader.x.toFixed(1)}, ${leader.z.toFixed(1)})`);
-  assert.equal(leader.posture,'prone','and lies down there');
-  // when the suppression ends he goes back to his place of the stage
-  for(let i=0;i<20*40&&dist(leader,SAPPERS.points.fault.slots.pawel_krawiec)>SAPPERS.arriveM;i++)step({});
-  assert.ok(dist(leader,SAPPERS.points.fault.slots.pawel_krawiec)<=SAPPERS.arriveM,'back at the cut');
+  const crew=IDS.map(id=>s.actor(id)),p0=s.objectives.obj_m01_cover_repair.progress;
+  for(const a of crew)a.suppressedUntil=s.clock+6;s.timers.repairSuppressedUntil=s.clock+6;
+  const ran=new Set();
+  for(let i=0;i<20*3;i++){step({});for(const a of crew)if(a.coverRun&&a.state==='ADVANCE'&&a.posture!=='prone')ran.add(a.id);}
+  assert.deepEqual([...ran].sort(),[...IDS].sort(),'each of them ran, upright');
+  for(const a of crew){
+    const lane=SAPPERS.seek.lanes[SAPPERS.roles[a.id]],node=s.world.coverNodes.find(c=>c.id==='cv_cable_fault');
+    assert.ok(Math.hypot(a.x-(node.position[0]+lane[0]),a.z-(node.position[2]+lane[1]))<1,`${a.id} is behind the sandbags at (${a.x.toFixed(1)}, ${a.z.toFixed(1)})`);
+    assert.equal(a.posture,'prone',`${a.id} lies down there`);assert.equal(a.coverRun,undefined,'and has stopped running');
+  }
+  assert.equal(s.objectives.obj_m01_cover_repair.progress,p0,'no work while the leader is behind the sandbags');
+  // when the suppression ends they go back to their places of the stage and the bar goes on
+  for(let i=0;i<20*30&&!crew.every(a=>dist(a,SAPPERS.points.fault.slots[a.id])<=SAPPERS.arriveM);i++)step({});
+  for(const a of crew)assert.ok(dist(a,SAPPERS.points.fault.slots[a.id])<=SAPPERS.arriveM,`${a.id} back at the cut`);
+  for(let i=0;i<20*5;i++)step({});
+  assert.ok(s.objectives.obj_m01_cover_repair.progress>p0,'the work goes on from where it stood');assert.equal(sapperPhase(s).id,'splice','the same stage');
 });
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------

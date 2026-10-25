@@ -219,7 +219,7 @@ const KNEELS=Object.freeze({camp:WORK,retreat:WORK,standby:{leader:true,helper:f
 const TIMED=new Set(['report>ready','verify>retreat','retreat>verify_west','verify_west>retreat']);   // the phases that end by the clock
 function stagedRoute(seed,support=false){
   const st={platoonKneel:0,platoonTurned:0,gateKneel:0,gateUp:0,gateShots:0,gateShotsUp:0,attritionGate:0,sectionKneel:0,sectionUp:0,kowalShots:0,
-    sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,sapperStand:0,hitboxChecks:0},deaths={},saves=[];
+    sapperCable:0,sapperWork:0,sapperLag:0,sapperWest:0,kowalUp:0,attritionDike:0,sapperProneWait:0,sapperProneSuppressed:0,sapperCoverRun:0,sapperStand:0,hitboxChecks:0},deaths={},saves=[];
   let holdTicks=0,withdrawFlag=null,seenRounds=new Set(),prevPhase='camp';
   let lastClock=0,lastCovers=false;const lastSup=new Map();   // suppression of every German at the end of the previous tick; whether Kowal covered the escort at the end of the previous tick
   const onStep=({sim,events})=>{
@@ -301,7 +301,9 @@ function stagedRoute(seed,support=false){
         if(want){st.sapperCable++;if(sim.active('cover_repair'))st.sapperWork++;}else st.sapperStand++;
         continue;
       }
-      if(clock<a.suppressedUntil){assert.equal(a.posture,'prone',`${id} lies prone under fire`);st.sapperProneSuppressed++;}
+      // 2026-10-25 re-pin (R3-a review, golden amendment 19, regenerated): a suppressed sapper with a sandbag row within reach (cv_cable_fault, cv_cable_second: before, none within 50 m of the cuts and the run for
+      // cover never happened on these routes) runs for it upright (actor.coverRun, drawn running, not prone) and lies prone once he is behind it; so he is prone under fire exactly when he is not running.
+      if(clock<a.suppressedUntil){assert.equal(a.posture,a.coverRun?'stand':'prone',a.coverRun?`${id} runs for cover upright`:`${id} lies prone under fire`);if(a.coverRun)st.sapperCoverRun++;else st.sapperProneSuppressed++;}
       else if(a.crouched&&sim.consumedEvent(E('east_demolition'))){assert.equal(a.posture,'crouch',`${id} kneels in the west after the retreat`);st.sapperWest++;}
       else if(a.crouched){assert.equal(a.posture,'crouch',`${id} works crouched`);
         // The tick he is called away from the cable, and the tick the repair is done, the change comes after the actors moved: one tick late.
@@ -349,7 +351,7 @@ for(const seed of SEEDS)test(`staged route seed ${seed}: kneeling platoon, gates
   assert.ok(st.sapperWest>0&&st.kowalUp>0,JSON.stringify(st));
   // R3-a re-pin (was `sapperProneWait>0`: the sappers lay prone at the second cut while they waited for the box and after the repair): they now wait kneeling or standing as the phase says
   // (sapperStand: the standby, the report, the ready and the looks after the blasts), and the test above asserts the exact posture of every man at his place on every tick.
-  assert.ok(st.sectionKneel>1000&&st.kowalShots>10&&st.sapperCable>100&&st.sapperWork>100&&st.sapperStand>100&&st.sapperProneSuppressed>0,JSON.stringify(st));
+  assert.ok(st.sectionKneel>1000&&st.kowalShots>10&&st.sapperCable>100&&st.sapperWork>100&&st.sapperStand>100&&st.sapperProneSuppressed>0&&st.sapperCoverRun>0,JSON.stringify(st));   // (2026-10-25: and the run for cover happens on every one of the 12 seeds)
   // R2-a (2026-10-24): the section's riflemen do rise now and then (a look, an answer) and still kneel behind the sandbags most of the time (12 seeds: up for 3 to 9 % as many man-ticks as they kneel).
   assert.ok(st.sectionUp>100&&st.sectionKneel>4*st.sectionUp,JSON.stringify(st));
   // The yaw stage is presentation only: forcing the plain body turn from saves inside the hold changes no gameplay byte, event or draw.

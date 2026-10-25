@@ -6,7 +6,7 @@
     {
       "view": "05-splice",
       "quality": "high",
-      "clock": 17092.925349997284,
+      "clock": 17092.983449997286,
       "player": {
         "x": -115.39,
         "z": 22.59
@@ -16,19 +16,19 @@
           "id": "pawel_krawiec",
           "clip": "sapper_work",
           "lod": 0,
-          "clipTime": 1.93
+          "clipTime": 1.94
         },
         {
           "id": "sapper_2",
           "clip": "sapper_work",
           "lod": 1,
-          "clipTime": 1.96
+          "clipTime": 1.98
         },
         {
           "id": "sapper_3",
           "clip": "cover_low_idle",
           "lod": 1,
-          "clipTime": 2.29
+          "clipTime": 2.31
         }
       ],
       "hud": {
@@ -41,7 +41,7 @@
     {
       "view": "07-fail",
       "quality": "high",
-      "clock": 17419.050000000516,
+      "clock": 17418.000600000512,
       "player": {
         "x": -115.39,
         "z": 22.59
@@ -51,24 +51,24 @@
           "id": "pawel_krawiec",
           "clip": "standing_idle_c",
           "lod": 0,
-          "clipTime": 3.12
+          "clipTime": 3.01
         },
         {
           "id": "sapper_2",
           "clip": "crouched_idle_b",
           "lod": 1,
-          "clipTime": 1.83
+          "clipTime": 1.71
         },
         {
           "id": "sapper_3",
           "clip": "cover_low_idle",
           "lod": 1,
-          "clipTime": 2.86
+          "clipTime": 2.74
         }
       ],
       "hud": {
         "objective": "Proteja o reparo da linha",
-        "status": "Reparo 50% · sem passagem · falta o segundo corte",
+        "status": "Reparo 49% · sem passagem · falta o segundo corte",
         "subtitle": ""
       },
       "errors": []
@@ -76,29 +76,29 @@
     {
       "view": "08-relocate",
       "quality": "high",
-      "clock": 17513.55000000067,
+      "clock": 17512.799400000666,
       "player": {
-        "x": -124.57,
-        "z": 22.59
+        "x": -128.79,
+        "z": 22.44
       },
       "sappers": [
         {
           "id": "pawel_krawiec",
           "clip": "walk",
           "lod": 0,
-          "clipTime": 0.31
+          "clipTime": 0.36
         },
         {
           "id": "sapper_2",
-          "clip": "carry_walk",
+          "clip": "prone_idle",
           "lod": 1,
-          "clipTime": 0.31
+          "clipTime": 0.72
         },
         {
           "id": "sapper_3",
-          "clip": "walk",
+          "clip": "prone_idle",
           "lod": 1,
-          "clipTime": 0.1
+          "clipTime": 0.37
         }
       ],
       "hud": {
@@ -111,7 +111,7 @@
     {
       "view": "11-test2",
       "quality": "high",
-      "clock": 18156.900600001707,
+      "clock": 18151.4997000017,
       "player": {
         "x": -131.59,
         "z": 22.59
@@ -121,19 +121,19 @@
           "id": "pawel_krawiec",
           "clip": "sapper_work",
           "lod": 0,
-          "clipTime": 0.19
+          "clipTime": 2.98
         },
         {
           "id": "sapper_2",
           "clip": "crouched_idle_b",
           "lod": 1,
-          "clipTime": 2.23
+          "clipTime": 1.65
         },
         {
           "id": "sapper_3",
           "clip": "cover_low_idle",
           "lod": 1,
-          "clipTime": 1.8
+          "clipTime": 1.21
         }
       ],
       "hud": {

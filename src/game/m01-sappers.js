@@ -19,6 +19,8 @@ import mapLayout from '../../missions/m01-tczew/map-layout.json' with { type: 'j
 
 const E=name=>`evt_m01_${name}`;
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
+/** The cover node types that are no box a man can lie behind (TczewWorld.covers leaves them out too): a window, a corner, a vehicle. */
+const COVER_NOT_A_BOX=Object.freeze(['WINDOW','WALL_CORNER','BUILDING_CORNER','VEHICLE']);
 /** Seconds of work without suppression the repair takes. With 75 s the crate delivered at about 04:42 left two thirds of the repair done before train 963 (04:45) and no fire could interrupt it; with 150 s it runs under fire. */
 export const REPAIR_WORK_SEC=150;
 /** The stages of obj_m01_cover_repair, in order, and the phases around them. */
@@ -50,6 +52,11 @@ export function sapperOperationPlan(def=definition){
   if(!roles||Object.keys(roles).length!==members.length||members.some(id=>!['leader','helper','watch'].includes(roles[id]))||
     ['leader','helper','watch'].some(r=>members.filter(id=>roles[id]===r).length!==1))fail('roles: one leader, one helper and one watch, the members of the group');
   const leader=members.find(id=>roles[id]==='leader'),helper=members.find(id=>roles[id]==='helper'),watch=members.find(id=>roles[id]==='watch');
+  // The lee places of the run for cover (R3-a review, 2026-10-25): each role has a place [dx, dz] of his own behind a cover node (dx: west of its centre, clear of the 0.45 m half width of the box and a
+  // body; dz: inside the box's 3 m, so that its shadow covers him from the east), 0.9 m or more apart, so that three men who run for the same node do not lie on one spot.
+  const lanes=op.seek.lanes;
+  if(!lanes||Object.keys(lanes).sort().join()!=='helper,leader,watch'||!Object.values(lanes).every(l=>Array.isArray(l)&&l.length===2&&num(l[0],-4,-1)&&num(l[1],-1.2,1.2)))fail('seek.lanes: [dx -4..-1, dz -1.2..1.2] for leader, helper and watch');
+  for(const a of Object.keys(lanes))for(const b of Object.keys(lanes))if(a<b&&Math.hypot(lanes[a][0]-lanes[b][0],lanes[a][1]-lanes[b][1])<.9)fail(`seek.lanes: ${a} and ${b} closer than 0.9 m`);
   const cable=op.cable;
   if(!Array.isArray(cable)||cable.length<4||!cable.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite)&&p[0]>=-300&&p[0]<=0))fail('cable: at least 4 [x, z] points in x -300..0');
   for(let i=1;i<cable.length;i++){const d=Math.hypot(cable[i][0]-cable[i-1][0],cable[i][1]-cable[i-1][1]);if(!(d>=1&&d<=60))fail('cable: points 1-60 m apart');}
@@ -91,8 +98,12 @@ export function sapperOperationPlan(def=definition){
   for(const key of ['locate','standby','report','ready'])if(typeof op.text?.[key]!=='string'||!op.text[key])fail(`text.${key}`);
   const known=new Set(mapLayout.features.map(f=>f.id));
   if(!known.has('ignition_line')||!known.has('repair_site_1')||!known.has('repair_site_2'))fail('map feature ignition_line / repair sites');
+  // Each cut has cover within reach of its three work places, or the run for cover could never happen there (a node the layout loses stops the game, like any other typo of the plan).
+  const covers=mapLayout.coverNodes.filter(c=>!c.partial&&!COVER_NOT_A_BOX.includes(c.type));
+  for(const name of ['fault','second'])for(const id of members){const s=points[name].slots[id];
+    if(!covers.some(c=>Math.hypot(s.x-c.position[0],s.z-c.position[2])<=op.seek.coverM))fail(`no cover node within seek.coverM (${op.seek.coverM} m) of ${id} at the ${name}`);}
   return Object.freeze({members:Object.freeze([...members]),roles:Object.freeze({...roles}),leader,helper,watch,arriveM:op.arriveM,locateSpeed:op.locate.speed,
-    seek:Object.freeze({...op.seek}),verifySec:op.verify.sec,reportSec:op.report.sec,cable:Object.freeze(cable.map(p=>Object.freeze([...p]))),points:Object.freeze(points),
+    seek:Object.freeze({coverM:op.seek.coverM,speed:op.seek.speed,lanes:Object.freeze(Object.fromEntries(Object.entries(lanes).map(([r,l])=>[r,Object.freeze([...l])])))}),verifySec:op.verify.sec,reportSec:op.report.sec,cable:Object.freeze(cable.map(p=>Object.freeze([...p]))),points:Object.freeze(points),
     stages:Object.freeze(out),text:Object.freeze({...op.text}),byId:Object.freeze(Object.fromEntries(out.map(s=>[s.id,s]))),relocateIndex:r});
 }
 export const SAPPERS=sapperOperationPlan();
@@ -170,16 +181,21 @@ export function sapperRate(sim,ph){
 /** Distance from a man to the line the team works along, between the two cuts: the old «within 6 m of repair site 2» of the pin rule, now for both cuts and the walk between them. */
 export const workDistance=a=>segmentDistance(a,SAPPERS.points.second,SAPPERS.points.fault);
 
-/** The cover a suppressed sapper makes for by his own decision: the nearest cover node that has a box (not a window, a corner or a vehicle) within SAPPERS.seek.coverM, on its lee (west) side; null if there is none or he is behind it already. */
+/**
+ * The cover a suppressed sapper makes for by his own decision: the nearest cover node that has a box (not a window, a corner or a vehicle) within SAPPERS.seek.coverM, on its lee (west) side, at the
+ * place of his role (SAPPERS.seek.lanes: the leader's is the nearest to the cable, the others lie in a file behind him, so three men never lie on one spot); a man without a role (a test's) keeps the
+ * old place, the node's lee at his own z. Null if there is no node or he is behind it already.
+ */
 export function sapperCover(world,a){
   let node=null,best=SAPPERS.seek.coverM;
   for(const c of world.coverNodes){
-    if(c.partial||['WINDOW','WALL_CORNER','BUILDING_CORNER','VEHICLE'].includes(c.type))continue;
+    if(c.partial||COVER_NOT_A_BOX.includes(c.type))continue;
     const d=Math.hypot(a.x-c.position[0],a.z-c.position[2]);
     if(d<best){best=d;node=c;}
   }
   if(!node)return null;
-  const spot={x:node.position[0]-1.1,z:node.position[2]+Math.max(-1.2,Math.min(1.2,a.z-node.position[2]))};
+  const lane=SAPPERS.seek.lanes[SAPPERS.roles[a.id]],
+    spot=lane?{x:node.position[0]+lane[0],z:node.position[2]+lane[1]}:{x:node.position[0]-1.1,z:node.position[2]+Math.max(-1.2,Math.min(1.2,a.z-node.position[2]))};
   return dist(a,spot)<.9?null:spot;   // moveActor stops a walker 0.8 m short of his target: that is behind it
 }
 

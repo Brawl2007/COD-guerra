@@ -16,5 +16,5 @@ test('envelope derives authored fire ranges, all covers and phase destination fa
     assert.equal(e.distance(x,z),0,`whole future/source bound ${x},${z}`);assert.ok(e.contains(x+20,z));assert.ok(e.contains(x,z-20));
   }
   assert.ok(!e.contains(15800,6200),'decorative railway endpoint is not an invented playable route');
-  const regions=e.regions;world.refresh(['evt_m01_west_demolition']);assert.equal(e.regions,regions);assert.equal(buildTerrainEnvelope(world).regions.filter(r=>r.id.startsWith('cover:')).length,26,'destroyed cover nodes remain protected (25 authored before T47, plus cv_ckm_post)');
+  const regions=e.regions;world.refresh(['evt_m01_west_demolition']);assert.equal(e.regions,regions);assert.equal(buildTerrainEnvelope(world).regions.filter(r=>r.id.startsWith('cover:')).length,28,'destroyed cover nodes remain protected (25 authored before T47, plus cv_ckm_post, plus the two sandbag rows of the sappers added by R3-a on 2026-10-25: cv_cable_fault and cv_cable_second)');
 });
