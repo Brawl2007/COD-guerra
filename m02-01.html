@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COD-Guerra · M02-01 Bancada da Quinta (Bzura 1939)</title>
+    <style>
+      :root {
+        --bg-panel: rgba(18, 20, 18, 0.84);
+        --border-panel: rgba(196, 178, 134, 0.38);
+        --accent: #d9b872;
+        --text-main: #ede8dc;
+        --text-dim: #b4ae9e;
+        --danger: #e56b55;
+        --safe: #7bc67e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #141715;
+        color: var(--text-main);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        user-select: none;
+      }
+      #m02-canvas {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+      }
+      .hud-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 14px 18px;
+      }
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .panel {
+        background: var(--bg-panel);
+        border: 1px solid var(--border-panel);
+        border-radius: 4px;
+        padding: 10px 14px;
+        backdrop-filter: blur(4px);
+        pointer-events: auto;
+      }
+      .mission-header h1 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .mission-header .sub {
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+      .objective-box {
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .telemetry-panel {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 11.5px;
+        line-height: 1.45;
+        min-width: 290px;
+      }
+      .telemetry-panel .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .controls-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      button,
+      select {
+        background: rgba(38, 42, 36, 0.95);
+        color: var(--text-main);
+        border: 1px solid var(--border-panel);
+        border-radius: 3px;
+        padding: 4px 8px;
+        font-size: 11.5px;
+        cursor: pointer;
+      }
+      button:hover,
+      select:hover {
+        border-color: var(--accent);
+      }
+      .center-reticle {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+      }
+      .center-reticle::before,
+      .center-reticle::after {
+        content: '';
+        position: absolute;
+        background: rgba(245, 240, 220, 0.85);
+      }
+      .center-reticle::before {
+        top: 7px;
+        left: 2px;
+        width: 12px;
+        height: 2px;
+      }
+      .center-reticle::after {
+        left: 7px;
+        top: 2px;
+        width: 2px;
+        height: 12px;
+      }
+      #door-prompt {
+        position: fixed;
+        top: 58%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(15, 17, 15, 0.9);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 6px 14px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        display: none;
+      }
+      .bottom-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+      }
+      .status-grid {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .badge-exposed {
+        color: var(--danger);
+        font-weight: 700;
+      }
+      .badge-covered {
+        color: var(--safe);
+        font-weight: 700;
+      }
+      .weapon-box {
+        text-align: right;
+        min-width: 210px;
+      }
+      .weapon-box .w-name {
+        font-size: 12px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+      }
+      .weapon-box .w-ammo {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--accent);
+        font-family: ui-monospace, SFMono-Regular, monospace;
+      }
+      .weapon-box .shot-feedback {
+        font-size: 11.5px;
+        color: var(--text-dim);
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="m02-canvas"></canvas>
+    <div class="center-reticle"></div>
+    <div id="door-prompt"></div>
+
+    <div class="hud-layer">
+      <div class="top-bar">
+        <div class="panel mission-header">
+          <h1>M02-01 · Bancada da Quinta (100 × 150 m)</h1>
+          <div class="sub">
+            Setor rural Kwiatkówek–Tum · 9 Set 1939 · 56.º Regimento / 25.ª DI (BANCADA DE PRODUÇÃO · RECONSTRUÍDO)
+          </div>
+          <div class="objective-box" id="hud-objective">
+            Objetivo: Ensaiar rotas (Vala ou Pomar), interiores B01/B02 e linhas de tiro
+          </div>
+          <div class="controls-bar">
+            <button type="button" data-tp="SN1" title="Entrada da bancada (0, -80)">1: SN1 Entrada</button>
+            <button type="button" data-tp="SN2" title="Vala oeste (-45, -5)">2: SN2 Vala</button>
+            <button type="button" data-tp="SN3" title="Flanco este B01 (-23, -12)">3: SN3 Casa B01</button>
+            <button type="button" data-tp="SN4" title="Frente oeste Celeiro B02 (8, -28)">4: SN4 Celeiro B02</button>
+            <button type="button" data-tp="SN5" title="Pomar sul (0, 45)">5: SN5 Pomar</button>
+            <button type="button" id="btn-toggle-debug">F3: Guias/LoS</button>
+            <button type="button" id="btn-reset-bench">Reset Bancada</button>
+          </div>
+        </div>
+
+        <div class="panel telemetry-panel">
+          <div class="row">
+            <span>Perfil Gráfico:</span>
+            <select id="select-quality">
+              <option value="high">Máxima (High)</option>
+              <option value="medium" selected>Equilibrada (Medium)</option>
+              <option value="low">Otimizada (Low)</option>
+            </select>
+          </div>
+          <div class="row" style="margin-top: 4px">
+            <span>Iluminação:</span>
+            <select id="select-lighting">
+              <option value="afternoon_1939_09_09" selected>Fim de tarde (9 Set 1939)</option>
+              <option value="neutral_review">Luz técnica neutra</option>
+            </select>
+          </div>
+          <div id="hud-telemetry" style="margin-top: 6px"></div>
+        </div>
+      </div>
+
+      <div class="bottom-bar">
+        <div class="panel status-grid" id="hud-tactical">
+          <div>Posição: <span id="hud-pos">X: 0.0, Y: 0.0, Z: -80.0</span></div>
+          <div>Linha de Fogo MG34 (B02): <span id="hud-mg-status" class="badge-covered">A calcular...</span></div>
+          <div>Progresso Rotas: <span id="hud-route-status">Vala 1/6 · Pomar 1/6 · B01 0/5 salas</span></div>
+          <div style="color: var(--text-dim); font-size: 11px; margin-top: 3px">
+            Controlos: WASD mover · Shift correr · C agachar · Rato/Setas olhar · Clique/Espaço disparar · E abrir/fechar porta · R recarregar
+          </div>
+        </div>
+
+        <div class="panel weapon-box">
+          <div class="w-name">Karabinek wz. 29 (7,92×57mm)</div>
+          <div class="w-ammo" id="hud-ammo">5 / 45</div>
+          <div class="shot-feedback" id="hud-last-shot">Último disparo: —</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/m02/m02-01-main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+import { M02BenchSimulation } from '../game/m02-01-simulation.js';
+import { M02BenchRenderer } from '../render/m02-01-renderer.js';
+
+const PANORAMA_VIEWS = Object.freeze({
+  SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
+  SN2: { x: -45, z: -5, angle: 0.25, pitch: 0.04, label: 'SN2 · Vala húmida oeste (-45, -5) rumo a B01' },
+  SN3: { x: -21, z: -13.5, angle: Math.PI, pitch: 0.0, label: 'SN3 · Fachada este da Casa B01 (-21, -13.5)' },
+  SN4: { x: 4, z: -29.5, angle: 0.0, pitch: 0.02, label: 'SN4 · Frente oeste do Celeiro B02 e abertura MG (4, -29.5)' },
+  SN5: { x: 0, z: 45, angle: -Math.PI / 2, pitch: 0.0, label: 'SN5 · Pomar sul olhando para o pátio (0, 45)' },
+});
+
+const params = new URLSearchParams(window.location.search);
+const initialQuality = params.get('quality') || 'medium';
+const initialLighting = params.get('lighting') || 'afternoon_1939_09_09';
+
+const canvas = document.getElementById('m02-canvas');
+const sim = new M02BenchSimulation();
+const renderer = new M02BenchRenderer(canvas, sim, {
+  quality: initialQuality,
+  lighting: initialLighting,
+});
+
+const elObjective = document.getElementById('hud-objective');
+const elPos = document.getElementById('hud-pos');
+const elMgStatus = document.getElementById('hud-mg-status');
+const elRouteStatus = document.getElementById('hud-route-status');
+const elAmmo = document.getElementById('hud-ammo');
+const elLastShot = document.getElementById('hud-last-shot');
+const elDoorPrompt = document.getElementById('door-prompt');
+const elTelemetry = document.getElementById('hud-telemetry');
+const selQuality = document.getElementById('select-quality');
+const selLighting = document.getElementById('select-lighting');
+
+if (selQuality) selQuality.value = renderer.qualityProfile.id;
+if (selLighting) selLighting.value = renderer.lightingPreset.id;
+
+const keys = new Set();
+let pendingSingleActions = {
+  interact: false,
+  reload: false,
+  crouch: false,
+  fire: false,
+};
+
+window.addEventListener('keydown', (e) => {
+  keys.add(e.code);
+  if (e.code === 'KeyE') pendingSingleActions.interact = true;
+  if (e.code === 'KeyR') pendingSingleActions.reload = true;
+  if (e.code === 'KeyC') pendingSingleActions.crouch = true;
+  if (e.code === 'Space') pendingSingleActions.fire = true;
+  if (e.code === 'F3') {
+    e.preventDefault();
+    renderer.toggleDebugOverlay();
+  }
+  if (e.code === 'Digit1') teleportToPanorama('SN1');
+  if (e.code === 'Digit2') teleportToPanorama('SN2');
+  if (e.code === 'Digit3') teleportToPanorama('SN3');
+  if (e.code === 'Digit4') teleportToPanorama('SN4');
+  if (e.code === 'Digit5') teleportToPanorama('SN5');
+});
+
+window.addEventListener('keyup', (e) => {
+  keys.delete(e.code);
+});
+
+canvas.addEventListener('mousedown', (e) => {
+  if (e.button === 0) {
+    pendingSingleActions.fire = true;
+    if (document.pointerLockElement !== canvas && canvas.requestPointerLock) {
+      canvas.requestPointerLock().catch?.(() => {});
+    }
+  }
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement === canvas) {
+    sim.player.angle += e.movementX * 0.0024;
+    sim.player.pitch = Math.max(-1.3, Math.min(1.3, sim.player.pitch - e.movementY * 0.0022));
+  }
+});
+
+window.addEventListener('resize', () => renderer.resize());
+
+selQuality?.addEventListener('change', (e) => {
+  renderer.applyQualityProfile(e.target.value);
+});
+
+selLighting?.addEventListener('change', (e) => {
+  renderer.applyLightingPreset(e.target.value);
+});
+
+document.getElementById('btn-toggle-debug')?.addEventListener('click', () => {
+  renderer.toggleDebugOverlay();
+});
+
+document.getElementById('btn-reset-bench')?.addEventListener('click', () => {
+  sim.reset();
+});
+
+for (const btn of document.querySelectorAll('[data-tp]')) {
+  btn.addEventListener('click', () => {
+    const id = btn.getAttribute('data-tp');
+    teleportToPanorama(id);
+  });
+}
+
+function teleportToPanorama(id) {
+  const view = PANORAMA_VIEWS[id];
+  if (!view) return null;
+  sim.teleportPlayer(view.x, view.z, view.angle, view.pitch);
+  return view;
+}
+
+function updateHud() {
+  const p = sim.player;
+  if (elObjective) {
+    elObjective.textContent = `Objetivo: ${sim.objective.title}`;
+  }
+  if (elPos) {
+    elPos.textContent = `X: ${p.x.toFixed(1)}m, Y: ${p.y.toFixed(2)}m, Z: ${p.z.toFixed(1)}m`;
+  }
+  if (elMgStatus) {
+    if (sim.mgState.canHitPlayer) {
+      elMgStatus.textContent = 'EXPOSTO AO FOGO DA MG34 (B02)';
+      elMgStatus.className = 'badge-exposed';
+    } else {
+      const blocker = sim.mgState.blockedById || 'fora do arco';
+      elMgStatus.textContent = `COBERTO (${blocker})`;
+      elMgStatus.className = 'badge-covered';
+    }
+  }
+  if (elRouteStatus) {
+    const ditchCount = sim.routeProgress.ditchWaypointsVisited.filter(Boolean).length;
+    const orchardCount = sim.routeProgress.orchardWaypointsVisited.filter(Boolean).length;
+    const roomsCount = Object.values(sim.routeProgress.visitedB01Rooms).filter(Boolean).length;
+    elRouteStatus.textContent = `Vala ${ditchCount}/6 · Pomar ${orchardCount}/6 · B01 ${roomsCount}/5 salas`;
+  }
+  if (elAmmo) {
+    elAmmo.textContent = `${sim.weapon.mag} / ${sim.weapon.reserve}`;
+  }
+  if (elLastShot) {
+    const last = sim.shotLog[sim.shotLog.length - 1];
+    if (!last) {
+      elLastShot.textContent = 'Último disparo: —';
+    } else if (last.hitTarget) {
+      elLastShot.textContent = `Último disparo: ALVO ATINGIDO (${last.hitId} · ${last.part})`;
+    } else if (last.glassBrokenId) {
+      elLastShot.textContent = `Último disparo: VIDRO PARTIDO (${last.glassBrokenId})`;
+    } else if (last.blockedBySolid) {
+      elLastShot.textContent = `Último disparo: BLOQUEADO (${last.hitId} · ${last.material})`;
+    } else {
+      elLastShot.textContent = 'Último disparo: Céu / Sem obstáculo';
+    }
+  }
+
+  const prompt = sim.currentDoorPrompt();
+  if (elDoorPrompt) {
+    if (prompt) {
+      elDoorPrompt.style.display = 'block';
+      elDoorPrompt.textContent = `${prompt.prompt} (${prompt.distance}m)`;
+    } else {
+      elDoorPrompt.style.display = 'none';
+    }
+  }
+
+  if (elTelemetry) {
+    const t = renderer.getTelemetrySummary();
+    elTelemetry.innerHTML = [
+      `<div class="row"><span>FPS (p50):</span><strong>${t.fpsP50}</strong></div>`,
+      `<div class="row"><span>Frame p50/p95/p99:</span><span>${t.frameTimeMs.p50} / ${t.frameTimeMs.p95} / ${t.frameTimeMs.p99} ms</span></div>`,
+      `<div class="row"><span>Sim / Render (p50):</span><span>${t.simMsP50} / ${t.renderMsP50} ms</span></div>`,
+      `<div class="row"><span>DrawCalls / Triângulos:</span><span>${t.drawCalls} / ${t.triangles}</span></div>`,
+    ].join('');
+  }
+}
+
+let lastTime = performance.now();
+
+function animate(now) {
+  const rawDt = (now - lastTime) / 1000;
+  lastTime = now;
+  const dt = Math.min(0.05, Math.max(0.001, rawDt || 1 / 60));
+
+  const forward = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
+  const side = (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0);
+  const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
+
+  const simStart = performance.now();
+  sim.tick(dt, {
+    forward,
+    side,
+    sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
+    aim: keys.has('KeyV'),
+    lookX,
+    lookY: 0,
+    interact: pendingSingleActions.interact,
+    reload: pendingSingleActions.reload,
+    crouch: pendingSingleActions.crouch,
+    fire: pendingSingleActions.fire,
+  });
+  const simMs = performance.now() - simStart;
+
+  pendingSingleActions.interact = false;
+  pendingSingleActions.reload = false;
+  pendingSingleActions.crouch = false;
+  pendingSingleActions.fire = false;
+
+  renderer.renderFrame(dt, simMs);
+  updateHud();
+  requestAnimationFrame(animate);
+}
+
+window.m02Bench = {
+  sim,
+  renderer,
+  PANORAMA_VIEWS,
+  teleportToPanorama,
+  teleportPlayer: (x, z, angle, pitch = 0) => sim.teleportPlayer(x, z, angle, pitch),
+  setQuality: (q) => {
+    if (selQuality) selQuality.value = q;
+    return renderer.applyQualityProfile(q);
+  },
+  setLighting: (l) => {
+    if (selLighting) selLighting.value = l;
+    return renderer.applyLightingPreset(l);
+  },
+  interactDoor: (doorId = null) => sim.interactDoor(doorId),
+  fireWeapon: () => sim.firePlayerWeapon(true, true),
+  getTelemetrySummary: () => renderer.getTelemetrySummary(),
+  getStateSummary: () => ({
+    clock: Number(sim.clock.toFixed(2)),
+    player: {
+      x: Number(sim.player.x.toFixed(2)),
+      y: Number(sim.player.y.toFixed(2)),
+      z: Number(sim.player.z.toFixed(2)),
+      angle: Number(sim.player.angle.toFixed(3)),
+      pitch: Number(sim.player.pitch.toFixed(3)),
+      health: sim.player.health,
+    },
+    mgState: structuredClone(sim.mgState),
+    routeProgress: structuredClone(sim.routeProgress),
+    doorPrompt: sim.currentDoorPrompt(),
+    doors: Object.fromEntries(sim.world.doorStates.entries()),
+    windows: Object.fromEntries(sim.world.windowStates.entries()),
+    lastShot: sim.shotLog[sim.shotLog.length - 1] ?? null,
+    telemetry: renderer.getTelemetrySummary(),
+  }),
+};
+
+requestAnimationFrame(animate);

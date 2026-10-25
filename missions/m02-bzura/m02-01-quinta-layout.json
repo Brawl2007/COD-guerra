@@ -1,0 +1,288 @@
+{
+  "schema": "m02-01-quinta-bench-v1",
+  "missionId": "m02_01_quinta",
+  "title": "M02-01 · Bancada da Quinta (100 × 150 m)",
+  "historicalNote": "BANCADA DE PRODUÇÃO (N0) — Setor rural Kwiatkówek–Tum (9 de setembro de 1939, 56.º Regimento / 25.ª DI polaca). Geometria e implantação são propostas de level design (RECONSTRUÍDO / DRAMATIZAÇÃO), sem coordenadas geográficas históricas fixadas até conclusão de GEO-01 e HIST-01.",
+  "space": "metres",
+  "axes": {
+    "x": "east",
+    "y": "up",
+    "z": "south"
+  },
+  "bounds": {
+    "playable": {
+      "minX": -50,
+      "maxX": 50,
+      "minZ": -90,
+      "maxZ": 60
+    }
+  },
+  "origin": [0, 0, 0],
+  "start": {
+    "x": 0,
+    "y": 0,
+    "z": -80,
+    "angle": 1.5707963267948966,
+    "pitch": 0
+  },
+  "zones": {
+    "courtyard": {
+      "minX": -22,
+      "maxX": 16,
+      "minZ": -20,
+      "maxZ": 20,
+      "groundY": 0
+    },
+    "ditch": {
+      "minX": -48,
+      "maxX": -42,
+      "minZ": -85,
+      "maxZ": 48,
+      "floorY": -1.1,
+      "bankWidth": 1.5,
+      "ramps": [
+        { "id": "ramp_north_entry", "minX": -48, "maxX": -40, "minZ": -76, "maxZ": -66 },
+        { "id": "ramp_house_exit", "minX": -46, "maxX": -36, "minZ": -8, "maxZ": 2 },
+        { "id": "ramp_south_exit", "minX": -48, "maxX": -40, "minZ": 40, "maxZ": 48 }
+      ]
+    },
+    "orchard": {
+      "minX": -24,
+      "maxX": 10,
+      "minZ": 30,
+      "maxZ": 60
+    },
+    "northGate": {
+      "x": 0,
+      "z": -24,
+      "width": 3.2
+    }
+  },
+  "routes": {
+    "ditch": [
+      [0, -80],
+      [-45, -70],
+      [-45, -5],
+      [-24, 0],
+      [-15, -8],
+      [0, -24]
+    ],
+    "orchard": [
+      [0, -80],
+      [43, -55],
+      [43, 27],
+      [8, 42],
+      [0, 20],
+      [0, -24]
+    ]
+  },
+  "slicePanoramaPoints": [
+    { "id": "SN1", "label": "Entrada da bancada", "x": 0, "z": -80 },
+    { "id": "SN2", "label": "Vala de aproximação oeste", "x": -45, "z": -5 },
+    { "id": "SN3", "label": "Flanco este da Casa B01", "x": -23, "z": -12 },
+    { "id": "SN4", "label": "Frente oeste do Celeiro B02", "x": 8, "z": -28 },
+    { "id": "SN5", "label": "Pomar sul", "x": 0, "z": 45 }
+  ],
+  "buildings": [
+    {
+      "id": "B01",
+      "name": "Casa rural da família ausente",
+      "evidence": "RECONSTRUÍDO tipologicamente [H06]; localização DRAMATIZAÇÃO",
+      "bounds": [-40, -26, -18, -8],
+      "width": 14,
+      "depth": 10,
+      "wallHeight": 2.8,
+      "ridgeHeight": 5.2,
+      "wallThickness": 0.26,
+      "material": "brick",
+      "roofMaterial": "thatch",
+      "rooms": [
+        { "id": "cozinha", "name": "Cozinha", "u0": 0, "v0": 0, "w": 7, "d": 5 },
+        { "id": "despensa", "name": "Despensa", "u0": 7, "v0": 0, "w": 2, "d": 5 },
+        { "id": "sala", "name": "Sala de passagem", "u0": 9, "v0": 0, "w": 5, "d": 5 },
+        { "id": "quarto_oeste", "name": "Quarto oeste", "u0": 0, "v0": 5, "w": 7, "d": 5 },
+        { "id": "quarto_este", "name": "Quarto este", "u0": 7, "v0": 5, "w": 7, "d": 5 }
+      ],
+      "walls": [
+        { "id": "b01_wall_north", "u0": 0, "v0": 0, "u1": 14, "v1": 0, "exterior": true, "material": "brick" },
+        { "id": "b01_wall_south", "u0": 0, "v0": 10, "u1": 14, "v1": 10, "exterior": true, "material": "brick" },
+        { "id": "b01_wall_west", "u0": 0, "v0": 0, "u1": 0, "v1": 10, "exterior": true, "material": "brick" },
+        { "id": "b01_wall_east", "u0": 14, "v0": 0, "u1": 14, "v1": 10, "exterior": true, "material": "brick" },
+        { "id": "b01_wall_mid_h", "u0": 0, "v0": 5, "u1": 14, "v1": 5, "exterior": false, "material": "brick" },
+        { "id": "b01_wall_mid_v1", "u0": 7, "v0": 0, "u1": 7, "v1": 10, "exterior": false, "material": "brick" },
+        { "id": "b01_wall_mid_v2", "u0": 9, "v0": 0, "u1": 9, "v1": 5, "exterior": false, "material": "brick" }
+      ],
+      "doors": [
+        { "id": "door_b01_east_main", "wallId": "b01_wall_east", "offset": 2.5, "width": 1.1, "height": 2.1, "initialState": "closed", "material": "wood_thin", "label": "Porta principal este (Casa B01)" },
+        { "id": "door_b01_north_service", "wallId": "b01_wall_north", "offset": 3.0, "width": 1.0, "height": 2.1, "initialState": "closed", "material": "wood_thin", "label": "Porta norte da cozinha (Casa B01)" },
+        { "id": "door_b01_kitchen_pantry", "wallId": "b01_wall_mid_v1", "offset": 2.5, "width": 1.0, "height": 2.1, "initialState": "open", "material": "wood_thin", "label": "Porta Cozinha–Despensa" },
+        { "id": "door_b01_pantry_hall", "wallId": "b01_wall_mid_v2", "offset": 2.5, "width": 1.0, "height": 2.1, "initialState": "open", "material": "wood_thin", "label": "Porta Despensa–Sala" },
+        { "id": "door_b01_kitchen_westbed", "wallId": "b01_wall_mid_h", "offset": 3.0, "width": 1.0, "height": 2.1, "initialState": "closed", "material": "wood_thin", "label": "Porta Cozinha–Quarto Oeste" },
+        { "id": "door_b01_hall_eastbed", "wallId": "b01_wall_mid_h", "offset": 11.0, "width": 1.0, "height": 2.1, "initialState": "open", "material": "wood_thin", "label": "Porta Sala–Quarto Este" }
+      ],
+      "windows": [
+        { "id": "win_b01_west_kitchen", "wallId": "b01_wall_west", "offset": 2.5, "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "open", "label": "Janela oeste da cozinha (B01)" },
+        { "id": "win_b01_east_hall", "wallId": "b01_wall_east", "offset": 0.65, "width": 1.0, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "intact", "label": "Janela este da sala (B01)" },
+        { "id": "win_b01_east_bed", "wallId": "b01_wall_east", "offset": 7.5, "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "open", "label": "Janela este do quarto (B01)" },
+        { "id": "win_b01_north_hall", "wallId": "b01_wall_north", "offset": 11.0, "width": 1.2, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "intact", "label": "Janela norte da sala (B01)" }
+      ],
+      "props": [
+        { "id": "prop_b01_stove", "name": "Fogão de alvenaria", "u": 0.5, "v": 0.5, "w": 1.5, "d": 1.4, "h": 1.35, "material": "stone" },
+        { "id": "prop_b01_table", "name": "Mesa da cozinha", "u": 4.1, "v": 0.8, "w": 1.5, "d": 1.0, "h": 0.78, "material": "wood_thin" },
+        { "id": "prop_b01_bed_west", "name": "Cama quarto oeste", "u": 0.6, "v": 7.0, "w": 1.9, "d": 2.2, "h": 0.65, "material": "wood_thin" },
+        { "id": "prop_b01_bed_east", "name": "Cama quarto este", "u": 10.8, "v": 7.0, "w": 1.9, "d": 2.2, "h": 0.65, "material": "wood_thin" }
+      ]
+    },
+    {
+      "id": "B02",
+      "name": "Celeiro do portão norte",
+      "evidence": "RECONSTRUÍDO [H06]; posição de MG e ocupação DRAMATIZAÇÃO",
+      "bounds": [12, 36, -38, -24],
+      "width": 24,
+      "depth": 14,
+      "wallHeight": 3.6,
+      "ridgeHeight": 7.2,
+      "wallThickness": 0.24,
+      "material": "wood_thick",
+      "roofMaterial": "wood",
+      "rooms": [
+        { "id": "armazenamento_norte", "name": "Armazenamento norte / sótão", "u0": 0, "v0": 0, "w": 24, "d": 4 },
+        { "id": "corredor_trabalho", "name": "Corredor central de trabalho", "u0": 0, "v0": 4, "w": 24, "d": 6 },
+        { "id": "palha_sul", "name": "Armazenamento sul (palha e ferramentas)", "u0": 0, "v0": 10, "w": 24, "d": 4 }
+      ],
+      "walls": [
+        { "id": "b02_wall_north", "u0": 0, "v0": 0, "u1": 24, "v1": 0, "exterior": true, "material": "wood_thick" },
+        { "id": "b02_wall_south", "u0": 0, "v0": 14, "u1": 24, "v1": 14, "exterior": true, "material": "wood_thick" },
+        { "id": "b02_wall_west", "u0": 0, "v0": 0, "u1": 0, "v1": 14, "exterior": true, "material": "wood_thick" },
+        { "id": "b02_wall_east", "u0": 24, "v0": 0, "u1": 24, "v1": 14, "exterior": true, "material": "wood_thick" }
+      ],
+      "doors": [
+        { "id": "door_b02_north_gate", "wallId": "b02_wall_north", "offset": 12.0, "width": 3.0, "height": 3.0, "initialState": "open", "material": "wood_thick", "label": "Portão norte do Celeiro B02" },
+        { "id": "door_b02_south_door", "wallId": "b02_wall_south", "offset": 18.0, "width": 1.2, "height": 2.2, "initialState": "closed", "material": "wood_thin", "label": "Porta sul do Celeiro B02" }
+      ],
+      "windows": [
+        { "id": "win_b02_west_mg", "wallId": "b02_wall_west", "offset": 8.0, "width": 1.8, "sillY": 1.0, "lintelY": 2.15, "frameWidth": 0.12, "glassState": "open", "label": "Abertura oeste de tiro MG (Celeiro B02)" }
+      ],
+      "posts": [
+        { "id": "post_b02_nw", "u": 7.0, "v": 4.0, "size": 0.36, "h": 3.6, "material": "wood_thick" },
+        { "id": "post_b02_ne", "u": 16.0, "v": 4.0, "size": 0.36, "h": 3.6, "material": "wood_thick" },
+        { "id": "post_b02_sw", "u": 7.0, "v": 10.0, "size": 0.36, "h": 3.6, "material": "wood_thick" },
+        { "id": "post_b02_se", "u": 16.0, "v": 10.0, "size": 0.36, "h": 3.6, "material": "wood_thick" }
+      ],
+      "props": [
+        { "id": "prop_b02_sacks", "name": "Sacos de sementes", "u": 2.0, "v": 0.8, "w": 4.5, "d": 2.1, "h": 1.15, "material": "earth" },
+        { "id": "prop_b02_sheaves", "name": "Feixes agrícolas", "u": 16.5, "v": 0.8, "w": 4.5, "d": 2.1, "h": 1.2, "material": "wood_thin" },
+        { "id": "prop_b02_straw", "name": "Palha prensada", "u": 2.0, "v": 10.8, "w": 4.5, "d": 2.1, "h": 1.0, "material": "wood_thin" },
+        { "id": "prop_b02_mg_mount", "name": "Bancada e parapeito MG34", "u": 0.5, "v": 7.1, "w": 1.5, "d": 1.8, "h": 0.96, "material": "wood_thick" },
+        { "id": "prop_b02_cart", "name": "Carroça no corredor", "u": 8.2, "v": 6.2, "w": 2.8, "d": 2.0, "h": 1.25, "material": "wood_thick" }
+      ]
+    },
+    {
+      "id": "B03",
+      "name": "Estábulo e arrecadação de arreios",
+      "evidence": "RECONSTRUÍDO [H06]; posição ficcional",
+      "bounds": [20, 38, 0, 12],
+      "width": 18,
+      "depth": 12,
+      "wallHeight": 3.0,
+      "ridgeHeight": 5.4,
+      "wallThickness": 0.24,
+      "material": "wood_thick",
+      "roofMaterial": "wood",
+      "rooms": [
+        { "id": "corredor_estabulo", "name": "Corredor central N–S", "u0": 7, "v0": 0, "w": 4, "d": 12 },
+        { "id": "baias_oeste", "name": "Baias oeste", "u0": 0, "v0": 0, "w": 7, "d": 12 },
+        { "id": "baias_este", "name": "Baias este e arreios", "u0": 11, "v0": 0, "w": 7, "d": 12 }
+      ],
+      "walls": [
+        { "id": "b03_wall_north", "u0": 0, "v0": 0, "u1": 18, "v1": 0, "exterior": true, "material": "wood_thick" },
+        { "id": "b03_wall_south", "u0": 0, "v0": 12, "u1": 18, "v1": 12, "exterior": true, "material": "wood_thick" },
+        { "id": "b03_wall_west", "u0": 0, "v0": 0, "u1": 0, "v1": 12, "exterior": true, "material": "wood_thick" },
+        { "id": "b03_wall_east", "u0": 18, "v0": 0, "u1": 18, "v1": 12, "exterior": true, "material": "wood_thick" }
+      ],
+      "doors": [
+        { "id": "door_b03_north", "wallId": "b03_wall_north", "offset": 9.0, "width": 2.4, "height": 2.4, "initialState": "open", "material": "wood_thick", "label": "Porta norte do Estábulo B03" },
+        { "id": "door_b03_south", "wallId": "b03_wall_south", "offset": 9.0, "width": 2.4, "height": 2.4, "initialState": "open", "material": "wood_thick", "label": "Porta sul do Estábulo B03" }
+      ],
+      "windows": [
+        { "id": "win_b03_west_high", "wallId": "b03_wall_west", "offset": 6.0, "width": 1.2, "sillY": 1.75, "lintelY": 2.45, "frameWidth": 0.1, "glassState": "open", "label": "Janela alta oeste (Estábulo B03)" }
+      ],
+      "props": [
+        { "id": "prop_b03_stall_w", "name": "Divisória de baia oeste", "u": 1.0, "v": 5.5, "w": 5.2, "d": 0.3, "h": 1.3, "material": "wood_thin" },
+        { "id": "prop_b03_stall_e", "name": "Divisória de baia este", "u": 11.8, "v": 5.5, "w": 5.2, "d": 0.3, "h": 1.3, "material": "wood_thin" }
+      ]
+    },
+    {
+      "id": "B04",
+      "name": "Forno e anexo de lenha",
+      "evidence": "RECONSTRUÍDO [H06]; tipologia rural",
+      "bounds": [-37, -29, 20, 26],
+      "width": 8,
+      "depth": 6,
+      "wallHeight": 2.4,
+      "ridgeHeight": 3.8,
+      "wallThickness": 0.26,
+      "material": "brick",
+      "roofMaterial": "tile",
+      "rooms": [
+        { "id": "nicho_forno", "name": "Forno e preparação", "u0": 0, "v0": 0, "w": 8, "d": 6 }
+      ],
+      "walls": [
+        { "id": "b04_wall_north", "u0": 0, "v0": 0, "u1": 8, "v1": 0, "exterior": true, "material": "brick" },
+        { "id": "b04_wall_south", "u0": 0, "v0": 6, "u1": 8, "v1": 6, "exterior": true, "material": "brick" },
+        { "id": "b04_wall_west", "u0": 0, "v0": 0, "u1": 0, "v1": 6, "exterior": true, "material": "brick" },
+        { "id": "b04_wall_east", "u0": 8, "v0": 0, "u1": 8, "v1": 6, "exterior": true, "material": "brick" }
+      ],
+      "doors": [
+        { "id": "door_b04_south", "wallId": "b04_wall_south", "offset": 5.2, "width": 1.0, "height": 2.0, "initialState": "open", "material": "wood_thin", "label": "Porta sul do Anexo B04" }
+      ],
+      "windows": [],
+      "props": [
+        { "id": "prop_b04_oven", "name": "Massa do forno de alvenaria", "u": 0.5, "v": 0.6, "w": 2.4, "d": 3.0, "h": 1.8, "material": "stone" }
+      ]
+    }
+  ],
+  "exteriorCovers": [
+    { "id": "cov_start_parapet", "name": "Talude de partida", "min": [-2.8, 0, -77.6], "max": [2.8, 0.95, -77.0], "material": "earth" },
+    { "id": "cov_gate_wall_west", "name": "Muro oeste do portão norte", "min": [-14.0, 0, -24.35], "max": [-1.8, 1.62, -23.65], "material": "brick" },
+    { "id": "cov_gate_wall_east", "name": "Muro leste do portão norte", "min": [1.8, 0, -24.35], "max": [11.8, 1.62, -23.65], "material": "brick" },
+    { "id": "cov_well_courtyard", "name": "Poço do pátio", "min": [-19.5, 0, -5.5], "max": [-17.7, 1.15, -3.7], "material": "stone" },
+    { "id": "cov_b04_woodpile", "name": "Pilha de lenha exterior (B04)", "min": [-31.5, 0, 26.2], "max": [-28.5, 1.15, 27.4], "material": "wood_thick" },
+    { "id": "cov_south_fence_west", "name": "Cerca sul do pátio (oeste)", "min": [-22.0, 0, 19.75], "max": [-3.0, 1.15, 20.15], "material": "wood_thin" },
+    { "id": "cov_south_fence_east", "name": "Cerca sul do pátio (leste)", "min": [3.0, 0, 19.75], "max": [16.0, 1.15, 20.15], "material": "wood_thin" },
+    { "id": "cov_orchard_bank_ne", "name": "Talude agrícola leste", "min": [38.5, 0, -48.0], "max": [40.2, 1.15, -42.0], "material": "earth" }
+  ],
+  "orchardTrees": [
+    { "id": "tree_orch_01", "x": -19.0, "z": 35.5, "trunkRadius": 0.2, "trunkHeight": 2.1, "canopyRadius": 1.9, "canopyY0": 1.85, "canopyY1": 4.1 },
+    { "id": "tree_orch_02", "x": -7.5, "z": 34.0, "trunkRadius": 0.22, "trunkHeight": 2.2, "canopyRadius": 2.1, "canopyY0": 1.9, "canopyY1": 4.3 },
+    { "id": "tree_orch_03", "x": 3.8, "z": 36.5, "trunkRadius": 0.19, "trunkHeight": 2.0, "canopyRadius": 1.8, "canopyY0": 1.8, "canopyY1": 4.0 },
+    { "id": "tree_orch_04", "x": -20.0, "z": 47.0, "trunkRadius": 0.21, "trunkHeight": 2.1, "canopyRadius": 2.0, "canopyY0": 1.85, "canopyY1": 4.2 },
+    { "id": "tree_orch_05", "x": -8.2, "z": 46.5, "trunkRadius": 0.2, "trunkHeight": 2.1, "canopyRadius": 1.95, "canopyY0": 1.85, "canopyY1": 4.1 },
+    { "id": "tree_orch_06", "x": 3.2, "z": 49.5, "trunkRadius": 0.22, "trunkHeight": 2.2, "canopyRadius": 2.05, "canopyY0": 1.9, "canopyY1": 4.3 },
+    { "id": "tree_orch_07", "x": -17.5, "z": 56.5, "trunkRadius": 0.18, "trunkHeight": 2.0, "canopyRadius": 1.75, "canopyY0": 1.8, "canopyY1": 3.9 }
+  ],
+  "mgEmplacement": {
+    "id": "de_b02_mg34",
+    "name": "Posição MG34 (Abertura oeste de B02)",
+    "x": 12.8,
+    "y": 0,
+    "z": -30.0,
+    "eyeHeight": 1.48,
+    "facing": 3.141592653589793,
+    "arcHalfAngle": 1.38,
+    "range": 95,
+    "burstRounds": 6,
+    "burstInterval": 0.09,
+    "cooldown": 2.4
+  },
+  "testTargets": [
+    { "id": "tgt_b02_mg_gunner", "name": "Alvo MG34 (Interior B02, janela oeste)", "buildingId": "B02", "x": 13.2, "y": 0, "z": -30.0, "facing": 3.141592653589793, "role": "mg_gunner" },
+    { "id": "tgt_b02_corridor", "name": "Alvo Corredor B02 (Atrás da parede oeste sólida)", "buildingId": "B02", "x": 15.0, "y": 0, "z": -34.0, "facing": 3.141592653589793, "role": "rifleman" },
+    { "id": "tgt_b02_south_door", "name": "Alvo Porta Sul B02 (Atrás da porta sul fechada)", "buildingId": "B02", "x": 30.0, "y": 0, "z": -26.0, "facing": 1.5707963267948966, "role": "rifleman" },
+    { "id": "tgt_b01_kitchen_window", "name": "Alvo Cozinha B01 (Visível pela janela oeste)", "buildingId": "B01", "x": -36.5, "y": 0, "z": -15.5, "facing": 3.141592653589793, "role": "rifleman" },
+    { "id": "tgt_b01_hall_door", "name": "Alvo Sala B01 (Atrás da porta principal este)", "buildingId": "B01", "x": -28.5, "y": 0, "z": -15.5, "facing": 0, "role": "rifleman" },
+    { "id": "tgt_b01_west_bedroom", "name": "Alvo Quarto Oeste B01 (Protegido por parede sólida)", "buildingId": "B01", "x": -36.5, "y": 0, "z": -10.5, "facing": 0, "role": "rifleman" },
+    { "id": "tgt_courtyard_open", "name": "Alvo Pátio Exterior (Visível do interior de B01/B02)", "buildingId": null, "x": -8.0, "y": 0, "z": -15.5, "facing": 3.141592653589793, "role": "rifleman" },
+    { "id": "tgt_orchard_canopy", "name": "Alvo Pomar (Atrás de copa de árvore, sem tronco na linha)", "buildingId": null, "x": -7.5, "y": 0, "z": 40.0, "facing": -1.5707963267948966, "role": "rifleman" }
+  ]
+}
