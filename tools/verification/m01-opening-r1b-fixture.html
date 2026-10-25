@@ -1,0 +1,66 @@
+<!doctype html><html lang="pt"><meta charset="utf-8"><link rel="icon" href="data:,"><title>M01 R1-b opening life: acts fixture</title><style>body{margin:0;overflow:hidden;background:#8d969a}canvas{display:block}</style><script type="module">
+// Isolated visual fixture for package R1-b (the opening life): the real M01Characters (GLBs, atlases, clips, the foot IK and the opening pose and props), a real M01Simulation for the cast, and a ground
+// mesh sampled from the simulation's own terrain around the squad post. Used to tune the poses and the props quickly (a close-up of one act of one man, any moment of it); the evidence captures are taken in
+// the game itself (tools/verification/m01-opening-r1b-captures.spec.js). Presentation only: nothing here writes a simulation or decides anything.
+import * as THREE from 'three';
+import {M01Characters} from '../../src/render/m01-characters.js';
+import {M01Simulation} from '../../src/game/m01-simulation.js';
+const W=1280,H=720;
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(W,H);renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.shadowMap.enabled=true;document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#9aa5a6');scene.fog=new THREE.Fog('#9aa5a6',40,260);
+scene.add(new THREE.HemisphereLight('#d7e2ea','#4d4a38',1.6));
+const sun=new THREE.DirectionalLight('#ffe9cf',2.4);sun.position.set(-30,40,30);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:1,far:120});scene.add(sun,sun.target);
+const sim=new M01Simulation();
+{
+  const x0=-110,x1=-30,z0=0,z1=50,nx=80,nz=50,pos=[],idx=[];
+  for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){const x=x0+(x1-x0)*i/nx,z=z0+(z1-z0)*j/nz;pos.push(x,sim.world.terrainHeightAt(x,z),z);}
+  for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const a=j*(nx+1)+i;idx.push(a,a+nx+1,a+1,a+1,a+nx+1,a+nx+2);}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+  const ground=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#6d6a4b',roughness:1}));ground.receiveShadow=true;scene.add(ground);
+}
+const camera=new THREE.PerspectiveCamera(70,W/H,.05,500);
+const characters=new M01Characters(scene,{batching:true});
+window.ready=false;await characters.load('high');
+const byId=Object.fromEntries(sim.actors.map(a=>[a.id,a]));
+/** Men to show: [{id, act, t (seconds into the act), until (seconds the act lasts), x, z, facing, to?}]. The camera: {x,y,z,tx,ty,tz,fov}. `clock` is the simulation time of the frame (the pose is a pure function of it). */
+function frame(men,cam,clock=60){
+  const actors=men.map((m,i)=>{
+    const base=byId[m.id];if(!base)throw new Error('no actor '+m.id);
+    const a=structuredClone(base);a.x=m.x;a.z=m.z;a.y=sim.world.heightAt(m.x,m.z);a.facing=m.facing??0;a.bodyYaw=a.facing;a.active=true;a.alive=true;a.state='GUARD';a.crouched=false;a.posture='stand';a.target=null;
+    if(m.crouched){a.crouched=true;a.posture='crouch';}
+    if(m.act)a.act={k:m.act,at:clock-(m.t??3),until:clock-(m.t??3)+(m.until??30),rng:1,n:1,b:a.facing,tn:m.tn??0,s:m.s??1234567+i*7919,hx:a.x,hz:a.z,...(m.to?{to:m.to}:{})};
+    else delete a.act;
+    if(m.motion)a.motion={speed:m.motion.speed,odometer:m.motion.odometer??0,gait:m.motion.gait,gaitSince:clock-5};
+    return a;
+  });
+  // twice: the first update creates the instances and their blend records, the second poses them as the game's second frame does
+  characters.update(actors,clock-.05,{x:cam.x,z:cam.z},'high',16230,sim.world,null);
+  characters.update(actors,clock,{x:cam.x,z:cam.z},'high',16230,sim.world,null);
+  sun.target.position.set(cam.tx,cam.ty,cam.tz);
+  camera.position.set(cam.x,cam.y,cam.z);camera.fov=cam.fov??42;camera.lookAt(cam.tx,cam.ty,cam.tz);camera.updateProjectionMatrix();
+  renderer.render(scene,camera);
+  const diag=characters.diagnostics.actors.map(a=>({id:a.id,clip:a.clip,opening:a.opening??null,lod:a.lod}));
+  return {diag,url:renderer.domElement.toDataURL('image/png'),drawCalls:renderer.info.render.calls};
+}
+// World position of named bones of a man's instance, in his own frame [right, up, forward] metres from his root (calibration of the hand targets and the props).
+function bones(id,names){
+  const v=characters.instances.get(id);if(!v)return null;
+  v.root.updateMatrixWorld(true);
+  const m=v.root.matrixWorld,o=new THREE.Vector3().setFromMatrixPosition(m),R=new THREE.Vector3(1,0,0).transformDirection(m),U=new THREE.Vector3(0,1,0).transformDirection(m),F=new THREE.Vector3(0,0,-1).transformDirection(m),out={};
+  for(const n of names){const b=v.root.getObjectByName(n);if(!b){out[n]=null;continue;}const p=new THREE.Vector3().setFromMatrixPosition(b.matrixWorld).sub(o);out[n]=[+p.dot(R).toFixed(3),+p.dot(U).toFixed(3),+p.dot(F).toFixed(3)];}
+  // the extent of the visible head and helmet parts in the same frame: [minRight, maxRight, minUp, maxUp, minForward, maxForward]
+  const box=new THREE.Box3();
+  v.root.traverse(n=>{
+    if(!n.isMesh||!(n.name.startsWith('head_')||n.name.startsWith('helmet_'))||n.parent?.visible===false)return;
+    if(!n.visible)return;
+    const g=n.geometry;if(!g.boundingBox)g.computeBoundingBox();
+    const corners=[];for(const x of [g.boundingBox.min.x,g.boundingBox.max.x])for(const y of [g.boundingBox.min.y,g.boundingBox.max.y])for(const z of [g.boundingBox.min.z,g.boundingBox.max.z])corners.push(new THREE.Vector3(x,y,z).applyMatrix4(n.matrixWorld));
+    box.makeEmpty();for(const c of corners)box.expandByPoint(c);
+    const pts=[box.min,box.max].map(p=>p.clone().sub(o));
+    out['mesh:'+n.name]=[+Math.min(pts[0].dot(R),pts[1].dot(R)).toFixed(3),+Math.max(pts[0].dot(R),pts[1].dot(R)).toFixed(3),+Math.min(pts[0].y,pts[1].y).toFixed(3),+Math.max(pts[0].y,pts[1].y).toFixed(3),+Math.min(pts[0].dot(F),pts[1].dot(F)).toFixed(3),+Math.max(pts[0].dot(F),pts[1].dot(F)).toFixed(3)];
+  });
+  return out;
+}
+window.fixture={show:(men,cam,clock)=>frame(men,cam,clock),ground:(x,z)=>sim.world.heightAt(x,z),cast:()=>Object.keys(byId),bones};
+window.ready=true;
+</script>

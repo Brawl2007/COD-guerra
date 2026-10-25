@@ -22,9 +22,12 @@ import {
 } from './m01-animation-resolver.js';
 import { animationSeed, unit as animationUnit } from './m01-animation-variety.js';
 import {SoldierMergeCache,batchSoldier} from './m01-soldier-batching.js';
-import { bindCharacterIkRig, createIkDiagnosticsState, formatIkDiagnostics, restoreIkPose, updateActorsIk } from './m01-hand-pin.js';
+import { bindCharacterIkRig, captureIkPose, createIkDiagnosticsState, formatIkDiagnostics, restoreIkPose, updateActorsIk } from './m01-hand-pin.js';
 import { sapperSample } from './m01-sapper-pose.js';
 import { SapperKit } from './m01-sapper-kit.js';
+import { openingSample, openingPose, openingProps, kowalCleans, HANDS_BUSY } from './m01-opening-pose.js';
+import { OpeningKit } from './m01-opening-kit.js';
+import { applyOpeningPose } from './m01-opening-ik.js';
 
 const BASE='assets/models/provisional/m01/characters/';
 const MG='assets/models/provisional/m01/weapons/mg34/';
@@ -66,6 +69,8 @@ const mgGunner=a=>a.team==='enemy'&&a.weapon==='mg34'&&['de_east_0','de_east_1']
 const stationClips=['station_drag_medic_grab','station_drag_patient_grab','station_drag_medic_release','station_drag_patient_release','drag_wounded','crouched_idle','wounded'];
 const SPINE_NAMES=['spine_02','spine_01','spine','chest','Spine2','Spine1','Spine'];
 const SUPPORT_ARM_NAMES=['upperarm_l','arm_l','LeftArm','mixamorigLeftArm'];
+// R1-b: the procedural pose of the opening acts (lean, head, arm IK) runs within this distance of the player, per quality preset, for at most OPEN_IK_MAX men a frame (nearest first, as the candidates are).
+const OPEN_IK_M={low:22,medium:45,high:75},OPEN_IK_MAX=14;
 const POSE_HOLD_MAX_DRIFT_M=1.5;   // a walking/running soldier moves < 0.5 m in the longest hold (0.067 s); anything more is not a normal frame
 const UP_AXIS=new THREE.Vector3(0,1,0);
 // Per-frame scratch of update() (single-threaded, never retained across calls).
@@ -109,6 +114,8 @@ export class M01Characters {
     this.instances=new Map();this.clips=new Map();this.revision=0;this.disposed=false;this.stats={};
     // R3-a: the phase of the sappers' operation (sim.sapperOps, set by update()) and the props the sappers hold (m01-sapper-kit.js); presentation only.
     this.ops=null;this.sapperKit=null;
+    // R1-b: the props of the opening life's acts (m01-opening-kit.js) and the men whose procedural pose (m01-opening-ik.js) is applied after the foot IK this frame; presentation only.
+    this.openingKit=null;this.openList=[];
     // T37 foot IK / ramp lean / hand pin (m01-foot-ik.js, m01-hand-pin.js). Presentation only; off = plain clip output, bit-identical.
     this.ikEnabled=Boolean(ik);this.ikMeasure=Boolean(ikMeasure);this.world=world;this.ikState=createIkDiagnosticsState();this.ikEntries=[];
     if(debug&&typeof window!=='undefined'){this.ikDebug={setEnabled:on=>this.setIkEnabled(on),isEnabled:()=>this.ikEnabled};window.m01CharacterIkDebug=this.ikDebug;}
@@ -225,6 +232,8 @@ export class M01Characters {
   sample(actor,time,actors=[],pose=actorPose(actor,time),battleClock){
     const offset=(hash(actor.id)%1000)/250;
     if(pose.name==='fallen')return {clip:'fallen',time:Number.isFinite(actor.diedAt)&&time>=actor.diedAt?Math.min(1.4,time-actor.diedAt):1.4,loop:false};
+    // R1-b: the act of a man of the opening (actor.act, until the first bomb of 04:34) chooses his clip; null for every other man, for the walking acts and while he is shaken or hit.
+    const opening=openingSample(actor,time,offset,this.clipView,pose);if(opening)return opening;
     if(actor.mg34Loader){const phase=actor.mg34Loader.phase,name=`mg34_loader_prone_${phase}`;
       if(this.clips.has(name))return {clip:name,time:Math.max(0,time-actor.mg34Loader.startedAt),loop:phase==='idle'};
       return {clip:phase==='leave'?'walk':'pinned',time:time+offset,loop:true};}
@@ -301,7 +310,7 @@ export class M01Characters {
       // The existing simulation refills the magazine and waits five seconds. Presentation samples that same interval.
       const reload=this.clips.get('rkm_reload')?.duration??3.4;
       if(actor.rounds===20&&actor.cooldown>0&&age>=burst&&age<burst+reload)return {clip:'rkm_reload',time:age-burst,loop:false};
-      if(battleClock<4*3600+33*60+10&&!Number.isFinite(actor.firedAt)&&!pose.moving)return {clip:'rkm_clean',time:time+offset,loop:true};
+      if(kowalCleans(actor,battleClock,pose.moving))return {clip:'rkm_clean',time:time+offset,loop:true};   // R1-b: while the opening has him, the cleaning is one of his acts
       const kGait=resolveLocomotionGait(actor,pose,time);
       if(kGait!=='idle'){
         const kClip=actor.state==='RETREAT'||kGait==='run'||kGait==='sprint'?'rkm_run':'rkm_walk';
@@ -359,6 +368,8 @@ export class M01Characters {
       weaponBone,dMuzzle:[0,0,0],dMuzzleOk:false,dProne:null,dBlend:null,dTime:0,dLoop:false,dIk:false};
     v.player=new AnimationPlayer(v.mixer);
     if(actor.role==='ENGINEER')v.kit=(this.sapperKit??=new SapperKit()).attach(root);   // R3-a: pliers, tester, coil and crate on the bones, hidden until a phase asks for them
+    v.okit=(this.openingKit??=new OpeningKit()).attach(root,actor.id);   // R1-b: binoculars, cigarette, mug, map, note, handset and phone, ammunition box, bag, meter and coil, hidden until an act asks for them (null for a man with none)
+    v.dAct=null;v.dOpen=false;
     // Reduced pose rate (far actors): while `hold.frozen` the bone-matrix recompute and texture upload of an already uploaded pose are skipped.
     // `serial` counts applied poses, so a pose is always uploaded at least once before any frame may reuse it.
     v.posePhase=animationUnit(animationSeed(actor.id),11);v.appliedTime=-Infinity;v.hold={frozen:false,serial:0};v.view=null;v.sampleClip=null;
@@ -518,6 +529,7 @@ export class M01Characters {
       layers.length=layerCount;
       v.player.apply(layers);
       if(v.kit)this.sapperKit.sync(v.kit,this.ops?.roles?.[a.id],this.ops);
+      if(v.okit)this.openingKit.sync(v.okit,openingProps(a,time),time);   // R1-b: the props of the act the man is in
       v.action=v.player.target;v.clip=plan.clip;
       // Cache the clip-sampled pose BEFORE any additive torso/arm correction, so a repeated sim time is bit-identical.
       if(v.spineBone&&v.spineClipQuat)v.spineClipQuat.copy(v.spineBone.quaternion);
@@ -533,7 +545,8 @@ export class M01Characters {
         }
       }
       const meshes=v.meshes,proneUp=a.mg34Prone&&a.mg34Prone.phase!=='standing'&&this.hasProne();
-      const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!a.civilian&&!mgCrew(a)&&!(ckmAtPost(a)&&this.hasCKM()),
+      // (R1-b: an act that puts both hands to work slings the rifle: its mesh is not drawn while the act lasts)
+      const armed=a.alive&&a.state!=='WOUNDED'&&!a.carriedBy&&a.role!=='MEDIC'&&!a.civilian&&!mgCrew(a)&&!(ckmAtPost(a)&&this.hasCKM())&&!(a.act&&HANDS_BUSY.has(a.act.k)),
         kowal=a.id==='szymon_kowal',bak=a.id==='jozef_bak',bipod=clip.userData?.bipod??'folded',castShadow=quality!=='low'&&d<35;
       for(let i=0;i<meshes.length;i++){
         const n=meshes[i];
@@ -561,10 +574,20 @@ export class M01Characters {
       v.dProne=(mgGunner(a)&&a.mg34Prone)?{phase:a.mg34Prone.phase,startedAt:a.mg34Prone.startedAt,progress:a.mg34Prone.progress,rounds:a.mg34Prone.burst?.rounds??0,emitted:a.mg34Prone.burst?.emitted??0,shot:a.shot,firedAt:a.firedAt,eye:eyePosition(a),hitboxes:actorHitboxes(a),muzzle:muzzlePosition(a,time)}:null;
       visible.push(v);
       if(ikOn){const e=this.ikEntries[ikCount]??={actor:null,inst:null,distance:0,view:null};e.actor=a;e.inst=v;e.distance=d;e.view=null;ikCount++;}
+      v.dAct=a.act?.k??null;v.dOpen=false;
+      if(ikOn&&a.act&&d<=OPEN_IK_M[preset]&&this.openList.length<OPEN_IK_MAX){v.openActor=a;this.openList.push(v);}   // R1-b: the procedural pose of the act, after the foot IK below
     }
     // Foot IK, ramp lean and hand pin run after every clip/additive correction, on the already sampled pose of the selected actors.
     if(ikOn){updateActorsIk(this.ikEntries,ikCount,quality,time,world,this.ikState,this.ikMeasure);for(let i=0;i<ikCount;i++){const e=this.ikEntries[i];e.actor=e.inst=e.view=null;}}
     else this.ikState.recordDisabled(selected.size,quality);
+    // R1-b: the lean, the head and the hands of the opening acts, on top of the clip and the foot IK; captured first (when the IK pass has not) so that the next frame's restoreIkPose undoes it.
+    if(this.openList.length){
+      for(let i=0;i<this.openList.length;i++){
+        const v=this.openList[i],a=v.openActor,spec=a?openingPose(a,time):null;v.openActor=null;
+        if(spec){if(!v.ikApplied){captureIkPose(v.ikRig);v.ikApplied=true;}v.dOpen=applyOpeningPose(v,spec);}
+      }
+      this.openList.length=0;
+    }
     for(let ci=0;ci<candidateCount;ci++){
       const a=cands[ci].a;
       if(selected.has(a.id)&&a.carriedBy&&a.task!=='station_wounded'&&(!a.carry||a.carry.phase==='carry')&&selected.has(a.carriedBy)){
@@ -602,6 +625,7 @@ export class M01Characters {
       ...(fading?{blendClip:fading.clip,blendWeight:fading.weight}:{}),
       weapon:v.weapon,weaponLOD:v.weaponLOD,muzzle:v.dMuzzleOk?[v.dMuzzle[0],v.dMuzzle[1],v.dMuzzle[2]]:undefined,weaponMeshes};
     if(v.dIk&&v.ik)entry.ik=v.ik;   // the live per-actor IK record, as before
+    if(v.dAct){const props=[];if(v.okit)for(const k in v.okit)if(v.okit[k].visible)props.push(k);entry.opening={act:v.dAct,pose:v.dOpen,props};}   // R1-b: the act drawn, whether its procedural pose was applied, and the props shown
     return entry;
   }
   /** True when this far instance keeps its previous pose this frame. Never for carried/carrying actors, MG34/CKM crews, the prone MG34 gunner and
@@ -640,6 +664,6 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
-  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.mergeCache.dispose();this.sapperKit?.dispose();this.assets.dispose();
+  dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.mergeCache.dispose();this.sapperKit?.dispose();this.openingKit?.dispose();this.assets.dispose();
     if(typeof window!=='undefined'&&this.ikDebug&&window.m01CharacterIkDebug===this.ikDebug)delete window.m01CharacterIkDebug;}
 }
