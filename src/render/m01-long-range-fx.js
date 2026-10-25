@@ -58,7 +58,9 @@ export const IMPACT_POOL_SLOTS=64;
 export const IMPACT_DRAW_BY_TIER=Object.freeze({low:14,medium:24,high:36});
 export const IMPACT_DENSITY=Object.freeze({low:.55,medium:.78,high:1});
 /** Minimum on-screen diameter of an impact puff (drawing-buffer px at 1366x768) and its physical radius up close (m). */
-export const IMPACT_MIN_PX=4,IMPACT_RADIUS_M=.2;
+export const IMPACT_MIN_PX=4,IMPACT_RADIUS_M=.3;
+/** From here the dust is one small opaque disc (the 'speck' batch, a sphere): the soft dust texture of the billboard has too little alpha to survive at 4 px (measured: invisible at 150-200 m). */
+export const IMPACT_SPECK_FROM_M=60;
 /** Beyond this the chips are sub-pixel and are not spent (sparks: 1.6x); the dust keeps its pixel floor. */
 export const IMPACT_DETAIL_M=90;
 const focal=(fovDeg,vh)=>(vh/2)/Math.tan(fovDeg*Math.PI/360);
@@ -137,17 +139,22 @@ export function classifyRoundEnd(world,end,{trees=null,dir=null}={}){
 
 /**
  * Draws every arrived impact of the pool at `time` through `put(name,point,scale,dir,opacity,color,seed,variant)` (the view's batch writer): dust puffs ('puff'),
- * sparks off steel ('spark') and chips off stone/brick/wood ('chip', only near). `cam` = camera position, `P`/`SC` = scratch point and scale array owned by
- * the caller. Allocation-free. Returns the number of impacts drawn (<= the tier's cap).
+ * sparks off steel ('spark'), chips off stone/brick/wood ('chip', only near) and, from IMPACT_SPECK_FROM_M, one disc ('speck') in place of the puffs. `cam` = camera
+ * position, `P`/`SC` = scratch point and scale array owned by the caller, `tint` = an optional scratch Color (setHex/multiplyScalar) darkened by `daylight`. Allocation-free. Returns the number of impacts drawn (<= the tier's cap).
  */
-export function drawRoundImpacts(pool,time,cam,fovDeg,vh,quality,put,P,SC){
+export function drawRoundImpacts(pool,time,cam,fovDeg,vh,quality,put,P,SC,tint=null,daylight=.5){
   const cap=IMPACT_DRAW_BY_TIER[quality]??IMPACT_DRAW_BY_TIER.low;let drawn=0;
   for(let i=0;i<pool.slots&&drawn<cap;i++){
     const age=time-pool.at[i];if(!(age>=0))continue;
     const mat=pool.mat[i],p=PROFILES[mat];if(age>=p.life)continue;
     const x=pool.x[i],y=pool.y[i],z=pool.z[i],seed=pool.seed[i],d=Math.max(.5,Math.hypot(x-cam.x,y-cam.y,z-cam.z)),k=age/p.life;drawn++;
     const dust=impactDustCount(mat,d,quality);
-    if(dust){
+    if(dust&&d>=IMPACT_SPECK_FROM_M){
+      // One disc: it swells in the first 0.12 s and shrinks away over the last 55 % of its life (no per-instance opacity on a sphere batch).
+      const grow=Math.min(1,age/.12),shrink=k<.45?1:Math.max(0,1-(k-.45)/.55),r=impactPuffRadius(d,0,fovDeg,vh)*(.55+.65*grow)*shrink;
+      P.x=x;P.y=y+.08+age*p.rise*.5;P.z=z;
+      if(tint){tint.setHex(p.color);tint.multiplyScalar(.5+.5*Math.min(1,Math.max(0,daylight)));put('speck',P,r,null,1,tint);}else put('speck',P,r,null,1,p.color);
+    }else if(dust){
       const fadeIn=Math.min(1,age/.08),life=fadeIn*Math.pow(1-k,1.18);
       for(let j=0;j<dust&&life>0;j++){
         const n0=visualNoise(seed,30+j*4),n1=visualNoise(seed,31+j*4),n2=visualNoise(seed,32+j*4),a=n0*Math.PI*2,r=age*p.spread*(.45+n1*.75);

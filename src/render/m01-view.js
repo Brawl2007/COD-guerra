@@ -331,13 +331,14 @@ export class M01View {
     this.materials.flash=new THREE.MeshBasicMaterial({color:'#ffd98c',toneMapped:false,fog:false});
     this.materials.tracer=new THREE.MeshBasicMaterial({color:'#ffb35a',toneMapped:false,fog:false});
     this.materials.puff=new THREE.MeshBasicMaterial({color:'#8c7c66',transparent:true,opacity:.62,depthWrite:false});
+    this.materials.speck=new THREE.MeshBasicMaterial({color:'#ffffff'});   // R2-c: far impact dust, an opaque disc tinted per instance (fogged like the scene)
     this.materials.gunSmoke=new THREE.MeshBasicMaterial({color:'#b9b8ae',transparent:true,opacity:.55,depthWrite:false,fog:false});
     // Instance colours (setColorAt) tint these; vertexColors must stay off (no `color` attribute on the tetrahedra: it rendered black).
     this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
     this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
     this.initShotFx();
-    for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
+    for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128],['speck','speck',48]]){
       const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
       const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects,name==='puff'?'dust':'smoke'):
         new THREE.InstancedMesh(geometry,this.materials[material],capacity);
@@ -345,6 +346,7 @@ export class M01View {
     }
     // Allocate instance colours before the first chip, keeping its shader variant stable.
     this.fireBatches.chip.setColorAt(0,this.fireColor.set('#ffffff'));
+    this.fireBatches.speck.setColorAt(0,this.fireColor.set('#ffffff'));
     this.fireBatches.tracer.setColorAt(0,this.fireColor.set('#ffffff'));   // R2-c: tracers are tinted per instance (faint in daylight), allocated up front
     this.fireBatches.muzzle.setColorAt(0,this.fireColor.set('#ffffff'));   // per-shot flash tint (daylight), allocated up front so the shader variant is stable
     this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
@@ -442,7 +444,7 @@ export class M01View {
     out.x=m.x;out.y=m.y;out.z=m.z;
   }
   updateFire(sim){
-    const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
+    const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0,speck:0};
     const far=p=>Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);
     const put=(name,p,scale,dir=null,opacity=1,color=null,styleSeed=null,variant=0)=>{
       const batch=this.fireBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count)return;
@@ -514,7 +516,7 @@ export class M01View {
     const gameplayTracers=counts.tracer;
     for(const r of display.rounds){if(counts.tracer-gameplayTracers>=DISPLAY_TRACER_CAP)break;tracer(r);}
     // R2-c: the arrived impacts of the Polish rounds (npc-shot.end), sized in pixels like the flashes, thinned by tier.
-    drawRoundImpacts(lr.pool,time,cam,this.camera.fov||70,this.owner?.canvas?.height||768,this.owner?.quality,put,lr.point,lr.scale);
+    drawRoundImpacts(lr.pool,time,cam,this.camera.fov||70,this.owner?.canvas?.height||768,this.owner?.quality,put,lr.point,lr.scale,lr.tint,daylightNow);
     // In-place compaction (the old filter() made a new array every frame).
     {let w=0;for(let r=0;r<this.impacts.length;r++){const i=this.impacts[r],p=impactProfile(i.material);if(time>=i.start&&time-i.start<Math.max(1.15,p.life))this.impacts[w++]=i;}this.impacts.length=w;}
     for(const i of this.impacts){
@@ -968,7 +970,7 @@ export class M01View {
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.demolitionState={entries:[],pieces:[],flash:null};
     this.longRange?.pool.reset();this.shotFx?.smoke.reset();if(this.shotFx){this.shotFx.list.count=0;this.shotFx.frames=0;}
-    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
+    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0,speck:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
   drawGraded(post){

@@ -88,23 +88,33 @@ test('pool bounds: it never grows, never evicts an impact that has not arrived, 
 
 test('the draw: bounded by the tier, every class draws what its profile says, far away the dust keeps a pixel floor and chips are not spent, nothing is drawn before arrival',()=>{
   const cam={x:0,y:1.7,z:0},P={x:0,y:0,z:0},SC=[0,0,1],f=(768/2)/Math.tan(70*Math.PI/360);
-  const calls={puff:0,spark:0,chip:0},put=name=>{calls[name]++;};
+  const calls={puff:0,spark:0,chip:0,speck:0},put=name=>{calls[name]++;};
   const fill=n=>{const pool=new RoundImpactPool();for(let i=0;i<n;i++)pool.schedule(40+i*3,0,10,10,i%6,i+1,10);return pool;};
   for(const q of ['low','medium','high']){
-    const pool=fill(64);calls.puff=calls.spark=calls.chip=0;
+    const pool=fill(64);calls.puff=calls.spark=calls.chip=calls.speck=0;
     assert.equal(drawRoundImpacts(pool,9.9,cam,70,768,q,put,P,SC),0,'before arrival');
     const n=drawRoundImpacts(pool,10.05,cam,70,768,q,put,P,SC);
     assert.equal(n,Math.min(IMPACT_DRAW_BY_TIER[q],pool.live(10.05)),`${q}: capped at ${IMPACT_DRAW_BY_TIER[q]}`);
-    assert.ok(calls.puff+calls.spark+calls.chip>=n,`${q}: something per impact`);
-    assert.ok(calls.puff<=n*3&&calls.chip<=n*3&&calls.spark<=n*3,'bounded per impact');
+    assert.ok(calls.puff+calls.spark+calls.chip+calls.speck>=n,`${q}: something per impact`);
+    assert.ok(calls.puff<=n*3&&calls.chip<=n*3&&calls.spark<=n*3&&calls.speck<=n,'bounded per impact (one disc far away)');
   }
   assert.ok(IMPACT_DRAW_BY_TIER.low>=14&&IMPACT_DRAW_BY_TIER.low<IMPACT_DRAW_BY_TIER.medium&&IMPACT_DRAW_BY_TIER.medium<IMPACT_DRAW_BY_TIER.high);
-  // The scale handed to the billboard batch is the puff WIDTH (a unit quad): at 150..600 m it is never narrower than IMPACT_MIN_PX pixels, in the sim's own world units.
-  for(const d of [150,300,600]){
-    const pool=new RoundImpactPool();pool.schedule(d,0,0,10,IMPACT_MATERIALS.indexOf('earth'),5,10);let w=0,ok=0;
-    drawRoundImpacts(pool,10.1,{x:0,y:0,z:0},70,768,'high',(name,p,sc)=>{if(name==='puff'){ok++;w=Math.max(w,sc[0]);}},{x:0,y:0,z:0},[0,0,1]);
-    assert.ok(ok>=1&&w*f/d>=IMPACT_MIN_PX*.79,`${d} m: widest puff ${(w*f/d).toFixed(1)} px`);   // x.8 = the smallest of the per-puff size variation
+  // Far (>= 60 m) the dust is ONE opaque disc whose scale is its radius (a sphere): its diameter is never under IMPACT_MIN_PX pixels. Near, the puff scale is the billboard WIDTH.
+  for(const d of [60,150,300,600,1000]){
+    const pool=new RoundImpactPool();pool.schedule(d,0,0,10,IMPACT_MATERIALS.indexOf('earth'),5,10);let px=0,discs=0,puffs=0;
+    drawRoundImpacts(pool,10.1,{x:0,y:0,z:0},70,768,'high',(name,p,sc)=>{if(name==='speck'){discs++;px=Math.max(px,2*sc*f/d);}if(name==='puff')puffs++;},{x:0,y:0,z:0},[0,0,1]);
+    assert.equal(discs,1,`${d} m: one disc`);assert.equal(puffs,0);assert.ok(px>=IMPACT_MIN_PX*.55,`${d} m: disc ${px.toFixed(1)} px across at 0.1 s (swelling from .55)`);
+    pool.reset();pool.schedule(d,0,0,10,IMPACT_MATERIALS.indexOf('earth'),5,10);px=0;
+    drawRoundImpacts(pool,10.35,{x:0,y:0,z:0},70,768,'high',(name,p,sc)=>{if(name==='speck')px=Math.max(px,2*sc*f/d);},{x:0,y:0,z:0},[0,0,1]);
+    assert.ok(px>=IMPACT_MIN_PX-1e-6,`${d} m: full disc ${px.toFixed(1)} px across`);
   }
+  {const pool=new RoundImpactPool();pool.schedule(30,0,0,10,IMPACT_MATERIALS.indexOf('earth'),5,10);let w=0,puffs=0,discs=0;
+    drawRoundImpacts(pool,10.2,{x:0,y:0,z:0},70,768,'high',(name,p,sc)=>{if(name==='puff'){puffs++;w=Math.max(w,sc[0]);}if(name==='speck')discs++;},{x:0,y:0,z:0},[0,0,1]);
+    assert.ok(puffs>=2&&discs===0&&w>=2*IMPACT_RADIUS_M*.6*.8,`30 m: ${puffs} puffs, widest ${w.toFixed(2)} m`);}
+  // The disc is tinted by daylight when a scratch colour is given (dusk darker than noon), and the tint object is reused, not allocated.
+  {const color={v:0,setHex(h){this.v=h;return this;},multiplyScalar(k){this.v=k;return this;}},seen=[];
+    for(const day of [0,1]){const pool=new RoundImpactPool();pool.schedule(200,0,0,10,0,5,10);drawRoundImpacts(pool,10.1,{x:0,y:0,z:0},70,768,'high',(name,p,sc,dir,op,col)=>{if(name==='speck')seen.push([col===color,col.v]);},{x:0,y:0,z:0},[0,0,1],color,day);}
+    assert.deepEqual(seen,[[true,.5],[true,1]],'the same object, darker at night');}
   // Counts by class / distance / tier.
   const E=IMPACT_MATERIALS.indexOf('earth'),M=IMPACT_MATERIALS.indexOf('metal'),W=IMPACT_MATERIALS.indexOf('wood');
   assert.equal(impactDustCount(M,10,'high'),0);assert.ok(impactSparkCount(M,10,'high')>=2&&impactSparkCount(M,10,'low')>=1);
@@ -150,7 +160,7 @@ function rig(quality,extra={}){
   const geometry=new THREE.BoxGeometry(),material=new THREE.MeshBasicMaterial(),view=Object.create(M01View.prototype);
   Object.assign(view,{camera:(()=>{const c=new THREE.PerspectiveCamera(70,16/9);c.position.set(0,1.7,0);return c;})(),fireDummy:new THREE.Object3D(),fireColor:new THREE.Color(),characters:null,impacts:[],fireBatches:{},
     owner:{quality,canvas:{height:768}},lightingModel:{daylight:.5},...extra});
-  for(const [name,n] of Object.entries({muzzle:96,tracer:48,puff:144,spark:96,smoke:64,chip:128}))view.fireBatches[name]=new THREE.InstancedMesh(geometry,material,n);
+  for(const [name,n] of Object.entries({muzzle:96,tracer:48,puff:144,spark:96,smoke:64,chip:128,speck:48}))view.fireBatches[name]=new THREE.InstancedMesh(geometry,material,n);
   return {view,dispose(){Object.values(view.fireBatches).forEach(b=>b.dispose());geometry.dispose();material.dispose();}};
 }
 const sim=(over={})=>({clock:10.2,actors:[],enemyFire:{rounds:[]},display:{rounds:[],fixed:{}},...over});
@@ -179,8 +189,8 @@ test('the view: a Polish round with an end point becomes one impact drawn on arr
       const slot=r.view.longRangeShot(shot({point:{x:200,y:1.4,z:150},end:ground}),{world,clock:10});
       assert.ok(slot>=0);assert.equal(r.view.lastEndMaterial,'earth');
       const arrive=10+Math.hypot(100,1.4)/ROUND_SPEED;
-      r.view.updateFire(sim({clock:arrive-.01}));assert.equal(r.view.fx.puff,0,'not before it arrives');
-      r.view.updateFire(sim({clock:arrive+.1}));r.view.lastClock=arrive+.1;assert.ok(r.view.fx.puff>=1,`${q}: the dust is drawn`);
+      r.view.updateFire(sim({clock:arrive-.01}));assert.equal(r.view.fx.speck,0,"not before it arrives");
+      r.view.updateFire(sim({clock:arrive+.1}));r.view.lastClock=arrive+.1;assert.ok(r.view.fx.speck>=1,`${q}: the dust is drawn`);
       assert.equal(r.view.longRangeDiagnostics.scheduled,1);assert.equal(r.view.longRangeDiagnostics.live,1);
       // An airborne end and a hit: the first draws nothing, the second a body puff.
       assert.equal(r.view.longRangeShot(shot({end:{x:300,y:90,z:150}}),{world,clock:11}),-1);assert.equal(r.view.lastEndMaterial,null);assert.equal(r.view.longRangeDiagnostics.airborne,1);
