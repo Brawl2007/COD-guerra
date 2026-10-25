@@ -1,6 +1,6 @@
 # Handoff do Capitão — M01, 2026-10-25
 
-**Candidata única:** PR #80, `claude/quirky-heisenberg-9l4m7b` @ `29ac84dc`. Branch de preparação do Capitão: `claude/exciting-bohr-k8v5xm` (todas as integrações passam por ela; merge `--no-ff` na #80). `main` intocada; sem deploy.
+**Candidata única:** PR #80, `claude/quirky-heisenberg-9l4m7b` @ `8b9a29e6` (atualizado no fim de 2026-10-25). Branch de preparação do Capitão: `claude/exciting-bohr-k8v5xm` (todas as integrações passam por ela; merge `--no-ff` na #80). `main` intocada; sem deploy.
 **Ordem em vigor:** proposta de reconstrução da M01 + adenda WaW/WWII (2026-10-23); decisão do proprietário: **opção B** (expandir para lá das 07:05 com atos e áreas novas) e fontes do repositório (PDFs em falta listados em `M01_R4_EXPANSION_PLAN.md` §5).
 **Documentos:** `M01_R0_REQUIREMENTS_MATRIX.md` (auditoria), `M01_R4_EXPANSION_PLAN.md` (atos e áreas), `M01_INTEGRATION_LEDGER.md` (topo = integrações de 2026-10-24/25).
 
@@ -16,6 +16,9 @@
 | R2-b IA alemã | `3c8e576d` | fogo polaco real, `safeX` 450 → 250, linhas alternadas, granadas/busca latentes, emenda 18 | 1684/1684 |
 | R2-c longe | `cdb33864` | impactos NPC, traçantes MG34/rkm/ckm, som com atraso | 1700/1700 |
 | R7-a áudio | `29ac84dc` | rio contínuo, ferrovia, outra margem, sem repetições seguidas, etiqueta T45 | 1710/1710 |
+| R3-a sapadores | `77175d85` | etapas (cabo, emenda, teste falhado → 2.º corte), cobertura atrás de sacos, retirada espaçada, emenda 19 | 1745/1745 |
+| R1-b abertura | `1d201f43` | ato I com 20 homens em atividade, reações aos aviões, emenda 20 | 1743/1743 + 38/38 |
+| R4 INC-1 atos | `8b9a29e6` | gestor de atos, cartão às 07:05, Ato VII-a norte (`?act=vii-a`), `acts.enabled=false` | 1797/1797 |
 
 ## Em curso (não integrado)
 
@@ -23,11 +26,10 @@
 
 ## Próximos pacotes (por ordem)
 
-1. R3-a (acima).
-2. Simulação: `end/hit` nas rondas da retaguarda e do rkm do Kowal (impactos visíveis); pó que tapa a vista da IA; falas de ferido.
-3. R1-b abertura 04:30–04:34 mais viva (pátio, sapadores a inspecionar, mensageiro) e ANIM-1 (fumar, munições, binóculos).
-4. R4 INC-1: gestor de atos + cartão às 07:05 + fatia norte 400 × 300 m (plano R4 §6), atrás de `acts.enabled=false`.
-5. Asset: alça da kb wz.29 sem entalhe.
+1. Ato VII-a: visual da fatia (relevo, montes de terra, árvores, legibilidade dos alemães a 70–140 m) e duração do combate (30–60 s é curto).
+2. Simulação: pó que tapa a vista da IA; falas e socorro de feridos; granadas/busca alemãs a aparecer nas rotas (hoje latentes).
+3. R4 WP seguintes (VII-b durante o dia, VII-c retirada ~17:00) só com fontes; Lisewo jogável depende de D-1.
+4. Asset: alça da kb wz.29 sem entalhe; dedos de baixa resolução.
 
 ## Pendentes humanos
 
