@@ -1,6 +1,5 @@
 // Required data contract for M01's existing transient events. Never persisted in a save.
 import {eyePosition} from '../world/spatial.js';
-import {waterCrossing} from '../core/battlefield-audio.js';
 import {M01_DEATH_CAUSES} from './m01-difficulty.js';
 export const BLAST_KINDS=Object.freeze(['grenade','demolition','bomb','shell']);
 export const PASS_KINDS=Object.freeze(['crack','whizz','none']);
@@ -62,5 +61,5 @@ export function validateM01AudioEvent(event){
 }
 export function enemyFireSoundPlan(event,player){
   const eye=eyePosition(player),dx=event.origin.x-eye.x,dz=event.origin.z-eye.z,distance=Math.hypot(dx,event.origin.y-eye.y,dz),angle=Math.atan2(dz,dx)-player.angle;
-  return {distance,pan:Math.sin(angle),front:Math.cos(angle),at:event.at+distance/343,water:waterCrossing(player.x,event.origin.x)};
+  return {distance,pan:Math.sin(angle),front:Math.cos(angle),at:event.at+distance/343};
 }

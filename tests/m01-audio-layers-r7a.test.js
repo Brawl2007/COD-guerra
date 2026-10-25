@@ -7,7 +7,6 @@ import {
   riverBedMix,riverLayerLevels,riverBedVolume,riverAlignmentPeriodMs,RIVER_LAYER_PERIODS_MS,railAmbiencePhase,railSlotKind,planRailAmbienceSlot,
   pickVariant,presentationNoise,SHOT_VARIANTS,FOOTSTEP_VARIANTS,
 } from '../src/core/battlefield-audio.js';
-import {enemyFireSoundPlan} from '../src/game/m01-audio-events.js';
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
 
 const makeAudio=()=>{const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx});assert.equal(audio.init(),true);return {audio,ctx};};
@@ -91,10 +90,6 @@ test('far-bank treatment: acousticBand, shape and shot plan read differently fro
   const {audio}=makeAudio();
   const a=audio.weaponFire('mg34',0,300,{key:'x:1',water:0,distant:true}),b=audio.weaponFire('mg34',0,300,{key:'x:2',water:240,distant:true});
   assert.ok(b.filter.frequency.value<a.filter.frequency.value*.7,`${b.filter.frequency.value} vs ${a.filter.frequency.value}`);
-  // a sim fire event carries the water crossing from the player to the muzzle
-  const plan=enemyFireSoundPlan({origin:{x:300,y:1,z:0},at:1},{x:-20,y:0,z:0,angle:0,crouched:false,prone:false});
-  assert.equal(plan.water,240);
-  assert.equal(enemyFireSoundPlan({origin:{x:-250,y:1,z:0},at:1},{x:-20,y:0,z:0,angle:0}).water,0);
 });
 
 test('repetition guard: no variant twice in a row, no ABAB with four variants, deterministic, off = old behaviour',()=>{
