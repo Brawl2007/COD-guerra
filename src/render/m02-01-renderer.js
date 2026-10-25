@@ -90,6 +90,10 @@ const RIG_TAU = Math.PI * 2;
 const RIG_EMPLACED_ID = 'DE-A05';
 const RIG_EMPLACED_HOME = Object.freeze({ x: 13.2, z: -30.0 });
 
+// Sim facing = atan2(dz, dx), i.e. forward = (cos f, sin f). The rig's forward is -Z, and a Y rotation of phi maps -Z to
+// (-sin phi, -cos phi), so phi = -f - PI/2 (same mapping the camera uses). The old "-f + PI/2" made soldiers face backwards.
+const rigYawFromFacing = (facing) => -(facing ?? 0) - Math.PI / 2;
+
 const rigClamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const rigLerp = (a, b, t) => a + (b - a) * t;
 const rigSmooth = (a, b, x) => {
@@ -214,7 +218,7 @@ function rigBodyGeometry() {
       chest: rBox(0.42, 0.32, 0.245),
       head: rigMerge([
         { g: new THREE.SphereGeometry(0.105, 12, 10), p: [0, 0.1, 0] },
-        { g: rCyl(0.045, 0.05, 0.09, 8), p: [0, 0.025, 0] },
+        { g: rCyl(0.045, 0.05, 0.14, 8), p: [0, 0, 0] }, // neck reaches down into the chest top (was a 4 cm gap)
         { g: rBox(0.026, 0.04, 0.04), p: [0, 0.09, -0.105] }, // nose: readable facing cue
       ]),
       upper: rCyl(0.056, 0.046, RIG_UPPER, 7),
@@ -571,7 +575,7 @@ function rigPose(entry, actor, ctx) {
     && Math.hypot(actor.x - RIG_EMPLACED_HOME.x, actor.z - RIG_EMPLACED_HOME.z) < 1.0;
 
   // ── Transform: position, smoothed yaw, forward fall
-  const targetYaw = -(actor.facing ?? 0) + Math.PI / 2;
+  const targetYaw = rigYawFromFacing(actor.facing);
   if (A.yaw === undefined || teleport) A.yaw = targetYaw;
   else {
     let d = targetYaw - A.yaw;
@@ -735,7 +739,7 @@ function rigPose(entry, actor, ctx) {
     + (surrW > 0.01 ? -0.04 * surrW : 0);
   entry.spine.rotation.set(
     spineX,
-    Math.sin(phase) * 0.08 * walkW + idleSway,
+    Math.sin(phase) * 0.08 * walkW * (1 - 0.7 * aimW) + idleSway, // less torso twist while the weapon is up
     Math.sin(phase) * 0.025 * walkW - 0.04 * aimW,
   );
   entry.spine.position.x = Math.sin(phase) * 0.012 * walkW + Math.sin(clock * 0.6 + seed * 5) * 0.008 * (1 - walkW);
@@ -765,7 +769,9 @@ function rigPose(entry, actor, ctx) {
   _wp[0] += Math.sin(phase) * 0.01 * walkW;
   _wp[1] += Math.abs(Math.sin(phase)) * 0.014 * walkW - spec.drop + 0.012 * kick;
   _wp[2] += spec.zShift + 0.085 * spec.recoil * kick + 0.04 * hitK;
-  _wr[0] += Math.sin(clock * 1.3 + seed * 4) * 0.01 * sway + 0.11 * spec.recoil * kick + aimPitch * aimW + 0.02 * supW * Math.sin(clock * 27 + seed);
+  // Keep the muzzle on the target line when the spine leans (crouch, aim stoop, suppression); recoil/hit flinch stay uncompensated.
+  const spineLean = spineX - 0.035 * kick - hitK;
+  _wr[0] += -spineLean * aimW * (1 - reloadE) + Math.sin(clock * 1.3 + seed * 4) * 0.01 * sway + 0.11 * spec.recoil * kick + aimPitch * aimW + 0.02 * supW * Math.sin(clock * 27 + seed);
   _wr[1] += Math.cos(clock * 0.9 + seed * 5) * 0.012 * sway + Math.sin(phase) * 0.03 * walkW;
   _wr[2] += 0.15 * boltBump;
   entry.weaponGroup.position.set(_wp[0], _wp[1], _wp[2]);
@@ -1290,7 +1296,7 @@ export class M02BenchRenderer {
     for (const a of this.sim.allies ?? []) {
       const soldier = this.#createSoldierMesh({ faction: 'pl', weapon: a.weapon ?? 'wz29', id: a.id, role: a.role });
       soldier.group.position.set(a.x, a.y, a.z);
-      soldier.group.rotation.y = -(a.facing ?? 0) + Math.PI / 2;
+      soldier.group.rotation.y = rigYawFromFacing(a.facing);
       this.targetsGroup.add(soldier.group);
       this.allyMeshes.set(a.id, soldier);
     }
@@ -1299,7 +1305,7 @@ export class M02BenchRenderer {
     for (const e of this.sim.enemies ?? []) {
       const soldier = this.#createSoldierMesh({ faction: 'de', weapon: e.weapon ?? 'kar98k', id: e.id, role: e.role });
       soldier.group.position.set(e.x, e.y, e.z);
-      soldier.group.rotation.y = -(e.facing ?? 0) + Math.PI / 2;
+      soldier.group.rotation.y = rigYawFromFacing(e.facing);
       this.targetsGroup.add(soldier.group);
       this.enemyMeshes.set(e.id, soldier);
     }
