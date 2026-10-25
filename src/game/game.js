@@ -11,8 +11,12 @@ import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 import {ROUND_SPEED} from './m01-fire.js';
 import {roundImpactSoundPlan,grenadeThrowSoundPlan,waterCrossing} from '../core/battlefield-audio.js';
+import {ACTS,M01ActRunner,actOf} from './m01-acts.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
+// R4 INC-1: a new act's checkpoint (schema 3 envelope, src/game/m01-acts.js) lives under its own key, so the schema 2 save of the current act is never overwritten by it
+// and a build with the act switch off never reads it. Only used when the switch is on.
+const ACT_SAVE_KEY='cod-guerra:checkpoint:m01:acts:v3';
 // These are the aerial impacts emitted by M01: the nine scripted ones and the 04:34 raid's schedule (raid_0434_1..N, mission.json raidTargets0434). Schema 2 stores their IDs,
 // so delayed presentation can be recovered without extending simulation/save data.
 const AERIAL_BLAST_IDS=new Set(['station_bomb','forward_post','repair_crater','raid_0530','raid_0530_1','raid_0530_2','raid_0530_3','raid_0530_4','raid_0530_5']);
@@ -21,11 +25,13 @@ const blastScale=id=>id?.startsWith('m01_grenade_')?'small':id?.includes('demoli
 
 export { M01_DIFFICULTY_LABELS } from '../ui/m01-hud.js';export { M01_DIFFICULTY_NEW_GAME } from './m01-difficulty.js';
 export class Game {
-  constructor(canvas,hud,onState=()=>{},missionId='m01_tczew',{touch=false}={}){
+  constructor(canvas,hud,onState=()=>{},missionId='m01_tczew',{touch=false,acts=null}={}){
     this.touch=touch;
+    // R4 INC-1: the act runner exists only when the switch is on (missions/m01-tczew/acts.json, or the QA override of the page: ?acts=1, ?act=vii-a). Off: null, and every line below is the old one.
+    this.acts=(acts?.enabled??ACTS.enabled)?new M01ActRunner({enabled:true,startAct:acts?.startAct??null}):null;
     this.canvas=canvas;this.hud=hud;this.onState=onState;this.m01Hud=new M01HudPresenter(hud);
     this.input=new Input(canvas);this.audio=new AudioSystem();this.renderer=new Renderer(canvas);this.audio.setQuality(this.renderer.quality);
-    this.sim=missionId==='m01_tczew'?new M01Simulation():new Simulation();this.started=false;this.paused=true;this.disposed=false;
+    this.sim=missionId==='m01_tczew'?(this.acts?this.acts.createInitial():new M01Simulation()):new Simulation();this.started=false;this.paused=true;this.disposed=false;
     this.audioDirector=new M01AudioDirector(this.audio);   // presentation only: reads the sim, hooked below by optional-chained lines
     if(this.isM01)this.renderer.prepareM01();
     this.last=performance.now();this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;
@@ -50,9 +56,11 @@ export class Game {
   get mission(){return this.sim.mission;}
   get isM01(){return this.sim.missionId==='m01_tczew';}
   get saveKey(){return this.isM01?'cod-guerra:checkpoint:m01:v2':SAVE_KEY;}
-  get hasSave(){try{return Boolean(localStorage.getItem(this.saveKey));}catch{return false;}}
+  get hasSave(){try{return Boolean(localStorage.getItem(this.saveKey))||Boolean(this.acts&&this.isM01&&localStorage.getItem(ACT_SAVE_KEY));}catch{return false;}}
+  /** R4 INC-1 (switch on only): the act a simulation runs, for the menu and the diagnostics. */
+  get act(){return this.acts&&this.isM01?actOf(this.sim):null;}
   selectMission(id){
-    this.menu();this.sim=id==='m01_tczew'?new M01Simulation():new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
+    this.menu();this.sim=id==='m01_tczew'?(this.acts?this.acts.createInitial():new M01Simulation()):new Simulation();this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();this.endDeathBeat();this.deathOffer=null;this.deaths={};
@@ -63,11 +71,15 @@ export class Game {
     if(this.started)return this.resume();
     if(continueSaved){
       let result;
-      try{result=this.sim.loadCheckpoint(localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
+      if(this.acts&&this.isM01){   // R4 INC-1: a new act's envelope first (it is newer than the completed current act it came from), else the schema 2 save
+        try{result=this.acts.load(localStorage.getItem(ACT_SAVE_KEY)??localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
+        if(result.ok)this.sim=result.sim;
+      }else try{result=this.sim.loadCheckpoint(localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
       if(!result.ok){this.onState('save-error',result.error);return false;}
       this.m01Hud.reset('continue',this.sim.clock);
     }
     this.started=true;this.rebuildSounds();
+    if(this.sim.mission.complete&&this.acts?.next(this.sim)){this.enterNextAct();this.audio.init();this.requestControl();return true;}   // R4: a finished act with a next one opens it
     if(this.sim.mission.complete){this.onState('complete');return true;}
     this.audio.init();this.requestControl();return true;
   }
@@ -126,7 +138,8 @@ export class Game {
   get difficulty(){return this.isM01?this.sim.difficulty:null;}
   /** H9 D5: the UI only passes the chosen level; the simulation owns it. A different level means a fresh M01Simulation (same seed), as in selectMission. */
   restartMission(difficulty){
-    if(this.isM01&&difficulty&&difficulty!==this.sim.difficulty)this.sim=new M01Simulation(undefined,{difficulty});else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
+    if(this.acts&&this.isM01)this.sim=this.acts.createInitial({difficulty:difficulty??this.sim.difficulty});   // R4: a new game starts at the first act (or the QA start act)
+    else if(this.isM01&&difficulty&&difficulty!==this.sim.difficulty)this.sim=new M01Simulation(undefined,{difficulty});else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
     this.messageUntil=0;this.checkpointUntil=0;this.hitUntil=0;this.m01Hud.reset('new',this.sim.clock);
@@ -327,20 +340,42 @@ export class Game {
     if(event.type==='restored'){
       this.endDeathBeat();this.rebuildSounds();this.pendingM01HitFeedback=null;this.renderer.resetEffects();this.input.clear();this.m01Hud.reset('restore',this.sim.clock);this.say('A retomar o último checkpoint');
     }
+    if(event.type==='complete'&&this.acts?.next(this.sim)){this.enterNextAct();return;}   // R4: the end of an act with a next one is its transition card, not the debrief
     if(event.type==='complete'){
       this.persistCheckpoint();this.pause();if(document.pointerLockElement===this.canvas)document.exitPointerLock();this.onState('complete');
     }
     this.audioDirector?.handleEvent(event,this.sim);   // after game.js has dispatched its own sounds; reads only
   }
   persistCheckpoint(){
+    if(this.acts&&this.isM01)return this.persistActCheckpoint();
     try{localStorage.setItem(this.saveKey,JSON.stringify(this.sim.checkpoint));}
     catch{this.say('Checkpoint guardado nesta partida. O navegador não permitiu guardá-lo no dispositivo.',2800);}
+  }
+  /** R4 INC-1 (switch on): the current act keeps its schema 2 key (and a new game of it drops a stale new-act save); a new act writes its schema 3 envelope under its own key. */
+  persistActCheckpoint(){
+    try{
+      const saved=this.acts.envelope(this.sim);
+      if(saved.schema===3)localStorage.setItem(ACT_SAVE_KEY,JSON.stringify(saved));
+      else{localStorage.setItem(this.saveKey,JSON.stringify(saved));if(!this.sim.mission.complete)localStorage.removeItem(ACT_SAVE_KEY);}
+    }catch{this.say('Checkpoint guardado nesta partida. O navegador não permitiu guardá-lo no dispositivo.',2800);}
+  }
+  /**
+   * R4 INC-1: the act is over and the runner has a next one. The finished act is saved as it always was (its completed schema 2 checkpoint), then the next act's simulation
+   * replaces it (it opens on its entry card) and is saved at once, so a reload continues there. Presentation state is reset as for a new mission; nothing is decided here.
+   */
+  enterNextAct(){
+    this.persistCheckpoint();
+    this.sim=this.acts.enter(this.sim);this.pendingSounds=[];this.pendingM01HitFeedback=null;
+    this.audio.resetPresentation?.(this.sim.clock,this.sim.renderState);this.audioDirector?.reset(this.sim);
+    this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();this.endDeathBeat();this.deathOffer=null;this.deaths={};
+    this.m01Hud.clear?.();this.m01Hud.reset('new',this.sim.clock);this.input.clear();
+    this.persistCheckpoint();
   }
   say(text,ms=1600){this.hud.message.textContent=text;this.messageUntil=this.sim.clock*1000+ms;}
   updateHud(){
     const now=this.sim.clock*1000,p=this.sim.player;
     if(now>=this.messageUntil)this.hud.message.textContent='';
-    this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'));
+    this.hud.crosshair.classList.toggle('hidden',this.isM01&&(p.aiming||this.sim.scene?.id==='cs_m01_roll_call'||Boolean(this.sim.scene?.card)));
     if(this.isM01){
       // Apresentação de M01: textos, cartelas, fades e avisos lidos da simulação (src/ui/m01-hud.js).
       this.m01Hud.update(this.sim);
@@ -372,7 +407,7 @@ export class Game {
       checkpoints:[...this.sim.checkpointsReached],flags:{...this.sim.flags},scene:this.sim.scene?.id??null,gate:this.sim.gate,
       objectives:structuredClone(this.sim.objectives),parts:this.sim.renderState.parts,enemyAlive:this.sim.enemies.filter(a=>a.alive).length,
       threat:this.sim.threat,ckm:this.sim.ckm,stationEvacuation:this.sim.stationEvacuation,animationPresentation:this.sim.animationPresentation,opening:this.sim.openingView,
-      hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null}}:{})});}
+      hudStatus:this.hud?.objectiveStatus?.textContent??'',hudPresentation:this.m01Hud?.diagnostics??null,...(this.acts?{act:actOf(this.sim)}:{})}}:{})});}
   dispose(){
     if(this.disposed)return;this.disposed=true;cancelAnimationFrame(this.frame);
     this.audioDirector?.dispose();this.m01Hud.dispose();

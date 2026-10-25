@@ -61,6 +61,7 @@ export function sceneBeatFrame(sim){
 export const typedChars=(line,index,elapsed)=>Math.max(0,Math.min(line.length,Math.floor((elapsed-index*HUD_TIMING.lineDelay)*HUD_TIMING.typeRate)));
 /** Fotograma cinematográfico derivado da cena da simulação (id + elapsed). Só apresentação. */
 export function cinematicFrame(scene,battleClock=0){
+  if(scene?.card)return actCardFrame(scene);   // R4: the card of a new act (scene.card, M01AreaSimulation); the current act's scenes carry none
   if(!scene||!LOCKED.has(scene.id))return {locked:false,black:0,card:null};
   const t=Number(scene.elapsed)||0,T=HUD_TIMING;
   if(scene.id==='cs_m01_intro'){
@@ -73,6 +74,17 @@ export function cinematicFrame(scene,battleClock=0){
   const black=Math.max(1-ramp(t,0,T.outroFadeIn),ramp(t,...T.outroFadeOut));
   const opacity=Math.min(ramp(t,.2,.2+T.cardFade),1-ramp(t,T.outroCardUntil-T.cardFade,T.outroCardUntil));
   return {locked:true,black,card:t<T.outroCardUntil?card('roll-call',['Chamada no abrigo',`Tczew — ${clockText(battleClock).slice(0,5)}`],opacity,t-.2):null};
+}
+
+/**
+ * R4 INC-1: the card of a new act (its entry, between the roll call and the new area, and its end, before the debrief). The entry card is black until its last 1.2 s
+ * (the area appears behind it); the end card fades the field to black in 1.5 s. Its lines say what is documented and what is reconstruction; no exact hour.
+ */
+export function actCardFrame(scene){
+  const t=Number(scene.elapsed)||0,end=scene.card.seconds,T=HUD_TIMING;
+  const black=scene.card.kind==='end'?ramp(t,0,1.5):1-ramp(t,end-1.2,end);
+  const opacity=Math.min(ramp(t,.4,.4+T.cardFade),1-ramp(t,end-1.4,end-.9));
+  return {locked:true,black,card:card(scene.id,scene.card.lines,opacity,t-.4)};
 }
 
 /** Transições de objectivos entre dois mapas {id:{state}}; previous=null significa linha de base vazia. */
@@ -184,7 +196,7 @@ export class M01HudPresenter {
     this.updateResumeCard(sim,clock,cine.locked);
     // Estado da ameaça: o texto é exactamente o da simulação.
     this.text('objectiveStatus',sim.mission.status??'');
-    this.text('clock',clockText(sim.battleClock));
+    this.text('clock',sim.clockLabel??clockText(sim.battleClock));   // R4: a new act shows only its approximate label (no exact hour without a source)
     this.updateMarker(this.markerFor(sim),cine.locked||beats.letterbox);
     this.updateTempo(sim.tempo??null,clock,cine.locked);
     this.updateInteraction(sim.interaction??'');
@@ -252,7 +264,8 @@ export class M01HudPresenter {
   updateResumeCard(sim,clock,locked){
     const t=clock-this.resumeAt,active=!locked&&t>=0&&t<HUD_TIMING.resumeCard&&this.kind==='continue';
     const cp=sim.definition.checkpoints.find(c=>c.id===sim.checkpointsReached.at(-1));
-    const data=active?card('resume',['Tczew — pontes do Vístula',`1 de setembro de 1939 · ${clockText(sim.battleClock).slice(0,5)}`,...(cp?[`${cp.label} · ${cp.name}`]:[])],
+    const head=sim.clockLabel?['Tczew — perímetro norte',`1 de setembro de 1939 · ${sim.clockLabel.toLowerCase()}`]:['Tczew — pontes do Vístula',`1 de setembro de 1939 · ${clockText(sim.battleClock).slice(0,5)}`];
+    const data=active?card('resume',[...head,...(cp?[`${cp.label} · ${cp.name}`]:[])],
       Math.min(ramp(t,.3,.3+HUD_TIMING.cardFade),1-ramp(t,HUD_TIMING.resumeCard-.7,HUD_TIMING.resumeCard)),t-.3):null;
     // As linhas fixam-se no primeiro fotograma; o relógio da batalha continua a correr no HUD.
     if(data&&this.resumeLines)data.lines=this.resumeLines;else if(data)this.resumeLines=data.lines;

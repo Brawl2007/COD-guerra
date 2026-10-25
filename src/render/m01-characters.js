@@ -640,7 +640,8 @@ export class M01Characters {
     return !actorPoseDue(time,v.appliedTime,quantum,v.posePhase*quantum);
   }
   updateCKM(actors,time,player,quality){
-    const gunner=actors.find(a=>a.id==='ckm_gunner'),d=Math.hypot(player.x-CKM_POSITION.x,player.z-CKM_POSITION.z);
+    // R4 INC-1: a new act places its own gun (gunner.ckm.root / yaw, M01AreaSimulation); the current act's record has neither, so its gun stays at CKM_POSITION facing east.
+    const gunner=actors.find(a=>a.id==='ckm_gunner'),at=gunner?.ckm?.root??CKM_POSITION,yaw=Number.isFinite(gunner?.ckm?.yaw)?gunner.ckm.yaw:-Math.PI/2,d=Math.hypot(player.x-at.x,player.z-at.z);
     if(!gunner?.ckm?.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){
       if(this.ckm)this.ckm.root.visible=false;return;
     }
@@ -654,7 +655,7 @@ export class M01Characters {
     }
     const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
     if(!clip){v.root.visible=false;return;}
-    v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
+    v.root.visible=true;v.root.position.set(at.x,at.y,at.z);v.root.rotation.y=yaw;
     v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
     const age=gunner.ckm.phase==='retreat'?clip.duration:drawn.time;
     v.mixer.setTime(phase==='idle'?age%clip.duration:Math.min(age,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);

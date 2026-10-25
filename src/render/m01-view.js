@@ -13,6 +13,7 @@ import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01TerrainMaterial } from './m01-terrain-material.js';
 import {M01TerrainRelief} from './m01-terrain-relief.js';
 import {M01FarLandscape} from './m01-far-landscape.js';
+import {M01AreaDressing} from './m01-area-dressing.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
@@ -51,6 +52,8 @@ const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.fre
 // SHELL_SCALE times the size of a rifle round's impact. Presentation only: no damage record, no decal, no sound.
 const GUN_SMOKE_SEC=3.2,SHELL_PUFF_SEC=2.4,SHELL_SCALE=3;
 const BOMB_NOSE=new THREE.Vector3(0,0,-1);
+/** R4 INC-1: which act areas a world carries ('' for the current act's TczewWorld). */
+const areaKey=world=>(world.layout?.areaRegions??[]).map(r=>r.id).join(',');
 const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);
 const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));
 
@@ -179,6 +182,7 @@ export class M01View {
   }
   buildTerrain(world){
     this.world=world;this.terrain?.setWorld(world);   // read-only: bakes the macro mask from the layout
+    this.reliefAreaKey=areaKey(world);
     this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});
     this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});
     this.environment=new M01Environment(this.scene,world,this.materials,{propVertexTextures:this.engine.capabilities.maxVertexTextures>0,surfaceY:(x,z)=>this.terrainRelief.envelope.contains(x,z)?this.terrainRelief.world.terrainHeightAt(x,z):this.terrainRelief.surfaceHeightAt(x,z),onVegetationUpdate:()=>{this.lastFrame=null;}});
@@ -203,8 +207,24 @@ export class M01View {
     {const proxy=this.mesh('box','stone',[-264,-2.5,71],[1,3,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
     {const proxy=this.mesh('box','stone',[-256,-2.5,71],[1,3,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
   }
+  /**
+   * R4 INC-1: a new act's area world flattens the presentation relief over its own region (layout.areaRegions, src/render/m01-terrain-envelope.js) so the drawn ground is the
+   * simulation's ground there. When the active world's areas differ from the ones the relief was built for, the relief and the far landscape are rebuilt for it (behind the
+   * act's entry card) and the area's dressing is made; the current act's world has no area, so for it nothing here ever runs.
+   */
+  syncAreaTerrain(world){
+    const key=areaKey(world);if(key===this.reliefAreaKey)return;
+    this.reliefAreaKey=key;
+    const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
+    this.terrainRelief.dispose();this.farLandscape.dispose();
+    this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});this.terrainRelief.setEnabled(relief);
+    this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
+    for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
+    this.areaDressing?.dispose();this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{ground:texturedSurface('soil',{worldScale:.42,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4})}):null;
+    this.lastFrame=null;
+  }
   syncSolids(world){
-    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}}
+    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}this.syncAreaTerrain(world);}
     this.terrainRelief?.sync(world,this.owner?.quality);
     const fieldRevision=this.environment?.fieldStructures.revision??0;
     for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);
@@ -1017,7 +1037,7 @@ export class M01View {
     if(this.disposed)return;
     this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.repairLine?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
-    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
+    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();this.areaDressing?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
     this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());this.speckGeometry?.dispose();
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
