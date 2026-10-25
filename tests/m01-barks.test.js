@@ -584,6 +584,14 @@ const CASES={
   [D(205)]:{stage:s=>{sapperBar(s,54);near(s,'pawel_krawiec');withLedger(s,{n:unspoken(s,[D(144),D(154)])});},act:s=>barkPoll(s)},   // 144 and 154 (the repair is half done, under way) outrank it in this bare world: made used up
   [D(206)]:{stage:s=>{sapperBar(s,97);near(s,'sapper_3');withLedger(s,{n:unspoken(s,[D(144),D(154)])});},act:s=>barkPoll(s)},
   [D(207)]:{stage:s=>{s.objectives.obj_m01_cover_repair.state='done';s.consumed.evt_m01_repair_complete=s.clock-300;s.consumed.evt_m01_east_demolition=s.clock-2;near(s,'pawel_krawiec');},act:s=>barkPoll(s)},
+  // R1-b (the opening life, src/game/m01-opening.js): the act that says the line asks the director through the `opening` trigger with its node and the man who says it (the player within the rule's hearing)
+  [D(210)]:{stage:s=>near(s,'staszek_pawlak'),act:s=>barkTrigger(s,'opening',{node:'phone_dead',point:s.actor('staszek_pawlak')})},
+  [D(211)]:{stage:s=>near(s,'marek_zielinski'),act:s=>barkTrigger(s,'opening',{node:'alert_order',point:s.actor('marek_zielinski')})},
+  [D(212)]:{stage:s=>near(s,'ckm_loader',10),act:s=>barkTrigger(s,'opening',{node:'ammo_report',point:s.actor('ckm_loader')})},
+  'co_m01_opening_order':{stage:s=>near(s,'pl_west_1'),act:s=>barkTrigger(s,'opening',{node:'courier_report',point:s.actor('pl_west_1')})},
+  'co_m01_opening_alert':{stage:s=>{near(s,'pl_west_1');s.consumed.evt_m01_railway_worker_report=s.clock-5;},act:s=>barkTrigger(s,'opening',{node:'courier_report',point:s.actor('pl_west_1')})},
+  'co_m01_opening_planes':{stage:s=>near(s,'pl_west_2'),act:s=>barkTrigger(s,'opening',{node:'planes_shout',point:s.actor('pl_west_2')})},
+  [D(213)]:{stage:s=>near(s,'marek_zielinski'),act:s=>barkTrigger(s,'opening',{node:'planes_order',point:s.actor('marek_zielinski')})},
   'co_m01_ally_hit':{stage:s=>{withdrawal(s);near(s,'marek_zielinski');withLedger(s,{n:unspoken(s,[D(100),D(101),D(102)])});},act:s=>impact(s,{victim:'pl_east_17',point:{x:s.player.x+10,y:0,z:s.player.z}})},
   'co_m01_cover_rotation':{stage:()=>{},act:s=>barkTrigger(s,'coverRotation',{node:'cv_sandbag_mid_2'})},
 };

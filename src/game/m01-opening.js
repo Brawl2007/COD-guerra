@@ -39,7 +39,7 @@ export const OPENING_ACTS=Object.freeze({
   cable_walk:{walk:true},cable_inspect:{crouch:true,face:'west'},cable_hold:{face:'leader'},cable_wait:{},home:{walk:true},
 });
 const ACT_KEYS=Object.freeze(['k','at','until','rng','n','b','tn','s','hx','hz']);
-const ACT_OPTIONAL=Object.freeze(['f','to','spd']);
+const ACT_OPTIONAL=Object.freeze(['f','to','spd','w']);
 const RECORD_KEYS=Object.freeze(['v','flags','courier','sap']);
 const COURIER_LEGS=Object.freeze(['post','run','deliver','back','cover']);
 const SAP_LEGS=Object.freeze(['rest','out','inspect','back','home']);
@@ -112,7 +112,6 @@ const ZIELINSKI='marek_zielinski';
 const openingSeed=(state,index)=>Math.imul(((state>>>0)^0x0b3a71c3)+Math.imul(index+1,0x9e3779b9)|0,2654435761)>>>0;
 const nextU=st=>{st.rng=(Math.imul(1664525,st.rng)+1013904223)>>>0;return st.rng/4294967296;};
 const between=(st,[lo,hi])=>lo+(hi-lo)*nextU(st);
-const t3=v=>+v.toFixed(3);
 const seedOf=st=>(nextU(st)*4294967296)>>>0;
 /** Independent uniform sample of (seed, salt), for the glances of a scan: a pure function of the act's own seed and the second. */
 const unitOf=(seed,salt)=>{let h=(seed^Math.imul(salt+1,0x9e3779b1))>>>0;h^=h>>>16;h=Math.imul(h,0x85ebca6b)>>>0;h^=h>>>13;h=Math.imul(h,0xc2b2ae35)>>>0;h^=h>>>16;return (h>>>0)/4294967296;};
@@ -129,8 +128,8 @@ export function newOpening(){
 }
 /** A fresh act for a man the opening meets: a short beat of idle (a different one for each man: nobody starts in step), his stream, his base facing and the place he is sent back to. */
 function newAct(sim,a,tn){
-  const index=OPENING.order.indexOf(a.id),st={k:'idle',at:t3(sim.clock),until:0,rng:openingSeed(sim.rng.state,index),n:0,b:a.facing,tn,s:0,hx:t3(a.x),hz:t3(a.z)};
-  st.until=t3(sim.clock+between(st,[.2,4.5]));st.s=seedOf(st);
+  const index=OPENING.order.indexOf(a.id),st={k:'idle',at:sim.clock,until:0,rng:openingSeed(sim.rng.state,index),n:0,b:a.facing,tn,s:0,hx:a.x,hz:a.z};
+  st.until=sim.clock+between(st,[.2,4.5]);st.s=seedOf(st);
   return st;
 }
 const home=a=>({x:a.act.hx,z:a.act.hz});
@@ -164,7 +163,9 @@ export function updateOpening(sim,dt){
   return q;
 }
 /** The window is over (the first bomb): every act ends, the record goes; the men are where they are and the bombs and the section take them from there. The sappers are not touched: the shelter has them. */
+export function closeOpening(sim){if(sim.timers.opening)endOpening(sim);}
 function endOpening(sim){
+  const q=sim.timers.opening;if(q&&!q.flags.sapReleased)releaseSappers(sim,q);   // (a bomb before the shelter time, in a test: the team is let go where it stands)
   for(const id of OPENING.order){const a=sim.actor(id);if(a?.act)releaseAct(a);}
   const c=sim.actor(OPENING.courier.id);if(c&&c.target&&!c.task){c.target=null;delete c.nav;c.state='GUARD';}
   delete sim.timers.opening;
@@ -185,25 +186,28 @@ function pickAct(sim,q,st,plan,tn){
   return e;
 }
 function startAct(sim,q,a,st,k,sec){
-  st.k=k;st.at=t3(sim.clock);st.until=t3(sim.clock+sec);st.n++;st.s=seedOf(st);delete st.to;
+  st.k=k;st.at=sim.clock;st.until=sim.clock+sec;st.n++;st.s=seedOf(st);delete st.to;delete st.w;
   hook(sim,q,a,st);
 }
 function stepMan(sim,q,a,plan,tn){
   const st=a.act,clock=sim.clock;
   if(a.target&&plan.driver!=='courier'&&dist(a,a.target)>=.8)return;   // somebody else is sending him (the scripted run of Nowicki): he is not ours until he stops
   if(tn>st.tn){   // the tension rose: he reacts after a delay of his own
-    st.tn=tn;st.until=Math.min(st.until,t3(clock+between(st,plan.react??OPENING.reactSec)));
+    st.tn=tn;st.until=Math.min(st.until,clock+between(st,plan.react??OPENING.reactSec));
   }
   if(plan.driver==='courier'&&q.courier.leg!=='post')return;   // out on an errand: the runner's machine decides
   if(clock>=st.until){const e=pickAct(sim,q,st,plan,Math.max(st.tn,tn));startAct(sim,q,a,st,e.act,between(st,e.sec));}
   applyAct(sim,a,st);
 }
-/** The effects of the act on the man, every tick: kneeling and where he looks. */
+/**
+ * The effects of the act on the man, every tick: kneeling, and where he looks. The facing is written when the act's own wish changes (`act.w`, the yaw last wished), not every tick: whatever turns a man
+ * meanwhile (a scripted turn, a later system, a test) is respected until the act wants something else, and a man who only stands keeps the very bits of the facing he was given.
+ */
 function applyAct(sim,a,st){
   const def=OPENING_ACTS[st.k];
   if(def.walk)return;
   a.crouched=Boolean(def.crouch);
-  let yaw=wrap(st.b);
+  let yaw=st.b;
   if(def.face==='east')yaw=0;
   else if(def.face==='courier'){const c=sim.actor(OPENING.courier.id);if(c&&usable(c)&&dist(a,c)<30)yaw=Math.atan2(c.z-a.z,c.x-a.x);}
   else if(def.face==='recipient'){const r=st.to&&sim.actor(st.to);if(r)yaw=Math.atan2(r.z-a.z,r.x-a.x);}
@@ -213,19 +217,35 @@ function applyAct(sim,a,st){
     const t=sim.clock-st.at,g=2.2+1.6*unitOf(st.s,997),i=Math.floor(t/g);
     yaw+=(unitOf(st.s,i)*2-1)*def.scan;
   }
-  a.facing=wrap(yaw);
-  if(a.state!=='ADVANCE')a.state='GUARD';
+  if(Math.abs(yaw)>Math.PI)yaw=wrap(yaw);
+  if(st.w!==yaw){a.facing=yaw;st.w=yaw;}
+}
+/**
+ * The last metres of a walk that has to end ON a place (the runner at his post, a sapper at the camp: R1-a stands the garrison at its posts when the bombs fall, R3-a kneels the sappers at the cable).
+ * moveActor stops 0.8 m short of its goal by design, so the rest is a short straight walk at the same pace and the man is set on the place itself. A place taken by somebody else's body is not forced:
+ * he stays where he is. True when the walk is over.
+ */
+function arrive(sim,a,p,dt,speed){
+  const d=dist(a,p);
+  if(d>=.8){sim.moveActor(a,p,dt,speed);return false;}
+  if(d<=1e-9)return true;
+  if(sim.bodiesNear(a,p.x,p.z,1.2).some(b=>dist(b,p)<(a.radius+b.radius)*.8)){a.state='GUARD';return true;}
+  const step=Math.min(d,speed*dt);
+  if(step>=d){a.facing=Math.atan2(p.z-a.z,p.x-a.x);a.x=p.x;a.z=p.z;a.y=sim.world.heightAt(p.x,p.z);a.state='GUARD';return true;}
+  a.facing=Math.atan2(p.z-a.z,p.x-a.x);a.state='ADVANCE';
+  sim.world.move(a,Math.cos(a.facing)*step,Math.sin(a.facing)*step);
+  return false;
 }
 /** Cuts a man's act short so that he picks the next at once (the sergeant turns to the telephone when the line is called dead). */
 function poke(sim,id,sec,st=null){
   const a=sim.actor(id);if(!a?.act)return;
-  const s=a.act;s.until=Math.min(s.until,t3(sim.clock+between(st??s,sec)));
+  const s=a.act;s.until=Math.min(s.until,sim.clock+between(st??s,sec));
 }
 /** What an act says when it begins: the bark director decides whether it is heard (the player within hearing, once, cooldowns). */
 function hook(sim,q,a,st){
   const h=OPENING_ACTS[st.k].hook;if(!h)return;
-  if(h==='phone_dead'){q.flags.lineDead=t3(sim.clock);barkTrigger(sim,'opening',{node:'phone_dead',point:a});poke(sim,ZIELINSKI,[1,2.2],st);}
-  else if(h==='order'){q.flags.order=t3(sim.clock);barkTrigger(sim,'opening',{node:'alert_order',point:a});}
+  if(h==='phone_dead'){q.flags.lineDead=sim.clock;barkTrigger(sim,'opening',{node:'phone_dead',point:a});poke(sim,ZIELINSKI,[1,2.2],st);}
+  else if(h==='order'){q.flags.order=sim.clock;barkTrigger(sim,'opening',{node:'alert_order',point:a});}
   else if(h==='shout')barkTrigger(sim,'opening',{node:a.id===ZIELINSKI?'planes_order':'planes_shout',point:a});
   else if(h==='deliver')barkTrigger(sim,'opening',{node:'courier_report',point:a});
   else if(h==='ammo')barkTrigger(sim,'opening',{node:'ammo_report',point:a});
@@ -237,13 +257,13 @@ function hook(sim,q,a,st){
 function stepCourier(sim,q,tn,dt){
   const C=OPENING.courier,a=sim.actor(C.id);if(!a||!a.act||!usable(a))return;
   const k=q.courier,st=a.act,clock=sim.clock,post=home(a);
-  const go=(p,spd,leg)=>{k.leg=leg;a.target={x:p.x,z:p.z};delete a.nav;st.k=leg==='cover'?'cover_run':'errand';st.at=t3(clock);st.until=t3(clock+OPEN_SEC);st.spd=spd;delete st.to;};
-  if(tn>=2&&k.leg!=='cover'&&k.leg!=='post'){go(post,C.coverSpeed,'cover');k.since=t3(clock);}
+  const go=(p,spd,leg)=>{k.leg=leg;a.target={x:p.x,z:p.z};delete a.nav;st.k=leg==='cover'?'cover_run':'errand';st.at=clock;st.until=clock+OPEN_SEC;st.spd=spd;delete st.to;delete st.w;};
+  if(tn>=2&&k.leg!=='cover'&&k.leg!=='post'){go(post,C.coverSpeed,'cover');k.since=clock;}
   if(k.leg==='post'){
     // arm the next errand when its cause has come (control is given, or the sergeant has ordered the alert): a delay of the runner's own
     const e=C.errands[k.e];
-    if(e&&k.at<0&&tn<2&&!sim.scene&&(e.after===null||q.flags[e.after]!==undefined))k.at=t3(Math.max(clock,e.after?q.flags[e.after]:0)+between(st,e.afterSec));
-    if(e&&k.at>=0&&clock>=k.at&&tn<2){k.s=0;k.since=t3(clock);go(e.stops[0].at,C.speed,'run');}
+    if(e&&k.at<0&&tn<2&&!sim.scene&&(e.after===null||q.flags[e.after]!==undefined))k.at=Math.max(clock,e.after?q.flags[e.after]:0)+between(st,e.afterSec);
+    if(e&&k.at>=0&&clock>=k.at&&tn<2){k.s=0;k.since=clock;go(e.stops[0].at,C.speed,'run');}
     return;
   }
   const e=C.errands[Math.min(k.e,C.errands.length-1)];
@@ -251,8 +271,8 @@ function stepCourier(sim,q,tn,dt){
     sim.moveActor(a,a.target,dt,st.spd);
     const stop=e.stops[k.s];
     if(dist(a,stop.at)<1.3){
-      k.leg='deliver';k.since=t3(clock);a.target=null;delete a.nav;a.state='GUARD';
-      st.k='deliver';st.at=t3(clock);st.until=t3(clock+between(st,C.deliverSec));st.to=stop.to;st.n++;st.s=seedOf(st);delete st.spd;
+      k.leg='deliver';k.since=clock;a.target=null;delete a.nav;a.state='GUARD';
+      st.k='deliver';st.at=clock;st.until=clock+between(st,C.deliverSec);st.to=stop.to;st.n++;st.s=seedOf(st);delete st.spd;delete st.w;
       alertMan(sim,stop.to);hook(sim,q,a,st);
     }
     return;
@@ -265,12 +285,11 @@ function stepCourier(sim,q,tn,dt){
     }
     return;
   }
-  // back or cover: to his post
-  sim.moveActor(a,a.target,dt,st.spd);
-  if(dist(a,post)<1.1){
-    a.target=null;delete a.nav;a.state='GUARD';a.facing=wrap(st.b);
+  // back or cover: to his post, and onto it (the garrison stands at its posts when the bombs fall: R1-a)
+  if(arrive(sim,a,post,dt,st.spd)){
+    a.target=null;delete a.nav;a.state='GUARD';
     if(k.leg==='back'){k.e++;k.at=-1;}
-    k.leg='post';k.s=0;delete st.spd;delete st.to;st.k='idle';st.at=t3(clock);st.until=t3(clock+between(st,[.6,2.4]));st.s=seedOf(st);
+    k.leg='post';k.s=0;delete st.spd;delete st.to;delete st.w;st.k='idle';st.at=clock;st.until=clock+between(st,[.6,2.4]);st.s=seedOf(st);
   }
 }
 /** A man the runner has told is on alert at once (the warned plan, after a reaction delay of his own), whatever the news has done so far. */
@@ -278,7 +297,7 @@ function alertMan(sim,id){
   const a=sim.actor(id),plan=OPENING.men[id];
   if(!a?.act||!usable(a)||!plan||plan.driver==='sappers')return;
   const st=a.act;
-  if(st.tn<1){st.tn=1;st.until=Math.min(st.until,t3(sim.clock+between(st,plan.react??OPENING.reactSec)));}
+  if(st.tn<1){st.tn=1;st.until=Math.min(st.until,sim.clock+between(st,plan.react??OPENING.reactSec));}
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -293,27 +312,27 @@ function stepSappers(sim,q,tn){
   const clock=sim.clock,sl=L.act;
   for(const a of men)if(a.act.tn<tn)a.act.tn=tn;
   const goTo=(a,p,spd)=>{if(!a.target||Math.abs(a.target.x-p.x)>.01||Math.abs(a.target.z-p.z)>.01){a.target={x:p.x,z:p.z};delete a.nav;}a.act.spd=spd;};
-  const setAct=(a,k)=>{const st=a.act;if(st.k!==k){st.k=k;st.at=t3(clock);st.n++;st.s=seedOf(st);if(k!=='cable_walk'&&k!=='home')delete st.spd;}st.until=t3(clock+OPEN_SEC);};
+  const setAct=(a,k)=>{const st=a.act;if(st.k!==k){st.k=k;delete st.w;st.at=clock;st.n++;st.s=seedOf(st);if(k!=='cable_walk'&&k!=='home')delete st.spd;}st.until=clock+OPEN_SEC;};
   const stay=a=>{a.target=null;delete a.nav;};
   const helperAt=stop=>({x:stop.x+S.followM+.3,z:stop.z+.5});
-  const atHome=a=>dist(a,home(a))<1;
-  if(tn>=2&&sap.leg!=='home'){sap.leg='home';sap.at=t3(clock);}
+  const atHome=a=>dist(a,home(a))<1e-6||!a.target&&dist(a,home(a))<1;   // on the place, or stopped within a metre of it (a body is on it: openingWalk lets him be)
+  if(tn>=2&&sap.leg!=='home'){sap.leg='home';sap.at=clock;}
   if(sap.leg==='rest'){
-    if(sap.until===0)sap.until=t3(clock+between(sl,S.restSec)*.5);
+    if(sap.until===0)sap.until=clock+between(sl,S.restSec)*.5;
     for(const a of men)stay(a);
     setAct(L,'cable_wait');setAct(H,'cable_wait');setAct(W,'binoculars');
-    if(clock>=sap.until&&tn<2){sap.leg='out';sap.at=t3(clock);sap.k=Math.floor(nextU(sl)*S.stops.length)%S.stops.length;}
+    if(clock>=sap.until&&tn<2){sap.leg='out';sap.at=clock;sap.k=Math.floor(nextU(sl)*S.stops.length)%S.stops.length;}
   }else if(sap.leg==='out'){
     const stop=S.stops[sap.k],hp=helperAt(stop);
     goTo(L,stop,S.speed);setAct(L,'cable_walk');goTo(H,hp,S.speed);setAct(H,'cable_walk');setAct(W,'binoculars');
-    if(dist(L,stop)<.9&&dist(H,hp)<.9){sap.leg='inspect';sap.at=t3(clock);sap.until=t3(clock+between(sl,S.inspectSec));stay(L);stay(H);}
+    if(dist(L,stop)<.9&&dist(H,hp)<.9){sap.leg='inspect';sap.at=clock;sap.until=clock+between(sl,S.inspectSec);stay(L);stay(H);}
   }else if(sap.leg==='inspect'){
     setAct(L,'cable_inspect');setAct(H,'cable_hold');setAct(W,'binoculars');
-    if(clock>=sap.until){sap.leg='back';sap.at=t3(clock);}
+    if(clock>=sap.until){sap.leg='back';sap.at=clock;}
   }else if(sap.leg==='back'){
-    for(const a of [L,H]){goTo(a,home(a),S.speed);setAct(a,'cable_walk');}
+    for(const a of [L,H]){if(!atHome(a))goTo(a,home(a),S.speed);setAct(a,'cable_walk');}
     setAct(W,'binoculars');
-    if(atHome(L)&&atHome(H)){sap.leg='rest';sap.until=t3(clock+between(sl,S.restSec));stay(L);stay(H);}
+    if(atHome(L)&&atHome(H)){sap.leg='rest';sap.until=clock+between(sl,S.restSec);stay(L);stay(H);}
   }else{   // home: the planes are heard; back to the camp at a good pace and wait there (look up, then watch), until the shelter takes them
     for(const a of men){if(atHome(a)){stay(a);setAct(a,a===W?'brace':'look_up');}else{goTo(a,home(a),S.homeSpeed);setAct(a,'home');}}
   }
@@ -331,8 +350,10 @@ export function openingWalk(sim,q,a,dt){
   if(!q||q.flags.sapReleased||!SAPPER_IDS.includes(a.id)||!a.act)return false;
   const st=a.act;
   if(a.target){
-    if(dist(a,a.target)>=.8){a.crouched=false;sim.moveActor(a,a.target,dt,st.spd??OPENING.sappers.speed);}
-    else{a.target=null;delete a.nav;a.state='GUARD';}
+    a.crouched=false;
+    const spd=st.spd??OPENING.sappers.speed,toCamp=a.target.x===st.hx&&a.target.z===st.hz;   // the camp is reached exactly; the joints of the cable within a metre
+    const over=toCamp?arrive(sim,a,a.target,dt,spd):dist(a,a.target)<.8||(sim.moveActor(a,a.target,dt,spd),false);
+    if(over){a.target=null;delete a.nav;a.state='GUARD';}
   }else applyAct(sim,a,st);
   return true;
 }
@@ -341,7 +362,7 @@ export function openingWalk(sim,q,a,dt){
 export function holdNowicki(sim){
   const q=sim.timers.opening;
   if(!q||!openingOn(sim)||q.flags.nowickiGone)return false;
-  q.flags.nowickiAt=t3(sim.clock);return true;
+  q.flags.nowickiAt=sim.clock;return true;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -382,6 +403,7 @@ export function validateOpeningAct(a,s,reject){
   if(st.f!==undefined&&(!Number.isInteger(st.f)||st.f<0||st.f>2))bad('first');
   if(st.to!==undefined&&(typeof st.to!=='string'||!/^[a-z0-9_]{1,40}$/.test(st.to)))bad('destinatário');
   if(st.spd!==undefined&&!fin(st.spd,0,8))bad('passo');
+  if(st.w!==undefined&&!(Number.isFinite(st.w)&&Math.abs(st.w)<=Math.PI+1e-9))bad('olhar');
 }
 /** The data this module relies on (tests): every errand stop and every sapper stop is on free ground, a free way apart from the men it is for. */
 export function openingDataErrors({blockedAt,heightAt,actors}){

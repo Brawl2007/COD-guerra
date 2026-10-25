@@ -20,8 +20,8 @@ const unit=(seed,salt)=>{let h=(seed^Math.imul(salt+1,0x9e3779b1))>>>0;h^=h>>>16
 const tOf=(act,time)=>Math.max(0,time-act.at),leftOf=(act,time)=>act.until-time;
 /** The ease of a held pose: in over `inSec` from the start of the act, out over `outSec` before its end. */
 const ease=(act,time,inSec=.7,outSec=.6)=>Math.min(smooth(tOf(act,time)/inSec),smooth(leftOf(act,time)/outSec));
-/** The acts that put both hands to work: the rifle is slung while they last (the renderer hides the rifle's mesh, the sling is not modelled). */
-export const HANDS_BUSY=Object.freeze(new Set(['map','binoculars','smoke','coffee','phone','phone_dead','ammo_check','aid_kit','deliver','errand','cable_inspect','cable_hold','cable_walk']));
+/** The acts that put both hands to work: the rifle is slung while they last (the renderer hides the rifle's mesh, the sling is not modelled); in the others (a cigarette, a mug, the note) one hand still holds it. */
+export const HANDS_BUSY=Object.freeze(new Set(['map','binoculars','phone','phone_dead','ammo_check','aid_kit','cable_inspect','cable_hold']));
 
 /** The clip candidate of a man whose act asks for one, or null when the ordinary rules decide (the walking acts, `idle`, and every man without an act). */
 export function openingSample(actor,time,offset,clips,pose){
@@ -52,9 +52,10 @@ export function openingSample(actor,time,offset,clips,pose){
 export const kowalCleans=(actor,battleClock,moving)=>actor.act?actor.act.k==='clean_rkm':battleClock<4*3600+33*60+10&&!Number.isFinite(actor.firedAt)&&!moving;
 
 // ---- the procedural pose -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-const POLE_L=[-.26,-.2,-.08],POLE_R=[.26,-.2,-.08];
+// Where the elbow points ([right, up, forward] metres from the shoulder): down and a little out is the natural carriage (hands at the face, the mouth, a held object); out and down for the telephone, the map and the box.
+const DOWN_L=[-.12,-.7,.04],DOWN_R=[.12,-.7,.04],OUT_L=[-.32,-.5,-.05],OUT_R=[.32,-.5,-.05],EAR_R=[.5,-.3,-.05];
 // One reused record per call site: the result is read at once by the renderer (no allocation per man per frame).
-const SPEC={lean:0,head:0,l:null,r:null},HAND_L={a:'head',o:[0,0,0],w:0,p:POLE_L},HAND_R={a:'head',o:[0,0,0],w:0,p:POLE_R},DIR={a:'shoulder',dir:[0,0,0],len:.5,w:0,p:POLE_R};
+const SPEC={lean:0,head:0,l:null,r:null},HAND_L={a:"head",o:[0,0,0],w:0,p:DOWN_L},HAND_R={a:"head",o:[0,0,0],w:0,p:DOWN_R},DIR={a:"shoulder",dir:[0,0,0],len:.5,w:0,p:DOWN_R};
 const hand=(rec,a,o0,o1,o2,w,p)=>{rec.a=a;rec.o[0]=o0;rec.o[1]=o1;rec.o[2]=o2;rec.w=w;rec.p=p;return rec;};
 const EAST_UP=Object.freeze([.88,.46,.05]);
 /**
@@ -67,32 +68,32 @@ export function openingPose(actor,time){
   SPEC.lean=0;SPEC.head=0;SPEC.l=null;SPEC.r=null;
   switch(act.k){
     case 'binoculars':   // both hands raise the glasses to the eyes, hold them, lower them
-      SPEC.l=hand(HAND_L,'head',-.045,.085,.2,w,POLE_L);SPEC.r=hand(HAND_R,'head',.045,.085,.2,w,POLE_R);return SPEC;
+      SPEC.l=hand(HAND_L,"head",-.045,.085,.2,w,DOWN_L);SPEC.r=hand(HAND_R,"head",.045,.085,.2,w,DOWN_R);return SPEC;
     case 'smoke':{       // the cigarette is in his right hand; every few seconds the hand goes to the mouth for a drag
       const P=7+unit(act.s,1)*2.5,ph=(t+unit(act.s,2)*P)%P,w2=Math.min(smooth(ph/.5),smooth((2.3-ph)/.6))*clamp01(Math.min(t/.6,leftOf(act,time)/.6));
-      SPEC.head=.1*w2;SPEC.r=hand(HAND_R,'head',.03,-.005,.17,w2,POLE_R);return SPEC;}
+      SPEC.head=.1*w2;SPEC.r=hand(HAND_R,"head",.03,-.005,.17,w2,DOWN_R);return SPEC;}
     case 'coffee':{      // the mug in his right hand; a sip every ten seconds or so
       const P=9+unit(act.s,1)*3,ph=(t+unit(act.s,2)*P)%P,w2=Math.min(smooth(ph/.6),smooth((2.8-ph)/.7))*clamp01(Math.min(t/.6,leftOf(act,time)/.6));
-      SPEC.head=.16*w2;SPEC.r=hand(HAND_R,'head',.025,-.02,.18,w2,POLE_R);return SPEC;}
+      SPEC.head=.16*w2;SPEC.r=hand(HAND_R,"head",.025,-.02,.18,w2,DOWN_R);return SPEC;}
     case 'phone':case 'phone_dead':{
       let rx=.095,ry=.04,rz=.02;
       if(act.k==='phone_dead'&&t>2.6){const q=(t-2.6)%4.4,away=Math.min(smooth(q/.5),smooth((2.6-q)/.5));rx=.095+.04*away;ry=.04-.12*away;rz=.02+.3*away;}   // the handset away from the ear: he looks at it, shakes it
-      SPEC.r=hand(HAND_R,'head',rx,ry,rz,w,POLE_R);SPEC.l=hand(HAND_L,'head',-.1,-.36,.2,w,POLE_L);SPEC.head=act.k==='phone_dead'?-.12*w:0;return SPEC;}
+      SPEC.r=hand(HAND_R,"head",rx,ry,rz,w,EAR_R);SPEC.l=hand(HAND_L,"head",-.1,-.36,.2,w,OUT_L);SPEC.head=act.k==='phone_dead'?-.12*w:0;return SPEC;}
     case 'map':          // both hands hold the folded map at the chest and he reads it
-      SPEC.l=hand(HAND_L,'head',-.13,-.31,.3,w,POLE_L);SPEC.r=hand(HAND_R,'head',.13,-.31,.3,w,POLE_R);SPEC.head=-.28*w;return SPEC;
+      SPEC.l=hand(HAND_L,"head",-.13,-.31,.3,w,OUT_L);SPEC.r=hand(HAND_R,"head",.13,-.31,.3,w,OUT_R);SPEC.head=-.28*w;return SPEC;
     case 'ammo_check':{  // bent over the open box on its stack: the left hand holds the lid, the right counts the clips along the row
       const row=(t*.45+unit(act.s,5))%1,r2=-.12+.24*Math.abs(2*row-1);
-      SPEC.lean=.55*w;SPEC.head=-.3*w;SPEC.l=hand(HAND_L,'root',-.16,.86,.52,w,POLE_L);SPEC.r=hand(HAND_R,'root',r2,.84,.5,w,POLE_R);return SPEC;}
+      SPEC.lean=.55*w;SPEC.head=-.3*w;SPEC.l=hand(HAND_L,"root",-.16,.86,.52,w,OUT_L);SPEC.r=hand(HAND_R,"root",r2,.84,.5,w,OUT_R);return SPEC;}
     case 'aid_kit':      // the medic's bag open at his left hip: one hand holds it, the other looks through it
-      SPEC.lean=.15*w;SPEC.head=-.25*w;SPEC.l=hand(HAND_L,'root',-.26,.96,.3,w,POLE_L);SPEC.r=hand(HAND_R,'root',-.08,.94+.04*Math.sin(t*1.7),.36,w,POLE_R);return SPEC;
+      SPEC.lean=.15*w;SPEC.head=-.25*w;SPEC.l=hand(HAND_L,"root",-.26,.96,.3,w,OUT_L);SPEC.r=hand(HAND_R,"root",-.08,.94+.04*Math.sin(t*1.7),.36,w,OUT_R);return SPEC;
     case 'track_check':  // peering down at the rails
       SPEC.lean=.42*w;SPEC.head=-.2*w;return SPEC;
     case 'look_up':      // the planes: the head goes up
       SPEC.head=.55*smooth(t/.35)*smooth(leftOf(act,time)/.4+.3);return SPEC;
     case 'point':        // and the right arm points east, up
-      SPEC.head=.45*smooth(t/.35);DIR.dir[0]=EAST_UP[0];DIR.dir[1]=EAST_UP[1];DIR.dir[2]=EAST_UP[2];DIR.len=.55;DIR.w=smooth(t/.4)*smooth(leftOf(act,time)/.4+.2);DIR.p=POLE_R;SPEC.r=DIR;return SPEC;
+      SPEC.head=.45*smooth(t/.35);DIR.dir[0]=EAST_UP[0];DIR.dir[1]=EAST_UP[1];DIR.dir[2]=EAST_UP[2];DIR.len=.55;DIR.w=smooth(t/.4)*smooth(leftOf(act,time)/.4+.2);DIR.p=DOWN_R;SPEC.r=DIR;return SPEC;
     case 'deliver':      // the runner holds the sergeant's note out to the man he tells
-      SPEC.r=hand(HAND_R,'head',.2,-.42,.5,ease(act,time,.4,.5),POLE_R);return SPEC;
+      SPEC.r=hand(HAND_R,"head",.2,-.42,.5,ease(act,time,.4,.5),DOWN_R);return SPEC;
     case 'errand':case 'cable_inspect':case 'cable_hold':  // running with the note, the meter and the coil: no IK, the clip's hands are where they are
       return null;
     case 'brace':        // alert: glances up now and then

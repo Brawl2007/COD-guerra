@@ -27,7 +27,7 @@ import {SECTION,updateSection,sectionWalk,sectionAfter,sectionCasualty,sectionVi
 import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,blastPosture,blastTarget,sightPoint,blastOutcome,concussionPeak,concussionLevel,mergeConcussion,earlyRaidPoint} from './m01-blast.js';
 import {REPAIR_WORK_SEC,SAPPERS,sapperPhase,sapperGoal,sapperRate,sapperCover,sapperView,workDistance} from './m01-sappers.js';
 import {ckmFinal,retreatSlot} from './m01-retreat.js';
-import {updateOpening,openingWalk,holdNowicki,openingView,validateOpeningRecord,validateOpeningAct} from './m01-opening.js';
+import {updateOpening,openingWalk,holdNowicki,closeOpening,openingView,validateOpeningRecord,validateOpeningAct} from './m01-opening.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -590,6 +590,7 @@ export class M01Simulation {
       // R1-b: Nowicki looks up and points for the length of lines 012 and 013 (OPENING.planesRun.afterSec) before he runs for the sappers, when the opening life is running (without its record: the old immediate run)
       case E('planes_heard'):this.mission.phase='BUILDUP';line(12);line(13);line(67);line(66);if(!holdNowicki(this))this.actor('tadeusz_nowicki').target=this.world.point('repair_site_1');break;
       case E('bombing_0434'):
+        closeOpening(this);   // R1-b: the first bomb ends the opening life (every act, the record), here and not a tick later, so that no state holds the event and the record together
         this.finish('deliver_message');this.activate('take_cover');this.player.headgear='pl_helmet_wz31';
         this.message('Abrigue-se! Cabeça baixa, junto à cobertura!');
         this.mission.phase='FIRST_CONTACT';this.startScene('cs_m01_bombing');
