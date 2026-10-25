@@ -8,7 +8,7 @@
 // `observe(sim, events)` is called after every tick with the events that tick drained. Returns when the battle clock has reached 04:35:00.
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const seconds=text=>text.split(':').map(Number).reduce((n,x)=>n*60+x,0);
-export const OPENING_PILOTS=Object.freeze(['fast','rush','tourist']);   // (the metrics' three; 'witness' is the captures' own: it stays among the men)
+export const OPENING_PILOTS=Object.freeze(['fast','rush','tourist']);   // (the metrics' three; 'witness' and 'closeup' are the captures' own)
 /** The stations of the tourist, for the captures: [battle clock he is there from, label]. The view each one looks at is in the pilot. */
 export function openingPilot(sim,kind,observe=null){
   const step=(controls={})=>{sim.tick(.05,controls);observe?.(sim,sim.drainEvents());};
@@ -54,6 +54,14 @@ export function openingPilot(sim,kind,observe=null){
     walk(-53,15,{sprint:false});untilBattle('04:32:50',{x:-44,z:10.5});   // the strip: the sappers' camp, the garrison, the runner
     walk(-62,25,{sprint:false});untilBattle('04:33:55',{x:-48,z:20});     // beside the garrison line, looking along it: the planes are heard here
     untilBattle('04:34:40',{x:-48,z:18},{pitch:.1});                      // the first bombs
+    walk(-30,26,{sprint:false});rally();
+  }else if(kind==='closeup'){
+    // For the evidence only: he stands within 4-8 m of the men he is shown (the dawn is dark and the men small from farther): the section, the garrison, the leader at the cable, the garrison again for the planes.
+    intro();
+    untilBattle('04:31:10',{x:-74,z:21.5});
+    walk(-51,21,{sprint:false});untilBattle('04:32:25',{x:-44,z:18});
+    walk(-60,14.5,{sprint:false});untilBattle('04:32:58',{x:-55,z:10.7});
+    walk(-51,21,{sprint:false});untilBattle('04:34:40',{x:-47,z:20},{pitch:.05});
     walk(-30,26,{sprint:false});rally();
   }else throw new Error(`pilot ${kind}`);
 }
