@@ -43,7 +43,7 @@ Não se inventou fala onde existia uma: os aviões usam as 012, 013, 066 (Nowick
 - **Clips**: só os da biblioteca T08 (nenhum novo): `standing_idle`, `_b`, `_c`, `crouched_idle`, `crouched_idle_b`, `call_out`, `fidget_check_rifle`, `sapper_work`, `rkm_clean`, `rkm_crouched_idle`.
 - **Poses procedurais** (`m01-opening-pose.js` puro, `m01-opening-ik.js`): inclinação do tronco, cabeça e IK de dois ossos para os braços, aplicados **depois do IK dos pés** e desfeitos pelo `restoreIkPose` do frame seguinte (um homem sem acto fica byte a byte o que era: testado com a bancada de ossos reais). Binóculos aos olhos (cotovelos em baixo), cigarro que sobe à boca de vez em quando, caneca, mapa ao peito, telefone ao ouvido com a outra mão na caixa, a contar carregadores numa caixa aberta ao ventre, saco de enfermeiro, nota estendida, braço a apontar, cabeça para trás, encolhido a olhar para cima, a cabeça da tripulação da ckm a varrer a margem.
 - **Adereços procedurais** (caixas e cilindros, sem ficheiro nem terceiros): binóculos, cigarro com brasa e fumo, caneca esmaltada, mapa, nota, telefone e auscultador, caixa de munições, saco de enfermeiro, medidor e rolo de cabo; cada um só existe nos homens cujo plano o usa e só se vê enquanto o acto o pede. **A espingarda só fica ao ombro** (a malha não se desenha) **enquanto as duas mãos trabalham** (binóculos, mapa, telefone, caixa, saco, cabo); com cigarro, caneca ou nota uma mão ainda a segura.
-- **Custo**: o pose procedural só até 75 / 45 / 22 m (alta / média / baixa) e para 14 homens por frame, os mais próximos; os adereços não adicionam chamadas de desenho a quem não os mostra. Medido no teste de custo existente (`m01-render-perf`, `m01-frame-cost-allocation`), que passa.
+- **Custo**: o pose procedural só até 75 / 45 / 22 m (alta / média / baixa) e para 14 homens por frame, os mais próximos; os adereços não adicionam chamadas de desenho a quem não os mostra. **O custo é limitado por construção** (o teto de 14 homens por frame e as distâncias, provados em `tests/m01-opening-pose.test.js`, «cost bounded per quality»); os testes de custo que já existiam (`m01-render-perf`, `m01-frame-cost-allocation`, 9 / 9) passam, mas **não medem** a abertura: não se mediu FPS (a máquina de prova é SwiftShader).
 - **Diagnóstico**: `gameDiagnostics().m01.opening` (tensão, estafeta, sapadores, o acto de cada homem) e, por soldado, `opening: {act, pose, props}`; as capturas registam-nos.
 
 ### 2.6 `end` / `hit` na retaguarda e no Kowal (item 3)
@@ -62,9 +62,40 @@ O `npc-shot` da retaguarda polaca (`rearguardShot`) leva agora onde a bala parou
 - A média baixa do piloto rápido (1,94) é a rota: corre para leste e deixa o posto atrás; o máximo (9) é o que vê quando passa pelo posto e pelo acampamento.
 - Uma contagem por rótulo de acto **não é percepção**: não substitui um playtest.
 
-## 4. Capturas no jogo (`captures-before/`, `captures-after/`: o piloto `witness`, o jogador onde ele estava, três frames renderizados, SwiftShader: pixels, nunca FPS)
+## 4. Capturas no jogo (`captures-before/`, `captures-after/`, `captures-closeup-before/`, `captures-closeup-after/`: o jogo construído, um save verdadeiro do piloto carregado, SwiftShader: pixels, nunca FPS)
 
-TODO_CAPTURES
+Todas do jogo a sério (`npm run build` + `vite preview`; o «antes» é `77175d85` construído à parte numa pasta própria, a mesma especificação, o mesmo piloto: os mesmos controlos do jogador nas duas árvores). Cada imagem tem em `captures.json` os homens à vista com o clip, o acto e os adereços (`opening: {act, pose, props}`) e a lista de erros de consola (**vazia nas 20 imagens**). Vistas uma a uma.
+
+### 4.1 O piloto `witness` (sete instantes; o jogador vê a abertura e fica entre os homens até às bombas)
+
+Os cinco instantes pedidos (04:30:10, 04:31:00, 04:32:30, 04:33:40, 04:34:20) mais 04:33:20 e 04:34:10; os instantes reais são os do quadro seguinte ao pedido (o nome do ficheiro é o pedido, o relógio do HUD o real). O que cada imagem mostra, **e onde antes e depois são iguais**:
+
+| ficheiro | relógio | o que se vê depois | e antes |
+|---|---|---|---|
+| `01-043010` | 04:30:14 | **a cena de abertura** (barras pretas, legenda de Kowal «Café de verdade hoje. Mau sinal.», «saltar cena»): **não é a vista do jogador**, que só tem o controlo às 04:30:44 (quem salta a cena começa às 04:30:44; 04:30:10 só existe como cena). Ao fundo à esquerda, a ~25 m, os sapadores: dois **a andar** ao longo do cabo e o vigia ajoelhado de binóculos; ao centro um homem da guarnição de pé (o `captures.json` diz que fuma: a 25 m não se vê) | os três sapadores ajoelhados no chão a «picar» (`sapper_work`); o resto igual: a 25 m são silhuetas e a diferença mal se lê |
+| `02-043100` | 04:31:01 | o jogador está a 6 m do posto da secção, do outro lado dos sacos de areia: à esquerda Kowal com a rkm (limpa-a), ao centro **o sargento com o mapa aberto** (a folha branca lê-se), à direita Bąk a verificar a espingarda | os três de pé com a arma, na mesma pose, sem mapa: **é a diferença mais legível do conjunto** (a folha branca) |
+| `03-043230` | 04:32:31 | na faixa, a 8–16 m: dois sapadores **a andar** para a junta do cabo e o vigia ajoelhado de binóculos (o `captures.json` diz: o chefe com o medidor, o ajudante com o rolo; a esta distância e luz os adereços não se vêem); um homem da guarnição de pé à direita, a olhar para leste de binóculos (visto de trás não se vê o adereço) | os três sapadores ajoelhados no mesmo sítio, a «picar» o chão; o homem da guarnição de pé, parado |
+| `04-043320` | 04:33:21 | os aviões acabam de se ouvir; ao amanhecer **a diferença não se lê**: silhuetas escuras; o homem da guarnição ao centro, a 7 m, está de pé, quase como antes. O que o `captures.json` diz (os três sapadores ajoelhados em `cover`, `pl_west_0` a apontar, `pl_west_1`, Dudek e o reserva da ckm encolhidos, Nowicki a correr) só se vê melhor de perto (§4.2) | igual (os sapadores ajoelhados a picar; Nowicki a correr, como sempre: nos dados a corrida começa agora 5 s depois dos aviões) |
+| `05-043340` | 04:33:41 | o homem da guarnição ao centro (`pl_west_1`, a 7 m) em `brace`: o tronco um pouco inclinado e o braço dobrado; **quase igual** ao de antes; a 18–30 m o resto são silhuetas | o mesmo homem de pé com a mão ao cinto |
+| `06-043410` | 04:34:14 | **a 1.ª bomba** (cena `cs_m01_bombing`): barras, a faixa «ENE · aeronaves sobre a ponte», fumo, o homem da guarnição de pé, o registo da abertura já fechado | **igual** (propositado: paridade com R1-a) |
+| `07-043420` | 04:34:23 | o homem da guarnição já encolhido (`pinned`, o efeito de R1-a), o fumo maior | **igual** |
+
+**Leitura honesta.** Nesta distância e a esta luz o jogador que passa de corrida **não vê** a maior parte da abertura nova: vê o mapa do sargento (04:31, a 6 m), os sapadores a andar (04:30–04:33) em vez de ajoelhados a picar e, perto, as poses. O que a abertura nova faz pela ideia «a guerra começa às 04:34» está sobretudo nas falas e na estafeta (que o jogador ouve) e nas reacções aos aviões, que só se lêem a menos de 15 m (§4.2). **As imagens não provam que se perceba** (sem playtest humano).
+
+### 4.2 O piloto `closeup` (só para a prova: o jogador a 4–8 m dos homens que se mostram; seis instantes)
+
+O mesmo jogo, a mesma luz, o jogador mais perto (a faixa e o posto a 4–15 m); os instantes são os do que há para ver, não os pedidos. O 3.º instante (04:32:43) é o do chefe dos sapadores a medir o cabo na 1.ª junta (descoberto na 1.ª versão desta prova, que o apanhou a 04:32:58, já de volta ao acampamento: os instantes dependem do acto sorteado e foram escolhidos por esta semente, 19390901, e por este piloto; outra semente dá outro momento).
+
+| ficheiro | relógio, onde está o jogador | depois | antes |
+|---|---|---|---|
+| `01-043100` | 04:31:01, (−66, 22) a olhar para o posto a 6 m | à esquerda Kowal a limpar a rkm, ao centro **o sargento com o mapa aberto**, à direita Bąk a verificar a espingarda; os outros do posto fora do quadro | os três de pé com a arma, na mesma pose, sem mapa |
+| `02-043225` | 04:32:26, (−52, 21), para leste | um homem da guarnição a 9 m, de pé, **de costas, a olhar para leste de binóculos** (de trás o adereço não se vê; o `captures.json` regista `binoculars`, pose aplicada); à esquerda os sapadores ajoelhados no acampamento a 12–15 m, ainda parados | o homem de pé com os braços ao longo do corpo no mesmo sítio; os sapadores ajoelhados a picar: **quase igual** |
+| `03-043242` | 04:32:43, (−59, 15), para a 1.ª junta do cabo a 7 m | **o chefe dos sapadores ajoelhado na junta, curvado sobre o medidor** (a lâmpada âmbar vê-se junto ao joelho), o ajudante ajoelhado ao lado, e o vigia ajoelhado de binóculos a 13 m; a equipa **fez o caminho a pé** do acampamento até aqui | **ninguém na junta**: o ponto para onde o jogador olha é chão vazio; os três sapadores estão ajoelhados no acampamento a 16–18 m, a picar: **a diferença mais clara das capturas de perto** |
+| `04-043320` | 04:33:21, (−52, 20), para leste | os aviões ouvidos há 11 s: **um homem da guarnição a 8 m com o braço direito levantado, a apontar para leste**; à esquerda dois sapadores **ajoelhados, de arma, em cobertura** (`cover`) a 14 m; Nowicki a correr (regista-o o `captures.json`) está a ~70 m e não se distingue | o mesmo homem de pé com os braços ao longo do corpo; à esquerda os sapadores ajoelhados a picar (um com o braço levantado); ao fundo, junto ao arco, um homem pequeno a correr (Nowicki, já 11 s depois dos aviões) |
+| `05-043335` | 04:33:36 | o homem da guarnição de pé, **encolhido** (`brace`), a 8 m; ao fundo à esquerda um sapador a correr para o abrigo (o de R1-a, às 04:33:30) | o mesmo homem direito; o sapador a correr é o mesmo: **diferença pequena** |
+| `06-043414` | 04:34:17 | a 1.ª bomba: barras, a faixa «ENE · aeronaves sobre a ponte», «Abrigue-se!», o clarão da bomba ao fundo à esquerda, o homem da guarnição de pé | **igual** (propositado) |
+
+**O que as capturas de perto provam e não provam.** Provam que, a 4–10 m, o jogador **vê** um homem com o mapa, os sapadores a andar e a medir o cabo, um homem a apontar para leste com o braço levantado e os sapadores em cobertura, coisas que antes não existiam. **Não provam** que um jogador que vai a correr para o posto avançado repare nelas (a 20–30 m são silhuetas escuras), nem que as poses pequenas (café, cigarro, binóculos visto de trás, o saco do enfermeiro) se leiam no jogo normal: lêem-se na bancada (§5), não nestas imagens.
 
 ## 5. Bancada de actos (`acts/`: o renderizador real, os clips reais, um homem por imagem a 3 m)
 
@@ -112,7 +143,8 @@ TODO_AUDIT
 
 ```
 node tools/verification/m01-opening-metrics.mjs --label after --seeds 19390901,1,2 --jsonl <ficheiro>      # e --rev 77175d85 --label before
-npm run build && CHROME_EXECUTABLE=/opt/pw-browsers/chromium OPENING_OUT=<pasta> npx playwright test -c tools/verification/playwright.opening-r1b.config.js
+npm run build && CHROME_EXECUTABLE=/opt/pw-browsers/chromium OPENING_OUT=<pasta> npx playwright test -c tools/verification/playwright.opening-r1b.config.js      # piloto witness
+#   o piloto closeup: OPENING_PILOT=closeup OPENING_TIMES=04:31:00,04:32:25,04:32:42,04:33:20,04:33:35,04:34:14; o «antes»: o mesmo comando numa pasta com `git archive 77175d85` (e `node_modules` ligado) à qual se juntou `tools/verification/` desta árvore (o piloto e a especificação são os mesmos nas duas), com o jogo construído lá e, no config, outra porta (usou-se 4197) para correr ao lado
 CHROME_EXECUTABLE=/opt/pw-browsers/chromium node tools/verification/m01-opening-r1b-fixture-capture.mjs <pasta> [--only binoculars,smoke] [--views front,side]
 node tools/verification/m01-integration-golden-audit.mjs --amendment 20          # confere; --write regenera (x86)
 node --test tests/m01-opening.test.js tests/m01-opening-pose.test.js
