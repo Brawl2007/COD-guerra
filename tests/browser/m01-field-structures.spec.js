@@ -7,7 +7,9 @@ const OUT=process.env.M01_FIELD_EVIDENCE==='1'?'docs/verification/m01-runtime/m0
 const SHOT={style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000};
 const fresh=new M01Simulation(19390901);fresh.tick(.05,{skip:true});const start=fresh.snapshot(false),r=route(19390901,{support:true}),day=r.combatSnapshots.eastDemolitionOutside;
 // The alternate destruction branch is reached only through real movement/interact/tick controls.
-const d=driver();d.step({skip:true});d.walk(-66,26);d.walk(-15,26);d.walk(-15,2);d.walk(16,2);d.step({interact:true});d.walk(-15,2);d.walk(-60,12);d.until(()=>d.sim.flags['m01.forward_post_state']==='destroyed',120);const destroyed=d.sim.snapshot(false);
+// 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2); this is the detour of
+// tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
+const d=driver();d.step({skip:true});d.walk(-66,26);d.walk(-30,26);d.walk(-30,2);d.walk(16,2);d.step({interact:true});d.walk(-30,2);d.walk(-60,12);d.until(()=>d.sim.flags['m01.forward_post_state']==='destroyed',120);const destroyed=d.sim.snapshot(false);
 const centroid=s=>{const a=s.actors.filter(a=>a.alive&&a.active&&!a.civilian&&a.x<-200&&a.z>50);return a.length?{x:a.reduce((n,a)=>n+a.x,0)/a.length,z:a.reduce((n,a)=>n+a.z,0)/a.length,y:a.reduce((n,a)=>n+a.y,0)/a.length+1}:{x:-262,z:70,y:1};};
 const VIEWS=[
  {name:'03-start-hut-objective',snapshot:start,x:-242,z:32,target:{x:-262,z:20,y:0}},
@@ -77,4 +79,18 @@ test('failed optional kit retains exact proxies; reload restores; async ready re
  await page.route('**/structures/*.glb',r=>r.abort('failed'));const v=VIEWS.find(v=>v.name==='close-rail-shed');await open(page,v,{ready:false});await page.waitForFunction(()=>window.gameDiagnostics().m01.fieldStructures.structures.every(s=>s.failure));const failed=await page.evaluate(()=>window.gameDiagnostics());expect(failed.m01.fieldStructures.ready).toBe(false);expect(failed.m01.fieldStructures.viewProxies.every(p=>p.visible)).toBe(true);expect(failed.m01.fieldStructures.proxyColliderIds).toContain('hut_north');expect(failed.m01.requiredAssetFailures).toEqual([]);await capture(page,'optional-failure-proxies',info);await page.unroute('**/structures/*.glb');
  let release;const gate=new Promise(resolve=>{release=resolve;});await page.route('**/structures/*rail_shed_intact_lod0.glb',async route=>{await gate;await route.continue();});await page.reload();await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:120000});await page.evaluate(()=>{const hold=e=>{if(document.pointerLockElement){document.removeEventListener('pointerlockchange',hold,true);e.stopImmediatePropagation();document.exitPointerLock();}};document.addEventListener('pointerlockchange',hold,true);});await page.locator('#continue').click();await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.paused&&d.m01.demolition.clock===d.clock&&d.m01.fieldStructures.structures.find(s=>s.id==='rail_shed').ready===false;});const waiting=await page.evaluate(()=>window.gameDiagnostics());expect(waiting.m01.fieldStructures.proxyColliderIds).toContain('hut_north');const frozen=await page.evaluate(()=>window.gameVerificationState());release();await page.waitForFunction(()=>{const d=window.gameDiagnostics();return d.m01.fieldStructures.ready&&d.m01.fieldStructures.viewProxies.every(p=>!p.visible)&&d.m01.demolition.clock===d.clock;},null,{timeout:120000});const loaded=await page.evaluate(()=>window.gameDiagnostics());expect(loaded.clock).toBe(waiting.clock);expect(loaded.m01.renderedFrames).toBeGreaterThan(waiting.m01.renderedFrames);expect(await page.evaluate(()=>window.gameVerificationState())).toEqual(frozen);noDuplicateProxies(loaded);await capture(page,'optional-reload-restored',info);expect(errors).toEqual([]);
  }finally{await page.close();}
+});
+// T43 slice 2: still camera for 10 s => no LOD change, no fade, lodSwitches stable (frame clock of the consumer keeps running).
+test('LOD cross-fade: still camera for 10 s keeps lodSwitches and never fades',async({page})=>{
+ test.setTimeout(300000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const v=VIEWS.find(v=>v.name==='close-shelter');await open(page,v);
+ await page.waitForFunction(()=>!window.gameDiagnostics().m01.fieldStructures.fading,null,{timeout:30000});
+ const before=await page.evaluate(()=>window.gameDiagnostics().m01.fieldStructures);
+ expect(before.fading).toBe(false);
+ await page.waitForTimeout(10000);
+ const after=await page.evaluate(()=>window.gameDiagnostics().m01.fieldStructures);
+ expect(after.lodSwitches).toBe(before.lodSwitches);expect(after.fading).toBe(false);
+ expect(after.structures.map(s=>s.lod)).toEqual(before.structures.map(s=>s.lod));
+ for(const s of after.structures)expect(s.visibleModels).toBe(s.visible?1:0);
+ expect(errors).toEqual([]);
 });

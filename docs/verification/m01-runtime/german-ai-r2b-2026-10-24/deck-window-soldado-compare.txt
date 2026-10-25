@@ -1,0 +1,29 @@
+level soldado: old (33896528) | new (R2-b)
+        1:0  DEAD  41.2s by de_east_16 w4 c2 fight   41.2  |  DEAD  41.2s by de_east_16 w4 c2 fight   41.2
+        2:0  DEAD  60.8s by de_east_18 w5 c0 fight   60.8  |  DEAD  60.8s by de_east_18 w5 c0 fight   60.8
+        3:0  DEAD  63.1s by de_spans_8 w3 c1 fight   63.1  |  DEAD  63.1s by de_spans_8 w3 c1 fight   63.1
+        4:0  DEAD  42.3s by de_east_16 w5 c4 fight   42.3  |  DEAD  42.3s by de_east_16 w5 c4 fight   42.3
+        5:0  DEAD  51.4s by de_east_18 w4 c0 fight   51.4  |  DEAD  51.4s by de_east_18 w4 c0 fight   51.4
+        6:0  DEAD  50.5s by de_east_16 w5 c0 fight   50.5  |  DEAD  50.5s by de_east_16 w5 c0 fight   50.5
+        7:0  DEAD  46.1s by de_spans_4 w6 c2 fight   46.1  |  DEAD  46.1s by de_spans_4 w6 c2 fight   46.1
+        8:0  DEAD  70.9s by de_east_21 w4 c1 fight   70.9  |  DEAD  70.9s by de_east_21 w4 c1 fight   70.9
+        9:0  DEAD  86.6s by de_east_20 w8 c2 fight   86.6  |  DEAD  86.6s by de_east_20 w8 c2 fight   86.6
+       10:0  DEAD  64.0s by de_east_18 w6 c2 fight   64.0  |  DEAD  64.0s by de_east_18 w6 c2 fight   64.0
+       11:0  DEAD  43.5s by de_east_15 w5 c2 fight   43.5  |  DEAD  43.5s by de_east_15 w5 c2 fight   43.5
+ 19390901:0  DEAD  47.3s by de_east_19 w5 c5 fight   47.3  |  DEAD  47.3s by de_east_19 w5 c5 fight   47.3
+        1:1  alive minHP  11       w5 c27 fight  244.9  |  alive minHP  11       w3 c34 fight  244.9
+        2:1  alive minHP  33       w4 c31 fight  252.9  |  alive minHP  32       w5 c39 fight  240.3
+        3:1  alive minHP  66       w2 c25 fight  242.7  |  alive minHP  39       w2 c30 fight  220.9
+        4:1  alive minHP   1       w3 c8 fight  207.9  |  alive minHP  92       w0 c9 fight  169.9
+        5:1  alive minHP  66       w3 c24 fight  179.9  |  alive minHP  66       w1 c21 fight  249.9
+        6:1  alive minHP  32       w6 c30 fight  236.9  |  alive minHP  66       w3 c16 fight  181.5
+        7:1  alive minHP  66       w3 c45 fight  262.3  |  alive minHP  66       w1 c39 fight  242.1
+        8:1  alive minHP  66       w3 c32 fight  242.4  |  alive minHP  66       w2 c27 fight  220.5
+        9:1  alive minHP  66       w1 c32 fight  262.3  |  DEAD 225.3s by de_spans_9 w5 c33 fight  225.3
+       10:1  alive minHP  61       w4 c20 fight  178.2  |  alive minHP  66       w2 c15 fight  179.7
+       11:1  alive minHP  66       w1 c25 fight  253.1  |  alive minHP  66       w1 c27 fight  246.6
+ 19390901:1  alive minHP  66       w2 c15 fight  180.6  |  alive minHP  66       w2 c15 fight  180.6
+old control {'routes': 12, 'deaths': 12, 'ttd_median': 50.95, 'ttd_min': 41.2, 'ttd_max': 86.6, 'wounds_mean': 5.0, 'fight_mean': 0.0}
+old support {'routes': 12, 'deaths': 0, 'ttd_median': None, 'ttd_min': None, 'ttd_max': None, 'wounds_mean': 3.08, 'fight_mean': 228.7}
+new control {'routes': 12, 'deaths': 12, 'ttd_median': 50.95, 'ttd_min': 41.2, 'ttd_max': 86.6, 'wounds_mean': 5.0, 'fight_mean': 0.0}
+new support {'routes': 12, 'deaths': 1, 'ttd_median': 225.3, 'ttd_min': 225.3, 'ttd_max': 225.3, 'wounds_mean': 2.25, 'fight_mean': 216.1}

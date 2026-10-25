@@ -15,11 +15,13 @@ const key='cod-guerra:checkpoint:m01:v2',snapshot=toRepair(driver()).sim.snapsho
 function buildScenes(){
   const d=driver(19390901,{support:true}),{sim,step,until,walk}=d;
   step({skip:true});
-  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  // 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2) and the repair-cluster and hut-door solids; this is the detour of
+  // tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
+  walk(-66,26);walk(-30,26);walk(-30,2);walk(16,2);step({interact:true});
   until(()=>sim.active('follow_sergeant'),120);
-  walk(-15,2);walk(-15,11);walk(-147,11);walk(-50,11);walk(-44,11);
-  walk(-245,9);walk(-274,9);walk(-274,21);walk(-265,21);step({interact:true});
-  walk(-274,21);walk(-274,8);walk(-123,8);
+  walk(-30,2);walk(-30,11);walk(-147,11);walk(-50,11);walk(-44,11);
+  walk(-150,15.5);walk(-245,9);walk(-275.5,9);walk(-275.5,21);walk(-265,21);step({interact:true});
+  walk(-275.5,21);walk(-275.5,8);walk(-155,15.5);walk(-123,8);
   const drop=sim.snapshot(false);                    // identical to toRepair() up to here; the next step is its final interact
   step({interact:true});
   if(!sim.active('cover_repair'))throw new Error('Route did not deliver the crate');

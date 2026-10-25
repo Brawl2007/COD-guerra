@@ -18,6 +18,17 @@ export const HUD_TIMING=Object.freeze({
 });
 
 /** Speed of sound used for every delayed M01 sound (m/s). */
+/** H9 D5: pt-PT names of the three difficulty levels (the ids are the simulation's; this is presentation only). */
+export const M01_DIFFICULTY_LABELS=Object.freeze({recruta:'Recruta',soldado:'Soldado',veterano:'Veterano'});
+/**
+ * H9 D5, the death beat (presentation only, REAL seconds: the simulation is not ticked while it runs). sec = how long; offerAfterDeaths = deaths at one checkpoint after which a level above
+ * recruta is offered the next lower level. deathBeatFrame(age) = how black the screen is (full in 0.45 s) and how visible the cause text is (in from 0.3 s, out over the last 0.4 s).
+ */
+export const DEATH_BEAT=Object.freeze({sec:2.5,fadeInSec:.45,textFrom:.3,textInSec:.35,textOutSec:.4,offerAfterDeaths:3});
+export function deathBeatFrame(age){
+  const T=DEATH_BEAT;if(!(age>=0))return {black:0,text:0};
+  return {black:ramp(age,0,T.fadeInSec),text:ramp(age,T.textFrom,T.textFrom+T.textInSec)*(1-ramp(age,T.sec-T.textOutSec,T.sec))};
+}
 export const SOUND_SPEED=343;
 /** Impacts of the player's own shot closer than this are heard at once; farther ones arrive after distance/343 s. */
 export const PLAYER_IMPACT_DELAY_FROM=60;
@@ -50,6 +61,7 @@ export function sceneBeatFrame(sim){
 export const typedChars=(line,index,elapsed)=>Math.max(0,Math.min(line.length,Math.floor((elapsed-index*HUD_TIMING.lineDelay)*HUD_TIMING.typeRate)));
 /** Fotograma cinematográfico derivado da cena da simulação (id + elapsed). Só apresentação. */
 export function cinematicFrame(scene,battleClock=0){
+  if(scene?.card)return actCardFrame(scene);   // R4: the card of a new act (scene.card, M01AreaSimulation); the current act's scenes carry none
   if(!scene||!LOCKED.has(scene.id))return {locked:false,black:0,card:null};
   const t=Number(scene.elapsed)||0,T=HUD_TIMING;
   if(scene.id==='cs_m01_intro'){
@@ -62,6 +74,17 @@ export function cinematicFrame(scene,battleClock=0){
   const black=Math.max(1-ramp(t,0,T.outroFadeIn),ramp(t,...T.outroFadeOut));
   const opacity=Math.min(ramp(t,.2,.2+T.cardFade),1-ramp(t,T.outroCardUntil-T.cardFade,T.outroCardUntil));
   return {locked:true,black,card:t<T.outroCardUntil?card('roll-call',['Chamada no abrigo',`Tczew — ${clockText(battleClock).slice(0,5)}`],opacity,t-.2):null};
+}
+
+/**
+ * R4 INC-1: the card of a new act (its entry, between the roll call and the new area, and its end, before the debrief). The entry card is black until its last 1.2 s
+ * (the area appears behind it); the end card fades the field to black in 1.5 s. Its lines say what is documented and what is reconstruction; no exact hour.
+ */
+export function actCardFrame(scene){
+  const t=Number(scene.elapsed)||0,end=scene.card.seconds,T=HUD_TIMING;
+  const black=scene.card.kind==='end'?ramp(t,0,1.5):1-ramp(t,end-1.2,end);
+  const opacity=Math.min(ramp(t,.4,.4+T.cardFade),1-ramp(t,end-1.4,end-.9));
+  return {locked:true,black,card:card(scene.id,scene.card.lines,opacity,t-.4)};
 }
 
 /** Transições de objectivos entre dois mapas {id:{state}}; previous=null significa linha de base vazia. */
@@ -90,21 +113,48 @@ export function splitObjective(text,optionalText){
   const suffix=optionalText?` · ${optionalText}`:'';
   return suffix&&text.endsWith(suffix)&&text.length>suffix.length?{main:text.slice(0,-suffix.length),optional:optionalText}:{main:text,optional:''};
 }
+/** Vertical field of view of the M01 camera (src/render/m01-view.js PerspectiveCamera(70, …)). */
+export const M01_VFOV_DEG=70;
+/**
+ * Horizontal place of the objective marker for a bearing relative to the view (radians, + = right), on a screen of `aspect`.
+ * On screen: perspective-correct x in 0..1. Off screen: pinned to the nearer edge with the side, so the player knows which way to turn.
+ */
+export function markerScreen(bearing,aspect=16/9,vfovDeg=M01_VFOV_DEG){
+  const half=Math.atan(Math.tan(vfovDeg*Math.PI/360)*aspect),edge=.05;
+  if(Math.abs(bearing)<half)return {x:clamp(.5+.5*Math.tan(bearing)/Math.tan(half),edge,1-edge),side:null};
+  return {x:bearing>0?1-edge:edge,side:bearing>0?'right':'left'};
+}
 /** Intensidade do aviso de vida baixa (0 a partir de 45 de saúde). */
 export const lowHealthLevel=health=>clamp((45-health)/45);
 
 export class M01HudPresenter {
   constructor(el,{document:doc=globalThis.document}={}){
-    this.el=el;this.doc=doc;this.cache=new Map();this.queue=[];this.reset('new',0);
+    this.el=el;this.doc=doc;this.cache=new Map();this.queue=[];this.aspect=16/9;this.reset('new',0);
     if(!el.sceneCue&&el.root?.appendChild&&doc?.createElement){el.sceneCue=this.node('div','scene-look-prompt','');el.root.appendChild(el.sceneCue);}
+    // P2: world marker of the current objective and the "Mais tarde…" card of a compressed clock (created here, like the scene cue: no index.html change).
+    if(!el.objectiveMarker&&el.root?.appendChild&&doc?.createElement){
+      el.objectiveMarker=this.node('div','objective-marker','');el.objectiveMarker.setAttribute?.('aria-hidden','true');
+      el.markerLabel=this.node('span','marker-label','');el.markerDistance=this.node('span','marker-distance','');
+      el.objectiveMarker.append?.(this.node('i','marker-pip',''),el.markerLabel,el.markerDistance);el.root.appendChild(el.objectiveMarker);
+    }
+    if(!el.tempoCard&&el.root?.appendChild&&doc?.createElement){
+      el.tempoCard=this.node('div','tempo-card','');el.tempoLabel=this.node('strong','','');el.tempoReason=this.node('small','','');
+      el.tempoCard.append?.(el.tempoLabel,el.tempoReason);el.root.appendChild(el.tempoCard);
+    }
+    // The HUD root size is read here and on resize, never per frame (a clientWidth read after the frame's style writes forces a synchronous layout).
+    this.resize();
+    if(typeof ResizeObserver==='function'&&el.root?.nodeType===1){this.sizeObserver=new ResizeObserver(()=>this.resize());this.sizeObserver.observe(el.root);}
   }
+  /** Re-reads the HUD root size once (window resize / ResizeObserver). Fallback 16:9 while the root has no layout box. */
+  resize(){const root=this.el.root;this.aspect=root?.clientWidth&&root?.clientHeight?root.clientWidth/root.clientHeight:16/9;return this.aspect;}
+  dispose(){this.sizeObserver?.disconnect();this.sizeObserver=null;}
   /** kind: new (missão nova), continue (save carregado), restore (checkpoint reposto). */
   reset(kind='new',clock=0){
     this.clearSceneCues();
     this.kind=kind;this.baseline=kind==='new'?null:undefined;this.queue=[];this.banner=null;this.checkpointAt=-Infinity;this.checkpointName='';
-    this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
+    this.lastClock=clock;this.resumeAt=kind==='new'?-Infinity:clock;this.tempoSince=null;this.objectiveText=null;this.objectiveAt=-Infinity;this.lastHealth=null;
     this.announceCurrent=kind!=='new';this.resumeLines=null;
-    this.hitAt=-Infinity;this.opacity('hitMarker',0);
+    this.hitAt=-Infinity;this.opacity('hitMarker',0);this.markerMemo=null;
   }
   /** Confirmed hit by the player's shot (player-shot hit:true) at mission clock `clock`. */
   hit(clock){this.hitAt=clock;}
@@ -117,10 +167,11 @@ export class M01HudPresenter {
     for(const key of ['class:root:scene-beats','text:sceneCue','opacity:sceneCue'])this.cache.delete(key);
   }
   clear(){
-    this.clearSceneCues();
+    this.clearSceneCues();this.markerMemo=null;
     const e=this.el;this.cache.clear();
     e.root?.classList.remove('cinematic','m01');
-    for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName'])if(e[k])e[k].textContent='';
+    for(const k of ['interaction','subtitle','objective','objectiveStatus','titleCard','objectiveUpdate','resumeCard','checkpointName','markerLabel','markerDistance','tempoLabel','tempoReason'])if(e[k])e[k].textContent='';
+    for(const k of ['objectiveMarker','tempoCard'])e[k]?.style?.removeProperty('opacity');e.root?.classList.remove('tempo-compressed');
     e.ammo?.classList.remove('low','empty');e.objectivePanel?.classList.remove('fresh');e.interaction?.classList.remove('show');e.subtitle?.classList.remove('show');
     for(const k of ['fade','lowHealth','titleCard','objectiveUpdate','resumeCard','checkpoint','hitMarker'])e[k]?.style.removeProperty('opacity');
     e.rounds?.classList.add('hidden');e.status?.classList.remove('health-full','health-low');
@@ -145,7 +196,9 @@ export class M01HudPresenter {
     this.updateResumeCard(sim,clock,cine.locked);
     // Estado da ameaça: o texto é exactamente o da simulação.
     this.text('objectiveStatus',sim.mission.status??'');
-    this.text('clock',clockText(sim.battleClock));
+    this.text('clock',sim.clockLabel??clockText(sim.battleClock));   // R4: a new act shows only its approximate label (no exact hour without a source)
+    this.updateMarker(this.markerFor(sim),cine.locked||beats.letterbox);
+    this.updateTempo(sim.tempo??null,clock,cine.locked);
     this.updateInteraction(sim.interaction??'');
     this.updateSubtitle(sim.subtitle);
     this.opacity('subtitle',beats.subtitlePause?0:1);
@@ -211,12 +264,40 @@ export class M01HudPresenter {
   updateResumeCard(sim,clock,locked){
     const t=clock-this.resumeAt,active=!locked&&t>=0&&t<HUD_TIMING.resumeCard&&this.kind==='continue';
     const cp=sim.definition.checkpoints.find(c=>c.id===sim.checkpointsReached.at(-1));
-    const data=active?card('resume',['Tczew — pontes do Vístula',`1 de setembro de 1939 · ${clockText(sim.battleClock).slice(0,5)}`,...(cp?[`${cp.label} · ${cp.name}`]:[])],
+    const head=sim.clockLabel?['Tczew — perímetro norte',`1 de setembro de 1939 · ${sim.clockLabel.toLowerCase()}`]:['Tczew — pontes do Vístula',`1 de setembro de 1939 · ${clockText(sim.battleClock).slice(0,5)}`];
+    const data=active?card('resume',[...head,...(cp?[`${cp.label} · ${cp.name}`]:[])],
       Math.min(ramp(t,.3,.3+HUD_TIMING.cardFade),1-ramp(t,HUD_TIMING.resumeCard-.7,HUD_TIMING.resumeCard)),t-.3):null;
     // As linhas fixam-se no primeiro fotograma; o relógio da batalha continua a correr no HUD.
     if(data&&this.resumeLines)data.lines=this.resumeLines;else if(data)this.resumeLines=data.lines;
     if(!active)this.resumeLines=null;
     this.updateCard('resumeCard',data,'show');
+  }
+  /** sim.objectiveMarker runs the pacing target search (filter().sort() in some phases). Everything it reads changes only on a simulation tick,
+   *  so it is evaluated once per (simulation, clock, player pose) instead of once per rendered frame. reset()/clear() drop the memo. */
+  markerFor(sim){
+    const p=sim.player,m=this.markerMemo;
+    if(m&&m.sim===sim&&m.clock===sim.clock&&m.x===p?.x&&m.z===p?.z&&m.angle===p?.angle)return m.value;
+    const value=sim.objectiveMarker??null;
+    if(m){m.sim=sim;m.clock=sim.clock;m.x=p?.x;m.z=p?.z;m.angle=p?.angle;m.value=value;}
+    else this.markerMemo={sim,clock:sim.clock,x:p?.x,z:p?.z,angle:p?.angle,value};
+    return value;
+  }
+  updateMarker(marker,hidden){
+    const node=this.el.objectiveMarker;if(!node)return;
+    if(!marker||hidden){this.opacity('objectiveMarker',0);return;}
+    const place=markerScreen(marker.bearing,this.aspect);
+    this.set('marker:x',place.x.toFixed(4),v=>node.style?.setProperty('--marker-x',v));
+    this.set('marker:side',place.side??'',v=>{if(node.dataset)node.dataset.side=v;});
+    this.text('markerLabel',marker.label);this.text('markerDistance',`${Math.round(marker.distance)} m`);
+    this.opacity('objectiveMarker',1);
+  }
+  updateTempo(tempo,clock,locked){
+    const on=Boolean(tempo?.compressed)&&!locked;
+    if(on&&this.tempoSince===null)this.tempoSince=clock;if(!on)this.tempoSince=null;
+    this.toggle('root','tempo-compressed',on);
+    this.text('tempoLabel',on?tempo.label:'');this.text('tempoReason',on?tempo.reason:'');
+    // Card for the first seconds of each compression; the clock keeps its accelerated look (CSS) for the whole stretch.
+    const t=on?clock-this.tempoSince:0;this.opacity('tempoCard',on?Math.min(ramp(t,0,.6),1-ramp(t,5,6.5)):0);
   }
   updateInteraction(text){
     this.set('interaction',text,()=>{
@@ -259,6 +340,8 @@ export class M01HudPresenter {
     return {banner:this.banner?{kind:this.banner.kind,id:this.banner.id}:null,queued:this.queue.map(c=>`${c.kind}:${c.id}`),
       fade:Number(this.cache.get('opacity:fade')??0),checkpoint:Number(this.cache.get('opacity:checkpoint')??0),
       titleCard:this.cache.get('titleCard:lines')||null,resumeCard:this.cache.get('resumeCard:lines')||null,
-      cinematic:Boolean(this.cache.get('class:root:cinematic')),sceneBeats:this.beatFrame??null};
+      cinematic:Boolean(this.cache.get('class:root:cinematic')),sceneBeats:this.beatFrame??null,
+      marker:Number(this.cache.get('opacity:objectiveMarker')??0)>0?{label:this.cache.get('text:markerLabel'),x:Number(this.cache.get('marker:x')),side:this.cache.get('marker:side')||null}:null,
+      tempo:Boolean(this.cache.get('class:root:tempo-compressed'))};
   }
 }

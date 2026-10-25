@@ -2,8 +2,10 @@ import * as THREE from 'three';
 import { AssetManager } from '../assets/asset-manager.js';
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with {type:'json'};
 import { eyePosition, aimDirection } from '../world/spatial.js';
-import { roundPoint } from '../game/m01-fire.js';
 import { DISPLAY_FLASH_SEC, DISPLAY_TRACER_CAP } from '../game/m01-display-fire.js';
+import { ckmFlashes, ckmSmoke, CKM_SMOKE_SEC } from './m01-ckm-fx.js';
+import { RoundImpactPool, scheduleRoundImpact, scheduleLandedRound, classifyRoundEnd, drawRoundImpacts, tracerDrawn, tracerQuota, tracerHalfWidth, tracerHalfLength, tracerTint, IMPACT_POOL_SLOTS, IMPACT_MATERIALS } from './m01-long-range-fx.js';
+import { collectShotFlashes, createFlashList, ShotSmokeTable, flashRadius, flashTint, smokeRadius, SMOKE_SLOTS_BY_TIER, SMOKE_SEC as SHOT_SMOKE_SEC, NEAR_BODY_M } from './m01-shot-fx.js';
 import { m01StukaPosition, m01StukaSince, m01StukaPathTime, m01StukaActive, m01RaidPlanePosition, m01RaidSince, m01RaidPlaneActive, M01_STUKA_DIVE_FROM, M01_STUKA_DIVE_TO } from '../world/m01-aircraft-path.js';
 import { actorPose } from './m01-actor-pose.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -11,15 +13,17 @@ import { texturedSurface,weatheredBridgeSurface } from './m01-surfaces.js';
 import { M01TerrainMaterial } from './m01-terrain-material.js';
 import {M01TerrainRelief} from './m01-terrain-relief.js';
 import {M01FarLandscape} from './m01-far-landscape.js';
+import {M01AreaDressing} from './m01-area-dressing.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
 import { M01Grading } from './m01-grading.js';
-import { M01Impostors } from './m01-impostors.js';
+import { M01Impostors, POSTURES } from './m01-impostors.js';
 import {battlefieldBlastKind,battlefieldProfile,fxLayerCount,staggeredLife,impactProfile,fxDistanceBand,blastFlashEnvelope,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
 import {M01AmbientDirector,resolveSquadLivingMotion} from './m01-ambient.js';
 import { M01Environment } from './m01-environment.js';
 import { M01Characters } from './m01-characters.js';
+import { M01RepairLine } from './m01-repair-line.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { M01TrainWagons } from './m01-train-wagons.js';
 import { M01YardWagons, yardWagonFireDamage } from './m01-yard-wagons.js';
@@ -30,6 +34,7 @@ import {M01StationDamage} from './m01-station-damage.js';
 import {JU87_LOD_DISTANCES,JU87_QUALITY_FLOOR,JU87_BOMB_POOL,ju87Attitude,ju87Fade,ju87HeardAt,ju87PropellerTime,selectJu87Level,ju87SkyEnvironment,instanceJu87Materials,setJu87Fade,m01BombFlights} from './m01-aircraft.js';
 import {soldierVisualVariant} from './m01-soldier-variation.js';
 import { M01CombatFeedback } from './m01-combat-feedback.js';
+import { M01BodyFeedback } from './m01-body-feedback.js';
 import {M01BridgePortalPolish,bridgeMaterialSlot} from './m01-bridge-portal-polish.js';
 import {M01DamageDecals} from './m01-damage-decals.js';
 import {WEAPON_PRESENTATION,WeaponViewFx,WeaponWorldFx,WeaponLighting,viewUp,prewarmWeaponFx} from './first-person-weapon-fx.js';
@@ -40,11 +45,15 @@ import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collap
 
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
+/** Height of the rifle muzzle of an impostor as a share of its figure height (the silhouette's rifle ends at .77 h, see m01-impostors.js). */
+const IMPOSTOR_MUZZLE_H=.74;
 const NO_DISPLAY_FIRE=Object.freeze({rounds:Object.freeze([]),firedAt:Object.freeze({}),fixed:Object.freeze({})});
 // A fixed-origin display shot (the Panzerzug's 75 mm gun, T23): muzzle smoke lasts GUN_SMOKE_SEC and the burst where the shell lands SHELL_PUFF_SEC,
 // SHELL_SCALE times the size of a rifle round's impact. Presentation only: no damage record, no decal, no sound.
 const GUN_SMOKE_SEC=3.2,SHELL_PUFF_SEC=2.4,SHELL_SCALE=3;
 const BOMB_NOSE=new THREE.Vector3(0,0,-1);
+/** R4 INC-1: which act areas a world carries ('' for the current act's TczewWorld). */
+const areaKey=world=>(world.layout?.areaRegions??[]).map(r=>r.id).join(',');
 const fxSeed=(p,clock)=>((Math.floor((p.x+2048)*73)^Math.floor(((p.y??0)+128)*151)^Math.floor((p.z+2048)*197)^Math.floor(clock*1000))>>>0);
 const fxCount=(n,quality)=>Math.max(1,Math.round(n*(FX_DENSITY[quality]??FX_DENSITY.low)));
 
@@ -98,9 +107,9 @@ export class M01View {
     this.cylinder=new THREE.CylinderGeometry(1,1,1,12);this.geometry=[this.box,this.sphere,this.cylinder,this.roundBox,this.accessoryBox,this.helmetGeometry,this.featureSphere];
     this.kit=[];this.batches=new Map();this.solidGroup=new THREE.Group();this.effects=new THREE.Group();
     this.scene.add(this.solidGroup,this.effects);this.smokes=new Map();this.grenadeViews=new Map();this.world=null;this.revision=-1;
-    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};
+    this.flashUntil=0;this.shakeUntil=0;this.lastClock=0;this.bursts=[];this.impacts=[];this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};
     this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
-    this.combatFeedback=new M01CombatFeedback();
+    this.combatFeedback=new M01CombatFeedback();this.bodyFeedback=new M01BodyFeedback();
     this.ambientDirector=new M01AmbientDirector();
     this.horizonGlow=new THREE.Sprite(new THREE.SpriteMaterial({color:'#ff9e52',transparent:true,opacity:0,depthWrite:false,
       blending:THREE.AdditiveBlending,fog:false}));this.horizonGlow.visible=false;this.horizonGlow.renderOrder=6;this.scene.add(this.horizonGlow);
@@ -111,7 +120,7 @@ export class M01View {
     this.bridgeFinish=new M01BridgeFinishRuntime(this.scene,{quality:this.owner.quality});
     this.kitsSettled=false;   // every bridge kit GLB has arrived or failed (see M01BridgeFinishRuntime.sync)
     this.bridgeSyncInput={kits:this.kit,quality:this.owner.quality,world:null,kitsSettled:false};
-    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true};
+    this.bridgeSelectInput={kits:this.kit,state:null,camera:this.camera,prepared:true,clock:null};
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')){
       this.bridgeFinishDebug={setEnabled:on=>{const result=this.bridgeFinish.setEnabled(on);this.lastFrame=null;return result;},setTrainEffects:options=>{const value=typeof options==='boolean'?{lamp:options,smoke:options}:options;this.trainSmokeEnabled=Boolean(value.smoke);this.trainLife.lampsEnabled=Boolean(value.lamp);this.lastFrame=null;return value;},setCamera:pose=>{this.bridgeEditorialCamera=pose;this.lastFrame=null;return pose;},get:()=>this.bridgeFinish.diagnostics};window.m01BridgeFinishDebug=this.bridgeFinishDebug;
     }
@@ -121,6 +130,8 @@ export class M01View {
     this.weaponWorldFx=new WeaponWorldFx(this.effects);
     // One muzzle light in the weapon pass: the licensed rig drives the procedural fallback's light.
     this.characters=new M01Characters(this.scene);
+    // R3-a: the cable the sappers work on, its cuts and splices, the crate on the ground (reads sim.sapperOps); seated on the drawn terrain (the 5 m lattice), not on the analytic height
+    this.repairLine=new M01RepairLine(this.scene,{surfaceY:(x,z)=>this.terrainRelief?this.terrainRelief.surfaceHeightAt(x,z):null});
     this.impostors=new M01Impostors(this.scene);   // T20: camera-facing silhouettes beyond 350 m (one draw call per nation)
     this.viewModel=new M01ViewModel(this.weaponScene,this.characters,this.atmosphere.texture,this.weaponWorldFx,{muzzleLight:this.fallbackFx.light});
     if(typeof window!=='undefined'&&new URLSearchParams(window.location.search).has('debug')&&this.terrain){
@@ -171,6 +182,7 @@ export class M01View {
   }
   buildTerrain(world){
     this.world=world;this.terrain?.setWorld(world);   // read-only: bakes the macro mask from the layout
+    this.reliefAreaKey=areaKey(world);
     this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});
     this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});
     this.environment=new M01Environment(this.scene,world,this.materials,{propVertexTextures:this.engine.capabilities.maxVertexTextures>0,surfaceY:(x,z)=>this.terrainRelief.envelope.contains(x,z)?this.terrainRelief.world.terrainHeightAt(x,z):this.terrainRelief.surfaceHeightAt(x,z),onVegetationUpdate:()=>{this.lastFrame=null;}});
@@ -195,8 +207,24 @@ export class M01View {
     {const proxy=this.mesh('box','stone',[-264,-2.5,71],[1,3,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
     {const proxy=this.mesh('box','stone',[-256,-2.5,71],[1,3,9]);proxy.userData.m01FieldProxy='shelter';this.fieldProxyMeshes.push(proxy);}
   }
+  /**
+   * R4 INC-1: a new act's area world flattens the presentation relief over its own region (layout.areaRegions, src/render/m01-terrain-envelope.js) so the drawn ground is the
+   * simulation's ground there. When the active world's areas differ from the ones the relief was built for, the relief and the far landscape are rebuilt for it (behind the
+   * act's entry card) and the area's dressing is made; the current act's world has no area, so for it nothing here ever runs.
+   */
+  syncAreaTerrain(world){
+    const key=areaKey(world);if(key===this.reliefAreaKey)return;
+    this.reliefAreaKey=key;
+    const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
+    this.terrainRelief.dispose();this.farLandscape.dispose();
+    this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});this.terrainRelief.setEnabled(relief);
+    this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
+    for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
+    this.areaDressing?.dispose();this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{ground:texturedSurface('soil',{worldScale:.42,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4})}):null;
+    this.lastFrame=null;
+  }
   syncSolids(world){
-    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}}
+    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}this.syncAreaTerrain?.(world);}
     this.terrainRelief?.sync(world,this.owner?.quality);
     const fieldRevision=this.environment?.fieldStructures.revision??0;
     for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);
@@ -236,8 +264,8 @@ export class M01View {
     this.contactShadows=new THREE.InstancedMesh(geometry,this.contactMaterial,PROCEDURAL_ACTOR_CAPACITY);
     this.contactShadows.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.contactShadows.count=0;this.contactShadows.frustumCulled=false;this.scene.add(this.contactShadows);
   }
-  updateActors(actors,time,player={x:0,z:0},battleClock){
-    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock)??new Set();
+  updateActors(actors,time,player={x:0,z:0},battleClock,ops=null){
+    const skinned=this.characters?.update(actors,time,player,this.owner.quality,battleClock,this.world,ops)??new Set();
     const impostored=this.impostors?.select(actors,skinned,player,this.owner.quality,time)??new Set();   // hand-off: exactly one of {skinned body, impostor, procedural body}
     const counts={},dummy=new THREE.Object3D(),root=new THREE.Object3D(),matrix=new THREE.Matrix4();
     const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),tint=new THREE.Color();
@@ -280,12 +308,12 @@ export class M01View {
         put('rifle',[1.7,.52,0],[1.8,.1,.1]);continue;
       }
       const visual=!a.civilian&&this.characters?.visuals?soldierVisualVariant(a):null;
-      const cloth=a.civilian?'#404c56':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
+      const cloth=a.civilian?'#8f8a78':visual?'#'+visual.proxyCloth:a.team==='enemy'?'#b4c0b7':'#c9bea0',
         helmet=visual?'#'+visual.proxyHelmet:a.team==='enemy'?'#465252':'#635f47',skin=visual?'#'+visual.proxySkin:'#ffffff';
       const [hx,hy,hz]=pose.head,[tx,ty,tz]=pose.torso.position;
       const near=Math.hypot(a.x-player.x,a.z-player.z)<45;
       put('torso',pose.torso.position,pose.prone?pose.torso.size:[.30,pose.torso.size[1],.46],cloth,{roll:pose.torso.roll});put(near?'head':'farHead',pose.head,[.125,.18,.137],skin);
-      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#2b3134':helmet);
+      put('helmet',[hx,hy+.105,hz],[.175,a.civilian?.055:.14,.188],a.civilian?'#4b4a43':helmet);
       put('brim',[hx+.01,hy+.12,hz],[.186,.022,.2],helmet);
       if(near){put('nose',[hx+.126,hy+.005,hz],[.020,.039,.022],skin);
       put('eyes',[hx+.121,hy-.064,hz],[.004,.002,.021]);
@@ -311,7 +339,7 @@ export class M01View {
       for(const foot of pose.boots)put('boots',foot,[.25,.11,.16]);
       if(near)put('hands',[hx-.005,hy-.17,hz],[.058,.072,.060],skin);
       if(near)for(const i of [3,7])put('hands',pose.limbs[i].to,[.043,.066,.048],skin);
-      if(!a.civilian&&a.role!=='MEDIC'){
+      if(!a.civilian&&a.role!=='MEDIC'&&!a.mg34Loader){
         put('rifle',pose.rifle.position,[.82,.095,.06],null,{roll:pose.rifle.pitch});
         const from=pose.rifle.barrelFrom,to=pose.rifle.muzzle;
         put('barrel',from.map((v,i)=>(v+to[i])/2),[.012,.57,.012],null,{from,to});
@@ -326,19 +354,25 @@ export class M01View {
     this.materials.flash=new THREE.MeshBasicMaterial({color:'#ffd98c',toneMapped:false,fog:false});
     this.materials.tracer=new THREE.MeshBasicMaterial({color:'#ffb35a',toneMapped:false,fog:false});
     this.materials.puff=new THREE.MeshBasicMaterial({color:'#8c7c66',transparent:true,opacity:.62,depthWrite:false});
+    this.materials.speck=new THREE.MeshBasicMaterial({color:'#ffffff'});   // R2-c: far impact dust, an opaque disc tinted per instance (fogged like the scene)
     this.materials.gunSmoke=new THREE.MeshBasicMaterial({color:'#b9b8ae',transparent:true,opacity:.55,depthWrite:false,fog:false});
     // Instance colours (setColorAt) tint these; vertexColors must stay off (no `color` attribute on the tetrahedra: it rendered black).
     this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
     this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
+    this.speckGeometry=new THREE.IcosahedronGeometry(1,1);   // R2-c: 80 triangles for a 4 px disc (owned here, disposed in dispose())
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
-    for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128]]){
-      const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
+    this.initShotFx();
+    for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128],['speck','speck',48]]){
+      const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:name==='speck'?this.speckGeometry:this.sphere;
       const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects,name==='puff'?'dust':'smoke'):
         new THREE.InstancedMesh(geometry,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
     }
     // Allocate instance colours before the first chip, keeping its shader variant stable.
     this.fireBatches.chip.setColorAt(0,this.fireColor.set('#ffffff'));
+    this.fireBatches.speck.setColorAt(0,this.fireColor.set('#ffffff'));
+    this.fireBatches.tracer.setColorAt(0,this.fireColor.set('#ffffff'));   // R2-c: tracers are tinted per instance (faint in daylight), allocated up front
+    this.fireBatches.muzzle.setColorAt(0,this.fireColor.set('#ffffff'));   // per-shot flash tint (daylight), allocated up front so the shader variant is stable
     this.battlefieldFxBatches={};this.battlefieldDummy=new THREE.Object3D();this.battlefieldColor=new THREE.Color();
     for(const [name,capacity,color]of [
       ['flash',M01_BATTLEFIELD_FX_LIMITS.flash,'#fff0c2'],['core',M01_BATTLEFIELD_FX_LIMITS.core,'#ffc45d'],
@@ -350,8 +384,96 @@ export class M01View {
     this.battlefieldShards.setColorAt(0,this.battlefieldColor.set('#665747'));   // allocate instance colours up front: stable shader variant
     this.explosionLight=new THREE.PointLight('#ff9e45',0,80,2);this.explosionLight.visible=false;this.explosionLight.castShadow=false;this.effects.add(this.explosionLight);
   }
+  /** VIS-a: preallocated state of the per-shot flashes and smoke (m01-shot-fx.js); created once (the view test rigs call updateFire on a bare view, so also lazily). */
+  initShotFx(){
+    this.shotFx={list:createFlashList(),smoke:new ShotSmokeTable(),frames:0,drawn:0,smokeDrawn:0,smokeCap:0,nearest:Infinity};
+    this.shotTint=new THREE.Color();this.shotSmokeColor=new THREE.Color('#b9b8ae');this.shotPoint={x:0,y:0,z:0};this.shotRoot=new THREE.Object3D();this.shotMuzzle=new THREE.Vector3();
+    this.shotActors=new Map();this.shotActorsRef=null;this.shotActorsSize=-1;
+    if(!this.longRange)this.initLongRangeFx();
+  }
+  /** R2-c: the pool of Polish round impacts and the scratch objects of the tracer/impact draw (m01-long-range-fx.js); created once, never grown. */
+  initLongRangeFx(){
+    this.longRange={pool:new RoundImpactPool(IMPACT_POOL_SLOTS),point:{x:0,y:0,z:0},scale:[0,0,1],tp:{x:0,y:0,z:0},tq:{x:0,y:0,z:0},dir:{x:0,y:1,z:0},tscale:[0,0,1],
+      tint:new THREE.Color(),events:0,airborne:0,unclassified:0,tracers:{drawn:0,quota:0,suppressed:0}};
+  }
+  /**
+   * R2-c: an `npc-shot` that carries where the round stopped (`end`, `hit`) becomes one pooled impact, drawn when the round arrives (flight at the gameplay round
+   * speed). The surface class is the drawn one (m01-damage-decals.js, as for the player's rounds); a round that stopped in the air has nothing to show.
+   * Returns the pool slot or -1. Event time only (it may allocate); the draw per frame does not.
+   */
+  longRangeShot(event,sim){
+    if(!this.longRange)this.initLongRangeFx();
+    const lr=this.longRange;if(!event?.end)return -1;lr.events++;
+    let material=null;
+    try{material=event.hit===true?'earth':classifyRoundEnd(sim.world,event.end,{trees:this.environment?.treeDescriptors});}
+    catch(error){this.damageDecals.fail(error);}
+    this.lastEndMaterial=event.hit===true?null:material;   // read by Game for the thud of a round that lands near the player
+    if(material===null&&event.hit!==true){lr.airborne++;return -1;}
+    return scheduleRoundImpact(lr.pool,event,sim.clock,material,fxSeed(event.end,sim.clock));
+  }
+  /** R2-c: a German round that landed 60 m or more from the camera also draws the far dust disc (the existing near impact FX are untouched). Presentation only. */
+  longRangeLanding(event,sim){
+    if(!this.longRange)this.initLongRangeFx();
+    return scheduleLandedRound(this.longRange.pool,event,sim.clock,fxSeed(event.point,sim.clock));
+  }
+  /** `gameDiagnostics().m01.longRangeFire`: what the long-range presentation did (read-only counters). */
+  get longRangeDiagnostics(){
+    const lr=this.longRange;if(!lr)return {events:0,scheduled:0,dropped:0,live:0,pending:0,airborne:0,tracers:{drawn:0,quota:0,suppressed:0}};
+    const t=this.lastClock??0,p=lr.pool,sample=[];
+    for(let i=0;i<p.slots&&sample.length<8;i++)if(p.at[i]+1>=t&&Number.isFinite(p.at[i]))sample.push({x:p.x[i],y:p.y[i],z:p.z[i],at:p.at[i],material:IMPACT_MATERIALS[p.mat[i]]});
+    return {events:lr.events,scheduled:p.scheduled,dropped:p.dropped,live:p.live(t),pending:p.pending(t),drawn:p.lastDrawn,airborne:lr.airborne,tracers:{...lr.tracers},sample};
+  }
+  /** VIS-a: flashes (one per round) and smoke puffs of every NPC shooter; see m01-shot-fx.js. Allocation-free after construction apart from the ally eye point. */
+  updateShotFx(sim,time,put,far){
+    if(!this.shotFx)this.initShotFx();
+    const fx=this.shotFx,list=fx.list,fov=this.camera.fov||70,vh=this.owner?.canvas?.height||768,daylight=this.lightingModel?.daylight??.5,quality=this.owner?.quality;
+    const actors=sim.actors,index=this.shotActors;
+    if(this.shotActorsRef!==actors||this.shotActorsSize!==actors.length){index.clear();for(let i=0;i<actors.length;i++)index.set(actors[i].id,actors[i]);this.shotActorsRef=actors;this.shotActorsSize=actors.length;}
+    collectShotFlashes(sim,time,list,index);
+    const tint=flashTint(daylight);this.shotTint.setRGB(tint,tint,tint);
+    const cam=this.camera.position,P=this.shotPoint;
+    for(let i=0;i<list.count;i++){
+      P.x=list.x[i];P.y=list.y[i];P.z=list.z[i];
+      const a=index.get(list.by[i]);
+      if(a){
+        const item=this.impostors?.byId.get(a.id);
+        if(item){P.x=a.x;P.z=a.z;P.y=a.y+POSTURES[item.posture].heightM*IMPOSTOR_MUZZLE_H;}   // the rifle of the drawn silhouette, not the sim eye
+        else if(Math.hypot(P.x-cam.x,P.z-cam.z)<NEAR_BODY_M)this.bodyMuzzle(a,time,P);        // a drawn body keeps its true muzzle
+      }
+      list.x[i]=P.x;list.y[i]=P.y;list.z[i]=P.z;
+    }
+    fx.smoke.note(list,time,SMOKE_SLOTS_BY_TIER[quality]??SMOKE_SLOTS_BY_TIER.low);
+    const cap=SMOKE_SLOTS_BY_TIER[quality]??SMOKE_SLOTS_BY_TIER.low;let flashesDrawn=0,smokeDrawn=0,nearest=Infinity;
+    for(let i=0;i<list.count;i++){
+      P.x=list.x[i];P.y=list.y[i];P.z=list.z[i];const d=far(P),heavy=list.heavy[i]===1,seed=(Math.floor(list.at[i]*1000)^Math.floor((P.x+4096)*73)^Math.floor((P.z+4096)*197))>>>0;
+      put('muzzle',P,flashRadius(heavy,d,fov,vh,daylight)*(.85+.3*visualNoise(seed,3+list.index[i])),null,1,this.shotTint);flashesDrawn++;if(d<nearest)nearest=d;
+    }
+    const sm=fx.smoke;
+    for(let s=0;s<sm.slots&&smokeDrawn<cap;s++){
+      if(!sm.alive(s,time))continue;
+      const heavy=sm.heavy[s]===1,k=(time-sm.at[s])/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle),seed=sm.seed[s],n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+      P.x=sm.x[s]+(n0-.5)*.3*k+k*.35;P.y=sm.y[s]+.15+k*(heavy?1.6:1.1)*(.8+.4*n1);P.z=sm.z[s]+(n1-.5)*.25*k;
+      const d=far(P);
+      put('smoke',P,2*smokeRadius(heavy,k,d,fov,vh),null,(heavy?.5:.42)*Math.pow(1-k,1.15)*(.45+.4*daylight),this.shotSmokeColor,seed,4);smokeDrawn++;
+    }
+    fx.frames+=list.count?1:0;fx.drawn=flashesDrawn;fx.smokeDrawn=smokeDrawn;fx.smokeCap=cap;fx.nearest=nearest;
+  }
+  /** `gameDiagnostics().m01.distantFire`: what the last frame drew for NPC shots (read-only; the sample lists the first flashes with their world point). */
+  get shotDiagnostics(){
+    const fx=this.shotFx;if(!fx)return {frames:0,flashes:0,smoke:0,smokeCap:0,list:[]};
+    const l=fx.list,n=Math.min(l.count,8),list=[];for(let i=0;i<n;i++)list.push({by:l.by[i],heavy:l.heavy[i]===1,source:l.source[i],x:l.x[i],y:l.y[i],z:l.z[i],at:l.at[i]});
+    return {frames:fx.frames,flashes:fx.drawn,smoke:fx.smokeDrawn,smokeCap:fx.smokeCap,nearestM:Number.isFinite(fx.nearest)?fx.nearest:null,dropped:l.dropped,smokeSkipped:fx.smoke.skipped,list};
+  }
+  /** True muzzle of a drawn body (skinned socket first, else the procedural pose), written into `out`; scratch objects only. */
+  bodyMuzzle(a,time,out){
+    const pose=actorPose(a,time),root=this.shotRoot,m=this.shotMuzzle;root.position.set(a.x,a.y+pose.root.offsetY,a.z);
+    root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
+    m.fromArray(pose.rifle.muzzle);m.y-=pose.root.pivotY;m.applyMatrix4(root.matrix);
+    const skinned=this.characters?.muzzle(a.id);if(skinned)m.copy(skinned);
+    out.x=m.x;out.y=m.y;out.z=m.z;
+  }
   updateFire(sim){
-    const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};
+    const time=sim.clock,cam=this.camera.position,dummy=this.fireDummy,counts={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0,speck:0};
     const far=p=>Math.hypot(p.x-cam.x,p.y-cam.y,p.z-cam.z);
     const put=(name,p,scale,dir=null,opacity=1,color=null,styleSeed=null,variant=0)=>{
       const batch=this.fireBatches[name],index=counts[name];if(index>=batch.instanceMatrix.count)return;
@@ -363,34 +485,11 @@ export class M01View {
       if(batch.geometry.attributes.puffSpin)this.atmosphere.stylePuff(batch,index,styleSeed??fxSeed(p,time),variant);
       if(color)batch.setColorAt(index,this.fireColor.set(color));counts[name]++;
     };
-    const root=new THREE.Object3D(),muzzle=new THREE.Vector3();
-    for(const a of sim.actors)if(a.team==='enemy'&&a.alive&&a.active){
-      const age=time-(a.firedAt??-1e9);if(a.shot<=0&&age>2.2)continue;
-      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
-      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p),seed=fxSeed(p,a.firedAt??time);
-      if(a.mg34Prone?pose.firing:(pose.firing||pose.aiming&&age>=0&&age<.25))put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-      if(age>=0&&age<2.2){
-        const k=age/2.2,n0=visualNoise(seed,1),n1=visualNoise(seed,2);
-        put('smoke',{x:p.x+(n0-.5)*.22*k,y:p.y+.34+k*(1.3+n1*.55),z:p.z+(n1-.5)*.18*k},
-          Math.max(.22,d*.0065)*(.55+k*.95)*(1-k*k),null,.60*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
-      }
-    }
-    // Display fire (T22) is visual only: the simulation never marks its shooters as firing, so the flash window comes from display.firedAt.
-    // A gameplay shot in the last 0.25 s (enemy flash above) already shows a flash at that muzzle, so it is not drawn twice.
+    // VIS-a (m01-shot-fx.js): one flash per real NPC shot read from the simulation's own rounds (German gameplay rounds, MG34 round by round, display
+    // fire) and from the fire state of allied actors (Kowal's rkm, the allied riflemen); a pooled gun-smoke puff per shooter. Sized in pixels (physical
+    // up close, a bright point at 1 km) and tinted by the daylight of the lighting model. The renderer only places what the simulation already issued.
     const display=sim.displayFire??NO_DISPLAY_FIRE;
-    for(const a of sim.actors){
-      const at=display.firedAt[a.id],age=time-at;
-      if(at===undefined||!a.alive||!a.active||!(age>=0&&age<DISPLAY_FLASH_SEC)||a.team==='enemy'&&(a.shot>0||time-(a.firedAt??-1e9)<.25))continue;
-      const pose=actorPose(a,time);root.position.set(a.x,a.y+pose.root.offsetY,a.z);
-      root.rotation.set(pose.root.pitch,-a.facing,pose.root.roll,'YXZ');root.updateMatrix();
-      muzzle.fromArray(pose.rifle.muzzle);muzzle.y-=pose.root.pivotY;muzzle.applyMatrix4(root.matrix);
-      const skinnedMuzzle=this.characters?.muzzle(a.id);if(skinnedMuzzle)muzzle.copy(skinnedMuzzle);
-      const p={x:muzzle.x,y:muzzle.y,z:muzzle.z},d=far(p);
-      put('muzzle',p,Math.max(.12,d*.008)*(.8+.2*Math.sin(time*90)));
-    }
+    this.updateShotFx(sim,time,put,far);
     // Fixed-origin display shots have no actor to flash: the simulation publishes origin, aim point and times in display.fixed, so the flash, the
     // gun smoke and the arrival burst are pure functions of the clock (they survive a frame that never saw the round in flight).
     for(const shot of Object.values(display.fixed??{})){
@@ -412,16 +511,43 @@ export class M01View {
         }
       }
     }
+    // T47: the west bridgehead ckm. Flash and smoke come from the saved burst plan only (m01-ckm-fx.js); the renderer decides no target and no damage.
+    const ckmShots=ckmFlashes(sim.actors,time);
+    for(const f of ckmShots)put('muzzle',f,Math.max(.2,far(f)*.008)*(.8+.2*Math.sin(time*90)));
+    if(ckmShots.length){this.ckmPresentation.frames++;this.ckmPresentation.flashes=ckmShots.length;this.ckmPresentation.lastClock=time;this.ckmPresentation.lastFrame=this.renderedFrames??0;}
+    const ckmGas=ckmSmoke(sim.actors,time);
+    if(ckmGas){
+      const k=ckmGas.age/CKM_SMOKE_SEC,d=far(ckmGas),seed=fxSeed(ckmGas,sim.actor('ckm_gunner').ckm.burstPlan.startedAt),n0=visualNoise(seed,1),n1=visualNoise(seed,2);
+      put('smoke',{x:ckmGas.x+(n0-.5)*.5*k+k*.6,y:ckmGas.y+.3+k*(1.1+n1*.5),z:ckmGas.z+(n1-.5)*.4*k},
+        Math.max(.3,d*.0085)*(.55+k*.95)*(1-k*k),null,.5*Math.pow(1-k,1.15),'#b9b8ae',seed,4);
+    }
+    // R2-c (m01-long-range-fx.js): a round the simulation marked as a tracer is DRAWN only for an MG34 belt (rifles have none), after a short burn-in, as a faint short streak
+    // (dimmer in daylight and with distance), at most tracerQuota(tier) at once. Scratch objects only: nothing is allocated per frame.
+    if(!this.longRange)this.initLongRangeFx();
+    const lr=this.longRange,tracerCap=tracerQuota(this.owner?.quality),daylightNow=this.lightingModel?.daylight??.5;lr.tracers.drawn=0;lr.tracers.quota=tracerCap;lr.tracers.suppressed=0;
     const tracer=r=>{
-      const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!r.tracer||t<0||t>1)return;
-      const p=roundPoint(r,t),q=roundPoint(r,Math.min(1.02,t+.01)),len=Math.hypot(q.x-p.x,q.y-p.y,q.z-p.z)||1,d=far(p);
-      put('tracer',p,[Math.max(.025,d*.0016),Math.max(.025,d*.0016),Math.max(.6,d*.012)],{x:(q.x-p.x)/len,y:(q.y-p.y)/len,z:(q.z-p.z)/len});
+      if(!r.tracer)return;
+      const t=(time-r.firedAt)/(r.arriveAt-r.firedAt);if(!(t>=0&&t<=1))return;
+      const range=Math.hypot(r.ax-r.ox,r.az-r.oz);
+      if(!tracerDrawn(r,t,range)){lr.tracers.suppressed++;return;}
+      if(counts.tracer>=tracerCap)return;
+      const p=lr.tp,q=lr.tq,t2=Math.min(1.02,t+.01);
+      p.x=r.ox+(r.ax-r.ox)*t;p.y=r.oy+(r.ay-r.oy)*t+4*r.h*t*(1-t);p.z=r.oz+(r.az-r.oz)*t;
+      q.x=r.ox+(r.ax-r.ox)*t2;q.y=r.oy+(r.ay-r.oy)*t2+4*r.h*t2*(1-t2);q.z=r.oz+(r.az-r.oz)*t2;
+      const len=Math.hypot(q.x-p.x,q.y-p.y,q.z-p.z)||1,d=far(p),dir=lr.dir,sc=lr.tscale;
+      dir.x=(q.x-p.x)/len;dir.y=(q.y-p.y)/len;dir.z=(q.z-p.z)/len;
+      sc[0]=tracerHalfWidth(d);sc[1]=sc[0];sc[2]=tracerHalfLength(d);
+      const tint=tracerTint(daylightNow,d);lr.tint.setRGB(tint,tint,tint);
+      put('tracer',p,sc,dir,1,lr.tint);lr.tracers.drawn++;
     };
     for(const r of sim.enemyFire.rounds)tracer(r);
     // Second loop, after the gameplay tracers: they keep priority in the 48-instance batch and display fire takes at most DISPLAY_TRACER_CAP of what is left.
     const gameplayTracers=counts.tracer;
     for(const r of display.rounds){if(counts.tracer-gameplayTracers>=DISPLAY_TRACER_CAP)break;tracer(r);}
-    this.impacts=this.impacts.filter(i=>{const p=impactProfile(i.material);return time>=i.start&&time-i.start<Math.max(1.15,p.life);});
+    // R2-c: the arrived impacts of the Polish rounds (npc-shot.end), sized in pixels like the flashes, thinned by tier.
+    drawRoundImpacts(lr.pool,time,cam,this.camera.fov||70,this.owner?.canvas?.height||768,this.owner?.quality,put,lr.point,lr.scale,lr.tint,daylightNow);
+    // In-place compaction (the old filter() made a new array every frame).
+    {let w=0;for(let r=0;r<this.impacts.length;r++){const i=this.impacts[r],p=impactProfile(i.material);if(time>=i.start&&time-i.start<Math.max(1.15,p.life))this.impacts[w++]=i;}this.impacts.length=w;}
     for(const i of this.impacts){
       const age=time-i.start,d=far(i),seed=i.seed,quality=this.owner.quality,profile=impactProfile(i.material);
       if(profile.sparks&&age<profile.life){
@@ -735,17 +861,18 @@ export class M01View {
     this.trainLife.update(battleClock,state);
     this.wagons.update(sim.player,this.owner.quality,battleClock);
     this.yardWagons.update(sim.destruction,this.owner.quality,sim.world,sim.player,time,sim.consumed.evt_m01_wounded_dragged);
-    this.locomotive.update(sim.player,battleClock,state.train963);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug);
+    this.locomotive.update(sim.player,battleClock,state.train963,this.owner.quality);this.panzerzugArt.update(sim.player,battleClock,state.panzerzug,this.owner.quality);   // T43: preset + battle clock drive the 0.3 s fade (Low snaps)
     this.trainLife.observe(this.wagons.revision+this.locomotive.revision+this.panzerzugArt.revision);
     // Retain the last canvas frame while the mission clock is frozen (menu/pause).
     // Assets, world restore, quality and resizing still invalidate it.
-    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
-    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled);
+    this.environment?.fieldStructures.sync(sim.world,this.owner.quality,sim.player,battleClock);this.environment?.syncRailProps(sim.world,this.owner.quality,sim.player);this.environment?.trackBed.bindBridgeKits(this.kit,this.bridgeStructure);
+    this.environment?.syncVegetation(sim.world,this.owner.quality,sim.player,sim.clock,this.terrainRelief.enabled,battleClock);   // T43: battle clock drives the 0.3 s instance dither fades
     this.bridgeSyncInput.kits=this.kit;this.bridgeSyncInput.quality=this.owner.quality;this.bridgeSyncInput.world=sim.world;this.bridgeSyncInput.kitsSettled=this.kitsSettled;this.bridgeFinish.sync(this.bridgeSyncInput);
     const canvas=this.owner.canvas,previous=this.lastFrame;
+    // The procedural decal atlas completes in pause; its texture uploads must invalidate the frozen frame.
     const frame={clock:sim.clock,battleClock,world:sim.world,revision:sim.world.revision,quality:this.owner.quality,
       width:canvas.width,height:canvas.height,models:this.kit.length,kitsSettled:this.kitsSettled,characters:this.characters?.revision,aircraft:this.aircraftRevision,
-      bridgeFinishRevision:this.bridgeFinish.revision,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
+      bridgeFinishRevision:this.bridgeFinish.revision,damageAtlasRevision:this.damageDecals.map.version,damageHeightAtlasRevision:this.damageDecals.heightMap.version,vegetationRevision:this.environment?.vegetation.revision,reliefRevision:this.terrainRelief?.revision,farRevision:this.farLandscape?.revision,propsRuntime:this.environment?.propsRuntime.revision,trackBed:this.environment?.trackBed.revision,fieldStructures:this.environment?.fieldStructures.revision,wagons:this.wagons.revision,yardWagons:this.yardWagons.revision,locomotive:this.locomotive.revision,panzerzug:this.panzerzugArt.revision,impostors:this.impostors?.enabled,terrainEnabled:this.terrainEnabled,grading:this.grading.stateKey,waterDetail:this.water.detail};   // T42: the ?debug water A/B toggle is part of the paused-frame key; T44: so are the grade's ?debug toggles; T20: so is the impostor A/B toggle
     if(previous&&Object.keys(frame).every(k=>frame[k]===previous[k]))return;
     this.lastFrame=frame;this.renderedFrames=(this.renderedFrames??0)+1;
     for(const material of Object.values(this.materials))if(material.userData.m01LowDetail)material.userData.m01LowDetail.value=this.owner.quality==='low'?1:0;
@@ -753,8 +880,9 @@ export class M01View {
     this.terrain?.sync(this.owner.quality);
     this.syncSolids(sim.world);this.portalPolish.sync(this.owner.quality);const dt=Math.min(.05,Math.max(0,time-this.lastClock));this.lastClock=time;
     for(const kit of this.kit)for(const piece of kit.pieces){const s=state.parts[piece.name];piece.node.visible=Boolean(s&&s.visible&&s.lod===kit.file.lod);}
+    const sapperOps=sim.sapperOps;this.repairLine.sync(sapperOps,sim.world);   // R3-a: before the demolition and the actors (tests/m01-demolition.test.js pins updateDemolition directly before updateActors)
     this.updateDemolition(state,time,sim);
-    this.updateActors(sim.actors,time,sim.player,sim.battleClock);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
+    this.updateActors(sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
     this.horizonGlow.visible=Boolean(flash.active);
     if(flash.active){const angle=flash.azimuthDeg*Math.PI/180,d=flash.distance;
@@ -769,18 +897,20 @@ export class M01View {
     const bob=player.moveBlend*Math.sin(time*(player.sprinting?14:9))*.014;
     const legacyShake=time<this.shakeUntil?Math.sin(time*85)*.012:0,feedback=this.combatFeedback.sample(time,this.owner.quality);
     // Presentation-only offsets: authoritative yaw/pitch and shot direction remain untouched.
-    this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY,eye.z);
-    this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY,eye.z+dir.z);
+    const body=this.bodyFeedback.sample(time,player,this.owner.quality);   // landing dip and eased stairs: presentation only, the simulation's eye is untouched
+    this.camera.position.set(eye.x+feedback.cameraX,eye.y+bob+legacyShake+feedback.cameraY+body.dy,eye.z);
+    this.camera.lookAt(eye.x+dir.x+feedback.cameraX,eye.y+bob+legacyShake+dir.y+feedback.cameraY+body.dy-body.tilt,eye.z+dir.z);
     if(feedback.roll)this.camera.rotateZ(feedback.roll);
     if(this.bridgeEditorialCamera){this.camera.position.set(...this.bridgeEditorialCamera.position);this.camera.lookAt(...this.bridgeEditorialCamera.target);}
     this.bridgeFinish.prepareFrame();this.bridgeStructure.sync(this.owner.quality,this.camera.position,sim.world);this.environment?.trackBed.applyLegacyVisibility();
-    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeFinish.select(this.bridgeSelectInput);
+    this.bridgeSelectInput.kits=this.kit;this.bridgeSelectInput.state=state;this.bridgeSelectInput.clock=battleClock;this.bridgeFinish.select(this.bridgeSelectInput);   // T43: battle clock drives the truss<->card dither crossfade
     this.updateFire(sim);
     const width=this.owner.canvas.clientWidth,height=this.owner.canvas.clientHeight,aspect=width/height;
     const fov=player.aiming?48:70;
     this.camera.aspect=this.weaponCamera.aspect=aspect;this.camera.fov=THREE.MathUtils.lerp(this.camera.fov,fov,Math.min(1,dt*12));
     this.camera.updateProjectionMatrix();this.weaponCamera.updateProjectionMatrix();
     this.terrainRelief?.beginFrame(this.camera,time);this.farLandscape?.beginFrame(this.camera);this.farLandscape?.sync(sim.world,this.owner.quality,time,this.lightingModel);
+    this.characters?.setRimFog(this.lightingModel?.fog.color??[.63,.65,.65]);
     this.impostors?.sync({camera:this.camera,clock:time,battleClock:sim.battleClock,fog:this.lightingModel?.fog.color??[.63,.65,.65],sunColor:this.lightingModel?.sun.color,sunDir:this.lightingModel?.sky.sunDir,viewportHeight:this.owner.canvas.height});
     const w=sim.weapon,reload=w.reloadProgress(time*1000),bolt=w.boltCycling?Math.min(1,(time*1000-w.started)/1050):0;
     this.weaponRoot.position.set(player.aiming?0:.20,player.aiming?-.11:-.24,-.60);
@@ -794,7 +924,7 @@ export class M01View {
     this.carryBody.visible=sim.player.carrying==='jozef_bak';this.carryCrate.visible=sim.player.carrying==='sapper_crate';
     this.carryBody.position.y=this.carryCrate.position.y=bob*1.5;
     this.weaponLighting.sync({sky:this.skyLight,sun:this.lightingModel?{position:this.sun.position,target:this.sun.target,color:this.sun.color,intensity:this.lightingModel.sun.intensity}:this.sun,camera:this.camera,daylight:this.daylight??1,pitch:player.pitch});
-    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov})){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
+    if(this.viewModel.update(sim,this.owner.quality,this.flashUntil,{camera:this.camera,viewFov:this.weaponCamera.fov},state)){this.weaponRoot.visible=false;this.carryBody.visible=false;this.fallbackFx.hide(false);}
     else this.updateFallbackWeapon(sim);
     this.weaponWorldFx.update(time,sim.world);
     // Once, before any shot: compile and link the shot-FX programs now instead of stalling the first shot frame.
@@ -832,6 +962,7 @@ export class M01View {
   muzzle(clock){this.flashUntil=clock+.06;this.shakeUntil=clock+.1;}
   blast(clock){this.shakeUntil=clock+.4;}
   playerHit(clock,direction=null){this.combatFeedback.playerHit(clock,direction);this.lastFrame=null;}
+  playerLanding(clock,speed,surface){this.bodyFeedback.landing(clock,speed,surface);this.lastFrame=null;}
   directionalHit(clock,direction){this.combatFeedback.directionalHit(clock,direction);this.lastFrame=null;}
   roundFeedback(event,clock,direction=null,weapon=null){
     this.combatFeedback.roundImpact({clock,distance:event.distance,crack:Boolean(event.crack),direction,weapon,material:event.material});this.lastFrame=null;
@@ -864,11 +995,12 @@ export class M01View {
   resetEffects(){
     for(const plane of this.planes??[])plane.userData.level=null;
     for(const bomb of this.bombs??[])bomb.visible=false;
-    this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.damageDecals.reset();
+    this.lastFrame=null;this.flashUntil=0;this.fallbackShot=null;this.shakeUntil=0;this.lastClock=0;this.impacts=[];this.bursts=[];this.combatFeedback.reset();this.bodyFeedback?.reset();this.damageDecals.reset();
     for(const b of Object.values(this.fireBatches))b.count=0;for(const b of Object.values(this.battlefieldFxBatches))b.count=0;
     this.battlefieldShards.count=0;this.explosionLight.visible=false;this.explosionLight.intensity=0;
     this.demolitionState={entries:[],pieces:[],flash:null};
-    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
+    this.longRange?.pool.reset();this.shotFx?.smoke.reset();if(this.shotFx){this.shotFx.list.count=0;this.shotFx.frames=0;}
+    this.fx={muzzle:0,tracer:0,puff:0,spark:0,smoke:0,chip:0,speck:0};this.muzzlePresentation={frames:0,lastClock:null,lastFrame:null};this.ckmPresentation={frames:0,flashes:0,lastClock:null,lastFrame:null};this.battlefieldFxCounts={flash:0,core:0,fire:0,smoke:0,dust:0,shard:0};this.battlefieldFxMeta={kinds:{small:0,bombing:0,demolition:0},bands:{near:0,mid:0,far:0}};
   }
   /** T44 (Medium/High): the world goes into the grade's target, then ONE full-screen pass paints the canvas. The weapon scene is drawn afterwards, ungraded. */
   drawGraded(post){
@@ -892,8 +1024,8 @@ export class M01View {
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
     terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
-    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},
-    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),
+    visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},distantFire:this.shotDiagnostics,longRangeFire:this.longRangeDiagnostics,
+    combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),bodyFeedback:this.bodyFeedback.diagnostics(),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},
     demolition:{clock:this.lastClock,collapseSeconds:M01_COLLAPSE_DURATION,budget:M01_DEMOLITION_BUDGET,entries:this.demolitionState.entries,pieces:this.demolitionState.pieces,flash:this.demolitionState.flash,
       far:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality).farDemolitions,
@@ -903,11 +1035,11 @@ export class M01View {
     battlefieldFx:{active:this.bursts.length,counts:{...this.battlefieldFxCounts},meta:structuredClone(this.battlefieldFxMeta),limits:M01_BATTLEFIELD_FX_LIMITS,extraLights:this.explosionLight?.visible?1:0,atmosphere:this.atmosphere.diagnostics}};}
   dispose(){
     if(this.disposed)return;
-    this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.characters?.dispose();this.impostors?.dispose();
+    this.disposed=true;this.bridgeFinish.dispose();if(typeof window!=='undefined'&&window.m01BridgeFinishDebug===this.bridgeFinishDebug)delete window.m01BridgeFinishDebug;if(typeof window!=='undefined'&&window.m01RailPropsDebug===this.railPropsDebug)delete window.m01RailPropsDebug;if(typeof window!=='undefined'&&window.m01FieldStructuresDebug===this.fieldStructuresDebug)delete window.m01FieldStructuresDebug;if(typeof window!=='undefined'&&window.m01TerrainDebug===this.terrainDebug)delete window.m01TerrainDebug;this.grading.dispose();this.bombs?.forEach(b=>b.removeFromParent());if(this.bombs)this.bombs.length=0;for(const mixer of this.aircraftMixers){mixer.stopAllAction();mixer.uncacheRoot(mixer.getRoot());}for(const m of this.aircraftMaterials??[])m.dispose();this.aircraftSky?.dispose();this.viewModel?.dispose();this.repairLine?.dispose();this.characters?.dispose();this.impostors?.dispose();
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
-    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
+    if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();this.areaDressing?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
-    this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());
+    this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());this.speckGeometry?.dispose();
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }

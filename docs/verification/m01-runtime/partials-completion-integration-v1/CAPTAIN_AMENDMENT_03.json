@@ -1,0 +1,61 @@
+{
+  "id": "CAPTAIN-AMENDMENT-03",
+  "at": "2026-10-15T23:16:15.458173+00:00",
+  "authority": "Permanent user D34; complete all partial tasks and integrate; prospective clarification of the existing approved WEST-readiness policy, without changing gameplay.",
+  "preservedFailure": {
+    "independentAttempt2": "FAIL remains FAIL",
+    "localCorrection2": "24 routes:23PASS/1FAIL under the narrower CAP02 attribution rule; retained in CORRECTION_02_PRE_CLARIFICATION.json and original full evidence."
+  },
+  "finding": {
+    "seed": 6,
+    "mode": "help",
+    "firstDifferentTick1Based": 19704,
+    "firstDifferentClock": 985.1999999996517,
+    "previousBattleBoth": 24240.424999996507,
+    "rawBattle": 24240.849999996506,
+    "currentAndPolicyBattle": 24240.474999996506,
+    "sameRngAndHealthBeforeBoundary": true,
+    "mechanism": "Existing advanceBattle reduces scale8.5 to1 during the last60 battle seconds when WEST readiness is false; gate object is only created at06:44:30. The approved unfinished-carry readiness condition therefore acts from06:44:00.",
+    "rawWestConsumed": 992.1999999996453,
+    "firstDifferentControlsClock": 992.2499999996453,
+    "roundId": "m01_round_1659",
+    "roundBy": "de_east_0",
+    "weapon": "mg34",
+    "sameCompleteRoundInRawCurrentPolicy": true,
+    "firedAt": 990.9499999996466,
+    "arriveAt": 993.1188482685458,
+    "appliedAt": 993.1499999996445,
+    "rawPlayerAtImpact": [
+      -291.0793373670676,
+      -3,
+      31.756952057128466
+    ],
+    "rawImpactMaterial": "earth",
+    "rawHealth": 100,
+    "currentPlayerWaiting": [
+      -290.93459003017216,
+      -3,
+      26.05879022997216
+    ],
+    "currentImpactMaterial": "character",
+    "currentHealth": 92,
+    "extraDamage": 8,
+    "full24Result": "Only seed1/ignore and seed6/help lose8; every route completes, all other raw outcomes and original actor health/alive exact, all full policy stats/control/tickhealth/RNG exact."
+  },
+  "decision": "Retain active combat and the unchanged existing last60-second slowdown plus30-second clamp. Additional exposure may be caused by an additional impact of a projectile also issued in RAW, if RAW already leaves after WEST and current still waits for real delivery. No source gameplay, cadence, RNG, aim, health, depth or geometry change is authorised by this clarification.",
+  "newAttributionRequirements": [
+    "Keep CAP02 exact current/policy full stats, all controls, per-tick clocks/RNG/health, raw-health minus attributed damage, original RAW hits and all other RAW outcomes. Preserve every full unmodified report.",
+    "Record and verify the first RAW/current clock difference: identical prior clock/RNG/health/control prefix, WEST segment last60 seconds, predecessor ready, current unfinished carry, scale8.5 versus1. Gate-null is allowed only in the measured slowdown interval [06:44:00,06:44:30); frozen stage must still have WEST gate at06:44:30.",
+    "For every extra impact classify separately additional-issued or shared-issued projectile; retain issue/arrival/application, shooter/weapon/full round, player state, real carry context and matching exact policy hit. No impact may pass solely because its final health arithmetic happens to match.",
+    "For shared-issued additional impacts require complete RAW/current round equality; retain actual RAW landRound result with no player damage, actual RAW WEST consumption before the RAW exit controls and impact, and the measured RAW/current player positions explaining hit versus miss. All RAW health impacts remain preserved, with only the documented T05 pass and named T36 carry suppression projection.",
+    "If issue occurs during slowdown, prove WEST readiness false due unfinished carry in [06:44:00,06:44:30); if during freeze prove WEST gate/unfinished carry at06:44:30. Additional-issued cases keep full absent-RAW-round proof. Unexplained impacts, losses before the causal boundary, missing raw data or uncompleted routes are FAIL.",
+    "Run the corrected attribution on fresh pinned source and all24 routes in CI, then independent verifier and reviewer assess sufficiency. Do not relabel the prior23/24 as24/24 or task acceptance."
+  ],
+  "budget": {
+    "fixAttempt": 2,
+    "maxFixAttempts": 3,
+    "reviewRejections": 0,
+    "maxReviewRejections": 2
+  },
+  "acceptance": "NONE"
+}

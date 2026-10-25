@@ -8,6 +8,7 @@
     "dev": "vite --host 127.0.0.1",
     "test": "node --test tests/*.test.js",
     "build": "vite build",
+    "verify:bundle": "node tools/verify-t50-bundle.mjs",
     "build:browser": "node tools/verification/m01-browser-build.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test:browser": "playwright test",

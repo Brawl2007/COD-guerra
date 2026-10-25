@@ -1,0 +1,336 @@
+{
+  "label": "before",
+  "quality": "medium",
+  "viewport": [
+    1366,
+    768
+  ],
+  "from": 0.5,
+  "step": 0.4,
+  "count": 10,
+  "shots": [
+    {
+      "name": "repair-1",
+      "errors": [],
+      "files": [
+        {
+          "file": "repair-1-before-00.png",
+          "clock": 274.000000000028,
+          "offset": 0.5,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 830049
+        },
+        {
+          "file": "repair-1-before-01.png",
+          "clock": 274.6167000000282,
+          "offset": 1.117,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 830049
+        },
+        {
+          "file": "repair-1-before-02.png",
+          "clock": 274.86670000002823,
+          "offset": 1.367,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 830049
+        },
+        {
+          "file": "repair-1-before-03.png",
+          "clock": 275.2667000000283,
+          "offset": 1.767,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 547,
+          "triangles": 830569
+        },
+        {
+          "file": "repair-1-before-04.png",
+          "clock": 275.7500000000284,
+          "offset": 2.25,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 15,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 20
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16092677387199,
+              -1.921471894755415,
+              27.97430199471571
+            ],
+            "quaternion": [
+              -0.000006136137491465729,
+              -0.7148864348211396,
+              0.000006001843249802737,
+              0.6992405775089474
+            ],
+            "fov": 70
+          },
+          "draw": 549,
+          "triangles": 830169
+        },
+        {
+          "file": "repair-1-before-05.png",
+          "clock": 276.0000000000285,
+          "offset": 2.5,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 15,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 20
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.1610988697936,
+              -1.9198777418928121,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0.000017565543589766724,
+              -0.7148864346316716,
+              -0.00001718110771963395,
+              0.6992405773236261
+            ],
+            "fov": 70
+          },
+          "draw": 549,
+          "triangles": 830171
+        },
+        {
+          "file": "repair-1-before-06.png",
+          "clock": 276.40000000002857,
+          "offset": 2.9,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 3,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 4
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.161197512196985,
+              -1.9199959058578797,
+              27.97430199471571
+            ],
+            "quaternion": [
+              8.142736146335576e-7,
+              -0.7148864348470102,
+              -7.964525899685324e-7,
+              0.6992405775342518
+            ],
+            "fov": 70
+          },
+          "draw": 549,
+          "triangles": 830083
+        },
+        {
+          "file": "repair-1-before-07.png",
+          "clock": 276.9834000000287,
+          "offset": 3.483,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 829539
+        },
+        {
+          "file": "repair-1-before-08.png",
+          "clock": 277.2334000000288,
+          "offset": 3.733,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 547,
+          "triangles": 830059
+        },
+        {
+          "file": "repair-1-before-09.png",
+          "clock": 277.7834000000289,
+          "offset": 4.283,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 4
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              -29.161574734117142,
+              -1.9200816213614966,
+              27.97430199471571
+            ],
+            "quaternion": [
+              -0.00002002651705505839,
+              -0.7148864345669669,
+              0.000019588220826396536,
+              0.6992405772603375
+            ],
+            "fov": 70
+          },
+          "draw": 547,
+          "triangles": 829557
+        }
+      ],
+      "diag": {
+        "clock": 278.183500000029,
+        "drawCalls": 549,
+        "triangles": 830085,
+        "player": {
+          "x": -29.16119539665055,
+          "y": -3,
+          "z": 27.97430199471571,
+          "angle": 0.02212703500065723,
+          "pitch": 0,
+          "health": 100,
+          "crouched": true,
+          "aiming": false
+        },
+        "longRange": null,
+        "memory": null
+      }
+    }
+  ]
+}

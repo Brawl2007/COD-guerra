@@ -34,6 +34,7 @@ O diagrama é gerado a partir dos dados. Para regenerar: `node missions/m01-tcze
 | Abrigo de disparo no terreno da estação (−290, 22) | `RECONSTRUCTED` | T08, T27 |
 | Casamatas do encontro oeste: existência documentada, interior reconstruído | `RECONSTRUCTED` | T04 |
 | Posto da secção, posto avançado, barracão, abrigo | `RECONSTRUCTED` (dramatização plausível) | — |
+| Posto da ckm wz.30 (S2: aterro entre as pontes, 8; −3; 26; nenhuma fonte dá a posição da ckm) | `RECONSTRUCTED` | T04, T08, T27 (P12) |
 | Trem 963 diante dos portões e Panzerzug 7 na via paralela | `RECONSTRUCTED` | T07, T08, T14 |
 | Direções distantes: Elbląg a 80°/39,7 km, Malbork a 113°/15,8 km, Westerplatte a 346°/36,1 km | `EXACT` (cálculo por coordenadas de cidades) | — |
 
@@ -85,14 +86,15 @@ Regras (Prompt §71):
 
 ## 6. Cobertura
 
-25 nós em `map-layout.json → coverNodes`, cada um com posição, normal (todos voltados a +X, leste), altura e lados de exposição (`peek`). Tipos usados: `WALL_CORNER`, `WINDOW`, `SANDBAG`, `TRENCH`, `LOW_COVER`, `HIGH_COVER`, `BUILDING_CORNER` e `VEHICLE`.
+28 nós em `map-layout.json → coverNodes`, cada um com posição, normal (todos voltados a +X, leste), altura e lados de exposição (`peek`). Tipos usados: `WALL_CORNER`, `WINDOW`, `SANDBAG`, `TRENCH`, `LOW_COVER`, `HIGH_COVER`, `BUILDING_CORNER` e `VEHICLE`.
 
 - **Treliças da ponte** (`partial: true`): cobertura parcial. A engine deve usar a geometria real das barras e deixar passar tiros pelas aberturas. Nada de "cobre 50%" por sorteio.
 - **Nós dinâmicos:**
   - `cv_forward_post` pode ser destruído às 04:34.
   - `cv_crater_1` surge após o bombardeio.
   - As seteiras das casamatas desaparecem às 06:45.
-- **Reserva:** `cv_casemate_emb_s` fica reservado à guarnição da ckm wz.30.
+- **Reserva:** `cv_ckm_post` (8,8; −3; 26) fica reservado à guarnição da ckm wz.30, que desde a T47 está no posto S2 (8; −3; 26), no aterro entre as pontes, encostado à face norte do encontro rodoviário (`RECONSTRUCTED`: nenhuma fonte dá a posição da ckm). `cv_casemate_emb_s` (casamata, 24; −3; 43) deixou de estar reservado: a seteira da casamata não vê nenhum alemão.
+- **Sapadores (R3-a, revisão de 2026-10-25):** `cv_cable_fault` (−117; −2,2; 8) e `cv_cable_second` (−133,5; −2,2; 8) são duas fiadas de sacos de areia (1,2 m) na encosta sul do aterro, a 3,4 m e a 3,1 m a leste dos dois cortes do cabo (`GAMEPLAY_DRAMATIZATION`, sem fonte histórica). A equipa abriga-se aqui por decisão própria quando é suprimida (`src/game/m01-sappers.js`, `seek.lanes`: um lugar por sapador, a oeste da fiada) e volta ao trabalho quando a supressão acaba. As fiadas ficam a norte da linha do cabo (z 10,7) e do chão raso por onde anda o jogador, para não tapar o caminho da equipa nem o do jogador.
 
 ## 7. Luz (cálculo C01)
 
@@ -109,7 +111,7 @@ Não esconder gráfico ruim com escuridão (Prompt §26). A abertura precisa ser
 
 - A explosão leste é no pilar 6 (x ≈ 800). De onde Jan está no tabuleiro (x 20–160) fica a ~640–780 m: o clarão aparece em t = 0 e o som chega em **t ≈ 1,9–2,3 s** (C02).
 - MG34 do dique (1075, 1, 12) e do trem (1160, 3, 2,5), a ~1,05–1,2 km: timbre distante, cauda longa sobre a água e a planície. Os clarões precisam coincidir com a origem do som (~3 s de atraso).
-- A ckm wz.30 da casamata (24, −3, 43) soa próxima e abafada pelo interior de pedra.
+- A ckm wz.30 está ao ar livre no posto S2 (8, −3, 26; `RECONSTRUCTED`), já não na casamata (24, −3, 43): soa pelo evento `ally-fire` de cada rajada, com atraso distância/343 s, e o emissor de apresentação da casamata (`ae_s1_ckm_casemate`) foi retirado na T47. O timbre nesse posto ainda não foi ouvido em jogo.
 - O combate do norte (S4) fica a 0,8–1,5 km: som grave, sem estalidos agudos, com atraso de 2–4 s em relação aos clarões.
 - Mixagem: avisos de demolição e falas prioritárias passam por cima do combate distante (Prompt §71).
 

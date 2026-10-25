@@ -128,7 +128,7 @@
       "embrasures": [[25, -3, 37], [25, -3, 43]],
       "classification": "RECONSTRUCTED",
       "sources": ["T04"],
-      "notes": "Casamatas defensivas nos encontros: DOCUMENTED (T04). Um dos dois postos de disparo das cargas era um bunker na cabeça de ponte oeste (T08/T27). Interior reconstruído para gameplay; não chamar de reconstrução exata (Prompt §74). Metralhadora ckm wz.30 na seteira sul. Dentro da zona de demolição oeste."
+      "notes": "Casamatas defensivas nos encontros: DOCUMENTED (T04). Um dos dois postos de disparo das cargas era um bunker na cabeça de ponte oeste (T08/T27). Interior reconstruído para gameplay; não chamar de reconstrução exata (Prompt §74). Até T47 a metralhadora ckm wz.30 estava na seteira sul; já não está (ver ckm_post). Dentro da zona de demolição oeste."
     },
     {
       "id": "rail_embankment_west",
@@ -186,6 +186,17 @@
       "classification": "RECONSTRUCTED",
       "sources": [],
       "notes": "Posição e aparência: GAMEPLAY_DRAMATIZATION plausível. Início da missão."
+    },
+    {
+      "id": "ckm_post",
+      "name": "Posto da ckm wz.30 (abrigo de campanha de sacos de areia no encontro oeste da ponte rodoviária)",
+      "type": "position",
+      "point": [8, -3, 26],
+      "root": [7.17, -3, 26],
+      "azimuthDeg": 0,
+      "classification": "RECONSTRUCTED",
+      "sources": ["T04", "T08", "T27"],
+      "notes": "T47, RECONSTRUCTED: nenhuma fonte dá a posição da ckm. T08/T27 documentam um bunker de disparo na cabeça de ponte oeste (P12: posição exata em aberto) e T04 as casamatas sob os encontros; a seteira da casamata não vê nenhum alemão (o tabuleiro, o pilar 1 e as torres cortam a linha a 2–113 m). Este posto é o ponto S2 da análise de linhas (docs/verification/m01-runtime/ckm-fire-arc-phase0-2026-10-16): aterro entre as pontes, encostado à face norte do encontro rodoviário, ao nível das casamatas e a 8 m da casamata. A boca (gun_muzzle_flash) fica em (8; −2,36; 26), a 1045–1049 m dos atiradores dos portões de Lisewo, com linha livre e sem tocar nos colliders das pontes. Guarnição de três. Abrigo procedural de jogo, não a posição histórica."
     },
     {
       "id": "forward_post",
@@ -392,6 +403,15 @@
       "normal": [1, 0, 0],
       "heightM": 1.4,
       "peek": ["over"],
+      "activeUntil": "evt_m01_west_demolition"
+    },
+    {
+      "id": "cv_ckm_post",
+      "type": "WINDOW",
+      "position": [8.8, -3, 26],
+      "normal": [1, 0, 0],
+      "heightM": 0.5,
+      "peek": ["over"],
       "reservedFor": "ckm_crew",
       "activeUntil": "evt_m01_west_demolition"
     },
@@ -408,6 +428,24 @@
       "heightM": 0.8,
       "peek": ["over"],
       "activeAfter": "evt_m01_bombing_0434"
+    },
+    {
+      "id": "cv_cable_fault",
+      "type": "SANDBAG",
+      "position": [-117, -2.2, 8],
+      "normal": [1, 0, 0],
+      "heightM": 1.2,
+      "peek": ["over"],
+      "notes": "R3-a, GAMEPLAY_DRAMATIZATION (sem fonte histórica): fiada de sacos de areia na encosta sul do aterro, 3,4 m a leste do corte do ponto de reparo 2 (fault, em mission.json grp_sappers.operation) e a norte da linha do cabo, fora do chão raso por onde anda o jogador (z 11-17). Os sapadores abrigam-se aqui quando suprimidos (src/game/m01-sappers.js, seek.lanes). A base (y -2,2) é a do pé da encosta, onde ficam os três lugares de abrigo; mais a norte a fiada entra no talude."
+    },
+    {
+      "id": "cv_cable_second",
+      "type": "SANDBAG",
+      "position": [-133.5, -2.2, 8],
+      "normal": [1, 0, 0],
+      "heightM": 1.2,
+      "peek": ["over"],
+      "notes": "R3-a, GAMEPLAY_DRAMATIZATION (sem fonte histórica): o mesmo, 3,1 m a leste do segundo corte (second). A fiada acaba a 1,2 m da linha do cabo (z 10,7) para deixar passar a equipa quando segue o cabo de um corte ao outro."
     },
     { "id": "cv_firing_point", "type": "HIGH_COVER", "position": [-286, -3, 22], "normal": [1, 0, 0], "heightM": 2.0, "peek": ["left"] },
     { "id": "cv_rail_hut", "type": "BUILDING_CORNER", "position": [-249, -3, 14], "normal": [1, 0, 0], "heightM": 3.5, "peek": ["right"] },

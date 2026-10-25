@@ -1,0 +1,218 @@
+{
+  "scope": "Exact workflow-embedded assertion validation only; no simulation/browser run or synthetic route acceptance",
+  "workflowSha256": "70f44eab9675e3d2374d6ccede02e5d367e4affbcf1304ef2594fa3f411f7a0e",
+  "embeddedCodeSha256": "8bd799a9a193c976f59ffdc3051cc061e83520c40347b733945940e48700ac9f",
+  "measuredPath": "/workspace/COD-guerra/test-results/partials-correction-02/cap03-seed1.json",
+  "measuredSha256": "0302ce522b77fbe3919c229fb41924995618515b8152e72b4707067fa861c83c",
+  "focusedAdaptation": "Only count guards12/24/24 →1/2/2 in scratch code",
+  "cases": [
+    {
+      "name": "measured successful CAP03 focused report; only focused count guards adapted",
+      "expected": true,
+      "accepted": true,
+      "exitCode": 0
+    },
+    {
+      "name": "exact12seeds/24runs/24routes synthetic schema positive",
+      "expected": true,
+      "accepted": true,
+      "exitCode": 0
+    },
+    {
+      "name": "missing report result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "FAIL report result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "UNKNOWN report result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing top-level exactStatsAndSummary",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "FAIL top-level exactStatsAndSummary",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "UNKNOWN top-level exactStatsAndSummary",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "FAIL route result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "UNKNOWN route result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing route result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "FAIL route check",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "UNKNOWN route check",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "SKIPPED route check",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing route check result",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "empty route checks",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing route checks",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "non-array route checks",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "null route check",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing seeds count",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "11seeds instead of12",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "13seeds instead of12",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing rawPredecessor runs count",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "23 rawPredecessor runs instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "25 rawPredecessor runs instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing current runs count",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "23 current runs instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "25 current runs instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing policyReplayPredecessor runs count",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "23 policyReplayPredecessor runs instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "25 policyReplayPredecessor runs instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "missing route count",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "23routes instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    },
+    {
+      "name": "25routes instead of24",
+      "expected": false,
+      "accepted": false,
+      "exitCode": 1
+    }
+  ],
+  "productionDiffAgainst016b": "",
+  "positives": 2,
+  "negatives": 32,
+  "result": "PASS"
+}

@@ -1,6 +1,7 @@
 import { Random } from '../core/random.js';
 import { makeRound } from './m01-fire.js';
 import { eyePosition } from '../world/spatial.js';
+import { aimPoint } from './m01-aim.js';
 
 // Display fire (roadmap T22): visual-only rounds for the distant firefight (tracers and muzzle flashes across Lisewo).
 // They live in their own list, outside enemyFire.rounds and outside every save: they never trace the world, suppress,
@@ -8,7 +9,11 @@ import { eyePosition } from '../world/spatial.js';
 // For difficulty (H9) this means by construction: not a telegraph, not an aim/cadence multiplier target, not a burst to cap.
 // Mission data supplies profiles in groups[].displayFire (T23: the east front); a profile is, with every key but one target spec optional:
 //   {id, shooters:[actorId..] | origin:[x,y,z], weapon, rounds:[min,max], intervalSec:[min,max], interval, tracerEvery,
-//    bias:[mrad,mrad], cone:[mrad,mrad], targetGroup | targetIds:[..] | targetBox:[minX,maxX,minZ,maxZ], from, until, classification, note}
+//    bias:[mrad,mrad], cone:[mrad,mrad], targetGroup | targetIds:[..] | targetBox:[minX,maxX,minZ,maxZ], from, until, classification, note,
+//    respondSec, followUp:[probability,[min,max]]}
+// Combat AI slice 1 (both optional, absent = the T22/T23 behaviour, draw for draw): `respondSec` makes a shooter answer the men of his target group/ids
+// whose gameplay flash (firedAt) is at most that old, as a crew lays its gun on a muzzle flash (anyone of the pool when nobody fired); `followUp` gives a
+// burst a second one soon after (probability, pause range in s) instead of the flat interval, so a gun "talks" in uneven groups instead of a loop.
 // `weapon` is a display label that may differ from the actor's gameplay weapon; `from`/`until` are event ids (consumed gates).
 // Unknown keys are rejected (a typo must not silently change the behaviour). A fixed origin (the Panzerzug) has no actor to flash: the latest shot
 // of each such profile is published in display.fixed[profileId] = {ox,oy,oz,ax,ay,az,weapon,firedAt,arriveAt} for the renderer.
@@ -38,7 +43,7 @@ const idList = (id, name, v) => {
   return Object.freeze([...v]);
 };
 const KEYS = new Set(['id', 'shooters', 'origin', 'weapon', 'rounds', 'intervalSec', 'interval', 'tracerEvery', 'bias', 'cone', 'targetGroup', 'targetIds',
-  'targetBox', 'from', 'until', 'classification', 'note']);
+  'targetBox', 'from', 'until', 'classification', 'note', 'respondSec', 'followUp']);
 const numbers = (id, name, v, length, min = -Infinity) => {
   if (!Array.isArray(v) || v.length !== length || !v.every(n => Number.isFinite(n) && n >= min)) fail(id, `${name} must be ${length} finite numbers`);
   return Object.freeze([...v]);
@@ -63,13 +68,19 @@ export function normalizeDisplayProfile(p, { events } = {}) {
   const box = p.targetBox === undefined ? null : numbers(id, 'targetBox', p.targetBox, 4);
   if (box && (box[0] > box[1] || box[2] > box[3])) fail(id, 'targetBox must be [minX,maxX,minZ,maxZ]');
   if (p.targetGroup !== undefined && (typeof p.targetGroup !== 'string' || !p.targetGroup)) fail(id, 'targetGroup must be a group id');
+  if (p.respondSec !== undefined && (!Number.isFinite(p.respondSec) || p.respondSec <= 0 || p.respondSec > 60 || box)) fail(id, 'respondSec must be in (0, 60] s, for an actor target');
+  let followUp = null;
+  if (p.followUp !== undefined) {
+    if (!Array.isArray(p.followUp) || p.followUp.length !== 2 || !Number.isFinite(p.followUp[0]) || p.followUp[0] < 0 || p.followUp[0] > 1) fail(id, 'followUp must be [probability, [min,max]]');
+    followUp = Object.freeze([p.followUp[0], pair(id, 'followUp pause', p.followUp[1], { min: .05 })]);
+  }
   return Object.freeze({
     id, weapon: p.weapon, rounds, intervalSec: pair(id, 'intervalSec', p.intervalSec, { min: .05 }), interval, tracerEvery,
     bias: numbers(id, 'bias', p.bias ?? [2, 1.4], 2, 0), cone: numbers(id, 'cone', p.cone ?? [.7, .5], 2, 0), from: p.from, until: p.until,
     ...(p.classification !== undefined ? { classification: p.classification } : {}),
     ...(p.shooters ? { shooters: idList(id, 'shooters', p.shooters) } : { origin: numbers(id, 'origin', p.origin, 3) }),
     ...(p.targetGroup !== undefined ? { targetGroup: p.targetGroup } : {}), ...(p.targetIds !== undefined ? { targetIds: idList(id, 'targetIds', p.targetIds) } : {}),
-    ...(box ? { targetBox: box } : {}),
+    ...(box ? { targetBox: box } : {}), ...(p.respondSec !== undefined ? { respondSec: p.respondSec } : {}), ...(followUp ? { followUp } : {}),
   });
 }
 
@@ -101,17 +112,18 @@ const gone = ['DOWN', 'WOUNDED', 'reached_safety'];
 const eligible = (a, now) => Boolean(a && a.alive && a.active && !a.carriedBy && !gone.includes(a.state) && now >= (a.suppressedUntil ?? 0));
 const open = (p, view) => (!p.from || view.consumedEvent(p.from)) && (!p.until || !view.consumedEvent(p.until));
 
-/** Same aim point rule as the gameplay burst (chest height of a standing or crouched man, one metre above ground for a box). */
+/** Same aim point rule as the gameplay burst (torso of a standing, crouched or prone man, one metre above ground for a box). */
 function target(display, view, p, byId) {
   const r = () => display.rng.next();
   if (p.targetBox) {
     const [x0, x1, z0, z1] = p.targetBox, x = x0 + r() * (x1 - x0), z = z0 + r() * (z1 - z0);
     return { x, y: view.heightAt(x, z) + 1, z };
   }
-  const pool = (p.targetGroup ? view.actors.filter(a => a.group === p.targetGroup) : p.targetIds.map(id => byId.get(id))).filter(a => a?.alive && a.active);
-  if (!pool.length) return null;
-  const t = pool[Math.floor(r() * pool.length)];
-  return { x: t.x, y: t.y + (t.crouched ? .75 : 1.1), z: t.z };
+  const all = (p.targetGroup ? view.actors.filter(a => a.group === p.targetGroup) : p.targetIds.map(id => byId.get(id))).filter(a => a?.alive && a.active);
+  if (!all.length) return null;
+  const flashed = p.respondSec ? all.filter(a => Number.isFinite(a.firedAt) && a.firedAt <= view.clock && view.clock - a.firedAt <= p.respondSec) : [];
+  const pool = flashed.length ? flashed : all, t = pool[Math.floor(r() * pool.length)];   // still one draw
+  return aimPoint(t);   // T38: the torso of the posture he is drawn in (kneeling platoon/gate men, prone MG34 gunners)
 }
 
 /** One burst. Draw order is fixed: count, target, shared dispersion, per-round dispersion. A burst without a target or without room fires nothing. */
@@ -149,7 +161,7 @@ export function updateDisplayFire(display, view, dt) {
       if (p.shooters && !eligible(actor, now)) { delete display.cooldown[key]; continue; }
       display.cooldown[key] ??= draw(display.rng, p.intervalSec);   // staggered first burst after (re)activation
       if ((display.cooldown[key] -= dt) > 0) continue;
-      display.cooldown[key] = draw(display.rng, p.intervalSec);
+      display.cooldown[key] = p.followUp && display.rng.next() < p.followUp[0] ? draw(display.rng, p.followUp[1]) : draw(display.rng, p.intervalSec);
       const before = display.rounds.length;
       burst(display, view, p, who, actor, byId);
       for (let i = before; i < display.rounds.length; i++) flash(display.rounds[i]);

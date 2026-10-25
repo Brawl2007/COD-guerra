@@ -15,6 +15,19 @@ export function coverControls(sim){
   return {aim:true,lookX:Math.atan2(Math.sin(turn),Math.cos(turn))/.0022,lookY:(p.pitch-pitch)/.0022,fire:sim.weapon.state==='READY'};
 }
 
+/**
+ * SP-08 (2026-10-22): the corridor task through the same controls as Game. While Jan counts he stays at the post; when Zieliński sends him back he runs to Dudek and walks
+ * with him 3 m behind, on the river side (within the 10 m escort distance); afterwards he waits there for the blast. A simulation without the corridor task (the predecessors of
+ * the golden amendments) gets no control at all: the old wait at the post, byte for byte.
+ */
+export function corridorControls(sim){
+  const task=sim.corridorTask;if(!task)return {};
+  if(task.phase==='done'&&sim.player.x<-300)return {};   // after the escort he waits by the station with Dudek and Zieliński for the blast, then walks back (route)
+  const p=sim.player,goal=task.phase==='escort'&&task.carrier?{x:task.carrier.x+3,z:task.carrier.z+1.5}:{x:-292,z:26};
+  const dx=goal.x-p.x,dz=goal.z-p.z,d=Math.hypot(dx,dz);if(d<1)return {};
+  let turn=Math.atan2(dz,dx)-p.angle;turn=Math.atan2(Math.sin(turn),Math.cos(turn));
+  return {lookX:turn/.0022,forward:1,sprint:d>12};
+}
 // A bounded route through the real simulation; no event, clock or objective injection.
 // This is an automated state/control test, not a browser playthrough.
 export function driver(seed=19390901,{support=false,onStep,Simulation=M01Simulation}={}){
@@ -58,20 +71,21 @@ export function driver(seed=19390901,{support=false,onStep,Simulation=M01Simulat
 export function toRepair(d){
   const {sim,step,until,walk}=d;
   step({skip:true});
-  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
+  walk(-66,26);walk(-30,26);walk(-30,2);walk(16,2);step({interact:true});
   until(()=>sim.active('follow_sergeant'),120);
-  walk(-15,2);walk(-15,11);walk(-147,11);
+  walk(-30,2);walk(-30,11);walk(-147,11);
   walk(-50,11);walk(-44,11);
-  walk(-245,9);walk(-274,9);walk(-274,21);walk(-265,21);step({interact:true});
-  walk(-274,21);walk(-274,8);walk(-123,8);step({interact:true});
+  // The crates and sandbags of the repair cluster (-150,8) and the two drums at the hut's west door (-272/-274, 14) are solid: pass north of the first, west of the second.
+  walk(-150,15.5);walk(-245,9);walk(-275.5,9);walk(-275.5,21);walk(-265,21);step({interact:true});
+  walk(-275.5,21);walk(-275.5,8);walk(-155,15.5);walk(-123,8);step({interact:true});
   if(!sim.active('cover_repair'))throw new Error('Route did not deliver the crate');
   return d;
 }
 /** A real route to the scripted station evacuation, optionally observing it from the yard. */
 export function toStationEvacuation(d=driver(),{observe=false,phase='drag'}={}){
   const {sim,step,walk,until}=d;step({skip:true});
-  walk(-66,26);walk(-15,26);walk(-15,2);walk(16,2);step({interact:true});
-  if(observe){walk(-15,2);walk(-15,32);walk(-110,32);walk(-290,35);walk(-308,35);}
+  walk(-66,26);walk(-30,26);walk(-30,2);walk(16,2);step({interact:true});
+  if(observe){walk(-30,2);walk(-30,32);walk(-110,32);walk(-290,35);walk(-308,35);}
   until(()=>sim.consumedEvent('evt_m01_wounded_dragged'),120);
   if(observe&&phase==='release'){
     until(()=>sim.actor('generic_rifleman').stationDrag?.phase==='drag',180);walk(-331,32);
@@ -81,11 +95,11 @@ export function toStationEvacuation(d=driver(),{observe=false,phase='drag'}={}){
   return d;
 }
 /** Stay in the real sandbag cover until an actual adjustment salvo is emitted. */
-export function toCoverAdjustment({truss=false}={}){
-  const d=toRepair(driver()),{sim,walk,step,until}=d;
+export function toCoverAdjustment({truss=false,Simulation}={}){
+  const d=toRepair(driver(undefined,{Simulation})),{sim,walk,step,until}=d;
   walk(-115,27);walk(-26.5,28);step({crouch:true});
   until(()=>sim.active('hold_access'),500);
-  if(truss){step({crouch:true});walk(-115,32);walk(-10,32);walk(-10,40);walk(30,40);walk(38.5,37);step({crouch:true});}
+  if(truss){step({crouch:true});walk(-115,32);walk(-30,40);walk(-10,40);walk(30,40);walk(38.5,37);step({crouch:true});}
   d.beforeCoverAdjustment=sim.snapshot();
   until(()=>sim.timers.coverFire,65);
   return d;
@@ -96,11 +110,19 @@ export function route(seed=19390901,{support=false,onStep,Simulation=M01Simulati
   if(support)walk(-120,16.5);else{walk(-115,27);walk(-28,28);step({crouch:true});}
   until(()=>sim.active('hold_access'),500);
   if(!support)step({crouch:true});
-  walk(-115,32);walk(-10,32);walk(-10,40);walk(support?38:30,support?42.4:40);
+  // D43: like a player who is low after the repair, the support pilot asks Kowal for clips through the game's own interaction (E beside him, reserve <= 25,
+  // timers.kowalRounds left) before going to the deck; it comes up from behind him (west), as tests/helpers/m01-cover.js does. A pilot that never did ran dry
+  // before the east demolition on the knife-edge route (seed 3 with support).
+  if(support&&sim.weapon.reserve<=25&&(sim.timers.kowalRounds??0)>0){
+    const kowal=sim.actor('szymon_kowal');
+    if(kowal.alive&&kowal.active){walk(kowal.x-1.5,kowal.z);for(let i=0;i<2&&sim.weapon.reserve<=25&&sim.timers.kowalRounds>0;i++){step({interact:true});step({});}}
+  }
+  walk(-115,32);walk(-30,40);walk(-10,40);walk(support?38:30,support?42.4:40);
   until(()=>sim.consumedEvent('evt_m01_east_demolition'),500);
   walk(-15,40);walk(-115,27);walk(-275,27);walk(-292,26);
-  until(()=>sim.consumedEvent('evt_m01_west_demolition'),500);
-  walk(-292,68);walk(-262,70);
+  until(()=>sim.consumedEvent('evt_m01_west_demolition'),500,()=>corridorControls(sim));
+  if(sim.corridorTask)walk(-292,26);   // SP-08: back to the post after the escort (a simulation without the task never left it)
+  walk(-263,58);walk(-263,70);   // the shelter is entered by its open north passage (x -265..-261.5) through the gate of the fence, not through the west wall
   until(()=>sim.scene?.id==='cs_m01_roll_call',30);const outro=sim.snapshot();step({skip:true});
   until(()=>sim.mission.complete,10);
   if(sim.battleClock!==seconds('07:05:00'))throw new Error('Wrong final battle clock');

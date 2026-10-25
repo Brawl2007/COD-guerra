@@ -28,6 +28,10 @@ export const POSTURES=Object.freeze({
 export const MIN_WIDTH_PX=2;
 /** Minimum luminance contrast ratio (WCAG form (Y1+.05)/(Y2+.05)) of the ink against the backdrop at the actor distance. */
 export const MIN_CONTRAST=3;
+/** VIS-a: the Germans are drawn with MORE contrast than the Poles (never less than MIN_CONTRAST), so a German silhouette is the darker (against light haze) or
+ * lighter (against dark ground) of the two at the same distance. Same size, same shape: at 350 m a 1.7 m man is 3 px, a helmet outline is 0.3 px, so the
+ * nations can only be told apart by tone and hue at that range, not by helmet shape. */
+export const NATION_CONTRAST=Object.freeze({pl:MIN_CONTRAST,de:3.9});
 /** Mean linear colour of the terrain behind a distant figure, blended into the fog colour by the fog factor. */
 export const GROUND_BACKDROP=Object.freeze([.075,.07,.055]);
 /** Hue of each nation (linear). Only the hue survives: the luminance is solved from the contrast. */
@@ -89,7 +93,7 @@ export const fogFactor=(distance,range=M01_FOG_RANGE)=>clamp((distance-range.nea
 /** What the figure is seen against at this distance: terrain fading into the fog colour. */
 export const backdropColor=(fog,distance,range=M01_FOG_RANGE)=>{const f=fogFactor(distance,range);return GROUND_BACKDROP.map((g,i)=>lerp(g,fog[i],f));};
 /** Ink (linear rgb) of the nation hue with exactly the luminance that gives MIN_CONTRAST (or more) against the backdrop: darker than a light backdrop, lighter than a dark one. */
-export function impostorInk(nation,fog,distance,minRatio=MIN_CONTRAST){
+export function impostorInk(nation,fog,distance,minRatio=NATION_CONTRAST[nation]??MIN_CONTRAST){
   const back=backdropColor(fog,distance),yb=luminance(back),hue=NATION_HUE[nation],yh=luminance(hue);
   const dark=yb>=DARK_INK_FROM;   // light backdrops take dark ink; dark (blue hour) backdrops take light ink
   const target=dark?Math.max(0,(yb+.05)/minRatio-.05):Math.min(1,minRatio*(yb+.05)-.05);
@@ -172,7 +176,7 @@ export class M01Impostors {
     this.material=new THREE.ShaderMaterial({vertexShader:VERT,fragmentShader:FRAG,uniforms:this.uniforms,transparent:true,depthWrite:false,depthTest:true,fog:false,toneMapped:false,side:THREE.DoubleSide});
     this.material.customProgramCacheKey=()=>'m01-distant-front-impostors-v1';
     this.meshes={};this.capacity=0;this.last=null;this.backlight=0;this.rimFacing=0;
-    this.dummy=new THREE.Object3D();
+    this.dummy=new THREE.Object3D();this._fwd=new THREE.Vector3();
     if(debug&&typeof window!=='undefined')window.m01ImpostorDebug={setEnabled:on=>{this.enabled=Boolean(on);}};   // `enabled` is part of the view paused-frame key
   }
   allocate(quality){
@@ -205,7 +209,7 @@ export class M01Impostors {
   /** After the camera is placed: matrices, ink and rim. `fog` is the linear fog colour, `sunDir` the game-space sun direction. */
   sync({camera,clock,battleClock,fog,sunColor,sunDir,viewportHeight}){
     const eye=camera.position,fov=camera.fov,counts={pl:0,de:0},list=[];
-    const fwd=new THREE.Vector3();camera.getWorldDirection(fwd);
+    const fwd=this._fwd;camera.getWorldDirection(fwd);
     const strength=backlightStrength(battleClock),facing=sunDir?sunFacing([fwd.x,fwd.z],[sunDir[0],sunDir[2]]):0;
     this.backlight=strength;this.rimFacing=facing;
     // sun side on screen: sign of (sun - view) along the camera's right vector (right = fwd x up)
@@ -227,6 +231,8 @@ export class M01Impostors {
     }
     for(const n of IMPOSTOR_NATIONS){
       const m=this.meshes[n];if(!m)continue;m.count=counts[n];
+      if(!counts[n])continue;   // count 0 draws nothing: no upload
+      m.instanceMatrix.clearUpdateRanges();m.instanceMatrix.addUpdateRange(0,counts[n]*16);
       m.instanceMatrix.needsUpdate=true;m.geometry.getAttribute('aShape').needsUpdate=true;m.geometry.getAttribute('aInk').needsUpdate=true;
     }
     this.last={clock,list,counts};

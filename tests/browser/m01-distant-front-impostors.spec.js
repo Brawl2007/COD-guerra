@@ -243,7 +243,10 @@ for(const view of ['view10','view12'])test(`${view} ${CLOCK}: distant front silh
 
 test('Low quality: capacity 64 per nation, still one draw call per nation',async({browser},info)=>{
   test.setTimeout(process.env.CI?600000:420000);
-  const c=await capture(browser,info,{view:'view10',quality:'low'}),r=await measure(browser,info,c);
+  // view12, not view10 (T38 drift, measured on the integrated tree): the staggered east-gate positions and the route's 06:05 step moved the 12 sighted figures of view10 onto a dark
+  // backdrop (sighted rects 61 px, 11 changed = 0.18 < 0.2, mean on/off 61/52; at 813f163: 52 px, 19 changed = 0.37, mean 126/105 with a bright glint inside the rects). view12 has the same
+  // 12 figures with a free sightline (84 px, 70 changed = 0.83, mean |dL| 89). Every assertion and threshold is unchanged; view10 still runs at High in the two A/B tests above.
+  const c=await capture(browser,info,{view:'view12',quality:'low'}),r=await measure(browser,info,c);
   if(baseline)return;
   const d=r.impostors;
   expect(r.quality).toBe('low');expect(d.capacity).toBe(64);expect(d.drawCalls).toBe(2);expect(d.count.de).toBeLessThanOrEqual(64);expect(d.count.pl).toBeLessThanOrEqual(64);
