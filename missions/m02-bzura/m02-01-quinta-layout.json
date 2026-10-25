@@ -87,7 +87,7 @@
     "startP1": { "x": 0, "y": 0, "z": -175, "angle": 1.5707963267948966, "pitch": 0 },
     "outpostPosition": { "x": -18, "z": -110 },
     "covers": [
-      { "id": "cov_c01_p1_trench_lip", "name": "Talude da vala de partida (P1)", "min": [-6.5, 0, -172.5], "max": [6.5, 0.95, -171.8], "material": "earth" },
+      { "id": "cov_c01_p1_trench_lip", "name": "Talude da vala de partida (P1)", "min": [-6.5, 0, -172.5], "max": [6.5, 1.2, -171.8], "material": "earth" },
       { "id": "cov_c01_mid_culvert", "name": "Murete da estrada norte", "min": [2.2, 0, -143.0], "max": [7.2, 1.02, -142.2], "material": "stone" },
       { "id": "cov_c01_outpost_parapet", "name": "Parapeito da vala transversal alemã (EA0)", "min": [-25.5, 0, -109.2], "max": [-9.5, 0.92, -108.5], "material": "earth" }
     ],

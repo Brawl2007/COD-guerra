@@ -8,7 +8,7 @@ const port = process.env.PORT || '4273';
 
 export default defineConfig({
   testDir: path.join(repoRoot, 'tests/browser'),
-  testMatch: 'm02-01-quinta.spec.js',
+  testMatch: ['m02-01-quinta.spec.js','m02-mission.spec.js'],
   outputDir: '/tmp/m02-01-playwright-results',
   fullyParallel: false,
   workers: 1,

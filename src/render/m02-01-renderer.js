@@ -1,3 +1,5 @@
+import {M02CargoVisuals} from './m02-cargo-visuals.js';
+import {addM02Architecture,applyM02SurfaceUvs} from './m02-architecture.js';
 import { M02Environment } from './m02-environment.js';
 import * as THREE from 'three';
 import { M01MaterialLibrary } from './materials.js';
@@ -147,6 +149,7 @@ export class M02BenchRenderer {
 
     this.environment = new M02Environment(this.scene, sim.world, this.qualityProfile.id);
     this.materials = { ...this.#createMaterials(), ...createSoldierRigMaterials() };
+    this.cargo = new M02CargoVisuals();
     this.presentation = new M02Presentation(this.scene, this.camera, sim);
     this.materialLibraryReady = this.#loadMaterialLibrary();
     this.staticGroup = new THREE.Group();
@@ -534,6 +537,8 @@ export class M02BenchRenderer {
         this.staticGroup.add(craterGroup);
       }
     }
+    addM02Architecture(this.decorativeGroup,this.world,this.materials);
+    applyM02SurfaceUvs(this.staticGroup);applyM02SurfaceUvs(this.roofsGroup);applyM02SurfaceUvs(this.decorativeGroup);
   }
 
   #createGableRoof(b) {
@@ -663,6 +668,7 @@ export class M02BenchRenderer {
       }
     }
 
+    applyM02SurfaceUvs(this.dynamicDoorsGroup);
     this.lastWorldRevision = this.world.revision;
   }
 
@@ -920,6 +926,8 @@ export class M02BenchRenderer {
       this.#buildTargets();
     }
 
+    this.cargo.sync(this);
+
     // Update Cell B supply cart and volume crates
     if (currentCellId === 'B' && this.sim.areaB?.supplyCart) {
       const cartData = this.sim.areaB.supplyCart;
@@ -932,7 +940,7 @@ export class M02BenchRenderer {
         if (!crate) continue;
         crate.visible = !vol.lost;
         const vy = vol.state === 'ON_CART' ? 1.0 : vol.state === 'CARRIED' ? 1.15 : 0.1;
-        crate.position.set(vol.x, vy, vol.z);
+        crate.position.set(vol.x+(vol.state==='ON_CART'?(vol.type==='water'?-.5:.5):0), vy, vol.z);
       }
     }
 

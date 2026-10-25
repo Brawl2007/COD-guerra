@@ -26,7 +26,7 @@ export function m02EnvironmentLayout(world) {
 }
 
 export function m02TerrainSources(world) {
-  const route=world.layout.cartRoute??[[0,-220],[0,90]];
+  const route=(world.layout.cartRoute??[[0,-220],[0,90]]).map(p=>Array.isArray(p)?p:[p.x,p.z]);
   const tracks=[{halfWidth:3,points:route}];
   for(const b of world.layout.buildings??[]) {
     const [x0,x1,z0,z1]=b.bounds;

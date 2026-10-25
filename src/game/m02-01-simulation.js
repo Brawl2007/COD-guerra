@@ -380,6 +380,8 @@ export class M02BenchSimulation {
     this.player.y = this.world.heightAt(p1.x, p1.z);
     this.player.angle = p1.angle ?? Math.PI / 2;
     this.player.pitch = p1.pitch ?? 0;
+    this.player.crouched = true;
+    this.player.eyeHeight = 1.08;
 
     // Position the 7 Polish squad allies in the P1 preparation trench (around Z = -174..-178)
     for (const ally of this.allies) {

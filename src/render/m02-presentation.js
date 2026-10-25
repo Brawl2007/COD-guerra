@@ -16,7 +16,7 @@ export function m02VisualActor(actor, team, clock) {
     posture: actor.crouched ? 'crouch' : 'stand',
     shot: actor.shot ?? (clock - (actor.lastShotAt ?? -Infinity) < .15 ? .15 : 0),
     reload: actor.reloadingUntil > clock ? {startedAt:actor.reloadingUntil-(WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8)} : null,
-    motion: { speed: actor.moving ? (actor.sprinting ? 4 : 1.6) : 0 },
+    motion: { speed: actor.moving ? (actor.speed ?? (actor.suppressed>.55?2.6:4.1)) : 0 },
   };
 }
 
@@ -56,7 +56,8 @@ export class M02Presentation {
         if (actor.state === 'SURRENDERED') continue;
         const visual = m02VisualActor(actor, team, sim.clock);
         if (actor.weapon==='mg34') visual.id=`de_east_${mgIndex++}`;
-        const firedAt=this.fireTimes.get(actor.id)??-1e9;
+        const profile=WEAPON_PROFILES[actor.weapon];
+        const firedAt=actor.shotsFired>0&&profile?actor.nextFireAt-profile.cycleSec:this.fireTimes.get(actor.id)??-1e9;
         visual.firedAt=firedAt; visual.shot=Math.max(0,.2-(sim.clock-firedAt));
         visual.suppressedUntil=actor.suppressed>.4?sim.clock+.1:0;
         this.ids.set(actor.id, visual.id); actors.push(visual);
@@ -98,6 +99,9 @@ export class M02Presentation {
       // scheduled voices while suspended; dropping this event loses the first shot.
       if (!this.audio.ctx || this.audio.ctx.state==='closed') continue;
       const origin=event.origin??event.shot?.origin??event.center??sim.player;
+      const shooter=event.shooterId?sim.enemies.find(a=>a.id===event.shooterId)??sim.allies.find(a=>a.id===event.shooterId):null;
+      const occluded=shooter&&!sim.world.lineOfSight(sim.player,shooter,{includeFoliage:false});
+      this.audio.setOcclusion(occluded?{hz:1200,gain:.4}:null);
       const dx=origin.x-sim.player.x, dz=origin.z-sim.player.z;
       const distance=Math.hypot(dx,dz);
       const pan=Math.sin(Math.atan2(dz,dx)-sim.player.angle);
@@ -112,6 +116,7 @@ export class M02Presentation {
       }
       if (event.type==='mg-burst')this.audio.mg34Burst(pan,distance,event.rounds??3,.09,`mg:${event.clock}`);
       if (event.type==='grenade-exploded') this.audio.explosion(pan,distance);
+      this.audio.setOcclusion(null);
 
     }
   }

@@ -1,3 +1,6 @@
+import {m02ObjectivePresentation} from './m02-objective-presentation.js';
+import { M02Session } from './m02-session.js';
+import { mountM02SessionUi } from './m02-session-ui.js';
 import { m02PlayerAction, performM02PlayerAction } from '../game/m02-player-actions.js';
 import { M02BenchSimulation } from '../game/m02-01-simulation.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
@@ -15,11 +18,16 @@ const initialQuality = params.get('quality') || 'medium';
 const initialLighting = params.get('lighting') || 'afternoon_1939_09_09';
 
 const canvas = document.getElementById('m02-canvas');
-const sim = new M02BenchSimulation();
+const missionMode=document.body.dataset.mission==='m02';
+const sim = new M02BenchSimulation(19390909, {startScene:missionMode?'C01':'C02'});
 const renderer = new M02BenchRenderer(canvas, sim, {
   quality: initialQuality,
   lighting: initialLighting,
 });
+
+const session=missionMode?new M02Session(sim,renderer):null;
+const updateSessionUi=missionMode?mountM02SessionUi(session,renderer):()=>{};
+const debugMode=!missionMode||params.get('debug')==='1';
 
 const elObjective = document.getElementById('hud-objective');
 const elPos = document.getElementById('hud-pos');
@@ -55,6 +63,10 @@ let pendingSingleActions = {
 };
 
 window.addEventListener('keydown', (e) => {
+  if(missionMode && e.code==='Escape'){session.pause();keys.clear();return;}
+  if(missionMode && !session.playing)return;
+  if(e.repeat)return;
+  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','F5','F9'].includes(e.code))e.preventDefault();
   keys.add(e.code);
   if (e.code === 'KeyE') pendingSingleActions.interact = true;
   if (e.code === 'KeyR') pendingSingleActions.reload = true;
@@ -64,14 +76,15 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyZ') pendingSingleActions.orderSuppress = true;
   if (e.code === 'KeyX') pendingSingleActions.orderAdvance = true;
   if (e.code === 'KeyB') pendingSingleActions.orderFlank = true;
-  if (e.code === 'F3') {
+  if (debugMode && e.code === 'F3') {
     e.preventDefault();
     renderer.toggleDebugOverlay();
   }
   if (e.code === 'F5') {
     e.preventDefault();
-    sim.saveCheckpoint('cp_m02_manual');
+    sim.saveCheckpoint('cp_m02_manual');session?.save();
   }
+  if (e.code === 'F9' && missionMode) {e.preventDefault();session.restart();return;}
   if (e.code === 'F9') {
     e.preventDefault();
     const id = sim.checkpoints.has('cp_m02_manual')
@@ -81,6 +94,7 @@ window.addEventListener('keydown', (e) => {
         : 'cp_m02_a_preparacao';
     sim.restoreCheckpoint(id);
   }
+  if(!debugMode)return;
   if (e.code === 'Digit0') sim.startAreaAFullC01();
   if (e.code === 'Digit1') teleportToPanorama('SN1');
   if (e.code === 'Digit2') teleportToPanorama('SN2');
@@ -102,7 +116,13 @@ window.addEventListener('keyup', (e) => {
   keys.delete(e.code);
 });
 
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+window.addEventListener('blur',()=>{keys.clear();session?.pause();});
+window.addEventListener('pointerlockchange',()=>{if(missionMode && !document.pointerLockElement){keys.clear();session.pause();}});
+canvas.addEventListener('mouseup',e=>{if(e.button===2)keys.delete('KeyV');});
 canvas.addEventListener('mousedown', (e) => {
+  if(missionMode && !session.playing)return;
+  if(e.button===2)keys.add('KeyV');
   if (e.button === 0) {
     pendingSingleActions.fire = true;
     if (document.pointerLockElement !== canvas && canvas.requestPointerLock) {
@@ -112,7 +132,7 @@ canvas.addEventListener('mousedown', (e) => {
 });
 
 window.addEventListener('mousemove', (e) => {
-  if (document.pointerLockElement === canvas) {
+  if ((!missionMode||session.playing) && document.pointerLockElement === canvas) {
     sim.player.angle += e.movementX * 0.0024;
     sim.player.pitch = Math.max(-1.3, Math.min(1.3, sim.player.pitch - e.movementY * 0.0022));
   }
@@ -294,6 +314,7 @@ function updateHud() {
 }
 
 let lastTime = performance.now();
+let missionAccumulator=0;
 
 function animate(now) {
   const rawDt = (now - lastTime) / 1000;
@@ -305,13 +326,19 @@ function animate(now) {
   const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
 
   const simStart = performance.now();
+  const running=!missionMode||session.playing;
+  if(missionMode)missionAccumulator=running?Math.min(.25,missionAccumulator+Math.max(0,rawDt)):0;
+  const steps=missionMode?Math.floor((missionAccumulator+1e-9)/.05):1;
+  if(running)for(let step=0;step<steps;step++){
+  const tickDt=missionMode?.05:dt;
+  if(missionMode)missionAccumulator=Math.max(0,missionAccumulator-.05);
   const missionInteraction = pendingSingleActions.interact && performM02PlayerAction(sim);
-  sim.tick(dt, {
+  sim.tick(tickDt, {
     forward,
     side,
     sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
     aim: keys.has('KeyV'),
-    lookX,
+    lookX: missionMode?lookX/dt*tickDt:lookX,
     lookY: 0,
     interact: pendingSingleActions.interact && !missionInteraction,
     reload: pendingSingleActions.reload,
@@ -322,23 +349,19 @@ function animate(now) {
     orderAdvance: pendingSingleActions.orderAdvance,
     orderFlank: pendingSingleActions.orderFlank,
   });
+  for(const key of Object.keys(pendingSingleActions))pendingSingleActions[key]=false;
+  if(missionMode&&(sim.player.health<=0||sim.areaC.c12Completed))break;
+  }
   const simMs = performance.now() - simStart;
-
-  pendingSingleActions.interact = false;
-  pendingSingleActions.reload = false;
-  pendingSingleActions.crouch = false;
-  pendingSingleActions.fire = false;
-  pendingSingleActions.grenade = false;
-  pendingSingleActions.orderSuppress = false;
-  pendingSingleActions.orderAdvance = false;
-  pendingSingleActions.orderFlank = false;
 
   renderer.renderFrame(rawDt, simMs);
   updateHud();
+  if(missionMode)elObjective.textContent=m02ObjectivePresentation(sim).title;
+  session?.afterFrame(); updateSessionUi();
   requestAnimationFrame(animate);
 }
 
-window.m02Bench = {
+const benchApi = {
   sim,
   renderer,
   PANORAMA_VIEWS,
@@ -424,4 +447,6 @@ window.m02Bench = {
   }),
 };
 
+if(debugMode) window.m02Bench=benchApi;
+window.m02Diagnostics=()=>({state:session?.state??'bench',...benchApi.getStateSummary(),presentation:renderer.presentation.diagnostics,environment:renderer.environment.diagnostics});
 requestAnimationFrame(animate);

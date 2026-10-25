@@ -13,6 +13,7 @@ test('M02 decoration is stable, clear of buildings and collision cover, and cann
   const [x0,x1,z0,z1]=building.bounds;
   assert.ok(!(p.x>x0-1&&p.x<x1+1&&p.z>z0-1&&p.z<z1+1));
  }
+ for(const cell of ['B','C']){if(cell==='B')sim.enterAreaBC06();else sim.enterAreaCC09();const mask=bakeTerrainMask(m02TerrainSources(sim.world),{width:32,height:32});assert.equal(mask.length,4096);}
  const sources=m02TerrainSources(sim.world);
  assert.deepEqual(bakeTerrainMask(sources,{width:32,height:32}),bakeTerrainMask(sources,{width:32,height:32}));
 });
