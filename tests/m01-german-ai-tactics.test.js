@@ -268,7 +268,9 @@ test('the stick grenade: thrown at a Pole the man cannot hit with the rifle (the
   s.clock-=T.grenade.gapSec/2;assert.equal(s.deckGrenade(other),false,'and the squad throws one every gapSec');
   s.clock+=T.grenade.gapSec;assert.equal(s.deckGrenade(other),true);assert.equal(german(s).length,2);
   // his trigger throws before it fires: the same call through deckFire (the rifle is not used)
-  ({s,man}=bomber());const fired=man.firedAt;man.cooldown=0;s.deckFire(man,false);assert.equal(german(s).length,1);assert.equal(s.enemyFire.rounds.length,0,'no round with the grenade');assert.ok(man.firedAt>fired);
+  // 2026-10-24 re-pin (R3-a, golden amendment 19: the sappers' staged operation): the save of the first tick of the deck assault now has six rounds of other Germans in flight (the control route plays out differently from
+  // the repair on); the property is that THE THROW adds none, so it is counted against the rounds already in the air instead of against zero.
+  ({s,man}=bomber());const fired=man.firedAt,inFlight=s.enemyFire.rounds.length;man.cooldown=0;s.deckFire(man,false);assert.equal(german(s).length,1);assert.equal(s.enemyFire.rounds.length,inFlight,'no round with the grenade');assert.ok(man.firedAt>fired);
   // the overwatch never throws
   ({s,man}=bomber());const over=s.actor('de_spans_0');Object.assign(over,{x:man.x,z:man.z});over.deck.phase='clear';over.cooldown=0;over.rounds=5;s.deckFire(over,false);assert.equal(german(s).length,0);
 });

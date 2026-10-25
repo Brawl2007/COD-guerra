@@ -22,7 +22,13 @@ import {compareContinuation,restore} from './helpers/m01-determinism.js';
 const DEMOLITION='evt_m01_east_demolition';
 const FROM=seconds('06:10:00'),SILENCE_UNTIL=seconds('06:11:00'),REGROUP_AT=seconds('06:12:00');
 const SPANS=Array.from({length:10},(_,i)=>`de_spans_${i}`),FALLEN=SPANS.slice(0,4),SURVIVORS=SPANS.slice(4);
-const ROUTES=[[19390901,false],[7,true]];
+// 2026-10-24 re-pin (R3-a, golden amendment 19: the sappers' staged operation): the control route of the golden (seed 19390901, the pilot never fires) plays out differently from the repair on, as after every change of timing,
+// and on it the Poles' real fire (R2-b) and the rearguard now kill all six men of the assault before the east demolition (de_spans_9 at 784.8 s ... de_spans_7 at 872.6 s: measured with
+// docs/verification/m01-runtime/sappers-r3a-2026-10-24/README.md's route), so at 06:10 none of the ten is alive and there is nobody to fall back, lift a man or regroup. T48 is about what the survivors do, not about how many
+// the Poles kill on a route, so its control route is the control route of seed 1, on which all six survive to the blast (measured, deck Germans alive at the first tick after the blast, of the ten: seed 1: 6,
+// 3: 4, 2: 4, 4: 4, 6: 3, 7: 3, 8: 3, 5: 2; seed 19390901: 0). The support route of the golden (seed 7) is unchanged. Nothing else about the file moved.
+const CONTROL_SEED=1;
+const ROUTES=[[CONTROL_SEED,false],[7,true]];
 const info=(sim,a)=>({id:a.id,x:a.x,y:a.y,z:a.z,facing:a.facing,state:a.state,alive:a.alive,active:a.active,carriedBy:a.carriedBy??null,
   fallBack:a.fallBack?structuredClone(a.fallBack):null,diedAt:a.diedAt,speed:a.motion.speed,gait:a.motion.gait,pose:actorPoseName(a,sim.clock)});
 
@@ -144,7 +150,7 @@ for(const [seed,support] of ROUTES)test(`real route ${seed}/${support}: no Germa
 
 // A real gate shooter with a line of sight to the player, restored from the east demolition tick of the standard route. Everybody else holds fire.
 function gateShooterSetup(){
-  const sim=fromSnapshot(observe(19390901,false).snapshots.demolition),shooter=sim.actor('de_east_5');
+  const sim=fromSnapshot(observe(CONTROL_SEED,false).snapshots.demolition),shooter=sim.actor('de_east_5');
   assert.equal(shooter.group,'grp_de_east');assert.ok(Number(shooter.id.split('_').at(-1))<14,'a gate shooter');
   let spot=null;
   for(const x of [38,30,20,0,-20,-60,-120])for(const z of [42.4,40,32,27,22,20])if(!spot&&sim.world.lineOfSight(shooter,{...sim.player,x,z,y:sim.world.heightAt(x,z)}))spot={x,z};
@@ -224,7 +230,7 @@ for(const [seed,support] of ROUTES)test(`real route ${seed}/${support}: two fall
 });
 
 test('a carrier killed on the march drops his man where he stands; the other pair and the knot carry on',()=>{
-  const sim=fromSnapshot(observe(19390901,false).snapshots.mid),pairs=sim.germanWithdrawal.carried;assert.equal(pairs.length,2);
+  const sim=fromSnapshot(observe(CONTROL_SEED,false).snapshots.mid),pairs=sim.germanWithdrawal.carried;assert.equal(pairs.length,2);
   const [lost,kept]=pairs,carrier=sim.actor(lost.carrier),patient=sim.actor(lost.patient);
   Object.assign(carrier,{health:0,alive:false,state:'DOWN'});
   sim.tick(.05);
@@ -237,7 +243,7 @@ test('a carrier killed on the march drops his man where he stands; the other pai
 });
 
 test('the gate shooters of Lisewo keep their places: the withdrawal moves only the Germans of the spans',()=>{
-  const fresh=new M01Simulation(),obs=observe(19390901,false);
+  const fresh=new M01Simulation(),obs=observe(CONTROL_SEED,false);
   for(const a of obs.gates){
     const start=fresh.actor(a.id);
     assert.deepEqual([a.x,a.y,a.z],[start.x,start.y,start.z],a.id+' has not moved');
@@ -278,7 +284,7 @@ for(const [seed,support] of ROUTES)test(`real route ${seed}/${support}: the Germ
 });
 
 test('the march ends on the same places at 06:12 whatever the tick length, with no use of the RNG and no regard for suppression',()=>{
-  const snapshot=observe(19390901,false).snapshots.demolition,a=fromSnapshot(snapshot),b=fromSnapshot(snapshot),c=fromSnapshot(snapshot);
+  const snapshot=observe(CONTROL_SEED,false).snapshots.demolition,a=fromSnapshot(snapshot),b=fromSnapshot(snapshot),c=fromSnapshot(snapshot);
   const rng=a.rng.state;a.beginFallBack();assert.equal(a.rng.state,rng,'beginFallBack draws nothing');
   const pattern=[.013,.05,.031,.02];let n=0;
   for(const [sim,dt] of [[a,()=>.05],[b,()=>pattern[n++%pattern.length]],[c,()=>.05]]){
@@ -295,7 +301,7 @@ test('the march ends on the same places at 06:12 whatever the tick length, with 
 // ---- saves ---------------------------------------------------------------------------------------------------------------------------------------
 
 test('states saved on the demolition tick, in the middle of the march and at 06:12 validate and have identical futures after double restores',()=>{
-  const obs=observe(19390901,false);
+  const obs=observe(CONTROL_SEED,false);
   for(const [label,snapshot,ticks] of [['demolition',obs.snapshots.demolition,300],['mid',obs.snapshots.mid,250],['regroup',obs.snapshots.regroup,120]]){
     validateM01Snapshot(structuredClone(snapshot));
     const sim=fromSnapshot(snapshot);assert.deepEqual(sim.snapshot(),snapshot,label+' round-trips');
@@ -304,7 +310,7 @@ test('states saved on the demolition tick, in the middle of the march and at 06:
 });
 
 test('a save made after the east demolition by the code before T48 keeps the old retreat to x 1080 and is accepted unchanged',()=>{
-  const legacy=structuredClone(observe(19390901,false).snapshots.demolition);
+  const legacy=structuredClone(observe(CONTROL_SEED,false).snapshots.demolition);
   for(const a of legacy.actors){delete a.fallBack;if(a.group==='grp_de_spans'){a.carriedBy=null;a.y=0;if(a.alive)Object.assign(a,{state:'RETREAT',facing:0});}}
   Object.assign(legacy.player,{x:-290,y:-3,z:26});
   const before=structuredClone(legacy);validateM01Snapshot(legacy);
@@ -320,7 +326,7 @@ test('a save made after the east demolition by the code before T48 keeps the old
 });
 
 test('the validator accepts the new data and rejects malformed withdrawal data atomically',()=>{
-  const obs=observe(19390901,false),mid=obs.snapshots.mid,regroup=obs.snapshots.regroup;
+  const obs=observe(CONTROL_SEED,false),mid=obs.snapshots.mid,regroup=obs.snapshots.regroup;
   validateM01Snapshot(structuredClone(mid));validateM01Snapshot(structuredClone(regroup));
   assert.ok(regroup.actors.filter(a=>a.state==='REGROUP').length>=2);
   const span=(s,id)=>s.actors.find(a=>a.id===id),early=new M01Simulation(3).snapshot();
@@ -345,9 +351,11 @@ test('the validator accepts the new data and rejects malformed withdrawal data a
     // 2026-10-24 re-pin de_spans_8 -> de_spans_7 for the first six mutations above and for the getter test below (golden amendment 18, R2-b: the Poles' real fire and the closing lines change who falls in the deck fight): on this route
     // de_spans_4, 5, 6 and 8 now fall (x 322-567, the rearguard's rifles) and the two men who retreat and carry are de_spans_7 (de_spans_3) and de_spans_9 (de_spans_2); before, they were de_spans_8 and de_spans_9. The same mutations,
     // on a man who really retreats and carries.
-    ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_9').fallBack;},/transporte alemão/],
+    // 2026-10-24 re-pin de_spans_9 -> de_spans_5 for this and the dead-carrier mutation below (R3-a, golden amendment 19; the control route is now the one of seed 1, see CONTROL_SEED): on it all six of the assault
+    // survive to the blast and the two men who retreat and carry are de_spans_5 (de_spans_2) and de_spans_4 (de_spans_3). The same mutations, on a man who really carries.
+    ['a German carried by a man without a plan',mid,s=>{delete span(s,'de_spans_5').fallBack;},/transporte alemão/],
     ['a German carried by a Pole',mid,s=>{span(s,'de_spans_2').carriedBy='marek_zielinski';},/transporte alemão/],
-    ['a German carried by a dead man',mid,s=>{span(s,'de_spans_9').alive=false;},/transporte/],
+    ['a German carried by a dead man',mid,s=>{span(s,'de_spans_5').alive=false;},/transporte/],
   ];
   for(const [name,base,alter,pattern] of alterations){
     const bad=structuredClone(base);alter(bad);const raw=structuredClone(bad),target=new M01Simulation(),saved=target.snapshot();
@@ -356,7 +364,7 @@ test('the validator accepts the new data and rejects malformed withdrawal data a
 });
 
 test('the getter is computed on every read and detached; the plan and the pairs live in the actors of the save',()=>{
-  const sim=fromSnapshot(observe(19390901,false).snapshots.mid),saved=sim.snapshot();
+  const sim=fromSnapshot(observe(CONTROL_SEED,false).snapshots.mid),saved=sim.snapshot();
   const view=sim.germanWithdrawal;view.carried.length=0;view.regrouped.push('x');
   assert.deepEqual(sim.snapshot(),saved,'reading the getter writes nothing and returns detached data');
   assert.ok(!JSON.stringify(saved).includes('germanWithdrawal'));
@@ -365,6 +373,7 @@ test('the getter is computed on every read and detached; the plan and the pairs 
   // 2026-10-22 re-pin de_spans_5 -> de_spans_6 (golden amendment 15, the ckm stoppages): de_spans_5 now falls on the deck (x 507, dead before the demolition); de_spans_6 retreats and carries.
   // 2026-10-23 re-pin de_spans_6 -> de_spans_8 (golden amendment 16): de_spans_4 to de_spans_7 now fall in the deck fight (x 459-667); de_spans_8 retreats and carries (de_spans_3), de_spans_9 too (de_spans_2).
   // 2026-10-24 re-pin de_spans_8 -> de_spans_7 (golden amendment 18, R2-b): de_spans_8 now falls in the deck fight (x 567); de_spans_7 retreats and carries (de_spans_3), de_spans_9 too (de_spans_2).
+  // 2026-10-24 (R3-a, golden amendment 19; control route of seed 1, see CONTROL_SEED): all six of the assault survive and retreat, de_spans_7 among them (the carriers are de_spans_5 and de_spans_4).
   assert.match(JSON.stringify(saved.actors.find(a=>a.id==='de_spans_7')),/"fallBack":\{"t0":\d+(\.\d+)?,"x0"/);
   assert.deepEqual(restore(sim).germanWithdrawal,sim.germanWithdrawal);
 });
