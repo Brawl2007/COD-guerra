@@ -336,10 +336,11 @@ export class M01View {
     // Instance colours (setColorAt) tint these; vertexColors must stay off (no `color` attribute on the tetrahedra: it rendered black).
     this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
     this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
+    this.speckGeometry=new THREE.IcosahedronGeometry(1,1);this.geometry.push(this.speckGeometry);   // R2-c: 80 triangles for a 4 px disc (owned here, disposed with this.geometry)
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
     this.initShotFx();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128],['speck','speck',48]]){
-      const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:this.sphere;
+      const soft=name==='smoke'||name==='puff',geometry=name==='chip'?this.atmosphere.debrisGeometry:name==='speck'?this.speckGeometry:this.sphere;
       const batch=soft?this.atmosphere.billboardBatch(capacity,this.materials[material].color,this.effects,name==='puff'?'dust':'smoke'):
         new THREE.InstancedMesh(geometry,this.materials[material],capacity);
       batch.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.count=0;batch.frustumCulled=false;this.effects.add(batch);this.fireBatches[name]=batch;
