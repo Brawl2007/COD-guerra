@@ -160,3 +160,6 @@ body.touch button{min-height:44px}body.touch #message{bottom:34%}body.touch #sub
 #hud.tempo-compressed #battle-clock{color:var(--brass);animation:tempo-pulse 1.2s ease-in-out infinite}
 @keyframes tempo-pulse{50%{opacity:.55}}
 #hud.cinematic :is(.objective-marker,.tempo-card){opacity:0!important}
+
+.audio-status{grid-column:1/-1;margin:0;font:600 .6rem Arial,sans-serif;letter-spacing:.12em;color:#9da690;text-transform:none;max-width:460px}
+#pause-audio-status{margin-top:4px}

@@ -10,7 +10,7 @@ import { M01AudioDirector } from './audio-director-m01.js';
 import {enemyFireSoundPlan} from './m01-audio-events.js';
 import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 import {ROUND_SPEED} from './m01-fire.js';
-import {roundImpactSoundPlan,grenadeThrowSoundPlan} from '../core/battlefield-audio.js';
+import {roundImpactSoundPlan,grenadeThrowSoundPlan,waterCrossing} from '../core/battlefield-audio.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // These are the aerial impacts emitted by M01: the nine scripted ones and the 04:34 raid's schedule (raid_0434_1..N, mission.json raidTargets0434). Schema 2 stores their IDs,
@@ -164,7 +164,7 @@ export class Game {
       // Due sounds play in this same pass; the rest is compacted in place (no filter() arrays per frame). playSound never touches pendingSounds.
       playDueSounds(this.pendingSounds,this.sim.clock,this.playSoundBound);
       if(this.isM01)this.audio.updateM01Presentation({clock:this.sim.clock,state:this.sim.renderState,spatial:point=>this.spatial(point),
-        phase:this.sim.mission.phase,quality:this.renderer.quality});
+        phase:this.sim.mission.phase,quality:this.renderer.quality,listener:this.sim.player});
       if(this.isM01)this.audioDirector?.update(this.sim);
     }
     if(this.isM01)this.renderer.renderMission(this.sim);
@@ -177,7 +177,7 @@ export class Game {
     if(sound.kind==='fire'){
       // T47: the ckm wz.30 burst of the simulation (`ally-fire`, 8 rounds at 0.1 s) is played whole through its own burst call.
       if(this.isM01&&sound.weapon==='ckm_wz30')this.audio.ckmBurst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key,sound.front);
-      else if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source});
+      else if(this.isM01)this.audio.weaponFire(sound.weapon??'kar98k',sound.pan,sound.distance,{rounds:sound.rounds,interval:sound.interval,key:sound.key,front:sound.front,source:sound.source,...(sound.water>0?{water:sound.water}:{})});
       else if(sound.weapon==='mg34')this.audio.mg34Burst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key);
       else this.audio.rifleShot(sound.pan,sound.distance,sound.weapon??'kar98k',sound.key);
       return;
@@ -284,7 +284,7 @@ export class Game {
     // Fogo alemão: o estampido chega com o atraso da distância (343 m/s); o impacto e o estalo de quem passa perto, à chegada do tiro.
     // source: arma que dispara (posição da boca arredondada), só para juntar os tiros da MG34 deitada numa rajada sonora.
     if(event.type==='enemy-fire'){const s=enemyFireSoundPlan(event,this.sim.player),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
-      this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
+      this.pendingSounds.push({...s,water:waterCrossing(this.sim.player.x,event.origin.x),kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
     // T47: the west bridgehead ckm answers the Germans (one event per 8-round burst). The report reaches the player after distance / 343 s, like enemy fire.
     if(event.type==='ally-fire'){const s=enemyFireSoundPlan(event,this.sim.player),source=`${event.weapon}@${Math.round(event.origin.x)},${Math.round(event.origin.z)}`;
       this.pendingSounds.push({...s,kind:'fire',rounds:event.rounds,interval:event.interval,weapon:event.weapon,source,key:`${source}:${event.at.toFixed(3)}`});}
