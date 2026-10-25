@@ -99,6 +99,12 @@ test('the draw: bounded by the tier, every class draws what its profile says, fa
     assert.ok(calls.puff<=n*3&&calls.chip<=n*3&&calls.spark<=n*3,'bounded per impact');
   }
   assert.ok(IMPACT_DRAW_BY_TIER.low>=14&&IMPACT_DRAW_BY_TIER.low<IMPACT_DRAW_BY_TIER.medium&&IMPACT_DRAW_BY_TIER.medium<IMPACT_DRAW_BY_TIER.high);
+  // The scale handed to the billboard batch is the puff WIDTH (a unit quad): at 150..600 m it is never narrower than IMPACT_MIN_PX pixels, in the sim's own world units.
+  for(const d of [150,300,600]){
+    const pool=new RoundImpactPool();pool.schedule(d,0,0,10,IMPACT_MATERIALS.indexOf('earth'),5,10);let w=0,ok=0;
+    drawRoundImpacts(pool,10.1,{x:0,y:0,z:0},70,768,'high',(name,p,sc)=>{if(name==='puff'){ok++;w=Math.max(w,sc[0]);}},{x:0,y:0,z:0},[0,0,1]);
+    assert.ok(ok>=1&&w*f/d>=IMPACT_MIN_PX*.79,`${d} m: widest puff ${(w*f/d).toFixed(1)} px`);   // x.8 = the smallest of the per-puff size variation
+  }
   // Counts by class / distance / tier.
   const E=IMPACT_MATERIALS.indexOf('earth'),M=IMPACT_MATERIALS.indexOf('metal'),W=IMPACT_MATERIALS.indexOf('wood');
   assert.equal(impactDustCount(M,10,'high'),0);assert.ok(impactSparkCount(M,10,'high')>=2&&impactSparkCount(M,10,'low')>=1);

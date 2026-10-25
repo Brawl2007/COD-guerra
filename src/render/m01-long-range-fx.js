@@ -151,7 +151,7 @@ export function drawRoundImpacts(pool,time,cam,fovDeg,vh,quality,put,P,SC){
       const fadeIn=Math.min(1,age/.08),life=fadeIn*Math.pow(1-k,1.18);
       for(let j=0;j<dust&&life>0;j++){
         const n0=visualNoise(seed,30+j*4),n1=visualNoise(seed,31+j*4),n2=visualNoise(seed,32+j*4),a=n0*Math.PI*2,r=age*p.spread*(.45+n1*.75);
-        const sx=impactPuffRadius(d,k,fovDeg,vh)*(.7+n2*.6);SC[0]=sx;SC[1]=sx*(.5+.3*n1);SC[2]=1;
+        const w=2*impactPuffRadius(d,k,fovDeg,vh)*(.8+n2*.4);SC[0]=w;SC[1]=w*(.62+.3*n1);SC[2]=1;   // the billboard quad is 1 m wide at scale 1: the scale is the WIDTH, not the radius
         P.x=x+Math.cos(a)*r;P.y=y+.05+age*(p.rise+.2*n2);P.z=z+Math.sin(a)*r;
         put('puff',P,SC,null,.75*life,p.color,seed,30+j);
       }
