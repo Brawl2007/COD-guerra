@@ -33,7 +33,7 @@ export const TENSIONS=Object.freeze(['calm','warned','planes']);
  */
 export const OPENING_ACTS=Object.freeze({
   idle:{},map:{},binoculars:{face:'east',scan:.55},smoke:{},coffee:{},clean_rkm:{},rifle_check:{},phone:{},phone_dead:{hook:'phone_dead'},
-  ammo_check:{crouch:true},track_check:{crouch:true},aid_kit:{crouch:true},ckm_scan:{face:'east',scan:.1},ckm_belt:{hook:'ammo'},
+  ammo_check:{},track_check:{crouch:true},aid_kit:{},ckm_scan:{face:'east',scan:.1},ckm_belt:{hook:'ammo'},
   order:{face:'courier',hook:'order'},look_up:{face:'east'},point:{face:'east'},shout:{face:'east',hook:'shout'},brace:{face:'east',scan:.25,repeat:true},cover:{crouch:true,face:'east',scan:.3,repeat:true},
   errand:{walk:true},deliver:{face:'recipient',hook:'deliver'},cover_run:{walk:true},
   cable_walk:{walk:true},cable_inspect:{crouch:true,face:'west'},cable_hold:{face:'leader'},cable_wait:{},home:{walk:true},

@@ -33,7 +33,8 @@ export function openingSample(actor,time,offset,clips,pose){
   switch(act.k){
     case 'map':case 'binoculars':case 'look_up':case 'point':case 'brace':case 'deliver':case 'cable_hold':return stand('standing_idle_c');
     case 'smoke':case 'coffee':return stand('standing_idle_b');
-    case 'phone':case 'phone_dead':case 'ammo_check':case 'aid_kit':case 'track_check':return stand('standing_idle');
+    case 'phone':case 'phone_dead':case 'ammo_check':case 'aid_kit':return stand('standing_idle');
+    case 'track_check':return stand('crouched_idle');   // kneeling at the rails
     case 'rifle_check':{   // the library's one-shot every few seconds, the base idle in between (the fidget starts and ends on it)
       const cycle=4.6+unit(act.s,3)*1.6,u=(t+unit(act.s,4)*cycle)%cycle,dur=clips?.info?.('fidget_check_rifle')?.duration??clips?.get?.('fidget_check_rifle')?.duration??2.4;
       return u<dur&&has(clips,'fidget_check_rifle')?{clip:'fidget_check_rifle',time:u,loop:false,source:'opening'}:stand('standing_idle');}
@@ -88,7 +89,7 @@ export function openingPose(actor,time){
     case 'aid_kit':      // the medic's bag open at his left hip: one hand holds it, the other looks through it
       SPEC.lean=.15*w;SPEC.head=-.25*w;SPEC.l=hand(HAND_L,"root",-.26,.96,.3,w,OUT_L);SPEC.r=hand(HAND_R,"root",-.08,.94+.04*Math.sin(t*1.7),.36,w,OUT_R);return SPEC;
     case 'track_check':  // peering down at the rails
-      SPEC.lean=.42*w;SPEC.head=-.2*w;return SPEC;
+      SPEC.lean=.3*w;SPEC.head=-.3*w;return SPEC;
     case 'look_up':      // the planes: the head goes up
       SPEC.head=.55*smooth(t/.35)*smooth(leftOf(act,time)/.4+.3);return SPEC;
     case 'point':        // and the right arm points east, up

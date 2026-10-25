@@ -1314,6 +1314,14 @@ export class M01Simulation {
     return Boolean(q)&&k.alive&&k.active&&!squadMoving(q,k)&&!this.germanSilence()&&this.mission.phase!=='OUTRO'&&corridorRecord(this)?.phase==='escort';
   }
   /**
+   * R1-b: where a burst of Kowal's rkm lands, for the presentation only (the `end` of its `npc-shot`, with `hit:false`): on the ground just past the German it is aimed at, along the line from the gun. The burst
+   * is display-grade suppression (the target's suppressedUntil; no round is traced and nobody is struck), so this point decides nothing and draws no random number: the impact dust beside the German is all it gives.
+   */
+  kowalBurstEnd(kowal,target){
+    const dx=target.x-kowal.x,dz=target.z-kowal.z,d=Math.hypot(dx,dz)||1;
+    return {x:target.x+dx/d*1.2,y:target.y+.05,z:target.z+dz/d*1.2};
+  }
+  /**
    * Slice 3: Kowal covers the escort from the post he holds. While the escort lasts (SP-08) a gate German who fired in the last SQUAD.cover.freshSec seconds and whom he sees gets
    * an rkm burst: the suppression, cadence and magazine of kowalFire, drawn from his own AI stream; the empty magazine is changed for real (line 029). No round is traced.
    */
@@ -1328,7 +1336,7 @@ export class M01Simulation {
     kowal.cooldown=n*.11+3.4+2.8*u();if(ai)ai.target=target.id;
     kowal.shot=Math.max(.25,n*.11);kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=n;kowal.crouched=false;   // up over his cover for the burst
     const previousUntil=target.suppressedUntil;
-    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n});
+    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n,end:this.kowalBurstEnd(kowal,target),hit:false});
     recordSuppression(target,previousUntil,this.clock);
     if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5+u();if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
   }
@@ -1871,7 +1879,7 @@ export class M01Simulation {
     a.rounds=Math.max(0,a.rounds-1);if(a.rounds===0)a.reload={startedAt:this.clock,duration:3.4,mode:'clip'};
     a.shot=.135;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=angle;
     // The report of an allied rifle (audio weapon id `ally_rifle`, the profile of a Polish rifle heard at a distance); `by` names the man.
-    this.emit({type:'npc-shot',weapon:'ally_rifle',point:origin,rounds:1,by:a.id});
+    this.emit({type:'npc-shot',weapon:'ally_rifle',point:origin,rounds:1,by:a.id,end:hit?.point?{x:hit.point.x,y:hit.point.y,z:hit.point.z}:{x:origin.x+dir.x*R,y:origin.y+dir.y*R,z:origin.z+dir.z*R},hit:hit?.actor?.team==='enemy'});   // R1-b: where it stopped and whether it struck, for the presentation (as the section's real rounds say)
     ai.peek=Math.max(0,ai.peek-1);
     if(ai.peek>0&&a.rounds>0)a.cooldown=AI_BOLT[0]+AI_BOLT[1]*u();
     else{ai.peek=0;let pause=aiPause(ai,F.pauseSec*1.8-1.8,3);if(!(a.rounds>0))pause=Math.max(pause,AI_RELOAD_COVER+u());a.cooldown=pause;}
@@ -2064,7 +2072,7 @@ export class M01Simulation {
     if(ai)ai.target=target.id;
     kowal.shot=Math.max(.25,n*.11);kowal.firedAt=this.clock;kowal.facing=Math.atan2(target.z-kowal.z,target.x-kowal.x);kowal.rounds-=n;
     const previousUntil=target.suppressedUntil;
-    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n});
+    target.suppressedUntil=Math.max(target.suppressedUntil,this.clock+1.4+.2*n);this.updateMG34Posture(target);this.emit({type:'npc-shot',weapon:'rkm_wz28',point:eyePosition(kowal),rounds:n,end:this.kowalBurstEnd(kowal,target),hit:false});
     recordSuppression(target,previousUntil,this.clock);
     if(kowal.rounds<=0){kowal.rounds=20;kowal.cooldown=5+(ai?u():0);if(dist(kowal,this.player)<120)this.line('dlg_m01_029',`dlg_m01_029:${Math.floor(this.clock/90)}`);}
   }
