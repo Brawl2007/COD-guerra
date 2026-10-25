@@ -755,9 +755,9 @@ export function railSlotKind(slot,phase='shunting'){
   if(phase==='quiet')return null;
   if(phase!=='shunting')return audioVariation(`m01-rail-after:${slot}`)<.12?'tick':null;
   const raw=s=>audioVariation(`m01-rail:${s}`)<.62?RAIL_KINDS[audioHash(`m01-rail-kind:${s}`)%RAIL_KINDS.length]:null;
-  const cur=raw(slot);if(cur===null)return null;
-  const prev=raw(slot-1);
-  return prev===cur?RAIL_KINDS[(RAIL_KINDS.indexOf(cur)+1+audioHash(`m01-rail-alt:${slot}`)%(RAIL_KINDS.length-1))%RAIL_KINDS.length]:cur;
+  const fin=(sl,depth)=>{const cur=raw(sl);if(cur===null||depth>=6)return cur;const prev=fin(sl-1,depth+1);
+    return prev===cur?RAIL_KINDS[(RAIL_KINDS.indexOf(cur)+1+audioHash(`m01-rail-alt:${sl}`)%(RAIL_KINDS.length-1))%RAIL_KINDS.length]:cur;};
+  return fin(slot,0);
 }
 /** Grãos de uma janela ferroviária ao longe: cascata de engates, rangido de vagão, batente, sopro de vapor; ou, após o ataque, tiques de metal a arrefecer. */
 export function planRailAmbienceSlot(slot,phase='shunting'){

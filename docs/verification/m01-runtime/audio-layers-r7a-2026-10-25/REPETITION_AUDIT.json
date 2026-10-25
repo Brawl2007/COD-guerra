@@ -1,0 +1,519 @@
+{
+ "task": "R7-a audio repetition audit",
+ "route": "control route seed 19390901 (support:false)",
+ "note": "structure of variant choices only; nobody listened. before = stateless hash choice (variantGuard:false), after = VariantTracker guard.",
+ "before": {
+  "report": {
+   "footsteps": {
+    "events": 3519,
+    "groups": {
+     "step:earth": {
+      "n": 3194,
+      "maxRun": 12,
+      "backToBack": 1084,
+      "backToBackPct": 33.9,
+      "maxSquarePeriod": 10
+     },
+     "step:metal": {
+      "n": 313,
+      "maxRun": 8,
+      "backToBack": 110,
+      "backToBackPct": 35.3,
+      "maxSquarePeriod": 4
+     },
+     "step:wood": {
+      "n": 11,
+      "maxRun": 3,
+      "backToBack": 5,
+      "backToBackPct": 50,
+      "maxSquarePeriod": 0
+     },
+     "step:brick": {
+      "n": 1,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 0
+     }
+    },
+    "worstMaxRun": 12,
+    "worstBackToBackPct": 50,
+    "worstSquarePeriod": 10,
+    "sectionInterleaved": {
+     "n": 3519,
+     "maxRun": 12,
+     "backToBack": 1190,
+     "backToBackPct": 33.8,
+     "maxSquarePeriod": 10
+    }
+   },
+   "rifle-shots": {
+    "events": 2597,
+    "groups": {
+     "shot:kar98k": {
+      "n": 2256,
+      "maxRun": 6,
+      "backToBack": 530,
+      "backToBackPct": 23.5,
+      "maxSquarePeriod": 5
+     },
+     "shot:ally_rifle": {
+      "n": 341,
+      "maxRun": 4,
+      "backToBack": 86,
+      "backToBackPct": 25.3,
+      "maxSquarePeriod": 4
+     }
+    },
+    "worstMaxRun": 6,
+    "worstBackToBackPct": 25.3,
+    "worstSquarePeriod": 5,
+    "sectionInterleaved": {
+     "n": 2597,
+     "maxRun": 6,
+     "backToBack": 462,
+     "backToBackPct": 17.8,
+     "maxSquarePeriod": 4
+    }
+   },
+   "mg-bursts": {
+    "events": 7659,
+    "groups": {
+     "shot:mg34": {
+      "n": 6061,
+      "maxRun": 7,
+      "backToBack": 1507,
+      "backToBackPct": 24.9,
+      "maxSquarePeriod": 6
+     },
+     "shot:rkm_wz28": {
+      "n": 549,
+      "maxRun": 4,
+      "backToBack": 119,
+      "backToBackPct": 21.7,
+      "maxSquarePeriod": 3
+     },
+     "shot:ckm_wz30": {
+      "n": 1049,
+      "maxRun": 5,
+      "backToBack": 265,
+      "backToBackPct": 25.3,
+      "maxSquarePeriod": 6
+     }
+    },
+    "worstMaxRun": 7,
+    "worstBackToBackPct": 25.3,
+    "worstSquarePeriod": 6,
+    "sectionInterleaved": {
+     "n": 7659,
+     "maxRun": 7,
+     "backToBack": 1740,
+     "backToBackPct": 22.7,
+     "maxSquarePeriod": 5
+    }
+   },
+   "explosions": {
+    "events": 20,
+    "groups": {
+     "blast:large": {
+      "n": 20,
+      "maxRun": 3,
+      "backToBack": 7,
+      "backToBackPct": 36.8,
+      "maxSquarePeriod": 2
+     }
+    },
+    "worstMaxRun": 3,
+    "worstBackToBackPct": 36.8,
+    "worstSquarePeriod": 2,
+    "sectionInterleaved": {
+     "n": 20,
+     "maxRun": 3,
+     "backToBack": 7,
+     "backToBackPct": 36.8,
+     "maxSquarePeriod": 2
+    }
+   },
+   "bullet-passes": {
+    "events": 390,
+    "groups": {
+     "pass:crack": {
+      "n": 390,
+      "maxRun": 8,
+      "backToBack": 141,
+      "backToBackPct": 36.2,
+      "maxSquarePeriod": 7
+     }
+    },
+    "worstMaxRun": 8,
+    "worstBackToBackPct": 36.2,
+    "worstSquarePeriod": 7,
+    "sectionInterleaved": {
+     "n": 390,
+     "maxRun": 8,
+     "backToBack": 141,
+     "backToBackPct": 36.2,
+     "maxSquarePeriod": 7
+    }
+   },
+   "impacts": {
+    "events": 792,
+    "groups": {
+     "impact:earth": {
+      "n": 610,
+      "maxRun": 5,
+      "backToBack": 205,
+      "backToBackPct": 33.7,
+      "maxSquarePeriod": 6
+     },
+     "impact:stone": {
+      "n": 167,
+      "maxRun": 4,
+      "backToBack": 54,
+      "backToBackPct": 32.5,
+      "maxSquarePeriod": 3
+     },
+     "impact:wood": {
+      "n": 7,
+      "maxRun": 2,
+      "backToBack": 2,
+      "backToBackPct": 33.3,
+      "maxSquarePeriod": 0
+     },
+     "impact:brick": {
+      "n": 8,
+      "maxRun": 2,
+      "backToBack": 1,
+      "backToBackPct": 14.3,
+      "maxSquarePeriod": 2
+     }
+    },
+    "worstMaxRun": 5,
+    "worstBackToBackPct": 33.7,
+    "worstSquarePeriod": 6,
+    "sectionInterleaved": {
+     "n": 792,
+     "maxRun": 5,
+     "backToBack": 178,
+     "backToBackPct": 22.5,
+     "maxSquarePeriod": 5
+    }
+   },
+   "player-hit": {
+    "events": 1,
+    "groups": {
+     "phit": {
+      "n": 1,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 0
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 0,
+    "sectionInterleaved": {
+     "n": 1,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 0
+    }
+   }
+  },
+  "barks": {
+   "lines": 62,
+   "n": 62,
+   "maxRun": 1,
+   "backToBack": 0,
+   "backToBackPct": 0,
+   "maxSquarePeriod": 0
+  },
+  "adjusted": 0,
+  "clock": 1256.2999999994051,
+  "complete": true,
+  "events": {
+   "bridge-demolition": 2,
+   "bullet-whizz": 25,
+   "ckm": 185,
+   "debris": 14,
+   "distant-artillery": 105,
+   "distant-battle": 706,
+   "explosion": 22,
+   "fire-crackle": 1224,
+   "footstep": 3519,
+   "impact": 792,
+   "locomotive": 1073,
+   "metal-stress": 129,
+   "mg34": 1538,
+   "near-miss": 390,
+   "panzerzug-arrival": 1,
+   "player-hit": 1,
+   "rail-ambience": 65,
+   "ricochet": 37,
+   "rifle": 1707,
+   "rkm": 176,
+   "train-arrival": 1,
+   "veh.train.rolling": 2
+  },
+  "railAmbience": 65
+ },
+ "after": {
+  "report": {
+   "footsteps": {
+    "events": 3519,
+    "groups": {
+     "step:earth": {
+      "n": 3194,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 10
+     },
+     "step:metal": {
+      "n": 313,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 6
+     },
+     "step:wood": {
+      "n": 11,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 3
+     },
+     "step:brick": {
+      "n": 1,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 0
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 10,
+    "sectionInterleaved": {
+     "n": 3519,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 10
+    }
+   },
+   "rifle-shots": {
+    "events": 2597,
+    "groups": {
+     "shot:kar98k": {
+      "n": 2256,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 7
+     },
+     "shot:ally_rifle": {
+      "n": 341,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 8
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 8,
+    "sectionInterleaved": {
+     "n": 2597,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 7
+    }
+   },
+   "mg-bursts": {
+    "events": 7659,
+    "groups": {
+     "shot:mg34": {
+      "n": 6061,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 9
+     },
+     "shot:rkm_wz28": {
+      "n": 549,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 9
+     },
+     "shot:ckm_wz30": {
+      "n": 1049,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 7
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 9,
+    "sectionInterleaved": {
+     "n": 7659,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 9
+    }
+   },
+   "explosions": {
+    "events": 20,
+    "groups": {
+     "blast:large": {
+      "n": 20,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 2
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 2,
+    "sectionInterleaved": {
+     "n": 20,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 2
+    }
+   },
+   "bullet-passes": {
+    "events": 390,
+    "groups": {
+     "pass:crack": {
+      "n": 390,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 7
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 7,
+    "sectionInterleaved": {
+     "n": 390,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 7
+    }
+   },
+   "impacts": {
+    "events": 792,
+    "groups": {
+     "impact:earth": {
+      "n": 610,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 9
+     },
+     "impact:stone": {
+      "n": 167,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 8
+     },
+     "impact:wood": {
+      "n": 7,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 2
+     },
+     "impact:brick": {
+      "n": 8,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 3
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 9,
+    "sectionInterleaved": {
+     "n": 792,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 6
+    }
+   },
+   "player-hit": {
+    "events": 1,
+    "groups": {
+     "phit": {
+      "n": 1,
+      "maxRun": 1,
+      "backToBack": 0,
+      "backToBackPct": 0,
+      "maxSquarePeriod": 0
+     }
+    },
+    "worstMaxRun": 1,
+    "worstBackToBackPct": 0,
+    "worstSquarePeriod": 0,
+    "sectionInterleaved": {
+     "n": 1,
+     "maxRun": 1,
+     "backToBack": 0,
+     "backToBackPct": 0,
+     "maxSquarePeriod": 0
+    }
+   }
+  },
+  "barks": {
+   "lines": 62,
+   "n": 62,
+   "maxRun": 1,
+   "backToBack": 0,
+   "backToBackPct": 0,
+   "maxSquarePeriod": 0
+  },
+  "adjusted": 6657,
+  "clock": 1256.2999999994051,
+  "complete": true,
+  "events": {
+   "bridge-demolition": 2,
+   "bullet-whizz": 25,
+   "ckm": 185,
+   "debris": 14,
+   "distant-artillery": 105,
+   "distant-battle": 706,
+   "explosion": 22,
+   "fire-crackle": 1224,
+   "footstep": 3519,
+   "impact": 792,
+   "locomotive": 1073,
+   "metal-stress": 129,
+   "mg34": 1538,
+   "near-miss": 390,
+   "panzerzug-arrival": 1,
+   "player-hit": 1,
+   "rail-ambience": 65,
+   "ricochet": 37,
+   "rifle": 1707,
+   "rkm": 176,
+   "train-arrival": 1,
+   "veh.train.rolling": 2
+  },
+  "railAmbience": 65
+ }
+}
