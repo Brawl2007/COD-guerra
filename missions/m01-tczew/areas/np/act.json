@@ -419,8 +419,8 @@
         ],
         "closeAfterSec": 60,
         "pinnedWaitMaxSec": 4,
-        "breakPinnedSec": 60,
-        "breakOut": 6,
+        "breakPinnedSec": 75,
+        "breakOut": 7,
         "maxSec": 200,
         "fire": {
           "assaultPauseSec": 6,

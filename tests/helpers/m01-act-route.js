@@ -28,10 +28,12 @@ export function actControls(sim,mode,state){
   if(sim.weapon.mag===0&&sim.weapon.reserve>0&&sim.weapon.state==='READY'){c.reload=true;return c;}
   if(sim.weapon.reserve<10&&sim.interaction.startsWith('E ·'))c.interact=true;
   if(!seen.length||p.crouched){turn(-Math.PI/2);return c;}
-  const t=seen[0],eye=eyePosition(p),aim=aimPoint(t),h=Math.hypot(aim.x-eye.x,aim.z-eye.z);
+  // A human-paced rifleman, not an aimbot: he keeps one target, needs 0.8 s on it before a shot and fires at most once every 2.5 s.
+  const t=seen.find(a=>a.id===state.target)??seen[0];if(t.id!==state.target){state.target=t.id;state.since=sim.clock;}
+  const eye=eyePosition(p),aim=aimPoint(t),h=Math.hypot(aim.x-eye.x,aim.z-eye.z);
   turn(Math.atan2(aim.z-eye.z,aim.x-eye.x),Math.atan2(aim.y-eye.y,h));c.aim=true;
-  const settled=Math.abs(wrap(Math.atan2(aim.z-eye.z,aim.x-eye.x)-p.angle))<.004;
-  if(settled&&sim.weapon.state==='READY'&&sim.clock-(state.lastShot??-9)>1.6){c.fire=true;state.lastShot=sim.clock;}
+  const settled=Math.abs(wrap(Math.atan2(aim.z-eye.z,aim.x-eye.x)-p.angle))<.004&&sim.clock-state.since>=.8;
+  if(settled&&sim.weapon.state==='READY'&&sim.clock-(state.lastShot??-9)>2.5){c.fire=true;state.lastShot=sim.clock;}
   return c;
 }
 
