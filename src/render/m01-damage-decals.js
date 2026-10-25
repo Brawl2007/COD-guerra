@@ -118,7 +118,7 @@ function cellTriangles(world,ix,iz){
 }
 const underWater=(x,y)=>x>M01_TERRAIN_MESH.water.x0&&x<M01_TERRAIN_MESH.water.x1&&y<M01_TERRAIN_MESH.water.top+.03;
 /** True when the drawn terrain under `point` lies below the river surface and the impact is at or under it. */
-const overWater=(world,point)=>underWater(point.x,point.y)&&underWater(point.x,renderedTerrainHeight(world,point.x,point.z)??Infinity);
+export const overWater=(world,point)=>underWater(point.x,point.y)&&underWater(point.x,renderedTerrainHeight(world,point.x,point.z)??Infinity);
 
 // ——— Track beds ———
 const SEGMENTS=new WeakMap();
