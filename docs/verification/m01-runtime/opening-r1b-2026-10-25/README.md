@@ -125,7 +125,20 @@ O que **não** se prova aqui: que se leiam ao amanhecer a 10–20 m, onde a luz 
 
 ## 6. Testes executados
 
-TODO_TESTS
+Todos corridos por mim nesta máquina (4 núcleos, Node 22, x86), com o resultado real.
+
+**Focados** (código final salvo indicação):
+- `node --test tests/m01-opening.test.js tests/m01-opening-pose.test.js`: **28 / 28** (18 da abertura, 10 da pose e dos adereços). Entre os 18: os dados e a validação, a ausência de sorteios (fonte e execução), a abertura de cada homem, o aviso das 04:31, as vozes, a estafeta, os aviões, Nowicki, os sapadores, **a ordem alheia nunca sobreposta**, a 1.ª bomba, **o save a meio de cada acto (calma, estafeta a correr, sapadores fora, aviso, aviões) com duas recargas**, **o save antigo sem registo**, o registo e o acto corrompidos (22 casos).
+- `tests/m01-barks.test.js` + `tests/m01-rearguard.test.js` (+ os dois acima): 193 / 193 (341 s, antes da correcção das ordens alheias); `tests/m01-combat-ai.test.js` 11 / 11 (187 s; o teste novo do `end` / `hit` do Kowal); `tests/m01-nav-queue.test.js` 15 / 15 e «a goal behind the whole station» de `tests/m01-npc-navigation.test.js` 1 / 1 (depois da correcção); `m01-frame-cost-allocation` + `m01-render-perf` 9 / 9; `m01-locomotive` + `m01-panzerzug` + `m01-soldier-visual-variation` 23 / 23 (leem o `ENGINE_CONTRACT.md`).
+
+**Completo (`npm test` = `node --test tests/*.test.js`, 176 ficheiros)**:
+- 1.ª corrida, em `018b9151`: **1780 testes, 1775 verdes, 5 vermelhos** (3641 s). Os cinco eram **da abertura**, não de outro pacote: os quatro de `tests/m01-nav-queue.test.js` (a equipa dos sapadores apagava o alvo de `sapper_2`, um dos cinco homens que o teste manda andar) e «a goal behind the whole station» de `tests/m01-npc-navigation.test.js` (contava os `route()` de toda a simulação, onde a estafeta planeia mais dois). Corrigidos na raiz (os sapadores cedem a uma ordem alheia, §2.2) e, no último, contando os planos do homem de que o teste fala (Pawlak: 1, no tick 2, como em `77175d85`); nenhuma asserção removida nem enfraquecida.
+- Final: **1743 testes, 1743 verdes, 0 vermelhos** em 175 ficheiros (todos menos o de contrato; 3297 s), corrido em `553bc94a` enquanto o golden se regenerava (o contrato depende dele), e o `tests/m01-animation-contract.test.js` à parte no SHA final `5f76f4b6`: **38 / 38** (374 s). (1743 + 38 = 1781 = os 1780 da 1.ª corrida + o teste novo da ordem alheia.)
+
+**Build e navegador**:
+- `npm run build`: OK (2,2 s; só o aviso de blocos de mais de 600 kB que já existia).
+- Navegador (Playwright, SwiftShader, `CI=1`, o jogo construído), 8 especificações escolhidas por tocarem nas personagens, no HUD, nos saves e na abertura (`m01`, `game`, `m01-anim-resolver`, `m01-animation-contract`, `m01-t37-foot-ik-hand-pin`, `m01-soldier-visual-variation`, `m01-hud-presentation`, `m01-pacing-hud`: 50 testes). A corrida foi **parada pelo limite de 30 minutos do ambiente aos 47 testes: 44 verdes e 3 vermelhos**; **os mesmos três falham, com as mesmas mensagens, em `77175d85`** (corridos na árvore do predecessor, construída à parte): `game.spec.js:28` (o jogo antigo da aldeia: `#mag` mostra «—» onde esperava «15»), `m01-anim-resolver.spec.js:146` (sapper_2 a 213,53 s: erro dos pesos 0,1173 contra < 0,001) e `m01.spec.js:458` (CP-D: 46 inimigos vivos contra os 43 fixados; o save de CP-D da rota de controlo tem 48 vivos, mortos `de_spans_0..3`, **igual nas duas árvores**: o pin é anterior a R2-b / R3-a). **Não são desta entrega e não se tocaram.** O `m01-animation-contract.spec.js` (o save actual de 103 actores e o legado de 86, carregados no jogo verdadeiro) passou. Os três testes que a corrida não alcançou (`m01.spec.js:635`, `:663`, `:685`) correram à parte sobre a build final: **3 / 3 verdes** (4,4 min). Total das 8 especificações: **47 verdes, 3 vermelhos (anteriores)**; os 44 primeiros verdes sobre a build da árvore de `018b9151` (a correcção das ordens alheias, depois, não toca em nada do que esses fluxos fazem: nenhum deles manda um alvo a um sapador).
+- O `m01-pacing-hud.spec.js` reescreve imagens de prova de `docs/verification/m01-runtime/pacing-hud-2026-10-18/` (de outro pacote); repuseram-se com `git restore` e não fazem parte desta entrega.
 
 ## 7. Golden emenda 20 (`GOLDEN_AMENDMENT_20.json`, `tests/fixtures/m01-opening-gameplay-baseline.json`)
 
@@ -135,7 +148,7 @@ Escrita **só pela ferramenta oficial** (`node tools/verification/m01-integratio
 - **1.ª diferença**: tick 1 (04:30:44), `$.state.actors.0.act` (o sargento, um `idle` de uns 4 s, ausente no predecessor), nas duas rotas; **nenhum bloco de 512 ticks é o do predecessor**. **1.ª de comportamento** (com os registos novos tirados dos dois frames: actos, `timers.opening`, o registo do realizador, o estado do diálogo, o `end` / `hit` dos `npc-shot`): tick 1, `$.state.actors.9.facing`, `sapper_3` (−0,4 no predecessor; 0,4878 no controlo e 0,0065 no apoio): o vigia dos sapadores vira os olhos a leste e olha à volta.
 - **Tudo o resto fica igual**, e é o que torna a emenda limpa: **o mesmo número de ticks** (controlo 25987, apoio 22551), o mesmo tempo real do fim (1299,35 s e 1127,55 s), da 1.ª bomba (67,75 s) e de **todos os 18 eventos do relógio de batalha**; nenhum evento movido (`movedEvents` vazio); os 12 objectivos, CP-A..D, eventos consumidos, bandeiras e sobreviventes (12 / 18) iguais; saúde do jogador igual (76 / 100) e alemães por minuto real iguais (94,34 / 62,26); nas quatro rotas de guarda o mesmo tempo real do fim e o mesmo instante de reparo concluído; **0 clipping e 0 empilhados** nas 2 + 4 rotas.
 - **Contrato**: `tests/m01-animation-contract.test.js` **38 / 38** (eram 37: +1 da emenda 20; o da 19 passou a história: fixa a simulação de `77175d85`, e `simulation`, `mission.json` e `m01-barks.js` são os três que já não são os vivos).
-- **Verificação**: `node tools/verification/m01-integration-golden-audit.mjs --amendment 20` sem `--write`: TBD_CHECK.
+- **Regeneração** (a ferramenta correu cinco vezes sobre `--amendment 20`): (1) `--write` parada por mim a meio, porque o texto de geração falava de sete falas e eram cinco; (2) `--write` completa; (3) sem `--write`: `check: identical`; (4) `--write` outra vez, depois de a correcção das ordens alheias mudar o módulo: **o golden mudou numa só linha (o hash de `src/game/m01-opening.js`) e a conta ficou byte a byte a mesma**, isto é, os resumos por tick das duas rotas (51 e 45 blocos) são os mesmos antes e depois da correcção, que não corre em nenhuma das duas rotas; (5) no SHA final, `node tools/verification/m01-integration-golden-audit.mjs --amendment 20` sem `--write`: **`check: identical`** (a conta e o golden iguais byte a byte; as duas rotas e as quatro de guarda).
 
 ## 8. Riscos e incertezas
 
@@ -145,6 +158,9 @@ Escrita **só pela ferramenta oficial** (`node tools/verification/m01-integratio
 - **A tripulação da ckm só mexe a cabeça** (os clips dela estão ligados à animação do canhão) e a guarnição de seis **não se ajoelha** aos aviões (paridade das baixas de R1-a): encolhe-se de pé.
 - O primeiro estímulo de combate **não pode** ser mais cedo sem mexer nas horas históricas (04:34:00); o que se ganhou é o que se vê e ouve antes.
 - Um save de R1-b não carrega numa árvore anterior (chaves novas); o contrário (save antigo na nova árvore) sim.
+- **Três testes de navegador vermelhos que já o eram em `77175d85`** (`game.spec.js:28`, `m01-anim-resolver.spec.js:146`, `m01.spec.js:458`, §6) e que **não se tocaram** (fora do âmbito: o jogo antigo da aldeia, os pesos de cross-fade dos sapadores de R3-a e o pin de 43 inimigos vivos em CP-D, anterior a R2-b); ficam para quem os possui.
+- **O critério dos 60 s falha por 1,7 s** para quem vê a cena de abertura (§3): o aviso das 04:31:00 é âncora histórica; um sinal de guerra à vista antes dele (por exemplo um homem a reagir a algo antes do relatório do ferroviário) seria dramatização nova, e não se inventou.
+- **Nada disto foi visto por uma pessoa a jogar**: as capturas são de SwiftShader e do amanhecer escuro; as contagens por rótulo de acto não são percepção.
 
 ## 9. Como reproduzir
 
