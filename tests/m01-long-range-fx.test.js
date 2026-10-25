@@ -40,11 +40,11 @@ test('tracer look: about 1 px wide, a short streak, dimmer in daylight and far a
   const f=(768/2)/Math.tan(70*Math.PI/360);
   for(const d of [100,300,600,1000]){
     const wpx=2*tracerHalfWidth(d)/(d/f),lpx=2*tracerHalfLength(d)/(d/f);
-    assert.ok(wpx>=.9&&wpx<=1.5,`${d} m: ${wpx.toFixed(2)} px wide`);
-    assert.ok(tracerHalfLength(d)<=3&&lpx>=2,`${d} m: ${lpx.toFixed(1)} px long, at most 6 m`);
+    assert.ok(wpx>=1.2&&wpx<=1.9,`${d} m: ${wpx.toFixed(2)} px wide`);
+    assert.ok(tracerHalfLength(d)<=8&&lpx>=6,`${d} m: ${lpx.toFixed(1)} px long, at most 16 m`);
   }
   assert.ok(tracerTint(0,200)>tracerTint(1,200)&&tracerTint(.5,200)>tracerTint(.5,1500));
-  for(const day of [0,.5,1])for(const d of [0,500,5000])assert.ok(tracerTint(day,d)>=.35&&tracerTint(day,d)<=1);
+  for(const day of [0,.5,1])for(const d of [0,500,5000])assert.ok(tracerTint(day,d)>=.55&&tracerTint(day,d)<=1);
   assert.deepEqual([tracerQuota('low'),tracerQuota('medium'),tracerQuota('high')],[6,12,20]);
   assert.ok(TRACER_QUOTA_BY_TIER.low>=6,'Low still draws a readable handful');
   assert.equal(tracerQuota('x'),TRACER_QUOTA_BY_TIER.low);

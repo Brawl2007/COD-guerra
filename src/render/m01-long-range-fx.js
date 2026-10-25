@@ -22,13 +22,13 @@ export const TRACER_QUOTA_BY_TIER=Object.freeze({low:6,medium:12,high:20});
 /** A tracer ignites a short way out of the muzzle (pyrotechnic burn-in): nothing is drawn for the first metres of its flight. */
 export const TRACER_BURN_IN_M=25;
 export const tracerQuota=quality=>TRACER_QUOTA_BY_TIER[quality]??TRACER_QUOTA_BY_TIER.low;
-/** Half-thickness and half-length (m) of a tracer streak seen from `distance`: about a 1 px wide, ~5 px long streak, never longer than 6 m (short and fast, not a laser). */
-export const tracerHalfWidth=distance=>Math.max(.012,distance*.001);
-export const tracerHalfLength=distance=>Math.min(3,Math.max(.4,distance*.0045));
-/** Instance tint of a tracer (the material is orange): bright at night and dawn, dimmer in daylight and with distance (floor .35). */
+/** Half-thickness and half-length (m) of a tracer streak seen from `distance`: about a 1.4 px wide, ~7 px long streak, never longer than 16 m (short and fast, not a laser). */
+export const tracerHalfWidth=distance=>Math.max(.012,distance*.0013);
+export const tracerHalfLength=distance=>Math.min(8,Math.max(.5,distance*.007));
+/** Instance tint of a tracer (the material is orange): bright at night and dawn, dimmer in daylight and with distance (floor .55). */
 export function tracerTint(daylight,distance){
   const day=Math.min(1,Math.max(0,Number.isFinite(daylight)?daylight:.5)),far=Math.min(1,Math.max(0,(distance-150)/1500));
-  return Math.max(.35,(1-.5*day)*(1-.45*far));
+  return Math.max(.55,(1-.35*day)*(1-.3*far));
 }
 /**
  * Whether a round is drawn as a tracer at flight fraction `t`: the simulation marked it, its weapon may carry one, it is in flight and it has left the burn-in
@@ -58,7 +58,7 @@ export const IMPACT_POOL_SLOTS=64;
 export const IMPACT_DRAW_BY_TIER=Object.freeze({low:14,medium:24,high:36});
 export const IMPACT_DENSITY=Object.freeze({low:.55,medium:.78,high:1});
 /** Minimum on-screen diameter of an impact puff (drawing-buffer px at 1366x768) and its physical radius up close (m). */
-export const IMPACT_MIN_PX=3,IMPACT_RADIUS_M=.2;
+export const IMPACT_MIN_PX=4,IMPACT_RADIUS_M=.2;
 /** Beyond this the chips are sub-pixel and are not spent (sparks: 1.6x); the dust keeps its pixel floor. */
 export const IMPACT_DETAIL_M=90;
 const focal=(fovDeg,vh)=>(vh/2)/Math.tan(fovDeg*Math.PI/360);
@@ -153,7 +153,7 @@ export function drawRoundImpacts(pool,time,cam,fovDeg,vh,quality,put,P,SC){
         const n0=visualNoise(seed,30+j*4),n1=visualNoise(seed,31+j*4),n2=visualNoise(seed,32+j*4),a=n0*Math.PI*2,r=age*p.spread*(.45+n1*.75);
         const sx=impactPuffRadius(d,k,fovDeg,vh)*(.7+n2*.6);SC[0]=sx;SC[1]=sx*(.5+.3*n1);SC[2]=1;
         P.x=x+Math.cos(a)*r;P.y=y+.05+age*(p.rise+.2*n2);P.z=z+Math.sin(a)*r;
-        put('puff',P,SC,null,.5*life,p.color,seed,30+j);
+        put('puff',P,SC,null,.75*life,p.color,seed,30+j);
       }
     }
     const sparks=impactSparkCount(mat,d,quality);
