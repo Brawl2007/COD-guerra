@@ -3,7 +3,7 @@
 // the crate is delivered, the second cut 16 m to the west), the splice that closes each one, the crate they work from (open, on the ground at the cut they work at, on the helper's shoulder while
 // they walk; that one is drawn by the characters) and a coil of spare cable. Original procedural shapes (a low-poly tube along the sampled route, boxes and cylinders), no file and no asset:
 // the game shows no connections, charges or procedures (HISTORICAL_RESEARCH.md §79). The simulation decides which cut is open (sim.sapperOps.gaps) and where the box is; this only draws it.
-// The tube is rebuilt only when a cut changes state (three times in a mission); nothing here is saved or decides anything, and a paused frame is a pure function of the same state.
+// The tube is rebuilt only when a cut changes state (four times in a mission: the bomb's cut, the call, the first and the second cut spliced); nothing here is saved or decides anything, and a paused frame is a pure function of the same state.
 // Legibility (first captures in the real game, 2026-10-24: a 3 cm black cable and a 44 cm brown crate vanish on the dark slope at the dawn of the mission, from the 8-15 m at which the player covers the
 // repair): the cable is a pale, dry khaki 6 cm thick (a stylised stand-in for a heavy field cable), an open cut is marked by two stakes with white rags, the splice sleeve and the crate are pale and bigger, the
 // tools lie on a pale cloth. The ground under all of it is the terrain MESH, not the analytic height: the playable ground is a 5 m lattice of terrainHeightAt (m01-terrain-relief.js), whose chords
