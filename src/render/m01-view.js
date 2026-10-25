@@ -224,7 +224,7 @@ export class M01View {
     this.lastFrame=null;
   }
   syncSolids(world){
-    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}this.syncAreaTerrain(world);}
+    if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}this.syncAreaTerrain?.(world);}
     this.terrainRelief?.sync(world,this.owner?.quality);
     const fieldRevision=this.environment?.fieldStructures.revision??0;
     for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);

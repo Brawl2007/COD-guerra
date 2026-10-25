@@ -4,7 +4,7 @@
   "scene": null,
   "phase": "NP_ARRIVAL",
   "complete": false,
-  "clock": 1.4832999999999998,
+  "clock": 1.4832000000000014,
   "player": {
    "x": -412,
    "y": -3,
@@ -27,7 +27,7 @@
   "scene": null,
   "phase": "NP_ATTACK",
   "complete": false,
-  "clock": 23.083400000000193,
+  "clock": 23.000000000000195,
   "player": {
    "x": -410.01242546324204,
    "y": -3,
@@ -42,7 +42,7 @@
   "clockText": "MANHÃ · ~07:00",
   "objective": "Repila o ataque vindo do norte",
   "card": "",
-  "frames": 9,
+  "frames": 8,
   "errors": []
  },
  "west": {
@@ -50,7 +50,7 @@
   "scene": null,
   "phase": "NP_ATTACK",
   "complete": false,
-  "clock": 23.100000000000193,
+  "clock": 23.00020000000019,
   "player": {
    "x": -410.01242546324204,
    "y": -3,
@@ -65,7 +65,7 @@
   "clockText": "MANHÃ · ~07:00",
   "objective": "Repila o ataque vindo do norte",
   "card": "",
-  "frames": 7,
+  "frames": 9,
   "errors": []
  },
  "wreck": {
@@ -73,7 +73,7 @@
   "scene": null,
   "phase": "NP_ATTACK",
   "complete": false,
-  "clock": 23.06680000000019,
+  "clock": 23.000000000000192,
   "player": {
    "x": -410.01242546324204,
    "y": -3,

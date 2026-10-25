@@ -640,24 +640,6 @@ export class M01Characters {
     if(time===this.lastUpdateTime)return false;
     return !actorPoseDue(time,v.appliedTime,quantum,v.posePhase*quantum);
   }
-  /** R4 INC-1: the gun of a new act's area at its own root and yaw; the same LOD, clips and phases as updateCKM (which stays byte-pinned for the current act). */
-  updateAreaCKM(gunner,time,player,quality){
-    const at=gunner.ckm.root,yaw=Number.isFinite(gunner.ckm.yaw)?gunner.ckm.yaw:0,d=Math.hypot(player.x-at.x,player.z-at.z);
-    if(!gunner.ckm.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){if(this.ckm)this.ckm.root.visible=false;return;}
-    let lod=quality==='high'&&d<14?0:quality==='high'&&d<45?1:2;
-    while(lod<3&&!this.sources.has(`ckm:${lod}`))lod++;
-    if(lod===3)return;
-    if(this.ckm?.lod!==lod){
-      if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}
-      const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
-      this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
-    }
-    const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
-    if(!clip){v.root.visible=false;return;}
-    v.root.visible=true;v.root.position.set(at.x,at.y,at.z);v.root.rotation.y=yaw;
-    v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
-    v.mixer.setTime(phase==='idle'?drawn.time%clip.duration:Math.min(drawn.time,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
-  }
   updateCKM(actors,time,player,quality){
     const gunner=actors.find(a=>a.id==='ckm_gunner'),d=Math.hypot(player.x-CKM_POSITION.x,player.z-CKM_POSITION.z);
     if(!gunner?.ckm?.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){
@@ -683,6 +665,24 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  /** R4 INC-1: the gun of a new act's area at its own root and yaw; the same LOD, clips and phases as updateCKM (which stays byte-pinned for the current act). */
+  updateAreaCKM(gunner,time,player,quality){
+    const at=gunner.ckm.root,yaw=Number.isFinite(gunner.ckm.yaw)?gunner.ckm.yaw:0,d=Math.hypot(player.x-at.x,player.z-at.z);
+    if(!gunner.ckm.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){if(this.ckm)this.ckm.root.visible=false;return;}
+    let lod=quality==='high'&&d<14?0:quality==='high'&&d<45?1:2;
+    while(lod<3&&!this.sources.has(`ckm:${lod}`))lod++;
+    if(lod===3)return;
+    if(this.ckm?.lod!==lod){
+      if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}
+      const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
+      this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
+    }
+    const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
+    if(!clip){v.root.visible=false;return;}
+    v.root.visible=true;v.root.position.set(at.x,at.y,at.z);v.root.rotation.y=yaw;
+    v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
+    v.mixer.setTime(phase==='idle'?drawn.time%clip.duration:Math.min(drawn.time,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
+  }
   dispose(){this.disposed=true;if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}this.instances.forEach(v=>this.release(v));this.instances.clear();this.anim.clear();if(this._civilianKit){for(const o of Object.values(this._civilianKit))o.dispose();this._civilianKit=null;}this.visuals?.dispose();this.mergeCache.dispose();this.sapperKit?.dispose();this.openingKit?.dispose();this.assets.dispose();
     if(typeof window!=='undefined'&&this.ikDebug&&window.m01CharacterIkDebug===this.ikDebug)delete window.m01CharacterIkDebug;}
 }

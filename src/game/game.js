@@ -365,8 +365,7 @@ export class Game {
    */
   enterNextAct(){
     this.persistCheckpoint();
-    this.sim=this.acts.enter(this.sim);this.pendingSounds=[];this.pendingM01HitFeedback=null;
-    this.audio.resetPresentation?.(this.sim.clock,this.sim.renderState);this.audioDirector?.reset(this.sim);
+    this.sim=this.acts.enter(this.sim);this.rebuildSounds();this.pendingM01HitFeedback=null;   // rebuildSounds: pending sounds, audio presentation and director reset for the new simulation
     this.messageUntil=0;this.hitUntil=0;this.checkpointUntil=0;this.renderer.resetEffects();this.endDeathBeat();this.deathOffer=null;this.deaths={};
     this.m01Hud.clear?.();this.m01Hud.reset('new',this.sim.clock);this.input.clear();
     this.persistCheckpoint();
