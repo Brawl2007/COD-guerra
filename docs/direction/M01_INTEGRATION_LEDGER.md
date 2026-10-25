@@ -2,6 +2,8 @@
 
 Ler isto primeiro em cada sessão; atualizar só com factos verificados pelo Git. A política está no `AGENTS.md`, secção «uma IA entrega, um jogo recebe».
 
+**Integração 2026-10-25 (R3-a):** merge `--no-ff` na candidata #80 a partir de `claude/exciting-bohr-k8v5xm` @ `4ad75ff0` (R3-a `ddc7ab69`): sapadores em etapas (seguir o cabo, examinar, emendar, testar; 1.º teste falha e leva ao 2.º corte; relatório), cabo/estacas/lâmpada visíveis, corridas para fiadas de sacos (576/581 episódios), lugares de retirada espaçados (pilha dos aliados corrigida; teste de escolta reposto), golden emenda 19. `npm test` 1745/1745 e build OK em `4ad75ff0` (árvore combinada com R2-c e R7-a). **INTEGRADA SEM VALIDAÇÃO DE JOGO**. Falas 200–207 por rever.
+
 **Integração 2026-10-25 (R7-a):** merge `--no-ff` na candidata #80 a partir de `claude/exciting-bohr-k8v5xm` (R7-a `a59d7599`): leito contínuo do Vístula, ambiente ferroviário até à bomba da estação, tratamento de outra margem sobre a água, sem variantes repetidas seguidas, etiqueta de áudio provisório (T45). Só apresentação. `npm test` 1710/1710; build OK. **INTEGRADA SEM VALIDAÇÃO DE JOGO** (ninguém ouviu). Nota: com 3 variantes o padrão ABAB dos passos sobe (256 → 916).
 
 **Integração 2026-10-25 (R2-c):** merge `--no-ff` `cdb33864` na candidata #80 a partir de `claude/exciting-bohr-k8v5xm` @ `74779007` (R2-c `09f6332f`): impactos das rondas NPC, traçantes da MG34/rkm/ckm (GAMEPLAY_DRAMATIZATION), som de impacto com atraso pela distância, arremesso de granada alemã, fumo do VIS-a com o tamanho certo. Só renderer/áudio. `npm test` 1700/1700; build OK. **INTEGRADA SEM VALIDAÇÃO DE JOGO**. Pendente: `end/hit` da retaguarda e do rkm do Kowal na simulação.

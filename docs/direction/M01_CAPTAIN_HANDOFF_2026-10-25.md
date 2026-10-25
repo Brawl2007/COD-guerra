@@ -19,7 +19,7 @@
 
 ## Em curso (não integrado)
 
-- **R3-a sapadores em etapas**: branch **local** `claude/exciting-bohr-k8v5xm-r3a` @ `a504b1f2` (+ correções em curso: posições de retirada espaçadas para o empilhamento dos aliados, que existe já na #80; cobertura junto aos cortes; reverter o re-pin do teste de escolta). Emenda 19. Se a sessão cair, retomar a partir dessa branch (worktree `.claude/worktrees/agent-a16fb2a4f00878a25`) e integrar só com `npm test` completo verde.
+- R3-a integrado (ver ledger, 2026-10-25).
 
 ## Próximos pacotes (por ordem)
 
