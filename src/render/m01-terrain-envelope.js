@@ -49,6 +49,8 @@ export function buildTerrainEnvelope(world){
   add('source:evacuation-and-roll-call',[[-300-1.4-.92,30+2.3+.92],[-332-2-.92,24+2.2-.92],[-332+.9,24+.7],[-263.2,69.6],[-256.9,73.9]]);
   // consume(): actual distant fire origins are isolated protected regions, never a fictitious far city.
   for(const [id,x,z]of [['second_air_pass',-550,60],['north_contact_distant',-500,-1100],['kozliny_attack_distant',-500,-1300]])add(`source:fire:${id}`,[[x,z]]);
+  // R4 WP-1: the area of a new act (src/world/m01-area-world.js layout.areaRegions) is open ground at the simulation's height; the current act's layout has none.
+  for(const r of world.layout.areaRegions??[])regions.push(rect(`area:${r.id}`,r.minX,r.maxX,r.minZ,r.maxZ));
   const frozen=Object.freeze(regions),extent=rect('extent',Math.min(...regions.map(r=>r.minX))-20,Math.max(...regions.map(r=>r.maxX))+20,Math.min(...regions.map(r=>r.minZ))-20,Math.max(...regions.map(r=>r.maxZ))+20);
   // Distance to the union's raw rectangle hulls. Negative means inside a hull. No per-sample allocation.
   const distance=(x,z)=>{let d=Infinity;for(const r of frozen){const dx=Math.max(r.minX-x,0,x-r.maxX),dz=Math.max(r.minZ-z,0,z-r.maxZ);d=Math.min(d,Math.hypot(dx,dz));}return d;};

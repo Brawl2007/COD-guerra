@@ -69,6 +69,10 @@ function missionMenu(){
   $('#mission-briefing').textContent=m01?'Tczew, 04:30. Leve a mensagem ao posto da ponte. Mantenha contacto com a secção e cubra os sapadores.':'O posto avançado deixou de responder. Atravesse a aldeia com a patrulha e restabeleça as comunicações na capela.';
   $('#mission-note').textContent=m01?'AS PONTES DO VÍSTULA':'COMUNICAÇÕES INTERROMPIDAS';
   $('#mission-status').textContent=m01?'PROTÓTIPO · MODELOS E ÁUDIO PROVISÓRIOS':'BANCADA FICCIONAL · FRANÇA, 1944';
+  if(m01&&game.acts?.startAct){   // R4 INC-1 QA start: say what this is before the player starts it
+    $('#mission-briefing').textContent='QA · Ato VII-a — perímetro norte de Tczew, manhã (ataque de ~07:00, fonte única T08). Trincheira e posições: reconstrução; a chegada da secção é dramatização.';
+    $('#mission-status').textContent='QA · ATO NOVO DESLIGADO NO JOGO DISTRIBUÍDO · NÃO VALIDADO';
+  }
   t50Loading.selectMission(m01);
   $('#continue').classList.toggle('hidden',!game.hasSave);
   $('#start').disabled=false;$('#continue').disabled=false;
@@ -89,7 +93,11 @@ function missionMenu(){
 try{
   const params=new URLSearchParams(location.search);
   const touch=detectTouch();
-  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew',{touch});
+  // R4 INC-1 (QA, docs/verification/m01-runtime/acts-inc1-2026-10-25): ?acts=1 turns the M01 act chain on for this page (acts.json keeps it off); ?act=vii-a also starts
+  // a new game directly at Act VII-a. Without them the game is the shipped one.
+  const actParam=params.get('act'),actsParam=params.get('acts');
+  const acts={enabled:actParam?true:actsParam==='1'||actsParam==='on'?true:actsParam==='0'||actsParam==='off'?false:null,startAct:actParam};
+  game=new Game(canvas,hud,stateChanged,params.get('mission')==='sandbox-1944'?'sandbox-1944':'m01_tczew',{touch,acts});
   if(touch){
     document.body.classList.add('touch');document.querySelector('.touch-hint').classList.remove('hidden');
     touchState=new TouchState(game.input,{onPause:()=>game.pause()});bindTouchControls($('#touch-controls'),touchState);

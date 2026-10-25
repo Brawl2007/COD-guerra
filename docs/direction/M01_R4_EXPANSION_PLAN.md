@@ -2,6 +2,7 @@
 
 **Data:** 2026-10-23 · **Branch:** `claude/exciting-bohr-k8v5xm` (sobre a candidata #80 @ `9c1d7f2`; código = `40787b2`) · **Tipo:** só desenho, sem código.
 **Decisão de origem:** proprietário, 2026-10-23, opção B de `M01_R0_REQUIREMENTS_MATRIX.md` §6.1: representar a batalha (duas pontes, cidade, Lisewo, frentes norte e oeste, margens do Vístula); a missão continua depois das 07:05, em novos atos e áreas, com cronologia preservada. Meta de intensidade: CoD World at War / WWII, com identidade própria e sem conteúdo copiado.
+**Estado (2026-10-25):** **INC-1 (WP-0 + WP-1) CONCLUÍDO NA ORIGEM** no ramo local `claude/exciting-bohr-k8v5xm-r4inc1` (de `1d201f43`), atrás de `missions/m01-tczew/acts.json` `enabled:false`; sem playtest. Desvios: o bloco `acts` ficou em `acts.json` (não em `mission.json`, entrada fixada no golden 20); a fatia NP é x −620…−220 (80 m a leste, para não cortar a silhueta da cidade da paisagem distante); o checkpoint da chegada chama-se CP-E (ordem do Capitão); sem Bofors. Prova e QA: `docs/verification/m01-runtime/acts-inc1-2026-10-25/README.md`. Próximo: playtest do VII-a, depois WP-2.
 **Base factual:** só o repositório (`HISTORICAL_RESEARCH.md`, `SOURCE_CHECK.md`, `research/SOURCES.md`, `MAP.md`, `map-layout.json`, `mission.json`). As fontes externas **não abrem** neste ambiente; nada foi confirmado de novo. Etiquetas: `DOCUMENTED`, `RECONSTRUCTED`, `GAMEPLAY_DRAMATIZATION` (eventos) e `EXACT`/`RECONSTRUCTED`/`COMPRESSED_FOR_GAMEPLAY` (espaço), como em `HISTORICAL_RESEARCH.md`.
 
 ## 0. O que muda no jogo e o que não muda
