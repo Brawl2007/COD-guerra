@@ -446,7 +446,8 @@ export class M01Characters {
     const limits=LIMITS[quality]??LIMITS.low,preset=LIMITS[quality]?quality:'low';
     const ikOn=this.ikEnabled&&Boolean(world);let ikCount=0;
     if(quality==='high')this.requestHighSources();
-    this.updateCKM(actors,time,player,quality);
+    // R4 INC-1: a new act places its own gun (gunner.ckm.root / yaw, M01AreaSimulation); the current act's gun record has neither and keeps its own (pinned) updateCKM.
+    const areaGunner=actors.find(a=>a.id==='ckm_gunner'&&a.ckm?.root);if(areaGunner)this.updateAreaCKM(areaGunner,time,player,quality);else this.updateCKM(actors,time,player,quality);
     const selected=new Set(),visible=[],clips={},bands=[0,0,0];let submitted=0,drawCalls=0;
     this.carriers.clear();for(let i=0;i<actors.length;i++)if(actors[i].carriedBy)this.carriers.add(actors[i].carriedBy);
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
@@ -639,9 +640,26 @@ export class M01Characters {
     if(time===this.lastUpdateTime)return false;
     return !actorPoseDue(time,v.appliedTime,quantum,v.posePhase*quantum);
   }
+  /** R4 INC-1: the gun of a new act's area at its own root and yaw; the same LOD, clips and phases as updateCKM (which stays byte-pinned for the current act). */
+  updateAreaCKM(gunner,time,player,quality){
+    const at=gunner.ckm.root,yaw=Number.isFinite(gunner.ckm.yaw)?gunner.ckm.yaw:0,d=Math.hypot(player.x-at.x,player.z-at.z);
+    if(!gunner.ckm.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){if(this.ckm)this.ckm.root.visible=false;return;}
+    let lod=quality==='high'&&d<14?0:quality==='high'&&d<45?1:2;
+    while(lod<3&&!this.sources.has(`ckm:${lod}`))lod++;
+    if(lod===3)return;
+    if(this.ckm?.lod!==lod){
+      if(this.ckm){this.ckm.root.removeFromParent();this.ckm.mixer.stopAllAction();this.ckm.mixer.uncacheRoot(this.ckm.root);}
+      const source=this.sources.get(`ckm:${lod}`),root=source.scene.clone(true);
+      this.scene.add(root);this.ckm={root,lod,mixer:new THREE.AnimationMixer(root),clips:source.animations};
+    }
+    const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
+    if(!clip){v.root.visible=false;return;}
+    v.root.visible=true;v.root.position.set(at.x,at.y,at.z);v.root.rotation.y=yaw;
+    v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
+    v.mixer.setTime(phase==='idle'?drawn.time%clip.duration:Math.min(drawn.time,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
+  }
   updateCKM(actors,time,player,quality){
-    // R4 INC-1: a new act places its own gun (gunner.ckm.root / yaw, M01AreaSimulation); the current act's record has neither, so its gun stays at CKM_POSITION facing east.
-    const gunner=actors.find(a=>a.id==='ckm_gunner'),at=gunner?.ckm?.root??CKM_POSITION,yaw=Number.isFinite(gunner?.ckm?.yaw)?gunner.ckm.yaw:-Math.PI/2,d=Math.hypot(player.x-at.x,player.z-at.z);
+    const gunner=actors.find(a=>a.id==='ckm_gunner'),d=Math.hypot(player.x-CKM_POSITION.x,player.z-CKM_POSITION.z);
     if(!gunner?.ckm?.visible||!this.hasCKM()||d>(LIMITS[quality]??LIMITS.low).far){
       if(this.ckm)this.ckm.root.visible=false;return;
     }
@@ -655,7 +673,7 @@ export class M01Characters {
     }
     const v=this.ckm,drawn=ckmClipPhase(gunner.ckm,time),phase=['idle','aim','fire_burst','feed'].includes(drawn.phase)?drawn.phase:'abandon',clip=v.clips.find(c=>c.name===`ckm_wz30_gun_${phase}`)??v.clips.find(c=>c.name==='ckm_wz30_gun_idle');
     if(!clip){v.root.visible=false;return;}
-    v.root.visible=true;v.root.position.set(at.x,at.y,at.z);v.root.rotation.y=yaw;
+    v.root.visible=true;v.root.position.set(CKM_POSITION.x,CKM_POSITION.y,CKM_POSITION.z);v.root.rotation.y=-Math.PI/2;
     v.mixer.stopAllAction();const action=v.mixer.clipAction(clip).setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.reset().play();
     const age=gunner.ckm.phase==='retreat'?clip.duration:drawn.time;
     v.mixer.setTime(phase==='idle'?age%clip.duration:Math.min(age,clip.duration));v.clip=clip.name;v.time=action.time;v.root.updateMatrixWorld(true);
