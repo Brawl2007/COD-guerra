@@ -169,10 +169,15 @@ export class M02BenchRenderer {
     this.scene.add(this.camera);
 
     this.lastWorldRevision = -1;
+    this.lastRenderedCellId = this.sim.activeCellId ?? 'A';
+    this.lastArtilleryDetonated = false;
     this.lastSyncedTemporalState = null;
     this.targetMeshes = new Map();
     this.allyMeshes = new Map();
     this.enemyMeshes = new Map();
+    this.lastGroupMeshes = new Map();
+    this.supplyCartMesh = null;
+    this.supplyVolumeMeshes = new Map();
     this.hsA1Meshes = new Map();
     this.hsA2Meshes = new Map();
     this.hsA3Meshes = new Map();
@@ -413,29 +418,86 @@ export class M02BenchRenderer {
       this.staticGroup.add(crownMesh);
     }
 
-    // 5. MG34 weapon fixture inside B02 west aperture
-    const mgGroup = new THREE.Group();
-    const mgBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 1.05, 8), this.materials.gun_metal);
-    mgBarrel.rotation.z = Math.PI / 2;
-    mgBarrel.position.set(12.25, 1.38, -30.0);
-    const mgBipod = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.38, 0.28), this.materials.gun_metal);
-    mgBipod.position.set(12.05, 1.16, -30.0);
-    mgGroup.add(mgBarrel, mgBipod);
-    this.staticGroup.add(mgGroup);
+    this.supplyCartMesh = null;
+    this.supplyVolumeMeshes.clear();
+    const cellId = this.sim.activeCellId ?? 'A';
 
-    // 6. C04 Southern Orchard wooden post & white chalk sign next to wounded German soldier (-4.6, 36.2)
-    const c04Post = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.45, 0.18), this.materials.wood_frame);
-    c04Post.position.set(-4.6, 0.725, 36.2);
-    c04Post.castShadow = true;
-    this.c04ChalkMesh = new THREE.Group();
-    const chalkBarA = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.32, 0.05), this.materials.chalk_white);
-    chalkBarA.rotation.x = 0.65;
-    const chalkBarB = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.32, 0.05), this.materials.chalk_white);
-    chalkBarB.rotation.x = -0.65;
-    this.c04ChalkMesh.add(chalkBarA, chalkBarB);
-    this.c04ChalkMesh.position.set(-4.6, 1.12, 36.2);
-    this.c04ChalkMesh.visible = false;
-    this.staticGroup.add(c04Post, this.c04ChalkMesh);
+    if (cellId === 'A') {
+      // 5. MG34 weapon fixture inside B02 west aperture
+      const mgGroup = new THREE.Group();
+      const mgBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 1.05, 8), this.materials.gun_metal);
+      mgBarrel.rotation.z = Math.PI / 2;
+      mgBarrel.position.set(12.25, 1.38, -30.0);
+      const mgBipod = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.38, 0.28), this.materials.gun_metal);
+      mgBipod.position.set(12.05, 1.16, -30.0);
+      mgGroup.add(mgBarrel, mgBipod);
+      this.staticGroup.add(mgGroup);
+
+      // 6. C04 Southern Orchard wooden post & white chalk sign next to wounded German soldier (-4.6, 36.2)
+      const c04Post = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.45, 0.18), this.materials.wood_frame);
+      c04Post.position.set(-4.6, 0.725, 36.2);
+      c04Post.castShadow = true;
+      this.c04ChalkMesh = new THREE.Group();
+      const chalkBarA = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.32, 0.05), this.materials.chalk_white);
+      chalkBarA.rotation.x = 0.65;
+      const chalkBarB = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.32, 0.05), this.materials.chalk_white);
+      chalkBarB.rotation.x = -0.65;
+      this.c04ChalkMesh.add(chalkBarA, chalkBarB);
+      this.c04ChalkMesh.position.set(-4.6, 1.12, 36.2);
+      this.c04ChalkMesh.visible = false;
+      this.staticGroup.add(c04Post, this.c04ChalkMesh);
+    } else if (cellId === 'B' && this.sim.areaB?.supplyCart) {
+      // Cell B: Supply cart (SP02 — A Carroça Não Passa Sozinha) and 2 crates (vol_water & vol_ammo)
+      const cartData = this.sim.areaB.supplyCart;
+      const cartGroup = new THREE.Group();
+      const bed = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.55, 3.2), this.materials.wood_thick);
+      bed.position.y = 0.72;
+      const wheelGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.14, 12);
+      wheelGeo.rotateZ(Math.PI / 2);
+      const wheelFL = new THREE.Mesh(wheelGeo, this.materials.wood_frame);
+      wheelFL.position.set(-1.12, 0.45, -1.0);
+      const wheelFR = new THREE.Mesh(wheelGeo, this.materials.wood_frame);
+      wheelFR.position.set(1.12, 0.45, -1.0);
+      const wheelRL = new THREE.Mesh(wheelGeo, this.materials.wood_frame);
+      wheelRL.position.set(-1.12, 0.45, 1.0);
+      const wheelRR = new THREE.Mesh(wheelGeo, this.materials.wood_frame);
+      wheelRR.position.set(1.12, 0.45, 1.0);
+      cartGroup.add(bed, wheelFL, wheelFR, wheelRL, wheelRR);
+      cartGroup.position.set(cartData.x, 0, cartData.z);
+      this.supplyCartMesh = cartGroup;
+      this.staticGroup.add(cartGroup);
+
+      for (const vol of cartData.volumes) {
+        const crateGroup = new THREE.Group();
+        const box = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.48, 0.68), this.materials.wood_thin);
+        box.position.y = 0.24;
+        const bandMat = new THREE.MeshBasicMaterial({
+          color: vol.type === 'water' ? 0x4fc3f7 : 0x9ccc65,
+        });
+        const band = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.12, 0.7), bandMat);
+        band.position.y = 0.34;
+        crateGroup.add(box, band);
+        crateGroup.position.set(vol.x, 1.0, vol.z);
+        this.supplyVolumeMeshes.set(vol.id, crateGroup);
+        this.staticGroup.add(crateGroup);
+      }
+    } else if (cellId === 'C') {
+      // Cell C: B12 field aid station stretchers (2 macas) and SP03 artillery crater smoke when detonated
+      for (const sx of [-58.5, -54.5]) {
+        const stretcher = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.28, 2.0), this.materials.roof_thatch);
+        stretcher.position.set(sx, 0.22, 52.0);
+        this.staticGroup.add(stretcher);
+      }
+      if (this.sim.areaC?.artilleryDetonated) {
+        const craterGroup = new THREE.Group();
+        craterGroup.position.set(4.0, 0.1, 18.0);
+        const ember = new THREE.Mesh(new THREE.CylinderGeometry(3.4, 2.6, 0.35, 12), this.materials.horizon_flash);
+        const plume = new THREE.Mesh(new THREE.CylinderGeometry(2.8, 1.8, 9.5, 10), this.materials.horizon_smoke);
+        plume.position.y = 4.8;
+        craterGroup.add(ember, plume);
+        this.staticGroup.add(craterGroup);
+      }
+    }
   }
 
   #createGableRoof(b) {
@@ -617,6 +679,7 @@ export class M02BenchRenderer {
     this.targetMeshes.clear();
     this.allyMeshes.clear();
     this.enemyMeshes.clear();
+    this.lastGroupMeshes.clear();
 
     // Build Polish squad meshes (7 allies)
     for (const a of this.sim.allies ?? []) {
@@ -626,11 +689,12 @@ export class M02BenchRenderer {
       });
       soldier.group.position.set(a.x, a.y, a.z);
       soldier.group.rotation.y = -(a.facing ?? 0) + Math.PI / 2;
+      soldier.group.visible = !a.detachedOutOfCell;
       this.targetsGroup.add(soldier.group);
       this.allyMeshes.set(a.id, soldier);
     }
 
-    // Build German EA1 defender meshes (10 defenders)
+    // Build German defender meshes (EA0/EA1/EB1/EC1/EC2)
     for (const e of this.sim.enemies ?? []) {
       const soldier = this.#createSoldierMesh({
         isPolish: false,
@@ -640,6 +704,17 @@ export class M02BenchRenderer {
       soldier.group.rotation.y = -(e.facing ?? 0) + Math.PI / 2;
       this.targetsGroup.add(soldier.group);
       this.enemyMeshes.set(e.id, soldier);
+    }
+
+    // Build 12 Last Group survivor meshes (LG01..LG12) when in Cell C
+    if ((this.sim.activeCellId ?? 'A') === 'C' && this.sim.areaC?.lastGroup) {
+      for (const lg of this.sim.areaC.lastGroup) {
+        const soldier = this.#createSoldierMesh({ isPolish: true });
+        soldier.group.position.set(lg.x, lg.y ?? 0, lg.z);
+        soldier.group.rotation.y = -(lg.facing ?? 0) + Math.PI / 2;
+        this.targetsGroup.add(soldier.group);
+        this.lastGroupMeshes.set(lg.id, soldier);
+      }
     }
   }
 
@@ -822,16 +897,57 @@ export class M02BenchRenderer {
   renderFrame(dt, simMs = 0) {
     const renderStart = performance.now();
 
+    const currentCellId = this.sim.activeCellId ?? 'A';
+    const currentArtilleryDetonated = Boolean(this.sim.areaC?.artilleryDetonated);
+    if (
+      currentCellId !== this.lastRenderedCellId ||
+      currentArtilleryDetonated !== this.lastArtilleryDetonated
+    ) {
+      this.world = this.sim.world;
+      this.lastRenderedCellId = currentCellId;
+      this.lastArtilleryDetonated = currentArtilleryDetonated;
+      this.#buildStaticWorld();
+      this.#rebuildDynamicOpenings();
+      this.#buildTargets();
+    }
+
     if (this.world.revision !== this.lastWorldRevision) {
       this.#rebuildDynamicOpenings();
     }
 
-    // Rebuild actor meshes if enemy/ally roster count changed (e.g. C01 EA0 added or reset)
+    // Rebuild actor meshes if enemy/ally roster count changed (e.g. C01 EA0 or C10 EC2 added)
     if (
       this.enemyMeshes.size !== (this.sim.enemies?.length ?? 0) ||
       this.allyMeshes.size !== (this.sim.allies?.length ?? 0)
     ) {
       this.#buildTargets();
+    }
+
+    // Update Cell B supply cart and volume crates
+    if (currentCellId === 'B' && this.sim.areaB?.supplyCart) {
+      const cartData = this.sim.areaB.supplyCart;
+      if (this.supplyCartMesh) {
+        this.supplyCartMesh.position.set(cartData.x, 0, cartData.z);
+        this.supplyCartMesh.rotation.z = cartData.wheelDamaged ? -0.14 : 0;
+      }
+      for (const vol of cartData.volumes) {
+        const crate = this.supplyVolumeMeshes.get(vol.id);
+        if (!crate) continue;
+        crate.visible = !vol.lost;
+        const vy = vol.state === 'ON_CART' ? 1.0 : vol.state === 'CARRIED' ? 1.15 : 0.1;
+        crate.position.set(vol.x, vy, vol.z);
+      }
+    }
+
+    // Update Cell C Last Group survivors (LG01..LG12)
+    if (currentCellId === 'C' && this.sim.areaC?.lastGroup) {
+      for (const lg of this.sim.areaC.lastGroup) {
+        const entry = this.lastGroupMeshes.get(lg.id);
+        if (!entry) continue;
+        entry.group.visible = Boolean(this.sim.areaC.c10Started && lg.alive);
+        entry.group.position.set(lg.x, lg.y ?? 0, lg.z);
+        entry.group.rotation.y = -(lg.facing ?? 0) + Math.PI / 2;
+      }
     }
 
     // Auto-sync temporal lighting preset (T0..T3) unless user selected neutral_review
@@ -925,6 +1041,7 @@ export class M02BenchRenderer {
     for (const a of this.sim.allies ?? []) {
       const entry = this.allyMeshes.get(a.id);
       if (!entry) continue;
+      entry.group.visible = !a.detachedOutOfCell;
       const dist = Math.hypot(a.x - player.x, a.z - player.z);
       entry.group.userData.lodBand = selectConsumerLod('actors', dist, this.qualityProfile.lodPreset);
       entry.group.position.set(a.x, a.y, a.z);

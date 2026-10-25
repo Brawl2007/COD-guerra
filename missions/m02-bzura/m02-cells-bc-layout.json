@@ -1,0 +1,338 @@
+{
+  "schema": "m02-cells-bc-layout-v1",
+  "missionId": "M02",
+  "historicalClassification": "RECONSTRUÍDO tipologicamente; localização e combates DRAMATIZAÇÃO sobre EV03/EV04 (9–12 Set 1939)",
+  "cells": {
+    "B": {
+      "id": "B",
+      "title": "Área B · Corredor Logístico nos Acessos de Łęczyca",
+      "bounds": [-120, 120, -140, 140],
+      "playerSpawn": { "x": 0, "y": 0, "z": 85, "angle": -1.5708, "pitch": 0 },
+      "panoramaPoint": { "id": "P4", "x": 0, "z": 0, "angle": -1.5708, "pitch": 0, "label": "P4 · Cruzamento de Łęczyca (0, 0)" },
+      "cartRoute": [
+        [-50, 41],
+        [-20, 41],
+        [0, 25],
+        [0, -70]
+      ],
+      "supplyCart": {
+        "id": "cart_b07_supply",
+        "startX": -50,
+        "startZ": 41,
+        "goalX": 0,
+        "goalZ": -70,
+        "speed": 3.4,
+        "volumes": [
+          { "id": "vol_water", "type": "water", "label": "Volume de Água (B07)" },
+          { "id": "vol_ammo", "type": "ammo", "label": "Volume de Munição (B07)" }
+        ]
+      },
+      "buildings": [
+        {
+          "id": "B05",
+          "name": "B05 · Casa com oficina de reparação",
+          "bounds": [-52, -34, -30, -18],
+          "wallHeight": 3.1,
+          "ridgeHeight": 5.6,
+          "wallMaterial": "brick",
+          "roofMaterial": "tile",
+          "navigable": true,
+          "rooms": [
+            { "id": "oficina", "label": "Oficina", "bounds": [-52, -41, -30, -22] },
+            { "id": "quarto_fundos", "label": "Quarto de fundos", "bounds": [-52, -45, -22, -18] },
+            { "id": "cozinha_b05", "label": "Cozinha", "bounds": [-45, -41, -22, -18] },
+            { "id": "passagem_b05", "label": "Passagem e sala", "bounds": [-41, -34, -30, -18] }
+          ],
+          "internalWalls": [
+            { "id": "b05_iw_1", "x1": -41, "z1": -30, "x2": -41, "z2": -18, "material": "brick", "doorGap": { "center": -24, "width": 1.1 } },
+            { "id": "b05_iw_2", "x1": -52, "z1": -22, "x2": -41, "z2": -22, "material": "wood_thin", "doorGap": { "center": -43, "width": 1.0 } }
+          ],
+          "doors": [
+            { "id": "door_b05_west_gate", "buildingId": "B05", "x": -52, "z": -26, "orientation": "V", "width": 2.6, "height": 2.4, "initialState": "open", "material": "wood_thick", "label": "Portão oeste da Oficina B05" },
+            { "id": "door_b05_east_main", "buildingId": "B05", "x": -34, "z": -24, "orientation": "V", "width": 1.1, "height": 2.1, "initialState": "closed", "material": "wood_thin", "label": "Porta este da Oficina B05" },
+            { "id": "door_b05_south_kitchen", "buildingId": "B05", "x": -43, "z": -18, "orientation": "H", "width": 1.0, "height": 2.1, "initialState": "open", "material": "wood_thin", "label": "Saída sul da Cozinha B05" }
+          ],
+          "windows": [
+            { "id": "win_b05_north_1", "buildingId": "B05", "x": -47, "z": -30, "orientation": "H", "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "initialState": "intact", "label": "Janela norte oeste B05" },
+            { "id": "win_b05_north_2", "buildingId": "B05", "x": -37, "z": -30, "orientation": "H", "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "initialState": "open", "label": "Janela norte este B05" },
+            { "id": "win_b05_east_street", "buildingId": "B05", "x": -34, "z": -20.5, "orientation": "V", "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "initialState": "intact", "label": "Janela este B05 sobre o cruzamento" }
+          ],
+          "props": [
+            { "id": "prop_b05_workbench", "label": "Bancada pesada de oficina", "bounds": [-50.5, -46.5, -29.2, -27.8], "height": 0.95, "material": "wood_thick" }
+          ]
+        },
+        {
+          "id": "B06",
+          "name": "B06 · Loja de mantimentos e arrecadação",
+          "bounds": [20, 36, -35, -13],
+          "wallHeight": 3.3,
+          "ridgeHeight": 6.0,
+          "wallMaterial": "brick",
+          "roofMaterial": "tile",
+          "navigable": true,
+          "rooms": [
+            { "id": "loja_frontal", "label": "Loja frontal", "bounds": [20, 36, -35, -27] },
+            { "id": "arrecadacao", "label": "Arrecadação", "bounds": [20, 36, -27, -19] },
+            { "id": "privado_b06", "label": "Cozinha/espaço privado", "bounds": [20, 36, -19, -13] }
+          ],
+          "internalWalls": [
+            { "id": "b06_iw_1", "x1": 20, "z1": -27, "x2": 36, "z2": -27, "material": "brick", "doorGap": { "center": 22.5, "width": 1.2 } },
+            { "id": "b06_iw_2", "x1": 20, "z1": -19, "x2": 36, "z2": -19, "material": "wood_thin", "doorGap": { "center": 22.5, "width": 1.2 } }
+          ],
+          "doors": [
+            { "id": "door_b06_north", "buildingId": "B06", "x": 26, "z": -35, "orientation": "H", "width": 1.2, "height": 2.15, "initialState": "open", "material": "wood_thin", "label": "Entrada norte da Loja B06" },
+            { "id": "door_b06_south", "buildingId": "B06", "x": 26, "z": -13, "orientation": "H", "width": 1.2, "height": 2.15, "initialState": "closed", "material": "wood_thin", "label": "Porta sul da Loja B06" },
+            { "id": "door_b06_east_cargo", "buildingId": "B06", "x": 36, "z": -23, "orientation": "V", "width": 2.0, "height": 2.3, "initialState": "open", "material": "wood_thick", "label": "Porta leste de carga B06" }
+          ],
+          "windows": [
+            { "id": "win_b06_west_shop", "buildingId": "B06", "x": 20, "z": -31, "orientation": "V", "width": 1.6, "sillY": 0.95, "lintelY": 2.15, "initialState": "intact", "label": "Montra oeste da Loja B06 sobre a rua" },
+            { "id": "win_b06_west_storage", "buildingId": "B06", "x": 20, "z": -23, "orientation": "V", "width": 1.3, "sillY": 1.0, "lintelY": 2.1, "initialState": "open", "label": "Janela oeste da Arrecadação B06" }
+          ],
+          "props": [
+            { "id": "prop_b06_counter", "label": "Balcão da loja", "bounds": [23.5, 31.5, -31.8, -30.6], "height": 1.05, "material": "wood_thick" },
+            { "id": "prop_b06_crates", "label": "Caixas densas de mantimentos", "bounds": [26.0, 31.0, -24.5, -22.0], "height": 1.25, "material": "wood_thick" }
+          ]
+        },
+        {
+          "id": "B07",
+          "name": "B07 · Telheiro das carroças",
+          "bounds": [-60, -40, 35, 47],
+          "wallHeight": 3.0,
+          "ridgeHeight": 4.8,
+          "wallMaterial": "wood_thick",
+          "roofMaterial": "wood",
+          "navigable": true,
+          "rooms": [
+            { "id": "baia_carrocas", "label": "Baias de carroças e carga", "bounds": [-60, -40, 35, 47] }
+          ],
+          "internalWalls": [],
+          "doors": [
+            { "id": "door_b07_east_open", "buildingId": "B07", "x": -40, "z": 41, "orientation": "V", "width": 6.4, "height": 2.8, "initialState": "open", "material": "wood_thick", "label": "Frente leste aberta do Telheiro B07" },
+            { "id": "door_b07_north_service", "buildingId": "B07", "x": -50, "z": 35, "orientation": "H", "width": 3.2, "height": 2.6, "initialState": "open", "material": "wood_thin", "label": "Vão norte do Telheiro B07" }
+          ],
+          "windows": [],
+          "props": [
+            { "id": "prop_b07_forage", "label": "Forragem e eixo sobressalente", "bounds": [-58.5, -54.0, 36.2, 39.0], "height": 1.15, "material": "wood_thick" }
+          ]
+        },
+        {
+          "id": "B08",
+          "name": "B08 · Habitação fechada do cruzamento",
+          "bounds": [45, 57, 35, 45],
+          "wallHeight": 2.8,
+          "ridgeHeight": 4.9,
+          "wallMaterial": "brick",
+          "roofMaterial": "thatch",
+          "navigable": false,
+          "solidOpaque": true,
+          "rooms": [],
+          "internalWalls": [],
+          "doors": [],
+          "windows": [],
+          "props": []
+        }
+      ],
+      "covers": [
+        { "id": "cov_b_south_barricade", "bounds": [-8.0, -1.5, 54.0, 55.2], "height": 1.15, "material": "stone" },
+        { "id": "cov_b_west_wall", "bounds": [-24.0, -16.0, 12.0, 13.0], "height": 1.2, "material": "brick" },
+        { "id": "cov_b_east_cart", "bounds": [10.0, 15.5, 8.0, 10.2], "height": 1.25, "material": "wood_thick" },
+        { "id": "cov_b_north_stone", "bounds": [-12.0, -5.0, -45.0, -43.8], "height": 1.2, "material": "stone" }
+      ],
+      "enemyRosterEB1": [
+        { "id": "DE-B01", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -45.0, "z": -26.0, "facing": 1.57, "buildingId": "B05", "sector": "b05_workshop", "health": 100 },
+        { "id": "DE-B02", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -36.5, "z": -24.0, "facing": 0.4, "buildingId": "B05", "sector": "b05_workshop", "health": 100 },
+        { "id": "DE-B03", "encounterId": "EB1", "role": "rifleman", "weapon": "mp38", "x": -38.0, "z": -15.5, "facing": 1.57, "buildingId": "B05", "sector": "b05_yard", "health": 100 },
+        { "id": "DE-B04", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -31.0, "z": -16.0, "facing": 1.2, "buildingId": "B05", "sector": "b05_yard", "health": 100 },
+        { "id": "DE-B05", "encounterId": "EB1", "role": "mg_gunner", "weapon": "mg34", "x": 21.2, "z": -31.0, "facing": 2.6, "buildingId": "B06", "sector": "b06_shop", "health": 100 },
+        { "id": "DE-B06", "encounterId": "EB1", "role": "mg_assistant", "weapon": "kar98k", "x": 23.0, "z": -29.0, "facing": 2.6, "buildingId": "B06", "sector": "b06_shop", "health": 100 },
+        { "id": "DE-B07", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": 22.0, "z": -23.0, "facing": 2.8, "buildingId": "B06", "sector": "b06_storage", "health": 100 },
+        { "id": "DE-B08", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": 26.0, "z": -11.5, "facing": 1.8, "buildingId": "B06", "sector": "b06_south", "health": 100 },
+        { "id": "DE-B09", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 38.0, "z": 6.0, "facing": 2.9, "buildingId": null, "sector": "east_approach", "health": 100 },
+        { "id": "DE-B10", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "mp38", "x": 42.0, "z": 12.0, "facing": 2.9, "buildingId": null, "sector": "east_approach", "health": 100 },
+        { "id": "DE-B11", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 34.0, "z": 18.0, "facing": 2.8, "buildingId": null, "sector": "east_approach", "health": 100 },
+        { "id": "DE-B12", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 14.0, "z": -42.0, "facing": 1.6, "buildingId": null, "sector": "north_road", "health": 100 }
+      ]
+    },
+    "C": {
+      "id": "C",
+      "title": "Área C · Passagem e Socorro nos Acessos de Leśmierz",
+      "bounds": [-150, 150, -180, 180],
+      "playerSpawn": { "x": 0, "y": 0, "z": -72, "angle": 1.5708, "pitch": 0 },
+      "panoramaPoint": { "id": "P5", "x": -6, "z": -10, "angle": 1.5708, "pitch": 0, "label": "P5 · Pátio e Portaria de Leśmierz (-6, -10)" },
+      "artilleryFixedImpact": {
+        "id": "sp03_fixed_street_impact",
+        "x": 4.0,
+        "y": 0.0,
+        "z": 18.0,
+        "radius": 8.0,
+        "warningDurationSec": 6.0,
+        "debrisBounds": [-4.0, 12.0, 14.0, 22.0]
+      },
+      "evacRoute": [
+        [-6, -10],
+        [-30, -24],
+        [-30, -11],
+        [-30, 2],
+        [-35, 25],
+        [-58, 46],
+        [-58, 54],
+        [-54, 62],
+        [-85, 105]
+      ],
+      "buildings": [
+        {
+          "id": "B09",
+          "name": "B09 · Armazém ficcional de apoio ao acesso",
+          "bounds": [-40, -12, -20, -2],
+          "wallHeight": 4.2,
+          "ridgeHeight": 7.4,
+          "wallMaterial": "brick",
+          "roofMaterial": "tile",
+          "navigable": true,
+          "rooms": [
+            { "id": "nave_b09", "label": "Nave e circulação", "bounds": [-40, -20, -20, -2] },
+            { "id": "escritorio_b09", "label": "Escritório", "bounds": [-20, -12, -20, -14] },
+            { "id": "deposito_b09", "label": "Depósito", "bounds": [-20, -12, -14, -8] },
+            { "id": "servico_b09", "label": "Corredor de serviço", "bounds": [-20, -12, -8, -2] }
+          ],
+          "internalWalls": [
+            { "id": "b09_iw_1", "x1": -20, "z1": -20, "x2": -20, "z2": -2, "material": "brick", "doorGap": { "center": -11, "width": 1.4 } }
+          ],
+          "doors": [
+            { "id": "door_b09_north_gate", "buildingId": "B09", "x": -30, "z": -20, "orientation": "H", "width": 3.2, "height": 3.0, "initialState": "open", "material": "wood_thick", "label": "Portão norte da Nave B09" },
+            { "id": "door_b09_south_exit", "buildingId": "B09", "x": -30, "z": -2, "orientation": "H", "width": 1.6, "height": 2.3, "initialState": "open", "material": "wood_thick", "label": "Saída sul da Nave B09 para evacuação" },
+            { "id": "door_b09_east_yard", "buildingId": "B09", "x": -12, "z": -5, "orientation": "V", "width": 1.4, "height": 2.2, "initialState": "open", "material": "wood_thin", "label": "Porta leste de B09 para o pátio" }
+          ],
+          "windows": [
+            { "id": "win_b09_east_1", "buildingId": "B09", "x": -12, "z": -16, "orientation": "V", "width": 1.5, "sillY": 1.0, "lintelY": 2.2, "initialState": "intact", "label": "Janela leste do escritório B09" }
+          ],
+          "props": [
+            { "id": "prop_b09_stack_nw", "label": "Pilha de sacaria noroeste", "bounds": [-37.5, -34.0, -17.5, -14.0], "height": 1.4, "material": "earth" },
+            { "id": "prop_b09_stack_sw", "label": "Pilha de sacaria sudoeste", "bounds": [-37.5, -34.0, -8.0, -4.5], "height": 1.4, "material": "earth" }
+          ]
+        },
+        {
+          "id": "B10",
+          "name": "B10 · Oficina do portão lateral",
+          "bounds": [16, 36, -32, -16],
+          "wallHeight": 3.6,
+          "ridgeHeight": 6.2,
+          "wallMaterial": "brick",
+          "roofMaterial": "tile",
+          "navigable": true,
+          "rooms": [
+            { "id": "salao_b10", "label": "Salão da oficina", "bounds": [16, 30, -32, -16] },
+            { "id": "bancada_b10", "label": "Bancada e arrecadação", "bounds": [30, 36, -32, -16] }
+          ],
+          "internalWalls": [],
+          "doors": [
+            { "id": "door_b10_west_gate", "buildingId": "B10", "x": 16, "z": -24, "orientation": "V", "width": 2.8, "height": 2.6, "initialState": "open", "material": "wood_thick", "label": "Portão oeste da Oficina B10" },
+            { "id": "door_b10_south", "buildingId": "B10", "x": 24, "z": -16, "orientation": "H", "width": 1.2, "height": 2.2, "initialState": "open", "material": "wood_thin", "label": "Porta sul da Oficina B10" }
+          ],
+          "windows": [
+            { "id": "win_b10_north", "buildingId": "B10", "x": 22, "z": -32, "orientation": "H", "width": 1.5, "sillY": 1.0, "lintelY": 2.15, "initialState": "open", "label": "Janela norte da Oficina B10" }
+          ],
+          "props": [
+            { "id": "prop_b10_bench", "label": "Bancada mecânica B10", "bounds": [28.0, 34.0, -29.0, -26.5], "height": 1.05, "material": "stone" }
+          ]
+        },
+        {
+          "id": "B11",
+          "name": "B11 · Portaria e controlo de acesso",
+          "bounds": [4, 14, -5, 3],
+          "wallHeight": 2.9,
+          "ridgeHeight": 4.8,
+          "wallMaterial": "brick",
+          "roofMaterial": "tile",
+          "navigable": true,
+          "rooms": [
+            { "id": "controlo_b11", "label": "Sala de controlo", "bounds": [4, 10, -5, 3] },
+            { "id": "arrumos_b11", "label": "Arquivo e arrumos", "bounds": [10, 14, -5, 3] }
+          ],
+          "internalWalls": [],
+          "doors": [
+            { "id": "door_b11_west", "buildingId": "B11", "x": 4, "z": -1, "orientation": "V", "width": 1.2, "height": 2.1, "initialState": "open", "material": "wood_thin", "label": "Porta oeste da Portaria B11" },
+            { "id": "door_b11_south", "buildingId": "B11", "x": 8, "z": 3, "orientation": "H", "width": 1.2, "height": 2.1, "initialState": "open", "material": "wood_thin", "label": "Saída sul da Portaria B11" }
+          ],
+          "windows": [
+            { "id": "win_b11_north", "buildingId": "B11", "x": 8, "z": -5, "orientation": "H", "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "initialState": "intact", "label": "Janela norte da Portaria B11" }
+          ],
+          "props": []
+        },
+        {
+          "id": "B12",
+          "name": "B12 · Casa adaptada para socorro e saída",
+          "bounds": [-64, -46, 48, 60],
+          "wallHeight": 3.0,
+          "ridgeHeight": 5.3,
+          "wallMaterial": "brick",
+          "roofMaterial": "thatch",
+          "navigable": true,
+          "rooms": [
+            { "id": "sala_socorro", "label": "Sala de socorro", "bounds": [-64, -52, 48, 56] },
+            { "id": "cozinha_b12", "label": "Cozinha", "bounds": [-52, -46, 48, 56] },
+            { "id": "passagem_b12", "label": "Passagem de saída", "bounds": [-64, -46, 56, 60] }
+          ],
+          "internalWalls": [
+            { "id": "b12_iw_1", "x1": -64, "z1": 56, "x2": -46, "z2": 56, "material": "brick", "doorGap": { "center": -54, "width": 1.6 } }
+          ],
+          "doors": [
+            { "id": "door_b12_north_aid", "buildingId": "B12", "x": -58, "z": 48, "orientation": "H", "width": 1.6, "height": 2.2, "initialState": "open", "material": "wood_thin", "label": "Entrada norte da Casa de Socorro B12" },
+            { "id": "door_b12_south_evac", "buildingId": "B12", "x": -54, "z": 60, "orientation": "H", "width": 1.6, "height": 2.2, "initialState": "open", "material": "wood_thin", "label": "Saída sul de evacuação B12" }
+          ],
+          "windows": [
+            { "id": "win_b12_east", "buildingId": "B12", "x": -46, "z": 52, "orientation": "V", "width": 1.4, "sillY": 0.95, "lintelY": 2.05, "initialState": "intact", "label": "Janela este B12" }
+          ],
+          "props": [
+            { "id": "prop_b12_stretcher_1", "label": "Maca sanitária 1", "bounds": [-63.0, -60.5, 49.5, 50.6], "height": 0.55, "material": "wood_thin" },
+            { "id": "prop_b12_stretcher_2", "label": "Maca sanitária 2", "bounds": [-63.0, -60.5, 52.5, 53.6], "height": 0.55, "material": "wood_thin" }
+          ]
+        }
+      ],
+      "covers": [
+        { "id": "cov_c_north_wall", "bounds": [-10.0, -2.0, -42.0, -40.8], "height": 1.2, "material": "brick" },
+        { "id": "cov_c_yard_parapet", "bounds": [-8.0, 0.0, -14.0, -12.8], "height": 1.2, "material": "stone" },
+        { "id": "cov_c_evac_wall_1", "bounds": [-42.0, -38.0, 12.0, 22.0], "height": 1.35, "material": "brick" },
+        { "id": "cov_c_evac_wall_2", "bounds": [-52.0, -48.0, 32.0, 42.0], "height": 1.35, "material": "brick" }
+      ],
+      "enemyRosterEC1": [
+        { "id": "DE-C01", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": -28.0, "z": -16.0, "facing": -1.57, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
+        { "id": "DE-C02", "encounterId": "EC1", "role": "rifleman", "weapon": "mp38", "x": -15.0, "z": -11.0, "facing": -1.2, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
+        { "id": "DE-C03", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": -26.0, "z": -5.0, "facing": -1.57, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
+        { "id": "DE-C04", "encounterId": "EC1", "role": "mg_gunner", "weapon": "mg34", "x": 17.5, "z": -24.0, "facing": -2.6, "buildingId": "B10", "sector": "b10_workshop", "health": 100 },
+        { "id": "DE-C05", "encounterId": "EC1", "role": "mg_assistant", "weapon": "kar98k", "x": 20.0, "z": -22.0, "facing": -2.6, "buildingId": "B10", "sector": "b10_workshop", "health": 100 },
+        { "id": "DE-C06", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": 24.0, "z": -18.0, "facing": -2.2, "buildingId": "B10", "sector": "b10_workshop", "health": 100 },
+        { "id": "DE-C07", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": 6.5, "z": -2.5, "facing": -1.8, "buildingId": "B11", "sector": "b11_gatehouse", "health": 100 },
+        { "id": "DE-C08", "encounterId": "EC1", "role": "rifleman", "weapon": "mp38", "x": 8.5, "z": 1.0, "facing": -1.8, "buildingId": "B11", "sector": "b11_gatehouse", "health": 100 }
+      ],
+      "enemyRosterEC2": [
+        { "id": "DE-C09", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 115.0, "z": 90.0, "goalX": 28.0, "goalZ": 24.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C10", "encounterId": "EC2", "role": "reserve_east", "weapon": "mp38", "x": 118.0, "z": 94.0, "goalX": 24.0, "goalZ": 30.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C11", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 112.0, "z": 96.0, "goalX": 20.0, "goalZ": 36.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C12", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 120.0, "z": 86.0, "goalX": 32.0, "goalZ": 18.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C13", "encounterId": "EC2", "role": "reserve_east", "weapon": "mg34", "x": 116.0, "z": 88.0, "goalX": 26.0, "goalZ": 20.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C14", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 110.0, "z": 92.0, "goalX": 18.0, "goalZ": 28.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C15", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -105.0, "z": 50.0, "goalX": -72.0, "goalZ": 24.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
+        { "id": "DE-C16", "encounterId": "EC2", "role": "reserve_west", "weapon": "mp38", "x": -108.0, "z": 54.0, "goalX": -74.0, "goalZ": 30.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
+        { "id": "DE-C17", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -102.0, "z": 56.0, "goalX": -70.0, "goalZ": 36.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
+        { "id": "DE-C18", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -110.0, "z": 48.0, "goalX": -76.0, "goalZ": 18.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
+        { "id": "DE-C19", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -104.0, "z": 52.0, "goalX": -68.0, "goalZ": 22.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
+        { "id": "DE-C20", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -106.0, "z": 58.0, "goalX": -72.0, "goalZ": 40.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 }
+      ],
+      "lastGroupRoster": [
+        { "id": "LG01", "name": "kpr. Baran (LG01)", "x": 18.0, "z": -38.0, "health": 100, "initialWounded": false },
+        { "id": "LG02", "name": "strz. Pietrzak (LG02)", "x": 20.0, "z": -40.0, "health": 95, "initialWounded": false },
+        { "id": "LG03", "name": "strz. Grabowski (LG03 · ferido)", "x": 16.0, "z": -41.0, "health": 58, "initialWounded": true },
+        { "id": "LG04", "name": "strz. Pawłowski (LG04)", "x": 22.0, "z": -39.0, "health": 100, "initialWounded": false },
+        { "id": "LG05", "name": "strz. Michalski (LG05)", "x": 17.0, "z": -43.0, "health": 92, "initialWounded": false },
+        { "id": "LG06", "name": "strz. Król (LG06)", "x": 21.0, "z": -44.0, "health": 100, "initialWounded": false },
+        { "id": "LG07", "name": "strz. Wieczorek (LG07)", "x": 15.0, "z": -45.0, "health": 88, "initialWounded": false },
+        { "id": "LG08", "name": "strz. Jabłoński (LG08)", "x": 19.0, "z": -46.0, "health": 100, "initialWounded": false },
+        { "id": "LG09", "name": "strz. Majewski (LG09 · ferido)", "x": 16.5, "z": -47.5, "health": 62, "initialWounded": true },
+        { "id": "LG10", "name": "strz. Olszewski (LG10)", "x": 20.5, "z": -48.0, "health": 96, "initialWounded": false },
+        { "id": "LG11", "name": "strz. Stępień (LG11)", "x": 18.0, "z": -49.5, "health": 100, "initialWounded": false },
+        { "id": "LG12", "name": "strz. Jaworski (LG12)", "x": 22.0, "z": -50.0, "health": 90, "initialWounded": false }
+      ]
+    }
+  }
+}

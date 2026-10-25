@@ -143,7 +143,7 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     expect(c01StartState.player.z).toBe(-175);
     expect(c01StartState.objective.id).toBe('O00');
     expect(c01StartState.activeCartela?.text).toBe('Setor de Łęczyca — 9 de setembro de 1939 — fim da tarde');
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-03-c01-p1-start.png') });
+    await snapIfMissing('m02-03-c01-p1-start.png');
 
     // 11. M02-03 Capture 2: EA0 Outpost Combat at transverse trench (-18, -110) with Horizon N2 smoke
     await page.evaluate(() => {
@@ -151,7 +151,7 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
       window.m02Bench.teleportPlayer(-12.0, -124.0, 1.82, -0.03);
       window.m02Bench.renderer.renderFrame(0.016, 0.5);
     });
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-03-ea0-outpost-combat.png') });
+    await snapIfMissing('m02-03-ea0-outpost-combat.png');
 
     // 12. M02-03 Capture 3: Scene C05 / Transition T-AB (Night T1 lighting + cartela + Gruca order)
     await page.evaluate(() => {
@@ -164,7 +164,49 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     expect(tabState.objective.id).toBe('T-AB');
     expect(tabState.horizon.temporalState).toBe('T1');
     expect(tabState.transitionTABPayload.targetArea).toBe('AREA_B_LECZYCA');
-    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-03-c05-night-transition.png') });
+    await snapIfMissing('m02-03-c05-night-transition.png');
+
+    // 13. M02-04 Capture 1: Area B (Acessos de Łęczyca · C06–C08) with Supply Cart & B05/B06/B07/B08
+    await page.evaluate(() => {
+      window.m02Bench.enterAreaBC06();
+      window.m02Bench.teleportPlayer(-6.5, 48.0, -Math.PI / 2 + 0.12, -0.04);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const areaBState = await page.evaluate(() => window.m02Bench.getStateSummary());
+    expect(areaBState.activeCellId).toBe('B');
+    expect(areaBState.streaming.residentCellsCount).toBeLessThanOrEqual(2);
+    expect(areaBState.objective.id).toBe('O04');
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-04-area-b-supply-cart.png') });
+
+    // 14. M02-05 Capture 1: Area C (Acessos de Leśmierz · C09–C11) with SP03 Artillery Crater & Last Group Evacuation
+    await page.evaluate(() => {
+      window.m02Bench.deliverSupplyVolume('vol_water');
+      window.m02Bench.deliverSupplyVolume('vol_ammo');
+      window.m02Bench.completeC07Reorganization();
+      window.m02Bench.enterAreaCC09();
+      window.m02Bench.startC10OrderChanges();
+      window.m02Bench.detonateC10FixedArtillery();
+      for (let i = 0; i < 40; i++) window.m02Bench.sim.tick(0.05, {});
+      window.m02Bench.teleportPlayer(-12.0, -8.0, 0.85, -0.05);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const areaCState = await page.evaluate(() => window.m02Bench.getStateSummary());
+    expect(areaCState.activeCellId).toBe('C');
+    expect(areaCState.streaming.residentCellsCount).toBeLessThanOrEqual(2);
+    expect(areaCState.areaC.corridorExteriorBlocked).toBe(true);
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-05-area-c-lesmierz-sp03.png') });
+
+    // 15. M02-05 Capture 2: Scene C12 Epilogue & Campaign Bridge M02 -> M03 inside/near B12 Aid House
+    await page.evaluate(() => {
+      window.m02Bench.completeC12Epilogue({ lisOutcome: 'wounded_evacuated' });
+      window.m02Bench.teleportPlayer(-48.0, 44.0, 2.35, -0.04);
+      window.m02Bench.renderer.renderFrame(0.016, 0.5);
+    });
+    const c12State = await page.evaluate(() => window.m02Bench.getStateSummary());
+    expect(c12State.flags['m02.completed']).toBe(true);
+    expect(c12State.flags['m02.lis_status']).toBe('wounded_evacuated');
+    expect(c12State.m03ExportPackage.nextMissionId).toBe('M03');
+    await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-05-c12-epilogue-m03-bridge.png') });
 
     // Restore T0 afternoon lighting before telemetry collection
     await page.evaluate(() => window.m02Bench.setTemporalState('T0'));

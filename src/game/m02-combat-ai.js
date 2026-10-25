@@ -41,6 +41,19 @@ export const WEAPON_PROFILES = Object.freeze({
     burstGapSec: 0,
     spreadRad: 0.016,
   }),
+  mp38: Object.freeze({
+    id: 'mp38',
+    label: 'MP 38',
+    magSize: 32,
+    damage: 22,
+    cycleSec: 1.45,
+    reloadSec: 2.7,
+    range: 95,
+    suppressionAdd: 0.42,
+    burstCount: 3,
+    burstGapSec: 0.09,
+    spreadRad: 0.022,
+  }),
   mg34: Object.freeze({
     id: 'mg34',
     label: 'MG34',
@@ -187,6 +200,209 @@ export const M02_DIALOGUE_CATALOG = Object.freeze({
     durationSec: 4.2,
     text: 'Precisam de nós na passagem. Juntem os homens.',
   }),
+  bz39_c06_01: Object.freeze({
+    id: 'bz39_c06_01',
+    speakerId: 'pl_messenger',
+    speakerName: 'Mensageiro 56 pp',
+    priority: 1,
+    durationSec: 4.0,
+    text: 'Os nossos estão mais adiante. Precisam desta passagem.',
+  }),
+  bz39_c06_02: Object.freeze({
+    id: 'bz39_c06_02',
+    speakerId: 'pl_szymczak',
+    speakerName: 'sanit. Edmund Szymczak',
+    priority: 1,
+    durationSec: 3.8,
+    text: 'Água nesta. Munição na outra.',
+  }),
+  bz39_c06_03: Object.freeze({
+    id: 'bz39_c06_03',
+    speakerId: 'pl_driver',
+    speakerName: 'Condutor da Carroça',
+    priority: 1,
+    durationSec: 3.6,
+    text: 'A roda! Assim não passa.',
+  }),
+  bz39_c06_04: Object.freeze({
+    id: 'bz39_c06_04',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 1,
+    durationSec: 4.2,
+    text: 'Levem a carga pelo abrigo. Dois de cada vez.',
+  }),
+  bz39_c06_05: Object.freeze({
+    id: 'bz39_c06_05',
+    speakerId: 'pl_wierzba',
+    speakerName: 'strz. Tomasz Wierzba',
+    priority: 2,
+    durationSec: 4.0,
+    text: 'Trouxe dois. Os outros ficaram com a companhia.',
+  }),
+  bz39_c07_01: Object.freeze({
+    id: 'bz39_c07_01',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 1,
+    durationSec: 4.2,
+    text: 'A cidade ficou para trás. As ordens continuam para sul.',
+  }),
+  bz39_c07_02: Object.freeze({
+    id: 'bz39_c07_02',
+    speakerId: 'pl_szymczak',
+    speakerName: 'sanit. Edmund Szymczak',
+    priority: 1,
+    durationSec: 4.2,
+    text: 'Quem não consegue apoiar a perna fica com os feridos.',
+  }),
+  bz39_c07_03: Object.freeze({
+    id: 'bz39_c07_03',
+    speakerId: 'pl_lis',
+    speakerName: 'strz. Andrzej Lis',
+    priority: 2,
+    durationSec: 3.8,
+    text: 'Não dobres aí. Ainda precisamos desse caminho.',
+  }),
+  bz39_c08_01: Object.freeze({
+    id: 'bz39_c08_01',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 1,
+    durationSec: 4.2,
+    text: 'Abrimos o pátio. O grupo de lá atravessa depois.',
+  }),
+  bz39_c08_02: Object.freeze({
+    id: 'bz39_c08_02',
+    speakerId: 'pl_lis',
+    speakerName: 'strz. Andrzej Lis',
+    priority: 1,
+    durationSec: 4.0,
+    text: 'Vou com a ligação. Encontramo-nos na passagem.',
+    fallbackText: 'O mensageiro vai com a ligação. Encontramo-nos na passagem.',
+  }),
+  bz39_c09_02: Object.freeze({
+    id: 'bz39_c09_02',
+    speakerId: 'pl_wierzba',
+    speakerName: 'strz. Tomasz Wierzba',
+    priority: 1,
+    durationSec: 3.8,
+    text: 'À oficina. Vi dois a mudar de janela.',
+  }),
+  dlg_m02_002: Object.freeze({
+    id: 'dlg_m02_002',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 0,
+    durationSec: 4.4,
+    protectedLiteral: true,
+    text: 'O grupo da direita recuou. Nossa ordem mudou.',
+  }),
+  bz39_c10_01: Object.freeze({
+    id: 'bz39_c10_01',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 0,
+    durationSec: 4.0,
+    text: 'Segurem esta passagem. Só até eles saírem.',
+  }),
+  bz39_c10_02: Object.freeze({
+    id: 'bz39_c10_02',
+    speakerId: 'pl_observer',
+    speakerName: 'Observador Polaco',
+    priority: 0,
+    durationSec: 3.8,
+    text: 'Vai cair na rua. Para dentro do muro!',
+  }),
+  bz39_c10_03: Object.freeze({
+    id: 'bz39_c10_03',
+    speakerId: 'pl_malek',
+    speakerName: 'strz. Jurek Małek',
+    priority: 2,
+    durationSec: 3.2,
+    text: 'E a nossa posição?',
+  }),
+  bz39_c10_04: Object.freeze({
+    id: 'bz39_c10_04',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 1,
+    durationSec: 3.8,
+    text: 'Continua aqui. Protege a passagem.',
+  }),
+  dlg_m02_003: Object.freeze({
+    id: 'dlg_m02_003',
+    speakerId: 'piotr_sokol',
+    speakerName: 'strz. Piotr Sokół',
+    priority: 0,
+    durationSec: 4.2,
+    protectedLiteral: true,
+    text: 'Você vem conosco. A arma eu levo.',
+  }),
+  bz39_c11_01: Object.freeze({
+    id: 'bz39_c11_01',
+    speakerId: 'pl_szymczak',
+    speakerName: 'sanit. Edmund Szymczak',
+    priority: 0,
+    durationSec: 3.8,
+    text: 'Cobre a porta. Eu chego até ele.',
+  }),
+  bz39_c11_02: Object.freeze({
+    id: 'bz39_c11_02',
+    speakerId: 'pl_lis',
+    speakerName: 'strz. Andrzej Lis',
+    priority: 2,
+    durationSec: 3.4,
+    text: 'A perna não aguenta.',
+  }),
+  bz39_c11_03: Object.freeze({
+    id: 'bz39_c11_03',
+    speakerId: 'pl_szymczak',
+    speakerName: 'sanit. Edmund Szymczak',
+    priority: 1,
+    durationSec: 3.6,
+    text: 'Devagar. Põe o braço aqui.',
+  }),
+  bz39_c11_04: Object.freeze({
+    id: 'bz39_c11_04',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 0,
+    durationSec: 4.0,
+    text: 'Falta aquele grupo. Olhem para a saída!',
+  }),
+  bz39_c11_05: Object.freeze({
+    id: 'bz39_c11_05',
+    speakerId: 'pl_gruca',
+    speakerName: 'sierż. Władysław Gruca',
+    priority: 0,
+    durationSec: 4.0,
+    text: 'Passaram. Recuem até à casa!',
+  }),
+  bz39_c12_01: Object.freeze({
+    id: 'bz39_c12_01',
+    speakerId: 'pl_lis',
+    speakerName: 'strz. Andrzej Lis',
+    priority: 2,
+    durationSec: 4.2,
+    text: 'Fica com a arma. Ainda preciso das duas mãos.',
+  }),
+  bz39_c12_02: Object.freeze({
+    id: 'bz39_c12_02',
+    speakerId: 'pl_wierzba',
+    speakerName: 'strz. Tomasz Wierzba',
+    priority: 2,
+    durationSec: 3.2,
+    text: 'Lis…',
+  }),
+  bz39_c12_03: Object.freeze({
+    id: 'bz39_c12_03',
+    speakerId: 'piotr_sokol',
+    speakerName: 'strz. Piotr Sokół',
+    priority: 2,
+    durationSec: 3.0,
+    text: 'Quem falta?',
+  }),
 });
 
 export class M02DialogueDirector {
@@ -204,13 +420,25 @@ export class M02DialogueDirector {
     this.history = [];
   }
 
+  hasTriggered(lineId) {
+    return this.consumed.has(lineId);
+  }
+
   trigger(lineId, sim, { allowRepeat = false } = {}) {
     const def = M02_DIALOGUE_CATALOG[lineId];
     if (!def) return false;
     if (!allowRepeat && this.consumed.has(lineId)) return false;
 
+    // NAR-02 / K5: If Lis is missing, he must never speak in C12 or M03
+    if (def.speakerId === 'pl_lis' && sim.flags?.['m02.lis_status'] === 'missing') {
+      return false;
+    }
+    if (lineId === 'bz39_c12_02' && sim.flags?.['m02.lis_status'] !== 'missing') {
+      return false;
+    }
+
     const speaker = sim.allies.find((a) => a.id === def.speakerId);
-    if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED')) {
+    if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED' || speaker.detachedOutOfCell)) {
       if (!def.fallbackText) return false;
     }
 
@@ -219,6 +447,9 @@ export class M02DialogueDirector {
       const lisOk = sim.allies.some((a) => a.id === 'pl_lis' && a.alive && a.state !== 'DOWN');
       const wierzbaOk = sim.allies.some((a) => a.id === 'pl_wierzba' && a.alive && a.state !== 'DOWN');
       if (!lisOk || !wierzbaOk) resolvedText = def.fallbackText;
+    } else if (lineId === 'bz39_c08_02') {
+      const lisOk = sim.allies.some((a) => a.id === 'pl_lis' && a.alive && a.state !== 'DOWN' && a.state !== 'EVACUATED');
+      if (!lisOk) resolvedText = def.fallbackText;
     }
 
     this.consumed.add(lineId);
@@ -447,12 +678,51 @@ export function updatePolishSquad(sim, dt) {
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
-    if (!ally.alive || ally.state === 'DOWN') continue;
+    if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     stepActorWeapon(sim, ally, dt);
 
-    // 0. If C01/EA0 northern approach is active, bound from P1 (0,-175) to the transverse outpost trench (-18,-110)
-    if (sim.c01Active) {
+    if (sim.activeCellId === 'B') {
+      // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
+      const bGoals = {
+        pl_gruca: { x: -18.0, z: 10.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall' },
+        pl_wierzba: { x: -32.0, z: -12.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_b05_south' },
+        pl_lis: { x: -6.0, z: 50.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_south_barricade' },
+        pl_malek: { x: -22.0, z: 10.5, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall_2' },
+        pl_szymczak: { x: -38.0, z: 38.0, facing: 0, crouch: true, nodeId: 'cv_b07_aid' },
+        pl_aux_01: { x: 11.5, z: 6.5, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_east_cart' },
+        pl_aux_02: { x: 14.0, z: 6.8, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_east_cart_2' },
+      };
+      const g = bGoals[ally.id] ?? bGoals.pl_gruca;
+      ally.goal = g;
+      ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
+    } else if (sim.activeCellId === 'C') {
+      // Cell C (Leśmierz Passage & Evacuation): secure B09/B10/B11 and then cover B09 -> B12 evacuation route
+      const evacPhase = sim.c10Active || sim.c11Active;
+      const cGoals = evacPhase
+        ? {
+            pl_gruca: { x: -32.0, z: 18.0, facing: 0.4, crouch: true, nodeId: 'cv_c_evac_gruca' },
+            pl_wierzba: { x: -14.0, z: -4.0, facing: 0.3, crouch: true, nodeId: 'cv_c_b09_east' },
+            pl_malek: { x: -46.0, z: 36.0, facing: 0.5, crouch: true, nodeId: 'cv_c_evac_malek' },
+            pl_szymczak: { x: -56.0, z: 46.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_aid' },
+            pl_aux_01: { x: -6.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm' },
+            pl_aux_02: { x: -4.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm_2' },
+            pl_lis: ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' },
+          }
+        : {
+            pl_gruca: { x: -6.0, z: -15.5, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_yard_parapet' },
+            pl_wierzba: { x: 12.0, z: -24.0, facing: 0.0, crouch: false, nodeId: 'cv_c_b10_flank' },
+            pl_malek: { x: -28.0, z: -22.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_b09_north' },
+            pl_szymczak: { x: -8.0, z: -38.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_north_wall' },
+            pl_aux_01: { x: -4.0, z: -39.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_north_rkm' },
+            pl_aux_02: { x: -2.0, z: -39.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_north_rkm_2' },
+          };
+      const g = cGoals[ally.id] ?? cGoals.pl_gruca;
+      if (g) {
+        ally.goal = g;
+        ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
+      }
+    } else if (sim.c01Active) {
       const c01Elapsed = sim.clock - (sim.c01StartedAt ?? 0);
       const c01Stage = c01Elapsed < 4.5 ? 0 : c01Elapsed < 14.0 ? 1 : 2;
       const c01Map = {
@@ -666,8 +936,11 @@ export function updateGermanGarrison(sim, dt) {
 
     stepActorWeapon(sim, enemy, dt);
 
-    // Local reserve movement (DE-A12, DE-A13)
-    if (enemy.role === 'reserve' && !enemy.reserveShifted) {
+    // Local reserve movement (DE-A12, DE-A13 in Area A; or EC2 reserve DE-C09..DE-C20 in Area C)
+    if (enemy.encounterId === 'EC2' && sim.c10Active && typeof enemy.goalX === 'number' && !enemy.goal) {
+      enemy.goal = { x: enemy.goalX, z: enemy.goalZ, crouch: true };
+      enemy.state = 'ADVANCE_RESERVE';
+    } else if (enemy.role === 'reserve' && !enemy.reserveShifted) {
       if (westPressure && enemy.ShiftWest) {
         enemy.goal = { x: enemy.ShiftWest[0], z: enemy.ShiftWest[1], crouch: true };
         enemy.reserveShifted = 'west';

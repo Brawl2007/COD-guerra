@@ -85,6 +85,14 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'Digit4') teleportToPanorama('SN4');
   if (e.code === 'Digit5') teleportToPanorama('SN5');
   if (e.code === 'Digit6') sim.triggerTransitionTAB({ skip: false });
+  if (e.code === 'Digit7') sim.enterAreaBC06();
+  if (e.code === 'Digit8') sim.enterAreaCC09();
+  if (e.code === 'Digit9') {
+    sim.startC10OrderChanges();
+    sim.detonateC10FixedArtillery();
+    sim.assistLisInC11('wounded_evacuated');
+  }
+  if (e.code === 'KeyM') sim.completeC12Epilogue();
 });
 
 window.addEventListener('keyup', (e) => {
@@ -127,6 +135,24 @@ document.getElementById('btn-start-c01')?.addEventListener('click', () => {
 
 document.getElementById('btn-transition-tab')?.addEventListener('click', () => {
   sim.triggerTransitionTAB({ skip: false });
+});
+
+document.getElementById('btn-enter-area-b')?.addEventListener('click', () => {
+  sim.enterAreaBC06();
+});
+
+document.getElementById('btn-enter-area-c')?.addEventListener('click', () => {
+  sim.enterAreaCC09();
+});
+
+document.getElementById('btn-c10-c11-lis')?.addEventListener('click', () => {
+  sim.startC10OrderChanges();
+  sim.detonateC10FixedArtillery();
+  sim.assistLisInC11('wounded_evacuated');
+});
+
+document.getElementById('btn-c12-epilogue')?.addEventListener('click', () => {
+  sim.completeC12Epilogue();
 });
 
 document.getElementById('btn-toggle-debug')?.addEventListener('click', () => {
@@ -330,6 +356,20 @@ window.m02Bench = {
   markWoundedSoldierWithChalk: () => sim.markWoundedSoldierWithChalk(),
   startAreaAFullC01: () => sim.startAreaAFullC01(),
   triggerTransitionTAB: (opts = {}) => sim.triggerTransitionTAB(opts),
+  enterAreaBC06: (opts = {}) => sim.enterAreaBC06(opts),
+  damageCartWheel: () => sim.damageCartWheel(),
+  pickupSupplyVolume: (id, carrierId = 'piotr_sokol') => sim.pickupSupplyVolume(id, carrierId),
+  deliverSupplyVolume: (id) => sim.deliverSupplyVolume(id),
+  loseSupplyVolume: (id) => sim.loseSupplyVolume(id),
+  completeC07Reorganization: (opts = {}) => sim.completeC07Reorganization(opts),
+  enterAreaCC09: (opts = {}) => sim.enterAreaCC09(opts),
+  unlockC09GateLatch: () => sim.unlockC09GateLatch(),
+  startC10OrderChanges: () => sim.startC10OrderChanges(),
+  detonateC10FixedArtillery: () => sim.detonateC10FixedArtillery(),
+  startC11LisAndLastGroup: () => sim.startC11LisAndLastGroup(),
+  assistLisInC11: (mode = 'wounded_evacuated') => sim.assistLisInC11(mode),
+  completeC12Epilogue: (opts = {}) => sim.completeC12Epilogue(opts),
+  exportCampaignResultToM03: () => sim.exportCampaignResultToM03(),
   setTemporalState: (stateId) => {
     const res = sim.horizon.setTemporalState(stateId);
     const preset = renderer.applyLightingPreset(res.lightingPreset);
@@ -341,9 +381,15 @@ window.m02Bench = {
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),
+    activeCellId: sim.activeCellId,
+    streaming: sim.zoneStreamer.getStreamingMetrics(),
     c01Active: sim.c01Active,
     activeCartela: sim.activeCartela ? structuredClone(sim.activeCartela) : null,
     transitionTABPayload: sim.transitionTABPayload ? structuredClone(sim.transitionTABPayload) : null,
+    supplies: structuredClone(sim.supplies),
+    areaB: structuredClone(sim.areaB),
+    areaC: structuredClone(sim.areaC),
+    m03ExportPackage: sim.m03ExportPackage ? structuredClone(sim.m03ExportPackage) : null,
     horizon: sim.horizon ? sim.horizon.snapshot() : null,
     player: {
       x: Number(sim.player.x.toFixed(2)),

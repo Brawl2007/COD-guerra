@@ -11,6 +11,7 @@ import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { M01Navigator } from '../world/m01-navigation.js';
 import { M02QuintaWorld, BALLISTIC_MATERIAL_POLICY } from '../world/m02-quinta-world.js';
 import { M02HorizonDirector, M02_TEMPORAL_STATES } from '../world/m02-horizon-system.js';
+import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import {
   WEAPON_PROFILES,
@@ -19,6 +20,26 @@ import {
   updatePolishSquad,
   updateGermanGarrison,
 } from './m02-combat-ai.js';
+import {
+  createInitialAreaBState,
+  createInitialAreaCState,
+  enterAreaBC06 as runEnterAreaBC06,
+  damageCartWheel as runDamageCartWheel,
+  pickupSupplyVolume as runPickupSupplyVolume,
+  deliverSupplyVolume as runDeliverSupplyVolume,
+  loseSupplyVolume as runLoseSupplyVolume,
+  updateAreaB as runUpdateAreaB,
+  completeC07Reorganization as runCompleteC07Reorganization,
+  enterAreaCC09 as runEnterAreaCC09,
+  unlockC09GateLatch as runUnlockC09GateLatch,
+  startC10OrderChanges as runStartC10OrderChanges,
+  detonateC10FixedArtillery as runDetonateC10FixedArtillery,
+  startC11LisAndLastGroup as runStartC11LisAndLastGroup,
+  assistLisInC11 as runAssistLisInC11,
+  updateAreaC as runUpdateAreaC,
+  completeC12Epilogue as runCompleteC12Epilogue,
+  exportCampaignResultToM03 as runExportCampaignResultToM03,
+} from './m02-acts-director.js';
 
 const WALK_SPEED = 4.2;
 const SPRINT_SPEED = 6.1;
@@ -97,6 +118,23 @@ export function validateM02Snapshot(snap) {
       }
     }
   }
+  if (snap.areaB?.supplyCart?.volumes) {
+    const seenCarriers = new Set();
+    for (const vol of snap.areaB.supplyCart.volumes) {
+      if (!vol || !vol.id) {
+        return { valid: false, reason: 'Volume da carroça inválido no snapshot.' };
+      }
+      if (vol.carriedBy) {
+        if (vol.carriedBy === vol.id) {
+          return { valid: false, reason: `Referência circular carriedBy em ${vol.id}.` };
+        }
+        if (seenCarriers.has(vol.carriedBy)) {
+          return { valid: false, reason: `Portador duplicado (${vol.carriedBy}) para múltiplos volumes.` };
+        }
+        seenCarriers.add(vol.carriedBy);
+      }
+    }
+  }
   return { valid: true, reason: null };
 }
 
@@ -106,6 +144,8 @@ export class M02BenchSimulation {
     this.defaultStartScene = startScene;
     this.rng = new Random(seed);
     this.world = new M02QuintaWorld();
+    this.zoneStreamer = new M02ZoneStreamer('A', this.world);
+    this.activeCellId = 'A';
     this.navigator = new M01Navigator(this.world.navWorld).prewarm();
     this.weapon = new Wz29();
     this.dialogue = new M02DialogueDirector();
@@ -135,6 +175,20 @@ export class M02BenchSimulation {
     this.ea1StartedAt = 0;
     this.activeCartela = M02_TEMPORAL_STATES.T0.cartela;
     this.transitionTABPayload = null;
+    this.supplies = { waterDelivered: false, ammoDelivered: false };
+    this.transitionIdsApplied = [];
+    this.totalHostilesSpawned = 10;
+    this.areaB = createInitialAreaBState();
+    this.areaC = createInitialAreaCState();
+    this.c10Active = false;
+    this.c11Active = false;
+    this.m03ExportPackage = null;
+
+    if (this.activeCellId !== 'A') {
+      this.world = this.zoneStreamer.switchToCell('A');
+      this.activeCellId = 'A';
+      this.navigator = new M01Navigator(this.world.navWorld);
+    }
 
     for (const b of this.world.layout.buildings) {
       for (const d of b.doors ?? []) this.world.doorStates.set(d.id, d.initialState ?? 'closed');
@@ -175,6 +229,7 @@ export class M02BenchSimulation {
       maxHealth: 100,
       eyeHeight: EYE_HEIGHT,
       suppressed: 0,
+      carryingVolumeId: null,
     };
 
     this.weapon = new Wz29();
@@ -281,6 +336,9 @@ export class M02BenchSimulation {
       'm02.wierzba_status': 'fit',
       'm02.pomar_wounded_marked': false,
       'm02.fired_on_wounded': false,
+      'm02.supply_reached': 0,
+      'm02.corridor_held': false,
+      'm02.last_group_survivors': 0,
     };
 
     this.objective = {
@@ -302,6 +360,11 @@ export class M02BenchSimulation {
   }
 
   startAreaAFullC01({ saveInitialCheckpoint = true } = {}) {
+    if (this.activeCellId !== 'A') {
+      this.world = this.zoneStreamer.switchToCell('A');
+      this.activeCellId = 'A';
+      this.navigator = new M01Navigator(this.world.navWorld);
+    }
     const p1 = this.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175, angle: Math.PI / 2, pitch: 0 };
     this.player.x = p1.x;
     this.player.z = p1.z;
@@ -346,6 +409,7 @@ export class M02BenchSimulation {
         lastHitPart: null,
       }));
     this.enemies = [...ea0, ...this.enemies];
+    this.totalHostilesSpawned += ea0.length;
 
     this.c01Active = true;
     this.c01StartedAt = this.clock;
@@ -408,6 +472,62 @@ export class M02BenchSimulation {
       clock: this.clock,
     });
     return this.transitionTABPayload;
+  }
+
+  enterAreaBC06(options = {}) {
+    return runEnterAreaBC06(this, options);
+  }
+
+  damageCartWheel() {
+    return runDamageCartWheel(this);
+  }
+
+  pickupSupplyVolume(volumeId, carrierId = 'piotr_sokol') {
+    return runPickupSupplyVolume(this, volumeId, carrierId);
+  }
+
+  deliverSupplyVolume(volumeId) {
+    return runDeliverSupplyVolume(this, volumeId);
+  }
+
+  loseSupplyVolume(volumeId) {
+    return runLoseSupplyVolume(this, volumeId);
+  }
+
+  completeC07Reorganization(options = {}) {
+    return runCompleteC07Reorganization(this, options);
+  }
+
+  enterAreaCC09(options = {}) {
+    return runEnterAreaCC09(this, options);
+  }
+
+  unlockC09GateLatch() {
+    return runUnlockC09GateLatch(this);
+  }
+
+  startC10OrderChanges() {
+    return runStartC10OrderChanges(this);
+  }
+
+  detonateC10FixedArtillery() {
+    return runDetonateC10FixedArtillery(this);
+  }
+
+  startC11LisAndLastGroup() {
+    return runStartC11LisAndLastGroup(this);
+  }
+
+  assistLisInC11(mode = 'wounded_evacuated') {
+    return runAssistLisInC11(this, mode);
+  }
+
+  completeC12Epilogue(options = {}) {
+    return runCompleteC12Epilogue(this, options);
+  }
+
+  exportCampaignResultToM03() {
+    return runExportCampaignResultToM03(this);
   }
 
   drainEvents() {
@@ -1040,6 +1160,10 @@ export class M02BenchSimulation {
     this.mgState.blockedById = mgStatus.blockedById;
     this.mgState.blockedByMaterial = mgStatus.blockedByMaterial;
 
+    if (this.activeCellId !== 'A') {
+      return;
+    }
+
     // Check if C01/EA0 outpost (DE-A01..DE-A04) is active and whether it has been cleared
     if (this.c01Active) {
       const activeEa0 = this.enemies.filter((e) => e.encounterId === 'EA0' && e.alive && !e.nonCombatant);
@@ -1191,6 +1315,11 @@ export class M02BenchSimulation {
     this.updateGrenades(dt);
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
+    if (this.activeCellId === 'B') {
+      runUpdateAreaB(this, dt);
+    } else if (this.activeCellId === 'C') {
+      runUpdateAreaC(this, dt);
+    }
     this.horizon.update(this, dt);
     this.dialogue.update(this);
     this.updateTacticalContext();
@@ -1231,6 +1360,7 @@ export class M02BenchSimulation {
     return {
       schema: 'm02-01-bench-snapshot-v1',
       clock: this.clock,
+      activeCellId: this.activeCellId,
       player: structuredClone(this.player),
       weapon: this.weapon.snapshot(),
       grenadeAmmo: this.grenadeAmmo,
@@ -1239,6 +1369,14 @@ export class M02BenchSimulation {
       ea1StartedAt: this.ea1StartedAt,
       activeCartela: this.activeCartela,
       transitionTABPayload: this.transitionTABPayload ? structuredClone(this.transitionTABPayload) : null,
+      supplies: structuredClone(this.supplies),
+      transitionIdsApplied: [...this.transitionIdsApplied],
+      totalHostilesSpawned: this.totalHostilesSpawned,
+      areaB: structuredClone(this.areaB),
+      areaC: structuredClone(this.areaC),
+      c10Active: this.c10Active,
+      c11Active: this.c11Active,
+      m03ExportPackage: this.m03ExportPackage ? structuredClone(this.m03ExportPackage) : null,
       doors: Object.fromEntries(this.world.doorStates.entries()),
       windows: Object.fromEntries(this.world.windowStates.entries()),
       fences: Object.fromEntries(this.world.fenceStates.entries()),
@@ -1261,6 +1399,12 @@ export class M02BenchSimulation {
       throw new Error(`Snapshot M02 inválido: ${validation.reason}`);
     }
     this.clock = snap.clock;
+    const targetCellId = snap.activeCellId ?? 'A';
+    if (this.activeCellId !== targetCellId) {
+      this.world = this.zoneStreamer.switchToCell(targetCellId);
+      this.activeCellId = targetCellId;
+      this.navigator = new M01Navigator(this.world.navWorld);
+    }
     this.player = structuredClone(snap.player);
     this.weapon.restore(structuredClone(snap.weapon));
     this.grenadeAmmo = snap.grenadeAmmo ?? 2;
@@ -1269,6 +1413,14 @@ export class M02BenchSimulation {
     this.ea1StartedAt = snap.ea1StartedAt ?? 0;
     this.activeCartela = snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela;
     this.transitionTABPayload = snap.transitionTABPayload ? structuredClone(snap.transitionTABPayload) : null;
+    this.supplies = snap.supplies ? structuredClone(snap.supplies) : { waterDelivered: false, ammoDelivered: false };
+    this.transitionIdsApplied = snap.transitionIdsApplied ? [...snap.transitionIdsApplied] : [];
+    this.totalHostilesSpawned = snap.totalHostilesSpawned ?? 10;
+    this.areaB = snap.areaB ? structuredClone(snap.areaB) : createInitialAreaBState();
+    this.areaC = snap.areaC ? structuredClone(snap.areaC) : createInitialAreaCState();
+    this.c10Active = Boolean(snap.c10Active);
+    this.c11Active = Boolean(snap.c11Active);
+    this.m03ExportPackage = snap.m03ExportPackage ? structuredClone(snap.m03ExportPackage) : null;
     for (const [k, v] of Object.entries(snap.doors ?? {})) this.world.doorStates.set(k, v);
     for (const [k, v] of Object.entries(snap.windows ?? {})) this.world.windowStates.set(k, v);
     for (const [k, v] of Object.entries(snap.fences ?? {})) this.world.fenceStates.set(k, v);
