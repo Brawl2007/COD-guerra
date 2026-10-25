@@ -193,6 +193,21 @@ test('the sappers walk the cable before the bomb: out to a joint, kneel and test
   run(s,1.2);assert.equal(s.timers.opening.flags.sapReleased,true,'at 04:33:30 the old shelter logic has them');assert.equal(L.act,undefined);
 });
 
+test('an order that is not the opening\'s own is never overridden: a sapper sent elsewhere by somebody else lets the whole team go at once, his target stands and the old logic walks him there',()=>{
+  // (the team's own targets are its joints, the helper's place beside one and the camp; anything else is somebody else's: a scripted run, a system after the opening, a test)
+  const s=fresh(),H=s.actor(OPENING.sappers.helper),L=s.actor(OPENING.sappers.leader),W=s.actor(OPENING.sappers.watch);
+  run(s,3);assert.ok(s.timers.opening&&!s.timers.opening.flags.sapReleased,'the team is held');assert.ok(L.act&&H.act&&W.act);
+  const goal={x:H.x-30,z:H.z+12},x0=H.x;H.target={...goal};H.state='GUARD';
+  s.tick(STEP,{});s.drainEvents();
+  assert.equal(s.timers.opening.flags.sapReleased,true,'released in the very tick');
+  assert.deepEqual({x:H.target.x,z:H.target.z},goal,'his order stands, untouched');assert.ok(!L.act&&!H.act&&!W.act,'no act on the three');
+  run(s,2);assert.ok(H.x<x0-.5,`and the old logic walks him (${(x0-H.x).toFixed(2)} m in two seconds)`);
+  validateM01Snapshot(s.snapshot());
+  // the team's own targets are not foreign: a whole outing (out, inspect, back) never releases it
+  const t=fresh();let legs=new Set();until(t,x=>{legs.add(x.timers.opening.sap.leg);return x.timers.opening.sap.leg==='back';},240);
+  assert.ok(legs.has('out')&&legs.has('inspect'));assert.equal(t.timers.opening.flags.sapReleased,undefined,'the machine\'s own targets never released the team');
+});
+
 test('the first bomb ends it: no act on anybody, no record, and the six men of the garrison are on their posts to the bit (R1-a\'s bombs find them where they always found them)',()=>{
   const posts=new Map(new M01Simulation().actors.filter(a=>GARRISON.includes(a.id)).map(a=>[a.id,{x:a.x,z:a.z}])),s=fresh();
   until(s,x=>x.battleClock>=seconds('04:33:59.9'),260);const kneeling=new Map(s.actors.map(a=>[a.id,a.crouched]));   // the postures a tick before the bomb

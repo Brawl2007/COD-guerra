@@ -12,7 +12,8 @@
 //   raid     evt_m01_bombing_0434: the record ends and the acts with it; the bombs (R1-a) and the section (R2-a) take the men from where they stand.
 // Nothing here is a loop on a clock: each man is a small machine of his own. He holds an act for a time drawn from his OWN stream (`act.rng`, derived from the state of the main stream when his act
 // is created, never drawn from it), picks the next from the weights of the tension he is in (never the same act twice running), reacts to a change of tension after a delay drawn from the same stream,
-// and a man who is walking (the runner, the sapper team) is steered by the simulation's own A* walk (moveActor). No two neighbours are in step, and nothing is drawn from the main stream.
+// and a man who is walking (the runner, the sapper team) is steered by the simulation's own A* walk (moveActor). No two neighbours are in step, and nothing is drawn from the main stream. An order that is
+// not the opening's own is never overridden: a man somebody else sends away (the scripted run of Nowicki, a test) is not the opening's until he stops, and a sapper with a target of that kind lets the whole team go.
 // The simulation stores data only: `actor.act` ({k, at, until, ...}) says what a man is doing; the renderer draws it (clip, props, hands: src/render/m01-opening-pose.js, m01-opening-kit.js). Certainty:
 // that the men of the post were occupied like this is RECONSTRUCTED from the general picture of the night (HISTORICAL_RESEARCH.md §1-3: a post on alert, the Szymankowo warning T13); every act, every
 // man and every minute is GAMEPLAY_DRAMATIZATION. No act is a procedure of demolition (HISTORICAL_RESEARCH.md §79).
@@ -191,7 +192,7 @@ function startAct(sim,q,a,st,k,sec){
 }
 function stepMan(sim,q,a,plan,tn){
   const st=a.act,clock=sim.clock;
-  if(a.target&&plan.driver!=='courier'&&dist(a,a.target)>=.8)return;   // somebody else is sending him (the scripted run of Nowicki): he is not ours until he stops
+  if(a.target&&plan.driver!=='courier'&&dist(a,a.target)>=.8)return;   // somebody else is sending him (the scripted run of Nowicki): he is not ours until he stops (the runner is walked by nobody but stepCourier: the garrison is display-only)
   if(tn>st.tn){   // the tension rose: he reacts after a delay of his own
     st.tn=tn;st.until=Math.min(st.until,clock+between(st,plan.react??OPENING.reactSec));
   }
@@ -308,12 +309,15 @@ function stepSappers(sim,q,tn){
   if(q.flags.sapReleased)return;
   const [L,H,W]=[sim.actor(S.leader),sim.actor(S.helper),sim.actor(S.watch)],men=[L,H,W];
   if(sim.battleClock>=S.release||men.some(a=>!a||!a.act||!usable(a))){releaseSappers(sim,q);return;}
+  // somebody else is sending one of the three (a scripted run, a system after this one, a test): the opening never overrides an order that is not its own, it lets the whole team go (the old camp and shelter
+  // logic has them, target untouched), as it does for the man Nowicki's run belongs to (stepMan)
+  if(men.some(a=>a.target&&!ownTarget(a))){releaseSappers(sim,q);return;}
   const clock=sim.clock,sl=L.act;
   for(const a of men)if(a.act.tn<tn)a.act.tn=tn;
   const goTo=(a,p,spd)=>{if(!a.target||Math.abs(a.target.x-p.x)>.01||Math.abs(a.target.z-p.z)>.01){a.target={x:p.x,z:p.z};delete a.nav;}a.act.spd=spd;};
   const setAct=(a,k)=>{const st=a.act;if(st.k!==k){st.k=k;delete st.w;st.at=clock;st.n++;st.s=seedOf(st);if(k!=='cable_walk'&&k!=='home')delete st.spd;}st.until=clock+OPEN_SEC;};
   const stay=a=>{if(a.target)a.target=null;delete a.nav;a.crouched=true;};   // (a man of the team who is let stand where he is kneels in this very tick: none of the three ever stands still)
-  const helperAt=stop=>({x:stop.x+S.followM+.3,z:stop.z+.5});
+  const helperAt=stop=>helperPlace(stop);
   const atHome=a=>dist(a,home(a))<1e-6||!a.target&&dist(a,home(a))<1;   // on the place, or stopped within a metre of it (a body is on it: openingWalk lets him be)
   if(tn>=2&&sap.leg!=='home'){sap.leg='home';sap.at=clock;}
   if(sap.leg==='rest'){
@@ -336,9 +340,18 @@ function stepSappers(sim,q,tn){
     for(const a of men){if(atHome(a)){stay(a);setAct(a,'cover');}else{goTo(a,home(a),S.homeSpeed);setAct(a,'home');}}
   }
 }
+/** Where the helper stands beside the leader at a joint of the cable. */
+const helperPlace=stop=>({x:stop.x+OPENING.sappers.followM+.3,z:stop.z+.5});
+/** True when a sapper's target is one the team machine gave him itself (a joint of the cable, the helper's place beside it, his place at the camp); any other target is somebody else's order. */
+function ownTarget(a){
+  const t=a.target;if(!t)return false;
+  const at=p=>Math.abs(t.x-p.x)<.01&&Math.abs(t.z-p.z)<.01;
+  return Boolean(a.act)&&at(home(a))||OPENING.sappers.stops.some(s=>at(s)||at(helperPlace(s)));
+}
+/** The team is let go: the acts end and the targets the machine gave end with them (a target that is somebody else's stays: the old logic walks him there). */
 function releaseSappers(sim,q){
   q.flags.sapReleased=true;
-  for(const id of SAPPER_IDS){const a=sim.actor(id);if(!a)continue;if(a.act)releaseAct(a);a.target=null;delete a.nav;}
+  for(const id of SAPPER_IDS){const a=sim.actor(id);if(!a)continue;if(ownTarget(a)){a.target=null;delete a.nav;}if(a.act)releaseAct(a);}
 }
 
 /**
@@ -413,7 +426,7 @@ export function openingDataErrors({blockedAt,heightAt,actors}){
   }
   for(const s of OPENING.sappers.stops){
     if(!free(s.x,s.z))errors.push(`sapper stop (${s.x}, ${s.z}) is inside a solid`);
-    if(!free(s.x+OPENING.sappers.followM+.3,s.z+.5))errors.push(`the helper's place at the stop (${s.x}, ${s.z}) is inside a solid`);
+    const h=helperPlace(s);if(!free(h.x,h.z))errors.push(`the helper's place at the stop (${s.x}, ${s.z}) is inside a solid`);
   }
   return errors;
 }
