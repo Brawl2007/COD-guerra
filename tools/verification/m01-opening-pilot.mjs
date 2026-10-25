@@ -60,7 +60,7 @@ export function openingPilot(sim,kind,observe=null){
     intro();
     untilBattle('04:31:10',{x:-74,z:21.5});
     walk(-51,21,{sprint:false});untilBattle('04:32:25',{x:-44,z:18});
-    walk(-60,14.5,{sprint:false});untilBattle('04:32:58',{x:-55,z:10.7});
+    walk(-60,14.5,{sprint:false});untilBattle('04:32:42',{x:-53.6,z:10.6});    // the sappers' team has walked to the first cable stop: the leader measures, the helper holds the tape
     walk(-51,21,{sprint:false});untilBattle('04:34:40',{x:-47,z:20},{pitch:.05});
     walk(-30,26,{sprint:false});rally();
   }else throw new Error(`pilot ${kind}`);

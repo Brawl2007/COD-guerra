@@ -68,7 +68,28 @@ TODO_CAPTURES
 
 ## 5. Bancada de actos (`acts/`: o renderizador real, os clips reais, um homem por imagem a 3 m)
 
-TODO_ACTS
+Dezasseis imagens (`tools/verification/m01-opening-r1b-fixture-capture.mjs`, a página `m01-opening-r1b-fixture.html`: o `M01Characters` verdadeiro, os clips T08 verdadeiros, o acto posto à mão em `actor.act` (clone de um actor de uma `M01Simulation` verdadeira) com a forma exacta do que a simulação escreve, um homem de cada vez a 3 m, de frente, SwiftShader; o `report.json` guarda o diagnóstico de cada frame). Vistas uma a uma; **o que cada uma mostra, e o que não mostra bem**:
+
+| imagem | homem | o que se vê |
+|---|---|---|
+| `binoculars-front.png` | `pl_west_2` | binóculos pretos aos olhos com as duas mãos, cotovelos para baixo; a espingarda não se desenha (as duas mãos trabalham) |
+| `smoke-a-front.png` | `east_platoon_voice` | cigarro com a ponta vermelha na mão esquerda à altura do peito, cabeça virada de lado, espingarda baixa na outra mão; a ponta do cigarro é pequena |
+| `coffee-b-front.png` | Bąk | caneca esmaltada branca na mão esquerda à altura do peito, espingarda baixa na outra |
+| `map-front.png` | Zieliński | folha de mapa aberta nas duas mãos diante do peito, cabeça inclinada sobre ela; lê-se como papel branco |
+| `phone-front.png` | Pawlak | auscultador (pequeno, preto) junto à orelha esquerda, a outra mão na caixa verde do telefone de campanha à altura do ventre |
+| `ammo-front.png` | `pl_west_0` | caixa de munições aberta, de madeira, segura ao ventre com as duas mãos, cabeça baixa sobre ela; os carregadores lêem-se como blocos escuros na caixa |
+| `aid-front.png` | Dudek | cabeça baixa, mãos juntas à cintura (a «verificar o material») e o saco do enfermeiro ao quadril; **é o acto que menos se lê**: sem o saco à vista não se distingue de um homem a olhar para as mãos |
+| `track-front.png` | Lipski | ajoelhado, cabeça e tronco inclinados para a frente, uma mão a tocar no chão; visto de frente e de cima lê-se como «ajoelhado a olhar para baixo» |
+| `inspect-front.png` | chefe dos sapadores (Krawiec) | ajoelhado no clip `sapper_work`, cabeça baixa sobre o medidor (corpo verde, lâmpada âmbar, antena) segurado junto ao joelho; adereço sem pose procedural |
+| `hold-front.png` | ajudante (`sapper_2`) | ajoelhado em `crouched_idle_b`, o rolo de cabo preto nas duas mãos à altura do joelho; adereço sem pose procedural |
+| `cover-front.png` | Bąk | ajoelhado, espingarda vertical nas duas mãos, olhar para a frente (o `cover` dos aviões) |
+| `brace-front.png` | `pl_west_4` | de pé, tronco inclinado para a frente e cabeça baixa, a espingarda cruzada: o encolher-se dos aviões |
+| `lookup-front.png` | `pl_west_3` | cabeça atirada para trás a olhar para o céu, a espingarda à cintura com as duas mãos |
+| `point-front.png` | `pl_west_3` | braço direito levantado e dobrado, a mão fechada em arco no alto: lê-se como «aponta para cima», sem o indicador estendido (o dedo não se move: só a mão e o antebraço) |
+| `shout-front.png` | Zieliński | o clip `call_out` da biblioteca T08, sem pose procedural: mão direita levada à pala do capacete, cabeça virada; **lê-se como «proteger os olhos para ver os aviões», não como uma boca aberta a gritar** (não há animação de boca; o grito é a fala) |
+| `deliver-front.png` | a estafeta (`pl_west_1`) | braço esquerdo estendido com uma folha branca (a ordem do sargento) para quem a recebe |
+
+O que **não** se prova aqui: que se leiam ao amanhecer a 10–20 m, onde a luz azul e as silhuetas escuras tiram os pormenores (capturas no jogo, §4); só que a pose e o adereço estão certos de perto e que cada osso volta ao que era quando o acto acaba (teste `m01-opening-pose`).
 
 ## 6. Testes executados
 
