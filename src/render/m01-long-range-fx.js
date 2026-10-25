@@ -21,7 +21,9 @@ export const tracerWeapon=weapon=>TRACER_WEAPONS.includes(weapon);
 export const TRACER_QUOTA_BY_TIER=Object.freeze({low:6,medium:12,high:20});
 /** A tracer ignites a short way out of the muzzle (pyrotechnic burn-in): nothing is drawn for the first metres of its flight. */
 export const TRACER_BURN_IN_M=25;
-export const tracerQuota=quality=>TRACER_QUOTA_BY_TIER[quality]??TRACER_QUOTA_BY_TIER.low;
+/** The tracer batch has this many instances (createFireEffects); a view with no known tier (a bare test rig) is limited by it alone. */
+export const TRACER_BATCH=48;
+export const tracerQuota=quality=>TRACER_QUOTA_BY_TIER[quality]??TRACER_BATCH;
 /** Half-thickness and half-length (m) of a tracer streak seen from `distance`: about a 1.4 px wide, ~7 px long streak, never longer than 16 m (short and fast, not a laser). */
 export const tracerHalfWidth=distance=>Math.max(.012,distance*.0013);
 export const tracerHalfLength=distance=>Math.min(8,Math.max(.5,distance*.007));
@@ -61,6 +63,8 @@ export const IMPACT_DENSITY=Object.freeze({low:.55,medium:.78,high:1});
 export const IMPACT_MIN_PX=4,IMPACT_RADIUS_M=.3;
 /** From here the dust is one small opaque disc (the 'speck' batch, a sphere): the soft dust texture of the billboard has too little alpha to survive at 4 px (measured: invisible at 150-200 m). */
 export const IMPACT_SPECK_FROM_M=60;
+/** A landed German round farther than this has no dust a player could tell from the haze: no disc (the Polish rounds end within the section's 650 m). */
+export const IMPACT_LANDING_MAX_M=600;
 /** Beyond this the chips are sub-pixel and are not spent (sparks: 1.6x); the dust keeps its pixel floor. */
 export const IMPACT_DETAIL_M=90;
 const focal=(fovDeg,vh)=>(vh/2)/Math.tan(fovDeg*Math.PI/360);
@@ -128,7 +132,7 @@ export function scheduleRoundImpact(pool,event,clock,material,seed){
  * chips of the existing impact FX). `material` is the simulation's ('character' = it struck a man: the faint body puff). Returns the slot or -1.
  */
 export function scheduleLandedRound(pool,event,clock,seed,fromM=IMPACT_SPECK_FROM_M){
-  const p=event?.point;if(!p||![p.x,p.y,p.z].every(Number.isFinite)||!(event.distance>=fromM))return -1;
+  const p=event?.point;if(!p||![p.x,p.y,p.z].every(Number.isFinite)||!(event.distance>=fromM)||event.distance>IMPACT_LANDING_MAX_M)return -1;
   const mat=event.material==='character'?MAT.body:MAT[event.material];if(mat===undefined)return -1;
   return pool.schedule(p.x,p.y,p.z,clock,mat,seed,clock);
 }

@@ -8,9 +8,9 @@ import {M01CombatFeedback} from '../src/render/m01-combat-feedback.js';
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {ROUND_SPEED} from '../src/game/m01-fire.js';
 import {
-  TRACER_WEAPONS,TRACER_QUOTA_BY_TIER,TRACER_BURN_IN_M,tracerWeapon,tracerQuota,tracerDrawn,tracerHalfWidth,tracerHalfLength,tracerTint,
+  TRACER_WEAPONS,TRACER_QUOTA_BY_TIER,TRACER_BATCH,TRACER_BURN_IN_M,tracerWeapon,tracerQuota,tracerDrawn,tracerHalfWidth,tracerHalfLength,tracerTint,
   IMPACT_MATERIALS,ROUND_IMPACT_PROFILE,IMPACT_POOL_SLOTS,IMPACT_DRAW_BY_TIER,IMPACT_MIN_PX,IMPACT_RADIUS_M,RoundImpactPool,scheduleRoundImpact,classifyRoundEnd,
-  drawRoundImpacts,scheduleLandedRound,IMPACT_SPECK_FROM_M,impactDustCount,impactChipCount,impactSparkCount,impactPuffRadius,
+  drawRoundImpacts,scheduleLandedRound,IMPACT_SPECK_FROM_M,IMPACT_LANDING_MAX_M,impactDustCount,impactChipCount,impactSparkCount,impactPuffRadius,
 } from '../src/render/m01-long-range-fx.js';
 import {AudioManager} from '../src/core/audio.js';
 import {
@@ -47,7 +47,7 @@ test('tracer look: about 1 px wide, a short streak, dimmer in daylight and far a
   for(const day of [0,.5,1])for(const d of [0,500,5000])assert.ok(tracerTint(day,d)>=.55&&tracerTint(day,d)<=1);
   assert.deepEqual([tracerQuota('low'),tracerQuota('medium'),tracerQuota('high')],[6,12,20]);
   assert.ok(TRACER_QUOTA_BY_TIER.low>=6,'Low still draws a readable handful');
-  assert.equal(tracerQuota('x'),TRACER_QUOTA_BY_TIER.low);
+  assert.equal(tracerQuota('x'),TRACER_BATCH);assert.equal(tracerQuota(undefined),48,'no known tier: only the 48-instance batch limits (the R1-era display-fire test relies on it)');
 });
 
 // ---------------------------------------------------------------- impacts: event -> pool
@@ -76,6 +76,7 @@ test('German rounds that landed far away (round-impact) also get the far dust di
   const pool=new RoundImpactPool(),ev=(over={})=>({type:'round-impact',point:{x:400,y:0,z:30},material:'earth',distance:350,crack:false,...over});
   assert.ok(scheduleLandedRound(pool,ev(),100,1)>=0);assert.equal(pool.at[0],100,'it landed now');
   assert.equal(scheduleLandedRound(pool,ev({distance:IMPACT_SPECK_FROM_M-1}),100,1),-1,'near: the existing puffs and chips');
+  assert.equal(scheduleLandedRound(pool,ev({distance:IMPACT_LANDING_MAX_M+1}),100,1),-1,'beyond the haze: nothing');
   assert.equal(IMPACT_MATERIALS[pool.mat[scheduleLandedRound(pool,ev({material:'character'}),100,2)]],'body');
   assert.equal(scheduleLandedRound(pool,ev({material:'lava'}),100,3),-1);assert.equal(scheduleLandedRound(pool,{type:'round-impact'},100,3),-1);
   assert.equal(pool.scheduled,2);

@@ -1,0 +1,500 @@
+{
+  "label": "after",
+  "quality": "medium",
+  "viewport": [
+    1366,
+    768
+  ],
+  "from": 0.5,
+  "step": 0.4,
+  "count": 10,
+  "shots": [
+    {
+      "name": "repair-1",
+      "errors": [],
+      "files": [
+        {
+          "file": "repair-1-after-00.png",
+          "clock": 274.000000000028,
+          "offset": 0.5,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 1,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 830049
+        },
+        {
+          "file": "repair-1-after-01.png",
+          "clock": 274.56670000002816,
+          "offset": 1.067,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 1,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 830049
+        },
+        {
+          "file": "repair-1-after-02.png",
+          "clock": 274.8167000000282,
+          "offset": 1.317,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 1,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 830049
+        },
+        {
+          "file": "repair-1-after-03.png",
+          "clock": 275.31670000002833,
+          "offset": 1.817,
+          "fx": {
+            "muzzle": 3,
+            "tracer": 1,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 4,
+            "chip": 4,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 1,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16031092364833,
+              -1.92077192615625,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0.00005444178324151986,
+              -0.7148864327744819,
+              -0.0000532502815834541,
+              0.6992405755070825
+            ],
+            "fov": 70
+          },
+          "draw": 548,
+          "triangles": 831629
+        },
+        {
+          "file": "repair-1-after-04.png",
+          "clock": 275.79990000002846,
+          "offset": 2.3,
+          "fx": {
+            "muzzle": 2,
+            "tracer": 0,
+            "puff": 15,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 20,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119729004675,
+              -1.9195860136371734,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0.00006454621621092372,
+              -0.7148864319335747,
+              -0.00006313357101346563,
+              0.6992405746845792
+            ],
+            "fov": 70
+          },
+          "draw": 549,
+          "triangles": 830695
+        },
+        {
+          "file": "repair-1-after-05.png",
+          "clock": 276.0499000000285,
+          "offset": 2.55,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 15,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 20,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.161259170200196,
+              -1.919867015422568,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0.0000064307809803091945,
+              -0.7148864348185499,
+              -0.000006290038231918606,
+              0.6992405775064143
+            ],
+            "fov": 70
+          },
+          "draw": 548,
+          "triangles": 829655
+        },
+        {
+          "file": "repair-1-after-06.png",
+          "clock": 276.64990000002865,
+          "offset": 3.15,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 546,
+          "triangles": 829541
+        },
+        {
+          "file": "repair-1-after-07.png",
+          "clock": 276.8999000000287,
+          "offset": 3.4,
+          "fx": {
+            "muzzle": 2,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 547,
+          "triangles": 830585
+        },
+        {
+          "file": "repair-1-after-08.png",
+          "clock": 277.21660000002873,
+          "offset": 3.717,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 6,
+            "chip": 0,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.16119539665055,
+              -1.92,
+              27.97430199471571
+            ],
+            "quaternion": [
+              0,
+              -0.7148864348474739,
+              0,
+              0.6992405775347055
+            ],
+            "fov": 70
+          },
+          "draw": 547,
+          "triangles": 830067
+        },
+        {
+          "file": "repair-1-after-09.png",
+          "clock": 277.76660000002886,
+          "offset": 4.267,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 5,
+            "chip": 4,
+            "speck": 0
+          },
+          "longRange": {
+            "events": 0,
+            "scheduled": 0,
+            "dropped": 0,
+            "live": 0,
+            "pending": 0,
+            "drawn": 0,
+            "airborne": 0,
+            "tracers": {
+              "drawn": 0,
+              "quota": 12,
+              "suppressed": 0
+            },
+            "sample": []
+          },
+          "camera": {
+            "position": [
+              -29.160650270282122,
+              -1.9218452115441957,
+              27.97430199471571
+            ],
+            "quaternion": [
+              -0.00003291191246368893,
+              -0.7148864340898753,
+              0.000032191609124310186,
+              0.6992405767936875
+            ],
+            "fov": 70
+          },
+          "draw": 547,
+          "triangles": 829561
+        }
+      ],
+      "diag": {
+        "clock": 278.1333000000289,
+        "drawCalls": 548,
+        "triangles": 829567,
+        "player": {
+          "x": -29.16119539665055,
+          "y": -3,
+          "z": 27.97430199471571,
+          "angle": 0.02212703500065723,
+          "pitch": 0,
+          "health": 100,
+          "crouched": true,
+          "aiming": false
+        },
+        "longRange": {
+          "events": 0,
+          "scheduled": 0,
+          "dropped": 0,
+          "live": 0,
+          "pending": 0,
+          "drawn": 0,
+          "airborne": 0,
+          "tracers": {
+            "drawn": 0,
+            "quota": 12,
+            "suppressed": 0
+          },
+          "sample": []
+        },
+        "memory": null
+      }
+    }
+  ]
+}

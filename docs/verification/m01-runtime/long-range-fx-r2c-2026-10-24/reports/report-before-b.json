@@ -1,0 +1,336 @@
+{
+  "label": "before",
+  "quality": "medium",
+  "viewport": [
+    1366,
+    768
+  ],
+  "from": 3.5,
+  "step": 0.12,
+  "count": 10,
+  "shots": [
+    {
+      "name": "deck-polish-10",
+      "errors": [],
+      "files": [
+        {
+          "file": "deck-polish-10-before-00.png",
+          "clock": 854.1500999997709,
+          "offset": 3.65,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 500,
+          "triangles": 866943
+        },
+        {
+          "file": "deck-polish-10-before-01.png",
+          "clock": 854.4000999997706,
+          "offset": 3.9,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 2
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.050936287813236,
+              1.6416955236481112,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0.00013199976662124865,
+              -0.7071495989039362,
+              -0.00013198377643739142,
+              0.7070639362365659
+            ],
+            "fov": 70
+          },
+          "draw": 502,
+          "triangles": 862175
+        },
+        {
+          "file": "deck-polish-10-before-02.png",
+          "clock": 854.6500999997704,
+          "offset": 4.15,
+          "fx": {
+            "muzzle": 2,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 2,
+            "chip": 2
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.051407414754113,
+              1.6400879315909982,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0.00005552785445492706,
+              -0.7071496090436548,
+              -0.000055521127923322806,
+              0.7070639463750561
+            ],
+            "fov": 70
+          },
+          "draw": 505,
+          "triangles": 868525
+        },
+        {
+          "file": "deck-polish-10-before-03.png",
+          "clock": 854.9000999997702,
+          "offset": 4.4,
+          "fx": {
+            "muzzle": 1,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 2
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05138281866829,
+              1.63989869985325,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0.00001180192416006172,
+              -0.7071496111252914,
+              -0.000011800494498918986,
+              0.7070639484564406
+            ],
+            "fov": 70
+          },
+          "draw": 504,
+          "triangles": 867487
+        },
+        {
+          "file": "deck-polish-10-before-04.png",
+          "clock": 855.15009999977,
+          "offset": 4.65,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.051338985771018,
+              1.6400010244579057,
+              39.999885073935104
+            ],
+            "quaternion": [
+              1.9602017140760667e-7,
+              -0.707149611223748,
+              -1.9599642592183224e-7,
+              0.7070639485548852
+            ],
+            "fov": 70
+          },
+          "draw": 502,
+          "triangles": 866959
+        },
+        {
+          "file": "deck-polish-10-before-05.png",
+          "clock": 855.4000999997697,
+          "offset": 4.9,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 866949
+        },
+        {
+          "file": "deck-polish-10-before-06.png",
+          "clock": 855.6500999997695,
+          "offset": 5.15,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 866949
+        },
+        {
+          "file": "deck-polish-10-before-07.png",
+          "clock": 855.9000999997693,
+          "offset": 5.4,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 3,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 866949
+        },
+        {
+          "file": "deck-polish-10-before-08.png",
+          "clock": 856.150099999769,
+          "offset": 5.65,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 0,
+            "spark": 0,
+            "smoke": 1,
+            "chip": 0
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05133705909752,
+              1.64,
+              39.999885073935104
+            ],
+            "quaternion": [
+              0,
+              -0.7071496112237752,
+              0,
+              0.7070639485549124
+            ],
+            "fov": 70
+          },
+          "draw": 501,
+          "triangles": 866945
+        },
+        {
+          "file": "deck-polish-10-before-09.png",
+          "clock": 856.4000999997688,
+          "offset": 5.9,
+          "fx": {
+            "muzzle": 0,
+            "tracer": 0,
+            "puff": 5,
+            "spark": 0,
+            "smoke": 0,
+            "chip": 4
+          },
+          "longRange": null,
+          "camera": {
+            "position": [
+              29.05358279122805,
+              1.6480440930034577,
+              39.999885073935104
+            ],
+            "quaternion": [
+              -0.0001324405444661633,
+              -0.7071495988215213,
+              0.0001324245008873724,
+              0.7070639361541609
+            ],
+            "fov": 70
+          },
+          "draw": 503,
+          "triangles": 866971
+        }
+      ],
+      "diag": {
+        "clock": 856.7499999997685,
+        "drawCalls": 504,
+        "triangles": 866985,
+        "player": {
+          "x": 29.05133705909752,
+          "y": 0,
+          "z": 39.999885073935104,
+          "angle": 0.00012114530817196701,
+          "pitch": 0,
+          "health": 92,
+          "crouched": false,
+          "aiming": false
+        },
+        "longRange": null,
+        "memory": null
+      }
+    }
+  ]
+}

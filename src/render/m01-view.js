@@ -336,7 +336,7 @@ export class M01View {
     // Instance colours (setColorAt) tint these; vertexColors must stay off (no `color` attribute on the tetrahedra: it rendered black).
     this.materials.chip=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.chip);
     this.materials.blastShard=new THREE.MeshStandardMaterial(M01_BLAST_CHIP_MATERIALS.blastShard);
-    this.speckGeometry=new THREE.IcosahedronGeometry(1,1);this.geometry.push(this.speckGeometry);   // R2-c: 80 triangles for a 4 px disc (owned here, disposed with this.geometry)
+    this.speckGeometry=new THREE.IcosahedronGeometry(1,1);   // R2-c: 80 triangles for a 4 px disc (owned here, disposed in dispose())
     this.fireBatches={};this.fireDummy=new THREE.Object3D();this.fireColor=new THREE.Color();
     this.initShotFx();
     for(const [name,material,capacity]of [['muzzle','flash',96],['tracer','tracer',48],['puff','puff',144],['spark','flash',96],['smoke','gunSmoke',64],['chip','chip',128],['speck','speck',48]]){
@@ -1015,7 +1015,7 @@ export class M01View {
     this.fallbackFx.dispose();this.weaponWorldFx.dispose();this.weaponLighting.dispose();
     if(typeof window!=='undefined'&&window.m01ReliefHorizonDebug===this.reliefHorizonDebug)delete window.m01ReliefHorizonDebug;this.terrainRelief?.dispose();this.farLandscape?.dispose();
     if(typeof window!=='undefined'&&window.m01VegetationDebug===this.vegetationDebug)delete window.m01VegetationDebug;
-    this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());
+    this.trainLife.dispose();this.stationDamage.dispose();this.yardWagons.dispose();this.wagons.dispose();this.locomotive.dispose();this.panzerzugArt.dispose();this.portalPolish?.dispose();this.bridgeStructure?.dispose();this.damageDecals.dispose();this.environment?.dispose();this.assets.dispose();this.terrain?.dispose();this.atmosphere.dispose();this.contactMaterial?.dispose();this.horizonGlow?.material.dispose();this.geometry.forEach(g=>g.dispose());this.speckGeometry?.dispose();
     const textures=new Set();for(const m of new Set([...Object.values(this.materials),this.terrainLegacyMaterial].filter(Boolean))){if(m===this.terrain?.material)continue;if(m.map)textures.add(m.map);if(m.bumpMap)textures.add(m.bumpMap);m.dispose();}textures.forEach(t=>t.dispose());
     this.scene.traverse(n=>{if(n.isInstancedMesh)n.dispose();});this.scene.clear();this.weaponScene.clear();
   }
