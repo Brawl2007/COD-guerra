@@ -1,6 +1,6 @@
 // Headless Chromium captures of the opening life's acts in the isolated fixture (tools/verification/m01-opening-r1b-fixture.html): the real characters, clips, foot IK, procedural poses and props, one
 // close-up per act from the front-right and from the side. For tuning the poses and the props; the evidence captures are those of the game itself (m01-opening-r1b-captures.spec.js).
-//   CHROME_EXECUTABLE=/opt/pw-browsers/chromium node tools/verification/m01-opening-r1b-fixture-capture.mjs <outDir> [--only binoculars,smoke] [--dist 3.2] [--views front,side] [--t 4] [--fov 40]
+//   CHROME_EXECUTABLE=/opt/pw-browsers/chromium node tools/verification/m01-opening-r1b-fixture-capture.mjs <outDir> [--only binoculars,smoke] [--dist 3.2] [--views front,side,back] [--t 4] [--fov 40] [--ty 1.3] [--cy 1.45]
 // Starts the vite dev server on 127.0.0.1:5193. SwiftShader: pixels, never FPS.
 import {chromium} from '@playwright/test';
 import {spawn} from 'node:child_process';
@@ -8,7 +8,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 
 const arg=(n,d)=>{const i=process.argv.indexOf(n);return i<0?d:process.argv[i+1];};
 const out=process.argv[2]??'test-results/m01-opening-r1b-fixture',port=5193;
-const only=arg('--only',null)?.split(','),dist=Number(arg('--dist',3.2)),views=(arg('--views','front,side')).split(','),tOver=arg('--t',null),fov=Number(arg('--fov',40));
+const only=arg('--only',null)?.split(','),dist=Number(arg('--dist',3.2)),views=(arg('--views','front,side')).split(','),tOver=arg('--t',null),fov=Number(arg('--fov',40)),ty=Number(arg('--ty',1.3)),cy=Number(arg('--cy',1.45));
 await mkdir(out,{recursive:true});
 // [name, man, act, t, extra] The men are placed at the squad post (-70, 22) facing east; `crouched` for a kneeling act; `second` a second man in the shot.
 const X=-70,Z=22;
@@ -35,7 +35,7 @@ try{
       const az=view==='front'?-.55:view==='side'?-1.45:view==='back'?2.6:0;   // radians from his forward (east) towards his right (south)... negative: his left-front
       const y=sim=>0;void y;
       const h=await page.evaluate(([x,z])=>window.fixture.ground(x,z),[X,Z]);
-      const cam={x:X+Math.cos(az)*dist,y:h+1.45,z:Z+Math.sin(az)*dist,tx:X,ty:h+1.3,tz:Z,fov};
+      const cam={x:X+Math.cos(az)*dist,y:h+cy,z:Z+Math.sin(az)*dist,tx:X,ty:h+ty,tz:Z,fov};
       const men=[{id,act,t,x:X,z:Z,facing:0,...extra}];
       if(extra.second)men.push({...extra.second,x:X+extra.second.dx,z:Z+extra.second.dz});
       const r=await page.evaluate(([men,cam])=>window.fixture.show(men,cam),[men,cam]);

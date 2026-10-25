@@ -67,23 +67,24 @@ export function openingPose(actor,time){
   const t=tOf(act,time),w=ease(act,time);
   SPEC.lean=0;SPEC.head=0;SPEC.l=null;SPEC.r=null;
   switch(act.k){
-    case 'binoculars':   // both hands raise the glasses to the eyes, hold them, lower them
-      SPEC.l=hand(HAND_L,"head",-.045,.085,.2,w,DOWN_L);SPEC.r=hand(HAND_R,"head",.045,.085,.2,w,DOWN_R);return SPEC;
-    case 'smoke':{       // the cigarette is in his right hand; every few seconds the hand goes to the mouth for a drag
-      const P=7+unit(act.s,1)*2.5,ph=(t+unit(act.s,2)*P)%P,w2=Math.min(smooth(ph/.5),smooth((2.3-ph)/.6))*clamp01(Math.min(t/.6,leftOf(act,time)/.6));
-      SPEC.head=.1*w2;SPEC.r=hand(HAND_R,"head",.03,-.005,.17,w2,DOWN_R);return SPEC;}
-    case 'coffee':{      // the mug in his right hand; a sip every ten seconds or so
-      const P=9+unit(act.s,1)*3,ph=(t+unit(act.s,2)*P)%P,w2=Math.min(smooth(ph/.6),smooth((2.8-ph)/.7))*clamp01(Math.min(t/.6,leftOf(act,time)/.6));
-      SPEC.head=.16*w2;SPEC.r=hand(HAND_R,"head",.025,-.02,.18,w2,DOWN_R);return SPEC;}
-    case 'phone':case 'phone_dead':{
-      let rx=.095,ry=.04,rz=.02;
-      if(act.k==='phone_dead'&&t>2.6){const q=(t-2.6)%4.4,away=Math.min(smooth(q/.5),smooth((2.6-q)/.5));rx=.095+.04*away;ry=.04-.12*away;rz=.02+.3*away;}   // the handset away from the ear: he looks at it, shakes it
+    // (the hand targets are metres from the head joint along the soldier's axes [right, up, forward]; the eyes are about 0.015 above it and 0.10 ahead, the mouth 0.04 below and 0.10 ahead, the ear 0.09 to the side)
+    case 'binoculars':   // both hands raise the glasses to the eyes, hold them, lower them; the head is a little up
+      SPEC.head=.05*w;SPEC.l=hand(HAND_L,"head",-.05,-.02,.15,w,DOWN_L);SPEC.r=hand(HAND_R,"head",.05,-.02,.15,w,DOWN_R);return SPEC;
+    case 'smoke':{       // the cigarette hand rests at the chest and goes to the mouth every few seconds for a drag; the other hand keeps the rifle
+      const P=7+unit(act.s,1)*2.5,ph=(t+unit(act.s,2)*P)%P,drag=Math.min(smooth(ph/.5),smooth((2.3-ph)/.6));
+      SPEC.head=.1*drag;SPEC.r=hand(HAND_R,"head",.14-.105*drag,-.3+.225*drag,.2-.03*drag,w,DOWN_R);return SPEC;}
+    case 'coffee':{      // the mug rests at the belly and goes to the mouth for a sip every ten seconds or so
+      const P=9+unit(act.s,1)*3,ph=(t+unit(act.s,2)*P)%P,sip=Math.min(smooth(ph/.6),smooth((2.8-ph)/.7));
+      SPEC.head=.16*sip;SPEC.r=hand(HAND_R,"head",.13-.1*sip,-.42+.32*sip,.2-.01*sip,w,DOWN_R);return SPEC;}
+    case 'phone':case 'phone_dead':{   // the handset at the right ear, the left hand on the box at the chest
+      let rx=.115,ry=-.045,rz=.04;
+      if(act.k==='phone_dead'&&t>2.6){const q=(t-2.6)%4.4,away=Math.min(smooth(q/.5),smooth((2.6-q)/.5));rx=.115+.02*away;ry=-.045-.08*away;rz=.04+.3*away;}   // the handset away from the ear: he looks at it, shakes it
       SPEC.r=hand(HAND_R,"head",rx,ry,rz,w,EAR_R);SPEC.l=hand(HAND_L,"head",-.1,-.36,.2,w,OUT_L);SPEC.head=act.k==='phone_dead'?-.12*w:0;return SPEC;}
     case 'map':          // both hands hold the folded map at the chest and he reads it
       SPEC.l=hand(HAND_L,"head",-.13,-.31,.3,w,OUT_L);SPEC.r=hand(HAND_R,"head",.13,-.31,.3,w,OUT_R);SPEC.head=-.28*w;return SPEC;
-    case 'ammo_check':{  // bent over the open box on its stack: the left hand holds the lid, the right counts the clips along the row
-      const row=(t*.45+unit(act.s,5))%1,r2=-.12+.24*Math.abs(2*row-1);
-      SPEC.lean=.55*w;SPEC.head=-.3*w;SPEC.l=hand(HAND_L,"root",-.16,.86,.52,w,OUT_L);SPEC.r=hand(HAND_R,"root",r2,.84,.5,w,OUT_R);return SPEC;}
+    case 'ammo_check':{  // the open box held at the belly: the left hand under it, the right counts the clips along the row (the targets hang on the chest, which leans with him)
+      const row=(t*.45+unit(act.s,5))%1,r2=-.09+.2*Math.abs(2*row-1);
+      SPEC.lean=.2*w;SPEC.head=-.35*w;SPEC.l=hand(HAND_L,"chest",-.17,-.27,.3,w,OUT_L);SPEC.r=hand(HAND_R,"chest",r2,-.2+.012*Math.sin(t*2.3),.31,w,OUT_R);return SPEC;}
     case 'aid_kit':      // the medic's bag open at his left hip: one hand holds it, the other looks through it
       SPEC.lean=.15*w;SPEC.head=-.25*w;SPEC.l=hand(HAND_L,"root",-.26,.96,.3,w,OUT_L);SPEC.r=hand(HAND_R,"root",-.08,.94+.04*Math.sin(t*1.7),.36,w,OUT_R);return SPEC;
     case 'track_check':  // peering down at the rails
@@ -109,7 +110,7 @@ export function openingPose(actor,time){
  * Which props the man shows now (a pure function of act and time; the kit applies it): binoculars, cigarette (and its ember, 0..1), mug, map, note, handset, phone box, ammunition box, aid bag,
  * the sapper's meter and coil.
  */
-export const PROP_KEYS=Object.freeze(['binoculars','cigarette','mug','map','note','handset','phone','crate','bag','meter','coil']);
+export const PROP_KEYS=Object.freeze(['binoculars','cigarette','mug','map','note','handset','phone','box','bag','meter','coil']);
 const PROPS={};
 for(const k of PROP_KEYS)PROPS[k]=false;
 export function openingProps(actor,time){
@@ -123,7 +124,7 @@ export function openingProps(actor,time){
     case 'coffee':PROPS.mug=true;break;
     case 'map':PROPS.map=true;break;
     case 'phone':case 'phone_dead':PROPS.handset=true;PROPS.phone=true;break;
-    case 'ammo_check':PROPS.crate=true;break;
+    case 'ammo_check':PROPS.box=true;break;
     case 'aid_kit':PROPS.bag=true;break;
     case 'deliver':case 'errand':PROPS.note=true;break;
     case 'cable_inspect':case 'cable_hold':case 'cable_walk':case 'cable_wait':{   // the team: the leader has the meter, the helper the coil (the kit gives each only his own)

@@ -61,6 +61,19 @@ function bones(id,names){
   });
   return out;
 }
-window.fixture={show:(men,cam,clock)=>frame(men,cam,clock),ground:(x,z)=>sim.world.heightAt(x,z),cast:()=>Object.keys(byId),bones};
+// The extent of every visible skinned mesh (the vertices as the skeleton poses them now) in the man's frame: name -> [minRight, maxRight, minUp, maxUp, minForward, maxForward] (needs ?batching=0).
+function meshes(id,filter=''){
+  const v=characters.instances.get(id);if(!v)return null;
+  v.root.updateMatrixWorld(true);
+  const m=v.root.matrixWorld,o=new THREE.Vector3().setFromMatrixPosition(m),R=new THREE.Vector3(1,0,0).transformDirection(m),U=new THREE.Vector3(0,1,0).transformDirection(m),F=new THREE.Vector3(0,0,-1).transformDirection(m),out={},p=new THREE.Vector3();
+  v.root.traverse(n=>{
+    if(!n.isSkinnedMesh||!n.visible||n.parent?.visible===false||!n.name.includes(filter))return;
+    n.skeleton.update();const pos=n.geometry.attributes.position,lo=[1e9,1e9,1e9],hi=[-1e9,-1e9,-1e9];
+    for(let i=0;i<pos.count;i+=3){n.getVertexPosition(i,p);p.applyMatrix4(n.matrixWorld).sub(o);const c=[p.dot(R),p.dot(U),p.dot(F)];for(let k=0;k<3;k++){lo[k]=Math.min(lo[k],c[k]);hi[k]=Math.max(hi[k],c[k]);}}
+    out[n.name]=[lo[0],hi[0],lo[1],hi[1],lo[2],hi[2]].map(x=>+x.toFixed(3));
+  });
+  return out;
+}
+window.fixture={show:(men,cam,clock)=>frame(men,cam,clock),ground:(x,z)=>sim.world.heightAt(x,z),cast:()=>Object.keys(byId),bones,meshes};
 window.ready=true;
 </script>
