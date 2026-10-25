@@ -4,7 +4,7 @@
   "scene": null,
   "phase": "NP_ARRIVAL",
   "complete": false,
-  "clock": 1.5500000000000007,
+  "clock": 1.4832999999999998,
   "player": {
    "x": -412,
    "y": -3,
@@ -19,7 +19,7 @@
   "clockText": "MANHÃ · ~07:00",
   "objective": "Junte-se à secção no parapeito norte",
   "card": "",
-  "frames": 7,
+  "frames": 8,
   "errors": []
  },
  "mid": {
@@ -27,7 +27,7 @@
   "scene": null,
   "phase": "NP_ATTACK",
   "complete": false,
-  "clock": 23.01670000000019,
+  "clock": 23.083400000000193,
   "player": {
    "x": -410.01242546324204,
    "y": -3,
@@ -42,7 +42,7 @@
   "clockText": "MANHÃ · ~07:00",
   "objective": "Repila o ataque vindo do norte",
   "card": "",
-  "frames": 8,
+  "frames": 9,
   "errors": []
  },
  "west": {
@@ -50,7 +50,7 @@
   "scene": null,
   "phase": "NP_ATTACK",
   "complete": false,
-  "clock": 23.016600000000196,
+  "clock": 23.100000000000193,
   "player": {
    "x": -410.01242546324204,
    "y": -3,
@@ -65,7 +65,7 @@
   "clockText": "MANHÃ · ~07:00",
   "objective": "Repila o ataque vindo do norte",
   "card": "",
-  "frames": 8,
+  "frames": 7,
   "errors": []
  },
  "wreck": {
@@ -73,7 +73,7 @@
   "scene": null,
   "phase": "NP_ATTACK",
   "complete": false,
-  "clock": 23.016700000000192,
+  "clock": 23.06680000000019,
   "player": {
    "x": -410.01242546324204,
    "y": -3,
