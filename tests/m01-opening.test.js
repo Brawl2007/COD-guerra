@@ -164,17 +164,17 @@ test('the sappers walk the cable before the bomb: out to a joint, kneel and test
   const home={L:{x:L.x,z:L.z},H:{x:H.x,z:H.z},W:{x:W.x,z:W.z}},seen=new Set();let far=0,knelt=false,held=false;
   until(s,x=>{
     seen.add(x.timers.opening.sap.leg);far=Math.max(far,dist(L,home.L));
-    if(x.timers.opening.sap.leg==='inspect'){knelt||=L.crouched&&L.act.k==='cable_inspect';held||=H.act.k==='cable_hold'&&!H.crouched;}
+    if(x.timers.opening.sap.leg==='inspect'){knelt||=L.crouched&&L.act.k==='cable_inspect';held||=H.act.k==='cable_hold'&&H.crouched;}
     return x.timers.opening.sap.leg==='back'||x.timers.opening.sap.leg==='home';
   },240);
   assert.ok(seen.has('out')&&seen.has('inspect'),[...seen].join());assert.ok(far>8,`the leader walked ${far.toFixed(1)} m along the cable`);assert.ok(knelt&&held);
-  assert.equal(W.act.k,'binoculars');assert.equal(dist(W,home.W),0,'the watch never leaves the camp');
+  assert.equal(W.act.k,'cable_watch');assert.equal(W.crouched,true);assert.equal(dist(W,home.W),0,'the watch never leaves the camp');
   const stops=OPENING.sappers.stops;assert.ok(stops.some(p=>dist(L,p)<.9)||seen.has('back'));
   // the planes: they go home at a good pace and are on their places, to the bit, well before the shelter time
   s.battleClock=seconds('04:33:10');s.consume(E('planes_heard'));
   until(s,x=>x.battleClock>=seconds('04:33:29'),60);
   for(const [a,h] of [[L,home.L],[H,home.H],[W,home.W]])assert.ok(Math.hypot(a.x-h.x,a.z-h.z)<1e-9,`${a.id} is on his place`);
-  assert.equal(s.timers.opening.sap.leg,'home');assert.ok(['look_up','brace'].includes(L.act.k));
+  assert.equal(s.timers.opening.sap.leg,'home');assert.equal(L.act.k,'cover');assert.ok(L.crouched&&H.crouched&&W.crouched,'the three kneel at their places');
   run(s,1.2);assert.equal(s.timers.opening.flags.sapReleased,true,'at 04:33:30 the old shelter logic has them');assert.equal(L.act,undefined);
 });
 

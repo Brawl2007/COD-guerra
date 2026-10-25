@@ -24,19 +24,19 @@ export const OPENING_FIT=Object.freeze({
 });
 /** Which props a man can ever show: the union over the acts of his plans (a man who never smokes carries no cigarette). */
 const ACT_PROPS={binoculars:['binoculars'],smoke:['cigarette'],coffee:['mug'],map:['map'],phone:['handset','phone'],phone_dead:['handset','phone'],ammo_check:['box'],aid_kit:['bag'],deliver:['note'],errand:['note'],
-  cable_inspect:['meter'],cable_hold:['coil'],cable_walk:['meter','coil'],cable_wait:['meter','coil']};
+  cable_inspect:['meter'],cable_hold:['coil'],cable_walk:['meter','coil'],cable_wait:['meter','coil'],cable_watch:['binoculars']};
 export function propsOf(id){
   const m=OPENING.men[id];if(!m)return [];
   const acts=new Set();
   for(const list of Object.values(m.plans))for(const e of list)acts.add(e.act);
   if(m.driver==='courier'){acts.add('errand');acts.add('deliver');}
-  if(m.driver==='sappers'){for(const a of ['cable_inspect','cable_hold','cable_walk','cable_wait'])acts.add(a);}
+  if(m.driver==='sappers'){for(const a of ['cable_inspect','cable_hold','cable_walk','cable_wait','cable_watch'])acts.add(a);}
   const out=new Set();
   for(const a of acts)for(const p of ACT_PROPS[a]??[])out.add(p);
   if(m.driver==='sappers'){   // the leader carries the meter, the helper the coil; the watch neither
     if(id!==OPENING.sappers.leader)out.delete('meter');
     if(id!==OPENING.sappers.helper)out.delete('coil');
-    if(id===OPENING.sappers.watch){out.delete('meter');out.delete('coil');}
+    if(id===OPENING.sappers.watch){out.delete('meter');out.delete('coil');}else out.delete('binoculars');
   }
   return PROP_KEYS.filter(k=>out.has(k));
 }
@@ -107,7 +107,7 @@ export class OpeningKit {
       const fit=OPENING_FIT[k],bone=find(fit.bone);if(!bone)continue;
       const o=make[k]();o.position.set(...fit.pos);o.rotation.set(deg(fit.rot[0]),deg(fit.rot[1]),deg(fit.rot[2]));o.visible=false;o.name=`opening_${k}`;bone.add(o);kit[k]=o;
     }
-    return kit;
+    return Object.keys(kit).length?kit:null;   // (a rig without the bones the fits name gets none)
   }
   /** Shows the props the act asks for (`wanted`: the record of openingProps) and animates the cigarette's ember and smoke. */
   sync(kit,wanted,time){

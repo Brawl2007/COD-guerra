@@ -10,7 +10,7 @@ import {OPENING_ACTS} from '../game/m01-opening.js';
 
 /** The clips the opening needs from the library (tests/m01-opening-pose.test.js checks that every one is in the T08 manifests). */
 export const OPENING_POSE_CLIPS=Object.freeze(['standing_idle','standing_idle_b','standing_idle_c','crouched_idle','call_out','fidget_check_rifle','sapper_work','rkm_clean','rkm_crouched_idle','rkm_standing_idle',
-  'ckm_wz30_gunner_aim','ckm_wz30_gunner_idle','ckm_wz30_loader_feed','ckm_wz30_loader_idle']);
+  'crouched_idle_b']);
 const has=(clips,name)=>!clips||typeof clips.has!=='function'||clips.size===0||clips.has(name);
 const clamp01=x=>x<0?0:x>1?1:x;
 const smooth=x=>{const t=clamp01(x);return t*t*(3-2*t);};
@@ -21,17 +21,19 @@ const tOf=(act,time)=>Math.max(0,time-act.at),leftOf=(act,time)=>act.until-time;
 /** The ease of a held pose: in over `inSec` from the start of the act, out over `outSec` before its end. */
 const ease=(act,time,inSec=.7,outSec=.6)=>Math.min(smooth(tOf(act,time)/inSec),smooth(leftOf(act,time)/outSec));
 /** The acts that put both hands to work: the rifle is slung while they last (the renderer hides the rifle's mesh, the sling is not modelled); in the others (a cigarette, a mug, the note) one hand still holds it. */
-export const HANDS_BUSY=Object.freeze(new Set(['map','binoculars','phone','phone_dead','ammo_check','aid_kit','cable_inspect','cable_hold']));
+export const HANDS_BUSY=Object.freeze(new Set(['map','binoculars','cable_watch','phone','phone_dead','ammo_check','aid_kit','cable_inspect','cable_hold']));
 
 /** The clip candidate of a man whose act asks for one, or null when the ordinary rules decide (the walking acts, `idle`, and every man without an act). */
 export function openingSample(actor,time,offset,clips,pose){
   const act=actor.act;
   if(!act||!actor.alive||actor.state==='WOUNDED'||actor.carriedBy||pose?.name==='fallen'||pose?.name==='pinned'||pose?.underFire)return null;
-  // The ckm gunner and loader are drawn with the crew's clips at the gun (authored to its place): only their own acts leave those, the rest keep the crew's idle.
-  if((actor.id==='ckm_gunner'||actor.id==='ckm_loader')&&act.k!=='ckm_scan'&&act.k!=='ckm_belt')return null;
+  // The ckm gunner and loader are drawn with the crew's clips at the gun, authored to the gun's own animation (its idle, aim and feed phases): the opening never changes those, only their heads move (openingPose).
+  if(actor.id==='ckm_gunner'||actor.id==='ckm_loader')return null;
   const t=tOf(act,time),stand=name=>({clip:has(clips,name)?name:'standing_idle',time:t+offset,loop:true,source:'opening'});
   switch(act.k){
-    case 'map':case 'binoculars':case 'look_up':case 'point':case 'brace':case 'deliver':case 'cable_hold':return stand('standing_idle_c');
+    case 'map':case 'binoculars':case 'look_up':case 'point':case 'brace':case 'deliver':return stand('standing_idle_c');
+    case 'cable_hold':return stand('crouched_idle_b');   // the helper kneels beside the leader with the coil
+    case 'cable_watch':return stand('crouched_idle');   // the watch kneels, the glasses to his eyes
     case 'smoke':case 'coffee':return stand('standing_idle_b');
     case 'phone':case 'phone_dead':case 'ammo_check':case 'aid_kit':return stand('standing_idle');
     case 'track_check':return stand('crouched_idle');   // kneeling at the rails
@@ -44,9 +46,7 @@ export function openingSample(actor,time,offset,clips,pose){
     case 'cover':return actor.id==='szymon_kowal'&&has(clips,'rkm_crouched_idle')?{clip:'rkm_crouched_idle',time:t+offset,loop:true,source:'opening'}:stand('crouched_idle');
     case 'clean_rkm':return actor.id==='szymon_kowal'&&has(clips,'rkm_clean')?{clip:'rkm_clean',time:t+offset,loop:true,source:'opening'}:null;
     case 'cable_inspect':return has(clips,'sapper_work')?{clip:'sapper_work',time:(t+offset)*.55,loop:true,rate:.55,source:'sapper'}:null;
-    case 'ckm_scan':return actor.id==='ckm_gunner'&&has(clips,'ckm_wz30_gunner_aim')?{clip:'ckm_wz30_gunner_aim',time:t,loop:true,source:'opening'}:null;
-    case 'ckm_belt':return actor.id==='ckm_loader'&&has(clips,'ckm_wz30_loader_feed')?{clip:'ckm_wz30_loader_feed',time:t,loop:true,source:'opening'}:null;
-    default:return null;   // idle, errand, cable_walk, cable_wait, home, cover_run: the gait and the idles of the ordinary rules
+    default:return null;   // idle, errand, cable_walk, cable_wait, home, cover_run, the crew's acts: the gait and the idles of the ordinary rules
   }
 }
 /** The ordinary rules of Kowal's rkm cleaning keep working for a man without an act (a save from before, the minutes after 04:34): the opening's `act` wins only while he has one. */
@@ -56,9 +56,11 @@ export const kowalCleans=(actor,battleClock,moving)=>actor.act?actor.act.k==='cl
 // Where the elbow points ([right, up, forward] metres from the shoulder): down and a little out is the natural carriage (hands at the face, the mouth, a held object); out and down for the telephone, the map and the box.
 const DOWN_L=[-.12,-.7,.04],DOWN_R=[.12,-.7,.04],OUT_L=[-.32,-.5,-.05],OUT_R=[.32,-.5,-.05],EAR_R=[.5,-.3,-.05];
 // One reused record per call site: the result is read at once by the renderer (no allocation per man per frame).
-const SPEC={lean:0,head:0,l:null,r:null},HAND_L={a:"head",o:[0,0,0],w:0,p:DOWN_L},HAND_R={a:"head",o:[0,0,0],w:0,p:DOWN_R},DIR={a:"shoulder",dir:[0,0,0],len:.5,w:0,p:DOWN_R};
+const SPEC={lean:0,head:0,look:0,l:null,r:null},HAND_L={a:"head",o:[0,0,0],w:0,p:DOWN_L},HAND_R={a:"head",o:[0,0,0],w:0,p:DOWN_R},DIR={a:"shoulder",dir:[0,0,0],len:.5,w:0,p:DOWN_R};
 const hand=(rec,a,o0,o1,o2,w,p)=>{rec.a=a;rec.o[0]=o0;rec.o[1]=o1;rec.o[2]=o2;rec.w=w;rec.p=p;return rec;};
 const EAST_UP=Object.freeze([.88,.46,.05]);
+/** The head's yaw (radians, positive to his left) of a man who glances about: a new target every 2.2-3.8 s within +-amp, eased in over 0.6 s (the act's own seed; no clock but the one asked). */
+const glance=(act,t,amp)=>{const g=2.2+1.6*unit(act.s,997),i=Math.floor(t/g),next=(unit(act.s,i)*2-1)*amp,last=(unit(act.s,i-1)*2-1)*amp;return last+(next-last)*smooth((t-i*g)/.6);};
 /**
  * The procedural pose of the act at `time`: {lean, head, l, r} or null (nothing to add to the clip). The record is reused (valid until the next call).
  */
@@ -66,10 +68,10 @@ export function openingPose(actor,time){
   const act=actor.act;
   if(!act||!actor.alive||actor.state==='WOUNDED'||actor.carriedBy||!Object.hasOwn(OPENING_ACTS,act.k))return null;
   const t=tOf(act,time),w=ease(act,time);
-  SPEC.lean=0;SPEC.head=0;SPEC.l=null;SPEC.r=null;
+  SPEC.lean=0;SPEC.head=0;SPEC.look=0;SPEC.l=null;SPEC.r=null;
   switch(act.k){
     // (the hand targets are metres from the head joint along the soldier's axes [right, up, forward]; the eyes are about 0.015 above it and 0.10 ahead, the mouth 0.04 below and 0.10 ahead, the ear 0.09 to the side)
-    case 'binoculars':   // both hands raise the glasses to the eyes, hold them, lower them; the head is a little up
+    case 'binoculars':case 'cable_watch':   // both hands raise the glasses to the eyes, hold them, lower them; the head is a little up
       SPEC.head=.05*w;SPEC.l=hand(HAND_L,"head",-.05,-.02,.15,w,DOWN_L);SPEC.r=hand(HAND_R,"head",.05,-.02,.15,w,DOWN_R);return SPEC;
     case 'smoke':{       // the cigarette hand rests at the chest and goes to the mouth every few seconds for a drag; the other hand keeps the rifle
       const P=7+unit(act.s,1)*2.5,ph=(t+unit(act.s,2)*P)%P,drag=Math.min(smooth(ph/.5),smooth((2.3-ph)/.6));
@@ -98,6 +100,10 @@ export function openingPose(actor,time){
       SPEC.r=hand(HAND_R,"head",.2,-.42,.5,ease(act,time,.4,.5),DOWN_R);return SPEC;
     case 'errand':case 'cable_inspect':case 'cable_hold':  // running with the note, the meter and the coil: no IK, the clip's hands are where they are
       return null;
+    case 'ckm_scan':     // the gunner keeps the gun's authored pose and only turns his head along the east bank, from glance to glance
+      SPEC.look=glance(act,t,.5)*w;SPEC.head=.04*w;return SPEC;
+    case 'ckm_belt':     // the loader looks down at the belt, now and then up
+      SPEC.head=-.38*w+.12*smooth(Math.sin(t*.7+unit(act.s,8)*6)*.5+.5)*w;SPEC.look=glance(act,t,.12)*w;return SPEC;
     case 'brace':        // alert: glances up now and then
       SPEC.head=.2*smooth(Math.sin(t*.9+unit(act.s,6)*6)*.5+.5);return SPEC;
     case 'cover':        // kneeling: eyes up now and then
@@ -120,7 +126,7 @@ export function openingProps(actor,time){
   if(!act||!actor.alive||actor.state==='WOUNDED'||actor.carriedBy)return PROPS;
   const t=tOf(act,time);
   switch(act.k){
-    case 'binoculars':PROPS.binoculars=true;break;
+    case 'binoculars':case 'cable_watch':PROPS.binoculars=true;break;
     case 'smoke':{PROPS.cigarette=true;const P=7+unit(act.s,1)*2.5,ph=(t+unit(act.s,2)*P)%P;PROPS.ember=ph<2.3?smooth(ph/.5):Math.max(.15,1-(ph-2.3)/2);break;}
     case 'coffee':PROPS.mug=true;break;
     case 'map':PROPS.map=true;break;

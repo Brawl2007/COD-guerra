@@ -38,11 +38,12 @@ function reach(rig,root,side,spec){
  */
 export function applyOpeningPose(v,spec){
   const rig=v.ikRig,root=v.root;
-  if(!rig||!rig.hasArmIk||!spec||!(spec.lean||spec.head||spec.l||spec.r))return false;
+  if(!rig||!rig.hasArmIk||!spec||!(spec.lean||spec.head||spec.look||spec.l||spec.r))return false;
   root.updateMatrixWorld(true);
   _R.copy(_X).transformDirection(root.matrixWorld);_U.copy(_Y).transformDirection(root.matrixWorld);_F.copy(_Z).transformDirection(root.matrixWorld);
   // the soldier's forward is -z: a positive lean bends the torso forward (a turn of -lean about the right axis), a positive head pitch looks up (a turn of +pitch)
   if(spec.lean){turn(rig.spine_01,_R,-spec.lean*.5);root.updateMatrixWorld(true);turn(rig.spine_02,_R,-spec.lean*.5);root.updateMatrixWorld(true);}   // (a child's world matrix is refreshed before it turns: it follows its parent's new lean)
+  if(spec.look){turn(rig.neck,_U,spec.look);root.updateMatrixWorld(true);}   // a positive yaw turns the head to his left (about his up axis)
   if(spec.head){turn(rig.neck,_R,spec.head);root.updateMatrixWorld(true);}
   reach(rig,root,'l',spec.l);reach(rig,root,'r',spec.r);
   root.updateMatrixWorld(true);

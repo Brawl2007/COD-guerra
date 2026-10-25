@@ -33,10 +33,10 @@ export const TENSIONS=Object.freeze(['calm','warned','planes']);
  */
 export const OPENING_ACTS=Object.freeze({
   idle:{},map:{},binoculars:{face:'east',scan:.55},smoke:{},coffee:{},clean_rkm:{},rifle_check:{},phone:{},phone_dead:{hook:'phone_dead'},
-  ammo_check:{},track_check:{crouch:true},aid_kit:{},ckm_scan:{face:'east',scan:.1},ckm_belt:{hook:'ammo'},
+  ammo_check:{},track_check:{crouch:true},aid_kit:{},ckm_scan:{},ckm_belt:{hook:'ammo'},
   order:{face:'courier',hook:'order'},look_up:{face:'east'},point:{face:'east'},shout:{face:'east',hook:'shout'},brace:{face:'east',scan:.25,repeat:true},cover:{crouch:true,face:'east',scan:.3,repeat:true},
   errand:{walk:true},deliver:{face:'recipient',hook:'deliver'},cover_run:{walk:true},
-  cable_walk:{walk:true},cable_inspect:{crouch:true,face:'west'},cable_hold:{face:'leader'},cable_wait:{},home:{walk:true},
+  cable_walk:{walk:true},cable_inspect:{crouch:true,face:'west'},cable_hold:{crouch:true,face:'leader'},cable_wait:{crouch:true},cable_watch:{crouch:true,face:'east',scan:.5},home:{walk:true},
 });
 const ACT_KEYS=Object.freeze(['k','at','until','rng','n','b','tn','s','hx','hz']);
 const ACT_OPTIONAL=Object.freeze(['f','to','spd','w']);
@@ -320,21 +320,21 @@ function stepSappers(sim,q,tn){
   if(sap.leg==='rest'){
     if(sap.until===0)sap.until=clock+between(sl,S.restSec)*.5;
     for(const a of men)stay(a);
-    setAct(L,'cable_wait');setAct(H,'cable_wait');setAct(W,'binoculars');
+    setAct(L,'cable_wait');setAct(H,'cable_wait');setAct(W,'cable_watch');
     if(clock>=sap.until&&tn<2){sap.leg='out';sap.at=clock;sap.k=Math.floor(nextU(sl)*S.stops.length)%S.stops.length;}
   }else if(sap.leg==='out'){
     const stop=S.stops[sap.k],hp=helperAt(stop);
-    goTo(L,stop,S.speed);setAct(L,'cable_walk');goTo(H,hp,S.speed);setAct(H,'cable_walk');setAct(W,'binoculars');
+    goTo(L,stop,S.speed);setAct(L,'cable_walk');goTo(H,hp,S.speed);setAct(H,'cable_walk');setAct(W,'cable_watch');
     if(dist(L,stop)<.9&&dist(H,hp)<.9){sap.leg='inspect';sap.at=clock;sap.until=clock+between(sl,S.inspectSec);stay(L);stay(H);}
   }else if(sap.leg==='inspect'){
-    setAct(L,'cable_inspect');setAct(H,'cable_hold');setAct(W,'binoculars');
+    setAct(L,'cable_inspect');setAct(H,'cable_hold');setAct(W,'cable_watch');
     if(clock>=sap.until){sap.leg='back';sap.at=clock;}
   }else if(sap.leg==='back'){
     for(const a of [L,H]){if(!atHome(a))goTo(a,home(a),S.speed);setAct(a,'cable_walk');}
-    setAct(W,'binoculars');
+    setAct(W,'cable_watch');
     if(atHome(L)&&atHome(H)){sap.leg='rest';sap.until=clock+between(sl,S.restSec);stay(L);stay(H);}
   }else{   // home: the planes are heard; back to the camp at a good pace and wait there (look up, then watch), until the shelter takes them
-    for(const a of men){if(atHome(a)){stay(a);setAct(a,a===W?'brace':'look_up');}else{goTo(a,home(a),S.homeSpeed);setAct(a,'home');}}
+    for(const a of men){if(atHome(a)){stay(a);setAct(a,'cover');}else{goTo(a,home(a),S.homeSpeed);setAct(a,'home');}}
   }
 }
 function releaseSappers(sim,q){
@@ -353,7 +353,7 @@ export function openingWalk(sim,q,a,dt){
     a.crouched=false;
     const spd=st.spd??OPENING.sappers.speed,toCamp=a.target.x===st.hx&&a.target.z===st.hz;   // the camp is reached exactly; the joints of the cable within a metre
     const over=toCamp?arrive(sim,a,a.target,dt,spd):dist(a,a.target)<.8||(sim.moveActor(a,a.target,dt,spd),false);
-    if(over){a.target=null;delete a.nav;a.state='GUARD';}
+    if(over){a.target=null;delete a.nav;a.state='GUARD';a.crouched=true;}   // a man of the team who stops kneels (at the camp, at a joint of the cable), in this very tick: none of the three ever stands still
   }else applyAct(sim,a,st);
   return true;
 }
