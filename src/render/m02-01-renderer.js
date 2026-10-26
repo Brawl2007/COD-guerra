@@ -134,11 +134,19 @@ export class M02BenchRenderer {
     this.qualityProfile = M02_QUALITY_PROFILES[quality] ?? M02_QUALITY_PROFILES.medium;
     this.lightingPreset = M02_LIGHTING_PRESETS[lighting] ?? M02_LIGHTING_PRESETS.afternoon_1939_09_09;
 
+    // Software WebGL pays the multisample cost on the CPU. Keep the complete
+    // materials and geometry, but reserve MSAA for hardware rasterizers.
+    const probe=document.createElement('canvas').getContext('webgl2',{antialias:false});
+    const debug=probe?.getExtension('WEBGL_debug_renderer_info');
+    this.softwareRasterizer=Boolean(debug&&/swiftshader|llvmpipe|software/i.test(probe.getParameter(debug.UNMASKED_RENDERER_WEBGL)));
+    probe?.getExtension('WEBGL_lose_context')?.loseContext();
+
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: this.qualityProfile.id !== 'low',
+      antialias: this.qualityProfile.id !== 'low' && !this.softwareRasterizer,
+      alpha: false,
       powerPreference: 'high-performance',
-      preserveDrawingBuffer: true,
+      preserveDrawingBuffer: false,
     });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1071,6 +1079,10 @@ export class M02BenchRenderer {
     // Three.js camera looks down -Z when rotation.y = 0, so yaw = -angle - PI/2.
     this.camera.rotation.y = -player.angle - Math.PI / 2;
     this.camera.rotation.x = player.pitch;
+    const shake=Math.min(this.sim.audiovisual.accessibility.reducedCameraShake?.008:.045,this.sim.audiovisual.cameraShake.amplitudeRad);
+    this.camera.rotation.x+=Math.sin(this.sim.clock*29)*shake;
+    this.camera.rotation.y+=Math.sin(this.sim.clock*23+1)*shake*.65;
+    this.camera.rotation.z=Math.sin(this.sim.clock*19)*shake*.4;
 
     // Subtle weapon viewmodel bob and ADS offset
     const bob = player.moving ? Math.sin(this.sim.clock * (player.sprinting ? 11 : 7.5)) * 0.012 : 0;

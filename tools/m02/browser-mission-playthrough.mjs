@@ -9,7 +9,7 @@ let page;
 try{
  page=await browser.newPage({viewport:{width:480,height:270}});
  page.on('pageerror',e=>report.errors.push(e.stack??e.message));
- await page.goto('http://127.0.0.1:4290/COD-guerra/m02.html?quality=low&debug=1');
+ await page.goto(`${process.env.M02_BASE_URL??'http://127.0.0.1:4290/COD-guerra'}/m02.html?quality=low&debug=1`);
  await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled,null,{timeout:120000});
  await page.evaluate(async()=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot();});
  await page.click('#mission-start');
