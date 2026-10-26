@@ -67,11 +67,11 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     fogColor: 0x1c2432,
     fogNear: 38,
     fogFar: 230,
-    hemiSky: 0x3b4d6b,
-    hemiGround: 0x1c1a17,
-    hemiIntensity: 0.36,
+    hemiSky: 0x8ea1bd,
+    hemiGround: 0x3f4653,
+    hemiIntensity: 0.85,
     sunColor: 0x8aa8d6,
-    sunIntensity: 0.42,
+    sunIntensity: 0.7,
     sunPosition: [40, 62, -45],
   }),
   morning_1939_09_10: Object.freeze({
@@ -339,6 +339,10 @@ export class M02BenchRenderer {
   }
 
   #buildStaticWorld() {
+    // Reuse the two existing interior fills at this cell's actual buildings.
+    // They approximate bounced light rather than leaving B/C lit from A's rooms.
+    const fills=this.sim.activeCellId==='B'?[[-43,2.5,-24],[28,2.8,-26]]:this.sim.activeCellId==='C'?[[-20,2.8,-16],[24,2.8,-22]]:[[-33,2.45,-13],[22,3.1,-31]];
+    for(const [index,light]of [this.b01InteriorLight,this.b02InteriorLight].entries()){light.position.set(...fills[index]);light.intensity=4;}
     disposeM02ArchitectureBatches(this.staticGroup);disposeM02ArchitectureBatches(this.decorativeGroup);
     this.staticGroup.clear();
     this.roofsGroup.clear();

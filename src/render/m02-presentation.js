@@ -30,7 +30,7 @@ export class M02Presentation {
     this.stepAt = 0;
     this.characters = new M01Characters(scene, { ik:false });
     this.weaponScene = new THREE.Scene();
-    this.weaponScene.add(new THREE.HemisphereLight(0xdce6ed, 0x585245, 2));
+    this.weaponFill=new THREE.HemisphereLight(0xdce6ed,0x585245,2);this.weaponScene.add(this.weaponFill);
     // M01 viewmodel lives in camera space and has its own depth pass.
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
@@ -41,6 +41,10 @@ export class M02Presentation {
   }
   unlockAudio() { this.audio.init(); }
   update(sim, quality) {
+    const night=sim.horizon.temporalState==='T1';
+    this.weaponFill.intensity=night?1:2;
+    this.weaponFill.color.setHex(night?0x9fb3d2:0xdce6ed);
+    this.weaponFill.groundColor.setHex(night?0x454955:0x585245);
     if (sim.clock < this.resetClock) { this.audio.resetPresentation(sim.clock); this.fireTimes.clear(); this.stepAt=sim.clock; }
     this.resetClock = sim.clock;
     this.audio.setQuality(quality);
