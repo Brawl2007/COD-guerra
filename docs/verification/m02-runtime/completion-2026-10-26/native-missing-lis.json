@@ -1,0 +1,175 @@
+{
+  "startedAt": "2026-10-26T11:37:58.810Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.25,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 9.563
+    },
+    {
+      "label": "A:O01",
+      "clock": 3.7999999999999945,
+      "health": 100,
+      "pos": [
+        -9.058322041499379,
+        -171.77585703112788
+      ],
+      "realSec": 14.826
+    },
+    {
+      "label": "A:O02",
+      "clock": 27.250000000000252,
+      "health": 84,
+      "pos": [
+        6.12257528251337,
+        -61.23016296219264
+      ],
+      "realSec": 69.976
+    },
+    {
+      "label": "A:O03",
+      "clock": 34.000000000000206,
+      "health": 52,
+      "pos": [
+        24.166839263541306,
+        -38.37800621711858
+      ],
+      "realSec": 79.628
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 39.54999999999989,
+      "health": 36,
+      "pos": [
+        36.75423788370522,
+        -25.208608409365798
+      ],
+      "realSec": 86.522
+    },
+    {
+      "label": "B:O04",
+      "clock": 40.44999999999984,
+      "health": 36,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 88.421
+    },
+    {
+      "label": "B:O05",
+      "clock": 140.4499999999977,
+      "health": 36,
+      "pos": [
+        0.18610185147053204,
+        -69.75547274124239
+      ],
+      "realSec": 254.158
+    },
+    {
+      "label": "C:O06",
+      "clock": 141.24999999999787,
+      "health": 46,
+      "pos": [
+        0,
+        -72
+      ],
+      "realSec": 255.42
+    },
+    {
+      "label": "C:O07",
+      "clock": 184.65000000000774,
+      "health": 14,
+      "pos": [
+        4.332664352595738,
+        -0.7859402615475253
+      ],
+      "realSec": 315.399
+    },
+    {
+      "label": "C:O08",
+      "clock": 190.50000000000907,
+      "health": 14,
+      "pos": [
+        -0.7161417410594727,
+        -0.12142781887393929
+      ],
+      "realSec": 322.016
+    },
+    {
+      "label": "C:O09",
+      "clock": 242.70000000002094,
+      "health": 14,
+      "pos": [
+        -54.89871879138473,
+        54.12542070039902
+      ],
+      "realSec": 389.618
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "completed": true,
+  "result": {
+    "schema": "cod-guerra-campaign-bridge-m02-to-m03-v1",
+    "missionId": "M02",
+    "nextMissionId": "M03",
+    "completed": true,
+    "historicalDates": {
+      "offensiveStart": "1939-09-09",
+      "reorganizationMorning": "1939-09-10",
+      "operationalShift": "1939-09-12/13",
+      "warsawArrival": "1939-09-25",
+      "generalRetreatOnMorningSept10": false
+    },
+    "flags": {
+      "m02.completed": true,
+      "m02.axis": "orchard",
+      "m02.lis_status": "missing",
+      "m02.malek_status": "down",
+      "m02.wierzba_status": "fit",
+      "m02.pomar_wounded_marked": false,
+      "m02.fired_on_wounded": false,
+      "m02.supply_reached": 2,
+      "m02.corridor_held": true,
+      "m02.last_group_survivors": 12,
+      "m02.prep_avanco_ok": true,
+      "m02.ea0_posto_cleared": true,
+      "m02.transicao_tab_pronta": true
+    },
+    "supplies": {
+      "waterDelivered": true,
+      "ammoDelivered": true
+    },
+    "transitionIdsApplied": [
+      "TR01",
+      "TR02",
+      "TR03",
+      "TR04",
+      "TR05"
+    ],
+    "totalHostilesPlanned": 46,
+    "m03ImportState": {
+      "piotrCondition": "weathered_veteran",
+      "promotedToCorporalAutomatically": false,
+      "lisEntry": {
+        "status": "missing",
+        "presentInShelter": false,
+        "combatCapableNormalPatrol": false,
+        "requiresSupportWalking": false,
+        "canSpeakCanonicalWaterLine": false,
+        "canonicalWaterLineSpeaker": null,
+        "canonicalWaterLineText": null
+      },
+      "waterReserveBonus": "small_water_reserve_available",
+      "lastGroupSurvivorsCount": 12
+    }
+  },
+  "finishedAt": "2026-10-26T11:44:41.862Z"
+}

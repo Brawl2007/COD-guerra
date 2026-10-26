@@ -1,92 +1,72 @@
-# M02 — Continuação efetiva após publicação do Claude API
+# M02 — candidata jogável e continuidade
 
-Atualizado em 2026-10-25. Branch única publicada: `codex/m02-recovery-v1`. Último checkpoint de código: `caf3541` (atlas e interações), após `7f25739` (GLB/arma/áudio).
-**Estado atual: integração de apresentação e interações em progresso; NÃO declarar M02 concluída.**
+Atualizado em 2026-10-26. Candidata única: `codex/m02-recovery-v1`.
+Código atual: `9d8152d`, após `d4bc202`, `9f90614`, `f2c8644`, `49de368`, `f878820`, `db9d04d`, `878458f`, `c065f7e` e `c08f06a`.
+Estado: missão FPS C01–C12 implementada na candidata, com percurso contínuo de produção concluído e apresentação M01 integrada. O caso browser longo continua instável no limite de 240 s do SwiftShader. Não confundir esta entrega com merge em main, deploy, CI integral verde ou aprovação artística do proprietário.
 
-## Origem recuperada e decisões
+## Recuperação verificada
 
-- `git fetch origin` executado. O refspec original só incluía main; foi necessário fetch explícito de `api/m02-soldados-visual-v1`.
-- Gemini continua em `56e98cbf774d3b717f4f228ce5f66a7194f4d7a5`.
-- Claude visual foi publicado em `d08bb7abf3dd6bb86431a26131b9652b80cf68b6`, com commits `8bf3131` e `d08bb7a`. Base comum com Gemini: `41d990d`; portanto não inclui as áreas B/C recentes. `api/m02-conclusao-v1` não foi encontrada no remoto.
-- Não houve merge automático nem substituição do renderer por uma versão antiga. O rig Claude foi extraído com referência de origem para `src/render/m02-claude-soldier-rig.js`, conservando a sua implementação como fallback. O historial original permanece no ref remoto; não se atribui essa implementação ao Codex.
-- Checkpoint de implementação: `7f25739` — adaptação dos personagens GLB, arma e áudio M01; commit anterior `3119892` conserva o diagnóstico inicial.
+Consulta remota em 2026-10-26: Gemini `gemini/m02-01-quinta` em `56e98cbf774d3b717f4f228ce5f66a7194f4d7a5`; Claude `api/m02-soldados-visual-v1` em `d08bb7abf3dd6bb86431a26131b9652b80cf68b6`. `api/m02-conclusao-v1` continua ausente. A base comum Claude/Gemini é `41d990d`; o renderer antigo do Claude não foi sobreposto ao Gemini. O rig Claude preservado em `m02-claude-soldier-rig.js` serve como fallback e pose de rendição. Recuperação inicial e provas anteriores: `M02_RECOVERY_HISTORY_2026-10-25.md`.
 
-## Implementação presente
+## Jogo entregue na candidata
 
-- `M02Presentation` reutiliza **M01Characters**, seus modelos, clips, seleção LOD, batching e resolução de animações, sem editar ficheiros M01. Traduz cópias dos atores M02 e os temporizadores de recarga; regista instantes dos eventos reais de disparo apenas para apresentação.
-- **M01ViewModel** fornece mãos/arma GLB, recarga, ferrolho, mira e efeitos da arma numa passagem de render própria. Estatísticas somam as passagens de cenário e arma.
-- **AudioManager M01** recebe tiros reais do jogador, rajadas dos atores, explosões e passos. Web Audio é desbloqueado por gesto. As opções de tinnitus continuam a controlar a escala de concussão. Não há vozes gravadas novas nem garantia de cobertura de todos os eventos narrativos/horizonte.
-- Soldados sem GLB disponível mantêm o rig articulado Claude. A rendição continua no fallback de mãos levantadas. A adaptação dos identificadores de apresentação permite reutilizar RKM/MG M01 sem renomear os atores da simulação. Variantes de equipamento específicas, como MP38, ainda exigem revisão.
-- Biblioteca **M01MaterialLibrary** fornece o atlas às paredes, coberturas, portas e objetos da M02, com UVs métricos no cenário inicial. Reconstituições das células usam os materiais partilhados; rever a escala UV nessas reconstruções.
-- `m02-player-actions.js` liga [E] à transição A→B após o objetivo COMPLETE, recolha física de abastecimento, reorganização B e passagem a C apenas com abastecimentos resolvidos/corredor seguro e jogador no destino, e epílogo após O09 junto da casa de socorro B12. Portas e giz mantêm prioridade. Não troca regras de combate, RNG ou schema.
-- Build Vite inclui agora `dist/m02-01.html`; favicon explícito evita o 404 anterior. O título não anuncia missão concluída. O delta usado na telemetria visual vem do frame real; a simulação continua com o limite de dt anterior.
+- Entrada de produto: `m02.html`. `m02-01.html` conserva a bancada. O índice liga a missão. Build Vite gera ambas as entradas.
+- Menu, carregamento de assets, início C01, pausa por Esc/perda de foco ou pointer lock, morte e reinício de checkpoint, continuar após recarregar a página, três cartões de epílogo e debrief. Atalhos de salto e API mutável apenas com `?debug=1`; a entrada normal expõe só diagnósticos de leitura.
+- Controlos: WASD, Shift, C, rato, clique/Espaço, V/botão direito, R, G, E; Z/X/B para ordens; F5 guarda checkpoint. HUD apresenta condição, munições, objetivo e direção/distância, sem IDs técnicos no produto.
+- Interações reais ligam quinta, abastecimentos, reorganização, Leśmierz e saída C12. O fim só está disponível após O09 e na casa B12. A porta B12 já não impede o comando de saída.
+- Lis aguarda contacto em C11, caminha pela navegação até B12 quando auxiliado e conserva o estado de ferido. Ignorá-lo pode produzir desaparecido; não é evacuado automaticamente pelo contacto. O grupo LG01–LG12 é apresentado com soldados GLB durante a travessia.
+- Explosões podem danificar a roda e perder volumes não entregues, com oclusão por paredes; as consequências e a reorganização são persistentes e não duplicam água/munições. A água nunca reduz a vida de um jogador saudável.
 
-## Validação e evidência
+## Reutilização da M01 e limites de arte
 
-- `node --test tests/m02*.test.js`: **35 PASS, 0 FAIL, 0 SKIP** (inclui testes novos de tradução sem alteração do snapshot, bloqueio de saltos e transição contextual com arma preservada).
-- `npm run build`: **PASS**, com aviso de bundle grande. Entrada M02 presente.
-- Browser M02 integral por cenas: **2 PASS**, incluindo asserções existentes, 16 capturas e verificação de GLB/arma/áudio/snapshot. Fonte e configuração não foram editadas durante a execução final desse conjunto.
-- Smoke de produção em Chromium, via preview porta 4283: HTTP **200**, atlas Low com 3 texturas e 13 materiais, 8 variantes de assets, arma GLB ativa, sem falha reportada do atlas. Inspeção visual das capturas de produção/fachada/Área C executada.
-- O teste de áudio foi reforçado para usar Espaço no controlador normal, em vez de chamar o sintetizador diretamente; **PASS** na execução focada final: 1 tiro real registado, contexto running e pico de amostra **0,187886**. Gravação MediaRecorder evita perder o sinal quando o frame de software atrasa o processamento da tecla. Tentativas anteriores mediam antes do input e falharam; não foram contadas como sucesso. Log: `browser-input-audio.txt`.
-- A suíte Node global `npm test` foi **interrompida**, não aprovada: testes longos M01 continuavam a executar. Não somar os casos parcialmente executados nem afirmar regressão global verde. Os 35 testes M02 e as verificações browser acima são os resultados concluídos.
-- Evidência versionada: `docs/verification/m02-runtime/recovery-2026-10-25/`. Capturas são verificações por cenas, não playtest contínuo. Telemetria do spec legado ainda contém `renderFrame(0.016, 0.5)`; os seus 62,5 FPS não são benchmark.
-- Código da simulação, layouts, testes anteriores e ficheiros M01 não alterados. Main, produção e remoto não modificados. Sem force-push. Push normal da branch confirmado. PR não criado: a operação de leitura `gh api repos/Brawl2007/COD-guerra/pulls?...` devolveu Forbidden em api.github.com. Git HTTPS read/write funciona; não inferir falta de acesso Git nem pedir token apenas a partir do estado do gh.
+- `M01Characters`: modelos, clips, LOD, batching, animação de movimento/disparo/recarga, mortos e feridos. Adaptadores traduzem cópias, sem passar autoridade de combate ao renderer.
+- `M01ViewModel`: mãos, espingarda, mira, recarga, ferrolho, recuo e efeitos em passagem própria. `WeaponLighting` M01 fornece fill/key e ambiente reflexivo, sincronizados com o céu, sol e câmara; sem reconstruir a iluminação da arma. RKM e MG34 usam os modelos M01. A MP 38 tem silhueta original de 0,833 m e dois LODs, gerados pelo pipeline GLB/PBR M01; fonte, autoria e checksums documentados em ASSET_CREDITS e manifesto.
+- `M01MaterialLibrary`, `M01TerrainMaterial`, kit GLB de vegetação, política LOD, materiais de folhagem e `M01Atmosphere`: terreno, atlas, árvores, relva, céu, nuvens, fumo e iluminação. Arquitetura acrescenta remates, beirais, cumeeiras, chaminés e portadas. Carroça/caixas/barris são assets M01. Batching estático reaproveita a implementação M01 e mantém vértices/UVs; portas e telhados com ocultação mantêm identidade.
+- `AudioManager`: disparos causais e rajadas, mecanismos, passos, explosões, vento/frente distante e oclusão. MP 38 tem identidade própria no sintetizador partilhado. Áudio desbloqueado por gesto e medido na saída Web Audio; não há novas vozes gravadas. Legendas narrativas preservadas.
+- A qualidade máxima mantém os sistemas da M01. A noite foi revista para manter inimigos legíveis; as duas luzes interiores existentes acompanham os edifícios B/C. O contexto é opaco e não conserva desnecessariamente o framebuffer; MSAA fica disponível em GPU e é desligado quando o driver se identifica como rasterizador por software. Modelos e materiais não são substituídos para passar testes. Nenhum número de FPS sintético é benchmark.
+- Os humanos M01 são estilizados/provisórios, tal como na candidata M01. Reutilizar os seus sistemas não demonstra por si só superioridade artística. Capturas e revisão visual acompanham a entrega; não se afirma fotorealismo nem aprovação humana inexistente.
 
-## Ainda necessário para concluir a missão
+## Correções na simulação e saves
 
-1. Jogar C01–C12 num percurso contínuo, com movimento/combate e [E], sem saltos da bancada ou injeção de estado. Os atalhos de inspeção continuam disponíveis e não constituem conclusão.
-2. Completar a revisão de animações/especialistas/feridos e armas de cada equipa, incluindo grupo LG01..LG12 e equipamento não coberto pela M01. Exercitar falhas opcionais e restauros em todas as células.
-3. Reutilizar vegetação, terreno e restantes efeitos M01 em adaptadores adequados às coordenadas M02. Os materiais e GLB melhoram a bancada, mas o cenário continua insuficiente para aprovação visual final.
-4. Cobrir som distante, transições, mecanismos e narrativa; validar mixes/acessibilidade e áudio em sessões reais. O teste de amostras não substitui audição humana.
-5. Validar orientação e guardas das interações em B/C por controlos normais, perdas de abastecimentos, feridos e saída; repetir saves/checkpoints e determinismo em casos adversos. A simulação existente não foi reescrita para mascarar falhas.
-6. Só depois preparar revisão final/PR na candidata única. Sem merge main, deploy, force-push ou promoção de estado sem evidência.
+Limites B/C deixam de produzir NaN; a composição da área A inclui a trincheira P1 e o corredor C01 sem alterar o catálogo original da bancada de 100 × 150 m. Um passo de movimento nunca salta de -175 para -100. Postura inicial protegida por cobertura física. Temporizadores de guarnições são relativos à entrada na célula. Colapso de moral da quinta não se propaga às reservas EC2. MGs B/C percebem a partir da sua própria posição. A aquisição contra o jogador respeita os 1,2 s de reação do perfil Soldado M01, com estado persistido no ator.
 
-## Ambiente reutilizável
+Snapshots conservam RNG, granadas em voo, sequência, locks de portas e revisão da navegação. Saves antigos continuam aceites quando não têm os campos opcionais; coordenadas não finitas são rejeitadas sem destruir a sessão. Checkpoints semânticos e schema de campanha preservados. Produto usa ticks fixos de 50 ms e consome ações únicas uma vez por tick. Persistência local: `cod-guerra:checkpoint:m02:v1`.
 
-`install_script` e `start_skill` estão guardados no rascunho. O start_skill foi atualizado com recuperação Claude confirmada, nova entrada de produção, comandos de testes e limitações. Publicação do ambiente pertence ao proprietário; não foi efetuada nem foi verificada restauração numa tarefa nova. Usar o checkout existente, sem worktree por defeito.
+## Validação concluída e limite conhecido
 
----
+- Node M02: **49 PASS**, incluindo regressões de movimento, combate, reentrada/saves/RNG/granadas, abastecimentos, Lis, sessão, GLB MP38 e batching. Evidência `node-m02.txt`.
+- Áudio partilhado: **64 PASS**, incluindo toda a rota M01 sem mutação de simulação/RNG. Evidência `node-shared-audio.txt`.
+- Assets/sistemas M01 reutilizados: **42 PASS**. Evidência `node-shared-assets.txt`.
+- Build de produção e reprodução byte a byte dos GLB MP38: PASS. O aviso de bundle grande permanece.
+- Percurso nativo final de produção no SHA `9f906142128474cf876382b11136faa914049833`: **C01–C12, epílogo, debrief e pacote M03 válidos**, **0 mortes, 0 erros de página, vida final 74, Lis ferido evacuado fisicamente, 12/12 homens**. Duração simulada 256,15 s; perfil Low/480 × 270 para o percurso e debrief 1280 × 720. 101 clips, GLB/arma ativos, sem falhas de assets declaradas. Fonte: `native-final.json` e log. O planner só observa e produz controlos; não instala snapshots, teletransporta, mata inimigos, cura ou escreve tempo/RNG. Não é playtest humano nem benchmark gráfico.
+- A simulação não mudou após esse SHA. Os commits posteriores tratam testes, documentação e polimento de iluminação/apresentação. A sua revisão visual é separada do percurso.
+- O percurso anterior v6 também chegou ao fim sem mortes (vida 14, 12/12), com Lis desaparecido por falta de contacto. Não tinha SHA no harness antigo; manter essa limitação explícita em `native-missing-lis.json`.
+- Browser: o caso legado completo de cenas/portas/tiros/granadas/abastecimentos/M03 e asserção de erros **passou em 3,4 min** na execução `browser-suite.txt`, usando o `snapIfMissing` já existente para reutilizar 12 capturas anteriores. As quatro restantes e as 30 chamadas de telemetria foram executadas de novo. Origem das imagens registada em `browser-capture-cache.json`; não tratar as 12 imagens antigas como novas provas de arte.
+- A mesma execução teve 3 PASS e 1 FAIL numa nova asserção de qualidade que lia o tier antes do frame aplicar High. Foi corrigida a espera para exigir High e quatro texturas carregadas; a asserção foi preservada/reforçada e o caso focado passou (`browser-auto-quality.txt`).
+- A repetição posterior ao polimento (`browser-repeat.txt`) teve **3 PASS, 1 TIMEOUT**: áudio/GLB/snapshot, qualidade automática/High e sessão/persistência passaram; o caso longo excedeu 240 s. A captura fria de 16 imagens também excedeu esse limite (`browser-cold-captures.txt`). **Não se declara uma suite browser final integral verde.** Manter asserções e timeout; não converter a telemetria sintética em FPS reais. Há limitação de custo/variância gráfica no SwiftShader desta instância (quota de CPU observada: 4 núcleos).
+- Teste de áudio por input real registou pico 0,468053758 na execução com o caso de cenas aprovado, contexto running. A verificação usa MediaRecorder para não medir antes do gesto; som sintetizado M01, sem vozes gravadas novas.
+- Após ligar o `WeaponLighting` M01, o caso focado GLB/arma/áudio/snapshot passou novamente no código `9d8152d`: 1 PASS, pico 0,187596336 e contexto running (`browser-weapon-lighting.txt`). As cinco capturas finais foram revistas nesse código, incluindo os reflexos antes ausentes da arma. `git diff --exit-code 9f90614 9d8152d -- src/game src/world src/config.js missions/m02-bzura` confirma a simulação idêntica à do percurso completo.
+- Inspeção final: cinco capturas 1280 × 720, High salvo quinta Medium, na entrada de produto. Fixtures pausadas e identificadas; separadas do percurso. Terreno, vegetação, GLB, MP38 e atlas ativos sem erros de página. Comparação visual também com a referência M01 V6 Medium; não é certificação de superioridade artística. Relatório e imagens na pasta de evidência.
+- `npm test` global foi interrompido no ciclo anterior; não se declara toda a campanha M01/M02 verde. Suites concluídas acima estão separadas das não concluídas.
 
-## Histórico inicial — superado pela recuperação acima
+Evidência atual em `docs/verification/m02-runtime/completion-2026-10-26/`; histórico em `recovery-2026-10-25/`.
 
-# M02 — Estado real de recuperação
+## Reproduzir
 
-Data: 2026-10-25. Estado: **BLOQUEADA A CONTINUAÇÃO DO CLAUDE API; bancada Gemini executável, missão não concluída**.
+Node 24, `npm ci --cache /workspace/.npm-cache --no-audit --no-fund`; `npm run dev -- --port 5173`. Verificar HTTP 200 em `/COD-guerra/m02.html`, atributo `data-mission="m02"` e módulo `m02-01-main.js`. Menu é criado pelo JS. Perfil de inspeção pode ser explicitado com `?quality=high`.
 
-## Git e origem
+Testes M02: `node --test tests/m02*.test.js`. Build: `npm run build`. Browser: `CHROME_EXECUTABLE=/usr/bin/chromium M02_ARTIFACT_DIR=/tmp/m02-browser npx playwright test --config tools/m02/playwright-m02-01.config.js`. Usar diretório novo e um browser SwiftShader de cada vez. O spec legado usa argumentos de tempo sintéticos na telemetria final: não reportar esses FPS como reais.
 
-- Checkout inicial limpo: branch `work`, HEAD `6697956f3c684f06a856ddc4c6501bbb053bd438` (merge M01 PR #76). Não continha M02.
-- Consulta real a `git ls-remote --heads origin '*m02*' '*M02*'`: encontrada `gemini/m02-01-quinta`, HEAD `56e98cbf774d3b717f4f228ce5f66a7194f4d7a5`. Não encontradas `api/m02-soldados-visual-v1` nem `api/m02-conclusao-v1`. Isso não demonstra que não existam noutro computador.
-- Base Gemini recuperada por fetch; commits M02 preservados: `bef32e8`, `41d990d`, `df47781`, `bca39bd`, `56e98cb`, sobre `3c8e576`.
-- Branch local de recuperação: `codex/m02-recovery-v1`, criada diretamente sobre a base Gemini. Sem merge em main, push, deploy, reset ou alteração de código de jogo.
-- `M02_EXECUTION_STATE.md` não existia; o documento anterior disponível é `M02_HANDOFF.md`. As suas alegações de missão completa e desempenho não foram aceites como evidência atual.
-- Foi solicitado ao proprietário o patch, ficheiros ou branch do Claude API, ou confirmação de que só existe a base Gemini. Aguardando resposta; não iniciar adaptação duplicada de soldados/armas/áudio antes de recuperar essa entrega.
+Playthrough de produção: `M02_PLAY_OUT=/tmp/m02-native bash tools/m02/run-native-playthrough.sh`. Faz build, congela dist e helpers num diretório temporário, arranca servidor 4291, regista SHA e executa o piloto com controlos de jogador. Necessita Chromium e porta 4291 livre. Não editar fontes durante validação browser. Inspeções por fixtures devem ser identificadas e separadas do percurso contínuo.
 
-## Ambiente e validação executada
+## Ambiente e segurança
 
-- Node `v24.19.0`, npm `11.9.0`, Chromium `/usr/bin/chromium`.
-- Primeiro `npm ci` falhou porque o cache predefinido `/home/agent/.npm` não era gravável. Resolvido com `npm ci --cache /workspace/.npm-cache --no-audit --no-fund`: 21 pacotes instalados. Lockfile, verificações de integridade e TLS preservados.
-- `node --test tests/m02*.test.js`: **32 PASS, 0 FAIL, 0 SKIP**. Log da instância: `/tmp/cod-guerra-m02-tests.log`.
-- `npm run build`: **PASS**, aviso de bundle grande. É build da aplicação principal: `dist/m02-01.html` NÃO é gerado. Não valida distribuição de produção da M02.
-- `CHROME_EXECUTABLE=/usr/bin/chromium M02_ARTIFACT_DIR=/tmp/cod-guerra-m02-baseline npx playwright test -c tools/m02/playwright-m02-01.config.js`: **1 FAIL**, na asserção final `consoleErrors === []`, após produzir as 16 capturas e telemetria. Um erro HTTP 404; inspeção CDP posterior identificou `/favicon.ico`. Não modificar/enfraquecer a asserção. Log: `/tmp/cod-guerra-m02-browser.log`.
-- Arranque com `PORT=4173 node tools/m02/run-m02-01.mjs`: HTTP **200**, `window.m02Bench` presente, HUD do objetivo O01 e amostras de render verificadas no Chromium. Este servidor de desenvolvimento deve ser reiniciado em cada tarefa.
-- Capturas inspecionadas: `/tmp/cod-guerra-m02-boot.png` e `/tmp/cod-guerra-m02-baseline/m02-05-area-c-lesmierz-sp03.png`. Mostram bancada, soldados geométricos, arma simplificada, edifícios e cenário pouco detalhados. Não constitui playtest integral.
-- A telemetria final do spec injeta `renderFrame(0.016, 0.5)`: os 62,5 FPS e 0,5 ms de simulação desse trecho são valores derivados dos argumentos, NÃO medições reais de desempenho. Não reutilizar essas alegações.
-- Suíte M01 integral e playtest contínuo C01–C12 não executados nesta recuperação.
-- Logs/capturas em `/tmp` são evidência desta instância, não artefactos Git nem prova de restauração futura.
+Rascunho de `install_script` e `start_skill` guardado pelo plugin cloud-environment-onboarding, com startup, verificações e percurso M02. Arranque 5173 e HTTP de produto testados; guardar rascunho não publica snapshot. Revisão/gravação nas definições e publicação do ambiente pertencem ao proprietário; não bloqueiam o desenvolvimento.
 
-## Lacunas confirmadas na base recuperada
+Main não alterada, sem deploy ou force-push. Git HTTPS read/write funciona. API GitHub devolveu Forbidden no ciclo anterior; não pedir token a partir do estado do gh. Preservar commits e autoria; não fazer merge automático das branches divergentes. PR só pode ser declarado criado com resposta válida da API.
 
-1. `src/render/m02-01-renderer.js` constrói soldados com caixas/esferas e arma com caixa/cilindro; ainda não integra modelos GLB, clips e apresentação M01. O renderer já importa a política LOD M01, mas isso não equivale a reutilizar a biblioteca de personagens.
-2. `M02AudiovisualDirector` regista eventos espaciais; o controlador M02 não liga um motor de áudio audível. Testes dos registos não comprovam som no navegador.
-3. Interface de bancada expõe teletransportes e saltos diretos de cenas. A suíte usa teletransportes, chamadas diretas e snapshots; não demonstra progressão C01–C12 por controlos normais.
-4. Falta entrada M02 no build de produção; o runner Vite de desenvolvimento funciona.
-5. Falta favicon explícito em `m02-01.html`; o pedido automático gera o 404 que reprova a suíte.
+## Continuidade e promoção
 
-## Configuração reutilizável guardada
+A implementação jogável está consolidada nesta candidata. Não repetir recuperação Claude/Gemini nem reconstruir os sistemas M01 já partilhados. Para promoção posterior, resolver/medir o custo do caso gráfico longo no ambiente de CI ou numa GPU-alvo, executar a suite global e obter a revisão de jogo/arte apropriada. Estas verificações não foram substituídas por testes de estado. Main, produção e force-push continuam fora da autorização deste ciclo.
 
-Rascunho do ambiente com `install_script` (npm ci e cache gravável) e `start_skill` (checkout existente, sem worktree por defeito, recuperação Git, arranque M02, prontidão e comandos de testes com Chromium e diretório novo de capturas). Guardado com sucesso; revisão/gravação nas definições e publicação pelo proprietário ainda pendentes. Nenhuma alegação de publicação ou validação numa tarefa nova.
-
-## Próxima ação
-
-Obter a entrega Claude ou confirmação de inexistência antes de programar a continuação. Comparar ancestralidade e diffs, preservar autoria e integrar só o que falta numa candidata única. Depois reutilizar sistemas M01 por adaptadores de apresentação sem alterar autoridade da simulação M02; validar soldados/animações, armas, áudio audível, cenário e percurso real C01–C12. Preservar checkpoints, saves, RNG e testes. Corrigir o favicon no contexto da entrega recuperada e repetir o browser com um diretório de artefactos novo. Resolver a entrada de build antes de declarar distribuição de M02 pronta.
+Para regressões: reproduzir primeiro com o save/seed e controlos reportados; preservar RNG, granadas em voo, locks, revisão de navegação e consequências. Capturas por fixtures nunca substituem um percurso contínuo. A publicação do ambiente é distinta de fazer push desta candidata.

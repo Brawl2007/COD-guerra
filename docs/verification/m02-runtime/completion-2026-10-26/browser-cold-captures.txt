@@ -1,0 +1,47 @@
+[2m[WebServer] [22m(node:45163) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:45187) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45187) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/m02-01-quinta.spec.js:9:3 › M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verification & Captures › Boots m02-01.html without errors, verifies doors/ballistics/routes/squad-combat/grenades/C04, captures screenshots, and records telemetry (4.2m)
+(node:45641) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45641) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 audio probe {"peak":0.3828863501548767,"shots":5,"state":"running"}
+  ✓  2 tests/browser/m02-01-quinta.spec.js:276:1 › M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation (39.9s)
+  ✓  3 tests/browser/m02-mission.spec.js:3:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (44.3s)
+
+
+  1) tests/browser/m02-01-quinta.spec.js:9:3 › M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verification & Captures › Boots m02-01.html without errors, verifies doors/ballistics/routes/squad-combat/grenades/C04, captures screenshots, and records telemetry 
+
+    [31mTest timeout of 240000ms exceeded.[39m
+
+    Error: page.screenshot: Test timeout of 240000ms exceeded.
+    Call log:
+    [2m  - taking page screenshot[22m
+
+
+      207 |     expect(c12State.flags['m02.lis_status']).toBe('wounded_evacuated');
+      208 |     expect(c12State.m03ExportPackage.nextMissionId).toBe('M03');
+    > 209 |     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'm02-05-c12-epilogue-m03-bridge.png') });
+          |                ^
+      210 |
+      211 |     // 16. M02-06 Document L & Accessibility + Weapon Clearance Verification in Browser
+      212 |     await page.evaluate(() => {
+        at /workspace/COD-guerra/tests/browser/m02-01-quinta.spec.js:209:16
+
+    Error Context: ../../tmp/m02-01-playwright-results/m02-01-quinta-M02-01-M02-0-2f46f-shots-and-records-telemetry/error-context.md
+
+  1 failed
+    tests/browser/m02-01-quinta.spec.js:9:3 › M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verification & Captures › Boots m02-01.html without errors, verifies doors/ballistics/routes/squad-combat/grenades/C04, captures screenshots, and records telemetry 
+  2 passed (5.8m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

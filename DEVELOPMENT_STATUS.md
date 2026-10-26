@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — candidata jogável C01–C12 — 2026-10-26
+
+Branch `codex/m02-recovery-v1`, baseada na M02 Gemini e com recuperação compatível do Claude. Entrada `m02.html`; bancada preservada em `m02-01.html`. Soldados/animações/LOD, arma em primeira pessoa, áudio, terreno, vegetação e atmosfera reutilizam a M01. Percurso contínuo em Chromium concluído com controlos de jogador: sem mortes, vida 74, Lis evacuado fisicamente, 12/12 homens e pacote M03 válido. Estado, SHA, provas, limites dos testes e reprodução em [docs/m02/M02_EXECUTION_STATE.md](docs/m02/M02_EXECUTION_STATE.md). Candidata de desenvolvimento; main e produção não promovidas. O estado histórico da M01 abaixo não é alterado por esta entrega M02.
+
 ## M01 R2-b: fogo polaco real e IA alemã do tabuleiro (aproximação por linhas, supressão, granada de mão, busca) — 2026-10-24
 
 Ramo local `claude/exciting-bohr-k8v5xm-r2b` (de `33896528`, a integração da candidata #80 + bombas R1-a + secção polaca R2-a). **Não publicada**, sem revisão crítica independente, **sem playtest humano**. Ordem do Capitão a partir das queixas do proprietário: «os polacos fazem pouco para contrariar o ataque alemão; os inimigos mostram pouca inteligência; a longa distância não percebo o inimigo; o combate é artificial». Detalhe, tabelas antes / depois, achados e decisões em aberto: `docs/verification/m01-runtime/german-ai-r2b-2026-10-24/README.md`; contrato: `missions/m01-tczew/ENGINE_CONTRACT.md` (R2-b).

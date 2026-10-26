@@ -1,5 +1,9 @@
 # Executar e validar
 
+## M02 — Batalha do Bzura
+
+No checkout existente, usar `npm run dev -- --port 5173`; entrada de produto `/COD-guerra/m02.html`, bancada `/COD-guerra/m02-01.html`. `node --test tests/m02*.test.js` e `npm run build` verificam o alvo M02. O percurso contínuo de produção é reproduzível com `M02_PLAY_OUT=/tmp/m02-native bash tools/m02/run-native-playthrough.sh` (Chromium, porta 4291 livre, um browser por vez). O script usa controlos reais e conserva um relatório com SHA; inspeções por fixtures são separadas. Ver [estado e provas M02](docs/m02/M02_EXECUTION_STATE.md) para comandos browser, configuração do ambiente, saves e limites de desempenho. Não promover main ou produção automaticamente.
+
 ## Onze tarefas parciais aceites — 2026-10-16
 
 O lote `M01-PARTIALS-COMPLETION-INTEGRATION-V1` fecha T02/T03/T05/T06/T07/T14/T24/T26/T34/T36/T41. Fonte aceite `e377a0739906507dee63cd4006a3428efd22c56b`, branch `codex/m01-partials-browser-sampling-repair-v1`; produção idêntica à certificada `9a679c50`. Verificador independente PASS e revisão crítica ACCEPT; provas, limites e histórico no `docs/verification/m01-runtime/partials-completion-integration-v1/HANDOFF.md`. Node874/874, tooling173, build,24rotas causais,24futuros ON/OFF,299ficheiros protegidos, controlos integrais das pontes0 e44regressões acopladas passaram. A captura Stuka foi corrigida e validada separadamente; os runs anteriores42/44 e13/14 continuam FAIL, sem alegar uma execução integral44/44. O handoff contém a execução final e os resultados exatos da correção.
