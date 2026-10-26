@@ -1,0 +1,53 @@
+{
+  "asset": "MP 38",
+  "author": "COD-guerra project, original procedural geometry",
+  "license": "Original project asset; repository license remains to be decided by the owner. No third-party content.",
+  "generator": "tools/assets/m02-mp38/build.mjs",
+  "units": "metres",
+  "axes": "Y up; muzzle -Z; origin at weapon hand socket",
+  "length_m": 0.833,
+  "status": "Reconstructed visual silhouette, not a museum reproduction",
+  "sockets": {
+    "muzzle": [
+      0,
+      0.032,
+      -0.5
+    ]
+  },
+  "files": [
+    {
+      "file": "mp38_lod0.glb",
+      "triangles": 548,
+      "bounds": {
+        "min": [
+          -0.04149999842047691,
+          -0.2565000057220459,
+          -0.5
+        ],
+        "max": [
+          0.02800000086426735,
+          0.09149999916553497,
+          0.3330000042915344
+        ]
+      },
+      "sha256": "77cade8b728db255559b66fb9f55fa95ca63cf506ca7ae1d72612d011ee95b90"
+    },
+    {
+      "file": "mp38_lod1.glb",
+      "triangles": 236,
+      "bounds": {
+        "min": [
+          -0.02800000086426735,
+          -0.2549999952316284,
+          -0.5
+        ],
+        "max": [
+          0.02800000086426735,
+          0.09149999916553497,
+          0.3330000042915344
+        ]
+      },
+      "sha256": "844266338ff3b3edad4856aa170cec93614bf0a703c377e0fa8f20d9a59979be"
+    }
+  ]
+}

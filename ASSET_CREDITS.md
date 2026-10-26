@@ -56,3 +56,7 @@ Historical references: internal T24; MBP Tczew collection Poczt226 (front, 1900�
 ## Fonte Barlow · T50
 
 `assets/fonts/barlow/Barlow-Regular.ttf`: **Barlow Regular**, autoria Jeremy Tribby (The Barlow Project Authors, https://github.com/jpt/barlow), obtida de https://github.com/google/fonts/tree/main/ofl/barlow, licença **SIL Open Font License 1.1** (texto completo em `OFL.txt`, proveniência e SHA-256 em `SOURCE.json`). Servida localmente via `@font-face` (`font-display:block`) com preload; sem pedidos a Google Fonts. A fonte não foi modificada nem convertida (TTF; sem WOFF2 por falta de ferramenta local). A licença global e os restantes assets não são redefinidos.
+
+## MP 38 · M02
+
+`assets/models/provisional/m02/weapons/`: silhueta original procedural da MP 38, autoria **COD-guerra project**, gerada por `tools/assets/m02-mp38/build.mjs` através do pipeline GLB/PBR existente da M01. Dois LODs (548/236 triângulos), comprimento de 0,833 m, socket de mão e boca de fogo, SHA-256 no manifesto; sem conteúdo de terceiros ou extraído de jogos. Materiais e cores de vértice originais; reconstrução visual, sem afirmar reprodução museológica. Mantém os termos dos assets originais do projecto e a decisão pendente do proprietário sobre a licença global. O perfil sonoro é sintetizado pelo AudioManager partilhado, sem gravações de terceiros.

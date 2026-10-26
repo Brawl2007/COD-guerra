@@ -3,17 +3,19 @@ import { M01Characters } from './m01-characters.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { WEAPON_PROFILES } from '../game/m02-combat-ai.js';
 import { AudioManager } from '../core/audio.js';
+import {M02Weapons} from './m02-weapons.js';
 
 // Translated actors and weapon records belong to presentation. The shared renderers
 // read the collision layout; they never decide M02 combat or advance its clock.
 export function m02VisualActor(actor, team, clock) {
   const surrendered = actor.state === 'SURRENDERED';
-  const wounded = actor.state === 'WOUNDED_UNARMED';
+  const wounded = actor.state === 'WOUNDED_UNARMED'||actor.state==='WOUNDED_LIAISON';
   return { ...actor, team, active: !actor.detachedOutOfCell,
     id: actor.weapon === 'rkm_wz28' ? 'szymon_kowal' : actor.id,
-    role: wounded || surrendered || actor.role==='medic' ? 'MEDIC' : 'RIFLEMAN',
+    role: wounded || surrendered || actor.role==='medic'||actor.state==='WALKING_SUPPORTED'||actor.state==='EVACUATED_B12' ? 'MEDIC' : 'RIFLEMAN',
     state: wounded ? 'WOUNDED' : actor.moving ? 'ADVANCE' : actor.shot > 0 ? 'SUPPRESS' : 'GUARD',
     posture: actor.crouched ? 'crouch' : 'stand',
+    pose: actor.state==='EVACUATED_B12'?'seated':actor.pose,
     shot: actor.shot ?? (clock - (actor.lastShotAt ?? -Infinity) < .15 ? .15 : 0),
     reload: actor.reloadingUntil > clock ? {startedAt:actor.reloadingUntil-(WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8)} : null,
     motion: { speed: actor.moving ? (actor.speed ?? (actor.suppressed>.55?2.6:4.1)) : 0 },
@@ -32,7 +34,8 @@ export class M02Presentation {
     // M01 viewmodel lives in camera space and has its own depth pass.
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
-    this.ready = this.characters.load('medium');
+    this.m02Weapons=new M02Weapons();
+    this.ready = Promise.all([this.characters.load('medium'),this.m02Weapons.ready]);
     this.ids = new Map();
     this.resetClock = sim.clock;
   }
@@ -64,6 +67,7 @@ export class M02Presentation {
       }
     }
     this.characters.update(actors, sim.clock, {...sim.player}, quality);
+    this.m02Weapons.update(this.characters,actors);
     if (this.audio.ctx?.state==='running' && sim.player.moving && sim.clock>=this.stepAt) {
       this.audio.footstep('earth', {pace:sim.player.sprinting?'run':'walk'});
       this.stepAt=sim.clock+(sim.player.sprinting?.28:.5);

@@ -21,7 +21,7 @@ const layers=(grains,name)=>grains.filter(g=>g.layer===name);
 const WEAPONS=Object.keys(WEAPON_SOUND_PROFILES);
 
 test('every weapon has its own synthesized identity (spectral and mechanical signature)',()=>{
-  assert.deepEqual(WEAPONS.sort(),['ally_rifle','ckm_wz30','kar98k','kb_wz29','mg34','rkm_wz28']);
+  assert.deepEqual(WEAPONS.sort(),['ally_rifle','ckm_wz30','kar98k','kb_wz29','mg34','mp38','rkm_wz28']);
   const signature=id=>{const g=planWeaponShot(id,20,{key:'identity'}),p=WEAPON_SOUND_PROFILES[id];
     return JSON.stringify([p.crack.hz,p.crack.type,p.body.wave,p.body.hz,p.blast.hz,p.mech.map(m=>m.hz),p.cadence,layers(g,'crack')[0].filter.type]);};
   const signatures=WEAPONS.map(signature);assert.equal(new Set(signatures).size,WEAPONS.length,'no two weapons share a signature');
