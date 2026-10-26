@@ -1103,6 +1103,7 @@ export class M02BenchRenderer {
       player.aiming ? 0.08 : 0,
     );
 
+    this.presentation.weaponLighting.sync({sky:this.hemiLight,sun:this.sunLight,camera:this.camera,daylight:this.sim.horizon.temporalState==='T1'?0:1,pitch:player.pitch});
     this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
     this.environment.update(this.sim,this.qualityProfile.id);
     this.staticGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});
