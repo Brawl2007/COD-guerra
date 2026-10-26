@@ -3,6 +3,7 @@ import fs from 'node:fs';
 const out=process.env.M02_PLAY_OUT??'/tmp/m02-continuous';fs.mkdirSync(out,{recursive:true});
 const browser=await chromium.launch({executablePath:process.env.CHROME_EXECUTABLE??'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const report={startedAt:new Date().toISOString(),method:'Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.',stages:[],deaths:[],errors:[]};
+report.buildCommit=process.env.M02_BUILD_SHA??null;
 const started=Date.now();
 let page;
 try{

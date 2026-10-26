@@ -1,5 +1,6 @@
 import {M02CargoVisuals} from './m02-cargo-visuals.js';
 import {addM02Architecture,applyM02SurfaceUvs} from './m02-architecture.js';
+import {batchM02Architecture,disposeM02ArchitectureBatches} from './m02-static-batching.js';
 import { M02Environment } from './m02-environment.js';
 import * as THREE from 'three';
 import { M01MaterialLibrary } from './materials.js';
@@ -323,6 +324,7 @@ export class M02BenchRenderer {
   }
 
   #buildStaticWorld() {
+    disposeM02ArchitectureBatches(this.staticGroup);disposeM02ArchitectureBatches(this.decorativeGroup);
     this.staticGroup.clear();
     this.roofsGroup.clear();
     this.decorativeGroup.clear();
@@ -389,6 +391,7 @@ export class M02BenchRenderer {
       const floorMesh = new THREE.Mesh(floorGeo, floorMat);
       floorMesh.position.set(minX + bw / 2, 0.02, minZ + bd / 2);
       floorMesh.receiveShadow = true;
+      floorMesh.userData.m02Immutable=true;
       this.staticGroup.add(floorMesh);
 
       // Pitched gable roof
@@ -435,6 +438,7 @@ export class M02BenchRenderer {
         (ob.min.z + ob.max.z) / 2,
       );
       mesh.userData.vegetationFallback = ob.role==='tree_trunk';
+      mesh.userData.m02Immutable=true;
       mesh.castShadow = ob.role !== 'terrain_bank';
       mesh.receiveShadow = true;
       this.staticGroup.add(mesh);
@@ -539,6 +543,7 @@ export class M02BenchRenderer {
     }
     addM02Architecture(this.decorativeGroup,this.world,this.materials);
     applyM02SurfaceUvs(this.staticGroup);applyM02SurfaceUvs(this.roofsGroup);applyM02SurfaceUvs(this.decorativeGroup);
+    this.architectureBatches={shell:batchM02Architecture(this.staticGroup),detail:batchM02Architecture(this.decorativeGroup,{all:true})};
   }
 
   #createGableRoof(b) {
