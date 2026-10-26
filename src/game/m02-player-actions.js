@@ -2,9 +2,13 @@
 // unresolved encounters, create supplies or change checkpoint/schema rules.
 export function m02PlayerAction(sim) {
   const player=sim.player;
-  if (player.health<=0 || sim.currentChalkPrompt() || sim.currentDoorPrompt()) return null;
+  if (player.health<=0 || sim.currentChalkPrompt()) return null;
   const near=(x,z,r=4)=>Math.hypot(player.x-x,player.z-z)<=r;
   const action=(id,prompt,extra={})=>({id,prompt:`[E] ${prompt}`,distance:0,...extra});
+  if (sim.activeCellId==='C' && sim.objective.id==='O09' && !sim.areaC.c12Completed && near(-55,54,10)) {
+    return action('epilogue','Romper contacto e seguir para Varsóvia');
+  }
+  if(sim.currentDoorPrompt())return null;
   if (sim.activeCellId==='A' && sim.objective.id==='COMPLETE') {
     return action('area-b','Seguir a secção para Łęczyca');
   }
@@ -20,9 +24,6 @@ export function m02PlayerAction(sim) {
       return sim.areaB.reorganizedC07 ? action('area-c','Seguir para Leśmierz') : action('reorganize','Reagrupar a secção');
     }
   }
-  if (sim.activeCellId==='C' && sim.objective.id==='O09' && !sim.areaC.c12Completed && near(-55,54,10)) {
-    return action('epilogue','Romper contacto e seguir para Varsóvia');
-  }
   return null;
 }
 
@@ -34,7 +35,7 @@ export function performM02PlayerAction(sim) {
     case 'pickup': sim.pickupSupplyVolume(action.volumeId); break;
     case 'reorganize': sim.completeC07Reorganization(); break;
     case 'area-c': sim.enterAreaCC09(); break;
-    case 'epilogue': sim.completeC12Epilogue(); break;
+    case 'epilogue': sim.completeC12Epilogue({lisOutcome:sim.areaC.lisContactedInC11?sim.flags['m02.lis_status']:'missing'}); break;
     default: return false;
   }
   return true;

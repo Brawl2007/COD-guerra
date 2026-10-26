@@ -640,10 +640,13 @@ export function assistLisInC11(sim, mode = 'wounded_evacuated') {
     sim.flags['m02.lis_status'] = mode;
     if (lis && lis.alive) {
       lis.state = mode === 'wounded_evacuated' ? 'EVACUATED_B12' : 'WALKING_SUPPORTED';
-      lis.x = -58.0;
-      lis.z = 52.0; // Inside B12 aid house
-      lis.y = sim.world.heightAt(lis.x, lis.z);
-      lis.goal = null;
+      if(mode==='wounded_evacuated'){
+        // Explicit semantic import/fixture outcome; normal contact uses the
+        // physical supported walk below and resolves on reaching B12.
+        lis.x=-58;lis.z=52;lis.y=sim.world.heightAt(lis.x,lis.z);lis.goal=null;
+      }else{
+        lis.goal={x:-58,z:52,crouch:false};lis.navCorners=null;
+      }
     }
   } else if (mode === 'missing') {
     sim.areaC.lisSupportMode = 'missing';
@@ -681,6 +684,12 @@ export function updateAreaC(sim, dt) {
     if (lis && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= 3.5) {
       assistLisInC11(sim, 'wounded_walking');
     }
+  }
+
+  const supportedLis=sim.allies.find(a=>a.id==='pl_lis');
+  if(sim.areaC.lisContactedInC11&&supportedLis?.alive&&sim.flags['m02.lis_status']==='wounded_walking'&&Math.hypot(supportedLis.x+58,supportedLis.z-52)<2){
+    supportedLis.state='EVACUATED_B12';supportedLis.goal=null;
+    sim.areaC.lisSupportMode='wounded_evacuated';sim.flags['m02.lis_status']='wounded_evacuated';
   }
 
   // 4. Advance the 12 Last Group members (LG01..LG12) along the B09 -> B12 evacuation route

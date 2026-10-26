@@ -1,6 +1,27 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
+import {updateGermanGarrison} from '../src/game/m02-combat-ai.js';
+
+test('B MG acquires from its own position and gives the M01 reaction interval before aimed fire',()=>{
+ const s=new M02BenchSimulation();s.enterAreaBC06();s.allies=[];
+ const mg=s.enemies.find(e=>e.weapon==='mg34');s.enemies=[mg];
+ Object.assign(mg,{x:0,y:0,z:100,facing:Math.PI/2,nextFireAt:0,seeingTargetId:null});
+ Object.assign(s.player,{x:0,y:0,z:120,crouched:false,eyeHeight:1.65});
+ s.evaluateMgLineOfFire=()=>{throw Error('Area A aperture must not drive Area B perception');};
+ updateGermanGarrison(s,.05);assert.equal(mg.seeingTargetId,s.player.id);assert.equal(mg.shotsFired,0);
+ s.clock+=1;updateGermanGarrison(s,.05);assert.equal(mg.shotsFired,0);
+ s.clock+=.25;updateGermanGarrison(s,.05);assert.ok(mg.shotsFired>0);
+});
+
+test('C01 preparation trench is inside the movement envelope; walking cannot jump to the farm',()=>{
+ const s=new M02BenchSimulation(19390909,{startScene:'C01'}),before={...s.player};
+ const bounds=s.world.layout.bounds.playable;
+ assert.ok(before.z>=bounds.minZ&&before.z<=bounds.maxZ);
+ s.tick(.05,{forward:1});
+ assert.ok(Math.hypot(s.player.x-before.x,s.player.z-before.z)<1);
+ assert.ok(s.player.z< -170);
+});
 
 test('B/C movement and checkpoint continuation keep finite world coordinates',()=>{
  for(const cell of ['B','C']){
@@ -39,4 +60,33 @@ test('mid-grenade RNG and portal locks survive exact continuation; old saves rem
  assert.doesNotThrow(()=>s.restoreSnapshot(legacy));
  const before=s.snapshot(),bad=structuredClone(before);bad.player.x=NaN;
  assert.throws(()=>s.restoreSnapshot(bad),/inválido/);assert.deepEqual(s.snapshot(),before);
+});
+
+import {m02PlayerAction,performM02PlayerAction} from '../src/game/m02-player-actions.js';
+test('C12 exit interaction takes precedence over a nearby B12 door; leaving Lis behind remains a real outcome',()=>{
+ const s=new M02BenchSimulation();s.enterAreaCC09();s.detonateC10FixedArtillery();
+ s.teleportPlayer(-54,54.1,Math.PI/2);s.objective={id:'O09',status:'active'};
+ assert.ok(s.currentDoorPrompt(),'fixture must reproduce the doorway conflict');
+ assert.equal(m02PlayerAction(s).id,'epilogue');assert.equal(performM02PlayerAction(s),true);
+ assert.equal(s.flags['m02.lis_status'],'missing');
+ assert.equal(s.dialogue.hasTriggered('bz39_c12_01'),false);
+});
+
+test('contact with Lis starts a physical supported walk; it does not teleport him to B12',()=>{
+ const s=new M02BenchSimulation();s.enterAreaCC09();s.detonateC10FixedArtillery();
+ for(const e of s.enemies){e.alive=false;e.health=0;}
+ const lis=s.allies.find(a=>a.id==='pl_lis'),before=[lis.x,lis.z];
+ s.assistLisInC11('wounded_walking');assert.deepEqual([lis.x,lis.z],before);
+ assert.deepEqual([lis.goal.x,lis.goal.z],[-58,52]);
+ for(let i=0;i<1400&&s.flags['m02.lis_status']!=='wounded_evacuated';i++)s.tick(.1,{});
+ assert.equal(s.flags['m02.lis_status'],'wounded_evacuated');
+ assert.ok(Math.hypot(lis.x+58,lis.z-52)<2);
+});
+
+test('blast damage can immobilize the supply cart and lose real undelivered volumes without duplication',()=>{
+ const s=new M02BenchSimulation();s.enterAreaBC06();const cart=s.areaB.supplyCart;
+ s.detonateGrenadeAt(cart.x,.5,cart.z,6.5);
+ assert.equal(cart.wheelDamaged,true);assert.ok(cart.volumes.every(v=>v.lost));
+ const snapshot=s.snapshot();s.restoreSnapshot(snapshot);assert.deepEqual(s.snapshot(),snapshot);
+ assert.equal(s.pickupSupplyVolume('vol_water'),false);
 });

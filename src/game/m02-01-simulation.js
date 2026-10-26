@@ -1063,6 +1063,18 @@ export class M02BenchSimulation {
     }
 
     this.syncCalibrationAndEnemies();
+    if(this.activeCellId==='B'&&this.areaB?.supplyCart){
+      const cart=this.areaB.supplyCart,dx=cart.x-center.x,dz=cart.z-center.z,distance=Math.hypot(dx,dz);
+      const blocked=distance>.2&&traceObstruction(this.world,center,{x:dx/distance,y:0,z:dz/distance},Math.max(0,distance-.2));
+      if(!blocked&&distance<radius*.75)this.damageCartWheel();
+      for(const volume of cart.volumes){
+        if(volume.delivered||volume.lost)continue;
+        const vx=volume.x-center.x,vz=volume.z-center.z,reach=Math.hypot(vx,vz);
+        const occluded=reach>.2&&traceObstruction(this.world,center,{x:vx/reach,y:0,z:vz/reach},Math.max(0,reach-.2));
+        if(!occluded&&reach<radius*.35)this.loseSupplyVolume(volume.id);
+      }
+    }
+
     const blastRecord = {
       type: 'grenade-exploded',
       center,

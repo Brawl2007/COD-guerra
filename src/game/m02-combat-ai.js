@@ -1,5 +1,6 @@
 import { eyePosition } from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
+import {M01_DIFFICULTY} from './m01-difficulty.js';
 
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
@@ -645,7 +646,7 @@ export function stepActorNavigation(sim, actor, dt) {
     return;
   }
 
-  const baseSpeed = actor.suppressed > 0.55 ? 2.6 : 4.1;
+  const baseSpeed = actor.state==='WALKING_SUPPORTED'?1.8:actor.suppressed > 0.55 ? 2.6 : 4.1;
   const stepDist = Math.min(dist, baseSpeed * dt);
   let vx = (dx / dist) * stepDist;
   let vz = (dz / dist) * stepDist;
@@ -681,6 +682,7 @@ export function updatePolishSquad(sim, dt) {
     if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     stepActorWeapon(sim, ally, dt);
+    if(ally.id==='pl_lis'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11){ally.goal=null;ally.moving=false;continue;}
 
     if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
@@ -979,7 +981,7 @@ export function updateGermanGarrison(sim, dt) {
       const maxHalfCone = enemy.weapon === 'mg34' ? sim.mgState.arcHalfAngle : 1.32;
       if (angleDiff > maxHalfCone) continue;
 
-      const hasLoS = enemy.weapon === 'mg34'
+      const hasLoS = enemy.id === 'DE-A05' && sim.activeCellId === 'A'
         ? sim.evaluateMgLineOfFire(t).hasVisualLoS
         : sim.world.lineOfSight(enemy, t, { includeFoliage: true });
 
@@ -993,6 +995,7 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     if (visibleTarget) {
+      if(enemy.seeingTargetId!==visibleTarget.id||!Number.isFinite(enemy.targetAcquiredAt))enemy.targetAcquiredAt=sim.clock;
       enemy.state = 'ENGAGE_VISIBLE';
       enemy.seeingTargetId = visibleTarget.id;
       enemy.memory = {
@@ -1008,7 +1011,11 @@ export function updateGermanGarrison(sim, dt) {
         enemy.facing = Math.atan2(visibleTarget.z - enemy.z, visibleTarget.x - enemy.x);
       }
 
-      if (enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
+      // Reuse M01's default human reaction interval: acquisition is visible
+      // before the first aimed shot. Ballistics, suppression and cover still
+      // determine every hit; reacquisition state lives in actor checkpoints.
+      const reacted=visibleTarget.id!==sim.player.id||sim.clock-enemy.targetAcquiredAt>=M01_DIFFICULTY.soldado.reactionGraceSec;
+      if (reacted && enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
         const aimPt = {
           x: visibleTarget.x,
           y: visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25),

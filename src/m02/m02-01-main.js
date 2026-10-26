@@ -273,7 +273,7 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentChalkPrompt() ?? sim.currentDoorPrompt() ?? m02PlayerAction(sim);
+  const prompt = m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';

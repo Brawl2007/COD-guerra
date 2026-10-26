@@ -52,7 +52,10 @@ export const BALLISTIC_MATERIAL_POLICY = Object.freeze({
 export class M02QuintaWorld {
   constructor(customLayout = layout) {
     this.missionId = customLayout.missionId ?? 'm02_01_quinta';
-    this.layout = customLayout;
+    // The original 100 x 150 m farm catalogue stays intact. The assembled
+    // world also contains C01's preparation trench and approach to that farm.
+    const p1=customLayout.c01Corridor?.startP1;
+    this.layout = p1 ? {...customLayout,bounds:{...customLayout.bounds,playable:{...customLayout.bounds.playable,minZ:Math.min(customLayout.bounds.playable.minZ,p1.z-15)}}} : customLayout;
     this.events = [];
     this.colliders = [];
     this.decks = [];
