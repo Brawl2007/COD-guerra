@@ -1,0 +1,12 @@
+✔ M02 keeps the real M01 first-person rig on its own 58 degree lens while ADS zooms the world (1749.704636ms)
+✔ M02 presentation adapts live roles and reload timing without changing snapshots (22.569994ms)
+✔ contextual actions cannot skip unfinished combat or manufacture supplies (50.022163ms)
+✔ resolved farm enables normal interaction to enter area B with state retained (27.721156ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2796.547139

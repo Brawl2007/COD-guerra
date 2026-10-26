@@ -1,0 +1,107 @@
+{
+  "method": "Live enemy damage, trusted keyboard and relative mouse input listener. Planner only reads navigation/position. No health, clock, enemy, objective or save injection.",
+  "errors": [],
+  "samples": [
+    {
+      "clock": 0,
+      "state": "playing",
+      "health": 100,
+      "x": 0,
+      "z": -175,
+      "crouched": true,
+      "move": true,
+      "turn": -1.3050760146354654,
+      "pitch": 0
+    },
+    {
+      "clock": 10.050000000000008,
+      "state": "playing",
+      "health": 67,
+      "x": 9.142749467013187,
+      "z": -120.98434108072775,
+      "crouched": false,
+      "move": true,
+      "turn": 0.0008145591137787012,
+      "pitch": 0
+    },
+    {
+      "clock": 20.00000000000015,
+      "state": "playing",
+      "health": 67,
+      "x": 11.45091991743699,
+      "z": -60.333268068409886,
+      "crouched": false,
+      "move": true,
+      "turn": 0.00020557191317704948,
+      "pitch": 0
+    },
+    {
+      "clock": 30.250000000000295,
+      "state": "playing",
+      "health": 67,
+      "x": 11.999801341120934,
+      "z": -45.09314900119974,
+      "crouched": false,
+      "move": false,
+      "turn": 0,
+      "pitch": 0
+    },
+    {
+      "clock": 40.49999999999984,
+      "state": "playing",
+      "health": 67,
+      "x": 11.999801341120934,
+      "z": -45.09314900119974,
+      "crouched": false,
+      "move": false,
+      "turn": 0,
+      "pitch": 0
+    },
+    {
+      "clock": 50.49999999999927,
+      "state": "playing",
+      "health": 67,
+      "x": 11.999801341120934,
+      "z": -45.09314900119974,
+      "crouched": false,
+      "move": false,
+      "turn": 0,
+      "pitch": 0
+    },
+    {
+      "clock": 60.4999999999987,
+      "state": "playing",
+      "health": 67,
+      "x": 11.999801341120934,
+      "z": -45.09314900119974,
+      "crouched": false,
+      "move": false,
+      "turn": 0,
+      "pitch": 0
+    },
+    {
+      "clock": 70.49999999999814,
+      "state": "playing",
+      "health": 67,
+      "x": 11.999801341120934,
+      "z": -45.09314900119974,
+      "crouched": false,
+      "move": false,
+      "turn": 0,
+      "pitch": 0
+    },
+    {
+      "clock": 80.49999999999757,
+      "state": "playing",
+      "health": 67,
+      "x": 11.999801341120934,
+      "z": -45.09314900119974,
+      "crouched": false,
+      "move": false,
+      "turn": 0,
+      "pitch": 0
+    }
+  ],
+  "failure": "Live enemy fire did not kill the exposed player within this playtest budget",
+  "wallSeconds": 180.173
+}

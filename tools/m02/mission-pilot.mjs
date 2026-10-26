@@ -38,7 +38,7 @@ export class M02MissionPilot {
     let goal;
     if(sim.activeCellId==='C'&&!sim.areaC.c10Started&&!this.flanked&&Math.hypot(p.x-this.flankX,p.z-this.flankZ)>1)goal={id:'west-cover',x:this.flankX,z:this.flankZ};
     else if(hostiles.length)goal=hostiles[0];
-    else if(sim.activeCellId==='A')goal={x:0,z:50};
+    else if(sim.activeCellId==='A')goal=sim.enemies.find(a=>a.alive&&a.c04Candidate&&a.nonCombatant&&!a.chalkMarked)??{x:0,z:50};
     else if(sim.activeCellId==='B')goal={x:sim.areaB.supplyCart.goalX,z:sim.areaB.supplyCart.goalZ};
     else if(sim.activeCellId==='C'&&sim.areaC.c11Started&&!sim.areaC.lisContactedInC11)goal=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell)??{x:-55,z:54};
     else goal={x:-55,z:54};

@@ -41,6 +41,23 @@ test('M02 reloads use the full appropriate M01 timeline and automatic weapons ne
  assert.equal(m02CharacterSample(mp,10.05,clips).clip,'rkm_fire_burst');assert.equal(m02CharacterSample(mp,10.5,clips).clip,'aim');
 });
 
+test('the real seven-round MG clip never animates an unfired sixth round or anticipates the next fixed tick',async()=>{
+ const kits=await assets,clips=new Map(kits.flatMap(g=>g.animations).map(c=>[c.name,c]));
+ const fire=clips.get('mg34_fire_burst');assert.equal(fire.userData.events.fire.length,7);
+ clips.set('m02_mg34_crouch_fire',crouchedClip(fire,clips.get('crouched_idle'),'m02_mg34_crouch_fire'));
+ clips.set('m02_mg34_crouch_aim',crouchedClip(clips.get('mg34_aim'),clips.get('crouched_idle'),'m02_mg34_crouch_aim'));
+ for(const crouched of [false,true])for(const round of [0,1,2,3,4]){
+  const actor={alive:true,weapon:'mg34',crouched,lastShotAt:10,firedAt:10-round*.075,m02RoundIndex:round};
+  for(const age of [.001,.05,.1,.139]){
+   const result=m02CharacterSample(actor,10+age,clips);
+   assert.equal(result.clip,crouched?'m02_mg34_crouch_fire':'mg34_fire_burst');
+   assert.ok(result.time>=fire.userData.events.fire[round]);
+   assert.ok(result.time<fire.userData.events.fire[round+1],'animation cannot reach the next unspent round');
+   assert.equal(result.rate,0,'extrapolation cannot invent the next impulse');
+  }
+ }
+});
+
 test('C01 preparation positions are absolute, remain sheltered and survive save/restore',()=>{
  const sim=new M02BenchSimulation();sim.startAreaAFullC01();
  const positions=sim.allies.map(a=>[a.id,a.x,a.z]);sim.startAreaAFullC01();

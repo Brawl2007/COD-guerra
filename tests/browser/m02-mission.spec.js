@@ -1,4 +1,31 @@
 import {test,expect} from '@playwright/test';
+import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
+
+test('M02 subtitle and interaction fixtures remain readable together at small and desktop sizes',async({page})=>{
+ await page.goto('/COD-guerra/m02.html?quality=low');
+ await page.waitForFunction(()=>window.m02Diagnostics&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ // Explicit UI inspection fixture, never represented as a continuous playtest.
+ await page.addStyleTag({content:'#mission-menu,#cartela-banner{display:none!important}.mission-paused #dialogue-banner,.mission-paused #door-prompt,.mission-paused .hud-layer{visibility:visible}'});
+ const line=Object.values(M02_DIALOGUE_CATALOG).sort((a,b)=>b.text.length-a.text.length)[0];
+ for(const viewport of [{width:480,height:270},{width:1280,height:720}]){
+  await page.setViewportSize(viewport);
+  await page.evaluate(line=>{
+   const subtitle=document.querySelector('#dialogue-banner'),prompt=document.querySelector('#door-prompt');
+   subtitle.style.display='block';subtitle.textContent=`${line.speakerName}: «${line.text}»`;
+   prompt.style.display='block';prompt.textContent='[E] Sinalizar o ferido com giz';
+  },line);
+  const rect=await page.evaluate(()=>{
+   const box=id=>{const el=document.querySelector(id),r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,scroll:el.scrollWidth,width:el.clientWidth};};
+   return {dialogue:box('#dialogue-banner'),prompt:box('#door-prompt'),objective:box('.mission-header')};
+  });
+  expect(rect.prompt.bottom).toBeLessThanOrEqual(rect.dialogue.top);
+  expect(rect.objective.bottom).toBeLessThan(rect.prompt.top);
+  expect(rect.dialogue.left).toBeGreaterThanOrEqual(0);expect(rect.dialogue.right).toBeLessThanOrEqual(viewport.width);
+  expect(rect.dialogue.bottom).toBeLessThan(viewport.height);expect(rect.dialogue.scroll).toBeLessThanOrEqual(rect.dialogue.width);
+ }
+});
 
 test('M02 default quality follows M01 software GPU detection and maximum remains selectable',async({page})=>{
  await page.setViewportSize({width:800,height:450});

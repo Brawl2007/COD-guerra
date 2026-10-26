@@ -1,0 +1,1892 @@
+{
+  "method": "Live enemy damage, trusted keyboard and relative mouse input listener. Planner only reads navigation/position. No health, clock, enemy, objective or save injection.",
+  "errors": [],
+  "samples": [
+    {
+      "clock": 0.25,
+      "state": "playing",
+      "health": 100,
+      "x": 0,
+      "z": -175,
+      "crouched": true,
+      "move": true,
+      "turn": -1.311187087576842,
+      "pitch": 0
+    },
+    {
+      "clock": 10.90000000000002,
+      "state": "playing",
+      "health": 67,
+      "x": 6.7410185275722485,
+      "z": -117.56719071092671,
+      "crouched": false,
+      "move": true,
+      "turn": 0.0018957290947292371,
+      "pitch": 0
+    },
+    {
+      "clock": 21.150000000000166,
+      "state": "playing",
+      "health": 53,
+      "x": 4.088316622302883,
+      "z": -55.09852719388359,
+      "crouched": false,
+      "move": true,
+      "turn": 0.00013462606649183861,
+      "pitch": 0
+    }
+  ],
+  "death": {
+    "clock": 25.10000000000022,
+    "state": "dead",
+    "health": 0,
+    "x": 3.0477363548734138,
+    "z": -31.0260072238628,
+    "crouched": false,
+    "move": true,
+    "turn": 0.0032928057756327345,
+    "pitch": 0
+  },
+  "saved": {
+    "id": "cp_m02_a_preparacao",
+    "clock": 10.100000000000009,
+    "health": 67,
+    "x": 6.940067292755981,
+    "z": -122.4431295527374
+  },
+  "restored": {
+    "state": "playing",
+    "clock": 10.1,
+    "activeCellId": "A",
+    "streaming": {
+      "activeCellId": "A",
+      "residentCellIds": [
+        "A"
+      ],
+      "residentCount": 1,
+      "residentCellsCount": 1,
+      "maxResidentCells": 2,
+      "preloadCount": 0,
+      "switchCount": 0,
+      "disposedCount": 0,
+      "disposedCellsCount": 0
+    },
+    "c01Active": false,
+    "activeCartela": {
+      "text": "Setor de Łęczyca — 9 de setembro de 1939 — fim da tarde",
+      "expiresAt": 8
+    },
+    "transitionTABPayload": null,
+    "supplies": {
+      "waterDelivered": false,
+      "ammoDelivered": false
+    },
+    "areaB": {
+      "active": false,
+      "reorganizedC07": false,
+      "corridorUnderDirectFire": true,
+      "supplyCart": {
+        "id": "cart_b07_supply",
+        "state": "WAITING_CLEAR_CORRIDOR",
+        "x": -50,
+        "z": 41,
+        "goalX": 0,
+        "goalZ": -70,
+        "speed": 3.4,
+        "waypointIdx": 0,
+        "wheelDamaged": false,
+        "volumes": [
+          {
+            "id": "vol_water",
+            "type": "water",
+            "state": "ON_CART",
+            "x": -50,
+            "z": 41,
+            "carriedBy": null,
+            "delivered": false,
+            "lost": false
+          },
+          {
+            "id": "vol_ammo",
+            "type": "ammo",
+            "state": "ON_CART",
+            "x": -50,
+            "z": 41,
+            "carriedBy": null,
+            "delivered": false,
+            "lost": false
+          }
+        ]
+      }
+    },
+    "areaC": {
+      "active": false,
+      "gateLatchUnlocked": false,
+      "c10Started": false,
+      "c11Started": false,
+      "c12Completed": false,
+      "artilleryWarningAt": null,
+      "artilleryImpactAt": null,
+      "artilleryDetonated": false,
+      "corridorExteriorBlocked": false,
+      "fixedImpactSpec": {
+        "id": "sp03_fixed_street_impact",
+        "x": 4,
+        "y": 0,
+        "z": 18,
+        "radius": 8,
+        "warningDurationSec": 6,
+        "debrisBounds": [
+          -4,
+          12,
+          14,
+          22
+        ]
+      },
+      "lisContactedInC11": false,
+      "lisSupportMode": null,
+      "lastGroup": [
+        {
+          "id": "LG01",
+          "name": "kpr. Baran (LG01)",
+          "x": 18,
+          "z": -38,
+          "health": 100,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 0
+        },
+        {
+          "id": "LG02",
+          "name": "strz. Pietrzak (LG02)",
+          "x": 20,
+          "z": -40,
+          "health": 95,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 0.4
+        },
+        {
+          "id": "LG03",
+          "name": "strz. Grabowski (LG03 · ferido)",
+          "x": 16,
+          "z": -41,
+          "health": 58,
+          "initialWounded": true,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": true,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 3.8,
+          "startDelaySec": 0.8
+        },
+        {
+          "id": "LG04",
+          "name": "strz. Pawłowski (LG04)",
+          "x": 22,
+          "z": -39,
+          "health": 100,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 1.2000000000000002
+        },
+        {
+          "id": "LG05",
+          "name": "strz. Michalski (LG05)",
+          "x": 17,
+          "z": -43,
+          "health": 92,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 1.6
+        },
+        {
+          "id": "LG06",
+          "name": "strz. Król (LG06)",
+          "x": 21,
+          "z": -44,
+          "health": 100,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 2
+        },
+        {
+          "id": "LG07",
+          "name": "strz. Wieczorek (LG07)",
+          "x": 15,
+          "z": -45,
+          "health": 88,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 2.4000000000000004
+        },
+        {
+          "id": "LG08",
+          "name": "strz. Jabłoński (LG08)",
+          "x": 19,
+          "z": -46,
+          "health": 100,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 2.8000000000000003
+        },
+        {
+          "id": "LG09",
+          "name": "strz. Majewski (LG09 · ferido)",
+          "x": 16.5,
+          "z": -47.5,
+          "health": 62,
+          "initialWounded": true,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": true,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 3.8,
+          "startDelaySec": 3.2
+        },
+        {
+          "id": "LG10",
+          "name": "strz. Olszewski (LG10)",
+          "x": 20.5,
+          "z": -48,
+          "health": 96,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 3.6
+        },
+        {
+          "id": "LG11",
+          "name": "strz. Stępień (LG11)",
+          "x": 18,
+          "z": -49.5,
+          "health": 100,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 4
+        },
+        {
+          "id": "LG12",
+          "name": "strz. Jaworski (LG12)",
+          "x": 22,
+          "z": -50,
+          "health": 90,
+          "initialWounded": false,
+          "space": "metres",
+          "y": 0,
+          "radius": 0.36,
+          "eyeHeight": 1.64,
+          "alive": true,
+          "wounded": false,
+          "evacuated": false,
+          "waypointIdx": 0,
+          "moving": false,
+          "facing": 1.5707963267948966,
+          "speed": 4.8,
+          "startDelaySec": 4.4
+        }
+      ],
+      "epilogueCartelas": []
+    },
+    "m03ExportPackage": null,
+    "horizon": {
+      "temporalState": "T0",
+      "hsA1": {
+        "id": "HS-A1",
+        "state": "ADVANCE",
+        "actors": [
+          {
+            "id": "hs_a1_01",
+            "name": "kpr. Zieliński (HS-A1)",
+            "x": -165,
+            "z": -115.86,
+            "goalZ": -35,
+            "health": 100,
+            "mag": 5,
+            "reserve": 40,
+            "alive": true,
+            "representation": "L1_actor"
+          },
+          {
+            "id": "hs_a1_02",
+            "name": "strz. Dąbrowski (HS-A1)",
+            "x": -172,
+            "z": -123.86,
+            "goalZ": -42,
+            "health": 100,
+            "mag": 5,
+            "reserve": 40,
+            "alive": true,
+            "representation": "L1_actor"
+          },
+          {
+            "id": "hs_a1_03",
+            "name": "strz. Sikora (HS-A1)",
+            "x": -158,
+            "z": -129.86,
+            "goalZ": -48,
+            "health": 100,
+            "mag": 5,
+            "reserve": 40,
+            "alive": true,
+            "representation": "L1_actor"
+          },
+          {
+            "id": "hs_a1_04",
+            "name": "strz. Wójcik (HS-A1)",
+            "x": -168,
+            "z": -137.86,
+            "goalZ": -55,
+            "health": 92,
+            "mag": 4,
+            "reserve": 35,
+            "alive": true,
+            "representation": "L1_actor"
+          },
+          {
+            "id": "hs_a1_05",
+            "name": "strz. Krawczyk (HS-A1)",
+            "x": -176,
+            "z": -143.86,
+            "goalZ": -62,
+            "health": 100,
+            "mag": 5,
+            "reserve": 40,
+            "alive": true,
+            "representation": "L1_actor"
+          },
+          {
+            "id": "hs_a1_06",
+            "name": "strz. Mazur (HS-A1)",
+            "x": -162,
+            "z": -150.86,
+            "goalZ": -68,
+            "health": 85,
+            "mag": 3,
+            "reserve": 30,
+            "alive": true,
+            "representation": "L1_actor"
+          }
+        ]
+      },
+      "hsA2": {
+        "id": "HS-A2",
+        "state": "OFFENSIVE_FIRE",
+        "events": [
+          {
+            "id": "ev_hsa2_01",
+            "x": 340,
+            "y": 2,
+            "z": -210,
+            "flashAt": 2.5,
+            "flashed": true,
+            "soundArrivalAt": 3.523,
+            "soundPlayed": true,
+            "smokeActive": true
+          },
+          {
+            "id": "ev_hsa2_02",
+            "x": 420,
+            "y": 3,
+            "z": -140,
+            "flashAt": 9,
+            "flashed": true,
+            "soundArrivalAt": 10.254,
+            "soundPlayed": false,
+            "smokeActive": true
+          },
+          {
+            "id": "ev_hsa2_03",
+            "x": 380,
+            "y": 2,
+            "z": -65,
+            "flashAt": 18,
+            "flashed": false,
+            "soundArrivalAt": null,
+            "soundPlayed": false,
+            "smokeActive": false
+          },
+          {
+            "id": "ev_hsa2_04",
+            "x": 460,
+            "y": 4,
+            "z": 30,
+            "flashAt": 28,
+            "flashed": false,
+            "soundArrivalAt": null,
+            "soundPlayed": false,
+            "smokeActive": false
+          },
+          {
+            "id": "ev_hsa2_05",
+            "x": 310,
+            "y": 2,
+            "z": 95,
+            "flashAt": 40,
+            "flashed": false,
+            "soundArrivalAt": null,
+            "soundPlayed": false,
+            "smokeActive": false
+          }
+        ]
+      },
+      "hsA3": {
+        "id": "HS-A3",
+        "state": "PASSING_ONCE",
+        "x": -153.48,
+        "z": -245,
+        "targetX": 190,
+        "speed": 5.2,
+        "vehicles": [
+          {
+            "id": "hs_a3_01",
+            "offset": 0,
+            "x": -153.48,
+            "z": -245,
+            "visible": true
+          },
+          {
+            "id": "hs_a3_02",
+            "offset": -14,
+            "x": -167.48,
+            "z": -245,
+            "visible": true
+          },
+          {
+            "id": "hs_a3_03",
+            "offset": -28,
+            "x": -181.48,
+            "z": -245,
+            "visible": true
+          }
+        ]
+      },
+      "hsB1": {
+        "id": "HS-B1",
+        "state": "LOCALIZED_FIRE",
+        "sector": "S",
+        "flashesTriggered": 0,
+        "maxFlashes": 3
+      },
+      "hsC1": {
+        "id": "HS-C1",
+        "state": "ADVANCE",
+        "linkedRosterIds": [
+          "LG01",
+          "LG02",
+          "LG03",
+          "LG04",
+          "LG05",
+          "LG06",
+          "LG07",
+          "LG08",
+          "LG09",
+          "LG10",
+          "LG11",
+          "LG12"
+        ]
+      },
+      "hsC2": {
+        "id": "HS-C2",
+        "impactId": "art_hsc2_01",
+        "state": "READY",
+        "x": 4,
+        "y": 0,
+        "z": 18,
+        "detonatedOnce": false
+      },
+      "acousticLog": [
+        {
+          "eventId": "ev_hsa2_01",
+          "flashAt": 2.5,
+          "soundArrivalAt": 3.523,
+          "measuredDelaySec": 1.023
+        }
+      ]
+    },
+    "audiovisual": {
+      "accessibility": {
+        "subtitlesEnabled": true,
+        "directionalIndicatorsEnabled": true,
+        "reducedDynamicRange": false,
+        "tinnitusIntensity": 0.5,
+        "reducedCameraShake": false,
+        "reducedViolence": false
+      },
+      "weaponKinematics": {
+        "clearanceState": "READY",
+        "obstructionId": null,
+        "obstructionDistanceM": 0.78,
+        "lowerPitchRad": 0,
+        "pullBackM": 0,
+        "recoilPitchRad": 0,
+        "recoilKickBackM": 0
+      },
+      "cameraShake": {
+        "amplitudeRad": 0,
+        "tinnitusLevel": 0
+      }
+    },
+    "player": {
+      "x": 6.94,
+      "y": 0,
+      "z": -122.44,
+      "angle": 1.612,
+      "pitch": 0,
+      "health": 67
+    },
+    "mgState": {
+      "id": "de_b02_mg34",
+      "name": "Posição MG34 (Abertura oeste de B02)",
+      "x": 12.8,
+      "y": 0,
+      "z": -30,
+      "eyeHeight": 1.48,
+      "facing": 3.141592653589793,
+      "arcHalfAngle": 1.38,
+      "range": 95,
+      "burstRounds": 6,
+      "burstInterval": 0.09,
+      "cooldown": 2.4,
+      "space": "metres",
+      "active": true,
+      "alive": true,
+      "seeingPlayer": false,
+      "canHitPlayer": false,
+      "blockedById": "inactive_b02",
+      "blockedByMaterial": null,
+      "burstsFired": 0,
+      "nextBurstAt": 1
+    },
+    "routeProgress": {
+      "ditchWaypointsVisited": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "orchardWaypointsVisited": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "visitedBuildings": {
+        "B01": false,
+        "B02": false,
+        "B03": false,
+        "B04": false
+      },
+      "visitedB01Rooms": {
+        "cozinha": false,
+        "despensa": false,
+        "sala": false,
+        "quarto_oeste": false,
+        "quarto_este": false
+      },
+      "activeRoute": "none"
+    },
+    "objective": {
+      "id": "O00",
+      "title": "C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (1/4 ativos)",
+      "status": "active"
+    },
+    "flags": {
+      "m02.completed": false,
+      "m02.axis": null,
+      "m02.lis_status": "active",
+      "m02.malek_status": "fit",
+      "m02.wierzba_status": "fit",
+      "m02.pomar_wounded_marked": false,
+      "m02.fired_on_wounded": false,
+      "m02.supply_reached": 0,
+      "m02.corridor_held": false,
+      "m02.last_group_survivors": 0,
+      "m02.prep_avanco_ok": true,
+      "m02.ea0_posto_cleared": true
+    },
+    "squadOrder": {
+      "type": "auto",
+      "axis": null,
+      "issuedAt": 0
+    },
+    "activeDialogue": null,
+    "alliesCount": 7,
+    "enemiesCount": 14,
+    "enemiesActiveCount": 10,
+    "doorPrompt": null,
+    "doors": {
+      "door_b01_east_main": "closed",
+      "door_b01_north_service": "closed",
+      "door_b01_kitchen_pantry": "open",
+      "door_b01_pantry_hall": "open",
+      "door_b01_kitchen_westbed": "closed",
+      "door_b01_hall_eastbed": "open",
+      "door_b02_north_gate": "open",
+      "door_b02_south_door": "closed",
+      "door_b03_north": "open",
+      "door_b03_south": "open",
+      "door_b04_south": "open"
+    },
+    "windows": {
+      "win_b01_west_kitchen": "open",
+      "win_b01_east_hall": "intact",
+      "win_b01_east_bed": "open",
+      "win_b01_north_hall": "intact",
+      "win_b02_west_mg": "open",
+      "win_b03_west_high": "open"
+    },
+    "fences": {
+      "cov_south_fence_west": "intact",
+      "cov_south_fence_east": "intact"
+    },
+    "lastShot": null,
+    "telemetry": {
+      "qualityProfile": "low",
+      "lightingPreset": "afternoon_1939_09_09",
+      "sampleCount": 119,
+      "fpsP50": 3,
+      "frameTimeMs": {
+        "p50": 333.3,
+        "p95": 1383.2,
+        "p99": 4149.8
+      },
+      "simMsP50": 56,
+      "renderMsP50": 55.5,
+      "drawCalls": 85,
+      "triangles": 54206
+    },
+    "presentation": {
+      "characters": {
+        "poseUpdates": 1739,
+        "heldPoses": 0,
+        "boneUploads": 1721,
+        "boneSkips": 0,
+        "active": 18,
+        "limit": 18,
+        "instances": 18,
+        "clips": {
+          "pinned": 1,
+          "crouched_idle": 1,
+          "standing_idle": 4,
+          "death_crumple": 1,
+          "standing_idle_b": 1,
+          "m02_rifle_crouch_aim": 2,
+          "death_left": 2,
+          "rkm_run": 1,
+          "death_back": 2,
+          "walk": 3
+        },
+        "actors": [
+          {
+            "id": "de_east_0",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:0",
+              "nation": "de",
+              "profile": 0,
+              "head": "de_a",
+              "equipment": "mg-crew",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "a3b1a5",
+              "proxyHelmet": "3f4a4a",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "pinned",
+            "clipTime": 0.08262109869919954,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "pinned",
+                "weight": 1,
+                "time": 0.08262109869919954
+              }
+            ],
+            "weapon": "mg34",
+            "weaponLOD": 2,
+            "muzzle": [
+              12.482439912748228,
+              0.565767921626596,
+              -29.837266254354738
+            ],
+            "weaponMeshes": [
+              "mg34_body",
+              "mg34_feed_cover",
+              "mg34_cocking_handle",
+              "mg34_drum",
+              "mg34_belt",
+              "mg34_bipod_folded"
+            ]
+          },
+          {
+            "id": "DE-A11",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:7",
+              "nation": "de",
+              "profile": 7,
+              "head": "de_b",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 1,
+              "pack": 0.96,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "aabba8",
+              "proxyHelmet": "485454",
+              "proxySkin": "f7fafa"
+            },
+            "clip": "crouched_idle",
+            "clipTime": 3,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "crouched_idle",
+                "weight": 1,
+                "time": 3
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -5.587777126022932,
+              0.37067946127607504,
+              -23.185021966700685
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A06",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:2",
+              "nation": "de",
+              "profile": 2,
+              "head": "de_c",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "adbdaf",
+              "proxyHelmet": "424d4d",
+              "proxySkin": "fffff9"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.4301823012416577,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "standing_idle",
+                "weight": 1,
+                "time": 0.4301823012416577
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              14.456000947677445,
+              0.9345583872071167,
+              -28.614723796944986
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A12",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:0",
+              "nation": "de",
+              "profile": 0,
+              "head": "de_a",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "a3b1a5",
+              "proxyHelmet": "3f4a4a",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "death_crumple",
+            "clipTime": 1.7999999523162842,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "death_crumple",
+                "weight": 1,
+                "time": 1.7999999523162842
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -16.113347378802978,
+              0.030000000015619147,
+              -4.8721569794081905
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "DE-A08",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:7",
+              "nation": "de",
+              "profile": 7,
+              "head": "de_b",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 1,
+              "pack": 0.96,
+              "shovel": true,
+              "wear": 3,
+              "proxyCloth": "aabba8",
+              "proxyHelmet": "485454",
+              "proxySkin": "f7fafa"
+            },
+            "clip": "standing_idle",
+            "clipTime": 3.905627509276595,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "standing_idle",
+                "weight": 1,
+                "time": 3.905627509276595
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -28.82965562584625,
+              0.9312406208853914,
+              -16.19438230496588
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A09",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:6",
+              "nation": "de",
+              "profile": 6,
+              "head": "de_a",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.1,
+              "shovel": false,
+              "wear": 2,
+              "proxyCloth": "afb4a3",
+              "proxyHelmet": "475353",
+              "proxySkin": "fffef7"
+            },
+            "clip": "standing_idle",
+            "clipTime": 0.41090820933017014,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "standing_idle",
+                "weight": 1,
+                "time": 0.41090820933017014
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              28.667025695287258,
+              0.9344006761061376,
+              1.5092560615672186
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A07",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:0",
+              "nation": "de",
+              "profile": 0,
+              "head": "de_a",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "a3b1a5",
+              "proxyHelmet": "3f4a4a",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "standing_idle_b",
+            "clipTime": 3.7616311965675493,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "standing_idle_b",
+                "weight": 1,
+                "time": 3.7616311965675493
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -37.210085019399656,
+              0.9190616458452248,
+              -15.243667751994286
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A10",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:5",
+              "nation": "de",
+              "profile": 5,
+              "head": "de_c",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 1,
+              "pack": 0.87,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "b7c3b6",
+              "proxyHelmet": "455151",
+              "proxySkin": "f9f7f3"
+            },
+            "clip": "standing_idle",
+            "clipTime": 2.3958102080763766,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "standing_idle",
+                "weight": 1,
+                "time": 2.3958102080763766
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              29.341427763336956,
+              0.9381687614418814,
+              10.484424729743422
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A13",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:3",
+              "nation": "de",
+              "profile": 3,
+              "head": "de_a",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 1,
+              "pack": 0.92,
+              "shovel": false,
+              "wear": 3,
+              "proxyCloth": "b6bba7",
+              "proxyHelmet": "434f4f",
+              "proxySkin": "f2f3f1"
+            },
+            "clip": "m02_rifle_crouch_aim",
+            "clipTime": 1.3000000000000185,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "m02_rifle_crouch_fire",
+                "weight": 1,
+                "time": 1.1699999570846558
+              },
+              {
+                "clip": "m02_rifle_crouch_aim",
+                "weight": 0,
+                "time": 1.3000000000000185
+              }
+            ],
+            "blendClip": "m02_rifle_crouch_fire",
+            "blendWeight": 1,
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -9.96732740312255,
+              0.9710863661317596,
+              17.15765109053668
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A14",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:2",
+              "nation": "de",
+              "profile": 2,
+              "head": "de_c",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "adbdaf",
+              "proxyHelmet": "424d4d",
+              "proxySkin": "fffff9"
+            },
+            "clip": "m02_rifle_crouch_aim",
+            "clipTime": 1.6000000000000227,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "m02_rifle_crouch_aim",
+                "weight": 1,
+                "time": 1.6000000000000227
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -5.696033944788888,
+              0.9685267655898308,
+              35.376092860080924
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A02",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:2",
+              "nation": "de",
+              "profile": 2,
+              "head": "de_c",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "adbdaf",
+              "proxyHelmet": "424d4d",
+              "proxySkin": "fffff9"
+            },
+            "clip": "death_left",
+            "clipTime": 1.5,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "death_left",
+                "weight": 1,
+                "time": 1.5
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -21.565133448027208,
+              0.030000000708086588,
+              -100.13995799680532
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "szymon_kowal",
+            "lod": 2,
+            "key": "pl:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:4",
+              "nation": "pl",
+              "profile": 4,
+              "head": "kowal",
+              "equipment": "rkm",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.2,
+              "shovel": true,
+              "wear": 0,
+              "proxyCloth": "b9b496",
+              "proxyHelmet": "615d45",
+              "proxySkin": "fffaf6"
+            },
+            "clip": "rkm_run",
+            "clipTime": 0.4410062091943274,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "rkm_run",
+                "weight": 1,
+                "time": 0.4410062091943274
+              }
+            ],
+            "weapon": "rkm_wz28",
+            "weaponLOD": 2,
+            "muzzle": [
+              1.4312710109972133,
+              1.3917429112847097,
+              -106.6159057436142
+            ],
+            "weaponMeshes": [
+              "rkm_pouch",
+              "rkm_wz28",
+              "rkm_bipod_folded"
+            ]
+          },
+          {
+            "id": "DE-A03",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:5",
+              "nation": "de",
+              "profile": 5,
+              "head": "de_c",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 1,
+              "pack": 0.87,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "b7c3b6",
+              "proxyHelmet": "455151",
+              "proxySkin": "f9f7f3"
+            },
+            "clip": "death_back",
+            "clipTime": 1.5,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "death_back",
+                "weight": 1,
+                "time": 1.5
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -13.281348199431733,
+              -0.2899999991238649,
+              -111.4936043661855
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "DE-A04",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:0",
+              "nation": "de",
+              "profile": 0,
+              "head": "de_a",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "a3b1a5",
+              "proxyHelmet": "3f4a4a",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "death_back",
+            "clipTime": 1.5,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "death_back",
+                "weight": 1,
+                "time": 1.5
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -10.13855294594802,
+              -0.2899999991238649,
+              -112.33921052202498
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "pl_lis",
+            "lod": 2,
+            "key": "pl:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:5",
+              "nation": "pl",
+              "profile": 5,
+              "head": "krawiec",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 0.87,
+              "shovel": true,
+              "wear": 1,
+              "proxyCloth": "cdc19f",
+              "proxyHelmet": "625e46",
+              "proxySkin": "f9f7f3"
+            },
+            "clip": "walk",
+            "clipTime": 0.7929491986103798,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "walk",
+                "weight": 1,
+                "time": 0.7929491986103798
+              }
+            ],
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -26.288050273842636,
+              1.4952762811413556,
+              -106.75803786409385
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "pl_gruca",
+            "lod": 2,
+            "key": "pl:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:2",
+              "nation": "pl",
+              "profile": 2,
+              "head": "nowicki",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "c1bb99",
+              "proxyHelmet": "5d5a43",
+              "proxySkin": "fffff9"
+            },
+            "clip": "walk",
+            "clipTime": 0.23199530683015013,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "walk",
+                "weight": 1,
+                "time": 0.23199530683015013
+              }
+            ],
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -26.22347547082771,
+              1.5129515453039142,
+              -107.74958455244034
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          },
+          {
+            "id": "DE-A01",
+            "lod": 2,
+            "key": "de:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "de:2",
+              "nation": "de",
+              "profile": 2,
+              "head": "de_c",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 1.02,
+              "shovel": true,
+              "wear": 2,
+              "proxyCloth": "adbdaf",
+              "proxyHelmet": "424d4d",
+              "proxySkin": "fffff9"
+            },
+            "clip": "death_left",
+            "clipTime": 1.5,
+            "loop": false,
+            "blend": [
+              {
+                "clip": "death_left",
+                "weight": 1,
+                "time": 1.5
+              }
+            ],
+            "weapon": "kar98k",
+            "weaponLOD": 2,
+            "muzzle": [
+              -20.497805267945346,
+              -0.2899999992919134,
+              -111.17696247373463
+            ],
+            "weaponMeshes": []
+          },
+          {
+            "id": "pl_aux_02",
+            "lod": 2,
+            "key": "pl:2",
+            "visual": {
+              "version": "m01-soldier-visual/v1",
+              "id": "pl:0",
+              "nation": "pl",
+              "profile": 0,
+              "head": "pl_a",
+              "equipment": "field",
+              "civilian": false,
+              "faceStyle": 0,
+              "pack": 0.82,
+              "shovel": false,
+              "wear": 0,
+              "proxyCloth": "b6af90",
+              "proxyHelmet": "5a5640",
+              "proxySkin": "fffdf5"
+            },
+            "clip": "walk",
+            "clipTime": 0.5231391260705394,
+            "loop": true,
+            "blend": [
+              {
+                "clip": "walk",
+                "weight": 1,
+                "time": 0.5231391260705394
+              }
+            ],
+            "weapon": "wz29",
+            "weaponLOD": 2,
+            "muzzle": [
+              -0.6897759038320652,
+              1.5377761010593012,
+              -114.33591776920129
+            ],
+            "weaponMeshes": [
+              "rifle",
+              "clip"
+            ]
+          }
+        ],
+        "lodPreset": "low",
+        "lodBands": [
+          0,
+          0,
+          18
+        ],
+        "submittedMeshes": 105,
+        "submittedDrawCalls": 37,
+        "lodSwitches": 7,
+        "lodCounters": {
+          "low": [
+            0,
+            0,
+            7
+          ],
+          "medium": [],
+          "high": []
+        }
+      },
+      "loadedModels": [
+        "ckm:2",
+        "mg34:2",
+        "fp:patient",
+        "de:2",
+        "pl:2",
+        "pl:1",
+        "fp:0",
+        "pl:0"
+      ],
+      "clips": 110,
+      "failures": [],
+      "weapon": {
+        "active": true,
+        "visible": false,
+        "lod": 0,
+        "clock": 25.10000000000022,
+        "drawnTriangles": 0,
+        "drawnMeshes": [],
+        "native": {
+          "clock": 25.10000000000022,
+          "triangles": 3264,
+          "calls": 6,
+          "meshes": [
+            {
+              "name": "fp_sleeve_caps",
+              "triangles": 102
+            },
+            {
+              "name": "fp_cuffs",
+              "triangles": 96
+            },
+            {
+              "name": "fp_straps",
+              "triangles": 24
+            },
+            {
+              "name": "rifle",
+              "triangles": 1414
+            },
+            {
+              "name": "fp_hands",
+              "triangles": 1028
+            },
+            {
+              "name": "body",
+              "triangles": 600
+            }
+          ]
+        }
+      },
+      "weaponLighting": {
+        "fill": 2.093,
+        "key": 1.225,
+        "environment": 0.58,
+        "keyDirection": [
+          0.777,
+          0.507,
+          -0.372
+        ]
+      },
+      "audio": {
+        "state": "suspended",
+        "activeVoices": 4,
+        "maxVoices": 20,
+        "peakVoices": 12,
+        "droppedVoices": 0,
+        "evictedVoices": 0,
+        "loopRefused": 0,
+        "fadingVoices": 0,
+        "liveSources": 25,
+        "peakSources": 68,
+        "sourceBudget": 260,
+        "budgetDropped": 0,
+        "culledGrains": 0,
+        "categoryDropped": {},
+        "categories": {
+          "distant": 1,
+          "weapon": 1
+        },
+        "categoryLimits": {
+          "weapon": 12,
+          "player": 6,
+          "danger": 4,
+          "impact": 6,
+          "foley": 4,
+          "debris": 4,
+          "explosion": 6,
+          "distant": 6,
+          "vehicle": 4,
+          "aircraft": 3,
+          "fire": 3,
+          "ambience": 4,
+          "fx": 32
+        },
+        "loops": [
+          "battle-bed",
+          "wind"
+        ],
+        "permanentLoops": 2,
+        "buffers": 0,
+        "proceduralBuffers": 2,
+        "estimatedBufferBytes": 2205000,
+        "reverb": true,
+        "compressor": true,
+        "buses": [
+          "weapons",
+          "player",
+          "impacts",
+          "explosions",
+          "distant",
+          "vehicles",
+          "ambience"
+        ],
+        "intensity": 0.7328,
+        "quality": "low",
+        "lastDuck": null,
+        "nodePool": {
+          "idle": {
+            "gain": 56,
+            "biquad": 38,
+            "pan": 8
+          },
+          "hits": 2880,
+          "misses": 162
+        },
+        "core": {
+          "quality": "low",
+          "sfxCap": 20,
+          "voiceCap": 3,
+          "activeVoiceLines": 0,
+          "voiceStolen": 0,
+          "voiceRefused": 0,
+          "sfxStolen": 0,
+          "sfxRefused": 0,
+          "musicSlots": [],
+          "convolvers": 2,
+          "zone": "open",
+          "surface": "default",
+          "layoutOk": false,
+          "layoutIssues": 1,
+          "emitters": 0,
+          "emitterIssues": 0,
+          "loader": {
+            "decoded": 0,
+            "synthMissing": 0,
+            "synthDecode": 0,
+            "synthUnlisted": 0,
+            "missing": [],
+            "entries": 0
+          }
+        },
+        "director": null,
+        "nodesCreated": 1485,
+        "nodesDisposed": 1274,
+        "eventCounts": {
+          "distant-artillery": 5,
+          "distant-battle": 27,
+          "footstep": 50,
+          "mg34": 14,
+          "rifle": 42,
+          "rkm": 32,
+          "wz29-shot": 43
+        },
+        "lastEvents": [
+          {
+            "kind": "footstep",
+            "pan": 0,
+            "distance": 0,
+            "priority": 28,
+            "key": "step:371",
+            "detail": {
+              "surface": "earth",
+              "pace": "run",
+              "npc": false
+            },
+            "serial": 371
+          },
+          {
+            "kind": "rifle",
+            "pan": 0.073,
+            "distance": 75.83,
+            "priority": 66,
+            "key": "DE-A14:8:0",
+            "detail": "kar98k",
+            "serial": 373
+          },
+          {
+            "kind": "rifle",
+            "pan": 0.18,
+            "distance": 56.93,
+            "priority": 66,
+            "key": "DE-A13:7:0",
+            "detail": "kar98k",
+            "serial": 375
+          },
+          {
+            "kind": "footstep",
+            "pan": 0,
+            "distance": 0,
+            "priority": 28,
+            "key": "step:377",
+            "detail": {
+              "surface": "earth",
+              "pace": "run",
+              "npc": false
+            },
+            "serial": 377
+          },
+          {
+            "kind": "wz29-shot",
+            "pan": 0.406,
+            "distance": 79.23,
+            "priority": 66,
+            "key": "pl_lis:9:0",
+            "detail": "wz29",
+            "serial": 379
+          },
+          {
+            "kind": "footstep",
+            "pan": 0,
+            "distance": 0,
+            "priority": 28,
+            "key": "step:381",
+            "detail": {
+              "surface": "earth",
+              "pace": "run",
+              "npc": false
+            },
+            "serial": 381
+          },
+          {
+            "kind": "rkm",
+            "pan": 0.062,
+            "distance": 75.07,
+            "priority": 62,
+            "key": "pl_aux_01:11:0",
+            "detail": {
+              "weapon": "rkm_wz28",
+              "rounds": 1,
+              "interval": 0.1
+            },
+            "serial": 383
+          },
+          {
+            "kind": "rkm",
+            "pan": 0.063,
+            "distance": 74.87,
+            "priority": 62,
+            "key": "pl_aux_01:11:1",
+            "detail": {
+              "weapon": "rkm_wz28",
+              "rounds": 1,
+              "interval": 0.1
+            },
+            "serial": 385
+          },
+          {
+            "kind": "rkm",
+            "pan": 0.064,
+            "distance": 74.47,
+            "priority": 62,
+            "key": "pl_aux_01:11:2",
+            "detail": {
+              "weapon": "rkm_wz28",
+              "rounds": 1,
+              "interval": 0.1
+            },
+            "serial": 386
+          },
+          {
+            "kind": "distant-battle",
+            "pan": -0.959,
+            "distance": 895.91,
+            "priority": 20,
+            "key": "slot:33",
+            "detail": "rifle",
+            "serial": 387
+          },
+          {
+            "kind": "footstep",
+            "pan": 0,
+            "distance": 0,
+            "priority": 28,
+            "key": "step:389",
+            "detail": {
+              "surface": "earth",
+              "pace": "run",
+              "npc": false
+            },
+            "serial": 389
+          },
+          {
+            "kind": "mg34",
+            "pan": -0.997,
+            "distance": 8.83,
+            "priority": 62,
+            "key": "DE-A05:3:0",
+            "detail": {
+              "weapon": "mg34",
+              "rounds": 1,
+              "interval": 0.075
+            },
+            "serial": 391
+          }
+        ]
+      }
+    },
+    "environment": {
+      "loaded": true,
+      "failure": null,
+      "trees": 122,
+      "ground": 6104,
+      "batches": 8,
+      "terrain": {
+        "material": "m01-terrain-macro-v1",
+        "textures": 1,
+        "gpuBytes": 349524,
+        "quality": "low",
+        "tier": "low",
+        "lowDetail": 1,
+        "files": [],
+        "mask": {
+          "width": 256,
+          "height": 256
+        },
+        "samplers": 1,
+        "failures": []
+      }
+    }
+  },
+  "passed": true,
+  "wallSeconds": 69.835
+}

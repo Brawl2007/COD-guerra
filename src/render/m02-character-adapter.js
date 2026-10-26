@@ -51,11 +51,22 @@ export function m02CharacterSample(actor,time,clips){
   const {clip:name,startedAt}=actor.m02PreparationAction,clip=get(name),age=time-startedAt;
   if(actor.crouched&&clip&&age>=0&&age<clip.duration&&!actor.shot&&actor.suppressed<.2)return {clip:name,time:age,loop:false,rate:1};
  }
- // SMGs do not cycle a rifle bolt after an automatic burst. The magazine
- // handling still needs a dedicated MP38 clip/model pass (documented partial).
- if(actor.weapon==='mp38'){
-  const age=time-(actor.lastShotAt??-Infinity),name=age<.14?(actor.crouched?'m02_auto_crouch_fire':'rkm_fire_burst'):(actor.crouched?'crouched_idle':'aim');
-  if(get(name))return {clip:name,time:age<.14?Math.max(0,time-actor.firedAt):0,loop:false,rate:age<.14?1:0};
+ // Sample only the impulse of the last actual round. A seven-round M01 MG
+ // clip must not animate two imaginary shots after a five-round M02 burst,
+ // or anticipate the next round between fixed simulation ticks.
+ if(['mg34','rkm_wz28','mp38'].includes(actor.weapon)&&(actor.suppressed??0)<.4){
+  const mg=actor.weapon==='mg34',age=time-(actor.lastShotAt??-Infinity);
+  if(age>=0&&age<.14){
+   const source=get(mg?'mg34_fire_burst':'rkm_fire_burst'),markers=source?.userData?.events?.fire;
+   const name=actor.crouched?(mg?'m02_mg34_crouch_fire':'m02_auto_crouch_fire'):source?.name;
+   if(markers?.length&&get(name)){
+    const index=Math.max(0,actor.m02RoundIndex??0)%markers.length;
+    const at=markers[index],end=markers[index+1]??at+(markers[1]-markers[0]);
+    return {clip:name,time:Math.min(end-.001,at+age),loop:false,rate:0};
+   }
+  }
+  const name=mg?(actor.crouched?'m02_mg34_crouch_aim':'mg34_aim'):actor.weapon==='mp38'?(actor.crouched?'crouched_idle':'aim'):(actor.crouched?'rkm_crouched_idle':'rkm_aim');
+  if(get(name))return {clip:name,time:0,loop:false,rate:0};
  }
  if(actor.crouched&&actor.suppressed<.4){
   const age=time-actor.firedAt;

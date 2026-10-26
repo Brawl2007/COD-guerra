@@ -1,0 +1,984 @@
+
+> operation-ashen-road@0.2.0 test:chromebook
+> node --test --test-concurrency=1 tests/*.test.js
+
+✔ every asset manifest records author, licence and units, and every asset file is in a manifest (94.816886ms)
+✔ the known-gap list only shrinks: fixed gaps must be removed from it (70.731399ms)
+✔ graph topology: SFX / VOICE / MUSIC buses feed the master limiter, then destination (47.715766ms)
+✔ graph degrades without DynamicsCompressor and ConvolverNode, and never throws (18.163059ms)
+✔ caps: 32 SFX voices (20 on low), VOICE 3, music outside the pool (11.826778ms)
+✔ SFX priority stealing at the cap: lowest priority (oldest first) goes, never an equal or higher one (12.914004ms)
+✔ legacy per-category limits are unchanged: inside a full category an equal priority still replaces the oldest of that category (7.081162ms)
+✔ shrinking to low evicts down to the new cap on the next higher-priority admission (6.32919ms)
+✔ loops count toward the cap but are never stolen (0.752394ms)
+✔ VOICE bus: hard cap 3, priority stealing, independent of the SFX pool (9.883062ms)
+✔ MUSIC runs outside the SFX pool: 4 stems + 1 stinger, unknown slots refused, slots replaced in place (22.325628ms)
+✔ loader: a missing file, an HTTP error or a network failure falls back to synthesis without throwing (21.769228ms)
+✔ loader: decode failure (rejecting or empty buffer) falls back to synthesis; a good decode is used (11.435269ms)
+✔ loader: malformed manifests and unknown ids never throw; synthesis is deterministic (6.24063ms)
+✔ loader: a decode finishing after dispose is dropped (3.876818ms)
+✔ R1-a: a blast may carry the simulation's own concussion strength, which replaces the distance rule; without it the rule is unchanged (38.549402ms)
+✔ concussion ducks the SFX path only: MUSIC is untouched and VOICE is only touched above 0.6 (12.066822ms)
+✔ at most 2 ConvolverNodes with procedural impulses within the design lengths (227.346745ms)
+✔ impulse responses are generated from a seed: deterministic, finite, decaying, and need no files (77.608002ms)
+✔ allocation is bounded: IR length <= rate * max seconds for any rate or quality, and the fake refuses runaway buffers (875.344277ms)
+✔ regression: a failing assertion on a graph node produces a small message (it once grew past 2 GB) (11.259064ms)
+✔ zone changes crossfade reverb A/B and apply the interior lowpass only inside the station (1.842334ms)
+✔ layout loader: the real audio-layout.json compiles; open is the default zone, surfaces are resolved (0.82992ms)
+✔ layout tie-break: equal priority -> FIRST DECLARED wins (bridge_deck over casemates_west); priority still beats order (1.831533ms)
+✔ layout loader: malformed data falls back to open/earth and never throws (4.902715ms)
+✔ layout and update path are allocation-free in steady state: same objects, no nodes, no automation churn (11.311016ms)
+✔ dispose releases every node (graph, voices, dialogue, music) and the created/disposed audit balances (27.262692ms)
+✔ without an AudioContext every new entry point is an inert no-op (1.778269ms)
+✔ bus volumes (master/sfx/voice/music) are independent gains; the existing master volume still works (1.983871ms)
+✔ audio core never writes simulation state: sources read nothing but plain arguments (3.389053ms)
+✔ emitters: the real mission data compiles; windows and sectors are read, and T47 left no dramatized casemate ckm in it (51.862152ms)
+✔ emitters: a dramatized (display-only) ckm is gated on crew presence / s1 state (the 06:45 window is only the outer bound) (7.880975ms)
+✔ emitters: activeEmitters reuses the caller array (no per-frame allocation) and follows the s1 state (15.608363ms)
+✔ emitters: malformed or missing data never throws and falls back to silence; bad entries drop alone (26.626287ms)
+✔ hardening: invalid caps and options fall back instead of meaning unbounded or throwing (2.58522ms)
+✔ presentation only: the audio core modules import nothing from simulation, game, render or world code (2.921605ms)
+✔ music (T06b): with no music files nothing starts, no synth drone is requested and nothing throws; a real buffer in the store plays (4.001854ms)
+✔ music (T06b): the module is presentation-only (imports constants only) and the gate constants are exported from the package index (0.904005ms)
+✔ occlusion hook (T06b): voices created while it is set are lowpassed and attenuated; null restores the normal path (2.443768ms)
+✔ director probe (T06b): diagnostics.director is null until a probe is registered, plain data when it is, and null again afterwards (1.228528ms)
+✔ bus volumes set before init are kept and applied once the graph exists (16.041774ms)
+✔ invalid bus volumes and names are rejected, out-of-range values clamp (0.366111ms)
+✔ concussionScale reduces the concussion cut (18.448329ms)
+✔ parseAudioMix validates stored JSON (0.96753ms)
+✔ menu exposes the new audio controls (2.235084ms)
+✔ planar y becomes scene z; height is independent (2.972971ms)
+✔ horizontal head shot hits, aiming above the head misses (2.836669ms)
+✔ nearest wall shields an enemy; lowering the aim hits terrain (0.70288ms)
+✔ wall around muzzle blocks a clear camera sightline (0.310848ms)
+✔ enemy in cover cannot cause damage through a wall (3.361851ms)
+✔ unreachable destination reports failure and does not move through walls (0.855472ms)
+✔ wall shields blast damage but visible nearby actor takes damage (0.507071ms)
+✔ JSON checkpoint restores actors, reload, grenade, phase, clock and RNG exactly (31.533748ms)
+✔ corrupt and incompatible saves are rejected atomically (9.198383ms)
+✔ death restores the last living checkpoint without reviving defeated enemies (14.111644ms)
+✔ restored simulation reproduces future seeded decisions and events (442.935096ms)
+✔ two independent sectors evolve for 90 seconds with stable losses and unique events (1.930986ms)
+✔ partial fourth reinforcement group activates and visible candidates remain hidden (0.875273ms)
+✔ zero time never advances reload or the battle (2.172771ms)
+✔ weapon enforces cadence, ammo, and reload transfer (6.812804ms)
+✔ world blocks walls and permits open cells (4.47423ms)
+✔ navigation chooses a walkable next tile around cover (2.403783ms)
+✔ mission advances through checkpoint, combat, and radio (0.260191ms)
+✔ shot geometry detects targets on aim line (0.242251ms)
+✔ 3D matrix composition preserves translation and scale (0.886989ms)
+✔ weapon exposes a stable reload animation timeline (0.510048ms)
+✔ enemy selects cover instead of charging directly at player (2.629771ms)
+✔ grenade bounces on walls, warns AI, and applies radial damage (7.60226ms)
+✔ battle director activates reinforcement groups without replacing individual AI (2.139602ms)
+✔ text-only OBJ assets load with meshes, normals, and MTL colors (27.000882ms)
+✔ pointer lock entry and resume ignore cursor warps while later mouse movement works (4.633559ms)
+✔ High skins every soldier up to the impostor hand-off, with no box-proxy gap and no double draw (103.665075ms)
+✔ High draws enemy and ally soldiers as skinned LOD bodies at 200 m and 300 m, and hands over to impostors beyond (332.16589ms)
+✔ the High budget covers a combat crowd of 48 and still sorts by distance (1792.610127ms)
+✔ rim distance factor: none near, full at mid range, fades out where a figure is a few pixels tall; the aerial fill grows to a plateau (3.033662ms)
+✔ rim colour follows the fog colour and stays a thin edge light, never a glow (0.823358ms)
+✔ the rim is injected into the real three.js standard and physical fragment shaders, exactly once (0.922256ms)
+✔ only German body materials are patched; allies, weapons and the shared source materials are not (138.283618ms)
+✔ patchRimMaterial: one shared program key and compile hook, uniforms shared through the state object (1.624398ms)
+✔ Ju 87 clones use native LODs, share art, sample the saved clock and follow the stukaPath anchored to the bombing (46.277208ms)
+✔ missing optional Ju 87 art keeps the silhouettes; partial failure uses available detail and disposal prevents attachment (21.231563ms)
+✔ each Ju 87 gets its own light-weight material instances over shared textures, propeller rpm/phase and attitude (17.397818ms)
+✔ Ju 87 fade has no 90 s wrap (the path never loops) and eases in after the planes are heard, deterministically (14.830774ms)
+✔ Ju 87 LOD keeps 10 % hysteresis at thresholds while the quality floor always applies (15.62276ms)
+✔ at fade 0 the selected level (GLB or fallback proxy) stays visible and reported; opacity does the hiding (18.722958ms)
+✔ the entry fade reads the saved planes_heard time of the real simulation (1958.84278ms)
+✔ constants agree with the mission data they mirror (6.305879ms)
+✔ every Ju 87 lies on stukaPath at known instants after the bombing event, offset 0/3.5/7 s (32.721102ms)
+✔ the approach comes from the east, then the formation departs east, hides and never repeats (1.224468ms)
+✔ attitude comes from the path tangent: nose down in the dive, heading north then west, east on departure (39.769495ms)
+✔ second raid: one high pass from the raid start, crossing once, then hidden (1.243117ms)
+✔ the anchor is the consumed time of the bombing event: predicted before it, authoritative after; restore reproduces it (9927.881573ms)
+✔ bombs appear 1.5 s before each aerial blast and land at the authoritative point at its instant (38.216574ms)
+✔ the predicted blast points mirror the simulation (including the forward-post near miss and the 30 m rule) (32.024778ms)
+✔ simulation never imports the presentation path and no time wrap remains in the aircraft presentation (15.309254ms)
+✔ the view draws a bounded bomb pool from the flights and reports path/bomb diagnostics (31.103098ms)
+✔ the presented Ju 87 yaw is a smooth pure function of time: bounded rate through the pull-out, no NaN, position untouched (1916.657271ms)
+✔ T21 a: N ambient updates leave sim.snapshot() deep-equal (no write) (3467.230794ms)
+✔ T21 b: same seed -> same sequence; ambient never consumes sim.rng (39.343403ms)
+✔ T21 c: real checkpoint/restore at 05:52 continues with ambient.flashes>0 and identical flashes (4386.135194ms)
+✔ T21 d: reads battleReadout (never writes) and does not change real cadences (3106.837378ms)
+
+Interrupted while running:
+
+⚠ tests/m01-animation-contract.test.js (tests/m01-animation-contract.test.js:1:1)
+✖ tests/m01-animation-contract.test.js (563426.472489ms)
+✖ tests/m01-animation-player.test.js
+✖ tests/m01-animation-resolver-v2.test.js
+✖ tests/m01-animation-resolver.test.js
+✖ tests/m01-animation-variety-real-rig.test.js
+✖ tests/m01-animation-variety.test.js
+✖ tests/m01-atmosphere-runtime.test.js
+✖ tests/m01-audio-director.test.js
+✖ tests/m01-audio-feel.test.js
+✖ tests/m01-audio-production.test.js
+✖ tests/m01-barks.test.js
+✖ tests/m01-battlefield-audio.test.js
+✖ tests/m01-battlefield-fx-polish-v3.test.js
+✖ tests/m01-battlefield-fx.test.js
+✖ tests/m01-blast.test.js
+✖ tests/m01-body-feedback.test.js
+✖ tests/m01-bomb-effects.test.js
+✖ tests/m01-bridge-finish-runtime.test.js
+✖ tests/m01-bridge-lod.test.js
+✖ tests/m01-bridge-material-kit.test.js
+✖ tests/m01-bridge-material.test.js
+✖ tests/m01-bridge-portal-polish.test.js
+✖ tests/m01-bridge-structure.test.js
+✖ tests/m01-bridges-glb.test.js
+✖ tests/m01-character-assets.test.js
+✖ tests/m01-character-muzzle-profile.test.js
+✖ tests/m01-civilian-skin.test.js
+✖ tests/m01-ckm-candidate-posts.test.js
+✖ tests/m01-ckm-fire-arc.test.js
+✖ tests/m01-ckm-live-fire.test.js
+✖ tests/m01-ckm-live-presentation.test.js
+✖ tests/m01-ckm-placement-migration.test.js
+✖ tests/m01-ckm-runtime.test.js
+✖ tests/m01-ckm-stoppage.test.js
+✖ tests/m01-ckm-wz30-glb.test.js
+✖ tests/m01-collision-bridgehead.test.js
+✖ tests/m01-collision-visible-geometry.test.js
+✖ tests/m01-combat-ai.test.js
+✖ tests/m01-combat-feedback.test.js
+✖ tests/m01-combat-posture-staging.test.js
+✖ tests/m01-consolidation-lifecycle.test.js
+✖ tests/m01-continuity-raid.test.js
+✖ tests/m01-continuous-fixes.test.js
+✖ tests/m01-cover-combat.test.js
+✖ tests/m01-cover-origin.test.js
+✖ tests/m01-cover-threat.test.js
+✖ tests/m01-damage-decals.test.js
+✖ tests/m01-deck-assault.test.js
+✖ tests/m01-demolition-cue.test.js
+✖ tests/m01-demolition.test.js
+✖ tests/m01-difficulty-death-ui.test.js
+✖ tests/m01-difficulty-death.test.js
+✖ tests/m01-difficulty-save.test.js
+✖ tests/m01-difficulty-ui.test.js
+✖ tests/m01-difficulty-wiring.test.js
+✖ tests/m01-display-fire.test.js
+✖ tests/m01-east-front.test.js
+✖ tests/m01-environment-props.test.js
+✖ tests/m01-environment-quality.test.js
+✖ tests/m01-environment.test.js
+✖ tests/m01-escort-coordination.test.js
+✖ tests/m01-fair-death.test.js
+✖ tests/m01-far-actor-pose-rate.test.js
+✖ tests/m01-far-landscape.test.js
+✖ tests/m01-field-structures.test.js
+✖ tests/m01-first-load-lod.test.js
+✖ tests/m01-fp-ads-sight.test.js
+✖ tests/m01-fp-arms.test.js
+✖ tests/m01-fp-hand-grip.test.js
+✖ tests/m01-frame-catchup.test.js
+✖ tests/m01-frame-cost-allocation.test.js
+✖ tests/m01-german-ai-saves.test.js
+✖ tests/m01-german-ai-tactics.test.js
+✖ tests/m01-german-ai.test.js
+✖ tests/m01-german-retreat.test.js
+✖ tests/m01-grading.test.js
+✖ tests/m01-hud-presentation.test.js
+✖ tests/m01-impostors.test.js
+✖ tests/m01-ju87-glb.test.js
+✖ tests/m01-lighting.test.js
+✖ tests/m01-living-battlefield-t21.test.js
+✖ tests/m01-loading-and-bundle-t50.test.js
+✖ tests/m01-locomotive.test.js
+✖ tests/m01-lod-fade-bridge-opening-dark.test.js
+✖ tests/m01-lod-fade-bridge.test.js
+✖ tests/m01-lod-fade-instances.test.js
+✖ tests/m01-lod-fade-runtime.test.js
+✖ tests/m01-lod-policy-actors.test.js
+✖ tests/m01-lod-policy-vegetation-bridge.test.js
+✖ tests/m01-lod-policy.test.js
+✖ tests/m01-lod-preset-counters.test.js
+✖ tests/m01-material-atlas.test.js
+✖ tests/m01-material-authority.test.js
+✖ tests/m01-mg34-glb.test.js
+✖ tests/m01-mg34-prone-glb.test.js
+✖ tests/m01-mg34-prone-presentation.test.js
+✖ tests/m01-mg34-prone-runtime.test.js
+✖ tests/m01-mg34-prone-spatial.test.js
+✖ tests/m01-nav-queue.test.js
+✖ tests/m01-npc-navigation.test.js
+✖ tests/m01-pacing-combat-clock.test.js
+✖ tests/m01-pacing.test.js
+✖ tests/m01-panzerzug.test.js
+✖ tests/m01-partials-audio-pressure.test.js
+✖ tests/m01-partials-completion.test.js
+✖ tests/m01-partials-correction-01.test.js
+✖ tests/m01-player-collision.test.js
+✖ tests/m01-player-physics.test.js
+✖ tests/m01-player-reach.test.js
+✖ tests/m01-player-shot-feedback.test.js
+✖ tests/m01-poses.test.js
+✖ tests/m01-props-kit.test.js
+✖ tests/m01-props-runtime.test.js
+✖ tests/m01-rearguard.test.js
+✖ tests/m01-render-idempotence.test.js
+✖ tests/m01-render-perf.test.js
+✖ tests/m01-river-slip.test.js
+✖ tests/m01-rkm-wz28-glb.test.js
+✖ tests/m01-runtime.test.js
+✖ tests/m01-schema2-determinism.test.js
+✖ tests/m01-section.test.js
+✖ tests/m01-shot-fx.test.js
+✖ tests/m01-simulation-boundary.test.js
+✖ tests/m01-soldier-batching.test.js
+✖ tests/m01-soldier-motion-clips.test.js
+✖ tests/m01-soldier-visual-variation.test.js
+✖ tests/m01-soldiers-glb.test.js
+✖ tests/m01-station-architecture.test.js
+✖ tests/m01-station-drag-runtime.test.js
+✖ tests/m01-station-drag-transitions-glb.test.js
+✖ tests/m01-station-evacuation.test.js
+✖ tests/m01-support-runtime.test.js
+✖ tests/m01-t37-foot-ik-hand-pin.test.js
+✖ tests/m01-t37-ik-off-external-oracle.test.js
+✖ tests/m01-t49-scratch-reuse.test.js
+✖ tests/m01-t50-font-footer-bundle.test.js
+✖ tests/m01-tczew-data.test.js
+✖ tests/m01-terrain-envelope.test.js
+✖ tests/m01-terrain-mask.test.js
+✖ tests/m01-terrain-material.test.js
+✖ tests/m01-terrain-relief.test.js
+✖ tests/m01-terrain-textures.test.js
+✖ tests/m01-track-bed.test.js
+✖ tests/m01-train-arrival-t24.test.js
+✖ tests/m01-train-consist-polish.test.js
+✖ tests/m01-vegetation-glb.test.js
+✖ tests/m01-vegetation-layout.test.js
+✖ tests/m01-vegetation-lod.test.js
+✖ tests/m01-vegetation-runtime.test.js
+✖ tests/m01-viewmodel-feel.test.js
+✖ tests/m01-wagon-damage-glb.test.js
+✖ tests/m01-wagon-runtime-integration.test.js
+✖ tests/m01-wagons-glb.test.js
+✖ tests/m01-water.test.js
+✖ tests/m01-weapon-presentation.test.js
+✖ tests/m01-wz29-viewmodel.test.js
+✖ tests/m01-yard-wagon-colliders.test.js
+✖ tests/m02-01-quinta-geometry-ballistics.test.js
+✖ tests/m02-02-combat-squad-ai.test.js
+✖ tests/m02-03-area-a-horizon-c01.test.js
+✖ tests/m02-04-05-areas-bc-completion.test.js
+✖ tests/m02-06-audiovisual-accessibility-full-matrix.test.js
+✖ tests/m02-environment.test.js
+✖ tests/m02-playable-continuity.test.js
+✖ tests/m02-presentation.test.js
+✖ tests/m02-reconstruction.test.js
+✖ tests/m02-session.test.js
+✖ tests/m02-static-batching.test.js
+✖ tests/m02-weapon-causality.test.js
+✖ tests/m02-weapons.test.js
+✖ tests/t21-camera-level.test.js
+✖ tests/touch.test.js
+ℹ tests 273
+ℹ suites 0
+ℹ pass 101
+ℹ fail 0
+ℹ cancelled 172
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 598774.20162
+
+✖ failing tests:
+
+test at tests/m01-animation-contract.test.js:1:1
+✖ tests/m01-animation-contract.test.js (563426.472489ms)
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-animation-player.test.js:1:1
+✖ tests/m01-animation-player.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-animation-resolver-v2.test.js:1:1
+✖ tests/m01-animation-resolver-v2.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-animation-resolver.test.js:1:1
+✖ tests/m01-animation-resolver.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-animation-variety-real-rig.test.js:1:1
+✖ tests/m01-animation-variety-real-rig.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-animation-variety.test.js:1:1
+✖ tests/m01-animation-variety.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-atmosphere-runtime.test.js:1:1
+✖ tests/m01-atmosphere-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-audio-director.test.js:1:1
+✖ tests/m01-audio-director.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-audio-feel.test.js:1:1
+✖ tests/m01-audio-feel.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-audio-production.test.js:1:1
+✖ tests/m01-audio-production.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-barks.test.js:1:1
+✖ tests/m01-barks.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-battlefield-audio.test.js:1:1
+✖ tests/m01-battlefield-audio.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-battlefield-fx-polish-v3.test.js:1:1
+✖ tests/m01-battlefield-fx-polish-v3.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-battlefield-fx.test.js:1:1
+✖ tests/m01-battlefield-fx.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-blast.test.js:1:1
+✖ tests/m01-blast.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-body-feedback.test.js:1:1
+✖ tests/m01-body-feedback.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bomb-effects.test.js:1:1
+✖ tests/m01-bomb-effects.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridge-finish-runtime.test.js:1:1
+✖ tests/m01-bridge-finish-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridge-lod.test.js:1:1
+✖ tests/m01-bridge-lod.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridge-material-kit.test.js:1:1
+✖ tests/m01-bridge-material-kit.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridge-material.test.js:1:1
+✖ tests/m01-bridge-material.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridge-portal-polish.test.js:1:1
+✖ tests/m01-bridge-portal-polish.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridge-structure.test.js:1:1
+✖ tests/m01-bridge-structure.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-bridges-glb.test.js:1:1
+✖ tests/m01-bridges-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-character-assets.test.js:1:1
+✖ tests/m01-character-assets.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-character-muzzle-profile.test.js:1:1
+✖ tests/m01-character-muzzle-profile.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-civilian-skin.test.js:1:1
+✖ tests/m01-civilian-skin.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-candidate-posts.test.js:1:1
+✖ tests/m01-ckm-candidate-posts.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-fire-arc.test.js:1:1
+✖ tests/m01-ckm-fire-arc.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-live-fire.test.js:1:1
+✖ tests/m01-ckm-live-fire.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-live-presentation.test.js:1:1
+✖ tests/m01-ckm-live-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-placement-migration.test.js:1:1
+✖ tests/m01-ckm-placement-migration.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-runtime.test.js:1:1
+✖ tests/m01-ckm-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-stoppage.test.js:1:1
+✖ tests/m01-ckm-stoppage.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ckm-wz30-glb.test.js:1:1
+✖ tests/m01-ckm-wz30-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-collision-bridgehead.test.js:1:1
+✖ tests/m01-collision-bridgehead.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-collision-visible-geometry.test.js:1:1
+✖ tests/m01-collision-visible-geometry.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-combat-ai.test.js:1:1
+✖ tests/m01-combat-ai.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-combat-feedback.test.js:1:1
+✖ tests/m01-combat-feedback.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-combat-posture-staging.test.js:1:1
+✖ tests/m01-combat-posture-staging.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-consolidation-lifecycle.test.js:1:1
+✖ tests/m01-consolidation-lifecycle.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-continuity-raid.test.js:1:1
+✖ tests/m01-continuity-raid.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-continuous-fixes.test.js:1:1
+✖ tests/m01-continuous-fixes.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-cover-combat.test.js:1:1
+✖ tests/m01-cover-combat.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-cover-origin.test.js:1:1
+✖ tests/m01-cover-origin.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-cover-threat.test.js:1:1
+✖ tests/m01-cover-threat.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-damage-decals.test.js:1:1
+✖ tests/m01-damage-decals.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-deck-assault.test.js:1:1
+✖ tests/m01-deck-assault.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-demolition-cue.test.js:1:1
+✖ tests/m01-demolition-cue.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-demolition.test.js:1:1
+✖ tests/m01-demolition.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-difficulty-death-ui.test.js:1:1
+✖ tests/m01-difficulty-death-ui.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-difficulty-death.test.js:1:1
+✖ tests/m01-difficulty-death.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-difficulty-save.test.js:1:1
+✖ tests/m01-difficulty-save.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-difficulty-ui.test.js:1:1
+✖ tests/m01-difficulty-ui.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-difficulty-wiring.test.js:1:1
+✖ tests/m01-difficulty-wiring.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-display-fire.test.js:1:1
+✖ tests/m01-display-fire.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-east-front.test.js:1:1
+✖ tests/m01-east-front.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-environment-props.test.js:1:1
+✖ tests/m01-environment-props.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-environment-quality.test.js:1:1
+✖ tests/m01-environment-quality.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-environment.test.js:1:1
+✖ tests/m01-environment.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-escort-coordination.test.js:1:1
+✖ tests/m01-escort-coordination.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-fair-death.test.js:1:1
+✖ tests/m01-fair-death.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-far-actor-pose-rate.test.js:1:1
+✖ tests/m01-far-actor-pose-rate.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-far-landscape.test.js:1:1
+✖ tests/m01-far-landscape.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-field-structures.test.js:1:1
+✖ tests/m01-field-structures.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-first-load-lod.test.js:1:1
+✖ tests/m01-first-load-lod.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-fp-ads-sight.test.js:1:1
+✖ tests/m01-fp-ads-sight.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-fp-arms.test.js:1:1
+✖ tests/m01-fp-arms.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-fp-hand-grip.test.js:1:1
+✖ tests/m01-fp-hand-grip.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-frame-catchup.test.js:1:1
+✖ tests/m01-frame-catchup.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-frame-cost-allocation.test.js:1:1
+✖ tests/m01-frame-cost-allocation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-german-ai-saves.test.js:1:1
+✖ tests/m01-german-ai-saves.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-german-ai-tactics.test.js:1:1
+✖ tests/m01-german-ai-tactics.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-german-ai.test.js:1:1
+✖ tests/m01-german-ai.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-german-retreat.test.js:1:1
+✖ tests/m01-german-retreat.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-grading.test.js:1:1
+✖ tests/m01-grading.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-hud-presentation.test.js:1:1
+✖ tests/m01-hud-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-impostors.test.js:1:1
+✖ tests/m01-impostors.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-ju87-glb.test.js:1:1
+✖ tests/m01-ju87-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lighting.test.js:1:1
+✖ tests/m01-lighting.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-living-battlefield-t21.test.js:1:1
+✖ tests/m01-living-battlefield-t21.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-loading-and-bundle-t50.test.js:1:1
+✖ tests/m01-loading-and-bundle-t50.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-locomotive.test.js:1:1
+✖ tests/m01-locomotive.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-fade-bridge-opening-dark.test.js:1:1
+✖ tests/m01-lod-fade-bridge-opening-dark.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-fade-bridge.test.js:1:1
+✖ tests/m01-lod-fade-bridge.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-fade-instances.test.js:1:1
+✖ tests/m01-lod-fade-instances.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-fade-runtime.test.js:1:1
+✖ tests/m01-lod-fade-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-policy-actors.test.js:1:1
+✖ tests/m01-lod-policy-actors.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-policy-vegetation-bridge.test.js:1:1
+✖ tests/m01-lod-policy-vegetation-bridge.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-policy.test.js:1:1
+✖ tests/m01-lod-policy.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-lod-preset-counters.test.js:1:1
+✖ tests/m01-lod-preset-counters.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-material-atlas.test.js:1:1
+✖ tests/m01-material-atlas.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-material-authority.test.js:1:1
+✖ tests/m01-material-authority.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-glb.test.js:1:1
+✖ tests/m01-mg34-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-glb.test.js:1:1
+✖ tests/m01-mg34-prone-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-presentation.test.js:1:1
+✖ tests/m01-mg34-prone-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-runtime.test.js:1:1
+✖ tests/m01-mg34-prone-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-mg34-prone-spatial.test.js:1:1
+✖ tests/m01-mg34-prone-spatial.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-nav-queue.test.js:1:1
+✖ tests/m01-nav-queue.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-npc-navigation.test.js:1:1
+✖ tests/m01-npc-navigation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-pacing-combat-clock.test.js:1:1
+✖ tests/m01-pacing-combat-clock.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-pacing.test.js:1:1
+✖ tests/m01-pacing.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-panzerzug.test.js:1:1
+✖ tests/m01-panzerzug.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-partials-audio-pressure.test.js:1:1
+✖ tests/m01-partials-audio-pressure.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-partials-completion.test.js:1:1
+✖ tests/m01-partials-completion.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-partials-correction-01.test.js:1:1
+✖ tests/m01-partials-correction-01.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-player-collision.test.js:1:1
+✖ tests/m01-player-collision.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-player-physics.test.js:1:1
+✖ tests/m01-player-physics.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-player-reach.test.js:1:1
+✖ tests/m01-player-reach.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-player-shot-feedback.test.js:1:1
+✖ tests/m01-player-shot-feedback.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-poses.test.js:1:1
+✖ tests/m01-poses.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-props-kit.test.js:1:1
+✖ tests/m01-props-kit.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-props-runtime.test.js:1:1
+✖ tests/m01-props-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-rearguard.test.js:1:1
+✖ tests/m01-rearguard.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-render-idempotence.test.js:1:1
+✖ tests/m01-render-idempotence.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-render-perf.test.js:1:1
+✖ tests/m01-render-perf.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-river-slip.test.js:1:1
+✖ tests/m01-river-slip.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-rkm-wz28-glb.test.js:1:1
+✖ tests/m01-rkm-wz28-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-runtime.test.js:1:1
+✖ tests/m01-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-schema2-determinism.test.js:1:1
+✖ tests/m01-schema2-determinism.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-section.test.js:1:1
+✖ tests/m01-section.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-shot-fx.test.js:1:1
+✖ tests/m01-shot-fx.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-simulation-boundary.test.js:1:1
+✖ tests/m01-simulation-boundary.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldier-batching.test.js:1:1
+✖ tests/m01-soldier-batching.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldier-motion-clips.test.js:1:1
+✖ tests/m01-soldier-motion-clips.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldier-visual-variation.test.js:1:1
+✖ tests/m01-soldier-visual-variation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-soldiers-glb.test.js:1:1
+✖ tests/m01-soldiers-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-architecture.test.js:1:1
+✖ tests/m01-station-architecture.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-drag-runtime.test.js:1:1
+✖ tests/m01-station-drag-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-drag-transitions-glb.test.js:1:1
+✖ tests/m01-station-drag-transitions-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-station-evacuation.test.js:1:1
+✖ tests/m01-station-evacuation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-support-runtime.test.js:1:1
+✖ tests/m01-support-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-t37-foot-ik-hand-pin.test.js:1:1
+✖ tests/m01-t37-foot-ik-hand-pin.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-t37-ik-off-external-oracle.test.js:1:1
+✖ tests/m01-t37-ik-off-external-oracle.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-t49-scratch-reuse.test.js:1:1
+✖ tests/m01-t49-scratch-reuse.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-t50-font-footer-bundle.test.js:1:1
+✖ tests/m01-t50-font-footer-bundle.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-tczew-data.test.js:1:1
+✖ tests/m01-tczew-data.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-envelope.test.js:1:1
+✖ tests/m01-terrain-envelope.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-mask.test.js:1:1
+✖ tests/m01-terrain-mask.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-material.test.js:1:1
+✖ tests/m01-terrain-material.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-relief.test.js:1:1
+✖ tests/m01-terrain-relief.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-terrain-textures.test.js:1:1
+✖ tests/m01-terrain-textures.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-track-bed.test.js:1:1
+✖ tests/m01-track-bed.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-train-arrival-t24.test.js:1:1
+✖ tests/m01-train-arrival-t24.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-train-consist-polish.test.js:1:1
+✖ tests/m01-train-consist-polish.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-glb.test.js:1:1
+✖ tests/m01-vegetation-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-layout.test.js:1:1
+✖ tests/m01-vegetation-layout.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-lod.test.js:1:1
+✖ tests/m01-vegetation-lod.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-vegetation-runtime.test.js:1:1
+✖ tests/m01-vegetation-runtime.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-viewmodel-feel.test.js:1:1
+✖ tests/m01-viewmodel-feel.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wagon-damage-glb.test.js:1:1
+✖ tests/m01-wagon-damage-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wagon-runtime-integration.test.js:1:1
+✖ tests/m01-wagon-runtime-integration.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wagons-glb.test.js:1:1
+✖ tests/m01-wagons-glb.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-water.test.js:1:1
+✖ tests/m01-water.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-weapon-presentation.test.js:1:1
+✖ tests/m01-weapon-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-wz29-viewmodel.test.js:1:1
+✖ tests/m01-wz29-viewmodel.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m01-yard-wagon-colliders.test.js:1:1
+✖ tests/m01-yard-wagon-colliders.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-01-quinta-geometry-ballistics.test.js:1:1
+✖ tests/m02-01-quinta-geometry-ballistics.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-02-combat-squad-ai.test.js:1:1
+✖ tests/m02-02-combat-squad-ai.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-03-area-a-horizon-c01.test.js:1:1
+✖ tests/m02-03-area-a-horizon-c01.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-04-05-areas-bc-completion.test.js:1:1
+✖ tests/m02-04-05-areas-bc-completion.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-06-audiovisual-accessibility-full-matrix.test.js:1:1
+✖ tests/m02-06-audiovisual-accessibility-full-matrix.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-environment.test.js:1:1
+✖ tests/m02-environment.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-playable-continuity.test.js:1:1
+✖ tests/m02-playable-continuity.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-presentation.test.js:1:1
+✖ tests/m02-presentation.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-reconstruction.test.js:1:1
+✖ tests/m02-reconstruction.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-session.test.js:1:1
+✖ tests/m02-session.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-static-batching.test.js:1:1
+✖ tests/m02-static-batching.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-weapon-causality.test.js:1:1
+✖ tests/m02-weapon-causality.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/m02-weapons.test.js:1:1
+✖ tests/m02-weapons.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/t21-camera-level.test.js:1:1
+✖ tests/t21-camera-level.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/touch.test.js:1:1
+✖ tests/touch.test.js
+  'Promise resolution is still pending but the event loop has already resolved'
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

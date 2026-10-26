@@ -1,0 +1,145 @@
+{
+  "startedAt": "2026-10-26T22:27:30.997Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.49999999999999994,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 14.396
+    },
+    {
+      "label": "A:O01",
+      "clock": 7.349999999999982,
+      "health": 68,
+      "pos": [
+        -7.60451499991201,
+        -172.0059357072965
+      ],
+      "realSec": 26.32
+    },
+    {
+      "label": "A:O02",
+      "clock": 30.300000000000296,
+      "health": 68,
+      "pos": [
+        5.407543502994524,
+        -61.769770549529426
+      ],
+      "realSec": 54.656
+    },
+    {
+      "label": "A:O03",
+      "clock": 36.95000000000004,
+      "health": 60,
+      "pos": [
+        23.866191767495067,
+        -38.23713135061921
+      ],
+      "realSec": 72.003
+    },
+    {
+      "label": "A:C04",
+      "clock": 48.799999999999365,
+      "health": 60,
+      "pos": [
+        -24.965444223908744,
+        -15.420647291054262
+      ],
+      "realSec": 88.666
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 60.949999999998674,
+      "health": 60,
+      "pos": [
+        -0.30627718886959826,
+        44.1675721727247
+      ],
+      "realSec": 106.32
+    },
+    {
+      "label": "B:O04",
+      "clock": 62.09999999999861,
+      "health": 60,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 109.172
+    },
+    {
+      "label": "B:O05",
+      "clock": 166.15000000000353,
+      "health": 60,
+      "pos": [
+        0.1530605206689487,
+        -69.80682725864752
+      ],
+      "realSec": 257.007
+    },
+    {
+      "label": "C:O06",
+      "clock": 167.3500000000038,
+      "health": 70,
+      "pos": [
+        0,
+        -72
+      ],
+      "realSec": 258.642
+    },
+    {
+      "label": "C:O07",
+      "clock": 209.20000000001332,
+      "health": 70,
+      "pos": [
+        1.6185715394094946,
+        0.7613224888638885
+      ],
+      "realSec": 316.009
+    },
+    {
+      "label": "C:O08",
+      "clock": 215.45000000001474,
+      "health": 70,
+      "pos": [
+        0.2876416344698596,
+        1.5058025679374487
+      ],
+      "realSec": 329.766
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "buildCommit": "9da102bc931d78b44a381319cc893e13cd3923d4",
+  "last": {
+    "clock": 264.50000000002586,
+    "state": "playing",
+    "health": 70,
+    "cell": "C",
+    "objective": "O08",
+    "completed": false,
+    "decision": {
+      "controls": {
+        "lookX": -3.140431640397595,
+        "lookY": -0.0021999999999999997,
+        "forward": 1,
+        "sprint": true,
+        "reload": false
+      },
+      "goal": [
+        -55,
+        54
+      ],
+      "route": 1
+    },
+    "pos": [
+      -55.280627157328176,
+      53.289393896953996
+    ]
+  }
+}

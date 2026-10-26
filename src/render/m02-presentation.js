@@ -5,6 +5,11 @@ import { WEAPON_PROFILES } from '../game/m02-combat-ai.js';
 import { AudioManager } from '../core/audio.js';
 import {M02Weapons} from './m02-weapons.js';
 import {WeaponLighting} from './first-person-weapon-fx.js';
+import {WZ29_VISUAL} from './m01-wz29-presentation.js';
+
+// Match the shared M01 viewmodel projection. ADS zoom belongs to the world
+// camera; changing this lens crops the stock and magnifies the near hands.
+export const createM02WeaponCamera=()=>new THREE.PerspectiveCamera(58,1,WZ29_VISUAL.near,6);
 
 // Translated actors and weapon records belong to presentation. The shared renderers
 // read the collision layout; they never decide M02 combat or advance its clock.
@@ -26,8 +31,9 @@ export function m02VisualActor(actor, team, clock) {
 export class M02Presentation {
   constructor(scene, camera, sim) {
     this.camera = camera;
-    this.weaponCamera = new THREE.PerspectiveCamera(68,1,.01,20);
+    this.weaponCamera = createM02WeaponCamera();
     this.fireTimes = new Map();
+    this.roundEvents = new Map();
     this.stepAt = 0;
     this.characters = new M02Characters(scene, { ik:false });
     this.weaponScene = new THREE.Scene();
@@ -42,7 +48,7 @@ export class M02Presentation {
   }
   unlockAudio() { this.audio.init(); }
   update(sim, quality) {
-    if (sim.clock < this.resetClock) { this.audio.resetPresentation(sim.clock); this.fireTimes.clear(); this.stepAt=sim.clock; }
+    if (sim.clock < this.resetClock) { this.audio.resetPresentation(sim.clock); this.fireTimes.clear();this.roundEvents.clear(); this.stepAt=sim.clock; }
     this.resetClock = sim.clock;
     this.audio.setQuality(quality);
     this.audio.updateM01Presentation({clock:sim.clock,quality,state:{},fires:[],phase:sim.areaC?.c12Completed?'OUTRO':'MAIN_COMBAT',spatial:point=>this.spatial(point,sim)});
@@ -67,6 +73,8 @@ export class M02Presentation {
         const profile=WEAPON_PROFILES[actor.weapon];
         const firedAt=actor.lastShotAt??(actor.shotsFired>0&&profile?actor.nextFireAt-profile.cycleSec:this.fireTimes.get(actor.id)??-1e9);
         visual.firedAt=actor.burstStartedAt??firedAt; visual.shot=Math.max(0,.2-(sim.clock-firedAt));
+        const event=this.roundEvents.get(actor.id);
+        visual.m02RoundIndex=event&&Math.abs(event.clock-firedAt)<.001?event.roundIndex:actor.burst?actor.burst.emitted-1:Math.max(0,Math.round((firedAt-visual.firedAt)/(profile?.burstGapSec||1)));
         if(visual.state==='GUARD'&&sim.clock-firedAt<2.5)visual.state='SUPPRESS';
         visual.suppressedUntil=actor.suppressed>.4?sim.clock+.1:0;
         this.ids.set(actor.id, visual.id); actors.push(visual);
@@ -93,18 +101,18 @@ export class M02Presentation {
       renderState:{weaponVisible:sim.player.health>0} };
     this.visualWorld ??= {};
     Object.assign(this.visualWorld, record.world); record.world=this.visualWorld;
-    return this.weapon.update(record, quality, sim.weapon.lastShot/1000+.08, {camera:this.camera, viewFov:68});
+    return this.weapon.update(record, quality, sim.weapon.lastShot/1000+.08, {camera:this.camera, viewFov:this.weaponCamera.fov});
   }
   renderWeapon(renderer) {
     if (!this.weapon.root?.visible) return;
     const autoClear=renderer.autoClear;
     renderer.autoClear=false; renderer.clearDepth();
-    const camera=this.weaponCamera; camera.fov=this.camera.fov; camera.aspect=this.camera.aspect; camera.updateProjectionMatrix();
+    const camera=this.weaponCamera;camera.aspect=this.camera.aspect;camera.updateProjectionMatrix();
     renderer.render(this.weaponScene,camera); renderer.autoClear=autoClear;
   }
   consume(events, sim) {
     for (const event of events) {
-      if (event.type==='actor-burst') this.fireTimes.set(event.shooterId,sim.clock);
+      if (event.type==='actor-burst') {this.fireTimes.set(event.shooterId,event.clock);this.roundEvents.set(event.shooterId,{clock:event.clock,roundIndex:event.roundIndex??0});}
       // A trusted gesture may still be resuming the context. Web Audio accepts
       // scheduled voices while suspended; dropping this event loses the first shot.
       if (!this.audio.ctx || this.audio.ctx.state==='closed') continue;

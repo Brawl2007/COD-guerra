@@ -1,0 +1,21 @@
+[2m[WebServer] [22m(node:72700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:72725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 audio probe {"peak":0.49427512288093567,"shots":5,"state":"running"}
+  ✓  1 tests/browser/m02-01-quinta.spec.js:276:1 › M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation (49.4s)
+  ✓  2 tests/browser/m02-mission.spec.js:4:1 › M02 subtitle and interaction fixtures remain readable together at small and desktop sizes (45.2s)
+  ✓  3 tests/browser/m02-mission.spec.js:30:1 › M02 default quality follows M01 software GPU detection and maximum remains selectable (33.4s)
+  ✓  4 tests/browser/m02-mission.spec.js:43:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (58.9s)
+
+  4 passed (3.3m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
