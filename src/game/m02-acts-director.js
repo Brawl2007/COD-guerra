@@ -604,6 +604,7 @@ export function startC11LisAndLastGroup(sim) {
       lis.y = sim.world.heightAt(lis.x, lis.z);
       lis.health = Math.min(lis.health, 46);
       lis.state = 'WOUNDED_LIAISON';
+      lis.burst=null;lis.reloadingUntil=0;
       lis.crouched = true;
       lis.goal = null;
     }

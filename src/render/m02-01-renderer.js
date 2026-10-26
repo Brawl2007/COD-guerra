@@ -9,6 +9,7 @@ import { M02Presentation } from './m02-presentation.js';
 import { eyePosition } from '../world/spatial.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
 import {initialQuality as selectM01InitialQuality} from './three-renderer.js';
+import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -447,14 +448,15 @@ export class M02BenchRenderer {
         mat = this.materials.earth;
       }
 
+      const revetted=ob.material==='earth'&&this.world.layout.c01Corridor?.covers.some(c=>c.id===ob.id)&&sz>.09;
       const geo = ob.role === 'tree_trunk'
         ? new THREE.CylinderGeometry(sx * 0.48, sx * 0.55, sy, 8)
-        : new THREE.BoxGeometry(sx, sy, sz);
+        : new THREE.BoxGeometry(sx, sy, revetted?sz-.09:sz);
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(
         (ob.min.x + ob.max.x) / 2,
         (ob.min.y + ob.max.y) / 2,
-        (ob.min.z + ob.max.z) / 2,
+        (ob.min.z + ob.max.z) / 2+(revetted?.045:0),
       );
       mesh.userData.vegetationFallback = ob.role==='tree_trunk';
       mesh.userData.m02Immutable=true;
@@ -1094,6 +1096,11 @@ export class M02BenchRenderer {
     this.camera.rotation.x+=Math.sin(this.sim.clock*29)*shake;
     this.camera.rotation.y+=Math.sin(this.sim.clock*23+1)*shake*.65;
     this.camera.rotation.z=Math.sin(this.sim.clock*19)*shake*.4;
+    const recoil=weaponRecoil(WEAPON_PRESENTATION.wz29,this.sim.clock-this.sim.weapon.lastShot/1000,player.aiming?1:0,this.sim.weapon.shotCount);
+    const recoilScale=this.sim.audiovisual.accessibility.reducedCameraShake?.2:1;
+    this.camera.rotation.x+=recoil.pitch*recoilScale;
+    this.camera.rotation.y+=recoil.yaw*recoilScale;
+    this.camera.rotation.z+=recoil.roll*recoilScale*.3;
 
     // Subtle weapon viewmodel bob and ADS offset
     const bob = player.moving ? Math.sin(this.sim.clock * (player.sprinting ? 11 : 7.5)) * 0.012 : 0;

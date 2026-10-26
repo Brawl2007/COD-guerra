@@ -16,6 +16,10 @@ export function m02EnvironmentLayout(world) {
     if(x>bounds.minX-22&&x<bounds.maxX+22&&z>bounds.minZ-22&&z<bounds.maxZ+22)continue;
     trees.push({x,z,height:7+noise(i,43)*10,width:3+noise(i,44)*5,species:['oak','lime','poplar'][i%3],yaw:noise(i,45)*6.28});
   }
+  if(world.layout.c01Corridor)for(const side of [-1,1])for(let i=0;i<13;i++){
+    const x=side*(76+noise(i,61)*12),z=-202+i*10+noise(i,62)*5;
+    trees.push({x,z,height:8+noise(i,63)*7,width:4+noise(i,64)*3,species:i%3===0?'poplar':i%2?'oak':'lime',yaw:noise(i,65)*6.28});
+  }
   const ground=[];
   for(let i=0;i<6500;i++) {
     const x=-105+noise(i,51)*210,z=-220+noise(i,52)*325;
@@ -32,5 +36,9 @@ export function m02TerrainSources(world) {
     const [x0,x1,z0,z1]=b.bounds;
     tracks.push({halfWidth:1.2,points:[[0,(z0+z1)/2],[(x0+x1)/2,(z0+z1)/2]]});
   }
-  return {tracks,rails:[],channel:null,meadow:[]};
+  const meadow=world.layout.c01Corridor?[
+    [[-48,-189],[-7,-189],[-7,-97],[-48,-97]],
+    [[8,-189],[48,-189],[48,-97],[8,-97]],
+  ]:[];
+  return {tracks,rails:[],channel:null,meadow};
 }

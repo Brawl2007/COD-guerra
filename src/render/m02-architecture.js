@@ -4,6 +4,14 @@ import * as THREE from 'three';
 // existing wall shell, above reach or outside the authored door/window aperture.
 export function addM02Architecture(group,world,materials){
  const box=(x,y,z,w,h,d,material)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh;};
+ for(const cover of world.layout.c01Corridor?.covers??[]){
+  if(cover.material!=='earth')continue;
+  const [x0,y0,z0]=cover.min,[x1,y1]=cover.max;
+  // Timber revetment follows the authored solid: no decorative cover, door or
+  // foliage is introduced where the simulation would see an empty field.
+  for(let x=x0+.25;x<x1;x+=1.1)box(x,(y0+y1)/2,z0+.045,.11,y1-y0,.09,materials.wood_thick);
+  for(let y=y0+.13;y<y1-.08;y+=.22)box((x0+x1)/2,y,z0+.035,x1-x0,.17,.07,materials.wood_frame);
+ }
  for(const b of world.layout.buildings){
   const [x0,x1,z0,z1]=b.bounds,h=b.wallHeight??2.8;
   const wood=b.roofMaterial==='wood'||b.id==='B02'||b.id==='B03';

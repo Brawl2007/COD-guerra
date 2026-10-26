@@ -13,7 +13,8 @@ try{
  await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
  await page.addStyleTag({content:'#mission-menu,#cartela-banner{display:none!important} #inspection-label{position:fixed;bottom:12px;left:18px;padding:6px;background:#151713de;color:#e4d1a5;font:13px sans-serif;z-index:99}'});
  await page.evaluate(()=>{const label=document.createElement('div');label.id='inspection-label';label.textContent='INSPEÇÃO VISUAL · CENÁRIO CONTROLADO';document.body.append(label);});
- for(const shot of ['c01-section','quinta-medium','leczyca-high','lesmierz-high','mp38-high']){
+ const scenes=process.env.M02_VISUAL_SCENES?.split(',')??['c01-section','quinta-medium','leczyca-high','lesmierz-high','mp38-high'];
+ for(const shot of scenes){
   await page.evaluate(name=>{
    const {sim,renderer}=window.m02Bench;
    renderer.applyQualityProfile(name==='quinta-medium'?'medium':'high');
@@ -21,10 +22,17 @@ try{
     const gruca=sim.allies.find(a=>a.id==='pl_gruca');
     sim.teleportPlayer(gruca.x-4,gruca.z-1,Math.atan2(1,4),0);
    }
+   if(name==='c01-wide')sim.teleportPlayer(-8,-178,.8,-.02);
+   if(name==='c01-preparation'){
+    sim.startAreaAFullC01();for(let i=0;i<40;i++)sim.tick(.05,{});
+    sim.teleportPlayer(-6,-177,.9,-.08);
+   }
+   if(name==='c02-approach'){sim.reset('C02');sim.teleportPlayer(-12,-65,.97,-.02);}
    if(name==='quinta-medium')sim.teleportPlayer(-20,-43,Math.PI/2,-.02);
    if(name==='leczyca-high'){sim.enterAreaBC06();sim.teleportPlayer(-18,-3,-2.44,-.015);}
    if(name==='lesmierz-high'){sim.enterAreaCC09();sim.teleportPlayer(-4,-4,-.7,-.02);}
    if(name==='mp38-high'){
+    if(sim.activeCellId!=='C')sim.enterAreaCC09();
     const actor=sim.enemies.find(a=>a.weapon==='mp38'),f=actor.facing;
     sim.teleportPlayer(actor.x+Math.cos(f)*3.5,actor.z+Math.sin(f)*3.5,f+Math.PI,-.04);
    }

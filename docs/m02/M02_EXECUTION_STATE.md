@@ -4,7 +4,7 @@
 
 Nova ordem do proprietário: reconstrução incremental de qualidade, começando por armas e C01–C02, até preparar a M02 para avaliação humana. Plano em `M02_RECONSTRUCTION_PLAN.md`, revisão das quatro armas em `M02_WEAPON_REVIEW.md`. O documento complementar de 173.148 palavras foi identificado pelo proprietário e ainda aguarda anexo; a versão anterior continua válida.
 
-D1 implementa dispersão/ADS no input normal (mira exata só na bancada), rondas de MG34/wz.28/MP38 espaçadas e persistidas, supressão por ronda real, remoção do emissor MG fantasma e timestamps de áudio/animação causais. **54 testes M02 PASS**, incluindo cinco regressões novas e compatibilidade/restauro a meio da rajada. Build e playtest desta reconstrução são registados por etapa; não confundir os percursos antigos abaixo com validação de alterações novas. Próximo: reconstrução visual/tática C01–C02 e validação por input em navegador.
+D1 `702ced9` implementa dispersão/ADS no input normal (mira exata só na bancada), rondas de MG34/wz.28/MP38 espaçadas e persistidas, supressão por ronda real, remoção do emissor MG fantasma e timestamps de áudio/animação causais. D2 acrescenta preparação abrigada, clips M01 adaptados à postura física, recargas especializadas, exposição física em cobertura, obstrução do cano, paisagem C01 e Lis desarmado sem tiros. **61 testes M02 PASS**; imagens High antes/depois sem erros de página. Descrição e lacunas em `M02_C01_C02_RECONSTRUCTION.md`. Próximo: percurso por input em navegador desta reconstrução e revisão C03–C12. Não confundir os percursos antigos abaixo com validação de alterações novas.
 
 O estado abaixo descreve a entrega anterior de recuperação, que permanece preservada como baseline.
 

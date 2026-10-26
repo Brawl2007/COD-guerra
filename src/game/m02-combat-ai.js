@@ -25,7 +25,7 @@ export const WEAPON_PROFILES = Object.freeze({
     reloadSec: 3.2,
     range: 195,
     suppressionAdd: 0.65,
-    burstCount: 4,
+    burstCount: 3,
     burstGapSec: 0.1,
     spreadRad: 0.018,
   }),
@@ -566,6 +566,7 @@ export function stepActorNavigation(sim, actor, dt) {
     actor.moving = false;
     return;
   }
+  if(actor.reloadingUntil>sim.clock){actor.moving=false;actor.crouched=true;actor.eyeHeight=1.08;return;}
   if (!actor.goal) {
     actor.moving = false;
     return;
@@ -673,6 +674,18 @@ export function stepActorNavigation(sim, actor, dt) {
   movePlayer(sim.world, actor, vx, vz, dt);
 }
 
+export function updateLowCoverExposure(sim,actor){
+  if(actor.moving||!actor.goal?.crouch||actor.reloadingUntil>sim.clock||actor.role==='medic'||actor.goal.nodeId?.startsWith('prep_'))return;
+  if(sim.world.layout.buildings.some(b=>actor.x>b.bounds[0]&&actor.x<b.bounds[1]&&actor.z>b.bounds[2]&&actor.z<b.bounds[3]))return;
+  const cover=sim.world.obstacles.find(o=>o.max.y>actor.y+.8&&o.max.y<=actor.y+1.4&&o.min.y<=actor.y+.2&&Math.hypot(Math.max(o.min.x-actor.x,0,actor.x-o.max.x),Math.max(o.min.z-actor.z,0,actor.z-o.max.z))<=1.4);
+  if(!cover)return;
+  const offset=[...actor.id].reduce((n,c)=>n+c.charCodeAt(0),0)%11*.17;
+  const phase=(sim.clock+offset)%3.2;
+  const exposed=actor.suppressed<.55&&(Boolean(actor.burst)||(phase>=1.75&&phase<2.8));
+  if(actor.coverExposure?.exposed!==exposed)actor.coverExposure={coverId:cover.id,exposed,changedAt:Number(sim.clock.toFixed(3))};
+  actor.crouched=!exposed;actor.eyeHeight=exposed?1.65:1.08;
+}
+
 export function updatePolishSquad(sim, dt) {
   const coverById = sim.coverNodesById;
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
@@ -682,7 +695,8 @@ export function updatePolishSquad(sim, dt) {
   for (const ally of sim.allies) {
     if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
-    stepActorWeapon(sim, ally, dt);
+    if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state))ally.burst=null;
+    else stepActorWeapon(sim, ally, dt);
     if(ally.id==='pl_lis'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11){ally.goal=null;ally.moving=false;continue;}
 
     if (sim.activeCellId === 'B') {
@@ -728,6 +742,11 @@ export function updatePolishSquad(sim, dt) {
     } else if (sim.c01Active) {
       const c01Elapsed = sim.clock - (sim.c01StartedAt ?? 0);
       const c01Stage = c01Elapsed < 4.5 ? 0 : c01Elapsed < 14.0 ? 1 : 2;
+      const slot=sim.world.layout.c01Corridor?.preparationSlots?.[ally.id];
+      if(c01Stage===0&&slot){
+        ally.goal={x:slot.x,z:slot.z,facing:slot.facing,crouch:true,nodeId:`prep_${ally.id}`};
+        ally.crouched=true;ally.eyeHeight=1.08;ally.moving=false;continue;
+      }
       const c01Map = {
         pl_aux_01: ['cv_c01_p1_e', 'cv_c01_mid_e', 'cv_c01_mid_e'],
         pl_aux_02: ['cv_c01_p1_w', 'cv_c01_mid_e', 'cv_c01_mid_e'],
@@ -810,6 +829,7 @@ export function updatePolishSquad(sim, dt) {
 
     const prevNode = ally.reachedNodeId;
     stepActorNavigation(sim, ally, dt);
+    updateLowCoverExposure(sim,ally);
     if (!ally.moving && ally.goal?.nodeId && ally.reachedNodeId !== ally.goal.nodeId) {
       ally.reachedNodeId = ally.goal.nodeId;
       sim.combatLog.push({
@@ -829,6 +849,8 @@ export function updatePolishSquad(sim, dt) {
         sim.dialogue.trigger('bz39_c03_03', sim);
       }
     }
+
+    if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state))continue;
 
     // 2. Allied target acquisition & causal firing (no decorative shots!)
     if (ally.reloadingUntil > sim.clock || ally.mag <= 0 || sim.clock < ally.nextFireAt) {
@@ -963,6 +985,7 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     stepActorNavigation(sim, enemy, dt);
+    updateLowCoverExposure(sim,enemy);
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
     const potentialTargets = [sim.player, ...sim.allies].filter((t) => t && t.alive && t.state !== 'DOWN');

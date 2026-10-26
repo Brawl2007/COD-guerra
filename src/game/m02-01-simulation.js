@@ -128,12 +128,13 @@ export function validateM02Snapshot(snap) {
   for(const actor of [...(snap.allies??[]),...(snap.enemies??[])]){
     const b=actor.burst;
     if(b==null)continue; // Existing checkpoints have no pending-round field.
-    const maxRounds=WEAPON_PROFILES[actor.weapon]?.burstCount??1;
+    const maxRounds=actor.weapon==='rkm_wz28'?Math.max(4,WEAPON_PROFILES.rkm_wz28.burstCount):WEAPON_PROFILES[actor.weapon]?.burstCount??1;
     if(!Number.isInteger(actor.burstSequence)||actor.burstSequence<1||
       !Number.isInteger(b.totalRounds)||b.totalRounds<2||b.totalRounds>maxRounds||
       !Number.isInteger(b.remaining)||b.remaining<1||
       !Number.isInteger(b.emitted)||b.emitted<1||b.emitted+b.remaining!==b.totalRounds||actor.mag<b.remaining||
       !Number.isFinite(b.nextAt)||b.nextAt<0||!Number.isFinite(b.cooldownUntil)||b.cooldownUntil<0||
+      (b.interval!==undefined&&(!Number.isFinite(b.interval)||b.interval<=0))||
       !b.aimPoint||!['x','y','z'].every(k=>Number.isFinite(b.aimPoint[k]))||
       !['ally','enemy'].includes(b.side)||(b.targetId!==null&&typeof b.targetId!=='string')){
       return {valid:false,reason:`Rajada pendente inválida: ${actor.id}`};
@@ -399,8 +400,13 @@ export class M02BenchSimulation {
 
     // Position the 7 Polish squad allies in the P1 preparation trench (around Z = -174..-178)
     for (const ally of this.allies) {
-      ally.z = Number((ally.z - 96.0).toFixed(2));
+      const original=this.world.layout.polishSquad.find(a=>a.id===ally.id);
+      const slot=this.world.layout.c01Corridor?.preparationSlots?.[ally.id];
+      ally.x=slot?.x??original?.x??ally.x;
+      ally.z=slot?.z??Number(((original?.z??-79)-96).toFixed(2));
+      ally.facing=slot?.facing??original?.facing??Math.PI/2;
       ally.y = this.world.heightAt(ally.x, ally.z);
+      ally.crouched=true;ally.eyeHeight=1.08;ally.moving=false;
       ally.goal = null;
       ally.reachedNodeId = null;
     }
@@ -865,6 +871,7 @@ export class M02BenchSimulation {
     shooter.nextFireAt = pending?.cooldownUntil??Number((this.clock + prof.cycleSec).toFixed(3));
     if(!continuation){
       shooter.burstSequence=(shooter.burstSequence??0)+1;
+      shooter.burstStartedAt=this.clock;
       if(shooter.id==='DE-A05'){
         this.mgState.burstsFired++;this.mgState.nextBurstAt=shooter.nextFireAt;
       }
@@ -875,6 +882,9 @@ export class M02BenchSimulation {
         ? { x: 11.82, y: 1.42, z: -30.0 }
         : eyePosition(shooter);
 
+    const aimYaw=Math.atan2(aimPoint.z-origin.z,aimPoint.x-origin.x);
+    const aimPitch=Math.atan2(aimPoint.y-origin.y,Math.hypot(aimPoint.x-origin.x,aimPoint.z-origin.z));
+    const muzzle=shooter.id==='DE-A05'?origin:muzzlePosition({...shooter,angle:aimYaw,pitch:aimPitch,aiming:true},this.clock);
     const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies];
     let hitAny = false;
 
@@ -893,7 +903,7 @@ export class M02BenchSimulation {
       const rLen = Math.hypot(rx, ry, rz) || 1;
       const dir = { x: rx / rLen, y: ry / rLen, z: rz / rLen };
 
-      const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range);
+      const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range,muzzle);
 
       if (hit && hit.kind === 'world' && hit.material === 'glass' && hit.windowId) {
         this.world.setWindowState(hit.windowId, 'broken');
@@ -978,15 +988,15 @@ export class M02BenchSimulation {
       burstId: `${shooter.id}:${shooter.burstSequence}`,
       burstSize: planned,
       roundIndex: pending?.emitted??0,
-      interval: prof.burstGapSec,
+      interval: pending?.interval??prof.burstGapSec,
       hitAny,
-      origin,
+      origin:muzzle,
       target: aimPoint,
       clock: Number(this.clock.toFixed(2)),
     };
     this.events.push(evt);
     if(!continuation&&planned>1){
-      shooter.burst={remaining:planned-1,totalRounds:planned,emitted:1,nextAt:this.clock+prof.burstGapSec,cooldownUntil:shooter.nextFireAt,targetId:targetActor?.id??null,aimPoint:{...aimPoint},side};
+      shooter.burst={remaining:planned-1,totalRounds:planned,emitted:1,interval:prof.burstGapSec,nextAt:this.clock+prof.burstGapSec,cooldownUntil:shooter.nextFireAt,targetId:targetActor?.id??null,aimPoint:{...aimPoint},side};
     }
     return evt;
   }
@@ -1003,7 +1013,7 @@ export class M02BenchSimulation {
     while(burst.remaining>0&&this.clock+1e-8>=burst.nextAt){
       if(!this.fireActorBurst(shooter,target,burst.aimPoint,burst.side,{continuation:true}))break;
       burst.remaining--;burst.emitted++;
-      burst.nextAt=Number((burst.nextAt+(WEAPON_PROFILES[shooter.weapon]?.burstGapSec??0)).toFixed(6));
+      burst.nextAt=Number((burst.nextAt+(burst.interval??WEAPON_PROFILES[shooter.weapon]?.burstGapSec??0)).toFixed(6));
       if(target?.nonCombatant)break;
     }
     if(burst.remaining<=0||target?.nonCombatant)shooter.burst=null;

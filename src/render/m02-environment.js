@@ -87,7 +87,7 @@ export class M02Environment {
         const p=list[i],distance=Math.hypot(p.x-sim.player.x,p.z-sim.player.z);
         if(ground?(distance>38||i%(quality==='low'?6:quality==='medium'?3:1)!==0):chooseVegetationTier(distance,quality)!==tier)continue;
         dummy.position.set(p.x,this.world.terrainHeightAt(p.x,p.z),p.z);dummy.rotation.set(0,p.yaw,0);
-        if(ground)dummy.scale.set(1,p.h,1);else dummy.scale.set(p.width,p.height,p.width);
+        if(ground)dummy.scale.set(1,p.h/([.56,.56,.36][p.species]??.56),1);else dummy.scale.set(p.width,p.height,p.width);
         dummy.updateMatrix();mesh.setMatrixAt(count,dummy.matrix);mesh.geometry.attributes.instanceSpecies.setX(count,ground?p.species:species.indexOf(p.species));count++;
       }
       mesh.count=count;mesh.instanceMatrix.needsUpdate=true;mesh.geometry.attributes.instanceSpecies.needsUpdate=true;

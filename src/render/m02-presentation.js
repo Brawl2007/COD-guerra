@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { M01Characters } from './m01-characters.js';
+import {M02Characters} from './m02-character-adapter.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { WEAPON_PROFILES } from '../game/m02-combat-ai.js';
 import { AudioManager } from '../core/audio.js';
@@ -18,7 +18,7 @@ export function m02VisualActor(actor, team, clock) {
     posture: actor.crouched ? 'crouch' : 'stand',
     pose: actor.state==='EVACUATED_B12'?'seated':actor.pose,
     shot: actor.shot ?? (clock - (actor.lastShotAt ?? -Infinity) < .15 ? .15 : 0),
-    reload: actor.reloadingUntil > clock ? {startedAt:actor.reloadingUntil-(WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8)} : null,
+    reload: actor.reloadingUntil > clock ? {startedAt:actor.reloadingUntil-(WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8),durationSec:WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8} : null,
     motion: { speed: actor.moving ? (actor.speed ?? (actor.suppressed>.55?2.6:4.1)) : 0 },
   };
 }
@@ -29,14 +29,14 @@ export class M02Presentation {
     this.weaponCamera = new THREE.PerspectiveCamera(68,1,.01,20);
     this.fireTimes = new Map();
     this.stepAt = 0;
-    this.characters = new M01Characters(scene, { ik:false });
+    this.characters = new M02Characters(scene, { ik:false });
     this.weaponScene = new THREE.Scene();
     this.weaponLighting=new WeaponLighting(this.weaponScene);
     // M01 viewmodel lives in camera space and has its own depth pass.
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
     this.m02Weapons=new M02Weapons();
-    this.ready = Promise.all([this.characters.load('medium'),this.m02Weapons.ready]);
+    this.ready = Promise.all([this.characters.load('medium').then(()=>this.characters.prepareM02Clips()),this.m02Weapons.ready]);
     this.ids = new Map();
     this.resetClock = sim.clock;
   }
@@ -59,10 +59,15 @@ export class M02Presentation {
         // Preserve Claude's explicit hands-up surrender pose, not an armed idle.
         if (actor.state === 'SURRENDERED') continue;
         const visual = m02VisualActor(actor, team, sim.clock);
+        if(sim.c01Active&&!actor.shotsFired){
+          if(actor.id==='pl_lis')visual.m02PreparationAction={clip:'m02_check_rifle',startedAt:sim.c01StartedAt+.6};
+          if(actor.id==='pl_gruca')visual.m02PreparationAction={clip:'m02_scan_field',startedAt:sim.c01StartedAt};
+        }
         if (actor.weapon==='mg34') visual.id=`de_east_${mgIndex++}`;
         const profile=WEAPON_PROFILES[actor.weapon];
         const firedAt=actor.lastShotAt??(actor.shotsFired>0&&profile?actor.nextFireAt-profile.cycleSec:this.fireTimes.get(actor.id)??-1e9);
-        visual.firedAt=firedAt; visual.shot=Math.max(0,.2-(sim.clock-firedAt));
+        visual.firedAt=actor.burstStartedAt??firedAt; visual.shot=Math.max(0,.2-(sim.clock-firedAt));
+        if(visual.state==='GUARD'&&sim.clock-firedAt<2.5)visual.state='SUPPRESS';
         visual.suppressedUntil=actor.suppressed>.4?sim.clock+.1:0;
         this.ids.set(actor.id, visual.id); actors.push(visual);
       }

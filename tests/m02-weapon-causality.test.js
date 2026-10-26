@@ -74,3 +74,14 @@ test('inactive B02 cannot emit phantom MG shots or suppression in cells B/C',()=
   assert.equal(events.some(e=>e.type==='mg-burst'),false);
  }
 });
+
+test('D1 checkpoints retain their four-round wz28 burst when the current authored burst has three rounds',()=>{
+ const {sim,gun}=gunScene('rkm_wz28');
+ sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');
+ const snapshot=sim.snapshot(),saved=snapshot.enemies[0];
+ saved.burst.totalRounds=4;saved.burst.remaining=3;delete saved.burst.interval;
+ sim.restoreSnapshot(snapshot);sim.drainEvents();
+ for(let i=0;i<8;i++)sim.tick(.05,{});
+ assert.equal(sim.enemies[0].shotsFired,4);assert.equal(sim.enemies[0].mag,16);
+ assert.equal(sim.drainEvents().filter(e=>e.type==='actor-burst').length,3);
+});
