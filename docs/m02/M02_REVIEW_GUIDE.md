@@ -26,10 +26,10 @@ Registar dispositivo/GPU, perfil/resolução, cena/posição, comportamento obse
 
 `docs/verification/m02-runtime/reconstruction-2026-10-26/` conserva baseline, D1, antes/depois D2, percurso contínuo e inspeções. Relatos de fixtures são distintos de input real.
 
-- 62 testes M02 PASS; 112 testes focados dos sistemas M01 partilhados PASS (animação/mixer, arma/viewmodel e áudio).
+- 63 testes M02 PASS; 112 testes focados dos sistemas M01 partilhados PASS (animação/mixer, arma/viewmodel e áudio).
 - Quatro testes de navegador PASS: modelos/áudio/snapshot, qualidade, sessão persistida e legendas/aviso em 480 × 270 e 1280 × 720. Pico de áudio medido 0,494275; não valida preferência sonora humana.
 - Build PASS com aviso de bundle grande conservado.
-- Build de simulação `9da102b`: percurso contínuo até debrief/M03, zero mortes/erros, vida 70, Lis evacuado fisicamente e 12/12. Malek incapacitado e ferido do pomar não marcado: consequências reais desse percurso.
+- Build final `d23304a`: percurso contínuo até debrief/M03, zero mortes/erros, vida 73, Lis evacuado fisicamente, 12/12 e ferido marcado com giz. Malek incapacitado: consequência real do combate. O percurso inicial `9da102b` (vida 70, sem giz) mantém-se arquivado separadamente.
 - Prova separada de morte por fogo real: 25,10 s, vida 0; retoma do checkpoint de 10,10 s com vida 67 e posição guardada. Primeira sondagem a norte, fora do setor MG, não provocou morte e não é apresentada como teste aprovado.
 - Tentativa global sequencial interrompida aos 598,8 s no contrato de animação M01: 101 PASS, 0 FAIL, 172 CANCELLED. **Não é suite global aprovada**; não se removeram asserções, alteraram goldens ou aumentaram timeouts. Os testes focados concluídos acima têm logs independentes.
 

@@ -26,6 +26,10 @@ Cada entrega deve produzir comportamento ou imagem verificável, em build jogáv
 
 D3–D6 partem da implementação funcional existente; não são autorização para a substituir por descrições ou recomeçar do zero. O documento complementar poderá refinar os critérios sem apagar entregas válidas.
 
+## Progresso verificável
+
+D0 recuperado; D1 funcional em `702ced9`, ampliado até 63 testes M02. D2 tem a primeira entrega em `9da102b` e refinamento de lente/impulsos/UI em `d23304a`: capturas novas, morte/retoma por input e percurso C01–C12. A qualidade artística D1/D2 permanece aberta (mãos, MP38, implantação/servente MG, perfil de trincheira/terreno). D3–D5 conservam os sistemas existentes e o percurso funcional, com Lis desarmado corrigido; o piloto passou a visitar o giz para cobrir também essa ação numa nova passagem. D6 tem guia e pacote de provas preliminares em `M02_REVIEW_GUIDE.md`, com limites explícitos; não é aprovação final de missão/arte nem leitura do complemento ainda ausente.
+
 ## Diagnóstico inicial das armas
 
 Ver `M02_WEAPON_REVIEW.md`. Achados prioritários no baseline: input normal usava a mira exata de calibração; rajadas consumiam/aplicavam todas as rondas no mesmo tick; emissor MG paralelo produzia som/supressão sem uma ronda real. Correção D1 usa o tiro, obstrução, RNG, modelos e áudio já existentes, com temporizadores serializáveis por ator. Não muda dano, capacidade, guarnições ou roteiro para mascarar falhas.

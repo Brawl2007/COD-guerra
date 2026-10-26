@@ -36,3 +36,41 @@ Adaptador M02 herda M01Characters sem modificar fontes M01. A preparação de Li
 Tiro NPC consulta também a obstrução desde a boca do cano com a função espacial M01: ver o alvo acima do parapeito não permite disparar através dele. Recuo de câmara da wz.29 usa `weaponRecoil` M01 e respeita redução de movimento; não altera mira física/dano. Rajadas conservam agora o instante inicial para não reiniciar o clip a cada ronda. MG34 continua com apoio em pé/agachado; servente/deitado específico não fica aprovado por esta entrega.
 
 Inspeção ADS revelou outro desvio da integração: a M02 calculava a arma com FOV 68° e desenhava-a copiando o zoom da câmara do mundo (48° em ADS). Reposto o contrato M01: câmara própria de 58°, near 0,03 m/far 6 m, mesma lente enviada ao viewmodel; só o mundo faz zoom. Regressão carrega o FP GLB real e mede alinhamento da mira/subpixel e independência da projeção em hip/ADS. Não é reconstrução de mãos ou alteração dos assets partilhados.
+
+## Análise mecânica e de implementação
+
+### kb wz.29 — jogador e NPC não têm o mesmo contrato temporal
+
+O jogador usa `Wz29` M01: cinco no carregador, reserva inicial 40, `READY → BOLT_CYCLE → READY`. Até o último cartucho passa pelo ciclo de 1,05 s. Recarga de clipe apenas vazia (3,4 s); parcial é de 0,8 s por cartucho, interrompível se já existir munição no carregador. Estes são tempos de jogo. O NPC wz.29 conserva o perfil M02: dano 58, ciclo 1,35 s e recarga 2,6 s. Não se uniformizaram os números para esconder divergências; o clip NPC é normalizado ao respetivo intervalo de recarga.
+
+O clip `fire_bolt` dura aproximadamente 1,17 s. Os marcadores M01 de abertura (0,43 s), ejeção (0,60 s) e câmara fechada (1,00 s) são frações desse clip aplicadas ao ciclo autoritativo: aproximadamente 0,386 / 0,538 / 0,897 s após o tiro. Na recarga por clipe, a ejeção visual do clipe ocorre aos 2,45 s; a disponibilidade final de munição continua a ser decidida pela classe Wz29, não por um callback de animação.
+
+O fallback real é raio instantâneo com dispersão angular. A implementação sorteia uma banda total de 2,5° na anca e 0,05° em ADS, acrescentando 0,6° em movimento; não são cone/meia amplitude nem precisão medida da arma real. `aimSuppressedAdd` e os valores de recuo da ficha são intenções documentais; não afirmar que todos são consumidos pela classe. A alça tem presets 300/500/800/1000 m, mas não implementa queda ou tempo de voo. Dispersão, consumo e dano nunca são decididos pelo viewmodel.
+
+Mira geométrica M01: alça `[0,0.056,-0.29]`, lâmina `[0,0.065,-0.752]`, boca `[0,0.032,-0.765]` no osso da arma. O teste de adaptação usa o GLB FP real e exige alinhamento inferior a 0,5 pixel. Isso prova alinhamento, não qualidade das mãos: segmentos/dedos ainda exigem intervenção artística.
+
+### MG34 — cadência dentro da rajada, janela tática e implantação
+
+O asset M01 tem sete marcadores: 0 / 0,075 / 0,150 / 0,225 / 0,300 / 0,375 / 0,450 s. A M02 usa cinco rondas, idealmente até 0,300 s, dentro de uma janela tática de 2,1 s. Com ticks de 50 ms, a entrega causal ocorre no primeiro tick elegível: por exemplo 0 / 0,10 / 0,15 / 0,25 / 0,30 s. Essa quantização existe no estado do jogo; não se anunciam 800 rpm sustentadas a partir do intervalo entre rajadas.
+
+O clip tem tampa, tambor, cinta e alavanca. Os marcadores de recarga M01 incluem abertura 0,85 s, saída do tambor 1,35 s, montagem do novo 2,50 s, cinta 2,80 s, fecho 3,20 s e alavanca 3,60/3,90 s num clip de 4,4 s; M02 normaliza-o à sua recarga de 4,0 s. A origem especial B02 fica na abertura oeste, `[11.82,1.42,-30]`, e o arco é limitado. Fotografar a fachada norte não demonstra o setor da MG.
+
+A inspeção interior confirma implantação e auxiliar próximos do apoio de madeira, com possível interpenetração visual. Um servente a alimentar/deitar-se precisa de postura física e espaço próprios antes de reutilizar os clips M01 `mg34_loader_prone_*`; não colocar uma animação deitada num combatente cujo estado/hitboxes continuam de pé. Esse trabalho não foi declarado concluído.
+
+### rkm wz.28 — apoio da secção
+
+Vinte cartuchos, três rondas novas por rajada de 0,10 s, ciclo tático de 1,55 s. Após seis rajadas completas sobram dois cartuchos: a seguinte só pode emitir esses dois, sem fabricar uma terceira ronda. Checkpoints D1 com quatro rondas pendentes mantêm as quatro e respetiva munição/RNG. A recarga M02 de 3,2 s é uma decisão de gameplay; a seleção usa o clip especializado, não o ferrolho de espingarda.
+
+Modelos/kit e clips `rkm_walk/run/aim/crouched_idle/fire_burst/reload` pertencem à M01. A M02 adapta a base agachada e conserva ancas/pés; o osso raiz da arma recebe a mesma transformação rígida que os braços. Usar apenas deslocamento vertical quebrava os contactos. A versão deitada/bípode já existe na biblioteca M01, mas exige contrato físico de postura antes de aparecer em combate M02. Não duplicar a arma ou o mixer para a introduzir.
+
+### MP38 — distinguir identidade, proxy e funcionalidade disponível
+
+O modelo original do projeto mede 0,833 m no eixo longitudinal, com origem na empunhadura e boca em `[0,0.032,-0.5]`; LOD0 548 triângulos, LOD1 236. A construção usa o pipeline determinístico M01, aço/Bakelite aproximados por materiais PBR de cor por vértice. A forma é reconstrução visual; dimensões/acessórios de variante ainda precisam de referência primária. Não substituir por MP40 ou importar malhas de COD.
+
+A capacidade é 32, rajada de três a 0,11 s e janela tática de 1,45 s, com recarga 2,7 s. O intervalo de 0,11 s é afinação M02. O perfil áudio M01 mantém o default de 0,09 s para as chamadas antigas; os novos eventos M02 passam a sua própria cadência e uma ronda por evento. A animação automática reaproveitada evita o gesto de ferrolho de Mauser, mas o suporte da mão esquerda, a extração/inserção de carregador e a atuação específica MP38 continuam incompletos. Não basta esconder a espingarda e chamar essa recarga final.
+
+### Áudio, efeitos e fronteira de autoridade
+
+Só a wz.29 está atualmente nas mãos do jogador; MG34/wz.28/MP38 são usadas pelos NPC. Não se implementou nem anunciou recolha/troca de quatro armas. Cada ronda NPC emite munição consumida, origem/ponto observado, índice e timestamp; áudio, impulso animado e clarão leem esse evento. A fila não segue um alvo oculto e volta a consultar a obstrução. Morte/desarme/recarga ou supressão elevada interrompem-na sem consumir rondas futuras.
+
+AudioManager M01 conserva perfis de crack/corpo/mecânica/caudas, distância e espacialização. Na adaptação, oclusão sólida aplica filtro de 1200 Hz e ganho 0,4 por fonte, depois repõe o contexto. O pico gravado no navegador confirma sinal audível após gesto; a qualidade artística e inteligibilidade não foram ouvidas/aprovadas por uma pessoa. Passos ainda usam cadência temporal no adaptador M02, com `player.moving` vindo do input: verificar passos contra paredes e preferir o percurso/odómetro partilhado M01 numa próxima integração, sem fazer o áudio alterar o estado físico.

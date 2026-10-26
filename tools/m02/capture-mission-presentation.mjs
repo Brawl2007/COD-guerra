@@ -1,9 +1,10 @@
 // Explicit inspection fixtures; never counted as the continuous playthrough.
 import {chromium} from '@playwright/test';
 import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
 const out=process.env.M02_VISUAL_OUT??'/tmp/m02-visual-final';fs.mkdirSync(out,{recursive:true});
 const browser=await chromium.launch({executablePath:process.env.CHROME_EXECUTABLE??'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-const report={method:'Paused, explicitly labelled inspection fixtures in the product HUD; not a playthrough.',errors:[],captures:[]};
+const report={sourceCommit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),dirty:execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim().split('\n').filter(Boolean),method:'Paused, explicitly labelled inspection fixtures in the product HUD; not a playthrough. Mechanical weapon fixtures tick the simulation and sample the M01 viewmodel per tick, drawing the world at the final instant.',errors:[],captures:[]};
 try{
  const page=await browser.newPage({viewport:{width:1280,height:720}});
  page.on('pageerror',e=>report.errors.push(e.message));

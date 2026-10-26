@@ -1,0 +1,17 @@
+# Provas D2 — proveniência
+
+- `before/`: código D1 `702ced9`, antes de reconstruir a preparação/cobertura. Duas fixtures High 1280 × 720.
+- `after/`: fontes posteriormente guardadas em `9da102b`; três fixtures High, incluindo preparação aos 2 s. Não percurso jogado.
+- `native/`: build de produção congelada `9da102b`, SHA no relatório. Teclado real e listener de rato, plano só de leitura; C01–C12, epílogo/debrief/M03. O piloto não visitou o ferido para o giz nesta versão.
+- `native-final/`: build final **`d23304a`**, com lente da arma corrigida e piloto que visita o ferido. C01–C12/epílogo/debrief/M03, zero mortes/erros, vida 73, giz aplicado, Lis evacuado fisicamente, 12/12. Malek incapacitado e cinco transições conservados. Low/480 × 270 no percurso, debrief 1280 × 720; não é avaliação de High ou FPS físico.
+- `checkpoint-west/`: input real, sem injeção de saúde/estado/tempo. Jogador morreu aos 25,10 s e retomou checkpoint de 10,10 s com vida 67. Fontes `9da102b` com os refinamentos de apresentação/UI posteriores incluídos em `d23304a`; simulação inalterada.
+- `checkpoint-north-probe/`: tentativa exploratória anterior, alvo fixo fora do setor oeste da MG. Não morreu; não é prova de retoma aprovada.
+- `weapons/`: seis inspeções das armas com o código de apresentação `d23304a`, High 1280 × 720, rótulo no ecrã e diagnóstico correspondente em `report.json`. O script usa a simulação/GLB/viewmodel reais em fixtures pausadas, incluindo fogo autoritativo por ator; não representa combate contínuo. Wz.29: mira estabilizada, ferrolho, recarga vazia com jogador vivo; restantes: poses de disparo por eventos reais. Animação amostrada por tick e desenho de mundo no instante final nas mecânicas, para não enfileirar muitos frames High no SwiftShader.
+- `weapons/leczyca-high.png` e `lesmierz-high.png`: inspeções anteriores à correção da projeção da arma; ambiente/clips da mesma etapa. O diagnóstico e nomes estão em `weapons-first-probe/report.json`. Não são fotos da projeção final de 58°.
+- `weapons-first-probe/`: duas fotografias **rejeitadas** como prova mecânica (ADS em transição e jogador morto antes da recarga); o relatório inicial permanece para rastreabilidade.
+- `weapons-gpu-timeout/`: tentativa posterior que excedeu os 30 s do screenshot depois de enfileirar vários frames High. Timeout preservado. A alteração posterior foi no amostrador da fixture, não nos testes ou na simulação.
+- `node-final-projection.txt`: **63 PASS** M02, incluindo GLB real e alinhamento da mira/câmara própria. `shared-node.txt`: **112 PASS** M01 focados. `projection-node.txt` e `animation-refinement.txt`: verificações locais anteriores, não somar às contagens finais.
+- `browser-focused.txt`: quatro testes PASS, antes do ajuste de lente (áudio/modelos/snapshot, layout, qualidade e sessão). Pico 0,494275, contexto running. A regressão GLB/projeção posterior está em Node e nas seis capturas novas.
+- `global-node-interrupted.txt`: tentativa sequencial global interrompida aos 598,8 s no contrato de animação M01. **101 PASS, 0 FAIL, 172 CANCELLED**; saída 1 de interrupção. Não equivale a suite global verde.
+
+Artefatos gerados pelo navegador e pelos testes; sem imagem gerada, retoque ou recursos de COD. Os modelos provisórios, dedos/empunhadura, implantação da MG e terreno continuam a exigir revisão artística. Os tempos de percurso e a telemetria de fixtures não são FPS de GPU física. Ler `docs/m02/M02_REVIEW_GUIDE.md` antes de avaliar.
