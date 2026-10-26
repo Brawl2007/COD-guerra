@@ -14,7 +14,7 @@ const PANORAMA_VIEWS = Object.freeze({
 });
 
 const params = new URLSearchParams(window.location.search);
-const initialQuality = params.get('quality') || 'medium';
+const initialQuality = params.get('quality') || (document.body.dataset.mission==='m02'?'auto':'medium');
 const initialLighting = params.get('lighting') || 'afternoon_1939_09_09';
 
 const canvas = document.getElementById('m02-canvas');

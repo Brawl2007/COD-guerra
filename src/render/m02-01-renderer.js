@@ -8,6 +8,7 @@ import { createSoldierRigMaterials, rigCreate, rigPose } from './m02-claude-sold
 import { M02Presentation } from './m02-presentation.js';
 import { eyePosition } from '../world/spatial.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
+import {initialQuality as selectM01InitialQuality} from './three-renderer.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -138,7 +139,13 @@ export class M02BenchRenderer {
     // materials and geometry, but reserve MSAA for hardware rasterizers.
     const probe=document.createElement('canvas').getContext('webgl2',{antialias:false});
     const debug=probe?.getExtension('WEBGL_debug_renderer_info');
-    this.softwareRasterizer=Boolean(debug&&/swiftshader|llvmpipe|software/i.test(probe.getParameter(debug.UNMASKED_RENDERER_WEBGL)));
+    const gpu=debug?probe.getParameter(debug.UNMASKED_RENDERER_WEBGL):'';
+    this.softwareRasterizer=/swiftshader|llvmpipe|software/i.test(gpu);
+    if(quality==='auto'){
+      let saved;try{saved=localStorage.getItem('cod-guerra:visual-quality');}catch{}
+      const selected=selectM01InitialQuality({saved,cores:navigator.hardwareConcurrency,memory:navigator.deviceMemory,renderer:gpu,maxTexture:probe?.getParameter(probe.MAX_TEXTURE_SIZE)??0});
+      this.qualityProfile=M02_QUALITY_PROFILES[selected];
+    }
     probe?.getExtension('WEBGL_lose_context')?.loseContext();
 
     this.renderer = new THREE.WebGLRenderer({

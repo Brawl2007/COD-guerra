@@ -10,7 +10,10 @@ export class M02MissionPilot {
     if(this.lastCell!==sim.activeCellId){this.lastCell=sim.activeCellId;this.enteredAt=sim.clock;this.flanked=false;this.route=[];this.routeKey='';}
     if(sim.activeCellId!=='A'&&sim.clock-this.enteredAt<18&&!sim.enemies.some(e=>e.seeingTargetId===p.id))return {controls:{crouch:!p.crouched,reload:sim.weapon.mag<5},waitingForSquad:true};
     const action=m02PlayerAction(sim);
-    if(action)return {controls:{interact:true},action:action.id};
+    const lis=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell);
+    const rescuePending=sim.activeCellId==='C'&&sim.areaC.c11Started&&lis&&sim.flags['m02.lis_status']!=='wounded_evacuated';
+    if(action&&!(action.id==='epilogue'&&rescuePending))return {controls:{interact:true},action:action.id};
+    if(action?.id==='epilogue'&&rescuePending&&sim.areaC.lisContactedInC11)return {controls:{crouch:!p.crouched},waitingForLis:true};
     const chalk=sim.currentChalkPrompt();if(chalk)return {controls:{interact:true}};
     const door=sim.currentDoorPrompt();if(door?.state==='closed')return {controls:{interact:true}};
     const hostiles=sim.enemies.filter(e=>e.alive&&!e.nonCombatant&&e.state!=='SURRENDERED'&&e.state!=='WOUNDED_UNARMED');

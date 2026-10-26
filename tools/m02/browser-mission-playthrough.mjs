@@ -51,6 +51,7 @@ try{
  for(let i=0;i<3;i++){await page.screenshot({path:`${out}/epilogue-${i}.png`});await page.click('#mission-epilogue-next');}
  await page.waitForFunction(()=>window.m02Diagnostics().state==='debrief');
  report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));
+ report.diagnostics=await page.evaluate(()=>window.m02Diagnostics());
  await page.setViewportSize({width:1280,height:720});await page.screenshot({path:`${out}/debrief.png`});
  console.log('COMPLETE',JSON.stringify(report.result));
 }catch(error){report.failure=error.message;console.log('FAILED',error.message);if(page)await page.screenshot({path:`${out}/failure.png`}).catch(()=>{});process.exitCode=1;}
