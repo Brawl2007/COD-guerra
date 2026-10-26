@@ -1,5 +1,13 @@
 # M02 — candidata jogável e continuidade
 
+## Reconstrução dirigida — 2026-10-26
+
+Nova ordem do proprietário: reconstrução incremental de qualidade, começando por armas e C01–C02, até preparar a M02 para avaliação humana. Plano em `M02_RECONSTRUCTION_PLAN.md`, revisão das quatro armas em `M02_WEAPON_REVIEW.md`. O documento complementar de 173.148 palavras foi identificado pelo proprietário e ainda aguarda anexo; a versão anterior continua válida.
+
+D1 implementa dispersão/ADS no input normal (mira exata só na bancada), rondas de MG34/wz.28/MP38 espaçadas e persistidas, supressão por ronda real, remoção do emissor MG fantasma e timestamps de áudio/animação causais. **54 testes M02 PASS**, incluindo cinco regressões novas e compatibilidade/restauro a meio da rajada. Build e playtest desta reconstrução são registados por etapa; não confundir os percursos antigos abaixo com validação de alterações novas. Próximo: reconstrução visual/tática C01–C02 e validação por input em navegador.
+
+O estado abaixo descreve a entrega anterior de recuperação, que permanece preservada como baseline.
+
 Atualizado em 2026-10-26. Candidata única: `codex/m02-recovery-v1`.
 Código atual: `9d8152d`, após `d4bc202`, `9f90614`, `f2c8644`, `49de368`, `f878820`, `db9d04d`, `878458f`, `c065f7e` e `c08f06a`.
 Estado: missão FPS C01–C12 implementada na candidata, com percurso contínuo de produção concluído e apresentação M01 integrada. O caso browser longo continua instável no limite de 240 s do SwiftShader. Não confundir esta entrega com merge em main, deploy, CI integral verde ou aprovação artística do proprietário.

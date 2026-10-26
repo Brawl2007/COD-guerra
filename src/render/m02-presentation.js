@@ -61,7 +61,7 @@ export class M02Presentation {
         const visual = m02VisualActor(actor, team, sim.clock);
         if (actor.weapon==='mg34') visual.id=`de_east_${mgIndex++}`;
         const profile=WEAPON_PROFILES[actor.weapon];
-        const firedAt=actor.shotsFired>0&&profile?actor.nextFireAt-profile.cycleSec:this.fireTimes.get(actor.id)??-1e9;
+        const firedAt=actor.lastShotAt??(actor.shotsFired>0&&profile?actor.nextFireAt-profile.cycleSec:this.fireTimes.get(actor.id)??-1e9);
         visual.firedAt=firedAt; visual.shot=Math.max(0,.2-(sim.clock-firedAt));
         visual.suppressedUntil=actor.suppressed>.4?sim.clock+.1:0;
         this.ids.set(actor.id, visual.id); actors.push(visual);
@@ -114,7 +114,7 @@ export class M02Presentation {
         this.audio.wz29Shot(); this.audio.wz29Mechanism('bolt',`bolt:${sim.weapon.shotCount}`);
         if (event.shot?.blockedBySolid) this.audio.impact(event.shot.material??'earth',pan,event.shot.distance??distance);
       }
-      if (event.type==='actor-burst') this.audio.weaponFire(event.weapon,pan,distance,{rounds:event.rounds,key:`${event.shooterId}:${event.clock}`,source:event.shooterId});
+      if (event.type==='actor-burst') this.audio.weaponFire(event.weapon,pan,distance,{rounds:event.rounds,interval:event.interval,key:`${event.burstId??event.shooterId}:${event.roundIndex??event.clock}`,source:event.shooterId});
       if(event.type==='horizon-acoustic-boom'){
         const source=sim.horizon.hsA2.events.find(e=>e.id===event.eventId);
         const spatial=this.spatial(source,sim);this.audio.distantBattle('artillery',spatial.pan,spatial.distance,`horizon:${event.eventId}`);

@@ -125,6 +125,20 @@ export function validateM02Snapshot(snap) {
       }
     }
   }
+  for(const actor of [...(snap.allies??[]),...(snap.enemies??[])]){
+    const b=actor.burst;
+    if(b==null)continue; // Existing checkpoints have no pending-round field.
+    const maxRounds=WEAPON_PROFILES[actor.weapon]?.burstCount??1;
+    if(!Number.isInteger(actor.burstSequence)||actor.burstSequence<1||
+      !Number.isInteger(b.totalRounds)||b.totalRounds<2||b.totalRounds>maxRounds||
+      !Number.isInteger(b.remaining)||b.remaining<1||
+      !Number.isInteger(b.emitted)||b.emitted<1||b.emitted+b.remaining!==b.totalRounds||actor.mag<b.remaining||
+      !Number.isFinite(b.nextAt)||b.nextAt<0||!Number.isFinite(b.cooldownUntil)||b.cooldownUntil<0||
+      !b.aimPoint||!['x','y','z'].every(k=>Number.isFinite(b.aimPoint[k]))||
+      !['ally','enemy'].includes(b.side)||(b.targetId!==null&&typeof b.targetId!=='string')){
+      return {valid:false,reason:`Rajada pendente inválida: ${actor.id}`};
+    }
+  }
   if (snap.areaB?.supplyCart?.volumes) {
     const seenCarriers = new Set();
     for (const vol of snap.areaB.supplyCart.volumes) {
@@ -672,6 +686,7 @@ export class M02BenchSimulation {
   }
 
   evaluateMgLineOfFire(targetActor = this.player) {
+    if(this.activeCellId!=='A'||this.c01Active)return {mgActive:false,inArc:false,hasVisualLoS:false,canHitTarget:false,blockedById:'inactive_b02',blockedByMaterial:null,distance:0};
     this.syncCalibrationAndEnemies();
     const mg = this.mgState;
     const mgTarget = this.calibrationTargets.find((t) => t.id === 'tgt_b02_mg_gunner');
@@ -836,14 +851,24 @@ export class M02BenchSimulation {
     return record;
   }
 
-  fireActorBurst(shooter, targetActor, aimPoint, side) {
+  fireActorBurst(shooter, targetActor, aimPoint, side, {continuation=false}={}) {
     const prof = WEAPON_PROFILES[shooter.weapon] ?? WEAPON_PROFILES.wz29;
-    const roundsToFire = Math.min(shooter.mag, prof.burstCount ?? 1);
+    if(!continuation&&shooter.burst)return null;
+    const pending=continuation?shooter.burst:null;
+    const planned=pending?.totalRounds??Math.min(shooter.mag,prof.burstCount??1);
+    const roundsToFire = Math.min(shooter.mag,1);
     if (roundsToFire <= 0) return null;
 
     shooter.mag -= roundsToFire;
     shooter.shotsFired = (shooter.shotsFired ?? 0) + roundsToFire;
-    shooter.nextFireAt = Number((this.clock + prof.cycleSec).toFixed(3));
+    shooter.lastShotAt=this.clock;
+    shooter.nextFireAt = pending?.cooldownUntil??Number((this.clock + prof.cycleSec).toFixed(3));
+    if(!continuation){
+      shooter.burstSequence=(shooter.burstSequence??0)+1;
+      if(shooter.id==='DE-A05'){
+        this.mgState.burstsFired++;this.mgState.nextBurstAt=shooter.nextFireAt;
+      }
+    }
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
@@ -876,7 +901,7 @@ export class M02BenchSimulation {
 
       // Apply suppression to intended target when rounds hit or pass near their cover aperture
       if (targetActor && targetActor.alive) {
-        targetActor.suppressed = Math.min(1, (targetActor.suppressed ?? 0) + prof.suppressionAdd / roundsToFire);
+        targetActor.suppressed = Math.min(1, (targetActor.suppressed ?? 0) + prof.suppressionAdd / planned);
         shooter.suppressionsInflicted = (shooter.suppressionsInflicted ?? 0) + 1;
         this.combatLog.push({
           clock: Number(this.clock.toFixed(2)),
@@ -950,13 +975,38 @@ export class M02BenchSimulation {
       targetId: targetActor?.id ?? null,
       weapon: shooter.weapon,
       rounds: roundsToFire,
+      burstId: `${shooter.id}:${shooter.burstSequence}`,
+      burstSize: planned,
+      roundIndex: pending?.emitted??0,
+      interval: prof.burstGapSec,
       hitAny,
       origin,
       target: aimPoint,
       clock: Number(this.clock.toFixed(2)),
     };
     this.events.push(evt);
+    if(!continuation&&planned>1){
+      shooter.burst={remaining:planned-1,totalRounds:planned,emitted:1,nextAt:this.clock+prof.burstGapSec,cooldownUntil:shooter.nextFireAt,targetId:targetActor?.id??null,aimPoint:{...aimPoint},side};
+    }
     return evt;
+  }
+
+  advanceActorBurst(shooter){
+    const burst=shooter.burst;
+    if(!burst)return;
+    if(!shooter.alive||shooter.nonCombatant||shooter.suppressed>=.88||shooter.reloadingUntil>this.clock||shooter.mag<=0){shooter.burst=null;return;}
+    const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies];
+    const target=candidates.find(a=>a.id===burst.targetId)??null;
+    if(target?.nonCombatant){shooter.burst=null;return;}
+    // Last observed point, not the hidden target's current coordinates. Every
+    // round reuses the existing world/actor ray test at its own simulation tick.
+    while(burst.remaining>0&&this.clock+1e-8>=burst.nextAt){
+      if(!this.fireActorBurst(shooter,target,burst.aimPoint,burst.side,{continuation:true}))break;
+      burst.remaining--;burst.emitted++;
+      burst.nextAt=Number((burst.nextAt+(WEAPON_PROFILES[shooter.weapon]?.burstGapSec??0)).toFixed(6));
+      if(target?.nonCombatant)break;
+    }
+    if(burst.remaining<=0||target?.nonCombatant)shooter.burst=null;
   }
 
   firePlayerWeapon(exactAim = true, bypassCooldown = false) {
@@ -1331,7 +1381,7 @@ export class M02BenchSimulation {
     if (controls.reload) this.weapon.reload(nowMs);
     if (controls.sight) this.weapon.adjustSight();
     if (controls.interact) this.interactDoor();
-    if (controls.fire) this.firePlayerWeapon(true);
+    if (controls.fire) this.firePlayerWeapon(false);
     if (controls.grenade) this.throwGrenade();
     if (controls.orderSuppress) this.issueSquadOrder('suppress');
     if (controls.orderAdvance) this.issueSquadOrder('advance');
@@ -1350,21 +1400,9 @@ export class M02BenchSimulation {
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
 
-    if (this.mgState.seeingPlayer && this.clock >= this.mgState.nextBurstAt) {
-      this.mgState.burstsFired++;
-      this.mgState.nextBurstAt = this.clock + this.mgState.cooldown;
-      this.player.suppressed = Math.min(1, this.player.suppressed + 0.35);
-      this.events.push({
-        type: 'mg-burst',
-        sourceId: this.mgState.id,
-        origin: { x: 12.15, y: 1.42, z: -30.0 },
-        target: { x: this.player.x, y: this.player.y + 1.2, z: this.player.z },
-        rounds: this.mgState.burstRounds,
-        clock: this.clock,
-      });
-    } else {
-      this.player.suppressed = Math.max(0, this.player.suppressed - dt * 0.25);
-    }
+    // Suppression and firing now come from actual rounds. The former parallel
+    // B02 calibration emitter could also play while that gun was inactive.
+    this.player.suppressed = Math.max(0, this.player.suppressed - dt * 0.25);
   }
 
   saveCheckpoint(checkpointId) {

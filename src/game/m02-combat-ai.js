@@ -26,7 +26,7 @@ export const WEAPON_PROFILES = Object.freeze({
     range: 195,
     suppressionAdd: 0.65,
     burstCount: 4,
-    burstGapSec: 0.11,
+    burstGapSec: 0.1,
     spreadRad: 0.018,
   }),
   kar98k: Object.freeze({
@@ -52,7 +52,7 @@ export const WEAPON_PROFILES = Object.freeze({
     range: 95,
     suppressionAdd: 0.42,
     burstCount: 3,
-    burstGapSec: 0.09,
+    burstGapSec: 0.11,
     spreadRad: 0.022,
   }),
   mg34: Object.freeze({
@@ -65,7 +65,7 @@ export const WEAPON_PROFILES = Object.freeze({
     range: 98,
     suppressionAdd: 0.58,
     burstCount: 5,
-    burstGapSec: 0.09,
+    burstGapSec: 0.075,
     spreadRad: 0.024,
   }),
 });
@@ -543,6 +543,7 @@ export function friendlyFireClear(shooter, targetPoint, friendlies, clearanceM =
 }
 
 export function stepActorWeapon(sim, actor, dt) {
+  sim.advanceActorBurst?.(actor);
   const prof = WEAPON_PROFILES[actor.weapon] ?? WEAPON_PROFILES.wz29;
   if (actor.reloadingUntil > sim.clock) return;
   if (actor.reloadingUntil > 0 && sim.clock >= actor.reloadingUntil) {
