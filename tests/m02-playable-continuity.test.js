@@ -90,3 +90,12 @@ test('blast damage can immobilize the supply cart and lose real undelivered volu
  const snapshot=s.snapshot();s.restoreSnapshot(snapshot);assert.deepEqual(s.snapshot(),snapshot);
  assert.equal(s.pickupSupplyVolume('vol_water'),false);
 });
+
+test('C07 supplies are applied once and water never lowers an unwounded player health',()=>{
+ const s=new M02BenchSimulation();s.enterAreaBC06();
+ s.supplies.waterDelivered=true;s.supplies.ammoDelivered=true;s.player.health=100;
+ s.completeC07Reorganization();const reserve=s.weapon.reserve;
+ assert.equal(s.player.health,100);
+ s.player.health=40;s.completeC07Reorganization();
+ assert.equal(s.player.health,40);assert.equal(s.weapon.reserve,reserve);
+});

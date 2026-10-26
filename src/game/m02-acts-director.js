@@ -356,6 +356,7 @@ export function updateAreaB(sim, dt) {
 }
 
 export function completeC07Reorganization(sim, { skip = false } = {}) {
+  const firstReorganization=!sim.areaB.reorganizedC07;
   sim.areaB.reorganizedC07 = true;
   sim.flags['m02.corridor_held'] = true;
   sim.horizon.setTemporalState('T2', sim);
@@ -365,11 +366,11 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
   };
 
   // Apply supply consequences without magical full heal (I1 / D6)
-  if (sim.supplies.ammoDelivered) {
+  if (firstReorganization && sim.supplies.ammoDelivered) {
     sim.weapon.reserve = Math.min(60, sim.weapon.reserve + 15);
   }
-  if (sim.supplies.waterDelivered) {
-    sim.player.health = Math.min(85, Math.max(sim.player.health, sim.player.health + 10));
+  if (firstReorganization && sim.supplies.waterDelivered) {
+    sim.player.health = Math.max(sim.player.health,Math.min(85,sim.player.health+10));
   }
 
   // Evaluate squad status for Małek & Wierzba (severely wounded are evacuated and do not reappear fit)
