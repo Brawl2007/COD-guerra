@@ -1,5 +1,18 @@
 import {test,expect} from '@playwright/test';
 
+test('M02 default quality follows M01 software GPU detection and maximum remains selectable',async({page})=>{
+ await page.setViewportSize({width:800,height:450});
+ await page.goto('/COD-guerra/m02.html');
+ await page.waitForFunction(()=>window.m02Diagnostics&&!document.querySelector('#mission-start').disabled);
+ expect(await page.evaluate(()=>window.m02Diagnostics().telemetry.qualityProfile)).toBe('low');
+ await page.selectOption('#mission-quality','high');
+ await page.waitForFunction(()=>{const d=window.m02Diagnostics();return d.telemetry.qualityProfile==='high'&&d.environment.terrain.tier==='high'&&d.environment.terrain.files.length===4;});
+ expect(await page.locator('#mission-quality').inputValue()).toBe('high');
+ expect(await page.evaluate(()=>window.m02Diagnostics().environment.terrain.tier)).toBe('high');
+ expect(await page.evaluate(()=>window.m02Diagnostics().environment.terrain.failures)).toEqual([]);
+ expect(await page.evaluate(()=>window.m02Diagnostics().clock)).toBe(0);
+});
+
 test('M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:600});
