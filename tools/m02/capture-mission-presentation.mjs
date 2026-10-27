@@ -71,12 +71,19 @@ try{
      sim.teleportPlayer(actor.x+Math.cos(f+.65)*3.5,actor.z+Math.sin(f+.65)*3.5,f+.65+Math.PI,-.04);
     }
    }
+   if(name.startsWith('mp38-reload-')||name==='mp38-charge'){
+    sim.reset('C02');sim.enterAreaCC09();const actor=sim.enemies.find(a=>a.weapon==='mp38');
+    actor.mag=0;sim.tick(.05,{});
+    const age=name==='mp38-reload-extract'?.8:name==='mp38-reload-insert'?1.8:2.3;
+    for(let i=0;i<Math.round(age/.05);i++)sim.tick(.05,{});
+    const f=actor.facing+.65;sim.teleportPlayer(actor.x+Math.cos(f)*3.5,actor.z+Math.sin(f)*3.5,f+Math.PI,-.18);
+   }
    document.getElementById('inspection-label').textContent=`INSPEÇÃO VISUAL · CENÁRIO CONTROLADO · ${name}`;
    renderer.renderFrame(0,0);
   },shot);
   await page.waitForTimeout(1200);
   await page.screenshot({path:`${out}/${shot}.png`});
-  const diagnostics=await page.evaluate(()=>({software:window.m02Bench.renderer.softwareRasterizer,quality:window.m02Bench.renderer.qualityProfile.id,environment:window.m02Diagnostics().environment,presentation:window.m02Diagnostics().presentation,simulation:{health:window.m02Bench.sim.player.health,weapon:window.m02Bench.sim.weapon.snapshot()},architecture:window.m02Bench.renderer.architectureBatches,mp38:[...window.m02Bench.renderer.presentation.characters.instances.values()].filter(v=>v.m02MP38).map(v=>({id:v.id,visible:v.m02MP38.visible,rifle:v.meshes.find(m=>m.name==='rifle')?.visible}))}));
+  const diagnostics=await page.evaluate(()=>({software:window.m02Bench.renderer.softwareRasterizer,quality:window.m02Bench.renderer.qualityProfile.id,environment:window.m02Diagnostics().environment,presentation:window.m02Diagnostics().presentation,simulation:{health:window.m02Bench.sim.player.health,weapon:window.m02Bench.sim.weapon.snapshot()},architecture:window.m02Bench.renderer.architectureBatches,mp38:[...window.m02Bench.renderer.presentation.characters.instances.values()].filter(v=>v.m02MP38).map(v=>({id:v.id,visible:v.m02MP38.visible,rifle:v.meshes.find(m=>m.name==='rifle')?.visible,phase:v.m02ReloadPhase,magazine:v.m02MP38.getObjectByName('mp38_magazine')?.position.toArray()}))}));
   report.captures.push({shot,diagnostics});
   if(shot==='wz29-ads'&&diagnostics.presentation.weapon.aimBlend<.99)throw Error('ADS fixture did not settle');
   if(shot==='wz29-reload'&&(diagnostics.simulation.health<=0||diagnostics.presentation.weapon.clip!=='reload_clip'))throw Error('Reload fixture must show the living player reloading');

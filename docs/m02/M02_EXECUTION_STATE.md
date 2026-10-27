@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — 2026-10-27 (em validação)
+
+Continua na candidata única a partir de `c30cf5f`, árvore inicialmente limpa. Fetch confirmou as mesmas refs Gemini/Claude; não chegou o complemento integral. **E1: 69 testes M02 PASS e build PASS**; provas em `continuation-2026-10-27/e1/`. MP38 agora tem carregador/alavanca móveis, poses de mãos específicas e oito clips derivados M01 via IK/protração da clavícula partilhados; recarga visual segue o temporizador autoritativo de 2,7 s. Bancada MG B02 estreitada para deixar o atirador fisicamente fora do obstáculo, conservando o setor da abertura. Passos M02 passam a reutilizar os amostradores de distância da M01 para jogador/aliados: input contra uma parede não produz passos. Restauro na mesma célula/mesmo relógio invalida blends antigos e história da arma sem mexer em snapshots. Capturas High mostram a extração/inserção/armar da MP38 agachada e a bancada sem atravessar o atirador. As primeiras fotografias de recarga anteriores à correção de restauro exibiam pose antiga e não são validação dessa recarga; usar `reload-after-restore/`. Validação por input e cenários prosseguem; não tratar a prova `d23304a` abaixo como validação das alterações novas.
+
 ## Reconstrução dirigida — 2026-10-26
 
 Nova ordem do proprietário: reconstrução incremental de qualidade, começando por armas e C01–C02, até preparar a M02 para avaliação humana. Plano em `M02_RECONSTRUCTION_PLAN.md`, revisão das quatro armas em `M02_WEAPON_REVIEW.md`. O documento complementar de 173.148 palavras foi identificado pelo proprietário e ainda aguarda anexo; a versão anterior continua válida.

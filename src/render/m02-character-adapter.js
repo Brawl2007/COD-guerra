@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {M01Characters} from './m01-characters.js';
 import {genericCandidate} from './m01-animation-resolver.js';
+import {retargetSMGClip} from './m02-smg-animation.js';
 
 const LOWER=/^(root|hips|thigh_[lr]|calf_[lr]|foot_[lr]|ball_[lr])\./;
 const valueAt=(track,time)=>Array.from(track.createInterpolant().evaluate(time));
@@ -42,11 +43,17 @@ export function m02CharacterSample(actor,time,clips){
  if(!actor.alive||actor.state==='WOUNDED'||actor.role==='MEDIC')return null;
  const get=name=>clips.get(name);
  if(actor.reload){
-  const name=actor.weapon==='rkm_wz28'||actor.weapon==='mp38'?'rkm_reload':actor.weapon==='mg34'?'m02_mg34_crouch_reload':'m02_rifle_crouch_reload';
+  const name=actor.weapon==='mp38'?'m02_mp38_reload':actor.weapon==='rkm_wz28'?'rkm_reload':actor.weapon==='mg34'?'m02_mg34_crouch_reload':'m02_rifle_crouch_reload';
   const clip=get(name);
   if(clip)return {clip:name,time:THREE.MathUtils.clamp((time-actor.reload.startedAt)/actor.reload.durationSec,0,1)*clip.duration,loop:false,rate:clip.duration/actor.reload.durationSec};
  }
- if(actor.moving)return null;
+ if(actor.moving){
+  if(actor.weapon==='mp38'){
+   const name=actor.crouched?'m02_mp38_crouch_walk':actor.motion?.speed>3?'m02_mp38_run':'m02_mp38_walk';
+   if(get(name))return {clip:name,time:time%(get(name).duration||1),loop:true,rate:1};
+  }
+  return null;
+ }
  if(actor.m02PreparationAction){
   const {clip:name,startedAt}=actor.m02PreparationAction,clip=get(name),age=time-startedAt;
   if(actor.crouched&&clip&&age>=0&&age<clip.duration&&!actor.shot&&actor.suppressed<.2)return {clip:name,time:age,loop:false,rate:1};
@@ -58,14 +65,14 @@ export function m02CharacterSample(actor,time,clips){
   const mg=actor.weapon==='mg34',age=time-(actor.lastShotAt??-Infinity);
   if(age>=0&&age<.14){
    const source=get(mg?'mg34_fire_burst':'rkm_fire_burst'),markers=source?.userData?.events?.fire;
-   const name=actor.crouched?(mg?'m02_mg34_crouch_fire':'m02_auto_crouch_fire'):source?.name;
+   const name=actor.weapon==='mp38'?(actor.crouched?'m02_mp38_crouch_fire':'m02_mp38_fire'):actor.crouched?(mg?'m02_mg34_crouch_fire':'m02_auto_crouch_fire'):source?.name;
    if(markers?.length&&get(name)){
     const index=Math.max(0,actor.m02RoundIndex??0)%markers.length;
     const at=markers[index],end=markers[index+1]??at+(markers[1]-markers[0]);
     return {clip:name,time:Math.min(end-.001,at+age),loop:false,rate:0};
    }
   }
-  const name=mg?(actor.crouched?'m02_mg34_crouch_aim':'mg34_aim'):actor.weapon==='mp38'?(actor.crouched?'crouched_idle':'aim'):(actor.crouched?'rkm_crouched_idle':'rkm_aim');
+  const name=mg?(actor.crouched?'m02_mg34_crouch_aim':'mg34_aim'):actor.weapon==='mp38'?(actor.crouched?'m02_mp38_crouch_aim':'m02_mp38_aim'):(actor.crouched?'rkm_crouched_idle':'rkm_aim');
   if(get(name))return {clip:name,time:0,loop:false,rate:0};
  }
  if(actor.crouched&&actor.suppressed<.4){
@@ -80,6 +87,10 @@ export function m02CharacterSample(actor,time,clips){
 }
 
 export class M02Characters extends M01Characters{
+ resetM02Pose(){
+  this.anim.clear();this.lastUpdateTime=-Infinity;
+  for(const v of this.instances.values()){v.appliedTime=-Infinity;v.appliedQuality=null;v.hold.frozen=false;}
+ }
  prepareM02Clips(){
   for(const [source,base,name]of [
    ['fidget_check_rifle','crouched_idle','m02_check_rifle'],
@@ -93,6 +104,13 @@ export class M02Characters extends M01Characters{
    ['mg34_aim','crouched_idle','m02_mg34_crouch_aim'],
   ]){
    const clip=crouchedClip(this.clips.get(source),this.clips.get(base),name);if(clip)this.clips.set(name,clip);
+  }
+  for(const [source,name]of [
+   ['rkm_aim','m02_mp38_aim'],['m02_rifle_crouch_aim','m02_mp38_crouch_aim'],
+   ['rkm_fire_burst','m02_mp38_fire'],['m02_auto_crouch_fire','m02_mp38_crouch_fire'],
+   ['rkm_reload','m02_mp38_reload'],['walk','m02_mp38_walk'],['run','m02_mp38_run'],['crouch_walk','m02_mp38_crouch_walk'],
+  ]){
+   const clip=retargetSMGClip(this.clips.get(source),this.sources.get('pl:0')?.scene,name,{reload:name==='m02_mp38_reload'});if(clip)this.clips.set(name,clip);
   }
   this.revision++;
  }

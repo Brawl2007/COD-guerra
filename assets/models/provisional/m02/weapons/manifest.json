@@ -14,14 +14,20 @@
       -0.5
     ]
   },
+  "parts": [
+    "mp38_body",
+    "mp38_magazine",
+    "mp38_cocking_handle (LOD0)"
+  ],
+  "animation": "M02 runtime retargeting of M01 clips with M01 two-bone IK; magazine extraction/insertion and charging handle share the 2.7 second authoritative reload.",
   "files": [
     {
       "file": "mp38_lod0.glb",
       "triangles": 548,
       "bounds": {
         "min": [
-          -0.04149999842047691,
-          -0.2565000057220459,
+          -0.04150000018626451,
+          -0.25649999976158144,
           -0.5
         ],
         "max": [
@@ -30,7 +36,7 @@
           0.3330000042915344
         ]
       },
-      "sha256": "77cade8b728db255559b66fb9f55fa95ca63cf506ca7ae1d72612d011ee95b90"
+      "sha256": "79f1f4ec1c02d9a2c07873f2951d19c0c966237342534c39a8163107fd7050a5"
     },
     {
       "file": "mp38_lod1.glb",
@@ -38,7 +44,7 @@
       "bounds": {
         "min": [
           -0.02800000086426735,
-          -0.2549999952316284,
+          -0.25500000417232516,
           -0.5
         ],
         "max": [
@@ -47,7 +53,7 @@
           0.3330000042915344
         ]
       },
-      "sha256": "844266338ff3b3edad4856aa170cec93614bf0a703c377e0fa8f20d9a59979be"
+      "sha256": "4befb7be1443a0f2978842e3a1d993101654115e273f43a618510d2c25c80a49"
     }
   ]
 }

@@ -7,6 +7,26 @@ import {M01ViewModel} from '../src/render/m01-viewmodel.js';
 import {WZ29_VISUAL} from '../src/render/m01-wz29-presentation.js';
 import {viewModelFixture,loadCharacterGLB} from './helpers/m01-viewmodel-fixture.js';
 import {alignmentReport} from '../tools/verification/m01-wz29-viewmodel-audit.mjs';
+import {M02Characters} from '../src/render/m02-character-adapter.js';
+
+test('same-clock same-cell restore drops old character blends and viewmodel history without changing the snapshot',async()=>{
+ const source=await viewModelFixture(),characters=new M02Characters(new THREE.Scene(),{ik:false});
+ characters.sources=source.sources;characters.clips=source.clips;characters.prepareM02Clips();
+ const actor={id:'reload-fixture',team:'ally',active:true,alive:true,state:'GUARD',role:'RIFLEMAN',weapon:'mp38',x:0,y:0,z:0,facing:0,crouched:false,moving:false,suppressed:0,shot:0,motion:{speed:0}};
+ const player={x:2,y:0,z:2};
+ try{
+  characters.update([actor],10,player,'low');
+  const p=Object.create(M02Presentation.prototype),sim=new M02BenchSimulation();sim.clock=10;
+  Object.assign(p,{characters,resetClock:10,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map(),footsteps:{reset(){}},audio:{resetPresentation(){}},visualWorld:{}});
+  const saved=sim.snapshot();sim.restoreSnapshot(saved);const before=sim.snapshot();p.syncSession(sim);
+  assert.equal(p.visualWorld,null);assert.equal(characters.anim.size,0);
+  const reloading={...actor,crouched:true,posture:'crouch',reload:{startedAt:9.2,durationSec:2.7}};
+  characters.update([reloading],10,player,'low');const v=characters.instances.get(actor.id);
+  assert.equal(v.sampleClip,'m02_mp38_reload');assert.equal(v.dBlend.length,1);assert.equal(v.dBlend[0].weight,1);
+  assert.ok(v.root.getObjectByName('hips').position.y<.6,'a restored crouched reload must not retain the standing aim');
+  assert.deepEqual(sim.snapshot(),before);
+ }finally{characters.dispose();}
+});
 
 test('M02 keeps the real M01 first-person rig on its own 58 degree lens while ADS zooms the world',async()=>{
  const characters=await viewModelFixture();characters.sources.set('fp:0',await loadCharacterGLB('fp-arms-v2/m01_fp_arms_v2.glb'));

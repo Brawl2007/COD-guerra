@@ -60,3 +60,5 @@ Historical references: internal T24; MBP Tczew collection Poczt226 (front, 1900�
 ## MP 38 · M02
 
 `assets/models/provisional/m02/weapons/`: silhueta original procedural da MP 38, autoria **COD-guerra project**, gerada por `tools/assets/m02-mp38/build.mjs` através do pipeline GLB/PBR existente da M01. Dois LODs (548/236 triângulos), comprimento de 0,833 m, socket de mão e boca de fogo, SHA-256 no manifesto; sem conteúdo de terceiros ou extraído de jogos. Materiais e cores de vértice originais; reconstrução visual, sem afirmar reprodução museológica. Mantém os termos dos assets originais do projecto e a decisão pendente do proprietário sobre a licença global. O perfil sonoro é sintetizado pelo AudioManager partilhado, sem gravações de terceiros.
+
+2026-10-27: os mesmos dois LODs passam a separar corpo, carregador e alavanca (LOD0), sem aumentar triângulos. Animação MP38 derivada em runtime dos clips/rig M01 com o solver IK e protração da clavícula já existentes; extração, troca, inserção e armar sincronizados ao temporizador M02 de 2,7 s. Clips originais e fontes M01 não modificados.

@@ -6,6 +6,7 @@ import { AudioManager } from '../core/audio.js';
 import {M02Weapons} from './m02-weapons.js';
 import {WeaponLighting} from './first-person-weapon-fx.js';
 import {WZ29_VISUAL} from './m01-wz29-presentation.js';
+import {M02Footsteps} from './m02-footsteps.js';
 
 // Match the shared M01 viewmodel projection. ADS zoom belongs to the world
 // camera; changing this lens crops the stock and magnifies the near hands.
@@ -41,14 +42,24 @@ export class M02Presentation {
     // M01 viewmodel lives in camera space and has its own depth pass.
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
+    this.footsteps=new M02Footsteps(this.audio);this.footstepWorld=sim.world;
     this.m02Weapons=new M02Weapons();
     this.ready = Promise.all([this.characters.load('medium').then(()=>this.characters.prepareM02Clips()),this.m02Weapons.ready]);
     this.ids = new Map();
     this.resetClock = sim.clock;
+    this.playerRecord=sim.player;this.presentationWorld=sim.world;
   }
   unlockAudio() { this.audio.init(); }
+  syncSession(sim){
+    if(sim.clock<this.resetClock||sim.player!==this.playerRecord||sim.world!==this.presentationWorld){
+      this.audio.resetPresentation(sim.clock);this.fireTimes.clear();this.roundEvents.clear();this.footsteps.reset();
+      this.characters.resetM02Pose();this.visualWorld=null;
+    }
+    this.playerRecord=sim.player;this.presentationWorld=sim.world;this.resetClock=sim.clock;
+  }
   update(sim, quality) {
-    if (sim.clock < this.resetClock) { this.audio.resetPresentation(sim.clock); this.fireTimes.clear();this.roundEvents.clear(); this.stepAt=sim.clock; }
+    this.syncSession(sim);
+    if(this.footstepWorld!==sim.world){this.footstepWorld=sim.world;this.footsteps.reset();}
     this.resetClock = sim.clock;
     this.audio.setQuality(quality);
     this.audio.updateM01Presentation({clock:sim.clock,quality,state:{},fires:[],phase:sim.areaC?.c12Completed?'OUTRO':'MAIN_COMBAT',spatial:point=>this.spatial(point,sim)});
@@ -81,11 +92,8 @@ export class M02Presentation {
       }
     }
     this.characters.update(actors, sim.clock, {...sim.player}, quality);
-    this.m02Weapons.update(this.characters,actors);
-    if (this.audio.ctx?.state==='running' && sim.player.moving && sim.clock>=this.stepAt) {
-      this.audio.footstep('earth', {pace:sim.player.sprinting?'run':'walk'});
-      this.stepAt=sim.clock+(sim.player.sprinting?.28:.5);
-    }
+    this.m02Weapons.update(this.characters,actors,sim.clock);
+    if(this.audio.ctx?.state==='running')this.footsteps.update(sim.player,actors,sim.clock);else this.footsteps.reset();
   }
   spatial(point,sim) {
     if(!point)return {pan:0,distance:900,front:1};
@@ -111,6 +119,7 @@ export class M02Presentation {
     renderer.render(this.weaponScene,camera); renderer.autoClear=autoClear;
   }
   consume(events, sim) {
+    this.syncSession(sim);
     for (const event of events) {
       if (event.type==='actor-burst') {this.fireTimes.set(event.shooterId,event.clock);this.roundEvents.set(event.shooterId,{clock:event.clock,roundIndex:event.roundIndex??0});}
       // A trusted gesture may still be resuming the context. Web Audio accepts
@@ -140,6 +149,6 @@ export class M02Presentation {
   }
   get diagnostics() {
     return {characters:this.characters.stats, loadedModels:[...this.characters.sources.keys()], clips:this.characters.clips.size, failures:this.characters.assets.failures,
-      weapon:this.weapon.stats, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics};
+      weapon:this.weapon.stats, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
   }
 }

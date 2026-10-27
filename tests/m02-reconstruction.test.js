@@ -6,6 +6,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 import {stepActorNavigation,updateLowCoverExposure,updatePolishSquad} from '../src/game/m02-combat-ai.js';
 import {crouchedClip,m02CharacterSample} from '../src/render/m02-character-adapter.js';
+import {retargetSMGClip} from '../src/render/m02-smg-animation.js';
 
 async function load(path){const b=await fs.readFile(new URL(`../assets/models/provisional/m01/${path}`,import.meta.url));return new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'');}
 const assets=Promise.all([load('characters/m01_soldier_animations.glb'),load('characters/clip-library-v2/m01_soldier_clip_library_v2.glb'),load('weapons/mg34/m01_mg34_animations.glb')]);
@@ -33,12 +34,13 @@ test('real M01 GLB crouched adaptation preserves the lower body and weapon/hand 
 test('M02 reloads use the full appropriate M01 timeline and automatic weapons never select a rifle bolt',async()=>{
  const kits=await assets,clips=new Map(kits.flatMap(g=>g.animations).map(c=>[c.name,c]));
  for(const [source,name]of [['reload_clip','m02_rifle_crouch_reload'],['mg34_reload','m02_mg34_crouch_reload'],['rkm_fire_burst','m02_auto_crouch_fire']])clips.set(name,crouchedClip(clips.get(source),clips.get('crouched_idle'),name));
- for(const [weapon,name,durationSec]of [['mg34','m02_mg34_crouch_reload',4],['wz29','m02_rifle_crouch_reload',2.6],['rkm_wz28','rkm_reload',3.2],['mp38','rkm_reload',2.7]]){
+ for(const [source,name]of [['rkm_reload','m02_mp38_reload'],['rkm_fire_burst','m02_mp38_fire'],['aim','m02_mp38_aim']])clips.set(name,retargetSMGClip(clips.get(source),kits[0].scene,name,{reload:source==='rkm_reload'}));
+ for(const [weapon,name,durationSec]of [['mg34','m02_mg34_crouch_reload',4],['wz29','m02_rifle_crouch_reload',2.6],['rkm_wz28','rkm_reload',3.2],['mp38','m02_mp38_reload',2.7]]){
   const actor={alive:true,weapon,state:'ACTIVE',reload:{startedAt:10,durationSec}};
   const sample=m02CharacterSample(actor,10+durationSec/2,clips);assert.equal(sample.clip,name);assert.ok(Math.abs(sample.time-clips.get(name).duration/2)<1e-6);
  }
  const mp={alive:true,weapon:'mp38',state:'ACTIVE',crouched:false,lastShotAt:10,firedAt:10};
- assert.equal(m02CharacterSample(mp,10.05,clips).clip,'rkm_fire_burst');assert.equal(m02CharacterSample(mp,10.5,clips).clip,'aim');
+ assert.equal(m02CharacterSample(mp,10.05,clips).clip,'m02_mp38_fire');assert.equal(m02CharacterSample(mp,10.5,clips).clip,'m02_mp38_aim');
 });
 
 test('the real seven-round MG clip never animates an unfired sixth round or anticipates the next fixed tick',async()=>{
