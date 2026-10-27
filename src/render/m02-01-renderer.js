@@ -1,7 +1,8 @@
-import {M02CargoVisuals} from './m02-cargo-visuals.js';
+import {M02CargoVisuals,m02AuthoredPropModel} from './m02-cargo-visuals.js';
 import {addM02Architecture,applyM02SurfaceUvs} from './m02-architecture.js';
 import {batchM02Architecture,disposeM02ArchitectureBatches} from './m02-static-batching.js';
 import { M02Environment } from './m02-environment.js';
+import {m02TerrainAxes} from './m02-environment-layout.js';
 import * as THREE from 'three';
 import { M01MaterialLibrary } from './materials.js';
 import { createSoldierRigMaterials, rigCreate, rigPose } from './m02-claude-soldier-rig.js';
@@ -345,6 +346,7 @@ export class M02BenchRenderer {
     const fills=this.sim.activeCellId==='B'?[[-43,2.5,-24],[28,2.8,-26]]:this.sim.activeCellId==='C'?[[-20,2.8,-16],[24,2.8,-22]]:[[-33,2.45,-13],[22,3.1,-31]];
     for(const [index,light]of [this.b01InteriorLight,this.b02InteriorLight].entries()){light.position.set(...fills[index]);light.intensity=4;}
     disposeM02ArchitectureBatches(this.staticGroup);disposeM02ArchitectureBatches(this.decorativeGroup);
+    for(const {proxy}of this.authoredProps??[])proxy.geometry.dispose();this.authoredProps=[];
     this.staticGroup.clear();
     this.roofsGroup.clear();
     this.decorativeGroup.clear();
@@ -355,7 +357,8 @@ export class M02BenchRenderer {
     const length = 340;
     const segX = 64;
     const segZ = 90;
-    const terrainGeo = new THREE.PlaneGeometry(width, length, segX, segZ);
+    const axes=m02TerrainAxes(width,length,segX,segZ,Boolean(this.world.layout.c01Corridor));
+    const terrainGeo = new THREE.PlaneGeometry(width, length, axes.x.length-1, axes.z.length-1);
     terrainGeo.rotateX(-Math.PI / 2);
 
     const pos = terrainGeo.attributes.position;
@@ -363,8 +366,8 @@ export class M02BenchRenderer {
     const color = new THREE.Color();
 
     for (let i = 0; i < pos.count; i++) {
-      const vx = pos.getX(i);
-      const vz = pos.getZ(i) - 65; // center around Z = -65 (covers -235..+105)
+      const vx = axes.x[i%axes.x.length];pos.setX(i,vx);
+      const vz = axes.z[Math.floor(i/axes.x.length)];
       pos.setZ(i, vz);
       const vy = this.world.terrainHeightAt(vx, vz);
       pos.setY(i, vy);
@@ -460,6 +463,8 @@ export class M02BenchRenderer {
       );
       mesh.userData.vegetationFallback = ob.role==='tree_trunk';
       mesh.userData.m02Immutable=true;
+      const propModel=m02AuthoredPropModel(ob);
+      if(propModel){mesh.userData.m02Immutable=false;this.authoredProps.push({proxy:mesh,ob,model:propModel});}
       mesh.castShadow = ob.role !== 'terrain_bank';
       mesh.receiveShadow = true;
       this.staticGroup.add(mesh);

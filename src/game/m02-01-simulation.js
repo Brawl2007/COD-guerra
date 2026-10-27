@@ -1383,7 +1383,7 @@ export class M02BenchSimulation {
         this.player.health = Math.max(0, this.player.health - landing.damage);
         this.events.push({ type: 'player-landing', ...landing, clock: this.clock });
       }
-    } else if (this.player.fall) {
+    } else {
       movePlayer(this.world, this.player, 0, 0, dt);
     }
 

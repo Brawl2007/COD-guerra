@@ -47,7 +47,7 @@ export class M02Environment {
       const parts=names.flatMap((name,index)=>(sources.get(name)??[]).filter(n=>Boolean(n.material.map)===wantLeaf).map(n=>({geometry:n.geometry,species:index})));
       if(!parts.length)return;
       const geometry=mergeVegetationGeometry(parts),material=vegetationKitMaterial(wantLeaf?leaf:wood,{ground});
-      const capacity=ground?6500:110;
+      const capacity=ground?11000:150;
       for(const [key,value] of [['instanceSpecies',0],['instancePhysical',0],['instanceFade',1]])geometry.setAttribute(key,new THREE.InstancedBufferAttribute(new Float32Array(capacity).fill(value),1));
       const mesh=new THREE.InstancedMesh(geometry,material,capacity);mesh.count=0;mesh.frustumCulled=false;
       mesh.receiveShadow=true;this.root.add(mesh);this.batches.push({mesh,ground,tier});this.geometries.push(geometry);this.materials.push(material);

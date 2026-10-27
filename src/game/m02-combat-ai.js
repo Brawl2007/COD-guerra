@@ -1,4 +1,4 @@
-import { eyePosition } from '../world/spatial.js';
+import {eyePosition,traceObstruction} from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {M01_DIFFICULTY} from './m01-difficulty.js';
 
@@ -677,13 +677,23 @@ export function stepActorNavigation(sim, actor, dt) {
 export function updateLowCoverExposure(sim,actor){
   if(actor.moving||!actor.goal?.crouch||actor.reloadingUntil>sim.clock||actor.role==='medic'||actor.goal.nodeId?.startsWith('prep_'))return;
   if(sim.world.layout.buildings.some(b=>actor.x>b.bounds[0]&&actor.x<b.bounds[1]&&actor.z>b.bounds[2]&&actor.z<b.bounds[3]))return;
-  const cover=sim.world.obstacles.find(o=>o.max.y>actor.y+.8&&o.max.y<=actor.y+1.4&&o.min.y<=actor.y+.2&&Math.hypot(Math.max(o.min.x-actor.x,0,actor.x-o.max.x),Math.max(o.min.z-actor.z,0,actor.z-o.max.z))<=1.4);
+  const cover=sim.world.obstacles.find(o=>o.max.y>actor.y+.8&&o.max.y<=actor.y+(actor.encounterId==='EA0'?1.65:1.4)&&o.min.y<=actor.y+.4&&Math.hypot(Math.max(o.min.x-actor.x,0,actor.x-o.max.x),Math.max(o.min.z-actor.z,0,actor.z-o.max.z))<=(actor.encounterId==='EA0'?2:1.4));
   if(!cover)return;
   const offset=[...actor.id].reduce((n,c)=>n+c.charCodeAt(0),0)%11*.17;
   const phase=(sim.clock+offset)%3.2;
   const exposed=actor.suppressed<.55&&(Boolean(actor.burst)||(phase>=1.75&&phase<2.8));
   if(actor.coverExposure?.exposed!==exposed)actor.coverExposure={coverId:cover.id,exposed,changedAt:Number(sim.clock.toFixed(3))};
   actor.crouched=!exposed;actor.eyeHeight=exposed?1.65:1.08;
+}
+
+// Called only after visual perception succeeds. Prefer the torso; if a solid
+// parapet hides it, aim at the actually observed eye/head rather than repeatedly
+// shooting the wall. No hidden target or renderer information enters this test.
+export function m02VisibleAimPoint(sim,shooter,target){
+  const torso={x:target.x,y:target.y+(target.crouched?.95:1.25),z:target.z};
+  const origin=shooter.id==='DE-A05'?{x:11.82,y:1.42,z:-30}:eyePosition(shooter);
+  const dx=torso.x-origin.x,dy=torso.y-origin.y,dz=torso.z-origin.z,d=Math.hypot(dx,dy,dz)||1;
+  return traceObstruction(sim.world,origin,{x:dx/d,y:dy/d,z:dz/d},Math.max(0,d-.2))?eyePosition(target):torso;
 }
 
 export function updatePolishSquad(sim, dt) {
@@ -881,7 +891,7 @@ export function updatePolishSquad(sim, dt) {
 
       const aimPt = isMgSuppressTarget && !hasLoS
         ? { x: 12.2, y: 1.38, z: -30.0 }
-        : { x: enemy.x, y: enemy.y + (enemy.crouched ? 0.92 : 1.25), z: enemy.z };
+        : m02VisibleAimPoint(sim,ally,enemy);
 
       if (!friendlyFireClear(ally, aimPt, [sim.player, ...sim.allies])) continue;
 
@@ -960,6 +970,9 @@ export function updateGermanGarrison(sim, dt) {
     if (enemy.nonCombatant) continue;
 
     stepActorWeapon(sim, enemy, dt);
+    if(enemy.encounterId==='EA0'&&sim.c01Active&&!enemy.goal&&!enemy.fellBack){
+      enemy.goal={x:enemy.x,z:enemy.z,crouch:true,nodeId:`ea0_guard_${enemy.id}`};
+    }
 
     // Local reserve movement (DE-A12, DE-A13 in Area A; or EC2 reserve DE-C09..DE-C20 in Area C)
     if (enemy.encounterId === 'EC2' && sim.c10Active && typeof enemy.goalX === 'number' && !enemy.goal) {
@@ -1019,13 +1032,14 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     if (visibleTarget) {
+      const acquiredAim=m02VisibleAimPoint(sim,enemy,visibleTarget);
       if(enemy.seeingTargetId!==visibleTarget.id||!Number.isFinite(enemy.targetAcquiredAt))enemy.targetAcquiredAt=sim.clock;
       enemy.state = 'ENGAGE_VISIBLE';
       enemy.seeingTargetId = visibleTarget.id;
       enemy.memory = {
         targetId: visibleTarget.id,
         x: Number(visibleTarget.x.toFixed(2)),
-        y: Number((visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25)).toFixed(2)),
+        y: Number(acquiredAim.y.toFixed(2)),
         z: Number(visibleTarget.z.toFixed(2)),
         seenAt: Number(sim.clock.toFixed(2)),
         expiresAt: Number((sim.clock + 6.0).toFixed(2)),
@@ -1040,11 +1054,7 @@ export function updateGermanGarrison(sim, dt) {
       // determine every hit; reacquisition state lives in actor checkpoints.
       const reacted=visibleTarget.id!==sim.player.id||sim.clock-enemy.targetAcquiredAt>=M01_DIFFICULTY.soldado.reactionGraceSec;
       if (reacted && enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
-        const aimPt = {
-          x: visibleTarget.x,
-          y: visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25),
-          z: visibleTarget.z,
-        };
+        const aimPt = acquiredAim;
         sim.fireActorBurst(enemy, visibleTarget, aimPt, 'enemy');
       }
     } else {

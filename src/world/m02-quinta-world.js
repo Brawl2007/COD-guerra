@@ -4,6 +4,12 @@ import { indexSolids } from './m01-collision-layout.js';
 
 const xyz = (a) => ({ x: a[0], y: a[1], z: a[2] });
 
+function fieldTrenchHeight(x,z,x0,x1,z0,z1,depth,bank){
+  const inset=Math.min(x-x0,x1-x,z-z0,z1-z);
+  if(inset<0)return null;
+  const t=Math.min(1,inset/bank);return -depth*t*t*(3-2*t)+0;
+}
+
 const makeBox = (id, min, max, extra = {}) => ({
   ...extra,
   id,
@@ -241,10 +247,12 @@ export class M02QuintaWorld {
       return ditch.floorY * xFactor * zFactor;
     }
 
-    // Transverse outpost trench at (-18, -110) for C01/EA0
-    if (x >= -26.5 && x <= -9.0 && z >= -112.5 && z <= -109.2) {
-      return -0.32;
+    // Shallow field trenches share the same height function with the rendered
+    // terrain and M01 movement/ballistics. Sloped banks let actors leave them.
+    if(this.layout.c01Corridor){
+      const p1=fieldTrenchHeight(x,z,-8.5,7.5,-180,-172.8,.42,.8);if(p1!==null)return p1;
     }
+    const ea0=fieldTrenchHeight(x,z,-26.5,-9,-112.5,-109.2,.32,.5);if(ea0!==null)return ea0;
 
     // Gentle agricultural micro-relief on the eastern/southern flank only outside roads and courtyard
     if (Math.abs(x) <= 3.5) return 0;
