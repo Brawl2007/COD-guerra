@@ -562,6 +562,7 @@ export function stepActorWeapon(sim, actor, dt) {
 }
 
 export function stepActorNavigation(sim, actor, dt) {
+  actor.effectiveSpeed=0;
   if (!actor.alive || actor.nonCombatant || actor.state === 'DOWN' || actor.state === 'SURRENDERED' || actor.state === 'WOUNDED_UNARMED') {
     actor.moving = false;
     return;
@@ -648,13 +649,13 @@ export function stepActorNavigation(sim, actor, dt) {
     return;
   }
 
-  const baseSpeed = actor.state==='WALKING_SUPPORTED'?1.8:actor.suppressed > 0.55 ? 2.6 : 4.1;
+  const baseSpeed = actor.state==='WALKING_SUPPORTED'?1.8:actor.encounterId==='LAST_GROUP'?actor.speed:actor.suppressed > 0.55 ? 2.6 : 4.1;
   const stepDist = Math.min(dist, baseSpeed * dt);
   let vx = (dx / dist) * stepDist;
   let vz = (dz / dist) * stepDist;
 
   // Gentle personal-space repulsion against other living actors so capsules never stack
-  const allActors = [...sim.allies, ...sim.enemies];
+  const allActors = [...sim.allies, ...sim.enemies,...(actor.encounterId==='LAST_GROUP'?sim.areaC.lastGroup:[])];
   for (const other of allActors) {
     if (other.id === actor.id || !other.alive) continue;
     const ox = actor.x - other.x;
@@ -671,7 +672,10 @@ export function stepActorNavigation(sim, actor, dt) {
   actor.eyeHeight = 1.65;
   actor.moving = true;
   actor.facing = Math.atan2(dz, dx);
+  const x0=actor.x,z0=actor.z;
   movePlayer(sim.world, actor, vx, vz, dt);
+  const moved=Math.hypot(actor.x-x0,actor.z-z0);
+  actor.moving=moved>1e-5;actor.effectiveSpeed=dt>0?moved/dt:0;actor.motionDistance=(actor.motionDistance??0)+moved;
 }
 
 export function updateLowCoverExposure(sim,actor){

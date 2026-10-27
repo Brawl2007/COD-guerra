@@ -1,0 +1,34 @@
+✔ determinism: the same event always plans the same sound; different events plan different sounds (56.203249ms)
+✔ variant coverage: every variant of every weapon, material, blast, pass and footstep surface is reachable and structurally different (51.316518ms)
+✔ spread: pitch, gain and layer mix of repeated shots vary far beyond the old +-3-6 % (95.612542ms)
+✔ bursts: the authoritative cadence is untouched; display fire gets zero-mean jitter around the same interval (24.692248ms)
+✔ distance model is monotonic: quieter, darker, wetter and later with distance; air absorption follows the physics (1.512432ms)
+✔ footsteps: every surface sounds like itself, pace and load change the weight, and quiet is not silent (33.043455ms)
+✔ player body and gun sounds are synthesised events, not fixed beeps: the bolt, the reload, the hit and the landing vary and keep their sequence (0.587724ms)
+✔ AudioManager: footsteps, hit, landing and mechanism reach the graph with their own keys, at low priority where it matters (18.475493ms)
+✔ node pooling: gains, filters and panners are reused (no per-shot allocation growth), reset cleanly, and the created/disposed audit balances (20.612988ms)
+✔ director footsteps follow the distance walked: none standing, stride by stance, none in the air, none across a teleport (3.50268ms)
+✔ director display fire is not a metronome: burst lengths span 2-9, double taps occur, jitter is requested, the pool bounds the work (7.644503ms)
+✔ director ally footsteps: only walking allies within 25 m, from the distance each man walked, capped per frame, spatial and quiet at range (5.167158ms)
+✔ T37 constants and API match the shipped soldier rig (bone names, ankle/ball sole offsets, sockets, all LODs) (154.306178ms)
+✔ T37 two-bone solver preserves both segment lengths, reaches a reachable target, and clamps an unreachable one (9.763328ms)
+✔ T37 A1: boots sit within 2 cm of the real M01 terrain on every slope/posture; planted feet and bone lengths are untouched (179.328785ms)
+✔ T37 A1b: the body leans INTO the slope (pelvis forward on rising ground ahead, toward the rising side) and head stays near upright (8.401573ms)
+✔ T37 A2 (I8): hands keep their authored weapon grip (<= 1.5 cm) and the palm stays on the socket (R <= 3 cm, L <= 5 cm) on slopes (85.414717ms)
+✔ T37 A2b: bolt cycling, rifle reload and BAR burst keep the animated hands on their authored path while the body leans (19.833155ms)
+✔ T37 A3 (oracle): IK off is bit-identical to the current output, also after ON -> OFF, and with no world (138.101509ms)
+✔ T37 A4: same clock re-render, constant clip tracks and pauses are bit-identical with IK on (no accumulation) (13.946718ms)
+✔ T37 A5 (I7/I8): exact crew/station/prone/casualty/dead actors keep the authored pose bit-for-bit and no gameplay data is touched (37.109169ms)
+✔ T37 A6: fidelity tiers - distance/actor budgets, LOD1/LOD2 actors stay planted, slope_only never moves feet, counters per tier (266.643873ms)
+✔ T37 A6b: tier resolver is deterministic, budgeted and has distance hysteresis (0.405478ms)
+✔ T37 A7: live M01 simulation frames - accuracy bounds hold at every tier and the simulation is untouched (4131.962329ms)
+✔ T37 A8: no THREE object is constructed inside the IK hot path (module scratch only) and the per-frame garbage stays at boxed-number level (1685.413295ms)
+✔ T37 A9: dispose removes the debug hook and only the debug switch exposes it (0.766248ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7038.834696

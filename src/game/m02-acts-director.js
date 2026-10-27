@@ -705,18 +705,11 @@ export function updateAreaC(sim, dt) {
       continue;
     }
     allResolved = false;
+    if(sim.clock-(sim.areaC.artilleryWarningAt??0)<(lg.startDelaySec??0)){lg.moving=false;continue;}
     const wp = evacRoute[Math.min(lg.waypointIdx, evacRoute.length - 1)];
-    const dx = wp[0] - lg.x;
-    const dz = wp[1] - lg.z;
-    const dist = Math.hypot(dx, dz);
-    if (dist > 1e-4) {
-      const step = Math.min(dist, lg.speed * dt);
-      lg.x = Number((lg.x + (dx / dist) * step).toFixed(2));
-      lg.z = Number((lg.z + (dz / dist) * step).toFixed(2));
-      lg.y = sim.world.heightAt(lg.x, lg.z);
-      lg.facing = Math.atan2(dz, dx);
-      lg.moving = true;
-    }
+    lg.encounterId='LAST_GROUP';lg.state=lg.wounded?'WOUNDED_WALKING':'EVACUATING';
+    lg.goal={x:wp[0],z:wp[1],crouch:false};
+    stepActorNavigation(sim,lg,dt);
     const remDist = Math.hypot(wp[0] - lg.x, wp[1] - lg.z);
     if (remDist <= 0.65) {
       if (lg.waypointIdx < evacRoute.length - 1) {

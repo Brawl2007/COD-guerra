@@ -55,6 +55,17 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
   tgt_b01_hall_door: 'DE-A08',
 });
 
+function recordM02Hit(actor,clock,source,part='torso'){
+  actor.hitAt=clock;actor.hitYaw=Math.atan2(source.z-actor.z,source.x-actor.x);actor.hitPart=part;
+  if(!actor.alive){actor.diedAt=clock;actor.deathYaw=actor.facing??0;}
+}
+
+function roundNearActor(origin,direction,hit,range,actor){
+  const point=eyePosition(actor),dx=point.x-origin.x,dy=point.y-origin.y,dz=point.z-origin.z;
+  const along=Math.max(0,Math.min(hit?.distance??range,dx*direction.x+dy*direction.y+dz*direction.z));
+  return Math.hypot(dx-direction.x*along,dy-direction.y*along,dz-direction.z*along)<=3;
+}
+
 export function validateM02Snapshot(snap) {
   if (!snap || (snap.schema !== 'm02-01-bench-snapshot-v1' && snap.schema !== 'm02-02-snapshot-v2')) {
     return { valid: false, reason: 'Schema de snapshot M02 inválido.' };
@@ -125,7 +136,12 @@ export function validateM02Snapshot(snap) {
       }
     }
   }
-  for(const actor of [...(snap.allies??[]),...(snap.enemies??[])]){
+  if(snap.areaC?.lastGroup!==undefined&&!Array.isArray(snap.areaC.lastGroup))return {valid:false,reason:'Grupo de evacuação inválido.'};
+  for(const actor of [...(snap.allies??[]),...(snap.enemies??[]),...(snap.areaC?.lastGroup??[])]){
+    if(!actor||!Number.isFinite(actor.x)||!Number.isFinite(actor.z))return {valid:false,reason:'Posição de ator inválida.'};
+    for(const key of ['effectiveSpeed','motionDistance'])if(actor[key]!==undefined&&(!Number.isFinite(actor[key])||actor[key]<0))return {valid:false,reason:`Movimento inválido: ${actor.id}`};
+    for(const key of ['hitAt','hitYaw','diedAt','deathYaw'])if(actor[key]!==undefined&&!Number.isFinite(actor[key]))return {valid:false,reason:`Impacto inválido: ${actor.id}`};
+    if(actor.navCorners!=null&&(!Array.isArray(actor.navCorners)||actor.navCorners.some(p=>!p||!Number.isFinite(p.x)||!Number.isFinite(p.z))))return {valid:false,reason:`Rota inválida: ${actor.id}`};
     const b=actor.burst;
     if(b==null)continue; // Existing checkpoints have no pending-round field.
     const maxRounds=actor.weapon==='rkm_wz28'?Math.max(4,WEAPON_PROFILES.rkm_wz28.burstCount):WEAPON_PROFILES[actor.weapon]?.burstCount??1;
@@ -684,9 +700,11 @@ export class M02BenchSimulation {
         en.alive = false;
         en.health = 0;
         en.state = 'DEAD';
+        for(const key of ['hitAt','hitYaw','hitPart','diedAt','deathYaw'])if(tgt[key]!==undefined)en[key]=tgt[key];
       } else if (!en.alive && tgt.alive) {
         tgt.alive = false;
         tgt.health = 0;
+        for(const key of ['hitAt','hitYaw','hitPart','diedAt','deathYaw'])if(en[key]!==undefined)tgt[key]=en[key];
       }
     }
   }
@@ -815,6 +833,7 @@ export class M02BenchSimulation {
         targetActor.alive = false;
         targetActor.state = 'DEAD';
       }
+      recordM02Hit(targetActor,this.clock,origin,hit.part);
       this.syncCalibrationAndEnemies();
     }
 
@@ -910,7 +929,7 @@ export class M02BenchSimulation {
       }
 
       // Apply suppression to intended target when rounds hit or pass near their cover aperture
-      if (targetActor && targetActor.alive) {
+      if (targetActor && targetActor.alive && roundNearActor(origin,dir,hit,prof.range,targetActor)) {
         targetActor.suppressed = Math.min(1, (targetActor.suppressed ?? 0) + prof.suppressionAdd / planned);
         shooter.suppressionsInflicted = (shooter.suppressionsInflicted ?? 0) + 1;
         this.combatLog.push({
@@ -970,6 +989,7 @@ export class M02BenchSimulation {
             });
           }
         }
+        recordM02Hit(victim,this.clock,origin,hit.part);
         this.syncCalibrationAndEnemies();
       }
     }
@@ -1119,6 +1139,7 @@ export class M02BenchSimulation {
           }
         }
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
+        if(damage>0)recordM02Hit(actor,this.clock,center);
       }
     }
 
@@ -1362,6 +1383,7 @@ export class M02BenchSimulation {
     const forward = controls.forward ?? 0;
     const side = controls.side ?? 0;
     const inputLen = Math.hypot(forward, side);
+    const movementStartX=this.player.x,movementStartZ=this.player.z;
     this.player.moving = inputLen > 1e-3;
     this.player.sprinting =
       Boolean(controls.sprint) && !this.player.crouched && !this.player.aiming && forward > 0.1;
@@ -1388,6 +1410,8 @@ export class M02BenchSimulation {
     }
 
     this.weapon.update(nowMs);
+    this.player.moving=Math.hypot(this.player.x-movementStartX,this.player.z-movementStartZ)>1e-5;
+    if(!this.player.moving)this.player.sprinting=false;
     if (controls.reload) this.weapon.reload(nowMs);
     if (controls.sight) this.weapon.adjustSight();
     if (controls.interact) this.interactDoor();

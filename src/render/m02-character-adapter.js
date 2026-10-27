@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {M01Characters} from './m01-characters.js';
-import {genericCandidate} from './m01-animation-resolver.js';
+import {genericCandidate,resolveStrideSample} from './m01-animation-resolver.js';
 import {retargetSMGClip} from './m02-smg-animation.js';
 
 const LOWER=/^(root|hips|thigh_[lr]|calf_[lr]|foot_[lr]|ball_[lr])\./;
@@ -50,7 +50,7 @@ export function m02CharacterSample(actor,time,clips){
  if(actor.moving){
   if(actor.weapon==='mp38'){
    const name=actor.crouched?'m02_mp38_crouch_walk':actor.motion?.speed>3?'m02_mp38_run':'m02_mp38_walk';
-   if(get(name))return {clip:name,time:time%(get(name).duration||1),loop:true,rate:1};
+   if(get(name)){const stride=resolveStrideSample(actor,name,time,clips);return {clip:name,time:stride.time,loop:true,rate:stride.rate??1,stridePhase:stride.stridePhase};}
   }
   return null;
  }

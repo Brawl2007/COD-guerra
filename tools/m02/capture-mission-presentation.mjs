@@ -62,6 +62,13 @@ try{
    if(name==='quinta-medium')sim.teleportPlayer(-20,-43,Math.PI/2,-.02);
    if(name==='leczyca-high'){sim.enterAreaBC06();sim.teleportPlayer(-18,-3,-2.44,-.015);}
    if(name==='lesmierz-high'){sim.enterAreaCC09();sim.teleportPlayer(-4,-4,-.7,-.02);}
+   if(name==='c11-group'||name==='c11-lis-support'){
+    sim.reset('C02');sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();
+    if(name==='c11-lis-support')sim.assistLisInC11('wounded_walking');
+    for(let i=0;i<100;i++)sim.tick(.05,{});
+    if(name==='c11-group')sim.teleportPlayer(-4,-28,0,-.08);
+    else {const lis=sim.allies.find(a=>a.id==='pl_lis'),f=lis.facing+.7;sim.teleportPlayer(lis.x+Math.cos(f)*3,lis.z+Math.sin(f)*3,f+Math.PI,-.12);}
+   }
    if(name==='mp38-high'||name==='mp38-fire'){
     if(sim.activeCellId!=='C')sim.enterAreaCC09();
     const actor=sim.enemies.find(a=>a.weapon==='mp38'),f=actor.facing;

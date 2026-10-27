@@ -19,13 +19,14 @@ export function m02VisualActor(actor, team, clock) {
   const wounded = actor.state === 'WOUNDED_UNARMED'||actor.state==='WOUNDED_LIAISON';
   return { ...actor, team, active: !actor.detachedOutOfCell,
     id: actor.weapon === 'rkm_wz28' ? 'szymon_kowal' : actor.id,
-    role: wounded || surrendered || actor.role==='medic'||actor.state==='WALKING_SUPPORTED'||actor.state==='EVACUATED_B12' ? 'MEDIC' : 'RIFLEMAN',
+    role: wounded || surrendered || actor.role==='medic'||actor.state==='WOUNDED_WALKING'||actor.state==='WALKING_SUPPORTED'||actor.state==='EVACUATED_B12' ? 'MEDIC' : 'RIFLEMAN',
     state: wounded ? 'WOUNDED' : actor.moving ? 'ADVANCE' : actor.shot > 0 ? 'SUPPRESS' : 'GUARD',
     posture: actor.crouched ? 'crouch' : 'stand',
+    suppressedUntil:actor.suppressed>.4&&actor.crouched&&!actor.moving?clock+.1:0,
     pose: actor.state==='EVACUATED_B12'?'seated':actor.pose,
     shot: actor.shot ?? (clock - (actor.lastShotAt ?? -Infinity) < .15 ? .15 : 0),
     reload: actor.reloadingUntil > clock ? {startedAt:actor.reloadingUntil-(WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8),durationSec:WEAPON_PROFILES[actor.weapon]?.reloadSec??2.8} : null,
-    motion: { speed: actor.moving ? (actor.speed ?? (actor.suppressed>.55?2.6:4.1)) : 0 },
+    motion: { speed: actor.moving ? (actor.effectiveSpeed??actor.speed??(actor.suppressed>.55?2.6:4.1)) : 0,odometer:actor.motionDistance??0 },
   };
 }
 
@@ -35,14 +36,13 @@ export class M02Presentation {
     this.weaponCamera = createM02WeaponCamera();
     this.fireTimes = new Map();
     this.roundEvents = new Map();
-    this.stepAt = 0;
     this.characters = new M02Characters(scene, { ik:false });
     this.weaponScene = new THREE.Scene();
     this.weaponLighting=new WeaponLighting(this.weaponScene);
     // M01 viewmodel lives in camera space and has its own depth pass.
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
-    this.footsteps=new M02Footsteps(this.audio);this.footstepWorld=sim.world;
+    this.footsteps=new M02Footsteps(this.audio);
     this.m02Weapons=new M02Weapons();
     this.ready = Promise.all([this.characters.load('medium').then(()=>this.characters.prepareM02Clips()),this.m02Weapons.ready]);
     this.ids = new Map();
@@ -59,7 +59,6 @@ export class M02Presentation {
   }
   update(sim, quality) {
     this.syncSession(sim);
-    if(this.footstepWorld!==sim.world){this.footstepWorld=sim.world;this.footsteps.reset();}
     this.resetClock = sim.clock;
     this.audio.setQuality(quality);
     this.audio.updateM01Presentation({clock:sim.clock,quality,state:{},fires:[],phase:sim.areaC?.c12Completed?'OUTRO':'MAIN_COMBAT',spatial:point=>this.spatial(point,sim)});
@@ -71,7 +70,7 @@ export class M02Presentation {
     this.ids.clear();
     let mgIndex=0;
     const actors = [];
-    for (const [list, team] of [[sim.allies,'ally'],[sim.enemies,'enemy'],[(sim.areaC?.c10Started?sim.areaC.lastGroup:[]).filter(a=>!a.evacuated).map(a=>({...a,state:a.wounded?'WOUNDED_UNARMED':'ACTIVE',weapon:'wz29'})),'ally']]) {
+    for (const [list, team] of [[sim.allies,'ally'],[sim.enemies,'enemy'],[(sim.areaC?.c10Started?sim.areaC.lastGroup:[]).filter(a=>!a.evacuated).map(a=>({...a,state:a.wounded?'WOUNDED_WALKING':'ACTIVE',weapon:'wz29'})),'ally']]) {
       for (const actor of list ?? []) {
         // Preserve Claude's explicit hands-up surrender pose, not an armed idle.
         if (actor.state === 'SURRENDERED') continue;
@@ -87,7 +86,6 @@ export class M02Presentation {
         const event=this.roundEvents.get(actor.id);
         visual.m02RoundIndex=event&&Math.abs(event.clock-firedAt)<.001?event.roundIndex:actor.burst?actor.burst.emitted-1:Math.max(0,Math.round((firedAt-visual.firedAt)/(profile?.burstGapSec||1)));
         if(visual.state==='GUARD'&&sim.clock-firedAt<2.5)visual.state='SUPPRESS';
-        visual.suppressedUntil=actor.suppressed>.4?sim.clock+.1:0;
         this.ids.set(actor.id, visual.id); actors.push(visual);
       }
     }
