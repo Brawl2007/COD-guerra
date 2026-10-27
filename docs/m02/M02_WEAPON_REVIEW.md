@@ -1,6 +1,6 @@
 # M02 — revisão das armas e apresentação
 
-Data: 2026-10-26. Base: `9385b2d`. Esta revisão distingue dados preliminares, código realmente usado e decisões de gameplay; não certifica reprodução histórica ou qualidade AAA.
+Revisão inicial: 2026-10-26, base `9385b2d`; atualização E1–E3: 2026-10-27, código `21f8d67`. Esta revisão distingue dados preliminares, código realmente usado e decisões de gameplay; não certifica reprodução histórica ou qualidade AAA.
 
 ## Fontes e limites
 
@@ -8,7 +8,11 @@ Lidas nesta etapa: fichas locais `research/weapons/kb_wz29.md`, `kb_wz29.profile
 
 Foi estudada a matriz local WaW/WWII: legibilidade da arma, mecânica que acompanha o disparo, assinaturas sonoras, inimigos a distância jogável e ritmo irregular de cobertura/flanco. As URLs oficiais consultadas (`https://store.steampowered.com/manual/10090/`, `https://www.callofduty.com/wwii/campaign`) foram bloqueadas pelo proxy com 403; não se afirma leitura externa nem comparação jogada. Não se usam ficheiros, malhas, animações ou sons de COD.
 
-## Identidade e integração
+## Diagnóstico inicial e direção (2026-10-26)
+
+As lacunas desta tabela são o diagnóstico de origem. As correções D1/D2 e E1–E3 abaixo identificam o que já foi resolvido.
+
+### Identidade e integração
 
 | Arma | Identidade documental/preliminar | Implementação preservada | Lacuna verificada / direção |
 | --- | --- | --- | --- |
@@ -29,7 +33,7 @@ Foi estudada a matriz local WaW/WWII: legibilidade da arma, mecânica que acompa
 
 Capturar a wz.29 em repouso/ADS/disparo/ciclo/recarga vazia e parcial, MG34 a dominar o eixo da estrada, wz.28 a fixar a posição e MP38 a curta distância. Medir contactos de mãos, boca do cano, recuo, caudas de áudio e oclusão; distinguir fotografia de fixture de percurso jogado. Aplicar a C01–C02 antes de expandir outras cenas. Escala e licenças já verificadas não substituem revisão da atuação, composição e leitura dos inimigos.
 
-## Aplicação D2
+## Aplicação D2 — estado histórico anterior a E1
 
 Adaptador M02 herda M01Characters sem modificar fontes M01. A preparação de Lis/Gruca, tiro, mira e recargas agachadas reutilizam a parte superior dos clips existentes e a base `crouched_idle`. Os ossos reais são `thigh/calf/foot/ball`; arma e clipe estão na raiz do rig e recebem a transformação rígida das ancas para preservar contacto com as mãos. Testes carregam os GLB reais e medem pés/ancas e distâncias arma–mãos em vários instantes; clips originais permanecem idênticos. Recargas percorrem o clip completo no tempo da simulação, sem deslizar durante navegação. MP38 deixa de executar ferrolho de espingarda; a recarga rkm adaptada e o carregador estático MP38 continuam lacunas explícitas.
 
@@ -63,14 +67,27 @@ Vinte cartuchos, três rondas novas por rajada de 0,10 s, ciclo tático de 1,55 
 
 Modelos/kit e clips `rkm_walk/run/aim/crouched_idle/fire_burst/reload` pertencem à M01. A M02 adapta a base agachada e conserva ancas/pés; o osso raiz da arma recebe a mesma transformação rígida que os braços. Usar apenas deslocamento vertical quebrava os contactos. A versão deitada/bípode já existe na biblioteca M01, mas exige contrato físico de postura antes de aparecer em combate M02. Não duplicar a arma ou o mixer para a introduzir.
 
-### MP38 — distinguir identidade, proxy e funcionalidade disponível
+### MP38 — diagnóstico antes de E1
 
 O modelo original do projeto mede 0,833 m no eixo longitudinal, com origem na empunhadura e boca em `[0,0.032,-0.5]`; LOD0 548 triângulos, LOD1 236. A construção usa o pipeline determinístico M01, aço/Bakelite aproximados por materiais PBR de cor por vértice. A forma é reconstrução visual; dimensões/acessórios de variante ainda precisam de referência primária. Não substituir por MP40 ou importar malhas de COD.
 
 A capacidade é 32, rajada de três a 0,11 s e janela tática de 1,45 s, com recarga 2,7 s. O intervalo de 0,11 s é afinação M02. O perfil áudio M01 mantém o default de 0,09 s para as chamadas antigas; os novos eventos M02 passam a sua própria cadência e uma ronda por evento. A animação automática reaproveitada evita o gesto de ferrolho de Mauser, mas o suporte da mão esquerda, a extração/inserção de carregador e a atuação específica MP38 continuam incompletos. Não basta esconder a espingarda e chamar essa recarga final.
 
-### Áudio, efeitos e fronteira de autoridade
+### Áudio, efeitos e fronteira de autoridade — diagnóstico antes de E1
 
 Só a wz.29 está atualmente nas mãos do jogador; MG34/wz.28/MP38 são usadas pelos NPC. Não se implementou nem anunciou recolha/troca de quatro armas. Cada ronda NPC emite munição consumida, origem/ponto observado, índice e timestamp; áudio, impulso animado e clarão leem esse evento. A fila não segue um alvo oculto e volta a consultar a obstrução. Morte/desarme/recarga ou supressão elevada interrompem-na sem consumir rondas futuras.
 
 AudioManager M01 conserva perfis de crack/corpo/mecânica/caudas, distância e espacialização. Na adaptação, oclusão sólida aplica filtro de 1200 Hz e ganho 0,4 por fonte, depois repõe o contexto. O pico gravado no navegador confirma sinal audível após gesto; a qualidade artística e inteligibilidade não foram ouvidas/aprovadas por uma pessoa. Passos ainda usam cadência temporal no adaptador M02, com `player.moving` vindo do input: verificar passos contra paredes e preferir o percurso/odómetro partilhado M01 numa próxima integração, sem fazer o áudio alterar o estado físico.
+
+
+## E1–E3 — implementação atual (2026-10-27)
+
+**MP38:** oito clips M02 específicos de mira/disparo/recarga/marcha são derivados dos clips M01, sem alterar os originais. O mesmo solver M01 de dois ossos e protração de clavícula posiciona os pulsos no punho/apoio e no carregador ao longo da recarga autoritativa de 2,7 s. A malha original mantém escala, autoria e os 548/236 triângulos, mas separa corpo, carregador e alavanca (LOD0). O carregador sai, passa pela bolsa, regressa e encaixa; a mão acompanha a peça, seguida do gesto de armar. O renderer não decide munição ou fim de recarga. Testes com GLB real medem contactos a menos de 2,5 cm, percorrem a animação e verificam reset e imutabilidade dos clips de origem. Capturas válidas em `continuation-2026-10-27/e1/reload-after-restore/`. Não confundir com a primeira captura anterior à correção de restauro: o reset agora invalida blends e história da arma mesmo com célula/relógio iguais.
+
+**MG34:** bancada B02 reduzida dentro do espaço existente para que o corpo do atirador fique fisicamente fora do sólido; posição/setor da abertura oeste e consumo/cadência/dano preservados. A prova geométrica e a fotografia do interior confirmam a correção de interpenetração. Continua a usar a atuação em pé/agachada M01 e o auxiliar combatente. Não foi criada uma coreografia nova de alimentação por servente deitado.
+
+**wz.29 e wz.28:** conservam os contratos de D1/D2, a câmara própria da arma e as rondas causais. E2 melhora a seleção do ponto observado quando uma cobertura tapa o torso e só a cabeça fica exposta; continua a exigir perceção física e traço de obstrução real. E3 associa acertos e mortes reais aos timestamps/direções usados pelos clips M01, em vez de saltar diretamente para o fim da queda. Um disparo bloqueado junto do próprio atirador não suprime um alvo distante; o impacto próximo da cobertura do alvo pode suprimi-lo.
+
+**Passos/movimento:** o adaptador usa agora os amostradores de distância de jogador/NPC e espacialização do `M01AudioDirector`, com reset na retoma. Movimento efetivo e odómetro alimentam os clips; empurrar uma parede não produz marcha, oscilação ou passos artificiais. Não se instancia uma segunda simulação M01.
+
+Verificação final de código: 80 testes M02 aprovados, build e reprodução dos GLB aprovadas; resultados de navegador/percurso em `M02_REVIEW_GUIDE.md`. As quatro armas têm integração funcional, não certificação histórica/artística. Só a wz.29 é controlada pelo jogador. Falta avaliação humana da naturalidade, mãos/variante MP38, qualidade dos modelos e som; não se declara equivalência AAA.

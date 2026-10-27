@@ -1,8 +1,10 @@
-# C01–C02 — primeira reconstrução verificável
+# C01–C02 — reconstrução e continuidade
 
 2026-10-26, candidata `codex/m02-recovery-v1`, após D1 `702ced9`. Documento complementar de 173.148 palavras ainda não disponibilizado; roteiro e prompt anterior mantidos.
 
-## Comportamento
+## Primeira entrega — 2026-10-26
+
+### Comportamento
 
 P1 tem sete posições absolutas de preparação em vez de deslocar coordenadas mutáveis em cada início. Reentrar não envia a secção 96 m para trás. Os primeiros 4,5 s conservam o pelotão abrigado; Lis verifica a arma e Gruca observa o campo com clips M01 adaptados. O corredor conserva os três eixos e o posto avançado; o nó oeste intermédio passa a ter um talude físico de 1,2 m, equivalente ao abrigo já existente no eixo leste.
 
@@ -35,3 +37,16 @@ Foi também corrigida a câmara própria da arma para corresponder à M01 (58°/
 ## Verificação final da etapa
 
 63 testes M02 PASS, 112 testes M01 focados PASS, quatro casos browser PASS e build final PASS. A nova passagem de produção `d23304a` chegou novamente ao debrief/M03, desta vez visitando o ferido e marcando-o com giz por E: vida final 73, zero mortes/erros, Lis evacuado fisicamente e 12/12. A consequência de Malek incapacitado manteve-se. Fontes em `d2/native-final/`. As seis fotografias mecânicas finais em `d2/weapons/` usam a lente corrigida; mira estabilizada e recarga de jogador vivo foram verificadas pelo capturador. Arte e gameplay devem ser avaliados por pessoa: nenhuma destas contagens fecha as lacunas descritas acima.
+
+
+## E1–E3 — candidata atual, 2026-10-27
+
+Código `21f8d67`. As lacunas históricas MP38/bancada/terreno descritas acima foram tratadas nesta continuação; as provas antigas permanecem identificadas pelos seus SHA.
+
+P1 passa a uma depressão real de 42 cm, com rampas. Renderização, gravidade, colisão e balística consultam a mesma função de altura M02 e a malha amostra piso/bordas explicitamente. A cobertura P1 tem 75 cm acima do terreno exterior, protegendo quem se agacha no piso inferior e permitindo observar de pé. Saves anteriores assentam por gravidade M01 sem dano. O caminho de saída foi percorrido por controlos e testado com saves antigos.
+
+EA0 tem parapeito à frente dos defensores, uma depressão de 32 cm e exposição agachada/em pé. Os atiradores usam apenas um ponto realmente observado; se o torso está tapado, podem atingir a cabeça visível. Os defensores mantêm as suas posições durante C01 e o nó de limpeza permanece alcançável. Não se aumentou dano, número de inimigos ou aleatoriedade para fabricar resistência.
+
+Prados baixos nos flancos e sacaria/caixas GLB M01 encaixadas nos sólidos existentes acrescentam ocupação do terreno sem fechar caminhos. A MP38 ganhou partes móveis e contactos de mãos específicos via IK M01; a bancada MG deixa o corpo fora do sólido. Passos usam distância real partilhada com M01; impactos/quedas usam os eventos reais de combate. A apresentação não altera snapshots nem RNG.
+
+Provas High em `continuation-2026-10-27/e1/` e `e2/trenches/`. A galeria `landscape-before-trench/` é anterior à vala física final. Novo percurso congelado `21f8d67`: C01–C12 e debrief/M03, vida 32, zero mortes/erros, giz, água/munições, Lis e 12/12 preservados. Os 80 testes M02 incluem obstrução, contacto de mãos, saída/legado da vala, restauro exato e travessia física C11 com porta fechada. Guia e limitações de aprovação em `M02_REVIEW_GUIDE.md`.

@@ -1,44 +1,44 @@
-# M02 — revisão jogável e continuidade da direção
+# M02 — candidata C01–C12 para avaliação humana
 
-Esta é uma candidata incremental, não aprovação artística nem declaração de equivalência a World at War/WWII. O percurso C01–C12 está funcional e foi novamente jogado por controlos. A reconstrução de qualidade iniciou-se pelas armas e C01–C02; os marcos artísticos seguintes continuam abertos. O complemento de 173.148 palavras ainda não foi recebido.
+Candidata funcional na branch `codex/m02-recovery-v1`, código de jogo `21f8d67` (2026-10-27). O percurso contínuo de produção concluiu C01–C12, epílogo, debrief e exportação M03. Esta entrega está preparada para revisão humana com a especificação disponível; não declara equivalência artística a World at War/WWII, qualidade superior à M01 ou aprovação da missão. O complemento de 173.148 palavras ainda não foi recebido.
 
-## Abrir a candidata
+## Abrir e jogar
 
-Branch `codex/m02-recovery-v1`. Node 24, `npm ci`, `npm run dev`, entrada `/COD-guerra/m02.html`. O menu permite escolher Máxima, Equilibrada ou Leve; SwiftShader inicia automaticamente em Leve. A entrada normal não expõe os comandos de mutação da bancada.
+Node 24, `npm ci`, `npm run dev`, entrada `/COD-guerra/m02.html`. O menu permite escolher Máxima, Equilibrada ou Leve; SwiftShader inicia em Leve. A bancada `m02-01.html` permanece separada da entrada de produto. Em produto, mutações técnicas só existem com `?debug=1`.
 
-WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R recarregar, G granada, E interagir. Z suprimir, X avançar, B flanquear. Esc pausa; F5 grava checkpoint manual, F9 retoma. Redução do movimento da câmara e volume no menu. A bancada técnica `m02-01.html` continua disponível e separada do percurso de produto.
+WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R recarregar, G granada, E interagir. Z suprimir, X avançar, B flanquear. Esc pausa; F5 guarda checkpoint, F9 retoma. Volume e redução de movimento da câmara estão no menu. Só a wz.29 é controlada pelo jogador; MG34, wz.28 e MP38 são armas de NPC, sem sistema novo de recolha/troca.
 
-## Percurso de avaliação humana
+## Percurso de avaliação
 
 | Trecho | O que avaliar jogando |
 | --- | --- |
-| C01 | Preparação de Lis/Gruca, sete posições abrigadas, leitura do posto avançado e das coberturas intermédias. Agachar protege fisicamente; levantar expõe. Avaliar se a secção deixa espaço de decisão ao jogador. |
-| C02 | Comparar vala/casa/pomar; usar as três ordens e ouvir a resposta. MG34 domina a abertura **oeste** de B02, não a fachada norte. Avaliar clareza do setor, distâncias, oportunidade de flanco e exposição do cano. |
-| Armas | Wz.29: ADS, tiro único, ferrolho, recarga parcial e vazia. MG34/wz.28/MP38: rondas e impulsos separados, recargas e interrupção por dano/supressão. Ver mãos, coronha, cano e mira em movimento, perto das paredes e com câmara reduzida. |
-| C03–C04 | Entrar/abrir portas, combater em interiores, observar rendição e ferido desarmado. Aproximar-se do ferido no pomar e marcar com giz por E; confirmar a consequência. Não disparar sobre o ferido para completar o objetivo. |
-| C05–C08 | Passar a Łęczyca, proteger a carroça e entregar água/munições. Observar iluminação noturna, reorganização e consequência das perdas. A água não ressuscita nem cura para 100%. |
-| C09–C12 | Conquistar passagem, viver o impacto fixo, contactar Lis e abrir caminho para a evacuação. Aguardar a caminhada apoiada e a travessia dos 12 homens antes de sair; ler epílogo/debrief e consequências M03. |
-| Robustez | Pausar em recarga, F5/F9, recarregar o navegador e retomar; morrer exposto na abertura oeste e reiniciar. Verificar áudio após o gesto de retoma e ausência de rondas/objetos duplicados. |
+| C01 | Sete posições de preparação, Lis/Gruca, trincheira P1 escavada 42 cm e rampas. Verificar proteção ao agachar, saída e resistência do posto EA0, cujo parapeito fica à frente dos defensores. Só os pontos fisicamente observados devem poder ser atingidos. |
+| C02 | Comparar vala/casa/pomar e usar as três ordens. MG34 domina a abertura **oeste** de B02. A bancada deixa espaço ao corpo do atirador. Avaliar domínio visual, flanco e leitura de inimigos sem depender do HUD. |
+| Armas | Wz.29: ADS, tiro, ferrolho e recarga parcial/vazia. MG34/wz.28/MP38: rondas e impulsos separados. MP38: mãos no punho/apoio, carregador removido/inserido e alavanca no fim da recarga. Interromper por supressão/morte e restaurar no mesmo relógio. |
+| C03–C04 | Portas, interiores e flancos, rendição e ferido desarmado. Marcar o ferido do pomar com giz por E. Observar reação ao acerto e queda ao longo do tempo, sem exigir disparar sobre feridos para avançar. |
+| C05–C08 | Transição noturna para Łęczyca, proteção da carroça, água/munições e reorganização. Explosões podem perder volumes; a água não ressuscita nem cura para 100%. Ouvir passos por distância percorrida e oclusão dos tiros. |
+| C09–C12 | Passagem, aviso/impacto fixo, contacto e caminhada apoiada de Lis até B12. Os 12 homens atravessam com navegação, portas e colisão; LG03/LG09 caminham desarmados em vez de deslizar deitados. Esperar a travessia antes de sair. Ler epílogo/debrief e consequências M03. |
+| Robustez | Pausar durante recarga/rajada, F5/F9 e recarregar o navegador. Morrer exposto e retomar. Verificar posição, vida, rondas e volumes sem duplicação; passos não devem soar quando se empurra uma parede. |
 
-Registar dispositivo/GPU, perfil/resolução, cena/posição, comportamento observado e captura/vídeo. A comparação com M01 deve usar o mesmo dispositivo/perfil; o percurso Leve automatizado não compara qualidade visual ou capacidade humana.
+Registar dispositivo/GPU, perfil/resolução, cena/posição, comportamento observado e captura/vídeo. Comparar M01/M02 no mesmo dispositivo/perfil. O piloto automatizado observa atores ocultos para escolher rotas e não representa perícia humana ou experiência estética em Máxima.
 
-## O que as provas atuais sustentam
+## Provas desta candidata
 
-`docs/verification/m02-runtime/reconstruction-2026-10-26/` conserva baseline, D1, antes/depois D2, percurso contínuo e inspeções. Relatos de fixtures são distintos de input real.
+Pasta principal: [continuação 2026-10-27](../verification/m02-runtime/continuation-2026-10-27/README.md). Históricos anteriores permanecem preservados e identificados por SHA.
 
-- 63 testes M02 PASS; 112 testes focados dos sistemas M01 partilhados PASS (animação/mixer, arma/viewmodel e áudio).
-- Quatro testes de navegador PASS: modelos/áudio/snapshot, qualidade, sessão persistida e legendas/aviso em 480 × 270 e 1280 × 720. Pico de áudio medido 0,494275; não valida preferência sonora humana.
-- Build PASS com aviso de bundle grande conservado.
-- Build final `d23304a`: percurso contínuo até debrief/M03, zero mortes/erros, vida 73, Lis evacuado fisicamente, 12/12 e ferido marcado com giz. Malek incapacitado: consequência real do combate. O percurso inicial `9da102b` (vida 70, sem giz) mantém-se arquivado separadamente.
-- Prova separada de morte por fogo real: 25,10 s, vida 0; retoma do checkpoint de 10,10 s com vida 67 e posição guardada. Primeira sondagem a norte, fora do setor MG, não provocou morte e não é apresentada como teste aprovado.
-- Tentativa global sequencial interrompida aos 598,8 s no contrato de animação M01: 101 PASS, 0 FAIL, 172 CANCELLED. **Não é suite global aprovada**; não se removeram asserções, alteraram goldens ou aumentaram timeouts. Os testes focados concluídos acima têm logs independentes.
+- 80 testes M02 aprovados, sem falhas/cancelamentos; 26 testes focados dos sistemas M01 partilhados aprovados nesta etapa (IK/contacto de mãos e áudio/passos). Os 112 testes partilhados da etapa anterior têm logs próprios.
+- Build de produção e reprodução byte a byte dos GLB MP38 aprovadas. Aviso de bundle grande preservado.
+- Percurso congelado `21f8d67`: C01–C12/debrief/M03, zero mortes e erros de página, vida final 32, ferido marcado com giz, água/munições entregues, Lis ferido evacuado e 12/12 homens. Malek incapacitado, consequência mantida. Cinco transições aplicadas e fala canónica de Lis conservada na M03.
+- Cinco casos browser aprovados em 3,7 min, com 16 capturas novas, áudio running e pico 0,154458. Morte por fogo real aos 16,70 s, sem disparar nem injetar dano; retoma aos 0,05 s do checkpoint inicial com vida 100 e posição preservada. Prova separada, sem mortes no percurso completo.
+- Capturas High autênticas são fixtures controladas e rotuladas; não são apresentadas como fotografias de um playtest contínuo. A recarga MP38 válida está em `e1/reload-after-restore/`; a primeira sondagem de recarga, anterior à correção de blends no restauro, não é prova da recarga corrigida.
+- A suite global anterior foi interrompida no contrato de animação M01: 101 PASS, 0 FAIL, 172 CANCELLED. Não é suite global aprovada. Não foram alterados goldens, removidas asserções ou aumentados timeouts para conseguir resultados verdes. CI remoto não verificado.
 
-## Lacunas que impedem aprovação final de qualidade
+## Questões para aprovação de qualidade
 
-Soldados M01 continuam modelos provisórios estilizados. MP38 ainda usa apoio/recarga de arma automática adaptados; falta atuação e carregador específicos. A MG34 conserva a implantação em pé e a animação agachada, sem novo conjunto de servente/deitado. P1 tem talude físico e revestimento, não uma trincheira escavada com perfil de terreno próprio. O terreno e fachadas precisam de maior variedade/ocupação convincente; não substituir isso por filtros. Verificar se o posto EA0 oferece resistência/abrigo e ritmo suficientes: a secção pode neutralizá-lo rapidamente no percurso automatizado.
+Os humanos e as mãos FP continuam os assets estilizados/provisórios da M01. A MP38 já tem recarga específica com partes móveis e contactos IK, mas a fidelidade da malha/variante e a naturalidade dos gestos precisam de avaliação artística. A MG34 conserva o apoio em pé/agachado e o auxiliar combatente: não foi criada coreografia de servente a alimentar/deitado. A vala P1, abrigo EA0, vegetação baixa e props GLB partilhados estão implementados; avaliar agora o ritmo, composição e variedade do cenário em jogo.
 
-Não há vozes gravadas novas; falas literais estão preservadas em legendas e o áudio M01 é sintetizado. A leitura primária de manuais WaW/WWII não foi obtida: URLs oficiais consultadas devolveram proxy 403; a matriz local continua referência não certificada em jogo. Revisão em GPU física, áudio humano, acessibilidade e comparação artística com M01 ainda necessárias. Integrar o documento complementar antes de fechar critérios finais.
+Não há vozes gravadas novas. As falas literais estão em legendas, com áudio M01 sintetizado; sinal audível medido não demonstra qualidade sonora humana. A leitura primária dos manuais WaW/WWII não foi obtida (proxy 403); a matriz local não certifica comparação jogada. Medir desempenho numa GPU física e rever acessibilidade, som, mãos, animações e comparação com M01. Incorporar o complemento quando for disponibilizado antes de fechar os critérios que ele acrescenta.
 
-## Retomar sem repetir
+## Retoma e segurança
 
-Ler `M02_EXECUTION_STATE.md`, `M02_RECONSTRUCTION_PLAN.md` e o diff/commits reais. Não recriar as rajadas causais ou os clips já adaptados, nem substituir o renderer atual pela branch Claude antiga. Reutilizar os modelos/clips/atlas/LOD/áudio M01; manter simulação, RNG, saves e pacote M03 como autoridade. Sem merge em main, produção ou force-push. D3–D5 partem do que o percurso já demonstrou, com melhorias específicas e nova prova quando houver alteração de comportamento.
+Ler primeiro `M02_EXECUTION_STATE.md`, os commits/diff e a proveniência das provas. Não repetir recuperação Claude/Gemini, rajadas causais, recarga MP38, trincheiras ou navegação C11 já implementadas. Reutilizar os sistemas M01; simulação/RNG/saves e pacote M03 continuam autoridades. A próxima alteração deve responder a um defeito reproduzível ou à avaliação humana/documento complementar, seguida da verificação proporcional. Main não alterada, sem deploy ou force-push.

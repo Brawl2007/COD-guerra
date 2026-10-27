@@ -1,14 +1,21 @@
 # M02 — candidata jogável e continuidade
 
-## Continuação — 2026-10-27 (em validação)
+## Continuação — 2026-10-27: candidata funcional para avaliação humana
 
-E3 fecha a travessia física C11: os 12 homens usam navegação/colisão/portas M01, respeitam os atrasos já previstos no roster e a velocidade própria; LG03/LG09 caminham desarmados em vez de deslizar na pose deitados. Movimento efetivo/odómetro alimenta as animações, inclusive MP38, e o jogador parado contra uma parede não oscila como se caminhasse. Novos campos opcionais de movimento/rotas aceitam saves anteriores e rejeitam dados não finitos atomicamente. Acertos/mortes reais publicam os timestamps/direções que o resolver M01 já usa, com propagação à bancada; impactos na parede do próprio atirador deixam de suprimir alvos distantes. Munição/dano/guarnição/roteiro e os 12 IDs preservados. Verificação final completa e percurso por controlos em curso.
 
-E2 reconstrói P1 como depressão rasa de 42 cm com rampas, função de altura partilhada pelo desenho/colisão/balística e amostragem adicional nas bordas. Saves anteriores acima do novo piso assentam por gravidade M01 mesmo sem input, sem perder vida. EA0 passa a usar o parapeito à frente dos defensores e a expor-se fisicamente; quando só a cabeça é visível, a IA deixa de apontar sistematicamente ao torso tapado. Sem alterar dano, capacidade, reação ou RNG. Prados baixos nos flancos e sacaria/caixas GLB M01 nos sólidos já existentes enriquecem as três áreas. **73 testes M02 PASS e build PASS**, incluindo restauro do encontro, tiro real no alvo exposto, saída da vala e encaixe geométrico das peças. Capturas e percurso final serão registados separadamente antes de considerar a candidata funcionalmente verificada.
+**Estado atual:** branch única `codex/m02-recovery-v1`, código de jogo `21f8d67`. E1 `9a51249`, E2 `294a6c7` e E3 `21f8d67` integrados e publicados por push normal. A build de produção congelada desse SHA concluiu C01–C12, epílogo/debrief e pacote M03: **zero mortes/erros de página, vida final 32, giz no pomar, água/munições entregues, Lis ferido evacuado fisicamente e 12/12 homens**. Cinco transições aplicadas, Malek incapacitado e fala canónica de Lis na M03 preservados. O piloto observa atores/colisão, inclusive posições ocultas, mas envia apenas controlos; não instala estados nem altera vida, RNG ou tempo. Percurso Low/480 × 270 e debrief 1280 × 720, sem alegação de desempenho de GPU ou playtest humano.
 
-Continua na candidata única a partir de `c30cf5f`, árvore inicialmente limpa. Fetch confirmou as mesmas refs Gemini/Claude; não chegou o complemento integral. **E1: 69 testes M02 PASS e build PASS**; provas em `continuation-2026-10-27/e1/`. MP38 agora tem carregador/alavanca móveis, poses de mãos específicas e oito clips derivados M01 via IK/protração da clavícula partilhados; recarga visual segue o temporizador autoritativo de 2,7 s. Bancada MG B02 estreitada para deixar o atirador fisicamente fora do obstáculo, conservando o setor da abertura. Passos M02 passam a reutilizar os amostradores de distância da M01 para jogador/aliados: input contra uma parede não produz passos. Restauro na mesma célula/mesmo relógio invalida blends antigos e história da arma sem mexer em snapshots. Capturas High mostram a extração/inserção/armar da MP38 agachada e a bancada sem atravessar o atirador. As primeiras fotografias de recarga anteriores à correção de restauro exibiam pose antiga e não são validação dessa recarga; usar `reload-after-restore/`. Validação por input e cenários prosseguem; não tratar a prova `d23304a` abaixo como validação das alterações novas.
+**Verificação final:** 80/80 testes M02 PASS, 26/26 testes M01 partilhados focados PASS, build e reprodução byte a byte dos GLB MP38 PASS. **5/5 testes browser PASS em 3,7 min**, incluindo o caso longo com 16 capturas novas em diretório vazio, sem reutilizar as capturas antigas nem mudar o limite de 240 s. Áudio após gesto: contexto running, pico 0,154458. Suite global M01/M02 e CI remoto não declarados verdes. Morte por fogo inimigo real aos 16,70 s; retoma aos 0,05 s do checkpoint inicial com vida 100/posição preservadas: PASS. Prova independente do percurso sem mortes. Inspeções C11 e proveniência no relatório da continuação.
 
-## Reconstrução dirigida — 2026-10-26
+O pacote de provas e a proveniência estão em [continuation-2026-10-27/README.md](../verification/m02-runtime/continuation-2026-10-27/README.md); o percurso final está em `final/native/`. A candidata está preparada para avaliação humana **com a especificação disponível**. Não é aprovação de qualidade superior à M01/AAA. Modelos/mãos provisórios, naturalidade dos gestos, composição/ritmo, som, GPU física e o complemento de 173.148 palavras continuam a exigir revisão. Não repetir recuperação, rajadas, MP38 articulada, trincheiras ou navegação C11 já concluídas. Próximo desenvolvimento deve responder a observação reproduzível ou aos capítulos complementares quando chegarem.
+
+E3 fecha a travessia física C11: os 12 homens usam navegação/colisão/portas M01, respeitam os atrasos já previstos no roster e a velocidade própria; LG03/LG09 caminham desarmados em vez de deslizar na pose deitados. Movimento efetivo/odómetro alimenta as animações, inclusive MP38, e o jogador parado contra uma parede não oscila como se caminhasse. Novos campos opcionais de movimento/rotas aceitam saves anteriores e rejeitam dados não finitos atomicamente. Acertos/mortes reais publicam os timestamps/direções que o resolver M01 já usa, com propagação à bancada; impactos na parede do próprio atirador deixam de suprimir alvos distantes. Munição/dano/guarnição/roteiro e os 12 IDs preservados. 80 testes M02 e build aprovados; percurso completo final e suite browser aprovados conforme os resultados acima.
+
+E2 reconstrói P1 como depressão rasa de 42 cm com rampas, função de altura partilhada pelo desenho/colisão/balística e amostragem adicional nas bordas. Saves anteriores acima do novo piso assentam por gravidade M01 mesmo sem input, sem perder vida. EA0 passa a usar o parapeito à frente dos defensores e a expor-se fisicamente; quando só a cabeça é visível, a IA deixa de apontar sistematicamente ao torso tapado. Sem alterar dano, capacidade, reação ou RNG. Prados baixos nos flancos e sacaria/caixas GLB M01 nos sólidos já existentes enriquecem as três áreas. **73 testes M02 PASS e build PASS**, incluindo restauro do encontro, tiro real no alvo exposto, saída da vala e encaixe geométrico das peças. Capturas High e percurso final estão registados separadamente no pacote de provas; não implicam aprovação artística.
+
+Continua na candidata única a partir de `c30cf5f`, árvore inicialmente limpa. Fetch confirmou as mesmas refs Gemini/Claude; não chegou o complemento integral. **E1: 69 testes M02 PASS e build PASS**; provas em `continuation-2026-10-27/e1/`. MP38 agora tem carregador/alavanca móveis, poses de mãos específicas e oito clips derivados M01 via IK/protração da clavícula partilhados; recarga visual segue o temporizador autoritativo de 2,7 s. Bancada MG B02 estreitada para deixar o atirador fisicamente fora do obstáculo, conservando o setor da abertura. Passos M02 passam a reutilizar os amostradores de distância da M01 para jogador/aliados: input contra uma parede não produz passos. Restauro na mesma célula/mesmo relógio invalida blends antigos e história da arma sem mexer em snapshots. Capturas High mostram a extração/inserção/armar da MP38 agachada e a bancada sem atravessar o atirador. As primeiras fotografias de recarga anteriores à correção de restauro exibiam pose antiga e não são validação dessa recarga; usar `reload-after-restore/`. Validação por input e cenários concluída no código `21f8d67`; a prova `d23304a` abaixo é histórica e não valida alterações posteriores.
+
+## Histórico — reconstrução dirigida de 2026-10-26
 
 Nova ordem do proprietário: reconstrução incremental de qualidade, começando por armas e C01–C02, até preparar a M02 para avaliação humana. Plano em `M02_RECONSTRUCTION_PLAN.md`, revisão das quatro armas em `M02_WEAPON_REVIEW.md`. O documento complementar de 173.148 palavras foi identificado pelo proprietário e ainda aguarda anexo; a versão anterior continua válida.
 
@@ -20,8 +27,8 @@ Descrição e lacunas em `M02_C01_C02_RECONSTRUCTION.md`, guia jogável em `M02_
 
 O estado abaixo descreve a entrega anterior de recuperação, que permanece preservada como baseline.
 
-Atualizado em 2026-10-26. Candidata única: `codex/m02-recovery-v1`.
-Código atual: `9d8152d`, após `d4bc202`, `9f90614`, `f2c8644`, `49de368`, `f878820`, `db9d04d`, `878458f`, `c065f7e` e `c08f06a`.
+**Baseline histórico de 2026-10-26** (os resultados atuais são os do topo). Candidata única: `codex/m02-recovery-v1`.
+Código dessa baseline: `9d8152d`, após `d4bc202`, `9f90614`, `f2c8644`, `49de368`, `f878820`, `db9d04d`, `878458f`, `c065f7e` e `c08f06a`.
 Estado: missão FPS C01–C12 implementada na candidata, com percurso contínuo de produção concluído e apresentação M01 integrada. O caso browser longo continua instável no limite de 240 s do SwiftShader. Não confundir esta entrega com merge em main, deploy, CI integral verde ou aprovação artística do proprietário.
 
 ## Recuperação verificada
@@ -52,7 +59,7 @@ Limites B/C deixam de produzir NaN; a composição da área A inclui a trincheir
 
 Snapshots conservam RNG, granadas em voo, sequência, locks de portas e revisão da navegação. Saves antigos continuam aceites quando não têm os campos opcionais; coordenadas não finitas são rejeitadas sem destruir a sessão. Checkpoints semânticos e schema de campanha preservados. Produto usa ticks fixos de 50 ms e consome ações únicas uma vez por tick. Persistência local: `cod-guerra:checkpoint:m02:v1`.
 
-## Validação concluída e limite conhecido
+## Validação histórica da recuperação (2026-10-26)
 
 - Node M02: **49 PASS**, incluindo regressões de movimento, combate, reentrada/saves/RNG/granadas, abastecimentos, Lis, sessão, GLB MP38 e batching. Evidência `node-m02.txt`.
 - Áudio partilhado: **64 PASS**, incluindo toda a rota M01 sem mutação de simulação/RNG. Evidência `node-shared-audio.txt`.
@@ -69,7 +76,7 @@ Snapshots conservam RNG, granadas em voo, sequência, locks de portas e revisão
 - Inspeção final: cinco capturas 1280 × 720, High salvo quinta Medium, na entrada de produto. Fixtures pausadas e identificadas; separadas do percurso. Terreno, vegetação, GLB, MP38 e atlas ativos sem erros de página. Comparação visual também com a referência M01 V6 Medium; não é certificação de superioridade artística. Relatório e imagens na pasta de evidência.
 - `npm test` global foi interrompido no ciclo anterior; não se declara toda a campanha M01/M02 verde. Suites concluídas acima estão separadas das não concluídas.
 
-Evidência atual em `docs/verification/m02-runtime/completion-2026-10-26/`; histórico em `recovery-2026-10-25/`.
+Evidência dessa baseline em `docs/verification/m02-runtime/completion-2026-10-26/`; histórico em `recovery-2026-10-25/`.
 
 ## Reproduzir
 
@@ -87,6 +94,6 @@ Main não alterada, sem deploy ou force-push. Git HTTPS read/write funciona. API
 
 ## Continuidade e promoção
 
-A implementação jogável está consolidada nesta candidata. Não repetir recuperação Claude/Gemini nem reconstruir os sistemas M01 já partilhados. Para promoção posterior, resolver/medir o custo do caso gráfico longo no ambiente de CI ou numa GPU-alvo, executar a suite global e obter a revisão de jogo/arte apropriada. Estas verificações não foram substituídas por testes de estado. Main, produção e force-push continuam fora da autorização deste ciclo.
+A implementação jogável está consolidada nesta candidata. Não repetir recuperação Claude/Gemini nem reconstruir os sistemas M01 já partilhados. O timeout histórico do caso gráfico longo foi superado na repetição final desta continuação (5/5, capturas novas), sem mudar o seu limite. Para promoção posterior, medir numa GPU-alvo, executar os checks globais/CI ainda não concluídos e obter a revisão de jogo/arte apropriada. Estas verificações não foram substituídas por testes de estado. Main, produção e force-push continuam fora da autorização deste ciclo.
 
 Para regressões: reproduzir primeiro com o save/seed e controlos reportados; preservar RNG, granadas em voo, locks, revisão de navegação e consequências. Capturas por fixtures nunca substituem um percurso contínuo. A publicação do ambiente é distinta de fazer push desta candidata.
