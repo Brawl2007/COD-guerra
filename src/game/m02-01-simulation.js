@@ -1393,6 +1393,7 @@ export class M02BenchSimulation {
     this.player.sprinting =
       Boolean(controls.sprint) && !this.player.crouched && !this.player.aiming && forward > 0.1;
 
+    let landing;
     if (this.player.moving) {
       const nf = forward / Math.max(1, inputLen);
       const ns = side / Math.max(1, inputLen);
@@ -1405,13 +1406,13 @@ export class M02BenchSimulation {
       const sin = Math.sin(this.player.angle);
       const dx = (cos * nf - sin * ns) * speed * dt;
       const dz = (sin * nf + cos * ns) * speed * dt;
-      const landing = movePlayer(this.world, this.player, dx, dz, dt);
-      if (landing && landing.damage > 0) {
-        this.player.health = Math.max(0, this.player.health - landing.damage);
-        this.events.push({ type: 'player-landing', ...landing, clock: this.clock });
-      }
+      landing = movePlayer(this.world, this.player, dx, dz, dt);
     } else {
-      movePlayer(this.world, this.player, 0, 0, dt);
+      landing = movePlayer(this.world, this.player, 0, 0, dt);
+    }
+    if (landing && landing.damage > 0) {
+      this.player.health = Math.max(0, this.player.health - landing.damage);
+      this.events.push({ type: 'player-landing', ...landing, clock: this.clock });
     }
 
     this.weapon.update(nowMs);

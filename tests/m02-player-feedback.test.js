@@ -62,3 +62,18 @@ test('real grenade damage and damaging landings use the existing M01 body and la
   assert.equal(audio.diagnostics.eventCounts['player-landing'],1);assert.deepEqual(sim.snapshot(),before);
  }finally{audio.dispose();}
 });
+
+test('a stationary landing applies real fall damage, emits one sound event, and restores deterministically',()=>{
+ const {sim,audio,p}=setup();
+ try{
+  sim.enemies=[];Object.assign(sim.player,{x:0,z:106,y:7,health:100,fall:{vy:0,vx:0,vz:0,startY:7,t:0}});
+  const save=sim.snapshot();sim.drainEvents();
+  for(let i=0;i<50&&sim.player.fall;i++)sim.tick(.05,{});
+  const expected=sim.snapshot(),events=sim.drainEvents(),landing=events.find(e=>e.type==='player-landing');
+  assert.ok(landing?.damage>0);assert.equal(sim.player.health,100-landing.damage);
+  assert.equal(events.filter(e=>e.type==='player-landing').length,1);
+  const before=sim.snapshot();p.consume(events,sim);assert.equal(audio.diagnostics.eventCounts['player-landing'],1);assert.deepEqual(sim.snapshot(),before);
+  sim.restoreSnapshot(save);sim.drainEvents();for(let i=0;i<50&&sim.player.fall;i++)sim.tick(.05,{});
+  assert.deepEqual(sim.snapshot(),expected);assert.deepEqual(sim.drainEvents(),events);
+ }finally{audio.dispose();}
+});
