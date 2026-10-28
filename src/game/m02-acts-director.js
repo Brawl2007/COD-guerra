@@ -680,13 +680,8 @@ export function updateAreaC(sim, dt) {
     }
   }
 
-  // 3. Check player proximity to Lis in C11 to automatically trigger dlg_m02_003 on contact
-  if (sim.areaC.c11Started && !sim.areaC.lisContactedInC11) {
-    const lis = sim.allies.find((a) => a.id === 'pl_lis' && a.alive && !a.detachedOutOfCell);
-    if (lis && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= 3.5) {
-      assistLisInC11(sim, 'wounded_walking');
-    }
-  }
+  // Contact is an explicit player interaction; proximity alone cannot rescue
+  // Lis through walls or initiate dialogue without the player's action.
 
   const supportedLis=sim.allies.find(a=>a.id==='pl_lis');
   if(sim.areaC.lisContactedInC11&&supportedLis?.alive&&sim.flags['m02.lis_status']==='wounded_walking'&&Math.hypot(supportedLis.x+58,supportedLis.z-52)<2){

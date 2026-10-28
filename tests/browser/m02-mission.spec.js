@@ -1,6 +1,29 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('C11 Lis is helped by the normal interaction only when the player reaches him',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const setup=await page.evaluate(()=>{
+  const {sim}=window.m02Bench;sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();sim.enemies=[];
+  const lis=sim.allies.find(a=>a.id==='pl_lis');sim.teleportPlayer(lis.x,lis.z-1.4,Math.PI/2,-.12);
+  return {x:lis.x,z:lis.z,state:lis.state,contact:sim.areaC.lisContactedInC11};
+ });
+ expect(setup.state).toBe('WOUNDED_LIAISON');expect(setup.contact).toBe(false);
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.waitForFunction(()=>document.querySelector('#door-prompt').textContent.includes('Socorrer Lis'));
+ expect(await page.evaluate(()=>window.m02Bench.sim.areaC.lisContactedInC11)).toBe(false);
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · SOCORRO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('lis-contact-prompt.png')});
+ await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.m02Bench.sim.areaC.lisContactedInC11);
+ const result=await page.evaluate(()=>{const s=window.m02Bench.sim,l=s.allies.find(a=>a.id==='pl_lis');return {contact:s.areaC.lisContactedInC11,status:s.flags['m02.lis_status'],state:l.state,at:[l.x,l.z],line:s.dialogue.hasTriggered('dlg_m02_003')};});
+ expect(result.contact).toBe(true);expect(result.status).toBe('wounded_walking');expect(result.state).toBe('WALKING_SUPPORTED');
+ expect(Math.hypot(result.at[0]-setup.x,result.at[1]-setup.z)).toBeLessThan(2);expect(result.line).toBe(true);expect(errors).toEqual([]);
+ console.log('M02 Lis contact',JSON.stringify({setup,result}));
+});
+
 test('subtitle and damage direction options work through start, hit and checkpoint restore',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
