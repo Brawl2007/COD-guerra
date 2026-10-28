@@ -5,7 +5,8 @@ import {M01Grading} from './m01-grading.js';
 // M02 supplies its authored time of day; colours, key direction, cascades and
 // postprocess come from M01. This adapter never changes the mission clock.
 export function m02LightingModel(temporalState,preset){
-  const night=temporalState==='T1',morning=temporalState==='T2';
+  const selected=preset.temporalId??temporalState;
+  const night=selected==='T1',morning=selected==='T2';
   const model=lightingModel(night?-12:morning?7:14,morning?95:255);
   if(night||preset.id==='neutral_review'){
     const rgb=hex=>new THREE.Color(hex).toArray();

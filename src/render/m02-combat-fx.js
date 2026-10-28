@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {visualNoise} from './m01-atmosphere.js';
 import {impactProfile,battlefieldProfile,fxLayerCount,staggeredLife,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
-import {SHOT_FLASH_SEC,SMOKE_SEC as SHOT_SMOKE_SEC,flashRadius,flashTint,smokeRadius} from './m01-shot-fx.js';
+import {SHOT_FLASH_SEC,CLOCK_EPS,SMOKE_SEC as SHOT_SMOKE_SEC,flashRadius,flashTint,smokeRadius} from './m01-shot-fx.js';
 import {flashStarTexture} from './first-person-weapon-fx.js';
 
 const surface=material=>/metal/.test(material)?'metal':/wood/.test(material)?'wood':/brick/.test(material)?'brick':/stone/.test(material)?'stone':material;
@@ -54,10 +54,10 @@ export class M02CombatFX {
       b.geometry.attributes.puffOpacity?.setX(i,opacity);if(b.geometry.attributes.puffSpin)this.atmosphere.stylePuff(b,i,seed,variant);counts[name]++;
     };
     const distance=p=>Math.hypot(p.x-camera.position.x,p.y-camera.position.y,p.z-camera.position.z);
-    this.shots=this.shots.filter(s=>time-s.at<2.1&&time>=s.at);
+    this.shots=this.shots.filter(s=>time-s.at<2.1&&time>=s.at-CLOCK_EPS);
     const smokeShooters=new Map();
     for(const s of this.shots){
-      const age=time-s.at,p=s.origin,heavy=s.weapon==='mg34'||s.weapon==='rkm_wz28',dist=distance(p);
+      const age=Math.max(0,time-s.at),p=s.origin,heavy=s.weapon==='mg34'||s.weapon==='rkm_wz28',dist=distance(p);
       if(s.shooterId!=='player'&&age<SHOT_FLASH_SEC){
         const tint=flashTint(model?.daylight??1);put('flash',p,flashRadius(heavy,dist,camera.fov,viewportHeight,model?.daylight??1),this.flashColor.setRGB(tint,tint,tint));
       }
@@ -82,13 +82,13 @@ export class M02CombatFX {
       }
     }
     for(const s of smokeShooters.values()){
-      const heavy=s.weapon==='mg34'||s.weapon==='rkm_wz28',age=time-s.at,k=age/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle);
+      const heavy=s.weapon==='mg34'||s.weapon==='rkm_wz28',age=Math.max(0,time-s.at),k=age/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle);
       if(k>=1)continue;const p={x:s.origin.x+.3*k,y:s.origin.y+.1+k*(heavy?1.6:1.1),z:s.origin.z};
       put('smoke',p,smokeRadius(heavy,k,distance(p),camera.fov,viewportHeight),'#b9b8ae',.42*Math.pow(1-k,1.15),s.seed);
     }
-    const profile=battlefieldProfile('grenade');this.blasts=this.blasts.filter(b=>time-b.at<profile.duration&&time>=b.at);
+    const profile=battlefieldProfile('grenade');this.blasts=this.blasts.filter(b=>time-b.at<profile.duration&&time>=b.at-CLOCK_EPS);
     for(const b of this.blasts){
-      const age=time-b.at,p=b.point;
+      const age=Math.max(0,time-b.at),p=b.point;
       if(age<profile.flashEnd)put('flash',{...p,y:p.y+.2},.55*(1-age/profile.flashEnd),'#fff0c2');
       for(const [name,start,end,count,color,rise]of [['fire',profile.fireStart,profile.fireEnd,profile.counts.fire,'#e97831',1.8],['dust',profile.dustStart,profile.dustEnd,profile.counts.dust,'#8d7c67',.8]]){
         const n=fxLayerCount(count,quality,distance(p));

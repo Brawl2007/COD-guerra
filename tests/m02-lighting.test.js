@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {M02Lighting} from '../src/render/m02-lighting.js';
+import {M02Lighting,m02LightingModel} from '../src/render/m02-lighting.js';
 import {M02_LIGHTING_PRESETS} from '../src/render/m02-01-renderer.js';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
+import {lightingModel} from '../src/render/m01-lighting.js';
 
 test('M02 shadows follow P1 and streamed areas using the M01 cascade contract without changing the save',()=>{
  const scene=new THREE.Scene();scene.fog=new THREE.Fog(0,40,300);
@@ -32,4 +33,12 @@ test('M02 shadows follow P1 and streamed areas using the M01 cascade contract wi
   assert.equal(lighting.near.visible,false);assert.equal(lighting.begin(camera,'low'),false);
   assert.equal(engine.target,null);assert.equal(lighting.grading.target,null,'Low releases the postprocess render target');
  }finally{lighting.dispose();atmosphere.texture.dispose();}
+});
+
+test('the existing bench lighting selector can preview another phase without rewriting the mission time of day',()=>{
+ const sim=new M02BenchSimulation(),before=sim.snapshot();
+ const night=m02LightingModel(sim.horizon.temporalState,M02_LIGHTING_PRESETS.night_1939_09_09);
+ assert.equal(night.daylight,0);assert.equal(night.sun.intensity,M02_LIGHTING_PRESETS.night_1939_09_09.sunIntensity);
+ const day=m02LightingModel('T1',M02_LIGHTING_PRESETS.afternoon_1939_09_09);
+ assert.equal(day.daylight,lightingModel(14,255).daylight);assert.deepEqual(sim.snapshot(),before);
 });

@@ -23,3 +23,9 @@ A malha antiga terminava em x ±120 / z 105 em todas as áreas, mas B permite z 
 **84 testes M02 PASS/build PASS**. Nova regressão percorre os três mundos e exige cobertura de todos os limites, ring sem buracos/sobreposição, árvores fora da área jogável e snapshot/RNG preservados. Novo caso de navegador verifica a geometria/máscara realmente desenhadas nos limites B/C e mantém Low sem postprocess. O teste de qualidade passa também a exigir AO/grade M01 ativo em High.
 
 A primeira tentativa de galeria F3 foi invalidada por edição de fonte durante a captura: o HMR recarregou a página e perdeu o rótulo (log `landscape-invalid-hmr.txt`). Não é validação visual de B/C nem resultado verde. O capturador passa a guardar a falha explicitamente no report. Repetir na fonte congelada, sem alterações durante browser/percurso.
+
+## Refinamento de sincronização e validação F3
+
+No código F3 `899067e`, seis testes browser PASS em 4,2 min, incluindo limites reais de B/C e AO High; o caso longo passou em 3,0 min com capturas novas, sem alterar o limite de 240 s. O pacote final é repetido após o refinamento seguinte; `browser-f3.txt` é prova intermédia, não do código posterior.
+
+Uma sondagem adicional encontrou que `clock=10.0999999999` com evento arredondado para `10.1` eliminava o clarão/explosão como futuro. Aplicada a mesma `CLOCK_EPS` M01 e idade visual não negativa; eventos futuros reais continuam excluídos. Nova regressão exige os dois clarões nesse limite e expiração normal. O seletor técnico de iluminação também volta a respeitar o preset escolhido, sem mudar a fase da missão. O teste compara a luz diurna ao modelo M01 exato; não inventa intensidade histórica. 86 testes M02 PASS, build PASS, 44 testes focados M01 (luz, grade, partículas/clarões) PASS. Congelar este código para percurso e browser finais.

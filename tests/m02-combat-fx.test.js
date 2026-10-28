@@ -46,3 +46,17 @@ test('sustained fire keeps bounded M01 particle batches and expires without pers
   assert.equal(fx.shots.length,0);assert.equal(Object.values(fx.counts).reduce((a,b)=>a+b,0),0);
  }finally{f.dispose();}
 });
+
+test('rounded M02 event timestamps keep the current muzzle/blast alive at a fixed-tick floating-point boundary',()=>{
+ const f=fixture(),{fx,sim,camera}=f;
+ try{
+  sim.clock=10.0999999999;
+  fx.consume([
+   {type:'actor-burst',clock:10.1,weapon:'mg34',shooterId:'clock-fixture',traces:[{origin:{x:0,y:1,z:0},point:{x:0,y:1,z:5},hitKind:'none',material:'air'}]},
+   {type:'grenade-exploded',clock:10.1,center:{x:0,y:0,z:3}},
+  ],sim);
+  fx.update(sim,camera,'high',{daylight:1});
+  assert.equal(fx.shots.length,1);assert.equal(fx.blasts.length,1);assert.equal(fx.counts.flash,2);
+  sim.clock=10.2;fx.update(sim,camera,'high',{daylight:1});assert.equal(fx.counts.flash,0);
+ }finally{f.dispose();}
+});
