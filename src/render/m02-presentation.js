@@ -154,6 +154,7 @@ export class M02Presentation {
       if(playerHit)this.audio.hit(`m02-hit:${event.burstId}:${event.roundIndex}`);
       if(blastHit)this.audio.hit(`m02-blast-hit:${event.clock}`);
       if(event.type==='player-landing'&&event.damage>0)this.audio.landing(event.speed,event.surface,`m02-landing:${event.clock}`);
+      if(event.type==='rifle-ammo-collected')this.audio.wz29Mechanism('magazine',`m02-ammo:${event.actorId}:${event.clock}`);
       // Impacts and passing rounds have their own locations; the shooter's
       // occlusion and panning do not describe where a bullet lands.
       if(event.type==='shot-fired')playM02RoundAudio(this.audio,event.shot,sim,this.spatial.bind(this),event.shot?.id??`player:${sim.clock}`);

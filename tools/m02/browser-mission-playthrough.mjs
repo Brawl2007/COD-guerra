@@ -19,7 +19,7 @@ try{
  for(let iteration=0;iteration<24000;iteration++){
   const observed=await page.evaluate(()=>{
    const sim=window.m02Bench.sim;
-   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z]};
+   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,ammo:{mag:sim.weapon.mag,reserve:sim.weapon.reserve,received:sim.weapon.received,grenades:sim.grenadeAmmo},decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z]};
   });
   const label=`${observed.cell}:${observed.objective}`;
   if(label!==last){last=label;report.stages.push({label,clock:observed.clock,health:observed.health,pos:observed.pos,realSec:(Date.now()-started)/1000});console.log(JSON.stringify(report.stages.at(-1)));await page.screenshot({path:`${out}/${report.stages.length}-${label.replace(':','-')}.png`});}

@@ -1,3 +1,17 @@
+import {eyePosition,traceObstruction} from '../world/spatial.js';
+
+// Kar98k and wz.29 use 7.92×57 mm; ammunition belongs to the dead actor and
+// is transferred, never created. Living, surrendered and wounded men are not loot.
+export function m02RifleAmmoSources(sim){
+ return (sim.enemies??[]).filter(e=>e.alive===false&&e.state==='DEAD'&&!e.nonCombatant&&e.weapon==='kar98k'&&
+  Number.isSafeInteger(e.mag)&&Number.isSafeInteger(e.reserve)&&e.mag>=0&&e.reserve>=0&&e.mag+e.reserve>0);
+}
+function canReachAmmo(sim,actor){
+ const origin=eyePosition(sim.player),target={x:actor.x,y:(actor.y??0)+.35,z:actor.z};
+ const dx=target.x-origin.x,dy=target.y-origin.y,dz=target.z-origin.z,distance=Math.hypot(dx,dy,dz);
+ return distance<1e-8||!traceObstruction(sim.world,origin,{x:dx/distance,y:dy/distance,z:dz/distance},Math.max(0,distance-.05));
+}
+
 // Contextual player actions call the existing mission director. They never skip
 // unresolved encounters, create supplies or change checkpoint/schema rules.
 export function m02PlayerAction(sim) {
@@ -24,6 +38,11 @@ export function m02PlayerAction(sim) {
       return sim.areaB.reorganizedC07 ? action('area-c','Seguir para Leśmierz') : action('reorganize','Reagrupar a secção');
     }
   }
+  if(!player.carryingVolumeId&&sim.weapon.reserve<40){
+    const candidate=m02RifleAmmoSources(sim).filter(e=>near(e.x,e.z,1.8)&&canReachAmmo(sim,e))
+      .sort((a,b)=>Math.hypot(a.x-player.x,a.z-player.z)-Math.hypot(b.x-player.x,b.z-player.z)||(a.id<b.id?-1:a.id>b.id?1:0))[0];
+    if(candidate)return action('rifle-ammo','Recolher munição de 7,92 mm',{actorId:candidate.id,distance:Number(Math.hypot(candidate.x-player.x,candidate.z-player.z).toFixed(1))});
+  }
   return null;
 }
 
@@ -36,6 +55,12 @@ export function performM02PlayerAction(sim) {
     case 'reorganize': sim.completeC07Reorganization(); break;
     case 'area-c': sim.enterAreaCC09(); break;
     case 'epilogue': sim.completeC12Epilogue({lisOutcome:sim.areaC.lisContactedInC11?sim.flags['m02.lis_status']:'missing'}); break;
+    case 'rifle-ammo': {
+      const actor=sim.enemies.find(e=>e.id===action.actorId),given=sim.weapon.resupply(actor.mag+actor.reserve);
+      const reserve=Math.min(actor.reserve,given);actor.reserve-=reserve;actor.mag-=given-reserve;
+      sim.events.push({type:'rifle-ammo-collected',actorId:actor.id,rounds:given,clock:sim.clock});
+      break;
+    }
     default: return false;
   }
   return true;

@@ -1,7 +1,7 @@
 // Verification pilot, not gameplay AI. Reads collision/actor observations and
 // produces ordinary controls. Never writes player, actors, clocks, RNG or flags.
 import {eyePosition, traceShot} from '../../src/world/spatial.js';
-import {m02PlayerAction} from '../../src/game/m02-player-actions.js';
+import {m02PlayerAction,m02RifleAmmoSources} from '../../src/game/m02-player-actions.js';
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
 export class M02MissionPilot {
   constructor({flankX=-50,flankZ=-52}={}){this.flankX=flankX;this.flankZ=flankZ;this.route=[];this.routeKey='';this.nextPlan=0;this.lastCell=null;}
@@ -26,7 +26,9 @@ export class M02MissionPilot {
       const hit=traceShot(sim.world,eye,{x:dx/d,y:dy/d,z:dz/d},[enemy],220);
       if(hit?.kind==='actor'){target=enemy;aim=point;break;}
     }
-    if(target){
+    const outOfAmmo=sim.weapon.mag===0&&sim.weapon.reserve===0;
+    const ammoSources=outOfAmmo&&!p.carryingVolumeId?m02RifleAmmoSources(sim).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z)):[];
+    if(target&&!ammoSources.length&&!(outOfAmmo&&p.carryingVolumeId&&sim.areaB?.supplyCart)){
       const dx=aim.x-eye.x,dz=aim.z-eye.z;
       controls.lookX=wrap(Math.atan2(dz,dx)-p.angle);
       controls.lookY=p.pitch-Math.atan2(aim.y-eye.y,Math.hypot(dx,dz));
@@ -36,7 +38,9 @@ export class M02MissionPilot {
       return {controls,target:target.id};
     }
     let goal;
-    if(sim.activeCellId==='C'&&!sim.areaC.c10Started&&!this.flanked&&Math.hypot(p.x-this.flankX,p.z-this.flankZ)>1)goal={id:'west-cover',x:this.flankX,z:this.flankZ};
+    if(outOfAmmo&&p.carryingVolumeId&&sim.areaB?.supplyCart)goal={id:'delivery',x:sim.areaB.supplyCart.goalX,z:sim.areaB.supplyCart.goalZ};
+    else if(ammoSources.length)goal=ammoSources[0];
+    else if(sim.activeCellId==='C'&&!sim.areaC.c10Started&&!this.flanked&&Math.hypot(p.x-this.flankX,p.z-this.flankZ)>1)goal={id:'west-cover',x:this.flankX,z:this.flankZ};
     else if(hostiles.length)goal=hostiles[0];
     else if(sim.activeCellId==='A')goal=sim.enemies.find(a=>a.alive&&a.c04Candidate&&a.nonCombatant&&!a.chalkMarked)??{x:0,z:50};
     else if(sim.activeCellId==='B')goal={x:sim.areaB.supplyCart.goalX,z:sim.areaB.supplyCart.goalZ};

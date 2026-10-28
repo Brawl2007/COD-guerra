@@ -1,6 +1,29 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('the player can collect real compatible ammunition from a defeated rifleman using E',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{
+  const {sim}=window.m02Bench;sim.enterAreaBC06();sim.allies=[];sim.calibrationTargets=[];
+  const enemy=sim.enemies.find(e=>e.weapon==='kar98k');sim.enemies=[enemy];
+  Object.assign(enemy,{x:1.5,y:0,z:100,alive:true,health:1,state:'HOLD_SECTOR',nonCombatant:false,mag:3,reserve:12,nextFireAt:sim.clock+100,goal:null});
+  sim.teleportPlayer(0,100,0,-.2);sim.weapon.mag=5;sim.weapon.reserve=30;
+ });
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.keyboard.press('Space');await page.waitForFunction(()=>window.m02Bench.sim.enemies[0].alive===false);
+ await page.waitForFunction(()=>document.querySelector('#door-prompt').textContent.includes('Recolher munição'));
+ await page.addStyleTag({content:'#cartela-banner{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · MUNIÇÃO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('ammo-prompt.png')});
+ const before=await page.evaluate(()=>{const s=window.m02Bench.sim,e=s.enemies[0];return {reserve:s.weapon.reserve,available:e.mag+e.reserve};});
+ await page.keyboard.press('KeyE');await page.waitForFunction(n=>window.m02Bench.sim.weapon.reserve>n,before.reserve);
+ const after=await page.evaluate(()=>{const s=window.m02Bench.sim,e=s.enemies[0];return {reserve:s.weapon.reserve,available:e.mag+e.reserve,weapon:s.weapon.mag};});
+ expect(after.reserve).toBe(40);expect(after.available+after.reserve).toBe(before.available+before.reserve);
+ expect(after.weapon).toBe(4);expect(errors).toEqual([]);console.log('M02 recovered actual rifle ammunition',JSON.stringify({before,after}));
+});
+
 test('a grenade thrown by the player bounces off the actual B05 wall',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
