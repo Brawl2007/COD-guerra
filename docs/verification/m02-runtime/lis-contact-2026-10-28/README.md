@@ -1,0 +1,7 @@
+# M02 — contacto jogável com Lis
+
+Código `e4a4632772f9d2b63e289ccf7945973c6368dbef`: em C11, o jogador tem de alcançar Lis, estar a até 2 m com linha desobstruída e carregar em `E`. A aproximação por si só deixa de iniciar o diálogo ou socorrer através de uma parede. Lis incapacitado, ausente ou com o jogador a transportar carga não pode ser socorrido dessa forma. A fala protegida `dlg_m02_003`, a caminhada física, os três resultados e o pacote M03 mantêm-se. O contacto continua sem uma coreografia física entre duas pessoas.
+
+114 testes M02 PASS ([node.txt](node.txt)), build PASS ([build.txt](build.txt)) e quatro browser PASS ([browser.txt](browser.txt)). O teste de simulação verifica ausência de contacto automático, distância, parede, mãos ocupadas, incapacidade, fala e reprodução exata após restauro. O navegador usou `E` junto ao Lis real; a [captura](lis-contact-prompt.png) é um cenário controlado e identificado, não uma passagem contínua.
+
+Na [passagem contínua de produção](native/), o piloto usou controlos de jogador, incluindo a interação para socorrer Lis; observa também posições ocultas para planear. A build `e4a4632` chegou ao debrief e M03 sem mortes do jogador ou erros de página, com vida 46, eixo pomar, giz, água/munições, Lis evacuado e 12/12. Małek terminou incapacitado e Wierzba ferido. O piloto esperou a chegada de Lis antes de sair; a passagem não substitui avaliação humana nem demonstra qualidade gráfica comparável a outro jogo.

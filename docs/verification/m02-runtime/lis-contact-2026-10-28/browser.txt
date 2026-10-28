@@ -1,0 +1,23 @@
+[2m[WebServer] [22m(node:68014) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:68045) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:68045) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 Lis contact {"setup":{"x":-28,"z":-22,"state":"WOUNDED_LIAISON","contact":false},"result":{"contact":true,"status":"wounded_walking","state":"WALKING_SUPPORTED","at":[-28.267024733211052,-21.63778764259958],"line":true}}
+  ✓  1 tests/browser/m02-mission.spec.js:4:1 › C11 Lis is helped by the normal interaction only when the player reaches him (16.8s)
+M02 accessibility and damage direction {"initial":{"options":{"subtitlesEnabled":false,"directionalIndicatorsEnabled":false,"reducedDynamicRange":false,"tinnitusIntensity":0.5,"reducedCameraShake":false,"reducedViolence":false},"checkpoint":{"subtitlesEnabled":false,"directionalIndicatorsEnabled":false,"reducedDynamicRange":false,"tinnitusIntensity":0.5,"reducedCameraShake":false,"reducedViolence":false},"subtitle":"none"},"hit":{"hitId":"piotr_sokol","health":83},"visible":{"transform":"translate(-50%, -50%) rotate(-1.5708rad)","opacity":1},"disabled":{"source":{"x":6.415856484418614e-17,"z":101.0477888790279,"clock":0.1},"enabled":false}}
+  ✓  2 tests/browser/m02-mission.spec.js:27:1 › subtitle and damage direction options work through start, hit and checkpoint restore (12.1s)
+M02 recovered actual rifle ammunition {"before":{"reserve":30,"available":15},"after":{"reserve":40,"available":5,"weapon":4}}
+  ✓  3 tests/browser/m02-mission.spec.js:78:1 › the player can collect real compatible ammunition from a defeated rifleman using E (8.8s)
+  ✓  4 tests/browser/m02-mission.spec.js:295:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (16.2s)
+
+  4 passed (1.0m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

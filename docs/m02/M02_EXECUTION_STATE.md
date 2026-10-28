@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — contacto com Lis, 2026-10-28
+
+`e4a4632` substitui o socorro automático por proximidade por uma interação `E` a até 2 m, com linha desobstruída e Lis disponível. A fala protegida, estados, caminhada e M03 mantêm-se; não foi inventado acompanhante nem coreografia de apoio físico. 114 testes M02, build e quatro browser PASS. A build congelada concluiu C01–C12 e M03 sem mortes do jogador/erros, vida 46, eixo pomar, giz, água/munições, Lis evacuado e 12/12; o piloto usou controlos, mas observa também posições ocultas. [Provas e captura](../verification/m02-runtime/lis-contact-2026-10-28/README.md).
+
+Continuar a implementação antes da avaliação humana: apoio físico a Lis, servente MG, apresentação de armas e lançamento, soldados/mãos/rostos, cenários, IA e som continuam abertos. O documento complementar integral continua ausente. Main e produção não foram alteradas; não declarar qualidade comparável a COD ou missão concluída só pela progressão.
+
 ## Continuação — acessibilidade e leitura do combate, 2026-10-28
 
 `8fc54ef` expõe legendas e indicação de dano no menu, respeita a escolha no checkpoint inicial e apresenta a direção apenas para dano real a Piotr; o restauro limpa o indicador. A cartela deixa livre a área central da mira, inclusive em ecrãs baixos. 112 testes M02, build e quatro browser PASS; [captura e provas](../verification/m02-runtime/accessibility-2026-10-28/README.md). O percurso completo mais recente continua o de `a65dfb0` (uma morte e retoma), não foi repetido para esta etapa de interface; o arranque com opções padrão tem snapshot e eventos iguais ao anterior.
