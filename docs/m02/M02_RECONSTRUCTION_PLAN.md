@@ -1,5 +1,7 @@
 # M02 — direção técnica, artística e de gameplay
 
+Revisão de 2026-10-28: o proprietário rejeitou a apresentação. F1–F3 e refinamentos em `f49ecdc` corrigem integração de luz/grade/contacto M01, efeitos causais e terreno/cenário. O percurso funcional está preservado; arte continua em desenvolvimento. Estado e resultados atuais em `M02_EXECUTION_STATE.md` e `M02_REVIEW_GUIDE.md`; o quadro seguinte conserva a reconstrução anterior.
+
 Direção solicitada pelo proprietário em 2026-10-26. Candidata única: `codex/m02-recovery-v1`, base verificada `9385b2d`. Sem merge em main, deploy, force-push ou aprovação artística automática.
 
 ## Autoridade e leitura

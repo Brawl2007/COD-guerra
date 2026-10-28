@@ -1,0 +1,306 @@
+{
+  "schema": "cod-guerra-m02-quality-review/v1",
+  "candidateCodeCommit": "f49ecdc9a42f826383c1665f698c97fb56c9e6b0",
+  "branch": "codex/m02-recovery-v1",
+  "humanApproval": false,
+  "productionDeploy": false,
+  "sharedM01Changed": false,
+  "node": {
+    "m02Passed": 86,
+    "sharedPassed": 44,
+    "global": "not completed"
+  },
+  "browser": {
+    "passed": 6,
+    "duration": "4.0m",
+    "freshScreenshots": 16,
+    "audioPeak": 0.41764676570892334,
+    "audioContext": "running"
+  },
+  "native": {
+    "buildCommit": "d04e4162dbd31277540a32f119446a3ad1faad5e",
+    "completed": true,
+    "deaths": [],
+    "pageErrors": [],
+    "health": 46,
+    "clock": 264.35,
+    "flags": {
+      "m02.completed": true,
+      "m02.axis": "orchard",
+      "m02.lis_status": "wounded_evacuated",
+      "m02.malek_status": "down",
+      "m02.wierzba_status": "fit",
+      "m02.pomar_wounded_marked": true,
+      "m02.fired_on_wounded": false,
+      "m02.supply_reached": 2,
+      "m02.corridor_held": true,
+      "m02.last_group_survivors": 12,
+      "m02.prep_avanco_ok": true,
+      "m02.ea0_posto_cleared": true,
+      "m02.transicao_tab_pronta": true
+    },
+    "profile": "low; later code only stabilizes Medium/High muzzle-light count",
+    "simulationAndScriptUnchangedInCandidate": true
+  },
+  "checkpoint": {
+    "passed": true,
+    "death": {
+      "clock": 16.700000000000102,
+      "state": "dead",
+      "health": 0,
+      "x": 5.162216931827008,
+      "z": -79.99475092076,
+      "crouched": false,
+      "move": true,
+      "turn": 2.194401534150181e-05,
+      "pitch": 0
+    },
+    "saved": {
+      "id": "cp_m02_a_preparacao",
+      "clock": 0,
+      "health": 100,
+      "x": 0,
+      "z": -175
+    },
+    "restoredClock": 0,
+    "restoredPlayer": {
+      "x": 0,
+      "y": -0.42,
+      "z": -175,
+      "angle": 1.571,
+      "pitch": 0,
+      "health": 100
+    }
+  },
+  "high": {
+    "sourceCommit": "f49ecdc9a42f826383c1665f698c97fb56c9e6b0",
+    "method": "Paused, explicitly labelled inspection fixtures in the product HUD; not a playthrough. Mechanical weapon fixtures tick the simulation and sample the M01 viewmodel per tick, drawing the world at the final instant.",
+    "shots": [
+      "c01-preparation",
+      "c02-approach",
+      "lesmierz-high",
+      "mg34-fire"
+    ],
+    "errors": [],
+    "failure": null
+  },
+  "remoteCI": "not verified",
+  "files": {
+    "browser/legacy-telemetry-synthetic.json": {
+      "bytes": 1092,
+      "sha256": "3794f245040b86feef51dbca40e805b1e067d4e814ce445002e1b6529077099f"
+    },
+    "browser/m02-01-b01-kitchen-interior.png": {
+      "bytes": 805034,
+      "sha256": "8f0a6e1dd72707b16593d618433c2b3d93e30556024785961586f89514c99f0f"
+    },
+    "browser/m02-01-sn1-start.png": {
+      "bytes": 648421,
+      "sha256": "d3a011cf381e66ff879eb02a8c416527e71f24de8c07b4a49d1582febfa4974d"
+    },
+    "browser/m02-01-sn2-ditch.png": {
+      "bytes": 850282,
+      "sha256": "6d265d6b74b2e49ba8fcd705d31c889e1e2a2482b43ac241d57aa33d5ab1a7ab"
+    },
+    "browser/m02-01-sn3-b01-exterior.png": {
+      "bytes": 692712,
+      "sha256": "b9e287363b9a8a911435400cc800a264b51337cebfe6ab744b9cd8b314ffab8c"
+    },
+    "browser/m02-01-sn4-b02-barn.png": {
+      "bytes": 884406,
+      "sha256": "fc9ab9a744af18030a8fb9bc7105e6c84fb45e10faa0cc5c04e9ddd4fdbafc9f"
+    },
+    "browser/m02-01-sn5-orchard.png": {
+      "bytes": 787939,
+      "sha256": "c6692460cd18e5e59fe5eacb2838340c2ddccca04b019d6477dac28a9b6a15a1"
+    },
+    "browser/m02-02-c04-orchard-chalk.png": {
+      "bytes": 887340,
+      "sha256": "0ff8f94a8f91507400cdb5b956541ee2dbd7eec1cbe7a6c8a08c1b4d1d3c3740"
+    },
+    "browser/m02-02-courtyard-grenade-breach.png": {
+      "bytes": 859230,
+      "sha256": "01ff03468fa72a968ee40f0e6356103d60229098a014ecb8fee1d7a8e894fce6"
+    },
+    "browser/m02-02-squad-ditch-assault.png": {
+      "bytes": 833632,
+      "sha256": "a1da4b4e389ce52327819b91f35a6085b8d1c868eb4796abcd4889136b504d40"
+    },
+    "browser/m02-03-c01-p1-start.png": {
+      "bytes": 644567,
+      "sha256": "3b7352ef4849fb3dc7e5cc60f9f3f673190de4b73a4f44b1ce7028db209e1040"
+    },
+    "browser/m02-03-c05-night-transition.png": {
+      "bytes": 574318,
+      "sha256": "144561a752afd6e26849b2f56f85287eef1a80925c4ee89a6a7d9c7fca98fe06"
+    },
+    "browser/m02-03-ea0-outpost-combat.png": {
+      "bytes": 875400,
+      "sha256": "5f01a89e47f3c3dbcae158300c9c2264b8762576890c40dfec88e4218073c2cd"
+    },
+    "browser/m02-04-area-b-supply-cart.png": {
+      "bytes": 557214,
+      "sha256": "55703bd163f63467f4988b012abab38aaec1b78d1252272c8d0be164b5c417a0"
+    },
+    "browser/m02-05-area-c-lesmierz-sp03.png": {
+      "bytes": 673759,
+      "sha256": "8845411e9019a6f07f5ad39a6dc8554f67d239f96388db25f3063df08aa9cbce"
+    },
+    "browser/m02-05-c12-epilogue-m03-bridge.png": {
+      "bytes": 782494,
+      "sha256": "b9351c23b572bb4e9f507e460bc5a94c347f1e83de0e892d9bc48895feb9c4b3"
+    },
+    "browser/m02-06-accessibility-weapon-clearance.png": {
+      "bytes": 644102,
+      "sha256": "59d7f459fb1e4426a5a2dca7ed59748b93fe3f91bd2a71556682d969977ba65f"
+    },
+    "browser-d04e416.txt": {
+      "bytes": 1922,
+      "sha256": "604d8aa9544b6c51a369339491e79ea75802f10fe07be2282666247d2923d387"
+    },
+    "browser.txt": {
+      "bytes": 1923,
+      "sha256": "300a5c1de7c94ed35a09e26409b08455748e279c2b445da08f048c85d907d9d5"
+    },
+    "build.txt": {
+      "bytes": 1804,
+      "sha256": "558fbc7162e9cf9252328edd309165a555775aa546bbf85ce96d3a9c901df614"
+    },
+    "checkpoint/death.png": {
+      "bytes": 122441,
+      "sha256": "4d2749573a406895947445479c2c0f167d2e6fe621782e3c30933beb48b3d002"
+    },
+    "checkpoint/progress.json": {
+      "bytes": 1436,
+      "sha256": "d3c4b60a666c96fc0e6e6d67593a7711199cd6cdf23f472f0566d81fff1da614"
+    },
+    "checkpoint/report.json": {
+      "bytes": 51026,
+      "sha256": "c5e757a46c01c262272625152ef4a0b88527306016ff39a24593c48fc3f246ac"
+    },
+    "checkpoint/restored.png": {
+      "bytes": 148506,
+      "sha256": "9d081935edc6a5dd7b87de381f78cd9bdd37b27dd37751694e74846d562567c6"
+    },
+    "checkpoint.txt": {
+      "bytes": 283,
+      "sha256": "73c187a16c0cdd2d0b6d544cdec454cba127284d5334a0e0b7aaa15e337d54b4"
+    },
+    "high/c01-preparation.png": {
+      "bytes": 876566,
+      "sha256": "dc83ee6648bd4f35a49a60574c876f45f09c83223cd088b97957089b3a5bb2b5"
+    },
+    "high/c02-approach.png": {
+      "bytes": 900829,
+      "sha256": "8353c221f2277a616d781f15ef6a4e3e8c47423178119db1e9a229c4a314ed07"
+    },
+    "high/lesmierz-high.png": {
+      "bytes": 859544,
+      "sha256": "b6234e3f536965b922003a8130e81880183f2d3382c309b64fc2ed3e09ca607b"
+    },
+    "high/mg34-fire.png": {
+      "bytes": 1078515,
+      "sha256": "6ed05af1f9e98f9ca3f7a842cb7e9c9d8aa6f04ff1bfc6e06f8ca17700016ebb"
+    },
+    "high/report.json": {
+      "bytes": 130580,
+      "sha256": "e132243a4f2af951fa263fa8ef26720b49185d35c04bf323c40524194bbdf736"
+    },
+    "high.txt": {
+      "bytes": 88,
+      "sha256": "6075cc5e0fa10c8fa8e58b9ad2284e4e71593744ea71a1635720a42c96cd855c"
+    },
+    "native/1-A-O00.png": {
+      "bytes": 100553,
+      "sha256": "91d48a5082fff08929345977b546f8f4c0a61dc86e2539608fdd18b62d0518e1"
+    },
+    "native/10-C-O07.png": {
+      "bytes": 147279,
+      "sha256": "88e4f730697c01f191d431b372e2f8ba1b863608d6bbd1926888a43f218e3120"
+    },
+    "native/11-C-O08.png": {
+      "bytes": 114448,
+      "sha256": "d3ea3ad1a179e27ebc20c3570ac42526b0b52cf73f5d1deee7431cccf752dff0"
+    },
+    "native/12-C-O09.png": {
+      "bytes": 151062,
+      "sha256": "56e4deb6f51b534579a13659703a5c32dbf27964a8bbd00611f625671702a3ca"
+    },
+    "native/2-A-O01.png": {
+      "bytes": 102719,
+      "sha256": "2be5792208beaf6fc3d428b0074d22a2b417d98d89c069faab2b678193913e3a"
+    },
+    "native/3-A-O02.png": {
+      "bytes": 97537,
+      "sha256": "caa817c666b26c35941476b73c5f2bd97a3a013d26d81e7a9fe5ddce6d183815"
+    },
+    "native/4-A-O03.png": {
+      "bytes": 96257,
+      "sha256": "d2b45a366a1c349363a247318a9652eef3c47965c54bb1584f7af688e39dc045"
+    },
+    "native/5-A-C04.png": {
+      "bytes": 105897,
+      "sha256": "8f858a75ae4e0b15bfe8475221c8b16d80ac77bbca678f2a9faf17bee6d3e884"
+    },
+    "native/6-A-COMPLETE.png": {
+      "bytes": 118557,
+      "sha256": "67d3ed443e98ecc4328588c07e83d6090861b2c7d5b2aaa50e55782e0d2f3b1c"
+    },
+    "native/7-B-O04.png": {
+      "bytes": 79857,
+      "sha256": "f133e1d07b1d03a925edbcc98a6e326e7c448a4dd3b2c91b730e8e48b8383167"
+    },
+    "native/8-B-O05.png": {
+      "bytes": 71663,
+      "sha256": "e41817b1080ad24e93164ac565c3fa314dbf88f75d6f0dc72d42ee9c77d18f75"
+    },
+    "native/9-C-O06.png": {
+      "bytes": 100353,
+      "sha256": "ac20c106e59ee3b7518f43234e06d7d0eb6e38bb74a796aaeea4b52ed09df049"
+    },
+    "native/build.log": {
+      "bytes": 1804,
+      "sha256": "75bfcaa6b973c4f67083e62ff979a527184381ed8d976a4f8de2d4589444eb30"
+    },
+    "native/debrief.png": {
+      "bytes": 362712,
+      "sha256": "acf32d631a254b4de48a91e2dedf947ded2c55c7eead3cbf07f7d5144fdc4915"
+    },
+    "native/epilogue-0.png": {
+      "bytes": 79619,
+      "sha256": "7426bb20f547c64b8f188a052bcdd78c94f8da507184ee3b5488a060f1afc013"
+    },
+    "native/epilogue-1.png": {
+      "bytes": 82082,
+      "sha256": "e89db2c7c2219d95ad53f885f31fab4b27be99701aac20c85e02b375dc6a9984"
+    },
+    "native/epilogue-2.png": {
+      "bytes": 71563,
+      "sha256": "d9c3236774ba3649d978706fc5cc2c4821291407054a43c3e98562732cfc3289"
+    },
+    "native/progress.json": {
+      "bytes": 2913,
+      "sha256": "64d1d96efc8625d281a1db07a7333c831d80c60aa6bc5ec13c3b6f314c8cb631"
+    },
+    "native/report.json": {
+      "bytes": 66777,
+      "sha256": "90a9edc298557b992da3b7a43e14a329d2b0a5c4b3bed4a5c6827eb4ff177246"
+    },
+    "native/server.log": {
+      "bytes": 5150,
+      "sha256": "3b5e77505211bb7bde80502b947024ff73574a1e6c438e3114009b781722c818"
+    },
+    "native.txt": {
+      "bytes": 2601,
+      "sha256": "65c95c4260991e307652e731b9eab19a2a1ed50b58d9279749819987e6f28122"
+    },
+    "node.txt": {
+      "bytes": 11051,
+      "sha256": "ac6f37af6e6f99590a15c3a8395852549a80d1acae9b5e52be174b3fc7dcebab"
+    },
+    "shared.txt": {
+      "bytes": 5381,
+      "sha256": "8bff510459846d69175d4f9f83cae08f827a5815f2d034401b7415b8016cfa7c"
+    }
+  }
+}

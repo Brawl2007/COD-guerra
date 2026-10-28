@@ -1,0 +1,61 @@
+{
+  "method": "Live enemy damage, trusted keyboard and relative mouse input listener. Planner only reads navigation/position. No health, clock, enemy, objective or save injection.",
+  "errors": [],
+  "samples": [
+    {
+      "clock": 0.2,
+      "state": "playing",
+      "health": 100,
+      "x": 0,
+      "z": -175,
+      "crouched": true,
+      "move": true,
+      "turn": -1.311187087576842,
+      "pitch": 0
+    },
+    {
+      "clock": 4.749999999999991,
+      "state": "playing",
+      "health": 100,
+      "x": 7.599831428758271,
+      "z": -152.83282042754342,
+      "crouched": false,
+      "move": true,
+      "turn": 0.03361856503505311,
+      "pitch": 0
+    },
+    {
+      "clock": 8.699999999999989,
+      "state": "playing",
+      "health": 100,
+      "x": 7.195123132796206,
+      "z": -128.75235671149488,
+      "crouched": false,
+      "move": true,
+      "turn": 0.0016557186924037737,
+      "pitch": 0
+    },
+    {
+      "clock": 12.450000000000042,
+      "state": "playing",
+      "health": 68,
+      "x": 6.262082045997459,
+      "z": -105.8963933905072,
+      "crouched": false,
+      "move": true,
+      "turn": 0.002154288023842099,
+      "pitch": 0
+    },
+    {
+      "clock": 16.5000000000001,
+      "state": "playing",
+      "health": 20,
+      "x": 5.21490454030445,
+      "z": -81.2136126913939,
+      "crouched": false,
+      "move": true,
+      "turn": 0.000021421757777195793,
+      "pitch": 0
+    }
+  ]
+}

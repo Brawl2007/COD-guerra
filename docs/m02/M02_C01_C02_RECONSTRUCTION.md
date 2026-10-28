@@ -1,5 +1,7 @@
 # C01–C02 — reconstrução e continuidade
 
+F1–F3 (2026-10-28, `f49ecdc`): sombras passam a acompanhar P1 e as áreas seguintes, com cascatas/AO/grade/contacto M01. As rondas deixam de desenhar lasers/bolas e mostram partículas/clarões M01 no impacto real. Terreno e máscara cobrem agora cada célula completa; horizonte rural, vegetação com fade, ripas/plintos/tesouras acrescentam estrutura. Provas comparáveis e percurso preservado em `quality-2026-10-28/`. A apresentação anterior foi rejeitada e arte continua em desenvolvimento.
+
 2026-10-26, candidata `codex/m02-recovery-v1`, após D1 `702ced9`. Documento complementar de 173.148 palavras ainda não disponibilizado; roteiro e prompt anterior mantidos.
 
 ## Primeira entrega — 2026-10-26

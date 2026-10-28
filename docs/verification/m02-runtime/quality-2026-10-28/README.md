@@ -1,5 +1,21 @@
 # M02 — revisão de qualidade após avaliação do proprietário
 
+## Entrega desta revisão — 2026-10-28
+
+Código atual **`f49ecdc`**, branch `codex/m02-recovery-v1`. F1 `55b6fa2` corrige luz/sombras/contacto e liga o grade/AO M01; F2 `4cbe96f` substitui raios/esferas por FX causais M01; F3 `899067e` completa terreno/máscara por célula, horizonte e estrutura dos edifícios. `d04e416` corrige timestamps arredondados e o seletor de luz. O último refinamento `f49ecdc` mantém a luz de disparo presente a intensidade zero entre tiros em Medium/High, seguindo M01; Low continua sem essa luz. Não muda a intensidade dos disparos nem reduz a qualidade.
+
+**86 testes M02, 44 partilhados M01, seis testes browser (4.0m), build e reprodução GLB PASS.** O browser final usou diretório novo, 16 capturas novas, contexto áudio running/pico 0.417647, mantendo o limite de 240 s e todas as asserções. O caso novo lê a geometria e a máscara realmente desenhadas nos limites B/C; High exige o pós-processamento ativo. A telemetria legada usa argumentos de tempo sintéticos e não é benchmark de FPS. Sem suite global/CI remoto declarados verdes.
+
+Percurso contínuo de produção **`d04e416`**, C01–C12/epílogo/debrief/M03: zero mortes/erros, vida 46, eixo pomar, giz, água/munições, Lis ferido evacuado e 12/12. Malek incapacitado e TR01–TR05 preservados. Só foram enviados controlos; o planner observa posições ocultas. O único código de jogo posterior é a estabilidade da luz de disparo: `src/game`, `src/world`, roteiro/config estão idênticos; o percurso Low não usa essa luz em nenhuma das versões. Não apresentar o percurso como avaliação artística High ou perícia humana. Clock final 264.35 s simulados, não FPS.
+
+Prova final independente de morte por fogo real aos 16.70 s e retoma aos 0.00 s, vida 100, posição do checkpoint preservada: PASS. Fotografias High em `final/high/` são do código `f49ecdc`, fonte congelada, sem falha no relatório; rotuladas como cenários controlados. `landscape-high-899067e/` é a galeria F3 anterior ao refinamento de relógio/luz e inclui a borda C09.
+
+[Antes C02](before/c02-approach.png) · [Depois C02](final/high/c02-approach.png) · [MG corrigida](final/high/mg34-fire.png) · [Estado/provas](final/validation.json). A apresentação anterior foi rejeitada pelo proprietário; estes resultados não aprovam arte nem demonstram equivalência AAA/superioridade à M01. Modelos/rostos/mãos, atuação desarmada/apoiada de Lis e servente MG, variedade/ritmo e som continuam a precisar de trabalho e avaliação.
+
+As alterações estão só na candidata. O site público não recebe estes commits automaticamente: o workflow permite deploy apenas por dispatch explícito em main. A branch main remota foi verificada em `6697956`; não foi alterada. Foi pedida em paralelo a identificação do endereço/branch que o proprietário está a jogar, sem bloquear as correções. Sem deploy, force-push ou novo PR declarado; API GitHub/CI mantêm as limitações registadas. M01 partilhada permaneceu intacta. O complemento de 173.148 palavras continua ausente.
+
+O histórico das etapas abaixo conserva as provas intermédias, incluindo a sondagem invalidada por HMR.
+
 2026-10-28, mesma candidata `codex/m02-recovery-v1`, base `4aab5bb`. Trabalho reaberto por rejeição visual; não declarar a missão aprovada.
 
 `before/` é a apresentação anterior, `lighting/` a F1 com volumes de sombra a seguir o observador, cascatas/modelo de luz/grade/AO M01 e contacto sob os atores. Mesmas fixtures, posição, relógio e resolução; `report.json` identifica fontes/árvore suja. Capturas reais de Chromium/SwiftShader, High, 1280 × 720, explicitamente rotuladas como inspeções controladas. Não são playtest contínuo ou benchmark de GPU.

@@ -1,5 +1,7 @@
 # M02 — revisão das armas e apresentação
 
+F2/refinamentos (2026-10-28, `f49ecdc`): a apresentação usa o traço real de cada ronda e perfis/textura/billboards M01, sem raios/esferas persistentes. CLOCK_EPS conserva clarões/explosões em timestamps arredondados; a luz mantém configuração estável em Medium/High e fica ausente em Low. Dano/cadências/munição/RNG não mudam. Provas em `quality-2026-10-28/`; análises mecânicas anteriores abaixo conservadas.
+
 Revisão inicial: 2026-10-26, base `9385b2d`; atualização E1–E3: 2026-10-27, código `21f8d67`. Esta revisão distingue dados preliminares, código realmente usado e decisões de gameplay; não certifica reprodução histórica ou qualidade AAA.
 
 ## Fontes e limites

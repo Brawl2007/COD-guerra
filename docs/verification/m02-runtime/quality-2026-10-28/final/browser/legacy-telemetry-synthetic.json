@@ -1,0 +1,50 @@
+{
+  "capturedAt": "2026-10-28T10:10:05.654Z",
+  "profiles": {
+    "high": {
+      "qualityProfile": "high",
+      "lightingPreset": "afternoon_1939_09_09",
+      "sampleCount": 11,
+      "fpsP50": 62.5,
+      "frameTimeMs": {
+        "p50": 16,
+        "p95": 2183.2,
+        "p99": 2183.2
+      },
+      "simMsP50": 0.5,
+      "renderMsP50": 6.1,
+      "drawCalls": 264,
+      "triangles": 168785
+    },
+    "medium": {
+      "qualityProfile": "medium",
+      "lightingPreset": "afternoon_1939_09_09",
+      "sampleCount": 11,
+      "fpsP50": 62.5,
+      "frameTimeMs": {
+        "p50": 16,
+        "p95": 16.7,
+        "p99": 16.7
+      },
+      "simMsP50": 0.5,
+      "renderMsP50": 6,
+      "drawCalls": 258,
+      "triangles": 126623
+    },
+    "low": {
+      "qualityProfile": "low",
+      "lightingPreset": "afternoon_1939_09_09",
+      "sampleCount": 11,
+      "fpsP50": 62.5,
+      "frameTimeMs": {
+        "p50": 16,
+        "p95": 16549.3,
+        "p99": 16549.3
+      },
+      "simMsP50": 0.5,
+      "renderMsP50": 4.5,
+      "drawCalls": 208,
+      "triangles": 80256
+    }
+  }
+}
