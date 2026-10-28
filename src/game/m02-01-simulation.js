@@ -14,6 +14,7 @@ import { M02HorizonDirector, M02_TEMPORAL_STATES } from '../world/m02-horizon-sy
 import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
+import {m02ExposedLastGroup,updateM02EvacuationWound} from './m02-evacuation-targets.js';
 import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
@@ -904,7 +905,7 @@ export class M02BenchSimulation {
     const aimYaw=Math.atan2(aimPoint.z-origin.z,aimPoint.x-origin.x);
     const aimPitch=Math.atan2(aimPoint.y-origin.y,Math.hypot(aimPoint.x-origin.x,aimPoint.z-origin.z));
     const muzzle=shooter.id==='DE-A05'?origin:muzzlePosition({...shooter,angle:aimYaw,pitch:aimPitch,aiming:true},this.clock);
-    const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies];
+    const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies, ...m02ExposedLastGroup(this)];
     let hitAny = false;
     const traces=[];
 
@@ -993,6 +994,7 @@ export class M02BenchSimulation {
             });
           }
         }
+        updateM02EvacuationWound(this,victim);
         recordM02Hit(victim,this.clock,origin,hit.part);
         this.syncCalibrationAndEnemies();
       }
@@ -1030,7 +1032,7 @@ export class M02BenchSimulation {
     const burst=shooter.burst;
     if(!burst)return;
     if(!shooter.alive||shooter.nonCombatant||shooter.suppressed>=.88||shooter.reloadingUntil>this.clock||shooter.mag<=0){shooter.burst=null;return;}
-    const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies];
+    const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies,...m02ExposedLastGroup(this)];
     const target=candidates.find(a=>a.id===burst.targetId)??null;
     if(target?.nonCombatant){shooter.burst=null;return;}
     // Last observed point, not the hidden target's current coordinates. Every
@@ -1103,7 +1105,7 @@ export class M02BenchSimulation {
     this.navigator.sync();
 
     const affectedActors = [];
-    const allActors = [this.player, ...this.allies, ...this.enemies];
+    const allActors = [this.player, ...this.allies, ...this.enemies, ...m02ExposedLastGroup(this)];
     for (const actor of allActors) {
       if (!actor || !actor.alive) continue;
       const targetPt = { x: actor.x, y: actor.y + 0.95, z: actor.z };
@@ -1143,6 +1145,7 @@ export class M02BenchSimulation {
             actor.state = 'DEAD';
           }
         }
+        updateM02EvacuationWound(this,actor);
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
         if(damage>0)recordM02Hit(actor,this.clock,center);
       }

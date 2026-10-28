@@ -1,6 +1,7 @@
 import {eyePosition,traceObstruction} from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {M01_DIFFICULTY} from './m01-difficulty.js';
+import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
 
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
@@ -1005,7 +1006,7 @@ export function updateGermanGarrison(sim, dt) {
     updateLowCoverExposure(sim,enemy);
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
-    const potentialTargets = [sim.player, ...sim.allies].filter((t) => t && t.alive && t.state !== 'DOWN');
+    const potentialTargets = [sim.player, ...sim.allies, ...m02ExposedLastGroup(sim)].filter((t) => t && t.alive && t.state !== 'DOWN');
     let visibleTarget = null;
     let bestTargetScore = -Infinity;
 

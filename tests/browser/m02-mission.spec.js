@@ -1,6 +1,31 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('C11 real casualty retains an M01 death pose after a same-clock checkpoint restore',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.addStyleTag({content:'#mission-menu,#cartela-banner{display:none!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"INSPEÇÃO CONTROLADA · C11";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();
+  const gun=sim.enemies.find(e=>e.weapon==='mg34')??sim.enemies[0];sim.enemies=[gun];sim.allies=[];
+  Object.assign(gun,{x:70,y:0,z:-100,weapon:'kar98k',facing:0,mag:5,reserve:10,suppressed:0,goal:null,nextFireAt:0});
+  for(const a of sim.areaC.lastGroup)a.evacuated=true;
+  const man=sim.areaC.lastGroup[0];Object.assign(man,{x:80,y:0,z:-100,health:1,alive:true,evacuated:false});
+  sim.teleportPlayer(75,-96,Math.atan2(-4,5),-.12);sim.drainEvents();renderer.renderFrame(0,0);
+  const shot=sim.fireActorBurst(gun,man,{x:80,y:1.25,z:-100},'enemy');sim.enemies=[];
+  for(let i=0;i<10;i++)sim.tick(.05,{});renderer.renderFrame(0,0);
+  const saved=sim.snapshot(),read=()=>renderer.presentation.characters.stats.actors.find(a=>a.id===man.id);
+  const first=read();sim.restoreSnapshot(saved);renderer.renderFrame(0,0);
+  return {hitId:shot.traces[0].hitId,alive:sim.areaC.lastGroup[0].alive,first,restored:read()};
+ });
+ expect(result.hitId).toBe('LG01');expect(result.alive).toBe(false);
+ expect(result.first?.clip).toMatch(/^(death_|fallen)/);expect(result.restored?.clip).toMatch(/^(death_|fallen)/);
+ await page.screenshot({path:testInfo.outputPath('c11-casualty.png')});expect(errors).toEqual([]);
+ console.log('M02 C11 casualty fixture',JSON.stringify(result));
+});
+
 test('a real hit gives the player M01 audio and visible feedback, cleared by checkpoint restore',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

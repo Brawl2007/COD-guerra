@@ -720,6 +720,10 @@ export function updateAreaC(sim, dt) {
         evacuatedCount++;
       }
     }
+    // The penultimate waypoint is beyond B12's south door. Count men who
+    // have crossed the house while they continue to the final rally point;
+    // they remain vulnerable until they actually leave the scene.
+    if(!lg.evacuated&&lg.waypointIdx>=evacRoute.length-1)evacuatedCount++;
   }
 
   sim.flags['m02.last_group_survivors'] = evacuatedCount;
