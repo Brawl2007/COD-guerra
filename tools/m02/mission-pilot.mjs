@@ -1,6 +1,6 @@
 // Verification pilot, not gameplay AI. Reads collision/actor observations and
 // produces ordinary controls. Never writes player, actors, clocks, RNG or flags.
-import {eyePosition, traceShot} from '../../src/world/spatial.js';
+import {eyePosition,muzzlePosition,traceShot} from '../../src/world/spatial.js';
 import {m02PlayerAction,m02RifleAmmoSources} from '../../src/game/m02-player-actions.js';
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
 export class M02MissionPilot {
@@ -23,7 +23,8 @@ export class M02MissionPilot {
     for(const enemy of hostiles){
       const point={x:enemy.x,y:enemy.y+1.58-(enemy.crouched?.56:0),z:enemy.z};
       const dx=point.x-eye.x,dy=point.y-eye.y,dz=point.z-eye.z,d=Math.hypot(dx,dy,dz);
-      const hit=traceShot(sim.world,eye,{x:dx/d,y:dy/d,z:dz/d},[enemy],220);
+      const aimed={...p,angle:Math.atan2(dz,dx),pitch:Math.atan2(dy,Math.hypot(dx,dz)),aiming:true};
+      const hit=traceShot(sim.world,eye,{x:dx/d,y:dy/d,z:dz/d},[enemy],220,muzzlePosition(aimed,sim.clock));
       if(hit?.kind==='actor'){target=enemy;aim=point;break;}
     }
     const outOfAmmo=sim.weapon.mag===0&&sim.weapon.reserve===0;

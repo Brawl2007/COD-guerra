@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 import {m02PlayerAction,performM02PlayerAction,m02RifleAmmoSources} from '../src/game/m02-player-actions.js';
 import {M02MissionPilot} from '../tools/m02/mission-pilot.mjs';
+import {eyePosition,muzzlePosition,traceShot} from '../src/world/spatial.js';
 
 function scene(){
  const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];
@@ -43,4 +44,16 @@ test('the browser pilot seeks a physical ammunition source when its rifle is emp
  sim.clock=30;const pilot=new M02MissionPilot();pilot.lastCell='B';pilot.enteredAt=0;
  assert.equal(m02RifleAmmoSources(sim)[0].id,enemy.id);
  const decision=pilot.decide(sim);assert.deepEqual(decision.goal,[8,100]);assert.notEqual(decision.target,armed.id);
+});
+
+test('the browser pilot does not shoot through a parapet that hides the muzzle but leaves the eye clear',()=>{
+ const {sim}=scene();sim.clock=30;sim.weapon.mag=5;sim.weapon.reserve=30;
+ const enemy=sim.enemies[0];Object.assign(enemy,{x:10,y:0,z:100,alive:true,state:'HOLD_SECTOR',health:100});
+ sim.world.obstacles.push({id:'muzzle-wall',min:{x:1.1,y:1.3,z:99.7},max:{x:1.3,y:1.6,z:100.3},material:'brick'});
+ const eye=eyePosition(sim.player),point={x:enemy.x,y:1.58,z:enemy.z},d=Math.hypot(point.x-eye.x,point.y-eye.y),dir={x:(point.x-eye.x)/d,y:(point.y-eye.y)/d,z:0};
+ const aimed={...sim.player,angle:0,pitch:Math.atan2(point.y-eye.y,point.x-eye.x),aiming:true};
+ assert.equal(traceShot(sim.world,eye,dir,[enemy],220)?.kind,'actor');
+ assert.equal(traceShot(sim.world,eye,dir,[enemy],220,muzzlePosition(aimed,sim.clock))?.kind,'world');
+ const pilot=new M02MissionPilot();pilot.lastCell='B';pilot.enteredAt=0;
+ const decision=pilot.decide(sim);assert.notEqual(decision.target,enemy.id);assert.notEqual(decision.controls.fire,true);
 });
