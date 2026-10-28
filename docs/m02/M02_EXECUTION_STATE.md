@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — áudio balístico, 2026-10-28
+
+Código `9ca83a3`: impactos NPC e do jogador passam ao som M01 a partir do ponto de colisão real, com família de material, posição e oclusão; projéteis inimigos próximos produzem estalo apenas quando o segmento efetivo passa perto do jogador com linha livre. Simulação/saves/RNG inalterados. 90 testes M02, build e dois casos browser PASS; percurso de produção C01–C12 PASS (0 mortes/erros, vida 89, giz, água/munições, Lis evacuado, 12/12, M03 válido). Provas e capturas reais Low em [round-audio-2026-10-28](../verification/m02-runtime/round-audio-2026-10-28/README.md). O limite de vozes foi atingido, com 6 recusas (4 da categoria do jogador) e 9 substituições: investigar mistura/prioridade em combate intenso. Contagem de eventos e pico do master não são avaliação humana da mistura.
+
+O apoio a Lis ainda não tem acompanhante físico; Piotr é o interveniente explícito no contacto do roteiro, portanto não se inventou outro soldado. Cenários, rostos/mãos, servente MG, IA, som e avaliação humana/GPU continuam abertos. As capturas Low evidenciam simplicidade visual e não sustentam comparação de qualidade com COD. O complemento integral ainda não foi recebido; não declarar missão aprovada nem repetir a recuperação. Main e produção intactas.
+
 ## Continuação — feridos C11, 2026-10-28
 
 Lis e LG03/LG09 já não caminham desarmados com os braços na pose de espingarda invisível. A apresentação deriva quatro clips M01 e usa IK M01 para a mão no torso e o outro braço junto ao corpo, preservando os passos M01, odómetro, postura e autoridade da simulação. Reposição no mesmo relógio volta à pose correta; mortos/deitados e Lis evacuado conservam o resolver anterior. Não se criou uma coreografia de dupla nem um acompanhante físico: isso permanece pendente.

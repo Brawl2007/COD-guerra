@@ -1,0 +1,20 @@
+[2m[WebServer] [22m(node:38795) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:38821) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38821) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 audio probe {"peak":0.14278730750083923,"shots":1,"state":"running"}
+  ✓  1 tests/browser/m02-01-quinta.spec.js:276:1 › M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation (15.2s)
+M02 NPC impact audio probe {"peak":0.0084951501339674,"impactCount":1,"trace":{"origin":{"x":6.428173655166587e-17,"y":1.519528891699546,"z":101.0498004256643},"point":{"x":-0.03867675297925791,"y":1.6053722574938734,"z":103},"hitKind":"world","material":"wood_thick"},"unchanged":true,"state":"running"}
+  ✓  2 tests/browser/m02-mission.spec.js:4:1 › M02 real NPC collision drives an audible material impact in Web Audio (10.8s)
+
+  2 passed (29.9s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
