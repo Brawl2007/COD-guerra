@@ -1,6 +1,26 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('B12 aid station presents the two physical stretchers at their authored positions',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;sim.enterAreaCC09();sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(-57,51,Math.PI,-.15);renderer.renderFrame(0,0);
+  const groups=[];renderer.staticGroup.traverse(n=>{if(n.name.startsWith('M02 aid stretcher '))groups.push({name:n.name,parts:n.children.length,position:n.position.toArray()});});
+  return groups;
+ });
+ expect(result).toEqual([
+  {name:'M02 aid stretcher prop_b12_stretcher_1',parts:3,position:[-61.75,0,50.05]},
+  {name:'M02 aid stretcher prop_b12_stretcher_2',parts:3,position:[-61.75,0,53.05]},
+ ]);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · POSTO DE SOCORRO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('b12-aid-stretchers.png')});
+ expect(errors).toEqual([]);
+});
+
 test('C11 Lis is helped by the normal interaction only when the player reaches him',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

@@ -14,6 +14,7 @@ import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
 import {M02Lighting} from './m02-lighting.js';
 import {M02CombatFX} from './m02-combat-fx.js';
 import {M02Grenades} from './m02-grenades.js';
+import {createM02AidStretcher,isM02AidStretcher} from './m02-aid-stretcher.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -347,7 +348,7 @@ export class M02BenchRenderer {
   }
 
   #buildStaticWorld() {
-    this.staticGroup.traverse(n=>{if(n.userData.m02Ground)n.geometry.dispose();});
+    this.staticGroup.traverse(n=>{if(n.userData.m02Ground||n.userData.m02AidStretcher)n.geometry.dispose();});
     // Reuse the two existing interior fills at this cell's actual buildings.
     // They approximate bounced light rather than leaving B/C lit from A's rooms.
     const fills=this.sim.activeCellId==='B'?[[-43,2.5,-24],[28,2.8,-26]]:this.sim.activeCellId==='C'?[[-20,2.8,-16],[24,2.8,-22]]:[[-33,2.45,-13],[22,3.1,-31]];
@@ -446,6 +447,11 @@ export class M02BenchRenderer {
       const sy = ob.max.y - ob.min.y;
       const sz = ob.max.z - ob.min.z;
       if (sx <= 0 || sy <= 0 || sz <= 0) continue;
+
+      if (isM02AidStretcher(ob)) {
+        this.staticGroup.add(createM02AidStretcher(ob, this.materials));
+        continue;
+      }
 
       let mat = this.materials.brick_B01;
       if (ob.role === 'window_frame' || ob.role === 'door_frame' || ob.role === 'post') {
@@ -566,12 +572,7 @@ export class M02BenchRenderer {
         this.staticGroup.add(crateGroup);
       }
     } else if (cellId === 'C') {
-      // Cell C: B12 field aid station stretchers (2 macas) and SP03 artillery crater smoke when detonated
-      for (const sx of [-58.5, -54.5]) {
-        const stretcher = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.28, 2.0), this.materials.roof_thatch);
-        stretcher.position.set(sx, 0.22, 52.0);
-        this.staticGroup.add(stretcher);
-      }
+      // SP03 artillery crater smoke when detonated.
       if (this.sim.areaC?.artilleryDetonated) {
         const craterGroup = new THREE.Group();
         craterGroup.position.set(4.0, 0.1, 18.0);
