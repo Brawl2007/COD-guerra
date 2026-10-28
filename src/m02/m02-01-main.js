@@ -448,5 +448,5 @@ const benchApi = {
 };
 
 if(debugMode) window.m02Bench=benchApi;
-window.m02Diagnostics=()=>({state:session?.state??'bench',...benchApi.getStateSummary(),presentation:renderer.presentation.diagnostics,environment:renderer.environment.diagnostics});
+window.m02Diagnostics=()=>({state:session?.state??'bench',...benchApi.getStateSummary(),presentation:renderer.presentation.diagnostics,environment:renderer.environment.diagnostics,lighting:renderer.lighting.diagnostics});
 requestAnimationFrame(animate);

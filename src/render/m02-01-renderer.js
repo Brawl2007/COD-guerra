@@ -11,6 +11,7 @@ import { eyePosition } from '../world/spatial.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
 import {initialQuality as selectM01InitialQuality} from './three-renderer.js';
 import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
+import {M02Lighting} from './m02-lighting.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -223,6 +224,7 @@ export class M02BenchRenderer {
     };
 
     this.#setupLights();
+    this.lighting=new M02Lighting(this.scene,this.renderer,this.sunLight,this.hemiLight,this.environment.atmosphere);
     this.#buildStaticWorld();
     this.#rebuildDynamicOpenings();
     this.#buildTargets();
@@ -1115,15 +1117,17 @@ export class M02BenchRenderer {
       player.aiming ? 0.08 : 0,
     );
 
-    this.presentation.weaponLighting.sync({sky:this.hemiLight,sun:this.sunLight,camera:this.camera,daylight:this.sim.horizon.temporalState==='T1'?0:1,pitch:player.pitch});
-    this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
     this.environment.update(this.sim,this.qualityProfile.id);
+    this.lighting.update(this.sim,this.lightingPreset,this.qualityProfile.id);
+    this.presentation.weaponLighting.sync({sky:this.hemiLight,sun:this.sunLight,camera:this.camera,daylight:this.lighting.model.daylight,pitch:player.pitch});
+    this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
     this.staticGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});
     this.horizonGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});
-    if(this.lightingPreset.temporalId!=='T1' && this.lightingPreset.id!=='neutral_review') this.hemiLight.intensity=1.55;
     this.renderer.info.autoReset=false;
     this.renderer.info.reset();
+    const graded=this.lighting.begin(this.camera,this.qualityProfile.id,this.softwareRasterizer);
     this.renderer.render(this.scene, this.camera);
+    if(graded)this.lighting.grading.composite(this.renderer);
     this.presentation.renderWeapon(this.renderer);
     this.renderer.info.autoReset=true;
 

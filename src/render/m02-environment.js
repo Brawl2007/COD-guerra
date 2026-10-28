@@ -6,7 +6,6 @@ import { bakeTerrainMask } from './m01-terrain-mask.js';
 import { mergeVegetationGeometry, chooseVegetationTier } from './m01-vegetation-runtime.js';
 import { vegetationKitMaterial } from './m01-vegetation-material.js';
 import { M01Atmosphere } from './m01-atmosphere.js';
-import { lightingModel } from './m01-lighting.js';
 import { m02EnvironmentLayout, m02TerrainSources } from './m02-environment-layout.js';
 
 // Keep the M01 terrain shader, texture tiers, anti-tiling, normals and lifetime
@@ -71,11 +70,6 @@ export class M02Environment {
     for(const event of sim.horizon.hsA2.events)if(event.smokeActive)this.damage.set(event.id,{id:`m02_bomb_${event.id}`,x:event.x,y:event.y,z:event.z,started:event.flashAt,smokeVisible:true});
     this.clock=sim.clock;this.quality=quality;this.terrain.sync(quality);
     for(const material of this.materials)material.userData.m01Vegetation.m01Time.value=sim.clock;
-    const alt=sim.horizon.temporalState==='T1'?-12:sim.horizon.temporalState==='T2'?7:14;
-    const model=lightingModel(alt,sim.horizon.temporalState==='T2'?95:255);
-    if(alt<0){model.sky.zenith=[.008,.015,.035];model.sky.horizon=[.035,.05,.08];model.fog.color=[.035,.05,.08];model.sky.glow=.1;model.sky.discStrength=0;}
-    if(this.scene.fog)this.scene.fog.color.setRGB(...model.fog.color);
-    this.atmosphere.lighting(sim.player,model,sim.clock);
     this.atmosphere.update({damage:[...this.damage.values()]},sim.clock,quality,{railwaySmoke:false});
     const key=`${quality}:${Math.round(sim.player.x/2)}:${Math.round(sim.player.z/2)}`;
     if(!this.loaded||key===this.key)return;this.key=key;

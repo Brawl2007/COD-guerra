@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Revisão após rejeição visual — 2026-10-28
+
+O proprietário rejeitou a qualidade da candidata anterior. O percurso funcional não constitui aprovação artística. Continuação na mesma branch/árvore limpa `4aab5bb`, fetch sem novidades para a candidata; complemento integral continua ausente. F1 corrige luz/sombras: o volume antigo ficava na origem, fora de P1; agora segue o observador e usa `lightingModel`, `cascadePlan`, `splitIntensity`, `M01Grading` e a textura de contacto M01. A arma conserva o seu passe separado depois do grade. Low não aloca postprocess; em SwiftShader mantém-se a política existente de não usar MSAA, sem desligar AO/grade. **81 testes M02 PASS e build PASS**; capturas reais antes/F1 em `quality-2026-10-28/`. Ainda em desenvolvimento: tiros deixavam linhas/esferas por 1,4 s e a paisagem continua demasiado vazia. Não tratar a entrega anterior como aprovação humana nem como validação destas novas alterações.
+
 ## Continuação — 2026-10-27: candidata funcional para avaliação humana
 
 
