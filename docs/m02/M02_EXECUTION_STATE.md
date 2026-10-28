@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — granada visível, 2026-10-28
+
+`0df6974`: a granada em voo, antes invisível, acompanha o estado físico com a escala e forma da M01; é removida ao explodir ou restaurar um snapshot anterior. Física, dano e saves inalterados. 99 testes M02, build e três browser PASS; [captura pelo comando G e provas](../verification/m02-runtime/grenade-2026-10-28/README.md). O percurso completo continua o de `1eb75f1`, não foi repetido para esta alteração visual. Animação de lançamento em primeira pessoa e modelo detalhado continuam por fazer. Não declarar a M02 concluída nem interromper o desenvolvimento à espera de avaliação humana.
+
 ## Continuação — dano e travessia, 2026-10-28
 
 `508b8f8` liga o ferimento real de Piotr ao áudio e ao feedback visual M01; vítimas aliadas e impactos bloqueados não provocam essa reação. `dd8358b` aplica dano e áudio de aterragem mesmo quando o jogador deixa de dar input na queda. [Provas e percurso](../verification/m02-runtime/player-damage-2026-10-28/README.md): 94 testes M02, build, três browser e percurso C01–C12/M03 PASS; código desse percurso anterior à alteração seguinte.
