@@ -1,6 +1,26 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('a grenade thrown by the player bounces off the actual B05 wall',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const wall=await page.evaluate(()=>{
+  const {sim}=window.m02Bench;sim.enterAreaBC06();sim.enemies=[];sim.allies=[];sim.teleportPlayer(-31,-22,Math.PI,0);
+  const w=sim.world.obstacles.find(o=>o.id==='B05_east_seg_1');return {min:w.min,max:w.max};
+ });
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.keyboard.press('KeyG');
+ await page.waitForFunction(()=>{const {sim,renderer}=window.m02Bench,g=sim.grenades[0];return g&&g.vx>0&&renderer.grenadeViews.views.has(g.id);});
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.addStyleTag({content:'#mission-menu,#cartela-banner{display:none!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"INSPEÇÃO CONTROLADA · RESSALTO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ const result=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,g=sim.grenades[0],v=renderer.grenadeViews.views.get(g.id);return {x:g.x,y:g.y,z:g.z,vx:g.vx,vz:g.vz,view:v.position.toArray(),ammo:sim.grenadeAmmo};});
+ expect(result.x).toBeGreaterThanOrEqual(wall.max.x);expect(result.vx).toBeGreaterThan(0);expect(result.ammo).toBe(1);
+ expect(result.view).toEqual([result.x,result.y,result.z]);await page.screenshot({path:testInfo.outputPath('grenade-wall-bounce.png')});
+ expect(errors).toEqual([]);console.log('M02 grenade bounce in B05',JSON.stringify({wall,result}));
+});
+
 test('the normal grenade input displays the live projectile and a checkpoint removes it',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

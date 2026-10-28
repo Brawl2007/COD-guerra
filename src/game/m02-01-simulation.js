@@ -15,6 +15,7 @@ import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {m02ExposedLastGroup,updateM02EvacuationWound} from './m02-evacuation-targets.js';
+import {stepM02Grenade} from './m02-grenade-physics.js';
 import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
@@ -1081,12 +1082,15 @@ export class M02BenchSimulation {
     const len = Math.hypot(rawDir.x, rawDir.y, rawDir.z) || 1;
     const dir = { x: rawDir.x / len, y: rawDir.y / len, z: rawDir.z / len };
     const speed = 15.0;
+    // A player pressed against a wall cannot spawn a grenade on its far side.
+    const obstruction=traceObstruction(this.world,eye,dir,.45);
+    const releaseDistance=obstruction?Math.max(0,obstruction.distance-.002):.45;
 
     const g = {
       id: `gren_${++this.grenadeSeq}`,
-      x: eye.x + dir.x * 0.45,
-      y: eye.y + dir.y * 0.45,
-      z: eye.z + dir.z * 0.45,
+      x: eye.x + dir.x * releaseDistance,
+      y: eye.y + dir.y * releaseDistance,
+      z: eye.z + dir.z * releaseDistance,
       vx: dir.x * speed,
       vy: dir.y * speed + 2.8,
       vz: dir.z * speed,
@@ -1182,31 +1186,7 @@ export class M02BenchSimulation {
   updateGrenades(dt) {
     for (const g of this.grenades) {
       if (g.exploded) continue;
-      const nx = g.x + g.vx * dt;
-      const ny = g.y + g.vy * dt;
-      const nz = g.z + g.vz * dt;
-      const stepDist = Math.hypot(nx - g.x, ny - g.y, nz - g.z);
-      if (stepDist > 1e-5) {
-        const dir = { x: (nx - g.x) / stepDist, y: (ny - g.y) / stepDist, z: (nz - g.z) / stepDist };
-        const obs = traceObstruction(this.world, { x: g.x, y: g.y, z: g.z }, dir, stepDist);
-        if (obs) {
-          g.vx *= -0.32;
-          g.vz *= -0.32;
-        } else {
-          g.x = nx;
-          g.z = nz;
-        }
-      }
-      const floorY = this.world.heightAt(g.x, g.z) + 0.08;
-      if (ny <= floorY) {
-        g.y = floorY;
-        g.vy = Math.abs(g.vy) * 0.25;
-        g.vx *= 0.65;
-        g.vz *= 0.65;
-      } else {
-        g.y = ny;
-        g.vy -= 9.81 * dt;
-      }
+      stepM02Grenade(this.world,g,dt);
 
       if (this.clock >= g.fuseAt) {
         g.exploded = true;
