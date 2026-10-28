@@ -1,6 +1,38 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('M02 real NPC collision drives an audible material impact in Web Audio',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio;
+  await a.ctx.resume();sim.enterAreaBC06();sim.allies=[];
+  const gun=sim.enemies.find(e=>e.weapon==='mg34');sim.enemies=[gun];
+  Object.assign(gun,{x:0,y:0,z:100,mag:50,suppressed:0});Object.assign(sim.player,{x:0,y:0,z:120,eyeHeight:1.65,angle:0});
+  sim.world.obstacles.push({id:'audio-probe-wall',min:{x:-3,y:0,z:103},max:{x:3,y:3,z:103.3},material:'wood_thick'});
+  sim.drainEvents();sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');
+  const events=sim.drainEvents(),round=events.find(e=>e.type==='actor-burst'),before=JSON.stringify(sim.snapshot());
+  const destination=a.ctx.createMediaStreamDestination();a.master.connect(destination);
+  const recorder=new MediaRecorder(destination.stream),chunks=[];recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
+  const prior=a.diagnostics.eventCounts.impact??0;
+  // Isolate the impact in this instrumented fixture; the normal game still plays the shot.
+  const weaponFire=a.weaponFire;a.weaponFire=()=>{};p.consume(events,sim);a.weaponFire=weaponFire;
+  await new Promise(r=>setTimeout(r,350));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
+  const buffer=await a.ctx.decodeAudioData(await new Blob(chunks,{type:recorder.mimeType}).arrayBuffer());
+  let peak=0;for(let c=0;c<buffer.numberOfChannels;c++)for(const v of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(v));
+  a.master.disconnect(destination);
+  return {peak,impactCount:(a.diagnostics.eventCounts.impact??0)-prior,trace:round.traces[0],unchanged:before===JSON.stringify(sim.snapshot()),state:a.ctx.state};
+ });
+ console.log('M02 NPC impact audio probe',JSON.stringify(result));
+ expect(result.trace.hitKind).toBe('world');expect(result.trace.material).toBe('wood_thick');
+ expect(result.trace.point.z-result.trace.origin.z).toBeGreaterThan(1);
+ expect(result.impactCount).toBe(1);expect(result.peak).toBeGreaterThan(.001);expect(result.state).toBe('running');
+ expect(result.unchanged).toBe(true);expect(errors).toEqual([]);
+});
+
 test('M02 subtitle and interaction fixtures remain readable together at small and desktop sizes',async({page})=>{
  await page.goto('/COD-guerra/m02.html?quality=low');
  await page.waitForFunction(()=>window.m02Diagnostics&&!document.querySelector('#mission-start').disabled);

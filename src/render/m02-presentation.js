@@ -7,6 +7,7 @@ import {M02Weapons} from './m02-weapons.js';
 import {WeaponLighting} from './first-person-weapon-fx.js';
 import {WZ29_VISUAL} from './m01-wz29-presentation.js';
 import {M02Footsteps} from './m02-footsteps.js';
+import {playM02RoundAudio} from './m02-round-audio.js';
 
 // Match the shared M01 viewmodel projection. ADS zoom belongs to the world
 // camera; changing this lens crops the stock and magnifies the near hands.
@@ -133,7 +134,6 @@ export class M02Presentation {
       const pan=Math.sin(Math.atan2(dz,dx)-sim.player.angle);
       if (event.type==='shot-fired') {
         this.audio.wz29Shot(); this.audio.wz29Mechanism('bolt',`bolt:${sim.weapon.shotCount}`);
-        if (event.shot?.blockedBySolid) this.audio.impact(event.shot.material??'earth',pan,event.shot.distance??distance);
       }
       if (event.type==='actor-burst') this.audio.weaponFire(event.weapon,pan,distance,{rounds:event.rounds,interval:event.interval,key:`${event.burstId??event.shooterId}:${event.roundIndex??event.clock}`,source:event.shooterId});
       if(event.type==='horizon-acoustic-boom'){
@@ -143,6 +143,12 @@ export class M02Presentation {
       if (event.type==='mg-burst')this.audio.mg34Burst(pan,distance,event.rounds??3,.09,`mg:${event.clock}`);
       if (event.type==='grenade-exploded') this.audio.explosion(pan,distance);
       this.audio.setOcclusion(null);
+      // Impacts and passing rounds have their own locations; the shooter's
+      // occlusion and panning do not describe where a bullet lands.
+      if(event.type==='shot-fired')playM02RoundAudio(this.audio,event.shot,sim,this.spatial.bind(this),event.shot?.id??`player:${sim.clock}`);
+      if(event.type==='actor-burst')for(const [i,trace] of (event.traces??[]).entries()){
+        playM02RoundAudio(this.audio,trace,sim,this.spatial.bind(this),`${event.burstId??event.shooterId}:${event.roundIndex??event.clock}:${i}`,{nearPass:event.side==='enemy'});
+      }
 
     }
   }
