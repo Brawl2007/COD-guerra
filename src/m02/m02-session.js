@@ -7,7 +7,7 @@ export class M02Session {
  constructor(sim,renderer,storage=globalThis.localStorage){this.sim=sim;this.renderer=renderer;this.storage=storage;this.state='menu';this.lastCheckpoint=null;this.message='';}
  get playing(){return this.state==='playing';}
  get saveAvailable(){try{return Boolean(this.storage.getItem(M02_SAVE_KEY));}catch{return false;}}
- start(){this.sim.checkpoints.clear();this.sim.reset('C01');this.lastCheckpoint=null;this.state='playing';this.renderer.presentation.unlockAudio();this.save();}
+ start(){const options={...this.sim.audiovisual.accessibility};this.sim.checkpoints.clear();this.sim.reset('C01');this.sim.setAccessibilityOptions(options);const initial=this.sim.checkpoints.get('cp_m02_a_preparacao');if(initial)initial.audiovisual=this.sim.audiovisual.snapshot();this.lastCheckpoint=null;this.state='playing';this.renderer.presentation.unlockAudio();this.save();}
  pause(){if(this.playing){this.state='paused';this.renderer.presentation.audio.suspend();}}
  resume(){if(this.state==='paused'){this.state='playing';this.renderer.presentation.unlockAudio();}}
  save(){

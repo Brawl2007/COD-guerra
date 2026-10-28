@@ -14,6 +14,15 @@ import {M01CombatFeedback} from './m01-combat-feedback.js';
 // camera; changing this lens crops the stock and magnifies the near hands.
 export const createM02WeaponCamera=()=>new THREE.PerspectiveCamera(58,1,WZ29_VISUAL.near,6);
 
+// Damage source is presentation-only and is sampled against mission time.
+// The angle remains correct as the player turns or moves after the hit.
+export function m02DamageIndicator(source,player,clock,enabled=true){
+ if(!enabled||!source||!Number.isFinite(clock))return null;
+ const age=clock-source.clock;if(age<-.001||age>=1.2)return null;
+ const dx=source.x-player.x,dz=source.z-player.z;if(!Number.isFinite(dx)||!Number.isFinite(dz)||Math.hypot(dx,dz)<.05)return null;
+ return {angle:Math.atan2(dz,dx)-player.angle,opacity:Math.max(0,1-Math.max(0,age)/1.2)};
+}
+
 // Translated actors and weapon records belong to presentation. The shared renderers
 // read the collision layout; they never decide M02 combat or advance its clock.
 export function m02VisualActor(actor, team, clock) {
@@ -46,6 +55,7 @@ export class M02Presentation {
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
     this.feedback=new M01CombatFeedback();
+    this.damageSource=null;
     this.footsteps=new M02Footsteps(this.audio);
     this.m02Weapons=new M02Weapons();
     this.ready = Promise.all([this.characters.load('medium').then(()=>this.characters.prepareM02Clips()),this.m02Weapons.ready]);
@@ -58,6 +68,7 @@ export class M02Presentation {
     if(sim.clock<this.resetClock||sim.player!==this.playerRecord||sim.world!==this.presentationWorld){
       this.audio.resetPresentation(sim.clock);this.fireTimes.clear();this.roundEvents.clear();this.footsteps.reset();
       this.feedback?.reset();
+      this.damageSource=null;
       this.characters.resetM02Pose();this.visualWorld=null;
     }
     this.playerRecord=sim.player;this.presentationWorld=sim.world;this.resetClock=sim.clock;
@@ -127,7 +138,11 @@ export class M02Presentation {
       if (event.type==='actor-burst') {this.fireTimes.set(event.shooterId,event.clock);this.roundEvents.set(event.shooterId,{clock:event.clock,roundIndex:event.roundIndex??0});}
       const playerHit=event.type==='actor-burst'&&event.side==='enemy'&&event.traces?.some(trace=>trace.hitKind==='actor'&&trace.hitId===sim.player.id);
       const blastHit=event.type==='grenade-exploded'&&event.affectedActors?.some(actor=>actor.id===sim.player.id&&actor.damage>0);
-      if(playerHit||blastHit){const direction=this.spatial(event.origin??event.center,sim).pan;this.feedback?.playerHit(event.clock??sim.clock,direction);}
+      if(playerHit||blastHit){
+        const source=event.origin??event.center,direction=this.spatial(source,sim).pan;
+        this.feedback?.playerHit(event.clock??sim.clock,direction);
+        if(Number.isFinite(source?.x)&&Number.isFinite(source?.z))this.damageSource={x:source.x,z:source.z,clock:event.clock??sim.clock};
+      }
       // A trusted gesture may still be resuming the context. Web Audio accepts
       // scheduled voices while suspended; dropping this event loses the first shot.
       if (!this.audio.ctx || this.audio.ctx.state==='closed') continue;

@@ -1,6 +1,57 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('subtitle and damage direction options work through start, hit and checkpoint restore',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await expect(page.locator('#mission-subtitles')).toBeChecked();await expect(page.locator('#mission-direction-toggle')).toBeChecked();
+ await page.uncheck('#mission-subtitles');await page.uncheck('#mission-direction-toggle');await page.click('#mission-start');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ const initial=await page.evaluate(()=>({options:window.m02Bench.sim.audiovisual.accessibility,checkpoint:window.m02Bench.sim.checkpoints.get('cp_m02_a_preparacao').audiovisual.accessibility,subtitle:document.querySelector('#dialogue-banner').style.display}));
+ expect(initial.options.subtitlesEnabled).toBe(false);expect(initial.options.directionalIndicatorsEnabled).toBe(false);
+ expect(initial.checkpoint.subtitlesEnabled).toBe(false);expect(initial.checkpoint.directionalIndicatorsEnabled).toBe(false);expect(initial.subtitle).toBe('none');
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.check('#mission-subtitles');await page.check('#mission-direction-toggle');
+ await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;sim.enterAreaBC06();sim.allies=[];
+  const gun=sim.enemies.find(e=>e.weapon==='mg34');sim.enemies=[gun];
+  Object.assign(gun,{x:0,y:0,z:100,mag:50,suppressed:0,nextFireAt:sim.clock+100});
+  Object.assign(sim.player,{x:0,y:0,z:106,eyeHeight:1.65,health:100,angle:0});sim.drainEvents();renderer.renderFrame(0,0);
+  window.m02BeforeDirection=sim.snapshot();
+ });
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ const hit=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,gun=sim.enemies[0];const e=sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:106},'enemy');renderer.renderFrame(0,0);return {hitId:e.traces[0].hitId,health:sim.player.health};});
+ expect(hit.hitId).toBe('piotr_sokol');expect(hit.health).toBeLessThan(100);
+ await page.waitForFunction(()=>!document.querySelector('#mission-direction').hidden);
+ const visible=await page.evaluate(()=>({transform:document.querySelector('#mission-direction').style.transform,opacity:Number(document.querySelector('#mission-direction').style.opacity)}));
+ expect(visible.transform).toContain('rotate(');expect(visible.opacity).toBeGreaterThan(0);
+ const banner=await page.locator('#cartela-banner').boundingBox(),marker=await page.locator('#mission-direction').boundingBox();
+ expect(banner.y+banner.height).toBeLessThan(marker.y);
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · DIREÇÃO DO DANO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('damage-direction.png')});
+ await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02BeforeDirection);renderer.renderFrame(0,0);});
+ await page.waitForFunction(()=>document.querySelector('#mission-direction').hidden);
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await expect(page.locator('#mission-subtitles')).toBeChecked();await expect(page.locator('#mission-direction-toggle')).toBeChecked();
+ await page.uncheck('#mission-direction-toggle');await page.click('#mission-resume');
+ const disabled=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,gun=sim.enemies[0];sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:106},'enemy');renderer.renderFrame(0,0);return {source:renderer.presentation.damageSource,enabled:sim.audiovisual.accessibility.directionalIndicatorsEnabled};});
+ expect(disabled.source).not.toBeNull();expect(disabled.enabled).toBe(false);
+ await page.waitForTimeout(100);expect(await page.locator('#mission-direction').isHidden()).toBe(true);expect(errors).toEqual([]);
+ console.log('M02 accessibility and damage direction',JSON.stringify({initial,hit,visible,disabled}));
+});
+
+test('location card stays inside the viewport and clear of the aiming area',async({page})=>{
+ await page.goto('/COD-guerra/m02.html?quality=low&debug=1');await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.waitForFunction(()=>getComputedStyle(document.querySelector('#cartela-banner')).display!=='none');
+ for(const viewport of [{width:480,height:270},{width:1280,height:720}]){
+  await page.setViewportSize(viewport);
+  const banner=await page.locator('#cartela-banner').boundingBox();
+  expect(banner.x).toBeGreaterThanOrEqual(0);expect(banner.x+banner.width).toBeLessThanOrEqual(viewport.width);
+  expect(banner.y+banner.height).toBeLessThan(viewport.height/2-49);
+ }
+});
+
 test('the player can collect real compatible ammunition from a defeated rifleman using E',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

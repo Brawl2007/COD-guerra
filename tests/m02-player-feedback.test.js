@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
-import {M02Presentation} from '../src/render/m02-presentation.js';
+import {M02Presentation,m02DamageIndicator} from '../src/render/m02-presentation.js';
 import {AudioManager} from '../src/core/audio.js';
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
 import {M01CombatFeedback} from '../src/render/m01-combat-feedback.js';
@@ -30,11 +30,12 @@ test('a real hostile hit identifies the actual victim and plays the M01 critical
   const before=sim.snapshot();p.consume(events,sim);assert.deepEqual(sim.snapshot(),before);
   assert.equal(audio.diagnostics.eventCounts['player-hit'],1);
   assert.equal(p.feedback.counts.playerHit,1);assert.ok(p.feedback.sample(sim.clock,'low').overlayAlpha>0);
+  assert.deepEqual(p.damageSource,{x:round.origin.x,z:round.origin.z,clock:round.clock});
   assert.equal(p.feedback.sample(sim.clock+2,'low').overlayAlpha,0,'the injury flash decays on mission time');
   assert.ok([...audio.voices].some(v=>v.kind==='player-hit'&&v.priority===100),'critical hit must enter a full voice pool');
   sim.restoreSnapshot(save);sim.drainEvents();sim.fireActorBurst(sim.enemies[0],sim.player,{x:0,y:1.25,z:106},'enemy');
   assert.deepEqual(sim.drainEvents().find(e=>e.type==='actor-burst').traces,round.traces,'restored RNG preserves the same impact and victim');
-  p.syncSession(sim);assert.equal(p.feedback.counts.playerHit,0,'same-clock checkpoint restore removes stale impact feedback');
+  p.syncSession(sim);assert.equal(p.feedback.counts.playerHit,0,'same-clock checkpoint restore removes stale impact feedback');assert.equal(p.damageSource,null);
  }finally{audio.dispose();}
 });
 
@@ -47,8 +48,17 @@ test('an ally being hit, a wall stopping the round, and a blocked explosion do n
    {hitKind:'world',material:'stone',point:{x:0,y:1,z:104},origin:{x:0,y:1,z:100}},
   ])p.consume([{type:'actor-burst',side:'enemy',shooterId:'other',weapon:'kar98k',rounds:1,traces:[trace],origin:trace.origin}],sim);
   p.consume([{type:'grenade-exploded',center:{x:0,y:0,z:103},affectedActors:[{id:sim.player.id,damage:0,blockedByWall:true}]}],sim);
-  assert.equal(audio.diagnostics.eventCounts['player-hit']??0,0);assert.equal(p.feedback.counts.playerHit,0);assert.deepEqual(sim.snapshot(),before);
+  assert.equal(audio.diagnostics.eventCounts['player-hit']??0,0);assert.equal(p.feedback.counts.playerHit,0);assert.equal(p.damageSource,undefined);assert.deepEqual(sim.snapshot(),before);
  }finally{audio.dispose();}
+});
+
+test('damage direction follows the physical source as the player turns and obeys the accessibility setting',()=>{
+ const source={x:10,z:0,clock:5},player={x:0,z:0,angle:0};
+ assert.equal(m02DamageIndicator(source,player,5).angle,0);
+ player.angle=Math.PI/2;assert.equal(m02DamageIndicator(source,player,5.3).angle,-Math.PI/2);
+ assert.ok(m02DamageIndicator(source,player,5.3).opacity<1);
+ assert.equal(m02DamageIndicator(source,player,5.3,false),null);
+ assert.equal(m02DamageIndicator(source,player,6.2),null);
 });
 
 test('real grenade damage and damaging landings use the existing M01 body and landing sounds',()=>{

@@ -294,7 +294,7 @@ function updateHud() {
 
   if (elDialogueBanner) {
     const line = sim.dialogue.activeLine;
-    if (line) {
+    if (line && sim.audiovisual.accessibility.subtitlesEnabled) {
       elDialogueBanner.style.display = 'block';
       elDialogueBanner.innerHTML = `<span class="speaker">${line.speakerName}:</span> «${line.text}»`;
     } else {

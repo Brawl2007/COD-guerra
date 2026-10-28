@@ -14,3 +14,24 @@ test('M02 session saves checkpoints across reload without changing the simulatio
  db.setItem(M02_SAVE_KEY,'broken json');const before=restored.snapshot();
  assert.equal(other.continue(),false);assert.deepEqual(restored.snapshot(),before);
 });
+
+test('accessibility selected before starting is retained in the initial checkpoint and after restart',()=>{
+ const db=storage(),sim=new M02BenchSimulation(),session=new M02Session(sim,renderer,db);
+ sim.setAccessibilityOptions({subtitlesEnabled:false,directionalIndicatorsEnabled:false,reducedCameraShake:true});
+ session.start();const selected=structuredClone(sim.audiovisual.accessibility);
+ assert.equal(selected.subtitlesEnabled,false);assert.equal(selected.directionalIndicatorsEnabled,false);assert.equal(selected.reducedCameraShake,true);
+ const checkpoint=sim.checkpoints.get('cp_m02_a_preparacao');assert.deepEqual(checkpoint.audiovisual.accessibility,selected);
+ assert.equal(sim.drainEvents().filter(e=>e.type==='checkpoint-saved'&&e.checkpointId==='cp_m02_a_preparacao').length,1,'starting does not duplicate checkpoint events');
+ sim.setAccessibilityOptions({subtitlesEnabled:true,directionalIndicatorsEnabled:true,reducedCameraShake:false});session.restart();
+ assert.deepEqual(sim.audiovisual.accessibility,selected);
+ const restored=new M02BenchSimulation(),other=new M02Session(restored,renderer,db);assert.equal(other.continue(),true);
+ assert.deepEqual(restored.audiovisual.accessibility,selected);
+});
+
+test('starting with default accessibility keeps the original C01 snapshot and checkpoint events',()=>{
+ const baseline=new M02BenchSimulation(),candidate=new M02BenchSimulation();
+ baseline.reset('C01');const session=new M02Session(candidate,renderer,storage());session.start();
+ assert.deepEqual(candidate.snapshot(),baseline.snapshot());
+ assert.deepEqual(candidate.checkpoints.get('cp_m02_a_preparacao'),baseline.checkpoints.get('cp_m02_a_preparacao'));
+ assert.deepEqual(candidate.drainEvents(),baseline.drainEvents());
+});
