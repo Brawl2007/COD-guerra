@@ -1,6 +1,36 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('a real hit gives the player M01 audio and visible feedback, cleared by checkpoint restore',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ // Paused inspection fixture: expose the normal HUD and label the screenshot.
+ await page.addStyleTag({content:'#mission-menu{display:none!important}#mission-hit[hidden]{display:block!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"INSPEÇÃO CONTROLADA · IMPACTO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ const before=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await renderer.presentation.audio.ctx.resume();
+  sim.enterAreaBC06();sim.allies=[];const gun=sim.enemies.find(e=>e.weapon==='mg34');sim.enemies=[gun];
+  Object.assign(gun,{x:0,y:0,z:100,mag:50,suppressed:0});Object.assign(sim.player,{x:0,y:0,z:106,eyeHeight:1.65,health:100,angle:-Math.PI/2});
+  sim.drainEvents();renderer.renderFrame(0,0);window.m02DamageSave=sim.snapshot();return sim.player.health;
+ });
+ await page.screenshot({path:testInfo.outputPath('before-hit.png')});
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,gun=sim.enemies[0];
+  sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:106},'enemy');const after=JSON.stringify(sim.snapshot());
+  renderer.renderFrame(0,0);
+  return {health:sim.player.health,count:renderer.presentation.feedback.counts.playerHit,flash:renderer.presentation.feedback.sample(sim.clock,'low').overlayAlpha,
+   sounds:renderer.presentation.audio.diagnostics.eventCounts['player-hit'],unchanged:after===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.health).toBeLessThan(before);expect(result.count).toBe(1);expect(result.flash).toBeGreaterThan(0);expect(result.sounds).toBeGreaterThan(0);expect(result.unchanged).toBe(true);
+ await page.waitForFunction(()=>Number(document.querySelector('#mission-hit').style.opacity)>0);
+ await page.waitForTimeout(450);await page.screenshot({path:testInfo.outputPath('after-hit.png')});
+ const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02DamageSave);renderer.renderFrame(0,0);return {health:sim.player.health,count:renderer.presentation.feedback.counts.playerHit};});
+ expect(restored.health).toBe(before);expect(restored.count).toBe(0);expect(errors).toEqual([]);
+ console.log('M02 real player hit fixture',JSON.stringify({before,...result,restored}));
+});
+
 test('M02 real NPC collision drives an audible material impact in Web Audio',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

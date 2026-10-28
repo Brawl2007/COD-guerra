@@ -23,7 +23,8 @@ export function mountM02SessionUi(session,renderer){
    root.querySelector('#mission-quality').value=renderer.qualityProfile.id;
    const sim=session.sim,health=sim.player.health;
    vitals.querySelector('#mission-condition').textContent=health>60?'Em condições':health>25?'Ferido':'Ferimento grave';
-   hit.style.opacity=health<40?String((40-health)/90):'0';
+   const hitFeedback=renderer.presentation.feedback.sample(sim.clock,renderer.qualityProfile.id);
+   hit.style.opacity=String(Math.max(health<40?(40-health)/90:0,hitFeedback.overlayAlpha));
    const objective=m02ObjectivePresentation(sim),point=objective.point;
    if(point){const dx=point[0]-sim.player.x,dz=point[1]-sim.player.z,angle=Math.atan2(dz,dx)-sim.player.angle;
     vitals.querySelector('#mission-bearing').textContent=`${Math.abs(angle)% (Math.PI*2)<.4?'↑':Math.sin(angle)>0?'→':'←'} ${Math.round(Math.hypot(dx,dz))} m · objetivo`;

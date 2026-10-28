@@ -8,6 +8,7 @@ import {WeaponLighting} from './first-person-weapon-fx.js';
 import {WZ29_VISUAL} from './m01-wz29-presentation.js';
 import {M02Footsteps} from './m02-footsteps.js';
 import {playM02RoundAudio} from './m02-round-audio.js';
+import {M01CombatFeedback} from './m01-combat-feedback.js';
 
 // Match the shared M01 viewmodel projection. ADS zoom belongs to the world
 // camera; changing this lens crops the stock and magnifies the near hands.
@@ -44,6 +45,7 @@ export class M02Presentation {
     // M01 viewmodel lives in camera space and has its own depth pass.
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
+    this.feedback=new M01CombatFeedback();
     this.footsteps=new M02Footsteps(this.audio);
     this.m02Weapons=new M02Weapons();
     this.ready = Promise.all([this.characters.load('medium').then(()=>this.characters.prepareM02Clips()),this.m02Weapons.ready]);
@@ -55,6 +57,7 @@ export class M02Presentation {
   syncSession(sim){
     if(sim.clock<this.resetClock||sim.player!==this.playerRecord||sim.world!==this.presentationWorld){
       this.audio.resetPresentation(sim.clock);this.fireTimes.clear();this.roundEvents.clear();this.footsteps.reset();
+      this.feedback?.reset();
       this.characters.resetM02Pose();this.visualWorld=null;
     }
     this.playerRecord=sim.player;this.presentationWorld=sim.world;this.resetClock=sim.clock;
@@ -122,6 +125,9 @@ export class M02Presentation {
     this.syncSession(sim);
     for (const event of events) {
       if (event.type==='actor-burst') {this.fireTimes.set(event.shooterId,event.clock);this.roundEvents.set(event.shooterId,{clock:event.clock,roundIndex:event.roundIndex??0});}
+      const playerHit=event.type==='actor-burst'&&event.side==='enemy'&&event.traces?.some(trace=>trace.hitKind==='actor'&&trace.hitId===sim.player.id);
+      const blastHit=event.type==='grenade-exploded'&&event.affectedActors?.some(actor=>actor.id===sim.player.id&&actor.damage>0);
+      if(playerHit||blastHit){const direction=this.spatial(event.origin??event.center,sim).pan;this.feedback?.playerHit(event.clock??sim.clock,direction);}
       // A trusted gesture may still be resuming the context. Web Audio accepts
       // scheduled voices while suspended; dropping this event loses the first shot.
       if (!this.audio.ctx || this.audio.ctx.state==='closed') continue;
@@ -143,6 +149,11 @@ export class M02Presentation {
       if (event.type==='mg-burst')this.audio.mg34Burst(pan,distance,event.rounds??3,.09,`mg:${event.clock}`);
       if (event.type==='grenade-exploded') this.audio.explosion(pan,distance);
       this.audio.setOcclusion(null);
+      // Only the actual hit victim (not the intended target) receives the
+      // high-priority M01 body cue. Cover and friendly casualties stay silent.
+      if(playerHit)this.audio.hit(`m02-hit:${event.burstId}:${event.roundIndex}`);
+      if(blastHit)this.audio.hit(`m02-blast-hit:${event.clock}`);
+      if(event.type==='player-landing'&&event.damage>0)this.audio.landing(event.speed,event.surface,`m02-landing:${event.clock}`);
       // Impacts and passing rounds have their own locations; the shooter's
       // occlusion and panning do not describe where a bullet lands.
       if(event.type==='shot-fired')playM02RoundAudio(this.audio,event.shot,sim,this.spatial.bind(this),event.shot?.id??`player:${sim.clock}`);

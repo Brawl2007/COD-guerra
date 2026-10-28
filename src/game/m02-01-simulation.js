@@ -926,7 +926,7 @@ export class M02BenchSimulation {
       const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range,muzzle);
       // Presentation receives the actual, spread/occlusion-resolved round. The
       // intended aim point below remains tactical memory, never an impact FX.
-      traces.push({origin:{...muzzle},point:hit?.point?{...hit.point}:{x:origin.x+dir.x*prof.range,y:origin.y+dir.y*prof.range,z:origin.z+dir.z*prof.range},hitKind:hit?.kind??'none',material:hit?.kind==='actor'?'character':hit?.material??'air'});
+      traces.push({origin:{...muzzle},point:hit?.point?{...hit.point}:{x:origin.x+dir.x*prof.range,y:origin.y+dir.y*prof.range,z:origin.z+dir.z*prof.range},hitKind:hit?.kind??'none',hitId:hit?.kind==='actor'?hit.actor.id:null,material:hit?.kind==='actor'?'character':hit?.material??'air'});
 
       if (hit && hit.kind === 'world' && hit.material === 'glass' && hit.windowId) {
         this.world.setWindowState(hit.windowId, 'broken');
