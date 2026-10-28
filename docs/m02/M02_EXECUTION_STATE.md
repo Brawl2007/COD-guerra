@@ -1,5 +1,13 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — dano e travessia, 2026-10-28
+
+`508b8f8` liga o ferimento real de Piotr ao áudio e ao feedback visual M01; vítimas aliadas e impactos bloqueados não provocam essa reação. `dd8358b` aplica dano e áudio de aterragem mesmo quando o jogador deixa de dar input na queda. [Provas e percurso](../verification/m02-runtime/player-damage-2026-10-28/README.md): 94 testes M02, build, três browser e percurso C01–C12/M03 PASS; código desse percurso anterior à alteração seguinte.
+
+`1eb75f1` integra LG01–LG12 na perceção e balística dos inimigos e nas explosões enquanto expostos; feridos graves diminuem a velocidade e os mortos deixam de atravessar. A contagem reconhece a passagem da porta sul B12, podendo diminuir antes do ponto de reunião se houver uma perda. O resultado efetivo passa a C12/M03. 98 testes M02, build e três browser PASS; nova build de produção completou C01–C12, zero mortes do jogador/erros, vida 100, giz, abastecimentos, Lis e 12/12. Os 12 não sofreram dano adicional nesse percurso; perdas foram verificadas em cenários controlados. Ver [evac-combat-2026-10-28](../verification/m02-runtime/evac-combat-2026-10-28/README.md) para capturas, casos de falha e proveniência.
+
+O proprietário pediu que a avaliação humana fique por último: continuar com as tarefas técnicas/artísticas antes dessa etapa. Continuam abertos atuação de apoio real a Lis, servente MG, qualidade de soldados/mãos/rostos e cenários, som e mistura sob carga; o complemento integral ainda não foi recebido. Não declarar a missão acabada ou comparável a COD apenas pelos testes. Main e produção não foram alteradas; preservar RNG, checkpoints, consequências e roteiro.
+
 ## Continuação — áudio balístico, 2026-10-28
 
 Código `9ca83a3`: impactos NPC e do jogador passam ao som M01 a partir do ponto de colisão real, com família de material, posição e oclusão; projéteis inimigos próximos produzem estalo apenas quando o segmento efetivo passa perto do jogador com linha livre. Simulação/saves/RNG inalterados. 90 testes M02, build e dois casos browser PASS; percurso de produção C01–C12 PASS (0 mortes/erros, vida 89, giz, água/munições, Lis evacuado, 12/12, M03 válido). Provas e capturas reais Low em [round-audio-2026-10-28](../verification/m02-runtime/round-audio-2026-10-28/README.md). O limite de vozes foi atingido, com 6 recusas (4 da categoria do jogador) e 9 substituições: investigar mistura/prioridade em combate intenso. Contagem de eventos e pico do master não são avaliação humana da mistura.

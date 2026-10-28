@@ -1,0 +1,21 @@
+[2m[WebServer] [22m(node:45593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:45617) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45617) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 C11 casualty fixture {"hitId":"LG01","alive":false,"first":{"id":"LG01","lod":1,"key":"pl:1","visual":{"version":"m01-soldier-visual/v1","id":"pl:4","nation":"pl","profile":4,"head":"dudek","equipment":"field","civilian":false,"faceStyle":0,"pack":1.2,"shovel":true,"wear":0,"proxyCloth":"b9b496","proxyHelmet":"615d45","proxySkin":"fffaf6"},"clip":"death_crumple","clipTime":0.49999999999999994,"loop":false,"blend":[{"clip":"death_crumple","weight":1,"time":0.49999999999999994}],"weapon":"wz29","weaponLOD":1,"muzzle":[80.33463086417305,0.2752401393462877,-99.46671899033363],"weaponMeshes":[]},"restored":{"id":"LG01","lod":1,"key":"pl:1","visual":{"version":"m01-soldier-visual/v1","id":"pl:4","nation":"pl","profile":4,"head":"dudek","equipment":"field","civilian":false,"faceStyle":0,"pack":1.2,"shovel":true,"wear":0,"proxyCloth":"b9b496","proxyHelmet":"615d45","proxySkin":"fffaf6"},"clip":"death_crumple","clipTime":0.49999999999999994,"loop":false,"blend":[{"clip":"death_crumple","weight":1,"time":0.49999999999999994}],"weapon":"wz29","weaponLOD":1,"muzzle":[80.33463086417305,0.2752401393462877,-99.46671899033363],"weaponMeshes":[]}}
+  ✓  1 tests/browser/m02-mission.spec.js:4:1 › C11 real casualty retains an M01 death pose after a same-clock checkpoint restore (18.1s)
+M02 real player hit fixture {"before":100,"health":83,"count":1,"flash":0.24648,"sounds":1,"unchanged":true,"restored":{"health":100,"count":0}}
+  ✓  2 tests/browser/m02-mission.spec.js:29:1 › a real hit gives the player M01 audio and visible feedback, cleared by checkpoint restore (11.0s)
+  ✓  3 tests/browser/m02-mission.spec.js:193:1 › C11 wounded men use the real unarmed torso pose and retain it after a same-clock restore (9.0s)
+
+  3 passed (41.6s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

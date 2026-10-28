@@ -1,0 +1,21 @@
+[2m[WebServer] [22m(node:43760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:43786) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43786) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 audio probe {"peak":0.20028634369373322,"shots":1,"state":"running"}
+  ✓  1 tests/browser/m02-01-quinta.spec.js:276:1 › M02 reuses loaded M01 GLB rigs and viewmodel, emits audible samples, and preserves simulation on presentation (20.7s)
+M02 real player hit fixture {"before":100,"health":83,"count":1,"flash":0.24648,"sounds":1,"unchanged":true,"restored":{"health":100,"count":0}}
+  ✓  2 tests/browser/m02-mission.spec.js:4:1 › a real hit gives the player M01 audio and visible feedback, cleared by checkpoint restore (9.6s)
+  ✓  3 tests/browser/m02-mission.spec.js:131:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (17.7s)
+
+  3 passed (52.3s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
