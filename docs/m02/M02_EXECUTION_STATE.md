@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — acessibilidade e leitura do combate, 2026-10-28
+
+`8fc54ef` expõe legendas e indicação de dano no menu, respeita a escolha no checkpoint inicial e apresenta a direção apenas para dano real a Piotr; o restauro limpa o indicador. A cartela deixa livre a área central da mira, inclusive em ecrãs baixos. 112 testes M02, build e quatro browser PASS; [captura e provas](../verification/m02-runtime/accessibility-2026-10-28/README.md). O percurso completo mais recente continua o de `a65dfb0` (uma morte e retoma), não foi repetido para esta etapa de interface; o arranque com opções padrão tem snapshot e eventos iguais ao anterior.
+
+Continuar o desenvolvimento antes da avaliação humana: apoio físico a Lis, servente MG, apresentação de armas e lançamento, soldados/mãos/rostos, cenários, IA e som continuam abertos. O documento complementar de 173.148 palavras continua ausente. Main e produção intactas; não declarar a missão concluída apenas pelos testes.
+
 ## Continuação — ressalto e munição, 2026-10-28
 
 `aec045e` corrige o ressalto de granadas: parede/teto refletem a componente normal, solo conserva deslocação, lançamento junto de uma parede não aparece do outro lado e estados antigos na superfície são recuperados. Snapshot/fusível/RNG preservados. [Provas](../verification/m02-runtime/grenade-physics-2026-10-28/README.md) incluem o lançamento por `G` contra a parede B05. A colisão usa o centro do projétil e pára o restante deslocamento naquele tick; falta animação de lançamento e modelo detalhado. A primeira passagem dessa build foi interrompida em B06, não declarada concluída.

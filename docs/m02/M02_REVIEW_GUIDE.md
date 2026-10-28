@@ -7,7 +7,7 @@ Candidata em revisão após rejeição da apresentação pelo proprietário, bra
 
 Node 24, `npm ci`, `npm run dev`, entrada `/COD-guerra/m02.html`. O menu permite escolher Máxima, Equilibrada ou Leve; SwiftShader inicia em Leve. A bancada `m02-01.html` permanece separada da entrada de produto. Em produto, mutações técnicas só existem com `?debug=1`.
 
-WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R recarregar, G granada, E interagir. Z suprimir, X avançar, B flanquear. Esc pausa; F5 guarda checkpoint, F9 retoma. Volume e redução de movimento da câmara estão no menu. E também permite recolher os cartuchos de 7,92 mm existentes num atirador Kar98k abatido, quando estiver próximo e sem parede no caminho. Só a wz.29 é controlada pelo jogador; MG34, wz.28 e MP38 são armas de NPC, sem sistema de recolha/troca de armas.
+WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R recarregar, G granada, E interagir. Z suprimir, X avançar, B flanquear. Esc pausa; F5 guarda checkpoint, F9 retoma. Volume, legendas, indicação de dano e redução de movimento da câmara estão no menu. E também permite recolher os cartuchos de 7,92 mm existentes num atirador Kar98k abatido, quando estiver próximo e sem parede no caminho. Só a wz.29 é controlada pelo jogador; MG34, wz.28 e MP38 são armas de NPC, sem sistema de recolha/troca de armas.
 
 ## Percurso de avaliação
 

@@ -1,0 +1,22 @@
+[2m[WebServer] [22m(node:66907) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:66931) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:66931) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 accessibility and damage direction {"initial":{"options":{"subtitlesEnabled":false,"directionalIndicatorsEnabled":false,"reducedDynamicRange":false,"tinnitusIntensity":0.5,"reducedCameraShake":false,"reducedViolence":false},"checkpoint":{"subtitlesEnabled":false,"directionalIndicatorsEnabled":false,"reducedDynamicRange":false,"tinnitusIntensity":0.5,"reducedCameraShake":false,"reducedViolence":false},"subtitle":"none"},"hit":{"hitId":"piotr_sokol","health":83},"visible":{"transform":"translate(-50%, -50%) rotate(-1.5708rad)","opacity":0.958333},"disabled":{"source":{"x":6.415856484418614e-17,"z":101.0477888790279,"clock":0.1},"enabled":false}}
+  ✓  1 tests/browser/m02-mission.spec.js:4:1 › subtitle and damage direction options work through start, hit and checkpoint restore (12.1s)
+  ✓  2 tests/browser/m02-mission.spec.js:44:1 › location card stays inside the viewport and clear of the aiming area (12.8s)
+M02 real player hit fixture {"before":100,"health":83,"count":1,"flash":0.24648,"sounds":1,"unchanged":true,"restored":{"health":100,"count":0}}
+  ✓  3 tests/browser/m02-mission.spec.js:145:1 › a real hit gives the player M01 audio and visible feedback, cleared by checkpoint restore (8.9s)
+  ✓  4 tests/browser/m02-mission.spec.js:272:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (17.4s)
+
+  4 passed (53.7s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
