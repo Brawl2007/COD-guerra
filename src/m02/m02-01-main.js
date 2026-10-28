@@ -448,5 +448,5 @@ const benchApi = {
 };
 
 if(debugMode) window.m02Bench=benchApi;
-window.m02Diagnostics=()=>({state:session?.state??'bench',...benchApi.getStateSummary(),presentation:renderer.presentation.diagnostics,environment:renderer.environment.diagnostics,lighting:renderer.lighting.diagnostics,combatFx:renderer.combatFx.diagnostics});
+window.m02Diagnostics=()=>({state:session?.state??'bench',...benchApi.getStateSummary(),presentation:renderer.presentation.diagnostics,environment:renderer.environment.diagnostics,lighting:renderer.lighting.diagnostics,combatFx:renderer.combatFx.diagnostics,grenades:renderer.grenadeViews.diagnostics});
 requestAnimationFrame(animate);

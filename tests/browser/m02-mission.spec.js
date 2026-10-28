@@ -1,6 +1,28 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('the normal grenade input displays the live projectile and a checkpoint removes it',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.evaluate(()=>{window.m02BeforeGrenade=window.m02Bench.sim.snapshot();});
+ await page.keyboard.press('KeyG');await page.waitForFunction(()=>window.m02Diagnostics().grenades.active===1);
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.addStyleTag({content:'#mission-menu{display:none!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"INSPEÇÃO CONTROLADA · GRANADA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ const shown=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,g=sim.grenades[0],mesh=renderer.grenadeViews.views.get(g.id),before=JSON.stringify(sim.snapshot());
+  renderer.grenadeViews.update(sim);
+  return {ammo:sim.grenadeAmmo,ids:renderer.grenadeViews.diagnostics.ids,position:mesh.position.toArray(),actual:[g.x,g.y,g.z],radius:mesh.scale.x,visible:mesh.visible,unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(shown.ammo).toBe(1);expect(shown.ids).toHaveLength(1);expect(shown.position).toEqual(shown.actual);
+ expect(shown.radius).toBe(.07);expect(shown.visible).toBe(true);expect(shown.unchanged).toBe(true);
+ await page.screenshot({path:testInfo.outputPath('grenade-in-flight.png')});
+ const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02BeforeGrenade);renderer.renderFrame(0,0);return {ammo:sim.grenadeAmmo,active:renderer.grenadeViews.diagnostics.active};});
+ expect(restored).toEqual({ammo:2,active:0});expect(errors).toEqual([]);
+ console.log('M02 real grenade input',JSON.stringify({shown,restored}));
+});
+
 test('C11 real casualty retains an M01 death pose after a same-clock checkpoint restore',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

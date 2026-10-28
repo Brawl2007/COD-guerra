@@ -13,6 +13,7 @@ import {initialQuality as selectM01InitialQuality} from './three-renderer.js';
 import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
 import {M02Lighting} from './m02-lighting.js';
 import {M02CombatFX} from './m02-combat-fx.js';
+import {M02Grenades} from './m02-grenades.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -169,6 +170,7 @@ export class M02BenchRenderer {
 
     this.environment = new M02Environment(this.scene, sim.world, this.qualityProfile.id);
     this.materials = { ...this.#createMaterials(), ...createSoldierRigMaterials() };
+    this.grenadeViews=new M02Grenades(this.scene,this.materials.grenade_body);
     this.cargo = new M02CargoVisuals();
     this.presentation = new M02Presentation(this.scene, this.camera, sim);
     this.materialLibraryReady = this.#loadMaterialLibrary();
@@ -950,6 +952,7 @@ export class M02BenchRenderer {
     }
 
     this.cargo.sync(this);
+    this.grenadeViews.update(this.sim);
 
     // Update Cell B supply cart and volume crates
     if (currentCellId === 'B' && this.sim.areaB?.supplyCart) {
