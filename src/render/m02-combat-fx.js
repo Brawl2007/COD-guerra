@@ -100,7 +100,10 @@ export class M02CombatFX {
       }
     }
     const light=sampleMuzzleEnvironmentLight(this.shots.filter(s=>s.shooterId!=='player').map(s=>({x:s.origin.x,y:s.origin.y-1.35,z:s.origin.z,alive:true,active:true,firedAt:s.at,weapon:s.weapon})),time,sim.player,quality);
-    this.light.visible=light.active;if(light.active){this.light.position.set(...light.position);this.light.intensity=light.intensity;}
+    // Same policy as M01 weapon FX: keep the light count stable during combat,
+    // varying intensity rather than switching light-count variants per flash.
+    // Low has no muzzle light and pays no additional light loop.
+    this.light.visible=quality!=='low';this.light.intensity=light.active?light.intensity:0;if(light.active)this.light.position.set(...light.position);
     for(const [name,b]of Object.entries(this.batches)){
       b.count=counts[name];b.instanceMatrix.needsUpdate=true;if(b.instanceColor)b.instanceColor.needsUpdate=true;
       for(const a of Object.values(b.geometry.attributes))if(a.isInstancedBufferAttribute)a.needsUpdate=true;

@@ -35,15 +35,18 @@ test('NPC impact FX use the actual obstructed round, not tactical aim; presentat
 test('sustained fire keeps bounded M01 particle batches and expires without persistent laser lines or hit spheres',()=>{
  const f=fixture(),{fx,sim,camera}=f;
  try{
-  fx.sync(sim);const geometries=Object.values(fx.batches).map(b=>b.geometry),childCount=fx.root.children.length;
+  sim.teleportPlayer(0,3,0);fx.sync(sim);const geometries=Object.values(fx.batches).map(b=>b.geometry),childCount=fx.root.children.length;
   for(let i=0;i<512;i++)fx.shot({origin:{x:0,y:1,z:0},point:{x:0,y:1,z:100},hitKind:'none',material:'air'},0,{weapon:'mg34',shooterId:`gun${i%8}`,roundIndex:i});
   assert.equal(fx.shots.length,128);assert.equal(fx.dropped,384);
   sim.clock=.08;fx.update(sim,camera,'high',{daylight:1});
+  assert.equal(fx.light.visible,true);assert.ok(fx.light.intensity>0);
   assert.equal(fx.counts.flash,0);assert.ok(fx.counts.tracer>0);assert.equal(fx.counts.dust,0,'a miss in air cannot invent a ground impact');
   for(const b of Object.values(fx.batches))assert.ok(b.count<=b.instanceMatrix.count);
   assert.deepEqual(Object.values(fx.batches).map(b=>b.geometry),geometries);assert.equal(fx.root.children.length,childCount);
   sim.clock=5;fx.update(sim,camera,'high',{daylight:1});
   assert.equal(fx.shots.length,0);assert.equal(Object.values(fx.counts).reduce((a,b)=>a+b,0),0);
+  assert.equal(fx.light.visible,true);assert.equal(fx.light.intensity,0,'inactive flashes retain the same shader light count');
+  fx.update(sim,camera,'low',{daylight:1});assert.equal(fx.light.visible,false);
  }finally{f.dispose();}
 });
 
