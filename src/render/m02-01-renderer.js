@@ -12,6 +12,7 @@ import { selectConsumerLod } from './m01-lod-policy.js';
 import {initialQuality as selectM01InitialQuality} from './three-renderer.js';
 import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
 import {M02Lighting} from './m02-lighting.js';
+import {M02CombatFX} from './m02-combat-fx.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -211,7 +212,7 @@ export class M02BenchRenderer {
     this.hsA2Meshes = new Map();
     this.hsA3Meshes = new Map();
     this.roofMeshes = new Map();
-    this.activeTracers = [];
+
     this.debugLoSVisible = false;
 
     this.telemetryWindow = [];
@@ -225,6 +226,7 @@ export class M02BenchRenderer {
 
     this.#setupLights();
     this.lighting=new M02Lighting(this.scene,this.renderer,this.sunLight,this.hemiLight,this.environment.atmosphere);
+    this.combatFx=new M02CombatFX(this.scene,this.environment.atmosphere);
     this.#buildStaticWorld();
     this.#rebuildDynamicOpenings();
     this.#buildTargets();
@@ -897,29 +899,8 @@ export class M02BenchRenderer {
     return this.lightingPreset;
   }
 
-  spawnShotVisual(shotRecord, colorHex = null) {
-    const color = colorHex ?? (
-      shotRecord.hitTarget
-        ? 0x66bb6a
-        : shotRecord.glassBrokenId
-          ? 0x4dd0e1
-          : 0xffb74d
-    );
-    const pts = [
-      new THREE.Vector3(shotRecord.origin.x, shotRecord.origin.y - 0.06, shotRecord.origin.z),
-      new THREE.Vector3(shotRecord.point.x, shotRecord.point.y, shotRecord.point.z),
-    ];
-    const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({ color }),
-    );
-    const impact = new THREE.Mesh(
-      new THREE.SphereGeometry(0.08, 6, 6),
-      new THREE.MeshBasicMaterial({ color }),
-    );
-    impact.position.set(shotRecord.point.x, shotRecord.point.y, shotRecord.point.z);
-    this.tracersGroup.add(line, impact);
-    this.activeTracers.push({ line, impact, expiresAt: this.sim.clock + 1.4 });
+  spawnShotVisual(shotRecord) {
+    this.combatFx.shot(shotRecord,this.sim.clock);
   }
 
   resize() {
@@ -1024,56 +1005,10 @@ export class M02BenchRenderer {
     const events = this.sim.drainEvents();
     this.presentation.consume(events, this.sim);
     this.environment.consume(events, this.sim);
-    for (const evt of events) {
-      if (evt.type === 'shot-fired' && evt.shot) {
-        this.spawnShotVisual(evt.shot);
-      } else if (evt.type === 'actor-burst' && evt.origin && evt.target) {
-        this.spawnShotVisual(
-          {
-            origin: evt.origin,
-            point: evt.target,
-            hitTarget: evt.hitAny,
-          },
-          evt.side === 'ally' ? 0xffe082 : 0xff6e40,
-        );
-      } else if (evt.type === 'grenade-exploded' && evt.center) {
-        const ring = new THREE.Mesh(
-          new THREE.SphereGeometry(1.6, 12, 10),
-          new THREE.MeshBasicMaterial({ color: 0xff8a3d, transparent: true, opacity: 0.55 }),
-        );
-        ring.position.set(evt.center.x, evt.center.y, evt.center.z);
-        const core = new THREE.Mesh(
-          new THREE.SphereGeometry(0.45, 8, 8),
-          new THREE.MeshBasicMaterial({ color: 0xfff3b0 }),
-        );
-        core.position.set(evt.center.x, evt.center.y, evt.center.z);
-        this.tracersGroup.add(ring, core);
-        this.activeTracers.push({ line: ring, impact: core, expiresAt: this.sim.clock + 1.1 });
-      } else if (evt.type === 'mg-burst') {
-        this.spawnShotVisual(
-          {
-            origin: evt.origin,
-            point: evt.target,
-            hitTarget: false,
-          },
-          0xff5252,
-        );
-      }
-    }
+    this.combatFx.consume(events,this.sim);
 
     if (this.c04ChalkMesh) {
       this.c04ChalkMesh.visible = Boolean(this.sim.flags?.['m02.pomar_wounded_marked']);
-    }
-
-    // Clean expired tracers
-    for (let i = this.activeTracers.length - 1; i >= 0; i--) {
-      if (this.sim.clock >= this.activeTracers[i].expiresAt) {
-        const item = this.activeTracers[i];
-        this.tracersGroup.remove(item.line, item.impact);
-        item.line.geometry.dispose();
-        item.impact.geometry.dispose();
-        this.activeTracers.splice(i, 1);
-      }
     }
 
     const player = this.sim.player;
@@ -1119,6 +1054,7 @@ export class M02BenchRenderer {
 
     this.environment.update(this.sim,this.qualityProfile.id);
     this.lighting.update(this.sim,this.lightingPreset,this.qualityProfile.id);
+    this.combatFx.update(this.sim,this.camera,this.qualityProfile.id,this.lighting.model,this.canvas.height);
     this.presentation.weaponLighting.sync({sky:this.hemiLight,sun:this.sunLight,camera:this.camera,daylight:this.lighting.model.daylight,pitch:player.pitch});
     this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
     this.staticGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});

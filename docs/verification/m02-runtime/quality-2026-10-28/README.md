@@ -7,3 +7,11 @@
 F1: 81 testes M02 PASS e build PASS, logs nesta pasta. A prova unitária atravessa as áreas A/B/C, exige alvo de sombra no jogador, distância da luz e intensidade total corretas, postprocess em High/libertação em Low e snapshot/RNG/eventos idênticos. M01 não alterada; a adaptação reutiliza os seus componentes. As fotografias mantêm o terreno vazio visível: este defeito não foi declarado resolvido pela iluminação.
 
 Próxima implementação em curso: efeitos causais por ronda e composição da paisagem. Provas de F1 não validam alterações posteriores. Sem main, deploy ou force-push.
+
+## F2 — tiro causal e partículas M01
+
+As rondas NPC passam a publicar o traço realmente resolvido (obstrução, dispersão, material e ponto de impacto); o ponto tático continua preservado separadamente. Dano, munição, RNG e relógio não mudam. O renderer usa os perfis de superfície/explosão, envelopes de clarão, textura de estrela da arma e billboards M01. As pools são limitadas: 128 registos de tiro, 16 explosões, geometria partilhada e contagens limitadas por batch. Sem raios de 1,4 s nem esfera a assinalar acertos; só algumas rondas automáticas recebem um traçante curto em movimento. Restauro de mesmo relógio limpa o estado transitório.
+
+**83 testes M02 PASS, build PASS.** Novas provas exigem que uma parede junto à arma corte o traço/impacto, sem dano no alvo atrás; renderizar conserva snapshot/RNG; 512 tiros mantêm capacidade fixa e todos os efeitos expiram. `fx/` mostra a remoção dos lasers em C11, mas a primeira MG ainda tinha clarão esférico e foi rejeitada. **Usar `fx-star/mg34-fire.png`** para o clarão corrigido, com a textura M01 transparente. Capturas controladas, não novo percurso integral.
+
+Continua em curso F3: cobertura visual de terreno em todas as células, horizonte e composição rural. Não declarar qualidade final ou aprovação.

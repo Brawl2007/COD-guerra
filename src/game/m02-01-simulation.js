@@ -906,6 +906,7 @@ export class M02BenchSimulation {
     const muzzle=shooter.id==='DE-A05'?origin:muzzlePosition({...shooter,angle:aimYaw,pitch:aimPitch,aiming:true},this.clock);
     const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies];
     let hitAny = false;
+    const traces=[];
 
     for (let i = 0; i < roundsToFire; i++) {
       const dx = aimPoint.x - origin.x;
@@ -923,6 +924,9 @@ export class M02BenchSimulation {
       const dir = { x: rx / rLen, y: ry / rLen, z: rz / rLen };
 
       const hit = traceShot(this.world, origin, dir, candidateTargets, prof.range,muzzle);
+      // Presentation receives the actual, spread/occlusion-resolved round. The
+      // intended aim point below remains tactical memory, never an impact FX.
+      traces.push({origin:{...muzzle},point:hit?.point?{...hit.point}:{x:origin.x+dir.x*prof.range,y:origin.y+dir.y*prof.range,z:origin.z+dir.z*prof.range},hitKind:hit?.kind??'none',material:hit?.kind==='actor'?'character':hit?.material??'air'});
 
       if (hit && hit.kind === 'world' && hit.material === 'glass' && hit.windowId) {
         this.world.setWindowState(hit.windowId, 'broken');
@@ -1010,6 +1014,7 @@ export class M02BenchSimulation {
       roundIndex: pending?.emitted??0,
       interval: pending?.interval??prof.burstGapSec,
       hitAny,
+      traces,
       origin:muzzle,
       target: aimPoint,
       clock: Number(this.clock.toFixed(2)),
