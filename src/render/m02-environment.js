@@ -6,14 +6,14 @@ import { bakeTerrainMask } from './m01-terrain-mask.js';
 import { mergeVegetationGeometry, chooseVegetationTier } from './m01-vegetation-runtime.js';
 import { vegetationKitMaterial } from './m01-vegetation-material.js';
 import { M01Atmosphere } from './m01-atmosphere.js';
-import { m02EnvironmentLayout, m02TerrainSources } from './m02-environment-layout.js';
+import { m02EnvironmentLayout, m02TerrainSources,m02TerrainExtent } from './m02-environment-layout.js';
 
 // Keep the M01 terrain shader, texture tiers, anti-tiling, normals and lifetime
 // management. Only its macro mask describes a different mission.
 export class M02TerrainMaterial extends M01TerrainMaterial {
   bakeMask() {
     if(!this.world||this.disposed)return;
-    const extent={x0:-170,x1:170,z0:-235,z1:105};
+    const extent=m02TerrainExtent(this.world);
     const size={width:this.tier==='high'?512:256,height:this.tier==='high'?512:256};
     const data=bakeTerrainMask(m02TerrainSources(this.world),{...size,extent});
     const texture=new THREE.DataTexture(data,size.width,size.height,THREE.RGBAFormat);
@@ -46,7 +46,7 @@ export class M02Environment {
       const parts=names.flatMap((name,index)=>(sources.get(name)??[]).filter(n=>Boolean(n.material.map)===wantLeaf).map(n=>({geometry:n.geometry,species:index})));
       if(!parts.length)return;
       const geometry=mergeVegetationGeometry(parts),material=vegetationKitMaterial(wantLeaf?leaf:wood,{ground});
-      const capacity=ground?11000:150;
+      const capacity=ground?24000:384;
       for(const [key,value] of [['instanceSpecies',0],['instancePhysical',0],['instanceFade',1]])geometry.setAttribute(key,new THREE.InstancedBufferAttribute(new Float32Array(capacity).fill(value),1));
       const mesh=new THREE.InstancedMesh(geometry,material,capacity);mesh.count=0;mesh.frustumCulled=false;
       mesh.receiveShadow=true;this.root.add(mesh);this.batches.push({mesh,ground,tier});this.geometries.push(geometry);this.materials.push(material);
@@ -79,15 +79,16 @@ export class M02Environment {
       const list=ground?this.layout.ground:this.layout.trees;
       for(let i=0;i<list.length;i++) {
         const p=list[i],distance=Math.hypot(p.x-sim.player.x,p.z-sim.player.z);
-        if(ground?(distance>38||i%(quality==='low'?6:quality==='medium'?3:1)!==0):chooseVegetationTier(distance,quality)!==tier)continue;
+        const groundFar=quality==='high'?70:quality==='medium'?52:38;
+        if(ground?(distance>groundFar||i%(quality==='low'?6:quality==='medium'?3:1)!==0):chooseVegetationTier(distance,quality)!==tier)continue;
         dummy.position.set(p.x,this.world.terrainHeightAt(p.x,p.z),p.z);dummy.rotation.set(0,p.yaw,0);
         if(ground)dummy.scale.set(1,p.h/([.56,.56,.36][p.species]??.56),1);else dummy.scale.set(p.width,p.height,p.width);
-        dummy.updateMatrix();mesh.setMatrixAt(count,dummy.matrix);mesh.geometry.attributes.instanceSpecies.setX(count,ground?p.species:species.indexOf(p.species));count++;
+        dummy.updateMatrix();mesh.setMatrixAt(count,dummy.matrix);mesh.geometry.attributes.instanceSpecies.setX(count,ground?p.species:species.indexOf(p.species));mesh.geometry.attributes.instanceFade.setX(count,ground?Math.min(1,(groundFar-distance)/12):1);count++;
       }
-      mesh.count=count;mesh.instanceMatrix.needsUpdate=true;mesh.geometry.attributes.instanceSpecies.needsUpdate=true;
+      mesh.count=count;mesh.instanceMatrix.needsUpdate=true;mesh.geometry.attributes.instanceSpecies.needsUpdate=true;mesh.geometry.attributes.instanceFade.needsUpdate=true;
       mesh.castShadow=!ground&&tier===0&&quality!=='low';
     }
   }
-  get diagnostics(){return {loaded:this.loaded??false,failure:this.failure??null,trees:this.layout?.trees.length??0,ground:this.layout?.ground.length??0,batches:this.batches.length,terrain:this.terrain.diagnostics};}
+  get diagnostics(){return {loaded:this.loaded??false,failure:this.failure??null,trees:this.layout?.trees.length??0,ground:this.layout?.ground.length??0,batches:this.batches.length,terrainExtent:m02TerrainExtent(this.world),terrain:this.terrain.diagnostics};}
   dispose(){this.root.removeFromParent();for(const g of this.geometries)g.dispose();for(const m of this.materials)m.dispose();this.assets.dispose();this.terrain.dispose();this.atmosphere.dispose();}
 }

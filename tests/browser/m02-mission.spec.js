@@ -37,7 +37,33 @@ test('M02 default quality follows M01 software GPU detection and maximum remains
  expect(await page.locator('#mission-quality').inputValue()).toBe('high');
  expect(await page.evaluate(()=>window.m02Diagnostics().environment.terrain.tier)).toBe('high');
  expect(await page.evaluate(()=>window.m02Diagnostics().environment.terrain.failures)).toEqual([]);
+ await page.waitForFunction(()=>window.m02Diagnostics().lighting.grading.active);
+ expect(await page.evaluate(()=>window.m02Diagnostics().lighting.cascades)).toBe(2);
  expect(await page.evaluate(()=>window.m02Diagnostics().clock)).toBe(0);
+});
+
+test('M02 drawn terrain and shared material mask cover every streamed cell, including B/C outer edges',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:640,height:360});
+ await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ for(const cell of ['B','C']){
+  const result=await page.evaluate(cell=>{
+   const {sim,renderer}=window.m02Bench;
+   if(cell==='B')sim.enterAreaBC06();else sim.enterAreaCC09();
+   const p=sim.world.layout.bounds.playable;sim.teleportPlayer(p.maxX-2,p.maxZ-2,-2.3,-.08);
+   const clock=sim.clock;renderer.renderFrame(0,0);
+   const terrain=renderer.staticGroup.children.find(m=>m.name==='M02 playable terrain');terrain.geometry.computeBoundingBox();
+   const b=terrain.geometry.boundingBox,u=renderer.environment.terrain.uniforms.m01Extent.value;
+   return {cell:sim.activeCellId,clock,afterClock:sim.clock,playable:p,drawn:{minX:b.min.x,maxX:b.max.x,minZ:b.min.z,maxZ:b.max.z},mask:[u.x,u.y,1/u.z,1/u.w],groundSurfaces:renderer.staticGroup.children.filter(m=>m.userData.m02Ground).length,grading:renderer.lighting.grading.diagnostics};
+  },cell);
+  expect(result.cell).toBe(cell);expect(result.afterClock).toBe(result.clock);
+  for(const axis of ['X','Z']){expect(result.drawn[`min${axis}`]).toBeLessThan(result.playable[`min${axis}`]);expect(result.drawn[`max${axis}`]).toBeGreaterThan(result.playable[`max${axis}`]);}
+  expect(result.mask[0]).toBeLessThan(result.playable.minX);expect(result.mask[0]+result.mask[2]).toBeGreaterThan(result.playable.maxX);
+  expect(result.mask[1]).toBeLessThan(result.playable.minZ);expect(result.mask[1]+result.mask[3]).toBeGreaterThan(result.playable.maxZ);
+  expect(result.groundSurfaces).toBe(5);expect(result.grading.active).toBe(false);
+ }
+ expect(errors).toEqual([]);
 });
 
 test('M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint',async({page})=>{

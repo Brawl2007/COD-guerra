@@ -2,7 +2,7 @@ import {M02CargoVisuals,m02AuthoredPropModel} from './m02-cargo-visuals.js';
 import {addM02Architecture,applyM02SurfaceUvs} from './m02-architecture.js';
 import {batchM02Architecture,disposeM02ArchitectureBatches} from './m02-static-batching.js';
 import { M02Environment } from './m02-environment.js';
-import {m02TerrainAxes} from './m02-environment-layout.js';
+import {m02TerrainAxes,m02TerrainExtent,m02FarGroundPatches} from './m02-environment-layout.js';
 import * as THREE from 'three';
 import { M01MaterialLibrary } from './materials.js';
 import { createSoldierRigMaterials, rigCreate, rigPose } from './m02-claude-soldier-rig.js';
@@ -345,6 +345,7 @@ export class M02BenchRenderer {
   }
 
   #buildStaticWorld() {
+    this.staticGroup.traverse(n=>{if(n.userData.m02Ground)n.geometry.dispose();});
     // Reuse the two existing interior fills at this cell's actual buildings.
     // They approximate bounced light rather than leaving B/C lit from A's rooms.
     const fills=this.sim.activeCellId==='B'?[[-43,2.5,-24],[28,2.8,-26]]:this.sim.activeCellId==='C'?[[-20,2.8,-16],[24,2.8,-22]]:[[-33,2.45,-13],[22,3.1,-31]];
@@ -357,11 +358,10 @@ export class M02BenchRenderer {
     this.roofMeshes.clear();
 
     // 1. Terrain mesh with ditch depression, C01 northern approach (P1 at Z=-175, EA0 at Z=-110), and vertex colors
-    const width = 240;
-    const length = 340;
-    const segX = 64;
-    const segZ = 90;
-    const axes=m02TerrainAxes(width,length,segX,segZ,Boolean(this.world.layout.c01Corridor));
+    const extent=m02TerrainExtent(this.world),width=extent.x1-extent.x0,length=extent.z1-extent.z0;
+    const segX = Math.ceil(width/3.75);
+    const segZ = Math.ceil(length/3.75);
+    const axes=m02TerrainAxes(width,length,segX,segZ,Boolean(this.world.layout.c01Corridor),{x:(extent.x0+extent.x1)/2,z:(extent.z0+extent.z1)/2});
     const terrainGeo = new THREE.PlaneGeometry(width, length, axes.x.length-1, axes.z.length-1);
     terrainGeo.rotateX(-Math.PI / 2);
 
@@ -405,8 +405,17 @@ export class M02BenchRenderer {
 
     const terrainMat = this.environment.terrain.material;
     const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
+    terrainMesh.name='M02 playable terrain';terrainMesh.userData.m02Ground=true;
     terrainMesh.receiveShadow = true;
     this.staticGroup.add(terrainMesh);
+    // Continue the same M01 surface beyond every cell's physical bounds. The
+    // outer ring never overlaps the playable mesh or adds gameplay obstacles.
+    for(const [x0,x1,z0,z1]of m02FarGroundPatches(extent)){
+      const geometry=new THREE.PlaneGeometry(x1-x0,z1-z0,12,12);geometry.rotateX(-Math.PI/2);geometry.translate((x0+x1)/2,0,(z0+z1)/2);
+      const vertices=geometry.attributes.position;
+      for(let i=0;i<vertices.count;i++)vertices.setY(i,this.world.terrainHeightAt(vertices.getX(i),vertices.getZ(i)));
+      geometry.computeVertexNormals();const mesh=new THREE.Mesh(geometry,terrainMat);mesh.name='M02 outer fields';mesh.userData.m02Ground=true;mesh.receiveShadow=true;this.staticGroup.add(mesh);
+    }
 
     // 2. Floor slabs inside B01, B02, B03, B04
     for (const b of this.world.layout.buildings) {

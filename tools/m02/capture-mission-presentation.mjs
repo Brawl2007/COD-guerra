@@ -62,6 +62,7 @@ try{
    if(name==='quinta-medium')sim.teleportPlayer(-20,-43,Math.PI/2,-.02);
    if(name==='leczyca-high'){sim.enterAreaBC06();sim.teleportPlayer(-18,-3,-2.44,-.015);}
    if(name==='lesmierz-high'){sim.enterAreaCC09();sim.teleportPlayer(-4,-4,-.7,-.02);}
+   if(name==='c09-terrain-edge'){sim.enterAreaCC09();sim.teleportPlayer(140,165,-2.3,-.12);}
    if(name==='c11-group'||name==='c11-lis-support'){
     sim.reset('C02');sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();
     if(name==='c11-lis-support')sim.assistLisInC11('wounded_walking');
@@ -97,4 +98,5 @@ try{
  }
  if(report.errors.length)throw Error(report.errors.join('\n'));
  console.log(JSON.stringify({captures:report.captures.map(c=>c.shot),errors:report.errors}));
-}finally{fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));await browser.close();}
+}catch(error){report.failure=error.message;throw error;}
+finally{fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));await browser.close();}

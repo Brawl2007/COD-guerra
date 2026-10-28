@@ -4,6 +4,7 @@ import * as THREE from 'three';
 // existing wall shell, above reach or outside the authored door/window aperture.
 export function addM02Architecture(group,world,materials){
  const box=(x,y,z,w,h,d,material)=>{const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh;};
+ const beam=(a,b)=>{const v=new THREE.Vector3(...b).sub(new THREE.Vector3(...a)),mid=new THREE.Vector3(...a).addScaledVector(v,.5);const mesh=box(mid.x,mid.y,mid.z,.14,v.length(),.14,materials.wood_frame);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());};
  for(const cover of world.layout.c01Corridor?.covers??[]){
   if(cover.material!=='earth')continue;
   const [x0,y0,z0]=cover.min,[x1,y1]=cover.max;
@@ -19,11 +20,32 @@ export function addM02Architecture(group,world,materials){
   for(const x of [x0,x1])for(const z of [z0,z1])box(x,h/2,z,.13,h,.13,trim);
   for(const z of [z0,z1])box((x0+x1)/2,h-.08,z,x1-x0+.25,.16,.16,trim);
   for(const x of [x0,x1])box(x,h-.08,(z0+z1)/2,.16,.16,z1-z0+.25,trim);
+  // Roof timbers stay above head height; the wall battens/plinth stay on
+  // actual solid segments, never crossing a door or firing aperture.
+  if(wood)for(let x=x0+1.8;x<x1-1;x+=4){
+   beam([x,h+.05,z0],[x,h+.05,z1]);
+   beam([x,h+.05,z0],[x,b.ridgeHeight??h+1.8,(z0+z1)/2]);
+   beam([x,h+.05,z1],[x,b.ridgeHeight??h+1.8,(z0+z1)/2]);
+  }
   // Ridge cap breaks the perfectly flat procedural roof silhouette.
   box((x0+x1)/2,b.ridgeHeight??h+1.8,(z0+z1)/2,x1-x0+.5,.14,.22,materials.roof_wood);
   if(b.id==='B01'||b.id==='B04'||b.id==='B12'){
    box(x0+2,h+.5,z0+2,.8,1.6,.7,materials.brick_cover);
    box(x0+2,h+1.34,z0+2,1,.16,.9,materials.stone);
+  }
+ }
+ for(const ob of world.obstacles){
+  if(ob.role!=='wall')continue;
+  const {min,max}=ob,h=max.y-min.y,horizontal=max.x-min.x>max.z-min.z;
+  if(/wood/.test(ob.material)&&h>.6){
+   const start=horizontal?min.x:min.z,end=horizontal?max.x:max.z;
+   for(let s=start+.3;s<end-.05;s+=.65)for(const side of [-1,1]){
+    const x=horizontal?s:side<0?min.x-.012:max.x+.012,z=horizontal?(side<0?min.z-.012:max.z+.012):s;
+    box(x,(min.y+max.y)/2,z,horizontal?.045:.03,h,horizontal?.03:.045,materials.wood_frame);
+   }
+  }
+  if(min.y<.05&&h>.4&&/brick/.test(ob.material)){
+   box((min.x+max.x)/2,.16,(min.z+max.z)/2,max.x-min.x+.025,.32,max.z-min.z+.025,materials.stone);
   }
  }
  for(const win of world.windows){
