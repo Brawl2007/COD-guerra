@@ -1,5 +1,13 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — ressalto e munição, 2026-10-28
+
+`aec045e` corrige o ressalto de granadas: parede/teto refletem a componente normal, solo conserva deslocação, lançamento junto de uma parede não aparece do outro lado e estados antigos na superfície são recuperados. Snapshot/fusível/RNG preservados. [Provas](../verification/m02-runtime/grenade-physics-2026-10-28/README.md) incluem o lançamento por `G` contra a parede B05. A colisão usa o centro do projétil e pára o restante deslocamento naquele tick; falta animação de lançamento e modelo detalhado. A primeira passagem dessa build foi interrompida em B06, não declarada concluída.
+
+`898b072` permite recolher com `E` munição 7,92 mm existente num atirador Kar98k abatido; desconta os cartuchos do ator e usa a reserva M01, com limites, obstrução e restauro. Não é troca de armas nem saque de feridos/rendidos. `a65dfb0` corrige o piloto de verificação para respeitar o cano obstruído; não muda a balística do jogo. [Provas](../verification/m02-runtime/ammo-recovery-2026-10-28/README.md): 109 testes M02, build e três browser PASS. A build `a65dfb0` completou C01–C12/M03 com **uma morte e retoma por checkpoint**, sem erros de página, vida final 84, giz, abastecimentos, Lis evacuado e 12/12. O piloto observa também posições ocultas; não é avaliação humana. A primeira execução após a recolha foi interrompida em B06; o registo não prova a causa do bloqueio.
+
+Continuar a implementação antes da avaliação humana, conforme pedido: apoio físico real a Lis, servente MG, animação de lançamento, modelos de soldados/mãos/rostos e armas, cenários, IA e som permanecem abertos. O complemento integral não foi recebido. Main e produção não foram alteradas; não declarar a M02 completa ou comparável a COD apenas porque a progressão foi percorrida.
+
 ## Continuação — granada visível, 2026-10-28
 
 `0df6974`: a granada em voo, antes invisível, acompanha o estado físico com a escala e forma da M01; é removida ao explodir ou restaurar um snapshot anterior. Física, dano e saves inalterados. 99 testes M02, build e três browser PASS; [captura pelo comando G e provas](../verification/m02-runtime/grenade-2026-10-28/README.md). O percurso completo continua o de `1eb75f1`, não foi repetido para esta alteração visual. Animação de lançamento em primeira pessoa e modelo detalhado continuam por fazer. Não declarar a M02 concluída nem interromper o desenvolvimento à espera de avaliação humana.

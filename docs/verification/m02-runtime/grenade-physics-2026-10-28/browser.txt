@@ -1,0 +1,21 @@
+[2m[WebServer] [22m(node:58109) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:58143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:58143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+M02 grenade bounce in B05 {"wall":{"min":{"x":-34.13,"y":0,"z":-23.37},"max":{"x":-33.87,"y":3.1,"z":-21.25}},"result":{"x":-33.62800779820714,"y":1.4832048906612125,"z":-22,"vx":4.8,"vz":1.83697019872103e-15,"view":[-33.62800779820714,1.4832048906612125,-22],"ammo":1}}
+  ✓  1 tests/browser/m02-mission.spec.js:4:1 › a grenade thrown by the player bounces off the actual B05 wall (14.9s)
+M02 real grenade input {"shown":{"ammo":1,"ids":["gren_1"],"position":[1.1940306291686696e-16,0.9154750000000001,-173.05],"actual":[1.1940306291686696e-16,0.9154750000000001,-173.05],"radius":0.07,"visible":true,"unchanged":true},"restored":{"ammo":2,"active":0}}
+  ✓  2 tests/browser/m02-mission.spec.js:24:1 › the normal grenade input displays the live projectile and a checkpoint removes it (9.0s)
+  ✓  3 tests/browser/m02-mission.spec.js:198:1 › M02 playable entry starts C01, pauses without advancing, and resumes a persisted checkpoint (16.4s)
+
+  3 passed (44.5s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

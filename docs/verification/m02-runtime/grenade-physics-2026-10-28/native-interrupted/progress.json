@@ -1,0 +1,101 @@
+{
+  "startedAt": "2026-10-28T18:09:26.918Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.15000000000000002,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 5.939
+    },
+    {
+      "label": "A:O01",
+      "clock": 14.000000000000064,
+      "health": 100,
+      "pos": [
+        -4.722451523425744,
+        -144.40610926379082
+      ],
+      "realSec": 20.293
+    },
+    {
+      "label": "A:O02",
+      "clock": 28.45000000000027,
+      "health": 100,
+      "pos": [
+        5.906072796182094,
+        -61.868366204802456
+      ],
+      "realSec": 34.734
+    },
+    {
+      "label": "A:O03",
+      "clock": 34.50000000000018,
+      "health": 100,
+      "pos": [
+        23.312896792760142,
+        -38.328705372034705
+      ],
+      "realSec": 40.788
+    },
+    {
+      "label": "A:C04",
+      "clock": 45.89999999999953,
+      "health": 100,
+      "pos": [
+        -24.795376438580266,
+        -15.471654784257455
+      ],
+      "realSec": 52.684
+    },
+    {
+      "label": "A:COMPLETE",
+      "clock": 56.09999999999895,
+      "health": 100,
+      "pos": [
+        -8.572148428546253,
+        34.53467923381728
+      ],
+      "realSec": 63.206
+    },
+    {
+      "label": "B:O04",
+      "clock": 57.049999999998896,
+      "health": 100,
+      "pos": [
+        -50,
+        51
+      ],
+      "realSec": 64.263
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "buildCommit": "aec045eded4c670b1f742aad1d289916de504732",
+  "last": {
+    "clock": 291.600000000032,
+    "state": "playing",
+    "health": 84,
+    "cell": "B",
+    "objective": "O04",
+    "completed": false,
+    "decision": {
+      "controls": {
+        "lookX": -0.0007812366173687303,
+        "lookY": -0.0007883370103782105,
+        "aim": true,
+        "fire": false,
+        "reload": true
+      },
+      "target": "DE-B06"
+    },
+    "pos": [
+      23.93456995878948,
+      -32.998243467599345
+    ]
+  }
+}

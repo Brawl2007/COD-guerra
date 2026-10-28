@@ -1,11 +1,13 @@
 # M02 — candidata C01–C12 para avaliação humana
 
+**Continuidade:** esta página conserva a revisão visual histórica `f49ecdc`. Para o código mais recente, testes e trabalho pendente, ler primeiro [M02_EXECUTION_STATE.md](M02_EXECUTION_STATE.md). O proprietário pediu para deixar a avaliação humana para o fim do desenvolvimento.
+
 Candidata em revisão após rejeição da apresentação pelo proprietário, branch `codex/m02-recovery-v1`, código `f49ecdc` (2026-10-28). Sombras, AO/grade M01, efeitos de tiro e cobertura/composição do terreno receberam alterações reais. O percurso C01–C12 continua funcional; qualidade artística permanece em desenvolvimento. Esta entrega não aprova a missão nem afirma equivalência a COD/AAA. O complemento de 173.148 palavras ainda não foi recebido.
 ## Abrir e jogar
 
 Node 24, `npm ci`, `npm run dev`, entrada `/COD-guerra/m02.html`. O menu permite escolher Máxima, Equilibrada ou Leve; SwiftShader inicia em Leve. A bancada `m02-01.html` permanece separada da entrada de produto. Em produto, mutações técnicas só existem com `?debug=1`.
 
-WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R recarregar, G granada, E interagir. Z suprimir, X avançar, B flanquear. Esc pausa; F5 guarda checkpoint, F9 retoma. Volume e redução de movimento da câmara estão no menu. Só a wz.29 é controlada pelo jogador; MG34, wz.28 e MP38 são armas de NPC, sem sistema novo de recolha/troca.
+WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R recarregar, G granada, E interagir. Z suprimir, X avançar, B flanquear. Esc pausa; F5 guarda checkpoint, F9 retoma. Volume e redução de movimento da câmara estão no menu. E também permite recolher os cartuchos de 7,92 mm existentes num atirador Kar98k abatido, quando estiver próximo e sem parede no caminho. Só a wz.29 é controlada pelo jogador; MG34, wz.28 e MP38 são armas de NPC, sem sistema de recolha/troca de armas.
 
 ## Percurso de avaliação
 
@@ -40,4 +42,4 @@ Não há vozes gravadas novas. As falas literais estão em legendas, com áudio 
 
 ## Retoma e segurança
 
-Ler primeiro `M02_EXECUTION_STATE.md`, os commits/diff e a proveniência das provas. Não repetir recuperação Claude/Gemini, rajadas causais, recarga MP38, trincheiras ou navegação C11 já implementadas. Reutilizar os sistemas M01; simulação/RNG/saves e pacote M03 continuam autoridades. A próxima alteração deve responder a um defeito reproduzível ou à avaliação humana/documento complementar, seguida da verificação proporcional. Main não alterada, sem deploy ou force-push.
+Ler primeiro `M02_EXECUTION_STATE.md`, os commits/diff e a proveniência das provas. Não repetir recuperação Claude/Gemini, rajadas causais, recarga MP38, trincheiras ou navegação C11 já implementadas. Reutilizar os sistemas M01; simulação/RNG/saves e pacote M03 continuam autoridades. Continuar a resolver as lacunas técnicas e artísticas documentadas, com verificação proporcional; integrar o documento complementar quando chegar e deixar a avaliação humana para o fim. Main não alterada, sem deploy ou force-push.
