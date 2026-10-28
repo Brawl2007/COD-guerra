@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — posto de socorro B12, 2026-10-28
+
+`7221862` substitui os blocos das duas macas físicas por lona e varais nas proporções da M01, adaptados aos obstáculos existentes, e remove duas caixas decorativas sem colisão que ocupavam a rota. A caixa física original continua maior do que a geometria visível; colisão detalhada não foi implementada. A alteração não muda simulação, navegação, roteiro ou saves. 115 testes M02, build e dois browser PASS; [captura High e proveniência](../verification/m02-runtime/aid-station-2026-10-28/README.md). A inspeção controlada mostra que o posto ainda precisa de composição e detalhe. O último percurso completo continua o de `e4a4632`.
+
+Continuar a implementação: apoio físico a Lis, servente MG, apresentação de armas e lançamento, soldados/mãos/rostos, cenários, IA e som continuam abertos. O complemento integral ainda não foi recebido. Não confundir progressão jogável nem esta melhoria com aprovação humana ou qualidade comparável a COD; main e produção não foram alteradas.
+
 ## Continuação — contacto com Lis, 2026-10-28
 
 `e4a4632` substitui o socorro automático por proximidade por uma interação `E` a até 2 m, com linha desobstruída e Lis disponível. A fala protegida, estados, caminhada e M03 mantêm-se; não foi inventado acompanhante nem coreografia de apoio físico. 114 testes M02, build e quatro browser PASS. A build congelada concluiu C01–C12 e M03 sem mortes do jogador/erros, vida 46, eixo pomar, giz, água/munições, Lis evacuado e 12/12; o piloto usou controlos, mas observa também posições ocultas. [Provas e captura](../verification/m02-runtime/lis-contact-2026-10-28/README.md).
