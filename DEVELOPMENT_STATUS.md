@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — pose de feridos em C11 — 2026-10-28
+
+Lis e LG03/LG09 usam marcha/espera desarmadas derivadas dos clips e IK M01, com a mão no torso; pernas e odómetro permanecem sincronizados com a navegação M02. 87 testes M02, três casos browser e build PASS; capturas High e limites em [wounded-2026-10-28](docs/verification/m02-runtime/wounded-2026-10-28/README.md). A coreografia de apoio com acompanhante e a qualidade artística global continuam abertas. Simulação/roteiro intactos, sem novo percurso integral nesta alteração.
+
 ## M02 — revisão de apresentação após avaliação do proprietário — 2026-10-28
 
 Branch `codex/m02-recovery-v1`, código `f49ecdc`. Entrada `m02.html`, bancada preservada. Sombras seguem agora o observador em todas as áreas; cascatas/grade/AO/contacto M01 integrados. Tiros usam traços reais e partículas M01, com clarões curtos, pools limitadas, CLOCK_EPS e configuração de luz estável. Malha/máscara cobrem os limites reais B/C; terreno contínuo, horizonte rural, vegetação com fade, ripas/plintos/tesouras nos edifícios. Sistemas/assets M01 não modificados.

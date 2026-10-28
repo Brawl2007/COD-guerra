@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — feridos C11, 2026-10-28
+
+Lis e LG03/LG09 já não caminham desarmados com os braços na pose de espingarda invisível. A apresentação deriva quatro clips M01 e usa IK M01 para a mão no torso e o outro braço junto ao corpo, preservando os passos M01, odómetro, postura e autoridade da simulação. Reposição no mesmo relógio volta à pose correta; mortos/deitados e Lis evacuado conservam o resolver anterior. Não se criou uma coreografia de dupla nem um acompanhante físico: isso permanece pendente.
+
+87 testes M02 PASS, build PASS, três casos browser PASS (entrada/pausa/checkpoint, GLB/áudio e pose/arma/restauro C11). Capturas High reais e proveniência em [wounded-2026-10-28](../verification/m02-runtime/wounded-2026-10-28/README.md). A simulação/roteiro não foram alterados; o percurso completo de produção anterior não foi repetido nesta etapa. Sem declaração de aprovação artística/AAA. Próximas tarefas: contacto de apoio com acompanhante real, servente MG, rosto/mãos, cenários, IA/som e avaliação humana, preservando determinismo e continuidade M03.
+
 ## Revisão após rejeição visual — 2026-10-28
 
 Código atual `f49ecdc` na candidata `codex/m02-recovery-v1`, a partir de árvore limpa `4aab5bb`; fetch sem novidades para a candidata. O proprietário rejeitou a apresentação anterior. F1 corrige sombras fora de P1 e integra cascatas/luz/contacto/grade M01; F2 remove raios/esferas persistentes e usa impactos reais por ronda, partículas/perfis/textura M01; F3 corrige terreno/máscara que terminavam antes dos limites B/C e acrescenta horizonte, vegetação com fade e estrutura às fachadas/telhados. Refinamentos tratam CLOCK_EPS, preset técnico e estabilidade da luz de disparo. Modelos/arma/LOD/áudio/atlas M01 continuam partilhados e inalterados.

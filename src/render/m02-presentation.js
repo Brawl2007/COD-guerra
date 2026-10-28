@@ -18,6 +18,7 @@ export function m02VisualActor(actor, team, clock) {
   const surrendered = actor.state === 'SURRENDERED';
   const wounded = actor.state === 'WOUNDED_UNARMED'||actor.state==='WOUNDED_LIAISON';
   return { ...actor, team, active: !actor.detachedOutOfCell,
+    m02WoundedWalking:actor.state==='WALKING_SUPPORTED'||actor.state==='WOUNDED_WALKING',
     id: actor.weapon === 'rkm_wz28' ? 'szymon_kowal' : actor.id,
     role: wounded || surrendered || actor.role==='medic'||actor.state==='WOUNDED_WALKING'||actor.state==='WALKING_SUPPORTED'||actor.state==='EVACUATED_B12' ? 'MEDIC' : 'RIFLEMAN',
     state: wounded ? 'WOUNDED' : actor.moving ? 'ADVANCE' : actor.shot > 0 ? 'SUPPRESS' : 'GUARD',

@@ -102,3 +102,31 @@ test('M02 playable entry starts C01, pauses without advancing, and resumes a per
  expect(restored.environment.loaded).toBe(true);
  expect(errors).toEqual([]);
 });
+
+test('C11 wounded men use the real unarmed torso pose and retain it after a same-clock restore',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});
+ await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;
+  sim.reset('C02');sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();sim.assistLisInC11('wounded_walking');
+  for(let i=0;i<100;i++)sim.tick(.05,{});
+  const lis=sim.allies.find(a=>a.id==='pl_lis');sim.teleportPlayer(lis.x+3,lis.z,Math.PI,0);
+  renderer.renderFrame(0,0);
+  const observe=()=>{
+   const entry=renderer.presentation.characters.stats.actors.find(a=>a.id==='pl_lis');
+   const v=renderer.presentation.characters.instances.get('pl_lis');v.root.updateMatrixWorld(true);
+   const hips=v.root.getObjectByName('hips'),hand=v.root.getObjectByName('hand_l');
+   const target=hips.localToWorld(hips.position.clone().set(0,.16,-.18));
+   return {clip:entry.clip,weaponMeshes:entry.weaponMeshes,distance:hand.getWorldPosition(target.clone()).distanceTo(target)};
+  };
+  const before=observe(),save=sim.snapshot();sim.restoreSnapshot(save);const afterRestore=sim.snapshot();
+  renderer.presentation.update(sim,renderer.qualityProfile.id);
+  return {before,after:observe(),sameSnapshot:JSON.stringify(sim.snapshot())===JSON.stringify(afterRestore)};
+ });
+ for(const pose of [result.before,result.after]){
+  expect(pose.clip).toBe('m02_wounded_walk');expect(pose.weaponMeshes).toEqual([]);expect(pose.distance).toBeLessThan(.06);
+ }
+ expect(result.sameSnapshot).toBe(true);expect(errors).toEqual([]);
+});

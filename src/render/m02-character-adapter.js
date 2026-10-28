@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {M01Characters} from './m01-characters.js';
 import {genericCandidate,resolveStrideSample} from './m01-animation-resolver.js';
 import {retargetSMGClip} from './m02-smg-animation.js';
+import {woundedClip} from './m02-wounded-animation.js';
 
 const LOWER=/^(root|hips|thigh_[lr]|calf_[lr]|foot_[lr]|ball_[lr])\./;
 const valueAt=(track,time)=>Array.from(track.createInterpolant().evaluate(time));
@@ -40,6 +41,11 @@ export function crouchedClip(source,base,name){
 }
 
 export function m02CharacterSample(actor,time,clips){
+ if(actor.alive&&actor.m02WoundedWalking){
+  const name=actor.moving?(actor.crouched?'m02_wounded_crouch_walk':'m02_wounded_walk'):(actor.crouched?'m02_wounded_crouch_idle':'m02_wounded_idle');
+  const clip=clips.get(name);
+  if(clip){const stride=actor.moving?resolveStrideSample(actor,name,time,clips):null;return {clip:name,time:stride?.time??time,loop:true,rate:stride?.rate??1,stridePhase:stride?.stridePhase};}
+ }
  if(!actor.alive||actor.state==='WOUNDED'||actor.role==='MEDIC')return null;
  const get=name=>clips.get(name);
  if(actor.reload){
@@ -111,6 +117,9 @@ export class M02Characters extends M01Characters{
    ['rkm_reload','m02_mp38_reload'],['walk','m02_mp38_walk'],['run','m02_mp38_run'],['crouch_walk','m02_mp38_crouch_walk'],
   ]){
    const clip=retargetSMGClip(this.clips.get(source),this.sources.get('pl:0')?.scene,name,{reload:name==='m02_mp38_reload'});if(clip)this.clips.set(name,clip);
+  }
+  for(const [source,name,stride]of [['walk','m02_wounded_walk',1.54],['crouch_walk','m02_wounded_crouch_walk',.768],['standing_idle','m02_wounded_idle',null],['crouched_idle','m02_wounded_crouch_idle',null]]){
+   const clip=woundedClip(this.clips.get(source),this.sources.get('pl:0')?.scene,name,stride);if(clip)this.clips.set(name,clip);
   }
   this.revision++;
  }
