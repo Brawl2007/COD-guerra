@@ -141,6 +141,7 @@ export function validateM02Snapshot(snap) {
   if(snap.areaC?.lastGroup!==undefined&&!Array.isArray(snap.areaC.lastGroup))return {valid:false,reason:'Grupo de evacuação inválido.'};
   for(const actor of [...(snap.allies??[]),...(snap.enemies??[]),...(snap.areaC?.lastGroup??[])]){
     if(!actor||!Number.isFinite(actor.x)||!Number.isFinite(actor.z))return {valid:false,reason:'Posição de ator inválida.'};
+    if(actor.m02LastEngagedTargetId!==undefined&&typeof actor.m02LastEngagedTargetId!=='string')return {valid:false,reason:`Alvo de equipa inválido: ${actor.id}`};
     for(const key of ['effectiveSpeed','motionDistance'])if(actor[key]!==undefined&&(!Number.isFinite(actor[key])||actor[key]<0))return {valid:false,reason:`Movimento inválido: ${actor.id}`};
     for(const key of ['hitAt','hitYaw','diedAt','deathYaw'])if(actor[key]!==undefined&&!Number.isFinite(actor[key]))return {valid:false,reason:`Impacto inválido: ${actor.id}`};
     if(actor.navCorners!=null&&(!Array.isArray(actor.navCorners)||actor.navCorners.some(p=>!p||!Number.isFinite(p.x)||!Number.isFinite(p.z))))return {valid:false,reason:`Rota inválida: ${actor.id}`};

@@ -2,6 +2,7 @@ import {eyePosition,traceObstruction} from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {M01_DIFFICULTY} from './m01-difficulty.js';
 import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
+import {m02MachineGunCover} from './m02-machinegun-team.js';
 
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
@@ -881,6 +882,7 @@ export function updatePolishSquad(sim, dt) {
       continue;
     }
 
+    const crewCover=m02MachineGunCover(sim,ally,'ally');
     let bestEnemy = null;
     let bestScore = -Infinity;
     for (const enemy of sim.enemies) {
@@ -908,6 +910,7 @@ export function updatePolishSquad(sim, dt) {
       let score = 200 - dist;
       if (enemy.id === 'DE-A05') score += 85; // prioritize MG34
       if (hasLoS) score += 40;
+      if (enemy.id===crewCover?.targetId && hasLoS) score += 220;
       if (score > bestScore) {
         bestScore = score;
         bestEnemy = { enemy, aimPt, isMgSuppressTarget };
@@ -917,7 +920,9 @@ export function updatePolishSquad(sim, dt) {
     if (bestEnemy) {
       const { enemy, aimPt } = bestEnemy;
       ally.facing = Math.atan2(aimPt.z - ally.z, aimPt.x - ally.x);
-      sim.fireActorBurst(ally, enemy, aimPt, 'ally');
+      const fired=sim.fireActorBurst(ally, enemy, aimPt, 'ally');
+      if(fired&&ally.id==='pl_aux_01')ally.m02LastEngagedTargetId=enemy.id;
+      if(fired&&enemy.id===crewCover?.targetId)fired.crewCoverFor=crewCover.gunnerId;
       if (ally.id === 'pl_lis' && (enemy.id === 'DE-A05' || enemy.encounterId === 'EA0')) {
         sim.dialogue.trigger('bz39_c02_02', sim);
       }
@@ -1012,6 +1017,7 @@ export function updateGermanGarrison(sim, dt) {
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
     const potentialTargets = [sim.player, ...sim.allies, ...m02ExposedLastGroup(sim)].filter((t) => t && t.alive && t.state !== 'DOWN');
+    const crewCover=m02MachineGunCover(sim,enemy,'enemy');
     let visibleTarget = null;
     let bestTargetScore = -Infinity;
 
@@ -1034,7 +1040,7 @@ export function updateGermanGarrison(sim, dt) {
 
       if (!hasLoS) continue;
 
-      const score = 180 - dist + (t.id === 'piotr_sokol' ? 15 : 0);
+      const score = 180 - dist + (t.id === 'piotr_sokol' ? 15 : 0) + (t.id===crewCover?.targetId ? 220 : 0);
       if (score > bestTargetScore) {
         bestTargetScore = score;
         visibleTarget = t;
@@ -1065,7 +1071,8 @@ export function updateGermanGarrison(sim, dt) {
       const reacted=visibleTarget.id!==sim.player.id||sim.clock-enemy.targetAcquiredAt>=M01_DIFFICULTY.soldado.reactionGraceSec;
       if (reacted && enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
         const aimPt = acquiredAim;
-        sim.fireActorBurst(enemy, visibleTarget, aimPt, 'enemy');
+        const fired=sim.fireActorBurst(enemy, visibleTarget, aimPt, 'enemy');
+        if(fired&&visibleTarget.id===crewCover?.targetId)fired.crewCoverFor=crewCover.gunnerId;
       }
     } else {
       enemy.seeingTargetId = null;

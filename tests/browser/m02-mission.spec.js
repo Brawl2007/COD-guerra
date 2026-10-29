@@ -1,6 +1,39 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('the real wz28 team reloads and covers the same visible target',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;sim.enterAreaBC06();sim.clock=10;
+  const gun=sim.allies.find(a=>a.id==='pl_aux_01'),loader=sim.allies.find(a=>a.id==='pl_aux_02');
+  const target=sim.enemies.find(a=>a.id==='DE-B01'),near=sim.enemies.find(a=>a.id==='DE-B02');
+  Object.assign(gun,{x:-2,y:0,z:75,mag:1,reserve:100,reloadingUntil:0,nextFireAt:0,suppressed:0,goal:null});
+  Object.assign(loader,{x:-.5,y:0,z:75,mag:5,reserve:30,reloadingUntil:0,nextFireAt:100,suppressed:0,goal:null});
+  Object.assign(target,{x:-2,y:0,z:65,health:1000,alive:true,nonCombatant:false,nextFireAt:100});
+  Object.assign(near,{x:4,y:0,z:68,health:1000,alive:true,nonCombatant:false,nextFireAt:100});
+  sim.allies=[gun,loader];sim.enemies=[target];sim.teleportPlayer(0,80,-Math.PI/2,-.1);sim.drainEvents();
+  sim.tick(.05,{});const first=sim.events.find(e=>e.type==='actor-burst'&&e.shooterId===gun.id);
+  loader.nextFireAt=0;sim.enemies.push(near);sim.tick(.05,{});
+  const cover=sim.events.find(e=>e.type==='actor-burst'&&e.shooterId===loader.id);
+  const snapshot=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const visuals=renderer.presentation.characters.stats.actors.filter(a=>['szymon_kowal','pl_aux_02'].includes(a.id)).map(a=>({id:a.id,clip:a.clip}));
+  return {first,cover,gunMag:gun.mag,loaderMag:loader.mag,reloadingUntil:gun.reloadingUntil,clock:sim.clock,unchanged:snapshot===JSON.stringify(sim.snapshot()),visuals};
+ });
+ expect(result.first?.targetId).toBe('DE-B01');expect(result.cover?.targetId).toBe('DE-B01');expect(result.cover?.crewCoverFor).toBe('pl_aux_01');
+ expect(result.gunMag).toBe(0);expect(result.loaderMag).toBe(4);expect(result.reloadingUntil).toBeGreaterThan(result.clock);
+ expect(result.unchanged).toBe(true);expect(result.visuals.find(v=>v.id==='szymon_kowal')?.clip).toBe('rkm_reload');
+ expect(result.visuals.find(v=>v.id==='pl_aux_02')).toBeTruthy();expect(errors).toEqual([]);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · DUPLA WZ.28";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('wz28-reload-cover-night.png')});
+ await page.evaluate(()=>{const {renderer}=window.m02Bench;renderer.applyLightingPreset('neutral_review');renderer.renderFrame(0,0);});
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · DUPLA WZ.28 · LUZ TÉCNICA"}'});
+ await page.screenshot({path:testInfo.outputPath('wz28-reload-cover-neutral.png')});
+ console.log('M02 wz28 team',JSON.stringify({first:result.first?.targetId,cover:result.cover?.targetId,visuals:result.visuals}));
+});
+
 test('C12 exit warns before leaving an unrescued Lis and preserves the missing outcome',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
