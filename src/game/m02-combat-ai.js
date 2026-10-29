@@ -547,6 +547,16 @@ export function friendlyFireClear(shooter, targetPoint, friendlies, clearanceM =
 export function stepActorWeapon(sim, actor, dt) {
   sim.advanceActorBurst?.(actor);
   const prof = WEAPON_PROFILES[actor.weapon] ?? WEAPON_PROFILES.wz29;
+  if(actor.reloadingUntil>0){
+    const startedAt=actor.reloadingUntil-prof.reloadSec;
+    for(const [phase,fraction] of [['seat',.45],['close',.85]]){
+      const at=startedAt+prof.reloadSec*fraction;
+      if(sim.clock-dt<at-1e-8&&sim.clock+1e-8>=at){
+        sim.events.push({type:'actor-reload-cue',shooterId:actor.id,weapon:actor.weapon,phase,
+          clock:Number(at.toFixed(3)),origin:{x:actor.x,y:actor.y??0,z:actor.z,eyeHeight:actor.eyeHeight??1.65}});
+      }
+    }
+  }
   if (actor.reloadingUntil > sim.clock) return;
   if (actor.reloadingUntil > 0 && sim.clock >= actor.reloadingUntil) {
     const needed = prof.magSize - actor.mag;
@@ -557,6 +567,8 @@ export function stepActorWeapon(sim, actor, dt) {
   }
   if (actor.mag <= 0 && actor.reserve > 0 && actor.reloadingUntil === 0) {
     actor.reloadingUntil = Number((sim.clock + prof.reloadSec).toFixed(3));
+    sim.events.push({type:'actor-reload-cue',shooterId:actor.id,weapon:actor.weapon,phase:'open',
+      clock:Number(sim.clock.toFixed(3)),origin:{x:actor.x,y:actor.y??0,z:actor.z,eyeHeight:actor.eyeHeight??1.65}});
     if (actor.id === 'pl_aux_01') {
       sim.dialogue.trigger('bz39_c03_02', sim, { allowRepeat: true });
     }

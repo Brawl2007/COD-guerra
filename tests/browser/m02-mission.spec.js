@@ -1,5 +1,32 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
+import {writeFileSync} from 'node:fs';
+
+test('a real NPC reload produces a nearby audible M01 mechanism cue',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio;await a.ctx.resume();
+  sim.enterAreaBC06();sim.allies=[];const gun=sim.enemies.find(e=>e.id==='DE-B05');sim.enemies=[gun];
+  Object.assign(gun,{x:2,y:0,z:100,mag:0,reserve:50,reloadingUntil:0,nextFireAt:1000,suppressed:0});
+  Object.assign(sim.player,{x:0,y:0,z:100,eyeHeight:1.65,angle:0});sim.drainEvents();sim.tick(.05,{});
+  const cues=sim.drainEvents().filter(e=>e.type==='actor-reload-cue'),before=JSON.stringify(sim.snapshot());
+  p.syncSession(sim);a.stopAll(false);const dest=a.ctx.createMediaStreamDestination();a.master.connect(dest);
+  const recorder=new MediaRecorder(dest.stream),chunks=[];recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
+  const count=a.diagnostics.eventCounts['npc-reload']??0;p.consume(cues,sim);
+  await new Promise(r=>setTimeout(r,350));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
+  const blob=new Blob(chunks,{type:recorder.mimeType}),buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());
+  let peak=0;for(let c=0;c<buffer.numberOfChannels;c++)for(const v of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(v));
+  const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);});
+  a.master.disconnect(dest);return {cues,peak,encoded,count:(a.diagnostics.eventCounts['npc-reload']??0)-count,unchanged:before===JSON.stringify(sim.snapshot()),state:a.ctx.state};
+ });
+ expect(result.cues.map(e=>e.phase)).toEqual(['open']);expect(result.count).toBe(1);expect(result.peak).toBeGreaterThan(.0001);
+ expect(result.unchanged).toBe(true);expect(result.state).toBe('running');expect(errors).toEqual([]);
+ writeFileSync(testInfo.outputPath('npc-reload.webm'),Buffer.from(result.encoded,'base64'));
+ console.log('M02 NPC reload sound',JSON.stringify({peak:result.peak,count:result.count,cue:result.cues[0]}));
+});
 
 test('the real wz28 team reloads and covers the same visible target',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
