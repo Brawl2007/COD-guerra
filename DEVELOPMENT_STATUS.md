@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — recuperação do braço após lançamento — 2026-10-29
+
+Na candidata `codex/m02-recovery-v1`, `cc0ecfc` adapta o rig M01 para mostrar o braço a regressar depois da soltura física da granada, sem alterar física ou snapshots. 118 testes M02, build e três casos de navegador passaram. [Captura High, método e limitações](docs/verification/m02-runtime/grenade-follow-through-2026-10-29/README.md). Faltam preparação, manipulação da granada e melhoria da geometria da mão; não é animação final nem validação artística. O último percurso integral é o de `e4a4632`; main e produção não foram alteradas.
+
 ## M02 — pose de feridos em C11 — 2026-10-28
 
 Lis e LG03/LG09 usam marcha/espera desarmadas derivadas dos clips e IK M01, com a mão no torso; pernas e odómetro permanecem sincronizados com a navegação M02. 87 testes M02, três casos browser e build PASS; capturas High e limites em [wounded-2026-10-28](docs/verification/m02-runtime/wounded-2026-10-28/README.md). A coreografia de apoio com acompanhante e a qualidade artística global continuam abertas. Simulação/roteiro intactos, sem novo percurso integral nesta alteração.

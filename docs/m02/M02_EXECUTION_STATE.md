@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — granada em primeira pessoa, 2026-10-29
+
+`cc0ecfc` acrescenta uma recuperação do braço direito com o rig M01 após a soltura física da granada. Tiro, ferrolho, recarga, morte e restauro têm prioridade; lançamento, colisão, RNG e snapshots mantêm-se, com identidade acrescentada ao evento. 118 testes M02, build e três browser PASS; [captura High e limites](../verification/m02-runtime/grenade-follow-through-2026-10-29/README.md). A mão continua angular e faltam preparação, pino, granada na mão e coreografia completa: não apresentar esta aproximação como animação final. O percurso integral continua o de `e4a4632`.
+
+Próximas prioridades: animação completa de granada, melhoria das mãos/rostos e armas, atuação física de Lis, coordenação real das duplas MG, composição dos cenários, IA e som. O complemento integral de 173.148 palavras ainda não foi recebido. Não declarar a M02 concluída ou comparável a COD; main e produção continuam intactas.
+
 ## Continuação — posto de socorro B12, 2026-10-28
 
 `7221862` substitui os blocos das duas macas físicas por lona e varais nas proporções da M01, adaptados aos obstáculos existentes, e remove duas caixas decorativas sem colisão que ocupavam a rota. A caixa física original continua maior do que a geometria visível; colisão detalhada não foi implementada. A alteração não muda simulação, navegação, roteiro ou saves. 115 testes M02, build e dois browser PASS; [captura High e proveniência](../verification/m02-runtime/aid-station-2026-10-28/README.md). A inspeção controlada mostra que o posto ainda precisa de composição e detalhe. O último percurso completo continua o de `e4a4632`.
