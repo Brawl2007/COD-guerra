@@ -13,7 +13,7 @@ WASD/rato, Shift correr, C agachar, V/botão direito apontar, clique disparar, R
 
 | Trecho | O que avaliar jogando |
 | --- | --- |
-| C01 | Sete posições de preparação, Lis/Gruca, trincheira P1 escavada 42 cm e rampas. Verificar proteção ao agachar, saída e resistência do posto EA0, cujo parapeito fica à frente dos defensores. Só os pontos fisicamente observados devem poder ser atingidos. |
+| C01 | Sete posições de preparação, Lis/Gruca, trincheira P1 escavada 42 cm e rampas. Verificar proteção ao agachar, saída e resistência do posto EA0, cujo parapeito fica à frente dos defensores. Só os pontos fisicamente observados devem poder ser atingidos. Na quinta, `Z` segura a fase de cobertura, `X` manda avançar para o próximo ponto e `B` orienta o flanco pelo pomar. |
 | C02 | Comparar vala/casa/pomar e usar as três ordens. Observar impactos curtos em superfícies reais, sem linhas/esferas persistentes; clarões e partículas variam com a ronda/material. MG34 domina a abertura **oeste** de B02. A bancada deixa espaço ao corpo do atirador. Avaliar domínio visual, flanco e leitura de inimigos sem depender do HUD. |
 | Armas | Wz.29: ADS, tiro, ferrolho e recarga parcial/vazia. MG34/wz.28/MP38: rondas e impulsos separados. MP38: mãos no punho/apoio, carregador removido/inserido e alavanca no fim da recarga. Interromper por supressão/morte e restaurar no mesmo relógio. |
 | C03–C04 | Portas, interiores e flancos, rendição e ferido desarmado. Marcar o ferido do pomar com giz por E. Observar reação ao acerto e queda ao longo do tempo, sem exigir disparar sobre feridos para avançar. |

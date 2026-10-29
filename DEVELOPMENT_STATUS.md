@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — combate em equipa, áudio e cena — 2026-10-29
+
+Na candidata `codex/m02-recovery-v1`, as duplas cobrem o metralhador durante recargas reais; recargas NPC e quiques de granada têm som espacial; noite e bancada B05 foram melhoradas; `Z/X/B` alteram a progressão da secção na quinta. 135 testes M02, build e verificações browser focadas passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto; a repetição com ordens na candidata mais recente está em curso. [Estado e provas](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, coreografias e restante missão continuam em desenvolvimento; main e produção intactas.
+
 ## M02 — chegada de Lis e decisão de retirada — 2026-10-29
 
 Na candidata `codex/m02-recovery-v1`, `dcb46ec` mantém Lis parado após chegar fisicamente ao posto e avisa quando a retirada ocorre sem o socorrer ou enquanto se desloca. 119 testes M02, build e três browser passaram. A build completou C01–C12/M03 em percurso automatizado com Lis evacuado e 12/12, sem mortes/erros; [provas e limites](docs/verification/m02-runtime/lis-station-2026-10-29/README.md). Coreografia de apoio e qualidade global permanecem em desenvolvimento; main e produção não foram alteradas.

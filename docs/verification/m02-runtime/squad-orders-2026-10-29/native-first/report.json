@@ -1,0 +1,32 @@
+{
+  "startedAt": "2026-10-29T22:04:16.329Z",
+  "method": "Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.",
+  "stages": [
+    {
+      "label": "A:O00",
+      "clock": 0.1,
+      "health": 100,
+      "pos": [
+        0,
+        -175
+      ],
+      "realSec": 7.079
+    },
+    {
+      "label": "A:O01",
+      "clock": 17.000000000000107,
+      "health": 100,
+      "pos": [
+        -4.5470843538960635,
+        -138.2801374067169
+      ],
+      "realSec": 24.688
+    }
+  ],
+  "deaths": [],
+  "errors": [],
+  "orders": [],
+  "buildCommit": "899a8f59f734947ef25652f86aa0f03c90234021",
+  "failure": "Squad order suppress was not applied",
+  "finishedAt": "2026-10-29T22:04:42.403Z"
+}

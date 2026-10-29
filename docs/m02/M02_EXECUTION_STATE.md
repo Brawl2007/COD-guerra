@@ -1,5 +1,13 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — equipas, som, noite, oficina e ordens, 2026-10-29
+
+Candidata `codex/m02-recovery-v1`; código de jogo até `899a8f5`, ferramenta de verificação `0068321`. As duplas existentes cobrem alvos realmente observados durante a recarga (`b304701`); os NPCs ganham sons de recarga sincronizados e espaciais (`a194be2`). A noite de Łęczyca é mais legível mantendo o céu e a hora noturnos (`7bc5819`); a bancada B05 recebe detalhes M01 sem novos obstáculos (`817b34c`); granadas produzem som apenas em quiques físicos com velocidade suficiente (`c1b8ec9`). As ordens `Z/X/B` da quinta passam a afetar os destinos da secção e a apresentar confirmação (`899a8f5`).
+
+135 testes M02, build e testes browser focados passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto com 0 mortes/erros, vida 94, giz, água/munições, Lis evacuado e 12/12; a alteração posterior de ordens foi verificada em simulação e browser, e o modo automático foi comparado durante 800 passos com e sem guarnição. A primeira execução integral com teclas foi invalidada por uma espera incorreta no piloto; `0068321` aguarda o tick real e a repetição está em curso. Não tratar essa primeira tentativa como PASS. As [provas e limitações](../verification/m02-runtime/squad-orders-2026-10-29/README.md) incluem capturas e áudio.
+
+Continuar antes da avaliação humana: manipulação de armas e granada em primeira pessoa, alimentação física de MG, apoio físico a Lis, modelos/mãos/rostos, cenários, ordens fora da quinta, IA e mistura sob carga permanecem abertos. O PROMPT MESTRE integral ainda não foi recebido. Main e produção intactas; não declarar qualidade COD ou M02 concluída.
+
 ## Continuação — chegada de Lis e retirada C12, 2026-10-29
 
 `dcb46ec` corrige Lis a caminhar depois de evacuado: chega fisicamente a menos de 0,65 m do ponto B12, pára e mantém a posição mesmo com um objetivo antigo restaurado; o epílogo normal já não o teleporta. A interação de retirada indica se Lis não foi socorrido ou ainda está a caminho, sem eliminar os resultados possíveis. 119 testes M02, build e três browser PASS. A [passagem contínua de produção](../verification/m02-runtime/lis-station-2026-10-29/README.md) concluiu C01–C12/M03 com 0 mortes/erros, vida 94, giz, água/munições, Lis evacuado, 12/12 e Małek incapacitado; o piloto observa posições ocultas e não substitui playtest humano.
