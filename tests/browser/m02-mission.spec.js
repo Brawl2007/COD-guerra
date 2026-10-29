@@ -2,6 +2,29 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('the B05 workshop uses M01 tabletop props without changing the simulation',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await renderer.cargo.ready;sim.enterAreaBC06();sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(-45,-24.8,Math.atan2(-3.6,-3.5),-.13);
+  const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const root=renderer.staticGroup.getObjectByName('M02 B05 workbench dressing');
+  return {objects:root?.children.map(n=>n.name),unchanged:before===JSON.stringify(sim.snapshot()),preset:renderer.lightingPreset.id};
+ });
+ expect(result.objects).toEqual(['M02 B05 ammo_tin_box','M02 B05 jerrycans','M02 B05 ammo_crate_wood']);
+ expect(result.preset).toBe('night_1939_09_09');expect(result.unchanged).toBe(true);expect(errors).toEqual([]);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · OFICINA B05";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.evaluate(()=>{const {renderer}=window.m02Bench;renderer.staticGroup.getObjectByName('M02 B05 workbench dressing').visible=false;renderer.renderFrame(0,0);});
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · BANCADA SEM DETALHES"}'});
+ await page.screenshot({path:testInfo.outputPath('b05-workbench-undressed.png')});
+ await page.evaluate(()=>{const {renderer}=window.m02Bench;renderer.staticGroup.getObjectByName('M02 B05 workbench dressing').visible=true;renderer.renderFrame(0,0);});
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · OFICINA B05"}'});
+ await page.screenshot({path:testInfo.outputPath('b05-workbench.png')});
+});
+
 test('night lighting remains active in the B05 interior at Low quality',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

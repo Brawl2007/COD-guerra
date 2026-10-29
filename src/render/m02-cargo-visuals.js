@@ -8,10 +8,25 @@ export function fitM02Prop(source,ob){
  root.position.set(ob.min.x-box.min.x*root.scale.x,ob.min.y-box.min.y*root.scale.y,ob.min.z-box.min.z*root.scale.z);
  root.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});return root;
 }
+
+// Small, non-blocking set dressing placed on the authored B05 workbench.
+// These are unmodified M01 props at their authored scale (the three-can group
+// is reduced to fit the tabletop); they do not add simulation collision.
+export function createM02WorkshopDressing(ob,models){
+ if(ob?.id!=='prop_b05_workbench'||!['ammo_tin_box','ammo_crate_wood','jerrycans'].every(id=>models.has(id)))return null;
+ const root=new THREE.Group();root.name='M02 B05 workbench dressing';
+ const cx=(ob.min.x+ob.max.x)/2,cz=(ob.min.z+ob.max.z)/2;
+ for(const [id,x,z,scale] of [['ammo_tin_box',cx-1.25,cz,1],['jerrycans',cx,cz-.15,.65],['ammo_crate_wood',cx+1.2,cz,1]]){
+  const model=models.get(id).clone(true),bounds=new THREE.Box3().setFromObject(model);
+  model.scale.setScalar(scale);model.position.set(x,ob.max.y-bounds.min.y*scale+.005,z);
+  model.name=`M02 B05 ${id}`;model.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});root.add(model);
+ }
+ return root;
+}
 // Use the accepted M01 models; ownership and optional failures retain the
 // existing M02 proxies until the complete replacement is available.
 export class M02CargoVisuals {
- constructor(){this.assets=new AssetManager();this.models=new Map();this.ready=Promise.allSettled(['horse_cart','ammo_crate_wood','barrel_wood','sandbag_run','supply_crate_planked'].map(async id=>{const asset=await this.assets.load(id,`${BASE}m01_prop_${id}_lod0.glb`);this.models.set(id,asset.scene);}));}
+ constructor(){this.assets=new AssetManager();this.models=new Map();this.ready=Promise.allSettled(['horse_cart','ammo_crate_wood','ammo_tin_box','jerrycans','barrel_wood','sandbag_run','supply_crate_planked'].map(async id=>{const asset=await this.assets.load(id,`${BASE}m01_prop_${id}_lod0.glb`);this.models.set(id,asset.scene);}));}
  install(group,id,scale){
   if(!group||group.userData.m01Cargo||!this.models.has(id))return;
   const root=this.models.get(id).clone(true);root.scale.set(...scale);root.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});
@@ -21,6 +36,11 @@ export class M02CargoVisuals {
   for(const {proxy,ob,model}of renderer.authoredProps??[]){
    if(proxy.userData.m01PropInstalled||!this.models.has(model))continue;
    const root=fitM02Prop(this.models.get(model),ob);renderer.staticGroup.add(root);proxy.visible=false;proxy.userData.m01PropInstalled=model;
+  }
+  if(renderer.sim.activeCellId==='B'&&this.workshopRoot?.parent!==renderer.staticGroup){
+   const bench=renderer.world.obstacles.find(ob=>ob.id==='prop_b05_workbench');
+   const root=createM02WorkshopDressing(bench,this.models);
+   if(root){renderer.staticGroup.add(root);this.workshopRoot=root;}
   }
   this.install(renderer.supplyCartMesh,'horse_cart',[1.45,1,.7]);
   for(const [id,group]of renderer.supplyVolumeMeshes)this.install(group,id==='vol_water'?'barrel_wood':'ammo_crate_wood',id==='vol_water'?[1,.65,1]:[.75,1.4,1.5]);
