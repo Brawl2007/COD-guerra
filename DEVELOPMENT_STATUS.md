@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — chegada de Lis e decisão de retirada — 2026-10-29
+
+Na candidata `codex/m02-recovery-v1`, `dcb46ec` mantém Lis parado após chegar fisicamente ao posto e avisa quando a retirada ocorre sem o socorrer ou enquanto se desloca. 119 testes M02, build e três browser passaram. A build completou C01–C12/M03 em percurso automatizado com Lis evacuado e 12/12, sem mortes/erros; [provas e limites](docs/verification/m02-runtime/lis-station-2026-10-29/README.md). Coreografia de apoio e qualidade global permanecem em desenvolvimento; main e produção não foram alteradas.
+
 ## M02 — recuperação do braço após lançamento — 2026-10-29
 
 Na candidata `codex/m02-recovery-v1`, `cc0ecfc` adapta o rig M01 para mostrar o braço a regressar depois da soltura física da granada, sem alterar física ou snapshots. 118 testes M02, build e três casos de navegador passaram. [Captura High, método e limitações](docs/verification/m02-runtime/grenade-follow-through-2026-10-29/README.md). Faltam preparação, manipulação da granada e melhoria da geometria da mão; não é animação final nem validação artística. O último percurso integral é o de `e4a4632`; main e produção não foram alteradas.

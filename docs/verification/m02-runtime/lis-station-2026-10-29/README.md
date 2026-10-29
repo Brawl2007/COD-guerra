@@ -1,0 +1,11 @@
+# M02 — chegada de Lis e decisão de retirada
+
+Código testado: `dcb46ec2b619dfa6e251f655071631adf4609cd7`. Antes, Lis era marcado como evacuado a quase 2 m do ponto B12 e recebia de novo um objetivo de combate; numa reprodução deslocou-se mais 1,64 m depois do estado de evacuação. Agora caminha até 0,65 m do ponto, pára ali e permanece sem objetivo de combate. O epílogo normal não volta a colocá-lo por teleporte. Saves anteriores com destino de navegação antigo deixam de o fazer regressar à marcha.
+
+O aviso de saída distingue Lis ainda por socorrer, Lis a caminho e a chegada ao posto; sair continua possível e conserva os três resultados já previstos para a M03. Não foi criada animação de acompanhante nem se alterou a decisão de o deixar para trás.
+
+- [119 testes M02](node.txt), build e [três testes browser](browser.txt) passaram. Os testes cobrem a marcha real, posição após a chegada, restauro determinístico, save com destino antigo, ausência de teleporte no epílogo e avisos das três situações.
+- [Captura da decisão de saída](c12-exit-without-lis.png): Chromium/SwiftShader Low, 800 × 450, cenário controlado com Piotr colocado em B12 e objetivo O09 preparado. `E` foi enviado normalmente e confirmou `missing`, com Lis ausente e sem a fala da água na M03. O fixture não é um percurso de missão.
+- [Percurso contínuo](native/report.json): build de produção `dcb46ec`, Chromium/SwiftShader Low 480 × 270, início → C01–C12 → debrief e pacote M03, sem mortes do jogador ou erros de página, vida final 94, eixo vala, giz, água e munições, Lis `wounded_evacuated`, 12/12 e Małek incapacitado. As cinco transições constam no pacote. Registo [console](native/console.log) e [capturas](native/) são desta execução. O piloto usa teclado e eventos de rato e consulta posições internas, inclusive ocultas, para planear; não instala estados, não é playtest humano nem benchmark de GPU. A posição exata de Lis na chegada é coberta pelos testes de simulação, não pelo relatório do piloto.
+
+Continuam abertas a coreografia de apoio a Lis, a apresentação de mãos e armas, duplas de MG, composição de cenário, IA e som. Os resultados não aprovam a qualidade artística nem demonstram equivalência a Call of Duty. O documento complementar integral ainda não foi fornecido.

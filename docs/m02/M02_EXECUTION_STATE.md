@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — chegada de Lis e retirada C12, 2026-10-29
+
+`dcb46ec` corrige Lis a caminhar depois de evacuado: chega fisicamente a menos de 0,65 m do ponto B12, pára e mantém a posição mesmo com um objetivo antigo restaurado; o epílogo normal já não o teleporta. A interação de retirada indica se Lis não foi socorrido ou ainda está a caminho, sem eliminar os resultados possíveis. 119 testes M02, build e três browser PASS. A [passagem contínua de produção](../verification/m02-runtime/lis-station-2026-10-29/README.md) concluiu C01–C12/M03 com 0 mortes/erros, vida 94, giz, água/munições, Lis evacuado, 12/12 e Małek incapacitado; o piloto observa posições ocultas e não substitui playtest humano.
+
+Continuar a implementação antes da avaliação humana: coreografia de apoio a Lis, animação completa de granada, mãos/rostos e armas, duplas MG, cenários, IA e som continuam abertos. O complemento integral ainda não foi recebido. Main e produção intactas; missão não declarada concluída ou comparável a COD.
+
 ## Continuação — granada em primeira pessoa, 2026-10-29
 
 `cc0ecfc` acrescenta uma recuperação do braço direito com o rig M01 após a soltura física da granada. Tiro, ferrolho, recarga, morte e restauro têm prioridade; lançamento, colisão, RNG e snapshots mantêm-se, com identidade acrescentada ao evento. 118 testes M02, build e três browser PASS; [captura High e limites](../verification/m02-runtime/grenade-follow-through-2026-10-29/README.md). A mão continua angular e faltam preparação, pino, granada na mão e coreografia completa: não apresentar esta aproximação como animação final. O percurso integral continua o de `e4a4632`.
