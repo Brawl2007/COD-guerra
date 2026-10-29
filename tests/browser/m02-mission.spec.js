@@ -143,8 +143,11 @@ test('the normal grenade input displays the live projectile and a checkpoint rem
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
  await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
  await page.click('#mission-start');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
- await page.evaluate(()=>{window.m02BeforeGrenade=window.m02Bench.sim.snapshot();});
+ const handBefore=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;window.m02BeforeGrenade=sim.snapshot();const p=renderer.presentation,hand=p.weapon.root.getObjectByName('hand_r');return hand.getWorldPosition(hand.position.clone()).project(p.weaponCamera).toArray();});
  await page.keyboard.press('KeyG');await page.waitForFunction(()=>window.m02Diagnostics().grenades.active===1);
+ const follow=await page.evaluate(()=>{const p=window.m02Bench.renderer.presentation,hand=p.weapon.root.getObjectByName('hand_r');return {...window.m02Diagnostics().presentation.grenadeFollowThrough,hand:hand.getWorldPosition(hand.position.clone()).project(p.weaponCamera).toArray()};});
+ expect(follow.startedAt).not.toBeNull();expect(follow.weight).toBeGreaterThan(0);
+ expect(Math.hypot(follow.hand[0]-handBefore[0],follow.hand[1]-handBefore[1])).toBeGreaterThan(.04);
  await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
  await page.addStyleTag({content:'#mission-menu{display:none!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"INSPEÇÃO CONTROLADA · GRANADA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
  const shown=await page.evaluate(()=>{
@@ -155,9 +158,23 @@ test('the normal grenade input displays the live projectile and a checkpoint rem
  expect(shown.ammo).toBe(1);expect(shown.ids).toHaveLength(1);expect(shown.position).toEqual(shown.actual);
  expect(shown.radius).toBe(.07);expect(shown.visible).toBe(true);expect(shown.unchanged).toBe(true);
  await page.screenshot({path:testInfo.outputPath('grenade-in-flight.png')});
- const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02BeforeGrenade);renderer.renderFrame(0,0);return {ammo:sim.grenadeAmmo,active:renderer.grenadeViews.diagnostics.active};});
- expect(restored).toEqual({ammo:2,active:0});expect(errors).toEqual([]);
- console.log('M02 real grenade input',JSON.stringify({shown,restored}));
+ const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02BeforeGrenade);renderer.renderFrame(0,0);return {ammo:sim.grenadeAmmo,active:renderer.grenadeViews.diagnostics.active,follow:renderer.presentation.diagnostics.grenadeFollowThrough};});
+ expect(restored).toEqual({ammo:2,active:0,follow:{startedAt:null,weight:0}});expect(errors).toEqual([]);
+ console.log('M02 real grenade input',JSON.stringify({shown,handBefore,follow,restored}));
+});
+
+test('High quality shows the released grenade and returning first-person arm',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.evaluate(()=>{const freeze=()=>{if(window.m02Bench.renderer.presentation.grenadeFollowThroughWeight>0)window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape'}));else requestAnimationFrame(freeze);};requestAnimationFrame(freeze);});
+ await page.keyboard.press('KeyG');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const shot=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;return {ammo:sim.grenadeAmmo,projectiles:sim.grenades.length,follow:renderer.presentation.diagnostics.grenadeFollowThrough};});
+ expect(shot.ammo).toBe(1);expect(shot.projectiles).toBe(1);expect(shot.follow.weight).toBeGreaterThan(0);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"LANÇAMENTO REAL · G · HIGH";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('grenade-follow-through-high.png')});expect(errors).toEqual([]);
+ console.log('M02 High grenade follow-through',JSON.stringify(shot));
 });
 
 test('C11 real casualty retains an M01 death pose after a same-clock checkpoint restore',async({page},testInfo)=>{

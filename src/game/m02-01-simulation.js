@@ -1099,7 +1099,7 @@ export class M02BenchSimulation {
       exploded: false,
     };
     this.grenades.push(g);
-    this.events.push({ type: 'grenade-thrown', grenade: { ...g }, clock: this.clock });
+    this.events.push({ type: 'grenade-thrown', grenade: { ...g }, clock: this.clock, throwerId: customOrigin ? null : this.player.id });
     return g;
   }
 

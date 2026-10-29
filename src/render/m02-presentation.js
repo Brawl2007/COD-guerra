@@ -9,6 +9,7 @@ import {WZ29_VISUAL} from './m01-wz29-presentation.js';
 import {M02Footsteps} from './m02-footsteps.js';
 import {playM02RoundAudio} from './m02-round-audio.js';
 import {M01CombatFeedback} from './m01-combat-feedback.js';
+import {M02GrenadeFollowThrough} from './m02-grenade-follow-through.js';
 
 // Match the shared M01 viewmodel projection. ADS zoom belongs to the world
 // camera; changing this lens crops the stock and magnifies the near hands.
@@ -55,6 +56,7 @@ export class M02Presentation {
     this.weapon = new M01ViewModel(this.weaponScene, this.characters);
     this.audio = new AudioManager({quality:'medium'});
     this.feedback=new M01CombatFeedback();
+    this.grenadeFollowThrough=new M02GrenadeFollowThrough();
     this.damageSource=null;
     this.footsteps=new M02Footsteps(this.audio);
     this.m02Weapons=new M02Weapons();
@@ -68,6 +70,7 @@ export class M02Presentation {
     if(sim.clock<this.resetClock||sim.player!==this.playerRecord||sim.world!==this.presentationWorld){
       this.audio.resetPresentation(sim.clock);this.fireTimes.clear();this.roundEvents.clear();this.footsteps.reset();
       this.feedback?.reset();
+      this.grenadeFollowThrough?.reset();
       this.damageSource=null;
       this.characters.resetM02Pose();this.visualWorld=null;
     }
@@ -117,13 +120,20 @@ export class M02Presentation {
   }
   hasCharacter(id) { return this.characters.instances.has(this.ids.get(id)); }
   updateWeapon(sim, quality) {
+    this.grenadeFollowThrough??=new M02GrenadeFollowThrough();
+    this.grenadeFollowThrough.restore();
     const record = { clock:sim.clock, player:{...sim.player,moveBlend:sim.player.moving?1:0},
       world:{revision:sim.world.revision,obstacles:sim.world.obstacles},
       weapon:Object.assign(Object.create(Object.getPrototypeOf(sim.weapon)), sim.weapon),
       renderState:{weaponVisible:sim.player.health>0} };
     this.visualWorld ??= {};
     Object.assign(this.visualWorld, record.world); record.world=this.visualWorld;
-    return this.weapon.update(record, quality, sim.weapon.lastShot/1000+.08, {camera:this.camera, viewFov:this.weaponCamera.fov});
+    const ready=this.weapon.update(record, quality, sim.weapon.lastShot/1000+.08, {camera:this.camera, viewFov:this.weaponCamera.fov});
+    const throwAt=this.grenadeFollowThrough.startedAt;
+    const eligible=ready&&sim.player.health>0&&!sim.player.carryingVolumeId&&!sim.weapon.reloading&&!sim.weapon.boltCycling&&
+      !(throwAt!==null&&sim.weapon.lastShot/1000>=throwAt);
+    this.grenadeFollowThroughWeight=this.grenadeFollowThrough.apply(this.weapon.root,sim.clock,eligible);
+    return ready;
   }
   renderWeapon(renderer) {
     if (!this.weapon.root?.visible) return;
@@ -135,6 +145,7 @@ export class M02Presentation {
   consume(events, sim) {
     this.syncSession(sim);
     for (const event of events) {
+      if(event.type==='grenade-thrown'&&event.throwerId===sim.player.id)(this.grenadeFollowThrough??=new M02GrenadeFollowThrough()).begin(event.clock);
       if (event.type==='actor-burst') {this.fireTimes.set(event.shooterId,event.clock);this.roundEvents.set(event.shooterId,{clock:event.clock,roundIndex:event.roundIndex??0});}
       const playerHit=event.type==='actor-burst'&&event.side==='enemy'&&event.traces?.some(trace=>trace.hitKind==='actor'&&trace.hitId===sim.player.id);
       const blastHit=event.type==='grenade-exploded'&&event.affectedActors?.some(actor=>actor.id===sim.player.id&&actor.damage>0);
@@ -181,6 +192,6 @@ export class M02Presentation {
   }
   get diagnostics() {
     return {characters:this.characters.stats, loadedModels:[...this.characters.sources.keys()], clips:this.characters.clips.size, failures:this.characters.assets.failures,
-      weapon:this.weapon.stats, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
+      weapon:this.weapon.stats, grenadeFollowThrough:{startedAt:this.grenadeFollowThrough?.startedAt??null,weight:this.grenadeFollowThroughWeight??0}, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
   }
 }
