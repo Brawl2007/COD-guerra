@@ -12,7 +12,7 @@ export function m02LightingModel(temporalState,preset){
     const rgb=hex=>new THREE.Color(hex).toArray();
     model.hemi={color:rgb(preset.hemiSky),groundColor:rgb(preset.hemiGround),intensity:preset.hemiIntensity};
     model.sun={...model.sun,color:rgb(preset.sunColor),intensity:preset.sunIntensity,keyDir:new THREE.Vector3(...preset.sunPosition).normalize().toArray()};
-    model.fog.color=rgb(preset.fogColor);model.exposure=1.04;
+    model.fog.color=rgb(preset.fogColor);model.exposure=night?1.4:1.04;
     if(night){model.daylight=0;model.sky.zenith=[.008,.015,.035];model.sky.horizon=model.fog.color;model.sky.glow=.1;model.sky.discStrength=0;}
   }
   return model;

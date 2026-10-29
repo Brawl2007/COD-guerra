@@ -75,9 +75,11 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     fogFar: 230,
     hemiSky: 0x8ea1bd,
     hemiGround: 0x3f4653,
-    hemiIntensity: 0.85,
+    // Moonlit fill keeps uniforms and cover readable without changing T1's
+    // dark sky or the physical visibility used by the simulation.
+    hemiIntensity: 2.25,
     sunColor: 0x8aa8d6,
-    sunIntensity: 0.7,
+    sunIntensity: 1.12,
     sunPosition: [40, 62, -45],
   }),
   morning_1939_09_10: Object.freeze({

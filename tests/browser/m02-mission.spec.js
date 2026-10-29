@@ -2,6 +2,22 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('night lighting remains active in the B05 interior at Low quality',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;sim.enterAreaBC06();sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(-38,-24,Math.PI,-.08);const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  return {preset:renderer.lightingPreset.id,daylight:renderer.lighting.model.daylight,exposure:renderer.lighting.model.exposure,
+   unchanged:before===JSON.stringify(sim.snapshot()),player:[sim.player.x,sim.player.z]};
+ });
+ expect(result.preset).toBe('night_1939_09_09');expect(result.daylight).toBe(0);expect(result.exposure).toBe(1.4);expect(result.unchanged).toBe(true);expect(errors).toEqual([]);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · B05 · NOITE · LOW";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('night-b05-low.png')});
+});
+
 test('a real NPC reload produces a nearby audible M01 mechanism cue',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
@@ -47,18 +63,20 @@ test('the real wz28 team reloads and covers the same visible target',async({page
   const cover=sim.events.find(e=>e.type==='actor-burst'&&e.shooterId===loader.id);
   const snapshot=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
   const visuals=renderer.presentation.characters.stats.actors.filter(a=>['szymon_kowal','pl_aux_02'].includes(a.id)).map(a=>({id:a.id,clip:a.clip}));
-  return {first,cover,gunMag:gun.mag,loaderMag:loader.mag,reloadingUntil:gun.reloadingUntil,clock:sim.clock,unchanged:snapshot===JSON.stringify(sim.snapshot()),visuals};
+  const lighting={preset:renderer.lightingPreset.id,daylight:renderer.lighting.model.daylight,exposure:renderer.lighting.model.exposure,hemi:renderer.lighting.model.hemi.intensity};
+  return {first,cover,gunMag:gun.mag,loaderMag:loader.mag,reloadingUntil:gun.reloadingUntil,clock:sim.clock,unchanged:snapshot===JSON.stringify(sim.snapshot()),visuals,lighting};
  });
  expect(result.first?.targetId).toBe('DE-B01');expect(result.cover?.targetId).toBe('DE-B01');expect(result.cover?.crewCoverFor).toBe('pl_aux_01');
  expect(result.gunMag).toBe(0);expect(result.loaderMag).toBe(4);expect(result.reloadingUntil).toBeGreaterThan(result.clock);
  expect(result.unchanged).toBe(true);expect(result.visuals.find(v=>v.id==='szymon_kowal')?.clip).toBe('rkm_reload');
+ expect(result.lighting).toEqual({preset:'night_1939_09_09',daylight:0,exposure:1.4,hemi:2.25});
  expect(result.visuals.find(v=>v.id==='pl_aux_02')).toBeTruthy();expect(errors).toEqual([]);
  await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · DUPLA WZ.28";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
  await page.screenshot({path:testInfo.outputPath('wz28-reload-cover-night.png')});
  await page.evaluate(()=>{const {renderer}=window.m02Bench;renderer.applyLightingPreset('neutral_review');renderer.renderFrame(0,0);});
  await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · DUPLA WZ.28 · LUZ TÉCNICA"}'});
  await page.screenshot({path:testInfo.outputPath('wz28-reload-cover-neutral.png')});
- console.log('M02 wz28 team',JSON.stringify({first:result.first?.targetId,cover:result.cover?.targetId,visuals:result.visuals}));
+ console.log('M02 wz28 team',JSON.stringify({first:result.first?.targetId,cover:result.cover?.targetId,visuals:result.visuals,lighting:result.lighting}));
 });
 
 test('C12 exit warns before leaving an unrescued Lis and preserves the missing outcome',async({page},testInfo)=>{

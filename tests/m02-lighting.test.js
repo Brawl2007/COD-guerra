@@ -39,6 +39,7 @@ test('the existing bench lighting selector can preview another phase without rew
  const sim=new M02BenchSimulation(),before=sim.snapshot();
  const night=m02LightingModel(sim.horizon.temporalState,M02_LIGHTING_PRESETS.night_1939_09_09);
  assert.equal(night.daylight,0);assert.equal(night.sun.intensity,M02_LIGHTING_PRESETS.night_1939_09_09.sunIntensity);
+ assert.equal(night.hemi.intensity,2.25);assert.equal(night.exposure,1.4);assert.equal(night.sky.discStrength,0);
  const day=m02LightingModel('T1',M02_LIGHTING_PRESETS.afternoon_1939_09_09);
- assert.equal(day.daylight,lightingModel(14,255).daylight);assert.deepEqual(sim.snapshot(),before);
+ assert.deepEqual(day,lightingModel(14,255));assert.deepEqual(sim.snapshot(),before);
 });
