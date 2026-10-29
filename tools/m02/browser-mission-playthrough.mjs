@@ -16,7 +16,7 @@ try{
  await page.evaluate(async()=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot();});
  await page.click('#mission-start');
  await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
- const held=new Set();let last='',orderIndex=0,lastOrderAt=-Infinity,pendingOrder=null;
+ const held=new Set();let last='',orderIndex=0,lastOrderAt=-Infinity;
  const orderSequence=[['KeyZ','suppress'],['KeyX','advance'],['KeyB','flank_east']];
  const hold=async(key,on)=>{if(on&&!held.has(key)){await page.keyboard.down(key);held.add(key);}else if(!on&&held.has(key)){await page.keyboard.up(key);held.delete(key);}};
  for(let iteration=0;iteration<24000;iteration++){
@@ -40,13 +40,14 @@ try{
   }
   if(Date.now()-started>1800000)throw Error('Continuous run exceeded 30 minute wall budget');
   if(report.errors.length)throw Error(report.errors.join('\n'));
-  if(pendingOrder){
-    if(observed.squadOrder!==pendingOrder.type)throw Error(`Squad order ${pendingOrder.type} was not applied`);
-    report.orders.push({...pendingOrder,confirmedAt:observed.clock});pendingOrder=null;
-  }
   if(verifyOrders&&orderIndex<orderSequence.length&&observed.cell==='A'&&['O01','O02'].includes(observed.objective)&&observed.clock-lastOrderAt>=2){
     const [key,type]=orderSequence[orderIndex++];await page.keyboard.press(key);
-    pendingOrder={key,type,issuedAt:observed.clock};lastOrderAt=observed.clock;
+    // Input is consumed by the next fixed simulation tick. A frame can have
+    // advanced between the observation and keypress, so wait for the actual
+    // order rather than mistaking that earlier frame for confirmation.
+    await page.waitForFunction(expected=>window.m02Bench.sim.squadOrder.type===expected,type,{timeout:20000});
+    const confirmedAt=await page.evaluate(()=>window.m02Bench.sim.clock);
+    report.orders.push({key,type,issuedAt:observed.clock,confirmedAt});lastOrderAt=confirmedAt;
   }
   const c=observed.decision.controls;
   // The M01 verification harness uses the same relative mouse events because
@@ -59,7 +60,7 @@ try{
  }
  for(const key of held)await page.keyboard.up(key);
  if(!report.completed)throw Error('Mission not completed');
- if(verifyOrders&&(orderIndex!==orderSequence.length||pendingOrder||report.orders.length!==orderSequence.length))throw Error('The complete squad order sequence was not verified');
+ if(verifyOrders&&(orderIndex!==orderSequence.length||report.orders.length!==orderSequence.length))throw Error('The complete squad order sequence was not verified');
  for(let i=0;i<3;i++){await page.screenshot({path:`${out}/epilogue-${i}.png`});await page.click('#mission-epilogue-next');}
  await page.waitForFunction(()=>window.m02Diagnostics().state==='debrief');
  report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));
