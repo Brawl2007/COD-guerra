@@ -1,6 +1,24 @@
 import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 
+test('C12 exit warns before leaving an unrescued Lis and preserves the missing outcome',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{
+  const {sim}=window.m02Bench;sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();sim.enemies=[];
+  sim.teleportPlayer(-54,54.1,Math.PI/2,-.12);sim.objective={id:'O09',status:'active'};
+ });
+ await page.click('#mission-resume');await page.waitForFunction(()=>document.querySelector('#door-prompt').textContent.includes('Recuar sem socorrer Lis'));
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · SAÍDA C12";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('c12-exit-without-lis.png')});
+ await page.keyboard.press('KeyE');await page.waitForFunction(()=>window.m02Bench.sim.areaC.c12Completed);
+ const result=await page.evaluate(()=>{const s=window.m02Bench.sim;return {status:s.flags['m02.lis_status'],lis:s.m03ExportPackage.m03ImportState.lisEntry};});
+ expect(result.status).toBe('missing');expect(result.lis.presentInShelter).toBe(false);expect(result.lis.canSpeakCanonicalWaterLine).toBe(false);
+ expect(errors).toEqual([]);
+});
+
 test('B12 aid station presents the two physical stretchers at their authored positions',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');

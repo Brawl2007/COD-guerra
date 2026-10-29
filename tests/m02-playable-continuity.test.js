@@ -80,7 +80,30 @@ test('contact with Lis starts a physical supported walk; it does not teleport hi
  assert.deepEqual([lis.goal.x,lis.goal.z],[-58,52]);
  for(let i=0;i<1400&&s.flags['m02.lis_status']!=='wounded_evacuated';i++)s.tick(.1,{});
  assert.equal(s.flags['m02.lis_status'],'wounded_evacuated');
- assert.ok(Math.hypot(lis.x+58,lis.z-52)<2);
+ assert.ok(Math.hypot(lis.x+58,lis.z-52)<.65);
+ assert.equal(lis.moving,false);assert.equal(lis.effectiveSpeed,0);assert.equal(lis.goal,null);
+ const arrived=[lis.x,lis.z],saved=s.snapshot();
+ for(let i=0;i<50;i++)s.tick(.1,{});
+ assert.deepEqual([lis.x,lis.z],arrived,'evacuated Lis must not walk back to a combat position');
+ assert.equal(lis.state,'EVACUATED_B12');assert.equal(lis.goal,null);
+ const expected=s.snapshot();s.restoreSnapshot(saved);for(let i=0;i<50;i++)s.tick(.1,{});
+ assert.deepEqual(s.snapshot(),expected,'arrival remains deterministic after checkpoint restore');
+ const legacy=structuredClone(saved),legacyLis=legacy.allies.find(a=>a.id==='pl_lis');
+ legacyLis.goal={x:-56,z:50,crouch:false,nodeId:'cv_c_b12_lis'};legacyLis.moving=true;
+ s.restoreSnapshot(legacy);s.tick(.1,{});
+ const restoredLis=s.allies.find(a=>a.id==='pl_lis');
+ assert.deepEqual([restoredLis.x,restoredLis.z],arrived,'stale goals in earlier saves cannot restart the walk');
+ assert.equal(restoredLis.moving,false);assert.equal(restoredLis.goal,null);
+ s.completeC12Epilogue({lisOutcome:'wounded_evacuated'});
+ assert.deepEqual([restoredLis.x,restoredLis.z],arrived,'normal epilogue must not teleport an already evacuated Lis');
+});
+
+test('the exit warns whether Lis has not been rescued or is still on his way',()=>{
+ const s=new M02BenchSimulation();s.enterAreaCC09();s.startC10OrderChanges();s.detonateC10FixedArtillery();
+ s.teleportPlayer(-54,54.1,Math.PI/2);s.objective={id:'O09',status:'active'};
+ assert.match(m02PlayerAction(s).prompt,/sem socorrer Lis/);
+ s.assistLisInC11('wounded_walking');assert.match(m02PlayerAction(s).prompt,/Lis ainda a caminho/);
+ s.assistLisInC11('wounded_evacuated');assert.match(m02PlayerAction(s).prompt,/seguir para Varsóvia/);
 });
 
 test('blast damage can immobilize the supply cart and lose real undelivered volumes without duplication',()=>{

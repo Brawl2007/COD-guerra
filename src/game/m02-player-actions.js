@@ -20,7 +20,11 @@ export function m02PlayerAction(sim) {
   const near=(x,z,r=4)=>Math.hypot(player.x-x,player.z-z)<=r;
   const action=(id,prompt,extra={})=>({id,prompt:`[E] ${prompt}`,distance:0,...extra});
   if (sim.activeCellId==='C' && sim.objective.id==='O09' && !sim.areaC.c12Completed && near(-55,54,10)) {
-    return action('epilogue','Romper contacto e seguir para Varsóvia');
+    const lis=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell&&a.state==='WOUNDED_LIAISON');
+    const prompt=!sim.areaC.lisContactedInC11
+      ? lis?'Recuar sem socorrer Lis':'Recuar — Lis desaparecido'
+      : sim.flags['m02.lis_status']==='wounded_walking'?'Recuar — Lis ainda a caminho':'Romper contacto e seguir para Varsóvia';
+    return action('epilogue',prompt,{distance:Number(Math.hypot(player.x+55,player.z-54).toFixed(1))});
   }
   if(sim.activeCellId==='C'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11&&!player.carryingVolumeId){
     const lis=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell&&a.state==='WOUNDED_LIAISON');

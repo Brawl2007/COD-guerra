@@ -712,6 +712,11 @@ export function updatePolishSquad(sim, dt) {
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state))ally.burst=null;
     else stepActorWeapon(sim, ally, dt);
+    // Once in the aid station Lis remains there, including after restoring an
+    // older save with a stale navigation goal. Do not reassign combat cover.
+    if(ally.id==='pl_lis'&&sim.activeCellId==='C'&&ally.state==='EVACUATED_B12'){
+      ally.goal=null;ally.navCorners=null;ally.moving=false;ally.effectiveSpeed=0;continue;
+    }
     if(ally.id==='pl_lis'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11){ally.goal=null;ally.moving=false;continue;}
 
     if (sim.activeCellId === 'B') {

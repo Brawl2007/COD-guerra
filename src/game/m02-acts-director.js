@@ -684,8 +684,9 @@ export function updateAreaC(sim, dt) {
   // Lis through walls or initiate dialogue without the player's action.
 
   const supportedLis=sim.allies.find(a=>a.id==='pl_lis');
-  if(sim.areaC.lisContactedInC11&&supportedLis?.alive&&sim.flags['m02.lis_status']==='wounded_walking'&&Math.hypot(supportedLis.x+58,supportedLis.z-52)<2){
-    supportedLis.state='EVACUATED_B12';supportedLis.goal=null;
+  if(sim.areaC.lisContactedInC11&&supportedLis?.alive&&sim.flags['m02.lis_status']==='wounded_walking'&&Math.hypot(supportedLis.x+58,supportedLis.z-52)<.65){
+    supportedLis.state='EVACUATED_B12';supportedLis.goal=null;supportedLis.navCorners=null;
+    supportedLis.moving=false;supportedLis.effectiveSpeed=0;
     sim.areaC.lisSupportMode='wounded_evacuated';sim.flags['m02.lis_status']='wounded_evacuated';
   }
 
@@ -740,9 +741,11 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   if (!sim.areaC.artilleryDetonated) detonateC10FixedArtillery(sim);
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
 
-  if (lisOutcome) {
+  const alreadyResolvedContact=sim.areaC.lisContactedInC11&&lisOutcome===sim.flags['m02.lis_status']&&
+    (lisOutcome==='wounded_evacuated'||lisOutcome==='wounded_walking');
+  if (lisOutcome && !alreadyResolvedContact) {
     assistLisInC11(sim, lisOutcome);
-  } else if (!sim.flags['m02.lis_status'] || sim.flags['m02.lis_status'] === 'active') {
+  } else if (!lisOutcome && (!sim.flags['m02.lis_status'] || sim.flags['m02.lis_status'] === 'active')) {
     assistLisInC11(sim, 'wounded_evacuated');
   }
 
