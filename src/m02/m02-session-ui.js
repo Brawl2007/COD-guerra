@@ -2,11 +2,13 @@ import {m02ObjectivePresentation} from './m02-objective-presentation.js';
 import {m02DamageIndicator} from '../render/m02-presentation.js';
 export function mountM02SessionUi(session,renderer){
  const root=document.createElement('section');root.id='mission-menu';root.setAttribute('aria-label','Menu da missão');
- root.innerHTML=`<div class="menu-card"><p class="eyebrow">POLÓNIA · SETEMBRO DE 1939</p><h1>Batalha do Bzura</h1><p id="session-status">A preparar a missão…</p><div class="menu-actions"><button id="mission-start">Iniciar missão</button><button id="mission-continue">Continuar</button><button id="mission-resume">Retomar</button><button id="mission-epilogue-next">Continuar</button><button id="mission-restart">Reiniciar checkpoint</button></div><label>Qualidade <select id="mission-quality"><option value="high">Máxima</option><option value="medium" selected>Equilibrada</option><option value="low">Leve</option></select></label><label>Volume <input id="mission-volume" type="range" min="0" max="1" step=".05" value=".68"></label><label><input id="mission-shake" type="checkbox"> Reduzir movimento da câmara</label><label><input id="mission-subtitles" type="checkbox"> Legendas</label><label><input id="mission-direction-toggle" type="checkbox"> Indicação de dano</label><p class="controls-help">WASD · mover &nbsp; Shift · correr &nbsp; C · agachar<br>Rato · olhar &nbsp; Clique · disparar &nbsp; V / botão direito · apontar<br>R · recarregar &nbsp; G · granada &nbsp; E · interagir<br>Z · suprimir &nbsp; X · avançar &nbsp; B · flanquear &nbsp; Esc · pausa</p><p id="session-message" role="status"></p></div>`;
+ root.innerHTML=`<div class="menu-card"><p class="eyebrow">POLÓNIA · SETEMBRO DE 1939</p><h1>Batalha do Bzura</h1><p id="session-status">A preparar a missão…</p><div class="menu-actions"><button id="mission-start">Iniciar missão</button><button id="mission-continue">Continuar</button><button id="mission-resume">Retomar</button><button id="mission-epilogue-next">Continuar</button><button id="mission-restart">Reiniciar checkpoint</button></div><label>Qualidade <select id="mission-quality"><option value="high">Máxima</option><option value="medium" selected>Equilibrada</option><option value="low">Leve</option></select></label><label>Volume <input id="mission-volume" type="range" min="0" max="1" step=".05" value=".68"></label><label><input id="mission-shake" type="checkbox"> Reduzir movimento da câmara</label><label><input id="mission-subtitles" type="checkbox"> Legendas</label><label><input id="mission-direction-toggle" type="checkbox"> Indicação de dano</label><p class="controls-help">WASD · mover &nbsp; Shift · correr &nbsp; C · agachar<br>Rato · olhar &nbsp; Clique · disparar &nbsp; V / botão direito · apontar<br>R · recarregar &nbsp; G · granada &nbsp; E · interagir<br>Na quinta: Z · suprimir &nbsp; X · avançar &nbsp; B · flanquear<br>Esc · pausa</p><p id="session-message" role="status"></p></div>`;
  document.body.append(root);
  const vitals=document.createElement('div');vitals.id='mission-vitals';vitals.innerHTML='<span id="mission-condition"></span><span id="mission-bearing"></span>';document.body.append(vitals);
  const hit=document.createElement('div');hit.id='mission-hit';document.body.append(hit);
  const direction=document.createElement('div');direction.id='mission-direction';direction.setAttribute('aria-hidden','true');document.body.append(direction);
+ const orderNotice=document.createElement('div');orderNotice.id='mission-order';orderNotice.hidden=true;orderNotice.setAttribute('role','status');
+ document.getElementById('hud-objective').after(orderNotice);
 
  const start=root.querySelector('#mission-start'),cont=root.querySelector('#mission-continue'),resume=root.querySelector('#mission-resume'),restart=root.querySelector('#mission-restart');
  const epilogueNext=root.querySelector('#mission-epilogue-next');epilogueNext.onclick=()=>session.nextEpilogue();
@@ -26,6 +28,10 @@ export function mountM02SessionUi(session,renderer){
    vitals.hidden=!session.playing;hit.hidden=!session.playing;
    root.querySelector('#mission-quality').value=renderer.qualityProfile.id;
    const sim=session.sim,health=sim.player.health;
+   const order=sim.squadOrder,age=sim.clock-(order?.issuedAt??-Infinity);
+   const orderLabels={suppress:'Secção: segurar e suprimir',advance:'Secção: avançar',flank_east:'Secção: flanquear pelo pomar'};
+   orderNotice.hidden=!session.playing||sim.activeCellId!=='A'||sim.c01Active||!orderLabels[order?.type]||age<0||age>=4;
+   const orderText=orderLabels[order?.type]??'';if(orderNotice.textContent!==orderText)orderNotice.textContent=orderText;
    const accessibility=sim.audiovisual.accessibility;
    root.querySelector('#mission-shake').checked=accessibility.reducedCameraShake;
    root.querySelector('#mission-subtitles').checked=accessibility.subtitlesEnabled;

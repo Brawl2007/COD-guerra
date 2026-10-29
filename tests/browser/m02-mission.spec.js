@@ -2,6 +2,25 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('farm squad orders change real cover goals through normal keys and show confirmation',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{const s=window.m02Bench.sim;s.reset('C02');s.clock=10;s.ea1StartedAt=0;s.c01Active=false;s.enemies=[];s.allies=s.allies.filter(a=>a.id==='pl_gruca');});
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.keyboard.press('KeyZ');await page.waitForFunction(()=>window.m02Bench.sim.squadOrder.type==='suppress'&&!document.querySelector('#mission-order').hidden);
+ const held=await page.evaluate(()=>({node:window.m02Bench.sim.allies[0].goal.nodeId,text:document.querySelector('#mission-order').textContent}));
+ expect(held.node).toBe('cv_ditch_mid_a');expect(held.text).toContain('segurar e suprimir');
+ await page.keyboard.press('KeyX');await page.waitForFunction(()=>window.m02Bench.sim.squadOrder.type==='advance'&&window.m02Bench.sim.allies[0].goal?.nodeId==='cv_b01_north_wall');
+ await page.waitForFunction(()=>document.querySelector('#mission-order').textContent.includes('avançar'));
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · ORDENS";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('squad-order-advance.png')});
+ await page.keyboard.press('KeyB');await page.waitForFunction(()=>window.m02Bench.sim.squadOrder.type==='flank_east'&&document.querySelector('#mission-order').textContent.includes('pomar'));
+ const flank=await page.evaluate(()=>window.m02Bench.sim.allies[0].goal.nodeId);
+ expect(['cv_orchard_bank_e','cv_b03_south_entry','cv_courtyard_consolidate']).toContain(flank);expect(errors).toEqual([]);
+});
+
 test('a physically bounced grenade produces an audible local material cue',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/COD-guerra/m02.html?quality=low&debug=1');await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);

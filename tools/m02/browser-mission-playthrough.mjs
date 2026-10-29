@@ -3,6 +3,8 @@ import fs from 'node:fs';
 const out=process.env.M02_PLAY_OUT??'/tmp/m02-continuous';fs.mkdirSync(out,{recursive:true});
 const browser=await chromium.launch({executablePath:process.env.CHROME_EXECUTABLE??'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const report={startedAt:new Date().toISOString(),method:'Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.',stages:[],deaths:[],errors:[]};
+const verifyOrders=process.env.M02_ORDER_RUN==='1';
+if(verifyOrders)report.orders=[];
 report.buildCommit=process.env.M02_BUILD_SHA??null;
 const started=Date.now();
 let page;
@@ -14,12 +16,13 @@ try{
  await page.evaluate(async()=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot();});
  await page.click('#mission-start');
  await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
- const held=new Set();let last='';
+ const held=new Set();let last='',orderIndex=0,lastOrderAt=-Infinity,pendingOrder=null;
+ const orderSequence=[['KeyZ','suppress'],['KeyX','advance'],['KeyB','flank_east']];
  const hold=async(key,on)=>{if(on&&!held.has(key)){await page.keyboard.down(key);held.add(key);}else if(!on&&held.has(key)){await page.keyboard.up(key);held.delete(key);}};
  for(let iteration=0;iteration<24000;iteration++){
   const observed=await page.evaluate(()=>{
    const sim=window.m02Bench.sim;
-   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,ammo:{mag:sim.weapon.mag,reserve:sim.weapon.reserve,received:sim.weapon.received,grenades:sim.grenadeAmmo},decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z]};
+   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,ammo:{mag:sim.weapon.mag,reserve:sim.weapon.reserve,received:sim.weapon.received,grenades:sim.grenadeAmmo},decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z],squadOrder:sim.squadOrder.type};
   });
   const label=`${observed.cell}:${observed.objective}`;
   if(label!==last){last=label;report.stages.push({label,clock:observed.clock,health:observed.health,pos:observed.pos,realSec:(Date.now()-started)/1000});console.log(JSON.stringify(report.stages.at(-1)));await page.screenshot({path:`${out}/${report.stages.length}-${label.replace(':','-')}.png`});}
@@ -37,6 +40,14 @@ try{
   }
   if(Date.now()-started>1800000)throw Error('Continuous run exceeded 30 minute wall budget');
   if(report.errors.length)throw Error(report.errors.join('\n'));
+  if(pendingOrder){
+    if(observed.squadOrder!==pendingOrder.type)throw Error(`Squad order ${pendingOrder.type} was not applied`);
+    report.orders.push({...pendingOrder,confirmedAt:observed.clock});pendingOrder=null;
+  }
+  if(verifyOrders&&orderIndex<orderSequence.length&&observed.cell==='A'&&['O01','O02'].includes(observed.objective)&&observed.clock-lastOrderAt>=2){
+    const [key,type]=orderSequence[orderIndex++];await page.keyboard.press(key);
+    pendingOrder={key,type,issuedAt:observed.clock};lastOrderAt=observed.clock;
+  }
   const c=observed.decision.controls;
   // The M01 verification harness uses the same relative mouse events because
   // absolute headless pointer-lock motion cancels. Only the input listener runs.
@@ -48,6 +59,7 @@ try{
  }
  for(const key of held)await page.keyboard.up(key);
  if(!report.completed)throw Error('Mission not completed');
+ if(verifyOrders&&(orderIndex!==orderSequence.length||pendingOrder||report.orders.length!==orderSequence.length))throw Error('The complete squad order sequence was not verified');
  for(let i=0;i<3;i++){await page.screenshot({path:`${out}/epilogue-${i}.png`});await page.click('#mission-epilogue-next');}
  await page.waitForFunction(()=>window.m02Diagnostics().state==='debrief');
  report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));

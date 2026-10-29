@@ -717,6 +717,13 @@ export function m02VisibleAimPoint(sim,shooter,target){
 export function updatePolishSquad(sim, dt) {
   const coverById = sim.coverNodesById;
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
+  const orderMode=sim.squadOrder?.type??'auto';
+  // A suppression order holds the current phase of the farm approach. It
+  // does not teleport anyone: men continue walking to their assigned cover.
+  // Advance selects the next authored node and still uses the same navigator.
+  const issuedAt=Number.isFinite(sim.squadOrder?.issuedAt)?sim.squadOrder.issuedAt:sim.clock;
+  const orderClock=orderMode==='suppress'?Math.min(sim.clock,issuedAt):sim.clock;
+  const orderElapsed=Math.max(0,orderClock-(sim.ea1StartedAt??0));
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05' && e.alive && !e.nonCombatant);
 
   // Assign tactical cover goals by squad state & elapsed time / progression
@@ -798,7 +805,7 @@ export function updatePolishSquad(sim, dt) {
       }
     } else if (ally.id === 'pl_aux_01' || ally.id === 'pl_aux_02') {
       // 1. rkm wz. 28 support pair (Nowak + Kowalski) holds fire base and advances to north courtyard wall once ditch team reaches B01
-      const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
+      const combatElapsed = orderElapsed;
       const ditchAdvanced = combatElapsed >= 18 || sim.player.z > -35;
       const nodeId = ditchAdvanced
         ? (ally.id === 'pl_aux_01' ? 'cv_gate_wall_west_s' : 'cv_b01_east_corner')
@@ -810,7 +817,7 @@ export function updatePolishSquad(sim, dt) {
       }
     } else if (ally.id === 'pl_szymczak') {
       // Medic stays in covered support behind Gruca and moves to orchard in C04
-      const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
+      const combatElapsed = orderElapsed;
       const c04Ready = sim.objective.id === 'C04' || sim.objective.id === 'O03';
       const nodeId = c04Ready
         ? 'cv_courtyard_consolidate'
@@ -824,10 +831,10 @@ export function updatePolishSquad(sim, dt) {
       }
     } else {
       // Assault & flank team (Gruca, Lis, Wierzba, Małek)
-      const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
-      const orderMode = sim.squadOrder?.type ?? 'auto';
+      const combatElapsed = orderElapsed;
       if (activeAxis === 'orchard' || orderMode === 'flank_east') {
-        const stage = combatElapsed < 12 ? 0 : combatElapsed < 26 ? 1 : 2;
+        const baseStage = combatElapsed < 12 ? 0 : combatElapsed < 26 ? 1 : 2;
+        const stage=Math.min(2,baseStage+(orderMode==='advance'?1:0));
         const mapByRole = {
           pl_gruca: ['cv_orchard_bank_e', 'cv_b03_south_entry', 'cv_courtyard_consolidate'],
           pl_wierzba: ['cv_orchard_bank_e', 'cv_b03_north_exit', 'cv_gate_wall_west_s'],
@@ -843,7 +850,8 @@ export function updatePolishSquad(sim, dt) {
         }
       } else {
         // Default / Ditch + B01 clearing bound progression
-        const stage = combatElapsed < 8 ? 0 : combatElapsed < 18 ? 1 : combatElapsed < 30 ? 2 : 3;
+        const baseStage = combatElapsed < 8 ? 0 : combatElapsed < 18 ? 1 : combatElapsed < 30 ? 2 : 3;
+        const stage=Math.min(3,baseStage+(orderMode==='advance'?1:0));
         const mapByRole = {
           pl_gruca: ['cv_ditch_north_a', 'cv_ditch_mid_a', 'cv_b01_north_wall', 'cv_b01_east_corner'],
           pl_lis: ['cv_ditch_north_b', 'cv_ditch_south_a', 'cv_b01_kitchen_in', 'cv_b01_hall_in'],
