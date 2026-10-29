@@ -11,6 +11,7 @@ import {playM02RoundAudio} from './m02-round-audio.js';
 import {M01CombatFeedback} from './m01-combat-feedback.js';
 import {M02GrenadeFollowThrough} from './m02-grenade-follow-through.js';
 import {playM02NpcReloadAudio} from './m02-npc-reload-audio.js';
+import {playM02GrenadeBounce} from './m02-grenade-audio.js';
 
 // Match the shared M01 viewmodel projection. ADS zoom belongs to the world
 // camera; changing this lens crops the stock and magnifies the near hands.
@@ -183,6 +184,7 @@ export class M02Presentation {
       if(event.type==='player-landing'&&event.damage>0)this.audio.landing(event.speed,event.surface,`m02-landing:${event.clock}`);
       if(event.type==='rifle-ammo-collected')this.audio.wz29Mechanism('magazine',`m02-ammo:${event.actorId}:${event.clock}`);
       if(event.type==='actor-reload-cue')playM02NpcReloadAudio(this.audio,event,sim,this.spatial.bind(this));
+      if(event.type==='grenade-bounced')playM02GrenadeBounce(this.audio,event,sim,this.spatial.bind(this));
       // Impacts and passing rounds have their own locations; the shooter's
       // occlusion and panning do not describe where a bullet lands.
       if(event.type==='shot-fired')playM02RoundAudio(this.audio,event.shot,sim,this.spatial.bind(this),event.shot?.id??`player:${sim.clock}`);

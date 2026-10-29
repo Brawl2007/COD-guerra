@@ -1187,7 +1187,11 @@ export class M02BenchSimulation {
   updateGrenades(dt) {
     for (const g of this.grenades) {
       if (g.exploded) continue;
-      stepM02Grenade(this.world,g,dt);
+      const impact=stepM02Grenade(this.world,g,dt);
+      // Sub-threshold contacts include resting/settling and must not create a
+      // continuous rattle or consume the presentation's limited voice pool.
+      if(impact&&impact.speed>=1.2)this.events.push({type:'grenade-bounced',grenadeId:g.id,
+        point:impact.point,material:impact.material,speed:impact.speed,clock:Number(this.clock.toFixed(3))});
 
       if (this.clock >= g.fuseAt) {
         g.exploded = true;

@@ -2,6 +2,31 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('a physically bounced grenade produces an audible local material cue',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/COD-guerra/m02.html?quality=low&debug=1');await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio;await a.ctx.resume();sim.enterAreaBC06();sim.enemies=[];sim.allies=[];
+  Object.assign(sim.player,{x:-2,y:0,z:100,eyeHeight:1.65,angle:0});
+  sim.world.obstacles.push({id:'audio-bounce-wall',min:{x:1,y:0,z:97},max:{x:1.2,y:3,z:103},material:'wood_thick'});
+  sim.throwGrenade({x:0,y:1.5,z:100},{x:1,y:0,z:0});sim.drainEvents();for(let i=0;i<4;i++)sim.tick(.05,{});
+  const bounce=sim.drainEvents().filter(e=>e.type==='grenade-bounced'),before=JSON.stringify(sim.snapshot());
+  p.syncSession(sim);a.stopAll(false);const dest=a.ctx.createMediaStreamDestination();a.master.connect(dest);
+  const recorder=new MediaRecorder(dest.stream),chunks=[];recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
+  const count=a.diagnostics.eventCounts['grenade-bounce']??0;p.consume(bounce,sim);
+  await new Promise(r=>setTimeout(r,350));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
+  const blob=new Blob(chunks,{type:recorder.mimeType}),buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());
+  let peak=0;for(let c=0;c<buffer.numberOfChannels;c++)for(const v of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(v));
+  const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);});
+  a.master.disconnect(dest);return {bounce,peak,encoded,count:(a.diagnostics.eventCounts['grenade-bounce']??0)-count,unchanged:before===JSON.stringify(sim.snapshot()),state:a.ctx.state};
+ });
+ expect(result.bounce).toHaveLength(1);expect(result.bounce[0].material).toBe('wood_thick');expect(result.count).toBe(1);
+ expect(result.peak).toBeGreaterThan(.0001);expect(result.unchanged).toBe(true);expect(result.state).toBe('running');expect(errors).toEqual([]);
+ writeFileSync(testInfo.outputPath('grenade-bounce.webm'),Buffer.from(result.encoded,'base64'));
+ console.log('M02 grenade bounce sound',JSON.stringify({peak:result.peak,count:result.count,bounce:result.bounce[0]}));
+});
+
 test('the B05 workshop uses M01 tabletop props without changing the simulation',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
@@ -251,9 +276,9 @@ test('a grenade thrown by the player bounces off the actual B05 wall',async({pag
  await page.waitForFunction(()=>{const {sim,renderer}=window.m02Bench,g=sim.grenades[0];return g&&g.vx>0&&renderer.grenadeViews.views.has(g.id);});
  await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
  await page.addStyleTag({content:'#mission-menu,#cartela-banner{display:none!important}.mission-paused .hud-layer{visibility:visible}body:after{content:"INSPEÇÃO CONTROLADA · RESSALTO";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
- const result=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,g=sim.grenades[0],v=renderer.grenadeViews.views.get(g.id);return {x:g.x,y:g.y,z:g.z,vx:g.vx,vz:g.vz,view:v.position.toArray(),ammo:sim.grenadeAmmo};});
+ const result=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,g=sim.grenades[0],v=renderer.grenadeViews.views.get(g.id);return {x:g.x,y:g.y,z:g.z,vx:g.vx,vz:g.vz,view:v.position.toArray(),ammo:sim.grenadeAmmo,sounds:renderer.presentation.audio.diagnostics.eventCounts['grenade-bounce']??0};});
  expect(result.x).toBeGreaterThanOrEqual(wall.max.x);expect(result.vx).toBeGreaterThan(0);expect(result.ammo).toBe(1);
- expect(result.view).toEqual([result.x,result.y,result.z]);await page.screenshot({path:testInfo.outputPath('grenade-wall-bounce.png')});
+ expect(result.view).toEqual([result.x,result.y,result.z]);expect(result.sounds).toBeGreaterThan(0);await page.screenshot({path:testInfo.outputPath('grenade-wall-bounce.png')});
  expect(errors).toEqual([]);console.log('M02 grenade bounce in B05',JSON.stringify({wall,result}));
 });
 

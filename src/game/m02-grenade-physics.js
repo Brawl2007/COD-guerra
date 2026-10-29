@@ -68,13 +68,17 @@ export function stepM02Grenade(world,g,dt){
   const contact={x:start.x+dir.x*solid.distance,y:start.y+dir.y*solid.distance,z:start.z+dir.z*solid.distance};
   const axis=hitAxis(solid,contact,dir),travel=Math.max(0,solid.distance-SEPARATION);
   g.x=start.x+dir.x*travel;g.y=start.y+dir.y*travel;g.z=start.z+dir.z*travel;
+  const speed=axis?Math.abs(g[`v${axis}`]):0;
   if(axis)g[`v${axis}`]*=-.32;
   g.vy-=GRAVITY*dt;
+  return axis?{point:contact,material:solid.material??'stone',speed}:null;
  }else if(groundFraction!==Infinity){
+  const speed=Math.max(0,-g.vy);
   g.x=start.x+dx*groundFraction;g.z=start.z+dz*groundFraction;
   g.y=world.heightAt(g.x,g.z)+GROUND_OFFSET;
   if(g.vy<0)g.vy=-g.vy*.25;
   g.vx*=.65;g.vz*=.65;
+  return {point:{x:g.x,y:g.y,z:g.z},material:'earth',speed};
  }else{
   g.x=nx;g.y=ny;g.z=nz;g.vy-=GRAVITY*dt;
  }
