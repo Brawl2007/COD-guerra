@@ -5,6 +5,8 @@ const browser=await chromium.launch({executablePath:process.env.CHROME_EXECUTABL
 const report={startedAt:new Date().toISOString(),method:'Continuous production build; trusted Playwright keyboard/start and pointer-lock mouse input; read-only planner uses actor/collision observations, never writes simulation state.',stages:[],deaths:[],errors:[]};
 const verifyOrders=process.env.M02_ORDER_RUN==='1';
 if(verifyOrders)report.orders=[];
+const verifyGrenade=process.env.M02_GRENADE_RUN==='1';
+if(verifyGrenade)report.grenade=null;
 report.buildCommit=process.env.M02_BUILD_SHA??null;
 const started=Date.now();
 let page;
@@ -41,6 +43,18 @@ try{
   }
   if(Date.now()-started>1800000)throw Error('Continuous run exceeded 30 minute wall budget');
   if(report.errors.length)throw Error(report.errors.join('\n'));
+  if(verifyGrenade&&!report.grenade&&observed.cell==='A'&&observed.objective==='O00'&&observed.clock>=.1){
+    // Deliberate early throw into the open approach exercises real player
+    // input and nearby squad perception without installing simulation state.
+    await page.keyboard.press('KeyG');
+    await page.waitForFunction(before=>{
+      const s=window.m02Bench.sim;return s.grenadeAmmo===before-1&&s.allies.some(a=>a.m02GrenadeThreat);
+    },observed.ammo.grenades,{timeout:20000});
+    report.grenade=await page.evaluate(()=>{
+      const s=window.m02Bench.sim;return {clock:s.clock,ammo:s.grenadeAmmo,
+        projectile:s.grenades[0]?.id??null,reactors:s.allies.filter(a=>a.m02GrenadeThreat).map(a=>a.id)};
+    });
+  }
   const allowedOrders=observed.cell==='A'?['O01','O02'].includes(observed.objective):observed.cell==='B'?observed.objective==='O04':['O06','O07','O08'].includes(observed.objective);
   const sequence=orderSequence[observed.cell];
   if(verifyOrders&&sequence&&orderIndex[observed.cell]<sequence.length&&allowedOrders&&observed.clock-lastOrderAt[observed.cell]>=2){
@@ -64,6 +78,7 @@ try{
  for(const key of held)await page.keyboard.up(key);
  if(!report.completed)throw Error('Mission not completed');
  if(verifyOrders&&(Object.keys(orderSequence).some(cell=>orderIndex[cell]!==orderSequence[cell].length)||report.orders.length!==7))throw Error('The complete squad order sequence was not verified');
+ if(verifyGrenade&&(!report.grenade?.projectile||!report.grenade.reactors.length))throw Error('Grenade and squad reaction were not verified');
  for(let i=0;i<3;i++){await page.screenshot({path:`${out}/epilogue-${i}.png`});await page.click('#mission-epilogue-next');}
  await page.waitForFunction(()=>window.m02Diagnostics().state==='debrief');
  report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));
