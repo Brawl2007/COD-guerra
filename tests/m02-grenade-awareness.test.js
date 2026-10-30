@@ -50,6 +50,14 @@ test('a real nearby bounce is heard behind the observer, but not through a solid
  }
 });
 
+test('an earlier bounce retained in the event queue is not heard again on a later tick',()=>{
+ const {sim,actor}=setup();sim.grenades=[];sim.drainEvents();Object.assign(actor,{x:10,facing:0});
+ sim.throwGrenade({x:1,y:.2,z:100},{x:0,y:-1,z:0});sim.tick(.05,{});
+ assert.ok(sim.events.some(e=>e.type==='grenade-bounced'));assert.equal(actor.m02GrenadeThreat,undefined);
+ actor.x=4;sim.tick(.05,{});
+ assert.equal(actor.m02GrenadeThreat,undefined);assert.equal(sim.events.some(e=>e.type==='grenade-warning'),false);
+});
+
 test('an enemy seeing the actual grenade flees without producing an allied player warning',()=>{
  const {sim,actor}=setup('enemy'),before=actor.x;sim.tick(.05,{});
  const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');

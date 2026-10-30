@@ -2,6 +2,23 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('a soldier hears a real grenade bounce behind him',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{
+  const s=window.m02Bench.sim;s.enterAreaBC06();const a=s.allies.find(a=>a.id==='pl_gruca');s.allies=[a];s.enemies=[];
+  Object.assign(a,{x:4,y:0,z:100,facing:0,state:'ACTIVE',goal:null,reloadingUntil:s.clock+100});s.teleportPlayer(0,100,0,-1.1);
+ });
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');await page.keyboard.press('KeyG');
+ await page.waitForFunction(()=>{
+  const {sim,renderer}=window.m02Bench;return sim.allies[0].state==='FLEE_GRENADE'&&renderer.presentation.grenadeWarning?.perception==='bounce';
+ });
+ const result=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;return {ammo:sim.grenadeAmmo,x:sim.allies[0].x,reload:sim.allies[0].reloadingUntil,perception:renderer.presentation.grenadeWarning.perception};});
+ expect(result.ammo).toBe(1);expect(result.x).toBeGreaterThan(4);expect(result.reload).toBe(0);expect(result.perception).toBe('bounce');expect(errors).toEqual([]);
+});
+
 test('a soldier flees and warns after seeing the player grenade',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
