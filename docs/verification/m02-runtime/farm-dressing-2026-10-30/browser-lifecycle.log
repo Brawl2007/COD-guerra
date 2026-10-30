@@ -1,0 +1,17 @@
+[1A[2K[WebServer] (node:180123) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:180147) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:180147) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m02-mission.spec.js:5:1 › changing cells releases furniture geometry but retains the shared M01 props
+[1A[2K[2/2] tests/browser/m02-mission.spec.js:26:1 › B01 kitchen uses the original M01 lantern and crate
+[1A[2K  2 passed (48.3s)

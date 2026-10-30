@@ -2,7 +2,7 @@
 
 ## Continuação — objetos M01 na casa, 2026-10-30
 
-`5c2b230` coloca a lanterna e a caixa de tábuas originais do kit M01 na mesa B01. A caixa encaixa no colisor existente; a lanterna é detalhe visual sem colisão própria. Rebuild e mudança de célula não duplicam os objetos. 151 testes M02, build e três browser passaram; [comparação e limites](../verification/m02-runtime/farm-dressing-2026-10-30/README.md). O último percurso integral concluído continua o de `e6c62e0` abaixo; a passagem congelada `5c2b230` está em curso. A simulação e o roteiro não mudaram nesta etapa.
+`5c2b230` coloca a lanterna e a caixa de tábuas originais do kit M01 na mesa B01. A caixa encaixa no colisor existente; a lanterna é detalhe visual sem colisão própria. Rebuild e mudança de célula não duplicam os objetos. 151 testes M02, build e três browser passaram; [comparação e limites](../verification/m02-runtime/farm-dressing-2026-10-30/README.md). A [passagem integral congelada](../verification/m02-runtime/farm-dressing-2026-10-30/native/report.json) concluiu C01–C12/M03 com uma morte e retoma, vida final 29, giz, água/munições, Lis evacuado e 12/12; sete reações à granada e sete ordens foram confirmadas. O piloto lê atores e geometria ocultos e não substitui playtest humano. Em Low houve 15 recusas sonoras (12 passos e três impactos de tijolo), nenhuma de disparo nesta execução. A simulação e o roteiro não mudaram nesta etapa. `3478326` liberta a geometria dos móveis ao mudar de área; 151 testes M02, build e dois browser adicionais passaram, incluindo A→B→A e preservação dos modelos partilhados (`92a1e0d`). A passagem integral acima é anterior a esta limpeza visual.
 
 ## Continuação — reação a granadas, 2026-10-30
 
