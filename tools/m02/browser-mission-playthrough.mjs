@@ -7,6 +7,7 @@ const verifyOrders=process.env.M02_ORDER_RUN==='1';
 if(verifyOrders)report.orders=[];
 const verifyGrenade=process.env.M02_GRENADE_RUN==='1';
 if(verifyGrenade)report.grenade=null;
+const traceAudio=process.env.M02_AUDIO_TRACE==='1';
 report.buildCommit=process.env.M02_BUILD_SHA??null;
 const started=Date.now();
 let page;
@@ -18,6 +19,19 @@ try{
  await page.evaluate(async()=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot();});
  await page.click('#mission-start');
  await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
+ if(traceAudio)await page.evaluate(()=>{
+  const audio=window.m02Bench.renderer.presentation.audio,voice=audio._voice;
+  window.m02PilotAudioDenials=[];
+  audio._voice=function(options={}){
+   const category=options.category??'fx',dropped=this.dropped,budget=this.budgetDropped,categoryDrops=this.categoryDropped[category]??0;
+   const result=voice.call(this,options);
+   if(!result){
+    const reason=this.budgetDropped>budget?'source-budget':(this.categoryDropped[category]??0)>categoryDrops?'category-limit':this.dropped>dropped?'global-limit':'unavailable';
+    window.m02PilotAudioDenials.push({clock:window.m02Bench.sim.clock,kind:options.kind??'fx',category,priority:options.priority??null,reason});
+   }
+   return result;
+  };
+ });
  const held=new Set();let last='';
  const orderSequence={A:[['KeyZ','suppress'],['KeyX','advance'],['KeyB','flank_east']],B:[['KeyZ','suppress'],['KeyX','advance']],C:[['KeyZ','suppress'],['KeyX','advance']]};
  const orderIndex={A:0,B:0,C:0},lastOrderAt={A:-Infinity,B:-Infinity,C:-Infinity};
@@ -86,4 +100,7 @@ try{
  await page.setViewportSize({width:1280,height:720});await page.screenshot({path:`${out}/debrief.png`});
  console.log('COMPLETE',JSON.stringify(report.result));
 }catch(error){report.failure=error.message;console.log('FAILED',error.message);if(page)await page.screenshot({path:`${out}/failure.png`}).catch(()=>{});process.exitCode=1;}
-finally{report.finishedAt=new Date().toISOString();fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));await browser.close();}
+finally{
+ if(traceAudio&&page)report.audioDenials=await page.evaluate(()=>window.m02PilotAudioDenials??[]).catch(()=>[]);
+ report.finishedAt=new Date().toISOString();fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));await browser.close();
+}
