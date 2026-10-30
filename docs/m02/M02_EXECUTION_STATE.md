@@ -1,12 +1,20 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — ordens em B/C e áudio dos pisos, 2026-10-30
+
+`187e281` estende `Z/X` a B/C: os aliados elegíveis mantêm as posições reais e retomam os destinos da missão, sem prender Lis em evacuação nem o último grupo. Os campos da ordem são opcionais em saves antigos; o teste de restauro é determinista. `B` continua a atuar apenas na quinta. A [passagem integral congelada](../verification/m02-runtime/squad-orders-2026-10-29/native-allcells/report.json) confirmou sete ordens por teclado nas três áreas e concluiu C01–C12/M03: zero mortes/erros, vida 86, giz, ambos os abastecimentos, Lis evacuado e 12/12. O piloto observa também atores e geometria ocultos; não é playtest humano.
+
+`fe20322` adapta as superfícies e a reverberação da M01 à célula ativa: passos na madeira B01 e na terra, bem como atenuação de passos de aliados atrás de paredes reais. 139 testes M02, 53 focados com áudio partilhado, build e três browser passaram; [gravações e limites](../verification/m02-runtime/surface-audio-2026-10-30/README.md). O percurso integral `fe20322` está em curso. As zonas são caixas aproximadas, não acústica detalhada por sala. Em `187e281`, o limite Low atingiu 20 vozes, com uma recusa na categoria do jogador e 24 substituições; a categoria isolada não identifica qual som foi recusado.
+
+Continuar antes da avaliação humana: manipulação de armas e granada em primeira pessoa, alimentação física de MG, apoio físico a Lis, modelos/mãos/rostos, cenários, IA e mistura sob carga. O complemento integral ainda não foi recebido. Main e produção intactas; não declarar qualidade COD ou missão concluída.
+
 ## Continuação — equipas, som, noite, oficina e ordens, 2026-10-29
 
 Candidata `codex/m02-recovery-v1`; código de jogo até `899a8f5`, ferramenta de verificação `0068321`. As duplas existentes cobrem alvos realmente observados durante a recarga (`b304701`); os NPCs ganham sons de recarga sincronizados e espaciais (`a194be2`). A noite de Łęczyca é mais legível mantendo o céu e a hora noturnos (`7bc5819`); a bancada B05 recebe detalhes M01 sem novos obstáculos (`817b34c`); granadas produzem som apenas em quiques físicos com velocidade suficiente (`c1b8ec9`). As ordens `Z/X/B` da quinta passam a afetar os destinos da secção e a apresentar confirmação (`899a8f5`).
 
-135 testes M02, build e testes browser focados passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto com 0 mortes/erros, vida 94, giz, água/munições, Lis evacuado e 12/12; a alteração posterior de ordens foi verificada em simulação e browser, e o modo automático foi comparado durante 800 passos com e sem guarnição. A primeira execução integral com teclas foi invalidada por uma espera incorreta no piloto; `0068321` aguarda o tick real e a repetição está em curso. Não tratar essa primeira tentativa como PASS. As [provas e limitações](../verification/m02-runtime/squad-orders-2026-10-29/README.md) incluem capturas e áudio.
+135 testes M02, build e testes browser focados passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto com 0 mortes/erros, vida 94, giz, água/munições, Lis evacuado e 12/12; a alteração posterior de ordens foi verificada em simulação e browser, e o modo automático foi comparado durante 800 passos com e sem guarnição. A primeira execução integral com teclas foi invalidada por uma espera incorreta no piloto; `0068321` aguarda o tick real e a repetição terminou com sucesso. Não tratar essa primeira tentativa como PASS. As [provas e limitações](../verification/m02-runtime/squad-orders-2026-10-29/README.md) incluem capturas e áudio.
 
-Continuar antes da avaliação humana: manipulação de armas e granada em primeira pessoa, alimentação física de MG, apoio físico a Lis, modelos/mãos/rostos, cenários, ordens fora da quinta, IA e mistura sob carga permanecem abertos. O PROMPT MESTRE integral ainda não foi recebido. Main e produção intactas; não declarar qualidade COD ou M02 concluída.
+Continuar antes da avaliação humana: manipulação de armas e granada em primeira pessoa, alimentação física de MG, apoio físico a Lis, modelos/mãos/rostos, cenários, coordenação tática mais avançada, IA e mistura sob carga permanecem abertos. O PROMPT MESTRE integral ainda não foi recebido. Main e produção intactas; não declarar qualidade COD ou M02 concluída.
 
 ## Continuação — chegada de Lis e retirada C12, 2026-10-29
 
