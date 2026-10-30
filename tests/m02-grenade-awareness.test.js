@@ -45,6 +45,14 @@ test('an enemy seeing the actual grenade flees without producing an allied playe
  assert.equal(actor.state,'FLEE_GRENADE');assert.ok(actor.x>before);
 });
 
+test('an observed grenade stops a real pending burst without spending its unfired rounds',()=>{
+ const {sim,actor}=setup('enemy');Object.assign(actor,{weapon:'mp38',mag:5,reserve:0,reloadingUntil:0,nextFireAt:0});
+ const shot=sim.fireActorBurst(actor,sim.player,{x:sim.player.x,y:1.4,z:sim.player.z},'enemy');
+ assert.equal(shot.rounds,1);assert.equal(actor.mag,4);assert.equal(actor.burst.remaining,2);sim.drainEvents();
+ sim.tick(.05,{});assert.equal(actor.burst,null);assert.equal(actor.mag,4);assert.equal(actor.shotsFired,1);
+ assert.equal(sim.drainEvents().some(e=>e.type==='actor-burst'&&e.shooterId===actor.id),false);
+});
+
 test('an escape target from a previous cell cannot drag an ally back across a transition',()=>{
  const {sim,actor}=setup();sim.tick(.05,{});assert.equal(actor.m02GrenadeThreat.cell,'B');
  sim.enterAreaCC09();sim.tick(.05,{});
