@@ -112,7 +112,7 @@ export class M02Presentation {
     }
     this.characters.update(actors, sim.clock, {...sim.player}, quality);
     this.m02Weapons.update(this.characters,actors,sim.clock);
-    if(this.audio.ctx?.state==='running')this.footsteps.update(sim.player,actors,sim.clock);else this.footsteps.reset();
+    if(this.audio.ctx?.state==='running')this.footsteps.update(sim.player,actors,sim.clock,sim.world);else this.footsteps.reset();
   }
   spatial(point,sim) {
     if(!point)return {pan:0,distance:900,front:1};

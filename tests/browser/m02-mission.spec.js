@@ -2,6 +2,44 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('real player steps use the visible farm floor and M01 interior audio',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{const s=window.m02Bench.sim;s.reset('C02');s.c01Active=false;s.enemies=[];s.allies=[];});
+ for(const [name,x,z,material,zone] of [['earth',-10,-60,'earth','open'],['wood',-38,-15,'wood','m02_B01']]){
+  await page.evaluate(async({x,z})=>{
+   const {sim,renderer}=window.m02Bench,a=renderer.presentation.audio;sim.teleportPlayer(x,z,0,-.4);
+   await a.ctx.resume();a.stopAll(false);renderer.presentation.footsteps.reset();
+   const destination=a.ctx.createMediaStreamDestination(),recorder=new MediaRecorder(destination.stream),chunks=[];
+   a.master.connect(destination);recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();
+   window.m02StepRecording={destination,recorder,chunks};
+  },{x,z});
+  await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+  await page.keyboard.down('KeyW');
+  await page.waitForFunction(material=>window.m02Bench.renderer.presentation.audio.diagnostics.lastEvents.some(e=>e.kind==='footstep'&&!e.detail.npc&&e.detail.surface===material),material);
+  await page.keyboard.up('KeyW');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+  const result=await page.evaluate(async()=>{
+   const a=window.m02Bench.renderer.presentation.audio,{destination,recorder,chunks}=window.m02StepRecording;
+   await new Promise(r=>setTimeout(r,300));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
+   const blob=new Blob(chunks,{type:recorder.mimeType}),buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());let peak=0;
+   for(let c=0;c<buffer.numberOfChannels;c++)for(const v of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(v));
+   const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);});
+   const step=a.diagnostics.lastEvents.filter(e=>e.kind==='footstep'&&!e.detail.npc).at(-1);
+   a.master.disconnect(destination);return {peak,encoded,step,zone:a.core.zone.id,surface:a.core.surface.material};
+  });
+  expect(result.step.detail.surface).toBe(material);expect(result.surface).toBe(material);expect(result.zone).toBe(zone);expect(result.peak).toBeGreaterThan(.0001);
+  writeFileSync(testInfo.outputPath(`step-${name}.webm`),Buffer.from(result.encoded,'base64'));
+  if(name==='wood'){
+   await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · PISO B01";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+   await page.screenshot({path:testInfo.outputPath('wood-floor-b01.png')});
+  }
+  console.log('M02 surface step',JSON.stringify({material,zone:result.zone,peak:result.peak,step:result.step}));
+ }
+ expect(errors).toEqual([]);
+});
+
 test('squad can hold and resume in B and C using the normal keys',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

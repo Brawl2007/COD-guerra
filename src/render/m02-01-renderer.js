@@ -14,6 +14,7 @@ import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
 import {M02Lighting} from './m02-lighting.js';
 import {M02CombatFX} from './m02-combat-fx.js';
 import {M02Grenades} from './m02-grenades.js';
+import {m02FloorFamily} from './m02-audio-layout.js';
 import {createM02AidStretcher,isM02AidStretcher} from './m02-aid-stretcher.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
@@ -428,7 +429,7 @@ export class M02BenchRenderer {
       const bw = maxX - minX;
       const bd = maxZ - minZ;
       const floorGeo = new THREE.BoxGeometry(bw - 0.1, 0.08, bd - 0.1);
-      const floorMat = b.id === 'B01' ? this.materials.wood_thin : this.materials.earth;
+      const floorMat = m02FloorFamily(b) === 'wood' ? this.materials.wood_thin : this.materials.earth;
       const floorMesh = new THREE.Mesh(floorGeo, floorMat);
       floorMesh.position.set(minX + bw / 2, 0.02, minZ + bd / 2);
       floorMesh.receiveShadow = true;
