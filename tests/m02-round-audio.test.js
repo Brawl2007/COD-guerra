@@ -6,7 +6,7 @@ import {m02RoundPass,playM02RoundAudio} from '../src/render/m02-round-audio.js';
 import {AudioManager} from '../src/core/audio.js';
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
 
-test('actual MP38 rounds share a voice per gun without losing any emitted shot',()=>{
+test('overlapping actual MP38 rounds share a voice per gun without losing any emitted shot',()=>{
  const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];
  const gun=sim.enemies.find(e=>e.id==='DE-B03'),other=sim.enemies.find(e=>e.id==='DE-B10');sim.enemies=[gun];
  Object.assign(gun,{x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});
@@ -34,6 +34,26 @@ test('actual MP38 rounds share a voice per gun without losing any emitted shot',
   assert.equal([...audio.voices].filter(v=>v.kind==='mp38').length,2,'different gunners keep spatially independent voices');
   audio.weaponFire('mg34',0,20,{rounds:1,interval:.075,key:'switched',source:gun.id});
   assert.equal(audio.bursts.get(gun.id).weapon,'mg34');assert.notEqual(audio.bursts.get(gun.id).voice,voice);
+ }finally{audio.dispose();}
+});
+
+test('MP38 rounds delivered in one slow frame retain cadence without inventing shots',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];
+ const gun=sim.enemies.find(e=>e.id==='DE-B03');sim.enemies=[gun];
+ Object.assign(gun,{x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});sim.teleportPlayer(20,120,Math.PI,0);
+ sim.drainEvents();sim.fireActorBurst(gun,sim.player,{x:0,y:5,z:120},'enemy');
+ const events=sim.drainEvents().filter(e=>e.type==='actor-burst');
+ for(let i=0;i<8;i++){sim.tick(.05,{});events.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'));}
+ assert.equal(events.length,3);assert.equal(gun.mag,29);
+ const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,quality:'low'});audio.init();ctx.currentTime=10;
+ try{
+  const p=Object.create(M02Presentation.prototype);
+  Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+  const before=sim.snapshot();p.consume(events,sim);
+  const burst=audio.bursts.get(gun.id),starts=[...burst.voice.sources.keys()].map(source=>source.startAt);
+  assert.equal(burst.round,2);assert.equal(audio.diagnostics.eventCounts.rifle,3);
+  for(const time of [10,10.11,10.22])assert.ok(starts.some(start=>Math.abs(start-time)<1e-6),`missing round at ${time}`);
+  assert.ok(Math.abs(burst.scheduledAt-10.22)<1e-6);assert.deepEqual(sim.snapshot(),before);
  }finally{audio.dispose();}
 });
 

@@ -135,30 +135,64 @@ test('real MP38 rounds remain audible while sharing a gunner voice',async({page}
  await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
  await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
  const result=await page.evaluate(async()=>{
+  // This controlled audio fixture advances simulation explicitly below. Stop
+  // the paused render loop so software WebGL cannot stretch its 50 ms steps.
+  window.requestAnimationFrame=()=>0;await new Promise(r=>setTimeout(r,100));
   const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio;sim.enterAreaBC06();sim.allies=[];
   const gun=sim.enemies.find(e=>e.id==='DE-B03');sim.enemies=[gun];
   Object.assign(gun,{x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});sim.teleportPlayer(20,120,Math.PI,0);
-  await a.ctx.resume();a.stopAll(false);sim.drainEvents();const count=a.diagnostics.eventCounts.rifle??0;
+  sim.drainEvents();sim.fireActorBurst(gun,sim.player,{x:0,y:5,z:120},'enemy');
+  const shots=sim.drainEvents().filter(e=>e.type==='actor-burst'&&e.shooterId===gun.id);
+  for(let i=0;i<8;i++){sim.tick(.05,{});shots.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'&&e.shooterId===gun.id));}
+  await a.ctx.resume();a.stopAll(false);const count=a.diagnostics.eventCounts.rifle??0;
   const dest=a.ctx.createMediaStreamDestination(),recorder=new MediaRecorder(dest.stream),chunks=[];a.master.connect(dest);
-  recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();let rounds=0,unchanged=true;const voiceRounds=[];
-  const consume=()=>{
-   const events=sim.drainEvents(),shots=events.filter(e=>e.type==='actor-burst'&&e.shooterId===gun.id);
-   const before=JSON.stringify(sim.snapshot());p.consume(events,sim);unchanged&&=before===JSON.stringify(sim.snapshot());
-   for(const shot of shots){rounds+=shot.rounds;voiceRounds.push({round:a.bursts.get(gun.id)?.round,voices:[...a.voices].filter(v=>v.kind==='mp38').length});}
-  };
-  sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');consume();
-  for(let i=0;i<8;i++){await new Promise(r=>setTimeout(r,50));sim.tick(.05,{});consume();}
+  recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();let rounds=0,unchanged=true,previous=shots[0]?.clock??0;const voiceRounds=[];
+  // Replay only the actual emitted round events at their simulation intervals;
+  // the fixture generates no hits, so the recording isolates the weapon.
+  for(const shot of shots){
+   await new Promise(r=>setTimeout(r,Math.max(0,(shot.clock-previous)*1000)));previous=shot.clock;
+   const before=JSON.stringify(sim.snapshot());p.consume([shot],sim);unchanged&&=before===JSON.stringify(sim.snapshot());
+   rounds+=shot.rounds;voiceRounds.push({round:a.bursts.get(gun.id)?.round,voices:[...a.voices].filter(v=>v.kind==='mp38').length});
+  }
   await new Promise(r=>setTimeout(r,300));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
   const blob=new Blob(chunks,{type:recorder.mimeType}),buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());let peak=0;
   for(let c=0;c<buffer.numberOfChannels;c++)for(const value of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(value));
   const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);});
-  a.master.disconnect(dest);return {rounds,mag:gun.mag,voiceRounds,peak,encoded,unchanged,rifleEvents:(a.diagnostics.eventCounts.rifle??0)-count};
+  a.master.disconnect(dest);return {rounds,mag:gun.mag,voiceRounds,peak,encoded,unchanged,rifleEvents:(a.diagnostics.eventCounts.rifle??0)-count,hitKinds:shots.flatMap(e=>e.traces.map(t=>t.hitKind))};
  });
+ console.log('M02 MP38 burst audio',JSON.stringify({rounds:result.rounds,mag:result.mag,voiceRounds:result.voiceRounds,peak:result.peak,hitKinds:result.hitKinds}));
  expect(result.rounds).toBe(3);expect(result.mag).toBe(29);expect(result.rifleEvents).toBe(3);
- expect(result.voiceRounds.map(v=>v.round)).toEqual([0,1,2]);expect(result.voiceRounds.every(v=>v.voices===1)).toBe(true);
+ expect(result.voiceRounds[0].round).toBe(0);expect(result.voiceRounds.slice(1).some(v=>v.round>0)).toBe(true);
+ expect(result.voiceRounds.every(v=>v.voices===1)).toBe(true);expect(result.hitKinds).toEqual(['none','none','none']);
  expect(result.peak).toBeGreaterThan(.0001);expect(result.unchanged).toBe(true);expect(errors).toEqual([]);
  writeFileSync(testInfo.outputPath('mp38-three-round-burst.webm'),Buffer.from(result.encoded,'base64'));
- console.log('M02 MP38 burst audio',JSON.stringify({rounds:result.rounds,mag:result.mag,voiceRounds:result.voiceRounds,peak:result.peak}));
+});
+
+test('MP38 rounds batched in one frame keep their real cadence',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:640,height:360});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  window.requestAnimationFrame=()=>0;await new Promise(r=>setTimeout(r,100));
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio;sim.enterAreaBC06();sim.allies=[];
+  const gun=sim.enemies.find(e=>e.id==='DE-B03');sim.enemies=[gun];
+  Object.assign(gun,{x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});sim.teleportPlayer(20,120,Math.PI,0);
+  sim.drainEvents();sim.fireActorBurst(gun,sim.player,{x:0,y:5,z:120},'enemy');
+  const shots=sim.drainEvents().filter(e=>e.type==='actor-burst'&&e.shooterId===gun.id);
+  for(let i=0;i<8;i++){sim.tick(.05,{});shots.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'&&e.shooterId===gun.id));}
+  await a.ctx.resume();a.stopAll(false);const count=a.diagnostics.eventCounts.rifle??0,grain=a._grain,cracks=[];
+  a._grain=function(voice,g,at,key){if(voice.kind==='mp38'&&g.layer==='crack')cracks.push(at+(g.at??0));return grain.call(this,voice,g,at,key);};
+  const before=JSON.stringify(sim.snapshot());let firstCount;
+  try{p.consume(shots.slice(0,2),sim);firstCount=cracks.length;p.consume(shots.slice(2),sim);}finally{a._grain=grain;}
+  return {shots:shots.length,mag:gun.mag,firstCount,cracks,round:a.bursts.get(gun.id)?.round,
+   voices:[...a.voices].filter(v=>v.kind==='mp38').length,rifleEvents:(a.diagnostics.eventCounts.rifle??0)-count,unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.shots).toBe(3);expect(result.mag).toBe(29);expect(result.firstCount).toBe(2);
+ expect(result.cracks).toHaveLength(3);expect(result.round).toBe(2);expect(result.voices).toBe(1);expect(result.rifleEvents).toBe(3);
+ expect(result.cracks[1]-result.cracks[0]).toBeCloseTo(.11,3);expect(result.cracks[2]-result.cracks[1]).toBeCloseTo(.11,3);
+ expect(result.unchanged).toBe(true);expect(errors).toEqual([]);
+ console.log('M02 batched MP38 cadence',JSON.stringify(result));
 });
 
 test('a soldier flees and warns after seeing the player grenade',async({page},testInfo)=>{

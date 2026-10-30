@@ -346,12 +346,17 @@ export class AudioManager {
       const now=this.ctx.currentTime,b=this.bursts.get(source);
       if(b&&b.weapon===id&&!b.voice.closed&&now-b.at<=step*1.9+.05){
         if(this.liveSources>=(SOURCE_BUDGET[this.quality]??SOURCE_BUDGET.high)&&pr<AUDIO_PRIORITY.explosion){this.budgetDropped++;return b.voice;}
-        b.round++;b.at=now;const grains=planWeaponShot(id,distance,{key:b.key,round:b.round,detail:this.detail});
-        for(const g of grains)if(b.voice.closed||!this._grain(b.voice,g,now,`${b.key}:${b.round}`))break;
+        // M02 may consume several already-fired MP38 rounds in one slow
+        // render frame. Space only those real events at their authored gap;
+        // never anticipate a round or alter the existing M01 MG timing.
+        const at=id==='mp38'?Math.max(now,b.scheduledAt+step):now;
+        b.round++;b.at=now;b.scheduledAt=at;
+        const grains=planWeaponShot(id,distance,{key:b.key,round:b.round,detail:this.detail});
+        for(const g of grains)if(b.voice.closed||!this._grain(b.voice,g,at,`${b.key}:${b.round}`))break;
         return b.voice.closed?null:b.voice;
       }
       const voice=this._playPlan(planWeaponShot(id,distance,{key:k,detail:this.detail}),{kind:id,category,priority:pr,pan,distance,front,key:k});
-      if(voice)this.bursts.set(source,{voice,at:now,round:0,key:k,weapon:id});else this.bursts.delete(source);
+      if(voice)this.bursts.set(source,{voice,at:now,scheduledAt:now,round:0,key:k,weapon:id});else this.bursts.delete(source);
       return voice;
     }
     const grains=n>1?planWeaponBurst(id,distance,{rounds:n,interval,key:k,detail:this.detail,cadenceJitter}):planWeaponShot(id,distance,{key:k,detail:this.detail});
