@@ -1,0 +1,13 @@
+{"label":"A:O00","clock":0,"health":100,"pos":[0,-175],"realSec":5.086}
+{"label":"A:O01","clock":17.000000000000107,"health":100,"pos":[-4.5475492667774295,-138.88826190088298],"realSec":26.403}
+{"label":"A:O02","clock":30.750000000000302,"health":100,"pos":[5.644217773444426,-61.78823351118149],"realSec":40.115}
+{"label":"A:O03","clock":35.950000000000095,"health":100,"pos":[23.452922925970086,-38.461951785844505],"realSec":45.361}
+{"label":"A:C04","clock":52.74999999999914,"health":100,"pos":[-24.042206932644216,-15.697840848785246],"realSec":62.367}
+{"label":"A:COMPLETE","clock":62.94999999999856,"health":100,"pos":[-8.946627758541258,34.39650712396767],"realSec":72.581}
+{"label":"B:O04","clock":63.79999999999851,"health":100,"pos":[-50,51],"realSec":73.716}
+{"label":"B:O05","clock":147.69999999999933,"health":100,"pos":[0.19498132267732604,-69.74415242230235],"realSec":158.23}
+{"label":"C:O06","clock":148.04999999999941,"health":100,"pos":[0,-72],"realSec":158.827}
+{"label":"C:O07","clock":189.40000000000882,"health":100,"pos":[0.5367498601523764,0.11974730567640024],"realSec":200.281}
+{"label":"C:O08","clock":195.25000000001015,"health":100,"pos":[-0.7722130509006714,0.9022056735705211],"realSec":206.222}
+{"label":"C:O09","clock":252.7000000000232,"health":57,"pos":[-54.97533025078996,54.04691563054514],"realSec":264.188}
+COMPLETE {"schema":"cod-guerra-campaign-bridge-m02-to-m03-v1","missionId":"M02","nextMissionId":"M03","completed":true,"historicalDates":{"offensiveStart":"1939-09-09","reorganizationMorning":"1939-09-10","operationalShift":"1939-09-12/13","warsawArrival":"1939-09-25","generalRetreatOnMorningSept10":false},"flags":{"m02.completed":true,"m02.axis":"ditch","m02.lis_status":"wounded_evacuated","m02.malek_status":"down","m02.wierzba_status":"fit","m02.pomar_wounded_marked":true,"m02.fired_on_wounded":false,"m02.supply_reached":2,"m02.corridor_held":true,"m02.last_group_survivors":12,"m02.prep_avanco_ok":true,"m02.ea0_posto_cleared":true,"m02.transicao_tab_pronta":true},"supplies":{"waterDelivered":true,"ammoDelivered":true},"transitionIdsApplied":["TR01","TR02","TR03","TR04","TR05"],"totalHostilesPlanned":46,"m03ImportState":{"piotrCondition":"weathered_veteran","promotedToCorporalAutomatically":false,"lisEntry":{"status":"wounded_evacuated","presentInShelter":true,"combatCapableNormalPatrol":false,"requiresSupportWalking":false,"canSpeakCanonicalWaterLine":true,"canonicalWaterLineSpeaker":"pl_lis","canonicalWaterLineText":"Guarda um pouco de água. Todos precisam."},"waterReserveBonus":"small_water_reserve_available","lastGroupSurvivorsCount":12}}
