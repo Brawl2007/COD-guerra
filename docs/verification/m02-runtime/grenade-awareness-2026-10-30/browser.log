@@ -1,0 +1,28 @@
+[1A[2K[WebServer] (node:173027) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+[1A[2K(node:173051) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:173051) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] tests/browser/m02-mission.spec.js:5:1 › a soldier flees and warns after seeing the player grenade
+[1A[2K[2/4] tests/browser/m02-mission.spec.js:301:1 › C11 Lis is helped by the normal interaction only when the player reaches him
+[1A[2Ktests/browser/m02-mission.spec.js:301:1 › C11 Lis is helped by the normal interaction only when the player reaches him
+M02 Lis contact {"setup":{"x":-28,"z":-22,"state":"WOUNDED_LIAISON","contact":false},"result":{"contact":true,"status":"wounded_walking","state":"WALKING_SUPPORTED","at":[-28.267024733211052,-21.63778764259958],"line":true}}
+
+[1A[2K[3/4] tests/browser/m02-mission.spec.js:398:1 › a grenade thrown by the player bounces off the actual B05 wall
+[1A[2Ktests/browser/m02-mission.spec.js:398:1 › a grenade thrown by the player bounces off the actual B05 wall
+M02 grenade bounce in B05 {"wall":{"min":{"x":-34.13,"y":0,"z":-23.37},"max":{"x":-33.87,"y":3.1,"z":-21.25}},"result":{"x":-33.62800779820714,"y":1.4832048906612125,"z":-22,"vx":4.8,"vz":1.83697019872103e-15,"view":[-33.62800779820714,1.4832048906612125,-22],"ammo":1,"sounds":1}}
+
+[1A[2K[4/4] tests/browser/m02-mission.spec.js:418:1 › the normal grenade input displays the live projectile and a checkpoint removes it
+[1A[2Ktests/browser/m02-mission.spec.js:418:1 › the normal grenade input displays the live projectile and a checkpoint removes it
+M02 real grenade input {"shown":{"ammo":1,"ids":["gren_1"],"position":[1.653273178848927e-16,1.0064250000000001,-172.3],"actual":[1.653273178848927e-16,1.0064250000000001,-172.3],"radius":0.07,"visible":true,"unchanged":true},"handBefore":[0.7922439566926501,-0.8543425142421662,0.8482598276772638],"follow":{"startedAt":0.05,"weight":0.8737997256515775,"hand":[0.7745717963841173,-0.2059348737499423,0.8563232594167317]},"restored":{"ammo":2,"active":0,"follow":{"startedAt":null,"weight":0}}}
+
+[1A[2K  4 passed (53.8s)
