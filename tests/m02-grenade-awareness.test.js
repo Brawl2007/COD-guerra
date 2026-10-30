@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
+import {m02VisualActor} from '../src/render/m02-presentation.js';
+import {m02CharacterSample} from '../src/render/m02-character-adapter.js';
 
 function setup(side='ally'){
  const sim=new M02BenchSimulation();sim.enterAreaBC06();
@@ -71,6 +73,61 @@ test('an observed grenade stops a real pending burst without spending its unfire
  assert.equal(shot.rounds,1);assert.equal(actor.mag,4);assert.equal(actor.burst.remaining,2);sim.drainEvents();
  sim.tick(.05,{});assert.equal(actor.burst,null);assert.equal(actor.mag,4);assert.equal(actor.shotsFired,1);
  assert.equal(sim.drainEvents().some(e=>e.type==='actor-burst'&&e.shooterId===actor.id),false);
+});
+
+test('the mounted B02 gunner ducks for a real grenade, then can resume firing after the blast',()=>{
+ const sim=new M02BenchSimulation();sim.c01Active=false;
+ const gunner=sim.enemies.find(a=>a.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
+ sim.teleportPlayer(8,-30,0,0);sim.drainEvents();
+ const before={x:gunner.x,z:gunner.z,crouched:gunner.crouched,eyeHeight:gunner.eyeHeight};
+ assert.equal(sim.evaluateMgLineOfFire().hasVisualLoS,true);
+ const first=sim.fireActorBurst(gunner,sim.player,{x:sim.player.x,y:1.4,z:sim.player.z},'enemy');
+ assert.equal(first.rounds,1);assert.equal(gunner.mag,49);assert.equal(gunner.burst.remaining,4);sim.drainEvents();
+ sim.tick(.05,{grenade:true});
+ const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');
+ assert.equal(warning?.actorId,'DE-A05');assert.equal(warning.perception,'visual');assert.equal(warning.heardByPlayer,false);
+ assert.equal(sim.grenadeAmmo,1);assert.equal(gunner.tacticalState,'TakeCoverGrenade');
+ assert.equal(gunner.crouched,true);assert.equal(gunner.eyeHeight,1.08);
+ assert.equal(gunner.x,before.x);assert.equal(gunner.z,before.z);
+ assert.equal(gunner.burst,null);assert.equal(gunner.mag,49);assert.equal(gunner.shotsFired,1);
+ assert.deepEqual(sim.evaluateMgLineOfFire(),{mgActive:true,inArc:false,hasVisualLoS:false,canHitTarget:false,blockedById:'gunner_taking_cover',blockedByMaterial:null,distance:0});
+ const visual=m02VisualActor(gunner,'enemy',sim.clock);
+ assert.equal(m02CharacterSample(visual,sim.clock,new Map([['m02_mg34_crouch_aim',{}]])).clip,'m02_mg34_crouch_aim');
+
+ const checkpoint=sim.snapshot(),bad=structuredClone(checkpoint);
+ bad.enemies.find(e=>e.id==='DE-A05').m02GrenadeThreat.previousCrouched='false';
+ assert.throws(()=>sim.restoreSnapshot(bad),/inválid/);assert.deepEqual(sim.snapshot(),checkpoint);
+ const run=()=>{for(let i=0;i<80;i++)sim.tick(.05,{});return {snapshot:sim.snapshot(),events:sim.drainEvents()};};
+ const result=run(),explosion=result.events.find(e=>e.type==='grenade-exploded');
+ assert.ok(explosion);assert.ok(explosion.affectedActors.find(a=>a.id==='DE-A05').damage>0,'ducking does not grant blast immunity');
+ const shots=result.events.filter(e=>e.type==='actor-burst'&&e.shooterId==='DE-A05');
+ assert.ok(shots.length>0,'the surviving gunner resumes actual firing');
+ assert.ok(shots.every(e=>e.clock>explosion.clock),'no rounds are fired while taking cover');
+ const restored=result.snapshot.enemies.find(e=>e.id==='DE-A05');
+ assert.equal(restored.crouched,before.crouched);assert.equal(restored.eyeHeight,before.eyeHeight);
+ assert.equal(restored.x,before.x);assert.equal(restored.z,before.z);assert.equal(restored.m02GrenadeThreat,undefined);
+ sim.restoreSnapshot(checkpoint);sim.drainEvents();assert.deepEqual(run(),result);
+});
+
+test('the mounted gunner does not react to a grenade hidden behind him or a solid wall',()=>{
+ for(const mode of ['rear','wall']){
+  const sim=new M02BenchSimulation();sim.c01Active=false;
+  const gunner=sim.enemies.find(e=>e.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];gunner.nextFireAt=100;
+  if(mode==='rear')sim.teleportPlayer(16,-30,0,0);
+  else{
+   sim.teleportPlayer(8,-30,0,0);
+   sim.world.obstacles.push({id:'mg-awareness-wall',min:{x:10,y:0,z:-32},max:{x:10.2,y:3,z:-28},material:'brick'});
+  }
+  sim.drainEvents();sim.tick(.05,{grenade:true});
+  assert.equal(gunner.m02GrenadeThreat,undefined,mode);
+  assert.equal(sim.drainEvents().some(e=>e.type==='grenade-warning'),false,mode);
+ }
+});
+
+test('older grenade-threat checkpoints without posture fields remain valid',()=>{
+ const {sim}=setup();sim.tick(.05,{});const old=sim.snapshot();
+ assert.equal(old.allies[0].m02GrenadeThreat.previousCrouched,undefined);
+ assert.doesNotThrow(()=>sim.restoreSnapshot(old));
 });
 
 test('a hold order yields to danger and resumes its saved position after the explosion',()=>{

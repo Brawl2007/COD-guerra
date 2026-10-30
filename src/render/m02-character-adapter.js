@@ -48,6 +48,8 @@ export function m02CharacterSample(actor,time,clips){
  }
  if(!actor.alive||actor.state==='WOUNDED'||actor.role==='MEDIC')return null;
  const get=name=>clips.get(name);
+ // This is a defensive pose, not another impulse from the interrupted burst.
+ if(actor.tacticalState==='TakeCoverGrenade'&&get('m02_mg34_crouch_aim'))return {clip:'m02_mg34_crouch_aim',time:0,loop:false,rate:0};
  if(actor.reload){
   const name=actor.weapon==='mp38'?'m02_mp38_reload':actor.weapon==='rkm_wz28'?'rkm_reload':actor.weapon==='mg34'?'m02_mg34_crouch_reload':'m02_rifle_crouch_reload';
   const clip=get(name);

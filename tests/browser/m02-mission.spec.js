@@ -2,6 +2,37 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('the B02 mounted gunner takes cover from the player grenade',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await Promise.all([renderer.materialLibraryReady,renderer.presentation.ready]);
+  sim.reset('C02');sim.c01Active=false;const gunner=sim.enemies.find(a=>a.id==='DE-A05');
+  sim.enemies=[gunner];sim.allies=[];gunner.nextFireAt=100;sim.teleportPlayer(8,-30,0,0);renderer.renderFrame(0,0);
+ });
+ const overlay=await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · MG34 NA ABERTURA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('mg34-before-grenade.png')});
+ await overlay.evaluate(el=>el.remove());
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.keyboard.press('KeyG');
+ await page.waitForFunction(()=>window.m02Bench.sim.enemies[0].tacticalState==='TakeCoverGrenade');
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,a=sim.enemies[0];renderer.renderFrame(0,0);
+  return {ammo:sim.grenadeAmmo,grenades:sim.grenades.length,state:a.state,tacticalState:a.tacticalState,
+   crouched:a.crouched,x:a.x,z:a.z,clip:renderer.presentation.characters.stats.actors.find(v=>v.id==='de_east_0')?.clip,
+   sight:sim.evaluateMgLineOfFire()};
+ });
+ expect(result.ammo).toBe(1);expect(result.grenades).toBe(1);expect(result.crouched).toBe(true);
+ expect(result.x).toBe(13.2);expect(result.z).toBe(-30);expect(result.clip).toBe('m02_mg34_crouch_aim');
+ expect(result.sight.mgActive).toBe(true);expect(result.sight.canHitTarget).toBe(false);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · MG34 REAGE À GRANADA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('mg34-grenade-cover.png')});expect(errors).toEqual([]);
+ console.log('M02 mounted MG grenade reaction',JSON.stringify(result));
+});
+
 test('changing cells releases furniture geometry but retains the shared M01 props',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

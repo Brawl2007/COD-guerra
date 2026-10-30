@@ -152,7 +152,9 @@ export function validateM02Snapshot(snap) {
       const t=actor.m02GrenadeThreat;
       if(!t||typeof t.id!=='string'||!t.id||!['A','B','C'].includes(t.cell)||!['seenX','seenZ','goalX','goalZ'].every(k=>Number.isFinite(t[k]))||typeof t.previousState!=='string'||
         !(t.previousTacticalState===null||typeof t.previousTacticalState==='string')||
-        !(t.previousGoal===null||t.previousGoal&&Number.isFinite(t.previousGoal.x)&&Number.isFinite(t.previousGoal.z)))
+        !(t.previousGoal===null||t.previousGoal&&Number.isFinite(t.previousGoal.x)&&Number.isFinite(t.previousGoal.z))||
+        (t.previousCrouched!==undefined&&typeof t.previousCrouched!=='boolean')||
+        (t.previousEyeHeight!==undefined&&!Number.isFinite(t.previousEyeHeight)))
         return {valid:false,reason:`Ameaça de granada inválida: ${actor.id}`};
     }
     for(const key of ['effectiveSpeed','motionDistance'])if(actor[key]!==undefined&&(!Number.isFinite(actor[key])||actor[key]<0))return {valid:false,reason:`Movimento inválido: ${actor.id}`};
@@ -747,6 +749,9 @@ export class M02BenchSimulation {
         blockedByMaterial: null,
         distance: 0,
       };
+    }
+    if (mgEnemy?.state==='FLEE_GRENADE' && mgEnemy.tacticalState==='TakeCoverGrenade') {
+      return {mgActive:true,inArc:false,hasVisualLoS:false,canHitTarget:false,blockedById:'gunner_taking_cover',blockedByMaterial:null,distance:0};
     }
 
     // Muzzle positioned at the western MG aperture of Barn B02 (x=11.82, y=1.42, z=-30.0)
