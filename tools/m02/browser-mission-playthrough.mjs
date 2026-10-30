@@ -20,14 +20,30 @@ try{
  await page.click('#mission-start');
  await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
  if(traceAudio)await page.evaluate(()=>{
-  const audio=window.m02Bench.renderer.presentation.audio,voice=audio._voice;
+  const audio=window.m02Bench.renderer.presentation.audio,voice=audio._voice,fire=audio.weaponFire;
   window.m02PilotAudioDenials=[];
+  window.m02PilotMp38={events:0,voiced:0,reused:0,sameFrame:0,delayed:0,maxDelay:0};
   audio._voice=function(options={}){
    const category=options.category??'fx',dropped=this.dropped,budget=this.budgetDropped,categoryDrops=this.categoryDropped[category]??0;
    const result=voice.call(this,options);
    if(!result){
     const reason=this.budgetDropped>budget?'source-budget':(this.categoryDropped[category]??0)>categoryDrops?'category-limit':this.dropped>dropped?'global-limit':'unavailable';
     window.m02PilotAudioDenials.push({clock:window.m02Bench.sim.clock,kind:options.kind??'fx',category,priority:options.priority??null,reason});
+   }
+   return result;
+  };
+  // Observe the existing Web Audio decisions; do not write gameplay state or
+  // request extra shots. The voice count is separate from authoritative ammo.
+  audio.weaponFire=function(weapon,pan,distance,options={}){
+   const previous=this.bursts.get(options.source),oldVoice=previous?.voice,oldAt=previous?.at,now=this.ctx?.currentTime??0;
+   const result=fire.call(this,weapon,pan,distance,options);
+   if(weapon==='mp38'&&options.rounds===1&&options.source){
+    const stats=window.m02PilotMp38,current=this.bursts.get(options.source);stats.events++;
+    if(result){
+     stats.voiced++;if(result===oldVoice){stats.reused++;if(Number.isFinite(oldAt)&&Math.abs(now-oldAt)<.002)stats.sameFrame++;}
+     const delay=Math.max(0,(current?.scheduledAt??now)-now);
+     if(delay>.001)stats.delayed++;stats.maxDelay=Math.max(stats.maxDelay,delay);
+    }
    }
    return result;
   };
@@ -101,6 +117,9 @@ try{
  console.log('COMPLETE',JSON.stringify(report.result));
 }catch(error){report.failure=error.message;console.log('FAILED',error.message);if(page)await page.screenshot({path:`${out}/failure.png`}).catch(()=>{});process.exitCode=1;}
 finally{
- if(traceAudio&&page)report.audioDenials=await page.evaluate(()=>window.m02PilotAudioDenials??[]).catch(()=>[]);
+ if(traceAudio&&page){
+  report.audioDenials=await page.evaluate(()=>window.m02PilotAudioDenials??[]).catch(()=>[]);
+  report.mp38Audio=await page.evaluate(()=>window.m02PilotMp38??null).catch(()=>null);
+ }
  report.finishedAt=new Date().toISOString();fs.writeFileSync(`${out}/report.json`,JSON.stringify(report,null,2));await browser.close();
 }
