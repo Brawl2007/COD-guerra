@@ -57,6 +57,29 @@ test('MP38 rounds delivered in one slow frame retain cadence without inventing s
  }finally{audio.dispose();}
 });
 
+test('simultaneous MP38 gunners keep all real rounds within the Low audio voice budget',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];
+ const base=sim.enemies.find(e=>e.id==='DE-B03');
+ sim.enemies=Array.from({length:6},(_,i)=>Object.assign(structuredClone(base),{
+  id:`pressure_mp_${i}`,x:(i-2.5)*3,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0}));
+ sim.teleportPlayer(30,120,Math.PI,0);sim.drainEvents();
+ for(const gun of sim.enemies)sim.fireActorBurst(gun,sim.player,{x:gun.x,y:5,z:120},'enemy');
+ const events=sim.drainEvents().filter(e=>e.type==='actor-burst');
+ for(let i=0;i<8;i++){sim.tick(.05,{});events.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'));}
+ assert.equal(events.length,18);assert.ok(sim.enemies.every(g=>g.mag===29));
+ const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,quality:'low'});audio.init();
+ try{
+  const p=Object.create(M02Presentation.prototype);
+  Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+  const before=sim.snapshot();for(const event of events){ctx.currentTime=event.clock;p.consume([event],sim);}
+  assert.equal(audio.diagnostics.eventCounts.rifle,18);
+  assert.equal([...audio.voices].filter(v=>v.kind==='mp38').length,6);
+  assert.ok(sim.enemies.every(g=>audio.bursts.get(g.id)?.round===2));
+  assert.equal(audio.diagnostics.droppedVoices,0);assert.equal(audio.diagnostics.evictedVoices,0);
+  assert.equal(audio.diagnostics.budgetDropped,0);assert.deepEqual(sim.snapshot(),before);
+ }finally{audio.dispose();}
+});
+
 test('near passes use the finite collision-resolved segment and do not pass through walls',()=>{
  const player={x:0,y:0,z:0,eyeHeight:1.65},world={obstacles:[]};
  const trace={origin:{x:-8,y:1.65,z:1},point:{x:8,y:1.65,z:1}};
