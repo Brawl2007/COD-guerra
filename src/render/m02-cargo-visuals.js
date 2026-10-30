@@ -23,10 +23,24 @@ export function createM02WorkshopDressing(ob,models){
  }
  return root;
 }
+
+// The M01 lantern sits on the kitchen table; the ordinary wooden crate fits
+// inside the table's existing solid volume. Neither adds simulation collision.
+export function createM02FarmDressing(ob,models){
+ if(ob?.id!=='prop_b01_table'||!models.has('railway_lantern')||!models.has('supply_crate_planked'))return null;
+ const root=new THREE.Group();root.name='M02 B01 kitchen dressing';
+ const cx=(ob.min.x+ob.max.x)/2,cz=(ob.min.z+ob.max.z)/2;
+ for(const [id,x,z,y] of [['railway_lantern',cx+.3,cz,ob.max.y],['supply_crate_planked',cx,cz,ob.min.y]]){
+  const model=models.get(id).clone(true),bounds=new THREE.Box3().setFromObject(model);
+  model.position.set(x,y-bounds.min.y+.005,z);model.name=`M02 B01 ${id}`;
+  model.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});root.add(model);
+ }
+ return root;
+}
 // Use the accepted M01 models; ownership and optional failures retain the
 // existing M02 proxies until the complete replacement is available.
 export class M02CargoVisuals {
- constructor(){this.assets=new AssetManager();this.models=new Map();this.ready=Promise.allSettled(['horse_cart','ammo_crate_wood','ammo_tin_box','jerrycans','barrel_wood','sandbag_run','supply_crate_planked'].map(async id=>{const asset=await this.assets.load(id,`${BASE}m01_prop_${id}_lod0.glb`);this.models.set(id,asset.scene);}));}
+ constructor(){this.assets=new AssetManager();this.models=new Map();this.ready=Promise.allSettled(['horse_cart','ammo_crate_wood','ammo_tin_box','jerrycans','barrel_wood','sandbag_run','supply_crate_planked','railway_lantern'].map(async id=>{const asset=await this.assets.load(id,`${BASE}m01_prop_${id}_lod0.glb`);this.models.set(id,asset.scene);}));}
  install(group,id,scale){
   if(!group||group.userData.m01Cargo||!this.models.has(id))return;
   const root=this.models.get(id).clone(true);root.scale.set(...scale);root.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});
@@ -41,6 +55,11 @@ export class M02CargoVisuals {
    const bench=renderer.world.obstacles.find(ob=>ob.id==='prop_b05_workbench');
    const root=createM02WorkshopDressing(bench,this.models);
    if(root){renderer.staticGroup.add(root);this.workshopRoot=root;}
+  }
+  if(renderer.sim.activeCellId==='A'&&this.farmRoot?.parent!==renderer.staticGroup){
+   const table=renderer.world.obstacles.find(ob=>ob.id==='prop_b01_table');
+   const root=createM02FarmDressing(table,this.models);
+   if(root){renderer.staticGroup.add(root);this.farmRoot=root;}
   }
   this.install(renderer.supplyCartMesh,'horse_cart',[1.45,1,.7]);
   for(const [id,group]of renderer.supplyVolumeMeshes)this.install(group,id==='vol_water'?'barrel_wood':'ammo_crate_wood',id==='vol_water'?[1,.65,1]:[.75,1.4,1.5]);

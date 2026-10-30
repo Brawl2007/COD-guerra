@@ -2,6 +2,26 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('B01 kitchen uses the original M01 lantern and crate',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await Promise.all([renderer.materialLibraryReady,renderer.cargo.ready]);sim.reset('C02');sim.c01Active=false;sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(-38,-15.6,Math.atan2(-1.1,2.85),-.24);const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const root=renderer.staticGroup.getObjectByName('M02 B01 kitchen dressing');
+  return {objects:root?.children.map(n=>n.name),unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.objects).toEqual(['M02 B01 railway_lantern','M02 B01 supply_crate_planked']);expect(result.unchanged).toBe(true);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · MESA SEM OBJETOS";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.evaluate(()=>{const {renderer}=window.m02Bench;renderer.staticGroup.getObjectByName('M02 B01 kitchen dressing').visible=false;renderer.renderFrame(0,0);});
+ await page.screenshot({path:testInfo.outputPath('b01-table-undressed.png')});
+ await page.evaluate(()=>{const {renderer}=window.m02Bench;renderer.staticGroup.getObjectByName('M02 B01 kitchen dressing').visible=true;renderer.renderFrame(0,0);});
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · OBJETOS M01"}'});
+ await page.screenshot({path:testInfo.outputPath('b01-table-dressed.png')});expect(errors).toEqual([]);
+});
+
 test('a soldier hears a real grenade bounce behind him',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
