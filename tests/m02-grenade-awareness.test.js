@@ -73,6 +73,15 @@ test('an observed grenade stops a real pending burst without spending its unfire
  assert.equal(sim.drainEvents().some(e=>e.type==='actor-burst'&&e.shooterId===actor.id),false);
 });
 
+test('a hold order yields to danger and resumes its saved position after the explosion',()=>{
+ const {sim,actor}=setup();Object.assign(actor,{mag:5,reserve:0,reloadingUntil:0});sim.issueSquadOrder('suppress');
+ const anchor=sim.squadOrder.holdPositions[actor.id];let farthest=actor.x;
+ for(let i=0;i<50;i++){sim.tick(.05,{});farthest=Math.max(farthest,actor.x);}
+ assert.equal(sim.grenades.length,0);assert.ok(farthest>anchor.x+2,'the order cannot pin a man beside a grenade');
+ assert.equal(actor.goal.nodeId,'order_hold_pl_gruca');assert.ok(actor.x<farthest-1,'the actor returns through normal movement');
+ assert.equal(actor.health,100);
+});
+
 test('an escape target from a previous cell cannot drag an ally back across a transition',()=>{
  const {sim,actor}=setup();sim.tick(.05,{});assert.equal(actor.m02GrenadeThreat.cell,'B');
  sim.enterAreaCC09();sim.tick(.05,{});
