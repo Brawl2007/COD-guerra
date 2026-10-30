@@ -11,7 +11,15 @@ const incapable=actor=>!actor.alive||actor.nonCombatant||actor.detachedOutOfCell
 // active escape action. Do not restore his previous armed state or posture.
 export function m02ClearIncapableGrenadeThreat(actor){
  if(!incapable(actor))return false;
- if(actor.m02GrenadeThreat)delete actor.m02GrenadeThreat;
+ const threat=actor.m02GrenadeThreat;
+ if(threat){
+  // Keep any new scripted destination (for example Lis's evacuation), but
+  // never leave the temporary escape/cover order on an incapacitated actor.
+  if([`grenade_escape_${threat.id}`,`grenade_cover_${threat.id}`].includes(actor.goal?.nodeId)){
+   actor.goal=null;actor.navCorners=null;actor.moving=false;actor.effectiveSpeed=0;
+  }
+  delete actor.m02GrenadeThreat;
+ }
  return true;
 }
 

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 import {m02VisualActor} from '../src/render/m02-presentation.js';
 import {m02CharacterSample} from '../src/render/m02-character-adapter.js';
+import {m02ClearIncapableGrenadeThreat} from '../src/game/m02-grenade-awareness.js';
 
 function setup(side='ally'){
  const sim=new M02BenchSimulation();sim.enterAreaBC06();
@@ -145,6 +146,7 @@ test('a blast that kills the mounted gunner clears his threat before the next ch
  const explosion=sim.drainEvents().find(e=>e.type==='grenade-exploded');
  assert.ok(explosion.affectedActors.find(a=>a.id==='DE-A05').damage>=20);
  assert.equal(gunner.alive,false);assert.equal(gunner.state,'DEAD');assert.equal(gunner.m02GrenadeThreat,undefined);
+ assert.equal(gunner.goal,null);assert.equal(gunner.moving,false);
  assert.equal(sim.evaluateMgLineOfFire().mgActive,false);
  const checkpoint=sim.snapshot();assert.doesNotThrow(()=>sim.restoreSnapshot(checkpoint));
  assert.equal(sim.enemies[0].m02GrenadeThreat,undefined);
@@ -156,6 +158,7 @@ test('a blast that kills the mounted gunner clears his threat before the next ch
  second.nextFireAt=100;immediate.teleportPlayer(8,-30,0,0);immediate.tick(.05,{grenade:true});
  assert.ok(second.m02GrenadeThreat);immediate.detonateGrenadeAt(second.x,1,second.z);
  assert.equal(second.alive,false);assert.equal(second.m02GrenadeThreat,undefined);
+ assert.equal(second.goal,null);assert.equal(second.moving,false);
  assert.equal(immediate.snapshot().enemies[0].m02GrenadeThreat,undefined);
 });
 
@@ -170,6 +173,14 @@ test('the C04 wounded transition clears a grenade escape without restoring armed
  assert.equal(wounded.m02GrenadeThreat,undefined);
  const checkpoint=sim.snapshot();sim.restoreSnapshot(checkpoint);
  assert.equal(sim.enemies.find(e=>e.c04Candidate).state,'WOUNDED_UNARMED');
+});
+
+test('clearing an obsolete grenade threat preserves a new wounded evacuation destination',()=>{
+ const {sim,actor}=setup();sim.tick(.05,{});assert.ok(actor.m02GrenadeThreat);
+ const destination={x:-58,z:52,crouch:false,nodeId:'aid_station'};
+ actor.state='WALKING_SUPPORTED';actor.goal=destination;
+ assert.equal(m02ClearIncapableGrenadeThreat(actor),true);
+ assert.equal(actor.m02GrenadeThreat,undefined);assert.deepEqual(actor.goal,destination);
 });
 
 test('older grenade-threat checkpoints without posture fields remain valid',()=>{
