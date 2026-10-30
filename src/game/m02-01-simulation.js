@@ -16,6 +16,7 @@ import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {m02ExposedLastGroup,updateM02EvacuationWound} from './m02-evacuation-targets.js';
 import {stepM02Grenade} from './m02-grenade-physics.js';
+import {m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
 import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
@@ -730,6 +731,7 @@ export class M02BenchSimulation {
         tgt.health = 0;
         for(const key of ['hitAt','hitYaw','hitPart','diedAt','deathYaw'])if(en[key]!==undefined)tgt[key]=en[key];
       }
+      if(en.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(en);
     }
   }
 
@@ -860,6 +862,7 @@ export class M02BenchSimulation {
         targetActor.alive = false;
         targetActor.state = 'DEAD';
       }
+      if(targetActor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(targetActor);
       recordM02Hit(targetActor,this.clock,origin,hit.part);
       this.syncCalibrationAndEnemies();
     }
@@ -1021,6 +1024,7 @@ export class M02BenchSimulation {
           }
         }
         updateM02EvacuationWound(this,victim);
+        if(victim.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(victim);
         recordM02Hit(victim,this.clock,origin,hit.part);
         this.syncCalibrationAndEnemies();
       }
@@ -1175,6 +1179,7 @@ export class M02BenchSimulation {
           }
         }
         updateM02EvacuationWound(this,actor);
+        if(actor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(actor);
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
         if(damage>0)recordM02Hit(actor,this.clock,center);
       }

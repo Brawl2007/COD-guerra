@@ -3,7 +3,7 @@ import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {M01_DIFFICULTY} from './m01-difficulty.js';
 import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
 import {m02MachineGunCover} from './m02-machinegun-team.js';
-import {m02ReactToGrenade} from './m02-grenade-awareness.js';
+import {m02ReactToGrenade,m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
 
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
@@ -729,7 +729,10 @@ export function updatePolishSquad(sim, dt) {
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
-    if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
+    if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) {
+      if(ally.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(ally);
+      continue;
+    }
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state)){ally.burst=null;delete ally.m02GrenadeThreat;}
     else if(m02ReactToGrenade(sim,ally,'ally')){stepActorNavigation(sim,ally,dt);continue;}
@@ -973,7 +976,7 @@ export function updateGermanGarrison(sim, dt) {
     sim.allies.some((a) => a.alive && a.x > 18 && a.z > -35);
 
   for (const enemy of sim.enemies) {
-    if (!enemy.alive) continue;
+    if (!enemy.alive) {if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);continue;}
     if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
     enemy.suppressed = Math.max(0, enemy.suppressed - dt * 0.25);
 
@@ -985,6 +988,7 @@ export function updateGermanGarrison(sim, dt) {
       enemy.moving = false;
       enemy.goal = null;
       enemy.health = Math.max(25, enemy.health);
+      if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);
       sim.combatLog.push({
         clock: Number(sim.clock.toFixed(2)),
         type: 'enemy_wounded_unarmed_c04',
@@ -1001,6 +1005,7 @@ export function updateGermanGarrison(sim, dt) {
       enemy.nonCombatant = true;
       enemy.moving = false;
       enemy.goal = null;
+      if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);
       sim.combatLog.push({
         clock: Number(sim.clock.toFixed(2)),
         type: 'enemy_surrendered',
@@ -1009,7 +1014,7 @@ export function updateGermanGarrison(sim, dt) {
       continue;
     }
 
-    if (enemy.nonCombatant) continue;
+    if (enemy.nonCombatant) {if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);continue;}
 
     if(m02ReactToGrenade(sim,enemy,'enemy')){stepActorNavigation(sim,enemy,dt);continue;}
     stepActorWeapon(sim, enemy, dt);

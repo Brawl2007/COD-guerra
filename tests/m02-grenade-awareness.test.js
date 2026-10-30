@@ -124,6 +124,29 @@ test('the mounted gunner does not react to a grenade hidden behind him or a soli
  }
 });
 
+test('a blast that kills the mounted gunner clears his threat before the next checkpoint',()=>{
+ const sim=new M02BenchSimulation();sim.c01Active=false;
+ const gunner=sim.enemies.find(e=>e.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
+ gunner.health=20;gunner.nextFireAt=100;sim.teleportPlayer(8,-30,0,0);
+ sim.tick(.05,{grenade:true});assert.equal(gunner.tacticalState,'TakeCoverGrenade');
+ for(let i=0;i<45&&sim.grenades.length;i++)sim.tick(.05,{});
+ const explosion=sim.drainEvents().find(e=>e.type==='grenade-exploded');
+ assert.ok(explosion.affectedActors.find(a=>a.id==='DE-A05').damage>=20);
+ assert.equal(gunner.alive,false);assert.equal(gunner.state,'DEAD');assert.equal(gunner.m02GrenadeThreat,undefined);
+ assert.equal(sim.evaluateMgLineOfFire().mgActive,false);
+ const checkpoint=sim.snapshot();assert.doesNotThrow(()=>sim.restoreSnapshot(checkpoint));
+ assert.equal(sim.enemies[0].m02GrenadeThreat,undefined);
+
+ // Other real blasts can kill an actor between ticks; the immediate snapshot
+ // must also be clean, before the garrison loop has a chance to run.
+ const immediate=new M02BenchSimulation();immediate.c01Active=false;
+ const second=immediate.enemies.find(e=>e.id==='DE-A05');immediate.enemies=[second];immediate.allies=[];
+ second.nextFireAt=100;immediate.teleportPlayer(8,-30,0,0);immediate.tick(.05,{grenade:true});
+ assert.ok(second.m02GrenadeThreat);immediate.detonateGrenadeAt(second.x,1,second.z);
+ assert.equal(second.alive,false);assert.equal(second.m02GrenadeThreat,undefined);
+ assert.equal(immediate.snapshot().enemies[0].m02GrenadeThreat,undefined);
+});
+
 test('older grenade-threat checkpoints without posture fields remain valid',()=>{
  const {sim}=setup();sim.tick(.05,{});const old=sim.snapshot();
  assert.equal(old.allies[0].m02GrenadeThreat.previousCrouched,undefined);

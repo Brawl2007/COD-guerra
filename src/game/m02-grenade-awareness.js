@@ -6,6 +6,15 @@ const angleDiff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
 const incapable=actor=>!actor.alive||actor.nonCombatant||actor.detachedOutOfCell||
  ['DOWN','SURRENDERED','WOUNDED_UNARMED','WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(actor.state);
 
+// Damage and scripted transitions can incapacitate an actor between AI ticks.
+// Clear the memory immediately so a checkpoint cannot retain a dead man's
+// active escape action. Do not restore his previous armed state or posture.
+export function m02ClearIncapableGrenadeThreat(actor){
+ if(!incapable(actor))return false;
+ if(actor.m02GrenadeThreat)delete actor.m02GrenadeThreat;
+ return true;
+}
+
 function restorePosture(actor,threat){
  if(threat.previousCrouched!==undefined)actor.crouched=threat.previousCrouched;
  if(threat.previousEyeHeight!==undefined)actor.eyeHeight=threat.previousEyeHeight;
@@ -13,10 +22,7 @@ function restorePosture(actor,threat){
 
 export function m02ReactToGrenade(sim,actor,side){
  let threat=actor.m02GrenadeThreat;
- if(incapable(actor)){
-  if(threat)delete actor.m02GrenadeThreat;
-  return false;
- }
+ if(m02ClearIncapableGrenadeThreat(actor))return false;
  if(threat&&threat.cell!==sim.activeCellId){
   if(actor.state==='FLEE_GRENADE'){actor.state=threat.previousState;actor.tacticalState=threat.previousTacticalState;actor.goal=null;actor.navCorners=null;restorePosture(actor,threat);}
   delete actor.m02GrenadeThreat;threat=null;
