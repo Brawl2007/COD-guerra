@@ -3,6 +3,39 @@ import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 import {M02Presentation} from '../src/render/m02-presentation.js';
 import {m02RoundPass,playM02RoundAudio} from '../src/render/m02-round-audio.js';
+import {AudioManager} from '../src/core/audio.js';
+import {FakeAudioContext} from './helpers/fake-audio-context.js';
+
+test('actual MP38 rounds share a voice per gun without losing any emitted shot',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];
+ const gun=sim.enemies.find(e=>e.id==='DE-B03'),other=sim.enemies.find(e=>e.id==='DE-B10');sim.enemies=[gun];
+ Object.assign(gun,{x:0,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});
+ Object.assign(sim.player,{x:0,y:0,z:120,crouched:false,eyeHeight:1.65});sim.drainEvents();
+ sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');
+ const events=sim.drainEvents().filter(e=>e.type==='actor-burst');
+ for(let i=0;i<8;i++){sim.tick(.05,{});events.push(...sim.drainEvents().filter(e=>e.type==='actor-burst'));}
+ assert.equal(events.length,3);assert.equal(gun.mag,29);assert.ok(events.every(e=>e.rounds===1&&e.weapon==='mp38'));
+ const ctx=new FakeAudioContext(),audio=new AudioManager({contextFactory:()=>ctx,quality:'low'});assert.equal(audio.init(),true);
+ try{
+  const p=Object.create(M02Presentation.prototype);
+  Object.assign(p,{audio,resetClock:sim.clock,playerRecord:sim.player,presentationWorld:sim.world,fireTimes:new Map(),roundEvents:new Map()});
+  const before=sim.snapshot();let voice=null,sourceCount=0;
+  for(const [index,event] of events.entries()){
+   ctx.currentTime=event.clock;p.consume([event],sim);
+   const burst=audio.bursts.get(gun.id);voice??=burst.voice;
+   assert.equal(burst.voice,voice);assert.equal(burst.round,index);
+   assert.ok(voice.sources.size>sourceCount,'every real round schedules new sound grains');sourceCount=voice.sources.size;
+   assert.equal([...audio.voices].filter(v=>v.kind==='mp38').length,1);
+  }
+  assert.equal(audio.diagnostics.eventCounts.rifle,3);assert.deepEqual(sim.snapshot(),before);
+  Object.assign(other,{x:2,y:0,z:100,facing:Math.PI/2,mag:32,reserve:0,suppressed:0});sim.enemies.push(other);
+  sim.drainEvents();sim.fireActorBurst(other,sim.player,{x:0,y:1.25,z:120},'enemy');
+  ctx.currentTime=sim.clock;p.consume(sim.drainEvents().filter(e=>e.type==='actor-burst'),sim);
+  assert.equal([...audio.voices].filter(v=>v.kind==='mp38').length,2,'different gunners keep spatially independent voices');
+  audio.weaponFire('mg34',0,20,{rounds:1,interval:.075,key:'switched',source:gun.id});
+  assert.equal(audio.bursts.get(gun.id).weapon,'mg34');assert.notEqual(audio.bursts.get(gun.id).voice,voice);
+ }finally{audio.dispose();}
+});
 
 test('near passes use the finite collision-resolved segment and do not pass through walls',()=>{
  const player={x:0,y:0,z:0,eyeHeight:1.65},world={obstacles:[]};

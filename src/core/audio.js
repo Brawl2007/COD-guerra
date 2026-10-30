@@ -334,24 +334,24 @@ export class AudioManager {
   }
   /**
    * Disparo/rajada de qualquer arma com perfil próprio. `distant` encaminha para o bus longínquo de baixa prioridade.
-   * `source` identifica a arma que dispara (só apresentação): tiros únicos de uma metralhadora que chegam em cadência
-   * (a MG34 deitada emite um evento por tiro) juntam-se à mesma voz como tiros seguintes da rajada.
+   * `source` identifica a arma que dispara (só apresentação): tiros únicos de uma arma automática que chegam em cadência
+   * juntam-se à mesma voz como tiros seguintes da rajada. Cada ronda ainda cria os seus próprios grãos sonoros.
    */
   weaponFire(weapon,pan=0,distance=0,{rounds=1,interval=null,key='',front=1,distant=false,priority=null,source=null,cadenceJitter=0}={}){
     const id=weaponProfileId(weapon),p=WEAPON_SOUND_PROFILES[id],category=distant?'distant':p.category,pr=priority??(distant?AUDIO_PRIORITY.distant:AUDIO_PRIORITY[p.priority]);
     const n=clamp(Math.round(rounds)||1,1,p.family==='mg'?9:4),step=interval??p.cadence,k=key||`${id}:${this.serial}`,name=EVENT_NAME[id]??'rifle';
     this._record(name,{pan,distance,priority:pr,key:k,detail:p.family==='mg'?{weapon:id,rounds:n,interval:step}:weapon});
     this._feel(distant?'distant':p.family==='mg'?'mg':'rifle',distance);
-    if(n===1&&p.family==='mg'&&source&&this.ctx){
+    if(n===1&&(p.family==='mg'||id==='mp38')&&source&&this.ctx){
       const now=this.ctx.currentTime,b=this.bursts.get(source);
-      if(b&&!b.voice.closed&&now-b.at<=step*1.9+.05){
+      if(b&&b.weapon===id&&!b.voice.closed&&now-b.at<=step*1.9+.05){
         if(this.liveSources>=(SOURCE_BUDGET[this.quality]??SOURCE_BUDGET.high)&&pr<AUDIO_PRIORITY.explosion){this.budgetDropped++;return b.voice;}
         b.round++;b.at=now;const grains=planWeaponShot(id,distance,{key:b.key,round:b.round,detail:this.detail});
         for(const g of grains)if(b.voice.closed||!this._grain(b.voice,g,now,`${b.key}:${b.round}`))break;
         return b.voice.closed?null:b.voice;
       }
       const voice=this._playPlan(planWeaponShot(id,distance,{key:k,detail:this.detail}),{kind:id,category,priority:pr,pan,distance,front,key:k});
-      if(voice)this.bursts.set(source,{voice,at:now,round:0,key:k});else this.bursts.delete(source);
+      if(voice)this.bursts.set(source,{voice,at:now,round:0,key:k,weapon:id});else this.bursts.delete(source);
       return voice;
     }
     const grains=n>1?planWeaponBurst(id,distance,{rounds:n,interval,key:k,detail:this.detail,cadenceJitter}):planWeaponShot(id,distance,{key:k,detail:this.detail});
