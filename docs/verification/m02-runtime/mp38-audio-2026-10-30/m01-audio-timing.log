@@ -1,0 +1,12 @@
+✔ bursts keep the authoritative cadence in one voice; later rounds have shorter tails (26.770995ms)
+✔ category limits and the global hard limit hold under a saturated battle (87.218395ms)
+✔ real MG34 event shape: one-round events from the same gun join one burst voice with burst tails (5.27356ms)
+✔ looped brown noise has no seam; ricochets (not distance) add the whizz; budget and floor bound the graph (162.61839ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 683.523629

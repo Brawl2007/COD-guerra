@@ -1,8 +1,12 @@
 # Estado de desenvolvimento
 
+## M02 — áudio MP38 — 2026-10-30
+
+Na candidata `codex/m02-recovery-v1`, as rondas reais de MP38 podem partilhar uma voz de áudio por atirador e mantêm o intervalo da arma quando chegam no mesmo frame. 161 testes M02, build e duas verificações browser de áudio passaram; também foram executados testes do áudio partilhado da M01. [Gravação, método e limites](docs/verification/m02-runtime/mp38-audio-2026-10-30/README.md). A passagem integral mais recente com esta alteração está em curso. Qualidade artística, mecânicas e restante polimento continuam em desenvolvimento; main e produção intactas.
+
 ## M02 — MG34, granadas e posição B02 — 2026-10-30
 
-Na candidata `codex/m02-recovery-v1`, o artilheiro da MG34 fixa reage a granadas reais e recupera a postura se sobreviver; checkpoints não conservam a ameaça nem o destino temporário de um soldado incapacitado. A bancada usa a caixa M01 e o modelo animado substitui a arma provisória estática. 159 testes M02, build e dois casos browser passaram após `382736c`; a [passagem `6e23001`](docs/verification/m02-runtime/mounted-mg-grenade-2026-10-30/native-final/report.json) completou C01–C12/M03 por piloto sem mortes de Piotr nem erros antes da limpeza final dos destinos. [Estado, capturas e limitações](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, manipulação das armas e granada, apoio a Lis e restantes marcos continuam em desenvolvimento; main e produção intactas.
+Na candidata `codex/m02-recovery-v1`, o artilheiro da MG34 fixa reage a granadas reais e recupera a postura se sobreviver; checkpoints não conservam a ameaça nem o destino temporário de um soldado incapacitado. A bancada usa a caixa M01 e o modelo animado substitui a arma provisória estática. 159 testes M02, build e dois casos browser passaram após `382736c`; a [passagem `e029771`](docs/verification/m02-runtime/mounted-mg-grenade-2026-10-30/native-cleanup/report.json) chegou a M03 sem mortes de Piotr nem erros, mas sem a cena do ferido C04; a [passagem anterior](docs/verification/m02-runtime/mounted-mg-grenade-2026-10-30/native-final/report.json) exercitou-a. [Estado, capturas e limitações](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, manipulação das armas e granada, apoio a Lis e restantes marcos continuam em desenvolvimento; main e produção intactas.
 
 ## M02 — combate em equipa, áudio e cena — 2026-10-29
 
