@@ -1,8 +1,12 @@
 # Estado de desenvolvimento
 
+## M02 — MG34, granadas e posição B02 — 2026-10-30
+
+Na candidata `codex/m02-recovery-v1`, o artilheiro da MG34 fixa reage a granadas reais e recupera a postura se sobreviver; checkpoints não conservam a ameaça de um soldado incapacitado. A bancada usa a caixa M01 e o modelo animado substitui a arma provisória estática. 158 testes M02, build e três casos browser passaram; a [passagem `6e23001`](docs/verification/m02-runtime/mounted-mg-grenade-2026-10-30/native-final/report.json) completou C01–C12/M03 por piloto sem mortes de Piotr nem erros. [Estado, capturas e limitações](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, manipulação das armas e granada, apoio a Lis e restantes marcos continuam em desenvolvimento; main e produção intactas.
+
 ## M02 — combate em equipa, áudio e cena — 2026-10-29
 
-Na candidata `codex/m02-recovery-v1`, as duplas cobrem o metralhador durante recargas reais; recargas NPC e quiques de granada têm som espacial; noite e bancada B05 foram melhoradas; `Z/X/B` alteram a progressão da secção na quinta. 135 testes M02, build e verificações browser focadas passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto; a repetição com ordens na candidata mais recente está em curso. [Estado e provas](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, coreografias e restante missão continuam em desenvolvimento; main e produção intactas.
+Na candidata `codex/m02-recovery-v1`, as duplas cobrem o metralhador durante recargas reais; recargas NPC e quiques de granada têm som espacial; noite e bancada B05 foram melhoradas; `Z/X/B` alteram a progressão da secção na quinta. 135 testes M02, build e verificações browser focadas passaram. A build `c1b8ec9` completou C01–C12/M03 por piloto; a repetição com ordens foi registada nas continuações posteriores. [Estado e provas](docs/m02/M02_EXECUTION_STATE.md). Qualidade artística, coreografias e restante missão continuam em desenvolvimento; main e produção intactas.
 
 ## M02 — chegada de Lis e decisão de retirada — 2026-10-29
 
