@@ -3,6 +3,31 @@
 import {eyePosition,muzzlePosition,traceShot} from '../../src/world/spatial.js';
 import {m02PlayerAction,m02RifleAmmoSources} from '../../src/game/m02-player-actions.js';
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
+
+// When an enemy occupies a room the player cannot route directly into, find
+// an accessible position with a real shot to that actor. This only guides
+// normal player controls; it never moves an actor or changes a door.
+export function m02PilotFiringPosition(sim,p,enemy){
+  const bounds=sim.world.layout.bounds.playable,candidates=[];
+  for(const radius of [2,4,6,8,12,16])for(let i=0;i<16;i++){
+    const angle=i*Math.PI/8,x=enemy.x+Math.cos(angle)*radius,z=enemy.z+Math.sin(angle)*radius;
+    if(x<=bounds.minX+.5||x>=bounds.maxX-.5||z<=bounds.minZ+.5||z>=bounds.maxZ-.5||Math.hypot(x-p.x,z-p.z)<1)continue;
+    candidates.push({x,z,distance:Math.hypot(x-p.x,z-p.z)});
+  }
+  candidates.sort((a,b)=>a.distance-b.distance);
+  for(const goal of candidates){
+    const trial={...p,x:goal.x,y:sim.world.heightAt(goal.x,goal.z),z:goal.z,crouched:true,eyeHeight:1.08,aiming:true};
+    const eye=eyePosition(trial),target={x:enemy.x,y:enemy.y+1.58-(enemy.crouched?.56:0),z:enemy.z};
+    const dx=target.x-eye.x,dy=target.y-eye.y,dz=target.z-eye.z,d=Math.hypot(dx,dy,dz);if(d<.01)continue;
+    trial.angle=Math.atan2(dz,dx);trial.pitch=Math.atan2(dy,Math.hypot(dx,dz));
+    const hit=traceShot(sim.world,eye,{x:dx/d,y:dy/d,z:dz/d},[enemy],220,muzzlePosition(trial,sim.clock));
+    if(hit?.kind!=='actor')continue;
+    const path=sim.navigator.route(p,goal),last=path?.at(-1);
+    if(last&&Math.hypot(last[0]-goal.x,last[1]-goal.z)<.8)return {goal,path};
+  }
+  return null;
+}
+
 export class M02MissionPilot {
   constructor({flankX=-50,flankZ=-52}={}){this.flankX=flankX;this.flankZ=flankZ;this.route=[];this.routeKey='';this.nextPlan=0;this.lastCell=null;}
   decide(sim){
@@ -60,6 +85,10 @@ export class M02MissionPilot {
           const g={x:d.center.x+(d.orientation==='V'?sign*1.3:0),z:d.center.z+(d.orientation==='H'?sign*1.3:0)};
           const path=sim.navigator.route(p,g);if(path){this.route=path;goal=g;break outer;}
         }
+      }
+      if(!this.route.length&&hostiles.includes(goal)){
+        const vantage=m02PilotFiringPosition(sim,p,goal);
+        if(vantage){this.route=vantage.path;goal=vantage.goal;}
       }
       this.routeKey=goalKey;this.nextPlan=sim.clock+4;
     }
