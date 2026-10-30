@@ -12,6 +12,9 @@ test('the B02 mounted gunner takes cover from the player grenade',async({page},t
   sim.reset('C02');sim.c01Active=false;const gunner=sim.enemies.find(a=>a.id==='DE-A05');
   sim.enemies=[gunner];sim.allies=[];gunner.nextFireAt=100;sim.teleportPlayer(8,-30,0,0);renderer.renderFrame(0,0);
  });
+ const aim=await page.evaluate(()=>window.m02Bench.renderer.presentation.characters.stats.actors.find(v=>v.id==='de_east_0'));
+ expect(aim.weapon).toBe('mg34');expect(aim.weaponMeshes).toContain('mg34_body');expect(aim.muzzle).toHaveLength(3);
+ console.log('M02 mounted MG visual aim',JSON.stringify({clip:aim.clip,muzzle:aim.muzzle,meshes:aim.weaponMeshes}));
  const overlay=await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · MG34 NA ABERTURA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
  await page.screenshot({path:testInfo.outputPath('mg34-before-grenade.png')});
  await overlay.evaluate(el=>el.remove());
@@ -31,6 +34,41 @@ test('the B02 mounted gunner takes cover from the player grenade',async({page},t
  await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · MG34 REAGE À GRANADA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
  await page.screenshot({path:testInfo.outputPath('mg34-grenade-cover.png')});expect(errors).toEqual([]);
  console.log('M02 mounted MG grenade reaction',JSON.stringify(result));
+});
+
+test('the B02 MG bench uses the existing M01 ammunition tin',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await Promise.all([renderer.materialLibraryReady,renderer.cargo.ready]);
+  sim.reset('C02');sim.c01Active=false;sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(14.8,-28.1,Math.atan2(-1.9,-2.4),-.23);const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const bench=renderer.staticGroup.getObjectByName('M02 furniture prop_b02_mg_mount');
+  const tin=renderer.staticGroup.getObjectByName('M02 B02 MG bench dressing');
+  let phantom=0;renderer.staticGroup.traverse(n=>{if(n.isMesh&&n.geometry.type==='CylinderGeometry'&&n.position.x===12.25&&n.position.y===1.38&&n.position.z===-30)phantom++;});
+  return {parts:bench?.children.map(n=>n.name),models:tin?.children.map(n=>n.name),phantom,unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.parts).toEqual(['table top','table leg','table leg','table leg','table leg']);
+ expect(result.models).toEqual(['M02 B02 ammo_tin_box']);expect(result.phantom).toBe(0);expect(result.unchanged).toBe(true);
+ await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,bench=renderer.staticGroup.getObjectByName('M02 furniture prop_b02_mg_mount');
+  const tin=renderer.staticGroup.getObjectByName('M02 B02 MG bench dressing'),ob=sim.world.obstacles.find(o=>o.id==='prop_b02_mg_mount');
+  const part=bench.children[0],geometry=new part.geometry.constructor(ob.max.x-ob.min.x,ob.max.y-ob.min.y,ob.max.z-ob.min.z);
+  const proxy=new part.constructor(geometry,renderer.materials.wood_thick);proxy.name='controlled original MG bench block';
+  proxy.position.set((ob.min.x+ob.max.x)/2,(ob.min.y+ob.max.y)/2,(ob.min.z+ob.max.z)/2);
+  proxy.castShadow=proxy.receiveShadow=true;bench.visible=false;tin.visible=false;renderer.staticGroup.add(proxy);renderer.renderFrame(0,0);
+ });
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · BLOCO ANTERIOR";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('mg-bench-block.png')});
+ await page.evaluate(()=>{
+  const {renderer}=window.m02Bench,proxy=renderer.staticGroup.getObjectByName('controlled original MG bench block');proxy.removeFromParent();proxy.geometry.dispose();
+  renderer.staticGroup.getObjectByName('M02 furniture prop_b02_mg_mount').visible=true;
+  renderer.staticGroup.getObjectByName('M02 B02 MG bench dressing').visible=true;renderer.renderFrame(0,0);
+ });
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · BANCADA E CAIXA M01"}'});
+ await page.screenshot({path:testInfo.outputPath('mg-bench-dressed.png')});expect(errors).toEqual([]);
 });
 
 test('changing cells releases furniture geometry but retains the shared M01 props',async({page})=>{

@@ -519,17 +519,10 @@ export class M02BenchRenderer {
     const cellId = this.sim.activeCellId ?? 'A';
 
     if (cellId === 'A') {
-      // 5. MG34 weapon fixture inside B02 west aperture
-      const mgGroup = new THREE.Group();
-      const mgBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 1.05, 8), this.materials.gun_metal);
-      mgBarrel.rotation.z = Math.PI / 2;
-      mgBarrel.position.set(12.25, 1.38, -30.0);
-      const mgBipod = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.38, 0.28), this.materials.gun_metal);
-      mgBipod.position.set(12.05, 1.16, -30.0);
-      mgGroup.add(mgBarrel, mgBipod);
-      this.staticGroup.add(mgGroup);
-
-      // 6. C04 Southern Orchard wooden post & white chalk sign next to wounded German soldier (-4.6, 36.2)
+      // The gunner's animated M01 MG34 is the weapon. Do not draw the old
+      // permanent cylinder and box: they remained after its operator died and
+      // appeared alongside the real model during combat.
+      // C04 Southern Orchard wooden post & white chalk sign next to wounded German soldier (-4.6, 36.2)
       const c04Post = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.45, 0.18), this.materials.wood_frame);
       c04Post.position.set(-4.6, 0.725, 36.2);
       c04Post.castShadow = true;

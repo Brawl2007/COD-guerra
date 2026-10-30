@@ -37,6 +37,17 @@ export function createM02FarmDressing(ob,models){
  }
  return root;
 }
+
+// An M01 ammunition tin sits to the side of the fixed B02 aperture. It is
+// visual dressing, not an ammunition pickup or a new collision volume.
+export function createM02MgDressing(ob,models){
+ if(ob?.id!=='prop_b02_mg_mount'||!models.has('ammo_tin_box'))return null;
+ const model=models.get('ammo_tin_box').clone(true),bounds=new THREE.Box3().setFromObject(model);
+ const root=new THREE.Group();root.name='M02 B02 MG bench dressing';model.name='M02 B02 ammo_tin_box';
+ model.position.set((ob.min.x+ob.max.x)/2,ob.max.y-bounds.min.y+.005,ob.max.z-(bounds.max.z-bounds.min.z)/2-.04);
+ model.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;}});root.add(model);
+ return root;
+}
 // Use the accepted M01 models; ownership and optional failures retain the
 // existing M02 proxies until the complete replacement is available.
 export class M02CargoVisuals {
@@ -60,6 +71,11 @@ export class M02CargoVisuals {
    const table=renderer.world.obstacles.find(ob=>ob.id==='prop_b01_table');
    const root=createM02FarmDressing(table,this.models);
    if(root){renderer.staticGroup.add(root);this.farmRoot=root;}
+  }
+  if(renderer.sim.activeCellId==='A'&&this.mgRoot?.parent!==renderer.staticGroup){
+   const bench=renderer.world.obstacles.find(ob=>ob.id==='prop_b02_mg_mount');
+   const root=createM02MgDressing(bench,this.models);
+   if(root){renderer.staticGroup.add(root);this.mgRoot=root;}
   }
   this.install(renderer.supplyCartMesh,'horse_cart',[1.45,1,.7]);
   for(const [id,group]of renderer.supplyVolumeMeshes)this.install(group,id==='vol_water'?'barrel_wood':'ammo_crate_wood',id==='vol_water'?[1,.65,1]:[.75,1.4,1.5]);

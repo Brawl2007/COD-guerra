@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
-// B01 has authored solid collision boxes but no M01 furniture asset. Use the
-// existing M01 materials to describe their contents, without changing those
+// These authored solid collision boxes have no matching M01 furniture asset.
+// Use the existing M01 materials to describe their contents, without changing those
 // boxes or claiming the gaps under the table are traversable or shootable.
 export function createM02FarmFurniture(ob,materials){
- if(!['prop_b01_stove','prop_b01_table','prop_b01_bed_west','prop_b01_bed_east'].includes(ob?.id))return null;
+ if(!['prop_b01_stove','prop_b01_table','prop_b01_bed_west','prop_b01_bed_east','prop_b02_mg_mount'].includes(ob?.id))return null;
  const sx=ob.max.x-ob.min.x,sy=ob.max.y-ob.min.y,sz=ob.max.z-ob.min.z;
  if(!(sx>0&&sy>0&&sz>0))return null;
  const root=new THREE.Group();root.name=`M02 furniture ${ob.id}`;
@@ -13,7 +13,7 @@ export function createM02FarmFurniture(ob,materials){
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.name=name;
   mesh.position.set(x+w/2,y+h/2,z+d/2);mesh.castShadow=mesh.receiveShadow=true;mesh.userData.m02FarmFurniture=true;root.add(mesh);
  };
- if(ob.id==='prop_b01_table'){
+ if(ob.id==='prop_b01_table'||ob.id==='prop_b02_mg_mount'){
   const top=Math.min(.09,sy*.2),leg=Math.min(.10,sx*.1,sz*.1);
   box('table top',0,sy-top,0,sx,top,sz,materials.wood_thin);
   for(const x of [0,sx-leg])for(const z of [0,sz-leg])box('table leg',x,0,z,leg,sy-top,leg,materials.wood_frame);
