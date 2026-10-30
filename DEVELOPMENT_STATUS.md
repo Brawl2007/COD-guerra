@@ -2,7 +2,7 @@
 
 ## M02 — áudio MP38 — 2026-10-30
 
-Na candidata `codex/m02-recovery-v1`, as rondas reais de MP38 podem partilhar uma voz de áudio por atirador e mantêm o intervalo da arma quando chegam no mesmo frame. 161 testes M02, build e duas verificações browser de áudio passaram; também foram executados testes do áudio partilhado da M01. [Gravação, método e limites](docs/verification/m02-runtime/mp38-audio-2026-10-30/README.md). A passagem integral mais recente com esta alteração está em curso. Qualidade artística, mecânicas e restante polimento continuam em desenvolvimento; main e produção intactas.
+Na candidata `codex/m02-recovery-v1`, as rondas reais de MP38 podem partilhar uma voz de áudio por atirador e mantêm o intervalo da arma quando chegam no mesmo frame. 162 testes M02, build e duas verificações browser de áudio passaram; também foram executados testes do áudio partilhado da M01. A [passagem `6bc11f2`](docs/verification/m02-runtime/mp38-audio-2026-10-30/native-final/report.json) chegou a C12/M03 sem mortes de Piotr ou erros, com C04, Lis evacuado e 12/12 no último grupo. [Gravação, método e limites](docs/verification/m02-runtime/mp38-audio-2026-10-30/README.md). Qualidade artística, mecânicas e restante polimento continuam em desenvolvimento; main e produção intactas.
 
 ## M02 — MG34, granadas e posição B02 — 2026-10-30
 
