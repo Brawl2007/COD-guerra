@@ -124,6 +124,18 @@ test('the mounted gunner does not react to a grenade hidden behind him or a soli
  }
 });
 
+test('the mounted gunner can hear a real nearby bounce behind his firing arc',()=>{
+ const sim=new M02BenchSimulation();sim.c01Active=false;
+ const gunner=sim.enemies.find(e=>e.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
+ gunner.nextFireAt=100;sim.teleportPlayer(8,-30,0,0);sim.drainEvents();
+ sim.throwGrenade({x:16,y:.2,z:-30},{x:0,y:-1,z:0});sim.tick(.05,{});
+ const events=sim.drainEvents(),warning=events.find(e=>e.type==='grenade-warning');
+ assert.ok(events.some(e=>e.type==='grenade-bounced'));
+ assert.equal(warning?.actorId,'DE-A05');assert.equal(warning.perception,'bounce');
+ assert.equal(gunner.tacticalState,'TakeCoverGrenade');assert.equal(gunner.crouched,true);
+ assert.equal(gunner.x,13.2);assert.equal(gunner.z,-30);
+});
+
 test('a blast that kills the mounted gunner clears his threat before the next checkpoint',()=>{
  const sim=new M02BenchSimulation();sim.c01Active=false;
  const gunner=sim.enemies.find(e=>e.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
