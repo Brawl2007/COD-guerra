@@ -147,6 +147,19 @@ test('a blast that kills the mounted gunner clears his threat before the next ch
  assert.equal(immediate.snapshot().enemies[0].m02GrenadeThreat,undefined);
 });
 
+test('the C04 wounded transition clears a grenade escape without restoring armed combat',()=>{
+ const sim=new M02BenchSimulation();sim.c01Active=false;
+ const wounded=sim.enemies.find(e=>e.c04Candidate),gunner=sim.enemies.find(e=>e.id==='DE-A05');
+ sim.enemies=[gunner,wounded];sim.allies=[];gunner.nextFireAt=100;
+ sim.teleportPlayer(-5.5,30,Math.PI/2,0);sim.tick(.05,{grenade:true});
+ assert.equal(wounded.state,'FLEE_GRENADE');assert.ok(wounded.m02GrenadeThreat);
+ wounded.health=48;sim.tick(.05,{});
+ assert.equal(wounded.state,'WOUNDED_UNARMED');assert.equal(wounded.nonCombatant,true);
+ assert.equal(wounded.m02GrenadeThreat,undefined);
+ const checkpoint=sim.snapshot();sim.restoreSnapshot(checkpoint);
+ assert.equal(sim.enemies.find(e=>e.c04Candidate).state,'WOUNDED_UNARMED');
+});
+
 test('older grenade-threat checkpoints without posture fields remain valid',()=>{
  const {sim}=setup();sim.tick(.05,{});const old=sim.snapshot();
  assert.equal(old.allies[0].m02GrenadeThreat.previousCrouched,undefined);
