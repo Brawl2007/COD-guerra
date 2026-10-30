@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — objetos M01 na casa, 2026-10-30
+
+`5c2b230` coloca a lanterna e a caixa de tábuas originais do kit M01 na mesa B01. A caixa encaixa no colisor existente; a lanterna é detalhe visual sem colisão própria. Rebuild e mudança de célula não duplicam os objetos. 151 testes M02, build e três browser passaram; [comparação e limites](../verification/m02-runtime/farm-dressing-2026-10-30/README.md). O último percurso integral concluído continua o de `e6c62e0` abaixo; a passagem congelada `5c2b230` está em curso. A simulação e o roteiro não mudaram nesta etapa.
+
 ## Continuação — reação a granadas, 2026-10-30
 
 `d775029` faz aliados e inimigos móveis reagirem a uma granada realmente visível, abandonando a recarga/rajada pendente sem criar munição e movendo-se pela navegação física a partir da última posição observada. Aliados próximos avisam por texto, sem voz gravada. Memória e objetivo anterior são guardados e validados; saves antigos continuam aceites. Lis em evacuação, o grupo separado e o atirador da MG fixa não fazem esta fuga. 145 testes M02, build e quatro browser passaram; [provas e limites](../verification/m02-runtime/grenade-awareness-2026-10-30/README.md). Sem granadas, 200 passos de ambas as rotinas de IA em cada célula produziram snapshots e eventos iguais à build anterior.
