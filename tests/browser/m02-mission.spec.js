@@ -2,6 +2,27 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('changing cells releases furniture geometry but retains the shared M01 props',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await renderer.cargo.ready;sim.reset('C02');renderer.renderFrame(0,0);
+  const table=renderer.staticGroup.getObjectByName('M02 furniture prop_b01_table'),oldParts=table.children;
+  let released=0,sharedReleased=0;for(const part of oldParts)part.geometry.addEventListener('dispose',()=>released++);
+  let shared=null;renderer.cargo.models.get('railway_lantern').traverse(n=>{if(!shared&&n.isMesh)shared=n.geometry;});
+  shared.addEventListener('dispose',()=>sharedReleased++);
+  sim.enterAreaBC06();let snapshot=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);const bUnchanged=snapshot===JSON.stringify(sim.snapshot());
+  sim.reset('C02');snapshot=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const back=renderer.staticGroup.getObjectByName('M02 B01 kitchen dressing');let restoredShared=false;
+  back?.traverse(n=>{if(n.isMesh&&n.geometry===shared)restoredShared=true;});
+  return {released,expected:oldParts.length,sharedReleased,restoredShared,bUnchanged,aUnchanged:snapshot===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.released).toBe(result.expected);expect(result.expected).toBe(5);expect(result.sharedReleased).toBe(0);expect(result.restoredShared).toBe(true);
+ expect(result.bUnchanged).toBe(true);expect(result.aUnchanged).toBe(true);expect(errors).toEqual([]);
+});
+
 test('B01 kitchen uses the original M01 lantern and crate',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
