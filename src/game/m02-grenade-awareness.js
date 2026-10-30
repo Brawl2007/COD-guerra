@@ -1,7 +1,7 @@
-// A soldier can react only to a nearby grenade in their visual cone, with an
-// unobstructed ray to its actual position. Memory keeps the last observed
-// position while fleeing; it does not track the projectile through a wall.
-const halfCone=1.32,noticeRange=8,clearRadius=8.5;
+// A soldier can react to a nearby visible grenade or its actual nearby bounce.
+// Memory keeps the last perceived position; it does not track the projectile
+// through a wall or use the future location of its detonation.
+const halfCone=1.32,noticeRange=8,hearingRange=5,clearRadius=8.5;
 const angleDiff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
 const incapable=actor=>!actor.alive||actor.nonCombatant||actor.detachedOutOfCell||
  ['DOWN','SURRENDERED','WOUNDED_UNARMED','WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(actor.state)||actor.id==='DE-A05';
@@ -28,14 +28,17 @@ export function m02ReactToGrenade(sim,actor,side){
   let nearest=null;
   for(const g of sim.grenades){
    const dx=g.x-actor.x,dz=g.z-actor.z,dist=Math.hypot(dx,dz),vertical=g.y-(actor.y??0);
-   if(g.exploded||dist>noticeRange||Math.abs(vertical)>4||
-      Math.abs(angleDiff(Math.atan2(dz,dx),actor.facing??0))>halfCone)continue;
+   if(g.exploded||dist>noticeRange||Math.abs(vertical)>4)continue;
    const point={x:g.x,y:g.y,z:g.z,eyeHeight:0,space:'metres'};
-   if(!sim.world.lineOfSight(actor,point,{includeFoliage:true}))continue;
-   if(!nearest||dist<nearest.dist)nearest={g,dx,dz,dist};
+   const visible=Math.abs(angleDiff(Math.atan2(dz,dx),actor.facing??0))<=halfCone&&
+    sim.world.lineOfSight(actor,point,{includeFoliage:true});
+   const bounce=!visible&&dist<=hearingRange&&sim.events.some(e=>e.type==='grenade-bounced'&&e.grenadeId===g.id&&Math.abs(e.clock-sim.clock)<.002);
+   const heard=bounce&&sim.world.lineOfSight(actor,point,{includeFoliage:false});
+   if(!visible&&!heard)continue;
+   if(!nearest||dist<nearest.dist)nearest={g,dx,dz,dist,perception:visible?'visual':'bounce'};
   }
   if(!nearest)return false;
-  const {g,dx,dz,dist}=nearest,seed=[...actor.id].reduce((n,c)=>n+c.charCodeAt(0),0);
+  const {g,dx,dz,dist,perception}=nearest,seed=[...actor.id].reduce((n,c)=>n+c.charCodeAt(0),0);
   const direction=dist>.01?{x:-dx/dist,z:-dz/dist}:{x:Math.cos(seed),z:Math.sin(seed)};
   const travel=Math.max(2,clearRadius-dist),bounds=sim.world.layout.bounds.playable;
   const clamp=(v,min,max)=>Math.max(min+.5,Math.min(max-.5,v));
@@ -46,7 +49,7 @@ export function m02ReactToGrenade(sim,actor,side){
   actor.m02GrenadeThreat=threat;
   const canWarn=side==='ally'&&sim.player.alive&&Math.hypot(sim.player.x-actor.x,sim.player.z-actor.z)<=20&&
    sim.world.lineOfSight(sim.player,actor,{includeFoliage:false});
-  sim.events.push({type:'grenade-warning',grenadeId:g.id,actorId:actor.id,actorName:actor.name??'Soldado',side,heardByPlayer:canWarn,clock:sim.clock});
+  sim.events.push({type:'grenade-warning',grenadeId:g.id,actorId:actor.id,actorName:actor.name??'Soldado',side,perception,heardByPlayer:canWarn,clock:sim.clock});
  }
  // Cancelling pending rounds or an unfinished reload never creates ammunition.
  // The next normal update may start a fresh reload after the danger is gone.

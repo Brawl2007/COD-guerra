@@ -38,6 +38,18 @@ test('grenades behind the observer or behind a wall cause no fabricated warning'
  }
 });
 
+test('a real nearby bounce is heard behind the observer, but not through a solid wall or beyond range',()=>{
+ for(const mode of ['clear','wall','far']){
+  const {sim,actor}=setup();sim.grenades=[];sim.drainEvents();actor.facing=0;
+  if(mode==='wall')sim.world.obstacles.push({id:'bounce-wall',min:{x:2,y:0,z:98},max:{x:2.2,y:3,z:102},material:'brick'});
+  sim.throwGrenade({x:mode==='far'?-2:1,y:.2,z:100},{x:0,y:-1,z:0});sim.tick(.05,{});
+  const events=sim.drainEvents();assert.ok(events.some(e=>e.type==='grenade-bounced'),mode+' uses a real collision');
+  const warning=events.find(e=>e.type==='grenade-warning');
+  if(mode==='clear'){assert.equal(warning?.perception,'bounce');assert.equal(actor.state,'FLEE_GRENADE');}
+  else{assert.equal(warning,undefined,mode);assert.equal(actor.m02GrenadeThreat,undefined);}
+ }
+});
+
 test('an enemy seeing the actual grenade flees without producing an allied player warning',()=>{
  const {sim,actor}=setup('enemy'),before=actor.x;sim.tick(.05,{});
  const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');
