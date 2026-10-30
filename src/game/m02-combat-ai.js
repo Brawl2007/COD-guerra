@@ -739,7 +739,12 @@ export function updatePolishSquad(sim, dt) {
     }
     if(ally.id==='pl_lis'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11){ally.goal=null;ally.moving=false;continue;}
 
-    if (sim.activeCellId === 'B') {
+    const held=(sim.activeCellId==='B'||sim.activeCellId==='C')&&orderMode==='suppress'&&
+      sim.squadOrder?.issuedCell===sim.activeCellId&&sim.squadOrder?.holdPositions?.[ally.id];
+    if(held&&!['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state)){
+      ally.goal={x:held.x,z:held.z,crouch:true,nodeId:`order_hold_${ally.id}`};
+      ally.tacticalState='HoldAndSuppress';
+    } else if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
       const bGoals = {
         pl_gruca: { x: -18.0, z: 10.0, facing: -Math.PI / 2, crouch: true, nodeId: 'cv_b_west_wall' },

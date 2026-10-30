@@ -139,6 +139,12 @@ export function validateM02Snapshot(snap) {
     }
   }
   if(snap.areaC?.lastGroup!==undefined&&!Array.isArray(snap.areaC.lastGroup))return {valid:false,reason:'Grupo de evacuação inválido.'};
+  if(snap.squadOrder?.issuedCell!==undefined&&!['A','B','C'].includes(snap.squadOrder.issuedCell))return {valid:false,reason:'Área da ordem inválida.'};
+  if(snap.squadOrder?.holdPositions!==undefined){
+    const holds=snap.squadOrder.holdPositions;
+    if(!holds||typeof holds!=='object'||Array.isArray(holds)||Object.keys(holds).length>32||
+      Object.values(holds).some(p=>!p||!Number.isFinite(p.x)||!Number.isFinite(p.z)))return {valid:false,reason:'Posições da ordem inválidas.'};
+  }
   for(const actor of [...(snap.allies??[]),...(snap.enemies??[]),...(snap.areaC?.lastGroup??[])]){
     if(!actor||!Number.isFinite(actor.x)||!Number.isFinite(actor.z))return {valid:false,reason:'Posição de ator inválida.'};
     if(actor.m02LastEngagedTargetId!==undefined&&typeof actor.m02LastEngagedTargetId!=='string')return {valid:false,reason:`Alvo de equipa inválido: ${actor.id}`};
@@ -605,15 +611,21 @@ export class M02BenchSimulation {
       type,
       axis: resolvedAxis,
       issuedAt: Number(this.clock.toFixed(2)),
+      issuedCell:this.activeCellId,
     };
+    if(type==='suppress'&&(this.activeCellId==='B'||this.activeCellId==='C')){
+      this.squadOrder.holdPositions=Object.fromEntries(this.allies.filter(a=>a.alive&&!a.detachedOutOfCell&&
+        !['DOWN','WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(a.state))
+        .map(a=>[a.id,{x:a.x,z:a.z}]));
+    }
     if (!this.flags['m02.axis'] && (resolvedAxis === 'ditch' || resolvedAxis === 'orchard')) {
       this.flags['m02.axis'] = resolvedAxis;
     }
-    if (type === 'suppress') {
+    if (this.activeCellId==='A' && type === 'suppress') {
       this.dialogue.trigger('bz39_c02_01', this);
-    } else if (type === 'advance') {
+    } else if (this.activeCellId==='A' && type === 'advance') {
       this.dialogue.trigger('bz39_c03_01', this);
-    } else if (type === 'flank_east') {
+    } else if (this.activeCellId==='A' && type === 'flank_east') {
       this.dialogue.trigger('bz39_c02_01', this);
     }
     this.events.push({ type: 'squad-order', order: this.squadOrder, clock: this.clock });

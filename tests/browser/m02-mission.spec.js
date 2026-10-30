@@ -2,6 +2,27 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('squad can hold and resume in B and C using the normal keys',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ for(const cell of ['B','C']){
+  await page.evaluate(cell=>{const s=window.m02Bench.sim;if(cell==='B')s.enterAreaBC06();else s.enterAreaCC09();s.enemies=[];s.allies=s.allies.filter(a=>a.id==='pl_gruca');},cell);
+  await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+  await page.keyboard.press('KeyZ');await page.waitForFunction(cell=>{const s=window.m02Bench.sim;return s.squadOrder.type==='suppress'&&s.squadOrder.issuedCell===cell&&s.allies[0].goal?.nodeId==='order_hold_pl_gruca'&&!document.querySelector('#mission-order').hidden;},cell);
+  const hold=await page.evaluate(()=>{const s=window.m02Bench.sim;return {actor:[s.allies[0].x,s.allies[0].z],anchor:s.squadOrder.holdPositions.pl_gruca,text:document.querySelector('#mission-order').textContent};});
+  expect(Math.hypot(hold.actor[0]-hold.anchor.x,hold.actor[1]-hold.anchor.z)).toBeLessThan(.01);expect(hold.text).toContain('segurar');
+  if(cell==='B'){
+   await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · ORDEM EM B";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+   await page.screenshot({path:testInfo.outputPath('squad-hold-area-b.png')});
+  }
+  await page.keyboard.press('KeyX');await page.waitForFunction(()=>{const s=window.m02Bench.sim;return s.squadOrder.type==='advance'&&s.allies[0].goal?.nodeId!=='order_hold_pl_gruca'&&document.querySelector('#mission-order').textContent.includes('prosseguir');});
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ }
+ expect(errors).toEqual([]);
+});
+
 test('farm squad orders change real cover goals through normal keys and show confirmation',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
