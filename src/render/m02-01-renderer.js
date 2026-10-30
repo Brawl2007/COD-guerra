@@ -15,6 +15,7 @@ import {M02Lighting} from './m02-lighting.js';
 import {M02CombatFX} from './m02-combat-fx.js';
 import {M02Grenades} from './m02-grenades.js';
 import {m02FloorFamily} from './m02-audio-layout.js';
+import {createM02FarmFurniture} from './m02-farm-furniture.js';
 import {createM02AidStretcher,isM02AidStretcher} from './m02-aid-stretcher.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
@@ -455,6 +456,8 @@ export class M02BenchRenderer {
         this.staticGroup.add(createM02AidStretcher(ob, this.materials));
         continue;
       }
+      const furniture=createM02FarmFurniture(ob,this.materials);
+      if(furniture){this.staticGroup.add(furniture);continue;}
 
       let mat = this.materials.brick_B01;
       if (ob.role === 'window_frame' || ob.role === 'door_frame' || ob.role === 'post') {

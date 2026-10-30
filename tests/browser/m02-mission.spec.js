@@ -2,6 +2,39 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('B01 furniture gives the authored solids recognisable interiors',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await renderer.materialLibraryReady;sim.reset('C02');sim.c01Active=false;sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(-38,-15.6,Math.atan2(-1.1,2.85),-.24);const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const groups=['prop_b01_stove','prop_b01_table','prop_b01_bed_west','prop_b01_bed_east'].map(id=>{
+   const group=renderer.staticGroup.getObjectByName(`M02 furniture ${id}`);return {id,parts:group?.children.map(n=>n.name)};
+  });
+  return {groups,unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.groups.map(g=>g.parts?.length)).toEqual([3,5,6,6]);expect(result.groups[1].parts.filter(n=>n==='table leg')).toHaveLength(4);expect(result.unchanged).toBe(true);
+ await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,group=renderer.staticGroup.getObjectByName('M02 furniture prop_b01_table'),ob=sim.world.obstacles.find(o=>o.id==='prop_b01_table');
+  const part=group.children[0],geometry=new part.geometry.constructor(ob.max.x-ob.min.x,ob.max.y-ob.min.y,ob.max.z-ob.min.z);
+  const proxy=new part.constructor(geometry,renderer.materials.wood_thin);proxy.name='controlled original table block';
+  proxy.position.set((ob.min.x+ob.max.x)/2,(ob.min.y+ob.max.y)/2,(ob.min.z+ob.max.z)/2);proxy.castShadow=proxy.receiveShadow=true;group.visible=false;renderer.staticGroup.add(proxy);renderer.renderFrame(0,0);
+ });
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · BLOCO DE MESA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('b01-table-block.png')});
+ await page.evaluate(()=>{
+  const {renderer}=window.m02Bench,proxy=renderer.staticGroup.getObjectByName('controlled original table block');proxy.removeFromParent();proxy.geometry.dispose();
+  renderer.staticGroup.getObjectByName('M02 furniture prop_b01_table').visible=true;renderer.renderFrame(0,0);
+ });
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · COZINHA B01"}'});
+ await page.screenshot({path:testInfo.outputPath('b01-kitchen.png')});
+ await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.teleportPlayer(-35.8,-10,Math.PI,-.2);renderer.renderFrame(0,0);});
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · QUARTO B01"}'});
+ await page.screenshot({path:testInfo.outputPath('b01-bedroom.png')});expect(errors).toEqual([]);
+});
+
 test('real player steps use the visible farm floor and M01 interior audio',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
