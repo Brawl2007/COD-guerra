@@ -2,6 +2,28 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('a soldier flees and warns after seeing the player grenade',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{
+  const s=window.m02Bench.sim;s.enterAreaBC06();const a=s.allies.find(a=>a.id==='pl_gruca');s.allies=[a];s.enemies=[];
+  Object.assign(a,{x:4,y:0,z:100,facing:Math.PI,state:'ACTIVE',goal:null,reloadingUntil:0});s.teleportPlayer(0,100,0,0);
+ });
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.keyboard.press('KeyG');
+ await page.waitForFunction(()=>{
+  const s=window.m02Bench.sim,n=document.querySelector('#mission-grenade-warning');
+  return s.allies[0].state==='FLEE_GRENADE'&&s.allies[0].x>4&&s.grenadeAmmo===1&&!n.hidden&&n.textContent.includes('Granada!');
+ });
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;return {x:sim.allies[0].x,threat:sim.allies[0].m02GrenadeThreat?.id,grenades:sim.grenades.length,warning:renderer.presentation.grenadeWarning};});
+ expect(result.x).toBeGreaterThan(4);expect(result.threat).toBeTruthy();expect(result.grenades).toBe(1);expect(result.warning?.name).toContain('Gruca');
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · GRANADA VISTA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('grenade-warning-and-flee.png')});expect(errors).toEqual([]);
+});
+
 test('B01 furniture gives the authored solids recognisable interiors',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');

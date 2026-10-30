@@ -59,6 +59,7 @@ export class M02Presentation {
     this.audio = new AudioManager({quality:'medium'});
     this.feedback=new M01CombatFeedback();
     this.grenadeFollowThrough=new M02GrenadeFollowThrough();
+    this.grenadeWarning=null;
     this.damageSource=null;
     this.footsteps=new M02Footsteps(this.audio);
     this.m02Weapons=new M02Weapons();
@@ -73,6 +74,7 @@ export class M02Presentation {
       this.audio.resetPresentation(sim.clock);this.fireTimes.clear();this.roundEvents.clear();this.footsteps.reset();
       this.feedback?.reset();
       this.grenadeFollowThrough?.reset();
+      this.grenadeWarning=null;
       this.damageSource=null;
       this.characters.resetM02Pose();this.visualWorld=null;
     }
@@ -148,6 +150,7 @@ export class M02Presentation {
     this.syncSession(sim);
     for (const event of events) {
       if(event.type==='grenade-thrown'&&event.throwerId===sim.player.id)(this.grenadeFollowThrough??=new M02GrenadeFollowThrough()).begin(event.clock);
+      if(event.type==='grenade-warning'&&event.heardByPlayer)this.grenadeWarning={clock:event.clock,name:event.actorName};
       if (event.type==='actor-burst') {this.fireTimes.set(event.shooterId,event.clock);this.roundEvents.set(event.shooterId,{clock:event.clock,roundIndex:event.roundIndex??0});}
       const playerHit=event.type==='actor-burst'&&event.side==='enemy'&&event.traces?.some(trace=>trace.hitKind==='actor'&&trace.hitId===sim.player.id);
       const blastHit=event.type==='grenade-exploded'&&event.affectedActors?.some(actor=>actor.id===sim.player.id&&actor.damage>0);

@@ -3,6 +3,7 @@ import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {M01_DIFFICULTY} from './m01-difficulty.js';
 import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
 import {m02MachineGunCover} from './m02-machinegun-team.js';
+import {m02ReactToGrenade} from './m02-grenade-awareness.js';
 
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
@@ -730,7 +731,8 @@ export function updatePolishSquad(sim, dt) {
   for (const ally of sim.allies) {
     if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
-    if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state))ally.burst=null;
+    if(['WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(ally.state)){ally.burst=null;delete ally.m02GrenadeThreat;}
+    else if(m02ReactToGrenade(sim,ally,'ally')){stepActorNavigation(sim,ally,dt);continue;}
     else stepActorWeapon(sim, ally, dt);
     // Once in the aid station Lis remains there, including after restoring an
     // older save with a stale navigation goal. Do not reassign combat cover.
@@ -1009,6 +1011,7 @@ export function updateGermanGarrison(sim, dt) {
 
     if (enemy.nonCombatant) continue;
 
+    if(m02ReactToGrenade(sim,enemy,'enemy')){stepActorNavigation(sim,enemy,dt);continue;}
     stepActorWeapon(sim, enemy, dt);
     if(enemy.encounterId==='EA0'&&sim.c01Active&&!enemy.goal&&!enemy.fellBack){
       enemy.goal={x:enemy.x,z:enemy.z,crouch:true,nodeId:`ea0_guard_${enemy.id}`};

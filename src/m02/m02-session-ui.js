@@ -9,6 +9,7 @@ export function mountM02SessionUi(session,renderer){
  const direction=document.createElement('div');direction.id='mission-direction';direction.setAttribute('aria-hidden','true');document.body.append(direction);
  const orderNotice=document.createElement('div');orderNotice.id='mission-order';orderNotice.hidden=true;orderNotice.setAttribute('role','status');
  document.getElementById('hud-objective').after(orderNotice);
+ const grenadeNotice=document.createElement('div');grenadeNotice.id='mission-grenade-warning';grenadeNotice.hidden=true;grenadeNotice.setAttribute('role','status');orderNotice.after(grenadeNotice);
 
  const start=root.querySelector('#mission-start'),cont=root.querySelector('#mission-continue'),resume=root.querySelector('#mission-resume'),restart=root.querySelector('#mission-restart');
  const epilogueNext=root.querySelector('#mission-epilogue-next');epilogueNext.onclick=()=>session.nextEpilogue();
@@ -34,6 +35,9 @@ export function mountM02SessionUi(session,renderer){
    const applicable=farm||elsewhere&&order?.type!=='flank_east';
    orderNotice.hidden=!session.playing||!applicable||!orderLabels[order?.type]||age<0||age>=4;
    const orderText=orderLabels[order?.type]??'';if(orderNotice.textContent!==orderText)orderNotice.textContent=orderText;
+   const warning=renderer.presentation.grenadeWarning,warningAge=sim.clock-(warning?.clock??-Infinity);
+   grenadeNotice.hidden=!session.playing||warningAge<0||warningAge>=2;
+   const warningText=warning?`${warning.name}: Granada!`:'';if(grenadeNotice.textContent!==warningText)grenadeNotice.textContent=warningText;
    const accessibility=sim.audiovisual.accessibility;
    root.querySelector('#mission-shake').checked=accessibility.reducedCameraShake;
    root.querySelector('#mission-subtitles').checked=accessibility.subtitlesEnabled;
