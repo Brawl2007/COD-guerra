@@ -10,7 +10,7 @@ test('farm furniture stays within the existing solid volumes without modifying s
  const expected={prop_b01_stove:3,prop_b01_table:5,prop_b01_bed_west:6,prop_b01_bed_east:6};
  for(const [id,count] of Object.entries(expected)){
   const ob=sim.world.obstacles.find(item=>item.id===id),group=createM02FarmFurniture(ob,materials);
-  assert.equal(group.children.length,count);group.updateMatrixWorld(true);
+  assert.equal(group.children.length,count);assert.ok(group.children.every(part=>part.userData.m02FarmFurniture));group.updateMatrixWorld(true);
   const bounds=new THREE.Box3().setFromObject(group);
   for(const axis of ['x','y','z']){
    assert.ok(bounds.min[axis]>=ob.min[axis]-1e-5,`${id} protrudes before ${axis}`);

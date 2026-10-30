@@ -352,7 +352,7 @@ export class M02BenchRenderer {
   }
 
   #buildStaticWorld() {
-    this.staticGroup.traverse(n=>{if(n.userData.m02Ground||n.userData.m02AidStretcher)n.geometry.dispose();});
+    this.staticGroup.traverse(n=>{if(n.userData.m02Ground||n.userData.m02AidStretcher||n.userData.m02FarmFurniture)n.geometry.dispose();});
     // Reuse the two existing interior fills at this cell's actual buildings.
     // They approximate bounced light rather than leaving B/C lit from A's rooms.
     const fills=this.sim.activeCellId==='B'?[[-43,2.5,-24],[28,2.8,-26]]:this.sim.activeCellId==='C'?[[-20,2.8,-16],[24,2.8,-22]]:[[-33,2.45,-13],[22,3.1,-31]];

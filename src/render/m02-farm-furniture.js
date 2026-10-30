@@ -11,7 +11,7 @@ export function createM02FarmFurniture(ob,materials){
  root.position.set(ob.min.x,ob.min.y,ob.min.z);
  const box=(name,x,y,z,w,h,d,material)=>{
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.name=name;
-  mesh.position.set(x+w/2,y+h/2,z+d/2);mesh.castShadow=mesh.receiveShadow=true;root.add(mesh);
+  mesh.position.set(x+w/2,y+h/2,z+d/2);mesh.castShadow=mesh.receiveShadow=true;mesh.userData.m02FarmFurniture=true;root.add(mesh);
  };
  if(ob.id==='prop_b01_table'){
   const top=Math.min(.09,sy*.2),leg=Math.min(.10,sx*.1,sz*.1);
