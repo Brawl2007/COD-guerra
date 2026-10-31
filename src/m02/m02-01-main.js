@@ -275,7 +275,9 @@ function updateHud() {
     }
   }
 
-  const prompt = m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
+  // The interaction key is unavailable while the grenade is reserved. Do
+  // not advertise a door or chalk action until the player's hands are free.
+  const prompt = sim.playerGrenadeAction ? null : m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';

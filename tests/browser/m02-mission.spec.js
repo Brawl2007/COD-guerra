@@ -54,17 +54,21 @@ test('G during reload reserves the grenade and shows that it is waiting',async({
  await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
  await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
  await page.evaluate(()=>{
-  const s=window.m02Bench.sim;s.reset('C02');s.c01Active=false;s.enemies=[];s.allies=[];s.teleportPlayer(0,-60,0,0);
+  const s=window.m02Bench.sim;s.reset('C02');s.c01Active=false;s.allies=[];s.teleportPlayer(0,-60,0,0);
+  const wounded=s.enemies.find(e=>e.c04Candidate);Object.assign(wounded,{x:1,z:-60,state:'WOUNDED_UNARMED',alive:true,nonCombatant:true,chalkMarked:false});s.enemies=[wounded];
   s.weapon.mag=0;s.weapon.reload(s.clock*1000);
   const freeze=()=>{if(window.m02Bench.sim.playerGrenadeAction?.waitingForReload)window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape'}));else requestAnimationFrame(freeze);};
   requestAnimationFrame(freeze);
  });
- await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');await page.keyboard.press('KeyG');
+ await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
+ await page.waitForFunction(()=>document.querySelector('#door-prompt').style.display==='block');await page.keyboard.press('KeyG');
  await page.waitForFunction(()=>window.m02Diagnostics().state==='paused'&&window.m02Bench.sim.playerGrenadeAction?.waitingForReload);
  const result=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,save=sim.snapshot(),hud=document.querySelector('#hud-grenades').textContent;
-  sim.restoreSnapshot(save);renderer.renderFrame(0,0);return {hud,ammo:sim.grenadeAmmo,weapon:sim.weapon.state,waiting:sim.playerGrenadeAction.waitingForReload,projectiles:sim.grenades.length,held:renderer.presentation.grenadePreparation.mesh.visible};});
+  sim.restoreSnapshot(save);renderer.renderFrame(0,0);return {hud,ammo:sim.grenadeAmmo,weapon:sim.weapon.state,waiting:sim.playerGrenadeAction.waitingForReload,projectiles:sim.grenades.length,held:renderer.presentation.grenadePreparation.mesh.visible,
+   chalkAvailable:!!sim.currentChalkPrompt(),promptDisplay:document.querySelector('#door-prompt').style.display};});
  expect(result.hud).toContain('em espera');expect(result.ammo).toBe(1);expect(result.weapon).toBe('RELOAD_CLIP');
- expect(result.waiting).toBe(true);expect(result.projectiles).toBe(0);expect(result.held).toBe(false);expect(errors).toEqual([]);
+ expect(result.waiting).toBe(true);expect(result.projectiles).toBe(0);expect(result.held).toBe(false);
+ expect(result.chalkAvailable).toBe(true);expect(result.promptDisplay).toBe('none');expect(errors).toEqual([]);
 });
 
 test('the B02 mounted gunner takes cover from the player grenade',async({page},testInfo)=>{
