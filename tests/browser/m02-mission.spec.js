@@ -249,6 +249,10 @@ test('a soldier flees and warns after seeing the player grenade',async({page},te
  await page.evaluate(()=>{
   const s=window.m02Bench.sim;s.enterAreaBC06();const a=s.allies.find(a=>a.id==='pl_gruca');s.allies=[a];s.enemies=[];
   Object.assign(a,{x:4,y:0,z:100,facing:Math.PI,state:'ACTIVE',goal:null,reloadingUntil:0});s.teleportPlayer(0,100,0,0);
+  // The longer real preparation gives the actor time to follow the area's
+  // authored orders. Use the playable hold order to keep the observer here;
+  // its grenade reaction must still override that order and move physically.
+  s.issueSquadOrder('suppress');
  });
  await page.click('#mission-resume');await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');
  await page.keyboard.press('KeyG');

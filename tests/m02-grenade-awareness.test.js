@@ -37,6 +37,16 @@ test('a visible grenade interrupts an ally reload, produces a warning and real m
  assert.equal(sim.allies[0].m02GrenadeThreat,undefined);
 });
 
+test('a player grenade overrides a real hold order only when the projectile is visible',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();const actor=sim.allies.find(a=>a.id==='pl_gruca');
+ sim.allies=[actor];sim.enemies=[];Object.assign(actor,{x:4,y:0,z:100,facing:Math.PI,state:'ACTIVE',goal:null,reloadingUntil:0});
+ sim.teleportPlayer(0,100,0,0);sim.issueSquadOrder('suppress');sim.drainEvents();
+ preparePlayerThrow(sim);assert.equal(actor.x,4);assert.equal(actor.m02GrenadeThreat,undefined);
+ sim.tick(.05,{});const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');
+ assert.equal(warning?.actorId,actor.id);assert.equal(warning.perception,'visual');assert.equal(warning.heardByPlayer,true);
+ assert.equal(actor.state,'FLEE_GRENADE');assert.ok(actor.x>4);assert.equal(actor.m02GrenadeThreat.previousTacticalState,'HoldAndSuppress');
+});
+
 test('grenades behind the observer or behind a wall cause no fabricated warning',()=>{
  for(const mode of ['rear','wall']){
   const {sim,actor}=setup();
