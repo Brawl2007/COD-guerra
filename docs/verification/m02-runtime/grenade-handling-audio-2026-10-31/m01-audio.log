@@ -1,0 +1,46 @@
+✔ bus volumes set before init are kept and applied once the graph exists (7.594168ms)
+✔ invalid bus volumes and names are rejected, out-of-range values clamp (0.277159ms)
+✔ concussionScale reduces the concussion cut (6.478154ms)
+✔ parseAudioMix validates stored JSON (0.473931ms)
+✔ menu exposes the new audio controls (0.465606ms)
+✔ determinism: the same event always plans the same sound; different events plan different sounds (87.901478ms)
+✔ variant coverage: every variant of every weapon, material, blast, pass and footstep surface is reachable and structurally different (45.701554ms)
+✔ spread: pitch, gain and layer mix of repeated shots vary far beyond the old +-3-6 % (84.271749ms)
+✔ bursts: the authoritative cadence is untouched; display fire gets zero-mean jitter around the same interval (53.292305ms)
+✔ distance model is monotonic: quieter, darker, wetter and later with distance; air absorption follows the physics (1.280109ms)
+✔ footsteps: every surface sounds like itself, pace and load change the weight, and quiet is not silent (65.401198ms)
+✔ player body and gun sounds are synthesised events, not fixed beeps: the bolt, the reload, the hit and the landing vary and keep their sequence (0.617872ms)
+✔ AudioManager: footsteps, hit, landing and mechanism reach the graph with their own keys, at low priority where it matters (26.303742ms)
+✔ node pooling: gains, filters and panners are reused (no per-shot allocation growth), reset cleanly, and the created/disposed audit balances (34.833259ms)
+✔ director footsteps follow the distance walked: none standing, stride by stance, none in the air, none across a teleport (4.371609ms)
+✔ director display fire is not a metronome: burst lengths span 2-9, double taps occur, jitter is requested, the pool bounds the work (9.959971ms)
+✔ director ally footsteps: only walking allies within 25 m, from the distance each man walked, capped per frame, spatial and quiet at range (19.155108ms)
+✔ every weapon has its own synthesized identity (spectral and mechanical signature) (5.865859ms)
+✔ near/mid/far/very-distant shots change layers continuously: mechanism only near, more echoes and longer tail far (1.147649ms)
+✔ bursts keep the authoritative cadence in one voice; later rounds have shorter tails (17.134781ms)
+✔ bullet crack vs whizz, material impacts and ricochets are distinct and deterministic (16.478805ms)
+✔ explosions scale from grenade to bridge demolition with debris, metal stress, splash and rumble (13.422147ms)
+✔ category limits and the global hard limit hold under a saturated battle (29.30989ms)
+✔ dynamic intensity rises with heard combat, decays on the simulation clock and drives the distant scheduler (72.333289ms)
+✔ distant battle is deterministic, aperiodic and never repeats the same sector+kind back to back (50.585838ms)
+✔ Ju 87 engine layers follow the rendered aircraft path; pull-out siren only on request after a real aerial blast (31.843705ms)
+✔ trains: emitters match rendered placements; arrivals play once per live transition; idle ticks vary (11.480835ms)
+✔ fires: emitters come from presentation state; crackle only near, loop follows the nearest fire (6.251102ms)
+✔ graph: buses, compressor and outdoor reverb exist; voices send to reverb; everything created is disposed (4.725654ms)
+✔ full presentation pass over the complete real M01 route never changes simulation state or RNG (56952.898214ms)
+✔ presentation clock jumps (pause, restore, slow frames) never backlog scheduled one-shots (2.762266ms)
+✔ real MG34 event shape: one-round events from the same gun join one burst voice with burst tails (2.510354ms)
+✔ early releases fade instead of cutting; fading voices leave the budget at once and still dispose cleanly (4.361862ms)
+✔ overlapping ducks keep the deepest cut and the latest release; a near-miss cannot cancel a blast duck (1.579979ms)
+✔ Ju 87 pull-out comes from the nearest rendered Stuka and only while the formation is shown (1.824413ms)
+✔ Doppler acts on the Ju 87 engine during the dive; a restore jump does not glitch the pitch (14.784558ms)
+✔ No Doppler dip around the former 90 s path wrap; INTRO/SETUP stay quiet; fire loop has hysteresis (22.613097ms)
+✔ looped brown noise has no seam; ricochets (not distance) add the whizz; budget and floor bound the graph (30.275698ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 57790.408154

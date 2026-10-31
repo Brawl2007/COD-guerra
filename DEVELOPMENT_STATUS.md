@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — som da granada e clarões NPC — 2026-10-31
+
+`114cd6d` sincroniza o som de tecido e equipamento da M01 com a preparação real da granada; [gravação, testes e passagem automatizada](docs/verification/m02-runtime/grenade-handling-audio-2026-10-31/README.md). `fabe62b` aproxima o clarão do socket visual da arma quando há linha desobstruída, preservando a simulação. Passaram 176 testes M02, build e [verificação browser da MG34](docs/verification/m02-runtime/muzzle-flash-2026-10-31/README.md). A missão continua em desenvolvimento; main e produção intactas.
+
 ## M02 — preparação de granada e forno B04 — 2026-10-31
 
 Na candidata `codex/m02-recovery-v1`, a granada é reservada e preparada com o rig M01 antes de ser libertada; espera por ferrolho ou recarga e mantém pausa, física e checkpoints coerentes. O forno B04 ganhou portas e molduras visuais no colisor existente. Passaram 172 testes M02, build e verificações browser; [capturas e limites da granada](docs/verification/m02-runtime/grenade-preparation-2026-10-31/README.md), [antes/depois do forno](docs/verification/m02-runtime/farm-oven-2026-10-31/README.md). A [passagem automatizada `f20faf3`](docs/verification/m02-runtime/grenade-preparation-2026-10-31/native-f20/report.json), anterior ao ajuste de interface e ao forno, chegou a C12/M03 sem mortes ou erros e com C04, Lis e 12/12. A missão e a qualidade artística continuam em desenvolvimento; main e produção intactas.

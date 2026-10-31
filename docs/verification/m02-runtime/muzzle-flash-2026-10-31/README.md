@@ -1,0 +1,5 @@
+# Clarão dos disparos NPC — 2026-10-31
+
+`fabe62b` posiciona clarão, fumo e luz no socket do modelo animado quando este fica a até 0,6 m da origem física e o segmento entre os dois não atravessa um sólido. Se o modelo não estiver disponível ou o segmento estiver obstruído, usa a origem física. O traçado, o impacto, o dano e a simulação não mudam; o desvio entre a origem balística da MG34 e o modelo continua por resolver.
+
+[Antes](before-high.png) e [depois](after-high.png) são capturas High do mesmo disparo real da MG34, num cenário pausado e controlado. O [teste browser](browser.log) mediu origem física `(11,82; 1,42; -30)` e socket/clarão `(12,018; 1,434; -30,213)`, mantendo o impacto real e o snapshot. [176 testes M02](node.log) e [build](build.log) passaram. Os testes também recusam sockets distantes, inválidos ou separados por parede. Não é playtest humano nem medição de FPS. O último percurso contínuo é o de `114cd6d`, anterior a esta alteração visual, documentado no [relatório de áudio](../grenade-handling-audio-2026-10-31/README.md).

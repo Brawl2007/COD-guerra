@@ -1,0 +1,19 @@
+[1A[2K[WebServer] (node:240583) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+[1A[2K(node:240610) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:240610) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/1] tests/browser/m02-mission.spec.js:108:1 › a real B02 burst puts its flash on the animated MG34 muzzle
+[1A[2Ktests/browser/m02-mission.spec.js:108:1 › a real B02 burst puts its flash on the animated MG34 muzzle
+M02 mounted MG flash {"origin":{"x":11.82,"y":1.42,"z":-30},"trace":{"origin":{"x":11.82,"y":1.42,"z":-30},"point":{"x":8.18,"y":1.5236106038087656,"z":-29.979293728538046},"hitKind":"actor","hitId":"piotr_sokol","material":"character"},"model":[12.018217919528484,1.4342285960373542,-30.213215248445913],"flash":{"x":12.018217919528484,"y":1.4342285960373542,"z":-30.213215248445913},"flashCount":1,"unchanged":true}
+
+[1A[2K  1 passed (49.1s)
