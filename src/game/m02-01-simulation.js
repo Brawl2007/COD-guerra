@@ -1138,6 +1138,8 @@ export class M02BenchSimulation {
     this.playerGrenadeAction=this.weapon.reloading?{startedAt:null,releaseAt:null,waitingForReload:true}:
       {startedAt,releaseAt:startedAt+M02_GRENADE_PREPARE_SECONDS};
     this.events.push({type:'grenade-preparing',throwerId:this.player.id,clock:this.clock});
+    if(!this.playerGrenadeAction.waitingForReload&&startedAt<=this.clock+1e-8)
+      this.events.push({type:'grenade-handling-started',throwerId:this.player.id,clock:this.clock});
     return true;
   }
 
@@ -1452,6 +1454,7 @@ export class M02BenchSimulation {
 
   tick(dt, controls = {}) {
     if (dt <= 0) return;
+    const previousClock=this.clock;
     this.clock += dt;
     const nowMs = this.clock * 1000;
     const preparingGrenade=Boolean(this.playerGrenadeAction);
@@ -1511,6 +1514,12 @@ export class M02BenchSimulation {
     if (!preparingGrenade&&controls.grenade&&!shot&&this.preparePlayerGrenade()){
       this.player.aiming=false;this.player.sprinting=false;
     }
+    // A queued throw starts only when its existing rifle action is finished.
+    // Crossing the timestamp, rather than a render-frame timer, makes the cue
+    // once-only across pause, slow frames and old/new checkpoint restores.
+    const action=this.playerGrenadeAction;
+    if(preparingGrenade&&action&&!action.waitingForReload&&action.startedAt>previousClock+1e-8&&action.startedAt<=this.clock+1e-8)
+      this.events.push({type:'grenade-handling-started',throwerId:this.player.id,clock:this.clock});
     const released=this.playerGrenadeAction&&!this.playerGrenadeAction.waitingForReload&&this.clock+1e-8>=this.playerGrenadeAction.releaseAt?
       this.throwGrenade(null,null,{reserved:true}):null;
     if (controls.orderSuppress) this.issueSquadOrder('suppress');

@@ -1,9 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
-import {playM02GrenadeBounce} from '../src/render/m02-grenade-audio.js';
+import {playM02GrenadeBounce,playM02GrenadeHandling,m02GrenadeHandlingGrains} from '../src/render/m02-grenade-audio.js';
 import {AudioManager} from '../src/core/audio.js';
 import {FakeAudioContext} from './helpers/fake-audio-context.js';
+
+test('real handling reuses a bounded M01 cloth and equipment voice without changing the simulation',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];sim.enemies=[];sim.drainEvents();sim.tick(.05,{grenade:true});
+ const event=sim.drainEvents().find(e=>e.type==='grenade-handling-started');assert.ok(event);
+ const before=sim.snapshot(),grains=m02GrenadeHandlingGrains('test'),audio=new AudioManager({contextFactory:()=>new FakeAudioContext(),quality:'low'});audio.init();
+ try{
+  assert.deepEqual(grains.map(g=>g.layer),['cloth','gear','gear']);assert.ok(grains.every(g=>g.at<.15&&g.dur<=.07));
+  const voice=playM02GrenadeHandling(audio,event,sim);assert.ok(voice);assert.equal(voice.category,'player');assert.equal(voice.sources.size,3);
+  assert.equal(audio.diagnostics.eventCounts['grenade-handling'],1);assert.deepEqual(sim.snapshot(),before);
+  assert.equal(playM02GrenadeHandling(audio,{...event,throwerId:'other'},sim),null);
+  assert.equal(playM02GrenadeHandling(audio,event,{...sim,clock:sim.clock+1}),null);
+ }finally{audio.dispose();}
+});
 
 test('a real grenade wall impact emits its actual material and location exactly on replay',()=>{
  const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.allies=[];sim.enemies=[];

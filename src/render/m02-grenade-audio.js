@@ -1,5 +1,23 @@
-import {AUDIO_PRIORITY,planImpact} from '../core/battlefield-audio.js';
+import {AUDIO_PRIORITY,planImpact,planPlayerHit,planLanding} from '../core/battlefield-audio.js';
 import {eyePosition,traceObstruction} from '../world/spatial.js';
+
+// A short sleeve/equipment movement when the hand actually begins the throw.
+// Reuse only M01's cloth and gear grains: there is no invented pin pull or
+// recorded voice, and nothing is scheduled across the later release/death.
+export function m02GrenadeHandlingGrains(key){
+ const cloth=planPlayerHit({key}).filter(g=>g.layer==='cloth').map(g=>({...g,at:0,vol:g.vol*.75}));
+ const gear=planLanding(4,'ground',{key}).filter(g=>g.layer==='gear').slice(0,2).map(g=>({...g,at:g.at+.035,vol:g.vol*.65}));
+ return [...cloth,...gear];
+}
+
+export function playM02GrenadeHandling(audio,event,sim){
+ const age=sim.clock-event.clock;
+ if(event.throwerId!==sim.player.id||!Number.isFinite(age)||age<-.001||age>.25)return null;
+ const key=`m02-grenade-handling:${event.clock}`,grains=m02GrenadeHandlingGrains(key);
+ if(!grains.length)return null;
+ audio._record('grenade-handling',{priority:AUDIO_PRIORITY.fire,key});
+ return audio._playPlan(grains,{kind:'grenade-handling',category:'player',priority:AUDIO_PRIORITY.fire,key});
+}
 
 // A quiet material-specific collision, not the full bullet-impact debris or
 // ricochet effect. It is emitted only for the actual simulated impact point.

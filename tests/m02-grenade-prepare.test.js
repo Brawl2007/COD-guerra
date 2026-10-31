@@ -11,7 +11,8 @@ function openField(){
 test('grenade input reserves one item and releases only after preparation on the mission clock',()=>{
  const sim=openField();sim.clock=.0004;sim.tick(.05,{grenade:true,aim:true});
  assert.equal(sim.grenadeAmmo,1);assert.equal(sim.grenades.length,0);assert.equal(sim.player.aiming,false);
- assert.equal(sim.drainEvents().filter(e=>e.type==='grenade-preparing').length,1);
+ const initial=sim.drainEvents();assert.equal(initial.filter(e=>e.type==='grenade-preparing').length,1);
+ assert.equal(initial.filter(e=>e.type==='grenade-handling-started').length,1);
  assert.equal(sim.playerGrenadeAction.releaseAt-sim.playerGrenadeAction.startedAt,M02_GRENADE_PREPARE_SECONDS);
  for(let i=0;i<9;i++)sim.tick(.05,{grenade:true,fire:true,reload:true});
  assert.equal(sim.grenades.length,0);assert.equal(sim.grenadeAmmo,1);assert.equal(sim.weapon.shotCount,0);
@@ -49,13 +50,16 @@ test('a grenade pressed during the bolt cycle waits for the real rifle and survi
  const sim=openField();sim.tick(.05,{fire:true});assert.equal(sim.weapon.boltCycling,true);
  const boltReady=sim.weapon.until/1000;sim.tick(.05,{grenade:true});
  assert.equal(sim.grenadeAmmo,1);assert.equal(sim.playerGrenadeAction.startedAt,boltReady);assert.equal(sim.grenades.length,0);
+ assert.equal(sim.events.some(e=>e.type==='grenade-handling-started'),false,'no handling before the bolt finishes');
  const save=sim.snapshot(),run=()=>{
   while(sim.clock+1e-8<boltReady)sim.tick(.05,{fire:true});
   assert.equal(sim.weapon.boltCycling,false);assert.equal(sim.weapon.shotCount,1);assert.equal(sim.grenades.length,0);
   while(sim.playerGrenadeAction)sim.tick(.05,{fire:true});
   return {snapshot:sim.snapshot(),events:sim.drainEvents()};
  };
- sim.drainEvents();const first=run();sim.restoreSnapshot(save);sim.drainEvents();assert.deepEqual(run(),first);
+ sim.drainEvents();const first=run();const handling=first.events.filter(e=>e.type==='grenade-handling-started');
+ assert.equal(handling.length,1);assert.ok(handling[0].clock+1e-8>=boltReady);
+ sim.restoreSnapshot(save);sim.drainEvents();assert.deepEqual(run(),first);
  const invalid=structuredClone(save);invalid.playerGrenadeAction.startedAt+=.1;invalid.playerGrenadeAction.releaseAt+=.1;
  assert.throws(()=>sim.restoreSnapshot(invalid),/inválid/);
 });
@@ -72,13 +76,25 @@ test('a grenade pressed during reload waits until the real reload finishes, incl
  const reloading=openField();reloading.weapon.mag=3;const reserve=reloading.weapon.reserve;assert.equal(reloading.weapon.reload(0),true);
  reloading.tick(.05,{grenade:true});assert.equal(reloading.grenadeAmmo,1);assert.equal(reloading.playerGrenadeAction.waitingForReload,true);
  assert.equal(reloading.throwGrenade(null,null,{reserved:true}),null);
+ assert.equal(reloading.events.some(e=>e.type==='grenade-handling-started'),false);
  const save=reloading.snapshot();reloading.drainEvents();
  const run=()=>{while(reloading.weapon.reloading){reloading.tick(.05,{fire:true,grenade:true});assert.equal(reloading.grenades.length,0);}
   assert.equal(reloading.weapon.mag,5);assert.equal(reloading.weapon.reserve,reserve-2);assert.equal(reloading.weapon.shotCount,0);
   assert.ok(Number.isFinite(reloading.playerGrenadeAction.startedAt));
   while(reloading.playerGrenadeAction)reloading.tick(.05,{});return {snapshot:reloading.snapshot(),events:reloading.drainEvents()};};
- const first=run();reloading.restoreSnapshot(save);reloading.drainEvents();assert.deepEqual(run(),first);
+ const first=run();assert.equal(first.events.filter(e=>e.type==='grenade-handling-started').length,1);
+ reloading.restoreSnapshot(save);reloading.drainEvents();assert.deepEqual(run(),first);
  const bad=structuredClone(save);delete bad.grenadeAmmo;assert.throws(()=>reloading.restoreSnapshot(bad),/inválid/);
+});
+
+test('restoring after handling starts does not repeat it, and death while queued never starts it',()=>{
+ const sim=openField();sim.tick(.05,{grenade:true});assert.equal(sim.drainEvents().filter(e=>e.type==='grenade-handling-started').length,1);
+ const save=sim.snapshot();sim.tick(.05,{});sim.restoreSnapshot(save);sim.drainEvents();
+ for(let i=0;i<10;i++)sim.tick(.05,{});assert.equal(sim.drainEvents().some(e=>e.type==='grenade-handling-started'),false);
+ const waiting=openField();waiting.weapon.mag=0;waiting.weapon.reload(0);waiting.tick(.05,{grenade:true});waiting.drainEvents();waiting.player.health=20;
+ waiting.detonateGrenadeAt(waiting.player.x,1,waiting.player.z);
+ assert.equal(waiting.playerGrenadeAction,null);assert.equal(waiting.grenadeAmmo,2);
+ assert.equal(waiting.drainEvents().some(e=>e.type==='grenade-handling-started'),false);
 });
 
 test('carried supplies and duplicate presses cannot spend an unavailable grenade',()=>{

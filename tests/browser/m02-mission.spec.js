@@ -428,6 +428,33 @@ test('farm squad orders change real cover goals through normal keys and show con
  expect(['cv_orchard_bank_e','cv_b03_south_entry','cv_courtyard_consolidate']).toContain(flank);expect(errors).toEqual([]);
 });
 
+test('a real grenade preparation produces audible M01 handling foley',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  // Freeze the render loop, generate the event from a real simulation tick,
+  // and record only the associated first-person foley through Web Audio.
+  window.requestAnimationFrame=()=>0;await new Promise(r=>setTimeout(r,100));
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio;sim.enterAreaBC06();sim.enemies=[];sim.allies=[];
+  sim.drainEvents();sim.tick(.05,{grenade:true});const events=sim.drainEvents().filter(e=>e.type==='grenade-handling-started');
+  const before=JSON.stringify(sim.snapshot());p.syncSession(sim);await a.ctx.resume();a.stopAll(false);
+  const destination=a.ctx.createMediaStreamDestination(),recorder=new MediaRecorder(destination.stream),chunks=[];a.master.connect(destination);
+  recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();const count=a.diagnostics.eventCounts['grenade-handling']??0;p.consume(events,sim);
+  await new Promise(r=>setTimeout(r,350));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
+  const blob=new Blob(chunks,{type:recorder.mimeType}),buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());let peak=0;
+  for(let c=0;c<buffer.numberOfChannels;c++)for(const value of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(value));
+  const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);});
+  a.master.disconnect(destination);return {events:events.length,ammo:sim.grenadeAmmo,projectiles:sim.grenades.length,peak,encoded,
+   count:(a.diagnostics.eventCounts['grenade-handling']??0)-count,unchanged:before===JSON.stringify(sim.snapshot()),state:a.ctx.state};
+ });
+ expect(result.events).toBe(1);expect(result.ammo).toBe(1);expect(result.projectiles).toBe(0);expect(result.count).toBe(1);
+ expect(result.peak).toBeGreaterThan(.0001);expect(result.unchanged).toBe(true);expect(result.state).toBe('running');expect(errors).toEqual([]);
+ writeFileSync(testInfo.outputPath('grenade-handling.webm'),Buffer.from(result.encoded,'base64'));
+ console.log('M02 grenade handling audio',JSON.stringify({peak:result.peak,events:result.events,count:result.count}));
+});
+
 test('a physically bounced grenade produces an audible local material cue',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/COD-guerra/m02.html?quality=low&debug=1');await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
