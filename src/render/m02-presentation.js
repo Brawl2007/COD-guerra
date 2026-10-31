@@ -77,6 +77,15 @@ export class M02Presentation {
       this.feedback?.reset();
       this.grenadeFollowThrough?.reset();
       this.grenadePreparation?.reset();
+      // A checkpoint can be made just after the projectile left the hand.
+      // Its optional release view identifies the player's new-style throw;
+      // rebuild only the remaining arm motion and retain rifle priority.
+      if(!sim.playerGrenadeAction&&sim.player.health>0&&!sim.player.carryingVolumeId&&!sim.weapon.reloading&&!sim.weapon.boltCycling){
+        let recent=null;
+        for(const g of sim.grenades??[])if(g.releaseView&&sim.clock>=g.spawnedAt-.001&&sim.clock-g.spawnedAt<.45&&
+          sim.weapon.lastShot/1000<g.spawnedAt&&(!recent||g.spawnedAt>recent.spawnedAt))recent=g;
+        if(recent)this.grenadeFollowThrough?.begin(Math.min(sim.clock,recent.spawnedAt));
+      }
       this.grenadeWarning=null;
       this.damageSource=null;
       this.characters.resetM02Pose();this.visualWorld=null;

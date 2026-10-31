@@ -38,3 +38,18 @@ test('actual firing or reloading takes precedence over the release follow-throug
  sim.weapon.update(10000);sim.clock=10;sim.weapon.mag=3;sim.weapon.reload(10000);
  sim.throwGrenade();p.consume(sim.drainEvents(),sim);p.updateWeapon(sim,'low');assert.equal(p.grenadeFollowThroughWeight,0);assert.equal(p.grenadeFollowThrough.startedAt,null);
 });
+
+test('a checkpoint just after release restores the arm motion without overriding a later shot',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();sim.enemies=[];sim.allies=[];sim.teleportPlayer(0,100,0,0);
+ sim.tick(.05,{grenade:true});for(let i=0;i<10;i++)sim.tick(.05,{});assert.equal(sim.grenades.length,1);
+ const flight=sim.snapshot(),root=new THREE.Group(),upper=new THREE.Bone(),lower=new THREE.Bone();
+ upper.name='upperarm_r';lower.name='lowerarm_r';root.add(upper);upper.add(lower);
+ const p=Object.create(M02Presentation.prototype);
+ Object.assign(p,{weapon:{root,update:()=>true},weaponCamera:{fov:58},camera:{},
+  audio:{resetPresentation:()=>{}},footsteps:{reset:()=>{}},characters:{resetM02Pose:()=>{}},
+  fireTimes:new Map(),roundEvents:new Map(),grenadeFollowThrough:new M02GrenadeFollowThrough(),
+  playerRecord:sim.player,presentationWorld:sim.world,resetClock:sim.clock});
+ sim.restoreSnapshot(flight);p.syncSession(sim);p.updateWeapon(sim,'low');assert.ok(p.grenadeFollowThroughWeight>0);
+ sim.tick(.05,{fire:true});assert.equal(sim.weapon.shotCount,1);const fired=sim.snapshot();
+ sim.restoreSnapshot(fired);p.syncSession(sim);p.updateWeapon(sim,'low');assert.equal(p.grenadeFollowThroughWeight,0);
+});

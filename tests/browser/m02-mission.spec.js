@@ -39,6 +39,9 @@ test('G prepares the M01 hand before the grenade is physically released',async({
  const released=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,p=renderer.presentation,g=sim.grenades[0];
   return {ammo:sim.grenadeAmmo,id:g.id,shown:renderer.grenadeViews.views.has(g.id),held:p.grenadePreparation.mesh.visible,weight:p.grenadeFollowThroughWeight};});
  expect(released.ammo).toBe(1);expect(released.shown).toBe(true);expect(released.held).toBe(false);expect(released.weight).toBeGreaterThan(0);
+ const flightRestore=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,save=sim.snapshot();sim.restoreSnapshot(save);renderer.renderFrame(0,0);
+  return {weight:renderer.presentation.grenadeFollowThroughWeight,projectiles:sim.grenades.length};});
+ expect(flightRestore.weight).toBeGreaterThan(0);expect(flightRestore.projectiles).toBe(1);
  const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02MidPrepare);renderer.renderFrame(0,0);
   return {ammo:sim.grenadeAmmo,projectiles:sim.grenades.length,state:renderer.presentation.diagnostics.grenadePreparation,held:renderer.presentation.grenadePreparation.mesh.visible};});
  expect(restored.ammo).toBe(1);expect(restored.projectiles).toBe(0);expect(restored.state.held).toBe(true);expect(restored.held).toBe(true);
@@ -666,10 +669,13 @@ test('the normal grenade input displays the live projectile and a checkpoint rem
  const shown=await page.evaluate(()=>{
   const {sim,renderer}=window.m02Bench,g=sim.grenades[0],mesh=renderer.grenadeViews.views.get(g.id),before=JSON.stringify(sim.snapshot());
   renderer.grenadeViews.update(sim);
-  return {ammo:sim.grenadeAmmo,ids:renderer.grenadeViews.diagnostics.ids,position:mesh.position.toArray(),actual:[g.x,g.y,g.z],radius:mesh.scale.x,visible:mesh.visible,unchanged:before===JSON.stringify(sim.snapshot())};
+  mesh.geometry.computeBoundingBox();const size=mesh.geometry.boundingBox.getSize(mesh.position.clone()).multiply(mesh.scale).toArray();
+  return {ammo:sim.grenadeAmmo,ids:renderer.grenadeViews.diagnostics.ids,position:mesh.position.toArray(),actual:[g.x,g.y,g.z],size,visible:mesh.visible,unchanged:before===JSON.stringify(sim.snapshot())};
  });
  expect(shown.ammo).toBe(1);expect(shown.ids).toHaveLength(1);expect(shown.position).toEqual(shown.actual);
- expect(shown.radius).toBe(.07);expect(shown.visible).toBe(true);expect(shown.unchanged).toBe(true);
+ expect(shown.size[0]).toBeGreaterThan(.055);expect(shown.size[0]).toBeLessThan(.08);
+ expect(shown.size[1]).toBeGreaterThan(.09);expect(shown.size[1]).toBeLessThan(.11);
+ expect(shown.visible).toBe(true);expect(shown.unchanged).toBe(true);
  await page.screenshot({path:testInfo.outputPath('grenade-in-flight.png')});
  const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02BeforeGrenade);renderer.renderFrame(0,0);return {ammo:sim.grenadeAmmo,active:renderer.grenadeViews.diagnostics.active,follow:renderer.presentation.diagnostics.grenadeFollowThrough};});
  expect(restored).toEqual({ammo:2,active:0,follow:{startedAt:null,weight:0}});expect(errors).toEqual([]);
