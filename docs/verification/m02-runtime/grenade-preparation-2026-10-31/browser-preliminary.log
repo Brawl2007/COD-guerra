@@ -1,0 +1,79 @@
+[1A[2K[WebServer] (node:218776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 7 tests using 1 worker
+
+[1A[2K(node:218800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:218800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/7] tests/browser/m02-mission.spec.js:5:1 › G prepares the M01 hand before the grenade is physically released
+[1A[2Ktests/browser/m02-mission.spec.js:5:1 › G prepares the M01 hand before the grenade is physically released
+M02 player grenade preparation {"held":{"ammo":1,"projectiles":0,"state":{"progress":0.8999999999999999,"held":true},"visible":true,"parent":"hand_r","shared":true,"screen":[0.2401472548548327,-0.33813583100465655,0.8965205791518817]},"released":{"ammo":1,"id":"gren_1","shown":true,"held":false,"weight":0.5829903978052121},"restored":{"ammo":1,"projectiles":0,"state":{"progress":0.8999999999999999,"held":true},"held":true}}
+
+[1A[2K[2/7] tests/browser/m02-mission.spec.js:48:1 › the B02 mounted gunner takes cover from the player grenade
+[1A[2Ktests/browser/m02-mission.spec.js:48:1 › the B02 mounted gunner takes cover from the player grenade
+M02 mounted MG visual aim {"clip":"mg34_aim","muzzle":[12.018217919528484,1.4342285960373542,-30.213215248445913],"meshes":["mg34_body","mg34_feed_cover","mg34_cocking_handle","mg34_drum","mg34_belt","mg34_bipod_folded"]}
+
+[1A[2KM02 mounted MG grenade reaction {"ammo":1,"grenades":1,"state":"FLEE_GRENADE","tacticalState":"TakeCoverGrenade","crouched":true,"x":13.2,"z":-30,"clip":"m02_mg34_crouch_aim","sight":{"mgActive":true,"inArc":false,"hasVisualLoS":false,"canHitTarget":false,"blockedById":"gunner_taking_cover","blockedByMaterial":null,"distance":0}}
+
+[1A[2K[3/7] tests/browser/m02-mission.spec.js:158:1 › a soldier hears a real grenade bounce behind him
+[1A[2K[4/7] tests/browser/m02-mission.spec.js:241:1 › a soldier flees and warns after seeing the player grenade
+[1A[2K  1) tests/browser/m02-mission.spec.js:241:1 › a soldier flees and warns after seeing the player grenade
+
+    [31mTest timeout of 180000ms exceeded.[39m
+
+    Error: page.waitForFunction: Test timeout of 180000ms exceeded.
+
+      250 |   const s=window.m02Bench.sim;s.enterAreaBC06();const a=s.allies.find(a=>a.id==='pl_gruca');s.allies=[a];s.enemies=[];
+      251 |   Object.assign(a,{x:4,y:0,z:100,facing:Math.PI,state:'ACTIVE',goal:null,reloadingUntil:0});s.teleportPlayer(0,100,0,0);
+    > 252 |   // The longer real preparation gives the actor time to follow the area's
+          |             ^
+      253 |   // authored orders. Use the playable hold order to keep the observer here;
+      254 |   // its grenade reaction must still override that order and move physically.
+      255 |   s.issueSquadOrder('suppress');
+        at /workspace/COD-guerra/tests/browser/m02-mission.spec.js:252:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/m02-mission-a-soldier-flee-5dac6-r-seeing-the-player-grenade/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/m02-mission-a-soldier-flee-5dac6-r-seeing-the-player-grenade/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/m02-mission-a-soldier-flee-5dac6-r-seeing-the-player-grenade/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/m02-mission-a-soldier-flee-5dac6-r-seeing-the-player-grenade/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K(node:220708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:220708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[5/7] tests/browser/m02-mission.spec.js:634:1 › a grenade thrown by the player bounces off the actual B05 wall
+[1A[2Ktests/browser/m02-mission.spec.js:634:1 › a grenade thrown by the player bounces off the actual B05 wall
+M02 grenade bounce in B05 {"wall":{"min":{"x":-34.13,"y":0,"z":-23.37},"max":{"x":-33.87,"y":3.1,"z":-21.25}},"result":{"x":-33.14800779820714,"y":1.3939532573278797,"z":-22.112,"vx":4.8,"vz":1.83697019872103e-15,"view":[-33.14800779820714,1.3939532573278797,-22.112],"ammo":1,"sounds":1}}
+
+[1A[2K[6/7] tests/browser/m02-mission.spec.js:654:1 › the normal grenade input displays the live projectile and a checkpoint removes it
+[1A[2Ktests/browser/m02-mission.spec.js:654:1 › the normal grenade input displays the live projectile and a checkpoint removes it
+M02 real grenade input {"shown":{"ammo":1,"ids":["gren_1"],"position":[-0.11199999999999982,0.9828500000000001,-171.443],"actual":[-0.11199999999999982,0.9828500000000001,-171.443],"radius":0.07,"visible":true,"unchanged":true},"handBefore":[0.7922439566926501,-0.8543425142421662,0.8482598276772638],"follow":{"startedAt":0.5499999999999999,"weight":0.5829903978052121,"hand":[0.5272912064737678,-0.45156690283160306,0.8785488398721443]},"restored":{"ammo":2,"active":0,"follow":{"startedAt":null,"weight":0}}}
+
+[1A[2K[7/7] tests/browser/m02-mission.spec.js:679:1 › High quality shows the released grenade and returning first-person arm
+[1A[2Ktests/browser/m02-mission.spec.js:679:1 › High quality shows the released grenade and returning first-person arm
+M02 High grenade follow-through {"ammo":1,"projectiles":1,"follow":{"startedAt":0.5499999999999999,"weight":0.5829903978052121}}
+
+[1A[2K  1 failed
+    tests/browser/m02-mission.spec.js:241:1 › a soldier flees and warns after seeing the player grenade
+  6 passed (5.9m)

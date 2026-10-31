@@ -1,0 +1,17 @@
+[1A[2K[WebServer] (node:224126) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:224150) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:224150) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/2] tests/browser/m02-mission.spec.js:51:1 › G during reload reserves the grenade and shows that it is waiting
+[1A[2K[2/2] tests/browser/m02-mission.spec.js:293:1 › B04 oven has visible baking and firebox doors within its existing solid
+[1A[2K  2 passed (47.6s)

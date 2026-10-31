@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — preparação de granada e forno B04 — 2026-10-31
+
+Na candidata `codex/m02-recovery-v1`, a granada é reservada e preparada com o rig M01 antes de ser libertada; espera por ferrolho ou recarga e mantém pausa, física e checkpoints coerentes. O forno B04 ganhou portas e molduras visuais no colisor existente. Passaram 172 testes M02, build e verificações browser; [capturas e limites da granada](docs/verification/m02-runtime/grenade-preparation-2026-10-31/README.md), [antes/depois do forno](docs/verification/m02-runtime/farm-oven-2026-10-31/README.md). A [passagem automatizada `f20faf3`](docs/verification/m02-runtime/grenade-preparation-2026-10-31/native-f20/report.json), anterior ao ajuste de interface e ao forno, chegou a C12/M03 sem mortes ou erros e com C04, Lis e 12/12. A missão e a qualidade artística continuam em desenvolvimento; main e produção intactas.
+
 ## M02 — áudio MP38 — 2026-10-30
 
 Na candidata `codex/m02-recovery-v1`, as rondas reais de MP38 podem partilhar uma voz de áudio por atirador e mantêm o intervalo da arma quando chegam no mesmo frame. 162 testes M02, build e duas verificações browser de áudio passaram; também foram executados testes do áudio partilhado da M01. A [passagem `6bc11f2`](docs/verification/m02-runtime/mp38-audio-2026-10-30/native-final/report.json) chegou a C12/M03 sem mortes de Piotr ou erros, com C04, Lis evacuado e 12/12 no último grupo. [Gravação, método e limites](docs/verification/m02-runtime/mp38-audio-2026-10-30/README.md). Qualidade artística, mecânicas e restante polimento continuam em desenvolvimento; main e produção intactas.
