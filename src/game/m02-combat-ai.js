@@ -428,6 +428,24 @@ export class M02DialogueDirector {
     return this.consumed.has(lineId);
   }
 
+  resolveForCurrentState(entry,sim) {
+    const def=M02_DIALOGUE_CATALOG[entry.id];
+    if(!def)return entry; // Preserve dialogue records from older checkpoints.
+    if(def.speakerId==='pl_lis'&&sim.flags?.['m02.lis_status']==='missing')return null;
+    if(entry.id==='bz39_c12_02'&&sim.flags?.['m02.lis_status']!=='missing')return null;
+    const speaker=sim.allies.find(a=>a.id===def.speakerId);
+    if(speaker&&(!speaker.alive||speaker.state==='DOWN'||speaker.state==='EVACUATED'||speaker.detachedOutOfCell))return null;
+    let text=entry.text;
+    if(entry.id==='bz39_c03_01'){
+      const available=id=>sim.allies.some(a=>a.id===id&&a.alive&&a.state!=='DOWN'&&!a.detachedOutOfCell);
+      text=available('pl_lis')&&available('pl_wierzba')?def.text:def.fallbackText;
+    }else if(entry.id==='bz39_c08_02'){
+      const lis=sim.allies.find(a=>a.id==='pl_lis');
+      text=lis&&lis.alive&&lis.state!=='DOWN'&&lis.state!=='EVACUATED'&&!lis.detachedOutOfCell?def.text:def.fallbackText;
+    }
+    return {...entry,text};
+  }
+
   trigger(lineId, sim, { allowRepeat = false } = {}) {
     const def = M02_DIALOGUE_CATALOG[lineId];
     if (!def) return false;
@@ -443,7 +461,7 @@ export class M02DialogueDirector {
 
     const speaker = sim.allies.find((a) => a.id === def.speakerId);
     if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED' || speaker.detachedOutOfCell)) {
-      if (!def.fallbackText) return false;
+      return false;
     }
 
     let resolvedText = def.text;
@@ -488,8 +506,9 @@ export class M02DialogueDirector {
     if (this.activeLine && sim.clock >= this.activeLine.expiresAt) {
       this.activeLine = null;
     }
-    if (!this.activeLine && this.queue.length > 0) {
-      const next = this.queue.shift();
+    while (!this.activeLine && this.queue.length > 0) {
+      const next = this.resolveForCurrentState(this.queue.shift(),sim);
+      if(!next)continue;
       this.activeLine = {
         ...next,
         startedAt: Number(sim.clock.toFixed(2)),

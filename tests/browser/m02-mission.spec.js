@@ -2,6 +2,24 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('queued dialogue displays an available speaker after Lis becomes missing',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const state=await page.evaluate(()=>{
+  const s=window.m02Bench.sim;s.reset('C02');s.c01Active=false;s.enemies=[];s.dialogue.reset();s.drainEvents();
+  s.dialogue.trigger('bz39_c01_01',s);s.dialogue.update(s);s.dialogue.trigger('bz39_c02_02',s);s.dialogue.trigger('bz39_c02_03',s);
+  s.flags['m02.lis_status']='missing';s.allies.find(a=>a.id==='pl_lis').detachedOutOfCell=true;
+  s.clock=s.dialogue.activeLine.expiresAt+.05;s.dialogue.update(s);
+  return {active:s.dialogue.activeLine.id,history:s.dialogue.history.map(l=>l.id)};
+ });
+ expect(state.active).toBe('bz39_c02_03');expect(state.history).not.toContain('bz39_c02_02');
+ await page.click('#mission-resume');await page.waitForFunction(()=>document.querySelector('#dialogue-banner').textContent.includes('Cabeça baixa, Małek'));
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · CONTINUIDADE DO DIÁLOGO";position:fixed;right:8px;top:8px;z-index:80;padding:5px;background:#111;color:#fff;font:11px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('dialogue-continuity.png')});expect(errors).toEqual([]);
+});
+
 test('G prepares the M01 hand before the grenade is physically released',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
