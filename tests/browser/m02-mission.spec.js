@@ -290,6 +290,33 @@ test('a soldier flees and warns after seeing the player grenade',async({page},te
  await page.screenshot({path:testInfo.outputPath('grenade-warning-and-flee.png')});expect(errors).toEqual([]);
 });
 
+test('B04 oven has visible baking and firebox doors within its existing solid',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await renderer.materialLibraryReady;sim.reset('C02');sim.c01Active=false;sim.enemies=[];sim.allies=[];
+  sim.teleportPlayer(-33.1,24.8,Math.atan2(-1.2,-2.2),-.12);const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const ob=sim.world.obstacles.find(o=>o.id==='prop_b04_oven'),group=renderer.staticGroup.getObjectByName('M02 furniture prop_b04_oven');
+  const geometry=new group.children[0].geometry.constructor(ob.max.x-ob.min.x,ob.max.y-ob.min.y,ob.max.z-ob.min.z);
+  const proxy=new group.children[0].constructor(geometry,renderer.materials.stone);proxy.name='controlled original oven block';
+  proxy.position.set((ob.min.x+ob.max.x)/2,(ob.min.y+ob.max.y)/2,(ob.min.z+ob.max.z)/2);proxy.castShadow=proxy.receiveShadow=true;
+  group.visible=false;renderer.staticGroup.add(proxy);renderer.renderFrame(0,0);
+  return {parts:group.children.map(n=>n.name),unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.parts).toEqual(['oven masonry','baking surround','firebox surround','baking door','firebox door','baking handle','firebox handle']);expect(result.unchanged).toBe(true);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · FORNO ANTERIOR";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('oven-before-high.png')});
+ const unchanged=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,before=JSON.stringify(sim.snapshot()),proxy=renderer.staticGroup.getObjectByName('controlled original oven block');
+  proxy.removeFromParent();proxy.geometry.dispose();renderer.staticGroup.getObjectByName('M02 furniture prop_b04_oven').visible=true;renderer.renderFrame(0,0);
+  return before===JSON.stringify(sim.snapshot());
+ });
+ expect(unchanged).toBe(true);await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · FORNO B04"}'});
+ await page.screenshot({path:testInfo.outputPath('oven-after-high.png')});expect(errors).toEqual([]);
+});
+
 test('B01 furniture gives the authored solids recognisable interiors',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');

@@ -4,7 +4,7 @@ import * as THREE from 'three';
 // Use the existing M01 materials to describe their contents, without changing those
 // boxes or claiming the gaps under the table are traversable or shootable.
 export function createM02FarmFurniture(ob,materials){
- if(!['prop_b01_stove','prop_b01_table','prop_b01_bed_west','prop_b01_bed_east','prop_b02_mg_mount'].includes(ob?.id))return null;
+ if(!['prop_b01_stove','prop_b01_table','prop_b01_bed_west','prop_b01_bed_east','prop_b02_mg_mount','prop_b04_oven'].includes(ob?.id))return null;
  const sx=ob.max.x-ob.min.x,sy=ob.max.y-ob.min.y,sz=ob.max.z-ob.min.z;
  if(!(sx>0&&sy>0&&sz>0))return null;
  const root=new THREE.Group();root.name=`M02 furniture ${ob.id}`;
@@ -22,6 +22,17 @@ export function createM02FarmFurniture(ob,materials){
   box('masonry',0,0,0,sx,sy-top,sz-plate,materials.stone);
   box('stove top',0,sy-top,0,sx,top,sz,materials.gun_metal);
   box('firebox door',sx*.23,sy*.25,sz-plate,sx*.54,sy*.34,plate,materials.gun_metal);
+ }else if(ob.id==='prop_b04_oven'){
+  // The front faces the southern entrance. The doors are inset into the
+  // original solid volume; neither opening is a traversable collision gap.
+  const plate=Math.min(.02,sz*.01);
+  box('oven masonry',0,0,0,sx,sy,sz-3*plate,materials.stone);
+  box('baking surround',sx*.18,sy*.43,sz-3*plate,sx*.64,sy*.34,plate,materials.brick_B04);
+  box('firebox surround',sx*.30,sy*.14,sz-3*plate,sx*.40,sy*.21,plate,materials.brick_B04);
+  box('baking door',sx*.21,sy*.46,sz-2*plate,sx*.58,sy*.28,plate,materials.gun_metal);
+  box('firebox door',sx*.33,sy*.17,sz-2*plate,sx*.34,sy*.15,plate,materials.gun_metal);
+  box('baking handle',sx*.42,sy*.58,sz-plate,sx*.16,sy*.025,plate,materials.stone);
+  box('firebox handle',sx*.44,sy*.225,sz-plate,sx*.12,sy*.025,plate,materials.stone);
  }else{
   const rail=Math.min(.08,sx*.1,sz*.1),base=sy*.25,mattress=sy*.48;
   box('bed base',0,0,0,sx,base,sz,materials.wood_frame);
