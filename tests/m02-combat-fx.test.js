@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {M02CombatFX} from '../src/render/m02-combat-fx.js';
+import {M02CombatFX,m02VisibleMuzzleFlash} from '../src/render/m02-combat-fx.js';
 import {M01Atmosphere} from '../src/render/m01-atmosphere.js';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 
@@ -11,6 +11,31 @@ function fixture(){
  const fx=new M02CombatFX(scene,atmosphere),sim=new M02BenchSimulation(),camera=new THREE.PerspectiveCamera(68,16/9,.12,8000);
  return {fx,sim,camera,dispose(){fx.dispose();for(const b of atmosphere.puffBatches)b.geometry.dispose();quad.dispose();material.dispose();}};
 }
+
+test('an actual NPC flash follows a nearby unobstructed socket without moving the simulated round',()=>{
+ const f=fixture(),{fx,sim,camera}=f;
+ try{
+  sim.enterAreaBC06();sim.allies=[];const gun=sim.enemies.find(a=>a.weapon==='mg34');sim.enemies=[gun];sim.world.obstacles=[];
+  Object.assign(gun,{x:0,y:0,z:100,mag:50,suppressed:0});Object.assign(sim.player,{x:0,y:0,z:120,eyeHeight:1.65});sim.drainEvents();
+  const event=sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy'),before=sim.snapshot(),actual=structuredClone(event.traces[0]);
+  const socket={x:actual.origin.x+.2,y:actual.origin.y,z:actual.origin.z};fx.consume([event],sim);
+  fx.update(sim,camera,'high',{daylight:1},720,()=>socket);
+  assert.deepEqual(fx.shots[0].origin,actual.origin);assert.deepEqual(fx.shots[0].point,actual.point);assert.deepEqual(fx.shots[0].flashOrigin,socket);
+  const matrix=new THREE.Matrix4(),position=new THREE.Vector3();fx.batches.flash.getMatrixAt(0,matrix);position.setFromMatrixPosition(matrix);
+  assert.ok(position.distanceTo(new THREE.Vector3(socket.x,socket.y,socket.z))<1e-5);
+  fx.update(sim,camera,'high',{daylight:1},720,()=>({x:99,y:99,z:99}));assert.deepEqual(fx.shots[0].flashOrigin,socket);
+  assert.deepEqual(event.traces[0],actual);assert.deepEqual(sim.snapshot(),before);
+ }finally{f.dispose();}
+});
+
+test('muzzle sockets across solid cover, too far away or invalid cannot shift the flash',()=>{
+ const origin={x:1,y:1,z:0},socket={x:.5,y:1,z:0};
+ assert.deepEqual(m02VisibleMuzzleFlash({obstacles:[]},origin,socket),socket);
+ const wall={min:{x:.7,y:0,z:-1},max:{x:.8,y:2,z:1}};
+ assert.equal(m02VisibleMuzzleFlash({obstacles:[wall]},origin,socket),null);
+ assert.equal(m02VisibleMuzzleFlash({obstacles:[]},origin,{x:0,y:1,z:0}),null);
+ assert.equal(m02VisibleMuzzleFlash({obstacles:[]},origin,{x:NaN,y:1,z:0}),null);
+});
 
 test('NPC impact FX use the actual obstructed round, not tactical aim; presentation preserves snapshot and RNG',()=>{
  const f=fixture(),{fx,sim,camera}=f;

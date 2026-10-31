@@ -105,6 +105,34 @@ test('the B02 mounted gunner takes cover from the player grenade',async({page},t
  console.log('M02 mounted MG grenade reaction',JSON.stringify(result));
 });
 
+test('a real B02 burst puts its flash on the animated MG34 muzzle',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await Promise.all([renderer.materialLibraryReady,renderer.presentation.ready]);
+  sim.reset('C02');sim.c01Active=false;const gunner=sim.enemies.find(a=>a.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
+  sim.teleportPlayer(8,-30,0,0);renderer.renderFrame(0,0);sim.drainEvents();
+  const event=sim.fireActorBurst(gunner,sim.player,{x:sim.player.x,y:1.5,z:sim.player.z},'enemy');
+  const before=JSON.stringify(sim.snapshot());renderer.renderFrame(0,0);
+  const shot=renderer.combatFx.shots.find(s=>s.shooterId==='DE-A05'),id=renderer.presentation.ids.get('DE-A05');
+  const muzzle=renderer.presentation.characters.muzzle(id);window.m02FlashShot=shot;window.m02SocketFlash=shot.flashOrigin;
+  return {origin:event.origin,trace:event.traces[0],model:muzzle?.toArray(),flash:shot.flashOrigin,
+   flashCount:renderer.combatFx.counts.flash,unchanged:before===JSON.stringify(sim.snapshot())};
+ });
+ expect(result.flash).toBeTruthy();expect(result.flashCount).toBeGreaterThan(0);expect(result.unchanged).toBe(true);
+ expect(Math.hypot(result.flash.x-result.model[0],result.flash.y-result.model[1],result.flash.z-result.model[2])).toBeLessThan(.001);
+ expect(Math.hypot(result.flash.x-result.origin.x,result.flash.y-result.origin.y,result.flash.z-result.origin.z)).toBeGreaterThan(.02);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · CLARÃO ANTERIOR";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.evaluate(()=>{window.m02FlashShot.flashOrigin=null;window.m02Bench.renderer.renderFrame(0,0);});
+ await page.screenshot({path:testInfo.outputPath('mg-flash-before-high.png')});
+ await page.evaluate(()=>{window.m02FlashShot.flashOrigin=window.m02SocketFlash;window.m02Bench.renderer.renderFrame(0,0);});
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · CLARÃO NO MODELO"}'});
+ await page.screenshot({path:testInfo.outputPath('mg-flash-after-high.png')});expect(errors).toEqual([]);
+ console.log('M02 mounted MG flash',JSON.stringify(result));
+});
+
 test('the B02 MG bench uses the existing M01 ammunition tin',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');

@@ -3,9 +3,21 @@ import {visualNoise} from './m01-atmosphere.js';
 import {impactProfile,battlefieldProfile,fxLayerCount,staggeredLife,sampleMuzzleEnvironmentLight} from './m01-battlefield-fx-profile.js';
 import {SHOT_FLASH_SEC,CLOCK_EPS,SMOKE_SEC as SHOT_SMOKE_SEC,flashRadius,flashTint,smokeRadius} from './m01-shot-fx.js';
 import {flashStarTexture} from './first-person-weapon-fx.js';
+import {traceObstruction} from '../world/spatial.js';
 
 const surface=material=>/metal/.test(material)?'metal':/wood/.test(material)?'wood':/brick/.test(material)?'brick':/stone/.test(material)?'stone':material;
 const finitePoint=p=>p&&[p.x,p.y,p.z].every(Number.isFinite);
+
+// A model socket can place the flash on the animated barrel without moving
+// the authoritative shot, tracer or impact. Never bridge a solid surface or
+// use a distant/stale model as a cosmetic replacement for the real origin.
+export function m02VisibleMuzzleFlash(world,origin,socket){
+ if(!finitePoint(origin)||!finitePoint(socket)||!world)return null;
+ const dx=origin.x-socket.x,dy=origin.y-socket.y,dz=origin.z-socket.z,d=Math.hypot(dx,dy,dz);
+ if(d>.6)return null;
+ if(d>.02&&traceObstruction(world,socket,{x:dx/d,y:dy/d,z:dz/d},d-.01))return null;
+ return {x:socket.x,y:socket.y,z:socket.z};
+}
 
 // M01 particle textures, material profiles and envelopes, driven by actual M02
 // rounds. Fixed pools replace allocated full-length debug rays and hit spheres.
@@ -43,7 +55,7 @@ export class M02CombatFX {
       }
     }
   }
-  update(sim,camera,quality,model,viewportHeight=720){
+  update(sim,camera,quality,model,viewportHeight=720,resolveMuzzle=null){
     this.sync(sim);const time=sim.clock,counts=Object.fromEntries(Object.keys(this.batches).map(k=>[k,0]));
     const put=(name,p,scale,color='#ffffff',opacity=1,seed=0,variant=0,dir=null)=>{
       const b=this.batches[name],i=counts[name];if(i>=b.instanceMatrix.count)return;
@@ -55,11 +67,17 @@ export class M02CombatFX {
     };
     const distance=p=>Math.hypot(p.x-camera.position.x,p.y-camera.position.y,p.z-camera.position.z);
     this.shots=this.shots.filter(s=>time-s.at<2.1&&time>=s.at-CLOCK_EPS);
-    const smokeShooters=new Map();
+    const smokeShooters=new Map(),muzzles=new Map();
     for(const s of this.shots){
       const age=Math.max(0,time-s.at),p=s.origin,heavy=s.weapon==='mg34'||s.weapon==='rkm_wz28',dist=distance(p);
-      if(s.shooterId!=='player'&&age<SHOT_FLASH_SEC){
-        const tint=flashTint(model?.daylight??1);put('flash',p,flashRadius(heavy,dist,camera.fov,viewportHeight,model?.daylight??1),this.flashColor.setRGB(tint,tint,tint));
+      if(s.shooterId!=='player'&&age<SHOT_FLASH_SEC&&counts.flash<this.batches.flash.instanceMatrix.count){
+        if(!s.flashResolved&&resolveMuzzle){
+          s.flashResolved=true;
+          if(!muzzles.has(s.shooterId))muzzles.set(s.shooterId,resolveMuzzle(s.shooterId));
+          s.flashOrigin=m02VisibleMuzzleFlash(sim.world,p,muzzles.get(s.shooterId));
+        }
+        const flash=s.flashOrigin??p,tint=flashTint(model?.daylight??1);
+        put('flash',flash,flashRadius(heavy,distance(flash),camera.fov,viewportHeight,model?.daylight??1),this.flashColor.setRGB(tint,tint,tint));
       }
       if(s.shooterId!=='player')smokeShooters.set(s.shooterId,s);
       const dx=s.point.x-p.x,dy=s.point.y-p.y,dz=s.point.z-p.z,len=Math.hypot(dx,dy,dz);
@@ -83,7 +101,7 @@ export class M02CombatFX {
     }
     for(const s of smokeShooters.values()){
       const heavy=s.weapon==='mg34'||s.weapon==='rkm_wz28',age=Math.max(0,time-s.at),k=age/(heavy?SHOT_SMOKE_SEC.mg:SHOT_SMOKE_SEC.rifle);
-      if(k>=1)continue;const p={x:s.origin.x+.3*k,y:s.origin.y+.1+k*(heavy?1.6:1.1),z:s.origin.z};
+      if(k>=1)continue;const origin=s.flashOrigin??s.origin,p={x:origin.x+.3*k,y:origin.y+.1+k*(heavy?1.6:1.1),z:origin.z};
       put('smoke',p,smokeRadius(heavy,k,distance(p),camera.fov,viewportHeight),'#b9b8ae',.42*Math.pow(1-k,1.15),s.seed);
     }
     const profile=battlefieldProfile('grenade');this.blasts=this.blasts.filter(b=>time-b.at<profile.duration&&time>=b.at-CLOCK_EPS);
@@ -99,7 +117,7 @@ export class M02CombatFX {
         }
       }
     }
-    const light=sampleMuzzleEnvironmentLight(this.shots.filter(s=>s.shooterId!=='player').map(s=>({x:s.origin.x,y:s.origin.y-1.35,z:s.origin.z,alive:true,active:true,firedAt:s.at,weapon:s.weapon})),time,sim.player,quality);
+    const light=sampleMuzzleEnvironmentLight(this.shots.filter(s=>s.shooterId!=='player').map(s=>{const p=s.flashOrigin??s.origin;return {x:p.x,y:p.y-1.35,z:p.z,alive:true,active:true,firedAt:s.at,weapon:s.weapon};}),time,sim.player,quality);
     // Same policy as M01 weapon FX: keep the light count stable during combat,
     // varying intensity rather than switching light-count variants per flash.
     // Low has no muzzle light and pays no additional light loop.

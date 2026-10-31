@@ -178,6 +178,7 @@ export class M02BenchRenderer {
     this.grenadeViews=new M02Grenades(this.scene,this.materials.grenade_body);
     this.cargo = new M02CargoVisuals();
     this.presentation = new M02Presentation(this.scene,this.camera,sim,{grenadeGeometry:this.grenadeViews.geometry,grenadeMaterial:this.materials.grenade_body});
+    this.resolveNpcMuzzle=id=>{const visual=this.presentation.ids.get(id);return visual?this.presentation.characters.muzzle(visual):null;};
     this.materialLibraryReady = this.#loadMaterialLibrary();
     this.staticGroup = new THREE.Group();
     this.dynamicDoorsGroup = new THREE.Group();
@@ -1066,7 +1067,7 @@ export class M02BenchRenderer {
 
     this.environment.update(this.sim,this.qualityProfile.id);
     this.lighting.update(this.sim,this.lightingPreset,this.qualityProfile.id);
-    this.combatFx.update(this.sim,this.camera,this.qualityProfile.id,this.lighting.model,this.canvas.height);
+    this.combatFx.update(this.sim,this.camera,this.qualityProfile.id,this.lighting.model,this.canvas.height,this.resolveNpcMuzzle);
     this.presentation.weaponLighting.sync({sky:this.hemiLight,sun:this.sunLight,camera:this.camera,daylight:this.lighting.model.daylight,pitch:player.pitch});
     this.viewModel.visible = !this.presentation.updateWeapon(this.sim, this.qualityProfile.id);
     this.staticGroup.traverse(node=>{if(node.userData.vegetationFallback)node.visible=!this.environment.loaded;});
