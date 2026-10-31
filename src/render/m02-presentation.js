@@ -10,6 +10,7 @@ import {M02Footsteps} from './m02-footsteps.js';
 import {playM02RoundAudio} from './m02-round-audio.js';
 import {M01CombatFeedback} from './m01-combat-feedback.js';
 import {M02GrenadeFollowThrough} from './m02-grenade-follow-through.js';
+import {M02GrenadePreparation} from './m02-grenade-preparation.js';
 import {playM02NpcReloadAudio} from './m02-npc-reload-audio.js';
 import {playM02GrenadeBounce} from './m02-grenade-audio.js';
 
@@ -46,7 +47,7 @@ export function m02VisualActor(actor, team, clock) {
 }
 
 export class M02Presentation {
-  constructor(scene, camera, sim) {
+  constructor(scene, camera, sim, {grenadeGeometry=null,grenadeMaterial=null}={}) {
     this.camera = camera;
     this.weaponCamera = createM02WeaponCamera();
     this.fireTimes = new Map();
@@ -59,6 +60,7 @@ export class M02Presentation {
     this.audio = new AudioManager({quality:'medium'});
     this.feedback=new M01CombatFeedback();
     this.grenadeFollowThrough=new M02GrenadeFollowThrough();
+    this.grenadePreparation=new M02GrenadePreparation(grenadeGeometry,grenadeMaterial);
     this.grenadeWarning=null;
     this.damageSource=null;
     this.footsteps=new M02Footsteps(this.audio);
@@ -74,6 +76,7 @@ export class M02Presentation {
       this.audio.resetPresentation(sim.clock);this.fireTimes.clear();this.roundEvents.clear();this.footsteps.reset();
       this.feedback?.reset();
       this.grenadeFollowThrough?.reset();
+      this.grenadePreparation?.reset();
       this.grenadeWarning=null;
       this.damageSource=null;
       this.characters.resetM02Pose();this.visualWorld=null;
@@ -126,6 +129,7 @@ export class M02Presentation {
   updateWeapon(sim, quality) {
     this.grenadeFollowThrough??=new M02GrenadeFollowThrough();
     this.grenadeFollowThrough.restore();
+    this.grenadePreparation?.restore();
     const record = { clock:sim.clock, player:{...sim.player,moveBlend:sim.player.moving?1:0},
       world:{revision:sim.world.revision,obstacles:sim.world.obstacles},
       weapon:Object.assign(Object.create(Object.getPrototypeOf(sim.weapon)), sim.weapon),
@@ -136,7 +140,8 @@ export class M02Presentation {
     const throwAt=this.grenadeFollowThrough.startedAt;
     const eligible=ready&&sim.player.health>0&&!sim.player.carryingVolumeId&&!sim.weapon.reloading&&!sim.weapon.boltCycling&&
       !(throwAt!==null&&sim.weapon.lastShot/1000>=throwAt);
-    this.grenadeFollowThroughWeight=this.grenadeFollowThrough.apply(this.weapon.root,sim.clock,eligible);
+    this.grenadePreparationState=ready&&sim.player.health>0?this.grenadePreparation?.apply(this.weapon,sim.playerGrenadeAction,sim.clock)??null:null;
+    this.grenadeFollowThroughWeight=this.grenadeFollowThrough.apply(this.weapon.root,sim.clock,eligible&&!this.grenadePreparationState);
     return ready;
   }
   renderWeapon(renderer) {
@@ -199,6 +204,6 @@ export class M02Presentation {
   }
   get diagnostics() {
     return {characters:this.characters.stats, loadedModels:[...this.characters.sources.keys()], clips:this.characters.clips.size, failures:this.characters.assets.failures,
-      weapon:this.weapon.stats, grenadeFollowThrough:{startedAt:this.grenadeFollowThrough?.startedAt??null,weight:this.grenadeFollowThroughWeight??0}, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
+      weapon:this.weapon.stats, grenadePreparation:this.grenadePreparationState??null,grenadeFollowThrough:{startedAt:this.grenadeFollowThrough?.startedAt??null,weight:this.grenadeFollowThroughWeight??0}, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
   }
 }

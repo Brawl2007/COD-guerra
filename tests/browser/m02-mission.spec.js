@@ -2,6 +2,49 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('G prepares the M01 hand before the grenade is physically released',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(async()=>{
+  const {sim,renderer}=window.m02Bench;await Promise.all([renderer.materialLibraryReady,renderer.presentation.ready]);
+  sim.reset('C02');sim.c01Active=false;sim.enemies=[];sim.allies=[];sim.teleportPlayer(0,-60,Math.PI/2,0);
+  window.m02FreezeThrow=phase=>{
+   const frame=()=>{const s=window.m02Bench.sim,a=s.playerGrenadeAction;
+    if(phase==='prepare'&&a&&s.clock-a.startedAt>=.3||phase==='release'&&!a&&s.grenades.length){
+     window.dispatchEvent(new KeyboardEvent('keydown',{code:'Escape'}));return;
+    }requestAnimationFrame(frame);
+   };requestAnimationFrame(frame);
+  };
+  renderer.renderFrame(0,0);
+ });
+ await page.evaluate(()=>window.m02FreezeThrow('prepare'));await page.click('#mission-resume');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='playing');await page.keyboard.press('KeyG');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='paused'&&window.m02Bench.sim.playerGrenadeAction);
+ const held=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,mesh=p.grenadePreparation.mesh;
+  renderer.renderFrame(0,0);window.m02MidPrepare=sim.snapshot();
+  return {ammo:sim.grenadeAmmo,projectiles:sim.grenades.length,state:p.diagnostics.grenadePreparation,
+   visible:mesh.visible,parent:mesh.parent?.name,shared:mesh.geometry===renderer.grenadeViews.geometry,
+   screen:mesh.getWorldPosition(mesh.position.clone()).project(p.weaponCamera).toArray()};
+ });
+ expect(held.ammo).toBe(1);expect(held.projectiles).toBe(0);expect(held.state.held).toBe(true);
+ expect(held.visible).toBe(true);expect(held.parent).toBe('hand_r');expect(held.shared).toBe(true);
+ expect(Math.abs(held.screen[0])).toBeLessThan(1);expect(Math.abs(held.screen[1])).toBeLessThan(1);
+ const overlay=await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · PREPARAÇÃO DA GRANADA";position:fixed;right:12px;top:12px;z-index:80;padding:6px;background:#111;color:#fff;font:12px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('grenade-preparation-high.png')});await overlay.evaluate(el=>el.remove());
+ await page.evaluate(()=>window.m02FreezeThrow('release'));await page.click('#mission-resume');
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='paused'&&!window.m02Bench.sim.playerGrenadeAction&&window.m02Bench.sim.grenades.length===1);
+ const released=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench,p=renderer.presentation,g=sim.grenades[0];
+  return {ammo:sim.grenadeAmmo,id:g.id,shown:renderer.grenadeViews.views.has(g.id),held:p.grenadePreparation.mesh.visible,weight:p.grenadeFollowThroughWeight};});
+ expect(released.ammo).toBe(1);expect(released.shown).toBe(true);expect(released.held).toBe(false);expect(released.weight).toBeGreaterThan(0);
+ const restored=await page.evaluate(()=>{const {sim,renderer}=window.m02Bench;sim.restoreSnapshot(window.m02MidPrepare);renderer.renderFrame(0,0);
+  return {ammo:sim.grenadeAmmo,projectiles:sim.grenades.length,state:renderer.presentation.diagnostics.grenadePreparation,held:renderer.presentation.grenadePreparation.mesh.visible};});
+ expect(restored.ammo).toBe(1);expect(restored.projectiles).toBe(0);expect(restored.state.held).toBe(true);expect(restored.held).toBe(true);
+ expect(errors).toEqual([]);console.log('M02 player grenade preparation',JSON.stringify({held,released,restored}));
+});
+
 test('the B02 mounted gunner takes cover from the player grenade',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:1280,height:720});await page.goto('/COD-guerra/m02.html?quality=high&debug=1');

@@ -15,6 +15,12 @@ function setup(side='ally'){
  return {sim,actor};
 }
 
+function preparePlayerThrow(sim){
+ sim.tick(.05,{grenade:true});for(let i=0;i<9;i++)sim.tick(.05,{});
+ assert.ok(sim.playerGrenadeAction);assert.equal(sim.grenades.length,0);
+}
+function releasePlayerThrow(sim){preparePlayerThrow(sim);sim.tick(.05,{});assert.equal(sim.grenades.length,1);}
+
 test('a visible grenade interrupts an ally reload, produces a warning and real movement, with deterministic restore',()=>{
  const {sim,actor}=setup(),initialX=actor.x,beforeAmmo=actor.mag+actor.reserve;
  sim.tick(.05,{});const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');
@@ -79,12 +85,13 @@ test('an observed grenade stops a real pending burst without spending its unfire
 test('the mounted B02 gunner ducks for a real grenade, then can resume firing after the blast',()=>{
  const sim=new M02BenchSimulation();sim.c01Active=false;
  const gunner=sim.enemies.find(a=>a.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
- sim.teleportPlayer(8,-30,0,0);sim.drainEvents();
+ sim.teleportPlayer(8,-30,0,0);gunner.nextFireAt=100;sim.drainEvents();
  const before={x:gunner.x,z:gunner.z,crouched:gunner.crouched,eyeHeight:gunner.eyeHeight};
  assert.equal(sim.evaluateMgLineOfFire().hasVisualLoS,true);
+ preparePlayerThrow(sim);
  const first=sim.fireActorBurst(gunner,sim.player,{x:sim.player.x,y:1.4,z:sim.player.z},'enemy');
  assert.equal(first.rounds,1);assert.equal(gunner.mag,49);assert.equal(gunner.burst.remaining,4);sim.drainEvents();
- sim.tick(.05,{grenade:true});
+ sim.tick(.05,{});
  const warning=sim.drainEvents().find(e=>e.type==='grenade-warning');
  assert.equal(warning?.actorId,'DE-A05');assert.equal(warning.perception,'visual');assert.equal(warning.heardByPlayer,false);
  assert.equal(sim.grenadeAmmo,1);assert.equal(gunner.tacticalState,'TakeCoverGrenade');
@@ -119,7 +126,7 @@ test('the mounted gunner does not react to a grenade hidden behind him or a soli
    sim.teleportPlayer(8,-30,0,0);
    sim.world.obstacles.push({id:'mg-awareness-wall',min:{x:10,y:0,z:-32},max:{x:10.2,y:3,z:-28},material:'brick'});
   }
-  sim.drainEvents();sim.tick(.05,{grenade:true});
+  sim.drainEvents();releasePlayerThrow(sim);sim.tick(.05,{});
   assert.equal(gunner.m02GrenadeThreat,undefined,mode);
   assert.equal(sim.drainEvents().some(e=>e.type==='grenade-warning'),false,mode);
  }
@@ -141,7 +148,7 @@ test('a blast that kills the mounted gunner clears his threat before the next ch
  const sim=new M02BenchSimulation();sim.c01Active=false;
  const gunner=sim.enemies.find(e=>e.id==='DE-A05');sim.enemies=[gunner];sim.allies=[];
  gunner.health=20;gunner.nextFireAt=100;sim.teleportPlayer(8,-30,0,0);
- sim.tick(.05,{grenade:true});assert.equal(gunner.tacticalState,'TakeCoverGrenade');
+ releasePlayerThrow(sim);assert.equal(gunner.tacticalState,'TakeCoverGrenade');
  for(let i=0;i<45&&sim.grenades.length;i++)sim.tick(.05,{});
  const explosion=sim.drainEvents().find(e=>e.type==='grenade-exploded');
  assert.ok(explosion.affectedActors.find(a=>a.id==='DE-A05').damage>=20);
@@ -155,7 +162,7 @@ test('a blast that kills the mounted gunner clears his threat before the next ch
  // must also be clean, before the garrison loop has a chance to run.
  const immediate=new M02BenchSimulation();immediate.c01Active=false;
  const second=immediate.enemies.find(e=>e.id==='DE-A05');immediate.enemies=[second];immediate.allies=[];
- second.nextFireAt=100;immediate.teleportPlayer(8,-30,0,0);immediate.tick(.05,{grenade:true});
+ second.nextFireAt=100;immediate.teleportPlayer(8,-30,0,0);releasePlayerThrow(immediate);
  assert.ok(second.m02GrenadeThreat);immediate.detonateGrenadeAt(second.x,1,second.z);
  assert.equal(second.alive,false);assert.equal(second.m02GrenadeThreat,undefined);
  assert.equal(second.goal,null);assert.equal(second.moving,false);
@@ -166,7 +173,7 @@ test('the C04 wounded transition clears a grenade escape without restoring armed
  const sim=new M02BenchSimulation();sim.c01Active=false;
  const wounded=sim.enemies.find(e=>e.c04Candidate),gunner=sim.enemies.find(e=>e.id==='DE-A05');
  sim.enemies=[gunner,wounded];sim.allies=[];gunner.nextFireAt=100;
- sim.teleportPlayer(-5.5,30,Math.PI/2,0);sim.tick(.05,{grenade:true});
+ sim.teleportPlayer(-5.5,30,Math.PI/2,0);releasePlayerThrow(sim);
  assert.equal(wounded.state,'FLEE_GRENADE');assert.ok(wounded.m02GrenadeThreat);
  wounded.health=48;sim.tick(.05,{});
  assert.equal(wounded.state,'WOUNDED_UNARMED');assert.equal(wounded.nonCombatant,true);

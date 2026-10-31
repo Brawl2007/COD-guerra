@@ -48,7 +48,8 @@ test('EC2 reserves do not inherit the defeated EA1 farm garrison morale',()=>{
 });
 
 test('mid-grenade RNG and portal locks survive exact continuation; old saves remain readable',()=>{
- const s=new M02BenchSimulation();s.tick(.1,{grenade:true});
+ const s=new M02BenchSimulation();s.tick(.1,{grenade:true});for(let i=0;i<10;i++)s.tick(.05,{});
+ assert.equal(s.grenades.length,1,'this checkpoint must contain a grenade already in flight');
  s.doorLocks.set('portal',{actorId:'pl_lis',expiresAt:1});
  const snapshot=s.snapshot();
  for(let i=0;i<45;i++)s.tick(.05,{});

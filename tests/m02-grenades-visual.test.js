@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import {M02BenchSimulation} from '../src/game/m02-01-simulation.js';
 import {M02Grenades} from '../src/render/m02-grenades.js';
 
-test('M01-sized grenade meshes follow real projectiles and same-clock checkpoint restore without ghost objects',()=>{
+test('shared grenade meshes follow real projectiles and same-clock checkpoint restore without ghost objects',()=>{
  const sim=new M02BenchSimulation(),scene=new THREE.Scene(),material=new THREE.MeshStandardMaterial(),view=new M02Grenades(scene,material);
  try{
   const first=sim.throwGrenade(),save=sim.snapshot();sim.throwGrenade();const before=sim.snapshot();

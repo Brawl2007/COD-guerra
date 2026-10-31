@@ -177,7 +177,7 @@ export class M02BenchRenderer {
     this.materials = { ...this.#createMaterials(), ...createSoldierRigMaterials() };
     this.grenadeViews=new M02Grenades(this.scene,this.materials.grenade_body);
     this.cargo = new M02CargoVisuals();
-    this.presentation = new M02Presentation(this.scene, this.camera, sim);
+    this.presentation = new M02Presentation(this.scene,this.camera,sim,{grenadeGeometry:this.grenadeViews.geometry,grenadeMaterial:this.materials.grenade_body});
     this.materialLibraryReady = this.#loadMaterialLibrary();
     this.staticGroup = new THREE.Group();
     this.dynamicDoorsGroup = new THREE.Group();

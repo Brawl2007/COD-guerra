@@ -16,7 +16,7 @@ function canReachActor(sim,actor,height){
 // unresolved encounters, create supplies or change checkpoint/schema rules.
 export function m02PlayerAction(sim) {
   const player=sim.player;
-  if (player.health<=0 || sim.currentChalkPrompt()) return null;
+  if (player.health<=0 || sim.playerGrenadeAction || sim.currentChalkPrompt()) return null;
   const near=(x,z,r=4)=>Math.hypot(player.x-x,player.z-z)<=r;
   const action=(id,prompt,extra={})=>({id,prompt:`[E] ${prompt}`,distance:0,...extra});
   if (sim.activeCellId==='C' && sim.objective.id==='O09' && !sim.areaC.c12Completed && near(-55,54,10)) {

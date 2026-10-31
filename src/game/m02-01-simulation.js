@@ -57,6 +57,12 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
   tgt_b01_kitchen_window: 'DE-A07',
   tgt_b01_hall_door: 'DE-A08',
 });
+// The player commits one grenade on the press and releases it after the M01
+// first-person arm has had time to prepare. This is mission time, not a timer
+// owned by the renderer or browser.
+export const M02_GRENADE_PREPARE_SECONDS = 0.5;
+// Measured at the end of the shared M01 hand pose (camera-space metres).
+const M02_GRENADE_RELEASE_VIEW=Object.freeze({right:.112,up:-.090,forward:.557});
 
 function recordM02Hit(actor,clock,source,part='torso'){
   actor.hitAt=clock;actor.hitYaw=Math.atan2(source.z-actor.z,source.x-actor.x);actor.hitPart=part;
@@ -76,7 +82,28 @@ export function validateM02Snapshot(snap) {
   if (snap.rngState !== undefined && (!Number.isInteger(snap.rngState) || snap.rngState<0 || snap.rngState>0xffffffff)) return {valid:false,reason:'Estado aleatório inválido.'};
   if (snap.worldRevision !== undefined && (!Number.isInteger(snap.worldRevision)||snap.worldRevision<0)) return {valid:false,reason:'Revisão de mundo inválida.'};
   if (snap.grenadeSeq !== undefined && (!Number.isInteger(snap.grenadeSeq)||snap.grenadeSeq<0)) return {valid:false,reason:'Sequência de granadas inválida.'};
-  if (snap.grenades !== undefined && (!Array.isArray(snap.grenades) || snap.grenades.some(g=>!g||!g.id||!['x','y','z','vx','vy','vz','spawnedAt','fuseAt'].every(k=>Number.isFinite(g[k]))))) return {valid:false,reason:'Granada inválida.'};
+  if (snap.grenadeAmmo !== undefined && (!Number.isInteger(snap.grenadeAmmo)||snap.grenadeAmmo<0)) return {valid:false,reason:'Munição de granadas inválida.'};
+  if(snap.playerGrenadeAction!==undefined){
+    const action=snap.playerGrenadeAction;
+    if(!action||!Number.isInteger(snap.grenadeAmmo)||snap.player?.health<=0||snap.player?.carryingVolumeId)
+      return {valid:false,reason:'Preparação de granada inválida.'};
+    // A press during the rifle's bolt cycle is reserved immediately, but the
+    // hand cannot leave the rifle until that existing animation has finished.
+    if(action.waitingForReload===true){
+      if(action.startedAt!==null||action.releaseAt!==null||!['RELOAD_SINGLE','RELOAD_CLIP'].includes(snap.weapon?.state))
+        return {valid:false,reason:'Espera da granada inválida.'};
+    }else{
+      const waiting=action.startedAt>snap.clock+1e-6;
+      if(!Number.isFinite(action.startedAt)||!Number.isFinite(action.releaseAt)||action.startedAt<0||
+        waiting&&(snap.weapon?.state!=='BOLT_CYCLE'||!Number.isFinite(snap.weapon.until)||
+          Math.abs(action.startedAt-snap.weapon.until/1000)>1e-6||action.startedAt-snap.clock>1.1)||
+        Math.abs(action.releaseAt-action.startedAt-M02_GRENADE_PREPARE_SECONDS)>1e-6||action.releaseAt<=snap.clock-1e-6)
+        return {valid:false,reason:'Preparação de granada inválida.'};
+    }
+  }
+  if (snap.grenades !== undefined && (!Array.isArray(snap.grenades) || snap.grenades.some(g=>!g||!g.id||
+    !['x','y','z','vx','vy','vz','spawnedAt','fuseAt'].every(k=>Number.isFinite(g[k]))||
+    g.releaseView!==undefined&&(!g.releaseView||!Number.isFinite(g.releaseView.angle)||!Number.isFinite(g.releaseView.pitch)||Math.abs(g.releaseView.pitch)>1.35)))) return {valid:false,reason:'Granada inválida.'};
   if (snap.doorLocks !== undefined && (!Array.isArray(snap.doorLocks)||snap.doorLocks.some(e=>!Array.isArray(e)||e.length!==2||typeof e[0]!=='string'||!e[1]||typeof e[1].actorId!=='string'||!Number.isFinite(e[1].expiresAt)))) return {valid:false,reason:'Fila de porta inválida.'};
   if (typeof snap.clock !== 'number' || !Number.isFinite(snap.clock) || snap.clock < 0) {
     return { valid: false, reason: 'Clock de snapshot inválido.' };
@@ -228,6 +255,7 @@ export class M02BenchSimulation {
     this.grenades = [];
     this.grenadeSeq = 0;
     this.grenadeAmmo = 2;
+    this.playerGrenadeAction = null;
     this.squadOrder = { type: 'auto', axis: null, issuedAt: 0 };
     this.c01Active = false;
     this.c01StartedAt = 0;
@@ -1024,6 +1052,7 @@ export class M02BenchSimulation {
           }
         }
         updateM02EvacuationWound(this,victim);
+        if(victim===this.player&&victim.health<=0)this.cancelPlayerGrenade();
         if(victim.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(victim);
         recordM02Hit(victim,this.clock,origin,hit.part);
         this.syncCalibrationAndEnemies();
@@ -1102,31 +1131,61 @@ export class M02BenchSimulation {
     return rec;
   }
 
-  throwGrenade(customOrigin = null, customDir = null) {
-    if (!customOrigin && this.grenadeAmmo <= 0) return null;
-    if (!customOrigin) this.grenadeAmmo--;
+  preparePlayerGrenade() {
+    if(this.playerGrenadeAction||this.grenadeAmmo<=0||this.player.health<=0||this.player.carryingVolumeId)return false;
+    this.grenadeAmmo--;
+    const startedAt=this.weapon.boltCycling?Math.max(this.clock,this.weapon.until/1000):this.clock;
+    this.playerGrenadeAction=this.weapon.reloading?{startedAt:null,releaseAt:null,waitingForReload:true}:
+      {startedAt,releaseAt:startedAt+M02_GRENADE_PREPARE_SECONDS};
+    this.events.push({type:'grenade-preparing',throwerId:this.player.id,clock:this.clock});
+    return true;
+  }
+
+  cancelPlayerGrenade() {
+    if(!this.playerGrenadeAction)return false;
+    this.playerGrenadeAction=null;this.grenadeAmmo++;
+    return true;
+  }
+
+  throwGrenade(customOrigin = null, customDir = null, {reserved=false} = {}) {
+    if(reserved&&(customOrigin||!this.playerGrenadeAction||!Number.isFinite(this.playerGrenadeAction.releaseAt)||this.clock+1e-8<this.playerGrenadeAction.releaseAt))return null;
+    if(!customOrigin&&!reserved&&(this.playerGrenadeAction||this.grenadeAmmo<=0))return null;
+    if (!customOrigin && !reserved) this.grenadeAmmo--;
 
     const eye = customOrigin ?? eyePosition(this.player);
     const rawDir = customDir ?? aimDirection(this.player.angle, this.player.pitch);
     const len = Math.hypot(rawDir.x, rawDir.y, rawDir.z) || 1;
     const dir = { x: rawDir.x / len, y: rawDir.y / len, z: rawDir.z / len };
     const speed = 15.0;
-    // A player pressed against a wall cannot spawn a grenade on its far side.
-    const obstruction=traceObstruction(this.world,eye,dir,.45);
-    const releaseDistance=obstruction?Math.max(0,obstruction.distance-.002):.45;
+    // The player release follows the hand's view-frame endpoint. The direct
+    // calibration API retains its original .45 m ray. Both paths trace from
+    // the eye so a grenade cannot spawn on the far side of a solid wall.
+    let releaseDir=dir,releaseLength=.45;
+    if(reserved){
+      const right={x:-Math.sin(this.player.angle),y:0,z:Math.cos(this.player.angle)};
+      const up={x:-Math.cos(this.player.angle)*Math.sin(this.player.pitch),y:Math.cos(this.player.pitch),z:-Math.sin(this.player.angle)*Math.sin(this.player.pitch)};
+      const offset={x:dir.x*M02_GRENADE_RELEASE_VIEW.forward+right.x*M02_GRENADE_RELEASE_VIEW.right+up.x*M02_GRENADE_RELEASE_VIEW.up,
+        y:dir.y*M02_GRENADE_RELEASE_VIEW.forward+right.y*M02_GRENADE_RELEASE_VIEW.right+up.y*M02_GRENADE_RELEASE_VIEW.up,
+        z:dir.z*M02_GRENADE_RELEASE_VIEW.forward+right.z*M02_GRENADE_RELEASE_VIEW.right+up.z*M02_GRENADE_RELEASE_VIEW.up};
+      releaseLength=Math.hypot(offset.x,offset.y,offset.z);releaseDir={x:offset.x/releaseLength,y:offset.y/releaseLength,z:offset.z/releaseLength};
+    }
+    const obstruction=traceObstruction(this.world,eye,releaseDir,releaseLength);
+    const releaseDistance=obstruction?Math.max(0,obstruction.distance-.002):releaseLength;
 
     const g = {
       id: `gren_${++this.grenadeSeq}`,
-      x: eye.x + dir.x * releaseDistance,
-      y: eye.y + dir.y * releaseDistance,
-      z: eye.z + dir.z * releaseDistance,
+      x: eye.x + releaseDir.x * releaseDistance,
+      y: eye.y + releaseDir.y * releaseDistance,
+      z: eye.z + releaseDir.z * releaseDistance,
       vx: dir.x * speed,
       vy: dir.y * speed + 2.8,
       vz: dir.z * speed,
       spawnedAt: Number(this.clock.toFixed(3)),
       fuseAt: Number((this.clock + 2.0).toFixed(3)),
       exploded: false,
+      ...(reserved?{releaseView:{angle:this.player.angle,pitch:this.player.pitch}}:{}),
     };
+    if(reserved)this.playerGrenadeAction=null;
     this.grenades.push(g);
     this.events.push({ type: 'grenade-thrown', grenade: { ...g }, clock: this.clock, throwerId: customOrigin ? null : this.player.id });
     return g;
@@ -1179,6 +1238,7 @@ export class M02BenchSimulation {
           }
         }
         updateM02EvacuationWound(this,actor);
+        if(actor===this.player&&actor.health<=0)this.cancelPlayerGrenade();
         if(actor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(actor);
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
         if(damage>0)recordM02Hit(actor,this.clock,center);
@@ -1213,9 +1273,13 @@ export class M02BenchSimulation {
     return blastRecord;
   }
 
-  updateGrenades(dt) {
+  updateGrenades(dt, justReleasedId = null) {
     for (const g of this.grenades) {
       if (g.exploded) continue;
+      // The new projectile is created at this tick's end, so no part of this
+      // tick's elapsed time belongs to it. Existing and restored projectiles
+      // keep the original integration, including legacy rounded timestamps.
+      if(g.id===justReleasedId)continue;
       const impact=stepM02Grenade(this.world,g,dt);
       // Sub-threshold contacts include resting/settling and must not create a
       // continuous rattle or consume the presentation's limited voice pool.
@@ -1390,6 +1454,7 @@ export class M02BenchSimulation {
     if (dt <= 0) return;
     this.clock += dt;
     const nowMs = this.clock * 1000;
+    const preparingGrenade=Boolean(this.playerGrenadeAction);
 
     if (controls.lookX) this.player.angle += controls.lookX;
     if (controls.lookY) {
@@ -1401,14 +1466,14 @@ export class M02BenchSimulation {
       this.player.eyeHeight = this.player.crouched ? 1.08 : EYE_HEIGHT;
     }
 
-    this.player.aiming = Boolean(controls.aim);
+    this.player.aiming = !preparingGrenade&&Boolean(controls.aim);
     const forward = controls.forward ?? 0;
     const side = controls.side ?? 0;
     const inputLen = Math.hypot(forward, side);
     const movementStartX=this.player.x,movementStartZ=this.player.z;
     this.player.moving = inputLen > 1e-3;
     this.player.sprinting =
-      Boolean(controls.sprint) && !this.player.crouched && !this.player.aiming && forward > 0.1;
+      !preparingGrenade&&Boolean(controls.sprint) && !this.player.crouched && !this.player.aiming && forward > 0.1;
 
     let landing;
     if (this.player.moving) {
@@ -1433,18 +1498,26 @@ export class M02BenchSimulation {
     }
 
     this.weapon.update(nowMs);
+    if(this.playerGrenadeAction?.waitingForReload&&!this.weapon.reloading){
+      this.playerGrenadeAction={startedAt:this.clock,releaseAt:this.clock+M02_GRENADE_PREPARE_SECONDS};
+    }
     this.player.moving=Math.hypot(this.player.x-movementStartX,this.player.z-movementStartZ)>1e-5;
     if(!this.player.moving)this.player.sprinting=false;
-    if (controls.reload) this.weapon.reload(nowMs);
-    if (controls.sight) this.weapon.adjustSight();
-    if (controls.interact) this.interactDoor();
-    if (controls.fire) this.firePlayerWeapon(false);
-    if (controls.grenade) this.throwGrenade();
+    if(this.player.health<=0||this.player.carryingVolumeId)this.cancelPlayerGrenade();
+    if (!preparingGrenade&&controls.reload) this.weapon.reload(nowMs);
+    if (!preparingGrenade&&controls.sight) this.weapon.adjustSight();
+    if (!preparingGrenade&&controls.interact) this.interactDoor();
+    const shot=!preparingGrenade&&controls.fire?this.firePlayerWeapon(false):null;
+    if (!preparingGrenade&&controls.grenade&&!shot&&this.preparePlayerGrenade()){
+      this.player.aiming=false;this.player.sprinting=false;
+    }
+    const released=this.playerGrenadeAction&&!this.playerGrenadeAction.waitingForReload&&this.clock+1e-8>=this.playerGrenadeAction.releaseAt?
+      this.throwGrenade(null,null,{reserved:true}):null;
     if (controls.orderSuppress) this.issueSquadOrder('suppress');
     if (controls.orderAdvance) this.issueSquadOrder('advance');
     if (controls.orderFlank) this.issueSquadOrder('flank_east');
 
-    this.updateGrenades(dt);
+    this.updateGrenades(dt,released?.id);
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
     if (this.activeCellId === 'B') {
@@ -1490,6 +1563,7 @@ export class M02BenchSimulation {
       player: structuredClone(this.player),
       weapon: this.weapon.snapshot(),
       grenadeAmmo: this.grenadeAmmo,
+      ...(this.playerGrenadeAction?{playerGrenadeAction:structuredClone(this.playerGrenadeAction)}:{}),
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
       ea1StartedAt: this.ea1StartedAt,
@@ -1539,6 +1613,7 @@ export class M02BenchSimulation {
     this.player = structuredClone(snap.player);
     this.weapon.restore(structuredClone(snap.weapon));
     this.grenadeAmmo = snap.grenadeAmmo ?? 2;
+    this.playerGrenadeAction = snap.playerGrenadeAction?structuredClone(snap.playerGrenadeAction):null;
     this.c01Active = Boolean(snap.c01Active);
     this.c01StartedAt = snap.c01StartedAt ?? 0;
     this.ea1StartedAt = snap.ea1StartedAt ?? 0;

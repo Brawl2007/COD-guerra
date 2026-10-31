@@ -256,7 +256,9 @@ function updateHud() {
     elAmmo.textContent = `${sim.weapon.mag} / ${sim.weapon.reserve}`;
   }
   if (elGrenades) {
-    elGrenades.textContent = `${sim.grenadeAmmo}`;
+    const action=sim.playerGrenadeAction;
+    const status=action?(action.waitingForReload||sim.clock<action.startedAt?' · em espera':' · preparando'):'';
+    elGrenades.textContent = `${sim.grenadeAmmo}${status}`;
   }
   if (elLastShot) {
     const last = sim.shotLog[sim.shotLog.length - 1];
