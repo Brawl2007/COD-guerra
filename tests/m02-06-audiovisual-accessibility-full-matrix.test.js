@@ -447,7 +447,6 @@ describe('M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Ma
 
   it(
     'O3/SAVE: restoreSnapshot() restores the RNG state saved with the checkpoint',
-    { todo: 'BUG: snapshot()/restoreSnapshot() omit sim.rng.state (src/game/m02-01-simulation.js); after restoreCheckpoint the shot-jitter RNG continues from the later state, so replays after a restore are not reproducible.' },
     () => {
       const sim = new M02BenchSimulation(19390909);
       for (let i = 0; i < 300; i++) sim.tick(0.05, { crouch: i === 0, aim: i % 90 < 45, fire: i % 25 === 5 });
@@ -463,7 +462,6 @@ describe('M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Ma
 
   it(
     'O3/SAVE: replaying the same inputs after restoreCheckpoint reproduces an identical snapshot()',
-    { todo: 'BUG: restore -> replay diverges (src/game/m02-01-simulation.js): besides the missing rng.state, transient enemy AI fields not in the snapshot (facing, navRevision, nav goals) and dialogue/flags differ after replaying 600 ticks from the same checkpoint.' },
     () => {
       const sim = new M02BenchSimulation(19390909);
       const controls = (i) => ({ crouch: i === 0, aim: i % 90 < 45, fire: i % 25 === 5 });
