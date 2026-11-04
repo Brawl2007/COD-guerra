@@ -262,6 +262,32 @@ export function loseSupplyVolume(sim, volumeId) {
   return true;
 }
 
+/**
+ * A carrier who is no longer alive drops the volume where he fell (DROPPED_READY, can be picked up again). Closes the
+ * carriedBy relation so no snapshot points a volume at a dead actor (PDF I5; FIX-2b). Deterministic; returns the count.
+ */
+export function dropVolumesOfFallenCarriers(sim) {
+  const volumes = sim.areaB?.supplyCart?.volumes;
+  if (!volumes) return 0;
+  let dropped = 0;
+  for (const vol of volumes) {
+    if (!vol.carriedBy) continue;
+    const carrier = vol.carriedBy === sim.player.id ? sim.player : sim.allies.find((a) => a.id === vol.carriedBy);
+    if (carrier && carrier.alive !== false) continue;
+    const carrierId = vol.carriedBy;
+    vol.state = 'DROPPED_READY';
+    vol.carriedBy = null;
+    if (carrier) {
+      vol.x = carrier.x;
+      vol.z = carrier.z;
+      if (carrier.carryingVolumeId === vol.id) carrier.carryingVolumeId = null;
+    }
+    sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'supply_volume_dropped', volumeId: vol.id, carrierId });
+    dropped++;
+  }
+  return dropped;
+}
+
 export function syncSupplyFlags(sim) {
   const cart = sim.areaB?.supplyCart;
   if (!cart) return;

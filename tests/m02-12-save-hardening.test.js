@@ -571,3 +571,86 @@ describe('M02-12 — P2: loja persistente (current ilegível, checkpoint incompa
     assert.equal(sim.lastCheckpointPersist.ok, true);
   });
 });
+
+describe('M02-12 — P2: validador (enums e relações, PDF I4/I5) e perfil da arma vindo do código', () => {
+  it('rejeita estado fora do enum, aliado morto com arma ativa, lis_status inválido, carroça/volume fora do enum, portador morto ou inexistente, vida fora de [0, máx.], objetivo inválido', () => {
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    const cases = [
+      [(s) => { s.allies[0].state = 'ZOMBIE'; }, /Estado de aliado inválido: .*ZOMBIE/],
+      [(s) => { s.enemies[0].state = 'ZOMBIE'; }, /Estado de inimigo inválido/],
+      [(s) => { s.allies[0].alive = false; s.allies[0].state = 'ACTIVE'; s.allies[0].mag = 20; s.allies[0].health = 0; }, /Aliado morto com arma ativa/],
+      [(s) => { s.flags['m02.lis_status'] = 'dead'; }, /m02\.lis_status/],
+      [(s) => { s.areaC.c12Completed = true; }, /m02\.lis_status: active/], // depois de C12 só os três valores finais (I4)
+      [(s) => { s.areaB.supplyCart.state = 'FLYING'; }, /Estado da carroça inválido/],
+      [(s) => { s.areaB.supplyCart.volumes[0].state = 'TELEPORTED'; }, /Estado do volume vol_water inválido/],
+      [(s) => { s.areaB.supplyCart.volumes[0].state = 'CARRIED'; }, /incoerente/],
+      [
+        (s) => {
+          s.allies[1].alive = false;
+          s.allies[1].state = 'DOWN';
+          s.areaB.supplyCart.volumes[0].carriedBy = s.allies[1].id;
+          s.areaB.supplyCart.volumes[0].state = 'CARRIED';
+        },
+        /Portador morto/,
+      ],
+      [(s) => { s.areaB.supplyCart.volumes[0].carriedBy = 'pl_fantasma'; s.areaB.supplyCart.volumes[0].state = 'CARRIED'; }, /Portador inexistente/],
+      [(s) => { s.enemies[0].health = -50; }, /Vida fora de \[0, máx\.\]/],
+      [(s) => { s.allies[0].health = s.allies[0].maxHealth + 1; }, /Vida fora de \[0, máx\.\]/],
+      [(s) => { s.objective.status = 'xyz'; }, /Objetivo inválido/],
+      [(s) => { s.weapon.id = 'mp40'; }, /Arma do jogador desconhecida/],
+      [(s) => { s.weapon.mag = 9; }, /munição da arma/],
+      [(s) => { s.weapon.reloadMode = 'magic'; }, /ciclo\/recarga/],
+    ];
+    for (const [mutate, pattern] of cases) {
+      const bad = sim.snapshot();
+      mutate(bad);
+      const res = validateM02Snapshot(bad);
+      assert.equal(res.valid, false, `deveria rejeitar: ${pattern}`);
+      assert.match(res.reason, pattern);
+    }
+    for (const status of ['wounded_evacuated', 'wounded_walking', 'missing', null, 'active']) {
+      const ok = sim.snapshot();
+      ok.flags['m02.lis_status'] = status;
+      assert.equal(validateM02Snapshot(ok).valid, true, `lis_status ${status} aceite antes de C12`);
+    }
+  });
+
+  it('weapon.profile do save nunca é aplicado: dano 9999 e campos estranhos são ignorados; o estado da arma é reposto', () => {
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    const codeProfile = structuredClone(sim.weapon.profile);
+    const snap = sim.snapshot();
+    snap.weapon.mag = 3;
+    snap.weapon.reserve = 12;
+    snap.weapon.profile = { id: 'x', label: 'x', type: 'x', damage: 9999, range: 1e6, reload: { duration: 1 } };
+    snap.weapon.evil = true;
+    assert.equal(validateM02Snapshot(snap).valid, true, 'campos desconhecidos não impedem o restauro (saves v2 antigos)');
+    const target = new M02BenchSimulation(1, { storage: createMemoryStorage() });
+    target.restoreSnapshot(snap);
+    assert.deepEqual(target.weapon.profile, codeProfile, 'o perfil vem do código');
+    assert.equal('evil' in target.weapon, false);
+    assert.equal(target.weapon.mag, 3);
+    assert.equal(target.weapon.reserve, 12);
+  });
+
+  it('um portador que morre larga o volume no tick em que cai: os saves seguintes continuam válidos', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.enterAreaBC06();
+    assert.equal(sim.pickupSupplyVolume('vol_ammo', 'pl_malek'), true);
+    sim.tick(DT, {});
+    const malek = sim.allies.find((a) => a.id === 'pl_malek');
+    malek.alive = false;
+    malek.state = 'DOWN';
+    malek.health = 0;
+    sim.tick(DT, {});
+    const vol = sim.areaB.supplyCart.volumes.find((v) => v.id === 'vol_ammo');
+    assert.equal(vol.carriedBy, null);
+    assert.equal(vol.state, 'DROPPED_READY');
+    assert.equal(malek.carryingVolumeId, null);
+    assert.equal(vol.x, malek.x);
+    assert.ok(sim.combatLog.some((e) => e.type === 'supply_volume_dropped' && e.carrierId === 'pl_malek'));
+    sim.saveCheckpoint('cp_m02_manual');
+    assert.equal(sim.lastCheckpointPersist.ok, true, sim.lastCheckpointPersist.reason);
+    assert.equal(sim.pickupSupplyVolume('vol_ammo'), true, 'o volume largado pode ser recolhido');
+  });
+});

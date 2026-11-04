@@ -41,6 +41,7 @@ import {
   completeC12Epilogue as runCompleteC12Epilogue,
   exportCampaignResultToM03 as runExportCampaignResultToM03,
   syncAreaCWorldDamage,
+  dropVolumesOfFallenCarriers,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -70,6 +71,47 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
 
 const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELOAD_SINGLE']);
 const PLAYER_ID = 'piotr_sokol';
+
+// FIX-2b (PDF I4/I5): enums e relações que o restauro aceita. Valores tirados do código que os escreve.
+const ALLY_STATES = Object.freeze([
+  'ACTIVE',
+  'DOWN',
+  'DEAD',
+  'EVACUATED',
+  'LIAISON_OUTSIDE_CELL',
+  'WOUNDED_LIAISON',
+  'EVACUATED_B12',
+  'WALKING_SUPPORTED',
+  'MISSING',
+]);
+/** Estados possíveis de um aliado com alive=false: nenhum tem arma ativa («um ator morto não pode voltar a ser dono de arma ativa», I5). */
+const ALLY_INCAPACITATED_STATES = Object.freeze(['DOWN', 'DEAD', 'EVACUATED', 'MISSING']);
+const ENEMY_STATES = Object.freeze([
+  'HOLD_SECTOR',
+  'ENGAGE_VISIBLE',
+  'SEARCH_MEMORY',
+  'SHIFT_COVER',
+  'FALLBACK_COVER',
+  'ADVANCE_RESERVE',
+  'SURRENDERED',
+  'WOUNDED_UNARMED',
+  'DEAD',
+  'DOWN',
+]);
+/** I4 (p. 34): os três valores finais de m02.lis_status; antes da resolução a flag é nula ('active' é o nulo legado do código). */
+const LIS_FINAL_STATUSES = Object.freeze(['wounded_evacuated', 'wounded_walking', 'missing']);
+const LIS_PENDING_STATUSES = Object.freeze([null, 'active']);
+const CART_STATES = Object.freeze(['WAITING_CLEAR_CORRIDOR', 'MOVING', 'DELIVERED', 'IMMOBILIZED']);
+const VOLUME_STATES = Object.freeze(['ON_CART', 'CARRIED', 'DELIVERED', 'LOST', 'DROPPED_READY']);
+const OBJECTIVE_STATUSES = Object.freeze(['active', 'completed']);
+/** Campos de estado da arma que o save pode repor. O perfil (dano, alcance, recarga) vem sempre do código. */
+const WEAPON_STATE_FIELDS = Object.freeze(['mag', 'reserve', 'state', 'until', 'started', 'lastShot', 'shotCount', 'received', 'sight', 'reloadMode']);
+const WZ29_PROFILE_ID = new Wz29().profile.id;
+const WZ29_MAG_CAPACITY = 5;
+
+/** Vida finita em [0, maxHealth]. */
+const healthInRange = (a) =>
+  typeof a.health === 'number' && typeof a.maxHealth === 'number' && a.maxHealth > 0 && a.health >= 0 && a.health <= a.maxHealth;
 
 const isPlainObject = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 const isUint32 = (v) => Number.isInteger(v) && v >= 0 && v <= 0xffffffff;
@@ -171,10 +213,20 @@ export function validateM02Snapshot(snap) {
   if (
     !isPlainObject(w) ||
     !isNonNegativeInteger(w.mag) ||
+    w.mag > WZ29_MAG_CAPACITY ||
     !isNonNegativeInteger(w.reserve) ||
     !WEAPON_STATES.includes(w.state)
   ) {
     return { valid: false, reason: 'Estado de munição da arma inválido no snapshot.' };
+  }
+  if (w.id !== WZ29_PROFILE_ID) {
+    return { valid: false, reason: `Arma do jogador desconhecida no snapshot: ${w.id}` };
+  }
+  if (
+    ['until', 'started', 'lastShot', 'shotCount', 'received', 'sight'].some((k) => typeof w[k] !== 'number') ||
+    ![null, 'clip', 'single'].includes(w.reloadMode)
+  ) {
+    return { valid: false, reason: 'Estado de ciclo/recarga da arma inválido no snapshot.' };
   }
   if (!isNonNegativeInteger(snap.grenadeAmmo)) {
     return { valid: false, reason: 'Contagem de granadas inválida no snapshot.' };
@@ -208,8 +260,18 @@ export function validateM02Snapshot(snap) {
       }
       if (actorIds.has(a.id)) return { valid: false, reason: `ID de ator duplicado no snapshot: ${a.id}` };
       actorIds.add(a.id);
+      const states = label === 'Aliado' ? ALLY_STATES : ENEMY_STATES;
+      if (!states.includes(a.state)) return { valid: false, reason: `Estado de ${label.toLowerCase()} inválido: ${a.id}=${a.state}` };
+      if (typeof a.alive !== 'boolean') return { valid: false, reason: `${label} sem estado vivo/morto: ${a.id}` };
+      if (!healthInRange(a)) {
+        return { valid: false, reason: `Vida fora de [0, máx.] para ${a.id}: ${a.health}/${a.maxHealth}` };
+      }
+      if (label === 'Aliado' && !a.alive && !ALLY_INCAPACITATED_STATES.includes(a.state)) {
+        return { valid: false, reason: `Aliado morto com arma ativa no snapshot: ${a.id} (${a.state})` };
+      }
     }
   }
+  const aliveById = new Map([[PLAYER_ID, p.alive !== false], ...snap.allies.map((a) => [a.id, a.alive])]);
   if (!Array.isArray(snap.targets)) return { valid: false, reason: 'Lista de alvos de calibração inválida.' };
 
   for (const key of ['mgState', 'routeProgress', 'objective', 'squadOrder', 'dialogue', 'audiovisual', 'supplies']) {
@@ -226,6 +288,15 @@ export function validateM02Snapshot(snap) {
   }
   if (![null, 'ditch', 'orchard'].includes(snap.flags['m02.axis'] ?? null)) {
     return { valid: false, reason: `Valor inválido para m02.axis: ${snap.flags['m02.axis']}` };
+  }
+  const lisStatus = snap.flags['m02.lis_status'] ?? null;
+  const lisAllowed = snap.areaC.c12Completed ? LIS_FINAL_STATUSES : [...LIS_PENDING_STATUSES, ...LIS_FINAL_STATUSES];
+  if (!lisAllowed.includes(lisStatus)) {
+    return { valid: false, reason: `Valor inválido para m02.lis_status: ${lisStatus}` };
+  }
+  const objective = snap.objective;
+  if (typeof objective.id !== 'string' || !objective.id || !OBJECTIVE_STATUSES.includes(objective.status)) {
+    return { valid: false, reason: `Objetivo inválido no snapshot: ${objective.id}/${objective.status}` };
   }
   for (const key of ['transitionIdsApplied', 'checkpointsReached']) {
     const list = snap[key];
@@ -262,10 +333,13 @@ export function validateM02Snapshot(snap) {
     }
   }
 
-  const volumes = snap.areaB.supplyCart?.volumes;
+  const cart = snap.areaB.supplyCart;
+  if (cart !== undefined && (!isPlainObject(cart) || !CART_STATES.includes(cart.state))) {
+    return { valid: false, reason: `Estado da carroça inválido no snapshot: ${cart?.state}` };
+  }
+  const volumes = cart?.volumes;
   if (volumes !== undefined) {
     if (!Array.isArray(volumes)) return { valid: false, reason: 'Volumes da carroça inválidos no snapshot.' };
-    const carriers = new Set([PLAYER_ID, ...snap.allies.map((a) => a.id)]);
     const volumeIds = new Set();
     const seenCarriers = new Set();
     for (const vol of volumes) {
@@ -273,6 +347,9 @@ export function validateM02Snapshot(snap) {
         return { valid: false, reason: 'Volume da carroça inválido no snapshot.' };
       }
       volumeIds.add(vol.id);
+      if (!VOLUME_STATES.includes(vol.state)) {
+        return { valid: false, reason: `Estado do volume ${vol.id} inválido: ${vol.state}` };
+      }
       if (vol.carriedBy) {
         if (vol.carriedBy === vol.id) {
           return { valid: false, reason: `Referência circular carriedBy em ${vol.id}.` };
@@ -280,8 +357,11 @@ export function validateM02Snapshot(snap) {
         if (seenCarriers.has(vol.carriedBy)) {
           return { valid: false, reason: `Portador duplicado (${vol.carriedBy}) para múltiplos volumes.` };
         }
-        if (!carriers.has(vol.carriedBy)) {
+        if (!aliveById.has(vol.carriedBy)) {
           return { valid: false, reason: `Portador inexistente (${vol.carriedBy}) para ${vol.id}.` };
+        }
+        if (!aliveById.get(vol.carriedBy)) {
+          return { valid: false, reason: `Portador morto (${vol.carriedBy}) para ${vol.id}.` };
         }
         seenCarriers.add(vol.carriedBy);
       }
@@ -289,6 +369,10 @@ export function validateM02Snapshot(snap) {
     const carried = volumes.find((v) => v.carriedBy === PLAYER_ID)?.id ?? null;
     if ((p.carryingVolumeId ?? null) !== carried) {
       return { valid: false, reason: 'Volume transportado pelo jogador inconsistente com a carroça.' };
+    }
+    const incoherent = volumes.find((v) => (v.state === 'CARRIED') !== Boolean(v.carriedBy));
+    if (incoherent) {
+      return { valid: false, reason: `Volume ${incoherent.id} incoerente: estado ${incoherent.state} com carriedBy ${incoherent.carriedBy}.` };
     }
   } else if (p.carryingVolumeId) {
     return { valid: false, reason: 'Jogador transporta um volume sem carroça no snapshot.' };
@@ -1586,6 +1670,8 @@ export class M02BenchSimulation {
     } else {
       this.player.suppressed = Math.max(0, this.player.suppressed - dt * 0.25);
     }
+    // Quem caiu neste tick larga o volume que carregava: nenhum snapshot fica com carriedBy num ator morto (I5, FIX-2b).
+    dropVolumesOfFallenCarriers(this);
   }
 
   /**
@@ -1841,8 +1927,9 @@ export class M02BenchSimulation {
     this.navigator = new M01Navigator(this.world.navWorld).prewarm();
 
     this.player = p.player;
-    // `id` vem do perfil da arma (derivado); só o estado mutável volta ao objeto.
-    const { id: _weaponProfileId, ...weaponState } = p.weapon;
+    // Só os campos de estado da arma (lista branca) voltam ao objeto: o perfil (dano, alcance, recarga) e o `id` vêm do
+    // código, nunca do save — Wz29.restore faz Object.assign e aplicaria um `profile` injetado (FIX-2b).
+    const weaponState = Object.fromEntries(WEAPON_STATE_FIELDS.filter((k) => k in p.weapon).map((k) => [k, p.weapon[k]]));
     this.weapon.restore(weaponState);
     this.grenadeAmmo = p.grenadeAmmo;
     this.grenades = p.grenades;
