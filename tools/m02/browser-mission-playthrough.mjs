@@ -109,7 +109,9 @@ try{
   await page.evaluate(([x,y])=>window.dispatchEvent(new MouseEvent('mousemove',{movementX:x,movementY:y})),[(c.lookX??0)/.0024,(c.lookY??0)/.0022]);
   for(const [key,on] of [['KeyW',c.forward>0],['ShiftLeft',c.sprint],['KeyV',c.aim]])await hold(key,Boolean(on));
   for(const [key,on] of [['KeyC',c.crouch],['KeyE',c.interact],['KeyF',c.giveWater],['KeyR',c.reload],['Space',c.fire],['KeyG',c.grenade]])if(on)await page.keyboard.press(key);
-  await page.waitForFunction(clock=>window.m02Bench.sim.clock>clock,observed.clock,{timeout:60000});
+  // Completing C12 stops the simulation clock. A withdrawal input can enter
+  // the epilogue on this very tick, so either outcome releases the pilot.
+  await page.waitForFunction(clock=>window.m02Bench.sim.clock>clock||window.m02Bench.sim.areaC.c12Completed,observed.clock,{timeout:60000});
   if(iteration%100===0)fs.writeFileSync(`${out}/progress.json`,JSON.stringify({...report,last:observed},null,2));
  }
  for(const key of held)await page.keyboard.up(key);
