@@ -19,10 +19,10 @@ import {driver,route} from './helpers/m01-route.js';
 const ROOT=join(dirname(fileURLToPath(import.meta.url)),'..');
 const strip=s=>JSON.parse(JSON.stringify(s));
 
-test('the shipped switch is OFF and the act table is valid (current act first, two area acts after it: VII-a, then VII-b since INC-2)',()=>{
+test('the shipped switch is OFF and the act table is valid (current act first, three area acts after it: VII-a, then VII-b since INC-2, then VII-c since INC-3)',()=>{
   assert.equal(acts.enabled,false,'acts.json enabled=false until the owner accepts the new acts');
-  assert.equal(ACTS.enabled,false);assert.deepEqual(ACTS.order,['act_bw_0430_0705','act_vii_a_north','act_vii_b_north_day']);
-  assert.deepEqual(ACTS.order.map(id=>ACTS.entries[id].next),['act_vii_a_north','act_vii_b_north_day',null],'the chain ends at VII-b, where the debrief follows');
+  assert.equal(ACTS.enabled,false);assert.deepEqual(ACTS.order,['act_bw_0430_0705','act_vii_a_north','act_vii_b_north_day','act_vii_c_withdrawal']);
+  assert.deepEqual(ACTS.order.map(id=>ACTS.entries[id].next),['act_vii_a_north','act_vii_b_north_day','act_vii_c_withdrawal',null],'the chain ends at VII-c, where the debrief follows');
   assert.equal(definition.acts,undefined,'mission.json (an input pinned by the amendment 20 golden) carries no act block');
   assert.throws(()=>actsPlan({...acts,order:['act_vii_a_north']}),/must start with act_bw_0430_0705/);
   assert.throws(()=>actsPlan({...acts,entries:{...acts.entries,act_bw_0430_0705:{...acts.entries.act_bw_0430_0705,next:null}}}),/next must be act_vii_a_north/);
@@ -388,6 +388,8 @@ test('QA start: the switch on with startAct makes the area act directly (default
   assert.throws(()=>new M01ActRunner({enabled:true,startAct:'act_ix'}),/unknown start act/);
   const b=new M01ActRunner({enabled:true,startAct:'vii-b'}).createInitial({difficulty:'soldado'});   // INC-2: ?act=vii-b
   assert.ok(b instanceof M01AreaSimulation);assert.equal(actOf(b),'act_vii_b_north_day');assert.equal(b.difficulty,'soldado');assert.deepEqual(b.carry,defaultCarry('soldado'));assert.equal(b.scene.id,'cs_npb_entry');
+  const c=new M01ActRunner({enabled:true,startAct:'vii-c'}).createInitial({difficulty:'veterano'});   // INC-3: ?act=vii-c, which opens on the order's card
+  assert.ok(c instanceof M01AreaSimulation);assert.equal(actOf(c),'act_vii_c_withdrawal');assert.equal(c.difficulty,'veterano');assert.deepEqual(c.carry,defaultCarry('veterano'));assert.equal(c.scene.id,'cs_npc_order');
 });
 
 test('the act modules stay out of the renderer, the UI, the browser and the wall clock (the boundary of m01-simulation-boundary.test.js)',()=>{
@@ -395,7 +397,7 @@ test('the act modules stay out of the renderer, the UI, the browser and the wall
   const seen=new Set(),queue=['src/game/m01-acts.js','src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js'].map(f=>join(ROOT,f));
   while(queue.length){const file=queue.pop();if(seen.has(file))continue;seen.add(file);
     for(const m of readFileSync(file,'utf8').matchAll(IMPORT)){const spec=m[1]??m[2];if(spec.startsWith('.')){const t=resolve(dirname(file),spec);if(t.endsWith('.js'))queue.push(t);}else assert.fail(`${relative(ROOT,file)} imports ${spec}`);}}
-  const own=new Set(['src/game/m01-acts.js','src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js','src/game/m01-shell-blast.js','src/game/m01-unit-hash.js']);   // the current act's modules have their own boundary test (INC-2: the shell module and the hash are the new act's, and are checked here)
+  const own=new Set(['src/game/m01-acts.js','src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js','src/game/m01-shell-blast.js','src/game/m01-unit-hash.js','src/game/m01-withdrawal.js']);   // the current act's modules have their own boundary test (INC-2: the shell module and the hash are the new act's, INC-3: the withdrawal module; all are checked here)
   for(const file of seen){const rel=relative(ROOT,file).split(sep).join('/');assert.ok(!rel.startsWith('src/render/')&&!rel.startsWith('src/ui/'),rel);if(!own.has(rel))continue;
     const code=readFileSync(file,'utf8');for(const [re,what] of [[/(?<![.$\w])document\./,'DOM'],[/(?<![.$\w])window\./,'window'],[/\bMath\.random\b/,'Math.random'],[/\bDate\.now\b|\bperformance\.now\b/,'wall clock'],[/\blocalStorage\b/,'storage']])
       assert.doesNotMatch(code,re,`${rel}: ${what}`);}

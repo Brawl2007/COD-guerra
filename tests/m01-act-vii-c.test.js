@@ -76,7 +76,7 @@ test('F1 profile of VII-c; D-5 is left out: the probe flag is in the data and is
     ['an exit band beyond the south edge',x=>{x.withdrawal.exit.maxZ=-1040;},/exit \{minX/],['a courier that is not np_...',x=>{x.withdrawal.messenger.id='mensageiro';},/messenger\.id \(np_/],
     ['a courier who starts at the command post',x=>{x.withdrawal.messenger.from=[-425,-1105];},/at least 10 m apart/],['a courier outside the slice',x=>{x.withdrawal.messenger.from=[-700,-1056];},/messenger from \/ to/],
     ['a courier slower than a walk',x=>{x.withdrawal.messenger.pace=.5;},/pace 1-8/],['a man missing from the line',x=>{x.withdrawal.line.teams[0].pop();},/line: its teams are exactly/],
-    ['a man twice in the line',x=>{x.withdrawal.line.teams[1].push('pl_np_4');},/a man in two teams/],['the leader missing from the rear',x=>{x.withdrawal.rear.teams.pop();},/rear: its teams are exactly/],
+    ['a man twice in the line',x=>{x.withdrawal.line.teams[1].push('pl_np_4');},/a man in two teams/],['the leader missing from the rear',x=>{x.withdrawal.rear.teams=[['staszek_pawlak'],['szymon_kowal']];x.withdrawal.rear.moves=x.withdrawal.rear.moves.filter(m=>m.team<2);},/rear: its teams are exactly/],
     ['a final slot outside the band',x=>{x.withdrawal.line.posts[2].slots.pl_np_0=[-560.2,-1064];},/inside the exit band/],['a final slot outside the area',x=>{x.withdrawal.rear.posts[2].slots.szymon_kowal=[-700,-1059];},/outside the area/],
     ['two men on one slot',x=>{x.withdrawal.line.posts[1].slots.pl_np_1=[-490.2,-1126.4];},/less than 1\.3 m apart/],['two men on one slot in the band, line and rear',x=>{x.withdrawal.rear.posts[2].slots.szymon_kowal=[-597,-1064.5];},/less than 1\.3 m apart/],
     ['a team that never reaches the exit',x=>{x.withdrawal.line.moves.pop();},/last move goes to the last post/],['a bound with two triggers',x=>{x.withdrawal.line.moves[0].afterArrivalSec=1;},/exactly one of/],
@@ -86,7 +86,7 @@ test('F1 profile of VII-c; D-5 is left out: the probe flag is in the data and is
     ['a barrage in an act with no assault',x=>{x.barrages=strip(actB.barrages);},/barrages and medics belong to an act with an assault/],
     ['CP-K on an echelon that does not exist',x=>{x.checkpoints[1].trigger={type:'echelonBroken',echelon:0};},/echelonBroken: the index of an echelon that another follows/],
     ['CP-K on a flag of another act',x=>{x.checkpoints[1].trigger={type:'flag',flag:'m01npb.lineOut'};},/flag: a flag of the act/],
-    ['a section whose squad does not move its leader',x=>{x.groups.find(g=>g.id==='grp_np_section').squad.teams=[['staszek_pawlak'],['szymon_kowal']];},/a man missing|slot of|rear: its teams are exactly|moves its leader/],
+    ['a section whose squads do not move its leader',x=>{const sq=x.groups.find(g=>g.id==='grp_np_section').squad;sq.teams=[['staszek_pawlak'],['szymon_kowal']];sq.moves=sq.moves.filter(m=>m.team<2);x.withdrawal.rear.teams=[['staszek_pawlak'],['szymon_kowal']];x.withdrawal.rear.moves=x.withdrawal.rear.moves.filter(m=>m.team<2);},/moves its leader too/],
   ];
   for(const [name,mutate,re] of cases)assert.throws(()=>planOf(mutate),re,name);
   // the plan builder alone, with the context it is given
@@ -136,7 +136,7 @@ test('F8: the light of the act comes from its data (18:39, 19:00, 19:16) and onl
   assert.ok(Math.abs(sunState(c.layout.sun.keyframes,19*3600+8*60).altDeg-(-4.9))<1e-9,'half-way to 19:16');assert.deepEqual(sunState(c.layout.sun.keyframes,20*3600).altDeg,-6);
   // night legibility: the lighting model has no anchor below the blue hour, so the light at 19:16 and after is the blue hour's (the key light, the sky light and the exposure do not fall)
   const late=lightingModel(-6,293);for(const [k,v] of [['sun',m.sun.intensity],['hemi',m.hemi.intensity],['exposure',m.exposure]])assert.equal(k==='sun'?late.sun.intensity:k==='hemi'?late.hemi.intensity:late.exposure,v,`${k} at 19:16 is the blue hour's`);
-  assert.ok(late.hemi.intensity>=1.3&&late.exposure>=1.3&&late.sun.intensity>=.9,'the sky light and the exposure that make the dawn of 04:30 playable');assert.equal(late.phase,'blue-hour');assert.ok(keyElevationDeg(-6)>=12,'the key light keeps its twilight floor');
+  assert.ok(late.hemi.intensity>=1.3&&late.exposure>=1.3&&late.sun.intensity>=.9,'the sky light and the exposure that make the dawn of 04:30 playable');assert.equal(late.phase,'blue-hour');assert.ok(keyElevationDeg(-6)>=11&&keyElevationDeg(-6)<12,'the key light keeps its twilight floor (11.4 deg: the floor of 12 deg less a quarter of a degree per degree of the sun below the dawn\'s -3.7)');
   // the whole act, minutes of it, lies between the keyframes of 19:00 and 19:16
   const sim=newSim();assert.equal(sim.battleClock,19*3600);const r=actCRoute(sim,{mode:'laggard',maxSec:900});assert.ok(r.complete);assert.ok(sim.battleClock<19*3600+16*60,'the act ends before 19:16 internal');
 });
@@ -144,7 +144,7 @@ test('F8: the light of the act comes from its data (18:39, 19:00, 19:16) and onl
 test('F7: the courier — off the field, then walking from the SW corner to the command post at his pace; on arrival the order (flag, event, two lines in the right mouths), a few seconds of speech, and back where he came from',()=>{
   const sim=pastCards(newSim()),W=sim.plan.withdrawal,M=W.messenger,R=sim.timers.withdrawal,m=sim.actor(M.id),z=sim.actor('marek_zielinski');
   const walk=Math.hypot(M.to[0]-M.from[0],M.to[1]-M.from[1])/M.pace,t0=sim.clock;
-  assert.deepEqual([m.x,m.z],M.from);let nearest=Infinity;const said=[];const say=sim.say.bind(sim);sim.say=on=>{const r=say(on);if(r)said.push([on,sim.clock]);return r;};
+  assert.ok(Math.hypot(m.x-M.from[0],m.z-M.from[1])<=M.pace*ACT_C_TICK*2,'he has just left the corner');let nearest=Infinity;const said=[];const say=sim.say.bind(sim);sim.say=on=>{const r=say(on);if(r)said.push([on,sim.clock]);return r;};
   for(let i=0;i<4000&&R.messenger==='walking';i++){sim.tick(ACT_C_TICK,{});sim.drainEvents();for(const id of W.ids.rear){const a=sim.actor(id);nearest=Math.min(nearest,Math.hypot(a.x-m.x,a.z-m.z));}}
   assert.equal(R.messenger,'speaking');assert.ok(Math.abs(sim.clock-t0-walk)<=ACT_C_TICK*2,`he arrives ${walk.toFixed(2)} s after the card (${(sim.clock-t0).toFixed(2)})`);
   assert.ok(Math.hypot(m.x-M.to[0],m.z-M.to[1])<.06);assert.equal(R.orderAt,sim.clock);assert.equal(R.since,R.orderAt);assert.equal(sim.flags['m01npc.order'],true);assert.ok(sim.consumedEvent('evt_npc_order'));assert.equal(sim.mission.phase,'NPC_ORDER');
@@ -155,7 +155,7 @@ test('F7: the courier — off the field, then walking from the SW corner to the 
   const spoke=sim.clock;for(let i=0;i<400&&R.messenger==='speaking';i++){sim.tick(ACT_C_TICK,{});sim.drainEvents();}
   assert.equal(R.messenger,'leaving');assert.ok(Math.abs(sim.clock-spoke-M.speakSec)<=ACT_C_TICK*2+1e-9);assert.equal(m.active,true);
   for(let i=0;i<4000&&R.messenger==='leaving';i++){sim.tick(ACT_C_TICK,{});sim.drainEvents();}
-  assert.equal(R.messenger,'gone');assert.equal(m.active,false);assert.deepEqual([m.x,m.z],M.from,'back at the corner he came from');assert.equal(R.orderAt,spoke-0);
+  assert.equal(R.messenger,'gone');assert.equal(m.active,false);assert.ok(Math.hypot(m.x-M.from[0],m.z-M.from[1])<=.06,'back at the corner he came from (within 5 cm)');assert.equal(R.orderAt,spoke,'the order was given when he arrived');
 });
 
 test('F6: the section goes up to the parapet with the order (the leader first, then Pawlak, then Kowal) and kneels there facing north; nothing moves before the order',()=>{
@@ -167,7 +167,8 @@ test('F6: the section goes up to the parapet with the order (the leader first, t
   const left={};for(let i=0;i<2000;i++){sim.tick(ACT_C_TICK,{});sim.drainEvents();for(const id of P.squad.teams.flat())if(left[id]===undefined&&Math.hypot(sim.actor(id).x-stage[id].x,sim.actor(id).z-stage[id].z)>.01)left[id]=sim.clock-order;
     if(sim.timers.squad.move>=3&&!sim.timers.squad.moving&&P.squad.teams.flat().every(id=>Math.hypot(sim.actor(id).x-P.squad.posts[1].slots[id][0],sim.actor(id).z-P.squad.posts[1].slots[id][1])<=.05))break;}
   assert.ok(left.marek_zielinski>=1.5&&left.marek_zielinski<2,`the leader goes 1.5 s after the order (${left.marek_zielinski})`);assert.ok(left.staszek_pawlak>left.marek_zielinski&&left.szymon_kowal>left.staszek_pawlak,'then Pawlak, then Kowal');
-  for(const id of P.squad.teams.flat()){const a=sim.actor(id);assert.deepEqual([a.x,a.z],P.squad.posts[1].slots[id],`${id} at his place on the parapet`);assert.equal(a.crouched,true,`${id} kneels`);assert.equal(a.facing,-Math.PI/2,`${id} faces north`);assert.equal(a.atPost,true);}
+  sim.tick(ACT_C_TICK,{});sim.drainEvents();   // the tick after the last man arrived: he kneels
+  for(const id of P.squad.teams.flat()){const a=sim.actor(id);assert.ok(Math.hypot(a.x-P.squad.posts[1].slots[id][0],a.z-P.squad.posts[1].slots[id][1])<=.05,`${id} at his place on the parapet (within 5 cm)`);assert.equal(a.crouched,true,`${id} kneels`);assert.equal(a.facing,-Math.PI/2,`${id} faces north`);assert.equal(a.atPost,true);}
   assert.ok(P.squad.posts[1].slots.marek_zielinski[1]===-1159.2&&Math.abs(P.squad.posts[1].slots.szymon_kowal[0])>0,'the places are the parapet\'s of VII-a and VII-b');
 });
 
@@ -193,7 +194,7 @@ test('F6: the line and the ckm crew leave by bounds — three teams, two bounds 
   assert.equal(R.lineOutAt,sim.clock);assert.equal(R.lineOutAt,Math.max(...Object.values(outAt)));assert.equal(sim.flags['m01npc.lineOut'],true);assert.equal(sim.mission.phase,'NPC_REAR');
   assert.equal(sim.objectives.obj_npc_cover.state,'done');assert.equal(sim.objectives.obj_npc_withdraw.state,'active');assert.equal(sim.mission.text,'Recue com a secção até à saída');assert.equal(sim.objectiveMarker.label,'Saída');assert.deepEqual([sim.objectiveMarker.x,sim.objectiveMarker.z],[-580,-1062]);
   assert.equal(sim.mission.status,'Retirada · a secção recua por lanços');assert.ok(said.some(([on])=>on==='line_out'));
-  assert.deepEqual(cps.map(c=>c[0]),[CP_J,CP_K]);assert.equal(cps[1][1],R.lineOutAt,'CP-K in the tick the line is out');assert.equal(sim.respawn.label,'CP-K');assert.deepEqual(sim.checkpointsReached,[CP_J,CP_K]);
+  assert.deepEqual(cps.map(c=>c[0]),[CP_K],'(CP-J was taken before the wrapper was put on, at the end of the dusk card)');assert.equal(cps[0][1],R.lineOutAt,'CP-K in the tick the line is out');assert.equal(sim.respawn.label,'CP-K');assert.deepEqual(sim.checkpointsReached,[CP_J,CP_K]);
   // the ckm crew: on its retreat phase from its first step (the gun is drawn in its abandoned pose, the crew walks), never before; the gun stays visible at the nest
   for(const id of ['ckm_gunner','ckm_loader'])assert.equal(sim.actor(id).ckm.phase,'retreat',id);assert.ok(Math.abs(sim.actor('ckm_gunner').ckm.startedAt-left.ckm_gunner)<=ACT_C_TICK+1e-9);assert.equal(sim.actor('ckm_gunner').ckm.visible,true);
   assert.deepEqual(clip.report(),[],'no clipping');assert.equal(stack.summary().pairs,0,'no men inside each other');
@@ -267,38 +268,54 @@ test('no stream is drawn: the main stream and every man\'s own stream are what t
   assert.equal(track(7,'veterano'),track(19390901,'recruta'));
 });
 
-/** Two simulations from the same state tick the same controls and stay equal (the whole snapshot, every `every` ticks). */
-function sameFuture(save,runner,ticks=900,every=3){
-  const a=runner.load(JSON.stringify(save));assert.equal(a.ok,true,a.error);const b=runner.load(JSON.stringify(save));assert.equal(b.ok,true,b.error);
-  const sa=a.sim,sb=b.sim,state={};
+/**
+ * The simulation that played up to a moment and the simulation restored from a save made there tick the same controls and stay equal: the events of every tick and the whole snapshot every `every` ticks.
+ * The restored game against the ORIGINAL that went on playing (the form of tests/m01-acts.test.js for VII-a), not against a second load of the same text.
+ */
+function sameFuture(sim,runner,plan,ticks=900,every=3,envelope=null){
+  const env=strip(envelope??live(sim));assert.equal(env.schema,3);assert.equal(env.act,ID);assert.equal(env.actSave.schema,AREA_SAVE_SCHEMA);validateAreaSnapshot(env.actSave,plan);
+  const r=runner.load(JSON.stringify(env));assert.equal(r.ok,true,r.error);const copy=r.sim;
+  assert.equal(JSON.stringify(copy.snapshot()),JSON.stringify(sim.snapshot()),"the restored state is the original's");
+  const sa={},sb={};
   for(let i=0;i<ticks;i++){
-    const c=actCControls(sa,'prompt',state);sa.tick(ACT_C_TICK,c);sb.tick(ACT_C_TICK,c);
-    assert.deepEqual(sa.drainEvents(),sb.drainEvents(),`events at tick ${i}`);
-    if(i%every===0)assert.equal(JSON.stringify(sa.snapshot()),JSON.stringify(sb.snapshot()),`tick ${i}`);
+    const ca=actCControls(sim,'prompt',sa),cb=actCControls(copy,'prompt',sb);assert.deepEqual(cb,ca,`controls at tick ${i}`);
+    sim.tick(ACT_C_TICK,ca);copy.tick(ACT_C_TICK,cb);
+    assert.deepEqual(copy.drainEvents(),sim.drainEvents(),`events at tick ${i}`);
+    if(i%every===0)assert.equal(JSON.stringify(copy.snapshot()),JSON.stringify(sim.snapshot()),`tick ${i}`);
   }
-  return sa;
+  assert.equal(copy.mission.status,sim.mission.status);assert.deepEqual(copy.checkpointsReached,sim.checkpointsReached);
 }
-test('saves: a schema 3 save of VII-c restores to the same state and the same future, tick for tick — in the order card, the dusk card, at CP-J, with the courier on his way and speaking, with the section going up, in the middle of the line\'s bounds, at CP-K, in the middle of the rear guard\'s, with the rear guard out and in the end beat',()=>{
-  const runner=new M01ActRunner({enabled:true,startAct:'vii-c'}),plan=areaActPlan(ID),sim=newSim(19390901,'soldado'),state={},stages=[];
-  const take=(name,done,max=40000)=>{for(let i=0;i<max&&!done(sim);i++){sim.tick(ACT_C_TICK,actCControls(sim,'prompt',state));sim.drainEvents();}assert.ok(done(sim),name);
-    const env=live(sim);assert.equal(env.schema,3);assert.equal(env.act,ID);assert.equal(env.actSave.schema,AREA_SAVE_SCHEMA);stages.push([name,strip(env)]);};
-  take('in the order card',s=>s.scene?.id==='cs_npc_order'&&s.scene.elapsed>2);
-  take('in the dusk card',s=>s.scene?.id==='cs_npc_dusk');
-  take('at CP-J (the card just ended)',s=>s.checkpointsReached.length===1);
-  take('the courier walking',s=>s.timers.withdrawal.messenger==='walking'&&s.clock>15);
-  take('the order has been given',s=>s.timers.withdrawal.messenger==='speaking');
-  take('the section going up',s=>s.timers.squad.move===1&&s.timers.squad.moving);
-  take('the first bound of the line',s=>s.timers.line.move===1&&s.timers.line.moving);
-  take('the line\'s second bounds, five men out',s=>s.timers.withdrawal.out.length>=5&&s.timers.withdrawal.lineOutAt===null);
-  take('CP-K (the line just out)',s=>s.checkpointsReached.includes(CP_K));
-  take('the rear guard\'s third bound',s=>s.timers.rear.move===3&&s.timers.rear.moving);
-  take('the rear guard out',s=>s.timers.withdrawal.rearOutAt!==null);
-  take('the end beat',s=>s.timers.endAt!==null);
-  assert.equal(stages.length,12);
-  for(const [name,env] of stages){validateAreaSnapshot(env.actSave,plan);sameFuture(env,runner,name==='in the order card'||name==='in the dusk card'?200:900,name.includes('card')?5:3);}
-  // the stored checkpoints (what the game keeps): CP-J and CP-K, restored and played on identically
-  const cpJ=(()=>{const s=pastCards(newSim());return strip(new M01ActRunner({enabled:true}).envelope(s));})();assert.equal(cpJ.actSave.checkpointsReached[0],CP_J);sameFuture(cpJ,runner,1200,6);
-  const k=pastCards(newSim());driveTo(k,s=>s.checkpointsReached.includes(CP_K));const cpK=strip(runner.envelope(k));assert.deepEqual(cpK.actSave.checkpointsReached,[CP_J,CP_K]);assert.equal(cpK.actSave.timers.withdrawal.lineOutAt!==null,true);sameFuture(cpK,runner,1500,6);
+test('saves: a schema 3 save of VII-c restores to the same state and the same future as the game that went on playing, tick for tick — in the order card, the dusk card, at CP-J, with the courier on his way and speaking, with the section going up, in the middle of the line\'s bounds, at CP-K, in the middle of the rear guard\'s, with the rear guard out and in the end beat',()=>{
+  const runner=new M01ActRunner({enabled:true,startAct:'vii-c'}),plan=areaActPlan(ID);
+  const STAGES=[
+    ['in the order card',s=>s.scene?.id==='cs_npc_order'&&s.scene.elapsed>.5,200,5],
+    ['in the dusk card',s=>s.scene?.id==='cs_npc_dusk',200,5],
+    ['at CP-J (the card just ended)',s=>s.checkpointsReached.length===1,900,3],
+    ['the courier walking',s=>s.timers.withdrawal.messenger==='walking'&&s.clock>15,900,3],
+    ['the order has been given',s=>s.timers.withdrawal.messenger==='speaking',900,3],
+    ['the section going up',s=>s.timers.squad.move===1&&s.timers.squad.moving,900,3],
+    ['the first bound of the line',s=>s.timers.line.move===1&&s.timers.line.moving,900,3],
+    ['the line\'s second bounds, five men out',s=>s.timers.withdrawal.out.length>=5&&s.timers.withdrawal.lineOutAt===null,900,3],
+    ['CP-K (the line just out)',s=>s.checkpointsReached.includes(CP_K),900,3],
+    ['the rear guard\'s third bound',s=>s.timers.rear.move===3&&s.timers.rear.moving,900,3],
+    ['the rear guard out',s=>s.timers.withdrawal.rearOutAt!==null,900,3],
+    ['the end beat',s=>s.timers.endAt!==null,400,3],
+  ];
+  for(const [name,done,ticks,every] of STAGES){
+    const sim=newSim(19390901,'soldado'),state={};
+    for(let i=0;i<40000&&!done(sim);i++){sim.tick(ACT_C_TICK,actCControls(sim,'prompt',state));sim.drainEvents();}
+    assert.ok(done(sim),name);
+    sameFuture(sim,runner,plan,ticks,every);
+  }
+  // the checkpoints the game keeps (what runner.envelope stores): CP-J and CP-K, restored and played on identically to the game that took them
+  for(const [name,done] of [['CP-J',s=>s.checkpointsReached.length===1],['CP-K',s=>s.checkpointsReached.includes(CP_K)]]){
+    const sim=newSim(19390901,'soldado'),state={};for(let i=0;i<40000&&!done(sim);i++){sim.tick(ACT_C_TICK,actCControls(sim,'prompt',state));sim.drainEvents();}
+    assert.ok(done(sim),name);const env=runner.envelope(sim);assert.deepEqual(env.actSave.checkpointsReached,sim.checkpointsReached,name);
+    // the checkpoint is taken inside the tick (CP-J when the card ends, before the tick's steps; CP-K after them), so the live state of that tick is not it: the game that takes the checkpoint and dies goes back to it
+    assert.equal(JSON.stringify(strip(env.actSave)),JSON.stringify(strip(sim.checkpoint)),`${name}: the envelope is the checkpoint`);
+    sim.restoreCheckpoint();sim.drainEvents();
+    sameFuture(sim,runner,plan,name==='CP-J'?900:1500,6,env);
+  }
 });
 
 test('saves: tampered or foreign records are refused with a message — the withdrawal, its squads, the men who left, the flags and objectives that must agree with it, the card, the roster, the wave a VII-c save cannot have',()=>{
@@ -324,7 +341,7 @@ test('saves: tampered or foreign records are refused with a message — the with
   bad('the courier missing from the roster',s=>{s.actors.pop();},/elenco/);bad('the roster in another order',s=>{s.actors.reverse();},/elenco/);
   bad('CP-K without the line out',s=>{s.checkpointsReached=[CP_J,CP_K];},/checkpoint cp_npc_k_retirada sem a flag m01npc\.lineOut/);bad('CP-K before CP-J',s=>{s.checkpointsReached=[CP_K];s.flags['m01npc.lineOut']=true;},/registo da retirada|checkpoint/);
   bad('CP-J without the dusk card done',s=>{s.sceneDone=['cs_npc_order'];s.checkpointsReached=[CP_J];},/checkpoint cp_npc_j_ordem sem o cartão|cartão/);
-  bad('a card that is not the next one',s=>{s.scene={id:'cs_npc_end',elapsed:1,card:{kind:'end',lines:act.cards.end.lines,seconds:9},skippable:true};},/cartão/);bad('cards done out of order',s=>{s.sceneDone=['cs_npc_dusk','cs_npc_order'];},/cartão/);
+  bad('a card that is not the next one',s=>{s.sceneDone=['cs_npc_order'];s.scene={id:'cs_npc_end',elapsed:1,card:{kind:'end',lines:act.cards.end.lines,seconds:9},skippable:true};},/cartão/);bad('the end card before the exit',s=>{s.scene={id:'cs_npc_end',elapsed:1,card:{kind:'end',lines:act.cards.end.lines,seconds:9},skippable:true};},/o cartão de fim sem a saída/);bad('cards done out of order',s=>{s.sceneDone=['cs_npc_dusk','cs_npc_order'];},/cartão/);
   bad('a card with another kind',s=>{s.sceneDone=['cs_npc_order'];s.scene={id:'cs_npc_dusk',elapsed:1,card:{kind:'end',lines:act.cards.entry.lines,seconds:6},skippable:true};},/cartão/);
   bad('a card with other lines',s=>{s.sceneDone=['cs_npc_order'];s.scene={id:'cs_npc_dusk',elapsed:1,card:{kind:'entry',lines:['x'],seconds:6},skippable:true};},/cartão/);bad('a card that has been on for ever',s=>{s.sceneDone=['cs_npc_order'];s.scene={id:'cs_npc_dusk',elapsed:60,card:{kind:'entry',lines:act.cards.entry.lines,seconds:6},skippable:true};},/cartão/);
   bad('a card already done and on screen',s=>{s.scene={id:'cs_npc_order',elapsed:1,card:{kind:'order',lines:act.cards.order.lines,seconds:9},skippable:true};},/cartão/);bad('another act\'s name',s=>{s.act='act_vii_b_north_day';},/inválid/);

@@ -1147,6 +1147,7 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
     for(const id of plan.medics.ids)if(byId.get(id).active===(R.state==='idle'))reject('registo dos maqueiros (maqueiro no campo ou fora dele contra o registo)');
     if(R.state!=='idle'&&R.patient!==null&&!byId.get(R.patient))reject('registo dos maqueiros (doente)');
   }
+  if(!validScene(plan,s.scene,s.sceneDone))reject('cartão');   // the card on screen and the cards done (INC-3: the order's card is one of them)
   // INC-3: the withdrawal's record, its two squads and the flags and objectives that must agree with it are required when the plan has a withdrawal and refused when it has not.
   if(Boolean(plan.withdrawal)!==(s.timers?.withdrawal!==undefined))reject('registo da retirada (exigido pelos atos que a têm, recusado nos outros)');
   if(plan.withdrawal){
@@ -1154,10 +1155,13 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
     if(!validWithdrawalRecord(plan.withdrawal,R,s.clock,s.actors))reject('registo da retirada');
     if(!validWithdrawalSquads(plan.withdrawal,s.timers,s.clock))reject('registo dos lanços da retirada');
     for(const [name,at] of [['order',R.orderAt],['lineOut',R.lineOutAt],['exited',R.exitedAt]])if(Boolean(s.flags?.[F(name)])!==(at!==null))reject(`registo da retirada (a flag ${name} e o registo discordam)`);
+    if((s.scene?.id===A.endCard||s.sceneDone.includes(A.endCard))&&R.exitedAt===null)reject('registo da retirada (o cartão de fim sem a saída)');
     if((R.lineOutAt!==null)!==(O[A.arrivalObjective].state==='done')||(R.lineOutAt===null)!==(O[A.holdObjective].state==='locked')||(R.exitedAt!==null)!==(O[A.holdObjective].state==='done'))reject('registo da retirada (os objetivos e o registo discordam)');
   }else if(s.timers?.line!==undefined||s.timers?.rear!==undefined)reject('registo dos lanços da retirada (recusado nos atos sem retirada)');
-  if(!validScene(plan,s.scene,s.sceneDone))reject('cartão');
   for(const t of plan.triggers)if(t.type==='echelonBroken'&&s.checkpointsReached.includes(t.id)&&!Number.isFinite(s.timers?.wave?.echs?.[t.echelon]?.brokenAt))reject(`checkpoint ${t.id} sem a quebra da vaga ${t.echelon}`);
+  // INC-3: a checkpoint taken by a flag exists only once the flag is true, and the arrival's only once the entry card has ended.
+  for(const t of plan.triggers)if(t.type==='flag'&&s.checkpointsReached.includes(t.id)&&!s.flags?.[t.flag])reject(`checkpoint ${t.id} sem a flag ${t.flag}`);
+  if(s.checkpointsReached.includes(plan.profile.arrivalCheckpoint)&&!s.sceneDone.includes(plan.profile.entryCard))reject(`checkpoint ${plan.profile.arrivalCheckpoint} sem o cartão ${plan.profile.entryCard}`);
   if(p.concussion!==undefined||p.concussedUntil!==undefined){
     if(!(Number.isFinite(p.concussion)&&p.concussion>0&&p.concussion<=1)||!Number.isFinite(p.concussedUntil)||p.concussedUntil>s.clock+CONCUSSION.maxSec+1e-6)reject('atordoamento do jogador');
   }

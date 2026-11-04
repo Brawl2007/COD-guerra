@@ -372,7 +372,7 @@ test('saves: tampered or foreign records are refused with a message — the barr
   assert.equal(good.actSave.player.concussion===undefined||good.actSave.player.concussion>0,true);
 });
 
-test('F2: the chain BW -> VII-a -> VII-b: carry keeps the BW events and the flags of VII-a (m01np*), the seed is derived without drawing, the debrief of VII-b has both area paragraphs in order, and the debrief follows VII-b',()=>{
+test('F2: the chain BW -> VII-a -> VII-b: carry keeps the BW events and the flags of VII-a (m01np*), the seed is derived without drawing, the debrief of VII-b has both area paragraphs in order, and VII-b hands over to VII-c (INC-3)',()=>{
   const runner=new M01ActRunner({enabled:true}),a=new M01AreaSimulation(19390901,{difficulty:'soldado',carry:{...defaultCarry('soldado'),events:['evt_m01_east_demolition','evt_m01_west_demolition']}}),r=actRoute(a,{mode:'passive',maxSec:700});
   assert.equal(r.complete,true);assert.equal(a.flags['m01np.completed'],true);assert.equal(a.flags['m01np.wave'],'repelled');
   const before=JSON.stringify(a.snapshot());
@@ -391,10 +391,10 @@ test('F2: the chain BW -> VII-a -> VII-b: carry keeps the BW events and the flag
   assert.deepEqual(q.definition.debrief.paragraphs.map(p=>p.id).slice(0,5),['db_01','db_02','db_03','db_npb_01','db_04']);
   assert.deepEqual(debriefChain('act_vii_a_north',defaultCarry()).map(x=>x.paragraphs[0].id),['db_np_01']);assert.deepEqual(debriefChain(ID,carry).map(x=>x.paragraphs[0].id),['db_np_01','db_npb_01']);
   assert.equal(debriefWith(...debriefChain(ID,carry)).length,definition.debrief.paragraphs.length+2);
-  // a stored envelope of VII-b opens through the runner; the chain ends here: the debrief follows VII-b
+  // a stored envelope of VII-b opens through the runner; since INC-3 the chain goes on: VII-b hands over to VII-c (the debrief follows VII-c; tests/m01-act-vii-c.test.js)
   const env=runner.envelope(b);assert.equal(runner.load(JSON.stringify(env)).ok,true);
-  b.mission.complete=true;assert.equal(runner.next(b),null,'no act after VII-b yet: the debrief');
-  assert.equal(runner.enter(b),null,'and there is nothing to enter');
+  assert.equal(runner.next(b),null,'while VII-b is being played there is no next act');b.mission.complete=true;assert.equal(runner.next(b),'act_vii_c_withdrawal','VII-b hands over to VII-c');
+  const c=runner.enter(b);assert.equal(actOf(c),'act_vii_c_withdrawal');assert.equal(c.scene.id,'cs_npc_order');
 });
 
 test('F9: nothing on screen of VII-b gives an exact hour, a count of attacks, an ordinal, a calibre, an insignia or the name of a historical officer; its cards say what is documented and what is reconstruction',()=>{
