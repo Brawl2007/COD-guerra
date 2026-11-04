@@ -25,6 +25,8 @@ import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 const ID='act_vii_b_north_day',strip=s=>JSON.parse(JSON.stringify(s));
 const newSim=(seed=19390901,difficulty='soldado')=>new M01AreaSimulation(seed,{difficulty,actId:ID});
 const BAND=act.barrages[0].band;
+/** A save made at this very moment (the live snapshot, with the checkpoint it resumes inside it), in the schema 3 envelope: what the browser spec stores. runner.envelope(sim) is the last CHECKPOINT. */
+const live=sim=>({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
 
 /** Past the entry card, at the west post with a full reserve: the resupply objective is done, barrage 1 has begun (its first shell is in the air). The caller may then move the player. */
 function atWestPost(sim){
@@ -44,7 +46,7 @@ test('the data of VII-b: a valid plan of two attacks, two barrages, two stretche
   assert.ok(plan.assault.echelons[1].lullSec>=20&&plan.assault.echelons[1].lullSec<=30,'a short pause: 30 s at most');
   assert.equal(act.events.find(e=>e.id==='evt_npb_wave_2').trigger.lullSec,plan.assault.echelons[1].lullSec,'the event that documents the pause says the pause the data has');
   assert.equal(plan.waveAt,null);assert.deepEqual(plan.waveTrigger,{type:'barrageEnd',barrage:'brg_npb_1',afterSec:6});
-  assert.deepEqual(plan.barrages.barrages.map(b=>[b.id,b.impacts,b.durationSec,b.warnSec,b.spec]),[['brg_npb_1',10,40,1.5,'SHELL_BLAST'],['brg_npb_2',6,20,1.5,'SHELL_BLAST']]);
+  assert.deepEqual(plan.barrages.barrages.map(b=>[b.id,b.impacts,b.durationSec,b.warnSec,b.spec]),[['brg_npb_1',12,46,1.5,'SHELL_BLAST'],['brg_npb_2',6,20,1.5,'SHELL_BLAST']]);
   assert.equal(plan.barrages.barrages[0].from,'obj_npb_resupply');assert.deepEqual(plan.barrages.barrages[1].from,{echelonBroken:0,afterSec:20});
   assert.deepEqual(plan.barrages.barrages[0].casualty,{impact:4,near:'pl_np_3',offsetM:[1.5,-3]});
   assert.deepEqual(plan.medics.ids,['np_maqueiro_0','np_maqueiro_1']);assert.equal(plan.medics.maxCasualties,2);
@@ -201,11 +203,11 @@ test('F3: a barrage — a whistle 1.5 s before each impact, craters, the Poles n
       }
       assert.equal(sim.player.health,health,`${name}: the shells never hurt the player`);assert.ok(sim.player.alive);
     }
-    assert.equal(launches.length,10,`${name}: ten impacts`);assert.equal(landings.length,10);assert.equal(hurtTicks,0);
+    assert.equal(launches.length,12,`${name}: twelve impacts`);assert.equal(landings.length,12);assert.equal(hurtTicks,0);
     launches.forEach((l,k)=>{assert.ok(Math.abs(landings[k].at-l.at-1.5)<=ACT_B_TICK+1e-9,`${name}: impact ${k} lands 1.5 s after its whistle (${landings[k].at-l.at})`);assert.ok(Math.hypot(l.x-landings[k].x,l.z-landings[k].z)<1e-9||minGap>=30,'it lands where it was whistled unless the player ran under it');});
     assert.ok(minGap>=SAFE_IMPACT_M,`${name}: no shell nearer than 30 m to the player (${minGap})`);
     assert.equal(sim.rng.state,main,`${name}: the simulation's main stream is not drawn by the barrage`);
-    assert.equal(sim.sectors.damage.filter(d=>d.id.startsWith('np_shell_crater_brg_npb_1_')).length,10,'a crater for each, with an id the decals and the audio read as a crater and a shell');
+    assert.equal(sim.sectors.damage.filter(d=>d.id.startsWith('np_shell_crater_brg_npb_1_')).length,12,'a crater for each, with an id the decals and the audio read as a crater and a shell');
     assert.ok(sim.sectors.damage.every(d=>Number.isFinite(d.started)&&Number.isFinite(d.soundAt)&&d.soundAt>=d.started));
     assert.equal(sim.timers.barrage.run,null);assert.ok(Number.isFinite(sim.timers.barrage.done.brg_npb_1));assert.equal(sim.objectives.obj_npb_take_cover.state,'done');assert.equal(sim.objectives.obj_npb_hold.state,'active');
     if(name==='the middle of the band')assert.ok(landings.some(l=>l.concussion>0)&&Math.max(...landings.map(l=>l.concussion))<=1,'standing in the band he is stunned, by the nearest shells');
@@ -319,7 +321,7 @@ test('saves: a schema 3 save of VII-b restores to the same state and the same fu
   const sim=newSim(19390901,'recruta'),state={arrived:false,lastHealth:100};
   const stages=[];
   const take=(name,done,max=40000)=>{for(let i=0;i<max&&!done(sim);i++){sim.tick(ACT_B_TICK,actBControls(sim,'passive',state));sim.drainEvents();}assert.ok(done(sim),name);
-    const env=runner.envelope(sim);assert.equal(env.schema,3);assert.equal(env.act,ID);assert.equal(env.actSave.schema,AREA_SAVE_SCHEMA);stages.push([name,strip(env)]);};
+    const env=live(sim);assert.equal(env.schema,3);assert.equal(env.act,ID);assert.equal(env.actSave.schema,AREA_SAVE_SCHEMA);stages.push([name,strip(env)]);};
   take('CP-I (the card just ended)',s=>s.checkpointsReached.length===1);
   take('mid-barrage with a shell in the air',s=>s.timers.barrage.run?.shells.length>0&&s.timers.barrage.run.k>=4);
   take('the bearers on their way',s=>s.timers.medics.state==='toPatient'&&s.clock>0);
@@ -337,10 +339,10 @@ test('saves: a schema 3 save of VII-b restores to the same state and the same fu
 
 test('saves: tampered or foreign records are refused with a message — the barrage, the bearers, the stun, the craters, the checkpoints; a VII-a save carries none of them and one that does is refused',()=>{
   const runner=new M01ActRunner({enabled:true,startAct:'vii-b'}),sim=newSim(19390901,'soldado'),state={arrived:false,lastHealth:100};
-  tickUntil(sim,s=>s.timers.barrage.run?.shells.length>0&&s.timers.barrage.run.k>=3,20000,{skip:true});
   for(let i=0;i<20000&&!(sim.timers.barrage.run?.shells.length>0&&sim.timers.barrage.run.k>=3);i++){sim.tick(ACT_B_TICK,actBControls(sim,'passive',state));sim.drainEvents();}
   assert.ok(sim.timers.barrage.run?.shells.length>0);
-  const good=strip(runner.envelope(sim));assert.equal(runner.load(JSON.stringify(good)).ok,true);
+  const good=strip(live(sim));assert.equal(runner.load(JSON.stringify(good)).ok,true);
+  assert.deepEqual(strip(runner.envelope(sim).actSave),strip(sim.checkpoint),'the runner\'s envelope is the last checkpoint (CP-I here), which has no barrage running');
   const bad=(name,mutate,re=/inválid/)=>{const e=strip(good);mutate(e.actSave);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,re,`${name}: ${r.error}`);};
   bad('no barrage record',s=>{delete s.timers.barrage;},/registo das barragens/);bad('a stray key in the barrage record',s=>{s.timers.barrage.extra=1;},/registo das barragens/);
   bad('a barrage that does not exist',s=>{s.timers.barrage.run.id='brg_x';},/registo das barragens/);bad('the same barrage running and done',s=>{s.timers.barrage.done[s.timers.barrage.run.id]=1;},/registo das barragens/);
@@ -356,7 +358,7 @@ test('saves: tampered or foreign records are refused with a message — the barr
   bad('a checkpoint of the pause without the break',s=>{s.checkpointsReached=['cp_npb_i_dia','cp_npb_i2_pausa'];},/sem a quebra da vaga 0/);bad('a flag of VII-a in the place of VII-b\'s',s=>{s.flags['m01np.wave']=s.flags['m01npb.wave'];delete s.flags['m01npb.wave'];},/inválid/);
   bad('another act\'s name',s=>{s.act='act_vii_a_north';},/inválid/);
   // a VII-a save with a barrage record, and the bearers of VII-b among VII-a's men
-  const a=new M01AreaSimulation(),ea=strip(runner.envelope(a));assert.equal(runner.load(JSON.stringify(ea)).ok,true,'a plain VII-a save loads');
+  const a=new M01AreaSimulation(),ea=strip(live(a));assert.equal(runner.load(JSON.stringify(ea)).ok,true,'a plain VII-a save loads');
   const withB=strip(ea);withB.actSave.timers.barrage={done:{},run:null};const r=runner.load(JSON.stringify(withB));assert.equal(r.ok,false);assert.match(r.error,/registo das barragens/);
   const withM=strip(ea);withM.actSave.timers.medics={state:'idle',patient:null,handled:0,since:0};assert.match(runner.load(JSON.stringify(withM)).error,/registo dos maqueiros/);
   // a save made before the stun existed has no fields for it and loads
@@ -364,7 +366,7 @@ test('saves: tampered or foreign records are refused with a message — the barr
 });
 
 test('F2: the chain BW -> VII-a -> VII-b: carry keeps the BW events and the flags of VII-a (m01np*), the seed is derived without drawing, the debrief of VII-b has both area paragraphs in order, and the debrief follows VII-b',()=>{
-  const runner=new M01ActRunner({enabled:true}),a=new M01AreaSimulation(19390901,{difficulty:'soldado'}),r=actRoute(a,{mode:'passive',maxSec:700});
+  const runner=new M01ActRunner({enabled:true}),a=new M01AreaSimulation(19390901,{difficulty:'soldado',carry:{...defaultCarry('soldado'),events:['evt_m01_east_demolition','evt_m01_west_demolition']}}),r=actRoute(a,{mode:'passive',maxSec:700});
   assert.equal(r.complete,true);assert.equal(a.flags['m01np.completed'],true);assert.equal(a.flags['m01np.wave'],'repelled');
   const before=JSON.stringify(a.snapshot());
   assert.equal(runner.next(a),ID,'VII-a hands over to VII-b');assert.equal(new M01ActRunner({enabled:false}).next(a),null);
@@ -374,7 +376,7 @@ test('F2: the chain BW -> VII-a -> VII-b: carry keeps the BW events and the flag
   assert.ok(b instanceof M01AreaSimulation);assert.equal(actOf(b),ID);assert.equal(b.scene.id,'cs_npb_entry');assert.equal(b.weapon.reserve,a.weapon.reserve);assert.equal(b.difficulty,'soldado');assert.ok(b.world.events.includes('evt_m01_west_demolition'));
   assert.equal(b.flags['m01np.completed'],true,'the flags of VII-a are carried');assert.equal(b.flags['m01npb.wave'],'pending');
   const ids=b.definition.debrief.paragraphs.filter(p=>p.enabled).map(p=>p.id);
-  assert.deepEqual(ids,['db_01','db_02','db_03','db_np_01','db_npb_01',...ids.slice(5)],'db_01..db_03, VII-a\'s, VII-b\'s, then the rest');assert.ok(ids.slice(5).every(id=>/^db_0[4-7]$/.test(id)));
+  assert.deepEqual(ids,['db_01','db_02','db_03','db_np_01','db_npb_01',...ids.slice(5)],'db_01..db_03, VII-a\'s, VII-b\'s, then the rest');assert.ok(ids.slice(5).every(id=>/^db_0[4-7]b?$/.test(id)));
   assert.deepEqual(b.renderState.debrief.map(p=>p.id),ids);
   for(const p of definition.debrief.paragraphs)assert.equal(b.definition.debrief.paragraphs.find(q=>q.id===p.id).text,p.text,'the paragraphs of the current act are untouched');
   // the QA start at VII-b (nothing played before): its own paragraph goes after db_03
@@ -385,7 +387,7 @@ test('F2: the chain BW -> VII-a -> VII-b: carry keeps the BW events and the flag
   // a stored envelope of VII-b opens through the runner; the chain ends here: the debrief follows VII-b
   const env=runner.envelope(b);assert.equal(runner.load(JSON.stringify(env)).ok,true);
   b.mission.complete=true;assert.equal(runner.next(b),null,'no act after VII-b yet: the debrief');
-  assert.throws(()=>runner.enter(b),TypeError);
+  assert.equal(runner.enter(b),null,'and there is nothing to enter');
 });
 
 test('F9: nothing on screen of VII-b gives an exact hour, a count of attacks, an ordinal, a calibre, an insignia or the name of a historical officer; its cards say what is documented and what is reconstruction',()=>{

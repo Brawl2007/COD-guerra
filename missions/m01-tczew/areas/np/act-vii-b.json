@@ -203,8 +203,8 @@
     {
       "id": "brg_npb_1",
       "from": "obj_npb_resupply",
-      "durationSec": 40,
-      "impacts": 10,
+      "durationSec": 46,
+      "impacts": 12,
       "intervalSec": [
         2.5,
         5
@@ -661,10 +661,10 @@
                   -294
                 ],
                 "delaySec": [
-                  40,
-                  44,
-                  48,
-                  52
+                  38,
+                  42,
+                  46,
+                  50
                 ]
               }
             ],
@@ -680,8 +680,8 @@
             "limitStation": 5,
             "closeAfterSec": 50,
             "breakPinnedSec": 85,
-            "breakOut": 14,
-            "maxSec": 105
+            "breakOut": 15,
+            "maxSec": 100
           }
         ],
         "cover": {

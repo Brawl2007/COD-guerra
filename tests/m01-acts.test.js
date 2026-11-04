@@ -395,7 +395,7 @@ test('the act modules stay out of the renderer, the UI, the browser and the wall
   const seen=new Set(),queue=['src/game/m01-acts.js','src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js'].map(f=>join(ROOT,f));
   while(queue.length){const file=queue.pop();if(seen.has(file))continue;seen.add(file);
     for(const m of readFileSync(file,'utf8').matchAll(IMPORT)){const spec=m[1]??m[2];if(spec.startsWith('.')){const t=resolve(dirname(file),spec);if(t.endsWith('.js'))queue.push(t);}else assert.fail(`${relative(ROOT,file)} imports ${spec}`);}}
-  const own=new Set(['src/game/m01-acts.js','src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js']);   // the current act's modules have their own boundary test
+  const own=new Set(['src/game/m01-acts.js','src/game/m01-area-sim.js','src/game/m01-act-factories.js','src/world/m01-area-world.js','src/game/m01-shell-blast.js','src/game/m01-unit-hash.js']);   // the current act's modules have their own boundary test (INC-2: the shell module and the hash are the new act's, and are checked here)
   for(const file of seen){const rel=relative(ROOT,file).split(sep).join('/');assert.ok(!rel.startsWith('src/render/')&&!rel.startsWith('src/ui/'),rel);if(!own.has(rel))continue;
     const code=readFileSync(file,'utf8');for(const [re,what] of [[/(?<![.$\w])document\./,'DOM'],[/(?<![.$\w])window\./,'window'],[/\bMath\.random\b/,'Math.random'],[/\bDate\.now\b|\bperformance\.now\b/,'wall clock'],[/\blocalStorage\b/,'storage']])
       assert.doesNotMatch(code,re,`${rel}: ${what}`);}
