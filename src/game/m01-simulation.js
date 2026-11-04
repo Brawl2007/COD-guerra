@@ -18,7 +18,7 @@ import {makeAuxiliaries,updateYard,updateLoaders,AUXILIARY_IDS,YARD_IDS,MG_LOADE
 import {GARRISON_GROUP,garrisonPlan,makeGarrison} from './m01-garrison.js';
 import {blastKind,impactPass,validateM01AudioEvent} from './m01-audio-events.js';
 import {activeCompression,tempoState,interludeText,continuityAllowed,objectiveMarker,pacingStatus,HOLD_AREA,HOLD_POSITION,WEST_SAFE_X} from './m01-pacing.js';
-import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,deckLines,deckLineNumber,validDeckRecord} from './m01-deck-assault.js';
+import {DECK_ASSAULT,DECK_SAFE_X,deckRole,assaultIndex,deckEntry,deckGoal,deckLimitNode,deckLines,deckLineNumber,validDeckRecord,normalizeDeckRecord,DECK_SAFE_X_MIN} from './m01-deck-assault.js';
 import {REARGUARD,rearguardIndex,rearguardPost,validRearguardRecord} from './m01-rearguard.js';
 import {barkEvent,barkTrigger,barkPoll,barkShown,noteSpoken,validateBarkState,BARK_RULES,BARK_CONFIG,BARK_LINES} from './m01-barks.js';
 import {stepCorridor,escortPace,escortTarget,zielinskiJoinPoint,escortSubject,corridorView,corridorRecord,validateCorridorRecord,CORRIDOR} from './m01-corridor.js';
@@ -1792,7 +1792,11 @@ export class M01Simulation {
       // Package 2 (2026-11-04): R2-b asked for the kneeling defender to be suppressed as well. The rearguard kneels except for the second before and after each of its shots, so with that second condition the
       // grenade needed a Pole pinned by this very man's fire at the moment he had a man 6-32 m away: 0 in 24 routes. Kneeling is enough; the player is still a target only in authored cover.
       const covered=b===p?Boolean(this.world.coverAt(p)):Boolean(b.crouched);
-      if(this.sees(a,b)&&!covered)continue;   // he can hit him with his rifle
+      // Package 2, critical review (2026-11-04): the PLAYER is judged by the world's sight, not the dust's. With sees() a cloud between a German and a player standing in the open made him a target of a grenade
+      // thrown at his exact place by a man who could not see him (a free aimed throw at a man in the open that the rifle was denied); the player is a target only in authored cover or out of sight of the
+      // walls, as R2-b and README 1.3 say. A defender (the AI's own man) still counts the dust, as everywhere else in the act.
+      const sight=b===p?this.world.lineOfSight(a,b):this.sees(a,b);
+      if(sight&&!covered)continue;   // he can hit him with his rifle
       best=b;bd=dd;
     }
     if(!best)return false;
@@ -2648,6 +2652,9 @@ export class M01Simulation {
     // R2-b: every man of the deck assault carries playerSuppressedUntil from the entry (beginDeckAssault), so a deck man without it is from a save made before R2-b, which kept no record of who suppressed him: all of that
     // suppression was the player's, and the rule of the 20 s reads it (no draw, nothing else touched). A save of R2-b always has the key, so restoring it changes nothing.
     for(const a of candidate.actors)if(a.group==='grp_de_spans'&&a.deck!==undefined&&a.playerSuppressedUntil===undefined)a.playerSuppressedUntil=a.suppressedUntil>s.clock?a.suppressedUntil:0;
+    // 2026-11-04 (package 2, critical review): `lim` and `node` of the deck records are indices into each man's path, and safeX shapes that path (250 -> 190 renumbered the closing lines), so a save made under
+    // another safeX is put on the live lines: a `lim` that is not a live line goes to the nearest one (ties to the deeper), a `node` past the deepest line to it. A record of the live data is left as it is.
+    for(const a of candidate.actors)if(a.group==='grp_de_spans'&&a.deck!==undefined)normalizeDeckRecord(a);
     // Combat AI slice 1: a save made before it has no actor.ai. Each German of grp_de_east and Kowal gets his stream, derived from the saved main state (no draw
     // from it), no open peek and his current suppression already taken into account, so his saved cooldown runs out exactly as it would have.
     for(const a of candidate.actors)if(AI_MIGRATE(a)&&a.ai===undefined)a.ai=newAI(s.rng,aiIndex(a.id),a.suppressedUntil);
@@ -2819,10 +2826,13 @@ export function validateM01Snapshot(s){
   }
   // Combat slice 2, versioned rule (deck record v1, src/game/m01-deck-assault.js): a man of grp_de_spans who carries the deck record may stand west of x 690 down to
   // DECK_SAFE_X (450, mission data); every other German, and any man of the spans without the record (every save made before this rule), keeps x >= 690.
-  for(const a of s.actors)if(a.deck!==undefined&&(a.group!=='grp_de_spans'||!Object.hasOwn(s.consumed??{},DECK_ASSAULT.from)||!validDeckRecord(a,s.clock)||a.ai===undefined))reject('assalto do tabuleiro '+a.id);
+  // (`olderPlan`: a save of another safeX may carry a `lim` that is not a live line and a `node` past the live deepest line; restoreSnapshot puts them on the live lines, normalizeDeckRecord.)
+  for(const a of s.actors)if(a.deck!==undefined&&(a.group!=='grp_de_spans'||!Object.hasOwn(s.consumed??{},DECK_ASSAULT.from)||!validDeckRecord(a,s.clock,{olderPlan:true})||a.ai===undefined))reject('assalto do tabuleiro '+a.id);
   // Combat slice 2b (rearguard record v1, src/game/m01-rearguard.js): only a man of the rearguard, after the deck assault began, with his combat AI stream.
   for(const a of s.actors)if(a.rear!==undefined&&(a.group!=='grp_east_platoon'||!Object.hasOwn(s.consumed??{},REARGUARD.from)||!validRearguardRecord(a,s.clock)||a.ai===undefined))reject('retaguarda '+a.id);
-  if(s.actors.some(a=>a.team==='enemy'&&a.x<(a.group==='grp_de_spans'&&a.deck!==undefined?DECK_SAFE_X:690))||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
+  // (package 2 critical review, 2026-11-04: a fallen man's body lies where he fell, east of the safeX of the build that played him; it is held to the lowest safeX the data may hold, DECK_SAFE_X_MIN, so that a
+  // move of safeX up does not refuse the saves of the fights already played. A man on his feet is held to the live safeX.)
+  if(s.actors.some(a=>a.team==='enemy'&&a.x<(a.group==='grp_de_spans'&&a.deck!==undefined?(a.alive?DECK_SAFE_X:DECK_SAFE_X_MIN):690))||s.actors.some(a=>definition.historicalPersonsOffscreen.some(h=>h.id===a.id)))reject('elenco');
   if(s.actors.some(a=>a.team!==(a.id.startsWith('de_')?'enemy':'ally')||
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','REGROUP','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
     ![a.facing,a.shot,a.cooldown,a.suppressedUntil].every(Number.isFinite)||typeof a.active!=='boolean'||(a.target&&![a.target.x,a.target.z].every(Number.isFinite))))reject('estado dos actores');

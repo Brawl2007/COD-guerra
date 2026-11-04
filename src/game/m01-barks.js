@@ -154,7 +154,7 @@ const CONDITIONS={
     return false;}],
   // -- what the Germans do
   mg34:({phase,los})=>[2,s=>{
-    for(const id of ['de_east_0','de_east_1']){const a=s.actor(id);if(a&&a.alive&&a.active&&a.mg34Prone?.phase===phase&&(!los||s.world.lineOfSight(a,s.player)))return true;}
+    for(const id of ['de_east_0','de_east_1']){const a=s.actor(id);if(a&&a.alive&&a.active&&a.mg34Prone?.phase===phase&&(!los||s.sees(a,s.player)))return true;}   // (sees: the world's sight and no dust, as the gunner's own acquisition; the line is a subtitle, but it must not say "he reloads, now!" for a gunner the cloud hides)
     return false;}],
   peek:({los})=>[2,s=>peekers(s,los,1)>0],
   peekCount:({min})=>[2,s=>peekers(s,false,min)>=min],

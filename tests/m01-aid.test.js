@@ -295,3 +295,35 @@ test('the plot is safe: on the golden control route the medic is at the aid post
   assert.equal(seen.at0603.task,null);assert.ok(seen.at0603.dist<3);
   assert.ok(seen.treated&&seen.treated.size>=1,'at least one wounded man of the garrison was treated on this route');
 });
+
+test('a bomb that kills the man the medic is treating, after the medic\'s own update of that tick, leaves a save the validator accepts; the next tick ends the job; a restore of the save goes on as the original does',()=>{
+  // Package 2 critical review (2026-11-04): a tick runs updateActors (updateAid) before updateEarlyRaid / updateRaidSchedule, so the job pointed at a body for the rest of the tick in which the bomb fell, and
+  // validateAidRecord refused that snapshot (a player saving at that moment lost the save). The transient is a valid state; updateAid ends the job on the next tick.
+  const s=fresh(),t=s.timers.raidSchedule0434.at(-1),a=wound(s,'pl_west_3',{x:t.point.x,z:t.point.z,health:40}),medic=man(s,AID.medic);
+  run(s,sim=>sim.timers.aid?.phase==='treat',240);
+  assert.equal(s.timers.aid?.phase,'treat','the medic is kneeling at him');assert.ok(dist(medic,a)<2);
+  // the bomb of the schedule that fell on this spot falls again: its entry is due and its crater is taken off the list (as tests/m01-bomb-effects.test.js does)
+  t.emitted=false;s.sectors.damage=s.sectors.damage.filter(d=>d.id!==t.id);
+  s.tick(DT,{});
+  assert.equal(a.alive,false,'the bomb killed him');assert.equal(a.state,'DOWN');
+  assert.equal(s.timers.aid?.patient,a.id,'and the job still points at the body for the rest of this tick (updateAid ran before the bomb)');assert.equal(medic.task,'aid');
+  const snap=s.snapshot();
+  assert.doesNotThrow(()=>validateM01Snapshot(structuredClone(snap)),'the save of that moment is valid');
+  // refused: what is not that transient (a carried man, a man alive and not wounded, a stranger)
+  for(const [name,f] of Object.entries({
+    carry:x=>{x.timers.aid.phase='carry';x.timers.aid.dest={x:0,z:0};delete x.timers.aid.left;},
+    notDown:x=>{x.actors.find(m=>m.id===a.id).state='GUARD';},
+    inactive:x=>{x.actors.find(m=>m.id===a.id).active=false;},
+    noRecord:x=>{delete x.actors.find(m=>m.id===a.id).aid;},
+    stranger:x=>{x.timers.aid.patient='pl_east_0';},
+  })){const x=structuredClone(snap);f(x);assert.throws(()=>validateM01Snapshot(x),/trabalho do socorrista|transporte|primeiros socorros|estado/,name);}
+  // the restored game ends the job on its first tick, as the original does on its own
+  const r=new M01Simulation(1);r.restoreSnapshot(structuredClone(snap));r.drainEvents();
+  const twin=new M01Simulation(2);twin.restoreSnapshot(structuredClone(snap));twin.drainEvents();
+  s.tick(DT,{});r.tick(DT,{});twin.tick(DT,{});
+  for(const sim of [s,r]){assert.equal(sim.timers.aid,undefined,'the job is over');assert.equal(man(sim,AID.medic).task,null);assert.ok(dist(man(sim,AID.medic).target,aidPost(sim))<.01,'the medic\'s target is the aid post again');assert.equal(man(sim,a.id).aid.t,undefined,'he was never treated');}
+  for(let i=0;i<60;i++){s.tick(DT,{});r.tick(DT,{});twin.tick(DT,{});}
+  validateM01Snapshot(structuredClone(s.snapshot()));validateM01Snapshot(structuredClone(r.snapshot()));
+  assert.deepEqual(twin.snapshot(),r.snapshot(),'two restores of the save go on identically');
+  assert.deepEqual([man(r,AID.medic).x,man(r,AID.medic).z,man(r,AID.medic).task],[man(s,AID.medic).x,man(s,AID.medic).z,man(s,AID.medic).task],'and the medic walks home as in the original');
+});
