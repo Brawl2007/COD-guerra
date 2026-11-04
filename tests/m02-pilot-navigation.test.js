@@ -19,3 +19,14 @@ test('the verification pilot can reach a real firing position when an enemy room
  assert.equal(acquired,true,'ordinary movement reaches a position with a real unobstructed shot');
  assert.equal(enemy.health,100,'the planner did not damage the target');
 });
+
+test('the optional pilot approaches the wounded man and completes water before marking chalk',()=>{
+ const sim=new M02BenchSimulation(),wounded=sim.enemies.find(e=>e.c04Candidate);
+ sim.enemies=[wounded];sim.allies=[];Object.assign(wounded,{x:1,y:0,z:-60,health:40,alive:true,state:'WOUNDED_UNARMED',nonCombatant:true});
+ sim.teleportPlayer(4,-60,Math.PI,0);const pilot=new M02MissionPilot({offerWater:true});
+ assert.ok(sim.currentChalkPrompt());assert.equal(sim.currentWoundedWaterPrompt(),null);
+ const before=sim.snapshot(),first=pilot.decide(sim);assert.equal(first.approachingWounded,true);assert.deepEqual(sim.snapshot(),before);
+ for(let i=0;i<150&&!sim.flags['m02.pomar_wounded_water'];i++){const d=pilot.decide(sim);sim.tick(.05,d.controls);}
+ assert.equal(sim.flags['m02.pomar_wounded_water'],true);assert.equal(sim.flags['m02.pomar_wounded_marked'],false);
+ assert.equal(pilot.decide(sim).controls.interact,true,'chalk remains a separate next action');
+});

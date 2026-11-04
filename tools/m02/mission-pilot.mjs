@@ -29,7 +29,7 @@ export function m02PilotFiringPosition(sim,p,enemy){
 }
 
 export class M02MissionPilot {
-  constructor({flankX=-50,flankZ=-52}={}){this.flankX=flankX;this.flankZ=flankZ;this.route=[];this.routeKey='';this.nextPlan=0;this.lastCell=null;}
+  constructor({flankX=-50,flankZ=-52,offerWater=false}={}){this.flankX=flankX;this.flankZ=flankZ;this.offerWater=offerWater;this.route=[];this.routeKey='';this.nextPlan=0;this.lastCell=null;}
   decide(sim){
     const p=sim.player, eye=eyePosition(p), controls={};
     if(this.lastCell!==sim.activeCellId){this.lastCell=sim.activeCellId;this.enteredAt=sim.clock;this.flanked=false;this.route=[];this.routeKey='';}
@@ -39,7 +39,16 @@ export class M02MissionPilot {
     const rescuePending=sim.activeCellId==='C'&&sim.areaC.c11Started&&lis&&sim.flags['m02.lis_status']!=='wounded_evacuated';
     if(action&&!(action.id==='epilogue'&&rescuePending))return {controls:{interact:true},action:action.id};
     if(action?.id==='epilogue'&&rescuePending&&sim.areaC.lisContactedInC11)return {controls:{crouch:!p.crouched},waitingForLis:true};
-    const chalk=sim.currentChalkPrompt();if(chalk)return {controls:{interact:true}};
+    const chalk=sim.currentChalkPrompt();
+    if(this.offerWater&&chalk&&!sim.flags['m02.pomar_wounded_water']){
+      if(sim.playerWaterAction)return {controls:{},waitingForWater:true};
+      if(sim.currentWoundedWaterPrompt())return {controls:{giveWater:true}};
+      if(sim.weapon.reloading||sim.weapon.boltCycling)return {controls:{},waitingForWeapon:true};
+      const wounded=sim.enemies.find(e=>e.id===chalk.actorId),path=wounded&&sim.navigator.route(p,wounded);
+      const corner=path?.find(([x,z])=>Math.hypot(x-p.x,z-p.z)>.35)??[wounded.x,wounded.z];
+      return {controls:{lookX:wrap(Math.atan2(corner[1]-p.z,corner[0]-p.x)-p.angle),forward:1},approachingWounded:true};
+    }
+    if(chalk)return {controls:{interact:true}};
     const door=sim.currentDoorPrompt();if(door?.state==='closed')return {controls:{interact:true}};
     const hostiles=sim.enemies.filter(e=>e.alive&&!e.nonCombatant&&e.state!=='SURRENDERED'&&e.state!=='WOUNDED_UNARMED');
     const priority=e=>Math.hypot(e.x-p.x,e.z-p.z)-(e.seeingTargetId===p.id?120:0)-(e.weapon==='mg34'?25:0);
