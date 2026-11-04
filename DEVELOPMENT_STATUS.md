@@ -2,7 +2,7 @@
 
 ## M02 — continuidade do diálogo — 2026-10-31
 
-`9b4f034` verifica novamente o emissor e as alternativas do roteiro ao iniciar uma fala em fila; `7c9ad85` preserva a fala de partida de Lis em C08. Passaram 180 testes M02, build, um caso browser e comparação de 800 passos com a candidata anterior. [Provas e limites](docs/verification/m02-runtime/dialogue-continuity-2026-10-31/README.md). O percurso integral atualizado está em curso. A missão continua em desenvolvimento; main e produção intactas.
+`9b4f034` verifica novamente o emissor e as alternativas do roteiro ao iniciar uma fala em fila; `7c9ad85` preserva a fala de partida de Lis em C08. Passaram 180 testes M02, build, um caso browser e comparação de 800 passos com a candidata anterior. Uma passagem automatizada chegou a M03 sem mortes ou erros, com Lis evacuado e 12/12; [provas e limites](docs/verification/m02-runtime/dialogue-continuity-2026-10-31/README.md). A missão continua em desenvolvimento; main e produção intactas.
 
 ## M02 — som da granada e clarões NPC — 2026-10-31
 
