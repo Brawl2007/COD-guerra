@@ -175,6 +175,9 @@ export function validateM02Snapshot(snap) {
       if (!e.id || !Number.isFinite(e.x) || !Number.isFinite(e.z) || e.mag < 0 || e.reserve < 0) {
         return { valid: false, reason: `Inimigo inválido no snapshot: ${e?.id}` };
       }
+      if (e.m02BarnRetreat !== undefined && (!e.m02BarnRetreat || !['inside','outside'].includes(e.m02BarnRetreat.phase) || !Number.isFinite(e.m02BarnRetreat.startedAt) || e.m02BarnRetreat.startedAt < 0 || e.m02BarnRetreat.startedAt > snap.clock)) {
+        return { valid: false, reason: `Retirada do celeiro inválida no snapshot: ${e.id}` };
+      }
     }
   }
   if(snap.areaC?.lastGroup!==undefined&&!Array.isArray(snap.areaC.lastGroup))return {valid:false,reason:'Grupo de evacuação inválido.'};

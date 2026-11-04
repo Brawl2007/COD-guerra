@@ -1002,6 +1002,32 @@ export function updateGermanGarrison(sim, dt) {
     if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
     enemy.suppressed = Math.max(0, enemy.suppressed - dt * 0.25);
 
+    // The B02 loader can attempt the south door when the farm collapses.
+    // Keep this a physical, interruptible movement; a blocked route eventually
+    // ends in surrender so the player is never required to hunt him down.
+    if (enemy.m02BarnRetreat && !enemy.nonCombatant) {
+      const retreat = enemy.m02BarnRetreat;
+      if (retreat.phase === 'inside' && Math.hypot(enemy.x - 30, enemy.z + 25.3) <= 0.5) {
+        retreat.phase = 'outside';
+        enemy.goal = {x:30,z:-22,crouch:false};
+        // The coarse navigation grid cannot reliably represent this 1.2 m
+        // aperture. The final short segment still uses normal collision and
+        // door handling; it does not teleport the actor through the wall.
+      }
+      if ((retreat.phase === 'outside' && enemy.z >= -22.5 && Math.abs(enemy.x - 30) <= 0.7) || sim.clock - retreat.startedAt >= 15) {
+        enemy.state = 'SURRENDERED'; enemy.nonCombatant = true; enemy.moving = false; enemy.goal = null;
+        sim.combatLog.push({clock:Number(sim.clock.toFixed(2)),type:'enemy_surrendered',actorId:enemy.id});
+      } else {
+        if (retreat.phase === 'outside') {
+          enemy.navCorners = [{x:30,z:-22}];
+          enemy.navGoalKey = '30.00,-22.00';
+          enemy.navRevision = sim.world.revision;
+        }
+        stepActorNavigation(sim, enemy, dt);
+      }
+      continue;
+    }
+
     // Check C04 wounded non-combatant transition in southern orchard
     if (enemy.c04Candidate && !enemy.nonCombatant && (enemy.health <= 48 || (mgDown && neutralizedCount >= 6))) {
       enemy.state = 'WOUNDED_UNARMED';
@@ -1023,6 +1049,14 @@ export function updateGermanGarrison(sim, dt) {
 
     // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders neutralized)
     if (sim.activeCellId === 'A' && enemy.encounterId !== 'EA0' && !enemy.nonCombatant && mgDown && neutralizedCount >= 7) {
+      if (enemy.id === 'DE-A06' && enemy.x > 12 && enemy.x < 36 && enemy.z > -38 && enemy.z < -24) {
+        enemy.state = 'RETREAT_B02'; enemy.m02BarnRetreat = {phase:'inside',startedAt:sim.clock};
+        enemy.goal = {x:30,z:-25.3,crouch:false}; enemy.burst = null; enemy.reloadingUntil = 0;
+        if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);
+        sim.combatLog.push({clock:Number(sim.clock.toFixed(2)),type:'enemy_retreat_b02',actorId:enemy.id});
+        stepActorNavigation(sim,enemy,dt);
+        continue;
+      }
       enemy.state = 'SURRENDERED';
       enemy.nonCombatant = true;
       enemy.moving = false;

@@ -2,6 +2,26 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('C03 barn loader uses the south door during a physical retreat',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{
+  const s=window.m02Bench.sim;s.reset('C02');s.c01Active=false;s.allies=[];
+  for(const enemy of s.enemies)if(enemy.id!=='DE-A06'){enemy.alive=false;enemy.health=0;}
+  s.teleportPlayer(30,-19,-Math.PI/2,0);s.drainEvents();
+ });
+ await page.click('#mission-resume');
+ await page.waitForFunction(()=>{const s=window.m02Bench.sim,e=s.enemies.find(a=>a.id==='DE-A06');return e?.state==='RETREAT_B02'&&e.z>-23.9;},{},{timeout:20000});
+ const crossing=await page.evaluate(()=>{const s=window.m02Bench.sim,e=s.enemies.find(a=>a.id==='DE-A06');return {x:e.x,z:e.z,door:s.world.doors.find(d=>d.id==='door_b02_south_door').state};});
+ expect(Math.abs(crossing.x-30)).toBeLessThan(.7);expect(crossing.door).toBe('open');
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · RETIRADA C03";position:fixed;right:8px;top:8px;z-index:80;padding:5px;background:#111;color:#fff;font:10px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('barn-retreat.png')});
+ await page.waitForFunction(()=>window.m02Bench.sim.enemies.find(a=>a.id==='DE-A06')?.state==='SURRENDERED');
+ expect(errors).toEqual([]);
+});
+
 test('C11 keyboard withdrawal requires a renewed confirmation after moving',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
