@@ -93,3 +93,43 @@ test('a German stick grenade leaves a cloud at the Pole it falls on: the explosi
   assert.equal(s.sees(man,pawlak),false,'and the Pole it fell on is hidden from the thrower');
   s.clock=record.started+21;assert.equal(s.sees(man,pawlak),true,'until the smoke is gone');
 });
+
+// Package 2 critical review (2026-11-04): the dust must never make the PLAYER a grenade target. deckGrenade() asked sees() (the world's sight AND no dust): a cloud between a German and a player standing in the open
+// made the player "a Pole he cannot hit with the rifle" and the grenade was thrown at his exact place by a man who could not see him. The player is judged by the world's sight: a target only in authored cover or out
+// of sight of the walls (R2-b, README 1.3). A defender still counts the dust.
+function bomber({gap=20,player=[-20,28],crouched=false,cloud=false,cloudAhead=8}={}){
+  const {s}=scene({level:'recruta'});calm(s);for(const a of pair(s))a.active=false;
+  Object.assign(s.player,{x:player[0],z:player[1],y:s.world.heightAt(player[0],player[1]),crouched});
+  const man=station(s,'de_spans_4',17,{phase:'cover',since:2,until:s.clock+30,cooldown:1e6});
+  Object.assign(man,{x:player[0]+gap,z:player[1]});man.y=s.world.heightAt(man.x,man.z);
+  if(cloud)cloudAt(s,s.player.x+cloudAhead,s.player.z,{age:2,id:'m01_grenade_77'});
+  return {s,man};
+}
+const thrown=(s,man)=>{const before=s.grenades.active.length;const r=s.deckGrenade(man);return {r,count:s.grenades.active.length-before};};
+
+test('the dust never makes the player a grenade target: standing in the open 20 m away, with or without a cloud between, no grenade is thrown at his place',()=>{
+  {const {s,man}=bomber();
+    assert.equal(s.world.coverAt(s.player),null,'he is in the open, not in authored cover');assert.equal(s.world.lineOfSight(man,s.player),true);assert.equal(s.sees(man,s.player),true);
+    assert.deepEqual(thrown(s,man),{r:false,count:0},'a man he can hit with the rifle is the rifle\'s');}
+  {const {s,man}=bomber({cloud:true});
+    assert.equal(s.world.lineOfSight(man,s.player),true,'the deck is open: it is the cloud that hides him');assert.equal(s.sees(man,s.player),false,'the German does not see him');assert.equal(s.sees(s.player,man),false);
+    assert.deepEqual(thrown(s,man),{r:false,count:0},'and a German who cannot see him does not throw at his exact place');
+    assert.equal(s.dustRays.blocked>0,true,'the cloud answered the question');}
+  // crouched in the open, the same
+  {const {s,man}=bomber({cloud:true,crouched:true});assert.equal(s.world.coverAt(s.player),null);assert.deepEqual(thrown(s,man),{r:false,count:0});}
+});
+
+test('what the dust did not change: a player out of sight of the walls, or in authored cover, is still a grenade target; so is a kneeling defender, and a standing one the dust hides',()=>{
+  // out of sight of the walls: the world's line of sight is closed (a stub of the geometry), no cloud
+  {const {s,man}=bomber();s.world.lineOfSight=()=>false;const t=thrown(s,man);assert.equal(t.r,true,'no line of sight to the player');assert.equal(t.count,1);
+    const g=s.grenades.active.at(-1);assert.equal(g.by,'de_spans_4');}
+  // in authored cover (the sim's own test of cover), with the cloud between them: the cloud does not matter, he is a target as before
+  {const {s,man}=bomber({cloud:true});const cover=s.world.coverAt;s.world.coverAt=p=>p===s.player?{id:'cv_test'}:cover.call(s.world,p);
+    const t=thrown(s,man);assert.equal(t.r,true,'the player in authored cover');assert.equal(t.count,1);}
+  // a standing defender the dust hides: the AI's own man still counts the dust (as everywhere else in the act)
+  {const {s,man,pawlak}=veiledScene({cloud:false});   // (the player is off the map; Pawlak stands on the deck 86 m west of the man: brought to 20 m, inside the throw)
+    Object.assign(pawlak,{x:man.x-20});pawlak.y=s.world.heightAt(pawlak.x,pawlak.z);
+    assert.equal(s.sees(man,pawlak),true);assert.deepEqual(thrown(s,man),{r:false,count:0},'a standing Pole in his sight is the rifle\'s');
+    cloudAt(s,pawlak.x+8,pawlak.z,{age:2,id:'m01_grenade_78'});
+    assert.equal(s.sees(man,pawlak),false);assert.deepEqual(thrown(s,man),{r:true,count:1},'the same Pole behind a cloud is not: the grenade');}
+});

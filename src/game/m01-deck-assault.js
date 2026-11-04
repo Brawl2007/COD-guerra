@@ -15,6 +15,12 @@ export const DECK_KEYS=Object.freeze(['v','phase','node','until','since','t0','p
 export const DECK_OPTIONAL_KEYS=Object.freeze(['lim','gr']);   // lim: the node of line 0 (his old limit); gr: 0
 /** The deepest line of a man keeps this many metres east of safeX (the old data had 450 / 458: the same 8 m), so a body that ends a step west of its goal is still east of the safety line. */
 export const DECK_LINE_MARGIN_M=8;
+/**
+ * The lowest safeX the data may hold (deckAssaultPlan). Package 2 critical review, 2026-11-04: also the lowest x at which a FALLEN man of the assault may lie in a save (validateM01Snapshot, «elenco»): a body
+ * lies where the man fell, east of the safeX of the build that played him, and that may be lower than the safeX of the build that loads the save (a move of safeX up must not refuse the checkpoints of
+ * the fights already played). A man on his feet is held to the live safeX as ever.
+ */
+export const DECK_SAFE_X_MIN=120;
 
 export function deckAssaultPlan(def=definition){
   const fail=m=>{throw new Error(`M01 deck assault: ${m}`);};
@@ -30,7 +36,7 @@ export function deckAssaultPlan(def=definition){
   // The four men the east demolition fells (GERMAN_FELLED, T48) are the overwatch: their posts lie inside the blast radius, the assault's places outside it
   // (tests/m01-deck-assault.test.js checks both against map-layout bz_east).
   // 2026-10-24 (R2-b): safeX may go down to 120 (it was 400-690): the closing lines reach the west posts of the Polish side (x 165-175) and the deck post (x 17-38) must stay 80 m away.
-  if(!num(d.safeX,120,690)||!num(d.clearX,880,1000))fail('safeX / clearX');
+  if(!num(d.safeX,DECK_SAFE_X_MIN,690)||!num(d.clearX,880,1000))fail('safeX / clearX');
   if(!Array.isArray(d.entry)||d.entry.length!==g.size||!d.entry.every(p=>pair(p,1020,1045)))fail('entry: one deck place per man, x 1020-1045');
   if(!Array.isArray(d.overwatchNodes)||d.overwatchNodes.length!==d.overwatch.length||!d.overwatchNodes.every(p=>pair(p,880,d.clearX-1)))fail('overwatchNodes: on span 08, west of clearX');
   if(!Array.isArray(d.fallback)||d.fallback.length!==d.assault.length||!d.fallback.every((p,i)=>pair(p,d.clearX+.5,963)&&(!i||p[0]-d.fallback[i-1][0]>=2)))fail('fallback: on span 08, east of clearX, at least 2 m apart in x (T48 pairs a carrier with the nearest fallen by x)');
@@ -74,6 +80,10 @@ export function deckAssaultPlan(def=definition){
     paths.push(Object.freeze(pts.map(p=>Object.freeze(p))));lineNodes.push(Object.freeze(lines));
   });
   const freezePts=list=>Object.freeze(list.map(([x,z])=>Object.freeze({x,z})));
+  // 2026-11-04 (package 2, critical review): the highest node index the path of each assault man can have under ANY safeX. Every station of his column lies in at most one of the two groups (east of
+  // his limit, or between the limit and the deepest line), and the path adds the limit and the deepest line; so with safeX low enough for all the stations west of the limit to count, the deepest line
+  // is node (stations east of the limit) + 1 + (stations west of it). `lim` and `node` of a record written under another safeX are integers in 0..maxNodes[k] (validDeckRecord, olderPlan).
+  const maxNodes=d.assault.map((id,k)=>{const col=d.stations.map(x=>x+d.lanes[k][1]),lim=d.limits[k];return col.filter(x=>x>lim+6).length+1+col.filter(x=>x<lim-6).length;});
   // The longest a normal fight can hold the east demolition's gate, from the first tick of the hold: the squad's deadline (maxSec, plus closeExtraSec while any man is on a closing line) and
   // the run back from the deepest line to clearX at rushSpeed, less the gate's own start, 60 s after the entry. The absolute bounds of the hold (advanceBattle) are measured from it.
   const closing=lineNodes.some(l=>l.length>1);
@@ -81,7 +91,7 @@ export function deckAssaultPlan(def=definition){
   const tactics=Object.freeze({closeGapM:t.closeGapM,stages:t.stages,pressure:Object.freeze({...t.pressure}),casualtyHoldSec:t.casualtyHoldSec,closeHoldSec:Object.freeze([...t.closeHoldSec]),
     closeExtraSec:t.closeExtraSec,alternateWaitSec:t.alternateWaitSec,pinSec:t.pinSec,squadTargets:Object.freeze({...sq}),search:Object.freeze({...se}),grenade:Object.freeze({...gr})});
   return Object.freeze({version:d.version,from:d.from,safeX:d.safeX,clearX:d.clearX,overwatch:Object.freeze([...d.overwatch]),assault:Object.freeze([...d.assault]),
-    entry:freezePts(d.entry),overwatchNodes:freezePts(d.overwatchNodes),fallback:freezePts(d.fallback),paths:Object.freeze(paths),lines:Object.freeze(lineNodes),
+    entry:freezePts(d.entry),overwatchNodes:freezePts(d.overwatchNodes),fallback:freezePts(d.fallback),paths:Object.freeze(paths),lines:Object.freeze(lineNodes),maxNodes:Object.freeze(maxNodes),
     lanes:Object.freeze(d.lanes.map(l=>Object.freeze([...l]))),limits:Object.freeze([...d.limits]),tactics,pursuitToX:d.pursuitToX,
     rushStations:d.rushStations,rushSpeed:d.rushSpeed,coverSec:Object.freeze([...d.coverSec]),holdSec:Object.freeze([...d.holdSec]),pinnedWaitMaxSec:d.pinnedWaitMaxSec,
     breakPinnedSec:d.breakPinnedSec,breakOut:d.breakOut,maxSec:d.maxSec,holdBaseSec,fire:Object.freeze({...f})});
@@ -112,20 +122,54 @@ export const deckDeepestNode=a=>DECK_ASSAULT.paths[assaultIndex(a)].length-1;
 export const deckLimitNode=a=>a.deck?.lim??deckLines(a)[0];
 /** Which line his forward limit is: 0 = the old limit, 1.. = closing lines. */
 export const deckLineNumber=a=>{const i=deckLines(a).indexOf(deckLimitNode(a));return i<0?0:i;};
-/** A saved deck record: the exact keys (plus the optional ones), a known phase, a node on the man's path and times the machine could have written. Pure check, for the validator. */
-export function validDeckRecord(a,clock){
+/**
+ * A saved deck record: the exact keys (plus the optional ones), a known phase, a node on the man's path and times the machine could have written. Pure check, for the validator.
+ * `olderPlan` (what validateM01Snapshot asks, 2026-11-04, package 2 critical review): the record may have been written under ANOTHER safeX. `lim` and `node` are indices into the path, and moving safeX moves
+ * the closing lines and the deepest line along it (250 -> 190 renumbered the lines of de_spans_5 from [22, 26, 31] to [22, 28, 33]), so a record of an older build is accepted with a `lim` that is not a line
+ * of the live data and a `node` past the live deepest line, as long as both are integers of a path some safeX could give the man (0..plan.maxNodes[k], and `lim` not before line 0); restoreSnapshot then
+ * puts them on the live lines (normalizeDeckRecord). Without `olderPlan` the record must be one the live data could have written: `lim` a line of his, `node` on his path. `plan` is the live plan
+ * unless a test asks for another (deckAssaultPlan of a changed definition).
+ */
+export function validDeckRecord(a,clock,{olderPlan=false,plan=DECK_ASSAULT}={}){
   const d=a.deck,finite=(v,lo,hi)=>Number.isFinite(v)&&v>=lo&&v<=hi;
   if(!d||typeof d!=='object'||Array.isArray(d)||DECK_KEYS.some(k=>!Object.hasOwn(d,k)))return false;
   const extra=Object.keys(d).filter(k=>!DECK_KEYS.includes(k));
   if(extra.some(k=>!DECK_OPTIONAL_KEYS.includes(k)))return false;
   if(d.v!==DECK_ASSAULT_VERSION||!DECK_PHASES.includes(d.phase)||!Number.isInteger(d.node)||d.node<0)return false;
-  const role=deckRole(a);
-  if(role==='overwatch'){if(d.node!==0||!['advance','clear'].includes(d.phase)||extra.length)return false;}
+  if(plan.overwatch.includes(a.id)){if(d.node!==0||!['advance','clear'].includes(d.phase)||extra.length)return false;}
   else{
-    const lines=deckLines(a),last=deckDeepestNode(a);
-    if(d.lim!==undefined&&(!Number.isInteger(d.lim)||!lines.includes(d.lim)))return false;
-    if(d.gr!==undefined&&(!Number.isInteger(d.gr)||d.gr<1||d.gr>DECK_ASSAULT.tactics.grenade.perMan))return false;
+    const k=plan.assault.indexOf(a.id);if(k<0)return false;
+    const lines=plan.lines[k],last=olderPlan?plan.maxNodes[k]:plan.paths[k].length-1;
+    if(d.lim!==undefined&&(!Number.isInteger(d.lim)||(olderPlan?d.lim<lines[0]||d.lim>last:!lines.includes(d.lim))))return false;
+    if(d.gr!==undefined&&(!Number.isInteger(d.gr)||d.gr<1||d.gr>plan.tactics.grenade.perMan))return false;
     if(d.node>last)return false;   // (a man pulled back to an earlier line is still west of it for a while: his node may be past his limit, never past the deepest line)
   }
-  return finite(d.t0,0,clock)&&finite(d.since,d.t0,clock)&&finite(d.until,0,clock+Math.max(DECK_ASSAULT.holdSec[1],DECK_ASSAULT.coverSec[1],DECK_ASSAULT.tactics.closeHoldSec[1])+1)&&finite(d.pinned,0,1e6);
+  return finite(d.t0,0,clock)&&finite(d.since,d.t0,clock)&&finite(d.until,0,clock+Math.max(plan.holdSec[1],plan.coverSec[1],plan.tactics.closeHoldSec[1])+1)&&finite(d.pinned,0,1e6);
+}
+
+/** The line of `lines` (ascending node indices) nearest to the node `n` by index; a tie goes to the deeper line (the later one). */
+export function nearestDeckLine(n,lines){
+  let best=lines[0];
+  for(const line of lines)if(Math.abs(line-n)<=Math.abs(best-n))best=line;
+  return best;
+}
+/**
+ * RESTORE of a record written under another plan (2026-11-04, package 2 critical review). `lim` (the node of the forward line he may go to) and `node` are indices into the path, and safeX shapes the
+ * path: lowering it adds stations west of the old deepest line and moves the closing lines along; raising it takes them away. So a record whose `lim` is not one of the man's live lines is put on the
+ * nearest live line by node index (a tie to the deeper line: the old deepest line of every man is the live deepest line for the shipped 250 -> 190, which a tie-to-shallower rule would not give), line 0
+ * written as no key as deckLine() does, and a `node` past the live deepest line is put on it. This is done for every man with a record, alive or not, in any phase: a man who fell back keeps the line he
+ * had been on, which is what deckExtraSec reads (the squad's deadline). A record that is already valid for the live data is left exactly as it is (nothing changes for a save of the same build).
+ * Deterministic, no clock, no draw; returns true when it changed anything. `plan` is the live plan unless a test asks for another.
+ */
+export function normalizeDeckRecord(a,plan=DECK_ASSAULT){
+  const d=a.deck,k=plan.assault.indexOf(a.id);
+  if(!d||k<0)return false;
+  const lines=plan.lines[k],last=plan.paths[k].length-1;let changed=false;
+  if(d.lim!==undefined&&!lines.includes(d.lim)){
+    const to=nearestDeckLine(d.lim,lines);
+    if(to===lines[0])delete d.lim;else d.lim=to;
+    changed=true;
+  }
+  if(d.node>last){d.node=last;changed=true;}
+  return changed;
 }

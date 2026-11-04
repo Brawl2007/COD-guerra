@@ -36,6 +36,10 @@ const LOCOMOTIVE_LAYERS=steamLayers(140),ARMOURED_TRAIN_LAYERS=steamLayers(110);
 const RIVER_BED_LAYERS=Object.freeze(RIVER_LAYERS.map(l=>layer(l.name,'noise',{noise:l.noise,rate:l.rate,gain:l.gain,filter:l.filter})));
 const FIRE_LAYERS=Object.freeze([layer('roar','noise',{noise:'brown',rate:.9,filter:{type:'lowpass',freq:600,q:.6}}),
   layer('hiss','noise',{noise:'white',rate:.6,gain:.15,filter:{type:'highpass',freq:2600,q:.5}})]);
+// Area acts (VII-c dusk): provisional procedural beds, started/stopped by AreaAudio (src/game/m01-area-audio.js), never by the simulation.
+const AREA_BED_LAYERS=Object.freeze({
+  'area-wind':Object.freeze([layer('low','noise',{noise:'brown',rate:.7,filter:{type:'lowpass',freq:380,q:.5}}),layer('high','noise',{noise:'white',rate:.45,gain:.18,filter:{type:'bandpass',freq:900,q:.6}})]),
+  'area-fires':FIRE_LAYERS});
 // Orçamento de fontes vivas (grãos agendados + loops): o limite de 32 vozes conta eventos, não nós.
 export const SOURCE_BUDGET=Object.freeze({low:260,medium:420,high:600});
 // Reserva de nós reutilizáveis (ganhos, filtros, panners): um disparo deixa de criar ~15 nós novos. As fontes (osciladores e
@@ -453,6 +457,13 @@ export class AudioManager {
     offsets.forEach((at,i)=>grains.push(...planWeaponShot(i%3===2?'ally_rifle':'kar98k',Math.max(distance,500),{key:`${id}:${i}`,at,detail:this.detail,tracker:this.variants})));
     return this._playPlan(grains,{kind:'distant-volley',category:'distant',priority:AUDIO_PRIORITY.distant,pan,distance:Math.max(distance,500),front,key:id});
   }
+  /** Area-act bed (loop `key` of AREA_BED_LAYERS) at `volume`; returns false when the key is unknown or no loop slot is free. Slow gusts reuse presentationNoise. */
+  setAreaBed(key,{volume=.02,distance=0,pan=0}={}){
+    const layers=AREA_BED_LAYERS[key];if(!this.ctx||!layers)return false;
+    if(!this.loops.has(key)&&!this._startLoop(key,{kind:key,category:key==='area-fires'?'fire':'ambience',volume,distance,pan,layers}))return false;
+    this._setLoop(key,{volume:volume*(.75+.5*presentationNoise(`${key}:gust`,this.clock,4.1)),distance,pan});return true;
+  }
+  stopAreaBed(key){this._stopLoop(key);}
   ambience(kind,pan=0){this.distantBattle(kind==='artillery'?'artillery':'rifle',pan,900,`legacy-ambience:${kind}:${this.serial}`);}
 
   // ------------------------------------------------------------ loops (vento, frente, motores, fogo)

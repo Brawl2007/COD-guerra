@@ -90,6 +90,10 @@ test('the records: lim and gr are optional keys of the deck record, bounded; eve
   man.deck.lim=lines[1];assert.ok(validDeckRecord(man,s.clock));assert.equal(deckLineNumber(man),1);
   man.deck.lim=lines[2];assert.ok(validDeckRecord(man,s.clock));assert.equal(deckLineNumber(man),2);
   man.deck.lim=lines[1]+1;assert.ok(!validDeckRecord(man,s.clock),'a limit that is not a line');
+  // 2026-11-04 (package 2 critical review): the same record is the record of ANOTHER safeX when it is a node of the man's path under some safeX (250 -> 190 renumbered the lines): the validator of a load
+  // (olderPlan) accepts it, restoreSnapshot puts it on the nearest live line (tests/m01-pkg2-saves.test.js); what no safeX could have written is refused in both modes.
+  assert.ok(validDeckRecord(man,s.clock,{olderPlan:true}),'a node of the path that is not a line: a save of another safeX');
+  for(const bad of [lines[1]+.5,'29',null,-1,lines[0]-1,P.maxNodes[1]+1,1e9]){man.deck.lim=bad;assert.ok(!validDeckRecord(man,s.clock,{olderPlan:true}),`lim ${bad} is no node of any path`);}
   man.deck.lim=lines[1];man.deck.gr=1;assert.ok(validDeckRecord(man,s.clock));
   for(const bad of [0,2,-1,1.5,'1']){man.deck.gr=bad;assert.ok(!validDeckRecord(man,s.clock),`gr ${bad}`);}
   delete man.deck.gr;man.deck.extra=1;assert.ok(!validDeckRecord(man,s.clock),'an unknown key');delete man.deck.extra;
@@ -97,7 +101,10 @@ test('the records: lim and gr are optional keys of the deck record, bounded; eve
   const over=s.actor('de_spans_1');over.deck.lim=0;assert.ok(!validDeckRecord(over,s.clock),'an overwatch man has no line');
   // inside a save
   const save=json(raw);const m=save.actors.find(a=>a.id==='de_spans_4');m.deck.lim=P.lines[0][1];assert.doesNotThrow(()=>validateM01Snapshot(json(save)));
-  m.deck.lim=P.lines[0][1]+1;assert.throws(()=>validateM01Snapshot(json(save)),/assalto do tabuleiro/);
+  // 2026-11-04 (package 2 critical review): a limit that is a node of the man's path but not a line of the live data is a save of another safeX and loads (it was refused before: a CP-D written with safeX 250
+  // could not be loaded with 190); a limit no safeX could have written is still refused.
+  m.deck.lim=P.lines[0][1]+1;assert.doesNotThrow(()=>validateM01Snapshot(json(save)),'a node of the path that is not a line');
+  for(const bad of [P.lines[0][1]+.5,'29',-1,P.lines[0][0]-1,P.maxNodes[0]+1,1e9]){m.deck.lim=bad;assert.throws(()=>validateM01Snapshot(json(save)),/assalto do tabuleiro/,`lim ${bad}`);}
 });
 
 test('the new events are validated: the stick grenade thrown, the explosion with its thrower, the changes of line; and the grenade death has its own words',()=>{
