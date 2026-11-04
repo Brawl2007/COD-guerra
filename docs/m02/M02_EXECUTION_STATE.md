@@ -2,7 +2,7 @@
 
 ## Continuação — retirada física em C03, 2026-11-04
 
-`82863c1` implementa a tentativa do auxiliar da MG de atravessar a porta sul de B02 após a quebra de moral, com rendição se a passagem estiver bloqueada e estado persistido no checkpoint. Passaram 208 testes M02, build e [browser com captura em cenário controlado](../verification/m02-runtime/barn-retreat-2026-11-04/README.md); não houve teste em iPhone. O ator ainda não tem animação de fuga ou rendição dedicada e mantém a arma visível. A ocorrência depende de ele sobreviver dentro do celeiro; não é garantida em todas as passagens. Prosseguir atuação física, armas, áudio e auditoria do roteiro, preservando simulação e saves. Main e produção intactas.
+`82863c1` implementa a tentativa do auxiliar da MG de atravessar a porta sul de B02 após a quebra de moral, com rendição se a passagem estiver bloqueada e estado persistido no checkpoint. Passaram 208 testes M02, build e [browser com captura em cenário controlado](../verification/m02-runtime/barn-retreat-2026-11-04/README.md). A passagem contínua da mesma build chegou à M03 sem mortes do jogador nem erros, com água/giz, dois abastecimentos, Lis e 12/12; piloto lê estado oculto e não comprova que a fuga ocorreu nesse percurso. Não houve teste em iPhone. O ator ainda não tem animação de fuga ou rendição dedicada e mantém a arma visível. A ocorrência depende de ele sobreviver dentro do celeiro; não é garantida em todas as passagens. Prosseguir atuação física, armas, áudio e auditoria do roteiro, preservando simulação e saves. Main e produção intactas.
 
 ## Continuação — passagem com retirada antecipada, 2026-11-04
 
