@@ -31,7 +31,9 @@ export class M02AudiovisualDirector {
   }
 
   reset() {
-    this.accessibility = { ...DEFAULT_ACCESSIBILITY_OPTIONS };
+    // Opções de acessibilidade são configuração do utilizador, não estado de jogo (PDF I5, p. 34–35: «configuração gráfica
+    // separada»): só o primeiro reset (construtor) aplica as omissões; reset/restauro de jogo não as mexe (FIX-2b).
+    this.accessibility = this.accessibility ?? { ...DEFAULT_ACCESSIBILITY_OPTIONS };
     this.weaponKinematics = {
       clearanceState: 'READY', // 'READY' | 'LOWERED_NEAR_OBSTACLE'
       obstructionId: null,
@@ -232,9 +234,9 @@ export class M02AudiovisualDirector {
     this.directionalIndicators = this.directionalIndicators.filter((ind) => sim.clock < ind.expiresAt);
   }
 
+  /** Estado audiovisual do jogo. Sem `accessibility`: é configuração separada (I5) e fica fora do save. */
   snapshot() {
     return {
-      accessibility: structuredClone(this.accessibility),
       weaponKinematics: structuredClone(this.weaponKinematics),
       cameraShake: structuredClone(this.cameraShake),
       // SAVE-01: os IDs `aud_N` derivam do comprimento do registo e os indicadores expiram pelo relógio da simulação.
@@ -245,7 +247,7 @@ export class M02AudiovisualDirector {
 
   restore(snap) {
     if (!snap) return;
-    if (snap.accessibility) this.accessibility = structuredClone(snap.accessibility);
+    // `snap.accessibility` de saves v2 anteriores ao FIX-2b é ignorado: restaurar um checkpoint não reverte a configuração.
     if (snap.weaponKinematics) this.weaponKinematics = structuredClone(snap.weaponKinematics);
     if (snap.cameraShake) this.cameraShake = structuredClone(snap.cameraShake);
     this.spatialAudioLog = structuredClone(snap.spatialAudioLog ?? []);

@@ -708,7 +708,7 @@ export class M02BenchSimulation {
       text: cartelaText,
       expiresAt: this.clock + 8.0,
     };
-    this.flags['m02.completed'] = true;
+    // m02.completed não é escrito aqui: «só após conclusão transacional» (PDF I4, p. 34), que é C12 (FIX-2b).
     this.flags['m02.transicao_tab_pronta'] = true;
 
     this.transitionTABPayload = {
@@ -1511,7 +1511,7 @@ export class M02BenchSimulation {
       this.objective.id = 'COMPLETE';
       this.objective.title = 'Quinta consolidada — Secção pronta para avançar rumo a Łęczyca (M02-B)';
       this.objective.status = 'completed';
-      this.flags['m02.completed'] = true;
+      // Objetivo local da Área A concluído; a missão não: m02.completed só em C12 (PDF I4, p. 34; FIX-2b).
       this.dialogue.trigger('bz39_c05_01', this);
       if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
     } else if (activeCombatDefenders.length === 0) {
@@ -1954,6 +1954,9 @@ export class M02BenchSimulation {
     this.mgState = p.mgState;
     this.routeProgress = p.routeProgress;
     this.flags = p.flags;
+    // Migração explícita de saves v2 anteriores ao FIX-2b (PDF I5: «migrar com regra explícita»): marcavam m02.completed já
+    // na Área A/C05; a flag só é verdadeira depois de C12 (I4, p. 34).
+    if (this.flags['m02.completed'] && !this.areaC?.c12Completed) this.flags['m02.completed'] = false;
     this.squadOrder = p.squadOrder;
     this.dialogue.restore(p.dialogue);
     this.horizon.restore(p.horizon);

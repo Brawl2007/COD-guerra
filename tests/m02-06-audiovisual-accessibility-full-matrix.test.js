@@ -171,16 +171,22 @@ describe('M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Ma
     // Directional indicator created
     assert.ok(sim.audiovisual.directionalIndicators.length > 0, 'Directional indicator must be created on explosion');
 
-    // Verify snapshot / restore preserves accessibility options
+    // FIX-2b: accessibility options are user configuration, kept apart from the game state (PDF I5, p. 34-35:
+    // "configuracao grafica separada"). The snapshot does not carry them; restoring a checkpoint neither reverts the
+    // current user's options nor imposes the saved ones (this test used to require the opposite).
     const snap = sim.snapshot();
     assert.ok(snap.audiovisual, 'Snapshot must contain audiovisual slice');
+    assert.equal('accessibility' in snap.audiovisual, false, 'Accessibility config is not part of the game snapshot');
 
     const freshSim = new M02BenchSimulation(19390909);
     freshSim.restoreSnapshot(snap);
+    assert.deepEqual(freshSim.audiovisual.accessibility, { ...DEFAULT_ACCESSIBILITY_OPTIONS }, 'Restore keeps the target config');
 
-    assert.equal(freshSim.audiovisual.accessibility.reducedDynamicRange, true);
-    assert.equal(freshSim.audiovisual.accessibility.tinnitusIntensity, 0.0);
-    assert.equal(freshSim.audiovisual.accessibility.reducedCameraShake, true);
+    sim.restoreSnapshot(new M02BenchSimulation(19390909).snapshot());
+    assert.equal(sim.audiovisual.accessibility.reducedCameraShake, true, 'Restoring an older checkpoint keeps the user config');
+    assert.equal(sim.audiovisual.accessibility.tinnitusIntensity, 0.0);
+    sim.reset();
+    assert.equal(sim.audiovisual.accessibility.reducedDynamicRange, true, 'A game reset keeps the user config');
   });
 
   it('MAP-03: Stretcher and evacuation route physical scale and raycast clearance (0 collisions at ±0.45m)', () => {

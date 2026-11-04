@@ -269,7 +269,9 @@ test('COM-03 & K2/K3: Protected literal line dlg_m02_001, C04 wounded soldier pe
   sim.interactDoor();
   assert.equal(sim.flags['m02.pomar_wounded_marked'], true, 'Chalk interaction must set m02.pomar_wounded_marked=true');
   assert.equal(sim.objective.id, 'COMPLETE', 'Marking wounded soldier after clearing farm must complete M02-02');
-  assert.equal(sim.flags['m02.completed'], true);
+  // FIX-2b: concluir o objetivo local da Área A não conclui a missão — m02.completed é «Booleano, só após conclusão
+  // transacional» (PDF I4, p. 34), escrito em C12 (completeC12Epilogue).
+  assert.equal(sim.flags['m02.completed'], false);
 
   // Now test firing on the unarmed wounded soldier -> sets m02.fired_on_wounded=true and triggers priority-0 bz39_c04_05
   const shotAtWounded = sim.fireDirectRay(

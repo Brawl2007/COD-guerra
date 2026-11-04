@@ -2,6 +2,7 @@
 // Teste de estado (não é playtest): cada caso reproduz um defeito confirmado por execução e prova que deixou de ocorrer.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
 import { createMemoryStorage, M02SaveStore, M02_SAVE_STORAGE_KEY } from '../src/game/m02-save-store.js';
@@ -652,5 +653,66 @@ describe('M02-12 — P2: validador (enums e relações, PDF I4/I5) e perfil da a
     sim.saveCheckpoint('cp_m02_manual');
     assert.equal(sim.lastCheckpointPersist.ok, true, sim.lastCheckpointPersist.reason);
     assert.equal(sim.pickupSupplyVolume('vol_ammo'), true, 'o volume largado pode ser recolhido');
+  });
+});
+
+describe('M02-12 — P2: configuração separada do estado de jogo (I5) e m02.completed só em C12 (I4)', () => {
+  it('acessibilidade fora do snapshot: restaurar um checkpoint não reverte a configuração; save v2 antigo com ela carrega', () => {
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    const legacy = sim.saveCheckpoint('cp_m02_manual');
+    assert.equal('accessibility' in legacy.audiovisual, false);
+    sim.setAccessibilityOptions({ subtitlesEnabled: false, reducedCameraShake: true, tinnitusIntensity: 0 });
+    sim.restoreCheckpoint('cp_m02_manual');
+    assert.equal(sim.audiovisual.accessibility.subtitlesEnabled, false);
+    assert.equal(sim.audiovisual.accessibility.reducedCameraShake, true);
+    assert.equal(sim.audiovisual.accessibility.tinnitusIntensity, 0);
+
+    // Save v2 gravado antes do FIX-2b (levava a acessibilidade): continua a carregar e a configuração é ignorada.
+    legacy.audiovisual.accessibility = { subtitlesEnabled: true, reducedCameraShake: false, tinnitusIntensity: 1 };
+    assert.equal(validateM02Snapshot(legacy).valid, true);
+    sim.restoreSnapshot(legacy);
+    assert.equal(sim.audiovisual.accessibility.subtitlesEnabled, false);
+    assert.equal(sim.audiovisual.accessibility.tinnitusIntensity, 0);
+  });
+
+  it('m02.completed fica falso ao concluir a Área A e em C05; só C12 o põe verdadeiro; save antigo é migrado', () => {
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    killAll(sim.enemies);
+    sim.tick(DT, {});
+    assert.equal(sim.objective.id, 'COMPLETE');
+    assert.equal(sim.flags['m02.completed'], false, 'Área A consolidada não conclui a missão');
+    assert.equal(sim.checkpoints.get('cp_m02_b_acesso').flags['m02.completed'], false);
+    const payload = sim.triggerTransitionTAB({ skip: true });
+    assert.equal(sim.flags['m02.completed'], false, 'C05/T-AB não conclui a missão');
+    assert.equal(payload.flags['m02.completed'], false);
+    assert.equal(sim.exportCampaignResultToM03().completed, false, 'exportar antes de C12 não declara conclusão');
+
+    const legacy = sim.snapshot();
+    legacy.flags['m02.completed'] = true; // como os saves v2 anteriores ao FIX-2b gravavam na Área A
+    const fresh = new M02BenchSimulation(SEED + 1, { storage: createMemoryStorage() });
+    fresh.restoreSnapshot(legacy);
+    assert.equal(fresh.flags['m02.completed'], false, 'migração explícita: sem C12 não há conclusão');
+
+    sim.enterAreaBC06();
+    sim.enterAreaCC09();
+    assert.equal(sim.flags['m02.completed'], false);
+    sim.completeC12Epilogue();
+    assert.equal(sim.flags['m02.completed'], true);
+    const done = sim.saveCheckpoint('cp_m02_final_test');
+    fresh.restoreSnapshot(done);
+    assert.equal(fresh.flags['m02.completed'], true, 'depois de C12 a flag é reposta');
+  });
+
+  it('guarda estática: o seletor de iluminação da bancada só muda a luz de pré-visualização (não o estado temporal)', () => {
+    // Guarda de código (não é teste de comportamento): o listener está no módulo de browser, sem DOM em Node.
+    const src = readFileSync(new URL('../src/m02/m02-01-main.js', import.meta.url), 'utf8');
+    const start = src.indexOf("selLighting?.addEventListener('change'");
+    assert.ok(start >= 0);
+    const block = src.slice(start, src.indexOf('});', start));
+    assert.match(block, /renderer\.applyLightingPreset/);
+    assert.doesNotMatch(block, /setTemporalState|sim\.horizon/);
+    // E a simulação: mudar só a luz não mexe na data narrativa do snapshot.
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    assert.deepEqual(sim.snapshot().narrative, { temporalState: 'T0', narrativeDate: '1939-09-09', dayPart: 'fim da tarde', civilTime: null });
   });
 });
