@@ -57,3 +57,25 @@ Mesmas quatro vistas, mesmo save (semente 19390901), menor de 8 fotogramas lidos
 - Os alemães só mudaram por contraste (campo + ×1,32): a 140 m continuam sendo pontos. Soluções reais (silhueta/impostor, tamanho de mira, ADS) são decisões de desenho, não deste pacote.
 - Primeiro sync: se o primeiro mundo apresentado for já o da área, a paisagem distante assenta no terreno sem o deslocamento (≤ 5 cm a oeste): irrelevante aqui, anotado.
 - Nada disto foi jogado por uma pessoa.
+
+## Prioridade dos atores acima do orçamento (2026-11-04, renderer apenas)
+
+**Regra** (`src/render/m01-characters.js`, `actorPriority`): o orçamento de corpos animados não muda (Low 18 / Medium 24 / High 48). Só quando há mais candidatos (dentro do corte de distância da camada) do que o orçamento, os candidatos são ordenados por: guarnição reservada do MG34 (como antes) > **alemão vivo e ativo que está no campo de visão (cone de ±60°) ou disparou nos últimos 3 s** > vivo no campo de visão (aliado) > resto; dentro de cada classe, mais perto primeiro e depois por id. Cortam-se os que sobram e os escolhidos voltam à ordem de sempre (perto primeiro). Dentro do orçamento nada muda. Sem alocações por fotograma (registos do conjunto e comparador a nível de módulo). O renderer só lê `team`, `alive`, `active`, `shot`, `firedAt`, `x/z` e `player.angle`. Diagnóstico novo: `gameDiagnostics().m01.characters.priority = {overBudget, hostileCandidates, hostileDrawn, hostileNotSkinned}`.
+
+**O que a cena mostra (honestamente).** Do parapeito, 25 s depois do início da 2.ª vaga (`09-echelon2-low-actors.png`), os alemães vivos estão a 170-250 m: fora do alcance de corpos animados em Low (100 m) e Medium (130 m); são desenhados pelo corpo procedural (caixas) e a regra é inerte (`overBudget:false`, 0 candidatos alemães vivos). Em High (corte 350 m) os 14 alemães vivos já eram corpos animados. A rota passiva nunca ultrapassa 14 candidatos em Low (varrimento de toda a ação, 1 em 10 ticks). O caso do enunciado (mais de 18 candidatos) só aparece com o jogador mais à frente. Cena de esforço QA, edição do save (não é uma rota): 62 s da 2.ª vaga, jogador **80 m à frente do parapeito** (`09b-...-forward-actors.png`; `-before` = código anterior): 24 candidatos a menos de 100 m (6 alemães vivos, 9 caídos, 9 polacos) contra 18 em Low.
+
+| Cena 80 m à frente | Alemães vivos desenhados antes → depois | caídos antes → depois | polacos/outros antes → depois |
+|---|---|---|---|
+| Low (18) | 4 → 5 (candidatos 5) | 6 → 6 | 8 → 7 |
+| Medium (24) | 5 → 8 (candidatos 8) | 9 → 7 | 10 → 9 |
+| High (48) | 13 → 13 | 13 → 13 | 12 → 12 |
+
+(Vivos 13/14, dos quais 11/12 no campo de visão; os restantes estão para lá do corte de distância e continuam procedurais.) Do parapeito: Low 0 → 0, Medium 0 → 0, High 14 → 14 alemães vivos (a regra não altera nada). Números de `metrics-echelon2-actors{,-before}.json`, lidos no mesmo instante que o estado da simulação (`?visual-verify`). Ganho modesto: o corte de distância continua a ser o limite principal; o que a regra garante é que nenhum aliado atrás do jogador e nenhum caído tomam o lugar de um atacante visível.
+
+**Alcance que não foi tocado:** alemães vivos entre o corte (100/130 m) e o limite dos impostores (350 m) são caixas procedurais em Low/Medium; uma representação intermédia (LOD reduzido de corpo animado) não existe no código e não foi criada.
+
+**Comandos e resultados**
+- `node --test tests/m01-actor-legibility.test.js`: 12/12 (4 novos: 14 aliados perto + 10 alemães longe → os 10 desenhados em Low, atrás ou à frente; inimigo calado atrás perde para aliados à vista, o que disparou ganha, o caído não tem prioridade; mais de 18 vivos à vista → os 18 mais perto e `hostileNotSkinned`; dentro do orçamento, inerte). Sem a regra, os 3 testes de prioridade falham.
+- Os 25 ficheiros de teste que leem `m01-characters.js` (+ byte-guard): 236/236 e 28/28.
+- `npm run build`: ok. `CHROME_EXECUTABLE=/opt/pw-browsers/chromium npx playwright test tests/browser/m01-act-vii-a.spec.js tests/browser/m01-act-vii-a-visual.spec.js tests/browser/m01-act-vii-a-actors.spec.js`: 6 + o novo passam (os PNG repostos com `git checkout`; este pacote só acrescenta `09*`, `metrics-echelon2-actors*.json` e o spec novo).
+- Não é uma medida de FPS nem um playtest. Cena de esforço 80 m à frente: o jogador fica com a altura de olhos do parapeito (a simulação não reposiciona o terreno).

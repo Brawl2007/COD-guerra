@@ -80,6 +80,17 @@ const _twist=new THREE.Quaternion(),_muzzle=new THREE.Vector3();
 // Optional high-tier sources requested by update(); the key prefix selects the loader (loadSource / loadMG / loadCKM).
 const HIGH_SOURCES=['pl:0','de:0','de:1','mg34:0','ckm:0','mg34:1','ckm:1'];
 // Candidate order: reserved MG34 gunners, then their loaders, then nearest first, ties by id (a total order, so the in-place sort is deterministic).
+// Over-budget priority (renderer-only, reads sim fields): a live, active enemy that is in the player's view or fired within the last PRIORITY_FIRE_SEC is drawn before any ally;
+// then allies in view; then everything else. VIEW_COS = cos(60 deg), wider than the horizontal half-FOV of 16:9 at 70 deg (51 deg), so nothing visible falls outside it.
+const PRIORITY_FIRE_SEC=3,VIEW_COS=.5;
+const hostileLive=a=>a.team==='enemy'&&a.alive!==false;
+/** Priority class of a candidate: 1 = live enemy in view or recently firing, 2 = living non-hostile in view, 3 = the rest. Pure; `cosA/sinA` = player view direction (x,z), NaN = unknown. */
+export function actorPriority(a,d,px,pz,cosA,sinA,time){
+  const live=hostileLive(a),fresh=live&&(a.shot>0||time-a.firedAt<PRIORITY_FIRE_SEC);
+  const inView=d<=.5||(a.x-px)*cosA+(a.z-pz)*sinA>=VIEW_COS*d;   // false when the direction is NaN (a caller without a view)
+  return live&&(inView||fresh)?1:inView&&a.alive!==false?2:3;
+}
+const byPriority=(a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.p-b.p||a.d-b.d||a.a.id.localeCompare(b.a.id);
 const byCandidate=(a,b)=>Number(mgGunner(b.a))-Number(mgGunner(a.a))||Number(mgLoader(b.a))-Number(mgLoader(a.a))||a.d-b.d||a.a.id.localeCompare(b.a.id);
 const unarmedKind=a=>Boolean(a.civilian)||a.role==='MEDIC'||mgCrew(a);   // never carries the rifle: its weapon parts are not batched (decided at create, recreated if it ever changes)
 const NO_NAMES=[],RIFLE_ARMED=['rifle','clip'],BAK_ARMED=['clip','rifle_wz98a'],KOWAL_ARMED=['rkm_wz28'];   // parts whose visibility is exactly `armed` (see the update loop)
@@ -454,15 +465,24 @@ export class M01Characters {
     this.carriers.clear();for(let i=0;i<actors.length;i++)if(actors[i].carriedBy)this.carriers.add(actors[i].carriedBy);
     const availableMG=[0,1,2].some(l=>this.sources.has(`mg34:${l}`))&&this.clips.has('mg34_aim')&&this.clips.has('mg34_fire_burst');
     // Candidates live in a reused record pool and array (no filter/map/slice chain per frame); the sort is in place.
-    const cands=this.cands,pool=this.candPool;cands.length=0;
+    const cands=this.cands,pool=this.candPool;cands.length=0;let hostileCands=0;
     for(let i=0;i<actors.length;i++){
       const a=actors[i];
       if(!(a.active&&(!a.civilian||dressedCivilian(a))&&(a.role!=='SUPPORT'||a.id==='szymon_kowal'||mgGunner(a)&&availableMG||ckmRole(a))))continue;
       const d=Math.hypot(a.x-player.x,a.z-player.z);
       if(!(mgCrew(a)?d<1800:selectConsumerLod('actors',d,preset,instanceLod(this.instances.get(a.id)))<3))continue;
-      const rec=pool[cands.length]??={a:null,d:0};rec.a=a;rec.d=d;cands.push(rec);
+      const rec=pool[cands.length]??={a:null,d:0,p:3};rec.a=a;rec.d=d;rec.p=3;cands.push(rec);if(hostileLive(a))hostileCands++;
     }
     // Reserve the two real fire sources and their linked loaders within the existing 18/24/28 actor budget.
+    // Over budget: rank by priority (live enemies in view / firing first), keep the best `count`, then restore the usual nearest-first order among them (IK budget, pose order).
+    const overBudget=cands.length>limits.count;
+    if(overBudget){
+      const cosA=Math.cos(player.angle),sinA=Math.sin(player.angle);
+      for(let i=0;i<cands.length;i++){const r=cands[i];r.p=actorPriority(r.a,r.d,player.x,player.z,cosA,sinA,time);}
+      cands.sort(byPriority);
+      for(let i=limits.count;i<cands.length;i++)cands[i].a=null;
+      cands.length=limits.count;
+    }
     cands.sort(byCandidate);const candidateCount=Math.min(cands.length,limits.count);
     if(this.clips.size)for(let ci=0;ci<candidateCount;ci++){
       const {a,d}=cands[ci];
@@ -598,6 +618,7 @@ export class M01Characters {
         socket.add(v.root);v.root.position.set(0,0,0);v.root.rotation.set(0,0,0);v.root.updateMatrixWorld(true);
       }
     }
+    let hostileDrawn=0;for(let i=0;i<candidateCount;i++)if(hostileLive(cands[i].a)&&selected.has(cands[i].a.id))hostileDrawn++;
     for(let i=0;i<cands.length;i++)cands[i].a=null;cands.length=0;   // do not keep the actor records alive between frames
     for(const [id,v]of this.instances)if(!selected.has(id)){this.release(v);this.instances.delete(id);}
     // A record older than GAP (or from a later clock after a load) would be reset anyway: drop it.
@@ -607,7 +628,7 @@ export class M01Characters {
     let built=null;const chars=this;
     this.stats={poseUpdates:this.poseStats.applied,heldPoses:this.poseStats.held,boneUploads:this.poseStats.boneUploads,boneSkips:this.poseStats.boneSkips,active:selected.size,limit:limits.count,instances:this.instances.size,clips,
       get actors(){return built??=chars.diagnosticsViews(visible);},
-      lodPreset:preset,lodBands:bands,submittedMeshes:submitted,submittedDrawCalls:drawCalls,lodSwitches:this.lodSwitches,
+      lodPreset:preset,lodBands:bands,priority:{overBudget,hostileCandidates:hostileCands,hostileDrawn,hostileNotSkinned:hostileCands-hostileDrawn},submittedMeshes:submitted,submittedDrawCalls:drawCalls,lodSwitches:this.lodSwitches,
       lodCounters:{low:lodCounterTotals(this.lodCounters,'low'),medium:lodCounterTotals(this.lodCounters,'medium'),high:lodCounterTotals(this.lodCounters,'high')}};
     return selected;
   }

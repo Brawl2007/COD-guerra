@@ -47,6 +47,62 @@ test('the High budget covers a combat crowd of 48 and still sorts by distance',(
   }finally{c.dispose();}
 });
 
+// Over-budget selection (VII-a): live enemies in view / firing are drawn before allies; the budgets themselves stay 18/24/48.
+const placed=(team,id,x,z,extra={})=>({...rifleman(team,id,x),z,...extra});
+const LOOK_X={x:0,z:0,angle:0};   // player looks along +x
+test('over budget on Low, 14 allies close and 10 enemies far in front: every enemy in view is drawn (budget stays 18)',()=>{
+  const c=characters();
+  try{
+    for(const behind of [false,true]){
+      const actors=[];
+      for(let i=0;i<14;i++)actors.push(placed('ally',`pl_${i}`,behind?-3-i:3+i,i%3));
+      for(let i=0;i<10;i++)actors.push(placed('enemy',`de_${i}`,50+i*4,(i%5)-2));
+      const sel=c.update(actors,12,LOOK_X,'low');
+      assert.equal(sel.size,ACTOR_BUDGET.low);
+      for(let i=0;i<10;i++)assert.ok(sel.has(`de_${i}`),`de_${i} drawn (allies ${behind?'behind':'in front'})`);
+      assert.equal([...sel].filter(id=>id.startsWith('pl_')).length,8,'the 8 nearest allies fill the rest');
+      assert.ok(sel.has('pl_0')&&sel.has('pl_7')&&!sel.has('pl_8'));
+      const p=c.stats.priority;assert.deepEqual([p.overBudget,p.hostileCandidates,p.hostileDrawn,p.hostileNotSkinned],[true,10,10,0]);
+      assert.deepEqual([...c.update(actors.slice().reverse(),12,LOOK_X,'low')].sort(),[...sel].sort(),'independent of actor order');
+    }
+  }finally{c.dispose();}
+});
+
+test('over budget: enemies behind and quiet do not displace allies in view; an enemy that fired does; dead enemies get no priority',()=>{
+  const c=characters();
+  try{
+    const actors=[];
+    for(let i=0;i<18;i++)actors.push(placed('ally',`pl_${i}`,20+i,i%3));
+    actors.push(placed('enemy','de_behind',-5,0),placed('enemy','de_fired',-8,0,{firedAt:11}),placed('enemy','de_dead',60,0,{alive:false}),placed('enemy','de_view',70,0));
+    const sel=c.update(actors,12,LOOK_X,'low');
+    assert.ok(sel.has('de_view')&&sel.has('de_fired'),'in view / firing');
+    assert.ok(!sel.has('de_behind'),'quiet enemy behind loses to allies in view');assert.ok(!sel.has('de_dead'),'a dead enemy is not prioritised');
+    assert.equal(sel.size,18);
+  }finally{c.dispose();}
+});
+
+test('over budget with more live enemies in view than the budget: the nearest 18 are drawn and the rest is counted as not skinned',()=>{
+  const c=characters();
+  try{
+    const actors=[];
+    for(let i=0;i<22;i++)actors.push(placed('enemy',`de_${i}`,20+i*3,(i%5)-2));
+    for(let i=0;i<6;i++)actors.push(placed('ally',`pl_${i}`,5+i,0));
+    const sel=c.update(actors,12,LOOK_X,'low');
+    assert.deepEqual([...sel].sort(),Array.from({length:18},(_,i)=>`de_${i}`).sort());
+    assert.deepEqual([c.stats.priority.hostileCandidates,c.stats.priority.hostileDrawn,c.stats.priority.hostileNotSkinned],[22,18,4]);
+  }finally{c.dispose();}
+});
+
+test('within budget the priority rule is inert (nearest first, as before); the candidate pool does not grow past what it needs',()=>{
+  const c=characters();
+  try{
+    const actors=[placed('ally','pl_a',5,0),placed('enemy','de_a',-30,0)];
+    const sel=c.update(actors,12,LOOK_X,'low');assert.deepEqual([...sel].sort(),['de_a','pl_a']);assert.equal(c.stats.priority.overBudget,false);
+    const crowd=Array.from({length:30},(_,i)=>placed(i%2?'enemy':'ally',`m_${i}`,10+i,0));c.update(crowd,12,LOOK_X,'low');
+    assert.equal(c.cands.length,0);assert.ok(c.candPool.every(r=>r.a===null),'no actor record retained');
+  }finally{c.dispose();}
+});
+
 test('rim distance factor: none near, full at mid range, fades out where a figure is a few pixels tall; the aerial fill grows to a plateau',()=>{
   assert.equal(rimDistanceFactor(0),0);assert.equal(rimDistanceFactor(RIM_NEAR_M),0);assert.equal(rimDistanceFactor(RIM_FULL_M),1);assert.equal(rimDistanceFactor(RIM_FADE_FROM_M),1);assert.ok(RIM_FULL_M<=RIM_FADE_FROM_M);
   assert.equal(rimDistanceFactor(RIM_FADE_TO_M),0);assert.equal(rimDistanceFactor(1e6),0);
