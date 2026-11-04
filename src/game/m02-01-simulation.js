@@ -109,6 +109,20 @@ const WEAPON_STATE_FIELDS = Object.freeze(['mag', 'reserve', 'state', 'until', '
 const WZ29_PROFILE_ID = new Wz29().profile.id;
 const WZ29_MAG_CAPACITY = 5;
 
+/**
+ * -0 → 0 em todo o snapshot (no próprio objeto: o snapshot é uma árvore nova). O JSON do armazenamento não representa -0;
+ * normalizar aqui faz o restauro a partir da memória e a partir da loja darem exatamente o mesmo estado (FIX-2b).
+ */
+function normalizeNegativeZero(node) {
+  const keys = Array.isArray(node) ? node.keys() : Object.keys(node);
+  for (const k of keys) {
+    const v = node[k];
+    if (Object.is(v, -0)) node[k] = 0;
+    else if (v && typeof v === 'object') normalizeNegativeZero(v);
+  }
+  return node;
+}
+
 /** Vida finita em [0, maxHealth]. */
 const healthInRange = (a) =>
   typeof a.health === 'number' && typeof a.maxHealth === 'number' && a.maxHealth > 0 && a.health >= 0 && a.health <= a.maxHealth;
@@ -1786,7 +1800,7 @@ export class M02BenchSimulation {
    * frame), o índice `checkpoints`, o navegador (derivado do mundo) nem métricas do streamer.
    */
   snapshot() {
-    return {
+    return normalizeNegativeZero({
       schema: M02_SNAPSHOT_SCHEMA,
       schemaVersion: M02_SNAPSHOT_SCHEMA_VERSION,
       missionId: M02_MISSION_ID,
@@ -1835,7 +1849,7 @@ export class M02BenchSimulation {
       objective: structuredClone(this.objective),
       combatLog: structuredClone(this.combatLog),
       shotLog: structuredClone(this.shotLog),
-    };
+    });
   }
 
   /**

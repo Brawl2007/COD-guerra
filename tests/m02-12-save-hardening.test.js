@@ -716,3 +716,40 @@ describe('M02-12 — P2: configuração separada do estado de jogo (I5) e m02.co
     assert.deepEqual(sim.snapshot().narrative, { temporalState: 'T0', narrativeDate: '1939-09-09', dayPart: 'fim da tarde', civilTime: null });
   });
 });
+
+describe('M02-12 — -0 no snapshot (o JSON perde-o)', () => {
+  /** Como canonical(), mas distingue -0 de 0. */
+  const strictCanonical = (value) =>
+    JSON.stringify(value, (_k, v) => (Object.is(v, -0) ? '#-0' : v instanceof Map ? [...v.entries()].sort() : v instanceof Set ? [...v].sort() : v));
+  const hasNegativeZero = (node) =>
+    Object.is(node, -0) || (node !== null && typeof node === 'object' && Object.values(node).some(hasNegativeZero));
+
+  it('Área C: o snapshot não tem -0 e o restauro da memória e o da loja continuam igualmente, bit a bit', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.enterAreaCC09();
+    const driver = routeDriver('areaC');
+    record(sim, driver, 0, 10);
+    const live = liveState(sim);
+    assert.ok(hasNegativeZero(live), 'pré-condição: o estado vivo tem -0 (memória de um inimigo em x = -0)');
+    const snap = sim.saveCheckpoint('cp_m02_manual');
+    sim.drainEvents();
+    assert.equal(hasNegativeZero(snap), false);
+
+    const fromMemory = new M02BenchSimulation(SEED + 5, { storage: createMemoryStorage() });
+    fromMemory.restoreSnapshot(snap);
+    const fromStore = new M02BenchSimulation(SEED + 6, { storage });
+    fromStore.restorePersistedCheckpoint('cp_m02_manual');
+    for (let t = 10; t < 130; t++) {
+      fromMemory.tick(DT, driver(fromMemory, t));
+      fromStore.tick(DT, driver(fromStore, t));
+      assert.equal(strictCanonical(liveState(fromStore)), strictCanonical(liveState(fromMemory)), `tick ${t}`);
+    }
+    // E ambos seguem a continuação original (com -0 tratado como 0, ver canonical()).
+    const reference = record(sim, driver, 10, 60);
+    const again = new M02BenchSimulation(SEED + 7, { storage });
+    again.restorePersistedCheckpoint('cp_m02_manual');
+    again.drainEvents();
+    assertSameContinuation(record(again, driver, 10, 60), reference, 'Área C · cópia persistida');
+  });
+});
