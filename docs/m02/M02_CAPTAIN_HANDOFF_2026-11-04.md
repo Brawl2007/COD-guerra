@@ -78,7 +78,26 @@ Veredito: a M02 continua `PLANEJADA` e é uma **bancada isolada, INTEGRADA SEM V
   - `saveCheckpoint`/`restoreCheckpoint` devolvem referências partilhadas.
 - **Sem defeito, testado:** snapshots entre ticks nos 4 modos de restauro, nas Áreas A, B (com o limite corrigido em memória) e C.
 
-**FIX-2b**, que corrige todos estes defeitos, está **EM CURSO** como agente único (worktree `m02-fix2b`).
+**FIX-2b** está integrado: merge `318b265`, commits `763310e`…`371582e`. Depois dele:
+- `tests/m02-*.test.js` dá **100/100**, com 24 testes novos em `tests/m02-12-save-hardening.test.js`.
+- O build passa.
+- O browser M02 dá **2 passed (2,6 min)**, com N0 30/30.
+
+**Verificação adversarial independente do FIX-2b: ACEITE COM RESSALVAS.** Nenhum dos 8 defeitos originais se
+reproduz e não há P0 nem P1.
+- **Sem defeito:**
+  - 102 696 validações do estado vivo em A/B/C, até C12 com os três `lis_status`, sem nenhuma rejeição;
+  - fuzz de restauro em A e C: 72/72 iguais.
+- **P2 confirmados**, todos encaminhados para o FIX-2c (agente único, EM CURSO):
+  - dois checkpoints automáticos no mesmo tick;
+  - checkpoint gravado a meio das ações compostas C11/C12 (KeyM e botão);
+  - -0 que chega a `atan2` (caso construído);
+  - a loja fica sem saída quando `current` está ilegível, sem aviso nem `clear()` na UI;
+  - o F9 ignora um save manual compatível quando o último checkpoint é incompatível.
+
+**Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
+morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
+morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 
 **Testes corridos (checkout principal):**
 - `node --test --test-concurrency=1 tests/m02-*.test.js` em `58e7976`: **76/76 pass, 0 fail, 0 todo**. Em `465cd30` eram 54 pass e 2 todo.
@@ -98,7 +117,8 @@ Veredito: a M02 continua `PLANEJADA` e é uma **bancada isolada, INTEGRADA SEM V
 
 | Trabalho | Estado | Onde está |
 |---|---|---|
-| FIX-2b defeitos da revisão adversarial | **EM CURSO**: é o único agente ativo | worktree `m02-fix2b` |
+| FIX-2b defeitos da revisão adversarial | **Integrado** (`318b265`); verificação independente: ACEITE COM RESSALVAS | — |
+| FIX-2c P2 residuais dos saves | **EM CURSO**: é o único agente ativo | worktree `m02-fix2c` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
@@ -137,4 +157,4 @@ Ou se reaplicam com `git apply --3way` e se terminam, ou se apagam.
 | D-M02-6 | Elenco: Gruca, Wierzba, Małek, Szymczak; «Małek» vs «Malec» (M05) | Pendente |
 | D-M02-7 | A bancada pode avançar antes da aprovação da M01, sem promover o estado | Pendente |
 
-Outras decisões: as portas de B08 (F) e EQP-01 (validação das armas).
+Outras decisões: as portas de B08 (F), EQP-01 (validação das armas) e a regra `DROPPED_READY` (volume largado quando o portador morre).
