@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — escolha opcional C04, 2026-11-04
+
+`e2894a9` corrige o objetivo que apresentava o giz como obrigatório: o roteiro permite ajudar ou seguir. Após oferecer água, o indicador aponta à saída sem retirar a opção de giz. Passaram 191 testes M02 antes do ajuste final do indicador e, depois, oito testes focados, build e [browser com toque simulado](../verification/m02-runtime/c04-optional-2026-11-04/README.md). As condições de progressão não mudaram. Continuar comparação C01–C12 com o roteiro Astra; main e produção intactas.
+
 ## Continuação — som da oferta de água, 2026-11-04
 
 `8227c80` usa os grãos de tecido/equipamento M01 no início real e ainda ativo da oferta de água, sem repetição após restauro. Passaram 189 testes M02, build e [teste browser com gravação isolada](../verification/m02-runtime/c04-water-audio-2026-11-04/README.md), pico 0,0891; a mistura em combate e Safari/iPhone não foram verificadas. A passagem integral com água `ed24ac6` é anterior ao som. Prosseguir com reação/contacto do ferido e restantes cenas; main e produção intactas.

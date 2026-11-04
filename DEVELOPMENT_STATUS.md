@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — escolha opcional no pomar — 2026-11-04
+
+`e2894a9` esclarece que a ajuda ao ferido é opcional e orienta à saída após dar água. Testes M02, focados, build e [browser](docs/verification/m02-runtime/c04-optional-2026-11-04/README.md) passaram. A encenação e a auditoria das restantes cenas continuam pendentes.
+
 ## M02 — som da oferta de água — 2026-11-04
 
 `8227c80` liga o som de tecido e equipamento M01 ao início da oferta, sem repetir após checkpoint. 189 testes M02, build e browser com [gravação isolada](docs/verification/m02-runtime/c04-water-audio-2026-11-04/README.md) passaram. Falta validar mistura em combate e em iPhone.
