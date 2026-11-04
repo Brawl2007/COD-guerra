@@ -2,6 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir:'./tests/browser',
+  // M02 specs need the M02 bench dev server; they only run via tools/m02/playwright-m02-01.config.js.
+  testIgnore:['**/m02-*.spec.js'],
   // Software WebGL on shared CI runners renders much slower than a hardware GPU.
   // Keep the same production viewport, real controls and assertions; budget more wall time.
   fullyParallel:false,workers:1,retries:0,timeout:process.env.CI?180000:45000,

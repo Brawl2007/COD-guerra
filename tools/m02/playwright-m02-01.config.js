@@ -8,12 +8,15 @@ const port = process.env.PORT || '4273';
 
 export default defineConfig({
   testDir: path.join(repoRoot, 'tests/browser'),
-  testMatch: 'm02-01-quinta.spec.js',
-  outputDir: '/tmp/m02-01-playwright-results',
+  // Both M02 specs run only from this config (the main playwright.config.js ignores m02-*.spec.js).
+  testMatch: ['m02-01-quinta.spec.js', 'm02-n0-captures.spec.js'],
+  // All artefacts stay under test-results/ (ignored by version control).
+  outputDir: path.join(repoRoot, 'test-results', 'm02-playwright'),
   fullyParallel: false,
   workers: 1,
   retries: 0,
-  timeout: 240000,
+  // SwiftShader (software WebGL) renders slowly; budget generously per test.
+  timeout: process.env.CI ? 420000 : 300000,
   use: {
     baseURL: `http://127.0.0.1:${port}/COD-guerra/`,
     viewport: { width: 1280, height: 720 },
@@ -34,7 +37,8 @@ export default defineConfig({
     command: `PORT=${port} node tools/m02/run-m02-01.mjs`,
     cwd: repoRoot,
     url: `http://127.0.0.1:${port}/COD-guerra/m02-01.html`,
-    reuseExistingServer: true,
+    // Local runs may reuse a bench server already on PORT; CI always starts its own.
+    reuseExistingServer: !process.env.CI,
     timeout: 30000,
   },
 });
