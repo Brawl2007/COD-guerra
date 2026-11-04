@@ -142,7 +142,9 @@ test('the end of VII-c is the end card and then the debrief, with the paragraphs
   test.setTimeout(600000);
   const errors=await boot(page,'?debug=1&acts=1',{save:scenes.end,click:'#continue'});
   await page.waitForFunction(()=>window.gameDiagnostics().m01.scene==='cs_npc_end',null,{timeout:90000});
-  await page.waitForTimeout(3500);await page.screenshot({path:OUT+'09-end-card.png'});
+  const c0=await page.evaluate(()=>window.gameDiagnostics().clock);
+  await page.waitForFunction(c=>window.gameDiagnostics().clock>c+4.2,c0,{timeout:90000});   // the four lines typed in full (done 3.6 s into the card), before the text fades (7.6 s)
+  await page.screenshot({path:OUT+'09-end-card.png'});
   const card=await page.evaluate(()=>document.querySelector('#title-card')?.textContent);
   expect(card).toContain('O 2.º Batalhão deixou Tczew');expect(card).toContain('Retirada entre as 18:00 e as 20:00 (T03, resumo, certeza média)');expect(card).toContain('Pôr do sol às 18:39 (C01)');
   await page.waitForSelector('#complete:not(.hidden)',{timeout:90000});
