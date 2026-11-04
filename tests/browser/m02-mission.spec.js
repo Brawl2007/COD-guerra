@@ -13,6 +13,8 @@ test('C04 offers water by touch while keeping the separate chalk choice',async({
  });
  await page.locator('#mission-resume').click();const water=page.locator('[data-water]');await expect(water).toBeVisible();
  await expect(page.locator('#door-prompt')).toContainText('Marcar poste');await expect(page.locator('#door-prompt')).toContainText('Dar água');
+ const waterBox=await water.boundingBox(),weaponBox=await page.locator('.weapon-box').boundingBox();
+ expect(waterBox.y).toBeGreaterThanOrEqual(weaponBox.y+weaponBox.height);
  await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · C04";position:fixed;left:8px;top:45px;z-index:80;padding:4px;background:#111;color:#fff;font:10px sans-serif}'});
  await page.screenshot({path:testInfo.outputPath('c04-before-water.png')});
  const cdp=await page.context().newCDPSession(page),box=await water.boundingBox(),point={x:box.x+box.width/2,y:box.y+box.height/2,id:0};

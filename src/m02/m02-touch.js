@@ -28,5 +28,5 @@ export function mountM02Touch({sim, session, actions}) {
  document.addEventListener('visibilitychange',()=>{if(document.hidden)resetStick();});
  for(const button of root.querySelectorAll('[data-order]'))button.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions[button.dataset.order]=true;});
  const water=root.querySelector('[data-water]');water.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions.giveWater=true;});
- return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
+ return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();document.body.classList.toggle('m02-water-available',!water.hidden);if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
 }

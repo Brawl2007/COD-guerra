@@ -14,6 +14,7 @@
 #m02-touch .touch-water[hidden]{display:none}
 #m02-touch .down{background:rgba(155,140,91,.8)}
 body.m02-touch-active #mission-vitals{bottom:150px}body.m02-touch-active .weapon-box{bottom:140px}
+body.m02-touch-active.m02-water-available .weapon-box{bottom:185px}
 body.m02-touch-active #mission-narration{bottom:150px;width:min(500px,calc(100vw - 36px))}
 body.m02-touch-active .controls-help{font-size:0}body.m02-touch-active .controls-help::after{content:'Arraste à esquerda para mover e no ecrã para olhar. Use os botões para disparar, mirar e interagir.';font-size:13px}
 @media(max-height:500px){body.m02-touch-active #mission-vitals{bottom:110px}body.m02-touch-active .weapon-box{bottom:110px}body.m02-touch-active #mission-narration{bottom:95px;width:min(430px,calc(100vw - 230px))}#m02-touch .touch-move{width:90px;height:90px;bottom:12px}#m02-touch .touch-actions{bottom:8px;grid-template-columns:repeat(3,60px)}#m02-touch .touch-actions button{height:42px;font-size:9px}.touch-orders{top:48px}}
