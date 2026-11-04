@@ -12,6 +12,7 @@ import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 import {ROUND_SPEED} from './m01-fire.js';
 import {roundImpactSoundPlan,grenadeThrowSoundPlan,waterCrossing} from '../core/battlefield-audio.js';
 import {ACTS,M01ActRunner,actOf} from './m01-acts.js';
+import {chooseContinue,ACT_SAVE_BACKUP_SUFFIX} from './m01-save-select.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // R4 INC-1: a new act's checkpoint (schema 3 envelope, src/game/m01-acts.js) lives under its own key, so the schema 2 save of the current act is never overwritten by it
@@ -72,7 +73,14 @@ export class Game {
     if(continueSaved){
       let result;
       if(this.acts&&this.isM01){   // R4 INC-1: a new act's envelope first (it is newer than the completed current act it came from), else the schema 2 save
-        try{result=this.acts.load(localStorage.getItem(ACT_SAVE_KEY)??localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
+        try{
+          const pick=chooseContinue(this.acts,localStorage.getItem(ACT_SAVE_KEY),localStorage.getItem(this.saveKey));
+          result=pick.source==='acts'?pick.result:this.acts.load(pick.text);
+          if(pick.rejected){   // invalid act envelope: keep it under a backup key, open the schema 2 save, never delete it silently
+            localStorage.setItem(ACT_SAVE_KEY+ACT_SAVE_BACKUP_SUFFIX,pick.rejected);
+            if(result.ok){localStorage.removeItem(ACT_SAVE_KEY);this.say('Checkpoint do ato novo inválido: guardado em cópia; a retomar o ato 1.',3200);}
+          }
+        }catch(error){result={ok:false,error:error.message};}
         if(result.ok)this.sim=result.sim;
       }else try{result=this.sim.loadCheckpoint(localStorage.getItem(this.saveKey));}catch(error){result={ok:false,error:error.message};}
       if(!result.ok){this.onState('save-error',result.error);return false;}
@@ -138,7 +146,10 @@ export class Game {
   get difficulty(){return this.isM01?this.sim.difficulty:null;}
   /** H9 D5: the UI only passes the chosen level; the simulation owns it. A different level means a fresh M01Simulation (same seed), as in selectMission. */
   restartMission(difficulty){
-    if(this.acts&&this.isM01)this.sim=this.acts.createInitial({difficulty:difficulty??this.sim.difficulty});   // R4: a new game starts at the first act (or the QA start act)
+    if(this.acts&&this.isM01){   // R4: a new game starts at the first act (or the QA start act); the old act save moves to a backup key now, so Continue cannot open it
+      try{const old=localStorage.getItem(ACT_SAVE_KEY);if(old){localStorage.setItem(ACT_SAVE_KEY+ACT_SAVE_BACKUP_SUFFIX,old);localStorage.removeItem(ACT_SAVE_KEY);}}catch{/* storage refused: as before */}
+      this.sim=this.acts.createInitial({difficulty:difficulty??this.sim.difficulty});
+    }
     else if(this.isM01&&difficulty&&difficulty!==this.sim.difficulty)this.sim=new M01Simulation(undefined,{difficulty});else this.sim.reset();this.started=true;this.paused=true;this.pendingSounds=[];this.pendingM01HitFeedback=null;
     this.audio.resetPresentation?.(this.sim.clock,this.isM01?this.sim.renderState:null);
     this.audioDirector?.reset(this.sim);
