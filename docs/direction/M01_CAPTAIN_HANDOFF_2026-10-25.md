@@ -40,3 +40,13 @@ Playtest da #80 (T52), FPS no PC (T49), gravações (T45), revisão nativa do po
 - Clone já não é raso (`git fetch --unshallow`): os testes de bloqueio de bytes correm.
 - `npm test` completo ≈ 40–60 min; build antes de qualquer browser; matar só por PID.
 - Branches de pacote ficam locais (só a branch designada e a #80 recebem push): integrar cedo.
+
+## Atualização 2026-11-04 — pacote 1 feito (fora da #80)
+
+Ramo `claude/dreamy-ramanujan-6v62vr` @ `19cf713c` (base `b41d947d`); ver a entrada do topo do ledger. Visual do VII-a, segundo escalão alemão com pausa, saves do VII-a esquema 2, prioridade de desenho dos inimigos e correções da revisão crítica. **Não integrado na #80** (aguarda autorização), `acts.enabled=false`, sem playtest, `npm test` completo não corrido.
+
+Decisões pendentes do proprietário: (a) duração não garantida: ativo 93–204 s conforme a semente; afinar o 2.º escalão ou aceitar; (b) MG34 da orla quase não disparam na pausa (suprimidas pela linha); fogo de supressão às cegas seria regra nova; (c) CP-F na pausa (só existe CP-E; morrer no 2.º escalão repete tudo); (d) alemães a 120–250 m ocupam 4–8 px: aproximar a vaga ou aceitar.
+
+Visual ainda provisório: árvores pequenas em forma de guarda-chuva, face do parapeito desfocada em primeiro plano, padrão de relva cortada perto do jogador. +12 % triângulos não medidos no PC de referência.
+
+Próximos pacotes mantêm-se: 2 (pó que tapa a vista da IA, socorro de feridos, granadas/busca alemãs reais), 3 (VII-b/VII-c só com fontes), 4 (alça da kb wz.29).
