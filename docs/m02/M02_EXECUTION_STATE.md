@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — água ao ferido C04, 2026-11-04
+
+`5e8bbdb` acrescenta a opção de dar água ao ferido do pomar prevista no roteiro Astra, separada da marcação com giz. Pode ser acionada por `F` ou pelo botão tátil junto de um ferido alcançável; não atribui recompensa nem consome abastecimento B. A decisão e o checkpoint são preservados, incluindo transição de área. `390fbae` evita que o botão cubra a munição. Passaram 184 testes M02, build e [browser com toque simulado e capturas](../verification/m02-runtime/c04-water-2026-11-04/README.md). A interação ainda é instantânea, sem cantil, animação de entrega ou reação dedicada; o cenário browser foi configurado para inspeção e não é teste em iPhone. Uma passagem automatizada na build `390fbae` chegou à M03 sem mortes do jogador ou erros, com giz, abastecimentos, Lis e 12/12; o piloto lê estado oculto e não escolheu a água. Continuar auditoria do roteiro e atuação física; main e produção intactas.
+
 ## Referência Astra recebida — 2026-11-04
 
 O proprietário forneceu o PDF de pré-produção e duas plantas e confirmou que este é o roteiro verdadeiro da M02. Foram preservados em [referências/astra](referencias/astra/COMPARACAO_INICIAL.md); o roteiro C01–C12 do PDF é a referência principal da missão. A comparação inicial confirma a estrutura geral C01–C12, mas não prova fidelidade de encenação; identificou a ausência visível de opção para dar água ao ferido C04, coreografia incompleta de Lis e diferença entre alvo editorial de duração e percurso automatizado. Efetuar auditoria por cena e desenvolver as lacunas sem substituir sistemas válidos. O PDF não é o PROMPT MESTRE complementar de 173.148 palavras, que continua ausente.

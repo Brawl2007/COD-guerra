@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — opção de água C04 — 2026-11-04
+
+`5e8bbdb` permite escolher dar água ao ferido do pomar, preservando a opção de giz e o estado em checkpoints/áreas. 184 testes M02, build e browser com toque simulado passaram; `390fbae` ajusta a interface e concluiu percurso automatizado até M03, sem selecionar a água. [Capturas e limites](docs/verification/m02-runtime/c04-water-2026-11-04/README.md): a interação é provisória e ainda não anima a entrega física; falta verificação em iPhone real.
+
 ## M02 — roteiro Astra recebido — 2026-11-04
 
 PDF de pré-produção e plantas fornecidos pelo proprietário estão em [referências/astra](docs/m02/referencias/astra/COMPARACAO_INICIAL.md). O proprietário confirmou que o PDF contém o roteiro verdadeiro da M02; usar C01–C12 como referência principal. A estrutura principal existe, mas fidelidade detalhada das cenas, duração e encenação ainda não está demonstrada; a comparação inicial aponta lacunas concretas. Auditar e implementar por cena antes de declarar a missão concluída.

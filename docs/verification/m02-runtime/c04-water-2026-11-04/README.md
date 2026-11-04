@@ -1,0 +1,11 @@
+# C04 — opção de água ao ferido
+
+O roteiro Astra (p. 13) propõe marcar o ferido, dar água ou continuar. `5e8bbdb` acrescenta a opção independente: `F` no teclado ou botão **ÁGUA** tátil quando o jogador está até 1,8 m de um ferido vivo e desarmado com linha desobstruída. Não é permitida durante uma preparação de granada, com um volume nas mãos ou após morte. É uma ação única; não cura, dá pontos ou consome os volumes logísticos da área B. A marcação de giz continua disponível. `390fbae` evita que o botão cubra o contador de munição.
+
+A opção regista o instante no ator e a flag opcional `m02.pomar_wounded_water`, incluindo ao passar para B e no pacote de flags; checkpoints antigos sem esses campos continuam aceites e dados inválidos são rejeitados. Não há alteração da simulação quando a opção não é usada. O gesto **ainda é provisório**: é instantâneo, tem confirmação textual e não representa inventário de cantil, animação física da entrega, reação facial ou áudio dedicado. Não apresentar esta etapa como encenação cinematográfica completa.
+
+Passaram [184 testes M02](node-m02.txt), incluindo distância, parede, condições do ferido, repetição, independência do giz, restauro determinístico, transição para B e validação de saves. Build passou. O [teste browser](browser.txt) após `390fbae` usou Chromium/SwiftShader e toque simulado; as capturas [antes](c04-before-water.png) e [depois](c04-after-water.png) são de cenário controlado, com ferido posicionado pela fixture, não de um percurso completo nem de iPhone físico.
+
+A [passagem automatizada integral](native/report.json) na build `390fbae` terminou na M03 sem mortes do jogador nem erros de página, com giz, ambos os abastecimentos, Lis evacuado e 12/12 no último grupo; Małek ficou abatido e Wierzba ferido. Confirmou sete ordens e sete aliados a reagir à granada. O piloto lê estado oculto e **não escolheu dar água**, pelo que este percurso só verifica a continuidade normal; a escolha foi exercitada no teste controlado e nos testes de simulação. O piloto não substitui playtest humano.
+
+Próximos passos: atuação física da troca com recurso visual de cantil, mãos/reações/áudio, verificação de disponibilidade dos meios no roteiro, e auditoria das restantes ações C01–C12. Não inventar cura ou consequência para a M03.
