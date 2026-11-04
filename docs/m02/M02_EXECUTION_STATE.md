@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — diálogo em fila, 2026-10-31
+
+`9b4f034` volta a verificar os emissores e as alternativas já previstas no roteiro quando uma fala começa, para não apresentar uma fala futura de Lis desaparecido ou de um soldado presente mas incapacitado. `7c9ad85` corrige uma regressão encontrada na comparação: Lis mantém a fala de C08 enquanto parte para a ligação, mesmo separado da secção local. Passaram 180 testes M02, build e um caso browser; em quatro cenários, 800 snapshots e filas de eventos coincidiram com `705776f`. [Captura, método e limites](../verification/m02-runtime/dialogue-continuity-2026-10-31/README.md). O percurso integral desta versão está em curso; não o considerar concluído até verificar o relatório. As falas continuam em texto, sem novas vozes. Continuar combate, animação, arte, IA e áudio antes da avaliação humana. Main e produção intactas.
+
 ## Continuação — som da granada e clarões, 2026-10-31
 
 `114cd6d` usa tecido e equipamento sintetizados da M01 ao começar a preparação real da granada, sem antecipar o som durante recarga/ferrolho nem repeti-lo após restaurar um checkpoint. Passaram 174 testes M02, 38 testes M01 de áudio e quatro browser; a [gravação e os limites](../verification/m02-runtime/grenade-handling-audio-2026-10-31/README.md) distinguem saída de áudio de audibilidade sob combate. A [passagem automatizada](../verification/m02-runtime/grenade-handling-audio-2026-10-31/native-114/report.json) chegou a C12/M03 com saúde 85, sem mortes ou erros, C04, abastecimentos, Lis evacuado e 12/12; sete ordens e sete reações à granada. O piloto lê estado oculto e não é avaliação humana.
