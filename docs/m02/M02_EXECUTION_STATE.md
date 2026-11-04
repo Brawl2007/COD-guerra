@@ -1,5 +1,11 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — passagem com retirada antecipada, 2026-11-04
+
+`524b128` permite ao piloto exercitar a retirada antecipada por comandos reais; `6643816` corrige a espera do piloto quando C12 para o relógio. A [passagem contínua](../verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md) completou C12/M03 com 12 homens por localizar, Lis desaparecido, água/giz e dois abastecimentos; houve duas mortes e restauros em C:O06, sem erros de página. Passaram 206 testes M02 e build. A primeira tentativa chegou ao epílogo mas expirou no piloto; a falha foi preservada na evidência. O piloto lê estado oculto; não é playtest humano nem teste em iPhone.
+
+Próximo ponto do roteiro Astra: em C03, os defensores rendem-se na quebra de moral, mas ainda não existe a tentativa física de saída pela porta sul de B02 descrita no PDF. Implementar com percurso e colisão reais, rendição/fallback seguro se a rota falhar, sem obrigar o jogador a matar todos nem comprometer objetivos, checkpoints ou determinismo. Continuam pendentes atuação física, qualidade visual/áudio e auditoria das restantes cenas. Main e produção intactas.
+
 ## Continuação — confirmação da retirada C11, 2026-11-04
 
 `da6bb8a` exige um segundo comando deliberado antes de retirar com homens em trânsito; a confirmação é anulada por pausa, movimento, outras ações, alteração do número/estado de Lis ou restauro. Nenhum estado de missão é alterado na primeira pressão. Passaram 205 testes M02, build e [browser com teclado e toque](../verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md). Fixture controlada, sem teste em iPhone; passagem integral mais recente é a de `70c6031`, anterior a este ajuste. Continuar roteiro Astra, com atuação física e restantes cenas; main e produção intactas.

@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — passagem com retirada antecipada — 2026-11-04
+
+`6643816` corrige o piloto quando C12 para o relógio. A [passagem contínua](docs/verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md) completou a transferência à M03 com 12 homens por localizar e Lis desaparecido, após dois restauros; água e abastecimentos foram preservados. Passaram 206 testes M02 e build. A primeira tentativa expirou no piloto ao chegar ao epílogo e está documentada. A fuga física pela porta sul do celeiro prevista no roteiro Astra continua pendente, assim como avaliação humana e teste em iPhone.
+
 ## M02 — confirmação da retirada antecipada — 2026-11-04
 
 `da6bb8a` pede um segundo comando antes de retirar deixando homens por localizar e cancela a confirmação ao pausar, mover ou mudar a situação. 205 testes M02, build e [browser por teclado/toque](docs/verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md) passaram; falta teste em iPhone físico.
