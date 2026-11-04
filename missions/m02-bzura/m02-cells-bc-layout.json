@@ -1,6 +1,7 @@
 {
   "schema": "m02-cells-bc-layout-v1",
   "missionId": "M02",
+  "equipmentStatus": { "kar98k": "PROPOSTA_EQP01", "mg34": "PROPOSTA_EQP01", "note": "Fuzileiros alemães com Kar98k (proposta B6, p. 10); sem pistola-metralhadora (não consta de B6). EQP-01 pendente." },
   "historicalClassification": "RECONSTRUÍDO tipologicamente; localização e combates DRAMATIZAÇÃO sobre EV03/EV04 (9–12 Set 1939)",
   "cells": {
     "B": {
@@ -141,14 +142,14 @@
       "enemyRosterEB1": [
         { "id": "DE-B01", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -45.0, "z": -26.0, "facing": 1.57, "buildingId": "B05", "sector": "b05_workshop", "health": 100 },
         { "id": "DE-B02", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -36.5, "z": -24.0, "facing": 0.4, "buildingId": "B05", "sector": "b05_workshop", "health": 100 },
-        { "id": "DE-B03", "encounterId": "EB1", "role": "rifleman", "weapon": "mp38", "x": -38.0, "z": -15.5, "facing": 1.57, "buildingId": "B05", "sector": "b05_yard", "health": 100 },
+        { "id": "DE-B03", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -38.0, "z": -15.5, "facing": 1.57, "buildingId": "B05", "sector": "b05_yard", "health": 100 },
         { "id": "DE-B04", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": -31.0, "z": -16.0, "facing": 1.2, "buildingId": "B05", "sector": "b05_yard", "health": 100 },
         { "id": "DE-B05", "encounterId": "EB1", "role": "mg_gunner", "weapon": "mg34", "x": 21.2, "z": -31.0, "facing": 2.6, "buildingId": "B06", "sector": "b06_shop", "health": 100 },
         { "id": "DE-B06", "encounterId": "EB1", "role": "mg_assistant", "weapon": "kar98k", "x": 23.0, "z": -29.0, "facing": 2.6, "buildingId": "B06", "sector": "b06_shop", "health": 100 },
         { "id": "DE-B07", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": 22.0, "z": -23.0, "facing": 2.8, "buildingId": "B06", "sector": "b06_storage", "health": 100 },
         { "id": "DE-B08", "encounterId": "EB1", "role": "rifleman", "weapon": "kar98k", "x": 26.0, "z": -11.5, "facing": 1.8, "buildingId": "B06", "sector": "b06_south", "health": 100 },
         { "id": "DE-B09", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 38.0, "z": 6.0, "facing": 2.9, "buildingId": null, "sector": "east_approach", "health": 100 },
-        { "id": "DE-B10", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "mp38", "x": 42.0, "z": 12.0, "facing": 2.9, "buildingId": null, "sector": "east_approach", "health": 100 },
+        { "id": "DE-B10", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 42.0, "z": 12.0, "facing": 2.9, "buildingId": null, "sector": "east_approach", "health": 100 },
         { "id": "DE-B11", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 34.0, "z": 18.0, "facing": 2.8, "buildingId": null, "sector": "east_approach", "health": 100 },
         { "id": "DE-B12", "encounterId": "EB1", "role": "flank_rifleman", "weapon": "kar98k", "x": 14.0, "z": -42.0, "facing": 1.6, "buildingId": null, "sector": "north_road", "health": 100 }
       ]
@@ -308,23 +309,23 @@
       ],
       "enemyRosterEC1": [
         { "id": "DE-C01", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": -28.0, "z": -16.0, "facing": -1.57, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
-        { "id": "DE-C02", "encounterId": "EC1", "role": "rifleman", "weapon": "mp38", "x": -15.0, "z": -11.0, "facing": -1.2, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
+        { "id": "DE-C02", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": -15.0, "z": -11.0, "facing": -1.2, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
         { "id": "DE-C03", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": -26.0, "z": -5.0, "facing": -1.57, "buildingId": "B09", "sector": "b09_warehouse", "health": 100 },
         { "id": "DE-C04", "encounterId": "EC1", "role": "mg_gunner", "weapon": "mg34", "x": 17.5, "z": -24.0, "facing": -2.6, "buildingId": "B10", "sector": "b10_workshop", "health": 100 },
         { "id": "DE-C05", "encounterId": "EC1", "role": "mg_assistant", "weapon": "kar98k", "x": 20.0, "z": -22.0, "facing": -2.6, "buildingId": "B10", "sector": "b10_workshop", "health": 100 },
         { "id": "DE-C06", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": 24.0, "z": -18.0, "facing": -2.2, "buildingId": "B10", "sector": "b10_workshop", "health": 100 },
         { "id": "DE-C07", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": 6.5, "z": -2.5, "facing": -1.8, "buildingId": "B11", "sector": "b11_gatehouse", "health": 100 },
-        { "id": "DE-C08", "encounterId": "EC1", "role": "rifleman", "weapon": "mp38", "x": 8.5, "z": 1.0, "facing": -1.8, "buildingId": "B11", "sector": "b11_gatehouse", "health": 100 }
+        { "id": "DE-C08", "encounterId": "EC1", "role": "rifleman", "weapon": "kar98k", "x": 8.5, "z": 1.0, "facing": -1.8, "buildingId": "B11", "sector": "b11_gatehouse", "health": 100 }
       ],
       "enemyRosterEC2": [
         { "id": "DE-C09", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 115.0, "z": 90.0, "goalX": 28.0, "goalZ": 24.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
-        { "id": "DE-C10", "encounterId": "EC2", "role": "reserve_east", "weapon": "mp38", "x": 118.0, "z": 94.0, "goalX": 24.0, "goalZ": 30.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
+        { "id": "DE-C10", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 118.0, "z": 94.0, "goalX": 24.0, "goalZ": 30.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
         { "id": "DE-C11", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 112.0, "z": 96.0, "goalX": 20.0, "goalZ": 36.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
         { "id": "DE-C12", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 120.0, "z": 86.0, "goalX": 32.0, "goalZ": 18.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
         { "id": "DE-C13", "encounterId": "EC2", "role": "reserve_east", "weapon": "mg34", "x": 116.0, "z": 88.0, "goalX": 26.0, "goalZ": 20.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
         { "id": "DE-C14", "encounterId": "EC2", "role": "reserve_east", "weapon": "kar98k", "x": 110.0, "z": 92.0, "goalX": 18.0, "goalZ": 28.0, "facing": -2.4, "buildingId": null, "sector": "ec2_east", "health": 100 },
         { "id": "DE-C15", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -105.0, "z": 50.0, "goalX": -72.0, "goalZ": 24.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
-        { "id": "DE-C16", "encounterId": "EC2", "role": "reserve_west", "weapon": "mp38", "x": -108.0, "z": 54.0, "goalX": -74.0, "goalZ": 30.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
+        { "id": "DE-C16", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -108.0, "z": 54.0, "goalX": -74.0, "goalZ": 30.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
         { "id": "DE-C17", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -102.0, "z": 56.0, "goalX": -70.0, "goalZ": 36.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
         { "id": "DE-C18", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -110.0, "z": 48.0, "goalX": -76.0, "goalZ": 18.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
         { "id": "DE-C19", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -104.0, "z": 52.0, "goalX": -68.0, "goalZ": 22.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },

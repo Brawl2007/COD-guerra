@@ -90,6 +90,37 @@ Data de consulta de todas as entradas: **30/09/2026**.
 - Relação de baixas polonesas de Tczew em 1/9/1939 (Centralne Archiwum Wojskowe).
 - OpenStreetMap, para medir a geometria atual das pontes, da estação e das margens. Licença ODbL: exige atribuição se dados derivados forem distribuídos.
 
+## M02 Bzura — fontes do pacote (prefixo BZ-H)
+
+Fonte: `docs/m02/preproducao/M02-BZURA-PRE-PRODUCAO.pdf` (v1 de 24/10/2026), secção B2 (pp. 8–9) para título e função, p. 11 para o URL. O pacote usa os IDs `H01`–`H14`; para não colidir com as `H01`–`H30` da M01 acima, que **não são tocadas nem renumeradas**, passam aqui a `BZ-H01`–`BZ-H14`. **Estado de todas: registada no pacote; conteúdo não guardado.** Este repositório não tem cópia do texto nem leitura própria; a coluna «Leitura no pacote» reproduz apenas o que o próprio PDF declara (B2). A certeza não foi reavaliada.
+
+| ID | Título / instituição (B2, pp. 8–9) | URL (p. 11) | O que sustenta / limite (B2) | Leitura no pacote (B2) | Estado neste repositório |
+| --- | --- | --- | --- | --- | --- |
+| BZ-H01 | Muzeum II Wojny Światowej, «Początek bitwy nad Bzurą», 09/09/2021 | https://www.muzeum1939.pl/aktualnosci/-wojennydzien-poczatek-bitwy-nad-bzura-11861 | Início em 9/9, iniciativa polaca e desfecho geral. Não fixa pelotões. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H02 | Município de Łęczyca, «83. rocznica…», 09/09/2022 | https://leczyca.info.pl/83-rocznica-bitwy-nad-bzura-boj-o-leczyce/ | Reconhecimento, ataque vespertino, cidade livre em 10/9 e progressão posterior. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H03 | Bolesław Solarski, *Notatki Płockie* 54/2 (2009), pp. 41–49 | https://bazhum.muzhp.pl/media/texts/notatki-pockie-kwartalnik-towarzystwa-naukowego-pockiego/2009-tom-54-numer-2-219/notatki_plockie_kwartalnik_towarzystwa_naukowego_plockiego-r2009-t54-n2_219-s41-49.pdf | Segundo autor para reconquista e geografia de aproximação; síntese secundária com testemunhos. | PDF com texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H04 | Witold Jarno, «Mobilizacja 25 Dywizji…», *Folia Historica* 111 (2022), pp. 255–290 | https://czasopisma.uni.lodz.pl/historica/article/view/16424 | Composição da 25.ª DI e arquivos de referência; não prova combate de uma companhia. | resumo/bibliografia consultados | registada no pacote; conteúdo não guardado |
+| BZ-H05 | Marta Kuźma, «Wpływ opracowań źródłowych…», pp. 303–318 | https://www.academia.edu/32092958/Marta_Ku%C5%BAma · versão editorial localizada: https://www.maphist.waw.pl/wp-content/uploads/2020/05/ZDK_21_303-318.pdf | Ordem n.º 317 reproduzida/analisada: eixo do 56 pp em 10/9; alerta para erros de mapas. | versão textual da autora em Academia consultada; PDF editorial inacessível | registada no pacote; conteúdo não guardado |
+| BZ-H06 | MAiE Łódź, Skansen de Kwiatkówek | https://tum.maie.lodz.pl/skansen-leczycka-zagroda-chlopska/ | Arquitetura rural regional e interior do fim do período entre guerras; museu moderno, não quinta preservada in situ de 1939. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H07 | Narodowy Instytut Dziedzictwa, Zabytek.pl, conjunto de Tum | https://zabytek.pl/pl/obiekty/tum-zespol-archikolegiaty-pod-wezwaniem-najswietszej-maryi | Danos de guerra e reconstrução que alterou a imagem do monumento. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H08 | Geoportal/GUGiK, página NMT | https://www.geoportal.gov.pl/pl/dane/numeryczny-model-terenu-nmt/ | Disponibilidade de dados modernos de relevo; células locais não descarregadas nem medidas. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H09 | Mapster, folha WIG P40 S28 Łęczyca, 1937 | https://igrek.amzp.pl/WIG100_P40_S28 | Identificação cartográfica; imagem original não inspecionada nem georreferenciada. | catálogo localizado por pesquisa, abertura falhou | registada no pacote; conteúdo não guardado |
+| BZ-H10 | Muzeum Wojsk Lądowych, aquisição Browning wz.28 | https://muzeumwl.pl/nasz-nowy-nabytek-polski-miedzywojenny-karabin-browning-wz-28/ | Referência de objeto museológico, acessórios e fotografias disponíveis. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H11 | Muzeum Wojsk Lądowych, série de armamento de setembro de 1939 | https://muzeumwl.pl/nowa-seria-wydana-przez-mwl-polskie-uzbrojenie-wrzesien-1939/ | Seleção inicial de famílias de armas; não é inventário do 56 pp. | texto consultado | registada no pacote; conteúdo não guardado |
+| BZ-H12 | Imperial War Museums, MG34, FIR 10770 | https://www.iwm.org.uk/collections/item/object/30030080 | Modelo/calibre como pista de catálogo; falta inspeção integral. | registo indexado, abertura 403 | registada no pacote; conteúdo não guardado |
+| BZ-H13 | Município de Łęczyca, comemoração 2016 | https://leczyca.info.pl/9-wrzesnia-obchodzimy-rocznice-bitwy-nad-bzura/ | Eixos 60/69/56 pp; contém atribuição contraditória de companhia/batalhão. | texto indexado consultado | registada no pacote; conteúdo não guardado |
+| BZ-H14 | PTTK Ozorków, *Na Szlak* n.º 15 (2005), p. 20 | https://mbp.ozorkow.net/na_szlak/pdf/15.pdf | Pista de travessia do 56 pp perto de Mierczyn; insuficiente para coordenada de combate. | excerto indexado consultado | registada no pacote; conteúdo não guardado |
+
+Notas do pacote (p. 11): as referências a arquivos no artigo BZ-H04 são pistas, não arquivos consultados; excluir o domínio antigo `pism.co.uk` (conteúdo anómalo) e usar `pism.org.uk` quando o arquivo for retomado.
+
+### Cálculo próprio (M02)
+
+O identificador do pacote é `C02` (TIME-01); como a `C02` da M01 acima (atraso do som) já existe, esta entrada usa o prefixo `BZ-C02`, sem renumerar a da M01.
+
+| ID | Descrição | Método | Resultado | Classe / certeza |
+| --- | --- | --- | --- | --- |
+| BZ-C02 | Cálculo solar de Łęczyca (52,06° N, 19,20° E), 9–10/9/1939 | Algoritmo solar da NOAA (como a `C01`). Hora CET (UTC+1), a hora legal de 1939. | Ocaso de 9/9/1939 ≈ 18:09. Nascer do sol de 10/9 ≈ 05:13. 9/9 às 16:30: elevação 15,2°, azimute 259°. 9/9 às 17:00: 10,6° / 265°. 10/9 às 07:30: 20,7° / 109°. O «pôr do sol 19:10» do dossiê #58 usava CEST (UTC+2) e está errado para 1939; confirma a nota A2 do pacote. | RECONSTRUÍDO. Cálculo do Capitão M02 de 2026-11-04 (`docs/direction/M02_BZURA_DESIGN.md` §3.3); script fora do repositório; lat/lon aproximados |
+
 ## Regras de uso
 
 1. Uma página geral sobre a batalha não comprova sozinha uma rua, um uniforme de subunidade ou um acontecimento pessoal (seção 78).

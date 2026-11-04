@@ -96,8 +96,9 @@ function mapEnemyEntry(sim, e) {
     shotsFired: 0,
     hitsReceived: 0,
     lastHitPart: null,
-    mag: e.weapon === 'mg34' ? 50 : e.weapon === 'mp38' ? 32 : 5,
-    reserve: e.weapon === 'mg34' ? 200 : e.weapon === 'mp38' ? 96 : 35,
+    // EQP-01 pendente: só MG34 e Kar98k (propostas, B6); nenhuma pistola-metralhadora alemã consta de B6.
+    mag: e.weapon === 'mg34' ? 50 : 5,
+    reserve: e.weapon === 'mg34' ? 200 : 35,
   };
 }
 
@@ -776,7 +777,7 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   sim.flags['m02.completed'] = true;
   sim.objective = {
     id: 'O09',
-    title: `M02 Concluída (C12 Epílogo · Varsóvia 25 Set 1939): Lis=${sim.flags['m02.lis_status']} · Grupo final=${survivors}/12`,
+    title: `M02 Concluída (C12 Epílogo): Lis=${sim.flags['m02.lis_status']} · Grupo final=${survivors}/12`,
     status: 'completed',
   };
 
@@ -804,13 +805,14 @@ export function exportCampaignResultToM03(sim) {
       offensiveStart: '1939-09-09',
       reorganizationMorning: '1939-09-10',
       operationalShift: '1939-09-12/13',
+      // Data do pacote para a entrada da M03 (C6 p. 15 / I1 p. 33); K5 (p. 40): sem dia fixado para cada passo de Piotr até CONT-01.
       warsawArrival: '1939-09-25',
       generalRetreatOnMorningSept10: false, // HIST-TEST-01 mandatory historical invariant
     },
     flags: structuredClone(sim.flags),
     supplies: structuredClone(sim.supplies),
     transitionIdsApplied: [...sim.transitionIdsApplied],
-    totalHostilesPlanned: 46,
+    totalHostilesPlanned: 46, // total planeado de D2 (EA0 4 + EA1 10 + EB1 12 + EC1 8 + EC2 12); nunca simultâneo nem número de ecrã
     m03ImportState: {
       piotrCondition: 'weathered_veteran',
       promotedToCorporalAutomatically: false, // K5: no automatic promotion
