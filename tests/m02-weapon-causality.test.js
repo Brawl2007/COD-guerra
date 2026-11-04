@@ -52,6 +52,32 @@ test('a closing solid door blocks the remaining MG rounds after the burst has st
  assert.ok(sim.drainEvents().filter(e=>e.type==='actor-burst').every(e=>!e.hitAny));
 });
 
+test('a squad burst stops without spending more rounds when the player enters its line of fire',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaBC06();const gun=sim.allies.find(a=>a.weapon==='rkm_wz28'),target=sim.enemies[0];
+ sim.allies=[gun];sim.enemies=[target];Object.assign(gun,{x:0,y:0,z:100,mag:20,suppressed:0,alive:true});
+ Object.assign(target,{x:0,y:0,z:120,health:100,alive:true,nonCombatant:false});sim.teleportPlayer(4,110,0,0);sim.drainEvents();
+ const first=sim.fireActorBurst(gun,target,{x:0,y:1.25,z:120},'ally');assert.equal(first.rounds,1);assert.ok(gun.burst);
+ sim.teleportPlayer(0,110,0,0);const saved=sim.snapshot();sim.drainEvents();
+ sim.clock+=.01;sim.advanceActorBurst(gun);assert.ok(gun.burst,'crossing before the next round must not cancel it early');
+ sim.restoreSnapshot(saved);sim.drainEvents();
+ const run=()=>{sim.clock+=.2;sim.advanceActorBurst(sim.allies[0]);return {snapshot:sim.snapshot(),events:sim.drainEvents()};};
+ const result=run();assert.equal(result.snapshot.allies[0].mag,19);assert.equal(result.snapshot.allies[0].burst,null);
+ assert.equal(result.events.some(e=>e.type==='actor-burst'),false);
+ sim.restoreSnapshot(saved);sim.drainEvents();assert.deepEqual(run(),result);
+});
+
+test('a squad burst also stops for another ally and continues when the line is clear',()=>{
+ for(const blocked of [true,false]){
+  const sim=new M02BenchSimulation();sim.enterAreaBC06();const gun=sim.allies.find(a=>a.weapon==='rkm_wz28');
+  const teammate=sim.allies.find(a=>a!==gun),target=sim.enemies[0];sim.allies=[gun,teammate];sim.enemies=[target];
+  Object.assign(gun,{x:0,y:0,z:100,mag:20,suppressed:0,alive:true});
+  Object.assign(teammate,{x:4,y:0,z:110,alive:true});Object.assign(target,{x:0,y:0,z:120,health:100,alive:true,nonCombatant:false});
+  sim.teleportPlayer(4,112,0,0);sim.fireActorBurst(gun,target,{x:0,y:1.25,z:120},'ally');sim.drainEvents();
+  if(blocked)teammate.x=0;sim.clock=gun.burst.nextAt;sim.advanceActorBurst(gun);
+  assert.equal(gun.mag,blocked?19:18);assert.equal(sim.drainEvents().some(e=>e.type==='actor-burst'),!blocked);
+ }
+});
+
 test('mid-burst checkpoint continues the exact pending rounds/RNG and rejects corrupted bursts atomically',()=>{
  const {sim,gun}=gunScene();sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');
  sim.tick(.05,{});sim.tick(.05,{});const saved=sim.snapshot();

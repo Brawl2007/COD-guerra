@@ -21,6 +21,7 @@ import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
   M02DialogueDirector,
+  friendlyFireClear,
   updatePolishSquad,
   updateGermanGarrison,
 } from './m02-combat-ai.js';
@@ -1097,6 +1098,9 @@ export class M02BenchSimulation {
     // Last observed point, not the hidden target's current coordinates. Every
     // round reuses the existing world/actor ray test at its own simulation tick.
     while(burst.remaining>0&&this.clock+1e-8>=burst.nextAt){
+      // Teammates can move after the opening round. Apply the existing
+      // clearance rule at each actual round, before spending its ammo.
+      if(burst.side==='ally'&&!friendlyFireClear(shooter,burst.aimPoint,[this.player,...this.allies])){shooter.burst=null;return;}
       if(!this.fireActorBurst(shooter,target,burst.aimPoint,burst.side,{continuation:true}))break;
       burst.remaining--;burst.emitted++;
       burst.nextAt=Number((burst.nextAt+(burst.interval??WEAPON_PROFILES[shooter.weapon]?.burstGapSec??0)).toFixed(6));
