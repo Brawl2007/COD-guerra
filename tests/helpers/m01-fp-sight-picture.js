@@ -47,7 +47,8 @@ export function classifyRifle(rig){
   return out;
 }
 
-const MESHES=[['rifle',null],['clip',PART.metal],['fp_hands',PART.hands],['body',PART.sleeves],['fp_cuffs',PART.sleeves],['fp_sleeve_caps',PART.sleeves],['fp_straps',PART.sleeves]];
+// pkg4: the rear sight (base + leaf with the U notch) and the front post are meshes drawn in code on the weapon bone (src/render/m01-wz29-sights.js); the GLB's flat rear block is no longer in the rifle.
+const MESHES=[['rifle',null],['wz29_rear_base',PART.rear],['wz29_rear_leaf',PART.rear],['wz29_front_post',PART.front],['clip',PART.metal],['fp_hands',PART.hands],['body',PART.sleeves],['fp_cuffs',PART.sleeves],['fp_sleeve_caps',PART.sleeves],['fp_straps',PART.sleeves]];
 
 /**
  * Rasterises every visible view model mesh. `classes` is classifyRifle(rig). Returns {cols, rows, part (Uint8Array, PART.*), depth (Float32Array, m)},

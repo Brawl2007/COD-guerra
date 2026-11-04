@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {M01AreaSimulation} from '../src/game/m01-area-sim.js';
-import {areaReliefOffset,AREA_FLAT_MARGIN_M,AREA_RISE_M,AREA_UNDULATION_M,AREA_LIFT_M} from '../src/render/m01-area-field.js';
-import {buildMoundGeometry,buildBermGeometry,buildClodGeometry,buildCraterRimGeometry} from '../src/render/m01-area-earthworks.js';
+import {areaReliefOffset,AREA_FLAT_MARGIN_M,AREA_RISE_M,AREA_UNDULATION_M,AREA_LIFT_M,AREA_CELL_GLSL,createFieldMaterial} from '../src/render/m01-area-field.js';
+import * as THREE from 'three';
+import {createStubble,buildTuftGeometry,STUBBLE} from '../src/render/m01-area-stubble.js';
+import {buildMoundGeometry,buildBermGeometry,buildClodGeometry,buildCraterRimGeometry,createBermMaterial} from '../src/render/m01-area-earthworks.js';
 import {buildTreeLine,treeDrawRange,TREE_SHARE} from '../src/render/m01-area-trees.js';
 import {buildWreckGeometry} from '../src/render/m01-area-wreck.js';
 
@@ -81,4 +83,43 @@ test('clods and crater rims are small instanced meshes; the soldier lift is a pl
   assert.match(variation,/setLift\(lift\)\{[^}]*m\.color\.setScalar\(lift\)/);
   const view=readFileSync(new URL('../src/render/m01-view.js',import.meta.url),'utf8');
   assert.match(view,/areaDressing\?\.replaces\(b\.id\)/,'the plain boxes of the solids the dressing draws are skipped');
+});
+
+// Round 2 (pkg4). Pure data / shader-source checks; the pictures are in docs/verification/m01-runtime/pkg4-visual2-2026-11-04/.
+test('round 2 trees: taller than round 1 (crowns up to 30 m), crowns taller than wide, still one geometry under the triangle cap',()=>{
+  const a=buildTreeLine(L.treeLine,()=>L.groundY),pos=a.geometry.attributes.position,tops=[];
+  for(const t of a.trees){let top=-Infinity;for(let i=t.firstIndex;i<t.firstIndex+t.indexCount;i++)top=Math.max(top,pos.getY(a.geometry.index.getX(i)));tops.push(top-L.groundY);}
+  tops.sort((x,y)=>x-y);const median=tops[tops.length>>1];
+  assert.ok(median>=14&&tops.at(-1)>=24&&tops.at(-1)<=34,`median ${median.toFixed(1)} m, tallest ${tops.at(-1).toFixed(1)} m`);   // round 1: 6.5..17 m
+  assert.ok(a.geometry.index.count/3<=32000,`${a.geometry.index.count/3} triangles`);
+});
+
+test('round 2 berm: its own soil material (planks, pickets, near-camera pebbles) is a plain onBeforeCompile on the standard material, with a distinct program key and a Low switch',()=>{
+  const b=createBermMaterial({base:L.groundY,quality:'high'}),shader={uniforms:{},vertexShader:THREE.ShaderLib.standard.vertexShader,fragmentShader:THREE.ShaderLib.standard.fragmentShader};
+  b.material.onBeforeCompile(shader);
+  assert.match(shader.vertexShader,/vBermN=normalize\(mat3\(modelMatrix\)\*objectNormal\)/);assert.match(shader.fragmentShader,/float bRev=/);assert.match(shader.fragmentShader,/fwidth\(py\)/,'planks fade with fwidth');
+  assert.equal(b.material.customProgramCacheKey(),'m01-area-berm-v1');assert.equal(b.uniforms.uBermFine.value,1);b.setQuality('low');assert.equal(b.uniforms.uBermFine.value,0);
+  assert.equal(b.uniforms.uBermBase.value,L.groundY);b.material.dispose();
+});
+
+test('round 2 field: stochastic soil sampling on High, a warped single tap on Low; the cell hash is shared with the stubble',()=>{
+  const detail=new THREE.DataTexture(new Uint8Array(16),2,2),f=createFieldMaterial(detail,{quality:'high'}),shader={uniforms:{},vertexShader:THREE.ShaderLib.standard.vertexShader,fragmentShader:THREE.ShaderLib.standard.fragmentShader};
+  f.material.onBeforeCompile(shader);
+  assert.match(shader.fragmentShader,/vec3 areaSoil\(vec2 p\)/);assert.match(shader.fragmentShader,/textureGrad\(uAreaDetail/);assert.match(shader.fragmentShader,/float areaCellH\(vec2 ap\)/);
+  assert.match(AREA_CELL_GLSL,/float areaCellH/);assert.equal(f.material.customProgramCacheKey(),'m01-area-field-v2');
+  assert.doesNotMatch(shader.fragmentShader,/sin\(rowC\*6\.2832/,'the plain sine rows (the mown-lawn checkerboard) are gone');
+  f.dispose();detail.dispose();
+});
+
+test('round 2 stubble: tufts of thin blades, one instanced draw call, a fixed tile wrapped round the camera in the shader, no shadow, bounded triangles',()=>{
+  const g=buildTuftGeometry();g.computeBoundingBox();
+  assert.equal(g.index.count/3,STUBBLE.bladesPerTuft);assert.ok(g.boundingBox.max.y<=.25&&g.boundingBox.max.y>=.1,`blade height ${g.boundingBox.max.y}`);
+  for(let i=0;i<g.getAttribute('normal').count;i++)assert.equal(g.getAttribute('normal').getY(i),1);
+  const s=createStubble({bounds:[-620,-220,-1350,-1050],groundY:L.groundY,origin:[-340,-1200]});
+  assert.ok(s.mesh.isInstancedMesh&&s.mesh.count===STUBBLE.count&&s.mesh.frustumCulled===false&&s.mesh.castShadow===false&&s.mesh.receiveShadow===false);
+  assert.ok(s.triangles<=16000,`${s.triangles} triangles`);
+  const camera=new THREE.PerspectiveCamera();camera.position.set(-412,1,-1158);s.mesh.onBeforeRender(null,null,camera);assert.deepEqual(s.uniforms.uStubCam.value.toArray(),[-412,-1158]);
+  // every instance is a pure translation inside the 2R tile (the shader reads it as the tuft's tile coordinate)
+  const m=new THREE.Matrix4(),R=STUBBLE.radius;for(let i=0;i<s.mesh.count;i+=97){s.mesh.getMatrixAt(i,m);const e=m.elements;assert.ok(e[12]>=0&&e[12]<2*R&&e[14]>=0&&e[14]<2*R&&e[13]===0);}
+  s.dispose();
 });

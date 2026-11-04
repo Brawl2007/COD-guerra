@@ -138,7 +138,7 @@ export class HandRig {
   skinned(mesh,target,space='weapon'){
     this.root.updateMatrixWorld(true);this.inv.copy(this.weapon.matrixWorld).invert();
     const pos=mesh.geometry.getAttribute('position');
-    for(let i=0;i<pos.count;i++){pt.fromBufferAttribute(pos,i);mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld);if(space==='weapon')pt.applyMatrix4(this.inv);target[i*3]=pt.x;target[i*3+1]=pt.y;target[i*3+2]=pt.z;}
+    for(let i=0;i<pos.count;i++){pt.fromBufferAttribute(pos,i);if(mesh.isSkinnedMesh)mesh.applyBoneTransform(i,pt);pt.applyMatrix4(mesh.matrixWorld);if(space==='weapon')pt.applyMatrix4(this.inv);target[i*3]=pt.x;target[i*3+1]=pt.y;target[i*3+2]=pt.z;}
     return target;
   }
   /** Tip of a finger: the vertex dominated by its 03 bone that lies furthest from the 02 joint. */

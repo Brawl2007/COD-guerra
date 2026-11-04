@@ -40,13 +40,36 @@ export function buildFieldGeometry(area,base,{cell=12}={}){
   g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();g.userData={cols,rows,cell};return g;
 }
 
+/** Hash, value noise and the crop-cell hash of the field's patchwork (shared with the stubble cards, which pick their tint from the same cell). */
+export const AREA_CELL_GLSL=`
+float aHash(vec2 p){vec3 p3=fract(vec3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return fract((p3.x+p3.y)*p3.z);}
+float aNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(aHash(i),aHash(i+vec2(1.0,0.0)),f.x),mix(aHash(i+vec2(0.0,1.0)),aHash(i+vec2(1.0,1.0)),f.x),f.y);}
+/** The cell hash h1 of the patchwork at a point relative to the field origin: < .34 stubble, < .58 dry stubble, < .74 ploughed, < .88 pasture, else tubers. */
+float areaCellH(vec2 ap){
+  vec2 aw=ap+(vec2(aNoise(ap*.017+3.1),aNoise(ap*.017+9.7))-.5)*28.0;
+  float fu=aw.x*.2181+aw.y*.9759,fv=aw.x*.9759-aw.y*.2181;
+  float sid=floor(fv/34.0),off=aHash(vec2(sid,3.0))*.9,pid=floor(fu/118.0+off);
+  return aHash(vec2(sid,pid)*1.37+7.0);
+}
+`;
 const GLSL_HEAD=`
 uniform sampler2D uAreaDetail;uniform float uAreaLow;uniform vec2 uAreaOrigin;uniform vec4 uAreaTrack[2];uniform vec4 uAreaBand;
 varying vec3 vAreaPos;
 vec3 areaLin(vec3 c){return pow(c,vec3(2.2));}
-float aHash(vec2 p){vec3 p3=fract(vec3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return fract((p3.x+p3.y)*p3.z);}
-float aNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(aHash(i),aHash(i+vec2(1.0,0.0)),f.x),mix(aHash(i+vec2(0.0,1.0)),aHash(i+vec2(1.0,1.0)),f.x),f.y);}
+${AREA_CELL_GLSL}
 float aFbm(vec2 p){float s=.5*aNoise(p);p=p*2.03+17.1;s+=.25*aNoise(p);p=p*2.01+9.3;s+=.125*aNoise(p);return s/.875;}
+// Round 2 (pkg4): the soil map repeats every 1.1 m, which printed a lattice on the ground near the camera. Stochastic sampling: every lattice cell takes its own random offset
+// and the four neighbours are blended (smooth weights), so no two cells show the same patch of the map and the repeat disappears. textureGrad keeps the mip level of the plain
+// coordinate (the offsets jump between cells).
+vec3 areaSoil(vec2 p){
+  vec2 i=floor(p),f=fract(p);vec3 sum=vec3(0.0);float wsum=0.0;vec2 dx=dFdx(p),dy=dFdy(p);
+  for(int y=0;y<2;y++)for(int x=0;x<2;x++){
+    vec2 g=vec2(float(x),float(y)),c=i+g,o=vec2(aHash(c+11.0),aHash(c+71.0));
+    vec2 d=f-g;float w=max(0.0,1.0-dot(d,d)*1.1);w=w*w+1e-4;
+    sum+=w*textureGrad(uAreaDetail,p+o*7.0,dx,dy).rgb;wsum+=w;
+  }
+  return sum/wsum;
+}
 `;
 // A patchwork of fields (cells of 34 x ~118 m in a frame turned 12.6 degrees from the grid, edges warped by low-frequency noise, each cell with its own crop state), rows that follow
 // that frame (drawn only where they do not alias: fwidth), a worn track with two ruts, a trampled strip behind the parapet, and a metre-scale soil grain from the project's own
@@ -66,11 +89,15 @@ else if(h1<.58){aCol=areaLin(vec3(.55,.46,.29));rowSp=.45;rowAmp=.4;}
 else if(h1<.74){aCol=areaLin(vec3(.34,.26,.19));rowSp=.85;rowAmp=.8;}
 else if(h1<.88){aCol=areaLin(vec3(.34,.42,.21));rowAmp=.12;}
 else{aCol=areaLin(vec3(.31,.39,.21));rowSp=.62;rowAmp=.5;}
-float rowC=fv/rowSp;
-float rowR=.5+.5*sin(rowC*6.2832+aNoise(vec2(fu*.18,sid))*2.2);
-float rowFade=(1.0-smoothstep(.07,.24,fwidth(rowC)))*(1.0-smoothstep(45.0,150.0,aDist));
-float amp=rowAmp*rowFade;
-aCol*=1.0+(rowR-.5)*amp*.85;
+// Round 2: the rows used to be a plain sine with one phase shift per cell, which near the camera read as a mown lawn / checkerboard. Now the row coordinate is warped at three
+// scales, every row has its own width, strength and gaps, and the strength itself drifts along the row, so no two rows or segments look alike.
+float rowC=fv/rowSp+(aFbm(ap*.09+vec2(2.0,8.0))-.5)*3.2+(aNoise(ap*.7+4.0)-.5)*.5;
+float rowId=floor(rowC),rowJ=aHash(vec2(rowId,sid+31.0)),rowF=fract(rowC);
+float rowW=.22+.3*rowJ,rowR=1.0-smoothstep(rowW*.5,rowW,abs(rowF-.5));
+rowR*=step(.12,rowJ)*(.55+.45*aNoise(vec2(fu*.31+rowId*7.7,rowId)));
+float rowFade=(1.0-smoothstep(.07,.30,fwidth(rowC)))*(1.0-smoothstep(4.0,20.0,aDist));
+float amp=rowAmp*rowFade*.75*(.6+.8*aNoise(ap*.05+vec2(rowId*.37,1.0)));
+aCol*=1.0+(rowR-.4)*amp*.75;
 aCol*=.80+.40*aFbm(ap*.045+vec2(5.0,2.0));
 aCol*=.92+.16*aHash(vec2(sid,pid)+13.0);
 float balk=1.0-smoothstep(.5,1.7,edgeD);
@@ -86,12 +113,19 @@ vec2 bq=vec2(max(max(uAreaBand.x-vAreaPos.x,0.0),vAreaPos.x-uAreaBand.y),max(max
 wear=max(wear,(1.0-smoothstep(0.0,3.2+aNoise(vAreaPos.xz*.45)*2.4,length(bq)))*.9);
 aCol=mix(aCol,areaLin(vec3(.50,.42,.32))*(.80+.40*aNoise(vAreaPos.xz*1.3)),wear*.85);
 aCol*=1.0-rut*.25;amp*=1.0-wear;
-vec3 dt=texture2D(uAreaDetail,vAreaPos.xz*.9).rgb;
-float lum=dot(dt,vec3(.3,.59,.11))/.12;   // the soil map's mean is about .12 in linear light
-if(uAreaLow<.5){vec3 dt2=texture2D(uAreaDetail,vAreaPos.xz*.213+.37).rgb;lum*=mix(1.0,dot(dt2,vec3(.3,.59,.11))/.12,.6);}
+// Soil grain. High: stochastic sampling (no repeat); Low: one tap with the coordinate warped by a low-frequency noise (the repeat is broken up for one extra noise, not three taps).
+float lum;
+if(uAreaLow<.5){
+  vec3 dt=areaSoil(vAreaPos.xz*.9);
+  lum=dot(dt,vec3(.3,.59,.11))/.12;   // the soil map's mean is about .12 in linear light
+  vec3 dt2=texture2D(uAreaDetail,vAreaPos.xz*.213+.37+(vec2(aNoise(vAreaPos.xz*.31),aNoise(vAreaPos.xz*.31+5.0))-.5)*.5).rgb;lum*=mix(1.0,dot(dt2,vec3(.3,.59,.11))/.12,.6);
+}else{
+  vec2 wp=vAreaPos.xz*.9+(vec2(aNoise(vAreaPos.xz*.23),aNoise(vAreaPos.xz*.23+9.0))-.5)*1.6;
+  vec3 dt=texture2D(uAreaDetail,wp).rgb;lum=dot(dt,vec3(.3,.59,.11))/.12;
+}
 float nearK=1.0-smoothstep(8.0,60.0,aDist);
-aCol*=mix(1.0,lum,.8*nearK);
-float areaH=(rowR-.5)*amp*.55+(lum-1.0)*.5*nearK-rut*.5;
+aCol*=mix(1.0,lum,(uAreaLow>.5?.3:.8)*nearK);   // Low: its single warped tap still shows the map's tile seams as a faint lattice at 15-40 m, so it is used with less contrast
+float areaH=(rowR-.4)*amp*.5+(lum-1.0)*(uAreaLow>.5?.15:.5)*nearK-rut*.5;
 diffuseColor.rgb*=aCol;
 `;
 const GLSL_BUMP=`normal=normalize(normal-vec3(dFdx(areaH),dFdy(areaH),0.0)*.22);`;
@@ -111,6 +145,6 @@ export function createFieldMaterial(detail,{track=[],band=[0,0,0,0],origin=[0,0]
     shader.vertexShader='varying vec3 vAreaPos;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvAreaPos=(modelMatrix*vec4(transformed,1.0)).xyz;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>\n${GLSL_HEAD}`).replace('#include <map_fragment>',GLSL_BODY).replace('#include <normal_fragment_maps>',GLSL_BUMP);
   };
-  material.customProgramCacheKey=()=>'m01-area-field-v1';
+  material.customProgramCacheKey=()=>'m01-area-field-v2';
   return {material,uniforms,setQuality(q){uniforms.uAreaLow.value=q==='low'?1:0;},dispose(){material.dispose();}};
 }
