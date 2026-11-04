@@ -6,7 +6,7 @@ import {route} from '../helpers/m01-route.js';
 
 // R4 INC-1 smoke (production build, Chromium/SwiftShader, real controls and pointer lock): the QA flag boots Act VII-a on its card, the area is drawn and lit, the HUD shows
 // only the approximate label, a schema 3 save restores mid-wave, a completed current act opens the transition card (only with the switch on), and the debrief comes after
-// the last act. The saves are made in Node with the same simulation. A state/presentation check, not a playtest and not a frame-rate figure.
+// the last act (VII-b since INC-2). The saves are made in Node with the same simulation. A state/presentation check, not a playtest and not a frame-rate figure.
 const OUT=new URL('../../docs/verification/m01-runtime/acts-inc1-2026-10-25/',import.meta.url).pathname;
 const OUT2=new URL('../../docs/verification/m01-runtime/vii-a-duration-pkg1-2026-11-04/',import.meta.url).pathname;   // the lull and the second echelon (2026-11-04)
 const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',BW_KEY='cod-guerra:checkpoint:m01:v2';
@@ -74,7 +74,7 @@ test('QA flag ?act=vii-a boots Act VII-a on its card; the HUD shows only the app
   writeFileSync(OUT+'smoke-boot.json',JSON.stringify({card,after,errors},null,1)+'\n');
 });
 
-test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west), the lull, the second echelon, the end beat and the debrief after the last act',async({page,context})=>{
+test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west), the lull, the second echelon, the end beat and, since INC-2, the «Mais tarde…» card of VII-b (the debrief now follows VII-b)',async({page,context})=>{
   test.setTimeout(1500000);   // eight pages in one test: software GL on a shared machine needs more than ten minutes
   const shots=[['spawn',OUT+'03-spawn-north.png'],['mid',OUT+'04-line-north-midwave.png'],['west',OUT+'05-line-west-ckm.png'],['wreck',OUT+'05b-wreck-aimed.png'],
     ['lull',OUT2+'01-lull-overwatch-only.png'],['ech2',OUT2+'02-second-echelon.png']],report={};
@@ -95,11 +95,13 @@ test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west
   const errors=await boot(p,'?debug=1&acts=1',{save:scenes.end,click:'#continue'});
   await p.waitForFunction(()=>window.gameDiagnostics().m01.scene==='cs_np_end',null,{timeout:90000});
   await p.waitForTimeout(3500);await p.screenshot({path:OUT+'06-end-card.png'});
-  await p.waitForSelector('#complete:not(.hidden)',{timeout:90000});
-  const debrief=await p.locator('#debrief').textContent();
-  expect(debrief).toContain('Por volta das 07:00');expect(debrief).toContain('fonte');
-  await p.screenshot({path:OUT+'07-debrief.png'});
-  report.end={debrief,errors};expect(errors).toEqual([]);
+  // INC-2 (2026-11-04): VII-a has a next act now, so its end is the transition card into VII-b («Mais tarde…»), not the debrief; the debrief comes after VII-b (tests/browser/m01-act-vii-b.spec.js).
+  await p.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_b_north_day'&&window.gameDiagnostics().m01.scene==='cs_npb_entry',null,{timeout:90000});
+  await p.waitForFunction(()=>window.gameDiagnostics().clock>3,null,{timeout:60000});
+  expect(await p.locator('#complete').evaluate(el=>el.classList.contains('hidden'))).toBe(true);
+  expect(await p.locator('#title-card').textContent()).toContain('Mais tarde');
+  await p.screenshot({path:OUT+'07-transition-card-into-vii-b.png'});
+  report.end={card:await p.locator('#title-card').textContent(),errors};expect(errors).toEqual([]);
   writeFileSync(OUT+'smoke-saves.json',JSON.stringify(report,null,1)+'\n');
 });
 

@@ -12,12 +12,14 @@ import {createStubble} from './m01-area-stubble.js';
 // to draw); the sandbags, ammunition boxes and wire are the T12 prop kit drawn by M01PropsRuntime.
 // What it draws, in draw calls: the field (1), the heaped mounds (1), the berm (1), the clods (1), crater discs and rims (2), the scorch (1), the hull (1), the tree line with its
 // undergrowth (1), and on High the stubble (1): ten (eleven on High), against the roughly 150 of the first version (two meshes per tree, two per crater, two per wreck box).
+// INC-2: syncShellCraters adds the craters of an act's shells (two more instanced draws, on the first shell only).
 // Built once per area, disposed with it; the quality tier only scales how many trees and clods are drawn and the field shader's detail (never the cover or the hull).
+const SHELL_CRATERS_MAX=40;
 export class M01AreaDressing{
   /** `surface(x,z)` = the submitted terrain surface under the field (without this class's offset); `quality` = 'low'|'medium'|'high'. */
   constructor(parent,world,{surface=null,quality='low'}={}){
     const L=world.area,y=L.groundY,F=L.ground;
-    this.area=L.area;this.quality=quality;this.group=new THREE.Group();this.group.name=`m01-area-dressing:${L.area}`;parent.add(this.group);
+    this.area=L.area;this.groundY=y;this.quality=quality;this.group=new THREE.Group();this.group.name=`m01-area-dressing:${L.area}`;parent.add(this.group);
     this.geometries=[];this.materials=[];this.textures=[];this.replaced=new Set();this.drawn=[];
     const geometry=g=>{this.geometries.push(g);return g;},material=m=>{this.materials.push(m);return m;};
     const base=surface??(()=>y),ground=(x,z)=>base(x,z)+areaReliefOffset(L,x,z);
@@ -96,6 +98,31 @@ export class M01AreaDressing{
     const share=TREE_SHARE[quality]??TREE_SHARE.low;
     if(this.treeMesh){const r=treeDrawRange(this.trees,share);this.treeMesh.geometry.setDrawRange(r.start,r.count);this.treesDrawn=r.trees;}
     if(this.clods)this.clods.count=Math.max(1,Math.round(this.clods.userData.total*({low:.45,medium:.7,high:1}[quality]??.45)));
+  }
+  /**
+   * INC-2 (Act VII-b): the craters of the act's shells, from the simulation's saved damage records (`np_shell_crater_*`: where and when each fell) as the same dark scorched disc and lumpy rim as the area's
+   * old craters, two instanced draws made on the first shell and redrawn only when the set of records changes (the latest SHELL_CRATERS_MAX). The decals of the current act cannot lie on the area (its ground is
+   * not the terrain they project on), so without this a shell would leave smoke and nothing on the ground. Presentation only: it reads the records, decides nothing, and an act with no shells never reaches it.
+   */
+  syncShellCraters(damage){
+    const list=(damage??[]).filter(d=>typeof d.id==='string'&&d.id.startsWith('np_shell_crater_')).slice(-SHELL_CRATERS_MAX),key=list.map(d=>d.id).join(',');
+    if(key===(this.shellCraterKey??''))return;   // nothing changed (and nothing to draw before the first shell: an act without shells never makes the meshes)
+    this.shellCraterKey=key;
+    if(!this.shellCraters){
+      const disc=new THREE.CircleGeometry(1,24).rotateX(-Math.PI/2),rim=buildCraterRimGeometry();
+      const soot=new THREE.MeshStandardMaterial({color:'#2a251d',roughness:1,transparent:true,opacity:.85,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),earth=createEarthMaterial();
+      this.geometries.push(disc,rim);this.materials.push(soot,earth);
+      const discs=new THREE.InstancedMesh(disc,soot,SHELL_CRATERS_MAX),rims=new THREE.InstancedMesh(rim,earth,SHELL_CRATERS_MAX);
+      for(const [m,name,cast] of [[discs,'m01-area-shell-crater-discs',false],[rims,'m01-area-shell-crater-rims',true]]){m.name=name;m.castShadow=cast;m.receiveShadow=true;m.frustumCulled=false;this.group.add(m);}
+      this.shellCraters={discs,rims};
+    }
+    const {discs,rims}=this.shellCraters,m=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),p=new THREE.Vector3(),sc=new THREE.Vector3(),y=this.groundY;
+    list.forEach((d,i)=>{
+      const r=2.6+((i*37)%10)/10*.9;e.set(0,i*1.9,0);q.setFromEuler(e);   // a shell's crater is a little larger than the old mortar marks (1.9-2.9 m)
+      p.set(d.x,y+.02,d.z);sc.set(r,1,r*.86);m.compose(p,q,sc);discs.setMatrixAt(i,m);
+      p.set(d.x,y,d.z);sc.set(r*1.02,.4,r*.9);m.compose(p,q,sc);rims.setMatrixAt(i,m);
+    });
+    discs.count=rims.count=list.length;discs.instanceMatrix.needsUpdate=rims.instanceMatrix.needsUpdate=true;
   }
   /** True for the simulation boxes this class draws itself: M01View.syncSolids then skips their plain boxes. */
   replaces(id){return this.replaced.has(id);}

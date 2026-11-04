@@ -28,7 +28,7 @@ export function actsPlan(data=acts){
 }
 export const ACTS=actsPlan();
 /** QA aliases for the URL (?act=vii-a). */
-export const ACT_ALIASES=Object.freeze({'vii-a':'act_vii_a_north','act_vii_a_north':'act_vii_a_north','bw':BW_ACT});
+export const ACT_ALIASES=Object.freeze({'vii-a':'act_vii_a_north','act_vii_a_north':'act_vii_a_north','vii-b':'act_vii_b_north_day','act_vii_b_north_day':'act_vii_b_north_day','bw':BW_ACT});
 
 /** What act a simulation is running (an M01Simulation is the current act). */
 export const actOf=sim=>sim instanceof M01AreaSimulation?sim.actId:BW_ACT;
@@ -38,8 +38,11 @@ export const nextSeed=(state,actId)=>{let h=(state>>>0)^0x52344e50;for(const c o
 
 /** carryFrom(the last simulation of an act): what the next act inherits. Pure: reads, never writes. */
 export function carryFrom(sim,nextAct){
-  if(sim instanceof M01AreaSimulation)return {...clone(sim.carry),from:sim.actId,difficulty:sim.difficulty,weapon:{mag:sim.weapon.mag,reserve:sim.weapon.reserve},grenades:sim.grenades.ammo,
-    seed:nextSeed(sim.rng.state,nextAct)};
+  if(sim instanceof M01AreaSimulation){
+    // Area to area (INC-2): the flags of the finished act (m01np*: its wave, its completion) join the ones the current act left; the debrief of the last act reads the completion flags of those before it.
+    const flags=clone(sim.carry.flags);for(const [k,v] of Object.entries(sim.flags))if(k.startsWith('m01np'))flags[k]=v;
+    return {...clone(sim.carry),flags,from:sim.actId,difficulty:sim.difficulty,weapon:{mag:sim.weapon.mag,reserve:sim.weapon.reserve},grenades:sim.grenades.ammo,seed:nextSeed(sim.rng.state,nextAct)};
+  }
   const flags={};for(const [k,v] of Object.entries(sim.flags))if(k.startsWith('m01.'))flags[k]=v;
   return {v:1,from:BW_ACT,difficulty:sim.difficulty,seed:nextSeed(sim.rng.state,nextAct),events:Object.keys(sim.consumed),flags,
     weapon:{mag:sim.weapon.mag,reserve:sim.weapon.reserve},grenades:sim.grenades.ammo};

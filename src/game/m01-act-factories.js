@@ -129,7 +129,8 @@ const ECHELON_SPEC_KEYS=Object.freeze(['id','lullSec','checkpoint','overwatch','
 const LANE_KEYS=Object.freeze(['id','men','x','delaySec']),OVERWATCH_KEYS=Object.freeze(['id','weapon','node','delaySec']);
 // Suppressive fire of the machine guns (Captain's decision 2026-11-04): `fire.suppress` of the assault. A gun of `weapon` that has no target in sight fires short bursts of real rounds at the
 // place where it last saw a muzzle flash of a Pole (or of the player), for `memorySec` after it, one burst every `pauseSec` seconds (drawn), `pinnedPauseFactor` times that pause while it is pinned.
-const SUPPRESS_KEYS=Object.freeze(['weapon','memorySec','rounds','pauseSec','pinnedPauseFactor','note']);
+// 2026-11-04 (VII-a, step 0 of INC-2): `hitChance` {cover, exposed}: the chance that a round of this blind fire that strikes a man of the line (not the named men) hurts him, by how he stands (see landRounds).
+const SUPPRESS_KEYS=Object.freeze(['weapon','memorySec','rounds','pauseSec','pinnedPauseFactor','hitChance','pinSec','note']);
 const CHECKPOINT_ID=/^cp_[a-z0-9_]+$/;
 /**
  * `spec`: act.json grp_*.assault. `bounds`: {minX,maxX} the lanes and nodes must lie in, `groundY`; `solids`: boxes {id,min:{x,z},max:{x,z}} of the area (wreck,
@@ -160,6 +161,12 @@ export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach 
     const bad=Object.keys(z).find(k=>!SUPPRESS_KEYS.includes(k));if(bad!==undefined)fail(`fire.suppress: unknown key ${bad}`);
     if(z.weapon!=='mg34'||!num(z.memorySec,1,120)||!whole(z.rounds)||!range(z.pauseSec,1,60)||!num(z.pinnedPauseFactor,1,6))
       fail(`fire.suppress: weapon mg34 / memorySec 1-120 / rounds [lo, hi] whole numbers 1-${f.mg.rounds} (a short burst) / pauseSec [lo, hi] 1-60 / pinnedPauseFactor 1-6`);
+    if(z.pinSec!==undefined&&!num(z.pinSec,.5,6))fail('fire.suppress.pinSec: seconds 0.5-6 a man near the end of a blind round stays down (or leave it out)');
+    if(z.hitChance!==undefined){   // optional: without it a blind round hurts whatever it crosses, as in the first version of the suppressive fire
+      const h=z.hitChance;
+      if(!h||typeof h!=='object'||Array.isArray(h)||Object.keys(h).sort().join()!=='cover,exposed'||!num(h.cover,0,1)||!num(h.exposed,0,1)||h.cover>h.exposed)
+        fail('fire.suppress.hitChance: {cover, exposed} chances 0-1, cover not above exposed (or leave it out)');
+    }
   }
   // The echelons: the spec itself, then those that follow it.
   if(spec.echelons!==undefined&&(!Array.isArray(spec.echelons)||!spec.echelons.length))fail('echelons: a non-empty array, or leave it out');

@@ -4,6 +4,9 @@ import {readFileSync} from 'node:fs';
 import {arch} from 'node:os';
 import {M01AreaSimulation,areaActPlan,areaPlanSolids,validateAreaSnapshot} from '../src/game/m01-area-sim.js';
 import {makeApproachPlan,approachFlagOf} from '../src/game/m01-act-factories.js';
+import {makeRound} from '../src/game/m01-fire.js';
+import {pairUnit} from '../src/game/m01-unit-hash.js';
+import {eyePosition} from '../src/world/spatial.js';
 import {M01AreaWorld} from '../src/world/m01-area-world.js';
 import {buildM01AcceptedPropPlacements} from '../src/world/m01-prop-layout.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
@@ -126,6 +129,11 @@ test('the approach factory validates the echelons with clear messages (a typo st
     ['a suppressive burst of a fraction of a round',a=>{a.fire.suppress.rounds=[2.5,4];},/rounds \[lo, hi\]/],
     ['a pause between suppressive bursts the wrong way round',a=>{a.fire.suppress.pauseSec=[8,4];},/pauseSec \[lo, hi\] 1-60/],
     ['a pinned gun that fires faster than a free one',a=>{a.fire.suppress.pinnedPauseFactor=.5;},/pinnedPauseFactor 1-6/],
+    ['a hit chance that is not an object',a=>{a.fire.suppress.hitChance=.3;},/fire\.suppress\.hitChance/],
+    ['a hit chance with a stray key',a=>{a.fire.suppress.hitChance.lying=.1;},/fire\.suppress\.hitChance/],
+    ['a hit chance of the cover above the exposed one',a=>{a.fire.suppress.hitChance={cover:.6,exposed:.4};},/fire\.suppress\.hitChance/],
+    ['a hit chance above 1',a=>{a.fire.suppress.hitChance={cover:.1,exposed:1.5};},/fire\.suppress\.hitChance/],
+    ['a blind round that pins for a minute',a=>{a.fire.suppress.pinSec=60;},/fire\.suppress\.pinSec/],
     ['a checkpoint that is not an id',a=>{a.echelons[0].checkpoint='pause';},/echelon second: checkpoint \(an id cp_/],
     ['a checkpoint on the first echelon\'s successor taken twice',a=>{a.echelons.push({...a.echelons[0],id:'third',checkpoint:a.echelons[0].checkpoint,lanes:[{id:'only3',men:['de_np_90'],x:[-540]}],overwatch:[],breakOut:1});},/echelon third: checkpoint/],
   ];
@@ -360,7 +368,7 @@ test('suppressive fire hits only what its rounds cross, by the level\'s table: a
   const pinnedBefore=sim.allies.map(a=>a.suppressedUntil),health=sim.player.health;
   const empty=fire({x:-600,y:-3,z:-1250,who:'jan_wrona'});
   assert.ok(empty.some(e=>e.type==='enemy-fire'&&e.kind==='area'),'the burst was fired');
-  const impacts=empty.filter(e=>e.type==='round-impact');assert.ok(impacts.length>=3,'its rounds landed');
+  const impacts=empty.filter(e=>e.type==='round-impact'&&e.kind==='area');assert.ok(impacts.length>=3,'its rounds landed');   // (the ckm may answer the flash in these seconds: its rounds are of another kind and are not the burst's)
   assert.ok(impacts.every(e=>e.victim===null&&e.pinned.length===0),'and struck nobody, pinned nobody');
   assert.deepEqual(sim.allies.map(a=>a.suppressedUntil),pinnedBefore);assert.equal(sim.player.health,health);
   // a man standing in the open 25 m in front of the gun: the rounds cross him, the level's table decides (exposed: certain wound on veterano; one wound per burst; the level's damage)
@@ -436,6 +444,33 @@ test('death and checkpoint: a dead player restores CP-E (the arrival) in the fir
   for(let i=0;i<20000&&!(early.timers.wave&&early.clock-early.timers.wave.at>8);i++){early.tick(ACT_TICK,actControls(early,'passive',se));early.drainEvents();}
   assert.equal(early.timers.wave.echs[0].brokenAt,null);early.player.alive=false;early.player.health=0;early.playerDown('shot','de_np_0','mg34');early.tick(ACT_TICK,{});
   assert.ok(early.drainEvents().some(e=>e.type==='restored'));assert.equal(early.respawn.label,'CP-E');assert.equal(early.timers.wave,null);assert.deepEqual(early.checkpointsReached,['cp_np_e_perimetro']);
+});
+
+test('blind fire mostly suppresses (step 0 of INC-2, 2026-11-04): a blind round that crosses a man of the line hurts him with the chance of how he stands, the rest end in the earth and pin him pinSec seconds; aimed rounds are not touched',()=>{
+  const {sim}=toLull(),Z=sim.plan.assault.fire.suppress,H=Z.hitChance,gun=sim.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');
+  assert.ok(H&&H.cover<=.2&&H.exposed>=.3&&H.exposed<=.7&&Z.pinSec>=1&&Z.pinSec<4,'low behind the parapet, about even when risen to fire, a shorter pin than the aimed rounds\' 4 s');
+  assert.ok(gun);const man=sim.actor('pl_np_3'),origin=eyePosition({...gun,crouched:false});
+  const results={cover:[],exposed:[]};let n=0;
+  // One round at a time, from the gun to the man: kneeling (his head, a hand above the parapet, 1.3 m) or risen (his upper torso, 1.4 m: the parapet is 1.15 m). Rounds are landed directly; nothing else moves.
+  for(const [posture,aimY,crouched] of [['cover',1.3,true],['exposed',1.4,false]])for(let k=0;k<200;k++){
+    sim.enemyFire.rounds.length=0;Object.assign(man,{crouched,health:100,alive:true,suppressedUntil:0});
+    const id=`np_round_${9000+n++}`,r=makeRound({id,by:gun.id,weapon:'mg34',kind:'area',origin,aim:{x:man.x,y:man.y+aimY,z:man.z},firedAt:sim.clock-1,bias:[0,0],cone:[0,0],gauss:()=>0});
+    sim.enemyFire.rounds.push(r);sim.landRounds();
+    const hurt=man.health<100,expected=pairUnit(man.id,id)<H[posture];
+    assert.equal(hurt,expected,`${posture} ${id}: the round hurts him exactly when the pure draw of the two ids is under ${H[posture]}`);
+    if(!hurt)assert.ok(Math.abs(man.suppressedUntil-(sim.clock+Z.pinSec))<1e-9,'a spared man is pinned pinSec seconds like any near miss, not the aimed 4 s');
+    results[posture].push(hurt);
+  }
+  const share=k=>results[k].filter(Boolean).length/results[k].length;
+  assert.ok(share('cover')>0&&share('cover')<=.2,`behind the parapet few are hurt: ${share('cover')}`);assert.ok(share('exposed')>=.35&&share('exposed')<=.65,`risen to fire about half: ${share('exposed')}`);
+  // an aimed round (kind 'squad') at the same kneeling man is not gated: every one that reaches him hurts him, and he is pinned the aimed 4 s only by a near miss
+  let aimedHits=0;
+  for(let k=0;k<20;k++){
+    sim.enemyFire.rounds.length=0;Object.assign(man,{crouched:true,health:100,alive:true,suppressedUntil:0});
+    sim.enemyFire.rounds.push(makeRound({id:`np_round_${9500+k}`,by:gun.id,weapon:'mg34',kind:'squad',origin,aim:{x:man.x,y:man.y+1.3,z:man.z},firedAt:sim.clock-1,bias:[0,0],cone:[0,0],gauss:()=>0}));sim.landRounds();
+    if(man.health<100)aimedHits++;
+  }
+  assert.equal(aimedHits,20,'aimed rounds hurt whoever they cross: the gate is for blind fire only');
 });
 
 test('the golden of Act VII-a: both routes regenerate byte for byte (x86_64; tools/verification/m01-act-vii-a-golden.mjs)',{skip:arch()!=='x64'&&'x86_64 only'},()=>{

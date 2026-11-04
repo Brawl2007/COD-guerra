@@ -214,9 +214,10 @@ export class M01View {
    * act's entry card) and the area's dressing is made; the current act's world has no area, so for it nothing here ever runs.
    */
   syncAreaTerrain(world){
-    const key=areaKey(world),rebuilt=key!==this.reliefAreaKey;
-    if(!rebuilt&&(!world.area||this.areaDressing))return;
-    this.reliefAreaKey=key;
+    // INC-2: two acts of the same area (VII-a, VII-b) share the relief but not the turned earth the Germans bound to (the covers of their plans): when the covers differ, the dressing is made again for the new world.
+    const key=areaKey(world),rebuilt=key!==this.reliefAreaKey,coverKey=world.area?world.areaCovers.map(c=>c.id).join(','):'';
+    if(!rebuilt&&(!world.area||(this.areaDressing&&this.areaCoverKey===coverKey)))return;
+    this.reliefAreaKey=key;this.areaCoverKey=coverKey;
     if(rebuilt){
       const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
       this.terrainRelief.dispose();this.farLandscape.dispose();
@@ -846,6 +847,7 @@ export class M01View {
   }
   syncDamage(sim,state){
     this.stationDamage.update(state.damage,sim.clock);
+    this.areaDressing?.syncShellCraters(state.damage);   // INC-2: the craters of an area act's shells, from the saved damage (nothing for an act without shells)
     const yardFire=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??0,sim.clock);
     this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainLife.sources,railwaySmoke:this.trainSmokeEnabled!==false});
     const live=new Set(sim.grenades.active.map(g=>g.id));

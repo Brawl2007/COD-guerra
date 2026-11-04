@@ -10,10 +10,15 @@
 // 2026-11-04 (Captain's decisions, reversible; docs/verification/m01-runtime/vii-a-duration-pkg1-2026-11-04): (1) CP-F, a second checkpoint when the first echelon breaks (the pause begins):
 // a death in the second echelon returns there, not to the arrival (lullCheckpoint); (2) suppressive fire: a German MG34 with nothing in sight fires short bursts of real rounds at the
 // place where it last saw a muzzle flash of a Pole or of the player, and still fires, at half the cadence, while it is pinned (noteFlash, germanFire, areaBurst): GAMEPLAY_DRAMATIZATION.
+// 2026-11-04 (INC-2, Act VII-b «Norte, durante o dia», docs/direction/M01_R4_VII_BC_DESIGN.md): the names the first act kept in the code (its cards, objectives, phases, flags, arrival checkpoint,
+// marker) are the DEFAULTS of an act profile (act.profile; makeProfile), so that a second act of the same area can name its own; the barrage (artillery with an effect by radius, stepBarrage), the
+// checkpoints with a trigger of data (lullCheckpoint) and the stretcher-bearers (stepMedics) are optional blocks of the act data that an act without them (VII-a) never meets: its saves, its
+// streams and its golden are what they were.
 import bwDefinition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import npLayout from '../../missions/m01-tczew/areas/np/layout.json' with { type: 'json' };
 import npAct from '../../missions/m01-tczew/areas/np/act.json' with { type: 'json' };
+import npbAct from '../../missions/m01-tczew/areas/np/act-vii-b.json' with { type: 'json' };
 import {M01AreaWorld} from '../world/m01-area-world.js';
 import {movePlayer} from '../world/m01-player-physics.js';
 import {Wz29} from './wz29.js';
@@ -24,6 +29,9 @@ import {makeRound,traceRound,closestApproach,NEAR_MISS} from './m01-fire.js';
 import {aimPoint} from './m01-aim.js';
 import {initializePresentation,updateMotion,updatePosture,updateBodyYaw,recordSuppression,recordDamage,recordHit,updateActorDetails,presentationDiagnostics} from './m01-animation-presentation.js';
 import {impactPass} from './m01-audio-events.js';
+import {pairUnit} from './m01-unit-hash.js';   // a uniform number in [0, 1) from two ids (no stream is drawn)
+import {CONCUSSION,blastPosture,blastTarget,sightPoint,concussionPeak,concussionLevel,mergeConcussion} from './m01-blast.js';   // act 1's pure blast helpers, read and never changed
+import {SHELL_SPECS,SHELL_REACH_M,PLANNED_IMPACT_M,shellOutcome,shellProtection,makeBarragePlan,makeMedicPlan,barrageSeed,barrageNext,pickShellPoint,landingPoint,freshBarrageRecord,freshMedicRecord,validBarrageRecord,validMedicRecord} from './m01-shell-blast.js';
 import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validApproachWave,validGermanAi,validSquadRecord} from './m01-act-factories.js';
 
 // 2 (2026-11-03, the second echelon): the roster grew (the men of the echelons that follow the first) and the wave record gained its echelon state (timers.wave.ech/echs/lullUntil).
@@ -42,8 +50,36 @@ const aiGauss=ai=>{let u=0;while(u<=1e-12)u=aiNext(ai);return Math.sqrt(-2*Math.
 const between=(ai,[lo,hi])=>lo+(hi-lo)*aiNext(ai);
 const pause=(ai,mean,lo)=>Math.min(3*mean,Math.max(lo,mean*Math.exp(.5*aiGauss(ai)-.125)));
 
-/** The area acts this module can run. One today; WP-2..WP-4 add theirs here. */
-export const AREA_ACTS=Object.freeze({act_vii_a_north:Object.freeze({layout:npLayout,act:npAct})});
+/** The area acts this module can run, in the order of the chain (m01-acts.js): VII-a, VII-b; WP-4 adds VII-c. */
+export const AREA_ACTS=Object.freeze({act_vii_a_north:Object.freeze({layout:npLayout,act:npAct}),act_vii_b_north_day:Object.freeze({layout:npLayout,act:npbAct})});
+
+/**
+ * The names an area act uses for its parts (F1 of the design): ids of its cards, objectives, event and checkpoint, the prefix of its phases and flags, the label of its marker. VII-a's are the defaults
+ * (act.profile may omit any), so its data and its saves are exactly as they were; VII-b names its own. `ordinals`: whether the status line may say «2.ª vaga» (VII-b never counts its attacks on screen).
+ */
+export const PROFILE_DEFAULTS=Object.freeze({label:'VII-a',phasePrefix:'NP',flagPrefix:'m01np',markerLabel:'Parapeito norte',marker:'trench_post',entryCard:'cs_np_entry',endCard:'cs_np_end',
+  arrivalObjective:'obj_np_reach_trench',holdObjective:'obj_np_hold_north',coverObjective:null,cardEndEvent:'evt_np_card_end',waveEvent:'evt_np_wave',arrivalCheckpoint:'cp_np_e_perimetro',
+  statusLabel:'Linha norte',repelledText:'Ataque repelido',ordinals:true,arrivalNeedsReserve:false});
+export function makeProfile(act,layout){
+  const fail=m=>{throw new Error(`M01 ${act.id}: profile: ${m}`);};
+  const given=act.profile??{};
+  if(typeof given!=='object'||Array.isArray(given))fail('an object, or leave it out');
+  const bad=Object.keys(given).find(k=>k!=='note'&&!Object.hasOwn(PROFILE_DEFAULTS,k));if(bad!==undefined)fail(`unknown key ${bad}`);
+  const P={...PROFILE_DEFAULTS,...given};delete P.note;
+  for(const [k,v] of Object.entries(P)){
+    if(typeof PROFILE_DEFAULTS[k]==='boolean'){if(typeof v!=='boolean')fail(`${k}: true or false`);}
+    else if(k==='coverObjective'){if(v!==null&&(typeof v!=='string'||!v))fail('coverObjective: an objective id, or null');}
+    else if(typeof v!=='string'||!v)fail(`${k}: a non-empty text`);
+  }
+  if(!/^[A-Z]+$/.test(P.phasePrefix)||!/^m01np[a-z]*$/.test(P.flagPrefix))fail('phasePrefix (capitals) / flagPrefix (m01np...)');
+  const objective=id=>act.objectives.some(o=>o.id===id);
+  if(P.entryCard!==act.cards.entry.id||P.endCard!==act.cards.end.id)fail('entryCard / endCard must be the ids of cards.entry / cards.end');
+  if(!objective(P.arrivalObjective)||!objective(P.holdObjective)||(P.coverObjective!==null&&!objective(P.coverObjective)))fail('arrivalObjective / holdObjective / coverObjective must be objectives of the act');
+  if(!act.events.some(e=>e.id===P.waveEvent))fail('waveEvent must be an event of the act');
+  if(!act.checkpoints.some(c=>c.id===P.arrivalCheckpoint))fail('arrivalCheckpoint must be a checkpoint of the act');
+  if(!Object.hasOwn(act.points??{},P.marker)&&!Object.hasOwn(layout.points,P.marker))fail('marker must be a point of the act or of the layout');
+  return Object.freeze(P);
+}
 
 /** The solids of the area that no German path may cross and no turned earth may touch: the wreck, the parapet segments and the low front of the ckm nest (the footprints of the
  *  boxes the world builds, m01-area-world.js refresh; the heights do not matter to a path on the ground). */
@@ -54,25 +90,61 @@ export const areaPlanSolids=layout=>[...layout.wreck.boxes.map(b=>({id:b.id,min:
 /** Everything of the act that is data, validated once (a typo stops the game instead of changing it). */
 export function areaActPlan(actId='act_vii_a_north'){
   const entry=AREA_ACTS[actId];if(!entry)throw new Error(`M01 act: unknown area act ${actId}`);
-  const {layout,act}=entry,group=id=>act.groups.find(g=>g.id===id);
+  return areaPlanOf(actId,entry);
+}
+/** The plan of an act from its data ({layout, act}): areaActPlan for a registered act; the tests give it edited copies to see what a typo does. */
+export function areaPlanOf(actId,entry){
+  const {layout,act}=entry,group=id=>act.groups.find(g=>g.id===id),profile=makeProfile(act,layout),L=profile.label;
   const pb=layout.bounds.playable,def={groups:act.groups,events:act.events};
-  const line=makeLinePlan(def,{group:'grp_np_line',key:'rearguard',man:'^pl_np_\\d+$',postBox:{minX:pb.minX,maxX:pb.maxX,minZ:-1160,maxZ:-1158},survivorFloor:false,label:'M01 VII-a line'});
-  const section=group('grp_np_section'),squad=makeSquadPlan(section.squad,'M01 VII-a squad');
-  const assault=makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:'M01 VII-a assault',solids:areaPlanSolids(layout)});
+  const line=makeLinePlan(def,{group:'grp_np_line',key:'rearguard',man:'^pl_np_\\d+$',postBox:{minX:pb.minX,maxX:pb.maxX,minZ:-1160,maxZ:-1158},survivorFloor:false,label:`M01 ${L} line`});
+  const section=group('grp_np_section'),squad=makeSquadPlan(section.squad,`M01 ${L} squad`);
+  const assault=makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:`M01 ${L} assault`,solids:areaPlanSolids(layout)});
   const known=act.checkpoints.map(c=>c.id);
-  for(const e of assault.echelons)if(e.checkpoint!==null&&(!known.includes(e.checkpoint)||e.checkpoint===CP_ARRIVAL))
-    throw new Error(`M01 VII-a assault: echelon ${e.id}: checkpoint ${e.checkpoint} must be a checkpoint of the act other than the arrival's`);
+  for(const e of assault.echelons)if(e.checkpoint!==null&&(!known.includes(e.checkpoint)||e.checkpoint===profile.arrivalCheckpoint))
+    throw new Error(`M01 ${L} assault: echelon ${e.id}: checkpoint ${e.checkpoint} must be a checkpoint of the act other than the arrival's`);
   const ckm=group('grp_np_ckm');
-  if(!Array.isArray(ckm.root)||ckm.root.length!==3||!Number.isFinite(ckm.yawDeg))throw new Error('M01 VII-a ckm root/yawDeg');
+  if(!Array.isArray(ckm.root)||ckm.root.length!==3||!Number.isFinite(ckm.yawDeg))throw new Error(`M01 ${L} ckm root/yawDeg`);
   const stageSlots=Object.fromEntries(Object.entries(section.stage.slots).map(([id,[x,z]])=>[id,{x,z}]));
-  return Object.freeze({actId,layout,act,line,squad,assault,ckm,section,stageSlots,waveAt:seconds(act.events.find(e=>e.id==='evt_np_wave').trigger.at),
+  // The event that sends the first echelon on: at a battle clock (VII-a: or when the player reaches the post), or some seconds after a barrage has ended (VII-b).
+  const waveTrigger=act.events.find(e=>e.id===profile.waveEvent).trigger;
+  const barrages=act.barrages!==undefined?makeBarragePlan(act.barrages,{playable:pb,objectives:act.objectives.map(o=>o.id),echelons:assault.echelons.length,line:line.men,label:`M01 ${L} barrage`}):null;
+  const medics=act.medics!==undefined?makeMedicPlan(act.medics,{playable:pb,label:`M01 ${L} medics`}):null;
+  if(barrages){for(const b of barrages.barrages)if(b.callout&&!act.callouts.some(c=>c.on===b.callout))throw new Error(`M01 ${L} barrage ${b.id}: callout ${b.callout} is not a callout of the act`);}
+  if(waveTrigger.type==='battleClock'){if(typeof waveTrigger.at!=='string')throw new Error(`M01 ${L}: the wave event needs a battle clock time`);}
+  else if(waveTrigger.type==='barrageEnd'){if(!barrages?.byId[waveTrigger.barrage]||!(waveTrigger.afterSec>=0&&waveTrigger.afterSec<=60))throw new Error(`M01 ${L}: the wave event follows a barrage of the act, 0-60 s after its end`);}
+  else throw new Error(`M01 ${L}: the wave event trigger is battleClock or barrageEnd`);
+  const triggers=checkpointTriggers(act,profile,assault.echelons.length);
+  if(medics&&!barrages)throw new Error(`M01 ${L}: medics need a barrage (the wounded man is a shell's)`);
+  const points=Object.freeze({...layout.points,...(act.points??{})});
+  return Object.freeze({actId,layout,act,profile,line,squad,assault,ckm,section,stageSlots,waveTrigger,waveAt:waveTrigger.type==='battleClock'?seconds(waveTrigger.at):null,barrages,medics,triggers,points,
     clockStart:seconds(act.clock.battleClockStart)});
+}
+/**
+ * The checkpoints of an act that carry a trigger of DATA (F4 of the design; VII-a's carry a text that documents when they are taken, and one is taken by the entry card and one by an echelon's `checkpoint`):
+ * {type:'sceneEnd', scene}: the end of the entry card (the arrival's checkpoint); {type:'echelonBroken', echelon: k}: the end of the tick in which echelon k breaks and another follows; {type:'flag', flag}: the
+ * tick in which the flag of the act becomes true. Returns the ones that are taken during the fight (echelonBroken, flag), validated.
+ */
+function checkpointTriggers(act,profile,echelons){
+  const fail=m=>{throw new Error(`M01 ${profile.label}: checkpoints: ${m}`);},out=[];
+  for(const c of act.checkpoints){
+    const t=c.trigger;if(t===undefined||typeof t==='string')continue;
+    if(!t||typeof t!=='object'||Array.isArray(t))fail(`${c.id}: trigger (a text, or {type, ...})`);
+    if(t.type==='sceneEnd'){if(t.scene!==act.cards.entry.id||c.id!==profile.arrivalCheckpoint||Object.keys(t).length!==2)fail(`${c.id}: sceneEnd is the end of the entry card and the arrival's checkpoint`);}
+    else if(t.type==='echelonBroken'){
+      if(!Number.isInteger(t.echelon)||t.echelon<0||t.echelon>=echelons-1||Object.keys(t).length!==2)fail(`${c.id}: echelonBroken: the index of an echelon that another follows`);
+      out.push({id:c.id,type:t.type,echelon:t.echelon});
+    }else if(t.type==='flag'){
+      if(typeof t.flag!=='string'||!t.flag.startsWith(profile.flagPrefix+'.')||Object.keys(t).length!==2)fail(`${c.id}: flag: a flag of the act (${profile.flagPrefix}.*)`);
+      out.push({id:c.id,type:t.type,flag:t.flag});
+    }else fail(`${c.id}: trigger type ${t.type} (sceneEnd, echelonBroken or flag)`);
+  }
+  return Object.freeze(out);
 }
 
 const CKM_IDS=['ckm_gunner','ckm_loader'];
-const CP_ARRIVAL='cp_np_e_perimetro';   // CP-E, at the end of the entry card (the pause's checkpoint, CP-F, is the second echelon's `checkpoint` in the data)
+// The arrival's checkpoint is profile.arrivalCheckpoint (VII-a: CP-E, at the end of the entry card; the pause's checkpoint, CP-F, is the second echelon's `checkpoint` in the data; VII-b: CP-I, and CP-I2 by a trigger of data).
 /** The roster of an area act, in actor order (makeActors). */
-export const areaRoster=plan=>['marek_zielinski','staszek_pawlak','szymon_kowal',...plan.line.men,...CKM_IDS,...plan.assault.men.map(m=>m.id)];
+export const areaRoster=plan=>['marek_zielinski','staszek_pawlak','szymon_kowal',...plan.line.men,...CKM_IDS,...plan.assault.men.map(m=>m.id),...(plan.medics?.ids??[])];
 const LINE_DAMAGE=40;                    // a German round that strikes a man of the line (not the named section or the ckm crew: they are pinned, never killed, as the plot needs them)
 const ESSENTIAL_PIN_SEC=3,NEAR_PIN_SEC=4,PLAYER_SUPPRESS_SEC=5;
 const RKM={burst:[3,5],sigmaMil:[7,5],pauseSec:4,mag:20,reloadSec:4};
@@ -87,21 +159,22 @@ export function defaultCarry(difficulty=M01_DIFFICULTY_SIM_DEFAULT){
 export class M01AreaSimulation {
   constructor(seed=19390901,{difficulty=M01_DIFFICULTY_SIM_DEFAULT,actId='act_vii_a_north',carry=null}={}){
     if(!M01_DIFFICULTY_IDS.includes(difficulty))throw new RangeError('Dificuldade M01 desconhecida: '+String(difficulty));
-    this.difficulty=difficulty;this.actId=actId;this.plan=areaActPlan(actId);this.carry=clone(carry??defaultCarry(difficulty));this.reset(seed);
+    this.difficulty=difficulty;this.actId=actId;this.plan=areaActPlan(actId);this.profile=this.plan.profile;this.waveFlag=`${this.profile.flagPrefix}.wave`;this.carry=clone(carry??defaultCarry(difficulty));this.reset(seed);
   }
+  phase(name){return `${this.profile.phasePrefix}_${name}`;}
   get level(){return M01_DIFFICULTY[this.difficulty];}
   reset(seed=this.seed??19390901){
     const P=this.plan,L=P.layout,A=P.act;
     this.seed=seed;this.missionId=bwDefinition.id;this.area=L.area;this.rng=new Random(seed);
     // The definition the HUD and the audio read: the current act's, with this act's objectives, checkpoints and an empty cutscene list (the cards are scene.card).
     this.definition={...bwDefinition,objectives:A.objectives.map(o=>({...o})),checkpoints:A.checkpoints.map(c=>({...c})),cutscenes:[],sectors:[],
-      debrief:{...bwDefinition.debrief,paragraphs:debriefWith(A.debrief)}};
-    this.world=new M01AreaWorld(L,{extraCovers:P.assault.covers,eventIds:this.carry.events,flags:this.carry.flags});
+      debrief:{...bwDefinition.debrief,paragraphs:debriefWith(...debriefChain(this.actId,this.carry))}};
+    this.world=new M01AreaWorld(L,{extraCovers:P.assault.covers,eventIds:this.carry.events,flags:this.carry.flags,...(A.clock.sun?{sun:A.clock.sun}:{})});
     this.clock=0;this.battleClock=P.clockStart;this.events=[];
     // The current act's consumed events stay consumed (the bridges as the demolitions left them), an hour before this act's clock; this act's own events at their clock.
     this.consumed=Object.fromEntries(this.carry.events.map(id=>[id,-3600]));
     this.objectives=Object.fromEntries(A.objectives.map(o=>[o.id,{state:'locked',progress:0}]));
-    this.flags={...this.carry.flags,'m01np.wave':'pending'};
+    this.flags={...this.carry.flags,[this.waveFlag]:'pending'};
     this.destruction=[];this.dialogueQueue=[];this.subtitle=null;this.sceneDone=[];this.scene=null;this.checkpointsReached=[];this.failure=null;
     const s=L.points.spawn;
     this.player=entity('jan_wrona',{x:s.x,y:L.groundY,z:s.z},'player',{angle:s.facingDeg*Math.PI/180,pitch:0,radius:.36,aiming:false,moveBlend:0,sprinting:false,weaponShotAt:-1e9,carrying:null,headgear:'pl_rogatywka_wz37'});
@@ -110,11 +183,12 @@ export class M01AreaSimulation {
     this.actors=this.makeActors(seed);
     for(const a of this.actors)initializePresentation(a,this.clock);
     // The squad record starts at its first bound: the current act's updateSquad infers a retreat already made from men WEST of their slots, which means nothing here.
-    this.timers={boundary:0,boundaryCountdown:0,said:{},lastHitAt:-1e9,burstWound:null,wave:null,endAt:null,playerPinnedAt:-1e9,squad:{move:0,moving:false,since:0}};
+    this.timers={boundary:0,boundaryCountdown:0,said:{},lastHitAt:-1e9,burstWound:null,wave:null,endAt:null,playerPinnedAt:-1e9,squad:{move:0,moving:false,since:0},
+      ...(P.barrages?{barrage:freshBarrageRecord()}:{}),...(P.medics?{medics:freshMedicRecord()}:{})};   // the records of the blocks an act has; an act without them (VII-a) keeps the timers it always had
     this.enemyFire={rounds:[],nextId:0};
     const w=L.wreck.smoke;
     this.sectors={sectors:[],damage:[{id:w.id,x:w.x,y:w.y,z:w.z,started:-w.burningSinceSec,soundAt:-w.burningSinceSec,wreck:true}]};
-    this.mission={phase:'NP_ENTRY',complete:false,text:'',status:''};
+    this.mission={phase:this.phase('ENTRY'),complete:false,text:'',status:''};
     this.startCard('entry');
     this.checkpoint=this.snapshot(false);
   }
@@ -137,6 +211,8 @@ export class M01AreaSimulation {
     P.assault.men.forEach((m,i)=>{const later=m.echelon>0,n=later?m.entry:m.path[m.stops[0]];add(entity(m.id,{x:n.x,y,z:n.z},'enemy',{group:'grp_np_de',weapon:m.weapon,role:m.weapon==='mg34'?'SUPPORT':'RIFLEMAN',
       facing:Math.PI/2,firedAt:-1e9,cooldown:2+i*.4,crouched:!later,active:!later,
       deck:later?{v:1,phase:'advance',node:0,until:0,since:0,t0:0,pinned:0}:{v:1,phase:m.role==='overwatch'?'hold':'cover',node:m.stops[0],until:0,since:0,t0:0,pinned:0}}),30+i);});
+    // The stretcher-bearers (act.medics) wait off the field, at the south edge, until a man of the line is wounded (stepMedics). They are of the named kind: the plot needs them, so a round only pins them.
+    (P.medics?.ids??[]).forEach((id,i)=>add(entity(id,{x:P.medics.from[0]+i*1.2,y,z:P.medics.from[1]},'ally',{role:'MEDIC',group:'grp_np_medics',essential:true,active:false,facing:-Math.PI/2}),60+i));
     for(const a of out)if(a.firedAt===undefined)a.firedAt=-1e9;
     return out;
   }
@@ -163,25 +239,26 @@ export class M01AreaSimulation {
     if(s.elapsed<s.card.seconds&&!(skip&&s.skippable&&s.elapsed>.6))return;
     this.sceneDone.push(s.id);this.scene=null;
     if(s.card.kind==='entry'){
-      this.consume('evt_np_card_end');this.activate('obj_np_reach_trench');this.mission.phase='NP_ARRIVAL';
-      this.saveCheckpoint(CP_ARRIVAL);this.say('arrive_card_end');
-    }else{this.mission.complete=true;this.mission.phase='NP_END';this.flags['m01np.completed']=true;this.emit({type:'complete'});}
+      this.consume(this.profile.cardEndEvent);this.activate(this.profile.arrivalObjective);this.mission.phase=this.phase('ARRIVAL');
+      this.saveCheckpoint(this.profile.arrivalCheckpoint);this.say('arrive_card_end');
+    }else{this.mission.complete=true;this.mission.phase=this.phase('END');this.flags[`${this.profile.flagPrefix}.completed`]=true;this.emit({type:'complete'});}
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- tick
   tick(dt,controls={}){
     if(!Number.isFinite(dt)||dt<=0||this.mission.complete)return;dt=Math.min(.05,dt);
     if(!this.player.alive){const reason=this.failure;this.restoreCheckpoint();this.emit({type:'restored'});if(reason)this.message(reason);return;}
     this.clock+=dt;this.battleClock+=dt;const p=this.player;
+    if(p.concussedUntil!==undefined&&!(this.clock<p.concussedUntil)){delete p.concussion;delete p.concussedUntil;}   // the stun of a shell is over (exactly the rule of the bombs of act 1)
     p.angle+=(controls.lookX??0)*.0022;p.pitch=Math.max(-1.25,Math.min(1.25,p.pitch-(controls.lookY??0)*.0022));p.aiming=Boolean(controls.aim);
     if(controls.crouch)p.crouched=!p.crouched;
     this.updateScene(dt,controls.skip);
     const locked=Boolean(this.scene);
     if(!locked){
       const f=controls.forward??0,s=controls.side??0,len=Math.hypot(f,s)||1;
-      const speed=(controls.sprint?6:3.8)*(p.crouched?.6:1)*(p.aiming?.65:1);
+      const stun=concussionLevel(p,this.clock),speed=(controls.sprint?6*(1-CONCUSSION.sprintCut*stun):3.8*(1-CONCUSSION.walkCut*stun))*(p.crouched?.6:1)*(p.aiming?.65:1);   // stun is 0 for a man who was never stunned: the old numbers
       const dx=(Math.cos(p.angle)*f-Math.sin(p.angle)*s)*speed*dt/len,dz=(Math.sin(p.angle)*f+Math.cos(p.angle)*s)*speed*dt/len;
       const before={x:p.x,z:p.z},landing=movePlayer(this.world,p,dx,dz,dt);if(landing)this.emit({type:'player-landing',...landing,point:{x:landing.x,y:landing.y,z:landing.z}});
-      p.moveBlend=Math.min(1,dist(before,p)/(dt*3.8));p.sprinting=Boolean(controls.sprint)&&p.moveBlend>.1;
+      p.moveBlend=Math.min(1,dist(before,p)/(dt*3.8));p.sprinting=Boolean(controls.sprint)&&p.moveBlend>.1&&stun<CONCUSSION.sprintOffAt;
       this.weapon.update(this.clock*1000);
       if(controls.reload&&this.weapon.reload(this.clock*1000))this.emit({type:'reload',weapon:'kb_wz29'});
       if(controls.sight)this.message(`Alça: ${this.weapon.adjustSight()} m`);
@@ -191,7 +268,9 @@ export class M01AreaSimulation {
       this.boundaries(dt);
     }
     const before=this.actors.map(a=>({x:a.x,z:a.z}));
+    this.stepBarrage();
     this.updateWave();
+    this.stepMedics(dt);
     this.stepSection(dt);
     this.stepGermans(dt);
     this.stepLine(dt);this.stepKowal(dt);this.stepCKM();
@@ -210,6 +289,8 @@ export class M01AreaSimulation {
   fire(){
     const p=this.player,now=this.clock*1000;if(!this.weapon.shoot(now))return;
     const aim=this.weapon.shotDirection(p.angle,p.pitch,p.aiming,p.moveBlend>.1,this.rng.next);
+    const sway=1+CONCUSSION.aimSway*concussionLevel(p,this.clock);   // a stunned player's rifle is less steady: the same two draws, their deviation multiplied (exactly 1 when he is not stunned)
+    if(sway!==1){aim.angle=p.angle+(aim.angle-p.angle)*sway;aim.pitch=p.pitch+(aim.pitch-p.pitch)*sway;}
     const dir=aimDirection(aim.angle,aim.pitch),origin=eyePosition(p),hit=traceShot(this.world,origin,dir,this.actors,1200,muzzlePosition(p));
     p.weaponShotAt=now;p.pitch=Math.min(1.25,p.pitch+.024);this.noteFlash(p);
     if(hit?.actor?.team==='enemy')this.damageGerman(hit.actor,this.weapon.profile.damage*hit.multiplier,p,'player');
@@ -274,13 +355,19 @@ export class M01AreaSimulation {
     if(!p.alive)this.playerDown('shot',r.by,r.weapon);
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- the wave
+  /** The attack goes on: at a battle clock or when the player has reached the post (VII-a), or some seconds after a barrage has ended (VII-b, plan.waveTrigger). */
+  waveDue(){
+    const T=this.plan.waveTrigger;
+    if(T.type==='barrageEnd'){const end=this.timers.barrage?.done[T.barrage];return Number.isFinite(end)&&this.clock>=end+T.afterSec;}
+    return this.battleClock>=this.plan.waveAt||this.objectives[this.profile.arrivalObjective].state==='done';
+  }
   updateWave(){
-    if(this.flags['m01np.wave']!=='pending'||this.scene)return;
-    if(!(this.battleClock>=this.plan.waveAt||this.objectives.obj_np_reach_trench.state==='done'))return;
+    if(this.flags[this.waveFlag]!=='pending'||this.scene)return;
+    if(!this.waveDue())return;
     // The record of the fight: its start, the German dead, the LAST echelon's break and the end (brokenAt, repelledAt), and one record per echelon that has entered (`echs`).
-    this.flags['m01np.wave']='active';this.consume('evt_np_wave');
+    this.flags[this.waveFlag]='active';this.consume(this.profile.waveEvent);
     this.timers.wave={at:this.clock,casualties:0,brokenAt:null,repelledAt:null,closeCalled:false,ech:0,echs:[this.echelonRecord()],lullUntil:null};
-    this.activate('obj_np_hold_north');this.mission.phase='NP_ATTACK';
+    this.activate(this.profile.holdObjective);this.mission.phase=this.phase('ATTACK');
     for(const a of this.enemies)if(a.alive&&a.active){const S=this.plan.assault;a.deck.since=this.clock;a.deck.until=this.clock+between(a.ai,S.coverSec);a.cooldown=1.5+3*aiNext(a.ai);}
   }
   echelonRecord(){return {at:this.clock,casualties:0,brokenAt:null,closed:false,seen:false};}
@@ -288,12 +375,16 @@ export class M01AreaSimulation {
    * CP-F (Captain's decision 2026-11-04, reversible): when an echelon breaks and another follows, the checkpoint the next echelon names in the data (`checkpoint`) is taken, once, at the end of the
    * tick: a death in that echelon returns to the pause, not to the arrival. Only when the player can live in it: alive, inside the bounds (a countdown running outside would end the restored
    * life at once), no card up. A save in the pause from before this checkpoint existed takes it on its next tick. The same envelope path as CP-E (the game stores sim.checkpoint on the event).
+   * INC-2 (F4): the checkpoints of the act with a trigger of data (plan.triggers: echelonBroken, flag) are taken the same way, once, in the tick their trigger is true.
    */
   lullCheckpoint(){
     const W=this.timers.wave;if(!W||this.scene)return;
     const id=this.plan.assault.echelons[W.ech+1]?.checkpoint;
-    if(!id||W.echs[W.ech].brokenAt===null||this.checkpointsReached.includes(id)||!this.player.alive||this.timers.boundary>0)return;
-    this.saveCheckpoint(id);
+    if(id&&W.echs[W.ech].brokenAt!==null&&!this.checkpointsReached.includes(id)&&this.player.alive&&!(this.timers.boundary>0))this.saveCheckpoint(id);
+    for(const t of this.plan.triggers){
+      if(this.checkpointsReached.includes(t.id)||!this.player.alive||this.timers.boundary>0)continue;
+      if(t.type==='echelonBroken'?Number.isFinite(W.echs[t.echelon]?.brokenAt):Boolean(this.flags[t.flag]))this.saveCheckpoint(t.id);
+    }
   }
   man(a){return this.plan.assault.men.find(m=>m.id===a.id);}
   atNode(a,m){const n=m.path[a.deck.node];return Boolean(n)&&Math.hypot(a.x-n.x,a.z-n.z)<.06;}
@@ -343,8 +434,8 @@ export class M01AreaSimulation {
       }
     }
     if(W.brokenAt!==null&&W.repelledAt===null&&!this.enemies.some(a=>a.alive&&a.active)){
-      W.repelledAt=this.clock;this.flags['m01np.wave']='repelled';this.say('repelled');
-      this.finish('obj_np_hold_north');this.timers.endAt=this.clock+this.plan.act.endBeatSec;this.mission.phase='NP_REPELLED';
+      W.repelledAt=this.clock;this.flags[this.waveFlag]='repelled';this.say('repelled');
+      this.finish(this.profile.holdObjective);this.timers.endAt=this.clock+this.plan.act.endBeatSec;this.mission.phase=this.phase('REPELLED');
     }
     // The first echelon is seen when anybody of it is inside the field (it starts there); a later one two seconds after its first men step out of the trees.
     const R=W.echs[W.ech];
@@ -380,7 +471,7 @@ export class M01AreaSimulation {
       if(R.casualties>=E.breakOut||pinned>=E.breakPinnedSec||this.clock-R.at>=E.maxSec){
         R.brokenAt=this.clock;
         if(last)W.brokenAt=this.clock;
-        this.flags['m01np.wave']=last?'broken':'lull';this.say(last&&k>0?'final_break':'fallback');
+        this.flags[this.waveFlag]=last?'broken':'lull';this.say(last&&k>0?'final_break':'fallback');
         // Back along his own path: from the last node he actually reached (a man on his way to a node, or pinned short of it, turns back to the one before).
         for(const a of alive){const m=this.man(a);if(!last&&!(m.role==='assault'&&m.echelon===k))continue;
           const at=this.atNode(a,m);if(!at)a.deck.node--;a.deck.phase='fallback';a.deck.since=this.clock;a.crouched=false;}
@@ -398,7 +489,7 @@ export class M01AreaSimulation {
   }
   /** Echelon k walks in from the entry line (phase advance to its first stop, as the first echelon's men do after their cover); its overwatch, if it brings any, walks to its node. */
   enterEchelon(W,k){
-    W.ech=k;W.lullUntil=null;W.echs.push(this.echelonRecord());this.flags['m01np.wave']='active';this.admit(W);
+    W.ech=k;W.lullUntil=null;W.echs.push(this.echelonRecord());this.flags[this.waveFlag]='active';this.admit(W);
   }
   /** The men of the echelon on the field whose delay has run out walk in from the entry line (a lane or a gun that follows the others by delaySec). Once the echelon has broken, nobody else enters. */
   admit(W){
@@ -486,20 +577,26 @@ export class M01AreaSimulation {
     const due=this.enemyFire.rounds.filter(r=>r.arriveAt<=this.clock);this.enemyFire.rounds=this.enemyFire.rounds.filter(r=>r.arriveAt>this.clock);
     const p=this.player,L=this.level;
     for(const r of due){
-      const targets=[p,...this.allies.filter(b=>b.alive&&b.active)],hit=traceRound(this.world,r,targets),point=hit.point,victim=hit.actor??null,near=[];
+      const targets=[p,...this.allies.filter(b=>b.alive&&b.active&&!b.carriedBy)],hit=traceRound(this.world,r,targets),point=hit.point,near=[];
+      let victim=hit.actor??null,material=hit.material??'earth';
+      // Blind fire (kind 'area', fire.suppress.hitChance; 2026-11-04, step 0 of INC-2): the gun fired at a place, not at a man. A round of it that crosses a man of the line hurts him only with the chance of how
+      // he stands (kneeling behind the parapet: low; risen to fire: higher); otherwise it ends in the earth beside him and pins him like any near miss. A pure function of the two ids (pairUnit): no draw of any stream.
+      const H=r.kind==='area'?this.plan.assault.fire.suppress?.hitChance:undefined;
+      if(H&&victim&&victim!==p&&!victim.essential&&pairUnit(victim.id,r.id)>=H[victim.crouched?'cover':'exposed']){victim=null;material='earth';}
       if(victim===p){
         const covered=Boolean(this.world.coverAt(p))&&p.crouched,chance=L.woundChance[covered?'cover':'exposed'];
         if(this.rng.next()<chance)this.woundPlayer(r);
       }else if(victim){
         if(victim.essential){const prev=victim.suppressedUntil;victim.suppressedUntil=Math.max(prev,this.clock+ESSENTIAL_PIN_SEC);recordSuppression(victim,prev,this.clock);recordHit(victim,this.clock,{x:r.ox,z:r.oz});}
-        else{const h=victim.health,was=victim.alive;victim.health=Math.max(0,h-LINE_DAMAGE*hit.multiplier);victim.alive=victim.health>0;victim.state=victim.alive?'HIT_REACTION':'DOWN';
+        else{const h=victim.health,was=victim.alive;victim.health=Math.max(0,h-LINE_DAMAGE*hit.multiplier);victim.alive=victim.health>0;victim.state=victim.alive?(victim.state==='WOUNDED'?'WOUNDED':'HIT_REACTION'):'DOWN';
           recordDamage(victim,h,was,this.clock,{x:r.ox,z:r.oz});if(was&&!victim.alive)this.say('man_down');}
       }
+      const pinSec=r.kind==='area'?this.plan.assault.fire.suppress?.pinSec??NEAR_PIN_SEC:NEAR_PIN_SEC;   // blind fire pins for `pinSec` (fire.suppress.pinSec), aimed fire for NEAR_PIN_SEC
       for(const b of this.allies){if(!b.alive||!b.active||b===victim)continue;
-        if(closestApproach(r,hit.t,eyePosition(b))<=NEAR_MISS){const prev=b.suppressedUntil;b.suppressedUntil=Math.max(prev,this.clock+NEAR_PIN_SEC);recordSuppression(b,prev,this.clock);near.push(b.id);}}
+        if(closestApproach(r,hit.t,eyePosition(b))<=NEAR_MISS){const prev=b.suppressedUntil;b.suppressedUntil=Math.max(prev,this.clock+pinSec);recordSuppression(b,prev,this.clock);near.push(b.id);}}
       const approach=closestApproach(r,hit.t,eyePosition(p)),crack=approach<=6;
       if(crack&&approach<=2.5&&this.clock-this.timers.playerPinnedAt>6){this.timers.playerPinnedAt=this.clock;if(!p.crouched)this.say('player_pinned');}
-      if(point)this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material:hit.material??'earth',crack,distance:dist(point,p),pass:impactPass(crack,approach),victim:victim&&victim!==p?victim.id:null,pinned:near});
+      if(point)this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack,distance:dist(point,p),pass:impactPass(crack,approach),victim:victim&&victim!==p?victim.id:null,pinned:near});
     }
   }
   damageGerman(e,amount,source,by){
@@ -522,7 +619,7 @@ export class M01AreaSimulation {
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- the Poles
   stepSection(dt){
-    if(this.scene&&!this.sceneDone.includes('cs_np_entry'))return;
+    if(this.scene&&!this.sceneDone.includes(this.profile.entryCard))return;
     const z=this.actor('marek_zielinski');
     if(z.alive&&dist(z,z.post)>.05)this.walk(z,z.post,4,dt);
     else if(z.alive)z.atPost=true;
@@ -538,7 +635,7 @@ export class M01AreaSimulation {
     if(z.alive&&z.atPost&&!this.timers.wave)z.crouched=true;
   }
   squadPostOf(q,id){const t=this.plan.squad.teams.findIndex(team=>team.includes(id));let k=0;for(let i=0;i<Math.min(q.move+(q.moving?1:0),this.plan.squad.moves.length);i++)if(this.plan.squad.moves[i].team===t)k=this.plan.squad.moves[i].to;return k;}
-  stepLine(dt){if(!this.timers.wave)return;for(const id of this.plan.line.men){const a=this.actor(id);if(a.alive&&a.active)this.lineShooter(a,dt);}}
+  stepLine(dt){if(!this.timers.wave)return;for(const id of this.plan.line.men){const a=this.actor(id);if(a.alive&&a.active&&a.state!=='WOUNDED'&&!a.carriedBy)this.lineShooter(a,dt);}}
   /** A rifleman of the firing line (the rearguard's fire model, m01-act-factories makeLinePlan): kneel, rise riseBeforeSec before the shot, one aimed round, hold, kneel. */
   lineShooter(a,dt){
     const F=this.plan.line.fire;a.facing=-Math.PI/2;
@@ -636,23 +733,131 @@ export class M01AreaSimulation {
     }
     if(b.landed>=b.rounds)delete g.ckm.burstPlan;
   }
+  // ------------------------------------------------------------------------------------------------------------------------------------------------- the barrages and the stretcher-bearers (INC-2)
+  /**
+   * The artillery of the act (plan.barrages, m01-shell-blast.js). A barrage begins when its `from` is met (an objective done, or some seconds after an echelon broke). Each impact is LAUNCHED `warnSec` before it
+   * falls (the whistle: a `shell-incoming` event with the point), at a point drawn from the barrage's own stream in its band and at least PLANNED_IMPACT_M from the player; it LANDS (landShell): a crater in the
+   * damage record, the `m01-blast` event of kind shell, the Poles near it hurt by shellOutcome (the cast, the ckm crew and the bearers only shaken), the player only stunned and never within SAFE_IMPACT_M of a
+   * shell. Draws only from the barrage's stream (timers.barrage.run.rng), never from the simulation's: GAMEPLAY_DRAMATIZATION, no calibre, no battery, no count on screen.
+   */
+  stepBarrage(){
+    const B=this.plan.barrages;if(!B)return;
+    const R=this.timers.barrage;
+    if(!R.run)for(const b of B.barrages)if(!Object.hasOwn(R.done,b.id)&&this.barrageDue(b)){this.startBarrage(b,B.barrages.indexOf(b));break;}
+    const run=R.run;if(!run)return;
+    const b=B.byId[run.id],lastLaunch=run.startedAt+b.durationSec-b.warnSec;
+    while(run.k<b.impacts&&this.clock>=run.nextLaunchAt-1e-9&&run.nextLaunchAt<=lastLaunch+1e-9)this.launchShell(run,b);
+    for(const s of run.shells.filter(x=>x.landAt<=this.clock+1e-9))this.landShell(run,b,s);
+    run.shells=run.shells.filter(x=>x.landAt>this.clock+1e-9);
+    if(!run.shells.length&&(run.k>=b.impacts||run.nextLaunchAt>lastLaunch+1e-9))this.endBarrage(b);
+  }
+  barrageDue(b){
+    const f=b.from;
+    if(typeof f==='string')return this.objectives[f].state==='done';
+    const E=this.timers.wave?.echs[f.echelonBroken];
+    return Boolean(E)&&Number.isFinite(E.brokenAt)&&this.clock>=E.brokenAt+f.afterSec-1e-9;
+  }
+  startBarrage(b,index){
+    this.timers.barrage.run={id:b.id,startedAt:this.clock,rng:barrageSeed(this.seed,index),k:0,nextLaunchAt:this.clock,shells:[]};
+    if(this.profile.coverObjective)this.objectives[this.profile.coverObjective]={state:'active',progress:0};
+    this.mission.phase=this.phase('BARRAGE');
+    if(b.callout)this.say(b.callout);
+  }
+  /** One impact is on its way: where it will fall is decided now (the scripted casualty of the barrage, else a draw in the band away from the player), and the whistle begins. */
+  launchShell(run,b){
+    const n=run.k++,next=()=>barrageNext(run),P=this.player,c=b.casualty;
+    let at=null;
+    if(c&&c.impact===n){const man=this.actor(c.near);if(man.alive&&man.active&&man.state!=='WOUNDED'&&!man.carriedBy){const cand={x:man.x+c.offsetM[0],z:man.z+c.offsetM[1]};if(dist(cand,P)>=PLANNED_IMPACT_M)at=cand;}}
+    if(!at)at=pickShellPoint(next,b.band,P);
+    run.nextLaunchAt=this.clock+b.intervalSec[0]+(b.intervalSec[1]-b.intervalSec[0])*next();
+    run.shells.push({n,x:at.x,z:at.z,launchedAt:this.clock,landAt:this.clock+b.warnSec});
+    this.emit({type:'shell-incoming',point:{x:at.x,y:this.world.heightAt(at.x,at.z),z:at.z},warnSec:b.warnSec,at:this.clock});
+  }
+  /**
+   * A shell lands. Its centre is the planned point unless the player has come within SAFE_IMPACT_M of it (landingPoint). Every living, present, uncarried Pole within reach: the distance to his torso, whether the blast sees that
+   * torso (the world's line of sight from the centre, so the parapet shelters a man kneeling behind it), how he lies and a hash of the (man, crater) pair give the outcome (shellOutcome): killed, wounded (WOUNDED, health
+   * down but at least 1) or shaken (suppressedUntil). The player is never hurt: stunned by the nearest ones, less behind cover or crouching (the strongest effect wins). The Germans are not touched (it is their artillery).
+   */
+  landShell(run,b,shell){
+    const SB=SHELL_SPECS[b.spec],P=this.player,clock=this.clock,L=landingPoint(shell,P);
+    const at={x:L.x,y:this.world.heightAt(L.x,L.z),z:L.z},id=`np_shell_crater_${run.id}_${shell.n}`;
+    const source=sightPoint({x:at.x,y:at.y+SB.sourceHeight,z:at.z}),casualties={killed:[],wounded:[],suppressed:[]};
+    for(const a of this.allies){
+      if(!a.alive||!a.active||a.carriedBy||Math.abs(a.x-at.x)>SHELL_REACH_M||Math.abs(a.z-at.z)>SHELL_REACH_M)continue;
+      const target=blastTarget(a),distance=Math.hypot(a.x-at.x,target.y-source.y,a.z-at.z);if(distance>SHELL_REACH_M)continue;
+      const r=shellOutcome({distance,covered:!this.world.lineOfSight(source,sightPoint(target)),posture:blastPosture(a),protectedBy:shellProtection(a),u:pairUnit(a.id,id),spec:SB});
+      if(r.outcome==='none')continue;
+      const health=a.health,wasAlive=a.alive;
+      if(r.outcome==='kill'){a.health=0;a.alive=false;a.state='DOWN';a.crouched=false;recordDamage(a,health,wasAlive,clock,at);casualties.killed.push(a.id);}
+      else if(r.outcome==='wound'){a.health=Math.max(1,a.health-r.healthLoss);a.crouched=false;a.state='WOUNDED';recordDamage(a,health,wasAlive,clock,at);casualties.wounded.push(a.id);}
+      else{const prev=a.suppressedUntil;a.suppressedUntil=Math.max(prev,clock+r.suppressSec);recordSuppression(a,prev,clock);if(a.suppressedUntil>prev)casualties.suppressed.push(a.id);}
+    }
+    const body=blastTarget(P);let peak=0;
+    if(P.alive&&concussionPeak({distance:Math.hypot(P.x-at.x,body.y-source.y,P.z-at.z)})>0)
+      peak=concussionPeak({distance:Math.hypot(P.x-at.x,body.y-source.y,P.z-at.z),covered:!this.world.lineOfSight(source,sightPoint(body)),crouched:Boolean(P.crouched)});
+    const merged=mergeConcussion(P,clock,peak);if(merged)Object.assign(P,merged);
+    const soundAt=clock+dist(at,P)/343;
+    this.sectors.damage.push({id,x:at.x,y:at.y,z:at.z,started:clock,soundAt,smokeSeconds:30,concussion:peak});
+    this.emit({type:'m01-blast',kind:'shell',point:{...at},soundAt,aerial:false,concussion:peak,effects:casualties});
+    if(casualties.killed.length)this.say('man_down');
+  }
+  endBarrage(b){
+    const R=this.timers.barrage;R.done[b.id]=this.clock;R.run=null;
+    if(this.profile.coverObjective)this.finish(this.profile.coverObjective);
+    this.activate(this.profile.holdObjective);
+    this.mission.phase=this.timers.wave?this.phase('ATTACK'):this.phase('AFTER');
+    this.say('barrage_over');
+  }
+  /**
+   * The stretcher-bearers (plan.medics; NPC only: the player never carries anyone). When a man of the line is WOUNDED (a shell's casualty), the two bearers come on at the south edge and run to him, the first lifts
+   * him onto his shoulder (the carriedBy of the bearers of act 1: the renderer's existing carry), and both walk south to the exit and leave the field (inactive: nobody draws or hits them). At most `maxCasualties` per act.
+   */
+  stepMedics(dt){
+    const M=this.plan.medics;if(!M)return;
+    const R=this.timers.medics,[m0,m1]=M.ids.map(id=>this.actor(id));
+    if(R.state==='idle'){
+      if(R.handled>=M.maxCasualties)return;
+      const patient=this.plan.line.men.map(id=>this.actor(id)).find(a=>a.alive&&a.active&&a.state==='WOUNDED'&&!a.carriedBy);
+      if(!patient)return;
+      R.state='toPatient';R.patient=patient.id;R.since=this.clock;
+      [m0,m1].forEach((m,i)=>{m.x=M.from[0]+i*1.2;m.z=M.from[1];m.y=this.world.heightAt(m.x,m.z);m.active=true;m.crouched=false;});   // they come on at the south edge, side by side (off the field they are nowhere)
+      this.say('medic_call');return;
+    }
+    const patient=this.actor(R.patient);
+    if(R.state==='toPatient'){
+      const spots=[{x:patient.x-.8,z:patient.z+.9},{x:patient.x+.8,z:patient.z+.9}];   // south of him (the parapet is on his north), each on the side he starts on: the first bearer starts west of the second, so their paths never cross
+      [m0,m1].forEach((m,i)=>{this.walk(m,spots[i],M.runPace,dt);m.crouched=false;});
+      if(!patient.alive){R.state='carry';R.since=this.clock;return;}   // he died before they came: they go back
+      if([m0,m1].every(m=>dist(m,patient)<=M.pickupM)){patient.carriedBy=m0.id;patient.facing=m0.facing+Math.PI/2;R.state='carry';R.since=this.clock;}
+      return;
+    }
+    // carry: both go to the exit; the patient (if he is carried) rides on the first one's shoulder (act 1's convention)
+    const arrived=this.walk(m0,{x:M.exit[0],z:M.exit[1]},M.pace,dt);
+    this.walk(m1,{x:m0.x+1,z:m0.z+.3},M.pace*1.15,dt);
+    if(patient.carriedBy===m0.id){patient.facing=m0.facing+Math.PI/2;patient.x=m0.x-Math.cos(m0.facing)*.25;patient.z=m0.z-Math.sin(m0.facing)*.25;patient.y=m0.y+1.15;}
+    if(arrived){
+      if(patient.carriedBy===m0.id){patient.carriedBy=null;patient.active=false;}
+      m0.active=false;m1.active=false;R.handled++;R.state='idle';R.patient=null;R.since=this.clock;
+    }
+  }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- objectives, voices
   updateObjectives(){
-    const p=this.player,post=this.plan.layout.points.trench_post,reach=this.plan.act.objectives.find(o=>o.id==='obj_np_reach_trench');
-    if(this.active('obj_np_reach_trench')&&Math.hypot(p.x-post.x,p.z-post.z)<reach.reachM)this.finish('obj_np_reach_trench');
-    if(this.timers.endAt!==null&&this.clock>=this.timers.endAt&&!this.scene&&!this.sceneDone.includes('cs_np_end')){this.timers.endAt=null;this.startCard('end');}
+    const p=this.player,A=this.profile,post=this.plan.points[A.marker],reach=this.plan.act.objectives.find(o=>o.id===A.arrivalObjective);
+    if(this.active(A.arrivalObjective)&&Math.hypot(p.x-post.x,p.z-post.z)<reach.reachM&&(!A.arrivalNeedsReserve||this.weapon.reserve>=this.plan.act.resupply.reserveTo))this.finish(A.arrivalObjective);
+    if(this.timers.endAt!==null&&this.clock>=this.timers.endAt&&!this.scene&&!this.sceneDone.includes(A.endCard)){this.timers.endAt=null;this.startCard('end');}
     const current=this.plan.act.objectives.find(o=>this.active(o.id));
-    this.mission.text=current?.text??(this.objectives.obj_np_hold_north.state==='done'?'Ataque repelido':'');
+    this.mission.text=current?.text??(this.objectives[A.holdObjective].state==='done'?A.repelledText:'');
     const W=this.timers.wave;
-    this.mission.status=W&&W.repelledAt===null?this.fightStatus(W):'';
+    this.mission.status=this.timers.barrage?.run?'Fogo de artilharia · abrigue-se atrás do parapeito':W&&W.repelledAt===null?this.fightStatus(W):'';
   }
   /** The status line of the fight, as the HUD shows it: the echelon on the field (the first one's wording is the original), its men falling back, or the lull between two echelons. */
   fightStatus(W){
     const field=this.enemies.filter(a=>a.alive&&a.active).length,R=W.echs[W.ech],more=W.ech<this.plan.assault.echelons.length-1;
     const fallen=`${W.casualties} ${W.casualties===1?'caído':'caídos'}`;
-    if(R.brokenAt!==null&&more)return W.lullUntil===null?`Linha norte · vaga a recuar · ${field} no campo · ${fallen}`:
-      `Linha norte · pausa · ${field?`${field} ${field===1?'atirador':'atiradores'} na orla`:'campo livre'} · ${fallen}`;
-    return `Linha norte · ${W.ech?`${W.ech+1}.ª vaga · `:''}${field} ${field===1?'atacante':'atacantes'} no campo · ${fallen}`;
+    const L=this.profile.statusLabel;
+    if(R.brokenAt!==null&&more)return W.lullUntil===null?`${L} · vaga a recuar · ${field} no campo · ${fallen}`:
+      `${L} · pausa · ${field?`${field} ${field===1?'atirador':'atiradores'} na orla`:'campo livre'} · ${fallen}`;
+    return `${L} · ${W.ech&&this.profile.ordinals?`${W.ech+1}.ª vaga · `:''}${field} ${field===1?'atacante':'atacantes'} no campo · ${fallen}`;
   }
   say(on){
     const c=this.plan.act.callouts.find(x=>x.on===on);if(!c)return false;
@@ -670,9 +875,15 @@ export class M01AreaSimulation {
   // ------------------------------------------------------------------------------------------------------------------------------------------------- read-only views
   get clockLabel(){return this.plan.act.clock.label;}
   get objectiveMarker(){
-    if(this.scene||this.mission.complete||!this.active('obj_np_reach_trench'))return null;
-    const p=this.player,pt=this.plan.layout.points.trench_post,rel=Math.atan2(pt.z-p.z,pt.x-p.x)-p.angle;
-    return {label:'Parapeito norte',x:pt.x,y:this.plan.layout.groundY,z:pt.z,distance:dist(p,pt),bearing:Math.atan2(Math.sin(rel),Math.cos(rel))};
+    const A=this.profile;
+    if(this.scene||this.mission.complete||!this.active(A.arrivalObjective))return null;
+    const p=this.player;let pt=this.plan.points[A.marker],label=A.markerLabel;
+    if(A.arrivalNeedsReserve&&this.weapon.reserve<this.plan.act.resupply.reserveTo){   // short of ammunition: the first place is the nearest crate
+      let best=null;for(const o of this.world.areaProps)if(o.type==='ammo_crate_wood'&&(!best||Math.hypot(o.x-p.x,o.z-p.z)<Math.hypot(best.x-p.x,best.z-p.z)))best=o;
+      if(best){pt=best;label='Caixa de munições';}
+    }
+    const rel=Math.atan2(pt.z-p.z,pt.x-p.x)-p.angle;
+    return {label,x:pt.x,y:this.plan.layout.groundY,z:pt.z,distance:dist(p,pt),bearing:Math.atan2(Math.sin(rel),Math.cos(rel))};
   }
   get tempo(){return null;}
   get sapperOps(){return null;}
@@ -698,7 +909,7 @@ export class M01AreaSimulation {
     return {parts,events:Object.keys(this.consumed),destruction:[],flags:{...this.flags},battleClock:this.battleClock,interaction:this.interaction,subtitle:this.subtitle,scene:this.scene,
       debrief:this.definition.debrief.paragraphs.filter(p=>p.enabled),repairProgress:100,train963:this.consumedEvent('evt_m01_train963_arrives'),panzerzug:this.consumedEvent('evt_m01_panzerzug_arrives'),
       stukas:false,secondRaid:false,weaponVisible:!this.scene,
-      damage:this.sectors.damage.map(d=>({...d,smokeVisible:d.wreck||(d.id.startsWith('m01_grenade_')?this.clock-d.started<20:this.clock-d.started<240)}))};
+      damage:this.sectors.damage.map(d=>({...d,smokeVisible:d.wreck||this.clock-d.started<(d.smokeSeconds??(d.id.startsWith('m01_grenade_')?20:240))}))};
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- saves
   saveCheckpoint(id){
@@ -735,9 +946,23 @@ export class M01AreaSimulation {
   }
 }
 
-/** The debrief of the last act: the current act's enabled paragraphs, this act's inserted after `insertAfter`. Text and rules of the current act's paragraphs untouched. */
-export function debriefWith(extra){
-  const out=[];for(const p of bwDefinition.debrief.paragraphs){out.push({...p});if(p.id===extra.insertAfter)out.push(...extra.paragraphs.map(q=>({...q})));}
+/**
+ * The debrief of the last act: the current act's paragraphs (text and rules untouched) with the paragraphs of every area act played inserted after the paragraph each names (`insertAfter`), in the order of
+ * the chain: VII-a's after db_03, VII-b's after db_np_01. An extra whose anchor is not there (the QA start at VII-b has no db_np_01) goes after db_03, where the first area act's go.
+ */
+export function debriefWith(...extras){
+  const out=bwDefinition.debrief.paragraphs.map(p=>({...p}));
+  for(const extra of extras){
+    let at=out.findIndex(p=>p.id===extra.insertAfter);if(at<0)at=out.findIndex(p=>p.id==='db_03');
+    out.splice(at<0?out.length:at+1,0,...extra.paragraphs.map(q=>({...q})));
+  }
+  return out;
+}
+/** The debrief blocks of the acts whose paragraphs this act's debrief carries: the area acts before it that the carry says were completed (their completion flag), then its own. */
+export function debriefChain(actId,carry){
+  const ids=Object.keys(AREA_ACTS),mine=ids.indexOf(actId),out=[];
+  for(const id of ids.slice(0,mine)){const e=AREA_ACTS[id];if(carry.flags?.[`${makeProfile(e.act,e.layout).flagPrefix}.completed`])out.push(e.act.debrief);}
+  out.push(AREA_ACTS[actId].act.debrief);
   return out;
 }
 
@@ -755,13 +980,14 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   if(!Array.isArray(s.actors)||s.actors.length!==ids.length||s.actors.some((a,i)=>a?.id!==ids[i]))reject('elenco');
   // The place a gun last saw a flash lies in the area (a margin round it) and was made by a Pole or by the player.
   const pb=plan.layout.bounds.playable,box={minX:pb.minX-30,maxX:pb.maxX+30,minZ:pb.minZ-30,maxZ:pb.maxZ+30},shooters=['jan_wrona',...ids.filter(id=>!plan.assault.ids.includes(id))];
+  const waveFlag=`${plan.profile.flagPrefix}.wave`;
   for(const a of s.actors){
     if(![a.x,a.y,a.z,a.health].every(Number.isFinite)||a.health<0||a.health>100)reject(`ator ${a.id}`);
     if(a.team==='enemy'&&a.deck!==undefined&&!validApproachRecord(plan.assault,a,s.clock))reject(`registo de assalto ${a.id}`);
     if(a.team==='enemy'&&!validGermanAi(plan.assault,a,s.clock,shooters,box))reject(`registo de decisões ${a.id}`);
   }
   const why=[];
-  if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.['m01np.wave'],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);
+  if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.[waveFlag],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);
   const p=s.player;if(!p||![p.x,p.y,p.z,p.angle,p.pitch,p.health].every(Number.isFinite)||p.health<=0||p.health>100||!p.alive)reject('jogador');
   const w=s.weapon;if(!w||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>200)reject('arma');
   if(!s.objectives||plan.act.objectives.some(o=>!['locked','active','done'].includes(s.objectives[o.id]?.state)))reject('objetivos');
@@ -770,5 +996,22 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   // The checkpoint of a pause exists only once the echelon before it has broken.
   for(const e of plan.assault.echelons)if(e.checkpoint&&s.checkpointsReached.includes(e.checkpoint)&&!Number.isFinite(s.timers?.wave?.echs?.[e.index-1]?.brokenAt))reject(`checkpoint ${e.checkpoint} sem a quebra da vaga anterior`);
   if(!s.enemyFire||!Array.isArray(s.enemyFire.rounds))reject('fogo');
+  // INC-2: the records of the blocks an act has are required (and checked) when its plan has them, and refused when it has not (a barrage record in a VII-a save is not one this build could have written).
+  if(Boolean(plan.barrages)!==(s.timers?.barrage!==undefined))reject('registo das barragens (exigido pelos atos que as têm, recusado nos outros)');
+  if(plan.barrages&&!validBarrageRecord(plan.barrages,s.timers.barrage,s.clock,box))reject('registo das barragens');
+  if(Boolean(plan.medics)!==(s.timers?.medics!==undefined))reject('registo dos maqueiros (exigido pelos atos que os têm, recusado nos outros)');
+  if(plan.medics&&!validMedicRecord(plan.medics,s.timers.medics,s.clock,plan.line.men))reject('registo dos maqueiros');
+  if(plan.medics){   // who is carried, by whom, and where the bearers are: the record and the men agree
+    const R=s.timers.medics,byId=new Map(s.actors.map(a=>[a.id,a])),carried=s.actors.filter(a=>a.carriedBy);
+    if(carried.length>1||carried.some(a=>R.state!=='carry'||a.id!==R.patient||a.carriedBy!==plan.medics.ids[0]||!a.alive||!a.active))reject('registo dos maqueiros (homem transportado)');
+    for(const id of plan.medics.ids)if(byId.get(id).active===(R.state==='idle'))reject('registo dos maqueiros (maqueiro no campo ou fora dele contra o registo)');
+    if(R.state!=='idle'&&R.patient!==null&&!byId.get(R.patient))reject('registo dos maqueiros (doente)');
+  }
+  for(const t of plan.triggers)if(t.type==='echelonBroken'&&s.checkpointsReached.includes(t.id)&&!Number.isFinite(s.timers?.wave?.echs?.[t.echelon]?.brokenAt))reject(`checkpoint ${t.id} sem a quebra da vaga ${t.echelon}`);
+  if(p.concussion!==undefined||p.concussedUntil!==undefined){
+    if(!(Number.isFinite(p.concussion)&&p.concussion>0&&p.concussion<=1)||!Number.isFinite(p.concussedUntil)||p.concussedUntil>s.clock+CONCUSSION.maxSec+1e-6)reject('atordoamento do jogador');
+  }
+  // The craters of the shells are records of the act's saved damage: where and when they fell, with the sound that reaches the player after them.
+  for(const d of s.sectors?.damage??[])if(![d.x,d.y,d.z,d.started,d.soundAt].every(Number.isFinite)||typeof d.id!=='string'||d.started>s.clock+1e-6||(d.concussion!==undefined&&!(d.concussion>=0&&d.concussion<=1)))reject('destruição');
   if(s.resumeCheckpoint!==undefined)validateAreaSnapshot({...s.resumeCheckpoint},plan);
 }
