@@ -108,6 +108,7 @@ test('MAP-01 Rota A (Vala): player walks full ditch route from SN1 (0,-80) to No
   const seg5 = walkSegment(sim, 0, -24);
   assert.equal(seg5.reached, true);
 
+  assert.equal(sim.routeProgress.ditchWaypointsVisited.length, 6, 'Route A must track exactly 6 waypoints (guards vacuous every())');
   assert.ok(
     sim.routeProgress.ditchWaypointsVisited.every(Boolean),
     `All Route A (ditch) waypoints must be visited: ${sim.routeProgress.ditchWaypointsVisited.join(',')}`,
@@ -129,6 +130,7 @@ test('MAP-01 Rota B (Pomar) and route switching: player traverses eastern orchar
     const res = walkSegment(sim, wx, wz, { maxSteps: 750 });
     assert.equal(res.reached, true, `Failed to reach orchard waypoint (${wx},${wz}), dist=${res.distance}`);
   }
+  assert.equal(sim.routeProgress.orchardWaypointsVisited.length, 6, 'Route B must track exactly 6 waypoints (guards vacuous every())');
   assert.ok(
     sim.routeProgress.orchardWaypointsVisited.every(Boolean),
     `All Route B (orchard) waypoints must be visited: ${sim.routeProgress.orchardWaypointsVisited.join(',')}`,
