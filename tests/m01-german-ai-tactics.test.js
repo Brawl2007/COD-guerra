@@ -299,11 +299,13 @@ test('the stick grenade is never unfair: not at a player he can hit, not out of 
   {
     const {s,man}=bomber({pairOn:true});Object.assign(s.player,{x:-60,z:20,crouched:false});
     const [pawlak]=pair(s);Object.assign(man,{x:pawlak.x+25,z:pawlak.z,y:s.world.heightAt(pawlak.x+25,pawlak.z)});
-    assert.equal(s.world.lineOfSight(man,pawlak),true);assert.equal(s.deckGrenade(man),false,'Pawlak is in his sight: the rifle');
-    // pinned down on his post (kneeling and suppressed) he is a target even in sight; standing, or kneeling and not suppressed, he is not
-    pawlak.crouched=true;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),false,'kneeling, not suppressed');
-    pawlak.crouched=false;pawlak.suppressedUntil=s.clock+3;assert.equal(s.deckGrenade(man),false,'suppressed but standing');
-    pawlak.crouched=true;assert.equal(s.deckGrenade(man),true,'kneeling and suppressed: pinned down on his post');
+    for(const x of pair(s))x.crouched=false;   // (the pair of the saved scene kneels at its post, as the section's men do: package 2 counts that as cover)
+    assert.equal(s.world.lineOfSight(man,pawlak),true);assert.equal(s.deckGrenade(man),false,'Pawlak is in his sight, standing: the rifle');
+    // 2026-11-04 re-pin (package 2, golden amendment 21): R2-b asked for the defender to be kneeling AND suppressed (pinned down on his post) to be a target in sight; the rearguard kneels except the second before and
+    // after each shot, and a grenade needed a man 6-32 m away pinned by this very German at that moment: 0 in 24 routes. Kneeling at his post is cover enough; standing he is still the rifle's, suppressed or not.
+    pawlak.crouched=false;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),false,'standing, not suppressed: the rifle');
+    pawlak.crouched=false;pawlak.suppressedUntil=s.clock+3;assert.equal(s.deckGrenade(man),false,'suppressed but standing: the rifle');
+    pawlak.crouched=true;pawlak.suppressedUntil=s.clock-1;assert.equal(s.deckGrenade(man),true,'kneeling at his post: in cover, even in sight and not suppressed');
     const g0=german(s)[0],aim=Math.hypot(g0.vx*T.grenade.flightSec+g0.x-pawlak.x,g0.vz*T.grenade.flightSec+g0.z-pawlak.z);assert.ok(aim<5,`at Pawlak (${aim.toFixed(1)} m)`);
     s.grenades.active.length=0;man.deck.gr=0;delete s.timers.deckGrenadeAt;pawlak.suppressedUntil=0;pawlak.crouched=true;
     s.world.obstacles.push({id:'t_wall',min:{x:30,y:-1,z:30},max:{x:32,y:8,z:50},material:'stone'});

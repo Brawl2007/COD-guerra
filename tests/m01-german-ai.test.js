@@ -19,7 +19,7 @@ import {P,T,ENTRY,dist,load,plan,entry,isolate,pair,scene,lcg,shotsOf} from './h
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 test('the closing lines: three per man by default (line 0 is the old limit), the deepest at safeX + 8 m + his place in the formation; safeX 450 is the old assault node for node',()=>{
-  assert.equal(DECK_SAFE_X,250,'the shipped value of the single number the owner decides (it was 450)');
+  assert.equal(DECK_SAFE_X,190,'the shipped value of the single number the owner decides (it was 450, then 250; 190 since package 2, 2026-11-04: the front man ends within a stick grenade\'s throw of the rearguard)');
   const minLimit=Math.min(...P.limits);
   P.assault.forEach((id,k)=>{
     const lines=P.lines[k],path=P.paths[k],[z]=P.lanes[k];
@@ -31,8 +31,9 @@ test('the closing lines: three per man by default (line 0 is the old limit), the
     assert.ok(path[lines[1]].x<path[lines[0]].x&&path[lines[1]].x>path.at(-1).x,`${id}: the closing line lies between`);
     assert.ok(path.every((p,i)=>p.z===z&&(!i||p.x<path[i-1].x)),`${id}: one lane, east to west`);
   });
-  // the owner's numbers: the man in front ends 228 m from the deck post of the player (< 300 m) and 83 m from the rearguard's eastmost post (x 165-175: >= 80 m)
-  const lead=P.paths[0].at(-1).x;assert.ok(lead-30<300&&lead-175>=80,`the lead man's deepest line x ${lead}`);
+  // the owner's numbers: the man in front ends 168 m from the deck post of the player (< 300 m) and 23 m from the rearguard's eastmost post (x 165-175), inside the throw of a stick grenade (minM 6, rangeM 32)
+  // (2026-11-04, package 2: it was 228 m and 83 m with safeX 250: the grenade was out of reach in all 24 routes)
+  const lead=P.paths[0].at(-1).x;assert.ok(lead-30<300&&lead-175>=T.grenade.minM&&lead-175<=T.grenade.rangeM,`the lead man's deepest line x ${lead}`);
   // 450 = the assault of before R2-b: one line, the same nodes, the same limits, the same safety line
   const old=deckAssaultPlan(plan(d=>{d.safeX=450;}));
   assert.ok(old.lines.every(l=>l.length===1),'no closing line at 450');
@@ -50,7 +51,7 @@ test('the closing lines: three per man by default (line 0 is the old limit), the
 
 test('the tactics are mission data validated at load: a typo stops the game',()=>{
   const bad={
-    safeX_low:d=>{d.safeX=100;},limit_west:d=>{d.limits[0]=240;},stations_order:d=>{d.stations.push(900);},no_tactics:d=>{delete d.tactics;},stages:d=>{d.tactics.stages=0;},closeGap:d=>{d.tactics.closeGapM=0;},
+    safeX_low:d=>{d.safeX=100;},limit_west:d=>{d.limits[0]=185;},stations_order:d=>{d.stations.push(900);},no_tactics:d=>{delete d.tactics;},stages:d=>{d.tactics.stages=0;},closeGap:d=>{d.tactics.closeGapM=0;},
     pressure_share:d=>{d.tactics.pressure.share=0;},pressure_window:d=>{d.tactics.pressure.windowSec=-1;},hold:d=>{d.tactics.closeHoldSec=[9,3];},extra:d=>{d.tactics.closeExtraSec=1e3;},wait:d=>{d.tactics.alternateWaitSec=-1;},
     pin:d=>{d.tactics.pinSec=30;},squad:d=>{d.tactics.squadTargets.rangeM=10;},search:d=>{d.tactics.search.afterSec=d.tactics.search.memorySec;},grenade_range:d=>{d.tactics.grenade.rangeM=5;},grenade_fuse:d=>{d.tactics.grenade.fuseSec=d.tactics.grenade.flightSec;},
     grenade_wound:d=>{d.tactics.grenade.woundM=9;d.tactics.grenade.reachM=8;},grenade_per:d=>{d.tactics.grenade.perMan=5;},

@@ -46,16 +46,18 @@ function observed(){
 // 2026-10-24 re-pin (R2-b, owner complaint «os polacos fazem pouco para contrariar o ataque; os inimigos mostram pouca inteligência», golden amendment 18): safeX, the single number the owner moves, goes from 450 to 250,
 // and every man of the assault has closing lines between his old limit (line 0 = the forward line of before, x 458-578) and a deepest line safeX + 8 m + his place in the formation (x 258-378). The number 450 still
 // gives the assault of before node for node (tests/m01-german-ai.test.js). Measured: docs/verification/m01-runtime/german-ai-r2b-2026-10-24/README.md.
+// 2026-11-04 re-pin (package 2, golden amendment 21): safeX 250 -> 190 (and closeExtraSec 60 -> 100): the deepest line of the man in front is x 198, 23 m from the rearguard's eastmost post, inside the stick grenade's throw
+// (rangeM 32), so that the grenade of R2-b, which needed an assault that never came closer than 83 m, is thrown. The property is the same: one number in the data, every node east of it. Measured: docs/verification/m01-runtime/pkg2-act1-2026-11-04/README.md.
 test('the deck assault plan is mission data validated at load: the overwatch posts lie in the east blast, the assault places beyond it, the forward line x 450-600',()=>{
   const bz=layout.blastZones.find(b=>b.event===BLAST),inBlast=p=>Math.hypot(p.x-bz.center[0],p.z-bz.center[2])<=bz.radiusM;
-  assert.equal(DECK_SAFE_X,250);assert.equal(P.safeX,definition.groups.find(g=>g.id==='grp_de_spans').deckAssault.safeX);
+  assert.equal(DECK_SAFE_X,190);assert.equal(P.safeX,definition.groups.find(g=>g.id==='grp_de_spans').deckAssault.safeX);
   assert.ok(P.overwatchNodes.every(p=>inBlast(p)),'the four the blast fells (GERMAN_FELLED) post inside the blast radius');
   assert.ok(P.fallback.every(p=>p.x>=P.clearX&&p.x>=bz.center[0]+bz.radiusM),'the assault falls back beyond the blast radius');
   assert.ok(P.paths.every(path=>path.every(p=>p.x>=P.safeX&&p.z>37.5&&p.z<42.5)),'every node on the road deck, east of the safety line');
   assert.ok(P.paths.every((path,k)=>path[P.lines[k][0]].x===P.limits[k]&&P.limits[k]>=450&&P.limits[k]<=600),'line 0 of each assault man (his forward line of before) is mid-deck, x 450-600');
   assert.ok(P.paths.every(path=>path.at(-1).x>=DECK_SAFE_X+8&&path.at(-1).x<=400),'and the deepest closing line lies west of it, east of safeX');
   const mutate=f=>{const d=json(definition);f(d.groups.find(g=>g.id==='grp_de_spans').deckAssault);return d;};
-  for(const [name,f] of Object.entries({safeX:d=>{d.safeX=100;},limit:d=>{d.limits[0]=240;},version:d=>{d.version=2;},lane:d=>{d.lanes[1][0]=43;},order:d=>{d.assault.reverse();},
+  for(const [name,f] of Object.entries({safeX:d=>{d.safeX=100;},limit:d=>{d.limits[0]=185;},version:d=>{d.version=2;},lane:d=>{d.lanes[1][0]=43;},order:d=>{d.assault.reverse();},
     fallback:d=>{d.fallback[0][0]=900;},overwatch:d=>{d.overwatchNodes[0][0]=950;},stations:d=>{d.stations.reverse();},timing:d=>{d.maxSec=-1;}}))
     assert.throws(()=>deckAssaultPlan(mutate(f)),/deck assault/,name);
 });

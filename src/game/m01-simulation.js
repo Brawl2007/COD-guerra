@@ -28,6 +28,8 @@ import {BOMB_BLAST,BOMB_REACH_M,CONCUSSION,blastJitter,blastProtection,castIds,b
 import {REPAIR_WORK_SEC,SAPPERS,sapperPhase,sapperGoal,sapperRate,sapperCover,sapperView,workDistance} from './m01-sappers.js';
 import {ckmFinal,retreatSlot} from './m01-retreat.js';
 import {updateOpening,openingWalk,holdNowicki,closeOpening,openingView,validateOpeningRecord,validateOpeningAct} from './m01-opening.js';
+import {dustSpec,dustClouds,dustBlocks,validDust} from './m01-dust.js';
+import {updateAid,validateAidActor,validateAidRecord} from './m01-aid.js';
 
 export const seconds=text=>{const values=text.split(':').map(Number);if(values.length===2)values.push(0);return values.reduce((n,v)=>n*60+v,0);};
 export const clockText=n=>new Date(Math.round(n)*1000).toISOString().slice(11,19);
@@ -54,6 +56,7 @@ const simulationNavigator=world=>new M01Navigator(world,{emplacement:CKM_POSITIO
 // The men a walking man must keep clear of, gathered by gatherBodies into one list that is reused and never shortened (its first n entries are the answer; the callers read them
 // before they ask again).
 const BODY_SCRATCH=[];
+const DUST_SCRATCH=[];   // the clouds of one sight question (sees), rebuilt each time
 // The scripted station casualty is fictional and already in the yard before the raid, avoiding a visible relocation.
 const STATION_YARD={x:-300,y:-3,z:30},STATION_PATIENT='generic_rifleman';
 // Estimated presentation timing, owned by simulation and saved with the pair (schema 2).
@@ -355,6 +358,7 @@ export class M01Simulation {
   }
   reset(seed=19390901){
     this.missionId=definition.id;this.definition=definition;this.rng=new Random(seed);this.world=new TczewWorld();this.navigator=simulationNavigator(this.world);
+    this.dustRays={checked:0,blocked:0};   // package 2 diagnostic (sees()): sight questions that met a cloud and the ones the cloud answered "no" to; not saved
     this.navPlanAt=-1;this.navPlans=0;   // the tick (clock) of the last route() and how many that tick has had: NAV.routesPerTick (not saved: a tick starts from the saved clock)
     this.clock=0;this.battleClock=seconds(definition.clock.start);this.events=[];this.consumed={};this.objectives={};
     definition.objectives.forEach(o=>{this.objectives[o.id]={state:'locked',progress:0};});
@@ -395,6 +399,20 @@ export class M01Simulation {
     this.navigator.prewarm();   // after the events above moved the world's revision: the first plan finds the solid list already made
   }
   actor(id){return this.actors.find(a=>a.id===id);}
+  /**
+   * Package 2: does `a` see `b`? The world's line of sight (walls, cover, terrain) AND no cloud of dust or smoke thick enough on the line (src/game/m01-dust.js): the question every AI acquisition of the act asks
+   * (a German picking a target, the search, the grenade, the Polish riflemen, Kowal, the ckm, the section's calls). The world is asked at call time (a test may replace its lineOfSight). Not for what
+   * the player sees (the renderer), for the blasts' own cover test or for the scripted rules of the plot (the 20 s rule). `dustRays` counts the questions the dust answered and the ones it
+   * answered "no" to; it is a diagnostic, never saved.
+   */
+  sees(a,b){
+    if(!this.world.lineOfSight(a,b))return false;
+    const damage=this.sectors.damage;if(damage.length===0)return true;
+    const clouds=dustClouds(damage,this.clock,DUST_SCRATCH);if(clouds.length===0)return true;
+    this.dustRays.checked++;
+    if(!dustBlocks(clouds,eyePosition(a),eyePosition(b)))return true;
+    this.dustRays.blocked++;return false;
+  }
   get enemies(){return this.actors.filter(a=>a.team==='enemy'&&!a.displayOnly);}
   get allies(){return this.actors.filter(a=>a.team==='ally'&&!a.displayOnly);}
   get combatants(){return this.actors.filter(a=>!a.displayOnly);}
@@ -673,7 +691,8 @@ export class M01Simulation {
     // the bomb stunned the player (`concussion`, 0..1): the audio presents that strength, also after a restore, and a record without it (an older save) keeps the audio's own distance rule.
     const effects=aerial&&kind==='bomb'?this.bombEffects(id,p):null;
     if(effects)for(const how of ['killed','wounded'])for(const who of effects.casualties[how])this.noteCasualty(who,how,'bomb');   // R2-a: the section calls the men of ours a bomb has hit
-    this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343,...(kind==='grenade'?{smokeSeconds:20}:{}),...(effects?{concussion:effects.concussion}:{})});
+    // Package 2 (2026-11-04): the blast also leaves a cloud of dust and smoke (`dust`: radius, height, density, life; src/game/m01-dust.js) that blocks the AI's line of sight while it stands (sees()).
+    this.sectors.damage.push({id,...p,started:this.clock,soundAt:this.clock+dist(p,this.player)/343,...(kind==='grenade'?{smokeSeconds:20}:{}),...(effects?{concussion:effects.concussion}:{}),dust:dustSpec(kind)});
     this.emit({type:'m01-blast',kind,point:p,soundAt:this.clock+dist(p,this.player)/343,aerial,...(effects?{concussion:effects.concussion,effects:effects.casualties}:{}),...extra});return p;
   }
   /**
@@ -1064,7 +1083,7 @@ export class M01Simulation {
   }
   /** Clear shot = the production line of sight from the muzzle AND the undispersed arc free of every obstacle up to the target and of every bridge collider. */
   ckmClearShot(probe,o,t){
-    if(!this.world.lineOfSight(probe,{space:'metres',x:t.x,y:t.y,z:t.z,crouched:false}))return false;   // the standing man who fired (ckmAim)
+    if(!this.sees(probe,{space:'metres',x:t.x,y:t.y,z:t.z,crouched:false}))return false;   // the standing man who fired (ckmAim)
     const r=makeRound({id:'probe',by:'ckm_gunner',weapon:'ckm_wz30',kind:'ally',origin:o,aim:this.ckmAim(t),firedAt:0,bias:[0,0],cone:[0,0],gauss:()=>0}),hit=traceRound(this.world,r,[]);
     return !(hit.material!==null&&hit.t<.98)&&ckmThroughBridge(this.world,r)===null;
   }
@@ -1140,6 +1159,8 @@ export class M01Simulation {
     // R1-b (2026-10-25, src/game/m01-opening.js): until the first bomb of 04:34 each man near the opening route has an act of his own (actor.act), the runner walks his errands and the sapper team walks the
     // cable that is not cut yet; null from the first bomb on.
     const opening=updateOpening(this,dt);
+    // Package 2 (2026-11-04, src/game/m01-aid.js): the wounded of the west garrison call out and the medic treats and carries them; writes the garrison men's `aid`, `timers.aid` and the medic (task 'aid').
+    updateAid(this,dt);
     // T47: the ckm gunner decides first (his own saved stream, never this.rng); the other two men then copy his phase.
     const gunner=this.actors.find(a=>a.id==='ckm_gunner');
     this.updateCKMGunner(gunner,retreat);
@@ -1209,6 +1230,7 @@ export class M01Simulation {
       }
       if(a.task==='evacuate_bak'){this.evacuate(a,dt);continue;}
       if(a.task==='evacuate_station_wounded'){this.evacuateStation(a,dt);continue;}
+      if(a.task==='aid')continue;   // package 2: the medic's job (updateAid, above) moves him himself
       if(a.task==='stay_with_bak'||(this.mission.phase==='OUTRO'&&a.team==='ally'))continue;   // chamada: ninguém sai do lugar
       if(section&&sectionWalk(this,section,a,dt,sectionCtx))continue;   // slice 4: the pair moves between posts (shift, return, the road deck); false for everybody else and for the pair at the squad post
       if(opening&&openingWalk(this,opening,a,dt))continue;   // R1-b: the sapper team walks the cable and rests at its camp until the shelter time (04:33:30); false for everybody else
@@ -1330,7 +1352,7 @@ export class M01Simulation {
     if(kowal.cooldown>0||!this.kowalCovers())return;
     const ai=kowal.ai,u=ai?()=>aiNext(ai):()=>.5;
     const target=this.enemies.filter(a=>a.group==='grp_de_east'&&gateShooter(a)&&a.alive&&a.active&&this.clock-a.firedAt<SQUAD.cover.freshSec).sort((a,b)=>b.firedAt-a.firedAt)
-      .find(a=>this.world.lineOfSight(kowal,a));
+      .find(a=>this.sees(kowal,a));
     if(!target){kowal.cooldown=SQUAD.cover.lookSec[0]+SQUAD.cover.lookSec[1]*u();return;}
     let n=Math.min(kowal.rounds,2+Math.floor(u()*2)+Math.floor(u()*2.2));if(kowal.rounds-n===1)n+=n<5?1:-1;
     kowal.cooldown=n*.11+3.4+2.8*u();if(ai)ai.target=target.id;
@@ -1349,7 +1371,11 @@ export class M01Simulation {
       a.cooldown-=dt;
       if(proneGunner(a)){this.emitMG34Rounds(a);if(!canMG34Fire(a))continue;}
       // Deitados: só voltam a disparar depois de a supressão acabar e de se recomporem (a guarnição da MG volta à arma).
-      if(this.clock<a.suppressedUntil){if(a.ai)this.aiPinned(a);a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+(a.weapon==='mg34'?2.5:1.2)+(a.ai?.recover??0));continue;}
+      // Package 2: a man of the assault pinned in cover or on his line within a throw of the Pole who pins him answers with the grenade he still has (deckGrenade keeps every rule: his cover, his line, the range,
+      // the squad's pause; 0.4 s after he took the line): the rearguard kills a man 23-33 m from it within seconds, and a pinned man never reached his trigger, so the grenade of R2-b was never thrown.
+      if(this.clock<a.suppressedUntil){
+        if(a.deck&&a.group==='grp_de_spans'&&!retreat&&['cover','hold'].includes(a.deck.phase)&&this.clock-a.deck.since>=.4&&this.deckGrenade(a))continue;
+        if(a.ai)this.aiPinned(a);a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+(a.weapon==='mg34'?2.5:1.2)+(a.ai?.recover??0));continue;}
       if(a.cooldown>0)continue;
       if(a.group==='grp_de_spans'){if(a.deck)this.deckFire(a,retreat);else this.spansFire(a,retreat);}else this.eastFire(a,retreat,withdrawal);
     }
@@ -1420,7 +1446,7 @@ export class M01Simulation {
   }
   /** grp_de_east no dique: MG34 sobre o reparo/jogador/secção; atiradores sobretudo sobre a cabeça de ponte leste até às 06:00. */
   eastFire(a,retreat,withdrawal){
-    const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.world.lineOfSight(a,t),west=inside(p,this.world.layout.bounds.playable);
+    const p=this.player,r=()=>this.rng.next(),mg=a.weapon==='mg34',sees=t=>this.sees(a,t),west=inside(p,this.world.layout.bounds.playable);
     let target=null,kind=null;
     if(retreat){   // s2 german_regroup: fogo esporádico da margem leste depois da demolição
       const u=r();a.cooldown=(mg?16:32)+u*20;if(gateShooter(a)&&west&&sees(p)){target=p;kind='player';}
@@ -1562,7 +1588,7 @@ export class M01Simulation {
   /** grp_de_spans no tabuleiro: disparam sobre o último homem do pelotão e, às vezes, sobre o jogador. */
   spansFire(a,retreat){
     const r=()=>this.rng.next();a.cooldown=3+r()*3;if(retreat){a.cooldown=99;return;}
-    const sees=t=>this.world.lineOfSight(a,t),last=this.withdrawingPlatoon().filter(s=>s.x<a.x).sort((x,y)=>y.x-x.x)[0];
+    const sees=t=>this.sees(a,t),last=this.withdrawingPlatoon().filter(s=>s.x<a.x).sort((x,y)=>y.x-x.x)[0];
     if(r()<this.level.spansPickPlayerThreshold&&sees(this.player)){this.burst(a,this.player,'player',{rounds:1,bias:[2,1.4],cone:[0,0]});a.cooldown*=this.level.cooldownScale;}
     else if(last&&sees(last))this.burst(a,last,'platoon',{rounds:1,bias:[2,1.4],cone:[0,0]});
   }
@@ -1687,7 +1713,7 @@ export class M01Simulation {
       // SP-08 (2026-10-22): the men of the deck assault who regrouped on the surviving spans fire on the escort when they see Dudek with Bąk (their own AI stream); otherwise,
       // as before, nothing (looked at again every 2 s once the corridor task exists, every 99 s before it).
       const e=escortTarget(this);
-      if(!e||a.state!=='REGROUP'||!(a.rounds>0)||!this.world.lineOfSight(a,e)){a.cooldown=corridorRecord(this)?2:99;return;}
+      if(!e||a.state!=='REGROUP'||!(a.rounds>0)||!this.sees(a,e)){a.cooldown=corridorRecord(this)?2:99;return;}
       this.burst(a,e,'squad',{rounds:1,bias:[2,1.4],cone:[0,0]});a.state='REGROUP';   // he shoots from his place in the knot and stays in it (burst() marks a shooter SUPPRESS)
       a.cooldown=DECK_ASSAULT.fire.assaultPauseSec+4*aiNext(a.ai);return;
     }
@@ -1713,16 +1739,16 @@ export class M01Simulation {
   /** The deck man's target: a withdrawing platoon man ahead of him (west) within fire.platoonRangeM in sight, or the player in sight (more when he is the threat). */
   deckTarget(a,west,threat,over){
     const ai=a.ai,u=()=>aiNext(ai),p=this.player,c=[],add=(id,target,kind,w)=>c.push({id,target,kind,w:w*(id===ai.target?3:1)});
-    const near=this.withdrawingPlatoon().filter(s=>s.x<a.x&&dist(s,a)<DECK_ASSAULT.fire.platoonRangeM&&this.world.lineOfSight(a,s));
+    const near=this.withdrawingPlatoon().filter(s=>s.x<a.x&&dist(s,a)<DECK_ASSAULT.fire.platoonRangeM&&this.sees(a,s));
     const s=near.find(m=>m.id===ai.target)??(near.length?near[Math.floor(u()*near.length)]:null);
     if(s)add(s.id,s,'platoon',2.3);
     // H9 D2: spansPickPlayerThreshold as a weight (oddsWeight: recruta x1, soldado x2, veterano x3).
-    const seesPlayer=west&&this.world.lineOfSight(a,p);
+    const seesPlayer=west&&this.sees(a,p);
     if(seesPlayer)add('player',p,'player',((over?.6:1)+(threat?1.6:0))*oddsWeight(this.level.spansPickPlayerThreshold,M01_DIFFICULTY.recruta.spansPickPlayerThreshold));
     // R2-b: the Poles who hold the deck are targets too (rounds of kind `squad`: they pin whoever they pass, they never wound an ally); the nearest he sees, or the player, is what he remembers (ai.seen, for the search).
     const SQ=DECK_ASSAULT.tactics.squadTargets;let seen=seesPlayer?p:null,seenId='player';
     if(!over)for(const b of this.deckDefenders()){
-      if(b.x>=a.x||dist(a,b)>SQ.rangeM||!this.world.lineOfSight(a,b))continue;
+      if(b.x>=a.x||dist(a,b)>SQ.rangeM||!this.sees(a,b))continue;
       if(SQ.weight>0)add(b.id,b,'squad',SQ.weight*(this.clock-b.firedAt<AI_THREAT_SEC?3:1));   // (the ones who fire at him are the ones he answers: x3, as for the player who fires)
       if(!seen||dist(a,b)<dist(a,seen)){seen=b;seenId=b.id;}
     }
@@ -1741,7 +1767,7 @@ export class M01Simulation {
     const path=P.paths[assaultIndex(a)],last=Math.min(deckLimitNode(a),d.node+P.rushStations),target={space:'metres',x:seen.x,y:seen.y,z:seen.z,crouched:true};
     for(let n=d.node+1;n<=last;n++){
       const p=path[n],probe={space:'metres',x:p.x,y:this.world.heightAt(p.x,p.z),z:p.z,crouched:false};
-      if(this.world.lineOfSight(probe,target)){
+      if(this.world.lineOfSight(probe,target)){   // (the world's sight, not the dust's: he bounds to where he would see the place if the air were clear)
         d.node=n;d.phase='advance';d.since=now;d.until=now;ai.peek=0;a.crouched=false;
         this.emit({type:'deck-tactic',kind:'search',by:a.id,line:deckLineNumber(a),at:now});return true;
       }
@@ -1761,10 +1787,12 @@ export class M01Simulation {
     for(const b of [p,...this.deckDefenders()]){
       if(!b.alive||(b!==p&&!b.active)||b.x>=a.x)continue;
       const dd=dist(a,b);if(dd<G.minM||dd>G.rangeM||dd>=bd)continue;
-      // A Pole he cannot hit with the rifle: out of his sight; or the player in authored cover (the sim's own test of cover, world.coverAt); or a defender pinned down on his post (kneeling and suppressed:
-      // there is nothing to aim at but the cover he lies in, which is what a grenade is for). A standing or an unsuppressed Pole in his sight is the rifle's.
-      const covered=b===p?Boolean(this.world.coverAt(p)):Boolean(b.crouched)&&this.clock<b.suppressedUntil;
-      if(this.world.lineOfSight(a,b)&&!covered)continue;   // he can hit him with his rifle
+      // A Pole he cannot hit with the rifle: out of his sight (the walls, and since package 2 the dust: sees()); or the player in authored cover (the sim's own test of cover, world.coverAt); or a defender who
+      // kneels at his post (there is nothing to aim at but the cover he lies in, which is what a grenade is for). A standing Pole in his sight is the rifle's.
+      // Package 2 (2026-11-04): R2-b asked for the kneeling defender to be suppressed as well. The rearguard kneels except for the second before and after each of its shots, so with that second condition the
+      // grenade needed a Pole pinned by this very man's fire at the moment he had a man 6-32 m away: 0 in 24 routes. Kneeling is enough; the player is still a target only in authored cover.
+      const covered=b===p?Boolean(this.world.coverAt(p)):Boolean(b.crouched);
+      if(this.sees(a,b)&&!covered)continue;   // he can hit him with his rifle
       best=b;bd=dd;
     }
     if(!best)return false;
@@ -1833,7 +1861,7 @@ export class M01Simulation {
     const F=REARGUARD.fire,standing={...a,crouched:false};let best=null,bestD=Infinity;
     for(const m of this.actors){
       if(m.group!=='grp_de_spans'||!m.deck||!m.alive||!m.active||deckRole(m)!=='assault'||m.deck.phase==='clear')continue;
-      const d=dist(a,m);if(d>F.rangeM||!this.world.lineOfSight(standing,m))continue;
+      const d=dist(a,m);if(d>F.rangeM||!this.sees(standing,m))continue;
       if(m.id===a.ai.target)return m;
       if(d<bestD){best=m;bestD=d;}
     }
@@ -2061,8 +2089,8 @@ export class M01Simulation {
     // R2-b: from the deck assault on, a man of the assault who fired in the last 10 s within the rkm's reach is a target like the dike's.
     const deckToo=this.sectionRealFire();
     const dike=this.enemies.filter(a=>a.alive&&a.active&&(a.group==='grp_de_east'||(deckToo&&a.deck!==undefined&&deckRole(a)==='assault'&&dist(a,kowal)<=SECTION.real.rkmRangeM)));
-    const fresh=dike.filter(a=>this.clock-a.firedAt<10).sort((a,b)=>b.firedAt-a.firedAt).find(a=>this.world.lineOfSight(kowal,a));
-    const target=fresh??dike.find(a=>a.weapon==='mg34'&&this.world.lineOfSight(kowal,a));
+    const fresh=dike.filter(a=>this.clock-a.firedAt<10).sort((a,b)=>b.firedAt-a.firedAt).find(a=>this.sees(kowal,a));
+    const target=fresh??dike.find(a=>a.weapon==='mg34'&&this.sees(kowal,a));
     // Nothing to answer: he stays behind the sandbags and looks again (he rises riseBeforeSec before each look, as before every burst).
     if(!target){kowal.cooldown=ai?2.5+2*u():4;return;}
     // A burst of 2-5 rounds (3 on average, as the old fixed 3) that never leaves a single round in the 20-round magazine.
@@ -2325,7 +2353,7 @@ export class M01Simulation {
         // "Ajusta sobre a cobertura": rajada real de uma MG que vê o jogador (impactos na cobertura, não dano garantido).
         // Uma MG que o veja dispara uma rajada; sem MG, uma salva de até quatro atiradores (um tiro cada).
         const shooters=this.enemies.filter(a=>a.group==='grp_de_east'&&a.alive&&a.active&&this.clock>=a.suppressedUntil&&canMG34Fire(a)).sort((a,b)=>(b.weapon==='mg34')-(a.weapon==='mg34'))
-          .filter(a=>this.world.lineOfSight(a,p)).slice(0,4);
+          .filter(a=>this.sees(a,p)).slice(0,4);
         // No warning or cover reservation until a real salvo is emitted. Retry at a bounded cadence.
         this.timers.nextCoverCall=this.clock+(shooters.length?this.level.coverAdjustSalvoSec:4);   // H9 D2: 42 / 30 / 20 s
         if(shooters.length)this.flags['m01.suggested_cover']=rotation[this.timers.coverCallIndex++%rotation.length];
@@ -2584,7 +2612,9 @@ export class M01Simulation {
       stukas:this.consumedEvent(E('planes_heard'))&&!this.consumedEvent(E('second_air_pass')),
       secondRaid:this.flags['m01.second_raid_state']==='active',weaponVisible:!this.player.carrying&&this.scene?.id!=='cs_m01_roll_call',
       damage:this.sectors.damage.map(d=>({...d,smokeVisible:d.id.startsWith('m01_grenade_')?this.clock-d.started<Math.min(20,d.smokeSeconds??20):
-        this.clock-d.started<240||d.id==='station_bomb'||RAID_ID.test(d.id)}))};
+        this.clock-d.started<240||d.id==='station_bomb'||RAID_ID.test(d.id)})),
+      // Package 2: the clouds that stand now and hide a man from the AI (m01-dust.js), for the renderer to draw: {id, x, y, z, r, h, density}. Read only; the renderer decides nothing from it.
+      dust:dustClouds(this.sectors.damage,this.clock,[])};
   }
   snapshot(includeCheckpoint=true){const s=clone({schema:2,missionId:this.missionId,clock:this.clock,battleClock:this.battleClock,rng:this.rng.state,
     player:this.player,weapon:this.weapon.snapshot(),actors:this.actors,consumed:this.consumed,objectives:this.objectives,flags:this.flags,
@@ -2760,7 +2790,8 @@ export function validateM01Snapshot(s){
         !finite(p.startedAt,0,s.clock)||p.duration!==(p.phase==='feed'?4.8:1.9)||a.shot!==0)reject('MG34 loader');
     }
     if(a.carriedBy===s.player.id&&(a.id!=='jozef_bak'||!a.carry||a.carry.phase!=='putdown'&&s.player.carrying!=='jozef_bak'))reject('player carry association');
-    if(a.carry&&a.carriedBy!==s.player.id){const medic=s.actors.find(m=>m.id===a.carriedBy);if(medic?.id!=='leon_dudek'||medic.task!=='evacuate_bak'||!medic.alive||!medic.active)reject('carry medic association');}
+    if(a.carry&&a.carriedBy!==s.player.id){const medic=s.actors.find(m=>m.id===a.carriedBy);if(medic?.id!=='leon_dudek'||(medic.task!=='evacuate_bak'&&!(medic.task==='aid'&&GARRISON_IDS.includes(a.id)))||!medic.alive||!medic.active)reject('carry medic association');}   // package 2: the medic also carries a wounded man of the garrison (m01-aid.js)
+    if(a.aid!==undefined)validateAidActor(a,s,reject);   // package 2: a wounded garrison man's calls and treatment (absent in every older save)
   }
   for(const a of s.actors)if(CKM_IDS.includes(a.id)||a.ckm!==undefined||a.group==='grp_ckm_crew'){
     const t=a.ckm,i=CKM_IDS.indexOf(a.id);
@@ -2796,7 +2827,8 @@ export function validateM01Snapshot(s){
     !['GUARD','ADVANCE','SUPPRESS','RETREAT','REGROUP','HIT_REACTION','DOWN','WOUNDED','reached_safety'].includes(a.state)||
     ![a.facing,a.shot,a.cooldown,a.suppressedUntil].every(Number.isFinite)||typeof a.active!=='boolean'||(a.target&&![a.target.x,a.target.z].every(Number.isFinite))))reject('estado dos actores');
   if(s.actors.some(a=>(a.carriedBy!=null&&a.carriedBy!==s.player.id&&!s.actors.some(c=>c.id===a.carriedBy&&c.alive&&c.active))||
-    (a.task!=null&&![...YARD_TASKS,'evacuate_bak','stay_with_bak','evacuate_station_wounded','station_wounded','station_aid_post'].includes(a.task))))reject('transporte');
+    (a.task!=null&&![...YARD_TASKS,'evacuate_bak','stay_with_bak','evacuate_station_wounded','station_wounded','station_aid_post','aid'].includes(a.task))||
+    (a.task==='aid'&&(a.id!=='leon_dudek'||!s.timers?.aid))))reject('transporte');   // package 2: 'aid' is the medic's, while he has a job (timers.aid)
   // T48: the withdrawal's plan and its REGROUP state exist only for the Germans on the spans after the east demolition; a German carried is a fallen man lifted by a marching one.
   for(const a of s.actors){
     const f=a.fallBack;
@@ -2868,7 +2900,8 @@ export function validateM01Snapshot(s){
   if(s.sectors.sectors.some((sector,i)=>sector.id!==definition.sectors[i].id||!definition.sectors[i].schedule.some(entry=>entry.state===sector.state)||
     ![sector.strength,sector.morale,sector.supply].every(Number.isFinite)))reject('sectores');
   if(s.sectors.damage.some(d=>typeof d.id!=='string'||![d.x,d.y,d.z].every(Number.isFinite)||!finite(d.started,0,s.clock)||!finite(d.soundAt,d.started)||
-    d.smokeSeconds!==undefined&&!finite(d.smokeSeconds,0,d.id.startsWith('m01_grenade_')?20:240)||d.concussion!==undefined&&!finite(d.concussion,0,1)))reject('destruição');
+    d.smokeSeconds!==undefined&&!finite(d.smokeSeconds,0,d.id.startsWith('m01_grenade_')?20:240)||d.concussion!==undefined&&!finite(d.concussion,0,1)||
+    d.dust!==undefined&&!validDust(d.dust)))reject('destruição');   // package 2: the cloud of the blast (absent in every save made before it: the default of its kind)
   // R2-b: besides the player's (at most two), the stick grenades of the deck assault: `by` the thrower of the assault and `at` the time of the throw, the fuse at most the stick grenade's.
   const german=g=>g.by!==undefined;
   if(!Number.isInteger(s.grenades.nextId)||s.grenades.nextId<0||s.grenades.active.filter(g=>!german(g)).length>2||s.grenades.active.length>DECK_GRENADES_MAX||s.grenades.active.some(g=>typeof g.id!=='string'||![g.x,g.y,g.z,g.vx,g.vy,g.vz,g.fuse].every(Number.isFinite)||g.fuse<=0||
@@ -2910,6 +2943,7 @@ export function validateM01Snapshot(s){
   if('section' in s.timers)validateSectionRecord(s.timers.section,s,reject);
   // R1-b (2026-10-25): the opening life's record, from the first tick to the first bomb of 04:34 (m01-opening.js); absent in older saves, which start it at their next tick (before 04:34 only).
   if('opening' in s.timers)validateOpeningRecord(s.timers.opening,s,reject);
+  if('aid' in s.timers)validateAidRecord(s.timers.aid,s,reject);   // package 2: the medic's one job (m01-aid.js)
   if(s.timers.raidSchedule===undefined&&s.sectors.damage.some(d=>/^raid_0530_[1-5]$/.test(d.id)))reject('missing raid schedule');
   if(s.timers.raidSchedule!==undefined){
     const schedule=s.timers.raidSchedule,world=new TczewWorld(),raidAt=s.consumed[E('bombing_0530')];
