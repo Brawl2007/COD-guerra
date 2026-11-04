@@ -10,6 +10,10 @@ test('securing the farm and entering B/C do not complete the campaign mission',(
  sim.enterAreaBC06();assert.equal(sim.flags['m02.completed'],false);sim.enterAreaCC09();assert.equal(sim.flags['m02.completed'],false);
  const result=sim.completeC12Epilogue({lisOutcome:'missing'});assert.equal(result.completed,true);assert.equal(result.flags['m02.completed'],true);
  const completed=sim.snapshot();sim.restoreSnapshot(completed);assert.equal(sim.flags['m02.completed'],true);
+ // The debug bench can replay an earlier transition after C12; its historical
+ // payload must remain intermediate and survive a checkpoint unchanged.
+ const replay=sim.triggerTransitionTAB();assert.equal(replay.flags['m02.completed'],false);
+ const replayed=sim.snapshot();sim.restoreSnapshot(replayed);assert.deepEqual(sim.snapshot(),replayed);
 });
 
 test('legacy intermediate checkpoints repair only the premature completion flags',()=>{

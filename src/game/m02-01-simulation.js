@@ -560,7 +560,7 @@ export class M02BenchSimulation {
         reserve: this.weapon.reserve,
       },
       grenadeAmmo: this.grenadeAmmo,
-      flags: structuredClone(this.flags),
+      flags: {...structuredClone(this.flags),'m02.completed':false},
       squadStatuses: Object.fromEntries(
         this.allies.map((a) => [a.id, { alive: a.alive, state: a.state, health: a.health }]),
       ),
