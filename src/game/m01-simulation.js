@@ -1792,7 +1792,11 @@ export class M01Simulation {
       // Package 2 (2026-11-04): R2-b asked for the kneeling defender to be suppressed as well. The rearguard kneels except for the second before and after each of its shots, so with that second condition the
       // grenade needed a Pole pinned by this very man's fire at the moment he had a man 6-32 m away: 0 in 24 routes. Kneeling is enough; the player is still a target only in authored cover.
       const covered=b===p?Boolean(this.world.coverAt(p)):Boolean(b.crouched);
-      if(this.sees(a,b)&&!covered)continue;   // he can hit him with his rifle
+      // Package 2, critical review (2026-11-04): the PLAYER is judged by the world's sight, not the dust's. With sees() a cloud between a German and a player standing in the open made him a target of a grenade
+      // thrown at his exact place by a man who could not see him (a free aimed throw at a man in the open that the rifle was denied); the player is a target only in authored cover or out of sight of the
+      // walls, as R2-b and README 1.3 say. A defender (the AI's own man) still counts the dust, as everywhere else in the act.
+      const sight=b===p?this.world.lineOfSight(a,b):this.sees(a,b);
+      if(sight&&!covered)continue;   // he can hit him with his rifle
       best=b;bd=dd;
     }
     if(!best)return false;
