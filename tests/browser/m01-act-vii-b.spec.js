@@ -7,9 +7,10 @@ import {actBControls} from '../helpers/m01-act-b-route.js';
 
 // R4 INC-2 smoke (production build, Chromium/SwiftShader, real controls and pointer lock): the QA flag boots Act VII-b on its «Mais tarde…» card, the HUD shows only the label «DURANTE O DIA»,
 // CP-I is stored in the schema 3 envelope when the card ends, a save in the middle of the barrage (shells in the air) and one in the middle of the first attack restore and play on, the bearers carry
-// the wounded man, CP-I2 is stored when the first attack breaks, and the debrief follows the end card with the paragraphs of both area acts. The saves are made in Node with the same simulation.
+// the wounded man, CP-I2 is stored when the first attack breaks, and the end card of VII-b opens the order card of VII-c (INC-3; until then the debrief followed it, with the paragraphs of both area acts). The saves are made in Node with the same simulation.
 // A state/presentation check, not a playtest and not a frame-rate figure.
 const OUT=new URL('../../docs/verification/m01-runtime/inc2-vii-b-2026-11-04/',import.meta.url).pathname;
+const OUT3=new URL('../../docs/verification/m01-runtime/inc3-vii-c-2026-11-04/',import.meta.url).pathname;   // INC-3: the chain test below (VII-b -> VII-c) writes its state there
 const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',ID='act_vii_b_north_day',LABEL='DURANTE O DIA';
 const live=sim=>({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
 
@@ -128,16 +129,15 @@ test('CP-I2: the game stores the checkpoint of the interval when the first attac
   writeFileSync(OUT+'smoke-cpi2-stored.json',JSON.stringify({checkpoints:stored.actSave.checkpointsReached,flag:stored.actSave.flags['m01npb.wave'],brokenAt:stored.actSave.timers.wave.echs[0].brokenAt,clock:stored.actSave.clock,status:d.status,errors},null,1)+'\n');
 });
 
-test('the end of VII-b is the end card and then the debrief, with the paragraphs of both area acts (VII-a\'s, then VII-b\'s) and the current act\'s',async({page})=>{
+test('the end of VII-b is its end card and then, in the same page, the order card of VII-c («Por volta das 17:00»): since INC-3 the debrief follows VII-c, not VII-b',async({page})=>{
   test.setTimeout(600000);
   const errors=await boot(page,'?debug=1&acts=1',{save:scenes.end,click:'#continue'});
   await page.waitForFunction(()=>window.gameDiagnostics().m01.scene==='cs_npb_end',null,{timeout:90000});
   await page.waitForTimeout(3500);await page.screenshot({path:OUT+'08-end-card.png'});
-  await page.waitForSelector('#complete:not(.hidden)',{timeout:90000});
-  const debrief=await page.locator('#debrief').textContent();
-  expect(debrief).toContain('Por volta das 07:00');expect(debrief).toContain('Durante o dia, novos ataques vindos do norte');expect(debrief).toContain('As fontes do repositório não dizem');
-  expect(debrief.indexOf('Por volta das 07:00')).toBeLessThan(debrief.indexOf('Durante o dia, novos ataques'));
-  await page.screenshot({path:OUT+'09-debrief.png'});
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_c_withdrawal'&&window.gameDiagnostics().m01.scene==='cs_npc_order',null,{timeout:120000});
+  const card=await page.evaluate(()=>document.querySelector('#title-card')?.textContent);
+  expect(card).toContain('Por volta das 17:00');
+  expect(await page.locator('#complete').evaluate(n=>n.classList.contains('hidden'))).toBe(true);   // no debrief yet: VII-c is still to be played
   expect(errors).toEqual([]);
-  writeFileSync(OUT+'smoke-debrief.json',JSON.stringify({debrief,errors},null,1)+'\n');
+  mkdirSync(OUT3,{recursive:true});writeFileSync(OUT3+'smoke-chain-from-vii-b.json',JSON.stringify({card,errors},null,1)+'\n');
 });

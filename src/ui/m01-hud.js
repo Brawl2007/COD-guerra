@@ -79,10 +79,11 @@ export function cinematicFrame(scene,battleClock=0){
 /**
  * R4 INC-1: the card of a new act (its entry, between the roll call and the new area, and its end, before the debrief). The entry card is black until its last 1.2 s
  * (the area appears behind it); the end card fades the field to black in 1.5 s. Its lines say what is documented and what is reconstruction; no exact hour.
+ * INC-3: an act may open on an ORDER card (VII-c: «Por volta das 17:00»): fully black for all of its length, because the entry card follows at once and is the one that lets the area appear.
  */
 export function actCardFrame(scene){
   const t=Number(scene.elapsed)||0,end=scene.card.seconds,T=HUD_TIMING;
-  const black=scene.card.kind==='end'?ramp(t,0,1.5):1-ramp(t,end-1.2,end);
+  const black=scene.card.kind==='end'?ramp(t,0,1.5):scene.card.kind==='order'?1:1-ramp(t,end-1.2,end);
   const opacity=Math.min(ramp(t,.4,.4+T.cardFade),1-ramp(t,end-1.4,end-.9));
   return {locked:true,black,card:card(scene.id,scene.card.lines,opacity,t-.4)};
 }

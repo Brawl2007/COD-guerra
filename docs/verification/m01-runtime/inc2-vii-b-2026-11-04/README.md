@@ -105,3 +105,16 @@ Todas vistas por mim (resolução 1280×720, build de produção, Chromium/Swift
 ## 9. O que continua BLOQUEADO / à espera do proprietário
 
 D-1 Lisewo (fora); D-2 insígnias e nome da SS-Heimwehr no ecrã; D-3 duração total; D-5 sonda alemã na retirada; calibre, tipo e posição da artilharia alemã; número, horas e setores dos ataques do dia; baixas; o conteúdo de H01-PDF/T03/T08/T16 sobre a tarde (os ficheiros não estão em `research/sources/`); ruas reais, quartel e itinerário (P4); Bofors e morteiros polacos (WP-5). **Nada passa a VALIDADO sem playtest humano** (legibilidade do aviso de artilharia, variedade sem ciclos, duração 4–6 min). O INC-3 (VII-c, ordem das ~17:00 e retirada) não está feito.
+
+## 10. Errata da revisão crítica (2026-11-04, depois do merge `1d17b8f8`)
+
+A revisão crítica achou que um homem da linha ferido por um obus (`state: WOUNDED`) ficava com `crouched=false` nos dados: a visão e o traçado das rondas alemãs (`germanTargets`, `landRounds`) tratavam-no como um homem **de pé** acima do parapeito de 1,15 m, enquanto o renderer o desenha deitado, e o fogo às cegas contava-o como «exposto». Na semente 3 (passivo) o `pl_np_3`, ferido pelo obus programado aos 36 s, era atingido aos 84,7 s e morto aos 134 s, a jazer; 10 das 48 rotas da revisão mostravam o mesmo.
+Corrigido (commit `fix(m01): VII-b review — wounded men lie for German fire …`), como o ato atual faz (`m01-simulation.js alliedRound`, `lying`): um homem ferido fica fora de `germanTargets` e do traçado de `landRounds` e fica de joelhos nos dados (`crouched=true`). `endBarrage` só muda a fase se for a da barragem (`mission.phase === NPB_BARRAGE`). Os números das secções 5 e 6 foram refeitos:
+
+| | antes | agora |
+|---|---|---|
+| golden VII-b (recruta, semente 19390901): passivo / ativo | 339,5 s / 223,2 s | **351,4 s / 241,7 s** |
+| 18 rotas: passivo / ativo | 320–340 s / 209–293 s | **308–351 s / 205–336 s** |
+| homem ferido da 1.ª barragem levantado por um maqueiro | não verificado (`handled` também conta viagens em que o doente morreu antes) | **18/18 rotas** (o teste observa `carriedBy`) |
+
+O VII-a não muda (não há obuses, logo ninguém fica `WOUNDED`): rotas do golden byte a byte iguais, só o sha256 de `m01-area-sim.js` mudou. Também corrigido, só nos testes: `stun` do golden lia um campo que não existe (`sim.concussion`; agora o do jogador), a asserção «aterra onde foi assobiado» era sempre verdadeira (agora é estrita), o teste de saves compara o jogo restaurado com o ORIGINAL que continuou a jogar (antes comparava duas cargas do mesmo texto).

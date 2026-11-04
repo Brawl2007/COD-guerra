@@ -1,0 +1,612 @@
+{
+  "schemaVersion": 1,
+  "id": "act_vii_c_withdrawal",
+  "area": "np",
+  "title": "VII-c · Ordem das ~17:00 e retirada ao anoitecer",
+  "status": "INC-3 (R4, 2026-11-04): ato VII-c «Ordem ~17:00 e retirada» (desenho: docs/direction/M01_R4_VII_BC_DESIGN.md §3). Só corre com acts.enabled (mission.json/acts.json) ou com ?acts=1 / ?act=vii-c (QA), e a seguir ao VII-b na cadeia. Nada aqui está VALIDADO em jogo: o mensageiro, os lanços da linha e da retaguarda, a saída no canto sudoeste e todos os números são dramatização para o ritmo do ato. Sem inimigos: a sonda alemã na retirada (D-5) não tem fonte e não está construída.",
+  "classificationLegend": {
+    "DOCUMENTED": "Facto com fonte no repositório (pode ser fonte única: a certeza vai indicada).",
+    "RECONSTRUCTED": "Lugar, forma ou posição construída a partir de fontes indiretas.",
+    "GAMEPLAY_DRAMATIZATION": "Inventado para o ritmo do jogo; nunca apresentado como facto."
+  },
+  "history": [
+    {
+      "id": "h_npc_order",
+      "text": "Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard.",
+      "classification": "DOCUMENTED",
+      "certainty": "MÉDIA (resumo de T03)",
+      "sources": [
+        "T03"
+      ],
+      "gaps": [
+        "quem transmitiu a ordem e por onde",
+        "a hora exata (a fonte diz «por volta das 17:00»)",
+        "itinerário, ruas e ordem de marcha (P4: sem mapa de 1939)",
+        "qualquer contacto durante a retirada ou perseguição alemã",
+        "o que H01-PDF diz da tarde (o PDF não está guardado no repositório; só db_04 está registado)"
+      ],
+      "use": "Cartão «Por volta das 17:00» (a única hora no ecrã durante o jogo) e debrief. A ordem chega como «ordem do comandante do batalhão» (convenção de HISTORICAL_RESEARCH.md §3.2): os oficiais históricos ficam fora de cena e ninguém fala por Janik ou Juchtman."
+    },
+    {
+      "id": "h_npc_withdrawal",
+      "text": "O 2.º Batalhão retirou-se de Tczew: a retirada começou às 18:00 e acabou às 20:00.",
+      "classification": "DOCUMENTED",
+      "certainty": "MÉDIA (resumo de T03; db_04 diz «até às 20:00», H01-PDF, e é coerente)",
+      "sources": [
+        "T03"
+      ],
+      "use": "Cartão de fim e debrief."
+    },
+    {
+      "id": "h_npc_sunset",
+      "text": "Pôr do sol às 18:39; fim do crepúsculo civil às 19:16 (CET).",
+      "classification": "DOCUMENTED (cálculo)",
+      "certainty": "ALTA (astronomia)",
+      "sources": [
+        "C01"
+      ],
+      "use": "Cartão de fim e debrief; a luz do ato (clock.sun)."
+    },
+    {
+      "id": "h_npc_dramatization",
+      "text": "O mensageiro, a chegada da ordem ao posto de comando, a saída da linha e da ckm por lanços, a retaguarda da secção de Zieliński, a faixa de saída no canto sudoeste da fatia e a hora interna de 19:00 são dramatização para o ritmo e a duração do ato: as fontes do repositório não dão quem transmitiu a ordem, o caminho, as ruas nem a ordem de marcha, e nenhuma fonte fala de contacto durante a retirada.",
+      "classification": "GAMEPLAY_DRAMATIZATION",
+      "sources": [],
+      "use": "A faixa de saída só indica a direção geral de Starogard; não é rua nem caminho real."
+    }
+  ],
+  "profile": {
+    "label": "VII-c",
+    "phasePrefix": "NPC",
+    "flagPrefix": "m01npc",
+    "markerLabel": "Parapeito",
+    "marker": "trench_post",
+    "entryCard": "cs_npc_dusk",
+    "endCard": "cs_npc_end",
+    "arrivalObjective": "obj_npc_cover",
+    "holdObjective": "obj_npc_withdraw",
+    "coverObjective": null,
+    "cardEndEvent": "evt_npc_card_end",
+    "waveEvent": "evt_npc_order",
+    "arrivalCheckpoint": "cp_npc_j_ordem",
+    "statusLabel": "Retirada",
+    "repelledText": "Retirada concluída",
+    "ordinals": false,
+    "arrivalNeedsReserve": false,
+    "note": "Um ato sem ataque alemão: `waveEvent` é a chegada da ordem (o que o VII-a e o VII-b chamam a vaga), `arrivalObjective` fecha quando a linha sai e `holdObjective` quando o jogador chega à faixa de saída com a secção."
+  },
+  "points": {
+    "exit_centre": {
+      "x": -580,
+      "z": -1062,
+      "note": "Centro da faixa de saída (canto sudoeste da fatia, dentro de `playable`): só indica a direção geral de Swarożyn–Starogard (T03); NÃO é rua nem caminho real (P4 bloqueado)."
+    }
+  },
+  "clock": {
+    "battleClockStart": "19:00:00",
+    "label": "ANOITECER",
+    "labelNote": "Nenhuma hora no ecrã durante o jogo: a única é «Por volta das 17:00» no cartão da ordem (T03). O relógio interno (19:00 em diante) só serve à luz e ao som; está dentro da janela 18:00–20:00 da retirada, mas a escolha das 19:00 é dramatização.",
+    "classification": "DOCUMENTED (a ordem e a retirada ao anoitecer, T03) / GAMEPLAY_DRAMATIZATION (a hora interna de 19:00)",
+    "sun": {
+      "source": "C01 (método)",
+      "note": "RECONSTRUCTED: o Sol às 18:39, 19:00 e 19:16 (CET) pelo método de C01, o mesmo que reproduz 04:34, 06:10 e 07:05 de map-layout.json. Uma recalculação independente deu −1,0°/286° às 18:39, −3,9°/290° às 19:00 e −6,1°/293° às 19:16: diferença de 0,1° ou menos, sem efeito na luz. Só se aplica a este ato (apresentação). A −3,8° o modelo de luz está na âncora `blue-hour`; depois das 19:16 o Sol fica onde está (sem âncora noturna, o ato acaba muito antes).",
+      "keyframes": [
+        {
+          "clock": "18:39",
+          "altitudeDeg": -0.9,
+          "azimuthDeg": 286
+        },
+        {
+          "clock": "19:00",
+          "altitudeDeg": -3.8,
+          "azimuthDeg": 290
+        },
+        {
+          "clock": "19:16",
+          "altitudeDeg": -6.0,
+          "azimuthDeg": 293
+        }
+      ]
+    }
+  },
+  "cardsNote": "Cada linha de um cartão é uma só linha no ecrã (o HUD corta-a a 82 vw: `white-space:nowrap`, `overflow:hidden`): a 1.ª cabe cerca de 40 caracteres, a 2.ª cerca de 95, as outras cerca de 110 (a 1280 px). Os cartões do VII-c ficam abaixo disso (teste F9).",
+  "cards": {
+    "order": {
+      "id": "cs_npc_order",
+      "seconds": 9,
+      "skippable": true,
+      "lines": [
+        "Por volta das 17:00",
+        "Ordem do comandante do batalhão: deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard",
+        "(T03, resumo, certeza média) · quem a transmitiu, por onde e a ordem de marcha: desconhecidos",
+        "A retaguarda da secção, o mensageiro e o caminho representado: dramatização"
+      ]
+    },
+    "entry": {
+      "id": "cs_npc_dusk",
+      "seconds": 6,
+      "skippable": true,
+      "lines": [
+        "Ao anoitecer",
+        "Perímetro norte · 1 de setembro de 1939",
+        "A luz do crepúsculo: cálculo astronómico (C01) · a retirada: reconstrução e dramatização"
+      ]
+    },
+    "end": {
+      "id": "cs_npc_end",
+      "seconds": 9,
+      "skippable": true,
+      "lines": [
+        "O 2.º Batalhão deixou Tczew",
+        "Retirada entre as 18:00 e as 20:00 (T03, resumo, certeza média)",
+        "Pôr do sol às 18:39 (C01) · itinerário e ruas: desconhecidos (sem mapa de 1939)",
+        "O mensageiro, a retaguarda e o caminho representado: dramatização"
+      ]
+    }
+  },
+  "objectives": [
+    {
+      "id": "obj_npc_cover",
+      "text": "Cubra a saída da linha",
+      "required": true,
+      "marker": "trench_post",
+      "reachM": 3.5,
+      "classification": "GAMEPLAY_DRAMATIZATION"
+    },
+    {
+      "id": "obj_npc_withdraw",
+      "text": "Recue com a secção até à saída",
+      "required": true,
+      "marker": "exit_centre",
+      "reachM": 0,
+      "classification": "DOCUMENTED (retirada ao anoitecer, T03) / GAMEPLAY_DRAMATIZATION (papel do jogador, caminho e saída)"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "cp_npc_j_ordem",
+      "label": "CP-J",
+      "name": "Perímetro norte — ordem da tarde",
+      "trigger": {
+        "type": "sceneEnd",
+        "scene": "cs_npc_dusk"
+      },
+      "note": "Guarda-se no fim do cartão «Ao anoitecer» (depois do cartão da ordem): é o checkpoint de chegada do ato."
+    },
+    {
+      "id": "cp_npc_k_retirada",
+      "label": "CP-K",
+      "name": "Perímetro norte — retirada",
+      "trigger": {
+        "type": "flag",
+        "flag": "m01npc.lineOut"
+      },
+      "note": "Guarda-se no fim do tique em que a linha (e a ckm) chega à faixa de saída (o jogador vivo e dentro dos limites): a secção recua a seguir, e uma morte por limites repõe aqui, não na chegada."
+    }
+  ],
+  "events": [
+    {
+      "id": "evt_npc_dusk",
+      "trigger": {
+        "type": "battleClock",
+        "at": "19:00:00"
+      },
+      "results": [
+        "o ato começa (o relógio interno é só luz e som)"
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION",
+      "sources": []
+    },
+    {
+      "id": "evt_npc_order",
+      "trigger": {
+        "type": "order",
+        "note": "O mensageiro chega ao posto de comando (layout.points.command_post) e dá a ordem."
+      },
+      "results": [
+        "a ordem chega; 3 s depois a linha começa a sair por lanços e a secção sobe ao parapeito para ficar de retaguarda"
+      ],
+      "certainty": "DOCUMENTED (a ordem por volta das 17:00, T03) / GAMEPLAY_DRAMATIZATION (o mensageiro e o momento)",
+      "sources": [
+        "T03"
+      ]
+    },
+    {
+      "id": "evt_npc_line_out",
+      "trigger": {
+        "type": "flag",
+        "flag": "m01npc.lineOut"
+      },
+      "results": [
+        "a linha e a ckm chegaram à faixa de saída (CP-K); 2 s depois a secção recua por lanços, o jogador com ela"
+      ],
+      "certainty": "GAMEPLAY_DRAMATIZATION",
+      "sources": []
+    }
+  ],
+  "withdrawal": {
+    "classification": "GAMEPLAY_DRAMATIZATION",
+    "note": "A retirada: a linha (sete fuzileiros) e a ckm saem por lanços, três equipas em três lanços, para a faixa de saída; a secção de Zieliński fica de retaguarda e recua depois por lanços (mesma fábrica de lanços da retirada da cabeça de ponte, m01-act-factories.js makeSquadPlan). Ninguém atira em ninguém: as fontes do repositório não dão contacto durante a retirada.",
+    "exit": {
+      "minX": -600,
+      "maxX": -560,
+      "minZ": -1068,
+      "maxZ": -1056,
+      "note": "Faixa de saída: o canto sudoeste da fatia (dentro de `playable`, z ≤ −1050). O ato acaba quando o jogador está nela e a secção já saiu, antes de qualquer contagem de saída de limites."
+    },
+    "messenger": {
+      "id": "np_mensageiro",
+      "from": [
+        -560,
+        -1056
+      ],
+      "to": [
+        -425,
+        -1110
+      ],
+      "pace": 5,
+      "speakSec": 4,
+      "classification": "GAMEPLAY_DRAMATIZATION (a forma; a ordem é T03)",
+      "note": "Mensageiro fictício: sem nome, sem patente, sem insígnia. Chega de sudoeste ao posto de comando (layout.points.command_post), dá a ordem e volta por onde veio."
+    },
+    "line": {
+      "teams": [
+        [
+          "pl_np_4",
+          "pl_np_5",
+          "pl_np_6"
+        ],
+        [
+          "ckm_gunner",
+          "ckm_loader",
+          "pl_np_3"
+        ],
+        [
+          "pl_np_0",
+          "pl_np_1",
+          "pl_np_2"
+        ]
+      ],
+      "posts": [
+        null,
+        {
+          "id": "np_bound_a",
+          "slots": {
+            "pl_np_4": [-426, -1126],
+            "pl_np_5": [-423.5, -1127.8],
+            "pl_np_6": [-421, -1126],
+            "ckm_gunner": [-452, -1127],
+            "ckm_loader": [-454.5, -1128.8],
+            "pl_np_3": [-449.5, -1128.8],
+            "pl_np_0": [-490, -1126],
+            "pl_np_1": [-487.5, -1127.8],
+            "pl_np_2": [-485, -1126]
+          }
+        },
+        {
+          "id": "np_exit",
+          "slots": {
+            "pl_np_0": [-597, -1064],
+            "pl_np_1": [-592.5, -1064],
+            "pl_np_2": [-588, -1064],
+            "ckm_gunner": [-583.5, -1064],
+            "ckm_loader": [-579, -1064],
+            "pl_np_3": [-574.5, -1064],
+            "pl_np_4": [-597, -1059],
+            "pl_np_5": [-592.5, -1059],
+            "pl_np_6": [-588, -1059]
+          }
+        }
+      ],
+      "moves": [
+        { "team": 0, "to": 1, "call": "line_go", "orderAfterSec": 3 },
+        { "team": 1, "to": 1, "call": "line_bound", "afterArrivalSec": 0 },
+        { "team": 2, "to": 1, "call": "line_bound", "afterArrivalSec": 0 },
+        { "team": 0, "to": 2, "call": "line_bound", "afterArrivalSec": 0 },
+        { "team": 1, "to": 2, "call": "line_bound", "afterArrivalSec": 0 },
+        { "team": 2, "to": 2, "call": "line_bound", "afterArrivalSec": 0 }
+      ],
+      "pace": 4.6,
+      "arriveM": 0.9,
+      "stallSec": 9,
+      "lastCall": "19:40:00",
+      "cover": {
+        "freshSec": 10,
+        "lookSec": [2.5, 2]
+      },
+      "note": "Três equipas (a ala leste, a ckm com o quarto fuzileiro do centro, a ala oeste) em dois lanços cada: primeiro para o ponto de paragem a 30 m do parapeito, depois para a faixa de saída. Um lanço dura o que a equipa leva a chegar ou, no máximo, `stallSec`: a seguinte parte logo a seguir e a anterior acaba o caminho por si (a fábrica de lanços da BW). Quem entra na faixa de saída deixa o campo (fica inativo)."
+    },
+    "rear": {
+      "teams": [
+        [
+          "staszek_pawlak"
+        ],
+        [
+          "szymon_kowal"
+        ],
+        [
+          "marek_zielinski"
+        ]
+      ],
+      "posts": [
+        null,
+        {
+          "id": "np_rear_bound",
+          "slots": {
+            "staszek_pawlak": [-404, -1131],
+            "szymon_kowal": [-392, -1131],
+            "marek_zielinski": [-419, -1131]
+          }
+        },
+        {
+          "id": "np_exit_rear",
+          "slots": {
+            "staszek_pawlak": [-583.5, -1059],
+            "szymon_kowal": [-579, -1059],
+            "marek_zielinski": [-574.5, -1059]
+          }
+        }
+      ],
+      "moves": [
+        { "team": 0, "to": 1, "call": "rear_go", "orderAfterSec": 2 },
+        { "team": 1, "to": 1, "call": "rear_bound", "afterArrivalSec": 0 },
+        { "team": 2, "to": 1, "call": "rear_bound", "afterArrivalSec": 0 },
+        { "team": 0, "to": 2, "call": "rear_bound", "afterArrivalSec": 0 },
+        { "team": 1, "to": 2, "call": "rear_bound", "afterArrivalSec": 0 },
+        { "team": 2, "to": 2, "call": "rear_bound", "afterArrivalSec": 0 }
+      ],
+      "pace": 4.2,
+      "arriveM": 0.9,
+      "stallSec": 8,
+      "lastCall": "19:40:00",
+      "cover": {
+        "freshSec": 10,
+        "lookSec": [2.5, 2]
+      },
+      "note": "A retaguarda: a secção recua do parapeito, um homem por lanço, o chefe por último, quando a linha já saiu (`orderAfterSec` conta desde esse momento). Parte do parapeito, onde o plano `grp_np_section.squad` a deixou. O primeiro lanço é para sul, em linha recta (a 28 m do parapeito), porque as caixas de munições estão a 2,4 m atrás do parapeito: um caminho para oeste ao longo dele passaria por cima delas."
+    },
+    "outGraceSec": 45,
+    "lag": {
+      "distanceM": 50,
+      "afterSec": 12,
+      "note": "Ficar para trás mais de `distanceM` da secção (ou da saída, quando ela já saiu), `afterSec` depois de a retaguarda partir, só faz o Pawlak chamar o jogador (com o repouso da fala); não falha nem repõe nada."
+    },
+    "probe": {
+      "enabled": false,
+      "note": "D-5 (decisão do proprietário, pendente): uma sonda alemã de poucos homens durante a retirada NÃO tem fonte (T03 não fala de contacto; HISTORICAL_RESEARCH.md: «qualquer contacto durante a retirada ou perseguição alemã» é BLOQUEADO). Não está construída: o ato corre sem inimigos. A chave existe só para a decisão ficar à vista nos dados; `true` é recusado pelo plano até haver decisão e implementação."
+    }
+  },
+  "groups": [
+    {
+      "id": "grp_np_line",
+      "name": "Fuzileiros da linha norte (companhia do perímetro, nomes fictícios)",
+      "classification": "DOCUMENTED (2.ª/3.ª companhias a norte, T03) / GAMEPLAY_DRAMATIZATION (homens, número)",
+      "rearguard": {
+        "version": 1,
+        "from": "evt_npc_dusk",
+        "men": [
+          "pl_np_0",
+          "pl_np_1",
+          "pl_np_2",
+          "pl_np_3",
+          "pl_np_4",
+          "pl_np_5",
+          "pl_np_6"
+        ],
+        "posts": [
+          [-497, -1159.2],
+          [-483, -1159.2],
+          [-467, -1159.2],
+          [-455, -1159.2],
+          [-375, -1159.2],
+          [-361, -1159.2],
+          [-346, -1159.2]
+        ],
+        "joinWithinM": 30,
+        "runSpeed": 5.5,
+        "fire": {
+          "weapon": "kb_wz29",
+          "pauseSec": 6.5,
+          "sigmaMil": [7, 6],
+          "clearanceM": 1.2,
+          "headroomM": 0.15,
+          "rangeM": 250,
+          "riseBeforeSec": 0.9,
+          "holdAfterSec": 1.6
+        },
+        "note": "Os mesmos sete fuzileiros do VII-a e do VII-b, nos mesmos postos; neste ato não disparam (não há ninguém a quem disparar): a ficha de tiro da fábrica fica nos dados só porque a fábrica a exige."
+      }
+    },
+    {
+      "id": "grp_np_section",
+      "name": "Secção de Zieliński (no posto de comando; sobe ao parapeito com a ordem e fica de retaguarda)",
+      "classification": "GAMEPLAY_DRAMATIZATION",
+      "leader": {
+        "id": "marek_zielinski",
+        "from": [-421.5, -1111.8],
+        "post": [-421.5, -1111.8]
+      },
+      "stage": {
+        "slots": {
+          "marek_zielinski": [-421.5, -1111.8],
+          "staszek_pawlak": [-426.5, -1115.6],
+          "szymon_kowal": [-417.5, -1116.2]
+        }
+      },
+      "squad": {
+        "teams": [
+          ["marek_zielinski"],
+          ["staszek_pawlak"],
+          ["szymon_kowal"]
+        ],
+        "posts": [
+          null,
+          {
+            "id": "np_parapet",
+            "slots": {
+              "marek_zielinski": [-417, -1159.2],
+              "staszek_pawlak": [-402, -1159.2],
+              "szymon_kowal": [-390, -1159.2]
+            }
+          }
+        ],
+        "moves": [
+          { "team": 0, "to": 1, "call": "order", "orderAfterSec": 1.5 },
+          { "team": 1, "to": 1, "call": "follow", "afterArrivalSec": 1 },
+          { "team": 2, "to": 1, "call": "follow", "afterArrivalSec": 1 }
+        ],
+        "pace": 4.2,
+        "arriveM": 0.9,
+        "stallSec": 5,
+        "lastCall": "19:40:00",
+        "cover": {
+          "freshSec": 10,
+          "lookSec": [2.5, 2]
+        }
+      },
+      "note": "Lanços de subida: a secção sobe do posto de comando ao parapeito (o chefe primeiro) quando a ordem chega; `orderAfterSec` conta desde a chegada da ordem. O recuo vem depois, em `withdrawal.rear`."
+    },
+    {
+      "id": "grp_np_ckm",
+      "name": "Guarnição da ckm wz.30 (pelotão de metralhadoras do perímetro)",
+      "classification": "DOCUMENTED (pelotões de metralhadoras, T03) / RECONSTRUCTED (posição)",
+      "root": [-440, -3, -1159.5],
+      "yawDeg": 0,
+      "fire": {
+        "belt": 120,
+        "burstRounds": 8,
+        "interval": 0.1,
+        "burstSec": 1.3,
+        "feedSec": 3.2,
+        "aimSec": 1.2,
+        "holdSec": 8,
+        "cooldown": [3, 6],
+        "bias": [2.5, 1.2],
+        "cone": [5, 2.5],
+        "damage": 34,
+        "suppressSec": 2.5,
+        "engageSec": 10,
+        "closeM": 120,
+        "rangeM": 400
+      },
+      "fireNote": "Neste ato a ckm não dispara: a ficha de tiro fica nos dados só porque o actor da ckm a leva (a fita). A guarnição sai com a linha; a máquina fica no ninho na pose de abandono (a animação `abandon` do ato atual)."
+    }
+  ],
+  "cast": [
+    {
+      "id": "marek_zielinski",
+      "name": "Zieliński",
+      "role": "SQUAD_LEADER",
+      "essential": true
+    },
+    {
+      "id": "staszek_pawlak",
+      "name": "Pawlak",
+      "role": "RADIO_OPERATOR",
+      "essential": true
+    },
+    {
+      "id": "szymon_kowal",
+      "name": "Kowal",
+      "role": "SUPPORT",
+      "essential": true,
+      "rounds": 20
+    },
+    {
+      "id": "ckm_gunner",
+      "name": "Atirador da ckm",
+      "role": "SUPPORT",
+      "essential": true
+    },
+    {
+      "id": "ckm_loader",
+      "name": "Municiador da ckm",
+      "role": "SUPPORT",
+      "essential": true
+    },
+    {
+      "id": "np_mensageiro",
+      "name": "Mensageiro",
+      "role": "RIFLEMAN",
+      "essential": true
+    }
+  ],
+  "callouts": [
+    {
+      "id": "npc_001",
+      "on": "arrive_card_end",
+      "speaker": "marek_zielinski",
+      "text": "Wrona, aqui. Calma por agora: esperamos ordens do batalhão.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "npc_002",
+      "on": "order_given",
+      "speaker": "np_mensageiro",
+      "text": "Ordem do comandante do batalhão: retirar ao anoitecer! A linha sai primeiro, a retaguarda por último!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "npc_003",
+      "on": "order_section",
+      "speaker": "marek_zielinski",
+      "text": "Ouviram. A linha sai por lanços e nós cobrimos. Ao parapeito, depressa!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "npc_004",
+      "on": "line_go",
+      "speaker": "marek_zielinski",
+      "text": "Primeira equipa, lanço! As outras cobrem.",
+      "cooldownSec": 999
+    },
+    {
+      "id": "npc_005",
+      "on": "line_out",
+      "speaker": "marek_zielinski",
+      "text": "A linha saiu. Agora nós, por lanços. Wrona, comigo!",
+      "cooldownSec": 999
+    },
+    {
+      "id": "npc_006",
+      "on": "lag",
+      "speaker": "staszek_pawlak",
+      "text": "Wrona! Atrás de nós, estamos a sair!",
+      "cooldownSec": 25
+    },
+    {
+      "id": "npc_007",
+      "on": "exit",
+      "speaker": "marek_zielinski",
+      "text": "Todos fora. Em marcha para Starogard.",
+      "cooldownSec": 999
+    }
+  ],
+  "speakers": {
+    "marek_zielinski": "Zieliński",
+    "staszek_pawlak": "Pawlak",
+    "szymon_kowal": "Kowal",
+    "np_mensageiro": "Mensageiro"
+  },
+  "endBeatSec": 6,
+  "resupply": {
+    "reachM": 2.2,
+    "reserveTo": 40,
+    "text": "E · reabastecer na caixa de munições",
+    "note": "Caixas de munições atrás do parapeito (props do kit T12): continuam utilizáveis, como nos outros atos da área; GAMEPLAY_DRAMATIZATION."
+  },
+  "debrief": {
+    "insertAfter": "db_04",
+    "paragraphs": [
+      {
+        "id": "db_npc_01",
+        "enabled": true,
+        "sources": [
+          "T03",
+          "C01"
+        ],
+        "text": "Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard; o 2.º Batalhão retirou-se entre as 18:00 e as 20:00. O Sol pôs-se às 18:39. Quem transmitiu a ordem, o caminho e a ordem de marcha não estão confirmados; o mensageiro, a retaguarda da secção e o caminho representado são reconstrução para o jogo."
+      }
+    ]
+  }
+}

@@ -14,11 +14,16 @@
 // marker) are the DEFAULTS of an act profile (act.profile; makeProfile), so that a second act of the same area can name its own; the barrage (artillery with an effect by radius, stepBarrage), the
 // checkpoints with a trigger of data (lullCheckpoint) and the stretcher-bearers (stepMedics) are optional blocks of the act data that an act without them (VII-a) never meets: its saves, its
 // streams and its golden are what they were.
+// 2026-11-04 (INC-3, Act VII-c «Ordem ~17:00 e retirada», docs/direction/M01_R4_VII_BC_DESIGN.md §3): an act with no assault at all. Its plan has a WITHDRAWAL instead (act.withdrawal; m01-withdrawal.js): a courier brings
+// the order to the command post, the section goes up to the parapet, the line and the ckm crew leave by bounds (the squad machinery of m01-act-factories.js, a second and a third plan with records of their own), the section
+// stays as rear guard and leaves by bounds when the line is out, and the act ends when the player stands in the exit band and the rear guard is out (stepWithdrawal). A card for the order comes before the entry card
+// (cards.order), the checkpoints are CP-J at the end of the entry card and CP-K by a flag. Nobody fires: an act without the blocks (VII-a, VII-b) never meets any of this, as with the barrage.
 import bwDefinition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import npLayout from '../../missions/m01-tczew/areas/np/layout.json' with { type: 'json' };
 import npAct from '../../missions/m01-tczew/areas/np/act.json' with { type: 'json' };
 import npbAct from '../../missions/m01-tczew/areas/np/act-vii-b.json' with { type: 'json' };
+import npcAct from '../../missions/m01-tczew/areas/np/act-vii-c.json' with { type: 'json' };
 import {M01AreaWorld} from '../world/m01-area-world.js';
 import {movePlayer} from '../world/m01-player-physics.js';
 import {Wz29} from './wz29.js';
@@ -33,6 +38,7 @@ import {pairUnit} from './m01-unit-hash.js';   // a uniform number in [0, 1) fro
 import {CONCUSSION,blastPosture,blastTarget,sightPoint,concussionPeak,concussionLevel,mergeConcussion} from './m01-blast.js';   // act 1's pure blast helpers, read and never changed
 import {SHELL_SPECS,SHELL_REACH_M,PLANNED_IMPACT_M,shellOutcome,shellProtection,makeBarragePlan,makeMedicPlan,barrageSeed,barrageNext,pickShellPoint,landingPoint,freshBarrageRecord,freshMedicRecord,validBarrageRecord,validMedicRecord} from './m01-shell-blast.js';
 import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validApproachWave,validGermanAi,validSquadRecord} from './m01-act-factories.js';
+import {makeWithdrawalPlan,freshWithdrawalRecord,validWithdrawalRecord,validWithdrawalSquads,ckmCrewStage,inBand} from './m01-withdrawal.js';
 
 // 2 (2026-11-03, the second echelon): the roster grew (the men of the echelons that follow the first) and the wave record gained its echelon state (timers.wave.ech/echs/lullUntil).
 // A schema 1 save of this act (QA only: the acts are off by default) is REJECTED with a message, not migrated: it cannot hold the later echelons' men, and the act restarts in seconds.
@@ -50,8 +56,9 @@ const aiGauss=ai=>{let u=0;while(u<=1e-12)u=aiNext(ai);return Math.sqrt(-2*Math.
 const between=(ai,[lo,hi])=>lo+(hi-lo)*aiNext(ai);
 const pause=(ai,mean,lo)=>Math.min(3*mean,Math.max(lo,mean*Math.exp(.5*aiGauss(ai)-.125)));
 
-/** The area acts this module can run, in the order of the chain (m01-acts.js): VII-a, VII-b; WP-4 adds VII-c. */
-export const AREA_ACTS=Object.freeze({act_vii_a_north:Object.freeze({layout:npLayout,act:npAct}),act_vii_b_north_day:Object.freeze({layout:npLayout,act:npbAct})});
+/** The area acts this module can run, in the order of the chain (m01-acts.js): VII-a, VII-b, VII-c. */
+export const AREA_ACTS=Object.freeze({act_vii_a_north:Object.freeze({layout:npLayout,act:npAct}),act_vii_b_north_day:Object.freeze({layout:npLayout,act:npbAct}),
+  act_vii_c_withdrawal:Object.freeze({layout:npLayout,act:npcAct})});
 
 /**
  * The names an area act uses for its parts (F1 of the design): ids of its cards, objectives, event and checkpoint, the prefix of its phases and flags, the label of its marker. VII-a's are the defaults
@@ -98,25 +105,32 @@ export function areaPlanOf(actId,entry){
   const pb=layout.bounds.playable,def={groups:act.groups,events:act.events};
   const line=makeLinePlan(def,{group:'grp_np_line',key:'rearguard',man:'^pl_np_\\d+$',postBox:{minX:pb.minX,maxX:pb.maxX,minZ:-1160,maxZ:-1158},survivorFloor:false,label:`M01 ${L} line`});
   const section=group('grp_np_section'),squad=makeSquadPlan(section.squad,`M01 ${L} squad`);
-  const assault=makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:`M01 ${L} assault`,solids:areaPlanSolids(layout)});
+  // INC-3: an act has an assault (VII-a, VII-b: grp_np_de) or a withdrawal (VII-c: act.withdrawal), never both and never neither.
+  const assault=group('grp_np_de')!==undefined?makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:`M01 ${L} assault`,solids:areaPlanSolids(layout)}):null;
   const known=act.checkpoints.map(c=>c.id);
-  for(const e of assault.echelons)if(e.checkpoint!==null&&(!known.includes(e.checkpoint)||e.checkpoint===profile.arrivalCheckpoint))
+  for(const e of assault?.echelons??[])if(e.checkpoint!==null&&(!known.includes(e.checkpoint)||e.checkpoint===profile.arrivalCheckpoint))
     throw new Error(`M01 ${L} assault: echelon ${e.id}: checkpoint ${e.checkpoint} must be a checkpoint of the act other than the arrival's`);
   const ckm=group('grp_np_ckm');
   if(!Array.isArray(ckm.root)||ckm.root.length!==3||!Number.isFinite(ckm.yawDeg))throw new Error(`M01 ${L} ckm root/yawDeg`);
   const stageSlots=Object.fromEntries(Object.entries(section.stage.slots).map(([id,[x,z]])=>[id,{x,z}]));
-  // The event that sends the first echelon on: at a battle clock (VII-a: or when the player reaches the post), or some seconds after a barrage has ended (VII-b).
+  // The event that sends the first echelon on: at a battle clock (VII-a: or when the player reaches the post), or some seconds after a barrage has ended (VII-b); in VII-c, the order (the courier's arrival).
   const waveTrigger=act.events.find(e=>e.id===profile.waveEvent).trigger;
+  if(!assault&&(act.barrages!==undefined||act.medics!==undefined))throw new Error(`M01 ${L}: barrages and medics belong to an act with an assault`);
   const barrages=act.barrages!==undefined?makeBarragePlan(act.barrages,{playable:pb,objectives:act.objectives.map(o=>o.id),echelons:assault.echelons.length,line:line.men,label:`M01 ${L} barrage`}):null;
   const medics=act.medics!==undefined?makeMedicPlan(act.medics,{playable:pb,label:`M01 ${L} medics`}):null;
   if(barrages){for(const b of barrages.barrages)if(b.callout&&!act.callouts.some(c=>c.on===b.callout))throw new Error(`M01 ${L} barrage ${b.id}: callout ${b.callout} is not a callout of the act`);}
-  if(waveTrigger.type==='battleClock'){if(typeof waveTrigger.at!=='string')throw new Error(`M01 ${L}: the wave event needs a battle clock time`);}
+  const crewIds=['ckm_gunner','ckm_loader'];
+  const withdrawal=act.withdrawal!==undefined?makeWithdrawalPlan(act.withdrawal,{playable:pb,label:`M01 ${L} withdrawal`,lineIds:[...line.men,...crewIds],lineStage:{...Object.fromEntries(line.men.map((id,i)=>[id,line.posts[i]])),...ckmCrewStage(ckm.root,crewIds)},section:squad}):null;
+  if(Boolean(assault)===Boolean(withdrawal))throw new Error(`M01 ${L}: an area act has an assault (grp_np_de) or a withdrawal (act.withdrawal), not both and not neither`);
+  if(withdrawal){if(waveTrigger.type!=='order')throw new Error(`M01 ${L}: the order event trigger is {type: order}`);}
+  else if(waveTrigger.type==='battleClock'){if(typeof waveTrigger.at!=='string')throw new Error(`M01 ${L}: the wave event needs a battle clock time`);}
   else if(waveTrigger.type==='barrageEnd'){if(!barrages?.byId[waveTrigger.barrage]||!(waveTrigger.afterSec>=0&&waveTrigger.afterSec<=60))throw new Error(`M01 ${L}: the wave event follows a barrage of the act, 0-60 s after its end`);}
   else throw new Error(`M01 ${L}: the wave event trigger is battleClock or barrageEnd`);
-  const triggers=checkpointTriggers(act,profile,assault.echelons.length);
+  const triggers=checkpointTriggers(act,profile,assault?assault.echelons.length:0);
   if(medics&&!barrages)throw new Error(`M01 ${L}: medics need a barrage (the wounded man is a shell's)`);
+  if(act.cards.order!==undefined){const c=act.cards.order;if(!c||typeof c.id!=='string'||!c.id||!(c.seconds>0)||typeof c.skippable!=='boolean'||!Array.isArray(c.lines)||!c.lines.length)throw new Error(`M01 ${L}: cards.order {id, seconds, skippable, lines}`);}
   const points=Object.freeze({...layout.points,...(act.points??{})});
-  return Object.freeze({actId,layout,act,profile,line,squad,assault,ckm,section,stageSlots,waveTrigger,waveAt:waveTrigger.type==='battleClock'?seconds(waveTrigger.at):null,barrages,medics,triggers,points,
+  return Object.freeze({actId,layout,act,profile,line,squad,assault,ckm,section,stageSlots,waveTrigger,waveAt:waveTrigger.type==='battleClock'?seconds(waveTrigger.at):null,barrages,medics,withdrawal,triggers,points,
     clockStart:seconds(act.clock.battleClockStart)});
 }
 /**
@@ -144,7 +158,7 @@ function checkpointTriggers(act,profile,echelons){
 const CKM_IDS=['ckm_gunner','ckm_loader'];
 // The arrival's checkpoint is profile.arrivalCheckpoint (VII-a: CP-E, at the end of the entry card; the pause's checkpoint, CP-F, is the second echelon's `checkpoint` in the data; VII-b: CP-I, and CP-I2 by a trigger of data).
 /** The roster of an area act, in actor order (makeActors). */
-export const areaRoster=plan=>['marek_zielinski','staszek_pawlak','szymon_kowal',...plan.line.men,...CKM_IDS,...plan.assault.men.map(m=>m.id),...(plan.medics?.ids??[])];
+export const areaRoster=plan=>['marek_zielinski','staszek_pawlak','szymon_kowal',...plan.line.men,...CKM_IDS,...(plan.assault?plan.assault.men.map(m=>m.id):[]),...(plan.medics?.ids??[]),...(plan.withdrawal?[plan.withdrawal.messenger.id]:[])];
 const LINE_DAMAGE=40;                    // a German round that strikes a man of the line (not the named section or the ckm crew: they are pinned, never killed, as the plot needs them)
 const ESSENTIAL_PIN_SEC=3,NEAR_PIN_SEC=4,PLAYER_SUPPRESS_SEC=5;
 const RKM={burst:[3,5],sigmaMil:[7,5],pauseSec:4,mag:20,reloadSec:4};
@@ -169,12 +183,12 @@ export class M01AreaSimulation {
     // The definition the HUD and the audio read: the current act's, with this act's objectives, checkpoints and an empty cutscene list (the cards are scene.card).
     this.definition={...bwDefinition,objectives:A.objectives.map(o=>({...o})),checkpoints:A.checkpoints.map(c=>({...c})),cutscenes:[],sectors:[],
       debrief:{...bwDefinition.debrief,paragraphs:debriefWith(...debriefChain(this.actId,this.carry))}};
-    this.world=new M01AreaWorld(L,{extraCovers:P.assault.covers,eventIds:this.carry.events,flags:this.carry.flags,...(A.clock.sun?{sun:A.clock.sun}:{})});
+    this.world=new M01AreaWorld(L,{extraCovers:P.assault?P.assault.covers:[],eventIds:this.carry.events,flags:this.carry.flags,...(A.clock.sun?{sun:A.clock.sun}:{})});
     this.clock=0;this.battleClock=P.clockStart;this.events=[];
     // The current act's consumed events stay consumed (the bridges as the demolitions left them), an hour before this act's clock; this act's own events at their clock.
     this.consumed=Object.fromEntries(this.carry.events.map(id=>[id,-3600]));
     this.objectives=Object.fromEntries(A.objectives.map(o=>[o.id,{state:'locked',progress:0}]));
-    this.flags={...this.carry.flags,[this.waveFlag]:'pending'};
+    this.flags={...this.carry.flags,...(P.assault?{[this.waveFlag]:'pending'}:{})};   // an act with no assault (VII-c) has no wave to be pending
     this.destruction=[];this.dialogueQueue=[];this.subtitle=null;this.sceneDone=[];this.scene=null;this.checkpointsReached=[];this.failure=null;
     const s=L.points.spawn;
     this.player=entity('jan_wrona',{x:s.x,y:L.groundY,z:s.z},'player',{angle:s.facingDeg*Math.PI/180,pitch:0,radius:.36,aiming:false,moveBlend:0,sprinting:false,weaponShotAt:-1e9,carrying:null,headgear:'pl_rogatywka_wz37'});
@@ -184,12 +198,13 @@ export class M01AreaSimulation {
     for(const a of this.actors)initializePresentation(a,this.clock);
     // The squad record starts at its first bound: the current act's updateSquad infers a retreat already made from men WEST of their slots, which means nothing here.
     this.timers={boundary:0,boundaryCountdown:0,said:{},lastHitAt:-1e9,burstWound:null,wave:null,endAt:null,playerPinnedAt:-1e9,squad:{move:0,moving:false,since:0},
-      ...(P.barrages?{barrage:freshBarrageRecord()}:{}),...(P.medics?{medics:freshMedicRecord()}:{})};   // the records of the blocks an act has; an act without them (VII-a) keeps the timers it always had
+      ...(P.barrages?{barrage:freshBarrageRecord()}:{}),...(P.medics?{medics:freshMedicRecord()}:{}),   // the records of the blocks an act has; an act without them (VII-a) keeps the timers it always had
+      ...(P.withdrawal?{withdrawal:freshWithdrawalRecord(),line:{move:0,moving:false,since:0},rear:{move:0,moving:false,since:0}}:{})};   // INC-3: the withdrawal's record and its two squads (the line's bounds, the rear guard's)
     this.enemyFire={rounds:[],nextId:0};
     const w=L.wreck.smoke;
     this.sectors={sectors:[],damage:[{id:w.id,x:w.x,y:w.y,z:w.z,started:-w.burningSinceSec,soundAt:-w.burningSinceSec,wreck:true}]};
     this.mission={phase:this.phase('ENTRY'),complete:false,text:'',status:''};
-    this.startCard('entry');
+    this.startCard(A.cards.order?'order':'entry');   // INC-3: an act may open on a card before its entry card (VII-c: the order of ~17:00, then «Ao anoitecer»)
     this.checkpoint=this.snapshot(false);
   }
   makeActors(seed){
@@ -208,11 +223,13 @@ export class M01AreaSimulation {
     // The Germans of the first echelon are already in the field when the act opens (the infantry of the ~07:00 attack went to ground when its vehicle was hit, T08): each
     // man kneels at his first stop behind turned earth, silent, until the wave goes on (updateWave). Spawned under the entry card, never in sight. The echelons that follow
     // wait off the field (inactive: never drawn, never hit, never counted) at the entry line, ready to walk in when their lull is over (enterEchelon).
-    P.assault.men.forEach((m,i)=>{const later=m.echelon>0,n=later?m.entry:m.path[m.stops[0]];add(entity(m.id,{x:n.x,y,z:n.z},'enemy',{group:'grp_np_de',weapon:m.weapon,role:m.weapon==='mg34'?'SUPPORT':'RIFLEMAN',
+    (P.assault?.men??[]).forEach((m,i)=>{const later=m.echelon>0,n=later?m.entry:m.path[m.stops[0]];add(entity(m.id,{x:n.x,y,z:n.z},'enemy',{group:'grp_np_de',weapon:m.weapon,role:m.weapon==='mg34'?'SUPPORT':'RIFLEMAN',
       facing:Math.PI/2,firedAt:-1e9,cooldown:2+i*.4,crouched:!later,active:!later,
       deck:later?{v:1,phase:'advance',node:0,until:0,since:0,t0:0,pinned:0}:{v:1,phase:m.role==='overwatch'?'hold':'cover',node:m.stops[0],until:0,since:0,t0:0,pinned:0}}),30+i);});
     // The stretcher-bearers (act.medics) wait off the field, at the south edge, until a man of the line is wounded (stepMedics). They are of the named kind: the plot needs them, so a round only pins them.
     (P.medics?.ids??[]).forEach((id,i)=>add(entity(id,{x:P.medics.from[0]+i*1.2,y,z:P.medics.from[1]},'ally',{role:'MEDIC',group:'grp_np_medics',essential:true,active:false,facing:-Math.PI/2}),60+i));
+    // The courier of the withdrawal (act.withdrawal.messenger) waits off the field, at the SW corner of the slice, until the dusk card has ended (stepWithdrawal). Fictional, named by nothing but his errand; the plot needs him, so he cannot be hurt.
+    if(P.withdrawal){const M=P.withdrawal.messenger;add(entity(M.id,{x:M.from[0],y,z:M.from[1]},'ally',{role:'RIFLEMAN',group:'grp_np_messenger',essential:true,active:false,facing:0}),70);}
     for(const a of out)if(a.firedAt===undefined)a.firedAt=-1e9;
     return out;
   }
@@ -238,6 +255,7 @@ export class M01AreaSimulation {
     s.elapsed+=dt;
     if(s.elapsed<s.card.seconds&&!(skip&&s.skippable&&s.elapsed>.6))return;
     this.sceneDone.push(s.id);this.scene=null;
+    if(s.card.kind==='order'){this.startCard('entry');return;}   // INC-3: the order's card is followed at once by the entry card (the screen stays black between the two)
     if(s.card.kind==='entry'){
       this.consume(this.profile.cardEndEvent);this.activate(this.profile.arrivalObjective);this.mission.phase=this.phase('ARRIVAL');
       this.saveCheckpoint(this.profile.arrivalCheckpoint);this.say('arrive_card_end');
@@ -271,6 +289,7 @@ export class M01AreaSimulation {
     this.stepBarrage();
     this.updateWave();
     this.stepMedics(dt);
+    this.stepWithdrawal(dt);
     this.stepSection(dt);
     this.stepGermans(dt);
     this.stepLine(dt);this.stepKowal(dt);this.stepCKM();
@@ -378,12 +397,12 @@ export class M01AreaSimulation {
    * INC-2 (F4): the checkpoints of the act with a trigger of data (plan.triggers: echelonBroken, flag) are taken the same way, once, in the tick their trigger is true.
    */
   lullCheckpoint(){
-    const W=this.timers.wave;if(!W||this.scene)return;
-    const id=this.plan.assault.echelons[W.ech+1]?.checkpoint;
+    const W=this.timers.wave;if(this.scene)return;
+    const id=W?this.plan.assault.echelons[W.ech+1]?.checkpoint:null;   // INC-3: an act with no assault (VII-c) has no wave, and its CP-K comes from a flag
     if(id&&W.echs[W.ech].brokenAt!==null&&!this.checkpointsReached.includes(id)&&this.player.alive&&!(this.timers.boundary>0))this.saveCheckpoint(id);
     for(const t of this.plan.triggers){
       if(this.checkpointsReached.includes(t.id)||!this.player.alive||this.timers.boundary>0)continue;
-      if(t.type==='echelonBroken'?Number.isFinite(W.echs[t.echelon]?.brokenAt):Boolean(this.flags[t.flag]))this.saveCheckpoint(t.id);
+      if(t.type==='echelonBroken'?Number.isFinite(W?.echs[t.echelon]?.brokenAt):Boolean(this.flags[t.flag]))this.saveCheckpoint(t.id);
     }
   }
   man(a){return this.plan.assault.men.find(m=>m.id===a.id);}
@@ -508,11 +527,14 @@ export class M01AreaSimulation {
     this.world.move(a,dx/d*step,dz/d*step);
     return Math.hypot(target.x-a.x,target.z-a.z)<.05;
   }
-  /** Who a German can shoot at: the player and the Poles he sees (eye to eye, the world's line of sight), within range. */
+  /**
+   * Who a German can shoot at: the player and the Poles he sees (eye to eye, the world's line of sight), within range. A man who lies wounded (a shell's casualty, WOUNDED) is under the line of fire, not in it (the
+   * rule of act 1's rounds, which leave a man lying on the deck out of their traces): his stored posture is a standing man's, which would put him above the parapet in a German's eye.
+   */
   germanTargets(a,range){
     const out=[],p=this.player;
     if(p.alive&&dist(a,p)<=range&&this.world.lineOfSight(a,p))out.push(p);
-    for(const b of this.allies)if(b.alive&&b.active&&dist(a,b)<=range&&this.world.lineOfSight(a,b))out.push(b);
+    for(const b of this.allies)if(b.alive&&b.active&&b.state!=='WOUNDED'&&dist(a,b)<=range&&this.world.lineOfSight(a,b))out.push(b);
     return out;
   }
   germanFire(a,m,dt){
@@ -577,7 +599,7 @@ export class M01AreaSimulation {
     const due=this.enemyFire.rounds.filter(r=>r.arriveAt<=this.clock);this.enemyFire.rounds=this.enemyFire.rounds.filter(r=>r.arriveAt>this.clock);
     const p=this.player,L=this.level;
     for(const r of due){
-      const targets=[p,...this.allies.filter(b=>b.alive&&b.active&&!b.carriedBy)],hit=traceRound(this.world,r,targets),point=hit.point,near=[];
+      const targets=[p,...this.allies.filter(b=>b.alive&&b.active&&!b.carriedBy&&b.state!=='WOUNDED')],hit=traceRound(this.world,r,targets),point=hit.point,near=[];   // a man lying wounded is not in the trace (see germanTargets)
       let victim=hit.actor??null,material=hit.material??'earth';
       // Blind fire (kind 'area', fire.suppress.hitChance; 2026-11-04, step 0 of INC-2): the gun fired at a place, not at a man. A round of it that crosses a man of the line hurts him only with the chance of how
       // he stands (kneeling behind the parapet: low; risen to fire: higher); otherwise it ends in the earth beside him and pins him like any near miss. A pure function of the two ids (pairUnit): no draw of any stream.
@@ -620,6 +642,7 @@ export class M01AreaSimulation {
   // ------------------------------------------------------------------------------------------------------------------------------------------------- the Poles
   stepSection(dt){
     if(this.scene&&!this.sceneDone.includes(this.profile.entryCard))return;
+    if(this.plan.withdrawal)return;   // INC-3: in VII-c the section is moved by stepWithdrawal (up to the parapet with the order, back with the rear guard)
     const z=this.actor('marek_zielinski');
     if(z.alive&&dist(z,z.post)>.05)this.walk(z,z.post,4,dt);
     else if(z.alive)z.atPost=true;
@@ -634,7 +657,7 @@ export class M01AreaSimulation {
     for(const a of [z,this.actor('staszek_pawlak')])if(a.alive&&a.atPost&&this.timers.wave)this.lineShooter(a,dt);
     if(z.alive&&z.atPost&&!this.timers.wave)z.crouched=true;
   }
-  squadPostOf(q,id){const t=this.plan.squad.teams.findIndex(team=>team.includes(id));let k=0;for(let i=0;i<Math.min(q.move+(q.moving?1:0),this.plan.squad.moves.length);i++)if(this.plan.squad.moves[i].team===t)k=this.plan.squad.moves[i].to;return k;}
+  squadPostOf(q,id,plan=this.plan.squad){const t=plan.teams.findIndex(team=>team.includes(id));let k=0;for(let i=0;i<Math.min(q.move+(q.moving?1:0),plan.moves.length);i++)if(plan.moves[i].team===t)k=plan.moves[i].to;return k;}
   stepLine(dt){if(!this.timers.wave)return;for(const id of this.plan.line.men){const a=this.actor(id);if(a.alive&&a.active&&a.state!=='WOUNDED'&&!a.carriedBy)this.lineShooter(a,dt);}}
   /** A rifleman of the firing line (the rearguard's fire model, m01-act-factories makeLinePlan): kneel, rise riseBeforeSec before the shot, one aimed round, hold, kneel. */
   lineShooter(a,dt){
@@ -789,7 +812,7 @@ export class M01AreaSimulation {
       if(r.outcome==='none')continue;
       const health=a.health,wasAlive=a.alive;
       if(r.outcome==='kill'){a.health=0;a.alive=false;a.state='DOWN';a.crouched=false;recordDamage(a,health,wasAlive,clock,at);casualties.killed.push(a.id);}
-      else if(r.outcome==='wound'){a.health=Math.max(1,a.health-r.healthLoss);a.crouched=false;a.state='WOUNDED';recordDamage(a,health,wasAlive,clock,at);casualties.wounded.push(a.id);}
+      else if(r.outcome==='wound'){a.health=Math.max(1,a.health-r.healthLoss);a.crouched=true;a.state='WOUNDED';recordDamage(a,health,wasAlive,clock,at);casualties.wounded.push(a.id);}   // down, not standing: low whatever else reads his posture (and out of the German fire altogether, germanTargets, landRounds)
       else{const prev=a.suppressedUntil;a.suppressedUntil=Math.max(prev,clock+r.suppressSec);recordSuppression(a,prev,clock);if(a.suppressedUntil>prev)casualties.suppressed.push(a.id);}
     }
     const body=blastTarget(P);let peak=0;
@@ -805,7 +828,7 @@ export class M01AreaSimulation {
     const R=this.timers.barrage;R.done[b.id]=this.clock;R.run=null;
     if(this.profile.coverObjective)this.finish(this.profile.coverObjective);
     this.activate(this.profile.holdObjective);
-    this.mission.phase=this.timers.wave?this.phase('ATTACK'):this.phase('AFTER');
+    if(this.mission.phase===this.phase('BARRAGE'))this.mission.phase=this.timers.wave?this.phase('ATTACK'):this.phase('AFTER');   // only the barrage's own phase: a fight that was repelled while the guns were still firing stays repelled
     this.say('barrage_over');
   }
   /**
@@ -840,15 +863,108 @@ export class M01AreaSimulation {
       m0.active=false;m1.active=false;R.handled++;R.state='idle';R.patient=null;R.since=this.clock;
     }
   }
+  // ------------------------------------------------------------------------------------------------------------------------------------------------- the withdrawal (INC-3)
+  /**
+   * The withdrawal of Act VII-c (plan.withdrawal, m01-withdrawal.js). Nothing happens under the cards. When the entry card has ended the courier walks in from the SW corner of the slice to the command post
+   * (stepMessenger); on his arrival the order is given (the flag, the event, two lines) and from that moment the section goes up to the parapet (plan.squad, `east` = the order) while the line and the ckm crew leave by bounds
+   * (plan.withdrawal.line: three teams, two bounds each; a bound ends when its team has arrived or after stallSec, and the next team is on its way at once, as in the squad of the current act). A man who reaches the
+   * exit band leaves the field (inactive). When the last of them is out (`lineOut`, the flag that takes CP-K) and the section stands at the parapet, the rear guard leaves the same way (plan.withdrawal.rear,
+   * `east` = the line out), Zieliński last. The act ends when the rear guard is out and the player stands in the band (`exited`): the end beat, the end card. No stream is drawn anywhere here: every move is a function of
+   * the record and the plan, so a restore continues exactly. GAMEPLAY_DRAMATIZATION: the sources give the order and the withdrawal at dusk (T03), not who brought it, the way, the bounds, nor any contact.
+   */
+  stepWithdrawal(dt){
+    const W=this.plan.withdrawal;if(!W||this.scene)return;
+    const R=this.timers.withdrawal,F=name=>`${this.profile.flagPrefix}.${name}`;
+    this.stepMessenger(W,R,dt);
+    if(R.orderAt===null)return;
+    if(R.rearGoAt===null)this.driveSquad(dt,this.plan.squad,'squad',this.plan.stageSlots,R.orderAt,{});   // up to the parapet, until the rear guard leaves from it
+    this.driveSquad(dt,W.line,'line',W.lineStage,R.orderAt,{line_go:'line_go'});
+    this.retire(W.line,'line',W.lineStage,W.ids.line);
+    if(R.lineOutAt===null&&W.ids.line.every(id=>R.out.includes(id))){
+      R.lineOutAt=this.clock;this.flags[F('lineOut')]=true;this.finish(this.profile.arrivalObjective);this.activate(this.profile.holdObjective);this.mission.phase=this.phase('REAR');this.say('line_out');
+    }
+    if(R.lineOutAt!==null&&R.rearGoAt===null&&this.sectionAtParapet())R.rearGoAt=this.clock;
+    if(R.rearGoAt!==null){
+      this.driveSquad(dt,W.rear,'rear',W.rearStage,R.lineOutAt,{});
+      this.retire(W.rear,'rear',W.rearStage,W.ids.rear);
+      if(R.rearOutAt===null&&W.ids.rear.every(id=>R.out.includes(id)))R.rearOutAt=this.clock;
+    }
+    const p=this.player,centre=this.plan.points.exit_centre;
+    if(R.exitedAt===null&&R.rearOutAt!==null&&p.alive&&inBand(W.exit,p)){
+      R.exitedAt=this.clock;this.flags[F('exited')]=true;this.finish(this.profile.holdObjective);this.timers.endAt=this.clock+this.plan.act.endBeatSec;this.mission.phase=this.phase('EXIT');this.say('exit');
+    }
+    if(R.rearGoAt!==null&&R.exitedAt===null&&this.clock-R.rearGoAt>=W.lag.afterSec){   // far behind the rear guard (or the band, when it is out): Pawlak calls him; the line has a cooldown, nothing fails
+      const field=W.ids.rear.map(id=>this.actor(id)).filter(a=>a.active),behind=dist(centre,p)-(field.length?Math.max(...field.map(a=>dist(centre,a))):0);   // how far behind the last man of the rear guard he is (the band itself, when they are out)
+      if(behind>W.lag.distanceM)this.say('lag');
+    }
+  }
+  /** The courier: off the field until the entry card has ended, then walking in to the command post at his pace; on arrival the order (flag, event, the two lines), a few seconds of speaking, and back the way he came. */
+  stepMessenger(W,R,dt){
+    const M=W.messenger,m=this.actor(M.id),to={x:M.to[0],z:M.to[1]},from={x:M.from[0],z:M.from[1]};
+    if(R.messenger==='idle'){R.messenger='walking';R.since=this.clock;m.active=true;m.crouched=false;m.y=this.world.heightAt(m.x,m.z);}
+    if(R.messenger==='walking'){
+      if(!this.walk(m,to,M.pace,dt))return;
+      R.messenger='speaking';R.since=R.orderAt=this.clock;this.flags[`${this.profile.flagPrefix}.order`]=true;this.consume(this.profile.waveEvent);
+      this.mission.phase=this.phase('ORDER');this.say('order_given');this.say('order_section');
+    }
+    if(R.messenger==='speaking'){
+      const z=this.actor('marek_zielinski');m.facing=angleOf(m,z);z.facing=angleOf(z,m);
+      if(this.clock-R.since<M.speakSec)return;
+      R.messenger='leaving';R.since=this.clock;
+    }
+    if(R.messenger==='leaving'&&this.walk(m,from,M.pace,dt)){R.messenger='gone';R.since=this.clock;m.active=false;}
+  }
+  /**
+   * One squad plan of the withdrawal (the section's own, the line's, the rear guard's): the generic squad step over its record (sim.timers[key]), then every man who is still on the field walks to the slot of his team's
+   * current post (a team whose bound has ended on stallSec keeps walking to its slot while the next team starts), and a man held at a post after the first kneels facing north. The crew of the ckm, once on its way, is on its
+   * `retreat` phase (the renderer draws the gun in its abandoned pose and the crew walking). `calls`: which of the plan's calls say a line of the act.
+   */
+  driveSquad(dt,plan,key,stage,east,calls){
+    const q=squadStep(plan,this,{stageSlots:stage,carrier:null,east,say:node=>{if(calls[node])this.say(calls[node]);}},key);
+    for(const id of plan.teams.flat()){
+      const a=this.actor(id);if(!a.alive||!a.active)continue;
+      const k=this.squadPostOf(q,id,plan),slot=squadSlotOf(plan,stage,id,k);
+      if(squadMovingIn(plan,q,a)||dist(a,slot)>.05){
+        a.crouched=false;a.atPost=false;this.walk(a,slot,plan.pace,dt);
+        if(k>0&&a.ckm&&a.ckm.phase!=='retreat')a.ckm={...a.ckm,phase:'retreat',startedAt:this.clock};
+      }else if(k>0){a.crouched=true;a.facing=-Math.PI/2;a.atPost=true;}
+    }
+    return q;
+  }
+  /** The men of a plan who have reached their slot at the last post (the exit band) leave the field at once; a man stuck on something for outGraceSec after the plan's last bound is taken off the field in his slot. */
+  retire(plan,key,stage,ids){
+    const R=this.timers.withdrawal,q=this.timers[key],last=plan.posts.length-1;
+    const stuck=q.move>=plan.moves.length&&!q.moving&&this.clock-q.since>=this.plan.withdrawal.outGraceSec;
+    for(const id of ids){
+      if(R.out.includes(id))continue;
+      const a=this.actor(id),slot=squadSlotOf(plan,stage,id,last);
+      if(stuck||(this.squadPostOf(q,id,plan)===last&&dist(a,slot)<=plan.arriveM)){
+        if(stuck){a.x=slot.x;a.z=slot.z;a.y=this.world.heightAt(slot.x,slot.z);}
+        a.active=false;a.crouched=false;a.atPost=false;R.out.push(id);
+      }
+    }
+  }
+  /** The section stands at the parapet: the up plan has finished and every man is at his slot. */
+  sectionAtParapet(){
+    const P=this.plan,q=this.timers.squad,last=P.squad.posts.length-1;
+    if(q.move<P.squad.moves.length||q.moving)return false;
+    return P.squad.teams.flat().every(id=>{const a=this.actor(id);return !a.alive||dist(a,squadSlotOf(P.squad,P.stageSlots,id,last))<=P.squad.arriveM;});
+  }
+  /** The status line of the withdrawal, as the HUD shows it under the objective: no number, no hour. */
+  withdrawalStatus(){
+    const R=this.timers.withdrawal,L=this.profile.statusLabel;
+    if(R.orderAt===null||R.exitedAt!==null)return '';
+    return R.lineOutAt===null?`${L} · a linha sai por lanços`:`${L} · a secção recua por lanços`;
+  }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- objectives, voices
   updateObjectives(){
     const p=this.player,A=this.profile,post=this.plan.points[A.marker],reach=this.plan.act.objectives.find(o=>o.id===A.arrivalObjective);
-    if(this.active(A.arrivalObjective)&&Math.hypot(p.x-post.x,p.z-post.z)<reach.reachM&&(!A.arrivalNeedsReserve||this.weapon.reserve>=this.plan.act.resupply.reserveTo))this.finish(A.arrivalObjective);
+    if(!this.plan.withdrawal&&this.active(A.arrivalObjective)&&Math.hypot(p.x-post.x,p.z-post.z)<reach.reachM&&(!A.arrivalNeedsReserve||this.weapon.reserve>=this.plan.act.resupply.reserveTo))this.finish(A.arrivalObjective);   // VII-c's first objective closes with the line's exit, not at the marker
     if(this.timers.endAt!==null&&this.clock>=this.timers.endAt&&!this.scene&&!this.sceneDone.includes(A.endCard)){this.timers.endAt=null;this.startCard('end');}
     const current=this.plan.act.objectives.find(o=>this.active(o.id));
     this.mission.text=current?.text??(this.objectives[A.holdObjective].state==='done'?A.repelledText:'');
     const W=this.timers.wave;
-    this.mission.status=this.timers.barrage?.run?'Fogo de artilharia · abrigue-se atrás do parapeito':W&&W.repelledAt===null?this.fightStatus(W):'';
+    this.mission.status=this.plan.withdrawal?this.withdrawalStatus():this.timers.barrage?.run?'Fogo de artilharia · abrigue-se atrás do parapeito':W&&W.repelledAt===null?this.fightStatus(W):'';
   }
   /** The status line of the fight, as the HUD shows it: the echelon on the field (the first one's wording is the original), its men falling back, or the lull between two echelons. */
   fightStatus(W){
@@ -876,6 +992,13 @@ export class M01AreaSimulation {
   get clockLabel(){return this.plan.act.clock.label;}
   get objectiveMarker(){
     const A=this.profile;
+    if(this.plan.withdrawal){   // VII-c: the parapet while the line leaves, then the exit band
+      if(this.scene||this.mission.complete)return null;
+      const q=this.player,mark=this.active(A.arrivalObjective)?[this.plan.points[A.marker],A.markerLabel]:this.active(A.holdObjective)?[this.plan.points.exit_centre,'Saída']:null;
+      if(!mark)return null;
+      const [pt,label]=mark,rel=Math.atan2(pt.z-q.z,pt.x-q.x)-q.angle;
+      return {label,x:pt.x,y:this.plan.layout.groundY,z:pt.z,distance:dist(q,pt),bearing:Math.atan2(Math.sin(rel),Math.cos(rel))};
+    }
     if(this.scene||this.mission.complete||!this.active(A.arrivalObjective))return null;
     const p=this.player;let pt=this.plan.points[A.marker],label=A.markerLabel;
     if(A.arrivalNeedsReserve&&this.weapon.reserve<this.plan.act.resupply.reserveTo){   // short of ammunition: the first place is the nearest crate
@@ -966,6 +1089,21 @@ export function debriefChain(actId,carry){
   return out;
 }
 
+/**
+ * The card on screen in a save, and the cards already played: the act's cards play in their order (the order's, the entry's, the end's: the ones it has), so the cards done are a prefix of that order and the one
+ * on screen is the next, at the kind, length, lines and skippability the data gives it and not yet over. Never throws.
+ */
+function validScene(plan,scene,done){
+  const cards=plan.act.cards,seq=[['order',cards.order],['entry',cards.entry],['end',cards.end]].filter(([,c])=>c);
+  if(!Array.isArray(done)||done.length>seq.length||done.some((id,i)=>id!==seq[i][1].id))return false;
+  if(scene===null)return true;
+  if(!scene||typeof scene!=='object'||Array.isArray(scene)||Object.keys(scene).sort().join()!=='card,elapsed,id,skippable')return false;
+  const next=seq[done.length];if(!next)return false;
+  const [kind,c]=next,k=scene.card;
+  return scene.id===c.id&&scene.skippable===c.skippable&&Number.isFinite(scene.elapsed)&&scene.elapsed>=0&&scene.elapsed<c.seconds+1e-9&&Boolean(k)&&typeof k==='object'&&
+    Object.keys(k).sort().join()==='kind,lines,seconds'&&k.kind===kind&&k.seconds===c.seconds&&JSON.stringify(k.lines)===JSON.stringify(c.lines);
+}
+
 /** Rejects an area save that this build could not have written (wrong schema/area/act, unknown or missing actors, impossible numbers, bad records). */
 export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   const reject=m=>{throw new Error(`Checkpoint do ato inválido: ${m}.`);};
@@ -979,22 +1117,24 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   const ids=areaRoster(plan);
   if(!Array.isArray(s.actors)||s.actors.length!==ids.length||s.actors.some((a,i)=>a?.id!==ids[i]))reject('elenco');
   // The place a gun last saw a flash lies in the area (a margin round it) and was made by a Pole or by the player.
-  const pb=plan.layout.bounds.playable,box={minX:pb.minX-30,maxX:pb.maxX+30,minZ:pb.minZ-30,maxZ:pb.maxZ+30},shooters=['jan_wrona',...ids.filter(id=>!plan.assault.ids.includes(id))];
+  const pb=plan.layout.bounds.playable,box={minX:pb.minX-30,maxX:pb.maxX+30,minZ:pb.minZ-30,maxZ:pb.maxZ+30},shooters=['jan_wrona',...ids.filter(id=>!(plan.assault?.ids??[]).includes(id))];
   const waveFlag=`${plan.profile.flagPrefix}.wave`;
   for(const a of s.actors){
     if(![a.x,a.y,a.z,a.health].every(Number.isFinite)||a.health<0||a.health>100)reject(`ator ${a.id}`);
+    if(a.team==='enemy'&&!plan.assault)reject(`ator ${a.id}`);   // INC-3: an act with no assault has nobody on the other side
     if(a.team==='enemy'&&a.deck!==undefined&&!validApproachRecord(plan.assault,a,s.clock))reject(`registo de assalto ${a.id}`);
     if(a.team==='enemy'&&!validGermanAi(plan.assault,a,s.clock,shooters,box))reject(`registo de decisões ${a.id}`);
   }
   const why=[];
-  if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.[waveFlag],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);
+  if(plan.assault){if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.[waveFlag],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);}
+  else if(s.timers?.wave!==null||s.flags?.[waveFlag]!==undefined)reject('registo da vaga (este ato não tem ataque)');
   const p=s.player;if(!p||![p.x,p.y,p.z,p.angle,p.pitch,p.health].every(Number.isFinite)||p.health<=0||p.health>100||!p.alive)reject('jogador');
   const w=s.weapon;if(!w||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>200)reject('arma');
   if(!s.objectives||plan.act.objectives.some(o=>!['locked','active','done'].includes(s.objectives[o.id]?.state)))reject('objetivos');
   if(s.timers?.squad!==undefined&&!validSquadRecord(plan.squad,s.timers.squad,s.clock))reject('registo da secção');
   if(!Array.isArray(s.checkpointsReached)||s.checkpointsReached.some(id=>!plan.act.checkpoints.some(c=>c.id===id))||new Set(s.checkpointsReached).size!==s.checkpointsReached.length)reject('checkpoints');
   // The checkpoint of a pause exists only once the echelon before it has broken.
-  for(const e of plan.assault.echelons)if(e.checkpoint&&s.checkpointsReached.includes(e.checkpoint)&&!Number.isFinite(s.timers?.wave?.echs?.[e.index-1]?.brokenAt))reject(`checkpoint ${e.checkpoint} sem a quebra da vaga anterior`);
+  for(const e of plan.assault?.echelons??[])if(e.checkpoint&&s.checkpointsReached.includes(e.checkpoint)&&!Number.isFinite(s.timers?.wave?.echs?.[e.index-1]?.brokenAt))reject(`checkpoint ${e.checkpoint} sem a quebra da vaga anterior`);
   if(!s.enemyFire||!Array.isArray(s.enemyFire.rounds))reject('fogo');
   // INC-2: the records of the blocks an act has are required (and checked) when its plan has them, and refused when it has not (a barrage record in a VII-a save is not one this build could have written).
   if(Boolean(plan.barrages)!==(s.timers?.barrage!==undefined))reject('registo das barragens (exigido pelos atos que as têm, recusado nos outros)');
@@ -1007,7 +1147,21 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
     for(const id of plan.medics.ids)if(byId.get(id).active===(R.state==='idle'))reject('registo dos maqueiros (maqueiro no campo ou fora dele contra o registo)');
     if(R.state!=='idle'&&R.patient!==null&&!byId.get(R.patient))reject('registo dos maqueiros (doente)');
   }
+  if(!validScene(plan,s.scene,s.sceneDone))reject('cartão');   // the card on screen and the cards done (INC-3: the order's card is one of them)
+  // INC-3: the withdrawal's record, its two squads and the flags and objectives that must agree with it are required when the plan has a withdrawal and refused when it has not.
+  if(Boolean(plan.withdrawal)!==(s.timers?.withdrawal!==undefined))reject('registo da retirada (exigido pelos atos que a têm, recusado nos outros)');
+  if(plan.withdrawal){
+    const R=s.timers.withdrawal,F=n=>`${plan.profile.flagPrefix}.${n}`,O=s.objectives,A=plan.profile;
+    if(!validWithdrawalRecord(plan.withdrawal,R,s.clock,s.actors))reject('registo da retirada');
+    if(!validWithdrawalSquads(plan.withdrawal,s.timers,s.clock))reject('registo dos lanços da retirada');
+    for(const [name,at] of [['order',R.orderAt],['lineOut',R.lineOutAt],['exited',R.exitedAt]])if(Boolean(s.flags?.[F(name)])!==(at!==null))reject(`registo da retirada (a flag ${name} e o registo discordam)`);
+    if((s.scene?.id===A.endCard||s.sceneDone.includes(A.endCard))&&R.exitedAt===null)reject('registo da retirada (o cartão de fim sem a saída)');
+    if((R.lineOutAt!==null)!==(O[A.arrivalObjective].state==='done')||(R.lineOutAt===null)!==(O[A.holdObjective].state==='locked')||(R.exitedAt!==null)!==(O[A.holdObjective].state==='done'))reject('registo da retirada (os objetivos e o registo discordam)');
+  }else if(s.timers?.line!==undefined||s.timers?.rear!==undefined)reject('registo dos lanços da retirada (recusado nos atos sem retirada)');
   for(const t of plan.triggers)if(t.type==='echelonBroken'&&s.checkpointsReached.includes(t.id)&&!Number.isFinite(s.timers?.wave?.echs?.[t.echelon]?.brokenAt))reject(`checkpoint ${t.id} sem a quebra da vaga ${t.echelon}`);
+  // INC-3: a checkpoint taken by a flag exists only once the flag is true, and the arrival's only once the entry card has ended.
+  for(const t of plan.triggers)if(t.type==='flag'&&s.checkpointsReached.includes(t.id)&&!s.flags?.[t.flag])reject(`checkpoint ${t.id} sem a flag ${t.flag}`);
+  if(s.checkpointsReached.includes(plan.profile.arrivalCheckpoint)&&!s.sceneDone.includes(plan.profile.entryCard))reject(`checkpoint ${plan.profile.arrivalCheckpoint} sem o cartão ${plan.profile.entryCard}`);
   if(p.concussion!==undefined||p.concussedUntil!==undefined){
     if(!(Number.isFinite(p.concussion)&&p.concussion>0&&p.concussion<=1)||!Number.isFinite(p.concussedUntil)||p.concussedUntil>s.clock+CONCUSSION.maxSec+1e-6)reject('atordoamento do jogador');
   }

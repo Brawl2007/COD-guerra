@@ -1,0 +1,20 @@
+{
+ "checkpoints": [
+  "cp_npc_j_ordem",
+  "cp_npc_k_retirada"
+ ],
+ "out": [
+  "pl_np_6",
+  "ckm_loader",
+  "pl_np_5",
+  "pl_np_3",
+  "pl_np_4",
+  "ckm_gunner",
+  "pl_np_2",
+  "pl_np_1",
+  "pl_np_0"
+ ],
+ "lineOutAt": 103.53329999999626,
+ "clock": 103.53329999999626,
+ "errors": []
+}

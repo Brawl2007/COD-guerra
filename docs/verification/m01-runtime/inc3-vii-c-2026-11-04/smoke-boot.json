@@ -1,0 +1,119 @@
+{
+ "order": {
+  "act": "act_vii_c_withdrawal",
+  "scene": "cs_npc_order",
+  "phase": "NPC_ENTRY",
+  "complete": false,
+  "clock": 4.850099999999994,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "clockText": "ANOITECER",
+  "objective": "",
+  "status": "",
+  "marker": {
+   "label": "",
+   "distance": "",
+   "opacity": "0"
+  },
+  "card": "Por volta das 17:00Ordem do comandante do batalhão: deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard(T03, resumo, certeza média) · quem a transmitiu, por onde e a ordem de marcha: desconhecidosA retaguarda da secção, o mensageiro e o caminho representado: dramatização",
+  "subtitle": "",
+  "checkpoints": [],
+  "flags": {},
+  "lighting": {
+   "phase": "blue-hour",
+   "sunAltDeg": -3.811,
+   "sunAzDeg": 290.015,
+   "exposure": 1.3,
+   "hemiIntensity": 1.3
+  },
+  "dressingMeshes": 9
+ },
+ "dusk": {
+  "act": "act_vii_c_withdrawal",
+  "scene": "cs_npc_dusk",
+  "phase": "NPC_ENTRY",
+  "complete": false,
+  "clock": 9.816700000000004,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "clockText": "ANOITECER",
+  "objective": "",
+  "status": "",
+  "marker": {
+   "label": "",
+   "distance": "",
+   "opacity": "0"
+  },
+  "card": "Ao anoitecerPerímetro norte · 1 de setembro de 1939A luz do crepúsculo: cálculo astronómico (C01) · a retirada: reconstrução e dramatização",
+  "subtitle": "",
+  "checkpoints": [],
+  "flags": {},
+  "lighting": {
+   "phase": "blue-hour",
+   "sunAltDeg": -3.822,
+   "sunAzDeg": 290.031,
+   "exposure": 1.3,
+   "hemiIntensity": 1.3
+  },
+  "dressingMeshes": 9
+ },
+ "after": {
+  "act": "act_vii_c_withdrawal",
+  "scene": null,
+  "phase": "NPC_ARRIVAL",
+  "complete": false,
+  "clock": 11.450000000000015,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "clockText": "ANOITECER",
+  "objective": "Cubra a saída da linha",
+  "status": "",
+  "marker": {
+   "label": "Parapeito",
+   "distance": "81 m",
+   "opacity": "1"
+  },
+  "card": "",
+  "subtitle": "Zieliński: Wrona, aqui. Calma por agora: esperamos ordens do batalhão.",
+  "checkpoints": [
+   "cp_npc_j_ordem"
+  ],
+  "flags": {},
+  "lighting": {
+   "phase": "blue-hour",
+   "sunAltDeg": -3.826,
+   "sunAzDeg": 290.036,
+   "exposure": 1.3,
+   "hemiIntensity": 1.3
+  },
+  "dressingMeshes": 9
+ },
+ "checkpoints": [
+  "cp_npc_j_ordem"
+ ],
+ "errors": []
+}
