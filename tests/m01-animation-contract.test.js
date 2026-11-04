@@ -123,13 +123,21 @@ const SAPPERS_DELTA=/^\$\.state\.mission\.(text|status)$/,SAPPERS_BEHAVIOUR=/^\$
 // 77175d85, is this one; the sappers golden above is history since then (it pins the simulation of 77175d85).
 import opening from './fixtures/m01-opening-gameplay-baseline.json' with {type:'json'};
 const OPENING_DELTA=/^\$\.(state|checkpoint)\.(actors\.\d+\.act|timers\.opening)(\.|$)/,OPENING_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.facing$/;   // amendment 20, as measured
-const current=opening;   // the golden of the live simulation
+import aidDust from './fixtures/m01-aid-dust-gameplay-baseline.json' with {type:'json'};
+const AIDDUST_DELTA=/^\$\.(state|checkpoint)\.sectors\.damage\.\d+\.dust(\.|$)/,AIDDUST_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 21, as measured
+const current=aidDust;   // the golden of the live simulation
 /** 2026-10-24 (golden amendment 18, R2-b): the deck module (the closing lines and the tactics) and the level table (the words of the death by a stick grenade) moved with it, so the older goldens that record them are
  *  history for those two files: they are still recorded, and no longer the live bytes. Every other module a history test names is still compared with the live file. */
 const MOVED_BY_18=new Set(['src/game/m01-deck-assault.js','src/game/m01-difficulty.js']);
 /** 2026-10-25 (golden amendment 20, R1-b): the simulation, the director (the `opening` trigger) and the mission data (openingLife, the lines 210-212, the two callouts) moved with the opening life, so the golden of amendment 19
  *  (history since then) records them and no longer equals the live files. */
+/** 2026-11-04 (golden amendment 21, package 2): the simulation, the director (the `aid` trigger), the section (its sight goes through sim.sees), the presentation validator (a garrison man may be carried) and the mission data
+ *  (safeX, the lines 220-226) moved with the dust, the first aid and the grenade tuning, so the golden of amendment 20 and the older ones that record them are history for those five files; the two new modules are
+ *  recorded by the new golden only. */
+const MOVED_BY_21=new Set(["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-animation-presentation.js", "src/game/m01-barks.js", "src/game/m01-section.js"]);
 const MOVED_BY_20=new Set(['src/game/m01-simulation.js','src/game/m01-barks.js','missions/m01-tczew/mission.json']);
+/** What moved since amendment 19, for the history tests of the golden that precedes amendment 20: the files of amendments 20 and 21. */
+const MOVED_SINCE_19=new Set([...MOVED_BY_20,...MOVED_BY_21]);
 function unchangedSince(recorded,files,live,label='and'){
   for(const f of files){
     if(MOVED_BY_18.has(f)){assert.ok(recorded[f],`${f} is recorded`);assert.notEqual(recorded[f],live('../'+f),`${f} moved with amendment 18`);}
@@ -665,9 +673,11 @@ test('the German AI golden (amendment 18) chains to the squad coordination golde
   // rearguard, the deck module and the yard did not move.
   assert.equal(german.sourceSha256,'14e14803b7cf7e369a143258d74820d35c246ee1774765519b507af05b678d95','the German AI golden pins the simulation of 3c8e576d');
   assert.notEqual(sha('../src/game/m01-simulation.js'),german.sourceSha256,'the German AI golden is history: amendment 19 moved the simulation');
-  for(const f of ['src/game/m01-section.js','src/game/m01-squad.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js',
+  for(const f of ['src/game/m01-squad.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js',
     'src/game/m01-deck-assault.js','src/game/m01-yard-life.js'])
     assert.equal(german.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // 2026-11-04 (package 2, golden amendment 21): the section's sight now goes through sim.sees, so it moved after amendment 19 too; it is recorded and no longer the live file.
+  assert.ok(german.inputsSha256['src/game/m01-section.js'],'the section is recorded');assert.notEqual(german.inputsSha256['src/game/m01-section.js'],sha('../src/game/m01-section.js'),'src/game/m01-section.js moved with amendment 21');
   for(const f of ['src/game/m01-barks.js','missions/m01-tczew/mission.json']){assert.ok(german.inputsSha256[f],`${f} is recorded`);assert.notEqual(german.inputsSha256[f],sha('../'+f),`${f} moved with amendment 19`);}
   assert.deepEqual(account.changedGameplayInputsSincePredecessor,['src/game/m01-simulation.js','missions/m01-tczew/mission.json','src/game/m01-deck-assault.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-section.js'],
     'what moved since 33896528: the simulation, the mission data, the deck module, the level table\'s death words, the audio events and the section; the squad module, the director and the rearguard did not');
@@ -709,7 +719,7 @@ test('the sappers golden (amendment 19) chains to the German AI golden, pins the
   assert.equal(sappers.sourceSha256,'2d6bc32d95a44a6612d81774dcdb529fca0e35ed95bd4ea9dc94902a0b9b2781','the sappers golden pins the simulation of 77175d85');
   assert.notEqual(sha('../src/game/m01-simulation.js'),sappers.sourceSha256,'the sappers golden is history: amendment 20 moved the simulation');
   for(const [f,h] of Object.entries(sappers.inputsSha256))if(h!==null){
-    if(MOVED_BY_20.has(f)){assert.ok(h,`${f} is recorded`);assert.notEqual(h,sha('../'+f),`${f} moved with amendment 20`);}
+    if(MOVED_SINCE_19.has(f)){assert.ok(h,`${f} is recorded`);assert.notEqual(h,sha('../'+f),`${f} moved with amendment 20 or 21`);}
     else assert.equal(h,sha('../'+f),`and ${f}`);
   }
   assert.ok(sappers.inputsSha256['src/game/m01-sappers.js'],'the sapper module is a recorded input');assert.equal(german.inputsSha256['src/game/m01-sappers.js'],undefined,'the predecessor had no sapper module');
@@ -756,12 +766,18 @@ test('the sappers golden (amendment 19) chains to the German AI golden, pins the
     assert.ok(Math.abs(r.repairComplete.live-r.repairComplete.predecessor)<15,`seed ${r.seed} support ${r.support}: the repair is complete within seconds of where it was (${r.repairComplete.predecessor} -> ${r.repairComplete.live})`);}
 });
 
-test('the opening golden (amendment 20) chains to the sappers golden, pins the live simulation, the opening module, the director and the mission data, and cites its lockstep account',()=>{
+test('the opening golden (amendment 20) chains to the sappers golden, pins the simulation of 57ba50f3 (history since amendment 21), the opening module and the other modules, and cites its lockstep account',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
   const account=integrationAmendment(opening,{amendment:'20',task:'M01-OPENING-LIFE-V1',delta:'opening-life',previous:sappers,previousFile:'m01-sappers-gameplay-baseline.json',
     predecessor:'77175d8591e4dcf51e0bf3ef0a34c1319ab51cb8',deltaFields:OPENING_DELTA});
-  assert.equal(sha('../src/game/m01-simulation.js'),opening.sourceSha256,'the golden pins the live simulation');
-  for(const [f,h] of Object.entries(opening.inputsSha256))if(h!==null)assert.equal(h,sha('../'+f),`and ${f}`);
+  // History since amendment 21 (package 2, 2026-11-04): this golden pins the simulation of 57ba50f3 (the head of the branch before the dust, the first aid and the grenade tuning), not the live one; the five files that moved
+  // with amendment 21 are recorded and no longer the live bytes, every other recorded input is still the live file.
+  assert.equal(opening.sourceSha256,'d4f00e73f4573df03fe56d4797f32fdc2776aad562a896bc4a9014d8b67e70f1','the opening golden pins the simulation of 57ba50f3');
+  assert.notEqual(sha('../src/game/m01-simulation.js'),opening.sourceSha256,'the opening golden is history: amendment 21 moved the simulation');
+  for(const [f,h] of Object.entries(opening.inputsSha256))if(h!==null){
+    if(MOVED_BY_21.has(f)){assert.ok(h,`${f} is recorded`);assert.notEqual(h,sha('../'+f),`${f} moved with amendment 21`);}
+    else assert.equal(h,sha('../'+f),`and ${f}`);
+  }
   assert.ok(opening.inputsSha256['src/game/m01-opening.js'],'the opening module is a recorded input');assert.equal(sappers.inputsSha256['src/game/m01-opening.js'],undefined,'the predecessor had no opening module');
   assert.deepEqual(account.changedGameplayInputsSincePredecessor,['src/game/m01-simulation.js','missions/m01-tczew/mission.json','src/game/m01-barks.js','src/game/m01-opening.js'],
     'what moved since 77175d85: the simulation (the opening hooks, the display-only end / hit), the mission data (openingLife, three lines, two callouts), the director (the `opening` trigger) and the new module; the section, the sappers, the retreat, the rearguard, the deck module, the level table, the audio events and the layout did not');
@@ -796,6 +812,40 @@ test('the opening golden (amendment 20) chains to the sappers golden, pins the l
     assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);
     assert.equal(r.real.live,r.real.predecessor,`seed ${r.seed} support ${r.support}: the same real time`);assert.equal(r.repairComplete.live,r.repairComplete.predecessor,`seed ${r.seed} support ${r.support}: the repair completes when it did`);
   }
+});
+
+test('the aid-dust golden (amendment 21) chains to the opening golden, pins the live simulation, the dust and aid modules, the director, the section and the mission data, and cites its lockstep account',()=>{
+  const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
+  const account=integrationAmendment(aidDust,{amendment:'21',task:'M01-AID-DUST-V1',delta:'aid-dust',previous:opening,previousFile:'m01-opening-gameplay-baseline.json',
+    predecessor:'57ba50f3305d18a0ddcad0d2c3563f14e293d7a7',deltaFields:AIDDUST_DELTA});
+  assert.equal(sha('../src/game/m01-simulation.js'),aidDust.sourceSha256,'the golden pins the live simulation');
+  for(const [f,h] of Object.entries(aidDust.inputsSha256))if(h!==null)assert.equal(h,sha('../'+f),`and ${f}`);
+  assert.ok(aidDust.inputsSha256['src/game/m01-dust.js'],'the dust module is a recorded input');assert.equal(opening.inputsSha256['src/game/m01-dust.js'],undefined,'the predecessor had no dust module');
+  assert.ok(aidDust.inputsSha256['src/game/m01-aid.js'],'the aid module is a recorded input');assert.equal(opening.inputsSha256['src/game/m01-aid.js'],undefined,'the predecessor had no aid module');
+  assert.deepEqual(account.changedGameplayInputsSincePredecessor,["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-animation-presentation.js", "src/game/m01-barks.js", "src/game/m01-section.js", "src/game/m01-dust.js", "src/game/m01-aid.js"],
+    'what moved since 57ba50f3: the simulation (sees, the cloud of the crater, the aid, the grenade target and the pinned throw), the mission data (safeX 190, closeExtraSec 100, lines 220-226), the presentation validator (a garrison man may be carried), the director (the `aid` trigger), the section (its sight goes through sim.sees) and the two new modules; the deck module, the rearguard, the level table, the audio events, the blast, the garrison, the squad, the sappers, the retreat and the opening did not');
+  for(const f of Object.keys(opening.inputsSha256)){
+    if(MOVED_BY_21.has(f))assert.notEqual(aidDust.inputsSha256[f],opening.inputsSha256[f],`${f} moved with amendment 21`);
+    else assert.equal(aidDust.inputsSha256[f],opening.inputsSha256[f],`${f} did not move with amendment 21`);
+  }
+  // The two simulations are byte identical, tick for tick, until 04:34:00 (tick 1355, 67.75 s), when the first crater (station_bomb) is written with its cloud: the first difference is `sectors.damage.0.dust`, missing in the
+  // predecessor. With every cloud, every aid record, the medic's job, the director's record and the dialogue state stripped from both frames (stateOnly) the first BEHAVIOUR difference is the medic's first stride toward the
+  // first wounded man of the garrison (actors.5.x, Dudek, tick 4315, 215.75 s, 04:42:38). The plot is the predecessor's (the tool proved the 12 objectives, CP-A..D, the consumed events, the survivors and the plot flags on both routes).
+  assert.equal(account.behaviourFields,AIDDUST_BEHAVIOUR.source);assert.equal(account.behaviourActors,'^(leon_dudek)$');
+  const expected={false:{ticks:26170,real:1308.5,to0600:562.95,survivors:12,health:100,rounds:90.24,first:1355,behaviour:4315,old:25987,blocks:2},true:{ticks:22326,real:1116.3,to0600:543.2,survivors:18,health:100,rounds:59.39,first:1355,behaviour:4315,old:22551,blocks:2}};
+  for(const r of account.routes){
+    const e=expected[r.support];
+    assert.equal(r.firstDifference.tick,e.first);assert.equal(r.firstDifference.battleClock,'04:34:00');assert.equal(r.firstDifference.path,'$.state.sectors.damage.0.dust');assert.equal(r.firstDifference.predecessor,null);assert.equal(r.firstDifference.missing,true);
+    assert.deepEqual(r.firstDifference.live,{r:16,h:12,d:1,life:40},'the cloud of a bomb');assert.equal(r.identicalTicksBeforeIt,e.first-1);
+    assert.match(r.firstBehaviourDifference.path,AIDDUST_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,'leon_dudek');assert.equal(r.firstBehaviourDifference.path,'$.state.actors.5.x');assert.equal(r.firstBehaviourDifference.tick,e.behaviour);
+    assert.equal(r.oldTicks,e.old);assert.equal(r.newTicks,e.ticks);assert.equal(r.identicalBlocks,e.blocks);
+    assert.deepEqual(r.endState.live,{ticks:e.ticks,real:e.real,to0600:e.to0600,survivors:e.survivors,playerHealth:e.health});
+    assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);assert.equal(r.endState.objectives.cover_repair,'done');assert.equal(r.endState.objectives.hold_corridor,'done');
+    assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);assert.equal(r.measured.germanRoundsPerRealMin.live,e.rounds);
+    for(const ev of r.battleClockEvents)if(ev.fixed&&!ev.jump)assert.ok(Math.abs(ev.battle.live-ev.battle.predecessor)<=1.5,`${ev.id}: the same battle-clock time`);
+    assert.equal(r.battleClockEvents.find(ev=>ev.id==='evt_m01_east_demolition').battle.live,22200,'the east demolition is at 06:10:00 on both sides');
+  }
+  for(const r of account.otherRoutes){assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);assert.equal(r.clipping,0);assert.equal(r.stacked,0);}
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{

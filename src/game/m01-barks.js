@@ -28,7 +28,8 @@ const RECENT_MAX=8;
 export const TRIGGERS=Object.freeze(['poll','coverRotation','guide','squadMove','round-impact','ally-fire','player-hit','player-shot','reload','enemy_down_by_player','enemy-fire',
   'ckm_stoppage','ckm_stoppage_cleared',   // (these two: the ckm gun stops and is cleared, 2026-10-22; lines 114 and 115)
   'section-callout','section-order',   // (these two: a man of the section sees something new, the sergeant orders; R2-a, 2026-10-24, src/game/m01-section.js; lines 164 on)
-  'opening']);   // (an explicit call of the opening life, R1-b, 2026-10-25, src/game/m01-opening.js: a man's act begins; `node` names the call, the point is where he stands; lines 208 on)
+  'opening',   // (an explicit call of the opening life, R1-b, 2026-10-25, src/game/m01-opening.js: a man's act begins; `node` names the call, the point is where he stands; lines 208 on)
+  'aid']);   // (an explicit call of the first aid, package 2, 2026-11-04, src/game/m01-aid.js: a wounded man calls, the medic arrives, lifts him, lays him down; `node` names the call, the point is where he is; lines 220-226)
 
 /** The saved record (timers.barks). last, recent: when the last line was queued and the last RECENT_MAX ones, scripted or reactive alike (the gap and the 60 s budget count all voices);
  *  at: when each watched line was last said; n: how often each rule line was said; g: per variant group [next member, when the group last spoke];
@@ -104,7 +105,7 @@ const CONDITIONS={
   everyNth:n=>{NEEDS.hits=true;return [0,(s,c)=>(c.hitN-1)%n===0,['player-shot']];},
   repeatKill:sec=>{NEEDS.kill=true;return [0,(s,c)=>c.prevKill!==undefined&&s.clock-c.prevKill<=sec,['enemy_down_by_player']];},
   node:list=>{const prefixes=list.map(p=>p.endsWith('*')?[p.slice(0,-1),true]:[p,false]);
-    return [0,(s,c)=>{const n=c.node;if(typeof n!=='string')return false;for(const [p,glob] of prefixes)if(glob?n.startsWith(p):n===p)return true;return false;},['coverRotation','squadMove','opening']];},
+    return [0,(s,c)=>{const n=c.node;if(typeof n!=='string')return false;for(const [p,glob] of prefixes)if(glob?n.startsWith(p):n===p)return true;return false;},['coverRotation','squadMove','opening','aid']];},
   // -- the state of the mission
   active:list=>[1,s=>objectiveIs(s,list,'active')],
   done:list=>[1,s=>objectiveIs(s,list,'done')],

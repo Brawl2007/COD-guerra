@@ -455,7 +455,10 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // 2026-10-22 (integration): the ckm stoppages (WP2, golden amendment 15) move the deck fight of this route again: the casualties of the route's CP-D save are now de_spans_0..5 and de_spans_8
 // (de_east_3 survives; de_spans_5 falls on the deck, as tests/m01-german-retreat.test.js records), i.e. 43 alive. Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot on the
 // merged tree (43); the same measurement at 3eb21b38 (candidate + WP1) and at c99a4326 (+ WP3), before WP2, gives 44 with the casualties named above, so the change is the stoppages' and nothing else.
-const CPD_ENEMIES_ALIVE=43;
+// 2026-11-04 (package 2, golden amendment 21): the assault reaches its closing lines (safeX 190) and the dust of the blasts hides the Poles (src/game/m01-dust.js), so the deck fight of this route changes again: the
+// casualties of the route's CP-D save are now de_spans_0..4 (de_east_3 survives; de_spans_5 to de_spans_9 live to the blast, as tests/m01-german-retreat.test.js records for the golden route), i.e. 45 alive of the 50.
+// Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot on the branch tree (enemyAlive 45, not alive de_spans_0..4); the browser restore must still reproduce exactly the route's casualties.
+const CPD_ENEMIES_ALIVE=45;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
   await page.addInitScript(({key,snapshot})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(snapshot));},{key,snapshot});

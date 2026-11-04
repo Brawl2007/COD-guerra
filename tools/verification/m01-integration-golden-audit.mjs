@@ -15,7 +15,7 @@
 //   3. NAVIGATION GUARD (amendment 05 kept): on the live route no clipping event and no men standing inside each other; same on seeds 3 and 7 with and without support.
 //   4. RECORD: first difference, ticks, real seconds to 06:00 and to the end, the real-clock and battle-clock shift of every consumed event, German rounds per real minute (enemyFire.nextId).
 // Deterministic JSON (no clocks, no paths). x86_64 only (D11/D30).
-//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15|16|17|18|19|20 [--write]
+//   node tools/verification/m01-integration-golden-audit.mjs --amendment 06|07|08|09|10|11|12|13|14|15|16|17|18|19|20|21 [--write]
 // Amendment 09 (`identical`) moves the source lock and nothing else: the navigator queue (one route() per tick, reused work buffers, a warmed solid list) changes the bytes of the simulation
 // and of the navigator but not one byte of what a tick computes on the golden routes. Its lockstep must therefore find NO difference in any tick of either route (a first difference is a failure
 // there, as its absence is a failure for the others), the digests of the live simulation must equal the previous golden's, and the new golden is the old one with the new source lock.
@@ -297,7 +297,8 @@ const AMENDMENTS={
   // Measured on both golden routes (this tool, --amendment 20): the two simulations differ from the first tick (the new act of the sergeant, actors.0.act, missing in the predecessor); with the new records stripped
   // from both frames (stateOnly: every act, timers.opening, the director's record and the dialogue state, the display-only end / hit of the npc-shots) the first BEHAVIOUR difference is the watch of the sappers,
   // sapper_3, who turns his eyes east in the first tick (actors.9.facing).
-  '20':{task:'M01-OPENING-LIFE-V1',delta:'opening-life',predecessor:'77175d8591e4dcf51e0bf3ef0a34c1319ab51cb8',after:null,
+  // History since amendment 21 (package 2, 2026-11-04): the opening golden pins the simulation of 57ba50f3 (the head of the branch before the dust, the first aid and the grenade tuning), not the working tree's.
+  '20':{task:'M01-OPENING-LIFE-V1',delta:'opening-life',predecessor:'77175d8591e4dcf51e0bf3ef0a34c1319ab51cb8',after:'57ba50f3305d18a0ddcad0d2c3563f14e293d7a7',
     previousGolden:'tests/fixtures/m01-sappers-gameplay-baseline.json',golden:'tests/fixtures/m01-opening-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/opening-r1b-2026-10-25',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-squad.js','src/game/m01-section.js','src/game/m01-sappers.js','src/game/m01-retreat.js','src/game/m01-opening.js'],
@@ -309,8 +310,31 @@ const AMENDMENTS={
       strip(frame.state);strip(frame.checkpoint);
       for(const e of frame.events)if(e.type==='npc-shot'&&e.target===undefined){delete e.end;delete e.hit;}
       return frame;},
-    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.facing$/,behaviourActors:/^(pawel_krawiec|sapper_2|sapper_3|marek_zielinski|szymon_kowal|jozef_bak|staszek_pawlak|east_platoon_voice|tadeusz_nowicki|leon_dudek|ckm_gunner|ckm_loader|ckm_reserve|franciszek_lipski|pl_west_[0-5])$/}};
-const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 or 20`);
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.facing$/,behaviourActors:/^(pawel_krawiec|sapper_2|sapper_3|marek_zielinski|szymon_kowal|jozef_bak|staszek_pawlak|east_platoon_voice|tadeusz_nowicki|leon_dudek|ckm_gunner|ckm_loader|ckm_reserve|franciszek_lipski|pl_west_[0-5])$/},
+  // Amendment 21 (package 2, 2026-11-04, Captain's handoff 2026-10-25, «2. Simulação: pó que tapa a vista da IA; falas e socorro de feridos; granadas/busca alemãs a aparecer nas rotas»): three changes of Act I.
+  //  (1) DUST. A blast (a bomb, a grenade, a demolition) leaves a cloud in its crater record, sectors.damage[i].dust {r, h, d, life} (src/game/m01-dust.js; absent in a save made before it: the default of its kind), and
+  //      a line of sight that crosses 3 m of full-density cloud is blocked for the AI of both sides: M01Simulation.sees() is the question every acquisition asks (the gate MG34s and riflemen, the deck assault, the rearguard,
+  //      Kowal, the ckm, the section's calls and its real rounds); the renderer draws the same clouds (renderState.dust). The plot rules (the 20 s rule) and the blasts' own cover test do not use it.
+  //  (2) FIRST AID. The wounded of the west garrison (the bombs of 04:34-04:43) call out (new `aid` trigger of the bark director, dlg_m01_220-226) and Dudek, free of the station casualty and until 05:30 of the battle
+  //      clock, goes to the nearest one under the cover rules of src/game/m01-aid.js (waits for a bomb due near, drops when shaken), kneels, treats him 6-10 s, carries him to cover and goes back to the aid post. Saved:
+  //      actor.aid {n, at, t?, rest?} and timers.aid {patient, phase, since, left?, dest?}; the carry is Bąk's (carriedBy, carry).
+  //  (3) GRENADES AND SEARCH. safeX 250 -> 190 and closeExtraSec 60 -> 100 (the front man of the assault ends 23 m from the rearguard: inside the stick grenade's throw), the kneeling defender is a grenade target (R2-b also
+  //      asked for him to be suppressed), a man who reaches a line within a throw throws first, and the search probe looks with the world's sight (a Pole hidden by dust is looked for where he was last seen).
+  // Measured on both golden routes (this tool, --amendment 21): the two simulations are byte identical, tick for tick, until 04:34:00 (tick 1355, 67.75 s), when the first crater carries its cloud (the first difference,
+  // sectors.damage.0.dust); with the new records stripped from both frames (stateOnly: every cloud, every aid record, the medic's job, the director's record and the dialogue state) the first BEHAVIOUR difference is the
+  // medic's first stride toward the first wounded man (leon_dudek, actors.5.x, tick 4315, 215.75 s, 04:42:38).
+  '21':{task:'M01-AID-DUST-V1',delta:'aid-dust',predecessor:'57ba50f3305d18a0ddcad0d2c3563f14e293d7a7',after:null,
+    previousGolden:'tests/fixtures/m01-opening-gameplay-baseline.json',golden:'tests/fixtures/m01-aid-dust-gameplay-baseline.json',
+    evidence:'docs/verification/m01-runtime/pkg2-act1-2026-11-04',
+    extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-squad.js','src/game/m01-section.js','src/game/m01-sappers.js','src/game/m01-retreat.js','src/game/m01-opening.js','src/game/m01-dust.js','src/game/m01-aid.js'],
+    generationStage:'Package 2 on the amendment 20 tree (the branch head 57ba50f3: candidate #80 + R1-a + R2-a + R2-b + R3-a + R1-b + the act manager): (1) dust and smoke clouds are a fact of the simulation (m01-dust.js; every crater record carries {r, h, d, life}; sees() blocks the AI line of sight through 3 m of cloud, for both sides; the renderer draws renderState.dust); (2) the first aid of the wounded of the west garrison (m01-aid.js; the bark director\'s `aid` trigger and dlg_m01_220-226): they call out, Dudek treats the nearest one, carries him to cover and goes back; (3) the German grenades and the search happen: safeX 190, closeExtraSec 100, a kneeling defender is a grenade target, the grenade comes first on arrival at a line within a throw, the search looks with the world\'s sight. No random draw anywhere: the little variation (the time of a call) is derived from the ids.',
+    // The first difference is the cloud of the first crater (04:34:00); with the clouds, the aid records, the medic\'s job and the dialogue state stripped the first behaviour difference is the medic\'s first stride.
+    deltaFields:/^\$\.(state|checkpoint)\.sectors\.damage\.\d+\.dust(\.|$)/,
+    stateOnly:frame=>{
+      const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];for(const d of st.sectors?.damage??[])delete d.dust;for(const a of st.actors??[])delete a.aid;delete st.timers?.aid;delete st.timers?.barks;strip(st.resumeCheckpoint);};
+      strip(frame.state);strip(frame.checkpoint);return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^(leon_dudek)$/}};
+const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 or 21`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
 const out=join(ROOT,CFG.evidence),ACCOUNT=join(out,ACCOUNT_FILE),GOLDEN=join(ROOT,CFG.golden);

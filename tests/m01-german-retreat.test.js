@@ -27,7 +27,11 @@ const SPANS=Array.from({length:10},(_,i)=>`de_spans_${i}`),FALLEN=SPANS.slice(0,
 // docs/verification/m01-runtime/sappers-r3a-2026-10-24/README.md's route), so at 06:10 none of the ten is alive and there is nobody to fall back, lift a man or regroup. T48 is about what the survivors do, not about how many
 // the Poles kill on a route, so its control route is the control route of seed 1, on which all six survive to the blast (measured, deck Germans alive at the first tick after the blast, of the ten: seed 1: 6,
 // 3: 4, 2: 4, 4: 4, 6: 3, 7: 3, 8: 3, 5: 2; seed 19390901: 0). The support route of the golden (seed 7) is unchanged. Nothing else about the file moved.
-const CONTROL_SEED=1;
+// 2026-11-04 re-pin (package 2, golden amendment 21: the assault reaches its closing lines at x 198 and may throw its grenade, the dust of the blasts hides the Poles; src/game/m01-dust.js): the fight on the deck lasts longer and
+// on the control route of seed 1 five of the six men of the assault now fall before the blast (one, de_spans_9, survives), so there are not two men to lift the two fallen. The golden route itself (seed 19390901) keeps five
+// of them (de_spans_5 to de_spans_9; de_spans_4 falls on the deck) and is the control route of this file again, as it was before the re-pin above (measured, deck Germans alive at the first tick after the blast, of the ten, with a
+// read-only probe of the control routes: seed 19390901: 5, 3: 5, 7: 5, 2: 3, 6: 3, 9: 3, 4: 2, 8: 2, 10: 2, 1: 1, 11: 1, 5: 0). The support route of the golden (seed 7) is unchanged.
+const CONTROL_SEED=19390901;
 const ROUTES=[[CONTROL_SEED,false],[7,true]];
 const info=(sim,a)=>({id:a.id,x:a.x,y:a.y,z:a.z,facing:a.facing,state:a.state,alive:a.alive,active:a.active,carriedBy:a.carriedBy??null,
   fallBack:a.fallBack?structuredClone(a.fallBack):null,diedAt:a.diedAt,speed:a.motion.speed,gait:a.motion.gait,pose:actorPoseName(a,sim.clock)});

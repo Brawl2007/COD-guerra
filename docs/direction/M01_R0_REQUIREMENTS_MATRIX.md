@@ -55,7 +55,7 @@
 | F Frente norte | PARCIAL | Origens de fogo e som distantes (`m01-terrain-envelope.js:51`, `battlefield-audio.js:545`), evento 07:00 | Sem geometria nem combate; «Koźlin/Koźliny» por confirmar (SOURCE_CHECK P9); Pszczółki só em docs |
 | G Oeste/noroeste | AUSENTE | 0 ocorrências de Szpęgawa e Suchostrzygi no repositório | Precisa de fonte antes de qualquer posição |
 | H Margens do Vístula | IMPLEMENTADO SEM PLAYTEST | Canal, água e vegetação (`m01-water.js`, `m01-terrain-relief.js:10`) | Sem defesa contra travessia depois das demolições (e nenhuma fonte no repo a documenta, ver §3) |
-| I Apoio e comando | PARCIAL | Vagões, props do pátio, mensageiro Pawlak, reserva da ckm | Sem comando, depósito ou transporte de feridos jogável |
+| I Apoio e comando | PARCIAL | Vagões, props do pátio, mensageiro Pawlak, reserva da ckm; **pacote 2 (2026-11-04, emenda 21, local, sem playtest):** os feridos da guarnição oeste chamam e Dudek trata-os e leva-os para a cobertura (`src/game/m01-aid.js`) | Sem comando nem depósito; o transporte de feridos não é jogável (o jogador só leva Bąk) |
 | J Szymankowo | AUSENTE | Só falas `dlg_m01_001`/`008` (dramatização marcada) e `db_06` | Sem cena, mapa de operações ou área |
 
 ### 2.2 Cronologia (secção 4)
@@ -63,7 +63,7 @@
 | Ato | Estado | Evidência | Lacuna |
 |---|---|---|---|
 | I Antes das 04:34 | PARCIAL | Prelúdio 04:30–04:34 em tempo real; vida do pátio (`m01-yard-life.js`) | 4 min, 6 atores, sem preparação jogável nem variedade (fumar, munições, sapadores a inspecionar) |
-| II Bombardeamento 04:34 | PARCIAL | `evt_m01_bombing_0434`, 3 Ju 87, fumo e danos persistentes | Sem baixas, feridos nem alteração do terreno pelas bombas; o ferido da estação é um evento fixo |
+| II Bombardeamento 04:34 | PARCIAL | `evt_m01_bombing_0434`, 3 Ju 87, fumo e danos persistentes; R1-a: baixas e feridos; **pacote 2:** cada cratera deixa uma nuvem de pó/fumo (facto da simulação, guardado) que tapa a vista da IA, e os feridos são socorridos | Sem alteração do terreno pelas bombas além das crateras; o ferido da estação é um evento fixo |
 | III Cabeça leste ~04:45 | PARCIAL | Comboio 963 às 04:45, Panzerzug ~04:52, fogo dos portões | Só à distância; o jogador está no reparo |
 | IV 04:50–06:00 | PARCIAL | Reparo, `seg_hold` comprimido 24×, assalto do tabuleiro, retaguarda | Sem contra-ação polaca nem blindados ferroviários polacos; coordenação ausente |
 | V Retirada e demolição 06:00–06:45 | IMPLEMENTADO SEM PLAYTEST | Retirada 06:00, demolições 06:10/06:45, escolta SP-08, lanços da esquadra | Demolição sem consequência física na colisão; playtest pendente |
@@ -74,15 +74,15 @@
 
 | ID | Requisito | Estado | Evidência | Lacuna |
 |---|---|---|---|---|
-| AI-1 | Soldado: observar, cobrir, posição de tiro, recarga, supressão, explosões, ferimentos, ajudar, ordens, retirada | PARCIAL | Visão por linha de vista e memória de 60 s (`sees`, `ai.seen`); espreitar, cadência e recarga 3,4 s; `aiPinned`/`recover`; estado `WOUNDED` | Sem escolha dinâmica de cobertura nem de posição; sem reação a explosões; ajuda e arrasto só em eventos fixos; aliados sem decisão de retirada própria |
+| AI-1 | Soldado: observar, cobrir, posição de tiro, recarga, supressão, explosões, ferimentos, ajudar, ordens, retirada | PARCIAL | Visão por linha de vista e memória de 60 s (`sees`, `ai.seen`); espreitar, cadência e recarga 3,4 s; `aiPinned`/`recover`; estado `WOUNDED`; **pacote 2:** o socorrista espera a bomba, abriga-se quando abalado, trata e carrega o ferido (`m01-aid.js`) | Sem escolha dinâmica de cobertura nem de posição para o resto; sem decisão de retirada própria dos aliados |
 | AI-2 | Coordenação de esquadra no combate principal | PARCIAL | Lanços entre postos, equipa A e Kowal (`m01-squad.js`), depois das 06:10 | Nada em 05:30–06:10; sem callouts de avistamento nem líder que se adapte |
-| AI-3 | IA alemã | PARCIAL | Assalto do tabuleiro com `advance/cover/hold/fallback` e recuo por baixas (`m01-deck-assault.js`); MG34 com fogo de busca; sem omnisciência (`sees`) | Uma linha de aproximação; portão estático; sem flanqueio, granadas nem busca com movimento; mínimo 430 m |
+| AI-3 | IA alemã | PARCIAL | Assalto do tabuleiro com `advance/cover/hold/fallback` e recuo por baixas (`m01-deck-assault.js`); MG34 com fogo de busca; sem omnisciência (`sees`); **pacote 2:** o pó tapa a vista da IA dos dois lados; `safeX` 190 põe o homem da frente a 23 m da retaguarda e a granada de mão passa a ser lançada (nas rotas de controlo; 0 nas de apoio); a busca com movimento tem uma causa (a nuvem) | Portão estático; sem flanqueio; a busca é rara (ver o README do pacote 2); o jogador que cobre o tabuleiro mantém o assalto a > 200 m |
 | AI-4 | Estado emocional na animação; falas por eventos | PARCIAL | 62 regras reativas (`m01-barks.js`); animação lê supressão, ferimento, recarga e cobertura | Sem estados cansado, alarmado ou em pânico; ainda há falas por `poll` e cenas a horas fixas |
 | WPN-1 | Arma 1.ª pessoa: dedos, recarga, transições, sem atravessamentos | PARCIAL | `m01-viewmodel.js`: 3 clips, marcadores mecânicos, recuo, `wallClearance`; testes `m01-viewmodel-feel`, `m01-fp-arms` | Uma só arma (kb wz.29); sem clips de sprint, interrupção ou troca; dedos não verificados; licença fp-arms-v2 pendente |
 | WPN-2 | Armas em 3.ª pessoa | PARCIAL | Pin das mãos com IK até 45 m/16 atores (`m01-hand-pin.js`); arma por papel | Sem verificação visual; pouca variedade por papel |
 | ANIM-1 | Atividade variada antes e durante o combate | PARCIAL | 3+3 idles, 4 fidgets; tarefas `clean_weapon`, `coffee`, `map`, `patrol`… | Ver problema 5 |
 | SAP-1 | Operação técnica dos sapadores em 10 etapas | PARCIAL | Buscar caixa → entregar → `cover_repair` 0–100 com pausa sob supressão → `repair_complete` → `order_demolish` | Faltam identificar, inspecionar, verificar e preparar como etapas; abrigo por decisão própria; cabos/ferramentas funcionais; detonação e verificação |
-| DMG-1 | Explosões com consequências | PARCIAL | Danos persistentes guardados no save (`sectors.damage`, `m01-damage-decals.js`, `m01-station-damage.js`); granada do jogador fere | Bombas sem dano a soldados, posições, cobertura ou tarefas (facto 4) |
+| DMG-1 | Explosões com consequências | PARCIAL | Danos persistentes guardados no save (`sectors.damage`, `m01-damage-decals.js`, `m01-station-damage.js`); granada do jogador fere; R1-a: bombas ferem soldados; **pacote 2:** a cratera guarda a nuvem de pó (`dust`) que tapa a vista da IA | Bombas sem dano a posições, cobertura ou tarefas (facto 4) |
 | VIS-1 | Legibilidade à distância | PARCIAL | Impostores T20 por nação, contraste mínimo, rim/perspectiva aérea nos alemães | Distância real do combate; clarões por atirador além da ckm; observação por binóculos ausente |
 | VEH-1 | Veículos e equipamento históricos | PARCIAL | Panzerzug (animado, canhão de exibição), comboio, 3 Ju 87, carroças estáticas | FT-17/TK-3 ferroviários, Bofors 37 mm, 76,2 mm, camiões e motos: AUSENTE (e ver §3 sobre as fontes); nada funcional em jogo |
 | AUD-1 | Áudio por geografia, camadas, sem repetição | PARCIAL | Bandas por distância, atraso do som, absorção, 4 vozes por arma; camadas de vento, comboio, aviões; Ju 87 | Tudo sintetizado (T45 BLOQUEADA, humano); sem camada contínua de rio; sem etiqueta de áudio provisório; ninguém ouviu |

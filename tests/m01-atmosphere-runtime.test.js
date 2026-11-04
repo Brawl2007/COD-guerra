@@ -38,3 +38,31 @@ test('T25 all six raid smoke columns survive 05:36 with bounded pools and identi
   assert.deepEqual(state,saved);
  }finally{a.dispose();b.dispose();globalThis.document=original;}
 });
+
+test('package 2: the clouds of dust the simulation reports (state.dust) are drawn at their place, size and density, within the pools; no cloud, no puff; the state is never mutated',()=>{
+ const original=globalThis.document;globalThis.document={createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})};
+ const a=new M01Atmosphere(new THREE.Scene()),b=new M01Atmosphere(new THREE.Scene());
+ try{
+  const cloud=(over={})=>({id:'bomb_test',x:-130,y:-3,z:26,r:16,h:12,density:1,...over});
+  a.update({damage:[],dust:[]},10,'high');assert.equal(a.count,0,'no cloud, no puff');
+  a.update({damage:[]},10,'high');assert.equal(a.count,0,'a state without the field (an older caller) draws nothing');
+  const state={damage:[],dust:[cloud(),cloud({id:'m01_grenade_1',x:-50,z:40,r:4.5,h:3.5,density:.5}),cloud({id:'east_demolition',x:800,y:0,z:20,r:42,h:32,density:.25})]},saved=structuredClone(state);
+  a.update(state,10,'high');
+  const each=[Math.min(20,Math.max(3,Math.round(16*16/20))),Math.min(20,Math.max(3,Math.round(4.5*4.5/20))),Math.min(20,Math.max(3,Math.round(42*42/20)))];
+  assert.equal(a.count,each[0]+each[1]+each[2],'one puff per slot of each cloud: the bigger the cloud the more, to the quality\'s cap');
+  assert.deepEqual(state,saved,'the state is the simulation\'s: never written');
+  const fade=Array.from(a.fade.array).slice(0,a.count);
+  assert.ok(fade.slice(0,each[0]).every(v=>Math.abs(v-.62)<1e-6),'full density: .62');
+  assert.ok(fade.slice(each[0],each[0]+each[1]).every(v=>Math.abs(v-.31)<1e-6),'half density, half the opacity');
+  assert.ok(fade.slice(each[0]+each[1]).every(v=>Math.abs(v-.155)<1e-6));
+  // the puffs lie inside the cylinder of the first cloud
+  const m=a.puffs.instanceMatrix.array;for(let i=0;i<each[0];i++){const x=m[i*16+12],y=m[i*16+13],z=m[i*16+14];assert.ok(Math.hypot(x+130,z-26)<=16+1e-6&&y>=-3&&y<=-3+12+1,`puff ${i} inside the cloud`);}
+  // the cloud that hides a man is drawn before the lingering smoke columns, which would fill the pool alone (30 craters at high: 256 puffs)
+  const crowded={damage:Array.from({length:30},(_,i)=>({id:`${i}_demolition`,smokeVisible:true,started:10,x:i*10,y:0,z:0})),dust:[cloud()]};
+  a.update(crowded,11,'high');assert.equal(a.count,256);assert.ok(Array.from(a.fade.array).slice(0,each[0]).every(v=>Math.abs(v-.62)<1e-6),'the cloud keeps its puffs when the pool is full of smoke');
+  // pools: the quality's cap per cloud and the pool's capacity
+  a.update(state,10,'low');assert.ok(a.count<=112);a.update(state,10,'medium');assert.ok(a.count<=192);
+  a.update(state,10,'high');
+  b.update(structuredClone(state),10,'high');assert.deepEqual(Array.from(b.puffs.instanceMatrix.array).slice(0,16*each[0]),Array.from(a.puffs.instanceMatrix.array).slice(0,16*each[0]),'reconstructible: the same state draws the same puffs');
+ }finally{a.dispose();b.dispose();globalThis.document=original;}
+});

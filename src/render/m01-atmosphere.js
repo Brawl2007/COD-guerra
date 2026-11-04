@@ -243,6 +243,17 @@ export class M01Atmosphere {
         this.debris.setMatrixAt(chips++,this.dummy.matrix);this.demolitionDrawn.chips++;
       }
     }
+    // Package 2: the clouds of dust and smoke the SIMULATION says hide a man from the AI (state.dust, src/game/m01-dust.js: a vertical cylinder of radius r and height h, thinning with `density`) are drawn where they
+    // are and at their size, so what blocks a German's sight is on the screen (before the lingering smoke columns, which would otherwise fill the pool: the cloud that hides a man is the one that must be drawn); the renderer decides nothing from them. A few soft puffs fill the disc (a sunflower spread), low and wide, as dense as the cloud.
+    for(const c of state.dust??[]){
+      const cap=quality==='low'?9:quality==='medium'?14:20,n=Math.min(cap,Math.max(3,Math.round(c.r*c.r/20))),seed=(Math.floor((c.x+2048)*13)^Math.floor((c.z+2048)*29)^Math.floor(c.r*7))>>>0,w=Math.max(2.4,2.2*c.r/Math.sqrt(n));
+      for(let i=0;i<n&&count<damageMax;i++){
+        const n0=visualNoise(seed,i*4),n1=visualNoise(seed,i*4+1),n2=visualNoise(seed,i*4+2),a=i*2.399+n0*1.1,rr=c.r*Math.sqrt((i+.5)/n)*(.8+.2*n1);
+        this.dummy.rotation.set(0,0,0);this.dummy.position.set(c.x+Math.cos(a)*rr,c.y+.5+Math.max(0,c.h-1)*(.12+.4*n2),c.z+Math.sin(a)*rr);
+        this.dummy.scale.set(w*(.85+n1*.3),w*(.55+n2*.3),1);this.dummy.updateMatrix();
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,400+i);this.puffs.setColorAt(count,this.color.set('#90866f'));this.fade.setX(count++,.62*c.density);
+      }
+    }
     for(const d of damage){
       const demolition=d.id.endsWith('_demolition'),heavy=demolition||/bomb|raid/.test(d.id),age=Math.max(0,clock-d.started);
       const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
