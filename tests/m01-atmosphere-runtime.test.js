@@ -57,6 +57,9 @@ test('package 2: the clouds of dust the simulation reports (state.dust) are draw
   assert.ok(fade.slice(each[0]+each[1]).every(v=>Math.abs(v-.155)<1e-6));
   // the puffs lie inside the cylinder of the first cloud
   const m=a.puffs.instanceMatrix.array;for(let i=0;i<each[0];i++){const x=m[i*16+12],y=m[i*16+13],z=m[i*16+14];assert.ok(Math.hypot(x+130,z-26)<=16+1e-6&&y>=-3&&y<=-3+12+1,`puff ${i} inside the cloud`);}
+  // the cloud that hides a man is drawn before the lingering smoke columns, which would fill the pool alone (30 craters at high: 256 puffs)
+  const crowded={damage:Array.from({length:30},(_,i)=>({id:`${i}_demolition`,smokeVisible:true,started:10,x:i*10,y:0,z:0})),dust:[cloud()]};
+  a.update(crowded,11,'high');assert.equal(a.count,256);assert.ok(Array.from(a.fade.array).slice(0,each[0]).every(v=>Math.abs(v-.62)<1e-6),'the cloud keeps its puffs when the pool is full of smoke');
   // pools: the quality's cap per cloud and the pool's capacity
   a.update(state,10,'low');assert.ok(a.count<=112);a.update(state,10,'medium');assert.ok(a.count<=192);
   a.update(state,10,'high');

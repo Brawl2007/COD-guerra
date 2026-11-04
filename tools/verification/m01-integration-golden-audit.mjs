@@ -322,7 +322,7 @@ const AMENDMENTS={
   //      asked for him to be suppressed), a man who reaches a line within a throw throws first, and the search probe looks with the world's sight (a Pole hidden by dust is looked for where he was last seen).
   // Measured on both golden routes (this tool, --amendment 21): the two simulations are byte identical, tick for tick, until 04:34:00 (tick 1355, 67.75 s), when the first crater carries its cloud (the first difference,
   // sectors.damage.0.dust); with the new records stripped from both frames (stateOnly: every cloud, every aid record, the medic's job, the director's record and the dialogue state) the first BEHAVIOUR difference is the
-  // medic's first stride toward the first wounded man (leon_dudek, actors.5.x, tick 4303, 215.15 s, 04:42:36).
+  // medic's first stride toward the first wounded man (leon_dudek, actors.5.x, tick 4315, 215.75 s, 04:42:38).
   '21':{task:'M01-AID-DUST-V1',delta:'aid-dust',predecessor:'57ba50f3305d18a0ddcad0d2c3563f14e293d7a7',after:null,
     previousGolden:'tests/fixtures/m01-opening-gameplay-baseline.json',golden:'tests/fixtures/m01-aid-dust-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/pkg2-act1-2026-11-04',

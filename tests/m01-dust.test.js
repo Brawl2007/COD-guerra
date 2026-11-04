@@ -83,6 +83,7 @@ test('a hand grenade leaves a small cloud that lasts the 20 s of its smoke and h
   s.impact('m01_grenade_0',{x:-130,y:-3,z:Z},false);
   assert.deepEqual(s.sectors.damage.at(-1).dust,{r:4.5,h:3.5,d:1,life:20});
   const t0=s.sectors.damage.at(-1).started;
+  assert.equal(s.sectors.damage.at(-1).smokeSeconds,s.sectors.damage.at(-1).dust.life,'the sim\'s cloud and the renderer\'s smoke (smokeVisible, 20 s) are the same 20 s');
   s.clock=t0+3;assert.equal(s.sees(german,pole),false,'9 m of smoke across the line at eye height 1.6 m (cloud top 3.5 m)');
   s.clock=t0+19.5;assert.equal(s.sees(german,pole),true,'in its last seconds the smoke has gone');
   const s2=active();s2.impact('east_demolition',{x:800,y:0,z:20},false);assert.deepEqual(s2.sectors.damage.at(-1).dust,{r:42,h:32,d:1,life:150});

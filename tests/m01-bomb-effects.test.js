@@ -365,7 +365,14 @@ test('the whole mission still completes on the control route with the raid: the 
   // the west garrison (R1-a follow-up): nothing moves a man of it after the bombs: the dead lie, the wounded lie in the WOUNDED pose, the others stand at their posts to the end; none of them
   // held back an objective, a checkpoint or the west charge (the mission completed above)
   const plan=garrisonPlan(definition,sim.world,[]),men=plan.map(p=>sim.actor(p.id));
-  plan.forEach((p,i)=>{assert.ok(Math.hypot(men[i].x-p.x,men[i].z-p.z)<1e-9,`${p.id} never left his post`);assert.equal(men[i].displayOnly,true);});
+  // 2026-11-04 (package 2, golden amendment 21): a wounded man is no longer left where he fell: the medic treats him and, if he lies away from a cover, carries him to it (src/game/m01-aid.js; aid.rest says so). Every
+  // other man, and the wounded who lay by a cover, still never leaves his post.
+  plan.forEach((p,i)=>{
+    const moved=Math.hypot(men[i].x-p.x,men[i].z-p.z);
+    if(men[i].aid?.rest!==undefined){assert.equal(men[i].state,'WOUNDED');assert.ok(moved>0&&moved<20,`${p.id} was carried ${moved.toFixed(1)} m to cover`);}
+    else assert.ok(moved<1e-9,`${p.id} never left his post`);
+    assert.equal(men[i].displayOnly,true);
+  });
   assert.deepEqual(men.map(a=>!a.alive?'dead':a.state==='WOUNDED'?'wounded':a.state==='GUARD'?'unhurt':a.state),['dead','wounded','dead','unhurt','wounded','unhurt'],'who fell and where (control route)');
   assert.ok(men.every(a=>a.alive===(a.state!=='DOWN')));
 });

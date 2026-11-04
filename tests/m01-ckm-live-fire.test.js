@@ -304,6 +304,7 @@ test('saves made before T47 (86 and 89 actors, crew on the casemate post, no fir
     // What the previous build saved: crew on the casemate post, in the quiet cycle, with no fire record (the T34 yard actors and, for 86, the crew come later).
     old.actors.filter(a=>a.ckm).forEach((a,i)=>{[a.x,a.z]=casemate[i];a.ckm={phase:'aim',startedAt:Math.max(0,old.clock-1),visible:true};delete a.ckmFire;});
     old.actors=old.actors.filter(a=>!AUXILIARY_IDS.includes(a.id)&&!GARRISON_IDS.includes(a.id)&&(roster===89||!a.ckm));   // (2026-10-23, R1-a: nor the six men of the west garrison, which came later)
+    delete old.timers.aid;for(const a of old.actors){delete a.aid;if(a.task==='aid')delete a.task;}   // (2026-11-04, package 2: nor the first aid of the garrison, which came later: the save of the previous build has no job and no record)
     assert.equal(old.actors.length,roster);delete old.resumeCheckpoint;
     const keep=structuredClone(old),s=new M01Simulation();validateM01Snapshot(structuredClone(old));s.restoreSnapshot(old);
     assert.deepEqual(old,keep,'the supplied save is not edited');

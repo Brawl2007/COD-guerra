@@ -14,9 +14,10 @@ function measure(seed,support){
   const r=route(seed,{support,onStep:({sim,events})=>{
     for(const e of events){
       if(e.type==='enemy-grenade')m.grenades++;
-      if(e.type==='m01-blast'&&e.kind==='grenade'&&e.by!==undefined){m.exploded++;const rec=sim.sectors.damage.at(-1);m.cloudAtBoom={id:rec.id,dust:rec.dust,standing:sim.renderState.dust.some(c=>c.id===rec.id)};m.playerDistAtBoom=Math.min(m.playerDistAtBoom??Infinity,Math.hypot(rec.x-sim.player.x,rec.z-sim.player.z));}
+      if(e.type==='m01-blast'&&e.kind==='grenade'&&e.by!==undefined){m.exploded++;const rec=sim.sectors.damage.at(-1);m.cloudAtBoom={id:rec.id,dust:rec.dust,at:sim.clock};m.playerDistAtBoom=Math.min(m.playerDistAtBoom??Infinity,Math.hypot(rec.x-sim.player.x,rec.z-sim.player.z));}
       if(e.type==='deck-tactic'&&e.kind==='search')m.searches++;
     }
+    if(m.cloudAtBoom&&m.cloudStood===undefined&&sim.clock-m.cloudAtBoom.at>=3)m.cloudStood=sim.renderState.dust.some(c=>c.id===m.cloudAtBoom.id);   // (a blast starts without a cloud: it builds up in 1.5 s)
     for(const a of sim.actors){
       if(a.group!==GARRISON_GROUP)continue;
       if(a.state==='WOUNDED')m.wounded.add(a.id);
@@ -38,7 +39,7 @@ test('the control route: the wounded of the raid are treated and one is carried 
   assert.ok(m.calls>=3,'they called out');
   assert.deepEqual([m.at0603.task,m.at0603.job],[null,false]);assert.ok(m.at0603.dist<3,`Dudek at the aid post at 06:03:30 (${m.at0603.dist.toFixed(2)} m)`);
   assert.ok(m.grenades>=1&&m.exploded===m.grenades,`${m.grenades} stick grenades thrown, ${m.exploded} exploded`);
-  assert.deepEqual(m.cloudAtBoom.dust,{r:4.5,h:3.5,d:1,life:20});assert.equal(m.cloudAtBoom.standing,true,'the cloud stood at the explosion');
+  assert.deepEqual(m.cloudAtBoom.dust,{r:4.5,h:3.5,d:1,life:20});assert.equal(m.cloudStood,true,'and the cloud stood three seconds after the explosion');
   assert.ok(m.closest>=DECK_ASSAULT.tactics.grenade.minM&&m.closest<=DECK_ASSAULT.tactics.grenade.rangeM,`the closest approach to a Pole on the deck, ${m.closest.toFixed(1)} m, is inside the throw`);
   assert.ok(sim.dustRays.blocked>0&&sim.dustRays.blocked<sim.dustRays.checked,`the dust answered "no" to ${sim.dustRays.blocked} of ${sim.dustRays.checked} sight questions that met a cloud`);
   assert.ok(m.playerDistAtBoom>DECK_ASSAULT.tactics.grenade.reachM*5,`the grenade fell ${m.playerDistAtBoom.toFixed(0)} m from the player: nowhere near its woundM (${DECK_ASSAULT.tactics.grenade.woundM} m)`);
