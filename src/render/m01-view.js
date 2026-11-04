@@ -849,7 +849,7 @@ export class M01View {
     this.stationDamage.update(state.damage,sim.clock);
     this.areaDressing?.syncShellCraters(state.damage);   // INC-2: the craters of an area act's shells, from the saved damage (nothing for an act without shells)
     const yardFire=yardWagonFireDamage(sim.destruction,sim.world,sim.consumed.evt_m01_wounded_dragged??0,sim.clock);
-    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),trainSources:this.trainLife.sources,railwaySmoke:this.trainSmokeEnabled!==false});
+    this.atmosphere.update(yardFire?{...state,damage:[...state.damage,yardFire]}:state,sim.clock,this.owner.quality,{surfaceY:(x,z)=>sim.world.terrainHeightAt(x,z),eye:this.camera.position,trainSources:this.trainLife.sources,railwaySmoke:this.trainSmokeEnabled!==false});
     const live=new Set(sim.grenades.active.map(g=>g.id));
     for(const g of sim.grenades.active){let m=this.grenadeViews.get(g.id);if(!m){m=this.mesh('sphere','metal',[0,0,0],[.07,.07,.07],this.effects);this.grenadeViews.set(g.id,m);}m.position.set(g.x,g.y,g.z);}
     for(const [id,m]of this.grenadeViews)if(!live.has(id)){this.effects.remove(m);this.grenadeViews.delete(id);}

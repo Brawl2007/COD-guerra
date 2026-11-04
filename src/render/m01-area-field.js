@@ -124,8 +124,9 @@ wear=max(wear,(1.0-smoothstep(0.0,3.2+aNoise(vAreaPos.xz*.45)*2.4,length(bq)))*.
 if(wear>0.0)aCol=mix(aCol,areaLin(vec3(.50,.42,.32))*(.80+.40*aNoise(vAreaPos.xz*1.3)),wear*.85);
 aCol*=1.0-rut*.25;amp*=1.0-wear;
 // Soil grain. High: stochastic sampling (no repeat); Low: one tap with the coordinate warped by a low-frequency noise (the repeat is broken up for one extra noise, not three taps).
-float lum=1.0;float nearK=1.0-smoothstep(8.0,60.0,aDist);
-if(aDist<60.0){   // nearK is 0 beyond 60 m: the soil grain taps are not needed there
+// Low: the grain is only worth its taps near the eye; beyond ~15 m the 1.1 m soil map is under-sampled and printed a faint lattice on the ground (15-40 m), so it fades out between 4 and 15 m and the taps are skipped there.
+float grainFar=uAreaLow>.5?15.0:60.0;float lum=1.0;float nearK=1.0-smoothstep(uAreaLow>.5?4.0:8.0,grainFar,aDist);
+if(aDist<grainFar){   // nearK is 0 beyond grainFar: the soil grain taps are not needed there
 if(uAreaLow<.5){
   vec3 dt=areaSoil(vAreaPos.xz*.9);
   lum=dot(dt,vec3(.3,.59,.11))/.12;   // the soil map's mean is about .12 in linear light
@@ -135,8 +136,8 @@ if(uAreaLow<.5){
   vec3 dt=texture2D(uAreaDetail,wp).rgb;lum=dot(dt,vec3(.3,.59,.11))/.12;
 }
 }
-aCol*=mix(1.0,lum,(uAreaLow>.5?.3:.8)*nearK);   // Low: its single warped tap still shows the map's tile seams as a faint lattice at 15-40 m, so it is used with less contrast
-float areaH=(rowR-.4)*amp*.5+(lum-1.0)*(uAreaLow>.5?.15:.5)*nearK-rut*.5;
+aCol*=mix(1.0,lum,.8*nearK);
+float areaH=(rowR-.4)*amp*.5+(lum-1.0)*.5*nearK-rut*.5;
 diffuseColor.rgb*=aCol;
 `;
 const GLSL_BUMP=`normal=normalize(normal-vec3(dFdx(areaH),dFdy(areaH),0.0)*.22);`;

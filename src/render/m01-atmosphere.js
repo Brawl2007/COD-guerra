@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {puffTexture,cloudFieldTexture} from './m01-surfaces.js';
 import {dustPuffTexture} from './m01-fx-textures.js';
+import {M01DustVolumes} from './m01-dust-volume.js';
 import {CLOUD_WIND} from './m01-lighting.js';
 import {demolitionParticles} from './m01-demolition.js';
 import {train963Kinematics,isTrain963Visible} from './m01-locomotive.js';
@@ -81,6 +82,7 @@ export class M01Atmosphere {
     this.puffBatches=[];this.puffs=this.billboardBatch(this.capacity,'#ffffff',scene);
     this.debrisGeometry=new THREE.TetrahedronGeometry(1);this.debrisMaterial=new THREE.MeshStandardMaterial({color:'#615846',roughness:1});
     this.debris=new THREE.InstancedMesh(this.debrisGeometry,this.debrisMaterial,64);this.debris.count=0;this.debris.frustumCulled=false;scene.add(this.debris);
+    this.dustVolumes=new M01DustVolumes(scene);this.light=1;   // the simulation's dust clouds drawn as volumes (m01-dust-volume.js); `light` follows the lighting model's daylight
     this.dummy=new THREE.Object3D();this.color=new THREE.Color();this.fade=this.puffs.geometry.attributes.puffOpacity;
     this.demolitionDrawn={puffs:0,chips:0};   // set-piece particles drawn by the last update (diagnostics only)
   }
@@ -109,6 +111,7 @@ export class M01Atmosphere {
     u.skyZenith.value.setRGB(...sky.zenith);u.skyHorizon.value.setRGB(...sky.horizon);u.skyHalo.value.setRGB(...sky.halo);u.skyDisc.value.setRGB(...sky.disc);
     u.skyGlow.value=sky.glow;u.discStrength.value=sky.discStrength;u.sunDirection.value.set(...sky.sunDir);
     this.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.dustMaterial.uniforms.fogColor.value.setRGB(...model.fog.color);
+    this.dustVolumes.material.uniforms.fogColor.value.setRGB(...model.fog.color);this.light=.3+.7*model.daylight;
   }
   /** Railway puffs for this frame, decided before damage so the damage pass can leave exactly this room. Presentation only. */
   railwayPlan(state,clock,quality,context={}){
@@ -246,8 +249,13 @@ export class M01Atmosphere {
     }
     // Package 2: the clouds of dust and smoke the SIMULATION says hide a man from the AI (state.dust, src/game/m01-dust.js: a vertical cylinder of radius r and height h, thinning with `density`) are drawn where they
     // are and at their size, so what blocks a German's sight is on the screen (before the lingering smoke columns, which would otherwise fill the pool: the cloud that hides a man is the one that must be drawn); the renderer decides nothing from them. A few soft puffs fill the disc (a sunflower spread), low and wide, as dense as the cloud.
-    for(const c of state.dust??[]){
-      const cap=quality==='low'?9:quality==='medium'?14:20,n=Math.min(cap,Math.max(3,Math.round(c.r*c.r/20))),seed=(Math.floor((c.x+2048)*13)^Math.floor((c.z+2048)*29)^Math.floor(c.r*7))>>>0,w=Math.max(2.4,2.2*c.r/Math.sqrt(n));
+    // The nearest clouds (the quality's pool: 4 / 6 / 8) are drawn as volumes whose optical depth follows density x length inside the cylinder, so a cloud that blocks the AI (3 m of it) is an opaque curtain here; a cloud beyond the
+    // pool keeps the soft puffs below.
+    const clouds=state.dust??[],nVolumes=this.dustVolumes.pick(clouds,this.dustVolumes.poolFor(quality),context.eye??null);
+    this.dustVolumes.update(clouds,nVolumes,quality,clock,this.light);
+    for(let ci=0;ci<clouds.length;ci++){
+      if(nVolumes>0&&this.dustVolumes.isPicked(ci,nVolumes))continue;
+      const c=clouds[ci],cap=quality==='low'?9:quality==='medium'?14:20,n=Math.min(cap,Math.max(3,Math.round(c.r*c.r/20))),seed=(Math.floor((c.x+2048)*13)^Math.floor((c.z+2048)*29)^Math.floor(c.r*7))>>>0,w=Math.max(2.4,2.2*c.r/Math.sqrt(n));
       for(let i=0;i<n&&count<damageMax;i++){
         const n0=visualNoise(seed,i*4),n1=visualNoise(seed,i*4+1),n2=visualNoise(seed,i*4+2),a=i*2.399+n0*1.1,rr=c.r*Math.sqrt((i+.5)/n)*(.8+.2*n1);
         this.dummy.rotation.set(0,0,0);this.dummy.position.set(c.x+Math.cos(a)*rr,c.y+.5+Math.max(0,c.h-1)*(.12+.4*n2),c.z+Math.sin(a)*rr);
@@ -313,7 +321,7 @@ export class M01Atmosphere {
     this.debris.count=chips;this.debris.instanceMatrix.needsUpdate=true;this.dummy.rotation.set(0,0,0);
     this.count=count;this.puffs.count=count;this.puffs.instanceMatrix.needsUpdate=true;this.puffs.instanceColor.needsUpdate=true;this.fade.needsUpdate=true;
   }
-  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,railwayPuffs:this.railwayPuffs,trainPuffs:this.trainPuffs,railwayBudget:RAILWAY_PUFF_BUDGET[this.lastQuality]??RAILWAY_PUFF_BUDGET.medium,smokeByDamage:{...this.smokeByDamage},debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,demolition:{...this.demolitionDrawn}};}
-  dispose(){this.scene.remove(this.sky);this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
+  get diagnostics(){return {puffs:this.count,puffCapacity:this.capacity,railwayPuffs:this.railwayPuffs,trainPuffs:this.trainPuffs,railwayBudget:RAILWAY_PUFF_BUDGET[this.lastQuality]??RAILWAY_PUFF_BUDGET.medium,smokeByDamage:{...this.smokeByDamage},debris:this.debris.count,debrisCapacity:this.debris.instanceMatrix.count,puffBatches:this.puffBatches.length,dustVolumes:{drawn:this.dustVolumes.drawn,capacity:this.dustVolumes.capacity},demolition:{...this.demolitionDrawn}};}
+  dispose(){this.scene.remove(this.sky);this.dustVolumes.dispose();this.debris.removeFromParent();this.debris.dispose();this.debrisGeometry.dispose();this.debrisMaterial.dispose();for(const batch of this.puffBatches){batch.removeFromParent();batch.dispose();batch.geometry.dispose();}this.puffBatches=[];
     this.quad.dispose();this.skyGeometry.dispose();this.skyMaterial.dispose();this.material.dispose();this.dustMaterial.dispose();this.texture.dispose();this.dustTexture.dispose();this.cloudTexture.dispose();}
 }
