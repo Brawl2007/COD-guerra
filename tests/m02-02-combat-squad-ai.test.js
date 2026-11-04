@@ -74,13 +74,60 @@ test('AI-02: Honest enemy perception — enemies remember last seen/heard positi
   for (let i = 0; i < 130; i++) {
     sim.tick(0.05, {});
   }
-  if (kitchenDefender.alive && !kitchenDefender.seeingTargetId) {
-    assert.notEqual(
-      kitchenDefender.memory?.z,
-      -10.5,
-      'Enemy must never acquire hidden player coordinates through solid wall',
-    );
+  // Unconditional: the defender must still be alive and blind to Piotr, so the checks below really run.
+  assert.equal(kitchenDefender.alive, true, 'DE-A07 must still be alive after the wait');
+  assert.equal(kitchenDefender.seeingTargetId, null, 'DE-A07 must still not see Piotr behind the solid wall');
+  const memoryAfter = kitchenDefender.memory;
+  assert.ok(
+    memoryAfter === null || memoryAfter.targetId !== 'piotr_sokol',
+    'Expired visual memory of Piotr must not linger or be refreshed without sight or sound',
+  );
+  assert.notEqual(memoryAfter?.z, -10.5, 'Enemy must never acquire hidden player coordinates through solid wall');
+  assert.notEqual(memoryAfter?.source, 'visual', 'No visual memory may exist while the target is hidden');
+});
+
+test('AI-02 (som): firing from behind a solid wall gives an AUDIO memory at the shooter, never visual sight', () => {
+  const sim = new M02BenchSimulation(19390909);
+  const kitchenDefender = sim.enemies.find((e) => e.id === 'DE-A07');
+  assert.ok(kitchenDefender);
+
+  // Hidden position behind West Bedroom brick wall: no line of sight to DE-A07.
+  sim.teleportPlayer(-44.0, -10.5, 0);
+  sim.tick(0.1, {});
+  assert.equal(kitchenDefender.seeingTargetId, null, 'Precondition: hidden player is not seen');
+  const memoryBefore = kitchenDefender.memory;
+  assert.ok(
+    memoryBefore === null || memoryBefore.targetId !== 'piotr_sokol',
+    'Precondition: no memory of Piotr before he makes noise',
+  );
+
+  const shot = sim.firePlayerWeapon(true, true);
+  assert.ok(shot, 'Hidden player must be able to fire');
+
+  const heard = kitchenDefender.memory;
+  assert.ok(heard, 'DE-A07 must register a memory from the gunshot');
+  assert.equal(heard.source, 'audio', 'Memory from a hidden shot must be auditory, not visual');
+  assert.equal(heard.targetId, 'piotr_sokol');
+  assert.equal(heard.x, -44);
+  assert.equal(heard.z, -10.5);
+  assert.ok(heard.expiresAt > sim.clock, 'Audio memory must be fresh');
+  assert.ok(heard.expiresAt - heard.seenAt <= 6.0, 'Audio memory must be time-limited');
+
+  // The shot gives a position to search, but must NOT grant sight through the wall.
+  sim.tick(0.05, {});
+  assert.equal(kitchenDefender.seeingTargetId, null, 'Hearing a shot must not become wallhack vision');
+  assert.equal(kitchenDefender.state, 'SEARCH_MEMORY');
+
+  // Audio memory expires if the player stays silent and hidden.
+  for (let i = 0; i < 140; i++) {
+    sim.tick(0.05, {});
   }
+  assert.equal(kitchenDefender.seeingTargetId, null);
+  const later = kitchenDefender.memory;
+  assert.ok(
+    later === null || later.targetId !== 'piotr_sokol' || later.seenAt === heard.seenAt,
+    'Piotr audio memory must not be refreshed while silent',
+  );
 });
 
 test('AI-03: Narrow doorway single-file queue and automatic door opening prevent NPC bottlenecking', () => {

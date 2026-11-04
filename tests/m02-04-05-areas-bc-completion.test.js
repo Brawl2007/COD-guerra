@@ -68,6 +68,7 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
     assert.equal(sim.areaB.supplyCart.state, 'WAITING_CLEAR_CORRIDOR');
 
     // Neutralize EB1 defenders so corridor is clear and advance cart to goal
+    assert.ok(sim.enemies.length > 0, 'Cell B must contain EB1 defenders to neutralize (guards vacuous loop)');
     for (const e of sim.enemies) {
       e.alive = false;
       e.health = 0;
@@ -124,6 +125,7 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
     simZero.enterAreaBC06();
     simZero.loseSupplyVolume('vol_water');
     simZero.loseSupplyVolume('vol_ammo');
+    assert.ok(simZero.enemies.length > 0, 'Cell B must contain defenders to neutralize (guards vacuous loop)');
     for (const e of simZero.enemies) {
       e.alive = false;
       e.state = 'DEAD';

@@ -305,13 +305,14 @@ describe('M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Ma
     assert.equal(simC.areaC.artilleryDetonated, true);
   });
 
-  it('O3: 12-Seed Climax Stress Audit (19390909..19390920) completes full mission flow with 100% determinism', () => {
+  it('O3: 12-Seed scripted mission-flow audit (19390909..19390920) completes the state-driven flow (NOT a combat run; determinism is checked in the next test)', () => {
     const seeds = [
       19390909, 19390910, 19390911, 19390912,
       19390913, 19390914, 19390915, 19390916,
       19390917, 19390918, 19390919, 19390920,
     ];
 
+    assert.equal(new Set(seeds).size, 12, 'Audit must cover 12 distinct seeds');
     for (const seed of seeds) {
       const sim = new M02BenchSimulation(seed);
 
@@ -388,4 +389,93 @@ describe('M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Ma
       assert.ok(Number.isFinite(sim.player.z) && !Number.isNaN(sim.player.z));
     }
   });
+
+  it('O3: determinism — same seed and inputs give identical snapshot() every 60 ticks over 1800 ticks; different seeds diverge', () => {
+    const TOTAL_TICKS = 1800;
+    const CHECKPOINT_EVERY = 60;
+    const DT = 0.05;
+
+    // Fixed, seed-independent input script: crouched in cover, firing, reloading, issuing squad orders and turning.
+    const controlsAt = (i) => ({
+      crouch: i === 0,
+      aim: i % 90 < 45,
+      fire: i % 25 === 5,
+      reload: i % 400 === 399,
+      lookX: i % 200 === 100 ? 0.12 : 0,
+      orderSuppress: i === 30,
+      orderAdvance: i === 600,
+      orderFlank: i === 1200,
+    });
+
+    const run = (seed) => {
+      const sim = new M02BenchSimulation(seed);
+      const checkpoints = [];
+      for (let i = 0; i < TOTAL_TICKS; i++) {
+        sim.tick(DT, controlsAt(i));
+        if ((i + 1) % CHECKPOINT_EVERY === 0) checkpoints.push(JSON.stringify(sim.snapshot()));
+      }
+      return checkpoints;
+    };
+
+    const seeds = [19390909, 19390915, 19390920];
+    const runs = new Map();
+    for (const seed of seeds) {
+      const first = run(seed);
+      const second = run(seed);
+      assert.equal(first.length, TOTAL_TICKS / CHECKPOINT_EVERY, `Seed ${seed}: expected 30 checkpoints`);
+      assert.equal(second.length, first.length);
+      for (let c = 0; c < first.length; c++) {
+        assert.equal(
+          second[c],
+          first[c],
+          `Seed ${seed}: independent runs diverged at tick ${(c + 1) * CHECKPOINT_EVERY}`,
+        );
+      }
+      // The scenario must really move the simulation (not 30 copies of the initial state).
+      assert.notEqual(first[0], first[first.length - 1], `Seed ${seed}: state must evolve during the run`);
+      assert.equal(new Set(first).size > 1, true);
+      runs.set(seed, first);
+    }
+
+    // Different seeds must produce at least some difference in the checkpoint series.
+    const [a, b, c] = seeds.map((seed) => runs.get(seed));
+    const differs = (x, y) => x.some((snap, idx) => snap !== y[idx]);
+    assert.equal(differs(a, b), true, 'Seeds 19390909 and 19390915 must diverge somewhere');
+    assert.equal(differs(a, c), true, 'Seeds 19390909 and 19390920 must diverge somewhere');
+    assert.equal(differs(b, c), true, 'Seeds 19390915 and 19390920 must diverge somewhere');
+  });
+
+  it(
+    'O3/SAVE: restoreSnapshot() restores the RNG state saved with the checkpoint',
+    { todo: 'BUG: snapshot()/restoreSnapshot() omit sim.rng.state (src/game/m02-01-simulation.js); after restoreCheckpoint the shot-jitter RNG continues from the later state, so replays after a restore are not reproducible.' },
+    () => {
+      const sim = new M02BenchSimulation(19390909);
+      for (let i = 0; i < 300; i++) sim.tick(0.05, { crouch: i === 0, aim: i % 90 < 45, fire: i % 25 === 5 });
+      const savedState = sim.rng.state;
+      assert.notEqual(savedState, 19390909, 'Precondition: the RNG has been consumed by shot jitter');
+      sim.saveCheckpoint('cp_rng_probe');
+      for (let i = 300; i < 600; i++) sim.tick(0.05, { aim: i % 90 < 45, fire: i % 25 === 5 });
+      assert.notEqual(sim.rng.state, savedState, 'Precondition: the RNG advanced after the checkpoint');
+      sim.restoreCheckpoint('cp_rng_probe');
+      assert.equal(sim.rng.state, savedState, 'restoreCheckpoint must restore the RNG state');
+    },
+  );
+
+  it(
+    'O3/SAVE: replaying the same inputs after restoreCheckpoint reproduces an identical snapshot()',
+    { todo: 'BUG: restore -> replay diverges (src/game/m02-01-simulation.js): besides the missing rng.state, transient enemy AI fields not in the snapshot (facing, navRevision, nav goals) and dialogue/flags differ after replaying 600 ticks from the same checkpoint.' },
+    () => {
+      const sim = new M02BenchSimulation(19390909);
+      const controls = (i) => ({ crouch: i === 0, aim: i % 90 < 45, fire: i % 25 === 5 });
+      for (let i = 0; i < 300; i++) sim.tick(0.05, controls(i));
+      sim.saveCheckpoint('cp_replay_probe');
+      const replay = () => {
+        for (let i = 300; i < 900; i++) sim.tick(0.05, controls(i));
+        return JSON.stringify(sim.snapshot());
+      };
+      const first = replay();
+      sim.restoreCheckpoint('cp_replay_probe');
+      assert.equal(replay(), first, 'Replay after restore must match the original continuation');
+    },
+  );
 });
