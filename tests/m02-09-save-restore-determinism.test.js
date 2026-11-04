@@ -17,8 +17,8 @@ import {
 } from '../src/game/m02-save-store.js';
 
 const DT = 0.05;
-const PREFIX_TICKS = 160; // 8 s antes do snapshot (inclui uma granada ainda em voo no momento do snapshot)
-const CONTINUATION_TICKS = 240; // 12 s comparados tick a tick depois do snapshot
+const PREFIX_TICKS = 160; // 8 s antes do snapshot: uma granada já explodiu (indicador direcional ativo) e outra está em voo
+const CONTINUATION_TICKS = 160; // 8 s comparados tick a tick depois do snapshot
 const SEEDS = [19390909, 19390913];
 const ROUTES = Object.freeze({
   vala: Object.freeze([
@@ -93,9 +93,17 @@ function liveState(sim) {
   return top;
 }
 
+const sha256 = (text) => createHash('sha256').update(text).digest('hex');
+
+/**
+ * `<estado de jogo>:<gerador+eventos>`. A primeira parte exclui a semente e o estado do gerador, para mostrar se o
+ * gerador mudou o que acontece no jogo (controlo negativo); o digest completo compara tudo.
+ */
 function digest(sim, tickEvents) {
-  return createHash('sha256').update(canonical({ state: liveState(sim), events: tickEvents })).digest('hex');
+  const { rng, seed, ...state } = liveState(sim);
+  return `${sha256(canonical(state))}:${sha256(canonical({ rng, seed, events: tickEvents }))}`;
 }
+const gameplayPart = (d) => d.slice(0, d.indexOf(':'));
 
 function normalizeAngle(a) {
   let d = a;
@@ -120,7 +128,9 @@ function makeDriver(routeId) {
     if (tickIndex % 23 === 11) controls.fire = true;
     if (tickIndex % 97 === 50) controls.reload = true;
     if (tickIndex === 30) controls[routeId === 'pomar' ? 'orderFlank' : 'orderSuppress'] = true;
-    if (tickIndex === 150) controls.grenade = true; // fusível de 2 s: ainda em voo no snapshot (tick 160)
+    // Fusível de 2 s (40 ticks): a 1.ª explode no tick 140 (indicador direcional ainda ativo no snapshot do tick 160),
+    // a 2.ª ainda está em voo no snapshot e explode durante a continuação.
+    if (tickIndex === 100 || tickIndex === 150) controls.grenade = true;
     if (tickIndex === 200) controls.orderAdvance = true;
     if (tickIndex === 260 || tickIndex === 300) controls.crouch = true;
     if (tickIndex % 41 === 7) controls.interact = true;
@@ -156,28 +166,39 @@ function assertSameTrajectory(actual, expected, label) {
 }
 
 /** Prepara um cenário: prefixo gravado, checkpoint, continuação gravada (referência). */
-function buildScenario(routeId, seed) {
+function buildScenario(routeId, seed, { prefixTicks = PREFIX_TICKS, continuationTicks = CONTINUATION_TICKS } = {}) {
   const storage = createMemoryStorage();
   const sim = new M02BenchSimulation(seed, { storage });
   sim.drainEvents();
   const driver = makeDriver(routeId);
-  const prefix = runRecording(sim, driver, 0, PREFIX_TICKS);
+  const prefix = runRecording(sim, driver, 0, prefixTicks);
   const snap = sim.saveCheckpoint('cp_fix2_test');
   assert.equal(sim.lastCheckpointPersist.ok, true, `persistência do checkpoint: ${sim.lastCheckpointPersist.reason}`);
   sim.drainEvents();
   const rngAtSnapshot = sim.rng.state;
-  const continuation = runRecording(sim, driver, PREFIX_TICKS, CONTINUATION_TICKS);
-  return { sim, storage, snap, prefix, continuation, rngAtSnapshot };
+  const continuation = runRecording(sim, driver, prefixTicks, continuationTicks);
+  return { sim, storage, snap: structuredClone(snap), prefix, continuation, rngAtSnapshot };
+}
+
+const referenceRuns = new Map();
+/** A referência (snapshot + continuação gravada) de cada rota × semente, reutilizada pelo controlo negativo. */
+function referenceRun(routeId, seed) {
+  const key = `${routeId}|${seed}`;
+  if (!referenceRuns.has(key)) referenceRuns.set(key, buildScenario(routeId, seed));
+  return referenceRuns.get(key);
 }
 
 describe('M02-09 — SAVE-01: restauro determinístico com semente e estado do gerador (schema v2)', () => {
   for (const routeId of Object.keys(ROUTES)) {
     for (const seed of SEEDS) {
       it(`rota ${routeId} · semente ${seed}: continuação restaurada é igual tick a tick (sim novo, mesmo sim, save persistido)`, () => {
-        const { sim, storage, snap, continuation, rngAtSnapshot } = buildScenario(routeId, seed);
+        const { sim, storage, snap, continuation, rngAtSnapshot } = referenceRun(routeId, seed);
 
         // O cenário tem de exercitar o que o restauro tem de repor; senão a igualdade seria vazia.
         assert.equal(snap.grenades.length, 1, 'uma granada em voo no momento do snapshot');
+        assert.equal(snap.grenadeSeq, 2);
+        assert.ok(snap.audiovisual.directionalIndicators.length > 0, 'indicador direcional da 1.ª granada ativo no snapshot');
+        assert.ok(snap.combatLog.length > 0 && snap.shotLog.length > 0);
         assert.equal(snap.rng.seed, seed);
         assert.equal(snap.rng.state, rngAtSnapshot);
         assert.notEqual(sim.rng.state, rngAtSnapshot, 'a continuação consome o gerador (tiros da secção)');
@@ -208,31 +229,50 @@ describe('M02-09 — SAVE-01: restauro determinístico com semente e estado do g
     }
   }
 
-  it('controlo negativo: sem repor o gerador (comportamento v1), a continuação diverge — o teste deteta a falta', () => {
-    const { snap, continuation } = buildScenario('vala', SEEDS[0]);
-    const sim = new M02BenchSimulation(SEEDS[0]);
-    sim.restoreSnapshot(snap);
-    sim.drainEvents();
-    sim.rng.state = (snap.rng.state ^ 0x5bd1e995) >>> 0; // como no v1: gerador fora do snapshot
-    const digests = replay(sim, continuation.inputs);
-    assert.ok(
-      digests.some((d, i) => d !== continuation.digests[i]),
-      'com o gerador errado a trajetória tem de divergir; caso contrário o cenário não exercita o RNG',
-    );
+  it('controlo negativo: sem repor o gerador (comportamento v1), o estado de jogo diverge — o teste deteta a falta', () => {
+    for (const routeId of Object.keys(ROUTES)) {
+      const { snap, continuation } = referenceRun(routeId, SEEDS[0]);
+      const bad = new M02BenchSimulation(SEEDS[0]);
+      bad.restoreSnapshot(snap);
+      bad.drainEvents();
+      bad.rng.state = (snap.rng.state ^ 0x5bd1e995) >>> 0; // como no v1: gerador fora do snapshot
+      const actual = replay(bad, continuation.inputs).map(gameplayPart);
+      const expected = continuation.digests.map(gameplayPart);
+      assert.equal(actual[0], expected[0], `rota ${routeId}: o resto do estado foi reposto`);
+      assert.ok(
+        actual.some((d, i) => d !== expected[i]),
+        `rota ${routeId}: com o gerador errado o estado de jogo (sem contar o próprio gerador) tem de divergir`,
+      );
+    }
   });
 
-  it('mesma semente e mesmas entradas → mesmo estado em cada tick; semente diferente → trajetória diferente', () => {
+  it('fechaduras de porta ativas no snapshot (rota vala, 20 s) são repostas e a continuação coincide', () => {
+    const { snap, continuation, storage } = buildScenario('vala', SEEDS[0], { prefixTicks: 400, continuationTicks: 100 });
+    assert.ok(Object.keys(snap.doorLocks).length > 0, 'pelo menos uma porta estreita reservada por um NPC');
+    const fresh = new M02BenchSimulation(SEEDS[1]);
+    fresh.restoreSnapshot(snap);
+    fresh.drainEvents();
+    assert.deepEqual(Object.fromEntries(fresh.doorLocks), snap.doorLocks);
+    assertSameTrajectory(replay(fresh, continuation.inputs), continuation.digests, 'sim novo (fechaduras)');
+    const reloaded = new M02BenchSimulation(SEEDS[1], { storage });
+    reloaded.restorePersistedCheckpoint('cp_fix2_test');
+    reloaded.drainEvents();
+    assertSameTrajectory(replay(reloaded, continuation.inputs), continuation.digests, 'save persistido (fechaduras)');
+  });
+
+  it('mesma semente e mesmas entradas → mesmo estado em cada tick; semente diferente → estado de jogo diferente', () => {
     for (const routeId of Object.keys(ROUTES)) {
-      const a = new M02BenchSimulation(SEEDS[0]);
-      a.drainEvents();
-      const recA = runRecording(a, makeDriver(routeId), 0, PREFIX_TICKS + 80);
-      const b = new M02BenchSimulation(SEEDS[0]);
-      b.drainEvents();
-      assertSameTrajectory(replay(b, recA.inputs), recA.digests, `rota ${routeId}, mesma semente`);
-      const c = new M02BenchSimulation(SEEDS[1]);
-      c.drainEvents();
-      const other = replay(c, recA.inputs);
-      assert.ok(other.some((d, i) => d !== recA.digests[i]), `rota ${routeId}: a semente tem efeito observável`);
+      const { prefix } = referenceRun(routeId, SEEDS[0]);
+      const same = new M02BenchSimulation(SEEDS[0]);
+      same.drainEvents();
+      assertSameTrajectory(replay(same, prefix.inputs), prefix.digests, `rota ${routeId}, mesma semente desde o início`);
+      const other = new M02BenchSimulation(SEEDS[1]);
+      other.drainEvents();
+      const otherGameplay = replay(other, prefix.inputs).map(gameplayPart);
+      assert.ok(
+        otherGameplay.some((d, i) => d !== gameplayPart(prefix.digests[i])),
+        `rota ${routeId}: a semente tem efeito observável no estado de jogo (não só no gerador)`,
+      );
     }
   });
 });
