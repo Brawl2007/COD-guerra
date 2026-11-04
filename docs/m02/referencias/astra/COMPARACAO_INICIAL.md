@@ -1,6 +1,6 @@
 # M02 — referência Astra e comparação inicial
 
-O proprietário forneceu em 2026-11-04 o [pacote de pré-produção](M02-BZURA-PRE-PRODUCAO.pdf), o [masterplan](01-masterplan.png) e as [plantas de interiores](03-interiores.png). O PDF é uma proposta de 24-10-2026, com 56 páginas; distingue dramatização, hipótese histórica e geometria de design. Não confundir estas plantas com imagens do jogo. O proprietário identifica-o como referência do roteiro. O PROMPT MESTRE complementar de 173.148 palavras é outro documento e continua ausente.
+O proprietário forneceu em 2026-11-04 o [pacote de pré-produção](M02-BZURA-PRE-PRODUCAO.pdf), o [masterplan](01-masterplan.png) e as [plantas de interiores](03-interiores.png) e confirmou que este é o roteiro verdadeiro da M02. Usar o roteiro C01–C12 do PDF como referência principal para a missão, sem descartar implementações compatíveis. O PDF tem 56 páginas e data de 24-10-2026; distingue dramatização, hipótese histórica e geometria de design. Não confundir estas plantas com imagens do jogo nem tratar hipóteses históricas como factos validados. O PROMPT MESTRE complementar de 173.148 palavras é outro documento e continua ausente.
 
 ## Comparação inicial — não é auditoria integral
 

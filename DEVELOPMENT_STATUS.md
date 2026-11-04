@@ -2,7 +2,7 @@
 
 ## M02 — roteiro Astra recebido — 2026-11-04
 
-PDF de pré-produção e plantas fornecidos pelo proprietário estão em [referências/astra](docs/m02/referencias/astra/COMPARACAO_INICIAL.md). A estrutura principal existe, mas fidelidade detalhada das cenas, duração e encenação ainda não está demonstrada; a comparação inicial aponta lacunas concretas. Auditar e implementar por cena antes de declarar a missão concluída.
+PDF de pré-produção e plantas fornecidos pelo proprietário estão em [referências/astra](docs/m02/referencias/astra/COMPARACAO_INICIAL.md). O proprietário confirmou que o PDF contém o roteiro verdadeiro da M02; usar C01–C12 como referência principal. A estrutura principal existe, mas fidelidade detalhada das cenas, duração e encenação ainda não está demonstrada; a comparação inicial aponta lacunas concretas. Auditar e implementar por cena antes de declarar a missão concluída.
 
 ## M02 — joystick tátil e dois dedos — 2026-11-04
 

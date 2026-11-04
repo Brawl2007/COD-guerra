@@ -2,7 +2,7 @@
 
 ## Referência Astra recebida — 2026-11-04
 
-O proprietário forneceu o PDF de pré-produção e duas plantas. Foram preservados em [referências/astra](referencias/astra/COMPARACAO_INICIAL.md). A comparação inicial confirma a estrutura geral C01–C12, mas não prova fidelidade de encenação; identificou a ausência visível de opção para dar água ao ferido C04, coreografia incompleta de Lis e diferença entre alvo editorial de duração e percurso automatizado. Efetuar auditoria por cena e desenvolver as lacunas sem substituir sistemas válidos. O PDF não é o PROMPT MESTRE complementar de 173.148 palavras, que continua ausente.
+O proprietário forneceu o PDF de pré-produção e duas plantas e confirmou que este é o roteiro verdadeiro da M02. Foram preservados em [referências/astra](referencias/astra/COMPARACAO_INICIAL.md); o roteiro C01–C12 do PDF é a referência principal da missão. A comparação inicial confirma a estrutura geral C01–C12, mas não prova fidelidade de encenação; identificou a ausência visível de opção para dar água ao ferido C04, coreografia incompleta de Lis e diferença entre alvo editorial de duração e percurso automatizado. Efetuar auditoria por cena e desenvolver as lacunas sem substituir sistemas válidos. O PDF não é o PROMPT MESTRE complementar de 173.148 palavras, que continua ausente.
 
 ## Continuação — joystick e dois dedos, 2026-11-04
 
