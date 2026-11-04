@@ -624,7 +624,12 @@
               8
             ],
             "pinnedPauseFactor": 2,
-            "note": "Decisão do Capitão (2026-11-04, reversível: apagar `suppress`): GAMEPLAY_DRAMATIZATION. Uma MG34 sem alvo à vista dispara rajadas curtas (rondas reais, o modelo de qualquer ronda alemã, a mesma tabela D35 de ferimentos) sobre o sítio onde viu o último clarão de um polaco ou do jogador (até `memorySec` depois), uma rajada a cada `pauseSec` s; presa ao solo dispara às cegas com a pausa multiplicada por `pinnedPauseFactor`. Só atinge o que as rondas atravessam (parapeito, terra, ar por cima dele). Sorteios só do fluxo próprio do homem."
+            "hitChance": {
+              "cover": 0.1,
+              "exposed": 0.5
+            },
+            "pinSec": 1.5,
+            "note": "Decisão do Capitão (2026-11-04, reversível: apagar `suppress`): GAMEPLAY_DRAMATIZATION. Uma MG34 sem alvo à vista dispara rajadas curtas (rondas reais, o modelo de qualquer ronda alemã, a mesma tabela D35 de ferimentos) sobre o sítio onde viu o último clarão de um polaco ou do jogador (até `memorySec` depois), uma rajada a cada `pauseSec` s; presa ao solo dispara às cegas com a pausa multiplicada por `pinnedPauseFactor`. Só atinge o que as rondas atravessam (parapeito, terra, ar por cima dele). Sorteios só do fluxo próprio do homem. Correção de equilíbrio (INC-2, passo 0, 2026-11-04, reversível: apagar `hitChance` e `pinSec`): o fogo às cegas devia sobretudo abafar, raramente matar. Uma ronda sua que atravessa um homem da linha (não os nomeados) só o fere com a probabilidade `hitChance` conforme a postura (`cover`: ajoelhado atrás do parapeito; `exposed`: levantado para disparar), por uma função pura dos dois ids (sem sorteio); as outras acabam na terra a seu lado. Quem está a menos de 3 m do fim de uma ronda sua fica em baixo `pinSec` s (as rondas apontadas continuam a 4 s): sem isto a linha ficava presa quase todo o tempo, disparava menos e perdia a linha inteira com o piloto passivo, e a ckm disparava metade das rajadas."
           }
         },
         "playerWeight": {

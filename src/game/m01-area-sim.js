@@ -24,6 +24,7 @@ import {makeRound,traceRound,closestApproach,NEAR_MISS} from './m01-fire.js';
 import {aimPoint} from './m01-aim.js';
 import {initializePresentation,updateMotion,updatePosture,updateBodyYaw,recordSuppression,recordDamage,recordHit,updateActorDetails,presentationDiagnostics} from './m01-animation-presentation.js';
 import {impactPass} from './m01-audio-events.js';
+import {pairUnit} from './m01-unit-hash.js';   // a uniform number in [0, 1) from two ids (no stream is drawn)
 import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validApproachWave,validGermanAi,validSquadRecord} from './m01-act-factories.js';
 
 // 2 (2026-11-03, the second echelon): the roster grew (the men of the echelons that follow the first) and the wave record gained its echelon state (timers.wave.ech/echs/lullUntil).
@@ -486,7 +487,12 @@ export class M01AreaSimulation {
     const due=this.enemyFire.rounds.filter(r=>r.arriveAt<=this.clock);this.enemyFire.rounds=this.enemyFire.rounds.filter(r=>r.arriveAt>this.clock);
     const p=this.player,L=this.level;
     for(const r of due){
-      const targets=[p,...this.allies.filter(b=>b.alive&&b.active)],hit=traceRound(this.world,r,targets),point=hit.point,victim=hit.actor??null,near=[];
+      const targets=[p,...this.allies.filter(b=>b.alive&&b.active)],hit=traceRound(this.world,r,targets),point=hit.point,near=[];
+      let victim=hit.actor??null,material=hit.material??'earth';
+      // Blind fire (kind 'area', fire.suppress.hitChance; 2026-11-04, step 0 of INC-2): the gun fired at a place, not at a man. A round of it that crosses a man of the line hurts him only with the chance of how
+      // he stands (kneeling behind the parapet: low; risen to fire: higher); otherwise it ends in the earth beside him and pins him like any near miss. A pure function of the two ids (pairUnit): no draw of any stream.
+      const H=r.kind==='area'?this.plan.assault.fire.suppress?.hitChance:undefined;
+      if(H&&victim&&victim!==p&&!victim.essential&&pairUnit(victim.id,r.id)>=H[victim.crouched?'cover':'exposed']){victim=null;material='earth';}
       if(victim===p){
         const covered=Boolean(this.world.coverAt(p))&&p.crouched,chance=L.woundChance[covered?'cover':'exposed'];
         if(this.rng.next()<chance)this.woundPlayer(r);
@@ -495,11 +501,12 @@ export class M01AreaSimulation {
         else{const h=victim.health,was=victim.alive;victim.health=Math.max(0,h-LINE_DAMAGE*hit.multiplier);victim.alive=victim.health>0;victim.state=victim.alive?'HIT_REACTION':'DOWN';
           recordDamage(victim,h,was,this.clock,{x:r.ox,z:r.oz});if(was&&!victim.alive)this.say('man_down');}
       }
+      const pinSec=r.kind==='area'?this.plan.assault.fire.suppress?.pinSec??NEAR_PIN_SEC:NEAR_PIN_SEC;   // blind fire pins for `pinSec` (fire.suppress.pinSec), aimed fire for NEAR_PIN_SEC
       for(const b of this.allies){if(!b.alive||!b.active||b===victim)continue;
-        if(closestApproach(r,hit.t,eyePosition(b))<=NEAR_MISS){const prev=b.suppressedUntil;b.suppressedUntil=Math.max(prev,this.clock+NEAR_PIN_SEC);recordSuppression(b,prev,this.clock);near.push(b.id);}}
+        if(closestApproach(r,hit.t,eyePosition(b))<=NEAR_MISS){const prev=b.suppressedUntil;b.suppressedUntil=Math.max(prev,this.clock+pinSec);recordSuppression(b,prev,this.clock);near.push(b.id);}}
       const approach=closestApproach(r,hit.t,eyePosition(p)),crack=approach<=6;
       if(crack&&approach<=2.5&&this.clock-this.timers.playerPinnedAt>6){this.timers.playerPinnedAt=this.clock;if(!p.crouched)this.say('player_pinned');}
-      if(point)this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material:hit.material??'earth',crack,distance:dist(point,p),pass:impactPass(crack,approach),victim:victim&&victim!==p?victim.id:null,pinned:near});
+      if(point)this.emit({type:'round-impact',kind:r.kind,by:r.by,point,material,crack,distance:dist(point,p),pass:impactPass(crack,approach),victim:victim&&victim!==p?victim.id:null,pinned:near});
     }
   }
   damageGerman(e,amount,source,by){
