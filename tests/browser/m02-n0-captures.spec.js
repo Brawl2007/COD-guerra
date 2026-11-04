@@ -25,13 +25,16 @@ const LIGHTS = [
 const PROFILES = ['high', 'medium', 'low'];
 // PDF N: «SN1-SN5: pontos de revisao 360 graus». Each capture set is 4 headings from the SN point.
 const HEADINGS_DEG = [0, 90, 180, 270];
-const MIN_NON_UNIFORM_HEADINGS = 3;
+const MIN_NON_UNIFORM_HEADINGS = 4; // every heading of the 360-degree set
 
 // Reading-proof thresholds (luminance 0..255, on the saved PNG).
 const MIN_LUMA_STDDEV = 6; // image must not be flat / uniform
 const MIN_LUMA_MEAN = 12; // not black
 const MAX_LUMA_MEAN = 245; // not blown out
-const MIN_DISTINCT_LUMA = 24; // distinct 8-level luminance buckets
+// Calibrated on the 2026-11-04 run (120 readable blockout frames, viewed): min stddev 20.7, min distinct buckets 12.
+// Flat-shaded blockout surfaces give few luminance levels; a black/blank render gives stddev~0 and 1-2 buckets.
+// (24 buckets flagged readable frames as uniform.) This is a broken-render guard, not a readability judgement.
+const MIN_DISTINCT_LUMA = 8; // distinct 8-level luminance buckets
 
 // Key element of each SN as 3D sample points (metres, x east / y up / z south). The check passes when at least
 // one sample projects inside the frustum. It does not prove the element is unoccluded (human check pending).
@@ -79,7 +82,7 @@ test.describe('M02 N0 captures: 5 SN x 2 luzes x 3 perfis', () => {
       expectedSets: SNS.length * LIGHTS.length * PROFILES.length,
       thresholds: { MIN_LUMA_STDDEV, MIN_LUMA_MEAN, MAX_LUMA_MEAN, MIN_DISTINCT_LUMA },
       notes: [
-        'Reading proof is automatic and only guards against broken renders: per set, 4 headings from the PDF point (360-degree review), no black/blown-out heading, at least 3 of 4 headings with non-uniform luminance, key element inside the frustum in at least one heading. Bench HUD hidden. Occlusion, interiors, human reading, playtest and frame times remain human/other-gate items.',
+        'Reading proof is automatic and only guards against broken renders: per set, 4 headings from the PDF point (360-degree review), no black/blown-out heading, all 4 headings with non-uniform luminance (stddev>=6, >=8 luminance buckets), key element inside the frustum in at least one heading. Bench HUD hidden. Occlusion, interiors, human reading, playtest and frame times remain human/other-gate items.',
         'SwiftShader software WebGL: image fidelity and timings are not representative of a GPU.',
       ],
       browser: null,
@@ -238,8 +241,6 @@ test.describe('M02 N0 captures: 5 SN x 2 luzes x 3 perfis', () => {
             qualityApplied,
             noHeadingBlack: headings.every((h) => h.notBlack),
             noHeadingBlownOut: headings.every((h) => h.notBlownOut),
-            // A heading facing a plain untextured wall a few metres away is legitimately near-uniform in a blockout;
-            // a broken render (blank/black/missing geometry) is uniform in every heading.
             headingsNotUniform: nonUniform >= MIN_NON_UNIFORM_HEADINGS,
             keyElementInSomeHeading: headings.some((h) => h.keyElementInFrame),
             // The capture must be taken from the PDF section N point (tolerance 0.5 m), not an offset bench view.
