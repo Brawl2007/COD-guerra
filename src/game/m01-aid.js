@@ -239,11 +239,17 @@ export function validateAidActor(a,s,reject){
     !finite(r.at,0,s.clock+AID.call.everySec[1]+1e-6)||(r.t!==undefined&&!finite(r.t,0,s.clock))||(r.rest!==undefined&&(r.t===undefined||!finite(r.rest,r.t,s.clock))))reject('primeiros socorros '+a.id);
 }
 
-/** `timers.aid`, the medic's one job: {patient, phase, since, left? (treat), dest? (carry)}, consistent with the medic, the patient and his carry. */
+/**
+ * `timers.aid`, the medic's one job: {patient, phase, since, left? (treat), dest? (carry)}, consistent with the medic, the patient and his carry.
+ * One transient is valid (package 2 critical review, 2026-11-04): a tick runs updateActors (and so updateAid) BEFORE the raids' bombs (updateEarlyRaid / updateRaidSchedule), so a bomb that kills the
+ * man the medic is going to or treating leaves, at the end of that tick, the job pointing at a body (alive false, DOWN, not carried: a bomb skips a man on a shoulder, so only go and treat). A save made there
+ * is real; the next tick's updateAid ends the job (aborted) exactly as the live game does, so the save is accepted as it is and the restored game goes on as the original.
+ */
 export function validateAidRecord(j,s,reject){
   const medic=s.actors.find(a=>a.id===AID.medic),patient=s.actors.find(a=>a.id===j?.patient),keys=j&&typeof j==='object'&&!Array.isArray(j)?Object.keys(j):[];
+  const felled=Boolean(patient)&&!patient.alive&&patient.active&&patient.state==='DOWN'&&j?.phase!=='carry'&&patient.carriedBy==null&&!patient.carry;
   if(!j||keys.some(k=>!['patient','phase','since','left','dest'].includes(k))||!AID_PHASES.includes(j.phase)||!finite(j.since,0,s.clock)||!patient||patient.group!==GARRISON_GROUP||
-    !medic||!medic.alive||!medic.active||medic.task!=='aid'||medic.state==='WOUNDED'||!patient.alive||!patient.active||patient.state!=='WOUNDED'||!patient.aid)reject('trabalho do socorrista');
+    !medic||!medic.alive||!medic.active||medic.task!=='aid'||medic.state==='WOUNDED'||!(felled||patient.alive&&patient.active&&patient.state==='WOUNDED')||!patient.aid)reject('trabalho do socorrista');
   if((j.phase==='treat')!==(j.left!==undefined)||(j.left!==undefined&&!finite(j.left,0,AID.treatSec[1]+1e-6)))reject('trabalho do socorrista: tratamento');
   if(j.phase==='carry'){
     const d=j.dest;
