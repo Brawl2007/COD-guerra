@@ -42,9 +42,11 @@ const pause=(ai,mean,lo)=>Math.min(3*mean,Math.max(lo,mean*Math.exp(.5*aiGauss(a
 /** The area acts this module can run. One today; WP-2..WP-4 add theirs here. */
 export const AREA_ACTS=Object.freeze({act_vii_a_north:Object.freeze({layout:npLayout,act:npAct})});
 
-/** The solids of the area that no German path may cross and no turned earth may touch: the wreck and the parapet (the world builds the same boxes, m01-area-world.js). */
+/** The solids of the area that no German path may cross and no turned earth may touch: the wreck, the parapet segments and the low front of the ckm nest (the footprints of the
+ *  boxes the world builds, m01-area-world.js refresh; the heights do not matter to a path on the ground). */
 export const areaPlanSolids=layout=>[...layout.wreck.boxes.map(b=>({id:b.id,min:{x:b.min[0],z:b.min[2]},max:{x:b.max[0],z:b.max[2]}})),
-  ...layout.parapets.segments.map(([x0,x1],i)=>({id:`np_parapet_${i}`,min:{x:x0,z:layout.parapets.z0},max:{x:x1,z:layout.parapets.z1}}))];
+  ...layout.parapets.segments.map(([x0,x1],i)=>({id:`np_parapet_${i}`,min:{x:x0,z:layout.parapets.z0},max:{x:x1,z:layout.parapets.z1}})),
+  {id:'np_parapet_nest',min:{x:layout.parapets.nestFront.x0,z:layout.parapets.z0},max:{x:layout.parapets.nestFront.x1,z:layout.parapets.z1}}];
 
 /** Everything of the act that is data, validated once (a typo stops the game instead of changing it). */
 export function areaActPlan(actId='act_vii_a_north'){
@@ -314,9 +316,11 @@ export class M01AreaSimulation {
       if(d.phase==='fallback'){
         const target=d.node>=0?m.path[Math.min(d.node,m.path.length-1)]:m.entry;
         if(this.walk(a,target,S.fallbackSpeed,dt)){
+          d.since=this.clock;   // `since` is the last progress of his fall-back (set when he broke, and at every node he reaches): the stall below reads it
           if(d.node>=0)d.node--;
-          else{d.phase='clear';d.since=this.clock;a.active=false;}
+          else{d.phase='clear';a.active=false;}
         }
+        else this.fallbackStall(a,S);
       }
     }
     if(W.brokenAt!==null&&W.repelledAt===null&&!this.enemies.some(a=>a.alive&&a.active)){
@@ -330,6 +334,18 @@ export class M01AreaSimulation {
       if(W.ech===0){this.say('wave_seen');this.timers.openFireAt=this.clock+2.5;}else this.say('echelon_seen');
     }
     if(this.timers.openFireAt&&this.clock>=this.timers.openFireAt){this.timers.openFireAt=null;this.say('open_fire');}
+  }
+  /**
+   * Safety: a man in fallback who makes no progress (reaches no node) for `fallbackStallSec` is stuck on something, and a man who can never finish falling back would hold the lull
+   * (and the end of the act) for ever. He is taken off the field the way a finished fall-back does it (phase `clear`, inactive: nobody draws, hits or counts him), but in the least
+   * visible way: at once if no Pole and not the player has a line of sight to him; else he keeps trying until twice the stall time, and then goes anyway. No new saved state: the
+   * progress clock is `deck.since`, which the fall-back rewrites at every node.
+   */
+  fallbackStall(a,S){
+    const d=a.deck,idle=this.clock-d.since;
+    if(idle<S.fallbackStallSec)return;
+    if(idle<2*S.fallbackStallSec&&this.germanTargets(a,1e9).length)return;
+    d.phase='clear';a.active=false;
   }
   /**
    * The echelons. The one on the field breaks on its casualties (its own men and the overwatch that falls while it is there), on the pinning of its assault, or on its clock;
@@ -687,7 +703,8 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
     if(![a.x,a.y,a.z,a.health].every(Number.isFinite)||a.health<0||a.health>100)reject(`ator ${a.id}`);
     if(a.team==='enemy'&&a.deck!==undefined&&!validApproachRecord(plan.assault,a,s.clock))reject(`registo de assalto ${a.id}`);
   }
-  if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.['m01np.wave'],s.clock,s.actors))reject('registo da vaga (vagas, pausa ou estado do combate)');
+  const why=[];
+  if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.['m01np.wave'],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);
   const p=s.player;if(!p||![p.x,p.y,p.z,p.angle,p.pitch,p.health].every(Number.isFinite)||p.health<=0||p.health>100||!p.alive)reject('jogador');
   const w=s.weapon;if(!w||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>200)reject('arma');
   if(!s.objectives||plan.act.objectives.some(o=>!['locked','active','done'].includes(s.objectives[o.id]?.state)))reject('objetivos');

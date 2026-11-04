@@ -41,6 +41,48 @@ test('the slice data: 400 x 300 m inside north_perimeter, a valid plan of two ec
   assert.throws(()=>build(bad),/crosses/);
 });
 
+test('the path check is exact: a thin box on a long leg, between two samples of the old fixed-step check, is found; the ckm nest\'s front is a solid of the plan',()=>{
+  const plan=areaActPlan().assault,m=plan.men.find(x=>x.id==='de_np_4'),a=m.entry,b=m.path[0];
+  const L=Math.hypot(b.x-a.x,b.z-a.z);assert.ok(L>=80,'a long leg');
+  // the old check sampled t = 0, .02, .04 ...: 1.7 m apart on this leg, wider than an expanded earth box (0.9 + 2 x 0.32 = 1.54 m); a box 0.2 m deep centred at t = .51 fell between two samples
+  const zAt=a.z+(b.z-a.z)*.51,thin={id:'np_thin_box',min:{x:a.x-.1,z:zAt-.1},max:{x:a.x+.1,z:zAt+.1}};
+  const dz=Math.abs(zAt-a.z)%(L*.02);assert.ok(dz>.32+.1&&L*.02-dz>.32+.1,'the box is further than a body from both neighbouring samples');
+  const spec=ASSAULT(),withBox=s=>makeApproachPlan(spec,{minX:PB.minX,maxX:PB.maxX,groundY:layout.groundY,solids:s});
+  assert.ok(withBox(SOLIDS));
+  assert.throws(()=>withBox([...SOLIDS,thin]),/path of de_np_4 crosses np_thin_box/);
+  // beside the lane by more than a body, the same box is no obstacle; and one that only touches the edge of the grown box is not a crossing
+  const aside=(dx)=>({id:'aside',min:{x:a.x+dx-.1,z:zAt-.1},max:{x:a.x+dx+.1,z:zAt+.1}});
+  assert.ok(withBox([...SOLIDS,aside(.5)]),'0.5 m beside the lane (its edge 0.4 m): clear of the 0.32 m a body is grown by');
+  assert.throws(()=>withBox([...SOLIDS,aside(.35)]),/crosses aside/);
+  assert.ok(SOLIDS.some(x=>x.id==='np_parapet_nest'),'the ckm nest front is among the solids, as the world builds it');
+  assert.ok(withBox([...SOLIDS]),'and no shipped path crosses it');
+});
+
+test('a man who cannot finish his fall-back is taken off the field (fallbackStallSec), unseen at once, seen after twice the limit; the lull and the end are not held for ever',()=>{
+  const stall=areaActPlan().assault.fallbackStallSec;
+  for(const [seen,expected] of [[false,stall],[true,2*stall]]){
+    const sim=new M01AreaSimulation(19390901,{difficulty:'soldado'}),state={arrived:false,lastHealth:100};
+    let stuck=null,brokeAt=null,gone=null;const walk=sim.walk.bind(sim);
+    sim.walk=(a,t,v,dt)=>a===stuck&&a.deck.phase==='fallback'?false:walk(a,t,v,dt);   // wedged on something: it never moves
+    const hurt=sim.damageGerman.bind(sim);sim.damageGerman=(e,...rest)=>e===stuck?undefined:hurt(e,...rest);   // and the line cannot kill him, or there would be nothing to take off the field
+    if(!seen)sim.germanTargets=()=>[];   // nobody has a line of sight to him
+    for(let i=0;i<30000&&gone===null;i++){
+      sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();
+      const W=sim.timers.wave;
+      if(W&&W.echs[0].brokenAt!==null&&stuck===null){stuck=sim.enemies.find(a=>a.alive&&a.active&&sim.man(a).role==='assault'&&sim.man(a).echelon===0)??null;brokeAt=sim.clock;}
+      if(stuck&&(!stuck.active))gone=sim.clock;
+      if(seen&&stuck&&sim.clock>brokeAt){sim.germanTargets=a=>a===stuck?[sim.player]:[];}   // somebody watches him all the time
+    }
+    assert.ok(stuck,'a man of the first echelon was falling back');assert.ok(gone!==null,'he was taken off the field');
+    assert.equal(stuck.deck.phase,'clear');assert.ok(stuck.alive&&!stuck.active,'alive, off the field, `clear`: what a finished fall-back leaves');
+    const waited=gone-stuck.deck.since;
+    assert.ok(waited>=expected-1e-6&&waited<=expected+.2,`${seen?'seen':'unseen'}: after ${expected} s without progress, got ${waited}`);
+    validateAreaSnapshot(strip(sim.snapshot()),sim.plan);   // and what is saved is valid
+    for(let i=0;i<30000&&sim.timers.wave.ech===0;i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
+    assert.equal(sim.timers.wave.ech,1,'the lull ran and the second echelon walked in');
+  }
+});
+
 test('the approach factory validates the echelons with clear messages (a typo stops the game instead of changing it)',()=>{
   const cases=[
     ['echelons empty',a=>{a.echelons=[];},/echelons: a non-empty array/],
@@ -60,6 +102,8 @@ test('the approach factory validates the echelons with clear messages (a typo st
     ['delaySec list of the wrong length',a=>{a.echelons[0].lanes[0].delaySec=[1,2];},/echelon second: lane far_west: delaySec/],
     ['an overwatch gun with a stray key',a=>{a.echelons[0].overwatch[0].rate=9;},/echelon second: overwatch de_np_29/],
     ['a lane through the wreck',a=>{a.echelons[0].lanes=[{id:'only',men:['de_np_13'],x:[-390]}];a.echelons[0].breakOut=3;},/path of de_np_13 crosses np_wreck_(hull|upper)/],
+    ['no fall-back stall limit',a=>{delete a.fallbackStallSec;},/fallbackStallSec 5-120/],
+    ['a fall-back stall limit shorter than a leg takes to walk back',a=>{a.fallbackStallSec=15;},/fallbackStallSec 15 is shorter than a third more than the longest leg \(85\.0 m at 5\.2 m\/s\)/],
     ['a lane through the first echelon\'s earth',a=>{a.echelons[0].lanes[2].x[0]=a.lanes[1].x[0];},/crosses np_cover_de_np_[0-9]+_[0-9]/],
   ];
   assert.ok(build(ASSAULT()),'the shipped data builds');

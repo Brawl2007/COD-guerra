@@ -4,11 +4,11 @@
  "generator": "tools/verification/m01-act-vii-a-golden.mjs",
  "platform": "x86_64 only (floating point, as the current act goldens)",
  "inputsSha256": {
-  "src/game/m01-area-sim.js": "e2e1f21332126893bdbcba951176ab0992ef9737450e006a1a5c1604dc40d266",
-  "src/game/m01-act-factories.js": "ecb57ccfada2ce43a2e11cbad144bc969e350234e4eb416a210eeaef29aa775e",
+  "src/game/m01-area-sim.js": "9f6f1314c794795da296c387b1238a01dca7e9af30a3702dd025554f9cd89763",
+  "src/game/m01-act-factories.js": "fb5de57c9b80c517ec5f3350515c1aa710789ecb2337051c225121f1e46efa2b",
   "src/world/m01-area-world.js": "f06944d0d3bfdd2c42b8ef3899967e8924a494047dd978bca57c88dd452ec855",
   "src/world/m01-prop-layout.js": "04bf35b8ab03ee90087a9f6caefd284c2ea27671149af89dd6798fcdf9e34767",
-  "missions/m01-tczew/areas/np/act.json": "1da0aaa9644e6701d9cc8b6e3801e9037a1a00f1d32827522cb3e40b65a96456",
+  "missions/m01-tczew/areas/np/act.json": "b5356f22d979b005bcd7935d14bfa9e197578197322a20c469dfc30a5b1b81e6",
   "missions/m01-tczew/areas/np/layout.json": "2dd97832f41d656256b5c36e3633d4dfaa4dad81c00a7a05bd6477388bd53083",
   "tests/helpers/m01-act-route.js": "f82a9ddd2fcff4e73a1d465b3c700b58a2a06a4486e2d9f4a59104fcd125e506"
  },
