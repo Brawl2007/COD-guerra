@@ -423,3 +423,15 @@ test('the act modules stay out of the renderer, the UI, the browser and the wall
 test('the golden of Act VII-c: both routes regenerate byte for byte (x86_64; tools/verification/m01-act-vii-c-golden.mjs)',{skip:arch()!=='x64'&&'x86_64 only',timeout:1800000},()=>{
   assert.equal(actCGoldenText(),readFileSync(new URL(`../${ACT_C_GOLDEN_FIXTURE}`,import.meta.url),'utf8'));
 });
+
+test('VII-c: every player control after the cards (fire, grenade, reload, E, sight, crouch, aim) ticks without throwing (review 2026-11-04: firing threw on plan.assault null)',()=>{
+  const base={lookX:0,lookY:0,forward:0,side:0,sprint:false,aim:false,fire:false,reload:false,grenade:false,interact:false,skip:false,crouch:false,sight:false};
+  for(const key of ['fire','grenade','reload','interact','sight','crouch','aim']){
+    const sim=newSim();
+    while(sim.scene)sim.tick(ACT_C_TICK,{...base,skip:sim.scene.elapsed>1});
+    const mag=sim.weapon.mag;
+    for(let i=0;i<40;i++)sim.tick(ACT_C_TICK,{...base,[key]:i===0});
+    if(key==='fire')assert.equal(sim.weapon.mag,mag-1,'the shot was really fired');
+    sim.snapshot();   // validates itself (validateAreaSnapshot)
+  }
+});

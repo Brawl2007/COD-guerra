@@ -571,7 +571,8 @@ export class M01AreaSimulation {
    * a standing man's, eye to eye: the flash shows above the parapet whatever the posture of the man who made it. Decides nothing by itself: germanFire fires at the mark. No draw of any stream.
    */
   noteFlash(shooter){
-    const F=this.plan.assault.fire,Z=F.suppress;if(!Z||!this.timers.wave)return;
+    if(!this.plan.assault||!this.timers.wave)return;   // VII-c has no assault (and no wave): a shot there marks nothing (review 2026-11-04: it threw on plan.assault null)
+    const F=this.plan.assault.fire,Z=F.suppress;if(!Z)return;
     const from={...shooter,crouched:false};
     for(const g of this.enemies){
       if(!g.alive||!g.active||g.weapon!==Z.weapon||dist(g,shooter)>F.rangeM||!this.world.lineOfSight({...g,crouched:false},from))continue;
