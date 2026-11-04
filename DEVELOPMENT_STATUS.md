@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — som da oferta de água — 2026-11-04
+
+`8227c80` liga o som de tecido e equipamento M01 ao início da oferta, sem repetir após checkpoint. 189 testes M02, build e browser com [gravação isolada](docs/verification/m02-runtime/c04-water-audio-2026-11-04/README.md) passaram. Falta validar mistura em combate e em iPhone.
+
 ## M02 — gesto de água C04 — 2026-11-04
 
 `3421664` introduz gesto temporizado de oferta de água, interrompível e persistido, usando o rig M01 e cantil provisório. 187 testes M02, build e dois browser passaram; a passagem integral `ed24ac6` ofereceu água, marcou com giz e chegou à M03. [Captura e limites](docs/verification/m02-runtime/c04-handoff-2026-11-04/README.md): falta receção física pelo ferido, transição refinada e teste em iPhone.
