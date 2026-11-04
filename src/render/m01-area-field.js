@@ -105,8 +105,9 @@ float rowFade=(1.0-smoothstep(.07,.30,fwidth(rowC)))*(1.0-smoothstep(4.0,20.0,aD
 amp=rowAmp*rowFade*.75*(.6+.8*aNoise(ap*.05+vec2(rowId*.37,1.0)));
 aCol*=1.0+(rowR-.4)*amp*.75;
 }
-float aT=.5;if(aWk<1.0)aT=mix(aFbm(ap*.045+vec2(5.0,2.0)),.5,aWk);
-aCol*=.80+.40*aT;
+// Low: the 3-octave fbm of axis-aligned value noise printed a lattice of dark blobs on the pasture at 15-40 m; Low uses one low-frequency noise, turned 37 degrees off the cell axes, at half the strength.
+float aT=.5;if(aWk<1.0)aT=mix(uAreaLow>.5?aNoise(mat2(.8,.6,-.6,.8)*ap*.028+vec2(5.0,2.0)):aFbm(ap*.045+vec2(5.0,2.0)),.5,aWk);
+aCol*=uAreaLow>.5?.90+.20*aT:.80+.40*aT;
 aCol*=.92+.16*aHash(vec2(sid,pid)+13.0);
 float balk=1.0-smoothstep(.5,1.7,edgeD);
 aCol=mix(aCol,areaLin(vec3(.30,.38,.19))*(.85+.3*aNoise(ap*.9)),balk*.75);
