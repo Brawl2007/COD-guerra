@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Referência Astra recebida — 2026-11-04
+
+O proprietário forneceu o PDF de pré-produção e duas plantas. Foram preservados em [referências/astra](referencias/astra/COMPARACAO_INICIAL.md). A comparação inicial confirma a estrutura geral C01–C12, mas não prova fidelidade de encenação; identificou a ausência visível de opção para dar água ao ferido C04, coreografia incompleta de Lis e diferença entre alvo editorial de duração e percurso automatizado. Efetuar auditoria por cena e desenvolver as lacunas sem substituir sistemas válidos. O PDF não é o PROMPT MESTRE complementar de 173.148 palavras, que continua ausente.
+
 ## Continuação — joystick e dois dedos, 2026-11-04
 
 `b253edb` dá feedback visual ao joystick, repõe-o ao interromper o toque e identifica a recarga de forma mais clara. Dois testes browser com toque simulado passaram, incluindo mover e olhar simultaneamente, manter/soltar mira e parar o movimento ao pausar; oito testes de input/touch e build passaram. [Captura, método e primeira falha do teste](../verification/m02-runtime/touch-multifinger-2026-11-04/README.md). A simulação/saves são preservados. Ainda falta pré-visualização acessível e teste em Safari/iPhone real; main e produção intactas.

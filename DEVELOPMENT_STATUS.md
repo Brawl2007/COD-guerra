@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — roteiro Astra recebido — 2026-11-04
+
+PDF de pré-produção e plantas fornecidos pelo proprietário estão em [referências/astra](docs/m02/referencias/astra/COMPARACAO_INICIAL.md). A estrutura principal existe, mas fidelidade detalhada das cenas, duração e encenação ainda não está demonstrada; a comparação inicial aponta lacunas concretas. Auditar e implementar por cena antes de declarar a missão concluída.
+
 ## M02 — joystick tátil e dois dedos — 2026-11-04
 
 `b253edb` mostra a direção do joystick e limpa a indicação ao interromper o toque; dois testes browser simulados, oito testes de input e build passaram. [Captura e limites](docs/verification/m02-runtime/touch-multifinger-2026-11-04/README.md). Falta testar num iPhone e disponibilizar uma pré-visualização acessível.
