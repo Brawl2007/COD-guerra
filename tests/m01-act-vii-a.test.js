@@ -31,14 +31,27 @@ test('the slice data: 400 x 300 m inside north_perimeter, a valid plan of two ec
   assert.equal(plan.assault.men.length,31);assert.equal(plan.assault.ids.length,31);
   const [first,second]=plan.assault.echelons;
   assert.ok(second.breakOut>first.breakOut&&second.breakPinnedSec>first.breakPinnedSec,'the second echelon breaks a little harder (its own thresholds)');
-  assert.equal(first.lullSec,0);assert.ok(second.lullSec>=20&&second.lullSec<=30,'a lull of 20-30 s');
+  assert.equal(first.lullSec,0);assert.ok(second.lullSec>=20&&second.lullSec<=45,'a lull of 20-45 s (40 s since the Captain\'s decision of 2026-11-04)');
   assert.equal(act.events.find(e=>e.id==='evt_np_wave_2').trigger.lullSec,second.lullSec,'the event that documents the lull says the lull the data has');
   // the second echelon enters from the treeline line, on lanes that are not the first's, and the men of a lane follow one another in file
   for(const m of plan.assault.men.filter(m=>m.echelon===1)){assert.equal(m.entry.z,plan.assault.entryZ);assert.ok(m.delaySec>=0);}
   assert.ok(plan.assault.men.filter(m=>m.echelon===1&&m.role==='assault').some(m=>m.delaySec>0),'the lanes of the second echelon come in one after the other');
+  // Captain's decision 2026-11-04 (duration): the second echelon comes in two groups, a gap of at least 15 s between the last man of the first group and the first of the second
+  const delays=plan.assault.men.filter(m=>m.echelon===1&&m.role==='assault').map(m=>m.delaySec).sort((a,b)=>a-b),gaps=delays.slice(1).map((x,i)=>x-delays[i]);
+  assert.ok(Math.max(...gaps)>=15&&gaps.filter(g=>g>=15).length===1,`two groups of lanes: the gaps between entries are ${gaps}`);
+  assert.ok(delays.at(-1)<=second.maxSec/2,'and everybody is in before half of the echelon\'s clock');
   assert.ok(plan.assault.men.filter(m=>m.echelon===0).every(m=>m.delaySec===0),'the first echelon is on the field when the wave starts');
   const bad=ASSAULT();bad.lanes[0].x[1]=bad.lanes[0].x[0]+1;   // two men 1 m apart: one runs through the other's earth
   assert.throws(()=>build(bad),/crosses/);
+  // the pause is a checkpoint (CP-F, Captain's decision 2026-11-04): the second echelon names it, and it is a checkpoint of the act other than the arrival's
+  assert.deepEqual(act.checkpoints.map(c=>[c.id,c.label]),[['cp_np_e_perimetro','CP-E'],['cp_np_f_pausa','CP-F']]);
+  assert.equal(first.checkpoint,null);assert.equal(second.checkpoint,'cp_np_f_pausa');
+  const saved=act.checkpoints.splice(1,1);   // the same object the simulation reads: a checkpoint that is not the act's stops the game
+  try{assert.throws(()=>areaActPlan(),/echelon second: checkpoint cp_np_f_pausa must be a checkpoint of the act other than the arrival's/);}finally{act.checkpoints.splice(1,0,...saved);}
+  assert.ok(areaActPlan());
+  // the suppressive fire of the guns is data (fire.suppress)
+  const Z=plan.assault.fire.suppress;assert.equal(Z.weapon,'mg34');assert.ok(Z.memorySec>=5&&Z.memorySec<=60&&Z.rounds[0]<=Z.rounds[1]&&Z.rounds[1]<plan.assault.fire.mg.rounds,'short bursts, shorter than the gun\'s burst at a target');
+  assert.ok(Z.pauseSec[0]>=3&&Z.pauseSec[1]<=10&&Z.pinnedPauseFactor>=2,'a burst every few seconds, at least half the cadence while pinned');
 });
 
 test('the path check is exact: a thin box on a long leg, between two samples of the old fixed-step check, is found; the ckm nest\'s front is a solid of the plan',()=>{
@@ -98,13 +111,23 @@ test('the approach factory validates the echelons with clear messages (a typo st
     ['a lane id used twice',a=>{a.echelons[0].lanes[1].id=a.lanes[0].id;},/echelon second: lane west/],
     ['no lanes',a=>{a.echelons[0].lanes=[];},/echelon second: lanes/],
     ['delaySec in the first echelon',a=>{a.lanes[0].delaySec=5;},/lane west: delaySec belongs to the echelons that follow the first/],
-    ['delaySec beyond half the clock',a=>{a.echelons[0].lanes[0].delaySec=150;},/echelon second: lane far_west: delaySec 0-100/],
+    ['delaySec beyond half the clock',a=>{a.echelons[0].lanes[0].delaySec=150;},/echelon second: lane far_west: delaySec 0-60/],
     ['delaySec list of the wrong length',a=>{a.echelons[0].lanes[0].delaySec=[1,2];},/echelon second: lane far_west: delaySec/],
     ['an overwatch gun with a stray key',a=>{a.echelons[0].overwatch[0].rate=9;},/echelon second: overwatch de_np_29/],
     ['a lane through the wreck',a=>{a.echelons[0].lanes=[{id:'only',men:['de_np_13'],x:[-390]}];a.echelons[0].breakOut=3;},/path of de_np_13 crosses np_wreck_(hull|upper)/],
     ['no fall-back stall limit',a=>{delete a.fallbackStallSec;},/fallbackStallSec 5-120/],
     ['a fall-back stall limit shorter than a leg takes to walk back',a=>{a.fallbackStallSec=15;},/fallbackStallSec 15 is shorter than a third more than the longest leg \(85\.0 m at 5\.2 m\/s\)/],
     ['a lane through the first echelon\'s earth',a=>{a.echelons[0].lanes[2].x[0]=a.lanes[1].x[0];},/crosses np_cover_de_np_[0-9]+_[0-9]/],
+    ['a typo in the suppressive fire',a=>{a.fire.suppress.memorysec=9;},/fire\.suppress: unknown key memorysec/],
+    ['suppressive fire that is not an object',a=>{a.fire.suppress=[1];},/fire\.suppress: an object/],
+    ['suppressive fire of a rifle',a=>{a.fire.suppress.weapon='kar98k';},/fire\.suppress: weapon mg34/],
+    ['no memory of the flash',a=>{a.fire.suppress.memorySec=0;},/fire\.suppress: weapon mg34 \/ memorySec 1-120/],
+    ['a suppressive burst longer than the gun\'s burst at a target',a=>{a.fire.suppress.rounds=[3,a.fire.mg.rounds+1];},/rounds \[lo, hi\] whole numbers 1-6/],
+    ['a suppressive burst of a fraction of a round',a=>{a.fire.suppress.rounds=[2.5,4];},/rounds \[lo, hi\]/],
+    ['a pause between suppressive bursts the wrong way round',a=>{a.fire.suppress.pauseSec=[8,4];},/pauseSec \[lo, hi\] 1-60/],
+    ['a pinned gun that fires faster than a free one',a=>{a.fire.suppress.pinnedPauseFactor=.5;},/pinnedPauseFactor 1-6/],
+    ['a checkpoint that is not an id',a=>{a.echelons[0].checkpoint='pause';},/echelon second: checkpoint \(an id cp_/],
+    ['a checkpoint on the first echelon\'s successor taken twice',a=>{a.echelons.push({...a.echelons[0],id:'third',checkpoint:a.echelons[0].checkpoint,lanes:[{id:'only3',men:['de_np_90'],x:[-540]}],overwatch:[],breakOut:1});},/echelon third: checkpoint/],
   ];
   assert.ok(build(ASSAULT()),'the shipped data builds');
   for(const [name,mutate,re] of cases){const a=ASSAULT();mutate(a);assert.throws(()=>build(a),re,name);}
@@ -129,6 +152,10 @@ test('history guard: no exact hour on screen, no named vehicle type, no SS insig
   const ev=act.events.find(x=>x.id==='evt_np_wave_2');assert.equal(ev.certainty,'GAMEPLAY_DRAMATIZATION');assert.deepEqual(ev.sources,[]);
   const de=act.groups.find(g=>g.id==='grp_np_de');assert.match(de.classification,/duas vagas/);assert.match(de.echelonsNote,/DRAMATIZAÇÃO/);assert.match(de.echelonsNote,/T08/);
   assert.match(act.debrief.paragraphs[0].text,/duas vagas/);
+  // the Captain's decisions of 2026-11-04 are recorded where they act, as reversible, and the suppressive fire is dramatization (the source says only that machine guns repelled the infantry)
+  const hs=act.history.find(x=>x.id==='h_np_suppress');assert.equal(hs.classification,'GAMEPLAY_DRAMATIZATION');assert.deepEqual(hs.sources,[]);assert.match(hs.text,/T08/);assert.match(hs.text,/dramatização/);
+  const cpF=act.checkpoints.find(c=>c.id==='cp_np_f_pausa');assert.match(cpF.note,/Decisão do Capitão/);assert.match(cpF.note,/reversível/);assert.match(act.checkpoints[0].note,/Decisão do Capitão/);
+  const sup=de.assault.fire.suppress;assert.match(sup.note,/Decisão do Capitão/);assert.match(sup.note,/reversível/);assert.match(sup.note,/GAMEPLAY_DRAMATIZATION/);
   // the new callouts (European Portuguese, said by the section leader through the callout mechanism) exist for every key the simulation says
   for(const on of ['lull','lull_quiet','echelon_seen','final_break']){
     const c=act.callouts.find(x=>x.on===on);assert.ok(c,on);assert.equal(c.speaker,'marek_zielinski');assert.match(c.text,/[a-zç]/);assert.doesNotMatch(c.text,/\b(você|tu|ônibus|trem)\b/i,'not Brazilian Portuguese');
@@ -158,11 +185,20 @@ test('the area world adds its solids and props to the current act\'s world and c
  * pending): what it keeps is the last fight of the route.
  */
 function watcher(){
-  const w={};
+  // What the whole route keeps (a death does not clear it): the checkpoints taken and the suppressive bursts fired in the pause. What the last fight keeps is cleared when the fight begins again.
+  const w={checkpoints:[],cpFLate:0,areaLull:0,areaFight:0,lastClock:-1};
   const clear=()=>Object.assign(w,{lullStarted:null,lullStatus:false,lullEndPhases:null,secondStatus:false,firstBreakOverwatch:null,finalBreakPhases:null,flagMismatch:0,firstSeen:new Map(),sawLullFlag:false,e2Shooters:new Set()});
   clear();
+  w.event=(sim,e)=>{
+    const W=sim.timers.wave;
+    if(e.type==='checkpoint'){w.checkpoints.push(e.id);if(e.id==='cp_np_f_pausa'&&!(W&&W.echs[0].brokenAt!==null&&sim.clock-W.echs[0].brokenAt<=ACT_TICK+1e-9))w.cpFLate++;}
+    if(e.type==='enemy-fire'&&e.kind==='area'){if(W&&W.echs[0].brokenAt!==null&&W.ech===0)w.areaLull++;else w.areaFight++;}
+  };
   w.observe=sim=>{
-    const W=sim.timers.wave;if(!W){clear();return;}
+    const W=sim.timers.wave;if(!W){clear();w.lastClock=sim.clock;return;}
+    // A death in the second echelon restores the pause (CP-F): the fight is still on, the clock went back; what was recorded after the pause belongs to a life that no longer exists.
+    if(sim.clock<w.lastClock-1e-9){w.lullEndPhases=null;w.secondStatus=false;w.finalBreakPhases=null;w.firstSeen.clear();w.e2Shooters.clear();}
+    w.lastClock=sim.clock;
     const live=sim.enemies.filter(a=>a.alive&&a.active),plan=sim.plan.assault,man=a=>plan.men.find(m=>m.id===a.id);
     if(sim.flags['m01np.wave']!==approachFlagOf(plan,W))w.flagMismatch++;
     if(W.lullUntil!==null){
@@ -193,9 +229,11 @@ test('the cheap clipping audit of the long routes reports exactly what the full 
   assert.deepEqual(light.report(),full.report(),'same events, same ticks');
 });
 
-test('the slice completes on 18 routes (passive and active pilot x 3 levels x 3 seeds): two echelons with a lull, at least two minutes of fight, no clipping, no men inside each other',()=>{
+test('the slice completes on 18 routes (passive and active pilot x 3 levels x 3 seeds): two echelons with a lull, CP-F in the pause, at least 110 s of fight, no clipping, no men inside each other',t=>{
+  const lullBursts=[];   // per route: the bursts of suppressive fire the guns fired in the pause (Captain's decision 2026-11-04: before it the guns fired 0-6 aimed bursts there, about 2 on average)
   for(const mode of ['passive','active'])for(const d of ['recruta','soldado','veterano'])for(const seed of [19390901,3,7]){
     const sim=new M01AreaSimulation(seed,{difficulty:d}),clip=areaClippingAudit(),stack=stackingAudit(),watch=watcher();
+    const emit=sim.emit.bind(sim);sim.emit=e=>{watch.event(sim,e);emit(e);};   // the events of the route (the checkpoints, the bursts of suppressive fire)
     const r=actRoute(sim,{mode,maxSec:600,onStep:x=>{clip.observe(x);stack.observe(x);watch.observe(x.sim);}});
     const id=`${mode} ${d} ${seed}`;
     assert.equal(r.complete,true,id);assert.equal(sim.flags['m01np.wave'],'repelled',id);assert.equal(sim.objectives.obj_np_hold_north.state,'done',id);
@@ -208,10 +246,14 @@ test('the slice completes on 18 routes (passive and active pilot x 3 levels x 3 
     assert.ok(second.at-first.brokenAt>=plan.echelons[1].lullSec,`${id}: the second echelon enters its lull after the first broke`);
     assert.ok(second.brokenAt-second.at>=40,`${id}: the second echelon fights`);
     assert.equal(W.brokenAt,second.brokenAt,id);
-    // the duration the owner asked for: the whole fight, wave start to repelled, is at least two minutes with either pilot; the passive pilot is not stuck (6 minutes at most)
-    assert.ok(W.repelledAt-W.at>=120,`${id}: wave start to repelled ${Math.round((W.repelledAt-W.at)*10)/10} s must be at least 120 s`);
+    // the duration the owner asked for: the whole fight, wave start to repelled, is at least 110 s with either pilot (tests/m01-act-vii-a-seeds.test.js guards it on 15 seeds); the passive pilot is not stuck (6 minutes at most)
+    assert.ok(W.repelledAt-W.at>=110,`${id}: wave start to repelled ${Math.round((W.repelledAt-W.at)*10)/10} s must be at least 110 s`);
     if(mode==='passive')assert.ok(sim.clock<=360,`${id}: the passive pilot is done in ${Math.round(sim.clock)} s (6 minutes at most)`);
-    assert.ok(sim.enemyFire.nextId>=20,`${id}: the Germans fire real rounds`);assert.ok(watch.e2Shooters.size>=8,`${id}: the second echelon fires real rounds (${watch.e2Shooters.size} of its men did)`);assert.ok(sim.ckm.bursts>=1,`${id}: the ckm fires`);
+    // CP-F: the pause is a checkpoint, taken in the tick the first echelon broke, once; the arrival is the one before it; a death in the second echelon went back to it
+    assert.deepEqual([...new Set(watch.checkpoints)],['cp_np_e_perimetro','cp_np_f_pausa'],`${id}: the checkpoints of the route, in order`);assert.equal(watch.cpFLate,0,`${id}: CP-F is taken in the tick of the first break`);
+    assert.deepEqual(sim.checkpointsReached,['cp_np_e_perimetro','cp_np_f_pausa'],id);assert.equal(sim.respawn.label,'CP-F',id);
+    lullBursts.push([id,watch.areaLull]);
+    assert.ok(sim.enemyFire.nextId>=20,`${id}: the Germans fire real rounds`);assert.ok(watch.e2Shooters.size>=(mode==='passive'?8:2),`${id}: the second echelon fires real rounds (${watch.e2Shooters.size} of its men did; the active pilot snipes men as they step out of the trees, 2-17 of them get to fire, the passive pilot 17-18)`);assert.ok(sim.ckm.bursts>=1,`${id}: the ckm fires`);
     assert.ok(W.casualties>=1&&W.casualties<=plan.men.length,id);
     // the state of the fight is always the one its record implies; the status line says the lull and the second echelon
     assert.equal(watch.flagMismatch,0,`${id}: the flag follows the record`);assert.ok(watch.sawLullFlag&&watch.lullStatus,`${id}: the status line says the pause`);assert.ok(watch.secondStatus,`${id}: the status line says the second echelon`);
@@ -226,6 +268,11 @@ test('the slice completes on 18 routes (passive and active pilot x 3 levels x 3 
     // the overwatch holds the edge through the whole lull (it fires when it has a target and is not pinned: the Polish line often pins it silent, so no round is asserted)
     assert.ok(watch.lullEndPhases.every(p=>p==='hold'),`${id}: nobody but the overwatch is on the field at the end of the lull, and it is still holding (${watch.lullEndPhases})`);
   }
+  // The pause is not silent any more: a gun that stays alive fires at the last flash it saw. Not every route keeps a gun (the Polish line kills the ones that stand up to fire), so the rule is the whole.
+  t.diagnostic(`suppressive bursts in the pause by route: ${lullBursts.map(([id,n])=>`${id}=${n}`).join(' ')}`);
+  assert.ok(lullBursts.filter(([id,n])=>n>=1).length>=15,`at least 15 of the 18 routes hear the guns in the pause: ${lullBursts.map(([id,n])=>n)}`);
+  assert.ok(lullBursts.filter(([id])=>id.startsWith('passive')).every(([id,n])=>n>=1),'and every route of the pilot who never fires');
+  assert.ok(lullBursts.reduce((n,[,k])=>n+k,0)>=40,`and the pause has at least 40 bursts over the 18 routes (${lullBursts.reduce((n,[,k])=>n+k,0)})`);
 });
 
 test('the lull is quiet for the assault, not for the player: the overwatch holds the edge, the crates resupply, the pause is on the status line',()=>{
@@ -233,6 +280,7 @@ test('the lull is quiet for the assault, not for the player: the overwatch holds
   for(let i=0;i<20000&&!(sim.timers.wave?.lullUntil>0);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
   const W=sim.timers.wave;assert.ok(W.lullUntil>0,'the lull began');
   assert.equal(sim.flags['m01np.wave'],'lull');assert.equal(approachFlagOf(sim.plan.assault,W),'lull');assert.match(sim.mission.status,/^Linha norte · pausa · \d+ atiradores? na orla · \d+ caídos?$/);
+  assert.deepEqual(sim.checkpointsReached,['cp_np_e_perimetro','cp_np_f_pausa'],'the pause is a checkpoint (CP-F)');assert.equal(sim.respawn.label,'CP-F');
   assert.equal(sim.mission.phase,'NP_ATTACK','the objective is still to hold the north');assert.equal(sim.objectives.obj_np_hold_north.state,'active');
   const field=sim.enemies.filter(a=>a.alive&&a.active);
   assert.ok(field.length>0&&field.every(a=>sim.man(a).role==='overwatch'&&a.deck.phase==='hold'),'only the overwatch is left, holding its nodes');
@@ -246,6 +294,101 @@ test('the lull is quiet for the assault, not for the player: the overwatch holds
   for(let i=0;i<4000&&sim.timers.wave.ech===0;i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
   assert.equal(sim.timers.wave.ech,1);assert.equal(sim.flags['m01np.wave'],'active');assert.ok(sim.timers.wave.echs[1].at>=sim.timers.wave.echs[0].brokenAt+sim.plan.assault.echelons[1].lullSec);
   assert.ok(sim.enemies.some(a=>a.active&&sim.man(a).echelon===1),'the second echelon is on the field');
+});
+
+/** A passive route to the first tick of the pause (the first echelon has broken and left the field). */
+function toLull(difficulty='soldado',seed=19390901){
+  const sim=new M01AreaSimulation(seed,{difficulty}),state={arrived:false,lastHealth:100};
+  for(let i=0;i<30000&&!(sim.timers.wave?.lullUntil>0);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
+  assert.ok(sim.timers.wave?.lullUntil>0,'the pause began');
+  return {sim,state};
+}
+
+test('suppressive fire (Captain\'s decision 2026-11-04): a gun with nothing in sight fires short bursts at the last flash it saw, at its cadence (half of it while pinned), and forgets the flash',()=>{
+  const {sim}=toLull(),Z=sim.plan.assault.fire.suppress;
+  const gun=sim.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');assert.ok(gun,'a machine gun is on the edge in the pause');
+  const pole=sim.actor('pl_np_3'),markOf=()=>({x:pole.x,y:pole.y,z:pole.z,at:sim.clock,who:pole.id});
+  sim.germanTargets=()=>[];sim.noteFlash=()=>{};   // nothing in sight, and the Poles\' own flashes put in no mark: only the mark this test puts in can make him fire
+  const hurt=sim.damageGerman.bind(sim);sim.damageGerman=(e,...rest)=>e===gun?undefined:hurt(e,...rest);   // and the line cannot kill him: the experiment holds him still
+  sim.timers.wave.lullUntil=1e9;   // and the pause does not end under the experiment (the second echelon never comes: the gun holds the edge for as long as the test watches him)
+  for(const e of sim.enemies)delete e.ai.seen;
+  // The experiment holds the man still: not killed, not pinned unless the test says so, his mark kept fresh unless the test lets it age.
+  const trace=(sec,{pinned=false,fresh=true}={})=>{
+    const bursts=[],rounds=new Map(),crouched=[];
+    for(let i=0;i<Math.round(sec/ACT_TICK);i++){
+      gun.suppressedUntil=pinned?sim.clock+10:0;if(fresh&&gun.ai.seen)gun.ai.seen.at=sim.clock;
+      sim.tick(ACT_TICK,{});
+      for(const e of sim.drainEvents())if(e.type==='enemy-fire'&&e.by===gun.id){bursts.push(e);crouched.push(gun.crouched);}
+      for(const r of sim.enemyFire.rounds)if(r.by===gun.id&&!rounds.has(r.id))rounds.set(r.id,r);
+    }
+    return {bursts,rounds:[...rounds.values()],crouched};
+  };
+  const gaps=b=>b.slice(1).map((e,i)=>e.at-b[i].at);
+  // no flash seen: no fire, however long
+  gun.cooldown=0;assert.equal(trace(15).bursts.length,0,'without a mark the gun fires at nothing');
+  // a flash seen: bursts of 3-5 real rounds ('area' kind, the gun\'s own weapon) at the place, one every 4-8 s
+  gun.ai.seen=markOf();gun.cooldown=0;const mark={...gun.ai.seen};
+  const on=trace(60);
+  assert.ok(on.bursts.length>=7&&on.bursts.length<=15,`a burst every 4-8 s for 60 s: ${on.bursts.length}`);
+  assert.ok(on.bursts.every(e=>e.kind==='area'&&e.weapon==='mg34'&&e.rounds>=Z.rounds[0]&&e.rounds<=Z.rounds[1]),'short bursts of the gun\'s own weapon');
+  assert.ok(gaps(on.bursts).every(g=>g>=Z.pauseSec[0]-1e-6&&g<=Z.pauseSec[1]+2*ACT_TICK),`the pause between bursts is ${Z.pauseSec} s: ${gaps(on.bursts).map(g=>Math.round(g*100)/100)}`);
+  assert.equal(on.rounds.length,on.bursts.reduce((n,e)=>n+e.rounds,0),'every round of every burst is a real round in flight');
+  assert.ok(on.rounds.every(r=>r.kind==='area'&&r.by===gun.id&&Math.hypot(r.ax-mark.x,r.az-mark.z)<=4&&r.oy>mark.y+1&&r.ay>mark.y&&r.ay<mark.y+2.5),'aimed at the place of the flash, torso height of a man standing there, from the gun\'s standing eye');
+  assert.ok(on.rounds.some(r=>r.tracer)&&on.rounds.every(r=>r.arriveAt>r.firedAt),'a tracer in the burst, a flight time on every round');
+  // pinned: he fires blind from behind his cover, at half the cadence
+  gun.cooldown=0;const pinned=trace(90,{pinned:true});
+  assert.ok(pinned.bursts.length>=3&&pinned.bursts.length<=Math.floor(90/(Z.pauseSec[0]*Z.pinnedPauseFactor))+1,`pinned: ${pinned.bursts.length} bursts in 90 s`);
+  assert.ok(gaps(pinned.bursts).every(g=>g>=Z.pauseSec[0]*Z.pinnedPauseFactor-1e-6&&g<=Z.pauseSec[1]*Z.pinnedPauseFactor+2*ACT_TICK),`pinned pause ${Z.pinnedPauseFactor} x: ${gaps(pinned.bursts).map(g=>Math.round(g*100)/100)}`);
+  assert.ok(pinned.bursts.length<on.bursts.length*.75*(90/60),'pinned he fires less, not zero');
+  assert.ok(pinned.crouched.every(c=>c===true)&&on.crouched.every(c=>c===false),'pinned: down behind his cover when he fires; free: up');
+  // the flash is forgotten after memorySec: a mark that ages out stops the fire
+  gun.ai.seen=markOf();gun.cooldown=0;const t0=sim.clock,aged=trace(Z.memorySec+25,{fresh:false});
+  assert.ok(aged.bursts.length>=1&&aged.bursts.every(e=>e.at<=t0+Z.memorySec+1e-6),'no burst after the memory of the flash has run out');
+  assert.ok(aged.bursts.length<=Math.floor(Z.memorySec/Z.pauseSec[0])+1);
+});
+
+test('suppressive fire hits only what its rounds cross, by the level\'s table: a burst at an empty place wounds and pins nobody; a burst at a man standing in the open wounds him once (the cap of the level) for the level\'s damage',()=>{
+  const {sim}=toLull('veterano'),L=sim.level,gun=sim.enemies.find(a=>a.alive&&a.active&&a.weapon==='mg34');assert.ok(gun);
+  sim.germanTargets=()=>[];sim.noteFlash=()=>{};for(const e of sim.enemies)delete e.ai.seen;
+  const hurt=sim.damageGerman.bind(sim);sim.damageGerman=(e,...rest)=>e===gun?undefined:hurt(e,...rest);
+  const fire=(mark,sec=4)=>{
+    sim.enemyFire.rounds.length=0;gun.ai.seen={...mark,at:sim.clock};gun.cooldown=0;gun.health=100;gun.suppressedUntil=0;const events=[];
+    for(let i=0;i<Math.round(sec/ACT_TICK);i++){gun.suppressedUntil=0;sim.tick(ACT_TICK,{});events.push(...sim.drainEvents());}
+    return events;
+  };
+  // an empty place of the field, no man near it: the rounds land (the earth, the air), nobody is pinned or wounded
+  const pinnedBefore=sim.allies.map(a=>a.suppressedUntil),health=sim.player.health;
+  const empty=fire({x:-600,y:-3,z:-1250,who:'jan_wrona'});
+  assert.ok(empty.some(e=>e.type==='enemy-fire'&&e.kind==='area'),'the burst was fired');
+  const impacts=empty.filter(e=>e.type==='round-impact');assert.ok(impacts.length>=3,'its rounds landed');
+  assert.ok(impacts.every(e=>e.victim===null&&e.pinned.length===0),'and struck nobody, pinned nobody');
+  assert.deepEqual(sim.allies.map(a=>a.suppressedUntil),pinnedBefore);assert.equal(sim.player.health,health);
+  // a man standing in the open 25 m in front of the gun: the rounds cross him, the level's table decides (exposed: certain wound on veterano; one wound per burst; the level's damage)
+  const p=sim.player;Object.assign(p,{x:gun.x,y:sim.plan.layout.groundY,z:gun.z+25,crouched:false});p.health=100;
+  const hit=fire({x:p.x,y:p.y,z:p.z,who:'jan_wrona'});
+  assert.equal(hit.filter(e=>e.type==='player-hit').length,L.burstWoundCap,'one wound for the whole burst');
+  assert.equal(sim.player.health,100-L.woundDamage,'for the damage of the level');
+});
+
+test('a Pole\'s shot is a muzzle flash: every German gun in range with a line to it remembers the place, nobody else does; the player\'s shot too',()=>{
+  const sim=new M01AreaSimulation(19390901,{difficulty:'soldado'}),state={arrived:false,lastHealth:100};
+  for(let i=0;i<20000&&!(sim.timers.wave&&sim.clock-sim.timers.wave.at>10);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
+  const F=sim.plan.assault.fire,guns=sim.enemies.filter(a=>a.alive&&a.active&&a.weapon==='mg34');assert.ok(guns.length>=2,'the guns are on the edge');
+  for(const shooter of [sim.actor('pl_np_0'),sim.actor('pl_np_3'),sim.actor('szymon_kowal'),sim.actor('ckm_gunner'),sim.player]){
+    for(const e of sim.enemies)delete e.ai.seen;
+    sim.noteFlash(shooter);
+    for(const e of sim.enemies){
+      const sees=e.alive&&e.active&&e.weapon===F.suppress.weapon&&Math.hypot(e.x-shooter.x,e.z-shooter.z)<=F.rangeM&&sim.world.lineOfSight({...e,crouched:false},{...shooter,crouched:false});
+      if(sees)assert.deepEqual(e.ai.seen,{x:shooter.x,y:shooter.y,z:shooter.z,at:sim.clock,who:shooter.id},`${e.id} saw ${shooter.id}`);
+      else assert.equal(e.ai.seen,undefined,`${e.id} did not see ${shooter.id}`);
+    }
+  }
+  assert.ok(guns.some(g=>g.ai.seen),'in this fight some gun sees the shooters');
+  // what a man fires at he remembers too (the aimed burst): the real route leaves marks on the guns
+  const live=new M01AreaSimulation(19390901,{difficulty:'soldado'}),st={arrived:false,lastHealth:100};
+  for(let i=0;i<4000&&!live.enemies.some(a=>a.ai.seen);i++){live.tick(ACT_TICK,actControls(live,'passive',st));live.drainEvents();}
+  const marked=live.enemies.filter(a=>a.ai.seen);assert.ok(marked.length>=1&&marked.every(a=>a.weapon==='mg34'),'only the guns keep a mark');
+  validateAreaSnapshot(strip(live.snapshot()),live.plan);
 });
 
 test('the callouts: the section leader says the lull (true to the machine guns), the second echelon and the last break, once each',()=>{
@@ -267,7 +410,7 @@ test('the callouts: the section leader says the lull (true to the machine guns),
   assert.ok(said.length===2);
 });
 
-test('death and checkpoint: a dead player restores CP-E (the arrival), with the level\'s health, and the restore is valid, in the first echelon and in the second',()=>{
+test('death and checkpoint: a dead player restores CP-E (the arrival) in the first echelon and CP-F (the pause) in the second, with the level\'s health, and the restores are valid',()=>{
   const sim=new M01AreaSimulation(19390901,{difficulty:'soldado'}),state={arrived:false,lastHealth:100};
   for(let i=0;i<4000&&!(sim.timers.wave&&sim.clock-sim.timers.wave.at>5);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
   assert.deepEqual(sim.checkpointsReached,['cp_np_e_perimetro']);assert.equal(sim.respawn.label,'CP-E');
@@ -277,16 +420,22 @@ test('death and checkpoint: a dead player restores CP-E (the arrival), with the 
   sim.tick(ACT_TICK,{});const events=sim.drainEvents().map(e=>e.type);
   assert.ok(events.includes('restored'));assert.equal(sim.player.alive,true);assert.equal(sim.player.health,100);assert.equal(sim.flags['m01np.wave'],'pending');
   assert.equal(sim.objectives.obj_np_reach_trench.state,'active');
-  // dead in the middle of the second echelon: the same arrival, the fight starts over from its first echelon, the later men are off the field again
+  // dead in the middle of the second echelon (Captain's decision 2026-11-04: CP-F, the pause): back in the pause, the first echelon already gone, the later men off the field again
   const late=new M01AreaSimulation(19390901,{difficulty:'soldado'}),st={arrived:false,lastHealth:100};
   for(let i=0;i<20000&&!(late.timers.wave?.ech===1&&late.clock-late.timers.wave.echs[1].at>15);i++){late.tick(ACT_TICK,actControls(late,'passive',st));late.drainEvents();}
   assert.equal(late.timers.wave.ech,1);assert.ok(late.enemies.some(a=>a.active&&late.man(a).echelon===1));
+  assert.deepEqual(late.checkpointsReached,['cp_np_e_perimetro','cp_np_f_pausa']);
   late.player.alive=false;late.player.health=0;late.playerDown('shot','de_np_29','mg34');late.tick(ACT_TICK,{});
-  assert.ok(late.drainEvents().some(e=>e.type==='restored'));
-  assert.equal(late.timers.wave,null);assert.equal(late.flags['m01np.wave'],'pending');assert.equal(late.player.health,100);
+  assert.ok(late.drainEvents().some(e=>e.type==='restored'));assert.equal(late.respawn.label,'CP-F');
+  assert.equal(late.timers.wave.ech,0);assert.equal(late.timers.wave.echs.length,1);assert.ok(late.timers.wave.echs[0].brokenAt!==null);assert.equal(late.flags['m01np.wave'],'lull');assert.equal(late.player.health,100);
   assert.ok(late.enemies.filter(a=>late.man(a).echelon===1).every(a=>a.alive&&!a.active&&a.deck.phase==='advance'),'the second echelon waits off the field again');
-  assert.ok(late.enemies.filter(a=>late.man(a).echelon===0).every(a=>a.alive&&a.active),'the first echelon is on the field again');
+  assert.ok(late.enemies.filter(a=>late.man(a).echelon===0&&late.man(a).role==='assault'&&a.alive&&a.active).every(a=>a.deck.phase==='fallback'),'the first echelon\'s assault that is still on the field is falling back');
   validateAreaSnapshot(strip(late.snapshot()));
+  // dead in the first echelon, after the arrival and before the first break: the arrival
+  const early=new M01AreaSimulation(19390901,{difficulty:'soldado'}),se={arrived:false,lastHealth:100};
+  for(let i=0;i<20000&&!(early.timers.wave&&early.clock-early.timers.wave.at>8);i++){early.tick(ACT_TICK,actControls(early,'passive',se));early.drainEvents();}
+  assert.equal(early.timers.wave.echs[0].brokenAt,null);early.player.alive=false;early.player.health=0;early.playerDown('shot','de_np_0','mg34');early.tick(ACT_TICK,{});
+  assert.ok(early.drainEvents().some(e=>e.type==='restored'));assert.equal(early.respawn.label,'CP-E');assert.equal(early.timers.wave,null);assert.deepEqual(early.checkpointsReached,['cp_np_e_perimetro']);
 });
 
 test('the golden of Act VII-a: both routes regenerate byte for byte (x86_64; tools/verification/m01-act-vii-a-golden.mjs)',{skip:arch()!=='x64'&&'x86_64 only'},()=>{

@@ -1,0 +1,11 @@
+{
+ "checkpoints": [
+  "cp_np_e_perimetro",
+  "cp_np_f_pausa"
+ ],
+ "flag": "lull",
+ "brokenAt": 63.816599999998516,
+ "clock": 63.816599999998516,
+ "status": "Linha norte · vaga a recuar · 6 no campo · 7 caídos",
+ "errors": []
+}

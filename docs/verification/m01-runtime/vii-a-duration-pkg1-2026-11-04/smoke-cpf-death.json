@@ -1,0 +1,37 @@
+{
+ "beat": {
+  "age": 1.05,
+  "text": "Você se afastou da sua secção.",
+  "cause": "bounds",
+  "checkpoint": "cp_np_f_pausa",
+  "deaths": 1
+ },
+ "after": {
+  "act": "act_vii_a_north",
+  "scene": null,
+  "phase": "NP_ATTACK",
+  "complete": false,
+  "clock": 64.0499999999985,
+  "player": {
+   "x": -410.01242546324204,
+   "y": -3,
+   "z": -1158.6955261923713,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": true,
+   "aiming": false
+  },
+  "alive": 24,
+  "clockText": "MANHÃ · ~07:00",
+  "objective": "Repila o ataque vindo do norte",
+  "status": "Linha norte · vaga a recuar · 6 no campo · 7 caídos",
+  "card": "",
+  "frames": 9
+ },
+ "checkpoints": [
+  "cp_np_e_perimetro",
+  "cp_np_f_pausa"
+ ],
+ "errors": []
+}

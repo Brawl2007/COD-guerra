@@ -7,6 +7,9 @@
 // Everything is decided here, from seeded streams; the renderer only draws it. No wall clock, no unseeded draw, no DOM.
 // 2026-11-03 (duration of the combat): the German assault comes in ECHELONS. The first is on the field when the wave starts; when it breaks its assault falls back, the overwatch
 // holds the edge through a lull, and the next echelon walks in from the treeline line on lanes of its own (stepEchelons); the last echelon's break takes everybody back.
+// 2026-11-04 (Captain's decisions, reversible; docs/verification/m01-runtime/vii-a-duration-pkg1-2026-11-04): (1) CP-F, a second checkpoint when the first echelon breaks (the pause begins):
+// a death in the second echelon returns there, not to the arrival (lullCheckpoint); (2) suppressive fire: a German MG34 with nothing in sight fires short bursts of real rounds at the
+// place where it last saw a muzzle flash of a Pole or of the player, and still fires, at half the cadence, while it is pinned (noteFlash, germanFire, areaBurst): GAMEPLAY_DRAMATIZATION.
 import bwDefinition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import npLayout from '../../missions/m01-tczew/areas/np/layout.json' with { type: 'json' };
@@ -21,7 +24,7 @@ import {makeRound,traceRound,closestApproach,NEAR_MISS} from './m01-fire.js';
 import {aimPoint} from './m01-aim.js';
 import {initializePresentation,updateMotion,updatePosture,updateBodyYaw,recordSuppression,recordDamage,recordHit,updateActorDetails,presentationDiagnostics} from './m01-animation-presentation.js';
 import {impactPass} from './m01-audio-events.js';
-import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validApproachWave,validSquadRecord} from './m01-act-factories.js';
+import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validApproachWave,validGermanAi,validSquadRecord} from './m01-act-factories.js';
 
 // 2 (2026-11-03, the second echelon): the roster grew (the men of the echelons that follow the first) and the wave record gained its echelon state (timers.wave.ech/echs/lullUntil).
 // A schema 1 save of this act (QA only: the acts are off by default) is REJECTED with a message, not migrated: it cannot hold the later echelons' men, and the act restarts in seconds.
@@ -56,6 +59,9 @@ export function areaActPlan(actId='act_vii_a_north'){
   const line=makeLinePlan(def,{group:'grp_np_line',key:'rearguard',man:'^pl_np_\\d+$',postBox:{minX:pb.minX,maxX:pb.maxX,minZ:-1160,maxZ:-1158},survivorFloor:false,label:'M01 VII-a line'});
   const section=group('grp_np_section'),squad=makeSquadPlan(section.squad,'M01 VII-a squad');
   const assault=makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:'M01 VII-a assault',solids:areaPlanSolids(layout)});
+  const known=act.checkpoints.map(c=>c.id);
+  for(const e of assault.echelons)if(e.checkpoint!==null&&(!known.includes(e.checkpoint)||e.checkpoint===CP_ARRIVAL))
+    throw new Error(`M01 VII-a assault: echelon ${e.id}: checkpoint ${e.checkpoint} must be a checkpoint of the act other than the arrival's`);
   const ckm=group('grp_np_ckm');
   if(!Array.isArray(ckm.root)||ckm.root.length!==3||!Number.isFinite(ckm.yawDeg))throw new Error('M01 VII-a ckm root/yawDeg');
   const stageSlots=Object.fromEntries(Object.entries(section.stage.slots).map(([id,[x,z]])=>[id,{x,z}]));
@@ -64,6 +70,7 @@ export function areaActPlan(actId='act_vii_a_north'){
 }
 
 const CKM_IDS=['ckm_gunner','ckm_loader'];
+const CP_ARRIVAL='cp_np_e_perimetro';   // CP-E, at the end of the entry card (the pause's checkpoint, CP-F, is the second echelon's `checkpoint` in the data)
 /** The roster of an area act, in actor order (makeActors). */
 export const areaRoster=plan=>['marek_zielinski','staszek_pawlak','szymon_kowal',...plan.line.men,...CKM_IDS,...plan.assault.men.map(m=>m.id)];
 const LINE_DAMAGE=40;                    // a German round that strikes a man of the line (not the named section or the ckm crew: they are pinned, never killed, as the plot needs them)
@@ -157,7 +164,7 @@ export class M01AreaSimulation {
     this.sceneDone.push(s.id);this.scene=null;
     if(s.card.kind==='entry'){
       this.consume('evt_np_card_end');this.activate('obj_np_reach_trench');this.mission.phase='NP_ARRIVAL';
-      this.saveCheckpoint('cp_np_e_perimetro');this.say('arrive_card_end');
+      this.saveCheckpoint(CP_ARRIVAL);this.say('arrive_card_end');
     }else{this.mission.complete=true;this.mission.phase='NP_END';this.flags['m01np.completed']=true;this.emit({type:'complete'});}
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- tick
@@ -196,6 +203,7 @@ export class M01AreaSimulation {
     if(!p.alive)return;
     if(this.level.healing&&p.health<this.level.healing.cap&&this.clock-this.timers.lastHitAt>=this.level.healing.afterUnhitSec)p.health=Math.min(this.level.healing.cap,p.health+this.level.healing.ratePerSec*dt);
     this.updateObjectives();
+    this.lullCheckpoint();
     this.advanceSubtitle();
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- player
@@ -203,7 +211,7 @@ export class M01AreaSimulation {
     const p=this.player,now=this.clock*1000;if(!this.weapon.shoot(now))return;
     const aim=this.weapon.shotDirection(p.angle,p.pitch,p.aiming,p.moveBlend>.1,this.rng.next);
     const dir=aimDirection(aim.angle,aim.pitch),origin=eyePosition(p),hit=traceShot(this.world,origin,dir,this.actors,1200,muzzlePosition(p));
-    p.weaponShotAt=now;p.pitch=Math.min(1.25,p.pitch+.024);
+    p.weaponShotAt=now;p.pitch=Math.min(1.25,p.pitch+.024);this.noteFlash(p);
     if(hit?.actor?.team==='enemy')this.damageGerman(hit.actor,this.weapon.profile.damage*hit.multiplier,p,'player');
     const point=hit?.point??{x:origin.x+dir.x*1200,y:origin.y+dir.y*1200,z:origin.z+dir.z*1200};
     this.suppressAlong(origin,dir,hit,1200);
@@ -276,6 +284,17 @@ export class M01AreaSimulation {
     for(const a of this.enemies)if(a.alive&&a.active){const S=this.plan.assault;a.deck.since=this.clock;a.deck.until=this.clock+between(a.ai,S.coverSec);a.cooldown=1.5+3*aiNext(a.ai);}
   }
   echelonRecord(){return {at:this.clock,casualties:0,brokenAt:null,closed:false,seen:false};}
+  /**
+   * CP-F (Captain's decision 2026-11-04, reversible): when an echelon breaks and another follows, the checkpoint the next echelon names in the data (`checkpoint`) is taken, once, at the end of the
+   * tick: a death in that echelon returns to the pause, not to the arrival. Only when the player can live in it: alive, inside the bounds (a countdown running outside would end the restored
+   * life at once), no card up. A save in the pause from before this checkpoint existed takes it on its next tick. The same envelope path as CP-E (the game stores sim.checkpoint on the event).
+   */
+  lullCheckpoint(){
+    const W=this.timers.wave;if(!W||this.scene)return;
+    const id=this.plan.assault.echelons[W.ech+1]?.checkpoint;
+    if(!id||W.echs[W.ech].brokenAt===null||this.checkpointsReached.includes(id)||!this.player.alive||this.timers.boundary>0)return;
+    this.saveCheckpoint(id);
+  }
   man(a){return this.plan.assault.men.find(m=>m.id===a.id);}
   atNode(a,m){const n=m.path[a.deck.node];return Boolean(n)&&Math.hypot(a.x-n.x,a.z-n.z)<.06;}
   /** The approach assault: advance (bound to the next node), cover (kneel at a stop), hold (at the limit), fallback (back along the path), clear (gone). In echelons (stepEchelons). */
@@ -407,15 +426,21 @@ export class M01AreaSimulation {
   }
   germanFire(a,m,dt){
     const S=this.plan.assault,F=S.fire,mg=a.weapon==='mg34',suppressed=this.clock<a.suppressedUntil;
+    // Suppressive fire (fire.suppress, the guns it names): a gun that saw a muzzle flash lately (its mark) keeps firing at the place when it has nothing in sight, and when it is pinned too.
+    const Z=F.suppress&&a.weapon===F.suppress.weapon?F.suppress:null,mark=Z?this.flashMark(a,Z):null;
     a.cooldown-=dt;
-    if(suppressed){a.crouched=true;a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+.6);return;}
-    // Up from cover riseBeforeSec before the shot and holdAfterSec after it; down otherwise.
-    a.crouched=!(a.cooldown<=F.riseBeforeSec||this.clock-a.firedAt<F.holdAfterSec);
+    if(suppressed&&!mark){a.crouched=true;a.cooldown=Math.max(a.cooldown,a.suppressedUntil-this.clock+.6);return;}
+    // Up from cover riseBeforeSec before the shot and holdAfterSec after it; down otherwise (pinned with a mark to fire at: down, firing blind over the cover).
+    a.crouched=suppressed||!(a.cooldown<=F.riseBeforeSec||this.clock-a.firedAt<F.holdAfterSec);
     if(a.cooldown>0)return;
-    const targets=this.germanTargets(a,F.rangeM);
-    if(!targets.length){a.cooldown=.8+.6*aiNext(a.ai);return;}
+    const targets=suppressed?[]:this.germanTargets(a,F.rangeM);
+    if(!targets.length){
+      if(mark){this.areaBurst(a,mark,Z,suppressed);return;}
+      a.cooldown=.8+.6*aiNext(a.ai);return;
+    }
     const w=S.playerWeight[this.difficulty]??1,weights=targets.map(t=>t===this.player?w:1),sum=weights.reduce((n,x)=>n+x,0);
     let u=aiNext(a.ai)*sum,target=targets[0];for(let i=0;i<targets.length;i++){u-=weights[i];if(u<=0){target=targets[i];break;}}
+    if(Z)a.ai.seen={x:target.x,y:target.y,z:target.z,at:this.clock,who:target.id};   // what he fires at he remembers
     const kind=target===this.player?'player':'squad',ae=kind==='player'?this.level.aimErrorScale:1,spec=mg?F.mg:F.rifle;
     const rounds=mg?F.mg.rounds:1,interval=mg?F.mg.interval:.1,origin=eyePosition(a),aim=aimPoint(target);
     const shared=[spec.bias[0]*ae*aiGauss(a.ai),spec.bias[1]*ae*aiGauss(a.ai)],cone=[spec.cone[0]*ae,spec.cone[1]*ae];
@@ -425,6 +450,35 @@ export class M01AreaSimulation {
     a.cooldown=pause(a.ai,m.role==='overwatch'?F.overwatchPauseSec:F.assaultPauseSec,2);
     this.emit({type:'enemy-fire',by:a.id,origin,rounds,interval,weapon:a.weapon,at:this.clock});
     if(mg&&this.clock-(this.timers.said.mg_fire??-1e9)>40)this.say('mg_fire');
+  }
+  /** Where this gun last saw a muzzle flash of a Pole or of the player (`ai.seen`), if that was no more than `memorySec` ago; else null. */
+  flashMark(a,Z){const s=a.ai.seen;return s&&this.clock-s.at<=Z.memorySec?s:null;}
+  /**
+   * A Pole (or the player) has fired. Every German gun of `fire.suppress` within range that has a line to the flash remembers the place (`ai.seen`: the shooter's feet, when, who). The line is
+   * a standing man's, eye to eye: the flash shows above the parapet whatever the posture of the man who made it. Decides nothing by itself: germanFire fires at the mark. No draw of any stream.
+   */
+  noteFlash(shooter){
+    const F=this.plan.assault.fire,Z=F.suppress;if(!Z||!this.timers.wave)return;
+    const from={...shooter,crouched:false};
+    for(const g of this.enemies){
+      if(!g.alive||!g.active||g.weapon!==Z.weapon||dist(g,shooter)>F.rangeM||!this.world.lineOfSight({...g,crouched:false},from))continue;
+      g.ai.seen={x:shooter.x,y:shooter.y,z:shooter.z,at:this.clock,who:shooter.id};
+    }
+  }
+  /**
+   * Suppressive fire (GAMEPLAY_DRAMATIZATION): a short burst of real rounds, the model of every German round (makeRound now, traceRound when it lands, the level's table for the player), at
+   * the place where the gun last saw a flash: the torso of a man standing there, the gun's usual dispersion. Nothing is aimed at a man and a round hits only what it crosses (mostly the
+   * parapet, the earth, the air above it). Pinned, the gun fires blind from behind its cover, and its pause is `pinnedPauseFactor` times longer. Draws of the man's own stream only.
+   */
+  areaBurst(a,mark,Z,pinned){
+    const spec=this.plan.assault.fire.mg,rounds=Z.rounds[0]+Math.floor(aiNext(a.ai)*(Z.rounds[1]-Z.rounds[0]+1)),interval=spec.interval;
+    const origin=eyePosition({...a,crouched:false}),aim=aimPoint({x:mark.x,y:mark.y,z:mark.z,crouched:false}),shared=[spec.bias[0]*aiGauss(a.ai),spec.bias[1]*aiGauss(a.ai)];
+    for(let k=0;k<rounds;k++)this.enemyFire.rounds.push(makeRound({id:`np_round_${this.enemyFire.nextId++}`,by:a.id,weapon:a.weapon,kind:'area',origin,aim,firedAt:this.clock+k*interval,
+      bias:shared,cone:spec.cone,gauss:()=>aiGauss(a.ai),tracer:k===Math.min(1,rounds-1)}));
+    a.shot=rounds*interval+.06;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=angleOf(a,mark);a.crouched=pinned;
+    a.cooldown=between(a.ai,Z.pauseSec)*(pinned?Z.pinnedPauseFactor:1);
+    this.emit({type:'enemy-fire',by:a.id,origin,rounds,interval,weapon:a.weapon,at:this.clock,kind:'area'});
+    if(this.clock-(this.timers.said.mg_fire??-1e9)>40)this.say('mg_fire');
   }
   /** German rounds land: the world, the player (wound by the level's table), a man of the line (wounded or killed), the named men (pinned), near misses (pinned). */
   landRounds(){
@@ -516,7 +570,7 @@ export class M01AreaSimulation {
     let struck=false;
     if(hit?.actor?.team==='enemy'){this.damageGerman(hit.actor,this.weapon.profile.damage*hit.multiplier,a,a.id);struck=true;}
     this.suppressAlong(origin,dir,hit,R);
-    a.shot=.12;a.firedAt=this.clock;a.facing=aimed;
+    a.shot=.12;a.firedAt=this.clock;a.facing=aimed;this.noteFlash(a);
     return {fired:true,hit:struck,end:hit?.point?{x:hit.point.x,y:hit.point.y,z:hit.point.z}:{x:origin.x+dir.x*R,y:origin.y+dir.y*R,z:origin.z+dir.z*R}};
   }
   /** Kowal's rkm wz.28: short bursts (3-5 rounds of his 20) at the German he sees, a real magazine change. */
@@ -553,7 +607,7 @@ export class M01AreaSimulation {
     const shared=[C.bias[0]*gauss(),C.bias[1]*gauss()],plan=[];
     for(let k=0;k<C.burstRounds;k++)plan.push(makeRound({id:`np_ckm_${f.bursts}_${k}`,by:g.id,weapon:'ckm_wz30',kind:'ally',origin:o,aim,firedAt:clock+k*C.interval,bias:shared,cone:C.cone,gauss}));
     g.ckm={phase:'fire_burst',startedAt:clock,visible:true,root:p.root,yaw:p.yaw,burstPlan:{policy:'live',startedAt:clock,rounds:C.burstRounds,interval:C.interval,emitted:0,landed:0,target:target.id,plan}};
-    f.bursts++;f.engagedUntil=clock+C.holdSec;f.nextAt=clock+C.burstSec+C.cooldown[0]+(C.cooldown[1]-C.cooldown[0])*nx();
+    this.noteFlash(g);f.bursts++;f.engagedUntil=clock+C.holdSec;f.nextAt=clock+C.burstSec+C.cooldown[0]+(C.cooldown[1]-C.cooldown[0])*nx();
     this.emitCKMRounds(g);
   }
   ckmTarget(){
@@ -699,9 +753,12 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   if(s.clock<0||s.clock>36000||s.battleClock<plan.clockStart)reject('relógio');
   const ids=areaRoster(plan);
   if(!Array.isArray(s.actors)||s.actors.length!==ids.length||s.actors.some((a,i)=>a?.id!==ids[i]))reject('elenco');
+  // The place a gun last saw a flash lies in the area (a margin round it) and was made by a Pole or by the player.
+  const pb=plan.layout.bounds.playable,box={minX:pb.minX-30,maxX:pb.maxX+30,minZ:pb.minZ-30,maxZ:pb.maxZ+30},shooters=['jan_wrona',...ids.filter(id=>!plan.assault.ids.includes(id))];
   for(const a of s.actors){
     if(![a.x,a.y,a.z,a.health].every(Number.isFinite)||a.health<0||a.health>100)reject(`ator ${a.id}`);
     if(a.team==='enemy'&&a.deck!==undefined&&!validApproachRecord(plan.assault,a,s.clock))reject(`registo de assalto ${a.id}`);
+    if(a.team==='enemy'&&!validGermanAi(plan.assault,a,s.clock,shooters,box))reject(`registo de decisões ${a.id}`);
   }
   const why=[];
   if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.['m01np.wave'],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);
@@ -709,7 +766,9 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   const w=s.weapon;if(!w||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>200)reject('arma');
   if(!s.objectives||plan.act.objectives.some(o=>!['locked','active','done'].includes(s.objectives[o.id]?.state)))reject('objetivos');
   if(s.timers?.squad!==undefined&&!validSquadRecord(plan.squad,s.timers.squad,s.clock))reject('registo da secção');
-  if(!Array.isArray(s.checkpointsReached)||s.checkpointsReached.some(id=>!plan.act.checkpoints.some(c=>c.id===id)))reject('checkpoints');
+  if(!Array.isArray(s.checkpointsReached)||s.checkpointsReached.some(id=>!plan.act.checkpoints.some(c=>c.id===id))||new Set(s.checkpointsReached).size!==s.checkpointsReached.length)reject('checkpoints');
+  // The checkpoint of a pause exists only once the echelon before it has broken.
+  for(const e of plan.assault.echelons)if(e.checkpoint&&s.checkpointsReached.includes(e.checkpoint)&&!Number.isFinite(s.timers?.wave?.echs?.[e.index-1]?.brokenAt))reject(`checkpoint ${e.checkpoint} sem a quebra da vaga anterior`);
   if(!s.enemyFire||!Array.isArray(s.enemyFire.rounds))reject('fogo');
   if(s.resumeCheckpoint!==undefined)validateAreaSnapshot({...s.resumeCheckpoint},plan);
 }

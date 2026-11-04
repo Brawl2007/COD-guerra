@@ -119,12 +119,18 @@ export function makeLinePlan(def,o=BW_LINE_OPTIONS){
 // `lullSec` after the echelon before it has left the field (the overwatch keeps its posts through the lull), on lanes of its own that may follow one another by `delaySec`
 // (a column in file), with thresholds of its own and, if it wants, an overwatch of its own that walks in with it. The overwatch of every echelon stays on the field until the
 // LAST echelon breaks, which makes everybody fall back.
+// 2026-11-04 (Captain's decisions, reversible): an echelon may name a `checkpoint` (the one saved when the echelon before it breaks: the pause that leads to it), and the assault's `fire` may carry
+// `suppress` (the suppressive fire of its machine guns). Both are optional, validated here, and read by m01-area-sim.js; validGermanAi checks what the guns keep of it in a save.
 export const APPROACH_PHASES=DECK_PHASES,APPROACH_KEYS=DECK_KEYS,APPROACH_VERSION=DECK_ASSAULT_VERSION;
 /** The keys of sim.timers.wave and of each of its echelon records (the saved state of an approach assault; validApproachWave). */
 export const APPROACH_WAVE_KEYS=Object.freeze(['at','brokenAt','casualties','closeCalled','ech','echs','lullUntil','repelledAt']);
 export const APPROACH_ECHELON_KEYS=Object.freeze(['at','brokenAt','casualties','closed','seen']);
-const ECHELON_SPEC_KEYS=Object.freeze(['id','lullSec','overwatch','lanes','stations','limitStation','closeAfterSec','breakPinnedSec','breakOut','maxSec']);
+const ECHELON_SPEC_KEYS=Object.freeze(['id','lullSec','checkpoint','overwatch','lanes','stations','limitStation','closeAfterSec','breakPinnedSec','breakOut','maxSec']);
 const LANE_KEYS=Object.freeze(['id','men','x','delaySec']),OVERWATCH_KEYS=Object.freeze(['id','weapon','node','delaySec']);
+// Suppressive fire of the machine guns (Captain's decision 2026-11-04): `fire.suppress` of the assault. A gun of `weapon` that has no target in sight fires short bursts of real rounds at the
+// place where it last saw a muzzle flash of a Pole (or of the player), for `memorySec` after it, one burst every `pauseSec` seconds (drawn), `pinnedPauseFactor` times that pause while it is pinned.
+const SUPPRESS_KEYS=Object.freeze(['weapon','memorySec','rounds','pauseSec','pinnedPauseFactor','note']);
+const CHECKPOINT_ID=/^cp_[a-z0-9_]+$/;
 /**
  * `spec`: act.json grp_*.assault. `bounds`: {minX,maxX} the lanes and nodes must lie in, `groundY`; `solids`: boxes {id,min:{x,z},max:{x,z}} of the area (wreck,
  * parapet) that no path may cross and no cover may touch. Returns the frozen plan: per man his echelon, entry, path (stops and bypass waypoints round his own
@@ -148,6 +154,13 @@ export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach 
   if(!f||!num(f.assaultPauseSec,1,60)||!num(f.overwatchPauseSec,1,60)||!num(f.riseBeforeSec,.1,3)||!num(f.holdAfterSec,.1,3)||!num(f.rangeM,50,1500)||
     !f.rifle||!pair(f.rifle.bias)||!pair(f.rifle.cone)||!f.mg||!Number.isInteger(f.mg.rounds)||f.mg.rounds<1||f.mg.rounds>20||!num(f.mg.interval,.03,.5)||!pair(f.mg.bias)||!pair(f.mg.cone))fail('fire');
   const w=spec.playerWeight;if(!w||!['recruta','soldado','veterano'].every(k=>num(w[k],0,10)))fail('playerWeight');
+  if(f.suppress!==undefined){   // optional: without it the machine guns fire at what they see and at nothing else, as in INC-1
+    const z=f.suppress,whole=r=>Array.isArray(r)&&r.length===2&&r.every(v=>Number.isInteger(v)&&v>=1&&v<=f.mg.rounds)&&r[0]<=r[1];
+    if(!z||typeof z!=='object'||Array.isArray(z))fail('fire.suppress: an object, or leave it out');
+    const bad=Object.keys(z).find(k=>!SUPPRESS_KEYS.includes(k));if(bad!==undefined)fail(`fire.suppress: unknown key ${bad}`);
+    if(z.weapon!=='mg34'||!num(z.memorySec,1,120)||!whole(z.rounds)||!range(z.pauseSec,1,60)||!num(z.pinnedPauseFactor,1,6))
+      fail(`fire.suppress: weapon mg34 / memorySec 1-120 / rounds [lo, hi] whole numbers 1-${f.mg.rounds} (a short burst) / pauseSec [lo, hi] 1-60 / pinnedPauseFactor 1-6`);
+  }
   // The echelons: the spec itself, then those that follow it.
   if(spec.echelons!==undefined&&(!Array.isArray(spec.echelons)||!spec.echelons.length))fail('echelons: a non-empty array, or leave it out');
   const specs=[{id:'first',lullSec:0,overwatch:spec.overwatch,lanes:spec.lanes,stations:spec.stations,limitStation:spec.limitStation,closeAfterSec:spec.closeAfterSec,
@@ -157,6 +170,8 @@ export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach 
     if(!e||typeof e!=='object'||Array.isArray(e)||typeof e.id!=='string'||!e.id||specs.some(x=>x.id===e.id))fail(`${name}: id (a string, different from the other echelons' and from "first")`);
     const extra=Object.keys(e).find(k=>!ECHELON_SPEC_KEYS.includes(k));if(extra!==undefined)fail(`${name}: unknown key ${extra}`);
     if(!num(e.lullSec,5,180))fail(`${name}: lullSec 5-180 (seconds from the moment the echelon before has left the field to the entry of this one)`);
+    if(e.checkpoint!==undefined&&(typeof e.checkpoint!=='string'||!CHECKPOINT_ID.test(e.checkpoint)||specs.some(x=>x.checkpoint===e.checkpoint)))
+      fail(`${name}: checkpoint (an id cp_..., different from the other echelons': the checkpoint saved when the echelon before breaks and the pause that leads to this one begins)`);
     const st=e.stations??spec.stations,lim=e.limitStation??spec.limitStation;
     if(!stationsOk(st))fail(`${name}: stations: z, north to south, south of entryZ`);
     if(!limitOk(lim,st))fail(`${name}: limitStation`);
@@ -202,7 +217,7 @@ export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach 
     }
     // Its casualties are its own men, the assault and the overwatch it brings (the first echelon's overwatch is the first echelon's): it cannot break on more than that.
     if(e.breakOut>mine.assault.length+mine.overwatch.length)fail(`${name}breakOut ${e.breakOut} is more than its ${mine.assault.length} assault men plus ${mine.overwatch.length} on overwatch`);
-    echelons.push({index:k,id:e.id,lullSec:e.lullSec,men:mine.assault,overwatch:mine.overwatch,stations:[...e.stations],limitStation:e.limitStation,
+    echelons.push({index:k,id:e.id,lullSec:e.lullSec,checkpoint:e.checkpoint??null,men:mine.assault,overwatch:mine.overwatch,stations:[...e.stations],limitStation:e.limitStation,
       closeAfterSec:e.closeAfterSec,breakPinnedSec:e.breakPinnedSec,breakOut:e.breakOut,maxSec:e.maxSec});
   });
   if(new Set(ids).size!==ids.length)fail('a man listed twice');
@@ -298,4 +313,19 @@ export function validApproachWave(plan,W,flag,clock,actors,why=[]){
   if(W.lullUntil!==null&&(last||R.brokenAt===null||!finite(W.lullUntil,R.brokenAt+plan.echelons[W.ech+1].lullSec-1e-9,clock+plan.echelons[W.ech+1].lullSec+1e-6)))   // set at the break or later, lullSec ahead
     return no(`lull timer ${W.lullUntil} outside [break + lullSec, clock + lullSec]`);
   return flag===approachFlagOf(plan,W);
+}
+/**
+ * The decision record of a German (`actor.ai`): the state of his own stream of draws (`rng`, a 32-bit whole number) and, for a gun with suppressive fire (`fire.suppress`), the place where he
+ * last saw a muzzle flash (`seen` = {x, y, z, at, who}: the feet of the Pole or of the player who fired, when, and who). `shooters`: the ids of the men who can fire at him; `box`: the area
+ * the place must lie in (a margin included). A save older than the decision streams has no `ai` at all; one older than the suppressive fire has no `seen`. Never throws.
+ */
+export function validGermanAi(plan,a,clock,shooters,box){
+  const ai=a.ai;
+  if(ai===undefined)return true;
+  if(!ai||typeof ai!=='object'||Array.isArray(ai)||!Number.isInteger(ai.rng)||ai.rng<0||ai.rng>4294967295)return false;
+  const extra=Object.keys(ai).filter(k=>k!=='rng');
+  if(!extra.length)return true;
+  const z=plan.fire.suppress,s=ai.seen;
+  if(extra.length!==1||extra[0]!=='seen'||!z||a.weapon!==z.weapon||!s||typeof s!=='object'||Array.isArray(s)||Object.keys(s).sort().join()!=='at,who,x,y,z')return false;
+  return [s.x,s.y,s.z,s.at].every(Number.isFinite)&&s.at>=0&&s.at<=clock+1e-9&&shooters.includes(s.who)&&s.x>=box.minX&&s.x<=box.maxX&&s.z>=box.minZ&&s.z<=box.maxZ&&s.y>=-100&&s.y<=100;
 }

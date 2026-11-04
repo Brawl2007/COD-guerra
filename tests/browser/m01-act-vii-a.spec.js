@@ -13,6 +13,13 @@ const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',BW_KEY='cod-guerra:checkpoint:
 const envelope=sim=>({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
 
 let scenes;
+// 2026-11-04 (CP-F, the pause checkpoint): a save one second before the first echelon breaks (found by running the passive route to the tick of the break, then again 20 ticks short of it),
+// so the page can be watched storing the checkpoint when the break comes.
+function nearBreak(){
+  const run=n=>{const sim=new M01AreaSimulation(19390901,{difficulty:'recruta'}),state={arrived:false,lastHealth:100};let i=0;
+    for(;i<n&&!(sim.timers.wave?.echs[0].brokenAt>0);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}return {sim,ticks:i};};
+  return envelope(run(run(1e5).ticks-20).sim);
+}
 function build(){
   const sim=new M01AreaSimulation(19390901,{difficulty:'recruta'}),state={arrived:false,lastHealth:100};
   const tickUntil=(done,max=6000)=>{for(let i=0;i<max&&!done();i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}};
@@ -32,7 +39,7 @@ function build(){
   const ech2=envelope(sim);Object.assign(ech2.actSave.player,{crouched:false,angle:-Math.PI/2,pitch:.015});
   tickUntil(()=>sim.timers.endAt!==null,9000);   // two echelons: the passive pilot repels the attack ~4 minutes (4800 ticks) after the wave starts
   const end=envelope(sim);
-  return {spawn,mid,west,wreck,lull,ech2,end};
+  return {spawn,mid,west,wreck,lull,ech2,end,nearBreak:nearBreak()};
 }
 test.beforeAll(()=>{scenes=build();mkdirSync(OUT,{recursive:true});mkdirSync(OUT2,{recursive:true});});
 
@@ -46,7 +53,7 @@ async function boot(page,query,{save=null,key=ACT_KEY,click='#start'}={}){
 const diag=page=>page.evaluate(()=>{const d=window.gameDiagnostics();return {act:d.m01.act??null,scene:d.m01.scene,phase:d.missionPhase,complete:d.complete,clock:d.clock,player:d.player,
   alive:d.m01.enemyAlive,clockText:document.querySelector('#battle-clock')?.textContent,objective:document.querySelector('#objective-text')?.textContent,status:document.querySelector('#objective-status')?.textContent,
   card:document.querySelector('#title-card')?.textContent,frames:d.m01.renderedFrames??null};});
-const settle=page=>page.waitForTimeout(2500);
+const settle=async page=>{await page.waitForTimeout(2500);await page.waitForFunction(()=>document.querySelector('#battle-clock')?.textContent==='MANHÃ · ~07:00',null,{timeout:120000});};   // (software GL under load can take longer than 2.5 s to paint the HUD of the act it loaded)
 
 test('QA flag ?act=vii-a boots Act VII-a on its card; the HUD shows only the approximate morning label',async({page})=>{
   test.setTimeout(300000);
@@ -68,7 +75,7 @@ test('QA flag ?act=vii-a boots Act VII-a on its card; the HUD shows only the app
 });
 
 test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west), the lull, the second echelon, the end beat and the debrief after the last act',async({page,context})=>{
-  test.setTimeout(600000);
+  test.setTimeout(1500000);   // eight pages in one test: software GL on a shared machine needs more than ten minutes
   const shots=[['spawn',OUT+'03-spawn-north.png'],['mid',OUT+'04-line-north-midwave.png'],['west',OUT+'05-line-west-ckm.png'],['wreck',OUT+'05b-wreck-aimed.png'],
     ['lull',OUT2+'01-lull-overwatch-only.png'],['ech2',OUT2+'02-second-echelon.png']],report={};
   for(const [name,file] of shots){
@@ -94,6 +101,41 @@ test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west
   await p.screenshot({path:OUT+'07-debrief.png'});
   report.end={debrief,errors};expect(errors).toEqual([]);
   writeFileSync(OUT+'smoke-saves.json',JSON.stringify(report,null,1)+'\n');
+});
+
+test('CP-F (Captain\'s decision 2026-11-04): the game stores the pause checkpoint when the first echelon breaks, in the same schema 3 envelope as the arrival',async({page})=>{
+  test.setTimeout(600000);
+  const errors=await boot(page,'?debug=1&acts=1',{save:scenes.nearBreak,click:'#continue'});
+  await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_a_north',null,{timeout:60000});
+  const cps=()=>page.evaluate(key=>JSON.parse(localStorage.getItem(key)).actSave.checkpointsReached,ACT_KEY);
+  expect(await cps()).toEqual(['cp_np_e_perimetro']);
+  await page.waitForFunction(key=>JSON.parse(localStorage.getItem(key)).actSave.checkpointsReached.includes('cp_np_f_pausa'),ACT_KEY,{timeout:300000});
+  const stored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),ACT_KEY);
+  expect(stored.schema).toBe(3);expect(stored.act).toBe('act_vii_a_north');expect(Object.keys(stored).sort()).toEqual(['act','actSave','carry','missionId','schema']);
+  expect(stored.actSave.checkpointsReached).toEqual(['cp_np_e_perimetro','cp_np_f_pausa']);
+  expect(stored.actSave.timers.wave.echs[0].brokenAt).not.toBeNull();expect(stored.actSave.timers.wave.echs).toHaveLength(1);expect(stored.actSave.flags['m01np.wave']).toBe('lull');
+  await expect(page.locator('#checkpoint-name')).toHaveText('CP-F · Perímetro norte — pausa · Recruta');
+  const d=await diag(page);expect(d.phase).toBe('NP_ATTACK');expect(d.status).toMatch(/^Linha norte · (vaga a recuar|pausa) · /);
+  expect(errors).toEqual([]);
+  writeFileSync(OUT2+'smoke-cpf-stored.json',JSON.stringify({checkpoints:stored.actSave.checkpointsReached,flag:stored.actSave.flags['m01np.wave'],brokenAt:stored.actSave.timers.wave.echs[0].brokenAt,clock:stored.actSave.clock,status:d.status,errors},null,1)+'\n');
+});
+
+test('a death in the second echelon returns to CP-F, the pause, and not to the arrival',async({page})=>{
+  test.setTimeout(600000);
+  // 25 s into the second echelon (the checkpoint inside this save is CP-F), the player outside the area with the out-of-bounds countdown nearly out: the next tick ends this life
+  const save=JSON.parse(JSON.stringify(scenes.ech2));Object.assign(save.actSave.player,{x:-700});save.actSave.timers.boundary=7.99;
+  expect(save.actSave.resumeCheckpoint.checkpointsReached).toEqual(['cp_np_e_perimetro','cp_np_f_pausa']);
+  const errors=await boot(page,'?debug=1&acts=1',{save,click:'#continue'});
+  await page.waitForFunction(()=>window.gameDiagnostics().death.beat!==null,null,{timeout:120000});
+  const beat=await page.evaluate(()=>window.gameDiagnostics().death.beat);
+  expect(beat.cause).toBe('bounds');expect(beat.checkpoint).toBe('cp_np_f_pausa');
+  await expect(page.locator('#death-note')).toHaveText('A retomar em CP-F · Perímetro norte — pausa · Recruta');
+  await page.waitForFunction(()=>window.gameDiagnostics().death.beat===null&&/pausa|a recuar/.test(document.querySelector('#objective-status')?.textContent??''),null,{timeout:120000});
+  const after=await diag(page),cps=await page.evaluate(()=>window.gameDiagnostics().m01.checkpoints);
+  expect(cps).toEqual(['cp_np_e_perimetro','cp_np_f_pausa']);expect(after.phase).toBe('NP_ATTACK');expect(after.status).toMatch(/^Linha norte · (vaga a recuar|pausa) · /);
+  expect(after.clock).toBeLessThan(scenes.ech2.actSave.clock-20);   // the clock went back to the pause (the second echelon had been on the field 25 s)
+  expect(errors).toEqual([]);
+  writeFileSync(OUT2+'smoke-cpf-death.json',JSON.stringify({beat,after,checkpoints:cps,errors},null,1)+'\n');
 });
 
 test('a completed current act: debrief with the switch off (unchanged), transition card into VII-a with ?acts=1',async({page,context})=>{

@@ -8,7 +8,7 @@ import acts from '../missions/m01-tczew/acts.json' with {type:'json'};
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {SQUAD,updateSquad} from '../src/game/m01-squad.js';
 import {REARGUARD,rearguardPlan} from '../src/game/m01-rearguard.js';
-import {BW_SQUAD_SPEC,makeSquadPlan,squadStep,makeLinePlan,BW_LINE_OPTIONS,makeApproachPlan} from '../src/game/m01-act-factories.js';
+import {BW_SQUAD_SPEC,makeSquadPlan,squadStep,makeLinePlan,BW_LINE_OPTIONS,makeApproachPlan,validApproachWave} from '../src/game/m01-act-factories.js';
 import {M01ActRunner,ACTS,ACT_SAVE_SCHEMA,BW_ACT,actsPlan,carryFrom,validateCarry,nextSeed,actOf} from '../src/game/m01-acts.js';
 import {M01AreaSimulation,AREA_SAVE_SCHEMA,areaActPlan,defaultCarry,validateAreaSnapshot} from '../src/game/m01-area-sim.js';
 import {actControls,actRoute,ACT_TICK} from './helpers/m01-act-route.js';
@@ -78,15 +78,17 @@ test('schema 2 saves load exactly as before through the runner (switch on or off
   assert.equal(viaRunner.ok,false);assert.equal(viaRunner.error,direct.error,'a broken schema 2 save is rejected with the current act\'s own message');
 });
 
-// Where a save can be taken in the fight of Act VII-a (R4 duration work, 2026-11-03: two echelons with a lull between them): the pilot that reaches each one, and the condition.
+// Where a save can be taken in the fight of Act VII-a (R4 duration work, 2026-11-03: two echelons with a lull between them): the pilot that reaches each one, and the condition, the state
+// of the fight and the checkpoints reached there (CP-E, the arrival; CP-F, the pause, taken when the first echelon breaks: 2026-11-04).
+const CP_E='cp_np_e_perimetro',CP_F='cp_np_f_pausa';
 const SAVE_POINTS=[
-  ['the first echelon, 20 s in','active',sim=>sim.timers.wave?.ech===0&&sim.timers.wave.echs[0].brokenAt===null&&sim.clock-sim.timers.wave.at>20,'active'],
-  ['the lull, 10 s in (the first echelon is off the field, the second has not come)','passive',sim=>sim.timers.wave?.lullUntil>0&&sim.clock>sim.timers.wave.lullUntil-20,'lull'],
-  ['the second echelon, 20 s after it walked in','passive',sim=>sim.timers.wave?.ech===1&&sim.timers.wave.brokenAt===null&&sim.clock-sim.timers.wave.echs[1].at>20,'active'],
-  ['the last fall-back (the overwatch is falling back too)','passive',sim=>sim.timers.wave?.brokenAt>0&&sim.timers.wave.repelledAt===null,'broken'],
+  ['the first echelon, 20 s in','active',sim=>sim.timers.wave?.ech===0&&sim.timers.wave.echs[0].brokenAt===null&&sim.clock-sim.timers.wave.at>20,'active',[CP_E]],
+  ['the lull, 10 s in (the first echelon is off the field, the second has not come)','passive',sim=>sim.timers.wave?.lullUntil>0&&sim.clock>sim.timers.wave.lullUntil-20,'lull',[CP_E,CP_F]],
+  ['the second echelon, 20 s after it walked in','passive',sim=>sim.timers.wave?.ech===1&&sim.timers.wave.brokenAt===null&&sim.clock-sim.timers.wave.echs[1].at>20,'active',[CP_E,CP_F]],
+  ['the last fall-back (the overwatch is falling back too)','passive',sim=>sim.timers.wave?.brokenAt>0&&sim.timers.wave.repelledAt===null,'broken',[CP_E,CP_F]],
 ];
-function toPoint(mode,reached){
-  const sim=new M01AreaSimulation(19390901,{difficulty:'soldado'}),state={arrived:false,lastHealth:100};
+function toPoint(mode,reached,seed=19390901){
+  const sim=new M01AreaSimulation(seed,{difficulty:'soldado'}),state={arrived:false,lastHealth:100};
   for(let i=0;i<30000&&!reached(sim);i++){sim.tick(ACT_TICK,actControls(sim,mode,state));sim.drainEvents();}
   assert.ok(reached(sim),'the save point was reached');
   return {sim,state};
@@ -94,9 +96,9 @@ function toPoint(mode,reached){
 
 test('schema 3: a save restores to the same state and the same future, tick for tick, in the first echelon, in the lull, in the second echelon and in the last fall-back (save/restore identity)',()=>{
   const runner=new M01ActRunner({enabled:true});
-  for(const [name,mode,reached,flag] of SAVE_POINTS){
+  for(const [name,mode,reached,flag,checkpoints] of SAVE_POINTS){
     const {sim,state}=toPoint(mode,reached);
-    assert.equal(sim.flags['m01np.wave'],flag,name);
+    assert.equal(sim.flags['m01np.wave'],flag,name);assert.deepEqual(sim.checkpointsReached,checkpoints,`${name}: the checkpoints reached`);
     const text=JSON.stringify({schema:ACT_SAVE_SCHEMA,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
     const r=runner.load(text);assert.equal(r.ok,true,`${name}: ${r.error}`);const copy=r.sim;
     assert.deepEqual(strip(copy.snapshot()),strip(sim.snapshot()),name);
@@ -108,9 +110,10 @@ test('schema 3: a save restores to the same state and the same future, tick for 
     }
     assert.deepEqual(strip(copy.snapshot()),strip(sim.snapshot()),name);
     assert.equal(copy.mission.status,sim.mission.status,name);
-    // The runner's own envelope (the checkpoint, CP-E) round-trips too.
+    // The runner's own envelope (the checkpoint the game stores: CP-E, and CP-F from the pause on) round-trips too.
     const cp=runner.load(JSON.stringify(runner.envelope(sim)));assert.equal(cp.ok,true,cp.error);assert.deepEqual(strip(cp.sim.snapshot()),strip(sim.checkpoint));
-    assert.deepEqual(cp.sim.checkpointsReached,['cp_np_e_perimetro']);
+    assert.deepEqual(cp.sim.checkpointsReached,sim.checkpointsReached,`${name}: the stored checkpoint is the last one reached (20 s of play later than the save point: the first echelon may have broken since)`);
+    assert.equal(cp.sim.respawn.label,sim.checkpointsReached.includes(CP_F)?'CP-F':'CP-E',name);
   }
 });
 
@@ -207,7 +210,8 @@ test('schema 3: what the machine never writes is refused with its reason: a man 
 });
 
 test('schema 3: a save in the second echelon is checked too (who walked in and when, the records, the flag, the men off the field) and tampering is refused',()=>{
-  const runner=new M01ActRunner({enabled:true}),{sim}=toPoint('passive',s=>s.timers.wave?.ech===1&&s.clock-s.timers.wave.echs[1].at>4);   // 4 s in: the first lanes are in, the far lanes still wait at the treeline
+  // 4 s in: the first lanes are in, the far lanes still wait at the treeline. Seed 2: a man of the first echelon's assault got away alive and is off the field (the Polish line shoots most of them as they fall back).
+  const runner=new M01ActRunner({enabled:true}),{sim}=toPoint('passive',s=>s.timers.wave?.ech===1&&s.clock-s.timers.wave.echs[1].at>4,2);
   const good=()=>strip({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
   const loaded=runner.load(JSON.stringify(good()));assert.equal(loaded.ok,true,loaded.error);
   const W=sim.timers.wave,second=a=>sim.man(a).echelon===1&&sim.man(a).role==='assault';
@@ -245,11 +249,116 @@ test('schema 3: a save in the second echelon is checked too (who walked in and w
     const s=new M01AreaSimulation(seed,{difficulty:level}),state={arrived:false,lastHealth:100},flags=new Set();
     for(let i=0;i<30000&&!s.mission.complete;i++){
       s.tick(ACT_TICK,actControls(s,mode,state));s.drainEvents();
-      if(i%10===0){validateAreaSnapshot(strip(s.snapshot()),s.plan);flags.add(s.flags['m01np.wave']);}
+      if(i%10===0&&s.player.alive){validateAreaSnapshot(strip(s.snapshot()),s.plan);flags.add(s.flags['m01np.wave']);}   // (the tick of a death is not a state the game stores: the next tick restores the checkpoint)
     }
     assert.ok(s.mission.complete,`${mode} ${level} ${seed}`);
     assert.deepEqual([...flags].sort(),['active','broken','lull','pending','repelled'],`${mode} ${level} ${seed}: every state of the fight was sampled`);
   }
+});
+
+/** Runs a passive route to the tick in which CP-F is taken (the first echelon breaks). Returns the sim, the pilot's state and every event drained on the way. */
+function toCheckpointF(seed=19390901,difficulty='soldado'){
+  const sim=new M01AreaSimulation(seed,{difficulty}),state={arrived:false,lastHealth:100},events=[];
+  for(let i=0;i<30000&&!sim.checkpointsReached.includes(CP_F);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));events.push(...sim.drainEvents());}
+  assert.ok(sim.checkpointsReached.includes(CP_F),'CP-F was taken');
+  return {sim,state,events};
+}
+
+test('CP-F (Captain\'s decision 2026-11-04): the pause is a checkpoint taken when the first echelon breaks, stored by the game\'s own path, valid, restored with the same future tick for tick',()=>{
+  const runner=new M01ActRunner({enabled:true}),{sim,state,events}=toCheckpointF();
+  const cps=events.filter(e=>e.type==='checkpoint');
+  assert.deepEqual(cps.map(e=>e.id),[CP_E,CP_F],'the game stores sim.checkpoint on each `checkpoint` event: the arrival, then the pause');
+  const W=sim.timers.wave,def=sim.definition.checkpoints.find(c=>c.id===CP_F);
+  assert.deepEqual([def.label,def.name],['CP-F','Perímetro norte — pausa'],'what the card of the game shows');
+  assert.ok(W.echs[0].brokenAt!==null&&sim.clock-W.echs[0].brokenAt<2*ACT_TICK&&sim.flags['m01np.wave']==='lull','taken in the tick the first echelon broke');
+  assert.deepEqual(sim.checkpoint.checkpointsReached,[CP_E,CP_F]);assert.equal(sim.respawn.label,'CP-F');assert.equal(sim.checkpoint.player.health,100,'soldado: full health at the checkpoint');
+  // valid: the whole save and the wave record by themselves (validApproachWave), the checkpoint inside a later save too
+  const cp=strip(sim.checkpoint);validateAreaSnapshot(cp,sim.plan);
+  const why=[];assert.equal(validApproachWave(sim.plan.assault,cp.timers.wave,cp.flags['m01np.wave'],cp.clock,cp.actors,why),true,why.join());
+  // the game's own path: the envelope of the checkpoint, opened by the runner
+  const text=JSON.stringify(runner.envelope(sim)),a=runner.load(text),b=runner.load(text);assert.equal(a.ok,true,a.error);assert.equal(b.ok,true,b.error);
+  assert.deepEqual(strip(a.sim.snapshot()),cp);assert.deepEqual(a.sim.checkpointsReached,[CP_E,CP_F]);assert.equal(a.sim.respawn.label,'CP-F');
+  // the death path: the running simulation goes on for a while, then restores its own checkpoint; it must be the state the envelope holds, and have the same future
+  for(let i=0;i<300;i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
+  sim.restoreCheckpoint();sim.drainEvents();assert.deepEqual(strip(sim.snapshot()),strip(a.sim.snapshot()),'restoring the checkpoint = loading its envelope');
+  const sa={...state},sb={...state},sc={...state};
+  for(let i=0;i<1200;i++){
+    const ca=actControls(a.sim,'passive',sa),cb=actControls(b.sim,'passive',sb),cc=actControls(sim,'passive',sc);assert.deepEqual(cb,ca);assert.deepEqual(cc,ca);
+    a.sim.tick(ACT_TICK,ca);b.sim.tick(ACT_TICK,cb);sim.tick(ACT_TICK,cc);
+    const ea=a.sim.drainEvents();assert.deepEqual(b.sim.drainEvents(),ea,`events of tick ${i}`);assert.deepEqual(sim.drainEvents(),ea,`events of tick ${i} (restored by the death path)`);
+    if(i%40===0){const s=strip(a.sim.snapshot());assert.deepEqual(strip(b.sim.snapshot()),s,`tick ${i}`);assert.deepEqual(strip(sim.snapshot()),s,`tick ${i} (death path)`);}
+  }
+  assert.equal(a.sim.checkpointsReached.length,2,'CP-F is not taken twice');
+});
+
+test('CP-F: a death in the second echelon returns to the pause (the first echelon already breaking, the second waiting at the treeline again), not to the arrival; the fight then completes',()=>{
+  const {sim,state}=toCheckpointF();
+  for(let i=0;i<20000&&!(sim.timers.wave.ech===1&&sim.clock-sim.timers.wave.echs[1].at>12);i++){sim.tick(ACT_TICK,actControls(sim,'passive',state));sim.drainEvents();}
+  assert.equal(sim.timers.wave.ech,1);const diedAt=sim.clock;
+  assert.ok(sim.enemies.some(a=>a.active&&sim.man(a).echelon===1),'the second echelon is on the field');
+  sim.player.alive=false;sim.player.health=0;sim.playerDown('shot','de_np_29','mg34');
+  sim.tick(ACT_TICK,{});assert.ok(sim.drainEvents().some(e=>e.type==='restored'));
+  assert.equal(sim.respawn.label,'CP-F');assert.deepEqual(sim.checkpointsReached,[CP_E,CP_F]);assert.ok(sim.clock<diedAt-10,'the clock went back to the pause');
+  const W=sim.timers.wave;
+  assert.equal(W.ech,0);assert.equal(W.echs.length,1);assert.ok(W.echs[0].brokenAt!==null&&W.brokenAt===null&&W.repelledAt===null,'the first echelon has broken, the fight goes on');
+  assert.equal(sim.flags['m01np.wave'],'lull');assert.equal(sim.player.alive,true);assert.equal(sim.player.health,100);
+  assert.ok(sim.enemies.filter(a=>sim.man(a).echelon===1).every(a=>a.alive&&!a.active&&a.deck.phase==='advance'),'the second echelon waits off the field again');
+  assert.ok(sim.enemies.filter(a=>sim.man(a).echelon===0&&sim.man(a).role==='assault'&&a.alive&&a.active).every(a=>a.deck.phase==='fallback'),'the first echelon\'s assault that is still on the field is falling back');
+  validateAreaSnapshot(strip(sim.snapshot()),sim.plan);
+  const r=actRoute(sim,{mode:'passive',maxSec:700});assert.equal(r.complete,true);assert.equal(sim.flags['m01np.wave'],'repelled');assert.equal(sim.timers.wave.echs.length,2);
+  // and the stored envelope after the death is still CP-F
+  assert.equal(new M01ActRunner({enabled:true}).load(JSON.stringify(new M01ActRunner({enabled:true}).envelope(sim))).sim.respawn.label,'CP-F');
+});
+
+test('CP-F: tampered saves are refused (a pause checkpoint without the break before it, a checkpoint twice); a save from before CP-F and the suppressive fire still loads and takes CP-F on its next tick, but never with the player outside the bounds',()=>{
+  const runner=new M01ActRunner({enabled:true}),snap=sim=>strip({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
+  const refuse=(e,name,re=/inválid/)=>{const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,re,`${name}: ${r.error}`);};
+  // the arrival (nothing begun), the first echelon on the field, the pause
+  const spawn=new M01AreaSimulation(19390901,{difficulty:'recruta'});for(let i=0;i<400&&spawn.scene;i++)spawn.tick(ACT_TICK,{skip:true});
+  const first=toPoint('active',SAVE_POINTS[0][2]).sim;
+  for(const [name,sim] of [['before the fight',spawn],['first echelon on the field',first]]){
+    const e=snap(sim);assert.equal(runner.load(JSON.stringify(e)).ok,true,`${name}: the machine's own save loads`);
+    e.actSave.checkpointsReached=[CP_E,CP_F];refuse(e,`${name}: CP-F without the break`,/sem a quebra da vaga anterior/);
+    e.actSave.checkpointsReached=[CP_E,CP_E];refuse(e,`${name}: a checkpoint twice`);
+  }
+  const {sim:lull}=toCheckpointF();const e0=snap(lull);assert.equal(runner.load(JSON.stringify(e0)).ok,true);
+  e0.actSave.checkpointsReached=[CP_E,CP_F,CP_F];refuse(e0,'CP-F twice');
+  // a save from before CP-F (and before the suppressive fire): CP-E only, the checkpoint inside the save is CP-E, the guns have no `seen`
+  const cpE=(()=>{const s=new M01AreaSimulation(19390901,{difficulty:'soldado'}),st={arrived:false,lastHealth:100};for(let i=0;i<400&&!s.checkpointsReached.includes(CP_E);i++){s.tick(ACT_TICK,actControls(s,'passive',st));s.drainEvents();}return strip(s.checkpoint);})();
+  const old=snap(lull);old.actSave.checkpointsReached=[CP_E];old.actSave.resumeCheckpoint=cpE;for(const a of old.actSave.actors)if(a.team==='enemy')delete a.ai.seen;
+  const loaded=runner.load(JSON.stringify(old));assert.equal(loaded.ok,true,loaded.error);const sim=loaded.sim;
+  assert.deepEqual(sim.checkpointsReached,[CP_E]);assert.deepEqual(sim.checkpoint.checkpointsReached,[CP_E],'its checkpoint is the arrival');
+  // outside the bounds (a countdown running) the pause checkpoint waits: a restored life would end at once
+  sim.player.x=-700;sim.timers.boundary=3;sim.lullCheckpoint();assert.deepEqual(sim.checkpointsReached,[CP_E],'not taken outside the bounds');
+  sim.player.alive=false;sim.timers.boundary=0;sim.lullCheckpoint();assert.deepEqual(sim.checkpointsReached,[CP_E],'not taken by a dead player');
+  sim.player.alive=true;sim.player.x=-410;sim.tick(ACT_TICK,{});
+  assert.ok(sim.drainEvents().some(e=>e.type==='checkpoint'&&e.id===CP_F),'taken at the next tick, inside the bounds');
+  assert.deepEqual(sim.checkpoint.checkpointsReached,[CP_E,CP_F]);validateAreaSnapshot(strip(sim.checkpoint),sim.plan);
+});
+
+test('the decision record of a German is checked: the place a gun last saw a flash (ai.seen) must be a place in the area, a time that has been, and a shooter of the other side',()=>{
+  const runner=new M01ActRunner({enabled:true}),{sim}=toCheckpointF();
+  const gun=sim.enemies.find(a=>a.weapon==='mg34'),rifle=sim.enemies.find(a=>a.weapon==='kar98k');assert.ok(gun&&rifle);
+  const snap=()=>strip({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
+  const seen=(e,id,v)=>{e.actSave.actors.find(a=>a.id===id).ai.seen=v;};
+  const good={x:-410,y:-3,z:-1159.2,at:sim.clock-1,who:'jan_wrona'};
+  const ok=snap();seen(ok,gun.id,good);assert.equal(runner.load(JSON.stringify(ok)).ok,true,'a gun that saw the player\'s flash a second ago');
+  const cases=[
+    ['a rifleman with a flash mark (only the guns of fire.suppress have one)',e=>seen(e,rifle.id,good)],
+    ['a mark with a key missing',e=>seen(e,gun.id,{x:good.x,y:good.y,z:good.z,at:good.at})],
+    ['a mark with a key too many',e=>seen(e,gun.id,{...good,extra:1})],
+    ['a mark that is not an object',e=>seen(e,gun.id,'there')],
+    ['a mark at a time that has not been',e=>seen(e,gun.id,{...good,at:e.actSave.clock+5})],
+    ['a mark before the act began',e=>seen(e,gun.id,{...good,at:-1})],
+    ['a mark that is not a number',e=>seen(e,gun.id,{...good,x:'NaN'})],
+    ['a mark outside the area',e=>seen(e,gun.id,{...good,x:-2000})],
+    ['a mark made by a German',e=>seen(e,gun.id,{...good,who:rifle.id})],
+    ['a mark made by nobody',e=>seen(e,gun.id,{...good,who:'ghost'})],
+    ['a stream that is not a 32-bit number',e=>{e.actSave.actors.find(a=>a.id===gun.id).ai.rng=-1;}],
+    ['a record with a foreign key',e=>{e.actSave.actors.find(a=>a.id===gun.id).ai.mood='angry';}],
+    ['a record that is not an object',e=>{e.actSave.actors.find(a=>a.id===gun.id).ai=7;}],
+  ];
+  for(const [name,mutate] of cases){const e=snap();mutate(e);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,/inválid/,`${name}: ${r.error}`);}
 });
 
 test('the chain: the completed current act (golden route) hands over to Act VII-a; carry is pure and the seed is derived without drawing',()=>{
