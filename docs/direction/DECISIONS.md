@@ -238,3 +238,7 @@ Origem: playtest do proprietário (2026-10-18) — «o jogador atravessa paredes
 
 Não é playtest: a sensação de queda, aterragem, degraus e paredes nunca foi jogada.
 
+
+## D45 — M01 VII-a: o combate de infantaria no perímetro norte à luz da opção B, 2026-11-05
+
+Origem: auditoria de coerência das actas VII-a/b/c. `HISTORICAL_RESEARCH.md` §10 (~l.182) diz «Combate de infantaria alemã na margem oeste durante a manhã — não usar sem nova fonte», e a VII-a mostra um combate de infantaria no ecrã. **Leitura do Captain, pendente de confirmação do proprietário:** (1) o proprietário escolheu a opção B (expandir além das 07:05 com novos actos; `M01_R4_EXPANSION_PLAN.md`, `M01_CAPTAIN_HANDOFF_2026-10-25.md` «Ordem em vigor»), o que autoriza o combate da VII-a como `GAMEPLAY_DRAMATIZATION`; (2) o seu fundamento é a T08 (norte, ~07:00, fonte única, certeza BAIXA); (3) a restrição do §10 refere-se ao sector da margem oeste/ponte, não ao perímetro norte, pelo que não é violada; (4) o §10 não é alterado. Se o proprietário discordar, o combate sai da VII-a e fica só o fogo ouvido. Reversível: sim.
