@@ -50,12 +50,3 @@ Decisões pendentes do proprietário: (a) duração não garantida: ativo 93–2
 Visual ainda provisório: árvores pequenas em forma de guarda-chuva, face do parapeito desfocada em primeiro plano, padrão de relva cortada perto do jogador. +12 % triângulos não medidos no PC de referência.
 
 Próximos pacotes mantêm-se: 2 (pó que tapa a vista da IA, socorro de feridos, granadas/busca alemãs reais), 3 (VII-b/VII-c só com fontes), 4 (alça da kb wz.29).
-
-## Atualização 2026-11-04 (b) — pacote 2 feito (fora da #80)
-
-Ramo local `pkg2-act1` (base `57ba50f3`, o pacote 1; sem push). Pó que tapa a vista da IA (cada cratera guarda uma nuvem; `M01Simulation.sees()`; o renderer desenha `renderState.dust`), socorro de feridos (Dudek trata e leva ao ombro os feridos da guarnição oeste, @@HANDOFF_AID@@) e granadas/busca alemãs (`safeX` 190, `closeExtraSec` 100, defensor ajoelhado como alvo, homem imobilizado lança): ver a entrada do topo do ledger e `docs/verification/m01-runtime/pkg2-act1-2026-11-04/README.md`. Golden **emenda 21**. **Não integrado na #80** (aguarda autorização), `acts.enabled=false`, sem playtest, `npm test` completo não corrido.
-
-Decisões pendentes do proprietário: (a) `safeX` 190 / `closeExtraSec` 100 (o homem da frente fica a 23 m da retaguarda; a luta do jogador passivo dura mais; com 250 / 60 a granada volta a ser latente); (b) a busca com movimento só tem uma causa (a nuvem da granada, quando o esquadrão já está nas linhas mais fundas) e é rara: se se quer vê-la mais, é preciso deixar os homens em `hold` procurar, ou uma nuvem mais longa; (c) nas rotas de apoio (o jogador cobre o tabuleiro) o assalto não chega a 32 m de ninguém: sem granada, por desenho do R2-b; (d) polaco das falas 220–226 por rever por falante nativo; (e) raio/vida das nuvens (valores GAMEPLAY, `src/game/m01-dust.js`).
-
-Próximos pacotes mantêm-se: 3 (VII-b/VII-c só com fontes), 4 (alça da kb wz.29).
-

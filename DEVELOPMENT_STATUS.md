@@ -1,15 +1,5 @@
 # Estado de desenvolvimento
 
-## M01 pacote 2 (Ato I): pó que tapa a vista da IA, socorro de feridos, granadas e busca alemãs — 2026-11-04
-
-Ramo local `pkg2-act1` (de `57ba50f3`, o pacote 1). **Não publicado, não integrado na #80**, sem revisão crítica independente, **sem playtest humano**, `npm test` completo **não** corrido. Detalhe, contagens por rota e comandos: `docs/verification/m01-runtime/pkg2-act1-2026-11-04/README.md`.
-
-- **Pó e fumo.** Cada cratera de `sectors.damage` guarda `dust {r, h, d, life}` (`src/game/m01-dust.js`; saves antigos recebem o valor do tipo) e `M01Simulation.sees()` (vista do mundo **e** sem 3 m de nuvem na linha) é a pergunta de toda a aquisição da IA, dos dois lados (portões, assalto, retaguarda, Kowal, ckm, secção); o renderer desenha `renderState.dust` (`m01-atmosphere.js`). O que o jogador vê, a regra dos 20 s e o teste de cobertura das explosões não passam por ele.
-- **Socorro.** Os feridos da guarnição oeste chamam (falas 220–222) e Dudek trata o mais próximo, leva-o ao ombro para a cobertura e volta ao posto (`src/game/m01-aid.js`, falas 223–226): espera a bomba que vem, abriga-se quando abalado, só entre 04:36:30 e 05:30, nunca tira uma tarefa do guião; um ferido tratado continua ferido (não combate). Estado novo opcional e validado: `actor.aid`, `timers.aid`. Polaco das 7 falas por rever.
-- **Granadas e busca.** `safeX` 250 → 190 e `closeExtraSec` 60 → 100 (o homem da frente fica a 23 m da retaguarda, dentro do alcance), o defensor ajoelhado é alvo da granada, o homem imobilizado lança-a, a sonda da busca usa a vista do mundo. @@STATUS_NUMBERS@@
-- **Golden emenda 21** (`tests/fixtures/m01-aid-dust-gameplay-baseline.json`, `tools/verification/m01-integration-golden-audit.mjs --amendment 21`): @@STATUS_GOLDEN@@. Saves anteriores carregam (`tests/fixtures/m01-pkg2-old-saves.json`, dois saves reais do predecessor; `tests/m01-pkg2-saves.test.js`).
-- **Testes novos.** `tests/m01-dust.test.js`, `tests/m01-dust-ai.test.js`, `tests/m01-aid.test.js`, `tests/m01-pkg2-routes.test.js`, `tests/m01-pkg2-saves.test.js`, mais um teste em `tests/m01-atmosphere-runtime.test.js`; re-pins datados em `m01-deck-assault`, `m01-german-ai`, `m01-german-ai-tactics` e no contrato do golden. @@STATUS_TESTS@@
-
 ## M01 R4 INC-1: condutor de atos e Ato VII-a «Perímetro norte, manhã» (atrás de `acts.enabled=false`) — 2026-10-25
 
 Ramo local `claude/exciting-bohr-k8v5xm-r4inc1` (de `1d201f43`, a ponta da candidata #80 com R1-b). **Não publicado**, sem revisão crítica independente, **sem playtest humano**. Plano R4 §3.4 (WP-0 + WP-1), opção B do proprietário. Detalhe, QA e capturas: `docs/verification/m01-runtime/acts-inc1-2026-10-25/README.md`.
