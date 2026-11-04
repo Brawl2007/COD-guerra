@@ -48,6 +48,7 @@ const HAND_RETURN=Object.freeze({from:.93,to:1.1});   // fire_bolt clip seconds:
 const _fq=new THREE.Quaternion();
 const KEY_SIZE=25;   // slots of the per-frame change key in update()
 // The same licensed rig supplies the hands, wz.29 and mechanical animation. Never edits weapon state.
+const ARM_NODES=new WeakMap();   // root -> {l,r}: the upper-arm nodes play() resets every frame
 export class M01ViewModel {
   // worldFx (optional) receives world-space brass, clips and muzzle smoke; texture stays for caller compatibility.
   // muzzleLight (optional): the weapon pass's existing muzzle light, shared instead of adding a second one.
@@ -73,7 +74,7 @@ export class M01ViewModel {
     this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;
     this.release(this.root,this.mixer);this.armGeometry?.dispose();this.disposeDetail();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.skinMaterial?.dispose();this.skinMaterial=null;this.lod=lod;this.visual=null;this.sampleKey=null;
     this.fpSource=this.characters.sources.has('fp:0');
-    this.root=clone(this.characters.sources.get(this.fpSource?'fp:0':`pl:${lod}`).scene);this.scene.add(this.root);
+    this.root=clone(this.characters.sources.get(this.fpSource?'fp:0':`pl:${lod}`).scene);this.scene.add(this.root);this.parts=new Map();   // name -> node of this root, found once (getObjectByName walks the whole skeleton)
     this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip','fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
     const body=this.root.getObjectByName('body');
     this.poseBones=[];this.root.traverse(n=>{if(n.isBone)this.poseBones.push(n);});
@@ -161,7 +162,7 @@ export class M01ViewModel {
     }
   }
   play(root,mixer,clip,time){
-    for(const [side,position]of Object.entries(root.userData.viewArmBind??{}))root.getObjectByName(`upperarm_${side}`).position.fromArray(position);
+    for(const [side,position]of Object.entries(root.userData.viewArmBind??{})){let arm=ARM_NODES.get(root);if(!arm)ARM_NODES.set(root,arm={});(arm[side]??=root.getObjectByName(`upperarm_${side}`)).position.fromArray(position);}   // the upper-arm nodes are found once per root
     // Absolute mechanical sampling must reapply constant tracks after local arm
     // posing (PropertyMixer otherwise skips unchanged values). ADS/run interpolation
     // lives in the presentation pose, never in a wall-clock mixer crossfade.
@@ -205,6 +206,8 @@ export class M01ViewModel {
   // state (optional): the caller's `sim.renderState` of this frame (a getter that rebuilds the whole render state on every read); read here only if not passed.
   // view (optional): {camera, viewFov}. The camera is READ for the brass/clip/smoke spawns and the wall probe, and its field of
   // view is WRITTEN (applyFov) to the aim transition's value: the one camera property this class sets.
+  /** Named node of the current root, looked up once per build (per-frame getObjectByName walked the whole skeleton). */
+  part(name){let o=this.parts.get(name);if(o===undefined){o=this.root.getObjectByName(name)??null;this.parts.set(name,o);}return o;}   // absent names are remembered too (null); build() starts a new map
   update(sim,quality,flashUntil,view=null,state=sim.renderState){
     const characters=this.characters;this.observeNative(sim.clock);
     const lod=characters.sources.has('pl:0')?0:1;
@@ -242,7 +245,7 @@ export class M01ViewModel {
     this.root.position.set(0,0,0);this.root.rotation.set(0,0,0);
     this.play(this.root,this.mixer,clip,sample);
     // Carry presentation is preserved; the rifle path uses measured sight landmarks.
-    const eye=this._eye??=new THREE.Vector3();this.root.getObjectByName('eye_r').getWorldPosition(eye);
+    const eye=this._eye??=new THREE.Vector3();this.part('eye_r').getWorldPosition(eye);
     let mechanical=0,stroke=0,feel={wallDistance:null,wallTarget:0,wallLower:0,fov:null,breath:0,bob:0,gait:0};
     if(carry){
       this.root.position.copy(eye).multiplyScalar(-1);
@@ -280,21 +283,21 @@ export class M01ViewModel {
         shot:w.shotCount??0,look:v.look,mechanical,stroke,profile:PROFILE});
       Object.assign(feel,{wallLower:+v.wall.toFixed(4),fov:+adsFieldOfView(v.aim).toFixed(4),aimEased:+adsEase(v.aim).toFixed(5),gait:+pose.gait.phase.toFixed(4),
         bob:+(pose.gait.y*v.move*(1-adsEase(v.aim))).toFixed(6),breath:+(breathSway(t).y*(1-adsEase(v.aim))).toFixed(6)});
-      placeWz29(this.root,this.root.getObjectByName('weapon'),pose);
+      placeWz29(this.root,this.part('weapon'),pose);
       if(this.rifleMaterial){const ease=adsEase(v.aim*(1-.6*stroke)),u=this.rifleMaterial.userData;u.m01StockShade.value=STOCK_SHADE.strength*ease;u.m01FaceClip.value=u.m01FaceClip.depth*faceClipWeight(v.aim*(1-.6*stroke),stroke,reloadWeight,v.wall);}
       const gripWeight=w.reloading?1-reloadEnvelope(sample):w.boltCycling?
         1-THREE.MathUtils.smoothstep(sample,.12,.25)+THREE.MathUtils.smoothstep(sample,1.08,characters.clips.get('fire_bolt').duration):1;
       // The right wrist is back on its hold position a little before the fingers close on it: the thumb crosses the sights if the hand comes home
       // along the authored path with the rifle already back on the eye (R6-a).
       const wristWeight=w.boltCycling?Math.max(gripWeight,THREE.MathUtils.smoothstep(sample,HAND_RETURN.from,HAND_RETURN.to)):gripWeight;
-      this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.root.getObjectByName('weapon'),{r:wristWeight,l:1},adsEase(v.aim)*(1-reloadWeight));
+      this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.part('weapon'),{r:wristWeight,l:1},adsEase(v.aim)*(1-reloadWeight));
     }
-    this.root.getObjectByName('rifle').visible=!carry;
+    this.part('rifle').visible=!carry;
     if(this.sights)this.sights.visible=!carry;
-    if(this.handsCarry){this.handsCarry.visible=carry;this.root.getObjectByName('fp_hands').visible=!carry;}
+    if(this.handsCarry){this.handsCarry.visible=carry;this.part('fp_hands').visible=!carry;}
     // From clip_ejected the empty clip continues as a world object; the asset's short arc would otherwise vanish mid-air.
     const clipEjected=Boolean(this.worldFx&&view)&&w.state==='RELOAD_CLIP'&&sample>=PROFILE.mechanics.clipEjected;
-    this.root.getObjectByName('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
+    this.part('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
     // Partial reload inserts one cartridge. The five-round clip mesh stays hidden.
     this.round.visible=!carry&&w.state==='RELOAD_SINGLE'&&sample>.7&&sample<2.3;
     if(carry&&!this.wounded){
@@ -329,7 +332,7 @@ export class M01ViewModel {
       this.capturePose(this.poseLast);this.poseValid=true;this.lastReloading=w.reloading;this.lastReload=w.reloadProgress(t*1000);this.lastPoseClock=t;
     }
     this.root.updateMatrixWorld(true);this.observeNative(t);
-    const weapon=this.root.getObjectByName('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
+    const weapon=this.part('weapon'),{a,b,c,up}=this.tmp,shotAt=Number.isFinite(w.lastShot)?w.lastShot/1000:-Infinity;
     // Low frame rates can step past the 60 ms window in one frame: the first frame after a shot event always flashes.
     const fresh=!carry&&w.shotCount!==this.flashShot&&t<flashUntil+.2&&t-shotAt>=0&&t-shotAt<.25;if(fresh)this.flashShot=w.shotCount;
     const fx=carry?this.fx.hide():this.fx.update({clock:t,shotAt,gate:t<flashUntil,fresh,aim:this.visual?.aim??0,shot:w.shotCount??0,
@@ -339,7 +342,7 @@ export class M01ViewModel {
     let drawnTriangles=0;const drawnMeshes=[];
     this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position')?.count??0)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
     this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
-      armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps',carry&&this.handsCarry?'fp_hands_carry':'fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
+      armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps',carry&&this.handsCarry?'fp_hands_carry':'fp_hands'].reduce((n,name)=>n+(this.part(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
       phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(a).toArray(),
       visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(a.fromArray(WZ29_VISUAL[name])).toArray()])),
       // muzzleReach: how far the drawn muzzle stands in front of the eye (m); wallDistance is the probe's clearance the lowering answers.
