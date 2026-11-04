@@ -226,7 +226,7 @@
   ],
   "withdrawal": {
     "classification": "GAMEPLAY_DRAMATIZATION",
-    "note": "A retirada: a linha (sete fuzileiros) e a ckm saem por lanços, três equipas em três lanços, para a faixa de saída; a secção de Zieliński fica de retaguarda e recua depois por lanços (mesma fábrica de lanços da retirada da cabeça de ponte, m01-act-factories.js makeSquadPlan). Ninguém atira em ninguém: as fontes do repositório não dão contacto durante a retirada.",
+    "note": "A retirada: a linha (seis fuzileiros: o sétimo, pl_np_3, foi levado ferido pelos maqueiros no VII-b e não regressa) e a ckm saem por lanços, três equipas em dois lanços, para a faixa de saída; a secção de Zieliński fica de retaguarda e recua depois por lanços (mesma fábrica de lanços da retirada da cabeça de ponte, m01-act-factories.js makeSquadPlan). Ninguém atira em ninguém: as fontes do repositório não dão contacto durante a retirada.",
     "exit": {
       "minX": -600,
       "maxX": -560,
@@ -258,8 +258,7 @@
         ],
         [
           "ckm_gunner",
-          "ckm_loader",
-          "pl_np_3"
+          "ckm_loader"
         ],
         [
           "pl_np_0",
@@ -277,7 +276,6 @@
             "pl_np_6": [-421, -1126],
             "ckm_gunner": [-452, -1127],
             "ckm_loader": [-454.5, -1128.8],
-            "pl_np_3": [-449.5, -1128.8],
             "pl_np_0": [-490, -1126],
             "pl_np_1": [-487.5, -1127.8],
             "pl_np_2": [-485, -1126]
@@ -291,7 +289,6 @@
             "pl_np_2": [-588, -1064],
             "ckm_gunner": [-583.5, -1064],
             "ckm_loader": [-579, -1064],
-            "pl_np_3": [-574.5, -1064],
             "pl_np_4": [-597, -1059],
             "pl_np_5": [-592.5, -1059],
             "pl_np_6": [-588, -1059]
@@ -314,7 +311,7 @@
         "freshSec": 10,
         "lookSec": [2.5, 2]
       },
-      "note": "Três equipas (a ala leste, a ckm com o quarto fuzileiro do centro, a ala oeste) em dois lanços cada: primeiro para o ponto de paragem a 30 m do parapeito, depois para a faixa de saída. Um lanço dura o que a equipa leva a chegar ou, no máximo, `stallSec`: a seguinte parte logo a seguir e a anterior acaba o caminho por si (a fábrica de lanços da BW). Quem entra na faixa de saída deixa o campo (fica inativo)."
+      "note": "Três equipas (a ala leste, a ckm, a ala oeste) em dois lanços cada: primeiro para o ponto de paragem a 30 m do parapeito, depois para a faixa de saída. Um lanço dura o que a equipa leva a chegar ou, no máximo, `stallSec`: a seguinte parte logo a seguir e a anterior acaba o caminho por si (a fábrica de lanços da BW). Quem entra na faixa de saída deixa o campo (fica inativo)."
     },
     "rear": {
       "teams": [
@@ -388,7 +385,6 @@
           "pl_np_0",
           "pl_np_1",
           "pl_np_2",
-          "pl_np_3",
           "pl_np_4",
           "pl_np_5",
           "pl_np_6"
@@ -397,7 +393,6 @@
           [-497, -1159.2],
           [-483, -1159.2],
           [-467, -1159.2],
-          [-455, -1159.2],
           [-375, -1159.2],
           [-361, -1159.2],
           [-346, -1159.2]
@@ -414,7 +409,7 @@
           "riseBeforeSec": 0.9,
           "holdAfterSec": 1.6
         },
-        "note": "Os mesmos sete fuzileiros do VII-a e do VII-b, nos mesmos postos; neste ato não disparam (não há ninguém a quem disparar): a ficha de tiro da fábrica fica nos dados só porque a fábrica a exige."
+        "note": "Os fuzileiros do VII-a e do VII-b, nos mesmos postos, menos pl_np_3, o homem ferido que os maqueiros levaram no VII-b (seis fuzileiros: o efetivo da linha cai de sete para seis; nenhum número histórico); neste ato não disparam (não há ninguém a quem disparar): a ficha de tiro da fábrica fica nos dados só porque a fábrica a exige."
       }
     },
     {
