@@ -556,6 +556,7 @@
         "walkSpeed": 2.2,
         "rushSpeed": 4.6,
         "fallbackSpeed": 5.2,
+        "fallbackStallSec": 30,
         "coverSec": [
           1.5,
           4

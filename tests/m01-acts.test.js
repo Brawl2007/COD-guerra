@@ -172,7 +172,38 @@ test('schema 3: the echelon state of a save in the lull is checked (shape, order
   for(const [name,mutate] of cases){const e=good();mutate(e);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,/inválid/,`${name}: ${r.error}`);}
   // and the legitimate variants of the same save still load: the lull timer not yet set (the first echelon still falling back), the timer at its two ends
   const early=good();early.actSave.timers.wave.lullUntil=null;assert.equal(runner.load(JSON.stringify(early)).ok,true,'a broken echelon with its men still on the field has no lull timer yet');
-  for(const at of [W.echs[0].brokenAt,W.lullUntil]){const e=good();e.actSave.timers.wave.lullUntil=at;assert.equal(runner.load(JSON.stringify(e)).ok,true,`lull timer ${at}`);}
+  // the lull timer the machine writes is the break plus the lull at the earliest (it starts when the assault is off the field, later than the break): not the break itself
+  const lullSec=sim.plan.assault.echelons[1].lullSec,floor=W.echs[0].brokenAt+lullSec;
+  for(const at of [floor,W.lullUntil]){const e=good();e.actSave.timers.wave.lullUntil=at;assert.equal(runner.load(JSON.stringify(e)).ok,true,`lull timer ${at}`);}
+  for(const at of [W.echs[0].brokenAt,floor-.5]){const e=good();e.actSave.timers.wave.lullUntil=at;const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,`lull timer ${at}`);assert.match(r.error,/lull timer/);}
+});
+
+test('schema 3: what the machine never writes is refused with its reason: a man of a broken echelon not falling back, German dead counted that are not dead, a lull timer before break + lull',()=>{
+  const runner=new M01ActRunner({enabled:true}),flag=sim=>sim.flags['m01np.wave'];
+  const own=(sim,k)=>sim.enemies.filter(a=>a.alive&&a.active&&sim.man(a).echelon===k&&sim.man(a).role==='assault');
+  const snap=sim=>strip({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
+  const refuse=(sim,name,mutate,reason)=>{const e=snap(sim);mutate(e.actSave);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,/inválid/,name);assert.match(r.error,reason,`${name}: ${r.error}`);};
+  const actor=(a,id)=>a.actors.find(x=>x.id===id);
+  // (G1) the first echelon has broken and its men are still on the field (falling back): none of them can be in cover, hold or advance
+  const early=toPoint('passive',sim=>sim.timers.wave?.echs[0].brokenAt>0&&own(sim,0).length>0&&flag(sim)==='lull').sim;
+  assert.equal(runner.load(JSON.stringify(snap(early))).ok,true,'the machine\'s own save, a tick after the break, loads');
+  const man=own(early,0)[0];assert.equal(man.deck.phase,'fallback');
+  for(const phase of ['cover','hold','advance'])refuse(early,`G1 ${phase}`,a=>{actor(a,man.id).deck.phase=phase;},/after the break of his echelon/);
+  // (G3) the last break: everybody on the field is falling back, the overwatch too
+  const last=toPoint('passive',SAVE_POINTS[3][2]).sim,gun=last.enemies.find(a=>a.alive&&a.active&&last.man(a).role==='overwatch'),rifle=last.enemies.find(a=>a.alive&&a.active&&last.man(a).role==='assault');
+  assert.ok(gun&&gun.deck.phase==='fallback','an overwatch gun is falling back after the last break');
+  assert.equal(runner.load(JSON.stringify(snap(last))).ok,true);
+  refuse(last,'G3 overwatch holding',a=>{actor(a,gun.id).deck.phase='hold';},/after the last break/);
+  if(rifle)refuse(last,'G3 assault in cover',a=>{actor(a,rifle.id).deck.phase='cover';},/after the last break/);
+  // (G2, G5) the counts are dead men: the fight's and the echelon's own
+  const lull=toPoint('passive',SAVE_POINTS[1][2]).sim,deadOf=(sim,k)=>sim.enemies.filter(a=>!a.alive&&sim.man(a).echelon===k).length,dead=sim=>sim.enemies.filter(a=>!a.alive).length;
+  refuse(lull,'G5 the fight counts more than are dead',a=>{a.timers.wave.casualties=dead(lull)+1;},/German dead, only/);
+  refuse(lull,'G2 the echelon counts more than its own dead',a=>{a.timers.wave.echs[0].casualties=deadOf(lull,0)+1;},/echelon 0 counts/);
+  const second=toPoint('passive',s=>s.timers.wave?.ech===1&&s.timers.wave.echs[1].casualties>0).sim;   // dead of the second echelon: a count of the first echelon cannot borrow them
+  refuse(second,'G2 the first echelon borrows the dead of the second',a=>{a.timers.wave.echs[0].casualties=deadOf(second,0)+1;},/echelon 0 counts/);
+  assert.equal(runner.load(JSON.stringify(snap(second))).ok,true);
+  // (G4) the lull timer is the break plus the lull at the earliest
+  refuse(lull,'G4 lull timer at the break',a=>{a.timers.wave.lullUntil=a.timers.wave.echs[0].brokenAt;},/lull timer/);
 });
 
 test('schema 3: a save in the second echelon is checked too (who walked in and when, the records, the flag, the men off the field) and tampering is refused',()=>{

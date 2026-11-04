@@ -142,6 +142,7 @@ export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach 
   if(!limitOk(spec.limitStation,spec.stations))fail('limitStation');
   const c=spec.cover;if(!c||!num(c.widthM,.5,6)||!num(c.depthM,.3,3)||!num(c.heightM,.3,2)||!num(c.aheadM,.4,3)||!num(c.bypassM,c.widthM/2+.6,6))fail('cover');
   if(!num(spec.walkSpeed,.5,4)||!num(spec.rushSpeed,2,7)||!num(spec.fallbackSpeed,2,7))fail('speeds');
+  if(!num(spec.fallbackStallSec,5,120))fail('fallbackStallSec 5-120 (seconds a man may go without reaching a node on his fall-back before he is taken off the field)');
   if(!range(spec.coverSec,.5,30)||!range(spec.holdSec,1,120)||!num(spec.pinnedWaitMaxSec,0,30)||!timingsOk(spec))fail('timings');
   const f=spec.fire,pair=p=>Array.isArray(p)&&p.length===2&&p.every(v=>num(v,0,20));
   if(!f||!num(f.assaultPauseSec,1,60)||!num(f.overwatchPauseSec,1,60)||!num(f.riseBeforeSec,.1,3)||!num(f.holdAfterSec,.1,3)||!num(f.rangeM,50,1500)||
@@ -208,11 +209,24 @@ export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach 
   // Every cover clear of every path segment of every other man (bodies are 0.3 m), every path and cover clear of the area's own solids (wreck, parapet): a typo
   // that puts a lane through somebody's earth, or through the wreck, stops the game.
   const segs=men.flatMap(m=>[m.entry,...m.path].slice(1).map((p,i,arr)=>({id:m.id,a:i?arr[i-1]:m.entry,b:p})));
-  const near=(s,box,r)=>{for(let t=0;t<=1;t+=.02){const x=s.a.x+(s.b.x-s.a.x)*t,z=s.a.z+(s.b.z-s.a.z)*t;if(x>box.min.x-r&&x<box.max.x+r&&z>box.min.z-r&&z<box.max.z+r)return true;}return false;};
+  // Exact: the segment clipped against the box grown by r on every side (slab method), so no leg is too long for a thin box to slip between samples. Touching an edge is not crossing.
+  const near=(s,box,r)=>{
+    let t0=0,t1=1;
+    for(const k of ['x','z']){
+      const lo=box.min[k]-r,hi=box.max[k]+r,a=s.a[k],d=s.b[k]-a;
+      if(Math.abs(d)<1e-12){if(!(a>lo&&a<hi))return false;continue;}
+      let u=(lo-a)/d,v=(hi-a)/d;if(u>v)[u,v]=[v,u];
+      t0=Math.max(t0,u);t1=Math.min(t1,v);if(t0>=t1)return false;
+    }
+    return true;
+  };
+  // A man that falls back walks every leg of his path at fallbackSpeed: the stall limit must leave a leg a third again of the time it takes, or a healthy man would be taken for stuck.
+  const longestLeg=Math.max(...segs.map(s=>Math.hypot(s.b.x-s.a.x,s.b.z-s.a.z)));
+  if(spec.fallbackStallSec<longestLeg/spec.fallbackSpeed*1.33)fail(`fallbackStallSec ${spec.fallbackStallSec} is shorter than a third more than the longest leg (${longestLeg.toFixed(1)} m at ${spec.fallbackSpeed} m/s)`);
   for(const s of segs)for(const box of [...covers,...solids])if(near(s,box,.32))fail(`path of ${s.id} crosses ${box.id}`);
   for(const box of covers)for(const s of solids)if(box.max.x>s.min.x-.3&&box.min.x<s.max.x+.3&&box.max.z>s.min.z-.3&&box.min.z<s.max.z+.3)fail(`${box.id} touches ${s.id}`);
   return deepFreeze({version:spec.version,from:spec.from,entryZ:spec.entryZ,clearZ:spec.clearZ,men,ids,covers,cover:{...c},echelons,
-    walkSpeed:spec.walkSpeed,rushSpeed:spec.rushSpeed,fallbackSpeed:spec.fallbackSpeed,coverSec:[...spec.coverSec],holdSec:[...spec.holdSec],closeAfterSec:spec.closeAfterSec,
+    walkSpeed:spec.walkSpeed,rushSpeed:spec.rushSpeed,fallbackSpeed:spec.fallbackSpeed,fallbackStallSec:spec.fallbackStallSec,coverSec:[...spec.coverSec],holdSec:[...spec.holdSec],closeAfterSec:spec.closeAfterSec,
     pinnedWaitMaxSec:spec.pinnedWaitMaxSec,breakPinnedSec:spec.breakPinnedSec,breakOut:spec.breakOut,maxSec:spec.maxSec,fire:copy(f),playerWeight:{...w}});
 }
 /** A saved approach record: the deck keys (and `lim` optionally), a known phase, a node on the man's path, times the machine could have written. */
@@ -235,10 +249,12 @@ export function approachFlagOf(plan,W){
  * A saved wave record (sim.timers.wave) and the men it implies: the exact keys, an echelon record for every echelon that has entered (and none for one that has not),
  * times in the order the machine writes them (an echelon enters at least its lull after the one before broke), the final break and the lull timer only where they can
  * exist, the men of echelons that have not entered still waiting at the entry line untouched, the assault of the echelons that have gone gone, a man off the field only
- * waiting at the entry line or gone (phase `clear`) after his fall-back, a later echelon's man on the field no earlier than his echelon's entry plus his delay, and `flag`
- * (the sim's own flag of the fight) the one the record implies. `actors`: the saved actors. Never throws.
+ * waiting at the entry line or gone (phase `clear`) after his fall-back, every man on the field of a broken echelon falling back (everybody after the last break), no more
+ * German dead counted than there are dead Germans (the fight's and each echelon's), the lull timer no earlier than the break plus the lull, a later echelon's man on the field no earlier than his echelon's entry plus his delay, and `flag`
+ * (the sim's own flag of the fight) the one the record implies. `actors`: the saved actors. `why`: an array that receives the reason of a refusal where there is one. Never throws.
  */
-export function validApproachWave(plan,W,flag,clock,actors){
+export function validApproachWave(plan,W,flag,clock,actors,why=[]){
+  const no=m=>{why.push(m);return false;};   // `why`: where the reason of a refusal goes (the checks that say one; the others only refuse)
   const n=plan.echelons.length,total=plan.men.length,finite=(v,lo,hi)=>Number.isFinite(v)&&v>=lo&&v<=hi,count=v=>Number.isInteger(v)&&v>=0&&v<=total;
   const record=(o,keys)=>Boolean(o)&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).sort().join()===keys.join();
   if(!Array.isArray(actors)||(W!==null&&(typeof W!=='object'||!Number.isInteger(W.ech)||W.ech<0||W.ech>=n)))return false;
@@ -268,7 +284,18 @@ export function validApproachWave(plan,W,flag,clock,actors){
   for(const m of plan.men)if(m.echelon&&byId.get(m.id).active&&byId.get(m.id).deck.t0<W.echs[m.echelon].at+m.delaySec-1e-9)return false;
   const R=W.echs[W.ech],last=W.ech===n-1;
   if(W.echs[0].at!==W.at||W.brokenAt!==(last?R.brokenAt:null))return false;
+  // Once an echelon has broken (the machine switches its assault on the field to `fallback` in the very tick of the break, and nobody of it is admitted after), every living man of its
+  // assault who is still on the field is falling back; after the LAST break so is everybody (the overwatch of every echelon goes with it).
+  for(const m of plan.men){const a=byId.get(m.id);
+    if(!a.alive||!a.active||a.deck.phase==='fallback')continue;
+    if(W.brokenAt!==null||(m.role==='assault'&&Number.isFinite(W.echs[m.echelon]?.brokenAt)))return no(`${m.id} is on the field in phase ${a.deck.phase} after ${W.brokenAt!==null?'the last break':'the break of his echelon'} (he would be falling back)`);}
+  // The German dead the record counts are men who are dead: the fight's count and each echelon's own (its assault and its own overwatch) can be no more than that.
+  const dead=plan.men.filter(m=>!byId.get(m.id).alive);
+  if(W.casualties>dead.length)return no(`the fight counts ${W.casualties} German dead, only ${dead.length} are dead`);
+  const over=W.echs.findIndex((E,k)=>E.casualties>dead.filter(m=>m.echelon===k).length);
+  if(over>=0)return no(`echelon ${over} counts ${W.echs[over].casualties} dead of its own, only ${dead.filter(m=>m.echelon===over).length} of its men are dead`);
   if(W.repelledAt!==null&&(W.brokenAt===null||!finite(W.repelledAt,W.brokenAt,clock)))return false;
-  if(W.lullUntil!==null&&(last||R.brokenAt===null||!finite(W.lullUntil,R.brokenAt,clock+plan.echelons[W.ech+1].lullSec+1e-6)))return false;
+  if(W.lullUntil!==null&&(last||R.brokenAt===null||!finite(W.lullUntil,R.brokenAt+plan.echelons[W.ech+1].lullSec-1e-9,clock+plan.echelons[W.ech+1].lullSec+1e-6)))   // set at the break or later, lullSec ahead
+    return no(`lull timer ${W.lullUntil} outside [break + lullSec, clock + lullSec]`);
   return flag===approachFlagOf(plan,W);
 }
