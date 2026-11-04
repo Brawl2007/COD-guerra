@@ -162,3 +162,63 @@ describe('M02-13 — 1: dois checkpoints automáticos no mesmo tick (C01: quinta
     assert.equal(canonical(withoutId(sim.checkpoints.get('cp_m02_a_preparacao'))), canonical(sim.snapshot()));
   });
 });
+
+// ---------------------------------------------------------------------------------------------------------------------
+describe('M02-13 — 2: checkpoint automático só no fim de uma ação composta de API (não a meio)', () => {
+  const areaCWalker = (_sim, t) => ({ forward: t % 40 < 25 ? 1 : 0, fire: t % 17 === 4 });
+  const actions = [
+    ['completeC12Epilogue() a partir de C09 (KeyM / btn-c12-epilogue)', (s) => s.completeC12Epilogue(), { c12: true, lis: 'wounded_evacuated' }],
+    ['assistLisInC11("wounded_walking") antes de C10', (s) => s.assistLisInC11('wounded_walking'), { c12: false, lis: 'wounded_walking' }],
+    [
+      'startC10OrderChanges + detonateC10FixedArtillery + assistLisInC11 em runAtomicAction (Digit9 / btn-c10-c11-lis)',
+      (s) =>
+        s.runAtomicAction(() => {
+          s.startC10OrderChanges();
+          s.detonateC10FixedArtillery();
+          s.assistLisInC11('wounded_evacuated');
+        }),
+      { c12: false, lis: 'wounded_evacuated' },
+    ],
+  ];
+  for (const [label, act, expected] of actions) {
+    it(`${label}: cp_d gravado no fim da ação; F9 após recarregar reproduz a continuação`, () => {
+      const storage = createMemoryStorage();
+      const sim = new M02BenchSimulation(SEED, { storage });
+      sim.enterAreaCC09();
+      record(sim, areaCWalker, 20);
+      sim.drainEvents();
+      act(sim);
+      const saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
+      assert.deepEqual(saved.map((e) => e.checkpointId), ['cp_m02_d_cobertura_retirada'], 'um único cp_d, gravado pela ação');
+      assert.ok(saved[0].persisted);
+      const cp = structuredClone(sim.checkpoints.get('cp_m02_d_cobertura_retirada'));
+      assert.equal(canonical(withoutId(cp)), canonical(sim.snapshot()), 'cp_d é o estado do fim da ação, não o de a meio');
+      assert.equal(cp.areaC.artilleryDetonated, true);
+      assert.equal(cp.areaC.c12Completed, expected.c12);
+      assert.equal(cp.flags['m02.lis_status'], expected.lis);
+
+      const reference = record(sim, areaCWalker, 60);
+      const page = new M02BenchSimulation(SEED + 1, { storage });
+      assert.deepEqual(page.quickLoadCheckpoint(), { checkpointId: 'cp_m02_d_cobertura_retirada', source: 'store' });
+      page.drainEvents();
+      assert.equal(page.areaC.c12Completed, expected.c12, 'recarregar + F9 não volta a C10 sem a ação');
+      assertSameContinuation(record(page, areaCWalker, 60), reference, `${label} · F9 da loja`);
+    });
+  }
+
+  it('dentro de tick() a ação continua a pedir o checkpoint para o fim do tick (assistLisInC11 por proximidade)', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.enterAreaCC09();
+    killAll(sim.enemies.filter((e) => e.encounterId === 'EC1'));
+    sim.areaC.gateLatchUnlocked = true;
+    sim.drainEvents();
+    let saved = [];
+    for (let t = 0; t < 400 && !saved.length; t++) {
+      sim.tick(DT, {});
+      saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
+    }
+    assert.deepEqual(saved.map((e) => e.checkpointId), ['cp_m02_d_cobertura_retirada']);
+    assert.equal(canonical(withoutId(sim.checkpoints.get('cp_m02_d_cobertura_retirada'))), canonical(sim.snapshot()));
+  });
+});

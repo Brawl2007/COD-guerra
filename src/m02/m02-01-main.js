@@ -87,11 +87,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'Digit6') sim.triggerTransitionTAB({ skip: false });
   if (e.code === 'Digit7') sim.enterAreaBC06();
   if (e.code === 'Digit8') sim.enterAreaCC09();
-  if (e.code === 'Digit9') {
-    sim.startC10OrderChanges();
-    sim.detonateC10FixedArtillery();
-    sim.assistLisInC11('wounded_evacuated');
-  }
+  if (e.code === 'Digit9') playC10ToC11Lis();
   if (e.code === 'KeyM') sim.completeC12Epilogue();
 });
 
@@ -144,9 +140,7 @@ document.getElementById('btn-enter-area-c')?.addEventListener('click', () => {
 });
 
 document.getElementById('btn-c10-c11-lis')?.addEventListener('click', () => {
-  sim.startC10OrderChanges();
-  sim.detonateC10FixedArtillery();
-  sim.assistLisInC11('wounded_evacuated');
+  playC10ToC11Lis();
 });
 
 document.getElementById('btn-c12-epilogue')?.addEventListener('click', () => {
@@ -183,6 +177,15 @@ function teleportToPanorama(id) {
   if (!view) return null;
   sim.teleportPlayer(view.x, view.z, view.angle, view.pitch);
   return view;
+}
+
+/** Digit9 / btn-c10-c11-lis: C10 → impacto fixo → C11 numa só ação, para o cp_m02_d só ser gravado com o estado final (FIX-2c). */
+function playC10ToC11Lis() {
+  sim.runAtomicAction(() => {
+    sim.startC10OrderChanges();
+    sim.detonateC10FixedArtillery();
+    sim.assistLisInC11('wounded_evacuated');
+  });
 }
 
 function updateHud() {
@@ -367,6 +370,7 @@ window.m02Bench = {
   startC11LisAndLastGroup: () => sim.startC11LisAndLastGroup(),
   assistLisInC11: (mode = 'wounded_evacuated') => sim.assistLisInC11(mode),
   completeC12Epilogue: (opts = {}) => sim.completeC12Epilogue(opts),
+  runAtomicAction: (fn) => sim.runAtomicAction(fn),
   exportCampaignResultToM03: () => sim.exportCampaignResultToM03(),
   setAccessibilityOptions: (opts = {}) => sim.setAccessibilityOptions(opts),
   evaluateWeaponClearance: () => sim.audiovisual.evaluateWeaponClearance(sim),

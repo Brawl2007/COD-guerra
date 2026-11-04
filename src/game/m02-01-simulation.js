@@ -759,7 +759,7 @@ export class M02BenchSimulation {
   }
 
   enterAreaBC06(options = {}) {
-    return runEnterAreaBC06(this, options);
+    return this.#runCheckpointBatch(() => runEnterAreaBC06(this, options));
   }
 
   damageCartWheel() {
@@ -778,36 +778,38 @@ export class M02BenchSimulation {
     return runLoseSupplyVolume(this, volumeId);
   }
 
+  // Ações compostas de API (teclas/botões da bancada): cada uma é um lote atómico. Um checkpoint automático pedido a meio
+  // (cp_m02_d_cobertura_retirada em C10) só é gravado quando a ação inteira acabou, como no fim de tick() (FIX-2c).
   completeC07Reorganization(options = {}) {
-    return runCompleteC07Reorganization(this, options);
+    return this.#runCheckpointBatch(() => runCompleteC07Reorganization(this, options));
   }
 
   enterAreaCC09(options = {}) {
-    return runEnterAreaCC09(this, options);
+    return this.#runCheckpointBatch(() => runEnterAreaCC09(this, options));
   }
 
   unlockC09GateLatch() {
-    return runUnlockC09GateLatch(this);
+    return this.#runCheckpointBatch(() => runUnlockC09GateLatch(this));
   }
 
   startC10OrderChanges() {
-    return runStartC10OrderChanges(this);
+    return this.#runCheckpointBatch(() => runStartC10OrderChanges(this));
   }
 
   detonateC10FixedArtillery() {
-    return runDetonateC10FixedArtillery(this);
+    return this.#runCheckpointBatch(() => runDetonateC10FixedArtillery(this));
   }
 
   startC11LisAndLastGroup() {
-    return runStartC11LisAndLastGroup(this);
+    return this.#runCheckpointBatch(() => runStartC11LisAndLastGroup(this));
   }
 
   assistLisInC11(mode = 'wounded_evacuated') {
-    return runAssistLisInC11(this, mode);
+    return this.#runCheckpointBatch(() => runAssistLisInC11(this, mode));
   }
 
   completeC12Epilogue(options = {}) {
-    return runCompleteC12Epilogue(this, options);
+    return this.#runCheckpointBatch(() => runCompleteC12Epilogue(this, options));
   }
 
   exportCampaignResultToM03() {
@@ -1580,6 +1582,15 @@ export class M02BenchSimulation {
     if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
     if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
     return null;
+  }
+
+  /**
+   * Executa uma sequência de chamadas de API como uma só ação atómica: os checkpoints automáticos que ela peça (p. ex.
+   * startC10OrderChanges → detonateC10FixedArtillery → assistLisInC11) são gravados todos no fim, com o estado final
+   * (FIX-2c). Cada método composto da API já é atómico por si; isto cobre sequências de vários (Digit9 / btn-c10-c11-lis).
+   */
+  runAtomicAction(fn) {
+    return this.#runCheckpointBatch(fn);
   }
 
   /** Já atingido nesta linha temporal, ou pedido no passo em curso. */
