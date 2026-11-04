@@ -2,7 +2,7 @@
 
 ## Continuação — gesto de água C04, 2026-11-04
 
-`3421664` faz a oferta de água durar 1,5 s, com cantil provisório no rig M01; a decisão só é gravada ao terminar e a ação é interrompida por movimento, disparo, granada, morte ou perda de acesso. Checkpoint intermédio e saves antigos são preservados. Passaram 187 testes M02, build e dois browser; [captura e limites](../verification/m02-runtime/c04-handoff-2026-11-04/README.md). O ferido ainda não recebe fisicamente nem bebe; a geometria e a transição da mão são provisórias. Não houve nova passagem integral nem teste em iPhone físico nesta etapa. Continuar a partir do roteiro Astra, com auditoria por cena e implementação das lacunas; main e produção intactas.
+`3421664` faz a oferta de água durar 1,5 s, com cantil provisório no rig M01; a decisão só é gravada ao terminar e a ação é interrompida por movimento, disparo, granada, morte ou perda de acesso. Checkpoint intermédio e saves antigos são preservados. Passaram 187 testes M02, build e dois browser; [captura e limites](../verification/m02-runtime/c04-handoff-2026-11-04/README.md). A [passagem integral automatizada `ed24ac6`](../verification/m02-runtime/c04-handoff-2026-11-04/native/report.json) escolheu água e giz e chegou à M03 com a decisão preservada, abastecimentos, Lis e 12/12, sem mortes do jogador ou erros; o piloto lê estado oculto. O ferido ainda não recebe fisicamente nem bebe; a geometria e a transição da mão são provisórias, sem teste em iPhone físico. Continuar a partir do roteiro Astra; main e produção intactas.
 
 ## Continuação — água ao ferido C04, 2026-11-04
 
