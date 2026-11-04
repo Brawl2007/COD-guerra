@@ -13,7 +13,7 @@ export function mountM02SessionUi(session,renderer){
 
  const start=root.querySelector('#mission-start'),cont=root.querySelector('#mission-continue'),resume=root.querySelector('#mission-resume'),restart=root.querySelector('#mission-restart');
  const epilogueNext=root.querySelector('#mission-epilogue-next');epilogueNext.onclick=()=>session.nextEpilogue();
- const lock=()=>{document.getElementById('m02-canvas').requestPointerLock?.()?.catch?.(()=>{});};
+ const lock=()=>{if(!document.body.classList.contains('m02-touch-active'))document.getElementById('m02-canvas').requestPointerLock?.()?.catch?.(()=>{});};
  start.onclick=()=>{session.start();lock();};cont.onclick=()=>{if(session.continue())lock();};resume.onclick=()=>{session.resume();lock();};restart.onclick=()=>{session.restart();lock();};
  root.querySelector('#mission-quality').value=renderer.qualityProfile.id;
  root.querySelector('#mission-quality').onchange=e=>renderer.applyQualityProfile(e.target.value);

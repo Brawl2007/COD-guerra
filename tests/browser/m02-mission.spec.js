@@ -2,6 +2,29 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('touch controls move, look, fire and pause without pointer lock',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:844,height:390});await page.goto('/COD-guerra/m02.html?quality=low&touch=1&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await expect(page.locator('#m02-touch')).toBeVisible();
+ const before=await page.evaluate(()=>{const s=window.m02Bench.sim;return {x:s.player.x,z:s.player.z,angle:s.player.angle,mag:s.weapon.mag};});
+ const cdp=await page.context().newCDPSession(page);
+ const touch=async(type,points)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:points});
+ const stick=await page.locator('[data-touch=move]').boundingBox(),x=stick.x+stick.width/2,y=stick.y+stick.height/2;
+ await touch('touchStart',[{x,y,id:0}]);await touch('touchMove',[{x,y:y-50,id:0}]);await page.waitForTimeout(700);await touch('touchEnd',[]);
+ const moved=await page.evaluate(()=>({x:window.m02Bench.sim.player.x,z:window.m02Bench.sim.player.z}));
+ expect(Math.hypot(moved.x-before.x,moved.z-before.z)).toBeGreaterThan(.1);
+ await touch('touchStart',[{x:400,y:180,id:0}]);await touch('touchMove',[{x:450,y:180,id:0}]);await touch('touchEnd',[]);
+ expect(await page.evaluate(()=>window.m02Bench.sim.player.angle)).not.toBe(before.angle);
+ const fire=await page.locator('[data-touch=fire]').boundingBox();await touch('touchStart',[{x:fire.x+fire.width/2,y:fire.y+fire.height/2,id:0}]);await touch('touchEnd',[]);
+ await page.waitForFunction(mag=>window.m02Bench.sim.weapon.mag<mag,before.mag);
+ expect(await page.evaluate(()=>document.pointerLockElement)).toBeNull();
+ await page.screenshot({path:testInfo.outputPath('touch-landscape.png')});
+ await page.locator('[data-touch=pause]').click();await expect(page.locator('#mission-resume')).toBeVisible();
+ await page.locator('#mission-resume').click();await expect(page.locator('#m02-touch')).toBeVisible();
+ expect(errors).toEqual([]);
+});
+
 test('queued dialogue displays an available speaker after Lis becomes missing',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

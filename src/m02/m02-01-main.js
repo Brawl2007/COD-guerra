@@ -4,6 +4,8 @@ import { mountM02SessionUi } from './m02-session-ui.js';
 import { m02PlayerAction, performM02PlayerAction } from '../game/m02-player-actions.js';
 import { M02BenchSimulation } from '../game/m02-01-simulation.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
+import {detectTouch} from '../core/touch-controls.js';
+import {mountM02Touch} from './m02-touch.js';
 
 const PANORAMA_VIEWS = Object.freeze({
   SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
@@ -19,6 +21,7 @@ const initialLighting = params.get('lighting') || 'afternoon_1939_09_09';
 
 const canvas = document.getElementById('m02-canvas');
 const missionMode=document.body.dataset.mission==='m02';
+const touchMode=missionMode&&detectTouch();
 const sim = new M02BenchSimulation(19390909, {startScene:missionMode?'C01':'C02'});
 const renderer = new M02BenchRenderer(canvas, sim, {
   quality: initialQuality,
@@ -61,6 +64,8 @@ let pendingSingleActions = {
   orderAdvance: false,
   orderFlank: false,
 };
+const touch=touchMode?mountM02Touch({sim,session,actions:pendingSingleActions}):null;
+document.body.classList.toggle('m02-touch-active',touchMode);
 
 window.addEventListener('keydown', (e) => {
   if(missionMode && e.code==='Escape'){session.pause();keys.clear();return;}
@@ -118,7 +123,7 @@ window.addEventListener('keyup', (e) => {
 
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 window.addEventListener('blur',()=>{keys.clear();session?.pause();});
-window.addEventListener('pointerlockchange',()=>{if(missionMode && !document.pointerLockElement){keys.clear();session.pause();}});
+window.addEventListener('pointerlockchange',()=>{if(missionMode && !touchMode && !document.pointerLockElement){keys.clear();session.pause();}});
 canvas.addEventListener('mouseup',e=>{if(e.button===2)keys.delete('KeyV');});
 canvas.addEventListener('mousedown', (e) => {
   if(missionMode && !session.playing)return;
@@ -325,8 +330,8 @@ function animate(now) {
   lastTime = now;
   const dt = Math.min(0.05, Math.max(0.001, rawDt || 1 / 60));
 
-  const forward = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
-  const side = (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0);
+  const forward = Math.max(-1,Math.min(1,(keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0)+(touch?.input.forward??0)));
+  const side = Math.max(-1,Math.min(1,(keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0)+(touch?.input.side??0)));
   const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
 
   const simStart = performance.now();
@@ -340,8 +345,8 @@ function animate(now) {
   sim.tick(tickDt, {
     forward,
     side,
-    sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
-    aim: keys.has('KeyV'),
+    sprint: keys.has('ShiftLeft') || keys.has('ShiftRight') || Boolean(touch?.input.sprint),
+    aim: keys.has('KeyV') || Boolean(touch?.input.aim),
     lookX: missionMode?lookX/dt*tickDt:lookX,
     lookY: 0,
     interact: pendingSingleActions.interact && !missionInteraction,
@@ -361,7 +366,7 @@ function animate(now) {
   renderer.renderFrame(rawDt, simMs);
   updateHud();
   if(missionMode)elObjective.textContent=m02ObjectivePresentation(sim).title;
-  session?.afterFrame(); updateSessionUi();
+  session?.afterFrame(); updateSessionUi();touch?.update();
   requestAnimationFrame(animate);
 }
 
