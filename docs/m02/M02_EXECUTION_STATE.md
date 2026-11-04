@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — confirmação da retirada C11, 2026-11-04
+
+`da6bb8a` exige um segundo comando deliberado antes de retirar com homens em trânsito; a confirmação é anulada por pausa, movimento, outras ações, alteração do número/estado de Lis ou restauro. Nenhum estado de missão é alterado na primeira pressão. Passaram 205 testes M02, build e [browser com teclado e toque](../verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md). Fixture controlada, sem teste em iPhone; passagem integral mais recente é a de `70c6031`, anterior a este ajuste. Continuar roteiro Astra, com atuação física e restantes cenas; main e produção intactas.
+
 ## Continuação — presença física da secção, 2026-11-04
 
 `70c6031` impede que aliados fora da célula sejam vistos/atingidos localmente, bloqueiem tiros ou interfiram na navegação; Lis já evacuado permanece ausente em C11 sem ser movido. Passaram 204 testes M02, build e três browser; [comparação e limites](../verification/m02-runtime/actor-presence-2026-11-04/README.md). A [passagem integral](../verification/m02-runtime/actor-presence-2026-11-04/native/report.json) escolheu água/giz e chegou à M03 com Lis e 12/12, sem mortes do jogador ou erros; piloto lê estado oculto. Continuar roteiro Astra, com atenção à confirmação da retirada antecipada e à atuação física. Main e produção intactas.

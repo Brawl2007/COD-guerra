@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — confirmação da retirada antecipada — 2026-11-04
+
+`da6bb8a` pede um segundo comando antes de retirar deixando homens por localizar e cancela a confirmação ao pausar, mover ou mudar a situação. 205 testes M02, build e [browser por teclado/toque](docs/verification/m02-runtime/c11-withdrawal-confirm-2026-11-04/README.md) passaram; falta teste em iPhone físico.
+
 ## M02 — presença física da secção — 2026-11-04
 
 `70c6031` exclui aliados fora da célula de combate, fogo amigo e navegação, preservando Lis e o roster. 204 testes M02, build, três browser e passagem automatizada até à M03 passaram; [evidência e limites](docs/verification/m02-runtime/actor-presence-2026-11-04/README.md).
