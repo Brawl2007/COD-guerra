@@ -1,0 +1,7 @@
+# C04 — gesto de oferta de água
+
+`3421664` substitui a confirmação instantânea por uma ação de 1,5 s no relógio da missão. A água só é registada ao terminar; movimento, tiro, granada, morte ou perda de acesso ao ferido interrompem a preparação sem registar a oferta. A ação pendente é guardada e validada no checkpoint; saves anteriores sem o novo campo continuam a funcionar. Não introduz cura nem consome o abastecimento da área B.
+
+Reutiliza o rig de mãos e IK já adaptados da M01 e o material existente. Como não foi encontrado um cantil GLB no kit, usa uma geometria original provisória. A [captura](c04-water-in-hand.png) vem de um teste browser com ferido colocado numa fixture; **não demonstra contacto físico com o ferido, receção, beber, uma animação final ou fidelidade histórica do objeto**. O cantil desaparece ao concluir e a mão volta à arma; essas transições e a reação do ferido continuam por resolver.
+
+Passaram [187 testes M02](node-m02.txt), build e [dois testes browser](browser.txt), incluindo o toque na ação e regressão de diálogo desktop. Os testes de simulação verificam conclusão, interrupção, morte, estado em checkpoint e restauro determinístico; o teste com o rig real verifica que o objeto é visível e o braço regressa à pose original quando é restaurado. O browser usa Chromium/SwiftShader; não é teste em Safari/iPhone físico. A última passagem integral continua a de `390fbae`, anterior a esta alteração; nela o piloto não escolheu água.

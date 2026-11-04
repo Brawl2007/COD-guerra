@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — gesto de água C04, 2026-11-04
+
+`3421664` faz a oferta de água durar 1,5 s, com cantil provisório no rig M01; a decisão só é gravada ao terminar e a ação é interrompida por movimento, disparo, granada, morte ou perda de acesso. Checkpoint intermédio e saves antigos são preservados. Passaram 187 testes M02, build e dois browser; [captura e limites](../verification/m02-runtime/c04-handoff-2026-11-04/README.md). O ferido ainda não recebe fisicamente nem bebe; a geometria e a transição da mão são provisórias. Não houve nova passagem integral nem teste em iPhone físico nesta etapa. Continuar a partir do roteiro Astra, com auditoria por cena e implementação das lacunas; main e produção intactas.
+
 ## Continuação — água ao ferido C04, 2026-11-04
 
 `5e8bbdb` acrescenta a opção de dar água ao ferido do pomar prevista no roteiro Astra, separada da marcação com giz. Pode ser acionada por `F` ou pelo botão tátil junto de um ferido alcançável; não atribui recompensa nem consome abastecimento B. A decisão e o checkpoint são preservados, incluindo transição de área. `390fbae` evita que o botão cubra a munição. Passaram 184 testes M02, build e [browser com toque simulado e capturas](../verification/m02-runtime/c04-water-2026-11-04/README.md). A interação ainda é instantânea, sem cantil, animação de entrega ou reação dedicada; o cenário browser foi configurado para inspeção e não é teste em iPhone. Uma passagem automatizada na build `390fbae` chegou à M03 sem mortes do jogador ou erros, com giz, abastecimentos, Lis e 12/12; o piloto lê estado oculto e não escolheu a água. Continuar auditoria do roteiro e atuação física; main e produção intactas.

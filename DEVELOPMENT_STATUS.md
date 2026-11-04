@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — gesto de água C04 — 2026-11-04
+
+`3421664` introduz gesto temporizado de oferta de água, interrompível e persistido, usando o rig M01 e cantil provisório. 187 testes M02, build e dois browser passaram. [Captura e limites](docs/verification/m02-runtime/c04-handoff-2026-11-04/README.md): falta receção física pelo ferido, transição refinada e teste em iPhone.
+
 ## M02 — opção de água C04 — 2026-11-04
 
 `5e8bbdb` permite escolher dar água ao ferido do pomar, preservando a opção de giz e o estado em checkpoints/áreas. 184 testes M02, build e browser com toque simulado passaram; `390fbae` ajusta a interface e concluiu percurso automatizado até M03, sem selecionar a água. [Capturas e limites](docs/verification/m02-runtime/c04-water-2026-11-04/README.md): a interação é provisória e ainda não anima a entrega física; falta verificação em iPhone real.
