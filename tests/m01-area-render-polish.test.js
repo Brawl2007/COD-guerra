@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {STRETCHER,stretcherPose,buildStretcherGeometry,M01AreaStretcher} from '../src/render/m01-area-stretcher.js';
 import {DUSK,duskLift,exitLanternSites,haloSize,haloOpacity} from '../src/render/m01-area-dusk.js';
-import {M01_FX_PROFILES,battlefieldBlastKind,battlefieldProfile,blastFlashEnvelope,fxLayerCount} from '../src/render/m01-battlefield-fx-profile.js';
+import {M01_FX_PROFILES,battlefieldBlastKind,battlefieldProfile,blastFlashEnvelope,fxLayerCount,staggeredLife} from '../src/render/m01-battlefield-fx-profile.js';
 
 // Area render polish (2026-11-05): the stretcher of the VII-b bearers, the shell burst and the VII-c dusk guidance. Pure maths and the objects' bookkeeping; what must be SEEN is in
 // tests/browser/m01-area-render-polish.spec.js. None of this reads or writes the simulation beyond the records it is given.
@@ -101,6 +101,13 @@ test('shell bursts: np_shell_crater_* is its own kind with a longer flash than a
   assert.ok(blastFlashEnvelope(.12,battlefieldProfile('np_shell_crater_x_1'),60).active);   // still on at 120 ms
   for(const q of ['low','medium','high'])for(const layer of ['flash','core','fire','dust','smoke','shard'])assert.ok(fxLayerCount(shell.counts[layer],q,60)>=1);
   assert.ok(shell.counts.flash<=16&&shell.counts.core<=48&&shell.counts.fire<=96&&shell.counts.smoke<=128&&shell.counts.dust<=128&&shell.counts.shard<=96);   // inside the pools
+});
+
+test('the first drawn frame of a shell burst (age .06 s) is inside the flash for every layer noise value, and the shell kind keeps the first-frame rule',()=>{
+  const shell=M01_FX_PROFILES.shell,view=src('m01-view.js');
+  assert.match(view,/const SHELL_FIRST_FRAME_AGE=\.06;/);assert.match(view,/b\.first=Math\.min\(\.3,Math\.max\(0,time-b\.start\)\)-SHELL_FIRST_FRAME_AGE/);
+  for(let n=0;n<=1.0001;n+=.1){assert.ok(staggeredLife(.06,0,shell.flashEnd,n,.08).life>.5,`noise ${n}`);}
+  assert.equal(staggeredLife(0,0,shell.flashEnd,0,.08).life,0);   // why the first frame cannot be at age 0
 });
 
 test('the view builds the polish only for an area plan and ages only a shell burst from its first drawn frame',()=>{

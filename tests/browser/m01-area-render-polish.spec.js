@@ -48,9 +48,10 @@ function build(){
 }
 test.beforeAll(()=>{scenes=build();mkdirSync(OUT,{recursive:true});});
 
-async function boot(page,save){
-  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-  await page.addInitScript(({key,save})=>localStorage.setItem(key,JSON.stringify(save)),{key:ACT_KEY,save});
+async function boot(page,save,quality,watcher=null){
+  const errors=[];page.on('crash',()=>console.log('PAGE CRASH'));page.on('close',()=>console.log('PAGE CLOSE'));page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  await page.addInitScript(({key,save,quality})=>{localStorage.setItem(key,JSON.stringify(save));localStorage.setItem('cod-guerra:visual-quality',quality);},{key:ACT_KEY,save,quality});
+  if(watcher)await page.addInitScript(watcher);
   await page.goto('?debug=1&acts=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:150000});
   await page.locator('#continue').click();
   return errors;
@@ -58,18 +59,21 @@ async function boot(page,save){
 const freeze=async page=>{await page.evaluate(()=>window.dispatchEvent(new Event('blur')));await page.addStyleTag({content:'#pause,.overlay{display:none!important}'});await page.waitForTimeout(500);};
 const stats=page=>page.evaluate(()=>{const d=window.gameDiagnostics();return {quality:d.quality,drawCalls:d.drawCalls,triangles:d.triangles,geometries:d.geometries,textures:d.textures,clock:d.clock,lighting:d.m01.lighting?{phase:d.m01.lighting.phase,alt:d.m01.lighting.sunAltDeg,exposure:d.m01.lighting.exposure,hemi:d.m01.lighting.hemiIntensity}:null,fx:d.m01.battlefieldFx?{active:d.m01.battlefieldFx.active,counts:d.m01.battlefieldFx.counts,light:d.m01.battlefieldFx.extraLights}:null,polish:d.m01.areaPolish??null};});
 const setQuality=async(page,q)=>{await page.locator('#quality').selectOption(q,{force:true});await page.waitForTimeout(1500);};
+// the first frame on which the burst has a flash is the impact frame: freeze there from inside the page, in the rAF callback that runs right after the game's own. Installed before the page's scripts so that
+// the save's 1.5 s of whistle cannot pass while the page is still being driven from outside (a slow software GL would miss the impact).
+const IMPACT_WATCHER=()=>{window.__flash=null;window.__seen={frames:0,maxFlash:0,err:null};const watch=()=>{let d;try{d=window.gameDiagnostics?.();window.__seen.frames++;window.__seen.maxFlash=Math.max(window.__seen.maxFlash,d?.m01?.battlefieldFx?.counts.flash??0);}catch(e){window.__seen.err=String(e);}if(d&&d.m01?.battlefieldFx?.counts.flash>0&&window.__flash===null){window.__flash={clock:d.clock,counts:{...d.m01.battlefieldFx.counts},light:d.m01.battlefieldFx.extraLights,kinds:{...d.m01.battlefieldFx.meta.kinds}};window.dispatchEvent(new Event('blur'));return;}requestAnimationFrame(watch);};requestAnimationFrame(watch);};
 const want=name=>!ONLY||ONLY.includes(name);
 const report={};
+// a failed test must not leave its page (and its WebGL context) open for the next one
+test.afterEach(async({browser})=>{for(const c of browser.contexts())await c.close();});
 
 for(const quality of ['high','low']){
   test(`shell flash at the impact frame (${quality})`,async({browser})=>{
     test.skip(!want('shell'));
     test.setTimeout(400000);
-    const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=await boot(page,scenes.shell);
+    const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=await boot(page,scenes.shell,quality,IMPACT_WATCHER);
     await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_b_north_day',null,{timeout:60000});
-    await setQuality(page,quality);
-    // the first frame on which the burst has a flash is the impact frame: freeze there from inside the page, in the rAF callback that runs right after the game's own
-    await page.evaluate(()=>{window.__flash=null;const watch=()=>{const d=window.gameDiagnostics();if(d.m01.battlefieldFx.counts.flash>0&&window.__flash===null){window.__flash={clock:d.clock,counts:{...d.m01.battlefieldFx.counts},light:d.m01.battlefieldFx.extraLights};window.dispatchEvent(new Event('blur'));return;}requestAnimationFrame(watch);};requestAnimationFrame(watch);});
+    if(process.env.POLISH_DEBUG)for(let i=0;i<10;i++){await page.waitForTimeout(4000);console.log(JSON.stringify(await page.evaluate(()=>{const d=window.gameDiagnostics();return {clock:d.clock,fx:d.m01.battlefieldFx.active,counts:d.m01.battlefieldFx.counts,flash:window.__flash,seen:window.__seen,hudState:document.body.className};})));}
     await page.waitForFunction(()=>window.__flash!==null,null,{timeout:180000});
     await page.addStyleTag({content:'#pause,.overlay{display:none!important}'});await page.waitForTimeout(600);
     const flash=await page.evaluate(()=>window.__flash);
@@ -83,10 +87,9 @@ for(const quality of ['high','low']){
   test(`stretcher carry (${quality})`,async({browser})=>{
     test.skip(!want('carry'));
     test.setTimeout(400000);
-    const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=await boot(page,scenes.carry);
+    const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=await boot(page,scenes.carry,quality);
     await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_b_north_day',null,{timeout:60000});
-    await setQuality(page,quality);
-    await page.waitForFunction(c=>window.gameDiagnostics().clock>c+1.5,scenes.carry.actSave.clock,{timeout:120000});
+        await page.waitForFunction(c=>window.gameDiagnostics().clock>c+1.5,scenes.carry.actSave.clock,{timeout:120000});
     await freeze(page);
     await page.screenshot({path:`${OUT}stretcher-carry-${quality}.png`});
     const s=await stats(page);writeFileSync(`${OUT}report-carry-${quality}.json`,JSON.stringify({stats:s,info:scenes.carryInfo,errors},null,1)+'\n');
@@ -98,10 +101,9 @@ for(const [name,file] of [['duskLine','dusk-line'],['duskTown','dusk-town-glow']
     test(`${file} (${quality})`,async({browser})=>{
       test.skip(!want(name));
       test.setTimeout(400000);
-      const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=await boot(page,scenes[name]);
+      const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=await boot(page,scenes[name],quality);
       await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_c_withdrawal',null,{timeout:60000});
-      await setQuality(page,quality);
-      await page.waitForFunction(c=>window.gameDiagnostics().clock>c+.6,scenes[name].actSave.clock,{timeout:120000});
+            await page.waitForFunction(c=>window.gameDiagnostics().clock>c+.6,scenes[name].actSave.clock,{timeout:120000});
       await freeze(page);
       await page.screenshot({path:`${OUT}${file}-${quality}.png`});
       const s=await stats(page);writeFileSync(`${OUT}report-${file}-${quality}.json`,JSON.stringify({stats:s,errors},null,1)+'\n');

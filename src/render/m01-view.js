@@ -46,6 +46,7 @@ import {M01BridgeFinishRuntime} from './m01-bridge-finish-runtime.js';
 import {isDemolitionDamage,collapseTwinName,collapseDamageId,collapseSeed,collapsePose,collapseProgress,demolitionFlash,demolitionFallPoints,demolitionSilenceWindow,
   farFeedback,farFeedbackApplies,M01_COLLAPSE_DURATION,M01_BLAST_CHIP_MATERIALS,M01_DEMOLITION_BUDGET} from './m01-demolition.js';
 
+const SHELL_FIRST_FRAME_AGE=.06;
 export const M01_BATTLEFIELD_FX_LIMITS=Object.freeze({bursts:16,flash:16,core:48,fire:96,smoke:128,dust:128,shards:96,lights:1});
 const FX_DENSITY={low:.55,medium:.78,high:1};
 /** Height of the rifle muzzle of an impostor as a share of its figure height (the silhouette's rifle ends at .77 h, see m01-impostors.js). */
@@ -634,8 +635,9 @@ export class M01View {
     };
     for(const b of this.bursts){
       const match=findDamage(b),id=match?.id??'',kind=battlefieldBlastKind(id,b.aerial),profile=battlefieldProfile(id,b.aerial);
-      // A shell's burst is aged from the first frame it is drawn (at most .3 s after the impact): a slow frame that carried the clock past the flash would otherwise never show it. Other kinds keep the clock.
-      if(kind==='shell'&&b.first===undefined)b.first=Math.min(.3,Math.max(0,time-b.start));
+      // A shell's burst is aged from the first frame it is drawn (at most .3 s after the impact), and that frame is drawn at age SHELL_FIRST_FRAME_AGE, inside the flash (its eased life is zero at age 0): a slow frame that
+      // carried the clock past the flash would otherwise never show it. Other kinds keep the clock.
+      if(kind==='shell'&&b.first===undefined)b.first=Math.min(.3,Math.max(0,time-b.start))-SHELL_FIRST_FRAME_AGE;
       const age=time-b.start-(kind==='shell'?b.first:0),heavy=kind==='bombing'||kind==='shell';
       const distance=Math.hypot(b.x-cam.x,b.y-cam.y,b.z-cam.z),band=fxDistanceBand(distance);meta.kinds[kind]++;meta.bands[band]++;
       const farScale=band==='far'?1.12:band==='mid'?1.04:1;
