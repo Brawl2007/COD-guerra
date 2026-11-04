@@ -730,8 +730,11 @@ describe('M02-12 — -0 no snapshot (o JSON perde-o)', () => {
     sim.enterAreaCC09();
     const driver = routeDriver('areaC');
     record(sim, driver, 0, 10);
+    // A fonte natural deste -0 (memória de inimigo arredondada com toFixed) deixou de existir em FIX-2c (ver tests/m02-13);
+    // injeta-se um -0 inofensivo (registo de combate) para continuar a provar que o snapshot e o restauro o normalizam.
+    sim.combatLog.push({ type: 'probe_negative_zero', x: -0, z: -0 });
     const live = liveState(sim);
-    assert.ok(hasNegativeZero(live), 'pré-condição: o estado vivo tem -0 (memória de um inimigo em x = -0)');
+    assert.ok(hasNegativeZero(live), 'pré-condição: o estado vivo tem -0 (registo de combate com x = -0)');
     const snap = sim.saveCheckpoint('cp_m02_manual');
     sim.drainEvents();
     assert.equal(hasNegativeZero(snap), false);

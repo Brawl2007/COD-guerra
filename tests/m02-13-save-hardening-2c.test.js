@@ -222,3 +222,54 @@ describe('M02-13 — 2: checkpoint automático só no fim de uma ação composta
     assert.equal(canonical(withoutId(sim.checkpoints.get('cp_m02_d_cobertura_retirada'))), canonical(sim.snapshot()));
   });
 });
+
+// ---------------------------------------------------------------------------------------------------------------------
+describe('M02-13 — 3: -0 não chega ao atan2 (estado vivo e restaurado coincidem)', () => {
+  /** Inimigo de fuzil em (x, +0) virado para oeste, jogador a `d` m a oeste; sem tocar no relógio. */
+  function setup(x, d, playerZ, { needLineOfSight }) {
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    for (let i = 0; i < 5; i++) sim.tick(DT, {});
+    const e = sim.enemies.find((a) => a.alive && a.weapon !== 'mg34' && !a.c04Candidate);
+    Object.assign(e, { x, z: 0, y: sim.world.heightAt(x, 0), facing: Math.PI, memory: null, seeingTargetId: null, goal: null });
+    sim.teleportPlayer(x - d, playerZ, 0, 0);
+    const los = sim.world.lineOfSight(e, sim.player, { includeFoliage: true });
+    return los === needLineOfSight ? { sim, enemy: e } : null;
+  }
+
+  it('memória de som (jogador em z = -0,001): x/y/z da memória nunca são -0 e o restauro repete 200 ticks sem divergir', () => {
+    const { sim, enemy } = setup(22, 8, -0.001, { needLineOfSight: false });
+    sim.tick(DT, { fire: true }); // o disparo alerta o inimigo sem linha de vista: memória de áudio
+    assert.equal(enemy.memory?.source, 'audio');
+    for (const k of ['x', 'y', 'z']) assert.equal(Object.is(enemy.memory[k], -0), false, `memory.${k} não é -0`);
+    sim.saveCheckpoint('cp_m02_manual');
+    sim.drainEvents();
+    const snap = structuredClone(sim.checkpoints.get('cp_m02_manual'));
+    const reference = record(sim, idle, 200);
+    const fresh = new M02BenchSimulation(SEED + 1, { storage: createMemoryStorage() });
+    fresh.restoreSnapshot(snap);
+    fresh.drainEvents();
+    assertSameContinuation(record(fresh, idle, 200), reference, 'memória de som');
+  });
+
+  it('memória visual de um alvo em z = -0,001: não guarda -0 e o facing do inimigo não depende do sinal do zero', () => {
+    const { sim, enemy } = setup(-60, 14, -0.001, { needLineOfSight: true });
+    sim.tick(DT, {});
+    assert.equal(enemy.seeingTargetId, 'piotr_sokol');
+    for (const k of ['x', 'y', 'z']) assert.equal(Object.is(enemy.memory[k], -0), false, `memory.${k} não é -0`);
+  });
+
+  it('jogador em z = -0 exato à vista: o facing do inimigo ao vivo e depois de restaurar é o mesmo (+π, não -π)', () => {
+    const { sim, enemy } = setup(-60, 14, -0, { needLineOfSight: true });
+    assert.equal(Object.is(sim.player.z, -0), true, 'a construção deixa o jogador em z = -0');
+    sim.tick(DT, {});
+    assert.equal(enemy.seeingTargetId, 'piotr_sokol');
+    sim.saveCheckpoint('cp_m02_manual');
+    sim.drainEvents();
+    const snap = structuredClone(sim.checkpoints.get('cp_m02_manual'));
+    const reference = record(sim, idle, 40);
+    const fresh = new M02BenchSimulation(SEED + 1, { storage: createMemoryStorage() });
+    fresh.restoreSnapshot(snap);
+    fresh.drainEvents();
+    assertSameContinuation(record(fresh, idle, 40), reference, 'jogador em z = -0');
+  });
+});

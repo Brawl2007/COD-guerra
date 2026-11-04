@@ -20,6 +20,7 @@ import {
   M02DialogueDirector,
   updatePolishSquad,
   updateGermanGarrison,
+  roundNoNegZero,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -1017,9 +1018,9 @@ export class M02BenchSimulation {
       if (!enemy.seeingTargetId) {
         enemy.memory = {
           targetId: shooter.id,
-          x: Number(shooter.x.toFixed(2)),
-          y: Number((shooter.y + 1.2).toFixed(2)),
-          z: Number(shooter.z.toFixed(2)),
+          x: roundNoNegZero(shooter.x),
+          y: roundNoNegZero(shooter.y + 1.2),
+          z: roundNoNegZero(shooter.z),
           seenAt: Number(this.clock.toFixed(2)),
           expiresAt: Number((this.clock + 5.5).toFixed(2)),
           source: 'audio',
