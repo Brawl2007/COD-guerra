@@ -1,7 +1,7 @@
 // Verification pilot, not gameplay AI. Reads collision/actor observations and
 // produces ordinary controls. Never writes player, actors, clocks, RNG or flags.
 import {eyePosition,muzzlePosition,traceShot} from '../../src/world/spatial.js';
-import {m02PlayerAction,m02RifleAmmoSources} from '../../src/game/m02-player-actions.js';
+import {m02PlayerAction,m02RifleAmmoSources,m02EarlyWithdrawalPrompt} from '../../src/game/m02-player-actions.js';
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
 
 // When an enemy occupies a room the player cannot route directly into, find
@@ -29,15 +29,18 @@ export function m02PilotFiringPosition(sim,p,enemy){
 }
 
 export class M02MissionPilot {
-  constructor({flankX=-50,flankZ=-52,offerWater=false}={}){this.flankX=flankX;this.flankZ=flankZ;this.offerWater=offerWater;this.route=[];this.routeKey='';this.nextPlan=0;this.lastCell=null;}
+  constructor({flankX=-50,flankZ=-52,offerWater=false,earlyWithdrawal=false}={}){this.flankX=flankX;this.flankZ=flankZ;this.offerWater=offerWater;this.earlyWithdrawal=earlyWithdrawal;this.route=[];this.routeKey='';this.nextPlan=0;this.lastCell=null;}
   decide(sim){
     const p=sim.player, eye=eyePosition(p), controls={};
     if(this.lastCell!==sim.activeCellId){this.lastCell=sim.activeCellId;this.enteredAt=sim.clock;this.flanked=false;this.route=[];this.routeKey='';}
     if(sim.activeCellId!=='A'&&sim.clock-this.enteredAt<18&&!sim.enemies.some(e=>e.seeingTargetId===p.id))return {controls:{crouch:!p.crouched,reload:sim.weapon.mag<5},waitingForSquad:true};
+    const retreat=this.earlyWithdrawal?m02EarlyWithdrawalPrompt(sim):null;
+    if(retreat)return {controls:{giveWater:true},earlyWithdrawal:true,pending:retreat.count};
+    const preferRetreat=this.earlyWithdrawal&&sim.activeCellId==='C'&&sim.areaC.c11Started;
     const action=m02PlayerAction(sim);
     const lis=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell);
     const rescuePending=sim.activeCellId==='C'&&sim.areaC.c11Started&&lis&&sim.flags['m02.lis_status']!=='wounded_evacuated';
-    if(action&&!(action.id==='epilogue'&&rescuePending))return {controls:{interact:true},action:action.id};
+    if(action&&!(action.id==='epilogue'&&rescuePending)&&!(preferRetreat&&action.id==='assist-lis'))return {controls:{interact:true},action:action.id};
     if(action?.id==='epilogue'&&rescuePending&&sim.areaC.lisContactedInC11)return {controls:{crouch:!p.crouched},waitingForLis:true};
     const chalk=sim.currentChalkPrompt();
     if(this.offerWater&&chalk&&!sim.flags['m02.pomar_wounded_water']){
@@ -63,7 +66,7 @@ export class M02MissionPilot {
     }
     const outOfAmmo=sim.weapon.mag===0&&sim.weapon.reserve===0;
     const ammoSources=outOfAmmo&&!p.carryingVolumeId?m02RifleAmmoSources(sim).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z)):[];
-    if(target&&!ammoSources.length&&!(outOfAmmo&&p.carryingVolumeId&&sim.areaB?.supplyCart)){
+    if(target&&(!preferRetreat||target.seeingTargetId===p.id)&&!ammoSources.length&&!(outOfAmmo&&p.carryingVolumeId&&sim.areaB?.supplyCart)){
       const dx=aim.x-eye.x,dz=aim.z-eye.z;
       controls.lookX=wrap(Math.atan2(dz,dx)-p.angle);
       controls.lookY=p.pitch-Math.atan2(aim.y-eye.y,Math.hypot(dx,dz));
@@ -73,7 +76,8 @@ export class M02MissionPilot {
       return {controls,target:target.id};
     }
     let goal;
-    if(outOfAmmo&&p.carryingVolumeId&&sim.areaB?.supplyCart)goal={id:'delivery',x:sim.areaB.supplyCart.goalX,z:sim.areaB.supplyCart.goalZ};
+    if(preferRetreat)goal={id:'early-withdrawal',x:-55,z:54};
+    else if(outOfAmmo&&p.carryingVolumeId&&sim.areaB?.supplyCart)goal={id:'delivery',x:sim.areaB.supplyCart.goalX,z:sim.areaB.supplyCart.goalZ};
     else if(ammoSources.length)goal=ammoSources[0];
     else if(sim.activeCellId==='C'&&!sim.areaC.c10Started&&!this.flanked&&Math.hypot(p.x-this.flankX,p.z-this.flankZ)>1)goal={id:'west-cover',x:this.flankX,z:this.flankZ};
     else if(hostiles.length)goal=hostiles[0];

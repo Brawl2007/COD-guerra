@@ -30,3 +30,11 @@ test('the optional pilot approaches the wounded man and completes water before m
  assert.equal(sim.flags['m02.pomar_wounded_water'],true);assert.equal(sim.flags['m02.pomar_wounded_marked'],false);
  assert.equal(pilot.decide(sim).controls.interact,true,'chalk remains a separate next action');
 });
+
+test('the early withdrawal pilot asks for a real input without changing the mission state',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();sim.enemies=[];
+ sim.teleportPlayer(-55,54,0,0);const pilot=new M02MissionPilot({earlyWithdrawal:true});pilot.lastCell='C';pilot.enteredAt=-20;
+ const before=sim.snapshot(),decision=pilot.decide(sim);
+ assert.equal(decision.earlyWithdrawal,true);assert.equal(decision.pending,12);assert.equal(decision.controls.giveWater,true);
+ assert.deepEqual(sim.snapshot(),before);assert.equal(sim.areaC.c12Completed,false);
+});

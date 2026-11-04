@@ -9,6 +9,8 @@ const verifyGrenade=process.env.M02_GRENADE_RUN==='1';
 if(verifyGrenade)report.grenade=null;
 const verifyWater=process.env.M02_WATER_RUN==='1';
 if(verifyWater)report.water=null;
+const verifyEarlyWithdrawal=process.env.M02_EARLY_WITHDRAW_RUN==='1';
+if(verifyEarlyWithdrawal)report.earlyWithdrawal=null;
 const traceAudio=process.env.M02_AUDIO_TRACE==='1';
 report.buildCommit=process.env.M02_BUILD_SHA??null;
 const started=Date.now();
@@ -18,7 +20,7 @@ try{
  page.on('pageerror',e=>report.errors.push(e.stack??e.message));
  await page.goto(`${process.env.M02_BASE_URL??'http://127.0.0.1:4290/COD-guerra'}/m02.html?quality=low&debug=1`);
  await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled,null,{timeout:120000});
- await page.evaluate(async offerWater=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot({offerWater});},verifyWater);
+ await page.evaluate(async options=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot(options);},{offerWater:verifyWater,earlyWithdrawal:verifyEarlyWithdrawal});
  await page.click('#mission-start');
  await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
  if(traceAudio)await page.evaluate(()=>{
@@ -61,6 +63,7 @@ try{
   });
   const label=`${observed.cell}:${observed.objective}`;
   if(verifyWater&&!report.water&&observed.waterOffered)report.water={clock:observed.clock,cell:observed.cell,pos:observed.pos};
+  if(verifyEarlyWithdrawal&&!report.earlyWithdrawal&&observed.decision.earlyWithdrawal)report.earlyWithdrawal={clock:observed.clock,cell:observed.cell,pos:observed.pos,pending:observed.decision.pending};
   if(label!==last){last=label;report.stages.push({label,clock:observed.clock,health:observed.health,missionCompleted:observed.missionCompleted,pos:observed.pos,realSec:(Date.now()-started)/1000});console.log(JSON.stringify(report.stages.at(-1)));await page.screenshot({path:`${out}/${report.stages.length}-${label.replace(':','-')}.png`});}
   if(observed.missionCompleted&&!observed.completed)throw Error('M02 was marked complete before C12');
   if(observed.completed){report.completed=true;break;}
@@ -72,7 +75,7 @@ try{
     await page.screenshot({path:`${out}/death-${report.deaths.length}.png`});
     await page.click('#mission-restart');
     await page.waitForFunction(()=>document.pointerLockElement?.id==='m02-canvas');
-    await page.evaluate(async ({attempt,offerWater})=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot({flankX:attempt%2?-65:-50,flankZ:attempt%2?-70:-52,offerWater});},{attempt:report.deaths.length,offerWater:verifyWater});
+    await page.evaluate(async ({attempt,offerWater,earlyWithdrawal})=>{const {M02MissionPilot}=await import('/COD-guerra/tools/m02/mission-pilot.mjs');window.m02Pilot=new M02MissionPilot({flankX:attempt%2?-65:-50,flankZ:attempt%2?-70:-52,offerWater,earlyWithdrawal});},{attempt:report.deaths.length,offerWater:verifyWater,earlyWithdrawal:verifyEarlyWithdrawal});
     continue;
   }
   if(Date.now()-started>1800000)throw Error('Continuous run exceeded 30 minute wall budget');
@@ -119,6 +122,7 @@ try{
  report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));
  if(!report.result?.completed||!report.result?.flags?.['m02.completed'])throw Error('C12 did not complete the campaign transaction');
  if(verifyWater&&!report.result?.flags?.['m02.pomar_wounded_water'])throw Error('The water choice was lost before the campaign handoff');
+ if(verifyEarlyWithdrawal&&(!report.earlyWithdrawal||!(report.result?.m03ImportState?.lastGroupUnaccountedCount>0)))throw Error('Early withdrawal did not preserve an unaccounted group');
  report.diagnostics=await page.evaluate(()=>window.m02Diagnostics());
  await page.setViewportSize({width:1280,height:720});await page.screenshot({path:`${out}/debrief.png`});
  console.log('COMPLETE',JSON.stringify(report.result));
