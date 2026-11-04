@@ -4,8 +4,8 @@ import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 const PANORAMA_VIEWS = Object.freeze({
   SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
   SN2: { x: -45, z: -5, angle: 0.25, pitch: 0.04, label: 'SN2 · Vala húmida oeste (-45, -5) rumo a B01' },
-  SN3: { x: -21, z: -13.5, angle: Math.PI, pitch: 0.0, label: 'SN3 · Fachada este da Casa B01 (-21, -13.5)' },
-  SN4: { x: 4, z: -29.5, angle: 0.0, pitch: 0.02, label: 'SN4 · Frente oeste do Celeiro B02 e abertura MG (4, -29.5)' },
+  SN3: { x: -23, z: -12, angle: Math.PI, pitch: 0.0, label: 'SN3 · Flanco este da Casa B01 (-23, -12; PDF N)' },
+  SN4: { x: 8, z: -28, angle: 0.0, pitch: 0.02, label: 'SN4 · Frente oeste do Celeiro B02 e abertura MG (8, -28; PDF N)' },
   SN5: { x: 0, z: 45, angle: -Math.PI / 2, pitch: 0.0, label: 'SN5 · Pomar sul olhando para o pátio (0, 45)' },
 });
 

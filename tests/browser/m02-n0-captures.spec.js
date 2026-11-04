@@ -149,6 +149,8 @@ test.describe('M02 N0 captures: 5 SN x 2 luzes x 3 perfis', () => {
             },
             { sn, preset: light.preset },
           );
+          // Clean frame for N0: hide the bench HUD/debug overlays (the 3D view, viewmodel included, is unchanged).
+          await page.addStyleTag({ content: '.hud-layer,#dialogue-banner,#cartela-banner,#door-prompt{visibility:hidden!important}' });
           await page.screenshot({ path: file });
           const buf = fs.readFileSync(file);
           const sha256 = crypto.createHash('sha256').update(buf).digest('hex');
@@ -207,6 +209,8 @@ test.describe('M02 N0 captures: 5 SN x 2 luzes x 3 perfis', () => {
             luminanceNotBlack: luma.mean >= MIN_LUMA_MEAN,
             luminanceNotBlownOut: luma.mean <= MAX_LUMA_MEAN,
             keyElementInFrame: keyInFrame,
+            // The capture must be taken from the PDF section N point (tolerance 0.5 m), not an offset bench view.
+            atPdfPoint: Math.hypot(view.player.x - pdf.x, view.player.z - pdf.z) <= 0.5,
           };
           const passed = Object.values(checks).every(Boolean);
 
