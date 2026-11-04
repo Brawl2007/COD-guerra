@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — retirada com homens em trânsito — 2026-11-04
+
+`b89ccdd` acrescenta escolha explícita de retirada em B12, com homens não evacuados registados como por localizar e Lis ainda a caminho tratado como desaparecido. 198 testes M02, build, dois browser e uma passagem automatizada da saída normal passaram; [provas e limites](docs/verification/m02-runtime/c11-withdrawal-2026-11-04/README.md). Encenação e teste em iPhone continuam pendentes.
+
 ## M02 — conclusão de campanha em C12 — 2026-11-04
 
 `a876bf3` impede a marcação prematura de conclusão na quinta/C05 e migra checkpoints anteriores; `3795507` corrige restauro de C05 repetida na bancada. 193 testes M02, build, browser e testes focados passaram; a [passagem automatizada](docs/verification/m02-runtime/completion-flag-2026-11-04/README.md) escolheu água e giz e concluiu em C12/M03. A missão continua em desenvolvimento.

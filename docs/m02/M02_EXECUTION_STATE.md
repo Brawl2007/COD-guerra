@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — retirada antecipada C11, 2026-11-04
+
+`b89ccdd` permite escolher em B12 a retirada enquanto ainda há homens em trânsito, com aviso do número e de Lis. Só os que chegaram contam como evacuados; os vivos deixados para trás ficam por localizar, com IDs/contagem guardados e exportados separadamente para a M03. Lis ainda a caminhar fica desaparecido se o jogador partir; Lis já evacuado mantém-se sem segundo resgate. 198 testes M02, build e dois browser passaram. [Fixture tátil e passagem integral da saída normal](../verification/m02-runtime/c11-withdrawal-2026-11-04/README.md): água/giz, Lis e 12/12, sem mortes do jogador ou erros; o piloto lê estado oculto. Falta detetar automaticamente rota irrecuperável, melhorar encenação e testar iPhone físico. Main e produção intactas.
+
 ## Continuação — conclusão de campanha em C12, 2026-11-04
 
 `a876bf3` corrige `m02.completed`: a quinta e C05 deixam de marcar a missão toda como concluída, e a flag só é ativada na transação final C12/M03. Saves intermédios antigos com a flag prematura são migrados sem perder progresso; `3795507` preserva o restauro determinístico de uma repetição de C05 na bancada depois de C12. Passaram 193 testes M02, build, browser e sete testes focados após o ajuste; [método e evidências](../verification/m02-runtime/completion-flag-2026-11-04/README.md). A [passagem integral `a876bf3`](../verification/m02-runtime/completion-flag-2026-11-04/native/report.json) ofereceu água, marcou giz e manteve a flag falsa até O09, concluindo na M03 com Lis, 12/12, sem mortes do jogador ou erros; piloto lê estado oculto. A passagem é anterior ao ajuste de bancada. Continuar roteiro Astra e melhorias de atuação física; main e produção intactas.
