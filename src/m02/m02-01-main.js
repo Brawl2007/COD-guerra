@@ -71,12 +71,12 @@ window.addEventListener('keydown', (e) => {
   }
   if (e.code === 'F9') {
     e.preventDefault();
-    const id = sim.checkpoints.has('cp_m02_manual')
-      ? 'cp_m02_manual'
-      : sim.checkpoints.has('cp_m02_b_acesso')
-        ? 'cp_m02_b_acesso'
-        : 'cp_m02_a_preparacao';
-    sim.restoreCheckpoint(id);
+    // Depois de recarregar a página o índice em memória só tem o início: o F9 vai à loja persistida (FIX-2b).
+    try {
+      sim.quickLoadCheckpoint();
+    } catch (err) {
+      console.warn('[M02] F9 sem checkpoint restaurável:', err.message);
+    }
   }
   if (e.code === 'Digit0') sim.startAreaAFullC01();
   if (e.code === 'Digit1') teleportToPanorama('SN1');
@@ -122,11 +122,9 @@ selQuality?.addEventListener('change', (e) => {
 });
 
 selLighting?.addEventListener('change', (e) => {
-  const val = e.target.value;
-  const preset = renderer.applyLightingPreset(val);
-  if (preset.temporalId && sim.horizon) {
-    sim.horizon.setTemporalState(preset.temporalId);
-  }
+  // Só a luz de pré-visualização: a data narrativa e o estado temporal da simulação (e do save) não mudam (FIX-2b).
+  // O renderer volta a sincronizar a luz quando a missão mudar de estado temporal.
+  renderer.applyLightingPreset(e.target.value);
 });
 
 document.getElementById('btn-start-c01')?.addEventListener('click', () => {
@@ -380,6 +378,7 @@ window.m02Bench = {
   },
   saveCheckpoint: (id) => sim.saveCheckpoint(id),
   restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
+  quickLoadCheckpoint: () => sim.quickLoadCheckpoint(),
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),
@@ -393,7 +392,10 @@ window.m02Bench = {
     areaC: structuredClone(sim.areaC),
     m03ExportPackage: sim.m03ExportPackage ? structuredClone(sim.m03ExportPackage) : null,
     horizon: sim.horizon ? sim.horizon.snapshot() : null,
-    audiovisual: sim.audiovisual ? sim.audiovisual.snapshot() : null,
+    // A configuração de acessibilidade não faz parte do snapshot de jogo (I5); o resumo da bancada mostra-a à parte.
+    audiovisual: sim.audiovisual
+      ? { ...sim.audiovisual.snapshot(), accessibility: structuredClone(sim.audiovisual.accessibility) }
+      : null,
     player: {
       x: Number(sim.player.x.toFixed(2)),
       y: Number(sim.player.y.toFixed(2)),

@@ -41,6 +41,7 @@ import {
   completeC12Epilogue as runCompleteC12Epilogue,
   exportCampaignResultToM03 as runExportCampaignResultToM03,
   syncAreaCWorldDamage,
+  dropVolumesOfFallenCarriers,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -70,6 +71,61 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
 
 const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELOAD_SINGLE']);
 const PLAYER_ID = 'piotr_sokol';
+
+// FIX-2b (PDF I4/I5): enums e relações que o restauro aceita. Valores tirados do código que os escreve.
+const ALLY_STATES = Object.freeze([
+  'ACTIVE',
+  'DOWN',
+  'DEAD',
+  'EVACUATED',
+  'LIAISON_OUTSIDE_CELL',
+  'WOUNDED_LIAISON',
+  'EVACUATED_B12',
+  'WALKING_SUPPORTED',
+  'MISSING',
+]);
+/** Estados possíveis de um aliado com alive=false: nenhum tem arma ativa («um ator morto não pode voltar a ser dono de arma ativa», I5). */
+const ALLY_INCAPACITATED_STATES = Object.freeze(['DOWN', 'DEAD', 'EVACUATED', 'MISSING']);
+const ENEMY_STATES = Object.freeze([
+  'HOLD_SECTOR',
+  'ENGAGE_VISIBLE',
+  'SEARCH_MEMORY',
+  'SHIFT_COVER',
+  'FALLBACK_COVER',
+  'ADVANCE_RESERVE',
+  'SURRENDERED',
+  'WOUNDED_UNARMED',
+  'DEAD',
+  'DOWN',
+]);
+/** I4 (p. 34): os três valores finais de m02.lis_status; antes da resolução a flag é nula ('active' é o nulo legado do código). */
+const LIS_FINAL_STATUSES = Object.freeze(['wounded_evacuated', 'wounded_walking', 'missing']);
+const LIS_PENDING_STATUSES = Object.freeze([null, 'active']);
+const CART_STATES = Object.freeze(['WAITING_CLEAR_CORRIDOR', 'MOVING', 'DELIVERED', 'IMMOBILIZED']);
+const VOLUME_STATES = Object.freeze(['ON_CART', 'CARRIED', 'DELIVERED', 'LOST', 'DROPPED_READY']);
+const OBJECTIVE_STATUSES = Object.freeze(['active', 'completed']);
+/** Campos de estado da arma que o save pode repor. O perfil (dano, alcance, recarga) vem sempre do código. */
+const WEAPON_STATE_FIELDS = Object.freeze(['mag', 'reserve', 'state', 'until', 'started', 'lastShot', 'shotCount', 'received', 'sight', 'reloadMode']);
+const WZ29_PROFILE_ID = new Wz29().profile.id;
+const WZ29_MAG_CAPACITY = 5;
+
+/**
+ * -0 → 0 em todo o snapshot (no próprio objeto: o snapshot é uma árvore nova). O JSON do armazenamento não representa -0;
+ * normalizar aqui faz o restauro a partir da memória e a partir da loja darem exatamente o mesmo estado (FIX-2b).
+ */
+function normalizeNegativeZero(node) {
+  const keys = Array.isArray(node) ? node.keys() : Object.keys(node);
+  for (const k of keys) {
+    const v = node[k];
+    if (Object.is(v, -0)) node[k] = 0;
+    else if (v && typeof v === 'object') normalizeNegativeZero(v);
+  }
+  return node;
+}
+
+/** Vida finita em [0, maxHealth]. */
+const healthInRange = (a) =>
+  typeof a.health === 'number' && typeof a.maxHealth === 'number' && a.maxHealth > 0 && a.health >= 0 && a.health <= a.maxHealth;
 
 const isPlainObject = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 const isUint32 = (v) => Number.isInteger(v) && v >= 0 && v <= 0xffffffff;
@@ -171,10 +227,20 @@ export function validateM02Snapshot(snap) {
   if (
     !isPlainObject(w) ||
     !isNonNegativeInteger(w.mag) ||
+    w.mag > WZ29_MAG_CAPACITY ||
     !isNonNegativeInteger(w.reserve) ||
     !WEAPON_STATES.includes(w.state)
   ) {
     return { valid: false, reason: 'Estado de munição da arma inválido no snapshot.' };
+  }
+  if (w.id !== WZ29_PROFILE_ID) {
+    return { valid: false, reason: `Arma do jogador desconhecida no snapshot: ${w.id}` };
+  }
+  if (
+    ['until', 'started', 'lastShot', 'shotCount', 'received', 'sight'].some((k) => typeof w[k] !== 'number') ||
+    ![null, 'clip', 'single'].includes(w.reloadMode)
+  ) {
+    return { valid: false, reason: 'Estado de ciclo/recarga da arma inválido no snapshot.' };
   }
   if (!isNonNegativeInteger(snap.grenadeAmmo)) {
     return { valid: false, reason: 'Contagem de granadas inválida no snapshot.' };
@@ -208,8 +274,18 @@ export function validateM02Snapshot(snap) {
       }
       if (actorIds.has(a.id)) return { valid: false, reason: `ID de ator duplicado no snapshot: ${a.id}` };
       actorIds.add(a.id);
+      const states = label === 'Aliado' ? ALLY_STATES : ENEMY_STATES;
+      if (!states.includes(a.state)) return { valid: false, reason: `Estado de ${label.toLowerCase()} inválido: ${a.id}=${a.state}` };
+      if (typeof a.alive !== 'boolean') return { valid: false, reason: `${label} sem estado vivo/morto: ${a.id}` };
+      if (!healthInRange(a)) {
+        return { valid: false, reason: `Vida fora de [0, máx.] para ${a.id}: ${a.health}/${a.maxHealth}` };
+      }
+      if (label === 'Aliado' && !a.alive && !ALLY_INCAPACITATED_STATES.includes(a.state)) {
+        return { valid: false, reason: `Aliado morto com arma ativa no snapshot: ${a.id} (${a.state})` };
+      }
     }
   }
+  const aliveById = new Map([[PLAYER_ID, p.alive !== false], ...snap.allies.map((a) => [a.id, a.alive])]);
   if (!Array.isArray(snap.targets)) return { valid: false, reason: 'Lista de alvos de calibração inválida.' };
 
   for (const key of ['mgState', 'routeProgress', 'objective', 'squadOrder', 'dialogue', 'audiovisual', 'supplies']) {
@@ -226,6 +302,15 @@ export function validateM02Snapshot(snap) {
   }
   if (![null, 'ditch', 'orchard'].includes(snap.flags['m02.axis'] ?? null)) {
     return { valid: false, reason: `Valor inválido para m02.axis: ${snap.flags['m02.axis']}` };
+  }
+  const lisStatus = snap.flags['m02.lis_status'] ?? null;
+  const lisAllowed = snap.areaC.c12Completed ? LIS_FINAL_STATUSES : [...LIS_PENDING_STATUSES, ...LIS_FINAL_STATUSES];
+  if (!lisAllowed.includes(lisStatus)) {
+    return { valid: false, reason: `Valor inválido para m02.lis_status: ${lisStatus}` };
+  }
+  const objective = snap.objective;
+  if (typeof objective.id !== 'string' || !objective.id || !OBJECTIVE_STATUSES.includes(objective.status)) {
+    return { valid: false, reason: `Objetivo inválido no snapshot: ${objective.id}/${objective.status}` };
   }
   for (const key of ['transitionIdsApplied', 'checkpointsReached']) {
     const list = snap[key];
@@ -262,10 +347,13 @@ export function validateM02Snapshot(snap) {
     }
   }
 
-  const volumes = snap.areaB.supplyCart?.volumes;
+  const cart = snap.areaB.supplyCart;
+  if (cart !== undefined && (!isPlainObject(cart) || !CART_STATES.includes(cart.state))) {
+    return { valid: false, reason: `Estado da carroça inválido no snapshot: ${cart?.state}` };
+  }
+  const volumes = cart?.volumes;
   if (volumes !== undefined) {
     if (!Array.isArray(volumes)) return { valid: false, reason: 'Volumes da carroça inválidos no snapshot.' };
-    const carriers = new Set([PLAYER_ID, ...snap.allies.map((a) => a.id)]);
     const volumeIds = new Set();
     const seenCarriers = new Set();
     for (const vol of volumes) {
@@ -273,6 +361,9 @@ export function validateM02Snapshot(snap) {
         return { valid: false, reason: 'Volume da carroça inválido no snapshot.' };
       }
       volumeIds.add(vol.id);
+      if (!VOLUME_STATES.includes(vol.state)) {
+        return { valid: false, reason: `Estado do volume ${vol.id} inválido: ${vol.state}` };
+      }
       if (vol.carriedBy) {
         if (vol.carriedBy === vol.id) {
           return { valid: false, reason: `Referência circular carriedBy em ${vol.id}.` };
@@ -280,8 +371,11 @@ export function validateM02Snapshot(snap) {
         if (seenCarriers.has(vol.carriedBy)) {
           return { valid: false, reason: `Portador duplicado (${vol.carriedBy}) para múltiplos volumes.` };
         }
-        if (!carriers.has(vol.carriedBy)) {
+        if (!aliveById.has(vol.carriedBy)) {
           return { valid: false, reason: `Portador inexistente (${vol.carriedBy}) para ${vol.id}.` };
+        }
+        if (!aliveById.get(vol.carriedBy)) {
+          return { valid: false, reason: `Portador morto (${vol.carriedBy}) para ${vol.id}.` };
         }
         seenCarriers.add(vol.carriedBy);
       }
@@ -290,6 +384,10 @@ export function validateM02Snapshot(snap) {
     if ((p.carryingVolumeId ?? null) !== carried) {
       return { valid: false, reason: 'Volume transportado pelo jogador inconsistente com a carroça.' };
     }
+    const incoherent = volumes.find((v) => (v.state === 'CARRIED') !== Boolean(v.carriedBy));
+    if (incoherent) {
+      return { valid: false, reason: `Volume ${incoherent.id} incoerente: estado ${incoherent.state} com carriedBy ${incoherent.carriedBy}.` };
+    }
   } else if (p.carryingVolumeId) {
     return { valid: false, reason: 'Jogador transporta um volume sem carroça no snapshot.' };
   }
@@ -297,6 +395,16 @@ export function validateM02Snapshot(snap) {
 }
 
 export class M02BenchSimulation {
+  /** Profundidade de tick()/ação atómica em curso: um checkpoint automático pedido lá dentro fica pendente até ao fim. */
+  #checkpointBatchDepth = 0;
+  /**
+   * Checkpoints automáticos atingidos no passo em curso (FIX-2b). São gravados no fim do passo, depois de todos os sistemas,
+   * e nunca sobrevivem entre ticks: não entram no snapshot e um passo que falhe a meio descarta-os.
+   */
+  #pendingCheckpointIds = [];
+  /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
+  #lastSessionCheckpointId = null;
+
   /**
    * @param {number} seed
    * @param {object} [options]
@@ -326,6 +434,7 @@ export class M02BenchSimulation {
   }
 
   reset(startScene = this.defaultStartScene) {
+    this.#pendingCheckpointIds = [];
     this.rng = new Random(this.seed);
     this.clock = 0;
     this.events = [];
@@ -529,7 +638,9 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
 
     this.updateTacticalContext();
-    this.saveCheckpoint('cp_m02_a_preparacao');
+    // O início da missão é reproduzível pela semente e pela cena: fica só no índice em memória. Gravá-lo na loja a cada
+    // construção/reset (cada carregamento da página) substituía o último checkpoint do jogador (FIX-2b, P1).
+    this.saveCheckpoint('cp_m02_a_preparacao', { persist: false });
   }
 
   startAreaAFullC01({ saveInitialCheckpoint = true } = {}) {
@@ -611,7 +722,7 @@ export class M02BenchSimulation {
       text: cartelaText,
       expiresAt: this.clock + 8.0,
     };
-    this.flags['m02.completed'] = true;
+    // m02.completed não é escrito aqui: «só após conclusão transacional» (PDF I4, p. 34), que é C12 (FIX-2b).
     this.flags['m02.transicao_tab_pronta'] = true;
 
     this.transitionTABPayload = {
@@ -1121,7 +1232,12 @@ export class M02BenchSimulation {
     return evt;
   }
 
+  /** Ação atómica: um checkpoint atingido por este tiro (último defensor) só é gravado depois do áudio/recuo do disparo. */
   firePlayerWeapon(exactAim = true, bypassCooldown = false) {
+    return this.#runCheckpointBatch(() => this.#firePlayerWeapon(exactAim, bypassCooldown));
+  }
+
+  #firePlayerWeapon(exactAim, bypassCooldown) {
     const nowMs = this.clock * 1000;
     if (bypassCooldown && this.weapon.state === 'BOLT_CYCLE') {
       this.weapon.state = 'READY';
@@ -1271,13 +1387,27 @@ export class M02BenchSimulation {
 
       if (this.clock >= g.fuseAt) {
         g.exploded = true;
+        // Sai da lista de granadas em voo ANTES da explosão: um snapshot tirado durante a explosão (o rebentamento mata o
+        // último defensor) nunca guarda uma granada explodida, que o validador recusa (FIX-2b). O for…of continua no array
+        // antigo e salta as explodidas.
+        this.grenades = this.grenades.filter((other) => other !== g);
         this.detonateGrenadeAt(g.x, g.y, g.z);
       }
     }
     this.grenades = this.grenades.filter((g) => !g.exploded);
   }
 
+  /**
+   * Reavalia rota, objetivo e flags locais. Os checkpoints semânticos que esta avaliação atinge são pedidos só no fim, depois
+   * de o objetivo estar escrito: dentro de tick() ficam pendentes até ao fim do tick; fora dele são gravados aqui (FIX-2b).
+   */
   updateTacticalContext() {
+    const due = [];
+    this.#evaluateTacticalContext(due);
+    for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
+  }
+
+  #evaluateTacticalContext(due) {
     const px = this.player.x;
     const pz = this.player.z;
 
@@ -1352,7 +1482,7 @@ export class M02BenchSimulation {
           clock: Number(this.clock.toFixed(2)),
           type: 'ea0_outpost_cleared',
         });
-        this.saveCheckpoint('cp_m02_a_preparacao');
+        due.push('cp_m02_a_preparacao');
       } else {
         this.objective.id = 'O00';
         this.objective.title = `C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (${activeEa0.length}/4 ativos)`;
@@ -1395,17 +1525,14 @@ export class M02BenchSimulation {
       this.objective.id = 'COMPLETE';
       this.objective.title = 'Quinta consolidada — Secção pronta para avançar rumo a Łęczyca (M02-B)';
       this.objective.status = 'completed';
-      this.flags['m02.completed'] = true;
+      // Objetivo local da Área A concluído; a missão não: m02.completed só em C12 (PDF I4, p. 34; FIX-2b).
       this.dialogue.trigger('bz39_c05_01', this);
-      if (!this.checkpointsReached.includes('cp_m02_b_acesso')) {
-        this.saveCheckpoint('cp_m02_b_acesso');
-      }
+      if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
     } else if (activeCombatDefenders.length === 0) {
       if (this.objective.id !== 'C04') {
         this.dialogue.trigger('bz39_c03_04', this);
-        if (!this.checkpointsReached.includes('cp_m02_b_acesso')) {
-          this.saveCheckpoint('cp_m02_b_acesso');
-        }
+        // Pedido aqui, gravado depois de o objetivo C04 abaixo estar escrito (antes ficava gravado com o objetivo anterior).
+        if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       }
       this.objective.id = 'C04';
       this.objective.title = 'C04 (Pomar Sul): Reagrupar junto ao poço/pomar e sinalizar o ferido [E]';
@@ -1433,8 +1560,50 @@ export class M02BenchSimulation {
     }
   }
 
+  /**
+   * Um passo da simulação. Os checkpoints automáticos atingidos durante o passo (último defensor por tiro ou granada, C04,
+   * posto EA0, C10 na Área C) são gravados no FIM, depois de secção, guarnição, áreas, horizonte, diálogo, audiovisual e
+   * bloco MG: o snapshot é o estado entre dois ticks e restaurar + repetir as mesmas entradas reproduz a continuação.
+   */
   tick(dt, controls = {}) {
     if (dt <= 0) return;
+    this.#runCheckpointBatch(() => this.#step(dt, controls));
+  }
+
+  /**
+   * Pede um checkpoint semântico automático. Dentro de tick()/ação atómica fica pendente e é gravado no fim; fora dela é
+   * gravado já (o chamador está num ponto estável entre entradas).
+   */
+  requestAutoCheckpoint(checkpointId) {
+    if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
+    if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
+    return null;
+  }
+
+  /** Já atingido nesta linha temporal, ou pedido no passo em curso. */
+  checkpointReachedOrPending(checkpointId) {
+    return this.checkpointsReached.includes(checkpointId) || this.#pendingCheckpointIds.includes(checkpointId);
+  }
+
+  #runCheckpointBatch(fn) {
+    this.#checkpointBatchDepth++;
+    let completed = false;
+    try {
+      const result = fn();
+      completed = true;
+      return result;
+    } finally {
+      this.#checkpointBatchDepth--;
+      if (this.#checkpointBatchDepth === 0) {
+        const due = this.#pendingCheckpointIds;
+        this.#pendingCheckpointIds = [];
+        // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
+        if (completed) for (const checkpointId of due) this.saveCheckpoint(checkpointId);
+      }
+    }
+  }
+
+  #step(dt, controls) {
     this.clock += dt;
     const nowMs = this.clock * 1000;
 
@@ -1515,42 +1684,103 @@ export class M02BenchSimulation {
     } else {
       this.player.suppressed = Math.max(0, this.player.suppressed - dt * 0.25);
     }
+    // Quem caiu neste tick larga o volume que carregava: nenhum snapshot fica com carriedBy num ator morto (I5, FIX-2b).
+    dropVolumesOfFallenCarriers(this);
   }
 
   /**
    * Grava um checkpoint semântico: entra na lista da linha temporal (`checkpointsReached`, que faz parte do snapshot),
    * fica no índice em memória `checkpoints` e é persistido pela loja (SAVE-02). Uma falha de persistência não interrompe
    * a simulação: fica em `lastCheckpointPersist` e no evento `checkpoint-saved`.
+   * Um snapshot que o validador recusa nunca substitui a entrada boa do índice nem chega à loja, e o checkpoint não fica
+   * marcado como atingido (o gatilho seguinte volta a tentar): evento `checkpoint-rejected`, devolve null (FIX-2b).
+   * Devolve uma cópia: mexer no resultado não altera o índice (FIX-2b).
+   * `persist: false` só regista no índice em memória (checkpoint inicial do construtor/reset; não toca na loja).
    */
-  saveCheckpoint(checkpointId) {
-    if (!this.checkpointsReached.includes(checkpointId)) this.checkpointsReached.push(checkpointId);
+  saveCheckpoint(checkpointId, { persist = true } = {}) {
+    const addedNow = !this.checkpointsReached.includes(checkpointId);
+    if (addedNow) this.checkpointsReached.push(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
+    const check = validateM02Snapshot(snap);
+    if (!check.valid) {
+      if (addedNow) this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
+      const reason = `Snapshot recusado antes de gravar: ${check.reason}`;
+      this.lastCheckpointPersist = { ok: false, reason };
+      this.events.push({ type: 'checkpoint-rejected', checkpointId, clock: this.clock, reason });
+      return null;
+    }
     this.checkpoints.set(checkpointId, snap);
-    const persist = this.saveStore
+    if (!persist) {
+      this.lastCheckpointPersist = {
+        ok: false,
+        skipped: true,
+        reason: `Checkpoint ${checkpointId} só em memória: o arranque não grava por cima do save do jogador.`,
+      };
+      this.events.push({ type: 'checkpoint-saved', checkpointId, clock: this.clock, persisted: false, persistError: null, memoryOnly: true });
+      return structuredClone(snap);
+    }
+    this.#lastSessionCheckpointId = checkpointId;
+    const result = this.saveStore
       ? this.saveStore.commitCheckpoint(checkpointId, snap)
       : { ok: false, reason: 'Sem loja de saves.' };
-    this.lastCheckpointPersist = persist;
+    this.lastCheckpointPersist = result;
     this.events.push({
       type: 'checkpoint-saved',
       checkpointId,
       clock: this.clock,
-      persisted: persist.ok,
-      persistError: persist.ok ? null : persist.reason,
+      persisted: result.ok,
+      persistError: result.ok ? null : result.reason,
     });
-    return snap;
+    return structuredClone(snap);
   }
 
-  /** Restaura do índice em memória; se o checkpoint não estiver lá (p. ex. depois de recarregar a página), da loja persistente. */
-  restoreCheckpoint(checkpointId) {
-    let snap = this.checkpoints.get(checkpointId);
-    if (!snap && this.saveStore) {
-      snap = this.saveStore.loadCheckpoint(checkpointId);
-      if (snap) this.checkpoints.set(checkpointId, snap);
+  /**
+   * Carregamento rápido (F9 da bancada). Se esta sessão já gravou: o checkpoint manual, senão o último gravado nesta sessão.
+   * Numa sessão que ainda não gravou nada (página acabada de abrir ou recarregar): o último checkpoint persistido na loja.
+   * Só sem nada disso volta ao início em memória. Devolve { checkpointId, source }.
+   */
+  quickLoadCheckpoint() {
+    const sessionId = this.checkpoints.has('cp_m02_manual') ? 'cp_m02_manual' : this.#lastSessionCheckpointId;
+    if (sessionId) {
+      this.restoreCheckpoint(sessionId);
+      return { checkpointId: sessionId, source: 'session' };
     }
-    if (!snap) throw new Error(`Checkpoint ${checkpointId} não encontrado.`);
-    this.restoreSnapshot(snap);
-    return snap;
+    const latest = this.saveStore ? this.saveStore.latestCheckpointId() : null;
+    if (latest) {
+      this.restorePersistedCheckpoint(latest);
+      return { checkpointId: latest, source: 'store' };
+    }
+    this.restoreCheckpoint('cp_m02_a_preparacao');
+    return { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
+  }
+
+  /**
+   * Restaura do índice em memória; se o checkpoint não estiver lá (p. ex. depois de recarregar a página) ou a entrada do
+   * índice não passar na validação, usa a cópia persistida na loja. Devolve uma cópia do snapshot restaurado.
+   */
+  restoreCheckpoint(checkpointId) {
+    const inMemory = this.checkpoints.get(checkpointId) ?? null;
+    let memoryError = null;
+    if (inMemory) {
+      const check = validateM02Snapshot(inMemory);
+      if (check.valid) {
+        this.restoreSnapshot(inMemory);
+        return structuredClone(inMemory);
+      }
+      memoryError = check.reason;
+    }
+    const stored = this.saveStore ? this.saveStore.loadCheckpoint(checkpointId) : null;
+    if (!stored) {
+      throw new Error(
+        memoryError
+          ? `Checkpoint ${checkpointId} inválido em memória (${memoryError}) e sem cópia persistida válida.`
+          : `Checkpoint ${checkpointId} não encontrado.`,
+      );
+    }
+    this.restoreSnapshot(stored);
+    this.checkpoints.set(checkpointId, stored);
+    return structuredClone(stored);
   }
 
   /** Restaura a cópia persistida (ignora o índice em memória). Sem id, usa o último checkpoint gravado na loja. */
@@ -1561,7 +1791,7 @@ export class M02BenchSimulation {
     if (!snap) throw new Error(`Checkpoint persistido ${id ?? '(nenhum)'} não encontrado ou inválido.`);
     this.restoreSnapshot(snap);
     this.checkpoints.set(id, snap);
-    return snap;
+    return structuredClone(snap);
   }
 
   /**
@@ -1570,7 +1800,7 @@ export class M02BenchSimulation {
    * frame), o índice `checkpoints`, o navegador (derivado do mundo) nem métricas do streamer.
    */
   snapshot() {
-    return {
+    return normalizeNegativeZero({
       schema: M02_SNAPSHOT_SCHEMA,
       schemaVersion: M02_SNAPSHOT_SCHEMA_VERSION,
       missionId: M02_MISSION_ID,
@@ -1619,7 +1849,7 @@ export class M02BenchSimulation {
       objective: structuredClone(this.objective),
       combatLog: structuredClone(this.combatLog),
       shotLog: structuredClone(this.shotLog),
-    };
+    });
   }
 
   /**
@@ -1689,6 +1919,8 @@ export class M02BenchSimulation {
   }
 
   #activateRestore(p) {
+    // Pedidos de checkpoint pendentes pertenciam à linha temporal descartada.
+    this.#pendingCheckpointIds = [];
     this.seed = p.seed;
     this.rng = new Random(p.seed);
     this.rng.state = p.rngState;
@@ -1709,8 +1941,9 @@ export class M02BenchSimulation {
     this.navigator = new M01Navigator(this.world.navWorld).prewarm();
 
     this.player = p.player;
-    // `id` vem do perfil da arma (derivado); só o estado mutável volta ao objeto.
-    const { id: _weaponProfileId, ...weaponState } = p.weapon;
+    // Só os campos de estado da arma (lista branca) voltam ao objeto: o perfil (dano, alcance, recarga) e o `id` vêm do
+    // código, nunca do save — Wz29.restore faz Object.assign e aplicaria um `profile` injetado (FIX-2b).
+    const weaponState = Object.fromEntries(WEAPON_STATE_FIELDS.filter((k) => k in p.weapon).map((k) => [k, p.weapon[k]]));
     this.weapon.restore(weaponState);
     this.grenadeAmmo = p.grenadeAmmo;
     this.grenades = p.grenades;
@@ -1735,6 +1968,9 @@ export class M02BenchSimulation {
     this.mgState = p.mgState;
     this.routeProgress = p.routeProgress;
     this.flags = p.flags;
+    // Migração explícita de saves v2 anteriores ao FIX-2b (PDF I5: «migrar com regra explícita»): marcavam m02.completed já
+    // na Área A/C05; a flag só é verdadeira depois de C12 (I4, p. 34).
+    if (this.flags['m02.completed'] && !this.areaC?.c12Completed) this.flags['m02.completed'] = false;
     this.squadOrder = p.squadOrder;
     this.dialogue.restore(p.dialogue);
     this.horizon.restore(p.horizon);

@@ -168,13 +168,19 @@ export function buildCellWorldLayout(cellId) {
     destructibleFence: Boolean(c.destructibleFence),
   }));
 
+  // `rawCell.bounds` é o array [minX, maxX, minZ, maxZ]; espalhá-lo num objeto dava chaves "0".."3" e playable.minX
+  // undefined, e o clampToMap partilhado com a M01 devolvia NaN a cada passo (FIX-2b, P0 nas Áreas B/C).
+  const [minX, maxX, minZ, maxZ] = rawCell.bounds;
   return {
     missionId: `m02_cell_${cellId.toLowerCase()}`,
     cellId,
     title: rawCell.title,
     bounds: {
-      ...rawCell.bounds,
-      playable: { ...rawCell.bounds },
+      minX,
+      maxX,
+      minZ,
+      maxZ,
+      playable: { minX, maxX, minZ, maxZ },
     },
     playerSpawn: structuredClone(rawCell.playerSpawn),
     panoramaPoint: structuredClone(rawCell.panoramaPoint),
