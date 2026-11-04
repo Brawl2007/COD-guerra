@@ -28,3 +28,13 @@ test('an incapacitated speaker cannot use an addressee fallback to speak',()=>{
  const speaker=sim.allies.find(a=>a.id==='pl_gruca');speaker.alive=false;speaker.state='DOWN';
  assert.equal(sim.dialogue.trigger('bz39_c03_01',sim),false);assert.equal(sim.dialogue.queue.length,0);
 });
+
+test('C08 preserves Lis liaison departure after he is detached from the local squad',()=>{
+ const sim=new M02BenchSimulation();sim.enterAreaCC09();
+ const lis=sim.allies.find(a=>a.id==='pl_lis');assert.equal(lis.detachedOutOfCell,true);
+ assert.equal(sim.dialogue.hasTriggered('bz39_c08_02'),true);
+ assert.ok(sim.dialogue.queue.some(line=>line.id==='bz39_c08_02')||sim.dialogue.activeLine?.id==='bz39_c08_02');
+ for(let i=0;i<30&&sim.dialogue.activeLine?.id!=='bz39_c08_02';i++){sim.clock+=10;sim.dialogue.update(sim);}
+ assert.equal(sim.dialogue.activeLine?.id,'bz39_c08_02');
+ assert.equal(sim.dialogue.activeLine.text,M02_DIALOGUE_CATALOG.bz39_c08_02.text);
+});

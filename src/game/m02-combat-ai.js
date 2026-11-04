@@ -434,14 +434,15 @@ export class M02DialogueDirector {
     if(def.speakerId==='pl_lis'&&sim.flags?.['m02.lis_status']==='missing')return null;
     if(entry.id==='bz39_c12_02'&&sim.flags?.['m02.lis_status']!=='missing')return null;
     const speaker=sim.allies.find(a=>a.id===def.speakerId);
-    if(speaker&&(!speaker.alive||speaker.state==='DOWN'||speaker.state==='EVACUATED'||speaker.detachedOutOfCell))return null;
+    const liaisonDeparture=entry.id==='bz39_c08_02'&&speaker?.alive&&speaker.state!=='DOWN'&&speaker.state!=='EVACUATED';
+    if(speaker&&(!speaker.alive||speaker.state==='DOWN'||speaker.state==='EVACUATED'||speaker.detachedOutOfCell&&!liaisonDeparture))return null;
     let text=entry.text;
     if(entry.id==='bz39_c03_01'){
       const available=id=>sim.allies.some(a=>a.id===id&&a.alive&&a.state!=='DOWN'&&!a.detachedOutOfCell);
       text=available('pl_lis')&&available('pl_wierzba')?def.text:def.fallbackText;
     }else if(entry.id==='bz39_c08_02'){
       const lis=sim.allies.find(a=>a.id==='pl_lis');
-      text=lis&&lis.alive&&lis.state!=='DOWN'&&lis.state!=='EVACUATED'&&!lis.detachedOutOfCell?def.text:def.fallbackText;
+      text=lis&&lis.alive&&lis.state!=='DOWN'&&lis.state!=='EVACUATED'?def.text:def.fallbackText;
     }
     return {...entry,text};
   }
@@ -460,7 +461,8 @@ export class M02DialogueDirector {
     }
 
     const speaker = sim.allies.find((a) => a.id === def.speakerId);
-    if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED' || speaker.detachedOutOfCell)) {
+    const liaisonDeparture=lineId==='bz39_c08_02'&&speaker?.alive&&speaker.state!=='DOWN'&&speaker.state!=='EVACUATED';
+    if (speaker && (!speaker.alive || speaker.state === 'DOWN' || speaker.state === 'EVACUATED' || speaker.detachedOutOfCell&&!liaisonDeparture)) {
       return false;
     }
 
