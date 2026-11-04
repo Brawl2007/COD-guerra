@@ -62,6 +62,14 @@ test('a world with another wreck box does not reuse the hull',()=>withCanvas(()=
   a.dispose();b.dispose();
 }));
 
+test('syncShellCraters: a fresh array with the same craters redraws nothing; the same count with other craters does',()=>{
+  const ctx={geometries:[],materials:[],group:new THREE.Group(),groundY:-3},draw=damage=>M01AreaDressing.prototype.syncShellCraters.call(ctx,damage);
+  const shell=n=>({id:`np_shell_crater_brg_npb_1_${n}`,x:-440+n*20,y:-3,z:-1210,started:20+n});
+  draw([shell(0),shell(1)]);const discs=ctx.group.children[0],v=discs.instanceMatrix.version;
+  draw([{...shell(0)},{...shell(1)}]);assert.equal(discs.instanceMatrix.version,v,'equal records in a new array: no work');
+  draw([shell(1),shell(2)]);assert.ok(discs.instanceMatrix.version>v,'same count, other craters: redrawn');
+});
+
 test('dispose frees the instance buffers of every InstancedMesh (heaps, clods, crater discs and rims, shell craters, stubble)',()=>withCanvas(()=>{
   const scene=new THREE.Scene(),d=new M01AreaDressing(scene,worlds[1],{surface,quality:'high'});
   d.syncShellCraters([{id:'np_shell_crater_x_0',x:-440,y:-3,z:-1210,started:1},{id:'np_shell_crater_x_1',x:-420,y:-3,z:-1205,started:2}]);

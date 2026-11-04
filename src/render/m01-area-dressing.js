@@ -133,9 +133,12 @@ export class M01AreaDressing{
    * not the terrain they project on), so without this a shell would leave smoke and nothing on the ground. Presentation only: it reads the records, decides nothing, and an act with no shells never reaches it.
    */
   syncShellCraters(damage){
-    const list=(damage??[]).filter(d=>typeof d.id==='string'&&d.id.startsWith('np_shell_crater_')).slice(-SHELL_CRATERS_MAX),key=list.map(d=>d.id).join(',');
-    if(key===(this.shellCraterKey??''))return;   // nothing changed (and nothing to draw before the first shell: an act without shells never makes the meshes)
-    this.shellCraterKey=key;
+    // Called every frame with a fresh array: the cheap signature (count, first and last crater id) is taken without allocating; the list is only built when it changes.
+    let n=0,first=null,last=null;
+    if(damage)for(let i=0;i<damage.length;i++){const id=damage[i].id;if(typeof id==='string'&&id.startsWith('np_shell_crater_')){if(n===0)first=id;last=id;n++;}}
+    if(n===(this.shellCraterN??0)&&first===(this.shellCraterFirst??null)&&last===(this.shellCraterLast??null))return;   // nothing changed (and nothing to draw before the first shell: an act without shells never makes the meshes)
+    this.shellCraterN=n;this.shellCraterFirst=first;this.shellCraterLast=last;
+    const list=damage.filter(d=>typeof d.id==='string'&&d.id.startsWith('np_shell_crater_')).slice(-SHELL_CRATERS_MAX);
     if(!this.shellCraters){
       const disc=new THREE.CircleGeometry(1,24).rotateX(-Math.PI/2),rim=buildCraterRimGeometry();
       const soot=new THREE.MeshStandardMaterial({color:'#2a251d',roughness:1,transparent:true,opacity:.85,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),earth=createEarthMaterial();
