@@ -2,7 +2,7 @@
 
 ## M02 — presença física da secção — 2026-11-04
 
-`70c6031` exclui aliados fora da célula de combate, fogo amigo e navegação, preservando Lis e o roster. 204 testes M02, build e três browser passaram; [evidência](docs/verification/m02-runtime/actor-presence-2026-11-04/README.md). A passagem integral estava em curso neste registo.
+`70c6031` exclui aliados fora da célula de combate, fogo amigo e navegação, preservando Lis e o roster. 204 testes M02, build, três browser e passagem automatizada até à M03 passaram; [evidência e limites](docs/verification/m02-runtime/actor-presence-2026-11-04/README.md).
 
 ## M02 — retirada com homens em trânsito — 2026-11-04
 

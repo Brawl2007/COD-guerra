@@ -2,7 +2,7 @@
 
 ## Continuação — presença física da secção, 2026-11-04
 
-`70c6031` impede que aliados fora da célula sejam vistos/atingidos localmente, bloqueiem tiros ou interfiram na navegação; Lis já evacuado permanece ausente em C11 sem ser movido. Passaram 204 testes M02, build e três browser; [comparação e limites](../verification/m02-runtime/actor-presence-2026-11-04/README.md). Passagem integral com água/ordens/granada iniciada em `/tmp/m02-presence-native-70c6031`; consultar o relatório antes de declarar resultado. Continuar roteiro Astra, com atenção à confirmação da retirada antecipada e à atuação física. Main e produção intactas.
+`70c6031` impede que aliados fora da célula sejam vistos/atingidos localmente, bloqueiem tiros ou interfiram na navegação; Lis já evacuado permanece ausente em C11 sem ser movido. Passaram 204 testes M02, build e três browser; [comparação e limites](../verification/m02-runtime/actor-presence-2026-11-04/README.md). A [passagem integral](../verification/m02-runtime/actor-presence-2026-11-04/native/report.json) escolheu água/giz e chegou à M03 com Lis e 12/12, sem mortes do jogador ou erros; piloto lê estado oculto. Continuar roteiro Astra, com atenção à confirmação da retirada antecipada e à atuação física. Main e produção intactas.
 
 ## Continuação — retirada antecipada C11, 2026-11-04
 
