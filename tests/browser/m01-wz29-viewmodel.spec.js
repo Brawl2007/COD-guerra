@@ -1,11 +1,13 @@
 import {test,expect} from '@playwright/test';
 import {driver} from '../helpers/m01-route.js';
+import {gameBooted,expectPaused,SLOW_GL_TEST_TIMEOUT} from '../helpers/m01-browser-boot.js';
 const key='cod-guerra:checkpoint:m01:v2';
 for(const quality of ['low','medium','high'])test(`Wz.29 production ADS, paused save reconstruction and actual sights on ${quality}`,async({page},info)=>{
+  test.setTimeout(SLOW_GL_TEST_TIMEOUT);   // software WebGL: the lazy game boot alone takes ~45 s on a loaded 4-core VM
   const d=driver();d.step({skip:true});for(let i=0;i<12;i++)d.step({aim:true});
   const snapshot=d.sim.snapshot(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
-  await page.goto('?debug=1');await expect(page.locator('#start')).toBeEnabled({timeout:60000});await page.locator('#quality').selectOption(quality);
+  await page.goto('?debug=1');await gameBooted(page);await page.locator('#quality').selectOption(quality);
   // Freeze at the first native pointer-lock boundary, before a gameplay tick.
   await page.evaluate(()=>{
     const hold=e=>{if(document.pointerLockElement?.id==='game'){
@@ -13,7 +15,7 @@ for(const quality of ['low','medium','high'])test(`Wz.29 production ADS, paused 
     }};document.addEventListener('pointerlockchange',hold,true);
   });
   const menuFrames=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames);
-  await page.locator('#continue').click();await expect(page.locator('#pause')).toBeVisible();
+  await page.locator('#continue').click();await expectPaused(page);
   // renderedFrames increments before viewModel.update(), so High can expose stale menu stats while
   // optional assets finish loading. Wait for the presentation sample to match the restored player state.
   await page.waitForFunction(({clock,frames})=>{
