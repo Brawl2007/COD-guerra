@@ -2,6 +2,32 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('C04 water preparation plays an audible equipment cue from its real event',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const result=await page.evaluate(async()=>{
+  window.requestAnimationFrame=()=>0;await new Promise(r=>setTimeout(r,100));
+  const {sim,renderer}=window.m02Bench,p=renderer.presentation,a=p.audio,w=sim.enemies.find(e=>e.c04Candidate);sim.enemies=[w];sim.allies=[];
+  Object.assign(w,{x:1,y:0,z:-60,health:40,alive:true,state:'WOUNDED_UNARMED',nonCombatant:true});sim.teleportPlayer(0,-60,0,0);
+  sim.drainEvents();sim.tick(.05,{giveWater:true});const events=sim.drainEvents().filter(e=>e.type==='c04-water-started');
+  const before=JSON.stringify(sim.snapshot());p.syncSession(sim);await a.ctx.resume();a.stopAll(false);
+  const destination=a.ctx.createMediaStreamDestination(),recorder=new MediaRecorder(destination.stream),chunks=[];a.master.connect(destination);
+  recorder.ondataavailable=e=>chunks.push(e.data);recorder.start();const count=a.diagnostics.eventCounts['water-handling']??0;p.consume(events,sim);
+  await new Promise(r=>setTimeout(r,350));await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
+  const blob=new Blob(chunks,{type:recorder.mimeType}),buffer=await a.ctx.decodeAudioData(await blob.arrayBuffer());let peak=0;
+  for(let c=0;c<buffer.numberOfChannels;c++)for(const value of buffer.getChannelData(c))peak=Math.max(peak,Math.abs(value));
+  const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.readAsDataURL(blob);});
+  a.master.disconnect(destination);return {events:events.length,peak,encoded,count:(a.diagnostics.eventCounts['water-handling']??0)-count,
+   unchanged:before===JSON.stringify(sim.snapshot()),pending:Boolean(sim.playerWaterAction),state:a.ctx.state};
+ });
+ expect(result.events).toBe(1);expect(result.count).toBe(1);expect(result.pending).toBe(true);expect(result.peak).toBeGreaterThan(.0001);
+ expect(result.unchanged).toBe(true);expect(result.state).toBe('running');expect(errors).toEqual([]);
+ writeFileSync(testInfo.outputPath('water-handling.webm'),Buffer.from(result.encoded,'base64'));
+ console.log('M02 water handling audio',JSON.stringify({peak:result.peak,events:result.events,count:result.count}));
+});
+
 test('C04 offers water by touch while keeping the separate chalk choice',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:844,height:390});await page.goto('/COD-guerra/m02.html?quality=low&touch=1&debug=1');
