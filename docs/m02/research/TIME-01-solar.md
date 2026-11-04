@@ -22,7 +22,7 @@ Reprodução: `node tools/m02/solar-noaa.mjs` · teste: `node --test tests/m02-1
 Validação independente (no teste): equação do tempo e declinação tabeladas, nascer/ocaso de Londres e Varsóvia em 21/06/2023 (timeanddate.com) a ±2 min, elevação ao meio-dia solar.
 
 ## Divergência face ao cálculo anterior do Capitão
-Elevações/azimutes coincidem (≤0,1°). Ocaso 18:14 (não 18:09) e nascer 05:08 (não 05:13): diferença de ~5 min cada, consistente com o uso de zénite 90° em vez de 90,833° (semidiâmetro + refração). Está certo o valor NOAA acima (confirmado com Londres/Varsóvia).
+Elevações/azimutes coincidem (≤0,1°). Ocaso 18:14 (não 18:09) e nascer 05:08 (não 05:13): diferença de ~5 min cada, consistente com o uso de zénite 90° em vez de 90,833° (semidiâmetro + refração). Os dois pares estão certos, cada um na sua definição: 18:09/05:13 = centro geométrico do disco no horizonte (zénite 90°); 18:14/05:08 = ocaso/nascer padrão NOAA (zénite 90,833°), que é o que se usa para «pôr do sol» e foi confirmado com Londres/Varsóvia. Conferido pelo Capitão com uma implementação independente (Astronomical Almanac, baixa precisão), 2026-11-04. Para a cena, usar 18:14 / 05:08.
 Nota: o «pôr do sol 19:10» do #58 usava CEST (UTC+2); em CET equivale a ~18:10, em linha com 18:14 aqui.
 
 ## Presets de luz M02 vs. cálculo

@@ -171,8 +171,8 @@ Classificação: ✓ conforme, ≈ parcial, ✗ desvio. A severidade segue O6.
   |---|---|---|
   | 9/9, 16:30 | 15,2° | 259° |
   | 9/9, 17:00 | 10,6° | 265° |
-  | Ocaso de 9/9 | ≈ 18:09 | — |
-  | Nascer de 10/9 | ≈ 05:13 | — |
+  | Ocaso de 9/9 | ≈ 18:14 padrão NOAA (zénite 90,833°); ≈ 18:09 centro geométrico (90°) | — |
+  | Nascer de 10/9 | ≈ 05:08 padrão NOAA; ≈ 05:13 centro geométrico | — |
   | 10/9, 07:30 | 20,7° | 109° |
 
   Isto confirma a nota A2 do pacote: o «pôr do sol 19:10» do #58 está errado, porque usa CEST.
@@ -275,7 +275,7 @@ GEO-01 e ART-01. Para o cavalo, VO e sons novos, a licença está por definir.
   zona industrial antes da guerra.
 - **ART-01:** fotografias de Tum anteriores a setembro de 1939 (BZ-H07).
 - **EQP-01:** dotação de armas e uniformes. Inclui a MP38 da Gemini, que não tem fonte.
-- **TIME-01:** guardar C02, o cálculo solar de Łęczyca (§3.3), em `research/SOURCES.md`.
+- **TIME-01:** ~~guardar C02~~ guardado como `BZ-C02` em `research/SOURCES.md` (2026-11-04), com ferramenta e teste. Falta acertar os presets de luz da bancada (`docs/m02/research/TIME-01-solar.md`: T0 15–24° alto, T2 azimute errado em 38°).
 - **CONT-01:** trajetória até Varsóvia.
 - **Fontes BZ-H01…H14:** copiar para `research/SOURCES.md` com estado de leitura. Hoje estão apenas «registadas no
   PDF; conteúdo não guardado».
