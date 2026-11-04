@@ -2,6 +2,23 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('farm completion and the B transition do not claim M02 is complete',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const stages=await page.evaluate(()=>{
+  const s=window.m02Bench.sim,w=s.enemies.find(e=>e.c04Candidate);s.c01Active=false;s.enemies=[w];s.allies=[];
+  Object.assign(w,{x:1,y:0,z:35,health:40,alive:true,state:'WOUNDED_UNARMED',nonCombatant:true});s.teleportPlayer(0,44,0,0);s.updateTacticalContext();
+  const farm={objective:s.objective.id,completed:s.flags['m02.completed']};const payload=s.triggerTransitionTAB();
+  s.enterAreaBC06();const b={cell:s.activeCellId,completed:s.flags['m02.completed'],payload:payload.flags['m02.completed']};
+  s.enterAreaCC09();const c={cell:s.activeCellId,completed:s.flags['m02.completed']};
+  const result=s.completeC12Epilogue({lisOutcome:'missing'});return {farm,b,c,final:result.completed};
+ });
+ expect(stages).toEqual({farm:{objective:'COMPLETE',completed:false},b:{cell:'B',completed:false,payload:false},c:{cell:'C',completed:false},final:true});
+ expect(errors).toEqual([]);
+});
+
 test('C04 water preparation plays an audible equipment cue from its real event',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');

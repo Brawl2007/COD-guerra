@@ -57,11 +57,12 @@ try{
  for(let iteration=0;iteration<24000;iteration++){
   const observed=await page.evaluate(()=>{
    const sim=window.m02Bench.sim;
-   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,waterOffered:Boolean(sim.flags['m02.pomar_wounded_water']),ammo:{mag:sim.weapon.mag,reserve:sim.weapon.reserve,received:sim.weapon.received,grenades:sim.grenadeAmmo},decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z],squadOrder:sim.squadOrder.type};
+   return {clock:sim.clock,state:window.m02Diagnostics().state,health:sim.player.health,cell:sim.activeCellId,objective:sim.objective.id,completed:sim.areaC.c12Completed,missionCompleted:Boolean(sim.flags['m02.completed']),waterOffered:Boolean(sim.flags['m02.pomar_wounded_water']),ammo:{mag:sim.weapon.mag,reserve:sim.weapon.reserve,received:sim.weapon.received,grenades:sim.grenadeAmmo},decision:window.m02Pilot.decide(sim),pos:[sim.player.x,sim.player.z],squadOrder:sim.squadOrder.type};
   });
   const label=`${observed.cell}:${observed.objective}`;
   if(verifyWater&&!report.water&&observed.waterOffered)report.water={clock:observed.clock,cell:observed.cell,pos:observed.pos};
-  if(label!==last){last=label;report.stages.push({label,clock:observed.clock,health:observed.health,pos:observed.pos,realSec:(Date.now()-started)/1000});console.log(JSON.stringify(report.stages.at(-1)));await page.screenshot({path:`${out}/${report.stages.length}-${label.replace(':','-')}.png`});}
+  if(label!==last){last=label;report.stages.push({label,clock:observed.clock,health:observed.health,missionCompleted:observed.missionCompleted,pos:observed.pos,realSec:(Date.now()-started)/1000});console.log(JSON.stringify(report.stages.at(-1)));await page.screenshot({path:`${out}/${report.stages.length}-${label.replace(':','-')}.png`});}
+  if(observed.missionCompleted&&!observed.completed)throw Error('M02 was marked complete before C12');
   if(observed.completed){report.completed=true;break;}
   if(observed.health<=0){
     report.deaths.push({label,clock:observed.clock,realSec:(Date.now()-started)/1000});
@@ -116,6 +117,7 @@ try{
  for(let i=0;i<3;i++){await page.screenshot({path:`${out}/epilogue-${i}.png`});await page.click('#mission-epilogue-next');}
  await page.waitForFunction(()=>window.m02Diagnostics().state==='debrief');
  report.result=await page.evaluate(()=>structuredClone(window.m02Bench.sim.m03ExportPackage));
+ if(!report.result?.completed||!report.result?.flags?.['m02.completed'])throw Error('C12 did not complete the campaign transaction');
  if(verifyWater&&!report.result?.flags?.['m02.pomar_wounded_water'])throw Error('The water choice was lost before the campaign handoff');
  report.diagnostics=await page.evaluate(()=>window.m02Diagnostics());
  await page.setViewportSize({width:1280,height:720});await page.screenshot({path:`${out}/debrief.png`});

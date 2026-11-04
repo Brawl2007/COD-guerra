@@ -222,7 +222,7 @@ test('COM-03 & K2/K3: Protected literal line dlg_m02_001, C04 wounded soldier pe
   sim.interactDoor();
   assert.equal(sim.flags['m02.pomar_wounded_marked'], true, 'Chalk interaction must set m02.pomar_wounded_marked=true');
   assert.equal(sim.objective.id, 'COMPLETE', 'Marking wounded soldier after clearing farm must complete M02-02');
-  assert.equal(sim.flags['m02.completed'], true);
+  assert.equal(sim.flags['m02.completed'], false, 'the farm is not the end of the whole mission');
 
   // Now test firing on the unarmed wounded soldier -> sets m02.fired_on_wounded=true and triggers priority-0 bz39_c04_05
   const shotAtWounded = sim.fireDirectRay(

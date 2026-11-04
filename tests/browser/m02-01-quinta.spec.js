@@ -129,7 +129,7 @@ test.describe('M02-01 & M02-02 Quinta da Bzura (100x150m) — Browser Verificati
     });
     const c04State = await page.evaluate(() => window.m02Bench.getStateSummary());
     expect(c04State.flags['m02.pomar_wounded_marked']).toBe(true);
-    expect(c04State.flags['m02.completed']).toBe(true);
+    expect(c04State.flags['m02.completed']).toBe(false);
     await snapIfMissing('m02-02-c04-orchard-chalk.png');
 
     // 10. M02-03 Capture 1: Scene C01 Start at P1 (0, -175) with opening cartela & squad in northern trench

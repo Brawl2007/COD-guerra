@@ -545,7 +545,6 @@ export class M02BenchSimulation {
       text: cartelaText,
       expiresAt: this.clock + 8.0,
     };
-    this.flags['m02.completed'] = true;
     this.flags['m02.transicao_tab_pronta'] = true;
 
     this.transitionTABPayload = {
@@ -1458,7 +1457,6 @@ export class M02BenchSimulation {
       this.objective.id = 'COMPLETE';
       this.objective.title = 'Quinta consolidada — Secção pronta para avançar rumo a Łęczyca (M02-B)';
       this.objective.status = 'completed';
-      this.flags['m02.completed'] = true;
       this.dialogue.trigger('bz39_c05_01', this);
       if (!this.checkpoints.has('cp_m02_b_acesso')) {
         this.saveCheckpoint('cp_m02_b_acesso');
@@ -1705,7 +1703,14 @@ export class M02BenchSimulation {
     }
     this.mgState = structuredClone(snap.mgState);
     this.routeProgress = structuredClone(snap.routeProgress);
-    if (snap.flags) this.flags = structuredClone(snap.flags);
+    if (snap.flags) {
+      this.flags = structuredClone(snap.flags);
+      // Older checkpoints marked the whole mission complete when only the
+      // farm was secured. Keep their progress, but repair that campaign flag.
+      if(!this.areaC.c12Completed&&!this.m03ExportPackage?.completed)this.flags['m02.completed']=false;
+    }
+    // T-AB is always an intermediate transition, including in legacy saves.
+    if(this.transitionTABPayload?.flags?.['m02.completed'])this.transitionTABPayload.flags['m02.completed']=false;
     if (snap.squadOrder) this.squadOrder = structuredClone(snap.squadOrder);
     if (snap.dialogue) this.dialogue.restore(snap.dialogue);
     if (snap.horizon) this.horizon.restore(snap.horizon);

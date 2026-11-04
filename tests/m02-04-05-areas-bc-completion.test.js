@@ -183,6 +183,7 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
 
     // Outcome A: wounded_evacuated
     const pkgEvac = sim.completeC12Epilogue({ lisOutcome: 'wounded_evacuated' });
+    assert.equal(pkgEvac.flags['m02.completed'],true,'the final campaign transaction completes M02');
     assert.equal(sim.dialogue.hasTriggered('dlg_m02_003'), true);
     assert.equal(
       M02_DIALOGUE_CATALOG.dlg_m02_003.text,
