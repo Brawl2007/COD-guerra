@@ -15,6 +15,7 @@ import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {m02ExposedLastGroup,updateM02EvacuationWound} from './m02-evacuation-targets.js';
+import {m02ActorPresent} from './m02-actor-presence.js';
 import {stepM02Grenade} from './m02-grenade-physics.js';
 import {m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
 import {
@@ -670,7 +671,7 @@ export class M02BenchSimulation {
       issuedCell:this.activeCellId,
     };
     if(type==='suppress'&&(this.activeCellId==='B'||this.activeCellId==='C')){
-      this.squadOrder.holdPositions=Object.fromEntries(this.allies.filter(a=>a.alive&&!a.detachedOutOfCell&&
+      this.squadOrder.holdPositions=Object.fromEntries(this.allies.filter(a=>a.alive&&m02ActorPresent(a)&&
         !['DOWN','WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(a.state))
         .map(a=>[a.id,{x:a.x,z:a.z}]));
     }
@@ -1008,7 +1009,7 @@ export class M02BenchSimulation {
     const aimYaw=Math.atan2(aimPoint.z-origin.z,aimPoint.x-origin.x);
     const aimPitch=Math.atan2(aimPoint.y-origin.y,Math.hypot(aimPoint.x-origin.x,aimPoint.z-origin.z));
     const muzzle=shooter.id==='DE-A05'?origin:muzzlePosition({...shooter,angle:aimYaw,pitch:aimPitch,aiming:true},this.clock);
-    const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies, ...m02ExposedLastGroup(this)];
+    const candidateTargets = (side === 'ally' ? this.enemies : [this.player, ...this.allies, ...m02ExposedLastGroup(this)]).filter(m02ActorPresent);
     let hitAny = false;
     const traces=[];
 
@@ -1139,7 +1140,7 @@ export class M02BenchSimulation {
     if(!shooter.alive||shooter.nonCombatant||shooter.suppressed>=.88||shooter.reloadingUntil>this.clock||shooter.mag<=0){shooter.burst=null;return;}
     const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies,...m02ExposedLastGroup(this)];
     const target=candidates.find(a=>a.id===burst.targetId)??null;
-    if(target?.nonCombatant){shooter.burst=null;return;}
+    if(target&&(target.nonCombatant||!m02ActorPresent(target))){shooter.burst=null;return;}
     // Last observed point, not the hidden target's current coordinates. Every
     // round reuses the existing world/actor ray test at its own simulation tick.
     while(burst.remaining>0&&this.clock+1e-8>=burst.nextAt){
@@ -1250,7 +1251,7 @@ export class M02BenchSimulation {
     const affectedActors = [];
     const allActors = [this.player, ...this.allies, ...this.enemies, ...m02ExposedLastGroup(this)];
     for (const actor of allActors) {
-      if (!actor || !actor.alive) continue;
+      if (!m02ActorPresent(actor) || !actor.alive) continue;
       const targetPt = { x: actor.x, y: actor.y + 0.95, z: actor.z };
       const dx = targetPt.x - center.x;
       const dy = targetPt.y - center.y;
@@ -1485,7 +1486,7 @@ export class M02BenchSimulation {
       this.routeProgress.activeRoute !== 'none' ||
       this.routeProgress.visitedBuildings.B01 ||
       pz > -62 ||
-      this.allies.some((a) => a.z > -62)
+      this.allies.some((a) => a.alive && m02ActorPresent(a) && a.z > -62)
     ) {
       this.objective.id = 'O02';
       this.objective.title =

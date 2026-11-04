@@ -10,6 +10,7 @@ import { M02Presentation } from './m02-presentation.js';
 import { eyePosition } from '../world/spatial.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
 import {initialQuality as selectM01InitialQuality} from './three-renderer.js';
+import {m02ActorPresent} from '../game/m02-actor-presence.js';
 import {WEAPON_PRESENTATION,weaponRecoil} from './first-person-weapon-fx.js';
 import {M02Lighting} from './m02-lighting.js';
 import {M02CombatFX} from './m02-combat-fx.js';
@@ -738,7 +739,7 @@ export class M02BenchRenderer {
       });
       soldier.group.position.set(a.x, a.y, a.z);
       soldier.group.rotation.y = -(a.facing ?? 0) + Math.PI / 2;
-      soldier.group.visible = !a.detachedOutOfCell;
+      soldier.group.visible = m02ActorPresent(a);
       this.targetsGroup.add(soldier.group);
       this.allyMeshes.set(a.id, soldier);
     }
@@ -1035,7 +1036,7 @@ export class M02BenchRenderer {
       if (this.presentation.hasCharacter(actor.id)) { entry.group.visible=false; continue; }
       const band = selectConsumerLod('actors', Math.hypot(actor.x-player.x, actor.z-player.z), this.qualityProfile.id);
       rigPose(entry, actor, {clock:this.sim.clock, dt, side, lodBand:band});
-      entry.group.visible = !actor.detachedOutOfCell && !this.presentation.hasCharacter(actor.id);
+      entry.group.visible = m02ActorPresent(actor) && !this.presentation.hasCharacter(actor.id);
     }
 
     for(const lg of this.sim.areaC?.lastGroup??[]){const fallback=this.lastGroupMeshes.get(lg.id);if(fallback)fallback.group.visible=this.sim.areaC.c10Started&&lg.alive&&!lg.evacuated&&!this.presentation.hasCharacter(lg.id);}

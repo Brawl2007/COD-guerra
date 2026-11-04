@@ -2,6 +2,33 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('detached Lis is absent from rendering and cannot intercept an enemy round',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ const absent=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench;sim.reset('C02');sim.enterAreaCC09();const lis=sim.allies.find(a=>a.id==='pl_lis'),gun=sim.enemies.find(a=>a.weapon==='mg34');
+  sim.allies=[lis];sim.enemies=[gun];Object.assign(gun,{x:0,y:0,z:100,mag:50,suppressed:0,alive:true,goal:null});
+  Object.assign(lis,{x:0,y:0,z:110,health:100,alive:true,detachedOutOfCell:true,state:'LIAISON_OUTSIDE_CELL'});
+  sim.teleportPlayer(0,120,-Math.PI/2,0);sim.drainEvents();
+  const shot=sim.fireActorBurst(gun,sim.player,{x:0,y:1.25,z:120},'enemy');renderer.renderFrame(0,0);
+  return {hit:shot.traces[0].hitId,lisHealth:lis.health,playerHealth:sim.player.health,
+   model:renderer.presentation.hasCharacter(lis.id),fallback:renderer.allyMeshes.get(lis.id)?.group.visible??false};
+ });
+ expect(absent.hit).toBe('piotr_sokol');expect(absent.lisHealth).toBe(100);expect(absent.playerHealth).toBeLessThan(100);
+ expect(absent.model).toBe(false);expect(absent.fallback).toBe(false);
+ const label=await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · LIS DESTACADO";position:fixed;right:8px;top:8px;z-index:80;padding:5px;background:#111;color:#fff;font:10px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('lis-detached.png')});await label.evaluate(el=>el.remove());
+ const present=await page.evaluate(()=>{
+  const {sim,renderer}=window.m02Bench,lis=sim.allies[0];lis.detachedOutOfCell=false;lis.state='ACTIVE';renderer.renderFrame(0,0);
+  return {model:renderer.presentation.hasCharacter(lis.id),fallback:renderer.allyMeshes.get(lis.id)?.group.visible??false};
+ });
+ expect(present.model||present.fallback).toBe(true);
+ await page.addStyleTag({content:'#mission-menu{display:none!important}body:after{content:"INSPEÇÃO CONTROLADA · LIS PRESENTE";position:fixed;right:8px;top:8px;z-index:80;padding:5px;background:#111;color:#fff;font:10px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('lis-present-comparison.png')});expect(errors).toEqual([]);
+});
+
 test('C11 touch withdrawal warns about those left and preserves their uncertain fate',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:844,height:390});await page.goto('/COD-guerra/m02.html?quality=low&touch=1&debug=1');

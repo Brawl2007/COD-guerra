@@ -447,7 +447,7 @@ export function enterAreaCC09(sim, { skipTransition = false } = {}) {
   ];
   let idx = 0;
   for (const ally of sim.allies) {
-    if (ally.detachedOutOfCell || ally.state === 'EVACUATED') continue;
+    if (ally.detachedOutOfCell || ally.state === 'EVACUATED') {ally.detachedOutOfCell=true;continue;}
     const [ax, az] = allySpawns[idx++ % allySpawns.length];
     ally.x = ax;
     ally.z = az;
@@ -597,7 +597,7 @@ export function startC11LisAndLastGroup(sim) {
   if (lis) {
     // J3: Lis returns from liaison already wounded by fragmentation outside the cell (unless already incapacitated earlier; never duplicates Lis!)
     const wasAlreadyIncapacitated = !lis.alive || lis.state === 'EVACUATED' || lis.state === 'DOWN';
-    lis.detachedOutOfCell = false;
+    lis.detachedOutOfCell = wasAlreadyIncapacitated;
     if (!wasAlreadyIncapacitated) {
       lis.x = -28.0;
       lis.z = -22.0;

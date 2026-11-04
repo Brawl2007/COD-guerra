@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {M02Characters} from './m02-character-adapter.js';
 import { M01ViewModel } from './m01-viewmodel.js';
 import { WEAPON_PROFILES } from '../game/m02-combat-ai.js';
+import {m02ActorPresent} from '../game/m02-actor-presence.js';
 import { AudioManager } from '../core/audio.js';
 import {M02Weapons} from './m02-weapons.js';
 import {WeaponLighting} from './first-person-weapon-fx.js';
@@ -34,7 +35,7 @@ export function m02DamageIndicator(source,player,clock,enabled=true){
 export function m02VisualActor(actor, team, clock) {
   const surrendered = actor.state === 'SURRENDERED';
   const wounded = actor.state === 'WOUNDED_UNARMED'||actor.state==='WOUNDED_LIAISON';
-  return { ...actor, team, active: !actor.detachedOutOfCell,
+  return { ...actor, team, active: m02ActorPresent(actor),
     m02WoundedWalking:actor.state==='WALKING_SUPPORTED'||actor.state==='WOUNDED_WALKING',
     id: actor.weapon === 'rkm_wz28' ? 'szymon_kowal' : actor.id,
     role: wounded || surrendered || actor.role==='medic'||actor.state==='WOUNDED_WALKING'||actor.state==='WALKING_SUPPORTED'||actor.state==='EVACUATED_B12' ? 'MEDIC' : 'RIFLEMAN',

@@ -3,6 +3,7 @@ import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import {M01_DIFFICULTY} from './m01-difficulty.js';
 import {m02ExposedLastGroup} from './m02-evacuation-targets.js';
 import {m02MachineGunCover} from './m02-machinegun-team.js';
+import {m02ActorPresent} from './m02-actor-presence.js';
 import {m02ReactToGrenade,m02ClearIncapableGrenadeThreat} from './m02-grenade-awareness.js';
 
 export const WEAPON_PROFILES = Object.freeze({
@@ -555,7 +556,7 @@ export function friendlyFireClear(shooter, targetPoint, friendlies, clearanceM =
   const uz = dz / len;
 
   for (const f of friendlies) {
-    if (!f || f.id === shooter.id || !f.alive) continue;
+    if (!m02ActorPresent(f) || f.id === shooter.id || !f.alive) continue;
     const fx = f.x - shooter.x;
     const fz = f.z - shooter.z;
     const proj = fx * ux + fz * uz;
@@ -693,7 +694,7 @@ export function stepActorNavigation(sim, actor, dt) {
   // Gentle personal-space repulsion against other living actors so capsules never stack
   const allActors = [...sim.allies, ...sim.enemies,...(actor.encounterId==='LAST_GROUP'?sim.areaC.lastGroup:[])];
   for (const other of allActors) {
-    if (other.id === actor.id || !other.alive) continue;
+    if (other.id === actor.id || !other.alive || !m02ActorPresent(other)) continue;
     const ox = actor.x - other.x;
     const oz = actor.z - other.z;
     const od = Math.hypot(ox, oz);
@@ -750,7 +751,7 @@ export function updatePolishSquad(sim, dt) {
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
-    if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) {
+    if (!ally.alive || ally.state === 'DOWN' || !m02ActorPresent(ally)) {
       if(ally.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(ally);
       continue;
     }
@@ -991,10 +992,10 @@ export function updateGermanGarrison(sim, dt) {
   // Detect which flank is under pressure so local reserves (DE-A12, DE-A13) can shift (J1)
   const westPressure =
     (sim.player.x < -20 && sim.player.z > -45) ||
-    sim.allies.some((a) => a.alive && a.x < -24 && a.z > -35);
+    sim.allies.some((a) => a.alive && m02ActorPresent(a) && a.x < -24 && a.z > -35);
   const eastPressure =
     (sim.player.x > 18 && sim.player.z > -45) ||
-    sim.allies.some((a) => a.alive && a.x > 18 && a.z > -35);
+    sim.allies.some((a) => a.alive && m02ActorPresent(a) && a.x > 18 && a.z > -35);
 
   for (const enemy of sim.enemies) {
     if (!enemy.alive) {if(enemy.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(enemy);continue;}
@@ -1070,7 +1071,7 @@ export function updateGermanGarrison(sim, dt) {
     updateLowCoverExposure(sim,enemy);
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
-    const potentialTargets = [sim.player, ...sim.allies, ...m02ExposedLastGroup(sim)].filter((t) => t && t.alive && t.state !== 'DOWN');
+    const potentialTargets = [sim.player, ...sim.allies, ...m02ExposedLastGroup(sim)].filter((t) => m02ActorPresent(t) && t.alive && t.state !== 'DOWN');
     const crewCover=m02MachineGunCover(sim,enemy,'enemy');
     let visibleTarget = null;
     let bestTargetScore = -Infinity;

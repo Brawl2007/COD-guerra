@@ -1,9 +1,10 @@
 // A soldier can react to a nearby visible grenade or its actual nearby bounce.
 // Memory keeps the last perceived position; it does not track the projectile
 // through a wall or use the future location of its detonation.
+import {m02ActorPresent} from './m02-actor-presence.js';
 const halfCone=1.32,noticeRange=8,hearingRange=5,clearRadius=8.5;
 const angleDiff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
-const incapable=actor=>!actor.alive||actor.nonCombatant||actor.detachedOutOfCell||
+const incapable=actor=>!actor.alive||actor.nonCombatant||!m02ActorPresent(actor)||
  ['DOWN','SURRENDERED','WOUNDED_UNARMED','WOUNDED_LIAISON','WALKING_SUPPORTED','EVACUATED_B12'].includes(actor.state);
 
 // Damage and scripted transitions can incapacitate an actor between AI ticks.
