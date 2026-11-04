@@ -201,7 +201,7 @@ As correcções 1–4 mexem em quatro ficheiros do fecho do golden da emenda 21 
 
 ```
 node tools/verification/m01-integration-golden-audit.mjs --amendment 21 --write   → written
-node tools/verification/m01-integration-golden-audit.mjs --amendment 21           → a correr à hora desta escrita (19:42 →); o resultado fica na linha seguinte, no commit que a fecha
+node tools/verification/m01-integration-golden-audit.mjs --amendment 21           → check: identical   (19:42 → 21:05, ≈ 83 min; a última linha do relatório, saída 0)
 node tools/verification/m01-act-vii-a-golden.mjs                                   → check: identical
 node tools/verification/m01-act-vii-b-golden.mjs                                   → check: identical
 ```
