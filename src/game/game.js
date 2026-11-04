@@ -187,7 +187,6 @@ export class Game {
   }
   /** One queued sound that has come due (distance / 343 s after the simulation event). Presentation only. */
   playSound(sound){
-    if(sound.kind==='whistle'){this.audio.tone(2100,sound.duration,'sine',.05,-1500,sound.pan,0,{kind:'shell-whistle',category:'explosion',distance:sound.distance});return;}   // the falling shell: a sine gliding down for the warning time
     if(sound.kind==='fire'){
       // T47: the ckm wz.30 burst of the simulation (`ally-fire`, 8 rounds at 0.1 s) is played whole through its own burst call.
       if(this.isM01&&sound.weapon==='ckm_wz30')this.audio.ckmBurst(sound.pan,sound.distance,sound.rounds,sound.interval,sound.key,sound.front);
@@ -324,8 +323,7 @@ export class Game {
     }
     // The simulation decided the landing (speed, damage, surface); the thud and the camera dip only present it.
     if(event.type==='player-landing'){this.audio.landing(event.speed,event.surface,`landing:${this.sim.clock.toFixed(3)}`);this.renderer.m01.playerLanding(this.sim.clock,event.speed,event.surface);}
-    // R4 INC-2: the whistle of an incoming shell (Act VII-b). The simulation decided where it falls and when (the event is its launch, `warnSec` before the impact); this only presents it, from the launch.
-    if(event.type==='shell-incoming'){const s=this.spatial(event.point);this.pendingSounds.push({...s,at:event.at,kind:'whistle',duration:event.warnSec,key:`whistle:${event.at.toFixed(3)}`});}
+    // R4 INC-2: the whistle of an incoming shell is presented by the audio director (m01-area-audio.js), placed distance/343 s after the launch so that it leads the thud by warnSec.
     if(event.type==='m01-blast'){
       // O estrondo e a vibração chegam juntos (atraso = distância/343 m/s); o áudio só apresenta a autoridade já emitida.
       const s=this.spatial(event.point),damage=[...this.sim.sectors.damage].reverse().find(d=>d.soundAt===event.soundAt&&d.x===event.point.x&&d.z===event.point.z);
