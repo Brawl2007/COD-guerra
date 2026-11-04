@@ -70,6 +70,13 @@ test('syncShellCraters: a fresh array with the same craters redraws nothing; the
   draw([shell(1),shell(2)]);assert.ok(discs.instanceMatrix.version>v,'same count, other craters: redrawn');
 });
 
+test('shell crater rims share the dressing\'s earth material (one soil program) and add only their soot material to the owned list',()=>withCanvas(()=>{
+  const d=new M01AreaDressing(new THREE.Scene(),worlds[1],{surface}),before=d.materials.length;
+  d.syncShellCraters([{id:'np_shell_crater_x_0',x:-440,y:-3,z:-1210,started:1}]);
+  const rims=meshOf(d,'m01-area-shell-crater-rims');
+  assert.ok(rims.material===d.earth);assert.equal(d.materials.length,before+1);d.dispose();
+}));
+
 test('dispose frees the instance buffers of every InstancedMesh (heaps, clods, crater discs and rims, shell craters, stubble)',()=>withCanvas(()=>{
   const scene=new THREE.Scene(),d=new M01AreaDressing(scene,worlds[1],{surface,quality:'high'});
   d.syncShellCraters([{id:'np_shell_crater_x_0',x:-440,y:-3,z:-1210,started:1},{id:'np_shell_crater_x_1',x:-420,y:-3,z:-1205,started:2}]);

@@ -44,7 +44,7 @@ export class M01AreaDressing{
 
     // Earthworks: one soil material for the heaps, the berm, the clods and the crater rims.
     const covers=world.areaCovers??[],parapets=covers.filter(c=>c.coverType==='PARAPET'),mounds=covers.filter(c=>c.coverType==='EARTH');
-    const earth=material(createEarthMaterial());
+    const earth=material(createEarthMaterial());this.earth=earth;   // also the shell craters' rim material (syncShellCraters)
     if(mounds.length){
       const mesh=buildMoundInstances(mounds,geometry(buildMoundGeometry(3,{seg:18,detail:1})),earth);add(mesh,'m01-area-mounds',{cast:true,triangles:mesh.count*mesh.geometry.index.count/3});
       for(const c of mounds)this.replaced.add(c.id);
@@ -141,8 +141,8 @@ export class M01AreaDressing{
     const list=damage.filter(d=>typeof d.id==='string'&&d.id.startsWith('np_shell_crater_')).slice(-SHELL_CRATERS_MAX);
     if(!this.shellCraters){
       const disc=new THREE.CircleGeometry(1,24).rotateX(-Math.PI/2),rim=buildCraterRimGeometry();
-      const soot=new THREE.MeshStandardMaterial({color:'#2a251d',roughness:1,transparent:true,opacity:.85,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),earth=createEarthMaterial();
-      this.geometries.push(disc,rim);this.materials.push(soot,earth);
+      const soot=new THREE.MeshStandardMaterial({color:'#2a251d',roughness:1,transparent:true,opacity:.85,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),earth=this.earth??createEarthMaterial();
+      this.geometries.push(disc,rim);this.materials.push(soot);if(earth!==this.earth)this.materials.push(earth);   // the dressing's own earth material is already owned (one soil shader program, not two)
       const discs=new THREE.InstancedMesh(disc,soot,SHELL_CRATERS_MAX),rims=new THREE.InstancedMesh(rim,earth,SHELL_CRATERS_MAX);
       for(const [m,name,cast] of [[discs,'m01-area-shell-crater-discs',false],[rims,'m01-area-shell-crater-rims',true]]){m.name=name;m.castShadow=cast;m.receiveShadow=true;m.frustumCulled=false;this.group.add(m);}
       this.shellCraters={discs,rims};
