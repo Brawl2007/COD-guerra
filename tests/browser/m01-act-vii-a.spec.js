@@ -23,7 +23,7 @@ function build(){
   const mid=envelope(sim);Object.assign(mid.actSave.player,{crouched:false,angle:-Math.PI/2,pitch:.015});
   const west=envelope(sim);Object.assign(west.actSave.player,{crouched:false,angle:Math.PI+.06,pitch:-.03});
   const w=sim.plan.layout.points.wreck,wreck=envelope(sim);Object.assign(wreck.actSave.player,{crouched:false,angle:Math.atan2(w.z-p.z,w.x-p.x),pitch:.01,aiming:true});
-  tickUntil(()=>sim.timers.endAt!==null);
+  tickUntil(()=>sim.timers.endAt!==null,9000);   // two echelons: the passive pilot repels the attack ~4 minutes (4800 ticks) after the wave starts
   const end=envelope(sim);
   return {spawn,mid,west,wreck,end};
 }

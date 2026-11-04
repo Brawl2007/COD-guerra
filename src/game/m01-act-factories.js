@@ -114,54 +114,104 @@ export function makeLinePlan(def,o=BW_LINE_OPTIONS){
 // south along z). Same phases and the same saved record keys as the deck man's `deck` record (DECK_PHASES, DECK_KEYS, version DECK_ASSAULT_VERSION): an
 // overwatch that walks to its node and fires from cover, an assault that bounds from station to station (cover behind turned earth), holds at its limit, may
 // press on to a closing line, and falls back along its own path when the casualties or the suppression break it.
+// R4 duration work (2026-11-03): the assault may come in ECHELONS. The first is the spec itself (overwatch, lanes, stations and thresholds at its top level, as
+// before: a spec without `echelons` is the single-echelon assault of INC-1, unchanged). `spec.echelons` lists the ones that follow: each enters from the entry line
+// `lullSec` after the echelon before it has left the field (the overwatch keeps its posts through the lull), on lanes of its own that may follow one another by `delaySec`
+// (a column in file), with thresholds of its own and, if it wants, an overwatch of its own that walks in with it. The overwatch of every echelon stays on the field until the
+// LAST echelon breaks, which makes everybody fall back.
 export const APPROACH_PHASES=DECK_PHASES,APPROACH_KEYS=DECK_KEYS,APPROACH_VERSION=DECK_ASSAULT_VERSION;
+/** The keys of sim.timers.wave and of each of its echelon records (the saved state of an approach assault; validApproachWave). */
+export const APPROACH_WAVE_KEYS=Object.freeze(['at','brokenAt','casualties','closeCalled','ech','echs','lullUntil','repelledAt']);
+export const APPROACH_ECHELON_KEYS=Object.freeze(['at','brokenAt','casualties','closed','seen']);
+const ECHELON_SPEC_KEYS=Object.freeze(['id','lullSec','overwatch','lanes','stations','limitStation','closeAfterSec','breakPinnedSec','breakOut','maxSec']);
+const LANE_KEYS=Object.freeze(['id','men','x','delaySec']),OVERWATCH_KEYS=Object.freeze(['id','weapon','node','delaySec']);
 /**
- * `spec`: act.json grp_*.assault. `bounds`: {minX,maxX} the lanes and nodes must lie in, `groundY`. Returns the frozen plan: per man his entry, his path
- * (stops and bypass waypoints round his own cover), his stop indices, the covers (one per stop, south of it, the side the fire comes from) and the timings.
+ * `spec`: act.json grp_*.assault. `bounds`: {minX,maxX} the lanes and nodes must lie in, `groundY`; `solids`: boxes {id,min:{x,z},max:{x,z}} of the area (wreck,
+ * parapet) that no path may cross and no cover may touch. Returns the frozen plan: per man his echelon, entry, path (stops and bypass waypoints round his own
+ * cover), stop indices, the covers (one per stop, south of it, the side the fire comes from), and per echelon its men and thresholds.
  */
-export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach assault'}){
+export function makeApproachPlan(spec,{minX,maxX,groundY=-3,label='M01 approach assault',solids=[]}){
   const fail=m=>{throw new Error(`${label}: ${m}`);};
   if(!spec||spec.version!==APPROACH_VERSION)fail('version');
   const range=(r,lo,hi)=>Array.isArray(r)&&r.length===2&&num(r[0],lo,hi)&&num(r[1],r[0],hi);
   if(!num(spec.entryZ,-1e5,1e5)||!num(spec.clearZ,spec.entryZ,1e5))fail('entryZ / clearZ');
-  const st=spec.stations;
-  if(!Array.isArray(st)||st.length<2||st.some((z,i)=>!Number.isFinite(z)||z<=spec.entryZ||(i&&z<=st[i-1])))fail('stations: z, north to south, south of entryZ');
-  if(!Number.isInteger(spec.limitStation)||spec.limitStation<0||spec.limitStation>=st.length)fail('limitStation');
+  const stationsOk=st=>Array.isArray(st)&&st.length>=2&&st.every((z,i)=>Number.isFinite(z)&&z>spec.entryZ&&(!i||z>st[i-1]));
+  const limitOk=(l,st)=>Number.isInteger(l)&&l>=0&&l<st.length;
+  const timingsOk=e=>num(e.closeAfterSec,0,600)&&num(e.breakPinnedSec,1,300)&&Number.isInteger(e.breakOut)&&e.breakOut>=1&&num(e.maxSec,30,900);
+  if(!stationsOk(spec.stations))fail('stations: z, north to south, south of entryZ');
+  if(!limitOk(spec.limitStation,spec.stations))fail('limitStation');
   const c=spec.cover;if(!c||!num(c.widthM,.5,6)||!num(c.depthM,.3,3)||!num(c.heightM,.3,2)||!num(c.aheadM,.4,3)||!num(c.bypassM,c.widthM/2+.6,6))fail('cover');
   if(!num(spec.walkSpeed,.5,4)||!num(spec.rushSpeed,2,7)||!num(spec.fallbackSpeed,2,7))fail('speeds');
-  if(!range(spec.coverSec,.5,30)||!range(spec.holdSec,1,120)||!num(spec.closeAfterSec,0,600)||!num(spec.pinnedWaitMaxSec,0,30)||!num(spec.breakPinnedSec,1,300)||
-    !Number.isInteger(spec.breakOut)||spec.breakOut<1||!num(spec.maxSec,30,900))fail('timings');
+  if(!range(spec.coverSec,.5,30)||!range(spec.holdSec,1,120)||!num(spec.pinnedWaitMaxSec,0,30)||!timingsOk(spec))fail('timings');
   const f=spec.fire,pair=p=>Array.isArray(p)&&p.length===2&&p.every(v=>num(v,0,20));
   if(!f||!num(f.assaultPauseSec,1,60)||!num(f.overwatchPauseSec,1,60)||!num(f.riseBeforeSec,.1,3)||!num(f.holdAfterSec,.1,3)||!num(f.rangeM,50,1500)||
     !f.rifle||!pair(f.rifle.bias)||!pair(f.rifle.cone)||!f.mg||!Number.isInteger(f.mg.rounds)||f.mg.rounds<1||f.mg.rounds>20||!num(f.mg.interval,.03,.5)||!pair(f.mg.bias)||!pair(f.mg.cone))fail('fire');
   const w=spec.playerWeight;if(!w||!['recruta','soldado','veterano'].every(k=>num(w[k],0,10)))fail('playerWeight');
-  const ids=[],covers=[],men=[];
+  // The echelons: the spec itself, then those that follow it.
+  if(spec.echelons!==undefined&&(!Array.isArray(spec.echelons)||!spec.echelons.length))fail('echelons: a non-empty array, or leave it out');
+  const specs=[{id:'first',lullSec:0,overwatch:spec.overwatch,lanes:spec.lanes,stations:spec.stations,limitStation:spec.limitStation,closeAfterSec:spec.closeAfterSec,
+    breakPinnedSec:spec.breakPinnedSec,breakOut:spec.breakOut,maxSec:spec.maxSec}];
+  for(const [i,e] of (spec.echelons??[]).entries()){
+    const name=`echelon ${typeof e?.id==='string'&&e.id?e.id:'#'+(i+1)}`;
+    if(!e||typeof e!=='object'||Array.isArray(e)||typeof e.id!=='string'||!e.id||specs.some(x=>x.id===e.id))fail(`${name}: id (a string, different from the other echelons' and from "first")`);
+    const extra=Object.keys(e).find(k=>!ECHELON_SPEC_KEYS.includes(k));if(extra!==undefined)fail(`${name}: unknown key ${extra}`);
+    if(!num(e.lullSec,5,180))fail(`${name}: lullSec 5-180 (seconds from the moment the echelon before has left the field to the entry of this one)`);
+    const st=e.stations??spec.stations,lim=e.limitStation??spec.limitStation;
+    if(!stationsOk(st))fail(`${name}: stations: z, north to south, south of entryZ`);
+    if(!limitOk(lim,st))fail(`${name}: limitStation`);
+    if(!timingsOk(e))fail(`${name}: closeAfterSec / breakPinnedSec / breakOut / maxSec (every echelon sets its own thresholds)`);
+    specs.push({...e,overwatch:e.overwatch??[],stations:st,limitStation:lim});
+  }
+  const ids=[],covers=[],men=[],laneIds=new Set(),echelons=[];
   const cover=(id,x,z)=>{const box={id,min:{x:x-c.widthM/2,y:groundY,z:z+c.aheadM},max:{x:x+c.widthM/2,y:groundY+c.heightM,z:z+c.aheadM+c.depthM}};covers.push(box);return box.id;};
   const inX=x=>num(x,minX,maxX);
-  if(!Array.isArray(spec.overwatch)||!spec.overwatch.length)fail('overwatch');
-  for(const o of spec.overwatch){
-    if(typeof o.id!=='string'||!['mg34','kar98k'].includes(o.weapon)||!Array.isArray(o.node)||!inX(o.node[0])||!(o.node[1]>spec.entryZ))fail(`overwatch ${o.id}`);
-    ids.push(o.id);const node={x:o.node[0],z:o.node[1]};
-    men.push({id:o.id,role:'overwatch',weapon:o.weapon,entry:{x:node.x,z:spec.entryZ},path:[{x:node.x,z:node.z,stop:true,station:-1}],stops:[0],limitStop:0,deepestStop:0,cover:cover(`np_cover_${o.id}`,node.x,node.z)});
-  }
-  if(!Array.isArray(spec.lanes)||!spec.lanes.length)fail('lanes');
-  for(const lane of spec.lanes){
-    if(!Array.isArray(lane.men)||!Array.isArray(lane.x)||lane.men.length!==lane.x.length||!lane.x.every(inX))fail(`lane ${lane.id}`);
-    lane.men.forEach((id,k)=>{
-      ids.push(id);const x=lane.x[k],path=[],stops=[];
-      st.forEach((z,s)=>{
-        if(s){const prev=st[s-1],b=x+c.bypassM;path.push({x:b,z:prev,stop:false,station:s-1});path.push({x:b,z:prev+c.aheadM+c.depthM+.5,stop:false,station:s-1});}
-        stops.push(path.length);path.push({x,z,stop:true,station:s});cover(`np_cover_${id}_${s}`,x,z);
+  specs.forEach((e,k)=>{
+    const name=k?`echelon ${e.id}: `:'',mine={assault:[],overwatch:[]};
+    // delaySec: seconds after the echelon's entry that a man walks in (a gun: a number; a lane: a number for all its men, or one number per man for a column in file).
+    // The first echelon is already in the field when the wave goes on, so it takes none. Never more than half the echelon's clock.
+    const maxDelay=Math.min(120,e.maxSec/2);
+    const delaysOf=(o,count,what)=>{
+      if(o.delaySec===undefined)return Array(count).fill(0);
+      if(!k)fail(`${what}: delaySec belongs to the echelons that follow the first (the first is on the field when the wave starts)`);
+      const list=Array.isArray(o.delaySec)?o.delaySec:Array(count).fill(o.delaySec);
+      if(list.length!==count||!list.every(v=>num(v,0,maxDelay)))fail(`${name}${what}: delaySec 0-${maxDelay} s (half the echelon's maxSec at most), one number or one per man`);
+      return list;
+    };
+    if(!Array.isArray(e.overwatch)||(!k&&!e.overwatch.length))fail(`${name}overwatch`);
+    for(const o of e.overwatch){
+      if(!o||typeof o.id!=='string'||!['mg34','kar98k'].includes(o.weapon)||!Array.isArray(o.node)||!inX(o.node[0])||!(o.node[1]>spec.entryZ)||Object.keys(o).some(x=>!OVERWATCH_KEYS.includes(x)))fail(`${name}overwatch ${o?.id}`);
+      const [delaySec]=delaysOf(o,1,`overwatch ${o.id}`);
+      ids.push(o.id);mine.overwatch.push(o.id);const node={x:o.node[0],z:o.node[1]};
+      men.push({id:o.id,role:'overwatch',echelon:k,delaySec,weapon:o.weapon,entry:{x:node.x,z:spec.entryZ},path:[{x:node.x,z:node.z,stop:true,station:-1}],stops:[0],limitStop:0,deepestStop:0,cover:cover(`np_cover_${o.id}`,node.x,node.z)});
+    }
+    if(!Array.isArray(e.lanes)||!e.lanes.length)fail(`${name}lanes`);
+    for(const lane of e.lanes){
+      if(!lane||typeof lane.id!=='string'||!lane.id||laneIds.has(lane.id)||!Array.isArray(lane.men)||!lane.men.every(id=>typeof id==='string'&&id)||!Array.isArray(lane.x)||
+        lane.men.length!==lane.x.length||!lane.x.every(inX)||Object.keys(lane).some(x=>!LANE_KEYS.includes(x)))fail(`${name}lane ${lane?.id}`);
+      const delays=delaysOf(lane,lane.men.length,`lane ${lane.id}`);
+      laneIds.add(lane.id);
+      lane.men.forEach((id,j)=>{
+        ids.push(id);mine.assault.push(id);const x=lane.x[j],path=[],stops=[];
+        e.stations.forEach((z,s)=>{
+          if(s){const prev=e.stations[s-1],b=x+c.bypassM;path.push({x:b,z:prev,stop:false,station:s-1});path.push({x:b,z:prev+c.aheadM+c.depthM+.5,stop:false,station:s-1});}
+          stops.push(path.length);path.push({x,z,stop:true,station:s});cover(`np_cover_${id}_${s}`,x,z);
+        });
+        men.push({id,role:'assault',echelon:k,delaySec:delays[j],lane:lane.id,weapon:'kar98k',entry:{x,z:spec.entryZ},path,stops,limitStop:stops[e.limitStation],deepestStop:stops.at(-1)});
       });
-      men.push({id,role:'assault',lane:lane.id,weapon:'kar98k',entry:{x,z:spec.entryZ},path,stops,limitStop:stops[spec.limitStation],deepestStop:stops.at(-1)});
-    });
-  }
+    }
+    // Its casualties are its own men, the assault and the overwatch it brings (the first echelon's overwatch is the first echelon's): it cannot break on more than that.
+    if(e.breakOut>mine.assault.length+mine.overwatch.length)fail(`${name}breakOut ${e.breakOut} is more than its ${mine.assault.length} assault men plus ${mine.overwatch.length} on overwatch`);
+    echelons.push({index:k,id:e.id,lullSec:e.lullSec,men:mine.assault,overwatch:mine.overwatch,stations:[...e.stations],limitStation:e.limitStation,
+      closeAfterSec:e.closeAfterSec,breakPinnedSec:e.breakPinnedSec,breakOut:e.breakOut,maxSec:e.maxSec});
+  });
   if(new Set(ids).size!==ids.length)fail('a man listed twice');
-  // Every cover clear of every path segment of every other man (bodies are 0.3 m): a typo that puts a lane through somebody's earth stops the game.
+  // Every cover clear of every path segment of every other man (bodies are 0.3 m), every path and cover clear of the area's own solids (wreck, parapet): a typo
+  // that puts a lane through somebody's earth, or through the wreck, stops the game.
   const segs=men.flatMap(m=>[m.entry,...m.path].slice(1).map((p,i,arr)=>({id:m.id,a:i?arr[i-1]:m.entry,b:p})));
   const near=(s,box,r)=>{for(let t=0;t<=1;t+=.02){const x=s.a.x+(s.b.x-s.a.x)*t,z=s.a.z+(s.b.z-s.a.z)*t;if(x>box.min.x-r&&x<box.max.x+r&&z>box.min.z-r&&z<box.max.z+r)return true;}return false;};
-  for(const s of segs)for(const box of covers)if(near(s,box,.32))fail(`path of ${s.id} crosses ${box.id}`);
-  return deepFreeze({version:spec.version,from:spec.from,entryZ:spec.entryZ,clearZ:spec.clearZ,men,ids,covers,cover:{...c},
+  for(const s of segs)for(const box of [...covers,...solids])if(near(s,box,.32))fail(`path of ${s.id} crosses ${box.id}`);
+  for(const box of covers)for(const s of solids)if(box.max.x>s.min.x-.3&&box.min.x<s.max.x+.3&&box.max.z>s.min.z-.3&&box.min.z<s.max.z+.3)fail(`${box.id} touches ${s.id}`);
+  return deepFreeze({version:spec.version,from:spec.from,entryZ:spec.entryZ,clearZ:spec.clearZ,men,ids,covers,cover:{...c},echelons,
     walkSpeed:spec.walkSpeed,rushSpeed:spec.rushSpeed,fallbackSpeed:spec.fallbackSpeed,coverSec:[...spec.coverSec],holdSec:[...spec.holdSec],closeAfterSec:spec.closeAfterSec,
     pinnedWaitMaxSec:spec.pinnedWaitMaxSec,breakPinnedSec:spec.breakPinnedSec,breakOut:spec.breakOut,maxSec:spec.maxSec,fire:copy(f),playerWeight:{...w}});
 }
@@ -173,4 +223,45 @@ export function validApproachRecord(plan,a,clock){
   if(d.v!==APPROACH_VERSION||!APPROACH_PHASES.includes(d.phase)||!Number.isInteger(d.node)||d.node<-1||d.node>=man.path.length)return false;
   if(d.lim!==undefined&&(!Number.isInteger(d.lim)||!man.stops.includes(d.lim)))return false;
   return finite(d.t0,0,clock)&&finite(d.since,d.t0,clock)&&finite(d.until,0,clock+600)&&finite(d.pinned,0,1e6);
+}
+/** The state of the fight a wave record stands for: pending (no record), active (an echelon is on the field), lull (it broke and another follows), broken (the last broke), repelled. */
+export function approachFlagOf(plan,W){
+  if(!W)return 'pending';
+  if(W.repelledAt!==null)return 'repelled';
+  if(W.brokenAt!==null)return 'broken';
+  return W.echs[W.ech].brokenAt!==null?'lull':'active';
+}
+/**
+ * A saved wave record (sim.timers.wave) and the men it implies: the exact keys, an echelon record for every echelon that has entered (and none for one that has not),
+ * times in the order the machine writes them (an echelon enters at least its lull after the one before broke), the final break and the lull timer only where they can
+ * exist, the men of echelons that have not entered still waiting at the entry line untouched, the assault of the echelons that have gone gone, and `flag` (the sim's
+ * own flag of the fight) the one the record implies. `actors`: the saved actors. Never throws.
+ */
+export function validApproachWave(plan,W,flag,clock,actors){
+  const n=plan.echelons.length,total=plan.men.length,finite=(v,lo,hi)=>Number.isFinite(v)&&v>=lo&&v<=hi,count=v=>Number.isInteger(v)&&v>=0&&v<=total;
+  const record=(o,keys)=>Boolean(o)&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).sort().join()===keys.join();
+  if(!Array.isArray(actors)||(W!==null&&(typeof W!=='object'||!Number.isInteger(W.ech)||W.ech<0||W.ech>=n)))return false;
+  const byId=new Map(actors.map(a=>[a?.id,a])),entered=W?W.ech:0;   // before the wave only the first echelon is on the field
+  const here=W?.echs?.[entered],lulling=Number.isFinite(W?.lullUntil);   // the record of the echelon on the field (checked below); its lull timer running
+  for(const m of plan.men){
+    const a=byId.get(m.id),d=a?.deck;if(!a)return false;
+    const waiting=a.alive===true&&a.active===false&&d?.phase==='advance'&&d.node===0&&d.pinned===0&&a.x===m.entry.x&&a.z===m.entry.z;
+    if(m.echelon>entered&&!waiting)return false;
+    // a man of the echelon on the field still waiting at the entry line: his delay has not run out (a tick of grace), or the echelon broke before it did
+    if(m.echelon===entered&&waiting&&here&&here.brokenAt===null&&clock>here.at+m.delaySec+.06)return false;
+    if(m.role==='assault'&&(m.echelon<entered||(m.echelon===entered&&lulling))&&a.alive&&a.active)return false;   // gone: the echelons before, and this one once its lull runs
+  }
+  if(W===null)return flag==='pending';
+  if(!record(W,APPROACH_WAVE_KEYS)||!finite(W.at,0,clock)||!count(W.casualties)||typeof W.closeCalled!=='boolean'||!Array.isArray(W.echs)||W.echs.length!==W.ech+1)return false;
+  for(const [k,R] of W.echs.entries()){
+    if(!record(R,APPROACH_ECHELON_KEYS)||!finite(R.at,0,clock)||!count(R.casualties)||typeof R.closed!=='boolean'||typeof R.seen!=='boolean')return false;
+    if(R.brokenAt!==null&&!finite(R.brokenAt,R.at,clock))return false;
+    if(k<W.ech&&R.brokenAt===null)return false;
+    if(k&&R.at<W.echs[k-1].brokenAt+plan.echelons[k].lullSec-1e-9)return false;
+  }
+  const R=W.echs[W.ech],last=W.ech===n-1;
+  if(W.echs[0].at!==W.at||W.brokenAt!==(last?R.brokenAt:null))return false;
+  if(W.repelledAt!==null&&(W.brokenAt===null||!finite(W.repelledAt,W.brokenAt,clock)))return false;
+  if(W.lullUntil!==null&&(last||R.brokenAt===null||!finite(W.lullUntil,R.brokenAt,clock+plan.echelons[W.ech+1].lullSec+1e-6)))return false;
+  return flag===approachFlagOf(plan,W);
 }
