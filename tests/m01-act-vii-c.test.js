@@ -392,6 +392,7 @@ test('F9: nothing on screen of VII-c gives an exact hour but the one of the orde
   assert.match(order[2],/desconhecidos/);assert.match(order[3],/dramatização/);
   assert.deepEqual(end.join(' ').match(/\d{1,2}:\d{2}/g),['18:00','20:00','18:39']);assert.match(end[0],/2\.º Batalhão deixou Tczew/);assert.match(end[1],/T03, resumo, certeza média/);assert.match(end[2],/C01/);assert.match(end[2],/desconhecidos/);assert.match(end[3],/dramatização/);
   // every line fits the card: the HUD shows each as ONE line clipped at 82 vw (the 1st holds about 40 characters, the 2nd about 95, the others about 110, at 1280 px): nothing of what the cards say is cut off
+  for(const [file,area] of [['act',null],['act-vii-b',null],['act-vii-c',null]]){const a=JSON.parse(readFileSync(new URL(`../missions/m01-tczew/areas/np/${file}.json`,import.meta.url),'utf8'));for(const [name,card] of Object.entries(a.cards))card.lines.forEach((text,i)=>assert.ok(text.length<=[38,88,104,104,104][i],`${file} ${name} card, line ${i} is ${text.length} characters: ${text}`));}
   for(const [name,lines] of [['order',order],['entry',act.cards.entry.lines],['end',end]])lines.forEach((text,i)=>assert.ok(text.length<=[38,88,104,104][i],`${name} card, line ${i} is ${text.length} characters (${[38,88,104,104][i]} at most): ${text}`));
   assert.equal(act.cards.entry.lines[0],'Ao anoitecer');assert.match(act.cards.entry.lines.join(' '),/reconstrução e dramatização/);assert.match(act.cards.entry.lines.join(' '),/C01/);
   // the classification of what the act says and does
