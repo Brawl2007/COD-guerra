@@ -83,6 +83,18 @@ test('the wreck smoke puff colour is a hoisted constant, not a hex string parsed
   assert.ok(!/color\.set\('#/.test(src));assert.match(src,/const WRECK_PUFF_COLOR=new THREE\.Color\('#90866f'\)/);assert.match(src,/color\.copy\(WRECK_PUFF_COLOR\)/);
 });
 
+test('shadow casting follows the tier as act 1 does: none on Low (no shadow map), heaps, berm, rims, hull and shell craters on Medium/High',()=>withCanvas(()=>{
+  const d=new M01AreaDressing(new THREE.Scene(),worlds[1],{surface,quality:'low'}),casters=['m01-area-mounds','m01-area-berm','m01-area-crater-rims','m01-area-wreck'];
+  d.syncShellCraters([{id:'np_shell_crater_x_0',x:-440,y:-3,z:-1210,started:1}]);
+  const cast=()=>d.group.children.filter(c=>c.castShadow).map(c=>c.name).sort();
+  assert.deepEqual(cast(),[]);
+  d.setQuality('medium');assert.deepEqual(cast(),[...casters,'m01-area-shell-crater-rims'].sort());
+  d.setQuality('high');assert.deepEqual(cast(),[...casters,'m01-area-shell-crater-rims'].sort());
+  d.setQuality('low');assert.deepEqual(cast(),[]);
+  for(const n of casters)assert.ok(meshOf(d,n).visible,`${n} is still drawn on Low`);
+  d.dispose();
+}));
+
 test('dispose frees the instance buffers of every InstancedMesh (heaps, clods, crater discs and rims, shell craters, stubble)',()=>withCanvas(()=>{
   const scene=new THREE.Scene(),d=new M01AreaDressing(scene,worlds[1],{surface,quality:'high'});
   d.syncShellCraters([{id:'np_shell_crater_x_0',x:-440,y:-3,z:-1210,started:1},{id:'np_shell_crater_x_1',x:-420,y:-3,z:-1205,started:2}]);

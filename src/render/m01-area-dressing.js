@@ -23,7 +23,7 @@ export class M01AreaDressing{
     this.geometries=[];this.materials=[];this.textures=[];this.replaced=new Set();this.drawn=[];this.wreckKey=M01AreaDressing.wreckKey(world);
     const geometry=g=>{this.geometries.push(g);return g;},material=m=>{this.materials.push(m);return m;};
     const base=surface??(()=>y),ground=(x,z)=>base(x,z)+areaReliefOffset(L,x,z);
-    const add=(mesh,name,{cast=false,receive=true,triangles=null}={})=>{mesh.name=name;mesh.castShadow=cast;mesh.receiveShadow=receive;this.group.add(mesh);
+    const add=(mesh,name,{cast=false,receive=true,triangles=null}={})=>{mesh.name=name;mesh.userData.castsShadow=cast;mesh.castShadow=cast&&quality!=='low';mesh.receiveShadow=receive;this.group.add(mesh);
       const g=mesh.geometry,tris=triangles??(g.index?g.index.count:g.attributes.position.count)/3*(mesh.isInstancedMesh?mesh.count:1);this.drawn.push({mesh,name,triangles:tris});return mesh;};
 
     // The field: the existing terrain is covered by a grid that follows its submitted surface plus the area's visual offset (m01-area-field: 0 on the fought-over strip), drawn with
@@ -122,7 +122,8 @@ export class M01AreaDressing{
   }
   /** Scales what is drawn with the tier (never cover, the hull or the German-visible ground). Cheap and idempotent. */
   setQuality(quality){
-    this.quality=quality;this.field?.setQuality(quality);this.berm?.setQuality(quality);if(this.stubble)this.stubble.mesh.visible=quality==='high';
+    this.quality=quality;for(const c of this.group.children)if(c.userData.castsShadow)c.castShadow=quality!=='low';   // as act 1: Low has no shadow map, so nothing casts (the heaps, berm, rims, hull stay drawn)
+    this.field?.setQuality(quality);this.berm?.setQuality(quality);if(this.stubble)this.stubble.mesh.visible=quality==='high';
     const share=TREE_SHARE[quality]??TREE_SHARE.low;
     if(this.treeMesh){const r=treeDrawRange(this.trees,share);this.treeMesh.geometry.setDrawRange(r.start,r.count);this.treesDrawn=r.trees;}
     if(this.clods)this.clods.count=Math.max(1,Math.round(this.clods.userData.total*({low:.45,medium:.7,high:1}[quality]??.45)));
@@ -144,7 +145,7 @@ export class M01AreaDressing{
       const soot=new THREE.MeshStandardMaterial({color:'#2a251d',roughness:1,transparent:true,opacity:.85,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),earth=this.earth??createEarthMaterial();
       this.geometries.push(disc,rim);this.materials.push(soot);if(earth!==this.earth)this.materials.push(earth);   // the dressing's own earth material is already owned (one soil shader program, not two)
       const discs=new THREE.InstancedMesh(disc,soot,SHELL_CRATERS_MAX),rims=new THREE.InstancedMesh(rim,earth,SHELL_CRATERS_MAX);
-      for(const [m,name,cast] of [[discs,'m01-area-shell-crater-discs',false],[rims,'m01-area-shell-crater-rims',true]]){m.name=name;m.castShadow=cast;m.receiveShadow=true;m.frustumCulled=false;this.group.add(m);}
+      for(const [m,name,cast] of [[discs,'m01-area-shell-crater-discs',false],[rims,'m01-area-shell-crater-rims',true]]){m.name=name;m.userData.castsShadow=cast;m.castShadow=cast&&this.quality!=='low';m.receiveShadow=true;m.frustumCulled=false;this.group.add(m);}
       this.shellCraters={discs,rims};
     }
     const {discs,rims}=this.shellCraters,m=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),p=new THREE.Vector3(),sc=new THREE.Vector3(),y=this.groundY;
