@@ -174,8 +174,10 @@ export function validateM02Snapshot(snap) {
     if(!holds||typeof holds!=='object'||Array.isArray(holds)||Object.keys(holds).length>32||
       Object.values(holds).some(p=>!p||!Number.isFinite(p.x)||!Number.isFinite(p.z)))return {valid:false,reason:'Posições da ordem inválidas.'};
   }
+  if(snap.flags?.['m02.pomar_wounded_water']!==undefined&&typeof snap.flags['m02.pomar_wounded_water']!=='boolean')return {valid:false,reason:'Estado de água do ferido inválido.'};
   for(const actor of [...(snap.allies??[]),...(snap.enemies??[]),...(snap.areaC?.lastGroup??[])]){
     if(!actor||!Number.isFinite(actor.x)||!Number.isFinite(actor.z))return {valid:false,reason:'Posição de ator inválida.'};
+    if(actor.c04WaterOfferedAt!==undefined&&(!Number.isFinite(actor.c04WaterOfferedAt)||actor.c04WaterOfferedAt<0||actor.c04WaterOfferedAt>snap.clock))return {valid:false,reason:`Estado de água inválido: ${actor.id}`};
     if(actor.m02LastEngagedTargetId!==undefined&&typeof actor.m02LastEngagedTargetId!=='string')return {valid:false,reason:`Alvo de equipa inválido: ${actor.id}`};
     if(actor.m02GrenadeThreat!==undefined){
       const t=actor.m02GrenadeThreat;
@@ -694,6 +696,25 @@ export class M02BenchSimulation {
       distance: Number(dist.toFixed(2)),
       prompt: '[E] Marcar poste com giz branco (Sinalizar ferido para socorro)',
     };
+  }
+
+  currentWoundedWaterPrompt() {
+    if(this.activeCellId!=='A'||this.player.health<=0||this.playerGrenadeAction||this.player.carryingVolumeId||this.flags['m02.pomar_wounded_water'])return null;
+    const wounded=this.enemies.find(e=>e.c04Candidate&&e.alive&&e.state==='WOUNDED_UNARMED'&&e.c04WaterOfferedAt===undefined);
+    if(!wounded)return null;
+    const distance=Math.hypot(wounded.x-this.player.x,wounded.z-this.player.z);
+    if(distance>1.8)return null;
+    const origin=eyePosition(this.player),target={x:wounded.x,y:(wounded.y??0)+.7,z:wounded.z};
+    const dx=target.x-origin.x,dy=target.y-origin.y,dz=target.z-origin.z,length=Math.hypot(dx,dy,dz);
+    if(length>1e-8&&traceObstruction(this.world,origin,{x:dx/length,y:dy/length,z:dz/length},Math.max(0,length-.05)))return null;
+    return {actorId:wounded.id,distance:Number(distance.toFixed(2)),prompt:'[F] Dar água ao ferido'};
+  }
+
+  giveWoundedWater() {
+    const prompt=this.currentWoundedWaterPrompt();if(!prompt)return null;
+    const wounded=this.enemies.find(e=>e.id===prompt.actorId);wounded.c04WaterOfferedAt=this.clock;this.flags['m02.pomar_wounded_water']=true;
+    const event={type:'c04-wounded-water',actorId:wounded.id,clock:Number(this.clock.toFixed(2))};
+    this.events.push(event);return event;
   }
 
   markWoundedSoldierWithChalk() {
@@ -1514,6 +1535,7 @@ export class M02BenchSimulation {
     if (!preparingGrenade&&controls.reload) this.weapon.reload(nowMs);
     if (!preparingGrenade&&controls.sight) this.weapon.adjustSight();
     if (!preparingGrenade&&controls.interact) this.interactDoor();
+    if (!preparingGrenade&&controls.giveWater) this.giveWoundedWater();
     const shot=!preparingGrenade&&controls.fire?this.firePlayerWeapon(false):null;
     if (!preparingGrenade&&controls.grenade&&!shot&&this.preparePlayerGrenade()){
       this.player.aiming=false;this.player.sprinting=false;

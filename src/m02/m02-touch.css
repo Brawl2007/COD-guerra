@@ -10,6 +10,8 @@
 .touch-orders{position:absolute;top:max(54px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));display:flex;gap:4px}
 #m02-touch .touch-orders button{height:34px;padding:4px 6px;font-size:9px}
 #m02-touch .touch-pause{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));width:48px;height:38px;font-size:10px}
+#m02-touch .touch-water{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:135px;width:80px;height:44px;border-radius:10px}
+#m02-touch .touch-water[hidden]{display:none}
 #m02-touch .down{background:rgba(155,140,91,.8)}
 body.m02-touch-active #mission-vitals{bottom:150px}body.m02-touch-active .weapon-box{bottom:140px}
 body.m02-touch-active #mission-narration{bottom:150px;width:min(500px,calc(100vw - 36px))}

@@ -63,6 +63,7 @@ let pendingSingleActions = {
   orderSuppress: false,
   orderAdvance: false,
   orderFlank: false,
+  giveWater: false,
 };
 const touch=touchMode?mountM02Touch({sim,session,actions:pendingSingleActions}):null;
 document.body.classList.toggle('m02-touch-active',touchMode);
@@ -78,6 +79,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyC') pendingSingleActions.crouch = true;
   if (e.code === 'Space') pendingSingleActions.fire = true;
   if (e.code === 'KeyG') pendingSingleActions.grenade = true;
+  if (e.code === 'KeyF') pendingSingleActions.giveWater = true;
   if (e.code === 'KeyZ') pendingSingleActions.orderSuppress = true;
   if (e.code === 'KeyX') pendingSingleActions.orderAdvance = true;
   if (e.code === 'KeyB') pendingSingleActions.orderFlank = true;
@@ -283,10 +285,15 @@ function updateHud() {
   // The interaction key is unavailable while the grenade is reserved. Do
   // not advertise a door or chalk action until the player's hands are free.
   const prompt = sim.playerGrenadeAction ? null : m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
+  const waterPrompt=sim.currentWoundedWaterPrompt();
+  const offered=sim.activeCellId==='A'&&sim.enemies.find(e=>e.c04Candidate&&e.c04WaterOfferedAt!==undefined&&sim.clock-e.c04WaterOfferedAt<2);
   if (elDoorPrompt) {
-    if (prompt) {
+    if (prompt||waterPrompt||offered) {
       elDoorPrompt.style.display = 'block';
-      elDoorPrompt.textContent = `${prompt.prompt} (${prompt.distance}m)`;
+      const lines=[];if(offered)lines.push('Água oferecida ao ferido');
+      if(prompt)lines.push(`${prompt.prompt.replace('[E]',touchMode?'[USAR]':'[E]')} (${prompt.distance}m)`);
+      if(waterPrompt)lines.push(waterPrompt.prompt.replace('[F]',touchMode?'[ÁGUA]':'[F]'));
+      elDoorPrompt.textContent=lines.join(' · ');
     } else {
       elDoorPrompt.style.display = 'none';
     }
@@ -354,6 +361,7 @@ function animate(now) {
     crouch: pendingSingleActions.crouch,
     fire: pendingSingleActions.fire,
     grenade: pendingSingleActions.grenade,
+    giveWater: pendingSingleActions.giveWater,
     orderSuppress: pendingSingleActions.orderSuppress,
     orderAdvance: pendingSingleActions.orderAdvance,
     orderFlank: pendingSingleActions.orderFlank,

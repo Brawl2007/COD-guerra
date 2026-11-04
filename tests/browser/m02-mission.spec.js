@@ -2,6 +2,26 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('C04 offers water by touch while keeping the separate chalk choice',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:844,height:390});await page.goto('/COD-guerra/m02.html?quality=low&touch=1&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.locator('[data-touch=pause]').click();await expect(page.locator('#mission-resume')).toBeVisible();
+ await page.evaluate(()=>{
+  const s=window.m02Bench.sim,w=s.enemies.find(e=>e.c04Candidate);s.enemies=[w];s.allies=[];
+  Object.assign(w,{x:1.7,y:0,z:-60,health:40,alive:true,state:'WOUNDED_UNARMED',nonCombatant:true,crouched:true});s.teleportPlayer(0,-60,0,-.45);s.drainEvents();
+ });
+ await page.locator('#mission-resume').click();const water=page.locator('[data-water]');await expect(water).toBeVisible();
+ await expect(page.locator('#door-prompt')).toContainText('Marcar poste');await expect(page.locator('#door-prompt')).toContainText('Dar água');
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · C04";position:fixed;left:8px;top:45px;z-index:80;padding:4px;background:#111;color:#fff;font:10px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('c04-before-water.png')});
+ const cdp=await page.context().newCDPSession(page),box=await water.boundingBox(),point={x:box.x+box.width/2,y:box.y+box.height/2,id:0};
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await expect(water).toBeHidden();await expect(page.locator('#door-prompt')).toContainText('Água oferecida');
+ expect(await page.evaluate(()=>({given:window.m02Bench.sim.enemies[0].c04WaterOfferedAt!==undefined,chalk:window.m02Bench.sim.flags['m02.pomar_wounded_marked']}))).toEqual({given:true,chalk:false});
+ await page.screenshot({path:testInfo.outputPath('c04-after-water.png')});expect(errors).toEqual([]);
+});
+
 test('touch controls move, look, fire and pause without pointer lock',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:844,height:390});await page.goto('/COD-guerra/m02.html?quality=low&touch=1&debug=1');

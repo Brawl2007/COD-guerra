@@ -8,6 +8,7 @@ export function mountM02Touch({sim, session, actions}) {
  <div class="touch-move" data-touch="move" aria-label="Arrastar para mover"><span class="touch-knob">MOVER</span></div>
  <div class="touch-actions"><button data-touch="interact">USAR</button><button data-touch="reload">RECARGA</button><button data-touch="grenade">GRANADA</button><button data-touch="crouch">AGACHAR</button><button data-touch="aim">MIRAR</button><button class="touch-fire" data-touch="fire">DISPARAR</button></div>
  <div class="touch-orders"><button data-order="orderSuppress">SEGURAR</button><button data-order="orderAdvance">AVANÇAR</button><button data-order="orderFlank">FLANQUEAR</button></div>
+ <button class="touch-water" data-water hidden>ÁGUA</button>
  <button class="touch-pause" data-touch="pause" aria-label="Pausar">PAUSA</button>`;
  document.body.append(root);
  const input={forward:0,side:0,sprint:false,aim:false,
@@ -26,5 +27,6 @@ export function mountM02Touch({sim, session, actions}) {
  for(const event of ['blur','orientationchange'])window.addEventListener(event,resetStick);
  document.addEventListener('visibilitychange',()=>{if(document.hidden)resetStick();});
  for(const button of root.querySelectorAll('[data-order]'))button.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions[button.dataset.order]=true;});
- return {input,update(){const playing=session.playing;root.hidden=!playing;if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
+ const water=root.querySelector('[data-water]');water.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions.giveWater=true;});
+ return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
 }
