@@ -14,6 +14,7 @@ import { M01TerrainMaterial } from './m01-terrain-material.js';
 import {M01TerrainRelief} from './m01-terrain-relief.js';
 import {M01FarLandscape} from './m01-far-landscape.js';
 import {M01AreaDressing} from './m01-area-dressing.js';
+import {areaReliefOffset} from './m01-area-field.js';
 import { M01Atmosphere, visualNoise } from './m01-atmosphere.js';
 import { applyLighting, viewLightingDiagnostics, M01_FOG_RANGE } from './m01-lighting.js';
 import { M01Water } from './m01-water.js';
@@ -213,19 +214,25 @@ export class M01View {
    * act's entry card) and the area's dressing is made; the current act's world has no area, so for it nothing here ever runs.
    */
   syncAreaTerrain(world){
-    const key=areaKey(world);if(key===this.reliefAreaKey)return;
+    const key=areaKey(world),rebuilt=key!==this.reliefAreaKey;
+    if(!rebuilt&&(!world.area||this.areaDressing))return;
     this.reliefAreaKey=key;
-    const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
-    this.terrainRelief.dispose();this.farLandscape.dispose();
-    this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});this.terrainRelief.setEnabled(relief);
-    this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
-    for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
-    this.areaDressing?.dispose();this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{ground:texturedSurface('soil',{worldScale:.42,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4})}):null;
+    if(rebuilt){
+      const relief=this.terrainRelief.enabled,far=this.farLandscape.enabled;
+      this.terrainRelief.dispose();this.farLandscape.dispose();
+      this.terrainRelief=new M01TerrainRelief(this.scene,world,this.materials.ground,{terrainMeshes:this.terrainMeshes,onUpdate:()=>{this.lastFrame=null;}});this.terrainRelief.setEnabled(relief);
+      // The far landscape stands on the drawn ground: the submitted terrain plus the area's visual offset (m01-area-field: 0 on the fought-over strip).
+      this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z)+(world.area?areaReliefOffset(world.area,x,z):0),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
+      for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
+    }
+    this.areaDressing?.dispose();this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{surface:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),quality:this.owner?.quality}):null;
     this.lastFrame=null;
   }
   syncSolids(world){
     if(this.world!==world){if(!this.world)this.buildTerrain(world);else{this.world=world;this.terrain?.setWorld(world);}this.syncAreaTerrain?.(world);}
     this.terrainRelief?.sync(world,this.owner?.quality);
+    this.areaDressing?.setQuality(this.owner?.quality);
+    this.characters?.setAreaLegibility?.(Boolean(this.areaDressing));
     const fieldRevision=this.environment?.fieldStructures.revision??0;
     for(const proxy of this.fieldProxyMeshes??[])proxy.visible=!this.environment.fieldStructures.replaces(proxy.userData.m01FieldProxy);
     if(this.revision===world.revision&&this.solidWorld===world&&this.solidFieldRevision===fieldRevision)return;
@@ -234,7 +241,7 @@ export class M01View {
     for(const m of this.solidGroup.children)if(m.isInstancedMesh)m.dispose();this.solidGroup.clear();
     const byMaterial=new Map();
     for(const b of [...world.buildings,...world.covers,...world.joints]){
-      if(this.environment?.fieldStructures.replaces(b.id))continue;
+      if(this.environment?.fieldStructures.replaces(b.id)||this.areaDressing?.replaces(b.id))continue;
       if(b.id==='station'&&this.environment?.station?.ready)continue; // Visual replacement; collider remains in world.
       const key=b.material??'stone';if(!byMaterial.has(key))byMaterial.set(key,[]);byMaterial.get(key).push(b);
     }
@@ -1023,7 +1030,7 @@ export class M01View {
     environmentProps:this.environment?.propDiagnostics,trackBed:this.environment?.trackBed.diagnostics,bridgeFinish:this.bridgeFinish.diagnostics,bridgeCamera:{position:this.camera.position.toArray(),quaternion:this.camera.quaternion.toArray(),fov:this.camera.fov},bridgePortalPolish:this.portalPolish?.diagnostics,bridgeStructure:this.bridgeStructure?.diagnostics,vegetation:this.environment?.diagnostics,actorPoses:{...this.actorPoses},actorAnimations:{...this.actorAnimations},
     damageDecals:this.damageDecals.diagnostics,
     terrain:this.terrain?this.terrain.diagnostics:{material:'legacy-soil',textures:1,gpuBytes:0,quality:this.owner.quality},
-    terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,
+    terrainRelief:this.terrainRelief?.diagnostics,farLandscape:this.farLandscape?.diagnostics,areaDressing:this.areaDressing?.diagnostics??null,
     visiblePieces:this.kit.reduce((n,k)=>n+k.pieces.filter(p=>p.node.visible).length,0),fireEffects:{...this.fx},muzzlePresentation:{...this.muzzlePresentation},ckmPresentation:{...this.ckmPresentation},distantFire:this.shotDiagnostics,longRangeFire:this.longRangeDiagnostics,
     combatFeedback:this.combatFeedback.diagnostics(this.lastClock,this.owner.quality),bodyFeedback:this.bodyFeedback.diagnostics(),
     ambient:this.ambientDirector?.diagnostics,livingMotion:{...this.livingMotion},

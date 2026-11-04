@@ -247,7 +247,8 @@ export class M01Atmosphere {
       const demolition=d.id.endsWith('_demolition'),heavy=demolition||/bomb|raid/.test(d.id),age=Math.max(0,clock-d.started);
       const base=demolition?30:heavy?22:17,number=Math.max(6,Math.round(base*density));
       const seed=(Math.floor((d.x+2048)*17)^Math.floor((d.z+2048)*31)^Math.floor(d.started*1000))>>>0;
-      const endFade=d.id.startsWith('m01_grenade_')?Math.max(0,Math.min(1,(20-age)/5)):
+      // A wreck (the simulation's damage record carries `wreck`: the VII-a hull burning since long before the act) keeps its column; other fires burn out after 240 s.
+      const endFade=d.wreck?1:d.id.startsWith('m01_grenade_')?Math.max(0,Math.min(1,(20-age)/5)):
         d.id==='station_bomb'||d.id==='station_wagon_fire'||/^raid_0530(?:_[1-5])?$/.test(d.id)?1:Math.max(0,Math.min(1,(240-age)/30));
       for(let i=0;i<number&&count<damageMax;i++){
         const n0=visualNoise(seed,i*5),n1=visualNoise(seed,i*5+1),n2=visualNoise(seed,i*5+2),n3=visualNoise(seed,i*5+3);
