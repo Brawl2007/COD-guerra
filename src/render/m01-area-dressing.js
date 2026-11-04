@@ -106,7 +106,7 @@ export class M01AreaDressing{
    */
   syncShellCraters(damage){
     const list=(damage??[]).filter(d=>typeof d.id==='string'&&d.id.startsWith('np_shell_crater_')).slice(-SHELL_CRATERS_MAX),key=list.map(d=>d.id).join(',');
-    if(key===this.shellCraterKey)return;
+    if(key===(this.shellCraterKey??''))return;   // nothing changed (and nothing to draw before the first shell: an act without shells never makes the meshes)
     this.shellCraterKey=key;
     if(!this.shellCraters){
       const disc=new THREE.CircleGeometry(1,24).rotateX(-Math.PI/2),rim=buildCraterRimGeometry();

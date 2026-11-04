@@ -29,13 +29,14 @@ function build(){
   out.craters=live(sim);Object.assign(out.craters.actSave.player,{crouched:false,angle:Math.atan2(near.z-sim.player.z,near.x-sim.player.x),pitch:-.05});
   until(()=>sim.timers.medics.state==='carry'&&sim.clock-sim.timers.medics.since>9&&sim.actor(sim.timers.medics.patient).carriedBy);   // the bearers walking south with the wounded man on the first one's shoulder
   const m=sim.actor('np_maqueiro_0');   // the player turns to them
-  out.carry=live(sim);Object.assign(out.carry.actSave.player,{crouched:false,angle:Math.atan2(m.z-sim.player.z,m.x-sim.player.x),pitch:-.02});
+  out.carry=live(sim);const at={x:-476,z:-1118};   // behind the line, west of the bearers' way, 20-35 m from them (a QA viewpoint: the player may stand anywhere in the area)
+  Object.assign(out.carry.actSave.player,{...at,crouched:false,angle:Math.atan2(m.z-at.z,m.x-at.x),pitch:-.03});
   const inView=a=>{const b=Math.atan2(a.z-sim.player.z,a.x-sim.player.x)+Math.PI/2;return Math.abs(Math.atan2(Math.sin(b),Math.cos(b)))<.6;};
   until(()=>sim.timers.wave&&sim.clock-sim.timers.wave.at>8&&sim.enemies.filter(a=>a.alive&&a.active&&!a.crouched&&inView(a)).length>=3);out.attack=face(live(sim),-Math.PI/2,.015);   // the first attack, at least three Germans up in the field of view
   // one second before the first attack breaks (found by running to the break, then again 20 ticks short of it): the page is watched storing CP-I2
   const nearBreak=(()=>{const copy=runner.enter(a),st={arrived:false,lastHealth:100};let n=0;
     for(;n<60000&&!(copy.timers.wave?.echs[0].brokenAt>0);n++){copy.tick(ACT_TICK,actBControls(copy,'passive',st));copy.drainEvents();}
-    const again=runner.enter(a),s2={arrived:false,lastHealth:100};for(let i=0;i<n-20;i++){again.tick(ACT_TICK,actBControls(again,'passive',s2));again.drainEvents();}return live(again);})();
+    const again=runner.enter(a),s2={arrived:false,lastHealth:100};for(let i=0;i<n-20;i++){again.tick(ACT_TICK,actBControls(again,'passive',s2));again.drainEvents();}return face(live(again),-Math.PI/2,.02);})();
   out.nearBreak=nearBreak;
   until(()=>sim.timers.barrage.run?.id==='brg_npb_2'&&sim.timers.barrage.run.k>=3);out.barrage2=face(live(sim),-Math.PI/2);
   until(()=>sim.timers.endAt!==null,60000);out.end=live(sim);
@@ -53,7 +54,7 @@ async function boot(page,query,{save=null,key=ACT_KEY,click='#start'}={}){
 const diag=page=>page.evaluate(()=>{const d=window.gameDiagnostics();return {act:d.m01.act??null,scene:d.m01.scene,phase:d.missionPhase,complete:d.complete,clock:d.clock,player:d.player,
   alive:d.m01.enemyAlive,clockText:document.querySelector('#battle-clock')?.textContent,objective:document.querySelector('#objective-text')?.textContent,status:document.querySelector('#objective-status')?.textContent,
   card:document.querySelector('#title-card')?.textContent,craters:(d.m01.damage??[]).filter(x=>x.id.startsWith('np_shell_crater_')).length,
-  pending:(d.m01.pendingAudio??[]).map(s=>s.kind),checkpoints:d.m01.checkpoints,flags:d.m01.flags};});
+  pending:(d.m01.pendingAudio??[]).map(s=>s.kind),checkpoints:d.m01.checkpoints,flags:d.m01.flags,dressingMeshes:d.m01.areaDressing?.meshes??null};});
 const settle=async page=>{await page.waitForTimeout(2500);await page.waitForFunction(label=>document.querySelector('#battle-clock')?.textContent===label,LABEL,{timeout:120000});};   // software GL under load can take longer than 2.5 s to paint the HUD
 
 test('QA flag ?act=vii-b boots Act VII-b on «Mais tarde…»; the HUD shows only the label «DURANTE O DIA»; CP-I is stored in the schema 3 envelope when the card ends',async({page})=>{
@@ -99,7 +100,8 @@ test('schema 3 saves restore the act: the arrival with the resupply marker, the 
     if(name==='arrival'){expect(d.phase).toBe('NPB_ARRIVAL');expect(d.objective).toBe('Reabasteça-se e ocupe o flanco oeste do parapeito');}
     if(name==='barrage'||name==='barrage2'){expect(d.phase).toBe('NPB_BARRAGE');expect(d.status).toBe('Fogo de artilharia · abrigue-se atrás do parapeito');expect(d.objective).toBe('Abrigue-se atrás do parapeito');expect(d.craters).toBeGreaterThan(0);}
     if(name==='carry'){expect(scenes.carry.actSave.timers.medics.state).toBe('carry');}   // the page shows what the save says: the first bearer carries the man on his shoulder
-    if(name==='craters'){expect(d.craters).toBeGreaterThanOrEqual(10);}   // the records of the first barrage's shells are in the page's damage list
+    if(name==='craters'){expect(d.craters).toBeGreaterThanOrEqual(10);expect(d.dressingMeshes).toBe(report.arrival.dressingMeshes+2);}   // the records of the first barrage's shells are in the page's damage list, and the dressing drew them (two instanced meshes: discs and rims)
+    if(name==='arrival'){expect(d.dressingMeshes).toBeGreaterThan(5);}
     if(name==='attack'){expect(d.phase).toBe('NPB_ATTACK');expect(d.status).toMatch(/^Linha norte · \d+ atacantes? no campo · \d+ caídos?$/);expect(d.status).not.toMatch(/\.ª/);}
     await p.screenshot({path:file});
     if(name==='barrage'||name==='barrage2'){await p.waitForTimeout(900);await p.screenshot({path:file.replace('.png','-later.png')});}   // the same view a moment later (the burst of the new crater has gone, its smoke is up)
@@ -120,6 +122,7 @@ test('CP-I2: the game stores the checkpoint of the interval when the first attac
   expect(stored.actSave.checkpointsReached).toEqual(['cp_npb_i_dia','cp_npb_i2_pausa']);expect(stored.actSave.timers.wave.echs[0].brokenAt).not.toBeNull();expect(stored.actSave.timers.wave.echs).toHaveLength(1);
   expect(stored.actSave.flags['m01npb.wave']).toBe('lull');expect(Object.keys(stored.actSave.timers.barrage.done)).toEqual(['brg_npb_1']);
   await expect(page.locator('#checkpoint-name')).toHaveText('CP-I2 · Perímetro norte — intervalo · Recruta');
+  await page.waitForTimeout(3500);await page.screenshot({path:OUT+'06b-first-attack-breaks.png'});   // the Germans of the first attack falling back across the open, seen from the west post
   const d=await diag(page);expect(d.phase).toBe('NPB_ATTACK');
   expect(errors).toEqual([]);
   writeFileSync(OUT+'smoke-cpi2-stored.json',JSON.stringify({checkpoints:stored.actSave.checkpointsReached,flag:stored.actSave.flags['m01npb.wave'],brokenAt:stored.actSave.timers.wave.echs[0].brokenAt,clock:stored.actSave.clock,status:d.status,errors},null,1)+'\n');

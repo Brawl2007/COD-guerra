@@ -8,6 +8,8 @@ import {BOMB_BLAST,CONCUSSION,blastOutcome,concussionLevel} from '../src/game/m0
 import {SHELL_BLAST,SHELL_REACH_M,PLANNED_IMPACT_M,SAFE_IMPACT_M,barrageNext,barrageSeed,landingPoint,makeBarragePlan,makeMedicPlan,pickShellPoint,shellOutcome,shellProtection} from '../src/game/m01-shell-blast.js';
 import {pairUnit,unitHash} from '../src/game/m01-unit-hash.js';
 import {M01AreaWorld} from '../src/world/m01-area-world.js';
+import * as THREE from 'three';
+import {M01AreaDressing} from '../src/render/m01-area-dressing.js';
 import {TczewWorld} from '../src/world/tczew-world.js';
 import {lightingModel,phaseAt,sunState} from '../src/render/m01-lighting.js';
 import {areaClippingAudit} from './helpers/m01-act-audit.js';
@@ -418,6 +420,23 @@ test('F9: nothing on screen of VII-b gives an exact hour, a count of attacks, an
   assert.ok([...seen].some(t=>/^Linha norte · \d+ atacantes? no campo/.test(t)),'the status line keeps the game count of VII-a («N no campo»: return to the player, not history)');
   assert.ok([...seen].includes('Fogo de artilharia · abrigue-se atrás do parapeito'));assert.ok(![...seen].some(t=>/vaga\b/.test(t)&&/\d\.ª/.test(t)),'and never «2.ª vaga»');
   void state;
+});
+
+test('the craters of the shells are drawn from the saved damage records: nothing before the first shell, two instanced meshes then, redrawn only when the records change, a restore that removes them clears them',()=>{
+  const ctx={geometries:[],materials:[],group:new THREE.Group(),groundY:-3};   // the dressing is built with a canvas in the browser; its crater method needs only these four fields
+  const draw=damage=>M01AreaDressing.prototype.syncShellCraters.call(ctx,damage);
+  const others=[{id:'m01_grenade_0',x:0,y:0,z:0,started:1},{id:'np_wreck_fire',x:-390,y:-1.2,z:-1240,started:-420,wreck:true}];
+  draw(others);assert.equal(ctx.group.children.length,0,'no shell yet: nothing is made (VII-a never meets it)');
+  const shells=[0,1,2].map(n=>({id:`np_shell_crater_brg_npb_1_${n}`,x:-440+n*20,y:-3,z:-1210+n*5,started:20+n,soundAt:21+n}));
+  draw([...others,shells[0],shells[1]]);
+  assert.deepEqual(ctx.group.children.map(m=>[m.name,m.count]),[['m01-area-shell-crater-discs',2],['m01-area-shell-crater-rims',2]]);
+  const [discs,rims]=ctx.group.children,version=discs.instanceMatrix.version;
+  draw([...others,shells[0],shells[1]]);assert.equal(discs.instanceMatrix.version,version,'the same records: nothing redrawn');
+  const at=new THREE.Vector3();discs.getMatrixAt(1,new THREE.Matrix4().identity());const m=new THREE.Matrix4();discs.getMatrixAt(1,m);at.setFromMatrixPosition(m);
+  assert.deepEqual([at.x,at.z],[-420,-1205]);assert.ok(Math.abs(at.y-(-3+.02))<1e-6,'on the area\'s ground');
+  draw([...others,...shells]);assert.equal(discs.count,3);assert.equal(rims.count,3);assert.ok(discs.instanceMatrix.version>version);
+  draw(others);assert.equal(discs.count,0,'a restore to a checkpoint before the barrage clears them');assert.equal(ctx.group.children.length,2);
+  assert.equal(ctx.geometries.length,2);assert.equal(ctx.materials.length,2,'owned by the dressing: disposed with it');
 });
 
 test('the golden of Act VII-b: both routes regenerate byte for byte (x86_64; tools/verification/m01-act-vii-b-golden.mjs)',{skip:arch()!=='x64'&&'x86_64 only',timeout:1800000},()=>{
