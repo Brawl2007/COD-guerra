@@ -11,6 +11,7 @@ import {playM02RoundAudio} from './m02-round-audio.js';
 import {M01CombatFeedback} from './m01-combat-feedback.js';
 import {M02GrenadeFollowThrough} from './m02-grenade-follow-through.js';
 import {M02GrenadePreparation} from './m02-grenade-preparation.js';
+import {m02CanteenGeometry} from './m02-canteen.js';
 import {playM02NpcReloadAudio} from './m02-npc-reload-audio.js';
 import {playM02GrenadeBounce,playM02GrenadeHandling} from './m02-grenade-audio.js';
 
@@ -61,6 +62,8 @@ export class M02Presentation {
     this.feedback=new M01CombatFeedback();
     this.grenadeFollowThrough=new M02GrenadeFollowThrough();
     this.grenadePreparation=new M02GrenadePreparation(grenadeGeometry,grenadeMaterial);
+    this.waterGeometry=m02CanteenGeometry();this.waterPreparation=new M02GrenadePreparation(this.waterGeometry,grenadeMaterial);
+    if(this.waterPreparation.mesh)this.waterPreparation.mesh.name='M02 provisional canteen in hand';
     this.grenadeWarning=null;
     this.damageSource=null;
     this.footsteps=new M02Footsteps(this.audio);
@@ -77,6 +80,7 @@ export class M02Presentation {
       this.feedback?.reset();
       this.grenadeFollowThrough?.reset();
       this.grenadePreparation?.reset();
+      this.waterPreparation?.reset();
       // A checkpoint can be made just after the projectile left the hand.
       // Its optional release view identifies the player's new-style throw;
       // rebuild only the remaining arm motion and retain rifle priority.
@@ -139,6 +143,7 @@ export class M02Presentation {
     this.grenadeFollowThrough??=new M02GrenadeFollowThrough();
     this.grenadeFollowThrough.restore();
     this.grenadePreparation?.restore();
+    this.waterPreparation?.restore();
     const record = { clock:sim.clock, player:{...sim.player,moveBlend:sim.player.moving?1:0},
       world:{revision:sim.world.revision,obstacles:sim.world.obstacles},
       weapon:Object.assign(Object.create(Object.getPrototypeOf(sim.weapon)), sim.weapon),
@@ -150,7 +155,9 @@ export class M02Presentation {
     const eligible=ready&&sim.player.health>0&&!sim.player.carryingVolumeId&&!sim.weapon.reloading&&!sim.weapon.boltCycling&&
       !(throwAt!==null&&sim.weapon.lastShot/1000>=throwAt);
     this.grenadePreparationState=ready&&sim.player.health>0?this.grenadePreparation?.apply(this.weapon,sim.playerGrenadeAction,sim.clock)??null:null;
-    this.grenadeFollowThroughWeight=this.grenadeFollowThrough.apply(this.weapon.root,sim.clock,eligible&&!this.grenadePreparationState);
+    const water=sim.playerWaterAction;
+    this.waterPreparationState=ready&&sim.player.health>0&&water?this.waterPreparation?.apply(this.weapon,{startedAt:water.startedAt,releaseAt:water.finishAt},sim.clock)??null:null;
+    this.grenadeFollowThroughWeight=this.grenadeFollowThrough.apply(this.weapon.root,sim.clock,eligible&&!this.grenadePreparationState&&!this.waterPreparationState);
     return ready;
   }
   renderWeapon(renderer) {
@@ -214,6 +221,6 @@ export class M02Presentation {
   }
   get diagnostics() {
     return {characters:this.characters.stats, loadedModels:[...this.characters.sources.keys()], clips:this.characters.clips.size, failures:this.characters.assets.failures,
-      weapon:this.weapon.stats, grenadePreparation:this.grenadePreparationState??null,grenadeFollowThrough:{startedAt:this.grenadeFollowThrough?.startedAt??null,weight:this.grenadeFollowThroughWeight??0}, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
+      weapon:this.weapon.stats, grenadePreparation:this.grenadePreparationState??null,waterPreparation:this.waterPreparationState??null,grenadeFollowThrough:{startedAt:this.grenadeFollowThrough?.startedAt??null,weight:this.grenadeFollowThroughWeight??0}, weaponLighting:this.weaponLighting.state, audio:this.audio.diagnostics,footsteps:this.footsteps.diagnostics};
   }
 }

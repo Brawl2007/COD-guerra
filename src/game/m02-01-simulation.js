@@ -52,6 +52,7 @@ const SPRINT_SPEED = 6.1;
 const CROUCH_SPEED = 2.55;
 const DOOR_INTERACT_RANGE = 2.2;
 const CHALK_INTERACT_RANGE = 4.5;
+export const M02_WATER_HANDOFF_SECONDS = 1.5;
 
 const TARGET_TO_ENEMY_SYNC = Object.freeze({
   tgt_b02_mg_gunner: 'DE-A05',
@@ -101,6 +102,14 @@ export function validateM02Snapshot(snap) {
         Math.abs(action.releaseAt-action.startedAt-M02_GRENADE_PREPARE_SECONDS)>1e-6||action.releaseAt<=snap.clock-1e-6)
         return {valid:false,reason:'Preparação de granada inválida.'};
     }
+  }
+  if(snap.playerWaterAction!==undefined){
+    const a=snap.playerWaterAction;
+    if(!a||typeof a.actorId!=='string'||!Number.isFinite(a.startedAt)||!Number.isFinite(a.finishAt)||a.startedAt<0||
+      a.startedAt>snap.clock||a.finishAt<=snap.clock-1e-6||Math.abs(a.finishAt-a.startedAt-M02_WATER_HANDOFF_SECONDS)>1e-6||
+      snap.activeCellId!=='A'||snap.player?.health<=0||snap.player?.carryingVolumeId||snap.playerGrenadeAction||snap.weapon?.state!=='READY'||
+      snap.flags?.['m02.pomar_wounded_water']||!snap.enemies?.some(e=>e.id===a.actorId&&e.alive&&e.c04Candidate&&e.state==='WOUNDED_UNARMED'))
+      return {valid:false,reason:'Entrega de água inválida.'};
   }
   if (snap.grenades !== undefined && (!Array.isArray(snap.grenades) || snap.grenades.some(g=>!g||!g.id||
     !['x','y','z','vx','vy','vz','spawnedAt','fuseAt'].every(k=>Number.isFinite(g[k]))||
@@ -259,6 +268,7 @@ export class M02BenchSimulation {
     this.grenadeSeq = 0;
     this.grenadeAmmo = 2;
     this.playerGrenadeAction = null;
+    this.playerWaterAction = null;
     this.squadOrder = { type: 'auto', axis: null, issuedAt: 0 };
     this.c01Active = false;
     this.c01StartedAt = 0;
@@ -698,8 +708,9 @@ export class M02BenchSimulation {
     };
   }
 
-  currentWoundedWaterPrompt() {
-    if(this.activeCellId!=='A'||this.player.health<=0||this.playerGrenadeAction||this.player.carryingVolumeId||this.flags['m02.pomar_wounded_water'])return null;
+  currentWoundedWaterPrompt({duringHandoff=false}={}) {
+    if(this.activeCellId!=='A'||this.player.health<=0||this.playerGrenadeAction||this.player.carryingVolumeId||this.flags['m02.pomar_wounded_water']||
+      this.playerWaterAction&&!duringHandoff||this.weapon.reloading||this.weapon.boltCycling)return null;
     const wounded=this.enemies.find(e=>e.c04Candidate&&e.alive&&e.state==='WOUNDED_UNARMED'&&e.c04WaterOfferedAt===undefined);
     if(!wounded)return null;
     const distance=Math.hypot(wounded.x-this.player.x,wounded.z-this.player.z);
@@ -712,9 +723,16 @@ export class M02BenchSimulation {
 
   giveWoundedWater() {
     const prompt=this.currentWoundedWaterPrompt();if(!prompt)return null;
-    const wounded=this.enemies.find(e=>e.id===prompt.actorId);wounded.c04WaterOfferedAt=this.clock;this.flags['m02.pomar_wounded_water']=true;
-    const event={type:'c04-wounded-water',actorId:wounded.id,clock:Number(this.clock.toFixed(2))};
+    this.playerWaterAction={actorId:prompt.actorId,startedAt:this.clock,finishAt:this.clock+M02_WATER_HANDOFF_SECONDS};
+    const event={type:'c04-water-started',actorId:prompt.actorId,clock:Number(this.clock.toFixed(2))};
     this.events.push(event);return event;
+  }
+
+  finishWoundedWater() {
+    const action=this.playerWaterAction,prompt=this.currentWoundedWaterPrompt({duringHandoff:true});
+    if(!action||!prompt||prompt.actorId!==action.actorId||this.clock+1e-8<action.finishAt)return null;
+    const wounded=this.enemies.find(e=>e.id===action.actorId);wounded.c04WaterOfferedAt=this.clock;this.flags['m02.pomar_wounded_water']=true;this.playerWaterAction=null;
+    const event={type:'c04-wounded-water',actorId:wounded.id,clock:Number(this.clock.toFixed(2))};this.events.push(event);return event;
   }
 
   markWoundedSoldierWithChalk() {
@@ -911,6 +929,7 @@ export class M02BenchSimulation {
       if (targetActor.health <= 0) {
         targetActor.alive = false;
         targetActor.state = 'DEAD';
+        if(this.playerWaterAction?.actorId===targetActor.id)this.playerWaterAction=null;
       }
       if(targetActor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(targetActor);
       recordM02Hit(targetActor,this.clock,origin,hit.part);
@@ -1074,7 +1093,7 @@ export class M02BenchSimulation {
           }
         }
         updateM02EvacuationWound(this,victim);
-        if(victim===this.player&&victim.health<=0)this.cancelPlayerGrenade();
+        if(victim===this.player&&victim.health<=0){this.cancelPlayerGrenade();this.playerWaterAction=null;}
         if(victim.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(victim);
         recordM02Hit(victim,this.clock,origin,hit.part);
         this.syncCalibrationAndEnemies();
@@ -1157,7 +1176,7 @@ export class M02BenchSimulation {
   }
 
   preparePlayerGrenade() {
-    if(this.playerGrenadeAction||this.grenadeAmmo<=0||this.player.health<=0||this.player.carryingVolumeId)return false;
+    if(this.playerGrenadeAction||this.playerWaterAction||this.grenadeAmmo<=0||this.player.health<=0||this.player.carryingVolumeId)return false;
     this.grenadeAmmo--;
     const startedAt=this.weapon.boltCycling?Math.max(this.clock,this.weapon.until/1000):this.clock;
     this.playerGrenadeAction=this.weapon.reloading?{startedAt:null,releaseAt:null,waitingForReload:true}:
@@ -1265,7 +1284,7 @@ export class M02BenchSimulation {
           }
         }
         updateM02EvacuationWound(this,actor);
-        if(actor===this.player&&actor.health<=0)this.cancelPlayerGrenade();
+        if(actor===this.player&&actor.health<=0){this.cancelPlayerGrenade();this.playerWaterAction=null;}
         if(actor.m02GrenadeThreat)m02ClearIncapableGrenadeThreat(actor);
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
         if(damage>0)recordM02Hit(actor,this.clock,center);
@@ -1483,6 +1502,8 @@ export class M02BenchSimulation {
     this.clock += dt;
     const nowMs = this.clock * 1000;
     const preparingGrenade=Boolean(this.playerGrenadeAction);
+    if(this.playerWaterAction&&(Math.hypot(controls.forward??0,controls.side??0)>.1||controls.fire||controls.grenade||
+      !this.currentWoundedWaterPrompt({duringHandoff:true})))this.playerWaterAction=null;
 
     if (controls.lookX) this.player.angle += controls.lookX;
     if (controls.lookY) {
@@ -1532,18 +1553,21 @@ export class M02BenchSimulation {
     this.player.moving=Math.hypot(this.player.x-movementStartX,this.player.z-movementStartZ)>1e-5;
     if(!this.player.moving)this.player.sprinting=false;
     if(this.player.health<=0||this.player.carryingVolumeId)this.cancelPlayerGrenade();
-    if (!preparingGrenade&&controls.reload) this.weapon.reload(nowMs);
-    if (!preparingGrenade&&controls.sight) this.weapon.adjustSight();
-    if (!preparingGrenade&&controls.interact) this.interactDoor();
-    if (!preparingGrenade&&controls.giveWater) this.giveWoundedWater();
-    const shot=!preparingGrenade&&controls.fire?this.firePlayerWeapon(false):null;
-    if (!preparingGrenade&&controls.grenade&&!shot&&this.preparePlayerGrenade()){
+    if (!preparingGrenade&&controls.giveWater&&!controls.fire&&!controls.grenade&&!controls.reload&&inputLen<=.1) this.giveWoundedWater();
+    const preparingWater=Boolean(this.playerWaterAction);
+    if(preparingWater){this.player.aiming=false;this.player.sprinting=false;}
+    if (!preparingGrenade&&!preparingWater&&controls.reload) this.weapon.reload(nowMs);
+    if (!preparingGrenade&&!preparingWater&&controls.sight) this.weapon.adjustSight();
+    if (!preparingGrenade&&!preparingWater&&controls.interact) this.interactDoor();
+    const shot=!preparingGrenade&&!preparingWater&&controls.fire?this.firePlayerWeapon(false):null;
+    if (!preparingGrenade&&!preparingWater&&controls.grenade&&!shot&&this.preparePlayerGrenade()){
       this.player.aiming=false;this.player.sprinting=false;
     }
     // A queued throw starts only when its existing rifle action is finished.
     // Crossing the timestamp, rather than a render-frame timer, makes the cue
     // once-only across pause, slow frames and old/new checkpoint restores.
     const action=this.playerGrenadeAction;
+    if(this.playerWaterAction&&this.clock+1e-8>=this.playerWaterAction.finishAt)this.finishWoundedWater();
     if(preparingGrenade&&action&&!action.waitingForReload&&action.startedAt>previousClock+1e-8&&action.startedAt<=this.clock+1e-8)
       this.events.push({type:'grenade-handling-started',throwerId:this.player.id,clock:this.clock});
     const released=this.playerGrenadeAction&&!this.playerGrenadeAction.waitingForReload&&this.clock+1e-8>=this.playerGrenadeAction.releaseAt?
@@ -1564,6 +1588,7 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
+    if(this.playerWaterAction&&!this.currentWoundedWaterPrompt({duringHandoff:true}))this.playerWaterAction=null;
 
     // Suppression and firing now come from actual rounds. The former parallel
     // B02 calibration emitter could also play while that gun was inactive.
@@ -1599,6 +1624,7 @@ export class M02BenchSimulation {
       weapon: this.weapon.snapshot(),
       grenadeAmmo: this.grenadeAmmo,
       ...(this.playerGrenadeAction?{playerGrenadeAction:structuredClone(this.playerGrenadeAction)}:{}),
+      ...(this.playerWaterAction?{playerWaterAction:structuredClone(this.playerWaterAction)}:{}),
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
       ea1StartedAt: this.ea1StartedAt,
@@ -1649,6 +1675,7 @@ export class M02BenchSimulation {
     this.weapon.restore(structuredClone(snap.weapon));
     this.grenadeAmmo = snap.grenadeAmmo ?? 2;
     this.playerGrenadeAction = snap.playerGrenadeAction?structuredClone(snap.playerGrenadeAction):null;
+    this.playerWaterAction = snap.playerWaterAction?structuredClone(snap.playerWaterAction):null;
     this.c01Active = Boolean(snap.c01Active);
     this.c01StartedAt = snap.c01StartedAt ?? 0;
     this.ea1StartedAt = snap.ea1StartedAt ?? 0;

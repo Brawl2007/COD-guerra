@@ -284,13 +284,13 @@ function updateHud() {
 
   // The interaction key is unavailable while the grenade is reserved. Do
   // not advertise a door or chalk action until the player's hands are free.
-  const prompt = sim.playerGrenadeAction ? null : m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
+  const prompt = sim.playerGrenadeAction||sim.playerWaterAction ? null : m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
   const waterPrompt=sim.currentWoundedWaterPrompt();
   const offered=sim.activeCellId==='A'&&sim.enemies.find(e=>e.c04Candidate&&e.c04WaterOfferedAt!==undefined&&sim.clock-e.c04WaterOfferedAt<2);
   if (elDoorPrompt) {
-    if (prompt||waterPrompt||offered) {
+    if (prompt||waterPrompt||offered||sim.playerWaterAction) {
       elDoorPrompt.style.display = 'block';
-      const lines=[];if(offered)lines.push('Água oferecida ao ferido');
+      const lines=[];if(sim.playerWaterAction)lines.push('A oferecer água…');else if(offered)lines.push('Água oferecida ao ferido');
       if(prompt)lines.push(`${prompt.prompt.replace('[E]',touchMode?'[USAR]':'[E]')} (${prompt.distance}m)`);
       if(waterPrompt)lines.push(waterPrompt.prompt.replace('[F]',touchMode?'[ÁGUA]':'[F]'));
       elDoorPrompt.textContent=lines.join(' · ');

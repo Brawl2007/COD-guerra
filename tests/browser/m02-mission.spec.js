@@ -19,6 +19,9 @@ test('C04 offers water by touch while keeping the separate chalk choice',async({
  await page.screenshot({path:testInfo.outputPath('c04-before-water.png')});
  const cdp=await page.context().newCDPSession(page),box=await water.boundingBox(),point={x:box.x+box.width/2,y:box.y+box.height/2,id:0};
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await page.waitForFunction(()=>window.m02Bench.sim.playerWaterAction&&window.m02Bench.renderer.presentation.waterPreparationState?.progress>.6,null,{timeout:10000});
+ expect(await page.evaluate(()=>window.m02Bench.sim.flags['m02.pomar_wounded_water'])).toBeUndefined();
+ await page.screenshot({path:testInfo.outputPath('c04-water-in-hand.png')});
  await expect(water).toBeHidden();await expect(page.locator('#door-prompt')).toContainText('Água oferecida');
  expect(await page.evaluate(()=>({given:window.m02Bench.sim.enemies[0].c04WaterOfferedAt!==undefined,chalk:window.m02Bench.sim.flags['m02.pomar_wounded_marked']}))).toEqual({given:true,chalk:false});
  await page.screenshot({path:testInfo.outputPath('c04-after-water.png')});expect(errors).toEqual([]);
