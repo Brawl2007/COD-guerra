@@ -1,0 +1,66 @@
+{
+ "card": {
+  "act": "act_vii_b_north_day",
+  "scene": "cs_npb_entry",
+  "phase": "NPB_ENTRY",
+  "complete": false,
+  "clock": 3.4165000000000068,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "",
+  "status": "",
+  "card": "Mais tarde…Perímetro norte · 1 de setembro de 1939, durante o diaOs ataques vindos do norte continuaram, com apoio de artilharia (T16, certeza baixa) · quantos e a que horas: desconhecidoPosições, momentos, efetivos e o fogo representado: reconstrução e dramatização",
+  "craters": 0,
+  "pending": [],
+  "checkpoints": [],
+  "flags": {
+   "m01npb.wave": "pending"
+  },
+  "dressingMeshes": 10
+ },
+ "after": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_ARRIVAL",
+  "complete": false,
+  "clock": 4.6831000000000085,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "Reabasteça-se e ocupe o flanco oeste do parapeito",
+  "status": "",
+  "card": "",
+  "craters": 0,
+  "pending": [],
+  "checkpoints": [
+   "cp_npb_i_dia"
+  ],
+  "flags": {
+   "m01npb.wave": "pending"
+  },
+  "dressingMeshes": 10
+ },
+ "checkpoints": [
+  "cp_npb_i_dia"
+ ],
+ "errors": []
+}

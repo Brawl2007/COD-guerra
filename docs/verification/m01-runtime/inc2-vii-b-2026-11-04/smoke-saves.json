@@ -1,0 +1,211 @@
+{
+ "arrival": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_ARRIVAL",
+  "complete": false,
+  "clock": 1.6166999999999978,
+  "player": {
+   "x": -412,
+   "y": -3,
+   "z": -1078,
+   "angle": -1.5707963267948966,
+   "pitch": 0,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "Reabasteça-se e ocupe o flanco oeste do parapeito",
+  "status": "",
+  "card": "",
+  "craters": 0,
+  "pending": [],
+  "checkpoints": [
+   "cp_npb_i_dia"
+  ],
+  "flags": {
+   "m01np.wave": "repelled",
+   "m01np.completed": true,
+   "m01npb.wave": "pending"
+  },
+  "dressingMeshes": 10,
+  "errors": []
+ },
+ "barrage": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_BARRAGE",
+  "complete": false,
+  "clock": 42.53339999999972,
+  "player": {
+   "x": -504.5854880338988,
+   "y": -3,
+   "z": -1158.8380820252964,
+   "angle": -1.5707963267948966,
+   "pitch": 0.02,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "Abrigue-se atrás do parapeito",
+  "status": "Fogo de artilharia · abrigue-se atrás do parapeito",
+  "card": "",
+  "craters": 6,
+  "pending": [],
+  "checkpoints": [
+   "cp_npb_i_dia"
+  ],
+  "flags": {
+   "m01np.wave": "repelled",
+   "m01np.completed": true,
+   "m01npb.wave": "pending"
+  },
+  "dressingMeshes": 12,
+  "errors": []
+ },
+ "craters": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_AFTER",
+  "complete": false,
+  "clock": 68.03329999999828,
+  "player": {
+   "x": -504.5854880338988,
+   "y": -3,
+   "z": -1158.8380820252964,
+   "angle": -2.108555724383541,
+   "pitch": -0.05,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "Repila os ataques vindos do norte",
+  "status": "",
+  "card": "",
+  "craters": 12,
+  "pending": [],
+  "checkpoints": [
+   "cp_npb_i_dia"
+  ],
+  "flags": {
+   "m01np.wave": "repelled",
+   "m01np.completed": true,
+   "m01npb.wave": "pending"
+  },
+  "dressingMeshes": 12,
+  "errors": []
+ },
+ "carry": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_AFTER",
+  "complete": false,
+  "clock": 70.56669999999814,
+  "player": {
+   "x": -476,
+   "y": -3,
+   "z": -1118,
+   "angle": -0.684921290414389,
+   "pitch": -0.03,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "Repila os ataques vindos do norte",
+  "status": "",
+  "card": "",
+  "craters": 12,
+  "pending": [],
+  "checkpoints": [
+   "cp_npb_i_dia"
+  ],
+  "flags": {
+   "m01np.wave": "repelled",
+   "m01np.completed": true,
+   "m01npb.wave": "pending"
+  },
+  "dressingMeshes": 12,
+  "errors": []
+ },
+ "attack": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_ATTACK",
+  "complete": false,
+  "clock": 81.04999999999754,
+  "player": {
+   "x": -504.5854880338988,
+   "y": -3,
+   "z": -1158.8380820252964,
+   "angle": -1.5707963267948966,
+   "pitch": 0.015,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 36,
+  "clockText": "DURANTE O DIA",
+  "objective": "Repila os ataques vindos do norte",
+  "status": "Linha norte · 18 atacantes no campo · 0 caídos",
+  "card": "",
+  "craters": 12,
+  "pending": [
+   "impact"
+  ],
+  "checkpoints": [
+   "cp_npb_i_dia"
+  ],
+  "flags": {
+   "m01np.wave": "repelled",
+   "m01np.completed": true,
+   "m01npb.wave": "active"
+  },
+  "dressingMeshes": 12,
+  "errors": []
+ },
+ "barrage2": {
+  "act": "act_vii_b_north_day",
+  "scene": null,
+  "phase": "NPB_BARRAGE",
+  "complete": false,
+  "clock": 174.78330000000548,
+  "player": {
+   "x": -504.5854880338988,
+   "y": -3,
+   "z": -1158.8380820252964,
+   "angle": -1.5707963267948966,
+   "pitch": 0.02,
+   "health": 100,
+   "crouched": false,
+   "aiming": false
+  },
+  "alive": 21,
+  "clockText": "DURANTE O DIA",
+  "objective": "Abrigue-se atrás do parapeito",
+  "status": "Fogo de artilharia · abrigue-se atrás do parapeito",
+  "card": "",
+  "craters": 15,
+  "pending": [
+   "blast"
+  ],
+  "checkpoints": [
+   "cp_npb_i_dia",
+   "cp_npb_i2_pausa"
+  ],
+  "flags": {
+   "m01np.wave": "repelled",
+   "m01np.completed": true,
+   "m01npb.wave": "lull"
+  },
+  "dressingMeshes": 12,
+  "errors": []
+ }
+}

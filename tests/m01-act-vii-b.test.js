@@ -132,7 +132,7 @@ test('F3/F5: the plans of barrages and bearers refuse what is not a plan (a typo
     ['no time to land them',b=>{b[0].impacts=30;},/do not fit in/],['impacts a fraction',b=>{b[0].impacts=2.5;},/impacts 1-40/],['intervals the wrong way round',b=>{b[0].intervalSec=[5,2.5];},/intervalSec \[lo, hi\]/],
     ['no warning',b=>{delete b[0].warnSec;},/warnSec 0.5-4/],['a spec that does not exist',b=>{b[0].spec='SHELL_150';},/spec SHELL_150/],['a band outside the slice',b=>{b[0].band.minX=-700;},/band \{minX/],
     ['a band too small to be safe',b=>{b[0].band={minX:-440,maxX:-400,minZ:-1200,maxZ:-1150};},/at least 100 x 60 m/],['a callout that is not text',b=>{b[0].callout=3;},/callout/],
-    ['a casualty beyond the impacts',b=>{b[0].casualty.impact=10;},/casualty \{impact/],['a casualty on a man who is not of the line',b=>{b[0].casualty.near='marek_zielinski';},/casualty \{impact/],
+    ['a casualty beyond the impacts',b=>{b[0].casualty.impact=b[0].impacts;},/casualty \{impact/],['a casualty on a man who is not of the line',b=>{b[0].casualty.near='marek_zielinski';},/casualty \{impact/],
     ['a casualty offset of 40 m',b=>{b[0].casualty.offsetM=[40,0];},/casualty \{impact/]];
   for(const [name,mutate,re] of cases)assert.throws(()=>build(mutate),re,name);
   const m=extra=>{const x={...strip(act.medics),...extra};return makeMedicPlan(x,{playable:layout.bounds.playable});};
@@ -348,7 +348,7 @@ test('saves: tampered or foreign records are refused with a message — the barr
   const bad=(name,mutate,re=/inválid/)=>{const e=strip(good);mutate(e.actSave);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,re,`${name}: ${r.error}`);};
   bad('no barrage record',s=>{delete s.timers.barrage;},/registo das barragens/);bad('a stray key in the barrage record',s=>{s.timers.barrage.extra=1;},/registo das barragens/);
   bad('a barrage that does not exist',s=>{s.timers.barrage.run.id='brg_x';},/registo das barragens/);bad('the same barrage running and done',s=>{s.timers.barrage.done[s.timers.barrage.run.id]=1;},/registo das barragens/);
-  bad('more impacts than the barrage has',s=>{s.timers.barrage.run.k=11;},/registo das barragens/);bad('a shell the record has not launched',s=>{s.timers.barrage.run.shells[0].n=s.timers.barrage.run.k;},/registo das barragens/);
+  bad('more impacts than the barrage has',s=>{s.timers.barrage.run.k=act.barrages[0].impacts+1;},/registo das barragens/);bad('a shell the record has not launched',s=>{s.timers.barrage.run.shells[0].n=s.timers.barrage.run.k;},/registo das barragens/);
   bad('a shell outside the area',s=>{s.timers.barrage.run.shells[0].x=5000;},/registo das barragens/);bad('a landing that is not the warning after the launch',s=>{s.timers.barrage.run.shells[0].landAt+=3;},/registo das barragens/);
   bad('a shell that should have landed',s=>{s.timers.barrage.run.shells[0].landAt=s.clock-1;s.timers.barrage.run.shells[0].launchedAt=s.clock-2.5;},/registo das barragens/);
   bad('a stream that is not a 32-bit number',s=>{s.timers.barrage.run.rng=-1;},/registo das barragens/);bad('a barrage finished in the future',s=>{s.timers.barrage.done.brg_npb_2=s.clock+100;},/registo das barragens/);
