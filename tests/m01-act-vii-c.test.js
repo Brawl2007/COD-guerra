@@ -388,9 +388,11 @@ test('F9: nothing on screen of VII-c gives an exact hour but the one of the orde
   // the cards: the only hours are the order's («Por volta das 17:00»), the documented window and sunset of the end card (each with its source), and never an hour with seconds
   for(const text of [...act.cards.order.lines,...act.cards.entry.lines,...act.cards.end.lines,act.debrief.paragraphs[0].text,...act.history.map(h=>h.text)])assert.doesNotMatch(text,/\d{1,2}:\d{2}:\d{2}/,`an exact hour: ${text}`);
   assert.deepEqual(act.cards.entry.lines.join(' ').match(/\d{1,2}:\d{2}/g),null,'«Ao anoitecer» gives no hour');
-  const order=act.cards.order.lines,end=act.cards.end.lines;assert.equal(order[0],'Por volta das 17:00');assert.deepEqual(order.join(' ').match(/\d{1,2}:\d{2}/g),['17:00'],'one hour on the order card');assert.match(order[1],/Ordem do comandante do batalhão/);assert.match(order[1],/Swarożyn–Starogard/);assert.match(order[1],/T03, resumo, certeza média/);
+  const order=act.cards.order.lines,end=act.cards.end.lines;assert.equal(order[0],'Por volta das 17:00');assert.deepEqual(order.join(' ').match(/\d{1,2}:\d{2}/g),['17:00'],'one hour on the order card');assert.match(order[1],/Ordem do comandante do batalhão/);assert.match(order[1],/Swarożyn–Starogard/);assert.match(order[2],/T03, resumo, certeza média/);
   assert.match(order[2],/desconhecidos/);assert.match(order[3],/dramatização/);
-  assert.deepEqual(end.join(' ').match(/\d{1,2}:\d{2}/g),['18:00','20:00','18:39']);assert.match(end[0],/T03/);assert.match(end[1],/C01/);assert.match(end[2],/desconhecidos/);assert.match(end[2],/dramatização/);
+  assert.deepEqual(end.join(' ').match(/\d{1,2}:\d{2}/g),['18:00','20:00','18:39']);assert.match(end[0],/2\.º Batalhão deixou Tczew/);assert.match(end[1],/T03, resumo, certeza média/);assert.match(end[2],/C01/);assert.match(end[2],/desconhecidos/);assert.match(end[3],/dramatização/);
+  // every line fits the card: the HUD shows each as ONE line clipped at 82 vw (the 1st holds about 40 characters, the 2nd about 95, the others about 110, at 1280 px): nothing of what the cards say is cut off
+  for(const [name,lines] of [['order',order],['entry',act.cards.entry.lines],['end',end]])lines.forEach((text,i)=>assert.ok(text.length<=[38,88,104,104][i],`${name} card, line ${i} is ${text.length} characters (${[38,88,104,104][i]} at most): ${text}`));
   assert.equal(act.cards.entry.lines[0],'Ao anoitecer');assert.match(act.cards.entry.lines.join(' '),/reconstrução e dramatização/);assert.match(act.cards.entry.lines.join(' '),/C01/);
   // the classification of what the act says and does
   const hist=Object.fromEntries(act.history.map(h=>[h.id,h]));

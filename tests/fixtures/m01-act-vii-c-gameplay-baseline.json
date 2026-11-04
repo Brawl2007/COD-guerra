@@ -10,7 +10,7 @@
   "src/game/m01-unit-hash.js": "83b2739714aa6060f363f344a0f554712df87f857ffbdc3d7309a51377a28dc9",
   "src/world/m01-area-world.js": "162f71c3203dbd2cbc31ab8248c87b7c21c3499b184244ac99be53e74fcc3db7",
   "src/world/m01-prop-layout.js": "04bf35b8ab03ee90087a9f6caefd284c2ea27671149af89dd6798fcdf9e34767",
-  "missions/m01-tczew/areas/np/act-vii-c.json": "322e88986febc5b38409dcaf1ba0d78c44fc8c2a46a4f0a9b6bc43556e0ab495",
+  "missions/m01-tczew/areas/np/act-vii-c.json": "8f7a42f0f66c52c7f38e3bb1fa6ac8cc747087981c2a93d19b28fd319117ccda",
   "missions/m01-tczew/areas/np/layout.json": "2dd97832f41d656256b5c36e3633d4dfaa4dad81c00a7a05bd6477388bd53083",
   "tests/helpers/m01-act-c-route.js": "197731c9d64ba5c98242bf4b0f8d91d03b1473178f29151b1c3c1d0022c0882e"
  },

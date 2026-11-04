@@ -109,6 +109,7 @@
       ]
     }
   },
+  "cardsNote": "Cada linha de um cartão é uma só linha no ecrã (o HUD corta-a a 82 vw: `white-space:nowrap`, `overflow:hidden`): a 1.ª cabe cerca de 40 caracteres, a 2.ª cerca de 95, as outras cerca de 110 (a 1280 px). Os cartões do VII-c ficam abaixo disso (teste F9).",
   "cards": {
     "order": {
       "id": "cs_npc_order",
@@ -116,9 +117,9 @@
       "skippable": true,
       "lines": [
         "Por volta das 17:00",
-        "Ordem do comandante do batalhão: deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard (T03, resumo, certeza média)",
-        "Quem a transmitiu, por onde e a ordem de marcha: desconhecidos",
-        "A retaguarda da secção e o caminho representado: dramatização"
+        "Ordem do comandante do batalhão: deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard",
+        "(T03, resumo, certeza média) · quem a transmitiu, por onde e a ordem de marcha: desconhecidos",
+        "A retaguarda da secção, o mensageiro e o caminho representado: dramatização"
       ]
     },
     "entry": {
@@ -128,7 +129,7 @@
       "lines": [
         "Ao anoitecer",
         "Perímetro norte · 1 de setembro de 1939",
-        "A luz do crepúsculo: cálculo astronómico (C01) · a retirada representada: reconstrução e dramatização"
+        "A luz do crepúsculo: cálculo astronómico (C01) · a retirada: reconstrução e dramatização"
       ]
     },
     "end": {
@@ -136,9 +137,10 @@
       "seconds": 9,
       "skippable": true,
       "lines": [
-        "O 2.º Batalhão deixou Tczew entre as 18:00 e as 20:00 (T03)",
-        "Pôr do sol às 18:39 (C01)",
-        "Itinerário e ruas: desconhecidos (sem mapa de 1939) · o mensageiro, a retaguarda e o caminho representado: dramatização"
+        "O 2.º Batalhão deixou Tczew",
+        "Retirada entre as 18:00 e as 20:00 (T03, resumo, certeza média)",
+        "Pôr do sol às 18:39 (C01) · itinerário e ruas: desconhecidos (sem mapa de 1939)",
+        "O mensageiro, a retaguarda e o caminho representado: dramatização"
       ]
     }
   },

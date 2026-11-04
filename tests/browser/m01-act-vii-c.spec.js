@@ -72,7 +72,7 @@ test('QA flag ?act=vii-c boots Act VII-c on the order card, then «Ao anoitecer�
   await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_c_withdrawal'&&window.gameDiagnostics().m01.scene==='cs_npc_order',null,{timeout:60000});
   await expect(page.locator('#mission-briefing')).toContainText('QA · Ato VII-c');
   await page.waitForFunction(()=>window.gameDiagnostics().clock>4.8,null,{timeout:60000});   // every line of the card typed (40 characters a second, half a second between lines: the longest is done at 3.7 s), before the card fades (7.6 s)
-  const order=await diag(page);expect(order.card).toContain('Por volta das 17:00');expect(order.card).toContain('Ordem do comandante do batalhão');expect(order.card).toContain('desconhecidos');expect(order.card).toContain('dramatização');
+  const order=await diag(page);expect(order.card).toContain('Por volta das 17:00');expect(order.card).toContain('Ordem do comandante do batalhão: deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard');expect(order.card).toContain('(T03, resumo, certeza média)');expect(order.card).toContain('desconhecidos');expect(order.card).toContain('dramatização');
   await page.screenshot({path:OUT+'01-order-card.png'});
   await page.keyboard.press('Space');
   await page.waitForFunction(()=>window.gameDiagnostics().m01.scene==='cs_npc_dusk',null,{timeout:60000});
@@ -144,7 +144,7 @@ test('the end of VII-c is the end card and then the debrief, with the paragraphs
   await page.waitForFunction(()=>window.gameDiagnostics().m01.scene==='cs_npc_end',null,{timeout:90000});
   await page.waitForTimeout(3500);await page.screenshot({path:OUT+'09-end-card.png'});
   const card=await page.evaluate(()=>document.querySelector('#title-card')?.textContent);
-  expect(card).toContain('O 2.º Batalhão deixou Tczew entre as 18:00 e as 20:00');expect(card).toContain('Pôr do sol às 18:39');
+  expect(card).toContain('O 2.º Batalhão deixou Tczew');expect(card).toContain('Retirada entre as 18:00 e as 20:00 (T03, resumo, certeza média)');expect(card).toContain('Pôr do sol às 18:39 (C01)');
   await page.waitForSelector('#complete:not(.hidden)',{timeout:90000});
   const debrief=await page.locator('#debrief').textContent();
   const at=t=>debrief.indexOf(t);

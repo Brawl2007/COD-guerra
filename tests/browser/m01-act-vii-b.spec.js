@@ -10,6 +10,7 @@ import {actBControls} from '../helpers/m01-act-b-route.js';
 // the wounded man, CP-I2 is stored when the first attack breaks, and the end card of VII-b opens the order card of VII-c (INC-3; until then the debrief followed it, with the paragraphs of both area acts). The saves are made in Node with the same simulation.
 // A state/presentation check, not a playtest and not a frame-rate figure.
 const OUT=new URL('../../docs/verification/m01-runtime/inc2-vii-b-2026-11-04/',import.meta.url).pathname;
+const OUT3=new URL('../../docs/verification/m01-runtime/inc3-vii-c-2026-11-04/',import.meta.url).pathname;   // INC-3: the chain test below (VII-b -> VII-c) writes its state there
 const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',ID='act_vii_b_north_day',LABEL='DURANTE O DIA';
 const live=sim=>({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
 
@@ -138,5 +139,5 @@ test('the end of VII-b is its end card and then, in the same page, the order car
   expect(card).toContain('Por volta das 17:00');
   expect(await page.locator('#complete').evaluate(n=>n.classList.contains('hidden'))).toBe(true);   // no debrief yet: VII-c is still to be played
   expect(errors).toEqual([]);
-  writeFileSync(OUT+'smoke-chain-to-vii-c.json',JSON.stringify({card,errors},null,1)+'\n');
+  mkdirSync(OUT3,{recursive:true});writeFileSync(OUT3+'smoke-chain-from-vii-b.json',JSON.stringify({card,errors},null,1)+'\n');
 });
