@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — joystick e dois dedos, 2026-11-04
+
+`b253edb` dá feedback visual ao joystick, repõe-o ao interromper o toque e identifica a recarga de forma mais clara. Dois testes browser com toque simulado passaram, incluindo mover e olhar simultaneamente, manter/soltar mira e parar o movimento ao pausar; oito testes de input/touch e build passaram. [Captura, método e primeira falha do teste](../verification/m02-runtime/touch-multifinger-2026-11-04/README.md). A simulação/saves são preservados. Ainda falta pré-visualização acessível e teste em Safari/iPhone real; main e produção intactas.
+
 ## Continuação — controlos táteis, 2026-11-04
 
 `3ccfb05` adapta a infraestrutura tátil M01 para a M02, incluindo mover/olhar, disparar, mirar, ações, ordens e pausa sem pointer lock. Passaram 182 testes M02, oito testes partilhados de input e touch, build e dois testes browser (touch simulado e desktop); [captura e limites](../verification/m02-runtime/touch-2026-11-04/README.md). Ainda não foi testado em Safari/iPhone físico ou disponibilizado num endereço externo: o servidor deste ambiente é local. O utilizador pediu poder jogar no iPhone; falta pré-visualização acessível e verificação no dispositivo. Sem deploy de produção ou alteração da main.

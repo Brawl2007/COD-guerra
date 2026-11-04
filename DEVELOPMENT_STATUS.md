@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — joystick tátil e dois dedos — 2026-11-04
+
+`b253edb` mostra a direção do joystick e limpa a indicação ao interromper o toque; dois testes browser simulados, oito testes de input e build passaram. [Captura e limites](docs/verification/m02-runtime/touch-multifinger-2026-11-04/README.md). Falta testar num iPhone e disponibilizar uma pré-visualização acessível.
+
 ## M02 — controlos táteis — 2026-11-04
 
 `3ccfb05` acrescenta movimento, olhar, combate, ações e pausa táteis reutilizando a infraestrutura M01. Testes M02, build e browser simulado passaram; [prova e limitações](docs/verification/m02-runtime/touch-2026-11-04/README.md). Falta testar em iPhone/Safari e disponibilizar um endereço de pré-visualização acessível; não houve deploy.
