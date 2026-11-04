@@ -6,6 +6,7 @@ import {demolitionParticles} from './m01-demolition.js';
 import {train963Kinematics,isTrain963Visible} from './m01-locomotive.js';
 import {panzerzugKinematics,isPanzerzugVisible} from './m01-panzerzug.js';
 
+const WRECK_PUFF_COLOR=new THREE.Color('#90866f');   // hoisted: Color.set(string) parsed the hex for every puff of every frame
 // T24 (Gemini/Argon, M01-TRAIN-ARRIVAL-AND-LIFE-V1): railway smoke and steam share the existing 256-puff pool (no extra draw call).
 // The single railway puff cap: m01-train-life.js re-exports it as TRAIN_PUFF_CAP (Codex partials name); there is no second train emitter.
 export const RAILWAY_PUFF_BUDGET=Object.freeze({low:12,medium:18,high:24});
@@ -251,7 +252,7 @@ export class M01Atmosphere {
         const n0=visualNoise(seed,i*4),n1=visualNoise(seed,i*4+1),n2=visualNoise(seed,i*4+2),a=i*2.399+n0*1.1,rr=c.r*Math.sqrt((i+.5)/n)*(.8+.2*n1);
         this.dummy.rotation.set(0,0,0);this.dummy.position.set(c.x+Math.cos(a)*rr,c.y+.5+Math.max(0,c.h-1)*(.12+.4*n2),c.z+Math.sin(a)*rr);
         this.dummy.scale.set(w*(.85+n1*.3),w*(.55+n2*.3),1);this.dummy.updateMatrix();
-        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,400+i);this.puffs.setColorAt(count,this.color.set('#90866f'));this.fade.setX(count++,.62*c.density);
+        this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,400+i);this.puffs.setColorAt(count,this.color.copy(WRECK_PUFF_COLOR));this.fade.setX(count++,.62*c.density);
       }
     }
     for(const d of damage){

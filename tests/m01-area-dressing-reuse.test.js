@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {M01AreaSimulation} from '../src/game/m01-area-sim.js';
 import {M01AreaDressing} from '../src/render/m01-area-dressing.js';
@@ -76,6 +77,11 @@ test('shell crater rims share the dressing\'s earth material (one soil program) 
   const rims=meshOf(d,'m01-area-shell-crater-rims');
   assert.ok(rims.material===d.earth);assert.equal(d.materials.length,before+1);d.dispose();
 }));
+
+test('the wreck smoke puff colour is a hoisted constant, not a hex string parsed per puff per frame',()=>{
+  const src=readFileSync(new URL('../src/render/m01-atmosphere.js',import.meta.url),'utf8');
+  assert.ok(!/color\.set\('#/.test(src));assert.match(src,/const WRECK_PUFF_COLOR=new THREE\.Color\('#90866f'\)/);assert.match(src,/color\.copy\(WRECK_PUFF_COLOR\)/);
+});
 
 test('dispose frees the instance buffers of every InstancedMesh (heaps, clods, crater discs and rims, shell craters, stubble)',()=>withCanvas(()=>{
   const scene=new THREE.Scene(),d=new M01AreaDressing(scene,worlds[1],{surface,quality:'high'});
