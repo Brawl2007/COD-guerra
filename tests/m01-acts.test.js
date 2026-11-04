@@ -10,7 +10,7 @@ import {SQUAD,updateSquad} from '../src/game/m01-squad.js';
 import {REARGUARD,rearguardPlan} from '../src/game/m01-rearguard.js';
 import {BW_SQUAD_SPEC,makeSquadPlan,squadStep,makeLinePlan,BW_LINE_OPTIONS,makeApproachPlan} from '../src/game/m01-act-factories.js';
 import {M01ActRunner,ACTS,ACT_SAVE_SCHEMA,BW_ACT,actsPlan,carryFrom,validateCarry,nextSeed,actOf} from '../src/game/m01-acts.js';
-import {M01AreaSimulation,AREA_SAVE_SCHEMA,areaActPlan,defaultCarry} from '../src/game/m01-area-sim.js';
+import {M01AreaSimulation,AREA_SAVE_SCHEMA,areaActPlan,defaultCarry,validateAreaSnapshot} from '../src/game/m01-area-sim.js';
 import {actControls,actRoute,ACT_TICK} from './helpers/m01-act-route.js';
 import {driver,route} from './helpers/m01-route.js';
 
@@ -129,6 +129,8 @@ test('schema 3: tampered or foreign envelopes are rejected with a message; with 
   const old=good();old.actSave.schema=1;const refused=runner.load(JSON.stringify(old));
   assert.equal(refused.ok,false);assert.match(refused.error,/esquema 1/);assert.match(refused.error,/segunda vaga/);assert.match(refused.error,/recomece o ato/);
   assert.equal(AREA_SAVE_SCHEMA,2,'the act save schema moved to 2 with the echelon state');
+  // The area save's own schema is 2 now, which is also the number of the current act's save: a bare area save (no schema 3 envelope) must still never open the current act.
+  for(const enabled of [false,true]){const bare=new M01ActRunner({enabled}).load(JSON.stringify(sim.snapshot()));assert.equal(bare.ok,false,`bare area save, switch ${enabled}`);assert.match(bare.error,/inválid/);}
   const off=new M01ActRunner({enabled:false}).load(JSON.stringify(good()));assert.equal(off.ok,false);assert.match(off.error,/desligado/);
   assert.equal(runner.load('{').ok,false);assert.equal(runner.load(null).ok,false);
 });
@@ -171,6 +173,52 @@ test('schema 3: the echelon state of a save in the lull is checked (shape, order
   // and the legitimate variants of the same save still load: the lull timer not yet set (the first echelon still falling back), the timer at its two ends
   const early=good();early.actSave.timers.wave.lullUntil=null;assert.equal(runner.load(JSON.stringify(early)).ok,true,'a broken echelon with its men still on the field has no lull timer yet');
   for(const at of [W.echs[0].brokenAt,W.lullUntil]){const e=good();e.actSave.timers.wave.lullUntil=at;assert.equal(runner.load(JSON.stringify(e)).ok,true,`lull timer ${at}`);}
+});
+
+test('schema 3: a save in the second echelon is checked too (who walked in and when, the records, the flag, the men off the field) and tampering is refused',()=>{
+  const runner=new M01ActRunner({enabled:true}),{sim}=toPoint('passive',s=>s.timers.wave?.ech===1&&s.clock-s.timers.wave.echs[1].at>4);   // 4 s in: the first lanes are in, the far lanes still wait at the treeline
+  const good=()=>strip({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
+  const loaded=runner.load(JSON.stringify(good()));assert.equal(loaded.ok,true,loaded.error);
+  const W=sim.timers.wave,second=a=>sim.man(a).echelon===1&&sim.man(a).role==='assault';
+  const waiting=sim.enemies.find(a=>!a.active&&a.alive&&second(a)),walked=sim.enemies.find(a=>a.active&&a.alive&&second(a)),off=sim.enemies.find(a=>!a.active&&a.alive&&sim.man(a).echelon===0);
+  assert.ok(W.ech===1&&W.echs.length===2&&waiting&&walked&&off&&off.deck.phase==='clear','the second echelon is partly in and partly still at the treeline; a man of the first has finished his fall-back');
+  const flag=(e,to)=>{e.actSave.flags['m01np.wave']=to;},actor=(e,a)=>e.actSave.actors.find(x=>x.id===a.id);
+  const cases=[
+    ['the echelon index back at the first, the second record left over',e=>{e.actSave.timers.wave.ech=0;}],
+    ['the second echelon earlier than its lull allows',e=>{e.actSave.timers.wave.echs[1].at=e.actSave.timers.wave.echs[0].brokenAt+1;}],
+    ['the second echelon in the future',e=>{e.actSave.timers.wave.echs[1].at=e.actSave.clock+5;}],
+    ['a second record while the first has not broken',e=>{e.actSave.timers.wave.echs[0].brokenAt=null;}],
+    ['the second echelon broken without a last break',e=>{e.actSave.timers.wave.echs[1].brokenAt=e.actSave.clock;}],
+    ['a last break while the second echelon has not broken',e=>{e.actSave.timers.wave.brokenAt=e.actSave.clock;}],
+    ['repelled without a last break',e=>{e.actSave.timers.wave.repelledAt=e.actSave.clock;}],
+    ['a lull timer while the second echelon is on',e=>{e.actSave.timers.wave.lullUntil=e.actSave.clock+5;}],
+    ['the flag says lull',e=>flag(e,'lull')],['the flag says broken',e=>flag(e,'broken')],['the flag says pending',e=>flag(e,'pending')],['the flag says repelled',e=>flag(e,'repelled')],
+    ['more German dead than Germans',e=>{e.actSave.timers.wave.casualties=99;}],
+    ['a count that is not a whole number',e=>{e.actSave.timers.wave.echs[1].casualties=1.5;}],
+    ['a key missing from the wave record',e=>{delete e.actSave.timers.wave.closeCalled;}],
+    ['a foreign key in the second echelon\'s record',e=>{e.actSave.timers.wave.echs[1].extra=1;}],
+    ['a man of the first echelon\'s assault alive on the field',e=>{const a=e.actSave.actors.find(x=>x.id==='de_np_4');a.alive=true;a.active=true;a.health=100;}],
+    ['a man waiting at the treeline put on the field before his turn',e=>{actor(e,waiting).active=true;}],
+    ['a man waiting at the treeline moved',e=>{actor(e,waiting).x+=1;}],
+    ['a man of the second echelon who walked in before his echelon',e=>{const a=actor(e,walked);a.deck.t0=0;a.deck.since=0;}],
+    ['a man off the field who did not finish a fall-back',e=>{actor(e,walked).active=false;}],
+    ['a man who finished his fall-back, back on the field',e=>{actor(e,off).active=true;}],
+    ['a man marked as gone who is on the field',e=>{actor(e,walked).deck.phase='clear';}],
+    ['a man of the first echelon waiting at the treeline',e=>{const a=actor(e,off);Object.assign(a,{x:sim.man(off).entry.x,z:sim.man(off).entry.z});Object.assign(a.deck,{phase:'advance',node:0,pinned:0});}],
+    ['an actor without its assault record',e=>{delete actor(e,walked).deck;}],
+    ['an actor whose life flag is not a boolean',e=>{actor(e,walked).alive='yes';}],
+  ];
+  for(const [name,mutate] of cases){const e=good();mutate(e);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,/inválid/,`${name}: ${r.error}`);}
+  // the validator accepts everything the machine writes: three routes sampled every half second through the first echelon, the lull, the second echelon, the last fall-back and the end
+  for(const [mode,level,seed] of [['passive','soldado',19390901],['active','recruta',3],['active','veterano',7]]){
+    const s=new M01AreaSimulation(seed,{difficulty:level}),state={arrived:false,lastHealth:100},flags=new Set();
+    for(let i=0;i<30000&&!s.mission.complete;i++){
+      s.tick(ACT_TICK,actControls(s,mode,state));s.drainEvents();
+      if(i%10===0){validateAreaSnapshot(strip(s.snapshot()),s.plan);flags.add(s.flags['m01np.wave']);}
+    }
+    assert.ok(s.mission.complete,`${mode} ${level} ${seed}`);
+    assert.deepEqual([...flags].sort(),['active','broken','lull','pending','repelled'],`${mode} ${level} ${seed}: every state of the fight was sampled`);
+  }
 });
 
 test('the chain: the completed current act (golden route) hands over to Act VII-a; carry is pure and the seed is derived without drawing',()=>{

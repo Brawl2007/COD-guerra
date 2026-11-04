@@ -32,6 +32,7 @@ test('the slice data: 400 x 300 m inside north_perimeter, a valid plan of two ec
   const [first,second]=plan.assault.echelons;
   assert.ok(second.breakOut>first.breakOut&&second.breakPinnedSec>first.breakPinnedSec,'the second echelon breaks a little harder (its own thresholds)');
   assert.equal(first.lullSec,0);assert.ok(second.lullSec>=20&&second.lullSec<=30,'a lull of 20-30 s');
+  assert.equal(act.events.find(e=>e.id==='evt_np_wave_2').trigger.lullSec,second.lullSec,'the event that documents the lull says the lull the data has');
   // the second echelon enters from the treeline line, on lanes that are not the first's, and the men of a lane follow one another in file
   for(const m of plan.assault.men.filter(m=>m.echelon===1)){assert.equal(m.entry.z,plan.assault.entryZ);assert.ok(m.delaySec>=0);}
   assert.ok(plan.assault.men.filter(m=>m.echelon===1&&m.role==='assault').some(m=>m.delaySec>0),'the lanes of the second echelon come in one after the other');
@@ -114,7 +115,7 @@ test('the area world adds its solids and props to the current act\'s world and c
  */
 function watcher(){
   const w={};
-  const clear=()=>Object.assign(w,{lullStarted:null,lullStatus:false,lullEndPhases:null,secondStatus:false,firstBreakOverwatch:null,finalBreakPhases:null,flagMismatch:0,firstSeen:new Map(),sawLullFlag:false});
+  const clear=()=>Object.assign(w,{lullStarted:null,lullStatus:false,lullEndPhases:null,secondStatus:false,firstBreakOverwatch:null,finalBreakPhases:null,flagMismatch:0,firstSeen:new Map(),sawLullFlag:false,e2Shooters:new Set()});
   clear();
   w.observe=sim=>{
     const W=sim.timers.wave;if(!W){clear();return;}
@@ -126,6 +127,7 @@ function watcher(){
       if(sim.clock+ACT_TICK>=W.lullUntil)w.lullEndPhases=live.map(a=>a.deck.phase);   // the last tick of the lull: who is on the field, and doing what
     }
     if(sim.flags['m01np.wave']==='lull')w.sawLullFlag=true;
+    for(const r of sim.enemyFire.rounds)if(plan.men.find(m=>m.id===r.by)?.echelon===1)w.e2Shooters.add(r.by);   // real rounds in flight, by the men of the second echelon
     if(W.ech===1&&W.brokenAt===null&&/2\.ª vaga/.test(sim.mission.status))w.secondStatus=true;
     if(W.echs[0].brokenAt!==null&&w.firstBreakOverwatch===null)w.firstBreakOverwatch=live.filter(a=>man(a).role==='overwatch').map(a=>a.deck.phase);
     if(W.brokenAt!==null&&w.finalBreakPhases===null)w.finalBreakPhases=live.map(a=>a.deck.phase);
@@ -165,7 +167,7 @@ test('the slice completes on 18 routes (passive and active pilot x 3 levels x 3 
     // the duration the owner asked for: the whole fight, wave start to repelled, is at least two minutes with either pilot; the passive pilot is not stuck (6 minutes at most)
     assert.ok(W.repelledAt-W.at>=120,`${id}: wave start to repelled ${Math.round((W.repelledAt-W.at)*10)/10} s must be at least 120 s`);
     if(mode==='passive')assert.ok(sim.clock<=360,`${id}: the passive pilot is done in ${Math.round(sim.clock)} s (6 minutes at most)`);
-    assert.ok(sim.enemyFire.nextId>=20,`${id}: the Germans fire real rounds`);assert.ok(sim.ckm.bursts>=1,`${id}: the ckm fires`);
+    assert.ok(sim.enemyFire.nextId>=20,`${id}: the Germans fire real rounds`);assert.ok(watch.e2Shooters.size>=8,`${id}: the second echelon fires real rounds (${watch.e2Shooters.size} of its men did)`);assert.ok(sim.ckm.bursts>=1,`${id}: the ckm fires`);
     assert.ok(W.casualties>=1&&W.casualties<=plan.men.length,id);
     // the state of the fight is always the one its record implies; the status line says the lull and the second echelon
     assert.equal(watch.flagMismatch,0,`${id}: the flag follows the record`);assert.ok(watch.sawLullFlag&&watch.lullStatus,`${id}: the status line says the pause`);assert.ok(watch.secondStatus,`${id}: the status line says the second echelon`);

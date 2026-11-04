@@ -234,8 +234,9 @@ export function approachFlagOf(plan,W){
 /**
  * A saved wave record (sim.timers.wave) and the men it implies: the exact keys, an echelon record for every echelon that has entered (and none for one that has not),
  * times in the order the machine writes them (an echelon enters at least its lull after the one before broke), the final break and the lull timer only where they can
- * exist, the men of echelons that have not entered still waiting at the entry line untouched, the assault of the echelons that have gone gone, and `flag` (the sim's
- * own flag of the fight) the one the record implies. `actors`: the saved actors. Never throws.
+ * exist, the men of echelons that have not entered still waiting at the entry line untouched, the assault of the echelons that have gone gone, a man off the field only
+ * waiting at the entry line or gone (phase `clear`) after his fall-back, a later echelon's man on the field no earlier than his echelon's entry plus his delay, and `flag`
+ * (the sim's own flag of the fight) the one the record implies. `actors`: the saved actors. Never throws.
  */
 export function validApproachWave(plan,W,flag,clock,actors){
   const n=plan.echelons.length,total=plan.men.length,finite=(v,lo,hi)=>Number.isFinite(v)&&v>=lo&&v<=hi,count=v=>Number.isInteger(v)&&v>=0&&v<=total;
@@ -244,12 +245,16 @@ export function validApproachWave(plan,W,flag,clock,actors){
   const byId=new Map(actors.map(a=>[a?.id,a])),entered=W?W.ech:0;   // before the wave only the first echelon is on the field
   const here=W?.echs?.[entered],lulling=Number.isFinite(W?.lullUntil);   // the record of the echelon on the field (checked below); its lull timer running
   for(const m of plan.men){
-    const a=byId.get(m.id),d=a?.deck;if(!a)return false;
-    const waiting=a.alive===true&&a.active===false&&d?.phase==='advance'&&d.node===0&&d.pinned===0&&a.x===m.entry.x&&a.z===m.entry.z;
+    const a=byId.get(m.id),d=a?.deck;if(!a||!d||typeof d!=='object'||typeof a.alive!=='boolean'||typeof a.active!=='boolean')return false;
+    const waiting=a.alive&&!a.active&&d.phase==='advance'&&d.node===0&&d.pinned===0&&a.x===m.entry.x&&a.z===m.entry.z;
     if(m.echelon>entered&&!waiting)return false;
+    if(m.echelon===0&&waiting)return false;   // the first echelon is on the field from the start of the act: it never waits at the entry line
     // a man of the echelon on the field still waiting at the entry line: his delay has not run out (a tick of grace), or the echelon broke before it did
     if(m.echelon===entered&&waiting&&here&&here.brokenAt===null&&clock>here.at+m.delaySec+.06)return false;
     if(m.role==='assault'&&(m.echelon<entered||(m.echelon===entered&&lulling))&&a.alive&&a.active)return false;   // gone: the echelons before, and this one once its lull runs
+    // Off the field a living man is either waiting for his echelon or has finished his fall-back (the machine writes `clear` and `active:false` together, nowhere else).
+    if(a.alive&&!a.active&&!waiting&&d.phase!=='clear')return false;
+    if(d.phase==='clear'&&!(a.alive&&!a.active))return false;
   }
   if(W===null)return flag==='pending';
   if(!record(W,APPROACH_WAVE_KEYS)||!finite(W.at,0,clock)||!count(W.casualties)||typeof W.closeCalled!=='boolean'||!Array.isArray(W.echs)||W.echs.length!==W.ech+1)return false;
@@ -259,6 +264,8 @@ export function validApproachWave(plan,W,flag,clock,actors){
     if(k<W.ech&&R.brokenAt===null)return false;
     if(k&&R.at<W.echs[k-1].brokenAt+plan.echelons[k].lullSec-1e-9)return false;
   }
+  // a man of a later echelon who is on the field walked in at his turn (admit writes deck.t0 then), never before his echelon's entry plus his delay
+  for(const m of plan.men)if(m.echelon&&byId.get(m.id).active&&byId.get(m.id).deck.t0<W.echs[m.echelon].at+m.delaySec-1e-9)return false;
   const R=W.echs[W.ech],last=W.ech===n-1;
   if(W.echs[0].at!==W.at||W.brokenAt!==(last?R.brokenAt:null))return false;
   if(W.repelledAt!==null&&(W.brokenAt===null||!finite(W.repelledAt,W.brokenAt,clock)))return false;
