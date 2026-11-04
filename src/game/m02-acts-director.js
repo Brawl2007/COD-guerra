@@ -527,8 +527,9 @@ export function startC10OrderChanges(sim) {
     status: 'active',
   };
 
-  // Save the 4th canonical semantic checkpoint cp_m02_d_cobertura_retirada (I3)
-  sim.saveCheckpoint('cp_m02_d_cobertura_retirada');
+  // Save the 4th canonical semantic checkpoint cp_m02_d_cobertura_retirada (I3). Inside tick() (via updateAreaC) it is
+  // recorded at the end of the tick, after horizon/dialogue/audiovisual have run (FIX-2b); from the API it is recorded now.
+  sim.requestAutoCheckpoint('cp_m02_d_cobertura_retirada');
   return true;
 }
 

@@ -297,6 +297,14 @@ export function validateM02Snapshot(snap) {
 }
 
 export class M02BenchSimulation {
+  /** Profundidade de tick()/ação atómica em curso: um checkpoint automático pedido lá dentro fica pendente até ao fim. */
+  #checkpointBatchDepth = 0;
+  /**
+   * Checkpoints automáticos atingidos no passo em curso (FIX-2b). São gravados no fim do passo, depois de todos os sistemas,
+   * e nunca sobrevivem entre ticks: não entram no snapshot e um passo que falhe a meio descarta-os.
+   */
+  #pendingCheckpointIds = [];
+
   /**
    * @param {number} seed
    * @param {object} [options]
@@ -326,6 +334,7 @@ export class M02BenchSimulation {
   }
 
   reset(startScene = this.defaultStartScene) {
+    this.#pendingCheckpointIds = [];
     this.rng = new Random(this.seed);
     this.clock = 0;
     this.events = [];
@@ -1121,7 +1130,12 @@ export class M02BenchSimulation {
     return evt;
   }
 
+  /** Ação atómica: um checkpoint atingido por este tiro (último defensor) só é gravado depois do áudio/recuo do disparo. */
   firePlayerWeapon(exactAim = true, bypassCooldown = false) {
+    return this.#runCheckpointBatch(() => this.#firePlayerWeapon(exactAim, bypassCooldown));
+  }
+
+  #firePlayerWeapon(exactAim, bypassCooldown) {
     const nowMs = this.clock * 1000;
     if (bypassCooldown && this.weapon.state === 'BOLT_CYCLE') {
       this.weapon.state = 'READY';
@@ -1277,7 +1291,17 @@ export class M02BenchSimulation {
     this.grenades = this.grenades.filter((g) => !g.exploded);
   }
 
+  /**
+   * Reavalia rota, objetivo e flags locais. Os checkpoints semânticos que esta avaliação atinge são pedidos só no fim, depois
+   * de o objetivo estar escrito: dentro de tick() ficam pendentes até ao fim do tick; fora dele são gravados aqui (FIX-2b).
+   */
   updateTacticalContext() {
+    const due = [];
+    this.#evaluateTacticalContext(due);
+    for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
+  }
+
+  #evaluateTacticalContext(due) {
     const px = this.player.x;
     const pz = this.player.z;
 
@@ -1352,7 +1376,7 @@ export class M02BenchSimulation {
           clock: Number(this.clock.toFixed(2)),
           type: 'ea0_outpost_cleared',
         });
-        this.saveCheckpoint('cp_m02_a_preparacao');
+        due.push('cp_m02_a_preparacao');
       } else {
         this.objective.id = 'O00';
         this.objective.title = `C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (${activeEa0.length}/4 ativos)`;
@@ -1397,15 +1421,12 @@ export class M02BenchSimulation {
       this.objective.status = 'completed';
       this.flags['m02.completed'] = true;
       this.dialogue.trigger('bz39_c05_01', this);
-      if (!this.checkpointsReached.includes('cp_m02_b_acesso')) {
-        this.saveCheckpoint('cp_m02_b_acesso');
-      }
+      if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
     } else if (activeCombatDefenders.length === 0) {
       if (this.objective.id !== 'C04') {
         this.dialogue.trigger('bz39_c03_04', this);
-        if (!this.checkpointsReached.includes('cp_m02_b_acesso')) {
-          this.saveCheckpoint('cp_m02_b_acesso');
-        }
+        // Pedido aqui, gravado depois de o objetivo C04 abaixo estar escrito (antes ficava gravado com o objetivo anterior).
+        if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       }
       this.objective.id = 'C04';
       this.objective.title = 'C04 (Pomar Sul): Reagrupar junto ao poço/pomar e sinalizar o ferido [E]';
@@ -1433,8 +1454,50 @@ export class M02BenchSimulation {
     }
   }
 
+  /**
+   * Um passo da simulação. Os checkpoints automáticos atingidos durante o passo (último defensor por tiro ou granada, C04,
+   * posto EA0, C10 na Área C) são gravados no FIM, depois de secção, guarnição, áreas, horizonte, diálogo, audiovisual e
+   * bloco MG: o snapshot é o estado entre dois ticks e restaurar + repetir as mesmas entradas reproduz a continuação.
+   */
   tick(dt, controls = {}) {
     if (dt <= 0) return;
+    this.#runCheckpointBatch(() => this.#step(dt, controls));
+  }
+
+  /**
+   * Pede um checkpoint semântico automático. Dentro de tick()/ação atómica fica pendente e é gravado no fim; fora dela é
+   * gravado já (o chamador está num ponto estável entre entradas).
+   */
+  requestAutoCheckpoint(checkpointId) {
+    if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
+    if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
+    return null;
+  }
+
+  /** Já atingido nesta linha temporal, ou pedido no passo em curso. */
+  checkpointReachedOrPending(checkpointId) {
+    return this.checkpointsReached.includes(checkpointId) || this.#pendingCheckpointIds.includes(checkpointId);
+  }
+
+  #runCheckpointBatch(fn) {
+    this.#checkpointBatchDepth++;
+    let completed = false;
+    try {
+      const result = fn();
+      completed = true;
+      return result;
+    } finally {
+      this.#checkpointBatchDepth--;
+      if (this.#checkpointBatchDepth === 0) {
+        const due = this.#pendingCheckpointIds;
+        this.#pendingCheckpointIds = [];
+        // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
+        if (completed) for (const checkpointId of due) this.saveCheckpoint(checkpointId);
+      }
+    }
+  }
+
+  #step(dt, controls) {
     this.clock += dt;
     const nowMs = this.clock * 1000;
 
@@ -1689,6 +1752,8 @@ export class M02BenchSimulation {
   }
 
   #activateRestore(p) {
+    // Pedidos de checkpoint pendentes pertenciam à linha temporal descartada.
+    this.#pendingCheckpointIds = [];
     this.seed = p.seed;
     this.rng = new Random(p.seed);
     this.rng.state = p.rngState;

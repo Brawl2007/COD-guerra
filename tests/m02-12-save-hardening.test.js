@@ -9,6 +9,141 @@ import { createMemoryStorage } from '../src/game/m02-save-store.js';
 const DT = 0.05;
 const SEED = 19390909;
 
+/**
+ * JSON estável com Map/Set ordenados. `-0` é escrito como 0: o JSON do armazenamento não representa -0 e -0 === 0;
+ * uma divergência real de comportamento aparece noutros campos (posição, vida, gerador) e continua a ser detetada.
+ */
+function canonical(value) {
+  return JSON.stringify(value, function replacer(_key, v) {
+    if (typeof v === 'number') {
+      if (Object.is(v, -0)) return 0;
+      if (!Number.isFinite(v)) return `#${v}`;
+      return v;
+    }
+    if (v instanceof Map) return { '#map': [...v.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)) };
+    if (v instanceof Set) return { '#set': [...v].sort() };
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      return Object.fromEntries(Object.keys(v).sort().map((k) => [k, v[k]]));
+    }
+    return v;
+  });
+}
+
+// Como em tests/m02-09: tudo o que é próprio da simulação, menos mundo/navegador derivados, loja, índice, fila de eventos,
+// resultado da última persistência, dica do renderer e configuração do construtor.
+const NON_STATE_SIM_KEYS = new Set([
+  'world',
+  'navigator',
+  'zoneStreamer',
+  'saveStore',
+  'checkpoints',
+  'events',
+  'lastCheckpointPersist',
+  'rendererHintLastShot',
+  'defaultStartScene',
+]);
+const ownFields = (obj) => Object.fromEntries(Object.keys(obj).map((k) => [k, obj[k]]));
+
+/** Estado vivo lido dos objetos (não do snapshot), mais o estado do mundo. */
+function liveState(sim) {
+  const top = {};
+  for (const key of Object.keys(sim).sort()) {
+    if (NON_STATE_SIM_KEYS.has(key)) continue;
+    const v = sim[key];
+    top[key] = ['dialogue', 'horizon', 'audiovisual', 'weapon', 'rng'].includes(key) ? ownFields(v) : v;
+  }
+  top.worldState = {
+    cellId: sim.activeCellId,
+    streamerCellId: sim.zoneStreamer.activeCellId,
+    revision: sim.world.revision,
+    doors: sim.world.doorStates,
+    windows: sim.world.windowStates,
+    fences: sim.world.fenceStates,
+    exteriorCoverIds: (sim.world.layout.exteriorCovers ?? []).map((c) => c.id),
+    obstacleIds: sim.world.obstacles.map((o) => o.id).join(','),
+  };
+  return top;
+}
+
+function normalizeAngle(a) {
+  let d = a;
+  while (d > Math.PI) d -= Math.PI * 2;
+  while (d < -Math.PI) d += Math.PI * 2;
+  return d;
+}
+
+const ROUTES = Object.freeze({
+  vala: [[-45, -70], [-45, -30], [-45, -5], [-24, 0]],
+  pomar: [[43, -55], [43, -10], [43, 27], [8, 42]],
+  areaC: [[0, -40], [-6, -20], [-20, -10], [-28, -20]],
+});
+
+/** Piloto determinístico: segue waypoints, dispara, recarrega e lança uma granada. Só depende do estado da simulação. */
+function routeDriver(routeId) {
+  const wps = ROUTES[routeId];
+  return (sim, t) => {
+    let wp = 0;
+    while (wp < wps.length && Math.hypot(wps[wp][0] - sim.player.x, wps[wp][1] - sim.player.z) <= 1.2) wp++;
+    const c = {};
+    if (wp < wps.length) {
+      c.lookX = normalizeAngle(Math.atan2(wps[wp][1] - sim.player.z, wps[wp][0] - sim.player.x) - sim.player.angle);
+      c.forward = 1;
+      c.sprint = t % 60 < 40;
+    }
+    if (t % 23 === 11) c.fire = true;
+    if (t % 97 === 50) c.reload = true;
+    if (t % 120 === 30) c.grenade = true;
+    return c;
+  };
+}
+
+/** Corre `count` ticks com o piloto e devolve, por tick, o estado vivo canónico e os eventos. */
+function record(sim, driver, from, count) {
+  const states = [];
+  const events = [];
+  for (let t = from; t < from + count; t++) {
+    sim.tick(DT, driver(sim, t));
+    events.push(canonical(sim.drainEvents()));
+    states.push(canonical(liveState(sim)));
+  }
+  return { states, events };
+}
+
+function assertSameContinuation(actual, expected, label) {
+  const s = actual.states.findIndex((x, i) => x !== expected.states[i]);
+  assert.equal(s, -1, `${label}: estado diverge no tick ${s} da continuação`);
+  const e = actual.events.findIndex((x, i) => x !== expected.events[i]);
+  assert.equal(e, -1, `${label}: eventos divergem no tick ${e} da continuação`);
+}
+
+/**
+ * Um tick em que um checkpoint automático é atingido; depois: o snapshot gravado é o estado vivo no fim desse tick, e
+ * restaurá-lo (sim novo com outra semente, ou cópia persistida lida por outro sim) e repetir as mesmas entradas reproduz a
+ * continuação original tick a tick.
+ */
+function assertAutoCheckpointReplays(sim, storage, { checkpointId, triggerControls = {}, driver, from, count, label }) {
+  // O leitor da cópia persistida é construído antes do tick (como uma página aberta antes do save).
+  const reloaded = new M02BenchSimulation(sim.seed + 1, { storage });
+  sim.drainEvents();
+  sim.tick(DT, triggerControls);
+  const saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
+  assert.ok(saved.some((e) => e.checkpointId === checkpointId), `${label}: ${checkpointId} gravado neste tick`);
+  assert.ok(saved.every((e) => e.persisted), `${label}: persistido (${saved.map((e) => e.persistError).join(';')})`);
+  const snap = structuredClone(sim.checkpoints.get(checkpointId));
+  const { checkpointId: _id, ...savedState } = snap;
+  assert.equal(canonical(savedState), canonical(sim.snapshot()), `${label}: snapshot gravado = estado no fim do tick`);
+
+  const reference = record(sim, driver, from, count);
+  const fresh = new M02BenchSimulation(sim.seed + 777, { storage: createMemoryStorage() });
+  fresh.restoreSnapshot(structuredClone(snap));
+  fresh.drainEvents();
+  assertSameContinuation(record(fresh, driver, from, count), reference, `${label} · sim novo`);
+  reloaded.restorePersistedCheckpoint(checkpointId);
+  reloaded.drainEvents();
+  assertSameContinuation(record(reloaded, driver, from, count), reference, `${label} · cópia persistida`);
+  return snap;
+}
+
 const nonFiniteActors = (sim) =>
   [sim.player, ...sim.allies, ...sim.enemies].filter((a) => !Number.isFinite(a.x) || !Number.isFinite(a.y) || !Number.isFinite(a.z)).map((a) => a.id);
 
@@ -74,5 +209,90 @@ describe('M02-12 — P0: Áreas B/C sem NaN (limites jogáveis da célula)', () 
       for (let i = 0; i < 20; i++) reloaded.tick(DT, { forward: 1 });
       assert.deepEqual(nonFiniteActors(reloaded), [], `${id} restaurado da loja: posições finitas depois de andar`);
     }
+  });
+});
+
+describe('M02-12 — P1: checkpoints automáticos gravados no fim de tick()', () => {
+  for (const routeId of ['vala', 'pomar']) {
+    it(`rota ${routeId}: cp_m02_b_acesso pelo caminho C04 (objetivo escrito antes de gravar) reproduz a continuação`, () => {
+      const storage = createMemoryStorage();
+      const sim = new M02BenchSimulation(SEED, { storage });
+      const driver = routeDriver(routeId);
+      record(sim, driver, 0, 140);
+      const c04 = sim.enemies.find((e) => e.c04Candidate);
+      killAll(sim.enemies.filter((e) => e !== c04));
+      c04.state = 'WOUNDED_UNARMED';
+      c04.nonCombatant = true;
+      sim.player.suppressed = 0.6; // o bloco MG do fim do tick muda-o: um save a meio do tick ficava com 0.6
+      const snap = assertAutoCheckpointReplays(sim, storage, {
+        checkpointId: 'cp_m02_b_acesso',
+        driver,
+        from: 141,
+        count: 80,
+        label: `rota ${routeId} / C04`,
+      });
+      assert.equal(snap.objective.id, 'C04', 'o checkpoint guarda o objetivo C04, não o anterior');
+    });
+  }
+
+  it('tiro do jogador mata o último defensor: cp_m02_b_acesso depois do áudio do disparo e do resto do tick', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    for (let i = 0; i < 30; i++) sim.tick(DT, {});
+    const keep = sim.enemies.find((e) => !e.c04Candidate && e.encounterId !== 'EA0');
+    killAll(sim.enemies.filter((e) => e !== keep));
+    const p = sim.player;
+    keep.x = p.x + 6;
+    keep.z = p.z;
+    keep.y = sim.world.heightAt(keep.x, keep.z);
+    keep.health = 1;
+    keep.crouched = false;
+    p.angle = 0;
+    p.pitch = Math.atan2(keep.y + 1.25 - (p.y + p.eyeHeight), 6);
+    const snap = assertAutoCheckpointReplays(sim, storage, {
+      checkpointId: 'cp_m02_b_acesso',
+      triggerControls: { fire: true },
+      driver: routeDriver('vala'),
+      from: 31,
+      count: 80,
+      label: 'último defensor a tiro',
+    });
+    assert.equal(keep.alive, false);
+    assert.equal(snap.objective.id, 'COMPLETE');
+  });
+
+  it('C01: limpar o posto EA0 dentro do tick grava cp_m02_a_preparacao no fim do tick', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage, startScene: 'C01' });
+    record(sim, routeDriver('vala'), 0, 20);
+    killAll(sim.enemies.filter((e) => e.encounterId === 'EA0'));
+    const snap = assertAutoCheckpointReplays(sim, storage, {
+      checkpointId: 'cp_m02_a_preparacao',
+      driver: routeDriver('vala'),
+      from: 21,
+      count: 80,
+      label: 'C01 / EA0',
+    });
+    assert.equal(snap.c01Active, false);
+  });
+
+  it('Área C: cp_m02_d_cobertura_retirada atingido em updateAreaC (C10) reproduz a continuação', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.enterAreaCC09();
+    const driver = routeDriver('areaC');
+    record(sim, driver, 0, 20);
+    killAll(sim.enemies.filter((e) => e.encounterId === 'EC1'));
+    sim.areaC.gateLatchUnlocked = true;
+    const snap = assertAutoCheckpointReplays(sim, storage, {
+      checkpointId: 'cp_m02_d_cobertura_retirada',
+      driver,
+      from: 21,
+      count: 160, // atravessa o impacto fixo de artilharia SP03 (aviso de 6 s) e o arranque de C11
+      label: 'Área C / C10',
+    });
+    assert.equal(snap.objective.id, 'O07');
+    assert.equal(snap.areaC.c10Started, true);
+    assert.equal(sim.areaC.artilleryDetonated, true, 'a continuação comparada atravessa o impacto SP03');
   });
 });
