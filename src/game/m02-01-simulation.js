@@ -1402,9 +1402,11 @@ export class M02BenchSimulation {
    * de o objetivo estar escrito: dentro de tick() ficam pendentes até ao fim do tick; fora dele são gravados aqui (FIX-2b).
    */
   updateTacticalContext() {
-    const due = [];
-    this.#evaluateTacticalContext(due);
-    for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
+    this.#runCheckpointBatch(() => {
+      const due = [];
+      this.#evaluateTacticalContext(due);
+      for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
+    });
   }
 
   #evaluateTacticalContext(due) {
@@ -1598,7 +1600,7 @@ export class M02BenchSimulation {
         const due = this.#pendingCheckpointIds;
         this.#pendingCheckpointIds = [];
         // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
-        if (completed) for (const checkpointId of due) this.saveCheckpoint(checkpointId);
+        if (completed) this.#saveCheckpointBatch(due);
       }
     }
   }
@@ -1700,11 +1702,34 @@ export class M02BenchSimulation {
   saveCheckpoint(checkpointId, { persist = true } = {}) {
     const addedNow = !this.checkpointsReached.includes(checkpointId);
     if (addedNow) this.checkpointsReached.push(checkpointId);
+    const saved = this.#recordCheckpoint(checkpointId, persist);
+    if (!saved && addedNow) this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
+    return saved;
+  }
+
+  /**
+   * Grava de uma vez os checkpoints automáticos devidos no fim de um passo/ação (FIX-2c). TODOS ficam marcados em
+   * `checkpointsReached` antes do primeiro snapshot: assim cada um é igual ao estado do fim do passo (diferem só no
+   * `checkpointId`) e restaurar o primeiro não volta a disparar nem a regravar os restantes. O último do lote fica como
+   * «último gravado» (F9) e como `latestCheckpointId` da loja. Um lote rejeitado pelo validador não marca nenhum.
+   */
+  #saveCheckpointBatch(checkpointIds) {
+    const added = checkpointIds.filter((id) => !this.checkpointsReached.includes(id));
+    this.checkpointsReached.push(...added);
+    for (const checkpointId of checkpointIds) {
+      const saved = this.#recordCheckpoint(checkpointId, true);
+      if (!saved && added.includes(checkpointId)) {
+        this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
+      }
+    }
+  }
+
+  /** Snapshot → validação → índice em memória → loja. Não mexe em `checkpointsReached` (quem chama já o marcou). */
+  #recordCheckpoint(checkpointId, persist) {
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
     const check = validateM02Snapshot(snap);
     if (!check.valid) {
-      if (addedNow) this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
       const reason = `Snapshot recusado antes de gravar: ${check.reason}`;
       this.lastCheckpointPersist = { ok: false, reason };
       this.events.push({ type: 'checkpoint-rejected', checkpointId, clock: this.clock, reason });
