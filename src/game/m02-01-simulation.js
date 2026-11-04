@@ -304,6 +304,8 @@ export class M02BenchSimulation {
    * e nunca sobrevivem entre ticks: não entram no snapshot e um passo que falhe a meio descarta-os.
    */
   #pendingCheckpointIds = [];
+  /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
+  #lastSessionCheckpointId = null;
 
   /**
    * @param {number} seed
@@ -538,7 +540,9 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
 
     this.updateTacticalContext();
-    this.saveCheckpoint('cp_m02_a_preparacao');
+    // O início da missão é reproduzível pela semente e pela cena: fica só no índice em memória. Gravá-lo na loja a cada
+    // construção/reset (cada carregamento da página) substituía o último checkpoint do jogador (FIX-2b, P1).
+    this.saveCheckpoint('cp_m02_a_preparacao', { persist: false });
   }
 
   startAreaAFullC01({ saveInitialCheckpoint = true } = {}) {
@@ -1591,8 +1595,9 @@ export class M02BenchSimulation {
    * Um snapshot que o validador recusa nunca substitui a entrada boa do índice nem chega à loja, e o checkpoint não fica
    * marcado como atingido (o gatilho seguinte volta a tentar): evento `checkpoint-rejected`, devolve null (FIX-2b).
    * Devolve uma cópia: mexer no resultado não altera o índice (FIX-2b).
+   * `persist: false` só regista no índice em memória (checkpoint inicial do construtor/reset; não toca na loja).
    */
-  saveCheckpoint(checkpointId) {
+  saveCheckpoint(checkpointId, { persist = true } = {}) {
     const addedNow = !this.checkpointsReached.includes(checkpointId);
     if (addedNow) this.checkpointsReached.push(checkpointId);
     const snap = this.snapshot();
@@ -1606,18 +1611,48 @@ export class M02BenchSimulation {
       return null;
     }
     this.checkpoints.set(checkpointId, snap);
-    const persist = this.saveStore
+    if (!persist) {
+      this.lastCheckpointPersist = {
+        ok: false,
+        skipped: true,
+        reason: `Checkpoint ${checkpointId} só em memória: o arranque não grava por cima do save do jogador.`,
+      };
+      this.events.push({ type: 'checkpoint-saved', checkpointId, clock: this.clock, persisted: false, persistError: null, memoryOnly: true });
+      return structuredClone(snap);
+    }
+    this.#lastSessionCheckpointId = checkpointId;
+    const result = this.saveStore
       ? this.saveStore.commitCheckpoint(checkpointId, snap)
       : { ok: false, reason: 'Sem loja de saves.' };
-    this.lastCheckpointPersist = persist;
+    this.lastCheckpointPersist = result;
     this.events.push({
       type: 'checkpoint-saved',
       checkpointId,
       clock: this.clock,
-      persisted: persist.ok,
-      persistError: persist.ok ? null : persist.reason,
+      persisted: result.ok,
+      persistError: result.ok ? null : result.reason,
     });
     return structuredClone(snap);
+  }
+
+  /**
+   * Carregamento rápido (F9 da bancada). Se esta sessão já gravou: o checkpoint manual, senão o último gravado nesta sessão.
+   * Numa sessão que ainda não gravou nada (página acabada de abrir ou recarregar): o último checkpoint persistido na loja.
+   * Só sem nada disso volta ao início em memória. Devolve { checkpointId, source }.
+   */
+  quickLoadCheckpoint() {
+    const sessionId = this.checkpoints.has('cp_m02_manual') ? 'cp_m02_manual' : this.#lastSessionCheckpointId;
+    if (sessionId) {
+      this.restoreCheckpoint(sessionId);
+      return { checkpointId: sessionId, source: 'session' };
+    }
+    const latest = this.saveStore ? this.saveStore.latestCheckpointId() : null;
+    if (latest) {
+      this.restorePersistedCheckpoint(latest);
+      return { checkpointId: latest, source: 'store' };
+    }
+    this.restoreCheckpoint('cp_m02_a_preparacao');
+    return { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
   }
 
   /**

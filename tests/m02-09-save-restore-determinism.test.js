@@ -432,9 +432,14 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
     assert.equal(KEY, 'cod-guerra:m02:bench:v2');
     const storage = fakeStorage();
     const sim = new M02BenchSimulation(19390909, { storage });
+    // FIX-2b: o arranque não escreve na loja (o início fica só em memória); antes, cada carregamento da página gravava
+    // cp_m02_a_preparacao e passava a ser o «último» checkpoint, escondendo o save do jogador.
+    assert.equal(sim.lastCheckpointPersist.skipped, true);
+    assert.deepEqual(storage.log.filter(([op]) => op === 'set'), [], 'o construtor não escreve no armazenamento');
+    sim.saveCheckpoint('cp_m02_a_preparacao');
     assert.equal(sim.lastCheckpointPersist.ok, true);
     const afterA = storage.map.get(KEY);
-    assert.ok(afterA, 'cp_m02_a_preparacao persistido no arranque');
+    assert.ok(afterA, 'cp_m02_a_preparacao persistido quando é gravado');
     assert.equal(storage.map.has(`${KEY}:staging`), false, 'staging removido depois da promoção');
 
     const order = storage.log.filter(([op]) => op === 'set').map(([, k]) => k);
@@ -457,6 +462,7 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
   it('JSON corrompido em current: lê previous, não apaga nada, e a gravação seguinte não estraga o save bom', () => {
     const storage = fakeStorage();
     const sim = new M02BenchSimulation(19390909, { storage });
+    sim.saveCheckpoint('cp_m02_a_preparacao'); // FIX-2b: o arranque já não grava; dois commits para existir :previous
     sim.saveCheckpoint('cp_m02_manual');
     const goodPrevious = storage.map.get(`${KEY}:previous`);
     storage.map.set(KEY, '{"format":"cod-guerra-m02-bench-save", "checkpoints": {');
@@ -477,7 +483,7 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
 
   it('registo bem formado mas inválido (snapshot v1, outra missão) é rejeitado e o save bom mantém-se', () => {
     const storage = fakeStorage();
-    new M02BenchSimulation(19390909, { storage });
+    new M02BenchSimulation(19390909, { storage }).saveCheckpoint('cp_m02_a_preparacao');
     const good = storage.map.get(KEY);
     const tampered = JSON.parse(good);
     tampered.checkpoints.cp_m02_a_preparacao.schema = M02_LEGACY_SNAPSHOT_SCHEMA_V1;
@@ -514,6 +520,7 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
   it('falha só na promoção (quota no slot current) mantém current e previous coerentes', () => {
     const storage = fakeStorage();
     const sim = new M02BenchSimulation(19390909, { storage });
+    sim.saveCheckpoint('cp_m02_a_preparacao');
     const before = storage.map.get(KEY);
     const store = new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
     const failing = new M02SaveStore({
@@ -529,7 +536,7 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
 
   it('escrita truncada em silêncio é detetada na releitura do staging e não é promovida', () => {
     const storage = fakeStorage();
-    new M02BenchSimulation(19390909, { storage });
+    new M02BenchSimulation(19390909, { storage }).saveCheckpoint('cp_m02_a_preparacao');
     const before = storage.map.get(KEY);
     const truncating = {
       getItem: (k) => storage.getItem(k),
@@ -537,6 +544,7 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
       removeItem: (k) => storage.removeItem(k),
     };
     const sim = new M02BenchSimulation(19390909, { storage: truncating });
+    sim.saveCheckpoint('cp_m02_manual');
     assert.equal(sim.lastCheckpointPersist.ok, false);
     assert.match(sim.lastCheckpointPersist.reason, /não coincide/);
     assert.equal(storage.map.get(KEY), before);
@@ -546,7 +554,9 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
   it('armazenamento que lança na leitura: load devolve erro sem lançar e o índice em memória continua a funcionar', () => {
     const storage = fakeStorage({ failGet: true });
     const sim = new M02BenchSimulation(19390909, { storage });
+    sim.saveCheckpoint('cp_m02_manual');
     assert.equal(sim.lastCheckpointPersist.ok, false);
+    assert.match(sim.lastCheckpointPersist.reason, /Leitura do armazenamento falhou/);
     const store = new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
     const loaded = store.load();
     assert.equal(loaded.ok, false);
@@ -568,8 +578,8 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
     writer.teleportPlayer(-25, -14, Math.PI / 2);
     writer.saveCheckpoint('cp_m02_manual');
     const reader = new M02BenchSimulation(19390909, { storage: shared });
-    // O construtor do leitor gravou cp_m02_a_preparacao; o último é esse, mas o manual continua disponível.
-    assert.equal(reader.saveStore.latestCheckpointId(), 'cp_m02_a_preparacao');
+    // FIX-2b: o construtor do leitor (recarregar a página) já não grava cp_m02_a_preparacao; o último continua o manual.
+    assert.equal(reader.saveStore.latestCheckpointId(), 'cp_m02_manual');
     reader.checkpoints.delete('cp_m02_manual');
     reader.restorePersistedCheckpoint('cp_m02_manual');
     assert.equal(reader.player.x, -25);

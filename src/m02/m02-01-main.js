@@ -71,12 +71,12 @@ window.addEventListener('keydown', (e) => {
   }
   if (e.code === 'F9') {
     e.preventDefault();
-    const id = sim.checkpoints.has('cp_m02_manual')
-      ? 'cp_m02_manual'
-      : sim.checkpoints.has('cp_m02_b_acesso')
-        ? 'cp_m02_b_acesso'
-        : 'cp_m02_a_preparacao';
-    sim.restoreCheckpoint(id);
+    // Depois de recarregar a página o índice em memória só tem o início: o F9 vai à loja persistida (FIX-2b).
+    try {
+      sim.quickLoadCheckpoint();
+    } catch (err) {
+      console.warn('[M02] F9 sem checkpoint restaurável:', err.message);
+    }
   }
   if (e.code === 'Digit0') sim.startAreaAFullC01();
   if (e.code === 'Digit1') teleportToPanorama('SN1');
@@ -380,6 +380,7 @@ window.m02Bench = {
   },
   saveCheckpoint: (id) => sim.saveCheckpoint(id),
   restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
+  quickLoadCheckpoint: () => sim.quickLoadCheckpoint(),
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),

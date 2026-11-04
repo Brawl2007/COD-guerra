@@ -394,3 +394,40 @@ describe('M02-12 — P2: saveCheckpoint/restoreCheckpoint não expõem o objeto 
     assert.equal(sim.checkpoints.get('cp_m02_manual').player.health, 100);
   });
 });
+
+describe('M02-12 — P1: recarregar a página não destrói o save', () => {
+  it('o save anterior (F5 com relógio 5,0) continua restaurável depois de 2 recarregamentos; F9 vai à loja', () => {
+    const storage = createMemoryStorage(); // faz de localStorage entre carregamentos
+    const s1 = new M02BenchSimulation(SEED, { storage, startScene: 'C01' });
+    assert.equal(storage.getItem(M02_SAVE_STORAGE_KEY), null, 'o arranque não escreve');
+    killAll(s1.enemies.filter((e) => e.encounterId === 'EA0'));
+    for (let i = 0; i < 100; i++) s1.tick(DT, { forward: 1 });
+    const f5 = s1.saveCheckpoint('cp_m02_manual');
+    assert.ok(Math.abs(f5.clock - 5.0) < 1e-9);
+    const rawAfterF5 = storage.getItem(M02_SAVE_STORAGE_KEY);
+
+    for (const reload of [1, 2]) {
+      const page = new M02BenchSimulation(undefined, { storage });
+      assert.equal(storage.getItem(M02_SAVE_STORAGE_KEY), rawAfterF5, `recarregamento ${reload}: registo intacto`);
+      assert.equal(page.saveStore.latestCheckpointId(), 'cp_m02_manual');
+      assert.equal(page.clock, 0);
+      assert.deepEqual(page.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'store' });
+      assert.ok(Math.abs(page.clock - 5.0) < 1e-9, `recarregamento ${reload}: F9 restaura o F5 (relógio ${page.clock})`);
+      assert.equal(canonical(page.snapshot()), canonical({ ...f5, checkpointId: undefined }));
+    }
+  });
+
+  it('F9 numa sessão que já gravou: o manual desta sessão; sem manual, o último gravado nesta sessão', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_a_preparacao', source: 'start' });
+    killAll(sim.enemies);
+    sim.tick(DT, {});
+    assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_b_acesso', source: 'session' });
+    sim.teleportPlayer(-23, -12, 0);
+    sim.saveCheckpoint('cp_m02_manual');
+    sim.teleportPlayer(0, 0, 0);
+    assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'session' });
+    assert.equal(sim.player.x, -23);
+  });
+});
