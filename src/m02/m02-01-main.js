@@ -1,7 +1,7 @@
 import {m02ObjectivePresentation} from './m02-objective-presentation.js';
 import { M02Session } from './m02-session.js';
 import { mountM02SessionUi } from './m02-session-ui.js';
-import { m02PlayerAction, performM02PlayerAction } from '../game/m02-player-actions.js';
+import { m02PlayerAction, performM02PlayerAction, m02EarlyWithdrawalPrompt, performM02EarlyWithdrawal } from '../game/m02-player-actions.js';
 import { M02BenchSimulation } from '../game/m02-01-simulation.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 import {detectTouch} from '../core/touch-controls.js';
@@ -286,13 +286,15 @@ function updateHud() {
   // not advertise a door or chalk action until the player's hands are free.
   const prompt = sim.playerGrenadeAction||sim.playerWaterAction ? null : m02PlayerAction(sim) ?? sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
   const waterPrompt=sim.currentWoundedWaterPrompt();
+  const withdrawalPrompt=m02EarlyWithdrawalPrompt(sim);
   const offered=sim.activeCellId==='A'&&sim.enemies.find(e=>e.c04Candidate&&e.c04WaterOfferedAt!==undefined&&sim.clock-e.c04WaterOfferedAt<2);
   if (elDoorPrompt) {
-    if (prompt||waterPrompt||offered||sim.playerWaterAction) {
+    if (prompt||waterPrompt||withdrawalPrompt||offered||sim.playerWaterAction) {
       elDoorPrompt.style.display = 'block';
       const lines=[];if(sim.playerWaterAction)lines.push('A oferecer água…');else if(offered)lines.push('Água oferecida ao ferido');
       if(prompt)lines.push(`${prompt.prompt.replace('[E]',touchMode?'[USAR]':'[E]')} (${prompt.distance}m)`);
       if(waterPrompt)lines.push(waterPrompt.prompt.replace('[F]',touchMode?'[ÁGUA]':'[F]'));
+      if(withdrawalPrompt)lines.push(withdrawalPrompt.prompt.replace('[F]',touchMode?'[RECUAR]':'[F]'));
       elDoorPrompt.textContent=lines.join(' · ');
     } else {
       elDoorPrompt.style.display = 'none';
@@ -348,6 +350,10 @@ function animate(now) {
   if(running)for(let step=0;step<steps;step++){
   const tickDt=missionMode?.05:dt;
   if(missionMode)missionAccumulator=Math.max(0,missionAccumulator-.05);
+  if(pendingSingleActions.giveWater&&performM02EarlyWithdrawal(sim)){
+    for(const key of Object.keys(pendingSingleActions))pendingSingleActions[key]=false;
+    break;
+  }
   const missionInteraction = pendingSingleActions.interact && performM02PlayerAction(sim);
   sim.tick(tickDt, {
     forward,

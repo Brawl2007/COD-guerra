@@ -662,7 +662,7 @@ export function assistLisInC11(sim, mode = 'wounded_evacuated') {
 }
 
 export function updateAreaC(sim, dt) {
-  if (sim.activeCellId !== 'C' || !sim.areaC?.active) return;
+  if (sim.activeCellId !== 'C' || !sim.areaC?.active || sim.areaC.c12Completed) return;
 
   // 1. Check if EC1 is cleared to advance C09 -> C10
   if (!sim.areaC.c10Started) {
@@ -741,22 +741,27 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   if (!sim.areaC.artilleryDetonated) detonateC10FixedArtillery(sim);
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
 
-  const alreadyResolvedContact=sim.areaC.lisContactedInC11&&lisOutcome===sim.flags['m02.lis_status']&&
-    (lisOutcome==='wounded_evacuated'||lisOutcome==='wounded_walking');
+  const earlierEvacuation=lisOutcome==='wounded_evacuated'&&sim.allies.some(a=>a.id==='pl_lis'&&a.alive&&a.state==='EVACUATED');
+  if(earlierEvacuation){sim.flags['m02.lis_status']='wounded_evacuated';sim.areaC.lisSupportMode='wounded_evacuated';}
+  const alreadyResolvedContact=earlierEvacuation||lisOutcome==='wounded_evacuated'&&sim.flags['m02.lis_status']==='wounded_evacuated'||
+    sim.areaC.lisContactedInC11&&lisOutcome===sim.flags['m02.lis_status']&&lisOutcome==='wounded_walking';
   if (lisOutcome && !alreadyResolvedContact) {
     assistLisInC11(sim, lisOutcome);
   } else if (!lisOutcome && (!sim.flags['m02.lis_status'] || sim.flags['m02.lis_status'] === 'active')) {
     assistLisInC11(sim, 'wounded_evacuated');
   }
 
-  // Finalize LG01..LG12 survivors count if any are still in transit at B12
-  let survivors = 0;
+  // Only a man who physically reached the rally point is confirmed safe.
+  // A living man left behind is unaccounted for, not silently teleported or
+  // declared dead. The normal O09 route has already resolved every survivor.
+  let survivors = 0;const leftBehind=[];
   for (const lg of sim.areaC.lastGroup) {
-    if (lg.alive) {
-      lg.evacuated = true;
-      survivors++;
-    }
+    if (!lg.alive) continue;
+    if(lg.evacuated){delete lg.leftBehind;survivors++;}
+    else{leftBehind.push(lg.id);lg.leftBehind=true;lg.moving=false;lg.goal=null;lg.navCorners=null;}
   }
+  if(leftBehind.length){sim.areaC.leftBehindIds=leftBehind;sim.flags['m02.last_group_unaccounted']=leftBehind.length;}
+  else{delete sim.areaC.leftBehindIds;delete sim.flags['m02.last_group_unaccounted'];}
   sim.flags['m02.last_group_survivors'] = survivors;
   sim.areaC.c12Completed = true;
 
@@ -831,6 +836,7 @@ export function exportCampaignResultToM03(sim) {
       },
       waterReserveBonus: sim.supplies.waterDelivered ? 'small_water_reserve_available' : 'water_scarce',
       lastGroupSurvivorsCount: sim.flags['m02.last_group_survivors'] ?? 0,
+      ...(sim.flags['m02.last_group_unaccounted']?{lastGroupUnaccountedCount:sim.flags['m02.last_group_unaccounted']}:{}),
     },
   };
 

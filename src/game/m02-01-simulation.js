@@ -177,6 +177,11 @@ export function validateM02Snapshot(snap) {
     }
   }
   if(snap.areaC?.lastGroup!==undefined&&!Array.isArray(snap.areaC.lastGroup))return {valid:false,reason:'Grupo de evacuação inválido.'};
+  if(snap.areaC?.leftBehindIds!==undefined&&(!Array.isArray(snap.areaC.leftBehindIds)||snap.areaC.leftBehindIds.length>12||
+    new Set(snap.areaC.leftBehindIds).size!==snap.areaC.leftBehindIds.length||!snap.areaC.c12Completed||
+    snap.areaC.leftBehindIds.some(id=>typeof id!=='string'||!snap.areaC.lastGroup?.some(a=>a.id===id&&a.alive&&!a.evacuated&&a.leftBehind))))return {valid:false,reason:'Grupo deixado para trás inválido.'};
+  if(snap.flags?.['m02.last_group_unaccounted']!==undefined&&(!Number.isInteger(snap.flags['m02.last_group_unaccounted'])||snap.flags['m02.last_group_unaccounted']<0||snap.flags['m02.last_group_unaccounted']>12))return {valid:false,reason:'Contagem do grupo inválida.'};
+  if((snap.flags?.['m02.last_group_unaccounted']??0)!==(snap.areaC?.leftBehindIds?.length??0))return {valid:false,reason:'Contagem do grupo inconsistente.'};
   if(snap.squadOrder?.issuedCell!==undefined&&!['A','B','C'].includes(snap.squadOrder.issuedCell))return {valid:false,reason:'Área da ordem inválida.'};
   if(snap.squadOrder?.holdPositions!==undefined){
     const holds=snap.squadOrder.holdPositions;
@@ -186,6 +191,7 @@ export function validateM02Snapshot(snap) {
   if(snap.flags?.['m02.pomar_wounded_water']!==undefined&&typeof snap.flags['m02.pomar_wounded_water']!=='boolean')return {valid:false,reason:'Estado de água do ferido inválido.'};
   for(const actor of [...(snap.allies??[]),...(snap.enemies??[]),...(snap.areaC?.lastGroup??[])]){
     if(!actor||!Number.isFinite(actor.x)||!Number.isFinite(actor.z))return {valid:false,reason:'Posição de ator inválida.'};
+    if(actor.leftBehind!==undefined&&typeof actor.leftBehind!=='boolean')return {valid:false,reason:`Estado de evacuação inválido: ${actor.id}`};
     if(actor.c04WaterOfferedAt!==undefined&&(!Number.isFinite(actor.c04WaterOfferedAt)||actor.c04WaterOfferedAt<0||actor.c04WaterOfferedAt>snap.clock))return {valid:false,reason:`Estado de água inválido: ${actor.id}`};
     if(actor.m02LastEngagedTargetId!==undefined&&typeof actor.m02LastEngagedTargetId!=='string')return {valid:false,reason:`Alvo de equipa inválido: ${actor.id}`};
     if(actor.m02GrenadeThreat!==undefined){

@@ -19,11 +19,12 @@ export function m02PlayerAction(sim) {
   if (player.health<=0 || sim.playerGrenadeAction || sim.playerWaterAction || sim.currentChalkPrompt()) return null;
   const near=(x,z,r=4)=>Math.hypot(player.x-x,player.z-z)<=r;
   const action=(id,prompt,extra={})=>({id,prompt:`[E] ${prompt}`,distance:0,...extra});
-  if (sim.activeCellId==='C' && sim.objective.id==='O09' && !sim.areaC.c12Completed && near(-55,54,10)) {
+  if (sim.activeCellId==='C' && sim.objective.id==='O09' && !sim.areaC.c12Completed && near(-55,54,10) &&
+      !sim.areaC.lastGroup.some(a=>a.alive&&!a.evacuated)) {
     const lis=sim.allies.find(a=>a.id==='pl_lis'&&a.alive&&!a.detachedOutOfCell&&a.state==='WOUNDED_LIAISON');
-    const prompt=!sim.areaC.lisContactedInC11
+    const prompt=playerLisOutcome(sim)==='wounded_evacuated'?'Romper contacto e seguir para Varsóvia':!sim.areaC.lisContactedInC11
       ? lis?'Recuar sem socorrer Lis':'Recuar — Lis desaparecido'
-      : sim.flags['m02.lis_status']==='wounded_walking'?'Recuar — Lis ainda a caminho':'Romper contacto e seguir para Varsóvia';
+      : sim.flags['m02.lis_status']==='wounded_walking'?'Recuar — Lis ainda a caminho; ficará para trás':'Romper contacto e seguir para Varsóvia';
     return action('epilogue',prompt,{distance:Number(Math.hypot(player.x+55,player.z-54).toFixed(1))});
   }
   if(sim.activeCellId==='C'&&sim.areaC?.c11Started&&!sim.areaC.lisContactedInC11&&!player.carryingVolumeId){
@@ -54,6 +55,27 @@ export function m02PlayerAction(sim) {
   return null;
 }
 
+// An explicit early withdrawal is available only inside the aid house, after
+// C11 has started. Men who have not reached the rally remain unaccounted for.
+export function m02EarlyWithdrawalPrompt(sim){
+ const p=sim.player,c=sim.areaC;if(sim.activeCellId!=='C'||!c?.c11Started||c.c12Completed||p.health<=0||p.carryingVolumeId||sim.playerGrenadeAction||sim.playerWaterAction)return null;
+ const bounds=sim.world.layout.buildings?.find(b=>b.id==='B12')?.bounds;
+ if(!bounds||p.x<bounds[0]||p.x>bounds[1]||p.z<bounds[2]||p.z>bounds[3])return null;
+ const pending=c.lastGroup.filter(a=>a.alive&&!a.evacuated).length;if(!pending)return null;
+ const lisUnsafe=playerLisOutcome(sim)!=='wounded_evacuated';
+ return {count:pending,lisUnsafe,prompt:`[F] Recuar: ${pending} por evacuar${lisUnsafe?' · Lis não está seguro':''}`};
+}
+
+function playerLisOutcome(sim){
+ const lis=sim.allies.find(a=>a.id==='pl_lis');
+ return sim.flags['m02.lis_status']==='wounded_evacuated'||lis?.alive&&lis.state==='EVACUATED'?'wounded_evacuated':'missing';
+}
+
+export function performM02EarlyWithdrawal(sim){
+ if(!m02EarlyWithdrawalPrompt(sim))return false;
+ sim.completeC12Epilogue({lisOutcome:playerLisOutcome(sim)});return true;
+}
+
 export function performM02PlayerAction(sim) {
   const action=m02PlayerAction(sim);
   if (!action) return false;
@@ -62,7 +84,7 @@ export function performM02PlayerAction(sim) {
     case 'pickup': sim.pickupSupplyVolume(action.volumeId); break;
     case 'reorganize': sim.completeC07Reorganization(); break;
     case 'area-c': sim.enterAreaCC09(); break;
-    case 'epilogue': sim.completeC12Epilogue({lisOutcome:sim.areaC.lisContactedInC11?sim.flags['m02.lis_status']:'missing'}); break;
+    case 'epilogue': sim.completeC12Epilogue({lisOutcome:playerLisOutcome(sim)}); break;
     case 'assist-lis': sim.assistLisInC11('wounded_walking'); break;
     case 'rifle-ammo': {
       const actor=sim.enemies.find(e=>e.id===action.actorId),given=sim.weapon.resupply(actor.mag+actor.reserve);

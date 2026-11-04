@@ -1,5 +1,6 @@
 import {TouchState, bindTouchControls} from '../core/touch-controls.js';
 import './m02-touch.css';
+import {m02EarlyWithdrawalPrompt} from '../game/m02-player-actions.js';
 
 // The M01 touch mapper feeds the same M02 controls as keyboard and mouse.
 export function mountM02Touch({sim, session, actions}) {
@@ -9,6 +10,7 @@ export function mountM02Touch({sim, session, actions}) {
  <div class="touch-actions"><button data-touch="interact">USAR</button><button data-touch="reload">RECARGA</button><button data-touch="grenade">GRANADA</button><button data-touch="crouch">AGACHAR</button><button data-touch="aim">MIRAR</button><button class="touch-fire" data-touch="fire">DISPARAR</button></div>
  <div class="touch-orders"><button data-order="orderSuppress">SEGURAR</button><button data-order="orderAdvance">AVANÇAR</button><button data-order="orderFlank">FLANQUEAR</button></div>
  <button class="touch-water" data-water hidden>ÁGUA</button>
+ <button class="touch-water" data-withdraw hidden>RECUAR</button>
  <button class="touch-pause" data-touch="pause" aria-label="Pausar">PAUSA</button>`;
  document.body.append(root);
  const input={forward:0,side:0,sprint:false,aim:false,
@@ -28,5 +30,6 @@ export function mountM02Touch({sim, session, actions}) {
  document.addEventListener('visibilitychange',()=>{if(document.hidden)resetStick();});
  for(const button of root.querySelectorAll('[data-order]'))button.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions[button.dataset.order]=true;});
  const water=root.querySelector('[data-water]');water.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions.giveWater=true;});
- return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();document.body.classList.toggle('m02-water-available',!water.hidden);if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
+ const withdraw=root.querySelector('[data-withdraw]');withdraw.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions.giveWater=true;});
+ return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();const retreat=playing&&m02EarlyWithdrawalPrompt(sim);withdraw.hidden=!retreat;if(retreat)withdraw.textContent=`RECUAR (${retreat.count})`;document.body.classList.toggle('m02-water-available',!water.hidden||!withdraw.hidden);if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
 }

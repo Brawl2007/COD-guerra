@@ -66,6 +66,7 @@ test('mid-grenade RNG and portal locks survive exact continuation; old saves rem
 import {m02PlayerAction,performM02PlayerAction} from '../src/game/m02-player-actions.js';
 test('C12 exit interaction takes precedence over a nearby B12 door; leaving Lis behind remains a real outcome',()=>{
  const s=new M02BenchSimulation();s.enterAreaCC09();s.detonateC10FixedArtillery();
+ s.areaC.lastGroup.forEach(a=>a.evacuated=true);
  s.teleportPlayer(-54,54.1,Math.PI/2);s.objective={id:'O09',status:'active'};
  assert.ok(s.currentDoorPrompt(),'fixture must reproduce the doorway conflict');
  assert.equal(m02PlayerAction(s).id,'epilogue');assert.equal(performM02PlayerAction(s),true);
@@ -101,6 +102,7 @@ test('contact with Lis starts a physical supported walk; it does not teleport hi
 
 test('the exit warns whether Lis has not been rescued or is still on his way',()=>{
  const s=new M02BenchSimulation();s.enterAreaCC09();s.startC10OrderChanges();s.detonateC10FixedArtillery();
+ s.areaC.lastGroup.forEach(a=>a.evacuated=true);
  s.teleportPlayer(-54,54.1,Math.PI/2);s.objective={id:'O09',status:'active'};
  assert.match(m02PlayerAction(s).prompt,/sem socorrer Lis/);
  s.assistLisInC11('wounded_walking');assert.match(m02PlayerAction(s).prompt,/Lis ainda a caminho/);

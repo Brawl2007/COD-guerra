@@ -2,6 +2,29 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('C11 touch withdrawal warns about those left and preserves their uncertain fate',async({page},testInfo)=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:844,height:390});await page.goto('/COD-guerra/m02.html?quality=low&touch=1&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.locator('[data-touch=pause]').click();await expect(page.locator('#mission-resume')).toBeVisible();
+ await page.evaluate(()=>{
+  const s=window.m02Bench.sim;s.enterAreaCC09();s.startC10OrderChanges();s.detonateC10FixedArtillery();s.enemies=[];
+  s.areaC.lastGroup.forEach((a,i)=>{a.evacuated=i<5;if(i>=10){a.alive=false;a.health=0;}});s.teleportPlayer(-55,54,0,0);s.drainEvents();
+ });
+ await page.locator('#mission-resume').click();const withdraw=page.locator('[data-withdraw]');await expect(withdraw).toBeVisible();
+ await expect(withdraw).toContainText('5');await expect(page.locator('#door-prompt')).toContainText('5 por evacuar');
+ await expect(page.locator('#door-prompt')).toContainText('Lis não está seguro');
+ await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · RETIRADA C11";position:fixed;left:8px;top:45px;z-index:80;padding:4px;background:#111;color:#fff;font:10px sans-serif}'});
+ await page.screenshot({path:testInfo.outputPath('c11-withdrawal-choice.png')});
+ const cdp=await page.context().newCDPSession(page),box=await withdraw.boundingBox(),point={x:box.x+box.width/2,y:box.y+box.height/2,id:0};
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await page.waitForFunction(()=>window.m02Diagnostics().state==='epilogue');
+ const result=await page.evaluate(()=>{const s=window.m02Bench.sim;return {completed:s.flags['m02.completed'],safe:s.flags['m02.last_group_survivors'],unaccounted:s.flags['m02.last_group_unaccounted'],lis:s.flags['m02.lis_status'],left:s.areaC.lastGroup.filter(a=>a.leftBehind&&a.alive&&!a.evacuated).length,exported:s.m03ExportPackage.m03ImportState.lastGroupUnaccountedCount};});
+ expect(result).toEqual({completed:true,safe:5,unaccounted:5,lis:'missing',left:5,exported:5});
+ for(let i=0;i<3;i++)await page.locator('#mission-epilogue-next').click();
+ await expect(page.locator('#session-status')).toContainText('5 ficaram por localizar');expect(errors).toEqual([]);
+});
+
 test('farm completion and the B transition do not claim M02 is complete',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
@@ -753,6 +776,7 @@ test('C12 exit warns before leaving an unrescued Lis and preserves the missing o
  await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
  await page.evaluate(()=>{
   const {sim}=window.m02Bench;sim.enterAreaCC09();sim.startC10OrderChanges();sim.detonateC10FixedArtillery();sim.enemies=[];
+  sim.areaC.lastGroup.forEach(a=>a.evacuated=true);
   sim.teleportPlayer(-54,54.1,Math.PI/2,-.12);sim.objective={id:'O09',status:'active'};
  });
  await page.click('#mission-resume');await page.waitForFunction(()=>document.querySelector('#door-prompt').textContent.includes('Recuar sem socorrer Lis'));
