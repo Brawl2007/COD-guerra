@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — conclusão de campanha em C12, 2026-11-04
+
+`a876bf3` corrige `m02.completed`: a quinta e C05 deixam de marcar a missão toda como concluída, e a flag só é ativada na transação final C12/M03. Saves intermédios antigos com a flag prematura são migrados sem perder progresso; `3795507` preserva o restauro determinístico de uma repetição de C05 na bancada depois de C12. Passaram 193 testes M02, build, browser e sete testes focados após o ajuste; [método e evidências](../verification/m02-runtime/completion-flag-2026-11-04/README.md). A [passagem integral `a876bf3`](../verification/m02-runtime/completion-flag-2026-11-04/native/report.json) ofereceu água, marcou giz e manteve a flag falsa até O09, concluindo na M03 com Lis, 12/12, sem mortes do jogador ou erros; piloto lê estado oculto. A passagem é anterior ao ajuste de bancada. Continuar roteiro Astra e melhorias de atuação física; main e produção intactas.
+
 ## Continuação — escolha opcional C04, 2026-11-04
 
 `e2894a9` corrige o objetivo que apresentava o giz como obrigatório: o roteiro permite ajudar ou seguir. Após oferecer água, o indicador aponta à saída sem retirar a opção de giz. Passaram 191 testes M02 antes do ajuste final do indicador e, depois, oito testes focados, build e [browser com toque simulado](../verification/m02-runtime/c04-optional-2026-11-04/README.md). As condições de progressão não mudaram. Continuar comparação C01–C12 com o roteiro Astra; main e produção intactas.

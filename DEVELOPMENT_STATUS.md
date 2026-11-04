@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — conclusão de campanha em C12 — 2026-11-04
+
+`a876bf3` impede a marcação prematura de conclusão na quinta/C05 e migra checkpoints anteriores; `3795507` corrige restauro de C05 repetida na bancada. 193 testes M02, build, browser e testes focados passaram; a [passagem automatizada](docs/verification/m02-runtime/completion-flag-2026-11-04/README.md) escolheu água e giz e concluiu em C12/M03. A missão continua em desenvolvimento.
+
 ## M02 — escolha opcional no pomar — 2026-11-04
 
 `e2894a9` esclarece que a ajuda ao ferido é opcional e orienta à saída após dar água. Testes M02, focados, build e [browser](docs/verification/m02-runtime/c04-optional-2026-11-04/README.md) passaram. A encenação e a auditoria das restantes cenas continuam pendentes.
