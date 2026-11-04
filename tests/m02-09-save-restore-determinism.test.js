@@ -459,13 +459,14 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
     assert.equal(store.loadCheckpoint('cp_m02_manual').player.x, -23);
   });
 
-  it('JSON corrompido em current: lê previous, não apaga nada, e a gravação seguinte não estraga o save bom', () => {
+  it('JSON corrompido em current: lê previous, não apaga nada, e a gravação seguinte é abortada sem estragar nada', () => {
     const storage = fakeStorage();
     const sim = new M02BenchSimulation(19390909, { storage });
     sim.saveCheckpoint('cp_m02_a_preparacao'); // FIX-2b: o arranque já não grava; dois commits para existir :previous
     sim.saveCheckpoint('cp_m02_manual');
     const goodPrevious = storage.map.get(`${KEY}:previous`);
-    storage.map.set(KEY, '{"format":"cod-guerra-m02-bench-save", "checkpoints": {');
+    const corrupt = '{"format":"cod-guerra-m02-bench-save", "checkpoints": {';
+    storage.map.set(KEY, corrupt);
 
     const store = new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
     const loaded = store.load();
@@ -474,11 +475,15 @@ describe('M02-09 — SAVE-02: checkpoints persistidos com escrita atómica (M02S
     assert.match(loaded.rejected[0].reason, /corrompido em current/);
     assert.equal(storage.map.get(KEY).startsWith('{"format"'), true, 'leitura não apaga o slot corrompido');
 
+    // FIX-2b: um current que existe mas não se lê não é reconstruído a partir de previous (os checkpoints só presentes em
+    // current — o F5 — perdiam-se sem aviso): o commit é abortado e relatado, e os dois slots ficam como estavam.
     const res = store.commitCheckpoint('cp_m02_x', { ...sim.snapshot(), checkpointId: 'cp_m02_x' });
-    assert.equal(res.ok, true);
-    assert.equal(storage.map.get(`${KEY}:previous`), goodPrevious, 'previous bom não é substituído por current corrompido');
-    const rebuilt = JSON.parse(storage.map.get(KEY));
-    assert.deepEqual(Object.keys(rebuilt.checkpoints).sort(), ['cp_m02_a_preparacao', 'cp_m02_x']);
+    assert.equal(res.ok, false);
+    assert.match(res.reason, /Commit abortado, nada foi alterado: save atual ilegível/);
+    assert.equal(storage.map.get(KEY), corrupt, 'current corrompido intacto (nada é apagado)');
+    assert.equal(storage.map.get(`${KEY}:previous`), goodPrevious, 'previous bom não é substituído');
+    assert.equal(storage.map.has(`${KEY}:staging`), false);
+    assert.equal(store.loadCheckpoint('cp_m02_a_preparacao').checkpointId, 'cp_m02_a_preparacao', 'previous continua restaurável');
   });
 
   it('registo bem formado mas inválido (snapshot v1, outra missão) é rejeitado e o save bom mantém-se', () => {

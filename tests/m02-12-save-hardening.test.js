@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
-import { createMemoryStorage, M02_SAVE_STORAGE_KEY } from '../src/game/m02-save-store.js';
+import { createMemoryStorage, M02SaveStore, M02_SAVE_STORAGE_KEY } from '../src/game/m02-save-store.js';
 
 const DT = 0.05;
 const SEED = 19390909;
@@ -429,5 +429,145 @@ describe('M02-12 — P1: recarregar a página não destrói o save', () => {
     sim.teleportPlayer(0, 0, 0);
     assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'session' });
     assert.equal(sim.player.x, -23);
+  });
+});
+
+describe('M02-12 — P2: loja persistente (current ilegível, checkpoint incompatível, dois separadores)', () => {
+  const KEY = M02_SAVE_STORAGE_KEY;
+  const ids = (raw) => (raw ? Object.keys(JSON.parse(raw).checkpoints).sort() : null);
+  const storeOn = (storage) => new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
+  const snapAs = (sim, id) => ({ ...sim.snapshot(), checkpointId: id });
+
+  /** Sessão com cp_m02_a_preparacao e um F5: current = {a, manual}, previous = {a}. */
+  function savedSession() {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.saveCheckpoint('cp_m02_a_preparacao');
+    sim.teleportPlayer(-23, -12, 0);
+    sim.saveCheckpoint('cp_m02_manual');
+    return { storage, sim };
+  }
+
+  it('falha transitória a ler current durante um commit: aborta e relata; não reconstrói a partir de previous', () => {
+    const { storage, sim } = savedSession();
+    const currentBefore = storage.getItem(KEY);
+    const previousBefore = storage.getItem(`${KEY}:previous`);
+    let failOnce = true;
+    const flaky = {
+      getItem: (k) => {
+        if (k === KEY && failOnce) {
+          failOnce = false;
+          throw new Error('SecurityError transitório');
+        }
+        return storage.getItem(k);
+      },
+      setItem: (k, v) => storage.setItem(k, v),
+      removeItem: (k) => storage.removeItem(k),
+    };
+    const res = storeOn(flaky).commitCheckpoint('cp_m02_b_acesso', snapAs(sim, 'cp_m02_b_acesso'));
+    assert.equal(res.ok, false);
+    assert.match(res.reason, /Commit abortado, nada foi alterado: Leitura do armazenamento falhou/);
+    assert.equal(storage.getItem(KEY), currentBefore, 'current intacto: o F5 não se perde');
+    assert.equal(storage.getItem(`${KEY}:previous`), previousBefore);
+    const retry = storeOn(flaky).commitCheckpoint('cp_m02_b_acesso', snapAs(sim, 'cp_m02_b_acesso'));
+    assert.equal(retry.ok, true, 'passada a falha, o commit seguinte grava sobre o current completo');
+    assert.deepEqual(ids(storage.getItem(KEY)), ['cp_m02_a_preparacao', 'cp_m02_b_acesso', 'cp_m02_manual']);
+  });
+
+  it('dois separadores com commits intercalados: compare-and-swap no current e nenhum checkpoint se perde', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.saveCheckpoint('cp_m02_a_preparacao');
+    let hook = null;
+    const tabA = {
+      getItem: (k) => {
+        const v = storage.getItem(k);
+        if (hook && k === KEY) {
+          const h = hook;
+          hook = null;
+          h(); // o separador B grava entre a leitura de A e a promoção de A
+        }
+        return v;
+      },
+      setItem: (k, v) => storage.setItem(k, v),
+      removeItem: (k) => storage.removeItem(k),
+    };
+    let resB = null;
+    hook = () => {
+      resB = storeOn(storage).commitCheckpoint('cp_tab_b', snapAs(sim, 'cp_tab_b'));
+    };
+    const resA = storeOn(tabA).commitCheckpoint('cp_tab_a', snapAs(sim, 'cp_tab_a'));
+    assert.equal(resB.ok, true);
+    assert.equal(resA.ok, true);
+    assert.deepEqual(ids(storage.getItem(KEY)), ['cp_m02_a_preparacao', 'cp_tab_a', 'cp_tab_b']);
+    assert.equal(JSON.parse(storage.getItem(KEY)).seq, 3);
+    assert.deepEqual(ids(storage.getItem(`${KEY}:previous`)), ['cp_m02_a_preparacao', 'cp_tab_b'], 'previous = o commit de B');
+
+    // Um current que muda a cada leitura esgota as tentativas: commit abortado, nada promovido.
+    let n = 0;
+    const racing = {
+      getItem: (k) => (k === KEY ? storage.getItem(KEY).replace(/"seq":\d+/, `"seq":${100 + n++}`) : storage.getItem(k)),
+      setItem: (k, v) => storage.setItem(k, v),
+      removeItem: (k) => storage.removeItem(k),
+    };
+    const before = storage.getItem(KEY);
+    const raced = storeOn(racing).commitCheckpoint('cp_tab_c', snapAs(sim, 'cp_tab_c'));
+    assert.equal(raced.ok, false);
+    assert.match(raced.reason, /Gravação concorrente persistente/);
+    assert.equal(storage.getItem(KEY), before);
+  });
+
+  it('um checkpoint incompatível não invalida o registo: os compatíveis continuam a carregar e a ser gravados', () => {
+    const { storage } = savedSession();
+    for (const slot of [KEY, `${KEY}:previous`]) {
+      const r = JSON.parse(storage.getItem(slot));
+      r.checkpoints.cp_m02_a_preparacao.world.layoutSchema = 'm02-01-quinta-bench-v0';
+      storage.setItem(slot, JSON.stringify(r));
+    }
+    const store = storeOn(storage);
+    const loaded = store.load();
+    assert.equal(loaded.ok, true);
+    assert.equal(loaded.source, 'current');
+    assert.deepEqual(loaded.rejectedCheckpoints.map((r) => r.id), ['cp_m02_a_preparacao']);
+    assert.match(loaded.rejectedCheckpoints[0].reason, /Save incompatível: layout m02-01-quinta-bench-v0/);
+    assert.deepEqual(store.checkpointIds(), ['cp_m02_manual']);
+    assert.equal(store.latestCheckpointId(), 'cp_m02_manual');
+    assert.equal(store.loadCheckpoint('cp_m02_a_preparacao'), null);
+    assert.equal(store.loadCheckpoint('cp_m02_manual').player.x, -23);
+
+    new M02BenchSimulation(SEED, { storage }); // recarregar a página, duas vezes
+    const page = new M02BenchSimulation(SEED, { storage });
+    page.restorePersistedCheckpoint();
+    assert.equal(page.player.x, -23);
+    page.saveCheckpoint('cp_m02_b_test');
+    assert.equal(page.lastCheckpointPersist.ok, true, page.lastCheckpointPersist.reason);
+    const after = JSON.parse(storage.getItem(KEY));
+    assert.deepEqual(Object.keys(after.checkpoints).sort(), ['cp_m02_a_preparacao', 'cp_m02_b_test', 'cp_m02_manual']);
+    assert.equal(after.checkpoints.cp_m02_a_preparacao.world.layoutSchema, 'm02-01-quinta-bench-v0', 'incompatível guardado, não apagado');
+
+    // Incompatível só em current e compatível em previous: o commit seguinte recupera a versão boa de previous.
+    const { storage: s2, sim: sim2 } = savedSession();
+    const r = JSON.parse(s2.getItem(KEY));
+    r.checkpoints.cp_m02_a_preparacao.world.layoutSchema = 'm02-01-quinta-bench-v0';
+    s2.setItem(KEY, JSON.stringify(r));
+    assert.equal(storeOn(s2).commitCheckpoint('cp_m02_c_test', snapAs(sim2, 'cp_m02_c_test')).ok, true);
+    assert.deepEqual(storeOn(s2).checkpointIds().sort(), ['cp_m02_a_preparacao', 'cp_m02_c_test', 'cp_m02_manual']);
+  });
+
+  it('current e previous corrompidos: o arranque não grava por cima e o commit seguinte aborta (nada é apagado)', () => {
+    const storage = createMemoryStorage();
+    storage.setItem(KEY, '{"format":"cod');
+    storage.setItem(`${KEY}:previous`, '{"format":"cod');
+    const sim = new M02BenchSimulation(SEED, { storage });
+    assert.equal(storage.getItem(KEY), '{"format":"cod');
+    sim.saveCheckpoint('cp_m02_manual');
+    assert.equal(sim.lastCheckpointPersist.ok, false);
+    assert.match(sim.lastCheckpointPersist.reason, /Commit abortado/);
+    assert.equal(storage.getItem(KEY), '{"format":"cod');
+    assert.equal(storage.getItem(`${KEY}:previous`), '{"format":"cod');
+    assert.ok(sim.checkpoints.has('cp_m02_manual'), 'o checkpoint continua no índice em memória');
+    assert.equal(sim.saveStore.clear(), true, 'novo jogo explícito limpa os slots');
+    sim.saveCheckpoint('cp_m02_manual');
+    assert.equal(sim.lastCheckpointPersist.ok, true);
   });
 });
