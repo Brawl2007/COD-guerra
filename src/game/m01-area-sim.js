@@ -5,6 +5,8 @@
 // (m01-fire makeRound/traceRound, m01-aim), the presentation records (m01-animation-presentation), and the section machinery as factories
 // (m01-act-factories: the squad bounds, the firing line of the rearguard, the deck assault generalised to a line of approach).
 // Everything is decided here, from seeded streams; the renderer only draws it. No wall clock, no unseeded draw, no DOM.
+// 2026-11-03 (duration of the combat): the German assault comes in ECHELONS. The first is on the field when the wave starts; when it breaks its assault falls back, the overwatch
+// holds the edge through a lull, and the next echelon walks in from the treeline line on lanes of its own (stepEchelons); the last echelon's break takes everybody back.
 import bwDefinition from '../../missions/m01-tczew/mission.json' with { type: 'json' };
 import manifest from '../../assets/models/provisional/m01/bridges.manifest.json' with { type: 'json' };
 import npLayout from '../../missions/m01-tczew/areas/np/layout.json' with { type: 'json' };
@@ -19,9 +21,11 @@ import {makeRound,traceRound,closestApproach,NEAR_MISS} from './m01-fire.js';
 import {aimPoint} from './m01-aim.js';
 import {initializePresentation,updateMotion,updatePosture,updateBodyYaw,recordSuppression,recordDamage,recordHit,updateActorDetails,presentationDiagnostics} from './m01-animation-presentation.js';
 import {impactPass} from './m01-audio-events.js';
-import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validSquadRecord} from './m01-act-factories.js';
+import {makeApproachPlan,makeLinePlan,makeSquadPlan,squadStep,squadSlotOf,squadMovingIn,validApproachRecord,validApproachWave,validSquadRecord} from './m01-act-factories.js';
 
-export const AREA_SAVE_SCHEMA=1;
+// 2 (2026-11-03, the second echelon): the roster grew (the men of the echelons that follow the first) and the wave record gained its echelon state (timers.wave.ech/echs/lullUntil).
+// A schema 1 save of this act (QA only: the acts are off by default) is REJECTED with a message, not migrated: it cannot hold the later echelons' men, and the act restarts in seconds.
+export const AREA_SAVE_SCHEMA=2;
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const clone=v=>JSON.parse(JSON.stringify(v));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -38,6 +42,10 @@ const pause=(ai,mean,lo)=>Math.min(3*mean,Math.max(lo,mean*Math.exp(.5*aiGauss(a
 /** The area acts this module can run. One today; WP-2..WP-4 add theirs here. */
 export const AREA_ACTS=Object.freeze({act_vii_a_north:Object.freeze({layout:npLayout,act:npAct})});
 
+/** The solids of the area that no German path may cross and no turned earth may touch: the wreck and the parapet (the world builds the same boxes, m01-area-world.js). */
+export const areaPlanSolids=layout=>[...layout.wreck.boxes.map(b=>({id:b.id,min:{x:b.min[0],z:b.min[2]},max:{x:b.max[0],z:b.max[2]}})),
+  ...layout.parapets.segments.map(([x0,x1],i)=>({id:`np_parapet_${i}`,min:{x:x0,z:layout.parapets.z0},max:{x:x1,z:layout.parapets.z1}}))];
+
 /** Everything of the act that is data, validated once (a typo stops the game instead of changing it). */
 export function areaActPlan(actId='act_vii_a_north'){
   const entry=AREA_ACTS[actId];if(!entry)throw new Error(`M01 act: unknown area act ${actId}`);
@@ -45,7 +53,7 @@ export function areaActPlan(actId='act_vii_a_north'){
   const pb=layout.bounds.playable,def={groups:act.groups,events:act.events};
   const line=makeLinePlan(def,{group:'grp_np_line',key:'rearguard',man:'^pl_np_\\d+$',postBox:{minX:pb.minX,maxX:pb.maxX,minZ:-1160,maxZ:-1158},survivorFloor:false,label:'M01 VII-a line'});
   const section=group('grp_np_section'),squad=makeSquadPlan(section.squad,'M01 VII-a squad');
-  const assault=makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:'M01 VII-a assault'});
+  const assault=makeApproachPlan(group('grp_np_de').assault,{minX:pb.minX,maxX:pb.maxX,groundY:layout.groundY,label:'M01 VII-a assault',solids:areaPlanSolids(layout)});
   const ckm=group('grp_np_ckm');
   if(!Array.isArray(ckm.root)||ckm.root.length!==3||!Number.isFinite(ckm.yawDeg))throw new Error('M01 VII-a ckm root/yawDeg');
   const stageSlots=Object.fromEntries(Object.entries(section.stage.slots).map(([id,[x,z]])=>[id,{x,z}]));
@@ -114,10 +122,12 @@ export class M01AreaSimulation {
     const posts=[[-.794,-.029],[.08,-.52]];
     CKM_IDS.forEach((id,i)=>{const [dx,dz]=posts[i];add(entity(id,{x:rx+dz,y:ry,z:rz-dx},'ally',{group:'grp_ckm_crew',role:'SUPPORT',essential:true,facing:(i===1?112*Math.PI/180:0)-turn,
       ckm:{phase:'idle',startedAt:0,visible:true,root:{x:rx,y:ry,z:rz},yaw},...(i===0?{ckmFire:{rng:ckmSeed(seed),belt:P.ckm.fire.belt,bursts:0,nextAt:0,engagedUntil:0}}:{})}),20+i);});
-    // The Germans are already in the field when the act opens (the infantry of the ~07:00 attack went to ground when its vehicle was hit, T08): each man kneels at his
-    // first stop behind turned earth, silent, until the wave goes on (updateWave). Spawned under the entry card, never in sight.
-    P.assault.men.forEach((m,i)=>{const n=m.path[m.stops[0]];add(entity(m.id,{x:n.x,y,z:n.z},'enemy',{group:'grp_np_de',weapon:m.weapon,role:m.weapon==='mg34'?'SUPPORT':'RIFLEMAN',
-      facing:Math.PI/2,firedAt:-1e9,cooldown:2+i*.4,crouched:true,deck:{v:1,phase:m.role==='overwatch'?'hold':'cover',node:m.stops[0],until:0,since:0,t0:0,pinned:0}}),30+i);});
+    // The Germans of the first echelon are already in the field when the act opens (the infantry of the ~07:00 attack went to ground when its vehicle was hit, T08): each
+    // man kneels at his first stop behind turned earth, silent, until the wave goes on (updateWave). Spawned under the entry card, never in sight. The echelons that follow
+    // wait off the field (inactive: never drawn, never hit, never counted) at the entry line, ready to walk in when their lull is over (enterEchelon).
+    P.assault.men.forEach((m,i)=>{const later=m.echelon>0,n=later?m.entry:m.path[m.stops[0]];add(entity(m.id,{x:n.x,y,z:n.z},'enemy',{group:'grp_np_de',weapon:m.weapon,role:m.weapon==='mg34'?'SUPPORT':'RIFLEMAN',
+      facing:Math.PI/2,firedAt:-1e9,cooldown:2+i*.4,crouched:!later,active:!later,
+      deck:later?{v:1,phase:'advance',node:0,until:0,since:0,t0:0,pinned:0}:{v:1,phase:m.role==='overwatch'?'hold':'cover',node:m.stops[0],until:0,since:0,t0:0,pinned:0}}),30+i);});
     for(const a of out)if(a.firedAt===undefined)a.firedAt=-1e9;
     return out;
   }
@@ -257,29 +267,21 @@ export class M01AreaSimulation {
   updateWave(){
     if(this.flags['m01np.wave']!=='pending'||this.scene)return;
     if(!(this.battleClock>=this.plan.waveAt||this.objectives.obj_np_reach_trench.state==='done'))return;
-    this.flags['m01np.wave']='active';this.consume('evt_np_wave');this.timers.wave={at:this.clock,casualties:0,brokenAt:null,repelledAt:null,closed:false,seen:false};
+    // The record of the fight: its start, the German dead, the LAST echelon's break and the end (brokenAt, repelledAt), and one record per echelon that has entered (`echs`).
+    this.flags['m01np.wave']='active';this.consume('evt_np_wave');
+    this.timers.wave={at:this.clock,casualties:0,brokenAt:null,repelledAt:null,closeCalled:false,ech:0,echs:[this.echelonRecord()],lullUntil:null};
     this.activate('obj_np_hold_north');this.mission.phase='NP_ATTACK';
     for(const a of this.enemies)if(a.alive&&a.active){const S=this.plan.assault;a.deck.since=this.clock;a.deck.until=this.clock+between(a.ai,S.coverSec);a.cooldown=1.5+3*aiNext(a.ai);}
   }
+  echelonRecord(){return {at:this.clock,casualties:0,brokenAt:null,closed:false,seen:false};}
   man(a){return this.plan.assault.men.find(m=>m.id===a.id);}
   atNode(a,m){const n=m.path[a.deck.node];return Boolean(n)&&Math.hypot(a.x-n.x,a.z-n.z)<.06;}
-  /** The approach assault: advance (bound to the next node), cover (kneel at a stop), hold (at the limit), fallback (back along the path), clear (gone). */
+  /** The approach assault: advance (bound to the next node), cover (kneel at a stop), hold (at the limit), fallback (back along the path), clear (gone). In echelons (stepEchelons). */
   stepGermans(dt){
     const W=this.timers.wave;
     if(!W){for(const a of this.enemies)if(a.alive&&a.active){a.crouched=true;a.facing=Math.PI/2;}return;}
     const S=this.plan.assault,alive=this.enemies.filter(a=>a.alive&&a.active);
-    // The wave breaks on its casualties, on the pinning of the assault, or on its clock.
-    if(W.brokenAt===null){
-      const assault=alive.filter(a=>this.man(a).role==='assault'),pinned=assault.length?assault.reduce((n,a)=>n+a.deck.pinned,0)/assault.length:0;
-      if(W.casualties>=S.breakOut||pinned>=S.breakPinnedSec||this.clock-W.at>=S.maxSec){
-        W.brokenAt=this.clock;this.flags['m01np.wave']='broken';this.say('fallback');
-        // Back along his own path: from the last node he actually reached (a man on his way to a node, or pinned short of it, turns back to the one before).
-        for(const a of alive){const m=this.man(a),at=this.atNode(a,m);if(!at)a.deck.node--;a.deck.phase='fallback';a.deck.since=this.clock;a.crouched=false;}
-      }
-    }
-    if(W.brokenAt===null&&!W.closed&&this.clock-W.at>=S.closeAfterSec&&W.casualties<S.breakOut-1){
-      W.closed=true;for(const a of alive){const m=this.man(a);if(m.role==='assault'&&a.deck.lim===undefined)a.deck.lim=m.deepestStop;}
-    }
+    this.stepEchelons(W,S,alive);
     const moving=new Set(alive.filter(a=>a.deck.phase==='advance'&&this.man(a).role==='assault').map(a=>this.man(a).lane));
     for(const a of alive){
       const m=this.man(a),d=a.deck,suppressed=this.clock<a.suppressedUntil;
@@ -321,8 +323,56 @@ export class M01AreaSimulation {
       W.repelledAt=this.clock;this.flags['m01np.wave']='repelled';this.say('repelled');
       this.finish('obj_np_hold_north');this.timers.endAt=this.clock+this.plan.act.endBeatSec;this.mission.phase='NP_REPELLED';
     }
-    if(!W.seen&&alive.some(a=>a.z>-1350)){W.seen=true;this.say('wave_seen');this.timers.openFireAt=this.clock+2.5;}
+    // The first echelon is seen when anybody of it is inside the field (it starts there); a later one two seconds after its first men step out of the trees.
+    const R=W.echs[W.ech];
+    if(!R.seen&&alive.some(a=>this.man(a).echelon===W.ech&&(W.ech===0?a.z>-1350:this.clock-a.deck.t0>=2))){
+      R.seen=true;
+      if(W.ech===0){this.say('wave_seen');this.timers.openFireAt=this.clock+2.5;}else this.say('echelon_seen');
+    }
     if(this.timers.openFireAt&&this.clock>=this.timers.openFireAt){this.timers.openFireAt=null;this.say('open_fire');}
+  }
+  /**
+   * The echelons. The one on the field breaks on its casualties (its own men and the overwatch that falls while it is there), on the pinning of its assault, or on its clock;
+   * its assault falls back, the overwatch stays on its nodes (it fires whenever it has a target and is not pinned, as ever: a line that pins it keeps the lull quiet), and only the
+   * LAST echelon's break takes the overwatch with it. The lull runs from the moment the broken echelon's assault is off the field (fallen or gone); when it is over the next
+   * echelon walks in from the entry line (enterEchelon, admit).
+   */
+  stepEchelons(W,S,alive){
+    const k=W.ech,E=S.echelons[k],R=W.echs[k],last=k===S.echelons.length-1;
+    const own=alive.filter(a=>{const m=this.man(a);return m.role==='assault'&&m.echelon===k;});
+    if(R.brokenAt===null){
+      const pinned=own.length?own.reduce((n,a)=>n+a.deck.pinned,0)/own.length:0;
+      if(R.casualties>=E.breakOut||pinned>=E.breakPinnedSec||this.clock-R.at>=E.maxSec){
+        R.brokenAt=this.clock;
+        if(last)W.brokenAt=this.clock;
+        this.flags['m01np.wave']=last?'broken':'lull';this.say(last&&k>0?'final_break':'fallback');
+        // Back along his own path: from the last node he actually reached (a man on his way to a node, or pinned short of it, turns back to the one before).
+        for(const a of alive){const m=this.man(a);if(!last&&!(m.role==='assault'&&m.echelon===k))continue;
+          const at=this.atNode(a,m);if(!at)a.deck.node--;a.deck.phase='fallback';a.deck.since=this.clock;a.crouched=false;}
+      }
+    }
+    if(R.brokenAt===null&&!R.closed&&this.clock-R.at>=E.closeAfterSec&&R.casualties<E.breakOut-1){
+      R.closed=true;for(const a of own)if(a.deck.lim===undefined)a.deck.lim=this.man(a).deepestStop;
+    }
+    if(R.brokenAt!==null&&!last&&W.lullUntil===null&&!own.length){
+      W.lullUntil=this.clock+S.echelons[k+1].lullSec;
+      this.say(alive.some(a=>a.weapon==='mg34')?'lull':'lull_quiet');   // the voice says what is true: a machine gun is still on the edge, or none is left
+    }
+    if(W.lullUntil!==null&&this.clock>=W.lullUntil)this.enterEchelon(W,k+1);
+    else if(R.brokenAt===null)this.admit(W);
+  }
+  /** Echelon k walks in from the entry line (phase advance to its first stop, as the first echelon's men do after their cover); its overwatch, if it brings any, walks to its node. */
+  enterEchelon(W,k){
+    W.ech=k;W.lullUntil=null;W.echs.push(this.echelonRecord());this.flags['m01np.wave']='active';this.admit(W);
+  }
+  /** The men of the echelon on the field whose delay has run out walk in from the entry line (a lane or a gun that follows the others by delaySec). Once the echelon has broken, nobody else enters. */
+  admit(W){
+    const R=W.echs[W.ech];
+    for(const a of this.enemies){
+      const m=this.man(a);
+      if(m.echelon!==W.ech||a.active||!a.alive||a.deck.phase!=='advance'||this.clock<R.at+m.delaySec-1e-9)continue;
+      a.active=true;a.crouched=false;a.facing=Math.PI/2;a.deck.since=this.clock;a.deck.t0=this.clock;a.cooldown=1.5+3*aiNext(a.ai);
+    }
   }
   /** Straight walk to a point (the paths are built clear of every solid, m01-act-factories makeApproachPlan); true on arrival. */
   walk(a,target,speed,dt){
@@ -386,7 +436,10 @@ export class M01AreaSimulation {
     const h=e.health,was=e.alive;e.health=Math.max(0,h-amount);e.alive=e.health>0;e.state=e.alive?'HIT_REACTION':'DOWN';
     recordDamage(e,h,was,this.clock,source);
     if(was&&!e.alive){
-      if(this.timers.wave)this.timers.wave.casualties++;
+      // The fight's count, and the count of the echelon on the field: its own men (assault and its own overwatch) who fall before it breaks. The overwatch of an earlier echelon
+      // falling during a later one does not break that one; with a single echelon this is every German, as it always was.
+      const W=this.timers.wave;
+      if(W){W.casualties++;if(W.echs[W.ech].brokenAt===null&&this.man(e).echelon===W.ech)W.echs[W.ech].casualties++;}
       if(by==='player')this.emit({type:'enemy_down_by_player',id:e.id,group:e.group,weapon:'kb_wz29',distance:dist(e,this.player),point:{x:e.x,y:e.y,z:e.z},at:this.clock});
       if(this.clock-(this.timers.said.enemy_down??-1e9)>18)this.say('enemy_down');
     }
@@ -521,7 +574,15 @@ export class M01AreaSimulation {
     const current=this.plan.act.objectives.find(o=>this.active(o.id));
     this.mission.text=current?.text??(this.objectives.obj_np_hold_north.state==='done'?'Ataque repelido':'');
     const W=this.timers.wave;
-    this.mission.status=W&&W.repelledAt===null?`Linha norte · ${this.enemies.filter(a=>a.alive&&a.active).length} atacantes no campo · ${W.casualties} caídos`:'';
+    this.mission.status=W&&W.repelledAt===null?this.fightStatus(W):'';
+  }
+  /** The status line of the fight, as the HUD shows it: the echelon on the field (the first one's wording is the original), its men falling back, or the lull between two echelons. */
+  fightStatus(W){
+    const field=this.enemies.filter(a=>a.alive&&a.active).length,R=W.echs[W.ech],more=W.ech<this.plan.assault.echelons.length-1;
+    const fallen=`${W.casualties} ${W.casualties===1?'caído':'caídos'}`;
+    if(R.brokenAt!==null&&more)return W.lullUntil===null?`Linha norte · vaga a recuar · ${field} no campo · ${fallen}`:
+      `Linha norte · pausa · ${field?`${field} ${field===1?'atirador':'atiradores'} na orla`:'campo livre'} · ${fallen}`;
+    return `Linha norte · ${W.ech?`${W.ech+1}.ª vaga · `:''}${field} ${field===1?'atacante':'atacantes'} no campo · ${fallen}`;
   }
   say(on){
     const c=this.plan.act.callouts.find(x=>x.on===on);if(!c)return false;
@@ -614,6 +675,7 @@ export function debriefWith(extra){
 export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
   const reject=m=>{throw new Error(`Checkpoint do ato inválido: ${m}.`);};
   if(!s||typeof s!=='object'||Array.isArray(s))reject('formato');
+  if(s.schema===1)reject('esquema 1, anterior à segunda vaga do ato (os saves de teste antigos não são migrados: recomece o ato)');
   if(s.schema!==AREA_SAVE_SCHEMA)reject('esquema');
   if(s.area!==plan.layout.area||s.act!==plan.actId)reject('área/ato');
   if(!M01_DIFFICULTY_IDS.includes(s.difficulty))reject('dificuldade');
@@ -625,6 +687,7 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
     if(![a.x,a.y,a.z,a.health].every(Number.isFinite)||a.health<0||a.health>100)reject(`ator ${a.id}`);
     if(a.team==='enemy'&&a.deck!==undefined&&!validApproachRecord(plan.assault,a,s.clock))reject(`registo de assalto ${a.id}`);
   }
+  if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.['m01np.wave'],s.clock,s.actors))reject('registo da vaga (vagas, pausa ou estado do combate)');
   const p=s.player;if(!p||![p.x,p.y,p.z,p.angle,p.pitch,p.health].every(Number.isFinite)||p.health<=0||p.health>100||!p.alive)reject('jogador');
   const w=s.weapon;if(!w||!Number.isInteger(w.mag)||w.mag<0||w.mag>5||!Number.isInteger(w.reserve)||w.reserve<0||w.reserve>200)reject('arma');
   if(!s.objectives||plan.act.objectives.some(o=>!['locked','active','done'].includes(s.objectives[o.id]?.state)))reject('objetivos');

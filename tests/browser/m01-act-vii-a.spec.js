@@ -8,6 +8,7 @@ import {route} from '../helpers/m01-route.js';
 // only the approximate label, a schema 3 save restores mid-wave, a completed current act opens the transition card (only with the switch on), and the debrief comes after
 // the last act. The saves are made in Node with the same simulation. A state/presentation check, not a playtest and not a frame-rate figure.
 const OUT=new URL('../../docs/verification/m01-runtime/acts-inc1-2026-10-25/',import.meta.url).pathname;
+const OUT2=new URL('../../docs/verification/m01-runtime/vii-a-duration-pkg1-2026-11-04/',import.meta.url).pathname;   // the lull and the second echelon (2026-11-04)
 const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',BW_KEY='cod-guerra:checkpoint:m01:v2';
 const envelope=sim=>({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
 
@@ -23,11 +24,17 @@ function build(){
   const mid=envelope(sim);Object.assign(mid.actSave.player,{crouched:false,angle:-Math.PI/2,pitch:.015});
   const west=envelope(sim);Object.assign(west.actSave.player,{crouched:false,angle:Math.PI+.06,pitch:-.03});
   const w=sim.plan.layout.points.wreck,wreck=envelope(sim);Object.assign(wreck.actSave.player,{crouched:false,angle:Math.atan2(w.z-p.z,w.x-p.x),pitch:.01,aiming:true});
-  tickUntil(()=>sim.timers.endAt!==null);
+  // 2026-11-04: the fight is two echelons with a lull between them. A save 10 s before the lull ends (the first echelon is off the field, the overwatch holds the edge) and one 25 s
+  // into the second echelon (the lanes of the second echelon come out of the trees one after the other).
+  tickUntil(()=>sim.timers.wave.lullUntil>0&&sim.clock>sim.timers.wave.lullUntil-10,9000);
+  const lull=envelope(sim);Object.assign(lull.actSave.player,{crouched:false,angle:-Math.PI/2,pitch:.015});
+  tickUntil(()=>sim.timers.wave.ech===1&&sim.clock-sim.timers.wave.echs[1].at>25,9000);
+  const ech2=envelope(sim);Object.assign(ech2.actSave.player,{crouched:false,angle:-Math.PI/2,pitch:.015});
+  tickUntil(()=>sim.timers.endAt!==null,9000);   // two echelons: the passive pilot repels the attack ~4 minutes (4800 ticks) after the wave starts
   const end=envelope(sim);
-  return {spawn,mid,west,wreck,end};
+  return {spawn,mid,west,wreck,lull,ech2,end};
 }
-test.beforeAll(()=>{scenes=build();mkdirSync(OUT,{recursive:true});});
+test.beforeAll(()=>{scenes=build();mkdirSync(OUT,{recursive:true});mkdirSync(OUT2,{recursive:true});});
 
 async function boot(page,query,{save=null,key=ACT_KEY,click='#start'}={}){
   const errors=[];page.on('pageerror',e=>{errors.push(e.message);if(process.env.ACT_DEBUG)console.log('PAGEERROR',e.message,e.stack);});page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -37,7 +44,7 @@ async function boot(page,query,{save=null,key=ACT_KEY,click='#start'}={}){
   return errors;
 }
 const diag=page=>page.evaluate(()=>{const d=window.gameDiagnostics();return {act:d.m01.act??null,scene:d.m01.scene,phase:d.missionPhase,complete:d.complete,clock:d.clock,player:d.player,
-  alive:d.m01.enemyAlive,clockText:document.querySelector('#battle-clock')?.textContent,objective:document.querySelector('#objective-text')?.textContent,
+  alive:d.m01.enemyAlive,clockText:document.querySelector('#battle-clock')?.textContent,objective:document.querySelector('#objective-text')?.textContent,status:document.querySelector('#objective-status')?.textContent,
   card:document.querySelector('#title-card')?.textContent,frames:d.m01.renderedFrames??null};});
 const settle=page=>page.waitForTimeout(2500);
 
@@ -60,9 +67,10 @@ test('QA flag ?act=vii-a boots Act VII-a on its card; the HUD shows only the app
   writeFileSync(OUT+'smoke-boot.json',JSON.stringify({card,after,errors},null,1)+'\n');
 });
 
-test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west), the end beat and the debrief after the last act',async({page,context})=>{
+test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west), the lull, the second echelon, the end beat and the debrief after the last act',async({page,context})=>{
   test.setTimeout(600000);
-  const shots=[['spawn','03-spawn-north.png'],['mid','04-line-north-midwave.png'],['west','05-line-west-ckm.png'],['wreck','05b-wreck-aimed.png']],report={};
+  const shots=[['spawn',OUT+'03-spawn-north.png'],['mid',OUT+'04-line-north-midwave.png'],['west',OUT+'05-line-west-ckm.png'],['wreck',OUT+'05b-wreck-aimed.png'],
+    ['lull',OUT2+'01-lull-overwatch-only.png'],['ech2',OUT2+'02-second-echelon.png']],report={};
   for(const [name,file] of shots){
     const p=name==='spawn'?page:await context.newPage();
     const errors=await boot(p,'?debug=1&acts=1',{save:scenes[name],click:'#continue'});
@@ -71,7 +79,9 @@ test('schema 3 saves restore the slice: spawn, the line mid-wave (north and west
     const d=await diag(p);report[name]={...d,errors};
     expect(d.clockText).toBe('MANHÃ · ~07:00');expect(errors).toEqual([]);
     if(name!=='spawn')expect(d.phase).toBe('NP_ATTACK');
-    await p.screenshot({path:OUT+file});
+    if(name==='lull')expect(d.status).toMatch(/^Linha norte · pausa · /);   // the status line says the pause
+    if(name==='ech2')expect(d.status).toMatch(/^Linha norte · 2\.ª vaga · /);   // and the second echelon
+    await p.screenshot({path:file});
     if(p!==page)await p.close();
   }
   const p=await context.newPage();
