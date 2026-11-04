@@ -7,6 +7,7 @@ import {readFileSync} from 'node:fs';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import mapLayout from '../missions/m01-tczew/map-layout.json' with {type:'json'};
 import {M01Simulation,validateM01Snapshot,seconds,CKM_BELT,CKM_BURST_ROUNDS} from '../src/game/m01-simulation.js';
+import {dustSpec} from '../src/game/m01-dust.js';
 import {BARK_RULES,BARK_RULE_LIST,BARK_CONFIG,BARK_GROUPS,compileBarks,newBarkState,barkEvent,barkPoll,barkTrigger,barkChannelOpen,validateBarkState,TRIGGERS,
   CKM_BELT_FULL,CKM_BURST_ROUNDS_FULL} from '../src/game/m01-barks.js';
 import {route} from './helpers/m01-route.js';
@@ -622,6 +623,21 @@ for(const r of BARK_RULE_LIST)test(`rule ${r.id} can be said (${r.on}), and only
 });
 
 test('the staged cases cover exactly the rules of the data',()=>{assert.deepEqual(Object.keys(CASES).sort(),BARK_RULE_LIST.map(r=>r.id).sort());});
+
+// Package 2 critical review (2026-11-04): the condition `mg34 {los:true}` (123/124, «Ele recarrega! Agora!») asked the world's line of sight, so a gunner whom a cloud of dust hid from the player (and the
+// player from him: sees() is what his own acquisition asks) was still reported as in sight. It asks sees() now, as the rest of the act does.
+test('the gate MG reload lines (123 / 124) are silent when a cloud of dust hides the gunner from the player, and said in clear air',()=>{
+  const stage=s=>{inCover(s);const g=s.actor('de_east_1');g.active=true;g.mg34Prone={phase:'reload',startedAt:s.clock,duration:1.9,progress:1};return g;};
+  const reload=t=>t.startsWith(D(123))||t.startsWith(D(124));
+  {const s=fresh(),g=stage(s);assert.equal(s.world.lineOfSight(g,s.player),true);assert.equal(s.sees(g,s.player),true);
+    assert.equal(delta(s,()=>barkPoll(s)).filter(reload).length,1,'in clear air: one of the two lines is said');}
+  {const s=fresh(),g=stage(s),x=s.player.x+10;
+    s.sectors.damage.push({id:'raid_test_1',x,y:s.world.heightAt(x,s.player.z),z:s.player.z,started:s.clock-2,soundAt:s.clock-2,dust:dustSpec('bomb')});
+    assert.equal(s.world.lineOfSight(g,s.player),true,'the world is open between them');assert.equal(s.sees(g,s.player),false,'the cloud hides him');
+    assert.deepEqual(delta(s,()=>barkPoll(s)).filter(reload),[],'and the line is not said');
+    s.clock+=45;   // the cloud of a bomb lasts 40 s
+    assert.equal(s.sees(g,s.player),true,'the cloud is gone');assert.equal(delta(s,()=>barkPoll(s)).filter(reload).length,1,'and it is said');}
+});
 
 test('the same rules stay silent when their conditions do not hold (the player is too far, the wrong objective, the wrong side)',()=>{
   const far=(s,id)=>Object.assign(s.player,{x:s.actor(id).x+500});
