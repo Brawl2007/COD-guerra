@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {GeoBuilder,hash01} from './m01-area-geo.js';
 
 // VII-a visual package: the tree line north of the area (layout.treeLine: only drawing, RECONSTRUCTED; no source gives the vegetation). One merged geometry, one draw call:
-// pines (tall bent trunk, a crown of three or four lumpy blobs near the top), broadleaves (a short trunk and a crown of five or six overlapping blobs of different greens) and
+// pines (tall bent trunk, a conical crown of four lumpy blobs), poplars (a tall column of three) and broadleaves (a short trunk and a taller-than-wide crown of a core and four lobes) and
 // undergrowth (low bushes and dry brown scrub at the foot). Every tree has its own shape and size (seeded; nothing here uses the simulation RNG).
 // Quality tiers: the trees are placed in a seeded permutation and the geometry's draw range is a prefix of whole trees, so Low draws an even sample of the same line.
 export const TREE_SHARE={low:.55,medium:.8,high:1};
@@ -19,22 +19,34 @@ export function buildTreeLine(T,surface){
   for(let n=0;n<T.count;n++){
     const slot=perm[n],h=k=>hash01(slot*13+n,k),firstIndex=b.i.length;
     const x=T.minX+(T.maxX-T.minX)*(slot+h(1)*.8)/T.count,z=T.z+(h(2)-.5)*T.depthM,y=surface(x,z)-.05;
-    const pine=h(3)<.38,height=pine?10+h(4)*7:6.5+h(4)*5.5,green=GREENS[Math.floor(h(5)*GREENS.length)],light=lightOf(green),shade=.8+.4*h(6);
-    if(pine){
-      const trunkH=height*(.62+.1*h(7)),top=b.trunk(x,y,z,trunkH,.2+.05*h(8),.09,{sides:5,rings:3,bend:[(h(9)-.5)*1.4,(h(10)-.5)*1.4],color:[.20,.13,.08],seed:slot});
-      const crownR=1.7+h(11)*1.4,blobs=3;
+    // Round 2 (pkg4): larger and no flat 'umbrella' crowns. Three silhouettes: tall conical pines (blobs stacked and narrowing upward, taller than wide), tall columnar poplars,
+    // and broadleaves whose crown is a taller-than-wide core with lobes round it (every lobe at least as tall as it is wide, lobes at different heights and greens).
+    const kind=h(3)<.34?'pine':h(3)<.52?'poplar':'broad',green=GREENS[Math.floor(h(5)*GREENS.length)],light=lightOf(green),shade=.8+.4*h(6);
+    if(kind==='pine'){
+      const height=15+h(4)*11,trunkH=height*(.5+.1*h(7)),crownH=height-trunkH,top=b.trunk(x,y,z,trunkH*.78,.26+.06*h(8),.12,{sides:5,rings:3,bend:[(h(9)-.5)*1.2,(h(10)-.5)*1.2],color:[.20,.13,.08],seed:slot});
+      const crownR=2.0+h(11)*1.1,blobs=4;
       for(let k=0;k<blobs;k++){
-        const t=k/(blobs-1),ox=(h(20+k)-.5)*crownR*1.1,oz=(h(30+k)-.5)*crownR*1.1;
-        b.blob(top[0]+ox,top[1]+(height-trunkH)*(.2+.55*t)-.4,top[2]+oz,crownR*(1.05-.35*t)*(.8+.4*h(40+k)),(height-trunkH)*.34,crownR*(1.05-.35*t)*(.8+.4*h(50+k)),
-          {detail:1,seed:slot*7+k,lump:.30,bottom:[green[0]*.45,green[1]*.45,green[2]*.45],top:light,yaw:h(60+k)*6.28,shade});
+        const t=k/(blobs-1),r=crownR*(1.05-.72*t)*(.85+.3*h(40+k)),ox=(h(20+k)-.5)*crownR*.5*(1-t),oz=(h(30+k)-.5)*crownR*.5*(1-t);
+        b.blob(top[0]+ox,y+trunkH*.62+crownH*(.14+.66*t),top[2]+oz,r,crownH*(.34-.05*t),r,
+          {detail:1,seed:slot*7+k,lump:.26,bottom:[green[0]*.42,green[1]*.42,green[2]*.42],top:light,yaw:h(60+k)*6.28,shade});
+      }
+    }else if(kind==='poplar'){
+      const height=19+h(4)*10,trunkH=height*(.2+.08*h(7)),crownH=height-trunkH,top=b.trunk(x,y,z,trunkH,.2+.05*h(8),.1,{sides:5,rings:2,bend:[(h(9)-.5)*.5,(h(10)-.5)*.5],color:[.21,.15,.10],seed:slot});
+      const crownR=1.3+h(11)*.7,blobs=3,g2=[green[0]*1.15,green[1]*1.2,green[2]*1.05],l2=lightOf(g2);
+      for(let k=0;k<blobs;k++){
+        const t=k/(blobs-1),r=crownR*(1-.42*t*t)*(.9+.2*h(40+k));
+        b.blob(top[0]+(h(20+k)-.5)*.5,y+trunkH*.9+crownH*(.22+.5*t),top[2]+(h(30+k)-.5)*.5,r,crownH*(.30-.04*t),r,
+          {detail:1,seed:slot*7+k,lump:.22,bottom:[g2[0]*.45,g2[1]*.45,g2[2]*.45],top:l2,yaw:h(60+k)*6.28,shade});
       }
     }else{
-      const trunkH=height*(.30+.1*h(7)),top=b.trunk(x,y,z,trunkH,.22+.1*h(8),.12,{sides:5,rings:2,bend:[(h(9)-.5)*.8,(h(10)-.5)*.8],color:[.19,.14,.10],seed:slot});
-      const crownR=2.7+h(11)*2.6,blobs=5+Math.floor(h(12)*2),crownH=height-trunkH;
-      for(let k=0;k<blobs;k++){
-        const a=k/blobs*6.283+h(70)*3,ring=k===0?0:crownR*.62*(.55+.5*h(80+k)),g2=GREENS[Math.floor(h(90+k)*GREENS.length)],l2=lightOf(g2);
-        b.blob(top[0]+Math.cos(a)*ring,top[1]+crownH*(k===0?.62:.2+.5*h(100+k)),top[2]+Math.sin(a)*ring,crownR*(.6+.3*h(110+k)),crownH*(.30+.12*h(120+k)),crownR*(.6+.3*h(130+k)),
-          {detail:1,seed:slot*7+k,lump:.34,bottom:[g2[0]*.5,g2[1]*.5,g2[2]*.5],top:l2,yaw:h(140+k)*6.28,shade});
+      const height=11.5+h(4)*7,trunkH=height*(.34+.08*h(7)),top=b.trunk(x,y,z,trunkH,.26+.1*h(8),.14,{sides:5,rings:2,bend:[(h(9)-.5)*.8,(h(10)-.5)*.8],color:[.19,.14,.10],seed:slot});
+      const crownR=3.0+h(11)*1.6,crownH=height-trunkH,lobes=4;
+      // the core: taller than wide, then lobes round it
+      b.blob(top[0],y+trunkH+crownH*.5,top[2],crownR*.62,crownH*.46,crownR*.62,{detail:1,seed:slot*7,lump:.26,bottom:[green[0]*.5,green[1]*.5,green[2]*.5],top:light,yaw:h(60)*6.28,shade});
+      for(let k=0;k<lobes;k++){
+        const a=k/lobes*6.283+h(70)*3,ring=crownR*.5*(.7+.4*h(80+k)),g2=GREENS[Math.floor(h(90+k)*GREENS.length)],l2=lightOf(g2),ry=crownH*(.30+.1*h(120+k));
+        b.blob(top[0]+Math.cos(a)*ring,y+trunkH+crownH*(.24+.42*h(100+k)),top[2]+Math.sin(a)*ring,crownR*(.42+.14*h(110+k)),ry,crownR*(.42+.14*h(130+k)),
+          {detail:1,seed:slot*7+k+1,lump:.28,bottom:[g2[0]*.5,g2[1]*.5,g2[2]*.5],top:l2,yaw:h(140+k)*6.28,shade});
       }
     }
     // undergrowth at the foot: two to four bushes (greens and dry browns), sitting on the ground

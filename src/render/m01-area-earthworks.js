@@ -109,6 +109,64 @@ export function createEarthMaterial(){
   return material;
 }
 
+// Round 2 (pkg4): the berm's inner (south, toward the player) face seen from the parapet was a blurry brown smear: smooth vertex colour under a value-noise grain whose smallest
+// cell is 4 cm. The berm gets its own material: the same soil, plus a revetment of weathered horizontal planks held by pickets on the lower face (what a hasty trench face is
+// revetted with), finer pebble/grain detail that only exists near the camera, and a plank/picket bump. All world-space, procedural, no texture. The planks fade into their mean
+// colour with distance (fwidth) so they never alias. Presentation only; the geometry (and so every collision box) is untouched.
+const BERM_MAIN=`
+vec3 bn=normalize(vBermN);
+float bAbove=vEarthPos.y-uBermBase;
+// slope-following coordinates: x along the berm, bv up the face (so the detail is not sheared on the slope)
+vec3 btu=vec3(0.0,1.0,0.0)-bn*bn.y;float btl=length(btu);
+vec2 bp=btl>.3?vec2(vEarthPos.x,dot(vec3(0.0,bAbove,vEarthPos.z-uBermZ),btu/btl)):vec2(vEarthPos.x,vEarthPos.z-uBermZ);
+float bInner=smoothstep(.3,.6,bn.z);
+float bTop=1.14+.05*eNoise(vEarthPos.xz*.9);
+float bRev=bInner*(1.0-smoothstep(bTop-.05,bTop+.03,bAbove))*smoothstep(-.06,.02,bAbove);
+float bNear=1.0-smoothstep(4.0,26.0,length(vViewPosition));
+float bH=0.0;
+{
+  float py=bp.y/.15,row=floor(py),fy=fract(py);
+  float rowOff=eHash(vec2(row,3.1))*7.0,len=1.15+eHash(vec2(row,9.7))*.9;
+  float px=(bp.x+rowOff)/len,col=floor(px),fx=fract(px);
+  float tint=.55+.8*eHash(vec2(row*1.7+col,5.3));
+  float grain=eNoise(vec2(bp.x*2.2+row*3.7,bp.y*38.0))*.6+eNoise(vec2(bp.x*7.0+col,bp.y*90.0+row))*.4;
+  float aa=1.0-smoothstep(.12,.45,fwidth(py));
+  float gap=(1.0-smoothstep(.0,.075,fy))*.8+(1.0-smoothstep(.0,.03,min(fx,1.0-fx)*len));
+  gap=clamp(gap,0.0,1.0)*aa;
+  float pk=fract((bp.x+1.15)/2.3),picket=(1.0-smoothstep(.015,.04,abs(pk-.5)))*aa;
+  vec3 wood=vec3(.25,.19,.125)*tint*(.6+.8*grain);
+  wood*=1.0-.6*gap;wood=mix(wood,vec3(.12,.09,.06)*(.7+.5*grain),picket*.9);
+  wood=mix(vec3(.21,.16,.105)*tint,wood,aa);
+  float wear=.18*eNoise(vEarthPos.xz*5.0);
+  diffuseColor.rgb=mix(diffuseColor.rgb,wood*(1.0-wear)*(.7+.6*eG),bRev*.92);
+  bH=bRev*(-gap*.9+picket*.7+(grain-.5)*.5);
+}
+// near-camera soil: sparse pebbles (a third of the 2.6 cm cells, lighter than the earth) and fine grain, fading out with distance
+vec2 bq=bp*38.0,bi=floor(bq);float bHas=step(.68,eHash(bi+3.0));
+vec2 bc=bi+.5+(vec2(eHash(bi+7.0),eHash(bi+13.0))-.5)*.5;float bPeb=bHas*(1.0-smoothstep(.12,.34+.2*eHash(bi+21.0),length(bq-bc)));
+float bPebK=(1.0-bRev)*bNear*uBermFine;
+diffuseColor.rgb*=1.0+bPebK*(.55*bPeb*(eHash(bi+29.0)-.25));
+float bGrain=eNoise(bp*60.0);
+diffuseColor.rgb*=1.0+bPebK*.22*(bGrain-.5);
+bH+=bPebK*(bPeb*.6+(bGrain-.5)*.3);
+`;
+/** Soil of the berm: the heaps' earth plus plank-and-picket revetment on the inner face and near-camera pebble detail. `base` = ground height at the berm's foot, `z` = the berm's centre line (detail coordinates are taken relative to them: large world coordinates would shear the pattern). */
+export function createBermMaterial({base=0,z=0,quality='high'}={}){
+  const material=new THREE.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:1,metalness:0}),uniforms={uBermBase:{value:base},uBermZ:{value:z},uBermFine:{value:quality==='low'?0:1}};
+  material.onBeforeCompile=shader=>{
+    Object.assign(shader.uniforms,uniforms);
+    shader.vertexShader='varying vec3 vBermN;\n'+EARTH_HEAD+shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      vBermN=normalize(mat3(modelMatrix)*objectNormal);
+      vEarthPos=(modelMatrix*vec4(transformed,1.0)).xyz;`);
+    shader.fragmentShader='varying vec3 vBermN;\nuniform float uBermBase;uniform float uBermZ;uniform float uBermFine;\n'+EARTH_HEAD+shader.fragmentShader.replace('#include <common>',`#include <common>\n${EARTH_FRAG}`).replace('#include <map_fragment>',`#include <map_fragment>
+      float eG=eNoise(vEarthPos.xz*7.0+vEarthPos.y*5.0)*.6+eNoise(vEarthPos.xz*23.0+vEarthPos.y*17.0)*.4;
+      diffuseColor.rgb*=.55+.9*eG;`).replace('#include <color_fragment>',`#include <color_fragment>
+      ${BERM_MAIN}`).replace('#include <normal_fragment_maps>',`normal=normalize(normal-vec3(dFdx(eG),dFdy(eG),0.0)*.35-vec3(dFdx(bH),dFdy(bH),0.0)*.5);`);
+  };
+  material.customProgramCacheKey=()=>'m01-area-berm-v1';
+  return {material,uniforms,setQuality(q){uniforms.uBermFine.value=q==='low'?0:1;}};
+}
+
 /**
  * Instanced mounds for the world's turned-earth covers: ONE draw call. `covers` = [{id,min,max}] (EARTH covers that are not parapets). Every mound is drawn on every
  * quality tier (cover readability never depends on the tier); only the clods round them scale.

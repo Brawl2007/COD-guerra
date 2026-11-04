@@ -7,6 +7,8 @@ import {WEAPON_PRESENTATION,WeaponViewFx,advanceLookLag,mechanicalPulse,viewPoin
 import {frameFirstPersonCarry} from './m01-fp-carry.js';
 import {ViewHands} from './m01-fp-hands.js';
 import {visualNoise} from './m01-atmosphere.js';
+import {WeaponSights,rifleWithoutRearBlock} from './m01-wz29-sights.js';
+import {buildDetailedHands} from './m01-fp-fingers.js';
 
 const PROFILE=WEAPON_PRESENTATION.wz29,BOLT_SECONDS=wz29Profile.gameplay.boltCycleSec,RELOAD_CLIP_SECONDS=3.4;
 // GLB socket fallback (weapon bone frame). The clip path is the asset's own reload_clip ejection curve.
@@ -69,7 +71,7 @@ export class M01ViewModel {
   }
   build(lod){
     this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;
-    this.release(this.root,this.mixer);this.armGeometry?.dispose();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.skinMaterial?.dispose();this.skinMaterial=null;this.lod=lod;this.visual=null;this.sampleKey=null;
+    this.release(this.root,this.mixer);this.armGeometry?.dispose();this.disposeDetail();this.rifleMaterial?.dispose();this.atlasMaterial?.dispose();this.skinMaterial?.dispose();this.skinMaterial=null;this.lod=lod;this.visual=null;this.sampleKey=null;
     this.fpSource=this.characters.sources.has('fp:0');
     this.root=clone(this.characters.sources.get(this.fpSource?'fp:0':`pl:${lod}`).scene);this.scene.add(this.root);
     this.root.traverse(n=>{if(n.isMesh){n.visible=['body','rifle','clip','fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].includes(n.name);n.frustumCulled=false;n.castShadow=false;n.receiveShadow=false;}});
@@ -83,6 +85,19 @@ export class M01ViewModel {
     const rifle=this.root.getObjectByName('rifle');this.rifleMaterial=riflePresentationMaterial(rifle.material,rifle.skeleton?.bones.findIndex(b=>b.name==='weapon_bolt')??-1);rifle.material=this.rifleMaterial;
     const hands=this.root.getObjectByName('fp_hands');
     if(hands){this.skinMaterial=viewAtlasMaterial(hands.material);this.skinMaterial.name='FP skin';hands.material=this.skinMaterial;}
+    // pkg4: the GLB's rear sight block has no notch and its fingers are five-sided prisms. The standing view draws a notched rear sight and finer hands built in code
+    // (m01-wz29-sights.js, m01-fp-fingers.js); the GLB, its hash and the carry triangle budget are untouched (carry keeps the original hands as fp_hands_carry).
+    this.sights=null;this.rifleGeometry=null;this.handGeometry=null;this.handsCarry=null;
+    const trimmed=rifleWithoutRearBlock(rifle);
+    const weaponBone=this.root.getObjectByName('weapon');
+    if(trimmed&&!weaponBone)trimmed.geometry.dispose();
+    if(trimmed&&weaponBone){this.rifleGeometry=trimmed.geometry;rifle.geometry=trimmed.geometry;this.sights=new WeaponSights(weaponBone);}
+    const detailed=hands&&hands.isSkinnedMesh?buildDetailedHands(hands):null;
+    if(detailed){
+      const fine=new THREE.SkinnedMesh(detailed,this.skinMaterial);fine.name='fp_hands';fine.frustumCulled=false;fine.castShadow=false;fine.receiveShadow=false;
+      fine.position.copy(hands.position);fine.quaternion.copy(hands.quaternion);fine.scale.copy(hands.scale);hands.parent.add(fine);fine.updateMatrixWorld(true);fine.bind(hands.skeleton,hands.bindMatrix);
+      hands.name='fp_hands_carry';hands.visible=false;this.handGeometry=detailed;this.handsCarry=hands;
+    }
     this.atlasMaterial=viewAtlasMaterial(body.material);body.material=this.atlasMaterial;this.root.getObjectByName('clip').material=this.atlasMaterial;
     this.mixer=new THREE.AnimationMixer(this.root);
     // Bind finger rotations first, then learn each phalanx's flex axis from the authored grip pose (aim clip, t = 0).
@@ -275,6 +290,8 @@ export class M01ViewModel {
       this.hands.curl('r',gripWeight);this.hands.curl('l',1);this.hands.place(this.root.getObjectByName('weapon'),{r:wristWeight,l:1},adsEase(v.aim)*(1-reloadWeight));
     }
     this.root.getObjectByName('rifle').visible=!carry;
+    if(this.sights)this.sights.visible=!carry;
+    if(this.handsCarry){this.handsCarry.visible=carry;this.root.getObjectByName('fp_hands').visible=!carry;}
     // From clip_ejected the empty clip continues as a world object; the asset's short arc would otherwise vanish mid-air.
     const clipEjected=Boolean(this.worldFx&&view)&&w.state==='RELOAD_CLIP'&&sample>=PROFILE.mechanics.clipEjected;
     this.root.getObjectByName('clip').visible=!carry&&w.state==='RELOAD_CLIP'&&!clipEjected;
@@ -322,7 +339,7 @@ export class M01ViewModel {
     let drawnTriangles=0;const drawnMeshes=[];
     this.root.traverseVisible(n=>{if(n.isMesh){const triangles=(n.geometry.index?.count??n.geometry.getAttribute('position')?.count??0)/3;drawnTriangles+=triangles;drawnMeshes.push({name:n.name||'singleRound',triangles});}});
     this.stats={active:true,visible:true,lod,native:this.native,clock:t,fpVariant:this.fpSource?'fp-arms-v2':'optional-fallback',drawnTriangles,drawnMeshes,carryFrame:carry?this.carryFrame:null,clip,clipTime:sample,carrying:carry,singleRound:this.round.visible,
-      armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps','fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
+      armTriangles:this.armGeometry.index.count/3+['fp_sleeve_caps','fp_cuffs','fp_straps',carry&&this.handsCarry?'fp_hands_carry':'fp_hands'].reduce((n,name)=>n+(this.root.getObjectByName(name)?.geometry.index.count??0)/3,0),aimBlend:this.visual?.aim??null,runBlend:this.visual?.run??null,
       phase:feel.gait,visualMuzzle:this.flash.getWorldPosition(a).toArray(),
       visualSights:Object.fromEntries(['rear','front'].map(name=>[name,weapon.localToWorld(a.fromArray(WZ29_VISUAL[name])).toArray()])),
       // muzzleReach: how far the drawn muzzle stands in front of the eye (m); wallDistance is the probe's clearance the lowering answers.
@@ -330,9 +347,11 @@ export class M01ViewModel {
         lookPitch:+(this.visual?.look?.pitchLag??0).toFixed(5),clipEjected:Boolean(clipEjected),...fx}};
     return true;
   }
+  /** Geometry and meshes the view model builds in code (rear sight, trimmed rifle, fine hands); the shared GLB geometry is never disposed here. */
+  disposeDetail(){this.sights?.dispose();this.sights=null;this.rifleGeometry?.dispose();this.rifleGeometry=null;this.handGeometry?.dispose();this.handGeometry=null;this.handsCarry=null;}
   dispose(){
     this.release(this.wounded?.root,this.wounded?.mixer);this.wounded=null;this.patientGearGeometry?.dispose();this.patientGearGeometry=null;this.release(this.root,this.mixer);this.root=null;
-    this.armGeometry?.dispose();this.armGeometry=null;
+    this.armGeometry?.dispose();this.armGeometry=null;this.disposeDetail();
     this.rifleMaterial?.dispose();this.rifleMaterial=null;this.atlasMaterial?.dispose();this.atlasMaterial=null;this.skinMaterial?.dispose();this.skinMaterial=null;
     for(const [node,callback]of this.nativeHooks)node.onBeforeRender=callback;this.nativeHooks.clear();
     this.fx.dispose();this.roundGeometry.dispose();this.round.material.dispose();

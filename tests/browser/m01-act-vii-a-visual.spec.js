@@ -37,7 +37,7 @@ for(const quality of (process.env.VIS_TIERS??'high,low').split(','))test(`VII-a 
     await page.goto('?debug=1&acts=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9,null,{timeout:150000});
     await page.locator('#continue').click();
     await page.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_a_north',null,{timeout:60000});
-    await page.waitForTimeout(name==='spawn'?10000:3500);   // the arrival view opens with a short fade and letterbox in slow software rendering
+    await page.waitForTimeout(name==='spawn'?10000:Number(process.env.VIS_WAIT??3500));   // the arrival view opens with a short fade and letterbox in slow software rendering
     const samples=[];
     for(let i=0;i<8;i++){samples.push(await page.evaluate(()=>{const d=window.gameDiagnostics();return {quality:d.quality,drawCalls:d.drawCalls,triangles:d.triangles,geometries:d.geometries,textures:d.textures,dressing:d.m01.areaDressing??null};}));await page.waitForTimeout(400);}
     const med=k=>samples.map(s=>s[k]).sort((a,b)=>a-b)[0];   // the smallest of 8 frames: a frame read between two passes would double the figure

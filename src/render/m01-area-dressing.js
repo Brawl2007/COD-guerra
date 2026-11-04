@@ -1,16 +1,17 @@
 import * as THREE from 'three';
 import {artTexture} from './m01-surfaces.js';
 import {areaReliefOffset,buildFieldGeometry,createFieldMaterial} from './m01-area-field.js';
-import {buildMoundGeometry,buildBermGeometry,buildClodGeometry,buildCraterRimGeometry,buildMoundInstances,buildClodInstances,createEarthMaterial} from './m01-area-earthworks.js';
+import {buildMoundGeometry,buildBermGeometry,buildClodGeometry,buildCraterRimGeometry,buildMoundInstances,buildClodInstances,createEarthMaterial,createBermMaterial} from './m01-area-earthworks.js';
 import {buildTreeLine,treeDrawRange,createTreeMaterial,TREE_SHARE} from './m01-area-trees.js';
 import {buildWreckGeometry,createWreckMaterial} from './m01-area-wreck.js';
+import {createStubble} from './m01-area-stubble.js';
 
 // R4 INC-1 + the VII-a visual package: presentation-only dressing of a new act's area (world.area, src/world/m01-area-world.js). Procedural primitives of this project, no third-party
 // asset, no collider, nothing here decides anything. The area's solids are the simulation's boxes (the parapet, the turned earth the Germans bound to, the wreck: world.areaCovers);
 // this class draws them as heaped earth, an earth berm and a generic hull instead of the world's plain boxes (`replaces(id)` tells M01View.syncSolids which boxes it no longer needs
 // to draw); the sandbags, ammunition boxes and wire are the T12 prop kit drawn by M01PropsRuntime.
 // What it draws, in draw calls: the field (1), the heaped mounds (1), the berm (1), the clods (1), crater discs and rims (2), the scorch (1), the hull (1), the tree line with its
-// undergrowth (1): ten, against the roughly 150 of the first version (two meshes per tree, two per crater, two per wreck box).
+// undergrowth (1), and on High the stubble (1): ten (eleven on High), against the roughly 150 of the first version (two meshes per tree, two per crater, two per wreck box).
 // Built once per area, disposed with it; the quality tier only scales how many trees and clods are drawn and the field shader's detail (never the cover or the hull).
 export class M01AreaDressing{
   /** `surface(x,z)` = the submitted terrain surface under the field (without this class's offset); `quality` = 'low'|'medium'|'high'. */
@@ -32,6 +33,9 @@ export class M01AreaDressing{
       this.field=createFieldMaterial(detail,{track,band:[Math.min(...xs)-6,Math.max(...xs)+6,P.z1+.9,P.z1+4.5],origin:[(F.minX+F.maxX)/2,(F.minZ+F.maxZ)/2],quality});
       Object.assign(this.field.material,{polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4});material(this.field.material);
       const m=new THREE.Mesh(geometry(buildFieldGeometry(L,base,{cell:12})),this.field.material);m.renderOrder=-1;add(m,'m01-area-field');
+      // Round 2 (High tier only): stubble/grass tufts that follow the camera over the fought-over strip (m01-area-stubble). One instanced draw call, hidden below High.
+      const B=L.bounds.playable;this.stubble=createStubble({bounds:[B.minX,B.maxX,B.minZ,B.maxZ],groundY:y,origin:[(F.minX+F.maxX)/2,(F.minZ+F.maxZ)/2]});
+      add(this.stubble.mesh,'m01-area-stubble',{receive:false,triangles:this.stubble.triangles});
     }
 
     // Earthworks: one soil material for the heaps, the berm, the clods and the crater rims.
@@ -42,7 +46,9 @@ export class M01AreaDressing{
       for(const c of mounds)this.replaced.add(c.id);
     }
     if(parapets.length){
-      add(new THREE.Mesh(geometry(buildBermGeometry(parapets)),earth),'m01-area-berm',{cast:true});
+      // Round 2: the berm has its own soil with a plank-and-picket revetment on the inner face and near-camera pebble detail (createBermMaterial).
+      this.berm=createBermMaterial({base:y,z:(L.parapets.z0+L.parapets.z1)/2,quality});
+      add(new THREE.Mesh(geometry(buildBermGeometry(parapets)),material(this.berm.material)),'m01-area-berm',{cast:true});
       for(const c of parapets)this.replaced.add(c.id);
     }
     if(mounds.length||parapets.length){
@@ -86,7 +92,7 @@ export class M01AreaDressing{
   }
   /** Scales what is drawn with the tier (never cover, the hull or the German-visible ground). Cheap and idempotent. */
   setQuality(quality){
-    this.quality=quality;this.field?.setQuality(quality);
+    this.quality=quality;this.field?.setQuality(quality);this.berm?.setQuality(quality);if(this.stubble)this.stubble.mesh.visible=quality==='high';
     const share=TREE_SHARE[quality]??TREE_SHARE.low;
     if(this.treeMesh){const r=treeDrawRange(this.trees,share);this.treeMesh.geometry.setDrawRange(r.start,r.count);this.treesDrawn=r.trees;}
     if(this.clods)this.clods.count=Math.max(1,Math.round(this.clods.userData.total*({low:.45,medium:.7,high:1}[quality]??.45)));
@@ -95,8 +101,8 @@ export class M01AreaDressing{
   replaces(id){return this.replaced.has(id);}
   get diagnostics(){
     let triangles=0;for(const d of this.drawn){if(d===undefined)continue;
-      if(d.name==='m01-area-trees')triangles+=this.treeMesh.geometry.drawRange.count/3;else if(d.name==='m01-area-clods')triangles+=d.mesh.count*d.mesh.geometry.index.count/3;else triangles+=d.triangles;}
-    return {area:this.area,quality:this.quality,meshes:this.group.children.length,drawCalls:this.drawn.length,triangles:Math.round(triangles),trees:this.treesDrawn??0,clods:this.clods?.count??0,replacedSolids:this.replaced.size};
+      if(d.name==='m01-area-trees')triangles+=this.treeMesh.geometry.drawRange.count/3;else if(d.name==='m01-area-clods')triangles+=d.mesh.count*d.mesh.geometry.index.count/3;else if(d.name==='m01-area-stubble'){if(d.mesh.visible)triangles+=d.triangles;}else triangles+=d.triangles;}
+    return {area:this.area,quality:this.quality,meshes:this.group.children.length,drawCalls:this.drawn.filter(d=>d.mesh.visible).length,triangles:Math.round(triangles),trees:this.treesDrawn??0,clods:this.clods?.count??0,replacedSolids:this.replaced.size};
   }
-  dispose(){this.group.removeFromParent();for(const g of this.geometries)g.dispose();for(const m of this.materials)m.dispose();for(const t of this.textures)t.dispose();this.group.clear();this.drawn.length=0;}
+  dispose(){this.group.removeFromParent();for(const g of this.geometries)g.dispose();for(const m of this.materials)m.dispose();for(const t of this.textures)t.dispose();this.stubble?.dispose();this.stubble=null;this.group.clear();this.drawn.length=0;}
 }

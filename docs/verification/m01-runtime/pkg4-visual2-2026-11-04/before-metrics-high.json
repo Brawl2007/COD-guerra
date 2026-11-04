@@ -1,0 +1,64 @@
+{
+ "quality": "high",
+ "germanDistancesM": [
+  171.1,
+  169.6,
+  194.2,
+  174.4,
+  148.5,
+  164.9,
+  119.5,
+  142.2,
+  141.7,
+  149.6,
+  131.9,
+  153.9
+ ],
+ "scenes": {
+  "spawn": {
+   "quality": "high",
+   "drawCalls": 143,
+   "triangles": 557102,
+   "geometries": 290,
+   "textures": 111,
+   "dressing": {
+    "area": "np",
+    "quality": "high",
+    "meshes": 9,
+    "drawCalls": 9,
+    "triangles": 86908,
+    "trees": 64,
+    "clods": 1274,
+    "replacedSolids": 185
+   },
+   "errors": []
+  },
+  "mid": {
+   "quality": "high",
+   "drawCalls": 575,
+   "triangles": 1182615,
+   "geometries": 403,
+   "textures": 110,
+   "dressing": null,
+   "errors": []
+  },
+  "west": {
+   "quality": "high",
+   "drawCalls": 575,
+   "triangles": 1182615,
+   "geometries": 403,
+   "textures": 110,
+   "dressing": null,
+   "errors": []
+  },
+  "wreck": {
+   "quality": "high",
+   "drawCalls": 575,
+   "triangles": 1182615,
+   "geometries": 403,
+   "textures": 110,
+   "dressing": null,
+   "errors": []
+  }
+ }
+}
