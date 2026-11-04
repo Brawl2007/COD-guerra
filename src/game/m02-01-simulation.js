@@ -1471,7 +1471,7 @@ export class M02BenchSimulation {
         }
       }
       this.objective.id = 'C04';
-      this.objective.title = 'C04 (Pomar Sul): Reagrupar junto ao poço/pomar e sinalizar o ferido [E]';
+      this.objective.title = 'C04 (Pomar Sul): Reagrupar e avançar; ajudar o ferido é opcional';
       this.objective.status = 'active';
     } else if (mgNeutralized || b01DefendersDown) {
       this.objective.id = 'O03';

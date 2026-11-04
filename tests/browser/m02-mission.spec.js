@@ -38,6 +38,7 @@ test('C04 offers water by touch while keeping the separate chalk choice',async({
   Object.assign(w,{x:1.7,y:0,z:-60,health:40,alive:true,state:'WOUNDED_UNARMED',nonCombatant:true,crouched:true});s.teleportPlayer(0,-60,0,-.45);s.drainEvents();
  });
  await page.locator('#mission-resume').click();const water=page.locator('[data-water]');await expect(water).toBeVisible();
+ await expect(page.locator('#hud-objective')).toContainText('opcional');
  await expect(page.locator('#door-prompt')).toContainText('Marcar poste');await expect(page.locator('#door-prompt')).toContainText('Dar água');
  const waterBox=await water.boundingBox(),weaponBox=await page.locator('.weapon-box').boundingBox();
  expect(waterBox.y).toBeGreaterThanOrEqual(weaponBox.y+weaponBox.height);
