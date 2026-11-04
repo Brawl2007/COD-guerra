@@ -1,5 +1,5 @@
-import {test,expect} from '@playwright/test';
-import {gameBooted,expectPaused} from '../helpers/m01-browser-boot.js';
+import {test} from '@playwright/test';
+import {expect,gameBooted,expectPaused,slowGlPage,slowGlTestTimeout,simWaitTimeout} from '../helpers/m01-browser-boot.js';
 import {driver,route} from '../helpers/m01-route.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {newBarkState} from '../../src/game/m01-barks.js';
@@ -8,20 +8,23 @@ import {newBarkState} from '../../src/game/m01-barks.js';
 // Verifica apresentação e contratos de texto; não é playtest humano nem medição de desempenho.
 const key='cod-guerra:checkpoint:m01:v2';
 async function open(page){
-  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const errors=[];slowGlPage(page);page.on('pageerror',e=>errors.push(e.message));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
   await gameBooted(page);return errors;
 }
 const hud=page=>page.evaluate(()=>window.gameDiagnostics().m01.hudPresentation);
 const opacity=(page,id)=>page.evaluate(id=>Number(getComputedStyle(document.getElementById(id)).opacity),id);
+// Waiting for a SIMULATED clock is frame-bound: at most 0.25 s of simulation per rendered frame, and a software-GL frame took 2.5-10 s under load (tests/helpers/m01-browser-boot.js).
 async function pauseAt(page,clock){
-  await page.waitForFunction(t=>{if(window.gameDiagnostics().clock>=t){document.exitPointerLock();return true;}return false;},clock,{polling:'raf',timeout:120000});
+  const now=await page.evaluate(()=>window.gameDiagnostics().clock);
+  await page.waitForFunction(t=>{if(window.gameDiagnostics().clock>=t){document.exitPointerLock();return true;}return false;},clock,{polling:'raf',timeout:simWaitTimeout(Math.max(clock-now,0))+60000});
   await expectPaused(page);
 }
 function boxesOverlap(a,b){return a&&b&&a.w&&b.w&&a.h&&b.h&&a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;}
 
 test('the intro is presented as black screen, typed title card and letterbox; skipping reveals the objective and checkpoint',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  // 5.5 s of intro clock + 0.8 s after the skip are 26 frames at the very least; the skip, the resume and the two screenshots take a few more.
+  test.setTimeout(slowGlTestTimeout({simSeconds:8,frames:12}));
   const errors=await open(page);await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   await pauseAt(page,5.5);
@@ -59,7 +62,8 @@ test('the intro is presented as black screen, typed title card and letterbox; sk
 });
 
 test('a continued save shows the place card and keyed interaction prompt; HUD fits common resolutions without overlap',async({page},info)=>{
-  test.setTimeout(process.env.CI?180000:90000);
+  // 1.6 s of clock (7 frames), then five viewport sizes with a resize + a screenshot (one composited frame each).
+  test.setTimeout(slowGlTestTimeout({simSeconds:2,frames:16}));
   // 2026-10-18 (integration integ-pc): the player body physics (D44) made the old waypoint x -15 run into a solid on the way to (-15,2); this is the detour of
   // tests/helpers/m01-route.js (toRepair), which the Node routes already use. Only the path to the post changed, not what the test asserts.
   const route=driver();route.step({skip:true});route.walk(-66,26);route.walk(-30,26);route.walk(-30,2);route.walk(16,2);
@@ -102,7 +106,8 @@ function crewSave(){
   throw new Error('the crew never asked the way');
 }
 test('reactive dialogue: the subtitles render with their speaker, 118 and 119 show two different names, and the captions overlap nothing at 1366x768',async({page},info)=>{
-  test.setTimeout(process.env.CI?300000:200000);
+  // crewSave() runs a whole Node route inside the test (ROUTE_TIMEOUT: 107 s at load 30), then the second voice is on screen 2.7 s of simulation after the restore (measured in Node).
+  test.setTimeout(slowGlTestTimeout({route:true,simSeconds:4,frames:10}));
   const snapshot=crewSave();
   await page.addInitScript(({key,snapshot})=>localStorage.setItem(key,JSON.stringify(snapshot)),{key,snapshot});
   const errors=await open(page);
@@ -115,7 +120,7 @@ test('reactive dialogue: the subtitles render with their speaker, 118 and 119 sh
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
   // pause on the frame that shows the second voice, so that the page is measured with the subtitle on it
   await page.waitForFunction(()=>{const node=document.getElementById('subtitle');
-    if(node.classList.contains('show')&&node.textContent.includes('De lá também atira')){document.exitPointerLock();return true;}return false;},null,{polling:'raf',timeout:150000});
+    if(node.classList.contains('show')&&node.textContent.includes('De lá também atira')){document.exitPointerLock();return true;}return false;},null,{polling:'raf',timeout:simWaitTimeout(4)+60000});
   await expectPaused(page);
   const heard=await page.evaluate(()=>window.__subtitles);
   const first=heard.find(l=>l.text.includes('Cabo, pelo aterro para oeste?')),second=heard.find(l=>l.text.includes('Pelo aterro. De lá também atira.'));
