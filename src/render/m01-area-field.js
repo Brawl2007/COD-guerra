@@ -77,7 +77,10 @@ vec3 areaSoil(vec2 p){
 const GLSL_BODY=`
 vec2 ap=vAreaPos.xz-uAreaOrigin;
 float aDist=length(vViewPosition);
-vec2 aw=ap+(vec2(aNoise(ap*.017+3.1),aNoise(ap*.017+9.7))-.5)*28.0;
+// Low: the domain warp and the fbm tint fade out between 50 and 80 m (aWk 0 -> 1) and are not evaluated beyond it (straight cell edges, flat tint at that distance); High/Medium: aWk is 0, as before.
+float aWk=uAreaLow>.5?smoothstep(50.0,80.0,aDist):0.0;
+vec2 aw=ap;
+if(aWk<1.0)aw+=(vec2(aNoise(ap*.017+3.1),aNoise(ap*.017+9.7))-.5)*28.0*(1.0-aWk);
 float aCs=.9759,aSn=.2181;
 float fu=aw.x*aSn+aw.y*aCs,fv=aw.x*aCs-aw.y*aSn;
 float sid=floor(fv/34.0),off=aHash(vec2(sid,3.0))*.9,pf=fu/118.0+off,pid=floor(pf);
@@ -91,18 +94,24 @@ else if(h1<.88){aCol=areaLin(vec3(.34,.42,.21));rowAmp=.12;}
 else{aCol=areaLin(vec3(.31,.39,.21));rowSp=.62;rowAmp=.5;}
 // Round 2: the rows used to be a plain sine with one phase shift per cell, which near the camera read as a mown lawn / checkerboard. Now the row coordinate is warped at three
 // scales, every row has its own width, strength and gaps, and the strength itself drifts along the row, so no two rows or segments look alike.
+// The rows' weight (rowFade) is 0 beyond 20 m: the whole block is skipped there (rowR .4 and amp 0 are the neutral values the bump term below expects).
+float rowR=.4,amp=0.0;
+if(aDist<20.0){
 float rowC=fv/rowSp+(aFbm(ap*.09+vec2(2.0,8.0))-.5)*3.2+(aNoise(ap*.7+4.0)-.5)*.5;
 float rowId=floor(rowC),rowJ=aHash(vec2(rowId,sid+31.0)),rowF=fract(rowC);
-float rowW=.22+.3*rowJ,rowR=1.0-smoothstep(rowW*.5,rowW,abs(rowF-.5));
+float rowW=.22+.3*rowJ;rowR=1.0-smoothstep(rowW*.5,rowW,abs(rowF-.5));
 rowR*=step(.12,rowJ)*(.55+.45*aNoise(vec2(fu*.31+rowId*7.7,rowId)));
 float rowFade=(1.0-smoothstep(.07,.30,fwidth(rowC)))*(1.0-smoothstep(4.0,20.0,aDist));
-float amp=rowAmp*rowFade*.75*(.6+.8*aNoise(ap*.05+vec2(rowId*.37,1.0)));
+amp=rowAmp*rowFade*.75*(.6+.8*aNoise(ap*.05+vec2(rowId*.37,1.0)));
 aCol*=1.0+(rowR-.4)*amp*.75;
-aCol*=.80+.40*aFbm(ap*.045+vec2(5.0,2.0));
+}
+float aT=.5;if(aWk<1.0)aT=mix(aFbm(ap*.045+vec2(5.0,2.0)),.5,aWk);
+aCol*=.80+.40*aT;
 aCol*=.92+.16*aHash(vec2(sid,pid)+13.0);
 float balk=1.0-smoothstep(.5,1.7,edgeD);
 aCol=mix(aCol,areaLin(vec3(.30,.38,.19))*(.85+.3*aNoise(ap*.9)),balk*.75);
 float wear=0.0,rut=0.0;
+if(uAreaLow<.5){   // Low: no worn track, ruts or trampled strip (their cost is the loop and the band, not the look of the cover)
 for(int i=0;i<2;i++){
   vec4 s=uAreaTrack[i];vec2 a=s.xy,b=s.zw,pa=vAreaPos.xz-a,ba=b-a;float hh=clamp(dot(pa,ba)/max(dot(ba,ba),.001),0.0,1.0);float dd=length(pa-ba*hh);
   wear=max(wear,1.0-smoothstep(1.2,2.7+aNoise(vAreaPos.xz*.6)*1.5,dd));
@@ -111,10 +120,12 @@ for(int i=0;i<2;i++){
 }
 vec2 bq=vec2(max(max(uAreaBand.x-vAreaPos.x,0.0),vAreaPos.x-uAreaBand.y),max(max(uAreaBand.z-vAreaPos.z,0.0),vAreaPos.z-uAreaBand.w));
 wear=max(wear,(1.0-smoothstep(0.0,3.2+aNoise(vAreaPos.xz*.45)*2.4,length(bq)))*.9);
-aCol=mix(aCol,areaLin(vec3(.50,.42,.32))*(.80+.40*aNoise(vAreaPos.xz*1.3)),wear*.85);
+}
+if(wear>0.0)aCol=mix(aCol,areaLin(vec3(.50,.42,.32))*(.80+.40*aNoise(vAreaPos.xz*1.3)),wear*.85);
 aCol*=1.0-rut*.25;amp*=1.0-wear;
 // Soil grain. High: stochastic sampling (no repeat); Low: one tap with the coordinate warped by a low-frequency noise (the repeat is broken up for one extra noise, not three taps).
-float lum;
+float lum=1.0;float nearK=1.0-smoothstep(8.0,60.0,aDist);
+if(aDist<60.0){   // nearK is 0 beyond 60 m: the soil grain taps are not needed there
 if(uAreaLow<.5){
   vec3 dt=areaSoil(vAreaPos.xz*.9);
   lum=dot(dt,vec3(.3,.59,.11))/.12;   // the soil map's mean is about .12 in linear light
@@ -123,7 +134,7 @@ if(uAreaLow<.5){
   vec2 wp=vAreaPos.xz*.9+(vec2(aNoise(vAreaPos.xz*.23),aNoise(vAreaPos.xz*.23+9.0))-.5)*1.6;
   vec3 dt=texture2D(uAreaDetail,wp).rgb;lum=dot(dt,vec3(.3,.59,.11))/.12;
 }
-float nearK=1.0-smoothstep(8.0,60.0,aDist);
+}
 aCol*=mix(1.0,lum,(uAreaLow>.5?.3:.8)*nearK);   // Low: its single warped tap still shows the map's tile seams as a faint lattice at 15-40 m, so it is used with less contrast
 float areaH=(rowR-.4)*amp*.5+(lum-1.0)*(uAreaLow>.5?.15:.5)*nearK-rut*.5;
 diffuseColor.rgb*=aCol;
