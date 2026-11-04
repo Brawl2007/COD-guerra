@@ -61,3 +61,14 @@ test('a world with another wreck box does not reuse the hull',()=>withCanvas(()=
   assert.ok(hull);assert.ok(meshOf(b,'m01-area-wreck')!==hull);
   a.dispose();b.dispose();
 }));
+
+test('dispose frees the instance buffers of every InstancedMesh (heaps, clods, crater discs and rims, shell craters, stubble)',()=>withCanvas(()=>{
+  const scene=new THREE.Scene(),d=new M01AreaDressing(scene,worlds[1],{surface,quality:'high'});
+  d.syncShellCraters([{id:'np_shell_crater_x_0',x:-440,y:-3,z:-1210,started:1},{id:'np_shell_crater_x_1',x:-420,y:-3,z:-1205,started:2}]);
+  const meshes=[];d.group.traverse(o=>{if(o.isInstancedMesh)meshes.push(o);});
+  const names=meshes.map(m=>m.name);
+  for(const n of ['m01-area-mounds','m01-area-clods','m01-area-crater-discs','m01-area-crater-rims','m01-area-shell-crater-discs','m01-area-shell-crater-rims','m01-area-stubble'])assert.ok(names.includes(n),`${n} exists`);
+  const hits=new Map(meshes.map(m=>{const c={n:0};m.addEventListener('dispose',()=>{c.n++;});return [m,c];}));
+  d.dispose();
+  for(const [m,c] of hits)assert.ok(c.n>=1,`${m.name} released`);
+}));

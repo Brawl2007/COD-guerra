@@ -159,5 +159,6 @@ export class M01AreaDressing{
       if(d.name==='m01-area-trees')triangles+=this.treeMesh.geometry.drawRange.count/3;else if(d.name==='m01-area-clods')triangles+=d.mesh.count*d.mesh.geometry.index.count/3;else if(d.name==='m01-area-stubble'){if(d.mesh.visible)triangles+=d.triangles;}else triangles+=d.triangles;}
     return {area:this.area,quality:this.quality,meshes:this.group.children.length,drawCalls:this.drawn.filter(d=>d.mesh.visible).length,triangles:Math.round(triangles),trees:this.treesDrawn??0,clods:this.clods?.count??0,replacedSolids:this.replaced.size};
   }
-  dispose(){this.group.removeFromParent();for(const g of this.geometries)g.dispose();for(const m of this.materials)m.dispose();for(const t of this.textures)t.dispose();this.stubble?.dispose();this.stubble=null;this.group.clear();this.drawn.length=0;}
+  dispose(){this.group.removeFromParent();for(const c of this.group.children)if(c.isInstancedMesh)c.dispose();   // frees the instance matrix/colour buffers (the stubble's mesh is the stubble's own; harmless twice)
+    for(const g of this.geometries)g.dispose();for(const m of this.materials)m.dispose();for(const t of this.textures)t.dispose();this.stubble?.dispose();this.stubble=null;this.group.clear();this.drawn.length=0;}
 }
