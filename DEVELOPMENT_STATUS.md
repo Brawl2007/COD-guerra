@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — controlos táteis — 2026-11-04
+
+`3ccfb05` acrescenta movimento, olhar, combate, ações e pausa táteis reutilizando a infraestrutura M01. Testes M02, build e browser simulado passaram; [prova e limitações](docs/verification/m02-runtime/touch-2026-11-04/README.md). Falta testar em iPhone/Safari e disponibilizar um endereço de pré-visualização acessível; não houve deploy.
+
 ## M02 — linha de tiro das rajadas aliadas — 2026-11-04
 
 `5140dd1` interrompe rondas pendentes quando um aliado entra na linha de tiro, preservando munição e restauro determinístico. 182 testes M02 e build passaram. A [passagem automatizada](docs/verification/m02-runtime/ally-burst-clearance-2026-11-04/README.md) chegou à M03 sem mortes do jogador ou erros, com Lis evacuado e 11/12 no último grupo. A segurança continua a usar uma aproximação horizontal; qualidade visual, animação e áudio permanecem em desenvolvimento. Main e produção intactas.

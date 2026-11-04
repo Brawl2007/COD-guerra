@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — controlos táteis, 2026-11-04
+
+`3ccfb05` adapta a infraestrutura tátil M01 para a M02, incluindo mover/olhar, disparar, mirar, ações, ordens e pausa sem pointer lock. Passaram 182 testes M02, oito testes partilhados de input e touch, build e dois testes browser (touch simulado e desktop); [captura e limites](../verification/m02-runtime/touch-2026-11-04/README.md). Ainda não foi testado em Safari/iPhone físico ou disponibilizado num endereço externo: o servidor deste ambiente é local. O utilizador pediu poder jogar no iPhone; falta pré-visualização acessível e verificação no dispositivo. Sem deploy de produção ou alteração da main.
+
 ## Continuação — linha de tiro das rajadas, 2026-11-04
 
 `5140dd1` aplica a regra de segurança existente antes de cada ronda pendente de uma rajada aliada; se o jogador ou outro aliado entra na linha, a rajada termina sem tiro ou gasto de munição adicional. Passaram 182 testes M02 e build, incluindo continuação com linha livre e restauro determinístico. A [passagem automatizada e captura](../verification/m02-runtime/ally-burst-clearance-2026-11-04/README.md) chegaram à M03 sem mortes do jogador nem erros, com giz, abastecimentos, Lis evacuado e 11/12 no último grupo; a diferença para a passagem anterior não foi atribuída a esta alteração. O piloto lê estado oculto. A regra de segurança é horizontal e aproximada, não um teste 3D completo. Continuar arte, animação, combate e áudio antes da avaliação humana; o complemento integral permanece ausente. Main e produção intactas.
