@@ -28,8 +28,9 @@ function build(){
   const out={};
   out.orderCard=live(sim);
   until(()=>sim.scene?.id==='cs_npc_dusk');out.duskCard=live(sim);
-  until(()=>!sim.scene);until(()=>sim.clock>sim.timers.withdrawal.since+4);   // CP-J taken, the courier a few metres into his way
-  out.arrival=view(live(sim),{x:-412,z:-1078},{x:-425,z:-1110},.0);
+  until(()=>!sim.scene);until(()=>sim.clock>sim.timers.withdrawal.since+16);   // CP-J taken, the courier 80 m into his way (16 s at his pace), running in from the SW corner
+  const mes=sim.actor('np_mensageiro');
+  out.arrival=view(live(sim),{x:-455,z:-1082},{x:mes.x,z:mes.z},.0);   // a QA viewpoint 30 m from him, looking at him (the player may stand anywhere in the area)
   until(()=>sim.timers.withdrawal.messenger==='speaking'&&sim.clock>sim.timers.withdrawal.orderAt+1.5);
   out.order=view(live(sim),{x:-414,z:-1086},{x:-424,z:-1110},.03);   // 24 m from the courier, looking at him and the section
   until(()=>sim.timers.line.move===3&&sim.timers.line.moving);   // the second bounds of the line: the teams are strung out between the parapet and the band

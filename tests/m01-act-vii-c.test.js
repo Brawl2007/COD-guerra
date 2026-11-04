@@ -367,7 +367,7 @@ test('F2: the chain BW -> VII-a -> VII-b -> VII-c: carry keeps the BW events and
   assert.ok(c instanceof M01AreaSimulation);assert.equal(actOf(c),ID);assert.equal(c.scene.id,'cs_npc_order','the chain opens VII-c on the card of the order');assert.equal(c.weapon.reserve,b.weapon.reserve);assert.equal(c.difficulty,'soldado');assert.ok(c.world.events.includes('evt_m01_west_demolition'));
   assert.equal(c.flags['m01npb.completed'],true);assert.equal(c.flags['m01npc.wave'],undefined);
   const ids=c.definition.debrief.paragraphs.filter(p=>p.enabled).map(p=>p.id);
-  assert.deepEqual(ids.slice(0,8),['db_01','db_02','db_03','db_np_01','db_npb_01','db_04','db_npc_01','db_05'],'db_01..db_03, VII-a\'s, VII-b\'s, db_04, VII-c\'s, then the rest');assert.deepEqual(ids.slice(7),['db_05','db_06','db_07'].slice(0,ids.length-7).concat([]).length?ids.slice(7):ids.slice(7));
+  assert.deepEqual(ids.slice(0,7),['db_01','db_02','db_03','db_np_01','db_npb_01','db_04','db_npc_01'],'db_01..db_03, VII-a\'s, VII-b\'s, db_04, VII-c\'s, then the rest');assert.ok(ids.length>7&&ids.slice(7).every(id=>/^db_0[5-7]b?$/.test(id)),`the rest of the current act's paragraphs follow: ${ids.slice(7)}`);
   assert.equal(ids.length,definition.debrief.paragraphs.length+3);assert.deepEqual(c.renderState.debrief.map(p=>p.id),ids);
   for(const p of definition.debrief.paragraphs)assert.equal(c.definition.debrief.paragraphs.find(q=>q.id===p.id).text,p.text,'the paragraphs of the current act are untouched');
   assert.deepEqual(debriefChain(ID,carry).map(x=>x.paragraphs[0].id),['db_np_01','db_npb_01','db_npc_01']);assert.equal(debriefWith(...debriefChain(ID,carry)).length,definition.debrief.paragraphs.length+3);
