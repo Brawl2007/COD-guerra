@@ -73,6 +73,8 @@ const SUPPORT_ARM_NAMES=['upperarm_l','arm_l','LeftArm','mixamorigLeftArm'];
 const OPEN_IK_M={low:22,medium:45,high:75},OPEN_IK_MAX=14;
 const POSE_HOLD_MAX_DRIFT_M=1.5;   // a walking/running soldier moves < 0.5 m in the longest hold (0.067 s); anything more is not a normal frame
 const UP_AXIS=new THREE.Vector3(0,1,0);
+/** VII-a visual package: value multiplier of the German bodies' material colour in an act area (a pale stubble field behind a field-grey uniform). 1 elsewhere. */
+const AREA_GERMAN_LIFT=1.32;
 // Per-frame scratch of update() (single-threaded, never retained across calls).
 const _twist=new THREE.Quaternion(),_muzzle=new THREE.Vector3();
 // Optional high-tier sources requested by update(); the key prefix selects the loader (loadSource / loadMG / loadCKM).
@@ -665,6 +667,8 @@ export class M01Characters {
     v.root.updateMatrixWorld(true);return new THREE.Vector3().fromArray(v.muzzle).applyMatrix4(bone.matrixWorld);
   }
   get diagnostics(){return {...this.stats,ik:formatIkDiagnostics(this.ikState,this.ikEnabled),visuals:this.visuals?.diagnostics??null,proneAvailable:this.hasProne(),ckm:this.ckm?{visible:this.ckm.root.visible,lod:this.ckm.lod,clip:this.ckm.clip,time:this.ckm.time,position:this.ckm.root.position.toArray()}:null,loaded:[...this.sources.keys()],failures:this.assets.failures};}
+  /** VII-a visual package: German bodies are lifted in value where the area's pale stubble field is behind them (presentation only; the act-1 look is untouched). */
+  setAreaLegibility(on){this.visuals?.setLift(on?AREA_GERMAN_LIFT:1);}
   /** R4 INC-1: the gun of a new act's area at its own root and yaw; the same LOD, clips and phases as updateCKM (which stays byte-pinned for the current act). */
   updateAreaCKM(gunner,time,player,quality){
     const at=gunner.ckm.root,yaw=Number.isFinite(gunner.ckm.yaw)?gunner.ckm.yaw:0,d=Math.hypot(player.x-at.x,player.z-at.z);
