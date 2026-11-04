@@ -19,9 +19,10 @@ import {driver,route} from './helpers/m01-route.js';
 const ROOT=join(dirname(fileURLToPath(import.meta.url)),'..');
 const strip=s=>JSON.parse(JSON.stringify(s));
 
-test('the shipped switch is OFF and the act table is valid (current act first, one area act after it)',()=>{
+test('the shipped switch is OFF and the act table is valid (current act first, two area acts after it: VII-a, then VII-b since INC-2)',()=>{
   assert.equal(acts.enabled,false,'acts.json enabled=false until the owner accepts the new acts');
-  assert.equal(ACTS.enabled,false);assert.deepEqual(ACTS.order,['act_bw_0430_0705','act_vii_a_north']);
+  assert.equal(ACTS.enabled,false);assert.deepEqual(ACTS.order,['act_bw_0430_0705','act_vii_a_north','act_vii_b_north_day']);
+  assert.deepEqual(ACTS.order.map(id=>ACTS.entries[id].next),['act_vii_a_north','act_vii_b_north_day',null],'the chain ends at VII-b, where the debrief follows');
   assert.equal(definition.acts,undefined,'mission.json (an input pinned by the amendment 20 golden) carries no act block');
   assert.throws(()=>actsPlan({...acts,order:['act_vii_a_north']}),/must start with act_bw_0430_0705/);
   assert.throws(()=>actsPlan({...acts,entries:{...acts.entries,act_bw_0430_0705:{...acts.entries.act_bw_0430_0705,next:null}}}),/next must be act_vii_a_north/);
@@ -385,6 +386,8 @@ test('QA start: the switch on with startAct makes the area act directly (default
   assert.ok(sim instanceof M01AreaSimulation);assert.equal(sim.difficulty,'veterano');assert.deepEqual(sim.carry,defaultCarry('veterano'));
   assert.equal(actOf(sim),'act_vii_a_north');assert.equal(new M01ActRunner({enabled:true}).createInitial() instanceof M01Simulation,true);
   assert.throws(()=>new M01ActRunner({enabled:true,startAct:'act_ix'}),/unknown start act/);
+  const b=new M01ActRunner({enabled:true,startAct:'vii-b'}).createInitial({difficulty:'soldado'});   // INC-2: ?act=vii-b
+  assert.ok(b instanceof M01AreaSimulation);assert.equal(actOf(b),'act_vii_b_north_day');assert.equal(b.difficulty,'soldado');assert.deepEqual(b.carry,defaultCarry('soldado'));assert.equal(b.scene.id,'cs_npb_entry');
 });
 
 test('the act modules stay out of the renderer, the UI, the browser and the wall clock (the boundary of m01-simulation-boundary.test.js)',()=>{
