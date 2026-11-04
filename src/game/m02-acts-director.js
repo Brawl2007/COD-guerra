@@ -684,7 +684,7 @@ export function updateAreaC(sim, dt) {
     }
   }
 
-  // 4. Advance the 12 Last Group members (LG01..LG12) along the B09 -> B12 evacuation route
+  // 4. Advance the 12 Last Group members (LG01..LG12; FORA DO PDF, sourceStatus 'fora_do_pdf') along the B09 -> B12 evacuation route
   const evacRoute = cellsBCLayout.cells.C.evacRoute;
   let evacuatedCount = 0;
   let allResolved = true;

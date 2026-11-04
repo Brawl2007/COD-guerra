@@ -68,8 +68,12 @@ export const M02_DIALOGUE_CATALOG = Object.freeze({
     priority: 2,
     durationSec: 4.5,
     protectedLiteral: true,
+    // K2 (PDF p. 38): gatilho «C01, olhar livre e sem sobreposição de ordem crítica».
+    // Condição verificável em `playerHasFreeLook()` + `criticalOrderPending()`; sem ela, a linha espera na fila.
+    requiresFreeLook: true,
     text: 'Era a estrada de casa. Agora procuro onde esconder a cabeça.',
   }),
+  // K3 (PDF p. 39): texto literal conferido a 2026-11-04 (a auditoria K.md indicava «Depois da quinta», o PDF diz «Depois a quinta»).
   bz39_c01_01: Object.freeze({
     id: 'bz39_c01_01',
     speakerId: 'pl_gruca',
@@ -77,6 +81,26 @@ export const M02_DIALOGUE_CATALOG = Object.freeze({
     priority: 1,
     durationSec: 3.8,
     text: 'Ao próximo talude. Depois a quinta.',
+  }),
+  // K3 (PDF p. 39): «2, entrega de munição». Acompanha a passagem de munições na vala (C2 p. 12).
+  bz39_c01_02: Object.freeze({
+    id: 'bz39_c01_02',
+    speakerId: 'pl_malek',
+    speakerName: 'strz. Jurek Małek',
+    priority: 2,
+    durationSec: 3.0,
+    text: 'Levo estas também?',
+  }),
+  // K3 (PDF p. 39): «2, resposta, não repetir em combate». Só depois de bz39_c01_02; descartada se o combate começar.
+  bz39_c01_03: Object.freeze({
+    id: 'bz39_c01_03',
+    speakerId: 'pl_lis',
+    speakerName: 'strz. Andrzej Lis',
+    priority: 2,
+    durationSec: 3.0,
+    requiresPrior: 'bz39_c01_02',
+    quietCombat: true,
+    text: 'Deixa espaço para a água.',
   }),
   bz39_c02_01: Object.freeze({
     id: 'bz39_c02_01',
@@ -175,6 +199,8 @@ export const M02_DIALOGUE_CATALOG = Object.freeze({
     durationSec: 3.4,
     text: 'Ainda está a respirar.',
   }),
+  // K3 (PDF p. 40, linha p. 39): texto literal «Baixe a arma. Ele já não combate.» conferido a 2026-11-04
+  // (a auditoria K.md indicava «Baixa»; o PDF diz «Baixe»).
   bz39_c04_05: Object.freeze({
     id: 'bz39_c04_05',
     speakerId: 'pl_gruca',
@@ -396,6 +422,26 @@ export const M02_DIALOGUE_CATALOG = Object.freeze({
   }),
 });
 
+/**
+ * K2 (PDF p. 38) «olhar livre»: o jogador controla a câmara. Na simulação, só uma elipse/cartela temporizada
+ * (objeto com `expiresAt` ainda no futuro) ou o jogador sem vida lhe tira o olhar. A cartela inicial T0 é uma
+ * string e não bloqueia (C2 p. 12: «O jogador controla olhar e movimento desde o início»). Não há tomadas de câmara
+ * sobre perigos ativos (C7 p. 15).
+ */
+export function playerHasFreeLook(sim) {
+  if (!sim?.player || !(sim.player.health > 0)) return false;
+  const cartela = sim.activeCartela;
+  if (cartela && typeof cartela === 'object' && Number(cartela.expiresAt) > sim.clock) return false;
+  return true;
+}
+
+/** Combate ativo: algum hostil vivo e combatente que vê ou recorda um alvo. */
+export function combatIsActive(sim) {
+  return (sim?.enemies ?? []).some(
+    (e) => e.alive && !e.nonCombatant && (e.seeingTargetId != null || e.memory != null),
+  );
+}
+
 export class M02DialogueDirector {
   constructor() {
     this.activeLine = null;
@@ -443,6 +489,11 @@ export class M02DialogueDirector {
       if (!lisOk) resolvedText = def.fallbackText;
     }
 
+    // K3: linha de resposta só existe depois da linha a que responde
+    if (def.requiresPrior && !this.consumed.has(def.requiresPrior)) return false;
+    // K3: «não repetir em combate»: não entra se o combate já começou
+    if (def.quietCombat && combatIsActive(sim)) return false;
+
     this.consumed.add(lineId);
     const entry = {
       id: def.id,
@@ -453,9 +504,11 @@ export class M02DialogueDirector {
       durationSec: def.durationSec,
       queuedAt: Number(sim.clock.toFixed(2)),
     };
+    if (def.requiresFreeLook) entry.requiresFreeLook = true;
+    if (def.quietCombat) entry.quietCombat = true;
 
     // Priority 0 interrupts lower priority active speech immediately (K4)
-    if (this.activeLine && entry.priority < this.activeLine.priority) {
+    if (this.activeLine && entry.priority < this.activeLine.priority && this.canSpeakNow(entry, sim)) {
       this.activeLine = {
         ...entry,
         startedAt: Number(sim.clock.toFixed(2)),
@@ -471,12 +524,39 @@ export class M02DialogueDirector {
     return true;
   }
 
+  /** Ordem crítica (prioridade 0) a falar ou à espera: K2 «sem sobreposição de ordem crítica». */
+  criticalOrderPending(exceptId = null) {
+    if (this.activeLine && this.activeLine.priority === 0 && this.activeLine.id !== exceptId) return true;
+    return this.queue.some((q) => q.priority === 0 && q.id !== exceptId);
+  }
+
+  /** Condições de gatilho de uma entrada (K2/K3), avaliadas a cada atualização. */
+  canSpeakNow(entry, sim) {
+    if (entry.requiresFreeLook) {
+      if (!playerHasFreeLook(sim)) return false;
+      if (this.criticalOrderPending(entry.id)) return false;
+    }
+    return true;
+  }
+
   update(sim) {
     if (this.activeLine && sim.clock >= this.activeLine.expiresAt) {
       this.activeLine = null;
     }
+    // K4: uma linha que perde contexto é descartada, não reproduzida depois (resposta de C01 em combate)
+    const kept = [];
+    for (const q of this.queue) {
+      if (q.quietCombat && combatIsActive(sim)) {
+        sim.events.push({ type: 'dialogue-line-dropped', id: q.id, reason: 'combat-active' });
+      } else {
+        kept.push(q);
+      }
+    }
+    this.queue = kept;
     if (!this.activeLine && this.queue.length > 0) {
-      const next = this.queue.shift();
+      const idx = this.queue.findIndex((q) => this.canSpeakNow(q, sim));
+      if (idx < 0) return;
+      const next = this.queue.splice(idx, 1)[0];
       this.activeLine = {
         ...next,
         startedAt: Number(sim.clock.toFixed(2)),
@@ -733,7 +813,7 @@ export function updatePolishSquad(sim, dt) {
         ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
       }
     } else if (ally.id === 'pl_aux_01' || ally.id === 'pl_aux_02') {
-      // 1. rkm wz. 28 support pair (Nowak + Kowalski) holds fire base and advances to north courtyard wall once ditch team reaches B01
+      // 1. rkm wz. 28 support pair (Nowak + Kowalski: nomes FORA DO PDF, sourceStatus 'fora_do_pdf'; K1 só prevê «dois auxiliares») holds fire base and advances to north courtyard wall once ditch team reaches B01
       const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
       const ditchAdvanced = combatElapsed >= 18 || sim.player.z > -35;
       const nodeId = ditchAdvanced

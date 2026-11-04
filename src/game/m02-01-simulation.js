@@ -357,6 +357,9 @@ export class M02BenchSimulation {
 
     this.dialogue.trigger('bz39_c01_01', this);
     this.dialogue.trigger('dlg_m02_001', this);
+    // K3: entrega de munição na vala de C01; Lis responde (só se Małek falou e sem combate)
+    this.dialogue.trigger('bz39_c01_02', this);
+    this.dialogue.trigger('bz39_c01_03', this);
     this.dialogue.update(this);
 
     this.updateTacticalContext();

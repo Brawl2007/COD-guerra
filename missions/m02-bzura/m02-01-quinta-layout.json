@@ -419,6 +419,8 @@
     {
       "id": "pl_aux_01",
       "name": "strz. Nowak (rkm wz. 28)",
+      "sourceStatus": "fora_do_pdf",
+      "sourceNote": "Nome fora do PDF: K1 (p. 38) só prevê dois auxiliares anónimos para o rkm; Nowak só é citado em I6 (p. 35) como possível atribuição M03.",
       "role": "rkm_gunner",
       "weapon": "rkm_wz28",
       "x": 1.4,
@@ -432,6 +434,8 @@
     {
       "id": "pl_aux_02",
       "name": "strz. Kowalski (auxiliar rkm)",
+      "sourceStatus": "fora_do_pdf",
+      "sourceNote": "Nome fora do PDF (K1, p. 38: auxiliar anónimo do rkm).",
       "role": "rkm_loader",
       "weapon": "wz29",
       "x": 2.9,

@@ -331,19 +331,20 @@
         { "id": "DE-C19", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -104.0, "z": 52.0, "goalX": -68.0, "goalZ": 22.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 },
         { "id": "DE-C20", "encounterId": "EC2", "role": "reserve_west", "weapon": "kar98k", "x": -106.0, "z": 58.0, "goalX": -72.0, "goalZ": 40.0, "facing": -0.4, "buildingId": null, "sector": "ec2_west", "health": 100 }
       ],
+      "lastGroupRosterSourceNote": "Nomes, patentes e estados iniciais de LG01–LG12 estão fora do PDF (sourceStatus fora_do_pdf); o pacote só usa os IDs agregados LG01…LG12 (I4, secção K pp. 38–40 sem este elenco).",
       "lastGroupRoster": [
-        { "id": "LG01", "name": "kpr. Baran (LG01)", "x": 18.0, "z": -38.0, "health": 100, "initialWounded": false },
-        { "id": "LG02", "name": "strz. Pietrzak (LG02)", "x": 20.0, "z": -40.0, "health": 95, "initialWounded": false },
-        { "id": "LG03", "name": "strz. Grabowski (LG03 · ferido)", "x": 16.0, "z": -41.0, "health": 58, "initialWounded": true },
-        { "id": "LG04", "name": "strz. Pawłowski (LG04)", "x": 22.0, "z": -39.0, "health": 100, "initialWounded": false },
-        { "id": "LG05", "name": "strz. Michalski (LG05)", "x": 17.0, "z": -43.0, "health": 92, "initialWounded": false },
-        { "id": "LG06", "name": "strz. Król (LG06)", "x": 21.0, "z": -44.0, "health": 100, "initialWounded": false },
-        { "id": "LG07", "name": "strz. Wieczorek (LG07)", "x": 15.0, "z": -45.0, "health": 88, "initialWounded": false },
-        { "id": "LG08", "name": "strz. Jabłoński (LG08)", "x": 19.0, "z": -46.0, "health": 100, "initialWounded": false },
-        { "id": "LG09", "name": "strz. Majewski (LG09 · ferido)", "x": 16.5, "z": -47.5, "health": 62, "initialWounded": true },
-        { "id": "LG10", "name": "strz. Olszewski (LG10)", "x": 20.5, "z": -48.0, "health": 96, "initialWounded": false },
-        { "id": "LG11", "name": "strz. Stępień (LG11)", "x": 18.0, "z": -49.5, "health": 100, "initialWounded": false },
-        { "id": "LG12", "name": "strz. Jaworski (LG12)", "x": 22.0, "z": -50.0, "health": 90, "initialWounded": false }
+        { "id": "LG01", "name": "kpr. Baran (LG01)", "sourceStatus": "fora_do_pdf", "x": 18.0, "z": -38.0, "health": 100, "initialWounded": false },
+        { "id": "LG02", "name": "strz. Pietrzak (LG02)", "sourceStatus": "fora_do_pdf", "x": 20.0, "z": -40.0, "health": 95, "initialWounded": false },
+        { "id": "LG03", "name": "strz. Grabowski (LG03 · ferido)", "sourceStatus": "fora_do_pdf", "x": 16.0, "z": -41.0, "health": 58, "initialWounded": true },
+        { "id": "LG04", "name": "strz. Pawłowski (LG04)", "sourceStatus": "fora_do_pdf", "x": 22.0, "z": -39.0, "health": 100, "initialWounded": false },
+        { "id": "LG05", "name": "strz. Michalski (LG05)", "sourceStatus": "fora_do_pdf", "x": 17.0, "z": -43.0, "health": 92, "initialWounded": false },
+        { "id": "LG06", "name": "strz. Król (LG06)", "sourceStatus": "fora_do_pdf", "x": 21.0, "z": -44.0, "health": 100, "initialWounded": false },
+        { "id": "LG07", "name": "strz. Wieczorek (LG07)", "sourceStatus": "fora_do_pdf", "x": 15.0, "z": -45.0, "health": 88, "initialWounded": false },
+        { "id": "LG08", "name": "strz. Jabłoński (LG08)", "sourceStatus": "fora_do_pdf", "x": 19.0, "z": -46.0, "health": 100, "initialWounded": false },
+        { "id": "LG09", "name": "strz. Majewski (LG09 · ferido)", "sourceStatus": "fora_do_pdf", "x": 16.5, "z": -47.5, "health": 62, "initialWounded": true },
+        { "id": "LG10", "name": "strz. Olszewski (LG10)", "sourceStatus": "fora_do_pdf", "x": 20.5, "z": -48.0, "health": 96, "initialWounded": false },
+        { "id": "LG11", "name": "strz. Stępień (LG11)", "sourceStatus": "fora_do_pdf", "x": 18.0, "z": -49.5, "health": 100, "initialWounded": false },
+        { "id": "LG12", "name": "strz. Jaworski (LG12)", "sourceStatus": "fora_do_pdf", "x": 22.0, "z": -50.0, "health": 90, "initialWounded": false }
       ]
     }
   }
