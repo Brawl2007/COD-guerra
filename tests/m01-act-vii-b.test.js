@@ -206,7 +206,7 @@ test('F3: a barrage — a whistle 1.5 s before each impact, craters, the Poles n
       assert.equal(sim.player.health,health,`${name}: the shells never hurt the player`);assert.ok(sim.player.alive);
     }
     assert.equal(launches.length,12,`${name}: twelve impacts`);assert.equal(landings.length,12);assert.equal(hurtTicks,0);
-    launches.forEach((l,k)=>{assert.ok(Math.abs(landings[k].at-l.at-1.5)<=ACT_B_TICK+1e-9,`${name}: impact ${k} lands 1.5 s after its whistle (${landings[k].at-l.at})`);assert.ok(Math.hypot(l.x-landings[k].x,l.z-landings[k].z)<1e-9||minGap>=30,'it lands where it was whistled unless the player ran under it');});
+    launches.forEach((l,k)=>{assert.ok(Math.abs(landings[k].at-l.at-1.5)<=ACT_B_TICK+1e-9,`${name}: impact ${k} lands 1.5 s after its whistle (${landings[k].at-l.at})`);assert.ok(Math.hypot(l.x-landings[k].x,l.z-landings[k].z)<1e-9,`${name}: impact ${k} lands exactly where it was whistled (the player stands still, 42 m or more from every planned point, so nothing shifts it)`);});
     assert.ok(minGap>=SAFE_IMPACT_M,`${name}: no shell nearer than 30 m to the player (${minGap})`);
     assert.equal(sim.rng.state,main,`${name}: the simulation's main stream is not drawn by the barrage`);
     assert.equal(sim.sectors.damage.filter(d=>d.id.startsWith('np_shell_crater_brg_npb_1_')).length,12,'a crater for each, with an id the decals and the audio read as a crater and a shell');
@@ -307,35 +307,40 @@ test('F4: CP-I2 is taken in the tick the first attack breaks (a data trigger, on
   validateAreaSnapshot(strip(sim.snapshot()),sim.plan);
 });
 
-/** Two simulations from the same state tick the same controls and stay equal (the whole snapshot, every `every` ticks). */
-function sameFuture(save,plan,runner,ticks=900,every=3){
-  const a=runner.load(JSON.stringify(save));assert.equal(a.ok,true,a.error);const b=runner.load(JSON.stringify(save));assert.equal(b.ok,true,b.error);
-  const sa=a.sim,sb=b.sim,state={arrived:true,lastHealth:100,},controls=sim=>actBControls(sim,'active',state);
+/**
+ * The simulation that played up to a moment and the simulation restored from a save made there tick the same controls and stay equal: the events of every tick and the whole snapshot every `every` ticks.
+ * The stronger form of VII-a's test (tests/m01-acts.test.js): the restored game against the ORIGINAL that went on playing, not against a second load of the same text.
+ */
+function sameFuture(sim,runner,plan,ticks=900,every=3){
+  const env=strip(live(sim));assert.equal(env.schema,3);assert.equal(env.act,ID);assert.equal(env.actSave.schema,AREA_SAVE_SCHEMA);validateAreaSnapshot(env.actSave,plan);
+  const r=runner.load(JSON.stringify(env));assert.equal(r.ok,true,r.error);const copy=r.sim;
+  assert.equal(JSON.stringify(copy.snapshot()),JSON.stringify(sim.snapshot()),"the restored state is the original's");
+  const sa={arrived:true,lastHealth:100},sb={arrived:true,lastHealth:100};
   for(let i=0;i<ticks;i++){
-    const c=controls(sa);sa.tick(ACT_B_TICK,c);sb.tick(ACT_B_TICK,c);
-    assert.deepEqual(sa.drainEvents(),sb.drainEvents(),`events at tick ${i}`);
-    if(i%every===0)assert.equal(JSON.stringify(sa.snapshot()),JSON.stringify(sb.snapshot()),`tick ${i}`);
+    const ca=actBControls(sim,'active',sa),cb=actBControls(copy,'active',sb);assert.deepEqual(cb,ca,`controls at tick ${i}`);
+    sim.tick(ACT_B_TICK,ca);copy.tick(ACT_B_TICK,cb);
+    assert.deepEqual(copy.drainEvents(),sim.drainEvents(),`events at tick ${i}`);
+    if(i%every===0)assert.equal(JSON.stringify(copy.snapshot()),JSON.stringify(sim.snapshot()),`tick ${i}`);
   }
-  return sa;
+  assert.equal(copy.mission.status,sim.mission.status);
 }
-test('saves: a schema 3 save of VII-b restores to the same state and the same future, tick for tick — at CP-I, mid-barrage with shells in the air, with the bearers carrying, in the pause, in barrage 2 and mid-attack',()=>{
+test('saves: a schema 3 save of VII-b restores to the same state and the same future as the game that went on playing, tick for tick — at CP-I, mid-barrage with shells in the air, with the bearers carrying, in the pause, in barrage 2 and mid-attack',()=>{
   const runner=new M01ActRunner({enabled:true,startAct:'vii-b'}),plan=areaActPlan(ID);
-  const sim=newSim(19390901,'recruta'),state={arrived:false,lastHealth:100};
-  const stages=[];
-  const take=(name,done,max=40000)=>{for(let i=0;i<max&&!done(sim);i++){sim.tick(ACT_B_TICK,actBControls(sim,'passive',state));sim.drainEvents();}assert.ok(done(sim),name);
-    const env=live(sim);assert.equal(env.schema,3);assert.equal(env.act,ID);assert.equal(env.actSave.schema,AREA_SAVE_SCHEMA);stages.push([name,strip(env)]);};
-  take('CP-I (the card just ended)',s=>s.checkpointsReached.length===1);
-  take('mid-barrage with a shell in the air',s=>s.timers.barrage.run?.shells.length>0&&s.timers.barrage.run.k>=4);
-  take('the bearers on their way',s=>s.timers.medics.state==='toPatient'&&s.clock>0);
-  take('the bearers carrying',s=>s.timers.medics.state==='carry'&&s.actor(s.timers.medics.patient).carriedBy);
-  take('mid-attack (first echelon, 20 s in)',s=>s.timers.wave&&s.clock-s.timers.wave.at>20);
-  take('the pause (CP-I2 taken)',s=>s.checkpointsReached.includes('cp_npb_i2_pausa')&&s.timers.wave.lullUntil>0);
-  take('barrage 2 with a shell in the air',s=>s.timers.barrage.run?.id==='brg_npb_2'&&s.timers.barrage.run.shells.length>0);
-  take('the second attack, 25 s in',s=>s.timers.wave.ech===1&&s.clock-s.timers.wave.echs[1].at>25);
-  assert.equal(stages.length,8);
-  for(const [name,env] of stages){
-    validateAreaSnapshot(env.actSave,plan);
-    sameFuture(env,plan,runner,name.startsWith('CP-I')?300:600,name.startsWith('CP-I')?10:3);
+  const STAGES=[
+    ['CP-I (the card just ended)',s=>s.checkpointsReached.length===1,300,10],
+    ['mid-barrage with a shell in the air',s=>s.timers.barrage.run?.shells.length>0&&s.timers.barrage.run.k>=4,600,3],
+    ['the bearers on their way',s=>s.timers.medics.state==='toPatient'&&s.clock>0,600,3],
+    ['the bearers carrying',s=>s.timers.medics.state==='carry'&&s.actor(s.timers.medics.patient).carriedBy,600,3],
+    ['mid-attack (first echelon, 20 s in)',s=>s.timers.wave&&s.clock-s.timers.wave.at>20,600,3],
+    ['the pause (CP-I2 taken)',s=>s.checkpointsReached.includes('cp_npb_i2_pausa')&&s.timers.wave.lullUntil>0,600,3],
+    ['barrage 2 with a shell in the air',s=>s.timers.barrage.run?.id==='brg_npb_2'&&s.timers.barrage.run.shells.length>0,600,3],
+    ['the second attack, 25 s in',s=>s.timers.wave?.ech===1&&s.clock-s.timers.wave.echs[1].at>25,600,3],
+  ];
+  for(const [name,done,ticks,every] of STAGES){
+    const sim=newSim(19390901,'recruta'),state={arrived:false,lastHealth:100};
+    for(let i=0;i<40000&&!done(sim);i++){sim.tick(ACT_B_TICK,actBControls(sim,'passive',state));sim.drainEvents();}
+    assert.ok(done(sim),name);
+    sameFuture(sim,runner,plan,ticks,every);
   }
 });
 

@@ -527,11 +527,14 @@ export class M01AreaSimulation {
     this.world.move(a,dx/d*step,dz/d*step);
     return Math.hypot(target.x-a.x,target.z-a.z)<.05;
   }
-  /** Who a German can shoot at: the player and the Poles he sees (eye to eye, the world's line of sight), within range. */
+  /**
+   * Who a German can shoot at: the player and the Poles he sees (eye to eye, the world's line of sight), within range. A man who lies wounded (a shell's casualty, WOUNDED) is under the line of fire, not in it (the
+   * rule of act 1's rounds, which leave a man lying on the deck out of their traces): his stored posture is a standing man's, which would put him above the parapet in a German's eye.
+   */
   germanTargets(a,range){
     const out=[],p=this.player;
     if(p.alive&&dist(a,p)<=range&&this.world.lineOfSight(a,p))out.push(p);
-    for(const b of this.allies)if(b.alive&&b.active&&dist(a,b)<=range&&this.world.lineOfSight(a,b))out.push(b);
+    for(const b of this.allies)if(b.alive&&b.active&&b.state!=='WOUNDED'&&dist(a,b)<=range&&this.world.lineOfSight(a,b))out.push(b);
     return out;
   }
   germanFire(a,m,dt){
@@ -596,7 +599,7 @@ export class M01AreaSimulation {
     const due=this.enemyFire.rounds.filter(r=>r.arriveAt<=this.clock);this.enemyFire.rounds=this.enemyFire.rounds.filter(r=>r.arriveAt>this.clock);
     const p=this.player,L=this.level;
     for(const r of due){
-      const targets=[p,...this.allies.filter(b=>b.alive&&b.active&&!b.carriedBy)],hit=traceRound(this.world,r,targets),point=hit.point,near=[];
+      const targets=[p,...this.allies.filter(b=>b.alive&&b.active&&!b.carriedBy&&b.state!=='WOUNDED')],hit=traceRound(this.world,r,targets),point=hit.point,near=[];   // a man lying wounded is not in the trace (see germanTargets)
       let victim=hit.actor??null,material=hit.material??'earth';
       // Blind fire (kind 'area', fire.suppress.hitChance; 2026-11-04, step 0 of INC-2): the gun fired at a place, not at a man. A round of it that crosses a man of the line hurts him only with the chance of how
       // he stands (kneeling behind the parapet: low; risen to fire: higher); otherwise it ends in the earth beside him and pins him like any near miss. A pure function of the two ids (pairUnit): no draw of any stream.
@@ -809,7 +812,7 @@ export class M01AreaSimulation {
       if(r.outcome==='none')continue;
       const health=a.health,wasAlive=a.alive;
       if(r.outcome==='kill'){a.health=0;a.alive=false;a.state='DOWN';a.crouched=false;recordDamage(a,health,wasAlive,clock,at);casualties.killed.push(a.id);}
-      else if(r.outcome==='wound'){a.health=Math.max(1,a.health-r.healthLoss);a.crouched=false;a.state='WOUNDED';recordDamage(a,health,wasAlive,clock,at);casualties.wounded.push(a.id);}
+      else if(r.outcome==='wound'){a.health=Math.max(1,a.health-r.healthLoss);a.crouched=true;a.state='WOUNDED';recordDamage(a,health,wasAlive,clock,at);casualties.wounded.push(a.id);}   // down, not standing: low whatever else reads his posture (and out of the German fire altogether, germanTargets, landRounds)
       else{const prev=a.suppressedUntil;a.suppressedUntil=Math.max(prev,clock+r.suppressSec);recordSuppression(a,prev,clock);if(a.suppressedUntil>prev)casualties.suppressed.push(a.id);}
     }
     const body=blastTarget(P);let peak=0;
@@ -825,7 +828,7 @@ export class M01AreaSimulation {
     const R=this.timers.barrage;R.done[b.id]=this.clock;R.run=null;
     if(this.profile.coverObjective)this.finish(this.profile.coverObjective);
     this.activate(this.profile.holdObjective);
-    this.mission.phase=this.timers.wave?this.phase('ATTACK'):this.phase('AFTER');
+    if(this.mission.phase===this.phase('BARRAGE'))this.mission.phase=this.timers.wave?this.phase('ATTACK'):this.phase('AFTER');   // only the barrage's own phase: a fight that was repelled while the guns were still firing stays repelled
     this.say('barrage_over');
   }
   /**

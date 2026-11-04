@@ -20,7 +20,7 @@ const r6=v=>Math.round(v*1e6)/1e6;
 /** The gameplay frame of one tick of VII-b: VII-a's (actFrame) and what only VII-b decides. */
 export function actBFrame(sim){
   const p=sim.player,R=sim.timers.barrage,M=sim.timers.medics;
-  return {...actFrame(sim),stun:r6(sim.concussion??0),craters:sim.sectors.damage.length,
+  return {...actFrame(sim),stun:r6(p.concussion??0),craters:sim.sectors.damage.length,
     barrage:{done:R.done,run:R.run&&{id:R.run.id,k:R.run.k,rng:R.run.rng,shells:R.run.shells.map(s=>[s.n,r6(s.x),r6(s.z),r6(s.landAt)])}},
     medics:{state:M.state,patient:M.patient,handled:M.handled},
     wounded:sim.allies.filter(a=>a.state==='WOUNDED').map(a=>[a.id,r6(a.health),Boolean(a.carriedBy),a.active]),
@@ -28,16 +28,16 @@ export function actBFrame(sim){
 }
 export function actBGoldenRoute(mode,seed=19390901,difficulty='recruta'){
   const sim=new M01AreaSimulation(seed,{difficulty,actId:'act_vii_b_north_day'}),clip=areaClippingAudit(),stack=stackingAudit(),seconds=[];let digest=createHash('sha256');
-  const shells=[],minGap={m:Infinity};
+  const shells=[],minGap={m:Infinity},lifted=new Set();   // lifted: the men a bearer actually took onto his shoulder (a trip whose patient died before the pickup is in medics.handled, not here)
   const r=actBRoute(sim,{mode,maxSec:900,
     onEvent:e=>{if(e.type==='m01-blast'&&e.kind==='shell'){const d=Math.hypot(e.point.x-sim.player.x,e.point.z-sim.player.z);minGap.m=Math.min(minGap.m,d);shells.push([r6(sim.clock),r6(e.point.x),r6(e.point.z),r6(d),r6(e.concussion??0),e.effects.killed.length,e.effects.wounded.length,e.effects.suppressed.length]);}},
-    onStep:x=>{clip.observe(x);stack.observe(x);digest.update(JSON.stringify(actBFrame(x.sim)));if(x.tick%20===0){seconds.push(digest.digest('hex').slice(0,16));digest=createHash('sha256');}}});
+    onStep:x=>{clip.observe(x);stack.observe(x);for(const a of x.sim.allies)if(a.carriedBy)lifted.add(a.id);digest.update(JSON.stringify(actBFrame(x.sim)));if(x.tick%20===0){seconds.push(digest.digest('hex').slice(0,16));digest=createHash('sha256');}}});
   const W=sim.timers.wave;
   return {mode,seed,difficulty,ticks:r.ticks,complete:r.complete,clock:r6(r.clock),deaths:r.deaths,checkpoints:[...sim.checkpointsReached],
     wave:W&&{at:r6(W.at),brokenAt:W.brokenAt===null?null:r6(W.brokenAt),repelledAt:W.repelledAt===null?null:r6(W.repelledAt),casualties:W.casualties,
       echelons:W.echs.map(e=>({at:r6(e.at),brokenAt:e.brokenAt===null?null:r6(e.brokenAt),casualties:e.casualties}))},
     barrages:Object.fromEntries(Object.entries(sim.timers.barrage.done).map(([id,at])=>[id,r6(at)])),shells,minShellDistanceToPlayer:r6(minGap.m),
-    medics:{...sim.timers.medics},germansDead:sim.enemies.filter(a=>!a.alive).map(a=>a.id),polesDead:sim.allies.filter(a=>!a.alive).map(a=>a.id),
+    medics:{...sim.timers.medics},lifted:[...lifted],germansDead:sim.enemies.filter(a=>!a.alive).map(a=>a.id),polesDead:sim.allies.filter(a=>!a.alive).map(a=>a.id),
     polesWounded:sim.allies.filter(a=>a.state==='WOUNDED').map(a=>a.id),roundsFired:sim.enemyFire.nextId,ckmBursts:sim.ckm?.bursts??0,
     clipping:clip.report(),stacking:stack.report(),final:sha(actBFrame(sim)),perSecond:seconds};
 }

@@ -17,7 +17,7 @@ test('Act VII-b completes on 18 routes (passive and active pilot x 3 levels x 3 
   const table=[];
   for(const mode of ['passive','active'])for(const d of ['recruta','soldado','veterano'])for(const seed of [19390901,3,7]){
     const id=`${mode} ${d} ${seed}`,sim=new M01AreaSimulation(seed,{difficulty:d,actId:ID}),clip=areaClippingAudit(),stack=stackingAudit();
-    let landed=0,nearest=Infinity,artilleryHurt=0;const causes=[];
+    let landed=0,nearest=Infinity,artilleryHurt=0;const causes=[],lifted=new Set();   // lifted: who a bearer actually took onto his shoulder (medics.handled also counts a trip whose patient died before the pickup)
     const land=sim.landShell.bind(sim);
     sim.landShell=(run,b,shell)=>{   // the shells: where each one really fell against the player at that very moment, and what it did to him
       const p=sim.player,health=p.health,alive=p.alive;
@@ -25,15 +25,16 @@ test('Act VII-b completes on 18 routes (passive and active pilot x 3 levels x 3 
       const crater=sim.sectors.damage.at(-1);landed++;nearest=Math.min(nearest,Math.hypot(crater.x-p.x,crater.z-p.z));
       if(p.health<health||p.alive!==alive)artilleryHurt++;
     };
-    const r=actBRoute(sim,{mode,maxSec:900,onEvent:e=>{if(e.type==='player-down')causes.push(e.cause);},onStep:x=>{clip.observe(x);stack.observe(x);}});
+    const r=actBRoute(sim,{mode,maxSec:900,onEvent:e=>{if(e.type==='player-down')causes.push(e.cause);},onStep:x=>{clip.observe(x);stack.observe(x);for(const a of x.sim.allies)if(a.carriedBy)lifted.add(a.id);}});
     assert.equal(r.complete,true,id);assert.equal(sim.flags['m01npb.wave'],'repelled',id);assert.equal(sim.objectives.obj_npb_hold.state,'done',id);assert.equal(sim.mission.phase,'NPB_END',id);
     // the barrages: both came, every impact landed where the player was not
     assert.deepEqual(Object.keys(sim.timers.barrage.done).sort(),['brg_npb_1','brg_npb_2'],id);assert.equal(sim.timers.barrage.run,null,id);
     const craters=sim.sectors.damage.filter(d=>d.id.startsWith('np_shell_crater_')).length;   // the craters of the life that finished the act (a death returns to a checkpoint, and the barrage after it falls again: `landed` counts every life)
     assert.ok(craters>=14&&craters<=18&&landed>=craters,`${id}: ${craters} craters, ${landed} shells over ${r.deaths+1} lives`);assert.ok(nearest>=SAFE_IMPACT_M,`${id}: the nearest shell fell ${nearest.toFixed(1)} m from the player`);
     assert.equal(artilleryHurt,0,`${id}: the player is never hurt or killed by a shell`);assert.ok(causes.every(c=>c==='shot'),`${id}: the player dies only by German rounds (${causes})`);
-    // the wounded man of the first barrage is carried away by the bearers; the act's limit holds
-    assert.ok(sim.timers.medics.handled>=1&&sim.timers.medics.handled<=2,`${id}: ${sim.timers.medics.handled} wounded carried away`);
+    // the wounded man of the first barrage is actually lifted onto a bearer's shoulder and carried away (a man who lies wounded is out of the German fire, so only a later shell could still kill him before the pickup); the act's limit holds
+    assert.ok(lifted.has('pl_np_3'),`${id}: the scripted casualty was lifted by a bearer (lifted: ${[...lifted]}, ${sim.timers.medics.handled} trips)`);
+    assert.ok(sim.timers.medics.handled>=1&&sim.timers.medics.handled<=2,`${id}: ${sim.timers.medics.handled} bearers' trips in the life that finished the act (a death returns to a checkpoint, so \`lifted\` counts every life and \`handled\` only the last)`);
     assert.equal(sim.actor('pl_np_3').active===false||!sim.actor('pl_np_3').alive,true,`${id}: the scripted casualty is gone from the line`);
     // the two attacks and the two checkpoints (the second when the first broke)
     const W=sim.timers.wave;assert.equal(W.echs.length,2,id);assert.ok(W.echs[0].brokenAt!==null&&W.echs[1].brokenAt!==null&&W.brokenAt===W.echs[1].brokenAt,id);
