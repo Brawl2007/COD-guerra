@@ -435,3 +435,22 @@ test('VII-c: every player control after the cards (fire, grenade, reload, E, sig
     sim.snapshot();   // validates itself (validateAreaSnapshot)
   }
 });
+
+test('review LOW: a man stuck short of the parapet does not stall the act — the rear guard goes outGraceSec after the up plan ended (same grace as retire)',()=>{
+  const sim=pastCards(newSim(19390901,'recruta')),R=sim.timers.withdrawal,grace=sim.plan.withdrawal.outGraceSec,pin=[sim.actor('szymon_kowal').x,sim.actor('szymon_kowal').z];
+  for(let i=0;i<60000&&R.rearGoAt===null;i++){
+    const a=sim.actor('szymon_kowal');a.x=pin[0];a.z=pin[1];   // held by something the layout put in his way
+    sim.tick(ACT_C_TICK,actCControls(sim,'prompt',{}));sim.drainEvents();
+  }
+  assert.notEqual(R.rearGoAt,null,'the rear guard goes although a man never reaches his slot');assert.notEqual(R.lineOutAt,null);
+  assert.ok(R.rearGoAt>=sim.timers.squad.since+grace-ACT_C_TICK&&R.rearGoAt>=R.lineOutAt);
+});
+
+test('review LOW: a save with no card on screen has the entry card (and in VII-c the order card) done — a prefix that skips CP-J is rejected in all three area acts',()=>{
+  for(const id of Object.keys(AREA_ACTS)){
+    const sim=new M01AreaSimulation(19390901,{difficulty:'soldado',actId:id}),plan=sim.plan,need=[plan.act.cards.order,plan.act.cards.entry].filter(Boolean).length;
+    for(let i=0;i<80&&sim.scene;i++)sim.tick(ACT_C_TICK,{skip:true});
+    const ok=strip(sim.snapshot(true));validateAreaSnapshot(ok,plan);
+    for(let n=0;n<need;n++){const bad=strip(ok);bad.scene=null;bad.sceneDone=bad.sceneDone.slice(0,n);assert.throws(()=>validateAreaSnapshot(bad,plan),/cartão/,`${id}: ${n} cards done, none on screen`);}
+  }
+});

@@ -949,6 +949,7 @@ export class M01AreaSimulation {
   sectionAtParapet(){
     const P=this.plan,q=this.timers.squad,last=P.squad.posts.length-1;
     if(q.move<P.squad.moves.length||q.moving)return false;
+    if(this.clock-q.since>=P.withdrawal.outGraceSec)return true;   // a man held on something for outGraceSec after the last bound does not stall the act: the rear guard goes (as retire() takes a stuck man off the field)
     return P.squad.teams.flat().every(id=>{const a=this.actor(id);return !a.alive||dist(a,squadSlotOf(P.squad,P.stageSlots,id,last))<=P.squad.arriveM;});
   }
   /** The status line of the withdrawal, as the HUD shows it under the objective: no number, no hour. */
@@ -1097,7 +1098,7 @@ export function debriefChain(actId,carry){
 function validScene(plan,scene,done){
   const cards=plan.act.cards,seq=[['order',cards.order],['entry',cards.entry],['end',cards.end]].filter(([,c])=>c);
   if(!Array.isArray(done)||done.length>seq.length||done.some((id,i)=>id!==seq[i][1].id))return false;
-  if(scene===null)return true;
+  if(scene===null){const e=seq.findIndex(([kind])=>kind==='entry');return e<0||done.length>e;}   // no card on screen: the entry card (and the order's, which precedes it) is over; a save cannot skip CP-J
   if(!scene||typeof scene!=='object'||Array.isArray(scene)||Object.keys(scene).sort().join()!=='card,elapsed,id,skippable')return false;
   const next=seq[done.length];if(!next)return false;
   const [kind,c]=next,k=scene.card;

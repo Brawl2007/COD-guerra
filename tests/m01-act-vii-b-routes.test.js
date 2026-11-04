@@ -43,6 +43,7 @@ test('Act VII-b completes on 18 routes (passive and active pilot x 3 levels x 3 
     // no clipping, nobody inside anybody
     assert.deepEqual(clip.report(),[],id);assert.equal(stack.summary().pairs,0,`${id}: ${stack.report()}`);
     assert.ok(sim.clock>=MIN_ACT_SEC&&sim.clock<=MAX_ACT_SEC,`${id}: the act took ${Math.round(sim.clock)} s (${MIN_ACT_SEC}-${MAX_ACT_SEC})`);
+    assert.ok(r.deaths<=12,`${id}: ${r.deaths} deaths (a death resets the act clock, so the clock bound alone does not see them)`);
     table.push({id,clock:Math.round(sim.clock),fight:Math.round(W.repelledAt-W.at),deaths:r.deaths,shells:craters,nearest:Math.round(nearest),wounded:sim.timers.medics.handled,ckm:sim.ckm.bursts,polesDead:sim.allies.filter(a=>!a.alive).length});
   }
   t.diagnostic(`act clock (s), fight (s), deaths, shells, nearest shell (m), carried away, ckm bursts, Poles dead:\n${table.map(x=>`  ${x.id}: ${x.clock} ${x.fight} ${x.deaths} ${x.shells} ${x.nearest} ${x.wounded} ${x.ckm} ${x.polesDead}`).join('\n')}`);
