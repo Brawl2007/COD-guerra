@@ -6,7 +6,7 @@ import {demolitionParticles} from './m01-demolition.js';
 import {train963Kinematics,isTrain963Visible} from './m01-locomotive.js';
 import {panzerzugKinematics,isPanzerzugVisible} from './m01-panzerzug.js';
 
-const WRECK_PUFF_COLOR=new THREE.Color('#90866f');   // hoisted: Color.set(string) parsed the hex for every puff of every frame
+const WRECK_PUFF_COLOR=new THREE.Color('#90866f'),SMOKE_PUFF_COLOR=new THREE.Color('#7a7d7e'),STEAM_PUFF_COLOR=new THREE.Color('#dce2e6');   // hoisted: Color.set(string) parsed the hex for every puff of every frame
 // T24 (Gemini/Argon, M01-TRAIN-ARRIVAL-AND-LIFE-V1): railway smoke and steam share the existing 256-puff pool (no extra draw call).
 // The single railway puff cap: m01-train-life.js re-exports it as TRAIN_PUFF_CAP (Codex partials name); there is no second train emitter.
 export const RAILWAY_PUFF_BUDGET=Object.freeze({low:12,medium:18,high:24});
@@ -147,7 +147,7 @@ export class M01Atmosphere {
       this.dummy.position.set(x,height,z);this.dummy.rotation.set(0,0,0);
       this.dummy.scale.set(width,width*0.92,1);this.dummy.updateMatrix();
       this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
-      this.puffs.setColorAt(count,this.color.set('#7a7d7e'));this.fade.setX(count,opacity);
+      this.puffs.setColorAt(count,this.color.copy(SMOKE_PUFF_COLOR));this.fade.setX(count,opacity);
       count++;used++;
     }
     const westUsed=used;   // Codex's trainPuffs diagnostic counts only the two trains' smoke/steam
@@ -189,7 +189,7 @@ export class M01Atmosphere {
         this.dummy.position.set(x,y,z);this.dummy.rotation.set(0,0,0);
         this.dummy.scale.set(width*1.15,width*0.78,1);this.dummy.updateMatrix();
         this.puffs.setMatrixAt(count,this.dummy.matrix);this.stylePuff(this.puffs,count,seed,i);
-        this.puffs.setColorAt(count,this.color.set('#dce2e6'));this.fade.setX(count,opacity);
+        this.puffs.setColorAt(count,this.color.copy(STEAM_PUFF_COLOR));this.fade.setX(count,opacity);
         count++;used++;
       }
     }
