@@ -3,8 +3,8 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { M02BenchSimulation } from '../src/game/m02-01-simulation.js';
-import { createMemoryStorage } from '../src/game/m02-save-store.js';
+import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
+import { createMemoryStorage, M02_SAVE_STORAGE_KEY } from '../src/game/m02-save-store.js';
 
 const DT = 0.05;
 const SEED = 19390909;
@@ -294,5 +294,103 @@ describe('M02-12 — P1: checkpoints automáticos gravados no fim de tick()', ()
     assert.equal(snap.objective.id, 'O07');
     assert.equal(snap.areaC.c10Started, true);
     assert.equal(sim.areaC.artilleryDetonated, true, 'a continuação comparada atravessa o impacto SP03');
+  });
+});
+
+describe('M02-12 — P1: granada que mata o último defensor; índice só com snapshots válidos', () => {
+  for (const scene of ['C02', 'C01']) {
+    it(`${scene}: o checkpoint atingido pela explosão é válido, persistido e restaurável; a granada não fica no snapshot`, () => {
+      const storage = createMemoryStorage();
+      const sim = new M02BenchSimulation(SEED, { storage, startScene: scene });
+      for (let i = 0; i < 20; i++) sim.tick(DT, {});
+      const pool = scene === 'C01' ? sim.enemies.filter((e) => e.encounterId === 'EA0') : sim.enemies;
+      const keep = scene === 'C01' ? pool[0] : sim.enemies.find((e) => e.id === 'DE-A05');
+      killAll(pool.filter((e) => e !== keep));
+      for (const a of sim.allies) {
+        a.mag = 0;
+        a.reserve = 0; // a secção não dispara: é a granada que mata
+      }
+      keep.x = scene === 'C01' ? -18 : 0;
+      keep.z = scene === 'C01' ? -100 : -50;
+      keep.y = sim.world.heightAt(keep.x, keep.z);
+      const expectedId = scene === 'C01' ? 'cp_m02_a_preparacao' : 'cp_m02_b_acesso';
+
+      // No instante da explosão (antes do fim do tick) o estado já é gravável: a granada saiu da lista de granadas em voo.
+      const atBlast = [];
+      const detonate = sim.detonateGrenadeAt.bind(sim);
+      sim.detonateGrenadeAt = (...args) => {
+        atBlast.push(sim.grenades.map((g) => [g.id, g.exploded]));
+        const out = detonate(...args);
+        atBlast.push(validateM02Snapshot(sim.snapshot()).reason);
+        return out;
+      };
+      sim.throwGrenade({ x: keep.x, y: keep.y + 1.0, z: keep.z }, { x: 0, y: -1, z: 0 });
+      sim.drainEvents();
+      let saved = null;
+      for (let i = 0; i < 60 && !saved; i++) {
+        sim.tick(DT, {});
+        saved = sim.drainEvents().find((e) => e.type === 'checkpoint-saved') ?? null;
+      }
+      assert.equal(keep.alive, false, 'a granada matou o último defensor');
+      assert.deepEqual(atBlast, [[], null], 'durante a explosão: sem granada explodida na lista e snapshot válido');
+      assert.equal(saved?.checkpointId, expectedId);
+      assert.equal(saved.persisted, true, saved.persistError);
+      assert.deepEqual(sim.checkpoints.get(expectedId).grenades, []);
+      assert.equal(JSON.parse(storage.getItem(M02_SAVE_STORAGE_KEY)).latestCheckpointId, expectedId);
+      sim.restoreCheckpoint(expectedId);
+      assert.equal(keep.alive, false);
+    });
+  }
+
+  it('snapshot inválido não substitui a entrada boa do índice nem fica marcado como atingido; restauro recorre à loja', () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.teleportPlayer(-23, -12, 0);
+    const good = sim.saveCheckpoint('cp_m02_manual');
+    assert.ok(good);
+    const goodX = good.player.x;
+
+    sim.tick(DT, { forward: 1 });
+    sim.player.x = Number.NaN;
+    sim.drainEvents();
+    assert.equal(sim.saveCheckpoint('cp_m02_manual'), null);
+    assert.equal(sim.lastCheckpointPersist.ok, false);
+    assert.match(sim.lastCheckpointPersist.reason, /não finito/);
+    assert.deepEqual(sim.drainEvents().map((e) => e.type), ['checkpoint-rejected']);
+    assert.equal(sim.checkpoints.get('cp_m02_manual').player.x, goodX, 'o índice mantém o snapshot bom');
+    assert.equal(sim.saveCheckpoint('cp_novo_invalido'), null);
+    assert.equal(sim.checkpointsReached.includes('cp_novo_invalido'), false, 'recusado não conta como atingido');
+
+    sim.restoreCheckpoint('cp_m02_manual');
+    assert.equal(sim.player.x, goodX);
+
+    // A entrada do índice estragada depois de gravada (p. ex. por quem recebeu uma referência): o restauro usa a loja.
+    sim.checkpoints.get('cp_m02_manual').player.x = Number.NaN;
+    sim.tick(DT, { forward: 1 });
+    sim.restoreCheckpoint('cp_m02_manual');
+    assert.equal(sim.player.x, goodX, 'restaurado da cópia persistida');
+    assert.equal(validateM02Snapshot(sim.checkpoints.get('cp_m02_manual')).valid, true, 'índice reparado com a cópia boa');
+
+    const refusing = { getItem: () => null, setItem: () => { throw new Error('QuotaExceededError'); }, removeItem: () => {} };
+    const noStore = new M02BenchSimulation(SEED, { storage: refusing });
+    noStore.saveCheckpoint('cp_m02_manual');
+    noStore.checkpoints.get('cp_m02_manual').player.x = Number.NaN;
+    assert.throws(() => noStore.restoreCheckpoint('cp_m02_manual'), /inválido em memória .*sem cópia persistida válida/);
+  });
+});
+
+describe('M02-12 — P2: saveCheckpoint/restoreCheckpoint não expõem o objeto interno do índice', () => {
+  it('mexer no valor devolvido não altera o checkpoint guardado', () => {
+    const sim = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    const saved = sim.saveCheckpoint('cp_m02_manual');
+    saved.player.health = 1;
+    sim.restoreCheckpoint('cp_m02_manual');
+    assert.equal(sim.player.health, 100);
+    const restored = sim.restoreCheckpoint('cp_m02_manual');
+    restored.flags['m02.completed'] = true;
+    assert.equal(sim.checkpoints.get('cp_m02_manual').flags['m02.completed'], false);
+    const persisted = sim.restorePersistedCheckpoint('cp_m02_manual');
+    persisted.player.health = 2;
+    assert.equal(sim.checkpoints.get('cp_m02_manual').player.health, 100);
   });
 });

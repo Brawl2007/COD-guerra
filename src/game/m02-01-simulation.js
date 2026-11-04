@@ -1285,6 +1285,10 @@ export class M02BenchSimulation {
 
       if (this.clock >= g.fuseAt) {
         g.exploded = true;
+        // Sai da lista de granadas em voo ANTES da explosão: um snapshot tirado durante a explosão (o rebentamento mata o
+        // último defensor) nunca guarda uma granada explodida, que o validador recusa (FIX-2b). O for…of continua no array
+        // antigo e salta as explodidas.
+        this.grenades = this.grenades.filter((other) => other !== g);
         this.detonateGrenadeAt(g.x, g.y, g.z);
       }
     }
@@ -1584,11 +1588,23 @@ export class M02BenchSimulation {
    * Grava um checkpoint semântico: entra na lista da linha temporal (`checkpointsReached`, que faz parte do snapshot),
    * fica no índice em memória `checkpoints` e é persistido pela loja (SAVE-02). Uma falha de persistência não interrompe
    * a simulação: fica em `lastCheckpointPersist` e no evento `checkpoint-saved`.
+   * Um snapshot que o validador recusa nunca substitui a entrada boa do índice nem chega à loja, e o checkpoint não fica
+   * marcado como atingido (o gatilho seguinte volta a tentar): evento `checkpoint-rejected`, devolve null (FIX-2b).
+   * Devolve uma cópia: mexer no resultado não altera o índice (FIX-2b).
    */
   saveCheckpoint(checkpointId) {
-    if (!this.checkpointsReached.includes(checkpointId)) this.checkpointsReached.push(checkpointId);
+    const addedNow = !this.checkpointsReached.includes(checkpointId);
+    if (addedNow) this.checkpointsReached.push(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
+    const check = validateM02Snapshot(snap);
+    if (!check.valid) {
+      if (addedNow) this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
+      const reason = `Snapshot recusado antes de gravar: ${check.reason}`;
+      this.lastCheckpointPersist = { ok: false, reason };
+      this.events.push({ type: 'checkpoint-rejected', checkpointId, clock: this.clock, reason });
+      return null;
+    }
     this.checkpoints.set(checkpointId, snap);
     const persist = this.saveStore
       ? this.saveStore.commitCheckpoint(checkpointId, snap)
@@ -1601,19 +1617,35 @@ export class M02BenchSimulation {
       persisted: persist.ok,
       persistError: persist.ok ? null : persist.reason,
     });
-    return snap;
+    return structuredClone(snap);
   }
 
-  /** Restaura do índice em memória; se o checkpoint não estiver lá (p. ex. depois de recarregar a página), da loja persistente. */
+  /**
+   * Restaura do índice em memória; se o checkpoint não estiver lá (p. ex. depois de recarregar a página) ou a entrada do
+   * índice não passar na validação, usa a cópia persistida na loja. Devolve uma cópia do snapshot restaurado.
+   */
   restoreCheckpoint(checkpointId) {
-    let snap = this.checkpoints.get(checkpointId);
-    if (!snap && this.saveStore) {
-      snap = this.saveStore.loadCheckpoint(checkpointId);
-      if (snap) this.checkpoints.set(checkpointId, snap);
+    const inMemory = this.checkpoints.get(checkpointId) ?? null;
+    let memoryError = null;
+    if (inMemory) {
+      const check = validateM02Snapshot(inMemory);
+      if (check.valid) {
+        this.restoreSnapshot(inMemory);
+        return structuredClone(inMemory);
+      }
+      memoryError = check.reason;
     }
-    if (!snap) throw new Error(`Checkpoint ${checkpointId} não encontrado.`);
-    this.restoreSnapshot(snap);
-    return snap;
+    const stored = this.saveStore ? this.saveStore.loadCheckpoint(checkpointId) : null;
+    if (!stored) {
+      throw new Error(
+        memoryError
+          ? `Checkpoint ${checkpointId} inválido em memória (${memoryError}) e sem cópia persistida válida.`
+          : `Checkpoint ${checkpointId} não encontrado.`,
+      );
+    }
+    this.restoreSnapshot(stored);
+    this.checkpoints.set(checkpointId, stored);
+    return structuredClone(stored);
   }
 
   /** Restaura a cópia persistida (ignora o índice em memória). Sem id, usa o último checkpoint gravado na loja. */
@@ -1624,7 +1656,7 @@ export class M02BenchSimulation {
     if (!snap) throw new Error(`Checkpoint persistido ${id ?? '(nenhum)'} não encontrado ou inválido.`);
     this.restoreSnapshot(snap);
     this.checkpoints.set(id, snap);
-    return snap;
+    return structuredClone(snap);
   }
 
   /**
