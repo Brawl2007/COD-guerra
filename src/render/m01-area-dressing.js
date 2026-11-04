@@ -17,10 +17,10 @@ import {createStubble} from './m01-area-stubble.js';
 const SHELL_CRATERS_MAX=40;
 export class M01AreaDressing{
   /** `surface(x,z)` = the submitted terrain surface under the field (without this class's offset); `quality` = 'low'|'medium'|'high'. */
-  constructor(parent,world,{surface=null,quality='low'}={}){
+  constructor(parent,world,{surface=null,quality='low',reuse=null}={}){
     const L=world.area,y=L.groundY,F=L.ground;
     this.area=L.area;this.groundY=y;this.quality=quality;this.group=new THREE.Group();this.group.name=`m01-area-dressing:${L.area}`;parent.add(this.group);
-    this.geometries=[];this.materials=[];this.textures=[];this.replaced=new Set();this.drawn=[];
+    this.geometries=[];this.materials=[];this.textures=[];this.replaced=new Set();this.drawn=[];this.wreckKey=M01AreaDressing.wreckKey(world);
     const geometry=g=>{this.geometries.push(g);return g;},material=m=>{this.materials.push(m);return m;};
     const base=surface??(()=>y),ground=(x,z)=>base(x,z)+areaReliefOffset(L,x,z);
     const add=(mesh,name,{cast=false,receive=true,triangles=null}={})=>{mesh.name=name;mesh.castShadow=cast;mesh.receiveShadow=receive;this.group.add(mesh);
@@ -29,7 +29,9 @@ export class M01AreaDressing{
     // The field: the existing terrain is covered by a grid that follows its submitted surface plus the area's visual offset (m01-area-field: 0 on the fought-over strip), drawn with
     // a procedural patchwork of crops and soil (domain-warped, rows that follow the field, a worn track with ruts, a trampled strip behind the parapet). renderOrder -1 and a
     // polygon offset keep it in front of the coplanar terrain.
-    if(F){
+    // Perf audit: an act of the same area (VII-a -> VII-b -> VII-c) only changes the covers; the field, the stubble, the trees, the scorch and an unchanged wreck are taken over from `reuse` (see adopt).
+    const adopted=reuse&&reuse!==this&&reuse.area===L.area?this.adopt(reuse,world):new Set();
+    if(F&&!adopted.has('field')){
       const detail=artTexture('soil',256);this.textures.push(detail);
       const track=(L.features??[]).find(f=>f.id==='np_track_south')?.polyline.map(p=>[p[0],p[2]])??[],P=L.parapets,xs=P.segments.flat();
       this.field=createFieldMaterial(detail,{track,band:[Math.min(...xs)-6,Math.max(...xs)+6,P.z1+.9,P.z1+4.5],origin:[(F.minX+F.maxX)/2,(F.minZ+F.maxZ)/2],quality});
@@ -76,21 +78,47 @@ export class M01AreaDressing{
     // The wreck: the scorched ground round it and a generic hull inside the simulation's two boxes (the smoke column is the atmosphere's: the simulation's damage record).
     const w=L.points.wreck,wh=covers.find(c=>c.id==='np_wreck_hull'),wu=covers.find(c=>c.id==='np_wreck_upper');
     const scorch=material(new THREE.MeshStandardMaterial({color:'#1d1a16',roughness:1,transparent:true,opacity:.7,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));
-    const sm=new THREE.Mesh(geometry(new THREE.CircleGeometry(1,28).rotateX(-Math.PI/2)),scorch);sm.position.set(w.x,y+.025,w.z);sm.scale.set(7.5,1,5.5);sm.rotation.y=.3;add(sm,'m01-area-scorch',{receive:false,triangles:28});
+    if(!adopted.has('scorch')){const sm=new THREE.Mesh(geometry(new THREE.CircleGeometry(1,28).rotateX(-Math.PI/2)),scorch);sm.position.set(w.x,y+.025,w.z);sm.scale.set(7.5,1,5.5);sm.rotation.y=.3;add(sm,'m01-area-scorch',{receive:false,triangles:28});}
     if(wh&&wu){
       const arr=c=>({min:[c.min.x,c.min.y,c.min.z],max:[c.max.x,c.max.y,c.max.z]});
-      add(new THREE.Mesh(geometry(buildWreckGeometry(arr(wh),arr(wu))),material(createWreckMaterial())),'m01-area-wreck',{cast:true});
+      if(!adopted.has('wreck'))add(new THREE.Mesh(geometry(buildWreckGeometry(arr(wh),arr(wu))),material(createWreckMaterial())),'m01-area-wreck',{cast:true});
       this.replaced.add(wh.id);this.replaced.add(wu.id);
     }
 
     // The tree line north of the area (layout.treeLine): pines, broadleaves and undergrowth in one geometry; the quality tier draws a prefix of whole trees.
     const T=L.treeLine;
-    if(T){
+    if(T&&!adopted.has('trees')){
       const built=buildTreeLine(T,ground);this.trees=built.trees;
       const mesh=new THREE.Mesh(geometry(built.geometry),material(createTreeMaterial()));add(mesh,'m01-area-trees',{receive:true});
       this.treeMesh=mesh;this.treeTriangles=built.geometry.index.count/3;
     }
     this.setQuality(quality);
+  }
+  /** Key of the wreck's two simulation boxes (the hull is drawn from them): a reused hull is only valid if they are the same. */
+  static wreckKey(world){
+    const c=(world.areaCovers??[]).filter(b=>b.id==='np_wreck_hull'||b.id==='np_wreck_upper');
+    return c.map(b=>[b.id,b.min.x,b.min.y,b.min.z,b.max.x,b.max.y,b.max.z].join(':')).join('|');
+  }
+  /**
+   * Takes over, from the dressing of the previous act of the same area, the pieces that do not depend on the act's covers (field + soil texture + stubble, trees, scorch, and the wreck when its boxes are the same):
+   * they move into this dressing's group and ownership lists, so disposing `prev` afterwards leaves them alone. Returns the names taken: 'field', 'trees', 'scorch', 'wreck'.
+   */
+  adopt(prev,world){
+    const got=new Set(),wk=this.wreckKey;
+    const take=(name,tag)=>{
+      const i=prev.drawn.findIndex(d=>d.name===name);if(i<0)return false;
+      const d=prev.drawn[i];prev.drawn.splice(i,1);this.drawn.push(d);this.group.add(d.mesh);
+      for(const [from,to,item] of [[prev.geometries,this.geometries,d.mesh.geometry],[prev.materials,this.materials,d.mesh.material]]){const k=from.indexOf(item);if(k>=0){from.splice(k,1);to.push(item);}}
+      got.add(tag);return true;
+    };
+    if(prev.field&&take('m01-area-field','field')){
+      this.field=prev.field;this.textures.push(...prev.textures.splice(0));
+      if(take('m01-area-stubble','stubble')){this.stubble=prev.stubble;prev.stubble=null;}
+    }
+    if(prev.treeMesh&&take('m01-area-trees','trees')){this.trees=prev.trees;this.treeMesh=prev.treeMesh;this.treeTriangles=prev.treeTriangles;prev.treeMesh=null;}
+    take('m01-area-scorch','scorch');
+    if(prev.wreckKey===wk)take('m01-area-wreck','wreck');
+    return got;
   }
   /** Scales what is drawn with the tier (never cover, the hull or the German-visible ground). Cheap and idempotent. */
   setQuality(quality){

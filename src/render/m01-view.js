@@ -226,7 +226,7 @@ export class M01View {
       this.farLandscape=new M01FarLandscape(this.scene,world,{surfaceY:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z)+(world.area?areaReliefOffset(world.area,x,z):0),onUpdate:()=>{this.lastFrame=null;}});this.farLandscape.setEnabled(far);
       for(const mesh of this.terrainFillers)this.terrainRelief.trackAuxiliaryGround(mesh);
     }
-    this.areaDressing?.dispose();this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{surface:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),quality:this.owner?.quality}):null;
+    const prevDressing=this.areaDressing;this.areaDressing=world.area?new M01AreaDressing(this.scene,world,{surface:(x,z)=>this.terrainRelief.surfaceHeightAt(x,z),quality:this.owner?.quality,reuse:rebuilt?null:prevDressing}):null;prevDressing?.dispose();   // same area, other covers: the new dressing takes over the field/trees from the old one
     this.lastFrame=null;
   }
   syncSolids(world){
