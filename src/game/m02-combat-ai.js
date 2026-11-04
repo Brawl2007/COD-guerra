@@ -31,6 +31,8 @@ export const WEAPON_PROFILES = Object.freeze({
   kar98k: Object.freeze({
     id: 'kar98k',
     label: 'Kar98k',
+    // B6 (PDF p. 10): referência alemã proposta; catálogo, variante e dotação exigem validação (EQP-01 pendente).
+    equipmentStatus: 'PROPOSTA_EQP01',
     magSize: 5,
     damage: 46,
     cycleSec: 1.55,
@@ -41,22 +43,11 @@ export const WEAPON_PROFILES = Object.freeze({
     burstGapSec: 0,
     spreadRad: 0.016,
   }),
-  mp38: Object.freeze({
-    id: 'mp38',
-    label: 'MP 38',
-    magSize: 32,
-    damage: 22,
-    cycleSec: 1.45,
-    reloadSec: 2.7,
-    range: 95,
-    suppressionAdd: 0.42,
-    burstCount: 3,
-    burstGapSec: 0.09,
-    spreadRad: 0.022,
-  }),
   mg34: Object.freeze({
     id: 'mg34',
     label: 'MG34',
+    // B6 (PDF p. 10): referência alemã proposta; catálogo, variante e dotação exigem validação (EQP-01 pendente).
+    equipmentStatus: 'PROPOSTA_EQP01',
     magSize: 50,
     damage: 24,
     cycleSec: 2.1,
@@ -203,7 +194,7 @@ export const M02_DIALOGUE_CATALOG = Object.freeze({
   bz39_c06_01: Object.freeze({
     id: 'bz39_c06_01',
     speakerId: 'pl_messenger',
-    speakerName: 'Mensageiro 56 pp',
+    speakerName: 'Mensageiro', // DEC-02 pendente: sem subunidade nem regimento atribuídos (B4/C1)
     priority: 1,
     durationSec: 4.0,
     text: 'Os nossos estão mais adiante. Precisam desta passagem.',

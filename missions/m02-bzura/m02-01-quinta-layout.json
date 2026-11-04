@@ -2,7 +2,8 @@
   "schema": "m02-01-quinta-bench-v1",
   "missionId": "m02_01_quinta",
   "title": "M02-01 · Bancada da Quinta (100 × 150 m)",
-  "historicalNote": "BANCADA DE PRODUÇÃO (N0) — Setor rural Kwiatkówek–Tum (9 de setembro de 1939, 56.º Regimento / 25.ª DI polaca). Geometria e implantação são propostas de level design (RECONSTRUÍDO / DRAMATIZAÇÃO), sem coordenadas geográficas históricas fixadas até conclusão de GEO-01 e HIST-01.",
+  "historicalNote": "BANCADA DE PRODUÇÃO (N0) — Setor rural Kwiatkówek–Tum (9 de setembro de 1939, secção de fuzileiros polaca — companhia não identificada; enquadramento regimental/divisional pendente de DEC-02 / D-M02-3). Geometria e implantação são propostas de level design (RECONSTRUÍDO / DRAMATIZAÇÃO), sem coordenadas geográficas históricas fixadas até conclusão de GEO-01 e HIST-01.",
+  "equipmentStatus": { "kar98k": "PROPOSTA_EQP01", "mg34": "PROPOSTA_EQP01", "note": "MG34 e Kar98k são referências alemãs propostas (B6, p. 10); EQP-01 pendente. Não consta de B6 nenhuma pistola-metralhadora alemã." },
   "space": "metres",
   "axes": {
     "x": "east",
@@ -165,7 +166,7 @@
     {
       "id": "B01",
       "name": "Casa rural da família ausente",
-      "evidence": "RECONSTRUÍDO tipologicamente [H06]; localização DRAMATIZAÇÃO",
+      "evidence": "RECONSTRUÍDO tipologicamente [BZ-H06]; localização DRAMATIZAÇÃO",
       "bounds": [-40, -26, -18, -8],
       "width": 14,
       "depth": 10,
@@ -214,7 +215,7 @@
     {
       "id": "B02",
       "name": "Celeiro do portão norte",
-      "evidence": "RECONSTRUÍDO [H06]; posição de MG e ocupação DRAMATIZAÇÃO",
+      "evidence": "RECONSTRUÍDO [BZ-H06]; posição de MG e ocupação DRAMATIZAÇÃO",
       "bounds": [12, 36, -38, -24],
       "width": 24,
       "depth": 14,
@@ -258,7 +259,7 @@
     {
       "id": "B03",
       "name": "Estábulo e arrecadação de arreios",
-      "evidence": "RECONSTRUÍDO [H06]; posição ficcional",
+      "evidence": "RECONSTRUÍDO [BZ-H06]; posição ficcional",
       "bounds": [20, 38, 0, 12],
       "width": 18,
       "depth": 12,
@@ -293,7 +294,7 @@
     {
       "id": "B04",
       "name": "Forno e anexo de lenha",
-      "evidence": "RECONSTRUÍDO [H06]; tipologia rural",
+      "evidence": "RECONSTRUÍDO [BZ-H06]; tipologia rural",
       "bounds": [-37, -29, 20, 26],
       "width": 8,
       "depth": 6,
@@ -590,13 +591,13 @@
     }
   ],
   "orchardTrees": [
-    { "id": "tree_orch_01", "x": -19.0, "z": 35.5, "trunkRadius": 0.2, "trunkHeight": 2.1, "canopyRadius": 1.9, "canopyY0": 1.85, "canopyY1": 4.1 },
-    { "id": "tree_orch_02", "x": -7.5, "z": 34.0, "trunkRadius": 0.22, "trunkHeight": 2.2, "canopyRadius": 2.1, "canopyY0": 1.9, "canopyY1": 4.3 },
-    { "id": "tree_orch_03", "x": 3.8, "z": 36.5, "trunkRadius": 0.19, "trunkHeight": 2.0, "canopyRadius": 1.8, "canopyY0": 1.8, "canopyY1": 4.0 },
-    { "id": "tree_orch_04", "x": -20.0, "z": 47.0, "trunkRadius": 0.21, "trunkHeight": 2.1, "canopyRadius": 2.0, "canopyY0": 1.85, "canopyY1": 4.2 },
-    { "id": "tree_orch_05", "x": -8.2, "z": 46.5, "trunkRadius": 0.2, "trunkHeight": 2.1, "canopyRadius": 1.95, "canopyY0": 1.85, "canopyY1": 4.1 },
-    { "id": "tree_orch_06", "x": 3.2, "z": 49.5, "trunkRadius": 0.22, "trunkHeight": 2.2, "canopyRadius": 2.05, "canopyY0": 1.9, "canopyY1": 4.3 },
-    { "id": "tree_orch_07", "x": -17.5, "z": 56.5, "trunkRadius": 0.18, "trunkHeight": 2.0, "canopyRadius": 1.75, "canopyY0": 1.8, "canopyY1": 3.9 }
+    { "id": "tree_orch_01", "x": -19.0, "z": 35.5, "trunkRadius": 0.2, "trunkHeight": 2.1, "canopyRadius": 1.9, "canopyY0": 1.85, "canopyY1": 4.1, "status": "candidata" },
+    { "id": "tree_orch_02", "x": -7.5, "z": 34.0, "trunkRadius": 0.22, "trunkHeight": 2.2, "canopyRadius": 2.1, "canopyY0": 1.9, "canopyY1": 4.3, "status": "candidata" },
+    { "id": "tree_orch_03", "x": 3.8, "z": 36.5, "trunkRadius": 0.19, "trunkHeight": 2.0, "canopyRadius": 1.8, "canopyY0": 1.8, "canopyY1": 4.0, "status": "candidata" },
+    { "id": "tree_orch_04", "x": -20.0, "z": 47.0, "trunkRadius": 0.21, "trunkHeight": 2.1, "canopyRadius": 2.0, "canopyY0": 1.85, "canopyY1": 4.2, "status": "candidata" },
+    { "id": "tree_orch_05", "x": -8.2, "z": 46.5, "trunkRadius": 0.2, "trunkHeight": 2.1, "canopyRadius": 1.95, "canopyY0": 1.85, "canopyY1": 4.1, "status": "candidata" },
+    { "id": "tree_orch_06", "x": 3.2, "z": 49.5, "trunkRadius": 0.22, "trunkHeight": 2.2, "canopyRadius": 2.05, "canopyY0": 1.9, "canopyY1": 4.3, "status": "candidata" },
+    { "id": "tree_orch_07", "x": -17.5, "z": 56.5, "trunkRadius": 0.18, "trunkHeight": 2.0, "canopyRadius": 1.75, "canopyY0": 1.8, "canopyY1": 3.9, "status": "candidata" }
   ],
   "mgEmplacement": {
     "id": "de_b02_mg34",
