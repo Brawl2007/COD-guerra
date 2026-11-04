@@ -70,6 +70,16 @@ test('each older save validates, loads, and its deck records land on the live li
   }
 });
 
+test('two restores of an older save go on identically: the snapping is deterministic (the 06:09:30 save, the men on the closing lines, 30 s of game)',()=>{
+  const label='06:09:30 deck assault on the closing lines',a=new M01Simulation(2),b=new M01Simulation(3);
+  a.restoreSnapshot(save(label));b.restoreSnapshot(save(label));
+  const before=Object.fromEntries(deckMen(a.snapshot()).map(m=>[m.id,m.deck.phase+':'+m.deck.node]));
+  for(let i=0;i<600;i++){a.tick(DT,{});b.tick(DT,{});}
+  assert.deepEqual(a.snapshot(),b.snapshot());
+  assert.ok(deckMen(a.snapshot()).some(m=>m.deck.phase+':'+m.deck.node!==before[m.id]),'and the men did go on from the live lines');
+  validateM01Snapshot(structuredClone(a.snapshot()));
+});
+
 /** The route's own tail from a restored save: wait for the east demolition if it has not fallen, walk back to the west bank, the west demolition, the shelter, the roll call, 07:05:00. Snapshots validate on the way. */
 function playOn(snapshot,seed=19390901){
   class Restored extends M01Simulation{constructor(x){super(x);this.restoreSnapshot(structuredClone(snapshot));this.drainEvents();}}
