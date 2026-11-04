@@ -2,6 +2,21 @@ import {test,expect} from '@playwright/test';
 import {M02_DIALOGUE_CATALOG} from '../../src/game/m02-combat-ai.js';
 import {writeFileSync} from 'node:fs';
 
+test('C11 keyboard withdrawal requires a renewed confirmation after moving',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
+ await page.waitForFunction(()=>window.m02Bench&&!document.querySelector('#mission-start').disabled);
+ await page.click('#mission-start');await page.keyboard.press('Escape');await page.waitForFunction(()=>window.m02Diagnostics().state==='paused');
+ await page.evaluate(()=>{const s=window.m02Bench.sim;s.enterAreaCC09();s.startC10OrderChanges();s.detonateC10FixedArtillery();s.enemies=[];s.teleportPlayer(-55,54,0,0);});
+ await page.click('#mission-resume');await expect(page.locator('#door-prompt')).toContainText('Recuar:');
+ await page.keyboard.press('KeyF');await expect(page.locator('#door-prompt')).toContainText('Confirmar retirada');
+ expect(await page.evaluate(()=>window.m02Bench.sim.flags['m02.completed'])).toBe(false);
+ await page.keyboard.down('KeyW');await page.waitForTimeout(300);await page.keyboard.up('KeyW');
+ await expect(page.locator('#door-prompt')).toContainText('Recuar:');
+ await page.keyboard.press('KeyF');await expect(page.locator('#door-prompt')).toContainText('Confirmar retirada');
+ await page.keyboard.press('KeyF');await page.waitForFunction(()=>window.m02Diagnostics().state==='epilogue');expect(errors).toEqual([]);
+});
+
 test('detached Lis is absent from rendering and cannot intercept an enemy round',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.setViewportSize({width:800,height:450});await page.goto('/COD-guerra/m02.html?quality=low&debug=1');
@@ -44,6 +59,14 @@ test('C11 touch withdrawal warns about those left and preserves their uncertain 
  await page.addStyleTag({content:'body:after{content:"INSPEÇÃO CONTROLADA · RETIRADA C11";position:fixed;left:8px;top:45px;z-index:80;padding:4px;background:#111;color:#fff;font:10px sans-serif}'});
  await page.screenshot({path:testInfo.outputPath('c11-withdrawal-choice.png')});
  const cdp=await page.context().newCDPSession(page),box=await withdraw.boundingBox(),point={x:box.x+box.width/2,y:box.y+box.height/2,id:0};
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await expect(withdraw).toHaveText('CONFIRMAR');await expect(page.locator('#door-prompt')).toContainText('Confirmar retirada');
+ expect(await page.evaluate(()=>window.m02Diagnostics().state)).toBe('playing');
+ expect(await page.evaluate(()=>window.m02Bench.sim.flags['m02.completed'])).toBe(false);
+ await page.locator('[data-touch=pause]').click();await expect(page.locator('#mission-resume')).toBeVisible();
+ await page.locator('#mission-resume').click();await expect(withdraw).toHaveText('RECUAR (5)');
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await expect(withdraw).toHaveText('CONFIRMAR');await page.screenshot({path:testInfo.outputPath('c11-withdrawal-confirmation.png')});
  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[point]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  await page.waitForFunction(()=>window.m02Diagnostics().state==='epilogue');
  const result=await page.evaluate(()=>{const s=window.m02Bench.sim;return {completed:s.flags['m02.completed'],safe:s.flags['m02.last_group_survivors'],unaccounted:s.flags['m02.last_group_unaccounted'],lis:s.flags['m02.lis_status'],left:s.areaC.lastGroup.filter(a=>a.leftBehind&&a.alive&&!a.evacuated).length,exported:s.m03ExportPackage.m03ImportState.lastGroupUnaccountedCount};});

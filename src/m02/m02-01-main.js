@@ -6,6 +6,7 @@ import { M02BenchSimulation } from '../game/m02-01-simulation.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 import {detectTouch} from '../core/touch-controls.js';
 import {mountM02Touch} from './m02-touch.js';
+import {M02RetreatConfirmation} from './m02-retreat-confirmation.js';
 
 const PANORAMA_VIEWS = Object.freeze({
   SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
@@ -65,7 +66,8 @@ let pendingSingleActions = {
   orderFlank: false,
   giveWater: false,
 };
-const touch=touchMode?mountM02Touch({sim,session,actions:pendingSingleActions}):null;
+const retreatConfirmation=new M02RetreatConfirmation();
+const touch=touchMode?mountM02Touch({sim,session,actions:pendingSingleActions,withdrawalArmed:()=>retreatConfirmation.armed}):null;
 document.body.classList.toggle('m02-touch-active',touchMode);
 
 window.addEventListener('keydown', (e) => {
@@ -294,7 +296,7 @@ function updateHud() {
       const lines=[];if(sim.playerWaterAction)lines.push('A oferecer água…');else if(offered)lines.push('Água oferecida ao ferido');
       if(prompt)lines.push(`${prompt.prompt.replace('[E]',touchMode?'[USAR]':'[E]')} (${prompt.distance}m)`);
       if(waterPrompt)lines.push(waterPrompt.prompt.replace('[F]',touchMode?'[ÁGUA]':'[F]'));
-      if(withdrawalPrompt)lines.push(withdrawalPrompt.prompt.replace('[F]',touchMode?'[RECUAR]':'[F]'));
+      if(withdrawalPrompt)lines.push(withdrawalPrompt.prompt.replace('Recuar:',retreatConfirmation.armed?'Confirmar retirada:':'Recuar:').replace('[F]',touchMode?'[RECUAR]':'[F]'));
       elDoorPrompt.textContent=lines.join(' · ');
     } else {
       elDoorPrompt.style.display = 'none';
@@ -345,14 +347,22 @@ function animate(now) {
 
   const simStart = performance.now();
   const running=!missionMode||session.playing;
+  const interruptRetreat=Math.hypot(forward,side)>.1||pendingSingleActions.fire||pendingSingleActions.interact||pendingSingleActions.grenade||pendingSingleActions.reload||pendingSingleActions.crouch;
+  retreatConfirmation.sync(m02EarlyWithdrawalPrompt(sim),sim.player,running&&!interruptRetreat);
   if(missionMode)missionAccumulator=running?Math.min(.25,missionAccumulator+Math.max(0,rawDt)):0;
   const steps=missionMode?Math.floor((missionAccumulator+1e-9)/.05):1;
   if(running)for(let step=0;step<steps;step++){
   const tickDt=missionMode?.05:dt;
   if(missionMode)missionAccumulator=Math.max(0,missionAccumulator-.05);
-  if(pendingSingleActions.giveWater&&performM02EarlyWithdrawal(sim)){
-    for(const key of Object.keys(pendingSingleActions))pendingSingleActions[key]=false;
-    break;
+  if(pendingSingleActions.giveWater){
+    const withdrawal=m02EarlyWithdrawalPrompt(sim);
+    if(withdrawal){
+      pendingSingleActions.giveWater=false;
+      if(!interruptRetreat&&retreatConfirmation.request(withdrawal,sim.player)&&performM02EarlyWithdrawal(sim)){
+        for(const key of Object.keys(pendingSingleActions))pendingSingleActions[key]=false;
+        break;
+      }
+    }
   }
   const missionInteraction = pendingSingleActions.interact && performM02PlayerAction(sim);
   sim.tick(tickDt, {
@@ -377,6 +387,7 @@ function animate(now) {
   }
   const simMs = performance.now() - simStart;
 
+  retreatConfirmation.sync(m02EarlyWithdrawalPrompt(sim),sim.player,running&&!interruptRetreat);
   renderer.renderFrame(rawDt, simMs);
   updateHud();
   if(missionMode)elObjective.textContent=m02ObjectivePresentation(sim).title;

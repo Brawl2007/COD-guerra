@@ -3,7 +3,7 @@ import './m02-touch.css';
 import {m02EarlyWithdrawalPrompt} from '../game/m02-player-actions.js';
 
 // The M01 touch mapper feeds the same M02 controls as keyboard and mouse.
-export function mountM02Touch({sim, session, actions}) {
+export function mountM02Touch({sim, session, actions, withdrawalArmed=()=>false}) {
  const root=document.createElement('div');root.id='m02-touch';root.hidden=true;
  root.innerHTML=`<div class="touch-look" data-touch="look" aria-label="Arrastar para olhar"></div>
  <div class="touch-move" data-touch="move" aria-label="Arrastar para mover"><span class="touch-knob">MOVER</span></div>
@@ -31,5 +31,5 @@ export function mountM02Touch({sim, session, actions}) {
  for(const button of root.querySelectorAll('[data-order]'))button.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions[button.dataset.order]=true;});
  const water=root.querySelector('[data-water]');water.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions.giveWater=true;});
  const withdraw=root.querySelector('[data-withdraw]');withdraw.addEventListener('pointerdown',e=>{e.preventDefault();if(session.playing)actions.giveWater=true;});
- return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();const retreat=playing&&m02EarlyWithdrawalPrompt(sim);withdraw.hidden=!retreat;if(retreat)withdraw.textContent=`RECUAR (${retreat.count})`;document.body.classList.toggle('m02-water-available',!water.hidden||!withdraw.hidden);if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
+ return {input,update(){const playing=session.playing;root.hidden=!playing;water.hidden=!playing||!sim.currentWoundedWaterPrompt();const retreat=playing&&m02EarlyWithdrawalPrompt(sim);withdraw.hidden=!retreat;if(retreat)withdraw.textContent=withdrawalArmed()?'CONFIRMAR':`RECUAR (${retreat.count})`;document.body.classList.toggle('m02-water-available',!water.hidden||!withdraw.hidden);if(state.active!==playing){state.setActive(playing);if(!playing){resetStick();root.querySelectorAll('.down').forEach(el=>el.classList.remove('down'));}}}};
 }
