@@ -1,0 +1,978 @@
+diff --git a/docs/m02/n0/tabela-vaos.md b/docs/m02/n0/tabela-vaos.md
+new file mode 100644
+index 0000000..71430dd
+--- /dev/null
++++ b/docs/m02/n0/tabela-vaos.md
+@@ -0,0 +1,246 @@
++# Tabela de vãos, linhas de tiro e comparação com o PDF — bancada M02-01 (portão N0)
++
++Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.
++
++- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `aba0377c63007070dbd30dac24bc3ba526a1963f26f02618fc380ef7f2ab856e`), instanciado com `M02QuintaWorld`.
++- Cápsula do jogador (`PLAYER_PHYSICS`, src/world/m01-player-physics.js, usada por `m02-01-simulation.js`): raio 0,36 m (Ø 0,72 m), altura em pé 1,80 m, agachado 1,25 m, degrau máximo 0,45 m, sem salto. Olhos: em pé 1,64 m, agachado 1,08 m (EYE_HEIGHT / m02-01-simulation.js:1279).
++- Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).
++- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (BALLISTIC_MATERIAL_POLICY.penetrationLoss não é consumido).
++
++## 1. Vãos
++
++### 1.1 Geometria e passagem do jogador
++
++| ID | Edifício · parede | Centro (x; z) m | Offset (m) | L × A livre (m) | Peitoril → lintel (m) | Estado inicial | Atravessável (estado inicial) | Atravessável se aberto (em pé / agachado) | Folga vs Ø 0,72 (m) | Raio livre máx. (m) |
++| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
++| door_b01_east_main | B01 · b01_wall_east (este) | -26,00; -15,50 | 2,50 | 1,10 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b01_east_main_leaf) | sim / sim | 0,38 | 0,55 |
++| door_b01_north_service | B01 · b01_wall_north (norte) | -37,00; -18,00 | 3,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b01_north_service_leaf) | sim / sim | 0,28 | 0,50 |
++| door_b01_kitchen_pantry | B01 · b01_wall_mid_v1 (interior) | -33,00; -15,50 | 2,50 | 1,00 × 2,10 | 0,00 → 2,10 | porta open | sim | sim / sim | 0,28 | 0,50 |
++| door_b01_pantry_hall | B01 · b01_wall_mid_v2 (interior) | -31,00; -15,50 | 2,50 | 1,00 × 2,10 | 0,00 → 2,10 | porta open | sim | sim / sim | 0,28 | 0,50 |
++| door_b01_kitchen_westbed | B01 · b01_wall_mid_h (interior) | -37,00; -13,00 | 3,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b01_kitchen_westbed_leaf) | sim / sim | 0,28 | 0,50 |
++| door_b01_hall_eastbed | B01 · b01_wall_mid_h (interior) | -29,00; -13,00 | 11,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta open | sim | sim / sim | 0,28 | 0,50 |
++| win_b01_west_kitchen | B01 · b01_wall_west (oeste) | -40,00; -15,50 | 2,50 | 1,30 × 1,10 | 0,95 → 2,05 | vidro open | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
++| win_b01_east_hall | B01 · b01_wall_east (este) | -26,00; -17,35 | 0,65 | 1,00 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
++| win_b01_east_bed | B01 · b01_wall_east (este) | -26,00; -10,50 | 7,50 | 1,30 × 1,10 | 0,95 → 2,05 | vidro open | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
++| win_b01_north_hall | B01 · b01_wall_north (norte) | -29,00; -18,00 | 11,00 | 1,20 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
++| door_b02_north_gate | B02 · b02_wall_north (norte) | 24,00; -38,00 | 12,00 | 3,00 × 3,00 | 0,00 → 3,00 | porta open | sim | sim / sim | 2,28 | 1,50 |
++| door_b02_south_door | B02 · b02_wall_south (sul) | 30,00; -24,00 | 18,00 | 1,20 × 2,20 | 0,00 → 2,20 | porta closed | não (door_b02_south_door_leaf) | sim / sim | 0,48 | 0,60 |
++| win_b02_west_mg | B02 · b02_wall_west (oeste) | 12,00; -30,00 | 8,00 | 1,80 × 1,15 | 1,00 → 2,15 | vidro open | não (peitoril 1,00 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
++| door_b03_north | B03 · b03_wall_north (norte) | 29,00; 0,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
++| door_b03_south | B03 · b03_wall_south (sul) | 29,00; 12,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
++| win_b03_west_high | B03 · b03_wall_west (oeste) | 20,00; 6,00 | 6,00 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
++| door_b04_south | B04 · b04_wall_south (sul) | -31,80; 26,00 | 5,20 | 1,00 × 2,00 | 0,00 → 2,00 | porta open | não (cov_b04_woodpile) | não (cov_b04_woodpile) / não | 0,28 | 0,30 |
++
++Total: 11 portas e 6 janelas (17 vãos).
++
++### 1.2 Linha de vista e de tiro através do vão
++
++Estado «inicial» = o do layout; «aberto» = porta aberta / vidro aberto. Alturas absolutas ao piso: olhos em pé 1,64 m, agachado 1,08 m, meio-vão = (peitoril + lintel) / 2 (porta: a meio da altura).
++
++| ID | Estado inicial | LoS em pé (inicial) | LoS agachado (inicial) | Tiro a meio-vão (inicial) | LoS em pé (aberto) | Tiro a meio-vão (aberto) |
++| --- | --- | --- | --- | --- | --- | --- |
++| door_b01_east_main | porta closed | não (door_b01_east_main_leaf) | não (door_b01_east_main_leaf) | não (door_b01_east_main_leaf) (h 1,05) | sim | sim |
++| door_b01_north_service | porta closed | não (door_b01_north_service_leaf) | não (door_b01_north_service_leaf) | não (door_b01_north_service_leaf) (h 1,05) | sim | sim |
++| door_b01_kitchen_pantry | porta open | sim | sim | sim (h 1,05) | sim | sim |
++| door_b01_pantry_hall | porta open | sim | sim | sim (h 1,05) | sim | sim |
++| door_b01_kitchen_westbed | porta closed | não (door_b01_kitchen_westbed_leaf) | não (door_b01_kitchen_westbed_leaf) | não (door_b01_kitchen_westbed_leaf) (h 1,05) | sim | sim |
++| door_b01_hall_eastbed | porta open | sim | sim | sim (h 1,05) | sim | sim |
++| win_b01_west_kitchen | vidro open | sim | sim | sim (h 1,50) | sim | sim |
++| win_b01_east_hall | vidro intact | não (win_b01_east_hall_glass) | não (win_b01_east_hall_glass) | não (win_b01_east_hall_glass) (h 1,50) | sim | sim |
++| win_b01_east_bed | vidro open | sim | sim | sim (h 1,50) | sim | sim |
++| win_b01_north_hall | vidro intact | não (win_b01_north_hall_glass) | não (win_b01_north_hall_glass) | não (win_b01_north_hall_glass) (h 1,50) | sim | sim |
++| door_b02_north_gate | porta open | sim | sim | sim (h 1,50) | sim | sim |
++| door_b02_south_door | porta closed | não (door_b02_south_door_leaf) | não (door_b02_south_door_leaf) | não (door_b02_south_door_leaf) (h 1,10) | sim | sim |
++| win_b02_west_mg | vidro open | sim | sim | sim (h 1,57) | sim | sim |
++| door_b03_north | porta open | sim | sim | sim (h 1,20) | sim | sim |
++| door_b03_south | porta open | sim | sim | sim (h 1,20) | sim | sim |
++| win_b03_west_high | vidro open | não (win_b03_west_high_sill) | não (win_b03_west_high_sill) | sim (h 2,10) | não (win_b03_west_high_sill) | sim |
++| door_b04_south | porta open | sim | sim | sim (h 1,00) | sim | sim |
++
++## 2. Linhas de tiro da MG34 de B02
++
++Posições da MG nas diferentes fontes: PDF F3 p. 24 (12; -30); layout `mgEmplacement` (12,80; -30,00), olho 1,48 m; artilheiro `DE-A05` (13,20; -30,00); **boca usada pela simulação** (m02-01-simulation.js:685) (11,82; -30,00), altura 1,42 m. Arco: centro 3,142 rad (oeste), meio-ângulo 1,38 rad (79,1°), alcance 95 m.
++
++A parede oeste de B02 está em x = 12,00 (espessura 0,24 m): a boca da simulação (x = 11,82) fica **fora** do edifício, logo o raio da simulação ignora a janela/ombreiras. As colunas «real» traçam o raio a partir do artilheiro (olho 1,48 m) e mostram o campo de tiro que o vão realmente deixa.
++
++Estado: EXPOSTO = no arco, sem obstrução e com LoS (critério de `evaluateMgLineOfFire`); coberto (id) = primeiro sólido no raio.
++
++### 2.1 Pontos SN1–SN5 (coordenadas do PDF; SN1 = arranque (0; -80))
++
++| Ponto | (x; z) m | Dist. 3D à boca (m) | Sim · em pé | Sim · agachado | Real · em pé | Real · agachado |
++| --- | --- | --- | --- | --- | --- | --- |
++| SN1 | 0,00; -80,00 | 51,38 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) | bloqueado (b02_wall_west_seg_0) |
++| SN2 | -45,00; -5,00 | 62,08 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (b01_wall_east_seg_2) | bloqueado (b01_wall_east_seg_2) |
++| SN3 | -23,00; -12,00 | 39,20 | EXPOSTO | EXPOSTO | bloqueado (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
++| SN4 | 8,00; -28,00 | 4,32 | EXPOSTO | EXPOSTO | vê | vê |
++| SN5 | 0,00; 45,00 | 75,93 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) | bloqueado (b02_wall_south_seg_0) |
++
++PDF N2 (p. 48): «MG visível/audível na abertura oeste de B02 … ameaça identificável a cerca de 51 m». Distância horizontal arranque → boca: 51,4 m. LoS do jogador (em pé) ao artilheiro DE-A05: não (b02_wall_west_seg_0); à abertura (12; 1,42; -30): sim.
++
++### 2.2 Rota «vala» (comprimento 166,7 m; amostra a cada 10 m)
++
++| s (m) | (x; z) m | Dist. 3D (m) | Sim · em pé | Sim · agachado | Real · em pé |
++| --- | --- | --- | --- | --- | --- |
++| 0 | 0,0; -80,0 | 51,4 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
++| 10 | -9,8; -77,8 | 52,5 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
++| 20 | -19,5; -75,7 | 55,4 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
++| 30 | -29,3; -73,5 | 59,8 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
++| 40 | -39,0; -71,3 | 65,5 | EXPOSTO | EXPOSTO | bloqueado (win_b02_west_mg_jamb_a) |
++| 50 | -45,0; -66,1 | 67,3 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
++| 60 | -45,0; -56,1 | 62,5 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
++| 70 | -45,0; -46,1 | 59,1 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
++| 80 | -45,0; -36,1 | 57,2 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
++| 90 | -45,0; -26,1 | 57,0 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
++| 100 | -45,0; -16,1 | 58,5 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
++| 110 | -45,0; -6,1 | 61,6 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
++| 120 | -36,3; -2,9 | 55,2 | coberto (b01_wall_east_seg_3) | coberto (b01_wall_east_seg_3) | bloqueado (cov_gate_wall_east) |
++| 130 | -26,6; -0,6 | 48,4 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (win_b02_west_mg_jamb_b) |
++| 140 | -18,5; -4,9 | 39,4 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (win_b02_west_mg_jamb_b) |
++| 150 | -11,4; -11,8 | 29,5 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (win_b02_west_mg_jamb_b) |
++| 160 | -4,6; -19,1 | 19,6 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
++| 167 | 0,0; -24,0 | 13,3 | EXPOSTO | EXPOSTO | vê |
++
++Resumo: 11/18 amostras expostas em pé, 6/18 agachado (critério da simulação). Amostras expostas na simulação mas sem LoS a partir do artilheiro real: 5.
++
++### 2.3 Rota «pomar» (comprimento 237,2 m; amostra a cada 10 m)
++
++| s (m) | (x; z) m | Dist. 3D (m) | Sim · em pé | Sim · agachado | Real · em pé |
++| --- | --- | --- | --- | --- | --- |
++| 0 | 0,0; -80,0 | 51,4 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
++| 10 | 8,6; -75,0 | 45,1 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
++| 20 | 17,3; -69,9 | 40,3 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
++| 30 | 25,9; -64,9 | 37,7 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
++| 40 | 34,6; -59,9 | 37,6 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
++| 50 | 43,0; -54,7 | 39,8 | fora de arco | fora de arco | vê |
++| 60 | 43,0; -44,7 | 34,5 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_1) |
++| 70 | 43,0; -34,7 | 31,5 | fora de arco | fora de arco | bloqueado (b02_wall_east_seg_0) |
++| 80 | 43,0; -24,7 | 31,6 | fora de arco | fora de arco | bloqueado (b02_wall_east_seg_0) |
++| 90 | 43,0; -14,7 | 34,7 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 100 | 43,0; -4,7 | 40,1 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 110 | 43,0; 5,3 | 47,1 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 120 | 43,0; 15,3 | 55,0 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 130 | 43,0; 25,3 | 63,5 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 140 | 35,4; 30,3 | 64,7 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 150 | 26,2; 34,2 | 65,8 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 160 | 17,0; 38,1 | 68,3 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 170 | 7,9; 41,8 | 71,9 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 180 | 4,5; 32,4 | 62,9 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
++| 190 | 1,1; 23,0 | 54,1 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
++| 200 | 0,0; 13,2 | 44,8 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
++| 210 | 0,0; 3,2 | 35,3 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
++| 220 | 0,0; -6,8 | 26,1 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
++| 230 | 0,0; -16,8 | 17,7 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
++| 237 | 0,0; -24,0 | 13,3 | EXPOSTO | EXPOSTO | vê |
++
++Resumo: 2/25 amostras expostas em pé, 2/25 agachado (critério da simulação). Amostras expostas na simulação mas sem LoS a partir do artilheiro real: 1.
++
++## 3. Comparação PDF ↔ layout (B01–B04)
++
++Fonte PDF: `docs/m02/preproducao/M02-BZURA-PRE-PRODUCAO.pdf`, secção F (pp. 23–25) e N (p. 47). ✓ = igual; ✗ = diverge (entra na lista de problemas).
++
++### 3.1 Dimensões e implantação
++
++| Edifício | PDF (página) | Implantação X…, Z… PDF | Implantação layout | L × P PDF | L × P layout | Beiral / cumeeira PDF | Beiral / cumeeira layout | Resultado |
++| --- | --- | --- | --- | --- | --- | --- | --- | --- |
++| B01 | F2, p. 24 | X -40…-26, Z -18…-8 | X -40…-26, Z -18…-8 | 14 × 10 | 14 × 10 (bounds 14 × 10) | 2,8 / 5,2 | 2,8 / 5,2 | ✓ |
++| B02 | F3, p. 24 | X 12…36, Z -38…-24 | X 12…36, Z -38…-24 | 24 × 14 | 24 × 14 (bounds 24 × 14) | 3,6 / 7,2 | 3,6 / 7,2 | ✓ |
++| B03 | F4, p. 25 | X 20…38, Z 0…12 | X 20…38, Z 0…12 | 18 × 12 | 18 × 12 (bounds 18 × 12) | não indicado | 3,0 / 5,4 | ✓ |
++| B04 | F5, p. 25 | X -37…-29, Z 20…26 | X -37…-29, Z 20…26 | 8 × 6 | 8 × 6 (bounds 8 × 6) | não indicado | 2,4 / 3,8 | ✓ |
++
++B03 e B04: o PDF não fixa beiral/cumeeira (F4 diz só «volume mais baixo que B02»; layout B03 3,0 / 5,4 m < B02 3,6 / 7,2 m ✓).
++
++### 3.2 Vãos e divisões citados no PDF
++
++| Elemento | PDF diz (página) | Layout | Resultado |
++| --- | --- | --- | --- |
++| B01 divisões | cozinha u0-7/v0-5; despensa u7-9/v0-5; sala u9-14/v0-5; quartos u0-7/v5-10 e u7-14/v5-10 (F2, p. 24) | cozinha u0-7/v0-5; despensa u7-9/v0-5; sala u9-14/v0-5; quarto_oeste u0-7/v5-10; quarto_este u7-14/v5-10 | ✓ |
++| door_b01_east_main posição | entrada a este em u=14, v=5 (F2, p. 24); planta interior p. 23 mostra a porta no troço superior da parede este | parede este, v = 2,50 (centro z = -15,50) | ✗ |
++| door_b01_east_main largura | 1,00 m (F1, p. 23: folga pedonal 1,0 m) | 1,10 m (≥ mínimo) | ✓ |
++| door_b01_north_service posição | saída de serviço norte em u=3, v=0 (F2, p. 24) | parede norte, u = 3,00 | ✓ |
++| B01 portas internas | cozinha–despensa, despensa–sala, cozinha–quarto oeste, sala–quarto este (F2, p. 24) | kitchen_pantry, pantry_hall, kitchen_westbed, hall_eastbed | ✓ |
++| B01 janelas | janela oeste da cozinha e janela leste da sala (F2, p. 24; a planta p. 23 mostra mais vãos) | west_kitchen (oeste), east_hall (este), east_bed (este), north_hall (norte) | ✓ |
++| B02 faixas | v0-4 armazenamento, v4-10 corredor, v10-14 palha (F3, p. 24) | armazenamento_norte v0-4; corredor_trabalho v4-10; palha_sul v10-14 | ✓ |
++| door_b02_north_gate | portão norte centrado em u12, vão de 3 m (F3, p. 24) | parede norte, u = 12,00, largura 3,00 m | ✓ |
++| door_b02_south_door | porta sul u18, 1,2 m (F3, p. 24) | parede sul, u = 18,00, largura 1,20 m, closed | ✓ |
++| win_b02_west_mg | abertura oeste u0/v8, usada pela MG (F3, p. 24) | parede oeste, v = 8,00, largura 1,80 m, peitoril 1,00 | ✓ |
++| B02 posição da MG | MG a (12; -30) (F3, p. 24) | mgEmplacement (12,80; -30,00); boca da simulação (11,82; -30,00) | ✗ |
++| B03 corredor | corredor central norte-sul u7-11 (F4, p. 25) | corredor_estabulo u7-11 | ✓ |
++| door_b03_north | portas norte/sul de 2,4 m (F4, p. 25) | 2,40 × 2,40 m, u 7,80…10,20 (corredor u7…11) | ✓ |
++| door_b03_south | portas norte/sul de 2,4 m (F4, p. 25) | 2,40 × 2,40 m, u 7,80…10,20 (corredor u7…11) | ✓ |
++| B03 janelas altas | pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25) | win_b03_west_high (oeste) | ✗ |
++| B03 acesso a arreios | acesso pequeno a arreios pelo leste (F4, p. 25) | portas B03: norte, sul | ✗ |
++| door_b04_south | porta sul 1 m (F5, p. 25) | parede sul, u = 5,20, largura 1,00 m | ✓ |
++
++## 4. Pontos de captura SN1–SN5: PDF ↔ layout ↔ `PANORAMA_VIEWS`
++
++PDF: N p. 47 (planta) e N5 p. 49 (texto). Layout: `slicePanoramaPoints`. Código: `PANORAMA_VIEWS` em src/m02/m02-01-main.js (lido por análise de texto; o ficheiro usa `window`). Δ = distância horizontal ao PDF.
++
++| Ponto | PDF (x; z) | Layout (x; z) | Δ layout (m) | main.js (x; z) | Δ main.js (m) | Rumo main.js (rad) | Cápsula livre em main.js? | Resultado |
++| --- | --- | --- | --- | --- | --- | --- | --- | --- |
++| SN1 | 0,00; -80,00 | 0,00; -80,00 | 0,00 | 0,00; -80,00 | 0,00 | 1,571 | sim | ✓ |
++| SN2 | -45,00; -5,00 | -45,00; -5,00 | 0,00 | -45,00; -5,00 | 0,00 | 0,250 | sim | ✓ |
++| SN3 | -23,00; -12,00 | -23,00; -12,00 | 0,00 | -21,00; -13,50 | 2,50 | 3,142 | sim | ✗ |
++| SN4 | 8,00; -28,00 | 8,00; -28,00 | 0,00 | 4,00; -29,50 | 4,27 | 0,000 | sim | ✗ |
++| SN5 | 0,00; 45,00 | 0,00; 45,00 | 0,00 | 0,00; 45,00 | 0,00 | -1,571 | sim | ✓ |
++
++## 5. Rotas percorridas pela cápsula e posição dos atores
++
++Percurso com `movePlayer` (a mesma física da simulação), passos de 0,12 m, em pé, entre os pontos de cada rota do layout.
++
++| Rota | Pontos (x; z) | Chega ao fim? | Cota mínima (m) | Observação |
++| --- | --- | --- | --- | --- |
++| ditch | 0; -80 → -45; -70 → -45; -5 → -24; 0 → -15; -8 → 0; -24 | sim | -1,10 | sem bloqueio |
++| orchard | 0; -80 → 43; -55 → 43; 27 → 8; 42 → 0; 20 → 0; -24 | sim | -0,17 | sem bloqueio |
++
++| Ator | Papel | (x; z) m | Dentro de sólido? |
++| --- | --- | --- | --- |
++| jogador (start) | início | 0,00; -80,00 | não |
++| pl_gruca | PL leader | -1,80; -78,80 | não |
++| pl_lis | PL assault_house | -4,20; -79,20 | não |
++| pl_wierzba | PL flanker | 2,10; -78,90 | não |
++| pl_malek | PL recruit | -6,00; -80,20 | não |
++| pl_szymczak | PL medic | -3,20; -81,80 | não |
++| pl_aux_01 | PL rkm_gunner | 1,40; -78,40 | não |
++| pl_aux_02 | PL rkm_loader | 2,90; -79,80 | não |
++| DE-A05 | EA1 mg_gunner (B02) | 13,20; -30,00 | sim (prop_b02_mg_mount) |
++| DE-A06 | EA1 mg_loader (B02) | 15,20; -28,80 | não |
++| DE-A07 | EA1 rifleman (B01) | -36,50; -15,50 | não |
++| DE-A08 | EA1 rifleman (B01) | -28,50; -15,50 | não |
++| DE-A09 | EA1 rifleman (B03) | 29,00; 2,20 | não |
++| DE-A10 | EA1 rifleman (B03) | 29,00; 9,80 | não |
++| DE-A11 | EA1 rifleman | -5,50; -22,50 | não |
++| DE-A12 | EA1 reserve | -16,80; -4,60 | não |
++| DE-A13 | EA1 reserve | -9,50; 18,20 | não |
++| DE-A14 | EA1 rifleman_c04 | -5,50; 36,50 | não |
++| DE-A01 | EA0 outpost_rifleman | -21,50; -110,20 | não |
++| DE-A02 | EA0 outpost_rifleman | -18,00; -110,00 | não |
++| DE-A03 | EA0 outpost_rifleman | -14,20; -110,40 | não |
++| DE-A04 | EA0 outpost_rifleman | -11,00; -111,20 | não |
++
++Contagem: 10 inimigos EA1 (PDF N1 p. 48: «dez defensores EA1» ✓), 4 EA0 em Z ≈ -110 (fora da Área A, Z -90…60; PDF N1: «o posto EA0 … fica fora deste ensaio»).
++
++## 6. Lista de problemas
++
++Gerada automaticamente: 1 ERRO, 14 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
++
++| # | Sev. | Área | Elemento | Descrição |
++| --- | --- | --- | --- | --- |
++| 1 | ERRO | vãos | door_b04_south | porta aberta mas a passagem axial da cápsula (Ø 0,72 m, em pé) é bloqueada por `cov_b04_woodpile`; o único corredor livre da cápsula tem 0,04 m de largura (desvio lateral -0,12…-0,08 m). |
++| 2 | AVISO | vãos | win_b01_east_hall | troço de parede de 0,05 m no início da parede (< 0,30 m). |
++| 3 | AVISO | linha de tiro | win_b01_east_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_east_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política não é consumida por nenhum código. |
++| 4 | AVISO | linha de tiro | win_b01_north_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_north_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política não é consumida por nenhum código. |
++| 5 | AVISO | MG B02 | rota ditch | 5 de 18 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
++| 6 | AVISO | MG B02 | rota orchard | 1 de 25 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
++| 7 | AVISO | MG B02 | boca da MG | a simulação traça a partir de (11,82; -30,00), fora da parede oeste de B02 (x = 12,00); o PDF (p. 24) põe a MG em (12; -30), o layout em x = 12,80 e o artilheiro em x = 13,20. Quatro valores distintos para a mesma posição. |
++| 8 | AVISO | atores | DE-A05 | artilheiro em (13,20; -30,00) está dentro do sólido `prop_b02_mg_mount` (bancada da MG, h 0,96 m); verificar se é intencional (a cápsula do jogador não pode ocupar este ponto). |
++| 9 | AVISO | PDF | door_b01_east_main posição | PDF: entrada a este em u=14, v=5 (F2, p. 24); planta interior p. 23 mostra a porta no troço superior da parede este. Layout: parede este, v = 2,50 (centro z = -15,50). |
++| 10 | AVISO | PDF | B02 posição da MG | PDF: MG a (12; -30) (F3, p. 24). Layout: mgEmplacement (12,80; -30,00); boca da simulação (11,82; -30,00). |
++| 11 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
++| 12 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
++| 13 | AVISO | SN | SN3 | PANORAMA_VIEWS (-21,00; -13,50) diverge do PDF/N5 (-23,00; -12,00) em 2,50 m; a captura N5 deve usar um só conjunto (o PDF é a fonte). |
++| 14 | AVISO | SN | SN4 | PANORAMA_VIEWS (4,00; -29,50) diverge do PDF/N5 (8,00; -28,00) em 4,27 m; a captura N5 deve usar um só conjunto (o PDF é a fonte). |
++| 15 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
++| 16 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
++
++Limites desta prova: geometria/colisão estática de cápsula e raios retos; não cobre IA, animação, portas a abrir com tempo, desempenho, aparência nem jogo real.
++
+diff --git a/tools/m02/n0-common.mjs b/tools/m02/n0-common.mjs
+new file mode 100644
+index 0000000..19bd34c
+--- /dev/null
++++ b/tools/m02/n0-common.mjs
+@@ -0,0 +1,231 @@
++// Shared helpers for the M02 N0 proofs (planta + tabela de vãos).
++// Read-only over missions/, src/world, src/game and src/m02: nothing here mutates the simulation or game data.
++// Axes: x east, z south (plan view: north up), y up, all in metres (see layout "axes").
++import { readFileSync } from 'node:fs';
++import { createHash } from 'node:crypto';
++import path from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++import { M02QuintaWorld } from '../../src/world/m02-quinta-world.js';
++import { PLAYER_PHYSICS, deepestWall } from '../../src/world/m01-player-physics.js';
++import { traceObstruction } from '../../src/world/spatial.js';
++import { EYE_HEIGHT } from '../../src/config.js';
++
++export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
++export const LAYOUT_PATH = path.join(REPO_ROOT, 'missions', 'm02-bzura', 'm02-01-quinta-layout.json');
++export const MAIN_PATH = path.join(REPO_ROOT, 'src', 'm02', 'm02-01-main.js');
++export const SIM_PATH = path.join(REPO_ROOT, 'src', 'game', 'm02-01-simulation.js');
++
++export const CROUCH_EYE = 1.08; // same constant as m02-01-simulation.js (player.crouched ? 1.08 : EYE_HEIGHT)
++export const STAND_EYE = EYE_HEIGHT;
++export const PLAYER = Object.freeze({
++  radius: PLAYER_PHYSICS.radius,
++  standHeight: PLAYER_PHYSICS.standHeight,
++  crouchHeight: PLAYER_PHYSICS.crouchHeight,
++  stepUp: PLAYER_PHYSICS.stepUp,
++  standEye: STAND_EYE,
++  crouchEye: CROUCH_EYE,
++});
++
++// MG34 muzzle used by M02BenchSimulation.evaluateMgLineOfFire (src/game/m02-01-simulation.js, "const muzzle = ...").
++// It is read from that file's source so that a change there is noticed.
++export function readSimMuzzle() {
++  const src = readFileSync(SIM_PATH, 'utf8');
++  const m = src.match(/const muzzle = \{ x: ([-\d.]+), y: ([-\d.]+), z: ([-\d.]+) \};/);
++  if (!m) throw new Error('MG muzzle literal not found in m02-01-simulation.js');
++  return { x: Number(m[1]), y: Number(m[2]), z: Number(m[3]) };
++}
++
++// Canonical coordinates quoted by the owner's PDF (section N, p. 47 plan + N5 p. 49 text).
++export const PDF_SN = Object.freeze({
++  SN1: { x: 0, z: -80, label: 'entrada' },
++  SN2: { x: -45, z: -5, label: 'vala' },
++  SN3: { x: -23, z: -12, label: 'casa' },
++  SN4: { x: 8, z: -28, label: 'celeiro' },
++  SN5: { x: 0, z: 45, label: 'pomar' },
++});
++
++// Owner's PDF, section F (pp. 23-25): building envelope as written.
++export const PDF_BUILDINGS = Object.freeze({
++  B01: { page: 24, ref: 'F2', bounds: [-40, -26, -18, -8], width: 14, depth: 10, wallHeight: 2.8, ridgeHeight: 5.2 },
++  B02: { page: 24, ref: 'F3', bounds: [12, 36, -38, -24], width: 24, depth: 14, wallHeight: 3.6, ridgeHeight: 7.2 },
++  B03: { page: 25, ref: 'F4', bounds: [20, 38, 0, 12], width: 18, depth: 12, wallHeight: null, ridgeHeight: null },
++  B04: { page: 25, ref: 'F5', bounds: [-37, -29, 20, 26], width: 8, depth: 6, wallHeight: null, ridgeHeight: null },
++});
++
++// Door widths the PDF states in prose (metres): F1 p.23 (free clearance), F2-F5 pp.24-25.
++export const PDF_DOORS = Object.freeze({
++  door_b01_east_main: { width: 1.0, page: 23, note: 'F1 p.23: folga pedonal 1,0 m. F2 p.24 pede a entrada este em v=5; planta p.23 e layout: v=2,5' },
++  door_b01_north_service: { width: null, page: 24, note: 'F2 p.24: saída de serviço norte em u=3, v=0' },
++  door_b02_north_gate: { width: 3.0, page: 24, note: 'F3 p.24: portão norte centrado em u12, vão de 3 m' },
++  door_b02_south_door: { width: 1.2, page: 24, note: 'F3 p.24: porta sul u18, 1,2 m' },
++  door_b03_north: { width: 2.4, page: 25, note: 'F4 p.25: portas norte/sul de 2,4 m' },
++  door_b03_south: { width: 2.4, page: 25, note: 'F4 p.25: portas norte/sul de 2,4 m' },
++  door_b04_south: { width: 1.0, page: 25, note: 'F5 p.25: porta sul 1 m' },
++});
++
++export function loadLayout() {
++  const text = readFileSync(LAYOUT_PATH, 'utf8');
++  return { layout: JSON.parse(text), sha256: createHash('sha256').update(text).digest('hex') };
++}
++
++// Parses PANORAMA_VIEWS out of src/m02/m02-01-main.js (that file touches window/document, so it cannot be imported in Node).
++export function readPanoramaViews() {
++  const src = readFileSync(MAIN_PATH, 'utf8');
++  const block = src.match(/const PANORAMA_VIEWS = Object\.freeze\(\{([\s\S]*?)\}\);/);
++  if (!block) throw new Error('PANORAMA_VIEWS not found in m02-01-main.js');
++  const views = {};
++  const evalNum = (expr) => {
++    const e = expr.trim();
++    if (!/^[-+*/().\sA-Za-z0-9]+$/.test(e) || /[A-Za-z]/.test(e.replace(/Math\.PI/g, ''))) {
++      throw new Error(`Unsupported expression in PANORAMA_VIEWS: ${expr}`);
++    }
++    return Function(`"use strict"; return (${e});`)();
++  };
++  for (const line of block[1].split('\n')) {
++    const m = line.match(/^\s*(SN\d):\s*\{\s*x:\s*([^,]+),\s*z:\s*([^,]+),\s*angle:\s*([^,]+),\s*pitch:\s*([^,]+),/);
++    if (m) views[m[1]] = { x: evalNum(m[2]), z: evalNum(m[3]), angle: evalNum(m[4]), pitch: evalNum(m[5]) };
++  }
++  return views;
++}
++
++const r2 = (n) => Math.round(n * 100) / 100;
++
++// World-space geometry of every door/window straight from the layout data (independent of the world class).
++export function openingGeometry(layout) {
++  const out = [];
++  for (const b of layout.buildings) {
++    const ox = b.bounds[0];
++    const oz = b.bounds[2];
++    const wallById = new Map(b.walls.map((w) => [w.id, w]));
++    const add = (o, kind) => {
++      const w = wallById.get(o.wallId);
++      const horiz = Math.abs(w.v1 - w.v0) < 1e-6;
++      const len = horiz ? Math.abs(w.u1 - w.u0) : Math.abs(w.v1 - w.v0);
++      const startU = Math.min(w.u0, w.u1);
++      const startV = Math.min(w.v0, w.v1);
++      const center = horiz
++        ? { x: ox + startU + o.offset, z: oz + startV }
++        : { x: ox + startU, z: oz + startV + o.offset };
++      let side;
++      if (!w.exterior) side = 'interior';
++      else if (horiz) side = startV === 0 ? 'norte' : 'sul';
++      else side = startU === 0 ? 'oeste' : 'este';
++      const sill = kind === 'window' ? (o.sillY ?? 0.95) : 0;
++      const lintel = kind === 'window' ? (o.lintelY ?? 2.05) : (o.height ?? 2.1);
++      out.push({
++        kind,
++        id: o.id,
++        buildingId: b.id,
++        wallId: o.wallId,
++        wall: w,
++        exterior: Boolean(w.exterior),
++        side,
++        horiz,
++        wallLength: len,
++        offset: o.offset,
++        width: o.width,
++        sillY: sill,
++        lintelY: lintel,
++        clearHeight: r2(lintel - sill),
++        initialState: kind === 'window' ? (o.glassState ?? 'open') : (o.initialState ?? 'closed'),
++        frameWidth: o.frameWidth ?? (kind === 'window' ? 0.1 : 0.08),
++        label: o.label ?? o.id,
++        material: o.material ?? null,
++        center: { x: r2(center.x), z: r2(center.z) },
++        // unit normal of the wall plane (z for east-west walls, x for north-south walls)
++        normal: horiz ? { x: 0, z: 1 } : { x: 1, z: 0 },
++        // ends of the clear span in world space
++        span: horiz
++          ? [{ x: r2(center.x - o.width / 2), z: r2(center.z) }, { x: r2(center.x + o.width / 2), z: r2(center.z) }]
++          : [{ x: r2(center.x), z: r2(center.z - o.width / 2) }, { x: r2(center.x), z: r2(center.z + o.width / 2) }],
++      });
++    };
++    for (const d of b.doors ?? []) add(d, 'door');
++    for (const w of b.windows ?? []) add(w, 'window');
++  }
++  return out;
++}
++
++export function makeWorld(layout, { openAll = false } = {}) {
++  const world = new M02QuintaWorld(layout);
++  if (openAll) {
++    for (const b of layout.buildings) {
++      for (const d of b.doors ?? []) world.setDoorState(d.id, 'open');
++      for (const w of b.windows ?? []) world.setWindowState(w.id, 'open');
++    }
++  }
++  return world;
++}
++
++// --- Probes (read-only queries on the world's own collision and ray code) ---------------------------
++
++/** Can a capsule of `radius` x `height` walk straight through the opening along the wall normal? */
++export function probePassage(world, op, { radius = PLAYER.radius, height = PLAYER.standHeight, reach = op.exterior ? 1.6 : 1.2 } = {}) {
++  const y = world.heightAt(op.center.x, op.center.z);
++  for (let t = -reach; t <= reach + 1e-9; t += 0.05) {
++    const x = op.center.x + op.normal.x * t;
++    const z = op.center.z + op.normal.z * t;
++    const wall = deepestWall(world, x, z, y, radius, height);
++    if (wall) return { passes: false, blockerId: wall.b.id, role: wall.b.role, at: r2(t) };
++  }
++  return { passes: true, blockerId: null, role: null, at: null };
++}
++
++/** Lateral offsets (m along the wall, from the opening centre) for which the capsule passes: {min, max, count} or null if none. */
++export function lateralPassRange(world, op, { radius = PLAYER.radius, height = PLAYER.standHeight, step = 0.02 } = {}) {
++  let min = null;
++  let max = null;
++  const lx = op.horiz ? 1 : 0;
++  const lz = op.horiz ? 0 : 1;
++  for (let s = -op.width / 2 - 0.2; s <= op.width / 2 + 0.2 + 1e-9; s += step) {
++    const shifted = { ...op, center: { x: op.center.x + lx * s, z: op.center.z + lz * s } };
++    if (probePassage(world, shifted, { radius, height }).passes) {
++      if (min === null) min = s;
++      max = s;
++    }
++  }
++  return min === null ? null : { min: r2(min), max: r2(max) };
++}
++
++/** Largest capsule radius that still passes within the wall thickness (lateral clearance of the opening), 0 when nothing passes. */
++export function maxPassingRadius(world, op, height = PLAYER.standHeight) {
++  const ok = (r) => probePassage(world, op, { radius: r, height, reach: 0.3 }).passes;
++  if (!ok(0.01)) return 0;
++  let lo = 0.01;
++  let hi = 1.5;
++  for (let i = 0; i < 24; i++) {
++    const mid = (lo + hi) / 2;
++    if (ok(mid)) lo = mid;
++    else hi = mid;
++  }
++  return r2(lo);
++}
++
++export const actorAt = (x, z, eyeHeight, y = 0) => ({ x, y, z, eyeHeight, space: 'metres' });
++
++/** Geometric ray between two eye points: world.lineOfSight plus the first blocker (any solid blocks, no penetration is simulated). */
++export function sightInfo(world, a, b) {
++  const ay = (a.y ?? 0) + (a.eyeHeight ?? STAND_EYE);
++  const by = (b.y ?? 0) + (b.eyeHeight ?? STAND_EYE);
++  const dist = Math.hypot(b.x - a.x, by - ay, b.z - a.z);
++  const dir = { x: (b.x - a.x) / dist, y: (by - ay) / dist, z: (b.z - a.z) / dist };
++  const hit = traceObstruction(world, { x: a.x, y: ay, z: a.z }, dir, Math.max(0, dist - 0.02));
++  const los = world.lineOfSight(a, b, { includeFoliage: true });
++  return {
++    los,
++    blockerId: hit?.id ?? (!los ? 'copa' : null),
++    material: hit?.material ?? (!los ? 'foliage' : null),
++    distance: r2(dist),
++  };
++}
++
++/** Sight through the opening along the wall normal, at the given eye height above the floor, from `d` metres each side. */
++export function probeSight(world, op, eyeHeight, d = op.exterior ? 3 : 1.4) {
++  const gy = world.heightAt(op.center.x, op.center.z);
++  const a = actorAt(op.center.x - op.normal.x * d, op.center.z - op.normal.z * d, eyeHeight, gy);
++  const b = actorAt(op.center.x + op.normal.x * d, op.center.z + op.normal.z * d, eyeHeight, gy);
++  return sightInfo(world, a, b);
++}
++
++export { r2 };
+diff --git a/tools/m02/openings-table.mjs b/tools/m02/openings-table.mjs
+new file mode 100644
+index 0000000..053fc56
+--- /dev/null
++++ b/tools/m02/openings-table.mjs
+@@ -0,0 +1,483 @@
++#!/usr/bin/env node
++// M02-01 N0 proof: opening (door/window) table, MG34 lines of fire, PDF comparison and problem list.
++// Usage: node tools/m02/openings-table.mjs [--out docs/m02/n0/tabela-vaos.md]
++// Deterministic: same layout + same sources -> same bytes. Read-only over the game data.
++import { mkdirSync, writeFileSync } from 'node:fs';
++import path from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++import { movePlayer, deepestWall } from '../../src/world/m01-player-physics.js';
++import { traceObstruction } from '../../src/world/spatial.js';
++import {
++  REPO_ROOT, PLAYER, PDF_SN, PDF_BUILDINGS, PDF_DOORS, loadLayout, readPanoramaViews, readSimMuzzle,
++  openingGeometry, makeWorld, probePassage, lateralPassRange, maxPassingRadius, probeSight, sightInfo, actorAt, r2,
++} from './n0-common.mjs';
++
++const num = (n, d = 2) => {
++  const s = (Math.abs(n) < 0.5 * 10 ** -d ? 0 : n).toFixed(d).replace('.', ',');
++  return s;
++};
++const yn = (b) => (b ? 'sim' : 'não');
++const cell = (s) => String(s).replace(/\|/g, '/');
++const row = (...cols) => `| ${cols.map(cell).join(' | ')} |`;
++const head = (...cols) => `${row(...cols)}\n| ${cols.map(() => '---').join(' | ')} |`;
++
++function blockedLabel(res) {
++  return res.passes ? 'sim' : `não (${res.blockerId})`;
++}
++function sightLabel(res) {
++  return res.los ? 'sim' : `não (${res.blockerId})`;
++}
++
++function sampleRoute(points, step) {
++  const out = [{ s: 0, x: points[0][0], z: points[0][1] }];
++  let acc = 0;
++  let next = step;
++  for (let i = 1; i < points.length; i++) {
++    const [x0, z0] = points[i - 1];
++    const [x1, z1] = points[i];
++    const len = Math.hypot(x1 - x0, z1 - z0);
++    while (next <= acc + len + 1e-9) {
++      const t = (next - acc) / len;
++      out.push({ s: next, x: x0 + (x1 - x0) * t, z: z0 + (z1 - z0) * t });
++      next += step;
++    }
++    acc += len;
++  }
++  const [lx, lz] = points[points.length - 1];
++  if (Math.hypot(out[out.length - 1].x - lx, out[out.length - 1].z - lz) > 0.5) out.push({ s: acc, x: lx, z: lz });
++  return { samples: out, length: acc };
++}
++
++// Mirrors M02BenchSimulation.evaluateMgLineOfFire (src/game/m02-01-simulation.js): same arc test, same trace, same LoS call.
++function evaluateMg(world, mg, muzzle, target, eye) {
++  const gy = world.heightAt(target.x, target.z);
++  const targetActor = actorAt(target.x, target.z, eye, gy);
++  const ty = gy + eye;
++  const dx = target.x - muzzle.x;
++  const dy = ty - muzzle.y;
++  const dz = target.z - muzzle.z;
++  const dist = Math.hypot(dx, dy, dz);
++  if (dist > mg.range) return { status: 'fora de alcance', exposed: false, dist };
++  let diff = Math.abs(Math.atan2(dz, dx) - mg.facing);
++  while (diff > Math.PI) diff = Math.abs(diff - Math.PI * 2);
++  if (diff > mg.arcHalfAngle) return { status: 'fora de arco', exposed: false, dist, arcDiff: diff };
++  const dir = { x: dx / dist, y: dy / dist, z: dz / dist };
++  const obstruction = traceObstruction(world, muzzle, dir, Math.max(0, dist - 0.15));
++  if (obstruction) return { status: `coberto (${obstruction.id ?? obstruction.material})`, exposed: false, dist, arcDiff: diff };
++  const los = world.lineOfSight(actorAt(muzzle.x, muzzle.z, muzzle.y, 0), targetActor, { includeFoliage: true });
++  return { status: los ? 'EXPOSTO' : 'exposto sem LoS (copa)', exposed: true, dist, arcDiff: diff };
++}
++
++function actorClear(world, a, y = 0) {
++  const hit = deepestWall(world, a.x, a.z, y, PLAYER.radius, PLAYER.standHeight);
++  return hit ? hit.b.id : null;
++}
++
++function walkRoute(world, points) {
++  const p = { x: points[0][0], z: points[0][1], y: 0, crouched: false };
++  p.y = world.heightAt(p.x, p.z);
++  let minY = p.y;
++  for (let i = 1; i < points.length; i++) {
++    const [tx, tz] = points[i];
++    let best = Infinity;
++    let lastImprove = 0;
++    for (let k = 0; k < 4000; k++) {
++      const dx = tx - p.x;
++      const dz = tz - p.z;
++      const dist = Math.hypot(dx, dz);
++      if (dist < 0.3) break;
++      if (dist < best - 1e-3) {
++        best = dist;
++        lastImprove = k;
++      } else if (k - lastImprove > 60) {
++        return { reached: false, stalledAt: { x: r2(p.x), z: r2(p.z) }, segment: i, target: { x: tx, z: tz }, minY: r2(minY), blocker: actorClear(world, { x: p.x + dx / dist * 0.5, z: p.z + dz / dist * 0.5 }, p.y) };
++      }
++      const step = Math.min(0.12, dist);
++      movePlayer(world, p, (dx / dist) * step, (dz / dist) * step, 1 / 60);
++      minY = Math.min(minY, p.y);
++    }
++  }
++  return { reached: true, minY: r2(minY) };
++}
++
++export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
++  const problems = [];
++  const add = (sev, area, subject, text) => problems.push({ sev, area, subject, text });
++  const world = makeWorld(layout);
++  const worldOpen = makeWorld(layout, { openAll: true });
++  const ops = openingGeometry(layout);
++  const r = PLAYER.radius;
++  const lines = [];
++  const out = (s = '') => lines.push(s);
++
++  out('# Tabela de vãos, linhas de tiro e comparação com o PDF — bancada M02-01 (portão N0)');
++  out();
++  out('Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.');
++  out();
++  out(`- Entrada: \`missions/m02-bzura/m02-01-quinta-layout.json\` (sha256 \`${sha256}\`), instanciado com \`M02QuintaWorld\`.`);
++  out(`- Cápsula do jogador (\`PLAYER_PHYSICS\`, src/world/m01-player-physics.js, usada por \`m02-01-simulation.js\`): raio ${num(r)} m (Ø ${num(r * 2)} m), altura em pé ${num(PLAYER.standHeight)} m, agachado ${num(PLAYER.crouchHeight)} m, degrau máximo ${num(PLAYER.stepUp)} m, sem salto. Olhos: em pé ${num(PLAYER.standEye)} m, agachado ${num(PLAYER.crouchEye)} m (EYE_HEIGHT / m02-01-simulation.js:1279).`);
++  out('- Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).');
++  out('- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (BALLISTIC_MATERIAL_POLICY.penetrationLoss não é consumido).');
++  out();
++
++  // ---------------------------------------------------------------- 1. openings
++  out('## 1. Vãos');
++  out();
++  out('### 1.1 Geometria e passagem do jogador');
++  out();
++  out(head('ID', 'Edifício · parede', 'Centro (x; z) m', 'Offset (m)', 'L × A livre (m)', 'Peitoril → lintel (m)', 'Estado inicial', 'Atravessável (estado inicial)', 'Atravessável se aberto (em pé / agachado)', 'Folga vs Ø 0,72 (m)', 'Raio livre máx. (m)'));
++  const rows = [];
++  for (const op of ops) {
++    const init = probePassage(world, op);
++    const open = probePassage(worldOpen, op);
++    const openCrouch = probePassage(worldOpen, op, { height: PLAYER.crouchHeight });
++    const maxR = maxPassingRadius(worldOpen, op);
++    const margin = op.width - 2 * r;
++    const isWindow = op.kind === 'window';
++    const sillBlocks = isWindow && op.sillY > PLAYER.stepUp;
++    const passInit = sillBlocks ? `não (peitoril ${num(op.sillY)} m > degrau ${num(PLAYER.stepUp)} m)` : blockedLabel(init);
++    const passOpen = sillBlocks ? 'não (peitoril)' : `${blockedLabel(open)} / ${yn(openCrouch.passes)}`;
++    rows.push({ op, init, open, openCrouch, maxR, margin });
++    out(row(
++      op.id,
++      `${op.buildingId} · ${op.wallId} (${op.side})`,
++      `${num(op.center.x)}; ${num(op.center.z)}`,
++      num(op.offset),
++      `${num(op.width)} × ${num(op.clearHeight)}`,
++      isWindow ? `${num(op.sillY)} → ${num(op.lintelY)}` : `0,00 → ${num(op.lintelY)}`,
++      `${isWindow ? 'vidro ' : 'porta '}${op.initialState}`,
++      passInit,
++      passOpen,
++      isWindow ? 'n/a' : num(margin),
++      isWindow ? 'n/a' : num(maxR),
++    ));
++  }
++  out();
++  out(`Total: ${ops.filter((o) => o.kind === 'door').length} portas e ${ops.filter((o) => o.kind === 'window').length} janelas (${ops.length} vãos).`);
++  out();
++
++  out('### 1.2 Linha de vista e de tiro através do vão');
++  out();
++  out('Estado «inicial» = o do layout; «aberto» = porta aberta / vidro aberto. Alturas absolutas ao piso: olhos em pé 1,64 m, agachado 1,08 m, meio-vão = (peitoril + lintel) / 2 (porta: a meio da altura).');
++  out();
++  out(head('ID', 'Estado inicial', 'LoS em pé (inicial)', 'LoS agachado (inicial)', 'Tiro a meio-vão (inicial)', 'LoS em pé (aberto)', 'Tiro a meio-vão (aberto)'));
++  const sightRows = [];
++  for (const op of ops) {
++    const mid = op.kind === 'window' ? (op.sillY + op.lintelY) / 2 : op.lintelY / 2;
++    const s = {
++      stand: probeSight(world, op, PLAYER.standEye),
++      crouch: probeSight(world, op, PLAYER.crouchEye),
++      mid: probeSight(world, op, mid),
++      standOpen: probeSight(worldOpen, op, PLAYER.standEye),
++      midOpen: probeSight(worldOpen, op, mid),
++      midH: mid,
++    };
++    sightRows.push({ op, s });
++    out(row(op.id, `${op.kind === 'window' ? 'vidro ' : 'porta '}${op.initialState}`, sightLabel(s.stand), sightLabel(s.crouch), `${sightLabel(s.mid)} (h ${num(mid)})`, sightLabel(s.standOpen), sightLabel(s.midOpen)));
++  }
++  out();
++
++  // automatic opening checks
++  const byWall = new Map();
++  for (const op of ops) {
++    const k = `${op.buildingId}/${op.wallId}`;
++    if (!byWall.has(k)) byWall.set(k, []);
++    byWall.get(k).push(op);
++  }
++  for (const { op, init, open, openCrouch, margin, maxR } of rows) {
++    if (op.kind === 'door') {
++      if (margin < 0) add('ERRO', 'vãos', op.id, `porta mais estreita que o jogador (${num(op.width)} m < Ø ${num(2 * r)} m).`);
++      else if (margin < 0.2) add('AVISO', 'vãos', op.id, `folga lateral ${num(margin)} m (< 0,20 m) para a cápsula de Ø ${num(2 * r)} m.`);
++      if (op.lintelY < PLAYER.standHeight) add(op.lintelY < PLAYER.crouchHeight ? 'ERRO' : 'AVISO', 'vãos', op.id, `altura ${num(op.lintelY)} m < jogador em pé ${num(PLAYER.standHeight)} m.`);
++      if (op.initialState === 'closed' && init.passes) add('ERRO', 'vãos', op.id, 'porta inicialmente fechada mas sem colisão (a cápsula atravessa-a).');
++      if (!open.passes) {
++        const lat = lateralPassRange(worldOpen, op);
++        const latText = lat ? `o único corredor livre da cápsula tem ${num(lat.max - lat.min)} m de largura (desvio lateral ${num(lat.min)}…${num(lat.max)} m)` : 'não existe nenhum desvio lateral livre';
++        add('ERRO', 'vãos', op.id, `porta ${op.initialState === 'open' ? 'aberta' : 'aberta (após interação)'} mas a passagem axial da cápsula (Ø ${num(2 * r)} m, em pé) é bloqueada por \`${open.blockerId}\`; ${latText}.`);
++      } else if (open.passes && !openCrouch.passes) add('AVISO', 'vãos', op.id, 'passa em pé mas não agachado.');
++      if (open.passes && maxR > 0 && maxR < r) add('ERRO', 'vãos', op.id, `raio livre máximo ${num(maxR)} m < raio do jogador ${num(r)} m.`);
++      if (op.width < 1.0) add('AVISO', 'vãos', op.id, `largura ${num(op.width)} m < folga pedonal de 1,0 m do PDF F1 (p. 23).`);
++    }
++    // wall fit: extent, stubs and overlaps
++    const lo = op.offset - op.width / 2 - op.frameWidth;
++    const hi = op.offset + op.width / 2 + op.frameWidth;
++    if (lo < -1e-6 || hi > op.wallLength + 1e-6) add('ERRO', 'vãos', op.id, `vão (com batentes) ${num(lo)}…${num(hi)} m sai do comprimento da parede (${num(op.wallLength)} m).`);
++    const stubL = lo;
++    const stubR = op.wallLength - hi;
++    for (const [side, stub] of [['início', stubL], ['fim', stubR]]) {
++      if (stub > 1e-6 && stub < 0.3) add('AVISO', 'vãos', op.id, `troço de parede de ${num(stub)} m no ${side} da parede (< 0,30 m).`);
++    }
++  }
++  for (const [wallKey, list] of byWall) {
++    for (let i = 0; i < list.length; i++) {
++      for (let j = i + 1; j < list.length; j++) {
++        const a = list[i];
++        const b = list[j];
++        const gap = Math.abs(a.offset - b.offset) - (a.width + b.width) / 2 - a.frameWidth - b.frameWidth;
++        if (gap < 0) add('ERRO', 'vãos', `${a.id} / ${b.id}`, `sobreposição de vãos na parede ${wallKey} (${num(gap)} m).`);
++        else if (gap < 0.3) add('AVISO', 'vãos', `${a.id} / ${b.id}`, `apenas ${num(gap)} m de parede entre vãos em ${wallKey}.`);
++      }
++    }
++  }
++  for (const { op, s } of sightRows) {
++    const initialOpen = op.kind === 'door' ? op.initialState === 'open' : op.initialState === 'open' || op.initialState === 'broken';
++    if (initialOpen && !s.mid.los) add('ERRO', 'linha de tiro', op.id, `vão aberto sem linha de tiro a meio-vão (bloqueio \`${s.mid.blockerId}\`).`);
++    if (op.kind === 'window' && op.initialState === 'intact') {
++      if (!s.stand.los && s.standOpen.los) add('AVISO', 'linha de tiro', op.id, `vidro intacto bloqueia \`world.lineOfSight\` (bloqueio \`${s.stand.blockerId}\`) embora \`BALLISTIC_MATERIAL_POLICY.glass.blocksSight\` seja false; a política não é consumida por nenhum código.`);
++    }
++    if (op.kind === 'window' && !s.standOpen.los && s.mid.los) {
++      add('INFO', 'linha de tiro', op.id, `peitoril ${num(op.sillY)} m acima dos olhos em pé (${num(PLAYER.standEye)} m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»).`);
++    }
++  }
++  for (const { op } of rows) {
++    if (op.kind === 'window' && op.sillY <= PLAYER.stepUp) add('AVISO', 'vãos', op.id, `peitoril ${num(op.sillY)} m ≤ degrau ${num(PLAYER.stepUp)} m: a janela é atravessável a pé.`);
++  }
++
++  // ---------------------------------------------------------------- 2. MG lines of fire
++  const mg = layout.mgEmplacement;
++  const muzzle = readSimMuzzle();
++  const gunner = layout.enemyRosterEA1.find((e) => e.id === 'DE-A05');
++  const gunnerActor = actorAt(gunner.x, gunner.z, mg.eyeHeight, 0);
++  out('## 2. Linhas de tiro da MG34 de B02');
++  out();
++  out(`Posições da MG nas diferentes fontes: PDF F3 p. 24 (12; -30); layout \`mgEmplacement\` (${num(mg.x)}; ${num(mg.z)}), olho ${num(mg.eyeHeight)} m; artilheiro \`${gunner.id}\` (${num(gunner.x)}; ${num(gunner.z)}); **boca usada pela simulação** (m02-01-simulation.js:685) (${num(muzzle.x)}; ${num(muzzle.z)}), altura ${num(muzzle.y)} m. Arco: centro ${num(mg.facing, 3)} rad (oeste), meio-ângulo ${num(mg.arcHalfAngle, 2)} rad (${num((mg.arcHalfAngle * 180) / Math.PI, 1)}°), alcance ${num(mg.range, 0)} m.`);
++  out();
++  out(`A parede oeste de B02 está em x = 12,00 (espessura ${num(layout.buildings.find((b) => b.id === 'B02').wallThickness)} m): a boca da simulação (x = ${num(muzzle.x)}) fica **fora** do edifício, logo o raio da simulação ignora a janela/ombreiras. As colunas «real» traçam o raio a partir do artilheiro (olho ${num(mg.eyeHeight)} m) e mostram o campo de tiro que o vão realmente deixa.`);
++  out();
++  out('Estado: EXPOSTO = no arco, sem obstrução e com LoS (critério de `evaluateMgLineOfFire`); coberto (id) = primeiro sólido no raio.');
++  out();
++  const mgRows = [];
++  const mgEval = (label, pt) => {
++    const gy = world.heightAt(pt.x, pt.z);
++    const stand = evaluateMg(world, mg, muzzle, pt, PLAYER.standEye);
++    const crouch = evaluateMg(world, mg, muzzle, pt, PLAYER.crouchEye);
++    const real = sightInfo(world, gunnerActor, actorAt(pt.x, pt.z, PLAYER.standEye, gy));
++    const realCrouch = sightInfo(world, gunnerActor, actorAt(pt.x, pt.z, PLAYER.crouchEye, gy));
++    mgRows.push({ label, pt, stand, crouch, real, realCrouch });
++    return { stand, crouch, real, realCrouch };
++  };
++
++  out('### 2.1 Pontos SN1–SN5 (coordenadas do PDF; SN1 = arranque (0; -80))');
++  out();
++  out(head('Ponto', '(x; z) m', 'Dist. 3D à boca (m)', 'Sim · em pé', 'Sim · agachado', 'Real · em pé', 'Real · agachado'));
++  const snRows = [];
++  for (const [id, p] of Object.entries(PDF_SN)) {
++    const e = mgEval(id, p);
++    snRows.push({ id, ...e });
++    out(row(id, `${num(p.x)}; ${num(p.z)}`, num(e.stand.dist), e.stand.status, e.crouch.status, e.real.los ? 'vê' : `bloqueado (${e.real.blockerId})`, e.realCrouch.los ? 'vê' : `bloqueado (${e.realCrouch.blockerId})`));
++  }
++  const start = layout.start;
++  out();
++  const startDist = Math.hypot(start.x - muzzle.x, start.z - muzzle.z);
++  const seeGunner = sightInfo(world, actorAt(start.x, start.z, PLAYER.standEye, 0), gunnerActor);
++  const seeWindow = sightInfo(world, actorAt(start.x, start.z, PLAYER.standEye, 0), actorAt(12, -30, 1.42, 0));
++  out(`PDF N2 (p. 48): «MG visível/audível na abertura oeste de B02 … ameaça identificável a cerca de 51 m». Distância horizontal arranque → boca: ${num(startDist, 1)} m. LoS do jogador (em pé) ao artilheiro DE-A05: ${seeGunner.los ? 'sim' : `não (${seeGunner.blockerId})`}; à abertura (12; 1,42; -30): ${seeWindow.los ? 'sim' : `não (${seeWindow.blockerId})`}.`);
++  out();
++
++  for (const [name, pts] of Object.entries(layout.routes)) {
++    const { samples, length } = sampleRoute(pts, 10);
++    out(`### 2.${name === 'ditch' ? 2 : 3} Rota «${name === 'ditch' ? 'vala' : 'pomar'}» (comprimento ${num(length, 1)} m; amostra a cada 10 m)`);
++    out();
++    out(head('s (m)', '(x; z) m', 'Dist. 3D (m)', 'Sim · em pé', 'Sim · agachado', 'Real · em pé'));
++    let exposedStand = 0;
++    let exposedCrouch = 0;
++    let simExposedRealBlocked = 0;
++    for (const s of samples) {
++      const e = mgEval(`${name}@${num(s.s, 0)}`, { x: s.x, z: s.z });
++      if (e.stand.exposed) exposedStand++;
++      if (e.crouch.exposed) exposedCrouch++;
++      if (e.stand.exposed && !e.real.los) simExposedRealBlocked++;
++      out(row(num(s.s, 0), `${num(s.x, 1)}; ${num(s.z, 1)}`, num(e.stand.dist, 1), e.stand.status, e.crouch.status, e.real.los ? 'vê' : `bloqueado (${e.real.blockerId})`));
++    }
++    out();
++    out(`Resumo: ${exposedStand}/${samples.length} amostras expostas em pé, ${exposedCrouch}/${samples.length} agachado (critério da simulação). Amostras expostas na simulação mas sem LoS a partir do artilheiro real: ${simExposedRealBlocked}.`);
++    out();
++    if (simExposedRealBlocked > 0) {
++      add('AVISO', 'MG B02', `rota ${name}`, `${simExposedRealBlocked} de ${samples.length} amostras são «EXPOSTO» para a simulação (boca fora da parede, x = ${num(muzzle.x)}) mas o artilheiro em (${num(gunner.x)}; ${num(gunner.z)}) não tem linha de vista por trás do vão (secção 2).`);
++    }
++    if (exposedStand === 0) add('AVISO', 'MG B02', `rota ${name}`, 'nenhuma amostra da rota fica exposta à MG: a rota não testa a ameaça.');
++    if (exposedStand === samples.length) add('AVISO', 'MG B02', `rota ${name}`, 'todas as amostras ficam expostas à MG: a rota não tem cobertura.');
++  }
++  const muzzleOutside = muzzle.x < 12 - layout.buildings.find((b) => b.id === 'B02').wallThickness / 2;
++  if (muzzleOutside) {
++    add('AVISO', 'MG B02', 'boca da MG', `a simulação traça a partir de (${num(muzzle.x)}; ${num(muzzle.z)}), fora da parede oeste de B02 (x = 12,00); o PDF (p. 24) põe a MG em (12; -30), o layout em x = ${num(mg.x)} e o artilheiro em x = ${num(gunner.x)}. Quatro valores distintos para a mesma posição.`);
++  }
++  const mountBlocker = actorClear(world, gunner);
++  if (mountBlocker) add('AVISO', 'atores', gunner.id, `artilheiro em (${num(gunner.x)}; ${num(gunner.z)}) está dentro do sólido \`${mountBlocker}\` (bancada da MG, h ${num(layout.buildings[1].props.find((p) => p.id === 'prop_b02_mg_mount').h)} m); verificar se é intencional (a cápsula do jogador não pode ocupar este ponto).`);
++
++  // ---------------------------------------------------------------- 3. PDF comparison
++  out('## 3. Comparação PDF ↔ layout (B01–B04)');
++  out();
++  out('Fonte PDF: `docs/m02/preproducao/M02-BZURA-PRE-PRODUCAO.pdf`, secção F (pp. 23–25) e N (p. 47). ✓ = igual; ✗ = diverge (entra na lista de problemas).');
++  out();
++  out('### 3.1 Dimensões e implantação');
++  out();
++  out(head('Edifício', 'PDF (página)', 'Implantação X…, Z… PDF', 'Implantação layout', 'L × P PDF', 'L × P layout', 'Beiral / cumeeira PDF', 'Beiral / cumeeira layout', 'Resultado'));
++  for (const b of layout.buildings) {
++    const pdf = PDF_BUILDINGS[b.id];
++    if (!pdf) continue;
++    const bw = b.bounds[1] - b.bounds[0];
++    const bd = b.bounds[3] - b.bounds[2];
++    const okBounds = pdf.bounds.every((v, i) => v === b.bounds[i]);
++    const okSize = pdf.width === b.width && pdf.depth === b.depth && bw === pdf.width && bd === pdf.depth;
++    const okHeights = pdf.wallHeight === null || (pdf.wallHeight === b.wallHeight && pdf.ridgeHeight === b.ridgeHeight);
++    const ok = okBounds && okSize && okHeights;
++    out(row(
++      b.id,
++      `${pdf.ref}, p. ${pdf.page}`,
++      `X ${pdf.bounds[0]}…${pdf.bounds[1]}, Z ${pdf.bounds[2]}…${pdf.bounds[3]}`,
++      `X ${b.bounds[0]}…${b.bounds[1]}, Z ${b.bounds[2]}…${b.bounds[3]}`,
++      `${pdf.width} × ${pdf.depth}`,
++      `${b.width} × ${b.depth} (bounds ${bw} × ${bd})`,
++      pdf.wallHeight === null ? 'não indicado' : `${num(pdf.wallHeight, 1)} / ${num(pdf.ridgeHeight, 1)}`,
++      `${num(b.wallHeight, 1)} / ${num(b.ridgeHeight, 1)}`,
++      ok ? '✓' : '✗',
++    ));
++    if (!ok) add('ERRO', 'PDF', b.id, 'dimensões/implantação do layout diferem do PDF.');
++  }
++  out();
++  out('B03 e B04: o PDF não fixa beiral/cumeeira (F4 diz só «volume mais baixo que B02»; layout B03 3,0 / 5,4 m < B02 3,6 / 7,2 m ✓).');
++  out();
++
++  out('### 3.2 Vãos e divisões citados no PDF');
++  out();
++  out(head('Elemento', 'PDF diz (página)', 'Layout', 'Resultado'));
++  const opById = new Map(ops.map((o) => [o.id, o]));
++  const cmp = (el, pdf, lay, ok, sev = 'AVISO') => {
++    out(row(el, pdf, lay, ok ? '✓' : '✗'));
++    if (!ok) add(sev, 'PDF', el, `PDF: ${pdf}. Layout: ${lay}.`);
++  };
++  const b01 = layout.buildings.find((b) => b.id === 'B01');
++  const b02 = layout.buildings.find((b) => b.id === 'B02');
++  const b03 = layout.buildings.find((b) => b.id === 'B03');
++  const roomOk = (b, id, [u0, v0, w, d]) => {
++    const rm = b.rooms.find((x) => x.id === id);
++    return Boolean(rm) && rm.u0 === u0 && rm.v0 === v0 && rm.w === w && rm.d === d;
++  };
++  cmp('B01 divisões', 'cozinha u0-7/v0-5; despensa u7-9/v0-5; sala u9-14/v0-5; quartos u0-7/v5-10 e u7-14/v5-10 (F2, p. 24)',
++    b01.rooms.map((x) => `${x.id} u${x.u0}-${x.u0 + x.w}/v${x.v0}-${x.v0 + x.d}`).join('; '),
++    roomOk(b01, 'cozinha', [0, 0, 7, 5]) && roomOk(b01, 'despensa', [7, 0, 2, 5]) && roomOk(b01, 'sala', [9, 0, 5, 5]) && roomOk(b01, 'quarto_oeste', [0, 5, 7, 5]) && roomOk(b01, 'quarto_este', [7, 5, 7, 5]));
++  const e = opById.get('door_b01_east_main');
++  cmp('door_b01_east_main posição', 'entrada a este em u=14, v=5 (F2, p. 24); planta interior p. 23 mostra a porta no troço superior da parede este', `parede este, v = ${num(e.offset)} (centro z = ${num(e.center.z)})`, e.offset === 5, 'AVISO');
++  cmp('door_b01_east_main largura', `${num(PDF_DOORS.door_b01_east_main.width)} m (F1, p. 23: folga pedonal 1,0 m)`, `${num(e.width)} m (≥ mínimo)`, e.width >= PDF_DOORS.door_b01_east_main.width, 'INFO');
++  const n = opById.get('door_b01_north_service');
++  cmp('door_b01_north_service posição', 'saída de serviço norte em u=3, v=0 (F2, p. 24)', `parede norte, u = ${num(n.offset)}`, n.offset === 3 && n.side === 'norte');
++  const intDoors = ['door_b01_kitchen_pantry', 'door_b01_pantry_hall', 'door_b01_kitchen_westbed', 'door_b01_hall_eastbed'];
++  cmp('B01 portas internas', 'cozinha–despensa, despensa–sala, cozinha–quarto oeste, sala–quarto este (F2, p. 24)', intDoors.map((id) => id.replace('door_b01_', '')).join(', '), intDoors.every((id) => opById.has(id)));
++  cmp('B01 janelas', 'janela oeste da cozinha e janela leste da sala (F2, p. 24; a planta p. 23 mostra mais vãos)', ops.filter((o) => o.kind === 'window' && o.buildingId === 'B01').map((o) => `${o.id.replace('win_b01_', '')} (${o.side})`).join(', '),
++    opById.has('win_b01_west_kitchen') && opById.has('win_b01_east_hall'), 'AVISO');
++  cmp('B02 faixas', 'v0-4 armazenamento, v4-10 corredor, v10-14 palha (F3, p. 24)', b02.rooms.map((x) => `${x.id} v${x.v0}-${x.v0 + x.d}`).join('; '),
++    roomOk(b02, 'armazenamento_norte', [0, 0, 24, 4]) && roomOk(b02, 'corredor_trabalho', [0, 4, 24, 6]) && roomOk(b02, 'palha_sul', [0, 10, 24, 4]));
++  const gate = opById.get('door_b02_north_gate');
++  cmp('door_b02_north_gate', 'portão norte centrado em u12, vão de 3 m (F3, p. 24)', `parede norte, u = ${num(gate.offset)}, largura ${num(gate.width)} m`, gate.offset === 12 && gate.width === 3 && gate.side === 'norte');
++  const sd = opById.get('door_b02_south_door');
++  cmp('door_b02_south_door', 'porta sul u18, 1,2 m (F3, p. 24)', `parede sul, u = ${num(sd.offset)}, largura ${num(sd.width)} m, ${sd.initialState}`, sd.offset === 18 && sd.width === 1.2 && sd.side === 'sul');
++  const mgw = opById.get('win_b02_west_mg');
++  cmp('win_b02_west_mg', 'abertura oeste u0/v8, usada pela MG (F3, p. 24)', `parede oeste, v = ${num(mgw.offset)}, largura ${num(mgw.width)} m, peitoril ${num(mgw.sillY)}`, mgw.offset === 8 && mgw.side === 'oeste');
++  cmp('B02 posição da MG', 'MG a (12; -30) (F3, p. 24)', `mgEmplacement (${num(mg.x)}; ${num(mg.z)}); boca da simulação (${num(muzzle.x)}; ${num(muzzle.z)})`, mg.x === 12 && muzzle.x === 12, 'AVISO');
++  cmp('B03 corredor', 'corredor central norte-sul u7-11 (F4, p. 25)', `corredor_estabulo u${b03.rooms[0].u0}-${b03.rooms[0].u0 + b03.rooms[0].w}`, roomOk(b03, 'corredor_estabulo', [7, 0, 4, 12]));
++  for (const id of ['door_b03_north', 'door_b03_south']) {
++    const o = opById.get(id);
++    cmp(id, 'portas norte/sul de 2,4 m (F4, p. 25)', `${num(o.width)} × ${num(o.clearHeight)} m, u ${num(o.offset - o.width / 2)}…${num(o.offset + o.width / 2)} (corredor u7…11)`, o.width === 2.4 && o.offset - o.width / 2 >= 7 && o.offset + o.width / 2 <= 11);
++  }
++  const b03Windows = ops.filter((o) => o.kind === 'window' && o.buildingId === 'B03');
++  cmp('B03 janelas altas', 'pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25)', b03Windows.map((o) => `${o.id} (${o.side})`).join(', ') || 'nenhuma',
++    b03Windows.some((o) => o.side === 'norte') && b03Windows.some((o) => o.side === 'sul'));
++  cmp('B03 acesso a arreios', 'acesso pequeno a arreios pelo leste (F4, p. 25)', `portas B03: ${ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03').map((o) => o.side).join(', ')}`, ops.some((o) => o.kind === 'door' && o.buildingId === 'B03' && o.side === 'este'));
++  const d4 = opById.get('door_b04_south');
++  cmp('door_b04_south', 'porta sul 1 m (F5, p. 25)', `parede sul, u = ${num(d4.offset)}, largura ${num(d4.width)} m`, d4.width === 1 && d4.side === 'sul');
++  out();
++
++  // ---------------------------------------------------------------- 4. SN points
++  const views = readPanoramaViews();
++  const layoutSN = Object.fromEntries(layout.slicePanoramaPoints.map((p) => [p.id, p]));
++  out('## 4. Pontos de captura SN1–SN5: PDF ↔ layout ↔ `PANORAMA_VIEWS`');
++  out();
++  out('PDF: N p. 47 (planta) e N5 p. 49 (texto). Layout: `slicePanoramaPoints`. Código: `PANORAMA_VIEWS` em src/m02/m02-01-main.js (lido por análise de texto; o ficheiro usa `window`). Δ = distância horizontal ao PDF.');
++  out();
++  out(head('Ponto', 'PDF (x; z)', 'Layout (x; z)', 'Δ layout (m)', 'main.js (x; z)', 'Δ main.js (m)', 'Rumo main.js (rad)', 'Cápsula livre em main.js?', 'Resultado'));
++  for (const [id, p] of Object.entries(PDF_SN)) {
++    const l = layoutSN[id];
++    const v = views[id];
++    const dl = Math.hypot(l.x - p.x, l.z - p.z);
++    const dv = Math.hypot(v.x - p.x, v.z - p.z);
++    const clearV = actorClear(world, v);
++    const ok = dl < 0.01 && dv < 0.01;
++    out(row(id, `${num(p.x)}; ${num(p.z)}`, `${num(l.x)}; ${num(l.z)}`, num(dl), `${num(v.x)}; ${num(v.z)}`, num(dv), num(v.angle, 3), clearV ? `não (${clearV})` : 'sim', ok ? '✓' : '✗'));
++    if (dl >= 0.01) add('AVISO', 'SN', id, `layout (${num(l.x)}; ${num(l.z)}) diverge do PDF (${num(p.x)}; ${num(p.z)}) em ${num(dl)} m.`);
++    if (dv >= 0.01) add('AVISO', 'SN', id, `PANORAMA_VIEWS (${num(v.x)}; ${num(v.z)}) diverge do PDF/N5 (${num(p.x)}; ${num(p.z)}) em ${num(dv)} m; a captura N5 deve usar um só conjunto (o PDF é a fonte).`);
++    if (clearV) add('AVISO', 'SN', id, `a posição de PANORAMA_VIEWS está dentro de \`${clearV}\`.`);
++    const clearP = actorClear(world, p);
++    if (clearP) add('AVISO', 'SN', id, `a posição do PDF está dentro de \`${clearP}\`.`);
++  }
++  out();
++
++  // ---------------------------------------------------------------- 5. routes + actors
++  out('## 5. Rotas percorridas pela cápsula e posição dos atores');
++  out();
++  out('Percurso com `movePlayer` (a mesma física da simulação), passos de 0,12 m, em pé, entre os pontos de cada rota do layout.');
++  out();
++  out(head('Rota', 'Pontos (x; z)', 'Chega ao fim?', 'Cota mínima (m)', 'Observação'));
++  for (const [name, pts] of Object.entries(layout.routes)) {
++    const res = walkRoute(world, pts);
++    out(row(name, pts.map((p) => `${p[0]}; ${p[1]}`).join(' → '), yn(res.reached), num(res.minY), res.reached ? 'sem bloqueio' : `bloqueada perto de (${num(res.stalledAt.x)}; ${num(res.stalledAt.z)}) no troço ${res.segment} rumo a (${res.target.x}; ${res.target.z})${res.blocker ? `, sólido \`${res.blocker}\`` : ''}`));
++    if (!res.reached) add('ERRO', 'rotas', `rota ${name}`, `a cápsula do jogador fica bloqueada perto de (${num(res.stalledAt.x)}; ${num(res.stalledAt.z)}) no troço ${res.segment}.`);
++  }
++  out();
++  out(head('Ator', 'Papel', '(x; z) m', 'Dentro de sólido?'));
++  const actors = [
++    { id: 'jogador (start)', role: 'início', x: layout.start.x, z: layout.start.z },
++    ...layout.polishSquad.map((a) => ({ id: a.id, role: `PL ${a.role}`, x: a.x, z: a.z })),
++    ...layout.enemyRosterEA1.map((a) => ({ id: a.id, role: `EA1 ${a.role}${a.buildingId ? ` (${a.buildingId})` : ''}`, x: a.x, z: a.z })),
++    ...layout.c01Corridor.enemyRosterEA0.map((a) => ({ id: a.id, role: `EA0 ${a.role}`, x: a.x, z: a.z })),
++  ];
++  for (const a of actors) {
++    const hit = actorClear(world, a, world.heightAt(a.x, a.z));
++    out(row(a.id, a.role, `${num(a.x)}; ${num(a.z)}`, hit ? `sim (${hit})` : 'não'));
++    if (hit && a.id !== gunner.id) add('AVISO', 'atores', a.id, `posição (${num(a.x)}; ${num(a.z)}) coincide com o sólido \`${hit}\` (cápsula Ø ${num(2 * r)} m).`);
++  }
++  out();
++  out(`Contagem: ${layout.enemyRosterEA1.length} inimigos EA1 (PDF N1 p. 48: «dez defensores EA1» ${layout.enemyRosterEA1.length === 10 ? '✓' : '✗'}), ${layout.c01Corridor.enemyRosterEA0.length} EA0 em Z ≈ -110 (fora da Área A, Z -90…60; PDF N1: «o posto EA0 … fica fora deste ensaio»).`);
++  if (layout.enemyRosterEA1.length !== 10) add('ERRO', 'PDF', 'EA1', `PDF diz 10 defensores; o layout tem ${layout.enemyRosterEA1.length}.`);
++  out();
++
++  // ---------------------------------------------------------------- gate
++  const gw = layout.exteriorCovers.find((c) => c.id === 'cov_gate_wall_west');
++  const ge = layout.exteriorCovers.find((c) => c.id === 'cov_gate_wall_east');
++  const gapW = ge.min[0] - gw.max[0];
++  if (Math.abs(gapW - layout.zones.northGate.width) > 0.05) {
++    add('AVISO', 'portão norte', 'northGate', `\`zones.northGate.width\` = ${num(layout.zones.northGate.width)} m mas o vão entre os muros (${gw.id} / ${ge.id}) é ${num(gapW)} m.`);
++  }
++
++  // ---------------------------------------------------------------- 6. problems
++  const order = { ERRO: 0, AVISO: 1, INFO: 2 };
++  const sorted = problems
++    .map((p, i) => ({ ...p, i }))
++    .sort((a, b) => order[a.sev] - order[b.sev] || a.i - b.i);
++  out('## 6. Lista de problemas');
++  out();
++  const count = (s) => sorted.filter((p) => p.sev === s).length;
++  out(`Gerada automaticamente: ${count('ERRO')} ERRO, ${count('AVISO')} AVISO, ${count('INFO')} INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.`);
++  out();
++  out(head('#', 'Sev.', 'Área', 'Elemento', 'Descrição'));
++  sorted.forEach((p, i) => out(row(i + 1, p.sev, p.area, p.subject, p.text)));
++  out();
++  out('Limites desta prova: geometria/colisão estática de cápsula e raios retos; não cobre IA, animação, portas a abrir com tempo, desempenho, aparência nem jogo real.');
++  out();
++
++  return { markdown: `${lines.join('\n')}\n`, problems: sorted, ops, rows, sightRows, mgRows };
++}
++
++function main() {
++  const argv = process.argv.slice(2);
++  const outIdx = argv.indexOf('--out');
++  const outPath = path.resolve(REPO_ROOT, outIdx >= 0 ? argv[outIdx + 1] : 'docs/m02/n0/tabela-vaos.md');
++  const { markdown, problems } = buildOpeningsMarkdown();
++  mkdirSync(path.dirname(outPath), { recursive: true });
++  writeFileSync(outPath, markdown);
++  const c = (s) => problems.filter((p) => p.sev === s).length;
++  process.stdout.write(`wrote ${path.relative(REPO_ROOT, outPath)} (${markdown.length} bytes; ${c('ERRO')} ERRO, ${c('AVISO')} AVISO, ${c('INFO')} INFO)\n`);
++}
++
++if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

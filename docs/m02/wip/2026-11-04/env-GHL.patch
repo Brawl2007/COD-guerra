@@ -1,0 +1,1102 @@
+diff --git a/src/render/m02-01-renderer.js b/src/render/m02-01-renderer.js
+index 30543c4..3f760f6 100644
+--- a/src/render/m02-01-renderer.js
++++ b/src/render/m02-01-renderer.js
+@@ -1,6 +1,10 @@
+ import * as THREE from 'three';
+ import { eyePosition } from '../world/spatial.js';
+ import { selectConsumerLod } from './m01-lod-policy.js';
++import { HORIZON_CAMERA_FAR_M, horizonImpostorScale } from '../world/m02-horizon-system.js';
++import { M02_TERRAIN_MESH } from '../world/m02-environment-area.js';
++import { hash01 } from './m01-area-geo.js';
++import { M02Environment } from './m02-environment.js';
+ 
+ export const M02_QUALITY_PROFILES = Object.freeze({
+   high: Object.freeze({
+@@ -44,6 +48,7 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
+     fogColor: 0xaab4bc,
+     fogNear: 55,
+     fogFar: 320,
++    hazeDistM: 9000, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
+     hemiSky: 0xc8d4e0,
+     hemiGround: 0x564d3e,
+     hemiIntensity: 0.72,
+@@ -59,6 +64,7 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
+     fogColor: 0x1c2432,
+     fogNear: 38,
+     fogFar: 230,
++    hazeDistM: 3500, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
+     hemiSky: 0x3b4d6b,
+     hemiGround: 0x1c1a17,
+     hemiIntensity: 0.36,
+@@ -74,6 +80,7 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
+     fogColor: 0xc4cfd6,
+     fogNear: 42,
+     fogFar: 250,
++    hazeDistM: 4500, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
+     hemiSky: 0xdce6ed,
+     hemiGround: 0x585245,
+     hemiIntensity: 0.82,
+@@ -89,6 +96,7 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
+     fogColor: 0x968f84,
+     fogNear: 48,
+     fogFar: 260,
++    hazeDistM: 5500, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
+     hemiSky: 0xb8b0a4,
+     hemiGround: 0x4a4236,
+     hemiIntensity: 0.66,
+@@ -104,6 +112,7 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
+     fogColor: 0xcad4de,
+     fogNear: 120,
+     fogFar: 460,
++    hazeDistM: 12000, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
+     hemiSky: 0xffffff,
+     hemiGround: 0x7c7870,
+     hemiIntensity: 1.05,
+@@ -138,7 +147,7 @@ export class M02BenchRenderer {
+     this.renderer.toneMappingExposure = 1.04;
+ 
+     this.scene = new THREE.Scene();
+-    this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, 1200);
++    this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, HORIZON_CAMERA_FAR_M);
+     this.camera.rotation.order = 'YXZ';
+ 
+     this.materials = this.#createMaterials();
+@@ -195,6 +204,12 @@ export class M02BenchRenderer {
+     };
+ 
+     this.#setupLights();
++    // Ambiente M02 (campo, restolho, árvores, terraplenos, horizonte L3): reutiliza m01-area-*; criado ANTES do mundo estático (que consulta replaces()).
++    this.environment = new M02Environment(this.scene, this.world, {
++      quality: this.qualityProfile.id,
++      cellId: this.sim.activeCellId ?? 'A',
++    });
++    this.frameEvents = []; // eventos da simulação drenados neste frame (reutilizado; consumidores de apresentação em m02-01-main.js)
+     this.#buildStaticWorld();
+     this.#rebuildDynamicOpenings();
+     this.#buildTargets();
+@@ -235,6 +250,7 @@ export class M02BenchRenderer {
+       target_mg: new THREE.MeshStandardMaterial({ color: 0x3b443e, roughness: 0.72, metalness: 0.2 }),
+       target_helmet: new THREE.MeshStandardMaterial({ color: 0x2c322f, roughness: 0.55, metalness: 0.35 }),
+       target_hit: new THREE.MeshStandardMaterial({ color: 0xc94a38, roughness: 0.6, metalness: 0.1 }),
++      target_hit_reduced: new THREE.MeshStandardMaterial({ color: 0xb9b08a, roughness: 0.7, metalness: 0.1 }),
+       target_wounded: new THREE.MeshStandardMaterial({ color: 0x6e5246, roughness: 0.85, metalness: 0.06 }),
+       target_surrendered: new THREE.MeshStandardMaterial({ color: 0x5c665e, roughness: 0.85, metalness: 0.05 }),
+       target_down: new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.9, metalness: 0.05 }),
+@@ -288,10 +304,10 @@ export class M02BenchRenderer {
+     this.roofMeshes.clear();
+ 
+     // 1. Terrain mesh with ditch depression, C01 northern approach (P1 at Z=-175, EA0 at Z=-110), and vertex colors
+-    const width = 240;
+-    const length = 340;
+-    const segX = 64;
+-    const segZ = 90;
++    const width = M02_TERRAIN_MESH.widthM;
++    const length = M02_TERRAIN_MESH.lengthM;
++    const segX = M02_TERRAIN_MESH.segX;
++    const segZ = M02_TERRAIN_MESH.segZ;
+     const terrainGeo = new THREE.PlaneGeometry(width, length, segX, segZ);
+     terrainGeo.rotateX(-Math.PI / 2);
+ 
+@@ -301,7 +317,7 @@ export class M02BenchRenderer {
+ 
+     for (let i = 0; i < pos.count; i++) {
+       const vx = pos.getX(i);
+-      const vz = pos.getZ(i) - 65; // center around Z = -65 (covers -235..+105)
++      const vz = pos.getZ(i) + M02_TERRAIN_MESH.centreZ; // centrada em Z = -65 (cobre -235..+105)
+       pos.setZ(i, vz);
+       const vy = this.world.terrainHeightAt(vx, vz);
+       pos.setY(i, vy);
+@@ -364,6 +380,7 @@ export class M02BenchRenderer {
+     for (const ob of this.world.obstacles) {
+       if (ob.role === 'door_leaf' || ob.role === 'window_glass') continue;
+       if (ob.id === 'cov_south_fence_west' || ob.id === 'cov_south_fence_east') continue;
++      if (this.environment.replaces(ob.id)) continue; // parapeitos/montículos de terra: desenhados por m02-environment (berma/montículo da M01)
+       const sx = ob.max.x - ob.min.x;
+       const sy = ob.max.y - ob.min.y;
+       const sz = ob.max.z - ob.min.z;
+@@ -724,39 +741,23 @@ export class M02BenchRenderer {
+     this.hsA2Meshes.clear();
+     this.hsA3Meshes.clear();
+ 
+-    // L2/L3 360-degree distant treeline ring around Area A (8 sectors of 45 degrees)
++    // L2: anel de linha de árvores a ~285 m (dentro do nevoeiro de jogo), 32 blocos SEM padrão periódico (largura, altura, raio e rumo semeados por hash).
++    // O horizonte L3 (1,5-8 km: silhuetas, marcos provisórios de Tum/Łęczyca, quintas distantes) é de m02-environment.js; os antigos volumes «de estudo» a
++    // ~340-382 m (que contradiziam o PDF H2/H3, com torre inventada em Łęczyca) foram removidos daqui.
+     const ringCount = 32;
+-    const radius = 285;
+     for (let i = 0; i < ringCount; i++) {
+-      const a = (i / ringCount) * Math.PI * 2;
++      const a = ((i + (hash01(i, 21) - 0.5) * 0.6) / ringCount) * Math.PI * 2;
++      const radius = 270 + hash01(i, 22) * 30;
+       const hx = Math.cos(a) * radius;
+       const hz = Math.sin(a) * radius - 55;
+-      const w = 42 + (i % 3) * 14;
+-      const h = 12 + (i % 4) * 3.8;
+-      const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 9), this.materials.horizon_treeline);
++      const w = 30 + hash01(i, 23) * 40;
++      const h = 9 + hash01(i, 24) * 12;
++      const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 6 + hash01(i, 25) * 6), this.materials.horizon_treeline);
+       treeBlock.position.set(hx, h / 2 - 1, hz);
+       treeBlock.rotation.y = -a + Math.PI / 2;
+       this.horizonGroup.add(treeBlock);
+     }
+ 
+-    // Provisional L3 study volume in SW sector (Document H: Tum / Kolegiata study silhouette — explicitly tagged provisional)
+-    const studyGroup = new THREE.Group();
+-    const nave = new THREE.Mesh(new THREE.BoxGeometry(28, 18, 14), this.materials.horizon_study);
+-    nave.position.set(-260, 9, 280);
+-    const towerA = new THREE.Mesh(new THREE.BoxGeometry(7, 32, 7), this.materials.horizon_study);
+-    towerA.position.set(-272, 16, 280);
+-    const towerB = new THREE.Mesh(new THREE.BoxGeometry(7, 32, 7), this.materials.horizon_study);
+-    towerB.position.set(-248, 16, 280);
+-    studyGroup.add(nave, towerA, towerB);
+-
+-    // Provisional L3 study volume in E sector (Łęczyca urban horizon profile)
+-    const leczycaBlockA = new THREE.Mesh(new THREE.BoxGeometry(22, 14, 48), this.materials.horizon_study);
+-    leczycaBlockA.position.set(340, 7, -15);
+-    const leczycaTower = new THREE.Mesh(new THREE.BoxGeometry(8, 28, 8), this.materials.horizon_study);
+-    leczycaTower.position.set(335, 14, -2);
+-    studyGroup.add(leczycaBlockA, leczycaTower);
+-    this.horizonGroup.add(studyGroup);
+-
+     // HS-A1: 6 persistent Polish support soldiers on west flank (promote L2 <-> L1)
+     for (const actor of this.sim.horizon?.hsA1.actors ?? []) {
+       const soldier = this.#createSoldierMesh({ isPolish: true });
+@@ -783,6 +784,8 @@ export class M02BenchRenderer {
+       plume.visible = false;
+ 
+       group.add(flash, plume);
++      // L3 (1,5-8 km): flash e coluna são ampliados com a distância (tamanho angular legível); só apresentação, o estado vem de sim.horizon.
++      group.scale.setScalar(horizonImpostorScale(ev.distanceFromOriginM ?? Math.hypot(ev.x, ev.z)));
+       this.horizonGroup.add(group);
+       this.hsA2Meshes.set(ev.id, { group, flash, plume });
+     }
+@@ -844,6 +847,7 @@ export class M02BenchRenderer {
+     this.renderer.shadowMap.type = THREE.PCFShadowMap;
+     this.sunLight.castShadow = next.shadows;
+     this.horizonGroup.visible = true;
++    this.environment?.setQuality(next.id);
+     return this.qualityProfile;
+   }
+ 
+@@ -858,6 +862,7 @@ export class M02BenchRenderer {
+     this.sunLight.color.setHex(next.sunColor);
+     this.sunLight.intensity = next.sunIntensity;
+     this.sunLight.position.set(...next.sunPosition);
++    this.environment?.applyAtmosphere(next);
+     return this.lightingPreset;
+   }
+ 
+@@ -904,11 +909,15 @@ export class M02BenchRenderer {
+       currentArtilleryDetonated !== this.lastArtilleryDetonated
+     ) {
+       this.world = this.sim.world;
++      if (currentCellId !== this.lastRenderedCellId) this.environment.setWorld(this.world, currentCellId);
+       this.lastRenderedCellId = currentCellId;
+       this.lastArtilleryDetonated = currentArtilleryDetonated;
+       this.#buildStaticWorld();
+       this.#rebuildDynamicOpenings();
+       this.#buildTargets();
++      // Cratera SP03 (HS-C2): posição lida de sim.horizon.hsC2 (nunca inventada); só existe na célula C depois do impacto.
++      const spot = this.sim.horizon?.hsC2;
++      this.environment.syncCrater(currentCellId === 'C' && currentArtilleryDetonated && spot ? { x: spot.x, z: spot.z } : null);
+     }
+ 
+     if (this.world.revision !== this.lastWorldRevision) {
+@@ -984,6 +993,8 @@ export class M02BenchRenderer {
+ 
+     // Drain simulation events to spawn shot tracers, actor bursts, grenade blasts, or MG bursts
+     const events = this.sim.drainEvents();
++    this.frameEvents.length = 0;
++    for (const evt of events) this.frameEvents.push(evt);
+     for (const evt of events) {
+       if (evt.type === 'shot-fired' && evt.shot) {
+         this.spawnShotVisual(evt.shot);
+@@ -1117,7 +1128,9 @@ export class M02BenchRenderer {
+         entry.rightArm.rotation.x = 0;
+         entry.weaponGroup.position.y = crouchDrop;
+         entry.weaponGroup.visible = true;
+-        entry.torso.material = e.hitsReceived > 0 ? this.materials.target_hit : entry.uniformMat;
++        // reducedViolence (L2/accessibilidade): o estado «atingido» mantém-se na simulação; só a marca visual deixa de ser vermelha.
++        const hitMat = this.sim.audiovisual?.accessibility.reducedViolence ? this.materials.target_hit_reduced : this.materials.target_hit;
++        entry.torso.material = e.hitsReceived > 0 ? hitMat : entry.uniformMat;
+       }
+     }
+ 
+@@ -1129,13 +1142,25 @@ export class M02BenchRenderer {
+     this.camera.rotation.y = -player.angle - Math.PI / 2;
+     this.camera.rotation.x = player.pitch;
+ 
++    // Consumidores reais do M02AudiovisualDirector (só leitura): tremor de câmara limitado (já reduzido por reducedCameraShake no diretor), e a arma
++    // baixada/recuada perto de obstáculos (weaponKinematics). Oscilação determinista a partir do relógio da simulação, sem aleatoriedade.
++    const av = this.sim.audiovisual;
++    const shake = av?.cameraShake.amplitudeRad ?? 0;
++    if (shake > 0) {
++      this.camera.rotation.x += shake * Math.sin(this.sim.clock * 61.0);
++      this.camera.rotation.y += shake * Math.sin(this.sim.clock * 47.0 + 1.3);
++    }
++    const wk = av?.weaponKinematics;
++
+     // Subtle weapon viewmodel bob and ADS offset
+     const bob = player.moving ? Math.sin(this.sim.clock * (player.sprinting ? 11 : 7.5)) * 0.012 : 0;
+     this.viewModel.position.set(
+       player.aiming ? -0.14 : 0,
+       bob,
+-      player.aiming ? 0.08 : 0,
++      (player.aiming ? 0.08 : 0) + (wk ? wk.pullBackM + wk.recoilKickBackM : 0),
+     );
++    this.viewModel.rotation.x = wk ? wk.recoilPitchRad - wk.lowerPitchRad : 0;
++    this.environment.update(this.camera);
+ 
+     this.renderer.render(this.scene, this.camera);
+ 
+@@ -1154,6 +1179,16 @@ export class M02BenchRenderer {
+     return this.lastFrameMetrics;
+   }
+ 
++  /** Libertar recursos GPU (ambiente M02 e renderer). Chamar ao sair da bancada. */
++  dispose() {
++    this.environment?.dispose();
++    this.renderer.dispose();
++  }
++
++  getEnvironmentStats() {
++    return this.environment.stats;
++  }
++
+   getTelemetrySummary() {
+     const frames = this.telemetryWindow.map((m) => m.frameTimeMs).sort((a, b) => a - b);
+     const renders = this.telemetryWindow.map((m) => m.renderMs).sort((a, b) => a - b);
+@@ -1175,6 +1210,7 @@ export class M02BenchRenderer {
+       renderMsP50: Number(percentile(renders, 50).toFixed(2)),
+       drawCalls: this.lastFrameMetrics.drawCalls,
+       triangles: this.lastFrameMetrics.triangles,
++      environment: this.environment.stats,
+     };
+   }
+ }
+diff --git a/src/render/m02-environment.js b/src/render/m02-environment.js
+new file mode 100644
+index 0000000..f601f2c
+--- /dev/null
++++ b/src/render/m02-environment.js
+@@ -0,0 +1,551 @@
++import * as THREE from 'three';
++import { artTexture } from './m01-surfaces.js';
++import { GeoBuilder, hash01, valueNoise } from './m01-area-geo.js';
++import { AREA_LIFT_M, createFieldMaterial } from './m01-area-field.js';
++import { createStubble } from './m01-area-stubble.js';
++import { buildTreeLine, createTreeMaterial, treeDrawRange, TREE_SHARE } from './m01-area-trees.js';
++import {
++  buildBermGeometry,
++  buildClodGeometry,
++  buildClodInstances,
++  buildCraterRimGeometry,
++  buildMoundGeometry,
++  buildMoundInstances,
++  createBermMaterial,
++  createEarthMaterial,
++} from './m01-area-earthworks.js';
++import {
++  HORIZON_L3_LANDMARKS,
++  HORIZON_L3_LAYERS,
++  HORIZON_L3_FAR_M,
++  horizonAzimuthToWorld,
++  horizonHazeMix,
++} from '../world/m02-horizon-system.js';
++import {
++  M02_CART_TRACK,
++  M02_STUBBLE_PATCHES,
++  M02_TERRAIN_MESH,
++  M02_TREE_LINES,
++  createM02FieldArea,
++  isFieldCell,
++  mirrorBoxesZ,
++  selectEarthworkCovers,
++  semanticGroundRects,
++  terrainMeshBounds,
++  treeLineLocal,
++} from '../world/m02-environment-area.js';
++
++// M02 «Operação Bzura» — ambiente (secção G) e horizonte distante L3 (secção H). SÓ APRESENTAÇÃO: nada aqui decide dano, visibilidade, eventos ou missão.
++// Reutiliza (importa, sem editar) os módulos de ambiente da M01, que desenham em METROS Three.js (x/z solo, y altura):
++//   - m01-area-field    -> campo agrícola procedural (talhões, sulcos, carreiro com rodeiras) sobre a malha de terreno;
++//   - m01-area-stubble  -> restolho instanciado que segue a câmara (1 draw call por mancha);
++//   - m01-area-trees    -> linhas de árvores num só geometry (pinheiros/choupos/folhosas, sub-bosque);
++//   - m01-area-earthworks -> bermas de parapeito e montículos de terra (caixas do mundo) e crateras.
++// Não reutilizado: m01-area-dressing (orquestrador acoplado a `world.area` da M01: parapeitos/ treeLine/ wreck do layout M01) nem m01-area-wreck.
++// Os descritores M02 (em metros) vêm de src/world/m02-environment-area.js (puro, testado em Node).
++// Disposal: esta classe é dona de todas as geometrias, materiais e texturas que cria e liberta-os em dispose()/rebuild.
++
++const FIELD_COLOUR_RGB = [0.36, 0.39, 0.25]; // mesma cor base «campo» do terreno do renderer
++const NO_BAND = [1e5, 1e5, 1e5, 1e5]; // faixa pisada do M01 desligada (centro do M02 não tem parapeito M01)
++const L3_BOTTOM_Y = -3; // base das silhuetas: abaixo do chão (escondida pela moldura de chão)
++const STUBBLE_RADIUS_M = 13;
++const CRATER_RADIUS_M = 3.4;
++
++/** Fator de luz (0.25..1.2) das silhuetas sem iluminação (MeshBasic): escurece à noite com a mesma intensidade das luzes do preset. */
++export function l3LightScale(preset) {
++  const raw = (preset.hemiIntensity * 0.55 + preset.sunIntensity * 0.35) / 0.88;
++  return Math.max(0.25, Math.min(1.2, raw));
++}
++
++/** Recolore um atributo de cor: out = lerp(base * lightScale, fog, hazeMix(dist)). Escreve in-place; sem alocação. */
++export function recolourHaze(colourAttr, base, dist, fog, hazeDistM, lightScale) {
++  const a = colourAttr.array;
++  for (let i = 0; i < dist.length; i++) {
++    const mix = horizonHazeMix(dist[i], hazeDistM);
++    a[i * 3] = base[i * 3] * lightScale * (1 - mix) + fog.r * mix;
++    a[i * 3 + 1] = base[i * 3 + 1] * lightScale * (1 - mix) + fog.g * mix;
++    a[i * 3 + 2] = base[i * 3 + 2] * lightScale * (1 - mix) + fog.b * mix;
++  }
++  colourAttr.needsUpdate = true;
++}
++
++/** Anel de silhueta de uma camada L3: faixa vertical contínua com linha de topo irregular (ruído de valor semeado). Devolve vértices/triângulos em `b`. */
++export function buildSilhouetteRing(b, layer, seedBase, distOut) {
++  const [h0, h1] = layer.heightsM;
++  const n = layer.segments;
++  const first = b.vertexCount;
++  for (let k = 0; k < n; k++) {
++    const a = (k / n) * Math.PI * 2;
++    const x = Math.cos(a) * layer.radiusM;
++    const z = Math.sin(a) * layer.radiusM;
++    const low = valueNoise(k * 0.11, seedBase, seedBase + 1);
++    const high = valueNoise(k * 0.9, seedBase * 3, seedBase + 5);
++    const gap = valueNoise(k * 0.045, seedBase + 9, seedBase + 7) < 0.2 ? 0.28 : 1; // clareiras: campo aberto no horizonte
++    const h = (h0 + (h1 - h0) * (0.7 * low + 0.3 * high)) * gap;
++    const shade = 0.82 + 0.3 * hash01(k, seedBase);
++    const [r, g, bl] = layer.rgb;
++    b.vertex(x, L3_BOTTOM_Y, z, r * shade * 0.7, g * shade * 0.7, bl * shade * 0.7);
++    b.vertex(x, h, z, r * shade, g * shade, bl * shade);
++    distOut.push(layer.radiusM, layer.radiusM);
++  }
++  for (let k = 0; k < n; k++) {
++    const k2 = (k + 1) % n;
++    b.quad(first + k * 2, first + k * 2 + 1, first + k2 * 2 + 1, first + k2 * 2);
++  }
++}
++
++/** Uma caixa (8 vértices, 12 triângulos) com cor por vértice (base escura, topo claro). Para impostores L3. */
++function pushBox(b, cx, cy, cz, w, h, d, yaw, colour, distance, distOut) {
++  const c = Math.cos(yaw);
++  const s = Math.sin(yaw);
++  const first = b.vertexCount;
++  for (const [sx, sy, sz] of [[-1, 0, -1], [1, 0, -1], [1, 0, 1], [-1, 0, 1], [-1, 1, -1], [1, 1, -1], [1, 1, 1], [-1, 1, 1]]) {
++    const lx = (sx * w) / 2;
++    const lz = (sz * d) / 2;
++    const k = sy ? 1 : 0.65;
++    b.vertex(cx + lx * c + lz * s, cy + sy * h, cz - lx * s + lz * c, colour[0] * k, colour[1] * k, colour[2] * k);
++    distOut.push(distance);
++  }
++  b.quad(first + 0, first + 1, first + 5, first + 4);
++  b.quad(first + 1, first + 2, first + 6, first + 5);
++  b.quad(first + 2, first + 3, first + 7, first + 6);
++  b.quad(first + 3, first + 0, first + 4, first + 7);
++  b.quad(first + 4, first + 5, first + 6, first + 7);
++}
++
++export class M02Environment {
++  /**
++   * `parent` = THREE.Group onde o ambiente vive. `world` = M02QuintaWorld (A/B/C): `terrainHeightAt(x,z)`, `obstacles`, `layout`.
++   * `quality` = 'low'|'medium'|'high'. Constrói uma vez; `setWorld` reconstrói só o que depende do mundo (campo, bermas).
++   */
++  constructor(parent, world, { quality = 'medium', cellId = 'A' } = {}) {
++    this.parent = parent;
++    this.quality = quality;
++    this.cellId = cellId;
++    this.group = new THREE.Group();
++    this.group.name = 'm02-environment';
++    parent.add(this.group);
++
++    this.area = createM02FieldArea();
++    this.soilTexture = null; // criado com o campo (precisa de DOM canvas): dono = esta classe
++    this.fieldGroup = new THREE.Group();
++    this.worldGroup = new THREE.Group(); // bermas/montículos/crateras: dependem do mundo
++    this.treesGroup = new THREE.Group();
++    this.stubbleGroup = new THREE.Group();
++    this.l3Follow = new THREE.Group(); // anéis centrados na câmara (x/z)
++    this.l3Fixed = new THREE.Group(); // marcos provisórios fixos no mundo
++    this.group.add(this.fieldGroup, this.worldGroup, this.treesGroup, this.stubbleGroup, this.l3Follow, this.l3Fixed);
++
++    this.disposables = []; // geometrias/materiais/texturas de vida longa
++    this.worldDisposables = []; // dependentes do mundo
++    this.craterDisposables = [];
++    this.replaced = new Set();
++    this.stubblePatches = [];
++    this.treeLines = [];
++    this.fieldMesh = null;
++    this.fieldMaterial = null;
++    this.berms = [];
++    this.clods = null;
++    this.craterMeshes = null;
++    this.craterKey = '';
++    this.l3 = null;
++    this.l3Landmarks = null;
++    this.diagnostics = { fieldCells: 0, fieldCellsTotal: 0 };
++
++    this.#buildStubble();
++    this.#buildTrees();
++    this.#buildHorizonL3();
++    this.setWorld(world, cellId);
++    this.setQuality(quality);
++  }
++
++  // ---- campo + terraplenos (dependem do mundo) -------------------------------------------------------------------------------------------------------
++
++  /** Reconstrói o campo e os terraplenos para o mundo (célula A/B/C). Liberta o que foi substituído. */
++  setWorld(world, cellId = this.cellId) {
++    this.cellId = cellId;
++    this.#disposeList(this.worldDisposables);
++    this.#disposeList(this.craterDisposables);
++    this.fieldGroup.clear();
++    this.worldGroup.clear();
++    this.replaced.clear();
++    this.berms.length = 0;
++    this.clods = null;
++    this.craterMeshes = null;
++    this.craterKey = '';
++    this.#buildField(world);
++    this.#buildEarthworks(world);
++    this.#applyCellVisibility();
++    this.setQuality(this.quality);
++  }
++
++  #buildField(world) {
++    const mesh = M02_TERRAIN_MESH;
++    const b = terrainMeshBounds(mesh);
++    const rects = semanticGroundRects(world.layout);
++    const cols = mesh.segX;
++    const rows = mesh.segZ;
++    const position = new Float32Array((cols + 1) * (rows + 1) * 3);
++    let v = 0;
++    for (let j = 0; j <= rows; j++) {
++      for (let i = 0; i <= cols; i++) {
++        const x = b.minX + (mesh.widthM * i) / cols;
++        const z = b.minZ + (mesh.lengthM * j) / rows;
++        position[v++] = x;
++        position[v++] = world.terrainHeightAt(x, z) + AREA_LIFT_M;
++        position[v++] = z;
++      }
++    }
++    const index = [];
++    let total = 0;
++    for (let j = 0; j < rows; j++) {
++      for (let i = 0; i < cols; i++) {
++        total++;
++        const x0 = b.minX + (mesh.widthM * i) / cols;
++        const x1 = b.minX + (mesh.widthM * (i + 1)) / cols;
++        const z0 = b.minZ + (mesh.lengthM * j) / rows;
++        const z1 = b.minZ + (mesh.lengthM * (j + 1)) / rows;
++        if (!isFieldCell(rects, x0, x1, z0, z1)) continue;
++        const a = j * (cols + 1) + i;
++        const c = a + cols + 1;
++        index.push(a, c, a + 1, c, c + 1, a + 1);
++      }
++    }
++    const geometry = new THREE.BufferGeometry();
++    geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
++    geometry.setIndex(index);
++    geometry.computeVertexNormals();
++    geometry.computeBoundingBox();
++    geometry.computeBoundingSphere();
++    this.worldDisposables.push(geometry);
++    this.diagnostics.fieldCells = index.length / 6;
++    this.diagnostics.fieldCellsTotal = total;
++
++    if (!this.soilTexture) {
++      this.soilTexture = artTexture('soil', 256);
++      this.disposables.push(this.soilTexture);
++    }
++    const field = createFieldMaterial(this.soilTexture, {
++      track: M02_CART_TRACK,
++      band: NO_BAND,
++      origin: [(b.minX + b.maxX) / 2, (b.minZ + b.maxZ) / 2],
++      quality: this.quality,
++    });
++    Object.assign(field.material, { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -4 });
++    this.fieldMaterial = field;
++    this.worldDisposables.push(field.material);
++    const fieldMesh = new THREE.Mesh(geometry, field.material);
++    fieldMesh.name = 'm02-field';
++    fieldMesh.renderOrder = -1;
++    fieldMesh.receiveShadow = true;
++    this.fieldGroup.add(fieldMesh);
++    this.fieldMesh = fieldMesh;
++  }
++
++  #buildEarthworks(world) {
++    const { parapets, mounds } = selectEarthworkCovers(world.obstacles);
++    const earth = createEarthMaterial();
++    this.worldDisposables.push(earth);
++
++    // Bermas: a M01 põe a face de madeira (revetment) virada para +z; no M02 o jogador avança de norte (-z) para sul, por isso a berma é construída
++    // com as caixas espelhadas em z e o mesh tem scale.z = -1 (o three.js inverte o winding sozinho quando o determinante é negativo).
++    for (const box of parapets) {
++      const [mirrored] = mirrorBoxesZ([box]);
++      const geometry = buildBermGeometry([mirrored]);
++      const berm = createBermMaterial({ base: box.min.y, z: (box.min.z + box.max.z) / 2, quality: this.quality });
++      const mesh = new THREE.Mesh(geometry, berm.material);
++      mesh.name = `m02-berm:${box.id}`;
++      mesh.scale.z = -1;
++      mesh.castShadow = true;
++      mesh.receiveShadow = true;
++      this.worldGroup.add(mesh);
++      this.worldDisposables.push(geometry, berm.material);
++      this.berms.push(berm);
++      this.replaced.add(box.id);
++    }
++    if (mounds.length) {
++      const geometry = buildMoundGeometry(3, { seg: 18, detail: 1 });
++      const mesh = buildMoundInstances(mounds, geometry, earth);
++      mesh.name = 'm02-mounds';
++      this.worldGroup.add(mesh);
++      this.worldDisposables.push(geometry);
++      for (const m of mounds) this.replaced.add(m.id);
++    }
++    if (mounds.length || parapets.length) {
++      const clodGeometry = buildClodGeometry();
++      this.clods = buildClodInstances(mounds, parapets, clodGeometry, earth);
++      this.clods.name = 'm02-clods';
++      this.worldGroup.add(this.clods);
++      this.worldDisposables.push(clodGeometry);
++    }
++  }
++
++  /** true para as caixas da simulação que este módulo desenha como terra (o renderer não as desenha como caixas). */
++  replaces(id) {
++    return this.replaced.has(id);
++  }
++
++  /**
++   * Cratera do impacto fixo HS-C2/SP03 (posição lida de `sim.horizon.hsC2`, nunca inventada). Disco chamuscado + aro de terra, instanciados, 2 draws.
++   * Chamar com `null` para remover. Idempotente.
++   */
++  syncCrater(spot) {
++    const key = spot ? `${spot.x},${spot.z}` : '';
++    if (key === this.craterKey) return;
++    this.craterKey = key;
++    if (this.craterMeshes) {
++      this.worldGroup.remove(this.craterMeshes.discs, this.craterMeshes.rims);
++      this.craterMeshes = null;
++    }
++    this.#disposeList(this.craterDisposables);
++    if (!spot) return;
++    const disc = new THREE.CircleGeometry(1, 24).rotateX(-Math.PI / 2);
++    const rim = buildCraterRimGeometry();
++    const soot = new THREE.MeshStandardMaterial({ color: '#2a251d', roughness: 1, transparent: true, opacity: 0.85, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
++    const earth = createEarthMaterial();
++    this.craterDisposables.push(disc, rim, soot, earth);
++    const discs = new THREE.InstancedMesh(disc, soot, 1);
++    const rims = new THREE.InstancedMesh(rim, earth, 1);
++    const m = new THREE.Matrix4();
++    const q = new THREE.Quaternion();
++    const p = new THREE.Vector3();
++    const s = new THREE.Vector3();
++    p.set(spot.x, 0.03, spot.z);
++    s.set(CRATER_RADIUS_M, 1, CRATER_RADIUS_M * 0.86);
++    discs.setMatrixAt(0, m.compose(p, q, s));
++    p.set(spot.x, 0, spot.z);
++    s.set(CRATER_RADIUS_M * 1.02, 0.4, CRATER_RADIUS_M * 0.9);
++    rims.setMatrixAt(0, m.compose(p, q, s));
++    discs.name = 'm02-crater-disc';
++    rims.name = 'm02-crater-rim';
++    rims.castShadow = true;
++    this.worldGroup.add(discs, rims);
++    this.craterMeshes = { discs, rims };
++  }
++
++  // ---- restolho + árvores (dependem da célula, não do mundo) ------------------------------------------------------------------------------------------
++
++  #buildStubble() {
++    const b = terrainMeshBounds();
++    for (const patch of M02_STUBBLE_PATCHES) {
++      const stubble = createStubble({ bounds: patch.bounds, groundY: AREA_LIFT_M, origin: [(b.minX + b.maxX) / 2, (b.minZ + b.maxZ) / 2], radius: STUBBLE_RADIUS_M });
++      stubble.mesh.name = `m02-stubble:${patch.id}`;
++      this.stubbleGroup.add(stubble.mesh);
++      this.stubblePatches.push({ id: patch.id, bounds: patch.bounds, stubble, allocated: stubble.mesh.count });
++    }
++  }
++
++  #buildTrees() {
++    const material = createTreeMaterial();
++    this.disposables.push(material);
++    for (const line of M02_TREE_LINES) {
++      const { T, rotationY, worldOf } = treeLineLocal(line);
++      // As linhas ficam nas margens da malha (x = ±110, z = 96), onde terrainHeightAt = groundY em todas as células: chão plano, sem consulta ao mundo.
++      void worldOf;
++      const built = buildTreeLine(T, () => M02_TERRAIN_MESH.groundY);
++      const mesh = new THREE.Mesh(built.geometry, material);
++      mesh.name = `m02-trees:${line.id}`;
++      mesh.rotation.y = rotationY;
++      mesh.castShadow = false;
++      mesh.receiveShadow = true;
++      this.treesGroup.add(mesh);
++      this.disposables.push(built.geometry);
++      this.treeLines.push({ id: line.id, mesh, trees: built.trees, total: built.total, triangles: built.geometry.index.count / 3 });
++    }
++  }
++
++  // ---- horizonte L3 (1,5-8 km): impostores de baixo custo --------------------------------------------------------------------------------------------
++
++  #buildHorizonL3() {
++    // 1) moldura de chão: do limite da malha de terreno até HORIZON_L3_FAR_M (usa o nevoeiro da cena: por isso funde com o terreno sem costura).
++    const t = terrainMeshBounds();
++    const far = HORIZON_L3_FAR_M;
++    const inner = [[t.minX, t.minZ], [t.maxX, t.minZ], [t.maxX, t.maxZ], [t.minX, t.maxZ]];
++    const outer = [[t.minX - far, t.minZ - far], [t.maxX + far, t.minZ - far], [t.maxX + far, t.maxZ + far], [t.minX - far, t.maxZ + far]];
++    const pos = [];
++    for (const [x, z] of [...inner, ...outer]) pos.push(x, -0.02, z);
++    const idx = [];
++    for (let i = 0; i < 4; i++) {
++      const j = (i + 1) % 4;
++      idx.push(i, 4 + j, 4 + i, i, j, 4 + j); // winding virado para +y (normal +y verificada em teste)
++    }
++    const frame = new THREE.BufferGeometry();
++    frame.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
++    frame.setIndex(idx);
++    frame.computeVertexNormals();
++    const frameMat = new THREE.MeshStandardMaterial({ color: new THREE.Color().setRGB(...FIELD_COLOUR_RGB), roughness: 0.96, metalness: 0.02 });
++    const frameMesh = new THREE.Mesh(frame, frameMat);
++    frameMesh.name = 'm02-l3-ground-frame';
++    frameMesh.frustumCulled = false;
++    this.group.add(frameMesh); // fixa no mundo (costura com a malha de terreno); NÃO segue a câmara
++    this.disposables.push(frame, frameMat);
++
++    // 2) anéis de silhueta (3 camadas) num só geometry, cores por vértice recoloridas por preset (neblina + luz).
++    const b = new GeoBuilder();
++    const dist = [];
++    HORIZON_L3_LAYERS.forEach((layer, i) => buildSilhouetteRing(b, layer, 40 + i * 17, dist));
++    const rings = this.#finishL3Mesh(b, dist, 'm02-l3-silhouettes');
++    rings.mesh.frustumCulled = false;
++    this.l3Follow.add(rings.mesh);
++    this.l3 = rings;
++
++    // 3) marcos PROVISÓRIOS + quintas distantes (detalhe L3; escondido em qualidade baixa). Posições fixas no mundo (azimute/distância de horizon-system).
++    const d = new GeoBuilder();
++    const dd = [];
++    const lm = HORIZON_L3_LANDMARKS;
++    for (const mark of lm) {
++      const p = horizonAzimuthToWorld(mark.azimuthDeg, mark.distanceM);
++      const yaw = Math.atan2(-p.x, -p.z); // eixo local x do volume = tangente ao horizonte (perpendicular à direção origem->marco)
++      if (mark.towers === 0) {
++        // massa urbana baixa: fila de volumes de alturas variadas (sem torre inventada)
++        const n = Math.round(mark.widthM / 34);
++        for (let k = 0; k < n; k++) {
++          const off = (k - (n - 1) / 2) * 34;
++          const h = mark.heightM * (0.38 + 0.62 * hash01(k, 71));
++          const ox = Math.cos(yaw) * off;
++          const oz = -Math.sin(yaw) * off;
++          pushBox(d, p.x + ox, 0, p.z + oz, 30, h, 20, yaw, [0.09, 0.1, 0.1], mark.distanceM, dd);
++        }
++      } else {
++        // volume de estudo: nave + duas torres (provisório; sem pretensão de fidelidade)
++        const nave = [mark.widthM * 0.55, mark.heightM * 0.5, 36];
++        pushBox(d, p.x, 0, p.z, nave[0], nave[1], nave[2], yaw, [0.1, 0.11, 0.11], mark.distanceM, dd);
++        for (const side of [-1, 1]) {
++          const off = side * mark.widthM * 0.42;
++          pushBox(d, p.x + Math.cos(yaw) * off, 0, p.z - Math.sin(yaw) * off, 12, mark.heightM, 12, yaw, [0.1, 0.11, 0.11], mark.distanceM, dd);
++        }
++      }
++    }
++    // quintas distantes: 9 grupos de 3-4 volumes a 1,6-2,6 km, azimutes pseudo-aleatórios determinísticos (sem repetição idêntica)
++    for (let g = 0; g < 9; g++) {
++      const az = hash01(g, 311) * 360;
++      const dist2 = 1600 + hash01(g, 312) * 1000;
++      const c = horizonAzimuthToWorld(az, dist2);
++      const n = 3 + Math.floor(hash01(g, 313) * 2);
++      for (let k = 0; k < n; k++) {
++        const bw = 9 + hash01(g * 7 + k, 314) * 10;
++        const bh = 5 + hash01(g * 7 + k, 315) * 5;
++        pushBox(d, c.x + (hash01(g * 7 + k, 316) - 0.5) * 70, 0, c.z + (hash01(g * 7 + k, 317) - 0.5) * 70, bw, bh, 8 + hash01(g * 7 + k, 318) * 6, hash01(g * 7 + k, 319) * 3.14, [0.1, 0.095, 0.085], dist2, dd);
++      }
++    }
++    const landmarks = this.#finishL3Mesh(d, dd, 'm02-l3-landmarks');
++    landmarks.mesh.frustumCulled = false;
++    this.l3Fixed.add(landmarks.mesh);
++    this.l3Landmarks = landmarks;
++  }
++
++  #finishL3Mesh(builder, dist, name) {
++    const geometry = builder.build();
++    geometry.deleteAttribute('normal'); // MeshBasic: sem iluminação
++    const colour = geometry.getAttribute('color');
++    const base = new Float32Array(colour.array); // cor base (antes de neblina/luz)
++    const distances = Float32Array.from(dist);
++    const material = new THREE.MeshBasicMaterial({ vertexColors: true, fog: false, side: THREE.DoubleSide });
++    const mesh = new THREE.Mesh(geometry, material);
++    mesh.name = name;
++    this.disposables.push(geometry, material);
++    return { mesh, geometry, colour, base, distances, triangles: geometry.index.count / 3 };
++  }
++
++  /** Aplica neblina/luz do preset às silhuetas L3 (apenas no preset change; nunca por frame). `preset.hazeDistM` = visibilidade em metros. */
++  applyAtmosphere(preset) {
++    const fog = new THREE.Color(preset.fogColor);
++    const scale = l3LightScale(preset);
++    const haze = preset.hazeDistM ?? 9000;
++    for (const part of [this.l3, this.l3Landmarks]) {
++      if (part) recolourHaze(part.colour, part.base, part.distances, fog, haze, scale);
++    }
++  }
++
++  // ---- qualidade, célula e frame -------------------------------------------------------------------------------------------------------------------
++
++  /** Escala o que é desenhado com o nível (nunca cobertura nem leitura de combate): restolho (alta/média), árvores (fração), clods, detalhe L3. */
++  setQuality(quality) {
++    this.quality = quality;
++    this.fieldMaterial?.setQuality(quality);
++    for (const berm of this.berms) berm.setQuality(quality);
++    const share = TREE_SHARE[quality] ?? TREE_SHARE.low;
++    for (const line of this.treeLines) {
++      const r = treeDrawRange(line.trees, share);
++      line.mesh.geometry.setDrawRange(r.start, r.count);
++      line.drawn = r.trees;
++    }
++    const tufts = { high: 3400, medium: 1400, low: 0 }[quality] ?? 0;
++    for (const p of this.stubblePatches) p.tufts = Math.min(p.allocated, tufts);
++    if (this.clods) this.clods.count = Math.max(1, Math.round(this.clods.userData.total * ({ low: 0.45, medium: 0.7, high: 1 }[quality] ?? 0.45)));
++    if (this.l3Landmarks) this.l3Landmarks.mesh.visible = quality !== 'low';
++    this.#applyCellVisibility();
++  }
++
++  #applyCellVisibility() {
++    const inA = this.cellId === 'A';
++    this.treesGroup.visible = inA;
++    this.stubbleGroup.visible = inA;
++  }
++
++  /**
++   * Por frame (sem alocações): os anéis L3 seguem a câmara em x/z; o restolho só é desenhado perto da câmara (o shader dá a volta ao azulejo em torno dela).
++   * Só lê a posição da câmara.
++   */
++  update(camera) {
++    this.l3Follow.position.x = camera.position.x;
++    this.l3Follow.position.z = camera.position.z;
++    const cx = camera.position.x;
++    const cz = camera.position.z;
++    for (const p of this.stubblePatches) {
++      const [minX, maxX, minZ, maxZ] = p.bounds;
++      const dx = Math.max(minX - cx, 0, cx - maxX);
++      const dz = Math.max(minZ - cz, 0, cz - maxZ);
++      const n = p.tufts ?? 0;
++      p.stubble.mesh.count = Math.max(1, n);
++      p.stubble.mesh.visible = n > 0 && dx * dx + dz * dz < STUBBLE_RADIUS_M * STUBBLE_RADIUS_M;
++    }
++  }
++
++  get stats() {
++    let triangles = this.fieldMesh ? this.fieldMesh.geometry.index.count / 3 : 0;
++    let drawCalls = this.fieldMesh ? 1 : 0;
++    for (const line of this.treeLines) {
++      if (!this.treesGroup.visible) break;
++      triangles += line.mesh.geometry.drawRange.count / 3;
++      drawCalls++;
++    }
++    for (const p of this.stubblePatches) {
++      if (this.stubbleGroup.visible && p.stubble.mesh.visible) {
++        triangles += (p.stubble.mesh.count * p.stubble.triangles) / p.allocated;
++        drawCalls++;
++      }
++    }
++    for (const mesh of this.worldGroup.children) {
++      if (!mesh.visible) continue;
++      drawCalls++;
++      const g = mesh.geometry;
++      triangles += ((g.index ? g.index.count : g.attributes.position.count) / 3) * (mesh.isInstancedMesh ? mesh.count : 1);
++    }
++    for (const part of [this.l3, this.l3Landmarks]) {
++      if (part && part.mesh.visible) {
++        drawCalls++;
++        triangles += part.triangles;
++      }
++    }
++    drawCalls += 1; // moldura de chão
++    triangles += 8;
++    return { drawCalls, triangles: Math.round(triangles), fieldCells: this.diagnostics.fieldCells, fieldCellsTotal: this.diagnostics.fieldCellsTotal };
++  }
++
++  #disposeList(list) {
++    for (const item of list) item.dispose();
++    list.length = 0;
++  }
++
++  dispose() {
++    this.#disposeList(this.worldDisposables);
++    this.#disposeList(this.craterDisposables);
++    this.#disposeList(this.disposables);
++    for (const p of this.stubblePatches) p.stubble.dispose();
++    this.stubblePatches.length = 0;
++    this.treeLines.length = 0;
++    this.group.removeFromParent();
++    this.group.clear();
++  }
++}
+diff --git a/src/world/m02-environment-area.js b/src/world/m02-environment-area.js
+new file mode 100644
+index 0000000..4350b7c
+--- /dev/null
++++ b/src/world/m02-environment-area.js
+@@ -0,0 +1,142 @@
++// M02 «Operação Bzura» — dados PUROS do ambiente (secção G do PDF; auditoria G.md): ponte entre o mundo M02 (METROS) e os módulos de ambiente da M01
++// (src/render/m01-area-field/stubble/trees/earthworks, que desenham em metros Three.js: x/z solo, y altura). Sem Three.js, sem DOM, sem aleatoriedade:
++// só descritores e classificação, para o renderer (src/render/m02-environment.js) e para testes em Node.
++//
++// UNIDADES: o gameplay M02 está em METROS. A M01 legada usa 32 unidades = 1 m só no seu motor antigo (AGENTS.md); os módulos m01-area-* já são
++// em metros (alturas de árvores 11-26 m, relva 0,1-0,2 m). Nada aqui divide ou multiplica por 32: LEGACY_UNITS_PER_METRE só existe para o teste
++// de ponte (tests/m02-07-environment-horizon-units.test.js) que prova que nenhum valor foi aplicado com a escala errada.
++
++export const LEGACY_UNITS_PER_METRE = 32;
++/** Converte unidades legadas da M01 (32 u = 1 m) em metros. Só para pontes/testes; o ambiente M02 nunca recebe unidades legadas. */
++export const legacyUnitsToMetres = (units) => units / LEGACY_UNITS_PER_METRE;
++
++/** Malha de terreno do renderer M02 (m): 240 x 340, centrada em z = -65 (cobre x -120..120, z -235..105). Fonte única para renderer e ambiente. */
++export const M02_TERRAIN_MESH = Object.freeze({
++  widthM: 240,
++  lengthM: 340,
++  segX: 64,
++  segZ: 90,
++  centreX: 0,
++  centreZ: -65,
++  groundY: 0,
++});
++
++export function terrainMeshBounds(mesh = M02_TERRAIN_MESH) {
++  return {
++    minX: mesh.centreX - mesh.widthM / 2,
++    maxX: mesh.centreX + mesh.widthM / 2,
++    minZ: mesh.centreZ - mesh.lengthM / 2,
++    maxZ: mesh.centreZ + mesh.lengthM / 2,
++  };
++}
++
++/** Carreiro de carroça N-S (C01 P1 z=-175 até à quinta): usado como rodeiras/desgaste no shader do campo (polilinha [x,z] em m, 2 segmentos). */
++export const M02_CART_TRACK = Object.freeze([Object.freeze([0, -235]), Object.freeze([0, -100]), Object.freeze([0, 20])]);
++
++/** Trincheira transversal EA0 (C01) — mesma caixa que o terreno usa em terrainHeightAt (m). */
++export const M02_OUTPOST_TRENCH = Object.freeze({ minX: -26.5, maxX: -9.0, minZ: -112.5, maxZ: -109.2 });
++
++/**
++ * Descritor de «área» no formato que m01-area-field espera (`area.ground`, `area.groundY`, `area.bounds.playable/terrainRegion`), em metros.
++ * `terrainRegion` vazia (min > max): o chão M02 NÃO é plano (vala, trincheira, micro-relevo), por isso a malha do campo segue sempre `base(x,z)`.
++ * `playable` = a própria malha de terreno: o deslocamento visual `areaReliefOffset` é 0 em todo o campo, ou seja, o chão desenhado é o da simulação.
++ */
++export function createM02FieldArea(mesh = M02_TERRAIN_MESH) {
++  const b = terrainMeshBounds(mesh);
++  const region = Object.freeze({ ...b });
++  return Object.freeze({
++    area: 'm02-bzura',
++    groundY: mesh.groundY,
++    ground: region,
++    bounds: Object.freeze({
++      playable: Object.freeze({ minX: b.minX - 8, maxX: b.maxX + 8, minZ: b.minZ - 8, maxZ: b.maxZ + 8 }),
++      terrainRegion: Object.freeze({ minX: 1, maxX: -1, minZ: 1, maxZ: -1 }),
++    }),
++  });
++}
++
++const overlaps = (a, minX, maxX, minZ, maxZ, margin = 0) =>
++  a.minX - margin < maxX && a.maxX + margin > minX && a.minZ - margin < maxZ && a.maxZ + margin > minZ;
++
++/**
++ * Zonas «semânticas» do terreno M02 onde o campo agrícola NÃO deve ser desenhado: continuam com a cor de vértice do terreno (vala húmida, trincheira,
++ * pátio, pomar relvado, chão de edifícios). Devolve retângulos {minX,maxX,minZ,maxZ} em metros a partir do layout do mundo (A, B ou C).
++ */
++export function semanticGroundRects(layout) {
++  const rects = [];
++  for (const b of layout?.buildings ?? []) {
++    const [minX, maxX, minZ, maxZ] = b.bounds;
++    rects.push({ minX: minX - 1.5, maxX: maxX + 1.5, minZ: minZ - 1.5, maxZ: maxZ + 1.5 });
++  }
++  const z = layout?.zones ?? {};
++  if (z.courtyard) rects.push({ minX: z.courtyard.minX, maxX: z.courtyard.maxX, minZ: z.courtyard.minZ, maxZ: z.courtyard.maxZ });
++  if (z.ditch) rects.push({ minX: z.ditch.minX - 2.5, maxX: z.ditch.maxX + 2.5, minZ: z.ditch.minZ - 2, maxZ: z.ditch.maxZ + 2 });
++  if (z.orchard) rects.push({ minX: z.orchard.minX, maxX: z.orchard.maxX, minZ: z.orchard.minZ, maxZ: z.orchard.maxZ });
++  rects.push({ ...M02_OUTPOST_TRENCH, minX: M02_OUTPOST_TRENCH.minX - 1.5, maxX: M02_OUTPOST_TRENCH.maxX + 1.5, minZ: M02_OUTPOST_TRENCH.minZ - 1.5, maxZ: M02_OUTPOST_TRENCH.maxZ + 1.5 });
++  return rects;
++}
++
++/** true se a célula [minX,maxX]x[minZ,maxZ] da malha de terreno deve receber o campo agrícola (não toca nenhuma zona semântica). */
++export function isFieldCell(rects, minX, maxX, minZ, maxZ) {
++  for (const r of rects) if (overlaps(r, minX, maxX, minZ, maxZ)) return false;
++  return true;
++}
++
++/**
++ * Manchas de restolho (m01-area-stubble) sobre chão PLANO (y = groundY): o shader do restolho usa um y uniforme, logo só pode cobrir onde o terreno
++ * da simulação é plano (terrainHeightAt = 0). Norte (aproximação C01, abaixo da trincheira EA0) e oeste (além da vala, fora do pátio). `bounds` = [minX,maxX,minZ,maxZ].
++ */
++export const M02_STUBBLE_PATCHES = Object.freeze([
++  Object.freeze({ id: 'stubble_north', bounds: Object.freeze([-117, 117, -232, -116]) }),
++  Object.freeze({ id: 'stubble_west', bounds: Object.freeze([-117, -53, -104, 100]) }),
++]);
++
++/**
++ * Linhas de árvores (m01-area-trees): {minX,maxX,z,depthM,count} em metros, ao longo de x a z constante. Só nas margens sul/oeste/este da malha, em
++ * segmentos curtos que NÃO tapam o corredor C01 a norte, a coluna HS-A3 (z=-245) nem a linha de vista para o horizonte este (eventos HS-A2). Ilustrativas:
++ * a vegetação real da zona não tem fonte (G1); NÃO são macieiras nem têm colisão.
++ */
++export const M02_TREE_LINES = Object.freeze([
++  Object.freeze({ id: 'sebe_sul', axis: 'x', fixed: 96, from: -112, to: 112, depthM: 10, count: 22 }),
++  Object.freeze({ id: 'sebe_oeste', axis: 'z', fixed: -110, from: 4, to: 92, depthM: 9, count: 9 }),
++  Object.freeze({ id: 'sebe_este', axis: 'z', fixed: 110, from: 60, to: 92, depthM: 8, count: 5 }),
++]);
++
++/**
++ * Descritor `{minX,maxX,z,depthM,count}` de m01-area-trees.buildTreeLine para uma linha de M02_TREE_LINES, em coordenadas LOCAIS do mesh.
++ * axis 'x': local = mundo. axis 'z': o renderer roda o mesh +90 graus em y (x' = v, z' = -u), logo u = -z e v = x; `worldOf(u, v)` devolve {x,z} do mundo.
++ */
++export function treeLineLocal(line) {
++  if (line.axis === 'x') {
++    return { T: { minX: line.from, maxX: line.to, z: line.fixed, depthM: line.depthM, count: line.count }, rotationY: 0, worldOf: (u, v) => ({ x: u, z: v }) };
++  }
++  return { T: { minX: -line.to, maxX: -line.from, z: line.fixed, depthM: line.depthM, count: line.count }, rotationY: Math.PI / 2, worldOf: (u, v) => ({ x: v, z: -u }) };
++}
++
++/**
++ * Das caixas do mundo (obstáculos), escolhe as de terra que a M01 desenha como terraplenos: parapeitos longos e baixos (berma) e montículos.
++ * Mantém as caixas da simulação como colisão: o renderer só as substitui visualmente. IDs lidos do mundo, não inventados.
++ */
++export function selectEarthworkCovers(obstacles) {
++  const parapets = [];
++  const mounds = [];
++  for (const o of obstacles ?? []) {
++    if (o.role !== 'cover' || o.material !== 'earth') continue;
++    const w = o.max.x - o.min.x;
++    const d = o.max.z - o.min.z;
++    const h = o.max.y - o.min.y;
++    if (h <= 0 || h > 1.6) continue;
++    if (w >= 4 && d <= 1.2) parapets.push(o);
++    else mounds.push(o);
++  }
++  return { parapets, mounds };
++}
++
++/** Espelha caixas em z (z' = -z) para berma com a face de madeira virada para -z; o renderer aplica scale.z = -1 ao mesh. */
++export function mirrorBoxesZ(boxes) {
++  return boxes.map((o) => ({
++    id: o.id,
++    min: { x: o.min.x, y: o.min.y, z: -o.max.z },
++    max: { x: o.max.x, y: o.max.y, z: -o.min.z },
++  }));
++}
+diff --git a/src/world/m02-horizon-system.js b/src/world/m02-horizon-system.js
+index 77db802..a0c3ef4 100644
+--- a/src/world/m02-horizon-system.js
++++ b/src/world/m02-horizon-system.js
+@@ -38,6 +38,87 @@ export const HORIZON_SECTORS_360 = Object.freeze([
+   Object.freeze({ id: 'NW', azimuthDeg: 315, label: 'Noroeste · Campos baixos e linha de árvores do Bzura', layer: 'L2/L3' }),
+ ]);
+ 
++// ---------------------------------------------------------------------------------------------------------------------------------------------------------
++// H2 / L3 — camada de horizonte distante (PDF pp. 30-32): 1,5 a 8 km. TODAS as distâncias abaixo estão em METROS (o gameplay M02 é em metros; ver
++// tests/m02-07-environment-horizon-units.test.js). Dados puros: o renderer (src/render/m02-environment.js) desenha impostores de baixo custo a partir
++// destas constantes e nunca decide nada; a simulação só guarda eventos (HS-A2) a estas distâncias.
++// ---------------------------------------------------------------------------------------------------------------------------------------------------------
++export const HORIZON_L3_NEAR_M = 1500;
++export const HORIZON_L3_FAR_M = 8000;
++/** Margem para o fade de entrada/saída da camada L3 (fora de [NEAR, FAR] a opacidade cai a 0 em FADE_MARGIN_M). */
++export const HORIZON_L3_FADE_MARGIN_M = 300;
++/** `camera.far` do renderer: tem de cobrir o raio máximo da camada L3 (+ margem do fade). */
++export const HORIZON_CAMERA_FAR_M = HORIZON_L3_FAR_M + 600;
++/** Tecto da mistura de neblina: as silhuetas nunca desaparecem por completo (perspetiva atmosférica, não nevoeiro opaco). */
++export const HORIZON_HAZE_MAX_MIX = 0.88;
++/** Distância de referência (m) a partir da qual flashes/colunas de fumo L3 são ampliados para continuarem legíveis; ver horizonImpostorScale. */
++export const HORIZON_IMPOSTOR_REFERENCE_M = 300;
++export const HORIZON_IMPOSTOR_SCALE_MAX = 10;
++
++/**
++ * Camadas L3 (do mais perto para o mais longe). `radiusM` = raio do anel de silhueta; `heightsM` = intervalo de altura da silhueta (m acima do solo);
++ * `rgb` = cor base (0..1) antes da mistura de neblina. As bandas [nearM, farM] cobrem 1,5-8 km sem lacunas.
++ */
++export const HORIZON_L3_LAYERS = Object.freeze([
++  Object.freeze({ id: 'L3_A_sebes_e_quintas', nearM: 1500, farM: 2600, radiusM: 2000, heightsM: Object.freeze([9, 24]), segments: 96, rgb: Object.freeze([0.07, 0.1, 0.05]) }),
++  Object.freeze({ id: 'L3_B_bosques_e_povoados', nearM: 2600, farM: 4800, radiusM: 3600, heightsM: Object.freeze([16, 46]), segments: 128, rgb: Object.freeze([0.07, 0.095, 0.06]) }),
++  Object.freeze({ id: 'L3_C_cumeada', nearM: 4800, farM: 8000, radiusM: 6400, heightsM: Object.freeze([30, 95]), segments: 160, rgb: Object.freeze([0.08, 0.1, 0.09]) }),
++]);
++
++/**
++ * Marcos L3 PROVISÓRIOS (H3): azimutes e distâncias são placeholders até GEO-01 (NMT/georreferenciação). Sem torre inventada em Łęczyca; Tum como volume de
++ * estudo (nave + duas torres) marcado `provisional`. Azimute em graus no sentido horário a partir do Norte (-z); ver horizonAzimuthToWorld.
++ */
++export const HORIZON_L3_LANDMARKS = Object.freeze([
++  Object.freeze({ id: 'L3_LECZYCA_MASSA_URBANA', sectorId: 'E', azimuthDeg: 90, distanceM: 2800, widthM: 520, heightM: 26, towers: 0, provisional: true, label: 'Massa urbana de Łęczyca (provisória, sem torre)' }),
++  Object.freeze({ id: 'L3_TUM_VOLUME_ESTUDO', sectorId: 'SW', azimuthDeg: 225, distanceM: 4200, widthM: 150, heightM: 38, towers: 2, provisional: true, label: 'Volume de estudo de Tum (provisório)' }),
++]);
++
++/** Azimute (graus, horário a partir do Norte = -z; E = +x) + distância (m) -> posição no mundo (m). Arredonda ao metro. */
++export function horizonAzimuthToWorld(azimuthDeg, distanceM, centre = { x: 0, z: 0 }) {
++  const a = (azimuthDeg * Math.PI) / 180;
++  return { x: Math.round(centre.x + Math.sin(a) * distanceM), z: Math.round(centre.z - Math.cos(a) * distanceM) };
++}
++
++/** Camada L3 que cobre a distância `distM` (m), ou null se estiver fora de 1,5-8 km. */
++export function horizonLayerForDistance(distM) {
++  if (!(distM >= HORIZON_L3_NEAR_M && distM <= HORIZON_L3_FAR_M)) return null;
++  for (const layer of HORIZON_L3_LAYERS) if (distM >= layer.nearM && distM <= layer.farM) return layer;
++  return null;
++}
++
++/** Mistura de neblina (0..HORIZON_HAZE_MAX_MIX) à distância `distM` para uma visibilidade `hazeDistM` (distância a que 63% do contraste se perde). */
++export function horizonHazeMix(distM, hazeDistM) {
++  if (!(distM > 0) || !(hazeDistM > 0)) return 0;
++  return Math.min(HORIZON_HAZE_MAX_MIX, 1 - Math.exp(-distM / hazeDistM));
++}
++
++/** Opacidade 0..1 da camada L3 à distância `distM`: sobe com smoothstep em [NEAR-margem, NEAR] e desce em [FAR, FAR+margem]; 1 dentro de [NEAR, FAR]. */
++export function horizonFadeAlpha(distM) {
++  const m = HORIZON_L3_FADE_MARGIN_M;
++  const smooth = (t) => {
++    const c = Math.max(0, Math.min(1, t));
++    return c * c * (3 - 2 * c);
++  };
++  if (distM < HORIZON_L3_NEAR_M) return smooth((distM - (HORIZON_L3_NEAR_M - m)) / m);
++  if (distM > HORIZON_L3_FAR_M) return smooth(1 - (distM - HORIZON_L3_FAR_M) / m);
++  return 1;
++}
++
++/** Fator de escala (>=1) de flashes/colunas L3 para estes manterem tamanho angular legível: distM / referência, limitado. */
++export function horizonImpostorScale(distM) {
++  return Math.max(1, Math.min(HORIZON_IMPOSTOR_SCALE_MAX, distM / HORIZON_IMPOSTOR_REFERENCE_M));
++}
++
++/** Colocação dos 5 eventos finitos HS-A2 (azimute em graus a partir do Norte, distância à origem do mundo em m, instante do flash em s de simulação). */
++const HS_A2_L3_PLACEMENT = Object.freeze([
++  Object.freeze({ azimuthDeg: 62, distanceM: 1900, y: 2, flashAt: 2.5 }),
++  Object.freeze({ azimuthDeg: 75, distanceM: 2300, y: 3, flashAt: 9.0 }),
++  Object.freeze({ azimuthDeg: 88, distanceM: 2700, y: 2, flashAt: 18.0 }),
++  Object.freeze({ azimuthDeg: 97, distanceM: 3300, y: 4, flashAt: 28.0 }),
++  Object.freeze({ azimuthDeg: 108, distanceM: 3900, y: 2, flashAt: 40.0 }),
++]);
++
+ // H5 / HZ-02: L1<->L2 promotion/demotion with 15% hysteresis around 250m
+ export const LOD_PROMOTE_TO_L1_M = 230.0;
+ export const LOD_DEMOTE_TO_L2_M = 268.0;
+@@ -68,13 +149,19 @@ export class M02HorizonDirector {
+     this.hsA2 = {
+       id: 'HS-A2',
+       state: 'OFFENSIVE_FIRE', // OFFENSIVE_FIRE -> POSITION_TAKEN -> SETTLED_SMOKE
+-      events: [
+-        { id: 'ev_hsa2_01', x: 340, y: 2, z: -210, flashAt: 2.5, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
+-        { id: 'ev_hsa2_02', x: 420, y: 3, z: -140, flashAt: 9.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
+-        { id: 'ev_hsa2_03', x: 380, y: 2, z: -65, flashAt: 18.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
+-        { id: 'ev_hsa2_04', x: 460, y: 4, z: 30, flashAt: 28.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
+-        { id: 'ev_hsa2_05', x: 310, y: 2, z: 95, flashAt: 40.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
+-      ],
++      // L3 (1,5-8 km): posições derivadas de azimute+distância em metros. Antes estavam a 310-460 m (L2), em contradição com o PDF (H2).
++      events: HS_A2_L3_PLACEMENT.map((p, i) => ({
++        id: `ev_hsa2_0${i + 1}`,
++        ...horizonAzimuthToWorld(p.azimuthDeg, p.distanceM),
++        y: p.y,
++        flashAt: p.flashAt,
++        distanceFromOriginM: p.distanceM,
++        layer: 'L3',
++        flashed: false,
++        soundArrivalAt: null,
++        soundPlayed: false,
++        smokeActive: false,
++      })),
+     };
+ 
+     // HS-A3: Rear logistics column on northern road (passes once, never loops)
