@@ -27,8 +27,8 @@ export function actsPlan(data=acts){
   return Object.freeze({enabled:data.enabled,order:Object.freeze([...data.order]),entries:data.entries});
 }
 export const ACTS=actsPlan();
-/** QA aliases for the URL (?act=vii-a). */
-export const ACT_ALIASES=Object.freeze({'vii-a':'act_vii_a_north','act_vii_a_north':'act_vii_a_north','vii-b':'act_vii_b_north_day','act_vii_b_north_day':'act_vii_b_north_day','bw':BW_ACT});
+/** QA aliases for the URL (?act=vii-a, ?act=vii-b, ?act=vii-c). */
+export const ACT_ALIASES=Object.freeze({'vii-a':'act_vii_a_north','act_vii_a_north':'act_vii_a_north','vii-b':'act_vii_b_north_day','act_vii_b_north_day':'act_vii_b_north_day','vii-c':'act_vii_c_withdrawal','act_vii_c_withdrawal':'act_vii_c_withdrawal','bw':BW_ACT});
 
 /** What act a simulation is running (an M01Simulation is the current act). */
 export const actOf=sim=>sim instanceof M01AreaSimulation?sim.actId:BW_ACT;

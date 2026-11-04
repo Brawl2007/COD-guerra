@@ -2,11 +2,12 @@
   "schemaVersion": 1,
   "missionId": "m01_tczew",
   "enabled": false,
-  "enabledNote": "R4 INC-1 (2026-10-25). Desligado até à aceitação humana: com false o jogo é exatamente o de antes (M01Simulation, saves de esquema 2, debrief às 07:05). QA: ?acts=1 liga a cadeia de atos nesta página; ?act=vii-a começa diretamente no ato VII-a (src/main.js). O plano R4 (§3.1) punha este bloco em mission.json; mission.json é uma entrada fixada por sha256 no golden da emenda 20 (tests/fixtures/m01-opening-gameplay-baseline.json inputsSha256), por isso fica aqui, ao lado, sem mexer num byte do ato atual. INC-2 (2026-11-04): a cadeia passa a BW → VII-a → VII-b (o debrief vem a seguir ao VII-b); continua desligada por omissão. QA: ?act=vii-b começa diretamente no VII-b.",
+  "enabledNote": "R4 INC-1 (2026-10-25). Desligado até à aceitação humana: com false o jogo é exatamente o de antes (M01Simulation, saves de esquema 2, debrief às 07:05). QA: ?acts=1 liga a cadeia de atos nesta página; ?act=vii-a começa diretamente no ato VII-a (src/main.js). O plano R4 (§3.1) punha este bloco em mission.json; mission.json é uma entrada fixada por sha256 no golden da emenda 20 (tests/fixtures/m01-opening-gameplay-baseline.json inputsSha256), por isso fica aqui, ao lado, sem mexer num byte do ato atual. INC-2 (2026-11-04): a cadeia passa a BW → VII-a → VII-b (o debrief vem a seguir ao VII-b); continua desligada por omissão. QA: ?act=vii-b começa diretamente no VII-b. INC-3 (2026-11-04): a cadeia passa a BW → VII-a → VII-b → VII-c (o debrief vem a seguir ao VII-c); continua desligada por omissão. QA: ?act=vii-c começa diretamente no VII-c.",
   "order": [
     "act_bw_0430_0705",
     "act_vii_a_north",
-    "act_vii_b_north_day"
+    "act_vii_b_north_day",
+    "act_vii_c_withdrawal"
   ],
   "entries": {
     "act_bw_0430_0705": {
@@ -39,7 +40,18 @@
       "data": "areas/np/act-vii-b.json",
       "layout": "areas/np/layout.json",
       "save": "schema 3 (envelope com carry + actSave)",
-      "transition": "cartão cs_npb_entry («Mais tarde…») depois do cartão de fim do VII-a, antes do debrief",
+      "transition": "cartão cs_npb_entry («Mais tarde…») depois do cartão de fim do VII-a; a seguir ao cartão de fim do VII-b (cs_npb_end), o cartão da ordem (cs_npc_order) abre o VII-c",
+      "next": "act_vii_c_withdrawal"
+    },
+    "act_vii_c_withdrawal": {
+      "area": "np",
+      "window": "ordem por volta das 17:00 (T03, resumo, certeza média) · retirada ao anoitecer (18:00–20:00, T03; relógio interno de 19:00, só luz e som)",
+      "timeCertainty": "MEDIUM",
+      "simulation": "M01AreaSimulation",
+      "data": "areas/np/act-vii-c.json",
+      "layout": "areas/np/layout.json",
+      "save": "schema 3 (envelope com carry + actSave)",
+      "transition": "cartão cs_npc_order («Por volta das 17:00») depois do cartão de fim do VII-b, seguido do cartão cs_npc_dusk («Ao anoitecer»), antes do debrief",
       "next": null
     }
   }
