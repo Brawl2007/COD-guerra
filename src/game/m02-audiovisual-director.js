@@ -237,6 +237,9 @@ export class M02AudiovisualDirector {
       accessibility: structuredClone(this.accessibility),
       weaponKinematics: structuredClone(this.weaponKinematics),
       cameraShake: structuredClone(this.cameraShake),
+      // SAVE-01: os IDs `aud_N` derivam do comprimento do registo e os indicadores expiram pelo relógio da simulação.
+      spatialAudioLog: structuredClone(this.spatialAudioLog),
+      directionalIndicators: structuredClone(this.directionalIndicators),
     };
   }
 
@@ -245,5 +248,7 @@ export class M02AudiovisualDirector {
     if (snap.accessibility) this.accessibility = structuredClone(snap.accessibility);
     if (snap.weaponKinematics) this.weaponKinematics = structuredClone(snap.weaponKinematics);
     if (snap.cameraShake) this.cameraShake = structuredClone(snap.cameraShake);
+    this.spatialAudioLog = structuredClone(snap.spatialAudioLog ?? []);
+    this.directionalIndicators = structuredClone(snap.directionalIndicators ?? []);
   }
 }

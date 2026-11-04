@@ -42,6 +42,19 @@ import {
   exportCampaignResultToM03 as runExportCampaignResultToM03,
   syncAreaCWorldDamage,
 } from './m02-acts-director.js';
+import {
+  M02SaveStore,
+  M02_MISSION_ID,
+  M02_SNAPSHOT_SCHEMA,
+  M02_SNAPSHOT_SCHEMA_VERSION,
+  M02_LEGACY_SNAPSHOT_SCHEMA_V1,
+  M02_RNG_ALGORITHM,
+  M02_CELL_IDS,
+  M02_LAYOUT_SCHEMA_BY_CELL,
+  m02NarrativeStamp,
+  m02CellInteractiveIds,
+  findNonFiniteNumber,
+} from './m02-save-store.js';
 
 const WALK_SPEED = 4.2;
 const SPRINT_SPEED = 6.1;
@@ -55,77 +68,211 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
   tgt_b01_hall_door: 'DE-A08',
 });
 
-export function validateM02Snapshot(snap) {
-  if (!snap || (snap.schema !== 'm02-01-bench-snapshot-v1' && snap.schema !== 'm02-02-snapshot-v2')) {
-    return { valid: false, reason: 'Schema de snapshot M02 inválido.' };
+const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELOAD_SINGLE']);
+const PLAYER_ID = 'piotr_sokol';
+
+const isPlainObject = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
+const isUint32 = (v) => Number.isInteger(v) && v >= 0 && v <= 0xffffffff;
+const isNonNegativeInteger = (v) => Number.isSafeInteger(v) && v >= 0;
+
+function validateStateMap(map, label, knownIds, allowed) {
+  if (!isPlainObject(map)) return `Mapa de ${label} ausente no snapshot.`;
+  for (const [id, state] of Object.entries(map)) {
+    if (!knownIds.has(id)) return `ID de ${label} inexistente na versão atual do layout: ${id}`;
+    if (!allowed.includes(state)) return `Estado de ${label} inválido: ${state}`;
   }
-  if (typeof snap.clock !== 'number' || !Number.isFinite(snap.clock) || snap.clock < 0) {
+  for (const id of knownIds) {
+    if (!(id in map)) return `Estado de ${label} em falta no snapshot: ${id}`;
+  }
+  return null;
+}
+
+/**
+ * Fase 1 do restauro (PDF I5): valida tudo antes de tocar no estado vivo — schema e versão, semente e estado do gerador,
+ * data narrativa, célula e versão de layout, IDs de portas/janelas/cercas existentes, enums, números finitos, IDs únicos
+ * e relações (carriedBy, fechaduras de porta, granadas). Nunca lança; devolve { valid, reason }.
+ */
+export function validateM02Snapshot(snap) {
+  if (!isPlainObject(snap)) {
+    return { valid: false, reason: 'Schema de snapshot M02 inválido: snapshot ausente.' };
+  }
+  if (snap.schema === M02_LEGACY_SNAPSHOT_SCHEMA_V1) {
+    return {
+      valid: false,
+      reason:
+        'Schema de snapshot M02 v1 incompatível: não guarda a semente nem o estado do gerador (rng), por isso o restauro ' +
+        'não seria determinístico (SAVE-01). Sem migração: os checkpoints v1 só existiam em memória.',
+    };
+  }
+  if (snap.schema !== M02_SNAPSHOT_SCHEMA || snap.schemaVersion !== M02_SNAPSHOT_SCHEMA_VERSION) {
+    return { valid: false, reason: `Schema de snapshot M02 inválido: ${snap.schema}@${snap.schemaVersion}.` };
+  }
+  if (snap.missionId !== M02_MISSION_ID) {
+    return { valid: false, reason: `Snapshot de outra missão: ${snap.missionId}.` };
+  }
+  const nonFinite = findNonFiniteNumber(snap);
+  if (nonFinite) return { valid: false, reason: `Número não finito no snapshot: ${nonFinite}` };
+
+  const rng = snap.rng;
+  if (!isPlainObject(rng) || rng.algorithm !== M02_RNG_ALGORITHM || !Number.isSafeInteger(rng.seed) || !isUint32(rng.state)) {
+    return { valid: false, reason: 'Semente ou estado do gerador (rng) inválido no snapshot.' };
+  }
+  if (typeof snap.clock !== 'number' || snap.clock < 0) {
     return { valid: false, reason: 'Clock de snapshot inválido.' };
   }
+  if (!M02_CELL_IDS.includes(snap.activeCellId)) {
+    return { valid: false, reason: `Célula ativa inválida no snapshot: ${snap.activeCellId}` };
+  }
+  const world = snap.world;
+  if (!isPlainObject(world) || world.cellId !== snap.activeCellId || !isNonNegativeInteger(world.revision)) {
+    return { valid: false, reason: 'Bloco world do snapshot inválido ou inconsistente com a célula ativa.' };
+  }
+  if (world.layoutSchema !== M02_LAYOUT_SCHEMA_BY_CELL[snap.activeCellId]) {
+    return {
+      valid: false,
+      reason: `Save incompatível: layout ${world.layoutSchema} da célula ${snap.activeCellId}, atual ${M02_LAYOUT_SCHEMA_BY_CELL[snap.activeCellId]}.`,
+    };
+  }
+  if (!isPlainObject(snap.horizon) || !M02_TEMPORAL_STATES[snap.horizon.temporalState]) {
+    return { valid: false, reason: 'Estado temporal do horizonte inválido no snapshot.' };
+  }
+  const expectedNarrative = m02NarrativeStamp(snap.horizon.temporalState);
+  const narrative = snap.narrative;
   if (
-    !snap.player ||
-    typeof snap.player.x !== 'number' ||
-    typeof snap.player.z !== 'number' ||
-    typeof snap.player.health !== 'number' ||
-    snap.player.health < 0 ||
-    snap.player.health > 100
+    !isPlainObject(narrative) ||
+    narrative.temporalState !== expectedNarrative.temporalState ||
+    narrative.narrativeDate !== expectedNarrative.narrativeDate ||
+    narrative.dayPart !== expectedNarrative.dayPart ||
+    narrative.civilTime !== null
+  ) {
+    return { valid: false, reason: 'Data narrativa do snapshot inconsistente com o estado temporal.' };
+  }
+  if (snap.checkpointId !== undefined && (typeof snap.checkpointId !== 'string' || !snap.checkpointId)) {
+    return { valid: false, reason: 'Identificador de checkpoint inválido no snapshot.' };
+  }
+
+  const p = snap.player;
+  if (
+    !isPlainObject(p) ||
+    p.id !== PLAYER_ID ||
+    typeof p.x !== 'number' ||
+    typeof p.y !== 'number' ||
+    typeof p.z !== 'number' ||
+    typeof p.angle !== 'number' ||
+    typeof p.pitch !== 'number' ||
+    typeof p.health !== 'number' ||
+    p.health < 0 ||
+    p.health > 100 ||
+    (p.carryingVolumeId !== null && p.carryingVolumeId !== undefined && typeof p.carryingVolumeId !== 'string')
   ) {
     return { valid: false, reason: 'Estado do jogador inválido no snapshot.' };
   }
+  const w = snap.weapon;
   if (
-    !snap.weapon ||
-    typeof snap.weapon.mag !== 'number' ||
-    snap.weapon.mag < 0 ||
-    typeof snap.weapon.reserve !== 'number' ||
-    snap.weapon.reserve < 0
+    !isPlainObject(w) ||
+    !isNonNegativeInteger(w.mag) ||
+    !isNonNegativeInteger(w.reserve) ||
+    !WEAPON_STATES.includes(w.state)
   ) {
     return { valid: false, reason: 'Estado de munição da arma inválido no snapshot.' };
   }
-  if (!snap.doors || typeof snap.doors !== 'object') {
-    return { valid: false, reason: 'Mapa de portas ausente no snapshot.' };
+  if (!isNonNegativeInteger(snap.grenadeAmmo)) {
+    return { valid: false, reason: 'Contagem de granadas inválida no snapshot.' };
   }
-  for (const [, state] of Object.entries(snap.doors)) {
-    if (!['open', 'closed', 'destroyed'].includes(state)) {
-      return { valid: false, reason: `Estado de porta inválido: ${state}` };
-    }
-  }
-  if (!snap.windows || typeof snap.windows !== 'object') {
-    return { valid: false, reason: 'Mapa de janelas ausente no snapshot.' };
-  }
-  for (const [, state] of Object.entries(snap.windows)) {
-    if (!['open', 'intact', 'broken'].includes(state)) {
-      return { valid: false, reason: `Estado de janela inválido: ${state}` };
-    }
-  }
-  if (snap.fences) {
-    for (const [, state] of Object.entries(snap.fences)) {
-      if (!['intact', 'breached'].includes(state)) {
-        return { valid: false, reason: `Estado de cerca inválido: ${state}` };
+
+  const ids = m02CellInteractiveIds(snap.activeCellId);
+  const doorErr = validateStateMap(snap.doors, 'porta', ids.doors, ['open', 'closed', 'destroyed']);
+  if (doorErr) return { valid: false, reason: doorErr };
+  const windowErr = validateStateMap(snap.windows, 'janela', ids.windows, ['open', 'intact', 'broken']);
+  if (windowErr) return { valid: false, reason: windowErr };
+  const fenceErr = validateStateMap(snap.fences, 'cerca', ids.fences, ['intact', 'breached']);
+  if (fenceErr) return { valid: false, reason: fenceErr };
+
+  const actorIds = new Set([PLAYER_ID]);
+  for (const [list, label] of [
+    [snap.allies, 'Aliado'],
+    [snap.enemies, 'Inimigo'],
+  ]) {
+    if (!Array.isArray(list)) return { valid: false, reason: `Lista de ${label.toLowerCase()}s inválida.` };
+    for (const a of list) {
+      if (
+        !isPlainObject(a) ||
+        typeof a.id !== 'string' ||
+        !a.id ||
+        typeof a.x !== 'number' ||
+        typeof a.z !== 'number' ||
+        a.mag < 0 ||
+        a.reserve < 0
+      ) {
+        return { valid: false, reason: `${label} inválido no snapshot: ${a?.id}` };
       }
+      if (actorIds.has(a.id)) return { valid: false, reason: `ID de ator duplicado no snapshot: ${a.id}` };
+      actorIds.add(a.id);
     }
   }
-  if (snap.allies) {
-    if (!Array.isArray(snap.allies)) return { valid: false, reason: 'Lista de aliados inválida.' };
-    for (const a of snap.allies) {
-      if (!a.id || typeof a.x !== 'number' || typeof a.z !== 'number' || a.mag < 0 || a.reserve < 0) {
-        return { valid: false, reason: `Aliado inválido no snapshot: ${a?.id}` };
-      }
+  if (!Array.isArray(snap.targets)) return { valid: false, reason: 'Lista de alvos de calibração inválida.' };
+
+  for (const key of ['mgState', 'routeProgress', 'objective', 'squadOrder', 'dialogue', 'audiovisual', 'supplies']) {
+    if (!isPlainObject(snap[key])) return { valid: false, reason: `Bloco ${key} ausente ou inválido no snapshot.` };
+  }
+  if (!isPlainObject(snap.areaB) || !isPlainObject(snap.areaC)) {
+    return { valid: false, reason: 'Estado das áreas B/C ausente no snapshot.' };
+  }
+  if (!isPlainObject(snap.flags)) return { valid: false, reason: 'Flags de campanha ausentes no snapshot.' };
+  for (const [flag, value] of Object.entries(snap.flags)) {
+    if (value !== null && !['boolean', 'number', 'string'].includes(typeof value)) {
+      return { valid: false, reason: `Flag com tipo inválido: ${flag}` };
     }
   }
-  if (snap.enemies) {
-    if (!Array.isArray(snap.enemies)) return { valid: false, reason: 'Lista de inimigos inválida.' };
-    for (const e of snap.enemies) {
-      if (!e.id || typeof e.x !== 'number' || typeof e.z !== 'number' || e.mag < 0 || e.reserve < 0) {
-        return { valid: false, reason: `Inimigo inválido no snapshot: ${e?.id}` };
-      }
+  if (![null, 'ditch', 'orchard'].includes(snap.flags['m02.axis'] ?? null)) {
+    return { valid: false, reason: `Valor inválido para m02.axis: ${snap.flags['m02.axis']}` };
+  }
+  for (const key of ['transitionIdsApplied', 'checkpointsReached']) {
+    const list = snap[key];
+    if (!Array.isArray(list) || list.some((v) => typeof v !== 'string') || new Set(list).size !== list.length) {
+      return { valid: false, reason: `Lista ${key} inválida ou com repetições.` };
     }
   }
-  if (snap.areaB?.supplyCart?.volumes) {
+  for (const key of ['combatLog', 'shotLog']) {
+    if (!Array.isArray(snap[key])) return { valid: false, reason: `Registo ${key} ausente no snapshot.` };
+  }
+
+  if (!Array.isArray(snap.grenades) || !isNonNegativeInteger(snap.grenadeSeq)) {
+    return { valid: false, reason: 'Granadas em voo ou contador de granadas inválidos no snapshot.' };
+  }
+  const grenadeIds = new Set();
+  for (const g of snap.grenades) {
+    if (
+      !isPlainObject(g) ||
+      typeof g.id !== 'string' ||
+      grenadeIds.has(g.id) ||
+      g.exploded !== false ||
+      ['x', 'y', 'z', 'vx', 'vy', 'vz', 'fuseAt'].some((k) => typeof g[k] !== 'number')
+    ) {
+      return { valid: false, reason: `Granada em voo inválida no snapshot: ${g?.id}` };
+    }
+    grenadeIds.add(g.id);
+  }
+
+  if (!isPlainObject(snap.doorLocks)) return { valid: false, reason: 'Fechaduras de porta ausentes no snapshot.' };
+  for (const [doorId, lock] of Object.entries(snap.doorLocks)) {
+    if (!ids.doors.has(doorId)) return { valid: false, reason: `Fechadura de porta inexistente: ${doorId}` };
+    if (!isPlainObject(lock) || typeof lock.actorId !== 'string' || typeof lock.expiresAt !== 'number') {
+      return { valid: false, reason: `Fechadura de porta inválida: ${doorId}` };
+    }
+  }
+
+  const volumes = snap.areaB.supplyCart?.volumes;
+  if (volumes !== undefined) {
+    if (!Array.isArray(volumes)) return { valid: false, reason: 'Volumes da carroça inválidos no snapshot.' };
+    const carriers = new Set([PLAYER_ID, ...snap.allies.map((a) => a.id)]);
+    const volumeIds = new Set();
     const seenCarriers = new Set();
-    for (const vol of snap.areaB.supplyCart.volumes) {
-      if (!vol || !vol.id) {
+    for (const vol of volumes) {
+      if (!vol || !vol.id || volumeIds.has(vol.id)) {
         return { valid: false, reason: 'Volume da carroça inválido no snapshot.' };
       }
+      volumeIds.add(vol.id);
       if (vol.carriedBy) {
         if (vol.carriedBy === vol.id) {
           return { valid: false, reason: `Referência circular carriedBy em ${vol.id}.` };
@@ -133,15 +280,33 @@ export function validateM02Snapshot(snap) {
         if (seenCarriers.has(vol.carriedBy)) {
           return { valid: false, reason: `Portador duplicado (${vol.carriedBy}) para múltiplos volumes.` };
         }
+        if (!carriers.has(vol.carriedBy)) {
+          return { valid: false, reason: `Portador inexistente (${vol.carriedBy}) para ${vol.id}.` };
+        }
         seenCarriers.add(vol.carriedBy);
       }
     }
+    const carried = volumes.find((v) => v.carriedBy === PLAYER_ID)?.id ?? null;
+    if ((p.carryingVolumeId ?? null) !== carried) {
+      return { valid: false, reason: 'Volume transportado pelo jogador inconsistente com a carroça.' };
+    }
+  } else if (p.carryingVolumeId) {
+    return { valid: false, reason: 'Jogador transporta um volume sem carroça no snapshot.' };
   }
   return { valid: true, reason: null };
 }
 
 export class M02BenchSimulation {
-  constructor(seed = 19390909, { startScene = 'C02' } = {}) {
+  /**
+   * @param {number} seed
+   * @param {object} [options]
+   * @param {string} [options.startScene]
+   * @param {M02SaveStore} [options.saveStore] loja de checkpoints persistentes (por omissão: localStorage no browser, memória em Node)
+   * @param {{getItem:Function,setItem:Function,removeItem:Function}} [options.storage] armazenamento para a loja por omissão
+   */
+  constructor(seed = 19390909, { startScene = 'C02', saveStore = null, storage = null } = {}) {
+    this.saveStore = saveStore ?? new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
+    this.lastCheckpointPersist = null;
     this.seed = seed;
     this.defaultStartScene = startScene;
     this.rng = new Random(seed);
@@ -181,6 +346,7 @@ export class M02BenchSimulation {
     this.transitionTABPayload = null;
     this.supplies = { waterDelivered: false, ammoDelivered: false };
     this.transitionIdsApplied = [];
+    this.checkpointsReached = [];
     this.totalHostilesSpawned = 10;
     this.areaB = createInitialAreaBState();
     this.areaC = createInitialAreaCState();
@@ -1228,13 +1394,13 @@ export class M02BenchSimulation {
       this.objective.status = 'completed';
       this.flags['m02.completed'] = true;
       this.dialogue.trigger('bz39_c05_01', this);
-      if (!this.checkpoints.has('cp_m02_b_acesso')) {
+      if (!this.checkpointsReached.includes('cp_m02_b_acesso')) {
         this.saveCheckpoint('cp_m02_b_acesso');
       }
     } else if (activeCombatDefenders.length === 0) {
       if (this.objective.id !== 'C04') {
         this.dialogue.trigger('bz39_c03_04', this);
-        if (!this.checkpoints.has('cp_m02_b_acesso')) {
+        if (!this.checkpointsReached.includes('cp_m02_b_acesso')) {
           this.saveCheckpoint('cp_m02_b_acesso');
         }
       }
@@ -1348,36 +1514,86 @@ export class M02BenchSimulation {
     }
   }
 
+  /**
+   * Grava um checkpoint semântico: entra na lista da linha temporal (`checkpointsReached`, que faz parte do snapshot),
+   * fica no índice em memória `checkpoints` e é persistido pela loja (SAVE-02). Uma falha de persistência não interrompe
+   * a simulação: fica em `lastCheckpointPersist` e no evento `checkpoint-saved`.
+   */
   saveCheckpoint(checkpointId) {
+    if (!this.checkpointsReached.includes(checkpointId)) this.checkpointsReached.push(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
     this.checkpoints.set(checkpointId, snap);
-    this.events.push({ type: 'checkpoint-saved', checkpointId, clock: this.clock });
+    const persist = this.saveStore
+      ? this.saveStore.commitCheckpoint(checkpointId, snap)
+      : { ok: false, reason: 'Sem loja de saves.' };
+    this.lastCheckpointPersist = persist;
+    this.events.push({
+      type: 'checkpoint-saved',
+      checkpointId,
+      clock: this.clock,
+      persisted: persist.ok,
+      persistError: persist.ok ? null : persist.reason,
+    });
     return snap;
   }
 
+  /** Restaura do índice em memória; se o checkpoint não estiver lá (p. ex. depois de recarregar a página), da loja persistente. */
   restoreCheckpoint(checkpointId) {
-    const snap = this.checkpoints.get(checkpointId);
+    let snap = this.checkpoints.get(checkpointId);
+    if (!snap && this.saveStore) {
+      snap = this.saveStore.loadCheckpoint(checkpointId);
+      if (snap) this.checkpoints.set(checkpointId, snap);
+    }
     if (!snap) throw new Error(`Checkpoint ${checkpointId} não encontrado.`);
     this.restoreSnapshot(snap);
     return snap;
   }
 
+  /** Restaura a cópia persistida (ignora o índice em memória). Sem id, usa o último checkpoint gravado na loja. */
+  restorePersistedCheckpoint(checkpointId = null) {
+    if (!this.saveStore) throw new Error('Sem loja de saves M02.');
+    const id = checkpointId ?? this.saveStore.latestCheckpointId();
+    const snap = id ? this.saveStore.loadCheckpoint(id) : null;
+    if (!snap) throw new Error(`Checkpoint persistido ${id ?? '(nenhum)'} não encontrado ou inválido.`);
+    this.restoreSnapshot(snap);
+    this.checkpoints.set(id, snap);
+    return snap;
+  }
+
+  /**
+   * Snapshot v2 (PDF I5): todo o estado que `tick()` muta, mais a identidade da missão, a semente e o estado do gerador,
+   * a data narrativa e a versão do layout da célula. Não guarda `events` (fila de saída para o renderer, drenada a cada
+   * frame), o índice `checkpoints`, o navegador (derivado do mundo) nem métricas do streamer.
+   */
   snapshot() {
     return {
-      schema: 'm02-01-bench-snapshot-v1',
+      schema: M02_SNAPSHOT_SCHEMA,
+      schemaVersion: M02_SNAPSHOT_SCHEMA_VERSION,
+      missionId: M02_MISSION_ID,
+      rng: { algorithm: M02_RNG_ALGORITHM, seed: this.seed, state: this.rng.state },
+      narrative: m02NarrativeStamp(this.horizon.temporalState),
       clock: this.clock,
       activeCellId: this.activeCellId,
+      world: {
+        cellId: this.activeCellId,
+        layoutSchema: M02_LAYOUT_SCHEMA_BY_CELL[this.activeCellId] ?? null,
+        revision: this.world.revision,
+      },
       player: structuredClone(this.player),
       weapon: this.weapon.snapshot(),
       grenadeAmmo: this.grenadeAmmo,
+      grenades: structuredClone(this.grenades),
+      grenadeSeq: this.grenadeSeq,
+      doorLocks: Object.fromEntries([...this.doorLocks.entries()].map(([id, lock]) => [id, { ...lock }])),
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
       ea1StartedAt: this.ea1StartedAt,
-      activeCartela: this.activeCartela,
+      activeCartela: structuredClone(this.activeCartela),
       transitionTABPayload: this.transitionTABPayload ? structuredClone(this.transitionTABPayload) : null,
       supplies: structuredClone(this.supplies),
       transitionIdsApplied: [...this.transitionIdsApplied],
+      checkpointsReached: [...this.checkpointsReached],
       totalHostilesSpawned: this.totalHostilesSpawned,
       areaB: structuredClone(this.areaB),
       areaC: structuredClone(this.areaC),
@@ -1398,58 +1614,131 @@ export class M02BenchSimulation {
       horizon: this.horizon.snapshot(),
       audiovisual: this.audiovisual.snapshot(),
       objective: structuredClone(this.objective),
+      combatLog: structuredClone(this.combatLog),
+      shotLog: structuredClone(this.shotLog),
     };
   }
 
+  /**
+   * Restauro em fases (PDF I5): 1) validar tudo sem tocar no estado vivo; 2) reconstruir cópias independentes;
+   * 3) ativar. Se a ativação falhar a meio, o estado anterior é reposto e o erro é relançado (nunca fica meio restaurado).
+   */
   restoreSnapshot(snap) {
     const validation = validateM02Snapshot(snap);
     if (!validation.valid) {
       throw new Error(`Snapshot M02 inválido: ${validation.reason}`);
     }
-    this.clock = snap.clock;
-    const targetCellId = snap.activeCellId ?? 'A';
-    if (this.activeCellId !== targetCellId) {
-      this.world = this.zoneStreamer.switchToCell(targetCellId);
-      this.activeCellId = targetCellId;
-      this.navigator = new M01Navigator(this.world.navWorld);
+    const prepared = this.#prepareRestore(snap);
+    const rollback = this.#prepareRestore(this.snapshot());
+    try {
+      this.#activateRestore(prepared);
+    } catch (error) {
+      this.#activateRestore(rollback);
+      throw new Error(`Restauro M02 falhou na ativação e o estado anterior foi reposto: ${error.message}`);
     }
-    this.player = structuredClone(snap.player);
-    this.weapon.restore(structuredClone(snap.weapon));
-    this.grenadeAmmo = snap.grenadeAmmo ?? 2;
-    this.c01Active = Boolean(snap.c01Active);
-    this.c01StartedAt = snap.c01StartedAt ?? 0;
-    this.ea1StartedAt = snap.ea1StartedAt ?? 0;
-    this.activeCartela = snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela;
-    this.transitionTABPayload = snap.transitionTABPayload ? structuredClone(snap.transitionTABPayload) : null;
-    this.supplies = snap.supplies ? structuredClone(snap.supplies) : { waterDelivered: false, ammoDelivered: false };
-    this.transitionIdsApplied = snap.transitionIdsApplied ? [...snap.transitionIdsApplied] : [];
-    this.totalHostilesSpawned = snap.totalHostilesSpawned ?? 10;
-    this.areaB = snap.areaB ? structuredClone(snap.areaB) : createInitialAreaBState();
-    this.areaC = snap.areaC ? structuredClone(snap.areaC) : createInitialAreaCState();
-    this.c10Active = Boolean(snap.c10Active);
-    this.c11Active = Boolean(snap.c11Active);
-    this.m03ExportPackage = snap.m03ExportPackage ? structuredClone(snap.m03ExportPackage) : null;
-    for (const [k, v] of Object.entries(snap.doors ?? {})) this.world.doorStates.set(k, v);
-    for (const [k, v] of Object.entries(snap.windows ?? {})) this.world.windowStates.set(k, v);
-    for (const [k, v] of Object.entries(snap.fences ?? {})) this.world.fenceStates.set(k, v);
+    this.events.push({ type: 'restored', clock: this.clock, checkpointId: snap.checkpointId ?? null });
+  }
+
+  #prepareRestore(snap) {
+    return structuredClone({
+      seed: snap.rng.seed,
+      rngState: snap.rng.state,
+      clock: snap.clock,
+      cellId: snap.activeCellId,
+      worldRevision: snap.world.revision,
+      player: snap.player,
+      weapon: snap.weapon,
+      grenadeAmmo: snap.grenadeAmmo,
+      grenades: snap.grenades,
+      grenadeSeq: snap.grenadeSeq,
+      doorLocks: snap.doorLocks,
+      c01Active: Boolean(snap.c01Active),
+      c01StartedAt: snap.c01StartedAt ?? 0,
+      ea1StartedAt: snap.ea1StartedAt ?? 0,
+      activeCartela: snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela,
+      transitionTABPayload: snap.transitionTABPayload ?? null,
+      supplies: snap.supplies,
+      transitionIdsApplied: snap.transitionIdsApplied,
+      checkpointsReached: snap.checkpointsReached,
+      totalHostilesSpawned: snap.totalHostilesSpawned ?? 10,
+      areaB: snap.areaB,
+      areaC: snap.areaC,
+      c10Active: Boolean(snap.c10Active),
+      c11Active: Boolean(snap.c11Active),
+      m03ExportPackage: snap.m03ExportPackage ?? null,
+      doors: snap.doors,
+      windows: snap.windows,
+      fences: snap.fences,
+      allies: snap.allies,
+      enemies: snap.enemies,
+      targets: snap.targets,
+      mgState: snap.mgState,
+      routeProgress: snap.routeProgress,
+      flags: snap.flags,
+      squadOrder: snap.squadOrder,
+      dialogue: snap.dialogue,
+      horizon: snap.horizon,
+      audiovisual: snap.audiovisual,
+      objective: snap.objective,
+      combatLog: snap.combatLog,
+      shotLog: snap.shotLog,
+    });
+  }
+
+  #activateRestore(p) {
+    this.seed = p.seed;
+    this.rng = new Random(p.seed);
+    this.rng.state = p.rngState;
+    this.clock = p.clock;
+    if (this.activeCellId !== p.cellId) {
+      this.world = this.zoneStreamer.switchToCell(p.cellId);
+      this.activeCellId = p.cellId;
+    }
+    this.areaB = p.areaB;
+    this.areaC = p.areaC;
+    for (const [k, v] of Object.entries(p.doors)) this.world.doorStates.set(k, v);
+    for (const [k, v] of Object.entries(p.windows)) this.world.windowStates.set(k, v);
+    for (const [k, v] of Object.entries(p.fences)) this.world.fenceStates.set(k, v);
     syncAreaCWorldDamage(this);
     this.world.refresh();
-    this.navigator.sync();
-    if (snap.allies) this.allies = structuredClone(snap.allies);
-    if (snap.enemies) this.enemies = structuredClone(snap.enemies);
-    if (snap.targets) {
-      this.calibrationTargets = structuredClone(snap.targets);
-      this.targets = this.calibrationTargets;
-    }
-    this.mgState = structuredClone(snap.mgState);
-    this.routeProgress = structuredClone(snap.routeProgress);
-    if (snap.flags) this.flags = structuredClone(snap.flags);
-    if (snap.squadOrder) this.squadOrder = structuredClone(snap.squadOrder);
-    if (snap.dialogue) this.dialogue.restore(snap.dialogue);
-    if (snap.horizon) this.horizon.restore(snap.horizon);
-    if (snap.audiovisual) this.audiovisual.restore(snap.audiovisual);
-    this.objective = structuredClone(snap.objective);
-    this.events.push({ type: 'restored', clock: this.clock });
+    // A revisão do mundo decide quando os atores recalculam rotas (navRevision): tem de voltar ao valor gravado.
+    this.world.revision = p.worldRevision;
+    this.navigator = new M01Navigator(this.world.navWorld).prewarm();
+
+    this.player = p.player;
+    // `id` vem do perfil da arma (derivado); só o estado mutável volta ao objeto.
+    const { id: _weaponProfileId, ...weaponState } = p.weapon;
+    this.weapon.restore(weaponState);
+    this.grenadeAmmo = p.grenadeAmmo;
+    this.grenades = p.grenades;
+    this.grenadeSeq = p.grenadeSeq;
+    this.doorLocks = new Map(Object.entries(p.doorLocks));
+    this.c01Active = p.c01Active;
+    this.c01StartedAt = p.c01StartedAt;
+    this.ea1StartedAt = p.ea1StartedAt;
+    this.activeCartela = p.activeCartela;
+    this.transitionTABPayload = p.transitionTABPayload;
+    this.supplies = p.supplies;
+    this.transitionIdsApplied = p.transitionIdsApplied;
+    this.checkpointsReached = p.checkpointsReached;
+    this.totalHostilesSpawned = p.totalHostilesSpawned;
+    this.c10Active = p.c10Active;
+    this.c11Active = p.c11Active;
+    this.m03ExportPackage = p.m03ExportPackage;
+    this.allies = p.allies;
+    this.enemies = p.enemies;
+    this.calibrationTargets = p.targets;
+    this.targets = this.calibrationTargets;
+    this.mgState = p.mgState;
+    this.routeProgress = p.routeProgress;
+    this.flags = p.flags;
+    this.squadOrder = p.squadOrder;
+    this.dialogue.restore(p.dialogue);
+    this.horizon.restore(p.horizon);
+    this.audiovisual.restore(p.audiovisual);
+    this.objective = p.objective;
+    this.combatLog = p.combatLog;
+    this.shotLog = p.shotLog;
   }
 
   setAccessibilityOptions(partial = {}) {
