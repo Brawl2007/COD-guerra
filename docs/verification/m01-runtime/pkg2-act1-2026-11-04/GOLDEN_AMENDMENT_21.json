@@ -4,7 +4,7 @@
   "delta": "aid-dust",
   "predecessor": "57ba50f3305d18a0ddcad0d2c3563f14e293d7a7",
   "predecessorSourceSha256": "d4f00e73f4573df03fe56d4797f32fdc2776aad562a896bc4a9014d8b67e70f1",
-  "sourceSha256": "2f4db344f44823923a27a652032dec901cf45250da76a486703a5cd9c19059bb",
+  "sourceSha256": "2b6be19468fdde596256e3a872e922edf2107bf66d708261a5ea652cade9096d",
   "previousGolden": {
     "task": "M01-OPENING-LIFE-V1",
     "file": "tests/fixtures/m01-opening-gameplay-baseline.json",
@@ -19,6 +19,7 @@
     "src/game/m01-simulation.js",
     "missions/m01-tczew/mission.json",
     "src/game/m01-animation-presentation.js",
+    "src/game/m01-deck-assault.js",
     "src/game/m01-barks.js",
     "src/game/m01-section.js",
     "src/game/m01-dust.js",

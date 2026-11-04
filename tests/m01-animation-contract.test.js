@@ -133,8 +133,9 @@ const MOVED_BY_18=new Set(['src/game/m01-deck-assault.js','src/game/m01-difficul
  *  (history since then) records them and no longer equals the live files. */
 /** 2026-11-04 (golden amendment 21, package 2): the simulation, the director (the `aid` trigger), the section (its sight goes through sim.sees), the presentation validator (a garrison man may be carried) and the mission data
  *  (safeX, the lines 220-226) moved with the dust, the first aid and the grenade tuning, so the golden of amendment 20 and the older ones that record them are history for those five files; the two new modules are
- *  recorded by the new golden only. */
-const MOVED_BY_21=new Set(["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-animation-presentation.js", "src/game/m01-barks.js", "src/game/m01-section.js"]);
+ *  recorded by the new golden only. Critical review of the same day (amendment 21 regenerated): the deck module moved too (validDeckRecord's olderPlan, normalizeDeckRecord, the lowest legal safeX of a fallen man's body:
+ *  a deck record written under another safeX loads), so it is history for the goldens that record it as well. */
+const MOVED_BY_21=new Set(["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-animation-presentation.js", "src/game/m01-barks.js", "src/game/m01-section.js", "src/game/m01-deck-assault.js"]);
 const MOVED_BY_20=new Set(['src/game/m01-simulation.js','src/game/m01-barks.js','missions/m01-tczew/mission.json']);
 /** What moved since amendment 19, for the history tests of the golden that precedes amendment 20: the files of amendments 20 and 21. */
 const MOVED_SINCE_19=new Set([...MOVED_BY_20,...MOVED_BY_21]);
@@ -670,12 +671,15 @@ test('the German AI golden (amendment 18) chains to the squad coordination golde
     predecessor:'3389652895ac52d0bbf191301b4bce55e8e3b673',deltaFields:GERMAN_DELTA});
   // History since amendment 19 (the sappers' operation, 2026-10-24): this golden pins the simulation of 3c8e576d (candidate #80 + R1-a + R2-a + R2-b), not the live one. The director and the mission data moved with
   // the sappers, so they are no longer compared with the live files (they still have to be recorded); the section, the squad module, the audio events, the blast module, the garrison, the level table, the
-  // rearguard, the deck module and the yard did not move.
+  // rearguard and the yard did not move (the deck module did, with the critical review of amendment 21: below).
   assert.equal(german.sourceSha256,'14e14803b7cf7e369a143258d74820d35c246ee1774765519b507af05b678d95','the German AI golden pins the simulation of 3c8e576d');
   assert.notEqual(sha('../src/game/m01-simulation.js'),german.sourceSha256,'the German AI golden is history: amendment 19 moved the simulation');
   for(const f of ['src/game/m01-squad.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-difficulty.js','src/game/m01-rearguard.js',
-    'src/game/m01-deck-assault.js','src/game/m01-yard-life.js'])
+    'src/game/m01-yard-life.js'])
     assert.equal(german.inputsSha256[f],sha('../'+f),`and ${f}`);
+  // 2026-11-04 (package 2 critical review, amendment 21 regenerated): the deck module moved too (a deck record written under another safeX loads: validDeckRecord's olderPlan, normalizeDeckRecord, the lowest legal
+  // safeX of a fallen man's body), so it is recorded and no longer the live file.
+  assert.ok(german.inputsSha256['src/game/m01-deck-assault.js'],'the deck module is recorded');assert.notEqual(german.inputsSha256['src/game/m01-deck-assault.js'],sha('../src/game/m01-deck-assault.js'),'src/game/m01-deck-assault.js moved with amendment 21');
   // 2026-11-04 (package 2, golden amendment 21): the section's sight now goes through sim.sees, so it moved after amendment 19 too; it is recorded and no longer the live file.
   assert.ok(german.inputsSha256['src/game/m01-section.js'],'the section is recorded');assert.notEqual(german.inputsSha256['src/game/m01-section.js'],sha('../src/game/m01-section.js'),'src/game/m01-section.js moved with amendment 21');
   for(const f of ['src/game/m01-barks.js','missions/m01-tczew/mission.json']){assert.ok(german.inputsSha256[f],`${f} is recorded`);assert.notEqual(german.inputsSha256[f],sha('../'+f),`${f} moved with amendment 19`);}
@@ -822,8 +826,8 @@ test('the aid-dust golden (amendment 21) chains to the opening golden, pins the 
   for(const [f,h] of Object.entries(aidDust.inputsSha256))if(h!==null)assert.equal(h,sha('../'+f),`and ${f}`);
   assert.ok(aidDust.inputsSha256['src/game/m01-dust.js'],'the dust module is a recorded input');assert.equal(opening.inputsSha256['src/game/m01-dust.js'],undefined,'the predecessor had no dust module');
   assert.ok(aidDust.inputsSha256['src/game/m01-aid.js'],'the aid module is a recorded input');assert.equal(opening.inputsSha256['src/game/m01-aid.js'],undefined,'the predecessor had no aid module');
-  assert.deepEqual(account.changedGameplayInputsSincePredecessor,["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-animation-presentation.js", "src/game/m01-barks.js", "src/game/m01-section.js", "src/game/m01-dust.js", "src/game/m01-aid.js"],
-    'what moved since 57ba50f3: the simulation (sees, the cloud of the crater, the aid, the grenade target and the pinned throw), the mission data (safeX 190, closeExtraSec 100, lines 220-226), the presentation validator (a garrison man may be carried), the director (the `aid` trigger), the section (its sight goes through sim.sees) and the two new modules; the deck module, the rearguard, the level table, the audio events, the blast, the garrison, the squad, the sappers, the retreat and the opening did not');
+  assert.deepEqual(account.changedGameplayInputsSincePredecessor,["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-animation-presentation.js", "src/game/m01-deck-assault.js", "src/game/m01-barks.js", "src/game/m01-section.js", "src/game/m01-dust.js", "src/game/m01-aid.js"],
+    'what moved since 57ba50f3: the simulation (sees, the cloud of the crater, the aid, the grenade target and the pinned throw), the mission data (safeX 190, closeExtraSec 100, lines 220-226), the presentation validator (a garrison man may be carried), the director (the `aid` trigger, and since the critical review the MG34 reload line asks sim.sees), the section (its sight goes through sim.sees), the deck module (since the critical review of 2026-11-04: the records of a save of another safeX load) and the two new modules; the rearguard, the level table, the audio events, the blast, the garrison, the squad, the sappers, the retreat and the opening did not');
   for(const f of Object.keys(opening.inputsSha256)){
     if(MOVED_BY_21.has(f))assert.notEqual(aidDust.inputsSha256[f],opening.inputsSha256[f],`${f} moved with amendment 21`);
     else assert.equal(aidDust.inputsSha256[f],opening.inputsSha256[f],`${f} did not move with amendment 21`);
