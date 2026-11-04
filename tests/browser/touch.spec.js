@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import {gameBooted,expectPaused} from '../helpers/m01-browser-boot.js';
 
 // iPhone 11 landscape (CSS px). Emulated Chromium only: real Safari needs a human playtest.
 test.use({ viewport: { width: 896, height: 414 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
@@ -7,7 +8,7 @@ async function touchStart(page) {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('?debug=1');
-  await expect(page.locator('#start')).toBeEnabled({ timeout: 60000 });
+  await gameBooted(page);
   await page.locator('#start').tap();
   await page.waitForFunction(() => window.gameDiagnostics().clock > .05);
   await expect(page.locator('#touch-controls')).toBeVisible();
@@ -45,7 +46,7 @@ test('touch plays M01 without pointer lock: walk, look, fire, reload, pause/resu
   await page.locator('#tb-reload').tap();
   await expect(page.locator('#mag')).toHaveText('—');
   await page.locator('#tb-pause').tap();
-  await expect(page.locator('#pause')).toBeVisible();
+  await expectPaused(page);
   await expect(page.locator('#touch-controls')).toBeHidden();
   const frozen = await diag(page); await page.waitForTimeout(300);
   expect((await diag(page)).clock).toBe(frozen.clock);

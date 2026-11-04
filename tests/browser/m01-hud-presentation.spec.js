@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {gameBooted,expectPaused} from '../helpers/m01-browser-boot.js';
 import {driver,route} from '../helpers/m01-route.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
 import {newBarkState} from '../../src/game/m01-barks.js';
@@ -9,13 +10,13 @@ const key='cod-guerra:checkpoint:m01:v2';
 async function open(page){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#start')).toBeEnabled({timeout:60000});return errors;
+  await gameBooted(page);return errors;
 }
 const hud=page=>page.evaluate(()=>window.gameDiagnostics().m01.hudPresentation);
 const opacity=(page,id)=>page.evaluate(id=>Number(getComputedStyle(document.getElementById(id)).opacity),id);
 async function pauseAt(page,clock){
   await page.waitForFunction(t=>{if(window.gameDiagnostics().clock>=t){document.exitPointerLock();return true;}return false;},clock,{polling:'raf',timeout:120000});
-  await expect(page.locator('#pause')).toBeVisible();
+  await expectPaused(page);
 }
 function boxesOverlap(a,b){return a&&b&&a.w&&b.w&&a.h&&b.h&&a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;}
 
@@ -115,7 +116,7 @@ test('reactive dialogue: the subtitles render with their speaker, 118 and 119 sh
   // pause on the frame that shows the second voice, so that the page is measured with the subtitle on it
   await page.waitForFunction(()=>{const node=document.getElementById('subtitle');
     if(node.classList.contains('show')&&node.textContent.includes('De lá também atira')){document.exitPointerLock();return true;}return false;},null,{polling:'raf',timeout:150000});
-  await expect(page.locator('#pause')).toBeVisible();
+  await expectPaused(page);
   const heard=await page.evaluate(()=>window.__subtitles);
   const first=heard.find(l=>l.text.includes('Cabo, pelo aterro para oeste?')),second=heard.find(l=>l.text.includes('Pelo aterro. De lá também atira.'));
   expect(first,JSON.stringify(heard)).toBeTruthy();expect(second).toBeTruthy();

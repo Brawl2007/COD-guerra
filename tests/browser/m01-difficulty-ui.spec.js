@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {gameBooted,expectPaused} from '../helpers/m01-browser-boot.js';
 import {M01Simulation} from '../../src/game/m01-simulation.js';
 
 // H9 D5: menu selector, pause line and HUD badge in the real page. The UI only passes the level; the simulation owns it.
@@ -7,14 +8,14 @@ const key='cod-guerra:checkpoint:m01:v2';
 async function open(page){
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('?debug=1');await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9);
-  await expect(page.locator('#start')).toBeEnabled({timeout:60000});return errors;
+  await gameBooted(page);return errors;
 }
 const level=page=>page.evaluate(()=>window.gameDiagnostics().difficulty);
 async function begin(page){
   await page.locator('#start').click();
   await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game');
 }
-async function pause(page){await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();}
+async function pause(page){await page.evaluate(()=>document.exitPointerLock());await expectPaused(page);}
 
 test('a new game defaults to soldado, shows it in Portuguese, and the chosen level reaches the simulation',async({page})=>{
   test.setTimeout(process.env.CI?180000:90000);

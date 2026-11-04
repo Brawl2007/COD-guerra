@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 // Guards the shared boot/pause waits of the pointer-lock-boundary browser specs (tests/helpers/m01-browser-boot.js).
 // The premises are facts of the production page; the specs must not go back to a vacuous `#start` gate or to the 5 s default for `#pause`.
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
-const SPECS=['m01-fp-arms','m01-viewmodel-feel','m01-weapon-presentation','m01-wz29-viewmodel'].map(name=>`tests/browser/${name}.spec.js`);
+const SPECS=['m01-fp-arms','m01-viewmodel-feel','m01-weapon-presentation','m01-wz29-viewmodel','m01-difficulty-ui','m01-hud-presentation','m01','touch'].map(name=>`tests/browser/${name}.spec.js`);
 const html=read('index.html'),main=read('src/main.js'),helper=read('tests/helpers/m01-browser-boot.js');
 
 test('premise: index.html ships #start enabled and main.js defines the diagnostics hook only after the lazy game import',()=>{
