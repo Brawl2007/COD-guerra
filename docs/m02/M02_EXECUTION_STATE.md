@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — presença física da secção, 2026-11-04
+
+`70c6031` impede que aliados fora da célula sejam vistos/atingidos localmente, bloqueiem tiros ou interfiram na navegação; Lis já evacuado permanece ausente em C11 sem ser movido. Passaram 204 testes M02, build e três browser; [comparação e limites](../verification/m02-runtime/actor-presence-2026-11-04/README.md). Passagem integral com água/ordens/granada iniciada em `/tmp/m02-presence-native-70c6031`; consultar o relatório antes de declarar resultado. Continuar roteiro Astra, com atenção à confirmação da retirada antecipada e à atuação física. Main e produção intactas.
+
 ## Continuação — retirada antecipada C11, 2026-11-04
 
 `b89ccdd` permite escolher em B12 a retirada enquanto ainda há homens em trânsito, com aviso do número e de Lis. Só os que chegaram contam como evacuados; os vivos deixados para trás ficam por localizar, com IDs/contagem guardados e exportados separadamente para a M03. Lis ainda a caminhar fica desaparecido se o jogador partir; Lis já evacuado mantém-se sem segundo resgate. 198 testes M02, build e dois browser passaram. [Fixture tátil e passagem integral da saída normal](../verification/m02-runtime/c11-withdrawal-2026-11-04/README.md): água/giz, Lis e 12/12, sem mortes do jogador ou erros; o piloto lê estado oculto. Falta detetar automaticamente rota irrecuperável, melhorar encenação e testar iPhone físico. Main e produção intactas.

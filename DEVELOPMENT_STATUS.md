@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — presença física da secção — 2026-11-04
+
+`70c6031` exclui aliados fora da célula de combate, fogo amigo e navegação, preservando Lis e o roster. 204 testes M02, build e três browser passaram; [evidência](docs/verification/m02-runtime/actor-presence-2026-11-04/README.md). A passagem integral estava em curso neste registo.
+
 ## M02 — retirada com homens em trânsito — 2026-11-04
 
 `b89ccdd` acrescenta escolha explícita de retirada em B12, com homens não evacuados registados como por localizar e Lis ainda a caminho tratado como desaparecido. 198 testes M02, build, dois browser e uma passagem automatizada da saída normal passaram; [provas e limites](docs/verification/m02-runtime/c11-withdrawal-2026-11-04/README.md). Encenação e teste em iPhone continuam pendentes.
