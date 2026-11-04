@@ -1,5 +1,9 @@
 # M02 — candidata jogável e continuidade
 
+## Continuação — linha de tiro das rajadas, 2026-11-04
+
+`5140dd1` aplica a regra de segurança existente antes de cada ronda pendente de uma rajada aliada; se o jogador ou outro aliado entra na linha, a rajada termina sem tiro ou gasto de munição adicional. Passaram 182 testes M02 e build, incluindo continuação com linha livre e restauro determinístico. A [passagem automatizada e captura](../verification/m02-runtime/ally-burst-clearance-2026-11-04/README.md) chegaram à M03 sem mortes do jogador nem erros, com giz, abastecimentos, Lis evacuado e 11/12 no último grupo; a diferença para a passagem anterior não foi atribuída a esta alteração. O piloto lê estado oculto. A regra de segurança é horizontal e aproximada, não um teste 3D completo. Continuar arte, animação, combate e áudio antes da avaliação humana; o complemento integral permanece ausente. Main e produção intactas.
+
 ## Continuação — diálogo em fila, 2026-10-31
 
 `9b4f034` volta a verificar os emissores e as alternativas já previstas no roteiro quando uma fala começa, para não apresentar uma fala futura de Lis desaparecido ou de um soldado presente mas incapacitado. `7c9ad85` corrige uma regressão encontrada na comparação: Lis mantém a fala de C08 enquanto parte para a ligação, mesmo separado da secção local. Passaram 180 testes M02, build e um caso browser; em quatro cenários, 800 snapshots e filas de eventos coincidiram com `705776f`. [Captura, método e limites](../verification/m02-runtime/dialogue-continuity-2026-10-31/README.md). A [passagem automatizada](../verification/m02-runtime/dialogue-continuity-2026-10-31/native-7c/report.json) chegou a M03 sem mortes ou erros, saúde 92, C04 e giz, abastecimentos, Lis evacuado e 12/12; o piloto lê estado oculto e não substitui avaliação humana. As falas continuam em texto, sem novas vozes. Continuar combate, animação, arte, IA e áudio antes da avaliação humana. Main e produção intactas.

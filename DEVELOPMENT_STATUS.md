@@ -1,5 +1,9 @@
 # Estado de desenvolvimento
 
+## M02 — linha de tiro das rajadas aliadas — 2026-11-04
+
+`5140dd1` interrompe rondas pendentes quando um aliado entra na linha de tiro, preservando munição e restauro determinístico. 182 testes M02 e build passaram. A [passagem automatizada](docs/verification/m02-runtime/ally-burst-clearance-2026-11-04/README.md) chegou à M03 sem mortes do jogador ou erros, com Lis evacuado e 11/12 no último grupo. A segurança continua a usar uma aproximação horizontal; qualidade visual, animação e áudio permanecem em desenvolvimento. Main e produção intactas.
+
 ## M02 — continuidade do diálogo — 2026-10-31
 
 `9b4f034` verifica novamente o emissor e as alternativas do roteiro ao iniciar uma fala em fila; `7c9ad85` preserva a fala de partida de Lis em C08. Passaram 180 testes M02, build, um caso browser e comparação de 800 passos com a candidata anterior. Uma passagem automatizada chegou a M03 sem mortes ou erros, com Lis evacuado e 12/12; [provas e limites](docs/verification/m02-runtime/dialogue-continuity-2026-10-31/README.md). A missão continua em desenvolvimento; main e produção intactas.
