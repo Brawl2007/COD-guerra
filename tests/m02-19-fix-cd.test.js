@@ -594,9 +594,9 @@ describe('FIX-CD 10: missão completa C01→C12 com o MissionBot a dt = 1/60 em 
     // Antes ficava preso em C03 1800 s (semente 19390909): Lis («ClearRoom») encostada à parede norte de B01 sem rota (porta este
     // fechada), 4 hostis em HOLD_SECTOR dentro de B01/B03 e a moral da quinta a 6 de 10. Defeito do jogo (navegação dos aliados),
     // corrigido em stepActorNavigation; não era do bot.
-    // Semente 1 (D1/D4): com a MG34 a disparar da boca no vão o desfecho do bot é caótico (N0-fixes, tests/m02-26: a 777 passava a 1/60),
-    // sem as imunidades ocultas (D1: a falta do sierż. Gruca falha a missão) e com a secção a não tomar a quinta sozinha (D4: o bot vai
-    // pela vala) mudou outra vez: a 1/60, 9 de 40 sementes (1..40 e as três antigas) chegam a C12 (1, 5, 11, 17, 18, 24, 27, 34 e 31337);
+    // Semente 1 (D1/D4/C11/C06): com a MG34 a disparar da boca no vão o desfecho do bot é caótico (N0-fixes, tests/m02-26: a 777 passava a
+    // 1/60), sem as imunidades ocultas (D1: a falta do sierż. Gruca falha a missão), com a secção a não tomar a quinta sozinha (D4: o bot
+    // vai pela vala) e com a janela de segurança de C06 mudou outra vez: a 1/60, 6 das sementes 1..20 chegam a C12 (1, 5, 11, 17, 18 e 20);
     // a 777 e a 19390909 já não. Esta é a menor. Ver o comentário das sementes em m02-18.
     const sim = new M02BenchSimulation(1, { startScene: 'C01', storage: createMemoryStorage() });
     const bot = new MissionBot(sim, { dt: FRAME });
