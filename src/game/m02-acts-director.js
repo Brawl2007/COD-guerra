@@ -189,9 +189,13 @@ export const M02_REQUIRED_CHARACTERS = Object.freeze({
 /**
  * Id da primeira personagem exigida que está fora de combate num estado de jogo ou snapshot (`allies`, `areaC`, `flags`), ou null.
  * Sem falha depois de a missão estar concluída (C12 fechado). Só lê dados: serve a simulação e o validador do snapshot.
+ * `ignoreCompletion`: o validador de um CHECKPOINT (ponto de reinício) não aceita a personagem exigida fora de combate nem com a
+ * missão concluída — o estado concluído já não faz falhar a missão (acima), mas gravá-lo como ponto de reinício seria gravar um
+ * Gruca morto que faz a contagem do epílogo (C12, p. 14); o atalho KeyM com Gruca junto ao impacto do SP03 forçado gravava-o.
  */
-export function requiredCharacterOut(state) {
-  if (!state || state.areaC?.c12Completed || state.flags?.['m02.completed']) return null;
+export function requiredCharacterOut(state, { ignoreCompletion = false } = {}) {
+  if (!state) return null;
+  if (!ignoreCompletion && (state.areaC?.c12Completed || state.flags?.['m02.completed'])) return null;
   const allies = Array.isArray(state.allies) ? state.allies : [];
   const scene = M02_SCENE_IDS.indexOf(state.script?.sceneId); // -1: sem roteiro conhecido, a janela não filtra
   for (const req of Object.values(M02_REQUIRED_CHARACTERS)) {
@@ -1351,6 +1355,10 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   // FIX-CD2: o SP03 forçado acima fere Piotr (D5 p. 18) e pode matá-lo. A falha avalia-se antes da conclusão: com Piotr morto a
   // missão NÃO se marca concluída nem exporta para a M03 (o fim do lote regista `piotr_killed`). Devolve null como a recusa prévia.
   if (sim.player.alive === false || sim.player.health <= 0) return null;
+  // Revisão adversarial: o mesmo impacto fere quem estiver a ≤ 8 m de (4,18), Gruca incluído. Com o KeyM e Gruca ao pé do impacto
+  // a missão concluía-se (`completed: true`) e um F5 gravava cp_m02_manual com Gruca morto. As personagens exigidas (D1, p. 16)
+  // revalidam-se depois do SP03 forçado, como Piotr: nada se conclui nem exporta; o fim do lote regista a falha com o `actorId`.
+  if (requiredCharacterOut(sim)) return null;
 
   if (lisOutcome) {
     assistLisInC11(sim, lisOutcome);

@@ -232,6 +232,66 @@ describe('M02 D1: 2.ª falha dura — personagem exigida fora de combate', () =>
     assert.equal(sim.flags['m02.completed'], false);
     assert.equal(sim.m03ExportPackage, null);
   });
+
+  // Revisão adversarial: o KeyM força C10, o SP03 e C11; o impacto fixo (4, 18; raio 8 m) fere quem estiver perto. Só Piotr era
+  // revalidado depois dele: com Gruca ao pé do impacto a missão concluía-se (`completed: true`, exportada para a M03) e um F5 gravava
+  // cp_m02_manual com Gruca morto (o validador aceitava-o por c12Completed).
+  describe('o atalho KeyM (completeC12Epilogue) revalida Gruca depois do SP03 forçado, como a Piotr', () => {
+    /** C09 com os hostis fora de jogo, Piotr longe do impacto e Gruca em (gx, gz); depois da primeira passagem do relógio. */
+    const keyMSetup = (gx, gz, hp = 100) => {
+      const storage = createMemoryStorage();
+      const sim = new M02BenchSimulation(7, { storage });
+      sim.enterAreaCC09();
+      killHostiles(sim);
+      sim.teleportPlayer(-6, -16, Math.PI / 2);
+      sim.tick(0.1, {});
+      const g = ally(sim, 'pl_gruca');
+      Object.assign(g, { x: gx, z: gz, y: sim.world.heightAt(gx, gz), goal: null, health: hp });
+      sim.drainEvents();
+      return { sim, g, storage };
+    };
+    const storedWithGrucaOut = (storage) => {
+      const raw = storage.getItem('cod-guerra:m02:bench:v2');
+      if (!raw) return [];
+      return Object.entries(JSON.parse(raw).checkpoints)
+        .filter(([, s]) => s.allies.find((a) => a.id === 'pl_gruca')?.alive === false)
+        .map(([id]) => id);
+    };
+
+    for (const [gx, gz, hp] of [[4, 17, 100], [4, 16, 60]]) {
+      it(`Gruca a ${Math.hypot(gx - 4, gz - 18).toFixed(0)} m do impacto (vida ${hp}): o SP03 forçado derruba-o, nada se conclui nem exporta, a falha regista pl_gruca e nenhum checkpoint o grava fora de combate`, () => {
+        const { sim, g, storage } = keyMSetup(gx, gz, hp);
+        const pkg = sim.completeC12Epilogue();
+        assert.equal(g.alive, false, 'o impacto forçado derrubou-o (pré-condição do cenário)');
+        assert.equal(pkg, null, 'não devolve pacote');
+        assert.equal(sim.missionFailed?.reason, 'required_character_incapacitated');
+        assert.equal(sim.missionFailed?.actorId, 'pl_gruca');
+        assert.equal(sim.flags['m02.completed'], false, 'a missão não se marca concluída');
+        assert.equal(sim.areaC.c12Completed, false);
+        assert.equal(sim.m03ExportPackage, null, 'nada exportado para a M03');
+        assert.equal(sim.exportCampaignResultToM03().completed, false, 'a exportação direta nunca diz concluída com a missão falhada');
+        // o F5 que se segue é recusado e a loja não fica com um Gruca fora de combate em nenhum checkpoint
+        sim.drainEvents();
+        assert.equal(sim.saveCheckpoint('cp_m02_manual'), null);
+        assert.ok(sim.drainEvents().some((e) => e.type === 'checkpoint-rejected'));
+        assert.deepEqual(storedWithGrucaOut(storage), []);
+        // a página recarregada não encontra um save de «missão concluída com Gruca morto»
+        const page = new M02BenchSimulation(1, { storage });
+        const loaded = page.quickLoadCheckpoint();
+        assert.equal(ally(page, 'pl_gruca').alive, true, `F9 (${loaded.checkpointId}/${loaded.source}) repõe Gruca de pé`);
+        assert.equal(page.flags['m02.completed'], false);
+      });
+    }
+
+    it('controlo: com Gruca longe do impacto o mesmo KeyM conclui e exporta (a revalidação não bloqueia o atalho)', () => {
+      const { sim, g } = keyMSetup(-30, -30);
+      const pkg = sim.completeC12Epilogue();
+      assert.equal(g.alive, true);
+      assert.equal(sim.missionFailed, null);
+      assert.equal(pkg.completed, true);
+      assert.equal(sim.flags['m02.completed'], true);
+    });
+  });
 });
 
 describe('M02 D1: o que NÃO falha a missão — o PDF prevê o ramo (C08, C11, I4, K1)', () => {
@@ -345,6 +405,30 @@ describe('M02 D1: a falha no snapshot, no restauro e no validador (campo aditivo
     other.restoreSnapshot(plain);
     other.tick(DT, {});
     assert.equal(other.missionFailed?.actorId, 'pl_gruca');
+  });
+
+  it('nem com a missão concluída (c12Completed): um checkpoint com Gruca fora de combate continua recusado; um snapshot simples mostra-se', () => {
+    const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    assert.equal(sim.completeC12Epilogue().completed, true);
+    assert.equal(sim.areaC.c12Completed, true);
+    const alive = structuredClone(sim.snapshot());
+    alive.checkpointId = 'cp_m02_manual';
+    assert.equal(validateM02Snapshot(alive).valid, true, 'controlo: concluído e Gruca de pé é um ponto de reinício válido');
+    Object.assign(ally(sim, 'pl_gruca'), { alive: false, health: 0, state: 'DEAD' });
+    const plain = structuredClone(sim.snapshot());
+    assert.equal(plain.missionFailed, null, 'depois de C12 fechado já não há falha');
+    assert.equal(validateM02Snapshot(plain).valid, true, 'um snapshot sem checkpointId mostra o estado');
+    const asCheckpoint = structuredClone(plain);
+    asCheckpoint.checkpointId = 'cp_m02_manual';
+    const r = validateM02Snapshot(asCheckpoint);
+    assert.equal(r.valid, false);
+    assert.match(r.reason, /Checkpoint cp_m02_manual recusado.*pl_gruca.*fora de combate/);
+    assert.equal(requiredCharacterOut(plain), null, 'a regra da falha não mudou: sem falha depois de C12');
+    assert.equal(requiredCharacterOut(plain, { ignoreCompletion: true }), 'pl_gruca');
+    // o F5 da simulação aplica o mesmo validador
+    sim.drainEvents();
+    assert.equal(sim.saveCheckpoint('cp_m02_manual'), null);
+    assert.ok(sim.drainEvents().some((e) => e.type === 'checkpoint-rejected'));
   });
 
   it('o F5 (saveCheckpoint) com Gruca fora de combate avalia a falha primeiro e recusa, sem tocar na loja', () => {
