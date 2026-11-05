@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1988" viewBox="0 0 1040 1988" font-family="DejaVu Sans, Verdana, sans-serif">
 <title>M02-01 Quinta (bancada N0) — planta com escala</title>
-<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 6fbe27b464537017074b3f5a3909b82592c1224bb7cce668d963073e04e1a721). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
+<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 523e851c8580820288a429e6a7013cbc4829e24441c41d538126025a02081c50). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
 <defs>
 <clipPath id="clip-plan"><rect x="56" y="74" width="600" height="1128"/></clipPath>
 <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c9c4b4" stroke-width="2"/></pattern>
@@ -12,7 +12,7 @@
 </defs>
 <rect width="1040" height="1988" fill="#f4f0e4"/>
 <text x="56" y="26" font-size="17" font-weight="bold" fill="#22362f">M02-01 · Bancada da quinta (N0) · planta com escala</text>
-<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 6fbe27b46453</text>
+<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 523e851c8580</text>
 <text x="56" y="58" font-size="10.5" fill="#444">Gerada de missions/m02-bzura/m02-01-quinta-layout.json; esquemática, não é levantamento histórico nem aprovação do N0.</text>
 <g id="plano" clip-path="url(#clip-plan)">
 <rect x="56" y="74" width="600" height="1128" fill="#e9e6d8"/>
@@ -193,7 +193,7 @@
 <rect x="440" y="606.8" width="27" height="12.6" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sacks · h 1.15 m</title></rect>
 <rect x="527" y="606.8" width="27" height="12.6" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sheaves · h 1.2 m</title></rect>
 <rect x="440" y="666.8" width="27" height="12.6" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_straw · h 1 m</title></rect>
-<rect x="431" y="644.6" width="9" height="10.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
+<rect x="429.2" y="644.6" width="3.6" height="10.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
 <rect x="477.2" y="639.2" width="16.8" height="12" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_cart · h 1.25 m</title></rect>
 <rect x="468.92" y="624.92" width="2.16" height="2.16" fill="#2c2418"><title>post_b02_nw</title></rect>
 <rect x="522.92" y="624.92" width="2.16" height="2.16" fill="#2c2418"><title>post_b02_ne</title></rect>
@@ -270,7 +270,7 @@
 <text x="158" y="946" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b2a12">B04</text>
 </g>
 </g>
-<polygon id="arco-mg" points="432.8,650 324.7,1209.66 261.2,1193.56 199.96,1170.28 141.8,1140.12 87.48,1103.49 37.73,1060.87 -6.81,1012.83 -45.54,959.99 -77.95,903.05 -103.61,842.77 -122.19,779.95 -133.44,715.41 -137.2,650 -133.44,584.59 -122.19,520.05 -103.61,457.23 -77.95,396.95 -45.54,340.01 -6.81,287.17 37.73,239.13 87.48,196.51 141.8,159.88 199.96,129.72 261.2,106.44 324.7,90.34" fill="#b3402a" fill-opacity="0.07" stroke="#b3402a" stroke-opacity="0.45" stroke-width="0.8" stroke-dasharray="6 3"><title>Arco da MG34: centro 3.14 rad, meio-ângulo 1.38 rad, alcance 95 m</title></polygon>
+<polygon id="arco-mg" points="428,650 319.9,1209.66 256.4,1193.56 195.16,1170.28 137,1140.12 82.68,1103.49 32.93,1060.87 -11.61,1012.83 -50.34,959.99 -82.75,903.05 -108.41,842.77 -126.99,779.95 -138.24,715.41 -142,650 -138.24,584.59 -126.99,520.05 -108.41,457.23 -82.75,396.95 -50.34,340.01 -11.61,287.17 32.93,239.13 82.68,196.51 137,159.88 195.16,129.72 256.4,106.44 319.9,90.34" fill="#b3402a" fill-opacity="0.07" stroke="#b3402a" stroke-opacity="0.45" stroke-width="0.8" stroke-dasharray="6 3"><title>Arco da MG34: centro 3.14 rad, meio-ângulo 1.38 rad, alcance 95 m</title></polygon>
 <g id="rotas" fill="none" stroke-width="2.4" stroke-linejoin="round">
 <polyline id="rota-ditch" points="356,350 86,410 86,800 212,830 266,782 356,686" stroke="#3b7da6" stroke-opacity="0.9" marker-end="url(#arrow-ditch)"><title>Rota da vala</title></polyline>
 <circle cx="356" cy="350" r="2.4" fill="#3b7da6" stroke="none"><title>ditch #1 (0; -80)</title></circle>
@@ -323,7 +323,7 @@
 <text x="270.8" y="161.6" text-anchor="middle" font-size="6.5" fill="#5a1410">A03</text>
 <polygon id="DE-A04" points="290,158.8 293.6,165.8 286.4,165.8" fill="#5a1410" stroke="#fff" stroke-width="0.6"><title>DE-A04 · EA0 outpost_rifleman</title></polygon>
 <text x="290" y="156.8" text-anchor="middle" font-size="6.5" fill="#5a1410">A04</text>
-<g id="de_b02_mg34"><title>de_b02_mg34 · Posição MG34 (Abertura oeste de B02) · (12.8; -30)</title><circle cx="432.8" cy="650" r="5" fill="#ffffff" stroke="#b3302a" stroke-width="2"/><line x1="432.8" y1="650" x2="410.8" y2="650" stroke="#b3302a" stroke-width="2" marker-end="url(#arrow-mg)"/><text x="438.8" y="638" font-size="9" font-weight="bold" fill="#b3302a" stroke="#f4f0e4" stroke-width="2.5" paint-order="stroke">MG34</text></g>
+<g id="de_b02_mg34"><title>de_b02_mg34 · Posição MG34 (Abertura oeste de B02) · (12; -30)</title><circle cx="428" cy="650" r="5" fill="#ffffff" stroke="#b3302a" stroke-width="2"/><line x1="428" y1="650" x2="406" y2="650" stroke="#b3302a" stroke-width="2" marker-end="url(#arrow-mg)"/><text x="434" y="638" font-size="9" font-weight="bold" fill="#b3302a" stroke="#f4f0e4" stroke-width="2.5" paint-order="stroke">MG34</text></g>
 </g>
 <g id="arranque"><path d="M356 343 l6 11 h-12 z" fill="#2d6cb5" stroke="#fff" stroke-width="0.8"/><text x="365" y="364" font-size="8" fill="#1d4378">arranque (0; −80)</text></g>
 <g id="pontos-sn">
@@ -431,7 +431,7 @@
 <text x="680" y="602" font-size="8.5"><tspan font-weight="bold">SN4</tspan> (8; −28) Frente oeste do Celeiro B02</text>
 <text x="680" y="614.5" font-size="8.5"><tspan font-weight="bold">SN5</tspan> (0; 45) Pomar sul</text>
 <text x="680" y="637" font-weight="bold" font-size="11">Posições-chave</text>
-<text x="680" y="653" font-size="8.5">MG34: (12.8; −30) · boca na simulação (11,82; −30)</text>
+<text x="680" y="653" font-size="8.5">MG34: (12; −30) · boca na simulação (11,82; −30)</text>
 <text x="680" y="665.5" font-size="8.5">Rota vala: 6 pontos · pomar: 6 pontos</text>
 <text x="680" y="678" font-size="8.5">EA1: 10 · EA0: 4 · PL: 7</text>
 <text x="680" y="690.5" font-size="8.5">Macieiras candidatas: 7 (estado «candidata»)</text>
@@ -531,7 +531,7 @@
 <rect x="494" y="1372.4" width="81" height="37.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sacks · h 1.15 m</title></rect>
 <rect x="755" y="1372.4" width="81" height="37.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sheaves · h 1.2 m</title></rect>
 <rect x="494" y="1552.4" width="81" height="37.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_straw · h 1 m</title></rect>
-<rect x="467" y="1485.8" width="27" height="32.4" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
+<rect x="461.6" y="1485.8" width="10.8" height="32.4" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
 <rect x="605.6" y="1469.6" width="50.4" height="36" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_cart · h 1.25 m</title></rect>
 <rect x="580.76" y="1426.76" width="6.48" height="6.48" fill="#2c2418"><title>post_b02_nw</title></rect>
 <rect x="742.76" y="1426.76" width="6.48" height="6.48" fill="#2c2418"><title>post_b02_ne</title></rect>

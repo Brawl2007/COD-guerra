@@ -963,6 +963,9 @@ export function updatePolishSquad(sim, dt) {
   const coverById = sim.coverNodesById;
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05' && e.alive && !e.nonCombatant);
+  // Boca da MG34 de B02 (fonte única: layout.mgEmplacement). A secção supre a abertura: ponto de vista 0,15 m fora, ponto de mira 0,20 m dentro.
+  const mgMuzzle = sim.mgAperture;
+  const cm = (n) => Math.round(n * 100) / 100;
   lapseSquadOrder(sim);
 
   // Assign tactical cover goals by squad state & elapsed time / progression
@@ -1154,12 +1157,12 @@ export function updatePolishSquad(sim, dt) {
         !sim.c01Active &&
         ally.id === 'pl_aux_01' &&
         enemy.id === 'DE-A05' &&
-        sim.world.lineOfSight(ally, { x: 11.85, y: 0, z: -30.0, eyeHeight: 1.42, space: 'metres' }, { includeFoliage: false });
+        sim.world.lineOfSight(ally, { x: cm(mgMuzzle.x - 0.15), y: 0, z: mgMuzzle.z, eyeHeight: mgMuzzle.y, space: 'metres' }, { includeFoliage: false });
 
       if (!hasLoS && !isMgSuppressTarget) continue;
 
       const aimPt = isMgSuppressTarget && !hasLoS
-        ? { x: 12.2, y: 1.38, z: -30.0 }
+        ? { x: cm(mgMuzzle.x + 0.2), y: cm(mgMuzzle.y - 0.04), z: mgMuzzle.z }
         : { x: enemy.x, y: enemy.y + (enemy.crouched ? 0.92 : 1.25), z: enemy.z };
 
       if (!friendlyFireClear(ally, aimPt, [sim.player, ...sim.allies])) continue;

@@ -259,7 +259,7 @@
         { "id": "prop_b02_sacks", "name": "Sacos de sementes", "u": 2.0, "v": 0.8, "w": 4.5, "d": 2.1, "h": 1.15, "material": "earth" },
         { "id": "prop_b02_sheaves", "name": "Feixes agrícolas", "u": 16.5, "v": 0.8, "w": 4.5, "d": 2.1, "h": 1.2, "material": "wood_thin" },
         { "id": "prop_b02_straw", "name": "Palha prensada", "u": 2.0, "v": 10.8, "w": 4.5, "d": 2.1, "h": 1.0, "material": "wood_thin" },
-        { "id": "prop_b02_mg_mount", "name": "Bancada e parapeito MG34", "u": 0.5, "v": 7.1, "w": 1.5, "d": 1.8, "h": 0.96, "material": "wood_thick" },
+        { "id": "prop_b02_mg_mount", "name": "Bancada e parapeito MG34", "u": 0.2, "v": 7.1, "w": 0.6, "d": 1.8, "h": 0.96, "material": "wood_thick" },
         { "id": "prop_b02_cart", "name": "Carroça no corredor", "u": 8.2, "v": 6.2, "w": 2.8, "d": 2.0, "h": 1.25, "material": "wood_thick" }
       ]
     },
@@ -613,9 +613,11 @@
   "mgEmplacement": {
     "id": "de_b02_mg34",
     "name": "Posição MG34 (Abertura oeste de B02)",
-    "x": 12.8,
+    "note": "FONTE ÚNICA da MG34 de B02 (PDF F3 p. 24: «MG a (12,-30)»). (x, z) = boca da arma, no plano da parede oeste dentro do vão win_b02_west_mg (parede em x 11,88…12,12; vão z -30,9…-29,1, y 1,0…2,15); muzzleY = altura da boca. Origem do raio de fogo, da avaliação evaluateMgLineOfFire, do rasto das rajadas e do desenho no renderer. O artilheiro DE-A05 (enemyRosterEA1) fica atrás da abertura, no eixo de tiro (z igual, x maior); a sua linha de pontaria é o prolongamento do cano através da boca. eyeHeight = olhos do artilheiro.",
+    "x": 12.0,
     "y": 0,
     "z": -30.0,
+    "muzzleY": 1.42,
     "eyeHeight": 1.48,
     "facing": 3.141592653589793,
     "arcHalfAngle": 1.38,

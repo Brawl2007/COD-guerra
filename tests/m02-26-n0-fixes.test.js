@@ -3,14 +3,16 @@
 // Cada grupo reproduz o defeito com o layout anterior (reconstruído em memória a partir do layout atual) e prova a correção.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync, readdirSync } from 'node:fs';
 
 import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
 import { createMemoryStorage, M02_LAYOUT_SCHEMA_BY_CELL, M02_RETIRED_LAYOUT_SCHEMAS, M02_SAVE_STORAGE_KEY } from '../src/game/m02-save-store.js';
-import { M02QuintaWorld } from '../src/world/m02-quinta-world.js';
+import { M02QuintaWorld, m02MgMuzzle } from '../src/world/m02-quinta-world.js';
 import { M01Navigator } from '../src/world/m01-navigation.js';
-import { movePlayer } from '../src/world/m01-player-physics.js';
+import { movePlayer, deepestWall } from '../src/world/m01-player-physics.js';
+import { traceObstruction, traceShot, eyePosition, visible } from '../src/world/spatial.js';
 import { buildOpeningsMarkdown } from '../tools/m02/openings-table.mjs';
-import { loadLayout, openingGeometry, makeWorld, probePassage, lateralPassRange, PLAYER } from '../tools/m02/n0-common.mjs';
+import { loadLayout, openingGeometry, makeWorld, probePassage, lateralPassRange, actorAt, PLAYER, PDF_SN } from '../tools/m02/n0-common.mjs';
 
 const SEED = 19390909;
 const KEY = M02_SAVE_STORAGE_KEY;
@@ -169,3 +171,214 @@ describe('N0 · versão de layout da Área A (m02-01-quinta-bench-v2)', () => {
     assert.deepEqual(page.saveStore.checkpointIds(), ['cp_m02_b_test']);
   });
 });
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Itens 2 e 3 — MG34 de B02: uma só posição e avaliação ≡ disparo real
+
+const PDF_MG_XZ = { x: 12, z: -30 }; // PDF F3 p. 24: «MG a (12,-30)»
+const b02 = building(layout, 'B02');
+const mgWindow = b02.windows.find((w) => w.id === 'win_b02_west_mg');
+const gunnerEntry = layout.enemyRosterEA1.find((e) => e.id === 'DE-A05');
+
+/** Amostras: SN1–SN5 e as duas rotas de 2 em 2 m (em pé e agachado). */
+function mgSamples() {
+  const out = Object.entries(PDF_SN).map(([id, p]) => ({ id, x: p.x, z: p.z }));
+  for (const [name, pts] of Object.entries(layout.routes)) {
+    let acc = 0;
+    let next = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const [x0, z0] = pts[i - 1];
+      const [x1, z1] = pts[i];
+      const len = Math.hypot(x1 - x0, z1 - z0);
+      while (next <= acc + len + 1e-9) {
+        const t = (next - acc) / len;
+        out.push({ id: `${name}@${next}`, x: x0 + (x1 - x0) * t, z: z0 + (z1 - z0) * t });
+        next += 2;
+      }
+      acc += len;
+    }
+  }
+  return out;
+}
+
+/** O disparo da MG, medido sem passar por evaluateMgLineOfFire: traceShot desde a boca (como fireActorBurst) + vista desde a boca. */
+function realMgFire(sim, sample, eye, crouched) {
+  const world = sim.world;
+  const gy = world.heightAt(sample.x, sample.z);
+  const probe = { ...actorAt(sample.x, sample.z, eye, gy), id: 'sonda', alive: true, active: true, crouched };
+  const muzzle = sim.mgMuzzle;
+  const e = eyePosition(probe);
+  const dx = e.x - muzzle.x;
+  const dy = e.y - muzzle.y;
+  const dz = e.z - muzzle.z;
+  const dist = Math.hypot(dx, dy, dz);
+  let arc = Math.abs(Math.atan2(dz, dx) - sim.mgState.facing);
+  while (arc > Math.PI) arc = Math.abs(arc - Math.PI * 2);
+  const inArc = arc <= sim.mgState.arcHalfAngle;
+  const shot = traceShot(world, muzzle, { x: dx / dist, y: dy / dist, z: dz / dist }, [probe], sim.mgState.range);
+  const hits = shot?.kind === 'actor';
+  const los = world.lineOfSight(actorAt(muzzle.x, muzzle.z, muzzle.y, 0), probe, { includeFoliage: true });
+  return { probe, inArc, hits, los, canHit: inArc && hits, exposed: inArc && hits && los };
+}
+
+/** A avaliação e o raio do artilheiro tal como eram ANTES (boca fora da parede em 11,82; artilheiro em 13,20 com olhos 1,48). */
+function legacyMgDisagreements(oldLayout) {
+  const world = new M02QuintaWorld(oldLayout);
+  const oldMuzzle = { x: 11.82, y: 1.42, z: -30 };
+  const gunnerEye = { x: 13.2, y: 1.48, z: -30 };
+  const out = [];
+  for (const sample of mgSamples()) {
+    const gy = world.heightAt(sample.x, sample.z);
+    const target = { x: sample.x, y: gy, z: sample.z, eyeHeight: PLAYER.standEye, space: 'metres' };
+    const t = eyePosition(target);
+    const ray = (o) => {
+      const dx = t.x - o.x;
+      const dy = t.y - o.y;
+      const dz = t.z - o.z;
+      const dist = Math.hypot(dx, dy, dz);
+      return { dir: { x: dx / dist, y: dy / dist, z: dz / dist }, dist, dx, dz };
+    };
+    const a = ray(oldMuzzle);
+    let diff = Math.abs(Math.atan2(a.dz, a.dx) - layout.mgEmplacement.facing);
+    while (diff > Math.PI) diff = Math.abs(diff - Math.PI * 2);
+    const simExposed = a.dist <= layout.mgEmplacement.range && diff <= layout.mgEmplacement.arcHalfAngle && !traceObstruction(world, oldMuzzle, a.dir, Math.max(0, a.dist - 0.15));
+    const g = ray(gunnerEye);
+    const gunnerSees = !traceObstruction(world, gunnerEye, g.dir, Math.max(0, g.dist - 0.02));
+    if (simExposed && !gunnerSees) out.push(sample.id);
+  }
+  return out;
+}
+
+describe('N0-2: MG34 de B02 com uma só posição (layout = PDF = simulação = renderer; artilheiro atrás da abertura)', () => {
+  const mg = layout.mgEmplacement;
+  const muzzle = m02MgMuzzle(mg);
+  const innerFace = b02.bounds[0] + b02.wallThickness / 2;
+  const outerFace = b02.bounds[0] - b02.wallThickness / 2;
+  const winZ = b02.bounds[2] + mgWindow.offset;
+
+  it('o layout põe a MG onde o PDF diz (12; -30) e a boca dentro do vão win_b02_west_mg (jambas, peitoril e lintel verificados)', () => {
+    assert.deepEqual([mg.x, mg.z], [PDF_MG_XZ.x, PDF_MG_XZ.z]);
+    assert.ok(Number.isFinite(mg.muzzleY));
+    assert.ok(muzzle.x > outerFace && muzzle.x < innerFace, 'dentro da espessura da parede oeste (x 11,88…12,12)');
+    assert.ok(Math.abs(muzzle.z - winZ) < mgWindow.width / 2, 'dentro da largura do vão');
+    assert.ok(muzzle.y > mgWindow.sillY && muzzle.y < mgWindow.lintelY, 'entre o peitoril e o lintel');
+    const world = makeWorld(layout);
+    assert.equal(
+      world.obstacles.some((b) => muzzle.x >= b.min.x && muzzle.x <= b.max.x && muzzle.y >= b.min.y && muzzle.y <= b.max.y && muzzle.z >= b.min.z && muzzle.z <= b.max.z),
+      false,
+      'a boca não está dentro de nenhum sólido',
+    );
+  });
+
+  it('o artilheiro DE-A05 está atrás da abertura, no eixo de tiro, fora de sólidos e com linha livre até à boca', () => {
+    assert.ok(gunnerEntry.x > innerFace, 'atrás (a este) da face interior da parede');
+    assert.equal(gunnerEntry.z, muzzle.z, 'no eixo de tiro da boca');
+    assert.ok(gunnerEntry.x - muzzle.x <= 2.0, 'a menos de 2 m da boca (comprimento da arma)');
+    assert.equal(gunnerEntry.facing, mg.facing, 'virado para o arco da MG');
+    const world = makeWorld(layout);
+    assert.equal(deepestWall(world, gunnerEntry.x, gunnerEntry.z, 0, PLAYER.radius, PLAYER.standHeight), null, 'a cápsula do artilheiro não está dentro de nenhum sólido');
+    const eye = { x: gunnerEntry.x, y: mg.eyeHeight, z: gunnerEntry.z };
+    const d = Math.hypot(muzzle.x - eye.x, muzzle.y - eye.y, muzzle.z - eye.z);
+    const dir = { x: (muzzle.x - eye.x) / d, y: (muzzle.y - eye.y) / d, z: (muzzle.z - eye.z) / d };
+    assert.equal(traceObstruction(world, eye, dir, d), null, 'dos olhos do artilheiro à boca não há nada no caminho');
+    // Os alvos de calibração sincronizados com inimigos estão onde esses inimigos estão.
+    for (const [tgtId, enemyId] of [['tgt_b02_mg_gunner', 'DE-A05'], ['tgt_b01_kitchen_window', 'DE-A07'], ['tgt_b01_hall_door', 'DE-A08']]) {
+      const tgt = layout.testTargets.find((t) => t.id === tgtId);
+      const en = layout.enemyRosterEA1.find((e) => e.id === enemyId);
+      assert.deepEqual([tgt.x, tgt.z], [en.x, en.z], `${tgtId} coincide com ${enemyId}`);
+    }
+  });
+
+  it('a simulação usa a boca do layout em todo o lado: avaliação, disparo do artilheiro (fireActorBurst), rajada (mg-burst) e secção', () => {
+    const sim = new M02BenchSimulation(SEED);
+    assert.deepEqual(sim.mgMuzzle, muzzle);
+    assert.deepEqual(sim.mgAperture, { x: mg.x, y: mg.muzzleY, z: mg.z });
+    const a05 = sim.enemies.find((e) => e.id === 'DE-A05');
+    const evt = sim.fireActorBurst(a05, sim.player, { x: sim.player.x, y: sim.player.y + 1.25, z: sim.player.z }, 'enemy');
+    assert.deepEqual(evt.origin, muzzle, 'a origem do tiro do artilheiro é a boca');
+    let burst = null;
+    for (let i = 0; i < 80 && !burst; i++) {
+      sim.tick(0.05, {});
+      burst = sim.drainEvents().find((e) => e.type === 'mg-burst') ?? null;
+    }
+    assert.ok(burst, 'a MG dispara uma rajada sobre o jogador no arranque (exposto a 51 m)');
+    assert.deepEqual(burst.origin, muzzle, 'o rasto sai da boca');
+  });
+
+  it('nenhum valor antigo da boca (11,82 / 12,15 / 11,85) ficou escrito à mão na simulação, IA, renderer ou ferramentas', () => {
+    const files = [];
+    for (const dir of ['../src/game/', '../src/render/', '../src/m02/', '../tools/m02/']) {
+      for (const name of readdirSync(new URL(dir, import.meta.url))) {
+        if (/^m02-.*\.(js|mjs)$/.test(name) || (dir.endsWith('/m02/') && /\.(js|mjs)$/.test(name))) files.push(`${dir}${name}`);
+      }
+    }
+    assert.ok(files.length >= 8);
+    for (const f of files) {
+      const code = readFileSync(new URL(f, import.meta.url), 'utf8').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+      assert.doesNotMatch(code, /\b11\.82\b|\b12\.15\b|\b11\.85\b|x: 12\.2\b/, f);
+    }
+    const renderer = readFileSync(new URL('../src/render/m02-01-renderer.js', import.meta.url), 'utf8');
+    assert.match(renderer, /m02MgMuzzle\(this\.sim\.mgState\)/);
+    const ai = readFileSync(new URL('../src/game/m02-combat-ai.js', import.meta.url), 'utf8');
+    assert.match(ai, /sim\.mgAperture/);
+  });
+
+  it('reprodução: com o modelo anterior (boca 11,82 fora da parede; artilheiro em 13,20) a simulação dava «EXPOSTO» onde o artilheiro não via', () => {
+    const old = structuredClone(layout);
+    old.mgEmplacement.x = 12.8;
+    delete old.mgEmplacement.muzzleY;
+    const oldMount = building(old, 'B02').props.find((p) => p.id === 'prop_b02_mg_mount');
+    oldMount.u = 0.5;
+    oldMount.w = 1.5;
+    const disagreements = legacyMgDisagreements(old);
+    assert.ok(disagreements.includes('SN1') && disagreements.includes('SN3'), `SN1 e SN3 divergiam: ${disagreements.slice(0, 8).join(', ')}`);
+    assert.ok(disagreements.length >= 6, `${disagreements.length} amostras divergiam`);
+  });
+});
+
+describe('N0-3: a avaliação «EXPOSTO» da simulação coincide com o disparo real em todas as amostras (SN, vala e pomar, em pé e agachado)', () => {
+  it('evaluateMgLineOfFire ≡ traceShot + lineOfSight desde a boca, em SN1–SN5 e de 2 em 2 m nas duas rotas', () => {
+    const sim = new M02BenchSimulation(SEED);
+    const samples = mgSamples();
+    assert.ok(samples.length > 150, `${samples.length} amostras`);
+    const mismatches = [];
+    let exposed = 0;
+    let covered = 0;
+    for (const sample of samples) {
+      for (const [eye, crouched] of [[PLAYER.standEye, false], [PLAYER.crouchEye, true]]) {
+        const real = realMgFire(sim, sample, eye, crouched);
+        const ev = sim.evaluateMgLineOfFire(real.probe);
+        const simExposed = ev.canHitTarget && ev.hasVisualLoS;
+        if (ev.inArc !== real.inArc || ev.canHitTarget !== real.canHit || simExposed !== real.exposed) {
+          mismatches.push(`${sample.id}${crouched ? ' agachado' : ''}: sim ${ev.inArc}/${ev.canHitTarget}/${ev.hasVisualLoS} real ${real.inArc}/${real.hits}/${real.los}`);
+        }
+        if (real.exposed) exposed++;
+        else if (real.inArc) covered++;
+      }
+    }
+    assert.deepEqual(mismatches, []);
+    assert.ok(exposed > 20 && covered > 20, `a amostra tem expostos (${exposed}) e cobertos (${covered}) a sério`);
+  });
+
+  it('a tabela gerada não tem nenhuma amostra em que a avaliação e o disparo real discordem (nem boca fora do vão)', () => {
+    const { problems, mgRows } = buildOpeningsMarkdown(loadLayout());
+    assert.equal(problems.filter((p) => p.area === 'MG B02').length, 0, JSON.stringify(problems.filter((p) => p.area === 'MG B02')));
+    assert.ok(mgRows.length >= 40);
+    assert.ok(mgRows.every((r) => r.stand.agree && r.crouch.agree));
+  });
+
+  it('o jogador em SN1 (51 m) continua exposto à MG e na vala (agachado) continua coberto', () => {
+    const sim = new M02BenchSimulation(SEED);
+    const sn1 = sim.evaluateMgLineOfFire(sim.player);
+    assert.equal(sn1.canHitTarget, true);
+    assert.equal(sn1.hasVisualLoS, true);
+    assert.ok(Math.abs(sn1.distance - 51.4) < 0.2);
+    sim.teleportPlayer(-45, -40, 0);
+    sim.player.crouched = true;
+    sim.player.eyeHeight = 1.08;
+    const ditch = sim.evaluateMgLineOfFire(sim.player);
+    assert.equal(ditch.canHitTarget, false);
+    assert.equal(ditch.blockedById, 'ditch_east_lip_north');
+  });
+});
+

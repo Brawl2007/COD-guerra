@@ -38,6 +38,18 @@ const aabbToSolid = (b, kind = 'obstacle') => {
   };
 };
 
+/**
+ * Boca da MG34 de B02: ponto único de origem do raio de fogo, da avaliação de exposição, do rasto das rajadas, do desenho no
+ * renderer e dos pontos de supressão da secção. FONTE ÚNICA = `layout.mgEmplacement` (x, z = PDF F3 p. 24 «MG a (12,-30)»,
+ * `muzzleY` = altura da boca). Os pontos de supressão derivam dela: arestas 0,15 m fora e 0,20 m dentro do vão.
+ */
+export function m02MgMuzzle(mg) {
+  if (!mg || !Number.isFinite(mg.x) || !Number.isFinite(mg.z) || !Number.isFinite(mg.muzzleY)) {
+    throw new Error('mgEmplacement sem x, z e muzzleY finitos.');
+  }
+  return { x: mg.x, y: mg.muzzleY, z: mg.z };
+}
+
 export const BALLISTIC_MATERIAL_POLICY = Object.freeze({
   stone: Object.freeze({ blocksShot: true, blocksSight: true, penetrationLoss: 1.0, label: 'Pedra / Alvenaria pesada' }),
   brick: Object.freeze({ blocksShot: true, blocksSight: true, penetrationLoss: 1.0, label: 'Alvenaria de tijolo / reboco' }),

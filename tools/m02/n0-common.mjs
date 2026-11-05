@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { M02QuintaWorld } from '../../src/world/m02-quinta-world.js';
+import { M02QuintaWorld, m02MgMuzzle } from '../../src/world/m02-quinta-world.js';
 import { PLAYER_PHYSICS, deepestWall } from '../../src/world/m01-player-physics.js';
 import { traceObstruction } from '../../src/world/spatial.js';
 import { EYE_HEIGHT } from '../../src/config.js';
@@ -32,14 +32,14 @@ export const PLAYER = Object.freeze({
   crouchEye: CROUCH_EYE,
 });
 
-// MG34 muzzle used by M02BenchSimulation.evaluateMgLineOfFire (src/game/m02-01-simulation.js, "const muzzle = ...").
-// It is read from that file's source so that a change there is noticed.
-export function readSimMuzzle() {
-  const src = readFileSync(SIM_PATH, 'utf8');
-  const m = src.match(/const muzzle = \{ x: ([-\d.]+), y: ([-\d.]+), z: ([-\d.]+) \};/);
-  if (!m) throw new Error('MG muzzle literal not found in m02-01-simulation.js');
-  return { x: Number(m[1]), y: Number(m[2]), z: Number(m[3]) };
+// MG34 muzzle: single source of truth = layout.mgEmplacement (x, z, muzzleY), read through the same helper the simulation, the
+// renderer and the squad AI use (m02MgMuzzle). The table calls the real M02BenchSimulation.evaluateMgLineOfFire; nothing is mirrored.
+export function layoutMgMuzzle(layout) {
+  return m02MgMuzzle(layout.mgEmplacement);
 }
+
+// PDF F3 (p. 24): «MG a (12,-30) no mundo, auxiliar adjacente; raio de arma verifica montantes e parapeito».
+export const PDF_MG = Object.freeze({ x: 12, z: -30, page: 24, ref: 'F3' });
 
 // Canonical coordinates quoted by the owner's PDF (section N, p. 47 plan + N5 p. 49 text).
 export const PDF_SN = Object.freeze({
