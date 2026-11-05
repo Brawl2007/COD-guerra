@@ -5,7 +5,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
-import { SECTION_LEASH_M, SECTION_ASSAULT_LEASH_M, SECTION_SUPPORT_NODES } from '../src/game/m02-combat-ai.js';
+import { SECTION_LEASH_M, SECTION_ASSAULT_LEASH_M, SECTION_SUPPORT_NODES, WEAPON_PROFILES } from '../src/game/m02-combat-ai.js';
 import { C02_EXIT_Z } from '../src/game/m02-acts-director.js';
 
 const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -40,24 +40,58 @@ describe('M02 D4: Piotr parado em P1 — a secção resolve o posto mas não tom
   }
 });
 
-describe('M02 D4: Piotr abrigado no início da quinta — nenhuma das 10 sementes cai sozinha em 180 s, e a secção faz mesmo efeito nos primeiros 60 s', () => {
+// Revisão adversarial: a prova de 60 s punha Piotr «abrigado» em (0, -80), o ponto de partida, que está DENTRO do arco do MG34 de B02 e à
+// vista de DE-A11: nas sementes 1, 3, 7 e 9 morria antes dos 60 s e o teste passava na mesma (`break` na falha + `at60 !== null ||
+// sim.missionFailed`): não provava nada. D4 (p. 17) exige 60 s de observação COM Piotr abrigado. O abrigo real mais próximo é o extremo
+// norte da vala oeste (E3, p. 21: «rota da vala… fora do arco da MG34»), que nenhum hostil vê; a asserção é incondicional.
+describe('M02 D4: Piotr abrigado na vala (fora do arco da MG34, sem linha de tiro) — nenhuma das 10 sementes cai sozinha em 180 s, e a secção faz mesmo efeito nos primeiros 60 s', () => {
+  const DITCH_SHELTER = Object.freeze({ x: -45, z: -72 });
+  const inDitch = (seed) => {
+    const sim = new M02BenchSimulation(seed);
+    sim.teleportPlayer(DITCH_SHELTER.x, DITCH_SHELTER.z, Math.PI / 2, 0);
+    sim.player.crouched = true;
+    sim.player.eyeHeight = 1.08;
+    return sim;
+  };
+  /** Hostis vivos que, agora, veem Piotr: a mesma visão com que a IA escolhe a quem disparar (a MG34 pelo avaliador do tiro real). */
+  const seenBy = (sim) =>
+    sim.enemies.filter((e) => {
+      if (!e.alive || e.nonCombatant) return false;
+      if (Math.hypot(e.x - sim.player.x, e.z - sim.player.z) > (WEAPON_PROFILES[e.weapon]?.range ?? 160)) return false;
+      return e.id === 'DE-A05' ? sim.evaluateMgLineOfFire(sim.player).hasVisualLoS : sim.world.lineOfSight(e, sim.player, { includeFoliage: true });
+    });
+
+  it('controlo: o ponto de partida (0, -80) NÃO é abrigo — o MG34 e DE-A11 veem Piotr agachado; o da vala não é visto por ninguém nem avaliado como exposto', () => {
+    const start = sheltered(1);
+    assert.deepEqual([start.player.x, start.player.z], [0, -80]);
+    assert.equal(start.evaluateMgLineOfFire(start.player).hasVisualLoS, true, 'dentro do arco do MG34 (arcHalfAngle 1,38 rad)');
+    assert.ok(seenBy(start).some((e) => e.id === 'DE-A11'));
+    const ditch = inDitch(1);
+    assert.equal(ditch.evaluateMgLineOfFire(ditch.player).hasVisualLoS, false);
+    assert.deepEqual(seenBy(ditch).map((e) => e.id), [], 'nenhum hostil tem linha de vista a Piotr agachado na vala');
+    assert.deepEqual([ditch.player.x, ditch.player.z], [DITCH_SHELTER.x, DITCH_SHELTER.z]);
+  });
+
   for (const seed of SEEDS) {
-    it(`semente ${seed}`, () => {
-      const sim = sheltered(seed);
+    it(`semente ${seed}: 180 s abrigado, sem um tiro em Piotr nem falha da missão; aos 60 s a secção já fez efeito; a quinta não cai sozinha`, () => {
+      const sim = inDitch(seed);
       let at60 = null;
+      let mgSuppressedAt60 = null;
       for (let i = 0; i < Math.ceil(180 / DT); i++) {
         sim.tick(DT, {});
         sim.drainEvents();
+        assert.equal(sim.missionFailed, null, `falhou aos ${sim.clock.toFixed(1)} s: ${JSON.stringify(sim.missionFailed)}`);
         assert.equal(farmFallen(sim), false, `a quinta caiu sozinha aos ${sim.clock.toFixed(1)} s`);
         if (at60 === null && sim.clock >= 60) {
           at60 = sim.enemies.filter((e) => e.encounterId !== 'EA0' && (!e.alive || e.nonCombatant)).length;
-          const mgSuppressed = sim.combatLog.some((e) => e.type === 'ally_suppressed_enemy' && e.targetId === 'DE-A05');
-          assert.ok(at60 >= 1 || mgSuppressed, `a prova de 60 s mantém-se: ${at60} neutralizados, MG suprimida ${mgSuppressed}`);
+          mgSuppressedAt60 = sim.combatLog.some((e) => e.type === 'ally_suppressed_enemy' && e.targetId === 'DE-A05');
+          assert.ok(at60 >= 1 || mgSuppressedAt60, `a prova de 60 s mantém-se: ${at60} neutralizados, MG suprimida ${mgSuppressedAt60}`);
         }
-        if (sim.missionFailed) break; // Piotr parado à vista pode morrer: a autonomia não é vitória garantida
       }
-      assert.ok(at60 !== null || sim.missionFailed, 'chegou aos 60 s ou falhou antes');
-      assert.ok(farmHostiles(sim).length >= 1);
+      assert.notEqual(at60, null, 'chegou aos 60 s (incondicional)');
+      assert.equal(sim.player.health, 100, 'abrigado de verdade: nem um impacto');
+      assert.deepEqual(sim.combatLog.filter((e) => e.type === 'enemy_hit_ally' && e.targetId === 'piotr_sokol'), []);
+      assert.ok(farmHostiles(sim).length >= 1, `restam ${farmHostiles(sim).length} defensores`);
     });
   }
 });

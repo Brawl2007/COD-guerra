@@ -60,7 +60,14 @@ describe('M02 C06: a janela de segurança da entrada em B — nos 3 perfis, a dt
       const sim = enterB(difficulty);
       sim.areaB.contact = { movementStartedAt: 0, contactAt: 0, opened: true, openedAt: 0, openedBy: 'timer' };
       run(sim, 30);
-      assert.ok(sim.combatLog.some((e) => e.type === 'enemy_hit_ally' && e.targetId === 'piotr_sokol') || sim.player.health < 100 || sim.missionFailed, 'EB1 dispara a Piotr');
+      // sem disjunção (revisão adversarial): o controlo tem de ser hostil nos três perfis, não «alguma coisa mudou». Medido: 8-9
+      // atiradores de EB1, ≥ 1 impacto em Piotr em 30 s (recruta 1 e 68 de vida; soldado/veterano 5 e morre) e impactos na secção.
+      const eb1Shooters = eb1(sim).filter((e) => e.shotsFired > 0);
+      assert.ok(eb1Shooters.length >= 5, `EB1 abre fogo com vários atiradores (${eb1Shooters.length})`);
+      const hitsOnPiotr = enemyHitsOnSide(sim).filter((e) => e.targetId === 'piotr_sokol');
+      assert.ok(hitsOnPiotr.length >= 1, 'EB1 acerta em Piotr');
+      assert.ok(sim.player.health < 100, `a vida de Piotr desce (${sim.player.health})`);
+      assert.ok(enemyHitsOnSide(sim).some((e) => e.targetId !== 'piotr_sokol'), 'e acerta na secção');
     });
   }
 });
@@ -104,6 +111,8 @@ describe('M02 C06: como a janela fecha (contacto aberto)', () => {
     assert.equal(c.opened, false);
     assert.equal(areaBContactPending(sim), true);
     assert.equal(enemyHitsOnSide(sim).length, 0);
+    assert.equal(sim.allies.reduce((n, a) => n + (a.shotsFired ?? 0), 0), 0, 'até ao contacto a secção não disparou');
+    assert.equal(eb1(sim).reduce((n, e) => n + e.shotsFired, 0), 0, 'nem EB1');
     while (sim.clock < openAt + 0.2) sim.tick(FRAME, {});
     assert.equal(c.opened, true);
     assert.equal(c.openedBy, 'timer');
@@ -111,8 +120,10 @@ describe('M02 C06: como a janela fecha (contacto aberto)', () => {
     assert.ok(sim.combatLog.some((e) => e.type === 'b_contact_opened' && e.by === 'timer'));
     assert.ok(c.openedAt - c.movementStartedAt < C01_CONTACT_DELAY_SEC.max + FRAME, 'D6: primeiro contacto combatível até 60 s de movimento');
     run(sim, 8);
+    assert.equal(areaBContactPending(sim), false);
     assert.ok(eb1(sim).some((e) => e.shotsFired > 0), 'depois do contacto EB1 combate');
-    assert.ok(sim.allies.some((a) => (a.shotsFired ?? 0) > 0) || sim.enemies.some((e) => e.shotsFired > 0));
+    // sem a disjunção «alguém dispara»: os DOIS lados combatem depois do contacto, cada um por si (a secção já não está calada)
+    assert.ok(sim.allies.some((a) => (a.shotsFired ?? 0) > 0), 'e a secção também abre fogo');
   });
 
   it('proximidade: a ≤ 25 m de um defensor o contacto abre no mesmo tick (quem chega ao pé deles é visto)', () => {
