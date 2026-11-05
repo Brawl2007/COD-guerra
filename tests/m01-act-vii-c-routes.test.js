@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {M01AreaSimulation} from '../src/game/m01-area-sim.js';
+import {M01ActRunner} from '../src/game/m01-acts.js';
 import {actCRoute} from './helpers/m01-act-c-route.js';
 import {stackingAudit} from './helpers/m01-clipping.js';
 import {areaClippingAudit} from './helpers/m01-act-audit.js';
@@ -42,6 +43,17 @@ test('Act VII-c completes on 18 routes (prompt and laggard pilot x 3 levels x 3 
   const prompt=table.filter(x=>x.id.startsWith('prompt')).map(x=>x.withCards),laggard=table.filter(x=>x.id.startsWith('laggard')).map(x=>x.withCards);
   t.diagnostic(`prompt ${Math.min(...prompt)}-${Math.max(...prompt)} s, laggard ${Math.min(...laggard)}-${Math.max(...laggard)} s (cards at full length)`);
   assert.ok(Math.min(...prompt)>=180&&Math.max(...laggard)<=300,`3-5 minutes with the cards at full length (prompt ${Math.min(...prompt)}, laggard ${Math.max(...laggard)} s)`);
+});
+
+test('the finished act is what Continue reloads: the stored checkpoint after the end card is the completed state, not the withdrawal of CP-K (as act 1 does on its debrief)',{timeout:600000},()=>{
+  const runner=new M01ActRunner({enabled:true});
+  const sim=new M01AreaSimulation(19390901,{difficulty:'soldado',actId:ID});
+  const r=actCRoute(sim,{mode:'prompt',maxSec:900});assert.equal(r.complete,true);
+  const stored=JSON.parse(JSON.stringify(runner.envelope(sim)));
+  assert.equal(stored.actSave.mission.complete,true);assert.equal(stored.actSave.mission.phase,'NPC_END');assert.equal(stored.actSave.flags['m01npc.completed'],true);
+  assert.deepEqual(stored.actSave.checkpointsReached,['cp_npc_j_ordem','cp_npc_k_retirada']);
+  const back=runner.load(JSON.stringify(stored));assert.equal(back.ok,true,back.error);
+  assert.equal(back.sim.mission.complete,true);assert.equal(back.sim.mission.phase,'NPC_END');assert.equal(back.sim.clock,sim.clock);
 });
 
 test('determinism: the same seed and pilot give the same act twice, the whole state, and a different seed a different one',{timeout:600000},()=>{
