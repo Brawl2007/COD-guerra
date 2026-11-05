@@ -54,12 +54,13 @@ for(const r of routes){
   if(done.has(r.key))continue;
   asked={calls:0,atDeepestLine:0,searched:0};
   const wounded=new Set(),heard=new Set(),clouds=new Set(),treated=new Set(),carried=new Set(),laid=new Set(),jobs=new Set();
-  let calls=0,callsHeard=0,grenades=0,exploded=0,searches=0,closest=Infinity,firstBlocked=null,at0600=null,at0603=null,lastN=new Map(),lastSub=null;
+  let calls=0,callsHeard=0,grenades=0,exploded=0,searches=0,shellAt=null,searchBy=[],closest=Infinity,firstBlocked=null,at0600=null,at0603=null,lastN=new Map(),lastSub=null;
   const result=route(r.seed,{support:r.support,Simulation:Counting,onStep:({sim,events})=>{
     for(const e of events){
       if(e.type==='enemy-grenade')grenades++;
       if(e.type==='m01-blast'&&e.kind==='grenade'&&e.by!==undefined)exploded++;
-      if(e.type==='deck-tactic'&&e.kind==='search')searches++;
+      if(e.type==='deck-tactic'&&e.kind==='search'){searches++;searchBy.push(e.by.slice(-1));}
+      if(e.type==='m01-blast'&&e.kind==='shell'&&shellAt===null)shellAt=round(sim.clock,1);   // golden amendment 22: the German supporting round (updateDeckSupport)
     }
     for(const d of sim.sectors.damage)if(sim.clock-d.started<(d.dust?.life??40))clouds.add(d.id);
     if(firstBlocked===null&&sim.dustRays.blocked>0)firstBlocked={clock:round(sim.clock),battle:sim.battleClock};
@@ -84,7 +85,7 @@ for(const r of routes){
   const row={label,key:r.key,seed:r.seed,support:r.support,
     dust:{checked:sim.dustRays.checked,blocked:sim.dustRays.blocked,clouds:clouds.size,firstBlocked},
     aid:{wounded:wounded.size,calls,callsHeard,treated:treated.size,carried:carried.size,laid:laid.size,jobs:jobs.size,at0600,at0603},
-    fire:{grenades,exploded,searches,closestToPostM:round(closest,1),lostSight:{...asked}},
+    fire:{grenades,exploded,searches,searchBy:searchBy.join(''),supportRoundAt:shellAt,closestToPostM:round(closest,1),lostSight:{...asked}},
     complete:sim.mission.complete,survivors:sim.flags['m01.east_platoon_survivors'],playerHealth:sim.player.health,routeRealSec:round(sim.clock,1)};
   console.log(JSON.stringify(row));
   if(jsonl)appendFileSync(jsonl,JSON.stringify(row)+'\n');

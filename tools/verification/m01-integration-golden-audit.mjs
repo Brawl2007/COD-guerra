@@ -335,29 +335,35 @@ const AMENDMENTS={
       const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];for(const d of st.sectors?.damage??[])delete d.dust;for(const a of st.actors??[])delete a.aid;delete st.timers?.aid;delete st.timers?.barks;strip(st.resumeCheckpoint);};
       strip(frame.state);strip(frame.checkpoint);return frame;},
     behaviourFields:/^\$\.(state|checkpoint)\.actors\.\d+\.x$/,behaviourActors:/^(leon_dudek)$/},
-  // Amendment 22 (2026-11-05, the Captain's order after package 2): two changes of Act I, and the first one is the whole of what the routes see.
+  // Amendment 22 (2026-11-05, the Captain's order after package 2; REVISED the same day after the independent review rejected the first version, which changed texts only and left the search at 0): three changes of Act I.
   //  (1) TEXTS. A consistency audit of the mission data and a European Portuguese pass over mission.json (and, outside the pinned inputs, SCRIPT.md and HISTORICAL_RESEARCH.md): the role of Pawlak is MESSENGER (he has no
   //      radio, his roleNote says he carries the word on foot), the ckm reserve man no longer calls Wrona «cabo» (dlg_m01_118), the debrief says the sappers were a platoon (db_05), the offscreen Janik is not said to have had
-  //      his orders carried by «the messenger» (nobody knows who transmitted them), and 69 strings say comboio, ecrã, fumo, facto, contacto, Polónia, polaco, controlo, câmara, «a olhar» instead of the Brazilian words.
-  //  (2) SEARCH. A man of the deck assault who HOLDS a line that is not his deepest, and has lost the Poles he saw in the last 12 s, takes the bound of the search toward the next closing line (tactics.search.hold,
-  //      m01-simulation.js deckSearch). Measured on the 24 audit routes: 7 times a man asked for the search with no Pole in sight, always on his deepest line, where no station is left; the two golden routes never lose the
-  //      Poles at all. So the search stays at 0 on the routes and the simulation does what the predecessor's did.
-  // Measured on both golden routes (this tool, --amendment 22): the two simulations differ from the first tick (Pawlak's role, actors.<i>.role); with the old word put back and the dialogue state stripped from both frames
-  // (the length of a line sets how long its subtitle stays up, and the guide waits for the voice: the same strip as amendment 10) they are byte identical on every tick of both routes.
-  '22':{task:'M01-ACT1-TEXTS-SEARCH-V1',delta:'texts+search-hold',predecessor:'101b572af0c1f8489942b8ce3eadee5016ac02c4',after:null,noBehaviourDifference:true,countSearches:true,
+  //      his orders carried by «the messenger» (nobody knows who transmitted them), and the Brazilian words (comboio, ecrã, fumo, facto, contacto, Polónia, polaco, controlo, câmara, bombardeamento, toda a gente, «a olhar», até ao...).
+  //  (2) SEARCH FROM A HOLD. A man of the deck assault who HOLDS a line that is not his deepest, and has lost the Poles he saw in the last 12 s, takes the bound of the search toward the next closing line (tactics.search.hold,
+  //      m01-simulation.js deckSearch).
+  //  (3) THE CAUSE THE SEARCH LACKED. On the open deck every Pole is in sight of every German, so before this amendment nobody lost sight of anything before his deepest line (0 searches in the 24 routes; 7 asks, all on a deepest
+  //      line). tactics.support (updateDeckSupport): delaySec after the last living man of the Polish rearguard took his post, ONE ground burst of kind shell falls aheadM metres east of its front post (crater, report, a cloud
+  //      of 8 m for 30 s that hides the Poles from the Germans of the deck and the Germans from them; outside the shaken ring of a shell, so it touches no one); the men of the assault who then find no Pole in sight search. No draw,
+  //      no saved key (the crater is the record).
+  // Measured on both golden routes (this tool, --amendment 22): the two simulations differ from the first tick (Pawlak's role, actors.<i>.role); with the old word put back, the objective text put back and the dialogue state
+  // stripped from both frames (the length of a line sets how long its subtitle stays up, and the guide waits for the voice: the amendment 10 list) the first BEHAVIOUR difference is the crater of the supporting round
+  // (sectors.damage.<n>, the control route at 723.8 s real, the support route at 704.1 s).
+  '22':{task:'M01-ACT1-TEXTS-SEARCH-V1',delta:'texts+support-search',predecessor:'101b572af0c1f8489942b8ce3eadee5016ac02c4',after:null,countSearches:true,
     previousGolden:'tests/fixtures/m01-aid-dust-gameplay-baseline.json',golden:'tests/fixtures/m01-act1-texts-gameplay-baseline.json',
     evidence:'docs/verification/m01-runtime/act1-amend22-2026-11-05',
     extraInputs:['src/game/m01-deck-assault.js','src/game/m01-barks.js','src/game/m01-rearguard.js','src/game/m01-difficulty.js','src/game/m01-audio-events.js','src/game/m01-blast.js','src/game/m01-garrison.js','src/game/m01-squad.js','src/game/m01-section.js','src/game/m01-sappers.js','src/game/m01-retreat.js','src/game/m01-opening.js','src/game/m01-dust.js','src/game/m01-aid.js'],
-    generationStage:'Act 1 consistency and search on the amendment 21 tree (the integration line 101b572a: candidate #80 + package 2 with its critical review): (1) the texts of mission.json: Pawlak is a MESSENGER (RADIO_OPERATOR contradicted his roleNote), dlg_m01_118 says «Wrona» (a strzelec) and not «cabo» (PL by an AI author, to be reviewed by a native speaker), db_05 names the platoon of sappers, hist_janik no longer has the messenger transmit his orders, and European Portuguese: comboio, ecrã, fumo, facto, contacto, Polónia, polaco, controlo, câmara, «a + infinitivo», Cubro-o!, carregas-me?, Acertou.; (2) a man of the deck assault who holds a line that is not his deepest and has lost the Poles takes the bound of the search toward the next closing line (mission.json deckAssault.tactics.search.hold, deckSearch; no draw, no new saved key, the deepest line stays the end of every movement, casualtyHoldSec after the last fallen man); on the 24 audit routes the cause of a lost sight (the cloud of the one grenade) comes when the man is already on his deepest line, so no route searches and the simulation does what the predecessor\'s did; the golden is regenerated because its inputs moved (mission.json, the simulation, the deck module); golden amendment 22',
-    // The first difference is Pawlak\'s role in the first tick; with the old word put back and the dialogue state stripped (amendment 10\'s list) the two simulations are identical on every tick of both routes.
+    generationStage:'Act 1 consistency and the German search on the amendment 21 tree (the integration line 101b572a: candidate #80 + package 2 with its critical review): (1) the texts of mission.json: Pawlak is a MESSENGER (RADIO_OPERATOR contradicted his roleNote), dlg_m01_118 says «Wrona» (a strzelec) and not «cabo» (PL by an AI author, to be reviewed by a native speaker), db_05 names the platoon of sappers, hist_janik no longer has the messenger transmit his orders, and European Portuguese (comboio, ecrã, fumo, facto, contacto, Polónia, polaco, controlo, câmara, bombardeamento, toda a gente, a + infinitivo, Cubro-o!, carregas-me?, Acertou., até ao / até à); (2) a man of the deck assault who holds a line that is not his deepest and has lost the Poles takes the bound of the search toward the next closing line (mission.json deckAssault.tactics.search.hold, deckSearch; the deepest line stays the end of every movement, casualtyHoldSec after the last fallen man); (3) the cause the search lacked: one round of German supporting fire (mission.json deckAssault.tactics.support, updateDeckSupport): delaySec after the last living man of the Polish rearguard took his post a ground burst of kind shell falls aheadM east of the front post (crater, report, a cloud of 8 m for 30 s that hides the Poles from the Germans of the deck and the Germans from them; outside the shaken ring of a shell, so it touches no one; no draw, no saved key: the crater is the record), and the men of the assault who then find no Pole in sight search; the plot is the predecessor\'s (12 objectives, CP-A..D, 07:05, events, flags, survivors); golden amendment 22',
+    // The first difference is Pawlak\'s role in the first tick; with the old word put back, the objective text put back and the dialogue state stripped (amendment 10\'s list) the first behaviour difference is the crater of the round.
     deltaFields:/^\$\.(state|checkpoint)\.actors\.\d+\.role$/,
-    stripped:['actors[staszek_pawlak].role MESSENGER -> RADIO_OPERATOR (put back in the live frame)','dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»'],
+    stripped:['actors[staszek_pawlak].role MESSENGER -> RADIO_OPERATOR (put back in the live frame)','mission.text «até ao socorrista» -> «até o socorrista» (put back in the live frame)','dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»'],
     stateOnly:frame=>{
       const strip=st=>{if(!st)return;for(const k of ['dialogueConsumed','dialogueQueue','subtitle'])delete st[k];for(const k of ['barks','guide','guideDist'])delete st.timers?.[k];
-        for(const a of st.actors??[])if(a.id==='staszek_pawlak'&&a.role==='MESSENGER')a.role='RADIO_OPERATOR';strip(st.resumeCheckpoint);};
+        for(const a of st.actors??[])if(a.id==='staszek_pawlak'&&a.role==='MESSENGER')a.role='RADIO_OPERATOR';
+        if(typeof st.mission?.text==='string')st.mission.text=st.mission.text.replaceAll('até ao socorrista','até o socorrista');strip(st.resumeCheckpoint);};
       strip(frame.state);strip(frame.checkpoint);
       frame.events=frame.events.filter(e=>!(e.type==='message'&&/^(Zieliński chama-o da trincheira|Zieliński: .*mude de cobertura)/.test(e.message)));
-      return frame;}}};
+      return frame;},
+    behaviourFields:/^\$\.(state|checkpoint)\.sectors\.damage\.\d+$/,behaviourActors:/^(de_spans_[4-9])$/}};
 const CFG=AMENDMENTS[amendmentArg];if(!CFG)throw new Error(`--amendment ${amendmentArg}: 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 or 22`);
 assert.ok(CFG.predecessor,'the predecessor commit is pinned');assert.ok(CFG.identical||CFG.deltaFields,'the named delta paths are pinned (measure them first)');
 const KEY=`amendment-${amendmentArg}`,ACCOUNT_FILE=`GOLDEN_AMENDMENT_${amendmentArg}.json`;
@@ -390,9 +396,9 @@ assert.ok(changedInputs.length>0,'the live gameplay inputs moved');
 const NOT_PLOT=new Set(['m01.suggested_cover']);
 const plot=f=>Object.fromEntries(Object.entries(f).filter(([k])=>!NOT_PLOT.has(k)).sort());
 function observer({audit=true}={}){
-  const fired={},o={fired,at0600:null,clip:audit?clippingAudit():null,stack:audit?stackingAudit():null,searches:0};   // searches: the deck-tactic `search` events (amendment 22 reports them, the older accounts do not)
+  const fired={},o={fired,at0600:null,clip:audit?clippingAudit():null,stack:audit?stackingAudit():null,searches:0,supportRounds:0};   // searches: the deck-tactic `search` events, supportRounds: the ground bursts of kind shell (amendment 22 reports them, the older accounts do not)
   o.step=step=>{const {sim,events}=step;
-    for(const e of events)if(e.type==='deck-tactic'&&e.kind==='search')o.searches++;
+    for(const e of events){if(e.type==='deck-tactic'&&e.kind==='search')o.searches++;if(e.type==='m01-blast'&&e.kind==='shell')o.supportRounds++;}
     for(const id of Object.keys(sim.consumed))fired[id]??={battle:sim.battleClock,real:+sim.clock.toFixed(2)};
     if(o.at0600===null&&sim.battleClock>=seconds('06:00:00'))o.at0600=+sim.clock.toFixed(2);
     if(audit){o.clip.observe(step);o.stack.observe(step);}};
@@ -417,7 +423,7 @@ function clockEvents(now,old){
 
 const report={task:CFG.task,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,sourceSha256:sha(liveSource),
   previousGolden:{task:previous.task,file:CFG.previousGolden,sha256:sha(previousText),sourceSha256:previous.sourceSha256},...(CFG.identical?{identical:true}:{deltaFields:CFG.deltaFields.source}),
-  ...(CFG.stateOnly?(CFG.noBehaviourDifference?{noBehaviourDifference:true,stripped:CFG.stripped}:{behaviourFields:CFG.behaviourFields.source,behaviourActors:CFG.behaviourActors.source}):{}),
+  ...(CFG.stateOnly?(CFG.noBehaviourDifference?{noBehaviourDifference:true,stripped:CFG.stripped}:{behaviourFields:CFG.behaviourFields.source,behaviourActors:CFG.behaviourActors.source,...(CFG.stripped?{stripped:CFG.stripped}:{})}):{}),
   authority:`Written only by tools/verification/m01-integration-golden-audit.mjs --amendment ${amendmentArg} --write (x86); never edited by hand.`,
   changedGameplayInputsSincePredecessor:changedInputs,routes:[]};
 const golden={task:CFG.task,generationStage:CFG.generationStage,amendment:KEY,delta:CFG.delta,predecessor:CFG.predecessor,predecessorSourceSha256:previous.sourceSha256,
@@ -459,7 +465,7 @@ for(const {seed,support,ticks,blocks} of previous.routes){
   if(CFG.noBehaviourDifference)assert.equal(row.firstBehaviourDifference,null,'1b. with the dialogue state stripped the two simulations are identical on every tick of the route: the dialogue is presentation only');
   else if(CFG.stateOnly){assert.ok(row.firstBehaviourDifference,'the behaviour moved too');assert.match(row.firstBehaviourDifference.path,CFG.behaviourFields,'1b. the first behaviour difference is a combat field');
     // An event path has no actor (amendment 08: the new enemy_down_by_player event) and neither has the player's own record (amendment 16: his first step after the first stun); an actor path must be a man of the named delta.
-    if(row.firstBehaviourDifference.actor!==null||!/\.(events|player)\./.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}
+    if(row.firstBehaviourDifference.actor!==null||!/\.(events|player)\.|\.sectors\.damage\.\d+$/.test(row.firstBehaviourDifference.path))assert.match(row.firstBehaviourDifference.actor,CFG.behaviourActors,'1b. of a man the combat AI drives');}   // (amendment 22: the first difference of the behaviour may be a crater, which has no actor)
   }
   for(let i=0;i<Math.min(fin.blocks.length,blocks.length)&&JSON.stringify(fin.blocks[i])===JSON.stringify(blocks[i]);i++)row.identicalBlocks++;
   // 2. Invariants against the predecessor on its own route.
@@ -480,7 +486,7 @@ for(const {seed,support,ticks,blocks} of previous.routes){
     objectives:endNew.objectives,checkpoints:endNew.checkpoints,finalBattleClock:clockText(endNew.battleClock),consumedEvents:endNew.consumedEventIds.length,
     suggestedCover:{predecessor:own.flags['m01.suggested_cover']??null,live:sim.flags['m01.suggested_cover']??null}};
   row.measured={clipping:lo.clip.events.length,stacked:lo.stack.summary().pairs,germanRoundsPerRealMin:{predecessor:+(own.enemyFire.nextId/(own.clock/60)).toFixed(2),live:+(sim.enemyFire.nextId/(sim.clock/60)).toFixed(2)},
-    ...(CFG.countSearches?{searches:{predecessor:po.searches,live:lo.searches}}:{})};
+    ...(CFG.countSearches?{searches:{predecessor:po.searches,live:lo.searches},supportRounds:{predecessor:po.supportRounds,live:lo.supportRounds}}:{})};
   report.routes.push(row);golden.routes.push({seed,support,...fin});
   console.log(JSON.stringify({seed,support,ticks:[ticks,row.newTicks],to0600:[endOld.at0600,endNew.at0600],end:[endOld.real,endNew.real],identicalBlocks:row.identicalBlocks}));
 }
@@ -495,7 +501,7 @@ for(const seed of [3,7])for(const support of [false,true]){
       consumedEventIds:JSON.stringify(endOld.consumedEventIds)===JSON.stringify(endNew.consumedEventIds),finalBattleClock:endOld.battleClock===endNew.battleClock},
     survivors:{predecessor:endOld.survivors,live:endNew.survivors},real:{predecessor:endOld.real,live:endNew.real},
     repairComplete:{predecessor:po.fired.evt_m01_repair_complete?.real??null,live:lo.fired.evt_m01_repair_complete?.real??null},
-    ...(CFG.countSearches?{searches:{predecessor:po.searches,live:lo.searches}}:{})};
+    ...(CFG.countSearches?{searches:{predecessor:po.searches,live:lo.searches},supportRounds:{predecessor:po.supportRounds,live:lo.supportRounds}}:{})};
   report.otherRoutes.push(r);
   assert.equal(r.clipping,0,`seed ${seed} support ${support}: no clipping`);assert.equal(r.stacked,0,`seed ${seed} support ${support}: nobody inside another man`);
   assert.equal(endNew.complete,true);assert.equal(endNew.checkpoints.length,4);
