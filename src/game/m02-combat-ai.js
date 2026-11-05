@@ -1146,10 +1146,25 @@ export function updatePolishSquad(sim, dt) {
   }
 }
 
+/**
+ * Grupo de moral de um hostil (D3: «baixas elevadas ou saída comprometida podem produzir recuo/rendição»): o encontro a que pertence.
+ * Os da quinta (EA1) não trazem `encounterId` no layout; EA0 (o posto de C01) não tem moral de grupo.
+ */
+export const moraleGroupOf = (e) => e.encounterId ?? 'EA1';
+
 export function updateGermanGarrison(sim, dt) {
-  const ea1Enemies = sim.enemies.filter((e) => e.encounterId !== 'EA0');
-  const livingEa1Combat = ea1Enemies.filter((e) => e.alive && !e.nonCombatant);
-  const neutralizedCount = ea1Enemies.length - livingEa1Combat.length;
+  // Moral por grupo: a rendição conta SÓ as baixas do próprio encontro (EA1, EB1, EC1, EC2). Antes contava todos os hostis que não
+  // fossem de EA0, pelo que as baixas de EC1 rendiam EC2 no primeiro tick de C10 (e DE-A05, inexistente nas células B/C, dava a MG
+  // por abatida). A condição da MG é a de DE-A05 e só vale para o grupo da quinta, onde ela existe.
+  const moraleGroups = new Map();
+  for (const e of sim.enemies) {
+    if (e.encounterId === 'EA0') continue;
+    const key = moraleGroupOf(e);
+    const g = moraleGroups.get(key) ?? { size: 0, neutralized: 0 };
+    g.size += 1;
+    if (!e.alive || e.nonCombatant) g.neutralized += 1;
+    moraleGroups.set(key, g);
+  }
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05');
   const mgDown = !mgGunner || !mgGunner.alive || mgGunner.nonCombatant;
 
@@ -1166,8 +1181,12 @@ export function updateGermanGarrison(sim, dt) {
     if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
     enemy.suppressed = Math.max(0, enemy.suppressed - dt * 0.25);
 
+    const moraleGroup = moraleGroups.get(moraleGroupOf(enemy));
+    const neutralizedCount = moraleGroup?.neutralized ?? 0;
+    const groupMgDown = moraleGroupOf(enemy) === 'EA1' ? mgDown : true;
+
     // Check C04 wounded non-combatant transition in southern orchard
-    if (enemy.c04Candidate && !enemy.nonCombatant && (enemy.health <= 48 || (mgDown && neutralizedCount >= 6))) {
+    if (enemy.c04Candidate && !enemy.nonCombatant && (enemy.health <= 48 || (groupMgDown && neutralizedCount >= 6))) {
       enemy.state = 'WOUNDED_UNARMED';
       enemy.nonCombatant = true;
       enemy.crouched = true;
@@ -1184,8 +1203,8 @@ export function updateGermanGarrison(sim, dt) {
       continue;
     }
 
-    // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders neutralized)
-    if (!enemy.nonCombatant && mgDown && neutralizedCount >= 7) {
+    // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders of the SAME group are neutralized)
+    if (!enemy.nonCombatant && groupMgDown && neutralizedCount >= 7) {
       enemy.state = 'SURRENDERED';
       enemy.nonCombatant = true;
       enemy.moving = false;

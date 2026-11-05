@@ -41,6 +41,32 @@ export class MissionBot extends PlayerBot {
     return true;
   }
 
+  /**
+   * A reserva alemã de C10 (EC2, 12 homens) combate a sério e a sua moral só cede às suas próprias baixas (D3), por isso o jogador do
+   * teste não corre para ela em campo aberto: fica agachado atrás do parapeito do pátio (a secção toma as suas posições de C10),
+   * dispara ao que vê e espera que a reserva seja vencida ou se renda. No máximo 240 s (se não ceder, volta ao comportamento normal,
+   * para não pendurar o teste). Devolve true se agiu neste tick.
+   */
+  holdAgainstReserve() {
+    const { sim } = this;
+    if (!sim.areaC?.c10Started) return false;
+    if (!sim.enemies.some((e) => e.encounterId === 'EC2' && e.alive && !e.nonCombatant)) return false;
+    this.reserveWaitSec = (this.reserveWaitSec ?? 0) + this.dt;
+    if (this.reserveWaitSec > 240) return false;
+    const target = this.nearestVisibleHostile(160);
+    if (target) {
+      this.tick(this.aimAndFire(target));
+      return true;
+    }
+    const spot = { x: -4, z: -15.2 }; // atrás do parapeito do pátio (cov_c_yard_parapet), junto de Gruca
+    if (Math.hypot(spot.x - sim.player.x, spot.z - sim.player.z) > 1.2) {
+      this.walkStep(spot, 1.2);
+    } else {
+      this.tick(sim.player.crouched ? {} : { crouch: true });
+    }
+    return true;
+  }
+
   walkStep(goal, tol) {
     const { sim } = this;
     const p = sim.player;
@@ -81,10 +107,12 @@ export class MissionBot extends PlayerBot {
         return this.walkStep({ x: -4, z: 52 }, 1.5);
       case 'C09':
       case 'C10': {
+        if (this.holdAgainstReserve()) return undefined;
         if (this.hunt()) return undefined;
         return this.walkStep({ x: -6, z: -10 }, 1.5);
       }
       case 'C11': {
+        if (this.holdAgainstReserve()) return undefined;
         const a = sim.areaC;
         const lis = sim.allies.find((al) => al.id === 'pl_lis');
         const target = this.nearestVisibleHostile(160);
