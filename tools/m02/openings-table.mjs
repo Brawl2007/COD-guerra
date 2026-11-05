@@ -409,9 +409,15 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
     cmp(id, 'portas norte/sul de 2,4 m (F4, p. 25)', `${num(o.width)} × ${num(o.clearHeight)} m, u ${num(o.offset - o.width / 2)}…${num(o.offset + o.width / 2)} (corredor u7…11)`, o.width === 2.4 && o.offset - o.width / 2 >= 7 && o.offset + o.width / 2 <= 11);
   }
   const b03Windows = ops.filter((o) => o.kind === 'window' && o.buildingId === 'B03');
-  cmp('B03 janelas altas', 'pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25)', b03Windows.map((o) => `${o.id} (${o.side})`).join(', ') || 'nenhuma',
-    b03Windows.some((o) => o.side === 'norte') && b03Windows.some((o) => o.side === 'sul'));
-  cmp('B03 acesso a arreios', 'acesso pequeno a arreios pelo leste (F4, p. 25)', `portas B03: ${ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03').map((o) => o.side).join(', ')}`, ops.some((o) => o.kind === 'door' && o.buildingId === 'B03' && o.side === 'este'));
+  // «pequenas janelas altas»: peitoril acima dos olhos em pé (sem tiro/vista de um jogador em pé) e vão pequeno (≤ 1,5 m de largura).
+  const highSmall = (o) => o.sillY >= PLAYER.standEye && o.width <= 1.5;
+  cmp('B03 janelas altas', 'pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25)', b03Windows.map((o) => `${o.id} (${o.side}; ${num(o.width)} m, peitoril ${num(o.sillY)})`).join(', ') || 'nenhuma',
+    b03Windows.some((o) => o.side === 'norte' && highSmall(o)) && b03Windows.some((o) => o.side === 'sul' && highSmall(o)));
+  // «acesso pequeno a arreios pelo leste»: porta pedonal (≤ 1,2 m: F1 p. 23) na parede este, na metade sul (arrecadação sudeste).
+  const tackDoors = ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03' && o.side === 'este');
+  cmp('B03 acesso a arreios', 'acesso pequeno a arreios pelo leste, arrecadação a sudeste (F4, p. 25; F1 p. 23: porta pedonal 1,0 m)',
+    `portas B03: ${ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03').map((o) => o.side).join(', ')}${tackDoors.length ? `; este: ${tackDoors.map((o) => `${o.id} (${num(o.width)} × ${num(o.clearHeight)} m, v = ${num(o.offset)})`).join(', ')}` : ''}`,
+    tackDoors.some((o) => o.width <= 1.2 && o.width >= 0.9 && o.offset > b03.depth / 2));
   const d4 = opById.get('door_b04_south');
   cmp('door_b04_south', 'porta sul 1 m (F5, p. 25)', `parede sul, u = ${num(d4.offset)}, largura ${num(d4.width)} m`, d4.width === 1 && d4.side === 'sul');
   out();

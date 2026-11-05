@@ -2,7 +2,7 @@
 
 Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.
 
-- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `beb61131c60d80c08390c7df9715748716ae1fe0244c69fd3d6440cd5ce6ac18`), instanciado com `M02QuintaWorld`.
+- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `0d4ad89cc0ce74d05e189ee4beae4c68372942b5b1df25d2865cae3fd7527312`), instanciado com `M02QuintaWorld`.
 - Cápsula do jogador (`PLAYER_PHYSICS`, src/world/m01-player-physics.js, usada por `m02-01-simulation.js`): raio 0,36 m (Ø 0,72 m), altura em pé 1,80 m, agachado 1,25 m, degrau máximo 0,45 m, sem salto. Olhos: em pé 1,64 m, agachado 1,08 m (`EYE_HEIGHT` de src/config.js e o literal de olhos agachado em `m02-01-simulation.js`).
 - Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).
 - LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Política de vidro (`BALLISTIC_MATERIAL_POLICY.glass`): o vidro intacto **deixa ver** (`blocksSight` = false: `lineOfSight` ignora-o) mas **pára a bala**, que o parte (`glassBrokenId`; depois o vão fica `broken`). Bala = qualquer outro sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).
@@ -28,10 +28,13 @@ Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Pr
 | win_b02_west_mg | B02 · b02_wall_west (oeste) | 12,00; -30,00 | 8,00 | 1,80 × 1,15 | 1,00 → 2,15 | vidro open | não (peitoril 1,00 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | door_b03_north | B03 · b03_wall_north (norte) | 29,00; 0,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
 | door_b03_south | B03 · b03_wall_south (sul) | 29,00; 12,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
+| door_b03_east_tack | B03 · b03_wall_east (este) | 38,00; 9,50 | 9,50 | 1,00 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b03_east_tack_leaf) | sim / sim | 0,28 | 0,50 |
 | win_b03_west_high | B03 · b03_wall_west (oeste) | 20,00; 6,00 | 6,00 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
+| win_b03_north_high | B03 · b03_wall_north (norte) | 23,50; 0,00 | 3,50 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
+| win_b03_south_high | B03 · b03_wall_south (sul) | 34,50; 12,00 | 14,50 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | door_b04_south | B04 · b04_wall_south (sul) | -31,80; 26,00 | 5,20 | 1,00 × 2,00 | 0,00 → 2,00 | porta open | sim | sim / sim | 0,28 | 0,50 |
 
-Total: 11 portas e 6 janelas (17 vãos).
+Total: 12 portas e 8 janelas (20 vãos).
 
 ### 1.2 Linha de vista e de tiro através do vão
 
@@ -54,7 +57,10 @@ Estado «inicial» = o do layout; «aberto» = porta aberta / vidro aberto. Altu
 | win_b02_west_mg | vidro open | sim | sim | sim (h 1,57) | sim | sim |
 | door_b03_north | porta open | sim | sim | sim (h 1,20) | sim | sim |
 | door_b03_south | porta open | sim | sim | sim (h 1,20) | sim | sim |
+| door_b03_east_tack | porta closed | não (door_b03_east_tack_leaf) | não (door_b03_east_tack_leaf) | não (door_b03_east_tack_leaf) (h 1,05) | sim | sim |
 | win_b03_west_high | vidro open | não (win_b03_west_high_sill) | não (win_b03_west_high_sill) | sim (h 2,10) | não (win_b03_west_high_sill) | sim |
+| win_b03_north_high | vidro open | não (win_b03_north_high_sill) | não (win_b03_north_high_sill) | sim (h 2,10) | não (win_b03_north_high_sill) | sim |
+| win_b03_south_high | vidro open | não (win_b03_south_high_sill) | não (win_b03_south_high_sill) | sim (h 2,10) | não (win_b03_south_high_sill) | sim |
 | door_b04_south | porta open | sim | sim | sim (h 1,00) | sim | sim |
 
 ## 2. Linhas de tiro da MG34 de B02
@@ -167,8 +173,8 @@ B03 e B04: o PDF não fixa beiral/cumeeira (F4 diz só «volume mais baixo que B
 | B03 corredor | corredor central norte-sul u7-11 (F4, p. 25) | corredor_estabulo u7-11 | ✓ |
 | door_b03_north | portas norte/sul de 2,4 m (F4, p. 25) | 2,40 × 2,40 m, u 7,80…10,20 (corredor u7…11) | ✓ |
 | door_b03_south | portas norte/sul de 2,4 m (F4, p. 25) | 2,40 × 2,40 m, u 7,80…10,20 (corredor u7…11) | ✓ |
-| B03 janelas altas | pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25) | win_b03_west_high (oeste) | ✗ |
-| B03 acesso a arreios | acesso pequeno a arreios pelo leste (F4, p. 25) | portas B03: norte, sul | ✗ |
+| B03 janelas altas | pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25) | win_b03_west_high (oeste; 1,20 m, peitoril 1,75), win_b03_north_high (norte; 1,20 m, peitoril 1,75), win_b03_south_high (sul; 1,20 m, peitoril 1,75) | ✓ |
+| B03 acesso a arreios | acesso pequeno a arreios pelo leste, arrecadação a sudeste (F4, p. 25; F1 p. 23: porta pedonal 1,0 m) | portas B03: norte, sul, este; este: door_b03_east_tack (1,00 × 2,10 m, v = 9,50) | ✓ |
 | door_b04_south | porta sul 1 m (F5, p. 25) | parede sul, u = 5,20, largura 1,00 m | ✓ |
 
 ## 4. Pontos de captura SN1–SN5: PDF ↔ layout ↔ `PANORAMA_VIEWS`
@@ -221,14 +227,14 @@ Contagem: 10 inimigos EA1 (PDF N1 p. 48: «dez defensores EA1» ✓), 4 EA0 em Z
 
 ## 6. Lista de problemas
 
-Gerada automaticamente: 0 ERRO, 3 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
+Gerada automaticamente: 0 ERRO, 1 AVISO, 3 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
 
 | # | Sev. | Área | Elemento | Descrição |
 | --- | --- | --- | --- | --- |
-| 1 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
-| 2 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
-| 3 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
-| 4 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 1 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
+| 2 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 3 | INFO | linha de tiro | win_b03_north_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 4 | INFO | linha de tiro | win_b03_south_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
 
 Limites desta prova: geometria/colisão estática de cápsula e raios retos; não cobre IA, animação, portas a abrir com tempo, desempenho, aparência nem jogo real.
 

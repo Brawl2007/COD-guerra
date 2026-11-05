@@ -45,7 +45,7 @@ describe('N0 plan: planta SVG', () => {
     ];
     for (const id of ids) assert.ok(svg.includes(`id="${id}"`), `a planta não contém ${id}`);
     assert.equal(layout.orchardTrees.length, 7);
-    assert.equal(ops.length, 17);
+    assert.equal(ops.length, 20);
   });
 
   it('usa as posições SN do PDF N5 p. 49 (SN3 (-23,-12), SN4 (8,-28))', () => {

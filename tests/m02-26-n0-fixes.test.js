@@ -480,3 +480,91 @@ describe('N0-4: o vidro intacto deixa ver (BALLISTIC_MATERIAL_POLICY.glass.block
   });
 });
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Item 5 — B03: janelas altas N/S e porta pequena a este para os arreios (PDF F4 p. 25)
+
+/** Vista de um jogador em pé através do vão de uma janela (mesmo mundo e mesmos olhos de n0-common). */
+function standingSightThrough(world, op) {
+  const gy = world.heightAt(op.center.x, op.center.z);
+  const a = actorAt(op.center.x - op.normal.x * 3, op.center.z - op.normal.z * 3, PLAYER.standEye, gy);
+  const b = actorAt(op.center.x + op.normal.x * 3, op.center.z + op.normal.z * 3, PLAYER.standEye, gy);
+  return world.lineOfSight(a, b, { includeFoliage: true });
+}
+
+describe('N0-5: B03 tem as janelas altas das fachadas longas (N e S) e a porta pequena a este dos arreios (PDF F4, p. 25)', () => {
+  const b03 = building(layout, 'B03');
+  const ops = openingGeometry(layout).filter((o) => o.buildingId === 'B03');
+
+  it('reprodução: o layout anterior só tinha portas norte/sul e uma janela alta a oeste (a tabela acusava os dois desvios ao PDF)', () => {
+    const old = structuredClone(layout);
+    const oldB03 = building(old, 'B03');
+    oldB03.windows = oldB03.windows.filter((w) => w.id === 'win_b03_west_high');
+    oldB03.doors = oldB03.doors.filter((d) => d.id !== 'door_b03_east_tack');
+    const { problems } = buildOpeningsMarkdown({ layout: old, sha256: 'antigo' });
+    assert.ok(problems.some((p) => p.subject === 'B03 janelas altas'));
+    assert.ok(problems.some((p) => p.subject === 'B03 acesso a arreios'));
+  });
+
+  it('janelas altas e pequenas em ambas as fachadas longas (norte e sul), fora das portas de 2,4 m e do corredor', () => {
+    const windows = ops.filter((o) => o.kind === 'window');
+    for (const side of ['norte', 'sul']) {
+      const w = windows.find((o) => o.side === side);
+      assert.ok(w, `janela na fachada ${side}`);
+      assert.ok(w.sillY >= PLAYER.standEye, 'alta: o peitoril fica acima dos olhos em pé (sem tiro/vista em pé)');
+      assert.ok(w.width <= 1.5 && w.clearHeight <= 1.0, 'pequena');
+      const door = ops.find((o) => o.kind === 'door' && o.side === side);
+      const gap = Math.abs(w.offset - door.offset) - (w.width + door.width) / 2 - w.frameWidth - door.frameWidth;
+      assert.ok(gap >= 0.3, `${gap.toFixed(2)} m entre a janela ${side} e a porta ${side}`);
+      assert.ok(w.offset - w.width / 2 - w.frameWidth >= 0.3 && b03.width - (w.offset + w.width / 2 + w.frameWidth) >= 0.3, 'sem tocos de parede < 0,30 m');
+    }
+    const world = makeWorld(layout, { openAll: true });
+    for (const w of windows) assert.equal(standingSightThrough(world, w), false, `${w.id}: sem linha de vista a um jogador em pé`);
+  });
+
+  it('porta pequena a este para a sala dos arreios: pedonal (1,0 m), na metade sul (arrecadação a sudeste), fechada de início e atravessável quando aberta', () => {
+    const door = ops.find((o) => o.id === 'door_b03_east_tack');
+    assert.ok(door, 'door_b03_east_tack existe');
+    assert.equal(door.side, 'este');
+    assert.equal(door.width, 1.0);
+    assert.ok(door.width < 2.4, 'pequena (as de norte/sul têm 2,4 m)');
+    assert.ok(door.offset > b03.depth / 2, 'na metade sul (v > 6)');
+    assert.equal(door.initialState, 'closed');
+    const partition = b03.props.find((p) => p.id === 'prop_b03_stall_e');
+    assert.ok(door.offset - door.width / 2 > partition.v + partition.d, 'a porta abre para depois da divisória da baia este');
+    const closed = makeWorld(layout);
+    assert.equal(probePassage(closed, door).passes, false, 'fechada: a folha bloqueia');
+    const open = makeWorld(layout, { openAll: true });
+    assert.equal(probePassage(open, door).passes, true, 'aberta: a cápsula atravessa em linha reta');
+    assert.equal(probePassage(open, door, { height: PLAYER.crouchHeight }).passes, true);
+    const world = new M02QuintaWorld(layout);
+    assert.equal(world.getDoorState('door_b03_east_tack'), 'closed');
+    assert.equal(world.toggleDoor('door_b03_east_tack'), 'open', 'abre com uma ação física curta (E)');
+  });
+
+  it('o navegador dos NPC usa a porta este (aberta) quando é o único caminho para a arrecadação, e a rota norte→corredor→sul continua a existir', () => {
+    const sim = new M02BenchSimulation(SEED);
+    // Com as portas grandes abertas o navegador prefere o desvio de folga larga (a porta de 1,0 m só serve com folga apertada).
+    sim.world.setDoorState('door_b03_east_tack', 'open');
+    const around = sim.navigator.route({ x: 41, y: 0, z: 9.5, radius: PLAYER.radius }, { x: 33, z: 9.5 });
+    assert.ok(around && around.length >= 2, 'há caminho pelas portas norte/sul');
+    // Com as portas norte e sul fechadas, a porta este é o único acesso: o navegador passa por ela.
+    sim.world.setDoorState('door_b03_north', 'closed');
+    sim.world.setDoorState('door_b03_south', 'closed');
+    sim.navigator.sync();
+    const through = sim.navigator.route({ x: 41, y: 0, z: 9.5, radius: PLAYER.radius }, { x: 33, z: 9.5 });
+    assert.deepEqual(through, [[33, 9.5]], 'linha reta pelo vão da porta este (única passagem)');
+    // Fechada, a porta este deixa de ser caminho: sem rota para o interior.
+    sim.world.setDoorState('door_b03_east_tack', 'closed');
+    sim.navigator.sync();
+    assert.equal(sim.navigator.route({ x: 41, y: 0, z: 9.5, radius: PLAYER.radius }, { x: 33, z: 9.5 }), null);
+    const sim2 = new M02BenchSimulation(SEED);
+    const corridor = sim2.navigator.route({ x: 29, y: 0, z: -3, radius: PLAYER.radius }, { x: 29, z: 15 });
+    assert.ok(corridor && corridor.length >= 1, 'norte → corredor → sul (F4: rota alternativa legível)');
+  });
+
+  it('a tabela compara B03 com o PDF sem desvios', () => {
+    const { problems } = buildOpeningsMarkdown(loadLayout());
+    assert.ok(!problems.some((p) => p.subject === 'B03 janelas altas' || p.subject === 'B03 acesso a arreios'));
+  });
+});
+
