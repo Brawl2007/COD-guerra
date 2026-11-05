@@ -810,6 +810,12 @@ export function stepActorWeapon(sim, actor, dt) {
 
 /** Distância (m) do ponto de aproximação ao centro de uma porta (dentro dos 1,65 m a que um ator a abre). */
 const DOOR_APPROACH_M = 0.9;
+/**
+ * Regra (FIX-CD2): só uma porta fechada a ≤ DOOR_DETOUR_MAX_FROM_GOAL_M do DESTINO é um desvio plausível — o ator vai a uma porta que
+ * protege o seu destino (a sala/edifício dele), não à primeira porta fechada do mapa. Antes, uma falha momentânea de rota mandava
+ * Lis 61 m de B01 à porta sul de B02. Vale para aliados e inimigos (mesma função). Sem porta plausível, não há desvio.
+ */
+export const DOOR_DETOUR_MAX_FROM_GOAL_M = 12;
 
 /**
  * Rota até ao lado de cá de uma porta fechada, a mais próxima do destino (custo ator→porta→destino), quando não há rota até ao destino.
@@ -817,7 +823,7 @@ const DOOR_APPROACH_M = 0.9;
  */
 function routeToClosedDoorToward(sim, from, goal) {
   const closed = (sim.world.doors ?? [])
-    .filter((d) => d.state === 'closed')
+    .filter((d) => d.state === 'closed' && Math.hypot(d.center.x - goal.x, d.center.z - goal.z) <= DOOR_DETOUR_MAX_FROM_GOAL_M)
     .map((d) => ({
       d,
       cost: Math.hypot(d.center.x - from.x, d.center.z - from.z) + Math.hypot(d.center.x - goal.x, d.center.z - goal.z),

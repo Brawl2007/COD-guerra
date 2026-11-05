@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { M02BenchSimulation } from '../src/game/m02-01-simulation.js';
 import { createMemoryStorage } from '../src/game/m02-save-store.js';
 import { isPlayerSheltered } from '../src/game/m02-acts-director.js';
+import { stepActorNavigation, DOOR_DETOUR_MAX_FROM_GOAL_M } from '../src/game/m02-combat-ai.js';
 
 const killAll = (actors) => {
   for (const e of actors) Object.assign(e, { alive: false, health: 0, state: 'DEAD' });
@@ -48,7 +49,47 @@ describe('FIX-CD2 2: KeyM cujo SP03 forçado mata Piotr não conclui a missão n
   });
 });
 
-describe('FIX-CD2 3: o «abrigo válido» do cp_d conta as granadas do próprio jogador em voo', () => {
+describe('FIX-CD2 4: a falha de rota só desvia para portas fechadas plausíveis (≤ 12 m do destino), em aliados e inimigos', () => {
+  const DT = 1 / 60;
+  /** Prova doors4: o destino de Lis fica atrás de portas fechadas de B01 (sem rota); as restantes portas fechadas do mapa ficam longe. */
+  function walkToUnroutableGoal(kind) {
+    const sim = new M02BenchSimulation(1);
+    killAll(sim.enemies);
+    const goal = { x: -38, z: -11 };
+    const actor = kind === 'ally' ? sim.allies.find((a) => a.id === 'pl_lis') : sim.enemies[0];
+    Object.assign(actor, { alive: true, health: 100, state: 'IDLE', nonCombatant: false, x: -22, z: -14.5, y: sim.world.heightAt(-22, -14.5), goal: { ...goal }, navCorners: null });
+    const opened = [];
+    let maxFromGoal = 0;
+    for (let t = 0; t < 20 / DT; t++) {
+      sim.clock += DT;
+      actor.goal = { ...goal };
+      stepActorNavigation(sim, actor, DT);
+      for (const e of sim.events) {
+        if (e.type === 'door-toggled' && e.byActorId === actor.id) {
+          const d = sim.world.doors.find((x) => x.id === e.doorId);
+          opened.push(Math.hypot(d.center.x - goal.x, d.center.z - goal.z));
+        }
+      }
+      sim.events.length = 0;
+      const last = actor.navCorners?.at(-1);
+      if (last) maxFromGoal = Math.max(maxFromGoal, Math.hypot(last.x - goal.x, last.z - goal.z));
+    }
+    return { sim, actor, goal, opened, maxFromGoal };
+  }
+
+  for (const kind of ['ally', 'enemy']) {
+    it(`${kind}: nunca abre nem se dirige a uma porta fechada a mais de 12 m do destino (antes: 61 m até à porta sul de B02)`, () => {
+      const r = walkToUnroutableGoal(kind);
+      assert.equal(DOOR_DETOUR_MAX_FROM_GOAL_M, 12);
+      assert.ok(r.opened.length > 0, 'ainda abre as portas do seu destino');
+      for (const d of r.opened) assert.ok(d <= 12, `porta aberta a ${d.toFixed(1)} m do destino`);
+      assert.ok(r.maxFromGoal <= 13, `último canto da rota a ${r.maxFromGoal.toFixed(1)} m do destino`);
+      assert.ok(Math.hypot(r.actor.x - r.goal.x, r.actor.z - r.goal.z) < 12, 'fica junto ao destino, não do outro lado do mapa');
+    });
+  }
+});
+
+describe('FIX-CD2 3:o «abrigo válido» do cp_d conta as granadas do próprio jogador em voo', () => {
   const CP_D = 'cp_m02_d_cobertura_retirada';
   function c10WithGrenadeAtFeet(seed = 19390909) {
     const sim = new M02BenchSimulation(seed, { storage: createMemoryStorage() });
