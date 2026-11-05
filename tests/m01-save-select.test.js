@@ -7,7 +7,7 @@ import {M01Simulation} from '../src/game/m01-simulation.js';
 import {Game} from '../src/game/game.js';
 import {chooseContinue} from '../src/game/m01-save-select.js';
 
-const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',BACKUP=ACT_KEY+':backup',BASE_KEY='cod-guerra:checkpoint:m01:v2';
+const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3',BACKUP=ACT_KEY+':backup',REJECTED=ACT_KEY+':rejected',BASE_KEY='cod-guerra:checkpoint:m01:v2';
 const on=new M01ActRunner({enabled:true}),qa=new M01ActRunner({enabled:true,startAct:'vii-a'});
 const actText=()=>JSON.stringify(qa.envelope(qa.createInitial()));
 const baseText=()=>JSON.stringify(new M01Simulation().checkpoint);
@@ -49,19 +49,33 @@ test('VII-a save + act-1 save: the valid act envelope wins (newer by constructio
   assert.equal(g2.start({continueSaved:true}),true);assert.equal(g2.sim.constructor.name,'M01Simulation');
 });
 
-test('invalid act envelope + valid act-1 save: falls back with a notice, keeps the blob under the backup key, no save-error',()=>{
+test('invalid act envelope + valid act-1 save: falls back with a notice, keeps the blob under the rejected key, no save-error',()=>{
   const bad='{"schema":3,"broken":true}',stored={[ACT_KEY]:bad,[BASE_KEY]:baseText()};
   const {game,states,said}=setup(stored,on);
   assert.equal(game.start({continueSaved:true}),true);
-  assert.equal(game.sim.constructor.name,'M01Simulation');assert.equal(stored[BACKUP],bad);assert.equal(stored[ACT_KEY],undefined);
+  assert.equal(game.sim.constructor.name,'M01Simulation');assert.equal(stored[REJECTED],bad);assert.equal(stored[ACT_KEY],undefined);
   assert.equal(said.length,1);assert.deepEqual(states.filter(s=>s[0]==='save-error'),[]);
+});
+
+test('refused envelope: the notice outlives the first HUD update, and a later new game keeps the refused copy',()=>{
+  const bad='{"schema":3,"broken":true}',stored={[ACT_KEY]:bad,[BASE_KEY]:baseText()};
+  const {game}=setup(stored,on);
+  const sim=new M01Simulation();sim.clock=992.8;   // a loaded checkpoint far from clock 0
+  const message={textContent:''};
+  game.hud={message};game.say=Game.prototype.say;game.messageUntil=0;
+  game.acts={load:t=>t===bad?{ok:false,error:'bad'}:{ok:true,sim},createInitial:()=>new M01Simulation(),next:()=>null};
+  assert.equal(game.start({continueSaved:true}),true);
+  assert.ok(message.textContent.length>0);assert.ok(game.messageUntil>sim.clock*1000,'messageUntil is relative to the loaded sim clock');
+  stored[ACT_KEY]=actText();   // the fallback leaves a fresh act envelope here
+  game.acts=on;game.restartMission('soldado');
+  assert.equal(stored[REJECTED],bad,'a new game does not overwrite the refused envelope');
 });
 
 test('invalid act envelope and no act-1 save: save-error, and nothing is deleted',()=>{
   const bad='{"schema":3,"broken":true}',stored={[ACT_KEY]:bad};
   const {game,states}=setup(stored,on);
   assert.equal(game.start({continueSaved:true}),false);assert.equal(states.at(-1)[0],'save-error');
-  assert.equal(stored[ACT_KEY],bad);assert.equal(stored[BACKUP],bad);
+  assert.equal(stored[ACT_KEY],bad);assert.equal(stored[REJECTED],bad);
 });
 
 test('acts off: the acts key is never read nor written',()=>{

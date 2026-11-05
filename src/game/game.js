@@ -12,7 +12,7 @@ import {SIM_STEP,frameSimBudget,playDueSounds} from './frame-catchup.js';
 import {ROUND_SPEED} from './m01-fire.js';
 import {roundImpactSoundPlan,grenadeThrowSoundPlan,waterCrossing} from '../core/battlefield-audio.js';
 import {ACTS,M01ActRunner,actOf} from './m01-acts.js';
-import {chooseContinue,ACT_SAVE_BACKUP_SUFFIX} from './m01-save-select.js';
+import {chooseContinue,ACT_SAVE_BACKUP_SUFFIX,ACT_SAVE_REJECTED_SUFFIX} from './m01-save-select.js';
 
 const SAVE_KEY='cod-guerra:checkpoint:v1';
 // R4 INC-1: a new act's checkpoint (schema 3 envelope, src/game/m01-acts.js) lives under its own key, so the schema 2 save of the current act is never overwritten by it
@@ -70,15 +70,16 @@ export class Game {
   }
   start({continueSaved=false}={}){
     if(this.started)return this.resume();
+    let notice=null;   // said only once the loaded simulation is in place (say() reads this.sim.clock) and after any act entry (it resets messageUntil)
     if(continueSaved){
       let result;
       if(this.acts&&this.isM01){   // R4 INC-1: a new act's envelope first (it is newer than the completed current act it came from), else the schema 2 save
         try{
           const pick=chooseContinue(this.acts,localStorage.getItem(ACT_SAVE_KEY),localStorage.getItem(this.saveKey));
           result=pick.source==='acts'?pick.result:this.acts.load(pick.text);
-          if(pick.rejected){   // invalid act envelope: keep it under a backup key, open the schema 2 save, never delete it silently
-            localStorage.setItem(ACT_SAVE_KEY+ACT_SAVE_BACKUP_SUFFIX,pick.rejected);
-            if(result.ok){localStorage.removeItem(ACT_SAVE_KEY);this.say('Checkpoint do ato novo inválido: guardado em cópia; a retomar o ato 1.',3200);}
+          if(pick.rejected){   // invalid act envelope: keep it under its own key (a new game never touches it), open the schema 2 save, never delete it silently
+            localStorage.setItem(ACT_SAVE_KEY+ACT_SAVE_REJECTED_SUFFIX,pick.rejected);
+            if(result.ok){localStorage.removeItem(ACT_SAVE_KEY);notice='Checkpoint do ato novo inválido: guardado em cópia; a retomar o save anterior.';}
           }
         }catch(error){result={ok:false,error:error.message};}
         if(result.ok)this.sim=result.sim;
@@ -87,7 +88,8 @@ export class Game {
       this.m01Hud.reset('continue',this.sim.clock);
     }
     this.started=true;this.rebuildSounds();
-    if(this.sim.mission.complete&&this.acts?.next(this.sim)){this.enterNextAct();this.audio.init();this.requestControl();return true;}   // R4: a finished act with a next one opens it
+    if(this.sim.mission.complete&&this.acts?.next(this.sim)){this.enterNextAct();if(notice)this.say(notice,3200);this.audio.init();this.requestControl();return true;}   // R4: a finished act with a next one opens it
+    if(notice)this.say(notice,3200);
     if(this.sim.mission.complete){this.onState('complete');return true;}
     this.audio.init();this.requestControl();return true;
   }
