@@ -38,6 +38,88 @@ export const HORIZON_SECTORS_360 = Object.freeze([
   Object.freeze({ id: 'NW', azimuthDeg: 315, label: 'Noroeste · Campos baixos e linha de árvores do Bzura', layer: 'L2/L3' }),
 ]);
 
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// H2 / L3 — camada de horizonte distante (PDF pp. 30-32): 1,5 a 8 km. TODAS as distâncias abaixo estão em METROS (o gameplay M02 é em metros; ver
+// tests/m02-22-environment-horizon-units.test.js). Dados puros: o renderer (src/render/m02-environment.js) desenha impostores de baixo custo a partir
+// destas constantes e nunca decide nada; a simulação só guarda eventos (HS-A2) a estas distâncias.
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+export const HORIZON_L3_NEAR_M = 1500;
+export const HORIZON_L3_FAR_M = 8000;
+/** Margem para o fade de entrada/saída da camada L3 (fora de [NEAR, FAR] a opacidade cai a 0 em FADE_MARGIN_M). */
+export const HORIZON_L3_FADE_MARGIN_M = 300;
+/** `camera.far` do renderer: tem de cobrir o raio máximo da camada L3 (+ margem do fade). */
+export const HORIZON_CAMERA_FAR_M = HORIZON_L3_FAR_M + 600;
+/** Tecto da mistura de neblina: as silhuetas nunca desaparecem por completo (perspetiva atmosférica, não nevoeiro opaco). */
+export const HORIZON_HAZE_MAX_MIX = 0.88;
+/** Distância de referência (m) a partir da qual flashes/colunas de fumo L3 são ampliados para continuarem legíveis; ver horizonImpostorScale. */
+export const HORIZON_IMPOSTOR_REFERENCE_M = 300;
+export const HORIZON_IMPOSTOR_SCALE_MAX = 10;
+
+/**
+ * Camadas L3 (do mais perto para o mais longe). `radiusM` = raio do anel de silhueta; `heightsM` = intervalo de altura da silhueta (m acima do solo);
+ * `rgb` = cor base (0..1) antes da mistura de neblina. As bandas [nearM, farM] cobrem 1,5-8 km sem lacunas.
+ */
+export const HORIZON_L3_LAYERS = Object.freeze([
+  Object.freeze({ id: 'L3_A_sebes_e_quintas', nearM: 1500, farM: 2600, radiusM: 2000, heightsM: Object.freeze([9, 24]), segments: 96, rgb: Object.freeze([0.07, 0.1, 0.05]) }),
+  Object.freeze({ id: 'L3_B_bosques_e_povoados', nearM: 2600, farM: 4800, radiusM: 3600, heightsM: Object.freeze([16, 46]), segments: 128, rgb: Object.freeze([0.07, 0.095, 0.06]) }),
+  Object.freeze({ id: 'L3_C_cumeada', nearM: 4800, farM: 8000, radiusM: 6400, heightsM: Object.freeze([30, 95]), segments: 160, rgb: Object.freeze([0.08, 0.1, 0.09]) }),
+]);
+
+/**
+ * Marcos L3 PROVISÓRIOS (H3): azimutes e distâncias são placeholders até GEO-01 (NMT/georreferenciação). Sem torre inventada em Łęczyca; Tum como volume de
+ * estudo (nave + duas torres) marcado `provisional`. Azimute em graus no sentido horário a partir do Norte (-z); ver horizonAzimuthToWorld.
+ */
+export const HORIZON_L3_LANDMARKS = Object.freeze([
+  Object.freeze({ id: 'L3_LECZYCA_MASSA_URBANA', sectorId: 'E', azimuthDeg: 90, distanceM: 2800, widthM: 520, heightM: 26, towers: 0, provisional: true, label: 'Massa urbana de Łęczyca (provisória, sem torre)' }),
+  Object.freeze({ id: 'L3_TUM_VOLUME_ESTUDO', sectorId: 'SW', azimuthDeg: 225, distanceM: 4200, widthM: 150, heightM: 38, towers: 2, provisional: true, label: 'Volume de estudo de Tum (provisório)' }),
+]);
+
+/** Azimute (graus, horário a partir do Norte = -z; E = +x) + distância (m) -> posição no mundo (m). Arredonda ao metro. */
+export function horizonAzimuthToWorld(azimuthDeg, distanceM, centre = { x: 0, z: 0 }) {
+  const a = (azimuthDeg * Math.PI) / 180;
+  // `+ 0` normaliza -0 (Math.round(-1e-13) = -0), que quebraria comparações estritas após JSON/saves.
+  return { x: Math.round(centre.x + Math.sin(a) * distanceM) + 0, z: Math.round(centre.z - Math.cos(a) * distanceM) + 0 };
+}
+
+/** Camada L3 que cobre a distância `distM` (m), ou null se estiver fora de 1,5-8 km. */
+export function horizonLayerForDistance(distM) {
+  if (!(distM >= HORIZON_L3_NEAR_M && distM <= HORIZON_L3_FAR_M)) return null;
+  for (const layer of HORIZON_L3_LAYERS) if (distM >= layer.nearM && distM <= layer.farM) return layer;
+  return null;
+}
+
+/** Mistura de neblina (0..HORIZON_HAZE_MAX_MIX) à distância `distM` para uma visibilidade `hazeDistM` (distância a que 63% do contraste se perde). */
+export function horizonHazeMix(distM, hazeDistM) {
+  if (!(distM > 0) || !(hazeDistM > 0)) return 0;
+  return Math.min(HORIZON_HAZE_MAX_MIX, 1 - Math.exp(-distM / hazeDistM));
+}
+
+/** Opacidade 0..1 da camada L3 à distância `distM`: sobe com smoothstep em [NEAR-margem, NEAR] e desce em [FAR, FAR+margem]; 1 dentro de [NEAR, FAR]. */
+export function horizonFadeAlpha(distM) {
+  const m = HORIZON_L3_FADE_MARGIN_M;
+  const smooth = (t) => {
+    const c = Math.max(0, Math.min(1, t));
+    return c * c * (3 - 2 * c);
+  };
+  if (distM < HORIZON_L3_NEAR_M) return smooth((distM - (HORIZON_L3_NEAR_M - m)) / m);
+  if (distM > HORIZON_L3_FAR_M) return smooth(1 - (distM - HORIZON_L3_FAR_M) / m);
+  return 1;
+}
+
+/** Fator de escala (>=1) de flashes/colunas L3 para estes manterem tamanho angular legível: distM / referência, limitado. */
+export function horizonImpostorScale(distM) {
+  return Math.max(1, Math.min(HORIZON_IMPOSTOR_SCALE_MAX, distM / HORIZON_IMPOSTOR_REFERENCE_M));
+}
+
+/** Colocação dos 5 eventos finitos HS-A2 (azimute em graus a partir do Norte, distância à origem do mundo em m, instante do flash em s de simulação). */
+const HS_A2_L3_PLACEMENT = Object.freeze([
+  Object.freeze({ azimuthDeg: 62, distanceM: 1900, y: 2, flashAt: 2.5 }),
+  Object.freeze({ azimuthDeg: 75, distanceM: 2300, y: 3, flashAt: 9.0 }),
+  Object.freeze({ azimuthDeg: 88, distanceM: 2700, y: 2, flashAt: 18.0 }),
+  Object.freeze({ azimuthDeg: 97, distanceM: 3300, y: 4, flashAt: 28.0 }),
+  Object.freeze({ azimuthDeg: 108, distanceM: 3900, y: 2, flashAt: 40.0 }),
+]);
+
 // H5 / HZ-02: L1<->L2 promotion/demotion with 15% hysteresis around 250m
 export const LOD_PROMOTE_TO_L1_M = 230.0;
 export const LOD_DEMOTE_TO_L2_M = 268.0;
@@ -68,13 +150,19 @@ export class M02HorizonDirector {
     this.hsA2 = {
       id: 'HS-A2',
       state: 'OFFENSIVE_FIRE', // OFFENSIVE_FIRE -> POSITION_TAKEN -> SETTLED_SMOKE
-      events: [
-        { id: 'ev_hsa2_01', x: 340, y: 2, z: -210, flashAt: 2.5, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
-        { id: 'ev_hsa2_02', x: 420, y: 3, z: -140, flashAt: 9.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
-        { id: 'ev_hsa2_03', x: 380, y: 2, z: -65, flashAt: 18.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
-        { id: 'ev_hsa2_04', x: 460, y: 4, z: 30, flashAt: 28.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
-        { id: 'ev_hsa2_05', x: 310, y: 2, z: 95, flashAt: 40.0, flashed: false, soundArrivalAt: null, soundPlayed: false, smokeActive: false },
-      ],
+      // L3 (1,5-8 km): posições derivadas de azimute+distância em metros. Antes estavam a 310-460 m (L2), em contradição com o PDF (H2).
+      events: HS_A2_L3_PLACEMENT.map((p, i) => ({
+        id: `ev_hsa2_0${i + 1}`,
+        ...horizonAzimuthToWorld(p.azimuthDeg, p.distanceM),
+        y: p.y,
+        flashAt: p.flashAt,
+        distanceFromOriginM: p.distanceM,
+        layer: 'L3',
+        flashed: false,
+        soundArrivalAt: null,
+        soundPlayed: false,
+        smokeActive: false,
+      })),
     };
 
     // HS-A3: Rear logistics column on northern road (passes once, never loops)

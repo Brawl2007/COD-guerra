@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import { eyePosition } from '../world/spatial.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
+import { HORIZON_CAMERA_FAR_M, horizonImpostorScale } from '../world/m02-horizon-system.js';
+import { M02_TERRAIN_MESH } from '../world/m02-environment-area.js';
+import { hash01 } from './m01-area-geo.js';
+import { M02Environment } from './m02-environment.js';
+import { shadowHalfHeightM, solarFromSunPosition, sunPositionFromSolar } from './m02-solar-lighting.js';
 
 export const M02_QUALITY_PROFILES = Object.freeze({
   high: Object.freeze({
@@ -44,26 +49,36 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     fogColor: 0xaab4bc,
     fogNear: 55,
     fogFar: 320,
+    hazeDistM: 9000, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
     hemiSky: 0xc8d4e0,
     hemiGround: 0x564d3e,
     hemiIntensity: 0.72,
     sunColor: 0xffdfb0,
-    sunIntensity: 1.35,
-    sunPosition: [-75, 48, 32],
+    // TIME-01: 9/9 17:00 CET em Łęczyca = 10,7° / 265° (antes 30,5° / 247°). Sol baixo: a intensidade sobe para o chão continuar legível (cos do ângulo de incidência).
+    lightSource: 'sun',
+    solar: Object.freeze({ source: 'TIME-01', momentCET: '1939-09-09T17:00', elevationDeg: 10.7, azimuthDeg: 265 }),
+    sunIntensity: 2.0,
+    sunPosition: sunPositionFromSolar(10.7, 265),
   }),
   night_1939_09_09: Object.freeze({
     id: 'night_1939_09_09',
     temporalId: 'T1',
-    label: 'T1 · Noite de 9–10 Set 1939 (Acessos Łęczyca)',
+    label: 'T1 · Noite de 9–10 Set 1939 (Acessos Łęczyca) · lua não calculada (placeholder)',
     skyColor: 0x161d29,
     fogColor: 0x1c2432,
     fogNear: 38,
     fogFar: 230,
+    hazeDistM: 3500, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
     hemiSky: 0x3b4d6b,
     hemiGround: 0x1c1a17,
     hemiIntensity: 0.36,
+    // TIME-01: às 23:00 CET de 9/9 o sol está ABAIXO do horizonte. A única luz direcional da noite NÃO é um sol: é um placeholder de luar (lua não calculada;
+    // fase e posição por fazer). A direção abaixo é arbitrária e fixa; não representa nenhum azimute histórico.
+    lightSource: 'moon_placeholder',
+    moonLabel: 'lua não calculada (placeholder)',
+    solar: Object.freeze({ source: 'TIME-01', momentCET: '1939-09-09T23:00', sunBelowHorizon: true }),
     sunColor: 0x8aa8d6,
-    sunIntensity: 0.42,
+    sunIntensity: 0.4,
     sunPosition: [40, 62, -45],
   }),
   morning_1939_09_10: Object.freeze({
@@ -74,12 +89,16 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     fogColor: 0xc4cfd6,
     fogNear: 42,
     fogFar: 250,
+    hazeDistM: 4500, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
     hemiSky: 0xdce6ed,
     hemiGround: 0x585245,
     hemiIntensity: 0.82,
     sunColor: 0xfff0d4,
-    sunIntensity: 1.12,
-    sunPosition: [72, 42, -25],
+    // TIME-01: 10/9 07:30 CET = 20,8° / 109° (antes 28,9° / 71°: o sol estava a ENE em vez de ESE).
+    lightSource: 'sun',
+    solar: Object.freeze({ source: 'TIME-01', momentCET: '1939-09-10T07:30', elevationDeg: 20.8, azimuthDeg: 109 }),
+    sunIntensity: 1.55,
+    sunPosition: sunPositionFromSolar(20.8, 109),
   }),
   afternoon_1939_09_10: Object.freeze({
     id: 'afternoon_1939_09_10',
@@ -89,12 +108,16 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     fogColor: 0x968f84,
     fogNear: 48,
     fogFar: 260,
+    hazeDistM: 5500, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
     hemiSky: 0xb8b0a4,
     hemiGround: 0x4a4236,
     hemiIntensity: 0.66,
     sunColor: 0xffc58a,
-    sunIntensity: 1.18,
-    sunPosition: [-68, 44, 28],
+    // TIME-01: 10/9 16:00 CET = 19,3° / 253° (antes 30,9° / 248°).
+    lightSource: 'sun',
+    solar: Object.freeze({ source: 'TIME-01', momentCET: '1939-09-10T16:00', elevationDeg: 19.3, azimuthDeg: 253 }),
+    sunIntensity: 1.7,
+    sunPosition: sunPositionFromSolar(19.3, 253),
   }),
   neutral_review: Object.freeze({
     id: 'neutral_review',
@@ -104,11 +127,14 @@ export const M02_LIGHTING_PRESETS = Object.freeze({
     fogColor: 0xcad4de,
     fogNear: 120,
     fogFar: 460,
+    hazeDistM: 12000, // L3: visibilidade (m) para a perspetiva atmosférica do horizonte 1,5-8 km
     hemiSky: 0xffffff,
     hemiGround: 0x7c7870,
     hemiIntensity: 1.05,
     sunColor: 0xfff8ec,
     sunIntensity: 1.0,
+    lightSource: 'technical',
+    solar: null, // luz técnica de inspeção: não representa nenhum momento histórico
     sunPosition: [-40, 85, -20],
   }),
 });
@@ -138,7 +164,7 @@ export class M02BenchRenderer {
     this.renderer.toneMappingExposure = 1.04;
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, 1200);
+    this.camera = new THREE.PerspectiveCamera(68, 16 / 9, 0.12, HORIZON_CAMERA_FAR_M);
     this.camera.rotation.order = 'YXZ';
 
     this.materials = this.#createMaterials();
@@ -195,6 +221,12 @@ export class M02BenchRenderer {
     };
 
     this.#setupLights();
+    // Ambiente M02 (campo, restolho, árvores, terraplenos, horizonte L3): reutiliza m01-area-*; criado ANTES do mundo estático (que consulta replaces()).
+    this.environment = new M02Environment(this.scene, this.world, {
+      quality: this.qualityProfile.id,
+      cellId: this.sim.activeCellId ?? 'A',
+    });
+    this.frameEvents = []; // eventos da simulação drenados neste frame (reutilizado; consumidores de apresentação em m02-01-main.js)
     this.#buildStaticWorld();
     this.#rebuildDynamicOpenings();
     this.#buildTargets();
@@ -235,6 +267,7 @@ export class M02BenchRenderer {
       target_mg: new THREE.MeshStandardMaterial({ color: 0x3b443e, roughness: 0.72, metalness: 0.2 }),
       target_helmet: new THREE.MeshStandardMaterial({ color: 0x2c322f, roughness: 0.55, metalness: 0.35 }),
       target_hit: new THREE.MeshStandardMaterial({ color: 0xc94a38, roughness: 0.6, metalness: 0.1 }),
+      target_hit_reduced: new THREE.MeshStandardMaterial({ color: 0xb9b08a, roughness: 0.7, metalness: 0.1 }),
       target_wounded: new THREE.MeshStandardMaterial({ color: 0x6e5246, roughness: 0.85, metalness: 0.06 }),
       target_surrendered: new THREE.MeshStandardMaterial({ color: 0x5c665e, roughness: 0.85, metalness: 0.05 }),
       target_down: new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.9, metalness: 0.05 }),
@@ -288,10 +321,10 @@ export class M02BenchRenderer {
     this.roofMeshes.clear();
 
     // 1. Terrain mesh with ditch depression, C01 northern approach (P1 at Z=-175, EA0 at Z=-110), and vertex colors
-    const width = 240;
-    const length = 340;
-    const segX = 64;
-    const segZ = 90;
+    const width = M02_TERRAIN_MESH.widthM;
+    const length = M02_TERRAIN_MESH.lengthM;
+    const segX = M02_TERRAIN_MESH.segX;
+    const segZ = M02_TERRAIN_MESH.segZ;
     const terrainGeo = new THREE.PlaneGeometry(width, length, segX, segZ);
     terrainGeo.rotateX(-Math.PI / 2);
 
@@ -301,7 +334,7 @@ export class M02BenchRenderer {
 
     for (let i = 0; i < pos.count; i++) {
       const vx = pos.getX(i);
-      const vz = pos.getZ(i) - 65; // center around Z = -65 (covers -235..+105)
+      const vz = pos.getZ(i) + M02_TERRAIN_MESH.centreZ; // centrada em Z = -65 (cobre -235..+105)
       pos.setZ(i, vz);
       const vy = this.world.terrainHeightAt(vx, vz);
       pos.setY(i, vy);
@@ -364,6 +397,7 @@ export class M02BenchRenderer {
     for (const ob of this.world.obstacles) {
       if (ob.role === 'door_leaf' || ob.role === 'window_glass') continue;
       if (ob.id === 'cov_south_fence_west' || ob.id === 'cov_south_fence_east') continue;
+      if (this.environment.replaces(ob.id)) continue; // parapeitos/montículos de terra: desenhados por m02-environment (berma/montículo da M01)
       const sx = ob.max.x - ob.min.x;
       const sy = ob.max.y - ob.min.y;
       const sz = ob.max.z - ob.min.z;
@@ -404,6 +438,7 @@ export class M02BenchRenderer {
 
     // 4. Orchard tree canopies (visual sight-blockers, non-ballistic)
     for (const sb of this.world.sightBlockers) {
+      if (this.environment.replaces(sb.id)) continue; // copas candidatas: desenhadas por m02-environment (blocos de árvore da M01)
       const rx = (sb.max.x - sb.min.x) / 2;
       const ry = (sb.max.y - sb.min.y) / 2;
       const crownGeo = new THREE.IcosahedronGeometry(1, 1);
@@ -720,38 +755,22 @@ export class M02BenchRenderer {
     this.hsA2Meshes.clear();
     this.hsA3Meshes.clear();
 
-    // L2/L3 360-degree distant treeline ring around Area A (8 sectors of 45 degrees)
+    // L2: anel de linha de árvores a ~285 m (dentro do nevoeiro de jogo), 32 blocos SEM padrão periódico (largura, altura, raio e rumo semeados por hash).
+    // O horizonte L3 (1,5-8 km: silhuetas, marcos provisórios de Tum/Łęczyca, quintas distantes) é de m02-environment.js; os antigos volumes «de estudo» a
+    // ~340-382 m (que contradiziam o PDF H2/H3, com torre inventada em Łęczyca) foram removidos daqui.
     const ringCount = 32;
-    const radius = 285;
     for (let i = 0; i < ringCount; i++) {
-      const a = (i / ringCount) * Math.PI * 2;
+      const a = ((i + (hash01(i, 21) - 0.5) * 0.6) / ringCount) * Math.PI * 2;
+      const radius = 270 + hash01(i, 22) * 30;
       const hx = Math.cos(a) * radius;
       const hz = Math.sin(a) * radius - 55;
-      const w = 42 + (i % 3) * 14;
-      const h = 12 + (i % 4) * 3.8;
-      const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 9), this.materials.horizon_treeline);
+      const w = 30 + hash01(i, 23) * 40;
+      const h = 9 + hash01(i, 24) * 12;
+      const treeBlock = new THREE.Mesh(new THREE.BoxGeometry(w, h, 6 + hash01(i, 25) * 6), this.materials.horizon_treeline);
       treeBlock.position.set(hx, h / 2 - 1, hz);
       treeBlock.rotation.y = -a + Math.PI / 2;
       this.horizonGroup.add(treeBlock);
     }
-
-    // Provisional L3 study volume in SW sector (Document H: Tum / Kolegiata study silhouette — explicitly tagged provisional)
-    const studyGroup = new THREE.Group();
-    const nave = new THREE.Mesh(new THREE.BoxGeometry(28, 18, 14), this.materials.horizon_study);
-    nave.position.set(-260, 9, 280);
-    const towerA = new THREE.Mesh(new THREE.BoxGeometry(7, 32, 7), this.materials.horizon_study);
-    towerA.position.set(-272, 16, 280);
-    const towerB = new THREE.Mesh(new THREE.BoxGeometry(7, 32, 7), this.materials.horizon_study);
-    towerB.position.set(-248, 16, 280);
-    studyGroup.add(nave, towerA, towerB);
-
-    // Provisional L3 study volume in E sector (Łęczyca urban horizon profile)
-    const leczycaBlockA = new THREE.Mesh(new THREE.BoxGeometry(22, 14, 48), this.materials.horizon_study);
-    leczycaBlockA.position.set(340, 7, -15);
-    const leczycaTower = new THREE.Mesh(new THREE.BoxGeometry(8, 28, 8), this.materials.horizon_study);
-    leczycaTower.position.set(335, 14, -2);
-    studyGroup.add(leczycaBlockA, leczycaTower);
-    this.horizonGroup.add(studyGroup);
 
     // HS-A1: 6 persistent Polish support soldiers on west flank (promote L2 <-> L1)
     for (const actor of this.sim.horizon?.hsA1.actors ?? []) {
@@ -779,6 +798,8 @@ export class M02BenchRenderer {
       plume.visible = false;
 
       group.add(flash, plume);
+      // L3 (1,5-8 km): flash e coluna são ampliados com a distância (tamanho angular legível); só apresentação, o estado vem de sim.horizon.
+      group.scale.setScalar(horizonImpostorScale(ev.distanceFromOriginM ?? Math.hypot(ev.x, ev.z)));
       this.horizonGroup.add(group);
       this.hsA2Meshes.set(ev.id, { group, flash, plume });
     }
@@ -840,6 +861,7 @@ export class M02BenchRenderer {
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.sunLight.castShadow = next.shadows;
     this.horizonGroup.visible = true;
+    this.environment?.setQuality(next.id);
     return this.qualityProfile;
   }
 
@@ -854,6 +876,12 @@ export class M02BenchRenderer {
     this.sunLight.color.setHex(next.sunColor);
     this.sunLight.intensity = next.sunIntensity;
     this.sunLight.position.set(...next.sunPosition);
+    // Volume de sombras ao longo do «cima» da luz: concentrado quando o sol está baixo (TIME-01), para não gastar o mapa em altura que não existe.
+    const half = shadowHalfHeightM(solarFromSunPosition(next.sunPosition).elevationDeg);
+    this.sunLight.shadow.camera.top = half;
+    this.sunLight.shadow.camera.bottom = -half;
+    this.sunLight.shadow.camera.updateProjectionMatrix();
+    this.environment?.applyAtmosphere(next);
     return this.lightingPreset;
   }
 
@@ -900,11 +928,15 @@ export class M02BenchRenderer {
       currentArtilleryDetonated !== this.lastArtilleryDetonated
     ) {
       this.world = this.sim.world;
+      if (currentCellId !== this.lastRenderedCellId) this.environment.setWorld(this.world, currentCellId);
       this.lastRenderedCellId = currentCellId;
       this.lastArtilleryDetonated = currentArtilleryDetonated;
       this.#buildStaticWorld();
       this.#rebuildDynamicOpenings();
       this.#buildTargets();
+      // Cratera SP03 (HS-C2): posição lida de sim.horizon.hsC2 (nunca inventada); só existe na célula C depois do impacto.
+      const spot = this.sim.horizon?.hsC2;
+      this.environment.syncCrater(currentCellId === 'C' && currentArtilleryDetonated && spot ? { x: spot.x, z: spot.z } : null);
     }
 
     if (this.world.revision !== this.lastWorldRevision) {
@@ -980,6 +1012,8 @@ export class M02BenchRenderer {
 
     // Drain simulation events to spawn shot tracers, actor bursts, grenade blasts, or MG bursts
     const events = this.sim.drainEvents();
+    this.frameEvents.length = 0;
+    for (const evt of events) this.frameEvents.push(evt);
     for (const evt of events) {
       if (evt.type === 'shot-fired' && evt.shot) {
         this.spawnShotVisual(evt.shot);
@@ -1113,7 +1147,9 @@ export class M02BenchRenderer {
         entry.rightArm.rotation.x = 0;
         entry.weaponGroup.position.y = crouchDrop;
         entry.weaponGroup.visible = true;
-        entry.torso.material = e.hitsReceived > 0 ? this.materials.target_hit : entry.uniformMat;
+        // reducedViolence (L2/accessibilidade): o estado «atingido» mantém-se na simulação; só a marca visual deixa de ser vermelha.
+        const hitMat = this.sim.audiovisual?.accessibility.reducedViolence ? this.materials.target_hit_reduced : this.materials.target_hit;
+        entry.torso.material = e.hitsReceived > 0 ? hitMat : entry.uniformMat;
       }
     }
 
@@ -1125,13 +1161,25 @@ export class M02BenchRenderer {
     this.camera.rotation.y = -player.angle - Math.PI / 2;
     this.camera.rotation.x = player.pitch;
 
+    // Consumidores reais do M02AudiovisualDirector (só leitura): tremor de câmara limitado (já reduzido por reducedCameraShake no diretor), e a arma
+    // baixada/recuada perto de obstáculos (weaponKinematics). Oscilação determinista a partir do relógio da simulação, sem aleatoriedade.
+    const av = this.sim.audiovisual;
+    const shake = av?.cameraShake.amplitudeRad ?? 0;
+    if (shake > 0) {
+      this.camera.rotation.x += shake * Math.sin(this.sim.clock * 61.0);
+      this.camera.rotation.y += shake * Math.sin(this.sim.clock * 47.0 + 1.3);
+    }
+    const wk = av?.weaponKinematics;
+
     // Subtle weapon viewmodel bob and ADS offset
     const bob = player.moving ? Math.sin(this.sim.clock * (player.sprinting ? 11 : 7.5)) * 0.012 : 0;
     this.viewModel.position.set(
       player.aiming ? -0.14 : 0,
       bob,
-      player.aiming ? 0.08 : 0,
+      (player.aiming ? 0.08 : 0) + (wk ? wk.pullBackM + wk.recoilKickBackM : 0),
     );
+    this.viewModel.rotation.x = wk ? wk.recoilPitchRad - wk.lowerPitchRad : 0;
+    this.environment.update(this.camera);
 
     this.renderer.render(this.scene, this.camera);
 
@@ -1148,6 +1196,16 @@ export class M02BenchRenderer {
     if (this.telemetryWindow.length > 240) this.telemetryWindow.shift();
 
     return this.lastFrameMetrics;
+  }
+
+  /** Libertar recursos GPU (ambiente M02 e renderer). Chamar ao sair da bancada. */
+  dispose() {
+    this.environment?.dispose();
+    this.renderer.dispose();
+  }
+
+  getEnvironmentStats() {
+    return this.environment.stats;
   }
 
   getTelemetrySummary() {
@@ -1171,6 +1229,7 @@ export class M02BenchRenderer {
       renderMsP50: Number(percentile(renders, 50).toFixed(2)),
       drawCalls: this.lastFrameMetrics.drawCalls,
       triangles: this.lastFrameMetrics.triangles,
+      environment: this.environment.stats,
     };
   }
 }
