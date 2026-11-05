@@ -33,6 +33,9 @@ const elDoorPrompt = document.getElementById('door-prompt');
 const elCartelaBanner = document.getElementById('cartela-banner');
 const elDialogueBanner = document.getElementById('dialogue-banner');
 const elTelemetry = document.getElementById('hud-telemetry');
+const elSaveWarning = document.getElementById('hud-save-warning');
+const elSaveWarningText = document.getElementById('hud-save-warning-text');
+const btnClearSaves = document.getElementById('btn-clear-saves');
 const selQuality = document.getElementById('select-quality');
 const selLighting = document.getElementById('select-lighting');
 
@@ -179,6 +182,34 @@ function teleportToPanorama(id) {
   return view;
 }
 
+// Aviso de saves (FIX-2c): com `current` ilegível ou de outra formatVersion todos os F5 e checkpoints automáticos falhavam
+// em silêncio. O estado da loja é consultado ao arrancar, quando muda o resultado da última gravação e depois de limpar.
+let lastPersistSeen;
+function refreshSaveWarning() {
+  const status = sim.saveStore.status();
+  const last = sim.lastCheckpointPersist;
+  const failed = Boolean(last) && !last.ok && !last.skipped;
+  let text = '';
+  if (status.blocked) {
+    text = `Os saves da bancada estão bloqueados: nada grava (F5 e checkpoints automáticos falham). ${status.reason} Nada foi apagado; podes limpar os saves da bancada.`;
+  } else if (failed) {
+    text = `A última gravação falhou: ${last.reason}`;
+  }
+  if (elSaveWarning) elSaveWarning.hidden = !text;
+  if (elSaveWarningText) elSaveWarningText.textContent = text;
+  if (btnClearSaves) btnClearSaves.hidden = !status.blocked;
+  lastPersistSeen = sim.lastCheckpointPersist;
+}
+
+btnClearSaves?.addEventListener('click', () => {
+  const ok = window.confirm(
+    'Limpar saves da bancada: apaga TODOS os checkpoints guardados da bancada M02 neste navegador (F5 e automáticos). Não se pode anular. Continuar?',
+  );
+  if (!ok) return;
+  if (!sim.clearPersistedSaves()) console.warn('[M02] O armazenamento recusou apagar os saves da bancada.');
+  refreshSaveWarning();
+});
+
 /** Digit9 / btn-c10-c11-lis: C10 → impacto fixo → C11 numa só ação, para o cp_m02_d só ser gravado com o estado final (FIX-2c). */
 function playC10ToC11Lis() {
   sim.runAtomicAction(() => {
@@ -189,6 +220,7 @@ function playC10ToC11Lis() {
 }
 
 function updateHud() {
+  if (sim.lastCheckpointPersist !== lastPersistSeen) refreshSaveWarning();
   const p = sim.player;
   if (elObjective) {
     elObjective.textContent = `Objetivo [${sim.objective.id}]: ${sim.objective.title}`;
@@ -383,6 +415,12 @@ window.m02Bench = {
   saveCheckpoint: (id) => sim.saveCheckpoint(id),
   restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
   quickLoadCheckpoint: () => sim.quickLoadCheckpoint(),
+  getSaveStatus: () => sim.saveStore.status(),
+  clearPersistedSaves: () => {
+    const ok = sim.clearPersistedSaves();
+    refreshSaveWarning();
+    return ok;
+  },
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),
@@ -426,4 +464,5 @@ window.m02Bench = {
   }),
 };
 
+refreshSaveWarning();
 requestAnimationFrame(animate);

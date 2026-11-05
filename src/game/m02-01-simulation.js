@@ -1773,6 +1773,17 @@ export class M02BenchSimulation {
   }
 
   /**
+   * Apaga os saves persistidos da bancada (os três slots da loja). Saída explícita de uma loja bloqueada (`saveStore.status()`
+   * com `blocked`); nunca é chamada automaticamente (FIX-2c). Não toca no índice em memória desta sessão. Limpa o
+   * resultado da última gravação falhada, para o aviso da bancada desaparecer. Devolve false se o armazenamento recusar.
+   */
+  clearPersistedSaves() {
+    const ok = this.saveStore ? this.saveStore.clear() : false;
+    if (ok) this.lastCheckpointPersist = null;
+    return ok;
+  }
+
+  /**
    * Carregamento rápido (F9 da bancada). Se esta sessão já gravou: o checkpoint manual, senão o último gravado nesta sessão.
    * Numa sessão que ainda não gravou nada (página acabada de abrir ou recarregar): o último checkpoint persistido na loja.
    * Só sem nada disso volta ao início em memória. Devolve { checkpointId, source }.

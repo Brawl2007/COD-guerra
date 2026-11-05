@@ -300,6 +300,31 @@ export class M02SaveStore {
     return { ok: false, source: null, record: null, rejected, reason: rejected[0]?.reason ?? 'Sem save M02.' };
   }
 
+  /**
+   * Estado consultável da loja (FIX-2c). `blocked` é verdadeiro exatamente quando commitCheckpoint() abortaria sempre:
+   * `current` existe mas não pode ser lido (`storage-error`), não é JSON (`corrupt`) ou não é um registo desta versão
+   * (`incompatible`, p. ex. outra formatVersion). Nada é apagado automaticamente; a saída é clear() pedido pelo jogador.
+   * Um registo cujos checkpoints são todos incompatíveis NÃO bloqueia (o commit grava e conserva os antigos).
+   * `hasSave` indica se o que F9 carregaria existe (algum checkpoint compatível em `current`, ou em `previous` se
+   * `current` estiver vazio/ilegível). Nunca lança.
+   */
+  status() {
+    const cur = this.#get(this.slots.current);
+    const previousUsable = () => this.readSlot('previous').ok;
+    if (!cur.ok) return { blocked: true, kind: 'storage-error', reason: cur.reason, hasSave: previousUsable() };
+    if (cur.raw === null) return { blocked: false, kind: null, reason: null, hasSave: previousUsable() };
+    const parsed = this.#interpret(cur.raw);
+    if (!parsed.ok) {
+      return {
+        blocked: true,
+        kind: parsed.json ? 'corrupt' : 'incompatible',
+        reason: `Save atual ilegível ou inválido (${parsed.reason}).`,
+        hasSave: previousUsable(),
+      };
+    }
+    return { blocked: false, kind: null, reason: null, hasSave: Object.keys(parsed.info.loadable).length > 0 };
+  }
+
   /** O último checkpoint gravado, se for compatível com esta versão; senão null. */
   latestCheckpointId() {
     const loaded = this.load();

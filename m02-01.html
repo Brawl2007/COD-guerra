@@ -208,6 +208,21 @@
         color: var(--safe);
         font-weight: 700;
       }
+      .save-warning {
+        margin-top: 6px;
+        padding: 6px 10px;
+        border: 1px solid var(--danger);
+        border-radius: 3px;
+        color: var(--danger);
+        font-size: 12px;
+        line-height: 1.4;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .save-warning[hidden] {
+        display: none;
+      }
       .weapon-box {
         text-align: right;
         min-width: 210px;
@@ -246,6 +261,10 @@
           </div>
           <div class="objective-box" id="hud-objective">
             Objetivo: Escolher eixo de aproximação (Vala Oeste ou Pomar Leste) e fixar a MG34 em B02
+          </div>
+          <div class="save-warning" id="hud-save-warning" role="alert" hidden>
+            <span id="hud-save-warning-text"></span>
+            <button type="button" id="btn-clear-saves" hidden title="Apaga todos os checkpoints guardados da bancada M02 neste navegador (pede confirmação)">Limpar saves da bancada</button>
           </div>
           <div class="controls-bar">
             <button type="button" id="btn-start-c01" title="Iniciar Área A Completa em P1 (0, -175) com EA0">0: P1 C01 (-175m)</button>

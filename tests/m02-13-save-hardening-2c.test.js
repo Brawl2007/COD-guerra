@@ -2,6 +2,7 @@
 // Teste de estado (não é playtest): cada caso reproduz o defeito (falha com o código anterior) e prova que deixou de ocorrer.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import { M02BenchSimulation } from '../src/game/m02-01-simulation.js';
 import { createMemoryStorage, M02SaveStore, M02_SAVE_STORAGE_KEY } from '../src/game/m02-save-store.js';
@@ -271,5 +272,106 @@ describe('M02-13 — 3: -0 não chega ao atan2 (estado vivo e restaurado coincid
     fresh.restoreSnapshot(snap);
     fresh.drainEvents();
     assertSameContinuation(record(fresh, idle, 40), reference, 'jogador em z = -0');
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+describe('M02-13 — 4: loja bloqueada (current ilegível / outra formatVersion) é consultável e tem saída explícita', () => {
+  const KEY = M02_SAVE_STORAGE_KEY;
+  const savedSession = () => {
+    const storage = createMemoryStorage();
+    const sim = new M02BenchSimulation(SEED, { storage });
+    sim.saveCheckpoint('cp_m02_a_preparacao');
+    sim.teleportPlayer(-23, -12, 0);
+    sim.saveCheckpoint('cp_m02_manual');
+    return storage;
+  };
+  const breakers = {
+    'formatVersion de outra versão': (storage) => {
+      const r = JSON.parse(storage.getItem(KEY));
+      r.formatVersion += 1;
+      storage.setItem(KEY, JSON.stringify(r));
+    },
+    'JSON truncado só em current': (storage) => {
+      const raw = storage.getItem(KEY);
+      storage.setItem(KEY, raw.slice(0, raw.length - 10));
+    },
+  };
+
+  it('status(): vazio e válido não estão bloqueados', () => {
+    const empty = new M02BenchSimulation(SEED, { storage: createMemoryStorage() });
+    assert.deepEqual(empty.saveStore.status(), { blocked: false, kind: null, reason: null, hasSave: false });
+    const ok = new M02BenchSimulation(SEED, { storage: savedSession() });
+    assert.deepEqual(ok.saveStore.status(), { blocked: false, kind: null, reason: null, hasSave: true });
+  });
+
+  for (const [label, breakStorage] of Object.entries(breakers)) {
+    it(`${label}: status() diz bloqueado; F5 e automáticos falham sem apagar nada; clear() desbloqueia e o F5 volta a gravar`, () => {
+      const storage = savedSession();
+      breakStorage(storage);
+      const brokenRaw = storage.getItem(KEY);
+      const page = new M02BenchSimulation(SEED, { storage });
+
+      const status = page.saveStore.status();
+      assert.equal(status.blocked, true);
+      assert.match(status.kind, /^(corrupt|incompatible)$/);
+      assert.match(status.reason, /ilegível ou inválido|incompatível|JSON/i);
+
+      page.saveCheckpoint('cp_m02_manual');
+      assert.equal(page.lastCheckpointPersist.ok, false, 'F5 falha enquanto bloqueado');
+      page.requestAutoCheckpoint('cp_m02_b_acesso');
+      assert.equal(page.lastCheckpointPersist.ok, false, 'o checkpoint automático também falha enquanto bloqueado');
+      assert.equal(storage.getItem(KEY), brokenRaw, 'o estado bloqueado não é apagado automaticamente');
+      assert.equal(page.saveStore.status().blocked, true, 'continua bloqueado depois da falha');
+
+      // Saída explícita pedida pelo jogador (a bancada pede confirmação antes de chamar isto).
+      assert.equal(page.clearPersistedSaves(), true);
+      assert.equal(page.lastCheckpointPersist, null, 'o aviso da última gravação falhada desaparece com o clear');
+      assert.deepEqual(page.saveStore.status(), { blocked: false, kind: null, reason: null, hasSave: false });
+      page.saveCheckpoint('cp_m02_manual');
+      assert.equal(page.lastCheckpointPersist.ok, true, page.lastCheckpointPersist.reason);
+      assert.equal(page.saveStore.status().hasSave, true);
+      assert.equal(page.saveStore.status().blocked, false);
+    });
+  }
+
+  it('leitura do armazenamento a lançar: status() bloqueado (storage-error) sem lançar', () => {
+    const storage = savedSession();
+    const hostile = {
+      getItem: (k) => {
+        if (k === KEY) throw new Error('SecurityError');
+        return storage.getItem(k);
+      },
+      setItem: (k, v) => storage.setItem(k, v),
+      removeItem: (k) => storage.removeItem(k),
+    };
+    const store = new M02SaveStore({ storage: hostile, validateSnapshot: new M02BenchSimulation(SEED).saveStore.validateSnapshot });
+    const status = store.status();
+    assert.equal(status.blocked, true);
+    assert.equal(status.kind, 'storage-error');
+    assert.match(status.reason, /Leitura do armazenamento falhou/);
+  });
+
+  it('um registo cujos checkpoints são todos incompatíveis NÃO bloqueia (o commit grava e guarda os antigos)', () => {
+    const storage = savedSession();
+    const r = JSON.parse(storage.getItem(KEY));
+    for (const c of Object.values(r.checkpoints)) c.world.layoutSchema = 'old-layout';
+    storage.setItem(KEY, JSON.stringify(r));
+    const page = new M02BenchSimulation(SEED, { storage });
+    assert.equal(page.saveStore.status().blocked, false);
+    assert.equal(page.saveStore.status().hasSave, false, 'nada carregável');
+    page.saveCheckpoint('cp_m02_manual');
+    assert.equal(page.lastCheckpointPersist.ok, true, page.lastCheckpointPersist.reason);
+  });
+
+  it('guarda estática da bancada: o HUD mostra o aviso e «Limpar saves da bancada» pede confirmação antes de limpar', () => {
+    const html = readFileSync(new URL('../m02-01.html', import.meta.url), 'utf8');
+    const main = readFileSync(new URL('../src/m02/m02-01-main.js', import.meta.url), 'utf8');
+    assert.match(html, /id="hud-save-warning"/);
+    assert.match(html, /id="btn-clear-saves"[^>]*>[^<]*Limpar saves da bancada/);
+    assert.match(main, /saveStore\.status\(\)/, 'a bancada consulta o estado da loja');
+    assert.match(main, /lastCheckpointPersist/, 'a bancada lê o resultado da última gravação');
+    const handler = main.slice(main.indexOf("getElementById('btn-clear-saves')"));
+    assert.ok(handler.indexOf('confirm(') > -1 && handler.indexOf('confirm(') < handler.indexOf('clearPersistedSaves()'), 'confirm() antes de clearPersistedSaves()');
   });
 });
