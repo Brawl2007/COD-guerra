@@ -85,6 +85,18 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
 const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELOAD_SINGLE']);
 const PLAYER_ID = 'piotr_sokol';
 
+/**
+ * D1 (PDF p. 16, «Falhas duras»): a missão falha quando Piotr morre. A incapacidade definitiva de uma personagem exigida pelo cânone
+ * antes do seu ponto de resolução (também D1) depende da lista de personagens exigidas de K/I e ainda não está implementada.
+ * A falha é estado (`sim.missionFailed = {reason, at}`), nunca imunidade oculta: pára o roteiro e os checkpoints (automáticos
+ * e manuais) e só se sai dela por uma ação explícita (`restartAfterFailure`, o F9 da bancada).
+ */
+export const M02_MISSION_FAILURE_REASONS = Object.freeze(['piotr_killed']);
+/** Texto de apresentação de cada razão (a bancada só mostra; quem decide a falha é a simulação). */
+export const M02_MISSION_FAILURE_TEXT = Object.freeze({
+  piotr_killed: 'O strz. Piotr Sokół morreu. A missão falhou.',
+});
+
 // FIX-2b (PDF I4/I5): enums e relações que o restauro aceita. Valores tirados do código que os escreve.
 const ALLY_STATES = Object.freeze([
   'ACTIVE',
@@ -367,6 +379,14 @@ export function validateM02Snapshot(snap) {
       reason: 'Save incompatível: estado de contacto C01 (c01Contact) ausente ou inválido (snapshot anterior ao roteiro automático).',
     };
   }
+  // D1: campo aditivo do schema 2 — ausente = missão em curso (null). Presente tem de ser {reason ∈ enum, at ≤ clock}.
+  const failed = snap.missionFailed ?? null;
+  if (
+    failed !== null &&
+    (!isPlainObject(failed) || !M02_MISSION_FAILURE_REASONS.includes(failed.reason) || !finiteTime(failed.at) || failed.at > snap.clock + 1e-9)
+  ) {
+    return { valid: false, reason: 'Estado de falha da missão (missionFailed) inválido no snapshot.' };
+  }
   if (!isPlainObject(snap.flags)) return { valid: false, reason: 'Flags de campanha ausentes no snapshot.' };
   for (const [flag, value] of Object.entries(snap.flags)) {
     if (value !== null && !['boolean', 'number', 'string'].includes(typeof value)) {
@@ -555,6 +575,7 @@ export class M02BenchSimulation {
     this.c10Active = false;
     this.c11Active = false;
     this.m03ExportPackage = null;
+    this.missionFailed = null;
 
     if (this.activeCellId !== 'A') {
       this.world = this.zoneStreamer.switchToCell('A');
@@ -1706,10 +1727,48 @@ export class M02BenchSimulation {
   }
 
   /**
+   * D1: falha dura da missão. Piotr morto (saúde a 0 ou `alive` falso: tiro, explosão ou queda) escreve `missionFailed`
+   * uma só vez, com o relógio do instante; nunca depois de a missão estar concluída (o epílogo C12 é uma elipse sem combate).
+   * Avaliado no fim dos sistemas de combate e ANTES do roteiro: o roteiro não avança no tick em que Piotr morre.
+   * Com a missão falhada o roteiro e os checkpoints param (automáticos e manuais); quem hospeda a simulação (a bancada) deve
+   * deixar de a avançar e mostrar a falha, mas a simulação não se auto-congela: os testes de mundo continuam a poder andar.
+   */
+  #evaluateMissionFailure() {
+    if (this.missionFailed || this.flags['m02.completed'] || this.areaC?.c12Completed) return;
+    const p = this.player;
+    if (p.alive !== false && p.health > 0) return;
+    const at = Number(this.clock.toFixed(3));
+    this.missionFailed = { reason: 'piotr_killed', at };
+    const rec = { clock: Number(this.clock.toFixed(2)), type: 'mission_failed', reason: 'piotr_killed' };
+    this.combatLog.push(rec);
+    this.events.push({ type: 'mission-failed', reason: 'piotr_killed', at, clock: this.clock });
+  }
+
+  /**
+   * Reinício explícito depois de uma falha dura (D1/I5): carrega o último checkpoint compatível, pela mesma ordem de recurso do
+   * F9 (`quickLoadCheckpoint`). Sem falha em curso não faz nada (devolve null). Nunca é chamado pelo tick: sair da falha é
+   * uma ação do jogador.
+   */
+  restartAfterFailure() {
+    if (!this.missionFailed) return null;
+    const failure = structuredClone(this.missionFailed);
+    const loaded = this.quickLoadCheckpoint();
+    this.events.push({
+      type: 'mission-restarted',
+      after: failure,
+      checkpointId: loaded.checkpointId,
+      source: loaded.source,
+      clock: this.clock,
+    });
+    return loaded;
+  }
+
+  /**
    * Pede um checkpoint semântico automático. Dentro de tick()/ação atómica fica pendente e é gravado no fim; fora dela é
    * gravado já (o chamador está num ponto estável entre entradas).
    */
   requestAutoCheckpoint(checkpointId) {
+    if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
     if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
     return null;
@@ -1813,6 +1872,7 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
+    this.#evaluateMissionFailure();
     runUpdateScript(this);
 
     if (this.mgState.seeingPlayer && this.clock >= this.mgState.nextBurstAt) {
@@ -1858,6 +1918,11 @@ export class M02BenchSimulation {
    * «último gravado» (F9) e como `latestCheckpointId` da loja. Um lote rejeitado pelo validador não marca nenhum.
    */
   #saveCheckpointBatch(checkpointIds) {
+    // D1: os pedidos feitos antes de a falha ser avaliada (mesmo tick) também caem: nada se grava com a missão falhada.
+    if (this.missionFailed) {
+      for (const checkpointId of checkpointIds) this.#rejectCheckpointOnFailure(checkpointId);
+      return;
+    }
     const added = checkpointIds.filter((id) => !this.checkpointsReached.includes(id));
     this.checkpointsReached.push(...added);
     for (const checkpointId of checkpointIds) {
@@ -1868,8 +1933,21 @@ export class M02BenchSimulation {
     }
   }
 
+  #rejectCheckpointOnFailure(checkpointId) {
+    this.events.push({
+      type: 'checkpoint-rejected',
+      checkpointId,
+      clock: this.clock,
+      reason: `Checkpoint recusado: a missão falhou (${this.missionFailed.reason}). Reinicia a partir do último checkpoint.`,
+    });
+    return null;
+  }
+
   /** Snapshot → validação → índice em memória → loja. Não mexe em `checkpointsReached` (quem chama já o marcou). */
   #recordCheckpoint(checkpointId, persist) {
+    // D1: com a missão falhada nada se grava (automático ou manual): o checkpoint seria o próprio estado de falha e, sendo o
+    // último, tirava ao jogador o ponto de reinício bom.
+    if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
     const check = validateM02Snapshot(snap);
@@ -2036,6 +2114,7 @@ export class M02BenchSimulation {
       c10Active: this.c10Active,
       c11Active: this.c11Active,
       m03ExportPackage: this.m03ExportPackage ? structuredClone(this.m03ExportPackage) : null,
+      missionFailed: this.missionFailed ? structuredClone(this.missionFailed) : null,
       doors: Object.fromEntries(this.world.doorStates.entries()),
       windows: Object.fromEntries(this.world.windowStates.entries()),
       fences: Object.fromEntries(this.world.fenceStates.entries()),
@@ -2104,6 +2183,7 @@ export class M02BenchSimulation {
       c10Active: Boolean(snap.c10Active),
       c11Active: Boolean(snap.c11Active),
       m03ExportPackage: snap.m03ExportPackage ?? null,
+      missionFailed: snap.missionFailed ?? null,
       doors: snap.doors,
       windows: snap.windows,
       fences: snap.fences,
@@ -2168,6 +2248,7 @@ export class M02BenchSimulation {
     this.c10Active = p.c10Active;
     this.c11Active = p.c11Active;
     this.m03ExportPackage = p.m03ExportPackage;
+    this.missionFailed = p.missionFailed;
     this.allies = p.allies;
     this.enemies = p.enemies;
     this.calibrationTargets = p.targets;

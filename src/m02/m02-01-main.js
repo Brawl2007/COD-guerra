@@ -1,4 +1,4 @@
-import { M02BenchSimulation } from '../game/m02-01-simulation.js';
+import { M02BenchSimulation, M02_MISSION_FAILURE_TEXT } from '../game/m02-01-simulation.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 
 const PANORAMA_VIEWS = Object.freeze({
@@ -36,6 +36,9 @@ const elTelemetry = document.getElementById('hud-telemetry');
 const elSaveWarning = document.getElementById('hud-save-warning');
 const elSaveWarningText = document.getElementById('hud-save-warning-text');
 const btnClearSaves = document.getElementById('btn-clear-saves');
+const elMissionFailed = document.getElementById('mission-failed');
+const elMissionFailedText = document.getElementById('mission-failed-text');
+const btnRestartCheckpoint = document.getElementById('btn-restart-checkpoint');
 const selQuality = document.getElementById('select-quality');
 const selLighting = document.getElementById('select-lighting');
 
@@ -202,6 +205,32 @@ function refreshSaveWarning() {
   lastPersistSeen = sim.lastCheckpointPersist;
 }
 
+// D1: falha dura (Piotr morto). A bancada pára de avançar a simulação e mostra a falha; o reinício a partir do último checkpoint
+// compatível é uma ação explícita (este botão ou F9). Quem decide a falha é a simulação; a bancada só a mostra.
+let failureShown = false;
+function refreshMissionFailed() {
+  const failure = sim.missionFailed;
+  if (Boolean(failure) === failureShown) return;
+  failureShown = Boolean(failure);
+  if (elMissionFailed) elMissionFailed.hidden = !failure;
+  if (failure) {
+    if (elMissionFailedText) {
+      elMissionFailedText.textContent = `${M02_MISSION_FAILURE_TEXT[failure.reason] ?? 'A missão falhou.'} (${failure.at.toFixed(1)} s de simulação)`;
+    }
+    document.exitPointerLock?.();
+  }
+}
+
+btnRestartCheckpoint?.addEventListener('click', () => {
+  try {
+    const loaded = sim.restartAfterFailure();
+    if (loaded?.skipped?.length) console.warn('[M02] Reinício saltou checkpoints incompatíveis:', loaded.skipped);
+  } catch (err) {
+    console.warn('[M02] Sem checkpoint restaurável:', err.message);
+  }
+  refreshMissionFailed();
+});
+
 btnClearSaves?.addEventListener('click', () => {
   const ok = window.confirm(
     'Limpar saves da bancada: apaga TODOS os checkpoints guardados da bancada M02 neste navegador (F5 e automáticos). Não se pode anular. Continuar?',
@@ -222,6 +251,7 @@ function playC10ToC11Lis() {
 
 function updateHud() {
   if (sim.lastCheckpointPersist !== lastPersistSeen) refreshSaveWarning();
+  refreshMissionFailed();
   const p = sim.player;
   if (elObjective) {
     elObjective.textContent = `Cena ${sim.script.finished ? 'C12 (fim)' : sim.script.sceneId} · Objetivo [${sim.objective.id}]: ${sim.objective.title}`;
@@ -336,22 +366,26 @@ function animate(now) {
   const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
 
   const simStart = performance.now();
-  sim.tick(dt, {
-    forward,
-    side,
-    sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
-    aim: keys.has('KeyV'),
-    lookX,
-    lookY: 0,
-    interact: pendingSingleActions.interact,
-    reload: pendingSingleActions.reload,
-    crouch: pendingSingleActions.crouch,
-    fire: pendingSingleActions.fire,
-    grenade: pendingSingleActions.grenade,
-    orderSuppress: pendingSingleActions.orderSuppress,
-    orderAdvance: pendingSingleActions.orderAdvance,
-    orderFlank: pendingSingleActions.orderFlank,
-  });
+  // D1: com a missão falhada a bancada deixa de avançar a simulação (pausa de apresentação, como um menu) e mostra a falha;
+  // o roteiro e os checkpoints já param na própria simulação. Sair é uma ação explícita (botão ou F9).
+  if (!sim.missionFailed) {
+    sim.tick(dt, {
+      forward,
+      side,
+      sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
+      aim: keys.has('KeyV'),
+      lookX,
+      lookY: 0,
+      interact: pendingSingleActions.interact,
+      reload: pendingSingleActions.reload,
+      crouch: pendingSingleActions.crouch,
+      fire: pendingSingleActions.fire,
+      grenade: pendingSingleActions.grenade,
+      orderSuppress: pendingSingleActions.orderSuppress,
+      orderAdvance: pendingSingleActions.orderAdvance,
+      orderFlank: pendingSingleActions.orderFlank,
+    });
+  }
   const simMs = performance.now() - simStart;
 
   pendingSingleActions.interact = false;
@@ -417,6 +451,7 @@ window.m02Bench = {
   saveCheckpoint: (id) => sim.saveCheckpoint(id),
   restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
   quickLoadCheckpoint: () => sim.quickLoadCheckpoint(),
+  restartAfterFailure: () => sim.restartAfterFailure(),
   getSaveStatus: () => sim.saveStore.status(),
   clearPersistedSaves: () => {
     const ok = sim.clearPersistedSaves();
@@ -435,6 +470,7 @@ window.m02Bench = {
     areaB: structuredClone(sim.areaB),
     areaC: structuredClone(sim.areaC),
     script: structuredClone(sim.script),
+    missionFailed: sim.missionFailed ? structuredClone(sim.missionFailed) : null,
     m03ExportPackage: sim.m03ExportPackage ? structuredClone(sim.m03ExportPackage) : null,
     horizon: sim.horizon ? sim.horizon.snapshot() : null,
     // A configuração de acessibilidade não faz parte do snapshot de jogo (I5); o resumo da bancada mostra-a à parte.

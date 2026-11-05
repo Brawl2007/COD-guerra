@@ -1312,7 +1312,8 @@ function c11Resolved(sim) {
 /** Um passo do roteiro, no fim de tick() (depois do tático/objetivo). Pode encadear várias cenas se o estado já as ultrapassou. */
 export function updateScript(sim) {
   const sc = sim.script;
-  if (!sc || sc.finished) return;
+  // D1: com a missão falhada (Piotr morto) o roteiro pára: não avança cenas nem corre ações de transição.
+  if (!sc || sc.finished || sim.missionFailed) return;
   for (let guard = 0; guard < M02_SCENE_IDS.length; guard++) {
     const idx = sceneIndex(sc.sceneId);
     const floor = sceneIndex(stateSceneFloor(sim));

@@ -19,7 +19,9 @@ import {
 const DT = 0.05;
 const PREFIX_TICKS = 160; // 8 s antes do snapshot: uma granada já explodiu (indicador direcional ativo) e outra está em voo
 const CONTINUATION_TICKS = 160; // 8 s comparados tick a tick depois do snapshot
-const SEEDS = [19390909, 19390913];
+// D1: com a missão falhada (Piotr morto) nada se grava. O piloto da rota do pomar com a semente 19390913 morre no tick 158, antes do
+// snapshot do tick 160; 19390917 sobrevive nas duas rotas durante todo o cenário (vala e pomar, 320 ticks).
+const SEEDS = [19390909, 19390917];
 const ROUTES = Object.freeze({
   vala: Object.freeze([
     [-45, -70],
