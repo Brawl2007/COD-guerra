@@ -6,8 +6,8 @@ import * as THREE from 'three';
 // the simulation's numbers and decides nothing (no visibility, no damage, no event), and the soft rim, the thinner top and the noise only shape the picture of a cloud whose size and density come from the simulation.
 //
 // One InstancedMesh (one draw call, one material) holds a box per cloud; the fragment shader intersects the eye ray with the cylinder analytically (the same chord as dustChord) and integrates a few samples along it:
-// 9 on High, 6 on Medium, 4 on Low. Seen from outside the box's front faces are drawn (depth-tested: a wall in front of the cloud hides it); with the eye inside the box its back faces are drawn at
-// depth 0, so the dust around the player covers the view (without a depth texture the scene's own depth is unknown there: a thick cloud around the eye hides everything, as it does for the AI beyond 3 m). The pool, its
+// 9 on High, 6 on Medium, 4 on Low. Seen from outside the box's front faces are drawn (depth-tested: a wall in front of the cloud hides it); with the eye inside the box its back faces are drawn, and the depth written is that of the point where the ray enters the cylinder (the box is wider than the cylinder, so the face is not the cloud),
+// or 0 when the eye is inside the cylinder itself, so the dust around the player covers the view (without a depth texture the scene's own depth is unknown there: a thick cloud around the eye hides everything, as it does for the AI beyond 3 m). The pool, its
 // buffers and the material are built once; update() only writes into them (no allocation per frame).
 export const DUST_VOLUME_POOL=Object.freeze({low:4,medium:6,high:8});
 export const DUST_VOLUME_STEPS=Object.freeze({low:4,medium:6,high:9});
@@ -29,7 +29,7 @@ export class M01DustVolumes{
           vec3 o=(m*vec4(0.0,0.0,0.0,1.0)).xyz;float R=length(m[0].xyz)*.5,H=length(m[1].xyz);
           vCloud=vec4(o.x,o.y-H*.5,o.z,R);vDH=vec2(dustDensity,H);
           gl_Position=projectionMatrix*viewMatrix*w;}`,
-      fragmentShader:`uniform vec3 uColor;uniform vec3 fogColor;uniform float uLight;uniform float uTime;uniform float uSteps;uniform float uNoise;uniform float uK;
+      fragmentShader:`uniform vec3 uColor;uniform vec3 fogColor;uniform float uLight;uniform float uTime;uniform float uSteps;uniform float uNoise;uniform float uK;uniform mat4 projectionMatrix;
         varying vec3 vWorld;varying vec4 vCloud;varying vec2 vDH;
         float dHash(vec2 p){vec3 p3=fract(vec3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return fract((p3.x+p3.y)*p3.z);}
         float dNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(dHash(i),dHash(i+vec2(1.0,0.0)),f.x),mix(dHash(i+vec2(0.0,1.0)),dHash(i+vec2(1.0,1.0)),f.x),f.y);}
@@ -61,7 +61,9 @@ export class M01DustVolumes{
           if(alpha<.01)discard;
           vec3 col=uColor*uLight*(.80+.34*clamp(hm/uSteps,0.0,1.0))*mix(1.0,.70,smoothstep(1.0,9.0,tau));
           col=mix(col,fogColor,smoothstep(500.0,2700.0,dist));
-          gl_FragDepth=inBox?0.0:gl_FragCoord.z;
+          // depth where the ray enters the cylinder (t0), not the box face, which lies up to .41 r before it: a man or wall in the margin between box and cylinder (the simulation's sight line is clear there) stays in front; depth 0 only with the eye inside the cylinder (t0==0)
+          vec4 ce=projectionMatrix*viewMatrix*vec4(ro+rd*t0,1.0);
+          gl_FragDepth=t0<=0.0||ce.w<=1e-4?0.0:clamp(ce.z/ce.w*.5+.5,0.0,1.0);
           gl_FragColor=vec4(col,alpha);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
