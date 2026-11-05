@@ -160,7 +160,9 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
     const lisInC09 = sim.allies.find((a) => a.id === 'pl_lis');
     assert.equal(lisInC09.detachedOutOfCell, true, 'Lis must be detached on liaison outside the cell during C09-C10');
 
-    // Start C10 (EC2 adds 12 -> exact 46 total mission hostiles!)
+    // Start C10 (EC2 adds 12 -> exact 46 total mission hostiles!). FIX-CD (I3 p. 34): cp_m02_d only with Piotr in a valid shelter;
+    // (0,-40) is out of sight of EC1 and of the EC2 reserve when it arrives.
+    sim.teleportPlayer(0, -40, Math.PI / 2);
     sim.startC10OrderChanges();
     assert.equal(sim.totalHostilesSpawned, 46, 'Total identified hostiles across EA0+EA1+EB1+EC1+EC2 must equal 46');
     assert.equal(sim.dialogue.hasTriggered('dlg_m02_002'), true);

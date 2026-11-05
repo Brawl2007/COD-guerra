@@ -35,13 +35,21 @@ export function createInitialC01Contact() {
   return { movementStartedAt: null, contactAt: null, opened: false, openedAt: null, openedBy: null };
 }
 
-/** Abre o contacto de C02 (o posto EA0 passa a perceber e a combater). Idempotente; só conta com C01 ativa. */
+/**
+ * Abre o contacto de C02 (o posto EA0 passa a perceber e a combater). Idempotente; só conta com C01 ativa.
+ * Um tiro/granada ANTES de o jogador andar abre o contacto e também conta como o início do avanço (FIX-CD): `movementStartedAt` e
+ * `contactAt` ficam no instante da abertura. Antes ficavam nulos para sempre e a secção ficava presa no estágio 0 em P1.
+ */
 export function openC01Contact(sim, by) {
   const c = sim.c01Contact;
   if (!sim.c01Active || !c || c.opened) return false;
   c.opened = true;
   c.openedAt = Number(sim.clock.toFixed(3));
   c.openedBy = by;
+  if (c.movementStartedAt === null) {
+    c.movementStartedAt = c.openedAt;
+    c.contactAt = c.openedAt;
+  }
   sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'c01_contact_opened', by });
   return true;
 }
@@ -50,29 +58,34 @@ export function openC01Contact(sim, by) {
 export function updateC01Contact(sim) {
   const c = sim.c01Contact;
   if (!sim.c01Active || !c || c.opened) return;
+  let advanceStarted = false;
   if (c.movementStartedAt === null) {
     const p1 = sim.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175 };
     if (Math.hypot(sim.player.x - p1.x, sim.player.z - p1.z) < C01_ADVANCE_THRESHOLD_M) return;
     c.movementStartedAt = Number(sim.clock.toFixed(3));
     const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
     c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
+    advanceStarted = true;
   }
   if (sim.clock >= c.contactAt) {
     openC01Contact(sim, 'timer');
-    return;
+  } else {
+    // O posto não está cego a quem chega ao pé dele: dentro do raio de deteção o contacto abre já (sem sorteio: o atraso do
+    // temporizador foi sorteado uma só vez, ao primeiro avanço).
+    const px = sim.player.x;
+    const pz = sim.player.z;
+    const near = sim.enemies.some(
+      (e) =>
+        e.encounterId === 'EA0' &&
+        e.alive &&
+        !e.nonCombatant &&
+        Math.hypot(e.x - px, e.z - pz) <= C01_PROXIMITY_DETECTION_M,
+    );
+    if (near) openC01Contact(sim, 'proximity');
   }
-  // O posto não está cego a quem chega ao pé dele: dentro do raio de deteção o contacto abre já (sem sorteio: o atraso do
-  // temporizador foi sorteado uma só vez, ao primeiro avanço).
-  const px = sim.player.x;
-  const pz = sim.player.z;
-  const near = sim.enemies.some(
-    (e) =>
-      e.encounterId === 'EA0' &&
-      e.alive &&
-      !e.nonCombatant &&
-      Math.hypot(e.x - px, e.z - pz) <= C01_PROXIMITY_DETECTION_M,
-  );
-  if (near) openC01Contact(sim, 'proximity');
+  // I3 (p. 33): cp_m02_a_preparacao = «C01 terminada, antes do contacto» (vala, roster inicial, T0). O primeiro avanço acaba C01
+  // (roteiro) com o posto ainda sem alerta. Antes gravava-se quando o EA0 caía e o EA1 entrava em combate (espiral de morte; FIX-CD).
+  if (advanceStarted && !c.opened) sim.requestAutoCheckpoint('cp_m02_a_preparacao');
 }
 
 /**
@@ -219,7 +232,8 @@ function mapEnemyEntry(sim, e) {
     memory: null,
     goal: null,
     reloadingUntil: 0,
-    nextFireAt: 0.6,
+    // FIX-CD: relativo ao instante em que o hostil entra (antes 0,6 absoluto: a reserva EC2 nascia em C10 já pronta a disparar).
+    nextFireAt: Number((sim.clock + 0.6).toFixed(3)),
     shotsFired: 0,
     hitsReceived: 0,
     lastHitPart: null,
@@ -790,7 +804,46 @@ export function startC10OrderChanges(sim) {
 
   // Save the 4th canonical semantic checkpoint cp_m02_d_cobertura_retirada (I3). Inside tick() (via updateAreaC) it is
   // recorded at the end of the tick, after horizon/dialogue/audiovisual have run (FIX-2b); from the API it is recorded now.
-  sim.requestAutoCheckpoint('cp_m02_d_cobertura_retirada');
+  // FIX-CD: only with Piotr in a valid shelter (I3 p. 34); otherwise updateAreaC asks again every tick until he is.
+  requestCoverCheckpointIfSheltered(sim);
+  return true;
+}
+
+export const CP_D_ID = 'cp_m02_d_cobertura_retirada';
+/** Folga (m) para além do raio de uma explosão agendada: dentro dela Piotr não está abrigado. */
+export const SHELTER_BLAST_MARGIN_M = 2;
+
+/**
+ * «Abrigo válido» (I3 p. 34, ponto seguro e restauro de cp_m02_d): neste instante nenhum hostil ativo (vivo e combatente) com Piotr ao
+ * alcance da arma tem linha de vista para ele (a mesma visão, com folhagem, com que os hostis escolhem a quem disparar), e Piotr está
+ * fora do raio (+ SHELTER_BLAST_MARGIN_M) de todas as explosões agendadas. Não olha para o cone de visão: virar-se não é abrigo.
+ */
+export function isPlayerSheltered(sim) {
+  const p = sim.player;
+  if (!p || p.alive === false || !(p.health > 0)) return false;
+  for (const b of sim.hazardBlasts ?? []) {
+    if (Math.hypot(b.x - p.x, b.z - p.z) <= b.radius + SHELTER_BLAST_MARGIN_M) return false;
+  }
+  for (const e of sim.enemies) {
+    if (!e.alive || e.nonCombatant) continue;
+    const range = WEAPON_PROFILES[e.weapon]?.range ?? 160;
+    if (Math.hypot(e.x - p.x, e.z - p.z) > range) continue;
+    if (sim.world.lineOfSight(e, p, { includeFoliage: true })) return false;
+  }
+  return true;
+}
+
+/**
+ * cp_m02_d_cobertura_retirada (I3 p. 34): «C10: ordem local dada, antes de resolver evacuação», com o ponto de restauro em «abrigo
+ * válido». Antes gravava-se no instante em que a reserva EC2 nascia a 110-160 m com linha de tiro e o reinício voltava a matar Piotr
+ * (espiral de morte, FIX-CD). Pede-se de C10 até C12, no primeiro instante em que Piotr está abrigado.
+ */
+export function requestCoverCheckpointIfSheltered(sim) {
+  const a = sim.areaC;
+  if (!a?.c10Started || a.c12Completed || sim.missionFailed) return false;
+  if (sim.checkpointReachedOrPending?.(CP_D_ID) ?? sim.checkpointsReached.includes(CP_D_ID)) return false;
+  if (!isPlayerSheltered(sim)) return false;
+  sim.requestAutoCheckpoint(CP_D_ID);
   return true;
 }
 
@@ -1088,6 +1141,8 @@ export function updateAreaC(sim, dt) {
   }
 
   sim.flags['m02.last_group_survivors'] = evacuatedCount;
+  // 5. cp_m02_d no primeiro instante com Piotr abrigado (FIX-CD): de C10 até a evacuação estar resolvida (C12).
+  requestCoverCheckpointIfSheltered(sim);
   if (allResolved && !sim.areaC.c12Completed) {
     sim.dialogue.trigger('bz39_c11_05', sim);
     sim.objective = {

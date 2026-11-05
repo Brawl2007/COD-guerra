@@ -1901,7 +1901,7 @@ export class M02BenchSimulation {
           clock: Number(this.clock.toFixed(2)),
           type: 'ea0_outpost_cleared',
         });
-        due.push('cp_m02_a_preparacao');
+        // cp_m02_a_preparacao já não se grava aqui (EA1 a entrar em combate): é «antes do contacto», no fim de C01 (FIX-CD, I3 p. 33).
       } else {
         this.objective.id = 'O00';
         this.objective.title = `C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (${activeEa0.length}/4 ativos)`;
@@ -2263,9 +2263,11 @@ export class M02BenchSimulation {
   }
 
   /**
-   * Carregamento rápido (F9 da bancada). Ordem de recurso, saltando as entradas que não se deixam restaurar (incompatíveis
-   * ou inválidas; FIX-2c): 1) o checkpoint manual desta sessão; 2) o último gravado nesta sessão; 3) o último gravado na
-   * loja persistida (página acabada de abrir ou recarregada); 4) o checkpoint manual da loja; 5) o início em memória.
+   * Carregamento rápido (F9 da bancada e «Reiniciar do último checkpoint»). Ordem de recurso, saltando as entradas que não se
+   * deixam restaurar (incompatíveis ou inválidas; FIX-2c): 1) o último gravado nesta sessão, automático ou F5 (o mais recente);
+   * 2) o checkpoint manual desta sessão; 3) o último gravado na loja persistida (página acabada de abrir ou recarregada); 4) o
+   * checkpoint manual da loja; 5) o início em memória. FIX-CD: antes o F5 da sessão vinha primeiro, mesmo antigo, e o reinício
+   * voltava para trás de checkpoints automáticos mais recentes.
    * Devolve { checkpointId, source } e, se saltou alguma entrada, `skipped: [{ checkpointId, source, reason }]`.
    */
   quickLoadCheckpoint() {
@@ -2275,8 +2277,8 @@ export class M02BenchSimulation {
         attempts.push({ checkpointId, source, restore });
       }
     };
-    if (this.checkpoints.has('cp_m02_manual')) add('cp_m02_manual', 'session', (id) => this.restoreCheckpoint(id));
     add(this.#lastSessionCheckpointId, 'session', (id) => this.restoreCheckpoint(id));
+    if (this.checkpoints.has('cp_m02_manual')) add('cp_m02_manual', 'session', (id) => this.restoreCheckpoint(id));
     const skipped = [];
     const stored = this.saveStore ? this.saveStore.load() : null;
     if (stored?.ok) {
