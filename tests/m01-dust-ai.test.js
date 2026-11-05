@@ -49,6 +49,43 @@ test('the search needs the memory, the cover and the room of R2-b still: not bef
     const node=over.deck.node;s.deckFire(over,false);assert.equal(over.deck.node,node);assert.equal(tactic(s.drainEvents(),'search').length,0);}
 });
 
+// Golden amendment 22 (2026-11-05): the same cloud over a man who HOLDS a line. Package 2 left him nowhere to go («never past the limit»); the search now takes the next closing line when he has one.
+/** A man holding line `line` of his (node lines[line]) with the Poles 80 m west of him on the same open deck, a cloud on the first of them (the voice of the platoon is 260 m on, behind it); the player is off the map. */
+function veiledHold({cloud=true,line=0,seenAgo=5}={}){
+  const {s}=scene();calm(s);
+  const [pawlak,voice]=pair(s),L=P.lines[0],node=L[line],x0=P.paths[0][node].x;
+  Object.assign(pawlak,{x:x0-80,z:41.2,crouched:false,active:true,alive:true,state:'GUARD'});pawlak.y=s.world.heightAt(pawlak.x,pawlak.z);
+  Object.assign(voice,{x:x0-260,z:41.2,crouched:false,active:true,alive:true,state:'GUARD'});voice.y=s.world.heightAt(voice.x,voice.z);
+  s.player.x=1300;s.player.z=0;
+  const man=station(s,'de_spans_4',node,{phase:'hold',since:2,until:s.clock+30,cooldown:0,lim:L[line]});
+  man.ai.seen={x:pawlak.x,y:pawlak.y+1,z:pawlak.z,at:s.clock-seenAgo,who:'staszek_pawlak'};
+  if(cloud)cloudAt(s,pawlak.x,pawlak.z);
+  return {s,man,pawlak,voice};
+}
+
+test('the man who holds a line and has lost the Poles in the cloud takes the next closing line; on his deepest line he waits; with the air clear he fires and holds',()=>{
+  const L=P.lines[0];
+  {const {s,man,pawlak,voice}=veiledHold();
+    assert.equal(s.world.lineOfSight(man,pawlak),true);assert.equal(s.sees(man,pawlak),false);assert.equal(s.sees(man,voice),false);
+    const seen0={...man.ai.seen},fired=man.firedAt;
+    s.deckFire(man,false);
+    assert.deepEqual([man.deck.phase,man.deck.node,man.deck.lim],['advance',L[0]+1,L[1]],'on toward line 1, one station');assert.equal(man.firedAt,fired,'he has not fired');
+    assert.deepEqual(tactic(s.drainEvents(),'search').map(e=>[e.by,e.line]),[['de_spans_4',1]]);assert.deepEqual(man.ai.seen,seen0);
+    // it is the pressure's own line from now on: he walks to the stations short of it in cover bounds and holds it for the closing hold, and the squad's deadline is longer while he is on it
+    assert.equal(s.deckExtraSec(),T.closeExtraSec);
+  }
+  {const {s,man}=veiledHold({line:2});s.deckFire(man,false);
+    assert.deepEqual([man.deck.phase,man.deck.node],['hold',L[2]],'on the deepest line: nowhere to go');assert.equal(tactic(s.drainEvents(),'search').length,0);
+    assert.ok(man.cooldown>0&&man.cooldown<=6,'he looks again in a few seconds');}
+  {const {s,man}=veiledHold({cloud:false});s.deckFire(man,false);
+    assert.deepEqual([man.deck.phase,man.deck.node],['hold',L[0]]);assert.ok(man.firedAt>-1e8,'he fired');assert.equal(tactic(s.drainEvents(),'search').length,0);}
+  // the same bound is made through the fight: ticks and his own trigger (the cloud is there before the first one, so that his rounds have not pinned the pair and opened the line by the pressure: the cause is the search)
+  {const {s,man}=veiledHold();man.cooldown=1;
+    const evs=eventsOf(s,20*4);
+    assert.deepEqual(tactic(evs).map(e=>[e.kind,e.by,e.line]),[['search','de_spans_4',1]]);
+    assert.equal(man.deck.lim,L[1]);assert.ok(man.deck.node>=L[0]+1,'and he is on his way');assert.equal(man.firedAt<-1e8,true,'without a shot');}
+});
+
 test('the dust hides a Pole only while it stands: when the smoke is gone the man sees him again, fires and stays',()=>{
   const {s,man,pawlak}=veiledScene();
   s.clock=s.sectors.damage.at(-1).started+19.5;man.ai.seen.at=s.clock-5;   // the grenade's smoke is in its last half second

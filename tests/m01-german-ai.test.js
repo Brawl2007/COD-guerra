@@ -55,10 +55,14 @@ test('the tactics are mission data validated at load: a typo stops the game',()=
     pressure_share:d=>{d.tactics.pressure.share=0;},pressure_window:d=>{d.tactics.pressure.windowSec=-1;},hold:d=>{d.tactics.closeHoldSec=[9,3];},extra:d=>{d.tactics.closeExtraSec=1e3;},wait:d=>{d.tactics.alternateWaitSec=-1;},
     pin:d=>{d.tactics.pinSec=30;},squad:d=>{d.tactics.squadTargets.rangeM=10;},search:d=>{d.tactics.search.afterSec=d.tactics.search.memorySec;},grenade_range:d=>{d.tactics.grenade.rangeM=5;},grenade_fuse:d=>{d.tactics.grenade.fuseSec=d.tactics.grenade.flightSec;},
     grenade_wound:d=>{d.tactics.grenade.woundM=9;d.tactics.grenade.reachM=8;},grenade_per:d=>{d.tactics.grenade.perMan=5;},
+    search_hold:d=>{d.tactics.search.hold='yes';},search_hold_num:d=>{d.tactics.search.hold=1;},   // golden amendment 22: `hold` is a boolean or absent
   };
   for(const [name,f] of Object.entries(bad))assert.throws(()=>deckAssaultPlan(plan(f)),/deck assault/,name);
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.safeX=120;})),'the floor of the number the owner may move');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.grenade.perMan=0;})),'no grenades is a valid choice');
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{delete d.tactics.search.hold;})),'a search without `hold` is the one of R2-b');
+  assert.equal(deckAssaultPlan(plan(d=>{d.tactics.search.hold=false;})).tactics.search.hold,false);
+  assert.equal(T.search.hold,true,'the live data turn the search of a holding man on (golden amendment 22)');
 });
 
 test('A* validity: every node of every path, and the legs between them, are clear of every solid for a body, and the navigator routes a man along a line to the next without a detour',()=>{

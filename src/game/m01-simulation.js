@@ -1760,15 +1760,28 @@ export class M01Simulation {
    * R2-b: SEARCH. A man in cover on the way to his line who saw a Pole in the last search.memorySec seconds and has none in sight now (afterSec on) moves on to the first station toward his forward limit
    * (at most one bound of rushStations, never past the limit: the closing lines are the pressure's to open) from which a man on his feet would see the place where the Pole was last seen, instead of waiting
    * out his cover; it can repeat only while the memory lasts and ends at the limit. Reads the sight record (ai.seen) and the world's line of sight; no draw.
+   * Golden amendment 22 (2026-11-05): a man HOLDING a line searches too (tactics.search.hold). Package 2 showed why the search stayed at 0 in 24 routes: the one thing that hides a whole line of Poles on the
+   * open deck is the cloud of a grenade, and that comes when the squad already holds its lines, where «never past the limit» left the search nowhere to go. A man at a line that is not his deepest now takes
+   * the bound toward the NEXT closing line the same way (the first station from which he would see the place, at most rushStations from where he is, never past that line: safeX stays the deepest
+   * place of the act), exactly as if the pressure had opened it: lim is the next line, the casualty rule of deckLine can still put him one line back, and the squad's deadline grows by closeExtraSec as
+   * for any man on a closing line; and like the stage of the pressure it waits casualtyHoldSec after the last man of the assault who fell. The deepest line is the end of the search as it is of every
+   * other movement of the assault. Still no draw, no new saved key.
    */
   deckSearch(a){
     const P=DECK_ASSAULT,S=P.tactics.search,d=a.deck,ai=a.ai,now=this.clock,seen=ai.seen;
-    if(!seen||d.phase!=='cover'||now-seen.at>S.memorySec||now-seen.at<S.afterSec)return false;
-    const path=P.paths[assaultIndex(a)],last=Math.min(deckLimitNode(a),d.node+P.rushStations),target={space:'metres',x:seen.x,y:seen.y,z:seen.z,crouched:true};
+    if(!seen||now-seen.at>S.memorySec||now-seen.at<S.afterSec)return false;
+    let last=0,open=null;   // `last`: the last node he may take; `open`: the closing line that becomes his limit if he takes one past his old limit (a holding man)
+    if(d.phase==='cover')last=Math.min(deckLimitNode(a),d.node+P.rushStations);
+    else if(d.phase==='hold'&&S.hold===true){
+      const lines=deckLines(a),next=lines[deckLineNumber(a)+1];
+      if(next===undefined||now-this.deckLastCasualty()<P.tactics.casualtyHoldSec)return false;   // already on his deepest line, or a man of the assault fell lately
+      open=next;last=Math.min(next,d.node+P.rushStations);
+    }else return false;
+    const path=P.paths[assaultIndex(a)],target={space:'metres',x:seen.x,y:seen.y,z:seen.z,crouched:true};
     for(let n=d.node+1;n<=last;n++){
       const p=path[n],probe={space:'metres',x:p.x,y:this.world.heightAt(p.x,p.z),z:p.z,crouched:false};
       if(this.world.lineOfSight(probe,target)){   // (the world's sight, not the dust's: he bounds to where he would see the place if the air were clear)
-        d.node=n;d.phase='advance';d.since=now;d.until=now;ai.peek=0;a.crouched=false;
+        d.node=n;if(open!==null)d.lim=open;d.phase='advance';d.since=now;d.until=now;ai.peek=0;a.crouched=false;
         this.emit({type:'deck-tactic',kind:'search',by:a.id,line:deckLineNumber(a),at:now});return true;
       }
     }
