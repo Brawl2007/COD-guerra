@@ -44,6 +44,8 @@ import {
   syncAreaCWorldDamage,
   dropVolumesOfFallenCarriers,
   createInitialC01Contact,
+  CART_IMMOBILIZED_CAUSES,
+  CART_PARKED_REASONS,
   openC01Contact,
   updateC01Contact as runUpdateC01Contact,
   C01_CONTACT_OPENED_BY,
@@ -371,6 +373,24 @@ export function validateM02Snapshot(snap) {
   const cart = snap.areaB.supplyCart;
   if (cart !== undefined && (!isPlainObject(cart) || !CART_STATES.includes(cart.state))) {
     return { valid: false, reason: `Estado da carroça inválido no snapshot: ${cart?.state}` };
+  }
+  if (cart !== undefined) {
+    const cause = cart.immobilizedCause ?? null;
+    if (typeof cart.shaftBroken !== 'boolean') {
+      return { valid: false, reason: 'Save incompatível: a carroça não tem estado do varal (shaftBroken; snapshot anterior ao evento do tiro).' };
+    }
+    if (
+      typeof cart.shaftBroken !== 'boolean' ||
+      (cause !== null && !CART_IMMOBILIZED_CAUSES.includes(cause)) ||
+      (cart.shaftBroken !== (cause === 'shaft_broken')) ||
+      (cause !== null && cart.state !== 'IMMOBILIZED') ||
+      (cause === 'parked_fallback' ? !CART_PARKED_REASONS.includes(cart.parkedReason) : (cart.parkedReason ?? null) !== null)
+    ) {
+      return {
+        valid: false,
+        reason: `Causa de imobilização da carroça inválida ou incoerente: ${cause} (varal partido ${cart.shaftBroken}, estado ${cart.state}).`,
+      };
+    }
   }
   const volumes = cart?.volumes;
   if (volumes !== undefined) {

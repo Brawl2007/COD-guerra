@@ -2,7 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { stepActorNavigation } from './m02-combat-ai.js';
+import { stepActorNavigation, WEAPON_PROFILES } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
   TR01: 'Acessos de Łęczyca — noite de 9 para 10 de setembro',
@@ -52,6 +52,21 @@ export function updateC01Contact(sim) {
   if (sim.clock >= c.contactAt) openC01Contact(sim, 'timer');
 }
 
+/**
+ * SP02 (PDF C06 p. 13, J2 p. 36, F8 p. 26): «Um tiro que quebra o varal bloqueia a carroça em vez de a fazer explodir».
+ * Causas explícitas da imobilização (`cart.immobilizedCause`): o tiro que parte o varal (`shaft_broken`), a roda danificada
+ * (`wheel_damaged`, ação da bancada) e a alternativa «parada» (`parked_fallback`: F8/J2, «carroça já parada e carga manual»;
+ * não é carroça móvel): usada quando o evento do tiro falha. A carroça só pode ser atingida na última perna, perto do cruzamento.
+ */
+export const CART_IMMOBILIZED_CAUSES = Object.freeze(['shaft_broken', 'wheel_damaged', 'parked_fallback']);
+export const CART_PARKED_REASONS = Object.freeze(['shot_event_failed']);
+/** A carroça só é exposta ao tiro na perna final (z ≤ 20 m, o cruzamento fica em z≈0). */
+export const CART_CROSSING_Z = 20;
+/** Quanto tempo (s) a carroça pode estar exposta, com hostis capazes vivos, sem que algum tenha linha de tiro, antes de parar. */
+export const CART_SHOT_WINDOW_SEC = 2.0;
+/** Um hostil com supressão ≥ 0,88 não consegue disparar (updateGermanGarrison). */
+const CART_SHOOTER_MAX_SUPPRESSION = 0.88;
+
 export function createInitialAreaBState() {
   const bDef = cellsBCLayout.cells.B;
   return {
@@ -68,6 +83,11 @@ export function createInitialAreaBState() {
       speed: bDef.supplyCart.speed,
       waypointIdx: 0,
       wheelDamaged: false,
+      shaftBroken: false,
+      immobilizedCause: null,
+      parkedReason: null,
+      shotById: null,
+      crossingEntryAt: null,
       volumes: [
         { id: 'vol_water', type: 'water', state: 'ON_CART', x: bDef.supplyCart.startX, z: bDef.supplyCart.startZ, carriedBy: null, delivered: false, lost: false },
         { id: 'vol_ammo', type: 'ammo', state: 'ON_CART', x: bDef.supplyCart.startX, z: bDef.supplyCart.startZ, carriedBy: null, delivered: false, lost: false },
@@ -207,11 +227,12 @@ export function enterAreaBC06(sim, { skipTransition = false } = {}) {
   return sim.objective;
 }
 
-export function damageCartWheel(sim) {
+/** Imobiliza a carroça no sítio e larga os volumes ainda a bordo ao lado dela (transporte a pé); `cause` é explícita. */
+function immobilizeCart(sim, cause, extra = {}) {
   const cart = sim.areaB?.supplyCart;
   if (!cart || cart.state === 'DELIVERED' || cart.state === 'IMMOBILIZED') return false;
-  cart.wheelDamaged = true;
   cart.state = 'IMMOBILIZED';
+  cart.immobilizedCause = cause;
   for (const vol of cart.volumes) {
     if (vol.state === 'ON_CART') {
       vol.state = 'DROPPED_READY';
@@ -219,16 +240,82 @@ export function damageCartWheel(sim) {
       vol.z = cart.z;
     }
   }
-  sim.dialogue.trigger('bz39_c06_03', sim);
-  sim.dialogue.trigger('bz39_c06_04', sim);
-  sim.dialogue.update(sim);
   sim.combatLog.push({
     clock: Number(sim.clock.toFixed(2)),
     type: 'supply_cart_immobilized',
+    cause,
     x: cart.x,
     z: cart.z,
+    ...extra,
   });
   return true;
+}
+
+export function damageCartWheel(sim) {
+  const cart = sim.areaB?.supplyCart;
+  if (!cart || cart.state === 'DELIVERED' || cart.state === 'IMMOBILIZED') return false;
+  cart.wheelDamaged = true;
+  immobilizeCart(sim, 'wheel_damaged');
+  sim.dialogue.trigger('bz39_c06_03', sim);
+  sim.dialogue.trigger('bz39_c06_04', sim);
+  sim.dialogue.update(sim);
+  return true;
+}
+
+/** O tiro (de um hostil real) parte o varal: estado `shaft_broken`, carroça imobilizada, sem explosão (C06/J2). */
+export function breakCartShaft(sim, { shooterId = null } = {}) {
+  const cart = sim.areaB?.supplyCart;
+  if (!cart || cart.state === 'DELIVERED' || cart.state === 'IMMOBILIZED') return false;
+  cart.shaftBroken = true;
+  cart.shotById = shooterId;
+  if (!immobilizeCart(sim, 'shaft_broken', { shooterId })) return false;
+  const shooter = shooterId ? sim.enemies.find((e) => e.id === shooterId) : null;
+  if (shooter && shooter.mag > 0) {
+    shooter.mag -= 1; // o tiro gasta uma bala do carregador do atirador
+    shooter.shotsFired = (shooter.shotsFired ?? 0) + 1;
+  }
+  sim.events.push({ type: 'cart-shaft-broken', shooterId, x: cart.x, z: cart.z, clock: sim.clock });
+  sim.dialogue.trigger('bz39_c06_04', sim);
+  sim.dialogue.update(sim);
+  return true;
+}
+
+/** Alternativa explícita «parada» (F8/J2): a carroça fica onde está, volumes soltos para transporte manual. */
+export function parkCartFallback(sim, reason = 'shot_event_failed') {
+  const cart = sim.areaB?.supplyCart;
+  if (!cart || cart.state === 'DELIVERED' || cart.state === 'IMMOBILIZED') return false;
+  cart.parkedReason = reason;
+  if (!immobilizeCart(sim, 'parked_fallback', { reason })) return false;
+  sim.dialogue.trigger('bz39_c06_04', sim);
+  sim.dialogue.update(sim);
+  return true;
+}
+
+/**
+ * Evento do tiro na perna final: com hostis capazes vivos (supressão < 0,88), o mais próximo com alcance e linha de tiro à
+ * carroça parte-lhe o varal. Se nenhum a consegue atingir durante CART_SHOT_WINDOW_SEC, o evento falha e fica a alternativa
+ * «parada». Sem hostis capazes a carroça passa. Determinista (sem RNG). Devolve a causa aplicada ou null.
+ */
+export function resolveCartCrossingEvent(sim, cart) {
+  if (cart.waypointIdx < cellsBCLayout.cells.B.cartRoute.length - 1 || cart.z > CART_CROSSING_Z) return null;
+  const capable = sim.enemies.filter(
+    (e) => e.alive && !e.nonCombatant && (e.suppressed ?? 0) < CART_SHOOTER_MAX_SUPPRESSION,
+  );
+  if (capable.length === 0) return null;
+  if (cart.crossingEntryAt === null) cart.crossingEntryAt = Number(sim.clock.toFixed(2));
+  const target = { x: cart.x, y: sim.world.heightAt(cart.x, cart.z), z: cart.z, eyeHeight: 1.0, crouched: false };
+  let shooter = null;
+  let best = Infinity;
+  for (const e of capable) {
+    const d = Math.hypot(e.x - cart.x, e.z - cart.z);
+    if (d > (WEAPON_PROFILES[e.weapon]?.range ?? 100) || d >= best) continue;
+    if (!sim.world.lineOfSight(e, target, { includeFoliage: true })) continue;
+    shooter = e;
+    best = d;
+  }
+  if (shooter) return breakCartShaft(sim, { shooterId: shooter.id }) ? 'shaft_broken' : null;
+  if (sim.clock - cart.crossingEntryAt >= CART_SHOT_WINDOW_SEC) return parkCartFallback(sim, 'shot_event_failed') ? 'parked_fallback' : null;
+  return null;
 }
 
 export function pickupSupplyVolume(sim, volumeId, carrierId = 'piotr_sokol') {
@@ -387,6 +474,10 @@ export function updateAreaB(sim, dt) {
 
     if (!sim.areaB.corridorUnderDirectFire && !playerBlockingPath) {
       cart.state = 'MOVING';
+      if (resolveCartCrossingEvent(sim, cart)) {
+        syncSupplyFlags(sim);
+        return;
+      }
       const route = cellsBCLayout.cells.B.cartRoute;
       const wp = route[Math.min(cart.waypointIdx, route.length - 1)];
       const dx = wp[0] - cart.x;
