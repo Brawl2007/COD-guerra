@@ -21,6 +21,9 @@ export const DECK_LINE_MARGIN_M=8;
  * the fights already played). A man on his feet is held to the live safeX as ever.
  */
 export const DECK_SAFE_X_MIN=120;
+/** Amendment 22: the id of the crater record of the German supporting round (at most one in a game) and the nearest the round may fall to the front post of the rearguard (the 20 m ring in which a shell shakes a man, plus 2 m). */
+export const DECK_SUPPORT_ID='de_support_shell_1';
+export const DECK_SUPPORT_MIN_AHEAD_M=22;
 
 export function deckAssaultPlan(def=definition){
   const fail=m=>{throw new Error(`M01 deck assault: ${m}`);};
@@ -56,6 +59,11 @@ export function deckAssaultPlan(def=definition){
   if(!num(t.pinSec,0,10))fail('tactics.pinSec');
   // Amendment 22: `hold` (optional, boolean) lets a man who HOLDS a line search toward the next closing line; absent or false = the search of R2-b, from cover only.
   const se=t.search;if(!plain(se)||!num(se.memorySec,1,60)||!num(se.afterSec,.5,30)||se.afterSec>=se.memorySec||(se.hold!==undefined&&typeof se.hold!=='boolean'))fail('tactics.search');
+  // Amendment 22 (2026-11-05): `support` (optional) is the one round of German supporting fire that gives the search its cause (updateDeckSupport in m01-simulation.js): it falls delaySec after the last living man of the
+  // Polish rearguard took his post (never later than windowSec after that moment, so a save loaded long after it gets no round it did not have), aheadM metres east of the front post (a ground burst of kind
+  // `shell`, m01-dust.js: a cloud of 8 m, 30 s). aheadM stays outside the 20 m ring in which the shells of m01-shell-blast.js shake a man (SHELL_BLAST.shakenM), so the round touches no one: it leaves a crater and a cloud.
+  // Absent = no round (the game of before the amendment).
+  const sp=t.support;if(sp!==undefined&&(!plain(sp)||!num(sp.delaySec,0,30)||!num(sp.windowSec,1,60)||!num(sp.aheadM,DECK_SUPPORT_MIN_AHEAD_M,120)))fail('tactics.support');
   const gr=t.grenade;
   if(!plain(gr)||!num(gr.rangeM,10,60)||!num(gr.minM,2,gr.rangeM)||!Number.isInteger(gr.perMan)||gr.perMan<0||gr.perMan>2||!num(gr.gapSec,1,120)||!num(gr.flightSec,.8,3)||!num(gr.fuseSec,gr.flightSec+1.5,6)||
     !num(gr.woundM,1,gr.reachM??10)||!num(gr.reachM,gr.woundM,12)||!num(gr.suppressSec,0,10)||!num(gr.suppressM,1,30))fail('tactics.grenade');
@@ -90,7 +98,7 @@ export function deckAssaultPlan(def=definition){
   const closing=lineNodes.some(l=>l.length>1);
   const holdBaseSec=d.maxSec+(closing?t.closeExtraSec+Math.max(0,(minLimit-(d.safeX+DECK_LINE_MARGIN_M))/d.rushSpeed):0);
   const tactics=Object.freeze({closeGapM:t.closeGapM,stages:t.stages,pressure:Object.freeze({...t.pressure}),casualtyHoldSec:t.casualtyHoldSec,closeHoldSec:Object.freeze([...t.closeHoldSec]),
-    closeExtraSec:t.closeExtraSec,alternateWaitSec:t.alternateWaitSec,pinSec:t.pinSec,squadTargets:Object.freeze({...sq}),search:Object.freeze({...se}),grenade:Object.freeze({...gr})});
+    closeExtraSec:t.closeExtraSec,alternateWaitSec:t.alternateWaitSec,pinSec:t.pinSec,squadTargets:Object.freeze({...sq}),search:Object.freeze({...se}),support:sp===undefined?null:Object.freeze({...sp}),grenade:Object.freeze({...gr})});
   return Object.freeze({version:d.version,from:d.from,safeX:d.safeX,clearX:d.clearX,overwatch:Object.freeze([...d.overwatch]),assault:Object.freeze([...d.assault]),
     entry:freezePts(d.entry),overwatchNodes:freezePts(d.overwatchNodes),fallback:freezePts(d.fallback),paths:Object.freeze(paths),lines:Object.freeze(lineNodes),maxNodes:Object.freeze(maxNodes),
     lanes:Object.freeze(d.lanes.map(l=>Object.freeze([...l]))),limits:Object.freeze([...d.limits]),tactics,pursuitToX:d.pursuitToX,
