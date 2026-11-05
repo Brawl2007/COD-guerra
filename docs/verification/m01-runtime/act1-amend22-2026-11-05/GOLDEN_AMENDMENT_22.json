@@ -1,10 +1,10 @@
 {
   "task": "M01-ACT1-TEXTS-SEARCH-V1",
   "amendment": "amendment-22",
-  "delta": "texts+search-hold",
+  "delta": "texts+support-search",
   "predecessor": "101b572af0c1f8489942b8ce3eadee5016ac02c4",
   "predecessorSourceSha256": "2b6be19468fdde596256e3a872e922edf2107bf66d708261a5ea652cade9096d",
-  "sourceSha256": "ccf155d5de834adb241c0ebe186443e94a7740482961f6ffbd90bf3a8ce71c43",
+  "sourceSha256": "6c339c9347609a4bde9c34a7b6962a422e1db26a82c3a8b6e3626279c7257d30",
   "previousGolden": {
     "task": "M01-AID-DUST-V1",
     "file": "tests/fixtures/m01-aid-dust-gameplay-baseline.json",
@@ -12,9 +12,11 @@
     "sourceSha256": "2b6be19468fdde596256e3a872e922edf2107bf66d708261a5ea652cade9096d"
   },
   "deltaFields": "^\\$\\.(state|checkpoint)\\.actors\\.\\d+\\.role$",
-  "noBehaviourDifference": true,
+  "behaviourFields": "^\\$\\.(state|checkpoint)\\.sectors\\.damage\\.\\d+$",
+  "behaviourActors": "^(de_spans_[4-9])$",
   "stripped": [
     "actors[staszek_pawlak].role MESSENGER -> RADIO_OPERATOR (put back in the live frame)",
+    "mission.text «até ao socorrista» -> «até o socorrista» (put back in the live frame)",
     "dialogueConsumed",
     "dialogueQueue",
     "subtitle",
@@ -35,7 +37,7 @@
       "seed": 19390901,
       "support": false,
       "oldTicks": 26170,
-      "newTicks": 26170,
+      "newTicks": 25560,
       "firstDifference": {
         "tick": 1,
         "clock": 0.05,
@@ -48,7 +50,29 @@
       },
       "identicalTicksBeforeIt": 0,
       "identicalBlocks": 0,
-      "firstBehaviourDifference": null,
+      "firstBehaviourDifference": {
+        "tick": 14477,
+        "clock": 723.85,
+        "battleClock": "06:09:30",
+        "path": "$.state.sectors.damage.20",
+        "actor": null,
+        "predecessor": null,
+        "live": {
+          "id": "de_support_shell_1",
+          "x": 199,
+          "y": 0,
+          "z": 38.7,
+          "started": 723.8499999998894,
+          "soundAt": 724.3454916444341,
+          "smokeSeconds": 30,
+          "dust": {
+            "r": 8,
+            "h": 7,
+            "d": 1,
+            "life": 30
+          }
+        }
+      },
       "battleClockEvents": [
         {
           "id": "evt_m01_railway_worker_report",
@@ -257,7 +281,7 @@
           },
           "real": {
             "predecessor": 984.6,
-            "live": 984.6
+            "live": 955.4
           }
         },
         {
@@ -271,7 +295,7 @@
           },
           "real": {
             "predecessor": 1012.85,
-            "live": 1012.85
+            "live": 983.65
           }
         },
         {
@@ -285,7 +309,7 @@
           },
           "real": {
             "predecessor": 1293.45,
-            "live": 1293.45
+            "live": 1262.95
           }
         },
         {
@@ -299,11 +323,78 @@
           },
           "real": {
             "predecessor": 1308.45,
-            "live": 1308.45
+            "live": 1277.95
           }
         }
       ],
-      "movedEvents": [],
+      "movedEvents": [
+        {
+          "event": "evt_m01_debrief",
+          "real": {
+            "predecessor": 1308.5,
+            "live": 1278
+          },
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          }
+        },
+        {
+          "event": "evt_m01_dudek_retrieves_bak",
+          "real": {
+            "predecessor": 1012.85,
+            "live": 983.65
+          },
+          "battle": {
+            "predecessor": 22440.12,
+            "live": 22440.12
+          }
+        },
+        {
+          "event": "evt_m01_east_demolition",
+          "real": {
+            "predecessor": 984.6,
+            "live": 955.4
+          },
+          "battle": {
+            "predecessor": 22200,
+            "live": 22200
+          }
+        },
+        {
+          "event": "evt_m01_kozliny_attack_distant",
+          "real": {
+            "predecessor": 1308.45,
+            "live": 1277.95
+          },
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          }
+        },
+        {
+          "event": "evt_m01_roll_call",
+          "real": {
+            "predecessor": 1308.45,
+            "live": 1277.95
+          },
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          }
+        },
+        {
+          "event": "evt_m01_west_demolition",
+          "real": {
+            "predecessor": 1293.45,
+            "live": 1262.95
+          },
+          "battle": {
+            "predecessor": 24300,
+            "live": 24300
+          }
+        }
+      ],
       "endState": {
         "predecessorOwnRoute": {
           "ticks": 26170,
@@ -313,11 +404,11 @@
           "playerHealth": 100
         },
         "live": {
-          "ticks": 26170,
-          "real": 1308.5,
+          "ticks": 25560,
+          "real": 1278,
           "to0600": 562.95,
           "survivors": 12,
-          "playerHealth": 100
+          "playerHealth": 92
         },
         "objectives": {
           "deliver_message": "done",
@@ -351,11 +442,15 @@
         "stacked": 0,
         "germanRoundsPerRealMin": {
           "predecessor": 90.24,
-          "live": 90.24
+          "live": 89.06
         },
         "searches": {
           "predecessor": 0,
-          "live": 0
+          "live": 5
+        },
+        "supportRounds": {
+          "predecessor": 0,
+          "live": 1
         }
       }
     },
@@ -363,7 +458,7 @@
       "seed": 7,
       "support": true,
       "oldTicks": 22326,
-      "newTicks": 22326,
+      "newTicks": 21241,
       "firstDifference": {
         "tick": 1,
         "clock": 0.05,
@@ -376,7 +471,29 @@
       },
       "identicalTicksBeforeIt": 0,
       "identicalBlocks": 0,
-      "firstBehaviourDifference": null,
+      "firstBehaviourDifference": {
+        "tick": 14082,
+        "clock": 704.1,
+        "battleClock": "06:09:30",
+        "path": "$.state.sectors.damage.20",
+        "actor": null,
+        "predecessor": null,
+        "live": {
+          "id": "de_support_shell_1",
+          "x": 199,
+          "y": 0,
+          "z": 38.7,
+          "started": 704.0999999999074,
+          "soundAt": 704.5721703620209,
+          "smokeSeconds": 30,
+          "dust": {
+            "r": 8,
+            "h": 7,
+            "d": 1,
+            "life": 30
+          }
+        }
+      },
       "battleClockEvents": [
         {
           "id": "evt_m01_railway_worker_report",
@@ -585,7 +702,7 @@
           },
           "real": {
             "predecessor": 793.5,
-            "live": 793.5
+            "live": 744.6
           }
         },
         {
@@ -599,7 +716,7 @@
           },
           "real": {
             "predecessor": 821.75,
-            "live": 821.75
+            "live": 772.85
           }
         },
         {
@@ -613,7 +730,7 @@
           },
           "real": {
             "predecessor": 1101.25,
-            "live": 1101.25
+            "live": 1047
           }
         },
         {
@@ -627,11 +744,78 @@
           },
           "real": {
             "predecessor": 1116.25,
-            "live": 1116.25
+            "live": 1062
           }
         }
       ],
-      "movedEvents": [],
+      "movedEvents": [
+        {
+          "event": "evt_m01_debrief",
+          "real": {
+            "predecessor": 1116.3,
+            "live": 1062.05
+          },
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          }
+        },
+        {
+          "event": "evt_m01_dudek_retrieves_bak",
+          "real": {
+            "predecessor": 821.75,
+            "live": 772.85
+          },
+          "battle": {
+            "predecessor": 22440.12,
+            "live": 22440.12
+          }
+        },
+        {
+          "event": "evt_m01_east_demolition",
+          "real": {
+            "predecessor": 793.5,
+            "live": 744.6
+          },
+          "battle": {
+            "predecessor": 22200,
+            "live": 22200
+          }
+        },
+        {
+          "event": "evt_m01_kozliny_attack_distant",
+          "real": {
+            "predecessor": 1116.25,
+            "live": 1062
+          },
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          }
+        },
+        {
+          "event": "evt_m01_roll_call",
+          "real": {
+            "predecessor": 1116.25,
+            "live": 1062
+          },
+          "battle": {
+            "predecessor": 25500,
+            "live": 25500
+          }
+        },
+        {
+          "event": "evt_m01_west_demolition",
+          "real": {
+            "predecessor": 1101.25,
+            "live": 1047
+          },
+          "battle": {
+            "predecessor": 24300,
+            "live": 24300
+          }
+        }
+      ],
       "endState": {
         "predecessorOwnRoute": {
           "ticks": 22326,
@@ -641,11 +825,11 @@
           "playerHealth": 100
         },
         "live": {
-          "ticks": 22326,
-          "real": 1116.3,
+          "ticks": 21241,
+          "real": 1062.05,
           "to0600": 543.2,
           "survivors": 18,
-          "playerHealth": 100
+          "playerHealth": 92
         },
         "objectives": {
           "deliver_message": "done",
@@ -679,11 +863,15 @@
         "stacked": 0,
         "germanRoundsPerRealMin": {
           "predecessor": 59.39,
-          "live": 59.39
+          "live": 60.05
         },
         "searches": {
           "predecessor": 0,
-          "live": 0
+          "live": 1
+        },
+        "supportRounds": {
+          "predecessor": 0,
+          "live": 1
         }
       }
     }
@@ -706,7 +894,7 @@
       },
       "real": {
         "predecessor": 1318.75,
-        "live": 1318.75
+        "live": 1301.25
       },
       "repairComplete": {
         "predecessor": 429.55,
@@ -714,7 +902,11 @@
       },
       "searches": {
         "predecessor": 0,
-        "live": 0
+        "live": 3
+      },
+      "supportRounds": {
+        "predecessor": 0,
+        "live": 1
       }
     },
     {
@@ -734,7 +926,7 @@
       },
       "real": {
         "predecessor": 1112.9,
-        "live": 1112.9
+        "live": 1133
       },
       "repairComplete": {
         "predecessor": 394.85,
@@ -742,7 +934,11 @@
       },
       "searches": {
         "predecessor": 0,
-        "live": 0
+        "live": 1
+      },
+      "supportRounds": {
+        "predecessor": 0,
+        "live": 1
       }
     },
     {
@@ -762,7 +958,7 @@
       },
       "real": {
         "predecessor": 1334.65,
-        "live": 1334.65
+        "live": 1311.45
       },
       "repairComplete": {
         "predecessor": 438.8,
@@ -770,7 +966,11 @@
       },
       "searches": {
         "predecessor": 0,
-        "live": 0
+        "live": 2
+      },
+      "supportRounds": {
+        "predecessor": 0,
+        "live": 1
       }
     },
     {
@@ -790,7 +990,7 @@
       },
       "real": {
         "predecessor": 1116.3,
-        "live": 1116.3
+        "live": 1062.05
       },
       "repairComplete": {
         "predecessor": 386.55,
@@ -798,7 +998,11 @@
       },
       "searches": {
         "predecessor": 0,
-        "live": 0
+        "live": 1
+      },
+      "supportRounds": {
+        "predecessor": 0,
+        "live": 1
       }
     }
   ]
