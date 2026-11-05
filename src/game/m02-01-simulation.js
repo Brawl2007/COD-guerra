@@ -16,6 +16,7 @@ import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {
   M02_DIFFICULTY,
+  M02_DIFFICULTY_IDS,
   M02_DIFFICULTY_SIM_DEFAULT,
   M02_ENEMY_HIT_DAMAGE_FACTOR,
   M02_ENEMY_HIT_DAMAGE_MIN,
@@ -71,6 +72,7 @@ import {
   openC01Contact,
   updateC01Contact as runUpdateC01Contact,
   C01_CONTACT_OPENED_BY,
+  instantAt,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -247,6 +249,19 @@ export function validateM02Snapshot(snap) {
   }
   if (snap.checkpointId !== undefined && (typeof snap.checkpointId !== 'string' || !snap.checkpointId)) {
     return { valid: false, reason: 'Identificador de checkpoint inválido no snapshot.' };
+  }
+  // D6 (FIX-CD): perfil de dificuldade, campo aditivo do schema 2. Ausente = recruta (saves anteriores e saves de recruta).
+  if (snap.difficulty !== undefined && !M02_DIFFICULTY_IDS.includes(snap.difficulty)) {
+    return { valid: false, reason: `Perfil de dificuldade inválido no snapshot: ${String(snap.difficulty)}` };
+  }
+  // FIX-CD (D1/I3): um checkpoint é um ponto de reinício seguro. Piotr morto (vida 0 ou `alive` falso) ou a missão já falhada num
+  // checkpoint davam um reinício que volta a falhar no tick seguinte (ciclo). Um snapshot sem `checkpointId` pode mostrar a falha.
+  if (
+    snap.checkpointId !== undefined &&
+    isPlainObject(snap.player) &&
+    (snap.player.alive === false || !(snap.player.health > 0) || (snap.missionFailed ?? null) !== null)
+  ) {
+    return { valid: false, reason: `Checkpoint ${snap.checkpointId} recusado: Piotr morto ou missão falhada não é um ponto de reinício.` };
   }
 
   const p = snap.player;
@@ -523,7 +538,10 @@ export function validateM02Snapshot(snap) {
       (cause !== null && !CART_IMMOBILIZED_CAUSES.includes(cause)) ||
       (cart.shaftBroken !== (cause === 'shaft_broken')) ||
       (cause !== null && cart.state !== 'IMMOBILIZED') ||
-      (cause === 'parked_fallback' ? !CART_PARKED_REASONS.includes(cart.parkedReason) : (cart.parkedReason ?? null) !== null)
+      (cause === 'parked_fallback' ? !CART_PARKED_REASONS.includes(cart.parkedReason) : (cart.parkedReason ?? null) !== null) ||
+      // FIX-CD: campo aditivo (ausente nos saves anteriores = null); instante passado, nunca à frente do relógio.
+      !isTimeOrNull(cart.volumesUnattendedSince ?? null) ||
+      (cart.volumesUnattendedSince ?? 0) > snap.clock + 1e-9
     ) {
       return {
         valid: false,
@@ -585,10 +603,14 @@ export class M02BenchSimulation {
   /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
   #lastSessionCheckpointId = null;
   /**
-   * D6: perfil de dificuldade (recruta | soldado | veterano, os ids da M01). CONFIGURAÇÃO, não estado de jogo (I5): fora do snapshot,
-   * não é reposto por um checkpoint nem por reset(); privado para não contar como estado vivo (como os campos acima).
+   * D6: perfil de dificuldade (recruta | soldado | veterano, os ids da M01). Escolhe-se na configuração (construtor/setDifficulty) e
+   * não muda com reset(); como na M01 (H9 D1) entra no snapshot — afeta o resultado da simulação — no campo `difficulty`, omitido em
+   * recruta (saves de recruta iguais byte a byte; um save sem o campo restaura-se em recruta), e é reposto pelo restauro (FIX-CD).
+   * A acessibilidade continua fora do snapshot. Privado para não contar como estado vivo (como os campos acima).
    */
   #difficultyId = M02_DIFFICULTY_SIM_DEFAULT;
+  /** Relógio no início do passo em curso (só dentro de #step; null entre passos). Instante nominal dos disparos da regra F1. */
+  #tickStartClock = null;
   /** Resultado da última ordem à secção, para a bancada o mostrar (dica de apresentação; não é estado de jogo nem entra no snapshot). */
   #lastOrderFeedback = null;
 
@@ -633,8 +655,8 @@ export class M02BenchSimulation {
   }
 
   /**
-   * Muda o perfil de dificuldade (configuração: não toca no estado de jogo, no snapshot nem nos checkpoints). RangeError se o id
-   * não é um dos da M01. Devolve o perfil.
+   * Muda o perfil de dificuldade (não toca nos checkpoints já gravados; os snapshots seguintes levam o novo perfil). RangeError se
+   * o id não é um dos da M01. Devolve o perfil.
    */
   setDifficulty(id) {
     this.#difficultyId = resolveM02Difficulty(id).id;
@@ -673,6 +695,7 @@ export class M02BenchSimulation {
     this.c11Active = false;
     this.m03ExportPackage = null;
     this.missionFailed = null;
+    this.#lastOrderFeedback = null;
     this.hazardBlasts = [];
     this.hazardBlastSeq = 0;
 
@@ -823,7 +846,7 @@ export class M02BenchSimulation {
     this.flags = {
       'm02.completed': false,
       'm02.axis': null,
-      'm02.lis_status': 'active',
+      'm02.lis_status': null, // I4 (p. 34): nulo durante a missão; 'active' (versões anteriores) continua aceite como o nulo legado
       'm02.malek_status': 'fit',
       'm02.wierzba_status': 'fit',
       'm02.pomar_wounded_marked': false,
@@ -1029,6 +1052,9 @@ export class M02BenchSimulation {
   }
 
   completeC12Epilogue(options = {}) {
+    // FIX-CD (D1): uma missão falhada não se conclui por atalho (KeyM da bancada): nada muda e devolve null.
+    this.#evaluateMissionFailure();
+    if (this.missionFailed) return null;
     return this.#runCheckpointBatch(() => runCompleteC12Epilogue(this, options));
   }
 
@@ -1373,9 +1399,14 @@ export class M02BenchSimulation {
     const diff = this.difficulty;
     const enemyFire = side === 'enemy';
     const aimsAtPlayer = enemyFire && targetActor === this.player;
+    // F1 conta TEMPO, não ticks (FIX-CD): o instante de um disparo é o nominal — o fim do ciclo de fogo (`nextFireAt`) quando ele
+    // acabou dentro deste passo, senão o relógio. Antes contava o relógio do tick que processou o disparo e, em veterano, o 2.º impacto
+    // de um Kar98k isolado (ciclo 0,775 s < graça 0,8 s) matava com dt 0,1/0,05 e não com 1/60.
+    const tickStart = this.#tickStartClock ?? this.clock;
+    const shotAt = shooter.nextFireAt > tickStart && shooter.nextFireAt <= this.clock ? shooter.nextFireAt : this.clock;
     if (aimsAtPlayer && diff.reactionGraceSec !== null) {
       // F1: o contacto deste atirador com Piotr conta-se desde a sua primeira rajada e quebra-se após um intervalo longo sem lhe disparar.
-      const now = Number(this.clock.toFixed(3));
+      const now = Number(shotAt.toFixed(3));
       const idle = shooter.aimLastAt == null || now - shooter.aimLastAt > M02_F1_TELEGRAPH_GAP_SEC;
       if (idle || shooter.aimEngagedAt == null) shooter.aimEngagedAt = now;
       shooter.aimLastAt = now;
@@ -1442,7 +1473,7 @@ export class M02BenchSimulation {
           burstDamageOnPlayer += dmg;
           // F1: o primeiro contacto de um atirador nunca mata; a vida fica em 1 até ele combater Piotr há `reactionGraceSec`.
           if (diff.reactionGraceSec !== null && victim.health - dmg <= 0) {
-            const engagedFor = shooter.aimEngagedAt == null ? 0 : this.clock - shooter.aimEngagedAt;
+            const engagedFor = shooter.aimEngagedAt == null ? 0 : shotAt - shooter.aimEngagedAt;
             if (engagedFor < diff.reactionGraceSec) dmg = Math.max(0, victim.health - 1);
           }
         }
@@ -1579,6 +1610,11 @@ export class M02BenchSimulation {
    * registo a fonte, o aviso que a anunciou e quem a lançou; sem `meta` o registo é o de sempre (granada do jogador).
    */
   detonateGrenadeAt(x, y, z, radius = 6.5, meta = null) {
+    // Ação atómica (FIX-CD): chamada fora do tick (bancada), os checkpoints que ela pede gravam-se no fim, depois de avaliada a falha.
+    return this.#runCheckpointBatch(() => this.#detonate(x, y, z, radius, meta));
+  }
+
+  #detonate(x, y, z, radius, meta) {
     const center = { x, y: Math.max(this.world.heightAt(x, z) + 0.35, y), z };
     const worldChanges = this.world.applyExplosionDamageToWorld(center, Math.min(radius, 5.5));
     this.navigator.sync();
@@ -1675,7 +1711,7 @@ export class M02BenchSimulation {
       typeof warningSec === 'number' && !Number.isNaN(warningSec)
         ? Math.min(BLAST_WARNING_SEC.max, Math.max(BLAST_WARNING_SEC.min, warningSec))
         : ENEMY_GRENADE_WARNING_SEC;
-    const warnedAt = Number(this.clock.toFixed(3));
+    const warnedAt = instantAt(this.clock); // nunca à frente do relógio: o validador recusa warnedAt > clock (FIX-CD)
     const blast = {
       id: `blast_${++this.hazardBlastSeq}`,
       source,
@@ -1801,6 +1837,8 @@ export class M02BenchSimulation {
     this.#runCheckpointBatch(() => {
       const due = [];
       this.#evaluateTacticalContext(due);
+      // FIX-CD: depois da falha não se pedem checkpoints (antes, a cada tick, um `checkpoint-rejected` repetido: 368 em 70 s).
+      if (this.missionFailed) return;
       for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
     });
   }
@@ -1880,7 +1918,7 @@ export class M02BenchSimulation {
           clock: Number(this.clock.toFixed(2)),
           type: 'ea0_outpost_cleared',
         });
-        due.push('cp_m02_a_preparacao');
+        // cp_m02_a_preparacao já não se grava aqui (EA1 a entrar em combate): é «antes do contacto», no fim de C01 (FIX-CD, I3 p. 33).
       } else {
         this.objective.id = 'O00';
         this.objective.title = `C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (${activeEa0.length}/4 ativos)`;
@@ -1981,7 +2019,7 @@ export class M02BenchSimulation {
     if (this.missionFailed || this.flags['m02.completed'] || this.areaC?.c12Completed) return;
     const p = this.player;
     if (p.alive !== false && p.health > 0) return;
-    const at = Number(this.clock.toFixed(3));
+    const at = instantAt(this.clock); // nunca à frente do relógio (o validador recusa missionFailed.at > clock; FIX-CD)
     this.missionFailed = { reason: 'piotr_killed', at };
     const rec = { clock: Number(this.clock.toFixed(2)), type: 'mission_failed', reason: 'piotr_killed' };
     this.combatLog.push(rec);
@@ -2044,6 +2082,9 @@ export class M02BenchSimulation {
       if (this.#checkpointBatchDepth === 0) {
         const due = this.#pendingCheckpointIds;
         this.#pendingCheckpointIds = [];
+        // FIX-CD: a falha avalia-se no fim de cada passo/ação atómica, ANTES de gravar. Uma ação de bancada fora do tick (p. ex. uma
+        // explosão que mata Piotr e o último defensor) gravava cp_m02_b_acesso com Piotr morto, porque a falha só se avaliava em #step.
+        if (completed) this.#evaluateMissionFailure();
         // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
         if (completed) this.#saveCheckpointBatch(due);
       }
@@ -2051,6 +2092,15 @@ export class M02BenchSimulation {
   }
 
   #step(dt, controls) {
+    this.#tickStartClock = this.clock;
+    try {
+      this.#stepBody(dt, controls);
+    } finally {
+      this.#tickStartClock = null;
+    }
+  }
+
+  #stepBody(dt, controls) {
     this.clock += dt;
     const nowMs = this.clock * 1000;
 
@@ -2190,7 +2240,8 @@ export class M02BenchSimulation {
   /** Snapshot → validação → índice em memória → loja. Não mexe em `checkpointsReached` (quem chama já o marcou). */
   #recordCheckpoint(checkpointId, persist) {
     // D1: com a missão falhada nada se grava (automático ou manual): o checkpoint seria o próprio estado de falha e, sendo o
-    // último, tirava ao jogador o ponto de reinício bom.
+    // último, tirava ao jogador o ponto de reinício bom. A falha avalia-se aqui também (F5 fora do tick com Piotr já morto; FIX-CD).
+    this.#evaluateMissionFailure();
     if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
@@ -2238,9 +2289,11 @@ export class M02BenchSimulation {
   }
 
   /**
-   * Carregamento rápido (F9 da bancada). Ordem de recurso, saltando as entradas que não se deixam restaurar (incompatíveis
-   * ou inválidas; FIX-2c): 1) o checkpoint manual desta sessão; 2) o último gravado nesta sessão; 3) o último gravado na
-   * loja persistida (página acabada de abrir ou recarregada); 4) o checkpoint manual da loja; 5) o início em memória.
+   * Carregamento rápido (F9 da bancada e «Reiniciar do último checkpoint»). Ordem de recurso, saltando as entradas que não se
+   * deixam restaurar (incompatíveis ou inválidas; FIX-2c): 1) o último gravado nesta sessão, automático ou F5 (o mais recente);
+   * 2) o checkpoint manual desta sessão; 3) o último gravado na loja persistida (página acabada de abrir ou recarregada); 4) o
+   * checkpoint manual da loja; 5) o início em memória. FIX-CD: antes o F5 da sessão vinha primeiro, mesmo antigo, e o reinício
+   * voltava para trás de checkpoints automáticos mais recentes.
    * Devolve { checkpointId, source } e, se saltou alguma entrada, `skipped: [{ checkpointId, source, reason }]`.
    */
   quickLoadCheckpoint() {
@@ -2250,8 +2303,8 @@ export class M02BenchSimulation {
         attempts.push({ checkpointId, source, restore });
       }
     };
-    if (this.checkpoints.has('cp_m02_manual')) add('cp_m02_manual', 'session', (id) => this.restoreCheckpoint(id));
     add(this.#lastSessionCheckpointId, 'session', (id) => this.restoreCheckpoint(id));
+    if (this.checkpoints.has('cp_m02_manual')) add('cp_m02_manual', 'session', (id) => this.restoreCheckpoint(id));
     const skipped = [];
     const stored = this.saveStore ? this.saveStore.load() : null;
     if (stored?.ok) {
@@ -2328,6 +2381,8 @@ export class M02BenchSimulation {
       schemaVersion: M02_SNAPSHOT_SCHEMA_VERSION,
       missionId: M02_MISSION_ID,
       rng: { algorithm: M02_RNG_ALGORITHM, seed: this.seed, state: this.rng.state },
+      // D6 (FIX-CD, como a M01): o perfil muda o resultado da simulação; omitido em recruta (saves de recruta iguais byte a byte).
+      ...(this.#difficultyId !== M02_DIFFICULTY_SIM_DEFAULT ? { difficulty: this.#difficultyId } : {}),
       narrative: m02NarrativeStamp(this.horizon.temporalState),
       clock: this.clock,
       activeCellId: this.activeCellId,
@@ -2404,6 +2459,7 @@ export class M02BenchSimulation {
     return structuredClone({
       seed: snap.rng.seed,
       rngState: snap.rng.state,
+      difficulty: snap.difficulty ?? M02_DIFFICULTY_SIM_DEFAULT, // save sem o campo (anterior ao FIX-CD ou de recruta): recruta
       clock: snap.clock,
       cellId: snap.activeCellId,
       worldRevision: snap.world.revision,
@@ -2456,7 +2512,10 @@ export class M02BenchSimulation {
   #activateRestore(p) {
     // Pedidos de checkpoint pendentes pertenciam à linha temporal descartada.
     this.#pendingCheckpointIds = [];
+    // O retorno da última ordem (fora do snapshot) também: com o relógio a recuar, a bancada mostrava a recusa antiga (FIX-CD).
+    this.#lastOrderFeedback = null;
     this.seed = p.seed;
+    this.#difficultyId = resolveM02Difficulty(p.difficulty).id;
     this.rng = new Random(p.seed);
     this.rng.state = p.rngState;
     this.clock = p.clock;

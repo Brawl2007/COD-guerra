@@ -62,6 +62,34 @@ function lastStand(id, opts) {
   return { sim, hits: hpAfterEachHit.length, hpAfterEachHit, lastAt: t - step };
 }
 
+/**
+ * FIX-CD: a mesma «última resistência» com TICKS REAIS (a IA decide quando dispara) a um dt dado: Piotr de pé a 10 m de um Kar98k
+ * isolado (o resto do roster e a secção longe, a MG calada). Devolve a vida depois de cada impacto. Antes a regra F1 contava o relógio
+ * do tick que processava o disparo e o resultado mudava com o dt (veterano: o 2.º impacto matava com dt 0,1/0,05 e não com 1/60).
+ */
+function lastStandTicks(id, dtOf, seed = 1) {
+  const sim = new M02BenchSimulation(seed, { difficulty: id });
+  sim.teleportPlayer(30, -60, Math.PI);
+  sim.allies.forEach((a) => Object.assign(a, { x: 100, z: 100, alive: false, state: 'DEAD', health: 0 }));
+  const shooter = sim.enemies.find((e) => e.alive && e.weapon === 'kar98k');
+  for (const e of sim.enemies) if (e !== shooter) Object.assign(e, { x: 150, z: 150, y: 0, mag: 0, reserve: 0, goal: null });
+  Object.assign(shooter, { x: 40, z: -60, y: sim.world.heightAt(40, -60), crouched: false, mag: 500, facing: Math.PI, buildingId: null, sector: null, goal: null });
+  sim.mgState.nextBurstAt = 1e9;
+  const hits = [];
+  for (let i = 0; i < 4000 && sim.player.health > 0 && sim.clock < 30; i++) {
+    const before = sim.player.health;
+    sim.tick(dtOf(i), {});
+    if (sim.player.health < before) hits.push(sim.player.health);
+  }
+  return hits;
+}
+const DTS = [
+  ['0,1', () => 0.1],
+  ['0,05', () => 0.05],
+  ['1/60', () => 1 / 60],
+  ['irregular', (i) => 1 / 60 + (((i * 7919) % 13) - 6) * 0.0003],
+];
+
 describe('M02 D6: mesmos ids e multiplicadores derivados da tabela da M01', () => {
   it('os ids, o perfil por omissão da simulação e o do jogo novo são os da M01', () => {
     assert.deepEqual(M02_DIFFICULTY_IDS, M01_DIFFICULTY_IDS);
@@ -197,6 +225,15 @@ describe('M02 D6: o fogo inimigo muda com o perfil; o da secção e o resto do j
     assert.equal(shooter.aimEngagedAt, 0);
   });
 
+  it('F1 conta tempo, não ticks (FIX-CD): com ticks reais a dt 0,1 | 0,05 | 1/60 | irregular, o resultado de um Kar98k isolado é o mesmo', () => {
+    for (const [label, dtOf] of DTS) {
+      for (const seed of [1, 2, 3]) {
+        assert.deepEqual(lastStandTicks('veterano', dtOf, seed), [50, 1, 0], `veterano, dt ${label}, semente ${seed}: o 2.º impacto ainda não mata`);
+        assert.deepEqual(lastStandTicks('soldado', dtOf, seed), [66, 32, 0], `soldado, dt ${label}, semente ${seed}`);
+      }
+    }
+  });
+
   it('F1: o primeiro contacto nunca mata (vida fica em 1) em soldado e veterano; em recruta mata; o contacto quebra-se após 6 s sem disparar', () => {
     for (const id of ['soldado', 'veterano']) {
       const { sim, fire, shooter } = arena(id);
@@ -326,7 +363,9 @@ describe('M02 D6: o fogo inimigo muda com o perfil; o da secção e o resto do j
   });
 });
 
-describe('M02 D6: o perfil é configuração — fora do snapshot e do restauro — e determinista', () => {
+// FIX-CD: como na M01 (H9 D1), o perfil entra no snapshot — muda o resultado da simulação — e o restauro repõe-no. Omitido em recruta
+// (saves de recruta iguais aos de antes; um save sem o campo restaura-se em recruta). A acessibilidade continua fora (I5).
+describe('M02 D6: o perfil entra no snapshot (exceto recruta), é reposto pelo restauro e é determinista', () => {
   const drive = (id, ticks = 300) => {
     const sim = new M02BenchSimulation(SEED, { difficulty: id });
     for (let i = 0; i < ticks; i++) {
@@ -335,26 +374,46 @@ describe('M02 D6: o perfil é configuração — fora do snapshot e do restauro 
     return sim;
   };
 
-  it('o snapshot não leva o perfil (nem chave nem campo novo); o validador aceita o de qualquer perfil', () => {
+  it('o snapshot leva o perfil em soldado e veterano e não o leva em recruta; o validador aceita os três e recusa ids desconhecidos', () => {
     for (const id of IDS) {
       const snap = drive(id, 120).snapshot();
-      assert.equal(JSON.stringify(snap).includes('difficulty'), false, `${id}: nada de «difficulty» no snapshot`);
+      assert.equal(snap.difficulty, id === 'recruta' ? undefined : id, `${id}: campo difficulty`);
+      assert.equal('difficulty' in snap, id !== 'recruta', `${id}: recruta não escreve o campo (saves iguais aos de antes)`);
       assert.equal(validateM02Snapshot(snap).valid, true);
+      // a acessibilidade continua fora do snapshot
+      assert.equal(JSON.stringify(snap).includes('accessibility'), false);
     }
+    const snap = drive('soldado', 10).snapshot();
+    for (const bad of ['normal', 'Soldado', 3, null, '']) {
+      const r = validateM02Snapshot({ ...structuredClone(snap), difficulty: bad });
+      assert.equal(r.valid, false, `difficulty=${String(bad)}`);
+      assert.match(r.reason, /dificuldade/);
+    }
+    assert.equal(validateM02Snapshot({ ...structuredClone(snap), difficulty: 'recruta' }).valid, true, 'recruta explícito também é válido');
   });
 
-  it('restaurar um checkpoint gravado noutro perfil deixa o perfil configurado (I5) e não o reverte', () => {
+  it('restaurar um checkpoint gravado noutro perfil repõe o perfil do snapshot; um save sem o campo restaura-se em recruta; reset() não mexe', () => {
     const a = drive('soldado', 160);
     const snap = structuredClone(a.snapshot());
     const b = new M02BenchSimulation(1, { difficulty: 'veterano' });
     b.restoreSnapshot(snap);
-    assert.equal(b.difficulty.id, 'veterano');
+    assert.equal(b.difficulty.id, 'soldado', 'o perfil do snapshot');
     const c = new M02BenchSimulation(1);
     c.restoreSnapshot(snap);
-    assert.equal(c.difficulty.id, 'recruta');
-    // reset() também não mexe na configuração
+    assert.equal(c.difficulty.id, 'soldado');
+    // save sem o campo (anterior ao FIX-CD, ou de recruta): recruta
+    const legacy = structuredClone(snap);
+    delete legacy.difficulty;
+    const d = new M02BenchSimulation(1, { difficulty: 'veterano' });
+    d.restoreSnapshot(legacy);
+    assert.equal(d.difficulty.id, 'recruta');
+    // reset() não mexe no perfil em vigor
     b.reset();
-    assert.equal(b.difficulty.id, 'veterano');
+    assert.equal(b.difficulty.id, 'soldado');
+    // restauro falhado: o perfil anterior fica
+    const e = new M02BenchSimulation(1, { difficulty: 'veterano' });
+    assert.throws(() => e.restoreSnapshot({ ...structuredClone(snap), difficulty: 'lenda' }));
+    assert.equal(e.difficulty.id, 'veterano');
   });
 
   it('é determinista: mesma semente, mesmo perfil e mesmas entradas dão o mesmo estado; o perfil muda o estado', () => {

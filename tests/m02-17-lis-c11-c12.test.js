@@ -101,7 +101,7 @@ describe('M02 C11: contacto e percurso amparado/carregado a velocidade limitada'
     assert.equal(sim.areaC.lisPhase, 'supported');
     assert.equal(sim.areaC.lisSupportMode, 'wounded_walking');
     assert.equal(lis.state, 'WALKING_SUPPORTED');
-    assert.equal(sim.flags['m02.lis_status'], 'active', 'enum final só depois de a evacuação estar resolvida');
+    assert.equal(sim.flags['m02.lis_status'], null, 'enum final só depois de a evacuação estar resolvida (nulo antes; I4 p. 34)');
     const { max } = runRecording(sim, 200, { follow: true });
     assert.ok(max <= CFG.walkingSpeedMps * DT + 1e-6, `deslocamento por tick ${max}`);
     assert.equal(sim.areaC.lisPhase, 'sheltered');
@@ -135,7 +135,7 @@ describe('M02 C11: contacto e percurso amparado/carregado a velocidade limitada'
     sim.tick(DT, {});
     assert.equal(sim.areaC.lisSupportMode, 'wounded_evacuated');
     assert.equal(lis.state, 'CARRIED');
-    assert.equal(sim.flags['m02.lis_status'], 'active');
+    assert.equal(sim.flags['m02.lis_status'], null);
     const { max } = runRecording(sim, 400, { follow: true });
     assert.ok(max <= CFG.carriedSpeedMps * DT + 1e-6, `deslocamento por tick ${max}`);
     const slot = b12StretcherSlots()[0];

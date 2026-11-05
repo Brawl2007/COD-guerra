@@ -198,6 +198,7 @@ describe('M02-12 — P0: Áreas B/C sem NaN (limites jogáveis da célula)', () 
     sim.enterAreaCC09();
     for (let i = 0; i < 20; i++) sim.tick(0.1, { forward: 1 });
     killAll(sim.enemies);
+    sim.teleportPlayer(0, -40, Math.PI / 2); // FIX-CD: cp_m02_d só com Piotr abrigado da reserva EC2 (I3 p. 34)
     sim.unlockC09GateLatch();
     assert.equal(sim.lastCheckpointPersist.ok, true, `cp_m02_d_cobertura_retirada: ${sim.lastCheckpointPersist.reason}`);
 
@@ -262,19 +263,30 @@ describe('M02-12 — P1: checkpoints automáticos gravados no fim de tick()', ()
     assert.equal(snap.objective.id, 'COMPLETE');
   });
 
-  it('C01: limpar o posto EA0 dentro do tick grava cp_m02_a_preparacao no fim do tick', () => {
+  // FIX-CD (I3 p. 33): cp_m02_a_preparacao é «C01 terminada, antes do contacto» — o primeiro avanço, não a queda do posto EA0.
+  it('C01: o primeiro avanço (fim de C01, antes do contacto) grava cp_m02_a_preparacao no fim do tick', () => {
     const storage = createMemoryStorage();
     const sim = new M02BenchSimulation(SEED, { storage, startScene: 'C01' });
-    record(sim, routeDriver('vala'), 0, 20);
-    killAll(sim.enemies.filter((e) => e.encounterId === 'EA0'));
+    record(sim, () => ({}), 0, 20); // preparação em P1: ninguém avança
     const snap = assertAutoCheckpointReplays(sim, storage, {
       checkpointId: 'cp_m02_a_preparacao',
+      triggerControls: { forward: 1 },
       driver: routeDriver('vala'),
       from: 21,
       count: 80,
-      label: 'C01 / EA0',
+      label: 'C01 / primeiro avanço',
     });
-    assert.equal(snap.c01Active, false);
+    assert.equal(snap.c01Active, true);
+    assert.equal(snap.c01Contact.opened, false, 'antes do contacto');
+    assert.notEqual(snap.c01Contact.movementStartedAt, null);
+    assert.equal(snap.script.sceneId, 'C02', 'C01 terminada');
+    assert.equal(snap.enemies.filter((e) => e.encounterId === 'EA0' && e.alive).length, 4, 'roster inicial do posto');
+    // A queda do posto já não regrava cp_m02_a (antes: gravado com o EA1 a entrar em combate — espiral de morte no reinício)
+    killAll(sim.enemies.filter((e) => e.encounterId === 'EA0'));
+    sim.drainEvents();
+    sim.tick(DT, {});
+    assert.equal(sim.drainEvents().filter((e) => e.checkpointId === 'cp_m02_a_preparacao').length, 0);
+    assert.equal(sim.checkpoints.get('cp_m02_a_preparacao').clock, snap.clock);
   });
 
   it('Área C: cp_m02_d_cobertura_retirada atingido em updateAreaC (C10) reproduz a continuação', () => {
@@ -285,6 +297,8 @@ describe('M02-12 — P1: checkpoints automáticos gravados no fim de tick()', ()
     record(sim, driver, 0, 20);
     killAll(sim.enemies.filter((e) => e.encounterId === 'EC1'));
     sim.areaC.gateLatchUnlocked = true;
+    // FIX-CD (I3 p. 34): cp_m02_d só com Piotr em abrigo válido; (0,-40) fica fora da vista da reserva EC2 quando ela entra.
+    sim.teleportPlayer(0, -40, Math.PI / 2);
     const snap = assertAutoCheckpointReplays(sim, storage, {
       checkpointId: 'cp_m02_d_cobertura_retirada',
       driver,
@@ -304,8 +318,10 @@ describe('M02-12 — P1: granada que mata o último defensor; índice só com sn
       const storage = createMemoryStorage();
       const sim = new M02BenchSimulation(SEED, { storage, startScene: scene });
       for (let i = 0; i < 20; i++) sim.tick(DT, {});
-      const pool = scene === 'C01' ? sim.enemies.filter((e) => e.encounterId === 'EA0') : sim.enemies;
-      const keep = scene === 'C01' ? pool[0] : sim.enemies.find((e) => e.id === 'DE-A05');
+      // FIX-CD: em C01 a explosão que derruba o último homem do posto EA0 com a quinta já vencida grava cp_m02_b (o cp_m02_a é do
+      // primeiro avanço, «antes do contacto», e já não se regrava quando o posto cai).
+      const pool = sim.enemies;
+      const keep = scene === 'C01' ? sim.enemies.find((e) => e.encounterId === 'EA0') : sim.enemies.find((e) => e.id === 'DE-A05');
       killAll(pool.filter((e) => e !== keep));
       for (const a of sim.allies) {
         a.mag = 0;
@@ -314,7 +330,7 @@ describe('M02-12 — P1: granada que mata o último defensor; índice só com sn
       keep.x = scene === 'C01' ? -18 : 0;
       keep.z = scene === 'C01' ? -100 : -50;
       keep.y = sim.world.heightAt(keep.x, keep.z);
-      const expectedId = scene === 'C01' ? 'cp_m02_a_preparacao' : 'cp_m02_b_acesso';
+      const expectedId = 'cp_m02_b_acesso';
 
       // No instante da explosão (antes do fim do tick) o estado já é gravável: a granada saiu da lista de granadas em voo.
       const atBlast = [];
@@ -418,7 +434,7 @@ describe('M02-12 — P1: recarregar a página não destrói o save', () => {
     }
   });
 
-  it('F9 numa sessão que já gravou: o manual desta sessão; sem manual, o último gravado nesta sessão', () => {
+  it('F9 numa sessão que já gravou: o mais recente desta sessão, automático ou manual (FIX-CD: um F5 antigo não passa à frente)', () => {
     const storage = createMemoryStorage();
     const sim = new M02BenchSimulation(SEED, { storage });
     assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_a_preparacao', source: 'start' });
@@ -430,6 +446,12 @@ describe('M02-12 — P1: recarregar a página não destrói o save', () => {
     sim.teleportPlayer(0, 0, 0);
     assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'session' });
     assert.equal(sim.player.x, -23);
+    // um checkpoint gravado depois do F5 é o mais recente: o F9/reinício vai para ele e não para o F5 antigo
+    sim.teleportPlayer(5, -40, 0);
+    sim.saveCheckpoint('cp_m02_x_test');
+    sim.teleportPlayer(0, 0, 0);
+    assert.deepEqual(sim.quickLoadCheckpoint(), { checkpointId: 'cp_m02_x_test', source: 'session' });
+    assert.equal(sim.player.x, 5);
   });
 });
 
@@ -581,7 +603,8 @@ describe('M02-12 — P2: validador (enums e relações, PDF I4/I5) e perfil da a
       [(s) => { s.enemies[0].state = 'ZOMBIE'; }, /Estado de inimigo inválido/],
       [(s) => { s.allies[0].alive = false; s.allies[0].state = 'ACTIVE'; s.allies[0].mag = 20; s.allies[0].health = 0; }, /Aliado morto com arma ativa/],
       [(s) => { s.flags['m02.lis_status'] = 'dead'; }, /m02\.lis_status/],
-      [(s) => { s.areaC.c12Completed = true; }, /m02\.lis_status: active/], // depois de C12 só os três valores finais (I4)
+      [(s) => { s.areaC.c12Completed = true; }, /m02\.lis_status: null/], // depois de C12 só os três valores finais (I4)
+      [(s) => { s.areaC.c12Completed = true; s.flags['m02.lis_status'] = 'active'; }, /m02\.lis_status: active/], // nem o nulo legado
       [(s) => { s.areaB.supplyCart.state = 'FLYING'; }, /Estado da carroça inválido/],
       [(s) => { s.areaB.supplyCart.volumes[0].state = 'TELEPORTED'; }, /Estado do volume vol_water inválido/],
       [(s) => { s.areaB.supplyCart.volumes[0].state = 'CARRIED'; }, /incoerente/],

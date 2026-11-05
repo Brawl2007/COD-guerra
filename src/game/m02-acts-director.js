@@ -35,13 +35,21 @@ export function createInitialC01Contact() {
   return { movementStartedAt: null, contactAt: null, opened: false, openedAt: null, openedBy: null };
 }
 
-/** Abre o contacto de C02 (o posto EA0 passa a perceber e a combater). Idempotente; só conta com C01 ativa. */
+/**
+ * Abre o contacto de C02 (o posto EA0 passa a perceber e a combater). Idempotente; só conta com C01 ativa.
+ * Um tiro/granada ANTES de o jogador andar abre o contacto e também conta como o início do avanço (FIX-CD): `movementStartedAt` e
+ * `contactAt` ficam no instante da abertura. Antes ficavam nulos para sempre e a secção ficava presa no estágio 0 em P1.
+ */
 export function openC01Contact(sim, by) {
   const c = sim.c01Contact;
   if (!sim.c01Active || !c || c.opened) return false;
   c.opened = true;
   c.openedAt = Number(sim.clock.toFixed(3));
   c.openedBy = by;
+  if (c.movementStartedAt === null) {
+    c.movementStartedAt = c.openedAt;
+    c.contactAt = c.openedAt;
+  }
   sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'c01_contact_opened', by });
   return true;
 }
@@ -50,29 +58,34 @@ export function openC01Contact(sim, by) {
 export function updateC01Contact(sim) {
   const c = sim.c01Contact;
   if (!sim.c01Active || !c || c.opened) return;
+  let advanceStarted = false;
   if (c.movementStartedAt === null) {
     const p1 = sim.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175 };
     if (Math.hypot(sim.player.x - p1.x, sim.player.z - p1.z) < C01_ADVANCE_THRESHOLD_M) return;
     c.movementStartedAt = Number(sim.clock.toFixed(3));
     const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
     c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
+    advanceStarted = true;
   }
   if (sim.clock >= c.contactAt) {
     openC01Contact(sim, 'timer');
-    return;
+  } else {
+    // O posto não está cego a quem chega ao pé dele: dentro do raio de deteção o contacto abre já (sem sorteio: o atraso do
+    // temporizador foi sorteado uma só vez, ao primeiro avanço).
+    const px = sim.player.x;
+    const pz = sim.player.z;
+    const near = sim.enemies.some(
+      (e) =>
+        e.encounterId === 'EA0' &&
+        e.alive &&
+        !e.nonCombatant &&
+        Math.hypot(e.x - px, e.z - pz) <= C01_PROXIMITY_DETECTION_M,
+    );
+    if (near) openC01Contact(sim, 'proximity');
   }
-  // O posto não está cego a quem chega ao pé dele: dentro do raio de deteção o contacto abre já (sem sorteio: o atraso do
-  // temporizador foi sorteado uma só vez, ao primeiro avanço).
-  const px = sim.player.x;
-  const pz = sim.player.z;
-  const near = sim.enemies.some(
-    (e) =>
-      e.encounterId === 'EA0' &&
-      e.alive &&
-      !e.nonCombatant &&
-      Math.hypot(e.x - px, e.z - pz) <= C01_PROXIMITY_DETECTION_M,
-  );
-  if (near) openC01Contact(sim, 'proximity');
+  // I3 (p. 33): cp_m02_a_preparacao = «C01 terminada, antes do contacto» (vala, roster inicial, T0). O primeiro avanço acaba C01
+  // (roteiro) com o posto ainda sem alerta. Antes gravava-se quando o EA0 caía e o EA1 entrava em combate (espiral de morte; FIX-CD).
+  if (advanceStarted && !c.opened) sim.requestAutoCheckpoint('cp_m02_a_preparacao');
 }
 
 /**
@@ -147,6 +160,8 @@ export function createInitialAreaBState() {
       parkedReason: null,
       shotById: null,
       crossingEntryAt: null,
+      // FIX-CD: desde quando os volumes ainda por resolver esperam sem ninguém os levar, com a passagem livre (null = não esperam).
+      volumesUnattendedSince: null,
       volumes: [
         { id: 'vol_water', type: 'water', state: 'ON_CART', x: bDef.supplyCart.startX, z: bDef.supplyCart.startZ, carriedBy: null, delivered: false, lost: false },
         { id: 'vol_ammo', type: 'ammo', state: 'ON_CART', x: bDef.supplyCart.startX, z: bDef.supplyCart.startZ, carriedBy: null, delivered: false, lost: false },
@@ -219,7 +234,8 @@ function mapEnemyEntry(sim, e) {
     memory: null,
     goal: null,
     reloadingUntil: 0,
-    nextFireAt: 0.6,
+    // FIX-CD: relativo ao instante em que o hostil entra (antes 0,6 absoluto: a reserva EC2 nascia em C10 já pronta a disparar).
+    nextFireAt: Number((sim.clock + 0.6).toFixed(3)),
     shotsFired: 0,
     hitsReceived: 0,
     lastHitPart: null,
@@ -508,6 +524,45 @@ export function syncSupplyFlags(sim) {
   }
 }
 
+/**
+ * C06 (PDF p. 13; O04, D1 p. 16): «m02.supply_reached conta 0, 1 ou 2 volumes entregues; não inventa um terceiro comboio»; «se se
+ * perderem os dois volumes, o objetivo militar pode continuar, mas a falta é reconhecida». Com a carroça imobilizada, sem hostis
+ * ativos e sem ninguém a levar um volume durante VOLUME_ABANDON_SEC (tempo simulado, independente do dt), Gruca decide atravessar:
+ * os volumes ainda por entregar ficam abandonados (LOST) e a passagem resolve-se com o supply_reached que houver. Antes a cena
+ * ficava 900 s (ou para sempre) em C06/O04 se o jogador não pegasse nos volumes. 60 s é escolha documentada (o PDF não a fixa).
+ */
+export const VOLUME_ABANDON_SEC = 60;
+
+export function resolveAbandonedVolumes(sim) {
+  const cart = sim.areaB?.supplyCart;
+  if (!cart) return 0;
+  const pending = cart.volumes.filter((v) => !v.delivered && !v.lost);
+  const waiting =
+    cart.state === 'IMMOBILIZED' &&
+    pending.length > 0 &&
+    !pending.some((v) => v.state === 'CARRIED') &&
+    !sim.enemies.some((e) => e.alive && !e.nonCombatant);
+  if (!waiting) {
+    cart.volumesUnattendedSince = null;
+    return 0;
+  }
+  if (cart.volumesUnattendedSince == null) {
+    cart.volumesUnattendedSince = instantAt(sim.clock);
+    return 0;
+  }
+  if (sim.clock - cart.volumesUnattendedSince < VOLUME_ABANDON_SEC) return 0;
+  for (const vol of pending) {
+    vol.state = 'LOST';
+    vol.lost = true;
+    vol.carriedBy = null;
+  }
+  cart.volumesUnattendedSince = null;
+  const volumeIds = pending.map((v) => v.id);
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'supply_volumes_abandoned', volumeIds });
+  sim.events.push({ type: 'supply-volumes-abandoned', volumeIds, clock: sim.clock });
+  return pending.length;
+}
+
 export function updateAreaB(sim, dt) {
   if (sim.activeCellId !== 'B' || !sim.areaB?.active) return;
 
@@ -578,6 +633,7 @@ export function updateAreaB(sim, dt) {
     }
   }
 
+  resolveAbandonedVolumes(sim);
   syncSupplyFlags(sim);
 }
 
@@ -790,7 +846,46 @@ export function startC10OrderChanges(sim) {
 
   // Save the 4th canonical semantic checkpoint cp_m02_d_cobertura_retirada (I3). Inside tick() (via updateAreaC) it is
   // recorded at the end of the tick, after horizon/dialogue/audiovisual have run (FIX-2b); from the API it is recorded now.
-  sim.requestAutoCheckpoint('cp_m02_d_cobertura_retirada');
+  // FIX-CD: only with Piotr in a valid shelter (I3 p. 34); otherwise updateAreaC asks again every tick until he is.
+  requestCoverCheckpointIfSheltered(sim);
+  return true;
+}
+
+export const CP_D_ID = 'cp_m02_d_cobertura_retirada';
+/** Folga (m) para além do raio de uma explosão agendada: dentro dela Piotr não está abrigado. */
+export const SHELTER_BLAST_MARGIN_M = 2;
+
+/**
+ * «Abrigo válido» (I3 p. 34, ponto seguro e restauro de cp_m02_d): neste instante nenhum hostil ativo (vivo e combatente) com Piotr ao
+ * alcance da arma tem linha de vista para ele (a mesma visão, com folhagem, com que os hostis escolhem a quem disparar), e Piotr está
+ * fora do raio (+ SHELTER_BLAST_MARGIN_M) de todas as explosões agendadas. Não olha para o cone de visão: virar-se não é abrigo.
+ */
+export function isPlayerSheltered(sim) {
+  const p = sim.player;
+  if (!p || p.alive === false || !(p.health > 0)) return false;
+  for (const b of sim.hazardBlasts ?? []) {
+    if (Math.hypot(b.x - p.x, b.z - p.z) <= b.radius + SHELTER_BLAST_MARGIN_M) return false;
+  }
+  for (const e of sim.enemies) {
+    if (!e.alive || e.nonCombatant) continue;
+    const range = WEAPON_PROFILES[e.weapon]?.range ?? 160;
+    if (Math.hypot(e.x - p.x, e.z - p.z) > range) continue;
+    if (sim.world.lineOfSight(e, p, { includeFoliage: true })) return false;
+  }
+  return true;
+}
+
+/**
+ * cp_m02_d_cobertura_retirada (I3 p. 34): «C10: ordem local dada, antes de resolver evacuação», com o ponto de restauro em «abrigo
+ * válido». Antes gravava-se no instante em que a reserva EC2 nascia a 110-160 m com linha de tiro e o reinício voltava a matar Piotr
+ * (espiral de morte, FIX-CD). Pede-se de C10 até C12, no primeiro instante em que Piotr está abrigado.
+ */
+export function requestCoverCheckpointIfSheltered(sim) {
+  const a = sim.areaC;
+  if (!a?.c10Started || a.c12Completed || sim.missionFailed) return false;
+  if (sim.checkpointReachedOrPending?.(CP_D_ID) ?? sim.checkpointsReached.includes(CP_D_ID)) return false;
+  if (!isPlayerSheltered(sim)) return false;
+  sim.requestAutoCheckpoint(CP_D_ID);
   return true;
 }
 
@@ -833,8 +928,6 @@ export function detonateC10FixedArtillery(sim) {
   }
 
   const spec = sim.areaC.fixedImpactSpec;
-  // Add persistent debris obstacle blocking the exterior street at (4, 18), forcing evacuation through B09 nave!
-  syncAreaCWorldDamage(sim);
 
   // D5: o impacto consome o aviso agendado. Sem aviso cumprido (atalho de bancada que rebenta já) fica marcado `warningSkipped`.
   const hazard = sim.hazardBlasts.find((b) => b.source === 'scripted_artillery') ?? null;
@@ -842,12 +935,16 @@ export function detonateC10FixedArtillery(sim) {
   const warningSkipped = !hazard || sim.clock + 1e-9 < hazard.impactAt;
 
   // Apply causal explosion damage at the fixed coordinates (never shifts to chase or spare player!)
+  // FIX-CD: a explosão rebenta ANTES de existir o entulho que ela própria cria. Antes o entulho de pedra (caixa que contém o centro do
+  // impacto) era acrescentado primeiro e ocluía todos os raios: o SP03, única explosão perigosa real do jogo, nunca feria ninguém.
   const blastReport = sim.detonateGrenadeAt(spec.x, 0.6, spec.z, spec.radius, {
     source: 'scripted_artillery',
     blastId: hazard?.id ?? null,
     thrownBy: null,
     warningSkipped,
   });
+  // Add persistent debris obstacle blocking the exterior street at (4, 18), forcing evacuation through B09 nave!
+  syncAreaCWorldDamage(sim);
   sim.combatLog.push({
     clock: Number(sim.clock.toFixed(2)),
     type: 'sp03_fixed_artillery_impact',
@@ -1086,6 +1183,8 @@ export function updateAreaC(sim, dt) {
   }
 
   sim.flags['m02.last_group_survivors'] = evacuatedCount;
+  // 5. cp_m02_d no primeiro instante com Piotr abrigado (FIX-CD): de C10 até a evacuação estar resolvida (C12).
+  requestCoverCheckpointIfSheltered(sim);
   if (allResolved && !sim.areaC.c12Completed) {
     sim.dialogue.trigger('bz39_c11_05', sim);
     sim.objective = {
@@ -1195,7 +1294,7 @@ export function exportCampaignResultToM03(sim) {
     schema: 'cod-guerra-campaign-bridge-m02-to-m03-v1',
     missionId: 'M02',
     nextMissionId: 'M03',
-    completed: Boolean(sim.flags['m02.completed']),
+    completed: Boolean(sim.flags['m02.completed']) && !sim.missionFailed, // D1: uma missão falhada nunca exporta concluída
     historicalDates: {
       offensiveStart: '1939-09-09',
       reorganizationMorning: '1939-09-10',
@@ -1243,8 +1342,20 @@ export const C02_EXIT_Z = -85;
 export const C04_EXIT_Z = 44;
 export const C11_EVAC_RADIUS_M = 6;
 
+/**
+ * Instante PASSADO gravado pela simulação (início de cena, aviso de explosão, falha da missão), em ms arredondados para BAIXO.
+ * O validador recusa um instante à frente do relógio do snapshot (`> clock + 1e-9`); `toFixed(3)` arredondava para cima e, com o dt
+ * real de um frame (1/60 s), metade das transições de cena gravava um instante 0,1-0,5 ms à frente do relógio: o checkpoint desse
+ * passo era recusado e perdia-se (FIX-CD). Instantes futuros (impacto, próximo tiro, contacto agendado) não passam por aqui.
+ */
+export function instantAt(clock) {
+  const ms = Math.floor(clock * 1000);
+  const t = ms / 1000;
+  return t > clock ? (ms - 1) / 1000 : t;
+}
+
 export function createInitialScriptState(sceneId = 'C02', clock = 0) {
-  return { sceneId, sceneStartedAt: Number(clock.toFixed(3)), history: [], finished: false };
+  return { sceneId, sceneStartedAt: instantAt(clock), history: [], finished: false };
 }
 
 function sceneIndex(id) {
@@ -1268,7 +1379,7 @@ export function stateSceneFloor(sim) {
 
 function endScene(sim, nextId) {
   const sc = sim.script;
-  const now = Number(sim.clock.toFixed(3));
+  const now = instantAt(sim.clock);
   sc.history.push({ id: sc.sceneId, startedAt: sc.sceneStartedAt, endedAt: Math.max(now, sc.sceneStartedAt) });
   sc.sceneId = nextId;
   sc.sceneStartedAt = now;
@@ -1369,7 +1480,7 @@ export function updateScript(sim) {
     }
     if (sc.sceneId === 'C12') {
       if (sceneAge(sim) >= M02_SCENE_HOLD_SEC.C12 && sim.areaC?.c12Completed) {
-        sc.history.push({ id: 'C12', startedAt: sc.sceneStartedAt, endedAt: Number(sim.clock.toFixed(3)) });
+        sc.history.push({ id: 'C12', startedAt: sc.sceneStartedAt, endedAt: Math.max(instantAt(sim.clock), sc.sceneStartedAt) });
         sc.finished = true;
       }
       return;

@@ -96,7 +96,9 @@ const withoutId = ({ checkpointId: _id, ...rest }) => rest;
 const storedRecord = (storage) => JSON.parse(storage.getItem(M02_SAVE_STORAGE_KEY));
 
 // ---------------------------------------------------------------------------------------------------------------------
-describe('M02-13 — 1: dois checkpoints automáticos no mesmo tick (C01: quinta limpa enquanto o posto EA0 resiste)', () => {
+// FIX-CD: cp_m02_a grava-se no primeiro avanço («C01 terminada, antes do contacto», I3 p. 33): o tick do gatilho é também o do primeiro
+// avanço (antes era a queda do posto EA0 que o gravava).
+describe('M02-13 — 1: dois checkpoints automáticos no mesmo tick (C01: primeiro avanço no tick em que a quinta fica limpa)', () => {
   for (const variant of ['COMPLETE', 'C04']) {
     it(`caminho ${variant}: cp_a e cp_b gravados no mesmo tick são ambos iguais ao estado do fim do tick e restauram-se sem divergir`, () => {
       const storage = createMemoryStorage();
@@ -116,7 +118,7 @@ describe('M02-13 — 1: dois checkpoints automáticos no mesmo tick (C01: quinta
       // O posto EA0 resiste até ao tick do gatilho: a quinta fica limpa e os defensores do posto rendem-se nesse mesmo tick (a rendição
       // do posto já não vem das baixas da quinta — moral por grupo, D3 —, por isso o teste di-lo explicitamente).
       for (const e of sim.enemies.filter((x) => x.encounterId === 'EA0')) Object.assign(e, { state: 'SURRENDERED', nonCombatant: true });
-      sim.tick(DT, {});
+      sim.tick(DT, { forward: 1 });
       const saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
       assert.deepEqual(
         saved.map((e) => e.checkpointId),
@@ -157,12 +159,16 @@ describe('M02-13 — 1: dois checkpoints automáticos no mesmo tick (C01: quinta
     const storage = createMemoryStorage();
     const sim = new M02BenchSimulation(SEED, { storage, startScene: 'C01' });
     for (let i = 0; i < 10; i++) sim.tick(DT, {});
+    const startA = sim.checkpoints.get('cp_m02_a_preparacao');
     killAll(sim.enemies);
     sim.drainEvents();
     sim.updateTacticalContext();
     const saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
-    assert.deepEqual(saved.map((e) => e.checkpointId), ['cp_m02_a_preparacao', 'cp_m02_b_acesso']);
-    assert.equal(canonical(withoutId(sim.checkpoints.get('cp_m02_a_preparacao'))), canonical(sim.snapshot()));
+    // FIX-CD: a queda do posto EA0 já não regrava cp_m02_a (é do primeiro avanço, antes do contacto)
+    assert.deepEqual(saved.map((e) => e.checkpointId), ['cp_m02_b_acesso']);
+    assert.equal(sim.checkpoints.get('cp_m02_a_preparacao'), startA, 'cp_m02_a do início intacto');
+    assert.deepEqual(sim.checkpointsReached, ['cp_m02_a_preparacao', 'cp_m02_b_acesso'], 'marcados os dois');
+    assert.equal(canonical(withoutId(sim.checkpoints.get('cp_m02_b_acesso'))), canonical(sim.snapshot()));
   });
 });
 
@@ -189,6 +195,7 @@ describe('M02-13 — 2: checkpoint automático só no fim de uma ação composta
       const sim = new M02BenchSimulation(SEED, { storage });
       sim.enterAreaCC09();
       record(sim, areaCWalker, 20);
+      sim.teleportPlayer(0, -40, Math.PI / 2); // FIX-CD: cp_m02_d só com Piotr abrigado (I3 p. 34); (0,-40) fica fora da vista de EC1/EC2
       sim.drainEvents();
       act(sim);
       const saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
@@ -215,6 +222,7 @@ describe('M02-13 — 2: checkpoint automático só no fim de uma ação composta
     sim.enterAreaCC09();
     killAll(sim.enemies.filter((e) => e.encounterId === 'EC1'));
     sim.areaC.gateLatchUnlocked = true;
+    sim.teleportPlayer(0, -40, Math.PI / 2); // FIX-CD: cp_m02_d só com Piotr abrigado (I3 p. 34)
     sim.drainEvents();
     let saved = [];
     for (let t = 0; t < 400 && !saved.length; t++) {
@@ -434,13 +442,14 @@ describe('M02-13 — 5: F9 salta entradas incompatíveis e tenta a seguinte comp
     assert.equal(loaded.source, 'start');
   });
 
-  it('caminhos normais inalterados e sem «skipped»: manual da sessão, último da sessão, último da loja', () => {
+  it('caminhos normais sem «skipped»: o mais recente da sessão (automático ou manual) e, na página recarregada, o último da loja', () => {
     const { storage, s1 } = twoSaves();
-    assert.deepEqual(s1.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'session' });
-    s1.checkpoints.delete('cp_m02_manual');
+    // FIX-CD: o mais recente (cp_m02_b_test, gravado depois do F5) vem antes do F5 antigo
     assert.deepEqual(s1.quickLoadCheckpoint(), { checkpointId: 'cp_m02_b_test', source: 'session' });
+    s1.saveCheckpoint('cp_m02_manual'); // novo F5: passa a ser o mais recente
+    assert.deepEqual(s1.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'session' });
     const page = new M02BenchSimulation(SEED, { storage });
-    assert.deepEqual(page.quickLoadCheckpoint(), { checkpointId: 'cp_m02_b_test', source: 'store' });
+    assert.deepEqual(page.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'store' });
   });
 });
 
