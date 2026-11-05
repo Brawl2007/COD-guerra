@@ -219,6 +219,9 @@ export function sightInfo(world, a, b) {
   const los = world.lineOfSight(a, b, { includeFoliage: true });
   return {
     los,
+    // `hit` = primeiro sólido balístico no raio (o vidro intacto conta: pára a bala) mesmo que a vista passe por ele.
+    hitId: hit?.id ?? null,
+    hitMaterial: hit?.material ?? null,
     blockerId: hit?.id ?? (!los ? 'copa' : null),
     material: hit?.material ?? (!los ? 'foliage' : null),
     distance: r2(dist),

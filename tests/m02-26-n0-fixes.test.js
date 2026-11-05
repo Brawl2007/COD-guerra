@@ -382,3 +382,101 @@ describe('N0-3: a avaliação «EXPOSTO» da simulação coincide com o disparo 
   });
 });
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Item 4 — vidro intacto: política balística aplicada à vista; toco de parede de win_b01_east_hall
+
+describe('N0-4: o vidro intacto deixa ver (BALLISTIC_MATERIAL_POLICY.glass.blocksSight = false) mas pára a bala, que o parte', () => {
+  const hall = openingById(layout, 'win_b01_east_hall');
+  const north = openingById(layout, 'win_b01_north_hall');
+  const outsideEast = actorAt(hall.center.x + 3, hall.center.z, 1.5, 0);
+  const insideEast = actorAt(hall.center.x - 3, hall.center.z, 1.5, 0);
+
+  it('reprodução: a oclusão sobre todos os sólidos via o vidro como parede (o que lineOfSight fazia); agora lineOfSight deixa ver', () => {
+    const sim = new M02BenchSimulation(SEED);
+    assert.equal(sim.world.getWindowState('win_b01_east_hall'), 'intact');
+    assert.equal(sim.world.getWindowState('win_b01_north_hall'), 'intact');
+    assert.equal(visible(sim.world, outsideEast, insideEast), false, 'oclusão pura sobre todos os sólidos: o vidro bloqueia (comportamento antigo de lineOfSight)');
+    assert.equal(sim.world.lineOfSight(outsideEast, insideEast, { includeFoliage: true }), true, 'lineOfSight aplica a política: vidro intacto deixa ver');
+    const n1 = actorAt(north.center.x, north.center.z - 3, 1.5, 0);
+    const n2 = actorAt(north.center.x, north.center.z + 3, 1.5, 0);
+    assert.equal(sim.world.lineOfSight(n1, n2, { includeFoliage: true }), true);
+  });
+
+  it('só o vidro (blocksSight = false na política) sai da oclusão visual; paredes, portas fechadas e vãos barrados continuam a bloquear', () => {
+    const sim = new M02BenchSimulation(SEED);
+    const w = sim.world;
+    const transparent = w.obstacles.filter((b) => !w.sightOpaqueObstacles.includes(b));
+    assert.ok(transparent.length >= 2);
+    assert.ok(transparent.every((b) => b.material === 'glass'), 'só vidro sai');
+    assert.equal(w.materialBlocksSight('glass'), false);
+    for (const m of ['stone', 'brick', 'earth', 'metal', 'wood_thick', 'wood_thin', 'foliage', 'desconhecido']) assert.equal(w.materialBlocksSight(m), true, m);
+    const door = openingById(layout, 'door_b01_east_main');
+    const a = actorAt(door.center.x + 3, door.center.z, 1.5, 0);
+    const b = actorAt(door.center.x - 3, door.center.z, 1.5, 0);
+    assert.equal(w.lineOfSight(a, b, { includeFoliage: true }), false, 'a folha de porta fechada bloqueia a vista');
+    const wall = actorAt(hall.center.x + 3, hall.center.z + 3, 1.5, 0);
+    const wallIn = actorAt(hall.center.x - 3, hall.center.z + 3, 1.5, 0);
+    assert.equal(w.lineOfSight(wall, wallIn, { includeFoliage: true }), false, 'a parede bloqueia a vista');
+  });
+
+  it('a política de vista é opt-in por layout: a Área A declara ballistic-policy; as células B/C ficam em legacy-opaque (o vidro continua a bloquear a vista)', () => {
+    assert.equal(layout.sightPolicy, 'ballistic-policy');
+    const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    assert.equal(sim.world.sightPolicy, 'ballistic-policy');
+    sim.enterAreaBC06();
+    const b = sim.world;
+    assert.equal(b.sightPolicy, 'legacy-opaque');
+    const glass = b.obstacles.filter((o) => o.material === 'glass');
+    assert.ok(glass.length >= 1, 'a célula B tem vidro intacto');
+    assert.equal(b.materialBlocksSight('glass'), true, 'em B/C o vidro bloqueia a vista (comportamento anterior)');
+    assert.equal(b.sightOpaqueObstacles.length, b.obstacles.length, 'nenhum sólido sai da oclusão visual');
+    assert.throws(() => new M02QuintaWorld({ ...layout, sightPolicy: 'inventada' }), /sightPolicy desconhecida/);
+  });
+
+  it('a bala bate no vidro e parte-o (glassBrokenId); depois o vão fica partido e continua a deixar ver', () => {
+    const sim = new M02BenchSimulation(SEED);
+    const shot = sim.fireDirectRay({ x: hall.center.x + 5, y: 1.5, z: hall.center.z }, { x: -1, y: 0, z: 0 });
+    assert.equal(shot.glassBrokenId, 'win_b01_east_hall');
+    assert.equal(shot.material, 'glass');
+    assert.equal(sim.world.getWindowState('win_b01_east_hall'), 'broken');
+    assert.equal(sim.world.lineOfSight(outsideEast, insideEast, { includeFoliage: true }), true);
+    const second = sim.fireDirectRay({ x: hall.center.x + 5, y: 1.5, z: hall.center.z }, { x: -1, y: 0, z: 0 });
+    assert.equal(second.glassBrokenId, null);
+  });
+
+  it('a avaliação da MG: atrás do vidro intacto vê-se (hasVisualLoS) mas a bala pára no vidro (canHitTarget falso, blockedById = o vidro); partido, passa', () => {
+    const sim = new M02BenchSimulation(SEED);
+    // As janelas de B01 ficam atrás dos muros do portão para a MG: põe-se um vidro de ensaio (mesmo material e papel dos reais) no raio.
+    const target = { id: 'sonda', x: -10, y: 0, z: -30, eyeHeight: 1.65, space: 'metres', alive: true, active: true };
+    const pane = { id: 'vidro_ensaio_glass', role: 'window_glass', material: 'glass', windowId: 'ensaio', min: { x: 0, y: 0.5, z: -33 }, max: { x: 0.1, y: 2.5, z: -27 } };
+    const open = sim.evaluateMgLineOfFire(target);
+    assert.equal(open.inArc, true);
+    assert.equal(open.canHitTarget, true, 'sem vidro, a MG vê e acerta');
+    assert.equal(open.hasVisualLoS, true);
+    sim.world.obstacles.push(pane); // o vidro está em `obstacles` (pára a bala) e fora de `sightOpaqueObstacles` (deixa ver)
+    const intact = sim.evaluateMgLineOfFire(target);
+    assert.equal(intact.hasVisualLoS, true, 'a vista passa pelo vidro intacto');
+    assert.equal(intact.canHitTarget, false, 'a bala não passa pelo vidro intacto');
+    assert.equal(intact.blockedById, 'vidro_ensaio_glass');
+    assert.equal(intact.blockedByMaterial, 'glass');
+    // Uma parede no mesmo sítio bloqueia vista e bala; vidro e parede em fila: a parede decide a vista.
+    sim.world.obstacles.pop();
+    const wall = { id: 'parede_ensaio', role: 'wall', material: 'brick', min: { x: -5, y: 0, z: -33 }, max: { x: -4.9, y: 3, z: -27 } };
+    sim.world.obstacles.push(pane, wall);
+    sim.world.sightOpaqueObstacles.push(wall);
+    const both = sim.evaluateMgLineOfFire(target);
+    assert.equal(both.hasVisualLoS, false, 'a parede atrás do vidro bloqueia a vista');
+    assert.equal(both.canHitTarget, false);
+  });
+
+  it('win_b01_east_hall já não deixa o toco de parede de 0,05 m (< 0,30 m) junto ao canto, nem encosta à porta principal', () => {
+    const win = building(layout, 'B01').windows.find((w) => w.id === 'win_b01_east_hall');
+    assert.ok(win.offset - win.width / 2 - (win.frameWidth ?? 0.1) >= 0.3 - 1e-9, `toco de ${(win.offset - win.width / 2 - win.frameWidth).toFixed(2)} m`);
+    const door = building(layout, 'B01').doors.find((d) => d.id === 'door_b01_east_main');
+    const gap = door.offset - door.width / 2 - (door.frameWidth ?? 0.08) - (win.offset + win.width / 2 + win.frameWidth);
+    assert.ok(gap >= 0.3, `${gap.toFixed(2)} m de parede entre a janela e a porta`);
+    const { problems } = buildOpeningsMarkdown(loadLayout());
+    assert.ok(!problems.some((p) => p.subject === 'win_b01_east_hall'));
+  });
+});
+

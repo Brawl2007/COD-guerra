@@ -29,6 +29,11 @@ function blockedLabel(res) {
 function sightLabel(res) {
   return res.los ? 'sim' : `não (${res.blockerId})`;
 }
+// Tiro: qualquer sólido balístico pára a bala; o vidro intacto deixa ver mas a bala bate nele e parte-o.
+function shotLabel(res) {
+  if (!res.hitId) return 'sim';
+  return res.hitMaterial === 'glass' ? `pára no vidro, que parte (${res.hitId})` : `não (${res.hitId})`;
+}
 
 function sampleRoute(points, step) {
   const out = [{ s: 0, x: points[0][0], z: points[0][1] }];
@@ -128,7 +133,7 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
   out(`- Entrada: \`missions/m02-bzura/m02-01-quinta-layout.json\` (sha256 \`${sha256}\`), instanciado com \`M02QuintaWorld\`.`);
   out(`- Cápsula do jogador (\`PLAYER_PHYSICS\`, src/world/m01-player-physics.js, usada por \`m02-01-simulation.js\`): raio ${num(r)} m (Ø ${num(r * 2)} m), altura em pé ${num(PLAYER.standHeight)} m, agachado ${num(PLAYER.crouchHeight)} m, degrau máximo ${num(PLAYER.stepUp)} m, sem salto. Olhos: em pé ${num(PLAYER.standEye)} m, agachado ${num(PLAYER.crouchEye)} m (\`EYE_HEIGHT\` de src/config.js e o literal de olhos agachado em \`m02-01-simulation.js\`).`);
   out('- Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).');
-  out('- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (\`BALLISTIC_MATERIAL_POLICY.penetrationLoss\` só existe como dados).');
+  out('- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Política de vidro (`BALLISTIC_MATERIAL_POLICY.glass`): o vidro intacto **deixa ver** (`blocksSight` = false: `lineOfSight` ignora-o) mas **pára a bala**, que o parte (`glassBrokenId`; depois o vão fica `broken`). Bala = qualquer outro sólido bloqueia; **não há penetração** em `traceObstruction` (\`BALLISTIC_MATERIAL_POLICY.penetrationLoss\` só existe como dados).');
   out();
 
   // ---------------------------------------------------------------- 1. openings
@@ -184,7 +189,7 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
       midH: mid,
     };
     sightRows.push({ op, s });
-    out(row(op.id, `${op.kind === 'window' ? 'vidro ' : 'porta '}${op.initialState}`, sightLabel(s.stand), sightLabel(s.crouch), `${sightLabel(s.mid)} (h ${num(mid)})`, sightLabel(s.standOpen), sightLabel(s.midOpen)));
+    out(row(op.id, `${op.kind === 'window' ? 'vidro ' : 'porta '}${op.initialState}`, sightLabel(s.stand), sightLabel(s.crouch), `${shotLabel(s.mid)} (h ${num(mid)})`, sightLabel(s.standOpen), shotLabel(s.midOpen)));
   }
   out();
 

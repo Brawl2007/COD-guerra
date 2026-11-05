@@ -5,6 +5,7 @@
   "historicalNote": "BANCADA DE PRODUÇÃO (N0) — Setor rural Kwiatkówek–Tum (9 de setembro de 1939, secção de fuzileiros polaca — companhia não identificada; enquadramento regimental/divisional pendente de DEC-02 / D-M02-3). Geometria e implantação são propostas de level design (RECONSTRUÍDO / DRAMATIZAÇÃO), sem coordenadas geográficas históricas fixadas até conclusão de GEO-01 e HIST-01.",
   "equipmentStatus": { "kar98k": "PROPOSTA_EQP01", "mg34": "PROPOSTA_EQP01", "note": "MG34 e Kar98k são referências alemãs propostas (B6, p. 10); EQP-01 pendente. Não consta de B6 nenhuma pistola-metralhadora alemã." },
   "space": "metres",
+  "sightPolicy": "ballistic-policy",
   "axes": {
     "x": "east",
     "y": "up",
@@ -208,7 +209,7 @@
       ],
       "windows": [
         { "id": "win_b01_west_kitchen", "wallId": "b01_wall_west", "offset": 2.5, "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "open", "label": "Janela oeste da cozinha (B01)" },
-        { "id": "win_b01_east_hall", "wallId": "b01_wall_east", "offset": 0.65, "width": 1.0, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "intact", "label": "Janela este da sala (B01)" },
+        { "id": "win_b01_east_hall", "wallId": "b01_wall_east", "offset": 0.9, "width": 1.0, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "intact", "label": "Janela este da sala (B01)" },
         { "id": "win_b01_east_bed", "wallId": "b01_wall_east", "offset": 7.5, "width": 1.3, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "open", "label": "Janela este do quarto (B01)" },
         { "id": "win_b01_north_hall", "wallId": "b01_wall_north", "offset": 11.0, "width": 1.2, "sillY": 0.95, "lintelY": 2.05, "frameWidth": 0.1, "glassState": "intact", "label": "Janela norte da sala (B01)" }
       ],

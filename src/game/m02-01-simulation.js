@@ -1279,7 +1279,11 @@ export class M02BenchSimulation {
     // Balística: qualquer sólido pára a bala (o vidro intacto também: a bala parte-o). Vista: o vidro intacto deixa ver
     // (BALLISTIC_MATERIAL_POLICY.glass.blocksSight = false), por isso o raio de vista ignora-o e continua a procurar atrás dele.
     const obstruction = traceObstruction(this.world, muzzle, dir, Math.max(0, dist - 0.15));
-    const hasVisualLoS = inArc && !obstruction && this.world.lineOfSight(
+    const sightObstruction =
+      obstruction && !this.world.materialBlocksSight(obstruction.material)
+        ? this.world.traceSightObstruction(muzzle, dir, Math.max(0, dist - 0.15))
+        : obstruction;
+    const hasVisualLoS = inArc && !sightObstruction && this.world.lineOfSight(
       { x: muzzle.x, y: 0, z: muzzle.z, eyeHeight: muzzle.y, space: 'metres' },
       targetActor,
       { includeFoliage: true },

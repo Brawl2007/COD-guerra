@@ -2,10 +2,10 @@
 
 Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.
 
-- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `523e851c8580820288a429e6a7013cbc4829e24441c41d538126025a02081c50`), instanciado com `M02QuintaWorld`.
+- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `beb61131c60d80c08390c7df9715748716ae1fe0244c69fd3d6440cd5ce6ac18`), instanciado com `M02QuintaWorld`.
 - Cápsula do jogador (`PLAYER_PHYSICS`, src/world/m01-player-physics.js, usada por `m02-01-simulation.js`): raio 0,36 m (Ø 0,72 m), altura em pé 1,80 m, agachado 1,25 m, degrau máximo 0,45 m, sem salto. Olhos: em pé 1,64 m, agachado 1,08 m (`EYE_HEIGHT` de src/config.js e o literal de olhos agachado em `m02-01-simulation.js`).
 - Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).
-- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).
+- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Política de vidro (`BALLISTIC_MATERIAL_POLICY.glass`): o vidro intacto **deixa ver** (`blocksSight` = false: `lineOfSight` ignora-o) mas **pára a bala**, que o parte (`glassBrokenId`; depois o vão fica `broken`). Bala = qualquer outro sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).
 
 ## 1. Vãos
 
@@ -20,7 +20,7 @@ Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Pr
 | door_b01_kitchen_westbed | B01 · b01_wall_mid_h (interior) | -37,00; -13,00 | 3,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b01_kitchen_westbed_leaf) | sim / sim | 0,28 | 0,50 |
 | door_b01_hall_eastbed | B01 · b01_wall_mid_h (interior) | -29,00; -13,00 | 11,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta open | sim | sim / sim | 0,28 | 0,50 |
 | win_b01_west_kitchen | B01 · b01_wall_west (oeste) | -40,00; -15,50 | 2,50 | 1,30 × 1,10 | 0,95 → 2,05 | vidro open | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
-| win_b01_east_hall | B01 · b01_wall_east (este) | -26,00; -17,35 | 0,65 | 1,00 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
+| win_b01_east_hall | B01 · b01_wall_east (este) | -26,00; -17,10 | 0,90 | 1,00 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | win_b01_east_bed | B01 · b01_wall_east (este) | -26,00; -10,50 | 7,50 | 1,30 × 1,10 | 0,95 → 2,05 | vidro open | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | win_b01_north_hall | B01 · b01_wall_north (norte) | -29,00; -18,00 | 11,00 | 1,20 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | door_b02_north_gate | B02 · b02_wall_north (norte) | 24,00; -38,00 | 12,00 | 3,00 × 3,00 | 0,00 → 3,00 | porta open | sim | sim / sim | 2,28 | 1,50 |
@@ -46,9 +46,9 @@ Estado «inicial» = o do layout; «aberto» = porta aberta / vidro aberto. Altu
 | door_b01_kitchen_westbed | porta closed | não (door_b01_kitchen_westbed_leaf) | não (door_b01_kitchen_westbed_leaf) | não (door_b01_kitchen_westbed_leaf) (h 1,05) | sim | sim |
 | door_b01_hall_eastbed | porta open | sim | sim | sim (h 1,05) | sim | sim |
 | win_b01_west_kitchen | vidro open | sim | sim | sim (h 1,50) | sim | sim |
-| win_b01_east_hall | vidro intact | não (win_b01_east_hall_glass) | não (win_b01_east_hall_glass) | não (win_b01_east_hall_glass) (h 1,50) | sim | sim |
+| win_b01_east_hall | vidro intact | sim | sim | pára no vidro, que parte (win_b01_east_hall_glass) (h 1,50) | sim | sim |
 | win_b01_east_bed | vidro open | sim | sim | sim (h 1,50) | sim | sim |
-| win_b01_north_hall | vidro intact | não (win_b01_north_hall_glass) | não (win_b01_north_hall_glass) | não (win_b01_north_hall_glass) (h 1,50) | sim | sim |
+| win_b01_north_hall | vidro intact | sim | sim | pára no vidro, que parte (win_b01_north_hall_glass) (h 1,50) | sim | sim |
 | door_b02_north_gate | porta open | sim | sim | sim (h 1,50) | sim | sim |
 | door_b02_south_door | porta closed | não (door_b02_south_door_leaf) | não (door_b02_south_door_leaf) | não (door_b02_south_door_leaf) (h 1,10) | sim | sim |
 | win_b02_west_mg | vidro open | sim | sim | sim (h 1,57) | sim | sim |
@@ -221,17 +221,14 @@ Contagem: 10 inimigos EA1 (PDF N1 p. 48: «dez defensores EA1» ✓), 4 EA0 em Z
 
 ## 6. Lista de problemas
 
-Gerada automaticamente: 0 ERRO, 6 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
+Gerada automaticamente: 0 ERRO, 3 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
 
 | # | Sev. | Área | Elemento | Descrição |
 | --- | --- | --- | --- | --- |
-| 1 | AVISO | vãos | win_b01_east_hall | troço de parede de 0,05 m no início da parede (< 0,30 m). |
-| 2 | AVISO | linha de tiro | win_b01_east_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_east_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
-| 3 | AVISO | linha de tiro | win_b01_north_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_north_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
-| 4 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
-| 5 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
-| 6 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
-| 7 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 1 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
+| 2 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
+| 3 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
+| 4 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
 
 Limites desta prova: geometria/colisão estática de cápsula e raios retos; não cobre IA, animação, portas a abrir com tempo, desempenho, aparência nem jogo real.
 
