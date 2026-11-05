@@ -56,7 +56,7 @@ As falas são originais; o texto completo de cada ID está em `mission.json → 
 ### Cena 1 — O posto (04:30) · INTRO/SETUP
 
 **Ecrã preto.** Vento, água a correr sob ferro, um apito de manobra longe.
-Cartela: **TCZEW, POLÔNIA — 1 DE SETEMBRO DE 1939 — 04:30**.
+Cartela: **TCZEW, POLÓNIA — 1 DE SETEMBRO DE 1939 — 04:30**.
 Segunda cartela: *2.º Batalhão de Fuzileiros · Oddział Wydzielony "Tczew" · Exército "Pomorze"*.
 
 **Fade-in em primeira pessoa.** Jan está sentado no posto da secção: abrigo de madeira, sacos de areia, fogareiro. O céu está azul-escuro, com uma faixa clara a leste-nordeste. As torres neogóticas da ponte rodoviária aparecem em silhueta a 230 m. O jogador pode olhar à vontade.
@@ -407,7 +407,7 @@ As listas completas de eventos consumidos, objetivos, destruição e setores est
 
 | Cena | Pulável | Estado final ao pular |
 | --- | --- | --- |
-| `cs_m01_intro` | Sim | Controle no posto, com mensagem e caneca. Falas marcadas como tocadas. |
+| `cs_m01_intro` | Sim | Controlo no posto, com mensagem e caneca. Falas marcadas como tocadas. |
 | `cs_m01_bombing` | Não (14 s, jogável) | — |
 | `cs_m01_order` | Não (12 s, sem perda de controlo) | — |
 | `cs_m01_east_blast` e `cs_m01_west_blast` | Não (jogáveis, sem perda de controlo) | — |
