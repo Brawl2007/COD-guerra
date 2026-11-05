@@ -25,6 +25,9 @@ test('blast categories remain explicit rather than scale-only aliases',()=>{
   assert.equal(battlefieldBlastKind('m01_grenade_2',false),'small');
   assert.equal(battlefieldBlastKind('station_bomb',true),'bombing');
   assert.equal(battlefieldBlastKind('raid_0530',true),'bombing');
+  assert.equal(battlefieldBlastKind('de_support_shell_1',false),'shell');
+  assert.equal(battlefieldProfile('de_support_shell_1',false),M01_FX_PROFILES.shell);
+  assert.equal(battlefieldBlastKind('np_shell_crater_1',false),'shell');
   assert.equal(battlefieldBlastKind('east_demolition',false),'demolition');
   assert.equal(battlefieldBlastKind('west_demolition',false),'demolition');
   assert.notDeepEqual(M01_FX_PROFILES.small,M01_FX_PROFILES.bombing);
