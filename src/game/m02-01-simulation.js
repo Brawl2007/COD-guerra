@@ -16,6 +16,7 @@ import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {
   M02_DIFFICULTY,
+  M02_DIFFICULTY_IDS,
   M02_DIFFICULTY_SIM_DEFAULT,
   M02_ENEMY_HIT_DAMAGE_FACTOR,
   M02_ENEMY_HIT_DAMAGE_MIN,
@@ -248,6 +249,10 @@ export function validateM02Snapshot(snap) {
   }
   if (snap.checkpointId !== undefined && (typeof snap.checkpointId !== 'string' || !snap.checkpointId)) {
     return { valid: false, reason: 'Identificador de checkpoint inválido no snapshot.' };
+  }
+  // D6 (FIX-CD): perfil de dificuldade, campo aditivo do schema 2. Ausente = recruta (saves anteriores e saves de recruta).
+  if (snap.difficulty !== undefined && !M02_DIFFICULTY_IDS.includes(snap.difficulty)) {
+    return { valid: false, reason: `Perfil de dificuldade inválido no snapshot: ${String(snap.difficulty)}` };
   }
   // FIX-CD (D1/I3): um checkpoint é um ponto de reinício seguro. Piotr morto (vida 0 ou `alive` falso) ou a missão já falhada num
   // checkpoint davam um reinício que volta a falhar no tick seguinte (ciclo). Um snapshot sem `checkpointId` pode mostrar a falha.
@@ -595,10 +600,14 @@ export class M02BenchSimulation {
   /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
   #lastSessionCheckpointId = null;
   /**
-   * D6: perfil de dificuldade (recruta | soldado | veterano, os ids da M01). CONFIGURAÇÃO, não estado de jogo (I5): fora do snapshot,
-   * não é reposto por um checkpoint nem por reset(); privado para não contar como estado vivo (como os campos acima).
+   * D6: perfil de dificuldade (recruta | soldado | veterano, os ids da M01). Escolhe-se na configuração (construtor/setDifficulty) e
+   * não muda com reset(); como na M01 (H9 D1) entra no snapshot — afeta o resultado da simulação — no campo `difficulty`, omitido em
+   * recruta (saves de recruta iguais byte a byte; um save sem o campo restaura-se em recruta), e é reposto pelo restauro (FIX-CD).
+   * A acessibilidade continua fora do snapshot. Privado para não contar como estado vivo (como os campos acima).
    */
   #difficultyId = M02_DIFFICULTY_SIM_DEFAULT;
+  /** Relógio no início do passo em curso (só dentro de #step; null entre passos). Instante nominal dos disparos da regra F1. */
+  #tickStartClock = null;
   /** Resultado da última ordem à secção, para a bancada o mostrar (dica de apresentação; não é estado de jogo nem entra no snapshot). */
   #lastOrderFeedback = null;
 
@@ -643,8 +652,8 @@ export class M02BenchSimulation {
   }
 
   /**
-   * Muda o perfil de dificuldade (configuração: não toca no estado de jogo, no snapshot nem nos checkpoints). RangeError se o id
-   * não é um dos da M01. Devolve o perfil.
+   * Muda o perfil de dificuldade (não toca nos checkpoints já gravados; os snapshots seguintes levam o novo perfil). RangeError se
+   * o id não é um dos da M01. Devolve o perfil.
    */
   setDifficulty(id) {
     this.#difficultyId = resolveM02Difficulty(id).id;
@@ -1387,9 +1396,14 @@ export class M02BenchSimulation {
     const diff = this.difficulty;
     const enemyFire = side === 'enemy';
     const aimsAtPlayer = enemyFire && targetActor === this.player;
+    // F1 conta TEMPO, não ticks (FIX-CD): o instante de um disparo é o nominal — o fim do ciclo de fogo (`nextFireAt`) quando ele
+    // acabou dentro deste passo, senão o relógio. Antes contava o relógio do tick que processou o disparo e, em veterano, o 2.º impacto
+    // de um Kar98k isolado (ciclo 0,775 s < graça 0,8 s) matava com dt 0,1/0,05 e não com 1/60.
+    const tickStart = this.#tickStartClock ?? this.clock;
+    const shotAt = shooter.nextFireAt > tickStart && shooter.nextFireAt <= this.clock ? shooter.nextFireAt : this.clock;
     if (aimsAtPlayer && diff.reactionGraceSec !== null) {
       // F1: o contacto deste atirador com Piotr conta-se desde a sua primeira rajada e quebra-se após um intervalo longo sem lhe disparar.
-      const now = Number(this.clock.toFixed(3));
+      const now = Number(shotAt.toFixed(3));
       const idle = shooter.aimLastAt == null || now - shooter.aimLastAt > M02_F1_TELEGRAPH_GAP_SEC;
       if (idle || shooter.aimEngagedAt == null) shooter.aimEngagedAt = now;
       shooter.aimLastAt = now;
@@ -1456,7 +1470,7 @@ export class M02BenchSimulation {
           burstDamageOnPlayer += dmg;
           // F1: o primeiro contacto de um atirador nunca mata; a vida fica em 1 até ele combater Piotr há `reactionGraceSec`.
           if (diff.reactionGraceSec !== null && victim.health - dmg <= 0) {
-            const engagedFor = shooter.aimEngagedAt == null ? 0 : this.clock - shooter.aimEngagedAt;
+            const engagedFor = shooter.aimEngagedAt == null ? 0 : shotAt - shooter.aimEngagedAt;
             if (engagedFor < diff.reactionGraceSec) dmg = Math.max(0, victim.health - 1);
           }
         }
@@ -2075,6 +2089,15 @@ export class M02BenchSimulation {
   }
 
   #step(dt, controls) {
+    this.#tickStartClock = this.clock;
+    try {
+      this.#stepBody(dt, controls);
+    } finally {
+      this.#tickStartClock = null;
+    }
+  }
+
+  #stepBody(dt, controls) {
     this.clock += dt;
     const nowMs = this.clock * 1000;
 
@@ -2355,6 +2378,8 @@ export class M02BenchSimulation {
       schemaVersion: M02_SNAPSHOT_SCHEMA_VERSION,
       missionId: M02_MISSION_ID,
       rng: { algorithm: M02_RNG_ALGORITHM, seed: this.seed, state: this.rng.state },
+      // D6 (FIX-CD, como a M01): o perfil muda o resultado da simulação; omitido em recruta (saves de recruta iguais byte a byte).
+      ...(this.#difficultyId !== M02_DIFFICULTY_SIM_DEFAULT ? { difficulty: this.#difficultyId } : {}),
       narrative: m02NarrativeStamp(this.horizon.temporalState),
       clock: this.clock,
       activeCellId: this.activeCellId,
@@ -2431,6 +2456,7 @@ export class M02BenchSimulation {
     return structuredClone({
       seed: snap.rng.seed,
       rngState: snap.rng.state,
+      difficulty: snap.difficulty ?? M02_DIFFICULTY_SIM_DEFAULT, // save sem o campo (anterior ao FIX-CD ou de recruta): recruta
       clock: snap.clock,
       cellId: snap.activeCellId,
       worldRevision: snap.world.revision,
@@ -2486,6 +2512,7 @@ export class M02BenchSimulation {
     // O retorno da última ordem (fora do snapshot) também: com o relógio a recuar, a bancada mostrava a recusa antiga (FIX-CD).
     this.#lastOrderFeedback = null;
     this.seed = p.seed;
+    this.#difficultyId = resolveM02Difficulty(p.difficulty).id;
     this.rng = new Random(p.seed);
     this.rng.state = p.rngState;
     this.clock = p.clock;

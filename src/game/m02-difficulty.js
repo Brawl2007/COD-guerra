@@ -2,8 +2,9 @@
 // multiplicadores da tabela da M01 (src/game/m01-difficulty.js, desenho H9/D35), importada, não copiada: se a M01 recalibrar um
 // valor, a M02 acompanha. O PDF chama-lhes Acessível / Padrão / Exigente; o proprietário fixou os ids da M01 para a campanha toda.
 //
-// O perfil é CONFIGURAÇÃO (como as opções de acessibilidade, I5): vive fora do estado de jogo, não entra no snapshot nem é
-// reposto por um checkpoint, e é determinista (nenhum perfil faz sorteios; os multiplicadores actuam depois dos sorteios).
+// O perfil escolhe-se na configuração (construtor/setDifficulty) e é determinista (nenhum perfil faz sorteios; os multiplicadores
+// actuam depois dos sorteios). Como na M01 (H9 D1), entra no snapshot — muda o resultado da simulação — no campo `difficulty`, omitido
+// em recruta, e é reposto pelo restauro (FIX-CD). As opções de acessibilidade continuam fora do snapshot (I5).
 //
 // O que cada id faz na M02 (só o fogo INIMIGO muda; a secção polaca, os alvos de calibração e as regras de objetivos não):
 //   damageTakenScale  x o dano de cada bala/estilhaço inimigo que atinge Piotr. A referência é o tiro de Kar98k ao tronco da
@@ -16,7 +17,8 @@
 //   cooldownScale     x o ciclo de fogo de um hostil (M01: 1 | 0,5 | 0,5), contra Piotr ou contra a secção (os tipos da margem oeste da M01).
 //   reactionGraceSec  regra de morte justa F1 da M01: uma bala só leva Piotr a 0 se o MESMO atirador o combate há esse tempo; senão
 //                     a vida fica em 1. Sem sorteios. null = sem regra (recruta). O contacto de um atirador conta-se desde a sua
-//                     primeira rajada a Piotr e quebra-se após F1_TELEGRAPH_GAP_SEC (6 s) sem lhe disparar.
+//                     primeira rajada a Piotr e quebra-se após F1_TELEGRAPH_GAP_SEC (6 s) sem lhe disparar. Conta tempo nominal dos
+//                     disparos (fim do ciclo de fogo), não ticks: o resultado não depende do dt (FIX-CD).
 // NÃO mapeado (a M02 não o tem, ou o PDF da M02 o contraria): `woundChance` (a M02 resolve o acerto por geometria, não por sorteio),
 // `healing` e `hpOnCheckpoint` (D6/C7: «água e material sanitário não são poções de regeneração instantânea», «não se concede cura
 // total»), `kowalRounds`, `rifleGateEastThreshold`, `spansPickPlayerThreshold`, `deEast0Repair` e `coverAdjustSalvoSec` (cenários
