@@ -482,12 +482,8 @@ export class M02BenchRenderer {
         this.staticGroup.add(crateGroup);
       }
     } else if (cellId === 'C') {
-      // Cell C: B12 field aid station stretchers (2 macas) and SP03 artillery crater smoke when detonated
-      for (const sx of [-58.5, -54.5]) {
-        const stretcher = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.28, 2.0), this.materials.roof_thatch);
-        stretcher.position.set(sx, 0.22, 52.0);
-        this.staticGroup.add(stretcher);
-      }
+      // Cell C: SP03 artillery crater smoke when detonated. As 2 macas de B12 são os props `prop_b12_stretcher_*` do layout
+      // (desenhados com o resto dos obstáculos do edifício; antes havia 2 macas fixas por cima, noutras posições).
       if (this.sim.areaC?.artilleryDetonated) {
         const craterGroup = new THREE.Group();
         craterGroup.position.set(4.0, 0.1, 18.0);
