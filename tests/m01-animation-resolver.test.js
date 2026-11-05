@@ -732,6 +732,44 @@ test('same actor data at the same sim time gives identical output; pause (repeat
   const silent=resolve(base({crouched:true,posture:'crouch',postureSince:2}),10+GAP+1,resumed.state);assert.equal(silent.blend.length,1);
 });
 
+test('a posture fade starts at the sim stamp inside the observation interval, else at the first draw that shows the clip; a stamp one tick later does not move it',()=>{
+  // R3-a sappers (e3611c3f, m01-sapper-pose.js): the work clip follows sim.sapperOps.phase, which flips in the tick of the player's E, while `crouched`
+  // and postureSince are set by the NEXT tick (m01-simulation.js tick(): updatePosture runs before updateObjectives). Whether the stamp is visible at the draw
+  // that first shows sapper_work depends on how the game frames fall (tests/browser/m01-anim-resolver.spec.js accepts both). Draws at 1/30 s, clip by phase.
+  const HZ=30;
+  const run=({phaseAt,stampAt,seesStampFrom=stampAt})=>{
+    const a=base({crouched:false,posture:'stand',postureSince:1}),frames=[];let prev=null;
+    for(let i=0;i<=24;i++){
+      const t=9.9+i/HZ;
+      if(t>=seesStampFrom-1e-9){a.crouched=true;a.posture='crouch';a.postureSince=stampAt;}
+      const clip=t>=phaseAt-1e-9?'crouched_idle':'standing_idle';
+      const r=resolveAnimation({actor:a,time:t,candidate:{clip,time:t+OFFSET,loop:true,rate:1,duration:INFO[clip].duration},prev,alt:null});
+      prev=r.state;frames.push({t,r});
+    }
+    return frames;
+  };
+  const draws=[...Array(25).keys()].map(i=>9.9+i/HZ);
+  const first=draws.find(t=>t>=10-1e-9);   // the draw that first shows the new clip
+  const expectFrom=(frames,start,label)=>{
+    for(const {t,r} of frames.filter(f=>f.t>=first-1e-9)){
+      assert.ok(near(total(r.blend),1,1e-9),`${label}: sum at ${t}`);
+      const want=t-start>=FADE.posture-1e-9?1:smoothstep((t-start)/FADE.posture);
+      assert.ok(near(weightOf(r,'crouched_idle'),want,1e-9),`${label}: weight at ${t}, fade start ${start}: ${weightOf(r,'crouched_idle')} vs ${want}`);
+    }
+    for(const {t,r} of frames.filter(f=>f.t<first-1e-9))assert.equal(r.blend.length,1,`${label}: no fade before the clip changes (${t})`);
+  };
+  // 1. The stamp (a tick before the draw) lies in the interval (previous draw, this draw]: the fade starts at the stamp.
+  const stampTick=first-1/(HZ*2);
+  expectFrom(run({phaseAt:first,stampAt:stampTick}),stampTick,'stamp inside the interval');
+  // 2. The stamp is set by the next tick and first seen one frame later: the fade keeps its start at the first draw that showed the clip (weight 0 there), no restart.
+  const late=run({phaseAt:first,stampAt:first+.05,seesStampFrom:first+1/HZ});
+  expectFrom(late,first,'stamp one tick after the first draw');
+  assert.equal(weightOf(late.find(f=>near(f.t,first,1e-9)).r,'crouched_idle'),0,'the first draw that shows the clip is still all the old pose');
+  for(let i=1;i<late.length;i++)assert.ok(weightOf(late[i].r,'crouched_idle')>=weightOf(late[i-1].r,'crouched_idle')-1e-12,`monotonic at ${late[i].t}: the late stamp does not pop the fade back`);
+  // 3. A stamp older than the observation interval is unrelated to this change: the fade starts at the first draw.
+  expectFrom(run({phaseAt:first,stampAt:5}),first,'stale stamp');
+});
+
 test('a retarget in mid-fade (A, B, A) is continuous: no pop, one layer per clip, weights sum to one',()=>{
   const a=base({posture:'stand',postureSince:1});
   const script=(x,t)=>{
