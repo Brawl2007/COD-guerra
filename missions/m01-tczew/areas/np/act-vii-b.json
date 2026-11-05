@@ -29,13 +29,21 @@
       "use": "Só contexto: em jogo são «tropas alemãs vindas do norte», sem insígnias nem nome de unidade (decisão D-2 pendente), e nenhuma hora no ecrã (a etiqueta é «DURANTE O DIA»)."
     },
     {
-      "id": "h_npb_positions",
-      "text": "Segunda posição no flanco oeste do mesmo parapeito, virada a noroeste (2.ª e 3.ª companhias, pelotões de metralhadoras, morteiros e artilharia de infantaria nas posições de campo a norte e noroeste).",
-      "classification": "RECONSTRUCTED",
-      "certainty": "composição MÉDIA (T03, T08); posições pendentes (P4)",
+      "id": "h_npb_composition",
+      "text": "Composição do batalhão em posições de campo a norte e noroeste: 2.ª e 3.ª companhias, pelotões de metralhadoras, morteiros e artilharia de infantaria.",
+      "classification": "DOCUMENTED",
+      "certainty": "MÉDIA (resumo de T03)",
       "sources": [
-        "T03",
-        "T08"
+        "T03"
+      ]
+    },
+    {
+      "id": "h_npb_positions",
+      "text": "A segunda posição no flanco oeste do mesmo parapeito, virada a noroeste, é reconstrução: as fontes não dão coordenadas.",
+      "classification": "RECONSTRUCTED",
+      "certainty": "posições pendentes (P4: sem mapa de 1939)",
+      "sources": [
+        "T03"
       ]
     },
     {
@@ -227,7 +235,7 @@
           -3
         ]
       },
-      "note": "Artilharia sem calibre nem posição (as fontes dizem só «apoio de artilharia»). O quinto impacto cai ao pé do parapeito junto de pl_np_3 (se o jogador estiver a menos de 42 m, cai noutro sítio e ninguém fica ferido): é o homem ferido que os maqueiros levam. Nenhum impacto cai a menos de 30 m do jogador, que nunca morre nem fica ferido por artilharia (só atordoado)."
+      "note": "Artilharia sem calibre nem posição (a síntese de T16 em research/SOURCES.md não menciona artilharia; «apoio de artilharia» vem de HISTORICAL_RESEARCH.md, certeza BAIXA). O quinto impacto cai ao pé do parapeito junto de pl_np_3 (se o jogador estiver a menos de 42 m, cai noutro sítio e ninguém fica ferido): é o homem ferido que os maqueiros levam. Nenhum impacto cai a menos de 30 m do jogador, que nunca morre nem fica ferido por artilharia (só atordoado)."
     },
     {
       "id": "brg_npb_2",
@@ -778,7 +786,7 @@
     {
       "id": "staszek_pawlak",
       "name": "Pawlak",
-      "role": "RADIO_OPERATOR",
+      "role": "MESSENGER",
       "essential": true
     },
     {
