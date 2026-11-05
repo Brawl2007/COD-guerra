@@ -234,15 +234,22 @@ export class M02SaveStore {
     if (typeof validateSnapshot !== 'function') {
       throw new Error('M02SaveStore precisa de validateSnapshot.');
     }
-    if (typeof key !== 'string' || !key || key.startsWith(M02_FOREIGN_SAVE_NAMESPACE)) {
+    // São os SLOTS derivados que escrevem e apagam, por isso é neles (não só na chave base) que se recusa o espaço alheio: a chave
+    // `cod-guerra:checkpoint` (sem os dois pontos finais) passava, e os seus `:previous`/`:staging` caíam em `cod-guerra:checkpoint:*`,
+    // o espaço da M01 e dos saves v1 do Codex (revisão adversarial).
+    const slots =
+      typeof key === 'string' && key
+        ? Object.freeze({ current: key, previous: `${key}:previous`, staging: `${key}:staging` })
+        : null;
+    if (!slots || Object.values(slots).some((slot) => slot.startsWith(M02_FOREIGN_SAVE_NAMESPACE))) {
       throw new Error(
-        `M02SaveStore: chave base inválida (${String(key)}); o espaço ${M02_FOREIGN_SAVE_NAMESPACE}* pertence à M01 e aos saves v1 do Codex e nunca é usado por esta loja.`,
+        `M02SaveStore: chave base inválida (${String(key)}); o espaço ${M02_FOREIGN_SAVE_NAMESPACE}* pertence à M01 e aos saves v1 do Codex e nunca é usado por esta loja, nem pelos slots :previous e :staging que dela derivam.`,
       );
     }
     this.storage = storage ?? resolveDefaultStorage();
     this.key = key;
     this.validateSnapshot = validateSnapshot;
-    this.slots = Object.freeze({ current: key, previous: `${key}:previous`, staging: `${key}:staging` });
+    this.slots = slots;
     this.confirmedRaw = null;
     this.confirmedRecord = null;
     this.confirmedInfo = null;

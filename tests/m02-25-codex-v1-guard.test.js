@@ -298,6 +298,34 @@ describe('M02 item 0 — os saves v1 do Codex ficam byte a byte iguais em todos 
     assert.doesNotThrow(() => new M02SaveStore({ storage, key: 'cod-guerra:m02:bench:v2', validateSnapshot: validateM02Snapshot }));
     assert.doesNotThrow(() => new M02SaveStore({ storage, key: 'cod-guerra:m02:bench:teste', validateSnapshot: validateM02Snapshot }));
   });
+
+  // Revisão adversarial: a chave base `cod-guerra:checkpoint` (SEM os dois pontos finais) não começa por `cod-guerra:checkpoint:` e
+  // passava; os slots que dela derivam (`:previous`, `:staging`) caem nesse espaço e a loja escrevia e apagava chaves da M01.
+  it('o construtor recusa a chave base cujos SLOTS derivados caem no espaço alheio (cod-guerra:checkpoint sem dois pontos)', () => {
+    const NAMESPACE = 'cod-guerra:checkpoint:';
+    const bare = 'cod-guerra:checkpoint';
+    assert.throws(() => new M02SaveStore({ key: bare, validateSnapshot: validateM02Snapshot }), /chave base inválida/);
+    // propriedade: qualquer chave candidata, ou é recusada, ou nenhum dos seus três slots cai no espaço da M01/Codex
+    const candidates = [bare, `${bare}:`, `${bare}:previous`, `${bare}:staging`, 'cod-guerra:checkpoint:m02:v1', 'cod-guerra:checkpoint:x', 'cod-guerra:checkpointx', 'cod-guerra', 'cod-guerra:m02:bench:v2', 'cod-guerra:m02:bench:v2:previous', 'x:cod-guerra:checkpoint'];
+    for (const key of candidates) {
+      let store = null;
+      try {
+        store = new M02SaveStore({ storage: createMemoryStorage(), key, validateSnapshot: validateM02Snapshot });
+      } catch (error) {
+        assert.match(error.message, /chave base inválida/, key);
+        continue;
+      }
+      for (const slot of Object.values(store.slots)) assert.equal(slot.startsWith(NAMESPACE), false, `${key} -> ${slot}`);
+    }
+    // controlo do dano: com uma chave aceite, gravar/limpar nunca toca em nada do espaço alheio
+    const storage = recordingStorage();
+    const sim = new M02BenchSimulation(SEED, { saveStore: new M02SaveStore({ storage, key: 'cod-guerra:m02:bench:v2', validateSnapshot: validateM02Snapshot }) });
+    sim.saveCheckpoint('cp_m02_manual');
+    sim.saveCheckpoint('cp_m02_b_teste');
+    sim.saveStore.clear();
+    const foreignWrites = storage.log.filter(([op, key]) => (op === 'set' || op === 'remove') && String(key).startsWith(NAMESPACE));
+    assert.deepEqual(foreignWrites, []);
+  });
 });
 
 describe('M02 item 0 — M02SaveStore.detectForeignSaves(): deteção só-de-leitura', () => {

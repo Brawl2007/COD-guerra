@@ -379,8 +379,9 @@ export function validateM02Snapshot(snap) {
   }
   const aliveById = new Map([[PLAYER_ID, p.alive !== false], ...snap.allies.map((a) => [a.id, a.alive])]);
   // D1: também não é ponto de reinício um checkpoint com uma personagem exigida já fora de combate (a falha repetia-se no tick seguinte).
+  // Nem com a missão concluída (`ignoreCompletion`): o validador aceitava, por c12Completed, um cp_m02_manual com Gruca morto.
   if (snap.checkpointId !== undefined) {
-    const out = requiredCharacterOut(snap);
+    const out = requiredCharacterOut(snap, { ignoreCompletion: true });
     if (out) {
       return { valid: false, reason: `Checkpoint ${snap.checkpointId} recusado: a personagem exigida ${out} está fora de combate, não é um ponto de reinício.` };
     }

@@ -153,7 +153,13 @@ describe('M02 C11/C12: o resumo e a exportação para a M03 dizem evacuados, mor
     assert.deepEqual(g.members.map((m) => m.id), Array.from({ length: 12 }, (_, i) => `LG${String(i + 1).padStart(2, '0')}`));
     assert.deepEqual(g.members.filter((m) => m.fate === 'dead').map((m) => m.id), ['LG01', 'LG02', 'LG03', 'LG04', 'LG05']);
     assert.ok(g.members.filter((m) => m.fate === 'evacuated').length === 7);
-    assert.ok(g.members.filter((m) => m.initialWounded).length === 2 || g.members.some((m) => m.wounded), 'os dois feridos iniciais mantêm-se identificados');
+    // C11 (p. 14) «Doze homens identificados, dois já feridos» + «Quem foi atingido permanece ferido ou morto»: os dois feridos iniciais
+    // (LG03 e LG09, do layout) mantêm-se identificados e feridos, tenham morrido (LG03) ou chegado (LG09); ninguém mais ficou ferido.
+    const initial = g.members.filter((m) => m.initialWounded);
+    assert.deepEqual(initial.map((m) => m.id), ['LG03', 'LG09']);
+    assert.deepEqual(initial.map((m) => [m.fate, m.wounded]), [['dead', true], ['evacuated', true]]);
+    for (const m of g.members.filter((x) => !x.initialWounded && x.fate === 'evacuated')) assert.equal(m.wounded, false, `${m.id} chegou ileso`);
+    for (const m of g.members.filter((x) => x.fate === 'dead')) assert.equal(m.wounded, true, `${m.id}: quem morreu foi atingido`);
     assert.equal(validateM02Snapshot(sim.snapshot()).valid, true);
     assert.match(sim.objective.title, /Grupo final=7\/12/);
   });

@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
 import { C01_CONTACT_DELAY_SEC, C01_PROXIMITY_DETECTION_M } from '../src/game/m02-acts-director.js';
 import { areaBContactPending } from '../src/game/m02-combat-ai.js';
+import { createMemoryStorage } from '../src/game/m02-save-store.js';
 
 const FRAME = 1 / 60;
 const PROFILES = ['recruta', 'soldado', 'veterano'];
@@ -59,7 +60,14 @@ describe('M02 C06: a janela de segurança da entrada em B — nos 3 perfis, a dt
       const sim = enterB(difficulty);
       sim.areaB.contact = { movementStartedAt: 0, contactAt: 0, opened: true, openedAt: 0, openedBy: 'timer' };
       run(sim, 30);
-      assert.ok(sim.combatLog.some((e) => e.type === 'enemy_hit_ally' && e.targetId === 'piotr_sokol') || sim.player.health < 100 || sim.missionFailed, 'EB1 dispara a Piotr');
+      // sem disjunção (revisão adversarial): o controlo tem de ser hostil nos três perfis, não «alguma coisa mudou». Medido: 8-9
+      // atiradores de EB1, ≥ 1 impacto em Piotr em 30 s (recruta 1 e 68 de vida; soldado/veterano 5 e morre) e impactos na secção.
+      const eb1Shooters = eb1(sim).filter((e) => e.shotsFired > 0);
+      assert.ok(eb1Shooters.length >= 5, `EB1 abre fogo com vários atiradores (${eb1Shooters.length})`);
+      const hitsOnPiotr = enemyHitsOnSide(sim).filter((e) => e.targetId === 'piotr_sokol');
+      assert.ok(hitsOnPiotr.length >= 1, 'EB1 acerta em Piotr');
+      assert.ok(sim.player.health < 100, `a vida de Piotr desce (${sim.player.health})`);
+      assert.ok(enemyHitsOnSide(sim).some((e) => e.targetId !== 'piotr_sokol'), 'e acerta na secção');
     });
   }
 });
@@ -103,6 +111,8 @@ describe('M02 C06: como a janela fecha (contacto aberto)', () => {
     assert.equal(c.opened, false);
     assert.equal(areaBContactPending(sim), true);
     assert.equal(enemyHitsOnSide(sim).length, 0);
+    assert.equal(sim.allies.reduce((n, a) => n + (a.shotsFired ?? 0), 0), 0, 'até ao contacto a secção não disparou');
+    assert.equal(eb1(sim).reduce((n, e) => n + e.shotsFired, 0), 0, 'nem EB1');
     while (sim.clock < openAt + 0.2) sim.tick(FRAME, {});
     assert.equal(c.opened, true);
     assert.equal(c.openedBy, 'timer');
@@ -110,8 +120,10 @@ describe('M02 C06: como a janela fecha (contacto aberto)', () => {
     assert.ok(sim.combatLog.some((e) => e.type === 'b_contact_opened' && e.by === 'timer'));
     assert.ok(c.openedAt - c.movementStartedAt < C01_CONTACT_DELAY_SEC.max + FRAME, 'D6: primeiro contacto combatível até 60 s de movimento');
     run(sim, 8);
+    assert.equal(areaBContactPending(sim), false);
     assert.ok(eb1(sim).some((e) => e.shotsFired > 0), 'depois do contacto EB1 combate');
-    assert.ok(sim.allies.some((a) => (a.shotsFired ?? 0) > 0) || sim.enemies.some((e) => e.shotsFired > 0));
+    // sem a disjunção «alguém dispara»: os DOIS lados combatem depois do contacto, cada um por si (a secção já não está calada)
+    assert.ok(sim.allies.some((a) => (a.shotsFired ?? 0) > 0), 'e a secção também abre fogo');
   });
 
   it('proximidade: a ≤ 25 m de um defensor o contacto abre no mesmo tick (quem chega ao pé deles é visto)', () => {
@@ -202,5 +214,65 @@ describe('M02 C06: snapshot, restauro e validador da janela (campo aditivo areaB
     const other = new M02BenchSimulation(3);
     other.restoreSnapshot(legacy);
     assert.equal(areaBContactPending(other), false);
+  });
+});
+
+// FIX (revisão adversarial): `openedAt` e `movementStartedAt` eram gravados com toFixed(3), que arredonda para cima; com o dt real de um
+// frame (1/60 s) o instante ficava 0,1-0,5 ms à frente do relógio e o validador (`> clock + 1e-9`) recusava o checkpoint desse passo —
+// um F5 no frame em que o avanço começa, ou logo a seguir a um tiro, perdia-se (10 de 30 desfasamentos). `instantAt` arredonda para baixo.
+describe('M02 C06/C02: os instantes passados do contacto nunca ficam à frente do relógio (F5 logo a seguir não é recusado)', () => {
+  const PRE_TICKS = Array.from({ length: 30 }, (_, i) => i);
+
+  it('o início do avanço em B: em 30 desfasamentos do relógio, o instante gravado ≤ relógio e o F5 desse frame é aceite', () => {
+    for (const pre of PRE_TICKS) {
+      const sim = new M02BenchSimulation(5, { storage: createMemoryStorage() });
+      for (let i = 0; i < pre; i++) sim.tick(FRAME, {});
+      sim.enterAreaBC06();
+      sim.drainEvents();
+      let started = false;
+      for (let i = 0; i < 600 && !started; i++) {
+        sim.tick(FRAME, { forward: 1 });
+        started = sim.areaB.contact.movementStartedAt !== null;
+      }
+      assert.equal(started, true, `desfasamento ${pre}: o avanço começou`);
+      const c = sim.areaB.contact;
+      assert.ok(c.movementStartedAt <= sim.clock, `desfasamento ${pre}: movementStartedAt ${c.movementStartedAt} ≤ relógio ${sim.clock}`);
+      sim.drainEvents();
+      sim.saveCheckpoint('cp_m02_manual');
+      const rejected = sim.drainEvents().find((e) => e.type === 'checkpoint-rejected');
+      assert.equal(rejected, undefined, `desfasamento ${pre}: F5 aceite (${rejected?.reason ?? ''})`);
+    }
+  });
+
+  it('a abertura do contacto em B por um tiro fora do tick: openedAt ≤ relógio e o snapshot passa o validador, em 30 desfasamentos', () => {
+    for (const pre of PRE_TICKS) {
+      const sim = new M02BenchSimulation(7, { storage: createMemoryStorage() });
+      sim.enterAreaBC06();
+      for (let i = 0; i < 20 + pre; i++) sim.tick(FRAME, { forward: 1 });
+      assert.equal(sim.areaB.contact.opened, false, 'ainda dentro da janela');
+      sim.firePlayerWeapon(true);
+      const c = sim.areaB.contact;
+      assert.equal(c.opened, true);
+      assert.equal(c.openedBy, 'player_shot');
+      assert.ok(c.openedAt <= sim.clock, `desfasamento ${pre}: openedAt ${c.openedAt} ≤ relógio ${sim.clock}`);
+      const snap = sim.snapshot();
+      snap.checkpointId = 'cp_m02_manual';
+      const v = validateM02Snapshot(snap);
+      assert.equal(v.valid, true, `desfasamento ${pre}: ${v.reason}`);
+    }
+  });
+
+  it('o mesmo em C01/C02 (c01Contact): início do avanço e abertura por tiro nunca à frente do relógio', () => {
+    for (const pre of PRE_TICKS) {
+      const sim = new M02BenchSimulation(3, { startScene: 'C01' });
+      for (let i = 0; i < pre; i++) sim.tick(FRAME, {});
+      for (let i = 0; i < 6; i++) sim.tick(FRAME, { forward: 1 });
+      const c = sim.c01Contact;
+      assert.notEqual(c.movementStartedAt, null);
+      assert.ok(c.movementStartedAt <= sim.clock, `desfasamento ${pre}: movementStartedAt ${c.movementStartedAt} ≤ relógio ${sim.clock}`);
+      sim.firePlayerWeapon(true);
+      assert.equal(c.opened, true);
+      assert.ok(c.openedAt <= sim.clock, `desfasamento ${pre}: openedAt ${c.openedAt} ≤ relógio ${sim.clock}`);
+    }
   });
 });
