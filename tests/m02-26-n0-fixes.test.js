@@ -568,3 +568,35 @@ describe('N0-5: B03 tem as janelas altas das fachadas longas (N e S) e a porta p
   });
 });
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Item 6 — zones.northGate.width coerente com o vão real
+
+describe('N0-6: zones.northGate.width coincide com o vão entre os muros do portão norte', () => {
+  const west = layout.exteriorCovers.find((c) => c.id === 'cov_gate_wall_west');
+  const east = layout.exteriorCovers.find((c) => c.id === 'cov_gate_wall_east');
+  const gap = east.min[0] - west.max[0];
+
+  it('reprodução: o layout anterior dizia 3,2 m e o vão real é 3,6 m', () => {
+    assert.ok(Math.abs(gap - 3.6) < 1e-9);
+    const old = structuredClone(layout);
+    old.zones.northGate.width = 3.2;
+    const { problems } = buildOpeningsMarkdown({ layout: old, sha256: 'antigo' });
+    assert.ok(problems.some((p) => p.subject === 'northGate'));
+  });
+
+  it('corrigido: a largura da zona é o vão real e o centro do portão está a meio dos muros', () => {
+    assert.ok(Math.abs(layout.zones.northGate.width - gap) < 1e-9);
+    assert.ok(Math.abs(layout.zones.northGate.x - (west.max[0] + east.min[0]) / 2) < 1e-9);
+    assert.ok(Math.abs(layout.zones.northGate.z - (west.min[2] + west.max[2]) / 2) < 1e-9);
+    const world = makeWorld(layout);
+    assert.equal(deepestWall(world, layout.zones.northGate.x, layout.zones.northGate.z, 0, PLAYER.radius, PLAYER.standHeight), null, 'a cápsula passa no vão do portão');
+  });
+});
+
+describe('N0: a lista de problemas da tabela de vãos fica sem ERRO nem AVISO', () => {
+  it('só restam os INFO (janelas altas sem vista a um jogador em pé, coerente com o PDF F4)', () => {
+    const { problems } = buildOpeningsMarkdown(loadLayout());
+    assert.deepEqual(problems.filter((p) => p.sev !== 'INFO'), []);
+    assert.ok(problems.every((p) => /win_b03_(west|north|south)_high/.test(p.subject)));
+  });
+});

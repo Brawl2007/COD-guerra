@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1988" viewBox="0 0 1040 1988" font-family="DejaVu Sans, Verdana, sans-serif">
 <title>M02-01 Quinta (bancada N0) — planta com escala</title>
-<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 0d4ad89cc0ce74d05e189ee4beae4c68372942b5b1df25d2865cae3fd7527312). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
+<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 f7104f461bd65d98df9db970d85c53d3f5c99885cee7fb1ebe2ea2668c7d3964). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
 <defs>
 <clipPath id="clip-plan"><rect x="56" y="74" width="600" height="1128"/></clipPath>
 <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c9c4b4" stroke-width="2"/></pattern>
@@ -12,7 +12,7 @@
 </defs>
 <rect width="1040" height="1988" fill="#f4f0e4"/>
 <text x="56" y="26" font-size="17" font-weight="bold" fill="#22362f">M02-01 · Bancada da quinta (N0) · planta com escala</text>
-<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 0d4ad89cc0ce</text>
+<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 f7104f461bd6</text>
 <text x="56" y="58" font-size="10.5" fill="#444">Gerada de missions/m02-bzura/m02-01-quinta-layout.json; esquemática, não é levantamento histórico nem aprovação do N0.</text>
 <g id="plano" clip-path="url(#clip-plan)">
 <rect x="56" y="74" width="600" height="1128" fill="#e9e6d8"/>
@@ -62,7 +62,7 @@
 <rect id="ramp_south_exit" x="68" y="1070" width="48" height="48" fill="none" stroke="#4c7084" stroke-width="1" stroke-dasharray="4 3"><title>ramp_south_exit</title></rect>
 <text transform="translate(89.6 980) rotate(-90)" font-size="11" font-weight="bold" fill="#35586c" text-anchor="middle">VALA (cota -1.1 m)</text>
 </g>
-<g id="portao-norte"><line x1="346.4" y1="686" x2="365.6" y2="686" stroke="#22362f" stroke-width="2" stroke-dasharray="3 2"/><text x="369.2" y="698" font-size="9" fill="#22362f">Portão (0; −24) vão 3.2 m</text></g>
+<g id="portao-norte"><line x1="345.2" y1="686" x2="366.8" y2="686" stroke="#22362f" stroke-width="2" stroke-dasharray="3 2"/><text x="369.2" y="698" font-size="9" fill="#22362f">Portão (0; −24) vão 3.6 m</text></g>
 <g id="coberturas-exteriores">
 <rect id="cov_start_parapet" x="339.2" y="364.4" width="33.6" height="3.6" fill="#b59b72" stroke="#3a2f1c" stroke-width="0.8"><title>cov_start_parapet · Talude de partida · earth · h 0.95 m</title></rect>
 <rect id="cov_gate_wall_west" x="272" y="683.9" width="73.2" height="4.2" fill="#a8614a" stroke="#3a2f1c" stroke-width="0.8"><title>cov_gate_wall_west · Muro oeste do portão norte · brick · h 1.62 m</title></rect>
