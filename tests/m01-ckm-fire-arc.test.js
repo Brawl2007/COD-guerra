@@ -94,7 +94,9 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   // Re-measured on purpose for package 2 (golden amendment 21, 2026-11-04: dust, first aid, safeX 190 and the stick grenade): the assault of the neutral route closes in to 23 m of the rearguard and the east demolition
   // waits 8 s longer for the deck (980 -> 988 before it), while the escort that follows is shorter (the dust of the demolition hides the German knot), so the whole route has 4 samples fewer (1312 -> 1308); the census of
   // clear samples is unchanged (135, the same nine targets, nothing before the west demolition; tools/m01-ckm-fire-arc.mjs routeSweep).
-  assert.equal(r.samples,1308);assert.equal(r.samplesBeforeEastDemolition,988);
+  // Re-measured on purpose for the supporting round (golden amendment 22, 2026-11-05: updateDeckSupport): the deck support shortens the deck fight of the neutral route, so the east demolition comes 33 samples sooner (988 -> 955 before it)
+  // and the whole route 36 samples fewer (1308 -> 1272); the census of clear samples is unchanged (135, the same nine targets, nothing before the west demolition; tools/m01-ckm-fire-arc.mjs routeSweep).
+  assert.equal(r.samples,1272);assert.equal(r.samplesBeforeEastDemolition,955);
   // Re-measured on purpose for the 05:35 fill (golden amendment 12, 2026-10-19): the dike riflemen also fire at the player at the deck post, the main RNG moves from 05:35 and the
   // deck fight of this route plays out differently (enemy samples 42546 -> 42427, 27550 -> 27431); samples and the clear-sample census below are unchanged (135, the same nine).
   // Amendment 14 (2026-10-22): the 3 samples fewer after the east demolition take 138 enemy samples with them (42427 -> 42289); before it unchanged (27431), census unchanged.
@@ -103,7 +105,8 @@ test('whole-route sweep: no German actor is visible from the muzzle while the ca
   // Amendment 19 (2026-10-24, R3-a): enemy samples 46765 -> 47450, before the east demolition 32025 -> 32240 (the longer window above; the same cause).
   // Amendment 19 (2026-10-25, the R3-a review): enemy samples 47450 -> 46756, before the east demolition 32240 -> 32148 (the window above; the same cause).
   // Amendment 21 (2026-11-04, package 2): enemy samples 46756 -> 45388, before the east demolition 32148 -> 32268 (the window above; the same cause).
-  assert.equal(r.enemySamples,45388);assert.equal(r.enemySamplesBeforeEastDemolition,32268);
+  // Amendment 22 (2026-11-05, supporting round): enemy samples 45388 -> 44118, before the east demolition 32268 -> 30804 (the window above; the same cause).
+  assert.equal(r.enemySamples,44118);assert.equal(r.enemySamplesBeforeEastDemolition,30804);
   assert.equal(r.clearEnemySamplesBeforeEastDemolition,0);assert.equal(r.clearEnemySamplesAfterEastBeforeWestDemolition,0);
   // Re-measured on purpose, with the repo tool, for the NPC navigation round every solid (golden amendment 05, 2026-10-18, phys x npc integration): the west demolition, which waits
   // for every ally west of x -90, is consumed 0.15 s later on this route (movedEvents in docs/verification/m01-runtime/npc-navigation-2026-10-18/GOLDEN_AMENDMENT_05.json) while the
