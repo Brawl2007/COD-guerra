@@ -463,7 +463,11 @@ test('demolition inside the road truss shows the actual bearing while mouse look
 // 2026-11-04 (package 2, golden amendment 21): the assault reaches its closing lines (safeX 190) and the dust of the blasts hides the Poles (src/game/m01-dust.js), so the deck fight of this route changes again: the
 // casualties of the route's CP-D save are now de_spans_0..4 (de_east_3 survives; de_spans_5 to de_spans_9 live to the blast, as tests/m01-german-retreat.test.js records for the golden route), i.e. 45 alive of the 50.
 // Measured on the route's own save with a Node M01Simulation(1).restoreSnapshot on the branch tree (enemyAlive 45, not alive de_spans_0..4); the browser restore must still reproduce exactly the route's casualties.
-const CPD_ENEMIES_ALIVE=45;
+// 2026-11-05 (golden amendment 22, part B): one round of German supporting fire (4f5d992b) gives the deck search its cause, and the deck fight of this route changes once more: the casualties of the
+// route's CP-D save are now de_spans_0..3, de_spans_5, de_spans_6, de_spans_8 and de_spans_9 (de_spans_4 and de_spans_7 live: they are the carriers of tests/m01-german-retreat.test.js after 6a4043a5), i.e. 42 alive
+// of the 50. Measured on the route's own save with a Node M01Simulation.restoreSnapshot: 45 at 68892bce and at 4d72bacf (search from hold, before the round), 42 at 4f5d992b and at 5791ef91 (the line).
+// The full browser run of 2026-11-05 received 42 at this assertion; the pin stays exact (a restore must reproduce the route's casualties, no more and no fewer).
+const CPD_ENEMIES_ALIVE=42;
 test('a genuine CP-D reload keeps east destruction and casualties, including restart and page reload',async({page},info)=>{
   test.setTimeout(slowGlTestTimeout({route:true,boots:2,simSeconds:3,frames:16}));   // flow() = Node route; the page is reloaded once (second boot); no casualty happens in the 60 s after this save (Node)
   const snapshot=flow().checkpoints.cp_m01_d_retirada;
