@@ -86,6 +86,9 @@ window.addEventListener('keydown', (e) => {
       console.warn('[M02] F9 sem checkpoint restaurável:', err.message);
     }
   }
+  // FIX-CD (D1): com a missão falhada os atalhos de bancada que mudam o estado ficam parados (sair é F9 ou o botão de reinício);
+  // antes o KeyM concluía e exportava uma missão falhada como `completed: true`.
+  if (sim.missionFailed) return;
   if (e.code === 'Digit0') sim.startAreaAFullC01();
   if (e.code === 'Digit1') teleportToPanorama('SN1');
   if (e.code === 'Digit2') teleportToPanorama('SN2');
@@ -132,26 +135,32 @@ selLighting?.addEventListener('change', (e) => {
 });
 
 document.getElementById('btn-start-c01')?.addEventListener('click', () => {
+  if (sim.missionFailed) return; // FIX-CD: atalhos parados com a missão falhada
   sim.startAreaAFullC01();
 });
 
 document.getElementById('btn-transition-tab')?.addEventListener('click', () => {
+  if (sim.missionFailed) return; // FIX-CD: atalhos parados com a missão falhada
   sim.triggerTransitionTAB({ skip: false });
 });
 
 document.getElementById('btn-enter-area-b')?.addEventListener('click', () => {
+  if (sim.missionFailed) return; // FIX-CD: atalhos parados com a missão falhada
   sim.enterAreaBC06();
 });
 
 document.getElementById('btn-enter-area-c')?.addEventListener('click', () => {
+  if (sim.missionFailed) return; // FIX-CD: atalhos parados com a missão falhada
   sim.enterAreaCC09();
 });
 
 document.getElementById('btn-c10-c11-lis')?.addEventListener('click', () => {
+  if (sim.missionFailed) return; // FIX-CD: atalhos parados com a missão falhada
   playC10ToC11Lis();
 });
 
 document.getElementById('btn-c12-epilogue')?.addEventListener('click', () => {
+  if (sim.missionFailed) return; // FIX-CD: atalhos parados com a missão falhada
   sim.completeC12Epilogue();
 });
 

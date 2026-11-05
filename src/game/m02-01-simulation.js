@@ -249,6 +249,15 @@ export function validateM02Snapshot(snap) {
   if (snap.checkpointId !== undefined && (typeof snap.checkpointId !== 'string' || !snap.checkpointId)) {
     return { valid: false, reason: 'Identificador de checkpoint inválido no snapshot.' };
   }
+  // FIX-CD (D1/I3): um checkpoint é um ponto de reinício seguro. Piotr morto (vida 0 ou `alive` falso) ou a missão já falhada num
+  // checkpoint davam um reinício que volta a falhar no tick seguinte (ciclo). Um snapshot sem `checkpointId` pode mostrar a falha.
+  if (
+    snap.checkpointId !== undefined &&
+    isPlainObject(snap.player) &&
+    (snap.player.alive === false || !(snap.player.health > 0) || (snap.missionFailed ?? null) !== null)
+  ) {
+    return { valid: false, reason: `Checkpoint ${snap.checkpointId} recusado: Piotr morto ou missão falhada não é um ponto de reinício.` };
+  }
 
   const p = snap.player;
   if (
@@ -674,6 +683,7 @@ export class M02BenchSimulation {
     this.c11Active = false;
     this.m03ExportPackage = null;
     this.missionFailed = null;
+    this.#lastOrderFeedback = null;
     this.hazardBlasts = [];
     this.hazardBlastSeq = 0;
 
@@ -1030,6 +1040,9 @@ export class M02BenchSimulation {
   }
 
   completeC12Epilogue(options = {}) {
+    // FIX-CD (D1): uma missão falhada não se conclui por atalho (KeyM da bancada): nada muda e devolve null.
+    this.#evaluateMissionFailure();
+    if (this.missionFailed) return null;
     return this.#runCheckpointBatch(() => runCompleteC12Epilogue(this, options));
   }
 
@@ -1580,6 +1593,11 @@ export class M02BenchSimulation {
    * registo a fonte, o aviso que a anunciou e quem a lançou; sem `meta` o registo é o de sempre (granada do jogador).
    */
   detonateGrenadeAt(x, y, z, radius = 6.5, meta = null) {
+    // Ação atómica (FIX-CD): chamada fora do tick (bancada), os checkpoints que ela pede gravam-se no fim, depois de avaliada a falha.
+    return this.#runCheckpointBatch(() => this.#detonate(x, y, z, radius, meta));
+  }
+
+  #detonate(x, y, z, radius, meta) {
     const center = { x, y: Math.max(this.world.heightAt(x, z) + 0.35, y), z };
     const worldChanges = this.world.applyExplosionDamageToWorld(center, Math.min(radius, 5.5));
     this.navigator.sync();
@@ -1802,6 +1820,8 @@ export class M02BenchSimulation {
     this.#runCheckpointBatch(() => {
       const due = [];
       this.#evaluateTacticalContext(due);
+      // FIX-CD: depois da falha não se pedem checkpoints (antes, a cada tick, um `checkpoint-rejected` repetido: 368 em 70 s).
+      if (this.missionFailed) return;
       for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
     });
   }
@@ -2045,6 +2065,9 @@ export class M02BenchSimulation {
       if (this.#checkpointBatchDepth === 0) {
         const due = this.#pendingCheckpointIds;
         this.#pendingCheckpointIds = [];
+        // FIX-CD: a falha avalia-se no fim de cada passo/ação atómica, ANTES de gravar. Uma ação de bancada fora do tick (p. ex. uma
+        // explosão que mata Piotr e o último defensor) gravava cp_m02_b_acesso com Piotr morto, porque a falha só se avaliava em #step.
+        if (completed) this.#evaluateMissionFailure();
         // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
         if (completed) this.#saveCheckpointBatch(due);
       }
@@ -2191,7 +2214,8 @@ export class M02BenchSimulation {
   /** Snapshot → validação → índice em memória → loja. Não mexe em `checkpointsReached` (quem chama já o marcou). */
   #recordCheckpoint(checkpointId, persist) {
     // D1: com a missão falhada nada se grava (automático ou manual): o checkpoint seria o próprio estado de falha e, sendo o
-    // último, tirava ao jogador o ponto de reinício bom.
+    // último, tirava ao jogador o ponto de reinício bom. A falha avalia-se aqui também (F5 fora do tick com Piotr já morto; FIX-CD).
+    this.#evaluateMissionFailure();
     if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
@@ -2457,6 +2481,8 @@ export class M02BenchSimulation {
   #activateRestore(p) {
     // Pedidos de checkpoint pendentes pertenciam à linha temporal descartada.
     this.#pendingCheckpointIds = [];
+    // O retorno da última ordem (fora do snapshot) também: com o relógio a recuar, a bancada mostrava a recusa antiga (FIX-CD).
+    this.#lastOrderFeedback = null;
     this.seed = p.seed;
     this.rng = new Random(p.seed);
     this.rng.state = p.rngState;

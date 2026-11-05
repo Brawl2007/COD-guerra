@@ -1197,7 +1197,7 @@ export function exportCampaignResultToM03(sim) {
     schema: 'cod-guerra-campaign-bridge-m02-to-m03-v1',
     missionId: 'M02',
     nextMissionId: 'M03',
-    completed: Boolean(sim.flags['m02.completed']),
+    completed: Boolean(sim.flags['m02.completed']) && !sim.missionFailed, // D1: uma missão falhada nunca exporta concluída
     historicalDates: {
       offensiveStart: '1939-09-09',
       reorganizationMorning: '1939-09-10',
