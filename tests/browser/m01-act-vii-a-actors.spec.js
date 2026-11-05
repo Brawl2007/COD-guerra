@@ -23,12 +23,12 @@ test.beforeAll(()=>{
   mkdirSync(OUT,{recursive:true});
 });
 
-test('second echelon: Germans drawn as bodies on Low, Medium and High, from the parapet and 80 m forward',async({browser})=>{
+test('second echelon: Germans drawn as bodies on Low, Medium and High, from the parapet and 80 m forward',async({browser,baseURL})=>{
   test.setTimeout(900000);
   const report={scenes:{}};
   for(const scene of ['parapet','forward'])for(const quality of (process.env.VIS_TIERS??'low,medium,high').split(',')){
     const save=saves[scene],tiers=report.scenes[scene]??={};
-    const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,baseURL:'http://127.0.0.1:4173/COD-guerra/'});
+    const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,baseURL});   // the configured server (playwright.config.js baseURL; a hard-coded :4173 fails whenever the suite runs on another port)
     await context.addInitScript(({key,s,q})=>{localStorage.setItem(key,JSON.stringify(s));localStorage.setItem('cod-guerra:visual-quality',q);},{key:ACT_KEY,s:save,q:quality});
     const page=await context.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
