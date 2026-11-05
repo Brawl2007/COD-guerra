@@ -20,24 +20,33 @@ function relocated(sim,snapshot,x,z,target){
   s.player.pitch=Math.atan2(target.y-y-1.6,Math.hypot(dx,dz));s.player.aiming=false;
   return s;
 }
+/**
+ * The staged views stand 650-1000 m east of the playable area (x > 1080). Since 16383eb6 the player's body physics clamps x to the edge of the area + 10 m (450) on every tick that
+ * runs (src/world/m01-player-physics.js clampToMap), so a page that takes the pointer lock and lets two frames run can move the camera hundreds of metres before the pause: «still at the
+ * staged view» (hypot < 1) held only when no tick ran (the full run of 2026-11-05 received 653.6 m on wagon-near). The page therefore never takes the lock (the same technique as the reference
+ * frame of m01-demolition-setpiece.spec.js): Continue loads the checkpoint, the game stays paused on it and the simulation never ticks; a frame drawn at the loaded clock is the staged view.
+ * No quality round trip: the wagons' LOD policy has hysteresis, so a detour through Medium leaves wagons on a coarser level than the approved High counts (13/33/19 instead of 15/31/19
+ * on wagon-near in the first attempt). Nothing is injected into the simulation.
+ */
+async function drawStaged(page,state,quality){
+  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9&&window.gameDiagnostics().m01.wagons.loaded.length===6,null,{timeout:120000});
+  await expect(page.locator('#error')).toBeHidden();await page.locator('#quality').selectOption(quality);
+  await page.locator('#continue').click();
+  await page.waitForFunction(clock=>{const g=window.gameDiagnostics?.();return g?.clock===clock&&g.m01?.demolition?.clock===clock;},state.clock,{timeout:120000});
+  const data=await page.evaluate(()=>window.gameDiagnostics());
+  expect(data.paused,'the staged view is drawn without a single tick').toBe(true);expect(data.clock).toBe(state.clock);expect(data.quality).toBe(quality);
+  return data;
+}
 async function openView(browser,info,{name,sim,snapshot,x,z,target,quality}){
   const page=await browser.newPage(),errors=[],failed=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('requestfailed',r=>failed.push(r.url()));
   const state=relocated(sim,snapshot,x,z,target);
   await page.addInitScript(({key,state,quality})=>{
     localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality',quality);
+    HTMLCanvasElement.prototype.requestPointerLock=function(){};   // never locked: the game stays paused on the loaded state and never ticks
   },{key,state,quality});
   await page.goto('?debug=1');
-  // Everything loads in the menu: the relocated player is outside the playable area, so the mission may only run for the
-  // few frames needed to render the restored state (the 8 s out-of-bounds grace must never elapse).
-  await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9&&window.gameDiagnostics().m01.wagons.loaded.length===6,null,{timeout:120000});
-  await expect(page.locator('#error')).toBeHidden();await page.locator('#quality').selectOption(quality);
-  const before=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames??0);
-  await page.locator('#continue').click();
-  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  await page.waitForFunction(before=>window.gameDiagnostics().m01.renderedFrames>before+1,before,{timeout:120000});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
-  const data=await page.evaluate(()=>window.gameDiagnostics());
+  const data=await drawStaged(page,state,quality);
   expect(Math.hypot(data.player.x-x,data.player.z-z)).toBeLessThan(1);   // still at the staged view, never restored elsewhere
   await page.screenshot({path:info.outputPath(name),style:'#pause,#hud,#menu,#subtitle {visibility:hidden!important}',timeout:120000});
   const counters={view:name,quality:data.quality,player:{x:data.player?.x,z:data.player?.z},drawCalls:data.drawCalls,triangles:data.triangles,
@@ -94,15 +103,13 @@ test('total wagon GLB failure keeps the 65 procedural proxies and adds no detail
   const snapshots=trainSnapshots(),page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/assets/models/provisional/m01-wagons/*.glb',r=>r.abort());
   const state=relocated(snapshots.sim,snapshots.arrival,1120.2,-7.4,{x:1121.85,z:-2.5,y:.2});
-  await page.addInitScript(({key,state})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality','high');},{key,state});
+  await page.addInitScript(({key,state})=>{localStorage.setItem(key,JSON.stringify(state));localStorage.setItem('cod-guerra:visual-quality','high');HTMLCanvasElement.prototype.requestPointerLock=function(){};},{key,state});   // never locked: see drawStaged
   await page.goto('?debug=1');
   await page.waitForFunction(()=>window.gameDiagnostics?.().m01?.models.length===9&&
     new Set(window.gameDiagnostics().m01.assetFailures.filter(f=>f.path.includes('m01-wagons/')).map(f=>f.path)).size===6,null,{timeout:120000});
   await page.locator('#quality').selectOption('high');
-  const before=await page.evaluate(()=>window.gameDiagnostics().m01.renderedFrames??0);await page.locator('#continue').click();
-  await page.waitForFunction(()=>!window.gameDiagnostics().paused&&document.pointerLockElement?.id==='game',null,{timeout:120000});
-  await page.waitForFunction(before=>window.gameDiagnostics().m01.renderedFrames>before+1,before,{timeout:120000});
-  await page.evaluate(()=>document.exitPointerLock());await expect(page.locator('#pause')).toBeVisible();
+  await page.locator('#continue').click();
+  await page.waitForFunction(clock=>{const g=window.gameDiagnostics?.();return g?.clock===clock&&g.m01?.demolition?.clock===clock;},state.clock,{timeout:120000});
   const all=await page.evaluate(()=>window.gameDiagnostics()),d=all.m01.wagons;
   expect(Math.hypot(all.player.x-1120.2,all.player.z+7.4)).toBeLessThan(1);
   expect(d.proxies).toBe(65);expect(d.loaded).toEqual([]);expect(d.batches).toBe(0);

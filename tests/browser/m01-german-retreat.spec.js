@@ -31,6 +31,10 @@ function place(snapshot,view){
   s.player.angle=Math.atan2(dz,dx);s.player.pitch=Math.atan2(dy,Math.hypot(dx,dz));return s;
 }
 const VIEW={x:38,z:42.4,aim:centre};
+// The knot forms REGROUP_AHEAD m east of the westmost survivor (src/game/m01-simulation.js). At T48 (f9d76fb5) the Germans had stood at x ~1020 (980 m from VIEW: the band was 950-1010).
+// Since combat slice 2 (2b458e24, 2026-10-18: the deck assault goes to mid-deck and the demolition waits for the deck to clear) the westmost survivor is 58 m further west:
+// the knot stands at x ~960-964, 922-926 m from VIEW (measured with this very route in Node at 2b458e24, 195b6f4e and the integration line; the browser reads 922.4). Same 60 m band, re-centred.
+const DISTANCE_FROM={min:900,max:960};
 
 async function decode(browser,pngs){
   const page=await browser.newPage();
@@ -87,7 +91,7 @@ test('06:12: the Germans of the spans stand regrouped on the east deck, the fall
   // --- drawn: the six survivors are distant-front silhouettes on the deck ---
   const items=data.m01.impostors.items.filter(i=>SURVIVORS.includes(i.id));
   expect(items.map(i=>i.id).sort(),'the regrouped men are drawn as distant silhouettes').toEqual(knot.map(a=>a.id).sort());
-  for(const i of items){expect(i.nation).toBe('de');expect(i.posture,i.id).toBe('standing');expect(i.distance).toBeGreaterThan(950);expect(i.distance).toBeLessThan(1010);expect(i.moving,i.id+' stands still').toBeFalsy();}
+  for(const i of items){expect(i.nation).toBe('de');expect(i.posture,i.id).toBe('standing');expect(i.distance).toBeGreaterThan(DISTANCE_FROM.min);expect(i.distance).toBeLessThan(DISTANCE_FROM.max);expect(i.moving,i.id+' stands still').toBeFalsy();}
   // --- the capture at 06:12 and the same frame without the impostors ---
   const shot={style:'#pause,#hud,#menu{visibility:hidden!important}',timeout:120000};
   const on=await page.screenshot({...shot,path:info.outputPath('m01-german-regroup-0612.png')});

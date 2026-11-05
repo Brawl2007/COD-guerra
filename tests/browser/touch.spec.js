@@ -1,11 +1,12 @@
-import { test, expect } from '@playwright/test';
-import {gameBooted,expectPaused} from '../helpers/m01-browser-boot.js';
+import { test } from '@playwright/test';
+import {expect,gameBooted,expectPaused,slowGlPage,slowGlTestTimeout,simWaitTimeout} from '../helpers/m01-browser-boot.js';
 
 // iPhone 11 landscape (CSS px). Emulated Chromium only: real Safari needs a human playtest.
 test.use({ viewport: { width: 896, height: 414 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
 
 async function touchStart(page) {
   const errors = [];
+  slowGlPage(page);
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('?debug=1');
   await gameBooted(page);
@@ -22,7 +23,9 @@ async function cdp(page) {
 }
 
 test('touch plays M01 without pointer lock: walk, look, fire, reload, pause/resume', async ({ page }, info) => {
-  test.setTimeout(process.env.CI ? 240000 : 120000);
+  // One boot, the skip taps, a 1-frame stick/look drag, a shot (bolt cycle 1.05 s), a reload and the pause/resume: about 12 s of simulation, and every tap, screenshot and
+  // HUD fact below is composited by a frame (tests/helpers/m01-browser-boot.js).
+  test.setTimeout(slowGlTestTimeout({ simSeconds: 14, frames: 30 }));
   const errors = await touchStart(page);
   expect(await page.evaluate(() => document.pointerLockElement)).toBeNull();
   await page.screenshot({ path: info.outputPath('touch-controls.png') });
@@ -34,7 +37,7 @@ test('touch plays M01 without pointer lock: walk, look, fire, reload, pause/resu
   // Left thumb pushes the stick up (forward) while the right thumb drags to look: two simultaneous fingers.
   await t.send('touchStart', [{ x: 100, y: 330, id: 1 }, { x: 600, y: 150, id: 2 }]);
   for (let i = 1; i <= 8; i++) await t.send('touchMove', [{ x: 100, y: 330 - i * 8, id: 1 }, { x: 600 + i * 12, y: 150, id: 2 }]);
-  await page.waitForFunction(b => { const d = window.gameDiagnostics(); return Math.hypot(d.player.x - b.player.x, d.player.z - b.player.z) > .3 && d.player.angle !== b.player.angle; }, before, { timeout: 30000 });
+  await page.waitForFunction(b => { const d = window.gameDiagnostics(); return Math.hypot(d.player.x - b.player.x, d.player.z - b.player.z) > .3 && d.player.angle !== b.player.angle; }, before, { timeout: simWaitTimeout(2) });
   await t.send('touchEnd', []);
   const afterMove = await diag(page);
   await page.waitForTimeout(400);

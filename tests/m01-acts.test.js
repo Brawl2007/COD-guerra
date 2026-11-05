@@ -357,6 +357,7 @@ test('the decision record of a German is checked: the place a gun last saw a fla
     ['a mark made by nobody',e=>seen(e,gun.id,{...good,who:'ghost'})],
     ['a stream that is not a 32-bit number',e=>{e.actSave.actors.find(a=>a.id===gun.id).ai.rng=-1;}],
     ['a record with a foreign key',e=>{e.actSave.actors.find(a=>a.id===gun.id).ai.mood='angry';}],
+    ['a record that is missing (it would crash the tick)',e=>{delete e.actSave.actors.find(a=>a.id===gun.id).ai;}],
     ['a record that is not an object',e=>{e.actSave.actors.find(a=>a.id===gun.id).ai=7;}],
   ];
   for(const [name,mutate] of cases){const e=snap();mutate(e);const r=runner.load(JSON.stringify(e));assert.equal(r.ok,false,name);assert.match(r.error,/inválid/,`${name}: ${r.error}`);}

@@ -52,8 +52,13 @@ test('live M01 combat: real MG34 fire raises intensity; front bed, reverb, buses
   expect(limitsHold(live)).toBe(true);expect(new Set(live.audio.loops).size).toBe(live.audio.loops.length);
   expect(live.audio.liveSources).toBeLessThanOrEqual(live.audio.sourceBudget+80);expect(live.audio.quality).toBe('low');
   // A simulação continua a autoridade: o áudio só lê eventos já emitidos (fila pendente = tiros alemães em voo sonoro).
-  expect(live.m01.pendingAudio.every(s=>['fire','blast'].includes(s.kind))).toBe(true);
-  await info.attach('live-combat-audio.json',{body:JSON.stringify({initial,realMGDue,deadline,heard:{clock:heard.clock,audio:heard.audio},live:live.audio},null,2),contentType:'application/json'});
+  // The pending queue holds the sounds of sim events that were already emitted and have not yet arrived (`at` > the clock: playDueSounds plays and drops everything due at the end of each frame).
+  // Since 0ecb220d (2026-10-18, per-event variation) it also holds the scripted distant battle (500 m+: >= 1.5 s in flight), the nearby impacts and the grenade throws of the same events,
+  // so which kinds are in flight at the sampled frame is a race (this test failed at this line in the full run of 2026-11-05 and passed alone). The assertion is the contract itself:
+  // only kinds that game.js schedules from a sim event, each still in flight.
+  const PENDING_KINDS=['fire','blast','impact','grenade-throw','distant-battle'];
+  expect(live.m01.pendingAudio.every(s=>PENDING_KINDS.includes(s.kind)&&s.at>live.clock),JSON.stringify(live.m01.pendingAudio.map(s=>({kind:s.kind,in:+(s.at-live.clock).toFixed(2)})))).toBe(true);
+  await info.attach('live-combat-audio.json',{body:JSON.stringify({initial,realMGDue,deadline,heard:{clock:heard.clock,audio:heard.audio},live:live.audio,pending:live.m01.pendingAudio.map(s=>({kind:s.kind,inSec:+(s.at-live.clock).toFixed(2)}))},null,2),contentType:'application/json'});
   expect(errors).toEqual([]);
 });
 

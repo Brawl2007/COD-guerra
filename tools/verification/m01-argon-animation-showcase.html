@@ -40,7 +40,9 @@ const allies=sim.actors.filter(a=>a.team==='ally'&&a.alive&&!a.civilian&&a.role=
 const enemies=sim.actors.filter(a=>a.team==='enemy'&&a.alive&&!a.civilian&&a.role==='RIFLEMAN'&&a.weapon!=='mg34').slice(0,6);
 const source=[...allies,...enemies];
 if(source.length<9)throw Error('Sem soldados suficientes na simulação original: '+source.length);
-let mode='platoon',started=performance.now(),last=null,frame=0;
+// The stage clock advances by the wall time of each rendered frame, capped at 0.25 s like the game loop (src/game/frame-catchup.js): on software GL one frame takes seconds, and a clock
+// read straight from performance.now() jumped past the short reaction pulses (hit_front, turn_left/right) before the first frame of a stage was drawn.
+let mode='platoon',stageT=0,lastNow=null,last=null,frame=0;
 const modes={
  platoon:['12+ soldados: caminhar, correr, sprint e agachado','Walk · Run · Sprint · Crouch walk · sincronização dos pés'],
  reactions:['Reações de combate e mudança de direção','Hit front · Near miss duck · Turn left / right · idle'],
@@ -64,7 +66,7 @@ function stageActors(t){
   }else{
     a.state='GUARD';a.motion={...(original.motion??{}),gait:'idle',speed:0,odometer:0,gaitSince:0};
     const pulse=t%2.3,at=t-pulse;
-    if(i%4===0)a.hitAt=at;
+    if(i%4===0){a.hitAt=at;a.hitYaw=a.facing;}   // the round comes from the front: since f1137273 (T08 clip library, 2026-10-18) the hit clip follows the sector of hitYaw against facing (hit_left/right/back), and the sim actor's own hitYaw pointed anywhere
     if(i%4===1)a.suppressedAt=at;
     if(i%4===2)a.bodyYaw=a.facing+.46;
     if(i%4===3)a.bodyYaw=a.facing-.46;
@@ -73,7 +75,8 @@ function stageActors(t){
  });
 }
 function animate(now){
- const t=(now-started)/1000;
+ stageT+=lastNow===null?0:Math.min((now-lastNow)/1000,.25);lastNow=now;
+ const t=stageT;
  const actors=stageActors(t);
  characters.update(actors,t,{x:0,z:mode==='closeup'?-5:-11},'medium',sim.battleClock);
  if(mode==='closeup'){camera.position.set(-.35,2.20,-6.9);camera.lookAt(0,1.08,0);}
@@ -85,7 +88,7 @@ function animate(now){
  requestAnimationFrame(animate);
 }
 window.showcase={
- setMode(next){if(!modes[next])throw Error('Modo inválido '+next);mode=next;started=performance.now();
+ setMode(next){if(!modes[next])throw Error('Modo inválido '+next);mode=next;stageT=0;
   title.textContent=modes[mode][0];subtitle.textContent=modes[mode][1];return mode;},
  diagnostics(){return structuredClone(last)},
  modes:Object.keys(modes)

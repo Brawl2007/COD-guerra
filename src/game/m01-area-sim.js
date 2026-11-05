@@ -261,7 +261,7 @@ export class M01AreaSimulation {
     if(s.card.kind==='entry'){
       this.consume(this.profile.cardEndEvent);this.activate(this.profile.arrivalObjective);this.mission.phase=this.phase('ARRIVAL');
       this.saveCheckpoint(this.profile.arrivalCheckpoint);this.say('arrive_card_end');
-    }else{this.mission.complete=true;this.mission.phase=this.phase('END');this.flags[`${this.profile.flagPrefix}.completed`]=true;this.emit({type:'complete'});}
+    }else{this.mission.complete=true;this.mission.phase=this.phase('END');this.flags[`${this.profile.flagPrefix}.completed`]=true;this.checkpoint=this.snapshot(false);this.emit({type:'complete'});}   // like act 1's debrief: the finished state is what Continue reloads, not the last checkpoint of the route
   }
   // ------------------------------------------------------------------------------------------------------------------------------------------------- tick
   tick(dt,controls={}){
