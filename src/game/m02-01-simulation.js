@@ -1536,9 +1536,11 @@ export class M02BenchSimulation {
     } else if (activeCombatDefenders.length === 0) {
       if (this.objective.id !== 'C04') {
         this.dialogue.trigger('bz39_c03_04', this);
-        // Pedido aqui, gravado depois de o objetivo C04 abaixo estar escrito (antes ficava gravado com o objetivo anterior).
-        if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       }
+      // Pedido aqui, gravado depois de o objetivo C04 abaixo estar escrito (antes ficava gravado com o objetivo anterior).
+      // Não só na transição de objetivo: um tick que lançou depois de escrever C04 descartou o pedido (ver
+      // #runCheckpointBatch) e a transição já não se repete; assim o tick seguinte volta a pedi-lo, como no caminho COMPLETE (FIX-2c).
+      if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       this.objective.id = 'C04';
       this.objective.title = 'C04 (Pomar Sul): Reagrupar junto ao poço/pomar e sinalizar o ferido [E]';
       this.objective.status = 'active';
@@ -1784,23 +1786,44 @@ export class M02BenchSimulation {
   }
 
   /**
-   * Carregamento rápido (F9 da bancada). Se esta sessão já gravou: o checkpoint manual, senão o último gravado nesta sessão.
-   * Numa sessão que ainda não gravou nada (página acabada de abrir ou recarregar): o último checkpoint persistido na loja.
-   * Só sem nada disso volta ao início em memória. Devolve { checkpointId, source }.
+   * Carregamento rápido (F9 da bancada). Ordem de recurso, saltando as entradas que não se deixam restaurar (incompatíveis
+   * ou inválidas; FIX-2c): 1) o checkpoint manual desta sessão; 2) o último gravado nesta sessão; 3) o último gravado na
+   * loja persistida (página acabada de abrir ou recarregada); 4) o checkpoint manual da loja; 5) o início em memória.
+   * Devolve { checkpointId, source } e, se saltou alguma entrada, `skipped: [{ checkpointId, source, reason }]`.
    */
   quickLoadCheckpoint() {
-    const sessionId = this.checkpoints.has('cp_m02_manual') ? 'cp_m02_manual' : this.#lastSessionCheckpointId;
-    if (sessionId) {
-      this.restoreCheckpoint(sessionId);
-      return { checkpointId: sessionId, source: 'session' };
+    const attempts = [];
+    const add = (checkpointId, source, restore) => {
+      if (checkpointId && !attempts.some((a) => a.checkpointId === checkpointId && a.source === source)) {
+        attempts.push({ checkpointId, source, restore });
+      }
+    };
+    if (this.checkpoints.has('cp_m02_manual')) add('cp_m02_manual', 'session', (id) => this.restoreCheckpoint(id));
+    add(this.#lastSessionCheckpointId, 'session', (id) => this.restoreCheckpoint(id));
+    const skipped = [];
+    const stored = this.saveStore ? this.saveStore.load() : null;
+    if (stored?.ok) {
+      const latestId = stored.record.latestCheckpointId;
+      if (stored.loadable[latestId]) {
+        add(latestId, 'store', (id) => this.restorePersistedCheckpoint(id));
+      } else {
+        const why = stored.rejectedCheckpoints.find((r) => r.id === latestId)?.reason ?? 'incompatível';
+        skipped.push({ checkpointId: latestId, source: 'store', reason: why });
+      }
+      if (stored.loadable.cp_m02_manual) add('cp_m02_manual', 'store', (id) => this.restorePersistedCheckpoint(id));
     }
-    const latest = this.saveStore ? this.saveStore.latestCheckpointId() : null;
-    if (latest) {
-      this.restorePersistedCheckpoint(latest);
-      return { checkpointId: latest, source: 'store' };
+    for (const { checkpointId, source, restore } of attempts) {
+      try {
+        restore(checkpointId);
+      } catch (error) {
+        skipped.push({ checkpointId, source, reason: error.message });
+        continue;
+      }
+      return skipped.length ? { checkpointId, source, skipped } : { checkpointId, source };
     }
     this.restoreCheckpoint('cp_m02_a_preparacao');
-    return { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
+    const result = { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
+    return skipped.length ? { ...result, skipped } : result;
   }
 
   /**

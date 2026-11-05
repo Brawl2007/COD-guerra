@@ -76,7 +76,8 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     // Depois de recarregar a página o índice em memória só tem o início: o F9 vai à loja persistida (FIX-2b).
     try {
-      sim.quickLoadCheckpoint();
+      const loaded = sim.quickLoadCheckpoint();
+      if (loaded.skipped?.length) console.warn('[M02] F9 saltou checkpoints incompatíveis:', loaded.skipped);
     } catch (err) {
       console.warn('[M02] F9 sem checkpoint restaurável:', err.message);
     }

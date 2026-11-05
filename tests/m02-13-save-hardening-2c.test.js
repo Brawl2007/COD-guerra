@@ -375,3 +375,113 @@ describe('M02-13 — 4: loja bloqueada (current ilegível / outra formatVersion)
     assert.ok(handler.indexOf('confirm(') > -1 && handler.indexOf('confirm(') < handler.indexOf('clearPersistedSaves()'), 'confirm() antes de clearPersistedSaves()');
   });
 });
+
+// ---------------------------------------------------------------------------------------------------------------------
+describe('M02-13 — 5: F9 salta entradas incompatíveis e tenta a seguinte compatível', () => {
+  const KEY = M02_SAVE_STORAGE_KEY;
+  const incompatible = (storage, checkpointId) => {
+    for (const slot of [KEY, `${KEY}:previous`]) {
+      const raw = storage.getItem(slot);
+      if (!raw) continue;
+      const r = JSON.parse(raw);
+      if (r.checkpoints[checkpointId]) r.checkpoints[checkpointId].world.layoutSchema = 'old-layout';
+      storage.setItem(slot, JSON.stringify(r));
+    }
+  };
+  /** Sessão que gravou o manual em (-23, -12) e depois cp_m02_b_test; devolve a loja e a sessão. */
+  function twoSaves() {
+    const storage = createMemoryStorage();
+    const s1 = new M02BenchSimulation(SEED, { storage });
+    s1.teleportPlayer(-23, -12, 0);
+    s1.saveCheckpoint('cp_m02_manual');
+    for (let i = 0; i < 5; i++) s1.tick(DT, {});
+    s1.saveCheckpoint('cp_m02_b_test');
+    return { storage, s1 };
+  }
+
+  it('página recarregada, último gravado incompatível, manual compatível na loja: F9 carrega o manual, não o início', () => {
+    const { storage } = twoSaves();
+    incompatible(storage, 'cp_m02_b_test');
+    const page = new M02BenchSimulation(SEED, { storage });
+    assert.equal(page.saveStore.latestCheckpointId(), null, 'o último gravado já não é carregável');
+    const loaded = page.quickLoadCheckpoint();
+    assert.equal(loaded.checkpointId, 'cp_m02_manual');
+    assert.equal(loaded.source, 'store');
+    assert.equal(page.player.x, -23, 'o estado do manual foi restaurado');
+    assert.deepEqual(loaded.skipped.map((s) => s.checkpointId), ['cp_m02_b_test'], 'diz que saltou o incompatível');
+  });
+
+  it('sessão sem manual cujo último gravado ficou incompatível (memória e loja): salta para o manual compatível da loja', () => {
+    const { storage, s1 } = twoSaves();
+    s1.checkpoints.delete('cp_m02_manual'); // esta sessão só tem cp_m02_b_test no índice
+    s1.checkpoints.get('cp_m02_b_test').world.layoutSchema = 'old-layout';
+    incompatible(storage, 'cp_m02_b_test');
+    const loaded = s1.quickLoadCheckpoint();
+    assert.equal(loaded.checkpointId, 'cp_m02_manual');
+    assert.equal(loaded.source, 'store');
+    assert.equal(s1.player.x, -23);
+  });
+
+  it('sem nada compatível em lado nenhum: início em memória (como antes)', () => {
+    const { storage } = twoSaves();
+    incompatible(storage, 'cp_m02_b_test');
+    incompatible(storage, 'cp_m02_manual');
+    const page = new M02BenchSimulation(SEED, { storage });
+    const loaded = page.quickLoadCheckpoint();
+    assert.equal(loaded.checkpointId, 'cp_m02_a_preparacao');
+    assert.equal(loaded.source, 'start');
+  });
+
+  it('caminhos normais inalterados e sem «skipped»: manual da sessão, último da sessão, último da loja', () => {
+    const { storage, s1 } = twoSaves();
+    assert.deepEqual(s1.quickLoadCheckpoint(), { checkpointId: 'cp_m02_manual', source: 'session' });
+    s1.checkpoints.delete('cp_m02_manual');
+    assert.deepEqual(s1.quickLoadCheckpoint(), { checkpointId: 'cp_m02_b_test', source: 'session' });
+    const page = new M02BenchSimulation(SEED, { storage });
+    assert.deepEqual(page.quickLoadCheckpoint(), { checkpointId: 'cp_m02_b_test', source: 'store' });
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+describe('M02-13 — notas: um tick que lança a meio não perde o checkpoint (caminho C04 incluído)', () => {
+  for (const variant of ['COMPLETE', 'C04']) {
+    it(`caminho ${variant}: o pedido do tick que lançou é descartado, mas o tick seguinte volta a pedir cp_m02_b_acesso uma só vez`, () => {
+      const storage = createMemoryStorage();
+      const sim = new M02BenchSimulation(SEED, { storage });
+      for (let i = 0; i < 30; i++) sim.tick(DT, {});
+      const c04 = sim.enemies.find((e) => e.c04Candidate);
+      const keep = sim.enemies.find((e) => !e.c04Candidate && e.encounterId !== 'EA0');
+      if (variant === 'COMPLETE') {
+        killAll(sim.enemies.filter((e) => e !== keep));
+      } else {
+        killAll(sim.enemies.filter((e) => e !== keep && e !== c04));
+        c04.state = 'WOUNDED_UNARMED';
+        c04.nonCombatant = true;
+        c04.health = 30;
+      }
+      const p = sim.player;
+      Object.assign(keep, { x: p.x + 6, z: p.z, y: sim.world.heightAt(p.x + 6, p.z), health: 1, crouched: false });
+      p.angle = 0;
+      p.pitch = Math.atan2(keep.y + 1.25 - (p.y + p.eyeHeight), 6);
+      sim.drainEvents();
+      const original = sim.horizon.update.bind(sim.horizon);
+      let armed = true;
+      sim.horizon.update = (...args) => {
+        if (armed) {
+          armed = false;
+          throw new Error('falha simulada no horizonte');
+        }
+        return original(...args);
+      };
+      assert.throws(() => sim.tick(DT, { fire: true }), /falha simulada/);
+      assert.equal(sim.drainEvents().some((e) => e.type === 'checkpoint-saved' && e.checkpointId === 'cp_m02_b_acesso'), false);
+      assert.equal(sim.checkpointsReached.includes('cp_m02_b_acesso'), false, 'o tick que lançou não deixou o checkpoint marcado');
+      const saved = [];
+      for (let i = 0; i < 20; i++) {
+        sim.tick(DT, {});
+        saved.push(...sim.drainEvents().filter((e) => e.type === 'checkpoint-saved').map((e) => e.checkpointId));
+      }
+      assert.deepEqual(saved, ['cp_m02_b_acesso']);
+    });
+  }
+});
