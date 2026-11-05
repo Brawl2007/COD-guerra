@@ -1071,9 +1071,16 @@ export class M01AreaSimulation {
     return this;
   }
   restoreCheckpoint(){return this.restoreSnapshot(this.checkpoint);}
+  /**
+   * H9 D5, "Continuar em nível mais baixo": the checkpoint is restored as a save of the strictly lower level `to`, and stays the respawn point. The F1 engagement record (timers.telegraph)
+   * is state only soldado and veterano write and validateAreaSnapshot refuses on recruta, where nothing reads it, so lowering to recruta drops it (act 1's relevelSnapshot does the same);
+   * between soldado and veterano it stays (a pair of times, valid on both). The lowered save is validated before anything changes, so a refusal leaves the simulation as it was.
+   */
   lowerDifficulty(to){
     const order=M01_DIFFICULTY_IDS;if(order.indexOf(to)<0||order.indexOf(to)>=order.indexOf(this.difficulty))throw new RangeError('Só se pode descer de nível.');
-    const cp=clone(this.checkpoint);cp.difficulty=to;this.difficulty=to;this.carry.difficulty=to;this.restoreSnapshot(cp);this.checkpoint=clone(cp);
+    const cp=clone(this.checkpoint);cp.difficulty=to;if(to===M01_DIFFICULTY_SIM_DEFAULT&&cp.timers)delete cp.timers.telegraph;
+    validateAreaSnapshot(cp,this.plan);
+    this.difficulty=to;this.carry.difficulty=to;this.restoreSnapshot(cp);this.checkpoint=clone(cp);
   }
   loadCheckpoint(text){
     try{if(typeof text!=='string'||text.length>1000000)throw new Error('Ficheiro ausente ou demasiado grande.');this.restoreSnapshot(JSON.parse(text));return {ok:true};}
