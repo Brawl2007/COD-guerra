@@ -833,8 +833,6 @@ export function detonateC10FixedArtillery(sim) {
   }
 
   const spec = sim.areaC.fixedImpactSpec;
-  // Add persistent debris obstacle blocking the exterior street at (4, 18), forcing evacuation through B09 nave!
-  syncAreaCWorldDamage(sim);
 
   // D5: o impacto consome o aviso agendado. Sem aviso cumprido (atalho de bancada que rebenta já) fica marcado `warningSkipped`.
   const hazard = sim.hazardBlasts.find((b) => b.source === 'scripted_artillery') ?? null;
@@ -842,12 +840,16 @@ export function detonateC10FixedArtillery(sim) {
   const warningSkipped = !hazard || sim.clock + 1e-9 < hazard.impactAt;
 
   // Apply causal explosion damage at the fixed coordinates (never shifts to chase or spare player!)
+  // FIX-CD: a explosão rebenta ANTES de existir o entulho que ela própria cria. Antes o entulho de pedra (caixa que contém o centro do
+  // impacto) era acrescentado primeiro e ocluía todos os raios: o SP03, única explosão perigosa real do jogo, nunca feria ninguém.
   const blastReport = sim.detonateGrenadeAt(spec.x, 0.6, spec.z, spec.radius, {
     source: 'scripted_artillery',
     blastId: hazard?.id ?? null,
     thrownBy: null,
     warningSkipped,
   });
+  // Add persistent debris obstacle blocking the exterior street at (4, 18), forcing evacuation through B09 nave!
+  syncAreaCWorldDamage(sim);
   sim.combatLog.push({
     clock: Number(sim.clock.toFixed(2)),
     type: 'sp03_fixed_artillery_impact',
