@@ -140,6 +140,32 @@ O que mudou:
 - A entrada do Lis não pára sob fogo.
 - As portas de B12 têm 1,6 m, contra 1,4 m no PDF.
 
+**Combate D, integrado em `edc51ad`. Testes: `tests/m02-*.test.js` 293/293 (169 s); build OK. A secção D do PDF está nas pp. 16–18.**
+
+O que mudou:
+- **Falha da missão:** `missionFailed` quando o Piotr morre. Pára o roteiro e todas as gravações. O reinício é explícito, a partir do último checkpoint compatível (painel ou F9).
+- **Explosões:** cada explosão perigosa tem `hazardBlasts` com aviso de 5–8 s e posição fixa; o validador exige o intervalo [5,8].
+  - A IA alemã não lança granadas, porque o PDF não o prevê; existe só a API `throwEnemyGrenade`.
+  - O evento `blast-warning` **ainda não é consumido** pelo audiovisual.
+- **Dificuldade:** `src/game/m02-difficulty.js` com os IDs e multiplicadores importados de `m01-difficulty.js`.
+  - Impactos de Kar98k até matar: recruta 7, soldado 3, veterano 2.
+  - **Alerta:** os mesmos multiplicadores não dão a mesma letalidade que na M01, porque o ciclo da Kar98k é 1,55 s na M02 contra 9–18 s na M01.
+  - Em soldado e veterano, o MissionBot morre em 2 de 3 sementes. **É preciso calibrar com playtest humano.**
+  - A dificuldade é configuração e fica fora do snapshot. A bancada não tem seletor.
+- **Ordens:** só «cobrir» e «avançar», e só na Área A, que é a única com nós de cobertura. «Suprimir», «flanquear» e as teclas Z/X/B antigas foram retiradas. O efeito causal D4 mantém-se e foi testado com 3 sementes.
+- **Moral por grupo de encontro (D3):** o EC2 já não se rende no 1.º tick do C10.
+- **Contacto C02 por proximidade:** abre a 25 m; o valor é **escolha do agente**, porque o PDF não o fixa. Com avanço prudente mantém-se em [30,60) s.
+
+**Ajustes de testes a vigiar:**
+- No m02-09, a semente 19390913 passou a 19390917, porque o piloto do pomar morria (está na revisão).
+- No m02-13, o EA0 é rendido explicitamente.
+
+**Pendentes:**
+- 2.ª falha dura de D1 (incapacidade de personagem).
+- `hpOnCheckpoint`: há risco de espiral de morte.
+- Alternância apoio/deslocação.
+- Ordens nas Áreas B e C.
+
 **Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
 morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
 morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
@@ -165,7 +191,8 @@ morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 | FIX-2b defeitos da revisão adversarial | **Integrado** (`318b265`); verificação independente: ACEITE COM RESSALVAS | — |
 | FIX-2c P2 residuais dos saves | **Integrado**: merge `605e3fc` (`fe05c21`…`1bac72d`) | Ver lista abaixo |
 | 6–7 Roteiro C e set pieces J/E/F | **Integrado**: merge `07999a4` (`bb0cbf4`…`85dea7a`) | Ver lista abaixo |
-| 8 Combate D | **EM CURSO**: é o único agente ativo | worktree `m02-combat-d`, base `07999a4` |
+| 8 Combate D | **Integrado**: merge `edc51ad` (`4cedca2`…`46b59de`) | Ver lista abaixo |
+| Revisão adversarial do roteiro C e do combate D | **EM CURSO**: é o único agente ativo | Só leitura; provas em `scratchpad/review-cd/` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
