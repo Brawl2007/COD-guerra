@@ -797,9 +797,13 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
   // Evaluate squad status for Małek & Wierzba (severely wounded are evacuated and do not reappear fit)
   for (const ally of sim.allies) {
     if (!ally.alive || ally.state === 'DOWN') {
-      ally.state = 'EVACUATED';
-      if (ally.id === 'pl_malek') sim.flags['m02.malek_status'] = 'evacuated';
-      if (ally.id === 'pl_wierzba') sim.flags['m02.wierzba_status'] = 'evacuated';
+      // C07 evacua os FERIDOS GRAVES (caídos, DOWN). Quem morreu (DEAD, rebentado por explosão) não é um evacuado: «Ninguém morto ou
+      // evacuado regressa ao grupo» (I6, p. 35). Antes todo o `alive` falso passava a EVACUATED: um Lis morto era tratado como ferido
+      // evacuado e seguia para a M03 «presente no abrigo» (revisão adversarial). I4 (p. 34) já tem `dead` no domínio de malek/wierzba.
+      const dead = ally.state === 'DEAD';
+      if (!dead) ally.state = 'EVACUATED';
+      if (ally.id === 'pl_malek') sim.flags['m02.malek_status'] = dead ? 'dead' : 'evacuated';
+      if (ally.id === 'pl_wierzba') sim.flags['m02.wierzba_status'] = dead ? 'dead' : 'evacuated';
     } else if (ally.health < 55) {
       if (ally.id === 'pl_malek') sim.flags['m02.malek_status'] = 'wounded';
       if (ally.id === 'pl_wierzba') sim.flags['m02.wierzba_status'] = 'wounded';
@@ -1142,6 +1146,29 @@ function lisContactDialogue(sim) {
   sim.dialogue.update(sim);
 }
 
+/**
+ * Lis morto (DEAD: rebentado por uma explosão antes ou durante C11). O PDF não tem um quarto valor de `m02.lis_status` («Manter estes
+ * três valores; não renomear silenciosamente», I4, p. 34) nem faz dele uma falha dura: D1 (p. 16) só falha a missão por «personagem
+ * exigida pelo cânone» e por estado canónico impossível — e o desfecho «ausente» existe e é válido («A ausência é uma consequência
+ * válida», K5, p. 40; C12, pp. 14-15: «o lugar dele fica vazio e Wierzba só diz «Lis…»»; NAR-02: «ausente não fala nem reaparece»).
+ * Tratamento canónico: `missing` (I6, p. 35: «Ausente… Não reproduzir voz fora de cena»). Nunca `wounded_evacuated` nem
+ * `wounded_walking`: a M03 receberia um Lis «presente no abrigo» que morreu («Ninguém morto ou evacuado regressa ao grupo», I6).
+ * O estado do ator fica DEAD (a simulação diz a verdade); o enum é a abstração da campanha, que «não descreve morte comprovada».
+ */
+function lisIsDead(sim) {
+  return lisActor(sim)?.state === 'DEAD';
+}
+
+/**
+ * Lis consciente e presente (I6, p. 35: «Pode dizer «Guarda um pouco de água. Todos precisam.» se consciente e presente»): vivo, em
+ * pé ou amparado, na célula. É a mesma regra com que o diretor de diálogo cala o Lis caído/evacuado (M02DialogueDirector.trigger);
+ * quem foi incapacitado antes de C11 e evacuado por outro segue para a M03 ferido, mas a sua fala «é removida ou atribuída a um
+ * morador/companheiro presente» (PROMPT_MESTRE, M03: «Se Lis estiver ausente/incapacitado pelo resultado de M02»).
+ */
+function lisIsConscious(lis) {
+  return Boolean(lis) && lis.alive === true && !lis.detachedOutOfCell && !['DOWN', 'EVACUATED', 'MISSING', 'DEAD'].includes(lis.state);
+}
+
 function markLisMissing(sim, source) {
   const lis = lisActor(sim);
   sim.areaC.lisSupportMode = 'missing';
@@ -1149,7 +1176,7 @@ function markLisMissing(sim, source) {
   sim.areaC.lisOutcomeSource = source;
   sim.flags['m02.lis_status'] = 'missing';
   if (lis) {
-    lis.state = 'MISSING';
+    if (lis.state !== 'DEAD') lis.state = 'MISSING'; // um morto continua morto: só o enum da campanha diz «ausente»
     lis.detachedOutOfCell = true;
     lis.goal = null;
     lis.moving = false;
@@ -1167,7 +1194,10 @@ export function assistLisInC11(sim, mode = 'wounded_evacuated') {
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
 
   const lis = lisActor(sim);
-  if (mode === 'wounded_evacuated' || mode === 'wounded_walking') {
+  if (lisIsDead(sim) && mode !== 'missing') {
+    // Um Lis morto não se «abriga»: forçar um desfecho presente exportaria um Lis fantasma para a M03 (ver markLisMissing).
+    markLisMissing(sim, 'forced');
+  } else if (mode === 'wounded_evacuated' || mode === 'wounded_walking') {
     lisContactDialogue(sim);
     sim.areaC.lisSupportMode = mode;
     sim.areaC.lisPhase = 'sheltered';
@@ -1336,6 +1366,7 @@ export function updateAreaC(sim, dt) {
 export function deriveLisOutcome(sim) {
   const a = sim.areaC;
   const flag = sim.flags['m02.lis_status'];
+  if (lisIsDead(sim)) return 'missing'; // morto (antes de C11 ou já abrigado): ver markLisMissing. Antes `lisWasIncapacitated` dava wounded_evacuated
   if (a.lisPhase === 'sheltered' && ['wounded_evacuated', 'wounded_walking'].includes(flag)) return flag;
   if (a.lisWasIncapacitated) return 'wounded_evacuated';
   return 'missing';
@@ -1431,15 +1462,29 @@ function lastGroupDestinies(sim) {
   return { survivors: count('evacuated'), dead: count('dead'), inTransit: count('in_transit'), members };
 }
 
+/**
+ * Pacote M02→M03 (I4/I6, pp. 34-35). SÓ lê o estado, exceto na missão concluída: `m02.lis_status` é «nulo durante missão» (I4) e
+ * «o enum final só é escolhido quando a evacuação foi resolvida», por isso uma exportação com a missão em curso ou falhada devolve
+ * `completed: false`, o Lis por resolver (`status: null`, ninguém presente nem a falar), NÃO escreve a flag (antes escrevia
+ * `wounded_evacuated` por omissão em qualquer chamada) e não fica guardada em `sim.m03ExportPackage`.
+ * Só com a missão concluída o desfecho é o escrito por C12; se faltar (API chamada à mão com `m02.completed` forçado) é
+ * `wounded_evacuated`, salvo Lis morto, que é `missing` (ver markLisMissing).
+ */
 export function exportCampaignResultToM03(sim) {
-  const lisStatus = sim.flags['m02.lis_status'];
+  const completed = Boolean(sim.flags['m02.completed']) && !sim.missionFailed; // D1: uma missão falhada nunca exporta concluída
   const validLisStatuses = ['wounded_evacuated', 'wounded_walking', 'missing'];
-  const resolvedLisStatus = validLisStatuses.includes(lisStatus) ? lisStatus : 'wounded_evacuated';
-  sim.flags['m02.lis_status'] = resolvedLisStatus;
+  let resolvedLisStatus = null;
+  if (completed) {
+    const lisStatus = sim.flags['m02.lis_status'];
+    resolvedLisStatus = validLisStatuses.includes(lisStatus) ? lisStatus : lisIsDead(sim) ? 'missing' : 'wounded_evacuated';
+    sim.flags['m02.lis_status'] = resolvedLisStatus;
+  }
 
   const lisPresentInWarsaw = resolvedLisStatus === 'wounded_evacuated' || resolvedLisStatus === 'wounded_walking';
-  const m03WaterLineSpeaker = lisPresentInWarsaw ? 'pl_lis' : null;
-  const m03CanonicalWaterLine = lisPresentInWarsaw
+  // I6: a fala da água é «se consciente e presente». Quem foi incapacitado antes de C11 segue ferido mas sem a fala (lisIsConscious).
+  const lisCanSpeak = lisPresentInWarsaw && lisIsConscious(lisActor(sim));
+  const m03WaterLineSpeaker = lisCanSpeak ? 'pl_lis' : null;
+  const m03CanonicalWaterLine = lisCanSpeak
     ? 'Guarda um pouco de água. Todos precisam.'
     : null;
 
@@ -1447,7 +1492,7 @@ export function exportCampaignResultToM03(sim) {
     schema: 'cod-guerra-campaign-bridge-m02-to-m03-v1',
     missionId: 'M02',
     nextMissionId: 'M03',
-    completed: Boolean(sim.flags['m02.completed']) && !sim.missionFailed, // D1: uma missão falhada nunca exporta concluída
+    completed,
     historicalDates: {
       offensiveStart: '1939-09-09',
       reorganizationMorning: '1939-09-10',
@@ -1468,7 +1513,7 @@ export function exportCampaignResultToM03(sim) {
         presentInShelter: lisPresentInWarsaw,
         combatCapableNormalPatrol: false, // I6: never returns cured/uninjured by default
         requiresSupportWalking: resolvedLisStatus === 'wounded_walking',
-        canSpeakCanonicalWaterLine: lisPresentInWarsaw,
+        canSpeakCanonicalWaterLine: lisCanSpeak,
         canonicalWaterLineSpeaker: m03WaterLineSpeaker,
         canonicalWaterLineText: m03CanonicalWaterLine,
       },
@@ -1479,7 +1524,7 @@ export function exportCampaignResultToM03(sim) {
     },
   };
 
-  sim.m03ExportPackage = m03Export;
+  if (completed) sim.m03ExportPackage = m03Export; // missão em curso/falhada: só leitura (o estado, o snapshot e as flags ficam iguais)
   return m03Export;
 }
 

@@ -300,3 +300,181 @@ describe('M02 C11/C12: o último grupo (LG01-LG12) só conta como evacuado quand
     assert.equal(sim.flags['m02.last_group_survivors'], 11);
   });
 });
+
+// Revisão adversarial — I4 (p. 34) / I6 (p. 35) / D1 (p. 16): Lis com `alive` falso era exportado para a M03 como wounded_evacuated,
+// «presente no abrigo» e a dizer a fala da água, mesmo MORTO por uma explosão (C07 convertia todo o `alive` falso em EVACUATED).
+// Tratamento canónico (documentado em markLisMissing): Lis morto → `missing` (não há quarto valor: «Manter estes três valores»; não
+// é falha dura: D1 só falha por personagem exigida e K5 p. 40 diz «A ausência é uma consequência válida»); Lis caído (ferido, DOWN) e
+// evacuado por outro → wounded_evacuated, presente mas SEM a fala (só «se consciente e presente»; o diálogo já o calava). E a
+// exportação com a missão em curso ou falhada deixa de escrever `m02.lis_status`, que é «nulo durante missão».
+describe('M02 I4/I6: Lis fora de combate e a exportação para a M03 coerente', () => {
+  const blastLis = (sim) => {
+    const lis = lisOf(sim);
+    sim.detonateGrenadeAt(lis.x, lis.y + 0.5, lis.z, 6.5, null);
+    assert.equal(lis.alive, false, 'a explosão matou-o (pré-condição)');
+    assert.equal(lis.state, 'DEAD');
+    assert.equal(sim.missionFailed, null, 'Lis não é uma personagem exigida: a missão continua');
+    return lis;
+  };
+  const downLis = (sim) => Object.assign(lisOf(sim), { alive: false, health: 0, state: 'DOWN' });
+  const coherent = (pkg, sim) => {
+    const e = pkg.m03ImportState.lisEntry;
+    assert.equal(e.status, pkg.flags['m02.lis_status'], 'lisEntry.status igual à flag');
+    assert.equal(e.status, sim.flags['m02.lis_status']);
+    assert.equal(e.presentInShelter, e.status !== 'missing');
+    assert.equal(e.canSpeakCanonicalWaterLine, e.canonicalWaterLineSpeaker === 'pl_lis');
+    assert.equal(e.canSpeakCanonicalWaterLine, e.canonicalWaterLineText !== null);
+    assert.equal(e.combatCapableNormalPatrol, false);
+    assert.equal(e.requiresSupportWalking, e.status === 'wounded_walking');
+  };
+  /** Do abalo em A até C11, pelas mesmas funções do jogo (atalhos só para o cenário), com os hostis fora de jogo. */
+  const toC11 = (sim) => {
+    sim.enterAreaCC09(); // C07 (evacua os caídos) e C08
+    sim.startC10OrderChanges();
+    killHostiles(sim);
+    sim.detonateC10FixedArtillery();
+    assert.equal(sim.areaC.c11Started, true);
+  };
+
+  it('Lis MORTO por explosão em A: C07 não o «evacua», o desfecho de C12 é missing, o ator continua DEAD, ninguém o diz presente nem fala a fala da água', () => {
+    const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    const lis = blastLis(sim);
+    toC11(sim);
+    assert.equal(lis.state, 'DEAD', 'C07 só evacua os caídos (DOWN); «Ninguém morto ou evacuado regressa ao grupo» (I6)');
+    assert.equal(sim.areaC.lisPhase, 'incapacitated');
+    assert.equal(sim.allies.filter((a) => a.id === 'pl_lis').length, 1);
+    const pkg = sim.completeC12Epilogue();
+    assert.equal(sim.missionFailed, null);
+    assert.equal(pkg.completed, true);
+    assert.equal(pkg.flags['m02.lis_status'], 'missing');
+    assert.equal(sim.areaC.lisOutcomeSource, 'game');
+    assert.equal(lis.state, 'DEAD', 'a simulação não apaga a morte; só o enum da campanha diz «ausente»');
+    const e = pkg.m03ImportState.lisEntry;
+    assert.equal(e.status, 'missing');
+    assert.equal(e.presentInShelter, false);
+    assert.equal(e.canSpeakCanonicalWaterLine, false);
+    assert.equal(e.canonicalWaterLineSpeaker, null);
+    assert.equal(e.canonicalWaterLineText, null);
+    assert.equal(sim.dialogue.hasTriggered('bz39_c12_01'), false, 'Lis não fala em C12');
+    assert.equal(sim.dialogue.hasTriggered('bz39_c12_02'), true, 'Wierzba diz «Lis…»');
+    coherent(pkg, sim);
+    assert.equal(validateM02Snapshot(sim.snapshot()).valid, true);
+  });
+
+  it('o atalho KeyM com Lis morto em A: o desfecho forçado por omissão não o põe no abrigo (missing, fonte forced)', () => {
+    const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    const lis = blastLis(sim);
+    const pkg = sim.completeC12Epilogue();
+    assert.equal(pkg.completed, true);
+    assert.equal(pkg.flags['m02.lis_status'], 'missing');
+    assert.equal(sim.areaC.lisOutcomeSource, 'forced');
+    assert.equal(lis.state, 'DEAD');
+    assert.equal(pkg.m03ImportState.lisEntry.presentInShelter, false);
+    assert.equal(pkg.m03ImportState.lisEntry.canonicalWaterLineSpeaker, null);
+    coherent(pkg, sim);
+  });
+
+  it('forçar wounded_evacuated ou wounded_walking num Lis morto não cria um Lis fantasma: dá missing', () => {
+    for (const mode of ['wounded_evacuated', 'wounded_walking']) {
+      const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+      const lis = blastLis(sim);
+      assert.equal(sim.assistLisInC11(mode), 'missing', mode);
+      assert.equal(sim.areaC.lisOutcomeSource, 'forced');
+      assert.equal(lis.state, 'DEAD');
+      const pkg = sim.completeC12Epilogue({ lisOutcome: mode });
+      assert.equal(pkg.flags['m02.lis_status'], 'missing', mode);
+      assert.equal(pkg.m03ImportState.lisEntry.presentInShelter, false, mode);
+      coherent(pkg, sim);
+    }
+  });
+
+  it('Lis abrigado (wounded_evacuated escrito) e depois morto por uma explosão antes de C12 fechar: o desfecho passa a missing', () => {
+    const sim = setupC11();
+    const lis = lisOf(sim);
+    runRecording(sim, 40);
+    lis.health = 30;
+    sim.teleportPlayer(lis.x + 1.5, lis.z, 0, 0);
+    sim.tick(DT, {});
+    runRecording(sim, 400, { follow: true });
+    assert.equal(sim.flags['m02.lis_status'], 'wounded_evacuated');
+    assert.equal(sim.areaC.lisPhase, 'sheltered');
+    sim.teleportPlayer(EVAC_POINT[0], EVAC_POINT[1], 0, 0); // Piotr longe do abrigo, fora do raio da explosão
+    sim.detonateGrenadeAt(lis.x, lis.y + 0.5, lis.z, 6.5, null);
+    assert.equal(lis.state, 'DEAD');
+    assert.equal(sim.missionFailed, null);
+    const pkg = sim.completeC12Epilogue();
+    assert.equal(pkg.flags['m02.lis_status'], 'missing', 'a flag antiga não sobrevive à morte');
+    assert.equal(pkg.m03ImportState.lisEntry.presentInShelter, false);
+    coherent(pkg, sim);
+  });
+
+  it('Lis CAÍDO a tiro em A (ferido, DOWN): C07 evacua-o, C11 usa esse ferimento (wounded_evacuated, presente) mas sem a fala da água; o diálogo também o cala', () => {
+    const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    const lis = downLis(sim);
+    toC11(sim);
+    assert.equal(lis.state, 'EVACUATED', '«Feridos graves seguem por evacuação» (C07)');
+    const pkg = sim.completeC12Epilogue();
+    const e = pkg.m03ImportState.lisEntry;
+    assert.equal(e.status, 'wounded_evacuated');
+    assert.equal(e.presentInShelter, true, '«Lis sobrevive ferido se foi evacuado»');
+    assert.equal(e.canSpeakCanonicalWaterLine, false, 'I6: a fala é «se consciente e presente»; incapacitado, é removida ou atribuída a outro');
+    assert.equal(e.canonicalWaterLineSpeaker, null);
+    assert.equal(e.canonicalWaterLineText, null);
+    assert.equal(sim.dialogue.hasTriggered('bz39_c12_01'), false, 'o mesmo critério que o diálogo de C12');
+    coherent(pkg, sim);
+  });
+
+  it('controlo: Lis vivo e abrigado continua presente e a dizer a fala da água (wounded_evacuated e wounded_walking)', () => {
+    for (const mode of ['wounded_evacuated', 'wounded_walking']) {
+      const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+      const pkg = sim.completeC12Epilogue({ lisOutcome: mode });
+      const e = pkg.m03ImportState.lisEntry;
+      assert.equal(e.status, mode);
+      assert.equal(e.presentInShelter, true);
+      assert.equal(e.canSpeakCanonicalWaterLine, true);
+      assert.equal(e.canonicalWaterLineSpeaker, 'pl_lis');
+      assert.equal(e.canonicalWaterLineText, 'Guarda um pouco de água. Todos precisam.');
+      coherent(pkg, sim);
+    }
+  });
+
+  it('C07: Małek e Wierzba mortos por explosão ficam `dead` e DEAD (não «evacuados»); os caídos continuam evacuados', () => {
+    const sim = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    const malek = sim.allies.find((a) => a.id === 'pl_malek');
+    const wierzba = sim.allies.find((a) => a.id === 'pl_wierzba');
+    Object.assign(malek, { alive: false, health: 0, state: 'DEAD' });
+    Object.assign(wierzba, { alive: false, health: 0, state: 'DOWN' });
+    sim.completeC07Reorganization();
+    assert.equal(malek.state, 'DEAD');
+    assert.equal(sim.flags['m02.malek_status'], 'dead');
+    assert.equal(wierzba.state, 'EVACUATED');
+    assert.equal(sim.flags['m02.wierzba_status'], 'evacuated');
+  });
+
+  it('m02.lis_status é nulo durante a missão: exportar com a missão em curso ou falhada só lê (sem escrever a flag nem guardar o pacote)', () => {
+    const running = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    for (let i = 0; i < 5; i++) running.tick(DT, {});
+    const failed = new M02BenchSimulation(SEED, { startScene: 'C01' });
+    Object.assign(failed.allies.find((a) => a.id === 'pl_gruca'), { alive: false, health: 0, state: 'DOWN' });
+    failed.tick(DT, {});
+    assert.equal(failed.missionFailed?.reason, 'required_character_incapacitated');
+    for (const [label, sim] of [['em curso', running], ['falhada', failed]]) {
+      const before = JSON.stringify(sim.snapshot());
+      const pkg = sim.exportCampaignResultToM03();
+      assert.equal(pkg.completed, false, label);
+      assert.equal(sim.flags['m02.lis_status'], null, `${label}: a flag continua nula (I4)`);
+      assert.equal(pkg.flags['m02.lis_status'], null, label);
+      assert.equal(sim.m03ExportPackage, null, `${label}: o pacote não fica guardado`);
+      assert.equal(JSON.stringify(sim.snapshot()), before, `${label}: a exportação não muda o estado`);
+      assert.deepEqual(pkg.m03ImportState.lisEntry, {
+        status: null,
+        presentInShelter: false,
+        combatCapableNormalPatrol: false,
+        requiresSupportWalking: false,
+        canSpeakCanonicalWaterLine: false,
+        canonicalWaterLineSpeaker: null,
+        canonicalWaterLineText: null,
+      }, `${label}: Lis por resolver, ninguém presente nem a falar`);
+    }
+  });
+});
