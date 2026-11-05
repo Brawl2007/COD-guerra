@@ -65,7 +65,7 @@ test('the tactics are mission data validated at load: a typo stops the game',()=
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{delete d.tactics.support;})),'no support is the game of before the amendment');
   assert.equal(deckAssaultPlan(plan(d=>{delete d.tactics.support;})).tactics.support,null);
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.support.aheadM=DECK_SUPPORT_MIN_AHEAD_M;})),'the nearest the round may fall');
-  assert.deepEqual({...T.support},{delaySec:4,windowSec:12,aheadM:24},'the live data');
+  assert.deepEqual({...T.support},{delaySec:5,windowSec:12,aheadM:24},'the live data');
   assert.ok(Object.isFrozen(T.support)&&T.support.aheadM>20,'frozen, and outside the 20 m ring in which a shell shakes a man (m01-shell-blast.js)');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.safeX=120;})),'the floor of the number the owner may move');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.grenade.perMan=0;})),'no grenades is a valid choice');
