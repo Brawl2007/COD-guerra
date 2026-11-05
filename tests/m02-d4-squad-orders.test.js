@@ -313,7 +313,9 @@ describe('M02 D4: prova de 60 s com Piotr abrigado — efeito causal real da sec
         // 3) melhoria causal: suprimir a MG, neutralizar alguém ou conquistar cobertura — e o log liga a ação ao resultado
         const mgSuppressed = of('ally_suppressed_enemy').some((e) => e.targetId === 'DE-A05');
         const neutralized = of('ally_killed_enemy').length + of('enemy_wounded_unarmed_c04').length + of('enemy_surrendered').length;
-        assert.ok(mgSuppressed || neutralized >= 1 || captures.length >= 6, 'melhoria causal');
+        // FIX-CD: antes `… || captures.length >= 6`, sempre verdadeiro (já afirmado em 1): a melhoria tem de ser um efeito sobre o
+        // inimigo — MG suprimida ou alguém neutralizado (D4 p. 17); conquistar cobertura já conta em 1).
+        assert.ok(mgSuppressed || neutralized >= 1, `melhoria causal: MG suprimida ${mgSuppressed}, neutralizados ${neutralized}`);
         assert.ok(of('ally_hit_enemy').length + of('ally_killed_enemy').length >= 4, `impactos causais: ${of('ally_hit_enemy').length}`);
         for (const e of of('ally_hit_enemy')) {
           assert.ok(e.shooterId && e.targetId && e.damage > 0 && Number.isFinite(e.remainingHealth), 'cada impacto no log diz quem, a quem e quanto');

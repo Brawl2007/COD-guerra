@@ -143,7 +143,12 @@ describe('M02 D3: a moral conta só as baixas do próprio grupo (bug: EC2 rendia
     assert.equal(surrendered(a.enemies).length, 0, 'EA1: com a MG viva ninguém se rende');
     kill(a.enemies.find((e) => e.id === 'DE-A05'));
     idle(a, 0.5);
-    assert.ok(surrendered(a.enemies).length >= 1 || combatants(a.enemies).length === 0, 'EA1: com a MG abatida e 7+ baixas os restantes cedem');
+    // FIX-CD: antes `rendidos ≥ 1 OU sem combatentes` — passava também se ninguém se rendesse. Os que restam deixam TODOS de combater:
+    // o ferido do pomar (C04) fica ferido e desarmado e os outros rendem-se.
+    const ea1Alive = a.enemies.filter((e) => e.encounterId !== 'EA0' && e.alive);
+    assert.equal(combatants(a.enemies).length, 0, 'EA1: com a MG abatida e 8 baixas ninguém continua a combater');
+    assert.ok(surrendered(ea1Alive).length >= 1, 'EA1: pelo menos um rende-se');
+    for (const e of ea1Alive) assert.equal(e.state, e.c04Candidate ? 'WOUNDED_UNARMED' : 'SURRENDERED', `${e.id}: ${e.state}`);
   });
 });
 
