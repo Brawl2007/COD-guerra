@@ -117,6 +117,8 @@ H01-PDF foi lida por completo, com bibliografia e fotografias; H02, H30 e T23 ta
 
 **Regra de representação (secção 72).** Soldados inimigos em M01 são sobretudo pioneiros e guardas de fronteira na margem leste. Podem demonstrar medo, carregar feridos e recuar após a explosão das 06:10. A SS-Heimwehr aparece apenas como setor distante de combate no norte. **Nenhuma atrocidade é mostrada ou atribuída a unidade identificável em M01** (ver §8).
 
+**Fogo de apoio no tabuleiro (emenda 22 do Ato I, `GAMEPLAY_DRAMATIZATION`).** Quando a retaguarda polaca ocupa os seus postos no tabuleiro, cai **um** tiro de apoio alemão à sua frente (cratera e nuvem de pó; não fere nem abala ninguém). As fontes só dizem que a força incluía duas baterias leves e o comboio blindado (tabela acima); **nenhuma** dá fogo de apoio sobre o tabuleiro a esta hora, nem calibre, nem tipo, nem número de tiros. O tiro existe para o jogo ter uma razão para os atiradores do assalto perderem os polacos de vista e procurarem (`missions/m01-tczew/mission.json`, `deckAssault.tactics.support`); não é um facto e não deve ser contado como tal.
+
 ## 6. Geografia
 
 ### 6.1 Medidas e factos
