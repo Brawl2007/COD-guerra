@@ -12,7 +12,7 @@
   "history": [
     {
       "id": "h_np_attack",
-      "text": "Por volta das 07:00, ataque alemão vindo do norte (Koźlin/Koźliny): uma companhia com veículos blindados; um veículo destruído por um canhão AT; a infantaria repelida por metralhadoras.",
+      "text": "Por volta das 07:00, ataque alemão vindo do norte (Koźlin/Koźliny): uma companhia com veículos blindados; um veículo destruído por um canhão AT; a infantaria repelida (T08 e T16 dizem repelido; «por metralhadoras» não vem dos resumos de research/SOURCES.md).",
       "classification": "DOCUMENTED",
       "certainty": "BAIXA (fonte única)",
       "sources": [
@@ -37,9 +37,21 @@
     },
     {
       "id": "h_np_positions",
-      "text": "Posições de campo a norte e noroeste: 2.ª e 3.ª companhias, pelotões de metralhadoras, pelotão AT (Bofors wz.36), morteiros.",
+      "text": "Composição do batalhão em posições de campo a norte e noroeste: 2.ª e 3.ª companhias, pelotões de metralhadoras, pelotão AT (sem tipo de arma nas fontes), morteiros.",
       "classification": "DOCUMENTED",
-      "certainty": "MÉDIA (composição); posições pendentes (P4)",
+      "certainty": "MÉDIA (resumo de T03)",
+      "sources": [
+        "T03"
+      ],
+      "gaps": [
+        "tipo do canhão AT («Bofors wz.36» é identificação do jogo, não do resumo de T03 em research/SOURCES.md)"
+      ]
+    },
+    {
+      "id": "h_np_positions_place",
+      "text": "Onde ficam as posições (o parapeito, a ckm, o ponto do canhão AT) é reconstrução: as fontes não dão coordenadas.",
+      "classification": "RECONSTRUCTED",
+      "certainty": "posições pendentes (P4: sem mapa de 1939)",
       "sources": [
         "T03",
         "T08"
@@ -53,13 +65,13 @@
     },
     {
       "id": "h_np_echelons",
-      "text": "O ataque em duas vagas, a pausa de ~40 s entre elas (as metralhadoras da orla mantêm os postos) e o efetivo de cada vaga são dramatização para a duração do combate: a fonte única (T08) diz apenas que uma companhia atacou e que a infantaria foi repelida por metralhadoras; não dá vagas, pausas nem números.",
+      "text": "O ataque em duas vagas, a pausa de ~40 s entre elas (as metralhadoras da orla mantêm os postos) e o efetivo de cada vaga são dramatização para a duração do combate: o resumo da fonte única (T08, research/SOURCES.md) diz apenas que uma companhia com veículos blindados atacou e que um deles foi destruído por canhão AT; a infantaria detida por metralhadoras é dramatização; não dá vagas, pausas nem números.",
       "classification": "GAMEPLAY_DRAMATIZATION",
       "sources": []
     },
     {
       "id": "h_np_suppress",
-      "text": "As MG34 da orla disparam rajadas curtas de supressão sobre o sítio onde viram o último clarão de um atirador polaco (na pausa e quando os atiradores presos se escondem): dramatização para o ritmo do combate; a fonte única (T08) só diz que a infantaria foi repelida por metralhadoras.",
+      "text": "As MG34 da orla disparam rajadas curtas de supressão sobre o sítio onde viram o último clarão de um atirador polaco (na pausa e quando os atiradores presos se escondem): dramatização para o ritmo do combate; o resumo da fonte única (T08, research/SOURCES.md) não dá o fogo das metralhadoras.",
       "classification": "GAMEPLAY_DRAMATIZATION",
       "sources": []
     }
@@ -89,7 +101,7 @@
       "lines": [
         "Ataque vindo do norte repelido",
         "Fonte única (T08): um veículo blindado destruído por canhão AT",
-        "Infantaria repelida por metralhadoras",
+        "Infantaria detida pelo fogo: dramatização",
         "Os ataques a norte continuaram durante o dia (T16) · tipo dos veículos e lugar exato: desconhecidos"
       ]
     }
@@ -346,7 +358,7 @@
       "id": "grp_np_de",
       "name": "Tropas alemãs vindas do norte (sem insígnias)",
       "classification": "DOCUMENTED (ataque do norte, T08/T16) / GAMEPLAY_DRAMATIZATION (efetivo, movimentos, as duas vagas e a pausa entre elas)",
-      "echelonsNote": "DRAMATIZAÇÃO, não história: a fonte única (T08) diz que uma companhia atacou do norte e que a infantaria foi repelida por metralhadoras; não diz quantas vagas, nem pausas, nem quantos homens. As duas vagas (a 1.ª já na orla, a 2.ª a entrar das árvores 40 s depois de a 1.ª ter saído do campo), os 9 + 4 e os 16 + 2 homens e os limiares de quebra servem a duração do combate (a 1.ª vaga sozinha quebrava aos 30-60 s) e podem mudar com o playtest. Decisão do Capitão (2026-11-04, reversível): para o combate durar pelo menos 110 s com o piloto ativo em 90 % das sementes de teste (a revisão encontrara 11 de 26 percursos abaixo de 120 s), a pausa passou de 30 para 40 s, a 2.ª vaga entra em dois grupos de duas colunas (o lado oeste primeiro, o lado leste 36 s depois do começo da vaga: ver `delaySec` das faixas), a 2.ª vaga quebra aos 14 caídos (eram 12; a 1.ª continua a quebrar aos 7: com mais, quase ninguém da sua assalto sobrava para recuar) e o relógio de cada vaga (`maxSec`) baixou de 200 para 120 s para o piloto passivo, que não dispara, acabar o ato em menos de 6 minutos.",
+      "echelonsNote": "DRAMATIZAÇÃO, não história: o resumo da fonte única (T08, research/SOURCES.md) diz que uma companhia com veículos blindados atacou do norte e que um deles foi destruído por canhão AT; a infantaria detida por metralhadoras é dramatização; não diz quantas vagas, nem pausas, nem quantos homens. As duas vagas (a 1.ª já na orla, a 2.ª a entrar das árvores 40 s depois de a 1.ª ter saído do campo), os 9 + 4 e os 16 + 2 homens e os limiares de quebra servem a duração do combate (a 1.ª vaga sozinha quebrava aos 30-60 s) e podem mudar com o playtest. Decisão do Capitão (2026-11-04, reversível): para o combate durar pelo menos 110 s com o piloto ativo em 90 % das sementes de teste (a revisão encontrara 11 de 26 percursos abaixo de 120 s), a pausa passou de 30 para 40 s, a 2.ª vaga entra em dois grupos de duas colunas (o lado oeste primeiro, o lado leste 36 s depois do começo da vaga: ver `delaySec` das faixas), a 2.ª vaga quebra aos 14 caídos (eram 12; a 1.ª continua a quebrar aos 7: com mais, quase ninguém da sua assalto sobrava para recuar) e o relógio de cada vaga (`maxSec`) baixou de 200 para 120 s para o piloto passivo, que não dispara, acabar o ato em menos de 6 minutos.",
       "uniformNote": "Modelo alemão genérico do jogo; sem insígnias SS nem nome de unidade até haver fonte de uniformes de 1939 (D-2).",
       "assault": {
         "version": 1,
@@ -653,7 +665,7 @@
     {
       "id": "staszek_pawlak",
       "name": "Pawlak",
-      "role": "RADIO_OPERATOR",
+      "role": "MESSENGER",
       "essential": true
     },
     {
@@ -813,7 +825,7 @@
           "T08",
           "T16"
         ],
-        "text": "Por volta das 07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blindados, foi detido no perímetro norte de Tczew: um veículo foi destruído por um canhão anticarro e a infantaria foi repelida por metralhadoras. O tipo dos veículos, o lugar exato e a posição do canhão não estão confirmados; o parapeito, a chegada da secção, as duas vagas de ataque e a pausa entre elas, e o combate de Wrona são reconstrução para o jogo."
+        "text": "Às ~07:00 — hora de uma única fonte —, um ataque alemão vindo do norte, com veículos blindados, foi detido no perímetro norte de Tczew: um veículo foi destruído por um canhão anticarro e a infantaria foi repelida (a fonte única não diz como; metralhadoras é dramatização). O tipo dos veículos, o lugar exato e a posição do canhão não estão confirmados; o parapeito, a chegada da secção, as duas vagas de ataque e a pausa entre elas, e o combate de Wrona são reconstrução para o jogo."
       }
     ]
   }

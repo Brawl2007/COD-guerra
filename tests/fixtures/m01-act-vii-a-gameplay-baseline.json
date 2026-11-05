@@ -8,7 +8,7 @@
   "src/game/m01-act-factories.js": "f1bd1cef63b67a60d24949b4f7dc4a4b2f5857496342483649f5f06fa9899c76",
   "src/world/m01-area-world.js": "162f71c3203dbd2cbc31ab8248c87b7c21c3499b184244ac99be53e74fcc3db7",
   "src/world/m01-prop-layout.js": "04bf35b8ab03ee90087a9f6caefd284c2ea27671149af89dd6798fcdf9e34767",
-  "missions/m01-tczew/areas/np/act.json": "61c920ed8b13aa921d5b2cc776ce07fe1aab6962b1118155e2d85b6cb0a9fa6a",
+  "missions/m01-tczew/areas/np/act.json": "fa7c3a227a16e6730c2d99b1b5565fcb4e5516b98c5997460da7d5dce7d65af4",
   "missions/m01-tczew/areas/np/layout.json": "2dd97832f41d656256b5c36e3633d4dfaa4dad81c00a7a05bd6477388bd53083",
   "tests/helpers/m01-act-route.js": "f82a9ddd2fcff4e73a1d465b3c700b58a2a06a4486e2d9f4a59104fcd125e506"
  },
