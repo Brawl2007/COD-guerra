@@ -15,6 +15,14 @@ import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {
+  M02_DIFFICULTY,
+  M02_DIFFICULTY_SIM_DEFAULT,
+  M02_ENEMY_HIT_DAMAGE_FACTOR,
+  M02_ENEMY_HIT_DAMAGE_MIN,
+  M02_F1_TELEGRAPH_GAP_SEC,
+  resolveM02Difficulty,
+} from './m02-difficulty.js';
+import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
   M02DialogueDirector,
@@ -314,6 +322,10 @@ export function validateM02Snapshot(snap) {
       if (label === 'Aliado' && !a.alive && !ALLY_INCAPACITATED_STATES.includes(a.state)) {
         return { valid: false, reason: `Aliado morto com arma ativa no snapshot: ${a.id} (${a.state})` };
       }
+      // D6 (regra F1 da M01): contacto de um atirador com Piotr; só existe em soldado/veterano, instantes finitos ou null.
+      if (label === 'Inimigo' && ['aimEngagedAt', 'aimLastAt'].some((k) => k in a && a[k] !== null && !(Number.isFinite(a[k]) && a[k] >= 0))) {
+        return { valid: false, reason: `Contacto do inimigo com Piotr inválido no snapshot: ${a.id}` };
+      }
     }
   }
   const aliveById = new Map([[PLAYER_ID, p.alive !== false], ...snap.allies.map((a) => [a.id, a.alive])]);
@@ -553,6 +565,11 @@ export class M02BenchSimulation {
   #pendingCheckpointIds = [];
   /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
   #lastSessionCheckpointId = null;
+  /**
+   * D6: perfil de dificuldade (recruta | soldado | veterano, os ids da M01). CONFIGURAÇÃO, não estado de jogo (I5): fora do snapshot,
+   * não é reposto por um checkpoint nem por reset(); privado para não contar como estado vivo (como os campos acima).
+   */
+  #difficultyId = M02_DIFFICULTY_SIM_DEFAULT;
 
   /**
    * @param {number} seed
@@ -560,8 +577,10 @@ export class M02BenchSimulation {
    * @param {string} [options.startScene]
    * @param {M02SaveStore} [options.saveStore] loja de checkpoints persistentes (por omissão: localStorage no browser, memória em Node)
    * @param {{getItem:Function,setItem:Function,removeItem:Function}} [options.storage] armazenamento para a loja por omissão
+   * @param {string} [options.difficulty] perfil de dificuldade (ids da M01); por omissão `recruta`, a afinação de protótipo
    */
-  constructor(seed = 19390909, { startScene = 'C02', saveStore = null, storage = null } = {}) {
+  constructor(seed = 19390909, { startScene = 'C02', saveStore = null, storage = null, difficulty = M02_DIFFICULTY_SIM_DEFAULT } = {}) {
+    this.#difficultyId = resolveM02Difficulty(difficulty).id;
     this.saveStore = saveStore ?? new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
     this.lastCheckpointPersist = null;
     this.seed = seed;
@@ -580,6 +599,20 @@ export class M02BenchSimulation {
     this.combatLog = [];
     this.checkpoints = new Map();
     this.reset(startScene);
+  }
+
+  /** Perfil de dificuldade em vigor (objeto imutável de m02-difficulty.js). */
+  get difficulty() {
+    return M02_DIFFICULTY[this.#difficultyId];
+  }
+
+  /**
+   * Muda o perfil de dificuldade (configuração: não toca no estado de jogo, no snapshot nem nos checkpoints). RangeError se o id
+   * não é um dos da M01. Devolve o perfil.
+   */
+  setDifficulty(id) {
+    this.#difficultyId = resolveM02Difficulty(id).id;
+    return this.difficulty;
   }
 
   reset(startScene = this.defaultStartScene) {
@@ -1304,9 +1337,23 @@ export class M02BenchSimulation {
     const roundsToFire = Math.min(shooter.mag, prof.burstCount ?? 1);
     if (roundsToFire <= 0) return null;
 
+    // D6: perfil de dificuldade (configuração). Só o fogo inimigo muda: o ciclo de fogo contra qualquer alvo da secção, a precisão
+    // quando o alvo é Piotr, o dano que lhe chega e a regra F1. Em recruta todos os fatores são exatamente 1 e não há regra nova.
+    const diff = this.difficulty;
+    const enemyFire = side === 'enemy';
+    const aimsAtPlayer = enemyFire && targetActor === this.player;
+    if (aimsAtPlayer && diff.reactionGraceSec !== null) {
+      // F1: o contacto deste atirador com Piotr conta-se desde a sua primeira rajada e quebra-se após um intervalo longo sem lhe disparar.
+      const now = Number(this.clock.toFixed(3));
+      const idle = shooter.aimLastAt == null || now - shooter.aimLastAt > M02_F1_TELEGRAPH_GAP_SEC;
+      if (idle || shooter.aimEngagedAt == null) shooter.aimEngagedAt = now;
+      shooter.aimLastAt = now;
+    }
+    let burstDamageOnPlayer = 0;
+
     shooter.mag -= roundsToFire;
     shooter.shotsFired = (shooter.shotsFired ?? 0) + roundsToFire;
-    shooter.nextFireAt = Number((this.clock + prof.cycleSec).toFixed(3));
+    shooter.nextFireAt = Number((this.clock + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
@@ -1321,7 +1368,7 @@ export class M02BenchSimulation {
       const dy = aimPoint.y - origin.y;
       const dz = aimPoint.z - origin.z;
       const baseLen = Math.hypot(dx, dy, dz) || 1;
-      const spread = prof.spreadRad * (shooter.suppressed > 0.4 ? 1.55 : 1.0);
+      const spread = prof.spreadRad * (shooter.suppressed > 0.4 ? 1.55 : 1.0) * (aimsAtPlayer ? diff.aimErrorScale : 1);
       const jx = (this.rng.next() - 0.5) * 2 * spread;
       const jy = (this.rng.next() - 0.5) * 1.4 * spread;
       const jz = (this.rng.next() - 0.5) * 2 * spread;
@@ -1356,7 +1403,18 @@ export class M02BenchSimulation {
         const victim = hit.actor;
         const rawDmg = Math.round(prof.damage * (hit.multiplier ?? 1));
         // Essential allies and player in cover take bounded damage so squad progression stays cohesive
-        const dmg = side === 'enemy' ? Math.max(6, Math.round(rawDmg * 0.35)) : rawDmg;
+        let dmg = enemyFire ? Math.max(M02_ENEMY_HIT_DAMAGE_MIN, Math.round(rawDmg * M02_ENEMY_HIT_DAMAGE_FACTOR)) : rawDmg;
+        if (enemyFire && victim === this.player) {
+          dmg = Math.round(dmg * diff.damageTakenScale);
+          // Uma ferida por rajada (M01 `burstWoundCap`): o que passa do teto da rajada já não conta.
+          if (diff.burstDamageCap !== null) dmg = Math.max(0, Math.min(dmg, diff.burstDamageCap - burstDamageOnPlayer));
+          burstDamageOnPlayer += dmg;
+          // F1: o primeiro contacto de um atirador nunca mata; a vida fica em 1 até ele combater Piotr há `reactionGraceSec`.
+          if (diff.reactionGraceSec !== null && victim.health - dmg <= 0) {
+            const engagedFor = shooter.aimEngagedAt == null ? 0 : this.clock - shooter.aimEngagedAt;
+            if (engagedFor < diff.reactionGraceSec) dmg = Math.max(0, victim.health - 1);
+          }
+        }
         victim.health = Math.max(0, victim.health - dmg);
         victim.hitsReceived = (victim.hitsReceived ?? 0) + 1;
         shooter.hitsInflicted = (shooter.hitsInflicted ?? 0) + 1;
@@ -1519,7 +1577,9 @@ export class M02BenchSimulation {
         affectedActors.push({ id: actor.id, blockedByWall: true, damage: 0 });
       } else {
         const rawDamage = Math.round(125 * (1 - dist / radius));
-        const damage = actor.id === 'piotr_sokol' ? Math.round(rawDamage * 0.5) : rawDamage;
+        // D6: a explosão perigosa de um hostil (agendada, com `meta`) fere Piotr com o dano do perfil; a granada dele não.
+        const damageTakenScale = meta && actor.id === 'piotr_sokol' ? this.difficulty.damageTakenScale : 1;
+        const damage = actor.id === 'piotr_sokol' ? Math.round(rawDamage * 0.5 * damageTakenScale) : rawDamage;
         actor.health = Math.max(0, actor.health - damage);
         actor.suppressed = Math.min(1, (actor.suppressed ?? 0) + 0.92);
         if (actor.c04Candidate && actor.health <= 48) {
