@@ -99,6 +99,20 @@ describe('M02 D4: a secção avança com Piotr, até onde a trela deixa', () => 
     assert.equal(ally(sim, 'pl_gruca').holdingFor, null);
   });
 
+  it('no eixo do pomar a mesma trela: Gruca fixa no talude (apoio) e só vai à entrada de B03 e ao pátio com Piotr perto', () => {
+    const sim = planElapsed(sheltered(19390909));
+    sim.flags['m02.axis'] = 'orchard';
+    sim.tick(DT, {});
+    assert.equal(goalOf(sim, 'pl_gruca'), 'cv_orchard_bank_e', 'o talude do pomar é apoio: cabe na trela larga (51 m)');
+    assert.equal(ally(sim, 'pl_gruca').holdingFor, 'cv_courtyard_consolidate', 'o lanço do pátio ficou retido');
+    sim.teleportPlayer(30, 5, 0);
+    sim.tick(DT, {});
+    assert.equal(goalOf(sim, 'pl_gruca'), 'cv_b03_south_entry', 'com Piotr a 8 m da entrada de B03, a secção comete o assalto ao estábulo');
+    sim.teleportPlayer(-4, -48, 0);
+    sim.tick(DT, {});
+    assert.equal(goalOf(sim, 'pl_gruca'), 'cv_courtyard_consolidate', 'e o pátio quando é Piotr quem está a 30 m dele');
+  });
+
   it('a ordem «avançar para ali» é a exceção explícita: manda ir para lá da trela; sem ordem a mesma posição fica retida', () => {
     const control = planElapsed(sheltered(19390909));
     const ordered = sheltered(19390909);
