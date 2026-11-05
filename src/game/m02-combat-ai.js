@@ -724,7 +724,8 @@ export function stepActorNavigation(sim, actor, dt) {
     return;
   }
 
-  const baseSpeed = actor.suppressed > 0.55 ? 2.6 : 4.1;
+  // `maxSpeed`: teto de velocidade de um ator ferido (Lis em C11, J3); sem ele, a velocidade normal da secção.
+  const baseSpeed = actor.maxSpeed ?? (actor.suppressed > 0.55 ? 2.6 : 4.1);
   const stepDist = Math.min(dist, baseSpeed * dt);
   let vx = (dx / dist) * stepDist;
   let vz = (dz / dist) * stepDist;
@@ -757,9 +758,12 @@ export function updatePolishSquad(sim, dt) {
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
-    if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
+    // Quem foi evacuado ou está ausente (Lis incapacitado antes de C11, «missing») já não age nem se desloca.
+    if (!ally.alive || ally.state === 'DOWN' || ally.state === 'EVACUATED' || ally.state === 'MISSING' || ally.detachedOutOfCell) continue;
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     stepActorWeapon(sim, ally, dt);
+    // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
+    if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
 
     if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads

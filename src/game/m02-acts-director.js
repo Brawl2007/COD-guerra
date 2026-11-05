@@ -67,6 +67,41 @@ export const CART_SHOT_WINDOW_SEC = 2.0;
 /** Um hostil com supressão ≥ 0,88 não consegue disparar (updateGermanGarrison). */
 const CART_SHOOTER_MAX_SUPPRESSION = 0.88;
 
+/** Fases do percurso de Lis (J3): fora da célula → regresso a pé → à espera → amparado/carregado → abrigado; ou incapacitado antes. */
+export const LIS_PHASES = Object.freeze(['liaison_outside', 'returning', 'waiting', 'supported', 'sheltered', 'incapacitated']);
+export const LIS_OUTCOME_SOURCES = Object.freeze(['game', 'forced']);
+/** Distância (m) de contacto com Lis em C11 (dlg_m02_003 «no contacto»). */
+export const LIS_CONTACT_RANGE_M = 3.5;
+/** Raio de chegada ao ponto de evacuação (-85,105) para o jogador e o último grupo (m). */
+export const EVAC_ARRIVE_RADIUS_M = 1.5;
+
+function lisActor(sim) {
+  return sim.allies.find((a) => a.id === 'pl_lis') ?? null;
+}
+
+/** Centros das macas de B12 (F13, p. 27: duas macas), tirados dos props do layout: fonte única para layout, mundo e simulação. */
+export function b12StretcherSlots() {
+  const b12 = cellsBCLayout.cells.C.buildings.find((b) => b.id === 'B12');
+  return (b12.stretcherSlots ?? []).map((id) => {
+    const prop = b12.props.find((p) => p.id === id);
+    const [x0, x1, z0, z1] = prop.bounds;
+    return { id, x: (x0 + x1) / 2, z: (z0 + z1) / 2 };
+  });
+}
+
+/** Percurso de Lis amparado/carregado: a rota de evacuação a partir da porta norte de B09 (-30,-20); carregado acaba na maca 1. */
+function lisSupportPath(mode) {
+  const route = cellsBCLayout.cells.C.evacRoute;
+  const north = cellsBCLayout.cells.C.buildings.find((b) => b.id === 'B09').doors.find((d) => d.id === 'door_b09_north_gate');
+  const start = route.findIndex(([x, z]) => x === north.x && z === north.z);
+  if (mode === 'wounded_evacuated') {
+    const slot = b12StretcherSlots()[0];
+    const b12north = route.findIndex(([x, z], i) => i > start && x === -58 && z >= 46);
+    return [...route.slice(start, b12north + 1), [-58, 50], [slot.x, slot.z]];
+  }
+  return route.slice(start);
+}
+
 export function createInitialAreaBState() {
   const bDef = cellsBCLayout.cells.B;
   return {
@@ -110,7 +145,14 @@ export function createInitialAreaCState() {
     corridorExteriorBlocked: false,
     fixedImpactSpec: structuredClone(cDef.artilleryFixedImpact),
     lisContactedInC11: false,
-    lisSupportMode: null, // 'carried' | 'walking_supported' | 'unreached'
+    lisSupportMode: null, // 'wounded_evacuated' (carregado até B12) | 'wounded_walking' (amparado a pé) | 'missing'
+    // J3/Q2: fase do percurso persistente de Lis em C09-C11 (sem teleporte); ver LIS_PHASES.
+    lisPhase: null,
+    lisWasIncapacitated: false,
+    lisRouteIdx: 0,
+    lisOutcomeSource: null, // 'game' (condições de jogo) | 'forced' (atalho/API da bancada)
+    c11StartedAt: null,
+    lastGroupSummary: null, // { evacuated, inTransit, dead } escrito em C12
     lastGroup: cDef.lastGroupRoster.map((lg, idx) => ({
       ...lg,
       space: 'metres',
@@ -122,6 +164,7 @@ export function createInitialAreaCState() {
       alive: true,
       wounded: Boolean(lg.initialWounded),
       evacuated: false,
+      arrivedAt: null,
       waypointIdx: 0,
       moving: false,
       facing: Math.PI / 2,
@@ -619,6 +662,7 @@ export function enterAreaCC09(sim, { skipTransition = false } = {}) {
 
   sim.areaC = createInitialAreaCState();
   sim.areaC.active = true;
+  sim.areaC.lisPhase = lis?.detachedOutOfCell ? 'liaison_outside' : null;
   sim.c10Active = false;
   sim.c11Active = false;
 
@@ -749,21 +793,31 @@ export function detonateC10FixedArtillery(sim) {
 export function startC11LisAndLastGroup(sim) {
   if (!sim.areaC || sim.areaC.c11Started) return false;
   sim.areaC.c11Started = true;
+  sim.areaC.c11StartedAt = Number(sim.clock.toFixed(3));
   sim.c11Active = true;
 
-  const lis = sim.allies.find((a) => a.id === 'pl_lis');
+  const lis = lisActor(sim);
   if (lis) {
-    // J3: Lis returns from liaison already wounded by fragmentation outside the cell (unless already incapacitated earlier; never duplicates Lis!)
+    // J3: Lis regressa da ligação fora da célula já ferido por fragmentação (salvo se já estava incapacitado antes; nunca se
+    // duplica Lis). O regresso é um PERCURSO: entra pela antecâmara (0,-60) e caminha a velocidade de ferido até ao ponto de
+    // encontro junto à porta norte de B09; antes era reposto de uma vez em (-28,-22) (teleporte).
     const wasAlreadyIncapacitated = !lis.alive || lis.state === 'EVACUATED' || lis.state === 'DOWN';
     lis.detachedOutOfCell = false;
     if (!wasAlreadyIncapacitated) {
-      lis.x = -28.0;
-      lis.z = -22.0;
+      const cfg = cellsBCLayout.cells.C.lisReturn;
+      lis.x = cfg.entry[0];
+      lis.z = cfg.entry[1];
       lis.y = sim.world.heightAt(lis.x, lis.z);
       lis.health = Math.min(lis.health, 46);
       lis.state = 'WOUNDED_LIAISON';
-      lis.crouched = true;
-      lis.goal = null;
+      lis.crouched = false;
+      lis.maxSpeed = cfg.speedMps;
+      lis.navCorners = null;
+      lis.goal = { x: cfg.rendezvous[0], z: cfg.rendezvous[1], facing: Math.PI / 2, crouch: true };
+      sim.areaC.lisPhase = 'returning';
+    } else {
+      sim.areaC.lisPhase = 'incapacitated';
+      sim.areaC.lisWasIncapacitated = true;
     }
   }
 
@@ -780,39 +834,125 @@ export function startC11LisAndLastGroup(sim) {
   return true;
 }
 
+function lisContactDialogue(sim) {
+  if (sim.areaC.lisContactedInC11) return;
+  // Fala protegida de Piotr dlg_m02_003 («Você vem conosco. A arma eu levo.») no contacto, nunca durante o trajeto distante.
+  sim.areaC.lisContactedInC11 = true;
+  sim.dialogue.trigger('dlg_m02_003', sim, { allowRepeat: true });
+  sim.dialogue.trigger('bz39_c11_03', sim);
+  sim.dialogue.update(sim);
+}
+
+function markLisMissing(sim, source) {
+  const lis = lisActor(sim);
+  sim.areaC.lisSupportMode = 'missing';
+  sim.areaC.lisPhase = null;
+  sim.areaC.lisOutcomeSource = source;
+  sim.flags['m02.lis_status'] = 'missing';
+  if (lis) {
+    lis.state = 'MISSING';
+    lis.detachedOutOfCell = true;
+    lis.goal = null;
+    lis.moving = false;
+  }
+}
+
+/**
+ * API/atalho da bancada: IMPÕE o desfecho de Lis (resultado forçado, `lisOutcomeSource: 'forced'`) e coloca-o já no destino
+ * (maca 1 de B12 se carregado; dentro de B12 se amparado). Em jogo o desfecho resulta do percurso (updateAreaC/updateLisC11).
+ */
 export function assistLisInC11(sim, mode = 'wounded_evacuated') {
   if (!sim.areaC) return null;
   if (!sim.areaC.c10Started) startC10OrderChanges(sim);
   if (!sim.areaC.artilleryDetonated) detonateC10FixedArtillery(sim);
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
 
-  const lis = sim.allies.find((a) => a.id === 'pl_lis');
+  const lis = lisActor(sim);
   if (mode === 'wounded_evacuated' || mode === 'wounded_walking') {
-    // Trigger Piotr's protected literal line dlg_m02_003 ("Você vem conosco. A arma eu levo.") on contact
-    if (!sim.areaC.lisContactedInC11) {
-      sim.areaC.lisContactedInC11 = true;
-      sim.dialogue.trigger('dlg_m02_003', sim, { allowRepeat: true });
-      sim.dialogue.trigger('bz39_c11_03', sim);
-      sim.dialogue.update(sim);
-    }
+    lisContactDialogue(sim);
     sim.areaC.lisSupportMode = mode;
+    sim.areaC.lisPhase = 'sheltered';
+    sim.areaC.lisOutcomeSource = 'forced';
     sim.flags['m02.lis_status'] = mode;
     if (lis && lis.alive) {
       lis.state = mode === 'wounded_evacuated' ? 'EVACUATED_B12' : 'WALKING_SUPPORTED';
-      lis.x = -58.0;
-      lis.z = 52.0; // Inside B12 aid house
+      const dest = mode === 'wounded_evacuated' ? b12StretcherSlots()[0] : { x: -58, z: 51 };
+      lis.x = dest.x;
+      lis.z = dest.z;
       lis.y = sim.world.heightAt(lis.x, lis.z);
-      lis.goal = null;
+      lis.goal = { x: lis.x, z: lis.z };
+      lis.moving = false;
     }
   } else if (mode === 'missing') {
-    sim.areaC.lisSupportMode = 'missing';
-    sim.flags['m02.lis_status'] = 'missing';
-    if (lis) {
-      lis.state = 'MISSING';
-      lis.detachedOutOfCell = true;
-    }
+    markLisMissing(sim, 'forced');
   }
   return sim.flags['m02.lis_status'];
+}
+
+/** Contacto com Lis em C11: o modo depende da lesão (≥ walkMinHealth caminha amparado; abaixo é carregado até à maca). */
+function beginLisSupport(sim, lis) {
+  const a = sim.areaC;
+  const cfg = cellsBCLayout.cells.C.lisReturn;
+  lisContactDialogue(sim);
+  const mode = lis.health >= cfg.walkMinHealth ? 'wounded_walking' : 'wounded_evacuated';
+  a.lisSupportMode = mode;
+  a.lisPhase = 'supported';
+  a.lisRouteIdx = 0;
+  a.lisOutcomeSource = 'game';
+  lis.state = mode === 'wounded_walking' ? 'WALKING_SUPPORTED' : 'CARRIED';
+  lis.crouched = false;
+  lis.maxSpeed = mode === 'wounded_walking' ? cfg.walkingSpeedMps : cfg.carriedSpeedMps;
+}
+
+/**
+ * Lis em C11, um passo: regressa a pé ao ponto de encontro; no contacto passa a ser amparado/carregado pela rota de evacuação
+ * a velocidade limitada, e só avança enquanto Piotr está ao pé (raio de apoio). Chegado ao destino fica abrigado e o
+ * desfecho (`m02.lis_status`) fica escrito: «o enum final só é escolhido quando a evacuação foi resolvida» (I4).
+ */
+function updateLisC11(sim, dt) {
+  const a = sim.areaC;
+  const lis = lisActor(sim);
+  if (!a.c11Started || !lis || !lis.alive || lis.detachedOutOfCell) return;
+  const cfg = cellsBCLayout.cells.C.lisReturn;
+  const dPlayer = Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z);
+
+  if (a.lisPhase === 'returning' && Math.hypot(lis.x - cfg.rendezvous[0], lis.z - cfg.rendezvous[1]) <= 0.6) {
+    a.lisPhase = 'waiting';
+  }
+  if ((a.lisPhase === 'returning' || a.lisPhase === 'waiting') && dPlayer <= LIS_CONTACT_RANGE_M) {
+    beginLisSupport(sim, lis);
+  }
+  if (a.lisPhase === 'supported') {
+    const path = lisSupportPath(a.lisSupportMode);
+    lis.moving = false;
+    if (dPlayer <= cfg.supportRadius) {
+      let budget = lis.maxSpeed * dt;
+      while (budget > 1e-9 && a.lisRouteIdx < path.length) {
+        const [tx, tz] = path[a.lisRouteIdx];
+        const d = Math.hypot(tx - lis.x, tz - lis.z);
+        if (d <= budget) {
+          lis.x = tx;
+          lis.z = tz;
+          budget -= d;
+          a.lisRouteIdx += 1;
+        } else {
+          lis.facing = Math.atan2(tz - lis.z, tx - lis.x);
+          lis.x += ((tx - lis.x) / d) * budget;
+          lis.z += ((tz - lis.z) / d) * budget;
+          budget = 0;
+        }
+        lis.moving = true;
+      }
+      lis.y = sim.world.heightAt(lis.x, lis.z);
+      if (a.lisRouteIdx >= path.length) {
+        a.lisPhase = 'sheltered';
+        lis.moving = false;
+        lis.state = a.lisSupportMode === 'wounded_evacuated' ? 'EVACUATED_B12' : 'WALKING_SUPPORTED';
+        sim.flags['m02.lis_status'] = a.lisSupportMode;
+        sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'lis_sheltered', mode: a.lisSupportMode });
+      }
+    }
+  }
 }
 
 export function updateAreaC(sim, dt) {
@@ -834,15 +974,11 @@ export function updateAreaC(sim, dt) {
     }
   }
 
-  // 3. Check player proximity to Lis in C11 to automatically trigger dlg_m02_003 on contact
-  if (sim.areaC.c11Started && !sim.areaC.lisContactedInC11) {
-    const lis = sim.allies.find((a) => a.id === 'pl_lis' && a.alive && !a.detachedOutOfCell);
-    if (lis && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= 3.5) {
-      assistLisInC11(sim, 'wounded_walking');
-    }
-  }
+  // 3. Lis em C11: regresso a pé, contacto (dlg_m02_003) e percurso amparado/carregado (sem teleporte)
+  updateLisC11(sim, dt);
 
-  // 4. Advance the 12 Last Group members (LG01..LG12; FORA DO PDF, sourceStatus 'fora_do_pdf') along the B09 -> B12 evacuation route
+  // 4. O último grupo (LG01..LG12; FORA DO PDF, sourceStatus 'fora_do_pdf') só se põe em marcha no C11, em coluna (startDelaySec),
+  // pela rota de evacuação B09 (porta norte) → B12 → (-85,105); só conta como EVACUADO ao CHEGAR ao ponto de evacuação.
   const evacRoute = cellsBCLayout.cells.C.evacRoute;
   let evacuatedCount = 0;
   let allResolved = true;
@@ -853,6 +989,7 @@ export function updateAreaC(sim, dt) {
       continue;
     }
     allResolved = false;
+    if (!sim.areaC.c11Started || sim.clock < sim.areaC.c11StartedAt + lg.startDelaySec) continue;
     const wp = evacRoute[Math.min(lg.waypointIdx, evacRoute.length - 1)];
     const dx = wp[0] - lg.x;
     const dz = wp[1] - lg.z;
@@ -871,6 +1008,7 @@ export function updateAreaC(sim, dt) {
         lg.waypointIdx++;
       } else {
         lg.evacuated = true;
+        lg.arrivedAt = Number(sim.clock.toFixed(2));
         lg.moving = false;
         evacuatedCount++;
       }
@@ -888,29 +1026,58 @@ export function updateAreaC(sim, dt) {
   }
 }
 
+/**
+ * Desfecho de Lis a partir das condições de jogo (C11/C12, I4/I6): abrigado (carregado até à maca de B12 ou amparado até à saída)
+ * escreve-o ao chegar; já incapacitado antes de C11 → `wounded_evacuated` (outro fez a ligação; usa esse estado); em qualquer
+ * outro caso Piotr termina sem Lis → `missing` («ausência não equivale à morte comprovada»).
+ */
+export function deriveLisOutcome(sim) {
+  const a = sim.areaC;
+  const flag = sim.flags['m02.lis_status'];
+  if (a.lisPhase === 'sheltered' && ['wounded_evacuated', 'wounded_walking'].includes(flag)) return flag;
+  if (a.lisWasIncapacitated) return 'wounded_evacuated';
+  return 'missing';
+}
+
 export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   if (!sim.areaC) {
     enterAreaCC09(sim, { skipTransition: true });
   }
+  // Atalho da bancada (KeyM/botão): C11 nunca foi atingido por jogo e a função força C10/C11; o desfecho por omissão continua
+  // a ser o forçado `wounded_evacuated`. Com C11 atingido por jogo o desfecho deriva do estado de Lis (deriveLisOutcome).
+  const reachedByGame = Boolean(sim.areaC.c11Started);
   if (!sim.areaC.c10Started) startC10OrderChanges(sim);
   if (!sim.areaC.artilleryDetonated) detonateC10FixedArtillery(sim);
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
 
   if (lisOutcome) {
     assistLisInC11(sim, lisOutcome);
+  } else if (reachedByGame) {
+    const outcome = deriveLisOutcome(sim);
+    if (outcome === 'missing') {
+      markLisMissing(sim, 'game');
+    } else {
+      sim.flags['m02.lis_status'] = outcome;
+      sim.areaC.lisSupportMode = outcome;
+      sim.areaC.lisOutcomeSource = 'game';
+      const lis = lisActor(sim);
+      if (lis && sim.areaC.lisWasIncapacitated) lis.state = lis.alive ? 'EVACUATED' : lis.state;
+    }
   } else if (!sim.flags['m02.lis_status'] || sim.flags['m02.lis_status'] === 'active') {
     assistLisInC11(sim, 'wounded_evacuated');
   }
 
-  // Finalize LG01..LG12 survivors count if any are still in transit at B12
-  let survivors = 0;
-  for (const lg of sim.areaC.lastGroup) {
-    if (lg.alive) {
-      lg.evacuated = true;
-      survivors++;
-    }
-  }
-  sim.flags['m02.last_group_survivors'] = survivors;
+  // Último grupo: só conta como evacuado quem CHEGOU ao ponto de evacuação; quem ainda está em trânsito continua em trânsito
+  // (antes todos os vivos eram marcados evacuados aqui, sem chegar) e quem caiu fica como morto.
+  const group = sim.areaC.lastGroup;
+  const evacuated = group.filter((lg) => lg.alive && lg.evacuated).length;
+  sim.areaC.lastGroupSummary = {
+    evacuated,
+    inTransit: group.filter((lg) => lg.alive && !lg.evacuated).length,
+    dead: group.filter((lg) => !lg.alive).length,
+  };
+  sim.flags['m02.last_group_survivors'] = evacuated;
+  const survivors = evacuated;
   sim.areaC.c12Completed = true;
 
   // Trigger C12 dialogue according to Lis outcome (NAR-02: if missing, Lis never speaks and Wierzba says "Lis…")

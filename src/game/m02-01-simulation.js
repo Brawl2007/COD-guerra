@@ -46,6 +46,8 @@ import {
   createInitialC01Contact,
   CART_IMMOBILIZED_CAUSES,
   CART_PARKED_REASONS,
+  LIS_PHASES,
+  LIS_OUTCOME_SOURCES,
   openC01Contact,
   updateC01Contact as runUpdateC01Contact,
   C01_CONTACT_OPENED_BY,
@@ -89,6 +91,7 @@ const ALLY_STATES = Object.freeze([
   'WOUNDED_LIAISON',
   'EVACUATED_B12',
   'WALKING_SUPPORTED',
+  'CARRIED',
   'MISSING',
 ]);
 /** Estados possíveis de um aliado com alive=false: nenhum tem arma ativa («um ator morto não pode voltar a ser dono de arma ativa», I5). */
@@ -300,6 +303,32 @@ export function validateM02Snapshot(snap) {
   }
   if (!isPlainObject(snap.areaB) || !isPlainObject(snap.areaC)) {
     return { valid: false, reason: 'Estado das áreas B/C ausente no snapshot.' };
+  }
+  const areaC = snap.areaC;
+  const isTimeOrNull = (v) => v === null || (typeof v === 'number' && Number.isFinite(v) && v >= 0);
+  const lisSupportOk = [null, 'wounded_evacuated', 'wounded_walking', 'missing'].includes(areaC.lisSupportMode ?? null);
+  if (
+    !('lisPhase' in areaC) ||
+    ![null, ...LIS_PHASES].includes(areaC.lisPhase) ||
+    ![null, ...LIS_OUTCOME_SOURCES].includes(areaC.lisOutcomeSource) ||
+    !lisSupportOk ||
+    typeof areaC.lisWasIncapacitated !== 'boolean' ||
+    !isNonNegativeInteger(areaC.lisRouteIdx) ||
+    !isTimeOrNull(areaC.c11StartedAt) ||
+    Boolean(areaC.c11Started) !== (areaC.c11StartedAt !== null) ||
+    !Array.isArray(areaC.lastGroup) ||
+    areaC.lastGroup.some((lg) => typeof lg.evacuated !== 'boolean' || !isTimeOrNull(lg.arrivedAt) || (lg.evacuated && lg.arrivedAt === null))
+  ) {
+    return {
+      valid: false,
+      reason: 'Save incompatível: estado de Lis/último grupo da Área C ausente ou inválido (snapshot anterior ao percurso persistente de Lis).',
+    };
+  }
+  if (areaC.lastGroupSummary !== null && areaC.lastGroupSummary !== undefined) {
+    const sum = areaC.lastGroupSummary;
+    if (!isPlainObject(sum) || !['evacuated', 'inTransit', 'dead'].every((k) => isNonNegativeInteger(sum[k])) || sum.evacuated + sum.inTransit + sum.dead !== areaC.lastGroup.length) {
+      return { valid: false, reason: 'Resumo do último grupo (lastGroupSummary) inválido no snapshot.' };
+    }
   }
   const c01 = snap.c01Contact;
   const nullOrTime = (v) => v === null || (typeof v === 'number' && v >= 0);

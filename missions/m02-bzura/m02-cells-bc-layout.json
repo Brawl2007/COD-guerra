@@ -178,6 +178,16 @@
         "warningDurationSec": 6.0,
         "debrisBounds": [-4.0, 12.0, 14.0, 22.0]
       },
+      "lisReturn": {
+        "note": "J3/Q2: Lis regressa da ligação fora da célula por percurso contínuo (sem reposição): entra pela antecâmara (0,-60) (E3, p. 21) e caminha até ao ponto de encontro junto à porta norte de B09. Velocidade de ferido, limitada por tick.",
+        "entry": [0, -60],
+        "rendezvous": [-28, -23],
+        "speedMps": 2.2,
+        "supportRadius": 7.0,
+        "walkingSpeedMps": 2.4,
+        "carriedSpeedMps": 1.6,
+        "walkMinHealth": 40
+      },
       "evacRouteNote": "E3 (p. 21): depois de a rua exterior ficar comprometida a evacuação entra em B09 pela PORTA NORTE (-30,-20), com troço horizontal em z≈-32 (x -6..-30) e vertical em x=-30, atravessa a nave e sai a sul (-30,-2); segue por (-35,25), entra em B12 a norte (-58,48), passa pela sala e sai pela passagem sul (-54,60), até à saída (-85,105). MAP-03: rota de maca validada por raycast a ±0,45 m (largura útil ≥ 0,9 m). Antes (v1) entrava pela porta este (-12,-5).",
       "evacRoute": [
         [12, -36],
