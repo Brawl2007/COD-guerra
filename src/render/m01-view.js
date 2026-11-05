@@ -914,7 +914,7 @@ export class M01View {
     this.syncAreaPolish(sim);
     const sapperOps=sim.sapperOps;this.repairLine.sync(sapperOps,sim.world);   // R3-a: before the demolition and the actors (tests/m01-demolition.test.js pins updateDemolition directly before updateActors)
     this.updateDemolition(state,time,sim);
-    this.updateActors(this.areaStretcher?this.areaStretcher.present(sim.actors,sim.timers?.medics,sim.clock):sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);
+    this.updateActors(this.areaStretcher?this.areaStretcher.present(sim.actors):sim.actors,time,sim.player,sim.battleClock,sapperOps);this.syncDamage(sim,state);this.lighting(sim);
     this.areaDusk?.update(this.camera.position,sim.clock);this.water.sync(this.lightingModel,sim.clock,this.owner.quality);
     const atmosphere=this.ambientDirector.sample(sim,this.owner.quality),flash=atmosphere.horizonFlash;
     this.horizonGlow.visible=Boolean(flash.active);

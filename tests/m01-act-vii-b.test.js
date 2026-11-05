@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {arch} from 'node:os';
-import {M01AreaSimulation,AREA_ACTS,AREA_SAVE_SCHEMA,PROFILE_DEFAULTS,areaActPlan,areaPlanOf,areaRoster,debriefChain,debriefWith,defaultCarry,makeProfile,validateAreaSnapshot} from '../src/game/m01-area-sim.js';
+import {M01AreaSimulation,STRETCHER_HEIGHT_M,AREA_ACTS,AREA_SAVE_SCHEMA,PROFILE_DEFAULTS,areaActPlan,areaPlanOf,areaRoster,debriefChain,debriefWith,defaultCarry,makeProfile,validateAreaSnapshot} from '../src/game/m01-area-sim.js';
 import {M01ActRunner,ACTS,actOf,carryFrom,nextSeed,validateCarry} from '../src/game/m01-acts.js';
 import {BOMB_BLAST,CONCUSSION,blastOutcome,concussionLevel} from '../src/game/m01-blast.js';
 import {SHELL_BLAST,SHELL_REACH_M,PLANNED_IMPACT_M,SAFE_IMPACT_M,barrageNext,barrageSeed,landingPoint,makeBarragePlan,makeMedicPlan,pickShellPoint,shellOutcome,shellProtection} from '../src/game/m01-shell-blast.js';
@@ -258,7 +258,7 @@ test('F3: the Poles near a shell — kneeling behind the parapet a man is wounde
   }
 });
 
-test('F5: the stretcher-bearers — they come on at the south edge when a man of the line is wounded, run to him, the first carries him on his shoulder, both walk south and leave; at most two men per act; they cannot be killed; nobody stacks or clips',()=>{
+test('F5: the stretcher-bearers — they come on at the south edge when a man of the line is wounded, run to him, they lift him on a stretcher and carry him in line, both walk south and leave; at most two men per act; they cannot be killed; nobody stacks or clips',()=>{
   const sim=atWestPost(newSim(19390901,'veterano'));
   // keep the barrage out of it: this checks the bearers alone, on the wounded of the test
   sim.timers.barrage.done={brg_npb_1:sim.clock,brg_npb_2:sim.clock};sim.timers.barrage.run=null;sim.flags['m01npb.wave']='repelled';
@@ -273,14 +273,14 @@ test('F5: the stretcher-bearers — they come on at the south edge when a man of
     assert.equal(patient.carriedBy,m0.id);assert.equal(sim.timers.medics.patient,id);
     for(let i=0;i<4000&&sim.timers.medics.state==='carry';i++){
       sim.tick(ACT_B_TICK,{});sim.drainEvents();clip.observe({sim});stack.observe({sim});carried=true;
-      if(patient.carriedBy){assert.ok(Math.hypot(patient.x-m0.x,patient.z-m0.z)<.5,'on his shoulder');maxLift=Math.max(maxLift,patient.y-m0.y);}
+      if(patient.carriedBy){assert.ok(Math.abs(patient.x-(m0.x+m1.x)/2)<1e-9&&Math.abs(patient.z-(m0.z+m1.z)/2)<1e-9,'on the stretcher, between the bearers');maxLift=Math.max(maxLift,patient.y-m0.y);}
     }
     assert.equal(sim.timers.medics.state,'idle');assert.equal(patient.carriedBy,null);assert.equal(patient.active,false,'off the field');assert.ok(patient.alive);assert.deepEqual([m0.active,m1.active],[false,false]);
     assert.ok(Math.hypot(m0.x-M.exit[0],m0.z-M.exit[1])<.1,'at the exit, on the south edge');
   };
   run(lineIds[3]);assert.equal(sim.timers.medics.handled,1);
   run(lineIds[5]);assert.equal(sim.timers.medics.handled,2);
-  assert.ok(carried&&Math.abs(maxLift-1.15)<1e-9,'the patient rides 1.15 m above the carrier\'s feet (act 1\'s convention)');
+  assert.ok(carried&&Math.abs(maxLift-STRETCHER_HEIGHT_M)<1e-9,'the patient rides on the lifted stretcher, STRETCHER_HEIGHT_M above the carrier\'s feet');
   // a third wounded man is not carried: at most two per act
   const third=wound(lineIds[1]);for(let i=0;i<400;i++){sim.tick(ACT_B_TICK,{});sim.drainEvents();}
   assert.equal(sim.timers.medics.state,'idle');assert.equal(third.active,true);assert.equal(third.carriedBy,undefined);assert.deepEqual([m0.active,m1.active],[false,false]);

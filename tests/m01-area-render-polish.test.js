@@ -2,6 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
+import {M01AreaSimulation,STRETCHER_GAP_M,STRETCHER_LIFT_SEC,STRETCHER_REST_M,STRETCHER_HEIGHT_M} from '../src/game/m01-area-sim.js';
+import {actBControls} from './helpers/m01-act-b-route.js';
+import {ACT_TICK} from './helpers/m01-act-route.js';
 import {STRETCHER,stretcherPose,buildStretcherGeometry,M01AreaStretcher} from '../src/render/m01-area-stretcher.js';
 import {DUSK,duskLift,exitLanternSites,haloSize,haloOpacity} from '../src/render/m01-area-dusk.js';
 import {M01_FX_PROFILES,battlefieldBlastKind,battlefieldProfile,blastFlashEnvelope,fxLayerCount,staggeredLife} from '../src/render/m01-battlefield-fx-profile.js';
@@ -11,59 +14,68 @@ import {M01_FX_PROFILES,battlefieldBlastKind,battlefieldProfile,blastFlashEnvelo
 const src=name=>readFileSync(new URL(`../src/render/${name}`,import.meta.url),'utf8');
 
 const bearer=(id,x,z,facing=Math.PI/2)=>({id,x,y:-3,z,facing,active:true,alive:true,state:'IDLE',role:'MEDIC',carriedBy:null});
+// the simulation's own layout during the carry (stepMedics): the second bearer GAP behind the first along his heading, the man at their midpoint
 const scene=()=>{
-  const m0=bearer('np_maqueiro_0',-430,-1100),m1=bearer('np_maqueiro_1',-429,-1100.3),man={id:'pl_np_3',x:-430,y:-1.85,z:-1100.25,facing:3,active:true,alive:true,state:'WOUNDED',carriedBy:'np_maqueiro_0',crouched:true};
+  const m0=bearer('np_maqueiro_0',-430,-1100),m1=bearer('np_maqueiro_1',-430,-1100-STRETCHER_GAP_M),man={id:'pl_np_3',x:-430,y:-3+STRETCHER_HEIGHT_M,z:-1100-STRETCHER_GAP_M/2,facing:3,active:true,alive:true,state:'WOUNDED',carriedBy:'np_maqueiro_0',crouched:true};
   return [{id:'other',x:0,z:0,y:0,facing:0,active:true,alive:true,carriedBy:null},m0,m1,man];
 };
 
-test('stretcher pose: the rear bearer is drawn GAP behind the first along his heading once the lift is done, and where the simulation has him at the pick-up',()=>{
-  const [,m0,m1]=scene();
-  const done=stretcherPose(m0,m1,1,{}),start=stretcherPose(m0,m1,0,{});
-  assert.ok(Math.abs(Math.hypot(done.rearX-m0.x,done.rearZ-m0.z)-STRETCHER.gapM)<1e-9);
-  assert.ok(Math.abs((done.rearX-m0.x)*Math.cos(m0.facing)+(done.rearZ-m0.z)*Math.sin(m0.facing)+STRETCHER.gapM)<1e-9);   // exactly behind
-  assert.equal(start.rearX,m1.x);assert.equal(start.rearZ,m1.z);
-  assert.ok(start.y<done.y&&Math.abs(done.y-(-3+STRETCHER.heightM))<1e-9);   // lifted from the ground to carrying height
-  assert.ok(Math.abs(done.x-(m0.x+done.rearX)/2)<1e-12);   // the stretcher is centred between the pair
-  for(let k=0;k<=1.0001;k+=.1){const p=stretcherPose(m0,m1,k,{});assert.ok(Number.isFinite(p.x)&&Number.isFinite(p.z)&&Number.isFinite(p.y)&&p.y>=start.y-1e-9&&p.y<=done.y+1e-9);}
-  assert.equal(stretcherPose(m0,m1,7,{}).rearX,done.rearX);   // lift is clamped
+test('the renderer\'s stretcher numbers are the simulation\'s',()=>{
+  assert.equal(STRETCHER.gapM,STRETCHER_GAP_M);assert.equal(STRETCHER.liftSec,STRETCHER_LIFT_SEC);assert.equal(STRETCHER.restHeightM,STRETCHER_REST_M);assert.equal(STRETCHER.heightM,STRETCHER_HEIGHT_M);
+});
+
+test('stretcher pose: centred under the carried man where the simulation has him, its axis along the line from the rear bearer to the front one; nothing is moved',()=>{
+  const [,m0,m1,man]=scene(),before=JSON.stringify([m0,m1,man]);
+  const p=stretcherPose(m0,m1,man,{});
+  assert.equal(p.x,man.x);assert.equal(p.z,man.z);assert.ok(Math.abs(p.y-(man.y+STRETCHER.canvasBelowM))<1e-12);
+  assert.ok(Math.abs(p.yaw-Math.PI/2)<1e-12);   // rear (z lower) to front (z higher)
+  assert.equal(JSON.stringify([m0,m1,man]),before);
+  assert.equal(stretcherPose(m0,{...m0},man,{}).yaw,m0.facing);   // bearers on one spot: the front one's heading
 });
 
 test('stretcher pose falls back to nothing (the old shoulder carry) when a record is missing or not finite',()=>{
-  const [,m0,m1]=scene();
-  assert.equal(stretcherPose(null,m1,1),null);assert.equal(stretcherPose(m0,undefined,1),null);
-  assert.equal(stretcherPose({...m0,x:NaN},m1,1),null);assert.equal(stretcherPose(m0,{...m1,facing:undefined},1),null);
-  assert.ok(stretcherPose(m0,m1,NaN,{}));   // an unreadable lift counts as done
+  const [,m0,m1,man]=scene();
+  assert.equal(stretcherPose(null,m1,man),null);assert.equal(stretcherPose(m0,undefined,man),null);assert.equal(stretcherPose(m0,m1,null),null);
+  assert.equal(stretcherPose({...m0,x:NaN},m1,man),null);assert.equal(stretcherPose(m0,{...m1,facing:undefined},man),null);assert.equal(stretcherPose(m0,m1,{...man,y:NaN}),null);
 });
 
-test('the stretcher replaces the rear bearer and the patient by drawn copies, never touches the records, and leaves the list alone when nobody is carried',()=>{
+test('the stretcher moves no body: only the carried man is replaced by a copy, at the same place, and nothing is written back',()=>{
   const parent=new THREE.Group(),st=new M01AreaStretcher(parent),actors=scene(),before=JSON.stringify(actors);
-  const out=st.present(actors,{state:'carry',since:100},102.5);
+  const out=st.present(actors);
   assert.equal(JSON.stringify(actors),before);   // the simulation's records are untouched
   assert.notEqual(out,actors);assert.equal(out.length,actors.length);
   const [other,m0,m1,man]=actors,[o2,f2,r2,p2]=out;
-  assert.equal(o2,other);assert.equal(f2,m0);   // the first bearer and the others are the very same objects
-  assert.notEqual(r2,m1);assert.notEqual(p2,man);
-  assert.equal(p2.carriedBy,null);assert.equal(p2.state,'WOUNDED');assert.equal(p2.id,'pl_np_3');assert.equal(r2.id,'np_maqueiro_1');
-  assert.ok(Math.abs(Math.hypot(r2.x-m0.x,r2.z-m0.z)-STRETCHER.gapM)<1e-9);
-  assert.ok(Math.abs(p2.x-(m0.x+r2.x)/2)<1e-9&&Math.abs(p2.z-(m0.z+r2.z)/2)<1e-9);
+  assert.equal(o2,other);assert.equal(f2,m0);assert.equal(r2,m1);   // both bearers and the others are the very same objects: drawn where the simulation traces rounds against them
+  assert.notEqual(p2,man);assert.equal(p2.carriedBy,null);assert.equal(p2.state,'WOUNDED');assert.equal(p2.id,'pl_np_3');
+  assert.deepEqual([p2.x,p2.y,p2.z],[man.x,man.y,man.z]);   // the man is drawn at his simulated position
+  assert.ok(Math.abs(Math.hypot(m0.x-r2.x,m0.z-r2.z)-STRETCHER.gapM)<1e-9);
   assert.equal(st.group.visible,true);assert.equal(st.diagnostics.active,true);
-  // no allocation growth: the same copies and list are reused on the next frame
-  const again=st.present(actors,{state:'carry',since:100},102.6);assert.equal(again,out);assert.equal(again[2],r2);assert.equal(again[3],p2);
+  assert.ok(Math.abs(st.group.position.x-man.x)<1e-12&&Math.abs(st.group.position.z-man.z)<1e-12);
+  // no allocation growth: the same copy and list are reused on the next frame
+  const again=st.present(actors);assert.equal(again,out);assert.equal(again[3],p2);
   // nobody carried: the list itself, the group hidden
-  const idle=scene();idle[3].carriedBy=null;const same=st.present(idle,{state:'idle',since:0},103);assert.equal(same,idle);assert.equal(st.group.visible,false);
+  const idle=scene();idle[3].carriedBy=null;const same=st.present(idle);assert.equal(same,idle);assert.equal(st.group.visible,false);
   // a bearer missing: the shoulder carry stays
-  const lone=scene().filter(a=>a.id!=='np_maqueiro_1');assert.equal(st.present(lone,{state:'carry',since:1},3),lone);assert.equal(st.group.visible,false);
+  const lone=scene().filter(a=>a.id!=='np_maqueiro_1');assert.equal(st.present(lone),lone);assert.equal(st.group.visible,false);
   // an inactive rear bearer (he has left the field): the same
-  const gone=scene();gone[2].active=false;assert.equal(st.present(gone,{state:'carry',since:1},3),gone);
-  // the lift starts at the simulation's `since`, so a restore mid-carry does not replay it
-  const late=st.present(scene(),{state:'carry',since:10},50);assert.ok(Math.abs(st.pose.lift-1)<1e-9);void late;
-  const early=st.present(scene(),{state:'carry',since:10},10.1);assert.ok(st.pose.lift<.05);void early;
+  const gone=scene();gone[2].active=false;assert.equal(st.present(gone),gone);
   st.dispose();assert.equal(parent.children.length,0);
+});
+
+test('VII-b carry (seed 19390901): the bearers walk in line, the man lies at their midpoint, and every body the renderer draws is where the simulation traces rounds',()=>{
+  const sim=new M01AreaSimulation(19390901,{difficulty:'recruta',actId:'act_vii_b_north_day'}),st={arrived:false,lastHealth:100};
+  let i=0;for(;i<120000&&!(sim.timers.medics?.state==='carry'&&sim.timers.medics.patient&&sim.actor(sim.timers.medics.patient).carriedBy&&sim.clock-sim.timers.medics.since>3);i++){sim.tick(ACT_TICK,actBControls(sim,'passive',st));sim.drainEvents();}
+  assert.equal(sim.timers.medics.state,'carry','the scripted casualty is carried');
+  const m0=sim.actor('np_maqueiro_0'),m1=sim.actor('np_maqueiro_1'),pat=sim.actor(sim.timers.medics.patient);
+  assert.ok(Math.abs(Math.hypot(m0.x-m1.x,m0.z-m1.z)-STRETCHER_GAP_M)<.05,'in line, one gap apart');
+  assert.ok(Math.abs(pat.x-(m0.x+m1.x)/2)<1e-9&&Math.abs(pat.z-(m0.z+m1.z)/2)<1e-9&&Math.abs(pat.y-(m0.y+STRETCHER_HEIGHT_M))<1e-9,'the man lies at their midpoint at carrying height (the lift is over)');
+  const drawn=new M01AreaStretcher(new THREE.Group()).present(sim.actors);
+  for(const a of sim.actors){const d=drawn.find(x=>x.id===a.id);assert.deepEqual([d.x,d.y,d.z],[a.x,a.y,a.z],`${a.id} is drawn at its simulated position`);}
 });
 
 test('act 1 is untouched: only a carrier named np_maqueiro_N makes a stretcher',()=>{
   const st=new M01AreaStretcher(new THREE.Group()),act1=[{id:'medic_a',x:1,z:1,y:0,facing:0,active:true,carriedBy:null},{id:'generic_rifleman',x:2,z:1,y:0,facing:0,active:true,carriedBy:'medic_a',state:'WOUNDED'}];
-  assert.equal(st.present(act1,{state:'carry',since:0},9),act1);assert.equal(st.diagnostics.active,false);st.dispose();
+  assert.equal(st.present(act1),act1);assert.equal(st.diagnostics.active,false);st.dispose();
 });
 
 test('the stretcher geometry is small, finite and sized for a man',()=>{

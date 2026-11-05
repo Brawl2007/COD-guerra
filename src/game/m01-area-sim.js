@@ -43,6 +43,8 @@ import {makeWithdrawalPlan,freshWithdrawalRecord,validWithdrawalRecord,validWith
 // 2 (2026-11-03, the second echelon): the roster grew (the men of the echelons that follow the first) and the wave record gained its echelon state (timers.wave.ech/echs/lullUntil).
 // A schema 1 save of this act (QA only: the acts are off by default) is REJECTED with a message, not migrated: it cannot hold the later echelons' men, and the act restarts in seconds.
 export const AREA_SAVE_SCHEMA=2;
+// The VII-b stretcher (stepMedics): the bearers walk in line STRETCHER_GAP_M apart and lift the man in STRETCHER_LIFT_SEC from the ground (REST) to carrying height. src/render/m01-area-stretcher.js draws it with the same numbers.
+export const STRETCHER_GAP_M=2.0,STRETCHER_LIFT_SEC=1.2,STRETCHER_REST_M=.12,STRETCHER_HEIGHT_M=.8;
 const seconds=text=>{const v=text.split(':').map(Number);if(v.length===2)v.push(0);return v.reduce((n,x)=>n*60+x,0);};
 const clone=v=>JSON.parse(JSON.stringify(v));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -855,10 +857,14 @@ export class M01AreaSimulation {
       if([m0,m1].every(m=>dist(m,patient)<=M.pickupM)){patient.carriedBy=m0.id;patient.facing=m0.facing+Math.PI/2;R.state='carry';R.since=this.clock;}
       return;
     }
-    // carry: both go to the exit; the patient (if he is carried) rides on the first one's shoulder (act 1's convention)
+    // carry: both go to the exit, in line (the second one STRETCHER_GAP_M behind the first along his heading); the carried man lies on the stretcher between them, which they lift for STRETCHER_LIFT_SEC. These are the
+    // positions rounds are traced against (traceShot, germanTargets): the renderer draws the stretcher where the simulation has the men and moves nobody (m01-area-stretcher.js).
     const arrived=this.walk(m0,{x:M.exit[0],z:M.exit[1]},M.pace,dt);
-    this.walk(m1,{x:m0.x+1,z:m0.z+.3},M.pace*1.15,dt);
-    if(patient.carriedBy===m0.id){patient.facing=m0.facing+Math.PI/2;patient.x=m0.x-Math.cos(m0.facing)*.25;patient.z=m0.z-Math.sin(m0.facing)*.25;patient.y=m0.y+1.15;}
+    this.walk(m1,{x:m0.x-Math.cos(m0.facing)*STRETCHER_GAP_M,z:m0.z-Math.sin(m0.facing)*STRETCHER_GAP_M},M.pace*1.15,dt);
+    if(patient.carriedBy===m0.id){
+      const t=Math.max(0,Math.min(1,(this.clock-R.since)/STRETCHER_LIFT_SEC)),k=t*t*(3-2*t);
+      patient.facing=m0.facing+Math.PI/2;patient.x=(m0.x+m1.x)/2;patient.z=(m0.z+m1.z)/2;patient.y=m0.y+STRETCHER_REST_M+(STRETCHER_HEIGHT_M-STRETCHER_REST_M)*k;
+    }
     if(arrived){
       if(patient.carriedBy===m0.id){patient.carriedBy=null;patient.active=false;}
       m0.active=false;m1.active=false;R.handled++;R.state='idle';R.patient=null;R.since=this.clock;
