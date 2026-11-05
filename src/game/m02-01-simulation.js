@@ -20,6 +20,7 @@ import {
   M02DialogueDirector,
   updatePolishSquad,
   updateGermanGarrison,
+  roundNoNegZero,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -759,7 +760,7 @@ export class M02BenchSimulation {
   }
 
   enterAreaBC06(options = {}) {
-    return runEnterAreaBC06(this, options);
+    return this.#runCheckpointBatch(() => runEnterAreaBC06(this, options));
   }
 
   damageCartWheel() {
@@ -778,36 +779,38 @@ export class M02BenchSimulation {
     return runLoseSupplyVolume(this, volumeId);
   }
 
+  // Ações compostas de API (teclas/botões da bancada): cada uma é um lote atómico. Um checkpoint automático pedido a meio
+  // (cp_m02_d_cobertura_retirada em C10) só é gravado quando a ação inteira acabou, como no fim de tick() (FIX-2c).
   completeC07Reorganization(options = {}) {
-    return runCompleteC07Reorganization(this, options);
+    return this.#runCheckpointBatch(() => runCompleteC07Reorganization(this, options));
   }
 
   enterAreaCC09(options = {}) {
-    return runEnterAreaCC09(this, options);
+    return this.#runCheckpointBatch(() => runEnterAreaCC09(this, options));
   }
 
   unlockC09GateLatch() {
-    return runUnlockC09GateLatch(this);
+    return this.#runCheckpointBatch(() => runUnlockC09GateLatch(this));
   }
 
   startC10OrderChanges() {
-    return runStartC10OrderChanges(this);
+    return this.#runCheckpointBatch(() => runStartC10OrderChanges(this));
   }
 
   detonateC10FixedArtillery() {
-    return runDetonateC10FixedArtillery(this);
+    return this.#runCheckpointBatch(() => runDetonateC10FixedArtillery(this));
   }
 
   startC11LisAndLastGroup() {
-    return runStartC11LisAndLastGroup(this);
+    return this.#runCheckpointBatch(() => runStartC11LisAndLastGroup(this));
   }
 
   assistLisInC11(mode = 'wounded_evacuated') {
-    return runAssistLisInC11(this, mode);
+    return this.#runCheckpointBatch(() => runAssistLisInC11(this, mode));
   }
 
   completeC12Epilogue(options = {}) {
-    return runCompleteC12Epilogue(this, options);
+    return this.#runCheckpointBatch(() => runCompleteC12Epilogue(this, options));
   }
 
   exportCampaignResultToM03() {
@@ -1015,9 +1018,9 @@ export class M02BenchSimulation {
       if (!enemy.seeingTargetId) {
         enemy.memory = {
           targetId: shooter.id,
-          x: Number(shooter.x.toFixed(2)),
-          y: Number((shooter.y + 1.2).toFixed(2)),
-          z: Number(shooter.z.toFixed(2)),
+          x: roundNoNegZero(shooter.x),
+          y: roundNoNegZero(shooter.y + 1.2),
+          z: roundNoNegZero(shooter.z),
           seenAt: Number(this.clock.toFixed(2)),
           expiresAt: Number((this.clock + 5.5).toFixed(2)),
           source: 'audio',
@@ -1402,9 +1405,11 @@ export class M02BenchSimulation {
    * de o objetivo estar escrito: dentro de tick() ficam pendentes até ao fim do tick; fora dele são gravados aqui (FIX-2b).
    */
   updateTacticalContext() {
-    const due = [];
-    this.#evaluateTacticalContext(due);
-    for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
+    this.#runCheckpointBatch(() => {
+      const due = [];
+      this.#evaluateTacticalContext(due);
+      for (const checkpointId of due) this.requestAutoCheckpoint(checkpointId);
+    });
   }
 
   #evaluateTacticalContext(due) {
@@ -1531,9 +1536,11 @@ export class M02BenchSimulation {
     } else if (activeCombatDefenders.length === 0) {
       if (this.objective.id !== 'C04') {
         this.dialogue.trigger('bz39_c03_04', this);
-        // Pedido aqui, gravado depois de o objetivo C04 abaixo estar escrito (antes ficava gravado com o objetivo anterior).
-        if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       }
+      // Pedido aqui, gravado depois de o objetivo C04 abaixo estar escrito (antes ficava gravado com o objetivo anterior).
+      // Não só na transição de objetivo: um tick que lançou depois de escrever C04 descartou o pedido (ver
+      // #runCheckpointBatch) e a transição já não se repete; assim o tick seguinte volta a pedi-lo, como no caminho COMPLETE (FIX-2c).
+      if (!this.checkpointReachedOrPending('cp_m02_b_acesso')) due.push('cp_m02_b_acesso');
       this.objective.id = 'C04';
       this.objective.title = 'C04 (Pomar Sul): Reagrupar junto ao poço/pomar e sinalizar o ferido [E]';
       this.objective.status = 'active';
@@ -1580,6 +1587,15 @@ export class M02BenchSimulation {
     return null;
   }
 
+  /**
+   * Executa uma sequência de chamadas de API como uma só ação atómica: os checkpoints automáticos que ela peça (p. ex.
+   * startC10OrderChanges → detonateC10FixedArtillery → assistLisInC11) são gravados todos no fim, com o estado final
+   * (FIX-2c). Cada método composto da API já é atómico por si; isto cobre sequências de vários (Digit9 / btn-c10-c11-lis).
+   */
+  runAtomicAction(fn) {
+    return this.#runCheckpointBatch(fn);
+  }
+
   /** Já atingido nesta linha temporal, ou pedido no passo em curso. */
   checkpointReachedOrPending(checkpointId) {
     return this.checkpointsReached.includes(checkpointId) || this.#pendingCheckpointIds.includes(checkpointId);
@@ -1598,7 +1614,7 @@ export class M02BenchSimulation {
         const due = this.#pendingCheckpointIds;
         this.#pendingCheckpointIds = [];
         // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
-        if (completed) for (const checkpointId of due) this.saveCheckpoint(checkpointId);
+        if (completed) this.#saveCheckpointBatch(due);
       }
     }
   }
@@ -1700,11 +1716,34 @@ export class M02BenchSimulation {
   saveCheckpoint(checkpointId, { persist = true } = {}) {
     const addedNow = !this.checkpointsReached.includes(checkpointId);
     if (addedNow) this.checkpointsReached.push(checkpointId);
+    const saved = this.#recordCheckpoint(checkpointId, persist);
+    if (!saved && addedNow) this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
+    return saved;
+  }
+
+  /**
+   * Grava de uma vez os checkpoints automáticos devidos no fim de um passo/ação (FIX-2c). TODOS ficam marcados em
+   * `checkpointsReached` antes do primeiro snapshot: assim cada um é igual ao estado do fim do passo (diferem só no
+   * `checkpointId`) e restaurar o primeiro não volta a disparar nem a regravar os restantes. O último do lote fica como
+   * «último gravado» (F9) e como `latestCheckpointId` da loja. Um lote rejeitado pelo validador não marca nenhum.
+   */
+  #saveCheckpointBatch(checkpointIds) {
+    const added = checkpointIds.filter((id) => !this.checkpointsReached.includes(id));
+    this.checkpointsReached.push(...added);
+    for (const checkpointId of checkpointIds) {
+      const saved = this.#recordCheckpoint(checkpointId, true);
+      if (!saved && added.includes(checkpointId)) {
+        this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
+      }
+    }
+  }
+
+  /** Snapshot → validação → índice em memória → loja. Não mexe em `checkpointsReached` (quem chama já o marcou). */
+  #recordCheckpoint(checkpointId, persist) {
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
     const check = validateM02Snapshot(snap);
     if (!check.valid) {
-      if (addedNow) this.checkpointsReached.splice(this.checkpointsReached.indexOf(checkpointId), 1);
       const reason = `Snapshot recusado antes de gravar: ${check.reason}`;
       this.lastCheckpointPersist = { ok: false, reason };
       this.events.push({ type: 'checkpoint-rejected', checkpointId, clock: this.clock, reason });
@@ -1736,23 +1775,55 @@ export class M02BenchSimulation {
   }
 
   /**
-   * Carregamento rápido (F9 da bancada). Se esta sessão já gravou: o checkpoint manual, senão o último gravado nesta sessão.
-   * Numa sessão que ainda não gravou nada (página acabada de abrir ou recarregar): o último checkpoint persistido na loja.
-   * Só sem nada disso volta ao início em memória. Devolve { checkpointId, source }.
+   * Apaga os saves persistidos da bancada (os três slots da loja). Saída explícita de uma loja bloqueada (`saveStore.status()`
+   * com `blocked`); nunca é chamada automaticamente (FIX-2c). Não toca no índice em memória desta sessão. Limpa o
+   * resultado da última gravação falhada, para o aviso da bancada desaparecer. Devolve false se o armazenamento recusar.
+   */
+  clearPersistedSaves() {
+    const ok = this.saveStore ? this.saveStore.clear() : false;
+    if (ok) this.lastCheckpointPersist = null;
+    return ok;
+  }
+
+  /**
+   * Carregamento rápido (F9 da bancada). Ordem de recurso, saltando as entradas que não se deixam restaurar (incompatíveis
+   * ou inválidas; FIX-2c): 1) o checkpoint manual desta sessão; 2) o último gravado nesta sessão; 3) o último gravado na
+   * loja persistida (página acabada de abrir ou recarregada); 4) o checkpoint manual da loja; 5) o início em memória.
+   * Devolve { checkpointId, source } e, se saltou alguma entrada, `skipped: [{ checkpointId, source, reason }]`.
    */
   quickLoadCheckpoint() {
-    const sessionId = this.checkpoints.has('cp_m02_manual') ? 'cp_m02_manual' : this.#lastSessionCheckpointId;
-    if (sessionId) {
-      this.restoreCheckpoint(sessionId);
-      return { checkpointId: sessionId, source: 'session' };
+    const attempts = [];
+    const add = (checkpointId, source, restore) => {
+      if (checkpointId && !attempts.some((a) => a.checkpointId === checkpointId && a.source === source)) {
+        attempts.push({ checkpointId, source, restore });
+      }
+    };
+    if (this.checkpoints.has('cp_m02_manual')) add('cp_m02_manual', 'session', (id) => this.restoreCheckpoint(id));
+    add(this.#lastSessionCheckpointId, 'session', (id) => this.restoreCheckpoint(id));
+    const skipped = [];
+    const stored = this.saveStore ? this.saveStore.load() : null;
+    if (stored?.ok) {
+      const latestId = stored.record.latestCheckpointId;
+      if (stored.loadable[latestId]) {
+        add(latestId, 'store', (id) => this.restorePersistedCheckpoint(id));
+      } else {
+        const why = stored.rejectedCheckpoints.find((r) => r.id === latestId)?.reason ?? 'incompatível';
+        skipped.push({ checkpointId: latestId, source: 'store', reason: why });
+      }
+      if (stored.loadable.cp_m02_manual) add('cp_m02_manual', 'store', (id) => this.restorePersistedCheckpoint(id));
     }
-    const latest = this.saveStore ? this.saveStore.latestCheckpointId() : null;
-    if (latest) {
-      this.restorePersistedCheckpoint(latest);
-      return { checkpointId: latest, source: 'store' };
+    for (const { checkpointId, source, restore } of attempts) {
+      try {
+        restore(checkpointId);
+      } catch (error) {
+        skipped.push({ checkpointId, source, reason: error.message });
+        continue;
+      }
+      return skipped.length ? { checkpointId, source, skipped } : { checkpointId, source };
     }
     this.restoreCheckpoint('cp_m02_a_preparacao');
-    return { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
+    const result = { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
+    return skipped.length ? { ...result, skipped } : result;
   }
 
   /**

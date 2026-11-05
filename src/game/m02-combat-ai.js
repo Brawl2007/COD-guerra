@@ -1,6 +1,14 @@
 import { eyePosition } from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 
+/**
+ * Arredonda a `digits` casas SEM devolver -0 (Number((-0.001).toFixed(2)) é -0). O JSON do save não representa -0 e o
+ * snapshot normaliza-o para 0; um -0 no estado vivo que chegue a Math.atan2 dá -π onde o estado restaurado dá +π (FIX-2c).
+ */
+export function roundNoNegZero(value, digits = 2) {
+  return Number(value.toFixed(digits)) + 0;
+}
+
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
     id: 'wz29',
@@ -1068,15 +1076,16 @@ export function updateGermanGarrison(sim, dt) {
       enemy.seeingTargetId = visibleTarget.id;
       enemy.memory = {
         targetId: visibleTarget.id,
-        x: Number(visibleTarget.x.toFixed(2)),
-        y: Number((visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25)).toFixed(2)),
-        z: Number(visibleTarget.z.toFixed(2)),
+        x: roundNoNegZero(visibleTarget.x),
+        y: roundNoNegZero(visibleTarget.y + (visibleTarget.crouched ? 0.95 : 1.25)),
+        z: roundNoNegZero(visibleTarget.z),
         seenAt: Number(sim.clock.toFixed(2)),
         expiresAt: Number((sim.clock + 6.0).toFixed(2)),
         source: 'visual',
       };
       if (enemy.weapon !== 'mg34') {
-        enemy.facing = Math.atan2(visibleTarget.z - enemy.z, visibleTarget.x - enemy.x);
+        // `+ 0`: uma posição em -0 (jogador em z = -0) daria facing -π ao vivo e +π depois de restaurar (o save perde o -0).
+        enemy.facing = Math.atan2(visibleTarget.z - enemy.z + 0, visibleTarget.x - enemy.x + 0);
       }
 
       if (enemy.reloadingUntil <= sim.clock && enemy.mag > 0 && sim.clock >= enemy.nextFireAt && enemy.suppressed < 0.88) {
@@ -1093,7 +1102,7 @@ export function updateGermanGarrison(sim, dt) {
       if (enemy.memory && sim.clock < enemy.memory.expiresAt) {
         enemy.state = 'SEARCH_MEMORY';
         if (enemy.weapon !== 'mg34') {
-          enemy.facing = Math.atan2(enemy.memory.z - enemy.z, enemy.memory.x - enemy.x);
+          enemy.facing = Math.atan2(enemy.memory.z - enemy.z + 0, enemy.memory.x - enemy.x + 0);
         }
       } else {
         enemy.memory = null;
