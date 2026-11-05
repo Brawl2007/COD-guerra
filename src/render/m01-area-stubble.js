@@ -69,5 +69,5 @@ export function createStubble({bounds,groundY,origin,count=STUBBLE.count,radius=
   for(let i=0;i<count;i++){m.makeTranslation(hash01(i,501)*side,0,hash01(i,502)*side);mesh.setMatrixAt(i,m);}
   mesh.instanceMatrix.needsUpdate=true;mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=false;mesh.name='m01-area-stubble';
   mesh.onBeforeRender=(renderer,scene,camera)=>{uniforms.uStubCam.value.set(camera.position.x,camera.position.z);};
-  return {mesh,uniforms,triangles:count*geometry.index.count/3,dispose(){geometry.dispose();material.dispose();}};
+  return {mesh,uniforms,triangles:count*geometry.index.count/3,dispose(){mesh.dispose();geometry.dispose();material.dispose();}};
 }

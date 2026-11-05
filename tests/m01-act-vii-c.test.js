@@ -35,19 +35,19 @@ test('the data of VII-c: a valid plan with a withdrawal and no assault, a courie
   assert.equal(plan.actId,ID);assert.equal(AREA_ACTS[ID].layout,layout,'the same slice as VII-a and VII-b: layout.json is not changed');assert.deepEqual(Object.keys(AREA_ACTS),['act_vii_a_north','act_vii_b_north_day',ID]);
   assert.equal(plan.assault,null);assert.equal(plan.barrages,null);assert.equal(plan.medics,null,'nobody on the other side, no shell, no bearer');
   const W=plan.withdrawal;assert.ok(W);
-  assert.deepEqual(W.ids.line,['pl_np_4','pl_np_5','pl_np_6','ckm_gunner','ckm_loader','pl_np_3','pl_np_0','pl_np_1','pl_np_2'],'the line\'s seven riflemen and the ckm crew, in three teams');
+  assert.deepEqual(W.ids.line,['pl_np_4','pl_np_5','pl_np_6','ckm_gunner','ckm_loader','pl_np_0','pl_np_1','pl_np_2'],'the line\'s six riflemen (pl_np_3 was carried off wounded in VII-b) and the ckm crew, in three teams');
   assert.deepEqual(W.ids.rear,['staszek_pawlak','szymon_kowal','marek_zielinski'],'the rear guard is the section, its leader last');
   assert.deepEqual(plan.squad.teams,[['marek_zielinski'],['staszek_pawlak'],['szymon_kowal']],'the section goes up leader first');
   assert.equal(W.line.teams.length,3);assert.equal(W.line.moves.length,6,'three teams, two bounds each');assert.equal(W.rear.moves.length,6);
   assert.deepEqual(plan.waveTrigger,{type:'order',note:act.events.find(e=>e.id==='evt_npc_order').trigger.note});assert.equal(plan.waveAt,null);
   assert.deepEqual(act.checkpoints.map(c=>[c.id,c.label]),[[CP_J,'CP-J'],[CP_K,'CP-K']]);assert.deepEqual(act.checkpoints[0].trigger,{type:'sceneEnd',scene:'cs_npc_dusk'});
   assert.deepEqual(plan.triggers,[{id:CP_K,type:'flag',flag:'m01npc.lineOut'}],'CP-K is taken in the tick the line is out');
-  assert.equal(areaRoster(plan).length,3+7+2+1,'the roster: the section, the line, the ckm crew, the courier');assert.equal(areaRoster(plan).at(-1),'np_mensageiro');
+  assert.equal(areaRoster(plan).length,3+6+2+1,'the roster: the section, the line, the ckm crew, the courier');assert.equal(areaRoster(plan).at(-1),'np_mensageiro');
   assert.equal(plan.clockStart,19*3600);assert.equal(act.clock.label,'ANOITECER');assert.deepEqual(act.clock.sun.keyframes,[{clock:'18:39',altitudeDeg:-0.9,azimuthDeg:286},{clock:'19:00',altitudeDeg:-3.8,azimuthDeg:290},{clock:'19:16',altitudeDeg:-6,azimuthDeg:293}]);
   // the exit band is the SW corner of the slice, inside `playable`; every final slot of both squads is inside it with room to spare, and nobody shares a slot
   const pb=layout.bounds.playable,e=W.exit;
   assert.deepEqual(e,{minX:-600,maxX:-560,minZ:-1068,maxZ:-1056});assert.ok(e.minX>=pb.minX&&e.maxX<=pb.maxX&&e.minZ>=pb.minZ&&e.maxZ<=pb.maxZ&&e.maxZ<=-1050,'inside the playable area, z <= -1050');
-  const finals=[...Object.entries(W.line.posts.at(-1).slots),...Object.entries(W.rear.posts.at(-1).slots)];assert.equal(finals.length,12);
+  const finals=[...Object.entries(W.line.posts.at(-1).slots),...Object.entries(W.rear.posts.at(-1).slots)];assert.equal(finals.length,11);
   for(const [id,[x,z]] of finals)assert.ok(inBand(e,{x,z},.95),`${id} at least 0.95 m inside the band`);
   for(let i=0;i<finals.length;i++)for(let j=0;j<i;j++)assert.ok(Math.hypot(finals[i][1][0]-finals[j][1][0],finals[i][1][1]-finals[j][1][1])>=1.3,`${finals[i][0]} and ${finals[j][0]} do not share a slot`);
   assert.ok(Math.hypot(W.messenger.to[0]-layout.points.command_post.x,W.messenger.to[1]-layout.points.command_post.z)<1e-9,'the courier brings the order to the command post of the layout');
@@ -184,12 +184,12 @@ test('F6: the line and the ckm crew leave by bounds — three teams, two bounds 
     if(left.pl_np_4===undefined)kneeling&&=sim.plan.line.men.every(id=>sim.actor(id).crouched);
   }
   assert.ok(kneeling,'the line kneels at its posts until the first bound');
-  assert.ok(left.pl_np_4===left.pl_np_5&&left.pl_np_5===left.pl_np_6,'team 1 (the east wing) goes together');assert.ok(left.ckm_gunner===left.pl_np_3&&left.ckm_loader===left.ckm_gunner,'team 2 (the ckm crew and the man of the centre) together');
+  assert.ok(left.pl_np_4===left.pl_np_5&&left.pl_np_5===left.pl_np_6,'team 1 (the east wing) goes together');assert.ok(left.ckm_loader===left.ckm_gunner,'team 2 (the ckm crew) together');
   assert.ok(left.pl_np_0===left.pl_np_1&&left.pl_np_1===left.pl_np_2,'team 3 (the west wing) together');assert.ok(left.pl_np_4<left.ckm_gunner&&left.ckm_gunner<left.pl_np_0,'in order: east wing, crew, west wing');
   assert.ok(Math.abs(left.pl_np_4-R.orderAt-3)<=ACT_C_TICK+1e-9,'the first bound goes 3 s after the order');assert.ok(said.some(([on,t])=>on==='line_go'&&Math.abs(t-left.pl_np_4)<=ACT_C_TICK+1e-9),'«Primeira equipa, lanço!» when it starts');
   assert.ok(left.ckm_gunner-left.pl_np_4<=W.line.stallSec+.2&&left.pl_np_0-left.ckm_gunner<=W.line.stallSec+.2,'a team starts after the one before it has arrived or after stallSec at the most');
   // while the east wing is on the way, nobody else has moved
-  assert.deepEqual(Object.keys(outAt).sort(),[...W.ids.line].sort(),'every man of the line left the field');assert.equal(R.out.length,9);
+  assert.deepEqual(Object.keys(outAt).sort(),[...W.ids.line].sort(),'every man of the line left the field');assert.equal(R.out.length,8);
   for(const id of W.ids.line){const a=sim.actor(id);assert.equal(a.active,false);assert.ok(a.alive);assert.ok(inBand(W.exit,a),`${id} left the field inside the exit band`);assert.ok(Math.hypot(a.x-W.line.posts[2].slots[id][0],a.z-W.line.posts[2].slots[id][1])<=W.line.arriveM+1e-9,`${id} left within arriveM of his slot`);}
   assert.equal(R.lineOutAt,sim.clock);assert.equal(R.lineOutAt,Math.max(...Object.values(outAt)));assert.equal(sim.flags['m01npc.lineOut'],true);assert.equal(sim.mission.phase,'NPC_REAR');
   assert.equal(sim.objectives.obj_npc_cover.state,'done');assert.equal(sim.objectives.obj_npc_withdraw.state,'active');assert.equal(sim.mission.text,'Recue com a secção até à saída');assert.equal(sim.objectiveMarker.label,'Saída');assert.deepEqual([sim.objectiveMarker.x,sim.objectiveMarker.z],[-580,-1062]);
@@ -367,13 +367,13 @@ test('F2: the chain BW -> VII-a -> VII-b -> VII-c: carry keeps the BW events and
   assert.ok(c instanceof M01AreaSimulation);assert.equal(actOf(c),ID);assert.equal(c.scene.id,'cs_npc_order','the chain opens VII-c on the card of the order');assert.equal(c.weapon.reserve,b.weapon.reserve);assert.equal(c.difficulty,'soldado');assert.ok(c.world.events.includes('evt_m01_west_demolition'));
   assert.equal(c.flags['m01npb.completed'],true);assert.equal(c.flags['m01npc.wave'],undefined);
   const ids=c.definition.debrief.paragraphs.filter(p=>p.enabled).map(p=>p.id);
-  assert.deepEqual(ids.slice(0,7),['db_01','db_02','db_03','db_np_01','db_npb_01','db_04','db_npc_01'],'db_01..db_03, VII-a\'s, VII-b\'s, db_04, VII-c\'s, then the rest');assert.ok(ids.length>7&&ids.slice(7).every(id=>/^db_0[5-7]b?$/.test(id)),`the rest of the current act's paragraphs follow: ${ids.slice(7)}`);
+  assert.deepEqual(ids.slice(0,7),['db_01','db_02','db_03','db_np_01','db_npb_01','db_npc_01','db_04'],'db_01..db_03, VII-a\'s, VII-b\'s, VII-c\'s (the 17:00 order), then db_04 (the battalion had left by 20:00) and the rest');assert.ok(ids.length>7&&ids.slice(7).every(id=>/^db_0[5-7]b?$/.test(id)),`the rest of the current act's paragraphs follow: ${ids.slice(7)}`);
   assert.equal(ids.length,definition.debrief.paragraphs.length+3);assert.deepEqual(c.renderState.debrief.map(p=>p.id),ids);
   for(const p of definition.debrief.paragraphs)assert.equal(c.definition.debrief.paragraphs.find(q=>q.id===p.id).text,p.text,'the paragraphs of the current act are untouched');
   assert.deepEqual(debriefChain(ID,carry).map(x=>x.paragraphs[0].id),['db_np_01','db_npb_01','db_npc_01']);assert.equal(debriefWith(...debriefChain(ID,carry)).length,definition.debrief.paragraphs.length+3);
-  // the QA start at VII-c (nothing played before): its own paragraph goes after db_04
+  // the QA start at VII-c (nothing played before): its own paragraph goes after db_03 (db_npb_01 is absent: the fallback), before db_04
   const q=new M01ActRunner({enabled:true,startAct:'vii-c'}).createInitial({difficulty:'recruta'});assert.equal(actOf(q),ID);assert.equal(q.scene.id,'cs_npc_order');
-  assert.deepEqual(q.definition.debrief.paragraphs.map(p=>p.id).slice(0,6),['db_01','db_02','db_03','db_04','db_npc_01','db_05']);assert.deepEqual(q.carry,defaultCarry('recruta'));
+  assert.deepEqual(q.definition.debrief.paragraphs.map(p=>p.id).slice(0,6),['db_01','db_02','db_03','db_npc_01','db_04','db_05']);assert.deepEqual(q.carry,defaultCarry('recruta'));
   // a stored envelope of VII-c opens through the runner; the chain ends here: the debrief follows VII-c
   const env=runner.envelope(c);assert.equal(runner.load(JSON.stringify(env)).ok,true);
   c.mission.complete=true;assert.equal(runner.next(c),null,'no act after VII-c: the debrief');assert.equal(runner.enter(c),null,'and there is nothing to enter');
@@ -401,7 +401,7 @@ test('F9: nothing on screen of VII-c gives an exact hour but the one of the orde
   assert.equal(hist.h_npc_withdrawal.classification,'DOCUMENTED');assert.deepEqual(hist.h_npc_withdrawal.sources,['T03']);assert.equal(hist.h_npc_sunset.classification,'DOCUMENTED (cálculo)');assert.deepEqual(hist.h_npc_sunset.sources,['C01']);
   assert.equal(hist.h_npc_dramatization.classification,'GAMEPLAY_DRAMATIZATION');assert.deepEqual(hist.h_npc_dramatization.sources,[]);assert.match(hist.h_npc_dramatization.text,/nenhuma fonte fala de contacto/);
   assert.equal(act.clock.sun.source,'C01 (método)');assert.match(act.clock.sun.note,/RECONSTRUCTED/);assert.match(act.clock.classification,/GAMEPLAY_DRAMATIZATION/);
-  const d=act.debrief;assert.equal(d.insertAfter,'db_04');assert.equal(d.paragraphs[0].id,'db_npc_01');assert.deepEqual(d.paragraphs[0].sources,['T03','C01']);assert.match(d.paragraphs[0].text,/^Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard; o 2\.º Batalhão retirou-se entre as 18:00 e as 20:00\. O Sol pôs-se às 18:39\./);
+  const d=act.debrief;assert.equal(d.insertAfter,'db_npb_01');assert.equal(d.paragraphs[0].id,'db_npc_01');assert.deepEqual(d.paragraphs[0].sources,['T03','C01']);assert.match(d.paragraphs[0].text,/^Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer, rumo a Swarożyn–Starogard; o 2\.º Batalhão retirou-se entre as 18:00 e as 20:00\. O Sol pôs-se às 18:39\./);
   assert.match(d.paragraphs[0].text,/não estão confirmados/);assert.match(d.paragraphs[0].text,/reconstrução para o jogo/);assert.doesNotMatch(d.paragraphs[0].text,/ocupação|reféns|quartel/,'nothing about the occupation, hostages or the barracks (T30 is outside M01)');
   // the voices are European Portuguese, every key the simulation says has a line, the speakers are named, the courier has no name or rank
   for(const on of ['arrive_card_end','order_given','order_section','line_go','line_out','lag','exit']){const c=act.callouts.find(x=>x.on===on);assert.ok(c,on);assert.doesNotMatch(c.text,/\b(você|tu|ônibus|trem)\b/i,'not Brazilian Portuguese');assert.ok(act.speakers[c.speaker],`${on}: a named speaker`);}

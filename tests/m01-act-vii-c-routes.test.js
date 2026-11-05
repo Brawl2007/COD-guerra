@@ -26,7 +26,7 @@ test('Act VII-c completes on 18 routes (prompt and laggard pilot x 3 levels x 3 
     assert.equal(sim.objectives.obj_npc_cover.state,'done',id);assert.equal(sim.objectives.obj_npc_withdraw.state,'done',id);
     assert.deepEqual(sim.checkpointsReached,['cp_npc_j_ordem','cp_npc_k_retirada'],id);assert.equal(sim.respawn.label,'CP-K',id);
     // everyone of the plan left the field in the band, the courier too; nobody else is on it
-    const R=sim.timers.withdrawal;assert.equal(R.out.length,12,id);assert.equal(R.messenger,'gone',id);assert.ok(R.orderAt>20&&R.orderAt<40,`${id}: the order at ${R.orderAt}`);
+    const R=sim.timers.withdrawal;assert.equal(R.out.length,11,id);assert.equal(R.messenger,'gone',id);assert.ok(R.orderAt>20&&R.orderAt<40,`${id}: the order at ${R.orderAt}`);
     assert.ok(R.lineOutAt>R.orderAt+45&&R.rearOutAt>R.lineOutAt+45&&R.exitedAt>=R.rearOutAt,`${id}: the stages ${[R.orderAt,R.lineOutAt,R.rearOutAt,R.exitedAt].map(Math.round)}`);
     assert.deepEqual(sim.actors.filter(a=>a.active).map(a=>a.id),[],`${id}: the field is empty at the end`);assert.ok(sim.actors.every(a=>a.alive),`${id}: nobody died`);
     assert.equal(sim.enemies.length,0,id);assert.equal(sim.enemyFire.nextId,0,`${id}: nobody fired`);assert.equal(sim.rng.state,new M01AreaSimulation(seed,{difficulty:d,actId:ID}).rng.state,`${id}: the main stream was not drawn`);

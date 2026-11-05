@@ -13,8 +13,8 @@
 6. **Regra B4 preservada (verificada, não só afirmada).** A carga oeste espera Bąk entregue ao socorrista: é um gate de `readiness`, não uma fala. Nenhuma fala manda ir para oeste antes da demolição leste e do corredor. 149 (~06:04–06:08, depois de `finish(rescue_bak)`) diz ao jogador para VOLTAR à secção, como a mensagem de HUD "volte à secção"; 151 (~06:30) só avisa que a carga espera Bąk enquanto Dudek o leva à estação.
 7. **Vozes.** Jan conta; Zieliński diz "depois" e nunca "morto", ordens de 3–4 palavras; Krawiec nunca explica; Kowal fala em números e distâncias; Bąk ri antes do perigo; Dudek estanca/carrega, nunca "cura"; Pawlak diz as horas. Sem elogio ao jogador (Fable §6): Kowal corrige, Zieliński manda mudar.
 8. **Polaco.** Registo militar 1939: *Padnij!*, *Sanitariusz!*, *panie kapralu*, *cekaem* (sempre; nunca "MG"), *przęsło*, *kratownica*, *dworzec*, *wał* (dique). Palavrão máximo: *psiakrew*. Sem anglicismos. Referência de gravação a rever por falante nativo.
-9. **Legendas** em português no registo de `mission.json` ("você", "trem", "Cubro você!").
-10. **Pontos de referência usados** (só os que `map-layout.json` nomeia): portões e portal de Lisewo, dique norte/sul, trem 963 (vagões), tabuleiro, treliças (`cv_road_truss_*`), portal rodoviário/ferroviário (`cv_portal_*`), torres (`cv_tower_p1_*`), estação, aterro oeste. **Posto de sinais ("signal box")**: o mapa não tem nenhum; não há fala que o cite.
+9. **Legendas** em português europeu no registo de `mission.json` (emenda 22, 2026-11-05: «comboio» e não «trem», «Cubro-o!» e não «Cubro você!», o jogador tratado pelo imperativo formal e os camaradas por «tu»).
+10. **Pontos de referência usados** (só os que `map-layout.json` nomeia): portões e portal de Lisewo, dique norte/sul, comboio 963 (vagões), tabuleiro, treliças (`cv_road_truss_*`), portal rodoviário/ferroviário (`cv_portal_*`), torres (`cv_tower_p1_*`), estação, aterro oeste. **Posto de sinais ("signal box")**: o mapa não tem nenhum; não há fala que o cite.
 
 ## 1. Eventos e estados em que as falas se apoiam (nomes exactos)
 
@@ -56,13 +56,13 @@
 |---|---|---|---|---|---|---|---|---|
 | 110 | `ckm_gunner` | *Seria po wale!*<br>Rajada no dique! | ally-fire (by ckm_gunner, one per burst) | só as 2 primeiras rajadas da manhã, prioridade mínima (cede a qualquer outra fala); jogador <= 60 m; alterna 110/111 | 120 s / 3 / 2 | ckm_fire (110/111) | — |  |
 | 111 | `ckm_gunner` | *Ognia na bramę!*<br>Fogo no portão! | ally-fire (by ckm_gunner) | timers.coverFire.by é gateShooter; senão fica mudo; jogador <= 60 m | 60 s / 3 / 4 | ckm_fire (110/111) | — |  |
-| 112 | `ckm_gunner` | *Taśma się kończy!*<br>A fita está acabando! | ckm.phase → feed (troca real de fita, belt < CKM_BURST_ROUNDS) | jogador <= 60 m; não durante germanSilence | 90 s / 2 / 3 | ckm_belt (112/113) | — |  |
+| 112 | `ckm_gunner` | *Taśma się kończy!*<br>A fita está a acabar! | ckm.phase → feed (troca real de fita, belt < CKM_BURST_ROUNDS) | jogador <= 60 m; não durante germanSilence | 90 s / 2 / 3 | ckm_belt (112/113) | — |  |
 | 113 | `ckm_loader` | *Nowa taśma! Gotowe!*<br>Fita nova! Pronto! | ckm.phase feed → aim (CKM_FEED_SEC acabou) | segue 112 (token do mesmo slot); amunicyjny (ckm_loader) | 90 s / 3 / 3 | ckm_belt (112/113) | — |  |
 | 114 | `ckm_gunner` | *Zacięcie! Przeładować!*<br>Travou! Recarregar! | ckm_stoppage (evento da simulação, um por encravamento) | **Ligada em 2026-10-22** (§7c): a ckm encrava duas vezes por rota (`CKM_STOPPAGES` em `src/game/m01-simulation.js`); jogador <= 60 m do atirador; passa pelo intervalo (6 s), orçamento (7 em 60 s) e vozes do realizador como qualquer outra fala | 20 s / 2 / 3 | — | — | era NEEDS_EVENT:ckm_stoppage |
 | 115 | `ckm_loader` | *Jest. Strzelaj!*<br>Pronto. Atire! | ckm_stoppage_cleared (o municiador desencravou) | **Ligada em 2026-10-22** (§7c): segue 114 (`after` 0–8 s depois de a 114 ir para o ecrã; sem 114 não se diz); jogador <= 60 m do municiador; prioridade 3: orçamento de 5 falas em 60 s, a própria 114 conta uma | — / 3 / 3 | — | — | era NEEDS_EVENT:ckm_stoppage_cleared |
 | 116 | `ckm_gunner` | *Zabieramy go. Za mną!*<br>Levamos ela. Comigo! | ckm.phase → abandon | guarnição viva; jogador <= 60 m; só 1 vez. Reescreve Fable 190: a ckm DISPAROU toda a manhã (T47) | única / 1 / 1 | ckm_move | Fable 190; GAP 117 |  |
 | 117 | `ckm_loader` | *Wylej wodę. Skrzynki. Idziemy.*<br>Esvazie a água. Caixas. Vamos. | ckm.phase abandon + 1,5 s | refrigeração a água do wz.30; segue 116 | única / 3 / 1 | ckm_move | Fable 191 |  |
-| 118 | `ckm_reserve` | *Panie kapralu, nasypem na zachód?*<br>Cabo, pelo aterro para oeste? | ckm.phase → retreat | jogador <= 12 m da ckm; o retreat real do sim vai para oeste ao longo do aterro (z 22..26, até x ≈ −170 e ao ponto de reunião), NÃO para a estação | única / 3 / 1 | ckm_move | Fable 193 (reescrita) |  |
+| 118 | `ckm_reserve` | *Wrona, nasypem na zachód?*<br>Wrona, pelo aterro para oeste? | ckm.phase → retreat | jogador <= 12 m da ckm; o retreat real do sim vai para oeste ao longo do aterro (z 22..26, até x ≈ −170 e ao ponto de reunião), NÃO para a estação | única / 3 / 1 | ckm_move | Fable 193 (reescrita) |  |
 | 119 | `ckm_gunner` | *Nasypem. Stamtąd też strzela.*<br>Pelo aterro. De lá também atira. | 118 + 2 s | par de 118; ckm_gunner | única / 2 / 1 | ckm_move | Fable 194 (reescrita); GAP 118 |  |
 
 ### D. MG34 a suprimir-nos / reparo sob fogo (9)
@@ -84,7 +84,7 @@
 | ID | Falante | Polaco (original) / Legenda PT | Gatilho | Condições | CD clock / Pri / Máx | Grupo de variantes | Ref. Fable/GAP | Marcas |
 |---|---|---|---|---|---|---|---|---|
 | 128 | `szymon_kowal` | *Błysk przy bramie!*<br>Clarão no portão! | threat.recentFire (age < 2,5 s) em gateShooter | origem nos portões de Lisewo; 2.ª ocorrência em diante; jogador <= 80 m; não toca se co_m01_enemy_mg_fire_on_squad tocou há < 30 s | 90 s / 1 / 3 | located (128-131) | GAP 104; callout enemy_mg_fire_on_squad |  |
-| 129 | `szymon_kowal` | *Błysk przy wagonach!*<br>Clarão junto aos vagões! | threat.recentFire junto ao trem 963 (vagões) | origem a menos de 25 m do trem 963 parado; idem | 90 s / 1 / 3 | located (128-131) | — |  |
+| 129 | `szymon_kowal` | *Błysk przy wagonach!*<br>Clarão junto aos vagões! | threat.recentFire junto ao comboio 963 (vagões) | origem a menos de 25 m do comboio 963 parado; idem | 90 s / 1 / 3 | located (128-131) | — |  |
 | 130 | `szymon_kowal` | *Na lewo od bramy!*<br>À esquerda do portão! | timers.coverFire (origem nos portões, à esquerda do portão vista do jogador) | coverFire.age < 8 s (era «< 3 s» no rascunho; os dados usam 8 s, a janela da linha de HUD `coverFireStatus`, que diz o mesmo; ver §7, revisão N3); lado = sinal do produto vectorial (direcção do jogador para o portão x origem), como directionTo; não toca se co_m01_enemy_mg_fire_on_squad tocou há < 30 s | 45 s / 1 / 4 | located (128-131) | HUD coverFireStatus (texto) |  |
 | 131 | `szymon_kowal` | *Na prawo od bramy!*<br>À direita do portão! | timers.coverFire (origem nos portões, à direita do portão vista do jogador) | idem 130 | 45 s / 1 / 4 | located (128-131) | idem |  |
 | 132 | `marek_zielinski` | *Wychyla się. Czekaj.*<br>Ele se debruça. Espere. | ai.peek > 0 num grp_de_east com LOS ao jogador | jogador sem aim há 3 s; 1.ª vez por sessão e depois cd | 45 s / 2 / 3 | peek (132/133) | novo (combat: peeks) |  |
@@ -104,7 +104,7 @@
 
 | ID | Falante | Polaco (original) / Legenda PT | Gatilho | Condições | CD clock / Pri / Máx | Grupo de variantes | Ref. Fable/GAP | Marcas |
 |---|---|---|---|---|---|---|---|---|
-| 140 | `szymon_kowal` | *Dostał. Zmień stanowisko.*<br>Pegou. Mude de posição. | player-shot (hit: true) | alvo inimigo; 1 em cada 3 acertos; Kowal <= 40 m | 25 s / 2 / 4 | player_hit_enemy (140/141) | — |  |
+| 140 | `szymon_kowal` | *Dostał. Zmień stanowisko.*<br>Acertou. Mude de posição. | player-shot (hit: true) | alvo inimigo; 1 em cada 3 acertos; Kowal <= 40 m | 25 s / 2 / 4 | player_hit_enemy (140/141) | — |  |
 | 141 | `szymon_kowal` | *Jeden mniej przy bramie. Zmień stanowisko.*<br>Um a menos no portão. Mude de posição. | NEEDS_EVENT:enemy_down_by_player | fire() só põe a.state=DOWN; sem emit | 30 s / 2 / 4 | player_hit_enemy (140/141) | — | NEEDS_EVENT:enemy_down_by_player |
 | 142 | `marek_zielinski` | *Wrona. Nie licz. Zmień stanowisko.*<br>Wrona. Não conte. Mude de posição. | NEEDS_EVENT:enemy_down_by_player | 2.º abate seguido em < 20 s; eco de 048 | 60 s / 2 / 2 | player_hit_enemy (142) | Fable §6 (sem elogio) | NEEDS_EVENT:enemy_down_by_player |
 | 143 | `szymon_kowal` | *Cekaem ucichł. Do roboty!*<br>A metralhadora calou. Trabalhem! | de_east_0/1.suppressedUntil por tiro do jogador (state) | cover_repair activo; recordSuppression regista o instante; não toca se co_m01_enemy_group_suppressed (109) tocou há < 10 s | 20 s / 1 / 4 | mg_silenced (143) | GAP 103 / Fable 132 |  |
@@ -114,7 +114,7 @@
 | ID | Falante | Polaco (original) / Legenda PT | Gatilho | Condições | CD clock / Pri / Máx | Grupo de variantes | Ref. Fable/GAP | Marcas |
 |---|---|---|---|---|---|---|---|---|
 | 144 | `pawel_krawiec` | *Połowa. Nie cieszcie się.*<br>Metade. Não comemorem. | cover_repair.progress >= 50 | uma vez; Krawiec activo | única / 2 / 1 | repair_half (144) | Fable 122 |  |
-| 145 | `marek_zielinski` | *Trzymamy ten przyczółek. Do rozkazu.*<br>Seguramos esta cabeça de ponte. Até a ordem. | active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA | activeCompression com razão hold_in_position (m01-pacing COMPRESS_WHEN) ou inside(player,HOLD_AREA); antes de 06:00; uma vez | única / 2 / 1 | hold (145) | pacing HOLD_AREA |  |
+| 145 | `marek_zielinski` | *Trzymamy ten przyczółek. Do rozkazu.*<br>Seguramos esta cabeça de ponte. Até à ordem. | active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA | activeCompression com razão hold_in_position (m01-pacing COMPRESS_WHEN) ou inside(player,HOLD_AREA); antes de 06:00; uma vez | única / 2 / 1 | hold (145) | pacing HOLD_AREA |  |
 | 146 | `jozef_bak` | *Nie upuść mnie.*<br>Não me deixe cair. | player.carrying = jozef_bak | pickup; 1.ª vez | única / 1 / 1 | carry_bak (146) | GAP 120 / Fable 143 |  |
 | 147 | `leon_dudek` | *Tu, za portal drogowy!*<br>Aqui, atrás do portal da estrada! | player.carrying = jozef_bak e dist(aid_position) > 20 m | Dudek activo; repete por floor(clock/25); substitui mensagem de HUD a cada 7 s | 25 s / 1 / 4 | carry_guide (147) | objectiveMarker "Dudek com Bąk" |  |
 | 148 | `leon_dudek` | *Nie patrz na nogę. Patrz na mnie.*<br>Não olhe para a perna. Olhe para mim. | finish(rescue_bak) | uma vez | única / 1 / 1 | bak_delivered (148) | GAP 121 / Fable 150 |  |
@@ -124,7 +124,7 @@
 
 | ID | Falante | Polaco (original) / Legenda PT | Gatilho | Condições | CD clock / Pri / Máx | Grupo de variantes | Ref. Fable/GAP | Marcas |
 |---|---|---|---|---|---|---|---|---|
-| 150 | `jan_wrona` | *[n]. Liczę dalej.*<br>{n}. Continuo contando. | dlg_m01_049 + 25 s (sem evento novo) | {n} = m01.east_platoon_survivors por extenso, como 047/049; hold_corridor; pelo menos 1 homem pl_east_* ainda a passar (x > −275); uma vez | única / 2 / 1 | corridor_count (150) | GAP 122; Fable platoon_count |  |
+| 150 | `jan_wrona` | *[n]. Liczę dalej.*<br>{n}. Continuo a contar. | dlg_m01_049 + 25 s (sem evento novo) | {n} = m01.east_platoon_survivors por extenso, como 047/049; hold_corridor; pelo menos 1 homem pl_east_* ainda a passar (x > −275); uma vez | única / 2 / 1 | corridor_count (150) | GAP 122; Fable platoon_count |  |
 | 151 | `marek_zielinski` | *Czekamy na Bąka.*<br>Esperamos o Bąk. | consumedEvent(east_demolition) e !readiness(west_demolition) só por causa de Bąk | predicado real (readiness west_demolition): east_demolition consumido && player.x < −90 && todos os aliados não civis x < −90 && !bak.carry && !bak.carriedBy. A fala toca quando os 3 primeiros são verdadeiros e Bąk ainda carry/carriedBy (Dudek a levá-lo); ordem curta de Zieliński, não Krawiec; antes de 050 | 60 s / 1 / 2 | west_wait (151) | regra B4 |  |
 | 152 | `sapper_2` | *Zapalarka gotowa, panie kapralu.*<br>Acendedor pronto, cabo. | readiness(west_demolition) verdadeiro | readiness(west_demolition) passa a verdadeiro; antes de 050; uma vez | única / 2 / 1 | west_ready (152) | Fable 200 (variante) |  |
 
@@ -240,7 +240,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
   {
     "id": "dlg_m01_112",
     "speaker": "ckm_gunner",
-    "text": "A fita está acabando!",
+    "text": "A fita está a acabar!",
     "context": "reativa; ckm.phase → feed (troca real de fita, belt < CKM_BURST_ROUNDS)",
     "priority": 2,
     "note": "PL: Taśma się kończy!"
@@ -288,10 +288,10 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
   {
     "id": "dlg_m01_118",
     "speaker": "ckm_reserve",
-    "text": "Cabo, pelo aterro para oeste?",
+    "text": "Wrona, pelo aterro para oeste?",
     "context": "reativa; ckm.phase → retreat",
     "priority": 3,
-    "note": "PL: Panie kapralu, nasypem na zachód?"
+    "note": "PL: Wrona, nasypem na zachód?"
   },
   {
     "id": "dlg_m01_119",
@@ -377,7 +377,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
     "id": "dlg_m01_129",
     "speaker": "szymon_kowal",
     "text": "Clarão junto aos vagões!",
-    "context": "reativa; threat.recentFire junto ao trem 963 (vagões)",
+    "context": "reativa; threat.recentFire junto ao comboio 963 (vagões)",
     "priority": 1,
     "note": "PL: Błysk przy wagonach!"
   },
@@ -464,7 +464,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
   {
     "id": "dlg_m01_140",
     "speaker": "szymon_kowal",
-    "text": "Pegou. Mude de posição.",
+    "text": "Acertou. Mude de posição.",
     "context": "reativa; player-shot (hit: true)",
     "priority": 2,
     "note": "PL: Dostał. Zmień stanowisko."
@@ -504,7 +504,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
   {
     "id": "dlg_m01_145",
     "speaker": "marek_zielinski",
-    "text": "Seguramos esta cabeça de ponte. Até a ordem.",
+    "text": "Seguramos esta cabeça de ponte. Até à ordem.",
     "context": "reativa; active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA",
     "priority": 2,
     "note": "PL: Trzymamy ten przyczółek. Do rozkazu."
@@ -544,7 +544,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
   {
     "id": "dlg_m01_150",
     "speaker": "jan_wrona",
-    "text": "{n}. Continuo contando.",
+    "text": "{n}. Continuo a contar.",
     "context": "reativa; dlg_m01_049 + 25 s (sem evento novo)",
     "priority": 2,
     "note": "PL: [n]. Liczę dalej."
@@ -651,7 +651,7 @@ Dos 55: 4 dependiam de `NEEDS_EVENT` (114, 115, 141, 142); os quatro eventos exi
 Nenhum outro agente reviu o texto original; a segunda ronda aplicou as correcções do Capitão (cast, polaco, destino da ckm, 150–154, sobreposições). **Um falante nativo tem de confirmar TODO o polaco antes da gravação.**
 
 1. **Polaco** (confirmar com nativo): 104 *opatrunek*; 119/118 *nasypem* (pelo aterro); 122 *Czekać na przerwę!*; 123 *Ładuje! Teraz!*; 130/131 *Na lewo/prawo od bramy!*; 132 *Wychyla się*; 135 *W kratownicy!*; 140–142 *zmień stanowisko*; 152 *Zapalarka* (pedida pelo Capitão; "acendedor/ignitor" em PT é aproximação); 120/143 *cekaem* também para a MG alemã (decisão do Capitão).
-2. **118/119 vs. pedido do Capitão.** O pedido dava 118 *Panie kapralu, na dworzec?* e 119 *Na dworzec. Stamtąd też strzela.*; mas o código (T47: `retreat` em `src/game/m01-simulation.js`, `final={x:-170-i*1.6,z:22+i*1.2}`) e a nota de `grp_ckm_crew` mandam a guarnição para OESTE ao longo do aterro, não para a estação. Segui o código (alínea c): 118 *Panie kapralu, nasypem na zachód?* e 119 *Nasypem. Stamtąd też strzela.* (*nasyp* = aterro). Se o Capitão preferir a estação, a sim tem de mudar primeiro.
+2. **118/119 vs. pedido do Capitão.** O pedido dava 118 *Panie kapralu, na dworzec?* e 119 *Na dworzec. Stamtąd też strzela.*; mas o código (T47: `retreat` em `src/game/m01-simulation.js`, `final={x:-170-i*1.6,z:22+i*1.2}`) e a nota de `grp_ckm_crew` mandam a guarnição para OESTE ao longo do aterro, não para a estação. Segui o código (alínea c): 118 *Panie kapralu, nasypem na zachód?* e 119 *Nasypem. Stamtąd też strzela.* (*nasyp* = aterro). Se o Capitão preferir a estação, a sim tem de mudar primeiro. **Emenda 22 (2026-11-05):** o tratamento «Panie kapralu» / «Cabo» estava errado, o destinatário é Wrona, um strzelec (soldado raso): a 118 passa a *Wrona, nasypem na zachód?* / «Wrona, pelo aterro para oeste?» (polaco escrito por agente de IA, por rever por falante nativo).
 3. **Posto do falante.** Tratei `ckm_gunner` como "cabo" (*panie kapralu* em 118, vindo de `ckm_reserve`): sem fonte; confirmar. As falas Fable 190–194 foram reescritas porque a ckm DISPARA toda a manhã (T47).
 4. **110** passou a prioridade mínima (3) com CD 120 s e máx. 2; a alternativa é cortá-la.
 5. **150** agora usa `{n}` e `dlg_m01_049` (sem evento novo); o PL tem `[n]` como espaço reservado (a sim substitui `{n}` por extenso em PT).

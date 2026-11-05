@@ -124,13 +124,14 @@ float bTop=1.14+.05*eNoise(vEarthPos.xz*.9);
 float bRev=bInner*(1.0-smoothstep(bTop-.05,bTop+.03,bAbove))*smoothstep(-.06,.02,bAbove);
 float bNear=1.0-smoothstep(4.0,26.0,length(vViewPosition));
 float bH=0.0;
-{
-  float py=bp.y/.15,row=floor(py),fy=fract(py);
+float py=bp.y/.15,bFw=fwidth(py);   // outside the branch: derivatives need uniform control flow
+if(bRev>0.0){   // the revetment exists only on the inner face (bRev 0 elsewhere): the plank/picket work is skipped there
+  float row=floor(py),fy=fract(py);
   float rowOff=eHash(vec2(row,3.1))*7.0,len=1.15+eHash(vec2(row,9.7))*.9;
   float px=(bp.x+rowOff)/len,col=floor(px),fx=fract(px);
   float tint=.55+.8*eHash(vec2(row*1.7+col,5.3));
   float grain=eNoise(vec2(bp.x*2.2+row*3.7,bp.y*38.0))*.6+eNoise(vec2(bp.x*7.0+col,bp.y*90.0+row))*.4;
-  float aa=1.0-smoothstep(.12,.45,fwidth(py));
+  float aa=1.0-smoothstep(.12,.45,bFw);
   float gap=(1.0-smoothstep(.0,.075,fy))*.8+(1.0-smoothstep(.0,.03,min(fx,1.0-fx)*len));
   gap=clamp(gap,0.0,1.0)*aa;
   float pk=fract((bp.x+1.15)/2.3),picket=(1.0-smoothstep(.015,.04,abs(pk-.5)))*aa;
@@ -142,13 +143,15 @@ float bH=0.0;
   bH=bRev*(-gap*.9+picket*.7+(grain-.5)*.5);
 }
 // near-camera soil: sparse pebbles (a third of the 2.6 cm cells, lighter than the earth) and fine grain, fading out with distance
+float bPebK=(1.0-bRev)*bNear*uBermFine;
+if(bPebK>0.0){   // pebbles only near the camera (bNear), off the revetment and off on Low (uBermFine 0)
 vec2 bq=bp*38.0,bi=floor(bq);float bHas=step(.68,eHash(bi+3.0));
 vec2 bc=bi+.5+(vec2(eHash(bi+7.0),eHash(bi+13.0))-.5)*.5;float bPeb=bHas*(1.0-smoothstep(.12,.34+.2*eHash(bi+21.0),length(bq-bc)));
-float bPebK=(1.0-bRev)*bNear*uBermFine;
 diffuseColor.rgb*=1.0+bPebK*(.55*bPeb*(eHash(bi+29.0)-.25));
 float bGrain=eNoise(bp*60.0);
 diffuseColor.rgb*=1.0+bPebK*.22*(bGrain-.5);
 bH+=bPebK*(bPeb*.6+(bGrain-.5)*.3);
+}
 `;
 /** Soil of the berm: the heaps' earth plus plank-and-picket revetment on the inner face and near-camera pebble detail. `base` = ground height at the berm's foot, `z` = the berm's centre line (detail coordinates are taken relative to them: large world coordinates would shear the pattern). */
 export function createBermMaterial({base=0,z=0,quality='high'}={}){

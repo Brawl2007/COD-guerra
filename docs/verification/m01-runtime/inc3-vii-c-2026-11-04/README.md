@@ -110,3 +110,17 @@ D-1 Lisewo (fora); D-2 insígnias e nome da SS-Heimwehr no ecrã; D-3 duração 
 ## Errata da segunda revisão (LOW)
 
 `validScene` aceitava `scene:null` com qualquer prefixo de cartões (um save VII-c editado à mão jogava sem CP-J): agora sem cartão no ecrã exige o cartão de entrada feito (e o da ordem no VII-c); a varredura da revisão (`sweep.mjs`, todos os snapshots vivos das rotas) não rejeita nenhum. `sectionAtParapet()` ganhou a graça `outGraceSec` (a mesma dos planos da linha e da retaguarda): um homem preso não paralisa o ato. Rotas byte a byte iguais; só os sha256 dos goldens mudaram.
+
+## Auditoria de coerência 2026-11-05
+
+Auditoria dos dados dos atos VII-a/b/c (`missions/m01-tczew/areas/np/`). Não é playtest.
+
+- **D45** (`docs/direction/DECISIONS.md`): o combate de infantaria do VII-a segue a opção B; leitura do Captain, pendente de confirmação do proprietário. O §10 de `HISTORICAL_RESEARCH.md` refere-se à margem oeste/ponte; a T08 (norte, ~07:00, fonte única, certeza BAIXA) fundamenta o perímetro norte.
+- **pl_np_3** é levado ferido pelos maqueiros no VII-b e não regressa: o efetivo do VII-c foi confirmado em execução (o elenco da linha vem dos dados do ato) e a linha passa a seis fuzileiros e a ckm (11 homens nos postos finais em vez de 12). A retirada perdeu-o da equipa 2; testes ajustados (6 fuzileiros, `R.out` 8 na linha e 11 no total).
+- **Debrief:** `db_npc_01` fica depois de `db_npb_01` (antes, depois de `db_04`, que já diz que o batalhão saiu até às 20:00, antes da ordem das ~17:00). Num arranque QA direto no VII-c cai depois de `db_03`.
+- **Pawlak:** papel `MESSENGER` nos elencos (o papel é só dados; nada em `src` depende de `RADIO_OPERATOR` no perímetro norte).
+- **Secção no posto de comando:** mantida (mensageiro e rotas dependem dela); nota explícita nos dados, porque o cartão de fim do VII-b diz que a guarnição manteve as posições.
+- **Luz e etiqueta:** as horas 18:39/19:00/19:16 são DOCUMENTED (C01); só os keyframes são RECONSTRUCTED. `labelNote` cita as horas do cartão de fim (18:00–20:00, T03; 18:39, C01).
+- **Rótulos honestos:** «Bofors wz.36», «infantaria repelida por metralhadoras» e «apoio de artilharia» não constam dos resumos de `research/SOURCES.md` (T03, T08, T16); tipo e fogo ficam como dramatização, «apoio de artilharia» vem de `HISTORICAL_RESEARCH.md` (BAIXA). `h_np_positions` e `h_npb_positions` separam composição (DOCUMENTED, T03) de posição (RECONSTRUCTED). Hora do `db_np_01`: «~07:00».
+- **Desenho** (`M01_R4_VII_BC_DESIGN.md`): VII-c sem «fogo esparso da orla» (ckm fica; desvio registado, com D-5 BLOQUEADO).
+- **Goldens:** regenerados e `check: identical`. VII-a e VII-b mudam só as linhas sha256 dos ficheiros de entrada (rotas iguais). VII-c muda também as rotas e o `final` (sai um homem).

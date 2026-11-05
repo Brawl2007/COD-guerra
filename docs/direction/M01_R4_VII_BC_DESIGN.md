@@ -24,7 +24,7 @@ Os URLs de §5 do plano **não foram lidos** neste desenho («não guardada»). 
 |---|---|---|---|---|
 | F1 | «Durante o dia», ataques vindos do norte (Pszczółki), SS-Heimwehr com apoio de artilharia, repelidos; **sem hora** | `DOCUMENTED` | T16, BAIXA (resumo) | VII-b cartão, fim, debrief |
 | F2 | A guarnição repeliu ataques durante o dia e deixou Tczew à noite por ordem superior | `DOCUMENTED` | T03 (resumo; `HISTORICAL_RESEARCH.md` §9) | VII-b/VII-c debrief |
-| F3 | Norte: «dois batalhões com artilharia, morteiros e armas AT, vinda de Pszczółki» | `DOCUMENTED` | BAIXA (`HISTORICAL_RESEARCH.md` tabela alemã) | Só contexto; nenhum número no ecrã |
+| F3 | Norte: «dois batalhões com artilharia, morteiros e armas AT, vinda de Pszczółki» (nota de coerência 2026-11-05: «dois batalhões» é número de HISTORICAL_RESEARCH.md; o VII-b mostra «ataques» sem esse número e a segunda posição está nas lacunas (`gaps`) de `h_npb_day_attacks`: o ecrã não afirma efetivos) | `DOCUMENTED` | BAIXA (`HISTORICAL_RESEARCH.md` tabela alemã) | Só contexto; nenhum número no ecrã |
 | F4 | Posições de campo a norte/noroeste: 2.ª e 3.ª companhias, 2 pelotões de mtr, pelotão AT, morteiros, artilharia de infantaria | `DOCUMENTED` (composição); posições `RECONSTRUCTED` | T03 (MÉDIA), T08 | Flanco oeste do parapeito (VII-b) |
 | F5 | Ordem por volta das **17:00** para deixar Tczew ao anoitecer rumo a Swarożyn–Starogard | `DOCUMENTED` | T03, MÉDIA (resumo) | Cartão «~17:00» |
 | F6 | Retirada iniciada às 18:00 e concluída às 20:00 | `DOCUMENTED` | T03 (MÉDIA); `db_04` já diz «até às 20:00» com H01-PDF | VII-c fim, debrief |
@@ -33,7 +33,7 @@ Os URLs de §5 do plano **não foram lidos** neste desenho («não guardada»). 
 | R1 | Segunda posição no flanco oeste do mesmo parapeito, virada a noroeste | `RECONSTRUCTED` (de F4) | — | VII-b |
 | G1 | Duas investidas no dia, cada uma precedida de fogo de artilharia; tempos, efetivos, impactos | `GAMEPLAY_DRAMATIZATION` | — (F1 não dá número nem horas) | VII-b |
 | G2 | Maqueiros a evacuar feridos; caixa de munições; mensageiro com a ordem | `GAMEPLAY_DRAMATIZATION` (forma; a ordem é F5) | — | VII-b, VII-c |
-| G3 | A secção de Zieliński sai como retaguarda, por lanços, ao crepúsculo; fogo esparso da orla | `GAMEPLAY_DRAMATIZATION` | — | VII-c |
+| G3 | A secção de Zieliński sai como retaguarda, por lanços, ao crepúsculo (sem fogo da orla: ver «Desvios registados») | `GAMEPLAY_DRAMATIZATION` | — | VII-c |
 
 **BLOQUEADO (sem fonte no repositório):** número, horas e setores dos ataques do dia; calibre, tipo e posição da artilharia alemã (nada de «10,5 cm», «7,5 cm» ou baterias);
 baixas polacas ou alemãs; o que H01-PDF diz da tarde (só `db_04` registado; PDF não guardado); quem transmitiu a ordem das 17:00 e por onde; itinerário, ruas e ordem de marcha
@@ -101,7 +101,7 @@ não há âncora noturna: limitar a duração ou acrescentar uma âncora `night`
    (Personagens históricos fora de cena; nenhuma fala de Janik/Juchtman.)
 2. **CP-J** no fim dos cartões. Um mensageiro (fictício) chega ao posto de comando (−425, −1110) e fala a Zieliński; fala de Zieliński à secção.
 3. A linha `grp_np_line` sai por lanços (equipas), para sul, até à faixa de saída; a ckm desmonta e sai com ela. A secção fica como **retaguarda** (objetivo
-   «Cubra a saída da linha»): fogo esparso da orla (overwatch existente, MG34) contra quem se mostrar. Uma sonda alemã de poucos homens (opção `probe`, `GAMEPLAY_DRAMATIZATION`,
+   «Cubra a saída da linha»): ~~fogo esparso da orla (overwatch existente, MG34) contra quem se mostrar~~ (desvio: ver abaixo, não construído). Uma sonda alemã de poucos homens (opção `probe`, `GAMEPLAY_DRAMATIZATION`,
    **desligada por omissão** até decisão do proprietário, D-5).
 4. Quando a linha sai: **CP-K**; a secção recua por lanços (`makeSquadPlan`, lanços já usados na BW); o jogador acompanha. Ficar para trás > `stallSec` → chamada; não falha.
 5. Entrada na faixa de saída → beat final → `cs_npc_end` («O 2.º Batalhão deixou Tczew entre as 18:00 e as 20:00 (T03)» · «Pôr do sol às 18:39 (C01)» ·
@@ -170,3 +170,11 @@ H01-PDF/T03/T08/T16 sobre a tarde até os ficheiros estarem em `research/sources
 - Valores de `SHELL_BLAST`, número de impactos e durações são de jogo, a afinar no playtest.
 - F8 assume que `applyLighting` só lê `sim.world.layout.sun`; confirmado por leitura, não por teste.
 - As letras CP-I/J/K seguem o plano (CP-F/G/H ficam reservadas para checkpoints futuros do VII-a, que hoje só tem CP-E).
+
+## Desvios registados (auditoria de coerência 2026-11-05)
+
+- **VII-c sem «fogo esparso da orla»:** o desenho (G3 e passo 3) previa fogo da orla contra quem se mostrasse. Foi retirado com a sonda alemã (D-5, BLOQUEADO): sem alemães no ato não há a quem disparar, e a ckm fica no ninho na pose de abandono. O ato fica sem inimigos; a secção só recua. Estado: desvio aceite até decisão do proprietário sobre D-5.
+- **Debrief do VII-c depois de `db_npb_01`:** `db_npc_01` (ordem das ~17:00, retirada 18:00–20:00) passou de `insertAfter: db_04` para `db_npb_01`. `db_04` diz que o batalhão já tinha deixado Tczew até às 20:00, o que punha a ordem das 17:00 depois do desfecho; assim a ordem e a retirada vêm depois dos ataques do dia (`db_npb_01`) e a cadeia VII-a, VII-b, VII-c lê-se por ordem de tempo.
+- **Efetivo da linha no VII-c:** seis fuzileiros e a ckm (pl_np_3 foi levado ferido pelos maqueiros no VII-b).
+- **Secção no posto de comando:** o VII-c começa com a secção no posto de comando, embora o cartão de fim do VII-b diga que a guarnição manteve as posições: dramatização, anotada nos dados (`grp_np_section.note`).
+- **Papel de Pawlak:** `MESSENGER` em vez de `RADIO_OPERATOR` nos elencos de VII-a/b/c.

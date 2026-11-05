@@ -1,0 +1,62 @@
+{
+ "flash": {
+  "clock": 30.166600000000297,
+  "counts": {
+   "flash": 1,
+   "core": 2,
+   "fire": 1,
+   "smoke": 0,
+   "dust": 0,
+   "shard": 1
+  },
+  "light": 1,
+  "kinds": {
+   "small": 0,
+   "shell": 1,
+   "bombing": 0,
+   "demolition": 0
+  }
+ },
+ "stats": {
+  "quality": "low",
+  "drawCalls": 69,
+  "triangles": 267416,
+  "geometries": 249,
+  "textures": 74,
+  "clock": 30.166600000000297,
+  "lighting": {
+   "phase": "day",
+   "alt": 42.1,
+   "exposure": 1.08,
+   "hemi": 1.82
+  },
+  "fx": {
+   "active": 1,
+   "counts": {
+    "flash": 1,
+    "core": 2,
+    "fire": 1,
+    "smoke": 0,
+    "dust": 0,
+    "shard": 1
+   },
+   "light": 1
+  },
+  "polish": {
+   "stretcher": {
+    "active": false,
+    "frames": 0,
+    "x": 0,
+    "y": 0,
+    "z": 0,
+    "yaw": null,
+    "lift": null
+   },
+   "dusk": null
+  }
+ },
+ "errors": {
+  "total": 0,
+  "real": []
+ }
+}

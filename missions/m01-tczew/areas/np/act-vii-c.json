@@ -85,11 +85,11 @@
   "clock": {
     "battleClockStart": "19:00:00",
     "label": "ANOITECER",
-    "labelNote": "Nenhuma hora no ecrã durante o jogo: a única é «Por volta das 17:00» no cartão da ordem (T03). O relógio interno (19:00 em diante) só serve à luz e ao som; está dentro da janela 18:00–20:00 da retirada, mas a escolha das 19:00 é dramatização.",
+    "labelNote": "Nenhuma hora no ecrã durante o jogo: a única é «Por volta das 17:00» no cartão da ordem (T03). O cartão de fim traz as horas das fontes: 18:00–20:00 da retirada (T03) e o pôr do sol às 18:39 (C01). O relógio interno (19:00 em diante) só serve à luz e ao som; está dentro da janela 18:00–20:00 da retirada, mas a escolha das 19:00 é dramatização.",
     "classification": "DOCUMENTED (a ordem e a retirada ao anoitecer, T03) / GAMEPLAY_DRAMATIZATION (a hora interna de 19:00)",
     "sun": {
       "source": "C01 (método)",
-      "note": "RECONSTRUCTED: o Sol às 18:39, 19:00 e 19:16 (CET) pelo método de C01, o mesmo que reproduz 04:34, 06:10 e 07:05 de map-layout.json. Uma recalculação independente deu −1,0°/286° às 18:39, −3,9°/290° às 19:00 e −6,1°/293° às 19:16: diferença de 0,1° ou menos, sem efeito na luz. Só se aplica a este ato (apresentação). A −3,8° o modelo de luz está na âncora `blue-hour`; depois das 19:16 o Sol fica onde está (sem âncora noturna, o ato acaba muito antes).",
+      "note": "As horas são DOCUMENTED (C01, certeza ALTA: o Sol às 18:39, 19:00 e 19:16, CET, pelo método de C01); só os keyframes de luz (altitude e azimute dados ao modelo de luz) são RECONSTRUCTED. O método é o mesmo que reproduz 04:34, 06:10 e 07:05 de map-layout.json. Uma recalculação independente deu −1,0°/286° às 18:39, −3,9°/290° às 19:00 e −6,1°/293° às 19:16: diferença de 0,1° ou menos, sem efeito na luz. Só se aplica a este ato (apresentação). A −3,8° o modelo de luz está na âncora `blue-hour`; depois das 19:16 o Sol fica onde está (sem âncora noturna, o ato acaba muito antes).",
       "keyframes": [
         {
           "clock": "18:39",
@@ -226,7 +226,7 @@
   ],
   "withdrawal": {
     "classification": "GAMEPLAY_DRAMATIZATION",
-    "note": "A retirada: a linha (sete fuzileiros) e a ckm saem por lanços, três equipas em três lanços, para a faixa de saída; a secção de Zieliński fica de retaguarda e recua depois por lanços (mesma fábrica de lanços da retirada da cabeça de ponte, m01-act-factories.js makeSquadPlan). Ninguém atira em ninguém: as fontes do repositório não dão contacto durante a retirada.",
+    "note": "A retirada: a linha (seis fuzileiros: o sétimo, pl_np_3, foi levado ferido pelos maqueiros no VII-b e não regressa) e a ckm saem por lanços, três equipas em dois lanços, para a faixa de saída; a secção de Zieliński fica de retaguarda e recua depois por lanços (mesma fábrica de lanços da retirada da cabeça de ponte, m01-act-factories.js makeSquadPlan). Ninguém atira em ninguém: as fontes do repositório não dão contacto durante a retirada.",
     "exit": {
       "minX": -600,
       "maxX": -560,
@@ -258,8 +258,7 @@
         ],
         [
           "ckm_gunner",
-          "ckm_loader",
-          "pl_np_3"
+          "ckm_loader"
         ],
         [
           "pl_np_0",
@@ -277,7 +276,6 @@
             "pl_np_6": [-421, -1126],
             "ckm_gunner": [-452, -1127],
             "ckm_loader": [-454.5, -1128.8],
-            "pl_np_3": [-449.5, -1128.8],
             "pl_np_0": [-490, -1126],
             "pl_np_1": [-487.5, -1127.8],
             "pl_np_2": [-485, -1126]
@@ -291,7 +289,6 @@
             "pl_np_2": [-588, -1064],
             "ckm_gunner": [-583.5, -1064],
             "ckm_loader": [-579, -1064],
-            "pl_np_3": [-574.5, -1064],
             "pl_np_4": [-597, -1059],
             "pl_np_5": [-592.5, -1059],
             "pl_np_6": [-588, -1059]
@@ -314,7 +311,7 @@
         "freshSec": 10,
         "lookSec": [2.5, 2]
       },
-      "note": "Três equipas (a ala leste, a ckm com o quarto fuzileiro do centro, a ala oeste) em dois lanços cada: primeiro para o ponto de paragem a 30 m do parapeito, depois para a faixa de saída. Um lanço dura o que a equipa leva a chegar ou, no máximo, `stallSec`: a seguinte parte logo a seguir e a anterior acaba o caminho por si (a fábrica de lanços da BW). Quem entra na faixa de saída deixa o campo (fica inativo)."
+      "note": "Três equipas (a ala leste, a ckm, a ala oeste) em dois lanços cada: primeiro para o ponto de paragem a 30 m do parapeito, depois para a faixa de saída. Um lanço dura o que a equipa leva a chegar ou, no máximo, `stallSec`: a seguinte parte logo a seguir e a anterior acaba o caminho por si (a fábrica de lanços da BW). Quem entra na faixa de saída deixa o campo (fica inativo)."
     },
     "rear": {
       "teams": [
@@ -388,7 +385,6 @@
           "pl_np_0",
           "pl_np_1",
           "pl_np_2",
-          "pl_np_3",
           "pl_np_4",
           "pl_np_5",
           "pl_np_6"
@@ -397,7 +393,6 @@
           [-497, -1159.2],
           [-483, -1159.2],
           [-467, -1159.2],
-          [-455, -1159.2],
           [-375, -1159.2],
           [-361, -1159.2],
           [-346, -1159.2]
@@ -414,7 +409,7 @@
           "riseBeforeSec": 0.9,
           "holdAfterSec": 1.6
         },
-        "note": "Os mesmos sete fuzileiros do VII-a e do VII-b, nos mesmos postos; neste ato não disparam (não há ninguém a quem disparar): a ficha de tiro da fábrica fica nos dados só porque a fábrica a exige."
+        "note": "Os fuzileiros do VII-a e do VII-b, nos mesmos postos, menos pl_np_3, o homem ferido que os maqueiros levaram no VII-b (seis fuzileiros: o efetivo da linha cai de sete para seis; nenhum número histórico); neste ato não disparam (não há ninguém a quem disparar): a ficha de tiro da fábrica fica nos dados só porque a fábrica a exige."
       }
     },
     {
@@ -464,7 +459,7 @@
           "lookSec": [2.5, 2]
         }
       },
-      "note": "Lanços de subida: a secção sobe do posto de comando ao parapeito (o chefe primeiro) quando a ordem chega; `orderAfterSec` conta desde a chegada da ordem. O recuo vem depois, em `withdrawal.rear`."
+      "note": "Lanços de subida: o cartão de fim do VII-b diz que a guarnição manteve as posições, mas a secção do VII-c começa no posto de comando (GAMEPLAY_DRAMATIZATION: entre os dois atos, fora de cena, desce do parapeito para receber o mensageiro, que chega ao posto de comando; começar já no parapeito obrigaria a refazer o mensageiro e as rotas do ato). A secção sobe do posto de comando ao parapeito (o chefe primeiro) quando a ordem chega; `orderAfterSec` conta desde a chegada da ordem. O recuo vem depois, em `withdrawal.rear`."
     },
     {
       "id": "grp_np_ckm",
@@ -502,7 +497,7 @@
     {
       "id": "staszek_pawlak",
       "name": "Pawlak",
-      "role": "RADIO_OPERATOR",
+      "role": "MESSENGER",
       "essential": true
     },
     {
@@ -596,7 +591,7 @@
     "note": "Caixas de munições atrás do parapeito (props do kit T12): continuam utilizáveis, como nos outros atos da área; GAMEPLAY_DRAMATIZATION."
   },
   "debrief": {
-    "insertAfter": "db_04",
+    "insertAfter": "db_npb_01",
     "paragraphs": [
       {
         "id": "db_npc_01",

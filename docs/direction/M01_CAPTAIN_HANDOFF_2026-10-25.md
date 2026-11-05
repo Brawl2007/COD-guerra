@@ -50,3 +50,18 @@ Decisões pendentes do proprietário: (a) duração não garantida: ativo 93–2
 Visual ainda provisório: árvores pequenas em forma de guarda-chuva, face do parapeito desfocada em primeiro plano, padrão de relva cortada perto do jogador. +12 % triângulos não medidos no PC de referência.
 
 Próximos pacotes mantêm-se: 2 (pó que tapa a vista da IA, socorro de feridos, granadas/busca alemãs reais), 3 (VII-b/VII-c só com fontes), 4 (alça da kb wz.29).
+
+## Checkpoint 2026-11-05 (fim de sessão por limite de uso)
+
+Ramo `claude/dreamy-ramanujan-6v62vr` (push feito). Integrado nesta sessão, tudo **INTEGRADA SEM VALIDAÇÃO DE JOGO**, fora da #80 (sem merge na main/#80, sem deploy):
+- VII-a ronda 2 (CP-F, MG34 em pausa, 2.º escalão em 2 grupos) e correção de equilíbrio do fogo às cegas; VII-b (INC-2) e VII-c (INC-3) com correções das revisões críticas (`a5b86321`, `68892bce`); pacote 4 (alça kb wz.29, dedos) e visual ronda 2; specs de browser com esperas partilhadas; cartões dentro da largura; áudio dos atos da área (VII-b assobio/canhões, VII-c anoitecer), provisório T45.
+- Pacote 2 do ato 1 (pó, Dudek, granadas; emenda 21) integrado em `5b319f31`; revisão crítica pediu correções (saves antigos de CP-D/fim recusados após safeX 190; granada através do pó) — **em curso no ramo local `pkg2-fixes`** (worktree do agente), ainda não integrado.
+- M02: pré-produção do proprietário em `docs/m02/preproducao/`; M02 do Gemini integrada (`426045ee`, só ficheiros novos, testes M02 32/32, build principal inalterado); auditoria e plano em `docs/direction/M02_BZURA_DESIGN.md`; auditorias por secção em `docs/m02/auditoria-2026-11-04/` (N, O, P, Q por fazer). A M02 passa para outra conversa (prompt dado ao proprietário); esta linha integra a entrega dela por merge `--no-ff`.
+
+Trabalho em curso em worktrees locais (recuperar por `git worktree list` / ramos locais; NÃO estão no remoto): `pkg2-fixes` (prioridade alta), `acts-continue` (Continuar/saves antigos dos atos), `area-render-polish` (maca, clarão, luzes), `area-perf` (auditoria de desempenho), `triage-specs` (12 specs sob carga), `area-consistency` (workflow de coerência VII-a/b/c). Revisão crítica de toda a branch lançada como workflow (resultado por recolher).
+
+Fontes: muzeum1939.pl (H01-PDF), pl/en.wikipedia.org, konflikty.pl e warhistory.org **não resolvem na rede desta sessão** — pedir ao proprietário que os permita ou forneça os PDFs; até lá a tarde de 1/9 (VII-b/VII-c) fica RECONSTRUCTED/BLOQUEADA. Pistas a ler para D-2: Michaelis, *SS-Heimwehr Danzig in Poland 1939*; Angolia, *Cloth Insignia of the SS*. Tensão por resolver: research/SOURCES.md marca H01-PDF «INTEGRAL» mas o R4 diz que não foi guardado.
+
+Próximo: integrar `pkg2-fixes` (auditoria emenda 21), `acts-continue`, `area-*`, `triage-specs`; recolher a revisão crítica; `npm test` completo no SHA final; ledger, `DEVELOPMENT_STATUS.md`, guia de playtest (rascunho no scratchpad da sessão).
+
+Atualização do checkpoint: `acts-continue` integrado em `bf9f79ad` (Continuar nunca abre um save velho dos atos; envelope inválido recua para o save do ato 1) e `pkg2-fixes` integrado em `e15ad108` (saves antigos de CP-D/fim carregam após mudar safeX; granada nunca visa o jogador através do pó; emenda 21 `check: identical`; goldens VII-a/b/c idênticos; 45/45 + 39/39 focados; build OK). Pendente de decisão: a nuvem de pó do ato 1 quase não se vê para o jogador (véu bege ténue, captura `docs/verification/m01-runtime/pkg2-act1-2026-11-04/dust-act1-04-35-05.png`) mas é opaca para a IA. Frentes ainda paradas em worktrees locais: `area-render-polish`, `area-perf`, `triage-specs`, coerência VII-a/b/c e revisão crítica da branch.

@@ -60,3 +60,70 @@ Capturas: `after-02-arrival-*`, `after-04-line-north-midwave-*`, `after-05-line-
 
 ## Specs de viewmodel/ADS no Playwright (`CI=1`, SwiftShader)
 `m01-wz29-viewmodel.spec.js`, `m01-fp-arms.spec.js`, `m01-weapon-presentation.spec.js`, `m01-viewmodel-feel.spec.js`: **8 passaram, 7 falharam**, todos os falhados nos fluxos «save pausado no limite do pointer lock» (`#pause` nunca fica visível: o Chromium headless deste ambiente não concede o bloqueio do ponteiro; em Low/Medium do `wz29-viewmodel` `window.gameDiagnostics` ainda não existia). **Não atribuo isto ao pacote sem prova**: antes de qualquer alteração, o mesmo spec (`wz29-viewmodel`, High) já falhava neste ambiente (o clique em `#continue` não terminava em 45 s sem `CI=1`), mas não corri o conjunto completo no código de base. As verificações do viewmodel que dependem de geometria (alinhamento ADS, sight picture, orçamento de triângulos, perto do plano de corte, dedos/pega) são os testes `node --test` acima, que passam. Sem PNG versionado reescrito (`git status` limpo fora dos ficheiros deste pacote).
+
+
+## Desempenho e pó (2026-11-05)
+Auditoria de desempenho do renderer (só leitura, PC de referência Intel HD 5500 a 1366×768) e a nuvem de pó do Ato I. **Sem números de FPS**: o SwiftShader não mede isso; o que se mede aqui é trabalho evitado (consultas ao terreno, texturas, buffers libertados) e `renderer.info`.
+
+### O que mudou (ramo `area-perf-3`, por item da auditoria)
+| # | Item | O que fiz | Ficheiro |
+|---|---|---|---|
+| 1 | Shader do campo | Linhas de cultura só com `aDist < 20`; troços do trilho e faixa pisada só fora de Low; empenamento do domínio e tinta fbm desvanecem aos 50–80 m em Low e deixam de ser avaliados para lá disso; toques no mapa de solo só até 60 m (High/Medium). | `m01-area-field.js` |
+| 2 | Shader da berma | Bloco de pranchas/estacas dentro de `if(bRev>0.)`; seixos dentro de `if(bPebK>0.)`. | `m01-area-earthworks.js` |
+| 3 | Mudança de ato na mesma área | VII-a → VII-b → VII-c já não reconstrói campo, mapa de solo 256², restolho, árvores, destroço nem os ≈ 2 500 raycasts ao terreno: o novo `M01AreaDressing` recebe `reuse:` e só refaz as terraplanagens das coberturas (montes, berma, torrões, crateras). Mudança de área continua a reconstruir tudo. | `m01-area-dressing.js`, `m01-view.js` |
+| 4 | `dispose()` | Liberta todos os `InstancedMesh` (montes, torrões, discos/aros de crateras, crateras de granada) e o restolho. | `m01-area-dressing.js`, `m01-area-stubble.js` |
+| 5 | `syncShellCraters` | Decide por uma assinatura sem alocação antes de construir nada. | `m01-area-dressing.js` |
+| 6 | Atmosfera | Cores dos puffs (destroço, fumo, vapor) são constantes: acabou o `Color.set('#…')` por puff por fotograma. | `m01-atmosphere.js` |
+| 7 | Crateras de granada | Os aros reutilizam o material de terra da decoração (um só programa de solo). | `m01-area-dressing.js` |
+| 8 | Sombras | Montes/aros/berma só projetam sombra nos níveis com mapa de sombras (Low não). | `m01-area-dressing.js` |
+| 9 | Viewmodel | Nós nomeados procurados uma vez por construção (`ed3f2080`, verificado por `tests/m01-viewmodel-part-cache.test.js`). | `m01-viewmodel.js` |
+| 10 | Pó do Ato I | Ver abaixo. | `m01-dust-volume.js`, `m01-atmosphere.js`, `m01-view.js` |
+| 11 | Quadrícula em Low | Ver abaixo. | `m01-area-field.js` |
+
+### Medições
+**Consultas ao terreno por dressing** (`tests/m01-area-dressing-reuse.test.js`, correr com `DRESSING_COUNT=1`): primeira construção **2 457**; construção nova de outro ato (comportamento antigo) **2 457**; ato da mesma área com `reuse` **0**.
+
+**`renderer.info.memory` nas mudanças de ato, na página** (`tests/browser/m01-act-transition-memory.spec.js`: o fim de VII-a e o de VII-b abrem o ato seguinte; leitura mínima de 8 fotogramas depois de a decoração estar desenhada; `perf3-transitions-{high,low}.json`):
+
+| Mudança | High geometrias | High texturas | Low geometrias | Low texturas |
+|---|---|---|---|---|
+| VII-a → VII-b | 292 → 300 | 126 → 116 | 251 → 253 | 83 → 79 |
+| VII-b → VII-c | 295 → 299 | 118 → 100 | 249 → 252 | 76 → 78 |
+
+Os totais incluem o que o próprio ato traz (atores, crateras, cartelas), por isso a diferença é de poucos recursos e não zero; o spec exige texturas ≤ +4 e geometrias ≤ +12. O mesmo teste com a reconstrução completa (`reuse:null`, High) dá os mesmos totais (±1 geometria): **o ganho do reaproveitamento não está nas contagens de `renderer.info.memory`, está nos 2 457 raycasts, na textura de 256² e nos buffers que já não são recriados**. A volta VII-c → VII-a é um jogo novo (não é uma transição na mesma página): a identidade dos objetos e os eventos `dispose` de toda a cadeia VII-a → VII-b → VII-c → VII-a estão em `tests/m01-area-dressing-reuse.test.js` (nada fica por libertar, nada em uso é libertado).
+
+**`renderer.info` das quatro vistas de VII-a** (`tests/browser/m01-act-vii-a-visual.spec.js`, menor de 8 leituras; `perf3-base-metrics-*.json` = código da linha de integração 101b572a, `perf3-metrics-*.json` = este ramo; SwiftShader):
+
+| Vista | High draws | High triângulos | High geom./tex. | Low draws | Low triângulos | Low geom./tex. |
+|---|---|---|---|---|---|---|
+| 02 chegada | 147 → 147 | 571 186 → 571 186 | 292/111 → 292/111 | 77 → 77 | 258 657 → 254 642 | 246/76 → 247/76 |
+| 04 linha | 136 → 136 | 686 346 → 686 346 | 295/111 → 295/111 | 74 → 75 | 258 812 → 259 176 | 248/79 → 248/79 |
+| 05 oeste | (*) → 161 | (*) → 690 840 | 405/110 → 320/113 | 99 → 99 | 261 762 → 261 764 | 264/79 → 264/79 |
+| 05b destroço | 138 → 138 | 686 602 → 686 602 | 297/110 → 297/111 | 75 → 77 | 259 066 → 259 148 | 250/79 → 250/79 |
+
+(*) A leitura «antes» de High 05 (578 draws, 1 184 299 triângulos) é a passagem dupla do `renderer.info` já descrita no pacote 1: não é comparável. Triângulos e draws ficam iguais: **o trabalho desta ronda no renderer é de shader, CPU e libertação de memória, não de geometria**. Os `perf2-*` que um agente anterior tinha guardado (triângulos 40 % mais baixos) vinham de um estado que não consegui reproduzir e foram removidos. Capturas: `perf3-02-arrival-*`, `perf3-04-…`, `perf3-05-…`, `perf3-05b-…` (High e Low).
+
+### Pó do Ato I (item 10)
+**Problema.** `state.dust` (`src/game/m01-dust.js`) é um facto da simulação: cilindro de raio `r`, altura `h`, `density`; uma linha de visão com ≥ 3 m de densidade 1 dentro dele cega a IA. O renderer só desenhava um véu bege ténue (puffs soltos, `.62 × density`), por isso o jogador via através de uma nuvem que cega o alemão.
+
+**O que o renderer faz agora** (`src/render/m01-dust-volume.js`; só lê o registo da simulação, não decide visibilidade, dano nem eventos). Um único `InstancedMesh` (um draw call, um material) desenha uma caixa por nuvem; o fragment shader intersecta o raio do olho com o cilindro como `dustChord` e integra a profundidade ótica `tau = K · density · comprimento · perfil` com `alpha = 1 − exp(−tau)` (K = 2,3 compensa a média do perfil suave: 3 m de densidade 1 dão ≈ 95 % de opacidade; uma nuvem rala, ou uma corda curta junto à borda, continua rala). A orla suave, o topo mais fino e o ruído só modelam o desenho de uma nuvem cujo tamanho e densidade vêm da simulação; o perfil é 0 no corte do cilindro. Com o olho dentro da caixa desenha-se a face de trás a profundidade 0, de modo que o pó à volta do jogador cobre a vista. Por nível: **8 / 6 / 4 nuvens** (High / Medium / Low; as mais próximas do olho, as restantes mantêm os puffs antigos) e **9 / 6 / 4 amostras** por raio. Sem alocação por fotograma: `pick()` usa um `Int16Array` e um `Float32Array` fixos; a piscina, os buffers e o material são criados uma vez. `renderer.info`: +1 draw call enquanto há nuvens, sem geometria nova além de uma caixa unitária.
+
+**Capturas** (vista do jogador às 04:35:02, depois das bombas das 04:34, com um save do Ato I; `before` = código anterior, `after` = este ramo):
+
+| Nível | Antes | Depois |
+|---|---|---|
+| Low, vista N | `dust-before-n20-low.png`: apenas manchas escuras ténues junto ao horizonte | `dust-after-n20-low.png`: cortina de pó opaca em arco sobre o horizonte |
+| Low, vista E | `dust-before-e20-low.png` | `dust-after-e20-low.png` |
+| High, vista O (a ponte ao fundo) | `dust-before-w34-high.png`: véu ténue, a ponte lê-se completa | `dust-after-w34-high.png`: bancos de pó opacos; a ponte e as torres só aparecem entre eles |
+| High, vista N | — | `dust-after-n20-high.png` |
+
+Vi cada par. **Melhor:** a nuvem que cega a IA já é uma cortina que o jogador não atravessa com a vista; as ralas continuam ralas. **Não tão bom:** os bancos de High (vista O) têm topo chato e arestas laterais quase verticais (lêem-se como «pães» e não como nuvens de explosão). Sem textura de profundidade, com o olho dentro da caixa a nuvem tapa tudo, incluindo o que está dentro da nuvem. Os scripts de captura eram ficheiros temporários (removidos): as vistas saem de um save do Ato I às 04:35:02 com três orientações do jogador; não há spec versionado que as reproduza.
+
+### Quadrícula do campo em Low (item 11)
+O grão do mapa de solo (1,1 m, sub-amostrado) e o fbm de 3 oitavas imprimiam uma quadrícula a 15–40 m. Em Low o grão desvanece entre 4 e 15 m e não se amostra para lá disso; a tinta passa a uma só amostra de ruído de baixa frequência, rodada 37° em relação aos eixos das células e com metade da força; o `polygonOffset` do campo passa a −2/−16 (com −4 espreitavam manchas escuras do terreno entre os 15 e os 60 m). Comparar `after-02-arrival-low.png` (antes, com a quadrícula descrita acima) com `perf3-02-arrival-low.png` (depois): não vejo quadrícula a 15–40 m; fica uma modulação suave de baixa frequência e as faixas de linha da relva a menos de 20 m. **Custo visual em Low:** o trilho gasto, as rodeiras e a faixa pisada deixaram de existir em Low (pedido da auditoria, item 1): o caminho que atravessava o campo na chegada já não se vê. High e Medium não mudaram.
+
+### Comandos e resultados reais
+- `node --test` focado (71/71, 0 falhas): `m01-area-visual`, `m01-atmosphere-runtime`, `m01-dust`, `m01-dust-ai`, `m01-area-dressing-reuse` (9, com o teste novo), `m01-viewmodel-part-cache`, `m01-render-perf`, `m01-t49-scratch-reuse`, `m01-act-vii-b`. A suite completa (`npm test`) **não** foi corrida.
+- `npm run build`: ok.
+- Playwright (SwiftShader, Chromium, porta temporária): `m01-act-vii-a-visual.spec.js` High e Low: 2/2, 0 erros de página; `m01-act-transition-memory.spec.js` (novo): Low 1/1 e High 1/1 (High falhou uma vez por tempo-limite de 240 s com a máquina carregada; o limite subiu para 420 s e passou).
+- Riscos: nada disto foi jogado por uma pessoa nem medido na máquina de referência; a cortina de pó depende de `gl_FragDepth` e o seu custo (4–9 amostras por pixel coberto) não foi medido fora do SwiftShader.
