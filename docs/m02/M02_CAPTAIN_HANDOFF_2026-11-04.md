@@ -342,3 +342,54 @@ Merge `a22520ce` (`02169db5`…`02609b8d`).
 - Há um teste D4 vazio: o Piotr «abrigado» estava no arco da MG.
 
 Tudo isto está **EM CURSO** no FIX-DEV, como agente único (worktree `m02-fix-dev`, base `102ba5e2`).
+
+### FIX-DEV: correções da revisão
+
+Merge `82937c6d` (`f46484af`…`8b6b0edb`).
+
+**Testes:**
+- `tests/m02-*.test.js`: **575/575** (231 s).
+- Build: OK.
+- Browser M02: **2 passed (6,0 min)**, N0 30/30.
+- Ficheiros M01 inalterados.
+- Chave v1 do Codex intocada (m02-25: 19/19).
+
+**O que mudou:**
+- **C09, plano da secção.** Substitui os `cGoals` fixos e não acrescenta estado ao snapshot.
+  - A rkm fixa B10 a partir da base de fogo.
+  - O Gruca, o Małek e o Wierzba esperam em terreno morto, a que se chega por rota abrigada.
+  - Depois avançam pelas faixas do muro, expondo um defensor de cada vez (C09 p. 14). A trela D4 mantém-se.
+  - A janela de segurança no C09 foi medida e **rejeitada**: piorava os resultados.
+  - MissionBot, recruta, 15 sementes: chega ao C12 **4 → 8**; o Gruca cai 3 → 1; o Gruca atingido nos primeiros 15 s do C09 passa de 10/13 a 0.
+  - Sementes 1–40: chegam ao C12 7 → 18.
+  - O m02-18 passa a [5,7,10,1,4,8]; só se acrescentaram sementes.
+- **KeyM:** depois do SP03 forçado revalida as personagens exigidas. O validador nunca aceita o Gruca fora de combate, mesmo com `c12Completed`.
+- **`areaB.contact` e contacto C01:** passam a usar `instantAt`. F5 recusados: 10/30 → 0/30.
+- **Lis morto:** passa a `missing` (C12 pp. 14–15, I4 p. 34, I6 p. 35, K5 p. 40).
+  - O Lis caído e evacuado fica `wounded_evacuated`, sem a fala da água.
+  - `exportCampaignResultToM03()` já não escreve `lis_status` nem o pacote com a missão em curso ou falhada.
+- **Loja de saves:** recusa chaves base cujos slots caiam em `cod-guerra:checkpoint:`.
+- **Testes D4, C06 e C11:** deixaram de ser vazios ou condicionais. A prova D4 põe o Piotr na vala (-45,-72), fora do arco da MG.
+
+**Limitações, ainda abertas:**
+- O Gruca ainda cai no C11 (5/40): a reserva EC2 apanha-o na marcha para (-32,18).
+- Ordens «cobrir/avançar» só na Área A.
+- Não há «socorro quando seguro».
+- Coordenadas dos nós C09 e limiar de 55 de vida sem fonte no PDF.
+- Um tiro num EA0 em WITHDRAWN não marca `m02.fired_on_wounded`.
+- O bot pode rondar um Lis caído (timeout numa variante).
+- As métricas do bot são caóticas (±3 em 40) e **não são playtest**.
+
+**Ficheiros alterados nesta continuação (desde `c687e941`):**
+- código: `src/game/m02-01-simulation.js`, `m02-acts-director.js`, `m02-combat-ai.js`, `m02-save-store.js`, `src/render/m02-01-renderer.js`, `src/world/m02-quinta-world.js`;
+- dados: `missions/m02-bzura/m02-01-quinta-layout.json` (layout v2);
+- testes: `tests/m02-25*`, `-d1*`, `-d2*`, `-d4*`, `-c11*`, `-c06*`, `-c09*`, `m02-mission-bot.js` e ajustes em m02-09/15/18/19;
+- documentação e geradores: `docs/m02/n0/*` (regenerados), `docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md`, `docs/verification/m02-claude/n0-2026-11-05/`;
+- outros: `.gitignore`.
+
+**Próximos passos:**
+1. Revisão adversarial independente de `82937c6d`, focada no plano do C09 e no Lis `missing`.
+2. Gruca no C11 (marcha sob a reserva EC2) e «socorro quando seguro».
+3. Ordens nas Áreas B/C.
+4. Análise e testes de compatibilidade dos snapshots v1 do Codex (`cod-guerra:checkpoint:m02:v1`), sem migrar nem apagar, na branch de integração `codex/m02-integracao-unica`.
+5. Playtest humano antes de qualquer aprovação. A missão **não está aprovada**.
