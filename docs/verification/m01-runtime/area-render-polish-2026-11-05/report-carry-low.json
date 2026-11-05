@@ -1,11 +1,11 @@
 {
  "stats": {
   "quality": "low",
-  "drawCalls": 418,
-  "triangles": 603386,
-  "geometries": 493,
-  "textures": 67,
-  "clock": 65.28329999999843,
+  "drawCalls": 428,
+  "triangles": 687664,
+  "geometries": 540,
+  "textures": 121,
+  "clock": 65.18349999999843,
   "lighting": {
    "phase": "day",
    "alt": 42.1,
@@ -27,10 +27,10 @@
   "polish": {
    "stretcher": {
     "active": true,
-    "frames": 7,
-    "x": -453.4484310950255,
+    "frames": 10,
+    "x": -453.50952792024304,
     "y": -2.1999999999999997,
-    "z": -1150.1955161667997,
+    "z": -1150.4064042213413,
     "yaw": 1.2888044733572446,
     "lift": 1
    },
@@ -49,7 +49,7 @@
   }
  },
  "errors": {
-  "total": 150,
+  "total": 0,
   "real": []
  }
 }

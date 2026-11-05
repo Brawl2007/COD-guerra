@@ -1,11 +1,11 @@
 {
  "stats": {
   "quality": "high",
-  "drawCalls": 140,
-  "triangles": 428612,
-  "geometries": 302,
-  "textures": 67,
-  "clock": 18.816600000000133,
+  "drawCalls": 142,
+  "triangles": 733986,
+  "geometries": 336,
+  "textures": 103,
+  "clock": 18.716600000000135,
   "lighting": {
    "phase": "blue-hour",
    "alt": -3.843,
@@ -44,15 +44,15 @@
      }
     ],
     "haloScale": [
-     4.23,
-     3.97
+     9.15,
+     8.8
     ],
     "lift": 1
    }
   }
  },
  "errors": {
-  "total": 163,
+  "total": 0,
   "real": []
  }
 }

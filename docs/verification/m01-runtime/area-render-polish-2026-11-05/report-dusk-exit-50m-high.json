@@ -2,10 +2,10 @@
  "stats": {
   "quality": "high",
   "drawCalls": 99,
-  "triangles": 339889,
-  "geometries": 280,
-  "textures": 52,
-  "clock": 181.60000000000704,
+  "triangles": 441924,
+  "geometries": 321,
+  "textures": 89,
+  "clock": 181.65000000000703,
   "lighting": {
    "phase": "blue-hour",
    "alt": -4.216,
@@ -44,17 +44,15 @@
      }
     ],
     "haloScale": [
-     1.31,
-     1.12
+     2.97,
+     2.23
     ],
     "lift": 1
    }
   }
  },
  "errors": {
-  "total": 219,
-  "real": [
-   "THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:4811/ea031185-6073-4588-8449-cfd2c9fb36d0"
-  ]
+  "total": 0,
+  "real": []
  }
 }
