@@ -35,7 +35,7 @@ export class M01AreaDressing{
       const detail=artTexture('soil',256);this.textures.push(detail);
       const track=(L.features??[]).find(f=>f.id==='np_track_south')?.polyline.map(p=>[p[0],p[2]])??[],P=L.parapets,xs=P.segments.flat();
       this.field=createFieldMaterial(detail,{track,band:[Math.min(...xs)-6,Math.max(...xs)+6,P.z1+.9,P.z1+4.5],origin:[(F.minX+F.maxX)/2,(F.minZ+F.maxZ)/2],quality});
-      Object.assign(this.field.material,{polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-4});material(this.field.material);
+      Object.assign(this.field.material,{polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-16});material(this.field.material);   // coplanar with the terrain on the fought-over strip: at 15-60 m the -4 units left terrain-dark blotches poking through the pasture on Low (depth resolution ~2 mm at 40 m)
       const m=new THREE.Mesh(geometry(buildFieldGeometry(L,base,{cell:12})),this.field.material);m.renderOrder=-1;add(m,'m01-area-field');
       // Round 2 (High tier only): stubble/grass tufts that follow the camera over the fought-over strip (m01-area-stubble). One instanced draw call, hidden below High.
       const B=L.bounds.playable;this.stubble=createStubble({bounds:[B.minX,B.maxX,B.minZ,B.maxZ],groundY:y,origin:[(F.minX+F.maxX)/2,(F.minZ+F.maxZ)/2]});
