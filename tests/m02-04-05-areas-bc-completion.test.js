@@ -69,6 +69,9 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
 
     // Neutralize EB1 defenders so corridor is clear and advance cart to goal
     assert.ok(sim.enemies.length > 0, 'Cell B must contain EB1 defenders to neutralize (guards vacuous loop)');
+    // C06 → C07 é automático (roteiro): ao resolver a passagem o diretor aplica a reorganização no próprio tick; mede-se antes.
+    sim.player.health = 65;
+    const reserveBefore = sim.weapon.reserve;
     for (const e of sim.enemies) {
       e.alive = false;
       e.health = 0;
@@ -85,15 +88,17 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
     assert.equal(sim.flags['m02.corridor_held'], true);
     assert.equal(sim.objective.id, 'O05');
 
-    // Complete C07 reorganization (TR02 -> T2 morning + cp_m02_c_reorganizacao)
-    sim.player.health = 65;
-    const reserveBefore = sim.weapon.reserve;
-    const tr02 = sim.completeC07Reorganization();
-    assert.equal(tr02.temporalState, 'T2');
-    assert.equal(tr02.cartela, M02_TR_CARTELAS.TR02);
+    // C07 reorganization (TR02 -> T2 morning + cp_m02_c_reorganizacao): applied once, by the script; the bench key is idempotent
+    assert.equal(sim.script.sceneId, 'C07', 'the script moved C06 -> C07 when the passage was resolved');
     assert.ok(sim.weapon.reserve > reserveBefore, 'Delivered ammo volume must replenish reserve in C07');
     assert.equal(sim.player.health, 75, 'Delivered water volume provides bounded recovery (+10, never magical 100%)');
     assert.ok(sim.checkpoints.has('cp_m02_c_reorganizacao'), 'Checkpoint cp_m02_c_reorganizacao must be saved');
+    const reserveAfter = sim.weapon.reserve;
+    const tr02 = sim.completeC07Reorganization();
+    assert.equal(tr02.temporalState, 'T2');
+    assert.equal(tr02.cartela, M02_TR_CARTELAS.TR02);
+    assert.equal(sim.weapon.reserve, reserveAfter, 'a second call never re-applies the supply bonuses');
+    assert.equal(sim.player.health, 75);
 
     // 2. Damaged cart wheel (SP02 contingency) + manual transport (1 volume delivered, 1 lost) + SAVE-02 anti-duplication
     const simPartial = new M02BenchSimulation(19390909);

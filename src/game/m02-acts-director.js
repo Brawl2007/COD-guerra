@@ -107,6 +107,7 @@ export function createInitialAreaBState() {
   return {
     active: false,
     reorganizedC07: false,
+    c08Briefed: false,
     corridorUnderDirectFire: true,
     supplyCart: {
       id: bDef.supplyCart.id,
@@ -556,7 +557,23 @@ export function updateAreaB(sim, dt) {
   syncSupplyFlags(sim);
 }
 
+function c07Summary(sim) {
+  return {
+    transitionId: 'TR02',
+    temporalState: 'T2',
+    cartela: M02_TR_CARTELAS.TR02,
+    supplyReached: sim.flags['m02.supply_reached'],
+    supplies: structuredClone(sim.supplies),
+    playerHealth: sim.player.health,
+    weapon: { mag: sim.weapon.mag, reserve: sim.weapon.reserve },
+    flags: structuredClone(sim.flags),
+  };
+}
+
 export function completeC07Reorganization(sim, { skip = false } = {}) {
+  // Idempotente: com o roteiro automático (C06 → C07 ao resolver a passagem) e as teclas de bancada a coincidir, as
+  // consequências dos volumes (munição +15, água +10) aplicam-se uma só vez.
+  if (sim.areaB.reorganizedC07) return c07Summary(sim);
   sim.areaB.reorganizedC07 = true;
   sim.flags['m02.corridor_held'] = true;
   sim.horizon.setTemporalState('T2', sim);
@@ -599,30 +616,43 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
     title: 'C07 Concluída (Manhã 10 Set): Secção reorganizada — pronta para partir para os Acessos de Leśmierz (Área C)',
     status: 'completed',
   };
-  sim.saveCheckpoint('cp_m02_c_reorganizacao');
-  return {
-    transitionId: 'TR02',
-    temporalState: 'T2',
-    cartela: M02_TR_CARTELAS.TR02,
-    supplyReached: sim.flags['m02.supply_reached'],
-    supplies: structuredClone(sim.supplies),
-    playerHealth: sim.player.health,
-    weapon: { mag: sim.weapon.mag, reserve: sim.weapon.reserve },
-    flags: structuredClone(sim.flags),
-  };
+  // Dentro de tick()/ação atómica fica pendente e grava-se no fim; fora, grava-se já (nunca a meio de um tick).
+  sim.requestAutoCheckpoint('cp_m02_c_reorganizacao');
+  return c07Summary(sim);
 }
 
-export function enterAreaCC09(sim, { skipTransition = false } = {}) {
+/**
+ * C08 (PDF p. 14): ordem entregue, coluna reorganizada; Lis é destacado para ligação fora da célula até C11, salvo se já estava
+ * incapacitado/evacuado (então mantém o estado e outro mensageiro faz a ligação). Cartela TR03. Ainda na célula B: a mudança
+ * de célula é C09 (enterAreaCC09). Idempotente.
+ */
+export function beginC08Briefing(sim, { skipTransition = false } = {}) {
   if (!sim.areaB?.reorganizedC07) {
     completeC07Reorganization(sim, { skip: skipTransition });
   }
-
-  // C08 (TR03): Detach Lis for liaison outside the cell during C09-C10 unless he is already incapacitated/evacuated
+  if (sim.areaB.c08Briefed) return false;
+  sim.areaB.c08Briefed = true;
   const lis = sim.allies.find((a) => a.id === 'pl_lis');
   if (lis && lis.alive && lis.state !== 'DOWN' && lis.state !== 'EVACUATED') {
     lis.detachedOutOfCell = true;
     lis.state = 'LIAISON_OUTSIDE_CELL';
   }
+  sim.activeCartela = {
+    text: M02_TR_CARTELAS.TR03,
+    expiresAt: sim.clock + 8.0,
+  };
+  sim.dialogue.trigger('bz39_c08_01', sim);
+  sim.dialogue.trigger('bz39_c08_02', sim);
+  sim.dialogue.update(sim);
+  if (!sim.transitionIdsApplied.includes('TR03')) {
+    sim.transitionIdsApplied.push('TR03');
+  }
+  return true;
+}
+
+export function enterAreaCC09(sim, { skipTransition = false } = {}) {
+  beginC08Briefing(sim, { skipTransition });
+  const lis = sim.allies.find((a) => a.id === 'pl_lis');
 
   const worldC = sim.zoneStreamer.switchToCell('C');
   sim.activeCellId = 'C';
@@ -672,14 +702,8 @@ export function enterAreaCC09(sim, { skipTransition = false } = {}) {
     expiresAt: sim.clock + 8.0,
   };
 
-  sim.dialogue.trigger('bz39_c08_01', sim);
-  sim.dialogue.trigger('bz39_c08_02', sim);
   sim.dialogue.trigger('bz39_c09_02', sim);
   sim.dialogue.update(sim);
-
-  if (!sim.transitionIdsApplied.includes('TR03')) {
-    sim.transitionIdsApplied.push('TR03');
-  }
 
   sim.objective = {
     id: 'O06',
@@ -1157,4 +1181,158 @@ export function exportCampaignResultToM03(sim) {
 
   sim.m03ExportPackage = m03Export;
   return m03Export;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Roteiro automático C01 → C12 (PDF C, pp. 12-15): as cenas avançam por CONDIÇÕES DE JOGO (posição, objetivos, baixas, temporizadores
+// do próprio PDF), sem depender das teclas de bancada (Digit0-9/KeyM), que ficam só como atalhos de depuração: um atalho que salta
+// cenas é apanhado por `stateSceneFloor` e o roteiro continua a partir daí. Tempo simulado por cena em `script.history`.
+// ---------------------------------------------------------------------------------------------------------------------------
+export const M02_SCENE_IDS = Object.freeze(['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07', 'C08', 'C09', 'C10', 'C11', 'C12']);
+/** Cenas «de elipse» (C5 p. 13-14, C6 p. 14-15): duração proposta, limite inferior de «Duração proposta» da tabela da p. 12 (s). */
+export const M02_SCENE_HOLD_SEC = Object.freeze({ C05: 45, C07: 60, C08: 60, C12: 45 });
+/** Entrada do slice (0,-80) com folga: o posto EA0 já caiu e o jogador chegou às últimas coberturas antes da quinta (C02). */
+export const C02_EXIT_Z = -85;
+/** O jogador abandona a quinta pelo pomar a sul (C04 → C05, «a coluna sai da quinta»). */
+export const C04_EXIT_Z = 44;
+export const C11_EVAC_RADIUS_M = 6;
+
+export function createInitialScriptState(sceneId = 'C02', clock = 0) {
+  return { sceneId, sceneStartedAt: Number(clock.toFixed(3)), history: [], finished: false };
+}
+
+function sceneIndex(id) {
+  return M02_SCENE_IDS.indexOf(id);
+}
+
+/** Cena mínima já ultrapassada pelo estado real (atalhos de bancada incluídos). */
+export function stateSceneFloor(sim) {
+  if (sim.areaC?.c12Completed) return 'C12';
+  if (sim.activeCellId === 'C') {
+    if (sim.areaC?.c11Started) return 'C11';
+    if (sim.areaC?.c10Started) return 'C10';
+    return 'C09';
+  }
+  if (sim.activeCellId === 'B') {
+    if (sim.areaB?.c08Briefed) return 'C08';
+    return sim.areaB?.reorganizedC07 ? 'C07' : 'C06';
+  }
+  return sim.transitionTABPayload ? 'C05' : 'C01';
+}
+
+function endScene(sim, nextId) {
+  const sc = sim.script;
+  const now = Number(sim.clock.toFixed(3));
+  sc.history.push({ id: sc.sceneId, startedAt: sc.sceneStartedAt, endedAt: Math.max(now, sc.sceneStartedAt) });
+  sc.sceneId = nextId;
+  sc.sceneStartedAt = now;
+  sim.events.push({ type: 'scene-changed', from: sc.history.at(-1).id, to: nextId, clock: now });
+}
+
+function sceneAge(sim) {
+  return sim.clock - sim.script.sceneStartedAt;
+}
+
+/** Condição de saída natural de cada cena (a ação, se houver, corre na própria transição). Devolve a cena seguinte ou null. */
+function naturalNextScene(sim) {
+  const sc = sim.script;
+  const p = sim.player;
+  switch (sc.sceneId) {
+    case 'C01':
+      // C01: preparação; acaba quando o jogador começa a avançar (a preparação «pode ser abreviada»)
+      return sim.c01Contact?.movementStartedAt != null || !sim.c01Active ? 'C02' : null;
+    case 'C02':
+      // C02: posto EA0 vencido (ou rendido) e o jogador nas últimas coberturas; nunca por esperar
+      return !sim.c01Active && sim.activeCellId === 'A' && p.z >= C02_EXIT_Z ? 'C03' : null;
+    case 'C03':
+      // C03: sem defensores da quinta em combate (mortos, rendidos ou em fuga)
+      return sim.objective.id === 'C04' || sim.objective.id === 'COMPLETE' ? 'C04' : null;
+    case 'C04':
+      // C04: o jogador compreendeu a ordem e sai pelo pomar; a quinta fica consolidada (objetivo COMPLETE)
+      if (sim.objective.id === 'COMPLETE' && p.z >= C04_EXIT_Z) {
+        sim.triggerTransitionTAB({ skip: false });
+        return 'C05';
+      }
+      return null;
+    case 'C05':
+      if (sceneAge(sim) >= M02_SCENE_HOLD_SEC.C05) {
+        sim.enterAreaBC06();
+        return 'C06';
+      }
+      return null;
+    case 'C06':
+      // C06: «a cena acaba com a passagem resolvida» (todos os volumes resolvidos e sem hostis): corridor_held, sem tempo mínimo
+      if (sim.flags['m02.corridor_held']) {
+        sim.completeC07Reorganization();
+        return 'C07';
+      }
+      return null;
+    case 'C07':
+      if (sceneAge(sim) >= M02_SCENE_HOLD_SEC.C07) {
+        beginC08Briefing(sim);
+        return 'C08';
+      }
+      return null;
+    case 'C08':
+      if (sceneAge(sim) >= M02_SCENE_HOLD_SEC.C08) {
+        sim.enterAreaCC09();
+        return 'C09';
+      }
+      return null;
+    case 'C09':
+      return sim.areaC?.c10Started ? 'C10' : null;
+    case 'C10':
+      return sim.areaC?.c11Started ? 'C11' : null;
+    case 'C11':
+      return c11Resolved(sim) ? 'C12' : null;
+    default:
+      return null;
+  }
+}
+
+/**
+ * C11 → C12 (PDF p. 14): «A passagem termina quando todos os sobreviventes alcançáveis chegaram, foram explicitamente deixados ou
+ * ficaram sem rota segura e Gruca ordena romper contacto.» Aqui: todos os membros vivos do último grupo evacuados e Piotr no ponto
+ * de evacuação; se Lis ainda está a ser amparado ao lado de Piotr espera-se que acabe o percurso; se Piotr chegou sem ele,
+ * C12 regista `missing`.
+ */
+function c11Resolved(sim) {
+  const a = sim.areaC;
+  if (!a?.c11Started || a.c12Completed) return false;
+  if (a.lastGroup.some((lg) => lg.alive && !lg.evacuated)) return false;
+  const evac = cellsBCLayout.cells.C.evacRoute.at(-1);
+  if (Math.hypot(sim.player.x - evac[0], sim.player.z - evac[1]) > C11_EVAC_RADIUS_M) return false;
+  const lis = sim.allies.find((al) => al.id === 'pl_lis');
+  if (a.lisPhase === 'supported' && lis && Math.hypot(sim.player.x - lis.x, sim.player.z - lis.z) <= cellsBCLayout.cells.C.lisReturn.supportRadius) {
+    return false; // Lis ainda a chegar, com Piotr ao pé
+  }
+  return true;
+}
+
+/** Um passo do roteiro, no fim de tick() (depois do tático/objetivo). Pode encadear várias cenas se o estado já as ultrapassou. */
+export function updateScript(sim) {
+  const sc = sim.script;
+  if (!sc || sc.finished) return;
+  for (let guard = 0; guard < M02_SCENE_IDS.length; guard++) {
+    const idx = sceneIndex(sc.sceneId);
+    const floor = sceneIndex(stateSceneFloor(sim));
+    if (floor > idx) {
+      endScene(sim, M02_SCENE_IDS[idx + 1]); // atalho de bancada ou estado já ultrapassado: apanha a cena a cena
+      continue;
+    }
+    if (sc.sceneId === 'C12') {
+      if (sceneAge(sim) >= M02_SCENE_HOLD_SEC.C12 && sim.areaC?.c12Completed) {
+        sc.history.push({ id: 'C12', startedAt: sc.sceneStartedAt, endedAt: Number(sim.clock.toFixed(3)) });
+        sc.finished = true;
+      }
+      return;
+    }
+    const next = naturalNextScene(sim);
+    if (!next) return;
+    if (next === 'C12') {
+      sim.completeC12Epilogue();
+    }
+    endScene(sim, next);
+    if (next === 'C12') return;
+  }
 }

@@ -48,6 +48,10 @@ import {
   CART_PARKED_REASONS,
   LIS_PHASES,
   LIS_OUTCOME_SOURCES,
+  M02_SCENE_IDS,
+  createInitialScriptState,
+  updateScript as runUpdateScript,
+  beginC08Briefing as runBeginC08Briefing,
   openC01Contact,
   updateC01Contact as runUpdateC01Contact,
   C01_CONTACT_OPENED_BY,
@@ -330,6 +334,23 @@ export function validateM02Snapshot(snap) {
       return { valid: false, reason: 'Resumo do último grupo (lastGroupSummary) inválido no snapshot.' };
     }
   }
+  const sc = snap.script;
+  const scIdx = (id) => M02_SCENE_IDS.indexOf(id);
+  const finiteTime = (v) => typeof v === 'number' && Number.isFinite(v) && v >= 0;
+  if (
+    !isPlainObject(sc) ||
+    scIdx(sc.sceneId) < 0 ||
+    !finiteTime(sc.sceneStartedAt) ||
+    sc.sceneStartedAt > snap.clock + 1e-9 ||
+    typeof sc.finished !== 'boolean' ||
+    !Array.isArray(sc.history) ||
+    sc.history.length > M02_SCENE_IDS.length ||
+    sc.history.some((h, i) => !isPlainObject(h) || scIdx(h.id) < 0 || !finiteTime(h.startedAt) || !finiteTime(h.endedAt) || h.endedAt < h.startedAt || (i > 0 && scIdx(h.id) <= scIdx(sc.history[i - 1].id))) ||
+    (sc.history.length > 0 && scIdx(sc.history.at(-1).id) > scIdx(sc.sceneId)) ||
+    (sc.finished && sc.sceneId !== 'C12')
+  ) {
+    return { valid: false, reason: 'Save incompatível: estado do roteiro (script) ausente ou inválido (snapshot anterior ao roteiro automático).' };
+  }
   const c01 = snap.c01Contact;
   const nullOrTime = (v) => v === null || (typeof v === 'number' && v >= 0);
   if (
@@ -521,6 +542,7 @@ export class M02BenchSimulation {
     this.c01Active = false;
     this.c01StartedAt = 0;
     this.c01Contact = createInitialC01Contact();
+    this.script = createInitialScriptState(startScene === 'C01' ? 'C01' : 'C02', 0);
     this.ea1StartedAt = 0;
     this.activeCartela = M02_TEMPORAL_STATES.T0.cartela;
     this.transitionTABPayload = null;
@@ -769,6 +791,7 @@ export class M02BenchSimulation {
     this.c01Active = true;
     this.c01StartedAt = this.clock;
     this.c01Contact = createInitialC01Contact();
+    this.script = createInitialScriptState('C01', this.clock);
     this.activeCartela = {
       text: M02_TEMPORAL_STATES.T0.cartela,
       expiresAt: this.clock + 8.0,
@@ -854,6 +877,10 @@ export class M02BenchSimulation {
   // (cp_m02_d_cobertura_retirada em C10) só é gravado quando a ação inteira acabou, como no fim de tick() (FIX-2c).
   completeC07Reorganization(options = {}) {
     return this.#runCheckpointBatch(() => runCompleteC07Reorganization(this, options));
+  }
+
+  beginC08Briefing(options = {}) {
+    return this.#runCheckpointBatch(() => runBeginC08Briefing(this, options));
   }
 
   enterAreaCC09(options = {}) {
@@ -953,6 +980,24 @@ export class M02BenchSimulation {
     };
   }
 
+  /** Volume da carroça largado (varal partido / carroça parada) ao alcance de Piotr, que ainda não carrega nenhum (J2: transporte a pé). */
+  currentVolumePrompt() {
+    const cart = this.areaB?.supplyCart;
+    if (this.activeCellId !== 'B' || !cart || this.player.carryingVolumeId) return null;
+    let best = null;
+    for (const vol of cart.volumes) {
+      if (vol.state !== 'DROPPED_READY' || vol.delivered || vol.lost) continue;
+      const d = Math.hypot(vol.x - this.player.x, vol.z - this.player.z);
+      if (d <= DOOR_INTERACT_RANGE && (!best || d < best.d)) best = { vol, d };
+    }
+    if (!best) return null;
+    return {
+      volumeId: best.vol.id,
+      distance: Number(best.d.toFixed(2)),
+      prompt: `[E] Pegar o volume de ${best.vol.type === 'water' ? 'água' : 'munição'}`,
+    };
+  }
+
   markWoundedSoldierWithChalk() {
     const wounded = this.enemies.find((e) => e.c04Candidate && e.alive);
     if (!wounded) return null;
@@ -982,6 +1027,14 @@ export class M02BenchSimulation {
       const chalkPrompt = this.currentChalkPrompt();
       if (chalkPrompt) {
         return this.markWoundedSoldierWithChalk();
+      }
+    }
+    if (!explicitDoorId) {
+      const volumePrompt = this.currentVolumePrompt();
+      if (volumePrompt && runPickupSupplyVolume(this, volumePrompt.volumeId)) {
+        const evt = { type: 'supply-volume-picked', volumeId: volumePrompt.volumeId, clock: this.clock };
+        this.events.push(evt);
+        return evt;
       }
     }
     let targetDoorId = explicitDoorId;
@@ -1760,6 +1813,7 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
+    runUpdateScript(this);
 
     if (this.mgState.seeingPlayer && this.clock >= this.mgState.nextBurstAt) {
       this.mgState.burstsFired++;
@@ -1969,6 +2023,7 @@ export class M02BenchSimulation {
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
       c01Contact: structuredClone(this.c01Contact),
+      script: structuredClone(this.script),
       ea1StartedAt: this.ea1StartedAt,
       activeCartela: structuredClone(this.activeCartela),
       transitionTABPayload: this.transitionTABPayload ? structuredClone(this.transitionTABPayload) : null,
@@ -2036,6 +2091,7 @@ export class M02BenchSimulation {
       c01Active: Boolean(snap.c01Active),
       c01StartedAt: snap.c01StartedAt ?? 0,
       c01Contact: snap.c01Contact,
+      script: snap.script,
       ea1StartedAt: snap.ea1StartedAt ?? 0,
       activeCartela: snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela,
       transitionTABPayload: snap.transitionTABPayload ?? null,
@@ -2101,6 +2157,7 @@ export class M02BenchSimulation {
     this.c01Active = p.c01Active;
     this.c01StartedAt = p.c01StartedAt;
     this.c01Contact = p.c01Contact;
+    this.script = p.script;
     this.ea1StartedAt = p.ea1StartedAt;
     this.activeCartela = p.activeCartela;
     this.transitionTABPayload = p.transitionTABPayload;

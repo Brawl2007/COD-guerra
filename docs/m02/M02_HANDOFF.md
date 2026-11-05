@@ -190,3 +190,14 @@ Legenda: **teste de estado verde (não é aceitação)** = o teste Node passa, s
    ```bash
    npx playwright test -c tools/m02/playwright-m02-01.config.js tests/browser/m02-01-quinta.spec.js
    ```
+
+---
+
+## 6. Roteiro automático C01 → C12 e set pieces (2026-11-05, branch `m02-script-c`; INTEGRADA SEM VALIDAÇÃO DE JOGO)
+
+- **Progressão automática** (`src/game/m02-acts-director.js`, `updateScript`): C01 acaba quando o jogador começa a avançar; C02 → C03 com o posto EA0 vencido e o jogador em z ≥ -85; C03 → C04 sem defensores da quinta em combate; C04 → C05 com a quinta consolidada e o jogador a sair pelo pomar (z ≥ 44); C05 (45 s) → B; C06 acaba com o corredor segurado (`m02.corridor_held`, sem tempo mínimo); C07 (60 s) → C08 (60 s) → Área C; C09 → C10 com EC1 vencido e o jogador no pátio; C10 → C11 no impacto fixo (6 s); C11 → C12 com o último grupo todo evacuado e Piotr no ponto de evacuação (-85,105). As teclas `0–9`/`M` ficam só como atalhos de depuração (o roteiro apanha-os). Tempo simulado por cena em `sim.script.history`.
+- **C02:** o posto EA0 só abre fogo 30–60 s depois de o jogador avançar (`c01Contact`, sorteio com o RNG da simulação; um tiro ou granada do jogador abre-o já). A aproximação de C01 (P1 a ~100 m do slice) passou a ser percorrível (`bounds.c01Approach`).
+- **C06 / SP02:** o tiro parte o varal (`supplyCart.immobilizedCause = 'shaft_broken'`); se o evento falha, alternativa explícita `parked_fallback` (carroça parada, volumes a pé, [E] para pegar). Rota `(-70,60)→(-20,60)→(0,30)→(0,-70)`.
+- **C11/C12:** Lis regressa por movimento contínuo (entrada `(0,-60)`, velocidade de ferido limitada por tick) e é amparado/carregado pela rota de evacuação (agora pela porta norte de B09 `(-30,-20)`); `m02.lis_status` deriva do jogo (`missing` se Piotr termina sem Lis); o último grupo só conta como evacuado ao chegar a `(-85,105)`.
+- **Layout B/C v2** (`m02-cells-bc-layout-v2`): saves de B/C do layout v1 são recusados. Portas de B08: `doorsDecision.decision = 'pendente'` (decisão do proprietário).
+- Testes: `tests/m02-14` a `m02-19` (e `tests/m02-mission-bot.js`, o «jogador» só com entradas de tick). Não é playtest.

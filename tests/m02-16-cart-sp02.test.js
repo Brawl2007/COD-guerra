@@ -146,6 +146,31 @@ describe('M02 SP02: o tiro parte o varal (shaft_broken) e a carroça fica imobil
   });
 });
 
+describe('M02 SP02: transporte a pé dos volumes por entrada do jogador ([E]), sem API', () => {
+  it('com o varal partido o jogador pega num volume com interact, leva-o ao destino e a entrega conta (supply_reached)', () => {
+    const sim = enterB();
+    for (const e of sim.enemies) Object.assign(e, { alive: false, state: 'DEAD', health: 0 });
+    const cart = sim.areaB.supplyCart;
+    Object.assign(cart, { x: 0, z: 15, waypointIdx: 3 });
+    breakCartShaft(sim, { shooterId: 'DE-B09' });
+    const vol = cart.volumes.find((v) => v.id === 'vol_water');
+    assert.equal(sim.currentVolumePrompt(), null, 'longe do volume não há prompt');
+    sim.teleportPlayer(vol.x - 1.0, vol.z, 0, 0);
+    const prompt = sim.currentVolumePrompt();
+    assert.equal(prompt.volumeId, 'vol_water');
+    assert.match(prompt.prompt, /\[E\] Pegar o volume de água/);
+    sim.tick(0.1, { interact: true });
+    assert.equal(sim.player.carryingVolumeId, 'vol_water');
+    assert.equal(vol.state, 'CARRIED');
+    assert.equal(sim.currentVolumePrompt(), null, 'já a transportar um volume');
+    sim.teleportPlayer(cart.goalX, cart.goalZ + 3, 0, 0);
+    sim.tick(0.1, {});
+    assert.equal(vol.state, 'DELIVERED');
+    assert.equal(sim.flags['m02.supply_reached'], 1);
+    assert.equal(sim.player.carryingVolumeId, null);
+  });
+});
+
 describe('M02 SP02: alternativa «parada» explícita quando o evento do tiro falha', () => {
   it('hostis capazes vivos mas sem alcance/linha de tiro: depois de CART_SHOT_WINDOW_SEC a carroça fica parada (parked_fallback), volumes soltos', () => {
     const sim = enterB();
