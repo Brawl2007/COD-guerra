@@ -118,7 +118,7 @@ test('reactive dialogue: the subtitles render with their speaker, 118 and 119 sh
     if(node.classList.contains('show')&&node.textContent.includes('De lá também atira')){document.exitPointerLock();return true;}return false;},null,{polling:'raf',timeout:150000});
   await expectPaused(page);
   const heard=await page.evaluate(()=>window.__subtitles);
-  const first=heard.find(l=>l.text.includes('Cabo, pelo aterro para oeste?')),second=heard.find(l=>l.text.includes('Pelo aterro. De lá também atira.'));
+  const first=heard.find(l=>l.text.includes('Wrona, pelo aterro para oeste?')),second=heard.find(l=>l.text.includes('Pelo aterro. De lá também atira.'));
   expect(first,JSON.stringify(heard)).toBeTruthy();expect(second).toBeTruthy();
   expect(first.speaker).toBe('Soldado da ckm:');expect(second.speaker).toBe('Atirador da ckm:');
   expect(first.speaker).not.toBe(second.speaker);

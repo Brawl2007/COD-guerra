@@ -7,9 +7,9 @@
   "statusNote": "Fluxo ligado à engine Three.js com mapa próprio, wz.29, eventos e CP-A..D. Percurso completo verificado na simulação e trechos verificados no navegador. Arte, encenação e combate são provisórios; partida contínua no navegador e validação no Chromebook pendentes. Não é missão VALIDADA.",
   "dateStart": "1939-09-01T04:30:00+01:00",
   "dateEnd": "1939-09-01T07:05:00+01:00",
-  "timezone": "CET (UTC+01:00) — hora legal na Polônia e na Alemanha em 1939; independente do relógio do computador",
+  "timezone": "CET (UTC+01:00) — hora legal na Polónia e na Alemanha em 1939; independente do relógio do computador",
   "location": {
-    "name": "Tczew, Pomerânia, Polônia",
+    "name": "Tczew, Pomerânia, Polónia",
     "detail": "Cabeça de ponte oeste das pontes ferroviária e rodoviária sobre o Vístula",
     "lat": 54.0925,
     "lon": 18.805,
@@ -18,7 +18,7 @@
   "operation": {
     "polish": "Defesa das pontes de Tczew (Oddział Wydzielony „Tczew”, Exército „Pomorze”)",
     "german": "Tomada das pontes de Dirschau (Gruppe Medem)",
-    "campaign": "Campanha de setembro de 1939 (invasão alemã da Polônia)"
+    "campaign": "Campanha de setembro de 1939 (invasão alemã da Polónia)"
   },
   "faction": "PL",
   "formation": "Exército „Pomorze” → Oddział Wydzielony „Tczew”",
@@ -153,7 +153,7 @@
       "id": "staszek_pawlak",
       "name": "Stanisław „Staszek” Pawlak",
       "rank": "strzelec, goniec (mensageiro)",
-      "role": "RADIO_OPERATOR",
+      "role": "MESSENGER",
       "roleNote": "Sem rádio na secção; faz a ligação a pé.",
       "faction": "PL",
       "fictional": true,
@@ -189,7 +189,7 @@
       "id": "hist_janik",
       "name": "Stanisław Janik",
       "role": "comandante do 2.º Batalhão de Fuzileiros / OW „Tczew”",
-      "appearsAs": "ordens transmitidas pelo mensageiro; nome só no debrief",
+      "appearsAs": "ordens que chegam como «ordem do comandante do batalhão»; quem as transmitiu é desconhecido (o mensageiro do jogo é dramatização); nome só no debrief",
       "source": "T02"
     },
     {
@@ -322,7 +322,7 @@
           "note": "T38 (M01-COMBAT-POSTURE-STAGING-V1): enquanto segura o tabuleiro (from..until), cada homem do pelotão está agachado/de joelhos em JOGO (`crouched`: hitbox baixa, olhos a 1,08 m, mira alemã a 0,75 m, origem do traçante dos seus tiros de exibição à altura de quem está de joelhos), no seu lugar slots[i] [x, z] em metros (sem fila: lugares desencontrados ao longo das duas treliças, espaçamento mínimo 1,3 m, nenhum trio em fila cerrada nem quatro em linha, reservas pl_east_18..23 na faixa sul do bloco, junto à treliça sul (z ≥ 40,9; z cresce para sul: cada reserva fica mais a sul do que cada um dos outros dezoito)). O corpo roda yaw[i] radianos (|yaw| <= 0,4) em relação à direcção de jogo (só apresentação). Na retirada levantam-se e correm. 'prone' fica excluído para o pelotão (validatePresentation)."
         },
         "classification": "RECONSTRUCTED",
-        "note": "T23: o pelotão está presente e parado no extremo leste do tabuleiro rodoviário (T38: x 1028–1043, z 38,2–41,8, entre as treliças; antes x 1033–1043 em grelha 6×4) desde a chegada do trem 963 até à retirada das 06:00, e só então corre para oeste. Os 24 lugares são de jogo: antes os homens partilhavam 4 pontos (6 por ponto) e uma baixa não se via. Saves anteriores guardam as suas posições e são postos em guarda na tick seguinte."
+        "note": "T23: o pelotão está presente e parado no extremo leste do tabuleiro rodoviário (T38: x 1028–1043, z 38,2–41,8, entre as treliças; antes x 1033–1043 em grelha 6×4) desde a chegada do comboio 963 até à retirada das 06:00, e só então corre para oeste. Os 24 lugares são de jogo: antes os homens partilhavam 4 pontos (6 por ponto) e uma baixa não se via. Saves anteriores guardam as suas posições e são postos em guarda na tick seguinte."
       },
       "attritionNote": "T23: as seis reservas (pl_east_18..23) caem à vista, em horas fixas (sem aleatoriedade), a tiros de atiradores de espingarda do dique ou dos portões, nunca das MG34. A baixa conta nos mortos do grupo mas NÃO em m01.east_platoon_survivors (que fica em 18 até às 06:00): a regra dos 20 s e dlg_m01_049 mantêm-se. Cada entrada abre às horas de `at` e fecha em `cutoff`, para a bala chegar antes das 06:00.",
       "attrition": [
@@ -359,14 +359,14 @@
     {
       "id": "grp_de_east",
       "faction": "DE",
-      "composition": "pioneiros do trem 963 e guardas de fronteira (Grenzwacht)",
+      "composition": "pioneiros do comboio 963 e guardas de fronteira (Grenzwacht)",
       "sizeVisible": 40,
       "weapons": ["kar98k", "mg34"],
       "sector": "s2_east_bridgehead",
       "note": "Tamanho visível é valor de gameplay.",
       "firePositions": [
         { "id": "fp_m01_mg_gates_road", "actor": "de_east_0", "weapon": "mg34", "position": [1055, 0, 32], "targets": "obj_m01_cover_repair: sapadores no segundo corte", "classification": "RECONSTRUCTED", "note": "MG junto aos portões de Lisewo (x ≈ 1052), do lado alemão, entre as duas pontes e à frente do portal de 1912. Posição de jogo: entre as pontes a água deixa a margem leste à vista da cabeça de ponte oeste (as treliças tapam o resto). Daqui o fogo mergulhante a ~1,2 km cai sobre a encosta do aterro onde os sapadores trabalham, e o jogador, junto deles, vê o clarão a menos de 1200 m (alcance máximo do wz.29 no perfil)." },
-        { "id": "fp_m01_mg_gates_rail", "actor": "de_east_1", "weapon": "mg34", "position": [1055, 0, 13], "targets": "jogador e posto da secção (Kowal)", "classification": "RECONSTRUCTED", "note": "MG junto ao portão ferroviário, à frente do trem 963 (\"Clarões junto aos vagões\", dlg_m01_027). Kowal responde-lhe do posto da secção." },
+        { "id": "fp_m01_mg_gates_rail", "actor": "de_east_1", "weapon": "mg34", "position": [1055, 0, 13], "targets": "jogador e posto da secção (Kowal)", "classification": "RECONSTRUCTED", "note": "MG junto ao portão ferroviário, à frente do comboio 963 (\"Clarões junto aos vagões\", dlg_m01_027). Kowal responde-lhe do posto da secção." },
         { "id": "fp_m01_riflemen_gates", "actors": "de_east_2..de_east_13", "weapon": "kar98k",
           "positions": [[1053.8, 8.5, 3.02], [1056.8, 9.6, 3.24], [1055, 11, 2.98], [1053.2, 15.4, 3.3], [1055.6, 19.2, 3.07], [1058.3, 17, 3.21], [1053.2, 19, 2.95], [1054.4, 23.1, 3.27], [1053.5, 24.8, 3.1], [1058.3, 26.2, 3.18], [1054.1, 28.8, 2.99], [1056.8, 31.4, 3.25]],
           "stage": { "posture": "crouch", "riseBeforeSec": 1.2, "holdAfterSec": 2.5 },
@@ -387,7 +387,7 @@
     {
       "id": "grp_de_spans",
       "faction": "DE",
-      "composition": "dois grupos que avançam pelo tabuleiro leste após a retirada polonesa",
+      "composition": "dois grupos que avançam pelo tabuleiro leste após a retirada polaca",
       "size": 10,
       "maxAdvanceX": 690,
       "weapons": ["kar98k", "mg34"],
@@ -599,7 +599,7 @@
       "required": true,
       "activation": { "event": "evt_m01_east_demolition" },
       "completion": { "reach": "firing_point", "radiusM": 12 },
-      "failure": { "condition": "jogador além de outOfBoundsX (3.º pilar, x ≈ 401) por mais de 8 s", "message": "Você se afastou da sua secção." },
+      "failure": { "condition": "jogador além de outOfBoundsX (3.º pilar, x ≈ 401) por mais de 8 s", "message": "Afastou-se da sua secção." },
       "checkpoint": "cp_m01_d_retirada"
     },
     {
@@ -774,7 +774,7 @@
       "sector": "s1_west_bridgehead",
       "phase": "INTRO",
       "trigger": { "type": "missionStart" },
-      "results": ["mostrar cartela", "tela preta com vento e água"],
+      "results": ["mostrar cartela", "ecrã preto com vento e água"],
       "idempotent": true,
       "persist": true,
       "certainty": "GAMEPLAY_DRAMATIZATION",
@@ -785,7 +785,7 @@
       "sector": "s1_west_bridgehead",
       "phase": "SETUP",
       "trigger": { "type": "cutsceneComplete", "cutscene": "cs_m01_intro" },
-      "results": ["controle ao jogador em squad_post", "ativar obj_m01_deliver_message"],
+      "results": ["controlo ao jogador em squad_post", "ativar obj_m01_deliver_message"],
       "idempotent": true,
       "persist": true,
       "certainty": "GAMEPLAY_DRAMATIZATION",
@@ -796,7 +796,7 @@
       "sector": "s3_station_yard",
       "trigger": { "type": "battleClock", "at": "04:31:00" },
       "results": [
-        "Lipski percorre os trilhos com lanterna entre x −100 e −20",
+        "Lipski percorre os carris com lanterna entre x −100 e −20",
         "fala dlg_m01_008 se o jogador estiver a até 15 m; dlg_m01_019 só após o impacto que destrói o posto"
       ],
       "idempotent": true,
@@ -830,7 +830,7 @@
       "readiness": ["nenhuma bomba cai a menos de 30 m do jogador", "o primeiro impacto perto do jogador é um quase-acerto roteirizado a 30–40 m"],
       "results": [
         "3 Ju 87 mergulham sobre o aterro (stukaPath), com 3–5 s entre si",
-        "impactos: perto de forward_post (evt_m01_forward_post_bombed), perto de repair_site_1 (evt_m01_nowicki_lost), pátio da estação, e fumaça distante na direção do quartel",
+        "impactos: perto de forward_post (evt_m01_forward_post_bombed), perto de repair_site_1 (evt_m01_nowicki_lost), pátio da estação, e fumo distante na direção do quartel",
         "ativa evt_m01_cable_cut",
         "jogador troca a rogatywka pelo capacete wz.31 (animação curta)"
       ],
@@ -877,14 +877,14 @@
       "persist": true,
       "certainty": "RECONSTRUCTED",
       "sources": ["T12", "H01-PDF"],
-      "note": "Versão escolhida para o roteiro. H01-PDF, p. 132, nota 67, registra divergência sobre se os cabos foram realmente danificados; não apresentar o corte como fato consensual."
+      "note": "Versão escolhida para o roteiro. H01-PDF, p. 132, nota 67, regista divergência sobre se os cabos foram realmente danificados; não apresentar o corte como facto consensual."
     },
     {
       "id": "evt_m01_wounded_dragged",
       "sector": "s3_station_yard",
       "trigger": { "type": "battleClock", "at": "04:35:30" },
       "results": [
-        "um soldado arrasta um ferido do pátio (−300, −3, 30) até a estação; acontece com ou sem o jogador olhando",
+        "um soldado arrasta um ferido do pátio (−300, −3, 30) até a estação; acontece com ou sem o jogador a olhar",
         "estado final: ferido no posto de socorro da estação"
       ],
       "idempotent": true,
@@ -910,7 +910,7 @@
       "phase": "MAIN_COMBAT",
       "trigger": { "type": "battleClock", "at": "04:45:00" },
       "results": [
-        "trem 963 para diante dos portões fechados (east_gates)",
+        "comboio 963 para diante dos portões fechados (east_gates)",
         "pioneiros desembarcam; fogo do pelotão leste; MG no dique",
         "Pawlak chega com dlg_m01_025 (se o jogador estiver em S1)"
       ],
@@ -923,7 +923,7 @@
       "id": "evt_m01_panzerzug_arrives",
       "sector": "s2_east_bridgehead",
       "trigger": { "type": "battleClock", "at": "04:52:00" },
-      "results": ["Panzerzug 7 para na via paralela atrás do trem 963; MGs abrem fogo sobre a cabeça de ponte leste e, esporadicamente, sobre a oeste"],
+      "results": ["Panzerzug 7 para na via paralela atrás do comboio 963; MGs abrem fogo sobre a cabeça de ponte leste e, esporadicamente, sobre a oeste"],
       "idempotent": true,
       "persist": true,
       "certainty": "RECONSTRUCTED",
@@ -939,7 +939,7 @@
       "persist": true,
       "certainty": "RECONSTRUCTED",
       "sources": ["T12", "H01-PDF"],
-      "note": "Segue a versão de danos e reparo escolhida para o roteiro; a nota 67 de H01-PDF registra a divergência."
+      "note": "Segue a versão de danos e reparo escolhida para o roteiro; a nota 67 de H01-PDF regista a divergência."
     },
     {
       "id": "evt_m01_order_demolish",
@@ -1047,10 +1047,10 @@
       "sector": "s2_east_bridgehead",
       "phase": "CLIMAX",
       "trigger": { "type": "battleClock", "at": "06:10:00", "gate": true },
-      "readiness": ["todos os membros vivos de grp_east_platoon com x < 660", "nenhum ator polonês obrigatório dentro de bz_east"],
+      "readiness": ["todos os membros vivos de grp_east_platoon com x < 660", "nenhum ator polaco obrigatório dentro de bz_east"],
       "tolerance": {
         "maxHoldRealSec": 90,
-        "onTimeout": "retardatários fora do campo de visão do jogador passam ao estado 'reached_safety' (registrado em debug); nunca teleporte visível"
+        "onTimeout": "retardatários fora do campo de visão do jogador passam ao estado 'reached_safety' (registado em debug); nunca teleporte visível"
       },
       "results": [
         "demolição do antigo encontro leste (pilar 6 de 8, x ≈ 794–808) e do antigo portal do lado de Lisewo, nas duas pontes",
@@ -1096,7 +1096,7 @@
       ],
       "tolerance": {
         "maxHoldRealSec": 120,
-        "onTimeout": "se o jogador estiver dentro de bz_west, Zieliński vai até ele e o puxa (animação de agarrar); a detonação espera o jogador sair. Nunca matar o jogador com a demolição polonesa."
+        "onTimeout": "se o jogador estiver dentro de bz_west, Zieliński vai até ele e o puxa (animação de agarrar); a detonação espera o jogador sair. Nunca matar o jogador com a demolição polaca."
       },
       "results": [
         "demolição do encontro oeste e do pilar 1 (x ≈ 141); os dois primeiros vãos caem no Vístula",
@@ -1119,7 +1119,7 @@
       "persist": true,
       "certainty": "DOCUMENTED",
       "sources": ["T08"],
-      "note": "Topônimo e direção exatos pendentes (P9)."
+      "note": "Topónimo e direção exatos pendentes (P9)."
     },
     {
       "id": "evt_m01_roll_call",
@@ -1137,7 +1137,7 @@
       "sector": "s1_west_bridgehead",
       "phase": "OUTRO",
       "trigger": { "type": "cutsceneComplete", "cutscene": "cs_m01_roll_call" },
-      "results": ["tela de debrief (debrief.paragraphs habilitados)", "gravar m01.completed = true e flags de continuidade"],
+      "results": ["ecrã de debrief (debrief.paragraphs habilitados)", "gravar m01.completed = true e flags de continuidade"],
       "idempotent": true,
       "persist": true,
       "certainty": "DOCUMENTED",
@@ -1171,7 +1171,7 @@
       "layer": "medium_long",
       "distanceM": [780, 1250],
       "independentOfPlayer": true,
-      "representation": { "medium": "soldados simplificados com posições, IDs e baixas persistentes; clarões de MG", "long": "silhuetas, fumaça das locomotivas, clarões" },
+      "representation": { "medium": "soldados simplificados com posições, IDs e baixas persistentes; clarões de MG", "long": "silhuetas, fumo das locomotivas, clarões" },
       "schedule": [
         { "at": "04:30:00", "state": "quiet" },
         { "at": "04:45:00", "state": "train_arrives" },
@@ -1204,7 +1204,7 @@
         { "at": "04:50:00", "state": "aid_post", "activity": "posto de socorro improvisado na estação" },
         { "at": "05:30:00", "state": "second_raid", "activity": "bombardeio distante na cidade; manter o socorro" },
         { "at": "05:34:00", "state": "aid_post" },
-        { "at": "05:40:00", "state": "carts_evacuating", "activity": "carroça e padiolas levando feridos para oeste" },
+        { "at": "05:40:00", "state": "carts_evacuating", "activity": "carroça e padiolas a levar feridos para oeste" },
         { "at": "06:45:00", "state": "dust_fall" }
       ],
       "certainty": "RECONSTRUCTED"
@@ -1232,7 +1232,7 @@
       "distanceM": [800, 40000],
       "independentOfPlayer": true,
       "schedule": [
-        { "at": "04:30:00", "state": "empty", "activity": "céu clareando a ENE; nenhuma luz de trem" },
+        { "at": "04:30:00", "state": "empty", "activity": "céu a clarear a ENE; nenhuma luz de comboio" },
         { "at": "04:33:10", "state": "stukas_approach" },
         { "at": "04:34:00", "state": "stukas_attack" },
         { "at": "04:36:00", "state": "stukas_depart" },
@@ -1380,7 +1380,7 @@
           ],
           "active": ["obj_m01_hold_access"]
         },
-        "actors": "grp_ckm_crew no posto S2; grp_de_east com baixas atuais (IDs persistidos); trem 963 e Panzerzug 7 parados",
+        "actors": "grp_ckm_crew no posto S2; grp_de_east com baixas atuais (IDs persistidos); comboio 963 e Panzerzug 7 parados",
         "destruction": [
           "forward_post_state (conforme m01.forward_post_state)",
           "craters_embankment",
@@ -1448,7 +1448,7 @@
             "obj_m01_cover_withdrawal"
           ],
           "active": ["obj_m01_leave_bridge"],
-          "optionalState": "obj_m01_rescue_bak conforme estado salvo (ativo, concluído ou expirado)"
+          "optionalState": "obj_m01_rescue_bak conforme estado guardado (ativo, concluído ou expirado)"
         },
         "actors": "grp_east_platoon com sobreviventes = m01.east_platoon_survivors; Bąk e Dudek conforme flags; grp_de_spans com baixas da explosão (não reaparecem)",
         "destruction": [
@@ -1469,7 +1469,7 @@
         },
         "flags": ["m01.forward_post_state", "m01.bak_status", "m01.dudek_status", "m01.east_platoon_survivors", "m01.second_raid_state"]
       },
-      "neverSaveIf": "jogador dentro de bz_west depois das 06:36 ou carregando Bąk",
+      "neverSaveIf": "jogador dentro de bz_west depois das 06:36 ou a carregar Bąk",
       "clockNote": "relógio no momento do salvamento (≥ 06:10)"
     }
   ],
@@ -1479,11 +1479,11 @@
       "type": "first_person_intro",
       "skippable": true,
       "maxDurationSec": 75,
-      "skipEndState": "evt_m01_intro_card consumido; jogador em squad_post com controle; Zieliński e Krawiec no mapa; café servido; mensagem e caneca no inventário de missão",
+      "skipEndState": "evt_m01_intro_card consumido; jogador em squad_post com controlo; Zieliński e Krawiec no mapa; café servido; mensagem e caneca no inventário de missão",
       "timeline": [
         {
           "t": 0.0,
-          "action": "tela preta; áudio: vento, água do Vístula, um apito de manobra distante"
+          "action": "ecrã preto; áudio: vento, água do Vístula, um apito de manobra distante"
         },
         {
           "t": 3.0,
@@ -1530,7 +1530,7 @@
         },
         {
           "t": 44.0,
-          "action": "controle total ao jogador (evt_m01_prelude_start)"
+          "action": "controlo total ao jogador (evt_m01_prelude_start)"
         }
       ],
       "presentationCues": [
@@ -1548,7 +1548,7 @@
       "type": "interactive_scripted",
       "skippable": false,
       "maxDurationSec": 14,
-      "note": "Curta e jogável: o jogador mantém câmera e movimento (reduzido 40% durante o sopro).",
+      "note": "Curta e jogável: o jogador mantém câmara e movimento (reduzido 40% durante o sopro).",
       "timeline": [
         {
           "t": 0.0,
@@ -1568,7 +1568,7 @@
         },
         {
           "t": 8.5,
-          "action": "terceira bomba: pátio da estação; vagão pega fogo"
+          "action": "terceira bomba: pátio da estação; vagão apanha fogo"
         },
         {
           "t": 10.0,
@@ -1598,7 +1598,7 @@
       "type": "in_world_dialogue",
       "skippable": false,
       "maxDurationSec": 12,
-      "note": "Sem perda de controle. Pawlak chega correndo e fala abaixado atrás de cobertura.",
+      "note": "Sem perda de controlo. Pawlak chega a correr e fala abaixado atrás de cobertura.",
       "timeline": [
         {
           "t": 0.0,
@@ -1651,7 +1651,7 @@
         },
         {
           "t": 4.0,
-          "action": "detritos caem no rio a 700–800 m; fumaça cobre o trem 963"
+          "action": "detritos caem no rio a 700–800 m; fumo cobre o comboio 963"
         },
         {
           "t": 6.5,
@@ -1847,7 +1847,7 @@
         },
         {
           "t": 38.0,
-          "action": "silêncio de 3 s; câmera livre; a caneca está na mão de Krawiec, que não levanta os olhos"
+          "action": "silêncio de 3 s; câmara livre; a caneca está na mão de Krawiec, que não levanta os olhos"
         },
         {
           "t": 41.0,
@@ -1885,14 +1885,14 @@
     {
       "id": "dlg_m01_001",
       "speaker": "marek_zielinski",
-      "text": "Se um trem de Szymankowo vier fora de hora, quero saber antes do maquinista.",
+      "text": "Se um comboio de Szymankowo vier fora de hora, quero saber antes do maquinista.",
       "context": "intro, sobre o mapa",
       "priority": 2
     },
     {
       "id": "dlg_m01_002",
       "speaker": "pawel_krawiec",
-      "text": "Os meus rapazes conferiram tudo duas vezes. Só não quero ninguém tropeçando no que é nosso.",
+      "text": "Os meus rapazes conferiram tudo duas vezes. Só não quero ninguém a tropeçar no que é nosso.",
       "context": "intro",
       "priority": 2
     },
@@ -1904,14 +1904,14 @@
       "priority": 1
     },
     { "id": "dlg_m01_004", "speaker": "marek_zielinski", "text": "Confira o homem do posto. Ele está sozinho.", "context": "intro", "priority": 1, "mandatory": true },
-    { "id": "dlg_m01_005", "speaker": "szymon_kowal", "text": "Café de verdade hoje. Mau sinal.", "context": "intro, limpando o rkm", "priority": 3 },
-    { "id": "dlg_m01_006", "speaker": "jozef_bak", "text": "Dudek, se eu desmaiar, você me carrega?", "context": "intro", "priority": 3 },
+    { "id": "dlg_m01_005", "speaker": "szymon_kowal", "text": "Café de verdade hoje. Mau sinal.", "context": "intro, a limpar o rkm", "priority": 3 },
+    { "id": "dlg_m01_006", "speaker": "jozef_bak", "text": "Dudek, se eu desmaiar, carregas-me?", "context": "intro", "priority": 3 },
     { "id": "dlg_m01_007", "speaker": "leon_dudek", "text": "Carrego. Depois cobro.", "context": "intro", "priority": 3 },
     {
       "id": "dlg_m01_008",
       "speaker": "franciszek_lipski",
-      "text": "Szymankowo telefonou: um trem de carga fora do horário. Depois a linha caiu. Diga ao seu sargento.",
-      "context": "trilhos, 04:31, se o jogador estiver perto",
+      "text": "Szymankowo telefonou: um comboio de carga fora do horário. Depois a linha caiu. Diga ao seu sargento.",
+      "context": "carris, 04:31, se o jogador estiver perto",
       "priority": 2,
       "certainty": "GAMEPLAY_DRAMATIZATION",
       "sources": ["T13"]
@@ -1925,7 +1925,7 @@
       "context": "posto avançado, lendo o papel",
       "priority": 2
     },
-    { "id": "dlg_m01_012", "speaker": "tadeusz_nowicki", "text": "Ouve isso? Não é trem.", "context": "evt_m01_planes_heard", "priority": 1 },
+    { "id": "dlg_m01_012", "speaker": "tadeusz_nowicki", "text": "Ouve isso? Não é comboio.", "context": "evt_m01_planes_heard", "priority": 1 },
     { "id": "dlg_m01_013", "speaker": "tadeusz_nowicki", "text": "Aviões! A leste, contra a claridade!", "context": "callout aviões", "priority": 1 },
     { "id": "dlg_m01_014", "speaker": "marek_zielinski", "text": "Para o chão! Todo mundo no chão!", "context": "bombardeio", "priority": 1 },
     {
@@ -1984,7 +1984,7 @@
     {
       "id": "dlg_m01_025",
       "speaker": "staszek_pawlak",
-      "text": "Trem na cabeça de ponte leste! Os portões estão fechados — estão atirando!",
+      "text": "Comboio na cabeça de ponte leste! Os portões estão fechados — estão a atirar!",
       "context": "evt_m01_train963_arrives",
       "priority": 1
     },
@@ -1999,12 +1999,12 @@
     {
       "id": "dlg_m01_028",
       "speaker": "marek_zielinski",
-      "text": "Wrona, alça em mil. Mire nos clarões, não na fumaça.",
+      "text": "Wrona, alça em mil. Mire nos clarões, não no fumo.",
       "context": "tutorial de mira a longa distância",
       "priority": 1
     },
-    { "id": "dlg_m01_029", "speaker": "szymon_kowal", "text": "Trocando carregador!", "context": "callout recarga (real, quando o rkm recarrega)", "priority": 2 },
-    { "id": "dlg_m01_030", "speaker": "szymon_kowal", "text": "Cubro você!", "context": "callout; quem cobre o jogador enquanto ele recarrega. 2026-10-19 (revisão N3): era de Bąk, que nunca dispara no jogo; passa a Kowal, cujo rkm wz.28 dispara de verdade, e só se ele disparou nos últimos 6 s", "priority": 2, "bark": {"on": "reload", "when": {"consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "fired": {"of": "speaker", "sec": 6}, "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
+    { "id": "dlg_m01_029", "speaker": "szymon_kowal", "text": "A trocar o carregador!", "context": "callout recarga (real, quando o rkm recarrega)", "priority": 2 },
+    { "id": "dlg_m01_030", "speaker": "szymon_kowal", "text": "Cubro-o!", "context": "callout; quem cobre o jogador enquanto ele recarrega. 2026-10-19 (revisão N3): era de Bąk, que nunca dispara no jogo; passa a Kowal, cujo rkm wz.28 dispara de verdade, e só se ele disparou nos últimos 6 s", "priority": 2, "bark": {"on": "reload", "when": {"consumed": "evt_m01_train963_arrives", "notConsumed": "evt_m01_east_demolition", "fired": {"of": "speaker", "sec": 6}, "near": {"of": "speaker", "m": 8}}, "cooldown": 45, "max": 4} },
     { "id": "dlg_m01_031", "speaker": "pawel_krawiec", "text": "Linha inteira. Avisem o oficial: está pronta.", "context": "evt_m01_repair_complete", "priority": 1 },
     { "id": "dlg_m01_032", "speaker": "marek_zielinski", "text": "Pawlak, vai.", "context": "evt_m01_repair_complete", "priority": 1 },
     {
@@ -2027,7 +2027,7 @@
     {
       "id": "dlg_m01_035",
       "speaker": "marek_zielinski",
-      "text": "Mudar! Estão acertando a nossa posição. Para a torre!",
+      "text": "Mudar! Estão a acertar na nossa posição. Para a torre!",
       "context": "rotação de cobertura (variantes por nó)",
       "priority": 1,
       "bark": {"on": "coverRotation", "when": {"node": ["cv_tower_p1_*"]}, "cooldown": 20, "unless": [{"line": "dlg_m01_136", "within": 20}, {"line": "dlg_m01_137", "within": 20}]}
@@ -2050,8 +2050,8 @@
     {
       "id": "dlg_m01_038",
       "speaker": "szymon_kowal",
-      "text": "Trem blindado! Na outra via, atrás dos vagões!",
-      "context": "evt_m01_panzerzug_arrives (se o jogador estiver olhando para leste) ou primeira rajada do trem",
+      "text": "Comboio blindado! Na outra via, atrás dos vagões!",
+      "context": "evt_m01_panzerzug_arrives (se o jogador estiver a olhar para leste) ou primeira rajada do comboio",
       "priority": 1
     },
     {
@@ -2065,7 +2065,7 @@
       "id": "dlg_m01_040",
       "speaker": "east_platoon_voice",
       "text": "Não parem! Eles estão no tabuleiro atrás de nós!",
-      "context": "soldado do pelotão leste passando",
+      "context": "soldado do pelotão leste a passar",
       "priority": 2
     },
     { "id": "dlg_m01_041", "speaker": "jozef_bak", "text": "Estou bem… Não. Não estou.", "context": "evt_m01_bak_wounded", "priority": 1 },
@@ -2115,7 +2115,7 @@
       "id": "dlg_m01_052",
       "speaker": "franciszek_lipski",
       "text": "Meu avô atravessava por ela para ir à feira.",
-      "context": "após a demolição oeste; Lipski perto do barracão, olhando a ponte",
+      "context": "após a demolição oeste; Lipski perto do barracão, a olhar para a ponte",
       "priority": 2
     },
     { "id": "dlg_m01_053", "speaker": "marek_zielinski", "text": "Chamada.", "context": "abrigo", "priority": 1 },
@@ -2156,7 +2156,7 @@
       "id": "dlg_m01_066",
       "speaker": "tadeusz_nowicki",
       "text": "Vou avisar os sapadores! Fique no chão!",
-      "context": "evt_m01_planes_heard, ao sair correndo do posto pela encosta",
+      "context": "evt_m01_planes_heard, ao sair a correr do posto pela encosta",
       "priority": 1
     },
     { "id": "dlg_m01_067", "speaker": "marek_zielinski", "text": "Wrona! Nowicki! Saiam do posto!", "context": "evt_m01_planes_heard, gritado de longe", "priority": 1 },
@@ -2176,13 +2176,13 @@
     { "id": "dlg_m01_109", "speaker": "leon_dudek", "text": "Pelo cinto, não pelo braço.", "context": "reativa; player.carrying === jozef_bak", "priority": 2, "note": "PL: Za pas, nie za rękę.", "bark": {"on": "poll", "when": {"carrying": "jozef_bak", "near": {"of": "leon_dudek", "m": 25}}, "max": 1, "after": [{"line": "dlg_m01_146", "sec": 8, "window": 25}]} },
     { "id": "dlg_m01_110", "speaker": "ckm_gunner", "text": "Rajada no dique!", "context": "reativa; ally-fire (by ckm_gunner, one per burst)", "priority": 3, "note": "PL: Seria po wale!", "bark": {"on": "ally-fire", "when": {"by": "ckm_gunner", "ckmBurst": {"max": 2}, "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 120, "max": 2, "group": "ckm_fire"} },
     { "id": "dlg_m01_111", "speaker": "ckm_gunner", "text": "Fogo no portão!", "context": "reativa; ally-fire (by ckm_gunner)", "priority": 3, "note": "PL: Ognia na bramę!", "bark": {"on": "ally-fire", "when": {"by": "ckm_gunner", "ckmTarget": "gate", "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 60, "max": 4, "group": "ckm_fire"} },
-    { "id": "dlg_m01_112", "speaker": "ckm_gunner", "text": "A fita está acabando!", "context": "reativa; ckm.phase → feed (troca real de fita, belt < CKM_BURST_ROUNDS)", "priority": 2, "note": "PL: Taśma się kończy!", "bark": {"on": "poll", "when": {"ckmFeed": true, "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 90, "max": 3} },
+    { "id": "dlg_m01_112", "speaker": "ckm_gunner", "text": "A fita está a acabar!", "context": "reativa; ckm.phase → feed (troca real de fita, belt < CKM_BURST_ROUNDS)", "priority": 2, "note": "PL: Taśma się kończy!", "bark": {"on": "poll", "when": {"ckmFeed": true, "near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 90, "max": 3} },
     { "id": "dlg_m01_113", "speaker": "ckm_loader", "text": "Fita nova! Pronto!", "context": "reativa; ckm.phase feed → aim (CKM_FEED_SEC acabou)", "priority": 3, "note": "PL: Nowa taśma! Gotowe!", "bark": {"on": "poll", "when": {"ckmBeltFull": true, "near": {"of": "ckm_loader", "m": 60}}, "cooldown": 90, "max": 3, "after": [{"line": "dlg_m01_112", "sec": 3, "window": 6}]} },
     { "id": "dlg_m01_114", "speaker": "ckm_gunner", "text": "Travou! Recarregar!", "context": "reativa; ckm_stoppage (a ckm encrava: evento da simulação, ver CKM_STOPPAGES)", "priority": 2, "note": "PL: Zacięcie! Przeładować!", "bark": {"on": "ckm_stoppage", "when": {"near": {"of": "ckm_gunner", "m": 60}}, "cooldown": 20, "max": 3} },
     { "id": "dlg_m01_115", "speaker": "ckm_loader", "text": "Pronto. Atire!", "context": "reativa; ckm_stoppage_cleared (o municiador desencrava; segue 114)", "priority": 2, "note": "PL: Jest. Strzelaj!", "bark": {"on": "ckm_stoppage_cleared", "when": {"near": {"of": "ckm_loader", "m": 60}}, "max": 3, "after": [{"line": "dlg_m01_114", "sec": 0, "window": 8}]} },
     { "id": "dlg_m01_116", "speaker": "ckm_gunner", "text": "Levamos ela. Comigo!", "context": "reativa; ckm.phase → abandon", "priority": 1, "note": "PL: Zabieramy go. Za mną!", "bark": {"on": "poll", "when": {"ckmPhase": ["abandon", "retreat"], "sinceEvent": {"event": "evt_m01_east_demolition", "min": 0, "max": 60}, "near": {"of": "ckm_gunner", "m": 60}}, "max": 1} },
     { "id": "dlg_m01_117", "speaker": "ckm_loader", "text": "Esvazie a água. Caixas. Vamos.", "context": "reativa; ckm.phase abandon + 1,5 s", "priority": 3, "note": "PL: Wylej wodę. Skrzynki. Idziemy.", "bark": {"on": "poll", "when": {"near": {"of": "ckm_loader", "m": 60}}, "max": 1, "after": [{"line": "dlg_m01_116", "sec": 1.5, "window": 20}]} },
-    { "id": "dlg_m01_118", "speaker": "ckm_reserve", "text": "Cabo, pelo aterro para oeste?", "context": "reativa; ckm.phase → retreat", "priority": 3, "note": "PL: Panie kapralu, nasypem na zachód?", "bark": {"on": "poll", "when": {"ckmPhase": ["retreat"], "sinceEvent": {"event": "evt_m01_east_demolition", "min": 0, "max": 90}, "near": {"of": "ckm_reserve", "m": 12}}, "max": 1} },
+    { "id": "dlg_m01_118", "speaker": "ckm_reserve", "text": "Wrona, pelo aterro para oeste?", "context": "reativa; ckm.phase → retreat", "priority": 3, "note": "PL: Wrona, nasypem na zachód? | 2026-11-05 (emenda 22): o tratamento «cabo / Panie kapralu» estava errado, Wrona é strzelec (soldado raso); polaco escrito por agente de IA, por rever por falante nativo.", "bark": {"on": "poll", "when": {"ckmPhase": ["retreat"], "sinceEvent": {"event": "evt_m01_east_demolition", "min": 0, "max": 90}, "near": {"of": "ckm_reserve", "m": 12}}, "max": 1} },
     { "id": "dlg_m01_119", "speaker": "ckm_gunner", "text": "Pelo aterro. De lá também atira.", "context": "reativa; 118 + 2 s", "priority": 2, "note": "PL: Nasypem. Stamtąd też strzela.", "bark": {"on": "poll", "max": 1, "after": [{"line": "dlg_m01_118", "sec": 2, "window": 15}]} },
     { "id": "dlg_m01_120", "speaker": "szymon_kowal", "text": "Metralhadora do dique! Cabeças baixas!", "context": "reativa; enemy-fire (weapon mg34) + round-impact.pinned não vazio", "priority": 1, "note": "PL: Cekaem z wału! Głowy nisko!", "bark": {"on": "round-impact", "when": {"byMg34": true, "pinned": true, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 45, "max": 4, "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
     { "id": "dlg_m01_121", "speaker": "jozef_bak", "text": "Ha… raios, foi perto.", "context": "reativa; round-impact (crack, distance <= 6 m)", "priority": 2, "note": "PL: Ha… psiakrew, blisko.", "bark": {"on": "round-impact", "when": {"crack": true, "flag": {"m01.bak_status": "unhurt"}, "notConsumed": "evt_m01_bak_wounded", "near": {"of": "jozef_bak", "m": 20}}, "cooldown": 30, "max": 4, "group": "mg34_crack"} },
@@ -2193,7 +2193,7 @@
     { "id": "dlg_m01_126", "speaker": "sapper_3", "text": "Outra vez não…", "context": "reativa; timers.repairPins === 3", "priority": 2, "note": "PL: Tylko nie znowu…", "bark": {"on": "round-impact", "when": {"active": ["obj_m01_cover_repair"], "pinnedSapper": true, "repairPins": {"eq": 3}}, "max": 1} },
     { "id": "dlg_m01_127", "speaker": "pawel_krawiec", "text": "Três… quatro… agora.", "context": "reativa; timers.repairSuppressedUntil expira com repairPins >= 1", "priority": 2, "note": "PL: Trzy… cztery… teraz.", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_repair"], "repairResume": true}, "cooldown": 25, "max": 3} },
     { "id": "dlg_m01_128", "speaker": "szymon_kowal", "text": "Clarão no portão!", "context": "reativa; threat.recentFire (age < 2,5 s) em gateShooter", "priority": 1, "note": "PL: Błysk przy bramie!", "bark": {"on": "enemy-fire", "when": {"fireFrom": "gates", "near": {"of": "speaker", "m": 80}}, "cooldown": 90, "max": 3, "group": "located", "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
-    { "id": "dlg_m01_129", "speaker": "szymon_kowal", "text": "Clarão junto aos vagões!", "context": "reativa; threat.recentFire junto ao trem 963 (vagões)", "priority": 1, "note": "PL: Błysk przy wagonach!", "bark": {"on": "enemy-fire", "when": {"fireFrom": "wagons", "near": {"of": "speaker", "m": 80}}, "cooldown": 90, "max": 3, "group": "located", "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
+    { "id": "dlg_m01_129", "speaker": "szymon_kowal", "text": "Clarão junto aos vagões!", "context": "reativa; threat.recentFire junto ao comboio 963 (vagões)", "priority": 1, "note": "PL: Błysk przy wagonach!", "bark": {"on": "enemy-fire", "when": {"fireFrom": "wagons", "near": {"of": "speaker", "m": 80}}, "cooldown": 90, "max": 3, "group": "located", "requires": ["co_m01_enemy_mg_fire_on_squad"], "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
     { "id": "dlg_m01_130", "speaker": "szymon_kowal", "text": "À esquerda do portão!", "context": "reativa; timers.coverFire (origem nos portões, à esquerda do portão vista do jogador)", "priority": 1, "note": "PL: Na lewo od bramy!", "bark": {"on": "enemy-fire", "when": {"coverFire": {"side": "left", "ageMax": 8, "zone": "gateStrip"}, "near": {"of": "speaker", "m": 80}}, "cooldown": 45, "max": 4, "group": "located", "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
     { "id": "dlg_m01_131", "speaker": "szymon_kowal", "text": "À direita do portão!", "context": "reativa; timers.coverFire (origem nos portões, à direita do portão vista do jogador)", "priority": 1, "note": "PL: Na prawo od bramy!", "bark": {"on": "enemy-fire", "when": {"coverFire": {"side": "right", "ageMax": 8, "zone": "gateStrip"}, "near": {"of": "speaker", "m": 80}}, "cooldown": 45, "max": 4, "group": "located", "unless": [{"line": "co_m01_enemy_mg_fire_on_squad", "within": 30}]} },
     { "id": "dlg_m01_132", "speaker": "marek_zielinski", "text": "Ele se debruça. Espere.", "context": "reativa; ai.peek > 0 num grp_de_east com LOS ao jogador", "priority": 2, "note": "PL: Wychyla się. Czekaj.", "bark": {"on": "poll", "when": {"peek": {"los": true}, "notAiming": true, "notShotFor": 3, "notConsumed": "evt_m01_east_demolition"}, "cooldown": 45, "max": 3} },
@@ -2204,7 +2204,7 @@
     { "id": "dlg_m01_137", "speaker": "marek_zielinski", "text": "Atrás da treliça! Rasteje!", "context": "reativa; flags[m01.suggested_cover] = cv_road_truss_*", "priority": 1, "note": "PL: Za kratownicę! Czołgaj się!", "bark": {"on": "coverRotation", "when": {"node": ["cv_road_truss_*"]}, "cooldown": 20, "max": 4, "replaces": ["dlg_m01_035", "co_m01_cover_rotation"], "unless": [{"line": "dlg_m01_035", "within": 20}]} },
     { "id": "dlg_m01_138", "speaker": "szymon_kowal", "text": "Granada! Abaixem!", "context": "reativa; m01-blast kind grenade (granada do jogador) ou grenades.active com id m01_grenade_*", "priority": 1, "note": "PL: Granat! Padnij! | NOTE: a granada do jogador e, desde R2-b (2026-10-24), a granada de mão alemã do tabuleiro (deckAssault.tactics.grenade): a espera entre o arremesso e a explosão (fuseSec 3.8, flightSec 1.4) é o aviso", "bark": {"on": "poll", "when": {"grenade": {"fuseMax": 3, "fuseMin": 0.5, "allyWithin": 12}}, "cooldown": 20, "max": 4} },
     { "id": "dlg_m01_139", "speaker": "szymon_kowal", "text": "Abaixa!", "context": "reativa; round-impact (crack, distance <= 6 m do jogador)", "priority": 1, "note": "PL: Padnij!", "bark": {"on": "round-impact", "when": {"crack": true, "near": {"of": "szymon_kowal", "m": 25}}, "cooldown": 12, "max": 6, "group": "mg34_crack"} },
-    { "id": "dlg_m01_140", "speaker": "szymon_kowal", "text": "Pegou. Mude de posição.", "context": "reativa; player-shot (hit: true)", "priority": 2, "note": "PL: Dostał. Zmień stanowisko.", "bark": {"on": "player-shot", "when": {"hit": true, "everyNth": 3, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 25, "max": 4, "group": "player_hit_enemy"} },
+    { "id": "dlg_m01_140", "speaker": "szymon_kowal", "text": "Acertou. Mude de posição.", "context": "reativa; player-shot (hit: true)", "priority": 2, "note": "PL: Dostał. Zmień stanowisko.", "bark": {"on": "player-shot", "when": {"hit": true, "everyNth": 3, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 25, "max": 4, "group": "player_hit_enemy"} },
     { "id": "dlg_m01_141", "speaker": "szymon_kowal", "text": "Um a menos no portão. Mude de posição.", "context": "reativa; enemy_down_by_player (alemão dos portões morto pelo jogador)", "priority": 2, "note": "PL: Jeden mniej przy bramie. Zmień stanowisko.", "bark": {"on": "enemy_down_by_player", "when": {"downGroup": "grp_de_east", "downGate": true, "near": {"of": "szymon_kowal", "m": 40}}, "cooldown": 30, "max": 4, "group": "player_hit_enemy"} },
     { "id": "dlg_m01_142", "speaker": "marek_zielinski", "text": "Wrona. Não conte. Mude de posição.", "context": "reativa; enemy_down_by_player (2.º abate seguido em < 20 s)", "priority": 2, "note": "PL: Wrona. Nie licz. Zmień stanowisko.", "bark": {"on": "enemy_down_by_player", "when": {"repeatKill": 20}, "cooldown": 60, "max": 2, "group": "player_hit_enemy"} },
     { "id": "dlg_m01_143", "speaker": "szymon_kowal", "text": "A metralhadora calou. Trabalhem!", "context": "reativa; de_east_0/1.suppressedUntil por tiro do jogador (state)", "priority": 1, "note": "PL: Cekaem ucichł. Do roboty!", "bark": {"on": "player-shot", "when": {"active": ["obj_m01_cover_repair"], "mgSilenced": true}, "cooldown": 20, "max": 4, "unless": [{"line": "co_m01_enemy_group_suppressed", "within": 10}]} },
@@ -2214,7 +2214,7 @@
     { "id": "dlg_m01_147", "speaker": "leon_dudek", "text": "Aqui, atrás do portal da estrada!", "context": "reativa; player.carrying = jozef_bak e dist(aid_position) > 20 m", "priority": 1, "note": "PL: Tu, za portal drogowy!", "bark": {"on": "poll", "when": {"carrying": "jozef_bak", "farFrom": {"point": "aid_position", "m": 20}}, "cooldown": 25, "max": 4} },
     { "id": "dlg_m01_148", "speaker": "leon_dudek", "text": "Não olhe para a perna. Olhe para mim.", "context": "reativa; finish(rescue_bak)", "priority": 1, "note": "PL: Nie patrz na nogę. Patrz na mnie.", "bark": {"on": "poll", "when": {"done": ["obj_m01_rescue_bak"], "flag": {"m01.bak_status": "rescued_by_player"}}, "max": 1} },
     { "id": "dlg_m01_149", "speaker": "marek_zielinski", "text": "Bąk está com Dudek. Volte.", "context": "reativa; finish(rescue_bak) + 3 s", "priority": 1, "note": "PL: Bąk u Dudka. Wracaj.", "bark": {"on": "poll", "max": 1, "after": [{"line": "dlg_m01_148", "sec": 3, "window": 20}]} },
-    { "id": "dlg_m01_150", "speaker": "jan_wrona", "text": "{n}. Continuo contando.", "context": "reativa; dlg_m01_049 + 25 s (sem evento novo)", "priority": 2, "note": "PL: [n]. Liczę dalej.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_corridor"], "platoonPassing": true}, "max": 1, "after": [{"line": "dlg_m01_049", "sec": 25, "window": 60}]} },
+    { "id": "dlg_m01_150", "speaker": "jan_wrona", "text": "{n}. Continuo a contar.", "context": "reativa; dlg_m01_049 + 25 s (sem evento novo)", "priority": 2, "note": "PL: [n]. Liczę dalej.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_corridor"], "platoonPassing": true}, "max": 1, "after": [{"line": "dlg_m01_049", "sec": 25, "window": 60}]} },
     { "id": "dlg_m01_151", "speaker": "marek_zielinski", "text": "Esperamos o Bąk.", "context": "reativa; consumedEvent(east_demolition) e !readiness(west_demolition) só por causa de Bąk", "priority": 1, "note": "PL: Czekamy na Bąka.", "bark": {"on": "poll", "when": {"westWait": true, "clock": [null, "06:36:00"]}, "cooldown": 60, "max": 2} },
     { "id": "dlg_m01_152", "speaker": "sapper_2", "text": "Acendedor pronto, cabo.", "context": "reativa; readiness(west_demolition) verdadeiro", "priority": 2, "note": "PL: Zapalarka gotowa, panie kapralu.", "bark": {"on": "poll", "when": {"readiness": "evt_m01_west_demolition", "notConsumed": "evt_m01_west_demolition", "clock": [null, "06:36:00"]}, "max": 1} },
     { "id": "dlg_m01_153", "speaker": "szymon_kowal", "text": "Quieto. Quieto demais.", "context": "reativa; threat.recentFire vazio, threat.inFlight 0 e silêncio aliado (sem ally-fire/npc-shot/player-shot há 15 s)", "priority": 3, "note": "PL: Cicho. Za cicho.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_corridor"], "clock": ["06:11:00", null], "quiet": {"allySec": 20}}, "cooldown": 90, "max": 2, "group": "quiet"} },
@@ -2284,11 +2284,11 @@
     {"id": "dlg_m01_226", "speaker": "leon_dudek", "text": "Aqui está abrigado. Não se mexa.", "context": "reativa; primeiros socorros (pacote 2): Dudek deixa o ferido na cobertura", "priority": 2, "note": "PL: Tu jesteś osłonięty. Nie ruszaj się. | 2026-11-04 (pacote 2, primeiros socorros): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "aid", "when": {"node": ["delivered"], "near": {"of": "speaker", "m": 70}}, "cooldown": 0, "max": 2}}
   ],
   "callouts": {
-    "note": "Falas curtas acionadas por eventos reais (Prompt §31). Só tocar quando o evento correspondente acontece de fato; limite de 2 vozes simultâneas; granada/aviso de demolição têm prioridade sobre ambiente.",
+    "note": "Falas curtas acionadas por eventos reais (Prompt §31). Só tocar quando o evento correspondente acontece de facto; limite de 2 vozes simultâneas; granada/aviso de demolição têm prioridade sobre ambiente.",
     "lines": [
       { "id": "co_m01_enemy_mg_fire_on_squad", "event": "enemy_mg_fire_on_squad", "speaker": "szymon_kowal", "text": "Metralhadora no dique!" },
-      { "event": "npc_reloading", "speaker": "any_pl", "text": "Recarregando!" },
-      { "event": "player_reloading_near_ally", "speaker": "szymon_kowal", "text": "Cubro você!" },
+      { "event": "npc_reloading", "speaker": "any_pl", "text": "A recarregar!" },
+      { "event": "player_reloading_near_ally", "speaker": "szymon_kowal", "text": "Cubro-o!" },
       { "id": "co_m01_ally_hit", "event": "ally_hit", "speaker": "any_pl", "text": "Sanitário!", "priority": 1, "bark": {"on": "round-impact", "when": {"victim": true, "active": ["obj_m01_cover_withdrawal"], "near": {"of": "event", "m": 40}}, "cooldown": 15, "max": 6} },
       { "id": "co_m01_cover_rotation", "event": "cover_rotation", "speaker": "marek_zielinski", "text": "Mudar! Próxima posição!", "priority": 1, "bark": {"on": "coverRotation", "when": {"node": ["cv_sandbag_*"]}, "cooldown": 20, "unless": [{"line": "dlg_m01_136", "within": 20}, {"line": "dlg_m01_137", "within": 20}, {"line": "dlg_m01_035", "within": 20}]} },
       { "id": "co_m01_opening_order", "event": "opening_courier_order", "speaker": "any_pl", "text": "Ordem do sargento: munição e armas, conferir já!", "context": "reativa; abertura (R1-b), a estafeta entrega a primeira ordem (antes do aviso das 04:31)", "priority": 3, "note": "PL: Rozkaz sierżanta: amunicja i broń, sprawdzić, już! | 2026-10-25 (R1-b, abertura): texto original escrito por agente de IA; polaco por rever por falante nativo.", "bark": {"on": "opening", "when": {"node": ["courier_report"], "notConsumed": "evt_m01_railway_worker_report", "near": {"of": "event", "m": 45}}, "cooldown": 20, "max": 1} },
@@ -2355,7 +2355,7 @@
     "m01.bak_status": "'rescued_by_player' | 'rescued_by_dudek' | 'unhurt'",
     "m01.dudek_status": "'unhurt' | 'wounded_arm'",
     "m01.east_platoon_survivors": "inteiro 12–18 — GAMEPLAY_DRAMATIZATION, não é o efetivo histórico nem uma relação de baixas (P8)",
-    "m01.second_raid_state": "'pending' | 'active' | 'ended' (só dentro da missão; salvar com os timers)",
+    "m01.second_raid_state": "'pending' | 'active' | 'ended' (só dentro da missão; guardar com os timers)",
     "m01.forward_post_state": "'destroyed' | 'intact_near_miss' (só dentro da missão)",
     "note": "Nenhum destes personagens aparece em M02/M03 (outro protagonista e outro exército). Flags ficam no save da campanha para o arquivo de personagens e eventual referência; Jan não é transportado para outra frente (Prompt §73)."
   },
@@ -2372,7 +2372,7 @@
         "id": "db_02",
         "enabled": true,
         "sources": ["H01-PDF"],
-        "text": "Por volta das 04:45, um trem de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um trem blindado. Encontrou os portões fechados e defensores em posição."
+        "text": "Por volta das 04:45, um comboio de carga com sapadores alemães escondidos chegou à cabeça de ponte de Lisewo, apoiado por um comboio blindado. Encontrou os portões fechados e defensores em posição."
       },
       {
         "id": "db_03",
@@ -2390,7 +2390,7 @@
         "id": "db_05",
         "enabled": true,
         "sources": ["H01-PDF"],
-        "text": "Stanisław Janik comandava o 2.º Batalhão de Fuzileiros. Os sapadores eram comandados pelo subtenente Norbert Juchtman."
+        "text": "Stanisław Janik comandava o 2.º Batalhão de Fuzileiros. O pelotão de sapadores era comandado pelo subtenente Norbert Juchtman."
       },
       {
         "id": "db_05b",
@@ -2402,7 +2402,7 @@
         "id": "db_06",
         "enabled": true,
         "sources": ["T23"],
-        "text": "Em Szymankowo, ferroviários e aduaneiros poloneses avisaram Tczew e atrasaram o plano alemão. Em represália, combatentes alemães assassinaram 21 poloneses, sobretudo ferroviários e aduaneiros.",
+        "text": "Em Szymankowo, ferroviários e aduaneiros polacos avisaram Tczew e atrasaram o plano alemão. Em represália, combatentes alemães assassinaram 21 polacos, sobretudo ferroviários e aduaneiros.",
         "note": "Texto limitado ao que consta na página do IPN lida. Atribuição a SA/gendarmes, horário exacto e divisão das vítimas continuam pendentes em P10."
       },
       { "id": "db_07", "enabled": true, "text": "Jan Wrona, Marek Zieliński, Paweł Krawiec e os demais membros da secção são personagens fictícios." }

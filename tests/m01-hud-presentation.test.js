@@ -28,7 +28,7 @@ const opacity=(node)=>Number(node.styles.get('opacity')??0);
 
 test('intro cards and fade follow the cs_m01_intro beats in mission data',()=>{
   const intro=definition.cutscenes.find(c=>c.id==='cs_m01_intro').timeline,beat=prefix=>intro.find(b=>b.action?.startsWith(prefix)).t;
-  assert.equal(beat('tela preta'),0);
+  assert.equal(beat('ecrã preto'),0);   // 2026-11-05 (golden amendment 22, European Portuguese): the beat's action text is «ecrã preto», it was «tela preta»; the beat itself (t 0) is the same
   assert.equal(INTRO_CARDS[0].from,beat('cartela:'));assert.equal(INTRO_CARDS[1].from,beat('cartela 2'));
   assert.equal(INTRO_CARDS[1].to,beat('fade-in'));assert.equal(HUD_TIMING.introBlackUntil,beat('fade-in'));
   const at=t=>cinematicFrame({id:'cs_m01_intro',elapsed:t});
