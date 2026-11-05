@@ -146,7 +146,7 @@ test('a completed current act: debrief with the switch off (unchanged), transiti
   const errorsOff=await boot(page,'?debug=1',{save:bw,key:BW_KEY,click:'#continue'});
   await page.waitForSelector('#complete:not(.hidden)',{timeout:60000});
   const off=await page.evaluate(()=>({act:window.gameDiagnostics().m01.act??null,debrief:document.querySelector('#debrief').textContent}));
-  expect(off.act).toBe(null);expect(off.debrief).not.toContain('Por volta das 07:00');expect(errorsOff).toEqual([]);
+  expect(off.act).toBe(null);expect(off.debrief).not.toContain('Às ~07:00 — hora de uma única fonte');expect(errorsOff).toEqual([]);   // the VII-a paragraph; f13d2292 reworded it from «Por volta das 07:00», which left this guard vacuous
   const p=await context.newPage();
   const errorsOn=await boot(p,'?debug=1&acts=1',{save:bw,key:BW_KEY,click:'#continue'});
   await p.waitForFunction(()=>window.gameDiagnostics().m01.act==='act_vii_a_north'&&window.gameDiagnostics().m01.scene==='cs_np_entry',null,{timeout:60000});
