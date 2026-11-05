@@ -45,7 +45,11 @@ const VIEWS=({
   view12:{x:24,z:20,aim:{x:150,y:-9,z:20},lift:0,
     water:[[60,WATER_Y,-5],[60,WATER_Y,-60],[225,WATER_Y,-5],[225,WATER_Y,-60]],
     wake:[[140.9,WATER_Y,-14],[140.9,WATER_Y,-34]],control:[[205,WATER_Y,-14],[205,WATER_Y,-34]]},
-  view13:{x:30,z:20,aim:{x:110,y:-9.94,z:-300},lift:0,
+  // x 45, not 30: since b55a6311 (merge of 313c957b / 5fdfebb6 / d9e33459, the west-bank slip out of the river, 2026-10-18) the terrain has a ramp at x 25..40, z 10..15 (7 m over 15 m)
+  // right in front of a camera at (30, 20) looking towards -z: it filled the left and the centre of the frame and the measured box (x 520..1280) was mostly ramp and bank, so the far
+  // third was no longer lighter than the near one («37.1 vs 41.4»; the view passed at 3b73c35f and 68301b77 and failed from b55a6311 on, also at the triage base).
+  // From x 45 the ramp is 5-25 m to the left of the line of sight and ends left of the box.
+  view13:{x:45,z:20,aim:{x:110,y:-9.94,z:-300},lift:0,
     water:[[45,WATER_Y,-70],[45,WATER_Y,-260],[200,WATER_Y,-70],[200,WATER_Y,-260]],
     // the bank wall fills the left of this frame and the rifle the lower right: measure only the open water between them (below the horizon at y~357, above the weapon)
     box:{x0:520,x1:1280,y0:366,y1:466}}

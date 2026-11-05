@@ -25,12 +25,12 @@ function build(){
 }
 test.beforeAll(()=>{const built=build();scenes=built.scenes;scenes.dist=built.dist;mkdirSync(OUT,{recursive:true});});
 
-for(const quality of (process.env.VIS_TIERS??'high,low').split(','))test(`VII-a visual captures and renderer.info, tier ${quality}`,async({browser})=>{
+for(const quality of (process.env.VIS_TIERS??'high,low').split(','))test(`VII-a visual captures and renderer.info, tier ${quality}`,async({browser,baseURL})=>{
   test.setTimeout(900000);
   const report={quality,germanDistancesM:scenes.dist,scenes:{}};
   const only=(process.env.VIS_SCENES??'spawn,mid,west,wreck').split(','),shots=[['spawn','02-arrival'],['mid','04-line-north-midwave'],['west','05-line-west-ckm'],['wreck','05b-wreck-aimed']].filter(([n])=>only.includes(n));
   for(const [name,file] of shots){
-    const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,baseURL:process.env.VIS_BASE??'http://127.0.0.1:4173/COD-guerra/'});
+    const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,baseURL:process.env.VIS_BASE??baseURL});   // VIS_BASE overrides; the default is the configured server, not a hard-coded :4173
     await context.addInitScript(({key,save,q})=>{localStorage.setItem(key,JSON.stringify(save));localStorage.setItem('cod-guerra:visual-quality',q);},{key:ACT_KEY,save:scenes[name],q:quality});
     const page=await context.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});

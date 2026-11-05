@@ -30,6 +30,7 @@ O erro de consola `ERR_INSUFFICIENT_RESOURCES` / `VALIDATE_STATUS` do GL por sof
   - `tests/m01-display-fire.test.js` e `tests/m01-east-front.test.js` (importam `M01View` só para `Object.create(M01View.prototype)`) não foram concluídos: são simulações longas e cada uma passava dos 12 minutos de CPU na máquina partilhada; foram interrompidas. Não há evidência nem a favor nem contra deles.
 - `npm run build`: concluído sem erros (apenas o aviso habitual de chunks grandes).
 - Playwright (build de produção, Chromium/SwiftShader, porta livre, config temporária fora do repositório): `m01-act-vii-b`, `m01-act-vii-c` e `m01-area-render-polish`, 20 testes, 20 passam (22,9 min). Os 8 testes dos actos (4 + 4) reescrevem as capturas de `inc2`/`inc3`; foram repostas com `git checkout`.
+  - Nota (revisão, 4a4366ae): esta corrida foi feita numa árvore sem o commit f13d2292 (`pl_np_3` já não sai na retirada). Nessa árvore, a espera `rearOutAt===null&&out.length>=11` do `build()` nunca é verdadeira (`rearOutAt` põe-se no tick em que o último homem entra em `out`, 11 no total), pelo que `m01-act-vii-c` e `m01-area-render-polish` lançam «scene C not reached» em `beforeAll`. A espera passou a `out.length>=linha+retaguarda-1` (derivado do plano). Reproduzido só o `build()` em Node (passa); o Playwright não foi corrido outra vez (sem Chromium nesta máquina), logo «20 passam» fica por reconfirmar no SHA integrado.
 
 ## renderer.info antes/depois (mesma cena, mesma câmara)
 
