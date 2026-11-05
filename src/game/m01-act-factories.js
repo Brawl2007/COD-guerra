@@ -324,11 +324,10 @@ export function validApproachWave(plan,W,flag,clock,actors,why=[]){
 /**
  * The decision record of a German (`actor.ai`): the state of his own stream of draws (`rng`, a 32-bit whole number) and, for a gun with suppressive fire (`fire.suppress`), the place where he
  * last saw a muzzle flash (`seen` = {x, y, z, at, who}: the feet of the Pole or of the player who fired, when, and who). `shooters`: the ids of the men who can fire at him; `box`: the area
- * the place must lie in (a margin included). A save older than the decision streams has no `ai` at all; one older than the suppressive fire has no `seen`. Never throws.
+ * the place must lie in (a margin included). Every build has written `ai` for every area actor (and schema 1 is refused, nothing migrates), so a German without it is refused: the tick reads `a.ai.rng`. A save older than the suppressive fire has no `seen`. Never throws.
  */
 export function validGermanAi(plan,a,clock,shooters,box){
   const ai=a.ai;
-  if(ai===undefined)return true;
   if(!ai||typeof ai!=='object'||Array.isArray(ai)||!Number.isInteger(ai.rng)||ai.rng<0||ai.rng>4294967295)return false;
   const extra=Object.keys(ai).filter(k=>k!=='rng');
   if(!extra.length)return true;
