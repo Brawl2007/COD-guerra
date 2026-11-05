@@ -1,5 +1,5 @@
 {
-  "schema": "m02-01-quinta-bench-v1",
+  "schema": "m02-01-quinta-bench-v2",
   "missionId": "m02_01_quinta",
   "title": "M02-01 · Bancada da Quinta (100 × 150 m)",
   "historicalNote": "BANCADA DE PRODUÇÃO (N0) — Setor rural Kwiatkówek–Tum (9 de setembro de 1939, secção de fuzileiros polaca — companhia não identificada; enquadramento regimental/divisional pendente de DEC-02 / D-M02-3). Geometria e implantação são propostas de level design (RECONSTRUÍDO / DRAMATIZAÇÃO), sem coordenadas geográficas históricas fixadas até conclusão de GEO-01 e HIST-01.",
@@ -333,7 +333,7 @@
     { "id": "cov_gate_wall_west", "name": "Muro oeste do portão norte", "min": [-14.0, 0, -24.35], "max": [-1.8, 1.62, -23.65], "material": "brick" },
     { "id": "cov_gate_wall_east", "name": "Muro leste do portão norte", "min": [1.8, 0, -24.35], "max": [11.8, 1.62, -23.65], "material": "brick" },
     { "id": "cov_well_courtyard", "name": "Poço do pátio", "min": [-19.5, 0, -5.5], "max": [-17.7, 1.15, -3.7], "material": "stone" },
-    { "id": "cov_b04_woodpile", "name": "Pilha de lenha exterior (B04)", "min": [-31.5, 0, 26.2], "max": [-28.5, 1.15, 27.4], "material": "wood_thick" },
+    { "id": "cov_b04_woodpile", "name": "Pilha de lenha exterior (B04)", "min": [-30.8, 0, 26.2], "max": [-27.8, 1.15, 27.4], "material": "wood_thick" },
     { "id": "cov_south_fence_west", "name": "Cerca sul do pátio (oeste)", "min": [-22.0, 0, 19.75], "max": [-3.0, 1.15, 20.15], "material": "wood_thin", "destructibleFence": true },
     { "id": "cov_south_fence_east", "name": "Cerca sul do pátio (leste)", "min": [3.0, 0, 19.75], "max": [16.0, 1.15, 20.15], "material": "wood_thin", "destructibleFence": true },
     { "id": "cov_orchard_bank_ne", "name": "Talude agrícola leste", "min": [38.5, 0, -48.0], "max": [40.2, 1.15, -42.0], "material": "earth" }

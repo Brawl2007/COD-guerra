@@ -2,7 +2,7 @@
 
 Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.
 
-- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `e76b631cb513a34b51abe08202299aaa120021315e0b48bc360c1f8a61b68c81`), instanciado com `M02QuintaWorld`.
+- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `6fbe27b464537017074b3f5a3909b82592c1224bb7cce668d963073e04e1a721`), instanciado com `M02QuintaWorld`.
 - Cápsula do jogador (`PLAYER_PHYSICS`, src/world/m01-player-physics.js, usada por `m02-01-simulation.js`): raio 0,36 m (Ø 0,72 m), altura em pé 1,80 m, agachado 1,25 m, degrau máximo 0,45 m, sem salto. Olhos: em pé 1,64 m, agachado 1,08 m (`EYE_HEIGHT` de src/config.js e o literal de olhos agachado em `m02-01-simulation.js`).
 - Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).
 - LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).
@@ -29,7 +29,7 @@ Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Pr
 | door_b03_north | B03 · b03_wall_north (norte) | 29,00; 0,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
 | door_b03_south | B03 · b03_wall_south (sul) | 29,00; 12,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
 | win_b03_west_high | B03 · b03_wall_west (oeste) | 20,00; 6,00 | 6,00 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
-| door_b04_south | B04 · b04_wall_south (sul) | -31,80; 26,00 | 5,20 | 1,00 × 2,00 | 0,00 → 2,00 | porta open | não (cov_b04_woodpile) | não (cov_b04_woodpile) / não | 0,28 | 0,30 |
+| door_b04_south | B04 · b04_wall_south (sul) | -31,80; 26,00 | 5,20 | 1,00 × 2,00 | 0,00 → 2,00 | porta open | sim | sim / sim | 0,28 | 0,50 |
 
 Total: 11 portas e 6 janelas (17 vãos).
 
@@ -221,25 +221,24 @@ Contagem: 10 inimigos EA1 (PDF N1 p. 48: «dez defensores EA1» ✓), 4 EA0 em Z
 
 ## 6. Lista de problemas
 
-Gerada automaticamente: 1 ERRO, 13 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
+Gerada automaticamente: 0 ERRO, 13 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
 
 | # | Sev. | Área | Elemento | Descrição |
 | --- | --- | --- | --- | --- |
-| 1 | ERRO | vãos | door_b04_south | porta aberta mas a passagem axial da cápsula (Ø 0,72 m, em pé) é bloqueada por `cov_b04_woodpile`; o único corredor livre da cápsula tem 0,04 m de largura (desvio lateral -0,12…-0,08 m). |
-| 2 | AVISO | vãos | win_b01_east_hall | troço de parede de 0,05 m no início da parede (< 0,30 m). |
-| 3 | AVISO | linha de tiro | win_b01_east_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_east_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
-| 4 | AVISO | linha de tiro | win_b01_north_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_north_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
-| 5 | AVISO | MG B02 | SN1 | exposto à MG para a simulação (boca em x = 11,82) mas sem linha de vista a partir do artilheiro em (13,20; -30,00): bloqueio `b02_wall_west_seg_0`. |
-| 6 | AVISO | MG B02 | SN3 | exposto à MG para a simulação (boca em x = 11,82) mas sem linha de vista a partir do artilheiro em (13,20; -30,00): bloqueio `cov_gate_wall_east`. |
-| 7 | AVISO | MG B02 | rota ditch | 5 de 18 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
-| 8 | AVISO | MG B02 | rota orchard | 1 de 25 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
-| 9 | AVISO | MG B02 | boca da MG | a simulação traça a partir de (11,82; -30,00), fora da parede oeste de B02 (x = 12,00); o PDF (p. 24) põe a MG em (12; -30), o layout em x = 12,80 e o artilheiro em x = 13,20. Quatro valores distintos para a mesma posição. |
-| 10 | AVISO | atores | DE-A05 | artilheiro em (13,20; -30,00) está dentro do sólido `prop_b02_mg_mount` (bancada da MG, h 0,96 m); verificar se é intencional (a cápsula do jogador não pode ocupar este ponto). |
-| 11 | AVISO | PDF | B02 posição da MG | PDF: MG a (12; -30) (F3, p. 24). Layout: mgEmplacement (12,80; -30,00); boca da simulação (11,82; -30,00). |
-| 12 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
-| 13 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
-| 14 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
-| 15 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 1 | AVISO | vãos | win_b01_east_hall | troço de parede de 0,05 m no início da parede (< 0,30 m). |
+| 2 | AVISO | linha de tiro | win_b01_east_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_east_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
+| 3 | AVISO | linha de tiro | win_b01_north_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_north_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
+| 4 | AVISO | MG B02 | SN1 | exposto à MG para a simulação (boca em x = 11,82) mas sem linha de vista a partir do artilheiro em (13,20; -30,00): bloqueio `b02_wall_west_seg_0`. |
+| 5 | AVISO | MG B02 | SN3 | exposto à MG para a simulação (boca em x = 11,82) mas sem linha de vista a partir do artilheiro em (13,20; -30,00): bloqueio `cov_gate_wall_east`. |
+| 6 | AVISO | MG B02 | rota ditch | 5 de 18 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
+| 7 | AVISO | MG B02 | rota orchard | 1 de 25 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
+| 8 | AVISO | MG B02 | boca da MG | a simulação traça a partir de (11,82; -30,00), fora da parede oeste de B02 (x = 12,00); o PDF (p. 24) põe a MG em (12; -30), o layout em x = 12,80 e o artilheiro em x = 13,20. Quatro valores distintos para a mesma posição. |
+| 9 | AVISO | atores | DE-A05 | artilheiro em (13,20; -30,00) está dentro do sólido `prop_b02_mg_mount` (bancada da MG, h 0,96 m); verificar se é intencional (a cápsula do jogador não pode ocupar este ponto). |
+| 10 | AVISO | PDF | B02 posição da MG | PDF: MG a (12; -30) (F3, p. 24). Layout: mgEmplacement (12,80; -30,00); boca da simulação (11,82; -30,00). |
+| 11 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
+| 12 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
+| 13 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
+| 14 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
 
 Limites desta prova: geometria/colisão estática de cápsula e raios retos; não cobre IA, animação, portas a abrir com tempo, desempenho, aparência nem jogo real.
 

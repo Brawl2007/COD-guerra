@@ -83,6 +83,7 @@ import {
   M02_RNG_ALGORITHM,
   M02_CELL_IDS,
   M02_LAYOUT_SCHEMA_BY_CELL,
+  m02LayoutMismatchReason,
   m02NarrativeStamp,
   m02CellInteractiveIds,
   findNonFiniteNumber,
@@ -229,10 +230,7 @@ export function validateM02Snapshot(snap) {
     return { valid: false, reason: 'Bloco world do snapshot inválido ou inconsistente com a célula ativa.' };
   }
   if (world.layoutSchema !== M02_LAYOUT_SCHEMA_BY_CELL[snap.activeCellId]) {
-    return {
-      valid: false,
-      reason: `Save incompatível: layout ${world.layoutSchema} da célula ${snap.activeCellId}, atual ${M02_LAYOUT_SCHEMA_BY_CELL[snap.activeCellId]}.`,
-    };
+    return { valid: false, reason: m02LayoutMismatchReason(snap.activeCellId, world.layoutSchema) };
   }
   if (!isPlainObject(snap.horizon) || !M02_TEMPORAL_STATES[snap.horizon.temporalState]) {
     return { valid: false, reason: 'Estado temporal do horizonte inválido no snapshot.' };

@@ -33,6 +33,32 @@ export const M02_LAYOUT_SCHEMA_BY_CELL = Object.freeze({
 });
 
 /**
+ * VERSÕES DE LAYOUT RETIRADAS (célula A): o `schema` do JSON do layout é a versão de layout (`world.layoutSchema` do snapshot).
+ * Muda sempre que a geometria ou os IDs da célula mudam, porque um snapshot guarda posições, IDs de portas/janelas/cercas e o
+ * estado do mundo que só fazem sentido com a geometria com que foi gravado. Um save de uma versão retirada é RECUSADO com este
+ * motivo (nunca migrado, nunca lido «às cegas»): o registo fica guardado e intacto (nada é apagado), mas já não é carregável.
+ *   m02-01-quinta-bench-v1 → v2 (correções N0, docs/m02/n0/tabela-vaos.md): ver o texto abaixo.
+ */
+export const M02_RETIRED_LAYOUT_SCHEMAS = Object.freeze({
+  'm02-01-quinta-bench-v1':
+    'a geometria da quinta (Área A) mudou na versão v2 do layout: pilha de lenha de B04 afastada da porta sul, MG34 unificada em ' +
+    '(12; -30) com o artilheiro DE-A05 atrás da abertura, janela este da sala de B01 deslocada, janelas altas N/S e porta este de ' +
+    'B03 acrescentadas e vão do portão norte corrigido; posições, IDs e colisões do save deixaram de coincidir',
+});
+
+/** Texto de recusa de um save cujo `world.layoutSchema` não é o atual (mensagem curta + motivo conhecido, se houver). */
+export function m02LayoutMismatchReason(cellId, savedSchema) {
+  const current = M02_LAYOUT_SCHEMA_BY_CELL[cellId];
+  const why = M02_RETIRED_LAYOUT_SCHEMAS[savedSchema];
+  return (
+    `Save incompatível: layout ${savedSchema} da célula ${cellId}, atual ${current}.` +
+    (why
+      ? ` Motivo: ${why}. Sem migração: o save antigo não foi alterado nem apagado, mas já não pode ser carregado; começa de um checkpoint novo.`
+      : '')
+  );
+}
+
+/**
  * Data narrativa por estado temporal (PDF I1). Sem hora civil: TIME-01 ainda não a fixou, por isso `civilTime` fica null
  * em vez de uma hora inventada.
  */

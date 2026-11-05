@@ -297,7 +297,7 @@ describe('M02-09 — schema v2 e validação em fases (PDF I5)', () => {
       dayPart: 'fim da tarde',
       civilTime: null,
     });
-    assert.deepEqual(snap.world, { cellId: 'A', layoutSchema: 'm02-01-quinta-bench-v1', revision: sim.world.revision });
+    assert.deepEqual(snap.world, { cellId: 'A', layoutSchema: 'm02-01-quinta-bench-v2', revision: sim.world.revision });
     for (const key of ['grenades', 'grenadeSeq', 'doorLocks', 'checkpointsReached', 'combatLog', 'shotLog']) {
       assert.ok(key in snap, `snapshot v2 inclui ${key}`);
     }

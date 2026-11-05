@@ -93,9 +93,9 @@ describe('N0 plan: tabela de vãos', () => {
     assert.ok(!problems.some((p) => p.subject === 'door_b01_east_main posição'));
   });
 
-  it('classifica cada problema (ERRO/AVISO/INFO) e deteta o bloqueio conhecido da porta de B04', () => {
+  it('classifica cada problema (ERRO/AVISO/INFO) e a lista fica sem ERRO depois das correções N0 (tests/m02-26: o gerador continua a detetar o bloqueio de B04 com o layout antigo)', () => {
     for (const p of problems) assert.ok(['ERRO', 'AVISO', 'INFO'].includes(p.sev));
-    assert.ok(problems.some((p) => p.sev === 'ERRO' && p.subject === 'door_b04_south' && p.text.includes('cov_b04_woodpile')));
+    assert.deepEqual(problems.filter((p) => p.sev === 'ERRO'), []);
   });
 
   it('o ficheiro docs/m02/n0/tabela-vaos.md está atualizado', () => {

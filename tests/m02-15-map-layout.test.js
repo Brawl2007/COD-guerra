@@ -71,11 +71,11 @@ describe('M02 mapa — dimensões B01-B12 conforme a tabela da p. 20 do PDF (o h
 });
 
 describe('M02 mapa — versão de layout dos saves (layoutVersion)', () => {
-  it('o layout B/C subiu para v2 (caminho da carroça e entrada da evacuação mudaram); A não mudou', () => {
+  it('o layout B/C subiu para v2 (caminho da carroça e entrada da evacuação mudaram); A subiu para v2 nas correções N0', () => {
     assert.equal(cellsBC.schema, 'm02-cells-bc-layout-v2');
     assert.equal(M02_LAYOUT_SCHEMA_BY_CELL.B, 'm02-cells-bc-layout-v2');
     assert.equal(M02_LAYOUT_SCHEMA_BY_CELL.C, 'm02-cells-bc-layout-v2');
-    assert.equal(M02_LAYOUT_SCHEMA_BY_CELL.A, 'm02-01-quinta-bench-v1', 'A só ganhou bounds.c01Approach (alarga o limite; saves antigos continuam válidos)');
+    assert.equal(M02_LAYOUT_SCHEMA_BY_CELL.A, 'm02-01-quinta-bench-v2', 'A: v2 = correções N0 (geometria/IDs mudaram; saves v1 recusados com motivo — tests/m02-26)');
   });
 
   it('um save de B ou C gravado com o layout v1 é recusado com mensagem explícita (posições/waypoints antigos), não restaurado', () => {
