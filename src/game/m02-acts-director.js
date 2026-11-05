@@ -854,6 +854,8 @@ export function startC10OrderChanges(sim) {
 export const CP_D_ID = 'cp_m02_d_cobertura_retirada';
 /** Folga (m) para além do raio de uma explosão agendada: dentro dela Piotr não está abrigado. */
 export const SHELTER_BLAST_MARGIN_M = 2;
+/** Raio (m) da explosão de uma granada do jogador em voo (omissão de `detonateGrenadeAt`; as inimigas passam por `hazardBlasts`). */
+export const PLAYER_GRENADE_BLAST_RADIUS_M = 6.5;
 
 /**
  * «Abrigo válido» (I3 p. 34, ponto seguro e restauro de cp_m02_d): neste instante nenhum hostil ativo (vivo e combatente) com Piotr ao
@@ -865,6 +867,12 @@ export function isPlayerSheltered(sim) {
   if (!p || p.alive === false || !(p.health > 0)) return false;
   for (const b of sim.hazardBlasts ?? []) {
     if (Math.hypot(b.x - p.x, b.z - p.z) <= b.radius + SHELTER_BLAST_MARGIN_M) return false;
+  }
+  // FIX-CD2: as granadas em voo (rastilho de 2 s, sem aviso, `sim.grenades`) não estão em `hazardBlasts`: uma granada ainda não
+  // explodida a menos do raio (+ margem) de Piotr tira-lhe o abrigo, senão o cp_d gravava-se ao lado dela e o restauro rebentava-lhe nos pés.
+  for (const g of sim.grenades ?? []) {
+    if (g.exploded) continue;
+    if (Math.hypot(g.x - p.x, g.z - p.z) <= PLAYER_GRENADE_BLAST_RADIUS_M + SHELTER_BLAST_MARGIN_M) return false;
   }
   for (const e of sim.enemies) {
     if (!e.alive || e.nonCombatant) continue;
@@ -1218,6 +1226,10 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   if (!sim.areaC.c10Started) startC10OrderChanges(sim);
   if (!sim.areaC.artilleryDetonated) detonateC10FixedArtillery(sim);
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
+
+  // FIX-CD2: o SP03 forçado acima fere Piotr (D5 p. 18) e pode matá-lo. A falha avalia-se antes da conclusão: com Piotr morto a
+  // missão NÃO se marca concluída nem exporta para a M03 (o fim do lote regista `piotr_killed`). Devolve null como a recusa prévia.
+  if (sim.player.alive === false || sim.player.health <= 0) return null;
 
   if (lisOutcome) {
     assistLisInC11(sim, lisOutcome);

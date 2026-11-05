@@ -1,0 +1,157 @@
+// M02 FIX-CD2 · defeitos residuais confirmados por execução numa verificação independente (a seguir ao FIX-CD).
+// O item 1 (graça F1 independente do dt) está em tests/m02-19-fix-cd.test.js (bloco FIX-CD 5). Teste de estado, NÃO é playtest.
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { M02BenchSimulation } from '../src/game/m02-01-simulation.js';
+import { createMemoryStorage } from '../src/game/m02-save-store.js';
+import { isPlayerSheltered } from '../src/game/m02-acts-director.js';
+import { stepActorNavigation, DOOR_DETOUR_MAX_FROM_GOAL_M } from '../src/game/m02-combat-ai.js';
+
+const killAll = (actors) => {
+  for (const e of actors) Object.assign(e, { alive: false, health: 0, state: 'DEAD' });
+};
+const ofType = (events, type) => events.filter((e) => e.type === type);
+
+describe('FIX-CD2 2: KeyM cujo SP03 forçado mata Piotr não conclui a missão nem exporta concluída', () => {
+  function weakPiotrAtGate() {
+    const sim = new M02BenchSimulation(4243, { storage: createMemoryStorage() });
+    sim.enterAreaCC09({ skipTransition: true });
+    sim.player.health = 40;
+    sim.teleportPlayer(4, 18);
+    sim.drainEvents();
+    return sim;
+  }
+
+  it('completeC12Epilogue devolve null, regista piotr_killed e deixa m02.completed falso', () => {
+    const sim = weakPiotrAtGate();
+    const pkg = sim.completeC12Epilogue();
+    assert.equal(pkg, null);
+    assert.equal(sim.player.health, 0, 'o SP03 forçado matou Piotr (pré-condição da prova)');
+    assert.equal(sim.missionFailed?.reason, 'piotr_killed');
+    assert.equal(sim.flags['m02.completed'], false);
+    assert.equal(sim.areaC.c12Completed ?? false, false);
+    assert.equal(sim.objective?.status === 'completed', false);
+    assert.equal(sim.exportCampaignResultToM03().completed, false);
+    assert.equal(ofType(sim.drainEvents(), 'mission-failed').length, 1);
+    for (let i = 0; i < 5; i++) sim.tick(0.1, {});
+    assert.equal(sim.flags['m02.completed'], false);
+    assert.equal(sim.exportCampaignResultToM03().completed, false);
+  });
+
+  it('com Piotr vivo a mesma chamada conclui como antes', () => {
+    const sim = new M02BenchSimulation(4243, { storage: createMemoryStorage() });
+    sim.enterAreaCC09({ skipTransition: true });
+    sim.teleportPlayer(0, -40);
+    const pkg = sim.completeC12Epilogue();
+    assert.equal(sim.missionFailed, null);
+    assert.equal(pkg.completed, true);
+    assert.equal(sim.flags['m02.completed'], true);
+  });
+});
+
+describe('FIX-CD2 4: a falha de rota só desvia para portas fechadas plausíveis (≤ 12 m do destino), em aliados e inimigos', () => {
+  const DT = 1 / 60;
+  /** Prova doors4: o destino de Lis fica atrás de portas fechadas de B01 (sem rota); as restantes portas fechadas do mapa ficam longe. */
+  function walkToUnroutableGoal(kind) {
+    const sim = new M02BenchSimulation(1);
+    killAll(sim.enemies);
+    const goal = { x: -38, z: -11 };
+    const actor = kind === 'ally' ? sim.allies.find((a) => a.id === 'pl_lis') : sim.enemies[0];
+    Object.assign(actor, { alive: true, health: 100, state: 'IDLE', nonCombatant: false, x: -22, z: -14.5, y: sim.world.heightAt(-22, -14.5), goal: { ...goal }, navCorners: null });
+    const opened = [];
+    let maxFromGoal = 0;
+    for (let t = 0; t < 20 / DT; t++) {
+      sim.clock += DT;
+      actor.goal = { ...goal };
+      stepActorNavigation(sim, actor, DT);
+      for (const e of sim.events) {
+        if (e.type === 'door-toggled' && e.byActorId === actor.id) {
+          const d = sim.world.doors.find((x) => x.id === e.doorId);
+          opened.push(Math.hypot(d.center.x - goal.x, d.center.z - goal.z));
+        }
+      }
+      sim.events.length = 0;
+      const last = actor.navCorners?.at(-1);
+      if (last) maxFromGoal = Math.max(maxFromGoal, Math.hypot(last.x - goal.x, last.z - goal.z));
+    }
+    return { sim, actor, goal, opened, maxFromGoal };
+  }
+
+  for (const kind of ['ally', 'enemy']) {
+    it(`${kind}: nunca abre nem se dirige a uma porta fechada a mais de 12 m do destino (antes: 61 m até à porta sul de B02)`, () => {
+      const r = walkToUnroutableGoal(kind);
+      assert.equal(DOOR_DETOUR_MAX_FROM_GOAL_M, 12);
+      assert.ok(r.opened.length > 0, 'ainda abre as portas do seu destino');
+      for (const d of r.opened) assert.ok(d <= 12, `porta aberta a ${d.toFixed(1)} m do destino`);
+      assert.ok(r.maxFromGoal <= 13, `último canto da rota a ${r.maxFromGoal.toFixed(1)} m do destino`);
+      assert.ok(Math.hypot(r.actor.x - r.goal.x, r.actor.z - r.goal.z) < 12, 'fica junto ao destino, não do outro lado do mapa');
+    });
+  }
+});
+
+describe('FIX-CD2 5: o perfil de dificuldade escolhido depois do construtor sobrevive a reset() e ao reinício para o início', () => {
+  it('setDifficulty + morte + reinício sem checkpoint gravado volta ao início em memória com o mesmo perfil (antes: recruta)', () => {
+    for (const id of ['soldado', 'veterano']) {
+      const sim = new M02BenchSimulation(5, { storage: createMemoryStorage() });
+      sim.setDifficulty(id);
+      sim.player.health = 0;
+      sim.tick(0.1, {});
+      assert.ok(sim.missionFailed);
+      assert.deepEqual(sim.restartAfterFailure(), { checkpointId: 'cp_m02_a_preparacao', source: 'start' });
+      assert.equal(sim.difficulty.id, id);
+      assert.equal(sim.snapshot().difficulty, id, 'o perfil entra nos snapshots seguintes');
+      assert.equal(sim.missionFailed, null);
+    }
+  });
+
+  it('reset() mantém o perfil; um checkpoint gravado repõe o seu próprio perfil (comportamento FIX-CD inalterado)', () => {
+    const sim = new M02BenchSimulation(5, { storage: createMemoryStorage() });
+    sim.setDifficulty('veterano');
+    sim.reset();
+    assert.equal(sim.difficulty.id, 'veterano');
+    assert.ok(sim.saveCheckpoint('cp_m02_manual'));
+    sim.setDifficulty('recruta');
+    sim.restoreCheckpoint('cp_m02_manual');
+    assert.equal(sim.difficulty.id, 'veterano');
+  });
+});
+
+describe('FIX-CD2 3: o «abrigo válido» do cp_d conta as granadas do próprio jogador em voo', () => {
+  const CP_D = 'cp_m02_d_cobertura_retirada';
+  function c10WithGrenadeAtFeet(seed = 19390909) {
+    const sim = new M02BenchSimulation(seed, { storage: createMemoryStorage() });
+    sim.enterAreaCC09({ skipTransition: true });
+    killAll(sim.enemies);
+    sim.teleportPlayer(0, -40);
+    sim.areaC.gateLatchUnlocked = true;
+    const g = sim.throwGrenade({ x: sim.player.x, y: sim.player.y + 1.5, z: sim.player.z }, { x: 0, y: -1, z: 0 });
+    assert.ok(g);
+    sim.drainEvents();
+    sim.startC10OrderChanges();
+    killAll(sim.enemies.filter((e) => e.encounterId === 'EC2'));
+    return sim;
+  }
+
+  it('com a granada aos pés Piotr não está abrigado e o cp_d não se grava; depois de rebentar grava-se sem granadas em voo', () => {
+    const sim = c10WithGrenadeAtFeet();
+    for (let i = 0; i < 5; i++) {
+      sim.tick(0.1, {});
+      assert.equal(isPlayerSheltered(sim), false, `tick ${i}`);
+    }
+    assert.equal(sim.checkpoints.has(CP_D), false, 'antes: gravado com a granada em voo e o restauro ferido');
+    for (let i = 0; i < 40 && !sim.checkpoints.has(CP_D); i++) sim.tick(0.1, {});
+    const cp = sim.checkpoints.get(CP_D);
+    assert.ok(cp, 'grava-se quando a granada já rebentou');
+    assert.equal(cp.grenades.length, 0);
+    assert.ok(cp.player.health > 0);
+  });
+
+  it('uma granada lançada para longe (fora do raio + margem) não tira o abrigo', () => {
+    const sim = new M02BenchSimulation(19390909, { storage: createMemoryStorage() });
+    sim.enterAreaCC09({ skipTransition: true });
+    killAll(sim.enemies);
+    sim.teleportPlayer(0, -40);
+    sim.throwGrenade({ x: 0, y: 1.5, z: -10 }, { x: 0, y: 1, z: 0 });
+    assert.equal(isPlayerSheltered(sim), true);
+  });
+});

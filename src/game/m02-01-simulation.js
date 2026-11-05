@@ -1415,7 +1415,9 @@ export class M02BenchSimulation {
 
     shooter.mag -= roundsToFire;
     shooter.shotsFired = (shooter.shotsFired ?? 0) + roundsToFire;
-    shooter.nextFireAt = Number((this.clock + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
+    // O ciclo seguinte parte do instante nominal do disparo (shotAt), não do relógio do tick: senão o atraso 0..dt do 1.º disparo
+    // propagava-se ao 2.º e a regra F1 voltava a depender do dt (FIX-CD2 P2).
+    shooter.nextFireAt = Number((shotAt + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
@@ -1919,6 +1921,8 @@ export class M02BenchSimulation {
           type: 'ea0_outpost_cleared',
         });
         // cp_m02_a_preparacao já não se grava aqui (EA1 a entrar em combate): é «antes do contacto», no fim de C01 (FIX-CD, I3 p. 33).
+        // Nota (FIX-CD2): só chega à loja se o jogador avança antes do contacto; no arranque C02 por omissão ou com contacto antes de andar, o
+        // reinício cai no início em memória (`source: 'start'`), equivalente. Ver docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md §5.
       } else {
         this.objective.id = 'O00';
         this.objective.title = `C01/EA0: Tomar o posto avançado na vala transversal (-18,-110) (${activeEa0.length}/4 ativos)`;
@@ -2326,7 +2330,11 @@ export class M02BenchSimulation {
       }
       return skipped.length ? { checkpointId, source, skipped } : { checkpointId, source };
     }
+    // Início em memória: foi gravado em reset() com o perfil de então (p. ex. recruta, se setDifficulty veio depois do construtor).
+    // O perfil escolhido na configuração sobrevive ao reinício para o início (FIX-CD2); os checkpoints gravados repõem o seu próprio.
+    const activeDifficulty = this.#difficultyId;
     this.restoreCheckpoint('cp_m02_a_preparacao');
+    this.#difficultyId = activeDifficulty;
     const result = { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
     return skipped.length ? { ...result, skipped } : result;
   }
