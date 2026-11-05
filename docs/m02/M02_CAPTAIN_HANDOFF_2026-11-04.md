@@ -107,6 +107,39 @@ O botão novo da bancada só foi verificado por inspeção e por teste estático
 
 Fica conhecida uma janela residual de compare-and-swap entre separadores: o `localStorage` não tem escrita atómica.
 
+**Roteiro C e set pieces, integrado em `07999a4`. Testes: `tests/m02-*.test.js` 204/204; build OK.**
+
+O que mudou:
+- **Progressão automática C01→C12 por condições de jogo.** As teclas de bancada ficam só como atalhos.
+  - Teste de missão completa por entradas (`MissionBot`, 3 sementes, determinista). Um guard confirma que não usa atalhos.
+  - Tempo simulado até ao C12: 636,9 / 786,9 / 694,6 s (≈ 10,6–13,1 min). É só referência e não é playtest; fica **muito abaixo do alvo editorial de 29–34 min**.
+- **C02:** o EA0 começa sem alerta. O contacto é sorteado pelo RNG entre 30 e 60 s depois de o jogador começar a avançar (10 sementes testadas).
+  - `bz39_c01_03` pode tocar antes do contacto.
+  - O acesso P1 (z=-175 → -100) era impossível de percorrer e passou a ter `bounds.c01Approach`.
+- **Carroça:** o tiro parte o varal (`shaft_broken`). Há `parked_fallback` explícito e rota conforme a p. 21. [E] apanha um volume largado.
+- **Lis:** entra com velocidade limitada por tick, sem teletransporte.
+  - `lis_status` passa a vir do estado de jogo e fica `missing` quando o Piotr termina sem o Lis.
+  - A tecla KeyM mantém o valor forçado, marcado `lisOutcomeSource:'forced'`.
+- **Último grupo LG01–LG12:** só conta como evacuado quando chega a (-85,105).
+- **Mapa:** evacuação pela porta norte de B09 (-30,-20).
+  - B05–B12 já estavam conformes com o PDF p. 20; o erro era do handoff da Gemini.
+  - O layout B/C passa a `m02-cells-bc-layout-v2`, e os saves B/C v1 são recusados com o motivo explícito.
+- **B08:** `doorsDecision.decision:'pendente'`.
+- **B12:** as macas vêm só do layout.
+
+**Decisões do agente a rever:**
+- Interpretação do «fallback parada».
+- Tempos mínimos de cena: C05 45 s, C07 60 s, C08 60 s, C12 45 s (leitura da p. 12).
+- Lis «walking» ou «carried» com limiar de vida 40, que é **inventado**.
+- O Lis só se move com o Piotr a ≤ 7 m.
+
+**Observado e não corrigido:**
+- O EC2 rende-se no 1.º tick do C10 (regra de moral) → encaminhado para o Combate D.
+- Uma corrida ao EA0 não é alvejada antes do temporizador → encaminhado para o Combate D.
+- Os aliados não transportam volumes à mão.
+- A entrada do Lis não pára sob fogo.
+- As portas de B12 têm 1,6 m, contra 1,4 m no PDF.
+
 **Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
 morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
 morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
@@ -131,11 +164,11 @@ morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 |---|---|---|
 | FIX-2b defeitos da revisão adversarial | **Integrado** (`318b265`); verificação independente: ACEITE COM RESSALVAS | — |
 | FIX-2c P2 residuais dos saves | **Integrado**: merge `605e3fc` (`fe05c21`…`1bac72d`) | Ver lista abaixo |
-| 6–7 Roteiro C e set pieces J/E/F | **EM CURSO**: é o único agente ativo | worktree `m02-script-c`, base `605e3fc` |
+| 6–7 Roteiro C e set pieces J/E/F | **Integrado**: merge `07999a4` (`bb0cbf4`…`85dea7a`) | Ver lista abaixo |
+| 8 Combate D | **EM CURSO**: é o único agente ativo | worktree `m02-combat-d`, base `07999a4` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
-| 8 Combate D | **Não começado** (o agente foi parado sem diff) | — |
 
 Os patches em `docs/m02/wip/` são trabalho parcial de agentes interrompidos. **Não foram aplicados nem revistos.**
 Ou se reaplicam com `git apply --3way` e se terminam, ou se apagam.
