@@ -12,6 +12,46 @@ export const M02_TR_CARTELAS = Object.freeze({
   TR05: 'Nos dias seguintes, a pressão alemã desfaz a ofensiva. Alguns sobreviventes alcançam Varsóvia. · Varsóvia — 25 de setembro de 1939',
 });
 
+/**
+ * C02 (PDF p. 12): «O primeiro tiro combatível deve ocorrer em 30-60 s depois de iniciar o movimento». Até lá o posto EA0
+ * não conhece o jogador (perceção inicial «sem alerta»; antes via Piotr no tick 0, a ~67 m, e o contacto era < 15 s).
+ * O instante do contacto é sorteado UMA vez, no primeiro avanço do jogador, com o RNG da simulação (determinista, guardado
+ * no snapshot); um tiro ou granada do jogador abre o contacto já (a iniciativa é dele).
+ */
+export const C01_CONTACT_DELAY_SEC = Object.freeze({ min: 30, max: 60 });
+export const C01_CONTACT_OPENED_BY = Object.freeze(['timer', 'player_shot', 'player_grenade']);
+/** Distância (m) a P1 a partir da qual o jogador «começou a avançar». */
+const C01_ADVANCE_THRESHOLD_M = 0.1;
+
+export function createInitialC01Contact() {
+  return { movementStartedAt: null, contactAt: null, opened: false, openedAt: null, openedBy: null };
+}
+
+/** Abre o contacto de C02 (o posto EA0 passa a perceber e a combater). Idempotente; só conta com C01 ativa. */
+export function openC01Contact(sim, by) {
+  const c = sim.c01Contact;
+  if (!sim.c01Active || !c || c.opened) return false;
+  c.opened = true;
+  c.openedAt = Number(sim.clock.toFixed(3));
+  c.openedBy = by;
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'c01_contact_opened', by });
+  return true;
+}
+
+/** Regista o início do avanço (sorteia o atraso) e abre o contacto quando o atraso acaba. Chamado uma vez por tick. */
+export function updateC01Contact(sim) {
+  const c = sim.c01Contact;
+  if (!sim.c01Active || !c || c.opened) return;
+  if (c.movementStartedAt === null) {
+    const p1 = sim.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175 };
+    if (Math.hypot(sim.player.x - p1.x, sim.player.z - p1.z) < C01_ADVANCE_THRESHOLD_M) return;
+    c.movementStartedAt = Number(sim.clock.toFixed(3));
+    const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
+    c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
+  }
+  if (sim.clock >= c.contactAt) openC01Contact(sim, 'timer');
+}
+
 export function createInitialAreaBState() {
   const bDef = cellsBCLayout.cells.B;
   return {

@@ -43,6 +43,10 @@ import {
   exportCampaignResultToM03 as runExportCampaignResultToM03,
   syncAreaCWorldDamage,
   dropVolumesOfFallenCarriers,
+  createInitialC01Contact,
+  openC01Contact,
+  updateC01Contact as runUpdateC01Contact,
+  C01_CONTACT_OPENED_BY,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -295,6 +299,22 @@ export function validateM02Snapshot(snap) {
   if (!isPlainObject(snap.areaB) || !isPlainObject(snap.areaC)) {
     return { valid: false, reason: 'Estado das áreas B/C ausente no snapshot.' };
   }
+  const c01 = snap.c01Contact;
+  const nullOrTime = (v) => v === null || (typeof v === 'number' && v >= 0);
+  if (
+    !isPlainObject(c01) ||
+    typeof c01.opened !== 'boolean' ||
+    !nullOrTime(c01.movementStartedAt) ||
+    !nullOrTime(c01.contactAt) ||
+    !nullOrTime(c01.openedAt) ||
+    (c01.contactAt === null) !== (c01.movementStartedAt === null) ||
+    (c01.opened ? !C01_CONTACT_OPENED_BY.includes(c01.openedBy) || c01.openedAt === null : c01.openedBy !== null || c01.openedAt !== null)
+  ) {
+    return {
+      valid: false,
+      reason: 'Save incompatível: estado de contacto C01 (c01Contact) ausente ou inválido (snapshot anterior ao roteiro automático).',
+    };
+  }
   if (!isPlainObject(snap.flags)) return { valid: false, reason: 'Flags de campanha ausentes no snapshot.' };
   for (const [flag, value] of Object.entries(snap.flags)) {
     if (value !== null && !['boolean', 'number', 'string'].includes(typeof value)) {
@@ -451,6 +471,7 @@ export class M02BenchSimulation {
     this.squadOrder = { type: 'auto', axis: null, issuedAt: 0 };
     this.c01Active = false;
     this.c01StartedAt = 0;
+    this.c01Contact = createInitialC01Contact();
     this.ea1StartedAt = 0;
     this.activeCartela = M02_TEMPORAL_STATES.T0.cartela;
     this.transitionTABPayload = null;
@@ -698,6 +719,7 @@ export class M02BenchSimulation {
 
     this.c01Active = true;
     this.c01StartedAt = this.clock;
+    this.c01Contact = createInitialC01Contact();
     this.activeCartela = {
       text: M02_TEMPORAL_STATES.T0.cartela,
       expiresAt: this.clock + 8.0,
@@ -1074,6 +1096,7 @@ export class M02BenchSimulation {
     }
 
     this.alertEnemiesBySound(this.player, 90);
+    openC01Contact(this, 'player_shot');
 
     const material = hit?.material ?? 'air';
     const policy = BALLISTIC_MATERIAL_POLICY[material] ?? null;
@@ -1268,7 +1291,10 @@ export class M02BenchSimulation {
 
   throwGrenade(customOrigin = null, customDir = null) {
     if (!customOrigin && this.grenadeAmmo <= 0) return null;
-    if (!customOrigin) this.grenadeAmmo--;
+    if (!customOrigin) {
+      this.grenadeAmmo--;
+      openC01Contact(this, 'player_grenade');
+    }
 
     const eye = customOrigin ?? eyePosition(this.player);
     const rawDir = customDir ?? aimDirection(this.player.angle, this.player.pitch);
@@ -1672,6 +1698,7 @@ export class M02BenchSimulation {
     if (controls.orderAdvance) this.issueSquadOrder('advance');
     if (controls.orderFlank) this.issueSquadOrder('flank_east');
 
+    runUpdateC01Contact(this);
     this.updateGrenades(dt);
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
@@ -1892,6 +1919,7 @@ export class M02BenchSimulation {
       doorLocks: Object.fromEntries([...this.doorLocks.entries()].map(([id, lock]) => [id, { ...lock }])),
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
+      c01Contact: structuredClone(this.c01Contact),
       ea1StartedAt: this.ea1StartedAt,
       activeCartela: structuredClone(this.activeCartela),
       transitionTABPayload: this.transitionTABPayload ? structuredClone(this.transitionTABPayload) : null,
@@ -1958,6 +1986,7 @@ export class M02BenchSimulation {
       doorLocks: snap.doorLocks,
       c01Active: Boolean(snap.c01Active),
       c01StartedAt: snap.c01StartedAt ?? 0,
+      c01Contact: snap.c01Contact,
       ea1StartedAt: snap.ea1StartedAt ?? 0,
       activeCartela: snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela,
       transitionTABPayload: snap.transitionTABPayload ?? null,
@@ -2022,6 +2051,7 @@ export class M02BenchSimulation {
     this.doorLocks = new Map(Object.entries(p.doorLocks));
     this.c01Active = p.c01Active;
     this.c01StartedAt = p.c01StartedAt;
+    this.c01Contact = p.c01Contact;
     this.ea1StartedAt = p.ea1StartedAt;
     this.activeCartela = p.activeCartela;
     this.transitionTABPayload = p.transitionTABPayload;

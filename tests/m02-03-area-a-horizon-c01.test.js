@@ -26,7 +26,7 @@ describe('M02-03 — Área A Completa (Cena C01 + EA0 + Horizonte Vivo N2 + Tran
     assert.ok(!src.includes('Date.now'), 'm02-horizon-system.js must not use Date.now');
   });
 
-  it('C01 & EA0 — startAreaAFullC01() places Piotr at P1 (0, -175), squad engages EA0 (< 30 s), and clearing DE-A01..DE-A04 advances O00 -> O01', () => {
+  it('C01 & EA0 — startAreaAFullC01() places Piotr at P1 (0, -175), squad engages EA0 (first shot 30-60 s after the advance starts), and clearing DE-A01..DE-A04 advances O00 -> O01', () => {
     const sim = new M02BenchSimulation();
     sim.startAreaAFullC01();
 
@@ -47,15 +47,29 @@ describe('M02-03 — Área A Completa (Cena C01 + EA0 + Horizonte Vivo N2 + Tran
       assert.ok(distFromP1 >= 55 && distFromP1 <= 85, `EA0 defender ${def.id} must be ~65-75m from P1`);
     }
 
-    // Advance simulation for 12 seconds while player moves north->south along the approach track
+    // C02 (PDF p. 12): o primeiro tiro combatível só acontece 30-60 s depois de o jogador começar a avançar (antes: < 15 s, o posto
+    // via Piotr no tick 0). Primeiro 12 s a avançar: ninguém dispara; depois corre-se até ao primeiro tiro.
     let actorBursts = 0;
+    let firstBurstClock = null;
     for (let i = 0; i < 240; i++) {
       sim.tick(0.05, { forward: 1 });
       for (const ev of sim.drainEvents()) {
         if (ev.type === 'actor-burst') actorBursts += 1;
       }
     }
-    assert.ok(actorBursts > 0, 'Squad and EA0 outpost must exchange causal ballistic fire within < 15s');
+    assert.equal(actorBursts, 0, 'C02: sem tiros nos primeiros 12 s de avanço (o contacto só abre 30-60 s depois do início)');
+    for (let i = 0; i < 1400 && firstBurstClock === null; i++) {
+      sim.tick(0.05, {});
+      for (const ev of sim.drainEvents()) {
+        if (ev.type === 'actor-burst') {
+          actorBursts += 1;
+          firstBurstClock ??= ev.clock;
+        }
+      }
+    }
+    assert.ok(actorBursts > 0, 'Squad and EA0 outpost exchange causal ballistic fire once the contact opens');
+    const sinceAdvance = firstBurstClock - sim.c01Contact.movementStartedAt;
+    assert.ok(sinceAdvance >= 30 && sinceAdvance <= 60.1, `first combat shot ${sinceAdvance}s after the advance began (30-60 s)`);
 
     // Neutralize remaining EA0 defenders (simulating player/ally completion of EA0)
     for (const def of ea0Defenders) {
