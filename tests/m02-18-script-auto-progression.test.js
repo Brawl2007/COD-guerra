@@ -15,10 +15,12 @@ import { MissionBot } from './m02-mission-bot.js';
 // e a causa da morte nas que falham é desgaste por tiros de Kar98k em C09/C10, longe da quinta. A semente 777 (que antes passava)
 // morre em C10; 1 é a menor semente inteira que passa (sem escolher por vida restante).
 // D1 (imunidades ocultas removidas): Gruca, Lis e Szymczak deixaram de voltar a 18/20 de vida e a falta do sierż. Gruca falha a missão
-// (m02-d1-required-characters). Isso mexe outra vez no fluxo caótico do bot (o desgaste de Gruca nas cenas C03/C09/C10 passa a contar):
-// medido com o código de D1, 4 de 15 sementes (1..12 e as três antigas) chegam a C12 em dt 0,1 (1, 2, 3 e 19390909); a 31337 morre
-// (Piotr) em C10. A 31337 foi substituída pela 2, a menor semente a seguir à 1 que passa.
-const SEEDS = [19390909, 1, 2];
+// (m02-d1-required-characters). D4 (autonomia limitada): a secção já não toma a quinta sozinha, por isso o bot (que antes esperava que a
+// secção limpasse a quinta) vai pela vala até junto de B01 e só atira ao que consegue acertar (tests/m02-mission-bot.js). Tudo isto
+// mexe outra vez no fluxo caótico do bot: medido com o código de D4, 3 de 43 sementes (1..40 e as três antigas) chegam a C12 em dt 0,1
+// (7, 10 e 20; as 15 de antes davam 10 de 15, depois de D1 4 de 15) e a desgaste de Piotr/Gruca em C09-C11 mata o resto. As três
+// sementes de antes (19390909, 1, 31337) foram substituídas por estas três (as primeiras que passam, sem escolher por vida restante).
+const SEEDS = [7, 10, 20];
 const DT = 0.1;
 const FORBIDDEN_SHORTCUTS = [
   'startAreaAFullC01',
@@ -117,7 +119,7 @@ describe('M02 roteiro: a missão corre de C01 a C12 só com entradas simuladas (
   });
 
   it('C12 retém 45 s (elipse do epílogo) e depois o roteiro fecha (finished) sem mais mudanças', () => {
-    const { sim, bot } = playMission(19390909);
+    const { sim, bot } = playMission(SEEDS[0]);
     const startedAt = sim.script.sceneStartedAt;
     bot.idleUntil(() => sim.script.finished, 60);
     assert.equal(sim.script.finished, true);

@@ -35,9 +35,10 @@ test('AI-01: 60 seconds with Piotr in cover produces real causal squad progress 
   const totalAllyShots = sim.allies.reduce((acc, a) => acc + (a.shotsFired ?? 0), 0);
   assert.ok(totalAllyShots >= 10, `Expected allies to fire real ballistic shots, got ${totalAllyShots}`);
 
-  // 2. Allies captured advanced cover nodes in ditch and near B01/courtyard
+  // 2. Allies captured cover nodes (the ditch's north end and the start line). D4: the plan is led WITH the rifleman (tether
+  // SECTION_LEASH_M / SECTION_ASSAULT_LEASH_M), so with Piotr parked the section no longer hops on to B01 and the courtyard: 5, not 6+.
   const capturedCovers = sim.combatLog.filter((e) => e.type === 'ally_captured_cover');
-  assert.ok(capturedCovers.length >= 6, `Expected >= 6 cover captures in 60s, got ${capturedCovers.length}`);
+  assert.ok(capturedCovers.length >= 4, `Expected >= 4 cover captures in 60s, got ${capturedCovers.length}`);
 
   // 3. Allies suppressed enemies (including DE-A05 MG34) and inflicted real damage/kills
   const suppressEvents = sim.combatLog.filter((e) => e.type === 'ally_suppressed_enemy');

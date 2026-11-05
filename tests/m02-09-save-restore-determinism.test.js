@@ -251,9 +251,11 @@ describe('M02-09 — SAVE-01: restauro determinístico com semente e estado do g
     }
   });
 
-  it('fechaduras de porta ativas no snapshot (rota vala, 20 s) são repostas e a continuação coincide', () => {
-    // sem ordens: a secção segue o plano base e atravessa as portas estreitas de B01 (uma ordem suspendê-lo-ia, D4)
-    const { snap, continuation, storage } = buildScenario('vala', SEEDS[0], { prefixTicks: 400, continuationTicks: 100, withOrders: false });
+  it('fechaduras de porta ativas no snapshot (rota vala, 25 s) são repostas e a continuação coincide', () => {
+    // sem ordens: a secção segue o plano base e atravessa as portas estreitas de B01 (uma ordem suspendê-lo-ia, D4). O plano base é
+    // conduzido com o atirador (D4, trela): só entra em B01 quando Piotr chega à vala junto da casa, por isso o snapshot é tirado aos 25 s
+    // (antes aos 20 s) e não aos 8-12 s em que ainda estaria na vala norte.
+    const { snap, continuation, storage } = buildScenario('vala', SEEDS[0], { prefixTicks: 500, continuationTicks: 100, withOrders: false });
     assert.ok(Object.keys(snap.doorLocks).length > 0, 'pelo menos uma porta estreita reservada por um NPC');
     const fresh = new M02BenchSimulation(SEEDS[1]);
     fresh.restoreSnapshot(snap);

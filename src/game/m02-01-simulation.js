@@ -347,6 +347,10 @@ export function validateM02Snapshot(snap) {
       if (label === 'Aliado' && !a.alive && !ALLY_INCAPACITATED_STATES.includes(a.state)) {
         return { valid: false, reason: `Aliado morto com arma ativa no snapshot: ${a.id} (${a.state})` };
       }
+      // D4: o lanço do plano base que a trela reteve (id de um nó de cobertura) ou null; campo aditivo, ausente nos saves anteriores.
+      if (label === 'Aliado' && 'holdingFor' in a && a.holdingFor !== null && !(typeof a.holdingFor === 'string' && /^cv_[a-z0-9_]+$/.test(a.holdingFor))) {
+        return { valid: false, reason: `Objetivo retido (holdingFor) inválido no snapshot: ${a.id}` };
+      }
       // D6 (regra F1 da M01): contacto de um atirador com Piotr; só existe em soldado/veterano, instantes finitos ou null.
       if (label === 'Inimigo' && ['aimEngagedAt', 'aimLastAt'].some((k) => k in a && a[k] !== null && !(Number.isFinite(a[k]) && a[k] >= 0))) {
         return { valid: false, reason: `Contacto do inimigo com Piotr inválido no snapshot: ${a.id}` };

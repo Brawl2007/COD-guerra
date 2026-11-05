@@ -971,6 +971,75 @@ export function stepActorNavigation(sim, actor, dt) {
   movePlayer(sim.world, actor, vx, vz, dt);
 }
 
+/**
+ * D4 (PDF p. 17): «Sem ordem, Gruca conduz o plano base» mas «autonomia não é vitória garantida». O plano base (vala → casa B01 → pátio)
+ * é conduzido COM o atirador, não à frente dele: Gruca fixa e suprime com a secção a partir de posições de apoio (parapeitos de partida,
+ * extremo norte da vala, talude do pomar) e só COMETE o grupo às posições de assalto (colados a B01, ao pátio, a B03) quando Piotr está a
+ * menos de SECTION_ASSAULT_LEASH_M delas. Um objetivo do plano para lá da trela não é adotado: quem lá devia ir mantém a posição e
+ * suprime (`HoldCover`, registo `section_holding`) até Piotr se aproximar ou o jogador dar a ordem «avançar para ali» (que manda ir e é
+ * a exceção explícita). Antes a secção tomava a quinta sozinha com Piotr parado (72-86 s, 10 sementes em 10).
+ * VALORES SEM FONTE NO PDF: 60 m para as posições de apoio (os nós da vala ficam a 48-52 m do início da quinta; D1, p. 16, põe o combate
+ * principal entre 15 e 120 m) e 30 m para as de assalto (Piotr tem de estar na luta, não a meio campo).
+ */
+export const SECTION_LEASH_M = 60;
+export const SECTION_ASSAULT_LEASH_M = 30;
+/** Posições de apoio (fixar e suprimir): trela larga. As restantes (B01, pátio, B03, rotas de C01 à parte) são de assalto. */
+export const SECTION_SUPPORT_NODES = Object.freeze([
+  'cv_start_parapet_w',
+  'cv_start_parapet_e',
+  'cv_ditch_north_a',
+  'cv_ditch_north_b',
+  'cv_orchard_bank_e',
+]);
+
+const isSupportNode = (nodeId) => SECTION_SUPPORT_NODES.includes(nodeId) || String(nodeId ?? '').startsWith('cv_c01_');
+
+/**
+ * Adota o objetivo do plano base que a trela permite. `nodeIds` vem do lanço que o plano quer agora (o primeiro) para trás, até ao
+ * mais recuado; vai-se ao mais avançado que está dentro da trela de Piotr (apoio SECTION_LEASH_M, assalto SECTION_ASSAULT_LEASH_M).
+ * Se o que o plano quer não cabe na trela regista-se `section_holding` (uma vez por lanço) e a secção fixa e suprime onde pode; se
+ * nenhum cabe, mantém o objetivo anterior (ou a posição). `stateOf(nodeId)`: o estado tático de quem vai para esse nó.
+ */
+function adoptPlanGoal(sim, ally, nodeIds, stateOf) {
+  const wanted = nodeIds[0];
+  let adopted = null;
+  for (const nodeId of nodeIds) {
+    const node = sim.coverNodesById.get(nodeId);
+    if (!node) continue;
+    const leash = isSupportNode(nodeId) ? SECTION_LEASH_M : SECTION_ASSAULT_LEASH_M;
+    if (Math.hypot(node.x - sim.player.x, node.z - sim.player.z) <= leash) {
+      adopted = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
+      break;
+    }
+  }
+  if (adopted?.nodeId === wanted) {
+    if (ally.holdingFor) ally.holdingFor = null;
+    ally.goal = adopted;
+    ally.tacticalState = stateOf(wanted);
+    return true;
+  }
+  const wantedNode = sim.coverNodesById.get(wanted);
+  if (!wantedNode) return false;
+  if (ally.holdingFor !== wanted) {
+    ally.holdingFor = wanted;
+    sim.combatLog.push({
+      clock: Number(sim.clock.toFixed(2)),
+      type: 'section_holding',
+      actorId: ally.id,
+      nodeId: wanted,
+      distanceFromPiotr: Number(Math.hypot(wantedNode.x - sim.player.x, wantedNode.z - sim.player.z).toFixed(1)),
+      leashM: isSupportNode(wanted) ? SECTION_LEASH_M : SECTION_ASSAULT_LEASH_M,
+    });
+  }
+  if (adopted) {
+    ally.goal = adopted; // avança só até onde a trela deixa
+    ally.tacticalState = stateOf(adopted.nodeId);
+  } else {
+    ally.tacticalState = 'HoldCover';
+  }
+  return false;
+}
+
 export function updatePolishSquad(sim, dt) {
   const coverById = sim.coverNodesById;
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
@@ -1051,12 +1120,8 @@ export function updatePolishSquad(sim, dt) {
         pl_malek: ['cv_c01_p1_w', 'cv_c01_mid_w', 'cv_c01_outpost_clear'],
       };
       const seq = c01Map[ally.id] ?? c01Map.pl_gruca;
-      const nodeId = seq[Math.min(c01Stage, seq.length - 1)];
-      const node = coverById.get(nodeId);
-      if (node) {
-        ally.goal = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
-        ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
-      }
+      const stage = Math.min(c01Stage, seq.length - 1);
+      adoptPlanGoal(sim, ally, seq.slice(0, stage + 1).reverse(), () => (ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder'));
     } else if (ally.id === 'pl_aux_01' || ally.id === 'pl_aux_02') {
       // 1. rkm wz. 28 support pair (Nowak + Kowalski: nomes FORA DO PDF, sourceStatus 'fora_do_pdf'; K1 só prevê «dois auxiliares») holds fire base and advances to north courtyard wall once ditch team reaches B01
       const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
@@ -1064,11 +1129,8 @@ export function updatePolishSquad(sim, dt) {
       const nodeId = ditchAdvanced
         ? (ally.id === 'pl_aux_01' ? 'cv_gate_wall_west_s' : 'cv_b01_east_corner')
         : (ally.id === 'pl_aux_01' ? 'cv_start_parapet_e' : 'cv_start_parapet_w');
-      const node = coverById.get(nodeId);
-      if (node) {
-        ally.goal = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
-        ally.tacticalState = 'HoldAndSuppress';
-      }
+      const base = ally.id === 'pl_aux_01' ? 'cv_start_parapet_e' : 'cv_start_parapet_w';
+      adoptPlanGoal(sim, ally, nodeId === base ? [base] : [nodeId, base], () => 'HoldAndSuppress');
     } else if (ally.id === 'pl_szymczak') {
       // Medic stays in covered support behind Gruca and moves to orchard in C04
       const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
@@ -1078,11 +1140,7 @@ export function updatePolishSquad(sim, dt) {
         : combatElapsed >= 14
           ? 'cv_ditch_mid_b'
           : 'cv_start_parapet_w';
-      const node = coverById.get(nodeId);
-      if (node) {
-        ally.goal = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
-        ally.tacticalState = 'SupportMedic';
-      }
+      adoptPlanGoal(sim, ally, nodeId === 'cv_start_parapet_w' ? [nodeId] : [nodeId, 'cv_start_parapet_w'], () => 'SupportMedic');
     } else {
       // Assault & flank team (Gruca, Lis, Wierzba, Małek)
       const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
@@ -1095,12 +1153,8 @@ export function updatePolishSquad(sim, dt) {
           pl_malek: ['cv_ditch_north_b', 'cv_b01_kitchen_in', 'cv_b01_east_corner'],
         };
         const seq = mapByRole[ally.id] ?? mapByRole.pl_gruca;
-        const nodeId = seq[Math.min(stage, seq.length - 1)];
-        const node = coverById.get(nodeId);
-        if (node) {
-          ally.goal = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
-          ally.tacticalState = stage >= 1 ? 'FlankMove' : 'AdvanceOrder';
-        }
+        const upTo = Math.min(stage, seq.length - 1);
+        adoptPlanGoal(sim, ally, seq.slice(0, upTo + 1).reverse(), (id) => (seq.indexOf(id) >= 1 ? 'FlankMove' : 'AdvanceOrder'));
       } else {
         // Default / Ditch + B01 clearing bound progression
         const stage = combatElapsed < 8 ? 0 : combatElapsed < 18 ? 1 : combatElapsed < 30 ? 2 : 3;
@@ -1111,12 +1165,8 @@ export function updatePolishSquad(sim, dt) {
           pl_malek: ['cv_ditch_north_b', 'cv_ditch_mid_b', 'cv_ditch_south_a', 'cv_b01_kitchen_in'],
         };
         const seq = mapByRole[ally.id] ?? mapByRole.pl_gruca;
-        const nodeId = seq[Math.min(stage, seq.length - 1)];
-        const node = coverById.get(nodeId);
-        if (node) {
-          ally.goal = { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
-          ally.tacticalState = nodeId.startsWith('cv_b01_') && nodeId.endsWith('_in') ? 'ClearRoom' : 'AdvanceOrder';
-        }
+        const upTo = Math.min(stage, seq.length - 1);
+        adoptPlanGoal(sim, ally, seq.slice(0, upTo + 1).reverse(), (id) => (id.startsWith('cv_b01_') && id.endsWith('_in') ? 'ClearRoom' : 'AdvanceOrder'));
       }
     }
 

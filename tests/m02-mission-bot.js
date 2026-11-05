@@ -1,6 +1,7 @@
 // «Jogador» da missão inteira para testes M02: escolhe o comportamento pela cena do roteiro (lida do estado, como a cartela e o
 // objetivo no ecrã) e só age por entradas de tick(). Não chama atalhos de bancada nem funções de salto de cena. Não é playtest.
-import { PlayerBot } from './m02-bot-helper.js';
+import { PlayerBot, normalizeAngle } from './m02-bot-helper.js';
+import { eyePosition, muzzlePosition, traceObstruction } from '../src/world/spatial.js';
 import cellsBC from '../missions/m02-bzura/m02-cells-bc-layout.json' with { type: 'json' };
 
 const EVAC_POINT = cellsBC.cells.C.evacRoute.at(-1);
@@ -9,18 +10,73 @@ function aliveHostiles(sim) {
   return sim.enemies.filter((e) => e.alive && !e.nonCombatant);
 }
 
+/** Alturas do ponto de mira por ordem de preferência: peito, cabeça, anca (menos 0,25 m se o alvo está agachado). */
+const AIM_HEIGHTS = [1.2, 1.55, 0.85];
+
 export class MissionBot extends PlayerBot {
   /**
-   * Combate com prudência: atira ao hostil visível mais próximo (a arma do jogador alcança 1200 m; os hostis, 180 m, com
-   * dispersão); sem alvo visível aproxima-se do hostil vivo mais próximo só até uma distância de segurança e espera que a
+   * Ponto de mira com linha limpa até ao alvo (peito, depois cabeça, depois anca) ou null. Um alvo «visível» pela cabeça atrás de um
+   * muro baixo não se abate a apontar ao peito: antes o bot disparava sem fim contra o muro do portão (D4: com a quinta já sem cair
+   * sozinha esta limitação do bot deixou de ser invisível). O vidro não conta: o primeiro tiro parte-o.
+   */
+  clearAimPoint(target) {
+    const { sim } = this;
+    // a câmara vê por cima do muro baixo mas o cano, mais baixo, não dispara através dele (traceShot confere os dois): vale o pior
+    const origins = [eyePosition(sim.player), muzzlePosition(sim.player, sim.clock)];
+    const free = (origin, point) => {
+      const dx = point.x - origin.x;
+      const dy = point.y - origin.y;
+      const dz = point.z - origin.z;
+      const dist = Math.hypot(dx, dy, dz);
+      const obstruction = traceObstruction(sim.world, origin, { x: dx / dist, y: dy / dist, z: dz / dist }, Math.max(0, dist - 0.4));
+      return !obstruction || obstruction.material === 'glass';
+    };
+    for (const h of AIM_HEIGHTS) {
+      const point = { x: target.x, y: target.y + (target.crouched ? h - 0.25 : h), z: target.z };
+      if (origins.every((o) => free(o, point))) return point;
+    }
+    return null;
+  }
+
+  /** O hostil visível mais próximo a que o bot consegue acertar de onde está ({ enemy, aim }) ou null. */
+  nearestHittableHostile(maxRange) {
+    const { sim } = this;
+    const p = sim.player;
+    const candidates = sim.enemies
+      .filter((e) => e.alive && !e.nonCombatant && Math.hypot(e.x - p.x, e.z - p.z) <= maxRange && sim.world.lineOfSight(p, e, { includeFoliage: true }))
+      .sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z));
+    for (const enemy of candidates) {
+      const aim = this.clearAimPoint(enemy);
+      if (aim) return { enemy, aim };
+    }
+    return null;
+  }
+
+  /** Controlos para mirar a um ponto e disparar quando a arma está pronta (a mesma geometria de PlayerBot.aimAndFire). */
+  aimAtPoint(point) {
+    const { sim } = this;
+    const p = sim.player;
+    const eye = eyePosition(p);
+    const horiz = Math.hypot(point.x - eye.x, point.z - eye.z);
+    return {
+      lookX: normalizeAngle(Math.atan2(point.z - eye.z, point.x - eye.x) - p.angle),
+      lookY: p.pitch - Math.atan2(point.y - eye.y, horiz),
+      fire: sim.weapon.state === 'READY' && sim.weapon.mag > 0,
+      reload: sim.weapon.mag === 0 && sim.weapon.state === 'READY',
+    };
+  }
+
+  /**
+   * Combate com prudência: atira ao hostil visível mais próximo a que consegue acertar (a arma do jogador alcança 1200 m; os hostis,
+   * 180 m, com dispersão); sem alvo aproxima-se do hostil vivo mais próximo só até uma distância de segurança e espera que a
    * secção avance; a distância de segurança encurta 10 m por cada 20 s sem ver nem abater ninguém. Devolve false sem hostis.
    */
   hunt({ range = 160, standoff = 30 } = {}) {
     const { sim } = this;
-    const target = this.nearestVisibleHostile(range);
-    if (target) {
+    const shot = this.nearestHittableHostile(range);
+    if (shot) {
       this.waitedSec = 0;
-      this.tick(this.aimAndFire(target));
+      this.tick(this.aimAtPoint(shot.aim));
       return true;
     }
     const all = aliveHostiles(sim);
@@ -53,9 +109,9 @@ export class MissionBot extends PlayerBot {
     if (!sim.enemies.some((e) => e.encounterId === 'EC2' && e.alive && !e.nonCombatant)) return false;
     this.reserveWaitSec = (this.reserveWaitSec ?? 0) + this.dt;
     if (this.reserveWaitSec > 240) return false;
-    const target = this.nearestVisibleHostile(160);
-    if (target) {
-      this.tick(this.aimAndFire(target));
+    const shot = this.nearestHittableHostile(160);
+    if (shot) {
+      this.tick(this.aimAtPoint(shot.aim));
       return true;
     }
     const spot = { x: -4, z: -15.2 }; // atrás do parapeito do pátio (cov_c_yard_parapet), junto de Gruca
@@ -98,7 +154,17 @@ export class MissionBot extends PlayerBot {
         if (this.hunt()) return undefined;
         return this.walkStep({ x: 0, z: -80 }, 2.0);
       }
-      case 'C03':
+      case 'C03': {
+        // D4: a secção não toma a quinta sozinha (trela, m02-combat-ai.js): o jogador leva-a. Vai pela vala (E3, p. 21: «rota da vala», a de
+        // menor exposição, fora do arco da MG34 de B02) até junto de B01, onde a secção já está a ≤ 30 m dos seus lanços, e daí combate.
+        if (!this.ditchReached) {
+          const here = { x: -45, z: -48 };
+          if (Math.hypot(here.x - p.x, here.z - p.z) <= 2.5) this.ditchReached = true;
+          else return this.walkStep(Math.hypot(-45 - p.x, -70 - p.z) > 6 && p.z < -66 ? { x: -45, z: -70 } : here, 1.2);
+        }
+        if (this.hunt()) return undefined;
+        return this.tick({});
+      }
       case 'C06': {
         if (this.hunt()) return undefined;
         return this.tick({});
@@ -115,8 +181,8 @@ export class MissionBot extends PlayerBot {
         if (this.holdAgainstReserve()) return undefined;
         const a = sim.areaC;
         const lis = sim.allies.find((al) => al.id === 'pl_lis');
-        const target = this.nearestVisibleHostile(160);
-        if (target) return this.tick(this.aimAndFire(target));
+        const shot = this.nearestHittableHostile(160);
+        if (shot) return this.tick(this.aimAtPoint(shot.aim));
         if (!lis || a.lisPhase === 'incapacitated' || a.lisPhase === 'sheltered' || a.lisPhase === null) {
           return this.walkStep({ x: EVAC_POINT[0], z: EVAC_POINT[1] }, 3.0);
         }
