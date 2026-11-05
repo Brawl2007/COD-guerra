@@ -278,7 +278,7 @@ btnRestartCheckpoint?.addEventListener('click', () => {
 
 btnClearSaves?.addEventListener('click', () => {
   const ok = window.confirm(
-    'Limpar saves da bancada: apaga TODOS os checkpoints guardados da bancada M02 neste navegador (F5 e automáticos). Não se pode anular. Continuar?',
+    'Limpar saves da bancada: apaga os checkpoints guardados desta bancada M02 (F5 e automáticos; chave cod-guerra:m02:bench:v2). Não toca nos saves da M01 nem noutras versões da M02. Não se pode anular. Continuar?',
   );
   if (!ok) return;
   if (!sim.clearPersistedSaves()) console.warn('[M02] O armazenamento recusou apagar os saves da bancada.');
@@ -572,6 +572,7 @@ window.m02Bench = {
   quickLoadCheckpoint: () => sim.quickLoadCheckpoint(),
   restartAfterFailure: () => sim.restartAfterFailure(),
   getSaveStatus: () => sim.saveStore.status(),
+  detectForeignSaves: () => sim.saveStore.detectForeignSaves(),
   clearPersistedSaves: () => {
     const ok = sim.clearPersistedSaves();
     refreshSaveWarning();
@@ -626,4 +627,9 @@ window.m02Bench = {
 };
 
 refreshSaveWarning();
+// Item 0: só informa que existem saves de outra versão (p. ex. Codex v1); nada é lido como v2, migrado, escrito ou apagado.
+{
+  const foreign = sim.saveStore.detectForeignSaves();
+  if (foreign.length) console.info('[M02] Saves de outra versão preservados (não usados por esta bancada):', foreign);
+}
 requestAnimationFrame(animate);

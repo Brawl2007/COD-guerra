@@ -58,7 +58,7 @@ Correção necessária antes de migrar: `exportCampaignResultToM03` **escreve** 
 
 1. **M01 schema 2 e schema 3**: continuam a carregar exatamente como hoje, com despacho por `schema` antes de qualquer simulação. O envelope comum só se aplica a **gravações novas** depois de D-M02-4. Para leitura, um adaptador `lift(raw)` embrulha o formato antigo no envelope em memória, sem reescrever os bytes guardados.
 2. **M02 `cod-guerra-m02-bench-save` v2**: adaptador que embrulha cada snapshot: `missionId:'M02'`, `actId` a partir de `activeCellId`, `checkpointId`, cópias de `rng` e `narrative`, e o snapshot em `payload`.
-3. **M02 snapshot v1** (`m02-01-bench-snapshot-v1`): sem suporte. Nunca foi persistido (os checkpoints v1 viviam só em memória). Sem o estado do gerador, um restauro v1 não é determinístico. A FIX-2 rejeita-o com um erro explícito.
+3. **M02 snapshot v1** (`m02-01-bench-snapshot-v1`, desta bancada): sem suporte. Nunca foi persistido por esta bancada (os checkpoints v1 viviam só em memória). Sem o estado do gerador, um restauro v1 não é determinístico. A FIX-2 rejeita-o com um erro explícito. **Atenção:** a versão Codex da bancada gravou snapshots v1 *no navegador*; esses são outra coisa e estão protegidos (ver §8).
 4. **Ponte v1 → `carry`**: conversão num só sentido, só para pacotes gerados em memória (não há pacotes persistidos).
 5. **Chaves**: proposta de um namespace de campanha (`cod-guerra:campaign:<slot>` + `:previous` + `:staging`). As chaves antigas ficam só para leitura, como alternativa. Nunca são apagadas automaticamente.
 
@@ -89,3 +89,30 @@ Esta proposta favorece **A**, faseada: primeiro o `carry` puro da M02 (corrige a
 - Ida e volta do envelope para cada missão: `lift` → gravar → ler → restaurar → continuação igual tick a tick (o teste `tests/m02-09-save-restore-determinism.test.js` é o modelo).
 - `carry` M02→M03 puro: chamar a exportação não altera `sim.flags` nem o estado do gerador.
 - Envelope com `missionId`/`payloadSchema` desconhecido, chaves extra ou `rng` diferente do payload é rejeitado sem tocar no save bom.
+
+## 8. Compatibilidade com snapshots v1 do Codex: por analisar
+
+**Estado: por analisar. Não há migração, nem a haverá sem decisão do Capitão.** Esta secção só regista o que se sabe, o que falta e a proteção que já existe.
+
+### O que se sabe
+
+- A branch `origin/codex/m02-recovery-v1` (`src/m02/m02-session.js`) grava em `localStorage`, na chave **`cod-guerra:checkpoint:m02:v1`**, um valor `{"version":1,"id":"<checkpoint>","snapshot":{…}}`: o snapshot mais recente da sessão por relógio de simulação, um só slot (sem `:previous` nem `:staging`).
+- O `snapshot` do Codex tem `schema: 'm02-01-bench-snapshot-v1'` (o validador do Codex aceita também `'m02-02-snapshot-v2'`) e, nalguns casos, `rngState` (opcional; sem ele o restauro usa `seed`). Não tem o bloco `rng` `{algorithm, seed, state}`, a data narrativa, `world.layoutSchema` nem o perfil de dificuldade que o nosso schema 2 exige.
+- Esta bancada usa **`cod-guerra:m02:bench:v2`** (+ `:previous`, `:staging`) e o nosso validador estrito recusa qualquer snapshot v1 (`validateM02Snapshot`: «Schema de snapshot M02 v1 incompatível»). São chaves, formatos e validadores diferentes: os dois podem coexistir no mesmo navegador sem se verem.
+- Os dados do Codex podem existir nos navegadores do proprietário (alguns com `rngState`). Não os temos aqui; só conhecemos o código que os escreve.
+
+### Proteção (implementada e testada: `tests/m02-25-codex-v1-guard.test.js`)
+
+- `M02SaveStore` só lê, escreve e apaga os **três slots exatos** da v2. Nenhum caminho (gravação F5, checkpoints automáticos em lote, restauro, F9, `clear()`/`clearPersistedSaves()`, loja bloqueada) enumera ou limpa chaves por prefixo; o teste prova com um armazenamento falso que regista todos os acessos que `cod-guerra:checkpoint:m02:v1` e as chaves da M01 (`cod-guerra:checkpoint:m01:*`, `cod-guerra:checkpoint:v1`) ficam byte a byte iguais e nunca são lidas como save v2.
+- O construtor da loja recusa uma chave base no espaço `cod-guerra:checkpoint:*` (colidiria com a M01 e com o Codex).
+- `M02SaveStore.detectForeignSaves()` é a única leitura destas chaves e é **só-de-leitura**: devolve `[{ key, bytes, looksLikeV1 }]` para `cod-guerra:checkpoint:m02:*` (a chave v1 conhecida é sempre verificada pelo nome; as outras só se o armazenamento souber enumerar). `looksLikeV1` é um rótulo (formato `{version:1, id, snapshot}` ou snapshot com `schema` `…-v1` / `rngState`), não uma validação. A bancada (`src/m02/m02-01-main.js`) só faz `console.info` do resultado e expõe `detectForeignSaves()` na API de teste.
+- O texto de confirmação de «Limpar saves da bancada» diz que só apaga a chave `cod-guerra:m02:bench:v2` e que não toca na M01 nem noutras versões da M02.
+
+### O que falta analisar (antes de qualquer migração)
+
+1. Obter amostras reais de `cod-guerra:checkpoint:m02:v1` (com e sem `rngState`) do navegador do proprietário, só por exportação/cópia: nunca modificar o original.
+2. Decidir se vale a pena migrar. Um snapshot v1 sem `rng.algorithm`/`state` nem `layoutSchema` não permite um restauro determinístico igual ao do Codex; migrar obrigaria a inventar uma continuação do gerador (`rngState` é do gerador do Codex, `core-random-lcg32-v1` pode coincidir mas não está provado) e a mapear estruturas diferentes (granadas em voo, locks de portas, estados da IA). Alternativas a avaliar: (a) só leitura/«exportar para ficheiro» sem restauro; (b) restauro só até um ponto de checkpoint semântico (`cp_m02_*`) a partir do início do ponto, descartando o estado intermédio; (c) deixar os saves v1 inertes até a D-M02-4 escolher o gestor único.
+3. Se houver migração, deve ser uma cópia **para** a chave v2 (nunca em cima, nem apagando o original), com validação completa pelo `validateM02Snapshot` antes de gravar e etiqueta de origem (`migratedFrom: codex-v1`), sem alterar o registo v1.
+4. Coordenar com D-M02-4 (§6): um gestor único precisa de uma política para os dois conjuntos de chaves.
+
+Estado das decisões: nenhuma migração implementada; nenhum dado do Codex foi alterado; `detectForeignSaves()` só informa.

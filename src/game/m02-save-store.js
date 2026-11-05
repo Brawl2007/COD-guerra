@@ -1,8 +1,10 @@
 // M02-FIX-2 (SAVE-01/SAVE-02, PDF I2/I5): schema do snapshot M02 e armazenamento persistente dos checkpoints.
 //   - Schema v2 do snapshot: identidade da missão, semente e estado do gerador, data narrativa, versão do layout da célula.
 //     Um snapshot v1 (`m02-01-bench-snapshot-v1`, sem `rng`) é REJEITADO com erro explícito, sem migração: o estado do
-//     gerador não pode ser reconstruído sem inventar uma continuação diferente, e nenhum save v1 foi alguma vez persistido
-//     (os checkpoints v1 viviam só num Map em memória da sessão).
+//     gerador não pode ser reconstruído sem inventar uma continuação diferente, e nenhum save v1 DESTA bancada foi alguma vez
+//     persistido (os checkpoints v1 viviam só num Map em memória da sessão). Os snapshots v1 que a versão Codex gravou no
+//     navegador (`cod-guerra:checkpoint:m02:v1`) são de outra bancada: esta loja nunca os lê como v2 nem os toca (ver
+//     M02_CODEX_V1_SAVE_KEY e `detectForeignSaves()`, só-de-leitura).
 //   - M02SaveStore: adaptador de armazenamento injetável (getItem/setItem/removeItem). No browser usa localStorage quando existe
 //     e responde; em Node usa memória (uma instância por loja, sem fugas entre simulações). Escrita em três passos:
 //     slot `:staging` → reler e validar → promover (o save confirmado anterior passa a `:previous`). Dados corrompidos são
@@ -96,6 +98,21 @@ export const M02_SAVE_STORAGE_KEY = 'cod-guerra:m02:bench:v2';
 export const M02_SAVE_RECORD_FORMAT = 'cod-guerra-m02-bench-save';
 export const M02_SAVE_RECORD_VERSION = 2;
 
+/**
+ * PROTEÇÃO DOS SAVES DO CODEX (item 0). A outra versão da bancada (branch codex/m02-recovery-v1, `src/m02/m02-session.js`) grava
+ * `{version:1, id, snapshot}` em `cod-guerra:checkpoint:m02:v1`; a M01 usa `cod-guerra:checkpoint:*`. Estes dados pertencem ao
+ * jogador e a outra versão: esta loja NUNCA os lê como save v2, escreve, move, migra ou apaga.
+ *   - Todo o acesso à escrita/remoção usa só os três slots exatos derivados da chave v2 (`slots`); nenhum caminho enumera ou
+ *     limpa chaves por prefixo.
+ *   - O construtor recusa uma chave base cujos slots caiam no espaço `cod-guerra:checkpoint:` (colidiriam com M01/Codex).
+ *   - `detectForeignSaves()` é a única leitura destas chaves: só-de-leitura, só informa (chave, tamanho, parece v1).
+ */
+export const M02_CODEX_V1_SAVE_KEY = 'cod-guerra:checkpoint:m02:v1';
+/** Espaço de chaves de outras versões/missões (M01 e Codex). Só serve para recusar colisões e para a deteção só-de-leitura. */
+export const M02_FOREIGN_SAVE_NAMESPACE = 'cod-guerra:checkpoint:';
+/** Prefixo em que a deteção procura saves M02 de outras versões (só-de-leitura). */
+export const M02_FOREIGN_M02_PREFIX = 'cod-guerra:checkpoint:m02:';
+
 /** Armazenamento em memória com a interface de localStorage (Node, testes, browser sem localStorage). */
 export function createMemoryStorage(initial = {}) {
   const map = new Map(Object.entries(initial).map(([k, v]) => [k, String(v)]));
@@ -140,6 +157,43 @@ function errorText(error) {
   return error && typeof error.message === 'string' ? error.message : String(error);
 }
 
+/** Chaves do armazenamento, só se ele as souber enumerar (`keys()` da memória, `length`/`key(i)` do localStorage). Só-de-leitura. */
+function enumerateStorageKeys(storage) {
+  try {
+    if (typeof storage.keys === 'function') return [...storage.keys()];
+    if (Number.isSafeInteger(storage.length) && typeof storage.key === 'function') {
+      const out = [];
+      for (let i = 0; i < storage.length; i++) out.push(storage.key(i));
+      return out;
+    }
+  } catch {
+    // Armazenamento hostil: sem enumeração; a chave v1 conhecida continua a ser verificada pelo nome exato.
+  }
+  return [];
+}
+
+function utf8ByteLength(text) {
+  return typeof TextEncoder === 'function' ? new TextEncoder().encode(text).length : text.length;
+}
+
+/** `{version:1, id, snapshot}` (src/m02/m02-session.js do Codex) ou um snapshot v1 solto. Não é validação: é só um rótulo. */
+function looksLikeCodexV1Save(text) {
+  let value;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    return false;
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const isV1Snapshot = (s) =>
+    Boolean(s) &&
+    typeof s === 'object' &&
+    !Array.isArray(s) &&
+    ((typeof s.schema === 'string' && /-v1$/.test(s.schema)) || 'rngState' in s);
+  if (value.version === 1 && typeof value.id === 'string' && value.snapshot && typeof value.snapshot === 'object') return true;
+  return isV1Snapshot(value) || isV1Snapshot(value.snapshot);
+}
+
 /** Tentativas de um commit quando outro separador grava entre a leitura e a promoção (compare-and-swap falhado). */
 export const M02_SAVE_COMMIT_ATTEMPTS = 3;
 
@@ -153,6 +207,11 @@ export class M02SaveStore {
   constructor({ storage = null, key = M02_SAVE_STORAGE_KEY, validateSnapshot } = {}) {
     if (typeof validateSnapshot !== 'function') {
       throw new Error('M02SaveStore precisa de validateSnapshot.');
+    }
+    if (typeof key !== 'string' || !key || key.startsWith(M02_FOREIGN_SAVE_NAMESPACE)) {
+      throw new Error(
+        `M02SaveStore: chave base inválida (${String(key)}); o espaço ${M02_FOREIGN_SAVE_NAMESPACE}* pertence à M01 e aos saves v1 do Codex e nunca é usado por esta loja.`,
+      );
     }
     this.storage = storage ?? resolveDefaultStorage();
     this.key = key;
@@ -507,7 +566,40 @@ export class M02SaveStore {
     }
   }
 
-  /** Apaga os três slots (novo jogo). Devolve false se o armazenamento recusar. */
+  /**
+   * DETEÇÃO SÓ-DE-LEITURA de saves M02 de outras versões (item 0; docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md §«Compatibilidade com
+   * snapshots v1 do Codex»). Devolve [{ key, bytes, looksLikeV1 }] ordenado por chave, para as chaves `cod-guerra:checkpoint:m02:*`
+   * (inclui sempre `cod-guerra:checkpoint:m02:v1` se existir). Só chama getItem (e a enumeração de chaves, se o armazenamento a
+   * suportar); NÃO migra, NÃO valida como v2, NÃO escreve, move nem apaga, e não toca no cache da loja. `bytes` = tamanho UTF-8
+   * do valor cru; `looksLikeV1` = é JSON no formato `{version:1, id, snapshot}` do Codex (ou um snapshot v1 solto, com
+   * `schema` terminado em `-v1` ou `rngState`). Um valor ilegível devolve `looksLikeV1:false`. Nunca lança.
+   */
+  detectForeignSaves() {
+    const own = new Set(Object.values(this.slots));
+    const keys = new Set([M02_CODEX_V1_SAVE_KEY]);
+    for (const key of enumerateStorageKeys(this.storage)) {
+      if (typeof key === 'string' && key.startsWith(M02_FOREIGN_M02_PREFIX)) keys.add(key);
+    }
+    const found = [];
+    for (const key of [...keys].sort()) {
+      if (own.has(key)) continue;
+      let raw;
+      try {
+        raw = this.storage.getItem(key);
+      } catch {
+        continue;
+      }
+      if (raw === null || raw === undefined) continue;
+      const text = String(raw);
+      found.push({ key, bytes: utf8ByteLength(text), looksLikeV1: looksLikeCodexV1Save(text) });
+    }
+    return found;
+  }
+
+  /**
+   * Apaga os três slots v2 EXATOS (novo jogo) — nunca por prefixo, nunca outras chaves (M01, Codex v1…).
+   * Devolve false se o armazenamento recusar.
+   */
   clear() {
     let ok = true;
     for (const slotKey of Object.values(this.slots)) {

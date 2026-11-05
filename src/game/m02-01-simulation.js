@@ -201,7 +201,8 @@ export function validateM02Snapshot(snap) {
       valid: false,
       reason:
         'Schema de snapshot M02 v1 incompatível: não guarda a semente nem o estado do gerador (rng), por isso o restauro ' +
-        'não seria determinístico (SAVE-01). Sem migração: os checkpoints v1 só existiam em memória.',
+        'não seria determinístico (SAVE-01). Sem migração e sem apagar nada: os checkpoints v1 desta bancada só existiam em memória ' +
+        'e os saves v1 do Codex (cod-guerra:checkpoint:m02:v1) ficam intactos, nunca lidos como v2.',
     };
   }
   if (snap.schema !== M02_SNAPSHOT_SCHEMA || snap.schemaVersion !== M02_SNAPSHOT_SCHEMA_VERSION) {
