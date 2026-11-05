@@ -225,3 +225,43 @@ Um agente de cada vez:
 3. Revisão independente completa do HEAD final (simulação e saves) antes do N1.
 4. Tratar os desvios do PDF do §5 por ordem de severidade O6.
 5. Integração na linha da M01 pelo Capitão M01: `npm test` completo, `test:browser` da M01 e goldens (REG-01).
+
+---
+
+## 8. Continuação: 2026-11-05, sessão de desenvolvimento a seguir à comparação com o Codex
+
+**Base.** Continua-se na branch `claude/elegant-wright-m9l1ws`. A branch `codex/m02-integracao-unica` parte de `c687e941` e ainda não está integrada; não foi tocada.
+
+### Commits
+
+| Commit | Conteúdo | Testes |
+|---|---|---|
+| merge `984ff145` (`5489c4eb`…`80f698af`) | Proteção dos saves do Codex e correções N0 (ver abaixo) | — |
+| `b33e428b`, `eb3204e9` | Higiene do repositório (ver abaixo) | Em `eb3204e9`: `tests/m02-*.test.js` **426/426**; build OK; browser M02 **2 passed (6,2 min)**, N0 30/30 |
+
+**Proteção dos saves do Codex:**
+- A loja só toca nos seus 3 slots v2 exatos e recusa chaves `cod-guerra:checkpoint:*`.
+- `detectForeignSaves()` é só de leitura.
+- O teste `tests/m02-25-codex-v1-guard.test.js` (18 testes) prova que `cod-guerra:checkpoint:m02:v1` e as chaves M01 ficam **byte a byte iguais**.
+- Não há migração. O estado da compatibilidade v1 está em `docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md` («por analisar»).
+
+**Correções N0:**
+- A porta sul de B04 fica atravessável.
+- A MG34 passa a ter uma fonte única em (12,0; −30,0), como no PDF F3.
+- A avaliação «EXPOSTO» é igual à linha de tiro real (0 discrepâncias nas rotas e nos SN).
+- O vidro intacto deixa ver e pára a bala, só na Área A.
+- B03 ganha as janelas altas N/S e a porta este dos arreios (F4 p. 25).
+- O portão norte passa a 3,6 m.
+- O layout da Área A passa a v2: os saves com layout v1 são recusados com o motivo, sem apagar.
+- A tabela de vãos fica com 0 ERRO e 0 AVISO.
+
+**Higiene do repositório:**
+- O merge `984ff145` trazia o commit `5489c4eb`, que incluía por acidente um symlink `node_modules`. Esse symlink substituiu a pasta real de dependências.
+- O symlink saiu do controlo de versões e o `.gitignore` passa a ignorar `node_modules` também como symlink.
+- As dependências foram reinstaladas com `npm ci`.
+
+### Decisões a rever
+
+- **Sementes do MissionBot trocadas:** m02-18 passa de 777 para 1, e FIX-CD 10 passa de 19390909 para 777. A sobrevivência do bot é caótica a qualquer mudança da Área A: 10/15 sementes chegam ao C12. Nenhuma asserção foi enfraquecida.
+- **Vidro transparente só na Área A** (`sightPolicy`). Nas Áreas B/C, o DE-C02 via o Piotr através de `win_b09_east_1` e o bot morria em todas as sementes. É uma decisão de equilíbrio.
+- **Arco da MG:** a boca está agora dentro da abertura, e os raios no limite do arco (±79°) podem raspar a ombreira.
