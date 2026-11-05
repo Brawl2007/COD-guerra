@@ -603,7 +603,8 @@ describe('M02-12 — P2: validador (enums e relações, PDF I4/I5) e perfil da a
       [(s) => { s.enemies[0].state = 'ZOMBIE'; }, /Estado de inimigo inválido/],
       [(s) => { s.allies[0].alive = false; s.allies[0].state = 'ACTIVE'; s.allies[0].mag = 20; s.allies[0].health = 0; }, /Aliado morto com arma ativa/],
       [(s) => { s.flags['m02.lis_status'] = 'dead'; }, /m02\.lis_status/],
-      [(s) => { s.areaC.c12Completed = true; }, /m02\.lis_status: active/], // depois de C12 só os três valores finais (I4)
+      [(s) => { s.areaC.c12Completed = true; }, /m02\.lis_status: null/], // depois de C12 só os três valores finais (I4)
+      [(s) => { s.areaC.c12Completed = true; s.flags['m02.lis_status'] = 'active'; }, /m02\.lis_status: active/], // nem o nulo legado
       [(s) => { s.areaB.supplyCart.state = 'FLYING'; }, /Estado da carroça inválido/],
       [(s) => { s.areaB.supplyCart.volumes[0].state = 'TELEPORTED'; }, /Estado do volume vol_water inválido/],
       [(s) => { s.areaB.supplyCart.volumes[0].state = 'CARRIED'; }, /incoerente/],

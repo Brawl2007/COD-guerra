@@ -846,7 +846,7 @@ export class M02BenchSimulation {
     this.flags = {
       'm02.completed': false,
       'm02.axis': null,
-      'm02.lis_status': 'active',
+      'm02.lis_status': null, // I4 (p. 34): nulo durante a missão; 'active' (versões anteriores) continua aceite como o nulo legado
       'm02.malek_status': 'fit',
       'm02.wierzba_status': 'fit',
       'm02.pomar_wounded_marked': false,

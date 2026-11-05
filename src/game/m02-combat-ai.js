@@ -1149,6 +1149,8 @@ export function updatePolishSquad(sim, dt) {
 /**
  * Grupo de moral de um hostil (D3: «baixas elevadas ou saída comprometida podem produzir recuo/rendição»): o encontro a que pertence.
  * Os da quinta (EA1) não trazem `encounterId` no layout; EA0 (o posto de C01) não tem moral de grupo.
+ * PENDENTE (FIX-CD, D2 p. 16): a alteração prevista para o EA0 é «recuam para borda oeste; não reaparecem na quinta», não a rendição;
+ * não é trivial (exige um recuo navegado de não combatentes até à borda oeste e o limiar de 4 homens), por isso o EA0 continua sem moral.
  */
 export const moraleGroupOf = (e) => e.encounterId ?? 'EA1';
 
