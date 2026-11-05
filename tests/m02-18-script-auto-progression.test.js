@@ -22,7 +22,10 @@ import { MissionBot } from './m02-mission-bot.js';
 // C12 em dt 0,1 (5, 7, 10, 13, 19, 20 e 24; das 15 sementes de antes, 3: 5, 7 e 10; antes de tudo eram 10 de 15) e o desgaste de Piotr
 // e de Gruca em C09-C11 mata o resto (C09 é a cena mais mortal: 16 de 43). As sementes de antes (19390909, 1, 31337) foram
 // substituídas pelas três primeiras que passam, sem escolher por vida restante.
-const SEEDS = [5, 7, 10];
+// C09 (plano de dois grupos, m02-combat-ai.js; tests/m02-c09-section-advance): a secção fixa a oficina e trabalha as faixas de B09/B11 em vez
+// de abater só os 3 de B10 e esperar. Medido com o código final, 18 de 40 sementes (1..40) chegam a C12 em dt 0,1 (antes 7 de 40) e Piotr
+// morre em C09-C11 em 10 (antes 22). Sementes 5, 7 e 10 mantidas; acrescentadas as três menores que passam além dessas (1, 4 e 8).
+const SEEDS = [5, 7, 10, 1, 4, 8];
 const DT = 0.1;
 const FORBIDDEN_SHORTCUTS = [
   'startAreaAFullC01',

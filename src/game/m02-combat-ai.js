@@ -1013,7 +1013,103 @@ export const SECTION_SUPPORT_NODES = Object.freeze([
   'cv_orchard_bank_e',
 ]);
 
-const isSupportNode = (nodeId) => SECTION_SUPPORT_NODES.includes(nodeId) || String(nodeId ?? '').startsWith('cv_c01_');
+/**
+ * C09 (PDF p. 14): «Oito alemães defendem B09/B10/B11. Há combate legível entre 20 e 100 m, portas e flanco de serviço. A arma de apoio
+ * de Piotr tem munição finita. Gruca não manda o jogador atacar sozinho: um grupo fixa a oficina, outro avança no muro.»
+ * Antes a secção corria a posições fixas (`cGoals`), abatia os 3 de B10 em 13 de 13 sementes e ficava lá: B09 e B11 (5 homens) eram só
+ * de Piotr, e o MissionBot (recruta) chegava ao C12 em 7 de 40 sementes. O plano base de Gruca em C09 passa a ter dois grupos e duas
+ * fases, lidas do estado dos defensores (sem relógio nem estado novo):
+ *   FIXAR A OFICINA (B10 com combatentes): o grupo de apoio (rkm e o auxiliar) toma a base de fogo à beira do campo de tiro do portão
+ *   oeste de B10; o de manobra (Gruca, Małek, Wierzba) e o sanitário esperam no TERRENO MORTO a norte do pátio, onde nenhum defensor de
+ *   EC1 tem linha de vista — a rota abrigada. Antes corriam a descoberto do ponto de entrada ao parapeito do pátio e Gruca levava 16-48
+ *   de vida de DE-C05/C06 6,7-8,6 s depois da entrada (10 de 13 sementes). A janela de segurança de C02/C06 (EC1 «sem alerta» até
+ *   Piotr abrir o contacto) foi medida e piora: é a secção a combater B10 logo à entrada que protege Piotr, e com a janela só 2 de 15
+ *   sementes chegavam ao C12 (7 de 15 sem ela).
+ *   AVANÇAR (B10 neutralizada): Gruca toma o parapeito do pátio e vigia a secção (nada em EC1 lhe vê o parapeito sem B10); o apoio vem
+ *   atrás; Wierzba (o flanqueador) vai à faixa de tiro da porta oeste de B11 contra DE-C08, depois DE-C07, e Małek à do portão norte de
+ *   B09 contra DE-C01 («avança no muro»): posições a 11-18 m de onde só esse defensor os vê (mapa de exposição em
+ *   tests/m02-c09-section-advance.test.js). DE-C01 é quem enfia a linha da porta leste de B09, onde o jogador morria. Quem está ferido
+ *   (< C09_WOUNDED_HEALTH) não vai: fica com Gruca. Quem fica fora da trela (D4) também não: fixa e suprime onde está (`holdingFor`,
+ *   `section_holding`), por isso com Piotr parado a secção fixa a oficina mas não toma o pátio nem B09/B11.
+ * Mesma trela da quinta: posições de apoio a SECTION_LEASH_M de Piotr, de assalto a SECTION_ASSAULT_LEASH_M. As ordens do jogador
+ * («cobrir aqui», «avançar para ali») continuam só na Área A: as Áreas B e C não têm nós de cobertura de ordem.
+ * VALORES SEM FONTE NO PDF: as coordenadas dos nós (escolhidas pelo mapa de exposição da própria geometria), a ordem das faixas e o
+ * limiar de ferido (o de C07).
+ */
+const c9 = (x, z, facing = Math.PI / 2, crouch = true) => Object.freeze({ x, z, facing, crouch });
+export const C09_PLAN_NODES = Object.freeze({
+  // terreno morto a norte do pátio (x ≥ -7 com z ≤ -46, e mais ao largo quanto mais a norte: nenhum defensor de EC1 vê estes pontos)
+  cv_c_assembly_gruca: c9(-6, -46),
+  cv_c_assembly_malek: c9(-7, -48),
+  cv_c_assembly_wierzba: c9(0, -47),
+  cv_c_assembly_aid: c9(-3, -48),
+  // base de fogo sobre a oficina B10 (a beira do campo de tiro do portão oeste); já existiam em cGoals
+  cv_c_north_rkm: c9(-4, -39),
+  cv_c_north_rkm_2: c9(-2, -39),
+  // o pátio, depois de B10: só as aberturas de B09/B11 veem estes pontos
+  cv_c_yard_parapet: c9(-6, -15.5),
+  cv_c_yard_aid: c9(-9, -17.5),
+  cv_c_yard_line_rkm: c9(-4, -17.5),
+  cv_c_yard_line_rkm_2: c9(-2, -17.5),
+  // faixas de tiro: de cada uma só o defensor respetivo vê o aliado (e o aliado a ele), a 11-18 m
+  cv_c_lane_b11_west: c9(-8, -7, 0.4),
+  cv_c_lane_b11_south: c9(-5, 4, 0.2),
+  cv_c_lane_b09_north: c9(-35, -27, -1.2),
+});
+/** Posições de apoio: trela larga (SECTION_LEASH_M). As restantes (pátio e faixas) são de assalto (SECTION_ASSAULT_LEASH_M). */
+export const C09_SUPPORT_NODES = Object.freeze([
+  'cv_c_assembly_gruca',
+  'cv_c_assembly_malek',
+  'cv_c_assembly_wierzba',
+  'cv_c_assembly_aid',
+  'cv_c_north_rkm',
+  'cv_c_north_rkm_2',
+]);
+/** Faixa de tiro de cada defensor interior de B09/B11 que a secção trabalha (o primeiro vivo da lista de cada elemento é o seu objetivo). */
+export const C09_LANES = Object.freeze({
+  'DE-C08': 'cv_c_lane_b11_west',
+  'DE-C07': 'cv_c_lane_b11_south',
+  'DE-C01': 'cv_c_lane_b09_north',
+});
+/** Abaixo desta saúde um elemento da manobra está «ferido» (o limiar de C07) e não vai a uma faixa de tiro. */
+export const C09_WOUNDED_HEALTH = 55;
+export const C09_MANEUVER_TARGETS = Object.freeze({
+  pl_wierzba: Object.freeze(['DE-C08', 'DE-C07', 'DE-C01']),
+  pl_malek: Object.freeze(['DE-C01']),
+});
+
+/** Nó do plano (cell A: layout; cell C: C09_PLAN_NODES). */
+const planNode = (sim, nodeId) => sim.coverNodesById.get(nodeId) ?? C09_PLAN_NODES[nodeId] ?? null;
+
+const isSupportNode = (nodeId) =>
+  SECTION_SUPPORT_NODES.includes(nodeId) || C09_SUPPORT_NODES.includes(nodeId) || String(nodeId ?? '').startsWith('cv_c01_');
+
+/** Nós que um elemento da secção quer em C09 agora (o mais avançado primeiro, os recuos depois). */
+function c09NodeIds(sim, ally) {
+  const combatant = (id) => sim.enemies.some((e) => e.id === id && e.alive && !e.nonCombatant);
+  const workshopFixed = !sim.enemies.some((e) => e.buildingId === 'B10' && e.alive && !e.nonCombatant);
+  switch (ally.id) {
+    case 'pl_aux_01':
+      return workshopFixed ? ['cv_c_yard_line_rkm', 'cv_c_north_rkm'] : ['cv_c_north_rkm'];
+    case 'pl_aux_02':
+      return workshopFixed ? ['cv_c_yard_line_rkm_2', 'cv_c_north_rkm_2'] : ['cv_c_north_rkm_2'];
+    case 'pl_szymczak':
+      return workshopFixed ? ['cv_c_yard_aid', 'cv_c_assembly_aid'] : ['cv_c_assembly_aid'];
+    case 'pl_gruca':
+      return workshopFixed ? ['cv_c_yard_parapet', 'cv_c_assembly_gruca'] : ['cv_c_assembly_gruca'];
+    case 'pl_wierzba':
+    case 'pl_malek': {
+      const assembly = ally.id === 'pl_wierzba' ? 'cv_c_assembly_wierzba' : 'cv_c_assembly_malek';
+      if (!workshopFixed) return [assembly];
+      // quem está ferido (C07: saúde < 55) não vai a uma faixa: fica com Gruca no parapeito
+      if (ally.health < C09_WOUNDED_HEALTH) return ['cv_c_yard_parapet', assembly];
+      const target = C09_MANEUVER_TARGETS[ally.id].find(combatant);
+      return target ? [C09_LANES[target], 'cv_c_yard_parapet', assembly] : ['cv_c_yard_parapet', assembly];
+    }
+    default:
+      return ['cv_c_assembly_gruca'];
+  }
+}
 
 /**
  * Adota o objetivo do plano base que a trela permite. `nodeIds` vem do lanço que o plano quer agora (o primeiro) para trás, até ao
@@ -1025,7 +1121,7 @@ function adoptPlanGoal(sim, ally, nodeIds, stateOf) {
   const wanted = nodeIds[0];
   let adopted = null;
   for (const nodeId of nodeIds) {
-    const node = sim.coverNodesById.get(nodeId);
+    const node = planNode(sim, nodeId);
     if (!node) continue;
     const leash = isSupportNode(nodeId) ? SECTION_LEASH_M : SECTION_ASSAULT_LEASH_M;
     if (Math.hypot(node.x - sim.player.x, node.z - sim.player.z) <= leash) {
@@ -1039,7 +1135,7 @@ function adoptPlanGoal(sim, ally, nodeIds, stateOf) {
     ally.tacticalState = stateOf(wanted);
     return true;
   }
-  const wantedNode = sim.coverNodesById.get(wanted);
+  const wantedNode = planNode(sim, wanted);
   if (!wantedNode) return false;
   if (ally.holdingFor !== wanted) {
     ally.holdingFor = wanted;
@@ -1096,30 +1192,26 @@ export function updatePolishSquad(sim, dt) {
       ally.goal = g;
       ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
     } else if (sim.activeCellId === 'C') {
-      // Cell C (Leśmierz Passage & Evacuation): secure B09/B10/B11 and then cover B09 -> B12 evacuation route
+      // Cell C (Leśmierz Passage & Evacuation): secure B09/B10/B11 (C09) and then cover B09 -> B12 evacuation route (C10-C11)
       const evacPhase = sim.c10Active || sim.c11Active;
-      const cGoals = evacPhase
-        ? {
-            pl_gruca: { x: -32.0, z: 18.0, facing: 0.4, crouch: true, nodeId: 'cv_c_evac_gruca' },
-            pl_wierzba: { x: -14.0, z: -4.0, facing: 0.3, crouch: true, nodeId: 'cv_c_b09_east' },
-            pl_malek: { x: -46.0, z: 36.0, facing: 0.5, crouch: true, nodeId: 'cv_c_evac_malek' },
-            pl_szymczak: { x: -56.0, z: 46.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_aid' },
-            pl_aux_01: { x: -6.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm' },
-            pl_aux_02: { x: -4.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm_2' },
-            pl_lis: ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' },
-          }
-        : {
-            pl_gruca: { x: -6.0, z: -15.5, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_yard_parapet' },
-            pl_wierzba: { x: 12.0, z: -24.0, facing: 0.0, crouch: false, nodeId: 'cv_c_b10_flank' },
-            pl_malek: { x: -28.0, z: -22.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_b09_north' },
-            pl_szymczak: { x: -8.0, z: -38.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_north_wall' },
-            pl_aux_01: { x: -4.0, z: -39.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_north_rkm' },
-            pl_aux_02: { x: -2.0, z: -39.0, facing: Math.PI / 2, crouch: true, nodeId: 'cv_c_north_rkm_2' },
-          };
-      const g = cGoals[ally.id] ?? cGoals.pl_gruca;
-      if (g) {
-        ally.goal = g;
+      if (evacPhase) {
+        if (ally.holdingFor) ally.holdingFor = null; // o plano de C09 acabou
+        const cGoals = {
+          pl_gruca: { x: -32.0, z: 18.0, facing: 0.4, crouch: true, nodeId: 'cv_c_evac_gruca' },
+          pl_wierzba: { x: -14.0, z: -4.0, facing: 0.3, crouch: true, nodeId: 'cv_c_b09_east' },
+          pl_malek: { x: -46.0, z: 36.0, facing: 0.5, crouch: true, nodeId: 'cv_c_evac_malek' },
+          pl_szymczak: { x: -56.0, z: 46.0, facing: -Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_aid' },
+          pl_aux_01: { x: -6.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm' },
+          pl_aux_02: { x: -4.0, z: -11.5, facing: 0.5, crouch: true, nodeId: 'cv_c_yard_rkm_2' },
+          pl_lis: ally.goal ?? { x: -56.0, z: 50.0, facing: Math.PI / 2, crouch: false, nodeId: 'cv_c_b12_lis' },
+        };
+        ally.goal = cGoals[ally.id] ?? cGoals.pl_gruca;
         ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
+      } else {
+        // C09: plano de dois grupos com a trela de D4 (ver C09_PLAN_NODES)
+        adoptPlanGoal(sim, ally, c09NodeIds(sim, ally), (nodeId) =>
+          ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : nodeId.startsWith('cv_c_assembly') ? 'HoldCover' : 'AdvanceOrder',
+        );
       }
     } else if (orderGoal) {
       if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
