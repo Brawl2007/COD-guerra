@@ -127,3 +127,15 @@ export function withoutT47(path,input){
   if(path==='missions/m01-tczew/MAP.md')return mapWithoutT47(input);
   assert.fail('no approved T47 hunks for '+path);
 }
+
+// Golden amendment 22 (commits 42a94dd8, af38cf6d, 0cd865f1) intentionally edited the prose of missions/m01-tczew/HISTORICAL_RESEARCH.md and SCRIPT.md (European
+// Portuguese pass, German supporting round marked as dramatization). Those two documents therefore no longer equal the old base; the byte guards compare them with
+// the amendment-22 version instead (HISTORICAL_RESEARCH.md still minus the T47 row, as before). Every other file keeps its byte-identical base comparison.
+export const AMENDMENT22_DOC_COMMIT='0cd865f1';
+export const AMENDMENT22_DOCS=['missions/m01-tczew/HISTORICAL_RESEARCH.md','missions/m01-tczew/SCRIPT.md'];
+/** [bytes comparable with the working tree file, bytes expected] for a documentation file edited by amendment 22. */
+export function amendment22DocPair(path,actual,readAtCommit){
+  const expected=readAtCommit(AMENDMENT22_DOC_COMMIT,path);
+  if(path==='missions/m01-tczew/HISTORICAL_RESEARCH.md')return [historyWithoutT47(actual),historyWithoutT47(expected)];
+  return [actual,expected];
+}

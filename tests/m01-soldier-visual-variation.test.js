@@ -10,7 +10,7 @@ import {nodeCharacterAssets} from '../tools/verification/m01-soldier-variation-a
 import {M01Simulation} from '../src/game/m01-simulation.js';
 import {actorHitboxes,muzzlePosition} from '../src/world/spatial.js';
 import {integratedPresentation} from './helpers/m01-byte-guard-allowlist.js';
-import {withoutT47} from './helpers/m01-layout-t47-delta.js';
+import {withoutT47,amendment22DocPair,AMENDMENT22_DOCS} from './helpers/m01-layout-t47-delta.js';
 import {driver,toRepair} from './helpers/m01-route.js';
 const assets=await nodeCharacterAssets();
 function characters(on=true){const c=new M01Characters(new THREE.Scene(),{visualVariation:on});c.sources=assets.sources;c.clips=assets.clips;return c;}
@@ -84,6 +84,7 @@ test('integration preserves gameplay, hitbox/muzzle, save, locomotion and non-pr
   if(integratedPresentation.has(p))continue;
   const baseline=execFileSync('git',['show',base+':'+p],{maxBuffer:32*1024*1024});
   const actual=readFileSync(new URL('../'+p,import.meta.url));
+  if(AMENDMENT22_DOCS.includes(p)){const [now,expected]=amendment22DocPair(p,actual,(c,q)=>execFileSync('git',['show',c+':'+q],{maxBuffer:32*1024*1024}));assert.deepEqual(now,expected,p);continue;}   // golden amendment 22 documentation edits (42a94dd8, af38cf6d, 0cd865f1)
   if(p==='missions/m01-tczew/ENGINE_CONTRACT.md'){
     const start=baseline.indexOf(Buffer.from('Dados revistos nos PRs #8 e #10;'));
     assert.ok(start>=0,'baseline engine contract marker');
