@@ -408,9 +408,8 @@ describe('M02-06 — Audiovisual Director, Accessibility, and Full Acceptance Ma
       fire: i % 25 === 5,
       reload: i % 400 === 399,
       lookX: i % 200 === 100 ? 0.12 : 0,
-      orderSuppress: i === 30,
+      orderCover: i === 30,
       orderAdvance: i === 600,
-      orderFlank: i === 1200,
     });
 
     const run = (seed) => {

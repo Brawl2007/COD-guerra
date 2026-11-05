@@ -1,4 +1,5 @@
-import { M02BenchSimulation } from '../game/m02-01-simulation.js';
+import { M02BenchSimulation, M02_MISSION_FAILURE_TEXT } from '../game/m02-01-simulation.js';
+import { SQUAD_ORDER_REJECTION_TEXT } from '../game/m02-combat-ai.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 
 const PANORAMA_VIEWS = Object.freeze({
@@ -29,6 +30,7 @@ const elRouteStatus = document.getElementById('hud-route-status');
 const elAmmo = document.getElementById('hud-ammo');
 const elGrenades = document.getElementById('hud-grenades');
 const elLastShot = document.getElementById('hud-last-shot');
+const elOrder = document.getElementById('hud-order');
 const elDoorPrompt = document.getElementById('door-prompt');
 const elCartelaBanner = document.getElementById('cartela-banner');
 const elDialogueBanner = document.getElementById('dialogue-banner');
@@ -36,6 +38,9 @@ const elTelemetry = document.getElementById('hud-telemetry');
 const elSaveWarning = document.getElementById('hud-save-warning');
 const elSaveWarningText = document.getElementById('hud-save-warning-text');
 const btnClearSaves = document.getElementById('btn-clear-saves');
+const elMissionFailed = document.getElementById('mission-failed');
+const elMissionFailedText = document.getElementById('mission-failed-text');
+const btnRestartCheckpoint = document.getElementById('btn-restart-checkpoint');
 const selQuality = document.getElementById('select-quality');
 const selLighting = document.getElementById('select-lighting');
 
@@ -49,9 +54,8 @@ let pendingSingleActions = {
   crouch: false,
   fire: false,
   grenade: false,
-  orderSuppress: false,
+  orderCover: false,
   orderAdvance: false,
-  orderFlank: false,
 };
 
 window.addEventListener('keydown', (e) => {
@@ -61,9 +65,9 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyC') pendingSingleActions.crouch = true;
   if (e.code === 'Space') pendingSingleActions.fire = true;
   if (e.code === 'KeyG') pendingSingleActions.grenade = true;
-  if (e.code === 'KeyZ') pendingSingleActions.orderSuppress = true;
+  // D4: só duas ordens à secção, «cobrir aqui» (Z) e «avançar para ali» (X)
+  if (e.code === 'KeyZ') pendingSingleActions.orderCover = true;
   if (e.code === 'KeyX') pendingSingleActions.orderAdvance = true;
-  if (e.code === 'KeyB') pendingSingleActions.orderFlank = true;
   if (e.code === 'F3') {
     e.preventDefault();
     renderer.toggleDebugOverlay();
@@ -159,14 +163,11 @@ document.getElementById('btn-reset-bench')?.addEventListener('click', () => {
   sim.reset();
 });
 
-document.getElementById('btn-order-suppress')?.addEventListener('click', () => {
-  sim.issueSquadOrder('suppress');
+document.getElementById('btn-order-cover')?.addEventListener('click', () => {
+  sim.issueSquadOrder('cover');
 });
 document.getElementById('btn-order-advance')?.addEventListener('click', () => {
   sim.issueSquadOrder('advance');
-});
-document.getElementById('btn-order-flank')?.addEventListener('click', () => {
-  sim.issueSquadOrder('flank_east');
 });
 
 for (const btn of document.querySelectorAll('[data-tp]')) {
@@ -202,6 +203,32 @@ function refreshSaveWarning() {
   lastPersistSeen = sim.lastCheckpointPersist;
 }
 
+// D1: falha dura (Piotr morto). A bancada pára de avançar a simulação e mostra a falha; o reinício a partir do último checkpoint
+// compatível é uma ação explícita (este botão ou F9). Quem decide a falha é a simulação; a bancada só a mostra.
+let failureShown = false;
+function refreshMissionFailed() {
+  const failure = sim.missionFailed;
+  if (Boolean(failure) === failureShown) return;
+  failureShown = Boolean(failure);
+  if (elMissionFailed) elMissionFailed.hidden = !failure;
+  if (failure) {
+    if (elMissionFailedText) {
+      elMissionFailedText.textContent = `${M02_MISSION_FAILURE_TEXT[failure.reason] ?? 'A missão falhou.'} (${failure.at.toFixed(1)} s de simulação)`;
+    }
+    document.exitPointerLock?.();
+  }
+}
+
+btnRestartCheckpoint?.addEventListener('click', () => {
+  try {
+    const loaded = sim.restartAfterFailure();
+    if (loaded?.skipped?.length) console.warn('[M02] Reinício saltou checkpoints incompatíveis:', loaded.skipped);
+  } catch (err) {
+    console.warn('[M02] Sem checkpoint restaurável:', err.message);
+  }
+  refreshMissionFailed();
+});
+
 btnClearSaves?.addEventListener('click', () => {
   const ok = window.confirm(
     'Limpar saves da bancada: apaga TODOS os checkpoints guardados da bancada M02 neste navegador (F5 e automáticos). Não se pode anular. Continuar?',
@@ -222,6 +249,7 @@ function playC10ToC11Lis() {
 
 function updateHud() {
   if (sim.lastCheckpointPersist !== lastPersistSeen) refreshSaveWarning();
+  refreshMissionFailed();
   const p = sim.player;
   if (elObjective) {
     elObjective.textContent = `Cena ${sim.script.finished ? 'C12 (fim)' : sim.script.sceneId} · Objetivo [${sim.objective.id}]: ${sim.objective.title}`;
@@ -262,6 +290,20 @@ function updateHud() {
     elRouteStatus.textContent =
       `Vala ${ditchCount}/6 · Pomar ${orchardCount}/6 · B01 ${roomsCount}/5 salas · ` +
       `Horizonte ${tState} (HS-A1: ${hsA1State} · HS-A2: ${hsA2State})`;
+  }
+  if (elOrder) {
+    const order = sim.squadOrder;
+    const feedback = sim.lastOrderFeedback;
+    let text =
+      order.type === 'cover'
+        ? `COBRIR AQUI (${order.nodeId})`
+        : order.type === 'advance'
+          ? `AVANÇAR PARA ALI (${order.nodeId})`
+          : 'sem ordem — Gruca conduz o plano base';
+    if (feedback && !feedback.accepted && sim.clock - feedback.clock < 4) {
+      text += ` · ordem recusada: ${SQUAD_ORDER_REJECTION_TEXT[feedback.reason] ?? feedback.reason}`;
+    }
+    elOrder.textContent = text;
   }
   if (elAmmo) {
     elAmmo.textContent = `${sim.weapon.mag} / ${sim.weapon.reserve}`;
@@ -336,22 +378,25 @@ function animate(now) {
   const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
 
   const simStart = performance.now();
-  sim.tick(dt, {
-    forward,
-    side,
-    sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
-    aim: keys.has('KeyV'),
-    lookX,
-    lookY: 0,
-    interact: pendingSingleActions.interact,
-    reload: pendingSingleActions.reload,
-    crouch: pendingSingleActions.crouch,
-    fire: pendingSingleActions.fire,
-    grenade: pendingSingleActions.grenade,
-    orderSuppress: pendingSingleActions.orderSuppress,
-    orderAdvance: pendingSingleActions.orderAdvance,
-    orderFlank: pendingSingleActions.orderFlank,
-  });
+  // D1: com a missão falhada a bancada deixa de avançar a simulação (pausa de apresentação, como um menu) e mostra a falha;
+  // o roteiro e os checkpoints já param na própria simulação. Sair é uma ação explícita (botão ou F9).
+  if (!sim.missionFailed) {
+    sim.tick(dt, {
+      forward,
+      side,
+      sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
+      aim: keys.has('KeyV'),
+      lookX,
+      lookY: 0,
+      interact: pendingSingleActions.interact,
+      reload: pendingSingleActions.reload,
+      crouch: pendingSingleActions.crouch,
+      fire: pendingSingleActions.fire,
+      grenade: pendingSingleActions.grenade,
+      orderCover: pendingSingleActions.orderCover,
+      orderAdvance: pendingSingleActions.orderAdvance,
+    });
+  }
   const simMs = performance.now() - simStart;
 
   pendingSingleActions.interact = false;
@@ -359,9 +404,8 @@ function animate(now) {
   pendingSingleActions.crouch = false;
   pendingSingleActions.fire = false;
   pendingSingleActions.grenade = false;
-  pendingSingleActions.orderSuppress = false;
+  pendingSingleActions.orderCover = false;
   pendingSingleActions.orderAdvance = false;
-  pendingSingleActions.orderFlank = false;
 
   renderer.renderFrame(dt, simMs);
   updateHud();
@@ -386,7 +430,7 @@ window.m02Bench = {
   fireWeapon: () => sim.firePlayerWeapon(true, true),
   throwGrenade: (origin = null, dir = null) => sim.throwGrenade(origin, dir),
   detonateGrenadeAt: (x, y, z, r = 6.5) => sim.detonateGrenadeAt(x, y, z, r),
-  issueSquadOrder: (type, axis = null) => sim.issueSquadOrder(type, axis),
+  issueSquadOrder: (type, target = null) => sim.issueSquadOrder(type, target),
   markWoundedSoldierWithChalk: () => sim.markWoundedSoldierWithChalk(),
   startAreaAFullC01: () => sim.startAreaAFullC01(),
   triggerTransitionTAB: (opts = {}) => sim.triggerTransitionTAB(opts),
@@ -417,6 +461,7 @@ window.m02Bench = {
   saveCheckpoint: (id) => sim.saveCheckpoint(id),
   restoreCheckpoint: (id) => sim.restoreCheckpoint(id),
   quickLoadCheckpoint: () => sim.quickLoadCheckpoint(),
+  restartAfterFailure: () => sim.restartAfterFailure(),
   getSaveStatus: () => sim.saveStore.status(),
   clearPersistedSaves: () => {
     const ok = sim.clearPersistedSaves();
@@ -435,6 +480,7 @@ window.m02Bench = {
     areaB: structuredClone(sim.areaB),
     areaC: structuredClone(sim.areaC),
     script: structuredClone(sim.script),
+    missionFailed: sim.missionFailed ? structuredClone(sim.missionFailed) : null,
     m03ExportPackage: sim.m03ExportPackage ? structuredClone(sim.m03ExportPackage) : null,
     horizon: sim.horizon ? sim.horizon.snapshot() : null,
     // A configuração de acessibilidade não faz parte do snapshot de jogo (I5); o resumo da bancada mostra-a à parte.

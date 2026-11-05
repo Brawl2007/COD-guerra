@@ -68,6 +68,20 @@ export const WEAPON_PROFILES = Object.freeze({
   }),
 });
 
+/**
+ * D5 (PDF p. 18): «Uma explosão perigosa tem aviso legível de 5-8 s como ponto inicial de teste, cobertura alcançável e causa
+ * situada. A posição do impacto é fixada no mundo; não se desloca para poupar o jogador ou persegui-lo.»
+ * Fontes de explosão perigosa da M02: o impacto fixo de artilharia scriptado (SP03, C10) e a granada de mão de um hostil.
+ * A granada lançada pelo jogador (rastilho de 2 s) não é perigo que a simulação lhe imponha e fica fora desta janela.
+ */
+export const BLAST_WARNING_SEC = Object.freeze({ min: 5, max: 8 });
+export const BLAST_SOURCES = Object.freeze(['scripted_artillery', 'enemy_grenade']);
+/** Aviso por omissão de uma granada inimiga: o ponto médio da janela. */
+export const ENEMY_GRENADE_WARNING_SEC = 6.5;
+/** Raio da explosão de uma granada de mão (o da wz. 33 da bancada) e alcance máximo de lançamento (m). */
+export const ENEMY_GRENADE_RADIUS_M = 6.5;
+export const ENEMY_GRENADE_MAX_THROW_M = 35;
+
 export const M02_DIALOGUE_CATALOG = Object.freeze({
   dlg_m02_001: Object.freeze({
     id: 'dlg_m02_001',
@@ -600,6 +614,162 @@ function normalizeAngleDiff(a, b) {
   return d;
 }
 
+/**
+ * D4 (PDF p. 17): «Ordens do jogador limitam-se a «cobrir aqui» e «avançar para ali» em posições válidas, também acessíveis por
+ * seleção contextual. Sem ordem, Gruca conduz o plano base.» Só há dois tipos de ordem (`cover`, `advance`) e `auto` = sem ordem.
+ * As ordens «Suprimir MG», «Avançar B01» e «Flanquear Pomar» das versões anteriores da bancada deixam de existir; um save antigo
+ * que as guardasse é restaurado como `auto`.
+ * Uma ordem escolhe uma posição âncora (um nó de cobertura do layout da Área A, longe dos hostis e alcançável por Piotr) e atribui
+ * a cada elemento da equipa de assalto (Gruca, Lis, Wierzba, Małek) um nó distinto à volta dela; quem fica sem nó mantém a posição.
+ * O auxiliar do rkm e o sanitário seguem o seu próprio papel. As Áreas B e C não têm nós de cobertura no layout: sem ordens aí.
+ */
+export const SQUAD_ORDER_TYPES = Object.freeze(['auto', 'cover', 'advance']);
+export const LEGACY_SQUAD_ORDER_TYPES = Object.freeze(['suppress', 'flank_east']);
+export const SQUAD_ORDER_ASSAULT_TEAM = Object.freeze(['pl_gruca', 'pl_lis', 'pl_wierzba', 'pl_malek']);
+/** «Cobrir aqui»: a cobertura válida mais próxima de Piotr, até esta distância (m). */
+export const SQUAD_ORDER_SNAP_M = 14;
+/** «Avançar para ali» sem alvo: a posição válida mais próxima dentro de um cone de ±30° da mira, entre estas distâncias (m). */
+export const SQUAD_ORDER_AHEAD = Object.freeze({ minM: 8, maxM: 70, halfConeRad: 0.52 });
+/** Os elementos da equipa ocupam os nós mais próximos da âncora até esta distância (m). */
+export const SQUAD_ORDER_GROUP_M = 16;
+/** Uma posição com um hostil combatente vivo a menos desta distância (m) não é válida. */
+export const SQUAD_ORDER_ENEMY_CLEARANCE_M = 6;
+/**
+ * Uma ordem não dura para sempre: «cobrir aqui» caduca quando Piotr se afasta mais de SQUAD_ORDER_SNAP_M + isto da âncora (já não é
+ * «aqui»); «avançar para ali» caduca quando Piotr chega a menos de SQUAD_ORDER_ARRIVED_M do destino. Caducar devolve a secção ao plano
+ * base de Gruca (`auto`). Sem tempos inventados: caduca com o que o jogador faz.
+ */
+export const SQUAD_ORDER_COVER_LAPSE_EXTRA_M = 8;
+export const SQUAD_ORDER_ARRIVED_M = 6;
+export const SQUAD_ORDER_REJECTION_TEXT = Object.freeze({
+  ordem_desconhecida: 'só há duas ordens: cobrir aqui e avançar para ali',
+  piotr_caido: 'Piotr está caído',
+  sem_posicoes_validas: 'não há posições de cobertura válidas nesta cena',
+  sem_cobertura_aqui: 'não há cobertura válida aqui',
+  sem_posicao_a_frente: 'não há posição válida à frente',
+  posicao_invalida: 'posição inválida',
+  inalcancavel: 'posição inalcançável',
+});
+
+/** Posições válidas para as ordens do jogador: os nós de cobertura da Área A em uso (corredor de C01 ou quinta), sem hostis em cima. */
+export function squadOrderPositions(sim) {
+  if (sim.activeCellId !== 'A') return [];
+  const out = [];
+  for (const node of sim.coverNodesById.values()) {
+    if (node.id.startsWith('cv_c01_') !== Boolean(sim.c01Active)) continue;
+    if (node.id === 'cv_c01_outpost_clear') continue; // o posto EA0 ainda é dos hostis
+    const taken = sim.enemies.some(
+      (e) => e.alive && !e.nonCombatant && Math.hypot(e.x - node.x, e.z - node.z) < SQUAD_ORDER_ENEMY_CLEARANCE_M,
+    );
+    if (!taken) out.push(node);
+  }
+  return out;
+}
+
+const byDistanceThenId = (a, b) => a.d - b.d || (a.node.id < b.node.id ? -1 : a.node.id > b.node.id ? 1 : 0);
+
+function nearestPositions(positions, point, maxM) {
+  return positions
+    .map((node) => ({ node, d: Math.hypot(node.x - point.x, node.z - point.z) }))
+    .filter((c) => c.d <= maxM)
+    .sort(byDistanceThenId)
+    .map((c) => c.node);
+}
+
+/** Seleção contextual de «avançar para ali»: as posições à frente da mira de Piotr, da mais próxima para a mais distante. */
+function positionsAhead(sim, positions) {
+  const p = sim.player;
+  const { minM, maxM, halfConeRad } = SQUAD_ORDER_AHEAD;
+  return positions
+    .map((node) => ({ node, d: Math.hypot(node.x - p.x, node.z - p.z) }))
+    .filter((c) => c.d >= minM && c.d <= maxM && Math.abs(normalizeAngleDiff(Math.atan2(c.node.z - p.z, c.node.x - p.x), p.angle)) <= halfConeRad)
+    .sort(byDistanceThenId)
+    .map((c) => c.node);
+}
+
+/** Resolve uma ordem do jogador. `target`: id de um nó, `{x, z}` ou null (contextual). Devolve { ok, order } ou { ok: false, reason }. */
+export function resolveSquadOrder(sim, type, target = null) {
+  const reject = (reason) => ({ ok: false, reason });
+  if (!SQUAD_ORDER_TYPES.includes(type)) return reject('ordem_desconhecida');
+  const issuedAt = Number(sim.clock.toFixed(2));
+  if (type === 'auto') return { ok: true, order: { type: 'auto', axis: null, issuedAt } };
+  const p = sim.player;
+  if (p.alive === false || !(p.health > 0)) return reject('piotr_caido');
+  const positions = squadOrderPositions(sim);
+  if (positions.length === 0) return reject('sem_posicoes_validas');
+
+  let candidates;
+  if (typeof target === 'string') {
+    const node = positions.find((n) => n.id === target);
+    candidates = node ? [node] : [];
+    if (!candidates.length) return reject('posicao_invalida');
+  } else if (target === null || target === undefined) {
+    candidates = type === 'cover' ? nearestPositions(positions, p, SQUAD_ORDER_SNAP_M) : positionsAhead(sim, positions);
+    if (!candidates.length) return reject(type === 'cover' ? 'sem_cobertura_aqui' : 'sem_posicao_a_frente');
+  } else if (Number.isFinite(target.x) && Number.isFinite(target.z)) {
+    candidates = nearestPositions(positions, target, SQUAD_ORDER_SNAP_M);
+    if (!candidates.length) return reject('posicao_invalida');
+  } else {
+    return reject('posicao_invalida');
+  }
+  // «avançar para ali» é para outro sítio: um destino em cima de Piotr não é uma ordem de avançar
+  if (type === 'advance') {
+    candidates = candidates.filter((n) => Math.hypot(n.x - p.x, n.z - p.z) >= SQUAD_ORDER_ARRIVED_M);
+    if (!candidates.length) return reject('posicao_invalida');
+  }
+
+  // Só posições a que Piotr tem caminho: o jogador escolhe um sítio onde a secção pode ir.
+  const from = { x: p.x, y: p.y, z: p.z, radius: p.radius ?? PLAYER_PHYSICS.radius };
+  const anchor = candidates.slice(0, 4).find((n) => sim.navigator.route(from, { x: n.x, z: n.z }) !== null);
+  if (!anchor) return reject('inalcancavel');
+
+  const team = SQUAD_ORDER_ASSAULT_TEAM.filter((id) => {
+    const a = sim.allies.find((x) => x.id === id);
+    return a && a.alive && !['DOWN', 'EVACUATED', 'MISSING'].includes(a.state) && !a.detachedOutOfCell;
+  });
+  const around = nearestPositions(positions, anchor, SQUAD_ORDER_GROUP_M); // a âncora é a primeira (distância 0)
+  const assignments = {};
+  team.forEach((id, i) => {
+    if (around[i]) assignments[id] = around[i].id;
+  });
+  return {
+    ok: true,
+    order: { type, axis: null, issuedAt, nodeId: anchor.id, x: anchor.x, z: anchor.z, assignments },
+  };
+}
+
+const ORDER_HOLD = Object.freeze({ hold: true });
+
+/** Caduca a ordem em vigor quando deixa de se aplicar (ver SQUAD_ORDER_COVER_LAPSE_EXTRA_M / SQUAD_ORDER_ARRIVED_M). */
+function lapseSquadOrder(sim) {
+  const order = sim.squadOrder;
+  if (!order || order.type === 'auto') return;
+  const d = Math.hypot(sim.player.x - order.x, sim.player.z - order.z);
+  let reason = null;
+  if (sim.activeCellId !== 'A') reason = 'celula_mudou';
+  else if (order.type === 'cover' && d > SQUAD_ORDER_SNAP_M + SQUAD_ORDER_COVER_LAPSE_EXTRA_M) reason = 'piotr_afastou_se';
+  else if (order.type === 'advance' && d < SQUAD_ORDER_ARRIVED_M) reason = 'piotr_chegou';
+  if (!reason) return;
+  const clock = Number(sim.clock.toFixed(2));
+  sim.squadOrder = { type: 'auto', axis: null, issuedAt: clock };
+  sim.events.push({ type: 'squad-order-lapsed', order: order.type, reason, clock: sim.clock });
+  sim.combatLog.push({ clock, type: 'squad_order_lapsed', order: order.type, reason });
+}
+
+/**
+ * Objetivo que a ordem em vigor dá a um elemento da equipa de assalto: o nó atribuído, `ORDER_HOLD` (sem nó: mantém a posição, não
+ * segue o plano) ou null (sem ordem, outro papel, ou fora da Área A: segue o plano base).
+ */
+function squadOrderGoalFor(sim, ally) {
+  const order = sim.squadOrder;
+  if (!order || order.type === 'auto' || sim.activeCellId !== 'A' || !SQUAD_ORDER_ASSAULT_TEAM.includes(ally.id)) return null;
+  const nodeId = order.assignments?.[ally.id];
+  if (!nodeId) return ORDER_HOLD;
+  const node = sim.coverNodesById.get(nodeId);
+  if (!node) return null;
+  return { x: node.x, z: node.z, facing: node.facing, crouch: node.crouch, nodeId };
+}
+
 export function friendlyFireClear(shooter, targetPoint, friendlies, clearanceM = 0.82) {
   const dx = targetPoint.x - shooter.x;
   const dz = targetPoint.z - shooter.z;
@@ -755,6 +925,7 @@ export function updatePolishSquad(sim, dt) {
   const coverById = sim.coverNodesById;
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05' && e.alive && !e.nonCombatant);
+  lapseSquadOrder(sim);
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
@@ -764,6 +935,9 @@ export function updatePolishSquad(sim, dt) {
     stepActorWeapon(sim, ally, dt);
     // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
     if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
+
+    // D4: a ordem do jogador (cobrir aqui / avançar para ali) manda na equipa de assalto da Área A; sem ordem, o plano base.
+    const orderGoal = squadOrderGoalFor(sim, ally);
 
     if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
@@ -805,6 +979,9 @@ export function updatePolishSquad(sim, dt) {
         ally.goal = g;
         ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
       }
+    } else if (orderGoal) {
+      if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
+      ally.tacticalState = sim.squadOrder.type === 'cover' ? 'HoldCover' : 'AdvanceOrder';
     } else if (sim.c01Active) {
       // Os tempos contam desde que o jogador começou a avançar (a preparação em P1 não gasta o relógio da secção) e a secção só
       // toma a última cobertura, à frente do posto EA0, depois do contacto aberto (C02, PDF p. 12).
@@ -856,8 +1033,7 @@ export function updatePolishSquad(sim, dt) {
     } else {
       // Assault & flank team (Gruca, Lis, Wierzba, Małek)
       const combatElapsed = sim.clock - (sim.ea1StartedAt ?? 0);
-      const orderMode = sim.squadOrder?.type ?? 'auto';
-      if (activeAxis === 'orchard' || orderMode === 'flank_east') {
+      if (activeAxis === 'orchard') {
         const stage = combatElapsed < 12 ? 0 : combatElapsed < 26 ? 1 : 2;
         const mapByRole = {
           pl_gruca: ['cv_orchard_bank_e', 'cv_b03_south_entry', 'cv_courtyard_consolidate'],
@@ -901,6 +1077,8 @@ export function updatePolishSquad(sim, dt) {
         actorId: ally.id,
         nodeId: ally.goal.nodeId,
         fromNodeId: prevNode ?? null,
+        // D4: «o log deve relacionar ação e resultado» — a cobertura tomada por ordem do jogador diz qual foi a ordem
+        ...(orderGoal && orderGoal !== ORDER_HOLD ? { byOrder: sim.squadOrder.type } : {}),
       });
       if (ally.id === 'pl_malek' && ally.goal.nodeId === 'cv_ditch_north_b') {
         sim.dialogue.trigger('bz39_c02_04', sim);
@@ -968,10 +1146,25 @@ export function updatePolishSquad(sim, dt) {
   }
 }
 
+/**
+ * Grupo de moral de um hostil (D3: «baixas elevadas ou saída comprometida podem produzir recuo/rendição»): o encontro a que pertence.
+ * Os da quinta (EA1) não trazem `encounterId` no layout; EA0 (o posto de C01) não tem moral de grupo.
+ */
+export const moraleGroupOf = (e) => e.encounterId ?? 'EA1';
+
 export function updateGermanGarrison(sim, dt) {
-  const ea1Enemies = sim.enemies.filter((e) => e.encounterId !== 'EA0');
-  const livingEa1Combat = ea1Enemies.filter((e) => e.alive && !e.nonCombatant);
-  const neutralizedCount = ea1Enemies.length - livingEa1Combat.length;
+  // Moral por grupo: a rendição conta SÓ as baixas do próprio encontro (EA1, EB1, EC1, EC2). Antes contava todos os hostis que não
+  // fossem de EA0, pelo que as baixas de EC1 rendiam EC2 no primeiro tick de C10 (e DE-A05, inexistente nas células B/C, dava a MG
+  // por abatida). A condição da MG é a de DE-A05 e só vale para o grupo da quinta, onde ela existe.
+  const moraleGroups = new Map();
+  for (const e of sim.enemies) {
+    if (e.encounterId === 'EA0') continue;
+    const key = moraleGroupOf(e);
+    const g = moraleGroups.get(key) ?? { size: 0, neutralized: 0 };
+    g.size += 1;
+    if (!e.alive || e.nonCombatant) g.neutralized += 1;
+    moraleGroups.set(key, g);
+  }
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05');
   const mgDown = !mgGunner || !mgGunner.alive || mgGunner.nonCombatant;
 
@@ -988,8 +1181,12 @@ export function updateGermanGarrison(sim, dt) {
     if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
     enemy.suppressed = Math.max(0, enemy.suppressed - dt * 0.25);
 
+    const moraleGroup = moraleGroups.get(moraleGroupOf(enemy));
+    const neutralizedCount = moraleGroup?.neutralized ?? 0;
+    const groupMgDown = moraleGroupOf(enemy) === 'EA1' ? mgDown : true;
+
     // Check C04 wounded non-combatant transition in southern orchard
-    if (enemy.c04Candidate && !enemy.nonCombatant && (enemy.health <= 48 || (mgDown && neutralizedCount >= 6))) {
+    if (enemy.c04Candidate && !enemy.nonCombatant && (enemy.health <= 48 || (groupMgDown && neutralizedCount >= 6))) {
       enemy.state = 'WOUNDED_UNARMED';
       enemy.nonCombatant = true;
       enemy.crouched = true;
@@ -1006,8 +1203,8 @@ export function updateGermanGarrison(sim, dt) {
       continue;
     }
 
-    // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders neutralized)
-    if (!enemy.nonCombatant && mgDown && neutralizedCount >= 7) {
+    // Check garrison morale collapse (retreat / surrender when MG is down and >= 7 defenders of the SAME group are neutralized)
+    if (!enemy.nonCombatant && groupMgDown && neutralizedCount >= 7) {
       enemy.state = 'SURRENDERED';
       enemy.nonCombatant = true;
       enemy.moving = false;

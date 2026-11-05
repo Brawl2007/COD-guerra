@@ -19,7 +19,9 @@ import {
 const DT = 0.05;
 const PREFIX_TICKS = 160; // 8 s antes do snapshot: uma granada já explodiu (indicador direcional ativo) e outra está em voo
 const CONTINUATION_TICKS = 160; // 8 s comparados tick a tick depois do snapshot
-const SEEDS = [19390909, 19390913];
+// D1: com a missão falhada (Piotr morto) nada se grava. O piloto da rota do pomar com a semente 19390913 morre no tick 158, antes do
+// snapshot do tick 160; 19390917 sobrevive nas duas rotas durante todo o cenário (vala e pomar, 320 ticks).
+const SEEDS = [19390909, 19390917];
 const ROUTES = Object.freeze({
   vala: Object.freeze([
     [-45, -70],
@@ -112,8 +114,11 @@ function normalizeAngle(a) {
   return d;
 }
 
-/** Piloto determinístico por rota: segue os waypoints, dispara, recarrega, lança uma granada e dá ordens à secção. */
-function makeDriver(routeId) {
+/**
+ * Piloto determinístico por rota: segue os waypoints, dispara, recarrega, lança uma granada e dá ordens à secção.
+ * `withOrders: false` deixa a secção seguir o plano base de Gruca (uma ordem do jogador suspende-o por desenho, D4).
+ */
+function makeDriver(routeId, { withOrders = true } = {}) {
   const waypoints = ROUTES[routeId];
   let wp = 0;
   return (sim, tickIndex) => {
@@ -127,11 +132,11 @@ function makeDriver(routeId) {
     }
     if (tickIndex % 23 === 11) controls.fire = true;
     if (tickIndex % 97 === 50) controls.reload = true;
-    if (tickIndex === 30) controls[routeId === 'pomar' ? 'orderFlank' : 'orderSuppress'] = true;
+    if (withOrders && tickIndex === 30) controls.orderCover = true; // D4: só há «cobrir aqui» e «avançar para ali»
     // Fusível de 2 s (40 ticks): a 1.ª explode no tick 140 (indicador direcional ainda ativo no snapshot do tick 160),
     // a 2.ª ainda está em voo no snapshot e explode durante a continuação.
     if (tickIndex === 100 || tickIndex === 150) controls.grenade = true;
-    if (tickIndex === 200) controls.orderAdvance = true;
+    if (withOrders && tickIndex === 200) controls.orderAdvance = true;
     if (tickIndex === 260 || tickIndex === 300) controls.crouch = true;
     if (tickIndex % 41 === 7) controls.interact = true;
     return controls;
@@ -166,11 +171,11 @@ function assertSameTrajectory(actual, expected, label) {
 }
 
 /** Prepara um cenário: prefixo gravado, checkpoint, continuação gravada (referência). */
-function buildScenario(routeId, seed, { prefixTicks = PREFIX_TICKS, continuationTicks = CONTINUATION_TICKS } = {}) {
+function buildScenario(routeId, seed, { prefixTicks = PREFIX_TICKS, continuationTicks = CONTINUATION_TICKS, withOrders = true } = {}) {
   const storage = createMemoryStorage();
   const sim = new M02BenchSimulation(seed, { storage });
   sim.drainEvents();
-  const driver = makeDriver(routeId);
+  const driver = makeDriver(routeId, { withOrders });
   const prefix = runRecording(sim, driver, 0, prefixTicks);
   const snap = sim.saveCheckpoint('cp_fix2_test');
   assert.equal(sim.lastCheckpointPersist.ok, true, `persistência do checkpoint: ${sim.lastCheckpointPersist.reason}`);
@@ -247,7 +252,8 @@ describe('M02-09 — SAVE-01: restauro determinístico com semente e estado do g
   });
 
   it('fechaduras de porta ativas no snapshot (rota vala, 20 s) são repostas e a continuação coincide', () => {
-    const { snap, continuation, storage } = buildScenario('vala', SEEDS[0], { prefixTicks: 400, continuationTicks: 100 });
+    // sem ordens: a secção segue o plano base e atravessa as portas estreitas de B01 (uma ordem suspendê-lo-ia, D4)
+    const { snap, continuation, storage } = buildScenario('vala', SEEDS[0], { prefixTicks: 400, continuationTicks: 100, withOrders: false });
     assert.ok(Object.keys(snap.doorLocks).length > 0, 'pelo menos uma porta estreita reservada por um NPC');
     const fresh = new M02BenchSimulation(SEEDS[1]);
     fresh.restoreSnapshot(snap);

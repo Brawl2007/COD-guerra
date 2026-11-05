@@ -15,12 +15,28 @@ import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
 import { M02AudiovisualDirector } from './m02-audiovisual-director.js';
 import {
+  M02_DIFFICULTY,
+  M02_DIFFICULTY_SIM_DEFAULT,
+  M02_ENEMY_HIT_DAMAGE_FACTOR,
+  M02_ENEMY_HIT_DAMAGE_MIN,
+  M02_F1_TELEGRAPH_GAP_SEC,
+  resolveM02Difficulty,
+} from './m02-difficulty.js';
+import {
   WEAPON_PROFILES,
   M02_DIALOGUE_CATALOG,
   M02DialogueDirector,
   updatePolishSquad,
   updateGermanGarrison,
   roundNoNegZero,
+  BLAST_WARNING_SEC,
+  BLAST_SOURCES,
+  ENEMY_GRENADE_WARNING_SEC,
+  ENEMY_GRENADE_RADIUS_M,
+  ENEMY_GRENADE_MAX_THROW_M,
+  SQUAD_ORDER_TYPES,
+  LEGACY_SQUAD_ORDER_TYPES,
+  resolveSquadOrder,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -84,6 +100,18 @@ const TARGET_TO_ENEMY_SYNC = Object.freeze({
 
 const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELOAD_SINGLE']);
 const PLAYER_ID = 'piotr_sokol';
+
+/**
+ * D1 (PDF p. 16, «Falhas duras»): a missão falha quando Piotr morre. A incapacidade definitiva de uma personagem exigida pelo cânone
+ * antes do seu ponto de resolução (também D1) depende da lista de personagens exigidas de K/I e ainda não está implementada.
+ * A falha é estado (`sim.missionFailed = {reason, at}`), nunca imunidade oculta: pára o roteiro e os checkpoints (automáticos
+ * e manuais) e só se sai dela por uma ação explícita (`restartAfterFailure`, o F9 da bancada).
+ */
+export const M02_MISSION_FAILURE_REASONS = Object.freeze(['piotr_killed']);
+/** Texto de apresentação de cada razão (a bancada só mostra; quem decide a falha é a simulação). */
+export const M02_MISSION_FAILURE_TEXT = Object.freeze({
+  piotr_killed: 'O strz. Piotr Sokół morreu. A missão falhou.',
+});
 
 // FIX-2b (PDF I4/I5): enums e relações que o restauro aceita. Valores tirados do código que os escreve.
 const ALLY_STATES = Object.freeze([
@@ -297,6 +325,10 @@ export function validateM02Snapshot(snap) {
       if (label === 'Aliado' && !a.alive && !ALLY_INCAPACITATED_STATES.includes(a.state)) {
         return { valid: false, reason: `Aliado morto com arma ativa no snapshot: ${a.id} (${a.state})` };
       }
+      // D6 (regra F1 da M01): contacto de um atirador com Piotr; só existe em soldado/veterano, instantes finitos ou null.
+      if (label === 'Inimigo' && ['aimEngagedAt', 'aimLastAt'].some((k) => k in a && a[k] !== null && !(Number.isFinite(a[k]) && a[k] >= 0))) {
+        return { valid: false, reason: `Contacto do inimigo com Piotr inválido no snapshot: ${a.id}` };
+      }
     }
   }
   const aliveById = new Map([[PLAYER_ID, p.alive !== false], ...snap.allies.map((a) => [a.id, a.alive])]);
@@ -304,6 +336,22 @@ export function validateM02Snapshot(snap) {
 
   for (const key of ['mgState', 'routeProgress', 'objective', 'squadOrder', 'dialogue', 'audiovisual', 'supplies']) {
     if (!isPlainObject(snap[key])) return { valid: false, reason: `Bloco ${key} ausente ou inválido no snapshot.` };
+  }
+  // D4: ordem à secção — `auto`, `cover` ou `advance` (as de versões anteriores, `suppress`/`flank_east`, restauram-se como `auto`).
+  const order = snap.squadOrder;
+  const orderHasTarget = order.type === 'cover' || order.type === 'advance';
+  if (
+    !(SQUAD_ORDER_TYPES.includes(order.type) || LEGACY_SQUAD_ORDER_TYPES.includes(order.type)) ||
+    (order.issuedAt !== undefined && !(typeof order.issuedAt === 'number' && Number.isFinite(order.issuedAt) && order.issuedAt >= 0)) ||
+    (orderHasTarget &&
+      (typeof order.nodeId !== 'string' ||
+        !order.nodeId ||
+        !Number.isFinite(order.x) ||
+        !Number.isFinite(order.z) ||
+        !isPlainObject(order.assignments) ||
+        Object.entries(order.assignments).some(([id, node]) => typeof node !== 'string' || !snap.allies.some((a) => a.id === id))))
+  ) {
+    return { valid: false, reason: `Ordem à secção inválida no snapshot: ${order.type}` };
   }
   if (!isPlainObject(snap.areaB) || !isPlainObject(snap.areaC)) {
     return { valid: false, reason: 'Estado das áreas B/C ausente no snapshot.' };
@@ -367,6 +415,14 @@ export function validateM02Snapshot(snap) {
       reason: 'Save incompatível: estado de contacto C01 (c01Contact) ausente ou inválido (snapshot anterior ao roteiro automático).',
     };
   }
+  // D1: campo aditivo do schema 2 — ausente = missão em curso (null). Presente tem de ser {reason ∈ enum, at ≤ clock}.
+  const failed = snap.missionFailed ?? null;
+  if (
+    failed !== null &&
+    (!isPlainObject(failed) || !M02_MISSION_FAILURE_REASONS.includes(failed.reason) || !finiteTime(failed.at) || failed.at > snap.clock + 1e-9)
+  ) {
+    return { valid: false, reason: 'Estado de falha da missão (missionFailed) inválido no snapshot.' };
+  }
   if (!isPlainObject(snap.flags)) return { valid: false, reason: 'Flags de campanha ausentes no snapshot.' };
   for (const [flag, value] of Object.entries(snap.flags)) {
     if (value !== null && !['boolean', 'number', 'string'].includes(typeof value)) {
@@ -410,6 +466,39 @@ export function validateM02Snapshot(snap) {
       return { valid: false, reason: `Granada em voo inválida no snapshot: ${g?.id}` };
     }
     grenadeIds.add(g.id);
+  }
+
+  // D5: explosões perigosas com aviso agendado (campo aditivo do schema 2; ausente = nenhuma).
+  const hazards = snap.hazardBlasts ?? [];
+  const hazardSeq = snap.hazardBlastSeq ?? 0;
+  if (!Array.isArray(hazards) || !isNonNegativeInteger(hazardSeq)) {
+    return { valid: false, reason: 'Explosões agendadas (hazardBlasts) ou o seu contador inválidos no snapshot.' };
+  }
+  const hazardIds = new Set();
+  const LEAD_TOLERANCE = 0.02; // arredondamento dos instantes a 2-3 casas
+  for (const b of hazards) {
+    const lead = isPlainObject(b) ? b.impactAt - b.warnedAt : Number.NaN;
+    if (
+      !isPlainObject(b) ||
+      typeof b.id !== 'string' ||
+      !b.id ||
+      hazardIds.has(b.id) ||
+      !BLAST_SOURCES.includes(b.source) ||
+      ['x', 'y', 'z', 'radius', 'warnedAt', 'impactAt', 'warningSec'].some((k) => typeof b[k] !== 'number' || !Number.isFinite(b[k])) ||
+      b.radius <= 0 ||
+      b.warnedAt < 0 ||
+      b.warnedAt > snap.clock + 1e-9 ||
+      !(lead >= BLAST_WARNING_SEC.min - LEAD_TOLERANCE && lead <= BLAST_WARNING_SEC.max + LEAD_TOLERANCE) ||
+      !(b.warningSec >= BLAST_WARNING_SEC.min && b.warningSec <= BLAST_WARNING_SEC.max) ||
+      Math.abs(lead - b.warningSec) > LEAD_TOLERANCE ||
+      (b.thrownBy !== null && typeof b.thrownBy !== 'string')
+    ) {
+      return {
+        valid: false,
+        reason: `Explosão agendada inválida no snapshot (aviso de ${BLAST_WARNING_SEC.min}-${BLAST_WARNING_SEC.max} s, posição e fonte): ${b?.id}`,
+      };
+    }
+    hazardIds.add(b.id);
   }
 
   if (!isPlainObject(snap.doorLocks)) return { valid: false, reason: 'Fechaduras de porta ausentes no snapshot.' };
@@ -495,6 +584,13 @@ export class M02BenchSimulation {
   #pendingCheckpointIds = [];
   /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
   #lastSessionCheckpointId = null;
+  /**
+   * D6: perfil de dificuldade (recruta | soldado | veterano, os ids da M01). CONFIGURAÇÃO, não estado de jogo (I5): fora do snapshot,
+   * não é reposto por um checkpoint nem por reset(); privado para não contar como estado vivo (como os campos acima).
+   */
+  #difficultyId = M02_DIFFICULTY_SIM_DEFAULT;
+  /** Resultado da última ordem à secção, para a bancada o mostrar (dica de apresentação; não é estado de jogo nem entra no snapshot). */
+  #lastOrderFeedback = null;
 
   /**
    * @param {number} seed
@@ -502,8 +598,10 @@ export class M02BenchSimulation {
    * @param {string} [options.startScene]
    * @param {M02SaveStore} [options.saveStore] loja de checkpoints persistentes (por omissão: localStorage no browser, memória em Node)
    * @param {{getItem:Function,setItem:Function,removeItem:Function}} [options.storage] armazenamento para a loja por omissão
+   * @param {string} [options.difficulty] perfil de dificuldade (ids da M01); por omissão `recruta`, a afinação de protótipo
    */
-  constructor(seed = 19390909, { startScene = 'C02', saveStore = null, storage = null } = {}) {
+  constructor(seed = 19390909, { startScene = 'C02', saveStore = null, storage = null, difficulty = M02_DIFFICULTY_SIM_DEFAULT } = {}) {
+    this.#difficultyId = resolveM02Difficulty(difficulty).id;
     this.saveStore = saveStore ?? new M02SaveStore({ storage, validateSnapshot: validateM02Snapshot });
     this.lastCheckpointPersist = null;
     this.seed = seed;
@@ -522,6 +620,25 @@ export class M02BenchSimulation {
     this.combatLog = [];
     this.checkpoints = new Map();
     this.reset(startScene);
+  }
+
+  /** Última ordem à secção dada (aceite ou recusada, com o motivo) — só para a bancada mostrar o resultado. */
+  get lastOrderFeedback() {
+    return this.#lastOrderFeedback ? { ...this.#lastOrderFeedback } : null;
+  }
+
+  /** Perfil de dificuldade em vigor (objeto imutável de m02-difficulty.js). */
+  get difficulty() {
+    return M02_DIFFICULTY[this.#difficultyId];
+  }
+
+  /**
+   * Muda o perfil de dificuldade (configuração: não toca no estado de jogo, no snapshot nem nos checkpoints). RangeError se o id
+   * não é um dos da M01. Devolve o perfil.
+   */
+  setDifficulty(id) {
+    this.#difficultyId = resolveM02Difficulty(id).id;
+    return this.difficulty;
   }
 
   reset(startScene = this.defaultStartScene) {
@@ -555,6 +672,9 @@ export class M02BenchSimulation {
     this.c10Active = false;
     this.c11Active = false;
     this.m03ExportPackage = null;
+    this.missionFailed = null;
+    this.hazardBlasts = [];
+    this.hazardBlastSeq = 0;
 
     if (this.activeCellId !== 'A') {
       this.world = this.zoneStreamer.switchToCell('A');
@@ -740,6 +860,7 @@ export class M02BenchSimulation {
     if (this.activeCellId !== 'A') {
       this.world = this.zoneStreamer.switchToCell('A');
       this.activeCellId = 'A';
+      this.hazardBlasts = []; // D5: as explosões agendadas pertencem ao mundo da célula em que foram avisadas
       this.navigator = new M01Navigator(this.world.navWorld);
     }
     const p1 = this.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175, angle: Math.PI / 2, pitch: 0 };
@@ -932,26 +1053,31 @@ export class M02BenchSimulation {
     return { x: this.player.x, y: this.player.y, z: this.player.z, angle: this.player.angle };
   }
 
-  issueSquadOrder(type, axis = null) {
-    const valid = ['auto', 'suppress', 'advance', 'flank_east'];
-    if (!valid.includes(type)) return null;
-    const resolvedAxis = axis ?? (type === 'flank_east' ? 'orchard' : this.flags['m02.axis'] ?? 'ditch');
-    this.squadOrder = {
-      type,
-      axis: resolvedAxis,
-      issuedAt: Number(this.clock.toFixed(2)),
-    };
-    if (!this.flags['m02.axis'] && (resolvedAxis === 'ditch' || resolvedAxis === 'orchard')) {
-      this.flags['m02.axis'] = resolvedAxis;
+  /**
+   * D4 (PDF p. 17): ordens do jogador à secção — só «cobrir aqui» (`cover`) e «avançar para ali» (`advance`); `auto` volta ao plano
+   * base de Gruca. `target`: id de um nó de cobertura, `{x, z}` ou null (seleção contextual: a cobertura mais próxima de Piotr / a
+   * posição à frente da mira). A ordem é aceite só para uma posição válida e alcançável (ver resolveSquadOrder); senão devolve null
+   * e emite `squad-order-rejected` com o motivo. Ordens que já não existem («suprimir», «flank_east») são recusadas.
+   */
+  issueSquadOrder(type, target = null) {
+    const result = resolveSquadOrder(this, type, target);
+    const clock = Number(this.clock.toFixed(2));
+    if (!result.ok) {
+      this.#lastOrderFeedback = { type: String(type), accepted: false, reason: result.reason, clock };
+      this.events.push({ type: 'squad-order-rejected', order: String(type), reason: result.reason, clock: this.clock });
+      this.combatLog.push({ clock, type: 'squad_order_rejected', order: String(type), reason: result.reason });
+      return null;
     }
-    if (type === 'suppress') {
-      this.dialogue.trigger('bz39_c02_01', this);
-    } else if (type === 'advance') {
-      this.dialogue.trigger('bz39_c03_01', this);
-    } else if (type === 'flank_east') {
-      this.dialogue.trigger('bz39_c02_01', this);
-    }
-    this.events.push({ type: 'squad-order', order: this.squadOrder, clock: this.clock });
+    this.squadOrder = result.order;
+    this.#lastOrderFeedback = { type, accepted: true, reason: null, clock, nodeId: result.order.nodeId ?? null };
+    this.events.push({ type: 'squad-order', order: structuredClone(this.squadOrder), clock: this.clock });
+    this.combatLog.push({
+      clock,
+      type: 'squad_order',
+      order: type,
+      nodeId: result.order.nodeId ?? null,
+      assignments: structuredClone(result.order.assignments ?? {}),
+    });
     return this.squadOrder;
   }
 
@@ -1242,9 +1368,23 @@ export class M02BenchSimulation {
     const roundsToFire = Math.min(shooter.mag, prof.burstCount ?? 1);
     if (roundsToFire <= 0) return null;
 
+    // D6: perfil de dificuldade (configuração). Só o fogo inimigo muda: o ciclo de fogo contra qualquer alvo da secção, a precisão
+    // quando o alvo é Piotr, o dano que lhe chega e a regra F1. Em recruta todos os fatores são exatamente 1 e não há regra nova.
+    const diff = this.difficulty;
+    const enemyFire = side === 'enemy';
+    const aimsAtPlayer = enemyFire && targetActor === this.player;
+    if (aimsAtPlayer && diff.reactionGraceSec !== null) {
+      // F1: o contacto deste atirador com Piotr conta-se desde a sua primeira rajada e quebra-se após um intervalo longo sem lhe disparar.
+      const now = Number(this.clock.toFixed(3));
+      const idle = shooter.aimLastAt == null || now - shooter.aimLastAt > M02_F1_TELEGRAPH_GAP_SEC;
+      if (idle || shooter.aimEngagedAt == null) shooter.aimEngagedAt = now;
+      shooter.aimLastAt = now;
+    }
+    let burstDamageOnPlayer = 0;
+
     shooter.mag -= roundsToFire;
     shooter.shotsFired = (shooter.shotsFired ?? 0) + roundsToFire;
-    shooter.nextFireAt = Number((this.clock + prof.cycleSec).toFixed(3));
+    shooter.nextFireAt = Number((this.clock + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
@@ -1259,7 +1399,7 @@ export class M02BenchSimulation {
       const dy = aimPoint.y - origin.y;
       const dz = aimPoint.z - origin.z;
       const baseLen = Math.hypot(dx, dy, dz) || 1;
-      const spread = prof.spreadRad * (shooter.suppressed > 0.4 ? 1.55 : 1.0);
+      const spread = prof.spreadRad * (shooter.suppressed > 0.4 ? 1.55 : 1.0) * (aimsAtPlayer ? diff.aimErrorScale : 1);
       const jx = (this.rng.next() - 0.5) * 2 * spread;
       const jy = (this.rng.next() - 0.5) * 1.4 * spread;
       const jz = (this.rng.next() - 0.5) * 2 * spread;
@@ -1294,7 +1434,18 @@ export class M02BenchSimulation {
         const victim = hit.actor;
         const rawDmg = Math.round(prof.damage * (hit.multiplier ?? 1));
         // Essential allies and player in cover take bounded damage so squad progression stays cohesive
-        const dmg = side === 'enemy' ? Math.max(6, Math.round(rawDmg * 0.35)) : rawDmg;
+        let dmg = enemyFire ? Math.max(M02_ENEMY_HIT_DAMAGE_MIN, Math.round(rawDmg * M02_ENEMY_HIT_DAMAGE_FACTOR)) : rawDmg;
+        if (enemyFire && victim === this.player) {
+          dmg = Math.round(dmg * diff.damageTakenScale);
+          // Uma ferida por rajada (M01 `burstWoundCap`): o que passa do teto da rajada já não conta.
+          if (diff.burstDamageCap !== null) dmg = Math.max(0, Math.min(dmg, diff.burstDamageCap - burstDamageOnPlayer));
+          burstDamageOnPlayer += dmg;
+          // F1: o primeiro contacto de um atirador nunca mata; a vida fica em 1 até ele combater Piotr há `reactionGraceSec`.
+          if (diff.reactionGraceSec !== null && victim.health - dmg <= 0) {
+            const engagedFor = shooter.aimEngagedAt == null ? 0 : this.clock - shooter.aimEngagedAt;
+            if (engagedFor < diff.reactionGraceSec) dmg = Math.max(0, victim.health - 1);
+          }
+        }
         victim.health = Math.max(0, victim.health - dmg);
         victim.hitsReceived = (victim.hitsReceived ?? 0) + 1;
         shooter.hitsInflicted = (shooter.hitsInflicted ?? 0) + 1;
@@ -1391,6 +1542,8 @@ export class M02BenchSimulation {
     return rec;
   }
 
+  // Granada do jogador (ou de teste, com origem própria): rastilho de 2 s, sem aviso. As granadas inimigas não passam por aqui:
+  // têm o aviso de 5-8 s de D5 (`throwEnemyGrenade`).
   throwGrenade(customOrigin = null, customDir = null) {
     if (!customOrigin && this.grenadeAmmo <= 0) return null;
     if (!customOrigin) {
@@ -1421,7 +1574,11 @@ export class M02BenchSimulation {
     return g;
   }
 
-  detonateGrenadeAt(x, y, z, radius = 6.5) {
+  /**
+   * Explosão no mundo. `meta` (só nas explosões perigosas agendadas, D5: artilharia scriptada e granada inimiga) acrescenta ao
+   * registo a fonte, o aviso que a anunciou e quem a lançou; sem `meta` o registo é o de sempre (granada do jogador).
+   */
+  detonateGrenadeAt(x, y, z, radius = 6.5, meta = null) {
     const center = { x, y: Math.max(this.world.heightAt(x, z) + 0.35, y), z };
     const worldChanges = this.world.applyExplosionDamageToWorld(center, Math.min(radius, 5.5));
     this.navigator.sync();
@@ -1451,7 +1608,9 @@ export class M02BenchSimulation {
         affectedActors.push({ id: actor.id, blockedByWall: true, damage: 0 });
       } else {
         const rawDamage = Math.round(125 * (1 - dist / radius));
-        const damage = actor.id === 'piotr_sokol' ? Math.round(rawDamage * 0.5) : rawDamage;
+        // D6: a explosão perigosa de um hostil (agendada, com `meta`) fere Piotr com o dano do perfil; a granada dele não.
+        const damageTakenScale = meta && actor.id === 'piotr_sokol' ? this.difficulty.damageTakenScale : 1;
+        const damage = actor.id === 'piotr_sokol' ? Math.round(rawDamage * 0.5 * damageTakenScale) : rawDamage;
         actor.health = Math.max(0, actor.health - damage);
         actor.suppressed = Math.min(1, (actor.suppressed ?? 0) + 0.92);
         if (actor.c04Candidate && actor.health <= 48) {
@@ -1480,11 +1639,117 @@ export class M02BenchSimulation {
       affectedActors,
       clock: Number(this.clock.toFixed(2)),
     };
+    if (meta) {
+      blastRecord.source = meta.source ?? null;
+      blastRecord.blastId = meta.blastId ?? null;
+      blastRecord.thrownBy = meta.thrownBy ?? null;
+      if (meta.warningSkipped) blastRecord.warningSkipped = true;
+    }
     this.audiovisual.onExplosionDetonated(this, blastRecord);
     this.combatLog.push(blastRecord);
     this.events.push(blastRecord);
     this.updateTacticalContext();
     return blastRecord;
+  }
+
+  /**
+   * D5: agenda uma explosão perigosa com aviso. FIXA a posição do impacto no mundo (não se desloca para poupar o jogador nem para
+   * o perseguir), limita o aviso à janela [5, 8] s e emite o evento `blast-warning` (posição, raio, instante do aviso e do impacto,
+   * fonte e lançador: a causa situada), consumível pelo audiovisual. A explosão fica em `hazardBlasts` até ao impacto.
+   * Lança RangeError para fonte desconhecida ou posição/raio inválidos. Devolve uma cópia do registo.
+   */
+  scheduleBlastWarning({
+    source,
+    x,
+    z,
+    y = null,
+    radius = ENEMY_GRENADE_RADIUS_M,
+    warningSec = ENEMY_GRENADE_WARNING_SEC,
+    thrownBy = null,
+  }) {
+    if (!BLAST_SOURCES.includes(source)) throw new RangeError(`Fonte de explosão desconhecida: ${source}`);
+    if (![x, z, radius].every(Number.isFinite) || radius <= 0 || (y !== null && !Number.isFinite(y))) {
+      throw new RangeError('Posição ou raio de explosão inválidos.');
+    }
+    const lead =
+      typeof warningSec === 'number' && !Number.isNaN(warningSec)
+        ? Math.min(BLAST_WARNING_SEC.max, Math.max(BLAST_WARNING_SEC.min, warningSec))
+        : ENEMY_GRENADE_WARNING_SEC;
+    const warnedAt = Number(this.clock.toFixed(3));
+    const blast = {
+      id: `blast_${++this.hazardBlastSeq}`,
+      source,
+      x: roundNoNegZero(x, 3),
+      y: roundNoNegZero(y ?? this.world.heightAt(x, z) + 0.35, 3),
+      z: roundNoNegZero(z, 3),
+      radius,
+      warnedAt,
+      impactAt: Number((warnedAt + lead).toFixed(3)),
+      warningSec: lead,
+      thrownBy,
+    };
+    this.hazardBlasts.push(blast);
+    this.events.push({
+      type: 'blast-warning',
+      blastId: blast.id,
+      source,
+      position: { x: blast.x, y: blast.y, z: blast.z },
+      radius,
+      warnedAt,
+      impactAt: blast.impactAt,
+      warningSec: lead,
+      thrownBy,
+      clock: this.clock,
+    });
+    this.combatLog.push({
+      clock: Number(this.clock.toFixed(2)),
+      type: 'blast_warning',
+      blastId: blast.id,
+      source,
+      x: blast.x,
+      z: blast.z,
+      impactAt: blast.impactAt,
+      thrownBy,
+    });
+    return structuredClone(blast);
+  }
+
+  /**
+   * D5: granada de mão de um hostil (a única via das granadas inimigas). Não há voo simulado: ao lançar, o ponto de impacto
+   * (`target.x/z`) fica fixado no mundo e o aviso é o de `scheduleBlastWarning` (por omissão 6,5 s). Só lança um hostil vivo e
+   * combatente desta simulação, até ENEMY_GRENADE_MAX_THROW_M do alvo. Devolve o registo agendado ou null.
+   */
+  throwEnemyGrenade(thrower, target, { warningSec = ENEMY_GRENADE_WARNING_SEC } = {}) {
+    const enemy = typeof thrower === 'string' ? this.enemies.find((e) => e.id === thrower) : thrower;
+    if (!enemy || !this.enemies.includes(enemy) || !enemy.alive || enemy.nonCombatant) return null;
+    if (!target || !Number.isFinite(target.x) || !Number.isFinite(target.z)) return null;
+    if (Math.hypot(target.x - enemy.x, target.z - enemy.z) > ENEMY_GRENADE_MAX_THROW_M) return null;
+    return this.scheduleBlastWarning({
+      source: 'enemy_grenade',
+      x: target.x,
+      z: target.z,
+      radius: ENEMY_GRENADE_RADIUS_M,
+      warningSec,
+      thrownBy: enemy.id,
+    });
+  }
+
+  /**
+   * D5: impacto das explosões agendadas cuja hora chegou. O impacto fixo de artilharia (SP03) é do diretor da Área C
+   * (`detonateC10FixedArtillery`, a que o seu temporizador chama); aqui só rebentam as granadas inimigas.
+   */
+  #updateHazardBlasts() {
+    if (this.hazardBlasts.length === 0) return;
+    const due = this.hazardBlasts.filter((b) => b.source === 'enemy_grenade' && this.clock + 1e-9 >= b.impactAt);
+    for (const blast of due) {
+      // Sai da lista ANTES de explodir (como as granadas em voo): um snapshot tirado durante a explosão nunca guarda uma explodida.
+      this.hazardBlasts = this.hazardBlasts.filter((b) => b !== blast);
+      this.detonateGrenadeAt(blast.x, blast.y, blast.z, blast.radius, {
+        source: blast.source,
+        blastId: blast.id,
+        thrownBy: blast.thrownBy,
+      });
+    }
   }
 
   updateGrenades(dt) {
@@ -1706,10 +1971,48 @@ export class M02BenchSimulation {
   }
 
   /**
+   * D1: falha dura da missão. Piotr morto (saúde a 0 ou `alive` falso: tiro, explosão ou queda) escreve `missionFailed`
+   * uma só vez, com o relógio do instante; nunca depois de a missão estar concluída (o epílogo C12 é uma elipse sem combate).
+   * Avaliado no fim dos sistemas de combate e ANTES do roteiro: o roteiro não avança no tick em que Piotr morre.
+   * Com a missão falhada o roteiro e os checkpoints param (automáticos e manuais); quem hospeda a simulação (a bancada) deve
+   * deixar de a avançar e mostrar a falha, mas a simulação não se auto-congela: os testes de mundo continuam a poder andar.
+   */
+  #evaluateMissionFailure() {
+    if (this.missionFailed || this.flags['m02.completed'] || this.areaC?.c12Completed) return;
+    const p = this.player;
+    if (p.alive !== false && p.health > 0) return;
+    const at = Number(this.clock.toFixed(3));
+    this.missionFailed = { reason: 'piotr_killed', at };
+    const rec = { clock: Number(this.clock.toFixed(2)), type: 'mission_failed', reason: 'piotr_killed' };
+    this.combatLog.push(rec);
+    this.events.push({ type: 'mission-failed', reason: 'piotr_killed', at, clock: this.clock });
+  }
+
+  /**
+   * Reinício explícito depois de uma falha dura (D1/I5): carrega o último checkpoint compatível, pela mesma ordem de recurso do
+   * F9 (`quickLoadCheckpoint`). Sem falha em curso não faz nada (devolve null). Nunca é chamado pelo tick: sair da falha é
+   * uma ação do jogador.
+   */
+  restartAfterFailure() {
+    if (!this.missionFailed) return null;
+    const failure = structuredClone(this.missionFailed);
+    const loaded = this.quickLoadCheckpoint();
+    this.events.push({
+      type: 'mission-restarted',
+      after: failure,
+      checkpointId: loaded.checkpointId,
+      source: loaded.source,
+      clock: this.clock,
+    });
+    return loaded;
+  }
+
+  /**
    * Pede um checkpoint semântico automático. Dentro de tick()/ação atómica fica pendente e é gravado no fim; fora dela é
    * gravado já (o chamador está num ponto estável entre entradas).
    */
   requestAutoCheckpoint(checkpointId) {
+    if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
     if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
     return null;
@@ -1796,12 +2099,12 @@ export class M02BenchSimulation {
     if (controls.interact) this.interactDoor();
     if (controls.fire) this.firePlayerWeapon(true);
     if (controls.grenade) this.throwGrenade();
-    if (controls.orderSuppress) this.issueSquadOrder('suppress');
+    if (controls.orderCover) this.issueSquadOrder('cover');
     if (controls.orderAdvance) this.issueSquadOrder('advance');
-    if (controls.orderFlank) this.issueSquadOrder('flank_east');
 
     runUpdateC01Contact(this);
     this.updateGrenades(dt);
+    this.#updateHazardBlasts();
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
     if (this.activeCellId === 'B') {
@@ -1813,6 +2116,7 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
+    this.#evaluateMissionFailure();
     runUpdateScript(this);
 
     if (this.mgState.seeingPlayer && this.clock >= this.mgState.nextBurstAt) {
@@ -1858,6 +2162,11 @@ export class M02BenchSimulation {
    * «último gravado» (F9) e como `latestCheckpointId` da loja. Um lote rejeitado pelo validador não marca nenhum.
    */
   #saveCheckpointBatch(checkpointIds) {
+    // D1: os pedidos feitos antes de a falha ser avaliada (mesmo tick) também caem: nada se grava com a missão falhada.
+    if (this.missionFailed) {
+      for (const checkpointId of checkpointIds) this.#rejectCheckpointOnFailure(checkpointId);
+      return;
+    }
     const added = checkpointIds.filter((id) => !this.checkpointsReached.includes(id));
     this.checkpointsReached.push(...added);
     for (const checkpointId of checkpointIds) {
@@ -1868,8 +2177,21 @@ export class M02BenchSimulation {
     }
   }
 
+  #rejectCheckpointOnFailure(checkpointId) {
+    this.events.push({
+      type: 'checkpoint-rejected',
+      checkpointId,
+      clock: this.clock,
+      reason: `Checkpoint recusado: a missão falhou (${this.missionFailed.reason}). Reinicia a partir do último checkpoint.`,
+    });
+    return null;
+  }
+
   /** Snapshot → validação → índice em memória → loja. Não mexe em `checkpointsReached` (quem chama já o marcou). */
   #recordCheckpoint(checkpointId, persist) {
+    // D1: com a missão falhada nada se grava (automático ou manual): o checkpoint seria o próprio estado de falha e, sendo o
+    // último, tirava ao jogador o ponto de reinício bom.
+    if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     const snap = this.snapshot();
     snap.checkpointId = checkpointId;
     const check = validateM02Snapshot(snap);
@@ -2036,6 +2358,9 @@ export class M02BenchSimulation {
       c10Active: this.c10Active,
       c11Active: this.c11Active,
       m03ExportPackage: this.m03ExportPackage ? structuredClone(this.m03ExportPackage) : null,
+      missionFailed: this.missionFailed ? structuredClone(this.missionFailed) : null,
+      hazardBlasts: structuredClone(this.hazardBlasts),
+      hazardBlastSeq: this.hazardBlastSeq,
       doors: Object.fromEntries(this.world.doorStates.entries()),
       windows: Object.fromEntries(this.world.windowStates.entries()),
       fences: Object.fromEntries(this.world.fenceStates.entries()),
@@ -2104,6 +2429,9 @@ export class M02BenchSimulation {
       c10Active: Boolean(snap.c10Active),
       c11Active: Boolean(snap.c11Active),
       m03ExportPackage: snap.m03ExportPackage ?? null,
+      missionFailed: snap.missionFailed ?? null,
+      hazardBlasts: snap.hazardBlasts ?? [],
+      hazardBlastSeq: snap.hazardBlastSeq ?? 0,
       doors: snap.doors,
       windows: snap.windows,
       fences: snap.fences,
@@ -2113,7 +2441,9 @@ export class M02BenchSimulation {
       mgState: snap.mgState,
       routeProgress: snap.routeProgress,
       flags: snap.flags,
-      squadOrder: snap.squadOrder,
+      squadOrder: LEGACY_SQUAD_ORDER_TYPES.includes(snap.squadOrder.type)
+        ? { type: 'auto', axis: null, issuedAt: snap.squadOrder.issuedAt ?? 0 } // ordem que já não existe: neutralizada
+        : snap.squadOrder,
       dialogue: snap.dialogue,
       horizon: snap.horizon,
       audiovisual: snap.audiovisual,
@@ -2168,6 +2498,9 @@ export class M02BenchSimulation {
     this.c10Active = p.c10Active;
     this.c11Active = p.c11Active;
     this.m03ExportPackage = p.m03ExportPackage;
+    this.missionFailed = p.missionFailed;
+    this.hazardBlasts = p.hazardBlasts;
+    this.hazardBlastSeq = p.hazardBlastSeq;
     this.allies = p.allies;
     this.enemies = p.enemies;
     this.calibrationTargets = p.targets;

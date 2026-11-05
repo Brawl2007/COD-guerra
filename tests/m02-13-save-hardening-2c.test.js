@@ -113,7 +113,9 @@ describe('M02-13 — 1: dois checkpoints automáticos no mesmo tick (C01: quinta
         c04.nonCombatant = true;
         c04.health = 30;
       }
-      // O posto EA0 resiste no tick do gatilho: a quinta fica limpa e os defensores do posto rendem-se no mesmo tick.
+      // O posto EA0 resiste até ao tick do gatilho: a quinta fica limpa e os defensores do posto rendem-se nesse mesmo tick (a rendição
+      // do posto já não vem das baixas da quinta — moral por grupo, D3 —, por isso o teste di-lo explicitamente).
+      for (const e of sim.enemies.filter((x) => x.encounterId === 'EA0')) Object.assign(e, { state: 'SURRENDERED', nonCombatant: true });
       sim.tick(DT, {});
       const saved = sim.drainEvents().filter((e) => e.type === 'checkpoint-saved');
       assert.deepEqual(

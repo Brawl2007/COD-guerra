@@ -19,7 +19,15 @@ export const M02_TR_CARTELAS = Object.freeze({
  * no snapshot); um tiro ou granada do jogador abre o contacto já (a iniciativa é dele).
  */
 export const C01_CONTACT_DELAY_SEC = Object.freeze({ min: 30, max: 60 });
-export const C01_CONTACT_OPENED_BY = Object.freeze(['timer', 'player_shot', 'player_grenade']);
+/**
+ * C02: quem corre para o posto não espera pelo temporizador. O posto «sem alerta» dá pelo jogador quando ele chega a esta distância (m)
+ * de um dos seus homens (vivo e combatente) e o contacto abre nesse tick. Escolha documentada (o PDF não a fixa): D1 põe o combate
+ * principal entre 15 e 120 m e C02 o posto a ~67 m da partida; 25 m fica acima dos 15 m mínimos e abaixo da distância (≥ 30 m ao homem
+ * mais próximo) a que ficam as coberturas intermédias de C01 (cv_c01_mid_w/e), onde quem avança com prudência espera os 30-60 s do
+ * contacto. Só conta a distância: a visão por campo/exposição aplica-se depois de o contacto estar aberto (updateGermanGarrison).
+ */
+export const C01_PROXIMITY_DETECTION_M = 25;
+export const C01_CONTACT_OPENED_BY = Object.freeze(['timer', 'player_shot', 'player_grenade', 'proximity']);
 /** Distância (m) a P1 a partir da qual o jogador «começou a avançar». */
 const C01_ADVANCE_THRESHOLD_M = 0.1;
 
@@ -49,7 +57,22 @@ export function updateC01Contact(sim) {
     const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
     c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
   }
-  if (sim.clock >= c.contactAt) openC01Contact(sim, 'timer');
+  if (sim.clock >= c.contactAt) {
+    openC01Contact(sim, 'timer');
+    return;
+  }
+  // O posto não está cego a quem chega ao pé dele: dentro do raio de deteção o contacto abre já (sem sorteio: o atraso do
+  // temporizador foi sorteado uma só vez, ao primeiro avanço).
+  const px = sim.player.x;
+  const pz = sim.player.z;
+  const near = sim.enemies.some(
+    (e) =>
+      e.encounterId === 'EA0' &&
+      e.alive &&
+      !e.nonCombatant &&
+      Math.hypot(e.x - px, e.z - pz) <= C01_PROXIMITY_DETECTION_M,
+  );
+  if (near) openC01Contact(sim, 'proximity');
 }
 
 /**
@@ -212,6 +235,7 @@ export function enterAreaBC06(sim, { skipTransition = false } = {}) {
   }
   const worldB = sim.zoneStreamer.switchToCell('B');
   sim.activeCellId = 'B';
+  sim.hazardBlasts = []; // D5: uma explosão agendada pertence ao mundo da célula em que foi avisada
   sim.world = worldB;
   sim.navigator = new M01Navigator(sim.world.navWorld);
   sim.doorLocks.clear();
@@ -656,6 +680,7 @@ export function enterAreaCC09(sim, { skipTransition = false } = {}) {
 
   const worldC = sim.zoneStreamer.switchToCell('C');
   sim.activeCellId = 'C';
+  sim.hazardBlasts = []; // D5: uma explosão agendada pertence ao mundo da célula em que foi avisada
   sim.world = worldC;
   sim.navigator = new M01Navigator(sim.world.navWorld);
   sim.doorLocks.clear();
@@ -742,9 +767,20 @@ export function startC10OrderChanges(sim) {
   sim.dialogue.trigger('bz39_c10_02', sim);
   sim.dialogue.update(sim);
 
-  // Schedule fixed artillery impact warning (6.0s warning -> fixed street impact at (4, 0, 18))
-  sim.areaC.artilleryWarningAt = Number(sim.clock.toFixed(2));
-  sim.areaC.artilleryImpactAt = Number((sim.clock + sim.areaC.fixedImpactSpec.warningDurationSec).toFixed(2));
+  // Schedule fixed artillery impact warning (6.0s warning -> fixed street impact at (4, 0, 18)). D5 (PDF p. 18): o aviso é uma
+  // explosão agendada da simulação (janela 5-8 s, posição fixada, evento `blast-warning`); o temporizador do diretor lê as
+  // horas desse registo, que é a fonte única do aviso e do impacto.
+  const spec = sim.areaC.fixedImpactSpec;
+  const hazard = sim.scheduleBlastWarning({
+    source: 'scripted_artillery',
+    x: spec.x,
+    y: 0.6,
+    z: spec.z,
+    radius: spec.radius,
+    warningSec: spec.warningDurationSec,
+  });
+  sim.areaC.artilleryWarningAt = hazard.warnedAt;
+  sim.areaC.artilleryImpactAt = hazard.impactAt;
 
   sim.objective = {
     id: 'O07',
@@ -800,8 +836,18 @@ export function detonateC10FixedArtillery(sim) {
   // Add persistent debris obstacle blocking the exterior street at (4, 18), forcing evacuation through B09 nave!
   syncAreaCWorldDamage(sim);
 
+  // D5: o impacto consome o aviso agendado. Sem aviso cumprido (atalho de bancada que rebenta já) fica marcado `warningSkipped`.
+  const hazard = sim.hazardBlasts.find((b) => b.source === 'scripted_artillery') ?? null;
+  if (hazard) sim.hazardBlasts = sim.hazardBlasts.filter((b) => b !== hazard);
+  const warningSkipped = !hazard || sim.clock + 1e-9 < hazard.impactAt;
+
   // Apply causal explosion damage at the fixed coordinates (never shifts to chase or spare player!)
-  const blastReport = sim.detonateGrenadeAt(spec.x, 0.6, spec.z, spec.radius);
+  const blastReport = sim.detonateGrenadeAt(spec.x, 0.6, spec.z, spec.radius, {
+    source: 'scripted_artillery',
+    blastId: hazard?.id ?? null,
+    thrownBy: null,
+    warningSkipped,
+  });
   sim.combatLog.push({
     clock: Number(sim.clock.toFixed(2)),
     type: 'sp03_fixed_artillery_impact',
@@ -1312,7 +1358,8 @@ function c11Resolved(sim) {
 /** Um passo do roteiro, no fim de tick() (depois do tático/objetivo). Pode encadear várias cenas se o estado já as ultrapassou. */
 export function updateScript(sim) {
   const sc = sim.script;
-  if (!sc || sc.finished) return;
+  // D1: com a missão falhada (Piotr morto) o roteiro pára: não avança cenas nem corre ações de transição.
+  if (!sc || sc.finished || sim.missionFailed) return;
   for (let guard = 0; guard < M02_SCENE_IDS.length; guard++) {
     const idx = sceneIndex(sc.sceneId);
     const floor = sceneIndex(stateSceneFloor(sim));
