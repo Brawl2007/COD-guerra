@@ -422,16 +422,16 @@ export function validateM02Snapshot(snap) {
     !isTimeOrNull(areaC.c11StartedAt) ||
     Boolean(areaC.c11Started) !== (areaC.c11StartedAt !== null) ||
     !Array.isArray(areaC.lastGroup) ||
-    areaC.lastGroup.some((lg) => typeof lg.evacuated !== 'boolean' || !isTimeOrNull(lg.arrivedAt) || (lg.evacuated && lg.arrivedAt === null))
+    areaC.lastGroup.some((lg) => !isPlainObject(lg) || typeof lg.evacuated !== 'boolean' || !isTimeOrNull(lg.arrivedAt) || (lg.evacuated && lg.arrivedAt === null))
   ) {
     return {
       valid: false,
       reason: 'Save incompatível: estado de Lis/último grupo da Área C ausente ou inválido (snapshot anterior ao percurso persistente de Lis).',
     };
   }
-  // C11: o último grupo pode ser ferido e morto (campos aditivos `maxHealth`, `casualty…`; saves anteriores têm todos vivos e a 100 %).
+  // C11: o último grupo pode ser ferido e morto (campo aditivo `maxHealth`; saves anteriores têm todos vivos e a 100 %).
   for (const lg of areaC.lastGroup) {
-    const max = lg.maxHealth ?? lg.health;
+    const max = isPlainObject(lg) ? (lg.maxHealth ?? lg.health) : null;
     if (
       !isPlainObject(lg) ||
       typeof lg.alive !== 'boolean' ||

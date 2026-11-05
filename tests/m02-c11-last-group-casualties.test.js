@@ -231,6 +231,7 @@ describe('M02 C11: snapshot, restauro e validador do último grupo', () => {
       ['vivo com vida 0', (s) => { Object.assign(s.areaC.lastGroup[1], { alive: true, health: 0 }); }],
       ['ferido não booleano', (s) => { s.areaC.lastGroup[1].wounded = 'sim'; }],
       ['resumo que não bate com os homens (mortos)', (s) => { s.areaC.lastGroupSummary = { evacuated: 0, inTransit: 12, dead: 0 }; }],
+      ['membro que não é um objeto (o validador nunca lança)', (s) => { s.areaC.lastGroup[2] = null; }],
     ];
     for (const [label, mutate] of cases) {
       const bad = structuredClone(snap);
