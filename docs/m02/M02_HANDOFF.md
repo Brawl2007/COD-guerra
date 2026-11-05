@@ -67,17 +67,17 @@
 ### 2.4. M02-04 — Área B Completa: Acessos de Łęczyca, Encontro `EB1`, `SP02 — A Carroça Não Passa Sozinha` e Reorganização `TR02` (`STREAM-01`, `PERF-02`)
 1. **Streaming por Células (`src/world/m02-zone-streamer.js` — `STREAM-01`, `PERF-02`):**
    - `M02ZoneStreamer` gere as células `A`, `B` e `C` com limite estrito `MAX_RESIDENT_CELLS = 2` (`residentCellsCount <= 2`) e descarga explícita das células anteriores (`disposedCellsCount`).
-2. **Célula B (`180 × 240 m` · `B05`–`B08`) e Encontro `EB1` (`12` defensores `DE-B01..DE-B12`):**
-   - **B05 — Casa-oficina (`16 × 11 m`)**, **B06 — Loja de esquina (`12 × 9 m`)**, **B07 — Telheiro de carroças (`15 × 7 m`)** navegáveis; **B08 — Habitação fechada (`10 × 8 m`)** opaca, sem portas nem interior oco (`0` portas).
+2. **Célula B (`240 × 280 m` · `B05`–`B08`) e Encontro `EB1` (`12` defensores `DE-B01..DE-B12`):**
+   - **B05 — Casa-oficina (`18 × 12 m`)**, **B06 — Loja de esquina (`16 × 22 m`)**, **B07 — Telheiro de carroças (`20 × 12 m`)** navegáveis; **B08 — Habitação fechada (`12 × 10 m`)** opaca, sem portas nem interior oco (`0` portas).
    - `enterAreaBC06()` posiciona Piotr em `(0, 78)`, carrega `DE-B01..DE-B12` (`EB1`), ativa `T1` (`night_1939_09_09`) e dispara `bz39_c06_01` e `bz39_c06_02`.
 3. **Set Piece `SP02 — A Carroça Não Passa Sozinha` e Cena C07 (`TR02` · `cp_m02_c_reorganizacao`):**
-   - A carroça logística (`supplyCart`) aguarda em `(0, 62)` (`WAITING_CLEAR_CORRIDOR`) enquanto `B05`/`B06` mantêm fogo direto; quando o corredor é suprimido/limpo, avança até `(0, -48)` e entrega `vol_water` e `vol_ammo` (`m02.supply_reached = 2`).
+   - A carroça logística (`supplyCart`) aguarda em `(-70, 60)` (`WAITING_CLEAR_CORRIDOR`) enquanto `B05`/`B06` mantêm fogo direto; quando o corredor é suprimido/limpo, avança de `(-70, 60)` por `(-20, 60)` e `(0, 30)` até `(0, -70)` e entrega `vol_water` e `vol_ammo` (`m02.supply_reached = 2`).
    - Se a roda for danificada (`damageCartWheel()`), a carroça passa a `IMMOBILIZED`, dispara `bz39_c06_03` e `bz39_c06_04`, e liberta os volumes para transporte manual (`pickupSupplyVolume`, `deliverSupplyVolume`, `loseSupplyVolume`), suportando entrega parcial (`1` volume) ou nula (`0` volumes) e rejeitando portadores duplicados/circulares (`SAVE-02`).
    - `completeC07Reorganization()` aplica a transição `TR02` (`T2 · 10 de setembro de 1939 — manhã`), repõe reserva de munição (`+15` se `ammoDelivered`) e saúde limitada (`+10` até máx. `85` se `waterDelivered`, sem cura mágica a `100%`), evacua baixas graves sem ressurreição mágica e grava o 3.º checkpoint canónico `cp_m02_c_reorganizacao`.
 
 ### 2.5. M02-05 — Área C Completa: Acessos de Leśmierz, Encontros `EC1/EC2`, `SP03`, Socorro de `Lis`, Epílogo `C12` e Ponte `M02→M03` (`NAR-02`, `HIST-TEST-01`)
-1. **Cena C08 (`TR03`), Célula C (`200 × 200 m` · `B09`–`B12`) e Encontro `EC1` (`8` defensores `DE-C01..DE-C08`):**
-   - `enterAreaCC09()` destaca `Lis` para ligação fora da célula (`detachedOutOfCell = true`, `state = 'LIAISON_OUTSIDE_CELL'`), comuta para a Célula `C` em `T3` (`afternoon_1939_09_10`), carrega **B09 — Armazém agrícola (`22 × 12 m`)**, **B10 — Oficina mecânica (`14 × 10 m`)**, **B11 — Portaria e muro (`6 × 5 m`)** e **B12 — Casa de socorro e abrigo de bombas (`12 × 9 m` com 2 macas)**, e posiciona os `8` defensores finitos de `EC1`.
+1. **Cena C08 (`TR03`), Célula C (`300 × 360 m` · `B09`–`B12`) e Encontro `EC1` (`8` defensores `DE-C01..DE-C08`):**
+   - `enterAreaCC09()` destaca `Lis` para ligação fora da célula (`detachedOutOfCell = true`, `state = 'LIAISON_OUTSIDE_CELL'`), comuta para a Célula `C` em `T3` (`afternoon_1939_09_10`), carrega **B09 — Armazém agrícola (`28 × 18 m`)**, **B10 — Oficina mecânica (`20 × 16 m`)**, **B11 — Portaria e muro (`10 × 8 m`)** e **B12 — Casa de socorro e abrigo de bombas (`18 × 12 m` com 2 macas)**, e posiciona os `8` defensores finitos de `EC1`.
 2. **Cena C10 (`A Ordem Muda`), Encontro `EC2` (`12` reservas `DE-C09..DE-C20`) e `SP03 — Um Último Atravessamento`:**
    - `startC10OrderChanges()` dispara a fala literal protegida `dlg_m02_002` (`Gruca`: *«O grupo da direita recuou. Nossa ordem mudou.»*), adiciona as `12` reservas finitas de `EC2` (perfazendo ~~**exatamente `46` hostis identificados na missão inteira**~~ o total **planeado** de D2, nunca simultâneo e nunca número de ecrã: `EA0(4) + EA1(10) + EB1(12) + EC1(8) + EC2(12) = 46`; `LG01..LG12` e os nomes dos auxiliares estão fora do PDF), agenda o aviso de `6.0 s` do impacto fixo de artilharia e grava o 4.º checkpoint canónico `cp_m02_d_cobertura_retirada`.
    - `detonateC10FixedArtillery()` detona nas coordenadas fixas `(4, 0, 18)` (nunca deslocadas para perseguir ou poupar o jogador), bloqueia fisicamente a rua exterior (`corridorExteriorBlocked = true`) e força os `12` soldados do último grupo (`LG01..LG12`, incluindo `2` feridos iniciais `LG03` e `LG09`) a atravessar pela nave de `B09` rumo à Casa de Socorro `B12`.
@@ -190,3 +190,14 @@ Legenda: **teste de estado verde (não é aceitação)** = o teste Node passa, s
    ```bash
    npx playwright test -c tools/m02/playwright-m02-01.config.js tests/browser/m02-01-quinta.spec.js
    ```
+
+---
+
+## 6. Roteiro automático C01 → C12 e set pieces (2026-11-05, branch `m02-script-c`; INTEGRADA SEM VALIDAÇÃO DE JOGO)
+
+- **Progressão automática** (`src/game/m02-acts-director.js`, `updateScript`): C01 acaba quando o jogador começa a avançar; C02 → C03 com o posto EA0 vencido e o jogador em z ≥ -85; C03 → C04 sem defensores da quinta em combate; C04 → C05 com a quinta consolidada e o jogador a sair pelo pomar (z ≥ 44); C05 (45 s) → B; C06 acaba com o corredor segurado (`m02.corridor_held`, sem tempo mínimo); C07 (60 s) → C08 (60 s) → Área C; C09 → C10 com EC1 vencido e o jogador no pátio; C10 → C11 no impacto fixo (6 s); C11 → C12 com o último grupo todo evacuado e Piotr no ponto de evacuação (-85,105). As teclas `0–9`/`M` ficam só como atalhos de depuração (o roteiro apanha-os). Tempo simulado por cena em `sim.script.history`.
+- **C02:** o posto EA0 só abre fogo 30–60 s depois de o jogador avançar (`c01Contact`, sorteio com o RNG da simulação; um tiro ou granada do jogador abre-o já). A aproximação de C01 (P1 a ~100 m do slice) passou a ser percorrível (`bounds.c01Approach`).
+- **C06 / SP02:** o tiro parte o varal (`supplyCart.immobilizedCause = 'shaft_broken'`); se o evento falha, alternativa explícita `parked_fallback` (carroça parada, volumes a pé, [E] para pegar). Rota `(-70,60)→(-20,60)→(0,30)→(0,-70)`.
+- **C11/C12:** Lis regressa por movimento contínuo (entrada `(0,-60)`, velocidade de ferido limitada por tick) e é amparado/carregado pela rota de evacuação (agora pela porta norte de B09 `(-30,-20)`); `m02.lis_status` deriva do jogo (`missing` se Piotr termina sem Lis); o último grupo só conta como evacuado ao chegar a `(-85,105)`.
+- **Layout B/C v2** (`m02-cells-bc-layout-v2`): saves de B/C do layout v1 são recusados. Portas de B08: `doorsDecision.decision = 'pendente'` (decisão do proprietário).
+- Testes: `tests/m02-14` a `m02-19` (e `tests/m02-mission-bot.js`, o «jogador» só com entradas de tick). Não é playtest.

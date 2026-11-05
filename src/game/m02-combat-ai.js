@@ -724,7 +724,8 @@ export function stepActorNavigation(sim, actor, dt) {
     return;
   }
 
-  const baseSpeed = actor.suppressed > 0.55 ? 2.6 : 4.1;
+  // `maxSpeed`: teto de velocidade de um ator ferido (Lis em C11, J3); sem ele, a velocidade normal da secção.
+  const baseSpeed = actor.maxSpeed ?? (actor.suppressed > 0.55 ? 2.6 : 4.1);
   const stepDist = Math.min(dist, baseSpeed * dt);
   let vx = (dx / dist) * stepDist;
   let vz = (dz / dist) * stepDist;
@@ -757,9 +758,12 @@ export function updatePolishSquad(sim, dt) {
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
-    if (!ally.alive || ally.state === 'DOWN' || ally.detachedOutOfCell) continue;
+    // Quem foi evacuado ou está ausente (Lis incapacitado antes de C11, «missing») já não age nem se desloca.
+    if (!ally.alive || ally.state === 'DOWN' || ally.state === 'EVACUATED' || ally.state === 'MISSING' || ally.detachedOutOfCell) continue;
     ally.suppressed = Math.max(0, ally.suppressed - dt * 0.28);
     stepActorWeapon(sim, ally, dt);
+    // Lis ferido amparado/carregado/abrigado (J3): o percurso é do diretor da Área C (updateLisC11); a IA da secção não o move nem ele dispara.
+    if (ally.state === 'WALKING_SUPPORTED' || ally.state === 'CARRIED' || ally.state === 'EVACUATED_B12') continue;
 
     if (sim.activeCellId === 'B') {
       // Cell B (Łęczyca Logistics Corridor): bound from south entry toward B05 workshop & B06 shop crossroads
@@ -802,8 +806,11 @@ export function updatePolishSquad(sim, dt) {
         ally.tacticalState = ally.id.startsWith('pl_aux') ? 'HoldAndSuppress' : 'AdvanceOrder';
       }
     } else if (sim.c01Active) {
-      const c01Elapsed = sim.clock - (sim.c01StartedAt ?? 0);
-      const c01Stage = c01Elapsed < 4.5 ? 0 : c01Elapsed < 14.0 ? 1 : 2;
+      // Os tempos contam desde que o jogador começou a avançar (a preparação em P1 não gasta o relógio da secção) e a secção só
+      // toma a última cobertura, à frente do posto EA0, depois do contacto aberto (C02, PDF p. 12).
+      const c01Contact = sim.c01Contact;
+      const c01Elapsed = c01Contact?.movementStartedAt == null ? 0 : sim.clock - c01Contact.movementStartedAt;
+      const c01Stage = c01Elapsed < 4.5 ? 0 : c01Elapsed < 14.0 || !c01Contact?.opened ? 1 : 2;
       const c01Map = {
         pl_aux_01: ['cv_c01_p1_e', 'cv_c01_mid_e', 'cv_c01_mid_e'],
         pl_aux_02: ['cv_c01_p1_w', 'cv_c01_mid_e', 'cv_c01_mid_e'],
@@ -920,6 +927,8 @@ export function updatePolishSquad(sim, dt) {
     for (const enemy of sim.enemies) {
       if (!enemy.alive || enemy.nonCombatant) continue;
       if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
+      // C02: a secção não abre fogo sobre um posto que ainda não deu pelo contacto (o primeiro tiro é do contacto aberto).
+      if (sim.c01Active && !sim.c01Contact?.opened) continue;
       const dist = Math.hypot(enemy.x - ally.x, enemy.z - ally.z);
       if (dist > (WEAPON_PROFILES[ally.weapon]?.range ?? 180)) continue;
 
@@ -1012,6 +1021,15 @@ export function updateGermanGarrison(sim, dt) {
     }
 
     if (enemy.nonCombatant) continue;
+
+    // C02 (PDF p. 12): o posto EA0 está «sem alerta» até ao contacto aberto (30-60 s depois de o jogador avançar): não vê, não
+    // recorda (os ruídos que não abrem o contacto não o alertam) e não dispara. Antes via Piotr no tick 0 a ~67 m.
+    if (sim.c01Active && enemy.encounterId === 'EA0' && !sim.c01Contact?.opened) {
+      enemy.seeingTargetId = null;
+      enemy.memory = null;
+      enemy.state = 'HOLD_SECTOR';
+      continue;
+    }
 
     stepActorWeapon(sim, enemy, dt);
 

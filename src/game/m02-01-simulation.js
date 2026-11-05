@@ -43,6 +43,18 @@ import {
   exportCampaignResultToM03 as runExportCampaignResultToM03,
   syncAreaCWorldDamage,
   dropVolumesOfFallenCarriers,
+  createInitialC01Contact,
+  CART_IMMOBILIZED_CAUSES,
+  CART_PARKED_REASONS,
+  LIS_PHASES,
+  LIS_OUTCOME_SOURCES,
+  M02_SCENE_IDS,
+  createInitialScriptState,
+  updateScript as runUpdateScript,
+  beginC08Briefing as runBeginC08Briefing,
+  openC01Contact,
+  updateC01Contact as runUpdateC01Contact,
+  C01_CONTACT_OPENED_BY,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -83,6 +95,7 @@ const ALLY_STATES = Object.freeze([
   'WOUNDED_LIAISON',
   'EVACUATED_B12',
   'WALKING_SUPPORTED',
+  'CARRIED',
   'MISSING',
 ]);
 /** Estados possíveis de um aliado com alive=false: nenhum tem arma ativa («um ator morto não pode voltar a ser dono de arma ativa», I5). */
@@ -295,6 +308,65 @@ export function validateM02Snapshot(snap) {
   if (!isPlainObject(snap.areaB) || !isPlainObject(snap.areaC)) {
     return { valid: false, reason: 'Estado das áreas B/C ausente no snapshot.' };
   }
+  const areaC = snap.areaC;
+  const isTimeOrNull = (v) => v === null || (typeof v === 'number' && Number.isFinite(v) && v >= 0);
+  const lisSupportOk = [null, 'wounded_evacuated', 'wounded_walking', 'missing'].includes(areaC.lisSupportMode ?? null);
+  if (
+    !('lisPhase' in areaC) ||
+    ![null, ...LIS_PHASES].includes(areaC.lisPhase) ||
+    ![null, ...LIS_OUTCOME_SOURCES].includes(areaC.lisOutcomeSource) ||
+    !lisSupportOk ||
+    typeof areaC.lisWasIncapacitated !== 'boolean' ||
+    !isNonNegativeInteger(areaC.lisRouteIdx) ||
+    !isTimeOrNull(areaC.c11StartedAt) ||
+    Boolean(areaC.c11Started) !== (areaC.c11StartedAt !== null) ||
+    !Array.isArray(areaC.lastGroup) ||
+    areaC.lastGroup.some((lg) => typeof lg.evacuated !== 'boolean' || !isTimeOrNull(lg.arrivedAt) || (lg.evacuated && lg.arrivedAt === null))
+  ) {
+    return {
+      valid: false,
+      reason: 'Save incompatível: estado de Lis/último grupo da Área C ausente ou inválido (snapshot anterior ao percurso persistente de Lis).',
+    };
+  }
+  if (areaC.lastGroupSummary !== null && areaC.lastGroupSummary !== undefined) {
+    const sum = areaC.lastGroupSummary;
+    if (!isPlainObject(sum) || !['evacuated', 'inTransit', 'dead'].every((k) => isNonNegativeInteger(sum[k])) || sum.evacuated + sum.inTransit + sum.dead !== areaC.lastGroup.length) {
+      return { valid: false, reason: 'Resumo do último grupo (lastGroupSummary) inválido no snapshot.' };
+    }
+  }
+  const sc = snap.script;
+  const scIdx = (id) => M02_SCENE_IDS.indexOf(id);
+  const finiteTime = (v) => typeof v === 'number' && Number.isFinite(v) && v >= 0;
+  if (
+    !isPlainObject(sc) ||
+    scIdx(sc.sceneId) < 0 ||
+    !finiteTime(sc.sceneStartedAt) ||
+    sc.sceneStartedAt > snap.clock + 1e-9 ||
+    typeof sc.finished !== 'boolean' ||
+    !Array.isArray(sc.history) ||
+    sc.history.length > M02_SCENE_IDS.length ||
+    sc.history.some((h, i) => !isPlainObject(h) || scIdx(h.id) < 0 || !finiteTime(h.startedAt) || !finiteTime(h.endedAt) || h.endedAt < h.startedAt || (i > 0 && scIdx(h.id) <= scIdx(sc.history[i - 1].id))) ||
+    (sc.history.length > 0 && scIdx(sc.history.at(-1).id) > scIdx(sc.sceneId)) ||
+    (sc.finished && sc.sceneId !== 'C12')
+  ) {
+    return { valid: false, reason: 'Save incompatível: estado do roteiro (script) ausente ou inválido (snapshot anterior ao roteiro automático).' };
+  }
+  const c01 = snap.c01Contact;
+  const nullOrTime = (v) => v === null || (typeof v === 'number' && v >= 0);
+  if (
+    !isPlainObject(c01) ||
+    typeof c01.opened !== 'boolean' ||
+    !nullOrTime(c01.movementStartedAt) ||
+    !nullOrTime(c01.contactAt) ||
+    !nullOrTime(c01.openedAt) ||
+    (c01.contactAt === null) !== (c01.movementStartedAt === null) ||
+    (c01.opened ? !C01_CONTACT_OPENED_BY.includes(c01.openedBy) || c01.openedAt === null : c01.openedBy !== null || c01.openedAt !== null)
+  ) {
+    return {
+      valid: false,
+      reason: 'Save incompatível: estado de contacto C01 (c01Contact) ausente ou inválido (snapshot anterior ao roteiro automático).',
+    };
+  }
   if (!isPlainObject(snap.flags)) return { valid: false, reason: 'Flags de campanha ausentes no snapshot.' };
   for (const [flag, value] of Object.entries(snap.flags)) {
     if (value !== null && !['boolean', 'number', 'string'].includes(typeof value)) {
@@ -351,6 +423,24 @@ export function validateM02Snapshot(snap) {
   const cart = snap.areaB.supplyCart;
   if (cart !== undefined && (!isPlainObject(cart) || !CART_STATES.includes(cart.state))) {
     return { valid: false, reason: `Estado da carroça inválido no snapshot: ${cart?.state}` };
+  }
+  if (cart !== undefined) {
+    const cause = cart.immobilizedCause ?? null;
+    if (typeof cart.shaftBroken !== 'boolean') {
+      return { valid: false, reason: 'Save incompatível: a carroça não tem estado do varal (shaftBroken; snapshot anterior ao evento do tiro).' };
+    }
+    if (
+      typeof cart.shaftBroken !== 'boolean' ||
+      (cause !== null && !CART_IMMOBILIZED_CAUSES.includes(cause)) ||
+      (cart.shaftBroken !== (cause === 'shaft_broken')) ||
+      (cause !== null && cart.state !== 'IMMOBILIZED') ||
+      (cause === 'parked_fallback' ? !CART_PARKED_REASONS.includes(cart.parkedReason) : (cart.parkedReason ?? null) !== null)
+    ) {
+      return {
+        valid: false,
+        reason: `Causa de imobilização da carroça inválida ou incoerente: ${cause} (varal partido ${cart.shaftBroken}, estado ${cart.state}).`,
+      };
+    }
   }
   const volumes = cart?.volumes;
   if (volumes !== undefined) {
@@ -451,6 +541,8 @@ export class M02BenchSimulation {
     this.squadOrder = { type: 'auto', axis: null, issuedAt: 0 };
     this.c01Active = false;
     this.c01StartedAt = 0;
+    this.c01Contact = createInitialC01Contact();
+    this.script = createInitialScriptState(startScene === 'C01' ? 'C01' : 'C02', 0);
     this.ea1StartedAt = 0;
     this.activeCartela = M02_TEMPORAL_STATES.T0.cartela;
     this.transitionTABPayload = null;
@@ -698,6 +790,8 @@ export class M02BenchSimulation {
 
     this.c01Active = true;
     this.c01StartedAt = this.clock;
+    this.c01Contact = createInitialC01Contact();
+    this.script = createInitialScriptState('C01', this.clock);
     this.activeCartela = {
       text: M02_TEMPORAL_STATES.T0.cartela,
       expiresAt: this.clock + 8.0,
@@ -783,6 +877,10 @@ export class M02BenchSimulation {
   // (cp_m02_d_cobertura_retirada em C10) só é gravado quando a ação inteira acabou, como no fim de tick() (FIX-2c).
   completeC07Reorganization(options = {}) {
     return this.#runCheckpointBatch(() => runCompleteC07Reorganization(this, options));
+  }
+
+  beginC08Briefing(options = {}) {
+    return this.#runCheckpointBatch(() => runBeginC08Briefing(this, options));
   }
 
   enterAreaCC09(options = {}) {
@@ -882,6 +980,24 @@ export class M02BenchSimulation {
     };
   }
 
+  /** Volume da carroça largado (varal partido / carroça parada) ao alcance de Piotr, que ainda não carrega nenhum (J2: transporte a pé). */
+  currentVolumePrompt() {
+    const cart = this.areaB?.supplyCart;
+    if (this.activeCellId !== 'B' || !cart || this.player.carryingVolumeId) return null;
+    let best = null;
+    for (const vol of cart.volumes) {
+      if (vol.state !== 'DROPPED_READY' || vol.delivered || vol.lost) continue;
+      const d = Math.hypot(vol.x - this.player.x, vol.z - this.player.z);
+      if (d <= DOOR_INTERACT_RANGE && (!best || d < best.d)) best = { vol, d };
+    }
+    if (!best) return null;
+    return {
+      volumeId: best.vol.id,
+      distance: Number(best.d.toFixed(2)),
+      prompt: `[E] Pegar o volume de ${best.vol.type === 'water' ? 'água' : 'munição'}`,
+    };
+  }
+
   markWoundedSoldierWithChalk() {
     const wounded = this.enemies.find((e) => e.c04Candidate && e.alive);
     if (!wounded) return null;
@@ -911,6 +1027,14 @@ export class M02BenchSimulation {
       const chalkPrompt = this.currentChalkPrompt();
       if (chalkPrompt) {
         return this.markWoundedSoldierWithChalk();
+      }
+    }
+    if (!explicitDoorId) {
+      const volumePrompt = this.currentVolumePrompt();
+      if (volumePrompt && runPickupSupplyVolume(this, volumePrompt.volumeId)) {
+        const evt = { type: 'supply-volume-picked', volumeId: volumePrompt.volumeId, clock: this.clock };
+        this.events.push(evt);
+        return evt;
       }
     }
     let targetDoorId = explicitDoorId;
@@ -1074,6 +1198,7 @@ export class M02BenchSimulation {
     }
 
     this.alertEnemiesBySound(this.player, 90);
+    openC01Contact(this, 'player_shot');
 
     const material = hit?.material ?? 'air';
     const policy = BALLISTIC_MATERIAL_POLICY[material] ?? null;
@@ -1268,7 +1393,10 @@ export class M02BenchSimulation {
 
   throwGrenade(customOrigin = null, customDir = null) {
     if (!customOrigin && this.grenadeAmmo <= 0) return null;
-    if (!customOrigin) this.grenadeAmmo--;
+    if (!customOrigin) {
+      this.grenadeAmmo--;
+      openC01Contact(this, 'player_grenade');
+    }
 
     const eye = customOrigin ?? eyePosition(this.player);
     const rawDir = customDir ?? aimDirection(this.player.angle, this.player.pitch);
@@ -1672,6 +1800,7 @@ export class M02BenchSimulation {
     if (controls.orderAdvance) this.issueSquadOrder('advance');
     if (controls.orderFlank) this.issueSquadOrder('flank_east');
 
+    runUpdateC01Contact(this);
     this.updateGrenades(dt);
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
@@ -1684,6 +1813,7 @@ export class M02BenchSimulation {
     this.dialogue.update(this);
     this.audiovisual.update(this, dt);
     this.updateTacticalContext();
+    runUpdateScript(this);
 
     if (this.mgState.seeingPlayer && this.clock >= this.mgState.nextBurstAt) {
       this.mgState.burstsFired++;
@@ -1892,6 +2022,8 @@ export class M02BenchSimulation {
       doorLocks: Object.fromEntries([...this.doorLocks.entries()].map(([id, lock]) => [id, { ...lock }])),
       c01Active: this.c01Active,
       c01StartedAt: this.c01StartedAt,
+      c01Contact: structuredClone(this.c01Contact),
+      script: structuredClone(this.script),
       ea1StartedAt: this.ea1StartedAt,
       activeCartela: structuredClone(this.activeCartela),
       transitionTABPayload: this.transitionTABPayload ? structuredClone(this.transitionTABPayload) : null,
@@ -1958,6 +2090,8 @@ export class M02BenchSimulation {
       doorLocks: snap.doorLocks,
       c01Active: Boolean(snap.c01Active),
       c01StartedAt: snap.c01StartedAt ?? 0,
+      c01Contact: snap.c01Contact,
+      script: snap.script,
       ea1StartedAt: snap.ea1StartedAt ?? 0,
       activeCartela: snap.activeCartela ?? M02_TEMPORAL_STATES.T0.cartela,
       transitionTABPayload: snap.transitionTABPayload ?? null,
@@ -2022,6 +2156,8 @@ export class M02BenchSimulation {
     this.doorLocks = new Map(Object.entries(p.doorLocks));
     this.c01Active = p.c01Active;
     this.c01StartedAt = p.c01StartedAt;
+    this.c01Contact = p.c01Contact;
+    this.script = p.script;
     this.ea1StartedAt = p.ea1StartedAt;
     this.activeCartela = p.activeCartela;
     this.transitionTABPayload = p.transitionTABPayload;

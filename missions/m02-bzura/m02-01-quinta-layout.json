@@ -16,6 +16,13 @@
       "maxX": 50,
       "minZ": -90,
       "maxZ": 60
+    },
+    "c01Approach": {
+      "note": "Aproximação de C01/C02 (P1 em (0,-175) até à entrada do slice em (0,-80)): fora do slice N (E1, p. 19) mas percorrível a pé; o mundo junta-a a `playable` para o limite do mapa não repor o jogador em z=-100 no primeiro passo.",
+      "minX": -50,
+      "maxX": 50,
+      "minZ": -180,
+      "maxZ": -90
     }
   },
   "origin": [0, 0, 0],

@@ -1,0 +1,121 @@
+// M02 roteiro C01 → C12 (PDF C, pp. 12-15): progressão AUTOMÁTICA por condições de jogo, sem teclas de bancada nem saltos de cena.
+// O «jogador» é um bot que só usa entradas de tick() (tests/m02-mission-bot.js). É teste de estado, NÃO é playtest: os tempos
+// simulados por cena são referência para o alvo editorial de 29-34 min (C1, p. 12; «não é duração medida»), não medição de jogo.
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
+import { M02_SCENE_IDS, M02_SCENE_HOLD_SEC, C04_EXIT_Z, stateSceneFloor } from '../src/game/m02-acts-director.js';
+import { MissionBot } from './m02-mission-bot.js';
+
+const SEEDS = [19390909, 777, 31337];
+const DT = 0.1;
+const FORBIDDEN_SHORTCUTS = [
+  'startAreaAFullC01',
+  'triggerTransitionTAB',
+  'enterAreaBC06',
+  'completeC07Reorganization',
+  'beginC08Briefing',
+  'enterAreaCC09',
+  'unlockC09GateLatch',
+  'startC10OrderChanges',
+  'detonateC10FixedArtillery',
+  'startC11LisAndLastGroup',
+  'assistLisInC11',
+  'completeC12Epilogue',
+  'teleportPlayer',
+  'damageCartWheel',
+  'deliverSupplyVolume',
+  'saveCheckpoint',
+  'restoreCheckpoint',
+];
+
+function playMission(seed) {
+  const sim = new M02BenchSimulation(seed, { startScene: 'C01' });
+  const bot = new MissionBot(sim);
+  const reached = bot.playUntilC12(1800);
+  return { sim, bot, reached };
+}
+
+/** Tempo simulado por cena: história fechada + cena atual. */
+function sceneTimes(sim) {
+  const out = {};
+  for (const h of sim.script.history) out[h.id] = Number((h.endedAt - h.startedAt).toFixed(1));
+  return out;
+}
+
+describe('M02 roteiro: a missão corre de C01 a C12 só com entradas simuladas (sem atalhos de bancada)', () => {
+  it('o teste e o bot não chamam atalhos nem funções de salto de cena', () => {
+    for (const file of ['m02-18-script-auto-progression.test.js', 'm02-mission-bot.js', 'm02-bot-helper.js']) {
+      const src = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8');
+      // (a lista acima é a única ocorrência permitida: o ficheiro de teste cita os nomes para os proibir)
+      const body = file.endsWith('.test.js') ? src.replace(/const FORBIDDEN_SHORTCUTS = \[[\s\S]*?\];/, '') : src;
+      for (const name of FORBIDDEN_SHORTCUTS) {
+        assert.ok(!new RegExp(`\\b${name}\\b`).test(body.replace(/\/\/.*$/gm, '')), `${file} chama ${name}`);
+      }
+    }
+  });
+
+  for (const seed of SEEDS) {
+    it(`semente ${seed}: chega a C12 pelas cenas C01..C12 por ordem, termina M02 e fecha o resultado`, (t) => {
+      const { sim, bot, reached } = playMission(seed);
+      assert.equal(reached, true, `não chegou a C12: cena ${sim.script.sceneId}, t=${sim.clock.toFixed(1)}, hp ${sim.player.health}`);
+      assert.ok(sim.player.health > 0, 'Piotr sobrevive');
+      assert.equal(sim.script.sceneId, 'C12');
+
+      const scenes = bot.events.filter((e) => e.type === 'scene-changed').map((e) => e.to);
+      assert.deepEqual(scenes, M02_SCENE_IDS.slice(1), 'mudanças de cena C02..C12, uma vez cada, por ordem');
+      assert.deepEqual(sim.script.history.map((h) => h.id), M02_SCENE_IDS.slice(0, 11), 'C01..C11 fechadas, C12 em curso');
+
+      // Estado final coerente com o fecho de C12 (não é prova de que o jogo é divertido)
+      assert.equal(sim.flags['m02.completed'], true);
+      assert.ok(['wounded_evacuated', 'wounded_walking', 'missing'].includes(sim.flags['m02.lis_status']));
+      assert.equal(sim.areaC.lisOutcomeSource, 'game', 'desfecho de Lis derivado do jogo, não forçado');
+      assert.equal(sim.areaC.lastGroupSummary.evacuated + sim.areaC.lastGroupSummary.inTransit + sim.areaC.lastGroupSummary.dead, 12);
+      assert.equal(sim.areaC.lastGroupSummary.inTransit, 0, 'nenhum em trânsito: todos chegaram antes de C12');
+      assert.equal(sim.flags['m02.last_group_survivors'], sim.areaC.lastGroupSummary.evacuated);
+      for (const id of ['cp_m02_a_preparacao', 'cp_m02_b_acesso', 'cp_m02_c_reorganizacao', 'cp_m02_d_cobertura_retirada']) {
+        assert.ok(sim.checkpointsReached.includes(id), `checkpoint ${id}`);
+      }
+      assert.equal(validateM02Snapshot(sim.snapshot()).valid, true);
+
+      // Tempos simulados por cena (referência; ver cabeçalho)
+      const times = sceneTimes(sim);
+      assert.ok(times.C05 >= M02_SCENE_HOLD_SEC.C05 && times.C05 < M02_SCENE_HOLD_SEC.C05 + 1, `C05 ${times.C05}`);
+      assert.ok(times.C07 >= M02_SCENE_HOLD_SEC.C07 && times.C07 < M02_SCENE_HOLD_SEC.C07 + 1, `C07 ${times.C07}`);
+      assert.ok(times.C08 >= M02_SCENE_HOLD_SEC.C08 && times.C08 < M02_SCENE_HOLD_SEC.C08 + 1, `C08 ${times.C08}`);
+      assert.ok(times.C10 >= 6 && times.C10 < 7, `C10 dura o aviso de artilharia de 6 s (${times.C10})`);
+      assert.ok(times.C11 > 30, `C11 ${times.C11}`);
+      const total = sim.script.history.reduce((s, h) => s + (h.endedAt - h.startedAt), 0);
+      t.diagnostic(
+        `semente ${seed}: C12 aos ${sim.script.sceneStartedAt.toFixed(1)} s simulados (${(sim.script.sceneStartedAt / 60).toFixed(1)} min) · ` +
+          `por cena (s): ${M02_SCENE_IDS.slice(0, 11).map((id) => `${id}=${times[id]}`).join(' ')} · C12 retém ${M02_SCENE_HOLD_SEC.C12} s · ` +
+          `soma C01..C11 ${total.toFixed(1)} s · hp final ${sim.player.health} · Lis ${sim.flags['m02.lis_status']} · grupo ${sim.flags['m02.last_group_survivors']}/12 ` +
+          '(referência para o alvo editorial de 29-34 min; NÃO é playtest)',
+      );
+      assert.ok(sim.script.sceneStartedAt < 1800);
+    });
+  }
+
+  it('é determinista: a mesma semente e as mesmas entradas dão a mesma história de cenas e o mesmo estado final', () => {
+    const a = playMission(777).sim;
+    const b = playMission(777).sim;
+    assert.deepEqual(a.script, b.script);
+    assert.equal(JSON.stringify(a.flags), JSON.stringify(b.flags));
+    assert.equal(a.rng.state, b.rng.state);
+    assert.equal(a.player.health, b.player.health);
+  });
+
+  it('C12 retém 45 s (elipse do epílogo) e depois o roteiro fecha (finished) sem mais mudanças', () => {
+    const { sim, bot } = playMission(19390909);
+    const startedAt = sim.script.sceneStartedAt;
+    bot.idleUntil(() => sim.script.finished, 60);
+    assert.equal(sim.script.finished, true);
+    const last = sim.script.history.at(-1);
+    assert.equal(last.id, 'C12');
+    assert.ok(last.endedAt - startedAt >= M02_SCENE_HOLD_SEC.C12 && last.endedAt - startedAt < M02_SCENE_HOLD_SEC.C12 + 1);
+    const before = JSON.stringify(sim.script);
+    for (let i = 0; i < 50; i++) sim.tick(DT, {});
+    assert.equal(JSON.stringify(sim.script), before);
+  });
+});

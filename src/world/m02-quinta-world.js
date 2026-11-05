@@ -49,10 +49,34 @@ export const BALLISTIC_MATERIAL_POLICY = Object.freeze({
   foliage: Object.freeze({ blocksShot: false, blocksSight: true, penetrationLoss: 0.0, label: 'Copa vegetal (oclusão visual)' }),
 });
 
+/**
+ * O limite do mapa da física (`bounds.playable`) é o do slice N (E1, p. 19). A aproximação de C01/C02 (P1 a ~100 m a norte do
+ * slice) é percorrível, por isso a camada do mundo junta `bounds.c01Approach` a `playable` (união retangular). Cópia rasa: o
+ * JSON de origem e os arrays internos (edifícios, coberturas) ficam partilhados e o `playable` do slice continua em `bounds.slice`.
+ */
+export function withWalkableApproach(sourceLayout) {
+  const approach = sourceLayout.bounds?.c01Approach;
+  const slice = sourceLayout.bounds?.playable;
+  if (!approach || !slice) return sourceLayout;
+  return {
+    ...sourceLayout,
+    bounds: {
+      ...sourceLayout.bounds,
+      slice,
+      playable: {
+        minX: Math.min(slice.minX, approach.minX),
+        maxX: Math.max(slice.maxX, approach.maxX),
+        minZ: Math.min(slice.minZ, approach.minZ),
+        maxZ: Math.max(slice.maxZ, approach.maxZ),
+      },
+    },
+  };
+}
+
 export class M02QuintaWorld {
   constructor(customLayout = layout) {
     this.missionId = customLayout.missionId ?? 'm02_01_quinta';
-    this.layout = customLayout;
+    this.layout = withWalkableApproach(customLayout);
     this.events = [];
     this.colliders = [];
     this.decks = [];

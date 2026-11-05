@@ -73,8 +73,19 @@ test('K3: bz39_c01_02 and bz39_c01_03 are queued at C01 start and spoken in orde
   assert.deepEqual(ids.filter((id) => c01Ids.includes(id)), c01Ids, 'ordem relativa: ordem, 001, pergunta, resposta');
 });
 
-test('K3: with the bench EA0 post already seeing Piotr at tick 0, the C01 answer is dropped (no repeat in combat) but the question is kept', () => {
+test('K3/K4: the EA0 post no longer sees Piotr at tick 0 (C02: first shot 30-60 s after the advance), so the C01 answer is spoken before contact', () => {
   const sim = new M02BenchSimulation(19390909, { startScene: 'C01' });
+  for (let i = 0; i < 300; i += 1) sim.tick(0.1, {});
+  const ids = sim.dialogue.history.map((h) => h.id);
+  assert.ok(ids.includes('bz39_c01_02'), 'a entrega de munição é dita');
+  assert.ok(ids.includes('bz39_c01_03'), 'sem combate (posto sem alerta) a resposta de Lis toca antes do contacto');
+  assert.ok(!sim.events.some((e) => e.type === 'dialogue-line-dropped' && e.id === 'bz39_c01_03'));
+});
+
+test('K3: once the contact is open (player shot at the post) the C01 answer that has not played yet is dropped, the question is kept', () => {
+  const sim = new M02BenchSimulation(19390909, { startScene: 'C01' });
+  sim.tick(0.1, {}); // bz39_c01_01 a falar; 001/02/03 na fila (o olhar livre só vem com a cartela cumprida)
+  sim.firePlayerWeapon(true, true); // o jogador abre o contacto: o posto passa a combater
   for (let i = 0; i < 300; i += 1) sim.tick(0.1, {});
   const ids = sim.dialogue.history.map((h) => h.id);
   assert.ok(ids.includes('bz39_c01_02'), 'a entrega de munição é dita');

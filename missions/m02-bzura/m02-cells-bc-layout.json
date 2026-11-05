@@ -1,5 +1,5 @@
 {
-  "schema": "m02-cells-bc-layout-v1",
+  "schema": "m02-cells-bc-layout-v2",
   "missionId": "M02",
   "equipmentStatus": { "kar98k": "PROPOSTA_EQP01", "mg34": "PROPOSTA_EQP01", "note": "Fuzileiros alemães com Kar98k (proposta B6, p. 10); sem pistola-metralhadora (não consta de B6). EQP-01 pendente." },
   "historicalClassification": "RECONSTRUÍDO tipologicamente; localização e combates DRAMATIZAÇÃO sobre EV03/EV04 (9–12 Set 1939)",
@@ -10,16 +10,17 @@
       "bounds": [-120, 120, -140, 140],
       "playerSpawn": { "x": 0, "y": 0, "z": 85, "angle": -1.5708, "pitch": 0 },
       "panoramaPoint": { "id": "P4", "x": 0, "z": 0, "angle": -1.5708, "pitch": 0, "label": "P4 · Cruzamento de Łęczyca (0, 0)" },
+      "cartRouteNote": "E3 (p. 21): caminho da carroça (-70,60) → (-20,60) → (0,30) → (0,-70). Antes (v1) saía de (-50,41), dentro de B07 (x -60..-40, z 35..47), e dobrava em (0,25).",
       "cartRoute": [
-        [-50, 41],
-        [-20, 41],
-        [0, 25],
+        [-70, 60],
+        [-20, 60],
+        [0, 30],
         [0, -70]
       ],
       "supplyCart": {
         "id": "cart_b07_supply",
-        "startX": -50,
-        "startZ": 41,
+        "startX": -70,
+        "startZ": 60,
         "goalX": 0,
         "goalZ": -70,
         "speed": 3.4,
@@ -126,6 +127,14 @@
           "roofMaterial": "thatch",
           "navigable": false,
           "solidOpaque": true,
+          "doorsDecision": {
+            "decision": "pendente",
+            "decidedBy": "proprietário",
+            "pdf": "F9 (p. 26): fachada com porta deslocada e duas janelas vedadas; portas fechadas com tranca visível e sem prompt; nenhum tiro de um quarto inexistente",
+            "current": "0 portas e 0 janelas (massa opaca); o teste m02-04-05 exige 0 portas",
+            "options": ["A: manter 0 portas e 0 janelas (estado atual)", "B: porta e duas janelas vedadas só visuais, sem prompt nem colisor de passagem (PDF F9)"],
+            "implemented": "A"
+          },
           "rooms": [],
           "internalWalls": [],
           "doors": [],
@@ -169,17 +178,23 @@
         "warningDurationSec": 6.0,
         "debrisBounds": [-4.0, 12.0, 14.0, 22.0]
       },
-      "evacRouteNote": "MAP-03: rota de maca validada por raycast a ±0,45 m (largura útil ≥ 0,9 m). Entra em B09 pela porta este (1,4 m), atravessa a divisória interna (1,4 m), sai pela porta sul (1,6 m), contorna os muros de evacuação e atravessa B12 pela porta norte, vão interno e porta sul (1,6 m).",
+      "lisReturn": {
+        "note": "J3/Q2: Lis regressa da ligação fora da célula por percurso contínuo (sem reposição): entra pela antecâmara (0,-60) (E3, p. 21) e caminha até ao ponto de encontro junto à porta norte de B09. Velocidade de ferido, limitada por tick.",
+        "entry": [0, -60],
+        "rendezvous": [-28, -23],
+        "speedMps": 2.2,
+        "supportRadius": 7.0,
+        "walkingSpeedMps": 2.4,
+        "carriedSpeedMps": 1.6,
+        "walkMinHealth": 40
+      },
+      "evacRouteNote": "E3 (p. 21): depois de a rua exterior ficar comprometida a evacuação entra em B09 pela PORTA NORTE (-30,-20), com troço horizontal em z≈-32 (x -6..-30) e vertical em x=-30, atravessa a nave e sai a sul (-30,-2); segue por (-35,25), entra em B12 a norte (-58,48), passa pela sala e sai pela passagem sul (-54,60), até à saída (-85,105). MAP-03: rota de maca validada por raycast a ±0,45 m (largura útil ≥ 0,9 m). Antes (v1) entrava pela porta este (-12,-5).",
       "evacRoute": [
         [12, -36],
-        [2, -16],
-        [2, -8],
-        [-6, -5],
-        [-14, -5],
-        [-17, -11],
-        [-23, -11],
-        [-30, -8],
-        [-30, 1],
+        [-6, -32],
+        [-30, -32],
+        [-30, -20],
+        [-30, -2],
         [-30, 4],
         [-35, 25],
         [-45, 28],
@@ -295,6 +310,7 @@
           "windows": [
             { "id": "win_b12_east", "buildingId": "B12", "x": -46, "z": 52, "orientation": "V", "width": 1.4, "sillY": 0.95, "lintelY": 2.05, "initialState": "intact", "label": "Janela este B12" }
           ],
+          "stretcherSlots": ["prop_b12_stretcher_1", "prop_b12_stretcher_2"],
           "props": [
             { "id": "prop_b12_stretcher_1", "label": "Maca sanitária 1", "bounds": [-63.0, -60.5, 49.5, 50.6], "height": 0.55, "material": "wood_thin" },
             { "id": "prop_b12_stretcher_2", "label": "Maca sanitária 2", "bounds": [-63.0, -60.5, 52.5, 53.6], "height": 0.55, "material": "wood_thin" }

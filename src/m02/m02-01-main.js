@@ -224,7 +224,7 @@ function updateHud() {
   if (sim.lastCheckpointPersist !== lastPersistSeen) refreshSaveWarning();
   const p = sim.player;
   if (elObjective) {
-    elObjective.textContent = `Objetivo [${sim.objective.id}]: ${sim.objective.title}`;
+    elObjective.textContent = `Cena ${sim.script.finished ? 'C12 (fim)' : sim.script.sceneId} · Objetivo [${sim.objective.id}]: ${sim.objective.title}`;
   }
   if (elPos) {
     elPos.textContent = `X: ${p.x.toFixed(1)}m, Y: ${p.y.toFixed(2)}m, Z: ${p.z.toFixed(1)}m`;
@@ -284,7 +284,7 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentChalkPrompt() ?? sim.currentDoorPrompt();
+  const prompt = sim.currentChalkPrompt() ?? sim.currentVolumePrompt() ?? sim.currentDoorPrompt();
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';
@@ -396,6 +396,7 @@ window.m02Bench = {
   deliverSupplyVolume: (id) => sim.deliverSupplyVolume(id),
   loseSupplyVolume: (id) => sim.loseSupplyVolume(id),
   completeC07Reorganization: (opts = {}) => sim.completeC07Reorganization(opts),
+  beginC08Briefing: (opts = {}) => sim.beginC08Briefing(opts),
   enterAreaCC09: (opts = {}) => sim.enterAreaCC09(opts),
   unlockC09GateLatch: () => sim.unlockC09GateLatch(),
   startC10OrderChanges: () => sim.startC10OrderChanges(),
@@ -433,6 +434,7 @@ window.m02Bench = {
     supplies: structuredClone(sim.supplies),
     areaB: structuredClone(sim.areaB),
     areaC: structuredClone(sim.areaC),
+    script: structuredClone(sim.script),
     m03ExportPackage: sim.m03ExportPackage ? structuredClone(sim.m03ExportPackage) : null,
     horizon: sim.horizon ? sim.horizon.snapshot() : null,
     // A configuração de acessibilidade não faz parte do snapshot de jogo (I5); o resumo da bancada mostra-a à parte.
