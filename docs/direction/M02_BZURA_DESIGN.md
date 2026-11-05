@@ -215,6 +215,8 @@ bancada não pode tocar na M01. A extração para utilitários comuns faz-se dep
 
 ## 4. Plano de integração (P2 e P4: aproveitar, não recriar)
 
+> **Estado em 2026-11-05:** INT-1, FIX-1, FIX-2 (com duas revisões adversariais), FIX-3, K, roteiro C, set pieces, combate D, ambiente G/H/L e a prova automática N0 estão feitos na branch `claude/elegant-wright-m9l1ws`. N0 **não está aprovado**. Ver `docs/m02/M02_CAPTAIN_HANDOFF_2026-11-04.md`.
+
 **Princípios:**
 
 - Merge `--no-ff` que preserve os 5 commits da Gemini, **sem rebase**, porque a base `3c8e576d` já é antecessora

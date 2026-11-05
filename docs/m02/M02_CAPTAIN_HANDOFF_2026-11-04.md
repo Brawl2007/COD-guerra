@@ -1,330 +1,227 @@
-# M02 «Operação Bzura»: handoff do Capitão M02 (2026-11-04)
+# M02 «Operação Bzura»: handoff do Capitão M02 (sessão de 2026-11-04/05)
 
-Estado: **CHECKPOINT INTERCALAR n.º 2** (≈ 21:50 UTC). Desde as 21:01 UTC trabalha-se com **1 agente de cada vez**, por
-pedido do proprietário. Este ficheiro é atualizado no fim da sessão.
+**Estado final da sessão:** 2026-11-05, cerca das 06:00 UTC. A partir das 21:01 UTC de 4/11 trabalhou-se com 1 agente de cada vez, por pedido do proprietário.
 
-Veredito: a M02 continua `PLANEJADA` e é uma **bancada isolada, INTEGRADA SEM VALIDAÇÃO DE JOGO**. Nenhum portão
-(N0, N1, N6) está aprovado. Não há FPS medido. Os testes de estado não são playtest.
+**Veredito:**
+- A M02 continua `PLANEJADA`. É uma **bancada isolada, INTEGRADA SEM VALIDAÇÃO DE JOGO**.
+- Nenhum portão está aprovado: N0, N1 e N6 continuam pendentes.
+- Não há FPS medido. Os números do SwiftShader são só telemetria de software.
+- Os testes de estado não são playtest. As Áreas B e C continuam **congeladas e não aceites**: as correções desta sessão não as promovem.
 
-## 1. Base e ramo
+## 1. Base, ramo e integração
 
-- Branch: `claude/elegant-wright-m9l1ws`, criada a partir de `origin/claude/dreamy-ramanujan-6v62vr` @ `03387a31`.
-- Push só para esta branch. Sem merge na `main` nem na #80, sem deploy, sem force-push, sem PR.
-- Integração na linha da M01: cabe ao Capitão M01, com `merge --no-ff` desta branch.
-- Ficheiros da M01: `git diff 03387a3..HEAD -- src/game/m01-* src/render/m01-* src/world/m01-* src/game/game.js src/main.js missions/m01-tczew` está **vazio**.
+- **Branch:** `claude/elegant-wright-m9l1ws`, criada a partir de `origin/claude/dreamy-ramanujan-6v62vr` @ `03387a31`. O HEAD está no fim desta secção.
+- **Limites respeitados:** push só para esta branch; sem merge na `main` nem na #80; sem deploy, sem force-push e sem PR.
+- **Integração na linha da M01:** cabe ao Capitão M01, com `merge --no-ff` desta branch.
+- **M01 intacta:** `git diff 03387a3..HEAD -- src/game/m01-* src/render/m01-* src/world/m01-* src/game/game.js src/main.js missions/m01-tczew src/game/wz29.js` está **vazio**. Os módulos `m01-*` só foram **importados**:
+  - na física: `m01-player-physics`;
+  - na dificuldade: `m01-difficulty`;
+  - no ambiente: `m01-area-field`, `-stubble`, `-trees`, `-earthworks` e `-geo`, mais `m01-lod-policy`.
+- **Fora das pastas M02, a branch só mexe em:**
+  - `playwright.config.js` (`testIgnore` dos specs M02);
+  - `research/SOURCES.md` (secções BZ-H e BZ-C02 acrescentadas; as H01–H30 da M01 ficam intactas).
+- **Aviso para a integração.** `npm test` (`node --test tests/*.test.js`) apanha as 23 suites `tests/m02-*.test.js`:
+  - em série demoram cerca de 220 s;
+  - `test:chromebook` fica mais lento por isso;
+  - decidir na integração se ficam no `npm test` por omissão.
 
-## 2. Feito e integrado nesta branch (commit e push)
+## 2. Entregas desta sessão (todas com commit e push)
 
-| Passo | Commit(s) | Conteúdo | Prova |
-|---|---|---|---|
-| 0 Auditorias N, O, P, Q | `b8f78db`, `be954d9`, `625bde0` | `docs/m02/auditoria-2026-11-04/{N,O,P,Q}.md`. P inclui A pp. 5–7 | Leitura estática, sem medições |
-| FIX-1 História/equipamento | `5eb85d9` (merge `65ce341`) | Ver lista abaixo | `tests/m02-07-history-text-guard.test.js` |
-| FIX-3 Handoff honesto | `5c99744` (cherry-pick de `ac1f2d1`) | Ver lista abaixo | Revisão do Capitão |
-| K Texto | `465cd30` (cherry-pick de `bd6a452`) | Ver lista abaixo | `tests/m02-08-dialogue-k.test.js` |
-| TIME-01 Sol | `9177808` (merge `1ed037b`), `ba7d06e` | `tools/m02/solar-noaa.mjs` com teste e nota `docs/m02/research/TIME-01-solar.md`. BZ-C02 com as duas definições | `tests/m02-10-solar-time01.test.js`, mais verificação independente do Capitão |
-| EQP-01 Pesquisa | `8f5cc55` | `docs/m02/research/EQP-01.md`. É PROPOSTA; nenhuma afirmação acima de PROVÁVEL, porque só se leram resumos | — |
-| Testes reforçados | `9f5f44e` (merge `adcd1cd`) | Ver lista abaixo | Suites m02-01…06 |
-
-**FIX-1:**
-- «56.º Regimento / 25.ª DI», «56 pp» e «Mensageiro 56 pp» retirados do ecrã e dos dados (DEC-02 pendente).
-- Os fuzileiros alemães passam de MP38 a `kar98k`. MG34 e Kar98k ficam com `equipmentStatus:'PROPOSTA_EQP01'`.
-- Título do objetivo C12 sem data. A cartela «Varsóvia — 25 de setembro» mantém-se, porque o PDF a tem (C6 p. 15, I1 p. 33).
-- As 7 macieiras ficam com `status:'candidata'`. «46» só como total planeado de D2.
-- `research/SOURCES.md` passa a ter BZ-H01…H14 (estado: «registada no pacote; conteúdo não guardado») e BZ-C02.
-
-**FIX-3** (matriz de `docs/m02/M02_HANDOFF.md`):
-- PERF-01 e PERF-02: NÃO MEDIDO.
-- HIST-TEST-01/02: HUMANO.
-- REG-01: PENDENTE.
-- «PASS (100 %)» passa a «teste de estado verde (não é aceitação)».
-- Assinalado que `K-PERSONAGENS-DIALOGOS.md` não existe.
-
-**K (texto):**
-- `bz39_c01_02` (Małek) e `bz39_c01_03` (Lis): a segunda exige a primeira e cala-se em combate.
-- Condição K2 «olhar livre» e «sem ordem crítica pendente» aplicada a `dlg_m02_001`.
-- Nowak, Kowalski e LG01–LG12 com `sourceStatus:'fora_do_pdf'`.
-- `bz39_c01_01` e `bz39_c04_05` **já eram literais** (K3 p. 39). A auditoria K.md tinha falsos positivos e ficou anotada.
-
-**Testes reforçados:**
-- As asserções de AI-02 ficam incondicionais, e há um AI-02 novo por som.
-- O3 passa a determinismo real: 3 sementes × 2 execuções × 1800 ticks, comparando o snapshot a cada 60 ticks.
-- Os ciclos vazios passam a exigir comprimento.
-
-**Depois do checkpoint n.º 1 (21:01 UTC):**
-
-| Passo | Commit(s) | Conteúdo |
+| Passo do pedido | Commits e merges | Estado |
 |---|---|---|
-| FIX-2 Saves | merge `023734d` (de `270cd44`, `32a933b`, `d8648f4`), `58e7976` | Snapshot v2 com semente e estado do RNG, granadas em voo, fechaduras de portas, registos, data narrativa e versão de layout. Restauro em fases. `src/game/m02-save-store.js` grava com staging e `previous`. Proposta de envelope em `docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md` (D-M02-4). Os 2 testes `todo` independentes passaram a obrigatórios e passam |
-| Higiene de testes (passo 1) | `e74c952` | O `playwright.config.js` principal ignora `m02-*.spec.js` (a lista dá 219 testes em 62 ficheiros, 0 da M02). Os artefactos vão para `test-results/`. O servidor é reutilizado fora do CI |
-| Cabeçalho da bancada, SN3/SN4 | `5fee9ee` | O cabeçalho deixa de dizer «Missão M02 Completa» e «Bancada de produção» e diz bancada isolada, não validada, 9–10 Set. Kwiatkówek–Tum fica só como referência tipológica. SN3 passa a (-23,-12) e SN4 a (8,-28), do PDF N; os dois pontos estão fora de B01 e B02 |
-| N0 capturas (passo 10) | `e74c952`, `d3c3af0`, `dbb4436` | Ver lista abaixo |
+| 0 Auditorias N, O, P (com A pp. 5–7) e Q | `b8f78db`, `be954d9`, `625bde0` | Feito: `docs/m02/auditoria-2026-11-04/{N,O,P,Q}.md` |
+| 1 Higiene de testes | `e74c952` | Feito. Ver lista abaixo |
+| 2 FIX-1 História e equipamento | `5eb85d9` (merge `65ce341`), `ba7d06e`, `5fee9ee` | Feito. Ver lista abaixo |
+| 3 FIX-2 Saves (I5) | FIX-2 `023734d`; FIX-2b `318b265`; FIX-2c `605e3fc` | Feito. Duas revisões adversariais independentes; a última **aceitou com ressalvas**. Ver §3 |
+| 4 FIX-3 Handoff honesto | `5c99744` | Feito. Ver lista abaixo |
+| 5 Texto K | `465cd30` | Feito. Ver lista abaixo |
+| 6 Roteiro C | `07999a4`; correções `da599c7`, `279a8cb` | Feito. Ver lista abaixo |
+| 7 Set pieces e mapa (J, E, F) | `07999a4` (+ correções) | Feito. Ver lista abaixo |
+| 8 Combate D | `edc51ad`; correções `da599c7`, `279a8cb` | Feito. Ver lista abaixo |
+| 9 Ambiente e horizonte (G, H, L) | `32af0b7` | Feito. Ver lista abaixo |
+| 10 Portão N0 | `e74c952`, `d3c3af0`, `dbb4436` | **Prova automática feita. N0 NÃO aprovado.** Ver lista abaixo e §5 |
+| Pesquisa | `8f5cc55`, `9177808` | Ver lista abaixo |
 
-**N0 capturas:**
-- `tests/browser/m02-n0-captures.spec.js` gera 30 conjuntos: SN1–SN5 × 2 luzes × 3 perfis. Cada conjunto tem **4 direções**, porque o PDF N define os SN como pontos de revisão 360°. O total é de 120 PNG, gravados em `test-results/m02-artifacts/n0/` com o manifesto v2.
-- O HUD fica escondido nas capturas. Antes, as capturas passavam 30/30 só porque o HUD dava variação à imagem.
-- O limiar de imagem uniforme foi calibrado com imagens observadas.
+**1 Higiene de testes:**
+- O `playwright.config.js` principal ignora `m02-*.spec.js`: lista 219 testes em 62 ficheiros, 0 da M02.
+- `M02_ARTIFACT_DIR` passa a `test-results/m02-artifacts`, e `outputDir` passa a `test-results/m02-playwright`.
+- `reuseExistingServer` é `!CI`.
 
-**Revisão adversarial independente do FIX-2: REJEITADO.** A revisão foi só de leitura, com scripts de prova em
-`scratchpad/review/`. Defeitos confirmados por execução:
-- **P0:** x/z ficam NaN nas Áreas B e C. A causa está em `m02-zone-streamer.js:176-177` (`bounds` em array espalhado num objeto) e dispara em `clampToMap` da M01. Por isso o cp_c e o cp_d nunca persistem.
-- **P1:**
-  - os checkpoints automáticos são gravados a meio do `tick()`, e o restauro não reproduz a continuação;
-  - uma granada que mata o último defensor deixa um snapshot inválido no índice;
-  - recarregar a página apaga o save bom (o construtor chama `reset()`, que grava o cp_a), e o F9 só lê a memória.
-- **P2:**
-  - a loja reconstrói a partir de `previous` quando `current` é ilegível (perde checkpoints) e não tem compare-and-swap entre separadores;
-  - o validador aceita enums inválidos e um `weapon.profile` com damage 9999 vindo do save;
-  - a acessibilidade e a data narrativa estão misturadas no save, e `m02.completed=true` é posto na Área A;
-  - `saveCheckpoint`/`restoreCheckpoint` devolvem referências partilhadas.
-- **Sem defeito, testado:** snapshots entre ticks nos 4 modos de restauro, nas Áreas A, B (com o limite corrigido em memória) e C.
+**2 FIX-1 História e equipamento:**
+- Saem do ecrã e dos dados «56.º Regimento / 25.ª DI», «56 pp» e «Mensageiro 56 pp».
+- Fuzileiros com `kar98k`, sem MP38. MG34 e Kar98k ficam `PROPOSTA_EQP01`.
+- Datas: «10 Set» e a cartela «Varsóvia — 25 de setembro» estão sustentadas pelo PDF (B3, C6, I1). Só se tirou a data do título do objetivo C12.
+- As 7 macieiras ficam com `status:'candidata'`. «46» só aparece como total planeado de D2.
+- **BZ-H01…BZ-H14** e **BZ-C02** acrescentados a `research/SOURCES.md`.
+- Cabeçalho da bancada: «bancada isolada, blockout, NÃO validada; 9–10 Set; Kwiatkówek–Tum só como referência tipológica».
 
-**FIX-2b** está integrado: merge `318b265`, commits `763310e`…`371582e`. Depois dele:
-- `tests/m02-*.test.js` dá **100/100**, com 24 testes novos em `tests/m02-12-save-hardening.test.js`.
-- O build passa.
-- O browser M02 dá **2 passed (2,6 min)**, com N0 30/30.
+**3 FIX-2 Saves:**
+- Snapshot v2 com semente e estado do RNG.
+- Validador estrito.
+- Restauro por fases.
+- Checkpoints persistidos, com staging e `previous`.
+- Proposta de envelope comum: `docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md` (D-M02-4).
 
-**Verificação adversarial independente do FIX-2b: ACEITE COM RESSALVAS.** Nenhum dos 8 defeitos originais se
-reproduz e não há P0 nem P1.
-- **Sem defeito:**
-  - 102 696 validações do estado vivo em A/B/C, até C12 com os três `lis_status`, sem nenhuma rejeição;
-  - fuzz de restauro em A e C: 72/72 iguais.
-- **P2 confirmados**, todos encaminhados para o FIX-2c (agente único, EM CURSO):
-  - dois checkpoints automáticos no mesmo tick;
-  - checkpoint gravado a meio das ações compostas C11/C12 (KeyM e botão);
-  - -0 que chega a `atan2` (caso construído);
-  - a loja fica sem saída quando `current` está ilegível, sem aviso nem `clear()` na UI;
-  - o F9 ignora um save manual compatível quando o último checkpoint é incompatível.
+**4 FIX-3 Handoff honesto:**
+- PERF-01 e PERF-02 passam a NÃO MEDIDO.
+- HIST-TEST-01 e HIST-TEST-02 passam a HUMANO.
+- REG-01 passa a PENDENTE.
+- «PASS» passa a «teste de estado verde».
 
-**FIX-2c, integrado em `605e3fc`:**
-- Lote de checkpoints no mesmo tick.
-- `sim.runAtomicAction()` nas ações compostas de C07 a C12.
-- Sem -0 na memória dos inimigos nem no `atan2`.
-- `M02SaveStore.status()`, `sim.clearPersistedSaves()`, aviso `#hud-save-warning` e botão «Limpar saves da bancada», que só aparece quando a loja está bloqueada e pede confirmação.
-- O F9 salta entradas incompatíveis.
+**5 Texto K:**
+- Linhas novas `bz39_c01_02` e `bz39_c01_03`.
+- Condição K2 «olhar livre».
+- Nowak, Kowalski e LG01–LG12 ficam `fora_do_pdf`.
+- `bz39_c01_01` e `bz39_c04_05` **já eram literais** (K3 p. 39): a auditoria K tinha falsos positivos.
 
-Testes depois do FIX-2c: `tests/m02-*.test.js` **122/122**; build OK; browser M02 **2 passed (3,3 min)**, N0 30/30.
-O botão novo da bancada só foi verificado por inspeção e por teste estático.
+**6 Roteiro C:**
+- Progressão automática C01→C12 por condições de jogo, sem as teclas de bancada.
+- `lis_status` vem do jogo e é `missing` sem o Lis; fica nulo durante a missão.
+- O último grupo só conta como evacuado ao chegar.
+- O contacto do C02 acontece 30–60 s depois de o jogador começar a avançar, ou por proximidade a 25 m.
 
-Fica conhecida uma janela residual de compare-and-swap entre separadores: o `localStorage` não tem escrita atómica.
+**7 Set pieces e mapa:**
+- Carroça: o tiro parte o varal e há fallback de paragem.
+- O Lis desloca-se sem teletransporte.
+- Evacuação pela porta norte de B09.
+- B05–B12 já estavam conformes com o PDF p. 20; o erro era do handoff da Gemini.
+- Layout B/C v2.
+- B08: portas como decisão pendente.
+- B12: macas coerentes com o layout.
 
-**Roteiro C e set pieces, integrado em `07999a4`. Testes: `tests/m02-*.test.js` 204/204; build OK.**
+**8 Combate D:**
+- `missionFailed` quando o Piotr morre, com reinício explícito.
+- Aviso de 5–8 s em todas as explosões perigosas.
+- Perfis recruta, soldado e veterano com os IDs e multiplicadores da M01; o perfil fica no snapshot, como na M01.
+- Ordens só «cobrir» e «avançar».
+- Moral por grupo de encontro.
 
-O que mudou:
-- **Progressão automática C01→C12 por condições de jogo.** As teclas de bancada ficam só como atalhos.
-  - Teste de missão completa por entradas (`MissionBot`, 3 sementes, determinista). Um guard confirma que não usa atalhos.
-  - Tempo simulado até ao C12: 636,9 / 786,9 / 694,6 s (≈ 10,6–13,1 min). É só referência e não é playtest; fica **muito abaixo do alvo editorial de 29–34 min**.
-- **C02:** o EA0 começa sem alerta. O contacto é sorteado pelo RNG entre 30 e 60 s depois de o jogador começar a avançar (10 sementes testadas).
-  - `bz39_c01_03` pode tocar antes do contacto.
-  - O acesso P1 (z=-175 → -100) era impossível de percorrer e passou a ter `bounds.c01Approach`.
-- **Carroça:** o tiro parte o varal (`shaft_broken`). Há `parked_fallback` explícito e rota conforme a p. 21. [E] apanha um volume largado.
-- **Lis:** entra com velocidade limitada por tick, sem teletransporte.
-  - `lis_status` passa a vir do estado de jogo e fica `missing` quando o Piotr termina sem o Lis.
-  - A tecla KeyM mantém o valor forçado, marcado `lisOutcomeSource:'forced'`.
-- **Último grupo LG01–LG12:** só conta como evacuado quando chega a (-85,105).
-- **Mapa:** evacuação pela porta norte de B09 (-30,-20).
-  - B05–B12 já estavam conformes com o PDF p. 20; o erro era do handoff da Gemini.
-  - O layout B/C passa a `m02-cells-bc-layout-v2`, e os saves B/C v1 são recusados com o motivo explícito.
-- **B08:** `doorsDecision.decision:'pendente'`.
-- **B12:** as macas vêm só do layout.
+**9 Ambiente e horizonte:**
+- Reutiliza `m01-area-*` só por importação.
+- Horizonte L3 a 1,5–8 km, com impostores e fade.
+- Luzes calculadas pelo método NOAA. A noite não tem sol; a lua não foi calculada e está como placeholder.
+- Consumidores dos eventos audiovisuais, incluindo `blast-warning`, com áudio placeholder.
 
-**Decisões do agente a rever:**
-- Interpretação do «fallback parada».
-- Tempos mínimos de cena: C05 45 s, C07 60 s, C08 60 s, C12 45 s (leitura da p. 12).
-- Lis «walking» ou «carried» com limiar de vida 40, que é **inventado**.
-- O Lis só se move com o Piotr a ≤ 7 m.
+**10 Portão N0:**
+- 30 conjuntos: SN1–SN5 × 2 luzes × 3 perfis.
+- Cada conjunto tem 4 direções (revisão a 360°), tiradas no ponto do PDF N, com o HUD escondido.
+- Manifesto v2 com sha256, câmara e renderer WebGL.
 
-**Observado e não corrigido:**
-- O EC2 rende-se no 1.º tick do C10 (regra de moral) → encaminhado para o Combate D.
-- Uma corrida ao EA0 não é alvejada antes do temporizador → encaminhado para o Combate D.
+**Pesquisa:**
+- EQP-01 (`docs/m02/research/EQP-01.md`): PROPOSTA. Classe máxima PROVÁVEL, porque só se leram resumos.
+- TIME-01 (`tools/m02/solar-noaa.mjs`, `docs/m02/research/TIME-01-solar.md`).
+
+## 3. Revisões independentes de simulação e saves
+
+| Revisão | Base | Veredito | O que se seguiu |
+|---|---|---|---|
+| Saves FIX-2 | `58e7976` | **REJEITADO**: 1 P0 (NaN nas Áreas B/C), 3 P1, P2 | FIX-2b |
+| FIX-2b | `318b265` | **ACEITE COM RESSALVAS**: só P2 | FIX-2c |
+| Roteiro C e combate D | `edc51ad` | **REJEITADO**: 2 P1 (instantes recusados a dt 1/60; o SP03 não feria), P2 | FIX-CD |
+| FIX-CD | `da599c7` | **REJEITADO** por 2 P2 residuais (F1 dependente do dt; KeyM concluía com o Piotr morto) | FIX-CD2 |
+| FIX-CD2 | `279a8cb` | Os scripts do próprio verificador foram corridos de novo pelo Capitão sobre o HEAD e **já não reproduzem** (f1offset 0/18, f1phase 0/20, attacks1 casos 1–3 corrigidos). **Não houve nova revisão completa independente** | — |
+
+Resultados de fuzz de restauro-continuação, tick a tick, sem divergências:
+- 491 réplicas em `edc51ad`;
+- 292 réplicas em `da599c7`;
+- missões completas do MissionBot a dt 1/60, 1/144, 1/30 e com jitter: 0 checkpoints recusados e 0 checkpoints com o Piotr morto.
+
+As provas estão em `scratchpad/review*/`, que é **efémero**: não está no repositório.
+
+**Não revisto de forma independente:** o merge do ambiente (`32af0b7`). Só mexe em apresentação e eventos, não em simulação nem em saves.
+
+## 4. Testes corridos no HEAD final (`32af0b7`)
+
+- `node --test --test-concurrency=1 tests/m02-*.test.js` → **364/364 pass**, 0 fail, 0 todo (217 s).
+  - Inclui a missão completa por entradas (MissionBot), também a dt 1/60.
+  - Inclui determinismo: a mesma semente dá o mesmo estado, e o restauro reproduz a continuação.
+- `npm run build` → OK. `dist/` só tem `index.html`, por isso o build principal não muda.
+- Browser M02: `CHROME_EXECUTABLE=/opt/pw-browsers/chromium PORT=4391 npx playwright test -c tools/m02/playwright-m02-01.config.js` → **2 passed (8,9 min)** em SwiftShader. A duração subiu de cerca de 3 para 8,9 min com o ambiente G/H/L.
+- Prova N0 automática: **30/30 conjuntos**, 120 PNG, desvio de 0 m em relação aos pontos do PDF, 0 erros de consola.
+- `node --test tests/m01-tczew-data.test.js` → 14/14, corrido em `465cd30`, depois de mexer em `research/SOURCES.md`.
+- **Não corridos:**
+  - `npm test` completo, que inclui as suites da M01;
+  - `npm run test:browser` da M01;
+  - goldens da M01 (REG-01).
+
+  Estes ficam para o Capitão M01 na integração. O diff dos ficheiros da M01 é zero.
+
+## 5. Pendentes conhecidos
+
+**N0, por aprovar:**
+- leitura humana das 120 imagens;
+- oclusão e interiores;
+- vídeo contínuo das duas rotas;
+- planta com escala e tabela de vãos: o trabalho parcial está em `docs/m02/wip/2026-11-04/n0-plan.patch`, que **não foi revisto nem aplicado**;
+- lista de problemas.
+
+**Depois vêm** o N1 (log causal AI-01, COM e SAVE com evidência gravada) e o playtest humano do proprietário antes do N6.
+
+**Calibração, que precisa de playtest:**
+- Tempo da missão simulada até ao C12: ≈ 10,6–13,1 min, **muito abaixo do alvo de 29–34 min**.
+- Letalidade de soldado e veterano: o ciclo da Kar98k é 1,55 s na M02, contra 9–18 s na M01.
+- Valores escolhidos por agentes sem fonte:
+  - raio de contacto do C02: 25 m;
+  - abandono dos volumes no C06: 60 s;
+  - limiar de vida do Lis entre «walking» e «carried»: 40;
+  - desvio a portas fechadas: ≤ 12 m do destino;
+  - tempos mínimos de cena: C05 45 s, C07 60 s, C08 60 s, C12 45 s.
+
+**Desvios do PDF ainda abertos:**
+- Com o Piotr parado em P1, a secção toma a quinta sozinha aos 72–86 s (D4).
+- Spawn sob fogo no C06 em soldado e veterano.
+- LG01–LG12 invulneráveis (C11).
+- Ordens só na Área A (D4).
+- O EA0 não tem moral nem recuo (D2).
+- `essential` funciona como imunidade oculta (D1).
+- Falta a 2.ª falha dura de D1.
 - Os aliados não transportam volumes à mão.
-- A entrada do Lis não pára sob fogo.
 - As portas de B12 têm 1,6 m, contra 1,4 m no PDF.
 
-**Combate D, integrado em `edc51ad`. Testes: `tests/m02-*.test.js` 293/293 (169 s); build OK. A secção D do PDF está nas pp. 16–18.**
+**Saves:**
+- Janela residual de compare-and-swap entre separadores (o `localStorage` não é atómico).
+- O cp_a só chega à loja se o jogador avançar antes do contacto (documentado).
 
-O que mudou:
-- **Falha da missão:** `missionFailed` quando o Piotr morre. Pára o roteiro e todas as gravações. O reinício é explícito, a partir do último checkpoint compatível (painel ou F9).
-- **Explosões:** cada explosão perigosa tem `hazardBlasts` com aviso de 5–8 s e posição fixa; o validador exige o intervalo [5,8].
-  - A IA alemã não lança granadas, porque o PDF não o prevê; existe só a API `throwEnemyGrenade`.
-  - O evento `blast-warning` **ainda não é consumido** pelo audiovisual.
-- **Dificuldade:** `src/game/m02-difficulty.js` com os IDs e multiplicadores importados de `m01-difficulty.js`.
-  - Impactos de Kar98k até matar: recruta 7, soldado 3, veterano 2.
-  - **Alerta:** os mesmos multiplicadores não dão a mesma letalidade que na M01, porque o ciclo da Kar98k é 1,55 s na M02 contra 9–18 s na M01.
-  - Em soldado e veterano, o MissionBot morre em 2 de 3 sementes. **É preciso calibrar com playtest humano.**
-  - A dificuldade é configuração e fica fora do snapshot. A bancada não tem seletor.
-- **Ordens:** só «cobrir» e «avançar», e só na Área A, que é a única com nós de cobertura. «Suprimir», «flanquear» e as teclas Z/X/B antigas foram retiradas. O efeito causal D4 mantém-se e foi testado com 3 sementes.
-- **Moral por grupo de encontro (D3):** o EC2 já não se rende no 1.º tick do C10.
-- **Contacto C02 por proximidade:** abre a 25 m; o valor é **escolha do agente**, porque o PDF não o fixa. Com avanço prudente mantém-se em [30,60) s.
+**Apresentação:**
+- A noite é muito escura e a lua não foi calculada.
+- Os blocos do anel L2 parecem paredes cinzentas.
+- As sombras só cobrem ±65 m.
+- O áudio é placeholder e não foi ouvido, porque o headless não tem gesto de áudio.
+- Os azimutes de landmarks são placeholders até GEO-01.
 
-**Ajustes de testes a vigiar:**
-- No m02-09, a semente 19390913 passou a 19390917, porque o piloto do pomar morria (está na revisão).
-- No m02-13, o EA0 é rendido explicitamente.
+**Fontes bloqueadas:**
+- HIST-01 e HIST-02;
+- GEO-01 e GEO-02;
+- ART-01;
+- EQP-01 (validação);
+- CONT-01;
+- conteúdo das BZ-H01…H14, ainda não guardado.
 
-**Pendentes:**
-- 2.ª falha dura de D1 (incapacidade de personagem).
-- `hpOnCheckpoint`: há risco de espiral de morte.
-- Alternância apoio/deslocação.
-- Ordens nas Áreas B e C.
-
-**Revisão adversarial independente do roteiro C e do combate D, em `edc51ad`: REJEITADO.**
-
-**P1:**
-- O validador recusa instantes que a própria simulação escreve: `toFixed(3)` arredonda para cima. Com dt de 1/60, perdem-se o cp_c e o cp_d em cerca de 50 % das corridas.
-- O SP03 nunca fere ninguém: o entulho é criado antes da detonação e oclui todos os raios.
-
-**P2:**
-- Um checkpoint pode ser gravado com o Piotr morto, o que leva a um ciclo de reinício.
-- Há risco de espiral de morte, porque os gatilhos de cp_a e cp_d não seguem I3 pp. 33–34.
-- A graça F1 depende do dt.
-- A dificuldade fica fora do snapshot, ao contrário da M01.
-- O C06 fica sem saída se a carroça parar.
-- Um tiro antes de andar deixa a secção parada.
-- Desvios do PDF:
-  - os LG são invulneráveis;
-  - as ordens só funcionam na Área A;
-  - o EA0 não tem moral;
-  - `lis_status` fica 'active';
-  - `essential` funciona como imunidade oculta.
-- Há um spam de `checkpoint-rejected` depois da falha.
-- Há duas asserções vazias.
-
-**Sem defeito:**
-- Todo o estado novo está no snapshot.
-- O fuzz de restauro-continuação deu **491 réplicas e 0 divergências**: MissionBot em 8 corridas, 3 variantes de restauro e os 4 checkpoints automáticos.
-- O fuzz de entradas aleatórias deu 96 réplicas e 0 divergências.
-
-A troca de semente no m02-09 não esconde nenhum defeito.
-
-**Suspeito:** com dt de 1/60, ou nos perfis soldado e veterano, o MissionBot fica preso no C03 por causa da moral do EA1.
-
-**FIX-CD, integrado em `da599c7`. Testes:**
-- `tests/m02-*.test.js`: **319/319** (197 s).
-- Build OK.
-- Browser M02: **2 passed (3,1 min)**, N0 30/30.
-- Os ficheiros da M01 não mudaram.
-
-**Correções, com a prova antes → depois:**
-- Instantes da simulação arredondados para baixo (`instantAt`): cp_c e cp_d perdidos passam de 20/40 a 0/40; Digit0 passa de 10/30 a 0/30.
-- O SP03 passa a ferir: dano de 60 → 8 conforme a distância.
-- Já não se grava nenhum checkpoint com o Piotr morto. KeyM é recusado depois da falha, e há 0 spam.
-- cp_a passa a ser gravado no 1.º avanço antes do contacto, e cp_d no 1.º momento abrigado entre C10 e C12 (I3 pp. 33–34).
-  - O reinício passa a usar o checkpoint mais recente.
-  - Espiral de morte: veterano 31337 passa de 7/36 a 36/36 sobrevivências.
-- A graça F1 deixa de depender do dt, e a dificuldade entra no snapshot como na M01.
-- C06: os volumes passam a LOST depois de 60 s sem portador e sem hostis. O prazo de 60 s é **escolha do agente**.
-- `lis_status` fica nulo durante a missão.
-- Defeito real encontrado pelo bot a 1/60: os aliados batiam na parede antes de uma porta fechada. Passam a ir primeiro à porta.
-- Teste de missão completa a dt 1/60 em recruta.
-
-**Pendentes do FIX-CD:**
-- **Spawn sob fogo no C06:** em soldado e veterano, a dt 1/60, o Piotr morre 2 s depois de entrar, em (0,85), à vista do EB1.
-- O entulho do SP03 pode aparecer em cima do Piotr.
-- Se o Piotr nunca se abrigar, o cp_d não é gravado e o reinício cai no cp_c.
-- A moral do EA0 (D2: recuo para oeste) não está feita.
-- LG vulneráveis, ordens nas Áreas B e C e `essential`: não feitos, ficam por decidir.
-
-**Verificação independente do FIX-CD, em `da599c7`: REJEITADO.** Os P1 estão corrigidos.
-
-**Sem defeito:**
-- 7 missões completas a 1/60, 1/144, 1/30 e com jitter: 0 checkpoints recusados e 0 checkpoints com o Piotr morto.
-- Fuzz de restauro: **292 réplicas e 0 divergências**.
-
-**P2 que continuam a reproduzir:**
-- A graça F1 ainda depende do dt: o disparo seguinte é agendado a partir do relógio do tick.
-- Um KeyM que mata o Piotr conclui a missão e exporta `completed:true`.
-
-**P3:**
-- O abrigo do cp_d ignora as granadas do próprio jogador.
-- O cp_a não chega à loja no arranque por omissão da bancada; o reinício para o início em memória é equivalente.
-
-**Suspeitos:**
-- Portas sem limite de distância: o Lis andou 61 m até outra porta.
-- `setDifficulty` perde-se no reinício para o início.
-
-**Problema anterior, pendente de desenho:** com o Piotr parado em P1, a secção toma a quinta sozinha aos 72–86 s em 10/10 sementes. Contraria a D4 («autonomia não é vitória garantida»).
-
-**FIX-CD2, integrado em `279a8cb`.**
-
-Testes:
-- `tests/m02-*.test.js`: **329/329**.
-- Build OK.
-- Browser M02: **2 passed (3,3 min)**, N0 30/30.
-
-Confirmação pelo Capitão, com os scripts do próprio verificador corridos sobre o HEAD:
-- `f1offset`: 0/18 em todos os dt.
-- `f1phase`: 0/20 em todos os dt.
-- `attacks1`:
-  - caso 1: KeyM com o Piotr morto dá `completed:false` e `missionFailed=piotr_killed`;
-  - caso 2: a dificuldade veterano sobrevive ao reinício;
-  - caso 3: com a granada aos pés, o jogador não conta como abrigado e o cp_d não é gravado.
-
-Regra das portas: o desvio só vai a portas fechadas a ≤ 12 m do destino. O valor é escolha do agente.
-
-**Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
-morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
-morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
-
-**Testes corridos (checkout principal):**
-- `node --test --test-concurrency=1 tests/m02-*.test.js` em `58e7976`: **76/76 pass, 0 fail, 0 todo**. Em `465cd30` eram 54 pass e 2 todo.
-- `node --test tests/m01-tczew-data.test.js`: 14/14.
-- `npm run build`: passa. `dist/` só tem `index.html`; o build principal não muda.
-- Browser M02: `CHROME_EXECUTABLE=/opt/pw-browsers/chromium PORT=4391 npx playwright test -c tools/m02/playwright-m02-01.config.js` → **2 passed (2,4 min)** em SwiftShader, com o spec antigo e o N0. Prova N0 automática: **30/30 conjuntos**, 120 PNG, todos no ponto do PDF (desvio 0 m), 0 erros de consola. Árvore de trabalho = `dbb4436`.
-- Isto **não aprova o N0**. Continuam pendentes:
-  - a leitura humana das 120 imagens;
-  - a oclusão;
-  - os interiores;
-  - o vídeo das duas rotas;
-  - a planta com escala e a tabela de vãos (o patch WIP `n0-plan` está incompleto).
-  - Além disso, as luzes usadas são os presets atuais, que estão errados segundo o TIME-01.
-- **Não corrido:** `npm test` completo.
-
-## 3. Em curso, interrompido ou por começar
-
-| Trabalho | Estado | Onde está |
-|---|---|---|
-| FIX-2b defeitos da revisão adversarial | **Integrado** (`318b265`); verificação independente: ACEITE COM RESSALVAS | — |
-| FIX-2c P2 residuais dos saves | **Integrado**: merge `605e3fc` (`fe05c21`…`1bac72d`) | Ver lista abaixo |
-| 6–7 Roteiro C e set pieces J/E/F | **Integrado**: merge `07999a4` (`bb0cbf4`…`85dea7a`) | Ver lista abaixo |
-| 8 Combate D | **Integrado**: merge `edc51ad` (`4cedca2`…`46b59de`) | Ver lista abaixo |
-| Revisão adversarial do roteiro C e do combate D | **REJEITADO**, 2 P1 (ver abaixo) | Só leitura; provas em `scratchpad/review-cd/` |
-| FIX-CD correções da revisão | **Integrado**: merge `da599c7` (`fd66640`…`ef3b49e`) | Ver lista abaixo |
-| Verificação independente do FIX-CD | **REJEITADO**: P1 corrigidos, mas 2 P2 continuam a reproduzir (ver abaixo) | Só leitura; `scratchpad/review-cd-verify/` |
-| FIX-CD2 resíduos P2/P3 | **Integrado**: merge `279a8cb` (`c3339ef`…`6ed5e21`) | Ver lista abaixo |
-| 9 Ambiente G/H/L e luzes TIME-01 | **EM CURSO**: é o único agente ativo | worktree `m02-env`; reaproveita `docs/m02/wip/2026-11-04/env-GHL.patch` |
-| 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
-| N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
-| 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
-
-Os patches em `docs/m02/wip/` são trabalho parcial de agentes interrompidos. **Não foram aplicados nem revistos.**
-Ou se reaplicam com `git apply --3way` e se terminam, ou se apagam.
-
-## 4. Achados novos que exigem ação
-
-- **TIME-01 corrigido:**
-  - O ocaso de 9/9 é ≈ **18:14** e o nascer de 10/9 ≈ **05:08**, pela definição padrão NOAA (zénite 90,833°).
-  - 18:09 e 05:13 eram o centro geométrico do disco (zénite 90°).
-  - Confirmado com uma implementação independente. Os dois pares estão registados no BZ-C02.
-- **Presets de luz da bancada errados** face ao cálculo (`docs/m02/research/TIME-01-solar.md`):
-  - T0: o sol está 15–24° alto.
-  - T2: o azimute está errado em 38° (ENE em vez de SE).
-  - T3: a elevação está +11,6°.
-  - T1 noite: usa um «sol» acima do horizonte.
-- **C02:** os 4 hostis do EA0 veem o Piotr no tick 0. O primeiro contacto acontece em < 15 s, contra os 30–60 s do PDF (vai para o passo 6).
-- ~~«Kwiatkówek–Tum» como local~~ **corrigido** em `5fee9ee`: passa a ser referência tipológica (GEO-01).
-- ~~SN3/SN4 desviados do PDF~~ **corrigido** em `5fee9ee`.
-- **Lis no C11:** reaparece em (-28,-22) por teleporte (`m02-acts-director.js`), o que Q2 proíbe (passo 7).
-- **EQP-01:** a pesquisa não conseguiu ler as páginas completas, porque havia DNS bloqueado na sessão.
-
-## 5. Decisões pendentes do proprietário (D-M02-1…7, `docs/direction/M02_BZURA_DESIGN.md` §6)
+## 6. Decisões pendentes do proprietário
 
 | ID | Decisão | Estado nesta branch |
 |---|---|---|
-| D-M02-1 | Aceitar a fusão isolada da bancada (M02-INT-1) | Fusão feita na linha (`426045ee`) como INTEGRADA SEM VALIDAÇÃO DE JOGO. **Falta a ratificação.** |
+| D-M02-1 | Aceitar a fusão isolada da bancada (M02-INT-1) | Fusão na linha (`426045ee`) como INTEGRADA SEM VALIDAÇÃO DE JOGO. **Falta a ratificação.** |
 | D-M02-2 (DEC-01) | Cronologia sem recuo geral; «cobertura da retirada» com sentido local | Texto conforme. Pendente |
-| D-M02-3 (DEC-02) | 56.º pp como enquadramento | **Retirado do ecrã** até haver decisão (FIX-1) |
-| D-M02-4 (DEC-07) | Envelope de save comum com o condutor de atos da M01 | Proposta em preparação no FIX-2 (`docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md`). `m01-acts.js` não é alterado |
-| D-M02-5 (DEC-03/04/05/06) | Três células; clímax local em Leśmierz; rota do pomar mais longa; CP final em C10 | Pendente. A rota do pomar ainda não foi medida |
+| D-M02-3 (DEC-02) | 56.º pp como enquadramento | **Retirado do ecrã** até haver decisão |
+| D-M02-4 (DEC-07) | Envelope de save comum com o condutor de atos da M01 | Proposta em `docs/m02/M02_SAVE_ENVELOPE_PROPOSAL.md`. `m01-acts.js` não foi alterado; a M02 continua com schema próprio |
+| D-M02-5 (DEC-03/04/05/06) | Três células; clímax local em Leśmierz; rota do pomar mais longa; CP final antecipado para C10 | Pendente. O cp_d é gravado no 1.º abrigo válido entre C10 e C12 |
 | D-M02-6 | Elenco: Gruca, Wierzba, Małek, Szymczak; «Małek» vs «Malec» (M05) | Pendente |
 | D-M02-7 | A bancada pode avançar antes da aprovação da M01, sem promover o estado | Pendente |
 
-Outras decisões: as portas de B08 (F), EQP-01 (validação das armas) e a regra `DROPPED_READY` (volume largado quando o portador morre).
+**Outras decisões pedidas:**
+- Portas de B08.
+- EQP-01.
+- Regra `DROPPED_READY`: o volume fica no chão quando o portador morre (introduzida pelo FIX-2b).
+- Os valores de calibração do §5.
+- Manter as suites M02 no `npm test` por omissão.
+
+## 7. Próximos passos recomendados
+
+Um agente de cada vez:
+
+1. Aplicar e terminar `docs/m02/wip/2026-11-04/n0-plan.patch`: planta SVG e tabela de vãos.
+2. Leitura humana das capturas N0 e vídeo das rotas. Aprovação do N0 pelo proprietário.
+3. Revisão independente completa do HEAD final (simulação e saves) antes do N1.
+4. Tratar os desvios do PDF do §5 por ordem de severidade O6.
+5. Integração na linha da M01 pelo Capitão M01: `npm test` completo, `test:browser` da M01 e goldens (REG-01).
