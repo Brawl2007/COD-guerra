@@ -9,6 +9,18 @@ export function roundNoNegZero(value, digits = 2) {
   return Number(value.toFixed(digits)) + 0;
 }
 
+/**
+ * Instante PASSADO gravado pela simulação (início de cena, aviso de explosão, falha da missão, início do recuo do EA0), em ms
+ * arredondados para BAIXO. O validador recusa um instante à frente do relógio do snapshot (`> clock + 1e-9`); `toFixed(3)` arredondava
+ * para cima e, com o dt real de um frame (1/60 s), metade das transições de cena gravava um instante 0,1-0,5 ms à frente do relógio:
+ * o checkpoint desse passo era recusado e perdia-se (FIX-CD). Instantes futuros (impacto, próximo tiro, contacto agendado) não passam por aqui.
+ */
+export function instantAt(clock) {
+  const ms = Math.floor(clock * 1000);
+  const t = ms / 1000;
+  return t > clock ? (ms - 1) / 1000 : t;
+}
+
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
     id: 'wz29',
@@ -1145,6 +1157,7 @@ export function updatePolishSquad(sim, dt) {
     let bestScore = -Infinity;
     for (const enemy of sim.enemies) {
       if (!enemy.alive || enemy.nonCombatant) continue;
+      if (enemy.state === 'WITHDRAWING') continue; // D2: a secção deixa recuar o posto EA0 («posto que recua deixa de bloquear»), não o persegue a tiro
       if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
       // C02: a secção não abre fogo sobre um posto que ainda não deu pelo contacto (o primeiro tiro é do contacto aberto).
       if (sim.c01Active && !sim.c01Contact?.opened) continue;
@@ -1189,11 +1202,68 @@ export function updatePolishSquad(sim, dt) {
 
 /**
  * Grupo de moral de um hostil (D3: «baixas elevadas ou saída comprometida podem produzir recuo/rendição»): o encontro a que pertence.
- * Os da quinta (EA1) não trazem `encounterId` no layout; EA0 (o posto de C01) não tem moral de grupo.
- * PENDENTE (FIX-CD, D2 p. 16): a alteração prevista para o EA0 é «recuam para borda oeste; não reaparecem na quinta», não a rendição;
- * não é trivial (exige um recuo navegado de não combatentes até à borda oeste e o limiar de 4 homens), por isso o EA0 continua sem moral.
+ * Os da quinta (EA1) não trazem `encounterId` no layout.
  */
 export const moraleGroupOf = (e) => e.encounterId ?? 'EA1';
+
+/**
+ * D2 (PDF p. 16, tabela do roster): o posto EA0 (DE-A01…A04, vala transversal) tem como alteração permitida «recuam para borda oeste;
+ * não reaparecem na quinta»; D1 (O01, p. 16): «posto que recua deixa de bloquear»; C02 (p. 13): «não surgem novos homens para repor
+ * o combate». Moral por grupo de encontro, determinista (sem RNG): quando METADE do posto está fora de combate (mortos, caídos,
+ * rendidos ou já retirados) e o posto já abriu fogo (C02 quer o clarão que Lis aponta) os restantes que ainda combatem recuam, a
+ * andar e sem disparar, para a borda oeste jogável
+ * (`bounds.c01Approach.minX` do layout mais a margem) e ficam lá «retirados» (WITHDRAWN: vivos, fora de combate, contados no
+ * roster; nunca passam à quinta). Só depois de o contacto de C02 estar aberto (antes o posto está «sem alerta»).
+ * VALORES SEM FONTE NO PDF (D3 só diz «baixas elevadas»): 2 baixas de 4 (metade), margem de 2 m à borda, 25 s de limite do recuo.
+ */
+export const EA0_RETREAT_CASUALTIES = 2;
+export const EA0_WEST_EDGE_MARGIN_M = 2;
+/** Se o recuo não chega à borda neste tempo (rota cortada), o homem fica retirado onde estiver: o posto nunca bloqueia para sempre. */
+export const EA0_WITHDRAW_MAX_SEC = 25;
+const EA0_WITHDRAW_ARRIVE_M = 0.6;
+
+function beginEa0Withdrawal(sim, enemy, neutralized) {
+  const bounds = sim.world.layout.bounds ?? {};
+  const westX = (bounds.c01Approach?.minX ?? bounds.playable?.minX ?? -50) + EA0_WEST_EDGE_MARGIN_M;
+  enemy.state = 'WITHDRAWING';
+  enemy.withdrawStartedAt = instantAt(sim.clock);
+  enemy.goal = { x: westX, z: roundNoNegZero(enemy.z), crouch: false };
+  enemy.navCorners = null;
+  enemy.seeingTargetId = null;
+  enemy.memory = null;
+  sim.combatLog.push({
+    clock: Number(sim.clock.toFixed(2)),
+    type: 'enemy_withdrawing',
+    actorId: enemy.id,
+    encounterId: 'EA0',
+    casualties: neutralized,
+    x: Number(enemy.x.toFixed(2)),
+    z: Number(enemy.z.toFixed(2)),
+    toX: westX,
+  });
+}
+
+function stepEa0Withdrawal(sim, enemy, dt) {
+  stepActorNavigation(sim, enemy, dt);
+  const goal = enemy.goal;
+  const arrived = Boolean(goal) && Math.hypot(goal.x - enemy.x, goal.z - enemy.z) <= EA0_WITHDRAW_ARRIVE_M;
+  const timedOut = sim.clock - enemy.withdrawStartedAt >= EA0_WITHDRAW_MAX_SEC;
+  if (!arrived && !timedOut) return;
+  enemy.state = 'WITHDRAWN';
+  enemy.nonCombatant = true;
+  enemy.moving = false;
+  enemy.goal = null;
+  enemy.navCorners = null;
+  sim.combatLog.push({
+    clock: Number(sim.clock.toFixed(2)),
+    type: 'enemy_withdrawn',
+    actorId: enemy.id,
+    encounterId: 'EA0',
+    x: Number(enemy.x.toFixed(2)),
+    z: Number(enemy.z.toFixed(2)),
+    ...(arrived ? {} : { timedOut: true }),
+  });
+}
 
 export function updateGermanGarrison(sim, dt) {
   // Moral por grupo: a rendição conta SÓ as baixas do próprio encontro (EA1, EB1, EC1, EC2). Antes contava todos os hostis que não
@@ -1201,11 +1271,11 @@ export function updateGermanGarrison(sim, dt) {
   // por abatida). A condição da MG é a de DE-A05 e só vale para o grupo da quinta, onde ela existe.
   const moraleGroups = new Map();
   for (const e of sim.enemies) {
-    if (e.encounterId === 'EA0') continue;
     const key = moraleGroupOf(e);
-    const g = moraleGroups.get(key) ?? { size: 0, neutralized: 0 };
+    const g = moraleGroups.get(key) ?? { size: 0, neutralized: 0, shots: 0 };
     g.size += 1;
     if (!e.alive || e.nonCombatant) g.neutralized += 1;
+    g.shots += e.shotsFired ?? 0;
     moraleGroups.set(key, g);
   }
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05');
@@ -1271,6 +1341,18 @@ export function updateGermanGarrison(sim, dt) {
       continue;
     }
 
+    // D2: o posto EA0 recua (ver EA0_RETREAT_CASUALTIES). Quem recua anda para a borda oeste e não dispara nem percebe ninguém.
+    if (enemy.encounterId === 'EA0') {
+      // (só depois de o posto ter aberto fogo: C02 quer o clarão que Lis aponta; um posto que cai de uma só salva não «recua»)
+      if (enemy.state !== 'WITHDRAWING' && neutralizedCount >= EA0_RETREAT_CASUALTIES && (moraleGroup?.shots ?? 0) > 0) {
+        beginEa0Withdrawal(sim, enemy, neutralizedCount);
+      }
+      if (enemy.state === 'WITHDRAWING') {
+        stepEa0Withdrawal(sim, enemy, dt);
+        continue;
+      }
+    }
+
     stepActorWeapon(sim, enemy, dt);
 
     // Local reserve movement (DE-A12, DE-A13 in Area A; or EC2 reserve DE-C09..DE-C20 in Area C)
@@ -1289,8 +1371,9 @@ export function updateGermanGarrison(sim, dt) {
       }
     }
 
-    // Fallback to secondary cover if heavily suppressed and damaged
-    if (enemy.health < 55 && enemy.suppressed > 0.65 && enemy.fallback && !enemy.fellBack) {
+    // Fallback to secondary cover if heavily suppressed and damaged. (O posto EA0 não: o `fallback` dos seus homens aponta para a quinta e
+    // D2 manda-os recuar para a borda oeste, ver acima.)
+    if (enemy.health < 55 && enemy.suppressed > 0.65 && enemy.fallback && !enemy.fellBack && enemy.encounterId !== 'EA0') {
       enemy.goal = { x: enemy.fallback[0], z: enemy.fallback[1], crouch: true };
       enemy.fellBack = true;
       enemy.state = 'FALLBACK_COVER';

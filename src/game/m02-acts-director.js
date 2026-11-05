@@ -2,7 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { stepActorNavigation, WEAPON_PROFILES } from './m02-combat-ai.js';
+import { stepActorNavigation, WEAPON_PROFILES, instantAt } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
   TR01: 'Acessos de Łęczyca — noite de 9 para 10 de setembro',
@@ -1400,17 +1400,8 @@ export const C02_EXIT_Z = -85;
 export const C04_EXIT_Z = 44;
 export const C11_EVAC_RADIUS_M = 6;
 
-/**
- * Instante PASSADO gravado pela simulação (início de cena, aviso de explosão, falha da missão), em ms arredondados para BAIXO.
- * O validador recusa um instante à frente do relógio do snapshot (`> clock + 1e-9`); `toFixed(3)` arredondava para cima e, com o dt
- * real de um frame (1/60 s), metade das transições de cena gravava um instante 0,1-0,5 ms à frente do relógio: o checkpoint desse
- * passo era recusado e perdia-se (FIX-CD). Instantes futuros (impacto, próximo tiro, contacto agendado) não passam por aqui.
- */
-export function instantAt(clock) {
-  const ms = Math.floor(clock * 1000);
-  const t = ms / 1000;
-  return t > clock ? (ms - 1) / 1000 : t;
-}
+// `instantAt` vive em m02-combat-ai.js (D2 precisa dele sem import circular) e continua a sair daqui para quem o importava deste módulo.
+export { instantAt };
 
 export function createInitialScriptState(sceneId = 'C02', clock = 0) {
   return { sceneId, sceneStartedAt: instantAt(clock), history: [], finished: false };

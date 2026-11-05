@@ -146,6 +146,8 @@ const ENEMY_STATES = Object.freeze([
   'ADVANCE_RESERVE',
   'SURRENDERED',
   'WOUNDED_UNARMED',
+  'WITHDRAWING', // D2: o posto EA0 a recuar para a borda oeste (combatente, a andar)
+  'WITHDRAWN', // D2: o posto EA0 retirado na borda oeste (vivo, fora de combate)
   'DEAD',
   'DOWN',
 ]);
@@ -348,6 +350,21 @@ export function validateM02Snapshot(snap) {
       // D6 (regra F1 da M01): contacto de um atirador com Piotr; só existe em soldado/veterano, instantes finitos ou null.
       if (label === 'Inimigo' && ['aimEngagedAt', 'aimLastAt'].some((k) => k in a && a[k] !== null && !(Number.isFinite(a[k]) && a[k] >= 0))) {
         return { valid: false, reason: `Contacto do inimigo com Piotr inválido no snapshot: ${a.id}` };
+      }
+      // D2: recuo do posto EA0 (campo aditivo `withdrawStartedAt`; saves anteriores nunca o têm). WITHDRAWING/WITHDRAWN só existem em
+      // homens vivos do EA0, com o instante de início passado; quem recua é combatente e anda para um destino, quem foi retirado já não combate.
+      if (label === 'Inimigo') {
+        const withdrawing = a.state === 'WITHDRAWING';
+        const withdrawn = a.state === 'WITHDRAWN';
+        const started = a.withdrawStartedAt;
+        if (
+          ('withdrawStartedAt' in a && started !== null && !(Number.isFinite(started) && started >= 0 && started <= snap.clock + 1e-9)) ||
+          ((withdrawing || withdrawn) &&
+            (a.encounterId !== 'EA0' || a.alive !== true || !Number.isFinite(started) || Boolean(a.nonCombatant) !== withdrawn)) ||
+          (withdrawing && !(isPlainObject(a.goal) && Number.isFinite(a.goal.x) && Number.isFinite(a.goal.z)))
+        ) {
+          return { valid: false, reason: `Recuo do posto EA0 inválido no snapshot: ${a.id}` };
+        }
       }
     }
   }
