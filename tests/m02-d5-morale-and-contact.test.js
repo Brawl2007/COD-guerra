@@ -3,8 +3,10 @@
 // quando ele chega perto, sem esperar pelo temporizador do contacto. Testes de estado (entradas simuladas), não playtest.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { M02BenchSimulation } from '../src/game/m02-01-simulation.js';
+import { M02BenchSimulation, validateM02Snapshot } from '../src/game/m02-01-simulation.js';
 import { moraleGroupOf } from '../src/game/m02-combat-ai.js';
+import { C01_CONTACT_DELAY_SEC, C01_CONTACT_OPENED_BY, C01_PROXIMITY_DETECTION_M } from '../src/game/m02-acts-director.js';
+import { PlayerBot } from './m02-bot-helper.js';
 
 const DT = 0.1;
 const SEED = 19390909;
@@ -142,5 +144,120 @@ describe('M02 D3: a moral conta só as baixas do próprio grupo (bug: EC2 rendia
     kill(a.enemies.find((e) => e.id === 'DE-A05'));
     idle(a, 0.5);
     assert.ok(surrendered(a.enemies).length >= 1 || combatants(a.enemies).length === 0, 'EA1: com a MG abatida e 7+ baixas os restantes cedem');
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// C02 (PDF p. 12): «O primeiro tiro combatível deve ocorrer em 30-60 s depois de iniciar o movimento; o inimigo fica a cerca de 67 m da
+// partida.» O temporizador vale para quem avança com prudência; quem corre para o posto não fica sem ser alvejado: dentro de
+// C01_PROXIMITY_DETECTION_M de um homem do posto o contacto abre já (openedBy 'proximity').
+// ---------------------------------------------------------------------------------------------------------------------
+describe('M02 C02: o posto EA0 deteta quem chega perto (bug: quem corria para o posto não era alvejado até ao temporizador)', () => {
+  const HOLD = { x: -8.5, z: -142 }; // cobertura intermédia de C01 (cv_c01_mid_w), a ~31-34 m dos homens do posto
+  const POST_NEAR = { x: -18, z: -100 }; // 10 m do centro do posto (-18,-110)
+  const c01 = (seed = SEED) => new M02BenchSimulation(seed, { startScene: 'C01' });
+  const sentinels = (sim) => sim.enemies.filter((e) => e.encounterId === 'EA0');
+  const nearestSentinel = (sim) => Math.min(...sentinels(sim).filter((e) => e.alive).map((e) => Math.hypot(e.x - sim.player.x, e.z - sim.player.z)));
+
+  it('o raio de deteção (25 m) está entre os 15 m mínimos de D1 e as coberturas intermédias de C01 (≥ 30 m aos homens do posto)', () => {
+    assert.equal(C01_PROXIMITY_DETECTION_M, 25);
+    assert.ok(C01_PROXIMITY_DETECTION_M > 15);
+    assert.ok(C01_CONTACT_OPENED_BY.includes('proximity'));
+    const sim = c01();
+    for (const node of ['cv_c01_mid_w', 'cv_c01_mid_e']) {
+      const n = sim.coverNodesById.get(node);
+      const d = Math.min(...sentinels(sim).map((e) => Math.hypot(e.x - n.x, e.z - n.z)));
+      assert.ok(d > C01_PROXIMITY_DETECTION_M + 4, `${node} a ${d.toFixed(1)} m do homem mais próximo: avançar com prudência não dispara a deteção`);
+    }
+  });
+
+  it('um jogador que corre (sprint) para o posto abre o contacto por proximidade a ≤ 25 m, muito antes do temporizador, e é alvejado', () => {
+    const sim = c01();
+    const bot = new PlayerBot(sim);
+    const opened = () => sim.c01Contact.opened;
+    assert.equal(bot.walkTo(POST_NEAR, { tol: 1.0, maxSec: 40, sprint: true, until: opened }), true);
+    const c = sim.c01Contact;
+    assert.equal(c.opened, true);
+    assert.equal(c.openedBy, 'proximity');
+    const dMoving = c.openedAt - c.movementStartedAt;
+    assert.ok(dMoving < C01_CONTACT_DELAY_SEC.min, `abriu ${dMoving.toFixed(1)} s depois do avanço, antes de qualquer atraso de [30, 60)`);
+    assert.ok(c.openedAt < c.contactAt, 'o temporizador ainda não tinha chegado');
+    assert.ok(nearestSentinel(sim) <= C01_PROXIMITY_DETECTION_M + 0.7, `distância ao posto no instante: ${nearestSentinel(sim).toFixed(1)} m`);
+    assert.ok(nearestSentinel(sim) > C01_PROXIMITY_DETECTION_M - 1.5);
+    // e o posto reage: dispara contra Piotr nos segundos seguintes (antes, não via nem disparava a ninguém)
+    const shots = bot.events.filter((e) => e.type === 'actor-burst' && e.side === 'enemy');
+    assert.ok(shots.every((e) => e.clock >= c.openedAt - 1e-9), 'até ao contacto ninguém disparou: os tiros só começam no tick em que o contacto abre');
+    bot.idleUntil(() => bot.events.some((e) => e.type === 'actor-burst' && e.side === 'enemy'), 10);
+    const first = bot.events.find((e) => e.type === 'actor-burst' && e.side === 'enemy');
+    assert.ok(first, 'o posto abriu fogo');
+    assert.ok(first.clock - c.openedAt < 5, `1.º tiro inimigo ${(first.clock - c.openedAt).toFixed(1)} s depois do contacto`);
+    assert.ok(first.clock - c.movementStartedAt < C01_CONTACT_DELAY_SEC.min, 'e antes do fim do intervalo 30-60 s');
+    assert.ok(sentinels(sim).some((e) => e.id === first.shooterId), 'o tiro é de um homem do posto');
+  });
+
+  it('quem avança com prudência continua a esperar o temporizador (a abertura é por «timer» em [30, 60) s) — 10 sementes, coberturas intermédias', () => {
+    for (const seed of [1, 2, 3, 19390909, 777, 4242, 20260607, 9, 31337, 65535]) {
+      const sim = c01(seed);
+      const bot = new PlayerBot(sim);
+      assert.equal(bot.walkTo(HOLD, { tol: 1.2, maxSec: 40 }), true);
+      let closest = nearestSentinel(sim);
+      for (let i = 0; i < 700 && !sim.c01Contact.opened; i++) {
+        bot.tick({});
+        closest = Math.min(closest, nearestSentinel(sim));
+      }
+      const c = sim.c01Contact;
+      assert.equal(c.openedBy, 'timer', `semente ${seed}`);
+      const delay = c.contactAt - c.movementStartedAt;
+      assert.ok(delay >= C01_CONTACT_DELAY_SEC.min && delay < C01_CONTACT_DELAY_SEC.max, `semente ${seed}: atraso ${delay}`);
+      assert.ok(closest > C01_PROXIMITY_DETECTION_M, `semente ${seed}: aproximou-se a ${closest.toFixed(1)} m (> 25)`);
+    }
+  });
+
+  it('não gasta sorteios: o atraso do temporizador é o mesmo corra ou não o jogador; só conta homens do posto vivos e combatentes', () => {
+    const rusher = c01();
+    const waiter = c01();
+    new PlayerBot(rusher).walkTo(POST_NEAR, { tol: 1.0, maxSec: 40, sprint: true, until: () => rusher.c01Contact.opened });
+    for (let i = 0; i < 5; i++) waiter.tick(0.1, { forward: 1 });
+    assert.equal(rusher.c01Contact.contactAt, waiter.c01Contact.contactAt, 'o mesmo sorteio ao primeiro avanço');
+    assert.equal(rusher.c01Contact.openedBy, 'proximity');
+
+    // só o homem vivo e combatente conta: abatidos os três mais próximos, 10 m de um morto não abre; 20 m do vivo sim
+    const sim = c01();
+    const [alive, ...dead] = sentinels(sim);
+    dead.forEach(kill);
+    sim.tick(0.1, { forward: 1 }); // primeiro avanço
+    sim.teleportPlayer(dead[0].x, dead[0].z + 10, 0);
+    sim.tick(0.1, {});
+    if (Math.hypot(alive.x - sim.player.x, alive.z - sim.player.z) > C01_PROXIMITY_DETECTION_M) {
+      assert.equal(sim.c01Contact.opened, false, 'ao pé de homens abatidos, mas longe do vivo, o contacto não abre');
+    }
+    sim.teleportPlayer(alive.x, alive.z + C01_PROXIMITY_DETECTION_M - 1, 0);
+    sim.tick(0.1, {});
+    assert.equal(sim.c01Contact.opened, true);
+    assert.equal(sim.c01Contact.openedBy, 'proximity');
+  });
+
+  it('um salto direto para junto do posto (primeiro tick com movimento) abre o contacto nesse mesmo tick', () => {
+    const sim = c01();
+    sim.teleportPlayer(POST_NEAR.x, POST_NEAR.z, 0);
+    sim.tick(0.1, {});
+    assert.equal(sim.c01Contact.movementStartedAt !== null, true);
+    assert.equal(sim.c01Contact.opened, true);
+    assert.equal(sim.c01Contact.openedBy, 'proximity');
+    assert.ok(sim.combatLog.some((e) => e.type === 'c01_contact_opened' && e.by === 'proximity'));
+  });
+
+  it('o snapshot guarda e restaura o contacto aberto por proximidade; o validador aceita-o e continua a recusar origens inventadas', () => {
+    const sim = c01();
+    new PlayerBot(sim).walkTo(POST_NEAR, { tol: 1.0, maxSec: 40, sprint: true, until: () => sim.c01Contact.opened });
+    const snap = structuredClone(sim.snapshot());
+    assert.equal(snap.c01Contact.openedBy, 'proximity');
+    assert.equal(validateM02Snapshot(snap).valid, true);
+    const live = new M02BenchSimulation(1, { startScene: 'C01' });
+    live.restoreSnapshot(snap);
+    assert.deepEqual(live.c01Contact, sim.c01Contact);
+    const bad = structuredClone(snap);
+    bad.c01Contact.openedBy = 'magia';
+    assert.equal(validateM02Snapshot(bad).valid, false);
   });
 });

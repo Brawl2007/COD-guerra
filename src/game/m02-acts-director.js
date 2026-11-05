@@ -19,7 +19,15 @@ export const M02_TR_CARTELAS = Object.freeze({
  * no snapshot); um tiro ou granada do jogador abre o contacto já (a iniciativa é dele).
  */
 export const C01_CONTACT_DELAY_SEC = Object.freeze({ min: 30, max: 60 });
-export const C01_CONTACT_OPENED_BY = Object.freeze(['timer', 'player_shot', 'player_grenade']);
+/**
+ * C02: quem corre para o posto não espera pelo temporizador. O posto «sem alerta» dá pelo jogador quando ele chega a esta distância (m)
+ * de um dos seus homens (vivo e combatente) e o contacto abre nesse tick. Escolha documentada (o PDF não a fixa): D1 põe o combate
+ * principal entre 15 e 120 m e C02 o posto a ~67 m da partida; 25 m fica acima dos 15 m mínimos e abaixo da distância (≥ 30 m ao homem
+ * mais próximo) a que ficam as coberturas intermédias de C01 (cv_c01_mid_w/e), onde quem avança com prudência espera os 30-60 s do
+ * contacto. Só conta a distância: a visão por campo/exposição aplica-se depois de o contacto estar aberto (updateGermanGarrison).
+ */
+export const C01_PROXIMITY_DETECTION_M = 25;
+export const C01_CONTACT_OPENED_BY = Object.freeze(['timer', 'player_shot', 'player_grenade', 'proximity']);
 /** Distância (m) a P1 a partir da qual o jogador «começou a avançar». */
 const C01_ADVANCE_THRESHOLD_M = 0.1;
 
@@ -49,7 +57,22 @@ export function updateC01Contact(sim) {
     const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
     c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
   }
-  if (sim.clock >= c.contactAt) openC01Contact(sim, 'timer');
+  if (sim.clock >= c.contactAt) {
+    openC01Contact(sim, 'timer');
+    return;
+  }
+  // O posto não está cego a quem chega ao pé dele: dentro do raio de deteção o contacto abre já (sem sorteio: o atraso do
+  // temporizador foi sorteado uma só vez, ao primeiro avanço).
+  const px = sim.player.x;
+  const pz = sim.player.z;
+  const near = sim.enemies.some(
+    (e) =>
+      e.encounterId === 'EA0' &&
+      e.alive &&
+      !e.nonCombatant &&
+      Math.hypot(e.x - px, e.z - pz) <= C01_PROXIMITY_DETECTION_M,
+  );
+  if (near) openC01Contact(sim, 'proximity');
 }
 
 /**
