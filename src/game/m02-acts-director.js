@@ -1243,8 +1243,20 @@ export const C02_EXIT_Z = -85;
 export const C04_EXIT_Z = 44;
 export const C11_EVAC_RADIUS_M = 6;
 
+/**
+ * Instante PASSADO gravado pela simulação (início de cena, aviso de explosão, falha da missão), em ms arredondados para BAIXO.
+ * O validador recusa um instante à frente do relógio do snapshot (`> clock + 1e-9`); `toFixed(3)` arredondava para cima e, com o dt
+ * real de um frame (1/60 s), metade das transições de cena gravava um instante 0,1-0,5 ms à frente do relógio: o checkpoint desse
+ * passo era recusado e perdia-se (FIX-CD). Instantes futuros (impacto, próximo tiro, contacto agendado) não passam por aqui.
+ */
+export function instantAt(clock) {
+  const ms = Math.floor(clock * 1000);
+  const t = ms / 1000;
+  return t > clock ? (ms - 1) / 1000 : t;
+}
+
 export function createInitialScriptState(sceneId = 'C02', clock = 0) {
-  return { sceneId, sceneStartedAt: Number(clock.toFixed(3)), history: [], finished: false };
+  return { sceneId, sceneStartedAt: instantAt(clock), history: [], finished: false };
 }
 
 function sceneIndex(id) {
@@ -1268,7 +1280,7 @@ export function stateSceneFloor(sim) {
 
 function endScene(sim, nextId) {
   const sc = sim.script;
-  const now = Number(sim.clock.toFixed(3));
+  const now = instantAt(sim.clock);
   sc.history.push({ id: sc.sceneId, startedAt: sc.sceneStartedAt, endedAt: Math.max(now, sc.sceneStartedAt) });
   sc.sceneId = nextId;
   sc.sceneStartedAt = now;
@@ -1369,7 +1381,7 @@ export function updateScript(sim) {
     }
     if (sc.sceneId === 'C12') {
       if (sceneAge(sim) >= M02_SCENE_HOLD_SEC.C12 && sim.areaC?.c12Completed) {
-        sc.history.push({ id: 'C12', startedAt: sc.sceneStartedAt, endedAt: Number(sim.clock.toFixed(3)) });
+        sc.history.push({ id: 'C12', startedAt: sc.sceneStartedAt, endedAt: Math.max(instantAt(sim.clock), sc.sceneStartedAt) });
         sc.finished = true;
       }
       return;

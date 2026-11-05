@@ -71,6 +71,7 @@ import {
   openC01Contact,
   updateC01Contact as runUpdateC01Contact,
   C01_CONTACT_OPENED_BY,
+  instantAt,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -1675,7 +1676,7 @@ export class M02BenchSimulation {
       typeof warningSec === 'number' && !Number.isNaN(warningSec)
         ? Math.min(BLAST_WARNING_SEC.max, Math.max(BLAST_WARNING_SEC.min, warningSec))
         : ENEMY_GRENADE_WARNING_SEC;
-    const warnedAt = Number(this.clock.toFixed(3));
+    const warnedAt = instantAt(this.clock); // nunca à frente do relógio: o validador recusa warnedAt > clock (FIX-CD)
     const blast = {
       id: `blast_${++this.hazardBlastSeq}`,
       source,
@@ -1981,7 +1982,7 @@ export class M02BenchSimulation {
     if (this.missionFailed || this.flags['m02.completed'] || this.areaC?.c12Completed) return;
     const p = this.player;
     if (p.alive !== false && p.health > 0) return;
-    const at = Number(this.clock.toFixed(3));
+    const at = instantAt(this.clock); // nunca à frente do relógio (o validador recusa missionFailed.at > clock; FIX-CD)
     this.missionFailed = { reason: 'piotr_killed', at };
     const rec = { clock: Number(this.clock.toFixed(2)), type: 'mission_failed', reason: 'piotr_killed' };
     this.combatLog.push(rec);
