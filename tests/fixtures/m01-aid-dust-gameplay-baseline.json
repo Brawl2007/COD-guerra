@@ -1,6 +1,6 @@
 {
   "task": "M01-AID-DUST-V1",
-  "generationStage": "Package 2 on the amendment 20 tree (the branch head 57ba50f3: candidate #80 + R1-a + R2-a + R2-b + R3-a + R1-b + the act manager): (1) dust and smoke clouds are a fact of the simulation (m01-dust.js; every crater record carries {r, h, d, life}; sees() blocks the AI line of sight through 3 m of cloud, for both sides; the renderer draws renderState.dust); (2) the first aid of the wounded of the west garrison (m01-aid.js; the bark director's `aid` trigger and dlg_m01_220-226): they call out, Dudek treats the nearest one, carries him to cover and goes back; (3) the German grenades and the search happen: safeX 190, closeExtraSec 100, a kneeling defender is a grenade target, the grenade comes first on arrival at a line within a throw, the search looks with the world's sight. No random draw anywhere: the little variation (the time of a call) is derived from the ids.",
+  "generationStage": "Package 2 on the amendment 20 tree (the branch head 57ba50f3: candidate #80 + R1-a + R2-a + R2-b + R3-a + R1-b + the act manager): (1) dust and smoke clouds are a fact of the simulation (m01-dust.js; every crater record carries {r, h, d, life}; sees() blocks the AI line of sight through 3 m of cloud, for both sides; the renderer draws renderState.dust); (2) the first aid of the wounded of the west garrison (m01-aid.js; the bark director's `aid` trigger and dlg_m01_220-226): they call out, Dudek treats the nearest one, carries him to cover and goes back; (3) the German grenades and the search happen: safeX 190, closeExtraSec 100, a kneeling defender is a grenade target, the grenade comes first on arrival at a line within a throw, the search looks with the world's sight. No random draw anywhere: the little variation (the time of a call) is derived from the ids. Critical review of 2026-11-04 (same amendment, regenerated on the same predecessor): (4) a deck record written under another safeX loads (the load validator accepts a lim / node that is a node of the man's path under some safeX, restoreSnapshot puts them on the nearest live line, a fallen man's body is held to the lowest legal safeX, not the live one), (5) the dust never makes the player a grenade target in the open (deckGrenade judges the player by the world's sight, a defender still by sees()), (6) the medic's job may point at a felled patient for the rest of the tick of the bomb that killed him (the aid validator), (7) the MG34 reload line of the director asks sees().",
   "amendment": "amendment-21",
   "delta": "aid-dust",
   "predecessor": "57ba50f3305d18a0ddcad0d2c3563f14e293d7a7",
@@ -11,9 +11,9 @@
     "sha256": "2f1277e6b99ace2a930f2d7e976347e2f5dcb461a3d860bd86d5f6ae07a3213c"
   },
   "historicalGoldenSha256": "1081cb7cf5d000d4a7f6c602355142a1bdc064b7ef21e29b4d96b862223c3c46",
-  "sourceSha256": "2f4db344f44823923a27a652032dec901cf45250da76a486703a5cd9c19059bb",
+  "sourceSha256": "2b6be19468fdde596256e3a872e922edf2107bf66d708261a5ea652cade9096d",
   "inputsSha256": {
-    "src/game/m01-simulation.js": "2f4db344f44823923a27a652032dec901cf45250da76a486703a5cd9c19059bb",
+    "src/game/m01-simulation.js": "2b6be19468fdde596256e3a872e922edf2107bf66d708261a5ea652cade9096d",
     "src/game/m01-pacing.js": "57302b177de51ff274a0e266c3936b92a10e392ae85aaf7bc551f7ae31bf61f0",
     "missions/m01-tczew/mission.json": "96c9ed41af2c78bc8561be19f090fd337bb9fe7c2fe4aedec52ee00833c00bb9",
     "missions/m01-tczew/map-layout.json": "9fec8475f247f5adfe2c26c98e20b96b022e722e4f06d1515b6ead5284d98a42",
@@ -27,8 +27,8 @@
     "src/world/m01-navigation.js": "7339a237bb69eac8eef1d7d4004ac64cf861ccb3b5521e24bbdcec3bb10422a5",
     "src/world/m01-nav-layout.js": "1a82043a8ea33acedc57bb2e6001f00c566d60ddfb0ee7a0443d4387c0617c14",
     "tests/helpers/m01-route.js": "84192d362e419fab671ea4161bdca2e829c3ba5c0882e396bae3ec8daa22f7a7",
-    "src/game/m01-deck-assault.js": "0fb87b7afc49a7485362a81ba008125d49e14f548472037d1f57ec5496c2654f",
-    "src/game/m01-barks.js": "8e1e81d7d4aa76115e4b202e1c237ae11c35515599febf0340a0e7678dda338f",
+    "src/game/m01-deck-assault.js": "32d30c0f64ef7723ec7b5d946d6e83fa675d81e731ae23c719bdf60678ab5089",
+    "src/game/m01-barks.js": "b1d37487d39bb8597495746ae7de9e752697fd24089f5caf146b466fb06e528f",
     "src/game/m01-rearguard.js": "0c28f6436bb10bce9927a075fbd283a51b1f9647e22aa3df2d6c3df9bb210627",
     "src/game/m01-difficulty.js": "3e3a19ddc25fbbe807a08beaafabfa0a16f96f5f521b444cbe7f3941fe7a77e3",
     "src/game/m01-audio-events.js": "bf6354a4dc1ee811376a4d74a09e82624866a90abcaf24469c790620dd21baa8",
@@ -40,7 +40,7 @@
     "src/game/m01-retreat.js": "96d540f18a32054bc856bd25fb88ff637b415a0a871313ad16b158cd6a0b9f1d",
     "src/game/m01-opening.js": "e261400b61113a62715f26a8f06ba008087748ebf06c4389e0ed2383d277ffdd",
     "src/game/m01-dust.js": "11055fd9e57248790eaf9fe73e7a7a3f6b48f13f5fe78a389fcae4163187f63c",
-    "src/game/m01-aid.js": "5bb785ebcf195eee47b14e1da464f20622a55f2e95220aafdad2b7effb418f32"
+    "src/game/m01-aid.js": "a93c4b74114c9456c6b35c84bcb961d785b6bc174cba424458301538818101fe"
   },
   "routes": [
     {
@@ -443,5 +443,5 @@
     }
   ],
   "audit": "docs/verification/m01-runtime/pkg2-act1-2026-11-04/GOLDEN_AMENDMENT_21.json",
-  "auditSha256": "3ca9e5fcc2b046eff8ecf4fc240d8ed4ca5033a0318cf0392748a9e888cc8053"
+  "auditSha256": "aaa820930610a2005b4e3e6b78d3d08c59d327963039119b516a9ed3642fc170"
 }

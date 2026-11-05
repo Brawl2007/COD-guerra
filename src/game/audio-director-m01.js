@@ -1,5 +1,6 @@
 import audioLayout from '../../missions/m01-tczew/audio-layout.json' with { type: 'json' };
 import { audioHash, audioVariation, presentationNoise, waterCrossing, SPEED_OF_SOUND } from '../core/battlefield-audio.js';
+import { AreaAudio } from './m01-area-audio.js';
 import { MusicConductor, createMusicInput, readoutIntensity, MUSIC_TUNING, isEmitterAudible, surfaceAt } from '../core/audio/index.js';
 
 /**
@@ -66,6 +67,7 @@ export function occlusionFor(layout, zone, x, y, z, distance, out) {
 export class M01AudioDirector {
   constructor(audio, { layout = audioLayout } = {}) {
     this.audio = audio ?? null;
+    this.area = new AreaAudio(audio);   // area acts only (actId): the shell whistle and the VII-b/VII-c ambience; inert in act 1
     this.core = audio?.core ?? null;
     this.conductor = this.core ? new MusicConductor(this.core) : null;
     this.input = createMusicInput();
@@ -97,7 +99,7 @@ export class M01AudioDirector {
     this.sim = m01 ? sim : null;
     this._clearPending(); this.emitterSlot = NaN; this.restoredAt = -Infinity; this.step.ready = false; this.npcSteps.clear(); this.clk[0] = NaN;
     this.lastClock = m01 && Number.isFinite(sim.clock) ? sim.clock : -Infinity;
-    this.conductor?.reset(m01 ? sim.consumed : EMPTY);
+    this.conductor?.reset(m01 ? sim.consumed : EMPTY); this.area.reset(m01 ? sim : null);
     for(const train of this.trainArrivals){train.heard=m01&&sim.battleClock>=train.from;train.pending=false;}
     if (m01) { try { this.audio?.setEmitters?.(sim.definition); } catch { /* none -> silent emitters */ } }
   }
@@ -106,6 +108,7 @@ export class M01AudioDirector {
   handleEvent(event, sim = this.sim) {
     if (this.disposed || !event || !sim) return;
     if (sim !== this.sim) { if (sim.missionId !== MISSION_ID) return; this.reset(sim); }
+    this.area.handleEvent(event, sim);
     switch (event.type) {
       case 'restored': this.restoredAt = sim.clock; break;   // 20 s of silence after a player death
       case 'm01-blast': {
@@ -139,6 +142,7 @@ export class M01AudioDirector {
       this._emitters(sim);   // sim, not numbers: a number argument across a non-inlined call is boxed on every frame
       this._trainArrival(sim);
       this._music(sim);
+      this.area.update(sim);
       return true;
     } catch (error) { this._fail(error); return false; }
   }
@@ -310,7 +314,7 @@ export class M01AudioDirector {
   dispose() {
     if (this.disposed) return;
     this.disposed = true; this._clearPending();
-    this.conductor?.dispose();
+    this.conductor?.dispose(); this.area.dispose();
     try { this.audio?.setOcclusion?.(null); this.audio?.setDirectorProbe?.(null); } catch { /* the audio manager may already be gone */ }
     this.sim = null;
   }
