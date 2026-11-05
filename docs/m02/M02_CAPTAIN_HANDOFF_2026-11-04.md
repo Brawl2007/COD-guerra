@@ -166,6 +166,37 @@ O que mudou:
 - Alternância apoio/deslocação.
 - Ordens nas Áreas B e C.
 
+**Revisão adversarial independente do roteiro C e do combate D, em `edc51ad`: REJEITADO.**
+
+**P1:**
+- O validador recusa instantes que a própria simulação escreve: `toFixed(3)` arredonda para cima. Com dt de 1/60, perdem-se o cp_c e o cp_d em cerca de 50 % das corridas.
+- O SP03 nunca fere ninguém: o entulho é criado antes da detonação e oclui todos os raios.
+
+**P2:**
+- Um checkpoint pode ser gravado com o Piotr morto, o que leva a um ciclo de reinício.
+- Há risco de espiral de morte, porque os gatilhos de cp_a e cp_d não seguem I3 pp. 33–34.
+- A graça F1 depende do dt.
+- A dificuldade fica fora do snapshot, ao contrário da M01.
+- O C06 fica sem saída se a carroça parar.
+- Um tiro antes de andar deixa a secção parada.
+- Desvios do PDF:
+  - os LG são invulneráveis;
+  - as ordens só funcionam na Área A;
+  - o EA0 não tem moral;
+  - `lis_status` fica 'active';
+  - `essential` funciona como imunidade oculta.
+- Há um spam de `checkpoint-rejected` depois da falha.
+- Há duas asserções vazias.
+
+**Sem defeito:**
+- Todo o estado novo está no snapshot.
+- O fuzz de restauro-continuação deu **491 réplicas e 0 divergências**: MissionBot em 8 corridas, 3 variantes de restauro e os 4 checkpoints automáticos.
+- O fuzz de entradas aleatórias deu 96 réplicas e 0 divergências.
+
+A troca de semente no m02-09 não esconde nenhum defeito.
+
+**Suspeito:** com dt de 1/60, ou nos perfis soldado e veterano, o MissionBot fica preso no C03 por causa da moral do EA1.
+
 **Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
 morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
 morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
@@ -192,7 +223,8 @@ morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 | FIX-2c P2 residuais dos saves | **Integrado**: merge `605e3fc` (`fe05c21`…`1bac72d`) | Ver lista abaixo |
 | 6–7 Roteiro C e set pieces J/E/F | **Integrado**: merge `07999a4` (`bb0cbf4`…`85dea7a`) | Ver lista abaixo |
 | 8 Combate D | **Integrado**: merge `edc51ad` (`4cedca2`…`46b59de`) | Ver lista abaixo |
-| Revisão adversarial do roteiro C e do combate D | **EM CURSO**: é o único agente ativo | Só leitura; provas em `scratchpad/review-cd/` |
+| Revisão adversarial do roteiro C e do combate D | **REJEITADO**, 2 P1 (ver abaixo) | Só leitura; provas em `scratchpad/review-cd/` |
+| FIX-CD correções da revisão | **EM CURSO**: é o único agente ativo | worktree `m02-fix-cd`, base `edc51ad` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
