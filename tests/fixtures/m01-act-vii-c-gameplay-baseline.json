@@ -4,7 +4,7 @@
  "generator": "tools/verification/m01-act-vii-c-golden.mjs",
  "platform": "x86_64 only (floating point, as the current act goldens)",
  "inputsSha256": {
-  "src/game/m01-area-sim.js": "52226df655a86bfd9de31d221d986f4506f343ba283b0b251044d5297d486318",
+  "src/game/m01-area-sim.js": "a32dda48b0c6f302db0d4bad47a9d935c3582fa79675c08be10364959c0e72ba",
   "src/game/m01-act-factories.js": "d367a254846fbbce89fe598b37049c63d9476271c1cb3b2176bbc2e3987c9fdc",
   "src/game/m01-withdrawal.js": "f1d3b34f13daeac27f3d9ddeb93faf4135bc63608320f9bd184e392c4a532b18",
   "src/game/m01-unit-hash.js": "83b2739714aa6060f363f344a0f554712df87f857ffbdc3d7309a51377a28dc9",

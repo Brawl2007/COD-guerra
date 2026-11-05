@@ -835,8 +835,9 @@ export class M01AreaSimulation {
     this.say('barrage_over');
   }
   /**
-   * The stretcher-bearers (plan.medics; NPC only: the player never carries anyone). When a man of the line is WOUNDED (a shell's casualty), the two bearers come on at the south edge and run to him, the first lifts
-   * him onto his shoulder (the carriedBy of the bearers of act 1: the renderer's existing carry), and both walk south to the exit and leave the field (inactive: nobody draws or hits them). At most `maxCasualties` per act.
+   * The stretcher-bearers (plan.medics; NPC only: the player never carries anyone). When a man of the line is WOUNDED (a shell's casualty), the two bearers come on at the south edge and run to him, they lift
+   * him onto a stretcher (`carriedBy` = the first bearer, as in act 1; the man lies between the two, who walk in line), and both walk south to the exit and leave the field (inactive: nobody draws or hits them).
+   * At most `maxCasualties` per act. The carry pace (`plan.medics.pace`) is a gameplay number, retuned to 2.1 m/s on 2026-11-05 (INC-2 README, errata).
    */
   stepMedics(dt){
     const M=this.plan.medics;if(!M)return;
