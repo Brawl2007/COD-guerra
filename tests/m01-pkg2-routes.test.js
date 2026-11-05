@@ -9,13 +9,14 @@ import {route} from './helpers/m01-route.js';
 // (tools/verification/m01-pkg2-metrics.mjs), as properties. State, not a playtest.
 
 function measure(seed,support){
-  const m={wounded:new Set(),treated:new Set(),carried:new Set(),laid:new Set(),grenades:0,exploded:0,searches:0,closest:Infinity,playerGrenadeDamage:0,cloudAtBoom:null,at0603:null,calls:0};
+  const m={wounded:new Set(),treated:new Set(),carried:new Set(),laid:new Set(),grenades:0,exploded:0,searches:0,shells:0,closest:Infinity,playerGrenadeDamage:0,cloudAtBoom:null,at0603:null,calls:0};
   const lastN=new Map();
   const r=route(seed,{support,onStep:({sim,events})=>{
     for(const e of events){
       if(e.type==='enemy-grenade')m.grenades++;
       if(e.type==='m01-blast'&&e.kind==='grenade'&&e.by!==undefined){m.exploded++;const rec=sim.sectors.damage.at(-1);m.cloudAtBoom={id:rec.id,dust:rec.dust,at:sim.clock};m.playerDistAtBoom=Math.min(m.playerDistAtBoom??Infinity,Math.hypot(rec.x-sim.player.x,rec.z-sim.player.z));}
       if(e.type==='deck-tactic'&&e.kind==='search')m.searches++;
+      if(e.type==='m01-blast'&&e.kind==='shell')m.shells++;   // golden amendment 22: the German supporting round
     }
     if(m.cloudAtBoom&&m.cloudStood===undefined&&sim.clock-m.cloudAtBoom.at>=3)m.cloudStood=sim.renderState.dust.some(c=>c.id===m.cloudAtBoom.id);   // (a blast starts without a cloud: it builds up in 1.5 s)
     for(const a of sim.actors){
@@ -31,17 +32,25 @@ function measure(seed,support){
   return {m,sim:r.sim};
 }
 
-test('the control route: the wounded of the raid are treated and one is carried to cover, the medic is at his post before Bąk, the stick grenade is thrown at 23 m and leaves its cloud, the dust blocks rays',()=>{
+test('the control golden route: the wounded of the raid are treated and one is carried to cover, the medic is at his post before Bąk, the dust blocks rays, and the supporting round of golden amendment 22 falls',()=>{
   const {m,sim}=measure(19390901,false);
   assert.ok(m.wounded.size>=1,'a bomb wounded at least one man of the garrison');
   assert.equal(m.treated.size,m.wounded.size,'every wounded man was treated');
   assert.ok(m.carried.size>=1&&m.laid.size===m.carried.size,'and a man who lay away from cover was carried and laid');
   assert.ok(m.calls>=3,'they called out');
   assert.deepEqual([m.at0603.task,m.at0603.job],[null,false]);assert.ok(m.at0603.dist<3,`Dudek at the aid post at 06:03:30 (${m.at0603.dist.toFixed(2)} m)`);
+  assert.ok(sim.dustRays.blocked>0&&sim.dustRays.blocked<sim.dustRays.checked,`the dust answered "no" to ${sim.dustRays.blocked} of ${sim.dustRays.checked} sight questions that met a cloud`);
+  assert.equal(m.shells,1,'one supporting round (its cloud is among the clouds the dust answered for)');
+  assert.equal(sim.flags['m01.east_platoon_survivors'],12);assert.ok(sim.mission.complete);
+});
+
+// 2026-11-05 (golden amendment 22): the supporting round changed the fight of the golden control route (the front man now stops at 47 m and the route throws no grenade), so the stick grenade of package 2 is checked on the control
+// route of seed 1, where the assault still comes within a throw (the six control routes with a grenade of the 24 are seeds 1, 4, 5, 7, 8 and 10: docs/verification/m01-runtime/act1-amend22-2026-11-05/README.md).
+test('a control route in which the assault comes within a throw (seed 1): the stick grenade is thrown at 23 m and leaves its cloud, nowhere near the player',()=>{
+  const {m,sim}=measure(1,false);
   assert.ok(m.grenades>=1&&m.exploded===m.grenades,`${m.grenades} stick grenades thrown, ${m.exploded} exploded`);
   assert.deepEqual(m.cloudAtBoom.dust,{r:4.5,h:3.5,d:1,life:20});assert.equal(m.cloudStood,true,'and the cloud stood three seconds after the explosion');
   assert.ok(m.closest>=DECK_ASSAULT.tactics.grenade.minM&&m.closest<=DECK_ASSAULT.tactics.grenade.rangeM,`the closest approach to a Pole on the deck, ${m.closest.toFixed(1)} m, is inside the throw`);
-  assert.ok(sim.dustRays.blocked>0&&sim.dustRays.blocked<sim.dustRays.checked,`the dust answered "no" to ${sim.dustRays.blocked} of ${sim.dustRays.checked} sight questions that met a cloud`);
   assert.ok(m.playerDistAtBoom>DECK_ASSAULT.tactics.grenade.reachM*5,`the grenade fell ${m.playerDistAtBoom.toFixed(0)} m from the player: nowhere near its woundM (${DECK_ASSAULT.tactics.grenade.woundM} m)`);
   assert.equal(sim.flags['m01.east_platoon_survivors'],12);assert.ok(sim.mission.complete);
 });

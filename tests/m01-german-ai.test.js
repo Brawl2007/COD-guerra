@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import definition from '../missions/m01-tczew/mission.json' with {type:'json'};
 import {M01Simulation,validateM01Snapshot} from '../src/game/m01-simulation.js';
-import {DECK_SAFE_X,DECK_LINE_MARGIN_M,deckAssaultPlan,deckLines,deckLineNumber,deckLimitNode,validDeckRecord} from '../src/game/m01-deck-assault.js';
+import {DECK_SAFE_X,DECK_LINE_MARGIN_M,DECK_SUPPORT_MIN_AHEAD_M,deckAssaultPlan,deckLines,deckLineNumber,deckLimitNode,validDeckRecord} from '../src/game/m01-deck-assault.js';
 import {SECTION,sectionRealOn} from '../src/game/m01-section.js';
 import {validateM01AudioEvent,DECK_TACTIC_KINDS} from '../src/game/m01-audio-events.js';
 import {deathText} from '../src/game/m01-difficulty.js';
@@ -55,10 +55,23 @@ test('the tactics are mission data validated at load: a typo stops the game',()=
     pressure_share:d=>{d.tactics.pressure.share=0;},pressure_window:d=>{d.tactics.pressure.windowSec=-1;},hold:d=>{d.tactics.closeHoldSec=[9,3];},extra:d=>{d.tactics.closeExtraSec=1e3;},wait:d=>{d.tactics.alternateWaitSec=-1;},
     pin:d=>{d.tactics.pinSec=30;},squad:d=>{d.tactics.squadTargets.rangeM=10;},search:d=>{d.tactics.search.afterSec=d.tactics.search.memorySec;},grenade_range:d=>{d.tactics.grenade.rangeM=5;},grenade_fuse:d=>{d.tactics.grenade.fuseSec=d.tactics.grenade.flightSec;},
     grenade_wound:d=>{d.tactics.grenade.woundM=9;d.tactics.grenade.reachM=8;},grenade_per:d=>{d.tactics.grenade.perMan=5;},
+    search_hold:d=>{d.tactics.search.hold='yes';},search_hold_num:d=>{d.tactics.search.hold=1;},   // golden amendment 22: `hold` is a boolean or absent
+    // golden amendment 22: `support` (the German supporting round) is an object with a delay, a window and a distance in front of the rearguard that keeps the round out of the ring in which a shell shakes a man
+    support_type:d=>{d.tactics.support=true;},support_array:d=>{d.tactics.support=[4,12,24];},support_delay:d=>{d.tactics.support.delaySec=-1;},support_delay_far:d=>{d.tactics.support.delaySec=31;},
+    support_window:d=>{d.tactics.support.windowSec=0;},support_window_far:d=>{d.tactics.support.windowSec=61;},support_ahead_near:d=>{d.tactics.support.aheadM=DECK_SUPPORT_MIN_AHEAD_M-1;},
+    support_ahead_far:d=>{d.tactics.support.aheadM=121;},support_missing:d=>{delete d.tactics.support.aheadM;},support_nan:d=>{d.tactics.support.delaySec=null;},
   };
   for(const [name,f] of Object.entries(bad))assert.throws(()=>deckAssaultPlan(plan(f)),/deck assault/,name);
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{delete d.tactics.support;})),'no support is the game of before the amendment');
+  assert.equal(deckAssaultPlan(plan(d=>{delete d.tactics.support;})).tactics.support,null);
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.support.aheadM=DECK_SUPPORT_MIN_AHEAD_M;})),'the nearest the round may fall');
+  assert.deepEqual({...T.support},{delaySec:4,windowSec:12,aheadM:24},'the live data');
+  assert.ok(Object.isFrozen(T.support)&&T.support.aheadM>20,'frozen, and outside the 20 m ring in which a shell shakes a man (m01-shell-blast.js)');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.safeX=120;})),'the floor of the number the owner may move');
   assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{d.tactics.grenade.perMan=0;})),'no grenades is a valid choice');
+  assert.doesNotThrow(()=>deckAssaultPlan(plan(d=>{delete d.tactics.search.hold;})),'a search without `hold` is the one of R2-b');
+  assert.equal(deckAssaultPlan(plan(d=>{d.tactics.search.hold=false;})).tactics.search.hold,false);
+  assert.equal(T.search.hold,true,'the live data turn the search of a holding man on (golden amendment 22)');
 });
 
 test('A* validity: every node of every path, and the legs between them, are clear of every solid for a body, and the navigator routes a man along a line to the next without a detour',()=>{

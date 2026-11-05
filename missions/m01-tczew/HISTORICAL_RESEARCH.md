@@ -6,13 +6,13 @@ Fontes: IDs de [`research/SOURCES.md`](../../research/SOURCES.md).
 
 ## Legenda
 
-Fatos e eventos:
+Factos e eventos:
 
 | Classe | Uso |
 | --- | --- |
 | `DOCUMENTED` | Afirmado por fontes. Ainda precisa de leitura integral (§11) antes da aprovação final. |
-| `RECONSTRUCTED` | Inferido de fatos documentados, como uma posição derivada de medidas conhecidas. |
-| `GAMEPLAY_DRAMATIZATION` | Criação do roteiro, plausível e sem ser apresentada como fato. |
+| `RECONSTRUCTED` | Inferido de factos documentados, como uma posição derivada de medidas conhecidas. |
+| `GAMEPLAY_DRAMATIZATION` | Criação do roteiro, plausível e sem ser apresentada como facto. |
 
 Espaço:
 
@@ -26,21 +26,21 @@ Espaço:
 
 ## 1. Resumo em cinco linhas
 
-1. Em Tczew havia duas pontes sobre o Vístula: a rodoviária (Lentze, 1857) e a ferroviária (1891), 40 m a norte daquela. Em 1910–1912 ambas foram prolongadas para ~1030–1037 m (T25). Eram polonesas; a margem leste era da Cidade Livre de Danzig. `DOCUMENTED` (T04, T05, T06, T25)
-2. A Alemanha planejou tomá-las intactas com um trem de carga carregando sapadores escondidos, seguido do trem blindado n.º 7 (Gruppe Medem). Stukas atacariam antes os cabos de ignição das cargas polonesas. `DOCUMENTED` (T01, T07, T08, T12)
+1. Em Tczew havia duas pontes sobre o Vístula: a rodoviária (Lentze, 1857) e a ferroviária (1891), 40 m a norte daquela. Em 1910–1912 ambas foram prolongadas para ~1030–1037 m (T25). Eram polacas; a margem leste era da Cidade Livre de Danzig. `DOCUMENTED` (T04, T05, T06, T25)
+2. A Alemanha planeou tomá-las intactas com um comboio de carga a transportar sapadores escondidos, seguido do comboio blindado n.º 7 (Gruppe Medem). Stukas atacariam antes os cabos de ignição das cargas polacas. `DOCUMENTED` (T01, T07, T08, T12)
 3. Às **04:34**, Ju 87 vindos de Elbing bombardearam a estação, a cabeça de ponte oeste e o quartel do 2.º Batalhão de Fuzileiros. `DOCUMENTED` (H02, T10; T12 dá 04:35)
-4. O trem chegou por volta das 04:45 à cabeça de ponte leste, em Lisewo. Encontrou os portões fechados e defensores em posição. `DOCUMENTED` (T01, T07, T08)
+4. O comboio chegou por volta das 04:45 à cabeça de ponte leste, em Lisewo. Encontrou os portões fechados e defensores em posição. `DOCUMENTED` (T01, T07, T08)
 5. Por ordem recebida às 05:30, os sapadores demoliram o lado leste às **06:10** e o lado oeste às **06:45**, conforme H01-PDF (06:40 nas fontes secundárias). O plano alemão falhou, mas a guarnição deixou Tczew na mesma noite. `DOCUMENTED` (T01, T03, T04, T07, T09)
 
 ## 2. Contexto estratégico
 
-- **Corredor polonês e Cidade Livre.** Tczew ficava na margem esquerda (oeste) do Vístula, na Pomerânia polonesa. A margem direita (leste), incluindo Lisewo (*Liessau*) e Szymankowo (*Simonsdorf*), pertencia à Cidade Livre de Danzig, com a fronteira pelo meio do rio. As pontes eram inteiramente polonesas, e os postos de fronteira ferroviário e rodoviário ficavam em Lisewo. `DOCUMENTED` (T06)
-- **Linha Berlim–Königsberg.** A ferrovia cruzava as pontes e a Cidade Livre rumo a Marienburg (Malbork) e à Prússia Oriental. Trens alemães de trânsito passavam regularmente, o que permitiu o reconhecimento dos cabos a partir de trens expressos e o plano do trem de carga n.º 963. `DOCUMENTED` (T07, T08, T12)
-- **Importância.** Tomar as pontes intactas ligaria a Prússia Oriental ao Reich pelo corredor. A defesa polonesa tinha ordem de destruí-las em caso de agressão, por decisão do comandante do Exército "Pomorze" ou do próprio comandante local. `DOCUMENTED` (T02)
+- **Corredor polaco e Cidade Livre.** Tczew ficava na margem esquerda (oeste) do Vístula, na Pomerânia polaca. A margem direita (leste), incluindo Lisewo (*Liessau*) e Szymankowo (*Simonsdorf*), pertencia à Cidade Livre de Danzig, com a fronteira pelo meio do rio. As pontes eram inteiramente polacas, e os postos de fronteira ferroviário e rodoviário ficavam em Lisewo. `DOCUMENTED` (T06)
+- **Linha Berlim–Königsberg.** A ferrovia cruzava as pontes e a Cidade Livre rumo a Marienburg (Malbork) e à Prússia Oriental. Comboios alemães de trânsito passavam regularmente, o que permitiu o reconhecimento dos cabos a partir de comboios expressos e o plano do comboio de carga n.º 963. `DOCUMENTED` (T07, T08, T12)
+- **Importância.** Tomar as pontes intactas ligaria a Prússia Oriental ao Reich pelo corredor. A defesa polaca tinha ordem de destruí-las em caso de agressão, por decisão do comandante do Exército "Pomorze" ou do próprio comandante local. `DOCUMENTED` (T02)
 
 ## 3. Cronologia de 1/9/1939
 
-Hora legal: **CET (UTC+1)**, igual em Polônia e Alemanha em 1939 (C01).
+Hora legal: **CET (UTC+1)**, igual em Polónia e Alemanha em 1939 (C01).
 
 ### 3.1 Tabela
 
@@ -51,11 +51,11 @@ Hora legal: **CET (UTC+1)**, igual em Polônia e Alemanha em 1939 (C01).
 | 04:14 | Início do crepúsculo civil | `DOCUMENTED` (cálculo) | C01 | Luz azulada a leste |
 | 04:26 | Decolagem dos Ju 87 de Elbing (Elbląg) | `DOCUMENTED` (fontes divergem) | T11, T12 | Não visível; o som surge por volta de 04:33 |
 | **04:30** | **Prelúdio: cartela, café, posto** | `GAMEPLAY_DRAMATIZATION` | Prompt §53/§79 | Abertura |
-| **04:34** | **Bombardeio**: estação, margem oeste junto às pontes, quartel do 2.º Batalhão. Alvo: cabos de ignição na encosta sul do aterro | `DOCUMENTED` | H02, T08, T10, T12 | Primeiro contato |
+| **04:34** | **Bombardeamento**: estação, margem oeste junto às pontes, quartel do 2.º Batalhão. Alvo: cabos de ignição na encosta sul do aterro | `DOCUMENTED` | H02, T08, T10, T12 | Primeiro contacto |
 | ~04:34–04:44 | Ataque aéreo de cerca de 10 minutos | `DOCUMENTED` (baixa certeza) | T11 | Segunda passagem de aviões, ruído distante |
-| após 04:34 | Cabos danificados são reparados pelos sapadores poloneses | `DOCUMENTED` (sem hora exata) | T12 | Objetivo 3: proteger o reparo |
-| ~04:45 | Trem de carga n.º 963 (65 vagões, pioneiros ocultos) chega à cabeça de ponte leste. Portões fechados, fogo polonês | `DOCUMENTED` | T01, T07, T08 | Setor leste entra em combate |
-| ~04:45+ | Trem blindado n.º 7 atrás do trem de carga, na margem leste | `DOCUMENTED` (hora de chegada imprecisa) | T01, T07, T14 | Fogo de apoio alemão a longa distância |
+| após 04:34 | Cabos danificados são reparados pelos sapadores polacos | `DOCUMENTED` (sem hora exata) | T12 | Objetivo 3: proteger o reparo |
+| ~04:45 | Comboio de carga n.º 963 (65 vagões, pioneiros ocultos) chega à cabeça de ponte leste. Portões fechados, fogo polaco | `DOCUMENTED` | T01, T07, T08 | Setor leste entra em combate |
+| ~04:45+ | Comboio blindado n.º 7 atrás do comboio de carga, na margem leste | `DOCUMENTED` (hora de chegada imprecisa) | T01, T07, T14 | Fogo de apoio alemão a longa distância |
 | 04:45 | Couraçado *Schleswig-Holstein* abre fogo contra Westerplatte, a ~36 km a norte-noroeste | `DOCUMENTED` (geral) | conhecimento geral; confirmar | **Não usar** como som audível em Tczew sem fonte (§10) |
 | **05:30** | Ordem de demolir as pontes e retirar | `DOCUMENTED` | T01, T09 | Cutscene curta: ordem por mensageiro |
 | ~06:00 | O pelotão da cabeça de ponte leste recua com baixas | `DOCUMENTED` (nome e patente do oficial divergem) | T01, T08 | Cobrir a retirada pela ponte |
@@ -67,26 +67,26 @@ Hora legal: **CET (UTC+1)**, igual em Polônia e Alemanha em 1939 (C01).
 | 18:00–20:00 | Retirada do 2.º Batalhão | `DOCUMENTED` | T03 | Debrief |
 | 18:39 | Pôr do sol | `DOCUMENTED` (cálculo) | C01 | — |
 
-### 3.2 Divergências registradas (não escolher em silêncio)
+### 3.2 Divergências registadas (não escolher em silêncio)
 
 | Tema | Versões | Decisão provisória no jogo |
 | --- | --- | --- |
-| Hora do bombardeio | 04:34 (H02, T10, prompt) · 04:35 (T12) · faixa 04:26–04:45 em fóruns | **04:34**, conforme H02. Mostrar só "04:34". |
-| Número de aviões | 3 Ju 87 da 3./StG 1 (T12) · 6 bombardeiros e 6 caças (T11) | Mostrar **três Stukas numa passagem principal** e um ruído distante de outros aviões, sem afirmar número na tela. |
+| Hora do bombardeamento | 04:34 (H02, T10, prompt) · 04:35 (T12) · faixa 04:26–04:45 em fóruns | **04:34**, conforme H02. Mostrar só "04:34". |
+| Número de aviões | 3 Ju 87 da 3./StG 1 (T12) · 6 bombardeiros e 6 caças (T11) | Mostrar **três Stukas numa passagem principal** e um ruído distante de outros aviões, sem afirmar número no ecrã. |
 | Hora da destruição | 05:30 (T19, provavelmente confundindo com a hora da ordem) · 06:10/06:40 (T01, T04, T07, T09) | **Mensagem às 05:30 por reconstrução de T01/T09; H01 situa a decisão às ~06:00. Demolições às 06:10 e 06:45.** |
-| Quem demoliu o quê | T01: "ponte rodoviária e três vãos da ferroviária danificados" · T07: 6.º de 8 pilares às 06:10, 1.º pilar às 06:40, dois vãos no rio · T04: encontro e antigo portal do lado de Lisewo; encontro de Tczew e pilar no leito | **Conciliado com a geometria (P13):** com a extensão de 1912, o 6.º pilar é o antigo encontro leste de 1857/1891 (x ≈ 794–808). O 1.º pilar fica em x ≈ 141. A tela não conta vãos; confirmar com H01 e fotografias. |
+| Quem demoliu o quê | T01: "ponte rodoviária e três vãos da ferroviária danificados" · T07: 6.º de 8 pilares às 06:10, 1.º pilar às 06:40, dois vãos no rio · T04: encontro e antigo portal do lado de Lisewo; encontro de Tczew e pilar no leito | **Conciliado com a geometria (P13):** com a extensão de 1912, o 6.º pilar é o antigo encontro leste de 1857/1891 (x ≈ 794–808). O 1.º pilar fica em x ≈ 141. O ecrã não conta vãos; confirmar com H01 e fotografias. |
 | Unidade dos sapadores | 15.º Batalhão de Sapadores (T02) · 8.º Batalhão de Sapadores, Toruń (T09) | **Conciliável (T28):** Juchtman era comandante de pelotão do 8.º, que na mobilização formou o 15.º da 15.ª DI. No jogo continua "pelotão de sapadores destacado em Tczew". |
 | Patente de Janik | ppłk, tenente-coronel (T02) · mjr, major (T03) | Personagem histórico fica **fora de cena**. Ordens chegam como "ordem do comandante do batalhão". |
 | Oficial da cabeça de ponte leste | "Faterkowski" ou "Faterski" nos resumos | **Grafia confirmada: Walenty Faterkowski** (T26; rua com o seu nome junto às pontes, G01). H01-PDF confirma subtenente em 1939. Fora de cena; `db_05b` habilitado apenas para a identidade, sem números de perdas. |
-| Origem do trem blindado | Marienburg (versões gerais) · Marienwerder (T14) | Irrelevante para o mapa: ele chega pelo leste, pela linha de Szymankowo. |
-| Trem em Szymankowo | Desviado para linha morta e atrasado (T13) · chegou à ponte às 04:45 (T01, T08) | Não contraditórios: atraso, aviso a Tczew e chegada posterior. Confirmar com H01. |
-| Nome da localidade do ataque das 07:00 | "Koźlin" (resumo) · "Koźliny" (localidade ao norte de Tczew) | Tratar como "ataque vindo do norte"; confirmar topônimo. |
+| Origem do comboio blindado | Marienburg (versões gerais) · Marienwerder (T14) | Irrelevante para o mapa: ele chega pelo leste, pela linha de Szymankowo. |
+| Comboio em Szymankowo | Desviado para linha morta e atrasado (T13) · chegou à ponte às 04:45 (T01, T08) | Não contraditórios: atraso, aviso a Tczew e chegada posterior. Confirmar com H01. |
+| Nome da localidade do ataque das 07:00 | "Koźlin" (resumo) · "Koźliny" (localidade ao norte de Tczew) | Tratar como "ataque vindo do norte"; confirmar topónimo. |
 
 ### 3.3 Leituras na revisão dos PRs #8 e #10
 
 H01-PDF foi lida por completo, com bibliografia e fotografias; H02, H30 e T23 também foram lidas. Decisões e páginas estão em [`SOURCE_CHECK.md`](SOURCE_CHECK.md). A demolição oeste passa a 06:45 e o raid adicional entra em S5. Corte/reparo dos cabos permanece `RECONSTRUCTED`; identificação de pilares e números do pelotão não passam a `DOCUMENTED` pela leitura do artigo.
 
-## 4. Forças polonesas
+## 4. Forças polacas
 
 
 | Elemento | Detalhes | Classe |
@@ -108,18 +108,20 @@ H01-PDF foi lida por completo, com bibliografia e fotografias; H02, H30 e T23 ta
 | Elemento | Detalhes | Classe |
 | --- | --- | --- |
 | Comando da operação | **Gruppe (Kampfgruppe) Medem** — Oberstleutnant/Oberst Gerhard Medem, comandante de engenharia do I Corpo de Exército (Königsberg) | `DOCUMENTED` (T01, T08; patente a confirmar) |
-| Composição | Batalhão do Grenzwacht-Regiment 1, batalhão de infantaria de reserva, duas baterias leves, Pionier-Bataillon 41, trem blindado, batalhão SS-Heimwehr "Götze" e 3./StG 1 | `DOCUMENTED` (T08) |
-| Trem de carga | Trem regular n.º 963, 65 vagões, pioneiros escondidos | `DOCUMENTED` (T07, T08) |
-| Trem blindado | **Panzerzug 7**, saído de Marienwerder (T14). Armamento em 1939: dois canhões de 7,5 cm e dois de 2 cm antiaéreos (T20, fonte única) | `DOCUMENTED` (existência); armamento `BAIXA` |
+| Composição | Batalhão do Grenzwacht-Regiment 1, batalhão de infantaria de reserva, duas baterias leves, Pionier-Bataillon 41, comboio blindado, batalhão SS-Heimwehr "Götze" e 3./StG 1 | `DOCUMENTED` (T08) |
+| Comboio de carga | Comboio regular n.º 963, 65 vagões, pioneiros escondidos | `DOCUMENTED` (T07, T08) |
+| Comboio blindado | **Panzerzug 7**, saído de Marienwerder (T14). Armamento em 1939: dois canhões de 7,5 cm e dois de 2 cm antiaéreos (T20, fonte única) | `DOCUMENTED` (existência); armamento `BAIXA` |
 | Aviação | 3./StG 1: Ju 87 B de Elbing. Oblt. Bruno Dilley, Lt. Horst Schiller, Uffz. Gerhard Grenzel (T12) | `DOCUMENTED` |
 | Norte | SS-Heimwehr Danzig, dois batalhões com artilharia, morteiros e armas AT, vinda de Pszczółki | `DOCUMENTED` (baixa certeza) |
 | Outros | 65 homens do 14.º Regimento SA de Danzig citados em resumo | `DOCUMENTED` (baixa certeza; não usar) |
 
-**Regra de representação (seção 72).** Soldados inimigos em M01 são sobretudo pioneiros e guardas de fronteira na margem leste. Podem demonstrar medo, carregar feridos e recuar após a explosão das 06:10. A SS-Heimwehr aparece apenas como setor distante de combate no norte. **Nenhuma atrocidade é mostrada ou atribuída a unidade identificável em M01** (ver §8).
+**Regra de representação (secção 72).** Soldados inimigos em M01 são sobretudo pioneiros e guardas de fronteira na margem leste. Podem demonstrar medo, carregar feridos e recuar após a explosão das 06:10. A SS-Heimwehr aparece apenas como setor distante de combate no norte. **Nenhuma atrocidade é mostrada ou atribuída a unidade identificável em M01** (ver §8).
+
+**Fogo de apoio no tabuleiro (emenda 22 do Ato I, `GAMEPLAY_DRAMATIZATION`).** Quando a retaguarda polaca ocupa os seus postos no tabuleiro, cai **um** tiro de apoio alemão à sua frente (cratera e nuvem de pó; não fere nem abala ninguém). As fontes só dizem que a força incluía duas baterias leves e o comboio blindado (tabela acima); **nenhuma** dá fogo de apoio sobre o tabuleiro a esta hora, nem calibre, nem tipo, nem número de tiros. O tiro existe para o jogo ter uma razão para os atiradores do assalto perderem os polacos de vista e procurarem (`missions/m01-tczew/mission.json`, `deckAssault.tactics.support`); não é um facto e não deve ser contado como tal.
 
 ## 6. Geografia
 
-### 6.1 Medidas e fatos
+### 6.1 Medidas e factos
 
 | Elemento | Dado | Classe espacial | Fonte |
 | --- | --- | --- | --- |
@@ -150,21 +152,21 @@ H01-PDF foi lida por completo, com bibliografia e fotografias; H02, H30 e T23 ta
 
 Resumo. A lista completa, com status e certeza, está em [`research/equipment-timeline.json`](../../research/equipment-timeline.json).
 
-- **Polônia, jogador e esquadrão.** Karabinek (Mauser) **wz.29** em 7,92×57 mm, com 5 cartuchos em carregador interno, carregado por clipe, ferrolho manual. Também karabin wz.98a, rkm Browning wz.28 (carregador de 20), ckm wz.30 (fita, arrefecimento a água), pistola Vis wz.35 para graduados e oficiais, e granadas wz.33. Canhão AT Bofors wz.36 de 37 mm no pelotão AT (T03, T08).
-- **Uniforme polonês.** Túnica wz.36 cáqui-esverdeada. Muitos ainda usavam modelos anteriores, porque o wz.36 não chegou a toda a tropa (T17). Capacete wz.31, rogatywka wz.37, bornal wz.33, máscara WSR wz.32 em estojo, cartucheiras de couro e cantil. H30 lida: confirma a coexistência de modelos antigos e wz.36, mas não confirma todos estes detalhes nem a dotação do batalhão (P3).
+- **Polónia, jogador e esquadrão.** Karabinek (Mauser) **wz.29** em 7,92×57 mm, com 5 cartuchos em carregador interno, carregado por clipe, ferrolho manual. Também karabin wz.98a, rkm Browning wz.28 (carregador de 20), ckm wz.30 (fita, arrefecimento a água), pistola Vis wz.35 para graduados e oficiais, e granadas wz.33. Canhão AT Bofors wz.36 de 37 mm no pelotão AT (T03, T08).
+- **Uniforme polaco.** Túnica wz.36 cáqui-esverdeada. Muitos ainda usavam modelos anteriores, porque o wz.36 não chegou a toda a tropa (T17). Capacete wz.31, rogatywka wz.37, bornal wz.33, máscara WSR wz.32 em estojo, cartucheiras de couro e cantil. H30 lida: confirma a coexistência de modelos antigos e wz.36, mas não confirma todos estes detalhes nem a dotação do batalhão (P3).
 - **Alemanha, 1939.** Kar98k, MG34, Stielhandgranate 24, capacete M35, túnica M36 *feldgrau*. **MP40 e MG42 proibidos** (produção posterior). A MP38 existia, mas não como arma padrão dos pioneiros ou guardas de fronteira. Uniformes do Grenzwacht e armamento do Panzerzug 7 estão **PENDENTES**.
 - **Proibido em M01:** M1 Carbine, que é a arma do protótipo francês, além de MP40, MG42 e qualquer arma americana ou soviética.
 
 ## 8. Szymankowo e crimes da madrugada — regra de uso
 
-Fato (T13, MÉDIA): na madrugada de 1/9/1939, em Szymankowo, ferroviários e aduaneiros poloneses desviaram ou atrasaram o trem alemão e avisaram Tczew. Na mesma madrugada, foram mortos.
+Facto (T13, MÉDIA): na madrugada de 1/9/1939, em Szymankowo, ferroviários e aduaneiros polacos desviaram ou atrasaram o comboio alemão e avisaram Tczew. Na mesma madrugada, foram mortos.
 
 T23 foi lida; `db_06` contém apenas a informação confirmada nessa página. P10 continua parcial para a identificação específica dos autores e a divisão das vítimas. Os números divergentes de T13 não substituem a referência institucional.
 
-Decisão para M01 (seção 72):
+Decisão para M01 (secção 72):
 
 1. **Nenhuma cena jogável ou cutscene em Szymankowo em M01.** A missão fica em Tczew.
-2. O aviso de Szymankowo pode aparecer como **fato comunicado**: um ferroviário na estação diz que a linha para Szymankowo "não responde" e que houve aviso de um trem estranho. Isso é `GAMEPLAY_DRAMATIZATION` compatível com T13.
+2. O aviso de Szymankowo pode aparecer como **facto comunicado**: um ferroviário na estação diz que a linha para Szymankowo "não responde" e que houve aviso de um comboio estranho. Isso é `GAMEPLAY_DRAMATIZATION` compatível com T13.
 3. O destino dos ferroviários aparece **só no debrief**, em texto histórico sóbrio, conforme o texto limitado de T23 lida. Sem atribuir autoria a unidade específica.
 4. A ocupação de Tczew e a execução de reféns em setembro (T16) ficam **fora de M01**. Podem entrar numa nota de epílogo da campanha com pesquisa própria.
 
@@ -173,14 +175,14 @@ Decisão para M01 (seção 72):
 - As duas pontes foram destruídas antes da captura. O plano alemão de tomá-las intactas falhou. `DOCUMENTED`
 - A destruição atrasou a ligação ferroviária direta entre a Prússia Oriental e o Reich pelo corredor, mas não mudou o resultado da campanha. `DOCUMENTED` (geral; formular sem exagero)
 - A guarnição repeliu ataques durante o dia e deixou Tczew à noite por ordem superior. `DOCUMENTED` (T03)
-- **O debrief não declara vitória estratégica** (Prompt §79): registra atraso imposto e retirada.
-- O bombardeio das 04:34 é apresentado em Tczew como um dos primeiros atos de guerra do dia. O jogo **não** afirma "o primeiro ataque da Segunda Guerra", porque Wieluń e Westerplatte também reivindicam esse lugar. Formulação segura: *"minutos antes do ataque a Westerplatte"*.
+- **O debrief não declara vitória estratégica** (Prompt §79): regista atraso imposto e retirada.
+- O bombardeamento das 04:34 é apresentado em Tczew como um dos primeiros atos de guerra do dia. O jogo **não** afirma "o primeiro ataque da Segunda Guerra", porque Wieluń e Westerplatte também reivindicam esse lugar. Formulação segura: *"minutos antes do ataque a Westerplatte"*.
 
 ## 10. O que não usar sem nova fonte
 
 - Tiros do *Schleswig-Holstein* audíveis em Tczew.
 - Combate de infantaria alemã **na margem oeste** durante a manhã. Nenhuma fonte encontrada indica que alemães cruzaram o rio antes das demolições. O combate próximo de M01 é, portanto, contra a margem leste e o tabuleiro da ponte, não em ruas de Tczew.
-- Número exato de mortos poloneses em Tczew em 1/9.
+- Número exato de mortos polacos em Tczew em 1/9.
 - Falas atribuídas a Janik, Juchtman ou a outros oficiais históricos.
 - Localização exata do quartel e das ruas por onde os soldados passaram.
 
@@ -195,17 +197,17 @@ Estado em 01/10/2026; detalhes em [`SOURCE_CHECK.md`](SOURCE_CHECK.md).
 | P3 | Confirmar uniforme específico do batalhão após H30 | H30 | `equipment-timeline.json`, modelos | PARCIAL (H30 lida; dotação específica desconhecida) |
 | P4 | Medir posição da estação, aterro, quartel, margens e dique | Messtischblatt/WIG; OSM | `map-layout.json` | PARCIAL (G01/G02/T24; falta mapa de 1939) |
 | P5 | Posição exata dos portais das duas pontes em X | Fotografias T18, planta de 1891 | `map-layout.json` | **RESOLVIDA** (G01) |
-| P6 | Armamento e aparência do Panzerzug 7 em 1939 | Literatura sobre trens blindados; Bundesarchiv | Modelo e sons do trem | PARCIAL (ver SOURCE_CHECK) |
+| P6 | Armamento e aparência do Panzerzug 7 em 1939 | Literatura sobre comboios blindados; Bundesarchiv | Modelo e sons do comboio | PARCIAL (ver SOURCE_CHECK) |
 | P7 | Uniforme e equipamento do Grenzwacht-Regiment 1 em 1939 | Literatura especializada | Inimigos da margem leste | ABERTA |
 | P8 | Ocupantes e armamento da cabeça de ponte leste | H01 | Setor S2 | PARCIAL (identidade/patente confirmadas; números desconhecidos) |
-| P9 | Topônimo e direção do ataque das 07:00 | H01, T08 | Setor S4 | PARCIAL (norte: Koźliny/Pszczółki) |
+| P9 | Topónimo e direção do ataque das 07:00 | H01, T08 | Setor S4 | PARCIAL (norte: Koźliny/Pszczółki) |
 | P10 | Szymankowo: número de vítimas e autores | IPN (T23), muzeum1939 | Debrief | PARCIAL (T23 lida; debrief limitado habilitado) |
 | P11 | Fotografias das pontes no momento da explosão e licença de uso | T18 e arquivo de origem | Referência para VFX | ABERTA |
 | P12 | Local dos postos de disparo | H01, T27 | `firing_point` e `ignition_line` | PARCIAL (dois postos documentados) |
 | P13 | Estruturas demolidas às 06:10 e às 06:45 | H01, fotos, G01 | `bz_east`, `bz_west`, estados de dano | PARCIAL (reconstrução espacial; ver SOURCE_CHECK) |
 | P14 | Alavanca do ferrolho do wz.29 | T21 | Modelo da arma | **RESOLVIDA** (reta) |
 | P15 | Fuzil individual do batalhão em 1939 (wz.29 × wz.98a) | Fonte sobre o armamento do batalhão | Elenco, `equipment-timeline.json` | ABERTA (H30 não identifica o armamento do batalhão) |
-| P16 | Locomotiva e vagões do trem 963 | H01, T27 | Assets do trem | ABERTA |
+| P16 | Locomotiva e vagões do comboio 963 | H01, T27 | Assets do comboio | ABERTA |
 
 ## 12. Decisões de roteiro derivadas desta pesquisa
 
