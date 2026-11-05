@@ -89,6 +89,59 @@ export function updateC01Contact(sim) {
 }
 
 /**
+ * C06 (PDF p. 13) + D6 (p. 18): «Primeiro contacto combatível até 60 s de movimento». A entrada na Área B tem uma JANELA DE SEGURANÇA
+ * como a de C02: o ponto de entrada (0,85) é terreno aberto e 7 dos 12 defensores de EB1 têm linha de tiro a 75-130 m (o teste da
+ * entrada em B, tests/m02-c06, confere-o); em soldado e veterano, a 1/60 s, Piotr morria ~2 s depois de entrar (e a secção, com Gruca,
+ * levava o fogo todo). Até ao contacto aberto EB1 está «sem alerta»: não percebe, não recorda e não dispara, e a secção também não abre fogo.
+ * O contacto abre, como em C02: pelo tiro ou pela granada de Piotr (a iniciativa é dele); a ≤ C01_PROXIMITY_DETECTION_M de um defensor
+ * (quem chega ao pé deles é visto); ou 30-60 s depois de Piotr começar a andar (C01_CONTACT_DELAY_SEC, sorteado UMA vez com o RNG da
+ * simulação). Mesmo estado e mesmas regras que `c01Contact`, em `areaB.contact`. Um save anterior (sem o campo) não tem janela.
+ */
+export function openAreaBContact(sim, by) {
+  const c = sim.areaB?.contact;
+  if (sim.activeCellId !== 'B' || !sim.areaB?.active || !c || c.opened) return false;
+  c.opened = true;
+  c.openedAt = Number(sim.clock.toFixed(3));
+  c.openedBy = by;
+  if (c.movementStartedAt === null) {
+    c.movementStartedAt = c.openedAt;
+    c.contactAt = c.openedAt;
+  }
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'b_contact_opened', by });
+  return true;
+}
+
+/** Regista o início do avanço em B (sorteia o atraso) e abre o contacto quando o atraso acaba ou alguém chega ao pé de um defensor. */
+export function updateAreaBContact(sim) {
+  const c = sim.areaB?.contact;
+  if (sim.activeCellId !== 'B' || !sim.areaB?.active || !c || c.opened) return;
+  if (c.movementStartedAt === null) {
+    const spawn = sim.world.layout.playerSpawn;
+    if (Math.hypot(sim.player.x - spawn.x, sim.player.z - spawn.z) < C01_ADVANCE_THRESHOLD_M) return;
+    c.movementStartedAt = Number(sim.clock.toFixed(3));
+    const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
+    c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
+  }
+  if (sim.clock >= c.contactAt) {
+    openAreaBContact(sim, 'timer');
+    return;
+  }
+  const near = sim.enemies.some(
+    (e) =>
+      e.encounterId === 'EB1' &&
+      e.alive &&
+      !e.nonCombatant &&
+      Math.hypot(e.x - sim.player.x, e.z - sim.player.z) <= C01_PROXIMITY_DETECTION_M,
+  );
+  if (near) openAreaBContact(sim, 'proximity');
+}
+
+/** Um tiro ou uma granada de Piotr abre o contacto da cena em curso (C02 ou C06), o que estiver fechado. */
+export function openPendingContact(sim, by) {
+  return openC01Contact(sim, by) || openAreaBContact(sim, by);
+}
+
+/**
  * SP02 (PDF C06 p. 13, J2 p. 36, F8 p. 26): «Um tiro que quebra o varal bloqueia a carroça em vez de a fazer explodir».
  * Causas explícitas da imobilização (`cart.immobilizedCause`): o tiro que parte o varal (`shaft_broken`), a roda danificada
  * (`wheel_damaged`, ação da bancada) e a alternativa «parada» (`parked_fallback`: F8/J2, «carroça já parada e carga manual»;
@@ -210,6 +263,7 @@ export function createInitialAreaBState() {
     reorganizedC07: false,
     c08Briefed: false,
     corridorUnderDirectFire: true,
+    contact: createInitialC01Contact(), // C06: a janela de segurança da entrada (ver openAreaBContact)
     supplyCart: {
       id: bDef.supplyCart.id,
       state: 'WAITING_CLEAR_CORRIDOR', // WAITING_CLEAR_CORRIDOR -> MOVING -> DELIVERED | IMMOBILIZED

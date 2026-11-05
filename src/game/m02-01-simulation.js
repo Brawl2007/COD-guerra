@@ -69,9 +69,11 @@ import {
   createInitialScriptState,
   updateScript as runUpdateScript,
   beginC08Briefing as runBeginC08Briefing,
-  openC01Contact,
+  openPendingContact,
   updateC01Contact as runUpdateC01Contact,
+  updateAreaBContact as runUpdateAreaBContact,
   C01_CONTACT_OPENED_BY,
+  C01_CONTACT_DELAY_SEC,
   instantAt,
   M02_REQUIRED_CHARACTERS,
   requiredCharacterOut,
@@ -597,6 +599,24 @@ export function validateM02Snapshot(snap) {
     }
   }
 
+  // C06: a janela de segurança da entrada em B (campo aditivo `areaB.contact`, mesma forma que `c01Contact`; ausente nos saves anteriores).
+  const bContact = snap.areaB.contact;
+  if (
+    bContact !== undefined &&
+    (!isPlainObject(bContact) ||
+      typeof bContact.opened !== 'boolean' ||
+      !nullOrTime(bContact.movementStartedAt) ||
+      !nullOrTime(bContact.contactAt) ||
+      !nullOrTime(bContact.openedAt) ||
+      (bContact.contactAt === null) !== (bContact.movementStartedAt === null) ||
+      (bContact.opened ? !C01_CONTACT_OPENED_BY.includes(bContact.openedBy) || bContact.openedAt === null : bContact.openedBy !== null || bContact.openedAt !== null) ||
+      // instantes passados (início do avanço, abertura) nunca à frente do relógio; o agendado cai no máximo 60 s depois do início (D6)
+      (bContact.movementStartedAt !== null && bContact.movementStartedAt > snap.clock + 1e-9) ||
+      (bContact.openedAt !== null && bContact.openedAt > snap.clock + 1e-9) ||
+      (bContact.contactAt !== null && !(bContact.contactAt >= bContact.movementStartedAt && bContact.contactAt <= bContact.movementStartedAt + C01_CONTACT_DELAY_SEC.max + 1e-6)))
+  ) {
+    return { valid: false, reason: 'Estado da janela de segurança da entrada em B (areaB.contact) inválido no snapshot.' };
+  }
   const cart = snap.areaB.supplyCart;
   if (cart !== undefined && (!isPlainObject(cart) || !CART_STATES.includes(cart.state))) {
     return { valid: false, reason: `Estado da carroça inválido no snapshot: ${cart?.state}` };
@@ -1440,7 +1460,7 @@ export class M02BenchSimulation {
     }
 
     this.alertEnemiesBySound(this.player, 90);
-    openC01Contact(this, 'player_shot');
+    openPendingContact(this, 'player_shot');
 
     const material = hit?.material ?? 'air';
     const policy = BALLISTIC_MATERIAL_POLICY[material] ?? null;
@@ -1676,7 +1696,7 @@ export class M02BenchSimulation {
     if (!customOrigin && this.grenadeAmmo <= 0) return null;
     if (!customOrigin) {
       this.grenadeAmmo--;
-      openC01Contact(this, 'player_grenade');
+      openPendingContact(this, 'player_grenade');
     }
 
     const eye = customOrigin ?? eyePosition(this.player);
@@ -2262,6 +2282,7 @@ export class M02BenchSimulation {
     if (controls.orderAdvance) this.issueSquadOrder('advance');
 
     runUpdateC01Contact(this);
+    runUpdateAreaBContact(this);
     this.updateGrenades(dt);
     this.#updateHazardBlasts();
     updatePolishSquad(this, dt);

@@ -32,6 +32,12 @@ export function lastGroupTargets(sim) {
   return sim.areaC.lastGroup.filter((lg) => lg.alive && !lg.evacuated);
 }
 
+/** C06: a janela de segurança da entrada em B ainda não terminou (EB1 «sem alerta»; um save anterior, sem `areaB.contact`, não a tem). */
+export function areaBContactPending(sim) {
+  const c = sim.areaB?.contact;
+  return sim.activeCellId === 'B' && Boolean(sim.areaB?.active) && Boolean(c) && !c.opened;
+}
+
 export function isLastGroupMember(sim, actor) {
   return Boolean(sim.areaC?.lastGroup?.includes(actor));
 }
@@ -1226,6 +1232,8 @@ export function updatePolishSquad(sim, dt) {
       if (sim.c01Active && enemy.encounterId !== 'EA0') continue;
       // C02: a secção não abre fogo sobre um posto que ainda não deu pelo contacto (o primeiro tiro é do contacto aberto).
       if (sim.c01Active && !sim.c01Contact?.opened) continue;
+      // C06: idem à entrada em B, a secção não abre fogo sobre EB1 antes do contacto (o primeiro tiro é do contacto aberto)
+      if (areaBContactPending(sim)) continue;
       const dist = Math.hypot(enemy.x - ally.x, enemy.z - ally.z);
       if (dist > (WEAPON_PROFILES[ally.weapon]?.range ?? 180)) continue;
 
@@ -1400,6 +1408,14 @@ export function updateGermanGarrison(sim, dt) {
     // C02 (PDF p. 12): o posto EA0 está «sem alerta» até ao contacto aberto (30-60 s depois de o jogador avançar): não vê, não
     // recorda (os ruídos que não abrem o contacto não o alertam) e não dispara. Antes via Piotr no tick 0 a ~67 m.
     if (sim.c01Active && enemy.encounterId === 'EA0' && !sim.c01Contact?.opened) {
+      enemy.seeingTargetId = null;
+      enemy.memory = null;
+      enemy.state = 'HOLD_SECTOR';
+      continue;
+    }
+
+    // C06: a entrada em B tem a mesma janela de segurança (ver openAreaBContact): EB1 «sem alerta» até ao contacto aberto.
+    if (enemy.encounterId === 'EB1' && areaBContactPending(sim)) {
       enemy.seeingTargetId = null;
       enemy.memory = null;
       enemy.state = 'HOLD_SECTOR';

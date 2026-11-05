@@ -16,11 +16,13 @@ import { MissionBot } from './m02-mission-bot.js';
 // morre em C10; 1 é a menor semente inteira que passa (sem escolher por vida restante).
 // D1 (imunidades ocultas removidas): Gruca, Lis e Szymczak deixaram de voltar a 18/20 de vida e a falta do sierż. Gruca falha a missão
 // (m02-d1-required-characters). D4 (autonomia limitada): a secção já não toma a quinta sozinha, por isso o bot (que antes esperava que a
-// secção limpasse a quinta) vai pela vala até junto de B01 e só atira ao que consegue acertar (tests/m02-mission-bot.js). Tudo isto
-// mexe outra vez no fluxo caótico do bot: medido com o código de D4, 3 de 43 sementes (1..40 e as três antigas) chegam a C12 em dt 0,1
-// (7, 10 e 20; as 15 de antes davam 10 de 15, depois de D1 4 de 15) e a desgaste de Piotr/Gruca em C09-C11 mata o resto. As três
-// sementes de antes (19390909, 1, 31337) foram substituídas por estas três (as primeiras que passam, sem escolher por vida restante).
-const SEEDS = [7, 10, 20];
+// secção limpasse a quinta) vai pela vala até junto de B01 e só atira ao que consegue acertar (tests/m02-mission-bot.js). C11: o último
+// grupo também leva fogo. C06: a entrada em B tem a janela de segurança (senão Piotr morria 2 s depois de entrar em soldado/veterano a
+// 1/60). Tudo isto mexe outra vez no fluxo caótico do bot: medido com o código final, 7 de 43 sementes (1..40 e as três antigas) chegam a
+// C12 em dt 0,1 (5, 7, 10, 13, 19, 20 e 24; das 15 sementes de antes, 3: 5, 7 e 10; antes de tudo eram 10 de 15) e o desgaste de Piotr
+// e de Gruca em C09-C11 mata o resto (C09 é a cena mais mortal: 16 de 43). As sementes de antes (19390909, 1, 31337) foram
+// substituídas pelas três primeiras que passam, sem escolher por vida restante.
+const SEEDS = [5, 7, 10];
 const DT = 0.1;
 const FORBIDDEN_SHORTCUTS = [
   'startAreaAFullC01',
