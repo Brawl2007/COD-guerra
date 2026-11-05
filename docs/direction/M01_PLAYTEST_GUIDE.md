@@ -1,6 +1,6 @@
 # Guia de playtest — M01 Tczew (Ato I, VII-a, VII-b, VII-c)
 
-**Estado: PROVISÓRIO. Nada disto está validado em jogo.** Ainda não houve playtest humano. Os testes automáticos e os pilotos (programas que jogam sozinhos) não contam como validação. Verificado no ramo `claude/dreamy-ramanujan-6v62vr`, SHA `226dd578` ou posterior (ver o topo de `docs/direction/M01_INTEGRATION_LEDGER.md`), 2026-11-05. Os atos novos estão **desligados** na distribuição: só se veem pelos endereços de teste indicados abaixo.
+**Estado: PROVISÓRIO. Nada disto está validado em jogo.** Ainda não houve playtest humano. Os testes automáticos e os pilotos (programas que jogam sozinhos) não contam como validação. Verificado no ramo `claude/dreamy-ramanujan-6v62vr`, SHA `4a4366ae` ou posterior (ver o topo de `docs/direction/M01_INTEGRATION_LEDGER.md`), 2026-11-05. Os atos novos estão **desligados** na distribuição: só se veem pelos endereços de teste indicados abaixo.
 
 ## 1. Como começar
 
@@ -36,7 +36,8 @@ Dê de 1 a 5 (1 = muito mau, 5 = muito bom) e escreva uma frase por ponto:
 
 ## 3. Ato I — Ponte, 04:30–07:05
 
-- **Pó**: depois de uma bomba, granada ou demolição fica uma nuvem cinzenta sobre a cratera (bomba: raio 16 m, 40 s; demolição: raio 42 m, 150 s; granada: 20 s). Os alemães ou polacos atrás da nuvem deixam de se ver? Percebeu porquê?
+- **Pó**: depois de uma bomba, granada ou demolição fica uma nuvem sobre a cratera (bomba: raio 16 m, 40 s; demolição: raio 42 m, 150 s; granada: 20 s). Desde `4a4366ae` a nuvem é desenhada com a espessura que a simulação lhe dá: uma nuvem que cega a IA também deve tapar-lhe a vista. Os alemães ou polacos atrás da nuvem deixam de se ver? A nuvem pareceu exagerada, certa ou fraca?
+- **Tiro de apoio e busca alemã** (emenda 22): um tiro de apoio alemão cai perto da linha polaca e os homens do assalto do tabuleiro que perdem o alvo deslocam-se para o reencontrar. Notou-os a mudar de posição? Pareceu inteligente ou estranho?
 - **Feridos**: as bombas das 04:34–04:43 ferem homens da guarnição oeste, que chamam. Dudek, o médico, vai ao mais próximo, ajoelha-se, trata durante 6–10 s e leva-o ao ombro para a cobertura. O gesto lê-se? Percebeu que era o médico? Voltou ao posto?
 - **Granadas alemãs**: só aparecem em algumas rotas (nas simulações: 6 de 12 de controlo, nenhuma das de apoio). Se aparecer, o aviso (mensagem no HUD a 17 m ou menos) foi claro?
 - **Assalto no tabuleiro**: os alemães chegam mais perto (`safeX` 190, a cerca de 23 m da retaguarda polaca). Pareceu justo ou apertado?
