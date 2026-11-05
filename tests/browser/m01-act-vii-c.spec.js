@@ -131,7 +131,8 @@ test('CP-K: the game stores the checkpoint of the retreat when the line is out, 
   await page.waitForFunction(key=>JSON.parse(localStorage.getItem(key)).actSave.checkpointsReached.includes('cp_npc_k_retirada'),ACT_KEY,{timeout:300000});
   const stored=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),ACT_KEY);
   expect(stored.schema).toBe(3);expect(stored.act).toBe(ID);expect(Object.keys(stored).sort()).toEqual(['act','actSave','carry','missionId','schema']);
-  expect(stored.actSave.checkpointsReached).toEqual(['cp_npc_j_ordem','cp_npc_k_retirada']);expect(stored.actSave.timers.withdrawal.lineOutAt).not.toBeNull();expect(stored.actSave.timers.withdrawal.out).toHaveLength(9);
+  expect(stored.actSave.checkpointsReached).toEqual(['cp_npc_j_ordem','cp_npc_k_retirada']);expect(stored.actSave.timers.withdrawal.lineOutAt).not.toBeNull();
+  expect(stored.actSave.timers.withdrawal.out).toHaveLength(8);   // the line leaves: six riflemen and the two men of the ckm (9 before f13d2292 took pl_np_3 off the roster: tests/m01-act-vii-c.test.js, R.out.length 9 -> 8)
   expect(stored.actSave.flags['m01npc.lineOut']).toBe(true);expect(stored.actSave.objectives.obj_npc_withdraw.state).toBe('active');
   await expect(page.locator('#checkpoint-name')).toHaveText('CP-K · Perímetro norte — retirada · Recruta');
   await page.waitForTimeout(2500);const d=await diag(page);expect(d.phase).toBe('NPC_REAR');expect(d.objective).toBe('Recue com a secção até à saída');expect(d.marker?.label).toBe('Saída');
@@ -140,7 +141,7 @@ test('CP-K: the game stores the checkpoint of the retreat when the line is out, 
   writeFileSync(OUT+'smoke-cpk-stored.json',JSON.stringify({checkpoints:stored.actSave.checkpointsReached,out:stored.actSave.timers.withdrawal.out,lineOutAt:stored.actSave.timers.withdrawal.lineOutAt,clock:stored.actSave.clock,errors},null,1)+'\n');
 });
 
-test('the end of VII-c is the end card and then the debrief, with the paragraphs of the three area acts in order (VII-a\'s, VII-b\'s, db_04, VII-c\'s) and the current act\'s',async({page})=>{
+test('the end of VII-c is the end card and then the debrief, with the paragraphs of the three area acts in order (VII-a\'s, VII-b\'s, VII-c\'s, db_04) and the current act\'s',async({page})=>{
   test.setTimeout(600000);
   const errors=await boot(page,'?debug=1&acts=1',{save:scenes.end,click:'#continue'});
   await page.waitForFunction(()=>window.gameDiagnostics().m01.scene==='cs_npc_end',null,{timeout:90000});
@@ -152,13 +153,14 @@ test('the end of VII-c is the end card and then the debrief, with the paragraphs
   await page.waitForSelector('#complete:not(.hidden)',{timeout:90000});
   const debrief=await page.locator('#debrief').textContent();
   const at=t=>debrief.indexOf(t);
-  expect(debrief).toContain('Por volta das 07:00');expect(debrief).toContain('Durante o dia, novos ataques vindos do norte');expect(debrief).toContain('Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer');expect(debrief).toContain('O Sol pôs-se às 18:39');
-  expect(at('Por volta das 07:00')).toBeLessThan(at('Durante o dia, novos ataques'));
+  // f13d2292 (honest labels): the VII-a paragraph says «Às ~07:00 — hora de uma única fonte», not «Por volta das 07:00»; and the VII-c paragraph (the 17:00 order) now comes BEFORE db_04 («até às 20:00»).
+  expect(debrief).toContain('Às ~07:00 — hora de uma única fonte');expect(debrief).toContain('Durante o dia, novos ataques vindos do norte');expect(debrief).toContain('Por volta das 17:00 chegou a ordem de deixar Tczew ao anoitecer');expect(debrief).toContain('O Sol pôs-se às 18:39');
+  expect(at('Às ~07:00 — hora de uma única fonte')).toBeLessThan(at('Durante o dia, novos ataques'));
   expect(at('Durante o dia, novos ataques')).toBeLessThan(at('Por volta das 17:00 chegou a ordem'));
-  expect(at('Por volta das 17:00 chegou a ordem')).toBeGreaterThan(at('20:00'));   // db_04 («até às 20:00») comes before db_npc_01
+  expect(at('Por volta das 17:00 chegou a ordem')).toBeLessThan(at('até às 20:00'));   // db_npc_01 comes before db_04 («até às 20:00»)
   const paragraphs=await page.locator('#debrief p').allTextContents();
   const i04=paragraphs.findIndex(t=>/até às 20:00/.test(t)),iC=paragraphs.findIndex(t=>/Por volta das 17:00 chegou a ordem/.test(t));
-  expect(i04).toBeGreaterThanOrEqual(0);expect(iC).toBe(i04+1);   // db_npc_01 immediately after db_04
+  expect(iC).toBeGreaterThanOrEqual(0);expect(i04).toBe(iC+1);   // db_04 immediately after db_npc_01
   await page.screenshot({path:OUT+'10-debrief.png'});
   expect(errors).toEqual([]);
   writeFileSync(OUT+'smoke-debrief.json',JSON.stringify({card,paragraphs,errors},null,1)+'\n');
