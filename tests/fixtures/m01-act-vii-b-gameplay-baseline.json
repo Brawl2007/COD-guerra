@@ -5,7 +5,7 @@
  "platform": "x86_64 only (floating point, as the current act goldens)",
  "inputsSha256": {
   "src/game/m01-area-sim.js": "05c47777eb6ce347c82bdb31a253a06db0ea9bb8dec54e3c0a3b394ddb881528",
-  "src/game/m01-act-factories.js": "f1bd1cef63b67a60d24949b4f7dc4a4b2f5857496342483649f5f06fa9899c76",
+  "src/game/m01-act-factories.js": "d367a254846fbbce89fe598b37049c63d9476271c1cb3b2176bbc2e3987c9fdc",
   "src/game/m01-shell-blast.js": "4af3a2eea01edaac151e7ee537cc7dbc57731c31bb5ea4a28c4a96d1f2f27c5d",
   "src/game/m01-unit-hash.js": "83b2739714aa6060f363f344a0f554712df87f857ffbdc3d7309a51377a28dc9",
   "src/world/m01-area-world.js": "162f71c3203dbd2cbc31ab8248c87b7c21c3499b184244ac99be53e74fcc3db7",
