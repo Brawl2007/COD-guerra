@@ -43,7 +43,8 @@ function build(){
   untilC(()=>c.timers.withdrawal.lineOutAt!==null);
   untilC(()=>c.timers.rear.move===4&&c.timers.rear.moving);
   // all but the last man are out: the field holds 11 men since f13d2292 (roster without pl_np_3), so `>=11` with rearOutAt still null can never hold
-  untilC(()=>c.timers.withdrawal.rearOutAt===null&&c.timers.withdrawal.out.length>=10);
+  // the last man (Zieliński) is the only one still on the field: rearOutAt is set in the very tick the last man joins `out`, so «all but one» is the latest state with rearOutAt still null
+  const WC=c.plan.withdrawal.ids;untilC(()=>c.timers.withdrawal.rearOutAt===null&&c.timers.withdrawal.out.length>=WC.line.length+WC.rear.length-1);
   out.duskExit=look(live(c),{x:-540,z:-1092},{x:-580,z:-1062},.0);   // the approach to the band
   out.duskExitFar=look(live(c),{x:-470,z:-1130},{x:-580,z:-1062},.0);   // 130 m from the band
   return out;
