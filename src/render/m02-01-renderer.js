@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { eyePosition } from '../world/spatial.js';
+import { m02MgMuzzle } from '../world/m02-quinta-world.js';
 import { selectConsumerLod } from './m01-lod-policy.js';
 import { HORIZON_CAMERA_FAR_M, horizonImpostorScale } from '../world/m02-horizon-system.js';
 import { M02_TERRAIN_MESH } from '../world/m02-environment-area.js';
@@ -458,13 +459,15 @@ export class M02BenchRenderer {
     const cellId = this.sim.activeCellId ?? 'A';
 
     if (cellId === 'A') {
-      // 5. MG34 weapon fixture inside B02 west aperture
-      const mgGroup = new THREE.Group();
+      // 5. MG34 weapon fixture inside B02 west aperture. A boca vem da fonte única (layout.mgEmplacement, PDF F3 p. 24 «MG a (12,-30)»):
+      // o cano de 1,05 m estende-se da boca para dentro do celeiro, o bipé assenta no peitoril do vão.
+      const mgMuzzle = m02MgMuzzle(this.sim.mgState);
       const mgBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 1.05, 8), this.materials.gun_metal);
+      const mgGroup = new THREE.Group();
       mgBarrel.rotation.z = Math.PI / 2;
-      mgBarrel.position.set(12.25, 1.38, -30.0);
+      mgBarrel.position.set(mgMuzzle.x + 0.525, mgMuzzle.y, mgMuzzle.z);
       const mgBipod = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.38, 0.28), this.materials.gun_metal);
-      mgBipod.position.set(12.05, 1.16, -30.0);
+      mgBipod.position.set(mgMuzzle.x + 0.1, mgMuzzle.y - 0.26, mgMuzzle.z);
       mgGroup.add(mgBarrel, mgBipod);
       this.staticGroup.add(mgGroup);
 
@@ -832,10 +835,11 @@ export class M02BenchRenderer {
       new THREE.BufferGeometry().setFromPoints(orchardPts),
       new THREE.LineBasicMaterial({ color: 0x81c784 }),
     );
+    const mgMuzzle = m02MgMuzzle(this.sim.mgState);
     const mgRayPts = [
-      new THREE.Vector3(11.82, 1.42, -30.0),
+      new THREE.Vector3(mgMuzzle.x, mgMuzzle.y, mgMuzzle.z),
       new THREE.Vector3(-42.0, 1.2, -55.0),
-      new THREE.Vector3(11.82, 1.42, -30.0),
+      new THREE.Vector3(mgMuzzle.x, mgMuzzle.y, mgMuzzle.z),
       new THREE.Vector3(-35.0, 1.2, -5.0),
     ];
     const mgArcLine = new THREE.LineSegments(

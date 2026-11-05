@@ -9,7 +9,7 @@ import {
 } from '../world/spatial.js';
 import { movePlayer, PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { M02QuintaWorld, BALLISTIC_MATERIAL_POLICY } from '../world/m02-quinta-world.js';
+import { M02QuintaWorld, BALLISTIC_MATERIAL_POLICY, m02MgMuzzle } from '../world/m02-quinta-world.js';
 import { M02HorizonDirector, M02_TEMPORAL_STATES } from '../world/m02-horizon-system.js';
 import { M02ZoneStreamer } from '../world/m02-zone-streamer.js';
 import { Wz29 } from './wz29.js';
@@ -83,6 +83,7 @@ import {
   M02_RNG_ALGORITHM,
   M02_CELL_IDS,
   M02_LAYOUT_SCHEMA_BY_CELL,
+  m02LayoutMismatchReason,
   m02NarrativeStamp,
   m02CellInteractiveIds,
   findNonFiniteNumber,
@@ -201,7 +202,8 @@ export function validateM02Snapshot(snap) {
       valid: false,
       reason:
         'Schema de snapshot M02 v1 incompatível: não guarda a semente nem o estado do gerador (rng), por isso o restauro ' +
-        'não seria determinístico (SAVE-01). Sem migração: os checkpoints v1 só existiam em memória.',
+        'não seria determinístico (SAVE-01). Sem migração e sem apagar nada: os checkpoints v1 desta bancada só existiam em memória ' +
+        'e os saves v1 do Codex (cod-guerra:checkpoint:m02:v1) ficam intactos, nunca lidos como v2.',
     };
   }
   if (snap.schema !== M02_SNAPSHOT_SCHEMA || snap.schemaVersion !== M02_SNAPSHOT_SCHEMA_VERSION) {
@@ -228,10 +230,7 @@ export function validateM02Snapshot(snap) {
     return { valid: false, reason: 'Bloco world do snapshot inválido ou inconsistente com a célula ativa.' };
   }
   if (world.layoutSchema !== M02_LAYOUT_SCHEMA_BY_CELL[snap.activeCellId]) {
-    return {
-      valid: false,
-      reason: `Save incompatível: layout ${world.layoutSchema} da célula ${snap.activeCellId}, atual ${M02_LAYOUT_SCHEMA_BY_CELL[snap.activeCellId]}.`,
-    };
+    return { valid: false, reason: m02LayoutMismatchReason(snap.activeCellId, world.layoutSchema) };
   }
   if (!isPlainObject(snap.horizon) || !M02_TEMPORAL_STATES[snap.horizon.temporalState]) {
     return { valid: false, reason: 'Estado temporal do horizonte inválido no snapshot.' };
@@ -814,7 +813,7 @@ export class M02BenchSimulation {
 
     this.targets = this.calibrationTargets;
 
-    const mg = this.world.layout.mgEmplacement;
+    const { note: _mgNote, ...mg } = this.world.layout.mgEmplacement;
     this.mgState = {
       ...mg,
       space: 'metres',
@@ -1223,6 +1222,16 @@ export class M02BenchSimulation {
     }
   }
 
+  /** Boca da MG34 (cópia nova de layout.mgEmplacement via mgState): única origem do raio de fogo, da avaliação e do rasto. */
+  get mgMuzzle() {
+    return m02MgMuzzle(this.mgState);
+  }
+
+  /** Centro do vão da MG34 (PDF «MG a (12,-30)»; x,z do layout) à altura da boca. */
+  get mgAperture() {
+    return { x: this.mgState.x, y: this.mgState.muzzleY, z: this.mgState.z };
+  }
+
   evaluateMgLineOfFire(targetActor = this.player) {
     this.syncCalibrationAndEnemies();
     const mg = this.mgState;
@@ -1240,8 +1249,9 @@ export class M02BenchSimulation {
       };
     }
 
-    // Muzzle positioned at the western MG aperture of Barn B02 (x=11.82, y=1.42, z=-30.0)
-    const muzzle = { x: 11.82, y: 1.42, z: -30.0 };
+    // Boca no vão oeste de B02 (fonte única: layout.mgEmplacement; PDF F3 p. 24 «MG a (12,-30)»). A mesma origem serve a
+    // avaliação, o disparo do artilheiro (fireActorBurst) e o rasto das rajadas.
+    const muzzle = this.mgMuzzle;
     const targetEye = eyePosition(targetActor);
     const dx = targetEye.x - muzzle.x;
     const dy = targetEye.y - muzzle.y;
@@ -1266,8 +1276,14 @@ export class M02BenchSimulation {
     const inArc = angleDiff <= mg.arcHalfAngle;
 
     const dir = { x: dx / dist, y: dy / dist, z: dz / dist };
+    // Balística: qualquer sólido pára a bala (o vidro intacto também: a bala parte-o). Vista: o vidro intacto deixa ver
+    // (BALLISTIC_MATERIAL_POLICY.glass.blocksSight = false), por isso o raio de vista ignora-o e continua a procurar atrás dele.
     const obstruction = traceObstruction(this.world, muzzle, dir, Math.max(0, dist - 0.15));
-    const hasVisualLoS = inArc && !obstruction && this.world.lineOfSight(
+    const sightObstruction =
+      obstruction && !this.world.materialBlocksSight(obstruction.material)
+        ? this.world.traceSightObstruction(muzzle, dir, Math.max(0, dist - 0.15))
+        : obstruction;
+    const hasVisualLoS = inArc && !sightObstruction && this.world.lineOfSight(
       { x: muzzle.x, y: 0, z: muzzle.z, eyeHeight: muzzle.y, space: 'metres' },
       targetActor,
       { includeFoliage: true },
@@ -1421,7 +1437,7 @@ export class M02BenchSimulation {
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
-        ? { x: 11.82, y: 1.42, z: -30.0 }
+        ? this.mgMuzzle
         : eyePosition(shooter);
 
     const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies];
@@ -2180,7 +2196,7 @@ export class M02BenchSimulation {
       this.events.push({
         type: 'mg-burst',
         sourceId: this.mgState.id,
-        origin: { x: 12.15, y: 1.42, z: -30.0 },
+        origin: this.mgMuzzle,
         target: { x: this.player.x, y: this.player.y + 1.2, z: this.player.z },
         rounds: this.mgState.burstRounds,
         clock: this.clock,

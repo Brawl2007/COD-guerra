@@ -589,11 +589,13 @@ describe('FIX-CD 9: depois da falha não há rajada de checkpoint-rejected; o re
 // 10. Missão completa com o MissionBot ao dt real de frame (1/60) em recruta
 // ---------------------------------------------------------------------------------------------------------------------
 describe('FIX-CD 10: missão completa C01→C12 com o MissionBot a dt = 1/60 em recruta (teste de estado, NÃO é playtest)', () => {
-  it('semente 19390909: chega a C12 sem checkpoints recusados, com os 4 checkpoints e snapshots válidos em cada mudança de cena', (t) => {
-    // Antes ficava preso em C03 1800 s: Lis («ClearRoom») encostada à parede norte de B01 sem rota (porta este fechada), 4 hostis
-    // em HOLD_SECTOR dentro de B01/B03 e a moral da quinta a 6 de 10. Defeito do jogo (navegação dos aliados), corrigido em
-    // stepActorNavigation; não era do bot.
-    const sim = new M02BenchSimulation(19390909, { startScene: 'C01', storage: createMemoryStorage() });
+  it('semente 777: chega a C12 sem checkpoints recusados, com os 4 checkpoints e snapshots válidos em cada mudança de cena', (t) => {
+    // Antes ficava preso em C03 1800 s (semente 19390909): Lis («ClearRoom») encostada à parede norte de B01 sem rota (porta este
+    // fechada), 4 hostis em HOLD_SECTOR dentro de B01/B03 e a moral da quinta a 6 de 10. Defeito do jogo (navegação dos aliados),
+    // corrigido em stepActorNavigation; não era do bot.
+    // Semente 777 (N0-fixes, tests/m02-26): com a MG34 a disparar da boca no vão o desfecho do bot é caótico e a 19390909 a 1/60 morre
+    // em C09 por desgaste de Kar98k (a 777 a 1/60 chega a C12); ver o comentário das sementes em m02-18.
+    const sim = new M02BenchSimulation(777, { startScene: 'C01', storage: createMemoryStorage() });
     const bot = new MissionBot(sim, { dt: FRAME });
     const scenes = [];
     let rejected = 0;

@@ -38,6 +38,18 @@ const aabbToSolid = (b, kind = 'obstacle') => {
   };
 };
 
+/**
+ * Boca da MG34 de B02: ponto único de origem do raio de fogo, da avaliação de exposição, do rasto das rajadas, do desenho no
+ * renderer e dos pontos de supressão da secção. FONTE ÚNICA = `layout.mgEmplacement` (x, z = PDF F3 p. 24 «MG a (12,-30)»,
+ * `muzzleY` = altura da boca). Os pontos de supressão derivam dela: arestas 0,15 m fora e 0,20 m dentro do vão.
+ */
+export function m02MgMuzzle(mg) {
+  if (!mg || !Number.isFinite(mg.x) || !Number.isFinite(mg.z) || !Number.isFinite(mg.muzzleY)) {
+    throw new Error('mgEmplacement sem x, z e muzzleY finitos.');
+  }
+  return { x: mg.x, y: mg.muzzleY, z: mg.z };
+}
+
 export const BALLISTIC_MATERIAL_POLICY = Object.freeze({
   stone: Object.freeze({ blocksShot: true, blocksSight: true, penetrationLoss: 1.0, label: 'Pedra / Alvenaria pesada' }),
   brick: Object.freeze({ blocksShot: true, blocksSight: true, penetrationLoss: 1.0, label: 'Alvenaria de tijolo / reboco' }),
@@ -77,6 +89,13 @@ export class M02QuintaWorld {
   constructor(customLayout = layout) {
     this.missionId = customLayout.missionId ?? 'm02_01_quinta';
     this.layout = withWalkableApproach(customLayout);
+    // Política de vista dos materiais: `ballistic-policy` aplica BALLISTIC_MATERIAL_POLICY.blocksSight (o vidro intacto deixa ver;
+    // correção N0, Área A); `legacy-opaque` (por omissão) mantém o comportamento anterior, em que todo o sólido bloqueia a vista.
+    // As células B/C não declaram a política e ficam como estavam: aplicá-la ali muda quem vê quem pelas janelas (balanceamento).
+    this.sightPolicy = customLayout.sightPolicy ?? 'legacy-opaque';
+    if (this.sightPolicy !== 'ballistic-policy' && this.sightPolicy !== 'legacy-opaque') {
+      throw new Error(`sightPolicy desconhecida no layout M02: ${this.sightPolicy}`);
+    }
     this.events = [];
     this.colliders = [];
     this.decks = [];
@@ -596,6 +615,10 @@ export class M02QuintaWorld {
     }
 
     this.obstacles = obstacles;
+    // Política balística (BALLISTIC_MATERIAL_POLICY): o material com `blocksSight:false` (vidro) pára a bala (continua em `obstacles`:
+    // a bala bate e parte o vidro) mas NÃO a vista. `sightWorld` é o mesmo mundo sem esses sólidos, para a linha de vista.
+    this.sightOpaqueObstacles = obstacles.filter((b) => this.materialBlocksSight(b.material));
+    this.sightWorld = { obstacles: this.sightOpaqueObstacles, traceTerrain: (o, d, r) => this.traceTerrain(o, d, r) };
     this.navObstacles = obstacles.filter((b) => !b.walkThrough);
     this.sightBlockers = sightBlockers;
     this.doors = doorDescriptors;
@@ -627,8 +650,22 @@ export class M02QuintaWorld {
     return best;
   }
 
+  /**
+   * Um sólido deste material bloqueia a vista? Com `sightPolicy: 'ballistic-policy'` segue `BALLISTIC_MATERIAL_POLICY[material].blocksSight`
+   * (materiais sem entrada bloqueiam); com `legacy-opaque` bloqueia sempre (comportamento anterior à correção N0).
+   */
+  materialBlocksSight(material) {
+    if (this.sightPolicy === 'legacy-opaque') return true;
+    return BALLISTIC_MATERIAL_POLICY[material]?.blocksSight !== false;
+  }
+
+  /** Primeiro sólido que bloqueia a VISTA no raio (o vidro intacto deixa ver; ver `sightWorld`). */
+  traceSightObstruction(origin, direction, range) {
+    return traceObstruction(this.sightWorld, origin, direction, range);
+  }
+
   lineOfSight(a, b, { includeFoliage = true } = {}) {
-    if (!visible(this, a, b)) return false;
+    if (!visible(this.sightWorld, a, b)) return false;
     if (!includeFoliage || this.sightBlockers.length === 0) return true;
     const sightWorld = { obstacles: this.sightBlockers };
     const ax = a.x;

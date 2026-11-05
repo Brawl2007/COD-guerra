@@ -2,10 +2,10 @@
 
 Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.
 
-- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `e76b631cb513a34b51abe08202299aaa120021315e0b48bc360c1f8a61b68c81`), instanciado com `M02QuintaWorld`.
+- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `f7104f461bd65d98df9db970d85c53d3f5c99885cee7fb1ebe2ea2668c7d3964`), instanciado com `M02QuintaWorld`.
 - Cápsula do jogador (`PLAYER_PHYSICS`, src/world/m01-player-physics.js, usada por `m02-01-simulation.js`): raio 0,36 m (Ø 0,72 m), altura em pé 1,80 m, agachado 1,25 m, degrau máximo 0,45 m, sem salto. Olhos: em pé 1,64 m, agachado 1,08 m (`EYE_HEIGHT` de src/config.js e o literal de olhos agachado em `m02-01-simulation.js`).
 - Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).
-- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).
+- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Política de vidro (`BALLISTIC_MATERIAL_POLICY.glass`): o vidro intacto **deixa ver** (`blocksSight` = false: `lineOfSight` ignora-o) mas **pára a bala**, que o parte (`glassBrokenId`; depois o vão fica `broken`). Bala = qualquer outro sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).
 
 ## 1. Vãos
 
@@ -20,7 +20,7 @@ Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Pr
 | door_b01_kitchen_westbed | B01 · b01_wall_mid_h (interior) | -37,00; -13,00 | 3,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b01_kitchen_westbed_leaf) | sim / sim | 0,28 | 0,50 |
 | door_b01_hall_eastbed | B01 · b01_wall_mid_h (interior) | -29,00; -13,00 | 11,00 | 1,00 × 2,10 | 0,00 → 2,10 | porta open | sim | sim / sim | 0,28 | 0,50 |
 | win_b01_west_kitchen | B01 · b01_wall_west (oeste) | -40,00; -15,50 | 2,50 | 1,30 × 1,10 | 0,95 → 2,05 | vidro open | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
-| win_b01_east_hall | B01 · b01_wall_east (este) | -26,00; -17,35 | 0,65 | 1,00 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
+| win_b01_east_hall | B01 · b01_wall_east (este) | -26,00; -17,10 | 0,90 | 1,00 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | win_b01_east_bed | B01 · b01_wall_east (este) | -26,00; -10,50 | 7,50 | 1,30 × 1,10 | 0,95 → 2,05 | vidro open | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | win_b01_north_hall | B01 · b01_wall_north (norte) | -29,00; -18,00 | 11,00 | 1,20 × 1,10 | 0,95 → 2,05 | vidro intact | não (peitoril 0,95 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | door_b02_north_gate | B02 · b02_wall_north (norte) | 24,00; -38,00 | 12,00 | 3,00 × 3,00 | 0,00 → 3,00 | porta open | sim | sim / sim | 2,28 | 1,50 |
@@ -28,10 +28,13 @@ Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Pr
 | win_b02_west_mg | B02 · b02_wall_west (oeste) | 12,00; -30,00 | 8,00 | 1,80 × 1,15 | 1,00 → 2,15 | vidro open | não (peitoril 1,00 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
 | door_b03_north | B03 · b03_wall_north (norte) | 29,00; 0,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
 | door_b03_south | B03 · b03_wall_south (sul) | 29,00; 12,00 | 9,00 | 2,40 × 2,40 | 0,00 → 2,40 | porta open | sim | sim / sim | 1,68 | 1,20 |
+| door_b03_east_tack | B03 · b03_wall_east (este) | 38,00; 9,50 | 9,50 | 1,00 × 2,10 | 0,00 → 2,10 | porta closed | não (door_b03_east_tack_leaf) | sim / sim | 0,28 | 0,50 |
 | win_b03_west_high | B03 · b03_wall_west (oeste) | 20,00; 6,00 | 6,00 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
-| door_b04_south | B04 · b04_wall_south (sul) | -31,80; 26,00 | 5,20 | 1,00 × 2,00 | 0,00 → 2,00 | porta open | não (cov_b04_woodpile) | não (cov_b04_woodpile) / não | 0,28 | 0,30 |
+| win_b03_north_high | B03 · b03_wall_north (norte) | 23,50; 0,00 | 3,50 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
+| win_b03_south_high | B03 · b03_wall_south (sul) | 34,50; 12,00 | 14,50 | 1,20 × 0,70 | 1,75 → 2,45 | vidro open | não (peitoril 1,75 m > degrau 0,45 m) | não (peitoril) | n/a | n/a |
+| door_b04_south | B04 · b04_wall_south (sul) | -31,80; 26,00 | 5,20 | 1,00 × 2,00 | 0,00 → 2,00 | porta open | sim | sim / sim | 0,28 | 0,50 |
 
-Total: 11 portas e 6 janelas (17 vãos).
+Total: 12 portas e 8 janelas (20 vãos).
 
 ### 1.2 Linha de vista e de tiro através do vão
 
@@ -46,93 +49,96 @@ Estado «inicial» = o do layout; «aberto» = porta aberta / vidro aberto. Altu
 | door_b01_kitchen_westbed | porta closed | não (door_b01_kitchen_westbed_leaf) | não (door_b01_kitchen_westbed_leaf) | não (door_b01_kitchen_westbed_leaf) (h 1,05) | sim | sim |
 | door_b01_hall_eastbed | porta open | sim | sim | sim (h 1,05) | sim | sim |
 | win_b01_west_kitchen | vidro open | sim | sim | sim (h 1,50) | sim | sim |
-| win_b01_east_hall | vidro intact | não (win_b01_east_hall_glass) | não (win_b01_east_hall_glass) | não (win_b01_east_hall_glass) (h 1,50) | sim | sim |
+| win_b01_east_hall | vidro intact | sim | sim | pára no vidro, que parte (win_b01_east_hall_glass) (h 1,50) | sim | sim |
 | win_b01_east_bed | vidro open | sim | sim | sim (h 1,50) | sim | sim |
-| win_b01_north_hall | vidro intact | não (win_b01_north_hall_glass) | não (win_b01_north_hall_glass) | não (win_b01_north_hall_glass) (h 1,50) | sim | sim |
+| win_b01_north_hall | vidro intact | sim | sim | pára no vidro, que parte (win_b01_north_hall_glass) (h 1,50) | sim | sim |
 | door_b02_north_gate | porta open | sim | sim | sim (h 1,50) | sim | sim |
 | door_b02_south_door | porta closed | não (door_b02_south_door_leaf) | não (door_b02_south_door_leaf) | não (door_b02_south_door_leaf) (h 1,10) | sim | sim |
 | win_b02_west_mg | vidro open | sim | sim | sim (h 1,57) | sim | sim |
 | door_b03_north | porta open | sim | sim | sim (h 1,20) | sim | sim |
 | door_b03_south | porta open | sim | sim | sim (h 1,20) | sim | sim |
+| door_b03_east_tack | porta closed | não (door_b03_east_tack_leaf) | não (door_b03_east_tack_leaf) | não (door_b03_east_tack_leaf) (h 1,05) | sim | sim |
 | win_b03_west_high | vidro open | não (win_b03_west_high_sill) | não (win_b03_west_high_sill) | sim (h 2,10) | não (win_b03_west_high_sill) | sim |
+| win_b03_north_high | vidro open | não (win_b03_north_high_sill) | não (win_b03_north_high_sill) | sim (h 2,10) | não (win_b03_north_high_sill) | sim |
+| win_b03_south_high | vidro open | não (win_b03_south_high_sill) | não (win_b03_south_high_sill) | sim (h 2,10) | não (win_b03_south_high_sill) | sim |
 | door_b04_south | porta open | sim | sim | sim (h 1,00) | sim | sim |
 
 ## 2. Linhas de tiro da MG34 de B02
 
-Posições da MG nas diferentes fontes: PDF F3 p. 24 (12; -30); layout `mgEmplacement` (12,80; -30,00), olho 1,48 m; artilheiro `DE-A05` (13,20; -30,00); **boca usada pela simulação** (`evaluateMgLineOfFire`, `m02-01-simulation.js`) (11,82; -30,00), altura 1,42 m. Arco: centro 3,142 rad (oeste), meio-ângulo 1,38 rad (79,1°), alcance 95 m.
+Fonte única: `mgEmplacement` do layout. PDF F3 p. 24 (12,00; -30,00); layout (12,00; -30,00), boca a 1,42 m, olhos do artilheiro 1,48 m; artilheiro `DE-A05` (13,20; -30,00), atrás da abertura no eixo de tiro, a 1,2 m da boca. A simulação (`evaluateMgLineOfFire`), o disparo do artilheiro (`fireActorBurst`), o rasto das rajadas, os pontos de supressão da secção e o desenho do renderer usam a mesma boca (`m02MgMuzzle`): (12,00; -30,00), altura 1,42 m. Arco: centro 3,142 rad (oeste), meio-ângulo 1,38 rad (79,1°), alcance 95 m.
 
-A parede oeste de B02 está em x = 12,00 (espessura 0,24 m): a boca da simulação (x = 11,82) fica **fora** do edifício, logo o raio da simulação ignora a janela/ombreiras. As colunas «real» traçam o raio a partir do artilheiro (olho 1,48 m) e mostram o campo de tiro que o vão realmente deixa.
+A parede oeste de B02 está em x 11,88…12,12 (espessura 0,24 m) e o vão `win_b02_west_mg` abre z -30,90…-29,10, y 1,00…2,15: a boca (x = 12,00, y = 1,42, z = -30,00) está **dentro do vão**, por isso o raio de fogo verifica montantes, peitoril e lintel (PDF F3: «raio de arma verifica montantes e parapeito»). O artilheiro aponta pelo prolongamento do cano através da boca: a linha de pontaria é o raio da boca.
 
-Estado: EXPOSTO = no arco, sem obstrução e com LoS (critério de `evaluateMgLineOfFire`); coberto (id) = primeiro sólido no raio.
+Estado: **Sim** = `M02BenchSimulation.evaluateMgLineOfFire` (a função real, sem espelho): EXPOSTO = no arco, sem obstrução balística e com LoS; coberto (id) = primeiro sólido no raio. **Real** = o disparo da MG: `traceShot` desde a boca até aos olhos do alvo (a chamada de `fireActorBurst`, sem dispersão) e `world.lineOfSight` desde a boca; «vê» = a bala chega ao alvo e há linha de vista, «bloqueado (id)» = o primeiro sólido atingido. Sim e Real têm de coincidir em todas as amostras.
 
 ### 2.1 Pontos SN1–SN5 (coordenadas do PDF; SN1 = arranque (0; -80))
 
 | Ponto | (x; z) m | Dist. 3D à boca (m) | Sim · em pé | Sim · agachado | Real · em pé | Real · agachado |
 | --- | --- | --- | --- | --- | --- | --- |
-| SN1 | 0,00; -80,00 | 51,38 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) | bloqueado (b02_wall_west_seg_0) |
-| SN2 | -45,00; -5,00 | 62,08 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (b01_wall_east_seg_2) | bloqueado (b01_wall_east_seg_2) |
-| SN3 | -23,00; -12,00 | 39,20 | EXPOSTO | EXPOSTO | bloqueado (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
-| SN4 | 8,00; -28,00 | 4,32 | EXPOSTO | EXPOSTO | vê | vê |
-| SN5 | 0,00; 45,00 | 75,93 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) | bloqueado (b02_wall_south_seg_0) |
+| SN1 | 0,00; -80,00 | 51,42 | EXPOSTO | EXPOSTO | vê | vê |
+| SN2 | -45,00; -5,00 | 62,25 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
+| SN3 | -23,00; -12,00 | 39,36 | EXPOSTO | EXPOSTO | vê | vê |
+| SN4 | 8,00; -28,00 | 4,48 | EXPOSTO | EXPOSTO | vê | vê |
+| SN5 | 0,00; 45,00 | 75,95 | fora de arco | fora de arco | fora de arco | fora de arco |
 
-PDF N2 (p. 48): «MG visível/audível na abertura oeste de B02 … ameaça identificável a cerca de 51 m». Distância horizontal arranque → boca: 51,4 m. LoS do jogador (em pé) ao artilheiro DE-A05: não (b02_wall_west_seg_0); à abertura (12; 1,42; -30): sim.
+PDF N2 (p. 48): «MG visível/audível na abertura oeste de B02 … ameaça identificável a cerca de 51 m». Distância horizontal arranque → boca: 51,4 m. LoS do jogador (em pé) à boca da MG (12,00; 1,42; -30,00): sim; ao artilheiro DE-A05 (atrás da abertura): não (b02_wall_west_seg_0).
 
 ### 2.2 Rota «vala» (comprimento 166,7 m; amostra a cada 10 m)
 
 | s (m) | (x; z) m | Dist. 3D (m) | Sim · em pé | Sim · agachado | Real · em pé |
 | --- | --- | --- | --- | --- | --- |
-| 0 | 0,0; -80,0 | 51,4 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
-| 10 | -9,8; -77,8 | 52,5 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
-| 20 | -19,5; -75,7 | 55,4 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
-| 30 | -29,3; -73,5 | 59,8 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
-| 40 | -39,0; -71,3 | 65,5 | EXPOSTO | EXPOSTO | bloqueado (win_b02_west_mg_jamb_a) |
-| 50 | -45,0; -66,1 | 67,3 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
-| 60 | -45,0; -56,1 | 62,5 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
-| 70 | -45,0; -46,1 | 59,1 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
-| 80 | -45,0; -36,1 | 57,2 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
-| 90 | -45,0; -26,1 | 57,0 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
-| 100 | -45,0; -16,1 | 58,5 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
-| 110 | -45,0; -6,1 | 61,6 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
-| 120 | -36,3; -2,9 | 55,2 | coberto (b01_wall_east_seg_3) | coberto (b01_wall_east_seg_3) | bloqueado (cov_gate_wall_east) |
-| 130 | -26,6; -0,6 | 48,4 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (win_b02_west_mg_jamb_b) |
-| 140 | -18,5; -4,9 | 39,4 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (win_b02_west_mg_jamb_b) |
-| 150 | -11,4; -11,8 | 29,5 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (win_b02_west_mg_jamb_b) |
-| 160 | -4,6; -19,1 | 19,6 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
-| 167 | 0,0; -24,0 | 13,3 | EXPOSTO | EXPOSTO | vê |
+| 0 | 0,0; -80,0 | 51,4 | EXPOSTO | EXPOSTO | vê |
+| 10 | -9,8; -77,8 | 52,5 | EXPOSTO | EXPOSTO | vê |
+| 20 | -19,5; -75,7 | 55,5 | EXPOSTO | EXPOSTO | vê |
+| 30 | -29,3; -73,5 | 60,0 | EXPOSTO | EXPOSTO | vê |
+| 40 | -39,0; -71,3 | 65,7 | EXPOSTO | EXPOSTO | vê |
+| 50 | -45,0; -66,1 | 67,5 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
+| 60 | -45,0; -56,1 | 62,7 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
+| 70 | -45,0; -46,1 | 59,2 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
+| 80 | -45,0; -36,1 | 57,3 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
+| 90 | -45,0; -26,1 | 57,1 | EXPOSTO | coberto (ditch_east_lip_north) | vê |
+| 100 | -45,0; -16,1 | 58,7 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
+| 110 | -45,0; -6,1 | 61,8 | coberto (cov_gate_wall_west) | coberto (cov_gate_wall_west) | bloqueado (cov_gate_wall_west) |
+| 120 | -36,3; -2,9 | 55,4 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 130 | -26,6; -0,6 | 48,5 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 140 | -18,5; -4,9 | 39,5 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 150 | -11,4; -11,8 | 29,6 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 160 | -4,6; -19,1 | 19,8 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 167 | 0,0; -24,0 | 13,4 | EXPOSTO | EXPOSTO | vê |
 
-Resumo: 11/18 amostras expostas em pé, 6/18 agachado (critério da simulação). Amostras expostas na simulação mas sem LoS a partir do artilheiro real: 5.
+Resumo: 11/18 amostras expostas em pé, 6/18 agachado (critério da simulação). Amostras em que a avaliação da simulação e o disparo real discordam (em pé ou agachado): 0.
 
 ### 2.3 Rota «pomar» (comprimento 237,2 m; amostra a cada 10 m)
 
 | s (m) | (x; z) m | Dist. 3D (m) | Sim · em pé | Sim · agachado | Real · em pé |
 | --- | --- | --- | --- | --- | --- |
-| 0 | 0,0; -80,0 | 51,4 | EXPOSTO | EXPOSTO | bloqueado (b02_wall_west_seg_0) |
-| 10 | 8,6; -75,0 | 45,1 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
-| 20 | 17,3; -69,9 | 40,3 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
-| 30 | 25,9; -64,9 | 37,7 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
-| 40 | 34,6; -59,9 | 37,6 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_0) |
-| 50 | 43,0; -54,7 | 39,8 | fora de arco | fora de arco | vê |
-| 60 | 43,0; -44,7 | 34,5 | fora de arco | fora de arco | bloqueado (b02_wall_north_seg_1) |
-| 70 | 43,0; -34,7 | 31,5 | fora de arco | fora de arco | bloqueado (b02_wall_east_seg_0) |
-| 80 | 43,0; -24,7 | 31,6 | fora de arco | fora de arco | bloqueado (b02_wall_east_seg_0) |
-| 90 | 43,0; -14,7 | 34,7 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 100 | 43,0; -4,7 | 40,1 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 110 | 43,0; 5,3 | 47,1 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 120 | 43,0; 15,3 | 55,0 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 130 | 43,0; 25,3 | 63,5 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 140 | 35,4; 30,3 | 64,7 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 150 | 26,2; 34,2 | 65,8 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 160 | 17,0; 38,1 | 68,3 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 170 | 7,9; 41,8 | 71,9 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 180 | 4,5; 32,4 | 62,9 | fora de arco | fora de arco | bloqueado (b02_wall_south_seg_0) |
-| 190 | 1,1; 23,0 | 54,1 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
-| 200 | 0,0; 13,2 | 44,8 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
-| 210 | 0,0; 3,2 | 35,3 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
-| 220 | 0,0; -6,8 | 26,1 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
-| 230 | 0,0; -16,8 | 17,7 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (b02_wall_west_seg_1) |
-| 237 | 0,0; -24,0 | 13,3 | EXPOSTO | EXPOSTO | vê |
+| 0 | 0,0; -80,0 | 51,4 | EXPOSTO | EXPOSTO | vê |
+| 10 | 8,6; -75,0 | 45,1 | fora de arco | fora de arco | fora de arco |
+| 20 | 17,3; -69,9 | 40,3 | fora de arco | fora de arco | fora de arco |
+| 30 | 25,9; -64,9 | 37,6 | fora de arco | fora de arco | fora de arco |
+| 40 | 34,6; -59,9 | 37,5 | fora de arco | fora de arco | fora de arco |
+| 50 | 43,0; -54,7 | 39,7 | fora de arco | fora de arco | fora de arco |
+| 60 | 43,0; -44,7 | 34,3 | fora de arco | fora de arco | fora de arco |
+| 70 | 43,0; -34,7 | 31,4 | fora de arco | fora de arco | fora de arco |
+| 80 | 43,0; -24,7 | 31,4 | fora de arco | fora de arco | fora de arco |
+| 90 | 43,0; -14,7 | 34,5 | fora de arco | fora de arco | fora de arco |
+| 100 | 43,0; -4,7 | 40,0 | fora de arco | fora de arco | fora de arco |
+| 110 | 43,0; 5,3 | 47,0 | fora de arco | fora de arco | fora de arco |
+| 120 | 43,0; 15,3 | 54,9 | fora de arco | fora de arco | fora de arco |
+| 130 | 43,0; 25,3 | 63,4 | fora de arco | fora de arco | fora de arco |
+| 140 | 35,4; 30,3 | 64,6 | fora de arco | fora de arco | fora de arco |
+| 150 | 26,2; 34,2 | 65,8 | fora de arco | fora de arco | fora de arco |
+| 160 | 17,0; 38,1 | 68,3 | fora de arco | fora de arco | fora de arco |
+| 170 | 7,9; 41,8 | 71,9 | fora de arco | fora de arco | fora de arco |
+| 180 | 4,5; 32,4 | 62,9 | fora de arco | fora de arco | fora de arco |
+| 190 | 1,1; 23,0 | 54,1 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 200 | 0,0; 13,2 | 44,9 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 210 | 0,0; 3,2 | 35,3 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 220 | 0,0; -6,8 | 26,1 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 230 | 0,0; -16,8 | 17,9 | coberto (cov_gate_wall_east) | coberto (cov_gate_wall_east) | bloqueado (cov_gate_wall_east) |
+| 237 | 0,0; -24,0 | 13,4 | EXPOSTO | EXPOSTO | vê |
 
-Resumo: 2/25 amostras expostas em pé, 2/25 agachado (critério da simulação). Amostras expostas na simulação mas sem LoS a partir do artilheiro real: 1.
+Resumo: 2/25 amostras expostas em pé, 2/25 agachado (critério da simulação). Amostras em que a avaliação da simulação e o disparo real discordam (em pé ou agachado): 0.
 
 ## 3. Comparação PDF ↔ layout (B01–B04)
 
@@ -163,12 +169,12 @@ B03 e B04: o PDF não fixa beiral/cumeeira (F4 diz só «volume mais baixo que B
 | door_b02_north_gate | portão norte centrado em u12, vão de 3 m (F3, p. 24) | parede norte, u = 12,00, largura 3,00 m | ✓ |
 | door_b02_south_door | porta sul u18, 1,2 m (F3, p. 24) | parede sul, u = 18,00, largura 1,20 m, closed | ✓ |
 | win_b02_west_mg | abertura oeste u0/v8, usada pela MG (F3, p. 24) | parede oeste, v = 8,00, largura 1,80 m, peitoril 1,00 | ✓ |
-| B02 posição da MG | MG a (12; -30) (F3, p. 24) | mgEmplacement (12,80; -30,00); boca da simulação (11,82; -30,00) | ✗ |
+| B02 posição da MG | MG a (12; -30) (F3, p. 24) | mgEmplacement (12,00; -30,00); boca da simulação (12,00; -30,00) | ✓ |
 | B03 corredor | corredor central norte-sul u7-11 (F4, p. 25) | corredor_estabulo u7-11 | ✓ |
 | door_b03_north | portas norte/sul de 2,4 m (F4, p. 25) | 2,40 × 2,40 m, u 7,80…10,20 (corredor u7…11) | ✓ |
 | door_b03_south | portas norte/sul de 2,4 m (F4, p. 25) | 2,40 × 2,40 m, u 7,80…10,20 (corredor u7…11) | ✓ |
-| B03 janelas altas | pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25) | win_b03_west_high (oeste) | ✗ |
-| B03 acesso a arreios | acesso pequeno a arreios pelo leste (F4, p. 25) | portas B03: norte, sul | ✗ |
+| B03 janelas altas | pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25) | win_b03_west_high (oeste; 1,20 m, peitoril 1,75), win_b03_north_high (norte; 1,20 m, peitoril 1,75), win_b03_south_high (sul; 1,20 m, peitoril 1,75) | ✓ |
+| B03 acesso a arreios | acesso pequeno a arreios pelo leste, arrecadação a sudeste (F4, p. 25; F1 p. 23: porta pedonal 1,0 m) | portas B03: norte, sul, este; este: door_b03_east_tack (1,00 × 2,10 m, v = 9,50) | ✓ |
 | door_b04_south | porta sul 1 m (F5, p. 25) | parede sul, u = 5,20, largura 1,00 m | ✓ |
 
 ## 4. Pontos de captura SN1–SN5: PDF ↔ layout ↔ `PANORAMA_VIEWS`
@@ -202,7 +208,7 @@ Percurso com `movePlayer` (a mesma física da simulação), passos de 0,12 m, em
 | pl_szymczak | PL medic | -3,20; -81,80 | não |
 | pl_aux_01 | PL rkm_gunner | 1,40; -78,40 | não |
 | pl_aux_02 | PL rkm_loader | 2,90; -79,80 | não |
-| DE-A05 | EA1 mg_gunner (B02) | 13,20; -30,00 | sim (prop_b02_mg_mount) |
+| DE-A05 | EA1 mg_gunner (B02) | 13,20; -30,00 | não |
 | DE-A06 | EA1 mg_loader (B02) | 15,20; -28,80 | não |
 | DE-A07 | EA1 rifleman (B01) | -36,50; -15,50 | não |
 | DE-A08 | EA1 rifleman (B01) | -28,50; -15,50 | não |
@@ -221,25 +227,13 @@ Contagem: 10 inimigos EA1 (PDF N1 p. 48: «dez defensores EA1» ✓), 4 EA0 em Z
 
 ## 6. Lista de problemas
 
-Gerada automaticamente: 1 ERRO, 13 AVISO, 1 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
+Gerada automaticamente: 0 ERRO, 0 AVISO, 3 INFO. ERRO = contradiz um critério verificável (colisão, largura, PDF); AVISO = a rever pelo Capitão; INFO = coerente com o PDF mas relevante para a captura/jogo.
 
 | # | Sev. | Área | Elemento | Descrição |
 | --- | --- | --- | --- | --- |
-| 1 | ERRO | vãos | door_b04_south | porta aberta mas a passagem axial da cápsula (Ø 0,72 m, em pé) é bloqueada por `cov_b04_woodpile`; o único corredor livre da cápsula tem 0,04 m de largura (desvio lateral -0,12…-0,08 m). |
-| 2 | AVISO | vãos | win_b01_east_hall | troço de parede de 0,05 m no início da parede (< 0,30 m). |
-| 3 | AVISO | linha de tiro | win_b01_east_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_east_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
-| 4 | AVISO | linha de tiro | win_b01_north_hall | vidro intacto bloqueia `world.lineOfSight` (bloqueio `win_b01_north_hall_glass`) embora `BALLISTIC_MATERIAL_POLICY.glass.blocksSight` seja false; a política só é consumida para o rótulo do material (`materialLabel`), nunca `blocksSight`. |
-| 5 | AVISO | MG B02 | SN1 | exposto à MG para a simulação (boca em x = 11,82) mas sem linha de vista a partir do artilheiro em (13,20; -30,00): bloqueio `b02_wall_west_seg_0`. |
-| 6 | AVISO | MG B02 | SN3 | exposto à MG para a simulação (boca em x = 11,82) mas sem linha de vista a partir do artilheiro em (13,20; -30,00): bloqueio `cov_gate_wall_east`. |
-| 7 | AVISO | MG B02 | rota ditch | 5 de 18 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
-| 8 | AVISO | MG B02 | rota orchard | 1 de 25 amostras são «EXPOSTO» para a simulação (boca fora da parede, x = 11,82) mas o artilheiro em (13,20; -30,00) não tem linha de vista por trás do vão (secção 2). |
-| 9 | AVISO | MG B02 | boca da MG | a simulação traça a partir de (11,82; -30,00), fora da parede oeste de B02 (x = 12,00); o PDF (p. 24) põe a MG em (12; -30), o layout em x = 12,80 e o artilheiro em x = 13,20. Quatro valores distintos para a mesma posição. |
-| 10 | AVISO | atores | DE-A05 | artilheiro em (13,20; -30,00) está dentro do sólido `prop_b02_mg_mount` (bancada da MG, h 0,96 m); verificar se é intencional (a cápsula do jogador não pode ocupar este ponto). |
-| 11 | AVISO | PDF | B02 posição da MG | PDF: MG a (12; -30) (F3, p. 24). Layout: mgEmplacement (12,80; -30,00); boca da simulação (11,82; -30,00). |
-| 12 | AVISO | PDF | B03 janelas altas | PDF: pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25). Layout: win_b03_west_high (oeste). |
-| 13 | AVISO | PDF | B03 acesso a arreios | PDF: acesso pequeno a arreios pelo leste (F4, p. 25). Layout: portas B03: norte, sul. |
-| 14 | AVISO | portão norte | northGate | `zones.northGate.width` = 3,20 m mas o vão entre os muros (cov_gate_wall_west / cov_gate_wall_east) é 3,60 m. |
-| 15 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 1 | INFO | linha de tiro | win_b03_west_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 2 | INFO | linha de tiro | win_b03_north_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
+| 3 | INFO | linha de tiro | win_b03_south_high | peitoril 1,75 m acima dos olhos em pé (1,64 m): sem linha de vista a um jogador em pé, mesmo aberta; coerente com PDF F4 p. 25 («sem atirar por uma janela alta incompatível»). |
 
 Limites desta prova: geometria/colisão estática de cápsula e raios retos; não cobre IA, animação, portas a abrir com tempo, desempenho, aparência nem jogo real.
 

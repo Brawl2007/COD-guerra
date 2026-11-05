@@ -7,9 +7,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { movePlayer, deepestWall } from '../../src/world/m01-player-physics.js';
-import { traceObstruction } from '../../src/world/spatial.js';
+import { traceShot, eyePosition } from '../../src/world/spatial.js';
+import { M02BenchSimulation } from '../../src/game/m02-01-simulation.js';
 import {
-  REPO_ROOT, PLAYER, PDF_SN, PDF_BUILDINGS, PDF_DOORS, loadLayout, readPanoramaViews, readSimMuzzle,
+  REPO_ROOT, PLAYER, PDF_SN, PDF_BUILDINGS, PDF_DOORS, PDF_MG, loadLayout, readPanoramaViews, layoutMgMuzzle,
   openingGeometry, makeWorld, probePassage, lateralPassRange, maxPassingRadius, probeSight, sightInfo, actorAt, r2,
 } from './n0-common.mjs';
 
@@ -27,6 +28,11 @@ function blockedLabel(res) {
 }
 function sightLabel(res) {
   return res.los ? 'sim' : `não (${res.blockerId})`;
+}
+// Tiro: qualquer sólido balístico pára a bala; o vidro intacto deixa ver mas a bala bate nele e parte-o.
+function shotLabel(res) {
+  if (!res.hitId) return 'sim';
+  return res.hitMaterial === 'glass' ? `pára no vidro, que parte (${res.hitId})` : `não (${res.hitId})`;
 }
 
 function sampleRoute(points, step) {
@@ -49,24 +55,33 @@ function sampleRoute(points, step) {
   return { samples: out, length: acc };
 }
 
-// Mirrors M02BenchSimulation.evaluateMgLineOfFire (src/game/m02-01-simulation.js): same arc test, same trace, same LoS call.
-function evaluateMg(world, mg, muzzle, target, eye) {
+// Avaliação da simulação (a função REAL, sem espelho) e o disparo real do artilheiro, medidos sobre o mesmo alvo.
+//  - Sim: M02BenchSimulation.evaluateMgLineOfFire (o que o HUD, a IA da MG e o evento mg-burst usam).
+//  - Real: o caminho de um disparo da MG — traceShot a partir da boca (a mesma chamada de fireActorBurst, sem dispersão) até aos
+//    olhos do alvo, e world.lineOfSight a partir da boca para a copa; o arco é o do layout (mgEmplacement).
+function evaluateMg(sim, target, eye, crouched = false) {
+  const world = sim.world;
   const gy = world.heightAt(target.x, target.z);
-  const targetActor = actorAt(target.x, target.z, eye, gy);
-  const ty = gy + eye;
-  const dx = target.x - muzzle.x;
-  const dy = ty - muzzle.y;
-  const dz = target.z - muzzle.z;
+  const probe = { ...actorAt(target.x, target.z, eye, gy), id: 'sonda', alive: true, active: true, crouched };
+  const ev = sim.evaluateMgLineOfFire(probe);
+  const muzzle = sim.mgMuzzle;
+  const eyeP = eyePosition(probe);
+  const dx = eyeP.x - muzzle.x;
+  const dy = eyeP.y - muzzle.y;
+  const dz = eyeP.z - muzzle.z;
   const dist = Math.hypot(dx, dy, dz);
-  if (dist > mg.range) return { status: 'fora de alcance', exposed: false, dist };
-  let diff = Math.abs(Math.atan2(dz, dx) - mg.facing);
-  while (diff > Math.PI) diff = Math.abs(diff - Math.PI * 2);
-  if (diff > mg.arcHalfAngle) return { status: 'fora de arco', exposed: false, dist, arcDiff: diff };
   const dir = { x: dx / dist, y: dy / dist, z: dz / dist };
-  const obstruction = traceObstruction(world, muzzle, dir, Math.max(0, dist - 0.15));
-  if (obstruction) return { status: `coberto (${obstruction.id ?? obstruction.material})`, exposed: false, dist, arcDiff: diff };
-  const los = world.lineOfSight(actorAt(muzzle.x, muzzle.z, muzzle.y, 0), targetActor, { includeFoliage: true });
-  return { status: los ? 'EXPOSTO' : 'exposto sem LoS (copa)', exposed: true, dist, arcDiff: diff };
+  const shot = traceShot(world, muzzle, dir, [probe], sim.mgState.range);
+  const shotHits = shot?.kind === 'actor';
+  const los = world.lineOfSight(actorAt(muzzle.x, muzzle.z, muzzle.y, 0), probe, { includeFoliage: true });
+  const out = { dist: ev.distance, inArc: ev.inArc };
+  if (ev.blockedById === 'out_of_range') Object.assign(out, { status: 'fora de alcance', exposed: false });
+  else if (!ev.inArc) Object.assign(out, { status: 'fora de arco', exposed: false });
+  else if (!ev.canHitTarget) Object.assign(out, { status: `coberto (${ev.blockedById})`, exposed: false });
+  else Object.assign(out, { status: ev.hasVisualLoS ? 'EXPOSTO' : 'exposto sem LoS (copa)', exposed: ev.hasVisualLoS });
+  const realExposed = ev.inArc && shotHits && los;
+  const real = { hits: shotHits, los, exposed: realExposed, blocker: shotHits ? null : (shot?.id ?? shot?.material ?? null) };
+  return { ...out, canHit: ev.canHitTarget, real, agree: ev.canHitTarget === (ev.inArc && shotHits) && out.exposed === realExposed };
 }
 
 function actorClear(world, a, y = 0) {
@@ -118,7 +133,7 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
   out(`- Entrada: \`missions/m02-bzura/m02-01-quinta-layout.json\` (sha256 \`${sha256}\`), instanciado com \`M02QuintaWorld\`.`);
   out(`- Cápsula do jogador (\`PLAYER_PHYSICS\`, src/world/m01-player-physics.js, usada por \`m02-01-simulation.js\`): raio ${num(r)} m (Ø ${num(r * 2)} m), altura em pé ${num(PLAYER.standHeight)} m, agachado ${num(PLAYER.crouchHeight)} m, degrau máximo ${num(PLAYER.stepUp)} m, sem salto. Olhos: em pé ${num(PLAYER.standEye)} m, agachado ${num(PLAYER.crouchEye)} m (\`EYE_HEIGHT\` de src/config.js e o literal de olhos agachado em \`m02-01-simulation.js\`).`);
   out('- Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).');
-  out('- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Bala = qualquer sólido bloqueia; **não há penetração** em `traceObstruction` (\`BALLISTIC_MATERIAL_POLICY.penetrationLoss\` só existe como dados).');
+  out('- LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Política de vidro (`BALLISTIC_MATERIAL_POLICY.glass`): o vidro intacto **deixa ver** (`blocksSight` = false: `lineOfSight` ignora-o) mas **pára a bala**, que o parte (`glassBrokenId`; depois o vão fica `broken`). Bala = qualquer outro sólido bloqueia; **não há penetração** em `traceObstruction` (\`BALLISTIC_MATERIAL_POLICY.penetrationLoss\` só existe como dados).');
   out();
 
   // ---------------------------------------------------------------- 1. openings
@@ -174,7 +189,7 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
       midH: mid,
     };
     sightRows.push({ op, s });
-    out(row(op.id, `${op.kind === 'window' ? 'vidro ' : 'porta '}${op.initialState}`, sightLabel(s.stand), sightLabel(s.crouch), `${sightLabel(s.mid)} (h ${num(mid)})`, sightLabel(s.standOpen), sightLabel(s.midOpen)));
+    out(row(op.id, `${op.kind === 'window' ? 'vidro ' : 'porta '}${op.initialState}`, sightLabel(s.stand), sightLabel(s.crouch), `${shotLabel(s.mid)} (h ${num(mid)})`, sightLabel(s.standOpen), shotLabel(s.midOpen)));
   }
   out();
 
@@ -236,44 +251,48 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
 
   // ---------------------------------------------------------------- 2. MG lines of fire
   const mg = layout.mgEmplacement;
-  const muzzle = readSimMuzzle();
+  const mgSim = new M02BenchSimulation(19390909);
+  const mgWorld = mgSim.world;
+  const muzzle = layoutMgMuzzle(layout);
   const gunner = layout.enemyRosterEA1.find((e) => e.id === 'DE-A05');
-  const gunnerActor = actorAt(gunner.x, gunner.z, mg.eyeHeight, 0);
+  const b02 = layout.buildings.find((b) => b.id === 'B02');
+  const b02Wall = b02.bounds[0];
+  const b02Half = b02.wallThickness / 2;
+  const mgWin = layout.buildings.find((b) => b.id === 'B02').windows.find((w) => w.id === 'win_b02_west_mg');
+  const mgWinZ = b02.bounds[2] + mgWin.offset;
   out('## 2. Linhas de tiro da MG34 de B02');
   out();
-  out(`Posições da MG nas diferentes fontes: PDF F3 p. 24 (12; -30); layout \`mgEmplacement\` (${num(mg.x)}; ${num(mg.z)}), olho ${num(mg.eyeHeight)} m; artilheiro \`${gunner.id}\` (${num(gunner.x)}; ${num(gunner.z)}); **boca usada pela simulação** (\`evaluateMgLineOfFire\`, \`m02-01-simulation.js\`) (${num(muzzle.x)}; ${num(muzzle.z)}), altura ${num(muzzle.y)} m. Arco: centro ${num(mg.facing, 3)} rad (oeste), meio-ângulo ${num(mg.arcHalfAngle, 2)} rad (${num((mg.arcHalfAngle * 180) / Math.PI, 1)}°), alcance ${num(mg.range, 0)} m.`);
+  out(`Fonte única: \`mgEmplacement\` do layout. PDF F3 p. 24 (${num(PDF_MG.x)}; ${num(PDF_MG.z)}); layout (${num(mg.x)}; ${num(mg.z)}), boca a ${num(mg.muzzleY)} m, olhos do artilheiro ${num(mg.eyeHeight)} m; artilheiro \`${gunner.id}\` (${num(gunner.x)}; ${num(gunner.z)}), atrás da abertura no eixo de tiro, a ${num(gunner.x - muzzle.x, 1)} m da boca. A simulação (\`evaluateMgLineOfFire\`), o disparo do artilheiro (\`fireActorBurst\`), o rasto das rajadas, os pontos de supressão da secção e o desenho do renderer usam a mesma boca (\`m02MgMuzzle\`): (${num(mgSim.mgMuzzle.x)}; ${num(mgSim.mgMuzzle.z)}), altura ${num(mgSim.mgMuzzle.y)} m. Arco: centro ${num(mg.facing, 3)} rad (oeste), meio-ângulo ${num(mg.arcHalfAngle, 2)} rad (${num((mg.arcHalfAngle * 180) / Math.PI, 1)}°), alcance ${num(mg.range, 0)} m.`);
   out();
-  out(`A parede oeste de B02 está em x = 12,00 (espessura ${num(layout.buildings.find((b) => b.id === 'B02').wallThickness)} m): a boca da simulação (x = ${num(muzzle.x)}) fica **fora** do edifício, logo o raio da simulação ignora a janela/ombreiras. As colunas «real» traçam o raio a partir do artilheiro (olho ${num(mg.eyeHeight)} m) e mostram o campo de tiro que o vão realmente deixa.`);
+  out(`A parede oeste de B02 está em x ${num(b02Wall - b02Half)}…${num(b02Wall + b02Half)} (espessura ${num(b02.wallThickness)} m) e o vão \`${mgWin.id}\` abre z ${num(mgWinZ - mgWin.width / 2)}…${num(mgWinZ + mgWin.width / 2)}, y ${num(mgWin.sillY)}…${num(mgWin.lintelY)}: a boca (x = ${num(muzzle.x)}, y = ${num(muzzle.y)}, z = ${num(muzzle.z)}) está **dentro do vão**, por isso o raio de fogo verifica montantes, peitoril e lintel (PDF F3: «raio de arma verifica montantes e parapeito»). O artilheiro aponta pelo prolongamento do cano através da boca: a linha de pontaria é o raio da boca.`);
   out();
-  out('Estado: EXPOSTO = no arco, sem obstrução e com LoS (critério de `evaluateMgLineOfFire`); coberto (id) = primeiro sólido no raio.');
+  out('Estado: **Sim** = `M02BenchSimulation.evaluateMgLineOfFire` (a função real, sem espelho): EXPOSTO = no arco, sem obstrução balística e com LoS; coberto (id) = primeiro sólido no raio. **Real** = o disparo da MG: `traceShot` desde a boca até aos olhos do alvo (a chamada de `fireActorBurst`, sem dispersão) e `world.lineOfSight` desde a boca; «vê» = a bala chega ao alvo e há linha de vista, «bloqueado (id)» = o primeiro sólido atingido. Sim e Real têm de coincidir em todas as amostras.');
   out();
   const mgRows = [];
+  const mgDisagree = [];
   const mgEval = (label, pt) => {
-    const gy = world.heightAt(pt.x, pt.z);
-    const stand = evaluateMg(world, mg, muzzle, pt, PLAYER.standEye);
-    const crouch = evaluateMg(world, mg, muzzle, pt, PLAYER.crouchEye);
-    const real = sightInfo(world, gunnerActor, actorAt(pt.x, pt.z, PLAYER.standEye, gy));
-    const realCrouch = sightInfo(world, gunnerActor, actorAt(pt.x, pt.z, PLAYER.crouchEye, gy));
-    mgRows.push({ label, pt, stand, crouch, real, realCrouch });
-    return { stand, crouch, real, realCrouch };
+    const stand = evaluateMg(mgSim, pt, PLAYER.standEye, false);
+    const crouch = evaluateMg(mgSim, pt, PLAYER.crouchEye, true);
+    mgRows.push({ label, pt, stand, crouch });
+    if (!stand.agree) mgDisagree.push(`${label} em pé`);
+    if (!crouch.agree) mgDisagree.push(`${label} agachado`);
+    return { stand, crouch };
   };
+  const realLabel = (e) => (!e.inArc ? 'fora de arco' : e.real.exposed ? 'vê' : e.real.hits ? 'bala chega, sem LoS (copa)' : `bloqueado (${e.real.blocker})`);
 
   out('### 2.1 Pontos SN1–SN5 (coordenadas do PDF; SN1 = arranque (0; -80))');
   out();
   out(head('Ponto', '(x; z) m', 'Dist. 3D à boca (m)', 'Sim · em pé', 'Sim · agachado', 'Real · em pé', 'Real · agachado'));
-  const snRows = [];
   for (const [id, p] of Object.entries(PDF_SN)) {
     const e = mgEval(id, p);
-    snRows.push({ id, ...e });
-    if (e.stand.exposed && !e.real.los) add('AVISO', 'MG B02', id, `exposto à MG para a simulação (boca em x = ${num(muzzle.x)}) mas sem linha de vista a partir do artilheiro em (${num(gunner.x)}; ${num(gunner.z)}): bloqueio \`${e.real.blockerId}\`.`);
-    out(row(id, `${num(p.x)}; ${num(p.z)}`, num(e.stand.dist), e.stand.status, e.crouch.status, e.real.los ? 'vê' : `bloqueado (${e.real.blockerId})`, e.realCrouch.los ? 'vê' : `bloqueado (${e.realCrouch.blockerId})`));
+    out(row(id, `${num(p.x)}; ${num(p.z)}`, num(e.stand.dist), e.stand.status, e.crouch.status, realLabel(e.stand), realLabel(e.crouch)));
   }
   const start = layout.start;
   out();
   const startDist = Math.hypot(start.x - muzzle.x, start.z - muzzle.z);
-  const seeGunner = sightInfo(world, actorAt(start.x, start.z, PLAYER.standEye, 0), gunnerActor);
-  const seeWindow = sightInfo(world, actorAt(start.x, start.z, PLAYER.standEye, 0), actorAt(12, -30, 1.42, 0));
-  out(`PDF N2 (p. 48): «MG visível/audível na abertura oeste de B02 … ameaça identificável a cerca de 51 m». Distância horizontal arranque → boca: ${num(startDist, 1)} m. LoS do jogador (em pé) ao artilheiro DE-A05: ${seeGunner.los ? 'sim' : `não (${seeGunner.blockerId})`}; à abertura (12; 1,42; -30): ${seeWindow.los ? 'sim' : `não (${seeWindow.blockerId})`}.`);
+  const seeMuzzle = sightInfo(mgWorld, actorAt(start.x, start.z, PLAYER.standEye, 0), actorAt(muzzle.x, muzzle.z, muzzle.y, 0));
+  const seeGunner = sightInfo(mgWorld, actorAt(start.x, start.z, PLAYER.standEye, 0), actorAt(gunner.x, gunner.z, mg.eyeHeight, 0));
+  out(`PDF N2 (p. 48): «MG visível/audível na abertura oeste de B02 … ameaça identificável a cerca de 51 m». Distância horizontal arranque → boca: ${num(startDist, 1)} m. LoS do jogador (em pé) à boca da MG (${num(muzzle.x)}; ${num(muzzle.y)}; ${num(muzzle.z)}): ${seeMuzzle.los ? 'sim' : `não (${seeMuzzle.blockerId})`}; ao artilheiro DE-A05 (atrás da abertura): ${seeGunner.los ? 'sim' : `não (${seeGunner.blockerId})`}.`);
   out();
 
   for (const [name, pts] of Object.entries(layout.routes)) {
@@ -283,29 +302,37 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
     out(head('s (m)', '(x; z) m', 'Dist. 3D (m)', 'Sim · em pé', 'Sim · agachado', 'Real · em pé'));
     let exposedStand = 0;
     let exposedCrouch = 0;
-    let simExposedRealBlocked = 0;
+    let routeDisagree = 0;
     for (const s of samples) {
       const e = mgEval(`${name}@${num(s.s, 0)}`, { x: s.x, z: s.z });
+      if (!e.stand.agree || !e.crouch.agree) routeDisagree++;
       if (e.stand.exposed) exposedStand++;
       if (e.crouch.exposed) exposedCrouch++;
-      if (e.stand.exposed && !e.real.los) simExposedRealBlocked++;
-      out(row(num(s.s, 0), `${num(s.x, 1)}; ${num(s.z, 1)}`, num(e.stand.dist, 1), e.stand.status, e.crouch.status, e.real.los ? 'vê' : `bloqueado (${e.real.blockerId})`));
+      out(row(num(s.s, 0), `${num(s.x, 1)}; ${num(s.z, 1)}`, num(e.stand.dist, 1), e.stand.status, e.crouch.status, realLabel(e.stand)));
     }
     out();
-    out(`Resumo: ${exposedStand}/${samples.length} amostras expostas em pé, ${exposedCrouch}/${samples.length} agachado (critério da simulação). Amostras expostas na simulação mas sem LoS a partir do artilheiro real: ${simExposedRealBlocked}.`);
+    out(`Resumo: ${exposedStand}/${samples.length} amostras expostas em pé, ${exposedCrouch}/${samples.length} agachado (critério da simulação). Amostras em que a avaliação da simulação e o disparo real discordam (em pé ou agachado): ${routeDisagree}.`);
     out();
-    if (simExposedRealBlocked > 0) {
-      add('AVISO', 'MG B02', `rota ${name}`, `${simExposedRealBlocked} de ${samples.length} amostras são «EXPOSTO» para a simulação (boca fora da parede, x = ${num(muzzle.x)}) mas o artilheiro em (${num(gunner.x)}; ${num(gunner.z)}) não tem linha de vista por trás do vão (secção 2).`);
-    }
     if (exposedStand === 0) add('AVISO', 'MG B02', `rota ${name}`, 'nenhuma amostra da rota fica exposta à MG: a rota não testa a ameaça.');
     if (exposedStand === samples.length) add('AVISO', 'MG B02', `rota ${name}`, 'todas as amostras ficam expostas à MG: a rota não tem cobertura.');
   }
-  const muzzleOutside = muzzle.x < 12 - layout.buildings.find((b) => b.id === 'B02').wallThickness / 2;
-  if (muzzleOutside) {
-    add('AVISO', 'MG B02', 'boca da MG', `a simulação traça a partir de (${num(muzzle.x)}; ${num(muzzle.z)}), fora da parede oeste de B02 (x = 12,00); o PDF (p. 24) põe a MG em (12; -30), o layout em x = ${num(mg.x)} e o artilheiro em x = ${num(gunner.x)}. Quatro valores distintos para a mesma posição.`);
+  if (mgDisagree.length) {
+    add('ERRO', 'MG B02', 'avaliação ≠ disparo real', `a avaliação EXPOSTO da simulação discorda do disparo real (traceShot + lineOfSight desde a boca) em ${mgDisagree.length} amostras: ${mgDisagree.slice(0, 6).join(', ')}${mgDisagree.length > 6 ? '…' : ''}.`);
   }
-  const mountBlocker = actorClear(world, gunner);
-  if (mountBlocker) add('AVISO', 'atores', gunner.id, `artilheiro em (${num(gunner.x)}; ${num(gunner.z)}) está dentro do sólido \`${mountBlocker}\` (bancada da MG, h ${num(layout.buildings[1].props.find((p) => p.id === 'prop_b02_mg_mount').h)} m); verificar se é intencional (a cápsula do jogador não pode ocupar este ponto).`);
+  // Uma só posição para a MG: PDF = layout = boca da simulação; artilheiro atrás da abertura, no eixo, fora de sólidos.
+  const simMuzzle = mgSim.mgMuzzle;
+  if (mg.x !== PDF_MG.x || mg.z !== PDF_MG.z || simMuzzle.x !== mg.x || simMuzzle.z !== mg.z || simMuzzle.y !== mg.muzzleY) {
+    add('AVISO', 'MG B02', 'boca da MG', `posições da MG discordam: PDF (${num(PDF_MG.x)}; ${num(PDF_MG.z)}), layout (${num(mg.x)}; ${num(mg.z)}), boca da simulação (${num(simMuzzle.x)}; ${num(simMuzzle.z)}).`);
+  }
+  const innerFace = b02Wall + b02Half;
+  if (!(muzzle.x > b02Wall - b02Half && muzzle.x < innerFace && muzzle.y > mgWin.sillY && muzzle.y < mgWin.lintelY && Math.abs(muzzle.z - mgWinZ) < mgWin.width / 2)) {
+    add('AVISO', 'MG B02', 'boca da MG', `a boca (${num(muzzle.x)}; ${num(muzzle.y)}; ${num(muzzle.z)}) não está dentro do vão ${mgWin.id}.`);
+  }
+  if (!(gunner.x > innerFace && Math.abs(gunner.z - muzzle.z) < 0.01)) {
+    add('AVISO', 'MG B02', gunner.id, `o artilheiro (${num(gunner.x)}; ${num(gunner.z)}) não está atrás da abertura no eixo de tiro da boca.`);
+  }
+  const mountBlocker = actorClear(mgWorld, gunner);
+  if (mountBlocker) add('AVISO', 'atores', gunner.id, `artilheiro em (${num(gunner.x)}; ${num(gunner.z)}) está dentro do sólido \`${mountBlocker}\`.`);
 
   // ---------------------------------------------------------------- 3. PDF comparison
   out('## 3. Comparação PDF ↔ layout (B01–B04)');
@@ -350,7 +377,6 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
     if (!ok) add(sev, 'PDF', el, `PDF: ${pdf}. Layout: ${lay}.`);
   };
   const b01 = layout.buildings.find((b) => b.id === 'B01');
-  const b02 = layout.buildings.find((b) => b.id === 'B02');
   const b03 = layout.buildings.find((b) => b.id === 'B03');
   const roomOk = (b, id, [u0, v0, w, d]) => {
     const rm = b.rooms.find((x) => x.id === id);
@@ -376,16 +402,22 @@ export function buildOpeningsMarkdown({ layout, sha256 } = loadLayout()) {
   cmp('door_b02_south_door', 'porta sul u18, 1,2 m (F3, p. 24)', `parede sul, u = ${num(sd.offset)}, largura ${num(sd.width)} m, ${sd.initialState}`, sd.offset === 18 && sd.width === 1.2 && sd.side === 'sul');
   const mgw = opById.get('win_b02_west_mg');
   cmp('win_b02_west_mg', 'abertura oeste u0/v8, usada pela MG (F3, p. 24)', `parede oeste, v = ${num(mgw.offset)}, largura ${num(mgw.width)} m, peitoril ${num(mgw.sillY)}`, mgw.offset === 8 && mgw.side === 'oeste');
-  cmp('B02 posição da MG', 'MG a (12; -30) (F3, p. 24)', `mgEmplacement (${num(mg.x)}; ${num(mg.z)}); boca da simulação (${num(muzzle.x)}; ${num(muzzle.z)})`, mg.x === 12 && muzzle.x === 12, 'AVISO');
+  cmp('B02 posição da MG', 'MG a (12; -30) (F3, p. 24)', `mgEmplacement (${num(mg.x)}; ${num(mg.z)}); boca da simulação (${num(mgSim.mgMuzzle.x)}; ${num(mgSim.mgMuzzle.z)})`, mg.x === PDF_MG.x && mg.z === PDF_MG.z && mgSim.mgMuzzle.x === PDF_MG.x && mgSim.mgMuzzle.z === PDF_MG.z, 'AVISO');
   cmp('B03 corredor', 'corredor central norte-sul u7-11 (F4, p. 25)', `corredor_estabulo u${b03.rooms[0].u0}-${b03.rooms[0].u0 + b03.rooms[0].w}`, roomOk(b03, 'corredor_estabulo', [7, 0, 4, 12]));
   for (const id of ['door_b03_north', 'door_b03_south']) {
     const o = opById.get(id);
     cmp(id, 'portas norte/sul de 2,4 m (F4, p. 25)', `${num(o.width)} × ${num(o.clearHeight)} m, u ${num(o.offset - o.width / 2)}…${num(o.offset + o.width / 2)} (corredor u7…11)`, o.width === 2.4 && o.offset - o.width / 2 >= 7 && o.offset + o.width / 2 <= 11);
   }
   const b03Windows = ops.filter((o) => o.kind === 'window' && o.buildingId === 'B03');
-  cmp('B03 janelas altas', 'pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25)', b03Windows.map((o) => `${o.id} (${o.side})`).join(', ') || 'nenhuma',
-    b03Windows.some((o) => o.side === 'norte') && b03Windows.some((o) => o.side === 'sul'));
-  cmp('B03 acesso a arreios', 'acesso pequeno a arreios pelo leste (F4, p. 25)', `portas B03: ${ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03').map((o) => o.side).join(', ')}`, ops.some((o) => o.kind === 'door' && o.buildingId === 'B03' && o.side === 'este'));
+  // «pequenas janelas altas»: peitoril acima dos olhos em pé (sem tiro/vista de um jogador em pé) e vão pequeno (≤ 1,5 m de largura).
+  const highSmall = (o) => o.sillY >= PLAYER.standEye && o.width <= 1.5;
+  cmp('B03 janelas altas', 'pequenas janelas altas em ambas as fachadas longas, N e S (F4, p. 25)', b03Windows.map((o) => `${o.id} (${o.side}; ${num(o.width)} m, peitoril ${num(o.sillY)})`).join(', ') || 'nenhuma',
+    b03Windows.some((o) => o.side === 'norte' && highSmall(o)) && b03Windows.some((o) => o.side === 'sul' && highSmall(o)));
+  // «acesso pequeno a arreios pelo leste»: porta pedonal (≤ 1,2 m: F1 p. 23) na parede este, na metade sul (arrecadação sudeste).
+  const tackDoors = ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03' && o.side === 'este');
+  cmp('B03 acesso a arreios', 'acesso pequeno a arreios pelo leste, arrecadação a sudeste (F4, p. 25; F1 p. 23: porta pedonal 1,0 m)',
+    `portas B03: ${ops.filter((o) => o.kind === 'door' && o.buildingId === 'B03').map((o) => o.side).join(', ')}${tackDoors.length ? `; este: ${tackDoors.map((o) => `${o.id} (${num(o.width)} × ${num(o.clearHeight)} m, v = ${num(o.offset)})`).join(', ')}` : ''}`,
+    tackDoors.some((o) => o.width <= 1.2 && o.width >= 0.9 && o.offset > b03.depth / 2));
   const d4 = opById.get('door_b04_south');
   cmp('door_b04_south', 'porta sul 1 m (F5, p. 25)', `parede sul, u = ${num(d4.offset)}, largura ${num(d4.width)} m`, d4.width === 1 && d4.side === 'sul');
   out();

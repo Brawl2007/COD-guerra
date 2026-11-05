@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1988" viewBox="0 0 1040 1988" font-family="DejaVu Sans, Verdana, sans-serif">
 <title>M02-01 Quinta (bancada N0) — planta com escala</title>
-<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 e76b631cb513a34b51abe08202299aaa120021315e0b48bc360c1f8a61b68c81). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
+<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 f7104f461bd65d98df9db970d85c53d3f5c99885cee7fb1ebe2ea2668c7d3964). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
 <defs>
 <clipPath id="clip-plan"><rect x="56" y="74" width="600" height="1128"/></clipPath>
 <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c9c4b4" stroke-width="2"/></pattern>
@@ -12,7 +12,7 @@
 </defs>
 <rect width="1040" height="1988" fill="#f4f0e4"/>
 <text x="56" y="26" font-size="17" font-weight="bold" fill="#22362f">M02-01 · Bancada da quinta (N0) · planta com escala</text>
-<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 e76b631cb513</text>
+<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 f7104f461bd6</text>
 <text x="56" y="58" font-size="10.5" fill="#444">Gerada de missions/m02-bzura/m02-01-quinta-layout.json; esquemática, não é levantamento histórico nem aprovação do N0.</text>
 <g id="plano" clip-path="url(#clip-plan)">
 <rect x="56" y="74" width="600" height="1128" fill="#e9e6d8"/>
@@ -62,13 +62,13 @@
 <rect id="ramp_south_exit" x="68" y="1070" width="48" height="48" fill="none" stroke="#4c7084" stroke-width="1" stroke-dasharray="4 3"><title>ramp_south_exit</title></rect>
 <text transform="translate(89.6 980) rotate(-90)" font-size="11" font-weight="bold" fill="#35586c" text-anchor="middle">VALA (cota -1.1 m)</text>
 </g>
-<g id="portao-norte"><line x1="346.4" y1="686" x2="365.6" y2="686" stroke="#22362f" stroke-width="2" stroke-dasharray="3 2"/><text x="369.2" y="698" font-size="9" fill="#22362f">Portão (0; −24) vão 3.2 m</text></g>
+<g id="portao-norte"><line x1="345.2" y1="686" x2="366.8" y2="686" stroke="#22362f" stroke-width="2" stroke-dasharray="3 2"/><text x="369.2" y="698" font-size="9" fill="#22362f">Portão (0; −24) vão 3.6 m</text></g>
 <g id="coberturas-exteriores">
 <rect id="cov_start_parapet" x="339.2" y="364.4" width="33.6" height="3.6" fill="#b59b72" stroke="#3a2f1c" stroke-width="0.8"><title>cov_start_parapet · Talude de partida · earth · h 0.95 m</title></rect>
 <rect id="cov_gate_wall_west" x="272" y="683.9" width="73.2" height="4.2" fill="#a8614a" stroke="#3a2f1c" stroke-width="0.8"><title>cov_gate_wall_west · Muro oeste do portão norte · brick · h 1.62 m</title></rect>
 <rect id="cov_gate_wall_east" x="366.8" y="683.9" width="60" height="4.2" fill="#a8614a" stroke="#3a2f1c" stroke-width="0.8"><title>cov_gate_wall_east · Muro leste do portão norte · brick · h 1.62 m</title></rect>
 <rect id="cov_well_courtyard" x="239" y="797" width="10.8" height="10.8" fill="#9a9a96" stroke="#3a2f1c" stroke-width="0.8"><title>cov_well_courtyard · Poço do pátio · stone · h 1.15 m</title></rect>
-<rect id="cov_b04_woodpile" x="167" y="987.2" width="18" height="7.2" fill="#8a6a3d" stroke="#3a2f1c" stroke-width="0.8"><title>cov_b04_woodpile · Pilha de lenha exterior (B04) · wood_thick · h 1.15 m</title></rect>
+<rect id="cov_b04_woodpile" x="171.2" y="987.2" width="18" height="7.2" fill="#8a6a3d" stroke="#3a2f1c" stroke-width="0.8"><title>cov_b04_woodpile · Pilha de lenha exterior (B04) · wood_thick · h 1.15 m</title></rect>
 <rect id="cov_south_fence_west" x="224" y="948.5" width="114" height="2.4" fill="#b48b4a" stroke="#3a2f1c" stroke-width="1.4" stroke-dasharray="5 2"><title>cov_south_fence_west · Cerca sul do pátio (oeste) · wood_thin · h 1.15 m · cerca destrutível</title></rect>
 <rect id="cov_south_fence_east" x="374" y="948.5" width="78" height="2.4" fill="#b48b4a" stroke="#3a2f1c" stroke-width="1.4" stroke-dasharray="5 2"><title>cov_south_fence_east · Cerca sul do pátio (leste) · wood_thin · h 1.15 m · cerca destrutível</title></rect>
 <rect id="cov_orchard_bank_ne" x="587" y="542" width="10.2" height="36" fill="#b59b72" stroke="#3a2f1c" stroke-width="0.8"><title>cov_orchard_bank_ne · Talude agrícola leste · earth · h 1.15 m</title></rect>
@@ -78,7 +78,7 @@
 <text x="308.6" y="679.1" text-anchor="middle" font-size="7.5" fill="#3a2f1c">muro do portão O</text>
 <text x="396.8" y="679.1" text-anchor="middle" font-size="7.5" fill="#3a2f1c">muro do portão E</text>
 <text x="244.4" y="792.2" text-anchor="middle" font-size="7.5" fill="#3a2f1c">poço</text>
-<text x="176" y="1008.8" text-anchor="middle" font-size="7.5" fill="#3a2f1c">lenha B04</text>
+<text x="180.2" y="1008.8" text-anchor="middle" font-size="7.5" fill="#3a2f1c">lenha B04</text>
 <text x="281" y="965.3" text-anchor="middle" font-size="7.5" fill="#3a2f1c">cerca sul O</text>
 <text x="413" y="965.3" text-anchor="middle" font-size="7.5" fill="#3a2f1c">cerca sul E</text>
 <text x="592.1" y="537.2" text-anchor="middle" font-size="7.5" fill="#3a2f1c">talude NE</text>
@@ -127,8 +127,8 @@
 <line x1="116" y1="782" x2="200" y2="782" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="116" y1="722" x2="116" y2="733.1" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="116" y1="740.9" x2="116" y2="782" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
-<line x1="200" y1="722" x2="200" y2="722.9" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
-<line x1="200" y1="728.9" x2="200" y2="733.7" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
+<line x1="200" y1="722" x2="200" y2="724.4" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
+<line x1="200" y1="730.4" x2="200" y2="733.7" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="200" y1="740.3" x2="200" y2="763.1" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="200" y1="770.9" x2="200" y2="782" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="116" y1="752" x2="131" y2="752" stroke="#2c2418" stroke-width="1" stroke-linecap="butt"/>
@@ -171,8 +171,8 @@
 <text x="107" y="740" text-anchor="end" font-size="8" font-weight="bold" fill="#2c78b8">J1</text>
 </g>
 <g id="win_b01_east_hall"><title>win_b01_east_hall (J2) · B01 · 1 × 1.1 m · intact</title>
-<line x1="200" y1="722.9" x2="200" y2="728.9" stroke="#2c78b8" stroke-width="5"/>
-<text x="209" y="728.9" text-anchor="start" font-size="8" font-weight="bold" fill="#2c78b8">J2</text>
+<line x1="200" y1="724.4" x2="200" y2="730.4" stroke="#2c78b8" stroke-width="5"/>
+<text x="209" y="730.4" text-anchor="start" font-size="8" font-weight="bold" fill="#2c78b8">J2</text>
 </g>
 <g id="win_b01_east_bed"><title>win_b01_east_bed (J3) · B01 · 1.3 × 1.1 m · open</title>
 <line x1="200" y1="763.1" x2="200" y2="770.9" stroke="#2c78b8" stroke-width="5" stroke-opacity="0.35"/>
@@ -193,7 +193,7 @@
 <rect x="440" y="606.8" width="27" height="12.6" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sacks · h 1.15 m</title></rect>
 <rect x="527" y="606.8" width="27" height="12.6" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sheaves · h 1.2 m</title></rect>
 <rect x="440" y="666.8" width="27" height="12.6" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_straw · h 1 m</title></rect>
-<rect x="431" y="644.6" width="9" height="10.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
+<rect x="429.2" y="644.6" width="3.6" height="10.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
 <rect x="477.2" y="639.2" width="16.8" height="12" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_cart · h 1.25 m</title></rect>
 <rect x="468.92" y="624.92" width="2.16" height="2.16" fill="#2c2418"><title>post_b02_nw</title></rect>
 <rect x="522.92" y="624.92" width="2.16" height="2.16" fill="#2c2418"><title>post_b02_ne</title></rect>
@@ -229,13 +229,16 @@
 <rect x="542" y="830" width="42" height="72" fill="none" stroke="#9c8157" stroke-width="0.5" stroke-dasharray="2 2"/>
 <rect x="482" y="863" width="31.2" height="1.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b03_stall_w · h 1.3 m</title></rect>
 <rect x="546.8" y="863" width="31.2" height="1.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b03_stall_e · h 1.3 m</title></rect>
-<line x1="476" y1="830" x2="522.8" y2="830" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
+<line x1="476" y1="830" x2="493.4" y2="830" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
+<line x1="500.6" y1="830" x2="522.8" y2="830" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
 <line x1="537.2" y1="830" x2="584" y2="830" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
 <line x1="476" y1="902" x2="522.8" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
-<line x1="537.2" y1="902" x2="584" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
+<line x1="537.2" y1="902" x2="559.4" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
+<line x1="566.6" y1="902" x2="584" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
 <line x1="476" y1="830" x2="476" y2="862.4" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
 <line x1="476" y1="869.6" x2="476" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
-<line x1="584" y1="830" x2="584" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
+<line x1="584" y1="830" x2="584" y2="884" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
+<line x1="584" y1="890" x2="584" y2="902" stroke="#2c2418" stroke-width="1.44" stroke-linecap="butt"/>
 <g id="door_b03_north"><title>door_b03_north (P9) · B03 · 2.4 × 2.4 m · open</title>
 <line x1="522.8" y1="830" x2="537.2" y2="830" stroke="#2f8f4e" stroke-width="5" stroke-opacity="0.35"/>
 <line x1="522.8" y1="830" x2="537.2" y2="830" stroke="#2f8f4e" stroke-width="1.2" stroke-dasharray="3 2"/>
@@ -246,10 +249,24 @@
 <line x1="522.8" y1="902" x2="537.2" y2="902" stroke="#2f8f4e" stroke-width="1.2" stroke-dasharray="3 2"/>
 <text x="530" y="911" text-anchor="middle" font-size="8" font-weight="bold" fill="#2f8f4e">P10</text>
 </g>
+<g id="door_b03_east_tack"><title>door_b03_east_tack (P11) · B03 · 1 × 2.1 m · closed</title>
+<line x1="584" y1="884" x2="584" y2="890" stroke="#2f8f4e" stroke-width="5"/>
+<text x="593" y="890" text-anchor="start" font-size="8" font-weight="bold" fill="#2f8f4e">P11</text>
+</g>
 <g id="win_b03_west_high"><title>win_b03_west_high (J6) · B03 · 1.2 × 0.7 m · open</title>
 <line x1="476" y1="862.4" x2="476" y2="869.6" stroke="#2c78b8" stroke-width="5" stroke-opacity="0.35"/>
 <line x1="476" y1="862.4" x2="476" y2="869.6" stroke="#2c78b8" stroke-width="1.2" stroke-dasharray="3 2"/>
 <text x="467" y="869" text-anchor="end" font-size="8" font-weight="bold" fill="#2c78b8">J6</text>
+</g>
+<g id="win_b03_north_high"><title>win_b03_north_high (J7) · B03 · 1.2 × 0.7 m · open</title>
+<line x1="493.4" y1="830" x2="500.6" y2="830" stroke="#2c78b8" stroke-width="5" stroke-opacity="0.35"/>
+<line x1="493.4" y1="830" x2="500.6" y2="830" stroke="#2c78b8" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text x="497" y="825" text-anchor="middle" font-size="8" font-weight="bold" fill="#2c78b8">J7</text>
+</g>
+<g id="win_b03_south_high"><title>win_b03_south_high (J8) · B03 · 1.2 × 0.7 m · open</title>
+<line x1="559.4" y1="902" x2="566.6" y2="902" stroke="#2c78b8" stroke-width="5" stroke-opacity="0.35"/>
+<line x1="559.4" y1="902" x2="566.6" y2="902" stroke="#2c78b8" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text x="563" y="911" text-anchor="middle" font-size="8" font-weight="bold" fill="#2c78b8">J8</text>
 </g>
 <text x="530" y="826" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b2a12">B03</text>
 </g>
@@ -262,15 +279,15 @@
 <line x1="168.2" y1="986" x2="182" y2="986" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="134" y1="950" x2="134" y2="986" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
 <line x1="182" y1="950" x2="182" y2="986" stroke="#2c2418" stroke-width="1.56" stroke-linecap="butt"/>
-<g id="door_b04_south"><title>door_b04_south (P11) · B04 · 1 × 2 m · open</title>
+<g id="door_b04_south"><title>door_b04_south (P12) · B04 · 1 × 2 m · open</title>
 <line x1="162.2" y1="986" x2="168.2" y2="986" stroke="#2f8f4e" stroke-width="5" stroke-opacity="0.35"/>
 <line x1="162.2" y1="986" x2="168.2" y2="986" stroke="#2f8f4e" stroke-width="1.2" stroke-dasharray="3 2"/>
-<text x="165.2" y="995" text-anchor="middle" font-size="8" font-weight="bold" fill="#2f8f4e">P11</text>
+<text x="165.2" y="995" text-anchor="middle" font-size="8" font-weight="bold" fill="#2f8f4e">P12</text>
 </g>
 <text x="158" y="946" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b2a12">B04</text>
 </g>
 </g>
-<polygon id="arco-mg" points="432.8,650 324.7,1209.66 261.2,1193.56 199.96,1170.28 141.8,1140.12 87.48,1103.49 37.73,1060.87 -6.81,1012.83 -45.54,959.99 -77.95,903.05 -103.61,842.77 -122.19,779.95 -133.44,715.41 -137.2,650 -133.44,584.59 -122.19,520.05 -103.61,457.23 -77.95,396.95 -45.54,340.01 -6.81,287.17 37.73,239.13 87.48,196.51 141.8,159.88 199.96,129.72 261.2,106.44 324.7,90.34" fill="#b3402a" fill-opacity="0.07" stroke="#b3402a" stroke-opacity="0.45" stroke-width="0.8" stroke-dasharray="6 3"><title>Arco da MG34: centro 3.14 rad, meio-ângulo 1.38 rad, alcance 95 m</title></polygon>
+<polygon id="arco-mg" points="428,650 319.9,1209.66 256.4,1193.56 195.16,1170.28 137,1140.12 82.68,1103.49 32.93,1060.87 -11.61,1012.83 -50.34,959.99 -82.75,903.05 -108.41,842.77 -126.99,779.95 -138.24,715.41 -142,650 -138.24,584.59 -126.99,520.05 -108.41,457.23 -82.75,396.95 -50.34,340.01 -11.61,287.17 32.93,239.13 82.68,196.51 137,159.88 195.16,129.72 256.4,106.44 319.9,90.34" fill="#b3402a" fill-opacity="0.07" stroke="#b3402a" stroke-opacity="0.45" stroke-width="0.8" stroke-dasharray="6 3"><title>Arco da MG34: centro 3.14 rad, meio-ângulo 1.38 rad, alcance 95 m</title></polygon>
 <g id="rotas" fill="none" stroke-width="2.4" stroke-linejoin="round">
 <polyline id="rota-ditch" points="356,350 86,410 86,800 212,830 266,782 356,686" stroke="#3b7da6" stroke-opacity="0.9" marker-end="url(#arrow-ditch)"><title>Rota da vala</title></polyline>
 <circle cx="356" cy="350" r="2.4" fill="#3b7da6" stroke="none"><title>ditch #1 (0; -80)</title></circle>
@@ -323,7 +340,7 @@
 <text x="270.8" y="161.6" text-anchor="middle" font-size="6.5" fill="#5a1410">A03</text>
 <polygon id="DE-A04" points="290,158.8 293.6,165.8 286.4,165.8" fill="#5a1410" stroke="#fff" stroke-width="0.6"><title>DE-A04 · EA0 outpost_rifleman</title></polygon>
 <text x="290" y="156.8" text-anchor="middle" font-size="6.5" fill="#5a1410">A04</text>
-<g id="de_b02_mg34"><title>de_b02_mg34 · Posição MG34 (Abertura oeste de B02) · (12.8; -30)</title><circle cx="432.8" cy="650" r="5" fill="#ffffff" stroke="#b3302a" stroke-width="2"/><line x1="432.8" y1="650" x2="410.8" y2="650" stroke="#b3302a" stroke-width="2" marker-end="url(#arrow-mg)"/><text x="438.8" y="638" font-size="9" font-weight="bold" fill="#b3302a" stroke="#f4f0e4" stroke-width="2.5" paint-order="stroke">MG34</text></g>
+<g id="de_b02_mg34"><title>de_b02_mg34 · Posição MG34 (Abertura oeste de B02) · (12; -30)</title><circle cx="428" cy="650" r="5" fill="#ffffff" stroke="#b3302a" stroke-width="2"/><line x1="428" y1="650" x2="406" y2="650" stroke="#b3302a" stroke-width="2" marker-end="url(#arrow-mg)"/><text x="434" y="638" font-size="9" font-weight="bold" fill="#b3302a" stroke="#f4f0e4" stroke-width="2.5" paint-order="stroke">MG34</text></g>
 </g>
 <g id="arranque"><path d="M356 343 l6 11 h-12 z" fill="#2d6cb5" stroke="#fff" stroke-width="0.8"/><text x="365" y="364" font-size="8" fill="#1d4378">arranque (0; −80)</text></g>
 <g id="pontos-sn">
@@ -422,19 +439,22 @@
 <text x="680" y="476" font-size="8.5"><tspan font-weight="bold" fill="#2c78b8">J5</tspan> win_b02_west_mg · B02 · 1.8 × 1.15 · open</text>
 <text x="680" y="488.5" font-size="8.5"><tspan font-weight="bold" fill="#2f8f4e">P9</tspan> door_b03_north · B03 · 2.4 × 2.4 · open</text>
 <text x="680" y="501" font-size="8.5"><tspan font-weight="bold" fill="#2f8f4e">P10</tspan> door_b03_south · B03 · 2.4 × 2.4 · open</text>
-<text x="680" y="513.5" font-size="8.5"><tspan font-weight="bold" fill="#2c78b8">J6</tspan> win_b03_west_high · B03 · 1.2 × 0.7 · open</text>
-<text x="680" y="526" font-size="8.5"><tspan font-weight="bold" fill="#2f8f4e">P11</tspan> door_b04_south · B04 · 1 × 2 · open</text>
-<text x="680" y="548.5" font-weight="bold" font-size="11">Pontos SN (x; z)</text>
-<text x="680" y="564.5" font-size="8.5"><tspan font-weight="bold">SN1</tspan> (0; −80) Entrada da bancada</text>
-<text x="680" y="577" font-size="8.5"><tspan font-weight="bold">SN2</tspan> (−45; −5) Vala de aproximação oeste</text>
-<text x="680" y="589.5" font-size="8.5"><tspan font-weight="bold">SN3</tspan> (−23; −12) Flanco este da Casa B01</text>
-<text x="680" y="602" font-size="8.5"><tspan font-weight="bold">SN4</tspan> (8; −28) Frente oeste do Celeiro B02</text>
-<text x="680" y="614.5" font-size="8.5"><tspan font-weight="bold">SN5</tspan> (0; 45) Pomar sul</text>
-<text x="680" y="637" font-weight="bold" font-size="11">Posições-chave</text>
-<text x="680" y="653" font-size="8.5">MG34: (12.8; −30) · boca na simulação (11,82; −30)</text>
-<text x="680" y="665.5" font-size="8.5">Rota vala: 6 pontos · pomar: 6 pontos</text>
-<text x="680" y="678" font-size="8.5">EA1: 10 · EA0: 4 · PL: 7</text>
-<text x="680" y="690.5" font-size="8.5">Macieiras candidatas: 7 (estado «candidata»)</text>
+<text x="680" y="513.5" font-size="8.5"><tspan font-weight="bold" fill="#2f8f4e">P11</tspan> door_b03_east_tack · B03 · 1 × 2.1 · closed</text>
+<text x="680" y="526" font-size="8.5"><tspan font-weight="bold" fill="#2c78b8">J6</tspan> win_b03_west_high · B03 · 1.2 × 0.7 · open</text>
+<text x="680" y="538.5" font-size="8.5"><tspan font-weight="bold" fill="#2c78b8">J7</tspan> win_b03_north_high · B03 · 1.2 × 0.7 · open</text>
+<text x="680" y="551" font-size="8.5"><tspan font-weight="bold" fill="#2c78b8">J8</tspan> win_b03_south_high · B03 · 1.2 × 0.7 · open</text>
+<text x="680" y="563.5" font-size="8.5"><tspan font-weight="bold" fill="#2f8f4e">P12</tspan> door_b04_south · B04 · 1 × 2 · open</text>
+<text x="680" y="586" font-weight="bold" font-size="11">Pontos SN (x; z)</text>
+<text x="680" y="602" font-size="8.5"><tspan font-weight="bold">SN1</tspan> (0; −80) Entrada da bancada</text>
+<text x="680" y="614.5" font-size="8.5"><tspan font-weight="bold">SN2</tspan> (−45; −5) Vala de aproximação oeste</text>
+<text x="680" y="627" font-size="8.5"><tspan font-weight="bold">SN3</tspan> (−23; −12) Flanco este da Casa B01</text>
+<text x="680" y="639.5" font-size="8.5"><tspan font-weight="bold">SN4</tspan> (8; −28) Frente oeste do Celeiro B02</text>
+<text x="680" y="652" font-size="8.5"><tspan font-weight="bold">SN5</tspan> (0; 45) Pomar sul</text>
+<text x="680" y="674.5" font-weight="bold" font-size="11">Posições-chave</text>
+<text x="680" y="690.5" font-size="8.5">MG34: (12; −30) · boca na simulação (11,82; −30)</text>
+<text x="680" y="703" font-size="8.5">Rota vala: 6 pontos · pomar: 6 pontos</text>
+<text x="680" y="715.5" font-size="8.5">EA1: 10 · EA0: 4 · PL: 7</text>
+<text x="680" y="728" font-size="8.5">Macieiras candidatas: 7 (estado «candidata»)</text>
 </g>
 <g id="detalhe-edificios">
 <line x1="56" y1="1280" x2="1016" y2="1280" stroke="#22362f" stroke-width="1"/>
@@ -461,8 +481,8 @@
 <line x1="96" y1="1538" x2="348" y2="1538" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="96" y1="1358" x2="96" y2="1391.3" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="96" y1="1414.7" x2="96" y2="1538" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
-<line x1="348" y1="1358" x2="348" y2="1360.7" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
-<line x1="348" y1="1378.7" x2="348" y2="1393.1" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
+<line x1="348" y1="1358" x2="348" y2="1365.2" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
+<line x1="348" y1="1383.2" x2="348" y2="1393.1" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="348" y1="1412.9" x2="348" y2="1481.3" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="348" y1="1504.7" x2="348" y2="1538" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="96" y1="1448" x2="141" y2="1448" stroke="#2c2418" stroke-width="2.7" stroke-linecap="butt"/>
@@ -505,8 +525,8 @@
 <text x="78" y="1406" text-anchor="end" font-size="11" font-weight="bold" fill="#2c78b8">J1</text>
 </g>
 <g id="detalhe-win_b01_east_hall"><title>win_b01_east_hall (J2) · B01 · 1 × 1.1 m · intact</title>
-<line x1="348" y1="1360.7" x2="348" y2="1378.7" stroke="#2c78b8" stroke-width="7"/>
-<text x="366" y="1372.7" text-anchor="start" font-size="11" font-weight="bold" fill="#2c78b8">J2</text>
+<line x1="348" y1="1365.2" x2="348" y2="1383.2" stroke="#2c78b8" stroke-width="7"/>
+<text x="366" y="1377.2" text-anchor="start" font-size="11" font-weight="bold" fill="#2c78b8">J2</text>
 </g>
 <g id="detalhe-win_b01_east_bed"><title>win_b01_east_bed (J3) · B01 · 1.3 × 1.1 m · open</title>
 <line x1="348" y1="1481.3" x2="348" y2="1504.7" stroke="#2c78b8" stroke-width="7" stroke-opacity="0.35"/>
@@ -531,7 +551,7 @@
 <rect x="494" y="1372.4" width="81" height="37.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sacks · h 1.15 m</title></rect>
 <rect x="755" y="1372.4" width="81" height="37.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_sheaves · h 1.2 m</title></rect>
 <rect x="494" y="1552.4" width="81" height="37.8" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_straw · h 1 m</title></rect>
-<rect x="467" y="1485.8" width="27" height="32.4" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
+<rect x="461.6" y="1485.8" width="10.8" height="32.4" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_mg_mount · h 0.96 m</title></rect>
 <rect x="605.6" y="1469.6" width="50.4" height="36" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b02_cart · h 1.25 m</title></rect>
 <rect x="580.76" y="1426.76" width="6.48" height="6.48" fill="#2c2418"><title>post_b02_nw</title></rect>
 <rect x="742.76" y="1426.76" width="6.48" height="6.48" fill="#2c2418"><title>post_b02_ne</title></rect>
@@ -571,13 +591,16 @@
 <text x="357" y="1798" text-anchor="middle" font-size="8.5" fill="#5d4626">baias_este</text>
 <rect x="114" y="1789" width="93.6" height="5.4" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b03_stall_w · h 1.3 m</title></rect>
 <rect x="308.4" y="1789" width="93.6" height="5.4" fill="#8a6a3d" fill-opacity="0.55" stroke="#5d4626" stroke-width="0.6"><title>prop_b03_stall_e · h 1.3 m</title></rect>
-<line x1="96" y1="1690" x2="236.4" y2="1690" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
+<line x1="96" y1="1690" x2="148.2" y2="1690" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
+<line x1="169.8" y1="1690" x2="236.4" y2="1690" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
 <line x1="279.6" y1="1690" x2="420" y2="1690" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
 <line x1="96" y1="1906" x2="236.4" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
-<line x1="279.6" y1="1906" x2="420" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
+<line x1="279.6" y1="1906" x2="346.2" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
+<line x1="367.8" y1="1906" x2="420" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
 <line x1="96" y1="1690" x2="96" y2="1787.2" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
 <line x1="96" y1="1808.8" x2="96" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
-<line x1="420" y1="1690" x2="420" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
+<line x1="420" y1="1690" x2="420" y2="1852" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
+<line x1="420" y1="1870" x2="420" y2="1906" stroke="#2c2418" stroke-width="4.32" stroke-linecap="butt"/>
 <g id="detalhe-door_b03_north"><title>door_b03_north (P9) · B03 · 2.4 × 2.4 m · open</title>
 <line x1="236.4" y1="1690" x2="279.6" y2="1690" stroke="#2f8f4e" stroke-width="7" stroke-opacity="0.35"/>
 <line x1="236.4" y1="1690" x2="279.6" y2="1690" stroke="#2f8f4e" stroke-width="1.2" stroke-dasharray="3 2"/>
@@ -588,10 +611,24 @@
 <line x1="236.4" y1="1906" x2="279.6" y2="1906" stroke="#2f8f4e" stroke-width="1.2" stroke-dasharray="3 2"/>
 <text x="258" y="1924" text-anchor="middle" font-size="11" font-weight="bold" fill="#2f8f4e">P10</text>
 </g>
+<g id="detalhe-door_b03_east_tack"><title>door_b03_east_tack (P11) · B03 · 1 × 2.1 m · closed</title>
+<line x1="420" y1="1852" x2="420" y2="1870" stroke="#2f8f4e" stroke-width="7"/>
+<text x="438" y="1864" text-anchor="start" font-size="11" font-weight="bold" fill="#2f8f4e">P11</text>
+</g>
 <g id="detalhe-win_b03_west_high"><title>win_b03_west_high (J6) · B03 · 1.2 × 0.7 m · open</title>
 <line x1="96" y1="1787.2" x2="96" y2="1808.8" stroke="#2c78b8" stroke-width="7" stroke-opacity="0.35"/>
 <line x1="96" y1="1787.2" x2="96" y2="1808.8" stroke="#2c78b8" stroke-width="1.2" stroke-dasharray="3 2"/>
 <text x="78" y="1801" text-anchor="end" font-size="11" font-weight="bold" fill="#2c78b8">J6</text>
+</g>
+<g id="detalhe-win_b03_north_high"><title>win_b03_north_high (J7) · B03 · 1.2 × 0.7 m · open</title>
+<line x1="148.2" y1="1690" x2="169.8" y2="1690" stroke="#2c78b8" stroke-width="7" stroke-opacity="0.35"/>
+<line x1="148.2" y1="1690" x2="169.8" y2="1690" stroke="#2c78b8" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text x="159" y="1680" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c78b8">J7</text>
+</g>
+<g id="detalhe-win_b03_south_high"><title>win_b03_south_high (J8) · B03 · 1.2 × 0.7 m · open</title>
+<line x1="346.2" y1="1906" x2="367.8" y2="1906" stroke="#2c78b8" stroke-width="7" stroke-opacity="0.35"/>
+<line x1="346.2" y1="1906" x2="367.8" y2="1906" stroke="#2c78b8" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text x="357" y="1924" text-anchor="middle" font-size="11" font-weight="bold" fill="#2c78b8">J8</text>
 </g>
 <text x="258" y="1660" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b2a12">B03 · 18 × 12 m</text>
 <text x="258" y="1673" text-anchor="middle" font-size="9" fill="#5d4626">Estábulo e arrecadação de arreios</text>
@@ -606,10 +643,10 @@
 <line x1="662.6" y1="1798" x2="704" y2="1798" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="560" y1="1690" x2="560" y2="1798" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
 <line x1="704" y1="1690" x2="704" y2="1798" stroke="#2c2418" stroke-width="4.68" stroke-linecap="butt"/>
-<g id="detalhe-door_b04_south"><title>door_b04_south (P11) · B04 · 1 × 2 m · open</title>
+<g id="detalhe-door_b04_south"><title>door_b04_south (P12) · B04 · 1 × 2 m · open</title>
 <line x1="644.6" y1="1798" x2="662.6" y2="1798" stroke="#2f8f4e" stroke-width="7" stroke-opacity="0.35"/>
 <line x1="644.6" y1="1798" x2="662.6" y2="1798" stroke="#2f8f4e" stroke-width="1.2" stroke-dasharray="3 2"/>
-<text x="653.6" y="1816" text-anchor="middle" font-size="11" font-weight="bold" fill="#2f8f4e">P11</text>
+<text x="653.6" y="1816" text-anchor="middle" font-size="11" font-weight="bold" fill="#2f8f4e">P12</text>
 </g>
 <text x="632" y="1660" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b2a12">B04 · 8 × 6 m</text>
 <text x="632" y="1673" text-anchor="middle" font-size="9" fill="#5d4626">Forno e anexo de lenha</text>
