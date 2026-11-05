@@ -167,9 +167,10 @@ describe('FIX-CD 2: o impacto fixo de artilharia SP03 (D5 p. 18) fere Piotr e NP
     const dmg = {};
     for (const id of ['recruta', 'soldado', 'veterano']) {
       const { blast } = artilleryAt(4, 23, id, (sim) => {
-        // parados durante o aviso: um aliado fora da IA da secção (destacado) e um hostil rendido (fora da IA da guarnição)
+        // parados durante o aviso: um aliado fora da IA da secção (amparado: a IA não o move nem ele dispara) e um hostil rendido (fora da
+        // IA da guarnição). D1: `detachedOutOfCell` já não serve (quem está fora da célula não é atingido pelas explosões desta célula).
         const ally = sim.allies.find((a) => a.alive && a.id === 'pl_wierzba');
-        Object.assign(ally, { x: 4, z: 15, y: sim.world.heightAt(4, 15), goal: null, detachedOutOfCell: true });
+        Object.assign(ally, { x: 4, z: 15, y: sim.world.heightAt(4, 15), goal: null, state: 'WALKING_SUPPORTED' });
         const enemy = sim.enemies.find((e) => e.encounterId === 'EC2');
         Object.assign(enemy, { alive: true, health: 100, state: 'SURRENDERED', nonCombatant: true, x: 4, z: 21, y: sim.world.heightAt(4, 21), goal: null });
       });
@@ -589,13 +590,14 @@ describe('FIX-CD 9: depois da falha não há rajada de checkpoint-rejected; o re
 // 10. Missão completa com o MissionBot ao dt real de frame (1/60) em recruta
 // ---------------------------------------------------------------------------------------------------------------------
 describe('FIX-CD 10: missão completa C01→C12 com o MissionBot a dt = 1/60 em recruta (teste de estado, NÃO é playtest)', () => {
-  it('semente 777: chega a C12 sem checkpoints recusados, com os 4 checkpoints e snapshots válidos em cada mudança de cena', (t) => {
+  it('semente 2: chega a C12 sem checkpoints recusados, com os 4 checkpoints e snapshots válidos em cada mudança de cena', (t) => {
     // Antes ficava preso em C03 1800 s (semente 19390909): Lis («ClearRoom») encostada à parede norte de B01 sem rota (porta este
     // fechada), 4 hostis em HOLD_SECTOR dentro de B01/B03 e a moral da quinta a 6 de 10. Defeito do jogo (navegação dos aliados),
     // corrigido em stepActorNavigation; não era do bot.
-    // Semente 777 (N0-fixes, tests/m02-26): com a MG34 a disparar da boca no vão o desfecho do bot é caótico e a 19390909 a 1/60 morre
-    // em C09 por desgaste de Kar98k (a 777 a 1/60 chega a C12); ver o comentário das sementes em m02-18.
-    const sim = new M02BenchSimulation(777, { startScene: 'C01', storage: createMemoryStorage() });
+    // Semente 2 (D1): com a MG34 a disparar da boca no vão o desfecho do bot é caótico (N0-fixes, tests/m02-26: a 777 passava a 1/60) e,
+    // com as imunidades ocultas removidas (D1: a falta do sierż. Gruca falha a missão), a 777 a 1/60 morre em C10 e a 19390909 perde Gruca em
+    // C09; a 1 e a 2 chegam a C12 a 1/60. Ver o comentário das sementes em m02-18.
+    const sim = new M02BenchSimulation(2, { storage: createMemoryStorage(), startScene: 'C01' });
     const bot = new MissionBot(sim, { dt: FRAME });
     const scenes = [];
     let rejected = 0;

@@ -103,6 +103,52 @@ export const CART_SHOT_WINDOW_SEC = 2.0;
 /** Um hostil com supressão ≥ 0,88 não consegue disparar (updateGermanGarrison). */
 const CART_SHOOTER_MAX_SUPPRESSION = 0.88;
 
+/**
+ * D1 (PDF p. 16, «Falhas duras»): a 2.ª falha dura é a «incapacidade definitiva de uma personagem exigida pelo cânone antes do seu
+ * ponto de resolução»; «esta convenção deve ser visível, não imunidade oculta». É esta tabela, o ecrã de falha e o motivo
+ * `required_character_incapacitated` (com o `actorId`): ninguém é invulnerável (antes `essential` repunha a vida de Gruca, Lis e
+ * Szymczak sem aviso). «Fora de combate» é `alive` falso: caído por tiro (DOWN) ou morto por explosão (DEAD).
+ *
+ * EXIGIDA (fora de combate = falha, de C01 até C12 fechar — o ponto de resolução):
+ *  - pl_gruca: K1 (p. 38) «Essencial à resolução M02»; dá as ordens de todas as cenas, diz dlg_m02_002 em C10 (K2, p. 38) e ordena
+ *    romper contacto (C11) e conta os homens (C12, pp. 14-15). O PDF não prevê substituto nem ramo da missão sem ele.
+ *
+ * NÃO EXIGIDAS (o PDF prevê o ramo: a incapacidade é consequência persistente, não falha):
+ *  - pl_lis: C08 (p. 14) «Se já estava incapacitado/evacuado, não recebe essa missão: mantém o seu estado e outro mensageiro faz a
+ *    ligação»; C11 (p. 14) «se estava, usa esse estado e não produz um segundo Lis»; I4 (p. 34) «Se Lis já tinha sido ferido em
+ *    combate, C11 usa esse ferimento». Os três desfechos (wounded_evacuated, wounded_walking, missing) cobrem Lis fora de combate.
+ *  - pl_szymczak: A3 (p. 6) e K1 (p. 38): proposta do #58, «não se transforma em invulnerável»; a triagem de C07 e o socorro de C11
+ *    têm alternativa (Piotr carrega Lis, C11 p. 14), por isso o estado canónico não se torna impossível.
+ *  - pl_wierzba, pl_malek: «admitem consequência persistente conforme K/I» (D1); os auxiliares «podem morrer sem reiniciar» (D1).
+ *
+ * LIMITE: D1 diz que o ferimento incapacitante de Gruca/Lis/Szymczak «admite socorro quando seguro». A bancada não tem socorro
+ * interativo (Piotr ou Szymczak a levantar um caído), por isso, até existir, estar fora de combate é definitivo para quem é exigido.
+ */
+export const M02_REQUIRED_CHARACTERS = Object.freeze({
+  pl_gruca: Object.freeze({
+    id: 'pl_gruca',
+    name: 'sierż. Władysław Gruca',
+    fromScene: 'C01',
+    untilScene: 'C12', // até o epílogo fechar (`areaC.c12Completed`); C12 é uma elipse sem combate
+  }),
+});
+
+/**
+ * Id da primeira personagem exigida que está fora de combate num estado de jogo ou snapshot (`allies`, `areaC`, `flags`), ou null.
+ * Sem falha depois de a missão estar concluída (C12 fechado). Só lê dados: serve a simulação e o validador do snapshot.
+ */
+export function requiredCharacterOut(state) {
+  if (!state || state.areaC?.c12Completed || state.flags?.['m02.completed']) return null;
+  const allies = Array.isArray(state.allies) ? state.allies : [];
+  const scene = M02_SCENE_IDS.indexOf(state.script?.sceneId); // -1: sem roteiro conhecido, a janela não filtra
+  for (const req of Object.values(M02_REQUIRED_CHARACTERS)) {
+    if (scene >= 0 && (scene < M02_SCENE_IDS.indexOf(req.fromScene) || scene > M02_SCENE_IDS.indexOf(req.untilScene))) continue;
+    const a = allies.find((x) => x?.id === req.id);
+    if (a && a.alive === false) return req.id;
+  }
+  return null;
+}
+
 /** Fases do percurso de Lis (J3): fora da célula → regresso a pé → à espera → amparado/carregado → abrigado; ou incapacitado antes. */
 export const LIS_PHASES = Object.freeze(['liaison_outside', 'returning', 'waiting', 'supported', 'sheltered', 'incapacitated']);
 export const LIS_OUTCOME_SOURCES = Object.freeze(['game', 'forced']);

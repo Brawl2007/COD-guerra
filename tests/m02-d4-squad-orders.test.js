@@ -17,6 +17,12 @@ const SEED = 19390909;
 const DT = 0.05;
 const kill = (e) => Object.assign(e, { alive: false, state: 'DEAD', health: 0 });
 const ally = (sim, id) => sim.allies.find((a) => a.id === id);
+/**
+ * D1: ninguém é invulnerável e o sierż. Gruca é a primeira posição da equipa de assalto, por isso uma ordem de «avançar» em campo aberto
+ * até ao muro do portão, sob a MG34 de B02, mata-o a meio do caminho (e a missão falha). Estes testes verificam a ordem, não a
+ * sobrevivência: o jogador já fixou a MG (o atirador DE-A05 está fora de combate) antes de a dar.
+ */
+const mgDown = (sim) => kill(sim.enemies.find((e) => e.id === 'DE-A05'));
 const run = (sim, seconds, controls = {}) => {
   for (let i = 0; i < Math.ceil(seconds / DT); i++) sim.tick(DT, controls);
 };
@@ -193,6 +199,7 @@ describe('M02 D4: a ordem muda o que a equipa de assalto faz; sem ordem segue o 
 
   it('avançar para ali: o elemento atribuído desloca-se até à posição à frente e toma-a (byOrder = advance); os outros seguram', () => {
     const sim = sheltered();
+    mgDown(sim);
     const order = sim.issueSquadOrder('advance');
     assert.equal(order.nodeId, 'cv_gate_wall_west_s');
     const before = positionOf(sim, 'pl_gruca');
@@ -294,6 +301,7 @@ describe('M02 D4: prova de 60 s com Piotr abrigado — efeito causal real da sec
       it(`${mode} · semente ${seed}: ocupa cobertura, dispara com oclusão correta e melhora a situação (suprime a MG, neutraliza, conquista cobertura)`, () => {
         const sim = sheltered(seed);
         const shots = instrumentLineOfSight(sim);
+        if (mode === 'advance') mgDown(sim); // ver mgDown: avançar sob a MG mata o líder (D1)
         if (mode !== 'auto') assert.ok(sim.issueSquadOrder(mode), `${mode} aceite`);
         const ammoBefore = sim.allies.reduce((a, b) => a + b.mag + b.reserve, 0);
         run(sim, 60);

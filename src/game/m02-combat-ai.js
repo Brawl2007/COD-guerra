@@ -1299,7 +1299,7 @@ export function updateGermanGarrison(sim, dt) {
     stepActorNavigation(sim, enemy, dt);
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
-    const potentialTargets = [sim.player, ...sim.allies].filter((t) => t && t.alive && t.state !== 'DOWN');
+    const potentialTargets = [sim.player, ...sim.allies].filter((t) => t && t.alive && t.state !== 'DOWN' && !t.detachedOutOfCell);
     let visibleTarget = null;
     let bestTargetScore = -Infinity;
 

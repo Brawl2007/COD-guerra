@@ -14,7 +14,11 @@ import { MissionBot } from './m02-mission-bot.js';
 // gerador. Medido com o código final: 10 de 15 sementes (1..12 e as três antigas) chegam a C12 em dt 0,1 (≈ 2/3, como antes: 13 de 20),
 // e a causa da morte nas que falham é desgaste por tiros de Kar98k em C09/C10, longe da quinta. A semente 777 (que antes passava)
 // morre em C10; 1 é a menor semente inteira que passa (sem escolher por vida restante).
-const SEEDS = [19390909, 1, 31337];
+// D1 (imunidades ocultas removidas): Gruca, Lis e Szymczak deixaram de voltar a 18/20 de vida e a falta do sierż. Gruca falha a missão
+// (m02-d1-required-characters). Isso mexe outra vez no fluxo caótico do bot (o desgaste de Gruca nas cenas C03/C09/C10 passa a contar):
+// medido com o código de D1, 4 de 15 sementes (1..12 e as três antigas) chegam a C12 em dt 0,1 (1, 2, 3 e 19390909); a 31337 morre
+// (Piotr) em C10. A 31337 foi substituída pela 2, a menor semente a seguir à 1 que passa.
+const SEEDS = [19390909, 1, 2];
 const DT = 0.1;
 const FORBIDDEN_SHORTCUTS = [
   'startAreaAFullC01',

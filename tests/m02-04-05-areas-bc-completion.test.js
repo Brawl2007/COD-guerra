@@ -184,7 +184,9 @@ describe('M02-04 & M02-05 — Área B (Łęczyca), Área C (Leśmierz), Epílogo
     assert.equal(lisInC09.state, 'WOUNDED_LIAISON');
     assert.equal(sim.allies.filter((a) => a.id === 'pl_lis').length, 1, 'Lis must never be duplicated');
 
-    // Advance simulation so Last Group (LG01..LG12) traverses B09 -> B12
+    // Advance simulation so Last Group (LG01..LG12) traverses B09 -> B12. D1: ninguém é invulnerável e a falta do sierż. Gruca falha a
+    // missão; este teste é da travessia do último grupo e dos desfechos de Lis, não de combate: a reserva EC2 e o que resta de EC1 estão fora de jogo.
+    for (const e of sim.enemies) Object.assign(e, { alive: false, health: 0, state: 'DEAD' });
     for (let i = 0; i < 450; i++) {
       sim.tick(0.1);
     }

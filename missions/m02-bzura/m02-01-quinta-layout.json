@@ -372,8 +372,7 @@
       "facing": 1.5707963267948966,
       "mag": 5,
       "reserve": 45,
-      "health": 100,
-      "essential": true
+      "health": 100
     },
     {
       "id": "pl_lis",
@@ -385,8 +384,7 @@
       "facing": 1.5707963267948966,
       "mag": 5,
       "reserve": 45,
-      "health": 100,
-      "essential": true
+      "health": 100
     },
     {
       "id": "pl_wierzba",
@@ -398,8 +396,7 @@
       "facing": 1.5707963267948966,
       "mag": 5,
       "reserve": 45,
-      "health": 100,
-      "essential": false
+      "health": 100
     },
     {
       "id": "pl_malek",
@@ -411,8 +408,7 @@
       "facing": 1.5707963267948966,
       "mag": 5,
       "reserve": 40,
-      "health": 100,
-      "essential": false
+      "health": 100
     },
     {
       "id": "pl_szymczak",
@@ -424,8 +420,7 @@
       "facing": 1.5707963267948966,
       "mag": 5,
       "reserve": 25,
-      "health": 100,
-      "essential": true
+      "health": 100
     },
     {
       "id": "pl_aux_01",
@@ -439,8 +434,7 @@
       "facing": 1.35,
       "mag": 20,
       "reserve": 120,
-      "health": 100,
-      "essential": false
+      "health": 100
     },
     {
       "id": "pl_aux_02",
@@ -454,8 +448,7 @@
       "facing": 1.35,
       "mag": 5,
       "reserve": 60,
-      "health": 100,
-      "essential": false
+      "health": 100
     }
   ],
   "enemyRosterEA1": [
