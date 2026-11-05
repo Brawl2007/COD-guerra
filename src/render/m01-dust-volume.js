@@ -9,10 +9,19 @@ import * as THREE from 'three';
 // 9 on High, 6 on Medium, 4 on Low. Seen from outside the box's front faces are drawn (depth-tested: a wall in front of the cloud hides it); with the eye inside the box its back faces are drawn, and the depth written is that of the point where the ray enters the cylinder (the box is wider than the cylinder, so the face is not the cloud),
 // or 0 when the eye is inside the cylinder itself, so the dust around the player covers the view (without a depth texture the scene's own depth is unknown there: a thick cloud around the eye hides everything, as it does for the AI beyond 3 m). The pool, its
 // buffers and the material are built once; update() only writes into them (no allocation per frame).
+//
+// Draw order against the particle batches (flash, fire, smoke, dust sprites and the smoke columns: transparent, depthWrite false, renderOrder 0): the volume is drawn BEFORE them (renderOrder -.5, after the ground
+// marks and embers at -3..-1), so an explosion or a smoke column standing in front of a cloud composites over it instead of being blended away. A second pass over the same instances (depthMesh, renderOrder -.4,
+// colorWrite false) then writes the depth of the point where the eye ray enters the cloud wherever the cloud is near-opaque (alpha >= DUST_VOLUME_OPAQUE), so the batches drawn after it are depth-rejected behind that
+// curtain, as are the far impostors (renderOrder 2). Thin parts write no depth: what stands behind a thin cloud still shows through it. With the eye inside the cylinder the pass writes depth 0 only where the dust is near-opaque.
 export const DUST_VOLUME_POOL=Object.freeze({low:4,medium:6,high:8});
 export const DUST_VOLUME_STEPS=Object.freeze({low:4,medium:6,high:9});
 /** Optical depth per metre of density-1 cloud, compensating the mean of the soft profile (about .45): 3 m of cloud at density 1 give a transmittance of about 5 %. */
 export const DUST_VOLUME_K=2.3;
+/** Opacity from which the cloud also occludes by depth (the particle batches and impostors drawn after it are rejected behind it). */
+export const DUST_VOLUME_OPAQUE=.7;
+/** renderOrder of the colour pass and of the depth pass: before the particle batches (0), after the ground marks and embers (-3..-1). */
+export const DUST_VOLUME_ORDER=Object.freeze({color:-.5,depth:-.4});
 const DUST_COLOR=new THREE.Color('#a39679');   // hoisted: parsed once
 
 export class M01DustVolumes{
@@ -21,8 +30,8 @@ export class M01DustVolumes{
     this.geometry=new THREE.BoxGeometry(1,1,1);
     this.density=new THREE.InstancedBufferAttribute(new Float32Array(this.capacity),1);this.density.setUsage(THREE.DynamicDrawUsage);
     this.geometry.setAttribute('dustDensity',this.density);
-    this.material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,side:THREE.DoubleSide,
-      uniforms:{uColor:{value:DUST_COLOR.clone()},fogColor:{value:new THREE.Color('#869093')},uLight:{value:1},uTime:{value:0},uSteps:{value:DUST_VOLUME_STEPS.medium},uNoise:{value:1},uK:{value:DUST_VOLUME_K}},
+    const uniforms={uColor:{value:DUST_COLOR.clone()},fogColor:{value:new THREE.Color('#869093')},uLight:{value:1},uTime:{value:0},uSteps:{value:DUST_VOLUME_STEPS.medium},uNoise:{value:1},uK:{value:DUST_VOLUME_K}};
+    this.material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,side:THREE.DoubleSide,uniforms,
       vertexShader:`attribute float dustDensity;varying vec3 vWorld;varying vec4 vCloud;varying vec2 vDH;
         void main(){
           mat4 m=modelMatrix*instanceMatrix;vec4 w=m*vec4(position,1.0);vWorld=w.xyz;
@@ -59,19 +68,32 @@ export class M01DustVolumes{
           }
           tau*=uK*vDH.x;float alpha=1.0-exp(-tau);
           if(alpha<.01)discard;
+          #ifdef DEPTH_PASS
+          // depth pass (colorWrite false): only the near-opaque part writes depth, at the point where the eye ray enters the cylinder (t0, not the box face); 0 only with the eye inside the cylinder (t0==0)
+          if(alpha<DUST_OPAQUE)discard;
+          vec4 cp=projectionMatrix*viewMatrix*vec4(ro+rd*t0,1.0);
+          gl_FragDepth=t0<=0.0||cp.w<=1e-4?0.0:clamp(cp.z/cp.w*.5+.5,0.0,1.0);
+          gl_FragColor=vec4(0.0);
+          #else
           vec3 col=uColor*uLight*(.80+.34*clamp(hm/uSteps,0.0,1.0))*mix(1.0,.70,smoothstep(1.0,9.0,tau));
           col=mix(col,fogColor,smoothstep(500.0,2700.0,dist));
           // depth where the ray enters the cylinder (t0), not the box face, which lies up to .41 r before it: a man or wall in the margin between box and cylinder (the simulation's sight line is clear there) stays in front; depth 0 only with the eye inside the cylinder (t0==0)
           vec4 ce=projectionMatrix*viewMatrix*vec4(ro+rd*t0,1.0);
           gl_FragDepth=t0<=0.0||ce.w<=1e-4?0.0:clamp(ce.z/ce.w*.5+.5,0.0,1.0);
           gl_FragColor=vec4(col,alpha);
+          #endif
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }`});
+    // the depth pass: same shader and uniforms, same instances (the instance matrix is shared), no colour
+    this.depthMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:true,depthTest:true,colorWrite:false,side:THREE.DoubleSide,uniforms,
+      defines:{DEPTH_PASS:'',DUST_OPAQUE:DUST_VOLUME_OPAQUE.toFixed(3)},vertexShader:this.material.vertexShader,fragmentShader:this.material.fragmentShader});
     this.mesh=new THREE.InstancedMesh(this.geometry,this.material,this.capacity);this.mesh.name='m01-dust-volumes';
-    this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.mesh.count=0;this.mesh.frustumCulled=false;this.mesh.visible=false;this.mesh.renderOrder=2;
+    this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);this.mesh.count=0;this.mesh.frustumCulled=false;this.mesh.visible=false;this.mesh.renderOrder=DUST_VOLUME_ORDER.color;
+    this.depthMesh=new THREE.InstancedMesh(this.geometry,this.depthMaterial,this.capacity);this.depthMesh.name='m01-dust-volumes-depth';
+    this.depthMesh.instanceMatrix=this.mesh.instanceMatrix;this.depthMesh.count=0;this.depthMesh.frustumCulled=false;this.depthMesh.visible=false;this.depthMesh.renderOrder=DUST_VOLUME_ORDER.depth;
     this.dummy=new THREE.Object3D();this.pickIndex=new Int16Array(this.capacity);this.pickDistance=new Float32Array(this.capacity);
-    parent.add(this.mesh);
+    parent.add(this.mesh);parent.add(this.depthMesh);
   }
   /** How many clouds the quality tier draws as volumes (the rest of the list, if longer, keeps the soft puffs of the atmosphere). */
   poolFor(quality){return DUST_VOLUME_POOL[quality]??DUST_VOLUME_POOL.medium;}
@@ -98,8 +120,8 @@ export class M01DustVolumes{
       this.dummy.position.set(c.x,y0+H*.5,c.z);this.dummy.rotation.set(0,0,0);this.dummy.scale.set(c.r*2,H,c.r*2);this.dummy.updateMatrix();
       this.mesh.setMatrixAt(k,this.dummy.matrix);this.density.setX(k,c.density);
     }
-    this.drawn=n;this.mesh.count=n;this.mesh.visible=n>0;
+    this.drawn=n;this.mesh.count=this.depthMesh.count=n;this.mesh.visible=this.depthMesh.visible=n>0;
     if(n>0){this.mesh.instanceMatrix.needsUpdate=true;this.density.needsUpdate=true;}
   }
-  dispose(){this.mesh.removeFromParent();this.mesh.dispose();this.geometry.dispose();this.material.dispose();}
+  dispose(){this.mesh.removeFromParent();this.depthMesh.removeFromParent();this.mesh.dispose();this.depthMesh.dispose();this.geometry.dispose();this.material.dispose();this.depthMaterial.dispose();}
 }

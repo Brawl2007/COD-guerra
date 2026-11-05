@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {M01Atmosphere} from '../src/render/m01-atmosphere.js';
-import {M01DustVolumes,DUST_VOLUME_K} from '../src/render/m01-dust-volume.js';
+import {M01DustVolumes,DUST_VOLUME_K,DUST_VOLUME_ORDER,DUST_VOLUME_OPAQUE} from '../src/render/m01-dust-volume.js';
 import {DUST} from '../src/game/m01-dust.js';
 test('damage presentation is bounded, frozen at pause, reconstructible and never mutates source state',()=>{
  const original=globalThis.document;globalThis.document={createElement:()=>({getContext:()=>({createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){}})})};
@@ -103,4 +103,26 @@ test('dust volumes: the depth written is where the eye ray enters the cylinder, 
   assert.match(fs,/gl_FragDepth\s*=\s*t0<=0\.0/,'depth 0 only when t0 is 0 (eye inside the cylinder)');
   assert.match(fs,/uniform mat4 projectionMatrix/,'the fragment stage declares the projection');
  }finally{v.dispose();}
+});
+
+test('dust volumes: drawn before the particle batches (renderOrder 0), with a depth pass after the colour pass, so effects in front of a cloud composite over it and effects behind its near-opaque part are rejected',()=>{
+ const scene=new THREE.Scene(),v=new M01DustVolumes(scene);
+ try{
+  // three.js draws the transparent list by renderOrder first, then by distance: the sprites of flash/fire/smoke/dust and the smoke columns (billboardBatch) are renderOrder 0
+  assert.ok(v.mesh.renderOrder<0,'the colour pass is drawn before every renderOrder-0 particle batch');
+  assert.ok(v.depthMesh.renderOrder>v.mesh.renderOrder&&v.depthMesh.renderOrder<0,'the depth pass follows the colour pass, still before the particle batches');
+  assert.equal(v.mesh.renderOrder,DUST_VOLUME_ORDER.color);assert.equal(v.depthMesh.renderOrder,DUST_VOLUME_ORDER.depth);
+  assert.ok(v.mesh.renderOrder>-1,'after the ground marks and embers (renderOrder -3..-1)');
+  assert.equal(v.material.depthWrite,false,'the colour pass writes no depth (thin dust lets what is behind it show through)');
+  assert.equal(v.depthMaterial.depthWrite,true);assert.equal(v.depthMaterial.colorWrite,false);assert.equal(v.depthMaterial.transparent,true,'in the transparent list, after the colour pass');
+  assert.ok(v.depthMaterial.uniforms===v.material.uniforms,'one set of uniforms (steps, noise, time) for both passes');
+  assert.ok(v.depthMesh.instanceMatrix===v.mesh.instanceMatrix&&v.depthMesh.geometry===v.mesh.geometry,'the same instances');
+  assert.ok('DEPTH_PASS' in v.depthMaterial.defines&&!('DEPTH_PASS' in (v.material.defines??{})));
+  assert.ok(v.depthMaterial.fragmentShader.includes('#ifdef DEPTH_PASS')&&v.depthMaterial.fragmentShader.includes('DUST_OPAQUE'));
+  assert.ok(Number(v.depthMaterial.defines.DUST_OPAQUE)>.5&&Math.abs(Number(v.depthMaterial.defines.DUST_OPAQUE)-DUST_VOLUME_OPAQUE)<1e-3);
+  const clouds=[{x:0,y:0,z:0,r:16,h:12,density:1}];
+  v.update(clouds,1,'high',1,1);assert.equal(v.depthMesh.count,1);assert.equal(v.depthMesh.visible,true);
+  v.update(clouds,0,'high',1,1);assert.equal(v.depthMesh.count,0);assert.equal(v.depthMesh.visible,false);
+ }finally{v.dispose();}
+ assert.equal(scene.children.length,0,'dispose removes both passes');
 });
