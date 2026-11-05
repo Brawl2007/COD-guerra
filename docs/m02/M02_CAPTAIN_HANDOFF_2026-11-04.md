@@ -197,6 +197,32 @@ A troca de semente no m02-09 não esconde nenhum defeito.
 
 **Suspeito:** com dt de 1/60, ou nos perfis soldado e veterano, o MissionBot fica preso no C03 por causa da moral do EA1.
 
+**FIX-CD, integrado em `da599c7`. Testes:**
+- `tests/m02-*.test.js`: **319/319** (197 s).
+- Build OK.
+- Browser M02: **2 passed (3,1 min)**, N0 30/30.
+- Os ficheiros da M01 não mudaram.
+
+**Correções, com a prova antes → depois:**
+- Instantes da simulação arredondados para baixo (`instantAt`): cp_c e cp_d perdidos passam de 20/40 a 0/40; Digit0 passa de 10/30 a 0/30.
+- O SP03 passa a ferir: dano de 60 → 8 conforme a distância.
+- Já não se grava nenhum checkpoint com o Piotr morto. KeyM é recusado depois da falha, e há 0 spam.
+- cp_a passa a ser gravado no 1.º avanço antes do contacto, e cp_d no 1.º momento abrigado entre C10 e C12 (I3 pp. 33–34).
+  - O reinício passa a usar o checkpoint mais recente.
+  - Espiral de morte: veterano 31337 passa de 7/36 a 36/36 sobrevivências.
+- A graça F1 deixa de depender do dt, e a dificuldade entra no snapshot como na M01.
+- C06: os volumes passam a LOST depois de 60 s sem portador e sem hostis. O prazo de 60 s é **escolha do agente**.
+- `lis_status` fica nulo durante a missão.
+- Defeito real encontrado pelo bot a 1/60: os aliados batiam na parede antes de uma porta fechada. Passam a ir primeiro à porta.
+- Teste de missão completa a dt 1/60 em recruta.
+
+**Pendentes do FIX-CD:**
+- **Spawn sob fogo no C06:** em soldado e veterano, a dt 1/60, o Piotr morre 2 s depois de entrar, em (0,85), à vista do EB1.
+- O entulho do SP03 pode aparecer em cima do Piotr.
+- Se o Piotr nunca se abrigar, o cp_d não é gravado e o reinício cai no cp_c.
+- A moral do EA0 (D2: recuo para oeste) não está feita.
+- LG vulneráveis, ordens nas Áreas B e C e `essential`: não feitos, ficam por decidir.
+
 **Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
 morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
 morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
@@ -224,7 +250,8 @@ morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 | 6–7 Roteiro C e set pieces J/E/F | **Integrado**: merge `07999a4` (`bb0cbf4`…`85dea7a`) | Ver lista abaixo |
 | 8 Combate D | **Integrado**: merge `edc51ad` (`4cedca2`…`46b59de`) | Ver lista abaixo |
 | Revisão adversarial do roteiro C e do combate D | **REJEITADO**, 2 P1 (ver abaixo) | Só leitura; provas em `scratchpad/review-cd/` |
-| FIX-CD correções da revisão | **EM CURSO**: é o único agente ativo | worktree `m02-fix-cd`, base `edc51ad` |
+| FIX-CD correções da revisão | **Integrado**: merge `da599c7` (`fd66640`…`ef3b49e`) | Ver lista abaixo |
+| Verificação independente do FIX-CD | **EM CURSO**: é o único agente ativo | Só leitura; `scratchpad/review-cd-verify/` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
