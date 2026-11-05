@@ -1062,7 +1062,6 @@ function adoptPlanGoal(sim, ally, nodeIds, stateOf) {
 }
 
 export function updatePolishSquad(sim, dt) {
-  const coverById = sim.coverNodesById;
   const activeAxis = sim.flags['m02.axis'] || (sim.squadOrder?.axis ?? 'ditch');
   const mgGunner = sim.enemies.find((e) => e.id === 'DE-A05' && e.alive && !e.nonCombatant);
   // Boca da MG34 de B02 (fonte única: layout.mgEmplacement). A secção supre a abertura: ponto de vista 0,15 m fora, ponto de mira 0,20 m dentro.
