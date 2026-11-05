@@ -125,12 +125,13 @@ import opening from './fixtures/m01-opening-gameplay-baseline.json' with {type:'
 const OPENING_DELTA=/^\$\.(state|checkpoint)\.(actors\.\d+\.act|timers\.opening)(\.|$)/,OPENING_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.facing$/;   // amendment 20, as measured
 import aidDust from './fixtures/m01-aid-dust-gameplay-baseline.json' with {type:'json'};
 const AIDDUST_DELTA=/^\$\.(state|checkpoint)\.sectors\.damage\.\d+\.dust(\.|$)/,AIDDUST_BEHAVIOUR=/^\$\.(state|checkpoint)\.actors\.\d+\.x$/;   // amendment 21, as measured
-// 2026-11-05 (golden amendment 22, the act-1 consistency audit and European Portuguese of the mission texts, and the search of a man who holds a line): the texts of mission.json moved (the role of Pawlak, the lines, the notes, the
-// debrief), the simulation gained the search from hold (tactics.search.hold, deckSearch) and the deck module validates the new flag, so the aid-dust golden of amendment 21 is history since then (it pins the simulation of 101b572a).
-// The new golden is a no-behaviour-difference one like amendment 10's: with Pawlak's old role put back and the dialogue state stripped the two simulations are byte identical on every tick of both routes (no German
-// searches on them: the cause of a lost sight comes when the man is already on his deepest line).
+// 2026-11-05 (golden amendment 22, the act-1 consistency audit and European Portuguese of the mission texts, the search of a man who holds a line, and the German supporting round that gives the search its cause): the texts of
+// mission.json moved (the role of Pawlak, the lines, the notes, the debrief), the simulation gained the search from hold (tactics.search.hold, deckSearch) and the supporting round (tactics.support, updateDeckSupport) and the
+// deck module validates both keys, so the aid-dust golden of amendment 21 is history since then (it pins the simulation of 101b572a). The first version of this amendment (texts + search from hold only) was a
+// no-behaviour-difference one and the independent review rejected it: the search stayed at 0 on both golden routes. The new golden is a BEHAVIOUR amendment: the two simulations differ from the first tick by Pawlak's role;
+// with his old role, the old objective text and the dialogue state stripped from both frames the first difference is the crater of the supporting round (sectors.damage.<n>), and the German search happens on both routes.
 import act1Texts from './fixtures/m01-act1-texts-gameplay-baseline.json' with {type:'json'};
-const ACT1TEXTS_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.role$/;   // amendment 22, as measured
+const ACT1TEXTS_DELTA=/^\$\.(state|checkpoint)\.actors\.\d+\.role$/,ACT1TEXTS_BEHAVIOUR=/^\$\.(state|checkpoint)\.sectors\.damage\.\d+$/;   // amendment 22, as measured
 const current=act1Texts;   // the golden of the live simulation
 /** 2026-11-05 (golden amendment 22): the simulation, the mission data and the deck module moved again, so the golden of amendment 21 is history for those three files. */
 const MOVED_BY_22=new Set(["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-deck-assault.js"]);
@@ -864,41 +865,51 @@ test('the aid-dust golden (amendment 21) chains to the opening golden, pins the 
   for(const r of account.otherRoutes){assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);assert.equal(r.clipping,0);assert.equal(r.stacked,0);}
 });
 
-test('the act-1 texts and search golden (amendment 22) chains to the aid-dust golden, pins the live simulation, the mission data and the deck module, and cites its lockstep account: nothing that happens differs',()=>{
+test('the act-1 texts and German search golden (amendment 22) chains to the aid-dust golden, pins the live simulation, the mission data and the deck module, and cites its lockstep account: the plot is the predecessor\'s, the fight is not',()=>{
   const sha=url=>createHash('sha256').update(readFileSync(new URL(url,import.meta.url))).digest('hex');
-  const account=integrationAmendment(act1Texts,{amendment:'22',task:'M01-ACT1-TEXTS-SEARCH-V1',delta:'texts+search-hold',previous:aidDust,previousFile:'m01-aid-dust-gameplay-baseline.json',
+  const account=integrationAmendment(act1Texts,{amendment:'22',task:'M01-ACT1-TEXTS-SEARCH-V1',delta:'texts+support-search',previous:aidDust,previousFile:'m01-aid-dust-gameplay-baseline.json',
     predecessor:'101b572af0c1f8489942b8ce3eadee5016ac02c4',deltaFields:ACT1TEXTS_DELTA});
   assert.equal(sha('../src/game/m01-simulation.js'),act1Texts.sourceSha256,'the golden pins the live simulation');
   for(const [f,h] of Object.entries(act1Texts.inputsSha256))if(h!==null)assert.equal(h,sha('../'+f),`and ${f}`);
   assert.deepEqual(account.changedGameplayInputsSincePredecessor,["src/game/m01-simulation.js", "missions/m01-tczew/mission.json", "src/game/m01-deck-assault.js"],
-    'what moved since 101b572a: the simulation (deckSearch from hold), the mission data (the texts, the role of Pawlak, tactics.search.hold) and the deck module (the validator of the flag); no other pinned input moved');
+    'what moved since 101b572a: the simulation (deckSearch from hold, updateDeckSupport, the burst\'s smoke, the save validator), the mission data (the texts, the role of Pawlak, tactics.search.hold and tactics.support) and the deck module (the validators of the two keys); no other pinned input moved');
   for(const f of Object.keys(aidDust.inputsSha256)){
     if(MOVED_BY_22.has(f))assert.notEqual(act1Texts.inputsSha256[f],aidDust.inputsSha256[f],`${f} moved with amendment 22`);
     else assert.equal(act1Texts.inputsSha256[f],aidDust.inputsSha256[f],`${f} did not move with amendment 22`);
   }
-  // What the amendment is: nothing that happens. The two simulations differ from the very first tick by a word (Pawlak is a MESSENGER now, he was a RADIO_OPERATOR) and, as the lines are written in European Portuguese, by
-  // the length of some subtitles; with the old role put back and the dialogue state stripped from both frames (the list of amendment 10) they are byte identical on EVERY tick of both routes, events included.
-  assert.equal(account.noBehaviourDifference,true);
-  assert.deepEqual(account.stripped,['actors[staszek_pawlak].role MESSENGER -> RADIO_OPERATOR (put back in the live frame)','dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»']);
-  const expected={false:{ticks:26170,real:1308.5,to0600:562.95,survivors:12,health:100,rounds:90.24},true:{ticks:22326,real:1116.3,to0600:543.2,survivors:18,health:100,rounds:59.39}};
+  // What the amendment is: a BEHAVIOUR amendment (the first version of it, texts and a search that never acted, was a no-behaviour one and the independent review rejected it). The two simulations differ from the very first tick by a
+  // word (Pawlak is a MESSENGER now, he was a RADIO_OPERATOR) and by the length of some subtitles; with the old role, the old objective text and the dialogue state put back / stripped from both frames (the list of amendment 10) the first
+  // difference is the crater of the German supporting round (sectors.damage.<n>), and from there the fight is another fight: the Poles are hidden from the Germans for ~27 s and the men of the assault search. The plot is the predecessor\'s.
+  assert.equal(account.noBehaviourDifference,undefined,'a behaviour amendment');
+  assert.equal(account.behaviourFields,ACT1TEXTS_BEHAVIOUR.source);assert.equal(account.behaviourActors,'^(de_spans_[4-9])$');
+  assert.deepEqual(account.stripped,['actors[staszek_pawlak].role MESSENGER -> RADIO_OPERATOR (put back in the live frame)','mission.text «até ao socorrista» -> «até o socorrista» (put back in the live frame)','dialogueConsumed','dialogueQueue','subtitle','timers.barks','timers.guide','timers.guideDist','events: message «Zieliński chama-o da trincheira…»','events: message «Zieliński: …mude de cobertura»']);
+  const expected={false:{ticks:25560,old:26170,real:1278,to0600:562.95,survivors:12,health:92,rounds:89.06,roundsOld:90.24,behaviour:14477,behaviourClock:723.85,blocks:0,searches:5,moved:6,oldReal:1308.5,oldHealth:100},true:{ticks:21241,old:22326,real:1062.05,to0600:543.2,survivors:18,health:92,rounds:60.05,roundsOld:59.39,behaviour:14082,behaviourClock:704.1,blocks:0,searches:1,moved:6,oldReal:1116.3,oldHealth:100}};
   for(const r of account.routes){
     const e=expected[r.support];
     assert.equal(r.firstDifference.tick,1);assert.equal(r.firstDifference.battleClock,'04:30:44');assert.equal(r.firstDifference.actor,'staszek_pawlak');assert.match(r.firstDifference.path,/^\$\.state\.actors\.\d+\.role$/);
-    assert.equal(r.firstDifference.predecessor,'RADIO_OPERATOR');assert.equal(r.firstDifference.live,'MESSENGER');assert.equal(r.identicalBlocks,0);assert.equal(r.identicalTicksBeforeIt,0);
-    assert.equal(r.firstBehaviourDifference,null,'not one tick differs once the role and the dialogue state are put back');
-    assert.equal(r.oldTicks,e.ticks);assert.equal(r.newTicks,e.ticks,'not one tick more or less');
-    assert.deepEqual(r.endState.live,r.endState.predecessorOwnRoute,'the end of the route is the predecessor\'s');assert.deepEqual(r.endState.live,{ticks:e.ticks,real:e.real,to0600:e.to0600,survivors:e.survivors,playerHealth:e.health});
-    assert.deepEqual(r.movedEvents,[],'no consumed event moved by a tick');
-    for(const ev of r.battleClockEvents){assert.equal(ev.battle.live,ev.battle.predecessor,`${ev.id}: the same battle clock`);assert.equal(ev.real.live,ev.real.predecessor,`${ev.id}: the same real time`);}
-    assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);assert.equal(r.measured.germanRoundsPerRealMin.live,e.rounds);assert.equal(r.measured.germanRoundsPerRealMin.predecessor,e.rounds);
-    // The German search on the golden routes: none, on either side (the Poles are never lost: the grenade of the control route comes when every man is on his deepest line, and the support pilot keeps the assault away).
-    assert.deepEqual(r.measured.searches,{predecessor:0,live:0});
+    assert.equal(r.firstDifference.predecessor,'RADIO_OPERATOR');assert.equal(r.firstDifference.live,'MESSENGER');assert.equal(r.identicalBlocks,e.blocks);assert.equal(r.identicalTicksBeforeIt,0);
+    // the first difference of the BEHAVIOUR: the crater of the supporting round, written in the tick the round falls (06:09:30 of the battle clock: the gate holds it), missing in the predecessor
+    assert.match(r.firstBehaviourDifference.path,ACT1TEXTS_BEHAVIOUR);assert.equal(r.firstBehaviourDifference.actor,null);assert.equal(r.firstBehaviourDifference.tick,e.behaviour);assert.equal(r.firstBehaviourDifference.clock,e.behaviourClock);
+    assert.equal(r.firstBehaviourDifference.battleClock,'06:09:30');assert.equal(r.firstBehaviourDifference.predecessor,null);
+    assert.equal(r.firstBehaviourDifference.live.id,'de_support_shell_1');assert.deepEqual(r.firstBehaviourDifference.live.dust,{r:8,h:7,d:1,life:30});assert.equal(r.firstBehaviourDifference.live.x,199);assert.equal(r.firstBehaviourDifference.live.z,38.7);
+    assert.equal(r.oldTicks,e.old);assert.equal(r.newTicks,e.ticks);
+    // the plot of the predecessor on its own route (the tool proved the 12 objectives, CP-A..D, 07:05, the consumed events, the plot flags and the survivors); the real times and the health of the pilot are not the plot
+    assert.equal(r.endState.live.survivors,r.endState.predecessorOwnRoute.survivors);assert.deepEqual(r.endState.live,{ticks:e.ticks,real:e.real,to0600:e.to0600,survivors:e.survivors,playerHealth:e.health});
+    assert.equal(r.endState.predecessorOwnRoute.real,e.oldReal);assert.equal(r.endState.predecessorOwnRoute.playerHealth,e.oldHealth);assert.equal(r.endState.live.to0600,r.endState.predecessorOwnRoute.to0600,'nothing before the round moves: 06:00 is reached at the same real time');
+    assert.equal(r.measured.clipping,0);assert.equal(r.measured.stacked,0);assert.equal(r.measured.germanRoundsPerRealMin.live,e.rounds);assert.equal(r.measured.germanRoundsPerRealMin.predecessor,e.roundsOld);
+    assert.equal(r.movedEvents.length,e.moved,'the events after the round fire at another real time (the fight is shorter or longer); none before it');
+    for(const ev of r.battleClockEvents)assert.equal(ev.battle.live,ev.battle.predecessor,`${ev.id}: the same battle clock`);
+    // The German search on the golden routes: the predecessor made none; the live route makes it, and it is the round that makes it
+    assert.deepEqual(r.measured.searches,{predecessor:0,live:e.searches});assert.deepEqual(r.measured.supportRounds,{predecessor:0,live:1});
   }
-  for(const r of account.otherRoutes){
+  assert.deepEqual(account.routes.map(r=>r.measured.searches.live),[5,1],'five searches on the control golden route, one on the support golden route');
+  const others=[[3, false, 3, 1, 1318.75, 1301.25], [3, true, 1, 1, 1112.9, 1133], [7, false, 2, 1, 1334.65, 1311.45], [7, true, 1, 1, 1116.3, 1062.05]];   // [seed, support, searches, rounds, real predecessor, real live]
+  account.otherRoutes.forEach((r,i)=>{
     assert.equal(r.survivors.live,r.survivors.predecessor);assert.deepEqual(Object.values(r.same),[true,true,true,true],`seed ${r.seed} support ${r.support}: the plot of the predecessor`);
-    assert.equal(r.real.live,r.real.predecessor,`seed ${r.seed} support ${r.support}: the same real time`);assert.equal(r.repairComplete.live,r.repairComplete.predecessor);assert.equal(r.clipping,0);assert.equal(r.stacked,0);
-    assert.deepEqual(r.searches,{predecessor:0,live:0});
-  }
+    assert.equal(r.clipping,0);assert.equal(r.stacked,0);assert.equal(r.repairComplete.live,r.repairComplete.predecessor,'the repair is before the fight: the same real time');
+    const [seed,support,searches,rounds,realOld,realNew]=others[i];assert.deepEqual([r.seed,r.support],[seed,support]);
+    assert.deepEqual(r.searches,{predecessor:0,live:searches});assert.deepEqual(r.supportRounds,{predecessor:0,live:rounds});assert.deepEqual([r.real.predecessor,r.real.live],[realOld,realNew]);
+  });
 });
 
 for(const expected of current.routes)test(`all gameplay bytes hashed each tick against the live golden (${current.task}, ${current.amendment}): seed ${expected.seed}, support ${expected.support}`,()=>{
