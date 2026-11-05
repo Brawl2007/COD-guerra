@@ -34,6 +34,9 @@ import {
   ENEMY_GRENADE_WARNING_SEC,
   ENEMY_GRENADE_RADIUS_M,
   ENEMY_GRENADE_MAX_THROW_M,
+  SQUAD_ORDER_TYPES,
+  LEGACY_SQUAD_ORDER_TYPES,
+  resolveSquadOrder,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -334,6 +337,22 @@ export function validateM02Snapshot(snap) {
   for (const key of ['mgState', 'routeProgress', 'objective', 'squadOrder', 'dialogue', 'audiovisual', 'supplies']) {
     if (!isPlainObject(snap[key])) return { valid: false, reason: `Bloco ${key} ausente ou inválido no snapshot.` };
   }
+  // D4: ordem à secção — `auto`, `cover` ou `advance` (as de versões anteriores, `suppress`/`flank_east`, restauram-se como `auto`).
+  const order = snap.squadOrder;
+  const orderHasTarget = order.type === 'cover' || order.type === 'advance';
+  if (
+    !(SQUAD_ORDER_TYPES.includes(order.type) || LEGACY_SQUAD_ORDER_TYPES.includes(order.type)) ||
+    (order.issuedAt !== undefined && !(typeof order.issuedAt === 'number' && Number.isFinite(order.issuedAt) && order.issuedAt >= 0)) ||
+    (orderHasTarget &&
+      (typeof order.nodeId !== 'string' ||
+        !order.nodeId ||
+        !Number.isFinite(order.x) ||
+        !Number.isFinite(order.z) ||
+        !isPlainObject(order.assignments) ||
+        Object.entries(order.assignments).some(([id, node]) => typeof node !== 'string' || !snap.allies.some((a) => a.id === id))))
+  ) {
+    return { valid: false, reason: `Ordem à secção inválida no snapshot: ${order.type}` };
+  }
   if (!isPlainObject(snap.areaB) || !isPlainObject(snap.areaC)) {
     return { valid: false, reason: 'Estado das áreas B/C ausente no snapshot.' };
   }
@@ -570,6 +589,8 @@ export class M02BenchSimulation {
    * não é reposto por um checkpoint nem por reset(); privado para não contar como estado vivo (como os campos acima).
    */
   #difficultyId = M02_DIFFICULTY_SIM_DEFAULT;
+  /** Resultado da última ordem à secção, para a bancada o mostrar (dica de apresentação; não é estado de jogo nem entra no snapshot). */
+  #lastOrderFeedback = null;
 
   /**
    * @param {number} seed
@@ -599,6 +620,11 @@ export class M02BenchSimulation {
     this.combatLog = [];
     this.checkpoints = new Map();
     this.reset(startScene);
+  }
+
+  /** Última ordem à secção dada (aceite ou recusada, com o motivo) — só para a bancada mostrar o resultado. */
+  get lastOrderFeedback() {
+    return this.#lastOrderFeedback ? { ...this.#lastOrderFeedback } : null;
   }
 
   /** Perfil de dificuldade em vigor (objeto imutável de m02-difficulty.js). */
@@ -1027,26 +1053,31 @@ export class M02BenchSimulation {
     return { x: this.player.x, y: this.player.y, z: this.player.z, angle: this.player.angle };
   }
 
-  issueSquadOrder(type, axis = null) {
-    const valid = ['auto', 'suppress', 'advance', 'flank_east'];
-    if (!valid.includes(type)) return null;
-    const resolvedAxis = axis ?? (type === 'flank_east' ? 'orchard' : this.flags['m02.axis'] ?? 'ditch');
-    this.squadOrder = {
-      type,
-      axis: resolvedAxis,
-      issuedAt: Number(this.clock.toFixed(2)),
-    };
-    if (!this.flags['m02.axis'] && (resolvedAxis === 'ditch' || resolvedAxis === 'orchard')) {
-      this.flags['m02.axis'] = resolvedAxis;
+  /**
+   * D4 (PDF p. 17): ordens do jogador à secção — só «cobrir aqui» (`cover`) e «avançar para ali» (`advance`); `auto` volta ao plano
+   * base de Gruca. `target`: id de um nó de cobertura, `{x, z}` ou null (seleção contextual: a cobertura mais próxima de Piotr / a
+   * posição à frente da mira). A ordem é aceite só para uma posição válida e alcançável (ver resolveSquadOrder); senão devolve null
+   * e emite `squad-order-rejected` com o motivo. Ordens que já não existem («suprimir», «flank_east») são recusadas.
+   */
+  issueSquadOrder(type, target = null) {
+    const result = resolveSquadOrder(this, type, target);
+    const clock = Number(this.clock.toFixed(2));
+    if (!result.ok) {
+      this.#lastOrderFeedback = { type: String(type), accepted: false, reason: result.reason, clock };
+      this.events.push({ type: 'squad-order-rejected', order: String(type), reason: result.reason, clock: this.clock });
+      this.combatLog.push({ clock, type: 'squad_order_rejected', order: String(type), reason: result.reason });
+      return null;
     }
-    if (type === 'suppress') {
-      this.dialogue.trigger('bz39_c02_01', this);
-    } else if (type === 'advance') {
-      this.dialogue.trigger('bz39_c03_01', this);
-    } else if (type === 'flank_east') {
-      this.dialogue.trigger('bz39_c02_01', this);
-    }
-    this.events.push({ type: 'squad-order', order: this.squadOrder, clock: this.clock });
+    this.squadOrder = result.order;
+    this.#lastOrderFeedback = { type, accepted: true, reason: null, clock, nodeId: result.order.nodeId ?? null };
+    this.events.push({ type: 'squad-order', order: structuredClone(this.squadOrder), clock: this.clock });
+    this.combatLog.push({
+      clock,
+      type: 'squad_order',
+      order: type,
+      nodeId: result.order.nodeId ?? null,
+      assignments: structuredClone(result.order.assignments ?? {}),
+    });
     return this.squadOrder;
   }
 
@@ -2068,9 +2099,8 @@ export class M02BenchSimulation {
     if (controls.interact) this.interactDoor();
     if (controls.fire) this.firePlayerWeapon(true);
     if (controls.grenade) this.throwGrenade();
-    if (controls.orderSuppress) this.issueSquadOrder('suppress');
+    if (controls.orderCover) this.issueSquadOrder('cover');
     if (controls.orderAdvance) this.issueSquadOrder('advance');
-    if (controls.orderFlank) this.issueSquadOrder('flank_east');
 
     runUpdateC01Contact(this);
     this.updateGrenades(dt);
@@ -2411,7 +2441,9 @@ export class M02BenchSimulation {
       mgState: snap.mgState,
       routeProgress: snap.routeProgress,
       flags: snap.flags,
-      squadOrder: snap.squadOrder,
+      squadOrder: LEGACY_SQUAD_ORDER_TYPES.includes(snap.squadOrder.type)
+        ? { type: 'auto', axis: null, issuedAt: snap.squadOrder.issuedAt ?? 0 } // ordem que já não existe: neutralizada
+        : snap.squadOrder,
       dialogue: snap.dialogue,
       horizon: snap.horizon,
       audiovisual: snap.audiovisual,
