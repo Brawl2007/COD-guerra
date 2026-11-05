@@ -1219,6 +1219,10 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   if (!sim.areaC.artilleryDetonated) detonateC10FixedArtillery(sim);
   if (!sim.areaC.c11Started) startC11LisAndLastGroup(sim);
 
+  // FIX-CD2: o SP03 forçado acima fere Piotr (D5 p. 18) e pode matá-lo. A falha avalia-se antes da conclusão: com Piotr morto a
+  // missão NÃO se marca concluída nem exporta para a M03 (o fim do lote regista `piotr_killed`). Devolve null como a recusa prévia.
+  if (sim.player.alive === false || sim.player.health <= 0) return null;
+
   if (lisOutcome) {
     assistLisInC11(sim, lisOutcome);
   } else if (reachedByGame) {
