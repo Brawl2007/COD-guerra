@@ -8,7 +8,7 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 //  - a slightly lifted ambient (`duskLift`) for the dusk act only, a function of the sun the act's own keyframes give.
 // Nothing here is read by the simulation, and nothing is built for an act without a withdrawal plan. The quality tier never removes the lanterns and their halos (they are the guidance); it removes the
 // ground pools and the plume on Low.
-export const DUSK=Object.freeze({postM:2.3,lanternM:.3,haloMin:1.1,haloMax:7.5,haloPerM:.02,liftHemi:.22,liftExposure:.06});
+export const DUSK=Object.freeze({postM:2.6,lanternM:.4,haloMin:2.2,haloMax:16,haloPerM:.045,liftHemi:.22,liftExposure:.06});
 const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
 
 /** 0 at the first minutes after sunset (alt >= -0.6 deg), 1 from -3.2 deg down: how far the dusk lift is applied. Pure. */
@@ -65,7 +65,7 @@ export class M01AreaDusk{
       for(const d of discs)d.dispose();this.pools.name='m01-area-dusk-pools';this.pools.renderOrder=1;this.group.add(this.pools);
     }
     // The town to the south-west burns low: glows behind its silhouette and one thin plume. Offsets from the exit band, in metres (+x east, +z south).
-    for(const [dx,dz,w,h,o,color] of [[-190,70,150,70,.2,'#ff7a30'],[-255,-15,200,90,.16,'#ff8c3c'],[-170,150,110,50,.13,'#ff6a28']]){
+    for(const [dx,dz,w,h,o,color] of [[-190,70,150,70,.42,'#ff7a30'],[-255,-15,200,90,.34,'#ff8c3c'],[-170,150,110,50,.28,'#ff6a28']]){
       const s=new THREE.Sprite(material(new THREE.SpriteMaterial({map:glow,color,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,fog:false,opacity:o})));
       s.position.set(centre.x+dx,groundY(centre.x+dx,centre.z+dz)+h*.32,centre.z+dz);s.scale.set(w,h,1);s.name='m01-area-dusk-town-glow';s.userData.base=o;this.group.add(s);this.townGlows.push(s);
     }

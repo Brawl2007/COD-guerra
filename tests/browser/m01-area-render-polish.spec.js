@@ -11,6 +11,7 @@ import {actCControls,ACT_C_TICK} from '../helpers/m01-act-c-route.js';
 // (a window blur pauses the loop; the renderer keeps drawing the same clock) on the frame it wants. A presentation check, not a playtest and not a frame-rate figure.
 // POLISH_OUT = output directory (the committed evidence, or a scratch directory for the «before» run); POLISH_ONLY = comma list of shots.
 const OUT=process.env.POLISH_OUT??new URL('../../docs/verification/m01-runtime/area-render-polish-2026-11-05/',import.meta.url).pathname;
+const QUALITIES=(process.env.POLISH_Q??'high,low').split(',');
 const ONLY=process.env.POLISH_ONLY?process.env.POLISH_ONLY.split(','):null;
 const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3';
 const live=sim=>({schema:3,missionId:'m01_tczew',act:sim.actId,carry:sim.carry,actSave:sim.snapshot()});
@@ -64,14 +65,14 @@ const setQuality=async(page,q)=>{await page.locator('#quality').selectOption(q,{
 const IMPACT_WATCHER=()=>{window.__flash=null;window.__seen={frames:0,maxFlash:0,err:null};const watch=()=>{let d;try{d=window.gameDiagnostics?.();window.__seen.frames++;window.__seen.maxFlash=Math.max(window.__seen.maxFlash,d?.m01?.battlefieldFx?.counts.flash??0);}catch(e){window.__seen.err=String(e);}if(d&&d.m01?.battlefieldFx?.counts.flash>0&&window.__flash===null){window.__flash={clock:d.clock,counts:{...d.m01.battlefieldFx.counts},light:d.m01.battlefieldFx.extraLights,kinds:{...d.m01.battlefieldFx.meta.kinds}};window.dispatchEvent(new Event('blur'));return;}requestAnimationFrame(watch);};requestAnimationFrame(watch);};
 const want=name=>!ONLY||ONLY.includes(name);
 const report={};
-// The shared software-GL machine sometimes runs out of GPU/network resources under load (ERR_INSUFFICIENT_RESOURCES, empty-log VALIDATE_STATUS shader errors). The unmodified build shows the same on the same scenes
+// The shared software-GL machine sometimes runs out of GPU/network resources under load (ERR_INSUFFICIENT_RESOURCES, empty-log VALIDATE_STATUS shader errors, GLTF textures whose blob could not be fetched). The unmodified build shows the same on the same scenes
 // (docs README), so they are counted in the report but are not what these specs assert; any OTHER page error fails the test.
-const ENV_ERROR=/ERR_INSUFFICIENT_RESOURCES|^THREE\.WebGLProgram: Shader Error \d+ - VALIDATE_STATUS false/;
+const ENV_ERROR=/ERR_INSUFFICIENT_RESOURCES|^THREE\.GLTFLoader: Couldn't load texture blob:|^THREE\.WebGLProgram: Shader Error \d+ - VALIDATE_STATUS false/;
 const real=errors=>errors.filter(e=>!ENV_ERROR.test(e));
 // a failed test must not leave its page (and its WebGL context) open for the next one
 test.afterEach(async({browser})=>{for(const c of browser.contexts())await c.close();});
 
-for(const quality of ['high','low']){
+for(const quality of QUALITIES){
   test(`shell flash at the impact frame (${quality})`,async({browser})=>{
     test.skip(!want('shell'));
     test.setTimeout(400000);
@@ -86,7 +87,7 @@ for(const quality of ['high','low']){
     expect(real(errors)).toEqual([]);await page.close();
   });
 }
-for(const quality of ['high','low']){
+for(const quality of QUALITIES){
   test(`stretcher carry (${quality})`,async({browser})=>{
     test.skip(!want('carry'));
     test.setTimeout(400000);
@@ -100,7 +101,7 @@ for(const quality of ['high','low']){
   });
 }
 for(const [name,file] of [['duskLine','dusk-line'],['duskTown','dusk-town-glow'],['duskExit','dusk-exit-50m'],['duskExitFar','dusk-exit-130m']]){
-  for(const quality of ['high','low']){
+  for(const quality of QUALITIES){
     test(`${file} (${quality})`,async({browser})=>{
       test.skip(!want(name));
       test.setTimeout(400000);
