@@ -6,11 +6,13 @@
 //   dust      the sight questions the AI asked that met a cloud (`sim.dustRays.checked`), the ones the cloud answered "no" to (`blocked`), the clouds that stood (distinct craters), and when the first ray was blocked
 //   aid       the wounded men of the garrison (state WOUNDED at any time), the calls they made, those the director let the player hear (dlg_m01_220-222 on the subtitle), the men treated, carried and laid, the
 //             medic's jobs, and where the medic stood at 06:00 and at 06:03:30 (he must be free at the aid post for Bąk)
-//   fire      the stick grenades thrown and exploded, the searches (deck-tactic `search`), the closest the assault came to a Polish body on the deck
+//   fire      the stick grenades thrown and exploded, the searches (deck-tactic `search`), the closest the assault came to a Polish body on the deck, and (golden amendment 22) `lostSight`: how often a man of the
+//             deck assault asked for the search because he had no Pole in sight (deckSearch is called), how many of them were on their deepest line (nowhere left to go) and how many searched
 import {readFileSync,appendFileSync,existsSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {route} from '../../tests/helpers/m01-route.js';
-import {seconds} from '../../src/game/m01-simulation.js';
+import {M01Simulation,seconds} from '../../src/game/m01-simulation.js';
+import {deckLines,deckLineNumber} from '../../src/game/m01-deck-assault.js';
 
 const ROOT=resolve(import.meta.dirname,'../..');
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
@@ -28,6 +30,7 @@ if(arg('--summary')){
       aid:{woundedPerRoute:mean(pick(r=>r.aid.wounded)),callsPerRoute:mean(pick(r=>r.aid.calls)),callsHeardPerRoute:mean(pick(r=>r.aid.callsHeard)),treatedPerRoute:mean(pick(r=>r.aid.treated)),carriedPerRoute:mean(pick(r=>r.aid.carried)),
         routesWithATreatedMan:rs.filter(r=>r.aid.treated>0).length,medicFreeAtBak:rs.filter(r=>r.aid.at0603&&r.aid.at0603.task===null&&r.aid.at0603.job===false&&r.aid.at0603.distToPostM<3).length},
       fire:{grenadesThrownPerRoute:mean(pick(r=>r.fire.grenades)),routesWithAGrenade:rs.filter(r=>r.fire.grenades>0).length,searchesPerRoute:mean(pick(r=>r.fire.searches)),routesWithASearch:rs.filter(r=>r.fire.searches>0).length,
+        lostSight:{askedPerRoute:mean(pick(r=>r.fire.lostSight?.calls??0)),routesThatAsked:rs.filter(r=>(r.fire.lostSight?.calls??0)>0).length,askedOnTheDeepestLine:pick(r=>r.fire.lostSight?.atDeepestLine??0).reduce((a,b)=>a+b,0),asked:pick(r=>r.fire.lostSight?.calls??0).reduce((a,b)=>a+b,0)},
         closestToAPostM:{mean:mean(pick(r=>r.fire.closestToPostM)),min:Math.min(...pick(r=>r.fire.closestToPostM))}},
       completeRoutes:rs.filter(r=>r.complete).length,survivors:[...new Set(pick(r=>r.survivors))]};
   }
@@ -37,13 +40,22 @@ if(arg('--summary')){
 const DEFAULT_ROUTES=[19390901,1,2,3,4,5,6,7,8,9,10,11].flatMap(seed=>[`${seed}:0`,`${seed}:1`]).join(',');
 const routes=(arg('--routes')??DEFAULT_ROUTES).split(',').map(s=>{const [seed,mode]=s.split(':');return {seed:Number(seed),support:mode==='1',key:`${seed}:${mode}`};});
 const label=arg('--label')??'pkg2',jsonl=arg('--jsonl');
+/** Golden amendment 22: counts the calls of deckSearch (a man of the deck assault with no Pole in sight at his trigger) without changing what it does. */
+let asked={calls:0,atDeepestLine:0,searched:0};
+class Counting extends M01Simulation{
+  deckSearch(a){
+    const deepest=deckLineNumber(a)===deckLines(a).length-1,r=super.deckSearch(a);   // (the line before the call: a search from hold changes it)
+    asked.calls++;if(deepest)asked.atDeepestLine++;if(r)asked.searched++;return r;
+  }
+}
 const done=new Set(jsonl&&existsSync(jsonl)?readFileSync(jsonl,'utf8').split('\n').filter(l=>l.trim()).map(l=>JSON.parse(l)).filter(r=>r.label===label).map(r=>r.key):[]);
 
 for(const r of routes){
   if(done.has(r.key))continue;
+  asked={calls:0,atDeepestLine:0,searched:0};
   const wounded=new Set(),heard=new Set(),clouds=new Set(),treated=new Set(),carried=new Set(),laid=new Set(),jobs=new Set();
   let calls=0,callsHeard=0,grenades=0,exploded=0,searches=0,closest=Infinity,firstBlocked=null,at0600=null,at0603=null,lastN=new Map(),lastSub=null;
-  const result=route(r.seed,{support:r.support,onStep:({sim,events})=>{
+  const result=route(r.seed,{support:r.support,Simulation:Counting,onStep:({sim,events})=>{
     for(const e of events){
       if(e.type==='enemy-grenade')grenades++;
       if(e.type==='m01-blast'&&e.kind==='grenade'&&e.by!==undefined)exploded++;
@@ -72,7 +84,7 @@ for(const r of routes){
   const row={label,key:r.key,seed:r.seed,support:r.support,
     dust:{checked:sim.dustRays.checked,blocked:sim.dustRays.blocked,clouds:clouds.size,firstBlocked},
     aid:{wounded:wounded.size,calls,callsHeard,treated:treated.size,carried:carried.size,laid:laid.size,jobs:jobs.size,at0600,at0603},
-    fire:{grenades,exploded,searches,closestToPostM:round(closest,1)},
+    fire:{grenades,exploded,searches,closestToPostM:round(closest,1),lostSight:{...asked}},
     complete:sim.mission.complete,survivors:sim.flags['m01.east_platoon_survivors'],playerHealth:sim.player.health,routeRealSec:round(sim.clock,1)};
   console.log(JSON.stringify(row));
   if(jsonl)appendFileSync(jsonl,JSON.stringify(row)+'\n');
