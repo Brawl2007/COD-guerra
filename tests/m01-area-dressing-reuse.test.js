@@ -105,3 +105,12 @@ test('dispose frees the instance buffers of every InstancedMesh (heaps, clods, c
   d.dispose();
   for(const [m,c] of hits)assert.ok(c.n>=1,`${m.name} released`);
 }));
+
+test('the act of the same area asks the terrain for far fewer heights than a fresh dressing (no new field/trees/stubble/wreck raycasts)',()=>withCanvas(()=>{
+  const count=(world,reuse)=>{let n=0;const d=new M01AreaDressing(new THREE.Scene(),world,{surface:()=>{n++;return -3.2;},quality:'high',reuse});return {n,d};};
+  const first=count(worlds[0],null),fresh=count(worlds[1],null),reused=count(worlds[1],first.d);
+  if(process.env.DRESSING_COUNT)console.log('terrain height queries: first build',first.n,'fresh build',fresh.n,'same-area reuse',reused.n);
+  assert.ok(first.n>1500,`a fresh dressing queries the terrain for its field, trees and stubble (${first.n})`);
+  assert.ok(reused.n<first.n/2,`the reusing dressing queries only for its own earthworks (${reused.n} against ${first.n})`);
+  first.d.dispose();fresh.d.dispose();reused.d.dispose();
+}));
