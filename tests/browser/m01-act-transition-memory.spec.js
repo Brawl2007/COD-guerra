@@ -27,7 +27,7 @@ test.beforeAll(()=>{scenes=build();});
 const one=page=>page.evaluate(()=>{const d=window.gameDiagnostics();return {quality:d.quality,act:d.m01.act,scene:d.m01.scene,geometries:d.geometries,textures:d.textures,drawCalls:d.drawCalls,triangles:d.triangles,dressingMeshes:d.m01.areaDressing?.meshes??null};});
 /** Waits for the act's area dressing to be drawn (software GL paints the first frames late), then reads 8 frames: geometries/textures are gauges, draw calls and triangles take the smallest (a frame read between two passes doubles them). */
 async function snap(page,act){
-  await page.waitForFunction(a=>{const d=window.gameDiagnostics();return d.m01.act===a&&d.m01.areaDressing?.meshes>0;},act,{timeout:240000});
+  await page.waitForFunction(a=>{const d=window.gameDiagnostics();return d.m01.act===a&&d.m01.areaDressing?.meshes>0;},act,{timeout:420000});
   await page.waitForTimeout(3000);
   const s=[];for(let i=0;i<8;i++){s.push(await one(page));await page.waitForTimeout(300);}
   const min=k=>Math.min(...s.map(x=>x[k]));

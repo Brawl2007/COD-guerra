@@ -1,0 +1,51 @@
+{
+ "quality": "high",
+ "transitions": {
+  "vii-a_to_vii-b": {
+   "before": {
+    "quality": "high",
+    "act": "act_vii_a_north",
+    "scene": "cs_np_end",
+    "geometries": 292,
+    "textures": 126,
+    "drawCalls": 135,
+    "triangles": 721160,
+    "dressingMeshes": 10
+   },
+   "after": {
+    "quality": "high",
+    "act": "act_vii_b_north_day",
+    "scene": "cs_npb_entry",
+    "geometries": 300,
+    "textures": 116,
+    "drawCalls": 137,
+    "triangles": 486283,
+    "dressingMeshes": 10
+   },
+   "errors": []
+  },
+  "vii-b_to_vii-c": {
+   "before": {
+    "quality": "high",
+    "act": "act_vii_b_north_day",
+    "scene": null,
+    "geometries": 295,
+    "textures": 118,
+    "drawCalls": 123,
+    "triangles": 580711,
+    "dressingMeshes": 12
+   },
+   "after": {
+    "quality": "high",
+    "act": "act_vii_c_withdrawal",
+    "scene": "cs_npc_order",
+    "geometries": 299,
+    "textures": 100,
+    "drawCalls": 77,
+    "triangles": 355627,
+    "dressingMeshes": 9
+   },
+   "errors": []
+  }
+ }
+}
