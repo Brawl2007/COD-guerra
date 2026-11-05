@@ -1,6 +1,9 @@
 import { M02BenchSimulation, M02_MISSION_FAILURE_TEXT } from '../game/m02-01-simulation.js';
 import { SQUAD_ORDER_REJECTION_TEXT } from '../game/m02-combat-ai.js';
 import { M02BenchRenderer } from '../render/m02-01-renderer.js';
+import { M02PresentationFeed, landmarksInView } from '../render/m02-presentation.js';
+import { M02AudioPlaceholder } from '../render/m02-audio-placeholder.js';
+import { HORIZON_L3_LANDMARKS } from '../world/m02-horizon-system.js';
 
 const PANORAMA_VIEWS = Object.freeze({
   SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
@@ -20,6 +23,30 @@ const renderer = new M02BenchRenderer(canvas, sim, {
   quality: initialQuality,
   lighting: initialLighting,
 });
+
+// Consumidores de apresentação do diretor audiovisual e dos eventos (L3): só LEEM a simulação (ver src/render/m02-presentation.js).
+const presentation = new M02PresentationFeed();
+const audio = new M02AudioPlaceholder(window);
+const audioScratch = [];
+const elDirectionRing = document.getElementById('direction-ring');
+const elBlastWarning = document.getElementById('blast-warning');
+const elSubtitles = document.getElementById('subtitle-banner');
+const elLandmark = document.getElementById('landmark-label');
+const elWeaponClearance = document.getElementById('hud-weapon-clearance');
+const ARROW_POOL = 8;
+const arrows = [];
+for (let i = 0; i < ARROW_POOL && elDirectionRing; i++) {
+  const el = document.createElement('div');
+  el.className = 'dir-arrow';
+  el.textContent = '▲';
+  elDirectionRing.appendChild(el);
+  arrows.push(el);
+}
+let lastSubtitleKey = '';
+let lastLandmarkKey = '';
+const resumeAudio = () => audio.resume();
+window.addEventListener('keydown', resumeAudio, { once: false, passive: true });
+window.addEventListener('mousedown', resumeAudio, { once: false, passive: true });
 
 const elObjective = document.getElementById('hud-objective');
 const elPos = document.getElementById('hud-pos');
@@ -123,6 +150,17 @@ window.addEventListener('mousemove', (e) => {
 });
 
 window.addEventListener('resize', () => renderer.resize());
+
+// Opções de acessibilidade (L3): configuração do utilizador, fora do save (I5). A simulação só as guarda; quem as aplica é a apresentação.
+const optionIds = {
+  'opt-subtitles': 'subtitlesEnabled',
+  'opt-directional': 'directionalIndicatorsEnabled',
+  'opt-reduced-shake': 'reducedCameraShake',
+  'opt-reduced-violence': 'reducedViolence',
+};
+for (const [id, key] of Object.entries(optionIds)) {
+  document.getElementById(id)?.addEventListener('change', (e) => sim.setAccessibilityOptions({ [key]: e.target.checked }));
+}
 
 selQuality?.addEventListener('change', (e) => {
   renderer.applyQualityProfile(e.target.value);
@@ -256,7 +294,69 @@ function playC10ToC11Lis() {
   });
 }
 
+const ARROW_GLYPH = { enemy_fire: '▲', explosion_detonation: '✹', blast_warning: '⚠' };
+
+/** HUD de apresentação: aviso de explosão (5-8 s), indicadores direcionais, legendas de som, estado da arma e rótulo de marco provisório. */
+function updatePresentationHud() {
+  presentation.ingest(sim, renderer.frameEvents);
+  presentation.ingestDirectorLog(sim);
+  const view = presentation.view(sim);
+  presentation.drainAudio(audioScratch);
+  for (const cue of audioScratch) audio.play(cue);
+  audio.setTinnitus(view.tinnitusLevel);
+
+  let used = 0;
+  const place = (category, relRad) => {
+    const el = arrows[used++];
+    if (!el) return;
+    el.className = `dir-arrow ${category}`;
+    el.textContent = ARROW_GLYPH[category] ?? '▲';
+    el.style.display = 'block';
+    el.style.transform = `rotate(${(relRad * 180) / Math.PI}deg) translateY(-132px)`;
+  };
+  const nextBlast = view.blastWarnings.reduce((a, b) => (!a || b.remainingSec < a.remainingSec ? b : a), null);
+  for (const blast of view.blastWarnings) if (blast.directional) place('blast_warning', blast.relRad);
+  for (const ind of view.indicators) place(ind.category, ind.relRad);
+  for (let i = used; i < arrows.length; i++) arrows[i].style.display = 'none';
+
+  if (elBlastWarning) {
+    if (nextBlast) {
+      elBlastWarning.hidden = false;
+      elBlastWarning.textContent = `EXPLOSÃO IMINENTE · ${Math.ceil(nextBlast.remainingSec)} s · ${nextBlast.word} · a ${Math.round(nextBlast.distanceM)} m (raio ${nextBlast.radiusM} m)`;
+    } else {
+      elBlastWarning.hidden = true;
+    }
+  }
+  if (elSubtitles) {
+    const key = view.subtitles.map((s) => s.text).join('|');
+    if (key !== lastSubtitleKey) {
+      lastSubtitleKey = key;
+      elSubtitles.replaceChildren(
+        ...view.subtitles.map((s) => {
+          const line = document.createElement('div');
+          line.className = 'sub-line';
+          line.textContent = s.text;
+          return line;
+        }),
+      );
+    }
+  }
+  if (elWeaponClearance && view.weapon) {
+    elWeaponClearance.textContent = view.weapon.state === 'READY' ? 'Arma: pronta' : `Arma: baixada junto a obstáculo (${view.weapon.obstructionId})`;
+  }
+  if (elLandmark) {
+    const seen = landmarksInView(sim.player, HORIZON_L3_LANDMARKS);
+    const key = seen.map((m) => m.id).join('|');
+    if (key !== lastLandmarkKey) {
+      lastLandmarkKey = key;
+      elLandmark.hidden = seen.length === 0;
+      elLandmark.textContent = seen.map((m) => `${m.label} · ~${(m.distanceM / 1000).toFixed(1)} km`).join(' · ');
+    }
+  }
+}
+
 function updateHud() {
+  updatePresentationHud();
   if (sim.lastCheckpointPersist !== lastPersistSeen) refreshSaveWarning();
   refreshMissionFailed();
   const p = sim.player;
@@ -477,6 +577,9 @@ window.m02Bench = {
     refreshSaveWarning();
     return ok;
   },
+  presentation,
+  getPresentationView: () => presentation.view(sim),
+  getAudioSummary: () => audio.summary(),
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),

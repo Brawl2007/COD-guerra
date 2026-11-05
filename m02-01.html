@@ -276,6 +276,84 @@
         color: var(--text-dim);
         margin-top: 4px;
       }
+      /* L3/L5: consumidores do diretor audiovisual (apresentação). Indicadores direcionais, aviso de explosão, legendas de som e rótulo de marco provisório. */
+      #direction-ring {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        z-index: 18;
+        pointer-events: none;
+      }
+      #direction-ring .dir-arrow {
+        position: absolute;
+        left: -14px;
+        top: -14px;
+        width: 28px;
+        height: 28px;
+        display: none;
+        font-size: 22px;
+        line-height: 28px;
+        text-align: center;
+        font-weight: 700;
+        text-shadow: 0 0 4px #000, 0 0 2px #000;
+      }
+      #direction-ring .dir-arrow.enemy_fire { color: #ff7a52; }
+      #direction-ring .dir-arrow.explosion_detonation { color: #ffd166; }
+      #direction-ring .dir-arrow.blast_warning { color: #ff3b30; font-size: 30px; }
+      #blast-warning {
+        position: fixed;
+        top: 34%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 22;
+        background: rgba(60, 10, 8, 0.9);
+        border: 2px solid #ff3b30;
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 4px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        pointer-events: none;
+      }
+      #blast-warning[hidden] { display: none; }
+      #subtitle-banner {
+        position: fixed;
+        bottom: 176px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 19;
+        max-width: 640px;
+        text-align: center;
+        pointer-events: none;
+      }
+      #subtitle-banner .sub-line {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.78);
+        color: #f2f2ea;
+        font-size: 14px;
+        padding: 3px 12px;
+        margin-top: 3px;
+        border-radius: 3px;
+      }
+      #a11y-options { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; font-size: 11px; }
+      #a11y-options label { display: flex; align-items: center; gap: 4px; }
+      #landmark-label {
+        position: fixed;
+        top: 190px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 17;
+        font-size: 11.5px;
+        color: #d9d4c1;
+        background: rgba(0, 0, 0, 0.55);
+        padding: 2px 8px;
+        border-radius: 3px;
+        pointer-events: none;
+      }
+      #landmark-label[hidden] { display: none; }
     </style>
   </head>
   <body>
@@ -284,6 +362,10 @@
     <div id="door-prompt"></div>
     <div id="cartela-banner"></div>
     <div id="dialogue-banner"></div>
+    <div id="direction-ring" aria-hidden="true"></div>
+    <div id="blast-warning" role="alert" hidden></div>
+    <div id="subtitle-banner" aria-live="polite"></div>
+    <div id="landmark-label" hidden></div>
     <div id="mission-failed" role="alert" hidden>
       <h2>Missão falhada</h2>
       <p id="mission-failed-text"></p>
@@ -336,12 +418,18 @@
           <div class="row" style="margin-top: 4px">
             <span>Iluminação / Estado:</span>
             <select id="select-lighting">
-              <option value="afternoon_1939_09_09" selected>T0 · Fim de tarde (9 Set)</option>
-              <option value="night_1939_09_09">T1 · Noite (9–10 Set)</option>
-              <option value="morning_1939_09_10">T2 · Manhã (10 Set)</option>
-              <option value="afternoon_1939_09_10">T3 · Tarde (10 Set)</option>
+              <option value="afternoon_1939_09_09" selected>T0 · Fim de tarde (9 Set, 17:00)</option>
+              <option value="night_1939_09_09">T1 · Noite (lua não calculada)</option>
+              <option value="morning_1939_09_10">T2 · Manhã (10 Set, 07:30)</option>
+              <option value="afternoon_1939_09_10">T3 · Tarde (10 Set, 16:00)</option>
               <option value="neutral_review">Luz técnica neutra</option>
             </select>
+          </div>
+          <div class="row" style="margin-top: 4px" id="a11y-options" title="Acessibilidade (L3): opções de apresentação; não entram nos saves">
+            <label><input type="checkbox" id="opt-subtitles" checked /> Legendas de som</label>
+            <label><input type="checkbox" id="opt-directional" checked /> Indicadores direcionais</label>
+            <label><input type="checkbox" id="opt-reduced-shake" /> Menos tremor</label>
+            <label><input type="checkbox" id="opt-reduced-violence" /> Violência reduzida</label>
           </div>
           <div id="hud-telemetry" style="margin-top: 6px"></div>
         </div>
@@ -362,6 +450,7 @@
         <div class="panel weapon-box">
           <div class="w-name">kb wz. 29 · Granada wz. 33 (<span id="hud-grenades">2</span>)</div>
           <div class="w-ammo" id="hud-ammo">5 / 45</div>
+          <div class="shot-feedback" id="hud-weapon-clearance">Arma: pronta</div>
           <div class="shot-feedback" id="hud-last-shot">Último disparo: —</div>
         </div>
       </div>

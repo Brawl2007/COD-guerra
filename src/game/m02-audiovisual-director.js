@@ -25,6 +25,57 @@ export const DEFAULT_ACCESSIBILITY_OPTIONS = Object.freeze({
   reducedViolence: false,
 });
 
+/**
+ * Parâmetros acústicos puros (L3) de uma fonte em relação ao olho do ouvinte: escala, atraso pelo som (343 m/s), oclusão e azimute no mundo
+ * (atan2(dz, dx), 0 = +X, sentido de +Z). SEM estado e sem efeitos: usada pelo diretor (que regista no log do snapshot) e pelos consumidores de
+ * apresentação (renderer/HUD/áudio), que não podem escrever no log. As distâncias e os limiares (12/15/140 m) estão em METROS.
+ */
+export function computeSpatialAudioParams(world, eye, sourcePos, { isCriticalWarning = false, reducedDynamicRange = false } = {}) {
+  const dx = sourcePos.x - eye.x;
+  const dy = (sourcePos.y ?? 0) - eye.y;
+  const dz = sourcePos.z - eye.z;
+  const dist = Math.hypot(dx, dy, dz);
+
+  // L3: Three acoustic scales
+  const scale =
+    dist < 12.0
+      ? 'close_mechanical'
+      : dist <= 140.0
+        ? 'tactical_encounter'
+        : 'distant_operation';
+
+  // L3: Critical interface warnings are never delayed by speed of sound
+  const delaySec = isCriticalWarning || dist < 15.0 ? 0 : Number((dist / SOUND_SPEED_MPS).toFixed(3));
+
+  // L3: Wall and door occlusion between source and listener
+  let occlusionState = 'direct';
+  let gainMultiplier = 1.0;
+  let lowPassHz = 18000;
+
+  if (dist > 0.35) {
+    const dir = { x: -dx / dist, y: -dy / dist, z: -dz / dist };
+    const obs = traceObstruction(world, sourcePos, dir, Math.max(0.1, dist - 0.25));
+    if (obs) {
+      if (obs.role === 'door_leaf') {
+        occlusionState = 'closed_door';
+        gainMultiplier = 0.52;
+        lowPassHz = 1400;
+      } else {
+        occlusionState = 'solid_wall';
+        gainMultiplier = 0.28;
+        lowPassHz = 680;
+      }
+    }
+  }
+
+  if (reducedDynamicRange) {
+    gainMultiplier = Number(Math.min(0.75, Math.max(0.38, gainMultiplier)).toFixed(2));
+  }
+
+  const azimuthRad = Number(Math.atan2(dz, dx).toFixed(3));
+  return { dist, scale, delaySec, occlusionState, gainMultiplier, lowPassHz, azimuthRad };
+}
+
 export class M02AudiovisualDirector {
   constructor() {
     this.reset();
@@ -135,50 +186,12 @@ export class M02AudiovisualDirector {
 
   emitSpatialAudioEvent(sim, { category, sourcePos, material = 'earth', isCriticalWarning = false }) {
     const eye = eyePosition(sim.player);
-    const dx = sourcePos.x - eye.x;
-    const dy = (sourcePos.y ?? 0) - eye.y;
-    const dz = sourcePos.z - eye.z;
-    const dist = Math.hypot(dx, dy, dz);
-
-    // L3: Three acoustic scales
-    const scale =
-      dist < 12.0
-        ? 'close_mechanical'
-        : dist <= 140.0
-          ? 'tactical_encounter'
-          : 'distant_operation';
-
-    // L3: Critical interface warnings are never delayed by speed of sound
-    const delaySec = isCriticalWarning || dist < 15.0 ? 0 : Number((dist / SOUND_SPEED_MPS).toFixed(3));
-
-    // L3: Wall and door occlusion between source and listener
-    let occlusionState = 'direct';
-    let gainMultiplier = 1.0;
-    let lowPassHz = 18000;
-
-    if (dist > 0.35) {
-      const dir = { x: -dx / dist, y: -dy / dist, z: -dz / dist };
-      const obs = traceObstruction(sim.world, sourcePos, dir, Math.max(0.1, dist - 0.25));
-      if (obs) {
-        if (obs.role === 'door_leaf') {
-          occlusionState = 'closed_door';
-          gainMultiplier = 0.52;
-          lowPassHz = 1400;
-        } else {
-          occlusionState = 'solid_wall';
-          gainMultiplier = 0.28;
-          lowPassHz = 680;
-        }
-      }
-    }
-
-    if (this.accessibility.reducedDynamicRange) {
-      gainMultiplier = Number(Math.min(0.75, Math.max(0.38, gainMultiplier)).toFixed(2));
-    }
+    const { dist, scale, delaySec, occlusionState, gainMultiplier, lowPassHz, azimuthRad } = computeSpatialAudioParams(sim.world, eye, sourcePos, {
+      isCriticalWarning,
+      reducedDynamicRange: this.accessibility.reducedDynamicRange,
+    });
 
     const matAudio = MATERIAL_IMPACT_AUDIO_MAP[material] ?? MATERIAL_IMPACT_AUDIO_MAP.earth;
-    const azimuthRad = Number(Math.atan2(dz, dx).toFixed(3));
-
     const record = {
       id: `aud_${this.spatialAudioLog.length + 1}`,
       clock: Number(sim.clock.toFixed(3)),
