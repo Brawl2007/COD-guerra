@@ -28,7 +28,7 @@ import {M01AreaWorld} from '../world/m01-area-world.js';
 import {movePlayer} from '../world/m01-player-physics.js';
 import {Wz29} from './wz29.js';
 import {Random} from '../core/random.js';
-import {M01_DIFFICULTY,M01_DIFFICULTY_IDS,M01_DIFFICULTY_SIM_DEFAULT,deathText} from './m01-difficulty.js';
+import {M01_DIFFICULTY,M01_DIFFICULTY_IDS,M01_DIFFICULTY_SIM_DEFAULT,M01_AIMED_AT_PLAYER_KINDS,F1_TELEGRAPH_GAP_SEC,deathText} from './m01-difficulty.js';
 import {eyePosition,aimDirection,muzzlePosition,traceShot,traceObstruction} from '../world/spatial.js';
 import {makeRound,traceRound,closestApproach,NEAR_MISS} from './m01-fire.js';
 import {aimPoint} from './m01-aim.js';
@@ -361,6 +361,13 @@ export class M01AreaSimulation {
     if(!out)this.timers.boundaryCountdown=0;
     if(this.timers.boundary>=grace&&this.player.alive){this.player.alive=false;this.playerDown('bounds');}
   }
+  /** F1 bookkeeping (soldado/veterano only, draw-free; act 1's rule): a shooter's rounds of kind player open or extend his engagement of the player; a gap over F1_TELEGRAPH_GAP_SEC breaks it. */
+  noteTelegraph(a,kind,rounds,interval){
+    if(this.level.reactionGraceSec===null||a.team!=='enemy'||!M01_AIMED_AT_PLAYER_KINDS.includes(kind))return;
+    const t=this.timers.telegraph??={},last=this.clock+(rounds-1)*interval,e=t[a.id];
+    for(const [id,x] of Object.entries(t))if(this.clock-x.last>F1_TELEGRAPH_GAP_SEC)delete t[id];
+    if(e&&this.clock-e.last<=F1_TELEGRAPH_GAP_SEC)e.last=Math.max(e.last,last);else t[a.id]={first:this.clock,last};
+  }
   playerDown(cause,by=null,weapon=null){this.failure=deathText(cause,by,weapon);this.emit({type:'player-down',cause,by,text:this.failure});}
   woundPlayer(r){
     const p=this.player,L=this.level;
@@ -369,7 +376,9 @@ export class M01AreaSimulation {
       if(same&&b.n>=L.burstWoundCap)return;
       this.timers.burstWound=same?{by:b.by,at:b.at,n:b.n+1}:{by:r.by,at:r.firedAt,n:1};
     }
-    const health=Math.max(0,p.health-L.woundDamage);
+    let health=Math.max(0,p.health-L.woundDamage);
+    // F1 (D35, as act 1): health stays >= 1 unless the same shooter has engaged the player for reactionGraceSec (a blind 'area' round is no engagement).
+    if(health<=0&&L.reactionGraceSec!==null){const e=this.timers.telegraph?.[r.by];if(!e||r.firedAt-e.first<L.reactionGraceSec-1e-9)health=1;}
     p.health=health;p.alive=health>0;this.timers.lastHitAt=this.clock;this.emit({type:'player-hit'});
     if(!p.alive)this.playerDown('shot',r.by,r.weapon);
   }
@@ -559,6 +568,7 @@ export class M01AreaSimulation {
     const shared=[spec.bias[0]*ae*aiGauss(a.ai),spec.bias[1]*ae*aiGauss(a.ai)],cone=[spec.cone[0]*ae,spec.cone[1]*ae];
     for(let k=0;k<rounds;k++)this.enemyFire.rounds.push(makeRound({id:`np_round_${this.enemyFire.nextId++}`,by:a.id,weapon:a.weapon,kind,origin,aim,firedAt:this.clock+k*interval,
       bias:shared,cone,gauss:()=>aiGauss(a.ai),tracer:mg&&k===Math.min(1,rounds-1)}));
+    this.noteTelegraph(a,kind,rounds,interval);
     a.shot=rounds*interval+.06;a.firedAt=this.clock;a.state='SUPPRESS';a.facing=angleOf(a,target);a.crouched=false;
     a.cooldown=pause(a.ai,m.role==='overwatch'?F.overwatchPauseSec:F.assaultPauseSec,2);
     this.emit({type:'enemy-fire',by:a.id,origin,rounds,interval,weapon:a.weapon,at:this.clock});
@@ -1128,6 +1138,9 @@ export function validateAreaSnapshot(s,plan=areaActPlan(s?.act)){
     if(a.team==='enemy'&&!validGermanAi(plan.assault,a,s.clock,shooters,box))reject(`registo de decisões ${a.id}`);
   }
   const why=[];
+  if('telegraph' in (s.timers??{})){const t=s.timers.telegraph;   // F1 record: the shooters of the assault only, and none on recruta
+    if(!t||typeof t!=='object'||Array.isArray(t)||Object.getPrototypeOf(t)!==Object.prototype||s.difficulty===M01_DIFFICULTY_SIM_DEFAULT)reject('registo de engajamento');
+    for(const [by,e] of Object.entries(t))if(!(plan.assault?.ids??[]).includes(by)||!e||typeof e!=='object'||Object.keys(e).length!==2||!Number.isFinite(e.first)||!Number.isFinite(e.last)||e.first>e.last||e.last>s.clock+1)reject('registo de engajamento');}
   if(plan.assault){if(!validApproachWave(plan.assault,s.timers?.wave,s.flags?.[waveFlag],s.clock,s.actors,why))reject(`registo da vaga (${why[0]??'vagas, pausa ou estado do combate'})`);}
   else if(s.timers?.wave!==null||s.flags?.[waveFlag]!==undefined)reject('registo da vaga (este ato não tem ataque)');
   const p=s.player;if(!p||![p.x,p.y,p.z,p.angle,p.pitch,p.health].every(Number.isFinite)||p.health<=0||p.health>100||!p.alive)reject('jogador');
