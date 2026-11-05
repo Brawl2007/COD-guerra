@@ -1,8 +1,9 @@
 // M02-FIX-2 (SAVE-01/SAVE-02, PDF I2/I5): schema do snapshot M02 e armazenamento persistente dos checkpoints.
 //   - Schema v2 do snapshot: identidade da missão, semente e estado do gerador, data narrativa, versão do layout da célula.
 //     Um snapshot v1 (`m02-01-bench-snapshot-v1`, sem `rng`) é REJEITADO com erro explícito, sem migração: o estado do
-//     gerador não pode ser reconstruído sem inventar uma continuação diferente, e nenhum save v1 foi alguma vez persistido
-//     (os checkpoints v1 viviam só num Map em memória da sessão).
+//     gerador não pode ser reconstruído sem inventar uma continuação diferente. Atenção: a candidata Codex também
+//     persistiu saves v1 no browser, alguns com `rngState`; a compatibilidade exige migração analisada e testada.
+//     Esta loja ainda os rejeita e nunca deve apagar a chave antiga para os substituir.
 //   - M02SaveStore: adaptador de armazenamento injetável (getItem/setItem/removeItem). No browser usa localStorage quando existe
 //     e responde; em Node usa memória (uma instância por loja, sem fugas entre simulações). Escrita em três passos:
 //     slot `:staging` → reler e validar → promover (o save confirmado anterior passa a `:previous`). Dados corrompidos são
