@@ -538,7 +538,10 @@ export function validateM02Snapshot(snap) {
       (cause !== null && !CART_IMMOBILIZED_CAUSES.includes(cause)) ||
       (cart.shaftBroken !== (cause === 'shaft_broken')) ||
       (cause !== null && cart.state !== 'IMMOBILIZED') ||
-      (cause === 'parked_fallback' ? !CART_PARKED_REASONS.includes(cart.parkedReason) : (cart.parkedReason ?? null) !== null)
+      (cause === 'parked_fallback' ? !CART_PARKED_REASONS.includes(cart.parkedReason) : (cart.parkedReason ?? null) !== null) ||
+      // FIX-CD: campo aditivo (ausente nos saves anteriores = null); instante passado, nunca à frente do relógio.
+      !isTimeOrNull(cart.volumesUnattendedSince ?? null) ||
+      (cart.volumesUnattendedSince ?? 0) > snap.clock + 1e-9
     ) {
       return {
         valid: false,

@@ -160,6 +160,8 @@ export function createInitialAreaBState() {
       parkedReason: null,
       shotById: null,
       crossingEntryAt: null,
+      // FIX-CD: desde quando os volumes ainda por resolver esperam sem ninguém os levar, com a passagem livre (null = não esperam).
+      volumesUnattendedSince: null,
       volumes: [
         { id: 'vol_water', type: 'water', state: 'ON_CART', x: bDef.supplyCart.startX, z: bDef.supplyCart.startZ, carriedBy: null, delivered: false, lost: false },
         { id: 'vol_ammo', type: 'ammo', state: 'ON_CART', x: bDef.supplyCart.startX, z: bDef.supplyCart.startZ, carriedBy: null, delivered: false, lost: false },
@@ -522,6 +524,45 @@ export function syncSupplyFlags(sim) {
   }
 }
 
+/**
+ * C06 (PDF p. 13; O04, D1 p. 16): «m02.supply_reached conta 0, 1 ou 2 volumes entregues; não inventa um terceiro comboio»; «se se
+ * perderem os dois volumes, o objetivo militar pode continuar, mas a falta é reconhecida». Com a carroça imobilizada, sem hostis
+ * ativos e sem ninguém a levar um volume durante VOLUME_ABANDON_SEC (tempo simulado, independente do dt), Gruca decide atravessar:
+ * os volumes ainda por entregar ficam abandonados (LOST) e a passagem resolve-se com o supply_reached que houver. Antes a cena
+ * ficava 900 s (ou para sempre) em C06/O04 se o jogador não pegasse nos volumes. 60 s é escolha documentada (o PDF não a fixa).
+ */
+export const VOLUME_ABANDON_SEC = 60;
+
+export function resolveAbandonedVolumes(sim) {
+  const cart = sim.areaB?.supplyCart;
+  if (!cart) return 0;
+  const pending = cart.volumes.filter((v) => !v.delivered && !v.lost);
+  const waiting =
+    cart.state === 'IMMOBILIZED' &&
+    pending.length > 0 &&
+    !pending.some((v) => v.state === 'CARRIED') &&
+    !sim.enemies.some((e) => e.alive && !e.nonCombatant);
+  if (!waiting) {
+    cart.volumesUnattendedSince = null;
+    return 0;
+  }
+  if (cart.volumesUnattendedSince == null) {
+    cart.volumesUnattendedSince = instantAt(sim.clock);
+    return 0;
+  }
+  if (sim.clock - cart.volumesUnattendedSince < VOLUME_ABANDON_SEC) return 0;
+  for (const vol of pending) {
+    vol.state = 'LOST';
+    vol.lost = true;
+    vol.carriedBy = null;
+  }
+  cart.volumesUnattendedSince = null;
+  const volumeIds = pending.map((v) => v.id);
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'supply_volumes_abandoned', volumeIds });
+  sim.events.push({ type: 'supply-volumes-abandoned', volumeIds, clock: sim.clock });
+  return pending.length;
+}
+
 export function updateAreaB(sim, dt) {
   if (sim.activeCellId !== 'B' || !sim.areaB?.active) return;
 
@@ -592,6 +633,7 @@ export function updateAreaB(sim, dt) {
     }
   }
 
+  resolveAbandonedVolumes(sim);
   syncSupplyFlags(sim);
 }
 
