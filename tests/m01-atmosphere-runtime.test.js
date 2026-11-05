@@ -92,3 +92,15 @@ test('dust volumes: the optical depth the shader integrates is the simulation\'s
   assert.equal(v.material.side,THREE.DoubleSide);assert.equal(v.material.depthWrite,false);
  }finally{v.dispose();}
 });
+
+test('dust volumes: the depth written is where the eye ray enters the cylinder, not the face of its wider box (a man in the margin stays in front); depth 0 only with the eye inside the cylinder',()=>{
+ const scene=new THREE.Scene(),v=new M01DustVolumes(scene);
+ try{
+  const fs=v.material.fragmentShader;
+  assert.ok(!/gl_FragDepth\s*=[^;]*gl_FragCoord\.z/.test(fs),'the box face depth is not written');
+  assert.ok(!/gl_FragDepth\s*=\s*inBox/.test(fs),'inBox only picks front or back faces, not depth 0');
+  assert.match(fs,/projectionMatrix\s*\*\s*viewMatrix\s*\*\s*vec4\(\s*ro\s*\+\s*rd\s*\*\s*t0/,'the entry point of the cylinder is projected');
+  assert.match(fs,/gl_FragDepth\s*=\s*t0<=0\.0/,'depth 0 only when t0 is 0 (eye inside the cylinder)');
+  assert.match(fs,/uniform mat4 projectionMatrix/,'the fragment stage declares the projection');
+ }finally{v.dispose();}
+});
