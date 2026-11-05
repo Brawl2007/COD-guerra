@@ -4,7 +4,7 @@ import {M01AreaSimulation} from '../../src/game/m01-area-sim.js';
 import {actControls,ACT_TICK} from '../helpers/m01-act-route.js';
 
 // VII-a visual package (renderer only, QA by ?acts=1 + a schema 3 save): 1280 x 720 captures of the same four views as the INC-1 evidence (arrival, the line mid-wave,
-// west along the line, the wreck aimed) on the High and Low quality tiers, and the renderer.info numbers of each (draw calls, triangles, geometries). Not a frame rate:
+// west along the line, the wreck aimed; VIS_BASE = another preview URL) on the High and Low quality tiers, and the renderer.info numbers of each (draw calls, triangles, geometries). Not a frame rate:
 // SwiftShader timings are not evidence of anything. VIS_OUT = output directory, VIS_TAG = file-name prefix.
 const OUT=process.env.VIS_OUT??new URL('../../docs/verification/m01-runtime/vii-a-visual-pkg1-2026-11-03/',import.meta.url).pathname,TAG=process.env.VIS_TAG??'';
 const ACT_KEY='cod-guerra:checkpoint:m01:acts:v3';
@@ -30,7 +30,7 @@ for(const quality of (process.env.VIS_TIERS??'high,low').split(','))test(`VII-a 
   const report={quality,germanDistancesM:scenes.dist,scenes:{}};
   const only=(process.env.VIS_SCENES??'spawn,mid,west,wreck').split(','),shots=[['spawn','02-arrival'],['mid','04-line-north-midwave'],['west','05-line-west-ckm'],['wreck','05b-wreck-aimed']].filter(([n])=>only.includes(n));
   for(const [name,file] of shots){
-    const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,baseURL:'http://127.0.0.1:4173/COD-guerra/'});
+    const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1,baseURL:process.env.VIS_BASE??'http://127.0.0.1:4173/COD-guerra/'});
     await context.addInitScript(({key,save,q})=>{localStorage.setItem(key,JSON.stringify(save));localStorage.setItem('cod-guerra:visual-quality',q);},{key:ACT_KEY,save:scenes[name],q:quality});
     const page=await context.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
