@@ -1,0 +1,55 @@
+{
+ "stats": {
+  "quality": "low",
+  "drawCalls": 428,
+  "triangles": 687664,
+  "geometries": 540,
+  "textures": 121,
+  "clock": 65.18349999999843,
+  "lighting": {
+   "phase": "day",
+   "alt": 42.1,
+   "exposure": 1.08,
+   "hemi": 1.82
+  },
+  "fx": {
+   "active": 0,
+   "counts": {
+    "flash": 0,
+    "core": 0,
+    "fire": 0,
+    "smoke": 0,
+    "dust": 0,
+    "shard": 0
+   },
+   "light": 0
+  },
+  "polish": {
+   "stretcher": {
+    "active": true,
+    "frames": 10,
+    "x": -453.50952792024304,
+    "y": -2.1999999999999997,
+    "z": -1150.4064042213413,
+    "yaw": 1.2888044733572446,
+    "lift": 1
+   },
+   "dusk": null
+  }
+ },
+ "info": {
+  "m0": {
+   "x": -454.2006655809856,
+   "z": -1152.7920057018705,
+   "f": 1.2888044733572535
+  },
+  "m1": {
+   "x": -453.2006655809856,
+   "z": -1152.4920057018705
+  }
+ },
+ "errors": {
+  "total": 0,
+  "real": []
+ }
+}

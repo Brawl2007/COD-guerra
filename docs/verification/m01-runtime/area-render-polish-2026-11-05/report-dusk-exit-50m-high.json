@@ -1,0 +1,58 @@
+{
+ "stats": {
+  "quality": "high",
+  "drawCalls": 99,
+  "triangles": 441924,
+  "geometries": 321,
+  "textures": 89,
+  "clock": 181.65000000000703,
+  "lighting": {
+   "phase": "blue-hour",
+   "alt": -4.216,
+   "exposure": 1.3,
+   "hemi": 1.3
+  },
+  "fx": {
+   "active": 0,
+   "counts": {
+    "flash": 0,
+    "core": 0,
+    "fire": 0,
+    "smoke": 0,
+    "dust": 0,
+    "shard": 0
+   },
+   "light": 0
+  },
+  "polish": {
+   "stretcher": null,
+   "dusk": {
+    "lanterns": 2,
+    "halos": 2,
+    "townGlows": 3,
+    "pools": true,
+    "plume": true,
+    "quality": "high",
+    "sites": [
+     {
+      "x": -596,
+      "z": -1054.5
+     },
+     {
+      "x": -564,
+      "z": -1054.5
+     }
+    ],
+    "haloScale": [
+     2.97,
+     2.23
+    ],
+    "lift": 1
+   }
+  }
+ },
+ "errors": {
+  "total": 0,
+  "real": []
+ }
+}
