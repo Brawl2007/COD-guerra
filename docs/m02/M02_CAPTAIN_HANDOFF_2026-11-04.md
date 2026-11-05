@@ -223,6 +223,26 @@ A troca de semente no m02-09 não esconde nenhum defeito.
 - A moral do EA0 (D2: recuo para oeste) não está feita.
 - LG vulneráveis, ordens nas Áreas B e C e `essential`: não feitos, ficam por decidir.
 
+**Verificação independente do FIX-CD, em `da599c7`: REJEITADO.** Os P1 estão corrigidos.
+
+**Sem defeito:**
+- 7 missões completas a 1/60, 1/144, 1/30 e com jitter: 0 checkpoints recusados e 0 checkpoints com o Piotr morto.
+- Fuzz de restauro: **292 réplicas e 0 divergências**.
+
+**P2 que continuam a reproduzir:**
+- A graça F1 ainda depende do dt: o disparo seguinte é agendado a partir do relógio do tick.
+- Um KeyM que mata o Piotr conclui a missão e exporta `completed:true`.
+
+**P3:**
+- O abrigo do cp_d ignora as granadas do próprio jogador.
+- O cp_a não chega à loja no arranque por omissão da bancada; o reinício para o início em memória é equivalente.
+
+**Suspeitos:**
+- Portas sem limite de distância: o Lis andou 61 m até outra porta.
+- `setDifficulty` perde-se no reinício para o início.
+
+**Problema anterior, pendente de desenho:** com o Piotr parado em P1, a secção toma a quinta sozinha aos 72–86 s em 10/10 sementes. Contraria a D4 («autonomia não é vitória garantida»).
+
 **Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
 morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
 morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
@@ -251,7 +271,8 @@ morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 | 8 Combate D | **Integrado**: merge `edc51ad` (`4cedca2`…`46b59de`) | Ver lista abaixo |
 | Revisão adversarial do roteiro C e do combate D | **REJEITADO**, 2 P1 (ver abaixo) | Só leitura; provas em `scratchpad/review-cd/` |
 | FIX-CD correções da revisão | **Integrado**: merge `da599c7` (`fd66640`…`ef3b49e`) | Ver lista abaixo |
-| Verificação independente do FIX-CD | **EM CURSO**: é o único agente ativo | Só leitura; `scratchpad/review-cd-verify/` |
+| Verificação independente do FIX-CD | **REJEITADO**: P1 corrigidos, mas 2 P2 continuam a reproduzir (ver abaixo) | Só leitura; `scratchpad/review-cd-verify/` |
+| FIX-CD2 resíduos P2/P3 | **EM CURSO**: é o único agente ativo | worktree `m02-fix-cd2`, base `da599c7` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
