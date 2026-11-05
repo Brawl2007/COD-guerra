@@ -12,6 +12,8 @@ Na base Claude `c687e941`, passaram 66 testes focados de `m02-09-save-restore-de
 
 A loja desta linha (`src/game/m02-save-store.js`) grava noutro namespace, usa validação e protocolo v2 e rejeita snapshots v1. A afirmação anterior de que nenhum v1 havia sido persistido era válida apenas para a história local conhecida daquela linha e não vale para a candidata Codex. Não apagar a chave v1 nem a substituir; não restaurar por transformação superficial de schema. Estudar diferenças de áreas, atores, armas, objetivos, flags, portas, transições e RNG; validar com saves reais dos dois lados, rejeição segura, falhas de armazenamento e comparação da continuação. Enquanto não houver migrador comprovado, manter os dados antigos intactos e apresentar claramente a incompatibilidade.
 
+`src/game/m02-legacy-save-inspection.js` reconhece apenas o envelope v1 da candidata Codex e distingue armazenamento inacessível, ausência, conteúdo inválido, schema diferente e dados que exigem análise. Nunca grava ou apaga; detetar não significa validar nem migrar. Dois testes focados cobrem essas situações. **Ainda não está ligado à interface nem importa saves.**
+
 ## Integração pendente
 
 - Preservar o histórico e a autoria; resolver os conflitos manualmente numa integração `--no-ff`, sem rebase, sem force-push e sem tocar na `main`.
