@@ -44,7 +44,7 @@ export function openC01Contact(sim, by) {
   const c = sim.c01Contact;
   if (!sim.c01Active || !c || c.opened) return false;
   c.opened = true;
-  c.openedAt = Number(sim.clock.toFixed(3));
+  c.openedAt = instantAt(sim.clock); // instante passado: nunca à frente do relógio (toFixed(3) arredondava para cima)
   c.openedBy = by;
   if (c.movementStartedAt === null) {
     c.movementStartedAt = c.openedAt;
@@ -62,7 +62,7 @@ export function updateC01Contact(sim) {
   if (c.movementStartedAt === null) {
     const p1 = sim.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175 };
     if (Math.hypot(sim.player.x - p1.x, sim.player.z - p1.z) < C01_ADVANCE_THRESHOLD_M) return;
-    c.movementStartedAt = Number(sim.clock.toFixed(3));
+    c.movementStartedAt = instantAt(sim.clock);
     const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
     c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
     advanceStarted = true;
@@ -101,7 +101,7 @@ export function openAreaBContact(sim, by) {
   const c = sim.areaB?.contact;
   if (sim.activeCellId !== 'B' || !sim.areaB?.active || !c || c.opened) return false;
   c.opened = true;
-  c.openedAt = Number(sim.clock.toFixed(3));
+  c.openedAt = instantAt(sim.clock); // o validador recusa um instante > relógio: toFixed(3) arredondava para cima (10/30 F5 recusados)
   c.openedBy = by;
   if (c.movementStartedAt === null) {
     c.movementStartedAt = c.openedAt;
@@ -118,7 +118,7 @@ export function updateAreaBContact(sim) {
   if (c.movementStartedAt === null) {
     const spawn = sim.world.layout.playerSpawn;
     if (Math.hypot(sim.player.x - spawn.x, sim.player.z - spawn.z) < C01_ADVANCE_THRESHOLD_M) return;
-    c.movementStartedAt = Number(sim.clock.toFixed(3));
+    c.movementStartedAt = instantAt(sim.clock);
     const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
     c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
   }
