@@ -1760,12 +1760,15 @@ export class M01Simulation {
    * R2-b: SEARCH. A man in cover on the way to his line who saw a Pole in the last search.memorySec seconds and has none in sight now (afterSec on) moves on to the first station toward his forward limit
    * (at most one bound of rushStations, never past the limit: the closing lines are the pressure's to open) from which a man on his feet would see the place where the Pole was last seen, instead of waiting
    * out his cover; it can repeat only while the memory lasts and ends at the limit. Reads the sight record (ai.seen) and the world's line of sight; no draw.
-   * Golden amendment 22 (2026-11-05): a man HOLDING a line searches too (tactics.search.hold). Package 2 showed why the search stayed at 0 in 24 routes: the one thing that hides a whole line of Poles on the
-   * open deck is the cloud of a grenade, and that comes when the squad already holds its lines, where «never past the limit» left the search nowhere to go. A man at a line that is not his deepest now takes
-   * the bound toward the NEXT closing line the same way (the first station from which he would see the place, at most rushStations from where he is, never past that line: safeX stays the deepest
+   * Golden amendment 22 (2026-11-05): a man HOLDING a line searches too (tactics.search.hold). Package 2 README 5.4 said why the search stayed at 0 in 24 routes: the one thing that hides a whole line of Poles
+   * on the open deck is the cloud of a grenade, and it comes when the squad already holds its lines, where «never past the limit» left the search nowhere to go. A man at a line that is not his deepest now
+   * takes the bound toward the NEXT closing line the same way (the first station from which he would see the place, at most rushStations from where he is, never past that line: safeX stays the deepest
    * place of the act), exactly as if the pressure had opened it: lim is the next line, the casualty rule of deckLine can still put him one line back, and the squad's deadline grows by closeExtraSec as
    * for any man on a closing line; and like the stage of the pressure it waits casualtyHoldSec after the last man of the assault who fell. The deepest line is the end of the search as it is of every
    * other movement of the assault. Still no draw, no new saved key.
+   * MEASURED (docs/verification/m01-runtime/act1-amend22-2026-11-05/README.md): on the 24 audit routes a man of the assault asked for the search 7 times (the cloud of the route's single grenade, on the
+   * control routes of seeds 1, 2 and 7) and every time he was on his deepest line, where no station is left; the two golden routes never ask. So this changes nothing on those routes: it is the rule for the
+   * day something hides the Poles while a line is left (a cloud earlier in the fight, cover on the deck), not a cause of searches by itself.
    */
   deckSearch(a){
     const P=DECK_ASSAULT,S=P.tactics.search,d=a.deck,ai=a.ai,now=this.clock,seen=ai.seen;
