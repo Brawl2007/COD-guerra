@@ -321,3 +321,24 @@ Merge `a22520ce` (`02169db5`…`02609b8d`).
 2. Equilíbrio do C09 e da letalidade, mas só depois do playtest humano. Implementar o «socorro quando seguro».
 3. Compatibilidade dos saves v1 do Codex, com análise e testes, e sem migrar nem apagar. Isto pertence à branch de integração do Codex.
 4. Texto da falha na bancada a partir de `missionFailed.actorId`.
+
+### Revisão adversarial de `984ff145` e `a22520ce`: ACEITE COM RESSALVAS
+
+0 P0, 1 P1 e 5 P2.
+
+**Sem defeito:**
+- Saves do Codex: chave v1 e 5 chaves M01 com bytes iguais, 0 escritas e 0 leituras fora dos 3 slots, em todos os caminhos.
+- Fuzz de restauro: 200 comparações e 0 divergências, incluindo o recuo do EA0, a trela, o LG sob fogo e a janela do C06.
+- O Gruca a cair no mesmo tick de um checkpoint dá recusa e falha clara.
+- A exportação natural para a M03 é coerente.
+
+**P1:** na Área C, a secção nunca avança sobre B09/B11, contra o C09 p. 14 («outro avança no muro»). Além disso, o Gruca entra a descoberto no C09. **É isto que explica a queda do bot, não paredes transparentes.**
+
+**P2:**
+- KeyM com o SP03 forçado pode matar o Gruca e mesmo assim concluir a missão; um F5 grava esse estado.
+- `areaB.contact` usa `toFixed(3)` (10/30 F5 recusados a 1/60).
+- O Lis morto é exportado como `wounded_evacuated`.
+- A chave base `cod-guerra:checkpoint` sem «:» é aceite pela loja (não por omissão).
+- Há um teste D4 vazio: o Piotr «abrigado» estava no arco da MG.
+
+Tudo isto está **EM CURSO** no FIX-DEV, como agente único (worktree `m02-fix-dev`, base `102ba5e2`).
