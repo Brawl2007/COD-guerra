@@ -95,6 +95,18 @@ reproduz e não há P0 nem P1.
   - a loja fica sem saída quando `current` está ilegível, sem aviso nem `clear()` na UI;
   - o F9 ignora um save manual compatível quando o último checkpoint é incompatível.
 
+**FIX-2c, integrado em `605e3fc`:**
+- Lote de checkpoints no mesmo tick.
+- `sim.runAtomicAction()` nas ações compostas de C07 a C12.
+- Sem -0 na memória dos inimigos nem no `atan2`.
+- `M02SaveStore.status()`, `sim.clearPersistedSaves()`, aviso `#hud-save-warning` e botão «Limpar saves da bancada», que só aparece quando a loja está bloqueada e pede confirmação.
+- O F9 salta entradas incompatíveis.
+
+Testes depois do FIX-2c: `tests/m02-*.test.js` **122/122**; build OK; browser M02 **2 passed (3,3 min)**, N0 30/30.
+O botão novo da bancada só foi verificado por inspeção e por teste estático.
+
+Fica conhecida uma janela residual de compare-and-swap entre separadores: o `localStorage` não tem escrita atómica.
+
 **Regra de jogo nova, introduzida pelo FIX-2b e a aprovar pelo proprietário:** quando o portador de um volume
 morre, o volume fica no chão (`DROPPED_READY`). Evita que haja saves com `carriedBy` a apontar para um ator
 morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
@@ -118,11 +130,11 @@ morto. Não estava no pedido e o PDF não foi confirmado sobre isto.
 | Trabalho | Estado | Onde está |
 |---|---|---|
 | FIX-2b defeitos da revisão adversarial | **Integrado** (`318b265`); verificação independente: ACEITE COM RESSALVAS | — |
-| FIX-2c P2 residuais dos saves | **EM CURSO**: é o único agente ativo | worktree `m02-fix2c` |
+| FIX-2c P2 residuais dos saves | **Integrado**: merge `605e3fc` (`fe05c21`…`1bac72d`) | Ver lista abaixo |
+| 6–7 Roteiro C e set pieces J/E/F | **EM CURSO**: é o único agente ativo | worktree `m02-script-c`, base `605e3fc` |
 | 1 Higiene de testes e N0 (30 capturas) | **Aplicado e corrigido** (`e74c952`, `d3c3af0`, `dbb4436`); o patch fica só como histórico | — |
 | N0 Planta e tabela de vãos | **Parado a meio**, sem a planta SVG nem o teste | `docs/m02/wip/2026-11-04/n0-plan.patch` |
 | 9 Ambiente G/H/L (reuso de `m01-area-*`, horizonte L3) | **Parado a meio**, não revisto | `docs/m02/wip/2026-11-04/env-GHL.patch`: `src/render/m02-environment.js`, `src/world/m02-environment-area.js`, horizonte |
-| 6–7 Roteiro C e set pieces J/E/F | **Não começado** (o agente foi parado sem diff) | — |
 | 8 Combate D | **Não começado** (o agente foi parado sem diff) | — |
 
 Os patches em `docs/m02/wip/` são trabalho parcial de agentes interrompidos. **Não foram aplicados nem revistos.**
