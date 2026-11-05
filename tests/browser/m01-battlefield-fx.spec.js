@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {slowGlTestTimeout} from '../helpers/m01-browser-boot.js';
 import {route} from '../helpers/m01-route.js';
 import {seconds} from '../../src/game/m01-simulation.js';
 
@@ -32,8 +33,9 @@ test.afterEach(async({page},info)=>{
 });
 
 test('east demolition runs layered blast -> dust -> smoke, freezes on pause and cleans transient pools',async({page},info)=>{
-  // The trace reaches cleanup at ~90 s under SwiftShader; give CI headroom without changing any FX timing.
-  test.setTimeout(process.env.CI?300000:90000);
+  // The trace reaches cleanup at ~90 s under SwiftShader (the non-CI limit was exactly that: on a quiet machine the run of 2026-11-05 failed twice at page.screenshot of the smoke frame at 90 s).
+  // Frame-bound: 12 s of simulated time from the checkpoint to the blast (06:09:48 -> 06:10:00), the hot and the smoke phase, three paused captures and the restart; no FX timing is changed.
+  test.setTimeout(slowGlTestTimeout({simSeconds:24,frames:12}));
   // Arm while the menu is paused; no remote round trip races the live hot phase.
   const {errors,failed}=await openFrom(page,preBlast,'medium',()=>{
     window.__m01FxArmed=window.gameDiagnostics();
