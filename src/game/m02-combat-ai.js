@@ -808,6 +808,35 @@ export function stepActorWeapon(sim, actor, dt) {
   }
 }
 
+/** Distância (m) do ponto de aproximação ao centro de uma porta (dentro dos 1,65 m a que um ator a abre). */
+const DOOR_APPROACH_M = 0.9;
+
+/**
+ * Rota até ao lado de cá de uma porta fechada, a mais próxima do destino (custo ator→porta→destino), quando não há rota até ao destino.
+ * Determinista; null se nenhuma porta fechada é alcançável.
+ */
+function routeToClosedDoorToward(sim, from, goal) {
+  const closed = (sim.world.doors ?? [])
+    .filter((d) => d.state === 'closed')
+    .map((d) => ({
+      d,
+      cost: Math.hypot(d.center.x - from.x, d.center.z - from.z) + Math.hypot(d.center.x - goal.x, d.center.z - goal.z),
+    }))
+    .sort((a, b) => a.cost - b.cost || (a.d.id < b.d.id ? -1 : 1))
+    .slice(0, 4);
+  for (const { d } of closed) {
+    const n = d.orientation === 'H' ? { x: 0, z: 1 } : { x: 1, z: 0 };
+    const sides = [1, -1]
+      .map((sgn) => ({ x: d.center.x + n.x * DOOR_APPROACH_M * sgn, z: d.center.z + n.z * DOOR_APPROACH_M * sgn }))
+      .sort((a, b) => Math.hypot(a.x - from.x, a.z - from.z) - Math.hypot(b.x - from.x, b.z - from.z));
+    for (const near of sides) {
+      const corners = sim.navigator.route(from, near);
+      if (corners && corners.length) return corners;
+    }
+  }
+  return null;
+}
+
 export function stepActorNavigation(sim, actor, dt) {
   if (!actor.alive || actor.nonCombatant || actor.state === 'DOWN' || actor.state === 'SURRENDERED' || actor.state === 'WOUNDED_UNARMED') {
     actor.moving = false;
@@ -867,10 +896,13 @@ export function stepActorNavigation(sim, actor, dt) {
   // Replan A* route when goal or world revision changes (respecting 1 route per tick budget or immediate if unrouted)
   const goalKey = `${actor.goal.x.toFixed(2)},${actor.goal.z.toFixed(2)}`;
   if (!actor.navCorners || actor.navGoalKey !== goalKey || actor.navRevision !== sim.world.revision) {
-    const corners = sim.navigator.route(
-      { x: actor.x, y: actor.y, z: actor.z, radius: actor.radius ?? PLAYER_PHYSICS.radius },
-      { x: actor.goal.x, z: actor.goal.z },
-    );
+    const from = { x: actor.x, y: actor.y, z: actor.z, radius: actor.radius ?? PLAYER_PHYSICS.radius };
+    let corners = sim.navigator.route(from, { x: actor.goal.x, z: actor.goal.z });
+    // FIX-CD: sem rota porque o destino fica atrás de uma porta FECHADA (a navegação trata-a como parede), o ator ia em linha reta
+    // contra a parede e ficava lá para sempre — p. ex. Lis em «ClearRoom» encostada à parede norte de B01 com a porta este a 3 m, e
+    // a quinta presa em C03 (D4 p. 17: «se a rota segura estiver bloqueada… tentam alternativa»). Vai até à porta fechada mais
+    // próxima do destino (a ≤ 1,65 m abre-a, acima) e replaneia quando o mundo muda.
+    if (!corners || !corners.length) corners = routeToClosedDoorToward(sim, from, actor.goal);
     actor.navCorners = corners && corners.length ? corners.map(([cx, cz]) => ({ x: cx, z: cz })) : [{ x: actor.goal.x, z: actor.goal.z }];
     actor.navGoalKey = goalKey;
     actor.navRevision = sim.world.revision;

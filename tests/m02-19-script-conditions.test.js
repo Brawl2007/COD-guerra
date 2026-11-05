@@ -39,9 +39,17 @@ describe('M02 roteiro: condições de cada transição (PDF C, pp. 12-14)', () =
     idle(sim, 120); // posto vencido pela secção mas o jogador ainda em P1
     assert.equal(sim.c01Active, false);
     assert.equal(sim.script.sceneId, 'C02');
+    sim.drainEvents();
     sim.player.z = -84;
     sim.tick(DT, {});
-    assert.equal(sim.script.sceneId, 'C03');
+    const changes = sim.drainEvents().filter((e) => e.type === 'scene-changed').map((e) => `${e.from}→${e.to}`);
+    assert.equal(changes[0], 'C02→C03');
+    // FIX-CD: com a navegação dos aliados a passar portas fechadas, a secção pode vencer a quinta nos 120 s; então C03 resolve-se
+    // no mesmo tick (C03→C04), como manda a condição de C03.
+    if (sim.script.sceneId !== 'C03') {
+      assert.deepEqual(changes, ['C02→C03', 'C03→C04']);
+      assert.ok(['C04', 'COMPLETE'].includes(sim.objective.id), sim.objective.id);
+    }
   });
 
   it('C04 → C05 pede quinta consolidada (COMPLETE) e o jogador a sair pelo pomar (z ≥ 44); depois C05 dura 45 s e entra em B', () => {
