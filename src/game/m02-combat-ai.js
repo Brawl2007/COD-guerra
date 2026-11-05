@@ -68,6 +68,20 @@ export const WEAPON_PROFILES = Object.freeze({
   }),
 });
 
+/**
+ * D5 (PDF p. 18): «Uma explosão perigosa tem aviso legível de 5-8 s como ponto inicial de teste, cobertura alcançável e causa
+ * situada. A posição do impacto é fixada no mundo; não se desloca para poupar o jogador ou persegui-lo.»
+ * Fontes de explosão perigosa da M02: o impacto fixo de artilharia scriptado (SP03, C10) e a granada de mão de um hostil.
+ * A granada lançada pelo jogador (rastilho de 2 s) não é perigo que a simulação lhe imponha e fica fora desta janela.
+ */
+export const BLAST_WARNING_SEC = Object.freeze({ min: 5, max: 8 });
+export const BLAST_SOURCES = Object.freeze(['scripted_artillery', 'enemy_grenade']);
+/** Aviso por omissão de uma granada inimiga: o ponto médio da janela. */
+export const ENEMY_GRENADE_WARNING_SEC = 6.5;
+/** Raio da explosão de uma granada de mão (o da wz. 33 da bancada) e alcance máximo de lançamento (m). */
+export const ENEMY_GRENADE_RADIUS_M = 6.5;
+export const ENEMY_GRENADE_MAX_THROW_M = 35;
+
 export const M02_DIALOGUE_CATALOG = Object.freeze({
   dlg_m02_001: Object.freeze({
     id: 'dlg_m02_001',

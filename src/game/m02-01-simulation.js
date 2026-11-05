@@ -21,6 +21,11 @@ import {
   updatePolishSquad,
   updateGermanGarrison,
   roundNoNegZero,
+  BLAST_WARNING_SEC,
+  BLAST_SOURCES,
+  ENEMY_GRENADE_WARNING_SEC,
+  ENEMY_GRENADE_RADIUS_M,
+  ENEMY_GRENADE_MAX_THROW_M,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -432,6 +437,39 @@ export function validateM02Snapshot(snap) {
     grenadeIds.add(g.id);
   }
 
+  // D5: explosões perigosas com aviso agendado (campo aditivo do schema 2; ausente = nenhuma).
+  const hazards = snap.hazardBlasts ?? [];
+  const hazardSeq = snap.hazardBlastSeq ?? 0;
+  if (!Array.isArray(hazards) || !isNonNegativeInteger(hazardSeq)) {
+    return { valid: false, reason: 'Explosões agendadas (hazardBlasts) ou o seu contador inválidos no snapshot.' };
+  }
+  const hazardIds = new Set();
+  const LEAD_TOLERANCE = 0.02; // arredondamento dos instantes a 2-3 casas
+  for (const b of hazards) {
+    const lead = isPlainObject(b) ? b.impactAt - b.warnedAt : Number.NaN;
+    if (
+      !isPlainObject(b) ||
+      typeof b.id !== 'string' ||
+      !b.id ||
+      hazardIds.has(b.id) ||
+      !BLAST_SOURCES.includes(b.source) ||
+      ['x', 'y', 'z', 'radius', 'warnedAt', 'impactAt', 'warningSec'].some((k) => typeof b[k] !== 'number' || !Number.isFinite(b[k])) ||
+      b.radius <= 0 ||
+      b.warnedAt < 0 ||
+      b.warnedAt > snap.clock + 1e-9 ||
+      !(lead >= BLAST_WARNING_SEC.min - LEAD_TOLERANCE && lead <= BLAST_WARNING_SEC.max + LEAD_TOLERANCE) ||
+      !(b.warningSec >= BLAST_WARNING_SEC.min && b.warningSec <= BLAST_WARNING_SEC.max) ||
+      Math.abs(lead - b.warningSec) > LEAD_TOLERANCE ||
+      (b.thrownBy !== null && typeof b.thrownBy !== 'string')
+    ) {
+      return {
+        valid: false,
+        reason: `Explosão agendada inválida no snapshot (aviso de ${BLAST_WARNING_SEC.min}-${BLAST_WARNING_SEC.max} s, posição e fonte): ${b?.id}`,
+      };
+    }
+    hazardIds.add(b.id);
+  }
+
   if (!isPlainObject(snap.doorLocks)) return { valid: false, reason: 'Fechaduras de porta ausentes no snapshot.' };
   for (const [doorId, lock] of Object.entries(snap.doorLocks)) {
     if (!ids.doors.has(doorId)) return { valid: false, reason: `Fechadura de porta inexistente: ${doorId}` };
@@ -576,6 +614,8 @@ export class M02BenchSimulation {
     this.c11Active = false;
     this.m03ExportPackage = null;
     this.missionFailed = null;
+    this.hazardBlasts = [];
+    this.hazardBlastSeq = 0;
 
     if (this.activeCellId !== 'A') {
       this.world = this.zoneStreamer.switchToCell('A');
@@ -761,6 +801,7 @@ export class M02BenchSimulation {
     if (this.activeCellId !== 'A') {
       this.world = this.zoneStreamer.switchToCell('A');
       this.activeCellId = 'A';
+      this.hazardBlasts = []; // D5: as explosões agendadas pertencem ao mundo da célula em que foram avisadas
       this.navigator = new M01Navigator(this.world.navWorld);
     }
     const p1 = this.world.layout.c01Corridor?.startP1 ?? { x: 0, z: -175, angle: Math.PI / 2, pitch: 0 };
@@ -1412,6 +1453,8 @@ export class M02BenchSimulation {
     return rec;
   }
 
+  // Granada do jogador (ou de teste, com origem própria): rastilho de 2 s, sem aviso. As granadas inimigas não passam por aqui:
+  // têm o aviso de 5-8 s de D5 (`throwEnemyGrenade`).
   throwGrenade(customOrigin = null, customDir = null) {
     if (!customOrigin && this.grenadeAmmo <= 0) return null;
     if (!customOrigin) {
@@ -1442,7 +1485,11 @@ export class M02BenchSimulation {
     return g;
   }
 
-  detonateGrenadeAt(x, y, z, radius = 6.5) {
+  /**
+   * Explosão no mundo. `meta` (só nas explosões perigosas agendadas, D5: artilharia scriptada e granada inimiga) acrescenta ao
+   * registo a fonte, o aviso que a anunciou e quem a lançou; sem `meta` o registo é o de sempre (granada do jogador).
+   */
+  detonateGrenadeAt(x, y, z, radius = 6.5, meta = null) {
     const center = { x, y: Math.max(this.world.heightAt(x, z) + 0.35, y), z };
     const worldChanges = this.world.applyExplosionDamageToWorld(center, Math.min(radius, 5.5));
     this.navigator.sync();
@@ -1501,11 +1548,117 @@ export class M02BenchSimulation {
       affectedActors,
       clock: Number(this.clock.toFixed(2)),
     };
+    if (meta) {
+      blastRecord.source = meta.source ?? null;
+      blastRecord.blastId = meta.blastId ?? null;
+      blastRecord.thrownBy = meta.thrownBy ?? null;
+      if (meta.warningSkipped) blastRecord.warningSkipped = true;
+    }
     this.audiovisual.onExplosionDetonated(this, blastRecord);
     this.combatLog.push(blastRecord);
     this.events.push(blastRecord);
     this.updateTacticalContext();
     return blastRecord;
+  }
+
+  /**
+   * D5: agenda uma explosão perigosa com aviso. FIXA a posição do impacto no mundo (não se desloca para poupar o jogador nem para
+   * o perseguir), limita o aviso à janela [5, 8] s e emite o evento `blast-warning` (posição, raio, instante do aviso e do impacto,
+   * fonte e lançador: a causa situada), consumível pelo audiovisual. A explosão fica em `hazardBlasts` até ao impacto.
+   * Lança RangeError para fonte desconhecida ou posição/raio inválidos. Devolve uma cópia do registo.
+   */
+  scheduleBlastWarning({
+    source,
+    x,
+    z,
+    y = null,
+    radius = ENEMY_GRENADE_RADIUS_M,
+    warningSec = ENEMY_GRENADE_WARNING_SEC,
+    thrownBy = null,
+  }) {
+    if (!BLAST_SOURCES.includes(source)) throw new RangeError(`Fonte de explosão desconhecida: ${source}`);
+    if (![x, z, radius].every(Number.isFinite) || radius <= 0 || (y !== null && !Number.isFinite(y))) {
+      throw new RangeError('Posição ou raio de explosão inválidos.');
+    }
+    const lead =
+      typeof warningSec === 'number' && !Number.isNaN(warningSec)
+        ? Math.min(BLAST_WARNING_SEC.max, Math.max(BLAST_WARNING_SEC.min, warningSec))
+        : ENEMY_GRENADE_WARNING_SEC;
+    const warnedAt = Number(this.clock.toFixed(3));
+    const blast = {
+      id: `blast_${++this.hazardBlastSeq}`,
+      source,
+      x: roundNoNegZero(x, 3),
+      y: roundNoNegZero(y ?? this.world.heightAt(x, z) + 0.35, 3),
+      z: roundNoNegZero(z, 3),
+      radius,
+      warnedAt,
+      impactAt: Number((warnedAt + lead).toFixed(3)),
+      warningSec: lead,
+      thrownBy,
+    };
+    this.hazardBlasts.push(blast);
+    this.events.push({
+      type: 'blast-warning',
+      blastId: blast.id,
+      source,
+      position: { x: blast.x, y: blast.y, z: blast.z },
+      radius,
+      warnedAt,
+      impactAt: blast.impactAt,
+      warningSec: lead,
+      thrownBy,
+      clock: this.clock,
+    });
+    this.combatLog.push({
+      clock: Number(this.clock.toFixed(2)),
+      type: 'blast_warning',
+      blastId: blast.id,
+      source,
+      x: blast.x,
+      z: blast.z,
+      impactAt: blast.impactAt,
+      thrownBy,
+    });
+    return structuredClone(blast);
+  }
+
+  /**
+   * D5: granada de mão de um hostil (a única via das granadas inimigas). Não há voo simulado: ao lançar, o ponto de impacto
+   * (`target.x/z`) fica fixado no mundo e o aviso é o de `scheduleBlastWarning` (por omissão 6,5 s). Só lança um hostil vivo e
+   * combatente desta simulação, até ENEMY_GRENADE_MAX_THROW_M do alvo. Devolve o registo agendado ou null.
+   */
+  throwEnemyGrenade(thrower, target, { warningSec = ENEMY_GRENADE_WARNING_SEC } = {}) {
+    const enemy = typeof thrower === 'string' ? this.enemies.find((e) => e.id === thrower) : thrower;
+    if (!enemy || !this.enemies.includes(enemy) || !enemy.alive || enemy.nonCombatant) return null;
+    if (!target || !Number.isFinite(target.x) || !Number.isFinite(target.z)) return null;
+    if (Math.hypot(target.x - enemy.x, target.z - enemy.z) > ENEMY_GRENADE_MAX_THROW_M) return null;
+    return this.scheduleBlastWarning({
+      source: 'enemy_grenade',
+      x: target.x,
+      z: target.z,
+      radius: ENEMY_GRENADE_RADIUS_M,
+      warningSec,
+      thrownBy: enemy.id,
+    });
+  }
+
+  /**
+   * D5: impacto das explosões agendadas cuja hora chegou. O impacto fixo de artilharia (SP03) é do diretor da Área C
+   * (`detonateC10FixedArtillery`, a que o seu temporizador chama); aqui só rebentam as granadas inimigas.
+   */
+  #updateHazardBlasts() {
+    if (this.hazardBlasts.length === 0) return;
+    const due = this.hazardBlasts.filter((b) => b.source === 'enemy_grenade' && this.clock + 1e-9 >= b.impactAt);
+    for (const blast of due) {
+      // Sai da lista ANTES de explodir (como as granadas em voo): um snapshot tirado durante a explosão nunca guarda uma explodida.
+      this.hazardBlasts = this.hazardBlasts.filter((b) => b !== blast);
+      this.detonateGrenadeAt(blast.x, blast.y, blast.z, blast.radius, {
+        source: blast.source,
+        blastId: blast.id,
+        thrownBy: blast.thrownBy,
+      });
+    }
   }
 
   updateGrenades(dt) {
@@ -1861,6 +2014,7 @@ export class M02BenchSimulation {
 
     runUpdateC01Contact(this);
     this.updateGrenades(dt);
+    this.#updateHazardBlasts();
     updatePolishSquad(this, dt);
     updateGermanGarrison(this, dt);
     if (this.activeCellId === 'B') {
@@ -2115,6 +2269,8 @@ export class M02BenchSimulation {
       c11Active: this.c11Active,
       m03ExportPackage: this.m03ExportPackage ? structuredClone(this.m03ExportPackage) : null,
       missionFailed: this.missionFailed ? structuredClone(this.missionFailed) : null,
+      hazardBlasts: structuredClone(this.hazardBlasts),
+      hazardBlastSeq: this.hazardBlastSeq,
       doors: Object.fromEntries(this.world.doorStates.entries()),
       windows: Object.fromEntries(this.world.windowStates.entries()),
       fences: Object.fromEntries(this.world.fenceStates.entries()),
@@ -2184,6 +2340,8 @@ export class M02BenchSimulation {
       c11Active: Boolean(snap.c11Active),
       m03ExportPackage: snap.m03ExportPackage ?? null,
       missionFailed: snap.missionFailed ?? null,
+      hazardBlasts: snap.hazardBlasts ?? [],
+      hazardBlastSeq: snap.hazardBlastSeq ?? 0,
       doors: snap.doors,
       windows: snap.windows,
       fences: snap.fences,
@@ -2249,6 +2407,8 @@ export class M02BenchSimulation {
     this.c11Active = p.c11Active;
     this.m03ExportPackage = p.m03ExportPackage;
     this.missionFailed = p.missionFailed;
+    this.hazardBlasts = p.hazardBlasts;
+    this.hazardBlastSeq = p.hazardBlastSeq;
     this.allies = p.allies;
     this.enemies = p.enemies;
     this.calibrationTargets = p.targets;
