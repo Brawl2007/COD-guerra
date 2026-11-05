@@ -380,6 +380,52 @@ describe('FIX-CD 5: F1 conta tempo nominal dos disparos; o perfil vai no snapsho
     }
   });
 
+  it('FIX-CD2: com o 1.º disparo fora da grelha de ticks (1.º frame de 4..43 ms) o número de impactos até à morte é o mesmo a 0,05 | 1/30 | 1/60', () => {
+    // O ciclo seguinte parte do instante nominal do disparo, não do relógio do tick que o processou: antes o atraso 0..dt do 1.º
+    // disparo passava ao 2.º e, em veterano (graça 0,8 s > ciclo 0,775 s), o 2.º impacto matava em ~50 % das fases a dt 0,05.
+    for (const dt of [0.05, 1 / 30, FRAME]) {
+      for (const first of [0.004, 0.011, 0.019, 0.027, 0.035, 0.043]) {
+        const sim = new M02BenchSimulation(1, { difficulty: 'veterano' });
+        sim.teleportPlayer(30, -60, Math.PI);
+        sim.allies.forEach((a) => Object.assign(a, { x: 100, z: 100, alive: false, state: 'DEAD', health: 0 }));
+        const shooter = sim.enemies.find((e) => e.alive && e.weapon === 'kar98k');
+        for (const e of sim.enemies) if (e !== shooter) Object.assign(e, { x: 150, z: 150, y: 0, mag: 0, reserve: 0, goal: null });
+        Object.assign(shooter, { x: 40, z: -60, y: sim.world.heightAt(40, -60), crouched: false, mag: 500, facing: Math.PI, buildingId: null, sector: null, goal: null });
+        sim.mgState.nextBurstAt = 1e9;
+        const hits = [];
+        sim.tick(first, {});
+        for (let i = 0; i < Math.ceil(30 / dt) && sim.player.health > 0; i++) {
+          const before = sim.player.health;
+          sim.tick(dt, {});
+          if (sim.player.health < before) hits.push(sim.player.health);
+        }
+        assert.deepEqual(hits, [50, 1, 0], `dt ${dt.toFixed(4)}, 1.º frame ${first}`);
+      }
+    }
+  });
+
+  it('nextFireAt do atirador avança sempre um ciclo nominal completo desde o instante nominal do disparo (independente do dt)', () => {
+    const gaps = [];
+    for (const dt of [0.05, 1 / 30, FRAME]) {
+      const sim = new M02BenchSimulation(1, { difficulty: 'veterano' });
+      sim.teleportPlayer(30, -60, Math.PI);
+      sim.allies.forEach((a) => Object.assign(a, { x: 100, z: 100, alive: false, state: 'DEAD', health: 0 }));
+      const shooter = sim.enemies.find((e) => e.alive && e.weapon === 'kar98k');
+      for (const e of sim.enemies) if (e !== shooter) Object.assign(e, { x: 150, z: 150, y: 0, mag: 0, reserve: 0, goal: null });
+      Object.assign(shooter, { x: 40, z: -60, y: sim.world.heightAt(40, -60), crouched: false, mag: 500, facing: Math.PI, buildingId: null, sector: null, goal: null, nextFireAt: 0.6 + 0.0137 });
+      sim.mgState.nextBurstAt = 1e9;
+      const fires = [];
+      let prev = shooter.nextFireAt;
+      for (let i = 0; i < Math.ceil(2 / dt) && fires.length < 3; i++) {
+        sim.tick(dt, {});
+        if (shooter.nextFireAt !== prev) { fires.push(prev); prev = shooter.nextFireAt; }
+      }
+      // fires[k] = nextFireAt que foi consumido pelo disparo k (instante nominal); a diferença é o ciclo exato
+      gaps.push(Number((fires[1] - fires[0]).toFixed(3)));
+    }
+    assert.equal(new Set(gaps).size, 1, `ciclos entre disparos iguais em todos os dt: ${gaps}`);
+  });
+
   it('o perfil entra no snapshot (exceto recruta) e o restauro repõe-no; save sem o campo = recruta', () => {
     const v = new M02BenchSimulation(SEED, { difficulty: 'veterano' });
     const snap = v.snapshot();

@@ -1415,7 +1415,9 @@ export class M02BenchSimulation {
 
     shooter.mag -= roundsToFire;
     shooter.shotsFired = (shooter.shotsFired ?? 0) + roundsToFire;
-    shooter.nextFireAt = Number((this.clock + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
+    // O ciclo seguinte parte do instante nominal do disparo (shotAt), não do relógio do tick: senão o atraso 0..dt do 1.º disparo
+    // propagava-se ao 2.º e a regra F1 voltava a depender do dt (FIX-CD2 P2).
+    shooter.nextFireAt = Number((shotAt + prof.cycleSec * (enemyFire ? diff.cooldownScale : 1)).toFixed(3));
 
     const origin =
       shooter.weapon === 'mg34' && shooter.id === 'DE-A05'
