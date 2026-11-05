@@ -75,6 +75,9 @@ import {
   instantAt,
   M02_REQUIRED_CHARACTERS,
   requiredCharacterOut,
+  lastGroupTargets,
+  isLastGroupMember,
+  markLastGroupHit,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -424,9 +427,30 @@ export function validateM02Snapshot(snap) {
       reason: 'Save incompatível: estado de Lis/último grupo da Área C ausente ou inválido (snapshot anterior ao percurso persistente de Lis).',
     };
   }
+  // C11: o último grupo pode ser ferido e morto (campos aditivos `maxHealth`, `casualty…`; saves anteriores têm todos vivos e a 100 %).
+  for (const lg of areaC.lastGroup) {
+    const max = lg.maxHealth ?? lg.health;
+    if (
+      !isPlainObject(lg) ||
+      typeof lg.alive !== 'boolean' ||
+      typeof lg.wounded !== 'boolean' ||
+      !(typeof lg.health === 'number' && Number.isFinite(lg.health) && lg.health >= 0) ||
+      !(typeof max === 'number' && Number.isFinite(max) && max > 0 && lg.health <= max) ||
+      (lg.alive ? lg.health <= 0 : lg.health !== 0) ||
+      (lg.evacuated && !lg.alive) ||
+      ('state' in lg && lg.state !== undefined && typeof lg.state !== 'string')
+    ) {
+      return { valid: false, reason: `Estado do último grupo inválido no snapshot (vida, ferido, vivo/morto ou evacuado incoerentes): ${lg?.id}` };
+    }
+  }
   if (areaC.lastGroupSummary !== null && areaC.lastGroupSummary !== undefined) {
     const sum = areaC.lastGroupSummary;
-    if (!isPlainObject(sum) || !['evacuated', 'inTransit', 'dead'].every((k) => isNonNegativeInteger(sum[k])) || sum.evacuated + sum.inTransit + sum.dead !== areaC.lastGroup.length) {
+    const dead = areaC.lastGroup.filter((lg) => !lg.alive).length;
+    const evacuated = areaC.lastGroup.filter((lg) => lg.alive && lg.evacuated).length;
+    // C12 escreve o resumo uma só vez: os mortos são exatamente os de agora (depois de C12 já ninguém leva fogo) e os evacuados só
+    // podem ter crescido (quem estava em trânsito continua o percurso)
+    const stable = isPlainObject(sum) && sum.dead === dead && sum.evacuated <= evacuated;
+    if (!isPlainObject(sum) || !['evacuated', 'inTransit', 'dead'].every((k) => isNonNegativeInteger(sum[k])) || sum.evacuated + sum.inTransit + sum.dead !== areaC.lastGroup.length || !stable) {
       return { valid: false, reason: 'Resumo do último grupo (lastGroupSummary) inválido no snapshot.' };
     }
   }
@@ -1492,7 +1516,9 @@ export class M02BenchSimulation {
 
     // Quem está fora da célula (Lis na ligação de C08-C10, J3) não está no mundo atual: as posições dele são as da célula anterior e
     // nenhum tiro ou rajada desta célula o atinge (antes protegia-o a imunidade `essential`, que já não existe).
-    const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies.filter((a) => !a.detachedOutOfCell)];
+    // O último grupo (LG01…LG12) é alvo a partir de C10 (C11, p. 14: «quem foi atingido permanece ferido ou morto»).
+    const candidateTargets =
+      side === 'ally' ? this.enemies : [this.player, ...this.allies.filter((a) => !a.detachedOutOfCell), ...lastGroupTargets(this)];
     let hitAny = false;
 
     for (let i = 0; i < roundsToFire; i++) {
@@ -1533,6 +1559,7 @@ export class M02BenchSimulation {
       if (hit && hit.kind === 'actor' && hit.actor) {
         hitAny = true;
         const victim = hit.actor;
+        const victimWasAlive = victim.alive;
         const rawDmg = Math.round(prof.damage * (hit.multiplier ?? 1));
         // O fogo inimigo causa o dano do perfil (M02_ENEMY_HIT_DAMAGE_*) a quem atinge; ninguém tem imunidade (D1)
         let dmg = enemyFire ? Math.max(M02_ENEMY_HIT_DAMAGE_MIN, Math.round(rawDmg * M02_ENEMY_HIT_DAMAGE_FACTOR)) : rawDmg;
@@ -1584,6 +1611,9 @@ export class M02BenchSimulation {
             shooterId: shooter.id,
             targetId: victim.id,
           });
+        }
+        if (side === 'enemy' && isLastGroupMember(this, victim)) {
+          markLastGroupHit(this, victim, { wasAlive: victimWasAlive, shooterId: shooter.id, cause: 'fire' });
         }
         this.syncCalibrationAndEnemies();
       }
@@ -1687,7 +1717,7 @@ export class M02BenchSimulation {
     this.navigator.sync();
 
     const affectedActors = [];
-    const allActors = [this.player, ...this.allies, ...this.enemies];
+    const allActors = [this.player, ...this.allies, ...lastGroupTargets(this), ...this.enemies];
     for (const actor of allActors) {
       if (!actor || !actor.alive || actor.detachedOutOfCell) continue; // fora da célula (J3): a explosão desta célula não o alcança
       const targetPt = { x: actor.x, y: actor.y + 0.95, z: actor.z };
@@ -1710,6 +1740,7 @@ export class M02BenchSimulation {
         actor.suppressed = Math.min(1, (actor.suppressed ?? 0) + 0.25);
         affectedActors.push({ id: actor.id, blockedByWall: true, damage: 0 });
       } else {
+        const actorWasAlive = actor.alive;
         const rawDamage = Math.round(125 * (1 - dist / radius));
         // D6: a explosão perigosa de um hostil (agendada, com `meta`) fere Piotr com o dano do perfil; a granada dele não.
         const damageTakenScale = meta && actor.id === 'piotr_sokol' ? this.difficulty.damageTakenScale : 1;
@@ -1725,6 +1756,9 @@ export class M02BenchSimulation {
           // D1 (PDF p. 16): sem imunidades ocultas (antes os «essenciais» ficavam a 20 de vida).
           actor.alive = false;
           actor.state = 'DEAD';
+        }
+        if (isLastGroupMember(this, actor)) {
+          markLastGroupHit(this, actor, { wasAlive: actorWasAlive, shooterId: meta?.thrownBy ?? null, cause: 'blast' });
         }
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
       }

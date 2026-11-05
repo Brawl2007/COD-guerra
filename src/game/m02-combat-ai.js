@@ -21,6 +21,21 @@ export function instantAt(clock) {
   return t > clock ? (ms - 1) / 1000 : t;
 }
 
+/**
+ * C11 (PDF p. 14): «Quem foi atingido permanece ferido ou morto» e «não há mínimo artificial de dez sobreviventes». O último grupo
+ * (LG01…LG12) é alvo do fogo e das explosões a partir de C10 (o renderer só o mostra desde então), enquanto está vivo e não chegou ao ponto
+ * de evacuação (quem chegou já está fora do perigo). Antes não estava em nenhuma lista de alvos: era invulnerável (sempre 12/12).
+ */
+export function lastGroupTargets(sim) {
+  // (C12 é uma elipse sem combate: depois do fecho o grupo já não leva fogo, e o resumo de C12 fica exato quanto aos mortos)
+  if (sim.activeCellId !== 'C' || !sim.areaC?.c10Started || sim.areaC.c12Completed) return [];
+  return sim.areaC.lastGroup.filter((lg) => lg.alive && !lg.evacuated);
+}
+
+export function isLastGroupMember(sim, actor) {
+  return Boolean(sim.areaC?.lastGroup?.includes(actor));
+}
+
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
     id: 'wz29',
@@ -1432,7 +1447,8 @@ export function updateGermanGarrison(sim, dt) {
     stepActorNavigation(sim, enemy, dt);
 
     // Honest Visual Perception (AI-02: never tracks hidden targets through solid walls!)
-    const potentialTargets = [sim.player, ...sim.allies].filter((t) => t && t.alive && t.state !== 'DOWN' && !t.detachedOutOfCell);
+    // (o último grupo também é alvo a partir de C10: C11, p. 14, «quem foi atingido permanece ferido ou morto»)
+    const potentialTargets = [sim.player, ...sim.allies, ...lastGroupTargets(sim)].filter((t) => t && t.alive && t.state !== 'DOWN' && !t.detachedOutOfCell);
     let visibleTarget = null;
     let bestTargetScore = -Infinity;
 

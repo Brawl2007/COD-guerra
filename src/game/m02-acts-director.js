@@ -2,7 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { stepActorNavigation, WEAPON_PROFILES, instantAt } from './m02-combat-ai.js';
+import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
   TR01: 'Acessos de Łęczyca — noite de 9 para 10 de setembro',
@@ -184,6 +184,25 @@ function lisSupportPath(mode) {
   return route.slice(start);
 }
 
+/** Velocidade (m/s) de quem foi atingido (a dos dois feridos iniciais): «quem foi atingido permanece ferido ou morto» (C11). */
+export const LAST_GROUP_WOUNDED_SPEED = 3.8;
+
+// `lastGroupTargets` e `isLastGroupMember` vivem em m02-combat-ai.js (a percepção hostil precisa deles sem import circular).
+export { lastGroupTargets, isLastGroupMember };
+
+/**
+ * Um atingido do último grupo fica ferido (anda a velocidade de ferido); o que cai fica morto e fora do percurso, com uma baixa no
+ * registo. `wasAlive`: estava vivo antes deste impacto (quem chama capta-o antes de aplicar o dano).
+ */
+export function markLastGroupHit(sim, member, { wasAlive, shooterId = null, cause = 'fire' }) {
+  member.wounded = true;
+  member.speed = Math.min(member.speed, LAST_GROUP_WOUNDED_SPEED);
+  if (!wasAlive || member.alive) return;
+  member.moving = false;
+  member.state = 'DEAD';
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'last_group_casualty', actorId: member.id, shooterId, cause });
+}
+
 export function createInitialAreaBState() {
   const bDef = cellsBCLayout.cells.B;
   return {
@@ -247,6 +266,7 @@ export function createInitialAreaCState() {
       radius: PLAYER_PHYSICS.radius,
       eyeHeight: EYE_HEIGHT,
       alive: true,
+      maxHealth: lg.health ?? 100, // C11: o grupo deixou de ser invulnerável; a vida máxima é a do layout
       wounded: Boolean(lg.initialWounded),
       evacuated: false,
       arrivedAt: null,
@@ -1241,9 +1261,10 @@ export function updateAreaC(sim, dt) {
   requestCoverCheckpointIfSheltered(sim);
   if (allResolved && !sim.areaC.c12Completed) {
     sim.dialogue.trigger('bz39_c11_05', sim);
+    const deadCount = sim.areaC.lastGroup.filter((lg) => !lg.alive).length;
     sim.objective = {
       id: 'O09',
-      title: `O09 (Romper Contacto em B12): ${evacuatedCount}/12 sobreviventes evacuados — recuar para concluir M02`,
+      title: `O09 (Romper Contacto em B12): ${evacuatedCount} evacuados, ${deadCount} mortos de ${sim.areaC.lastGroup.length} — recuar para concluir M02`,
       status: 'active',
     };
   }
@@ -1336,6 +1357,18 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   return exportCampaignResultToM03(sim);
 }
 
+/** Destino individual de cada homem do último grupo e as contagens (derivados do estado, nunca de uma pontuação). */
+function lastGroupDestinies(sim) {
+  const members = sim.areaC.lastGroup.map((lg) => ({
+    id: lg.id,
+    fate: !lg.alive ? 'dead' : lg.evacuated ? 'evacuated' : 'in_transit',
+    wounded: Boolean(lg.wounded),
+    initialWounded: Boolean(lg.initialWounded),
+  }));
+  const count = (fate) => members.filter((m) => m.fate === fate).length;
+  return { survivors: count('evacuated'), dead: count('dead'), inTransit: count('in_transit'), members };
+}
+
 export function exportCampaignResultToM03(sim) {
   const lisStatus = sim.flags['m02.lis_status'];
   const validLisStatuses = ['wounded_evacuated', 'wounded_walking', 'missing'];
@@ -1379,6 +1412,8 @@ export function exportCampaignResultToM03(sim) {
       },
       waterReserveBonus: sim.supplies.waterDelivered ? 'small_water_reserve_available' : 'water_scarce',
       lastGroupSurvivorsCount: sim.flags['m02.last_group_survivors'] ?? 0,
+      // C11/I4/I6: sem mínimo artificial de dez; «manter destino individual» (LG01…LG12: evacuado / morto / em trânsito, e se ficou ferido).
+      lastGroup: lastGroupDestinies(sim),
     },
   };
 
