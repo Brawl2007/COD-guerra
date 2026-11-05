@@ -2,7 +2,7 @@
 
 Ficheiro **gerado** por `tools/m02/openings-table.mjs` (não editar à mão). Prova de geometria/colisão/linha de vista sobre os dados reais do layout; **não** é playtest nem aprova o N0.
 
-- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `f7104f461bd65d98df9db970d85c53d3f5c99885cee7fb1ebe2ea2668c7d3964`), instanciado com `M02QuintaWorld`.
+- Entrada: `missions/m02-bzura/m02-01-quinta-layout.json` (sha256 `23f67c018bca7c2b51436fe83cdcf6abfffeb4a72bfc49eb2c164ddda87eba77`), instanciado com `M02QuintaWorld`.
 - Cápsula do jogador (`PLAYER_PHYSICS`, src/world/m01-player-physics.js, usada por `m02-01-simulation.js`): raio 0,36 m (Ø 0,72 m), altura em pé 1,80 m, agachado 1,25 m, degrau máximo 0,45 m, sem salto. Olhos: em pé 1,64 m, agachado 1,08 m (`EYE_HEIGHT` de src/config.js e o literal de olhos agachado em `m02-01-simulation.js`).
 - Eixos: x este, z sul, y altura (metros). Posição = centro do vão no plano da parede. «Atravessável» = a cápsula passa em linha reta ao longo da normal da parede, com a colisão real (`deepestWall`, `playerSolids`).
 - LoS = `world.lineOfSight` (inclui copas) entre dois pontos à mesma altura, 3 m fora/dentro (1,4 m em paredes interiores), perpendiculares à parede. Política de vidro (`BALLISTIC_MATERIAL_POLICY.glass`): o vidro intacto **deixa ver** (`blocksSight` = false: `lineOfSight` ignora-o) mas **pára a bala**, que o parte (`glassBrokenId`; depois o vão fica `broken`). Bala = qualquer outro sólido bloqueia; **não há penetração** em `traceObstruction` (`BALLISTIC_MATERIAL_POLICY.penetrationLoss` só existe como dados).

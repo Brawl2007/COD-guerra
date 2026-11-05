@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1988" viewBox="0 0 1040 1988" font-family="DejaVu Sans, Verdana, sans-serif">
 <title>M02-01 Quinta (bancada N0) — planta com escala</title>
-<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 f7104f461bd65d98df9db970d85c53d3f5c99885cee7fb1ebe2ea2668c7d3964). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
+<desc>Gerada por tools/m02/plan-svg.mjs a partir de missions/m02-bzura/m02-01-quinta-layout.json (sha256 23f67c018bca7c2b51436fe83cdcf6abfffeb4a72bfc49eb2c164ddda87eba77). Norte = −Z (cima), este = +X. Escala 6 px/m. Prova geométrica; não é levantamento nem aprova o N0.</desc>
 <defs>
 <clipPath id="clip-plan"><rect x="56" y="74" width="600" height="1128"/></clipPath>
 <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c9c4b4" stroke-width="2"/></pattern>
@@ -12,7 +12,7 @@
 </defs>
 <rect width="1040" height="1988" fill="#f4f0e4"/>
 <text x="56" y="26" font-size="17" font-weight="bold" fill="#22362f">M02-01 · Bancada da quinta (N0) · planta com escala</text>
-<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 f7104f461bd6</text>
+<text x="56" y="44" font-size="10.5" fill="#444">Área A: X −50…50, Z −90…60 (100 × 150 m) · norte = −Z (cima), este = +X · metros · 1 quadrícula = 10 m · layout sha256 23f67c018bca</text>
 <text x="56" y="58" font-size="10.5" fill="#444">Gerada de missions/m02-bzura/m02-01-quinta-layout.json; esquemática, não é levantamento histórico nem aprovação do N0.</text>
 <g id="plano" clip-path="url(#clip-plan)">
 <rect x="56" y="74" width="600" height="1128" fill="#e9e6d8"/>

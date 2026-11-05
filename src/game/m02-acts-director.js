@@ -2,7 +2,7 @@ import cellsBCLayout from '../../missions/m02-bzura/m02-cells-bc-layout.json' wi
 import { PLAYER_PHYSICS } from '../world/m01-player-physics.js';
 import { EYE_HEIGHT } from '../config.js';
 import { M01Navigator } from '../world/m01-navigation.js';
-import { stepActorNavigation, WEAPON_PROFILES } from './m02-combat-ai.js';
+import { stepActorNavigation, WEAPON_PROFILES, instantAt, lastGroupTargets, isLastGroupMember } from './m02-combat-ai.js';
 
 export const M02_TR_CARTELAS = Object.freeze({
   TR01: 'Acessos de Łęczyca — noite de 9 para 10 de setembro',
@@ -89,6 +89,59 @@ export function updateC01Contact(sim) {
 }
 
 /**
+ * C06 (PDF p. 13) + D6 (p. 18): «Primeiro contacto combatível até 60 s de movimento». A entrada na Área B tem uma JANELA DE SEGURANÇA
+ * como a de C02: o ponto de entrada (0,85) é terreno aberto e 7 dos 12 defensores de EB1 têm linha de tiro a 75-130 m (o teste da
+ * entrada em B, tests/m02-c06, confere-o); em soldado e veterano, a 1/60 s, Piotr morria ~2 s depois de entrar (e a secção, com Gruca,
+ * levava o fogo todo). Até ao contacto aberto EB1 está «sem alerta»: não percebe, não recorda e não dispara, e a secção também não abre fogo.
+ * O contacto abre, como em C02: pelo tiro ou pela granada de Piotr (a iniciativa é dele); a ≤ C01_PROXIMITY_DETECTION_M de um defensor
+ * (quem chega ao pé deles é visto); ou 30-60 s depois de Piotr começar a andar (C01_CONTACT_DELAY_SEC, sorteado UMA vez com o RNG da
+ * simulação). Mesmo estado e mesmas regras que `c01Contact`, em `areaB.contact`. Um save anterior (sem o campo) não tem janela.
+ */
+export function openAreaBContact(sim, by) {
+  const c = sim.areaB?.contact;
+  if (sim.activeCellId !== 'B' || !sim.areaB?.active || !c || c.opened) return false;
+  c.opened = true;
+  c.openedAt = Number(sim.clock.toFixed(3));
+  c.openedBy = by;
+  if (c.movementStartedAt === null) {
+    c.movementStartedAt = c.openedAt;
+    c.contactAt = c.openedAt;
+  }
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'b_contact_opened', by });
+  return true;
+}
+
+/** Regista o início do avanço em B (sorteia o atraso) e abre o contacto quando o atraso acaba ou alguém chega ao pé de um defensor. */
+export function updateAreaBContact(sim) {
+  const c = sim.areaB?.contact;
+  if (sim.activeCellId !== 'B' || !sim.areaB?.active || !c || c.opened) return;
+  if (c.movementStartedAt === null) {
+    const spawn = sim.world.layout.playerSpawn;
+    if (Math.hypot(sim.player.x - spawn.x, sim.player.z - spawn.z) < C01_ADVANCE_THRESHOLD_M) return;
+    c.movementStartedAt = Number(sim.clock.toFixed(3));
+    const delay = C01_CONTACT_DELAY_SEC.min + sim.rng.next() * (C01_CONTACT_DELAY_SEC.max - C01_CONTACT_DELAY_SEC.min);
+    c.contactAt = Number((c.movementStartedAt + delay).toFixed(3));
+  }
+  if (sim.clock >= c.contactAt) {
+    openAreaBContact(sim, 'timer');
+    return;
+  }
+  const near = sim.enemies.some(
+    (e) =>
+      e.encounterId === 'EB1' &&
+      e.alive &&
+      !e.nonCombatant &&
+      Math.hypot(e.x - sim.player.x, e.z - sim.player.z) <= C01_PROXIMITY_DETECTION_M,
+  );
+  if (near) openAreaBContact(sim, 'proximity');
+}
+
+/** Um tiro ou uma granada de Piotr abre o contacto da cena em curso (C02 ou C06), o que estiver fechado. */
+export function openPendingContact(sim, by) {
+  return openC01Contact(sim, by) || openAreaBContact(sim, by);
+}
+
+/**
  * SP02 (PDF C06 p. 13, J2 p. 36, F8 p. 26): «Um tiro que quebra o varal bloqueia a carroça em vez de a fazer explodir».
  * Causas explícitas da imobilização (`cart.immobilizedCause`): o tiro que parte o varal (`shaft_broken`), a roda danificada
  * (`wheel_damaged`, ação da bancada) e a alternativa «parada» (`parked_fallback`: F8/J2, «carroça já parada e carga manual»;
@@ -102,6 +155,52 @@ export const CART_CROSSING_Z = 20;
 export const CART_SHOT_WINDOW_SEC = 2.0;
 /** Um hostil com supressão ≥ 0,88 não consegue disparar (updateGermanGarrison). */
 const CART_SHOOTER_MAX_SUPPRESSION = 0.88;
+
+/**
+ * D1 (PDF p. 16, «Falhas duras»): a 2.ª falha dura é a «incapacidade definitiva de uma personagem exigida pelo cânone antes do seu
+ * ponto de resolução»; «esta convenção deve ser visível, não imunidade oculta». É esta tabela, o ecrã de falha e o motivo
+ * `required_character_incapacitated` (com o `actorId`): ninguém é invulnerável (antes `essential` repunha a vida de Gruca, Lis e
+ * Szymczak sem aviso). «Fora de combate» é `alive` falso: caído por tiro (DOWN) ou morto por explosão (DEAD).
+ *
+ * EXIGIDA (fora de combate = falha, de C01 até C12 fechar — o ponto de resolução):
+ *  - pl_gruca: K1 (p. 38) «Essencial à resolução M02»; dá as ordens de todas as cenas, diz dlg_m02_002 em C10 (K2, p. 38) e ordena
+ *    romper contacto (C11) e conta os homens (C12, pp. 14-15). O PDF não prevê substituto nem ramo da missão sem ele.
+ *
+ * NÃO EXIGIDAS (o PDF prevê o ramo: a incapacidade é consequência persistente, não falha):
+ *  - pl_lis: C08 (p. 14) «Se já estava incapacitado/evacuado, não recebe essa missão: mantém o seu estado e outro mensageiro faz a
+ *    ligação»; C11 (p. 14) «se estava, usa esse estado e não produz um segundo Lis»; I4 (p. 34) «Se Lis já tinha sido ferido em
+ *    combate, C11 usa esse ferimento». Os três desfechos (wounded_evacuated, wounded_walking, missing) cobrem Lis fora de combate.
+ *  - pl_szymczak: A3 (p. 6) e K1 (p. 38): proposta do #58, «não se transforma em invulnerável»; a triagem de C07 e o socorro de C11
+ *    têm alternativa (Piotr carrega Lis, C11 p. 14), por isso o estado canónico não se torna impossível.
+ *  - pl_wierzba, pl_malek: «admitem consequência persistente conforme K/I» (D1); os auxiliares «podem morrer sem reiniciar» (D1).
+ *
+ * LIMITE: D1 diz que o ferimento incapacitante de Gruca/Lis/Szymczak «admite socorro quando seguro». A bancada não tem socorro
+ * interativo (Piotr ou Szymczak a levantar um caído), por isso, até existir, estar fora de combate é definitivo para quem é exigido.
+ */
+export const M02_REQUIRED_CHARACTERS = Object.freeze({
+  pl_gruca: Object.freeze({
+    id: 'pl_gruca',
+    name: 'sierż. Władysław Gruca',
+    fromScene: 'C01',
+    untilScene: 'C12', // até o epílogo fechar (`areaC.c12Completed`); C12 é uma elipse sem combate
+  }),
+});
+
+/**
+ * Id da primeira personagem exigida que está fora de combate num estado de jogo ou snapshot (`allies`, `areaC`, `flags`), ou null.
+ * Sem falha depois de a missão estar concluída (C12 fechado). Só lê dados: serve a simulação e o validador do snapshot.
+ */
+export function requiredCharacterOut(state) {
+  if (!state || state.areaC?.c12Completed || state.flags?.['m02.completed']) return null;
+  const allies = Array.isArray(state.allies) ? state.allies : [];
+  const scene = M02_SCENE_IDS.indexOf(state.script?.sceneId); // -1: sem roteiro conhecido, a janela não filtra
+  for (const req of Object.values(M02_REQUIRED_CHARACTERS)) {
+    if (scene >= 0 && (scene < M02_SCENE_IDS.indexOf(req.fromScene) || scene > M02_SCENE_IDS.indexOf(req.untilScene))) continue;
+    const a = allies.find((x) => x?.id === req.id);
+    if (a && a.alive === false) return req.id;
+  }
+  return null;
+}
 
 /** Fases do percurso de Lis (J3): fora da célula → regresso a pé → à espera → amparado/carregado → abrigado; ou incapacitado antes. */
 export const LIS_PHASES = Object.freeze(['liaison_outside', 'returning', 'waiting', 'supported', 'sheltered', 'incapacitated']);
@@ -138,6 +237,25 @@ function lisSupportPath(mode) {
   return route.slice(start);
 }
 
+/** Velocidade (m/s) de quem foi atingido (a dos dois feridos iniciais): «quem foi atingido permanece ferido ou morto» (C11). */
+export const LAST_GROUP_WOUNDED_SPEED = 3.8;
+
+// `lastGroupTargets` e `isLastGroupMember` vivem em m02-combat-ai.js (a percepção hostil precisa deles sem import circular).
+export { lastGroupTargets, isLastGroupMember };
+
+/**
+ * Um atingido do último grupo fica ferido (anda a velocidade de ferido); o que cai fica morto e fora do percurso, com uma baixa no
+ * registo. `wasAlive`: estava vivo antes deste impacto (quem chama capta-o antes de aplicar o dano).
+ */
+export function markLastGroupHit(sim, member, { wasAlive, shooterId = null, cause = 'fire' }) {
+  member.wounded = true;
+  member.speed = Math.min(member.speed, LAST_GROUP_WOUNDED_SPEED);
+  if (!wasAlive || member.alive) return;
+  member.moving = false;
+  member.state = 'DEAD';
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'last_group_casualty', actorId: member.id, shooterId, cause });
+}
+
 export function createInitialAreaBState() {
   const bDef = cellsBCLayout.cells.B;
   return {
@@ -145,6 +263,7 @@ export function createInitialAreaBState() {
     reorganizedC07: false,
     c08Briefed: false,
     corridorUnderDirectFire: true,
+    contact: createInitialC01Contact(), // C06: a janela de segurança da entrada (ver openAreaBContact)
     supplyCart: {
       id: bDef.supplyCart.id,
       state: 'WAITING_CLEAR_CORRIDOR', // WAITING_CLEAR_CORRIDOR -> MOVING -> DELIVERED | IMMOBILIZED
@@ -201,6 +320,7 @@ export function createInitialAreaCState() {
       radius: PLAYER_PHYSICS.radius,
       eyeHeight: EYE_HEIGHT,
       alive: true,
+      maxHealth: lg.health ?? 100, // C11: o grupo deixou de ser invulnerável; a vida máxima é a do layout
       wounded: Boolean(lg.initialWounded),
       evacuated: false,
       arrivedAt: null,
@@ -1195,9 +1315,10 @@ export function updateAreaC(sim, dt) {
   requestCoverCheckpointIfSheltered(sim);
   if (allResolved && !sim.areaC.c12Completed) {
     sim.dialogue.trigger('bz39_c11_05', sim);
+    const deadCount = sim.areaC.lastGroup.filter((lg) => !lg.alive).length;
     sim.objective = {
       id: 'O09',
-      title: `O09 (Romper Contacto em B12): ${evacuatedCount}/12 sobreviventes evacuados — recuar para concluir M02`,
+      title: `O09 (Romper Contacto em B12): ${evacuatedCount} evacuados, ${deadCount} mortos de ${sim.areaC.lastGroup.length} — recuar para concluir M02`,
       status: 'active',
     };
   }
@@ -1290,6 +1411,18 @@ export function completeC12Epilogue(sim, { lisOutcome = null } = {}) {
   return exportCampaignResultToM03(sim);
 }
 
+/** Destino individual de cada homem do último grupo e as contagens (derivados do estado, nunca de uma pontuação). */
+function lastGroupDestinies(sim) {
+  const members = sim.areaC.lastGroup.map((lg) => ({
+    id: lg.id,
+    fate: !lg.alive ? 'dead' : lg.evacuated ? 'evacuated' : 'in_transit',
+    wounded: Boolean(lg.wounded),
+    initialWounded: Boolean(lg.initialWounded),
+  }));
+  const count = (fate) => members.filter((m) => m.fate === fate).length;
+  return { survivors: count('evacuated'), dead: count('dead'), inTransit: count('in_transit'), members };
+}
+
 export function exportCampaignResultToM03(sim) {
   const lisStatus = sim.flags['m02.lis_status'];
   const validLisStatuses = ['wounded_evacuated', 'wounded_walking', 'missing'];
@@ -1333,6 +1466,8 @@ export function exportCampaignResultToM03(sim) {
       },
       waterReserveBonus: sim.supplies.waterDelivered ? 'small_water_reserve_available' : 'water_scarce',
       lastGroupSurvivorsCount: sim.flags['m02.last_group_survivors'] ?? 0,
+      // C11/I4/I6: sem mínimo artificial de dez; «manter destino individual» (LG01…LG12: evacuado / morto / em trânsito, e se ficou ferido).
+      lastGroup: lastGroupDestinies(sim),
     },
   };
 
@@ -1354,17 +1489,8 @@ export const C02_EXIT_Z = -85;
 export const C04_EXIT_Z = 44;
 export const C11_EVAC_RADIUS_M = 6;
 
-/**
- * Instante PASSADO gravado pela simulação (início de cena, aviso de explosão, falha da missão), em ms arredondados para BAIXO.
- * O validador recusa um instante à frente do relógio do snapshot (`> clock + 1e-9`); `toFixed(3)` arredondava para cima e, com o dt
- * real de um frame (1/60 s), metade das transições de cena gravava um instante 0,1-0,5 ms à frente do relógio: o checkpoint desse
- * passo era recusado e perdia-se (FIX-CD). Instantes futuros (impacto, próximo tiro, contacto agendado) não passam por aqui.
- */
-export function instantAt(clock) {
-  const ms = Math.floor(clock * 1000);
-  const t = ms / 1000;
-  return t > clock ? (ms - 1) / 1000 : t;
-}
+// `instantAt` vive em m02-combat-ai.js (D2 precisa dele sem import circular) e continua a sair daqui para quem o importava deste módulo.
+export { instantAt };
 
 export function createInitialScriptState(sceneId = 'C02', clock = 0) {
   return { sceneId, sceneStartedAt: instantAt(clock), history: [], finished: false };

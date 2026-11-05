@@ -17,6 +17,12 @@ const SEED = 19390909;
 const DT = 0.05;
 const kill = (e) => Object.assign(e, { alive: false, state: 'DEAD', health: 0 });
 const ally = (sim, id) => sim.allies.find((a) => a.id === id);
+/**
+ * D1: ninguém é invulnerável e o sierż. Gruca é a primeira posição da equipa de assalto, por isso uma ordem de «avançar» em campo aberto
+ * até ao muro do portão, sob a MG34 de B02, mata-o a meio do caminho (e a missão falha). Estes testes verificam a ordem, não a
+ * sobrevivência: o jogador já fixou a MG (o atirador DE-A05 está fora de combate) antes de a dar.
+ */
+const mgDown = (sim) => kill(sim.enemies.find((e) => e.id === 'DE-A05'));
 const run = (sim, seconds, controls = {}) => {
   for (let i = 0; i < Math.ceil(seconds / DT); i++) sim.tick(DT, controls);
 };
@@ -165,6 +171,9 @@ describe('M02 D4: a ordem muda o que a equipa de assalto faz; sem ordem segue o 
 
   it('cobrir aqui: Gruca e Lis ocupam os parapeitos atribuídos e os outros dois mantêm a posição; sem ordem avançam para a vala', () => {
     const auto = sheltered();
+    // D4: o plano base é conduzido COM o atirador (trela, SECTION_ASSAULT_LEASH_M das posições de assalto): com Piotr na vala, a 18-31 m
+    // das posições do meio da vala e do muro norte de B01, a secção avança pela vala e pela casa
+    auto.teleportPlayer(-45, -50, 0);
     run(auto, 30);
     const ordered = sheltered();
     const order = ordered.issueSquadOrder('cover');
@@ -193,6 +202,7 @@ describe('M02 D4: a ordem muda o que a equipa de assalto faz; sem ordem segue o 
 
   it('avançar para ali: o elemento atribuído desloca-se até à posição à frente e toma-a (byOrder = advance); os outros seguram', () => {
     const sim = sheltered();
+    mgDown(sim);
     const order = sim.issueSquadOrder('advance');
     assert.equal(order.nodeId, 'cv_gate_wall_west_s');
     const before = positionOf(sim, 'pl_gruca');
@@ -214,6 +224,7 @@ describe('M02 D4: a ordem muda o que a equipa de assalto faz; sem ordem segue o 
     assert.deepEqual(Object.keys(cleared).sort(), ['axis', 'issuedAt', 'type']);
     assert.equal(cleared.type, 'auto');
     assert.ok(distFromStart(sim, 'pl_wierzba') < 8, 'com a ordem em vigor Wierzba mantém a posição');
+    sim.teleportPlayer(-45, -50, 0); // o plano base avança com Piotr (D4: trela), aqui na vala
     run(sim, 30);
     assert.ok(distFromStart(sim, 'pl_wierzba') > 15, 'sem ordem Wierzba segue o plano base e avança');
   });
@@ -225,7 +236,7 @@ describe('M02 D4: a ordem muda o que a equipa de assalto faz; sem ordem segue o 
     run(cover, 5);
     assert.equal(cover.squadOrder.type, 'cover', 'Piotr abrigado: a ordem mantém-se');
     cover.drainEvents();
-    cover.teleportPlayer(order.x - 30, order.z + 5, 0);
+    cover.teleportPlayer(-45, -50, 0); // a 55 m da âncora, na vala (onde o plano base, sem ordem, volta a avançar)
     cover.tick(DT, {});
     assert.equal(cover.squadOrder.type, 'auto');
     const lapsed = cover.drainEvents().filter((e) => e.type === 'squad-order-lapsed');
@@ -294,6 +305,7 @@ describe('M02 D4: prova de 60 s com Piotr abrigado — efeito causal real da sec
       it(`${mode} · semente ${seed}: ocupa cobertura, dispara com oclusão correta e melhora a situação (suprime a MG, neutraliza, conquista cobertura)`, () => {
         const sim = sheltered(seed);
         const shots = instrumentLineOfSight(sim);
+        if (mode === 'advance') mgDown(sim); // ver mgDown: avançar sob a MG mata o líder (D1)
         if (mode !== 'auto') assert.ok(sim.issueSquadOrder(mode), `${mode} aceite`);
         const ammoBefore = sim.allies.reduce((a, b) => a + b.mag + b.reserve, 0);
         run(sim, 60);
@@ -303,7 +315,9 @@ describe('M02 D4: prova de 60 s com Piotr abrigado — efeito causal real da sec
 
         // 1) ocupa cobertura útil
         const captures = of('ally_captured_cover');
-        assert.ok(captures.length >= 6, `coberturas tomadas: ${captures.length}`);
+        // (D4, trela: sem Piotr à frente a secção não salta de lanço em lanço até à casa, por isso são menos capturas do que as 6+ de antes;
+        // o que a prova pede é ocupar cobertura útil, não um número)
+        assert.ok(captures.length >= 4, `coberturas tomadas: ${captures.length}`);
         // 2) dispara (munição real) com oclusão correta: só há tiros a alvos com linha de visão, salvo a rkm sobre a abertura da MG
         const totalShots = sim.allies.reduce((a, b) => a + (b.shotsFired ?? 0), 0);
         assert.ok(totalShots >= 50, `tiros reais da secção: ${totalShots}`);

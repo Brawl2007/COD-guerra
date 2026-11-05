@@ -69,10 +69,17 @@ import {
   createInitialScriptState,
   updateScript as runUpdateScript,
   beginC08Briefing as runBeginC08Briefing,
-  openC01Contact,
+  openPendingContact,
   updateC01Contact as runUpdateC01Contact,
+  updateAreaBContact as runUpdateAreaBContact,
   C01_CONTACT_OPENED_BY,
+  C01_CONTACT_DELAY_SEC,
   instantAt,
+  M02_REQUIRED_CHARACTERS,
+  requiredCharacterOut,
+  lastGroupTargets,
+  isLastGroupMember,
+  markLastGroupHit,
 } from './m02-acts-director.js';
 import {
   M02SaveStore,
@@ -105,15 +112,19 @@ const WEAPON_STATES = Object.freeze(['READY', 'BOLT_CYCLE', 'RELOAD_CLIP', 'RELO
 const PLAYER_ID = 'piotr_sokol';
 
 /**
- * D1 (PDF p. 16, «Falhas duras»): a missão falha quando Piotr morre. A incapacidade definitiva de uma personagem exigida pelo cânone
- * antes do seu ponto de resolução (também D1) depende da lista de personagens exigidas de K/I e ainda não está implementada.
- * A falha é estado (`sim.missionFailed = {reason, at}`), nunca imunidade oculta: pára o roteiro e os checkpoints (automáticos
+ * D1 (PDF p. 16, «Falhas duras»): duas falhas duras. (1) `piotr_killed`: a morte de Piotr. (2) `required_character_incapacitated`:
+ * a incapacidade definitiva de uma personagem exigida pelo cânone antes do seu ponto de resolução — quais e em que cenas está em
+ * M02_REQUIRED_CHARACTERS (m02-acts-director.js: hoje o sierż. Gruca, de C01 até C12 fechar); a falha leva o `actorId`.
+ * A terceira falha dura do PDF, a corrupção de estado rejeitada, é o `validateM02Snapshot` (o restauro recusa e nada muda).
+ * A falha é estado (`sim.missionFailed = {reason, at[, actorId]}`), nunca imunidade oculta: pára o roteiro e os checkpoints (automáticos
  * e manuais) e só se sai dela por uma ação explícita (`restartAfterFailure`, o F9 da bancada).
  */
-export const M02_MISSION_FAILURE_REASONS = Object.freeze(['piotr_killed']);
+export const M02_MISSION_FAILURE_REASONS = Object.freeze(['piotr_killed', 'required_character_incapacitated']);
 /** Texto de apresentação de cada razão (a bancada só mostra; quem decide a falha é a simulação). */
 export const M02_MISSION_FAILURE_TEXT = Object.freeze({
   piotr_killed: 'O strz. Piotr Sokół morreu. A missão falhou.',
+  required_character_incapacitated:
+    'Uma personagem exigida pelo roteiro ficou fora de combate (o sierż. Gruca é essencial à resolução da missão). A missão falhou.',
 });
 
 // FIX-2b (PDF I4/I5): enums e relações que o restauro aceita. Valores tirados do código que os escreve.
@@ -140,6 +151,8 @@ const ENEMY_STATES = Object.freeze([
   'ADVANCE_RESERVE',
   'SURRENDERED',
   'WOUNDED_UNARMED',
+  'WITHDRAWING', // D2: o posto EA0 a recuar para a borda oeste (combatente, a andar)
+  'WITHDRAWN', // D2: o posto EA0 retirado na borda oeste (vivo, fora de combate)
   'DEAD',
   'DOWN',
 ]);
@@ -339,13 +352,39 @@ export function validateM02Snapshot(snap) {
       if (label === 'Aliado' && !a.alive && !ALLY_INCAPACITATED_STATES.includes(a.state)) {
         return { valid: false, reason: `Aliado morto com arma ativa no snapshot: ${a.id} (${a.state})` };
       }
+      // D4: o lanço do plano base que a trela reteve (id de um nó de cobertura) ou null; campo aditivo, ausente nos saves anteriores.
+      if (label === 'Aliado' && 'holdingFor' in a && a.holdingFor !== null && !(typeof a.holdingFor === 'string' && /^cv_[a-z0-9_]+$/.test(a.holdingFor))) {
+        return { valid: false, reason: `Objetivo retido (holdingFor) inválido no snapshot: ${a.id}` };
+      }
       // D6 (regra F1 da M01): contacto de um atirador com Piotr; só existe em soldado/veterano, instantes finitos ou null.
       if (label === 'Inimigo' && ['aimEngagedAt', 'aimLastAt'].some((k) => k in a && a[k] !== null && !(Number.isFinite(a[k]) && a[k] >= 0))) {
         return { valid: false, reason: `Contacto do inimigo com Piotr inválido no snapshot: ${a.id}` };
       }
+      // D2: recuo do posto EA0 (campo aditivo `withdrawStartedAt`; saves anteriores nunca o têm). WITHDRAWING/WITHDRAWN só existem em
+      // homens vivos do EA0, com o instante de início passado; quem recua é combatente e anda para um destino, quem foi retirado já não combate.
+      if (label === 'Inimigo') {
+        const withdrawing = a.state === 'WITHDRAWING';
+        const withdrawn = a.state === 'WITHDRAWN';
+        const started = a.withdrawStartedAt;
+        if (
+          ('withdrawStartedAt' in a && started !== null && !(Number.isFinite(started) && started >= 0 && started <= snap.clock + 1e-9)) ||
+          ((withdrawing || withdrawn) &&
+            (a.encounterId !== 'EA0' || a.alive !== true || !Number.isFinite(started) || Boolean(a.nonCombatant) !== withdrawn)) ||
+          (withdrawing && !(isPlainObject(a.goal) && Number.isFinite(a.goal.x) && Number.isFinite(a.goal.z)))
+        ) {
+          return { valid: false, reason: `Recuo do posto EA0 inválido no snapshot: ${a.id}` };
+        }
+      }
     }
   }
   const aliveById = new Map([[PLAYER_ID, p.alive !== false], ...snap.allies.map((a) => [a.id, a.alive])]);
+  // D1: também não é ponto de reinício um checkpoint com uma personagem exigida já fora de combate (a falha repetia-se no tick seguinte).
+  if (snap.checkpointId !== undefined) {
+    const out = requiredCharacterOut(snap);
+    if (out) {
+      return { valid: false, reason: `Checkpoint ${snap.checkpointId} recusado: a personagem exigida ${out} está fora de combate, não é um ponto de reinício.` };
+    }
+  }
   if (!Array.isArray(snap.targets)) return { valid: false, reason: 'Lista de alvos de calibração inválida.' };
 
   for (const key of ['mgState', 'routeProgress', 'objective', 'squadOrder', 'dialogue', 'audiovisual', 'supplies']) {
@@ -383,16 +422,37 @@ export function validateM02Snapshot(snap) {
     !isTimeOrNull(areaC.c11StartedAt) ||
     Boolean(areaC.c11Started) !== (areaC.c11StartedAt !== null) ||
     !Array.isArray(areaC.lastGroup) ||
-    areaC.lastGroup.some((lg) => typeof lg.evacuated !== 'boolean' || !isTimeOrNull(lg.arrivedAt) || (lg.evacuated && lg.arrivedAt === null))
+    areaC.lastGroup.some((lg) => !isPlainObject(lg) || typeof lg.evacuated !== 'boolean' || !isTimeOrNull(lg.arrivedAt) || (lg.evacuated && lg.arrivedAt === null))
   ) {
     return {
       valid: false,
       reason: 'Save incompatível: estado de Lis/último grupo da Área C ausente ou inválido (snapshot anterior ao percurso persistente de Lis).',
     };
   }
+  // C11: o último grupo pode ser ferido e morto (campo aditivo `maxHealth`; saves anteriores têm todos vivos e a 100 %).
+  for (const lg of areaC.lastGroup) {
+    const max = isPlainObject(lg) ? (lg.maxHealth ?? lg.health) : null;
+    if (
+      !isPlainObject(lg) ||
+      typeof lg.alive !== 'boolean' ||
+      typeof lg.wounded !== 'boolean' ||
+      !(typeof lg.health === 'number' && Number.isFinite(lg.health) && lg.health >= 0) ||
+      !(typeof max === 'number' && Number.isFinite(max) && max > 0 && lg.health <= max) ||
+      (lg.alive ? lg.health <= 0 : lg.health !== 0) ||
+      (lg.evacuated && !lg.alive) ||
+      ('state' in lg && lg.state !== undefined && typeof lg.state !== 'string')
+    ) {
+      return { valid: false, reason: `Estado do último grupo inválido no snapshot (vida, ferido, vivo/morto ou evacuado incoerentes): ${lg?.id}` };
+    }
+  }
   if (areaC.lastGroupSummary !== null && areaC.lastGroupSummary !== undefined) {
     const sum = areaC.lastGroupSummary;
-    if (!isPlainObject(sum) || !['evacuated', 'inTransit', 'dead'].every((k) => isNonNegativeInteger(sum[k])) || sum.evacuated + sum.inTransit + sum.dead !== areaC.lastGroup.length) {
+    const dead = areaC.lastGroup.filter((lg) => !lg.alive).length;
+    const evacuated = areaC.lastGroup.filter((lg) => lg.alive && lg.evacuated).length;
+    // C12 escreve o resumo uma só vez: os mortos são exatamente os de agora (depois de C12 já ninguém leva fogo) e os evacuados só
+    // podem ter crescido (quem estava em trânsito continua o percurso)
+    const stable = isPlainObject(sum) && sum.dead === dead && sum.evacuated <= evacuated;
+    if (!isPlainObject(sum) || !['evacuated', 'inTransit', 'dead'].every((k) => isNonNegativeInteger(sum[k])) || sum.evacuated + sum.inTransit + sum.dead !== areaC.lastGroup.length || !stable) {
       return { valid: false, reason: 'Resumo do último grupo (lastGroupSummary) inválido no snapshot.' };
     }
   }
@@ -429,13 +489,29 @@ export function validateM02Snapshot(snap) {
       reason: 'Save incompatível: estado de contacto C01 (c01Contact) ausente ou inválido (snapshot anterior ao roteiro automático).',
     };
   }
-  // D1: campo aditivo do schema 2 — ausente = missão em curso (null). Presente tem de ser {reason ∈ enum, at ≤ clock}.
+  // D1: campo aditivo do schema 2 — ausente = missão em curso (null). Presente tem de ser {reason ∈ enum, at ≤ clock}; a falha por
+  // personagem exigida leva ainda o `actorId` de uma personagem da tabela M02_REQUIRED_CHARACTERS que está mesmo fora de combate,
+  // e a morte de Piotr não leva `actorId`.
   const failed = snap.missionFailed ?? null;
   if (
     failed !== null &&
     (!isPlainObject(failed) || !M02_MISSION_FAILURE_REASONS.includes(failed.reason) || !finiteTime(failed.at) || failed.at > snap.clock + 1e-9)
   ) {
     return { valid: false, reason: 'Estado de falha da missão (missionFailed) inválido no snapshot.' };
+  }
+  if (failed !== null) {
+    const byCharacter = failed.reason === 'required_character_incapacitated';
+    const allowedKeys = byCharacter ? ['reason', 'at', 'actorId'] : ['reason', 'at'];
+    const outOfAction = byCharacter ? snap.allies.find((a) => a.id === failed.actorId)?.alive === false : false;
+    if (
+      Object.keys(failed).some((k) => !allowedKeys.includes(k)) ||
+      (byCharacter && (!Object.hasOwn(M02_REQUIRED_CHARACTERS, failed.actorId) || !outOfAction))
+    ) {
+      return {
+        valid: false,
+        reason: `Estado de falha da missão (missionFailed) inválido no snapshot: ${failed.reason} exige ${byCharacter ? 'o actorId de uma personagem exigida fora de combate' : 'só reason e at'}.`,
+      };
+    }
   }
   if (!isPlainObject(snap.flags)) return { valid: false, reason: 'Flags de campanha ausentes no snapshot.' };
   for (const [flag, value] of Object.entries(snap.flags)) {
@@ -523,6 +599,24 @@ export function validateM02Snapshot(snap) {
     }
   }
 
+  // C06: a janela de segurança da entrada em B (campo aditivo `areaB.contact`, mesma forma que `c01Contact`; ausente nos saves anteriores).
+  const bContact = snap.areaB.contact;
+  if (
+    bContact !== undefined &&
+    (!isPlainObject(bContact) ||
+      typeof bContact.opened !== 'boolean' ||
+      !nullOrTime(bContact.movementStartedAt) ||
+      !nullOrTime(bContact.contactAt) ||
+      !nullOrTime(bContact.openedAt) ||
+      (bContact.contactAt === null) !== (bContact.movementStartedAt === null) ||
+      (bContact.opened ? !C01_CONTACT_OPENED_BY.includes(bContact.openedBy) || bContact.openedAt === null : bContact.openedBy !== null || bContact.openedAt !== null) ||
+      // instantes passados (início do avanço, abertura) nunca à frente do relógio; o agendado cai no máximo 60 s depois do início (D6)
+      (bContact.movementStartedAt !== null && bContact.movementStartedAt > snap.clock + 1e-9) ||
+      (bContact.openedAt !== null && bContact.openedAt > snap.clock + 1e-9) ||
+      (bContact.contactAt !== null && !(bContact.contactAt >= bContact.movementStartedAt && bContact.contactAt <= bContact.movementStartedAt + C01_CONTACT_DELAY_SEC.max + 1e-6)))
+  ) {
+    return { valid: false, reason: 'Estado da janela de segurança da entrada em B (areaB.contact) inválido no snapshot.' };
+  }
   const cart = snap.areaB.supplyCart;
   if (cart !== undefined && (!isPlainObject(cart) || !CART_STATES.includes(cart.state))) {
     return { valid: false, reason: `Estado da carroça inválido no snapshot: ${cart?.state}` };
@@ -1366,7 +1460,7 @@ export class M02BenchSimulation {
     }
 
     this.alertEnemiesBySound(this.player, 90);
-    openC01Contact(this, 'player_shot');
+    openPendingContact(this, 'player_shot');
 
     const material = hit?.material ?? 'air';
     const policy = BALLISTIC_MATERIAL_POLICY[material] ?? null;
@@ -1440,7 +1534,11 @@ export class M02BenchSimulation {
         ? this.mgMuzzle
         : eyePosition(shooter);
 
-    const candidateTargets = side === 'ally' ? this.enemies : [this.player, ...this.allies];
+    // Quem está fora da célula (Lis na ligação de C08-C10, J3) não está no mundo atual: as posições dele são as da célula anterior e
+    // nenhum tiro ou rajada desta célula o atinge (antes protegia-o a imunidade `essential`, que já não existe).
+    // O último grupo (LG01…LG12) é alvo a partir de C10 (C11, p. 14: «quem foi atingido permanece ferido ou morto»).
+    const candidateTargets =
+      side === 'ally' ? this.enemies : [this.player, ...this.allies.filter((a) => !a.detachedOutOfCell), ...lastGroupTargets(this)];
     let hitAny = false;
 
     for (let i = 0; i < roundsToFire; i++) {
@@ -1481,8 +1579,9 @@ export class M02BenchSimulation {
       if (hit && hit.kind === 'actor' && hit.actor) {
         hitAny = true;
         const victim = hit.actor;
+        const victimWasAlive = victim.alive;
         const rawDmg = Math.round(prof.damage * (hit.multiplier ?? 1));
-        // Essential allies and player in cover take bounded damage so squad progression stays cohesive
+        // O fogo inimigo causa o dano do perfil (M02_ENEMY_HIT_DAMAGE_*) a quem atinge; ninguém tem imunidade (D1)
         let dmg = enemyFire ? Math.max(M02_ENEMY_HIT_DAMAGE_MIN, Math.round(rawDmg * M02_ENEMY_HIT_DAMAGE_FACTOR)) : rawDmg;
         if (enemyFire && victim === this.player) {
           dmg = Math.round(dmg * diff.damageTakenScale);
@@ -1522,19 +1621,19 @@ export class M02BenchSimulation {
             byActorId: shooter.id,
           });
         } else if (victim.health <= 0) {
-          if (side === 'enemy' && victim.essential) {
-            victim.health = 18;
-            victim.suppressed = 1.0;
-          } else {
-            victim.alive = false;
-            victim.state = side === 'ally' ? 'DEAD' : 'DOWN';
-            this.combatLog.push({
-              clock: Number(this.clock.toFixed(2)),
-              type: side === 'ally' ? 'ally_killed_enemy' : 'ally_down',
-              shooterId: shooter.id,
-              targetId: victim.id,
-            });
-          }
+          // D1 (PDF p. 16): sem imunidades ocultas. Antes os «essenciais» (Gruca, Lis, Szymczak) voltavam a 18 de vida e supressão total;
+          // agora caem como qualquer outro (quem os faz falhar a missão é a regra visível `requiredCharacterOut`, não um truque).
+          victim.alive = false;
+          victim.state = side === 'ally' ? 'DEAD' : 'DOWN';
+          this.combatLog.push({
+            clock: Number(this.clock.toFixed(2)),
+            type: side === 'ally' ? 'ally_killed_enemy' : 'ally_down',
+            shooterId: shooter.id,
+            targetId: victim.id,
+          });
+        }
+        if (side === 'enemy' && isLastGroupMember(this, victim)) {
+          markLastGroupHit(this, victim, { wasAlive: victimWasAlive, shooterId: shooter.id, cause: 'fire' });
         }
         this.syncCalibrationAndEnemies();
       }
@@ -1597,7 +1696,7 @@ export class M02BenchSimulation {
     if (!customOrigin && this.grenadeAmmo <= 0) return null;
     if (!customOrigin) {
       this.grenadeAmmo--;
-      openC01Contact(this, 'player_grenade');
+      openPendingContact(this, 'player_grenade');
     }
 
     const eye = customOrigin ?? eyePosition(this.player);
@@ -1638,9 +1737,9 @@ export class M02BenchSimulation {
     this.navigator.sync();
 
     const affectedActors = [];
-    const allActors = [this.player, ...this.allies, ...this.enemies];
+    const allActors = [this.player, ...this.allies, ...lastGroupTargets(this), ...this.enemies];
     for (const actor of allActors) {
-      if (!actor || !actor.alive) continue;
+      if (!actor || !actor.alive || actor.detachedOutOfCell) continue; // fora da célula (J3): a explosão desta célula não o alcança
       const targetPt = { x: actor.x, y: actor.y + 0.95, z: actor.z };
       const dx = targetPt.x - center.x;
       const dy = targetPt.y - center.y;
@@ -1661,6 +1760,7 @@ export class M02BenchSimulation {
         actor.suppressed = Math.min(1, (actor.suppressed ?? 0) + 0.25);
         affectedActors.push({ id: actor.id, blockedByWall: true, damage: 0 });
       } else {
+        const actorWasAlive = actor.alive;
         const rawDamage = Math.round(125 * (1 - dist / radius));
         // D6: a explosão perigosa de um hostil (agendada, com `meta`) fere Piotr com o dano do perfil; a granada dele não.
         const damageTakenScale = meta && actor.id === 'piotr_sokol' ? this.difficulty.damageTakenScale : 1;
@@ -1673,12 +1773,12 @@ export class M02BenchSimulation {
           actor.nonCombatant = true;
           actor.crouched = true;
         } else if (actor.health <= 0) {
-          if (actor.essential) {
-            actor.health = 20;
-          } else {
-            actor.alive = false;
-            actor.state = 'DEAD';
-          }
+          // D1 (PDF p. 16): sem imunidades ocultas (antes os «essenciais» ficavam a 20 de vida).
+          actor.alive = false;
+          actor.state = 'DEAD';
+        }
+        if (isLastGroupMember(this, actor)) {
+          markLastGroupHit(this, actor, { wasAlive: actorWasAlive, shooterId: meta?.thrownBy ?? null, cause: 'blast' });
         }
         affectedActors.push({ id: actor.id, blockedByWall: false, damage, alive: actor.alive });
       }
@@ -2029,21 +2129,30 @@ export class M02BenchSimulation {
   }
 
   /**
-   * D1: falha dura da missão. Piotr morto (saúde a 0 ou `alive` falso: tiro, explosão ou queda) escreve `missionFailed`
-   * uma só vez, com o relógio do instante; nunca depois de a missão estar concluída (o epílogo C12 é uma elipse sem combate).
-   * Avaliado no fim dos sistemas de combate e ANTES do roteiro: o roteiro não avança no tick em que Piotr morre.
+   * D1: falha dura da missão. Escreve `missionFailed` uma só vez, com o relógio do instante, quando (1) Piotr morre (saúde a 0 ou
+   * `alive` falso: tiro, explosão ou queda) → `piotr_killed`; ou (2) uma personagem exigida pelo cânone fica fora de combate
+   * antes do seu ponto de resolução (`requiredCharacterOut`, tabela M02_REQUIRED_CHARACTERS) → `required_character_incapacitated`
+   * com o `actorId`. A morte de Piotr tem precedência. Nunca depois de a missão estar concluída (o epílogo C12 é uma elipse sem combate).
+   * Avaliado no fim dos sistemas de combate e ANTES do roteiro: o roteiro não avança no tick em que a falha acontece.
    * Com a missão falhada o roteiro e os checkpoints param (automáticos e manuais); quem hospeda a simulação (a bancada) deve
    * deixar de a avançar e mostrar a falha, mas a simulação não se auto-congela: os testes de mundo continuam a poder andar.
    */
   #evaluateMissionFailure() {
     if (this.missionFailed || this.flags['m02.completed'] || this.areaC?.c12Completed) return;
     const p = this.player;
-    if (p.alive !== false && p.health > 0) return;
+    let failure = null;
+    if (p.alive === false || !(p.health > 0)) {
+      failure = { reason: 'piotr_killed' };
+    } else {
+      const actorId = requiredCharacterOut(this);
+      if (actorId) failure = { reason: 'required_character_incapacitated', actorId };
+    }
+    if (!failure) return;
     const at = instantAt(this.clock); // nunca à frente do relógio (o validador recusa missionFailed.at > clock; FIX-CD)
-    this.missionFailed = { reason: 'piotr_killed', at };
-    const rec = { clock: Number(this.clock.toFixed(2)), type: 'mission_failed', reason: 'piotr_killed' };
-    this.combatLog.push(rec);
-    this.events.push({ type: 'mission-failed', reason: 'piotr_killed', at, clock: this.clock });
+    this.missionFailed = { reason: failure.reason, at, ...(failure.actorId ? { actorId: failure.actorId } : {}) };
+    const who = failure.actorId ? { actorId: failure.actorId } : {};
+    this.combatLog.push({ clock: Number(this.clock.toFixed(2)), type: 'mission_failed', reason: failure.reason, ...who });
+    this.events.push({ type: 'mission-failed', reason: failure.reason, ...who, at, clock: this.clock });
   }
 
   /**
@@ -2173,6 +2282,7 @@ export class M02BenchSimulation {
     if (controls.orderAdvance) this.issueSquadOrder('advance');
 
     runUpdateC01Contact(this);
+    runUpdateAreaBContact(this);
     this.updateGrenades(dt);
     this.#updateHazardBlasts();
     updatePolishSquad(this, dt);
