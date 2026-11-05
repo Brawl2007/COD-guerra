@@ -51,7 +51,7 @@ Hora legal: **CET (UTC+1)**, igual em Polónia e Alemanha em 1939 (C01).
 | 04:14 | Início do crepúsculo civil | `DOCUMENTED` (cálculo) | C01 | Luz azulada a leste |
 | 04:26 | Decolagem dos Ju 87 de Elbing (Elbląg) | `DOCUMENTED` (fontes divergem) | T11, T12 | Não visível; o som surge por volta de 04:33 |
 | **04:30** | **Prelúdio: cartela, café, posto** | `GAMEPLAY_DRAMATIZATION` | Prompt §53/§79 | Abertura |
-| **04:34** | **Bombardeio**: estação, margem oeste junto às pontes, quartel do 2.º Batalhão. Alvo: cabos de ignição na encosta sul do aterro | `DOCUMENTED` | H02, T08, T10, T12 | Primeiro contacto |
+| **04:34** | **Bombardeamento**: estação, margem oeste junto às pontes, quartel do 2.º Batalhão. Alvo: cabos de ignição na encosta sul do aterro | `DOCUMENTED` | H02, T08, T10, T12 | Primeiro contacto |
 | ~04:34–04:44 | Ataque aéreo de cerca de 10 minutos | `DOCUMENTED` (baixa certeza) | T11 | Segunda passagem de aviões, ruído distante |
 | após 04:34 | Cabos danificados são reparados pelos sapadores polacos | `DOCUMENTED` (sem hora exata) | T12 | Objetivo 3: proteger o reparo |
 | ~04:45 | Comboio de carga n.º 963 (65 vagões, pioneiros ocultos) chega à cabeça de ponte leste. Portões fechados, fogo polaco | `DOCUMENTED` | T01, T07, T08 | Setor leste entra em combate |
@@ -71,7 +71,7 @@ Hora legal: **CET (UTC+1)**, igual em Polónia e Alemanha em 1939 (C01).
 
 | Tema | Versões | Decisão provisória no jogo |
 | --- | --- | --- |
-| Hora do bombardeio | 04:34 (H02, T10, prompt) · 04:35 (T12) · faixa 04:26–04:45 em fóruns | **04:34**, conforme H02. Mostrar só "04:34". |
+| Hora do bombardeamento | 04:34 (H02, T10, prompt) · 04:35 (T12) · faixa 04:26–04:45 em fóruns | **04:34**, conforme H02. Mostrar só "04:34". |
 | Número de aviões | 3 Ju 87 da 3./StG 1 (T12) · 6 bombardeiros e 6 caças (T11) | Mostrar **três Stukas numa passagem principal** e um ruído distante de outros aviões, sem afirmar número no ecrã. |
 | Hora da destruição | 05:30 (T19, provavelmente confundindo com a hora da ordem) · 06:10/06:40 (T01, T04, T07, T09) | **Mensagem às 05:30 por reconstrução de T01/T09; H01 situa a decisão às ~06:00. Demolições às 06:10 e 06:45.** |
 | Quem demoliu o quê | T01: "ponte rodoviária e três vãos da ferroviária danificados" · T07: 6.º de 8 pilares às 06:10, 1.º pilar às 06:40, dois vãos no rio · T04: encontro e antigo portal do lado de Lisewo; encontro de Tczew e pilar no leito | **Conciliado com a geometria (P13):** com a extensão de 1912, o 6.º pilar é o antigo encontro leste de 1857/1891 (x ≈ 794–808). O 1.º pilar fica em x ≈ 141. O ecrã não conta vãos; confirmar com H01 e fotografias. |
@@ -174,7 +174,7 @@ Decisão para M01 (secção 72):
 - A destruição atrasou a ligação ferroviária direta entre a Prússia Oriental e o Reich pelo corredor, mas não mudou o resultado da campanha. `DOCUMENTED` (geral; formular sem exagero)
 - A guarnição repeliu ataques durante o dia e deixou Tczew à noite por ordem superior. `DOCUMENTED` (T03)
 - **O debrief não declara vitória estratégica** (Prompt §79): regista atraso imposto e retirada.
-- O bombardeio das 04:34 é apresentado em Tczew como um dos primeiros atos de guerra do dia. O jogo **não** afirma "o primeiro ataque da Segunda Guerra", porque Wieluń e Westerplatte também reivindicam esse lugar. Formulação segura: *"minutos antes do ataque a Westerplatte"*.
+- O bombardeamento das 04:34 é apresentado em Tczew como um dos primeiros atos de guerra do dia. O jogo **não** afirma "o primeiro ataque da Segunda Guerra", porque Wieluń e Westerplatte também reivindicam esse lugar. Formulação segura: *"minutos antes do ataque a Westerplatte"*.
 
 ## 10. O que não usar sem nova fonte
 

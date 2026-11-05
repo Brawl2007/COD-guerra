@@ -10,7 +10,7 @@ Dados executáveis: [`mission.json`](mission.json) (IDs estáveis de objetivos, 
 | --- | --- |
 | ID | `m01_tczew` (ordem 1 de 30) |
 | Título | A Primeira Manhã |
-| Data e hora | 1/9/1939, de 04:30 a 07:05 CET (UTC+1). Epílogo textual até as 20:00 |
+| Data e hora | 1/9/1939, de 04:30 a 07:05 CET (UTC+1). Epílogo textual até às 20:00 |
 | Local | Tczew, Pomerânia, Polónia — cabeça de ponte oeste das pontes sobre o Vístula |
 | Operação | Defesa das pontes de Tczew. Do lado alemão, a tomada das pontes de Dirschau pela Gruppe Medem |
 | Formação | Exército "Pomorze" → Oddział Wydzielony "Tczew" |
@@ -38,7 +38,7 @@ Dados executáveis: [`mission.json`](mission.json) (IDs estáveis de objetivos, 
 | 2. Intro | `cs_m01_intro`: cartela, café, mapa | 04:30 |
 | 3. Aproximação | Levar a mensagem ao posto da ponte; ferroviário na via | 04:30–04:33 |
 | 4. Diálogo | Nowicki e a caneca; "Não é comboio." | 04:33 |
-| 5. Primeiro contacto | Stukas em aproximação pelo sul; bombardeio | 04:34 |
+| 5. Primeiro contacto | Stukas em aproximação pelo sul; bombardeamento | 04:34 |
 | 6. Escalada | Reorganização; linha cortada; comboio na margem leste | 04:36–04:52 |
 | 7. Combate principal | Proteger o reparo; fogo a ~1–1,2 km; rotação de cobertura | 04:52–06:00 |
 | 8. Set-piece | Retirada do pelotão leste pelo tabuleiro; ferimento de Bąk; explosão leste | 06:00–06:10 |
@@ -85,11 +85,11 @@ Zieliński vem até Jan, entrega um papel dobrado e uma caneca esmaltada **amass
 
 *Skip da intro:* aplica o estado final (Jan com mensagem e caneca, controlo no posto) e não repete falas.
 
-### Cena 2 — Caminho até a ponte (04:30–04:33) · SETUP/BUILDUP
+### Cena 2 — Caminho até à ponte (04:30–04:33) · SETUP/BUILDUP
 
 Tutorial orgânico, sem manual (Prompt §53):
 
-- **Andar:** 90 m até o portal ferroviário, pela trincheira ou pela faixa aberta.
+- **Andar:** 90 m até ao portal ferroviário, pela trincheira ou pela faixa aberta.
 - **Observar:** o céu, as torres e o rio.
 - **Cobertura:** a trincheira ensina a agachar; os sacos de areia ensinam a se encostar.
 - **Interação:** entregar a mensagem.
@@ -131,7 +131,7 @@ Entregar a mensagem aciona `evt_m01_planes_heard`. O relógio salta para 04:33:1
 
 Três Ju 87 aproximam-se pelo sul e descem, um atrás do outro, com a sirene de mergulho. A pesquisa regista divergência sobre o número de aviões, então o ecrã não mostra número.
 
-- **t 0,6** — **ZIELIŃSKI:** Para o chão! Todo mundo no chão! (014)
+- **t 0,6** — **ZIELIŃSKI:** Para o chão! Toda a gente no chão! (014)
 - **t 2,1** — Primeira bomba (`evt_m01_forward_post_bombed`). Se Jan já saiu do posto, ela o destrói; se não, cai no rio 40 m a norte e levanta uma coluna de água e lama. **Nenhuma bomba cai a menos de 30 m do jogador.** Onda de choque e zumbido (configurável).
 - **t 5,0** — Segunda bomba na encosta, perto de onde Nowicki corria (`evt_m01_nowicki_lost`). Poeira. Nowicki não é visto de novo. Nada de corpo nem de close.
 - **t 8,5** — Terceira bomba no pátio da estação; um vagão apanha fogo.
@@ -142,7 +142,7 @@ Jan troca a *rogatywka* pelo capacete wz.31 numa animação curta.
 
 **Objetivos:** "Abrigue-se!" (completa ao entrar em cobertura ou após 12 s) → "Siga a voz do sargento". A voz é posicional e se repete com variações; não há marcador permanente na mira.
 
-No pátio da estação, a 300 m (`evt_m01_wounded_dragged`, 04:35:30), um soldado arrasta um ferido até a estação. **Acontece com ou sem o olhar do jogador.** A voz de Dudek é ouvida de longe: "Segura a perna dele! Segura, eu disse!" (017).
+No pátio da estação, a 300 m (`evt_m01_wounded_dragged`, 04:35:30), um soldado arrasta um ferido até à estação. **Acontece com ou sem o olhar do jogador.** A voz de Dudek é ouvida de longe: "Segura a perna dele! Segura, eu disse!" (017).
 
 Às 04:40, uma segunda passagem de aviões soa distante, sobre a estação e o quartel (`evt_m01_second_air_pass`), sem aviões sobre Jan.
 
@@ -193,7 +193,7 @@ Krawiec recolhe do chão a **caneca amassada**, sem comentário. Um jogador aten
 - Quando rajadas caem a menos de 3 m dos sapadores, eles se abaixam e o trabalho para: **KRAWIEC:** Precisamos de espaço para trabalhar! (022).
 - Fogo de Jan e Kowal sobre os clarões suprime as MGs e o trabalho retoma.
 - Se o progresso ficar parado por 120 s reais, a cadência inimiga cai sem aviso. É tolerância, não punição.
-- Callouts reais: **KOWAL:** A trocar o carregador! (029) quando o rkm recarrega; **BĄK:** Cubro-o! (030) quando Jan recarrega perto dele; **KOWAL:** Comboio blindado! Na outra via, atrás dos vagões! (038).
+- Callouts reais: **KOWAL:** A trocar o carregador! (029) quando o rkm recarrega; **KOWAL:** Cubro-o! (030) quando Jan recarrega e o rkm disparou nos últimos 6 s; **KOWAL:** Comboio blindado! Na outra via, atrás dos vagões! (038).
 
 Reparo concluído (`evt_m01_repair_complete`):
 
@@ -213,9 +213,9 @@ O relógio segura em 05:29:30 até o reparo terminar. Os setores continuam com c
 | 033 | **PAWLAK:** Ordem do comandante do batalhão: destruir as pontes. O pelotão do outro lado recua primeiro. |
 | 034 | **ZIELIŃSKI:** Ouviram. Quando os sapadores disserem, ninguém fica na ponte. |
 
-→ **CP-C (Proteção dos engenheiros)**, pedido após a ordem e guardado quando o segundo bombardeio terminar.
+→ **CP-C (Proteção dos engenheiros)**, pedido após a ordem e guardado quando o segundo bombardeamento terminar.
 
-`evt_m01_bombing_0530`: janela histórica 05:30–05:34, independente do jogador. Bombardeio de altitude (Do 17 Z, H01-PDF nota 76), representado por som e fumo distantes na cidade. Não repetir os mergulhos de Stukas. Cada impacto ou alternativa respeita 30 m da posição actual de Jan. O pedido de checkpoint fica pendente durante a janela; o snapshot guarda estado e timers reais.
+`evt_m01_bombing_0530`: janela histórica 05:30–05:34, independente do jogador. Bombardeamento de altitude (Do 17 Z, H01-PDF nota 76), representado por som e fumo distantes na cidade. Não repetir os mergulhos de Stukas. Cada impacto ou alternativa respeita 30 m da posição actual de Jan. O pedido de checkpoint fica pendente durante a janela; o snapshot guarda estado e timers reais.
 
 O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegaria.
 
@@ -242,7 +242,7 @@ O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegar
 
 **Objetivo: "Cubra a retirada do pelotão leste".**
 - Tiros a menos de 3 m de um grupo alemão fazem o grupo se deitar e parar.
-- No protótipo, a perda exige fogo real: um alemão do tabuleiro, activo e sem supressão, que vê o último homem dispara um tiro letal, e a baixa só conta quando o tiro chega. Há pelo menos 20 s de relógio entre baixas, contados desde as 06:05, até o mínimo de 12 sobreviventes. Sem tiro desobstruído não há perda automática. **A missão nunca falha por isso.** Os tiros em voo, os IDs das baixas e o número ficam gravados e aparecem na contagem. São parâmetros de gameplay, não efectivos históricos.
+- No protótipo, a perda exige fogo real: um alemão do tabuleiro, activo e sem supressão, que vê o último homem dispara um tiro letal, e a baixa só conta quando o tiro chega. Há pelo menos 20 s de relógio entre baixas, contados desde as 06:05, até ao mínimo de 12 sobreviventes. Sem tiro desobstruído não há perda automática. **A missão nunca falha por isso.** Os tiros em voo, os IDs das baixas e o número ficam gravados e aparecem na contagem. São parâmetros de gameplay, não efectivos históricos.
 - Soldados do pelotão leste passam pela secção a partir de 06:06: **SOLDADO:** Não parem! Eles estão no tabuleiro atrás de nós! (040)
 
 **06:04 — Bąk é ferido** no tabuleiro, a 55 m do portal (`evt_m01_bak_wounded`).
@@ -251,9 +251,9 @@ O comandante histórico não aparece. A ordem chega pelo mensageiro, como chegar
 | --- | --- |
 | 041 | **BĄK:** Estou bem… Não. Não estou. |
 | 042 | **DUDEK:** Bąk está no chão! Alguém me cubra! |
-| 043 | **ZIELIŃSKI:** Wrona! Traga o Bąk até o Dudek. Eu cubro! |
+| 043 | **ZIELIŃSKI:** Wrona! Traga o Bąk até ao Dudek. Eu cubro! |
 
-**Opcional:** carregar Bąk 63 m até o portal. Enquanto isso, Zieliński e Kowal cobrem; a IA suprime de facto.
+**Opcional:** carregar Bąk 63 m até ao portal. Enquanto isso, Zieliński e Kowal cobrem; a IA suprime de facto.
 - Se Jan não for, às 06:14 Dudek vai buscá-lo e volta ferido no braço (`evt_m01_dudek_retrieves_bak`).
 - **Ninguém morre por essa escolha.** Ela muda quem sai ferido e o que se ouve na chamada.
 
@@ -297,7 +297,7 @@ Avisos antes da demolição oeste:
 
 **06:45 — Demolição oeste** (`evt_m01_west_demolition`, `cs_m01_west_blast`).
 - **Prontidão:** jogador e atores obrigatórios fora de `bz_west`; guarnição da metralhadora fora da casamata.
-- **Tolerância:** se Jan insistir em ficar, Zieliński vai buscá-lo e o puxa. **A demolição polaca nunca mata o jogador.**
+- **Tolerância:** se Jan insistir em ficar, Zieliński vai buscá-lo e puxa-o. **A demolição polaca nunca mata o jogador.**
 - Detonação a ~210 m: som quase imediato e onda de pressão. O portal oeste e os primeiros vãos caem no Vístula.
 - Chuva de terra e lascas sobre o posto de disparo, depois silêncio, zumbido (reduzível), vento e água.
 - O oficial histórico dos sapadores fica fora de cena, sem modelo nem fala.
@@ -360,7 +360,7 @@ Tiros distantes ao norte (`evt_m01_kozliny_attack_distant`, 07:00, DOCUMENTED T0
 
 Fade para o debrief.
 
-**Por que Nowicki fica "sem resposta" e não "morto":** o jogo mostra claramente que a perda é inevitável, mas não inventa uma morte no ecrã. Ninguém sabe dizer onde ele está. É uma perda roteirizada e o jogo não finge que havia escolha (Prompt §72).
+**Porque é que Nowicki fica "sem resposta" e não "morto":** o jogo mostra claramente que a perda é inevitável, mas não inventa uma morte no ecrã. Ninguém sabe dizer onde ele está. É uma perda roteirizada e o jogo não finge que havia escolha (Prompt §72).
 
 ## 4. Debrief
 
@@ -393,14 +393,14 @@ O segundo momento é a chamada: a caneca amassada nas mãos de Krawiec e um nome
 | Rótulo | ID | Quando | Posição | Restaura |
 | --- | --- | --- | --- | --- |
 | CP-A | `cp_m01_a_orientacao` | Fim da intro | (−66, −3, 22) | Tudo inicial; Nowicki no posto |
-| CP-B | `cp_m01_b_reorganizacao` | Chegada ao ponto de reunião | (−148, −3, 30) | Bombardeio consumido; Nowicki `missing`; crateras; posto conforme `m01.forward_post_state`; incêndio no pátio; ferido de S3 no posto de socorro |
-| CP-C | `cp_m01_c_engenheiros` | Após a ordem, quando terminar o segundo bombardeio | (−30, −3, 24) | Linha reparada; caneca com Krawiec; comboio 963 e Panzerzug 7 parados; baixas de S2 por ID |
+| CP-B | `cp_m01_b_reorganizacao` | Chegada ao ponto de reunião | (−148, −3, 30) | Bombardeamento consumido; Nowicki `missing`; crateras; posto conforme `m01.forward_post_state`; incêndio no pátio; ferido de S3 no posto de socorro |
+| CP-C | `cp_m01_c_engenheiros` | Após a ordem, quando terminar o segundo bombardeamento | (−30, −3, 24) | Linha reparada; caneca com Krawiec; comboio 963 e Panzerzug 7 parados; baixas de S2 por ID |
 | CP-D | `cp_m01_d_retirada` | Após 06:10, com Jan em x < −20 e sem carregar ninguém | posição do momento | Pontas leste destruídas; sobreviventes do pelotão leste; estados de Bąk e Dudek; baixas alemãs da explosão |
 
 As listas completas de eventos consumidos, objetivos, destruição e setores estão em `mission.json → checkpoints`.
 
 **Regras:**
-- Todo evento é idempotente e tem ID estável. Restaurar não repete bombardeio, explosões, falas ou mudanças de fase.
+- Todo evento é idempotente e tem ID estável. Restaurar não repete bombardeamento, explosões, falas ou mudanças de fase.
 - Nunca guardar dentro da zona oeste depois das 06:36, com bombas a cair ou a carregar Bąk.
 
 ## 8. Skip
@@ -428,12 +428,12 @@ M02 troca de protagonista, exército e lugar. Nenhum destes personagens reaparec
 ## 10. Direção de atores
 
 - **Ninguém fica estátua** (Prompt §37). Durante as falas, as pessoas limpam arma, olham o céu, recarregam, dobram o mapa, amarram bota ou seguram o ferido.
-- **Zieliński:** voz baixa até o bombardeio. Depois, ordens curtas e gestos claros: aponta, abaixa, conta nos dedos. Na chamada, não muda o tom ao chegar em Nowicki.
+- **Zieliński:** voz baixa até ao bombardeamento. Depois, ordens curtas e gestos claros: aponta, abaixa, conta nos dedos. Na chamada, não muda o tom ao chegar a Nowicki.
 - **Krawiec:** impaciente com interrupções e meticuloso. Trabalha de costas para o rio e nunca explica o que faz.
 - **Kowal:** calmo, fala números. Recarrega em cobertura.
-- **Bąk:** o mais novo. Ri demais na intro e fica pálido depois do bombardeio.
+- **Bąk:** o mais novo. Ri demais na intro e fica pálido depois do bombardeamento.
 - **Dudek:** gentil e rápido. Nunca cura em um segundo; ele estanca, prende e carrega.
-- **Lipski:** civil. Trabalha até o fim do bombardeio e depois ajuda com as carroças. Não empunha arma.
+- **Lipski:** civil. Trabalha até ao fim do bombardeamento e depois ajuda com as carroças. Não empunha arma.
 - **Inimigos:** recuam com feridos após 06:10, deitam sob supressão e hesitam. Não são monstros intercambiáveis (Prompt §72).
 
 ## 11. Violência e intensidade (Prompt §57/§72)
@@ -453,7 +453,7 @@ M02 troca de protagonista, exército e lugar. Nenhum destes personagens reaparec
 | Gatilho | Condição |
 | --- | --- |
 | `missionStart` | Início da missão |
-| `battleClock` | Hora do relógio de batalha (`at`); com `gate: true`, segura o relógio até a prontidão |
+| `battleClock` | Hora do relógio de batalha (`at`); com `gate: true`, segura o relógio até à prontidão |
 | `eventComplete` | Outro evento já disparou (com `delaySec` opcional) |
 | `objectiveComplete` | Objetivo concluído |
 | `objectiveProgress` | Progresso de um objetivo atinge um valor |
@@ -492,7 +492,7 @@ Detalhes obrigatórios para implementar relógios, gatilhos e snapshots sem soft
 A demonstrar em navegador. Hoje, todos estão **PENDENTES**.
 
 1. Partida completa de 04:30 ao debrief, sem softlock, dentro de 18–24 min.
-2. Morrer e restaurar em cada checkpoint (A–D) sem duplicar bombardeio, explosões, falas ou reforços, e sem ressuscitar alemães mortos às 06:10.
+2. Morrer e restaurar em cada checkpoint (A–D) sem duplicar bombardeamento, explosões, falas ou reforços, e sem ressuscitar alemães mortos às 06:10.
 3. Pular a intro e a chamada sem quebrar a missão.
 4. Ficar parado 90 s às 05:40: S2 e S4 continuam ativos e coerentes.
 5. Virar a câmara durante a explosão leste: o estado depois confere com o antes.

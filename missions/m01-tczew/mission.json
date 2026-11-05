@@ -497,7 +497,7 @@
       "activation": { "event": "evt_m01_prelude_start" },
       "completion": { "interact": "tadeusz_nowicki", "at": "forward_post" },
       "failure": null,
-      "timeout": { "clock": "04:34:00", "result": "complete_silently", "note": "Se o jogador demorar, o bombardeio acontece às 04:34 onde ele estiver." },
+      "timeout": { "clock": "04:34:00", "result": "complete_silently", "note": "Se o jogador demorar, o bombardeamento acontece às 04:34 onde ele estiver." },
       "consequences": ["evt_m01_planes_heard"],
       "checkpoint": "cp_m01_a_orientacao"
     },
@@ -578,7 +578,7 @@
     },
     {
       "id": "obj_m01_rescue_bak",
-      "text": "(Opcional) Leve Bąk até o socorrista",
+      "text": "(Opcional) Leve Bąk até ao socorrista",
       "required": false,
       "activation": { "event": "evt_m01_bak_wounded" },
       "completion": { "carry": "jozef_bak", "from": "bak_wound_point", "to": "aid_position" },
@@ -884,7 +884,7 @@
       "sector": "s3_station_yard",
       "trigger": { "type": "battleClock", "at": "04:35:30" },
       "results": [
-        "um soldado arrasta um ferido do pátio (−300, −3, 30) até a estação; acontece com ou sem o jogador a olhar",
+        "um soldado arrasta um ferido do pátio (−300, −3, 30) até à estação; acontece com ou sem o jogador a olhar",
         "estado final: ferido no posto de socorro da estação"
       ],
       "idempotent": true,
@@ -1096,7 +1096,7 @@
       ],
       "tolerance": {
         "maxHoldRealSec": 120,
-        "onTimeout": "se o jogador estiver dentro de bz_west, Zieliński vai até ele e o puxa (animação de agarrar); a detonação espera o jogador sair. Nunca matar o jogador com a demolição polaca."
+        "onTimeout": "se o jogador estiver dentro de bz_west, Zieliński vai até ele e puxa-o (animação de agarrar); a detonação espera o jogador sair. Nunca matar o jogador com a demolição polaca."
       },
       "results": [
         "demolição do encontro oeste e do pilar 1 (x ≈ 141); os dois primeiros vãos caem no Vístula",
@@ -1202,7 +1202,7 @@
         { "at": "04:34:00", "state": "bombed", "activity": "incêndio num vagão, vidros quebrados, gritos" },
         { "at": "04:35:30", "state": "wounded_evacuation" },
         { "at": "04:50:00", "state": "aid_post", "activity": "posto de socorro improvisado na estação" },
-        { "at": "05:30:00", "state": "second_raid", "activity": "bombardeio distante na cidade; manter o socorro" },
+        { "at": "05:30:00", "state": "second_raid", "activity": "bombardeamento distante na cidade; manter o socorro" },
         { "at": "05:34:00", "state": "aid_post" },
         { "at": "05:40:00", "state": "carts_evacuating", "activity": "carroça e padiolas a levar feridos para oeste" },
         { "at": "06:45:00", "state": "dust_fall" }
@@ -1348,7 +1348,7 @@
       "trigger": { "event": "evt_m01_order_demolish" },
       "player": { "position": [-30, -3, 24], "facing": [1, 0, 0] },
       "clock": "05:34:00",
-      "clockNote": "hora nominal; guardar a hora real após terminar o segundo bombardeio",
+      "clockNote": "hora nominal; guardar a hora real após terminar o segundo bombardeamento",
       "savePolicy": "deferUntilSafe",
       "neverSaveIf": "m01.second_raid_state = 'active'; manter o pedido de CP-C pendente até a janela terminar",
       "restore": {
@@ -1647,7 +1647,7 @@
         },
         {
           "t": 2.1,
-          "action": "estrondo chega: atraso = distância real até o pilar 6 ÷ 343 m/s, calculado em tempo de execução (C02; ~1,9–2,3 s a partir do tabuleiro); vibração do tabuleiro sob o jogador"
+          "action": "estrondo chega: atraso = distância real até ao pilar 6 ÷ 343 m/s, calculado em tempo de execução (C02; ~1,9–2,3 s a partir do tabuleiro); vibração do tabuleiro sob o jogador"
         },
         {
           "t": 4.0,
@@ -1927,15 +1927,15 @@
     },
     { "id": "dlg_m01_012", "speaker": "tadeusz_nowicki", "text": "Ouve isso? Não é comboio.", "context": "evt_m01_planes_heard", "priority": 1 },
     { "id": "dlg_m01_013", "speaker": "tadeusz_nowicki", "text": "Aviões! A leste, contra a claridade!", "context": "callout aviões", "priority": 1 },
-    { "id": "dlg_m01_014", "speaker": "marek_zielinski", "text": "Para o chão! Todo mundo no chão!", "context": "bombardeio", "priority": 1 },
+    { "id": "dlg_m01_014", "speaker": "marek_zielinski", "text": "Para o chão! Toda a gente no chão!", "context": "bombardeamento", "priority": 1 },
     {
       "id": "dlg_m01_015",
       "speaker": "marek_zielinski",
       "text": "Wrona! Para a trincheira! Siga a minha voz!",
-      "context": "bombardeio; repetir com variações até o jogador chegar",
+      "context": "bombardeamento; repetir com variações até o jogador chegar",
       "priority": 1
     },
-    { "id": "dlg_m01_016", "speaker": "generic_rifleman", "text": "O aterro! Acertaram o aterro!", "context": "bombardeio", "priority": 2 },
+    { "id": "dlg_m01_016", "speaker": "generic_rifleman", "text": "O aterro! Acertaram o aterro!", "context": "bombardeamento", "priority": 2 },
     {
       "id": "dlg_m01_017",
       "speaker": "leon_dudek",
@@ -2070,7 +2070,7 @@
     },
     { "id": "dlg_m01_041", "speaker": "jozef_bak", "text": "Estou bem… Não. Não estou.", "context": "evt_m01_bak_wounded", "priority": 1 },
     { "id": "dlg_m01_042", "speaker": "leon_dudek", "text": "Bąk está no chão! Alguém me cubra!", "context": "evt_m01_bak_wounded", "priority": 1 },
-    { "id": "dlg_m01_043", "speaker": "marek_zielinski", "text": "Wrona! Traga o Bąk até o Dudek. Eu cubro!", "context": "obj_m01_rescue_bak (opcional)", "priority": 1 },
+    { "id": "dlg_m01_043", "speaker": "marek_zielinski", "text": "Wrona! Traga o Bąk até ao Dudek. Eu cubro!", "context": "obj_m01_rescue_bak (opcional)", "priority": 1 },
     { "id": "dlg_m01_044", "speaker": "marek_zielinski", "text": "Cabeças baixas! Lá do outro lado!", "context": "antes da demolição leste", "priority": 1 },
     { "id": "dlg_m01_045", "speaker": "szymon_kowal", "text": "…Lá se foi o outro lado.", "context": "após a demolição leste", "priority": 2 },
     {
@@ -2209,7 +2209,7 @@
     { "id": "dlg_m01_142", "speaker": "marek_zielinski", "text": "Wrona. Não conte. Mude de posição.", "context": "reativa; enemy_down_by_player (2.º abate seguido em < 20 s)", "priority": 2, "note": "PL: Wrona. Nie licz. Zmień stanowisko.", "bark": {"on": "enemy_down_by_player", "when": {"repeatKill": 20}, "cooldown": 60, "max": 2, "group": "player_hit_enemy"} },
     { "id": "dlg_m01_143", "speaker": "szymon_kowal", "text": "A metralhadora calou. Trabalhem!", "context": "reativa; de_east_0/1.suppressedUntil por tiro do jogador (state)", "priority": 1, "note": "PL: Cekaem ucichł. Do roboty!", "bark": {"on": "player-shot", "when": {"active": ["obj_m01_cover_repair"], "mgSilenced": true}, "cooldown": 20, "max": 4, "unless": [{"line": "co_m01_enemy_group_suppressed", "within": 10}]} },
     { "id": "dlg_m01_144", "speaker": "pawel_krawiec", "text": "Metade. Não comemorem.", "context": "reativa; cover_repair.progress >= 50", "priority": 2, "note": "PL: Połowa. Nie cieszcie się.", "bark": {"on": "poll", "when": {"active": ["obj_m01_cover_repair"], "progress": {"objective": "obj_m01_cover_repair", "min": 50}}, "max": 1} },
-    { "id": "dlg_m01_145", "speaker": "marek_zielinski", "text": "Seguramos esta cabeça de ponte. Até a ordem.", "context": "reativa; active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA", "priority": 2, "note": "PL: Trzymamy ten przyczółek. Do rozkazu.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_access"], "holdVisited": true, "inArea": "hold", "clock": [null, "06:00:00"]}, "max": 1} },
+    { "id": "dlg_m01_145", "speaker": "marek_zielinski", "text": "Seguramos esta cabeça de ponte. Até à ordem.", "context": "reativa; active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA", "priority": 2, "note": "PL: Trzymamy ten przyczółek. Do rozkazu.", "bark": {"on": "poll", "when": {"active": ["obj_m01_hold_access"], "holdVisited": true, "inArea": "hold", "clock": [null, "06:00:00"]}, "max": 1} },
     { "id": "dlg_m01_146", "speaker": "jozef_bak", "text": "Não me deixe cair.", "context": "reativa; player.carrying = jozef_bak", "priority": 1, "note": "PL: Nie upuść mnie.", "bark": {"on": "poll", "when": {"carrying": "jozef_bak"}, "max": 1} },
     { "id": "dlg_m01_147", "speaker": "leon_dudek", "text": "Aqui, atrás do portal da estrada!", "context": "reativa; player.carrying = jozef_bak e dist(aid_position) > 20 m", "priority": 1, "note": "PL: Tu, za portal drogowy!", "bark": {"on": "poll", "when": {"carrying": "jozef_bak", "farFrom": {"point": "aid_position", "m": 20}}, "cooldown": 25, "max": 4} },
     { "id": "dlg_m01_148", "speaker": "leon_dudek", "text": "Não olhe para a perna. Olhe para mim.", "context": "reativa; finish(rescue_bak)", "priority": 1, "note": "PL: Nie patrz na nogę. Patrz na mnie.", "bark": {"on": "poll", "when": {"done": ["obj_m01_rescue_bak"], "flag": {"m01.bak_status": "rescued_by_player"}}, "max": 1} },

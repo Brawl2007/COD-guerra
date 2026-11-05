@@ -114,7 +114,7 @@
 | ID | Falante | Polaco (original) / Legenda PT | Gatilho | Condições | CD clock / Pri / Máx | Grupo de variantes | Ref. Fable/GAP | Marcas |
 |---|---|---|---|---|---|---|---|---|
 | 144 | `pawel_krawiec` | *Połowa. Nie cieszcie się.*<br>Metade. Não comemorem. | cover_repair.progress >= 50 | uma vez; Krawiec activo | única / 2 / 1 | repair_half (144) | Fable 122 |  |
-| 145 | `marek_zielinski` | *Trzymamy ten przyczółek. Do rozkazu.*<br>Seguramos esta cabeça de ponte. Até a ordem. | active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA | activeCompression com razão hold_in_position (m01-pacing COMPRESS_WHEN) ou inside(player,HOLD_AREA); antes de 06:00; uma vez | única / 2 / 1 | hold (145) | pacing HOLD_AREA |  |
+| 145 | `marek_zielinski` | *Trzymamy ten przyczółek. Do rozkazu.*<br>Seguramos esta cabeça de ponte. Até à ordem. | active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA | activeCompression com razão hold_in_position (m01-pacing COMPRESS_WHEN) ou inside(player,HOLD_AREA); antes de 06:00; uma vez | única / 2 / 1 | hold (145) | pacing HOLD_AREA |  |
 | 146 | `jozef_bak` | *Nie upuść mnie.*<br>Não me deixe cair. | player.carrying = jozef_bak | pickup; 1.ª vez | única / 1 / 1 | carry_bak (146) | GAP 120 / Fable 143 |  |
 | 147 | `leon_dudek` | *Tu, za portal drogowy!*<br>Aqui, atrás do portal da estrada! | player.carrying = jozef_bak e dist(aid_position) > 20 m | Dudek activo; repete por floor(clock/25); substitui mensagem de HUD a cada 7 s | 25 s / 1 / 4 | carry_guide (147) | objectiveMarker "Dudek com Bąk" |  |
 | 148 | `leon_dudek` | *Nie patrz na nogę. Patrz na mnie.*<br>Não olhe para a perna. Olhe para mim. | finish(rescue_bak) | uma vez | única / 1 / 1 | bak_delivered (148) | GAP 121 / Fable 150 |  |
@@ -504,7 +504,7 @@ Mesmas chaves das entradas existentes (`id, speaker, text, context, priority` + 
   {
     "id": "dlg_m01_145",
     "speaker": "marek_zielinski",
-    "text": "Seguramos esta cabeça de ponte. Até a ordem.",
+    "text": "Seguramos esta cabeça de ponte. Até à ordem.",
     "context": "reativa; active(hold_access) e timers.holdAccessVisited, jogador dentro de HOLD_AREA",
     "priority": 2,
     "note": "PL: Trzymamy ten przyczółek. Do rozkazu."

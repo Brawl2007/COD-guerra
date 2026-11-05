@@ -50,8 +50,11 @@ test('the debrief says the sappers were a platoon (HISTORICAL_RESEARCH.md sectio
 // valid in Portugal since the Agreement.
 const BRAZILIAN=[[/\bPol[oô]nia\b/i,'Polônia'],[/\bpolon[êe]s(?:a|as|es)?\b/i,'polonês'],[/\bcontatos?\b/i,'contato'],[/\bfatos?\b/i,'fato'],[/\bvoc[êe]s?\b/i,'você'],[/\btrens?\b/i,'trem'],[/\btelas?\b/i,'tela'],
   [/\bfuma[çc]a\b/i,'fumaça'],[/\bc[âa]meras?\b/i,'câmera'],[/\bcontroles?\b/i,'controle'],[/\bplanej\w+\b/i,'planejar'],[/\bregistra(?:do|dos|da|das|m)?\b/i,'registra'],[/\btrilhos?\b/i,'trilho'],[/\bTop[ôo]nimos?\b/i,'Topônimo'],
-  [/\bb[ôo]nus\b/i,'bônus'],[/\bPegou\b/,'Pegou'],[/\bTrocando carregador\b/,'Trocando carregador'],[/\bestão (?:atirando|acertando)\b/,'estar + gerúndio'],[/\bsair correndo\b/,'sair correndo']];
-test('the three files no longer use the Brazilian words the audit replaced (comboio, ecrã, fumo, facto, contacto, Polónia, polaco, controlo, câmara, regista, carris)',()=>{
+  [/\bb[ôo]nus\b/i,'bônus'],[/\bPegou\b/,'Pegou'],[/\bTrocando carregador\b/,'Trocando carregador'],[/\bestão (?:atirando|acertando)\b/,'estar + gerúndio'],[/\bsair correndo\b/,'sair correndo'],
+  // review of 2026-11-05: the leftovers of the first pass (bombardeamento, toda a gente, chegar a, porque é que, puxa-o, até à / até ao before a noun)
+  [/\bbombardeios?\b/i,'bombardeio'],[/\btodo mundo\b/i,'todo mundo'],[/\bchegar em\b/i,'chegar em'],[/\bPor que (?!(?:raz|motiv))/,'Por que'],[/\be o puxa\b/i,'e o puxa'],
+  [/\baté (?:a|as) (?:estação|ponte|ordem|prontidão|20:00)\b/i,'até a(s) + nome'],[/\baté o (?:socorrista|pilar|portal|fim|mínimo|Dudek|bombardeio)\b/i,'até o + nome']];
+test('the three files no longer use the Brazilian words the audit replaced (comboio, ecrã, fumo, facto, contacto, Polónia, polaco, controlo, câmara, regista, carris, bombardeamento, toda a gente, até ao / até à)',()=>{
   const prose=[...strings(definition).filter(([path])=>!/(^|\.)id$/.test(path)).map(([path,v])=>[`mission.json:${path}`,v]),['SCRIPT.md',text('SCRIPT.md')],['HISTORICAL_RESEARCH.md',text('HISTORICAL_RESEARCH.md')]];
   const found=[];
   for(const [where,v] of prose){
@@ -63,11 +66,17 @@ test('the three files no longer use the Brazilian words the audit replaced (comb
 
 test('the lines the audit touched say what the Captain asked, by id',()=>{
   const said={dlg_m01_005:'Café de verdade hoje. Mau sinal.',dlg_m01_006:'Dudek, se eu desmaiar, carregas-me?',dlg_m01_012:'Ouve isso? Não é comboio.',dlg_m01_029:'A trocar o carregador!',dlg_m01_030:'Cubro-o!',
-    dlg_m01_112:'A fita está a acabar!',dlg_m01_140:'Acertou. Mude de posição.',dlg_m01_150:'{n}. Continuo a contar.'};
+    dlg_m01_112:'A fita está a acabar!',dlg_m01_140:'Acertou. Mude de posição.',dlg_m01_150:'{n}. Continuo a contar.',
+    // review of 2026-11-05
+    dlg_m01_014:'Para o chão! Toda a gente no chão!',dlg_m01_043:'Wrona! Traga o Bąk até ao Dudek. Eu cubro!',dlg_m01_145:'Seguramos esta cabeça de ponte. Até à ordem.'};
   for(const [id,t] of Object.entries(said))assert.equal(dialogue(id).text,t,id);
   assert.equal(definition.callouts.lines.filter(l=>l.text==='Cubro-o!').length,1,'the callout of the director says it too');
   assert.equal(definition.callouts.lines.find(l=>l.event==='npc_reloading').text,'A recarregar!');
   assert.equal(definition.objectives.find(o=>o.id==='obj_m01_leave_bridge').failure.message,'Afastou-se da sua secção.');
+  assert.ok(definition.objectives.some(o=>o.text==='(Opcional) Leve Bąk até ao socorrista'),'the optional objective of Bąk');
+  assert.match(definition.events.find(e=>e.id==='evt_m01_west_demolition').tolerance.onTimeout,/Zieliński vai até ele e puxa-o \(animação de agarrar\)/);
+  assert.match(definition.events.find(e=>e.id==='evt_m01_wounded_dragged').results[0],/até à estação/);
+  assert.match(text('SCRIPT.md'),/\*\*KOWAL:\*\* Cubro-o! \(030\)/,'SCRIPT.md credits line 030 to Kowal, as the data do since 2026-10-19');
   assert.match(definition.dialogue.find(l=>l.text.startsWith('Comboio blindado!')).text,/^Comboio blindado! Na outra via, atrás dos vagões!$/);
 });
 

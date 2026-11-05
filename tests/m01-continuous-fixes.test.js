@@ -36,7 +36,7 @@ test('Bąk takes the deck position with the 05:30 order and falls at bak_wound_p
   assert.ok(near(bak,point,1.5),`Bąk ferido em ${bak.x.toFixed(1)},${bak.z.toFixed(1)}`);
   assert.ok(bak.x>sim.player.x,'à frente de um jogador virado para leste');
   sim.tick(.05);   // o texto do HUD é recalculado no tick seguinte ao evento
-  assert.match(sim.mission.text,/\(Opcional\) Leve Bąk até o socorrista/);
+  assert.match(sim.mission.text,/\(Opcional\) Leve Bąk até ao socorrista/);
 });
 
 test('a direction hint names the destination, distance and side when the player does not approach it',()=>{
