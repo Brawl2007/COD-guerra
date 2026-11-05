@@ -45,7 +45,8 @@ function build(){
   until(()=>sim.timers.rear.move===4&&sim.timers.rear.moving);   // the rear guard's second bounds: Pawlak and Kowal are on their way to the band, Zieliński last
   const dusk=sim.actor('marek_zielinski');
   out.dusk=view(live(sim),{x:dusk.x+9,z:dusk.z-26},{x:-585,z:-1060},.02);   // behind the last man, looking down the way they go, into the sun
-  until(()=>sim.timers.withdrawal.rearOutAt===null&&sim.timers.withdrawal.out.length>=11);
+  // the last man (Zieliński) is the only one still on the field: rearOutAt is set in the very tick the last man joins `out`, so «all but one» is the latest state with rearOutAt still null
+  const WC=sim.plan.withdrawal.ids;until(()=>sim.timers.withdrawal.rearOutAt===null&&sim.timers.withdrawal.out.length>=WC.line.length+WC.rear.length-1);
   out.exit=view(live(sim),{x:-540,z:-1092},{x:-580,z:-1062},.0);   // the approach to the band: the last man is nearly there, the marker «Saída» ahead
   until(()=>sim.timers.endAt!==null,60000);out.end=live(sim);
   return out;

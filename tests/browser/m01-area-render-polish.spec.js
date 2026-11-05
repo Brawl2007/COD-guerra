@@ -42,7 +42,8 @@ function build(){
   out.duskTown=look(live(c),{x:-500,z:-1090},{x:-780,z:-1030},.02);   // half-way, looking west-south-west at the town
   untilC(()=>c.timers.withdrawal.lineOutAt!==null);
   untilC(()=>c.timers.rear.move===4&&c.timers.rear.moving);
-  untilC(()=>c.timers.withdrawal.rearOutAt===null&&c.timers.withdrawal.out.length>=11);
+  // the last man (Zieliński) is the only one still on the field: rearOutAt is set in the very tick the last man joins `out`, so «all but one» is the latest state with rearOutAt still null
+  const WC=c.plan.withdrawal.ids;untilC(()=>c.timers.withdrawal.rearOutAt===null&&c.timers.withdrawal.out.length>=WC.line.length+WC.rear.length-1);
   out.duskExit=look(live(c),{x:-540,z:-1092},{x:-580,z:-1062},.0);   // the approach to the band
   out.duskExitFar=look(live(c),{x:-470,z:-1130},{x:-580,z:-1062},.0);   // 130 m from the band
   return out;
