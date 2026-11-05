@@ -89,7 +89,34 @@ describe('FIX-CD2 4: a falha de rota só desvia para portas fechadas plausíveis
   }
 });
 
-describe('FIX-CD2 3:o «abrigo válido» do cp_d conta as granadas do próprio jogador em voo', () => {
+describe('FIX-CD2 5: o perfil de dificuldade escolhido depois do construtor sobrevive a reset() e ao reinício para o início', () => {
+  it('setDifficulty + morte + reinício sem checkpoint gravado volta ao início em memória com o mesmo perfil (antes: recruta)', () => {
+    for (const id of ['soldado', 'veterano']) {
+      const sim = new M02BenchSimulation(5, { storage: createMemoryStorage() });
+      sim.setDifficulty(id);
+      sim.player.health = 0;
+      sim.tick(0.1, {});
+      assert.ok(sim.missionFailed);
+      assert.deepEqual(sim.restartAfterFailure(), { checkpointId: 'cp_m02_a_preparacao', source: 'start' });
+      assert.equal(sim.difficulty.id, id);
+      assert.equal(sim.snapshot().difficulty, id, 'o perfil entra nos snapshots seguintes');
+      assert.equal(sim.missionFailed, null);
+    }
+  });
+
+  it('reset() mantém o perfil; um checkpoint gravado repõe o seu próprio perfil (comportamento FIX-CD inalterado)', () => {
+    const sim = new M02BenchSimulation(5, { storage: createMemoryStorage() });
+    sim.setDifficulty('veterano');
+    sim.reset();
+    assert.equal(sim.difficulty.id, 'veterano');
+    assert.ok(sim.saveCheckpoint('cp_m02_manual'));
+    sim.setDifficulty('recruta');
+    sim.restoreCheckpoint('cp_m02_manual');
+    assert.equal(sim.difficulty.id, 'veterano');
+  });
+});
+
+describe('FIX-CD2 3: o «abrigo válido» do cp_d conta as granadas do próprio jogador em voo', () => {
   const CP_D = 'cp_m02_d_cobertura_retirada';
   function c10WithGrenadeAtFeet(seed = 19390909) {
     const sim = new M02BenchSimulation(seed, { storage: createMemoryStorage() });

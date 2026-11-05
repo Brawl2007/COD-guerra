@@ -2328,7 +2328,11 @@ export class M02BenchSimulation {
       }
       return skipped.length ? { checkpointId, source, skipped } : { checkpointId, source };
     }
+    // Início em memória: foi gravado em reset() com o perfil de então (p. ex. recruta, se setDifficulty veio depois do construtor).
+    // O perfil escolhido na configuração sobrevive ao reinício para o início (FIX-CD2); os checkpoints gravados repõem o seu próprio.
+    const activeDifficulty = this.#difficultyId;
     this.restoreCheckpoint('cp_m02_a_preparacao');
+    this.#difficultyId = activeDifficulty;
     const result = { checkpointId: 'cp_m02_a_preparacao', source: 'start' };
     return skipped.length ? { ...result, skipped } : result;
   }
