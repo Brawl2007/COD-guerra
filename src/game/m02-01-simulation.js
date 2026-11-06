@@ -732,6 +732,8 @@ export class M02BenchSimulation {
    * e nunca sobrevivem entre ticks: não entram no snapshot e um passo que falhe a meio descarta-os.
    */
   #pendingCheckpointIds = [];
+  /** Pedidos de uma só vez (`deferWhileOut`) feitos com a personagem exigida caída: gravam-se quando ela se levanta; caem com evento se a missão falha. */
+  #deferredCheckpointIds = [];
   /** Último checkpoint gravado nesta sessão com persistência (meta-estado do F9; não é estado de jogo). */
   #lastSessionCheckpointId = null;
   /**
@@ -797,6 +799,7 @@ export class M02BenchSimulation {
 
   reset(startScene = this.defaultStartScene) {
     this.#pendingCheckpointIds = [];
+    this.#deferredCheckpointIds = [];
     this.rng = new Random(this.seed);
     this.clock = 0;
     this.events = [];
@@ -2282,11 +2285,16 @@ export class M02BenchSimulation {
    * Pede um checkpoint semântico automático. Dentro de tick()/ação atómica fica pendente e é gravado no fim; fora dela é
    * gravado já (o chamador está num ponto estável entre entradas).
    */
-  requestAutoCheckpoint(checkpointId) {
+  requestAutoCheckpoint(checkpointId, { deferWhileOut = false } = {}) {
     if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
     // D1: nunca um ponto de reinício com a personagem exigida fora de combate (o validador recusava-o, a cada pedido, com ruído): enquanto
-    // ela espera socorro adia-se em silêncio. Os pedidos repetidos (cp_b, cp_d) voltam a ser feitos quando se levantar; os de uma só vez perdem-se.
-    if (requiredCharacterOut(this, { ignoreCompletion: true })) return null;
+    // ela espera socorro os pedidos REPETIDOS (cp_b, cp_d: refeitos a cada passo) adiam-se em silêncio e voltam a ser feitos quando se levantar.
+    // Um pedido de UMA SÓ VEZ (`deferWhileOut`: cp_c, completeC07Reorganization é idempotente) não se perde: fica pendente e grava-se no fim do
+    // primeiro passo/ação em que a personagem se levantou; se a missão falha antes, cai com o evento `checkpoint-rejected` (como qualquer outro).
+    if (requiredCharacterOut(this, { ignoreCompletion: true })) {
+      if (deferWhileOut && !this.#deferredCheckpointIds.includes(checkpointId)) this.#deferredCheckpointIds.push(checkpointId);
+      return null;
+    }
     if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
     if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
     return null;
@@ -2316,11 +2324,16 @@ export class M02BenchSimulation {
     } finally {
       this.#checkpointBatchDepth--;
       if (this.#checkpointBatchDepth === 0) {
-        const due = this.#pendingCheckpointIds;
+        let due = this.#pendingCheckpointIds;
         this.#pendingCheckpointIds = [];
         // FIX-CD: a falha avalia-se no fim de cada passo/ação atómica, ANTES de gravar. Uma ação de bancada fora do tick (p. ex. uma
         // explosão que mata Piotr e o último defensor) gravava cp_m02_b_acesso com Piotr morto, porque a falha só se avaliava em #step.
         if (completed) this.#evaluateMissionFailure();
+        // Pedidos de uma só vez adiados enquanto a personagem exigida esperava socorro: saem com ela de pé (ou rejeitados, se a missão falhou).
+        if (completed && this.#deferredCheckpointIds.length > 0 && (this.missionFailed || !requiredCharacterOut(this, { ignoreCompletion: true }))) {
+          due = [...this.#deferredCheckpointIds.filter((id) => !due.includes(id)), ...due];
+          this.#deferredCheckpointIds = [];
+        }
         // Um passo que lançou a meio deixou estado incoerente: os pedidos desse passo são descartados, não gravados.
         if (completed) this.#saveCheckpointBatch(due);
       }
@@ -2753,6 +2766,7 @@ export class M02BenchSimulation {
   #activateRestore(p) {
     // Pedidos de checkpoint pendentes pertenciam à linha temporal descartada.
     this.#pendingCheckpointIds = [];
+    this.#deferredCheckpointIds = [];
     // O retorno da última ordem (fora do snapshot) também: com o relógio a recuar, a bancada mostrava a recusa antiga (FIX-CD).
     this.#lastOrderFeedback = null;
     this.seed = p.seed;

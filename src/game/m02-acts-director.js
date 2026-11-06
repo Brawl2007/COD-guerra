@@ -800,6 +800,9 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
 
   // Evaluate squad status for Małek & Wierzba (severely wounded are evacuated and do not reappear fit)
   for (const ally of sim.allies) {
+    // D1: a personagem exigida caída com a janela de socorro aberta (atalho de bancada sobre uma passagem por resolver) não é «evacuada»
+    // aqui: continua à espera de socorro até se levantar ou o prazo acabar (e o checkpoint cp_c fica adiado até lá).
+    if (Object.hasOwn(M02_REQUIRED_CHARACTERS, ally.id) && !ally.alive && isRescueWindowOpen(ally, sim.clock)) continue;
     if (!ally.alive || ally.state === 'DOWN') {
       // C07 evacua os FERIDOS GRAVES (caídos, DOWN). Quem morreu (DEAD, rebentado por explosão) não é um evacuado: «Ninguém morto ou
       // evacuado regressa ao grupo» (I6, p. 35). Antes todo o `alive` falso passava a EVACUATED: um Lis morto era tratado como ferido
@@ -830,7 +833,7 @@ export function completeC07Reorganization(sim, { skip = false } = {}) {
     status: 'completed',
   };
   // Dentro de tick()/ação atómica fica pendente e grava-se no fim; fora, grava-se já (nunca a meio de um tick).
-  sim.requestAutoCheckpoint('cp_m02_c_reorganizacao');
+  sim.requestAutoCheckpoint('cp_m02_c_reorganizacao', { deferWhileOut: true }); // uma só vez: se Gruca espera socorro, adia-se (D1)
   return c07Summary(sim);
 }
 
