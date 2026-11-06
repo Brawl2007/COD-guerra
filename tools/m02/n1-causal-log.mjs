@@ -212,7 +212,6 @@ function linkNodes(nodes) {
   const byKind = (k) => nodes.filter((n) => n.kind === k);
 
   // Ordem de Piotr -> aliado toma a cobertura atribuída (ou outro aliado, temporal)
-  const orders = byKind('log:squad_order');
   for (const effect of byKind('log:squad_order')) {
     const cause = latestCause(nodes, effect, ['input:order_requested'], LINK_RULES['INPUT_ORDER->ORDER_ACCEPTED'].windowSec);
     if (cause) link('INPUT_ORDER->ORDER_ACCEPTED', cause, effect, 'direct', { order: cause.order });
@@ -228,7 +227,6 @@ function linkNodes(nodes) {
     const assigned = cause.order?.assignments?.[effect.actorId];
     link('ORDER->ALLY_TAKES_COVER', cause, effect, assigned && assigned === effect.nodeId ? 'direct' : 'temporal');
   }
-  void orders;
 
   for (const effect of byKind('log:ally_hit_enemy')) {
     const cause = latestCause(nodes, effect, ['log:ally_suppressed_enemy'], LINK_RULES['SUPPRESSION->HOSTILE_HIT'].windowSec, (c) => c.targetId === effect.targetId);
@@ -378,9 +376,9 @@ export function renderSummaryMarkdown(log, { commit = 'unknown', date = '' } = {
     );
   }
   L.push('');
+  L.push(`Sementes diferentes dão registos diferentes: ${new Set(log.runs.map((r) => r.sha256)).size} sha256 distintos em ${log.runs.length} corridas.`);
+  L.push('');
   L.push(`Determinismo: ${log.allDeterministic ? 'cada par (semente, modo) correu duas vezes e produziu o mesmo sha256 do registo canónico' : 'HOUVE DIVERGÊNCIA entre repetições'}. O sha256 completo de cada corrida está em \`n1-causal-log.json\`.`);
-  const hashes = new Map();
-  for (const r of log.runs) hashes.set(`${r.meta.mode}`, (hashes.get(`${r.meta.mode}`) ?? new Set()).add(r.sha256));
   L.push('');
   L.push('## Contagens por tipo de ligação e por modo');
   L.push('');
