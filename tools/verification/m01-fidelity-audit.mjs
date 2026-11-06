@@ -5,7 +5,7 @@
 //   fidelity = Σ weight·layerFactor (DOCUMENTED + RECONSTRUCTED) / Σ weight·layerFactor, per act and overall.
 // Usage: node tools/verification/m01-fidelity-audit.mjs [--json] [--measure]
 //   --json     machine-readable report on stdout
-//   --measure  re-run the control routes (tools/verification/m01-fidelity-measure.mjs, ~30 s) and list weights that drifted > 1 s
+//   --measure  re-run the control routes (tools/verification/m01-fidelity-measure.mjs, ~30 s) and print each route's real seconds (no per-weight comparison yet)
 // Read-only: it never writes a file and changes nothing in the game.
 import {readFileSync} from 'node:fs';
 
