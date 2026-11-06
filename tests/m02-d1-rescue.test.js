@@ -621,6 +621,7 @@ describe('M02 D1 socorro: snapshot, restauro e validador (campos aditivos `rescu
       ['socorrista é o próprio', (s) => { lisIn(s).rescue.by = 'pl_lis'; }],
       ['levantar sem socorrista', (s) => { lisIn(s).rescue.by = null; lisIn(s).rescue.liftStartedAt = 1; }],
       ['início de levantar no futuro', (s) => { lisIn(s).rescue.liftStartedAt = s.clock + 1; }],
+      ['Piotr socorrista sem ter começado a levantar', (s) => { lisIn(s).rescue.by = 'piotr_sokol'; lisIn(s).rescue.liftStartedAt = null; }],
       ['estado anterior inválido', (s) => { lisIn(s).rescue.prevState = 'DOWN'; }],
       ['janela com o socorro já gasto', (s) => { lisIn(s).rescuedCount = 1; }],
       ['rescuedCount acima do máximo', (s) => { lisIn(s).rescue = null; lisIn(s).rescuedCount = 2; }],

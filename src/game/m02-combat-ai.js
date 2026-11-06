@@ -1287,6 +1287,7 @@ export function rescueFieldsProblem(a, clock, allyIds) {
   if (r.liftStartedAt !== null && !(r.by !== null && Number.isFinite(r.liftStartedAt) && r.liftStartedAt >= r.downedAt && r.liftStartedAt <= clock + 1e-9)) {
     return bad('início de levantar');
   }
+  if (r.by === PLAYER_ACTOR_ID && r.liftStartedAt === null) return bad('Piotr levanta logo ao carregar em [E]: não há fase de aproximação'); // só um aliado tem de ir ter com o caído
   if (!RESCUE_PREV_STATES.includes(r.prevState)) return bad('estado anterior');
   return null;
 }
