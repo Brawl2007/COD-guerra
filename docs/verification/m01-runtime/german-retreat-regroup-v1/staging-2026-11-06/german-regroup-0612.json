@@ -1,0 +1,199 @@
+{
+  "battleClock": 22331.041949999777,
+  "clock": 970.8166999996648,
+  "camera": {
+    "position": [
+      396,
+      -3.3600000000000003,
+      138
+    ],
+    "quaternion": [
+      0.002972791516364645,
+      -0.6443793585144428,
+      0.002505054600736121,
+      0.764696102731381
+    ],
+    "fov": 70,
+    "aspect": 1.7777777777777777,
+    "near": 0.05,
+    "far": 7500,
+    "width": 1280,
+    "height": 720
+  },
+  "rects": [
+    {
+      "id": "de_spans_7",
+      "x0": 638,
+      "x1": 643,
+      "y0": 356,
+      "y1": 362,
+      "inside": true
+    },
+    {
+      "id": "de_spans_4",
+      "x0": 637,
+      "x1": 642,
+      "y0": 356,
+      "y1": 362,
+      "inside": true
+    }
+  ],
+  "window": {
+    "x0": 592,
+    "x1": 688,
+    "y0": 329,
+    "y1": 389
+  },
+  "union": {
+    "pixels": 36,
+    "changed": 12,
+    "maxDiff": 132,
+    "meanAbs": 22.623183333333333
+  },
+  "control": {
+    "pixels": 440320,
+    "changed": 0,
+    "maxDiff": 0,
+    "meanAbs": 0
+  },
+  "perMan": [
+    {
+      "id": "de_spans_7",
+      "pixels": 30,
+      "changed": 12,
+      "maxDiff": 132,
+      "meanAbs": 27.147820000000003
+    },
+    {
+      "id": "de_spans_4",
+      "pixels": 30,
+      "changed": 11,
+      "maxDiff": 132,
+      "meanAbs": 25.602680000000003
+    }
+  ],
+  "sight": {
+    "clouds": [
+      {
+        "id": "east_demolition",
+        "x": 800,
+        "y": 0,
+        "z": 20,
+        "r": 42,
+        "h": 32,
+        "density": 1
+      }
+    ],
+    "blockAt": 3,
+    "deck": [
+      {
+        "id": "de_spans_4",
+        "worldLineOfSight": true,
+        "dustThicknessM": 73.22
+      },
+      {
+        "id": "de_spans_7",
+        "worldLineOfSight": true,
+        "dustThicknessM": 72.17
+      }
+    ],
+    "view": [
+      {
+        "id": "de_spans_4",
+        "worldLineOfSight": true,
+        "dustThicknessM": 0
+      },
+      {
+        "id": "de_spans_7",
+        "worldLineOfSight": true,
+        "dustThicknessM": 0
+      }
+    ]
+  },
+  "view": {
+    "x": 396,
+    "z": 138
+  },
+  "deck": {
+    "x": 38,
+    "z": 42.4
+  },
+  "items": [
+    {
+      "id": "de_spans_7",
+      "nation": "de",
+      "posture": "standing",
+      "distance": 572.6,
+      "position": [
+        960.414050200772,
+        0,
+        41.300000000000004
+      ],
+      "heightM": 3.341,
+      "widthM": 2.228,
+      "heightPx": 3,
+      "widthPx": 2,
+      "phase": 0.8997,
+      "moving": 0,
+      "contrast": 3.9,
+      "dark": false
+    },
+    {
+      "id": "de_spans_4",
+      "nation": "de",
+      "posture": "standing",
+      "distance": 574.6,
+      "position": [
+        962.2140502007719,
+        0,
+        40.2
+      ],
+      "heightM": 3.353,
+      "widthM": 2.235,
+      "heightPx": 3,
+      "widthPx": 2,
+      "phase": 0.8997,
+      "moving": 0,
+      "contrast": 3.9,
+      "dark": false
+    }
+  ],
+  "fallen": [
+    {
+      "id": "de_spans_0",
+      "x": 926.89999999999,
+      "z": 38.16,
+      "carriedBy": null
+    },
+    {
+      "id": "de_spans_1",
+      "x": 930.7999999999898,
+      "z": 41.84,
+      "carriedBy": null
+    },
+    {
+      "id": "de_spans_2",
+      "x": 959.3140502007719,
+      "z": 41.300000000000004,
+      "carriedBy": null
+    },
+    {
+      "id": "de_spans_3",
+      "x": 961.1140502007719,
+      "z": 40.2,
+      "carriedBy": null
+    }
+  ],
+  "knot": [
+    {
+      "id": "de_spans_4",
+      "x": 962.2140502007719,
+      "z": 40.2
+    },
+    {
+      "id": "de_spans_7",
+      "x": 960.414050200772,
+      "z": 41.300000000000004
+    }
+  ]
+}
