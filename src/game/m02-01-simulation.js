@@ -349,6 +349,11 @@ function validateCodexAdditiveState(snap) {
     if (actor.c04WaterOfferedAt !== undefined && (!Number.isFinite(actor.c04WaterOfferedAt) || actor.c04WaterOfferedAt < 0 || actor.c04WaterOfferedAt > snap.clock))
       return `Estado de água inválido: ${actor.id}`;
     if (actor.m02LastEngagedTargetId !== undefined && typeof actor.m02LastEngagedTargetId !== 'string') return `Alvo de equipa inválido: ${actor.id}`;
+    if (
+      actor.m02ReloadPosture !== undefined &&
+      (!isPlainObject(actor.m02ReloadPosture) || typeof actor.m02ReloadPosture.crouched !== 'boolean' || !Number.isFinite(actor.m02ReloadPosture.eyeHeight))
+    )
+      return `Postura de recarga inválida: ${actor.id}`;
     if (actor.m02GrenadeThreat !== undefined) {
       const t = actor.m02GrenadeThreat;
       if (
@@ -1954,7 +1959,10 @@ export class M02BenchSimulation {
       }
 
       // Apply suppression to intended target when rounds hit or pass near their cover aperture
-      if (targetActor && targetActor.alive && roundNearActor(origin,dir,hit,prof.range,targetActor)) {
+      // Supressão do alvo pretendido (D4/D6 calibrados com ela): cada ronda que voa para ele suprime-o, como antes do merge; a que bate
+      // num obstáculo junto à boca (≤ 2,5 m) não suprime ninguém à distância, salvo se passar perto dele (Codex 9ca83a3b, roundNearActor).
+      const roundLeftShooter = !(hit && hit.kind === 'world' && hit.distance < 2.5);
+      if (targetActor && targetActor.alive && (roundLeftShooter || roundNearActor(origin,dir,hit,prof.range,targetActor))) {
         targetActor.suppressed = Math.min(1, (targetActor.suppressed ?? 0) + prof.suppressionAdd / planned);
         shooter.suppressionsInflicted = (shooter.suppressionsInflicted ?? 0) + 1;
         this.combatLog.push({
@@ -2080,7 +2088,9 @@ export class M02BenchSimulation {
   advanceActorBurst(shooter){
     const burst=shooter.burst;
     if(!burst)return;
-    if(!shooter.alive||shooter.nonCombatant||shooter.suppressed>=.88||shooter.reloadingUntil>this.clock||shooter.mag<=0){shooter.burst=null;return;}
+    // Uma rajada começada não é interrompida pela supressão: a decisão de disparar é a do início (suppressed < 0,88), como na rajada
+    // atómica que D4/D6 calibraram; morte, não-combatente, recarga, carregador vazio, alvo ausente, clearance aliada e granada param-na.
+    if(!shooter.alive||shooter.nonCombatant||shooter.reloadingUntil>this.clock||shooter.mag<=0){shooter.burst=null;return;}
     const candidates=burst.side==='ally'?this.enemies:[this.player,...this.allies,...m02ExposedLastGroup(this)];
     const target=candidates.find(a=>a.id===burst.targetId)??null;
     if(target&&(target.nonCombatant||!m02ActorPresent(target))){shooter.burst=null;return;}

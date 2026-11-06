@@ -957,7 +957,13 @@ export function stepActorNavigation(sim, actor, dt) {
     actor.moving = false;
     return;
   }
-  if(actor.reloadingUntil>sim.clock){actor.moving=false;actor.crouched=true;actor.eyeHeight=1.08;return;}
+  // Codex: quem recarrega pára e agacha-se. Merge M02 único: no fim da recarga volta à postura que tinha (antes ficava agachado para
+  // sempre e, sem um ciclo de exposição para a geometria v2 desta linha, deixava de ver e de ser visto — a secção ficava cega).
+  if(actor.reloadingUntil>sim.clock){
+    if(!actor.m02ReloadPosture)actor.m02ReloadPosture={crouched:Boolean(actor.crouched),eyeHeight:actor.eyeHeight??1.65};
+    actor.moving=false;actor.crouched=true;actor.eyeHeight=1.08;return;
+  }
+  if(actor.m02ReloadPosture){actor.crouched=actor.m02ReloadPosture.crouched;actor.eyeHeight=actor.m02ReloadPosture.eyeHeight;delete actor.m02ReloadPosture;}
   if (!actor.goal) {
     actor.moving = false;
     return;

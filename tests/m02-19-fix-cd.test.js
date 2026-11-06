@@ -413,7 +413,9 @@ describe('FIX-CD 5: F1 conta tempo nominal dos disparos; o perfil vai no snapsho
       sim.allies.forEach((a) => Object.assign(a, { x: 100, z: 100, alive: false, state: 'DEAD', health: 0 }));
       const shooter = sim.enemies.find((e) => e.alive && e.weapon === 'kar98k');
       for (const e of sim.enemies) if (e !== shooter) Object.assign(e, { x: 150, z: 150, y: 0, mag: 0, reserve: 0, goal: null });
-      Object.assign(shooter, { x: 40, z: -60, y: sim.world.heightAt(40, -60), crouched: false, mag: 500, facing: Math.PI, buildingId: null, sector: null, goal: null, nextFireAt: 0.6 + 0.0137 });
+      // Merge M02 único: o atirador já tinha adquirido Piotr (a reação de aquisição de 1,2 s já passou), para o ciclo medir só o
+      // instante nominal do disparo, como antes; a reação é provada em tests/m02-playable-continuity.
+      Object.assign(shooter, { x: 40, z: -60, y: sim.world.heightAt(40, -60), crouched: false, mag: 500, facing: Math.PI, buildingId: null, sector: null, goal: null, nextFireAt: 0.6 + 0.0137, seeingTargetId: 'piotr_sokol', targetAcquiredAt: -10 });
       sim.mgState.nextBurstAt = 1e9;
       const fires = [];
       let prev = shooter.nextFireAt;

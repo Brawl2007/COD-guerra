@@ -437,7 +437,10 @@ describe('M02 D6: o perfil entra no snapshot (exceto recruta), é reposto pelo r
     for (const id of ['soldado', 'veterano']) {
       const controls = (i) => ({ aim: i % 90 < 45, fire: i % 25 === 5, forward: i < 80 ? 1 : 0 });
       const sim = new M02BenchSimulation(SEED, { difficulty: id });
-      sim.teleportPlayer(-44.0, -15.5, 0); // à janela de B01: DE-A07 combate Piotr cedo
+      // Merge M02 único: em (−44, −15,5) a física sempre ativa assentava Piotr no fundo da vala oeste e, com a reação de aquisição de
+      // 1,2 s, ninguém o combatia nos primeiros 6 s. Em (−42, −15,5) virado a norte Piotr avança a descoberto e a MG34 de B02 combate-o
+      // cedo nos dois perfis (medido): o snapshot tem estado F1 de um atirador, que é o que o teste exige.
+      sim.teleportPlayer(-42.0, -15.5, -Math.PI / 2);
       sim.player.crouched = false;
       for (let i = 0; i < 120; i++) sim.tick(0.05, controls(i));
       const snap = structuredClone(sim.snapshot());
