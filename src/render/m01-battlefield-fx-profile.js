@@ -1,4 +1,5 @@
 // Presentation-only battlefield FX profiles. No simulation state or RNG lives here.
+import {DECK_SUPPORT_ID} from '../game/m01-deck-assault.js';
 export const M01_FX_QUALITY_DENSITY=Object.freeze({low:.55,medium:.78,high:1});
 
 export const M01_FX_PROFILES=Object.freeze({
@@ -32,7 +33,8 @@ export const M01_FX_PROFILES=Object.freeze({
 
 export function battlefieldBlastKind(id='',aerial=false){
   if(id.endsWith('_demolition'))return 'demolition';
-  if(id.startsWith('np_shell_crater_'))return 'shell';
+  // The damage record carries no blast kind, so the id decides: the Act VII-b craters and the German supporting round of Act I (amendment 22) are shells.
+  if(id.startsWith('np_shell_crater_')||id===DECK_SUPPORT_ID)return 'shell';
   if(aerial||/bomb|raid/.test(id))return 'bombing';
   return 'small';
 }
