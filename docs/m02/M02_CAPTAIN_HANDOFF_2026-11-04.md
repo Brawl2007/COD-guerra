@@ -393,3 +393,45 @@ Merge `82937c6d` (`f46484af`…`8b6b0edb`).
 3. Ordens nas Áreas B/C.
 4. Análise e testes de compatibilidade dos snapshots v1 do Codex (`cod-guerra:checkpoint:m02:v1`), sem migrar nem apagar, na branch de integração `codex/m02-integracao-unica`.
 5. Playtest humano antes de qualquer aprovação. A missão **não está aprovada**.
+
+### Jogabilidade 2: merge `0b9857b4` (`424e9b4a`…`4642a3df`)
+
+Esta tarefa foi refeita depois de um reinício do contentor. O patch parcial do agente anterior foi revisto e **não foi aplicado**, porque as medições dele estavam confundidas por um defeito.
+
+**Testes:**
+- `tests/m02-*.test.js`: **650/650**.
+- Build: OK.
+- Browser M02: **2 passed (7,6 min)**, N0 30/30.
+- M01 inalterada; nenhuma semente de teste foi trocada.
+
+**O que mudou:**
+- **C11 (pp. 14, 17):** o Gruca avança por lanços abrigados até (-32,18). Só dá o lanço seguinte se no máximo 1 hostil não suprimido vir a rota.
+- **D1, socorro quando seguro (p. 16):**
+  - Quando o Gruca, o Lis, o Szymczak, o Wierzba ou o Małek caem a tiro, abre-se uma janela de socorro de 60 s.
+  - O local conta como seguro se nenhum hostil tiver linha de vista até 120 m.
+  - O socorro é feito pelo Piotr ([E], 4 s) ou por um aliado. O ferido levanta-se com 25 de vida e só pode ser socorrido uma vez.
+  - `required_character_incapacitated` só dispara sem socorro possível.
+  - Campos novos no snapshot: `allies[].rescue`, `rescuedCount` e `squadOrder.cellId`.
+- **D4:** as ordens «cobrir» e «avançar» funcionam também nas Áreas B e C, com teste causal.
+- **C04/I4:**
+  - Os estados WITHDRAWN, ferido e rendido marcam `fired_on_wounded`; WITHDRAWING não.
+  - A premissa anterior («não marcava») estava errada. O que faltava era a regra e o teste.
+- **Bot:** já não fica preso junto a um Lis caído.
+- **Painel de falha:** nomeia o ator, por exemplo «Sgt. Gruca incapacitado…».
+
+**MissionBot, recruta, sementes 1–40:** chegam ao C12 18 → 21; o Gruca cai 5 → 0; o Piotr morre 17 → 19. Os números são caóticos (±3) e **não são playtest**.
+
+**Valores sem fonte no PDF** (nomeados no código):
+- nós dos lanços;
+- raio de segurança de 120 m;
+- 4 s de socorro;
+- prazo de 60 s;
+- 25 de vida ao levantar;
+- lugares das ordens B/C.
+
+**Limitações:**
+- Os checkpoints de uma só vez (cp_c) pedidos durante a janela de socorro do Gruca **perdem-se**.
+- O bot não socorre por si.
+- O bot leva tiros a 130 m no início do C10.
+
+**Próximo passo:** revisão adversarial independente de `0b9857b4`.
