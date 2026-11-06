@@ -40,6 +40,14 @@ import {
   resolveSquadOrder,
   isNonCombatantTarget,
   isKnownOrderNode,
+  RESCUE_NAMES,
+  RESCUE_REACH_M,
+  RESCUE_LIFT_SEC,
+  openRescueWindow,
+  isRescuable,
+  rescueSpotIsSafe,
+  beginPlayerRescue,
+  rescueFieldsProblem,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -140,7 +148,7 @@ export function describeMissionFailure(failure) {
   if (failure.reason === 'required_character_incapacitated') {
     const who = Object.hasOwn(M02_REQUIRED_CHARACTERS, failure.actorId) ? M02_REQUIRED_CHARACTERS[failure.actorId] : null;
     if (who?.shortName) {
-      return `${who.shortName} incapacitado. É uma personagem exigida pelo roteiro até ao fim de C12 (D1); a missão falhou.`;
+      return `${who.shortName} incapacitado. Sem socorro possível (D1: «socorro quando seguro»): é uma personagem exigida pelo roteiro até ao fim de C12 e a missão falhou.`;
     }
   }
   return M02_MISSION_FAILURE_TEXT[failure.reason] ?? 'A missão falhou.';
@@ -374,6 +382,11 @@ export function validateM02Snapshot(snap) {
       // D4: o lanço do plano base que a trela reteve (id de um nó de cobertura) ou null; campo aditivo, ausente nos saves anteriores.
       if (label === 'Aliado' && 'holdingFor' in a && a.holdingFor !== null && !(typeof a.holdingFor === 'string' && /^cv_[a-z0-9_]+$/.test(a.holdingFor))) {
         return { valid: false, reason: `Objetivo retido (holdingFor) inválido no snapshot: ${a.id}` };
+      }
+      // D1: socorro quando seguro — janela `rescue` do caído e `rescuedCount` (campos aditivos; ausentes nos saves anteriores)
+      if (label === 'Aliado') {
+        const rescueProblem = rescueFieldsProblem(a, snap.clock, new Set(snap.allies.map((x) => x?.id)));
+        if (rescueProblem) return { valid: false, reason: rescueProblem };
       }
       // D6 (regra F1 da M01): contacto de um atirador com Piotr; só existe em soldado/veterano, instantes finitos ou null.
       if (label === 'Inimigo' && ['aimEngagedAt', 'aimLastAt'].some((k) => k in a && a[k] !== null && !(Number.isFinite(a[k]) && a[k] >= 0))) {
@@ -1269,6 +1282,60 @@ export class M02BenchSimulation {
     };
   }
 
+  /**
+   * D1: socorro quando seguro. O caído mais próximo de Piotr, ao alcance (RESCUE_REACH_M) e com a janela aberta: `safe` diz se nenhum
+   * hostil o vê (RESCUE_SAFE_RADIUS_M); `lifting` se Piotr já o está a levantar. O [E] só age com `safe`. null se não há ninguém ao alcance.
+   */
+  currentRescuePrompt() {
+    const p = this.player;
+    if (p.alive === false || !(p.health > 0)) return null;
+    let best = null;
+    for (const a of this.allies) {
+      if (!isRescuable(this, a)) continue;
+      const d = Math.hypot(a.x - p.x, a.z - p.z);
+      if (d <= RESCUE_REACH_M && (!best || d < best.d)) best = { a, d };
+    }
+    if (!best) return null;
+    const { a, d } = best;
+    const name = RESCUE_NAMES[a.id] ?? a.id;
+    const lifting = a.rescue.by === PLAYER_ID && a.rescue.liftStartedAt !== null;
+    const safe = lifting || rescueSpotIsSafe(this, a);
+    const left = lifting ? Math.max(0, RESCUE_LIFT_SEC - (this.clock - a.rescue.liftStartedAt)) : null;
+    return {
+      actorId: a.id,
+      distance: Number(d.toFixed(2)),
+      safe,
+      lifting,
+      prompt: lifting
+        ? `A levantar ${name}… ${Math.ceil(left)} s (fica ao lado dele)`
+        : safe
+          ? `[E] Socorrer ${name} (levantar o caído; fica com pouca vida)`
+          : `Socorro adiado: ${name} está à vista de um hostil`,
+    };
+  }
+
+  /**
+   * D1: o que a bancada mostra do socorro («visível, não imunidade oculta»): cada caído com a janela aberta, o tempo que lhe resta, se o
+   * local está seguro, quem o socorre e a distância de Piotr. Lista vazia se não há ninguém por socorrer.
+   */
+  rescueStatus() {
+    const out = [];
+    for (const a of this.allies) {
+      if (!isRescuable(this, a)) continue;
+      out.push({
+        actorId: a.id,
+        name: RESCUE_NAMES[a.id] ?? a.id,
+        remainingSec: Number(Math.max(0, a.rescue.deadlineAt - this.clock).toFixed(1)),
+        safe: rescueSpotIsSafe(this, a),
+        by: a.rescue.by,
+        lifting: a.rescue.liftStartedAt !== null,
+        distanceFromPiotr: Number(Math.hypot(a.x - this.player.x, a.z - this.player.z).toFixed(1)),
+        required: Object.hasOwn(M02_REQUIRED_CHARACTERS, a.id),
+      });
+    }
+    return out;
+  }
+
   markWoundedSoldierWithChalk() {
     const wounded = this.enemies.find((e) => e.c04Candidate && e.alive);
     if (!wounded) return null;
@@ -1294,6 +1361,11 @@ export class M02BenchSimulation {
   }
 
   interactDoor(explicitDoorId = null) {
+    if (!explicitDoorId) {
+      // D1: o [E] junto a um caído é socorrê-lo (só quando seguro: sem linha de vista de nenhum hostil); nunca cai para a porta mais próxima
+      const rescuePrompt = this.currentRescuePrompt();
+      if (rescuePrompt) return rescuePrompt.safe && !rescuePrompt.lifting ? beginPlayerRescue(this, rescuePrompt.actorId) : null;
+    }
     if (!explicitDoorId) {
       const chalkPrompt = this.currentChalkPrompt();
       if (chalkPrompt) {
@@ -1651,8 +1723,11 @@ export class M02BenchSimulation {
         } else if (victim.health <= 0) {
           // D1 (PDF p. 16): sem imunidades ocultas. Antes os «essenciais» (Gruca, Lis, Szymczak) voltavam a 18 de vida e supressão total;
           // agora caem como qualquer outro (quem os faz falhar a missão é a regra visível `requiredCharacterOut`, não um truque).
+          const stateBefore = victim.state;
           victim.alive = false;
           victim.state = side === 'ally' ? 'DEAD' : 'DOWN';
+          // D1: o ferimento incapacitante de um aliado elegível admite socorro quando seguro (janela visível; ver RESCUE_* em m02-combat-ai.js)
+          if (side === 'enemy' && this.allies.includes(victim)) openRescueWindow(this, victim, stateBefore);
           this.combatLog.push({
             clock: Number(this.clock.toFixed(2)),
             type: side === 'ally' ? 'ally_killed_enemy' : 'ally_down',
@@ -2172,7 +2247,8 @@ export class M02BenchSimulation {
     if (p.alive === false || !(p.health > 0)) {
       failure = { reason: 'piotr_killed' };
     } else {
-      const actorId = requiredCharacterOut(this);
+      // D1: só falha quando a personagem exigida fica incapacitada SEM socorro possível (janela esgotada, morta por explosão, socorro gasto)
+      const actorId = requiredCharacterOut(this, { unlessRescuable: true });
       if (actorId) failure = { reason: 'required_character_incapacitated', actorId };
     }
     if (!failure) return;
@@ -2208,6 +2284,9 @@ export class M02BenchSimulation {
    */
   requestAutoCheckpoint(checkpointId) {
     if (this.missionFailed) return this.#rejectCheckpointOnFailure(checkpointId);
+    // D1: nunca um ponto de reinício com a personagem exigida fora de combate (o validador recusava-o, a cada pedido, com ruído): enquanto
+    // ela espera socorro adia-se em silêncio. Os pedidos repetidos (cp_b, cp_d) voltam a ser feitos quando se levantar; os de uma só vez perdem-se.
+    if (requiredCharacterOut(this, { ignoreCompletion: true })) return null;
     if (this.#checkpointBatchDepth === 0) return this.saveCheckpoint(checkpointId);
     if (!this.#pendingCheckpointIds.includes(checkpointId)) this.#pendingCheckpointIds.push(checkpointId);
     return null;

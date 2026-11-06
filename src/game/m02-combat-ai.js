@@ -1020,6 +1020,277 @@ export function stepActorNavigation(sim, actor, dt) {
   movePlayer(sim.world, actor, vx, vz, dt);
 }
 
+// ---------------------------------------------------------------------------------------------------------------------------
+// D1 «socorro quando seguro» (PDF p. 16)
+// ---------------------------------------------------------------------------------------------------------------------------
+/**
+ * D1 (PDF p. 16, «Falhas duras»): «Ferimento incapacitante de Gruca/Lis/Szymczak fora da sequência admite socorro quando seguro; se o estado
+ * canónico se tornar impossível, apresentar falha clara e restaurar o checkpoint. Esta convenção deve ser visível, não imunidade oculta.»
+ * C11 (p. 14): «O socorrista procura abrigo e só atravessa com oportunidade real»; D6 (p. 18) e C7 (pp. 14-15): sem cura total («água e material
+ * sanitário não são poções de regeneração instantânea»). Regras desta bancada (tudo o que não é do PDF está marcado):
+ *  - QUEM: Gruca, Lis, Szymczak, Wierzba e Małek (RESCUE_ELIGIBLE: as três do PDF e as duas «consequência persistente conforme K/I»). Os
+ *    auxiliares «podem morrer sem reiniciar» (D1) e quem MORRE (DEAD: rebentado por uma explosão) não tem socorro.
+ *  - QUANDO: um aliado elegível derrubado a TIRO (DOWN) abre uma janela de socorro de RESCUE_WINDOW_SEC (`ally.rescue`, visível na bancada).
+ *  - SEGURO: o local do caído está seguro quando nenhum hostil combatente vivo com ele ao alcance da sua arma, até RESCUE_SAFE_RADIUS_M,
+ *    tem linha de vista para ele (a mesma visão com que os hostis escolhem alvo, de joelhos); ver rescueSpotIsSafe.
+ *  - POR QUEM: pelo jogador ([E] ao lado do caído, a ≤ RESCUE_REACH_M) ou por um aliado: o sanitário Szymczak (D4: «escolhe rota de socorro») e,
+ *    se ele não pode, o mais próximo de Wierzba, Małek e Lis. Só vai quando o local está seguro e desiste se deixar de estar. Levantar leva
+ *    RESCUE_LIFT_SEC com o socorrista ao lado e o local seguro.
+ *  - RESULTADO: levanta-se com RESCUE_HEALTH de vida (valor limitado: o próximo tiro volta a derrubá-lo), de joelhos. Cada um só tem direito a
+ *    RESCUE_MAX_PER_CHARACTER socorros (sem imunidade oculta): a segunda queda é definitiva.
+ *  - FALHA: Gruca é o único exigido (M02_REQUIRED_CHARACTERS). `required_character_incapacitated` só dispara quando ele fica incapacitado SEM
+ *    socorro possível: a janela esgotou-se, morreu por explosão ou já gastou o socorro. Enquanto a janela está aberta o roteiro espera e não
+ *    se grava nenhum checkpoint (nunca com Gruca fora de combate).
+ * VALORES SEM FONTE NO PDF: 120 m (o limite do combate principal de D1, p. 16, «entre 15 e 120 m»), 2,2 m (o alcance de interação da bancada),
+ * 4 s para levantar, 60 s de janela, 25 de vida, um socorro por pessoa.
+ */
+export const RESCUE_ELIGIBLE = Object.freeze(['pl_gruca', 'pl_lis', 'pl_szymczak', 'pl_wierzba', 'pl_malek']);
+/** Nome curto (português) para o ecrã. */
+export const RESCUE_NAMES = Object.freeze({
+  pl_gruca: 'Sgt. Gruca',
+  pl_lis: 'Lis',
+  pl_szymczak: 'Szymczak',
+  pl_wierzba: 'Wierzba',
+  pl_malek: 'Małek',
+});
+export const RESCUE_SAFE_RADIUS_M = 120;
+export const RESCUE_REACH_M = 2.2;
+/** O aliado socorrista começa a levantar quando chega a esta distância do caído. */
+export const RESCUE_ARRIVE_M = 1.6;
+export const RESCUE_LIFT_SEC = 4;
+export const RESCUE_WINDOW_SEC = 60;
+export const RESCUE_HEALTH = 25;
+export const RESCUE_MAX_PER_CHARACTER = 1;
+/** Socorristas aliados por ordem de preferência: o sanitário primeiro; os restantes, o mais próximo. */
+export const RESCUE_MEDIC = 'pl_szymczak';
+export const RESCUE_ASSISTANTS = Object.freeze(['pl_wierzba', 'pl_malek', 'pl_lis']);
+/** Estados que o caído tinha antes de cair e a que volta ao levantar-se (Lis ferido a regressar ou amparado em C11 retoma o seu percurso). */
+export const RESCUE_PREV_STATES = Object.freeze(['ACTIVE', 'WOUNDED_LIAISON', 'WALKING_SUPPORTED', 'CARRIED', 'EVACUATED_B12']);
+export const RESCUE_ABORT_REASONS = Object.freeze(['unsafe', 'rescuer_lost', 'rescuer_far']);
+const PLAYER_ACTOR_ID = 'piotr_sokol';
+
+/** A janela de socorro de um aliado (ou de um snapshot dele) está aberta no instante `clock`? Só dados: serve a simulação e o validador. */
+export function isRescueWindowOpen(ally, clock) {
+  return (
+    Boolean(ally) &&
+    ally.alive === false &&
+    ally.state === 'DOWN' &&
+    Boolean(ally.rescue) &&
+    clock < ally.rescue.deadlineAt &&
+    (ally.rescuedCount ?? 0) < RESCUE_MAX_PER_CHARACTER
+  );
+}
+
+/** Um aliado derrubado pode ser socorrido agora (janela aberta, na célula atual). */
+export function isRescuable(sim, ally) {
+  return !ally.detachedOutOfCell && isRescueWindowOpen(ally, sim.clock);
+}
+
+/** Abre a janela de socorro de um aliado elegível acabado de ser derrubado a tiro (fireActorBurst). Quem não é elegível ou já gastou o socorro fica sem janela. */
+export function openRescueWindow(sim, victim, prevState) {
+  victim.rescue = null;
+  if (!RESCUE_ELIGIBLE.includes(victim.id) || (victim.rescuedCount ?? 0) >= RESCUE_MAX_PER_CHARACTER) return false;
+  const downedAt = instantAt(sim.clock);
+  const deadlineAt = Number((downedAt + RESCUE_WINDOW_SEC).toFixed(3));
+  victim.rescue = {
+    downedAt,
+    deadlineAt,
+    by: null,
+    liftStartedAt: null,
+    prevState: RESCUE_PREV_STATES.includes(prevState) ? prevState : 'ACTIVE',
+  };
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_window_opened', actorId: victim.id, deadlineAt });
+  sim.events.push({ type: 'rescue-window-opened', actorId: victim.id, deadlineAt, clock: sim.clock });
+  return true;
+}
+
+/** Fecha a janela de socorro (o caído foi evacuado, ficou ausente...). */
+export function closeRescueWindow(ally) {
+  if (ally && ally.rescue) ally.rescue = null;
+}
+
+/**
+ * O local é seguro para levantar alguém: nenhum hostil combatente (vivo, a combater) com o ponto ao alcance da sua arma (no máximo
+ * RESCUE_SAFE_RADIUS_M) tem linha de vista para ele. A prova usa um ponto de joelhos (o socorrista), a vista dos hostis com folhagem.
+ */
+export function rescueSpotIsSafe(sim, point) {
+  const probe = { space: 'metres', x: point.x, y: point.y ?? sim.world.heightAt(point.x, point.z), z: point.z, crouched: true, eyeHeight: 1.08 };
+  for (const e of sim.enemies) {
+    if (!e.alive || e.nonCombatant) continue;
+    const reach = Math.min(WEAPON_PROFILES[e.weapon]?.range ?? 160, RESCUE_SAFE_RADIUS_M);
+    if (Math.hypot(e.x - point.x, e.z - point.z) > reach) continue;
+    if (sim.world.lineOfSight(e, probe, { includeFoliage: true })) return false;
+  }
+  return true;
+}
+
+function rescuerOf(sim, casualty) {
+  const by = casualty.rescue?.by ?? null;
+  if (by === null) return null;
+  return by === PLAYER_ACTOR_ID ? sim.player : (sim.allies.find((a) => a.id === by) ?? null);
+}
+
+function abortRescue(sim, casualty, reason) {
+  const byId = casualty.rescue.by;
+  casualty.rescue.by = null;
+  casualty.rescue.liftStartedAt = null;
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_aborted', actorId: casualty.id, byId, reason });
+  sim.events.push({ type: 'rescue-aborted', actorId: casualty.id, byId, reason, clock: sim.clock });
+}
+
+function completeRescue(sim, casualty) {
+  const r = casualty.rescue;
+  casualty.alive = true;
+  casualty.state = RESCUE_PREV_STATES.includes(r.prevState) ? r.prevState : 'ACTIVE';
+  casualty.health = Math.min(casualty.maxHealth ?? RESCUE_HEALTH, RESCUE_HEALTH);
+  casualty.rescuedCount = (casualty.rescuedCount ?? 0) + 1;
+  casualty.suppressed = 0.5;
+  casualty.crouched = true;
+  casualty.eyeHeight = 1.08;
+  casualty.moving = false;
+  casualty.reachedNodeId = null;
+  casualty.navCorners = null;
+  casualty.holdingFor = null;
+  casualty.nextFireAt = Number((sim.clock + 2).toFixed(3));
+  if (casualty.state === 'ACTIVE') casualty.goal = null; // volta ao plano; Lis retoma o percurso do diretor da Área C (o seu objetivo fica)
+  casualty.rescue = null;
+  sim.combatLog.push({
+    clock: Number(sim.clock.toFixed(2)),
+    type: 'ally_rescued',
+    actorId: casualty.id,
+    byId: r.by,
+    health: casualty.health,
+    rescuedCount: casualty.rescuedCount,
+  });
+  sim.events.push({ type: 'ally-rescued', actorId: casualty.id, byId: r.by, health: casualty.health, clock: sim.clock });
+}
+
+/**
+ * Socorrista aliado: o sanitário e, se ele não pode (caído, ausente, ocupado com outro caído), o mais próximo de Wierzba, Małek e Lis.
+ * Determinista: desempata pela ordem de RESCUE_ASSISTANTS.
+ */
+function pickAllyRescuer(sim, casualty) {
+  const usable = (a) =>
+    a && a.id !== casualty.id && a.alive && a.state === 'ACTIVE' && !a.detachedOutOfCell && !sim.allies.some((c) => c.rescue?.by === a.id);
+  const medic = sim.allies.find((a) => a.id === RESCUE_MEDIC);
+  if (usable(medic)) return medic;
+  let best = null;
+  for (const id of RESCUE_ASSISTANTS) {
+    const a = sim.allies.find((x) => x.id === id);
+    if (!usable(a)) continue;
+    const d = Math.hypot(a.x - casualty.x, a.z - casualty.z);
+    if (!best || d < best.d - 1e-9) best = { a, d };
+  }
+  return best?.a ?? null;
+}
+
+/**
+ * Um passo do socorro, no início de updatePolishSquad: fecha o que expirou, escolhe socorrista quando o local está seguro, interrompe se
+ * deixou de estar (ou se o socorrista caiu ou se afastou), conta o tempo de levantar e levanta. Sem RNG: só relógio, posições e linha de vista.
+ */
+export function stepRescues(sim) {
+  const clock = sim.clock;
+  const piotrUp = sim.player.alive !== false && sim.player.health > 0;
+  for (const c of sim.allies) {
+    if (!c.rescue) continue;
+    // invariante defensiva: a janela só existe num caído DOWN (evacuado, ausente ou de pé: já não há nada a socorrer)
+    if (c.alive || c.state !== 'DOWN' || c.detachedOutOfCell) {
+      c.rescue = null;
+      continue;
+    }
+    if (clock >= c.rescue.deadlineAt) {
+      c.rescue = null;
+      sim.combatLog.push({ clock: Number(clock.toFixed(2)), type: 'rescue_window_expired', actorId: c.id });
+      sim.events.push({ type: 'rescue-window-expired', actorId: c.id, clock });
+      continue;
+    }
+    const safe = rescueSpotIsSafe(sim, c);
+    let rescuer = rescuerOf(sim, c);
+    if (c.rescue.by !== null) {
+      const usable =
+        c.rescue.by === PLAYER_ACTOR_ID
+          ? piotrUp
+          : Boolean(rescuer) && rescuer.alive && rescuer.state === 'ACTIVE' && !rescuer.detachedOutOfCell && rescuer.id !== c.id;
+      if (!usable) abortRescue(sim, c, 'rescuer_lost');
+      else if (!safe) abortRescue(sim, c, 'unsafe');
+    }
+    if (c.rescue.by === null && safe) {
+      const ally = pickAllyRescuer(sim, c);
+      if (ally) {
+        c.rescue.by = ally.id;
+        c.rescue.liftStartedAt = null;
+        sim.combatLog.push({ clock: Number(clock.toFixed(2)), type: 'rescue_started', actorId: c.id, byId: ally.id, phase: 'approach' });
+        sim.events.push({ type: 'rescue-started', actorId: c.id, byId: ally.id, phase: 'approach', clock });
+      }
+    }
+    if (c.rescue.by === null) continue;
+    rescuer = rescuerOf(sim, c);
+    const byPlayer = c.rescue.by === PLAYER_ACTOR_ID;
+    const d = Math.hypot(rescuer.x - c.x, rescuer.z - c.z);
+    if (c.rescue.liftStartedAt === null) {
+      if (!byPlayer && d <= RESCUE_ARRIVE_M) {
+        c.rescue.liftStartedAt = instantAt(clock);
+        sim.combatLog.push({ clock: Number(clock.toFixed(2)), type: 'rescue_started', actorId: c.id, byId: c.rescue.by, phase: 'lift' });
+        sim.events.push({ type: 'rescue-started', actorId: c.id, byId: c.rescue.by, phase: 'lift', clock });
+      }
+      continue;
+    }
+    if (d > (byPlayer ? RESCUE_REACH_M : RESCUE_ARRIVE_M) + 1) abortRescue(sim, c, 'rescuer_far');
+    else if (clock - c.rescue.liftStartedAt >= RESCUE_LIFT_SEC - 1e-9) completeRescue(sim, c);
+  }
+}
+
+/** [E] de Piotr junto a um caído: começa a levantá-lo (só se o local estiver seguro e ele ao alcance). Devolve o evento ou null. */
+export function beginPlayerRescue(sim, actorId) {
+  const c = sim.allies.find((a) => a.id === actorId);
+  const p = sim.player;
+  if (!c || !isRescuable(sim, c) || p.alive === false || !(p.health > 0)) return null;
+  if (Math.hypot(p.x - c.x, p.z - c.z) > RESCUE_REACH_M || !rescueSpotIsSafe(sim, c)) return null;
+  const takenOver = c.rescue.by !== null && c.rescue.by !== PLAYER_ACTOR_ID ? c.rescue.by : null;
+  c.rescue.by = PLAYER_ACTOR_ID;
+  c.rescue.liftStartedAt = instantAt(sim.clock);
+  const evt = { type: 'rescue-started', actorId: c.id, byId: PLAYER_ACTOR_ID, phase: 'lift', ...(takenOver ? { tookOverFrom: takenOver } : {}), clock: sim.clock };
+  sim.combatLog.push({ clock: Number(sim.clock.toFixed(2)), type: 'rescue_started', actorId: c.id, byId: PLAYER_ACTOR_ID, phase: 'lift' });
+  sim.events.push(evt);
+  return evt;
+}
+
+/** Objetivo do aliado que está a socorrer (ir ao caído e ficar ao lado dele) ou null. */
+function rescueGoalFor(sim, ally) {
+  const c = sim.allies.find((x) => x.rescue?.by === ally.id);
+  if (!c) return null;
+  return { x: c.x, z: c.z, facing: Math.atan2(c.z - ally.z, c.x - ally.x), crouch: true, rescue: true };
+}
+
+/** O aliado está a levantar alguém agora (não dispara nem se desloca). */
+const isLifting = (sim, ally) => sim.allies.some((c) => c.rescue?.by === ally.id && c.rescue.liftStartedAt !== null);
+
+/**
+ * Erro (texto) dos campos de socorro de um aliado num snapshot, ou null: `rescue` (a janela) e `rescuedCount` (socorros já gastos) são
+ * campos aditivos do schema 2, ausentes nos saves anteriores. Só dados: o validador não precisa da simulação.
+ */
+export function rescueFieldsProblem(a, clock, allyIds) {
+  if ('rescuedCount' in a && a.rescuedCount !== undefined && !(Number.isInteger(a.rescuedCount) && a.rescuedCount >= 0 && a.rescuedCount <= RESCUE_MAX_PER_CHARACTER)) {
+    return `Socorros gastos (rescuedCount) inválidos no snapshot: ${a.id}`;
+  }
+  const r = a.rescue;
+  if (r === undefined || r === null) return null;
+  const bad = (why) => `Janela de socorro (rescue) inválida no snapshot: ${a.id} (${why})`;
+  if (typeof r !== 'object' || Array.isArray(r)) return bad('forma');
+  if (Object.keys(r).sort().join() !== ['by', 'deadlineAt', 'downedAt', 'liftStartedAt', 'prevState'].join()) return bad('campos');
+  if (!RESCUE_ELIGIBLE.includes(a.id)) return bad('personagem sem direito a socorro');
+  if (a.alive !== false || a.state !== 'DOWN') return bad('só um caído (DOWN) tem janela');
+  if ((a.rescuedCount ?? 0) >= RESCUE_MAX_PER_CHARACTER) return bad('socorro já gasto');
+  if (!Number.isFinite(r.downedAt) || r.downedAt < 0 || r.downedAt > clock + 1e-9) return bad('instante da queda');
+  if (!Number.isFinite(r.deadlineAt) || Math.abs(r.deadlineAt - r.downedAt - RESCUE_WINDOW_SEC) > 0.002) return bad('prazo');
+  if (r.by !== null && !(r.by === PLAYER_ACTOR_ID || (typeof r.by === 'string' && r.by !== a.id && allyIds.has(r.by)))) return bad('socorrista');
+  if (r.liftStartedAt !== null && !(r.by !== null && Number.isFinite(r.liftStartedAt) && r.liftStartedAt >= r.downedAt && r.liftStartedAt <= clock + 1e-9)) {
+    return bad('início de levantar');
+  }
+  if (!RESCUE_PREV_STATES.includes(r.prevState)) return bad('estado anterior');
+  return null;
+}
+
 /**
  * D4 (PDF p. 17): «Sem ordem, Gruca conduz o plano base» mas «autonomia não é vitória garantida». O plano base (vala → casa B01 → pátio)
  * é conduzido COM o atirador, não à frente dele: Gruca fixa e suprime com a secção a partir de posições de apoio (parapeitos de partida,
@@ -1291,6 +1562,7 @@ export function updatePolishSquad(sim, dt) {
   const mgMuzzle = sim.mgAperture;
   const cm = (n) => Math.round(n * 100) / 100;
   lapseSquadOrder(sim);
+  stepRescues(sim); // D1: socorro quando seguro (janelas abertas, socorristas, levantar)
 
   // Assign tactical cover goals by squad state & elapsed time / progression
   for (const ally of sim.allies) {
@@ -1303,8 +1575,15 @@ export function updatePolishSquad(sim, dt) {
 
     // D4: a ordem do jogador (cobrir aqui / avançar para ali) manda na equipa de assalto, em A, B e C; sem ordem, o plano base.
     const orderGoal = squadOrderGoalFor(sim, ally);
+    // D1: quem foi escolhido para socorrer um caído vai ter com ele (só quando o local está seguro) e deixa o plano enquanto o faz
+    const rescueGoal = rescueGoalFor(sim, ally);
+    // o socorro acabou (levantou, interrompeu-se ou Piotr tomou a vez): o objetivo de socorro não fica a mandar no aliado
+    if (!rescueGoal && ally.goal?.rescue) ally.goal = null;
 
-    if (orderGoal) {
+    if (rescueGoal) {
+      ally.goal = rescueGoal;
+      ally.tacticalState = 'SupportMedic';
+    } else if (orderGoal) {
       if (orderGoal !== ORDER_HOLD) ally.goal = orderGoal; // ORDER_HOLD: sem nó atribuído, mantém o objetivo/posição atual
       ally.tacticalState = sim.squadOrder.type === 'cover' ? 'HoldCover' : 'AdvanceOrder';
     } else if (sim.activeCellId === 'B') {
@@ -1422,7 +1701,7 @@ export function updatePolishSquad(sim, dt) {
     }
 
     // 2. Allied target acquisition & causal firing (no decorative shots!)
-    if (ally.reloadingUntil > sim.clock || ally.mag <= 0 || sim.clock < ally.nextFireAt) {
+    if (ally.reloadingUntil > sim.clock || ally.mag <= 0 || sim.clock < ally.nextFireAt || isLifting(sim, ally)) {
       continue;
     }
     if (ally.id === 'pl_szymczak' && ally.suppressed < 0.2) {

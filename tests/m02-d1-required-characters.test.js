@@ -36,6 +36,9 @@ function shootDown(sim, id, x = 30, z = -60) {
     shooter.mag = 5;
     sim.fireActorBurst(shooter, a, { x: a.x, y: a.y + 1.25, z: a.z }, 'enemy');
   }
+  // D1 «socorro quando seguro»: a queda a tiro abre uma janela de socorro (tests/m02-d1-rescue). Estes testes provam a REGRA DA FALHA
+  // — personagem exigida fora de combate SEM socorro possível —, por isso o caído fica sem janela, como depois de o prazo se esgotar.
+  a.rescue = null;
   return a;
 }
 
@@ -175,6 +178,7 @@ describe('M02 D1: 2.ª falha dura — personagem exigida fora de combate', () =>
         shooter.mag = 5;
         sim.fireActorBurst(shooter, a, { x: a.x, y: a.y + 1.25, z: a.z }, 'enemy');
       }
+      a.rescue = null; // sem socorro possível (ver shootDown)
       assert.equal(a.alive, false, `${label}: Gruca caiu`);
       sim.tick(DT, {});
       assert.equal(sim.missionFailed?.reason, 'required_character_incapacitated', label);

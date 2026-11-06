@@ -58,6 +58,8 @@ const elAmmo = document.getElementById('hud-ammo');
 const elGrenades = document.getElementById('hud-grenades');
 const elLastShot = document.getElementById('hud-last-shot');
 const elOrder = document.getElementById('hud-order');
+const elRescueRow = document.getElementById('hud-rescue-row');
+const elRescue = document.getElementById('hud-rescue');
 const elDoorPrompt = document.getElementById('door-prompt');
 const elCartelaBanner = document.getElementById('cartela-banner');
 const elDialogueBanner = document.getElementById('dialogue-banner');
@@ -436,7 +438,21 @@ function updateHud() {
     }
   }
 
-  const prompt = sim.currentChalkPrompt() ?? sim.currentVolumePrompt() ?? sim.currentDoorPrompt();
+  // D1: socorro quando seguro — a convenção é visível (quem está caído, quanto tempo resta, se o local está seguro e quem o socorre)
+  if (elRescueRow) {
+    const rescues = sim.rescueStatus();
+    elRescueRow.hidden = rescues.length === 0;
+    if (elRescue && rescues.length) {
+      elRescue.textContent = rescues
+        .map((r) => {
+          const who = r.by === null ? '' : r.by === 'piotr_sokol' ? ' · Piotr a levantar' : ` · ${r.lifting ? 'a levantar' : 'a caminho'}: ${r.by.replace('pl_', '')}`;
+          return `${r.name} incapacitado${r.required ? ' (exigido pelo roteiro)' : ''} · ${r.remainingSec.toFixed(0)} s · ${r.safe ? 'local seguro' : 'à vista de um hostil'}${who} · a ${r.distanceFromPiotr.toFixed(0)} m`;
+        })
+        .join(' | ');
+    }
+  }
+
+  const prompt = sim.currentRescuePrompt() ?? sim.currentChalkPrompt() ?? sim.currentVolumePrompt() ?? sim.currentDoorPrompt();
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';

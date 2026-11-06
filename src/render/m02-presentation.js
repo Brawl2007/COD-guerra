@@ -75,6 +75,12 @@ export const EVENT_CONSUMERS = Object.freeze({
   'checkpoint-rejected': Object.freeze({ consumer: 'hud', note: 'aviso de saves lido de sim.lastCheckpointPersist' }),
   restored: Object.freeze({ consumer: 'renderer+presentation', note: 'o renderer reconstrói pela revisão do mundo; a apresentação descarta legendas, indicadores e áudio pendentes' }),
   'mission-failed': Object.freeze({ consumer: 'hud', note: 'ecrã de falha lido de sim.missionFailed' }),
+  // D1 socorro quando seguro: a linha «Socorro (D1)» e o aviso [E] da bancada leem sim.rescueStatus() / sim.currentRescuePrompt() a cada frame
+  'rescue-window-opened': Object.freeze({ consumer: 'hud', note: 'janela de socorro: linha «Socorro (D1)» lida de sim.rescueStatus()' }),
+  'rescue-started': Object.freeze({ consumer: 'hud', note: 'quem socorre e a contagem de levantar vêm de sim.rescueStatus()/currentRescuePrompt()' }),
+  'rescue-aborted': Object.freeze({ consumer: 'hud', note: 'socorro interrompido (local inseguro, socorrista caído ou afastado): o estado da janela reflete-o' }),
+  'ally-rescued': Object.freeze({ consumer: 'state-only', note: 'o aliado volta a estar de pé pelo estado; sem cue próprio (pendente do áudio)' }),
+  'rescue-window-expired': Object.freeze({ consumer: 'hud', note: 'prazo esgotado: a linha de socorro desaparece e, para Gruca, o ecrã de falha lê sim.missionFailed' }),
   'mission-restarted': Object.freeze({ consumer: 'hud+presentation', note: 'o ecrã de falha desaparece pelo estado; a apresentação descarta legendas e áudio pendentes' }),
   'supply-volume-picked': Object.freeze({ consumer: 'hud', note: 'prompt de volume lido de sim.currentVolumePrompt()' }),
   'supply-volumes-abandoned': Object.freeze({ consumer: 'state-only', note: 'estado dos volumes lido pelo renderer (cena B)' }),
