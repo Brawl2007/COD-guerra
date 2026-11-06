@@ -385,7 +385,17 @@ describe('M02 D4 B/C: ordens no snapshot, no restauro e no validador (campo adit
       const fresh = new M02BenchSimulation(3);
       fresh.restoreSnapshot(snap);
       assert.deepEqual(trace(fresh, 200, 600, controls), ref);
-      assert.ok(ref.some((line) => line.includes('"type":"advance"')) || ref.at(-1).includes('"type":"auto"'), 'atravessa a 2.ª ordem ou a sua caducidade');
+      // a continuação atravessa a 2.ª ordem (tick 500, t = 25,05 s): começa com a ordem «cobrir» do snapshot e acaba com «avançar» aceite
+      // (nunca caducada nem recusada), com a sua posição e as atribuições da equipa de assalto
+      const orderAt = (line) => JSON.parse(line)[1];
+      assert.equal(orderAt(ref[0]).type, 'cover');
+      assert.equal(orderAt(ref[0]).issuedAt, 0.3);
+      const last = orderAt(ref.at(-1));
+      assert.equal(last.type, 'advance');
+      assert.equal(last.issuedAt, 25.05);
+      assert.equal(last.cellId, label);
+      assert.ok(isKnownOrderNode(label, last.nodeId), `nó conhecido da célula ${label}: ${last.nodeId}`);
+      assert.ok(Object.keys(last.assignments).length >= 3, 'a equipa de assalto tem nós atribuídos');
     });
   }
 

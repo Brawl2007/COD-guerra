@@ -17,6 +17,7 @@ import {
   ORDER_NODES,
   boundHopExposure,
 } from '../src/game/m02-combat-ai.js';
+import { M02_SCENE_IDS } from '../src/game/m02-acts-director.js';
 import { MissionBot } from './m02-mission-bot.js';
 
 const SEED = 7;
@@ -252,17 +253,45 @@ describe('M02 C10-C11: as sementes em que Gruca caía na marcha (MissionBot, rec
       const sim = new M02BenchSimulation(seed, { startScene: 'C01', difficulty: 'recruta' });
       const bot = new MissionBot(sim, { dt: 0.1 });
       let fell = null;
+      let furthest = 0; // a cena mais avançada que o bot alcançou: a asserção só vale se chegou à marcha (C10 em diante)
       for (let i = 0; i < 7000; i++) {
         if (sim.script.sceneId === 'C12' || sim.script.finished || sim.missionFailed || !(sim.player.health > 0)) break;
         bot.playTick();
+        furthest = Math.max(furthest, M02_SCENE_IDS.indexOf(sim.script.sceneId));
         const g = ally(sim, 'pl_gruca');
         if (!g.alive || g.state === 'DOWN') {
           fell = `${sim.script.sceneId} t=${sim.clock.toFixed(1)} (${g.x.toFixed(1)}, ${g.z.toFixed(1)})`;
           break;
         }
       }
+      furthest = Math.max(furthest, M02_SCENE_IDS.indexOf(sim.script.sceneId));
+      assert.ok(furthest >= M02_SCENE_IDS.indexOf('C10'), `o bot chegou à marcha (C10+) antes das asserções; ficou em ${M02_SCENE_IDS[furthest]}`);
       assert.equal(fell, null, `Gruca caiu: ${fell}`);
       assert.notEqual(sim.missionFailed?.actorId, 'pl_gruca');
     });
   }
+});
+
+describe('M02 C10-C11: sem nó de partida (depois de um socorro ou de uma ordem) Gruca só vai ao nó mais próximo se o caminho está aberto', () => {
+  it('com o caminho exposto a dois fuzis fica onde está (HoldCover, registo com atNodeId null); aberto, vai ao nó mais próximo', () => {
+    const { sim, gruca } = c10();
+    // Gruca de joelhos a 4 m da posição final, fora de qualquer nó e sem objetivo (o que um socorro ou uma ordem deixa)
+    Object.assign(gruca, { x: -32, z: 14, y: sim.world.heightAt(-32, 14), goal: null, navCorners: null, reachedNodeId: null });
+    const [a, b] = twoWest(sim);
+    run(sim, 2);
+    assert.equal(gruca.goal, null, 'sem objetivo: não corre a descoberto');
+    assert.equal(gruca.tacticalState, 'HoldCover');
+    assert.deepEqual([gruca.x, gruca.z], [-32, 14], 'ficou onde estava');
+    const held = sim.combatLog.filter((e) => e.type === 'section_bound_held' && e.actorId === 'pl_gruca');
+    assert.equal(held.length, 1, 'um registo, não um por passo');
+    assert.equal(held[0].atNodeId, null);
+    assert.equal(held[0].nodeId, 'cv_c_evac_gruca');
+    assert.equal(held[0].exposure, 2);
+    kill(a);
+    kill(b);
+    run(sim, 1);
+    assert.equal(gruca.goal?.nodeId, 'cv_c_evac_gruca', 'com o caminho aberto vai ao nó mais próximo');
+    run(sim, 6);
+    assert.ok(near(gruca, NODES.cv_c_evac_gruca));
+  });
 });
