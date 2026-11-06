@@ -4,6 +4,7 @@ import { M02BenchRenderer } from '../render/m02-01-renderer.js';
 import { M02PresentationFeed, landmarksInView } from '../render/m02-presentation.js';
 import { M02AudioPlaceholder } from '../render/m02-audio-placeholder.js';
 import { HORIZON_L3_LANDMARKS } from '../world/m02-horizon-system.js';
+import { M02TouchControls, detectTouchMode } from './m02-touch-controls.js';
 
 const PANORAMA_VIEWS = Object.freeze({
   SN1: { x: 0, z: -80, angle: Math.PI / 2, pitch: -0.02, label: 'SN1 · Entrada norte da bancada (0, -80)' },
@@ -47,6 +48,8 @@ let lastLandmarkKey = '';
 const resumeAudio = () => audio.resume();
 window.addEventListener('keydown', resumeAudio, { once: false, passive: true });
 window.addEventListener('mousedown', resumeAudio, { once: false, passive: true });
+// iOS: o WebAudio só arranca num gesto do utilizador; no modo toque o primeiro toque (pointerup/touchend/click) retoma o contexto.
+window.addEventListener('pointerup', resumeAudio, { once: false, passive: true });
 
 const elObjective = document.getElementById('hud-objective');
 const elPos = document.getElementById('hud-pos');
@@ -87,6 +90,24 @@ let pendingSingleActions = {
   orderAdvance: false,
 };
 
+/** F5 (teclado e botão «Gravar»). */
+function quickSaveCheckpoint() {
+  sim.saveCheckpoint('cp_m02_manual');
+  return sim.lastCheckpointPersist;
+}
+
+/** F9 (teclado e botão «Carregar»). Depois de recarregar a página o índice em memória só tem o início: vai à loja persistida (FIX-2b). */
+function quickLoadFromStore() {
+  try {
+    const loaded = sim.quickLoadCheckpoint();
+    if (loaded.skipped?.length) console.warn('[M02] F9 saltou checkpoints incompatíveis:', loaded.skipped);
+    return { ok: true };
+  } catch (err) {
+    console.warn('[M02] F9 sem checkpoint restaurável:', err.message);
+    return { ok: false, reason: err.message };
+  }
+}
+
 window.addEventListener('keydown', (e) => {
   keys.add(e.code);
   if (e.code === 'KeyE') pendingSingleActions.interact = true;
@@ -103,17 +124,11 @@ window.addEventListener('keydown', (e) => {
   }
   if (e.code === 'F5') {
     e.preventDefault();
-    sim.saveCheckpoint('cp_m02_manual');
+    quickSaveCheckpoint();
   }
   if (e.code === 'F9') {
     e.preventDefault();
-    // Depois de recarregar a página o índice em memória só tem o início: o F9 vai à loja persistida (FIX-2b).
-    try {
-      const loaded = sim.quickLoadCheckpoint();
-      if (loaded.skipped?.length) console.warn('[M02] F9 saltou checkpoints incompatíveis:', loaded.skipped);
-    } catch (err) {
-      console.warn('[M02] F9 sem checkpoint restaurável:', err.message);
-    }
+    quickLoadFromStore();
   }
   // FIX-CD (D1): com a missão falhada os atalhos de bancada que mudam o estado ficam parados (sair é F9 ou o botão de reinício);
   // antes o KeyM concluía e exportava uma missão falhada como `completed: true`.
@@ -135,7 +150,36 @@ window.addEventListener('keyup', (e) => {
   keys.delete(e.code);
 });
 
+// Modo toque (iPhone/Safari não tem pointer lock): joystick, arrastar para olhar e botões; alimenta os MESMOS controlos do tick.
+const touchMode = detectTouchMode(window);
+const touch = touchMode
+  ? new M02TouchControls({
+      document,
+      window,
+      onGesture: resumeAudio,
+      actions: {
+        fire: () => (pendingSingleActions.fire = true),
+        reload: () => (pendingSingleActions.reload = true),
+        crouch: () => (pendingSingleActions.crouch = true),
+        grenade: () => (pendingSingleActions.grenade = true),
+        interact: () => (pendingSingleActions.interact = true),
+        orderCover: () => (pendingSingleActions.orderCover = true),
+        orderAdvance: () => (pendingSingleActions.orderAdvance = true),
+        save: () => {
+          const last = quickSaveCheckpoint();
+          touch.toast(last?.ok === false && !last.skipped ? `Falhou a gravação: ${last.reason}` : 'Checkpoint gravado (F5)');
+        },
+        load: () => {
+          const res = quickLoadFromStore();
+          touch.toast(res.ok ? 'Checkpoint carregado (F9)' : 'Sem checkpoint para carregar');
+        },
+      },
+    })
+  : null;
+if (touchMode) renderer.resize();
+
 canvas.addEventListener('mousedown', (e) => {
+  if (touchMode) return; // toque: os eventos de rato sintéticos não disparam nem pedem pointer lock
   if (e.button === 0) {
     pendingSingleActions.fire = true;
     if (document.pointerLockElement !== canvas && canvas.requestPointerLock) {
@@ -453,6 +497,17 @@ function updateHud() {
   }
 
   const prompt = sim.currentInteractPrompt()?.prompt ?? null; // o mesmo alvo (o mais próximo) que o [E] executa
+  if (touch) {
+    touch.setInteractVisible(Boolean(prompt) && !sim.missionFailed);
+    touch.setStatus({
+      health: p.health,
+      mag: sim.weapon.mag,
+      reserve: sim.weapon.reserve,
+      grenades: sim.grenadeAmmo,
+      objective: sim.objective.title,
+      crouched: p.crouched,
+    });
+  }
   if (elDoorPrompt) {
     if (prompt) {
       elDoorPrompt.style.display = 'block';
@@ -502,18 +557,19 @@ function animate(now) {
   const forward = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0);
   const side = (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0);
   const lookX = (keys.has('ArrowRight') ? 1.8 * dt : 0) - (keys.has('ArrowLeft') ? 1.8 * dt : 0);
+  const tc = touch ? touch.poll() : null;
 
   const simStart = performance.now();
   // D1: com a missão falhada a bancada deixa de avançar a simulação (pausa de apresentação, como um menu) e mostra a falha;
   // o roteiro e os checkpoints já param na própria simulação. Sair é uma ação explícita (botão ou F9).
   if (!sim.missionFailed) {
     sim.tick(dt, {
-      forward,
-      side,
-      sprint: keys.has('ShiftLeft') || keys.has('ShiftRight'),
-      aim: keys.has('KeyV'),
-      lookX,
-      lookY: 0,
+      forward: tc && Math.abs(tc.forward) > Math.abs(forward) ? tc.forward : forward,
+      side: tc && Math.abs(tc.side) > Math.abs(side) ? tc.side : side,
+      sprint: keys.has('ShiftLeft') || keys.has('ShiftRight') || Boolean(tc?.sprint),
+      aim: keys.has('KeyV') || Boolean(tc?.aim),
+      lookX: lookX + (tc?.lookX ?? 0),
+      lookY: tc?.lookY ?? 0,
       interact: pendingSingleActions.interact,
       reload: pendingSingleActions.reload,
       crouch: pendingSingleActions.crouch,
@@ -599,6 +655,8 @@ window.m02Bench = {
   getPresentationView: () => presentation.view(sim),
   getAudioSummary: () => audio.summary(),
   getTelemetrySummary: () => renderer.getTelemetrySummary(),
+  touchMode,
+  touch,
   getStateSummary: () => ({
     clock: Number(sim.clock.toFixed(2)),
     activeCellId: sim.activeCellId,
