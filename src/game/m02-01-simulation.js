@@ -38,6 +38,7 @@ import {
   SQUAD_ORDER_TYPES,
   LEGACY_SQUAD_ORDER_TYPES,
   resolveSquadOrder,
+  isNonCombatantTarget,
 } from './m02-combat-ai.js';
 import {
   createInitialAreaBState,
@@ -1439,13 +1440,15 @@ export class M02BenchSimulation {
 
     if (hit && hit.kind === 'actor' && hit.actor) {
       const targetActor = hit.actor;
-      if (targetActor.nonCombatant || targetActor.state === 'WOUNDED_UNARMED' || targetActor.state === 'SURRENDERED') {
+      if (isNonCombatantTarget(targetActor)) {
+        // I4 (p. 34): ver NON_COMBATANT_STATES (ferido, rendido ou retirado marcam; quem ainda recua, WITHDRAWING, não)
         this.flags['m02.fired_on_wounded'] = true;
         this.dialogue.trigger('bz39_c04_05', this, { allowRepeat: true });
         this.combatLog.push({
           clock: Number(this.clock.toFixed(2)),
           type: 'player_fired_on_wounded',
           actorId: targetActor.id,
+          state: targetActor.state,
         });
       }
       const dmg = Math.round(this.weapon.profile.damage * (hit.multiplier ?? 1));

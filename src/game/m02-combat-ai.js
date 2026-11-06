@@ -42,6 +42,23 @@ export function isLastGroupMember(sim, actor) {
   return Boolean(sim.areaC?.lastGroup?.includes(actor));
 }
 
+/**
+ * I4 (PDF p. 34) `m02.fired_on_wounded`: «ação explícita após estado não combatente», «consequência de diálogo, sem recompensa» (a fala
+ * de Gruca, K3: «Baixe a arma. Ele já não combate.»); C7 (p. 15): a experiência «nunca recompensa o massacre de rendidos». Um tiro de
+ * Piotr que acerta num destes estados marca a flag: o ferido desarmado (C04: `WOUNDED_UNARMED`), o rendido (C03: «Rendição ou fuga
+ * substituem a obrigação de matar todos»: `SURRENDERED`) e o homem do posto EA0 já retirado na borda oeste (D2: `WITHDRAWN`, vivo, fora de
+ * combate e contado no roster — é `nonCombatant`, por isso o `nonCombatant` do tiro já o apanhava; o teste m02-c04-fired-on-withdrawn
+ * fixa-o, a nota do handoff de 2026-11-05 dizia o contrário e a sonda dava `true`).
+ * Quem ainda está a recuar (`WITHDRAWING`) NÃO conta: D2 classifica-o como combatente a andar para um destino (o validador exige
+ * `nonCombatant` falso), é um hostil ativo para o roteiro (a vala só fica livre quando chega à borda) e a bancada trata-o como alvo;
+ * recuar é uma decisão tática de D3 («recuo/rendição»), não a rendição nem a incapacidade de I4. A secção deixa-o ir (D2) mas não é
+ * Gruca quem condena o tiro de Piotr nas costas de um combatente que ainda não deixou o combate.
+ */
+export const NON_COMBATANT_STATES = Object.freeze(['WOUNDED_UNARMED', 'SURRENDERED', 'WITHDRAWN']);
+export function isNonCombatantTarget(actor) {
+  return Boolean(actor) && (Boolean(actor.nonCombatant) || NON_COMBATANT_STATES.includes(actor.state));
+}
+
 export const WEAPON_PROFILES = Object.freeze({
   wz29: Object.freeze({
     id: 'wz29',
