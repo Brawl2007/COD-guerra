@@ -97,6 +97,12 @@ test('COM-01 ambos os lados, combate real de 130 s (EA1): conservação da muni�
   const sim = new M02BenchSimulation(SEED);
   sim.player.crouched = true;
   sim.player.eyeHeight = 1.08;
+  // Merge M02 único: com as rajadas ronda a ronda e a reação de aquisição a secção fere o artilheiro da MG34 nos primeiros 15 s em
+  // quase todas as sementes, e a regra de recuo de um hostil ferido e suprimido (`fallback`, D3) tira-o da arma. Esta prova é a da
+  // munição finita (esgotar e calar-se), por isso o artilheiro fica na arma e aguenta os 130 s (vida de prova); o recuo ferido e a
+  // letalidade são provados nos testes de D3/D6 e moral. A contabilidade de munição de todos os outros atores não muda.
+  Object.assign(enemy(sim, 'DE-A05'), { fallback: null, health: 100000, maxHealth: 100000 });
+  Object.assign(ally(sim, 'pl_aux_01'), { health: 100000, maxHealth: 100000 }); // idem para o rkm da secção
   const actors = [...sim.enemies, ...sim.allies];
   const total = new Map(actors.map((x) => [x.id, x.mag + x.reserve]));
   const stats = { enemyReloads: 0, allyReloads: 0 };

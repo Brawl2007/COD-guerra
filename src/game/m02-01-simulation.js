@@ -1807,7 +1807,7 @@ export class M02BenchSimulation {
         this.flags['m02.fired_on_wounded'] = true;
         this.dialogue.trigger('bz39_c04_05', this, { allowRepeat: true });
         this.combatLog.push({
-          clock: Number(this.clock.toFixed(2)),
+          clock: roundNoNegZero(this.clock, 2),
           type: 'player_fired_on_wounded',
           actorId: targetActor.id,
           state: targetActor.state,
@@ -1834,11 +1834,12 @@ export class M02BenchSimulation {
     const material = hit?.material ?? 'air';
     const policy = BALLISTIC_MATERIAL_POLICY[material] ?? null;
 
+    // Sem -0 no registo vivo (o save normaliza -0 para 0; com a dispersão M01 a direção pode dar -0): vivo = restaurado (FIX-2c).
     const record = {
       id: `shot_${this.shotLog.length + 1}`,
-      clock: Number(this.clock.toFixed(3)),
-      origin: { x: Number(origin.x.toFixed(3)), y: Number(origin.y.toFixed(3)), z: Number(origin.z.toFixed(3)) },
-      direction: { x: Number(dir.x.toFixed(4)), y: Number(dir.y.toFixed(4)), z: Number(dir.z.toFixed(4)) },
+      clock: roundNoNegZero(this.clock, 3),
+      origin: { x: roundNoNegZero(origin.x, 3), y: roundNoNegZero(origin.y, 3), z: roundNoNegZero(origin.z, 3) },
+      direction: { x: roundNoNegZero(dir.x, 4), y: roundNoNegZero(dir.y, 4), z: roundNoNegZero(dir.z, 4) },
       hitKind: hit?.kind ?? 'none',
       hitId: hit?.kind === 'actor' ? hit.actor.id : (hit?.id ?? null),
       role: hit?.role ?? (hit?.kind === 'actor' ? 'target_actor' : null),
@@ -1848,17 +1849,17 @@ export class M02BenchSimulation {
       blockedBySolid: hit?.kind === 'world',
       hitTarget: hit?.kind === 'actor',
       glassBrokenId,
-      distance: hit ? Number(hit.distance.toFixed(3)) : range,
+      distance: hit ? roundNoNegZero(hit.distance, 3) : range,
       point: hit?.point
         ? {
-            x: Number(hit.point.x.toFixed(3)),
-            y: Number(hit.point.y.toFixed(3)),
-            z: Number(hit.point.z.toFixed(3)),
+            x: roundNoNegZero(hit.point.x, 3),
+            y: roundNoNegZero(hit.point.y, 3),
+            z: roundNoNegZero(hit.point.z, 3),
           }
         : {
-            x: Number((origin.x + dir.x * range).toFixed(3)),
-            y: Number((origin.y + dir.y * range).toFixed(3)),
-            z: Number((origin.z + dir.z * range).toFixed(3)),
+            x: roundNoNegZero((origin.x + dir.x * range), 3),
+            y: roundNoNegZero((origin.y + dir.y * range), 3),
+            z: roundNoNegZero((origin.z + dir.z * range), 3),
           },
     };
 
