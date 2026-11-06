@@ -11,7 +11,7 @@ usa o mesmo objeto em `docs/m02/referencias/astra/`.
 | 2 | `origin/codex/m02-recovery-v1` (`b0d14d4b`, 144 commits, base `56e98cbf`) | `46af6021` |
 | 2b | Ajustes de testes, sementes e correções após o merge | ver `git log 46af6021..m02-single` |
 
-**Estado: integrado SEM validação de jogo.** Não houve playtest humano nem verificação no iPhone. Os testes de estado não são
+**Estado: integrado SEM validação de jogo** (atualizado depois da decisão (a) do Capitão: ver secção 7). Não houve playtest humano nem verificação no iPhone. Os testes de estado não são
 playtest, e a experiência integrada não foi revista visualmente. O resultado dos testes está na secção 7.
 
 ## 1. Passo 1 — inspeção só de leitura dos saves v1 do Codex
@@ -55,6 +55,8 @@ Houve conflitos em dois ficheiros, e foram mantidos os dois lados.
   A M02 tem uma só entrada, `m02-01.html`. `RUNBOOK.md` foi anotado em conformidade.
 
 ## 3. Conflitos, ficheiro a ficheiro
+
+> Revisto na secção 7, que prevalece: o atraso de reação de aquisição e o contacto `[E]` com Lis passaram a estar ligados; a supressão já não aborta uma rajada; a recarga agachada restaura a postura.
 
 | Ficheiro | Resolução |
 |---|---|
@@ -150,7 +152,7 @@ vazio. `index.html`, `vite.config.js`, `src/core/audio.js`, `src/core/battlefiel
   - os sólidos de teste entram também em `sightOpaqueObstacles` (vista N0);
   - em `m02-machinegun-team` o contacto C06 abre-se no fixture.
 
-## 7. Resultados reais (código de `46b89f0f`) e pendências
+## 6b. Resultados intermédios (código de `46b89f0f`), antes da decisão do Capitão — histórico
 
 - **Builds:** `npm run build` OK e `npm run build:m02` OK, com o aviso de chunk grande que já existia.
 - **Node:** `node --test --test-concurrency=1` nas duas metades de `tests/m02-*.test.js`: **861 testes, 831 passam, 30 falham.**
@@ -204,3 +206,70 @@ para rondas a ≤ 3 m do alvo, as reações a granadas e as outras regras de IA 
 2. Para cada teste B, ligar a peça visual do Codex ao renderer, ajustando o teste com justificação, ou registar a exclusão como decisão.
 3. Ligar o ambiente/iluminação/FX do Codex. Isto exige verificação visual N0, e só depois se pode pensar no iPhone e em playtest humano.
 4. Decidir as alterações partilhadas da secção 4 com o Capitão M01.
+
+## 7. Decisão do Capitão (opção a): rajadas ronda a ronda do Codex e recalibração D
+
+O Capitão escolheu manter as rajadas ronda a ronda do Codex e recalibrar os cenários D desta linha sem enfraquecer o que provam.
+Onde a ronda a ronda quebrava uma **regra**, corrigiu-se o jogo:
+
+- **Supressão não aborta uma rajada começada** (`advanceActorBurst`):
+  - a decisão de disparar é a do início (`suppressed < 0,88`), como na rajada atómica sobre a qual D4/D6 foram calibrados;
+  - a rajada continua a parar com morte, não-combatente, recarga, carregador vazio, alvo ausente, clearance aliada por ronda,
+    alvo do EA0 a recuar (D2) e granada vista.
+  - Sem isto, a quinta caía sozinha (D4).
+- **Supressão do alvo pretendido:**
+  - cada ronda que sai da boca suprime-o;
+  - a que bate num obstáculo a ≤ 2,5 m da boca não suprime ninguém à distância (regra do Codex, mantida), salvo se passar perto.
+- **Recarga agachada do Codex:** no fim da recarga o ator volta à postura anterior (`m02ReloadPosture`, validado). Antes ficava
+  agachado para sempre, atrás das coberturas v2, e a secção deixava de ver os hostis: o efeito D4 desaparecia.
+- **Sem -0 no registo vivo de tiros** (`fireDirectRay` com `roundNoNegZero`). Com a dispersão M01, uma direção -0 fazia o restauro
+  de um sim novo divergir no tick 0 (SAVE-01).
+
+Continua demonstrado:
+
+- **F1 independente do dt:** o 1.º disparo fora da grelha a 0,05, 1/30 e 1/60 dá o mesmo número de impactos até à morte.
+- **D4:**
+  - efeito causal em 60 s com Piotr abrigado (as sementes 19390909, 2 e 31337 nos três modos);
+  - a quinta não cai sozinha em 180 s.
+- **Falhas:** `piotr_killed` e `required_character_incapacitated` sem checkpoint gravado.
+- **Janelas de segurança:** C06/C09 nos três perfis a 1/60.
+- **COM-01:** munição finita e sem disparo em recarga.
+- **SAVE-01 n.º 6:** restauro e continuação tick a tick com fechaduras.
+
+Ajustes de cenário, todos com a razão escrita no teste:
+
+| Teste | Ajuste |
+|---|---|
+| `m02-09` n.º 6 | Snapshot aos 28 s, porque a 1.ª fechadura aparece aos 27,65 s. |
+| `m02-c06` | Controlo sem janela observado durante 60 s, em vez de 30 s. |
+| `m02-c09` | Semente 3. |
+| `m02-d1`/`m02-d3` | Piotr em chão firme junto a B01. A física sempre ativa assentava-o na vala, tapado pelo peitoril. |
+| `m02-19` (ciclo F1) | O atirador já adquiriu Piotr; a reação é provada à parte. |
+| `m02-27` COM-01 | Os artilheiros da prova (MG34, rkm) ficam na arma durante 130 s, para a exaustão da dotação continuar exercitada. |
+| MissionBot (`m02-18`, `m02-19` FIX-CD 10, `m02-28`, marcha de Gruca) | Sementes medidas de novo: 32 de 40 chegam a C12 a dt 0,1. |
+| `m02-d4-squad-orders` | A semente 777 passa a 2. |
+
+### Partes do Codex ligadas nesta fase
+
+- **Contacto com Lis:** é o `[E]` deliberado (`lisContactPrompt`/`contactLisInC11`): alcance de 2 m, mãos livres e sem sólido
+  entre os dois. A proximidade sozinha já não socorre. O desfecho I4 continua a ser escrito no abrigo.
+- **Reação de aquisição:** `M02_ENEMY_REACTION_SEC` = 1,2 s (M01 «soldado») antes do 1.º tiro apontado a Piotr. É perceção, não
+  dificuldade.
+- **Noite:** preenchimento de luar `moonFill` no T1 (lua placeholder) para `m02LightingModel`. O ambiente TIME-01 do T1 mantém-se
+  (≤ 0,4).
+- **Recargas:** cues de recarga dos NPC e clips de recarga (as SMG ficam fora do roster, FIX-1). Lis ferido/amparado não recarrega
+  como combatente.
+- **Saves antigos:** reparação de uma T-AB antiga marcada «completed», feita na cópia preparada.
+
+### Testes `todo` (layout v3 da trincheira P1, decisão pendente do proprietário; não apagados)
+
+Os quatro dependem da mesma geometria v3 do corredor C01: trincheira P1, talude `cov_c01_mid_west_bank` e parapeito do EA0 elevado.
+
+1. `tests/m02-cover-dressing.test.js` «P1 is an actual shallow trench…».
+2. `tests/m02-cover-dressing.test.js` «EA0 defenders use the front parapet…».
+3. `tests/m02-reconstruction.test.js` «low-cover exposure changes physical line of sight…».
+4. `tests/m02-reconstruction.test.js` «a visible target above a parapet cannot be hit through the lower blocked muzzle».
+
+### Resultados
+
+Os números finais (Node, builds, browser, verificações M01 e da chave v1) estão no relatório de entrega do agente, com os SHAs.
