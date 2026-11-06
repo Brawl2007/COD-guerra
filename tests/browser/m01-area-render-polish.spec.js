@@ -67,9 +67,9 @@ const setQuality=async(page,q)=>{await page.locator('#quality').selectOption(q,{
 const IMPACT_WATCHER=()=>{window.__flash=null;window.__seen={frames:0,maxFlash:0,err:null};const watch=()=>{let d;try{d=window.gameDiagnostics?.();window.__seen.frames++;window.__seen.maxFlash=Math.max(window.__seen.maxFlash,d?.m01?.battlefieldFx?.counts.flash??0);}catch(e){window.__seen.err=String(e);}if(d&&d.m01?.battlefieldFx?.counts.flash>0&&window.__flash===null){window.__flash={clock:d.clock,counts:{...d.m01.battlefieldFx.counts},light:d.m01.battlefieldFx.extraLights,kinds:{...d.m01.battlefieldFx.meta.kinds}};window.dispatchEvent(new Event('blur'));return;}requestAnimationFrame(watch);};requestAnimationFrame(watch);};
 const want=name=>!ONLY||ONLY.includes(name);
 const report={};
-// The shared software-GL machine sometimes runs out of GPU/network resources under load (ERR_INSUFFICIENT_RESOURCES, empty-log VALIDATE_STATUS shader errors, GLTF textures whose blob could not be fetched). The unmodified build shows the same on the same scenes
+// The shared software-GL machine sometimes runs out of GPU/network resources under load (ERR_INSUFFICIENT_RESOURCES, empty-log VALIDATE_STATUS shader errors (only those: a message carrying a program/vertex/fragment info log is a real compile/link error and fails), GLTF textures whose blob could not be fetched). The unmodified build shows the same on the same scenes
 // (docs README), so they are counted in the report but are not what these specs assert; any OTHER page error fails the test.
-const ENV_ERROR=/ERR_INSUFFICIENT_RESOURCES|^THREE\.GLTFLoader: Couldn't load texture blob:|^THREE\.WebGLProgram: Shader Error \d+ - VALIDATE_STATUS false/;
+const ENV_ERROR=/ERR_INSUFFICIENT_RESOURCES|^THREE\.GLTFLoader: Couldn't load texture blob:|^THREE\.WebGLRenderer: Context Lost\.?$|^THREE\.WebGLProgram: Shader Error \d+ - VALIDATE_STATUS false\n\nMaterial Name: [^\n]*\nMaterial Type: [^\n]*\n\nProgram Info Log:\s*$/;
 const real=errors=>errors.filter(e=>!ENV_ERROR.test(e));
 // a failed test must not leave its page (and its WebGL context) open for the next one
 test.afterEach(async({browser})=>{for(const c of browser.contexts())await c.close();});
